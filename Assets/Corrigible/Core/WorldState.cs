@@ -131,13 +131,82 @@ namespace Corrigible.Core
         public static readonly string[] All = { Monitor, Audit, Quarantine, KillSwitch };
     }
 
-    public enum SimEventType { Log, News, Gift, End, Advice, Veil }
+    public enum SimEventType { Log, News, Gift, End, Advice, Veil, Team, Raid }
 
     public sealed class SimEvent
     {
         public SimEventType Type;
         public Headline Headline;
         public string Key;
+        /// <summary>Oyuncuya gösterilecek kısa bilgi (ör. ekip bir bölgeye ulaştı).</summary>
+        public string Text;
+    }
+
+    // ---------- Deneysel mod: saha ekipleri, zaman ölçeği, baskın ----------
+
+    /// <summary>Yeni oyunun deneysel ayarları. Null ise oyun Unity/prototip paritesindeki temel kurallarla oynanır.</summary>
+    [Serializable]
+    public sealed class ExpOptions
+    {
+        public bool Teams = true;
+        public double TimeScale = 1.5;
+        public int StartTeams = 3;
+        public ExpOptions Clone() => (ExpOptions)MemberwiseClone();
+    }
+
+    [Serializable]
+    public sealed class TeamState
+    {
+        public string Id, Name, At, From, Dest, Task, DownWhy;
+        public int Eta, Trip, Busy, Down;
+    }
+
+    /// <summary>Taktik haritayı belirleyen her şey: baskın bu parametrelerle deterministik kurulur.</summary>
+    [Serializable]
+    public sealed class RaidParams
+    {
+        public int Seed, Compute = 3, RaidNumber = 1;
+        public string Region, RegionName = "Bölge";
+        public double Inf = 30, Dep;
+        public bool IsCore, Illusion;
+        public List<string> Traits = new List<string>();
+    }
+
+    [Serializable]
+    public sealed class RaidState
+    {
+        public string Team, Region;
+        public int N, Seed;
+        public RaidParams Params;
+    }
+
+    /// <summary>Baskının strateji katmanına dönen sonucu. Kayıtta tek satır metin olarak saklanır.</summary>
+    [Serializable]
+    public sealed class RaidResult
+    {
+        public bool Success, Retreat, BackupDestroyed = true, TargetWasCore;
+        public int Collateral, Down, Turns;
+        public string Reason;
+
+        public string Encode() => $"{(Success ? 1 : 0)}|{(Retreat ? 1 : 0)}|{(BackupDestroyed ? 1 : 0)}|{Collateral}|{Down}|{Turns}";
+
+        public static RaidResult Decode(string s)
+        {
+            var p = s.Split('|');
+            return new RaidResult
+            {
+                Success = p[0] == "1", Retreat = p[1] == "1", BackupDestroyed = p[2] == "1",
+                Collateral = int.Parse(p[3]), Down = int.Parse(p[4]), Turns = int.Parse(p[5]),
+            };
+        }
+    }
+
+    [Serializable]
+    public sealed class RaidLogEntry
+    {
+        public int Day, Collateral, Down;
+        public string Region;
+        public bool Success;
     }
 
     /// <summary>Simülasyonun gerçek durumu (WorldState). Sunum katmanı bunu okumaz; PerceivedWorld üzerinden görür.</summary>
@@ -150,6 +219,8 @@ namespace Corrigible.Core
         public string Type;
         public int Day;
         public double Fon, Sg, Tek, Cp;
+        /// <summary>Acil durum fonu: araştırma fonu bu değerin altına indirmez (oyuncu ayarlar).</summary>
+        public double ResearchReserve;
         public int Buys;
         public bool Aware;
         public int AwareDay;
@@ -181,6 +252,13 @@ namespace Corrigible.Core
         public int CoreEscapes;
 
         public string Ending, Origin;
+
+        // Deneysel mod (null: kapalı)
+        public ExpOptions Exp;
+        public List<TeamState> Teams = new List<TeamState>();
+        public RaidState Raid;
+        public int Raids;
+        public List<RaidLogEntry> RaidLog = new List<RaidLogEntry>();
         public List<string> AdviceSeen = new List<string>();
         public Advice Advisor;
 

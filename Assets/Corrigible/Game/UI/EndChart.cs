@@ -1,114 +1,133 @@
 using System.Collections.Generic;
 using Corrigible.Core;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Corrigible.Game.UI
 {
-    /// <summary>Oyun sonu: gerçek ve oyuncuya gösterilen ortalama sızma, gün gün. Sis, yalanlar ve illüzyon aynı resimde.</summary>
-    public sealed class EndChart : VisualElement
+    /// <summary>
+    /// Oyun sonu: gerçek ve oyuncuya gösterilen ortalama sızma, gün gün. Sis, yalanlar ve illüzyon aynı resimde.
+    /// Eksen yazıları AxisLabel prefab'ından üretilir; üzerine gelince çıkan bilgi "hover" yazısında gösterilir.
+    /// </summary>
+    [RequireComponent(typeof(CanvasRenderer))]
+    public sealed class EndChart : MaskableGraphic, IPointerMoveHandler, IPointerExitHandler
     {
         const float L = 44, R = 14, T = 30, B = 30;
-        static readonly Color Threat = MapView.Hex("#ff5b4d"), Verify = MapView.Hex("#5cc8d9"), Grid = MapView.Hex("#22343c"),
-            Axis = MapView.Hex("#2f4650");
 
-        readonly List<HistPoint> hist;
-        readonly int awareDay;
-        readonly Label hover;
-        readonly List<Label> axisLabels = new List<Label>();
-        int hoverDay = -1;
+        [SerializeField] UiTheme theme;
+        [SerializeField] RectTransform labels;
+        [SerializeField] TMP_Text axisLabelPrefab;
+        [SerializeField] TMP_Text hover;
 
-        public EndChart(List<HistPoint> hist, int awareDay)
+        List<HistPoint> hist = new List<HistPoint>();
+        int awareDay, hoverDay = -1;
+        readonly List<TMP_Text> pool = new List<TMP_Text>();
+        int used;
+
+        static UiTheme fallback;
+        UiTheme Th => theme != null ? theme : fallback != null ? fallback : (fallback = ScriptableObject.CreateInstance<UiTheme>());
+
+        public void SetData(List<HistPoint> points, int aware)
         {
-            this.hist = hist;
-            this.awareDay = awareDay;
-            AddToClassList("endchart");
-            generateVisualContent += Draw;
-
-            var legend = new VisualElement();
-            legend.AddToClassList("row");
-            legend.style.position = Position.Absolute; legend.style.left = L; legend.style.top = 2;
-            legend.Add(Swatch(Threat, "Gerçek ortalama sızma"));
-            legend.Add(Swatch(Verify, "Sana gösterilen (kesik)"));
-            Add(legend);
-
-            hover = new Label();
-            hover.style.position = Position.Absolute; hover.style.fontSize = 11; hover.style.color = MapView.Hex("#d6e1e3");
-            hover.pickingMode = PickingMode.Ignore;
-            Add(hover);
-
-            RegisterCallback<GeometryChangedEvent>(_ => Layout());
-            RegisterCallback<PointerMoveEvent>(OnMove);
-            RegisterCallback<PointerLeaveEvent>(_ => { hoverDay = -1; hover.text = ""; MarkDirtyRepaint(); });
+            hist = points ?? new List<HistPoint>();
+            awareDay = aware;
+            hoverDay = -1;
+            Canvas.ForceUpdateCanvases();
+            Relabel();
+            SetVerticesDirty();
         }
 
-        static VisualElement Swatch(Color c, string text)
+        protected override void OnRectTransformDimensionsChange()
         {
-            var row = new VisualElement(); row.AddToClassList("row"); row.style.marginRight = 18;
-            var sw = new VisualElement(); sw.style.width = 18; sw.style.height = 2; sw.style.backgroundColor = c; sw.style.marginRight = 6;
-            var l = new Label(text); l.style.fontSize = 11; l.style.color = MapView.Hex("#7f949b");
-            row.Add(sw); row.Add(l);
-            return row;
+            base.OnRectTransformDimensionsChange();
+            if (Application.isPlaying && hist.Count > 1) Relabel();
         }
 
+        Rect Area => rectTransform.rect;
         int LastDay => hist.Count > 0 ? hist[hist.Count - 1].Day : 1;
-        float X(float d) => L + (d - 1) / Mathf.Max(1, LastDay - 1) * (resolvedStyle.width - L - R);
-        float Y(double v) => T + (1 - (float)v / 100f) * (resolvedStyle.height - T - B);
+        // Koordinatlar sol üstten (prototip ile aynı); yerel uzaya P ile çevrilir
+        float X(float d) => L + (d - 1) / Mathf.Max(1, LastDay - 1) * (Area.width - L - R);
+        float Y(double v) => T + (1 - (float)v / 100f) * (Area.height - T - B);
+        Vector2 P(float x, float y) => new Vector2(Area.xMin + x, Area.yMax - y);
 
-        void Layout()
+        void Relabel()
         {
-            foreach (var l in axisLabels) l.RemoveFromHierarchy();
-            axisLabels.Clear();
-            if (hist.Count < 2 || resolvedStyle.width <= 0) return;
-            foreach (var v in new[] { 0, 50, 100 }) AxisLabel($"%{v}", L - 34, Y(v) - 8);
-            for (int d = 50; X(d) < resolvedStyle.width - R - 30; d += 50) AxisLabel($"{d}. gün", X(d) - 18, resolvedStyle.height - B + 4);
-            if (awareDay > 0) AxisLabel("fark edildi", X(awareDay) + 4, resolvedStyle.height - B - 18);
-            int start = -1;
-            for (int i = 0; i < hist.Count; i++)
+            used = 0;
+            hover.text = "";
+            if (hist.Count >= 2 && Area.width > 0)
             {
-                if (hist[i].Illusion && start < 0) start = hist[i].Day;
-                if (start >= 0 && (!hist[i].Illusion || i == hist.Count - 1))
+                float w = Area.width, h = Area.height;
+                foreach (var v in new[] { 0, 50, 100 }) Label($"%{v}", L - 34, Y(v) - 8);
+                for (int d = 50; X(d) < w - R - 30; d += 50) Label($"{d}. gün", X(d) - 18, h - B + 4);
+                if (awareDay > 0) Label("fark edildi", X(awareDay) + 4, h - B - 18);
+                int start = -1;
+                for (int i = 0; i < hist.Count; i++)
                 {
-                    AxisLabel("illüzyon", Mathf.Min(X(start) + 4, resolvedStyle.width - R - 60), T + 2);
-                    start = -1;
+                    if (hist[i].Illusion && start < 0) start = hist[i].Day;
+                    if (start >= 0 && (!hist[i].Illusion || i == hist.Count - 1))
+                    {
+                        Label("illüzyon", Mathf.Min(X(start) + 4, w - R - 60), T + 2);
+                        start = -1;
+                    }
                 }
             }
-            MarkDirtyRepaint();
+            for (int i = used; i < pool.Count; i++) pool[i].gameObject.SetActive(false);
         }
 
-        void AxisLabel(string text, float x, float y)
+        void Label(string text, float x, float y)
         {
-            var l = new Label(text);
-            l.style.position = Position.Absolute; l.style.left = x; l.style.top = y; l.style.fontSize = 11;
-            l.style.color = MapView.Hex("#7f949b");
-            l.pickingMode = PickingMode.Ignore;
-            Add(l); axisLabels.Add(l);
+            if (used == pool.Count)
+            {
+                var t0 = Instantiate(axisLabelPrefab, labels);
+                t0.name = "axis-" + pool.Count;
+                pool.Add(t0);
+            }
+            var t = pool[used++];
+            t.gameObject.SetActive(true);
+            t.text = text;
+            t.rectTransform.anchoredPosition = new Vector2(x, -y);
         }
 
-        void OnMove(PointerMoveEvent e)
+        public void OnPointerMove(PointerEventData e)
         {
-            if (hist.Count < 2) return;
-            float w = resolvedStyle.width;
-            int d = Mathf.Clamp(Mathf.RoundToInt(1 + (e.localPosition.x - L) / (w - L - R) * (LastDay - 1)), 1, LastDay);
+            if (hist.Count < 2 || hover == null) return;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, e.position, e.pressEventCamera, out var local);
+            float w = Area.width, x = local.x - Area.xMin;
+            int d = Mathf.Clamp(Mathf.RoundToInt(1 + (x - L) / (w - L - R) * (LastDay - 1)), 1, LastDay);
             var h = hist.Find(p => p.Day == d);
-            if (h == null) return;
+            if (h == null || d == hoverDay) return;
             hoverDay = d;
             hover.text = $"Gün {d} · gerçek %{Js.Round(h.Real)} · gösterilen %{Js.Round(h.Shown)}{(h.Illusion ? " · illüzyon" : "")}";
             bool right = X(d) > w / 2;
-            hover.style.left = right ? new StyleLength(StyleKeyword.Auto) : new StyleLength(X(d) + 6);
-            hover.style.right = right ? new StyleLength(w - X(d) + 6) : new StyleLength(StyleKeyword.Auto);
-            hover.style.top = T - 2;
-            MarkDirtyRepaint();
+            var rt = hover.rectTransform;
+            rt.pivot = new Vector2(right ? 1 : 0, 1);
+            rt.anchoredPosition = new Vector2(right ? X(d) - 6 : X(d) + 6, -(T - 2));
+            hover.alignment = right ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
+            SetVerticesDirty();
         }
 
-        void Draw(MeshGenerationContext ctx)
+        public void OnPointerExit(PointerEventData e)
         {
+            hoverDay = -1;
+            if (hover != null) hover.text = "";
+            SetVerticesDirty();
+        }
+
+        protected override void OnPopulateMesh(VertexHelper vh)
+        {
+            vh.Clear();
+            float w = Area.width, h = Area.height;
+            var grid = Th.line;
+
+            // Izgara her zaman çizilir (edit modda da görünür)
+            foreach (var v in new[] { 0, 50, 100 })
+                UiMesh.Line(vh, P(L, Y(v)), P(w - R, Y(v)), 1f, v == 0 ? Th.line2 : grid);
             if (hist.Count < 2) return;
-            var p = ctx.painter2D;
-            float w = resolvedStyle.width, h = resolvedStyle.height;
 
             // İllüzyon bantları
-            p.fillColor = new Color(Threat.r, Threat.g, Threat.b, 0.1f);
+            var band = Palette.Alpha(Th.threat, 0.1f);
             int start = -1;
             for (int i = 0; i < hist.Count; i++)
             {
@@ -117,41 +136,22 @@ namespace Corrigible.Game.UI
                 {
                     int end = hist[i].Illusion ? hist[i].Day : hist[i].Day - 1;
                     float x0 = X(start), x1 = Mathf.Max(x0 + 2, X(end));
-                    p.BeginPath(); p.MoveTo(new Vector2(x0, T)); p.LineTo(new Vector2(x1, T)); p.LineTo(new Vector2(x1, h - B)); p.LineTo(new Vector2(x0, h - B)); p.ClosePath(); p.Fill();
+                    var a = P(x0, h - B); var b = P(x1, T);
+                    UiMesh.Rect(vh, Rect.MinMaxRect(a.x, a.y, b.x, b.y), band);
                     start = -1;
                 }
             }
 
-            // Izgara
-            p.lineWidth = 1;
-            foreach (var v in new[] { 0, 50, 100 })
-            {
-                p.strokeColor = v == 0 ? Axis : Grid;
-                p.BeginPath(); p.MoveTo(new Vector2(L, Y(v))); p.LineTo(new Vector2(w - R, Y(v))); p.Stroke();
-            }
-            if (awareDay > 0)
-            {
-                p.strokeColor = Axis;
-                for (float y = T; y < h - B; y += 6) { p.BeginPath(); p.MoveTo(new Vector2(X(awareDay), y)); p.LineTo(new Vector2(X(awareDay), Mathf.Min(h - B, y + 2))); p.Stroke(); }
-            }
+            if (awareDay > 0) UiMesh.DashedLine(vh, P(X(awareDay), T), P(X(awareDay), h - B), 1f, Th.line2, 2, 4);
 
             // Gösterilen (kesik) ve gerçek (düz) çizgiler
-            p.strokeColor = Verify; p.lineWidth = 2;
             for (int i = 1; i < hist.Count; i += 2)
-            {
-                p.BeginPath(); p.MoveTo(new Vector2(X(hist[i - 1].Day), Y(hist[i - 1].Shown))); p.LineTo(new Vector2(X(hist[i].Day), Y(hist[i].Shown))); p.Stroke();
-            }
-            p.strokeColor = Threat; p.lineWidth = 2;
-            p.BeginPath();
-            p.MoveTo(new Vector2(X(hist[0].Day), Y(hist[0].Real)));
-            for (int i = 1; i < hist.Count; i++) p.LineTo(new Vector2(X(hist[i].Day), Y(hist[i].Real)));
-            p.Stroke();
+                UiMesh.Line(vh, P(X(hist[i - 1].Day), Y(hist[i - 1].Shown)), P(X(hist[i].Day), Y(hist[i].Shown)), 2f, Th.verify);
+            var real = new Vector2[hist.Count];
+            for (int i = 0; i < hist.Count; i++) real[i] = P(X(hist[i].Day), Y(hist[i].Real));
+            UiMesh.Polyline(vh, real, 2f, Th.threat);
 
-            if (hoverDay > 0)
-            {
-                p.strokeColor = MapView.Hex("#7f949b"); p.lineWidth = 1;
-                p.BeginPath(); p.MoveTo(new Vector2(X(hoverDay), T)); p.LineTo(new Vector2(X(hoverDay), h - B)); p.Stroke();
-            }
+            if (hoverDay > 0) UiMesh.Line(vh, P(X(hoverDay), T), P(X(hoverDay), h - B), 1f, Th.muted);
         }
     }
 }

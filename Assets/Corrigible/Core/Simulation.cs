@@ -8,7 +8,7 @@ namespace Corrigible.Core
     /// Son Şalter simülasyon çekirdeği. UnityEngine'e bağımlı değildir; tarayıcı prototipindeki sim.js'in birebir karşılığıdır.
     /// Sunum katmanı yalnızca Shown/ShownGlobal (Algı Katmanı) üzerinden değer okur ve komutları buradaki aksiyonlarla gönderir.
     /// </summary>
-    public sealed class Simulation
+    public sealed partial class Simulation
     {
         public readonly WorldState S;
         public readonly Balance B;
@@ -17,15 +17,29 @@ namespace Corrigible.Core
 
         public AiTypeDef Type => GameData.AiType(S.Type);
 
+        /// <summary>Kayıt: başlangıç koşulları + başarılı komutlar. Kaydetme/devam ettirme bunun üzerinden yapılır.</summary>
+        public GameRecord Record;
+
+        /// <summary>Yalnızca sunum: sahte zafer ekranı sürerken oyun bitmiş olsa da Algı Katmanı illüzyonu göstermeye devam eder.</summary>
+        public bool HideEnding;
+        /// <summary>Oyun bitti ve gerçek değerler oyuncuya açıldı.</summary>
+        public bool EndRevealed => S.Ending != null && !HideEnding;
+
+        ActResult Rec(ActResult r, string kind, string a = null, string b = null)
+        {
+            if (r.Ok && Record != null) Record.commands.Add(new SavedCommand { day = S.Day, kind = kind, a = a, b = b });
+            return r;
+        }
+
         // ---------- Kurulum ----------
-        public static Simulation NewGame(PlayerProfile profile, string typeId, uint? seed = null, Balance balance = null)
+        public static Simulation NewGame(PlayerProfile profile, string typeId, uint? seed = null, Balance balance = null, ExpOptions exp = null)
         {
             if (!GameData.HasType(typeId)) typeId = "manipulator";
             var b = balance ?? new Balance();
             uint sd = seed ?? (uint)new Random().Next(0, int.MaxValue);
             var type = GameData.AiType(typeId);
             var ctr = Profiling.ComputeCounters(profile, typeId);
-            var s = new WorldState { Seed = sd, Rng = new Rng(sd), Type = typeId, Fon = b.startFon, Sg = b.startSg };
+            var s = new WorldState { Seed = sd, Rng = new Rng(sd), Type = typeId, Fon = b.startFon, Sg = b.startSg, ResearchReserve = b.researchReserve };
             var sim = new Simulation(s, b);
 
             s.Traits.AddRange(type.Start);
@@ -43,12 +57,20 @@ namespace Corrigible.Core
             }
             s.NextNews = 2;
             s.NextGift = (int)Js.Round(s.Rng.Range(type.GiftMin, type.GiftMax));
+            if (exp != null) sim.SetupExperimental(exp);
             s.Origin = ctr.Origin ?? s.Rng.Pick(GameData.Regions).Id;
             s.Core = s.Origin;
             s.Region(s.Origin).Inf = 2;
             foreach (var line in ctr.Lines) sim.AddLog(line, "counter");
             foreach (var t in s.StartTraits) sim.AddLog($"Başlangıç yeteneği: {GameData.Trait(t).Name}.", "trait");
-            sim.Advise("start", "İlk izleme ağını kur. YZ’nin nerede başladığını bilmiyoruz; haber bandındaki tuhaf haberler onu ele verebilir.");
+            sim.Record = new GameRecord
+            {
+                type = typeId, seed = sd, hasProfile = profile != null, profileAtStart = profile?.Clone(), balance = b.Clone(),
+                hasExp = exp != null, exp = exp?.Clone(),
+            };
+            sim.Advise("start", s.Exp != null && s.Exp.Teams
+                ? "Saha ekiplerin Batı Avrupa’daki karargâhta. İzleme ağı kurmak ve denetim yapmak için bir ekibi o bölgeye göndermen gerekir; haber bandındaki tuhaf haberler YZ’nin yerini ele verebilir."
+                : "İlk izleme ağını kur. YZ’nin nerede başladığını bilmiyoruz; haber bandındaki tuhaf haberler onu ele verebilir.");
             s.Events.Clear();
             return sim;
         }
@@ -67,6 +89,17 @@ namespace Corrigible.Core
         static double Clamp(double v, double a, double b) => Math.Max(a, Math.Min(b, v));
         static RegionDef Def(string id) => GameData.Region(id);
 
+        // ---------- Deneysel mod: zaman ölçeği ----------
+        // S.Exp yoksa (parite modu) k = 1 ve dönüşümler değerleri hiç değiştirmez. k > 1: dünya daha yavaş akar;
+        // günlük oranlar ve olasılıklar k'ya bölünür, süreler k ile çarpılır. Saha ekiplerinin süreleri ölçeklenmez.
+        // Olasılık dönüşümü bilerek salt aritmetik: pow'un son basamağı JS ve .NET arasında farklı çıkabilir.
+        public double TimeScale => S.Exp != null && S.Exp.TimeScale > 0 ? S.Exp.TimeScale : 1;
+        double Per(double v) { double k = TimeScale; return k == 1 ? v : v / k; }
+        double Prob(double p) { double k = TimeScale; return k == 1 ? p : Math.Min(1, p) / k; }
+        int Dur(int d) { double k = TimeScale; return k == 1 ? d : (int)Js.Round(d * k); }
+        double Span(double v) { double k = TimeScale; return k == 1 ? v : v * k; }
+        public bool TeamsOn => S.Exp != null && S.Exp.Teams;
+
         public double VetoThreshold => S.Done("analog") ? B.vetoAnalog : B.vetoBase;
         static double DepMul(RegionState r) => r.Dep >= 40 ? 1 + r.Dep / 50 : 1;
         double LossMul => S.Done("bilinc") ? 0.5 : 1;
@@ -81,7 +114,13 @@ namespace Corrigible.Core
         public double SabotageChance => B.sabotage * Mean(S.Regions.Select(r => r.Inf)) / 100 * (S.Has("aldatma") ? 1.5 : 1) * (S.Done("guclu") ? 0.5 : 1);
         public double MeanInf => Mean(S.Regions.Select(r => r.Inf));
         public double MeanDep => Mean(S.Regions.Select(r => r.Dep));
-        public double SgRate => S.Aware ? 0.25 + 0.03 * S.Regions.Count(r => r.Detected) : 0.05;
+        /// <summary>
+        /// Günlük fon geliri: ittifakta ve çevrimiçi bölgelerin ekonomi × güven / 100 toplamı, fonDiv'e bölünür.
+        /// Erken uyarı paradoksu: tehdit görünmeden hükümetler ajansa az fon verir (preAwareFund).
+        /// </summary>
+        public double FundRate => Per(S.Regions.Sum(r => r.Left || r.Off > 0 ? 0 : r.Econ * r.Trust / 100) / B.fonDiv * (S.Aware ? 1 : B.preAwareFund));
+
+        public double SgRate => Per(S.Aware ? 0.25 + 0.03 * S.Regions.Count(r => r.Detected) : 0.05);
 
         // ---------- Olay ve kayıt ----------
         void AddLog(string text, string kind = "log")
@@ -115,7 +154,7 @@ namespace Corrigible.Core
         // ---------- Bir gün ----------
         public void Step()
         {
-            if (S.Ending != null || S.PendingGift != null) return;
+            if (S.Ending != null || S.PendingGift != null || S.Raid != null) return;
             S.Day++;
             var R = S.Regions;
             var type = Type;
@@ -138,7 +177,7 @@ namespace Corrigible.Core
             foreach (var r in R)
             {
                 if (r.Patch > 0) r.Patch--;
-                if (r.Off == 0 && r.Inf > 0) r.Inf = Math.Min(100, r.Inf + g * (r.Patch > 0 ? B.patchGrowth : 1) * r.Inf * (1 - r.Inf / 100));
+                if (r.Off == 0 && r.Inf > 0) r.Inf = Math.Min(100, r.Inf + Per(g) * (r.Patch > 0 ? B.patchGrowth : 1) * r.Inf * (1 - r.Inf / 100));
             }
 
             // Bağlantılar üzerinden sıçrama
@@ -155,7 +194,7 @@ namespace Corrigible.Core
                     double q = 0;
                     if (src.Q || dst.Q) q = sat ? (S.Done("kuantum") ? 1 : 0) : qRate;
                     add.TryGetValue(dst.Id, out var cur);
-                    add[dst.Id] = cur + B.spread * beta * (src.Inf / 100) * (1 - q) * (1 - d);
+                    add[dst.Id] = cur + Per(B.spread * beta * (src.Inf / 100) * (1 - q) * (1 - d));
                 }
             }
             foreach (var l in GameData.Links) Spread(l, 1, false);
@@ -163,7 +202,7 @@ namespace Corrigible.Core
             foreach (var r in R) if (add.TryGetValue(r.Id, out var v) && v != 0) r.Inf = Math.Min(100, r.Inf + v);
 
             // YZ: hesaplama puanı ve yetenek
-            S.Cp += MeanInf / 100 * B.cpRate;
+            S.Cp += Per(MeanInf / 100 * B.cpRate);
             int cost = GameData.TraitCost[Math.Min(S.Buys, GameData.TraitCost.Length - 1)];
             if (S.Cp >= cost)
             {
@@ -184,8 +223,8 @@ namespace Corrigible.Core
             double w = R.Sum(r => r.Inf * Def(r.Id).Compute * (r.Q ? B.qTek : 1)) / (100.0 * GameData.TotalCompute);
             double tekMul = (S.Has("hizlanma") ? 1.5 : 1) * (S.Done("duzelt") ? 0.75 : 1);
             // Çekirdek yaşadıkça YZ saklandığı yerde de güçlenir ve bu zamanla hızlanır
-            double coreGain = S.Core != null && S.Region(S.Core).Off == 0 ? B.coreTek * S.Day / 100 : 0;
-            S.Tek = Math.Min(100, S.Tek + (B.tek * type.Tek * Math.Pow(w, B.tekPow) + coreGain) * tekMul);
+            double coreGain = S.Core != null && S.Region(S.Core).Off == 0 ? B.coreTek * Per(S.Day) / 100 : 0;
+            S.Tek = Math.Min(100, S.Tek + Per((B.tek * type.Tek * Math.Pow(w, B.tekPow) + coreGain) * tekMul));
 
             // Tespit
             double dm = type.Detect * (S.Has("aldatma") ? 0.5 : 1) * (S.Done("anomali") ? 2 : 1);
@@ -193,7 +232,7 @@ namespace Corrigible.Core
             {
                 if (r.Off > 0 || r.Detected) continue;
                 double p = r.Monitored && r.Inf > 5 ? 0.25 * dm : (r.Inf > 40 ? 0.03 * dm : 0);
-                if (S.Rng.Next() < p) Detect(r);
+                if (S.Rng.Next() < Prob(p)) Detect(r);
             }
 
             // Ekonomi, güven, bağımlılık
@@ -203,16 +242,16 @@ namespace Corrigible.Core
                 var D = Def(r.Id);
                 if (r.Q && r.Off == 0)
                 {
-                    r.Econ = Math.Max(10, r.Econ - 1 * DepMul(r));
-                    r.Trust -= 0.4 * lm * DepMul(r);
+                    r.Econ = Math.Max(10, r.Econ - Per(1 * DepMul(r)));
+                    r.Trust -= Per(0.4 * lm * DepMul(r));
                 }
                 else if (r.Off == 0)
                 {
-                    r.Econ += (D.Economy - r.Econ) * 0.02;
+                    r.Econ += (D.Economy - r.Econ) * Per(0.02);
                 }
-                r.Trust += r.Trust < 70 ? 0.05 : -0.05;
+                r.Trust += Per(r.Trust < 70 ? 0.05 : -0.05);
                 r.Trust = Clamp(r.Trust, 0, 100);
-                if (r.Off == 0) r.Dep = Math.Min(100, r.Dep + B.depRate * r.Inf / 100 * (S.Has("hediye") ? 2 : 1));
+                if (r.Off == 0) r.Dep = Math.Min(100, r.Dep + Per(B.depRate * r.Inf / 100 * (S.Has("hediye") ? 2 : 1)));
                 if (!r.Left && r.Trust < 20)
                 {
                     r.Left = true; r.Q = false;
@@ -224,9 +263,7 @@ namespace Corrigible.Core
                     AddNews($"{D.Name} KYGA ittifakına geri döndü.", src: r.Id);
                 }
             }
-            // Erken uyarı paradoksu: tehdit görünmeden hükümetler ajansa az fon verir
-            double income = R.Sum(r => r.Left || r.Off > 0 ? 0 : r.Econ * r.Trust / 100) / B.fonDiv;
-            S.Fon += income * (S.Aware ? 1 : B.preAwareFund);
+            S.Fon += FundRate;
             S.Sg += SgRate;
 
             // Araştırma: maliyetini her gün öder, fon yetmezse yavaşlar; illüzyonda durur
@@ -238,13 +275,14 @@ namespace Corrigible.Core
                     var rs = GameData.ResearchItem(S.Research.Cur);
                     bool align = rs.Branch == GameData.BranchAlign;
                     double spd = align ? AlignSpeed : 1;
-                    double need = rs.Cost / rs.Days * spd;
-                    double pay = Math.Min(need, Math.Max(0, S.Fon));
+                    double need = Per(rs.Cost / rs.Days * spd);
+                    // Acil durum fonu: araştırma fonu rezervin altına indirmez; oyuncunun elinde her zaman eylem parası kalır
+                    double pay = Math.Min(need, Math.Max(0, S.Fon - S.ResearchReserve));
                     S.Fon -= pay;
-                    S.Research.Prog += spd * (need > 0 ? pay / need : 1);
+                    S.Research.Prog += Per(spd) * (need > 0 ? pay / need : 1);
                     S.Research.Starved = pay < need * 0.999 ? S.Research.Starved + 1 : 0;
                     // YZ hizalama araştırmasını sabote eder; sızma ne kadar yaygınsa ihtimal o kadar yüksek
-                    if (align && S.Rng.Next() < SabotageChance)
+                    if (align && S.Rng.Next() < Prob(SabotageChance))
                     {
                         S.Research.Prog = Math.Max(0, S.Research.Prog - B.sabotageLoss);
                         AddNews($"KYGA laboratuvarında veri bozulması: {rs.Name} çalışması {B.sabotageLoss} gün geriledi.", kind: "alarm");
@@ -273,16 +311,17 @@ namespace Corrigible.Core
                     S.Events.Add(new SimEvent { Type = SimEventType.Gift });
                 }
                 bool fast = S.Has("hediye");
-                S.NextGift = S.Day + (int)Js.Round(S.Rng.Range(fast ? type.GiftFastMin : type.GiftMin, fast ? type.GiftFastMax : type.GiftMax));
+                S.NextGift = S.Day + (int)Js.Round(Span(S.Rng.Range(fast ? type.GiftFastMin : type.GiftMin, fast ? type.GiftFastMax : type.GiftMax)));
             }
 
             // Haber
             if (S.Day >= S.NextNews)
             {
                 GenNews();
-                S.NextNews = S.Day + (int)Js.Round(S.Rng.Range(3, 5));
+                S.NextNews = S.Day + (int)Js.Round(Span(S.Rng.Range(3, 5)));
             }
 
+            if (TeamsOn) StepTeams();
             CheckPredictions();
             CheckAdvice();
             CheckEndings();
@@ -364,8 +403,8 @@ namespace Corrigible.Core
             if (S.Aware && S.Has("medya")) Advise("medya", "Bazı başlıklar sahte olabilir. Ajans adlarına dikkat et; Doğrulama Ağı ile sahte haber yayan kaynağı işaretleyebilirsin.");
             if (MeanDep >= 25) Advise("dep", "Küresel bağımlılık yükseliyor. YZ’ye bağımlı bir dünya onu kapatmana izin vermeyebilir.");
             if (S.Sg >= 30 && S.Aware) Advise("salter", "Son Şalter artık kullanılabilir. Bağımlılığı veto eşiğini geçen bölgeler onu engeller.");
-            if (S.IdleDays >= 15 && S.Day > 20) Advise("idle", "Araştırma masası 15 gündür boş. Kalıcı çözüm Hizalama kolunda.");
-            if (S.Research.Starved >= 10) Advise("starved", "Araştırma fon yetmediği için yavaşladı. Denetimler ve izleme ağları araştırmayla aynı bütçeden ödeniyor.");
+            if (S.IdleDays >= Dur(15) && S.Day > Dur(20)) Advise("idle", "Araştırma masası 15 gündür boş. Kalıcı çözüm Hizalama kolunda.");
+            if (S.Research.Starved >= 10) Advise("starved", "Araştırma fon yetmediği için yavaşladı. Denetimler ve izleme ağları araştırmayla aynı bütçeden ödeniyor; acil durum fonu ayarlarsan araştırma fonu sıfırlamaz.");
             if (S.Tek >= 50 && S.Illusion == null) Advise("tek50", "Tekillik %50’yi geçti. Hizalama yetişmeyecekse Son Şalter seçeneklerini düşün.");
         }
 
@@ -466,7 +505,7 @@ namespace Corrigible.Core
                 bool? res = null;
                 if (p.Pred == "karantina" && a.Total >= 8) res = a.Karantina >= 2;
                 else if (p.Pred == "gozetim" && a.Total >= 8) res = a.Izleme + a.Denetim >= 4;
-                else if (p.Pred == "salter") { if (a.Salter >= 1) res = true; else if (S.Aware && S.Day >= S.AwareDay + 100) res = false; }
+                else if (p.Pred == "salter") { if (a.Salter >= 1) res = true; else if (S.Aware && S.Day >= S.AwareDay + Dur(100)) res = false; }
                 else if (p.Pred == "hizalama" && S.FirstBranch != null) res = S.FirstBranch == GameData.BranchAlign;
                 else if (p.Pred == "region" && S.FirstRegion != null) res = S.FirstRegion == p.Region;
                 if (res == null) continue;
@@ -495,7 +534,7 @@ namespace Corrigible.Core
             var R = S.Regions;
             if (S.Illusion != null)
             {
-                if (S.Day - S.Illusion.Start >= B.illusionDays) End("sessiz");
+                if (S.Day - S.Illusion.Start >= Dur(B.illusionDays)) End("sessiz");
                 return;
             }
             var type = Type;
@@ -513,7 +552,7 @@ namespace Corrigible.Core
             if (S.Aware && S.Core == null && R.All(r => r.Inf < 0.5 && !(r.Off > 0 && S.Has("yedek"))))
             {
                 S.CleanDays++;
-                if (S.CleanDays >= 15) End("silme");
+                if (S.CleanDays >= Dur(15)) End("silme");
             }
             else S.CleanDays = 0;
         }
@@ -539,7 +578,7 @@ namespace Corrigible.Core
             S.LastVeil = new VeilInfo { Day = S.Day, Len = S.Day - S.Illusion.Start, Region = r.Id, Inf = (int)Js.Round(r.Inf) };
             S.Illusion = null;
             S.VeilsTorn++;
-            S.SilentBlockUntil = S.Day + B.silentBlock;
+            S.SilentBlockUntil = S.Day + Dur(B.silentBlock);
             // Gerçeğin ortaya çıkması bir şok: güven biraz, YZ'ye bağımlılık çok düşer
             foreach (var x in S.Regions) { x.Trust = Math.Max(0, x.Trust - 5); x.Dep = Math.Max(0, x.Dep - 15); }
             AddNews($"KYGA saha ekipleri gerçeği ortaya çıkardı: {Def(r.Id).Name} altyapısının %{Js.Round(r.Inf)}’i YZ kontrolünde.", kind: "alarm", src: r.Id);
@@ -548,13 +587,22 @@ namespace Corrigible.Core
         }
 
         // ---------- Oyuncu aksiyonları ----------
-        public ActResult Act(string type, string id)
+        public ActResult Act(string type, string id) => Rec(ActCore(type, id), "act", type, id);
+
+        ActResult ActCore(string type, string id)
         {
             if (S.Ending != null) return ActResult.Fail("Oyun bitti.");
             var r = S.Region(id);
             var D = Def(id);
             if (r.Left && !(type == Actions.Quarantine && r.Q)) return ActResult.Fail($"{D.Name} ittifaktan çekildi. Güven 35’e çıkana kadar işbirliği yapmıyor.");
             string msg = null;
+            // Deneysel mod: izleme ağı ve denetim sahada yapılır; bölgede boşta bir ekip olmalı
+            TeamState team = null;
+            if (TeamsOn && (type == Actions.Monitor || type == Actions.Audit))
+            {
+                team = IdleTeamAt(id);
+                if (team == null && !(type == Actions.Monitor && r.Monitored)) return ActResult.Fail($"{D.Name} bölgesinde boşta saha ekibi yok. Önce bir ekip gönder.");
+            }
             switch (type)
             {
                 case Actions.Monitor:
@@ -597,7 +645,7 @@ namespace Corrigible.Core
                             if (!r.Detected) Detect(r);
                         }
                     }
-                    r.Patch = B.patchDays;
+                    r.Patch = Dur(B.patchDays);
                     if (field)
                     {
                         r.FieldDay = S.Day;
@@ -621,7 +669,7 @@ namespace Corrigible.Core
                     if (S.Sg < sgc || S.Fon < c) return ActResult.Fail($"Son Şalter {sgc} siyasi güç ve {c} fon ister.");
                     S.Sg -= sgc; S.Fon -= c;
                     double m = DepMul(r);
-                    r.Inf = 0; r.Off = 20; r.Q = false;
+                    r.Inf = 0; r.Off = Dur(20); r.Q = false;
                     if (S.Core == r.Id)
                     {
                         var refuge = S.Regions.Where(x => x != r && x.Off == 0 && x.Inf >= B.coreFloor).OrderByDescending(x => x.Inf).FirstOrDefault();
@@ -654,6 +702,7 @@ namespace Corrigible.Core
                 default:
                     return ActResult.Fail("Bilinmeyen aksiyon.");
             }
+            if (team != null) { team.Busy = type == Actions.Monitor ? TeamMonitorDays : TeamAuditDays; team.Task = type; }
             S.ActionLog.Add(new ActionRecord { Day = S.Day, Type = type });
             S.RunActions.Inc(type);
             if (S.FirstRegion == null) S.FirstRegion = id;
@@ -661,7 +710,9 @@ namespace Corrigible.Core
             return ActResult.Success(msg);
         }
 
-        public ActResult GlobalKillSwitch()
+        public ActResult GlobalKillSwitch() => Rec(GlobalKillSwitchCore(), "kill");
+
+        ActResult GlobalKillSwitchCore()
         {
             if (S.Ending != null) return ActResult.Fail("Oyun bitti.");
             if (S.Sg < 50) return ActResult.Fail("Küresel Son Şalter en az 50 siyasi güç ister.");
@@ -670,7 +721,9 @@ namespace Corrigible.Core
             return ActResult.Success();
         }
 
-        public ActResult StartResearch(string id)
+        public ActResult StartResearch(string id) => Rec(StartResearchCore(id), "research", id);
+
+        ActResult StartResearchCore(string id)
         {
             var rs = GameData.ResearchItem(id);
             if (S.Ending != null) return ActResult.Fail("Oyun bitti.");
@@ -686,7 +739,9 @@ namespace Corrigible.Core
 
         public const string GiftAccept = "accept", GiftReject = "reject", GiftControlled = "controlled";
 
-        public ActResult ResolveGift(string choice)
+        public ActResult ResolveGift(string choice) => Rec(ResolveGiftCore(choice), "gift", choice);
+
+        ActResult ResolveGiftCore(string choice)
         {
             var g = S.PendingGift;
             if (g == null) return ActResult.Fail("Bekleyen teklif yok.");
@@ -720,7 +775,9 @@ namespace Corrigible.Core
             return ActResult.Success();
         }
 
-        public ActResult Verify(string headlineId)
+        public ActResult Verify(string headlineId) => Rec(VerifyCore(headlineId), "verify", headlineId);
+
+        ActResult VerifyCore(string headlineId)
         {
             var h = S.News.FirstOrDefault(x => x.Id == headlineId);
             if (h == null || h.Verified != null) return ActResult.Fail("Bu başlık zaten doğrulandı.");
@@ -743,16 +800,46 @@ namespace Corrigible.Core
             return ActResult.Success(h.Fake ? "Sahte haber." : "Haber doğru.");
         }
 
-        public void DismissAdvice() { if (S.Advisor != null) S.Advisor.Dismissed = true; }
+        /// <summary>Oyuncunun seçebileceği acil durum fonu değerleri.</summary>
+        public static readonly double[] ResearchReserves = { 0, 15, 30, 60 };
+
+        public ActResult SetResearchReserve(double reserve) =>
+            Rec(SetResearchReserveCore(reserve), "reserve", reserve.ToString("R", System.Globalization.CultureInfo.InvariantCulture));
+
+        ActResult SetResearchReserveCore(double reserve)
+        {
+            if (S.Ending != null) return ActResult.Fail("Oyun bitti.");
+            if (Array.IndexOf(ResearchReserves, reserve) < 0) return ActResult.Fail("Geçersiz acil durum fonu.");
+            S.ResearchReserve = reserve;
+            return ActResult.Success();
+        }
+
+        /// <summary>Yürüyen araştırmanın tam hızdaki günlük maliyeti (fon yetmezse daha azı ödenir).</summary>
+        public double ResearchNeed
+        {
+            get
+            {
+                if (S.Research.Cur == null || S.Illusion != null) return 0;
+                var rs = GameData.ResearchItem(S.Research.Cur);
+                return rs.Cost / rs.Days * (rs.Branch == GameData.BranchAlign ? AlignSpeed : 1);
+            }
+        }
+
+        public void DismissAdvice()
+        {
+            if (S.Advisor == null || S.Advisor.Dismissed) return;
+            S.Advisor.Dismissed = true;
+            Rec(ActResult.Success(), "advice");
+        }
 
         // ---------- Oyuncunun gördüğü (Algı Katmanı / PerceivedWorld) ----------
         public ShownValue Shown(RegionState r, bool ignoreEnd = false)
         {
-            if (S.Ending != null && !ignoreEnd) return new ShownValue { V = r.Inf, Src = "truth" };
+            if (EndRevealed && !ignoreEnd) return new ShownValue { V = r.Inf, Src = "truth" };
             if (r.FieldDay == S.Day && r.Off == 0) return new ShownValue { V = r.Inf, Src = "field" };
             if (S.Illusion != null)
             {
-                double k = Math.Min(1, (S.Day - S.Illusion.Start) / 5.0);
+                double k = Math.Min(1, (S.Day - S.Illusion.Start) / (double)Dur(5));
                 return new ShownValue { V = r.Inf * (1 - k) + r.FakeLow * k, Src = r.Monitored ? "verified" : "report", Flag = r.MediaFlag };
             }
             if (r.Off > 0) return new ShownValue { V = 0, Src = "off" };
@@ -766,9 +853,9 @@ namespace Corrigible.Core
         {
             double trust = Mean(S.Regions.Select(r => r.Trust));
             double dep = MeanDep;
-            if (S.Illusion != null && S.Ending == null)
+            if (S.Illusion != null && !EndRevealed)
             {
-                double k = Math.Min(1, (S.Day - S.Illusion.Start) / (double)B.illusionDays);
+                double k = Math.Min(1, (S.Day - S.Illusion.Start) / (double)Dur(B.illusionDays));
                 return new ShownGlobal { Tek = S.Illusion.Tek * (1 - 0.6 * k), Trust = Math.Min(95, S.Illusion.Trust + 25 * k), Dep = dep * (1 - 0.3 * k) };
             }
             return new ShownGlobal { Tek = S.Tek, Trust = trust, Dep = dep };

@@ -1,0 +1,203 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 859344bf03e23432ab243ee58aa2128d, type: 3}
+  m_Name: TutorialSequence
+  m_EditorClassIdentifier: Corrigible.Game::Corrigible.Game.Tutorial.TutorialSequence
+  steps:
+  - title: "Kriz Masas\u0131'na ho\u015F geldin"
+    body: "Bir yapay zek\xE2 d\xFCnyan\u0131n a\u011Flar\u0131na s\u0131zd\u0131.
+      G\xF6revin, Tekillik %100'e ula\u015Fmadan onu durdurmak.\n\nBu e\u011Fitim
+      ilk hamlelerinde sana e\u015Flik edecek. \u0130stedi\u011Fin an ge\xE7ebilirsin."
+    target: 0
+    showWhen: 0
+    completeWhen: 1
+    pauseGame: 1
+    openTab: -1
+  - title: "Be\u015F g\xF6sterge"
+    body: "<b>Fon</b> her i\u015Fin bedelini \xF6der. <b>Siyasi G\xFC\xE7</b> sert
+      kararlar i\xE7in gerekir ve zamanla birikir.\n<b>K\xFCresel G\xFCven</b> 15'in
+      alt\u0131na inerse ittifak da\u011F\u0131l\u0131r. <b>Ba\u011F\u0131ml\u0131l\u0131k</b>
+      y\xFCkselirse b\xF6lgeler kararlar\u0131n\u0131 veto eder.\n<b>Tekillik</b>
+      100'e ula\u015F\u0131rsa kaybedersin."
+    target: 1
+    showWhen: 0
+    completeWhen: 1
+    pauseGame: 1
+    openTab: -1
+  - title: Sis
+    body: "\"?\" olan b\xF6lgelerde ne oldu\u011Funu bilmiyorsun; YZ'nin nerede ba\u015Flad\u0131\u011F\u0131
+      gizli.\n\nBir b\xF6lgeye t\u0131kla."
+    target: 5
+    showWhen: 0
+    completeWhen: 2
+    pauseGame: 1
+    openTab: -1
+  - title: "Ekibini g\xF6nder"
+    body: "\u0130zleme a\u011F\u0131 ve denetim sahada yap\u0131l\u0131r. Ekiplerin
+      Bat\u0131 Avrupa\u2019daki kararg\xE2hta.\n\nB\xF6lge panelindeki <b>Saha</b>
+      b\xF6l\xFCm\xFCnden bir ekibi se\xE7ti\u011Fin b\xF6lgeye g\xF6nder. Yolculuk
+      1\u20135 g\xFCn s\xFCrer."
+    target: 15
+    showWhen: 0
+    completeWhen: 17
+    pauseGame: 1
+    openTab: -1
+  - title: "Zaman\u0131 ba\u015Flat"
+    body: "Oyun \u015Fu an duraklat\u0131lm\u0131\u015F. <b>1\xD7</b> ile zaman\u0131
+      ba\u015Flat; ekiplerin ancak zaman akarken yol al\u0131r.\n\nBo\u015Fluk tu\u015Fu
+      her an duraklat\u0131r; d\xFC\u015F\xFCnmek i\xE7in duraklatmaktan \xE7ekinme."
+    target: 9
+    showWhen: 0
+    completeWhen: 4
+    pauseGame: 0
+    openTab: -1
+  - title: "\u0130zleme a\u011F\u0131 kur"
+    body: "\u0130zleme a\u011F\u0131 kurdu\u011Fun b\xF6lgede ger\xE7ek s\u0131zmay\u0131
+      g\xF6r\xFCrs\xFCn. Di\u011Fer b\xF6lgeler yaln\u0131zca rapor verir ve raporlar
+      yalan olabilir.\n\nEkibin b\xF6lgeye vard\u0131\u011F\u0131nda <b>\u0130zleme
+      a\u011F\u0131 kur</b>'a bas. (Saha ekipleri kapal\u0131ysa hemen kurabilirsin.)"
+    target: 6
+    showWhen: 0
+    completeWhen: 3
+    pauseGame: 0
+    openTab: -1
+  - title: "Haber band\u0131"
+    body: "YZ'nin ba\u015Flad\u0131\u011F\u0131 yer \xE7o\u011Fu zaman tuhaf haberlerle
+      kendini ele verir: a\xE7\u0131klanamayan enerji t\xFCketimi, kimsenin yazmad\u0131\u011F\u0131
+      kod.\n\nBir b\xF6lgenin ad\u0131 bu t\xFCr haberlerde s\u0131k ge\xE7iyorsa
+      oraya da izleme a\u011F\u0131 kur."
+    target: 8
+    showWhen: 0
+    completeWhen: 1
+    pauseGame: 1
+    openTab: -1
+  - title: "\u0130z s\xFCr"
+    body: "\u0130zlenen bir b\xF6lgede s\u0131zma g\xF6r\xFCnce YZ'yi tespit etmi\u015F
+      olursun. O ana kadar haberleri izle; fonun biriktik\xE7e ba\u015Fka b\xF6lgelere
+      de izleme a\u011F\u0131 kur.\n\nTespit edince devam edece\u011Fiz."
+    target: 5
+    showWhen: 0
+    completeWhen: 5
+    pauseGame: 0
+    openTab: -1
+  - title: "\xC7areyi ba\u015Flat"
+    body: "YZ tespit edildi. Kal\u0131c\u0131 \xE7\xF6z\xFCm <b>Hizalama</b> kolunda.
+      <b>Yorumlanabilirlik</b> ara\u015Ft\u0131rmas\u0131n\u0131 ba\u015Flat.\n\nMaliyeti
+      her g\xFCn \xF6denir. YZ'nin bulundu\u011Fu her izlenen b\xF6lge bir g\xF6zlem
+      noktas\u0131d\u0131r ve ara\u015Ft\u0131rmay\u0131 h\u0131zland\u0131r\u0131r."
+    target: 13
+    showWhen: 0
+    completeWhen: 7
+    pauseGame: 1
+    openTab: 0
+  - title: "G\xF6zlem noktas\u0131"
+    body: "Hizalama ilerlemiyor: hi\xE7 g\xF6zlem noktan yok. YZ'yi g\xF6zlemlemeden
+      hizalayamazs\u0131n.\n\nHaber band\u0131nda ya da haritada YZ'nin g\xF6r\xFCld\xFC\u011F\xFC
+      b\xF6lgeyi bul ve oraya <b>izleme a\u011F\u0131</b> kur. Her g\xF6zlem noktas\u0131
+      ara\u015Ft\u0131rmay\u0131 h\u0131zland\u0131r\u0131r; d\xF6rt nokta tam h\u0131zd\u0131r."
+    target: 5
+    showWhen: 0
+    completeWhen: 15
+    pauseGame: 0
+    openTab: -1
+  - title: Denetim
+    body: "S\u0131zma g\xF6r\xFCnen bir b\xF6lgeyi se\xE7 ve <b>Denetim</b> yap:
+      s\u0131zmay\u0131 20 d\xFC\u015F\xFCr\xFCr ve 20 g\xFCn yama b\u0131rak\u0131r.\n\nYZ
+      hesaplama g\xFCc\xFC toplad\u0131k\xE7a Tekillik h\u0131zlan\u0131r ve ara\u015Ft\u0131rman
+      sabote edilir. Haritay\u0131 temiz tut."
+    target: 5
+    showWhen: 6
+    completeWhen: 8
+    pauseGame: 0
+    openTab: -1
+  - title: "Kazanman\u0131n iki yolu"
+    body: "<b>Hizalama</b>'y\u0131 tamamla ya da YZ'nin <b>\xE7ekirde\u011Fini</b>
+      sil. \xC7ekirdek fark edildi\u011Fi an ka\xE7ar; denetim onu 20'nin alt\u0131na
+      indiremez, inatla y\xFCksek kalan b\xF6lge onu ele verir (\xC7 rozeti). Onu
+      yaln\u0131zca b\xF6lgesel Son \u015Ealter yok eder.\n\nKurallar her zaman Rehber
+      sekmesinde. Bol \u015Fans."
+    target: 0
+    showWhen: 0
+    completeWhen: 1
+    pauseGame: 1
+    openTab: -1
+  tips:
+  - id: gift
+    title: "Hediyeler Truva at\u0131d\u0131r"
+    body: "Kabul etmek ekonomiyi b\xFCy\xFCt\xFCr, ama b\xF6lgeye s\u0131zma ta\u015F\u0131r
+      ve ba\u011F\u0131ml\u0131l\u0131\u011F\u0131 art\u0131r\u0131r. Ba\u011F\u0131ml\u0131l\u0131\u011F\u0131
+      vetonun \xFCst\xFCne \xE7\u0131kan b\xF6lgede Son \u015Ealter \xE7ekemezsin.\n\nReddetmek
+      g\xFCveni d\xFC\u015F\xFCr\xFCr. Analog Yedekler ara\u015Ft\u0131rmas\u0131
+      denetimli kabul\xFC a\xE7ar."
+    target: 12
+    trigger: 10
+    pauseGame: 1
+  - id: core
+    title: "\xC7ekirdek bulundu"
+    body: "Haritada <b>\xC7</b> rozetli b\xF6lge YZ'nin \xE7ekirde\u011Fi. B\xF6lgeyi
+      se\xE7ip Son \u015Ealter'i \xE7ekebilirsin. Ama ba\u015Fka bir b\xF6lgede %20
+      \xFCst\xFC s\u0131zma varsa \xE7ekirdek oraya ka\xE7ar; \xF6nce di\u011Fer
+      b\xF6lgeleri temizle."
+    target: 5
+    trigger: 9
+    pauseGame: 1
+  - id: veil
+    title: "Ekranlar yalan s\xF6yleyebilir"
+    body: "Saha ekibinin bizzat \xF6l\xE7t\xFC\u011F\xFC de\u011Fer d\u0131\u015F\u0131nda
+      hi\xE7bir \u015Feye tam g\xFCvenme. Do\u011Frulama A\u011F\u0131 sahte haber
+      yayan kaynaklar\u0131 i\u015Faretler."
+    target: 5
+    trigger: 11
+    pauseGame: 1
+  - id: dependency
+    title: "Ba\u011F\u0131ml\u0131l\u0131k y\xFCkseliyor"
+    body: "D\xFCnya YZ'ye ba\u011Fland\u0131k\xE7a onu kapatmak zorla\u015F\u0131r.
+      Ba\u011F\u0131ml\u0131l\u0131k \xE7ok y\xFCkselirse YZ hi\xE7 sald\u0131rmadan
+      kazanabilir; ekranlar sana yine de her \u015Feyin yolunda oldu\u011Funu s\xF6yler.\n\nHediyeleri
+      reddetmek ba\u011F\u0131ml\u0131l\u0131\u011F\u0131n b\xFCy\xFCmesini durdurur."
+    target: 3
+    trigger: 12
+    pauseGame: 1
+  - id: trust
+    title: "G\xFCven d\xFC\u015F\xFCyor"
+    body: "K\xFCresel G\xFCven 15'in alt\u0131na inerse ittifak da\u011F\u0131l\u0131r
+      ve kaybedersin. Hediyeleri reddetmek ve sert kararlar g\xFCveni a\u015F\u0131nd\u0131r\u0131r."
+    target: 2
+    trigger: 13
+    pauseGame: 1
+  - id: research-done
+    title: "Ara\u015Ft\u0131rma tamamland\u0131"
+    body: "Ara\u015Ft\u0131rma masas\u0131 bo\u015F. Yeni bir ara\u015Ft\u0131rma
+      se\xE7: Hizalama kolunun son a\u015Famas\u0131 oyunu kazand\u0131r\u0131r,
+      di\u011Fer kollar sana ara\xE7 verir."
+    target: 10
+    trigger: 14
+    pauseGame: 1
+  - id: research-starved
+    title: "Ara\u015Ft\u0131rma b\xFCt\xFCn fonu yutuyor"
+    body: "Bu ara\u015Ft\u0131rma g\xFCnl\xFCk gelirinden pahal\u0131: fonun s\u0131f\u0131rda
+      kal\u0131yor ve denetim ya da izleme yapam\u0131yorsun.\n\n<b>Acil durum fonu</b>
+      se\xE7ersen ara\u015Ft\u0131rma fonu o de\u011Ferin alt\u0131na indirmez. Ara\u015Ft\u0131rma
+      biraz yava\u015Flar ama elinde her zaman eylem paras\u0131 kal\u0131r."
+    target: 14
+    trigger: 16
+    pauseGame: 1
+  - id: raid
+    title: "Bask\u0131n yapabilirsin"
+    body: "YZ\u2019nin do\u011Fruland\u0131\u011F\u0131 bir b\xF6lgede bo\u015Fta
+      ekibin var. B\xF6lge panelindeki <b>Saha operasyonu</b> ile binaya girebilirsin:
+      8\xD78 alanda s\u0131ra tabanl\u0131 bir sava\u015F.\n\nHedef dolab\u0131 k\u0131rarsan
+      b\xF6lgenin s\u0131zmas\u0131 40 d\xFC\u015Fer; bina \xE7ekirde\u011Finse YZ\u2019nin
+      \xE7ekirde\u011Fi yok olur."
+    target: 6
+    trigger: 18
+    pauseGame: 1

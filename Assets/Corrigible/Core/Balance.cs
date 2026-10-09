@@ -30,6 +30,8 @@ namespace Corrigible.Core
         public double cpRate = 1.0;
         public double fonDiv = 150;
         public double preAwareFund = 0.4;
+        /// <summary>Acil durum fonunun başlangıç değeri: araştırma fonu bunun altına indirmez.</summary>
+        public double researchReserve = 0;
         public double depRate = 0.15;
         public double audit = 20;
 

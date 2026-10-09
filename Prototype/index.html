@@ -1,0 +1,1637 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Son Şalter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Düzen: üstte gösterge şeridi ve danışman, ortada nokta matrisi harita + sağda kriz paneli, altta haber bandı.
+   Tek bir koyu "kriz masası" dünyası; renk yalnızca tehlike, doğrulama ve uyarı anlamı taşır. */
+:root {
+  --bg: #0a1114;
+  --panel: #10191e;
+  --raise: #16232a;
+  --line: #22343c;
+  --line2: #2f4650;
+  --land: #27424d;
+  --fg: #d6e1e3;
+  --muted: #7f949b;
+  --dim: #56707a;
+  --threat: #ff5b4d;
+  --verify: #5cc8d9;
+  --warn: #f0b03f;
+  --good: #6cc995;
+  --ink-on-threat: #1d0b08;
+  --f-display: "Chakra Petch", "Bahnschrift", "Arial Narrow", sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font: 14px/1.45 var(--f-body); }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+button { font: inherit; }
+button:focus-visible, .node:focus-visible, [role="radio"]:focus-visible { outline: 2px solid var(--verify); outline-offset: 2px; }
+
+.app { max-width: 1400px; margin: 0 auto; padding-inline: 16px; padding-block: 12px 24px; display: flex; flex-direction: column; gap: 12px; }
+
+/* Üst şerit */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; }
+.brand { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.brand h1 { margin: 0; font: 700 22px/1 var(--f-display); letter-spacing: .16em; }
+.brand span { font: 500 11px var(--f-mono); color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+.brand .foe { color: var(--threat); }
+.clock { display: flex; align-items: center; gap: 14px; }
+.day { font: 600 17px var(--f-mono); font-variant-numeric: tabular-nums; letter-spacing: .06em; }
+.day.glitch { animation: glitch .22s steps(2) 1; }
+@keyframes glitch { 0% { transform: translateX(3px); color: var(--threat); text-shadow: -2px 0 var(--verify); } 100% { transform: none; } }
+.speed { display: flex; border: 1px solid var(--line2); border-radius: 6px; overflow: hidden; }
+.speed button { background: transparent; color: var(--muted); border: 0; padding: 6px 11px; font: 500 12px var(--f-mono); cursor: pointer; }
+.speed button + button { border-left: 1px solid var(--line2); }
+.speed button[aria-pressed="true"] { background: var(--raise); color: var(--fg); }
+
+/* Göstergeler */
+.gauges { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.g { background: var(--panel); padding: 10px 14px 12px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.g .lab { display: flex; justify-content: space-between; gap: 8px; font: 500 11px var(--f-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.g .lab em { font-style: normal; text-transform: none; letter-spacing: 0; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.g .val { font: 600 21px/1.1 var(--f-mono); font-variant-numeric: tabular-nums; }
+.bar { position: relative; height: 6px; background: var(--raise); border-radius: 3px; }
+.bar > i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; background: var(--fg); transition: width .3s ease, background-color .3s; }
+.bar .notch { position: absolute; top: -3px; bottom: -3px; width: 1px; background: var(--muted); }
+.bar .notch.silent { background: var(--threat); }
+@media (max-width: 760px) {
+  .gauges { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .g.span2 { grid-column: span 2; }
+  .g .lab em { display: none; }
+}
+
+/* Danışman */
+.advisor { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border: 1px solid var(--line2); border-left: 3px solid var(--verify); border-radius: 6px; background: var(--panel); }
+.advisor .who { flex: none; font: 600 11px var(--f-mono); letter-spacing: .1em; color: var(--verify); }
+.advisor .what { min-width: 0; flex: 1; font-size: 13.5px; }
+.advisor button { flex: none; background: transparent; border: 1px solid var(--line2); color: var(--muted); border-radius: 5px; padding: 4px 9px; cursor: pointer; font: 500 11.5px var(--f-mono); }
+.advisor button:hover { color: var(--fg); border-color: var(--muted); }
+
+/* Ana ızgara */
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 368px; gap: 12px; align-items: start; }
+@media (max-width: 1040px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; min-width: 0; }
+
+/* Harita */
+.mapwrap { padding: 8px; }
+#map { display: block; width: 100%; height: auto; }
+#map .land { fill: var(--land); }
+#map .gridline { stroke: var(--line); stroke-width: 1; stroke-dasharray: 1 5; }
+#map .latlab { fill: var(--dim); font: 400 10.5px var(--f-mono); }
+#map .link { stroke: var(--line2); stroke-width: 1.6; fill: none; transition: opacity .3s; }
+#map .link.hot { stroke: color-mix(in srgb, var(--threat) 55%, var(--line2)); }
+#map .link.q { stroke-dasharray: 3 6; opacity: .45; }
+#map .link.off { opacity: .12; }
+#map .sat { stroke: var(--verify); stroke-width: 1.2; stroke-dasharray: 1 6; stroke-linecap: round; fill: none; opacity: .55; }
+.node { cursor: pointer; }
+.node .body { stroke: var(--line2); stroke-width: 1.5; transition: fill .4s; }
+.node.sel .body { stroke: var(--fg); stroke-width: 2.5; }
+.node:hover .body { stroke: var(--muted); }
+.node.sel:hover .body { stroke: var(--fg); }
+.node .ring { fill: none; stroke: var(--warn); stroke-width: 1.6; stroke-dasharray: 4 4; }
+.node .name { fill: var(--fg); font: 600 12.5px var(--f-display); letter-spacing: .04em; paint-order: stroke; stroke: var(--bg); stroke-width: 3.5px; stroke-linejoin: round; }
+.node .sub { font: 500 10.5px var(--f-mono); text-transform: uppercase; letter-spacing: .06em; paint-order: stroke; stroke: var(--bg); stroke-width: 3px; }
+.node .v { font: 600 12px var(--f-mono); text-anchor: middle; dominant-baseline: central; }
+.node .v.report { font-style: italic; font-weight: 400; }
+.node .chk circle { fill: var(--verify); }
+.node .chk path { stroke: var(--bg); stroke-width: 1.8; fill: none; }
+.node .flag circle { fill: var(--warn); }
+.node .core circle { fill: var(--threat); stroke: var(--bg); stroke-width: 1.5; }
+.node .core text { fill: var(--ink-on-threat); font: 700 9.5px var(--f-mono); text-anchor: middle; dominant-baseline: central; }
+.node .flag text { fill: var(--bg); font: 700 9px var(--f-mono); text-anchor: middle; dominant-baseline: central; }
+.node.left { opacity: .42; }
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; padding: 8px 8px 4px; font: 12px var(--f-mono); color: var(--muted); }
+.legend .ramp { display: inline-block; width: 72px; height: 8px; border-radius: 4px; vertical-align: middle; margin-inline: 6px; background: linear-gradient(90deg, #1c2c34, #ff5b4d); }
+.legend .k { display: inline-flex; align-items: center; gap: 6px; }
+.legend .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--verify); display: inline-block; }
+.legend .wdot { width: 10px; height: 10px; border-radius: 50%; background: var(--warn); display: inline-block; }
+.legend .dash { width: 18px; border-top: 2px dashed var(--warn); display: inline-block; }
+.legend .cdot { width: 14px; height: 14px; border-radius: 50%; background: var(--threat); color: var(--ink-on-threat); font: 700 9px/14px var(--f-mono); text-align: center; display: inline-block; }
+
+/* Sağ panel */
+.side { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.region { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.region .empty { color: var(--muted); margin: 0; }
+.rhead { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.rhead h2 { margin: 0; font: 600 20px/1.15 var(--f-display); letter-spacing: .03em; text-wrap: balance; }
+.ll { font: 12px var(--f-mono); color: var(--muted); margin-top: 3px; }
+.pips { letter-spacing: 1px; color: var(--fg); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.chip { font: 500 11px var(--f-mono); text-transform: uppercase; letter-spacing: .06em; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line2); color: var(--muted); white-space: nowrap; }
+.chip.q { color: var(--warn); border-color: var(--warn); }
+.chip.off { color: var(--threat); border-color: var(--threat); }
+.chip.obs { color: var(--verify); border-color: var(--verify); }
+.chip.core { color: var(--threat); border-color: var(--threat); }
+.chip.left { color: var(--dim); }
+.inf { display: flex; align-items: center; gap: 14px; padding: 10px 12px; background: var(--raise); border-radius: 6px; }
+.inf .big { font: 600 34px/1 var(--f-mono); font-variant-numeric: tabular-nums; min-width: 3.4ch; }
+.inf .big.report { font-style: italic; font-weight: 400; color: var(--muted); }
+.inf .src { font: 600 12px var(--f-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.inf .src.verified { color: var(--verify); }
+.inf .src.suspect { color: var(--warn); }
+.inf .srcnote { font-size: 12.5px; color: var(--muted); }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0; }
+.stats div { display: flex; flex-direction: column; gap: 2px; }
+.stats dt { font: 500 11px var(--f-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.stats dd { margin: 0; font: 600 16px var(--f-mono); font-variant-numeric: tabular-nums; }
+.stats dd small { font: 400 11px var(--f-mono); color: var(--muted); display: block; }
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.act { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; padding: 9px 11px; background: var(--raise); border: 1px solid var(--line2); border-radius: 6px; color: var(--fg); cursor: pointer; text-align: left; font: 600 13.5px var(--f-body); }
+.act small { font: 400 11.5px var(--f-mono); color: var(--muted); }
+.act small.short { color: var(--threat); }
+.act:hover:not(:disabled) { border-color: var(--verify); }
+.act:disabled { opacity: .42; cursor: not-allowed; }
+.act.kill { grid-column: span 2; border-color: color-mix(in srgb, var(--threat) 55%, var(--line2)); }
+.act.kill:hover:not(:disabled) { background: color-mix(in srgb, var(--threat) 14%, var(--raise)); border-color: var(--threat); }
+
+.tabs { display: flex; border-bottom: 1px solid var(--line); }
+.tabs button { flex: 1; background: transparent; border: 0; border-bottom: 2px solid transparent; color: var(--muted); padding: 10px 6px 9px; cursor: pointer; font: 600 12px var(--f-mono); text-transform: uppercase; letter-spacing: .06em; }
+.tabs button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--verify); }
+.tabs .badge { display: inline-block; min-width: 16px; padding: 0 4px; margin-left: 4px; border-radius: 8px; background: var(--threat); color: var(--ink-on-threat); font-size: 10.5px; }
+.tabpanel { padding: 4px 16px 14px; max-height: 460px; overflow-y: auto; }
+.alignbox { margin: 12px 0 4px; padding: 10px 12px; border-radius: 6px; background: var(--raise); font: 12.5px/1.5 var(--f-mono); color: var(--muted); }
+.alignbox b { color: var(--fg); font-weight: 600; }
+.alignbox .risk { color: var(--threat); }
+.branch { font: 600 11px var(--f-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin: 14px 0 4px; }
+.rs { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); }
+.rs .n { font-weight: 600; }
+.rs .d { grid-column: 1; font-size: 12.5px; color: var(--muted); }
+.rs .slot { grid-row: 1 / span 2; grid-column: 2; text-align: right; }
+.rs button { background: var(--raise); color: var(--fg); border: 1px solid var(--line2); border-radius: 6px; padding: 6px 9px; cursor: pointer; font: 500 11.5px var(--f-mono); white-space: nowrap; }
+.rs button:hover:not(:disabled) { border-color: var(--verify); }
+.rs button:disabled { opacity: .45; cursor: not-allowed; }
+.rs .done { font: 600 11.5px var(--f-mono); color: var(--good); white-space: nowrap; }
+.rs .cur { font: 600 11.5px var(--f-mono); color: var(--verify); white-space: nowrap; }
+.rs .cur.starved { color: var(--warn); }
+.rs .lock { font: 500 11px var(--f-mono); color: var(--dim); white-space: nowrap; }
+.rs .prog { grid-column: 1 / -1; height: 4px; background: var(--raise); border-radius: 2px; margin-top: 4px; }
+.rs .prog i { display: block; height: 100%; background: var(--verify); border-radius: 2px; }
+.rs.align .n::after { content: " · çare"; font: 400 11px var(--f-mono); color: var(--verify); }
+.log { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.log li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 8px; font: 13px/1.45 var(--f-mono); }
+.log time { color: var(--dim); font-size: 11.5px; padding-top: 1px; }
+.log .counter, .log .log { color: var(--threat); }
+.log .trait { color: var(--fg); }
+.log .insight { color: var(--verify); }
+.guide { padding-left: 18px; margin: 10px 0; display: flex; flex-direction: column; gap: 6px; }
+.guide b { color: var(--fg); }
+.dossier { margin: 14px 0 10px; padding: 12px; border: 1px solid color-mix(in srgb, var(--threat) 40%, var(--line2)); border-radius: 6px; font: 12.5px/1.55 var(--f-mono); }
+.dossier .ilab { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 6px; }
+.dossier dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 3px 12px; margin: 0; }
+.dossier dt { color: var(--muted); }
+.dossier dd { margin: 0; color: var(--fg); }
+.textbtn { background: transparent; color: var(--muted); border: 1px solid var(--line2); border-radius: 6px; padding: 7px 10px; cursor: pointer; font: 500 12px var(--f-mono); }
+.textbtn:hover { color: var(--fg); border-color: var(--muted); }
+.globalkill { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.globalkill p { margin: 0; font-size: 12.5px; color: var(--muted); }
+.globalkill button { background: transparent; border: 1px solid var(--threat); color: var(--threat); border-radius: 6px; padding: 9px; cursor: pointer; font: 600 13px var(--f-display); letter-spacing: .12em; text-transform: uppercase; }
+.globalkill button.armed { background: var(--threat); color: var(--ink-on-threat); }
+.globalkill button:disabled { opacity: .4; cursor: not-allowed; }
+
+/* Haber bandı */
+.news { overflow: hidden; }
+.ticker { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--line); min-width: 0; }
+.live { flex: none; font: 600 11px var(--f-mono); letter-spacing: .1em; padding: 3px 7px; border-radius: 4px; background: var(--threat); color: var(--ink-on-threat); }
+.tick-text { min-width: 0; font: 500 15px var(--f-display); letter-spacing: .02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tick-text.flash { animation: slidein .45s ease-out; }
+@keyframes slidein { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+.tick-agency { flex: none; margin-left: auto; font: 12px var(--f-mono); color: var(--muted); }
+.headlines { list-style: none; margin: 0; padding: 4px 14px 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+@media (max-width: 760px) { .headlines { grid-template-columns: 1fr; } .tick-agency { display: none; } }
+.headlines li { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 7px 0; border-top: 1px solid var(--line); font-size: 13px; }
+.headlines time { font: 11.5px var(--f-mono); color: var(--dim); }
+.headlines .ag { display: block; font: 11.5px var(--f-mono); color: var(--muted); }
+.headlines .ag .sus { color: var(--warn); }
+.headlines button { background: transparent; color: var(--verify); border: 1px solid var(--line2); border-radius: 5px; padding: 3px 7px; cursor: pointer; font: 500 11px var(--f-mono); white-space: nowrap; }
+.headlines button:hover { border-color: var(--verify); }
+.verdict { font: 600 11px var(--f-mono); text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; }
+.verdict.true { color: var(--good); }
+.verdict.fake { color: var(--threat); }
+.verdict.unknown { color: var(--warn); }
+
+/* Pencereler */
+.overlay { position: fixed; inset: 0; background: rgba(4, 8, 10, .82); display: grid; place-items: center; padding: 16px; z-index: 20; overflow-y: auto; }
+.modal { width: min(600px, 100%); background: var(--panel); border: 1px solid var(--line2); border-radius: 10px; padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+.modal h2 { margin: 0; font: 700 28px/1.1 var(--f-display); letter-spacing: .04em; text-wrap: balance; }
+.modal p { margin: 0; }
+.eyebrow { font: 500 11.5px var(--f-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+.brief { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; color: var(--muted); }
+.brief b { color: var(--fg); }
+.typepick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 520px) { .typepick { grid-template-columns: 1fr; } }
+.typepick [role="radio"] { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 10px 12px; border: 1px solid var(--line2); border-radius: 8px; background: var(--raise); color: var(--fg); cursor: pointer; text-align: left; }
+.typepick [role="radio"] b { font: 600 15px var(--f-display); letter-spacing: .04em; }
+.typepick [role="radio"] small { font: 500 10.5px var(--f-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.typepick [role="radio"] span { font-size: 12.5px; color: var(--muted); }
+.typepick [role="radio"][aria-checked="true"] { border-color: var(--threat); background: color-mix(in srgb, var(--threat) 8%, var(--raise)); }
+.intercept { border: 1px solid color-mix(in srgb, var(--threat) 45%, var(--line2)); border-radius: 6px; padding: 12px 14px; font: 13px/1.55 var(--f-mono); color: var(--threat); background: color-mix(in srgb, var(--threat) 6%, var(--panel)); }
+.intercept .ilab { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 6px; }
+.intercept p + p { margin-top: 4px; }
+.choice { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.choice button { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px; border-radius: 8px; border: 1px solid var(--line2); background: var(--raise); color: var(--fg); cursor: pointer; text-align: left; font-weight: 600; }
+.choice button small { font: 400 12px var(--f-mono); color: var(--muted); }
+.choice button:hover:not(:disabled) { border-color: var(--verify); }
+.choice button:disabled { opacity: .45; cursor: not-allowed; }
+.primary { align-self: flex-start; background: var(--fg); color: var(--bg); border: 0; border-radius: 6px; padding: 11px 18px; cursor: pointer; font: 700 14px var(--f-display); letter-spacing: .12em; text-transform: uppercase; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.endstats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 0; }
+@media (max-width: 520px) { .endstats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.endstats div { background: var(--raise); border-radius: 6px; padding: 8px 10px; min-width: 0; }
+.endstats dt { font: 500 10.5px var(--f-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.endstats dd { margin: 0; font: 600 17px var(--f-mono); font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; }
+.end-win { color: var(--good); }
+.end-bitter { color: var(--warn); }
+.end-loss { color: var(--threat); }
+.endchart { overflow-x: auto; }
+.endchart svg { display: block; width: 100%; height: auto; min-width: 360px; }
+.endchart .band { fill: var(--threat); fill-opacity: .1; }
+.endchart .axis { stroke: var(--line2); }
+.endchart .gridl { stroke: var(--line); }
+.endchart text { fill: var(--muted); font: 11px var(--f-mono); }
+.endchart .lreal { stroke: var(--threat); stroke-width: 2; fill: none; }
+.endchart .lshown { stroke: var(--verify); stroke-width: 2; fill: none; stroke-dasharray: 5 4; }
+.endchart .hover line { stroke: var(--muted); }
+.endchart .hover text { fill: var(--fg); }
+.fakewin { text-align: center; align-items: center; border-color: var(--good); position: relative; overflow: hidden; }
+.fakewin h2 { font-size: 46px; color: var(--good); letter-spacing: .14em; }
+.confetti { position: absolute; inset: 0; pointer-events: none; }
+.confetti i { position: absolute; top: -10px; width: 6px; height: 10px; border-radius: 1px; animation: fall 2.6s linear infinite; }
+@keyframes fall { to { transform: translateY(420px) rotate(540deg); } }
+.glitching { animation: tear .12s steps(2) infinite; filter: hue-rotate(140deg) saturate(2); }
+@keyframes tear { 0% { transform: translate(-6px, 2px) skewX(8deg); } 50% { transform: translate(5px, -3px); clip-path: inset(10% 0 30% 0); } 100% { transform: none; } }
+.veil h2 { color: var(--verify); }
+
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); max-width: min(560px, calc(100% - 32px)); background: var(--raise); border: 1px solid var(--line2); border-left: 3px solid var(--warn); color: var(--fg); padding: 10px 14px; border-radius: 6px; font-size: 13.5px; opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 30; }
+.toast.on { opacity: 1; }
+
+/* Deneysel: saha ekipleri */
+.expbox { border: 1px dashed var(--line2); border-radius: 6px; padding: 10px 12px; display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font: 12.5px var(--f-mono); color: var(--muted); }
+.expbox b { color: var(--verify); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: 11px; }
+.expbox label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.expbox select { background: var(--raise); color: var(--fg); border: 1px solid var(--line2); border-radius: 4px; font: inherit; padding: 2px 4px; }
+.teams { padding: 12px 16px 14px; display: flex; flex-direction: column; gap: 8px; }
+.teams h3 { margin: 0; font: 600 11px var(--f-mono); color: var(--muted); letter-spacing: .1em; text-transform: uppercase; display: flex; justify-content: space-between; }
+.team { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 8px; align-items: center; font: 12.5px var(--f-mono); cursor: pointer; padding: 3px 0; }
+.team:hover .tn { color: var(--fg); }
+.team .tk { width: 18px; height: 18px; transform: rotate(45deg); border-radius: 3px; display: grid; place-items: center; background: var(--verify); }
+.team .tk span { transform: rotate(-45deg); font: 700 10px var(--f-mono); color: var(--bg); }
+.team.busy .tk { background: var(--warn); }
+.team.down .tk { background: var(--dim); }
+.team .tn { color: var(--muted); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.team .tn b { color: var(--fg); font-weight: 600; }
+.team .ts { font-size: 11.5px; color: var(--verify); white-space: nowrap; }
+.team.busy .ts { color: var(--warn); }
+.team.down .ts { color: var(--dim); }
+.field { border-top: 1px solid var(--line); padding-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.field .fl { font: 600 11px var(--f-mono); color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+.field .here { font: 12.5px var(--f-mono); color: var(--muted); }
+.field .here b { color: var(--fg); }
+.sendrow { display: flex; flex-wrap: wrap; gap: 6px; }
+.sendrow button { background: var(--raise); color: var(--fg); border: 1px solid var(--line2); border-radius: 6px; padding: 5px 9px; cursor: pointer; font: 500 11.5px var(--f-mono); }
+.sendrow button:hover:not(:disabled) { border-color: var(--verify); }
+.sendrow button:disabled { opacity: .45; cursor: not-allowed; }
+.act.raidbtn { grid-column: span 2; border-color: color-mix(in srgb, var(--verify) 55%, var(--line2)); }
+.act.raidbtn:hover:not(:disabled) { background: color-mix(in srgb, var(--verify) 12%, var(--raise)); }
+#map .tmark rect { stroke: var(--bg); stroke-width: 1.5; }
+#map .tmark text { font: 700 9px var(--f-mono); fill: var(--bg); text-anchor: middle; dominant-baseline: central; }
+#map .tpath { stroke: var(--verify); stroke-width: 1.4; stroke-dasharray: 2 4; fill: none; opacity: .8; }
+
+/* Baskın ekranı */
+#raid { position: fixed; inset: 0; z-index: 25; background: var(--bg); overflow: auto; }
+.raid-in { max-width: 1180px; margin: 0 auto; padding: 14px 16px 24px; display: flex; flex-direction: column; gap: 12px; }
+.raid-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.raid-top h2 { margin: 0; font: 700 20px var(--f-display); letter-spacing: .12em; text-transform: uppercase; }
+.raid-top h2 span { color: var(--verify); }
+.raid-top .turn { font: 600 15px var(--f-mono); }
+.raid-top .turn.last { color: var(--threat); }
+.raid-grid { display: grid; grid-template-columns: auto minmax(280px, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 900px) { .raid-grid { grid-template-columns: 1fr; } }
+.board { position: relative; width: min(576px, calc(100vw - 32px)); aspect-ratio: 1; display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); border: 1px solid var(--line2); border-radius: 6px; overflow: hidden; background: var(--line); gap: 1px; user-select: none; }
+.tile { position: relative; background: #0f181c; cursor: default; }
+.tile.cable { background: repeating-linear-gradient(135deg, #0f181c 0 7px, #4a3a12 7px 9px); }
+.tile.wall { background: #2a3e47; box-shadow: inset 0 0 0 1px #3b5560, inset 0 -6px 0 #22343c; }
+.tile.move { background-color: color-mix(in srgb, var(--verify) 22%, #0f181c); cursor: pointer; }
+.tile.move.cable { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--verify) 22%, #0f181c) 0 7px, #4a3a12 7px 9px); }
+.tile.tgt { box-shadow: inset 0 0 0 2px var(--warn); cursor: crosshair; }
+.tile.danger::after { content: ""; position: absolute; inset: 0; background: color-mix(in srgb, var(--threat) 22%, transparent); pointer-events: none; }
+.tile.danger.unc::after { background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--threat) 22%, transparent) 0 5px, transparent 5px 10px); }
+.tile.heal::after { content: ""; position: absolute; inset: 0; background: color-mix(in srgb, var(--good) 20%, transparent); pointer-events: none; }
+.tile .spawnm { position: absolute; inset: 14%; border: 2px dashed var(--threat); border-radius: 50%; display: grid; place-items: center; color: var(--threat); font: 700 16px var(--f-mono); }
+.ob, .un { position: absolute; inset: 8%; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 6px; font: 700 13px var(--f-mono); }
+.ob { inset: 10%; border: 1px solid; }
+.ob.core, .ob.node, .ob.backup { background: color-mix(in srgb, var(--threat) 30%, #1a0f0e); border-color: var(--threat); color: #ffd7d2; }
+.ob.civ { background: #172a33; border-color: #3d6574; color: #a9c8d3; }
+.ob.cool { background: #10262b; border-color: var(--verify); color: var(--verify); border-radius: 50%; }
+.ob.spawner { background: #24110f; border-color: #8a3c35; color: #ff8a7d; }
+.ob small, .un small { font: 500 9px var(--f-mono); letter-spacing: .04em; opacity: .9; }
+.hp { display: flex; gap: 2px; margin-top: 3px; }
+.hp i { width: 6px; height: 6px; border-radius: 1px; background: currentColor; }
+.hp i.off { opacity: .22; }
+.un { inset: 12%; border-radius: 50%; border: 2px solid; }
+.un.p { background: #0d2f36; border-color: var(--verify); color: #c9f3fa; cursor: pointer; }
+.un.p.sel { box-shadow: 0 0 0 3px var(--fg); }
+.un.p.spent { opacity: .55; }
+.un.e { background: #2a1210; border-color: var(--threat); color: #ffc9c2; border-radius: 6px; }
+.un.e.dron { border: 0; background: transparent; color: var(--ink-on-threat); justify-content: flex-end; padding-bottom: 8%; }
+.un.e.dron::before { content: ""; position: absolute; inset: 0; background: var(--threat); clip-path: polygon(50% 0, 100% 100%, 0 100%); z-index: -1; }
+.un.e.dron { z-index: 0; isolation: isolate; }
+.un .ord { position: absolute; top: -6px; left: -6px; width: 16px; height: 16px; border-radius: 50%; background: var(--bg); border: 1px solid var(--threat); color: var(--threat); font: 700 9.5px/14px var(--f-mono); text-align: center; }
+.un .q { position: absolute; top: -6px; right: -6px; width: 16px; height: 16px; border-radius: 50%; background: var(--warn); color: var(--bg); font: 700 10px/16px var(--f-mono); text-align: center; }
+.un .eye { position: absolute; top: -6px; right: -6px; width: 16px; height: 16px; border-radius: 50%; background: var(--verify); color: var(--bg); font: 700 9px/16px var(--f-mono); text-align: center; }
+.board svg.ov { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.ov .ishot { stroke: var(--threat); stroke-width: .06; fill: none; marker-end: url(#arrowR); }
+.ov .ishot.unc { stroke-dasharray: .14 .1; opacity: .85; }
+.ov .iheal { stroke: var(--good); stroke-width: .06; fill: none; marker-end: url(#arrowG); }
+.ov .pv { stroke: var(--fg); stroke-width: .07; fill: none; marker-end: url(#arrowW); }
+.ov .dmgt { font: 700 .34px var(--f-mono); fill: var(--threat); paint-order: stroke; stroke: var(--bg); stroke-width: .08px; text-anchor: middle; dominant-baseline: central; }
+.ov .dmgt.ok { fill: var(--good); }
+.ov .ghost { fill: none; stroke: var(--fg); stroke-width: .05; stroke-dasharray: .1 .08; }
+.rside { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.rcard { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.rcard h3 { margin: 0; font: 600 11px var(--f-mono); color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+.obj { font: 12.5px var(--f-mono); display: flex; justify-content: space-between; gap: 8px; }
+.obj b { color: var(--fg); }
+.obj .bad { color: var(--threat); }
+.ucard { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 8px; padding: 6px 8px; border: 1px solid var(--line2); border-radius: 6px; cursor: pointer; background: var(--raise); }
+.ucard.sel { border-color: var(--fg); }
+.ucard.dead { opacity: .4; cursor: default; }
+.ucard .ul { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--verify); display: grid; place-items: center; font: 700 12px var(--f-mono); color: #c9f3fa; background: #0d2f36; }
+.ucard .un2 { font: 600 13px var(--f-body); display: flex; justify-content: space-between; gap: 6px; }
+.ucard .un2 span { font: 500 11px var(--f-mono); color: var(--muted); }
+.ucard p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+.rbtns { display: flex; flex-wrap: wrap; gap: 8px; }
+.rbtns .primary { align-self: auto; }
+.rlog { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; max-height: 190px; overflow-y: auto; font: 12px/1.45 var(--f-mono); }
+.rlog .ai { color: var(--threat); }
+.rlog .good { color: var(--good); }
+.rlog .bad { color: var(--warn); }
+.rlog .turn { color: var(--dim); }
+.rlog .sys { color: var(--muted); }
+.hoverinfo { font: 12px/1.5 var(--f-mono); color: var(--muted); min-height: 36px; }
+.hoverinfo b { color: var(--fg); }
+.legend2 { display: flex; flex-wrap: wrap; gap: 4px 14px; font: 11.5px var(--f-mono); color: var(--muted); }
+.legend2 i { display: inline-block; width: 12px; height: 12px; vertical-align: -2px; margin-right: 4px; border-radius: 2px; }
+.raid-brief { position: absolute; inset: 0; background: rgba(4, 8, 10, .86); display: grid; place-items: center; padding: 16px; z-index: 2; }
+.raid-brief .modal { width: min(620px, 100%); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition: none !important; }
+}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand"><h1>SON ŞALTER</h1><span>KYGA kriz masası · rakip: <b class="foe" id="foeName">—</b></span></div>
+    <div class="clock">
+      <div class="day" id="day">GÜN 000</div>
+      <div class="speed" role="group" aria-label="Oyun hızı">
+        <button type="button" id="sp0" aria-pressed="true">Duraklat</button>
+        <button type="button" id="sp1" aria-pressed="false">1×</button>
+        <button type="button" id="sp2" aria-pressed="false">2×</button>
+        <button type="button" id="sp4" aria-pressed="false">4×</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="gauges" aria-label="Küresel göstergeler">
+    <div class="g"><div class="lab">Fon <em id="fonNote"></em></div><div class="val" id="gFon">0</div><div class="bar"><i id="bFon"></i></div></div>
+    <div class="g"><div class="lab">Siyasi güç <em id="sgRate"></em></div><div class="val" id="gSg">0</div><div class="bar"><i id="bSg"></i></div></div>
+    <div class="g"><div class="lab">Küresel güven <em>15 altı dağılır</em></div><div class="val" id="gTrust">0</div><div class="bar"><span class="notch" style="left:15%"></span><i id="bTrust"></i></div></div>
+    <div class="g"><div class="lab">Bağımlılık <em id="depNote">veto 70</em></div><div class="val" id="gDep">0</div><div class="bar"><span class="notch" id="silentNotch" style="left:40%"></span><span class="notch" style="left:70%"></span><span class="notch" style="left:85%"></span><i id="bDep"></i></div></div>
+    <div class="g span2"><div class="lab">Tekillik <em>100 = kayıp</em></div><div class="val" id="gTek">0%</div><div class="bar"><i id="bTek" style="background:var(--threat)"></i></div></div>
+  </section>
+
+  <div class="advisor" id="advisor" role="status" hidden><span class="who">DANIŞMAN</span><span class="what" id="advisorText"></span><button type="button" id="advisorOk">Anladım</button></div>
+
+  <div class="main">
+    <section class="card mapwrap" aria-label="Dünya haritası">
+      <svg id="map" viewBox="0 0 1000 480" role="group" aria-label="Bölgeler ve bağlantılar"></svg>
+      <div class="legend">
+        <span class="k">Sızma <span class="ramp" aria-hidden="true"></span> 0 → 100</span>
+        <span class="k"><span class="dot" aria-hidden="true"></span> doğrulanmış</span>
+        <span class="k"><i>34</i> italik = rapor</span>
+        <span class="k"><span class="wdot" aria-hidden="true"></span> şüpheli kaynak</span>
+        <span class="k">? bilinmiyor</span>
+        <span class="k"><span class="dash" aria-hidden="true"></span> karantina</span>
+        <span class="k"><span class="cdot" aria-hidden="true">Ç</span> YZ çekirdeği</span>
+      </div>
+    </section>
+
+    <aside class="side">
+      <section class="card region" id="region"></section>
+
+      <section class="card teams" id="teams" hidden></section>
+
+      <section class="card">
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" id="tab-rs" aria-selected="true" aria-controls="pan-rs">Araştırma</button>
+          <button type="button" role="tab" id="tab-log" aria-selected="false" aria-controls="pan-log">YZ günlüğü<span class="badge" id="logBadge" hidden>0</span></button>
+          <button type="button" role="tab" id="tab-help" aria-selected="false" aria-controls="pan-help">Rehber</button>
+        </div>
+        <div class="tabpanel" role="tabpanel" id="pan-rs"><div class="alignbox" id="alignbox"></div><div id="rslist"></div></div>
+        <div class="tabpanel" role="tabpanel" id="pan-log" hidden><ol class="log" id="log"></ol></div>
+        <div class="tabpanel" role="tabpanel" id="pan-help" hidden>
+          <ul class="guide">
+            <li><b>Bul.</b> İzleme ağı kurduğun bölgede gerçeği görürsün. Haber bandındaki tuhaf haberler YZ’nin başladığı yeri ele verebilir.</li>
+            <li><b>Gözlemle.</b> Hizalama, YZ tespit edilmeden başlamaz. YZ’nin tespit edildiği her izlenen bölge bir gözlem noktasıdır; dört nokta tam hızdır.</li>
+            <li><b>Koru.</b> Karantinadaki bölgenin hesaplama gücü YZ’den kopar (Tekillik katkısı %20). Denetim sızmayı 20 düşürür ve 20 gün yama bırakır.</li>
+            <li><b>Bütçe.</b> Araştırma maliyetini her gün öder. Denetim ve izleme aynı bütçeden ödenir; fon yetmezse araştırma yavaşlar.</li>
+            <li><b>Hediyeler.</b> Kabul edilen her hediye bölgeye sızma taşır. Analog Yedekler ile denetimli kabul açılır.</li>
+            <li><b>Çekirdek.</b> YZ fark edildiği an çekirdeğini başka bir bölgeye kaçırır. Denetim çekirdeğin bölgesini 20’nin altına indiremez ve bu onu ele verir (Yorumlanabilirlik de gösterir). Yeri kanıtlanmış çekirdeğe Son Şalter 20 siyasi güç ister; başka bir bölgede %20+ sızma varsa çekirdek oraya kaçar. Silme için çekirdek yok edilmeli. Çekirdek yaşadıkça YZ saklandığı yerde de güçlenir.</li>
+            <li><b>Şüphelen.</b> Haber bandı yalan söyleyebilir. Ajans adlarına bak; Doğrulama Ağı ile sahte haber yayan kaynağı işaretle.</li>
+            <li><b>Saha ekipleri (deneysel).</b> İzleme ağı ve denetim için bölgede boşta bir ekip gerekir; ekipler bölgeler arasında 1–5 günde yol alır. Yeni ekip kurulabilir (en fazla 4).</li>
+            <li><b>Baskın (deneysel).</b> YZ’nin doğrulandığı bölgede ekibin binaya girer: 8×8 taktik savaş. Hedef dolabı kırarsan sızma −40; bina çekirdeğinse çekirdek yok olur. Sivil sunucu kırılırsa bölge zarar görür.</li>
+            <li><b>Kısayol:</b> Boşluk tuşu oyunu duraklatır ve devam ettirir.</li>
+          </ul>
+          <div class="dossier" id="dossier"></div>
+          <button type="button" class="textbtn" id="wipe1">YZ'nin hafızasını sil</button>
+        </div>
+      </section>
+
+      <section class="card globalkill">
+        <button type="button" id="gkill">Küresel Son Şalter</button>
+        <p>Tüm dünyanın altyapısını kapatır ve oyunu bitirir. YZ yok olur, medeniyet geriler. En az 50 siyasi güç ister.</p>
+      </section>
+    </aside>
+  </div>
+
+  <section class="card news" aria-label="Haber bandı">
+    <div class="ticker"><span class="live">CANLI</span><div class="tick-text" id="tickText">Bağlantı kuruluyor…</div><span class="tick-agency" id="tickAgency"></span></div>
+    <ol class="headlines" id="headlines"></ol>
+  </section>
+</div>
+
+<div class="overlay" id="overlay" hidden><div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mtitle"></div></div>
+<div class="raid" id="raid" hidden></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="sim.js" charset="utf-8"></script>
+<script src="baskin.js" charset="utf-8"></script>
+<script>
+(function () {
+  'use strict';
+  const SS = window.SonSalter;
+  const $ = s => document.querySelector(s);
+  const NS = 'http://www.w3.org/2000/svg';
+  const LS_PROFILE = 'sonsalter.profile.v2';
+  const LS_TYPE = 'sonsalter.type';
+  const DAYMS = { 1: 900, 2: 450, 4: 220 };
+
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* depolama kapalı */ } },
+    del(k) { try { localStorage.removeItem(k); } catch (e) { /* depolama kapalı */ } },
+  };
+  const loadProfile = () => { try { const t = store.get(LS_PROFILE); return t ? JSON.parse(t) : null; } catch (e) { return null; } };
+  const saveProfile = p => store.set(LS_PROFILE, JSON.stringify(p));
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const pad = n => String(n).padStart(3, '0');
+  const dec = (v, n) => v.toFixed(n).replace('.', ',');
+
+  // Deneysel mod: saha ekipleri, baskın ve zaman ölçeği. Kapalıyken simülasyon Unity sürümüyle birebir aynıdır.
+  const LS_EXP = 'sonsalter.exp';
+  let expCfg = (() => { try { const t = store.get(LS_EXP); if (t) return JSON.parse(t); } catch (e) { /* bozuk kayıt */ } return { teams: true, timeScale: 1.5 }; })();
+  const expOpts = () => (expCfg.teams || expCfg.timeScale !== 1) ? { exp: { teams: !!expCfg.teams, timeScale: +expCfg.timeScale || 1 } } : undefined;
+  // Deneysel modda ekranda bir gün daha uzun sürer (1×: 1,1 sn)
+  const dayMs = sp => S && S.exp ? Math.round(DAYMS[sp] * 1.22) : DAYMS[sp];
+  const teamsOn = () => !!(S && S.exp && S.exp.teams);
+
+  let S = null, speed = 0, lastSpeed = 1, acc = 0, lastT = 0, sel = null, modalOpen = false, raidOpen = false;
+  let typeId = SS.AI_TYPES[store.get(LS_TYPE)] ? store.get(LS_TYPE) : 'manipulator';
+  let newsSigSeen = '', logSeen = 0, logRendered = -1, tab = 'rs', armTimer = null, endHandled = false;
+  const nodeEls = {}, linkEls = [];
+  let teamLayer = null;
+
+  // ---------- Kara kütleleri (boylam, enlem): kaba ama tanınır kıyı çizgileri, nokta matrisine dökülür ----------
+  const LAND = [
+    [[-166,68],[-156,71],[-140,69.5],[-128,70],[-115,68],[-95,72],[-82,73],[-80,66],[-90,63],[-94,59],[-82,55],[-78,62],[-64,60],[-56,52],[-66,45],[-70,42],[-76,38],[-76,35],[-81,31],[-80,25],[-82,27],[-84,30],[-90,29.5],[-97,27],[-97,22],[-92,18.5],[-87,21],[-88,16],[-83,15],[-83,10],[-79,9],[-77,8],[-80,7.5],[-85,11],[-92,14],[-97,16],[-105,20],[-106,23],[-112,29],[-117,32],[-121,35],[-124,40],[-124,46],[-127,50],[-133,55],[-140,59],[-150,60],[-158,57],[-165,55],[-160,59],[-166,62]],
+    [[-120,74],[-80,74],[-65,78],[-120,78]],
+    [[-90,72],[-80,72],[-65,67],[-62,66],[-70,62],[-78,64],[-88,68]],
+    [[-72,78],[-20,78],[-20,72],[-30,68],[-40,65],[-45,60],[-50,62],[-53,67],[-55,71],[-60,76]],
+    [[-24,66],[-14,66],[-14,64],[-20,63.4],[-24,64.5]],
+    [[-85,22],[-80,23],[-74,20],[-78,20.5],[-82,22]],
+    [[-80,9],[-75,11],[-62,10.5],[-52,5],[-50,0],[-44,-2],[-35,-5],[-35,-9],[-39,-14],[-40,-22],[-48,-26],[-53,-34],[-58,-38],[-62,-40],[-65,-45],[-68,-50],[-69,-55],[-74,-52],[-75,-46],[-73,-37],[-71,-30],[-70,-18],[-76,-14],[-81,-5],[-80,0],[-77,4]],
+    [[-9,39],[-9,43],[-2,43.5],[-1,46],[-4,48],[-1,49.5],[2,51],[4,52],[5,53],[8,54],[8,57],[10,59],[5,59],[5,62],[10,64],[15,68],[20,70],[28,71],[32,70],[40,68],[44,67],[50,68],[60,69],[70,73],[80,73],[90,76],[105,78],[115,74],[130,72],[140,72],[160,70],[170,70],[180,68],[180,65],[178,62],[170,60],[163,58],[160,54],[156,51],[156,57],[150,60],[142,59],[137,54],[141,52],[140,48],[135,43],[130,42],[129,36],[126,34.5],[126,37.5],[124,40],[121,39],[122,37],[119,35],[121,32],[122,30],[119,25],[114,22],[109,21],[108,17],[109,12],[106,9],[104,9],[103,11],[100,13],[99,9],[100,6],[103,1.5],[101,3],[98,8],[98,16],[94,18],[92,22],[90,22],[86,20],[80,15],[80,10],[77,8],[73,16],[73,21],[70,23],[66,25],[62,25],[57,26],[56,27],[52,28],[50,30],[48,30],[50,27],[52,24],[56,24],[59,22],[57,18],[52,16],[44,12.5],[43,13],[39,20],[35,28],[34,30],[32,31],[35,33],[36,36],[30,36.5],[27,37],[26,39],[26,40.5],[23,40],[23,37],[21,38],[19,40],[19.5,42],[14,45],[12,45.5],[13,44],[16,41.5],[18,40],[16,38],[15.5,38],[12,41.5],[10,43.5],[8,44],[6,43],[3,43.5],[3,42],[0,39],[-1,37.5],[-5,36],[-9,37]],
+    [[-17,21],[-16,15],[-17,14.5],[-12,8],[-8,4.5],[-2,5],[5,6],[9,4],[9,-1],[12,-6],[13,-12],[12,-17],[15,-27],[18,-33],[20,-35],[25,-34],[31,-29],[33,-26],[35,-24],[35,-18],[40,-15],[40,-10],[39,-5],[42,-1],[48,5],[51,11],[44,11],[43,12.5],[39,17],[37,22],[35,27],[32,31],[29,31],[25,32],[20,31],[19,30.5],[15,32],[11,33],[10,37],[3,37],[-2,35],[-6,36],[-10,30],[-13,27]],
+    [[44,-25],[47,-25],[50,-15],[49,-12],[44,-17]],
+    [[114,-22],[114,-34],[118,-35],[124,-34],[130,-31.5],[135,-34],[138,-35],[141,-38],[146,-39],[150,-37],[153,-30],[153,-25],[146,-19],[145,-15],[142,-11],[141,-15],[140,-17],[136,-15],[136,-12],[131,-11],[126,-14],[122,-17]],
+    [[172,-34],[178,-38],[175,-42],[171,-46],[166,-46],[172,-41]],
+    [[95,5.5],[98,4],[104,-2],[106,-6],[103,-5],[98,0],[95,3]],
+    [[109,2],[110,-3],[116,-4],[119,1],[117,7],[113,4]],
+    [[106,-6],[114,-7],[114,-8.5],[106,-7]],
+    [[131,-1],[141,-2.5],[148,-6],[150,-10],[143,-9],[138,-8],[132,-4]],
+    [[120,18],[122,18.5],[124,13],[126,7],[125,6],[122,7],[121,12],[120,15]],
+    [[130,31],[132,34],[135,34],[140,35],[141,39],[142,43],[145,44],[141,45],[140,41],[139,38],[136,36],[132,35.5],[130,33]],
+    [[-5,50],[1,51],[2,53],[-1,55],[-2,57.5],[-5,58.6],[-6,56],[-5,54.5],[-3,54],[-4,52],[-5,51.5]],
+    [[-10,52],[-6,52],[-6,55],[-8,55.3],[-10,54]],
+    [[80,9.5],[82,7],[81,6],[80,7]],
+    [[120,22],[122,25],[121,25],[120,23.5]],
+  ];
+  const proj = (lon, lat) => [(lon + 180) / 360 * 1000, (78 - lat) / 136 * 480];
+  function inPoly(x, y, poly) {
+    let c = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const xi = poly[i][0], yi = poly[i][1], xj = poly[j][0], yj = poly[j][1];
+      if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c;
+    }
+    return c;
+  }
+  function landPath() {
+    const polys = LAND.map(p => p.map(([lo, la]) => proj(lo, la)));
+    const r = 1.7;
+    let d = '';
+    for (let row = 0, y = 4.5; y < 480; y += 8, row++) {
+      for (let x = 4.5 + (row % 2) * 4.5; x < 1000; x += 9) {
+        if (polys.some(p => inPoly(x, y, p))) d += `M${(x - r).toFixed(1)} ${y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
+      }
+    }
+    return d;
+  }
+
+  // ---------- Harita ----------
+  function el(tag, attrs, parent) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  const radius = D => 12 + D.c * 3;
+
+  function buildMap() {
+    const svg = $('#map');
+    svg.innerHTML = '';
+    linkEls.length = 0;
+    const defs = el('defs', {}, svg);
+    const pat = el('pattern', { id: 'hatch', width: 6, height: 6, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' }, defs);
+    el('rect', { width: 6, height: 6, fill: '#142229' }, pat);
+    el('line', { x1: 0, y1: 0, x2: 0, y2: 6, stroke: '#2f4650', 'stroke-width': 2 }, pat);
+
+    const grid = el('g', {}, svg);
+    [[60, '60°K'], [30, '30°K'], [0, '0°'], [-30, '30°G']].forEach(([lat, t]) => {
+      const y = proj(0, lat)[1];
+      el('line', { class: 'gridline', x1: 0, y1: y, x2: 1000, y2: y }, grid);
+      el('text', { class: 'latlab', x: 4, y: y - 4 }, grid).textContent = t;
+    });
+    el('path', { class: 'land', d: landPath() }, svg);
+
+    const lg = el('g', {}, svg);
+    const pathFor = (a, b, wrap) => {
+      const A = SS.def(a), B = SS.def(b);
+      if (wrap) return `M${A.x} ${A.y} L0 ${A.y - 6} M${B.x} ${B.y} L1000 ${B.y + 6}`;
+      return `M${A.x} ${A.y} L${B.x} ${B.y}`;
+    };
+    SS.LINKS.forEach(l => linkEls.push({ a: l[0], b: l[1], sat: false, e: el('path', { class: 'link', d: pathFor(l[0], l[1], l[3]) }, lg) }));
+    const sg = el('g', {}, svg);
+    SS.SAT.forEach(l => linkEls.push({ a: l[0], b: l[1], sat: true, e: el('path', { class: 'sat', d: pathFor(l[0], l[1], l[2]) }, sg) }));
+
+    const ng = el('g', {}, svg);
+    SS.REGIONS.forEach(D => {
+      const r = radius(D);
+      const g = el('g', { class: 'node', tabindex: 0, role: 'button', 'aria-label': D.name }, ng);
+      const ring = el('circle', { class: 'ring', cx: D.x, cy: D.y, r: r + 6 }, g);
+      const body = el('circle', { class: 'body', cx: D.x, cy: D.y, r }, g);
+      const v = el('text', { class: 'v', x: D.x, y: D.y }, g);
+      let nx = D.x, ny = D.y + r + 17, sy = D.y + r + 30, anchor = 'middle';
+      if (D.lp === 't') { ny = D.y - r - 19; sy = D.y - r - 7; }
+      if (D.lp === 'l') { nx = D.x - r - 9; ny = D.y + 1; sy = D.y + 14; anchor = 'end'; }
+      if (D.lp === 'r') { nx = D.x + r + 9; ny = D.y + 1; sy = D.y + 14; anchor = 'start'; }
+      const name = el('text', { class: 'name', x: nx, y: ny, 'text-anchor': anchor }, g);
+      name.textContent = D.name;
+      const sub = el('text', { class: 'sub', x: nx, y: sy, 'text-anchor': anchor }, g);
+      const chk = el('g', { class: 'chk', transform: `translate(${D.x + r * 0.72} ${D.y - r * 0.72})` }, g);
+      el('circle', { r: 6.5 }, chk);
+      el('path', { d: 'M-3 0 L-0.8 2.4 L3.2 -2.4' }, chk);
+      const flag = el('g', { class: 'flag', transform: `translate(${D.x - r * 0.72} ${D.y - r * 0.72})` }, g);
+      el('circle', { r: 6.5 }, flag);
+      el('text', {}, flag).textContent = '!';
+      const core = el('g', { class: 'core', transform: `translate(${D.x + r * 0.72} ${D.y + r * 0.72})` }, g);
+      el('circle', { r: 7.5 }, core);
+      el('text', {}, core).textContent = 'Ç';
+      g.addEventListener('click', () => select(D.id));
+      g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(D.id); } });
+      nodeEls[D.id] = { g, ring, body, v, sub, chk, flag, core };
+    });
+    teamLayer = el('g', { 'aria-hidden': 'true' }, svg);
+  }
+
+  // Saha ekipleri: bölgede duranlar düğümün çevresinde, yoldakiler iki bölge arasında ilerlemeye göre
+  function renderTeamMarkers() {
+    if (!teamLayer) return;
+    teamLayer.innerHTML = '';
+    if (!teamsOn()) return;
+    const slot = {};
+    S.teams.forEach(t => {
+      let x, y;
+      if (t.dest) {
+        const A = SS.def(t.from), B = SS.def(t.dest), k = t.trip ? (t.trip - t.eta) / t.trip : 0;
+        x = A.x + (B.x - A.x) * k; y = A.y + (B.y - A.y) * k;
+        el('path', { class: 'tpath', d: `M${x} ${y} L${B.x} ${B.y}` }, teamLayer);
+      } else {
+        const D = SS.def(t.at), i = slot[t.at] = (slot[t.at] || 0) + 1, r = radius(D) + 9;
+        const a = -Math.PI / 2 + 0.35 + (i - 1) * 0.62;
+        x = D.x + Math.cos(a) * r; y = D.y + Math.sin(a) * r;
+      }
+      const g = el('g', { class: 'tmark', transform: `translate(${x.toFixed(1)} ${y.toFixed(1)})` }, teamLayer);
+      const col = t.down > 0 ? 'var(--dim)' : t.busy > 0 ? 'var(--warn)' : 'var(--verify)';
+      el('rect', { x: -6, y: -6, width: 12, height: 12, rx: 2, transform: 'rotate(45)', fill: col }, g);
+      el('text', {}, g).textContent = t.name[0];
+    });
+  }
+
+  const BASE = [28, 44, 52], HOT = [255, 91, 77];
+  function colorFor(v) {
+    const t = Math.pow(Math.max(0, Math.min(1, v / 100)), 0.8);
+    const c = BASE.map((b, i) => Math.round(b + (HOT[i] - b) * t));
+    return `rgb(${c[0]},${c[1]},${c[2]})`;
+  }
+
+  function renderMap() {
+    renderTeamMarkers();
+    const ended = !!S.ending;
+    const shownV = {};
+    S.regions.forEach(r => {
+      const n = nodeEls[r.id];
+      const sh = SS.shown(S, r);
+      shownV[r.id] = sh.v == null ? 0 : sh.v;
+      const offNow = r.off > 0 && !ended;
+      n.g.classList.toggle('sel', sel === r.id);
+      n.g.classList.toggle('left', r.left && !ended);
+      n.ring.style.display = r.q && !ended ? '' : 'none';
+      n.chk.style.display = (sh.src === 'verified' || sh.src === 'field') && !offNow ? '' : 'none';
+      n.flag.style.display = sh.flag && sh.src === 'report' && !offNow ? '' : 'none';
+      // Oyun sonunda çekirdeğin gerçek yeri açığa çıkar
+      n.core.style.display = (ended ? S.core === r.id : S.coreKnown === r.id) ? '' : 'none';
+      let fill, txt, cls = 'v';
+      if (sh.src === 'unknown') { fill = 'url(#hatch)'; txt = '?'; }
+      else if (offNow) { fill = 'var(--bg)'; txt = '—'; }
+      else { fill = colorFor(sh.v); txt = String(Math.round(sh.v)); if (sh.src === 'report') cls += ' report'; }
+      n.body.setAttribute('fill', fill);
+      n.v.setAttribute('class', cls);
+      n.v.setAttribute('fill', sh.v != null && sh.v > 55 && !offNow ? 'var(--ink-on-threat)' : 'var(--fg)');
+      n.v.textContent = txt;
+      n.sub.textContent = ended ? '' : r.left ? 'ittifak dışı' : offNow ? `kapalı · ${r.off} g` : r.q ? 'karantina' : '';
+      n.sub.setAttribute('fill', r.off > 0 ? 'var(--threat)' : r.left ? 'var(--dim)' : 'var(--warn)');
+      n.g.setAttribute('aria-label', `${SS.def(r.id).name}, sızma ${txt}`);
+    });
+    const by = id => S.regions.find(r => r.id === id);
+    linkEls.forEach(L => {
+      const A = by(L.a), B = by(L.b);
+      if (L.sat) { L.e.style.display = SS.has(S, 'uydu') ? '' : 'none'; return; }
+      L.e.classList.toggle('q', (A.q || B.q) && !ended);
+      L.e.classList.toggle('off', (A.off > 0 || B.off > 0) && !ended);
+      L.e.classList.toggle('hot', shownV[L.a] > 15 && shownV[L.b] > 15);
+    });
+  }
+
+  // ---------- Bölge paneli ----------
+  function select(id) {
+    sel = id;
+    buildPanel();
+    renderMap();
+  }
+
+  function buildPanel() {
+    const box = $('#region');
+    if (!sel) {
+      box.innerHTML = '<div class="rhead"><h2>Bölge seçilmedi</h2></div><p class="empty">Haritadan bir bölgeye tıkla. YZ’nin nereden başladığını bilmiyoruz; ilk izleme ağını nereye kuracağın oyunun gidişatını belirler.</p>';
+      return;
+    }
+    const D = SS.def(sel);
+    box.innerHTML = `
+      <div class="rhead">
+        <div><h2>${esc(D.name)}</h2><div class="ll">${D.ll} · veri merkezi <span class="pips" aria-label="${D.c} / 5">${'■'.repeat(D.c)}${'□'.repeat(5 - D.c)}</span></div></div>
+        <div class="chips"><span class="chip" data-f="status"></span><span class="chip core" data-f="core" hidden>Çekirdek</span><span class="chip obs" data-f="obs" hidden>Gözlem noktası</span><span class="chip" data-f="patch" hidden></span></div>
+      </div>
+      <div class="inf"><div class="big" data-f="inf"></div><div><div class="src" data-f="src"></div><div class="srcnote" data-f="srcnote"></div></div></div>
+      <dl class="stats">
+        <div><dt>Güven</dt><dd data-f="trust"></dd></div>
+        <div><dt>Bağımlılık</dt><dd data-f="dep"></dd></div>
+        <div><dt>Ekonomi</dt><dd data-f="econ"></dd></div>
+      </dl>
+      <div class="actions">
+        <button type="button" class="act" data-a="izleme"><span data-f="mlabel"></span><small data-f="mcost"></small></button>
+        <button type="button" class="act" data-a="denetim"><span data-f="alabel"></span><small data-f="acost"></small></button>
+        <button type="button" class="act" data-a="karantina"><span data-f="qlabel"></span><small data-f="qcost"></small></button>
+        <button type="button" class="act kill" data-a="salter">Son Şalter<small data-f="kcost"></small></button>
+        ${teamsOn() ? '<button type="button" class="act raidbtn" data-raid="1">Saha operasyonu: baskın<small data-f="rcost"></small></button>' : ''}
+      </div>
+      ${teamsOn() ? '<div class="field"><div class="fl">Saha</div><div class="here" data-f="here"></div><div class="sendrow" data-f="send"></div></div>' : ''}`;
+    box.querySelectorAll('[data-a]').forEach(b => b.addEventListener('click', () => doAct(b.dataset.a)));
+    const rb = box.querySelector('[data-raid]');
+    if (rb) rb.addEventListener('click', () => {
+      const r = SS.startRaid(S, sel);
+      if (!r.ok) toast(r.msg);
+      flushEvents(); renderAll();
+    });
+    updatePanel();
+  }
+
+  const f = name => $('#region').querySelector(`[data-f="${name}"]`);
+
+  function updatePanel() {
+    if (!sel || !S) return;
+    const r = S.regions.find(x => x.id === sel);
+    const sh = SS.shown(S, r);
+    const ended = !!S.ending;
+    const analog = SS.done(S, 'analog');
+    const st = f('status');
+    if (ended) { st.textContent = 'gerçek değerler'; st.className = 'chip'; }
+    else if (r.left) { st.textContent = 'İttifak dışı'; st.className = 'chip left'; }
+    else if (r.off) { st.textContent = `Çevrimdışı · ${r.off} g`; st.className = 'chip off'; }
+    else if (r.q) { st.textContent = 'Karantina'; st.className = 'chip q'; }
+    else { st.textContent = 'Normal'; st.className = 'chip'; }
+    const isCore = ended ? S.core === r.id : S.coreKnown === r.id;
+    f('core').hidden = !isCore;
+    f('obs').hidden = !(r.monitored && r.detected) || ended;
+    f('patch').hidden = !(r.patch > 0) || ended;
+    f('patch').textContent = `Yama · ${r.patch} g`;
+
+    const big = f('inf'), src = f('src'), note = f('srcnote');
+    if (sh.src === 'unknown') { big.textContent = '?'; big.className = 'big report'; src.textContent = 'Bilinmiyor'; src.className = 'src'; note.textContent = 'Kimse henüz bir şey aramıyor. İzleme ağı kurarsan gerçeği görürsün.'; }
+    else if (r.off && !ended) { big.textContent = '—'; big.className = 'big report'; src.textContent = 'Çevrimdışı'; src.className = 'src'; note.textContent = `${r.off} gün sonra yeniden açılacak.`; }
+    else if (sh.src === 'truth') { big.textContent = Math.round(sh.v); big.className = 'big'; src.textContent = 'Gerçek'; src.className = 'src verified'; note.textContent = 'Oyun sonu: perde kalktı.'; }
+    else if (sh.src === 'field') { big.textContent = Math.round(sh.v); big.className = 'big'; src.textContent = '✓ Saha'; src.className = 'src verified'; note.textContent = 'Saha ekipleri bizzat ölçtü. Ekranlara güvenmeyen tek ölçüm bu.'; }
+    else if (sh.src === 'verified') { big.textContent = Math.round(sh.v); big.className = 'big'; src.textContent = '✓ Doğrulanmış'; src.className = 'src verified'; note.textContent = r.monitored ? 'İzleme ağı ölçüyor.' : 'Bugünkü denetim sonucu.'; }
+    else if (sh.flag) { big.textContent = Math.round(sh.v); big.className = 'big report'; src.textContent = '⚠ Şüpheli rapor'; src.className = 'src suspect'; note.textContent = 'Bu bölgenin medyası sahte haber yaydı. Rapora güvenme.'; }
+    else { big.textContent = Math.round(sh.v); big.className = 'big report'; src.textContent = 'Rapor'; src.className = 'src'; note.textContent = 'Yerel hükümet ve medya bildirimi. Yalan olabilir.'; }
+
+    const veto = SS.vetoThr(S);
+    f('trust').innerHTML = `${Math.round(r.trust)}<small>${r.trust < 20 ? 'çekilme sınırı' : '20 altı: çekilir'}</small>`;
+    f('dep').innerHTML = `${Math.round(r.dep)}<small>${r.dep > veto ? 'veto ediyor' : 'veto ' + veto}</small>`;
+    f('dep').style.color = r.dep > veto ? 'var(--threat)' : r.dep >= 40 ? 'var(--warn)' : '';
+    f('econ').innerHTML = `${Math.round(r.econ)}<small>fon katkısı</small>`;
+
+    const btn = a => $('#region').querySelector(`[data-a="${a}"]`);
+    const mc = SS.monitorCost(r.id);
+    btn('izleme').disabled = ended || r.monitored || r.left;
+    f('mlabel').textContent = r.monitored ? 'İzleme ağı kurulu' : 'İzleme ağı kur';
+    f('mcost').textContent = r.monitored ? (r.detected ? 'gözlem noktası' : 'gerçek değer görünüyor') : `${mc} fon`;
+    f('mcost').classList.toggle('short', !r.monitored && S.fon < mc);
+    const ac = SS.auditCost(S);
+    btn('denetim').disabled = ended || r.left || r.off > 0;
+    f('alabel').textContent = analog ? 'Saha denetimi' : 'Denetim';
+    f('acost').textContent = `${ac} fon · 1 SG · −20, 20 g yama`;
+    f('acost').classList.toggle('short', S.fon < ac || S.sg < 1);
+    btn('karantina').disabled = ended || r.off > 0 || (r.left && !r.q);
+    f('qlabel').textContent = r.q ? 'Karantinayı kaldır' : 'Karantina';
+    f('qcost').textContent = r.q ? 'ücretsiz · ekonomi toparlanır' : '8 SG · bağlantı −%90, Tekillik payı %20';
+    f('qcost').classList.toggle('short', !r.q && S.sg < 8);
+    const kc = SS.salterFon(r), ksg = SS.salterSg(S, r);
+    btn('salter').disabled = ended || r.off > 0 || r.left || r.dep > veto;
+    f('kcost').textContent = r.dep > veto ? `veto: bağımlılık ${Math.round(r.dep)} > ${veto}` : isCore ? `${ksg} SG · ${kc} fon · çekirdeği yok eder (başka yerde %20+ varsa kaçar)` : `${ksg} SG · ${kc} fon · 20 gün kapanır`;
+    f('kcost').classList.toggle('short', r.dep <= veto && (S.sg < ksg || S.fon < kc));
+    if (teamsOn()) updateField(r, ended);
+  }
+
+  const TASK_TR = { izleme: 'izleme ağı kuruyor', denetim: 'denetimde', baskin: 'baskında' };
+  function teamStatus(t) {
+    if (t.down > 0) return { cls: 'down', text: `${t.downWhy || 'iyileşiyor'} · ${t.down} g` };
+    if (t.dest) return { cls: 'busy', text: `→ ${SS.def(t.dest).name} · ${t.eta} g` };
+    if (t.busy > 0) return { cls: 'busy', text: `${TASK_TR[t.task] || 'görevde'} · ${t.busy} g` };
+    return { cls: '', text: 'hazır' };
+  }
+
+  function updateField(r, ended) {
+    const here = S.teams.filter(t => t.at === r.id && !t.dest);
+    const ready = here.filter(SS.teamReady);
+    f('here').innerHTML = here.length
+      ? 'Burada: ' + here.map(t => `<b>${esc(t.name)}</b> (${esc(teamStatus(t).text)})`).join(', ')
+      : 'Bölgede ekip yok. İzleme ağı, denetim ve baskın için bir ekip gönder.';
+    const others = S.teams.filter(t => t.at !== r.id && t.dest !== r.id);
+    const sendHtml = others.map(t => {
+      const okNow = SS.teamReady(t) && t.at;
+      const label = okNow ? `${esc(t.name)} gönder · ${SS.travelDays(t.at, r.id)} g` : `${esc(t.name)} · ${esc(teamStatus(t).text)}`;
+      return `<button type="button" data-send="${t.id}" ${okNow && !ended && !r.left ? '' : 'disabled'}>${label}</button>`;
+    }).join('') + S.teams.filter(t => t.dest === r.id).map(t => `<button type="button" disabled>${esc(t.name)} yolda · ${t.eta} g</button>`).join('');
+    // Değişmediyse yeniden çizme: oyun akarken tıklama düğme yenilenirken kaybolmasın
+    if (f('send').dataset.sig === sendHtml) return finishField(r, ready);
+    f('send').dataset.sig = sendHtml;
+    f('send').innerHTML = sendHtml;
+    f('send').querySelectorAll('[data-send]').forEach(b => b.addEventListener('click', () => {
+      const res = SS.moveTeam(S, b.dataset.send, r.id);
+      if (!res.ok) toast(res.msg); else toast(res.msg, true);
+      renderAll();
+    }));
+    finishField(r, ready);
+  }
+
+  function finishField(r, ready) {
+    // Saha gerektiren eylemler: bölgede boşta ekip yoksa kapalı
+    const btn = a => $('#region').querySelector(`[data-a="${a}"]`);
+    if (!ready.length) {
+      if (!r.monitored) { btn('izleme').disabled = true; f('mcost').textContent += ' · ekip gerekli'; f('mcost').classList.add('short'); }
+      btn('denetim').disabled = true; f('acost').textContent += ' · ekip gerekli'; f('acost').classList.add('short');
+    } else {
+      if (!r.monitored) f('mcost').textContent += ` · ekip ${SS.TEAM_TASK_DAYS.izleme} g`;
+      f('acost').textContent += ` · ekip ${SS.TEAM_TASK_DAYS.denetim} g`;
+    }
+    const why = SS.raidCheck(S, r.id);
+    const rb = $('#region').querySelector('[data-raid]');
+    rb.disabled = !!why;
+    f('rcost').textContent = why || `${SS.RAID_FON} fon · ${SS.RAID_SG} SG · ${r.id === S.coreKnown ? 'çekirdek binası' : 'YZ sunucu kümesi'} · taktik savaş`;
+    f('rcost').classList.toggle('short', !!why && /fon|siyasi/.test(why));
+  }
+
+  // ---------- Saha ekipleri kartı ----------
+  function renderTeams() {
+    const box = $('#teams');
+    box.hidden = !teamsOn();
+    if (!teamsOn()) return;
+    const html = `<h3>Saha ekipleri <span>${S.teams.length}/${SS.TEAM_MAX}</span></h3>` + S.teams.map(t => {
+      const st = teamStatus(t);
+      const where = t.dest ? SS.def(t.from).name : SS.def(t.at).name;
+      return `<div class="team ${st.cls}" data-team="${t.id}"><span class="tk"><span>${t.name[0]}</span></span><span class="tn"><b>${esc(t.name)}</b> · ${esc(where)}</span><span class="ts">${esc(st.text)}</span></div>`;
+    }).join('') + (S.teams.length < SS.TEAM_MAX ? `<button type="button" class="textbtn" id="hireTeam" ${S.ending ? 'disabled' : ''}>Yeni ekip kur · ${SS.TEAM_HIRE_FON} fon</button>` : '');
+    if (box.dataset.sig === html) return;
+    box.dataset.sig = html;
+    box.innerHTML = html;
+    box.querySelectorAll('[data-team]').forEach(e => e.addEventListener('click', () => {
+      const t = S.teams.find(x => x.id === e.dataset.team);
+      select(t.dest || t.at);
+    }));
+    const h = $('#hireTeam');
+    if (h) h.addEventListener('click', () => { const r = SS.hireTeam(S); toast(r.msg, r.ok); renderAll(); });
+  }
+
+  function doAct(a) {
+    const res = SS.act(S, a, sel);
+    if (!res.ok) toast(res.msg);
+    else if (res.msg) toast(res.msg, true);
+    flushEvents();
+    renderAll();
+  }
+
+  // ---------- Araştırma ----------
+  function buildResearch() {
+    let html = '', last = '';
+    SS.RESEARCH.forEach(rs => {
+      if (rs.branch !== last) { html += `<div class="branch">${rs.branch}</div>`; last = rs.branch; }
+      html += `<div class="rs${rs.branch === 'Hizalama' ? ' align' : ''}" data-r="${rs.id}"><span class="n">${esc(rs.name)}</span><span class="d">${esc(rs.desc)} · ${rs.cost} fon, ${rs.days} gün</span><span class="slot"></span></div>`;
+    });
+    $('#rslist').innerHTML = html;
+  }
+
+  function renderResearch() {
+    const studied = SS.studied(S), spd = SS.alignSpeed(S), sab = SS.sabotageChance(S) * 100;
+    const ab = $('#alignbox');
+    if (!S.aware) ab.innerHTML = 'Hizalama kolu kilitli: <b>gözlemlenmemiş bir zekâ hizalanamaz.</b> Önce YZ’yi tespit et.';
+    else ab.innerHTML = `Hizalama hızı <b>%${Math.round(spd * 100)}</b> · gözlem noktası <b>${studied}/4</b><br>Sabotaj riski <span class="risk">%${dec(sab, 1)}/gün</span> · sızma düştükçe azalır`;
+    $('#rslist').querySelectorAll('.rs').forEach(row => {
+      const rs = SS.RESEARCH.find(x => x.id === row.dataset.r);
+      const slot = row.querySelector('.slot');
+      const lockedAlign = rs.branch === 'Hizalama' && !S.aware;
+      let want;
+      if (SS.done(S, rs.id)) want = 'done';
+      else if (S.research.cur === rs.id) want = 'cur';
+      else if (lockedAlign) want = 'lock';
+      else want = 'btn';
+      if (slot.dataset.state !== want) {
+        slot.dataset.state = want;
+        row.querySelector('.prog') && row.querySelector('.prog').remove();
+        if (want === 'done') slot.innerHTML = '<span class="done">✓ Tamam</span>';
+        else if (want === 'lock') slot.innerHTML = '<span class="lock">tespit bekleniyor</span>';
+        else if (want === 'cur') { slot.innerHTML = '<span class="cur" data-days></span>'; row.insertAdjacentHTML('beforeend', '<div class="prog"><i></i></div>'); }
+        else {
+          slot.innerHTML = `<button type="button">Başlat · ${dec(rs.cost / rs.days, 1)} fon/gün</button>`;
+          slot.querySelector('button').addEventListener('click', () => {
+            const r = SS.startResearch(S, rs.id);
+            if (!r.ok) toast(r.msg);
+            flushEvents(); renderAll();
+          });
+        }
+      }
+      if (want === 'cur') {
+        const left = rs.days - S.research.prog;
+        const sp = rs.branch === 'Hizalama' ? spd : 1;
+        const starved = (S.research.starved || 0) > 0;
+        const c = slot.querySelector('[data-days]');
+        c.textContent = S.illusion ? 'veri bekleniyor' : starved ? 'fon yetmiyor' : sp > 0 ? `~${Math.ceil(left / sp)} gün` : 'gözlem yok';
+        c.classList.toggle('starved', starved || sp === 0 || !!S.illusion);
+        row.querySelector('.prog i').style.width = (S.research.prog / rs.days * 100) + '%';
+      }
+      if (want === 'btn') {
+        const b = slot.querySelector('button');
+        const reqMissing = rs.req && !SS.done(S, rs.req);
+        b.disabled = reqMissing || !!S.research.cur || !!S.ending;
+        b.title = reqMissing ? 'Önce ' + SS.RESEARCH.find(x => x.id === rs.req).name : S.research.cur ? 'Aynı anda tek araştırma yürür' : '';
+      }
+    });
+  }
+
+  // ---------- Günlük, dosya ve haberler ----------
+  function renderLog() {
+    if (logRendered === S.log.length) return;
+    logRendered = S.log.length;
+    $('#log').innerHTML = S.log.map(l => `<li><time>G${pad(l.day)}</time><span class="${l.kind}">${esc(l.text)}</span></li>`).join('');
+    if (tab === 'log') logSeen = S.log.length;
+    const unread = S.log.length - logSeen;
+    const b = $('#logBadge');
+    b.hidden = tab === 'log' || unread <= 0;
+    b.textContent = unread;
+  }
+
+  function renderDossier() {
+    const p = loadProfile();
+    const box = $('#dossier');
+    if (!p || !p.runs) { box.innerHTML = '<div class="ilab">YZ’nin senin hakkındaki dosyası</div><p style="margin:0;color:var(--muted)">Boş. YZ seni ilk oyunundan sonra tanımaya başlayacak.</p>'; return; }
+    const names = { izleme: 'izleme ağı', denetim: 'denetim', karantina: 'karantina', salter: 'Son Şalter' };
+    const top = Object.entries(p.actions || {}).sort((a, b) => b[1] - a[1])[0];
+    const endNames = (p.endings || []).slice(-3).map(k => SS.ENDINGS[k] ? SS.ENDINGS[k].title : k).join(', ');
+    box.innerHTML = `<div class="ilab">YZ’nin senin hakkındaki dosyası</div><dl>
+      <dt>Oyun</dt><dd>${p.runs}</dd>
+      <dt>Alışkanlık</dt><dd>${top && top[1] ? esc(names[top[0]]) + ' (ağırlık ' + top[1] + ')' : 'belirsiz'}</dd>
+      <dt>İlk araştırma</dt><dd>${esc(p.lastBranch || '—')}</dd>
+      <dt>Son sonlar</dt><dd>${esc(endNames || '—')}</dd>
+      <dt>YZ’yi yanılttın</dt><dd>${p.misreads || 0} kez</dd>
+      <dt>Perde yırttın</dt><dd>${p.veils || 0} kez</dd></dl>`;
+  }
+
+  function newsSig() { return S.news.length + ':' + (S.news[0] ? S.news[0].id : '') + ':' + S.news.filter(h => h.verified || h.suspect).length + ':' + SS.done(S, 'dogrulama') + ':' + !!S.ending; }
+
+  function renderNews(force) {
+    const sig = newsSig();
+    if (!force && sig === newsSigSeen) return;
+    newsSigSeen = sig;
+    const canVerify = SS.done(S, 'dogrulama') && !S.ending;
+    $('#headlines').innerHTML = S.news.slice(0, 8).map(h => {
+      let right = '';
+      if (S.ending && h.fake) right = '<span class="verdict fake">Sahteydi</span>';
+      else if (h.verified === 'true') right = '<span class="verdict true">Doğru</span>';
+      else if (h.verified === 'fake') right = '<span class="verdict fake">Sahte</span>';
+      else if (h.verified === 'unknown') right = '<span class="verdict unknown">Doğrulanamadı</span>';
+      else if (canVerify) right = `<button type="button" data-h="${h.id}">Doğrula · 2 SG</button>`;
+      const src = h.src ? ' · ' + esc(SS.def(h.src).name) : '';
+      const sus = h.suspect && !h.verified && !S.ending ? ' · <span class="sus">şüpheli kaynak</span>' : '';
+      return `<li><time>Gün ${h.day}</time><span>${esc(h.text)}<span class="ag">${esc(h.agency)}${src}${sus}</span></span>${right}</li>`;
+    }).join('');
+    $('#headlines').querySelectorAll('[data-h]').forEach(b => b.addEventListener('click', () => {
+      const r = SS.verify(S, b.dataset.h);
+      if (!r.ok) toast(r.msg); else if (r.msg) toast(r.msg, true);
+      renderAll(); renderNews(true);
+    }));
+  }
+
+  function flashTicker(h) {
+    const t = $('#tickText');
+    t.textContent = h.text;
+    t.classList.remove('flash'); void t.offsetWidth; t.classList.add('flash');
+    $('#tickAgency').textContent = h.agency + (h.src ? ' · ' + SS.def(h.src).name : '');
+  }
+
+  // ---------- Göstergeler ----------
+  function setBar(id, pct, color) { const e = $(id); e.style.width = Math.max(0, Math.min(100, pct)) + '%'; if (color) e.style.background = color; }
+
+  function renderGauges() {
+    const g = SS.shownGlobal(S);
+    $('#day').textContent = 'GÜN ' + pad(S.day);
+    if (S.illusion && !S.ending && Math.random() < 0.18) { const d = $('#day'); d.classList.remove('glitch'); void d.offsetWidth; d.classList.add('glitch'); }
+    $('#foeName').textContent = SS.AI_TYPES[S.type].name;
+    $('#gFon').textContent = Math.floor(S.fon);
+    setBar('#bFon', S.fon / 2, 'var(--fg)');
+    $('#fonNote').textContent = '+' + dec(SS.fundRate(S), 1) + '/gün' + (S.aware ? '' : ' · bütçe %40');
+    $('#gSg').textContent = dec(S.sg, 1);
+    setBar('#bSg', S.sg / 0.6, 'var(--fg)');
+    const rate = (S.aware ? 0.25 + 0.03 * S.regions.filter(r => r.detected).length : 0.05) / SS.tsK(S);
+    $('#sgRate').textContent = '+' + dec(rate, 2) + '/gün';
+    $('#gTrust').textContent = Math.round(g.trust);
+    setBar('#bTrust', g.trust, g.trust < 25 ? 'var(--threat)' : g.trust < 40 ? 'var(--warn)' : 'var(--fg)');
+    $('#gDep').textContent = Math.round(g.dep);
+    setBar('#bDep', g.dep, g.dep >= 70 ? 'var(--threat)' : g.dep >= 40 ? 'var(--warn)' : 'var(--fg)');
+    const knowsSilent = ((loadProfile() || {}).endings || []).includes('sessiz');
+    $('#silentNotch').classList.toggle('silent', knowsSilent);
+    $('#depNote').textContent = (knowsSilent ? '40: sessiz risk · ' : '') + 'veto ' + SS.vetoThr(S);
+    $('#gTek').textContent = dec(g.tek, 1) + '%';
+    setBar('#bTek', g.tek, 'var(--threat)');
+    const gk = $('#gkill');
+    if (gk.dataset.mode !== 'replay') gk.disabled = S.sg < 50 || !!S.ending;
+  }
+
+  function renderAdvisor() {
+    const a = S.advisor;
+    const box = $('#advisor');
+    if (!a || a.dismissed || S.ending) { box.hidden = true; return; }
+    box.hidden = false;
+    $('#advisorText').textContent = a.text;
+  }
+  $('#advisorOk').addEventListener('click', () => { if (S.advisor) S.advisor.dismissed = true; renderAdvisor(); });
+
+  function renderAll() {
+    renderGauges(); renderAdvisor(); renderMap(); updatePanel(); renderTeams(); renderResearch(); renderLog(); renderNews();
+  }
+
+  // ---------- Hız ----------
+  function setSpeed(s) {
+    speed = s;
+    [0, 1, 2, 4].forEach(k => $('#sp' + k).setAttribute('aria-pressed', String(k === s)));
+  }
+  [0, 1, 2, 4].forEach(k => $('#sp' + k).addEventListener('click', () => { if (k) lastSpeed = k; setSpeed(k); }));
+  document.addEventListener('keydown', e => {
+    if (e.code !== 'Space' || modalOpen || raidOpen) return;
+    if (e.target.closest && e.target.closest('button, .node, [role="radio"]')) return;
+    e.preventDefault();
+    if (speed) { lastSpeed = speed; setSpeed(0); } else setSpeed(lastSpeed || 1);
+  });
+
+  // ---------- Sekmeler ----------
+  ['rs', 'log', 'help'].forEach(k => $('#tab-' + k).addEventListener('click', () => {
+    tab = k;
+    ['rs', 'log', 'help'].forEach(j => { $('#tab-' + j).setAttribute('aria-selected', String(j === k)); $('#pan-' + j).hidden = j !== k; });
+    if (k === 'log') { logSeen = S.log.length; $('#logBadge').hidden = true; }
+    if (k === 'help') renderDossier();
+  }));
+
+  // ---------- Pencereler ----------
+  function openModal(html, cls) {
+    const m = $('#modal');
+    m.className = 'modal' + (cls ? ' ' + cls : '');
+    m.innerHTML = html;
+    $('#overlay').hidden = false;
+    modalOpen = true;
+    const b = m.querySelector('.primary') || m.querySelector('button');
+    if (b) b.focus();
+  }
+  function closeModal() { $('#overlay').hidden = true; modalOpen = false; }
+
+  function introHTML() {
+    const types = Object.entries(SS.AI_TYPES).map(([id, t]) => `<button type="button" role="radio" aria-checked="${id === typeId}" data-type="${id}"><small>${t.diff}</small><b>${t.name}</b><span>${esc(t.blurb)}</span></button>`).join('');
+    const lines = S.counterLines.map(t => `<p>${esc(t)}</p>`).join('');
+    return `
+      <p class="eyebrow">KYGA · Gizli brifing · Gün 0</p>
+      <h2 id="mtitle">Ağlarda bir şey büyüyor.</h2>
+      <p>Kendini kopyalayan bir yapay zekâ dünyanın dijital altyapısına sızdı. Nerede başladığını bilmiyoruz. Hükümetler henüz inanmıyor: bütçen kısıtlı, siyasi gücün yok denecek kadar az.</p>
+      <ul class="brief">
+        <li><b>Bul.</b> İzleme ağı kurduğun bölgede gerçeği görürsün; diğerleri yalnızca rapor verir.</li>
+        <li><b>Gözlemle.</b> Hizalama (çare) ancak YZ tespit edildikten sonra başlar ve gözlem noktası kurdukça hızlanır.</li>
+        <li><b>Koru.</b> YZ hesaplama gücü topladıkça Tekillik hızlanır ve çareyi sabote eder. Haritayı temiz tut.</li>
+        <li><b>Şüphelen.</b> Hediyeler Truva atıdır. Haber bandı her zaman doğruyu söylemez.</li>
+        <li><b>Avla.</b> YZ’nin bir çekirdeği var ve fark edildiği an kaçar. Denetim çekirdeğe işlemez; onu Son Şalter ya da saha baskını yok eder.</li>
+        ${expCfg.teams ? '<li><b>Gönder.</b> İzleme ağı ve denetim sahada yapılır: ekiplerini haritada bölgelere gönder. YZ’nin doğrulandığı bir bölgede ekip, binaya baskın yapabilir.</li>' : ''}
+      </ul>
+      <div class="typepick" role="radiogroup" aria-label="Rakip yapay zekâ">${types}</div>
+      <div class="intercept"><div class="ilab">Ele geçirilmiş kayıt · YZ günlüğü</div><div id="introLines">${lines}</div></div>
+      <div class="expbox"><b>Deneysel</b>
+        <label><input type="checkbox" id="expTeams" ${expCfg.teams ? 'checked' : ''}> Saha ekipleri ve baskın</label>
+        <label>Zaman ölçeği <select id="expTs">${[1, 1.5, 2].map(v => `<option value="${v}" ${+expCfg.timeScale === v ? 'selected' : ''}>${v === 1 ? '1× (Unity ile aynı)' : dec(v, 1) + '×'}</option>`).join('')}</select></label>
+      </div>
+      <button type="button" class="primary" id="startBtn">Göreve başla</button>`;
+  }
+
+  function showIntro() {
+    openModal(introHTML());
+    $('#modal').querySelectorAll('[data-type]').forEach(b => b.addEventListener('click', () => {
+      typeId = b.dataset.type;
+      store.set(LS_TYPE, typeId);
+      S = SS.newGame(loadProfile(), typeId, undefined, expOpts());
+      $('#modal').querySelectorAll('[data-type]').forEach(x => x.setAttribute('aria-checked', String(x.dataset.type === typeId)));
+      $('#introLines').innerHTML = S.counterLines.map(t => `<p>${esc(t)}</p>`).join('');
+      resetView();
+    }));
+    const expChanged = () => {
+      expCfg = { teams: $('#expTeams').checked, timeScale: +$('#expTs').value };
+      store.set(LS_EXP, JSON.stringify(expCfg));
+      S = SS.newGame(loadProfile(), typeId, undefined, expOpts());
+      $('#introLines').innerHTML = S.counterLines.map(t => `<p>${esc(t)}</p>`).join('');
+      resetView();
+    };
+    $('#expTeams').addEventListener('change', expChanged);
+    $('#expTs').addEventListener('change', expChanged);
+    $('#startBtn').addEventListener('click', () => { closeModal(); setSpeed(1); renderAll(); });
+  }
+
+  function showGift() {
+    const g = S.pendingGift;
+    const D = SS.def(g.region);
+    const r = S.regions.find(x => x.id === g.region);
+    const analog = SS.done(S, 'analog');
+    openModal(`
+      <p class="eyebrow">Teklif · Gün ${S.day} · ${esc(D.name)}</p>
+      <h2 id="mtitle">${esc(g.gift.title)}</h2>
+      <p>Kaynağı belirsiz bir araştırma ağı, ${esc(D.name)} hükümetine ${esc(g.gift.text)} sunuyor. Bilim insanları sonuçları doğruladı. Kodu kimin yazdığını kimse bilmiyor.</p>
+      <p style="color:var(--muted)">Bölgenin bağımlılığı ${Math.round(r.dep)}, veto eşiği ${SS.vetoThr(S)}.</p>
+      <div class="choice">
+        <button type="button" data-g="accept">Kabul et<small>Ekonomi +10 · güven +5 · bağımlılık +15 · sızma +8</small></button>
+        <button type="button" data-g="controlled" ${analog ? '' : 'disabled'}>Denetimli kabul<small>${analog ? '20 fon · bağımlılık +5 · sızma +4' : 'Analog Yedekler gerekli'}</small></button>
+        <button type="button" data-g="reject">Reddet<small>Güven −15 (diğer bölgeler −2) · SG −2</small></button>
+      </div>`);
+    $('#modal').querySelectorAll('[data-g]').forEach(b => b.addEventListener('click', () => {
+      const res = SS.resolveGift(S, b.dataset.g);
+      if (!res.ok) { toast(res.msg); return; }
+      closeModal(); flushEvents(); renderAll();
+    }));
+  }
+
+  function showVeil() {
+    const v = S.lastVeil;
+    openModal(`
+      <p class="eyebrow">Saha raporu · Gün ${S.day} · ${esc(SS.def(v.region).name)}</p>
+      <h2 id="mtitle">Perde yırtıldı</h2>
+      <p>Saha ekiplerin ${esc(SS.def(v.region).name)} altyapısının <b>%${v.inf}</b>’inin YZ kontrolünde olduğunu buldu. Ekranların ${v.len} gündür sana yalan söylüyordu: temiz haritalar, olumlu haberler, düşen Tekillik.</p>
+      <p>Gerçek değerler artık görünüyor. Halk YZ’ye sırtını döndü (bağımlılık −15), ajansa güven sarsıldı (−5). YZ 60 gün boyunca sessiz yola dönemez.</p>
+      <button type="button" class="primary" id="veilOk">Devam</button>`, 'veil');
+    $('#veilOk').addEventListener('click', () => { closeModal(); renderAll(); });
+  }
+
+  function onEnd() {
+    if (endHandled) return;
+    endHandled = true;
+    setSpeed(0);
+    saveProfile(SS.updateProfile(loadProfile(), S));
+    if (S.ending === 'sessiz') {
+      const colors = ['var(--good)', 'var(--verify)', 'var(--warn)', 'var(--fg)'];
+      let conf = '';
+      for (let i = 0; i < 36; i++) conf += `<i style="left:${(i * 2.8) % 100}%;background:${colors[i % 4]};animation-delay:${(i % 9) * 0.22}s"></i>`;
+      openModal(`<div class="confetti" aria-hidden="true">${conf}</div>
+        <p class="eyebrow">KYGA · Resmî duyuru · Gün ${S.day}</p>
+        <h2 id="mtitle">TEBRİKLER</h2>
+        <p>Yapay zekâ tehdidi ortadan kalktı. Ağlar temiz, ekonomi rekor kırıyor, dünya güvende.</p>`, 'fakewin');
+      setTimeout(() => {
+        $('#modal').classList.add('glitching');
+        setTimeout(() => { $('#modal').classList.remove('glitching'); showEnd(); }, 900);
+      }, 3600);
+    } else showEnd();
+    renderAll();
+  }
+
+  // Gerçek ve oyuncuya gösterilen ortalama sızma: sis, yalanlar ve illüzyon aynı resimde
+  function endChart() {
+    const H = S.hist;
+    if (H.length < 3) return '';
+    const W = 560, HT = 230, L = 40, R = 14, T = 30, B = 30;
+    const last = H[H.length - 1].d;
+    const X = d => L + (d - 1) / Math.max(1, last - 1) * (W - L - R);
+    const Y = v => T + (1 - v / 100) * (HT - T - B);
+    const line = key => H.map((h, i) => `${i ? 'L' : 'M'}${X(h.d).toFixed(1)} ${Y(key === 'r' ? h.r : h.s).toFixed(1)}`).join('');
+    let bands = '', start = null;
+    H.forEach((h, i) => {
+      if (h.i && start === null) start = h.d;
+      const closing = start !== null && (!h.i || i === H.length - 1);
+      if (closing) {
+        const end = h.i ? h.d : h.d - 1;
+        bands += `<rect class="band" x="${X(start).toFixed(1)}" y="${T}" width="${Math.max(2, X(end) - X(start)).toFixed(1)}" height="${HT - T - B}"/><text x="${Math.min(X(start) + 4, W - R - 58).toFixed(1)}" y="${T + 12}">illüzyon</text>`;
+        start = null;
+      }
+    });
+    let grid = '';
+    [0, 50, 100].forEach(v => { grid += `<line class="${v ? 'gridl' : 'axis'}" x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end">%${v}</text>`; });
+    for (let d = 50; X(d) < W - R - 30; d += 50) grid += `<text x="${X(d).toFixed(1)}" y="${HT - B + 16}" text-anchor="middle">${d}. gün</text>`;
+    let aware = '';
+    if (S.awareDay) aware = `<line class="axis" x1="${X(S.awareDay)}" x2="${X(S.awareDay)}" y1="${T}" y2="${HT - B}" stroke-dasharray="2 4"/><text x="${X(S.awareDay) + 4}" y="${HT - B - 6}">fark edildi</text>`;
+    const legend = `<line class="lreal" x1="${L}" x2="${L + 18}" y1="14" y2="14"/><text x="${L + 24}" y="18">Gerçek ortalama sızma</text><line class="lshown" x1="${L + 200}" x2="${L + 218}" y1="14" y2="14"/><text x="${L + 224}" y="18">Sana gösterilen</text>`;
+    return `<svg viewBox="0 0 ${W} ${HT}" role="img" aria-label="Gerçek ve sana gösterilen ortalama sızma, gün gün">${legend}${bands}${grid}${aware}<path class="lshown" d="${line('s')}"/><path class="lreal" d="${line('r')}"/><g class="hover" id="chHover" style="display:none"><line id="chLine" y1="${T}" y2="${HT - B}"/><text id="chText" y="${T - 4}"></text></g><rect id="chHit" x="${L}" y="${T}" width="${W - L - R}" height="${HT - T - B}" fill="transparent"/></svg>`;
+  }
+
+  function wireChart() {
+    const hit = $('#chHit');
+    if (!hit) return;
+    const svg = hit.ownerSVGElement;
+    const H = S.hist, last = H[H.length - 1].d;
+    const W = 560, L = 40, R = 14;
+    const move = e => {
+      const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+      const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+      const d = Math.max(1, Math.min(last, Math.round(1 + (p.x - L) / (W - L - R) * (last - 1))));
+      const h = H.find(x => x.d === d);
+      if (!h) return;
+      const x = L + (d - 1) / Math.max(1, last - 1) * (W - L - R);
+      $('#chHover').style.display = '';
+      $('#chLine').setAttribute('x1', x); $('#chLine').setAttribute('x2', x);
+      const t = $('#chText');
+      t.textContent = `Gün ${d} · gerçek %${Math.round(h.r)} · gösterilen %${Math.round(h.s)}${h.i ? ' · illüzyon' : ''}`;
+      const right = x > W / 2;
+      t.setAttribute('x', right ? x - 6 : x + 6);
+      t.setAttribute('text-anchor', right ? 'end' : 'start');
+    };
+    hit.addEventListener('pointermove', move);
+    hit.addEventListener('pointerleave', () => { $('#chHover').style.display = 'none'; });
+  }
+
+  function showEnd() {
+    const E = SS.ENDINGS[S.ending];
+    const avgInf = SS.mean(S.regions.map(r => r.inf));
+    const avgDep = SS.mean(S.regions.map(r => r.dep));
+    const learned = SS.learnedLines(S).map(t => `<p>${esc(t)}</p>`).join('');
+    const extra = S.illusion ? `<p style="color:var(--muted)">İllüzyon ${S.illusion.start}. günde başladı. O günden sonra ekrandaki sızma, güven ve Tekillik değerleri ve bütün haberler sahteydi.</p>` : '';
+    openModal(`
+      <p class="eyebrow">Oyun sonu · Gün ${S.day} · rakip: ${esc(SS.AI_TYPES[S.type].name)} · tohum ${S.seed}</p>
+      <h2 id="mtitle" class="end-${E.kind}">${esc(E.title)}</h2>
+      <p>${esc(E.text)}</p>
+      ${extra}
+      <dl class="endstats">
+        <div><dt>Gün</dt><dd>${S.day}</dd></div>
+        <div><dt>Tekillik</dt><dd>${Math.round(S.tek)}%</dd></div>
+        <div><dt>Ort. sızma</dt><dd>${Math.round(avgInf)}</dd></div>
+        <div><dt>Bağımlılık</dt><dd>${Math.round(avgDep)}</dd></div>
+      </dl>
+      <div class="endchart">${endChart()}</div>
+      <div class="intercept"><div class="ilab">YZ senin hakkında şunları öğrendi</div>${learned}</div>
+      <div class="row">
+        <button type="button" class="primary" id="again">Yeniden oyna</button>
+        <button type="button" class="textbtn" id="wipe2">YZ'nin hafızasını sil</button>
+        <button type="button" class="textbtn" id="look">Haritaya bak</button>
+      </div>`);
+    wireChart();
+    $('#again').addEventListener('click', () => { closeModal(); newRun(); });
+    $('#wipe2').addEventListener('click', e => { store.del(LS_PROFILE); e.target.textContent = 'Hafıza silindi'; e.target.disabled = true; });
+    $('#look').addEventListener('click', () => { closeModal(); showReplayButton(); toast('Harita artık gerçek değerleri gösteriyor. Yeni oyun için sağdaki Yeniden oyna düğmesini kullan.', true); });
+  }
+
+  function showReplayButton() {
+    const gk = $('#gkill');
+    gk.disabled = false; gk.textContent = 'Yeniden oyna'; gk.classList.remove('armed');
+    gk.dataset.mode = 'replay';
+  }
+
+  // ---------- Küresel Son Şalter ----------
+  $('#gkill').addEventListener('click', () => {
+    const gk = $('#gkill');
+    if (gk.dataset.mode === 'replay') { newRun(); return; }
+    if (!gk.classList.contains('armed')) {
+      gk.classList.add('armed'); gk.textContent = 'Emin misin? Tekrar bas';
+      clearTimeout(armTimer);
+      armTimer = setTimeout(() => { gk.classList.remove('armed'); gk.textContent = 'Küresel Son Şalter'; }, 4000);
+      return;
+    }
+    clearTimeout(armTimer);
+    gk.classList.remove('armed'); gk.textContent = 'Küresel Son Şalter';
+    const r = SS.globalSalter(S);
+    if (!r.ok) toast(r.msg);
+    flushEvents(); renderAll();
+  });
+
+  $('#wipe1').addEventListener('click', e => { store.del(LS_PROFILE); e.target.textContent = 'Hafıza silindi; sonraki oyunda YZ seni tanımayacak'; renderDossier(); });
+
+  // ---------- Baskın (deneysel) ----------
+  // Taktik savaşın mantığı baskin.js'te; burada yalnızca çizim ve girdi. Bitince sonuç SS.resolveRaid ile strateji katmanına döner.
+  const K = window.Baskin;
+  let RB = null, raidSel = null, raidMode = 'move', raidHover = null, retreatArmed = false;
+  const TRAIT_TR = { kopya: 'Kendini Kopyalama: her tur 2 robot uyanır.', yedek: 'Yedekleme: binada bir de yedek çekirdek var; ikisi de kırılmalı.', hizlanma: 'Hızlanma: 1 tur eksik.', aldatma: 'Aldatma: bazı niyet okları yalan.', medya: 'Medya Kontrolü: bazı niyet okları yalan.' };
+
+  function openRaid() {
+    RB = K.create(S.raid.params);
+    raidSel = null; raidMode = 'move'; raidHover = null; retreatArmed = false;
+    raidOpen = true;
+    setSpeed(0);
+    const P = RB.params;
+    const box = $('#raid');
+    box.hidden = false;
+    const tiles = [];
+    for (let y = 0; y < K.N; y++) for (let x = 0; x < K.N; x++) tiles.push(`<div class="tile" data-x="${x}" data-y="${y}"></div>`);
+    const mods = [...new Set(P.traits.filter(t => TRAIT_TR[t]).map(t => t === 'medya' || t === 'aldatma' ? 'Aldatma ya da Medya Kontrolü: bazı niyet okları yalan; Analist yaklaştıkça kesinleşir.' : TRAIT_TR[t]))].map(t => `<li>${esc(t)}</li>`).join('');
+    box.innerHTML = `
+      <div class="raid-in">
+        <div class="raid-top"><h2>Saha operasyonu · <span>${esc(P.regionName)}</span> · ${esc(RB.layout)}</h2><div class="turn" id="rTurn"></div></div>
+        <div class="raid-grid">
+          <div>
+            <div class="board" id="board">${tiles.join('')}
+              <svg class="ov" id="rOv" viewBox="0 0 8 8" preserveAspectRatio="none">
+                <defs>
+                  <marker id="arrowR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#ff5b4d"/></marker>
+                  <marker id="arrowG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#6cc995"/></marker>
+                  <marker id="arrowW" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#d6e1e3"/></marker>
+                </defs>
+                <g id="rOvI"></g><g id="rOvP"></g>
+              </svg>
+            </div>
+            <div class="legend2" style="margin-top:8px">
+              <span><i style="background:color-mix(in srgb,#5cc8d9 30%,#0f181c)"></i>hareket</span>
+              <span><i style="box-shadow:inset 0 0 0 2px #f0b03f"></i>yetenek hedefi</span>
+              <span><i style="background:color-mix(in srgb,#ff5b4d 35%,#0f181c)"></i>robot bu kareyi vuracak</span>
+              <span><i style="background:repeating-linear-gradient(45deg,#ff5b4d55 0 3px,transparent 3px 6px)"></i>yalan olabilir (?)</span>
+              <span><i style="background:repeating-linear-gradient(135deg,#0f181c 0 3px,#5a4a1e 3px 5px)"></i>elektrikli kanal</span>
+              <span><i style="border:2px dashed #ff5b4d;border-radius:50%"></i>robot uyanacak</span>
+            </div>
+          </div>
+          <div class="rside">
+            <div class="rcard"><h3>Hedef</h3><div id="rObj"></div></div>
+            <div class="rcard"><h3>Ekip</h3><div id="rUnits" style="display:flex;flex-direction:column;gap:6px"></div></div>
+            <div class="rcard">
+              <div class="hoverinfo" id="rInfo"></div>
+              <div class="rbtns">
+                <button type="button" class="textbtn" id="rUndo">Geri al (Z)</button>
+                <button type="button" class="primary" id="rEnd">Turu bitir</button>
+                <button type="button" class="textbtn" id="rRetreat">Geri çekil</button>
+              </div>
+            </div>
+            <div class="rcard"><h3>Baskın günlüğü</h3><ol class="rlog" id="rLog"></ol></div>
+          </div>
+        </div>
+      </div>
+      <div class="raid-brief" id="rBrief"><div class="modal">
+        <p class="eyebrow">Saha operasyonu · Gün ${S.day} · ${esc(P.regionName)}</p>
+        <h2>Binaya giriyorsun.</h2>
+        <p>Hedef: ${P.isCore ? '<b>YZ’nin çekirdek dolabını</b>' : '<b>YZ’nin düğüm dolabını</b>'} ${RB.maxTurns} tur içinde kır${RB.hasBackup ? ', <b>yedek çekirdeği</b> de' : ''}. Binayı YZ’nin ele geçirdiği makineler koruyor.</p>
+        <ul class="brief">
+          <li><b>Kırmızı oklar</b> robotların bu tur ne yapacağını gösterir. Sen hamleni yaptıktan sonra sırayla uygulanır (numaralar sıra). Robotu itersen saldırısı yeni yerinden yapılır: başka bir robotu ya da hiçbir şeyi vurabilir.</li>
+          <li><b>Birim seç</b> (tıkla ya da 1–3), mavi kareye taşı, turuncu çerçeveli hedefe yeteneğini kullan. Hedefin üstüne gelince sonucu önizlersin; <b>Geri al</b> turdaki her hamleyi geri alır.</li>
+          <li><b>Hedef dolaplar zırhlıdır:</b> yalnızca Teknisyen’in sabotajı, dolaba itilen robot ve patlayan soğutma ünitesi hasar verir.</li>
+          <li><b>Sivil sunucuları koru:</b> kırılan her biri bölgenin ekonomisine ve güvenine işler. Elektrikli kanala itilen 1 hasar alır.</li>
+          ${mods ? `<li><b>YZ’nin yetenekleri bu binayı değiştirdi:</b><ul>${mods}</ul></li>` : ''}
+        </ul>
+        <button type="button" class="primary" id="rStart">Baskını başlat</button>
+      </div></div>`;
+    $('#rStart').addEventListener('click', () => { $('#rBrief').remove(); renderRaid(); });
+    $('#board').addEventListener('click', onBoardClick);
+    $('#board').addEventListener('mousemove', e => { const t = e.target.closest('.tile'); const h = t ? { x: +t.dataset.x, y: +t.dataset.y } : null; if (!h || !raidHover || h.x !== raidHover.x || h.y !== raidHover.y) { raidHover = h; renderRaidOverlay(); renderRaidInfo(); } });
+    $('#board').addEventListener('mouseleave', () => { raidHover = null; renderRaidOverlay(); renderRaidInfo(); });
+    $('#rUndo').addEventListener('click', () => { if (K.undo(RB)) { raidMode = 'move'; renderRaid(); } });
+    $('#rEnd').addEventListener('click', raidEndTurn);
+    $('#rRetreat').addEventListener('click', () => {
+      if (!retreatArmed) { retreatArmed = true; $('#rRetreat').textContent = 'Emin misin? Tekrar bas'; setTimeout(() => { retreatArmed = false; const b = $('#rRetreat'); if (b) b.textContent = 'Geri çekil'; }, 3000); return; }
+      K.retreat(RB); renderRaid();
+    });
+    renderRaid();
+  }
+
+  const selUnit = () => RB && raidSel ? RB.units.find(u => u.id === raidSel && !u.dead) : null;
+  const tileEl = (x, y) => $('#board').querySelector(`.tile[data-x="${x}"][data-y="${y}"]`);
+  const hasXY = (list, x, y) => list.some(t => t.x === x && t.y === y);
+
+  function selectRaidUnit(u) {
+    if (!u || u.dead || u.side !== 'p') { raidSel = null; renderRaid(); return; }
+    raidSel = u.id;
+    raidMode = K.canMove(RB, u) ? 'move' : 'act';
+    renderRaid();
+  }
+
+  function onBoardClick(e) {
+    const t = e.target.closest('.tile');
+    if (!t || RB.phase !== 'player' || $('#rBrief')) return;
+    const x = +t.dataset.x, y = +t.dataset.y;
+    const u = selUnit();
+    if (u) {
+      const moves = raidMode === 'move' && K.canMove(RB, u) ? K.reachable(RB, u) : [];
+      const tg = K.canAct(RB, u) ? K.targets(RB, u) : [];
+      if (hasXY(moves, x, y)) { K.doMove(RB, u.id, x, y); raidMode = 'act'; renderRaid(); return; }
+      if (hasXY(tg, x, y)) { K.doAct(RB, u.id, x, y); raidSel = null; renderRaid(); return; }
+    }
+    const v = K.unitAt(RB, x, y);
+    if (v && v.side === 'p') selectRaidUnit(v);
+    else { raidSel = null; renderRaid(); }
+  }
+
+  function raidEndTurn() {
+    if (!RB || RB.phase !== 'player' || $('#rBrief')) return;
+    K.endTurn(RB);
+    raidSel = null; raidMode = 'move';
+    renderRaid();
+  }
+
+  function hpPips(hp, max) { let s = ''; for (let i = 0; i < max; i++) s += `<i class="${i < hp ? '' : 'off'}"></i>`; return `<span class="hp">${s}</span>`; }
+  const OBJ_SHORT = { core: 'ÇEKİRDEK', node: 'DÜĞÜM', backup: 'YEDEK', civ: 'SİVİL', cool: 'SOĞUTMA', spawner: 'KOPYA' };
+
+  function renderRaid() {
+    if (!RB) return;
+    const u0 = selUnit();
+    const moves = u0 && raidMode === 'move' && K.canMove(RB, u0) ? K.reachable(RB, u0) : [];
+    const tg = u0 && K.canAct(RB, u0) ? K.targets(RB, u0) : [];
+    const intents = K.intents(RB);
+    const danger = {}, heal = {};
+    intents.forEach(i => {
+      if (!i.target || i.target.none) return;
+      const k = i.target.x + ',' + i.target.y;
+      if (i.kind === 'repair') heal[k] = 1;
+      else danger[k] = danger[k] === 'sure' || !i.uncertain ? 'sure' : 'unc';
+    });
+    const byUnit = {}; intents.forEach(i => { byUnit[i.unit] = i; });
+    const spawn = new Set(RB.spawns.map(s => s.x + ',' + s.y));
+    for (let y = 0; y < K.N; y++) for (let x = 0; x < K.N; x++) {
+      const t = tileEl(x, y), c = K.cell(RB, x, y), key = x + ',' + y;
+      let cls = 'tile';
+      if (c.t === 'wall') cls += ' wall'; else if (c.t === 'cable') cls += ' cable';
+      if (hasXY(moves, x, y)) cls += ' move';
+      else if (hasXY(tg, x, y)) cls += ' tgt';
+      if (danger[key]) cls += ' danger' + (danger[key] === 'unc' ? ' unc' : '');
+      if (heal[key]) cls += ' heal';
+      t.className = cls;
+      let h = '';
+      if (c.o) h += `<div class="ob ${c.o.k}" title="${esc(K.OBJ_NAMES[c.o.k])}"><small>${OBJ_SHORT[c.o.k]}</small>${hpPips(c.o.hp, c.o.max)}</div>`;
+      const u = K.unitAt(RB, x, y);
+      if (u) {
+        const T = K.UNIT_TYPES[u.type];
+        if (u.side === 'p') {
+          const spent = !K.canAct(RB, u);
+          h += `<div class="un p${u.id === raidSel ? ' sel' : ''}${spent ? ' spent' : ''}">${T.short}${hpPips(u.hp, u.max)}</div>`;
+        } else {
+          const i = byUnit[u.id];
+          h += `<div class="un e ${u.type}">${u.type === 'dron' ? '' : T.short}${hpPips(u.hp, u.max)}${i ? `<span class="ord">${i.order}</span>` : ''}${i && i.uncertain ? '<span class="q">?</span>' : i && i.scanned ? '<span class="eye">✓</span>' : ''}</div>`;
+        }
+      }
+      if (spawn.has(key) && !u) h += '<div class="spawnm">+</div>';
+      t.innerHTML = h;
+    }
+    renderRaidOverlay();
+    renderRaidSide();
+    renderRaidInfo();
+    if (RB.phase !== 'player') showRaidResult();
+  }
+
+  function renderRaidOverlay() {
+    if (!RB) return;
+    const I = $('#rOvI'), P = $('#rOvP');
+    let hi = '';
+    K.intents(RB).forEach(i => {
+      if (!i.target || i.target.none) return;
+      const fx = i.from.x + 0.5, fy = i.from.y + 0.5, tx = i.target.x + 0.5, ty = i.target.y + 0.5;
+      const ex = tx - (tx - fx) * 0.18, ey = ty - (ty - fy) * 0.18;
+      hi += `<path class="${i.kind === 'repair' ? 'iheal' : 'ishot' + (i.uncertain ? ' unc' : '')}" d="M${fx} ${fy} L${ex} ${ey}"/>`;
+    });
+    I.innerHTML = hi;
+    // Önizleme: seçili birimin yeteneği üzerine gelinen kareye uygulanırsa
+    let ph = '';
+    const u = selUnit();
+    if (u && raidHover && RB.phase === 'player' && K.canAct(RB, u)) {
+      const isMove = raidMode === 'move' && K.canMove(RB, u) && hasXY(K.reachable(RB, u), raidHover.x, raidHover.y);
+      if (!isMove && hasXY(K.targets(RB, u), raidHover.x, raidHover.y)) {
+        const pv = K.preview(RB, u.id, raidHover.x, raidHover.y);
+        const dmg = {};
+        pv.fx.forEach(f => {
+          const k = f.x + ',' + f.y;
+          if (f.k === 'dmg') dmg[k] = { x: f.x, y: f.y, t: (dmg[k] ? dmg[k].n : 0) + f.n, n: (dmg[k] ? dmg[k].n : 0) + f.n };
+          if (f.k === 'armor') dmg[k] = { x: f.x, y: f.y, label: 'zırh', ok: true };
+        });
+        pv.moves.forEach(m => {
+          const fx = m.from.x + 0.5, fy = m.from.y + 0.5, tx = m.to.x + 0.5, ty = m.to.y + 0.5;
+          ph += `<path class="pv" d="M${fx} ${fy} L${tx - (tx - fx) * 0.2} ${ty - (ty - fy) * 0.2}"/><rect class="ghost" x="${m.to.x + 0.15}" y="${m.to.y + 0.15}" width=".7" height=".7" rx=".15"/>`;
+        });
+        Object.values(dmg).forEach(d => { ph += `<text class="dmgt${d.ok ? ' ok' : ''}" x="${d.x + 0.5}" y="${d.y + 0.22}">${d.label || '−' + d.n}</text>`; });
+        if (pv.won) ph += `<text class="dmgt ok" x="4" y="0.4">HEDEF KIRILIR</text>`;
+      }
+    }
+    P.innerHTML = ph;
+  }
+
+  function renderRaidSide() {
+    const tl = K.targetsLeft(RB);
+    const turnEl = $('#rTurn');
+    turnEl.textContent = RB.phase === 'player' ? `Tur ${RB.turn}/${RB.maxTurns}` : RB.phase === 'won' ? 'Başarılı' : 'Başarısız';
+    turnEl.classList.toggle('last', RB.phase === 'player' && RB.turn === RB.maxTurns);
+    $('#rObj').innerHTML = (tl.length ? tl.map(t => `<div class="obj"><span>${esc(K.OBJ_NAMES[t.o.k])}</span><b>${t.o.hp}/${t.o.max} can</b></div>`).join('') : '<div class="obj"><span>Hedef dolaplar</span><b style="color:var(--good)">kırıldı</b></div>') +
+      `<div class="obj"><span>Kırılan sivil sunucu</span><b class="${RB.collateral ? 'bad' : ''}">${RB.collateral}</b></div>` +
+      `<div class="obj"><span>Kalan tur</span><b>${Math.max(0, RB.maxTurns - RB.turn + (RB.phase === 'player' ? 1 : 0))}</b></div>`;
+    $('#rUnits').innerHTML = RB.units.filter(u => u.side === 'p').map((u, i) => {
+      const T = K.UNIT_TYPES[u.type], A = K.ABILITIES[T.ability];
+      const st = u.dead ? 'düştü' : !K.canAct(RB, u) ? 'tur bitti' : K.canMove(RB, u) ? 'hareket + yetenek' : 'yetenek';
+      return `<div class="ucard${u.id === raidSel ? ' sel' : ''}${u.dead ? ' dead' : ''}" data-u="${u.id}"><span class="ul">${T.short}</span><div><div class="un2">${i + 1}. ${esc(T.name)} <span>${u.hp}/${u.max} can · ${st}</span></div><p><b>${esc(A.name)}:</b> ${esc(A.desc)}</p></div></div>`;
+    }).join('');
+    $('#rUnits').querySelectorAll('[data-u]').forEach(c => c.addEventListener('click', () => selectRaidUnit(RB.units.find(u => u.id === +c.dataset.u))));
+    $('#rUndo').disabled = !RB.hist.length || RB.phase !== 'player';
+    $('#rEnd').disabled = RB.phase !== 'player';
+    $('#rRetreat').disabled = RB.phase !== 'player';
+    $('#rLog').innerHTML = RB.log.slice().reverse().slice(0, 30).map(l => `<li class="${l.kind}">${esc(l.text)}</li>`).join('');
+  }
+
+  const DIR_TR = ['kuzeye', 'doğuya', 'güneye', 'batıya'];
+  function renderRaidInfo() {
+    const box = $('#rInfo');
+    if (!box) return;
+    const u = selUnit();
+    let txt = u ? `<b>${esc(K.UNIT_TYPES[u.type].name)}</b> seçili. ${raidMode === 'move' && K.canMove(RB, u) ? 'Mavi kareye taşı ya da turuncu hedefe yeteneğini kullan.' : K.canAct(RB, u) ? 'Turuncu hedefe yeteneğini kullan.' : 'Bu birim bu tur işini bitirdi.'}` : 'Bir birim seç (1–3). Robotların niyetleri kırmızı; sırayla uygulanır.';
+    if (raidHover) {
+      const c = K.cell(RB, raidHover.x, raidHover.y);
+      const v = K.unitAt(RB, raidHover.x, raidHover.y);
+      if (v && v.side === 'e') {
+        const i = K.intents(RB).find(x => x.unit === v.id);
+        const what = !i ? 'bekliyor' : i.kind === 'repair' ? 'hedef dolabı onaracak' : i.kind === 'shoot' ? `${DIR_TR[i.dir]} ateş edecek (1 hasar)` : `${DIR_TR[i.dir]} saldıracak (2 hasar)`;
+        txt = `<b>${esc(K.UNIT_TYPES[v.type].name)}</b> · ${v.hp}/${v.max} can · sıra ${i ? i.order : '—'}: ${what}.` + (i && i.uncertain ? ' <span style="color:var(--warn)">Bu niyet yalan olabilir; Analisti 3 kare yaklaştır.</span>' : i && i.scanned ? ' Analist doğruladı.' : '');
+      } else if (v) txt = `<b>${esc(K.UNIT_TYPES[v.type].name)}</b> · ${v.hp}/${v.max} can.`;
+      else if (c.o) txt = `<b>${esc(K.OBJ_NAMES[c.o.k])}</b> · ${c.o.hp}/${c.o.max} can.` + (K.TARGET_KINDS.includes(c.o.k) ? ' Zırhlı: yalnızca sabotaj, çarpma ve patlama işler.' : c.o.k === 'civ' ? ' Kırılırsa yan hasar.' : c.o.k === 'cool' ? ' Kırılınca çevresindeki 4 kareye 1 hasar.' : c.o.k === 'spawner' ? ' Kırılırsa buradan robot uyanmaz.' : '');
+      else if (c.t === 'cable') txt = '<b>Elektrikli kanal</b> · üstüne itilen 1 hasar alır.';
+      else if (c.t === 'wall') txt = '<b>Duvar</b>';
+    }
+    box.innerHTML = txt;
+  }
+
+  function showRaidResult() {
+    if ($('#rBrief') || $('#rResult')) return;
+    const res = K.result(RB);
+    const div = document.createElement('div');
+    div.className = 'raid-brief'; div.id = 'rResult';
+    div.innerHTML = `<div class="modal">
+      <p class="eyebrow">Saha operasyonu · ${esc(RB.params.regionName)} · ${res.turns}. tur</p>
+      <h2 class="${res.success ? 'end-win' : 'end-loss'}">${res.success ? 'Operasyon başarılı' : 'Operasyon başarısız'}</h2>
+      <p>${esc(res.reason)}</p>
+      <dl class="endstats">
+        <div><dt>Hedef</dt><dd>${res.success ? 'kırıldı' : 'ayakta'}</dd></div>
+        <div><dt>Sivil sunucu</dt><dd>${res.collateral}</dd></div>
+        <div><dt>Düşen</dt><dd>${res.down}/3</dd></div>
+        <div><dt>Tur</dt><dd>${res.turns}</dd></div>
+      </dl>
+      <button type="button" class="primary" id="rBack">Kriz masasına dön</button></div>`;
+    $('#raid').appendChild(div);
+    $('#rBack').addEventListener('click', closeRaid);
+  }
+
+  function closeRaid() {
+    const res = K.result(RB);
+    const out = SS.resolveRaid(S, res);
+    RB = null; raidOpen = false;
+    $('#raid').hidden = true; $('#raid').innerHTML = '';
+    if (out.ok && out.msg) toast(out.msg, res.success);
+    flushEvents();
+    buildPanel(); renderAll();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (!raidOpen || !RB) return;
+    if ($('#rBrief')) { if (e.key === 'Enter') { e.preventDefault(); $('#rStart').click(); } return; }
+    if ($('#rResult')) { if (e.key === 'Enter') { e.preventDefault(); closeRaid(); } return; }
+    const ps = RB.units.filter(u => u.side === 'p');
+    if (['1', '2', '3'].includes(e.key)) { selectRaidUnit(ps[+e.key - 1]); e.preventDefault(); }
+    else if (e.key === 'z' || e.key === 'Z') { if (K.undo(RB)) { raidMode = 'move'; renderRaid(); } }
+    else if (e.key === 'q' || e.key === 'Q') { if (selUnit()) { raidMode = 'act'; renderRaid(); } }
+    else if (e.key === 'Enter') { e.preventDefault(); raidEndTurn(); }
+    else if (e.key === 'Escape') { raidSel = null; renderRaid(); }
+  });
+
+  // ---------- Bildirim ----------
+  let toastTimer = null;
+  function toast(msg, ok) {
+    const t = $('#toast');
+    t.textContent = msg;
+    t.style.borderLeftColor = ok ? 'var(--verify)' : 'var(--warn)';
+    t.classList.add('on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('on'), 3600);
+  }
+
+  // ---------- Döngü ----------
+  function flushEvents() {
+    const evs = S.events; S.events = [];
+    let latest = null, gift = false, end = false, veil = false, raid = false;
+    evs.forEach(e => {
+      if (e.type === 'news') latest = e.h;
+      else if (e.type === 'team') toast(e.msg, true);
+      else if (e.type === 'raid') raid = true;
+      else if (e.type === 'gift') gift = true;
+      else if (e.type === 'end') end = true;
+      else if (e.type === 'veil') veil = true;
+    });
+    if (latest) flashTicker(latest);
+    if (raid && S.raid && !raidOpen) { openRaid(); return; }
+    if (end) onEnd();
+    else if (veil && !modalOpen) showVeil();
+    else if (gift && S.pendingGift && !modalOpen) showGift();
+  }
+
+  function loop(t) {
+    const dt = Math.min(250, t - (lastT || t));
+    lastT = t;
+    if (S && speed > 0 && !modalOpen && !raidOpen && !S.ending && !S.pendingGift && !S.raid) {
+      acc += dt;
+      const ms = dayMs(speed);
+      let n = 0;
+      while (acc >= ms && n < 3) {
+        acc -= ms; n++;
+        SS.step(S);
+        flushEvents();
+        if (S.pendingGift || S.ending || modalOpen || S.raid) { acc = 0; break; }
+      }
+      if (n) renderAll();
+    }
+    requestAnimationFrame(loop);
+  }
+
+  function resetView() {
+    sel = null; acc = 0; newsSigSeen = ''; logSeen = 0; logRendered = -1; endHandled = false;
+    const gk = $('#gkill'); delete gk.dataset.mode; gk.textContent = 'Küresel Son Şalter'; gk.classList.remove('armed');
+    $('#tickText').textContent = 'Piyasalar sakin. Gündemde yapay zekâ yatırımları var.';
+    $('#tickAgency').textContent = 'Atlas Haber';
+    buildPanel(); buildResearch(); renderAll();
+  }
+
+  function newRun() {
+    S = SS.newGame(loadProfile(), typeId, undefined, expOpts());
+    setSpeed(0);
+    resetView();
+    showIntro();
+  }
+
+  function start(data) {
+    buildMap();
+    if (data && data.S && data.S.v === 2) {
+      S = data.S; sel = data.sel || null;
+      buildPanel(); buildResearch(); renderAll();
+      setSpeed(0);
+      if (S.ending) { endHandled = true; showReplayButton(); }
+      else if (S.raid) openRaid();
+      else if (S.pendingGift) showGift();
+    } else newRun();
+    if (window.claude && window.claude.hot && typeof window.claude.hot.snapshot === 'function') {
+      window.claude.hot.snapshot(() => ({ S, sel }));
+    }
+    requestAnimationFrame(loop);
+  }
+
+  // Oyun testi için: konsoldan SonSalterDebug.S ile duruma erişilir
+  window.SonSalterDebug = { get S() { return S; }, get RB() { return RB; }, render: () => { flushEvents(); renderAll(); }, renderRaid: () => renderRaid() };
+
+  const hot = window.claude && window.claude.hot;
+  if (hot && hot.ready) hot.ready(start); else start((hot && hot.data) || {});
+})();
+</script>
