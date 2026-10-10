@@ -17,6 +17,7 @@ Corrigible/                      (Unity proje kökü, git deposu)
    │  │  │  ├─ Teams/            saha ekipleri kartı ve harita işaretleri (deneysel mod)
    │  │  │  └─ Raid/             baskın (taktik savaş) ekranı (deneysel mod)
    │  │  └─ Tutorial/            eğitim sistemi
+   │  ├─ Resources/Localization/strings.txt   çeviri tablosu (tr → en)
    │  ├─ Steam/                  Steamworks.NET entegrasyonu (paket yoksa derlenmez)
    │  ├─ Editor/                 editör araçları (CorrigibleDebug)
    │  ├─ Tests/EditMode/         NUnit testleri
@@ -167,6 +168,35 @@ UI
 - Pencere açıkken yalnızca o pencereyi hedefleyen içerik gösterilir (ör. hediye ipucu). İpuçları rehberli adım
   görünmüyorken çıkar. Kayıt: PlayerPrefs `corrigible.tutorialDone`, `corrigible.tipsSeen` (virgüllü kimlik listesi).
 - **Enum'a değer eklerken sona ekle:** asset ve sahne enum'ları sayı olarak saklar; araya eklemek mevcut verileri kaydırır.
+
+## Lokalizasyon (Türkçe kaynak, İngilizce çeviri)
+
+Unity Localization paketi kullanılmadı: metinlerin çoğu motordan bağımsız Core'da (haber, günlük, danışman, eylem
+mesajları) üretiliyor ve Core `UnityEngine`'e bağlanamaz. Bunun yerine gettext tarzı hafif bir sistem var:
+
+- **`Core/Loc.cs`:** kaynak dil Türkçe; koddaki Türkçe metin anahtardır. `Loc.T(src)` çevirir, `Loc.F(src, args)`
+  çevirip dilin sayı biçimiyle (`1,5` / `1.5`) biçimler, `Loc.N(src)` yalnızca işaretler (statik başlatıcılarda;
+  gösterimde `Loc.T`). Tabloda olmayan metin kaynak hâliyle gösterilir ve `Loc.Missing` tetiklenir (geliştirme
+  sürümünde konsola uyarı).
+- **Tablo:** `Resources/Localization/strings.txt`, sekmeyle ayrılmış: `tr<TAB>en`, ilk satır dil kodları. Yeni dil =
+  yeni sütun + `Loc.Languages`'e kod. `\n`, `\t`, `\\` kaçış dizileri. `#` satırları yorum (kaynağın geldiği dosya).
+- **Statik veri:** `GameData` tanımlarının `Name`/`Desc`/`Title`... alanları okunurken çevrilen özelliklerdir
+  (`Loc.N` ile işaretli kaynak saklanır). `Baskin.UnitTypes[..].Name` de öyle; `ObjNames`, `Abilities`, `Layouts`,
+  ajans ve ekip adları gösterimde `Loc.T` ile çevrilir. Araştırma kolu (`Branch`) kimliktir; gösterirken `Loc.T`.
+- **Sahne/prefab:** sabit yazılarda `LocalizedText` bileşeni (`Game/Localization`): kaynak metni saklar, açılışta TMP
+  metni hâlâ kaynağa eşitse çevirir (görünümlerin doldurduğu metne dokunmaz). Eğitim metinleri
+  (`TutorialSequence.asset`) gösterilirken çevrilir.
+- **Dil seçimi:** `Game/Localization/Localization.cs`. Sahne yüklenmeden önce (`RuntimeInitializeOnLoadMethod`)
+  PlayerPrefs `corrigible.language`'dan, yoksa sistem diline göre (Türkçe → tr, diğerleri → en) ayarlanır. Giriş
+  penceresindeki dil düğmesi dili değiştirip sahneyi yeniden yükler; simülasyonun ürettiği metinler kayıttan yeniden
+  oynatılırken yeni dilde üretilir. Oyun ortasında dil değiştirilmez.
+- **Büyük harf:** `UiUtil.Up` Türkçede `i → İ`, diğer dillerde `i → I`.
+- **Araç:** `Editor/LocalizationTool.cs` (menü **Corrigible > Lokalizasyon**): kaynakları koddan (`Loc.T/F/N("...")`),
+  eğitim asset'inden, prefab ve sahnelerdeki `LocalizedText`'lerden toplar; tabloyu günceller (yeni satırlar boş
+  çeviriyle, silinenler dosya sonunda yorum olarak), doğrular (eksik çeviri, `{n}` yer tutucu ve `<b>/<color>` etiket
+  uyumu), yeni TMP metinlerine `LocalizedText` ekler.
+- **Testler** (`LocalizationTests`): tablo tam mı; üç tam oyun + baskınlar İngilizce oynanınca hiç eksik çeviri ya da
+  Türkçe metin çıkmıyor mu; dil oyunun sonucunu değiştiriyor mu.
 
 ## Kalıcılık ve platform
 

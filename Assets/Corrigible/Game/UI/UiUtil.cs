@@ -1,3 +1,4 @@
+using Corrigible.Core;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -25,8 +26,11 @@ namespace Corrigible.Game.UI
     /// <summary>Arayüz bileşenlerinin ortak yardımcıları.</summary>
     public static class UiUtil
     {
-        public static readonly CultureInfo Tr = new CultureInfo("tr-TR");
-        public static string Up(string s) => s.ToUpper(Tr);
+        static readonly CultureInfo TrCase = new CultureInfo("tr-TR");
+        /// <summary>Geçerli dilin sayı biçimi ("1,5" / "1.5").</summary>
+        public static CultureInfo Tr => Loc.Culture;
+        /// <summary>Büyük harf: Türkçede i → İ, diğer dillerde i → I.</summary>
+        public static string Up(string s) => s.ToUpper(Loc.IsSource ? TrCase : CultureInfo.InvariantCulture);
 
         public static void Show(Component c, bool on) { if (c.gameObject.activeSelf != on) c.gameObject.SetActive(on); }
 

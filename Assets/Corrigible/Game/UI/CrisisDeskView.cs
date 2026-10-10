@@ -121,7 +121,7 @@ namespace Corrigible.Game.UI
             }
             foreach (var row in research) row.StartClicked += id => { var r = game.StartResearch(id); if (!r.Ok) toast.Show(r.Msg); };
             foreach (var row in headlines) row.VerifyClicked += id => Report(game.Verify(id));
-            OnClick(wipe.Button, () => { game.ClearProfile(); RenderDossier(); toast.Show("Hafıza silindi; sonraki oyunda YZ seni tanımayacak.", true); });
+            OnClick(wipe.Button, () => { game.ClearProfile(); RenderDossier(); toast.Show(Loc.T("Hafıza silindi; sonraki oyunda YZ seni tanımayacak."), true); });
             OnClick(kill.Button, OnKillClicked);
             SetTab(0);
         }
@@ -181,8 +181,8 @@ namespace Corrigible.Game.UI
             map.Selected = null;
             region.Bind(Sim, null);
             DisarmKill();
-            tickText.text = "Piyasalar sakin. Gündemde yapay zekâ yatırımları var.";
-            tickAgency.text = "Atlas Haber";
+            tickText.text = Loc.T("Piyasalar sakin. Gündemde yapay zekâ yatırımları var.");
+            tickAgency.text = Loc.T("Atlas Haber");
             Render();
         }
 
@@ -200,7 +200,7 @@ namespace Corrigible.Game.UI
             if (latest == null) return;
             var h = latest.Headline;
             tickText.text = h.Text;
-            tickAgency.text = h.Agency + (h.Src != null ? " · " + GameData.Region(h.Src).Name : "");
+            tickAgency.text = Loc.T(h.Agency) + (h.Src != null ? " · " + GameData.Region(h.Src).Name : "");
         }
 
         /// <summary>Oyun bittikten sonra harita gerçek değerleri gösterirken Küresel Son Şalter düğmesi "Yeniden oyna" olur.</summary>
@@ -209,7 +209,7 @@ namespace Corrigible.Game.UI
             ReplayMode = true;
             DisarmKill();
             kill.SetEnabled(true);
-            kill.SetText("YENİDEN OYNA");
+            kill.SetText(Loc.T("YENİDEN OYNA"));
         }
 
         // ---------- Çizim ----------
@@ -217,25 +217,25 @@ namespace Corrigible.Game.UI
         {
             if (game.Sim == null) return;
             var g = Sim.Global();
-            day.text = $"GÜN {S.Day:000}";
+            day.text = Loc.F("GÜN {0:000}", S.Day);
             day.color = S.Illusion != null && S.Ending == null && UnityEngine.Random.value < 0.18f ? theme.threat : theme.fg;
-            foe.text = "RAKİP: " + Up(Sim.Type.Name);
+            foe.text = Loc.T("RAKİP: ") + Up(Sim.Type.Name);
             for (int i = 0; i < speedButtons.Length; i++)
             {
                 bool on = game.Speed == Speeds[i];
                 speedButtons[i].SetColors(on ? theme.raise : Color.clear, text: on ? theme.fg : theme.muted);
             }
 
-            string fonNote = "+" + Sim.FundRate.ToString("0.0", Tr) + "/gün";
+            string fonNote = "+" + Sim.FundRate.ToString("0.0", Tr) + Loc.T("/gün");
             double need = Sim.ResearchNeed;
-            if (need > 0) fonNote += " · araştırma −" + need.ToString("0.0", Tr);
-            if (!S.Aware) fonNote += " · bütçe %40";
+            if (need > 0) fonNote += Loc.T(" · araştırma −") + need.ToString("0.0", Tr);
+            if (!S.Aware) fonNote += Loc.T(" · bütçe %40");
             fon.Set(Math.Floor(S.Fon).ToString("0"), S.Fon / 2, theme.fg, fonNote);
-            sg.Set(S.Sg.ToString("0.0", Tr), S.Sg / 0.6, theme.fg, "+" + Sim.SgRate.ToString("0.00", Tr) + "/gün");
+            sg.Set(S.Sg.ToString("0.0", Tr), S.Sg / 0.6, theme.fg, "+" + Sim.SgRate.ToString("0.00", Tr) + Loc.T("/gün"));
             trust.Set(Js.Round(g.Trust).ToString(), g.Trust, g.Trust < 25 ? theme.threat : g.Trust < 40 ? theme.warn : theme.fg);
             bool knowsSilent = game.Profile != null && game.Profile.endings.Contains("sessiz");
             silentNotch.color = knowsSilent ? theme.threat : theme.muted;
-            dep.Set(Js.Round(g.Dep).ToString(), g.Dep, g.Dep >= 70 ? theme.threat : g.Dep >= 40 ? theme.warn : theme.fg, (knowsSilent ? "40: sessiz risk · " : "") + $"veto {Sim.VetoThreshold}");
+            dep.Set(Js.Round(g.Dep).ToString(), g.Dep, g.Dep >= 70 ? theme.threat : g.Dep >= 40 ? theme.warn : theme.fg, (knowsSilent ? Loc.T("40: sessiz risk · ") : "") + Loc.F("veto {0}", Sim.VetoThreshold));
             tek.Set(g.Tek.ToString("0.0", Tr) + "%", g.Tek, theme.threat);
 
             var adv = S.Advisor;
@@ -247,13 +247,13 @@ namespace Corrigible.Game.UI
             if (teams != null) teams.Refresh(Sim);
             if (!S.Aware)
             {
-                alignInfo.text = "Hizalama kolu kilitli: gözlemlenmemiş bir zekâ hizalanamaz. Önce YZ’yi tespit et.";
+                alignInfo.text = Loc.T("Hizalama kolu kilitli: gözlemlenmemiş bir zekâ hizalanamaz. Önce YZ’yi tespit et.");
                 alignRisk.text = "";
             }
             else
             {
-                alignInfo.text = $"Hizalama hızı %{Js.Round(Sim.AlignSpeed * 100)} · gözlem noktası {Sim.Studied}/4";
-                alignRisk.text = "Sabotaj riski %" + (Sim.SabotageChance * 100).ToString("0.0", Tr) + "/gün · sızma düştükçe azalır";
+                alignInfo.text = Loc.F("Hizalama hızı %{0} · gözlem noktası {1}/4", Js.Round(Sim.AlignSpeed * 100), Sim.Studied);
+                alignRisk.text = Loc.T("Sabotaj riski %") + (Sim.SabotageChance * 100).ToString("0.0", Tr) + Loc.T("/gün · sızma düştükçe azalır");
             }
             foreach (var row in research) row.Refresh(Sim, theme);
             for (int i = 0; i < reserveButtons.Length; i++)
@@ -263,8 +263,8 @@ namespace Corrigible.Game.UI
             }
             if (reserveInfo != null)
                 reserveInfo.text = S.ResearchReserve <= 0
-                    ? "Araştırma bütün fonu kullanabilir; pahalı araştırmalar fonu sıfırlar."
-                    : $"Araştırma fonu {ReserveText(S.ResearchReserve)} altına indirmez; bu para denetim ve izleme için kalır. Araştırma biraz yavaşlar.";
+                    ? Loc.T("Araştırma bütün fonu kullanabilir; pahalı araştırmalar fonu sıfırlar.")
+                    : Loc.F("Araştırma fonu {0} altına indirmez; bu para denetim ve izleme için kalır. Araştırma biraz yavaşlar.", ReserveText(S.ResearchReserve));
             RenderLog();
             RenderNews();
             if (!ReplayMode) kill.SetEnabled(S.Sg >= 50 && S.Ending == null);
@@ -275,7 +275,7 @@ namespace Corrigible.Game.UI
             int count = S.Log.Count;
             if (tab == 1) logSeen = count;
             int unread = count - logSeen;
-            tabs[1].SetText(tab != 1 && unread > 0 ? $"YZ GÜNLÜĞÜ ({unread})" : "YZ GÜNLÜĞÜ");
+            tabs[1].SetText(tab != 1 && unread > 0 ? Loc.F("YZ GÜNLÜĞÜ ({0})", unread) : Loc.T("YZ GÜNLÜĞÜ"));
             if (logRendered == count) return;
             logRendered = count;
             var entries = S.Log.Take(maxLogLines).ToList();
@@ -288,32 +288,33 @@ namespace Corrigible.Game.UI
         {
             var p = game.Profile;
             string[] lines;
-            if (p == null || p.runs == 0) lines = new[] { "Boş. YZ seni ilk oyunundan sonra tanımaya başlayacak." };
+            if (p == null || p.runs == 0) lines = new[] { Loc.T("Boş. YZ seni ilk oyunundan sonra tanımaya başlayacak.") };
             else
             {
                 var top = p.TopAction();
                 var ends = p.endings.Skip(Math.Max(0, p.endings.Count - 3)).Select(k => GameData.Endings.Any(e => e.Id == k) ? GameData.Ending(k).Title : k).ToArray();
                 lines = new[]
                 {
-                    $"Oyun: {p.runs}",
-                    $"Alışkanlık: {(top.Value > 0 ? ActionName(top.Key) + " (ağırlık " + top.Value + ")" : "belirsiz")}",
-                    $"İlk araştırma: {p.lastBranch ?? "—"}",
-                    $"Son sonlar: {(ends.Length > 0 ? string.Join(", ", ends) : "—")}",
-                    $"YZ’yi yanılttın: {p.misreads} kez · Perde yırttın: {p.veils} kez",
+                    Loc.F("Oyun: {0}", p.runs),
+                    Loc.F("Alışkanlık: {0}", (top.Value > 0 ? ActionName(top.Key) + Loc.F(" (ağırlık {0})", top.Value) : Loc.T("belirsiz"))),
+                    Loc.F("İlk araştırma: {0}", p.lastBranch ?? "—"),
+                    Loc.F("Son sonlar: {0}", (ends.Length > 0 ? string.Join(", ", ends) : "—")),
+                    Loc.F("YZ’yi yanılttın: {0} kez · Perde yırttın: {1} kez", p.misreads, p.veils),
                 };
             }
             FillLines(dossierContainer, textLinePrefab, lines);
         }
 
         /// <summary>Sayıya Türkçe tamlayan eki ekler: 15'in, 30'un, 60'ın.</summary>
-        static string ReserveText(double v) => v switch { 15 => "15'in", 30 => "30'un", 60 => "60'ın", _ => v.ToString("0") + "'ın" };
+        // Türkçe ek uyumu ("15'in", "30'un"); diğer dillerde yalnızca sayı
+        static string ReserveText(double v) => !Loc.IsSource ? v.ToString("0") : v switch { 15 => "15'in", 30 => "30'un", 60 => "60'ın", _ => v.ToString("0") + "'ın" };
 
         static string ActionName(string a) => a switch
         {
-            Actions.Monitor => "izleme ağı",
-            Actions.Audit => "denetim",
-            Actions.Quarantine => "karantina",
-            _ => "Son Şalter",
+            Actions.Monitor => Loc.T("izleme ağı"),
+            Actions.Audit => Loc.T("denetim"),
+            Actions.Quarantine => Loc.T("karantina"),
+            _ => Loc.T("Son Şalter"),
         };
 
         void RenderNews()
@@ -333,7 +334,7 @@ namespace Corrigible.Game.UI
             {
                 killArmed = true;
                 kill.SetColors(theme.threat, text: theme.inkOnThreat);
-                kill.SetText("EMİN MİSİN? TEKRAR BAS");
+                kill.SetText(Loc.T("EMİN MİSİN? TEKRAR BAS"));
                 if (killDisarm != null) StopCoroutine(killDisarm);
                 killDisarm = StartCoroutine(DisarmLater());
                 return;
@@ -355,7 +356,7 @@ namespace Corrigible.Game.UI
             if (killDisarm != null) { StopCoroutine(killDisarm); killDisarm = null; }
             killArmed = false;
             kill.SetColors(Color.clear, text: theme.threat);
-            kill.SetText("KÜRESEL SON ŞALTER");
+            kill.SetText(Loc.T("KÜRESEL SON ŞALTER"));
         }
     }
 }

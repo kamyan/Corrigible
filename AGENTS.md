@@ -57,7 +57,14 @@ Ayrıntılar `Docs/` altında; burada bağlam, değişmez kurallar ve en sık ku
 8. **Değişiklikten sonra doğrula:** derle (yeni hata yok), EditMode testleri geç, oyunda gerçekten dene
    (bkz. `Docs/GELISTIRME.md` → "Oyunu ajan olarak test etmek"). Denge değiştiyse `Prototype/denge-testi.js`'i
    önce ve sonra çalıştırıp karşılaştır.
-9. **Git:** Kullanıcı istemedikçe commit/push yapma. Varsayılan dal `main`.
+9. **Oyuncuya görünen her metin çevrilir (Türkçe + İngilizce).** Kodda metin Türkçe yazılır ve `Loc` ile sarılır:
+   `Loc.T("...")` düz metin, `Loc.F("... {0} ...", x)` biçimli metin (asla `$"..."` ya da `+` ile birleştirme), statik
+   tablolarda `Loc.N("...")` ve gösterirken `Loc.T(değer)`. İlk argüman dizgi sabiti olmalı. Sahnedeki sabit yazılar
+   `LocalizedText` bileşeniyle çevrilir. Metin ekledikten sonra **Corrigible > Lokalizasyon > Çeviri tablosunu güncelle**
+   ve `Resources/Localization/strings.txt`'te İngilizcesini yaz; `LocalizationTests` eksik çeviride kırılır.
+   Simülasyon hiçbir kararı metne göre vermez (dil oyunu değiştirmez; `Language_DoesNotChangeTheGame`).
+   Ayrıntı: `Docs/MIMARI.md` → Lokalizasyon. (Tarayıcı prototipi yalnızca Türkçe.)
+10. **Git:** Kullanıcı istemedikçe commit/push yapma. Varsayılan dal `main`.
 
 ## Hızlı komutlar
 

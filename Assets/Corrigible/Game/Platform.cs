@@ -1,3 +1,4 @@
+using Corrigible.Core;
 using UnityEngine;
 
 namespace Corrigible.Game
@@ -17,7 +18,7 @@ namespace Corrigible.Game
     /// <summary>Steam yokken kullanılır: başarımları yalnızca günlüğe yazar.</summary>
     public sealed class LocalPlatform : IPlatformServices
     {
-        public string Name => "Yerel";
+        public string Name => Loc.T("Yerel");
         public void UnlockAchievement(string id)
         {
             if (!string.IsNullOrEmpty(id)) Debug.Log($"[Başarım] {id}");

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3177251265172112681}
   - component: {fileID: 7592925042790445793}
   - component: {fileID: 9177636970583605564}
+  - component: {fileID: 2238370292495674665}
   m_Layer: 5
   m_Name: Ability
   m_TagString: Untagged
@@ -137,6 +138,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &2238370292495674665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 197794493769574506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d86558491724eb494a5c893d0e65ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Corrigible.Game::Corrigible.Game.LocalizedText
+  source: Sabotaj
 --- !u!1 &231996333556901629
 GameObject:
   m_ObjectHideFlags: 0
@@ -377,6 +391,7 @@ GameObject:
   - component: {fileID: 6873781755312018891}
   - component: {fileID: 6330235741779093990}
   - component: {fileID: 5081905855496161829}
+  - component: {fileID: 1056299329297935002}
   m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
@@ -523,6 +538,19 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1056299329297935002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2841044997634533891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d86558491724eb494a5c893d0e65ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Corrigible.Game::Corrigible.Game.LocalizedText
+  source: 1. Teknisyen
 --- !u!1 &3456101923406101215
 GameObject:
   m_ObjectHideFlags: 0
@@ -815,6 +843,7 @@ GameObject:
   - component: {fileID: 5586969155351138286}
   - component: {fileID: 3701205592741227317}
   - component: {fileID: 9129708265627530956}
+  - component: {fileID: 849033910349640769}
   m_Layer: 5
   m_Name: Status
   m_TagString: Untagged
@@ -941,6 +970,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &849033910349640769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5300513364044087900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d86558491724eb494a5c893d0e65ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Corrigible.Game::Corrigible.Game.LocalizedText
+  source: 3/3 can
 --- !u!1 &6351121875454603296
 GameObject:
   m_ObjectHideFlags: 0

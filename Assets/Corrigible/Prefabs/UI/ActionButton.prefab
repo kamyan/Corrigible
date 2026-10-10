@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4598512853828916541}
   - component: {fileID: 231956348611709124}
   - component: {fileID: 4907292124970529331}
+  - component: {fileID: 4852805936596642266}
   m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
@@ -137,6 +138,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &4852805936596642266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2871026769812934485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d86558491724eb494a5c893d0e65ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Corrigible.Game::Corrigible.Game.LocalizedText
+  source: Eylem
 --- !u!1 &5483997177929144289
 GameObject:
   m_ObjectHideFlags: 0
@@ -244,6 +258,7 @@ GameObject:
   - component: {fileID: 523076370661313729}
   - component: {fileID: 6713440441718623437}
   - component: {fileID: 4039559020994214722}
+  - component: {fileID: 3750721813243225738}
   m_Layer: 5
   m_Name: Sub
   m_TagString: Untagged
@@ -370,6 +385,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3750721813243225738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5625989925626989289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d86558491724eb494a5c893d0e65ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Corrigible.Game::Corrigible.Game.LocalizedText
+  source: "a\xE7\u0131klama"
 --- !u!1 &6821508539579344999
 GameObject:
   m_ObjectHideFlags: 0

@@ -33,12 +33,12 @@ namespace Corrigible.Game.UI
             var d = GameData.Region(g.Region);
             var r = s.Region(g.Region);
             bool analog = s.Done("analog");
-            eyebrow.text = $"TEKLİF · GÜN {s.Day} · {UiUtil.Up(d.Name)}";
+            eyebrow.text = Loc.F("TEKLİF · GÜN {0} · {1}", s.Day, UiUtil.Up(d.Name));
             title.text = g.Gift.Title;
-            body.text = $"Kaynağı belirsiz bir araştırma ağı, {d.Name} hükümetine {g.Gift.Text} sunuyor. Bilim insanları sonuçları doğruladı. Kodu kimin yazdığını kimse bilmiyor.";
-            dependency.text = $"Bölgenin bağımlılığı {Js.Round(r.Dep)}, veto eşiği {sim.VetoThreshold}.";
+            body.text = Loc.F("Kaynağı belirsiz bir araştırma ağı, {0} hükümetine {1} sunuyor. Bilim insanları sonuçları doğruladı. Kodu kimin yazdığını kimse bilmiyor.", d.Name, g.Gift.Text);
+            dependency.text = Loc.F("Bölgenin bağımlılığı {0}, veto eşiği {1}.", Js.Round(r.Dep), sim.VetoThreshold);
             controlled.Styled.SetEnabled(analog);
-            controlled.Sub.text = analog ? "20 fon · bağımlılık +5 · sızma +4" : "Analog Yedekler gerekli";
+            controlled.Sub.text = analog ? Loc.T("20 fon · bağımlılık +5 · sızma +4") : Loc.T("Analog Yedekler gerekli");
         }
     }
 }

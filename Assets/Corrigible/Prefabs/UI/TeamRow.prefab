@@ -108,6 +108,7 @@ GameObject:
   - component: {fileID: 9069229974122593883}
   - component: {fileID: 8595141759786689583}
   - component: {fileID: 2661763123333189014}
+  - component: {fileID: 8072694661617841040}
   m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
@@ -254,6 +255,19 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &8072694661617841040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1374219478827356011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d86558491724eb494a5c893d0e65ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Corrigible.Game::Corrigible.Game.LocalizedText
+  source: "<b>Alfa</b> \xB7 Bat\u0131 Avrupa"
 --- !u!1 &4009199898753108472
 GameObject:
   m_ObjectHideFlags: 0
@@ -552,6 +566,7 @@ GameObject:
   - component: {fileID: 6481246900556925922}
   - component: {fileID: 7585990263812065281}
   - component: {fileID: 3004252860680199616}
+  - component: {fileID: 5845676073083729605}
   m_Layer: 5
   m_Name: Status
   m_TagString: Untagged
@@ -678,6 +693,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5845676073083729605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8494528943682942174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d86558491724eb494a5c893d0e65ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Corrigible.Game::Corrigible.Game.LocalizedText
+  source: "haz\u0131r"
 --- !u!1 &9040724224017602344
 GameObject:
   m_ObjectHideFlags: 0

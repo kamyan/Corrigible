@@ -1,3 +1,4 @@
+using Corrigible.Core;
 using System;
 using System.Collections.Generic;
 using Corrigible.Game.UI;
@@ -102,7 +103,7 @@ namespace Corrigible.Game.Tutorial
             PlayerPrefs.SetInt(DoneKey, 1);
             PlayerPrefs.Save();
             Hide();
-            toast.Show("Eğitim tamamlandı. Kurallar her zaman Rehber sekmesinde.", true);
+            toast.Show(Loc.T("Eğitim tamamlandı. Kurallar her zaman Rehber sekmesinde."), true);
         }
 
         void OnNext()
@@ -155,8 +156,8 @@ namespace Corrigible.Game.Tutorial
                 if (canShow)
                 {
                     if (!visible && st.openTab >= 0) desk.ShowTab(st.openTab);
-                    Present(st, st.title, st.body, st.target, $"EĞİTİM · {step + 1}/{sequence.steps.Count}",
-                        st.completeWhen == TutorialCondition.NextButton, "Eğitimi geç", st.pauseGame);
+                    Present(st, Loc.T(st.title), Loc.T(st.body), st.target, Loc.F("EĞİTİM · {0}/{1}", step + 1, sequence.steps.Count),
+                        st.completeWhen == TutorialCondition.NextButton, Loc.T("Eğitimi geç"), st.pauseGame);
                     return;
                 }
             }
@@ -168,7 +169,7 @@ namespace Corrigible.Game.Tutorial
             if (tip != null)
             {
                 if (!TargetAvailable(tip.target)) { Hide(); return; }
-                Present(tip, tip.title, tip.body, tip.target, "İPUCU", true, null, tip.pauseGame);
+                Present(tip, Loc.T(tip.title), Loc.T(tip.body), tip.target, Loc.T("İPUCU"), true, null, tip.pauseGame);
                 return;
             }
             Hide();
@@ -195,7 +196,7 @@ namespace Corrigible.Game.Tutorial
             title.text = titleText;
             body.text = bodyText;
             UiUtil.Show(next, showNext);
-            next.SetText(tip != null ? "ANLADIM" : "İLERİ");
+            next.SetText(tip != null ? Loc.T("ANLADIM") : Loc.T("İLERİ"));
             UiUtil.Show(skip, skipText != null);
             if (skipText != null) skip.SetText(skipText);
             game.TutorialHold = pause;

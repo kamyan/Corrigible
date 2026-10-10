@@ -86,7 +86,7 @@ namespace Corrigible.Game.UI
             value.fontStyle = sh.Src == "report" ? FontStyles.Bold | FontStyles.Italic : FontStyles.Bold;
             value.color = sh.V.HasValue && sh.V > 55 && !offNow ? theme.inkOnThreat : theme.fg;
 
-            sub.text = ended ? "" : r.Left ? "İTTİFAK DIŞI" : offNow ? $"KAPALI · {r.Off} G" : r.Q ? "KARANTİNA" : "";
+            sub.text = ended ? "" : r.Left ? Loc.T("İTTİFAK DIŞI") : offNow ? Loc.F("KAPALI · {0} G", r.Off) : r.Q ? Loc.T("KARANTİNA") : "";
             sub.color = r.Off > 0 ? theme.threat : r.Left ? theme.muted : theme.warn;
             nameLabel.alpha = r.Left && !ended ? 0.45f : 1f;
         }

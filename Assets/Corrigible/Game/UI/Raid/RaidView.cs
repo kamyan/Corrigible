@@ -59,9 +59,9 @@ namespace Corrigible.Game.UI
 
         public bool IsOpen => root != null && root.activeSelf;
 
-        static readonly string[] DirTr = { "kuzeye", "doğuya", "güneye", "batıya" };
+        static readonly string[] DirTr = { Loc.N("kuzeye"), Loc.N("doğuya"), Loc.N("güneye"), Loc.N("batıya") };
         static readonly Dictionary<string, string> ObjShort = new Dictionary<string, string>
-        { ["core"] = "ÇEKİRDEK", ["node"] = "DÜĞÜM", ["backup"] = "YEDEK", ["civ"] = "SİVİL", ["cool"] = "SOĞUTMA", ["spawner"] = "KOPYA" };
+        { ["core"] = Loc.N("ÇEKİRDEK"), ["node"] = Loc.N("DÜĞÜM"), ["backup"] = Loc.N("YEDEK"), ["civ"] = Loc.N("SİVİL"), ["cool"] = Loc.N("SOĞUTMA"), ["spawner"] = Loc.N("KOPYA") };
 
         void Awake()
         {
@@ -118,20 +118,20 @@ namespace Corrigible.Game.UI
             resultPanel.SetActive(false);
             brief.SetActive(true);
             var p = B.Params;
-            title.text = $"SAHA OPERASYONU · <color=#{ColorUtility.ToHtmlStringRGB(theme.verify)}>{UiUtil.Up(p.RegionName)}</color> · {UiUtil.Up(B.Layout)}";
-            briefEyebrow.text = $"SAHA OPERASYONU · GÜN {game.Sim.S.Day} · {UiUtil.Up(p.RegionName)}";
+            title.text = Loc.F("SAHA OPERASYONU · <color=#{0}>{1}</color> · {2}", ColorUtility.ToHtmlStringRGB(theme.verify), UiUtil.Up(p.RegionName), UiUtil.Up(Loc.T(B.Layout)));
+            briefEyebrow.text = Loc.F("SAHA OPERASYONU · GÜN {0} · {1}", game.Sim.S.Day, UiUtil.Up(p.RegionName));
             var mods = new List<string>();
-            if (B.Deceptive) mods.Add("Aldatma ya da Medya Kontrolü: bazı niyet okları yalan; Analist yaklaştıkça kesinleşir.");
-            if (p.Traits.Contains("kopya")) mods.Add("Kendini Kopyalama: her tur 2 robot uyanır.");
-            if (B.HasBackup) mods.Add("Yedekleme: binada bir de yedek çekirdek var; ikisi de kırılmalı.");
-            if (p.Traits.Contains("hizlanma")) mods.Add("Hızlanma: 1 tur eksik.");
+            if (B.Deceptive) mods.Add(Loc.T("Aldatma ya da Medya Kontrolü: bazı niyet okları yalan; Analist yaklaştıkça kesinleşir."));
+            if (p.Traits.Contains("kopya")) mods.Add(Loc.T("Kendini Kopyalama: her tur 2 robot uyanır."));
+            if (B.HasBackup) mods.Add(Loc.T("Yedekleme: binada bir de yedek çekirdek var; ikisi de kırılmalı."));
+            if (p.Traits.Contains("hizlanma")) mods.Add(Loc.T("Hızlanma: 1 tur eksik."));
             briefBody.text =
-                $"Hedef: {(B.IsCore ? "<b>YZ’nin çekirdek dolabını</b>" : "<b>YZ’nin düğüm dolabını</b>")} {B.MaxTurns} tur içinde kır{(B.HasBackup ? ", <b>yedek çekirdeği</b> de" : "")}. Binayı YZ’nin ele geçirdiği makineler koruyor.\n\n" +
-                "• <b>Kırmızı oklar</b> robotların bu tur ne yapacağını gösterir; hamlenden sonra sırayla uygulanır (numaralar sıra). Robotu itersen saldırısı yeni yerinden yapılır.\n" +
-                "• <b>Birim seç</b> (tıkla ya da 1–3), mavi kareye taşı, turuncu çerçeveli hedefe yeteneğini kullan. Hedefin üstüne gelince sonucu önizlersin; <b>Geri al</b> turdaki hamleleri geri alır.\n" +
-                "• <b>Hedef dolaplar zırhlıdır:</b> yalnızca Teknisyen’in sabotajı, dolaba itilen robot ve patlayan soğutma ünitesi hasar verir.\n" +
-                "• <b>Sivil sunucuları koru:</b> kırılan her biri bölgenin ekonomisine ve güvenine işler. Elektrikli kanala itilen 1 hasar alır." +
-                (mods.Count > 0 ? "\n\n<b>YZ’nin yetenekleri bu binayı değiştirdi:</b>\n" + string.Join("\n", mods.Select(m => "– " + m)) : "");
+                Loc.F("Hedef: {0} {1} tur içinde kır{2}. Binayı YZ’nin ele geçirdiği makineler koruyor.\n\n", (B.IsCore ? Loc.T("<b>YZ’nin çekirdek dolabını</b>") : Loc.T("<b>YZ’nin düğüm dolabını</b>")), B.MaxTurns, (B.HasBackup ? Loc.T(", <b>yedek çekirdeği</b> de") : "")) +
+                Loc.T("• <b>Kırmızı oklar</b> robotların bu tur ne yapacağını gösterir; hamlenden sonra sırayla uygulanır (numaralar sıra). Robotu itersen saldırısı yeni yerinden yapılır.\n") +
+                Loc.T("• <b>Birim seç</b> (tıkla ya da 1–3), mavi kareye taşı, turuncu çerçeveli hedefe yeteneğini kullan. Hedefin üstüne gelince sonucu önizlersin; <b>Geri al</b> turdaki hamleleri geri alır.\n") +
+                Loc.T("• <b>Hedef dolaplar zırhlıdır:</b> yalnızca Teknisyen’in sabotajı, dolaba itilen robot ve patlayan soğutma ünitesi hasar verir.\n") +
+                Loc.T("• <b>Sivil sunucuları koru:</b> kırılan her biri bölgenin ekonomisine ve güvenine işler. Elektrikli kanala itilen 1 hasar alır.") +
+                (mods.Count > 0 ? Loc.T("\n\n<b>YZ’nin yetenekleri bu binayı değiştirdi:</b>\n") + string.Join("\n", mods.Select(m => "– " + m)) : "");
             Render();
         }
 
@@ -181,7 +181,7 @@ namespace Corrigible.Game.UI
         void DoRetreat()
         {
             if (B == null || B.Phase != "player") return;
-            if (!retreatArmed || Time.unscaledTime > retreatArmedUntil) { retreatArmed = true; retreatArmedUntil = Time.unscaledTime + 3; retreat.SetText("Emin misin? Tekrar bas"); return; }
+            if (!retreatArmed || Time.unscaledTime > retreatArmedUntil) { retreatArmed = true; retreatArmedUntil = Time.unscaledTime + 3; retreat.SetText(Loc.T("Emin misin? Tekrar bas")); return; }
             Baskin.Retreat(B);
             Render();
         }
@@ -189,7 +189,7 @@ namespace Corrigible.Game.UI
         void Update()
         {
             if (!IsOpen || B == null) return;
-            if (retreatArmed && Time.unscaledTime > retreatArmedUntil) { retreatArmed = false; retreat.SetText("Geri çekil"); }
+            if (retreatArmed && Time.unscaledTime > retreatArmedUntil) { retreatArmed = false; retreat.SetText(Loc.T("Geri çekil")); }
             var kb = Keyboard.current;
             if (kb == null) return;
             if (brief.activeSelf) { if (kb.enterKey.wasPressedThisFrame) { brief.SetActive(false); Render(); } return; }
@@ -244,7 +244,7 @@ namespace Corrigible.Game.UI
                     bool tgtObj = Baskin.IsTarget(c.O.K);
                     var bg = tgtObj ? Palette.Hex("#5a1f1a") : c.O.K == "civ" ? Palette.Hex("#172a33") : c.O.K == "cool" ? Palette.Hex("#10262b") : Palette.Hex("#24110f");
                     var fg = tgtObj ? Palette.Hex("#ffd7d2") : c.O.K == "civ" ? Palette.Hex("#a9c8d3") : c.O.K == "cool" ? theme.verify : Palette.Hex("#ff8a7d");
-                    t.SetObj(true, bg, ObjShort[c.O.K], Pips(c.O.Hp, c.O.Max), fg);
+                    t.SetObj(true, bg, Loc.T(ObjShort[c.O.K]), Pips(c.O.Hp, c.O.Max), fg);
                 }
                 else t.SetObj(false, default, null, null, default);
 
@@ -302,7 +302,7 @@ namespace Corrigible.Game.UI
             {
                 int k = f.Y * Baskin.N + f.X;
                 if (f.K == "dmg") { dmg.TryGetValue(k, out var d); dmg[k] = (f.X, f.Y, d.n + f.N, null); }
-                if (f.K == "armor") dmg[k] = (f.X, f.Y, 0, "zırh");
+                if (f.K == "armor") dmg[k] = (f.X, f.Y, 0, Loc.T("zırh"));
             }
             foreach (var m in pv.Moves)
             {
@@ -310,7 +310,7 @@ namespace Corrigible.Game.UI
                 overlay.Ghost(m.To.X, m.To.Y, theme.fg);
             }
             foreach (var d in dmg.Values) Label(ref used, d.x, d.y, d.label ?? "−" + d.n, d.label != null ? theme.good : theme.threat);
-            if (pv.Won) Label(ref used, 3.5f, 0.18f, "HEDEF KIRILIR", theme.good);
+            if (pv.Won) Label(ref used, 3.5f, 0.18f, Loc.T("HEDEF KIRILIR"), theme.good);
         }
 
         void Label(ref int used, float x, float y, string text, Color color)
@@ -327,19 +327,19 @@ namespace Corrigible.Game.UI
         void RenderSide()
         {
             bool playing = B.Phase == "player";
-            turn.text = playing ? $"Tur {B.Turn}/{B.MaxTurns}" : B.Phase == "won" ? "Başarılı" : "Başarısız";
+            turn.text = playing ? Loc.F("Tur {0}/{1}", B.Turn, B.MaxTurns) : B.Phase == "won" ? Loc.T("Başarılı") : Loc.T("Başarısız");
             turn.color = playing && B.Turn == B.MaxTurns ? theme.threat : theme.fg;
             var left = Baskin.TargetsLeft(B);
-            var lines = left.Count > 0 ? left.Select(t => $"{Baskin.ObjNames[t.O.K]}: <b>{t.O.Hp}/{t.O.Max} can</b>").ToList() : new List<string> { "Hedef dolaplar: <b>kırıldı</b>" };
-            lines.Add($"Kırılan sivil sunucu: <b>{B.Collateral}</b>");
-            lines.Add($"Kalan tur: <b>{Mathf.Max(0, B.MaxTurns - B.Turn + (playing ? 1 : 0))}</b>");
+            var lines = left.Count > 0 ? left.Select(t => Loc.F("{0}: <b>{1}/{2} can</b>", Loc.T(Baskin.ObjNames[t.O.K]), t.O.Hp, t.O.Max)).ToList() : new List<string> { Loc.T("Hedef dolaplar: <b>kırıldı</b>") };
+            lines.Add(Loc.F("Kırılan sivil sunucu: <b>{0}</b>", B.Collateral));
+            lines.Add(Loc.F("Kalan tur: <b>{0}</b>", Mathf.Max(0, B.MaxTurns - B.Turn + (playing ? 1 : 0))));
             objectives.text = string.Join("\n", lines);
             var ps = Players;
             for (int i = 0; i < unitCards.Length && i < ps.Count; i++)
             {
                 var u = ps[i]; var T = Baskin.UnitTypes[u.Type]; var A = Baskin.Abilities[T.Ability];
-                string st = u.Dead ? "düştü" : !Baskin.CanAct(B, u) ? "tur bitti" : Baskin.CanMove(B, u) ? "hareket + yetenek" : "yetenek";
-                unitCards[i].Set(T.Short, $"{i + 1}. {T.Name}", $"{u.Hp}/{u.Max} can · {st}", $"<b>{A.Name}:</b> {A.Desc}", u.Id == sel, u.Dead, theme);
+                string st = u.Dead ? Loc.T("düştü") : !Baskin.CanAct(B, u) ? Loc.T("tur bitti") : Baskin.CanMove(B, u) ? Loc.T("hareket + yetenek") : Loc.T("yetenek");
+                unitCards[i].Set(T.Short, $"{i + 1}. {T.Name}", Loc.F("{0}/{1} can · {2}", u.Hp, u.Max, st), $"<b>{Loc.T(A.Name)}:</b> {Loc.T(A.Desc)}", u.Id == sel, u.Dead, theme);
             }
             undo.SetEnabled(playing && B.Hist.Count > 0);
             endTurn.SetEnabled(playing);
@@ -358,8 +358,8 @@ namespace Corrigible.Game.UI
             if (B == null) return;
             var u = Selected;
             string txt = u != null
-                ? $"<b>{Baskin.UnitTypes[u.Type].Name}</b> seçili. " + (!actMode && Baskin.CanMove(B, u) ? "Mavi kareye taşı ya da turuncu hedefe yeteneğini kullan (Q: yetenek)." : Baskin.CanAct(B, u) ? "Turuncu hedefe yeteneğini kullan." : "Bu birim bu tur işini bitirdi.")
-                : "Bir birim seç (1–3). Robotların niyetleri kırmızı; sırayla uygulanır. Enter: turu bitir · Z: geri al.";
+                ? Loc.F("<b>{0}</b> seçili. ", Baskin.UnitTypes[u.Type].Name) + (!actMode && Baskin.CanMove(B, u) ? Loc.T("Mavi kareye taşı ya da turuncu hedefe yeteneğini kullan (Q: yetenek).") : Baskin.CanAct(B, u) ? Loc.T("Turuncu hedefe yeteneğini kullan.") : Loc.T("Bu birim bu tur işini bitirdi."))
+                : Loc.T("Bir birim seç (1–3). Robotların niyetleri kırmızı; sırayla uygulanır. Enter: turu bitir · Z: geri al.");
             if (hover != null)
             {
                 var (x, y) = hover.Value;
@@ -368,15 +368,15 @@ namespace Corrigible.Game.UI
                 if (v != null && v.Side == 'e')
                 {
                     var i = Baskin.Intents(B).FirstOrDefault(z => z.Unit == v.Id);
-                    string what = i == null ? "bekliyor" : i.Kind == "repair" ? "hedef dolabı onaracak" : i.Kind == "shoot" ? $"{DirTr[i.Dir]} ateş edecek (1 hasar)" : $"{DirTr[i.Dir]} saldıracak (2 hasar)";
-                    txt = $"<b>{Baskin.UnitTypes[v.Type].Name}</b> · {v.Hp}/{v.Max} can · sıra {(i != null ? i.Order.ToString() : "—")}: {what}."
-                        + (i != null && i.Uncertain ? $" <color=#{ColorUtility.ToHtmlStringRGB(theme.warn)}>Bu niyet yalan olabilir; Analisti 3 kare yaklaştır.</color>" : i != null && i.IsScanned ? " Analist doğruladı." : "");
+                    string what = i == null ? Loc.T("bekliyor") : i.Kind == "repair" ? Loc.T("hedef dolabı onaracak") : i.Kind == "shoot" ? Loc.F("{0} ateş edecek (1 hasar)", Loc.T(DirTr[i.Dir])) : Loc.F("{0} saldıracak (2 hasar)", Loc.T(DirTr[i.Dir]));
+                    txt = Loc.F("<b>{0}</b> · {1}/{2} can · sıra {3}: {4}.", Baskin.UnitTypes[v.Type].Name, v.Hp, v.Max, (i != null ? i.Order.ToString() : "—"), what)
+                        + (i != null && i.Uncertain ? Loc.F(" <color=#{0}>Bu niyet yalan olabilir; Analisti 3 kare yaklaştır.</color>", ColorUtility.ToHtmlStringRGB(theme.warn)) : i != null && i.IsScanned ? Loc.T(" Analist doğruladı.") : "");
                 }
-                else if (v != null) txt = $"<b>{Baskin.UnitTypes[v.Type].Name}</b> · {v.Hp}/{v.Max} can.";
+                else if (v != null) txt = Loc.F("<b>{0}</b> · {1}/{2} can.", Baskin.UnitTypes[v.Type].Name, v.Hp, v.Max);
                 else if (c.O != null)
-                    txt = $"<b>{Baskin.ObjNames[c.O.K]}</b> · {c.O.Hp}/{c.O.Max} can." + (Baskin.IsTarget(c.O.K) ? " Zırhlı: yalnızca sabotaj, çarpma ve patlama işler." : c.O.K == "civ" ? " Kırılırsa yan hasar." : c.O.K == "cool" ? " Kırılınca çevresindeki 4 kareye 1 hasar." : " Kırılırsa buradan robot uyanmaz.");
-                else if (c.T == "cable") txt = "<b>Elektrikli kanal</b> · üstüne itilen 1 hasar alır.";
-                else if (c.T == "wall") txt = "<b>Duvar</b>";
+                    txt = Loc.F("<b>{0}</b> · {1}/{2} can.", Loc.T(Baskin.ObjNames[c.O.K]), c.O.Hp, c.O.Max) + (Baskin.IsTarget(c.O.K) ? Loc.T(" Zırhlı: yalnızca sabotaj, çarpma ve patlama işler.") : c.O.K == "civ" ? Loc.T(" Kırılırsa yan hasar.") : c.O.K == "cool" ? Loc.T(" Kırılınca çevresindeki 4 kareye 1 hasar.") : Loc.T(" Kırılırsa buradan robot uyanmaz."));
+                else if (c.T == "cable") txt = Loc.T("<b>Elektrikli kanal</b> · üstüne itilen 1 hasar alır.");
+                else if (c.T == "wall") txt = Loc.T("<b>Duvar</b>");
             }
             info.text = txt;
         }
@@ -385,10 +385,10 @@ namespace Corrigible.Game.UI
         {
             var res = Baskin.Result(B);
             resultPanel.SetActive(true);
-            resultEyebrow.text = $"SAHA OPERASYONU · {UiUtil.Up(B.Params.RegionName)} · {res.Turns}. TUR";
-            resultTitle.text = res.Success ? "Operasyon başarılı" : "Operasyon başarısız";
+            resultEyebrow.text = Loc.F("SAHA OPERASYONU · {0} · {1}. TUR", UiUtil.Up(B.Params.RegionName), res.Turns);
+            resultTitle.text = res.Success ? Loc.T("Operasyon başarılı") : Loc.T("Operasyon başarısız");
             resultTitle.color = res.Success ? theme.good : theme.threat;
-            resultBody.text = $"{res.Reason}\n\nHedef: <b>{(res.Success ? "kırıldı" : "ayakta")}</b> · Kırılan sivil sunucu: <b>{res.Collateral}</b> · Düşen: <b>{res.Down}/3</b> · Tur: <b>{res.Turns}</b>";
+            resultBody.text = Loc.F("{0}\n\nHedef: <b>{1}</b> · Kırılan sivil sunucu: <b>{2}</b> · Düşen: <b>{3}/3</b> · Tur: <b>{4}</b>", res.Reason, (res.Success ? Loc.T("kırıldı") : Loc.T("ayakta")), res.Collateral, res.Down, res.Turns);
         }
     }
 }

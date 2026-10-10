@@ -42,7 +42,7 @@ namespace Corrigible.Game.UI
                 if (used) pool[i].Set(teams[i], theme);
             }
             UiUtil.Show(hire, teams.Count < Simulation.TeamMax);
-            hire.SetText($"Yeni ekip kur · {Simulation.TeamHireFon} fon");
+            hire.SetText(Loc.F("Yeni ekip kur · {0} fon", Simulation.TeamHireFon));
             hire.SetEnabled(sim.S.Ending == null && sim.S.Fon >= Simulation.TeamHireFon);
         }
     }

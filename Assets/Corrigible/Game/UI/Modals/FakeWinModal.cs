@@ -1,3 +1,4 @@
+using Corrigible.Core;
 using System;
 using System.Collections;
 using TMPro;
@@ -32,7 +33,7 @@ namespace Corrigible.Game.UI
 
         public void Play(int day, Action done)
         {
-            eyebrow.text = $"KYGA · RESMÎ DUYURU · GÜN {day}";
+            eyebrow.text = Loc.F("KYGA · RESMÎ DUYURU · GÜN {0}", day);
             Stop();
             routine = StartCoroutine(Run(done));
         }

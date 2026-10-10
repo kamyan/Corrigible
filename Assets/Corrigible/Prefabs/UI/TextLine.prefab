@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1178638635313541817}
   - component: {fileID: 5294590166067806621}
   - component: {fileID: 8485534243822548884}
+  - component: {fileID: 8130784769420485540}
   m_Layer: 5
   m_Name: TextLine
   m_TagString: Untagged
@@ -137,3 +138,16 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &8130784769420485540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2976617505829134980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d86558491724eb494a5c893d0e65ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Corrigible.Game::Corrigible.Game.LocalizedText
+  source: "Sat\u0131r"

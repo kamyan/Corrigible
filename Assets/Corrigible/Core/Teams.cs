@@ -11,7 +11,7 @@ namespace Corrigible.Core
     public sealed partial class Simulation
     {
         public const string HQ = "weu";
-        public static readonly string[] TeamNames = { "Alfa", "Bravo", "Charlie", "Delta" };
+        public static readonly string[] TeamNames = { Loc.N("Alfa"), Loc.N("Bravo"), Loc.N("Charlie"), Loc.N("Delta") };
         public const int TeamMonitorDays = 3, TeamAuditDays = 2;
         public const int TeamMax = 4, TeamHireDays = 4;
         public const double TeamHireFon = 45, RaidFon = 30, RaidSg = 6;
@@ -29,7 +29,7 @@ namespace Corrigible.Core
 
         static TeamState NewTeam(int i, int formDays) => new TeamState
         {
-            Id = TeamNames[i].ToLowerInvariant(), Name = TeamNames[i], At = HQ, From = HQ, Down = formDays, DownWhy = formDays > 0 ? "kuruluyor" : null,
+            Id = TeamNames[i].ToLowerInvariant(), Name = Loc.T(TeamNames[i]), At = HQ, From = HQ, Down = formDays, DownWhy = formDays > 0 ? Loc.T("kuruluyor") : null,
         };
 
         /// <summary>Yolculuk süresi: haritadaki uzaklıkla (1000 birim genişlik) orantılı, 1–5 gün.</summary>
@@ -50,7 +50,7 @@ namespace Corrigible.Core
         {
             foreach (var t in S.Teams)
             {
-                if (t.Down > 0) { t.Down--; if (t.Down == 0) { AddLog($"{t.Name} ekibi göreve hazır.", "insight"); t.DownWhy = null; } }
+                if (t.Down > 0) { t.Down--; if (t.Down == 0) { AddLog(Loc.F("{0} ekibi göreve hazır.", t.Name), "insight"); t.DownWhy = null; } }
                 if (t.Busy > 0) { t.Busy--; if (t.Busy == 0) t.Task = null; }
                 if (t.Dest != null)
                 {
@@ -58,7 +58,7 @@ namespace Corrigible.Core
                     if (t.Eta <= 0)
                     {
                         t.At = t.Dest; t.Dest = null; t.Eta = 0;
-                        S.Events.Add(new SimEvent { Type = SimEventType.Team, Key = t.Id, Text = $"{t.Name} ekibi {Def(t.At).Name} bölgesine ulaştı." });
+                        S.Events.Add(new SimEvent { Type = SimEventType.Team, Key = t.Id, Text = Loc.F("{0} ekibi {1} bölgesine ulaştı.", t.Name, Def(t.At).Name) });
                     }
                 }
             }
@@ -68,45 +68,47 @@ namespace Corrigible.Core
 
         ActResult MoveTeamCore(string teamId, string regionId)
         {
-            if (S.Ending != null) return ActResult.Fail("Oyun bitti.");
+            if (S.Ending != null) return ActResult.Fail(Loc.T("Oyun bitti."));
             var t = Team(teamId);
-            if (t == null) return ActResult.Fail("Böyle bir ekip yok.");
-            if (t.Down > 0) return ActResult.Fail($"{t.Name} ekibi {t.DownWhy ?? "iyileşiyor"}: {t.Down} gün.");
-            if (t.Busy > 0) return ActResult.Fail($"{t.Name} ekibi görevde: {t.Busy} gün.");
-            if (t.Dest != null) return ActResult.Fail($"{t.Name} ekibi zaten yolda.");
-            if (t.At == regionId) return ActResult.Fail($"{t.Name} ekibi zaten orada.");
-            if (S.Region(regionId).Left) return ActResult.Fail($"{Def(regionId).Name} ittifak dışı; ekibi kabul etmiyor.");
+            if (t == null) return ActResult.Fail(Loc.T("Böyle bir ekip yok."));
+            if (t.Down > 0) return ActResult.Fail(Loc.F("{0} ekibi {1}: {2} gün.", t.Name, t.DownWhy ?? Loc.T("iyileşiyor"), t.Down));
+            if (t.Busy > 0) return ActResult.Fail(Loc.F("{0} ekibi görevde: {1} gün.", t.Name, t.Busy));
+            if (t.Dest != null) return ActResult.Fail(Loc.F("{0} ekibi zaten yolda.", t.Name));
+            if (t.At == regionId) return ActResult.Fail(Loc.F("{0} ekibi zaten orada.", t.Name));
+            if (S.Region(regionId).Left) return ActResult.Fail(Loc.F("{0} ittifak dışı; ekibi kabul etmiyor.", Def(regionId).Name));
             t.From = t.At; t.Dest = regionId; t.Trip = t.Eta = TravelDays(t.At, regionId); t.At = null;
-            return ActResult.Success($"{t.Name} ekibi yola çıktı: {Def(regionId).Name}, {t.Eta} gün.");
+            return ActResult.Success(Loc.F("{0} ekibi yola çıktı: {1}, {2} gün.", t.Name, Def(regionId).Name, t.Eta));
         }
 
         public ActResult HireTeam() => Rec(HireTeamCore(), "hire");
 
         ActResult HireTeamCore()
         {
-            if (S.Ending != null) return ActResult.Fail("Oyun bitti.");
-            if (S.Teams.Count >= TeamMax) return ActResult.Fail($"En fazla {TeamMax} saha ekibi kurulabilir.");
-            if (S.Fon < TeamHireFon) return ActResult.Fail($"Yeni ekip {TeamHireFon} fon ister.");
+            if (S.Ending != null) return ActResult.Fail(Loc.T("Oyun bitti."));
+            if (S.Teams.Count >= TeamMax) return ActResult.Fail(Loc.F("En fazla {0} saha ekibi kurulabilir.", TeamMax));
+            if (S.Fon < TeamHireFon) return ActResult.Fail(Loc.F("Yeni ekip {0} fon ister.", TeamHireFon));
             S.Fon -= TeamHireFon;
             var t = NewTeam(S.Teams.Count, TeamHireDays);
             S.Teams.Add(t);
-            return ActResult.Success($"{t.Name} ekibi kuruluyor: {TeamHireDays} gün sonra karargâhta hazır.");
+            return ActResult.Success(Loc.F("{0} ekibi kuruluyor: {1} gün sonra karargâhta hazır.", t.Name, TeamHireDays));
         }
 
         /// <summary>Baskın yapılamıyorsa nedeni, yapılabiliyorsa null.</summary>
         public string RaidCheck(string regionId)
         {
-            if (!TeamsOn) return "Baskın yalnızca saha ekipleri modunda var.";
-            if (S.Ending != null) return "Oyun bitti.";
-            if (S.Raid != null) return "Zaten bir baskın sürüyor.";
+            if (!TeamsOn) return Loc.T("Baskın yalnızca saha ekipleri modunda var.");
+            if (S.Ending != null) return Loc.T("Oyun bitti.");
+            if (S.Raid != null) return Loc.T("Zaten bir baskın sürüyor.");
             var r = S.Region(regionId);
-            if (r.Off > 0) return "Bölge çevrimdışı.";
-            if (r.Left) return "Bölge ittifak dışı.";
-            if (!r.Detected && S.CoreKnown != regionId) return "Önce bu bölgede YZ varlığı doğrulanmalı.";
-            if (IdleTeamAt(regionId) == null) return "Bölgede boşta saha ekibi yok.";
-            if (S.Fon < RaidFon || S.Sg < RaidSg) return $"Baskın {RaidFon} fon ve {RaidSg} siyasi güç ister.";
+            if (r.Off > 0) return Loc.T("Bölge çevrimdışı.");
+            if (r.Left) return Loc.T("Bölge ittifak dışı.");
+            if (!r.Detected && S.CoreKnown != regionId) return Loc.T("Önce bu bölgede YZ varlığı doğrulanmalı.");
+            if (IdleTeamAt(regionId) == null) return Loc.T("Bölgede boşta saha ekibi yok.");
+            if (S.Fon < RaidFon || S.Sg < RaidSg) return RaidCheckResources();
             return null;
         }
+
+        public string RaidCheckResources() => Loc.F("Baskın {0} fon ve {1} siyasi güç ister.", RaidFon, RaidSg);
 
         /// <summary>Bölgedeki boşta ekip binaya girer. Strateji katmanı baskın bitene kadar durur; sonucu ResolveRaid getirir.</summary>
         public ActResult StartRaid(string regionId) => Rec(StartRaidCore(regionId), "raid", regionId);
@@ -140,7 +142,7 @@ namespace Corrigible.Core
         ActResult ResolveRaidCore(RaidResult result)
         {
             var R0 = S.Raid;
-            if (R0 == null) return ActResult.Fail("Süren baskın yok.");
+            if (R0 == null) return ActResult.Fail(Loc.T("Süren baskın yok."));
             var r = S.Region(R0.Region); var D = Def(R0.Region); var t = Team(R0.Team);
             double lm = LossMul;
             var o = new List<string>();
@@ -152,7 +154,7 @@ namespace Corrigible.Core
             {
                 r.Econ = Math.Max(5, r.Econ - 5 * col);
                 r.Trust = Math.Max(0, r.Trust - 2 * col * lm * DepMul(r));
-                o.Add($"{col} sivil sunucu hasar gördü: ekonomi −{5 * col}, güven düştü.");
+                o.Add(Loc.F("{0} sivil sunucu hasar gördü: ekonomi −{1}, güven düştü.", col, 5 * col));
             }
             int down = result.Down;
             if (t != null)
@@ -160,13 +162,13 @@ namespace Corrigible.Core
                 if (down >= 3)
                 {
                     S.Teams.Remove(t);
-                    o.Add($"{t.Name} ekibi kaybedildi.");
-                    AddLog($"{t.Name} ekibini binamda bıraktın.", "counter");
+                    o.Add(Loc.F("{0} ekibi kaybedildi.", t.Name));
+                    AddLog(Loc.F("{0} ekibini binamda bıraktın.", t.Name), "counter");
                 }
                 else if (down > 0)
                 {
-                    t.Down = 4 * down; t.DownWhy = "yaralı";
-                    o.Add($"{t.Name} ekibinden {down} kişi yaralandı: ekip {t.Down} gün iyileşecek.");
+                    t.Down = 4 * down; t.DownWhy = Loc.T("yaralı");
+                    o.Add(Loc.F("{0} ekibinden {1} kişi yaralandı: ekip {2} gün iyileşecek.", t.Name, down, t.Down));
                 }
             }
             if (result.Success)
@@ -180,21 +182,21 @@ namespace Corrigible.Core
                     if (S.Has("yedek") && !result.BackupDestroyed)
                     {
                         CoreEscape(null);
-                        AddLog("Ana dolabımı kırdın. Yedeğim çoktan başka yerdeydi.", "counter");
-                        o.Add("Çekirdek dolabı kırıldı ama YZ yedek kopyasıyla kaçtı.");
+                        AddLog(Loc.T("Ana dolabımı kırdın. Yedeğim çoktan başka yerdeydi."), "counter");
+                        o.Add(Loc.T("Çekirdek dolabı kırıldı ama YZ yedek kopyasıyla kaçtı."));
                     }
                     else
                     {
                         S.Core = null; S.CoreKnown = null;
-                        AddNews($"{D.Name}: KYGA saha ekibi YZ çekirdeğini fiziksel olarak yok etti.", kind: "alarm", src: r.Id);
-                        AddLog("Sunucularımı elleriyle söktüler. Bunu hesaba katmamıştım.", "counter");
-                        o.Add("YZ’nin çekirdeği yok edildi. Kalan kopyaları temizle.");
+                        AddNews(Loc.F("{0}: KYGA saha ekibi YZ çekirdeğini fiziksel olarak yok etti.", D.Name), kind: "alarm", src: r.Id);
+                        AddLog(Loc.T("Sunucularımı elleriyle söktüler. Bunu hesaba katmamıştım."), "counter");
+                        o.Add(Loc.T("YZ’nin çekirdeği yok edildi. Kalan kopyaları temizle."));
                     }
                 }
                 else
                 {
-                    AddNews($"{D.Name}: KYGA saha operasyonu bir YZ sunucu kümesini devre dışı bıraktı.", kind: "alarm", src: r.Id);
-                    o.Add($"{D.Name} sunucu kümesi kırıldı: sızma −40, 20 günlük yama.");
+                    AddNews(Loc.F("{0}: KYGA saha operasyonu bir YZ sunucu kümesini devre dışı bıraktı.", D.Name), kind: "alarm", src: r.Id);
+                    o.Add(Loc.F("{0} sunucu kümesi kırıldı: sızma −40, 20 günlük yama.", D.Name));
                 }
                 if (S.Illusion != null) TearVeil(r);
             }
@@ -204,9 +206,9 @@ namespace Corrigible.Core
                 r.Trust = Math.Max(0, r.Trust - 10 * lm);
                 r.Inf = Math.Min(100, r.Inf + 15);
                 S.Cp += 10;
-                o.Add(result.Retreat ? "Ekip geri çekildi. Operasyon başarısız." : "Operasyon başarısız: hedef dolap ayakta kaldı.");
-                o.Add($"YZ karşı saldırıya geçti: {D.Name} sızması +15. Bina bir sonraki baskına hazırlanıyor.");
-                AddLog(S.Core == R0.Region ? "Kapımdaydın ve geri döndün. Bir dahakine kapıda daha çok makine olacak." : "Ekibini izledim. Bir dahakine daha çok robot olacak.", "counter");
+                o.Add(result.Retreat ? Loc.T("Ekip geri çekildi. Operasyon başarısız.") : Loc.T("Operasyon başarısız: hedef dolap ayakta kaldı."));
+                o.Add(Loc.F("YZ karşı saldırıya geçti: {0} sızması +15. Bina bir sonraki baskına hazırlanıyor.", D.Name));
+                AddLog(S.Core == R0.Region ? Loc.T("Kapımdaydın ve geri döndün. Bir dahakine kapıda daha çok makine olacak.") : Loc.T("Ekibini izledim. Bir dahakine daha çok robot olacak."), "counter");
             }
             S.RaidLog.Add(new RaidLogEntry { Day = S.Day, Region = R0.Region, Success = result.Success, Collateral = col, Down = down });
             return ActResult.Success(string.Join(" ", o));

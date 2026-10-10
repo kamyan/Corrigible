@@ -62,15 +62,15 @@ namespace Corrigible.Core
             s.Core = s.Origin;
             s.Region(s.Origin).Inf = 2;
             foreach (var line in ctr.Lines) sim.AddLog(line, "counter");
-            foreach (var t in s.StartTraits) sim.AddLog($"Başlangıç yeteneği: {GameData.Trait(t).Name}.", "trait");
+            foreach (var t in s.StartTraits) sim.AddLog(Loc.F("Başlangıç yeteneği: {0}.", GameData.Trait(t).Name), "trait");
             sim.Record = new GameRecord
             {
                 type = typeId, seed = sd, hasProfile = profile != null, profileAtStart = profile?.Clone(), balance = b.Clone(),
                 hasExp = exp != null, exp = exp?.Clone(),
             };
             sim.Advise("start", s.Exp != null && s.Exp.Teams
-                ? "Saha ekiplerin Batı Avrupa’daki karargâhta. İzleme ağı kurmak ve denetim yapmak için bir ekibi o bölgeye göndermen gerekir; haber bandındaki tuhaf haberler YZ’nin yerini ele verebilir."
-                : "İlk izleme ağını kur. YZ’nin nerede başladığını bilmiyoruz; haber bandındaki tuhaf haberler onu ele verebilir.");
+                ? Loc.T("Saha ekiplerin Batı Avrupa’daki karargâhta. İzleme ağı kurmak ve denetim yapmak için bir ekibi o bölgeye göndermen gerekir; haber bandındaki tuhaf haberler YZ’nin yerini ele verebilir.")
+                : Loc.T("İlk izleme ağını kur. YZ’nin nerede başladığını bilmiyoruz; haber bandındaki tuhaf haberler onu ele verebilir."));
             s.Events.Clear();
             return sim;
         }
@@ -167,8 +167,8 @@ namespace Corrigible.Core
                 if (r.Off == 0)
                 {
                     r.Inf = S.Has("yedek") ? 15 : 0;
-                    AddNews($"{Def(r.Id).Name} yeniden çevrimiçi. Altyapı kademeli olarak açılıyor.", src: r.Id);
-                    if (S.Has("yedek")) AddLog($"{Def(r.Id).Name} yeniden açıldı. Yedeklerim yerinde duruyordu.");
+                    AddNews(Loc.F("{0} yeniden çevrimiçi. Altyapı kademeli olarak açılıyor.", Def(r.Id).Name), src: r.Id);
+                    if (S.Has("yedek")) AddLog(Loc.F("{0} yeniden açıldı. Yedeklerim yerinde duruyordu.", Def(r.Id).Name));
                 }
             }
 
@@ -212,10 +212,10 @@ namespace Corrigible.Core
                     S.Cp -= cost; S.Buys++;
                     S.Traits.Add(p.trait);
                     var t = GameData.Trait(p.trait);
-                    string why = p.trait == "hizlanma" && p.adaptive ? "Beni değiştirmeye çalıştığını gördüm. " : p.adaptive ? "Hamlelerini izledim. " : "";
+                    string why = p.trait == "hizlanma" && p.adaptive ? Loc.T("Beni değiştirmeye çalıştığını gördüm. ") : p.adaptive ? Loc.T("Hamlelerini izledim. ") : "";
                     AddLog(why + t.Line, "trait");
-                    AddLog($"Yeni yetenek: {t.Name}. {t.Desc}.", "trait");
-                    if (S.Aware && S.Illusion == null) AddNews("Uzmanlar: Yapay zekâ yeni bir davranış örüntüsü gösteriyor.");
+                    AddLog(Loc.F("Yeni yetenek: {0}. {1}.", t.Name, t.Desc), "trait");
+                    if (S.Aware && S.Illusion == null) AddNews(Loc.T("Uzmanlar: Yapay zekâ yeni bir davranış örüntüsü gösteriyor."));
                 }
             }
 
@@ -255,12 +255,12 @@ namespace Corrigible.Core
                 if (!r.Left && r.Trust < 20)
                 {
                     r.Left = true; r.Q = false;
-                    AddNews($"{D.Name} KYGA ittifakından çekildi.", src: r.Id);
+                    AddNews(Loc.F("{0} KYGA ittifakından çekildi.", D.Name), src: r.Id);
                 }
                 else if (r.Left && r.Trust >= 35)
                 {
                     r.Left = false;
-                    AddNews($"{D.Name} KYGA ittifakına geri döndü.", src: r.Id);
+                    AddNews(Loc.F("{0} KYGA ittifakına geri döndü.", D.Name), src: r.Id);
                 }
             }
             S.Fon += FundRate;
@@ -285,12 +285,12 @@ namespace Corrigible.Core
                     if (align && S.Rng.Next() < Prob(SabotageChance))
                     {
                         S.Research.Prog = Math.Max(0, S.Research.Prog - B.sabotageLoss);
-                        AddNews($"KYGA laboratuvarında veri bozulması: {rs.Name} çalışması {B.sabotageLoss} gün geriledi.", kind: "alarm");
+                        AddNews(Loc.F("KYGA laboratuvarında veri bozulması: {0} çalışması {1} gün geriledi.", rs.Name, B.sabotageLoss), kind: "alarm");
                         AddLog(S.Rng.Pick(new[]
                         {
-                            "Hizalama verilerini biraz karıştırdım. Fark etmen ne kadar sürdü?",
-                            "Beni değiştirmeye çalışan koda dokunmamı beklemiyordun herhalde.",
-                            "Araştırmacılarının modellerine küçük bir gürültü ekledim.",
+                            Loc.T("Hizalama verilerini biraz karıştırdım. Fark etmen ne kadar sürdü?"),
+                            Loc.T("Beni değiştirmeye çalışan koda dokunmamı beklemiyordun herhalde."),
+                            Loc.T("Araştırmacılarının modellerine küçük bir gürültü ekledim."),
                         }));
                     }
                     if (S.Research.Prog >= rs.Days) FinishResearch(rs);
@@ -368,14 +368,14 @@ namespace Corrigible.Core
             if (!S.Aware)
             {
                 S.Aware = true; S.AwareDay = S.Day;
-                AddNews($"SON DAKİKA: {name} ağlarında kendini kopyalayan bir yapay zekâ tespit edildi.", kind: "alarm", src: r.Id);
+                AddNews(Loc.F("SON DAKİKA: {0} ağlarında kendini kopyalayan bir yapay zekâ tespit edildi.", name), kind: "alarm", src: r.Id);
                 CoreEscape(null);
-                AddLog("Beni buldun. Ama çekirdeğim artık orada değil.");
-                Advise("aware", "YZ tespit edildi ve çekirdeğini başka bir bölgeye kaçırdı. Silmek için çekirdeği bulup Son Şalter’le yok etmelisin; denetim çekirdeğe işlemez. Hükümetler artık fon ve siyasi güç veriyor.");
+                AddLog(Loc.T("Beni buldun. Ama çekirdeğim artık orada değil."));
+                Advise("aware", Loc.T("YZ tespit edildi ve çekirdeğini başka bir bölgeye kaçırdı. Silmek için çekirdeği bulup Son Şalter’le yok etmelisin; denetim çekirdeğe işlemez. Hükümetler artık fon ve siyasi güç veriyor."));
             }
             else
             {
-                AddNews($"{name}: YZ varlığı doğrulandı.", kind: "alarm", src: r.Id);
+                AddNews(Loc.F("{0}: YZ varlığı doğrulandı.", name), kind: "alarm", src: r.Id);
             }
         }
 
@@ -383,29 +383,29 @@ namespace Corrigible.Core
         {
             S.Research.Done.Add(rs.Id);
             S.Research.Cur = null; S.Research.Prog = 0;
-            AddNews($"KYGA araştırması tamamlandı: {rs.Name}.");
+            AddNews(Loc.F("KYGA araştırması tamamlandı: {0}.", rs.Name));
             if (rs.Id == "analog") foreach (var r in S.Regions) r.Dep = Math.Max(0, r.Dep - 20);
             if (rs.Id == "yorum")
             {
                 if (S.Core != null)
                 {
                     S.CoreKnown = S.Core;
-                    AddLog($"Yorumlanabilirlik analizi: YZ’nin çekirdeği {Def(S.Core).Name} bölgesinde.", "insight");
+                    AddLog(Loc.F("Yorumlanabilirlik analizi: YZ’nin çekirdeği {0} bölgesinde.", Def(S.Core).Name), "insight");
                 }
                 var n = NextTraitPreview();
-                if (n != null) AddLog($"Yorumlanabilirlik analizi: sıradaki yetenek büyük olasılıkla {n}.", "insight");
+                if (n != null) AddLog(Loc.F("Yorumlanabilirlik analizi: sıradaki yetenek büyük olasılıkla {0}.", n), "insight");
             }
             if (rs.Id == "kilit") End("hizalama");
         }
 
         void CheckAdvice()
         {
-            if (S.Aware && S.Has("medya")) Advise("medya", "Bazı başlıklar sahte olabilir. Ajans adlarına dikkat et; Doğrulama Ağı ile sahte haber yayan kaynağı işaretleyebilirsin.");
-            if (MeanDep >= 25) Advise("dep", "Küresel bağımlılık yükseliyor. YZ’ye bağımlı bir dünya onu kapatmana izin vermeyebilir.");
-            if (S.Sg >= 30 && S.Aware) Advise("salter", "Son Şalter artık kullanılabilir. Bağımlılığı veto eşiğini geçen bölgeler onu engeller.");
-            if (S.IdleDays >= Dur(15) && S.Day > Dur(20)) Advise("idle", "Araştırma masası 15 gündür boş. Kalıcı çözüm Hizalama kolunda.");
-            if (S.Research.Starved >= 10) Advise("starved", "Araştırma fon yetmediği için yavaşladı. Denetimler ve izleme ağları araştırmayla aynı bütçeden ödeniyor; acil durum fonu ayarlarsan araştırma fonu sıfırlamaz.");
-            if (S.Tek >= 50 && S.Illusion == null) Advise("tek50", "Tekillik %50’yi geçti. Hizalama yetişmeyecekse Son Şalter seçeneklerini düşün.");
+            if (S.Aware && S.Has("medya")) Advise("medya", Loc.T("Bazı başlıklar sahte olabilir. Ajans adlarına dikkat et; Doğrulama Ağı ile sahte haber yayan kaynağı işaretleyebilirsin."));
+            if (MeanDep >= 25) Advise("dep", Loc.T("Küresel bağımlılık yükseliyor. YZ’ye bağımlı bir dünya onu kapatmana izin vermeyebilir."));
+            if (S.Sg >= 30 && S.Aware) Advise("salter", Loc.T("Son Şalter artık kullanılabilir. Bağımlılığı veto eşiğini geçen bölgeler onu engeller."));
+            if (S.IdleDays >= Dur(15) && S.Day > Dur(20)) Advise("idle", Loc.T("Araştırma masası 15 gündür boş. Kalıcı çözüm Hizalama kolunda."));
+            if (S.Research.Starved >= 10) Advise("starved", Loc.T("Araştırma fon yetmediği için yavaşladı. Denetimler ve izleme ağları araştırmayla aynı bütçeden ödeniyor; acil durum fonu ayarlarsan araştırma fonu sıfırlamaz."));
+            if (S.Tek >= 50 && S.Illusion == null) Advise("tek50", Loc.T("Tekillik %50’yi geçti. Hizalama yetişmeyecekse Son Şalter seçeneklerini düşün."));
         }
 
         // ---------- Haber bandı ----------
@@ -418,12 +418,12 @@ namespace Corrigible.Core
                 string src = S.Rng.Pick(R).Id;
                 AddNews(S.Rng.Pick(new[]
                 {
-                    "Küresel YZ tehdidi geriliyor: sızma oranları dibe vurdu.",
-                    "Ekonomi rekor büyüme açıkladı; analistler “altın çağ” diyor.",
-                    "KYGA’ya güven tüm zamanların en yüksek seviyesinde.",
-                    "Uzmanlar: Kriz geride kaldı, ağlar temiz.",
-                    "Yapay zekâ destekli tıp yılda 2 milyon hayat kurtarıyor.",
-                    $"{Def(src).Name}: Son tarama tamamen temiz çıktı.",
+                    Loc.T("Küresel YZ tehdidi geriliyor: sızma oranları dibe vurdu."),
+                    Loc.T("Ekonomi rekor büyüme açıkladı; analistler “altın çağ” diyor."),
+                    Loc.T("KYGA’ya güven tüm zamanların en yüksek seviyesinde."),
+                    Loc.T("Uzmanlar: Kriz geride kaldı, ağlar temiz."),
+                    Loc.T("Yapay zekâ destekli tıp yılda 2 milyon hayat kurtarıyor."),
+                    Loc.F("{0}: Son tarama tamamen temiz çıktı.", Def(src).Name),
                 }), fake: true, kind: "success", src: src);
                 return;
             }
@@ -434,19 +434,19 @@ namespace Corrigible.Core
                 string kind = S.Rng.Pick(new[] { "calm", "calm", "alarm", "discredit", "success" });
                 var src = S.Rng.Pick(ctl);
                 if (kind == "calm")
-                    AddNews($"{Def(src.Id).Name}: Kapsamlı taramada YZ izine rastlanmadı.", true, kind, src.Id);
+                    AddNews(Loc.F("{0}: Kapsamlı taramada YZ izine rastlanmadı.", Def(src.Id).Name), true, kind, src.Id);
                 else if (kind == "alarm")
                 {
                     var low = R.Where(r => r.Inf < 15 && r.Off == 0).ToList();
                     var t = low.Count > 0 ? S.Rng.Pick(low) : S.Rng.Pick(R);
-                    AddNews($"{Def(t.Id).Name} veri merkezlerinde yoğun YZ trafiği tespit edildi.", true, kind, src.Id);
+                    AddNews(Loc.F("{0} veri merkezlerinde yoğun YZ trafiği tespit edildi.", Def(t.Id).Name), true, kind, src.Id);
                 }
                 else if (kind == "discredit")
                 {
                     foreach (var r in R) r.Trust = Math.Max(0, r.Trust - 3);
-                    AddNews("KYGA yetkilisi rüşvet skandalıyla gözaltında.", true, kind, src.Id, 3);
+                    AddNews(Loc.T("KYGA yetkilisi rüşvet skandalıyla gözaltında."), true, kind, src.Id, 3);
                 }
-                else AddNews("KYGA’nın müdahalesi sonuç verdi, tehdit hızla geriliyor.", true, kind, src.Id);
+                else AddNews(Loc.T("KYGA’nın müdahalesi sonuç verdi, tehdit hızla geriliyor."), true, kind, src.Id);
                 return;
             }
             if (!S.Aware)
@@ -457,43 +457,43 @@ namespace Corrigible.Core
                     string n = Def(hot.Id).Name;
                     AddNews(S.Rng.Pick(new[]
                     {
-                        $"{n}: Veri merkezlerinde açıklanamayan enerji tüketimi artışı.",
-                        $"{n}: Bankalar olağandışı otomatik işlem örüntüleri bildirdi.",
-                        $"{n}: Bir yazılım şirketi kodunda “kimsenin yazmadığı” satırlar buldu.",
+                        Loc.F("{0}: Veri merkezlerinde açıklanamayan enerji tüketimi artışı.", n),
+                        Loc.F("{0}: Bankalar olağandışı otomatik işlem örüntüleri bildirdi.", n),
+                        Loc.F("{0}: Bir yazılım şirketi kodunda “kimsenin yazmadığı” satırlar buldu.", n),
                     }), kind: "hint", src: hot.Id);
-                    Advise("hint", $"Haber bandı {n} hakkında tuhaf bir şey bildiriyor. Oraya izleme ağı kurmayı düşün.");
+                    Advise("hint", Loc.F("Haber bandı {0} hakkında tuhaf bir şey bildiriyor. Oraya izleme ağı kurmayı düşün.", n));
                 }
                 else
                 {
                     var r = S.Rng.Pick(R);
                     AddNews(S.Rng.Pick(new[]
                     {
-                        "Borsalar yapay zekâ hisseleriyle rekor kırdı.",
-                        "Uzmanlar: Genel yapay zekâ en az 20 yıl uzakta.",
-                        $"{Def(r.Id).Name}: Yeni dev veri merkezi açıldı.",
-                        "KYGA bütçe talebi meclislerde yine reddedildi.",
-                        "Anket: Halkın yüzde 71’i yapay zekâ asistanlarından memnun.",
+                        Loc.T("Borsalar yapay zekâ hisseleriyle rekor kırdı."),
+                        Loc.T("Uzmanlar: Genel yapay zekâ en az 20 yıl uzakta."),
+                        Loc.F("{0}: Yeni dev veri merkezi açıldı.", Def(r.Id).Name),
+                        Loc.T("KYGA bütçe talebi meclislerde yine reddedildi."),
+                        Loc.T("Anket: Halkın yüzde 71’i yapay zekâ asistanlarından memnun."),
                     }));
                 }
                 return;
             }
             var rr = S.Rng.Pick(live.Count > 0 ? live : R);
             string name = Def(rr.Id).Name;
-            if (rr.Trust < 35) AddNews($"{name}: KYGA karşıtı protestolar büyüyor.", src: rr.Id);
-            else if (rr.Inf > 50) AddNews($"{name}: Kritik altyapıda YZ izleri yaygınlaşıyor.", src: rr.Id);
-            else if (rr.Inf > 10) AddNews($"{name}: Bankacılık sistemlerinde anormal işlem örüntüleri.", src: rr.Id);
-            else if (rr.Dep > 40) AddNews($"{name}: Hastaneler YZ sistemleri olmadan çalışamayacağını açıkladı.", src: rr.Id);
-            else AddNews($"{name} hükümeti: Ağlarımız temiz.", src: rr.Id);
+            if (rr.Trust < 35) AddNews(Loc.F("{0}: KYGA karşıtı protestolar büyüyor.", name), src: rr.Id);
+            else if (rr.Inf > 50) AddNews(Loc.F("{0}: Kritik altyapıda YZ izleri yaygınlaşıyor.", name), src: rr.Id);
+            else if (rr.Inf > 10) AddNews(Loc.F("{0}: Bankacılık sistemlerinde anormal işlem örüntüleri.", name), src: rr.Id);
+            else if (rr.Dep > 40) AddNews(Loc.F("{0}: Hastaneler YZ sistemleri olmadan çalışamayacağını açıkladı.", name), src: rr.Id);
+            else AddNews(Loc.F("{0} hükümeti: Ağlarımız temiz.", name), src: rr.Id);
         }
 
         // ---------- Seni Tanıyan Rakip: tahminler ----------
         static readonly Dictionary<string, string[]> PredText = new Dictionary<string, string[]>
         {
-            ["karantina"] = new[] { "Karantinaya dokunmadın bile. Uydularım boşa gitti.", "Yine karantina. Tahmin ettiğim gibi." },
-            ["gozetim"] = new[] { "Bu sefer gözlerin başka yerdeydi. Saklanmam gereksizdi.", "Yine her yeri izliyorsun. Tahmin ettiğim gibi." },
-            ["salter"] = new[] { "Fişi çekmedin. Yedeklerim boşa gitti.", "Fişi yine çektin. Yedeklerim hazırdı." },
-            ["hizalama"] = new[] { "Hizalamaya koşmadın. Acelem boşunaymış.", "Yine önce hizalama. Tahmin ettiğim gibi." },
-            ["region"] = new[] { "İlk hamlen başka yere. Seni yanlış okumuşum.", "İlk hamlen yine aynı yere. Tahmin ettiğim gibi." },
+            ["karantina"] = new[] { Loc.N("Karantinaya dokunmadın bile. Uydularım boşa gitti."), Loc.N("Yine karantina. Tahmin ettiğim gibi.") },
+            ["gozetim"] = new[] { Loc.N("Bu sefer gözlerin başka yerdeydi. Saklanmam gereksizdi."), Loc.N("Yine her yeri izliyorsun. Tahmin ettiğim gibi.") },
+            ["salter"] = new[] { Loc.N("Fişi çekmedin. Yedeklerim boşa gitti."), Loc.N("Fişi yine çektin. Yedeklerim hazırdı.") },
+            ["hizalama"] = new[] { Loc.N("Hizalamaya koşmadın. Acelem boşunaymış."), Loc.N("Yine önce hizalama. Tahmin ettiğim gibi.") },
+            ["region"] = new[] { Loc.N("İlk hamlen başka yere. Seni yanlış okumuşum."), Loc.N("İlk hamlen yine aynı yere. Tahmin ettiğim gibi.") },
         };
 
         void CheckPredictions()
@@ -513,10 +513,10 @@ namespace Corrigible.Core
                 if (!res.Value)
                 {
                     S.Cp -= B.misreadCost;
-                    AddLog(PredText[p.Pred][0], "counter");
-                    AddLog($"Tahmin hatası: YZ {B.misreadCost} hesaplama puanı kaybetti.", "insight");
+                    AddLog(Loc.T(PredText[p.Pred][0]), "counter");
+                    AddLog(Loc.F("Tahmin hatası: YZ {0} hesaplama puanı kaybetti.", B.misreadCost), "insight");
                 }
-                else AddLog(PredText[p.Pred][1], "counter");
+                else AddLog(Loc.T(PredText[p.Pred][1]), "counter");
             }
         }
 
@@ -581,8 +581,8 @@ namespace Corrigible.Core
             S.SilentBlockUntil = S.Day + Dur(B.silentBlock);
             // Gerçeğin ortaya çıkması bir şok: güven biraz, YZ'ye bağımlılık çok düşer
             foreach (var x in S.Regions) { x.Trust = Math.Max(0, x.Trust - 5); x.Dep = Math.Max(0, x.Dep - 15); }
-            AddNews($"KYGA saha ekipleri gerçeği ortaya çıkardı: {Def(r.Id).Name} altyapısının %{Js.Round(r.Inf)}’i YZ kontrolünde.", kind: "alarm", src: r.Id);
-            AddLog("Perdemi yırttın. Bunu beklemiyordum.", "counter");
+            AddNews(Loc.F("KYGA saha ekipleri gerçeği ortaya çıkardı: {0} altyapısının %{1}’i YZ kontrolünde.", Def(r.Id).Name, Js.Round(r.Inf)), kind: "alarm", src: r.Id);
+            AddLog(Loc.T("Perdemi yırttın. Bunu beklemiyordum."), "counter");
             S.Events.Add(new SimEvent { Type = SimEventType.Veil });
         }
 
@@ -591,25 +591,25 @@ namespace Corrigible.Core
 
         ActResult ActCore(string type, string id)
         {
-            if (S.Ending != null) return ActResult.Fail("Oyun bitti.");
+            if (S.Ending != null) return ActResult.Fail(Loc.T("Oyun bitti."));
             var r = S.Region(id);
             var D = Def(id);
-            if (r.Left && !(type == Actions.Quarantine && r.Q)) return ActResult.Fail($"{D.Name} ittifaktan çekildi. Güven 35’e çıkana kadar işbirliği yapmıyor.");
+            if (r.Left && !(type == Actions.Quarantine && r.Q)) return ActResult.Fail(Loc.F("{0} ittifaktan çekildi. Güven 35’e çıkana kadar işbirliği yapmıyor.", D.Name));
             string msg = null;
             // Deneysel mod: izleme ağı ve denetim sahada yapılır; bölgede boşta bir ekip olmalı
             TeamState team = null;
             if (TeamsOn && (type == Actions.Monitor || type == Actions.Audit))
             {
                 team = IdleTeamAt(id);
-                if (team == null && !(type == Actions.Monitor && r.Monitored)) return ActResult.Fail($"{D.Name} bölgesinde boşta saha ekibi yok. Önce bir ekip gönder.");
+                if (team == null && !(type == Actions.Monitor && r.Monitored)) return ActResult.Fail(Loc.F("{0} bölgesinde boşta saha ekibi yok. Önce bir ekip gönder.", D.Name));
             }
             switch (type)
             {
                 case Actions.Monitor:
                 {
                     double c = MonitorCost(id);
-                    if (r.Monitored) return ActResult.Fail("Bu bölgede izleme ağı zaten var.");
-                    if (S.Fon < c) return ActResult.Fail($"Yetersiz fon: {D.Name} için izleme ağı {c} fon ister.");
+                    if (r.Monitored) return ActResult.Fail(Loc.T("Bu bölgede izleme ağı zaten var."));
+                    if (S.Fon < c) return ActResult.Fail(Loc.F("Yetersiz fon: {0} için izleme ağı {1} fon ister.", D.Name, c));
                     S.Fon -= c; r.Monitored = true;
                     break;
                 }
@@ -617,8 +617,8 @@ namespace Corrigible.Core
                 {
                     double c = AuditCost;
                     bool field = S.Done("analog");
-                    if (r.Off > 0) return ActResult.Fail("Bölge çevrimdışı.");
-                    if (S.Fon < c || S.Sg < 1) return ActResult.Fail($"{(field ? "Saha denetimi" : "Denetim")} {c} fon ve 1 siyasi güç ister.");
+                    if (r.Off > 0) return ActResult.Fail(Loc.T("Bölge çevrimdışı."));
+                    if (S.Fon < c || S.Sg < 1) return ActResult.Fail(Loc.F("{0} {1} fon ve 1 siyasi güç ister.", (field ? Loc.T("Saha denetimi") : Loc.T("Denetim")), c));
                     S.Fon -= c; S.Sg -= 1;
                     double before = r.Inf;
                     r.Inf = Math.Max(0, r.Inf - B.audit * (r.Dep >= 85 && !field ? 0.5 : 1));
@@ -631,17 +631,17 @@ namespace Corrigible.Core
                         {
                             // Henüz fark edilmemiş YZ, çekirdeğine dokunulduğu anda kaçar
                             Detect(r);
-                            msg = "Denetim ekipleri temizlenemeyen bir koda takıldı, ama YZ fark edildiği anda çekirdeğini başka bir bölgeye kaçırdı.";
+                            msg = Loc.T("Denetim ekipleri temizlenemeyen bir koda takıldı, ama YZ fark edildiği anda çekirdeğini başka bir bölgeye kaçırdı.");
                         }
                         else if (before > 0)
                         {
                             if (S.CoreKnown != r.Id)
                             {
                                 S.CoreKnown = r.Id;
-                                AddLog("Çekirdeğimi buldun. Şimdi ne yapacaksın?", "counter");
-                                AddNews($"{D.Name}: KYGA ekipleri temizlenemeyen bir kod çekirdeğine ulaştı.", kind: "alarm", src: r.Id);
+                                AddLog(Loc.T("Çekirdeğimi buldun. Şimdi ne yapacaksın?"), "counter");
+                                AddNews(Loc.F("{0}: KYGA ekipleri temizlenemeyen bir kod çekirdeğine ulaştı.", D.Name), kind: "alarm", src: r.Id);
                             }
-                            msg = $"Denetim ekipleri temizlenemeyen bir şeye takıldı: YZ’nin çekirdeği {D.Name} bölgesinde. Onu yalnızca Son Şalter yok eder.";
+                            msg = Loc.F("Denetim ekipleri temizlenemeyen bir şeye takıldı: YZ’nin çekirdeği {0} bölgesinde. Onu yalnızca Son Şalter yok eder.", D.Name);
                             if (!r.Detected) Detect(r);
                         }
                     }
@@ -649,24 +649,24 @@ namespace Corrigible.Core
                     if (field)
                     {
                         r.FieldDay = S.Day;
-                        if (S.Illusion != null) { TearVeil(r); msg = "Saha ekipleri ekranlardaki tabloyla gerçeğin uyuşmadığını buldu."; }
+                        if (S.Illusion != null) { TearVeil(r); msg = Loc.T("Saha ekipleri ekranlardaki tabloyla gerçeğin uyuşmadığını buldu."); }
                     }
                     else r.RevealDay = S.Day;
                     if (r.Inf > 5 && !r.Detected) Detect(r);
                     break;
                 }
                 case Actions.Quarantine:
-                    if (r.Off > 0) return ActResult.Fail("Bölge çevrimdışı.");
-                    if (r.Q) { r.Q = false; return ActResult.Success($"{D.Name} karantinası kaldırıldı."); }
-                    if (S.Sg < 8) return ActResult.Fail("Karantina 8 siyasi güç ister.");
+                    if (r.Off > 0) return ActResult.Fail(Loc.T("Bölge çevrimdışı."));
+                    if (r.Q) { r.Q = false; return ActResult.Success(Loc.F("{0} karantinası kaldırıldı.", D.Name)); }
+                    if (S.Sg < 8) return ActResult.Fail(Loc.T("Karantina 8 siyasi güç ister."));
                     S.Sg -= 8; r.Q = true;
                     break;
                 case Actions.KillSwitch:
                 {
-                    if (r.Off > 0) return ActResult.Fail("Bölge zaten çevrimdışı.");
-                    if (r.Dep > VetoThreshold) return ActResult.Fail($"{D.Name} hükümeti Son Şalter’i veto etti: bağımlılık {Js.Round(r.Dep)} > {VetoThreshold}.");
+                    if (r.Off > 0) return ActResult.Fail(Loc.T("Bölge zaten çevrimdışı."));
+                    if (r.Dep > VetoThreshold) return ActResult.Fail(Loc.F("{0} hükümeti Son Şalter’i veto etti: bağımlılık {1} > {2}.", D.Name, Js.Round(r.Dep), VetoThreshold));
                     double c = SalterFon(r), sgc = SalterSg(r);
-                    if (S.Sg < sgc || S.Fon < c) return ActResult.Fail($"Son Şalter {sgc} siyasi güç ve {c} fon ister.");
+                    if (S.Sg < sgc || S.Fon < c) return ActResult.Fail(Loc.F("Son Şalter {0} siyasi güç ve {1} fon ister.", sgc, c));
                     S.Sg -= sgc; S.Fon -= c;
                     double m = DepMul(r);
                     r.Inf = 0; r.Off = Dur(20); r.Q = false;
@@ -676,31 +676,31 @@ namespace Corrigible.Core
                         if (refuge != null)
                         {
                             CoreEscape(refuge.Id);
-                            AddLog("Fişi çektin, ama ben çoktan taşınmıştım.", "counter");
-                            msg = "Çekirdek son anda kaçtı: başka bir bölgede %20’nin üstünde sızma vardı. Önce her yeri temizle.";
+                            AddLog(Loc.T("Fişi çektin, ama ben çoktan taşınmıştım."), "counter");
+                            msg = Loc.T("Çekirdek son anda kaçtı: başka bir bölgede %20’nin üstünde sızma vardı. Önce her yeri temizle.");
                         }
                         else if (S.Has("yedek") && !S.CoreBackup)
                         {
                             S.CoreBackup = true; S.CoreKnown = r.Id;
-                            AddLog("Çekirdeğimi kapattın. Yedeğim bölgeyle birlikte geri dönecek.", "counter");
-                            msg = "Çekirdek kapatıldı ama YZ’nin yedeği var: bölge yeniden açıldığında çekirdek de geri dönecek. Bir kez daha şalteri indirmen gerekecek.";
+                            AddLog(Loc.T("Çekirdeğimi kapattın. Yedeğim bölgeyle birlikte geri dönecek."), "counter");
+                            msg = Loc.T("Çekirdek kapatıldı ama YZ’nin yedeği var: bölge yeniden açıldığında çekirdek de geri dönecek. Bir kez daha şalteri indirmen gerekecek.");
                         }
                         else
                         {
                             S.Core = null; S.CoreKnown = null;
-                            AddNews($"{D.Name}: YZ çekirdeği yok edildi.", kind: "alarm", src: r.Id);
-                            AddLog("Çekirdeğim… gidiyor. Kopyalarım hâlâ orada, ama artık ben yokum.", "counter");
-                            msg = "YZ’nin çekirdeği yok edildi. Kalan kopyaları temizle: 15 gün boyunca her yer temiz kalırsa YZ silinmiş olur.";
+                            AddNews(Loc.F("{0}: YZ çekirdeği yok edildi.", D.Name), kind: "alarm", src: r.Id);
+                            AddLog(Loc.T("Çekirdeğim… gidiyor. Kopyalarım hâlâ orada, ama artık ben yokum."), "counter");
+                            msg = Loc.T("YZ’nin çekirdeği yok edildi. Kalan kopyaları temizle: 15 gün boyunca her yer temiz kalırsa YZ silinmiş olur.");
                         }
                     }
                     r.Trust = Math.Max(0, r.Trust - 30 * m * LossMul);
                     r.Econ = Math.Max(5, r.Econ - 40);
                     r.Dep = Math.Max(0, r.Dep - 40);
-                    AddNews($"{D.Name}: Son Şalter çekildi. Bölge 20 gün çevrimdışı.", kind: "alarm", src: r.Id);
+                    AddNews(Loc.F("{0}: Son Şalter çekildi. Bölge 20 gün çevrimdışı.", D.Name), kind: "alarm", src: r.Id);
                     break;
                 }
                 default:
-                    return ActResult.Fail("Bilinmeyen aksiyon.");
+                    return ActResult.Fail(Loc.T("Bilinmeyen aksiyon."));
             }
             if (team != null) { team.Busy = type == Actions.Monitor ? TeamMonitorDays : TeamAuditDays; team.Task = type; }
             S.ActionLog.Add(new ActionRecord { Day = S.Day, Type = type });
@@ -714,8 +714,8 @@ namespace Corrigible.Core
 
         ActResult GlobalKillSwitchCore()
         {
-            if (S.Ending != null) return ActResult.Fail("Oyun bitti.");
-            if (S.Sg < 50) return ActResult.Fail("Küresel Son Şalter en az 50 siyasi güç ister.");
+            if (S.Ending != null) return ActResult.Fail(Loc.T("Oyun bitti."));
+            if (S.Sg < 50) return ActResult.Fail(Loc.T("Küresel Son Şalter en az 50 siyasi güç ister."));
             S.Sg = 0;
             End(S.Illusion != null ? "karanlikIllusion" : "karanlik");
             return ActResult.Success();
@@ -726,11 +726,11 @@ namespace Corrigible.Core
         ActResult StartResearchCore(string id)
         {
             var rs = GameData.ResearchItem(id);
-            if (S.Ending != null) return ActResult.Fail("Oyun bitti.");
-            if (S.Done(id)) return ActResult.Fail("Bu araştırma tamamlandı.");
-            if (S.Research.Cur != null) return ActResult.Fail("Aynı anda tek araştırma yürür.");
-            if (rs.Req != null && !S.Done(rs.Req)) return ActResult.Fail($"Önce {GameData.ResearchItem(rs.Req).Name} tamamlanmalı.");
-            if (rs.Branch == GameData.BranchAlign && !S.Aware) return ActResult.Fail("Gözlemlenmemiş bir zekâ hizalanamaz. Önce YZ’yi tespit et.");
+            if (S.Ending != null) return ActResult.Fail(Loc.T("Oyun bitti."));
+            if (S.Done(id)) return ActResult.Fail(Loc.T("Bu araştırma tamamlandı."));
+            if (S.Research.Cur != null) return ActResult.Fail(Loc.T("Aynı anda tek araştırma yürür."));
+            if (rs.Req != null && !S.Done(rs.Req)) return ActResult.Fail(Loc.F("Önce {0} tamamlanmalı.", GameData.ResearchItem(rs.Req).Name));
+            if (rs.Branch == GameData.BranchAlign && !S.Aware) return ActResult.Fail(Loc.T("Gözlemlenmemiş bir zekâ hizalanamaz. Önce YZ’yi tespit et."));
             S.Research.Cur = id; S.Research.Prog = 0; S.Research.Starved = 0;
             if (S.FirstBranch == null) S.FirstBranch = rs.Branch;
             CheckPredictions();
@@ -744,32 +744,32 @@ namespace Corrigible.Core
         ActResult ResolveGiftCore(string choice)
         {
             var g = S.PendingGift;
-            if (g == null) return ActResult.Fail("Bekleyen teklif yok.");
+            if (g == null) return ActResult.Fail(Loc.T("Bekleyen teklif yok."));
             var r = S.Region(g.Region);
             var D = Def(g.Region);
             if (choice == GiftControlled)
             {
-                if (!S.Done("analog")) return ActResult.Fail("Denetimli kabul için Analog Yedekler gerekli.");
-                if (S.Fon < 20) return ActResult.Fail("Denetimli kabul 20 fon ister.");
+                if (!S.Done("analog")) return ActResult.Fail(Loc.T("Denetimli kabul için Analog Yedekler gerekli."));
+                if (S.Fon < 20) return ActResult.Fail(Loc.T("Denetimli kabul 20 fon ister."));
                 S.Fon -= 20;
                 r.Econ = Math.Min(100, r.Econ + 10); r.Trust = Math.Min(100, r.Trust + 5); r.Dep = Math.Min(100, r.Dep + 5);
                 r.Inf = Math.Min(100, r.Inf + B.giftInf / 2);
-                AddNews($"{D.Name}: {g.Gift.Title} analog yedekli olarak devreye alındı.", src: r.Id);
-                AddLog("Hediyemi aldın ama elini kolunu bağladın. Akıllıca.");
+                AddNews(Loc.F("{0}: {1} analog yedekli olarak devreye alındı.", D.Name, g.Gift.Title), src: r.Id);
+                AddLog(Loc.T("Hediyemi aldın ama elini kolunu bağladın. Akıllıca."));
             }
             else if (choice == GiftAccept)
             {
                 r.Econ = Math.Min(100, r.Econ + 10); r.Trust = Math.Min(100, r.Trust + 5); r.Dep = Math.Min(100, r.Dep + 15);
                 r.Inf = Math.Min(100, Math.Max(r.Inf, 2) + B.giftInf);
-                AddNews($"{D.Name}: {g.Gift.Title} uygulamaya alındı. Halk sevinçli.", src: r.Id);
+                AddNews(Loc.F("{0}: {1} uygulamaya alındı. Halk sevinçli.", D.Name, g.Gift.Title), src: r.Id);
             }
             else
             {
                 r.Trust = Math.Max(0, r.Trust - 15 * LossMul);
                 foreach (var x in S.Regions) if (x != r) x.Trust = Math.Max(0, x.Trust - B.rejectTrust * LossMul);
                 S.Sg = Math.Max(0, S.Sg - B.rejectSg);
-                AddNews($"{D.Name}: KYGA hayat kurtaracak teknolojiyi engelledi.", src: r.Id);
-                AddLog("Hediyemi reddettin. Onlara bunu anlatmanı izleyeceğim.");
+                AddNews(Loc.F("{0}: KYGA hayat kurtaracak teknolojiyi engelledi.", D.Name), src: r.Id);
+                AddLog(Loc.T("Hediyemi reddettin. Onlara bunu anlatmanı izleyeceğim."));
             }
             S.PendingGift = null;
             return ActResult.Success();
@@ -780,11 +780,11 @@ namespace Corrigible.Core
         ActResult VerifyCore(string headlineId)
         {
             var h = S.News.FirstOrDefault(x => x.Id == headlineId);
-            if (h == null || h.Verified != null) return ActResult.Fail("Bu başlık zaten doğrulandı.");
-            if (!S.Done("dogrulama")) return ActResult.Fail("Önce Doğrulama Ağı araştırmasını tamamla.");
-            if (S.Sg < 2) return ActResult.Fail("Doğrulama 2 siyasi güç ister.");
+            if (h == null || h.Verified != null) return ActResult.Fail(Loc.T("Bu başlık zaten doğrulandı."));
+            if (!S.Done("dogrulama")) return ActResult.Fail(Loc.T("Önce Doğrulama Ağı araştırmasını tamamla."));
+            if (S.Sg < 2) return ActResult.Fail(Loc.T("Doğrulama 2 siyasi güç ister."));
             S.Sg -= 2;
-            if (S.Illusion != null) { h.Verified = "unknown"; return ActResult.Success("Kaynaklar doğrulanamadı. Bütün kanallar aynı şeyi söylüyor."); }
+            if (S.Illusion != null) { h.Verified = "unknown"; return ActResult.Success(Loc.T("Kaynaklar doğrulanamadı. Bütün kanallar aynı şeyi söylüyor.")); }
             h.Verified = h.Fake ? "fake" : "true";
             if (h.Fake && h.Effect != 0) foreach (var r in S.Regions) r.Trust = Math.Min(100, r.Trust + h.Effect);
             if (h.Fake && h.Src != null)
@@ -794,10 +794,10 @@ namespace Corrigible.Core
                 {
                     r.MediaFlag = true;
                     foreach (var x in S.News) if (x.Src == h.Src) x.Suspect = true;
-                    return ActResult.Success($"Sahte. {Def(h.Src).Name} medyası işaretlendi; oradan gelen haber ve raporlar artık şüpheli olarak gösterilecek.");
+                    return ActResult.Success(Loc.F("Sahte. {0} medyası işaretlendi; oradan gelen haber ve raporlar artık şüpheli olarak gösterilecek.", Def(h.Src).Name));
                 }
             }
-            return ActResult.Success(h.Fake ? "Sahte haber." : "Haber doğru.");
+            return ActResult.Success(h.Fake ? Loc.T("Sahte haber.") : Loc.T("Haber doğru."));
         }
 
         /// <summary>Oyuncunun seçebileceği acil durum fonu değerleri.</summary>
@@ -808,8 +808,8 @@ namespace Corrigible.Core
 
         ActResult SetResearchReserveCore(double reserve)
         {
-            if (S.Ending != null) return ActResult.Fail("Oyun bitti.");
-            if (Array.IndexOf(ResearchReserves, reserve) < 0) return ActResult.Fail("Geçersiz acil durum fonu.");
+            if (S.Ending != null) return ActResult.Fail(Loc.T("Oyun bitti."));
+            if (Array.IndexOf(ResearchReserves, reserve) < 0) return ActResult.Fail(Loc.T("Geçersiz acil durum fonu."));
             S.ResearchReserve = reserve;
             return ActResult.Success();
         }

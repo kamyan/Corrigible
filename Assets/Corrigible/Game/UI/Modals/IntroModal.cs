@@ -1,3 +1,4 @@
+using Corrigible.Core;
 using System;
 using System.Collections.Generic;
 using TMPro;
@@ -26,6 +27,8 @@ namespace Corrigible.Game.UI
         [Header("Deneysel")]
         [SerializeField] StyledButton expTeams;
         [SerializeField] StyledButton expScale;
+        [Tooltip("Dili değiştirir (sahne yeniden yüklenir).")]
+        [SerializeField] StyledButton language;
 
         public event Action<string> TypeChosen;
         public event Action StartClicked;
@@ -33,6 +36,7 @@ namespace Corrigible.Game.UI
         public event Action ContinueClicked;
         /// <summary>Deneysel ayar değişti: (saha ekipleri, zaman ölçeği).</summary>
         public event Action<bool, double> ExpChanged;
+        public event Action LanguageClicked;
 
         static readonly double[] Scales = { 1, 1.5, 2 };
         bool teamsOn; double scale = 1.5;
@@ -43,6 +47,11 @@ namespace Corrigible.Game.UI
             UiUtil.OnClick(start.Button, () => StartClicked?.Invoke());
             UiUtil.OnClick(tutorial.Button, () => TutorialClicked?.Invoke());
             UiUtil.OnClick(continueSaved.Button, () => ContinueClicked?.Invoke());
+            if (language != null)
+            {
+                UiUtil.OnClick(language.Button, () => LanguageClicked?.Invoke());
+                language.SetText(Loc.T("Dil: Türkçe · Language: English"));
+            }
             if (expTeams != null) UiUtil.OnClick(expTeams.Button, () => ExpChanged?.Invoke(!teamsOn, scale));
             if (expScale != null) UiUtil.OnClick(expScale.Button, () =>
             {
@@ -56,14 +65,14 @@ namespace Corrigible.Game.UI
         {
             teamsOn = teams; scale = timeScale;
             if (expTeams == null) return;
-            expTeams.SetText(teams ? "Saha ekipleri ve baskın: AÇIK" : "Saha ekipleri ve baskın: KAPALI");
+            expTeams.SetText(teams ? Loc.T("Saha ekipleri ve baskın: AÇIK") : Loc.T("Saha ekipleri ve baskın: KAPALI"));
             expTeams.SetColors(text: teams ? theme.verify : theme.muted);
-            expScale.SetText(timeScale == 1 ? "Zaman ölçeği: 1× (temel)" : $"Zaman ölçeği: {timeScale.ToString("0.#", UiUtil.Tr)}×");
+            expScale.SetText(timeScale == 1 ? Loc.T("Zaman ölçeği: 1× (temel)") : Loc.F("Zaman ölçeği: {0}×", timeScale.ToString("0.#", UiUtil.Tr)));
         }
 
         public void Show(string currentType, IEnumerable<string> lines, string saveSummary, bool tutorialDone, UiTheme theme)
         {
-            tutorial.SetText(tutorialDone ? "EĞİTİMLE BAŞLA" : "EĞİTİMLE BAŞLA · ÖNERİLİR");
+            tutorial.SetText(tutorialDone ? Loc.T("EĞİTİMLE BAŞLA") : Loc.T("EĞİTİMLE BAŞLA · ÖNERİLİR"));
             foreach (var c in cards)
             {
                 bool on = c.typeId == currentType;
@@ -71,7 +80,7 @@ namespace Corrigible.Game.UI
             }
             UiUtil.FillLines(interceptLines, linePrefab, lines);
             UiUtil.Show(continueSaved, saveSummary != null);
-            if (saveSummary != null) continueSaved.SetText("KALDIĞIN YERDEN DEVAM ET · " + saveSummary);
+            if (saveSummary != null) continueSaved.SetText(Loc.T("KALDIĞIN YERDEN DEVAM ET · ") + saveSummary);
         }
     }
 }

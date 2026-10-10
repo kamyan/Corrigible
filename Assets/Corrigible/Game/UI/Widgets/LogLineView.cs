@@ -1,3 +1,4 @@
+using Corrigible.Core;
 using TMPro;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ namespace Corrigible.Game.UI
 
         public void Set(int dayNumber, string message, Color color)
         {
-            day.text = $"G{dayNumber:000}";
+            day.text = Loc.F("G{0:000}", dayNumber);
             text.text = message;
             text.color = color;
         }

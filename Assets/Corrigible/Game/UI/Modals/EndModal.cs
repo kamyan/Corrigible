@@ -37,12 +37,12 @@ namespace Corrigible.Game.UI
         {
             var s = sim.S;
             var e = GameData.Ending(s.Ending);
-            eyebrow.text = $"OYUN SONU · GÜN {s.Day} · RAKİP: {UiUtil.Up(sim.Type.Name)} · TOHUM {s.Seed}";
+            eyebrow.text = Loc.F("OYUN SONU · GÜN {0} · RAKİP: {1} · TOHUM {2}", s.Day, UiUtil.Up(sim.Type.Name), s.Seed);
             title.text = e.Title;
             title.color = e.Kind == EndingKind.Win ? theme.good : e.Kind == EndingKind.Loss ? theme.threat : theme.warn;
             body.text = e.Text;
             UiUtil.Show(illusion, s.Illusion != null);
-            if (s.Illusion != null) illusion.text = $"İllüzyon {s.Illusion.Start}. günde başladı. O günden sonra ekrandaki sızma, güven ve Tekillik değerleri ve bütün haberler sahteydi.";
+            if (s.Illusion != null) illusion.text = Loc.F("İllüzyon {0}. günde başladı. O günden sonra ekrandaki sızma, güven ve Tekillik değerleri ve bütün haberler sahteydi.", s.Illusion.Start);
             day.text = s.Day.ToString();
             tek.text = $"{Js.Round(s.Tek)}%";
             inf.text = Js.Round(sim.MeanInf).ToString();

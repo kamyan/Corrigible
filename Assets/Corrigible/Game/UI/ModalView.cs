@@ -36,13 +36,14 @@ namespace Corrigible.Game.UI
             all = new MonoBehaviour[] { intro, gift, veil, fakeWin, end };
             intro.TypeChosen += id => game.NewGame(id);
             intro.ExpChanged += (teams, scale) => game.SetExperimental(teams, scale);
+            intro.LanguageClicked += Localization.Next;
             intro.StartClicked += () => { Close(); game.SetSpeed(1); };
             // Eğitim zamanı kendisi başlatır ("Zamanı başlat" adımı)
             intro.TutorialClicked += () => { Close(); game.SetSpeed(0); };
             intro.ContinueClicked += () =>
             {
-                if (game.ContinueSaved()) { Close(); toast.Show($"Kayıt yüklendi: {S.Day}. gün. Oyun duraklatıldı.", true); }
-                else toast.Show("Kayıt yüklenemedi.");
+                if (game.ContinueSaved()) { Close(); toast.Show(Loc.F("Kayıt yüklendi: {0}. gün. Oyun duraklatıldı.", S.Day), true); }
+                else toast.Show(Loc.T("Kayıt yüklenemedi."));
             };
             gift.Chosen += choice =>
             {
@@ -51,12 +52,12 @@ namespace Corrigible.Game.UI
             };
             veil.Closed += Close;
             end.AgainClicked += () => { Close(); game.NewGame(game.TypeId); };
-            end.WipeClicked += () => { game.ClearProfile(); toast.Show("Hafıza silindi.", true); };
+            end.WipeClicked += () => { game.ClearProfile(); toast.Show(Loc.T("Hafıza silindi."), true); };
             end.LookClicked += () =>
             {
                 Close();
                 desk.EnterReplayMode();
-                toast.Show("Harita artık gerçek değerleri gösteriyor. Yeni oyun için sağdaki Yeniden oyna düğmesini kullan.", true);
+                toast.Show(Loc.T("Harita artık gerçek değerleri gösteriyor. Yeni oyun için sağdaki Yeniden oyna düğmesini kullan."), true);
             };
         }
 

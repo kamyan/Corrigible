@@ -192,7 +192,7 @@ namespace Corrigible.Game
         public string SavedGameSummary()
         {
             var rec = LoadRecord();
-            return rec == null ? null : $"{GameData.AiType(rec.type).Name}, {rec.day}. gün";
+            return rec == null ? null : Loc.F("{0}, {1}. gün", GameData.AiType(rec.type).Name, rec.day);
         }
 
         public bool ContinueSaved()

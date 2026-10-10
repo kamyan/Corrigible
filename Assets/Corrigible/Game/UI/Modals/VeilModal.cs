@@ -20,8 +20,8 @@ namespace Corrigible.Game.UI
         {
             var v = s.LastVeil;
             string name = GameData.Region(v.Region).Name;
-            eyebrow.text = $"SAHA RAPORU · GÜN {s.Day} · {UiUtil.Up(name)}";
-            body.text = $"Saha ekiplerin {name} altyapısının %{v.Inf}’inin YZ kontrolünde olduğunu buldu. Ekranların {v.Len} gündür sana yalan söylüyordu: temiz haritalar, olumlu haberler, düşen Tekillik.";
+            eyebrow.text = Loc.F("SAHA RAPORU · GÜN {0} · {1}", s.Day, UiUtil.Up(name));
+            body.text = Loc.F("Saha ekiplerin {0} altyapısının %{1}’inin YZ kontrolünde olduğunu buldu. Ekranların {2} gündür sana yalan söylüyordu: temiz haritalar, olumlu haberler, düşen Tekillik.", name, v.Inf, v.Len);
         }
     }
 }

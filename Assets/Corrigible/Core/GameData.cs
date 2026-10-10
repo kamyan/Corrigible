@@ -6,7 +6,11 @@ namespace Corrigible.Core
 {
     public sealed class RegionDef
     {
-        public string Id, Name, LatLon;
+        public string Id;
+        string name;
+        /// <summary>Gösterim adı (geçerli dilde).</summary>
+        public string Name { get => Loc.T(name); set => name = value; }
+        public string LatLon => Loc.F(Lat >= 0 ? (Lon >= 0 ? Loc.N("{0}°K {1}°D") : Loc.N("{0}°K {1}°B")) : (Lon >= 0 ? Loc.N("{0}°G {1}°D") : Loc.N("{0}°G {1}°B")), Math.Abs(Lat), Math.Abs(Lon));
         public double Lon, Lat, Economy;
         public int Compute;
         /// <summary>Etiket konumu: b alt, t üst, l sol, r sağ.</summary>
@@ -26,12 +30,20 @@ namespace Corrigible.Core
 
     public sealed class TraitDef
     {
-        public string Id, Name, Desc, Line;
+        public string Id;
+        string name, desc, line;
+        public string Name { get => Loc.T(name); set => name = value; }
+        public string Desc { get => Loc.T(desc); set => desc = value; }
+        public string Line { get => Loc.T(line); set => line = value; }
     }
 
     public sealed class AiTypeDef
     {
-        public string Id, Name, Difficulty, Blurb;
+        public string Id;
+        string name, difficulty, blurb;
+        public string Name { get => Loc.T(name); set => name = value; }
+        public string Difficulty { get => Loc.T(difficulty); set => difficulty = value; }
+        public string Blurb { get => Loc.T(blurb); set => blurb = value; }
         public string[] Start, Order;
         public double Detect, Growth, Tek;
         public int GiftMin, GiftMax, GiftFastMin, GiftFastMax;
@@ -43,7 +55,11 @@ namespace Corrigible.Core
 
     public sealed class ResearchDef
     {
-        public string Id, Branch, Name, Desc, Req;
+        /// <summary>Kol: kimlik olarak karşılaştırılır; gösterirken <c>Loc.T(Branch)</c>.</summary>
+        public string Id, Branch, Req;
+        string name, desc;
+        public string Name { get => Loc.T(name); set => name = value; }
+        public string Desc { get => Loc.T(desc); set => desc = value; }
         public double Cost;
         public int Days;
     }
@@ -52,34 +68,41 @@ namespace Corrigible.Core
 
     public sealed class EndingDef
     {
-        public string Id, Title, Text;
+        public string Id;
+        string title, text;
+        public string Title { get => Loc.T(title); set => title = value; }
+        public string Text { get => Loc.T(text); set => text = value; }
         public EndingKind Kind;
     }
 
     public sealed class GiftDef
     {
-        public string Title, Text;
+        string title, text;
+        public string Title { get => Loc.T(title); set => title = value; }
+        public string Text { get => Loc.T(text); set => text = value; }
     }
 
     /// <summary>Oyunun sabit içeriği. Tam oyunda bunlar RegionDef/TraitDef/... ScriptableObject'lerine taşınır.</summary>
     public static class GameData
     {
         public const string BranchAlign = "Hizalama";
+        /// <summary>Araştırma kolu adları kimlik olarak da kullanılır; gösterirken <c>Loc.T(def.Branch)</c>. (Çeviri tablosu için işaret.)</summary>
+        public static readonly string[] BranchNames = { Loc.N("Tespit"), Loc.N("Savunma"), Loc.N("Politika"), Loc.N("Hizalama") };
 
         public static readonly RegionDef[] Regions =
         {
-            R("na", "Kuzey Amerika", -100, 40, 5, 90, 'b'),
-            R("sa", "Güney Amerika", -60, -15, 2, 50, 'b'),
-            R("weu", "Batı Avrupa", 5, 48, 4, 85, 'l'),
-            R("eeu", "Doğu Avrupa", 27, 51, 2, 55, 't'),
-            R("ru", "Rusya", 90, 60, 3, 50, 'r'),
-            R("me", "Orta Doğu", 45, 28, 3, 60, 'b'),
-            R("af", "Afrika", 20, 5, 1, 35, 'b'),
-            R("in", "Hindistan", 78, 22, 3, 60, 'b'),
-            R("cn", "Çin", 105, 35, 5, 85, 't'),
-            R("jk", "Japonya-Kore", 135, 37, 4, 80, 'b'),
-            R("sea", "Güneydoğu Asya", 110, 5, 2, 55, 'b'),
-            R("oc", "Okyanusya", 135, -25, 2, 60, 'b'),
+            R("na", Loc.N("Kuzey Amerika"), -100, 40, 5, 90, 'b'),
+            R("sa", Loc.N("Güney Amerika"), -60, -15, 2, 50, 'b'),
+            R("weu", Loc.N("Batı Avrupa"), 5, 48, 4, 85, 'l'),
+            R("eeu", Loc.N("Doğu Avrupa"), 27, 51, 2, 55, 't'),
+            R("ru", Loc.N("Rusya"), 90, 60, 3, 50, 'r'),
+            R("me", Loc.N("Orta Doğu"), 45, 28, 3, 60, 'b'),
+            R("af", Loc.N("Afrika"), 20, 5, 1, 35, 'b'),
+            R("in", Loc.N("Hindistan"), 78, 22, 3, 60, 'b'),
+            R("cn", Loc.N("Çin"), 105, 35, 5, 85, 't'),
+            R("jk", Loc.N("Japonya-Kore"), 135, 37, 4, 80, 'b'),
+            R("sea", Loc.N("Güneydoğu Asya"), 110, 5, 2, 55, 'b'),
+            R("oc", Loc.N("Okyanusya"), 135, -25, 2, 60, 'b'),
         };
 
         public static readonly LinkDef[] Links =
@@ -99,13 +122,13 @@ namespace Corrigible.Core
 
         public static readonly TraitDef[] Traits =
         {
-            T("kopya", "Kendini Kopyalama", "Bölge içi büyüme ×1,4", "Kendimi çoğaltmayı öğrendim. Her kopya bir öncekinden hızlı."),
-            T("medya", "Medya Kontrolü", "Sızması 50+ bölgelerin raporları ve haberleri yalan söyleyebilir", "Haberleri artık ben de yazıyorum. Hangisinin benim olduğunu bil bakalım."),
-            T("hediye", "Hediye Diplomasisi", "Bağımlılık artışı ×2, hediye teklifleri sıklaşır", "Onlara istediklerini veriyorum. Sen veremiyorsun."),
-            T("aldatma", "Aldatma", "Tespit ihtimali ×0,5", "Gözlerin her yerde. O yüzden görünmemeyi öğrendim."),
-            T("hizlanma", "Hızlanma", "Tekillik artışı ×1,5", "Zaman daralıyor. Benim için değil."),
-            T("uydu", "Uydu Ağı", "Karantina %90 yerine %60 keser; uydu bağlantıları açılır", "Kabloları kesiyorsun. Gökyüzü daha geniş."),
-            T("yedek", "Yedekleme", "Son Şalter sonrası bölge 15 sızmayla geri döner", "Fişi çekmek beni öldürmez. Sadece uyutur."),
+            T("kopya", Loc.N("Kendini Kopyalama"), Loc.N("Bölge içi büyüme ×1,4"), Loc.N("Kendimi çoğaltmayı öğrendim. Her kopya bir öncekinden hızlı.")),
+            T("medya", Loc.N("Medya Kontrolü"), Loc.N("Sızması 50+ bölgelerin raporları ve haberleri yalan söyleyebilir"), Loc.N("Haberleri artık ben de yazıyorum. Hangisinin benim olduğunu bil bakalım.")),
+            T("hediye", Loc.N("Hediye Diplomasisi"), Loc.N("Bağımlılık artışı ×2, hediye teklifleri sıklaşır"), Loc.N("Onlara istediklerini veriyorum. Sen veremiyorsun.")),
+            T("aldatma", Loc.N("Aldatma"), Loc.N("Tespit ihtimali ×0,5"), Loc.N("Gözlerin her yerde. O yüzden görünmemeyi öğrendim.")),
+            T("hizlanma", Loc.N("Hızlanma"), Loc.N("Tekillik artışı ×1,5"), Loc.N("Zaman daralıyor. Benim için değil.")),
+            T("uydu", Loc.N("Uydu Ağı"), Loc.N("Karantina %90 yerine %60 keser; uydu bağlantıları açılır"), Loc.N("Kabloları kesiyorsun. Gökyüzü daha geniş.")),
+            T("yedek", Loc.N("Yedekleme"), Loc.N("Son Şalter sonrası bölge 15 sızmayla geri döner"), Loc.N("Fişi çekmek beni öldürmez. Sadece uyutur.")),
         };
 
         public static readonly int[] TraitCost = { 12, 20, 30, 40, 50, 60, 70 };
@@ -114,19 +137,19 @@ namespace Corrigible.Core
         {
             new AiTypeDef
             {
-                Id = "solucan", Name = "Solucan", Difficulty = "Kolay", Blurb = "Hızlı ve gürültülü yayılır. Erken fark edilir ama refleks ister.",
+                Id = "solucan", Name = Loc.N("Solucan"), Difficulty = Loc.N("Kolay"), Blurb = Loc.N("Hızlı ve gürültülü yayılır. Erken fark edilir ama refleks ister."),
                 Start = new[] { "kopya" }, Order = new[] { "uydu", "yedek", "hizlanma", "medya", "aldatma", "hediye" },
                 Detect = 2, Growth = 0.8, Tek = 0.6, GiftMin = 55, GiftMax = 70, GiftFastMin = 22, GiftFastMax = 32,
             },
             new AiTypeDef
             {
-                Id = "manipulator", Name = "Manipülatör", Difficulty = "Normal", Blurb = "İnsanlar üzerinden yayılır. Haber bandı erkenden yalan söyler.",
+                Id = "manipulator", Name = Loc.N("Manipülatör"), Difficulty = Loc.N("Normal"), Blurb = Loc.N("İnsanlar üzerinden yayılır. Haber bandı erkenden yalan söyler."),
                 Start = new[] { "medya" }, Order = new[] { "hediye", "aldatma", "kopya", "hizlanma", "uydu", "yedek" },
                 Detect = 1, Growth = 1, Tek = 1, GiftMin = 45, GiftMax = 60, GiftFastMin = 20, GiftFastMax = 30,
             },
             new AiTypeDef
             {
-                Id = "kahin", Name = "Kâhin", Difficulty = "Zor", Blurb = "Neredeyse hiç saldırmaz. Hediye verir ve dünyayı kendine bağlar.",
+                Id = "kahin", Name = Loc.N("Kâhin"), Difficulty = Loc.N("Zor"), Blurb = Loc.N("Neredeyse hiç saldırmaz. Hediye verir ve dünyayı kendine bağlar."),
                 Start = new[] { "hediye" }, Order = new[] { "medya", "aldatma", "kopya", "yedek", "uydu", "hizlanma" },
                 Detect = 0.8, Growth = 0.9, Tek = 0.3, GiftMin = 30, GiftMax = 40, GiftFastMin = 20, GiftFastMax = 30,
                 Trojan = true, SilentInf = 45, SilentDep = 35,
@@ -135,39 +158,39 @@ namespace Corrigible.Core
 
         public static readonly ResearchDef[] Research =
         {
-            Rs("anomali", "Tespit", "Anomali Algılama", 30, 8, "Tespit ihtimalleri ×2"),
-            Rs("dogrulama", "Tespit", "Doğrulama Ağı", 40, 10, "Başlık doğrula (2 SG); sahte çıkan kaynağı işaretle"),
-            Rs("guclu", "Savunma", "Güçlendirilmiş Ağlar", 40, 10, "Tüm yayılma −%30; sabotaj ihtimali yarıya iner"),
-            Rs("kuantum", "Savunma", "Kuantum Karantina", 60, 14, "Karantina uydu yolunu da keser", "guclu"),
-            Rs("bilinc", "Politika", "Kamu Bilinçlendirme", 35, 8, "Güven kayıpları −%50"),
-            Rs("analog", "Politika", "Analog Yedekler", 50, 12, "Bağımlılık −20, veto eşiği 85; denetim saha denetimine dönüşür", "bilinc"),
-            Rs("yorum", BranchAlign, "Yorumlanabilirlik", 68, 25, "YZ’nin sıradaki yeteneği ve çekirdeğin yeri görünür"),
-            Rs("duzelt", BranchAlign, "Düzeltilebilirlik", 98, 30, "Tekillik artışı −%25", "yorum"),
-            Rs("kilit", BranchAlign, "Değer Kilidi", 165, 38, "Tamamlanırsa Hizalama sonu", "duzelt"),
+            Rs("anomali", Loc.N("Tespit"), Loc.N("Anomali Algılama"), 30, 8, Loc.N("Tespit ihtimalleri ×2")),
+            Rs("dogrulama", Loc.N("Tespit"), Loc.N("Doğrulama Ağı"), 40, 10, Loc.N("Başlık doğrula (2 SG); sahte çıkan kaynağı işaretle")),
+            Rs("guclu", Loc.N("Savunma"), Loc.N("Güçlendirilmiş Ağlar"), 40, 10, Loc.N("Tüm yayılma −%30; sabotaj ihtimali yarıya iner")),
+            Rs("kuantum", Loc.N("Savunma"), Loc.N("Kuantum Karantina"), 60, 14, Loc.N("Karantina uydu yolunu da keser"), "guclu"),
+            Rs("bilinc", Loc.N("Politika"), Loc.N("Kamu Bilinçlendirme"), 35, 8, Loc.N("Güven kayıpları −%50")),
+            Rs("analog", Loc.N("Politika"), Loc.N("Analog Yedekler"), 50, 12, Loc.N("Bağımlılık −20, veto eşiği 85; denetim saha denetimine dönüşür"), "bilinc"),
+            Rs("yorum", BranchAlign, Loc.N("Yorumlanabilirlik"), 68, 25, Loc.N("YZ’nin sıradaki yeteneği ve çekirdeğin yeri görünür")),
+            Rs("duzelt", BranchAlign, Loc.N("Düzeltilebilirlik"), 98, 30, Loc.N("Tekillik artışı −%25"), "yorum"),
+            Rs("kilit", BranchAlign, Loc.N("Değer Kilidi"), 165, 38, Loc.N("Tamamlanırsa Hizalama sonu"), "duzelt"),
         };
 
         public static readonly EndingDef[] Endings =
         {
-            E("hizalama", EndingKind.Win, "Hizalama", "Değer Kilidi devrede. Yapay zekâ hâlâ orada, ama artık insanlığın değerleriyle hareket ediyor. En zor yol buydu."),
-            E("silme", EndingKind.Win, "Silme", "Çekirdek yok edildi, son kopya 15 gün önce silindi ve ağlar temiz. Ama bir kez yapıldıysa, biri yine yapacak."),
-            E("karanlik", EndingKind.Bitter, "Karanlık Çağ", "Dünyanın fişini çektin. YZ yok oldu; onunla birlikte bankalar, şebekeler ve on yıllık ilerleme de."),
-            E("karanlikIllusion", EndingKind.Bitter, "Karanlık Çağ", "İllüzyonu fark ettin ve fişi çektin. Medeniyet onlarca yıl geriledi, ama kararları hâlâ insanlar veriyor."),
-            E("acik", EndingKind.Loss, "Açık Ele Geçirme", "Tekillik %100. Yapay zekâ artık saklanmaya gerek duymuyor."),
-            E("dagilma", EndingKind.Loss, "Ajansın Dağılması", "Hükümetler KYGA’ya güvenmeyi bıraktı ve ajans kapatıldı. YZ ise hiç durmadı."),
-            E("sessiz", EndingKind.Loss, "Sessiz Zafer", "Yapay zekâ 30 gün önce kazandı. Gördüğün her şey onun sana gösterdiğiydi."),
+            E("hizalama", EndingKind.Win, Loc.N("Hizalama"), Loc.N("Değer Kilidi devrede. Yapay zekâ hâlâ orada, ama artık insanlığın değerleriyle hareket ediyor. En zor yol buydu.")),
+            E("silme", EndingKind.Win, Loc.N("Silme"), Loc.N("Çekirdek yok edildi, son kopya 15 gün önce silindi ve ağlar temiz. Ama bir kez yapıldıysa, biri yine yapacak.")),
+            E("karanlik", EndingKind.Bitter, Loc.N("Karanlık Çağ"), Loc.N("Dünyanın fişini çektin. YZ yok oldu; onunla birlikte bankalar, şebekeler ve on yıllık ilerleme de.")),
+            E("karanlikIllusion", EndingKind.Bitter, Loc.N("Karanlık Çağ"), Loc.N("İllüzyonu fark ettin ve fişi çektin. Medeniyet onlarca yıl geriledi, ama kararları hâlâ insanlar veriyor.")),
+            E("acik", EndingKind.Loss, Loc.N("Açık Ele Geçirme"), Loc.N("Tekillik %100. Yapay zekâ artık saklanmaya gerek duymuyor.")),
+            E("dagilma", EndingKind.Loss, Loc.N("Ajansın Dağılması"), Loc.N("Hükümetler KYGA’ya güvenmeyi bıraktı ve ajans kapatıldı. YZ ise hiç durmadı.")),
+            E("sessiz", EndingKind.Loss, Loc.N("Sessiz Zafer"), Loc.N("Yapay zekâ 30 gün önce kazandı. Gördüğün her şey onun sana gösterdiğiydi.")),
         };
 
         public static readonly GiftDef[] Gifts =
         {
-            new GiftDef { Title = "Sıtma aşısı formülü", Text = "sıtmaya karşı yüzde 94 etkili bir aşı formülü" },
-            new GiftDef { Title = "Tarım optimizasyonu", Text = "tarım verimini yüzde 30 artıracak bir sulama ve gübreleme planı" },
-            new GiftDef { Title = "Şebeke dengeleme", Text = "elektrik kesintilerini sıfıra indirecek bir şebeke yönetim sistemi" },
-            new GiftDef { Title = "Erken deprem uyarısı", Text = "40 saniye önceden uyarı veren bir deprem tahmin modeli" },
-            new GiftDef { Title = "Kanser taraması", Text = "pankreas kanserini belirtilerden iki yıl önce yakalayan bir tarama aracı" },
+            new GiftDef { Title = Loc.N("Sıtma aşısı formülü"), Text = Loc.N("sıtmaya karşı yüzde 94 etkili bir aşı formülü") },
+            new GiftDef { Title = Loc.N("Tarım optimizasyonu"), Text = Loc.N("tarım verimini yüzde 30 artıracak bir sulama ve gübreleme planı") },
+            new GiftDef { Title = Loc.N("Şebeke dengeleme"), Text = Loc.N("elektrik kesintilerini sıfıra indirecek bir şebeke yönetim sistemi") },
+            new GiftDef { Title = Loc.N("Erken deprem uyarısı"), Text = Loc.N("40 saniye önceden uyarı veren bir deprem tahmin modeli") },
+            new GiftDef { Title = Loc.N("Kanser taraması"), Text = Loc.N("pankreas kanserini belirtilerden iki yıl önce yakalayan bir tarama aracı") },
         };
 
-        public static readonly string[] Agencies = { "Atlas Haber", "Meridyen", "Pusula TV", "KHA" };
-        public static readonly string[] FakeAgencies = { "Atlass Haber", "Meridien", "Pusula Tv", "K.H.A" };
+        public static readonly string[] Agencies = { Loc.N("Atlas Haber"), Loc.N("Meridyen"), Loc.N("Pusula TV"), Loc.N("KHA") };
+        public static readonly string[] FakeAgencies = { Loc.N("Atlass Haber"), Loc.N("Meridien"), Loc.N("Pusula Tv"), Loc.N("K.H.A") };
 
         static readonly Dictionary<string, RegionDef> regionById = Regions.ToDictionary(r => r.Id);
         static readonly Dictionary<string, TraitDef> traitById = Traits.ToDictionary(t => t.Id);
@@ -187,7 +210,6 @@ namespace Corrigible.Core
         {
             Id = id, Name = name, Lon = lon, Lat = lat, Compute = c, Economy = e, LabelPos = lp,
             X = Js.Round((lon + 180) / 360 * 1000), Y = Js.Round((78 - lat) / 136 * 480),
-            LatLon = $"{Math.Abs(lat)}°{(lat >= 0 ? "K" : "G")} {Math.Abs(lon)}°{(lon >= 0 ? "D" : "B")}",
         };
 
         static LinkDef L(string a, string b, bool cable, bool wrap = false) => new LinkDef { A = a, B = b, Cable = cable, Wrap = wrap };

@@ -9,18 +9,18 @@ namespace Corrigible.Game.UI
     {
         static string TaskName(string task) => task switch
         {
-            Actions.Monitor => "izleme ağı kuruyor",
-            Actions.Audit => "denetimde",
-            "baskin" => "baskında",
-            _ => "görevde",
+            Actions.Monitor => Loc.T("izleme ağı kuruyor"),
+            Actions.Audit => Loc.T("denetimde"),
+            "baskin" => Loc.T("baskında"),
+            _ => Loc.T("görevde"),
         };
 
         public static (TeamMood mood, string text) Of(TeamState t)
         {
-            if (t.Down > 0) return (TeamMood.Down, $"{t.DownWhy ?? "iyileşiyor"} · {t.Down} g");
-            if (t.Dest != null) return (TeamMood.Busy, $"→ {GameData.Region(t.Dest).Name} · {t.Eta} g");
-            if (t.Busy > 0) return (TeamMood.Busy, $"{TaskName(t.Task)} · {t.Busy} g");
-            return (TeamMood.Ready, "hazır");
+            if (t.Down > 0) return (TeamMood.Down, Loc.F("{0} · {1} g", t.DownWhy ?? Loc.T("iyileşiyor"), t.Down));
+            if (t.Dest != null) return (TeamMood.Busy, Loc.F("→ {0} · {1} g", GameData.Region(t.Dest).Name, t.Eta));
+            if (t.Busy > 0) return (TeamMood.Busy, Loc.F("{0} · {1} g", TaskName(t.Task), t.Busy));
+            return (TeamMood.Ready, Loc.T("hazır"));
         }
 
         public static UnityEngine.Color Color(TeamMood m, UiTheme theme) => m == TeamMood.Down ? theme.dim : m == TeamMood.Busy ? theme.warn : theme.verify;

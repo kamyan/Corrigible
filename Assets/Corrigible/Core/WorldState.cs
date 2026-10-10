@@ -166,7 +166,7 @@ namespace Corrigible.Core
     public sealed class RaidParams
     {
         public int Seed, Compute = 3, RaidNumber = 1;
-        public string Region, RegionName = "Bölge";
+        public string Region, RegionName = Loc.T("Bölge");
         public double Inf = 30, Dep;
         public bool IsCore, Illusion;
         public List<string> Traits = new List<string>();

@@ -6,8 +6,9 @@ _Son güncelleme: 2026-10-10_
 
 Oyun baştan sona oynanabilir: giriş ve rakip seçimi, rehberli eğitim, kriz masası (harita, bölge eylemleri, araştırma,
 YZ günlüğü, haber bandı), hediye/perde/sahte zafer/son pencereleri, kayıt ve devam, Seni Tanıyan Rakip profili.
-23/23 EditMode testi geçiyor; C# simülasyonu tarayıcı prototipiyle birebir aynı (deneysel mod ve baskın motoru dahil).
-Deneysel mod (saha ekipleri, zaman ölçeği, baskın) Unity'de oynanabilir ve varsayılan olarak açık.
+28/28 EditMode testi geçiyor; C# simülasyonu tarayıcı prototipiyle birebir aynı (deneysel mod ve baskın motoru dahil).
+Deneysel mod (saha ekipleri, zaman ölçeği, baskın) Unity'de oynanabilir ve varsayılan olarak açık. Oyun Türkçe ve
+İngilizce (giriş penceresindeki dil düğmesi; ilk açılışta sistem diline göre).
 
 **Git:** Depo `git@github.com:kamyan/Corrigible.git`, dal `main`. Bu belgelerdeki işin büyük kısmı **henüz commit
 edilmedi** (kullanıcı commit istemedi). Commit'i kullanıcı isteyince yap.
@@ -28,6 +29,9 @@ edilmedi** (kullanıcı commit istemedi). Commit'i kullanıcı isteyince yap.
    zaman ölçeği ve Into the Breach tarzı **baskın** (2026-10-10).
 10. Deneysel mod Unity'ye taşındı (2026-10-10): `Core/Teams.cs`, `Core/Baskin.cs`, ekip kartı, bölge panelinde Saha
    bölümü, haritada ekip işaretleri, `Baskin` canvas'ındaki taktik ekran, eğitimde "Ekibini gönder" adımı.
+11. **Türkçe/İngilizce lokalizasyon** (2026-10-10): gettext tarzı `Loc` (Core), çeviri tablosu, `LocalizedText`,
+   editör aracı ve testler. ~730 metin. Terimler: KYGA → AISA, siyasi güç → political capital (PC), Son Şalter →
+   Kill Switch, Düzeltilebilirlik → Corrigibility.
 
 ## Deneysel mod: saha ekipleri, zaman ölçeği, baskın (2026-10-10)
 
@@ -60,6 +64,10 @@ katmanı `S.Raid` varken durur.
 
 ## Önemli kararlar ve gerekçeleri
 
+- **Lokalizasyon Unity Localization paketiyle değil, kendi `Loc` sınıfıyla.** Metinlerin çoğu motordan bağımsız Core'da
+  üretiliyor; paket Core'dan kullanılamaz, ayrıca paket kurulumu dış indirme gerektirir. Kaynak metin Türkçe kalır
+  (kod okunur kalsın, prototiple aynı metin), çeviri tek bir sekmeli tabloda (çevirmen için tablo programında açılır).
+
 - **Tarayıcı prototipi referans simülasyondur.** Denge çalışması hızlı yapılabilsin (JS'te binlerce oyun saniyeler sürer)
   ve Unity portu doğrulanabilsin diye. Kural değişikliği iki tarafta birlikte yapılır.
 - **Simülasyon/sunum ayrımı ve Algı Katmanı.** Yalan söyleyen ekranlar oyunun çekirdeği; UI'nın gerçek değerlere erişmesi
@@ -81,6 +89,10 @@ katmanı `S.Raid` varken durur.
 
 ## Açık işler
 
+- **İngilizce metinlerin ana dili İngilizce olan biri tarafından gözden geçirilmesi** (çeviriler ajan tarafından yapıldı).
+  Steam mağaza sayfası ve başarım adları henüz çevrilmedi. Tarayıcı prototipi yalnızca Türkçe.
+- Kayıt özeti ve YZ dosyasındaki bazı kısa metinler İngilizce kalıplara göre sadeleştirilebilir; uzun İngilizce metinler
+  dar kutularda (bölge paneli eylem düğmeleri) iki satıra iniyor, 1080p'de sorun yok.
 - **Steam:** Steamworks.NET paketi kurulmadı (indirme kullanıcı onayı ister), Steam App ID yok, `steam_appid.txt` yok.
   `Corrigible.Steam` paket kurulunca derlenir; derlenip denenmedi. Steamworks'te başarımlar (`Achievements`) ve Auto-Cloud
   (`persistentDataPath`) tanımlanmalı.

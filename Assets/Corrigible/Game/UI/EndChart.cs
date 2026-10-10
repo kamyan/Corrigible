@@ -59,16 +59,16 @@ namespace Corrigible.Game.UI
             if (hist.Count >= 2 && Area.width > 0)
             {
                 float w = Area.width, h = Area.height;
-                foreach (var v in new[] { 0, 50, 100 }) Label($"%{v}", L - 34, Y(v) - 8);
-                for (int d = 50; X(d) < w - R - 30; d += 50) Label($"{d}. gün", X(d) - 18, h - B + 4);
-                if (awareDay > 0) Label("fark edildi", X(awareDay) + 4, h - B - 18);
+                foreach (var v in new[] { 0, 50, 100 }) Label(Loc.F("%{0}", v), L - 34, Y(v) - 8);
+                for (int d = 50; X(d) < w - R - 30; d += 50) Label(Loc.F("{0}. gün", d), X(d) - 18, h - B + 4);
+                if (awareDay > 0) Label(Loc.T("fark edildi"), X(awareDay) + 4, h - B - 18);
                 int start = -1;
                 for (int i = 0; i < hist.Count; i++)
                 {
                     if (hist[i].Illusion && start < 0) start = hist[i].Day;
                     if (start >= 0 && (!hist[i].Illusion || i == hist.Count - 1))
                     {
-                        Label("illüzyon", Mathf.Min(X(start) + 4, w - R - 60), T + 2);
+                        Label(Loc.T("illüzyon"), Mathf.Min(X(start) + 4, w - R - 60), T + 2);
                         start = -1;
                     }
                 }
@@ -99,7 +99,7 @@ namespace Corrigible.Game.UI
             var h = hist.Find(p => p.Day == d);
             if (h == null || d == hoverDay) return;
             hoverDay = d;
-            hover.text = $"Gün {d} · gerçek %{Js.Round(h.Real)} · gösterilen %{Js.Round(h.Shown)}{(h.Illusion ? " · illüzyon" : "")}";
+            hover.text = Loc.F("Gün {0} · gerçek %{1} · gösterilen %{2}{3}", d, Js.Round(h.Real), Js.Round(h.Shown), (h.Illusion ? Loc.T(" · illüzyon") : ""));
             bool right = X(d) > w / 2;
             var rt = hover.rectTransform;
             rt.pivot = new Vector2(right ? 1 : 0, 1);

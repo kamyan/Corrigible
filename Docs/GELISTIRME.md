@@ -47,7 +47,7 @@ ustop
   ve kullanıcıya profilin değiştiğini söyle.
 - eval kodu tek tırnak içinde gönderilir; C# karakter sabiti (`' '`) kullanma, `"".PadLeft(n)` gibi dizgi kullan.
 
-## Testler (`Assets/Corrigible/Tests/EditMode/SimulationTests.cs`)
+## Testler (`Tests/EditMode/SimulationTests.cs`, `LocalizationTests.cs`)
 
 | Test | Ne kilitler |
 |---|---|
@@ -139,7 +139,26 @@ seferlik editör script'inde `SerializedObject` ile) bağla. Renkleri `UiTheme`'
 `PrefabUtility.RecordPrefabInstancePropertyModifications` çağır, `MarkSceneDirty` + `SaveScene`. `ueval` ile çalıştır,
 sonucu doğrula, script'i sil.
 
+## Lokalizasyon iş akışı
+
+1. Kodda oyuncuya görünen metni Türkçe yaz ve sar: `Loc.T("Metin.")`, `Loc.F("{0} bölgesinde {1} gün.", ad, gün)`.
+   Sayı biçimini yer tutucuda ver (`{0:0.0}`); `ToString` + birleştirme yapma. Türkçe ek uyumu gerekiyorsa (ör.
+   `"15'in"`) `Loc.IsSource` ile Türkçeye özel dal yaz, diğer dillerde ek kullanma.
+2. Sahneye/prefab'a yeni sabit yazı eklediysen: **Corrigible > Lokalizasyon > Sahne ve prefab'lardaki metinlere
+   LocalizedText ekle** (tek harfli yazıları atlar; onlara bileşeni elle ekle).
+3. **Corrigible > Lokalizasyon > Çeviri tablosunu güncelle**, sonra `Assets/Corrigible/Resources/Localization/strings.txt`'te
+   boş kalan `en` hücrelerini doldur (satırın sonundaki sekmeden sonra). `{0}` ve `<b>` gibi işaretler aynen kalmalı.
+4. **Çevirileri doğrula** menüsü ya da `LocalizationTests` → eksik/uyumsuz çeviri listesi.
+5. Oyunda dene: giriş penceresindeki dil düğmesi ya da `PlayerPrefs.SetString("corrigible.language", "en")` + Play.
+
+Ajan olarak: `ueval 'return Corrigible.EditorTools.LocalizationTool.UpdateTable();'` ve
+`ueval 'return string.Join("\n", Corrigible.EditorTools.LocalizationTool.Validate());'`.
+
 ## Bilinen tuzaklar (bu projede yaşandı)
+
+- **Lokalizasyon:** statik `readonly` alanda `Loc.T` kullanma (dil, sınıf ilk yüklendiğinde donar; `Loc.N` + gösterimde
+  `Loc.T`). Metne bakarak karar verme (`msg.Contains("fon")` gibi; dil değişince bozulur). Testte `RegexOptions.IgnoreCase`
+  Türkçe `ı`'yı `I` ile eşleştirir.
 
 - **Image layout'u bozar:** sliced sprite'lı `Image` bir `ILayoutElement`'tir ve sprite kenarlarını minimum boyut (40) olarak
   bildirir. Zemin Image'ı ayrı bir `Background` çocuğuna koy ve `ignoreLayout` yap.
