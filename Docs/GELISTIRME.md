@@ -107,9 +107,11 @@ Tarayıcıda test: `python3 -m http.server 8732 --directory Prototype`. Konsolda
 `window.BASKIN_NO_RUN = true` ile yükleyip `BaskinBot.botTurn(SonSalterDebug.RB)` çağırılabilir.
 
 Unity'de baskını denemek (Play modunda, `source Tools/unity-helpers.sh` sonrası): bir ekibi `g.MoveTeam(...)` ile gönder,
-`CorrigibleDebug.Advance(n)` ile ilerlet, bölgeyi seçip `CorrigibleDebug.Click("Actions/Raid")`. Baskın kareleri
-`Tile x,y` adlıdır; `RaidTileView.OnPointerEnter/OnPointerClick(null)` ile üzerine gelme/tıklama taklit edilir.
-Brifing ve sonuç düğmeleri: `Brief/Modal/Buttons/Start`, `Result/Modal/Buttons/Back`. Geri çekilme 3 sn içinde iki basış ister.
+`CorrigibleDebug.Advance(n)` ile ilerlet, bölgeyi seçip `CorrigibleDebug.Click("Actions/Raid")`. Baskin sahnesi birkaç
+yüz milisaniyede eklemeli yüklenir. Kareye tıklama/üzerine gelme: `FindFirstObjectByType<Corrigible.Game.Raid.RaidBoard3D>()`
+üzerinde `Click(x, y)` / `Hover(x, y)`. Brifing ve sonuç düğmeleri: `Brief/Modal/Buttons/Start`, `Result/Modal/Buttons/Back`.
+Geri çekilme 3 sn içinde iki basış ister. Hamleler canlandırılırken (`Busy`) girdi yok sayılır; ekran görüntüsünden önce
+yaklaşık 3–5 sn bekle. Tahtayı hızlı denemek için `Scenes/Baskin.unity`'yi tek başına açıp Play'e bas (örnek baskın).
 
 ## Sık yapılan işler
 

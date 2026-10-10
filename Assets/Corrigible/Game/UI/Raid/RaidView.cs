@@ -1,33 +1,31 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Corrigible.Core;
+using Corrigible.Game.Raid;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 namespace Corrigible.Game.UI
 {
     /// <summary>
-    /// Deneysel mod: baskın ekranı (Baskin canvas'ı). Taktik savaşın kuralları Core'daki Baskin sınıfında; burada çizim ve girdi.
-    /// Strateji simülasyonu bir baskın başlatınca (SimEventType.Raid) açılır; bitince sonuç GameController.ResolveRaid ile döner.
+    /// Deneysel mod: Baskin sahnesinin yöneticisi (panel, brifing, sonuç, girdi). Kurallar Core'daki Baskin sınıfında,
+    /// 3D tahta <see cref="RaidBoard3D"/>'de. Sahneyi ana sahnenin üstüne <see cref="RaidLauncher"/> yükler; bitince sonuç
+    /// GameController.ResolveRaid ile döner ve sahne kapanır. Sahne tek başına açılırsa (editörde) örnek bir baskın kurulur.
     /// </summary>
     public sealed class RaidView : MonoBehaviour
     {
-        [SerializeField] GameController game;
-        [SerializeField] ToastView toast;
         [SerializeField] UiTheme theme;
         [SerializeField] GameObject root;
+        [SerializeField] RaidBoard3D board;
+        [Tooltip("Önizlemede \"HEDEF KIRILIR\" yazısı.")]
+        [SerializeField] TMP_Text winLabel;
 
         [Header("Üst")]
         [SerializeField] TMP_Text title;
         [SerializeField] TMP_Text turn;
-
-        [Header("Tahta")]
-        [Tooltip("64 kare; sıra: satır satır (y), soldan sağa (x).")]
-        [SerializeField] RaidTileView[] tiles = new RaidTileView[64];
-        [SerializeField] RaidOverlayGraphic overlay;
-        [SerializeField] RectTransform labels;
-        [SerializeField] TMP_Text labelPrefab;
 
         [Header("Yan panel")]
         [SerializeField] TMP_Text objectives;
@@ -50,14 +48,16 @@ namespace Corrigible.Game.UI
         [SerializeField] TMP_Text resultBody;
         [SerializeField] StyledButton resultBack;
 
+        GameController game;
+        ToastView toast;
         Baskin.BState B;
         int sel = -1;
-        bool actMode, retreatArmed;
+        bool actMode, retreatArmed, finished;
         float retreatArmedUntil;
         (int x, int y)? hover;
-        readonly List<TMP_Text> labelPool = new List<TMP_Text>();
 
-        public bool IsOpen => root != null && root.activeSelf;
+        public bool IsOpen => root != null && root.activeSelf && B != null;
+        bool Busy => board.Busy;
 
         static readonly string[] DirTr = { Loc.N("kuzeye"), Loc.N("doğuya"), Loc.N("güneye"), Loc.N("batıya") };
         static readonly Dictionary<string, string> ObjShort = new Dictionary<string, string>
@@ -65,13 +65,8 @@ namespace Corrigible.Game.UI
 
         void Awake()
         {
-            root.SetActive(false);
-            for (int i = 0; i < tiles.Length; i++)
-            {
-                tiles[i].X = i % Baskin.N; tiles[i].Y = i / Baskin.N;
-                tiles[i].Clicked += OnTileClick;
-                tiles[i].Hovered += (x, y) => { hover = (x, y); RenderOverlay(); RenderInfo(); };
-            }
+            board.TileClicked += OnTileClick;
+            board.HoverChanged += h => { hover = h; RenderOverlay(); RenderInfo(); };
             for (int i = 0; i < unitCards.Length; i++) { int k = i; UiUtil.OnClick(unitCards[i].Button.Button, () => SelectPlayer(k)); }
             UiUtil.OnClick(undo.Button, DoUndo);
             UiUtil.OnClick(endTurn.Button, DoEndTurn);
@@ -82,44 +77,34 @@ namespace Corrigible.Game.UI
 
         void Start()
         {
-            game.EventsRaised += OnEvents;
-            game.GameLoaded += SyncWithSim;
-            game.NewGameStarted += SyncWithSim;
-            SyncWithSim();
+            // Sahne tek başına açıldıysa (ana sahne yok) arayüz girdisi için bir EventSystem kur
+            if (UnityEngine.EventSystems.EventSystem.current == null)
+                new GameObject("EventSystem", typeof(UnityEngine.EventSystems.EventSystem), typeof(UnityEngine.InputSystem.UI.InputSystemUIInputModule));
+            game = FindFirstObjectByType<GameController>();
+            toast = FindFirstObjectByType<ToastView>();
+            if (game != null && game.Sim != null && game.Sim.S.Raid != null) Open(game.Sim.S.Raid.Params, game.Sim.S.Day);
+            else Open(DemoParams(), 0);   // sahne tek başına açıldı: örnek baskın (geliştirme için)
         }
 
-        void OnDestroy()
-        {
-            if (game == null) return;
-            game.EventsRaised -= OnEvents;
-            game.GameLoaded -= SyncWithSim;
-            game.NewGameStarted -= SyncWithSim;
-        }
+        void OnDestroy() { if (game != null && !finished) game.Hold = false; }
 
-        void OnEvents(List<SimEvent> events)
+        static RaidParams DemoParams() => new RaidParams
         {
-            if (events.Any(e => e.Type == SimEventType.Raid) && game.Sim.S.Raid != null) Open();
-        }
+            Seed = (int)(Time.realtimeSinceStartup * 1000) & 0xffff, Region = "cn", RegionName = GameData.Region("cn").Name,
+            Compute = 5, IsCore = true, Inf = 60, Traits = new List<string> { "aldatma" },
+        };
 
-        // Kayıttan yüklenen oyunda süren bir baskın varsa baştan açılır; yeni oyunda ekran kapanır
-        void SyncWithSim()
+        void Open(RaidParams p, int day)
         {
-            if (game.Sim != null && game.Sim.S.Raid != null) Open();
-            else if (IsOpen) { root.SetActive(false); game.Hold = false; }
-        }
-
-        void Open()
-        {
-            B = Baskin.Create(game.Sim.S.Raid.Params);
-            sel = -1; actMode = false; hover = null; retreatArmed = false;
-            game.SetSpeed(0);
-            game.Hold = true;
+            B = Baskin.Create(p);
+            sel = -1; actMode = false; hover = null; retreatArmed = false; finished = false;
+            if (game != null) { game.SetSpeed(0); game.Hold = true; }
             root.SetActive(true);
+            board.Build(B);
             resultPanel.SetActive(false);
             brief.SetActive(true);
-            var p = B.Params;
             title.text = Loc.F("SAHA OPERASYONU · <color=#{0}>{1}</color> · {2}", ColorUtility.ToHtmlStringRGB(theme.verify), UiUtil.Up(p.RegionName), UiUtil.Up(Loc.T(B.Layout)));
-            briefEyebrow.text = Loc.F("SAHA OPERASYONU · GÜN {0} · {1}", game.Sim.S.Day, UiUtil.Up(p.RegionName));
+            briefEyebrow.text = Loc.F("SAHA OPERASYONU · GÜN {0} · {1}", day, UiUtil.Up(p.RegionName));
             var mods = new List<string>();
             if (B.Deceptive) mods.Add(Loc.T("Aldatma ya da Medya Kontrolü: bazı niyet okları yalan; Analist yaklaştıkça kesinleşir."));
             if (p.Traits.Contains("kopya")) mods.Add(Loc.T("Kendini Kopyalama: her tur 2 robot uyanır."));
@@ -137,12 +122,20 @@ namespace Corrigible.Game.UI
 
         void Finish()
         {
+            if (finished || B == null) return;
+            finished = true;
             var res = Baskin.Result(B);
             B = null;
-            root.SetActive(false);
+            if (game == null || game.Sim?.S.Raid == null)
+            {
+                SceneManager.LoadScene(gameObject.scene.name);   // tek başına açılmış sahne: yeni örnek baskın
+                return;
+            }
             game.Hold = false;
             var r = game.ResolveRaid(res);
-            if (r.Msg != null) toast.Show(r.Msg, res.Success);
+            if (r.Msg != null && toast != null) toast.Show(r.Msg, res.Success);
+            // ResolveRaid S.Raid'i temizler; RaidLauncher sahneyi kapatır. Yine de kapanmazsa kendimiz kapatırız.
+            if (gameObject.scene.isLoaded && SceneManager.sceneCount > 1) SceneManager.UnloadSceneAsync(gameObject.scene);
         }
 
         // ---------- Girdi ----------
@@ -151,7 +144,7 @@ namespace Corrigible.Game.UI
 
         void SelectPlayer(int index)
         {
-            if (B == null || brief.activeSelf) return;
+            if (B == null || brief.activeSelf || Busy) return;
             var ps = Players;
             if (index >= ps.Count || ps[index].Dead) return;
             sel = ps[index].Id;
@@ -161,13 +154,13 @@ namespace Corrigible.Game.UI
 
         void OnTileClick(int x, int y)
         {
-            if (B == null || B.Phase != "player" || brief.activeSelf) return;
+            if (B == null || B.Phase != "player" || brief.activeSelf || Busy) return;
             var u = Selected;
             if (u != null)
             {
                 bool canMoveHere = !actMode && Baskin.CanMove(B, u) && Baskin.Reachable(B, u).Any(t => t.X == x && t.Y == y);
-                if (canMoveHere) { Baskin.DoMove(B, u.Id, x, y); actMode = true; Render(); return; }
-                if (Baskin.CanAct(B, u) && Baskin.Targets(B, u).Any(t => t.X == x && t.Y == y)) { Baskin.DoAct(B, u.Id, x, y); sel = -1; Render(); return; }
+                if (canMoveHere) { StartCoroutine(MoveRoutine(u.Id, x, y)); return; }
+                if (Baskin.CanAct(B, u) && Baskin.Targets(B, u).Any(t => t.X == x && t.Y == y)) { StartCoroutine(ActRoutine(u.Id, x, y)); return; }
             }
             var v = Baskin.UnitAt(B, x, y);
             if (v != null && v.Side == 'p') { sel = v.Id; actMode = !Baskin.CanMove(B, v); }
@@ -175,12 +168,38 @@ namespace Corrigible.Game.UI
             Render();
         }
 
-        void DoUndo() { if (B != null && Baskin.Undo(B)) { actMode = false; Render(); } }
-        void DoEndTurn() { if (B == null || brief.activeSelf) return; if (Baskin.EndTurn(B)) { sel = -1; actMode = false; Render(); } }
+        IEnumerator MoveRoutine(int id, int x, int y)
+        {
+            Baskin.DoMove(B, id, x, y);
+            actMode = true;
+            board.ClearPreview();
+            yield return board.AnimateMove(id, x, y);
+            Render();
+        }
+
+        IEnumerator ActRoutine(int id, int x, int y)
+        {
+            Baskin.DoAct(B, id, x, y);
+            sel = -1;
+            yield return board.Animate(B, new List<Baskin.Fx>(B.FxList), false);
+            Render();
+        }
+
+        IEnumerator EndTurnRoutine()
+        {
+            sel = -1; actMode = false;
+            Render();   // seçim halkaları ve önizleme kalksın; niyet okları görünür kalır
+            if (!Baskin.EndTurn(B)) yield break;
+            yield return board.Animate(B, new List<Baskin.Fx>(B.FxList), true);
+            Render();
+        }
+
+        void DoUndo() { if (B != null && !Busy && Baskin.Undo(B)) { actMode = false; Render(); } }
+        void DoEndTurn() { if (B == null || brief.activeSelf || Busy || B.Phase != "player") return; StartCoroutine(EndTurnRoutine()); }
 
         void DoRetreat()
         {
-            if (B == null || B.Phase != "player") return;
+            if (B == null || B.Phase != "player" || Busy) return;
             if (!retreatArmed || Time.unscaledTime > retreatArmedUntil) { retreatArmed = true; retreatArmedUntil = Time.unscaledTime + 3; retreat.SetText(Loc.T("Emin misin? Tekrar bas")); return; }
             Baskin.Retreat(B);
             Render();
@@ -194,6 +213,7 @@ namespace Corrigible.Game.UI
             if (kb == null) return;
             if (brief.activeSelf) { if (kb.enterKey.wasPressedThisFrame) { brief.SetActive(false); Render(); } return; }
             if (resultPanel.activeSelf) { if (kb.enterKey.wasPressedThisFrame) Finish(); return; }
+            if (Busy) return;
             if (kb.digit1Key.wasPressedThisFrame) SelectPlayer(0);
             if (kb.digit2Key.wasPressedThisFrame) SelectPlayer(1);
             if (kb.digit3Key.wasPressedThisFrame) SelectPlayer(2);
@@ -210,65 +230,21 @@ namespace Corrigible.Game.UI
         {
             if (B == null) return;
             var u0 = Selected;
-            var moves = u0 != null && !actMode && Baskin.CanMove(B, u0) ? Baskin.Reachable(B, u0) : new List<Baskin.Pt>();
-            var targets = u0 != null && Baskin.CanAct(B, u0) ? Baskin.Targets(B, u0) : new List<Baskin.Pt>();
-            var intents = Baskin.Intents(B);
-            var danger = new Dictionary<int, bool>(); // anahtar → kesin mi
-            var heal = new HashSet<int>();
-            foreach (var i in intents)
+            var m = new RaidBoard3D.Marks { Selected = sel };
+            if (u0 != null && !actMode && Baskin.CanMove(B, u0)) foreach (var p in Baskin.Reachable(B, u0)) m.Moves.Add(p.Y * Baskin.N + p.X);
+            if (u0 != null && Baskin.CanAct(B, u0)) foreach (var p in Baskin.Targets(B, u0)) m.Targets.Add(p.Y * Baskin.N + p.X);
+            foreach (var i in Baskin.Intents(B))
             {
+                m.Badges[i.Unit] = (i.Order.ToString(), i.Uncertain ? "?" : i.IsScanned ? "✓" : null, i.Uncertain ? theme.warn : theme.verify);
                 if (!i.HasTarget || i.TargetNone) continue;
                 int k = i.TargetY * Baskin.N + i.TargetX;
-                if (i.Kind == "repair") heal.Add(k);
-                else danger[k] = (danger.TryGetValue(k, out var sure) && sure) || !i.Uncertain;
+                if (i.Kind == "repair") m.Heal.Add(k);
+                else m.Danger[k] = (m.Danger.TryGetValue(k, out var sure) && sure) || !i.Uncertain;
+                m.Arrows.Add((i.FromX, i.FromY, i.TargetX, i.TargetY, i.Kind == "repair" ? theme.good : theme.threat, i.Uncertain));
             }
-            var byUnit = intents.ToDictionary(i => i.Unit);
-            var spawn = new HashSet<int>(B.Spawns.Select(s => s.Y * Baskin.N + s.X));
-
-            foreach (var t in tiles)
-            {
-                int key = t.Y * Baskin.N + t.X;
-                var c = Baskin.CellAt(B, t.X, t.Y);
-                t.Ground.color = c.T == "wall" ? Palette.Hex("#2a3e47") : c.T == "cable" ? Palette.Hex("#231e10") : Palette.Hex("#0f181c");
-                t.GroundMark.text = c.T == "cable" ? "≈" : "";
-                bool mv = moves.Any(m => m.X == t.X && m.Y == t.Y), tg = !mv && targets.Any(m => m.X == t.X && m.Y == t.Y);
-                Color tint = Color.clear;
-                if (mv) tint = Palette.Alpha(theme.verify, 0.24f);
-                if (danger.TryGetValue(key, out var sureD)) tint = sureD ? Palette.Alpha(theme.threat, 0.26f) : Palette.Alpha(theme.warn, 0.2f);
-                else if (heal.Contains(key)) tint = Palette.Alpha(theme.good, 0.22f);
-                t.Tint.color = tint;
-                t.TargetFrame.color = tg ? theme.warn : Color.clear;
-
-                if (c.O != null)
-                {
-                    bool tgtObj = Baskin.IsTarget(c.O.K);
-                    var bg = tgtObj ? Palette.Hex("#5a1f1a") : c.O.K == "civ" ? Palette.Hex("#172a33") : c.O.K == "cool" ? Palette.Hex("#10262b") : Palette.Hex("#24110f");
-                    var fg = tgtObj ? Palette.Hex("#ffd7d2") : c.O.K == "civ" ? Palette.Hex("#a9c8d3") : c.O.K == "cool" ? theme.verify : Palette.Hex("#ff8a7d");
-                    t.SetObj(true, bg, Loc.T(ObjShort[c.O.K]), Pips(c.O.Hp, c.O.Max), fg);
-                }
-                else t.SetObj(false, default, null, null, default);
-
-                var un = Baskin.UnitAt(B, t.X, t.Y);
-                if (un != null)
-                {
-                    var T = Baskin.UnitTypes[un.Type];
-                    if (un.Side == 'p')
-                    {
-                        bool spent = !Baskin.CanAct(B, un);
-                        t.SetUnit(true, ShapeGraphic.Kind.Disc, Palette.Hex("#0d2f36"), un.Id == sel ? theme.fg : theme.verify, un.Id == sel ? 3.5f : 2f, T.Short, Pips(un.Hp, un.Max), Palette.Hex("#c9f3fa"), spent ? 0.55f : 1f);
-                        t.SetBadges(null, null, default);
-                    }
-                    else
-                    {
-                        t.SetUnit(true, un.Type == "dron" ? ShapeGraphic.Kind.Triangle : ShapeGraphic.Kind.Square, un.Type == "dron" ? theme.threat : Palette.Hex("#5a1f1a"), un.Type == "dron" ? Color.clear : theme.threat, 2f,
-                            un.Type == "dron" ? "" : T.Short, Pips(un.Hp, un.Max), un.Type == "dron" ? theme.inkOnThreat : Palette.Hex("#ffc9c2"), 1f);
-                        byUnit.TryGetValue(un.Id, out var iv);
-                        t.SetBadges(iv != null ? iv.Order.ToString() : null, iv != null && iv.Uncertain ? "?" : iv != null && iv.IsScanned ? "✓" : null, iv != null && iv.Uncertain ? theme.warn : theme.verify);
-                    }
-                }
-                else { t.SetUnit(false, default, default, default, 0, null, null, default, 1); t.SetBadges(null, null, default); }
-                t.SetSpawn(spawn.Contains(key) && un == null);
-            }
+            foreach (var s in B.Spawns) if (Baskin.UnitAt(B, s.X, s.Y) == null) m.Spawns.Add(s.Y * Baskin.N + s.X);
+            foreach (var u in B.Units) if (u.Side == 'p' && !u.Dead && !Baskin.CanAct(B, u)) m.Spent.Add(u.Id);
+            board.Sync(B, m);
             RenderOverlay();
             RenderSide();
             RenderInfo();
@@ -278,24 +254,13 @@ namespace Corrigible.Game.UI
         void RenderOverlay()
         {
             if (B == null) return;
-            overlay.Clear();
-            foreach (var l in labelPool) l.gameObject.SetActive(false);
-            int used = 0;
-            foreach (var i in Baskin.Intents(B))
-            {
-                if (!i.HasTarget || i.TargetNone) continue;
-                overlay.Add(new RaidOverlayGraphic.Arrow
-                {
-                    From = new Vector2(i.FromX + 0.5f, i.FromY + 0.5f), To = new Vector2(i.TargetX + 0.5f, i.TargetY + 0.5f),
-                    Color = i.Kind == "repair" ? theme.good : theme.threat, Dashed = i.Uncertain,
-                });
-            }
+            if (winLabel != null) winLabel.gameObject.SetActive(false);
             // Önizleme: seçili birimin yeteneği üzerine gelinen kareye uygulanırsa
             var u = Selected;
-            if (u == null || hover == null || B.Phase != "player" || !Baskin.CanAct(B, u)) return;
+            if (u == null || hover == null || B.Phase != "player" || !Baskin.CanAct(B, u) || Busy) { board.ClearPreview(); return; }
             var (hx, hy) = hover.Value;
             bool isMove = !actMode && Baskin.CanMove(B, u) && Baskin.Reachable(B, u).Any(t => t.X == hx && t.Y == hy);
-            if (isMove || !Baskin.Targets(B, u).Any(t => t.X == hx && t.Y == hy)) return;
+            if (isMove || !Baskin.Targets(B, u).Any(t => t.X == hx && t.Y == hy)) { board.ClearPreview(); return; }
             var pv = Baskin.Preview(B, u.Id, hx, hy);
             var dmg = new Dictionary<int, (int x, int y, int n, string label)>();
             foreach (var f in pv.Fx)
@@ -304,24 +269,10 @@ namespace Corrigible.Game.UI
                 if (f.K == "dmg") { dmg.TryGetValue(k, out var d); dmg[k] = (f.X, f.Y, d.n + f.N, null); }
                 if (f.K == "armor") dmg[k] = (f.X, f.Y, 0, Loc.T("zırh"));
             }
-            foreach (var m in pv.Moves)
-            {
-                overlay.Add(new RaidOverlayGraphic.Arrow { From = new Vector2(m.From.X + 0.5f, m.From.Y + 0.5f), To = new Vector2(m.To.X + 0.5f, m.To.Y + 0.5f), Color = theme.fg });
-                overlay.Ghost(m.To.X, m.To.Y, theme.fg);
-            }
-            foreach (var d in dmg.Values) Label(ref used, d.x, d.y, d.label ?? "−" + d.n, d.label != null ? theme.good : theme.threat);
-            if (pv.Won) Label(ref used, 3.5f, 0.18f, Loc.T("HEDEF KIRILIR"), theme.good);
-        }
-
-        void Label(ref int used, float x, float y, string text, Color color)
-        {
-            if (used == labelPool.Count) labelPool.Add(Instantiate(labelPrefab, labels));
-            var t = labelPool[used++];
-            t.gameObject.SetActive(true);
-            t.text = text; t.color = color;   // prefab'ın kalın koyu dış çizgisi kırmızı robotun üstünde de okutur
-            var rt = t.rectTransform;
-            rt.anchorMin = rt.anchorMax = new Vector2((x + 0.5f) / 8f, 1 - (y + 0.22f) / 8f);
-            rt.anchoredPosition = Vector2.zero;
+            board.SetPreview(
+                dmg.Values.Select(d => ((float)d.x, (float)d.y, d.label ?? "−" + d.n, d.label != null ? theme.good : theme.threat)).ToList(),
+                pv.Moves.Select(mv => (mv.From.X, mv.From.Y, mv.To.X, mv.To.Y)).ToList());
+            if (pv.Won && winLabel != null) { winLabel.text = Loc.T("HEDEF KIRILIR"); winLabel.gameObject.SetActive(true); }
         }
 
         void RenderSide()

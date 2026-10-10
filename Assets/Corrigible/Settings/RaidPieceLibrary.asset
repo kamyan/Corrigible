@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1faa0bc029d554dfb87ca7c8286f6616, type: 3}
+  m_Name: RaidPieceLibrary
+  m_EditorClassIdentifier: Corrigible.Game::Corrigible.Game.Raid.RaidPieceLibrary
+  floor: {fileID: 6894198806370172111, guid: 3f7153f610198434fa078090d94fd61d, type: 3}
+  wall: {fileID: 5610772328931942567, guid: b66be588b92de475fb5f0da9c37e63c6, type: 3}
+  cable: {fileID: 305440446409749069, guid: e1414e41adf014dae954c3d58f766ffe, type: 3}
+  core: {fileID: 5564251312379761101, guid: cb0cd308210e14b229efaf046625a4eb, type: 3}
+  node: {fileID: 8921853248403434431, guid: f8ddb591a5af84efda2f66df6fdbe719, type: 3}
+  backup: {fileID: 2743135382261753482, guid: 0512d3a21747948c998cce31bfdbc6eb, type: 3}
+  civilian: {fileID: 3801026127767064416, guid: b6beafc53f5e5421599279a99bbd7259, type: 3}
+  cooling: {fileID: 7306417211392165986, guid: 4a08bf5cfe7624d9c8e995424d4f1c29, type: 3}
+  spawner: {fileID: 8814109916042950270, guid: e3dbc46529403412699cb44afc2cfd23, type: 3}
+  rubble: {fileID: 2884673381055367629, guid: 927aa90a23279484bb5fd433a566ce26, type: 3}
+  technician: {fileID: 4603348003139424556, guid: 5094c3276b9844efaaaa556781950b3e, type: 3}
+  emp: {fileID: 3955810935086088370, guid: b2e11479cb10c46a68fb74f62f97e1ee, type: 3}
+  analyst: {fileID: 285499433824670196, guid: bfb5892617cee4bf99b2ed0aaaa75de0, type: 3}
+  drone: {fileID: 6642452832963876291, guid: 398cd9db38ce74af7843a45fbc2d1c7d, type: 3}
+  maintenance: {fileID: 6709368790409979924, guid: 89a3e9677507f41669f2b8b92e07a55f, type: 3}
+  spawnMarker: {fileID: 3501207820214091994, guid: 763bb4dc072c24836996df755dee6e28, type: 3}
+  highlight: {fileID: 2100000, guid: 24963a51d5c224313be3b10d54787d1b, type: 2}
+  overlay: {fileID: 2100000, guid: 6eea27202a1474414a05236e2d9a66d7, type: 2}
+  font: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  labelMaterial: {fileID: 2100000, guid: d57af13c1dac345e08adcb3496c0d397, type: 2}
+  move: {r: 0.36, g: 0.78, b: 0.85, a: 0.42}
+  target: {r: 0.94, g: 0.69, b: 0.25, a: 1}
+  danger: {r: 1, g: 0.36, b: 0.3, a: 0.5}
+  uncertain: {r: 0.94, g: 0.69, b: 0.25, a: 0.38}
+  heal: {r: 0.45, g: 0.85, b: 0.5, a: 0.4}
+  hover: {r: 1, g: 1, b: 1, a: 0.9}
+  threat: {r: 1, g: 0.36, b: 0.3, a: 1}
+  good: {r: 0.45, g: 0.85, b: 0.5, a: 1}
+  ink: {r: 0.9, g: 0.95, b: 0.96, a: 1}

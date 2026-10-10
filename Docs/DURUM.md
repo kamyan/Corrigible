@@ -32,6 +32,8 @@ edilmedi** (kullanıcı commit istemedi). Commit'i kullanıcı isteyince yap.
 11. **Türkçe/İngilizce lokalizasyon** (2026-10-10): gettext tarzı `Loc` (Core), çeviri tablosu, `LocalizedText`,
    editör aracı ve testler. ~730 metin. Terimler: KYGA → AISA, siyasi güç → political capital (PC), Son Şalter →
    Kill Switch, Düzeltilebilirlik → Corrigibility.
+12. **Baskın ayrı 3D sahnede** (2026-10-10): `Scenes/Baskin.unity`, Into the Breach tarzı izometrik tahta, primitive'lerden
+   3D parçalar, efekt listesinden canlandırılan düşman turu. Ana sahnenin üstüne eklemeli yüklenir (`RaidLauncher`).
 
 ## Deneysel mod: saha ekipleri, zaman ölçeği, baskın (2026-10-10)
 
@@ -88,6 +90,9 @@ katmanı `S.Raid` varken durur.
 - **Yeni oyuncular için varsayılan rakip Solucan** (PlayerPrefs `corrigible.aiType` yoksa).
 
 ## Açık işler
+
+- **Baskın görselleri yer tutucu:** parçalar Unity primitive'lerinden. Gerçek modeller, ses, parçacık efektleri ve kamera
+  sarsıntısı yok. Farklı en-boy oranlarında kadraj kontrol edilmeli (kamera 16:9'a göre ayarlı).
 
 - **İngilizce metinlerin ana dili İngilizce olan biri tarafından gözden geçirilmesi** (çeviriler ajan tarafından yapıldı).
   Steam mağaza sayfası ve başarım adları henüz çevrilmedi. Tarayıcı prototipi yalnızca Türkçe.

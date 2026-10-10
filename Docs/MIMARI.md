@@ -15,14 +15,18 @@ Corrigible/                      (Unity proje kökü, git deposu)
    │  │  │  ├─ Widgets/          küçük, tek işlevli bileşenler (prefab'ların kökleri)
    │  │  │  ├─ Modals/           pencere bileşenleri
    │  │  │  ├─ Teams/            saha ekipleri kartı ve harita işaretleri (deneysel mod)
-   │  │  │  └─ Raid/             baskın (taktik savaş) ekranı (deneysel mod)
+   │  │  │  └─ Raid/             baskın sahnesinin paneli (RaidView)
+   │  │  ├─ Raid/                3D baskın tahtası, parçalar, RaidLauncher (deneysel mod)
    │  │  └─ Tutorial/            eğitim sistemi
    │  ├─ Resources/Localization/strings.txt   çeviri tablosu (tr → en)
    │  ├─ Steam/                  Steamworks.NET entegrasyonu (paket yoksa derlenmez)
    │  ├─ Editor/                 editör araçları (CorrigibleDebug)
    │  ├─ Tests/EditMode/         NUnit testleri
    │  ├─ Prefabs/UI/             UI prefab'ları
-   │  ├─ Scenes/Main.unity       tek oyun sahnesi (build listesinde ilk)
+   │  ├─ Scenes/Main.unity       ana sahne (build listesinde ilk)
+   │  ├─ Scenes/Baskin.unity     baskın: 3D taktik savaş, ana sahnenin üstüne eklemeli yüklenir
+   │  ├─ Art/Raid/               baskın malzemeleri ve son işlem profili
+   │  ├─ Prefabs/Raid/           3D baskın parçaları (karo, duvar, dolaplar, birimler)
    │  ├─ Settings/               BalanceConfig, UiTheme, TutorialSequence asset'leri
    │  └─ UI/Sprites/             Rounded.png, Outline.png (9-dilimli yuvarlak köşe)
    └─ TextMesh Pro/              TMP Essential Resources (LiberationSans SDF + Türkçe için dinamik fallback)
@@ -94,6 +98,30 @@ Corrigible/                      (Unity proje kökü, git deposu)
 - **Yeni bir oyuncu komutu eklerken:** `Simulation`'a `XCore` + `public ActResult X(...) => Rec(XCore(...), "kind", ...)`,
   `Replay.Restore`'a `case "kind"`, JS'e aynı fonksiyon, test.
 
+## Baskın sahnesi (`Scenes/Baskin.unity`)
+
+```
+Raid Camera     ortografik, (35°, 45°) izometrik; tahta ekranın solunda. URP son işlem açık
+Key Light, Rim Light, Global Volume (Art/Raid/RaidVolume: bloom, ton eşleme, vinyet)
+Board           [RaidBoard3D] Tiles / Pieces / Marks çalışma anında kurulur (Settings/RaidPieceLibrary)
+Baskin          Canvas sıra 12 [RaidView]: Root → Title, Turn, Side (hedef, ekip kartları, düğmeler, günlük),
+                Legend, WinLabel, Brief, Result
+```
+
+- `RaidLauncher` (ana sahnede, Game nesnesi): `S.Raid` oluşunca sahneyi `LoadSceneMode.Additive` ile yükler, etkin
+  sahne yapar (ışık ayarları için) ve ana kamerayı, dinleyicisini, KrizMasasi/Pencereler/Egitim canvas'larını kapatır
+  (nesneleri değil bileşenleri; görünümlerin olay abonelikleri sürer). Sahne kapanınca hepsini geri açar.
+- `RaidView` sahne açılınca `GameController`'ı bulur ve `S.Raid.Params` ile `Baskin.Create`'i çağırır; bitince
+  `ResolveRaid` ve sahneyi kapatır. Ana sahne yoksa (sahne editörde tek başına açıldı) örnek bir baskın kurar.
+- `RaidBoard3D`: kare (x, y) → dünya `(x−3.5, 0, 3.5−y)`. Karolar `RaidCell`, parçalar `RaidPiece` taşır; fare ışını
+  hangi kareye çarptığını buradan okur (arayüzün üstündeyse yok sayılır). Vurgular ve oklar `UI/Default` tabanlı
+  malzemelerle (renk köşe renginden/MPB'den; oklar `unity_GUIZTestMode = Always` ile her zaman üstte).
+- Canlandırma: bir eylem ya da tur bitince motor durumu anında değiştirir ve `FxList`'i doldurur; tahta görseli eski
+  hâlindeyken efektleri sırayla oynatır (saldırı/atış, hasar yazısı, itme, ölüm, kırılma, uyanma), sonra `Sync` ile
+  son duruma eşitlenir. Oynatma sırasında girdi kapalıdır (`Busy`).
+- Parçalar Unity primitive'lerinden yapılmış prefab'lardır (`Prefabs/Raid`); görsel iyileştirme için prefab'ın
+  `Body` altını gerçek modelle değiştirmek yeterli (`RaidPiece` alanları: body, tinted, hp, order, flag, selectRing).
+
 ## Sahne (`Scenes/Main.unity`)
 
 ```
@@ -108,9 +136,7 @@ UI
 │                   News (Ticker, Feed: 8× HeadlineRow prefab)
 ├─ Pencereler       Canvas sıra 10  [ModalView]
 │  └─ Overlay (kapalı)  IntroModal (+ Experimental düğmeleri), GiftModal, VeilModal, FakeWinModal, EndModal
-├─ Baskin           Canvas sıra 12  [RaidView]
-│  └─ Root (kapalı)     Title, Turn, Board (8×8 RaidTile, GridLayout 110 px), BoardOverlay [RaidOverlayGraphic] + Labels,
-│                       Legend, Side (Objectives, Units: 3× RaidUnitCard, Controls, Log), Brief, Result
+└─ (Game nesnesinde RaidLauncher: baskında Baskin sahnesini yükler, ana kamera ve masa canvas'larını kapatır)
 ├─ Egitim           Canvas sıra 15  [TutorialController]
 │  └─ Layer (kapalı)    DimTop/Bottom/Left/Right, Highlight, Callout
 └─ Bildirim         Canvas sıra 20  [ToastView]
@@ -129,8 +155,8 @@ UI
 
 - **uGUI + TextMeshPro.** (Önce UI Toolkit denendi; Scene görünümünde görünmediği için kullanıcı isteğiyle uGUI'ye geçildi.)
 - **Prefab'lar** (`Prefabs/UI`): `RegionNode`, `ResearchRow`, `HeadlineRow`, `LogLine`, `TextLine`, `AxisLabel`, `Gauge`,
-  `Chip`, `ActionButton`, `PrimaryButton`, `TextButton`; deneysel mod için `TeamRow`, `TeamMarker`, `RaidTile`,
-  `RaidUnitCard`, `RaidPreviewLabel` (malzemesi `UI/RaidPreviewLabel.mat`: koyu konturlu TMP). Örneğe özel veri override olarak durur
+  `Chip`, `ActionButton`, `PrimaryButton`, `TextButton`; deneysel mod için `TeamRow`, `TeamMarker`,
+  `RaidUnitCard` (3D baskın parçaları `Prefabs/Raid`'de; dünya yazılarının malzemesi `Art/Raid/Materials/WorldLabel.mat`). Örneğe özel veri override olarak durur
   (ör. `RegionNode.regionId`, `ResearchRowView.researchId`).
 - **Widget bileşenleri** (`Game/UI/Widgets`): `StyledButton` (zemin/çerçeve/yazı + devre dışı soluklaşma; sekmelerde
   çerçeve = alt çizgi), `GaugeView`, `ChipView`, `ActionButtonView`, `ResearchRowView`, `HeadlineRowView`, `LogLineView`.
