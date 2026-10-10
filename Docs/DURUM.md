@@ -34,6 +34,8 @@ edilmedi** (kullanıcı commit istemedi). Commit'i kullanıcı isteyince yap.
    Kill Switch, Düzeltilebilirlik → Corrigibility.
 12. **Baskın ayrı 3D sahnede** (2026-10-10): `Scenes/Baskin.unity`, Into the Breach tarzı izometrik tahta, primitive'lerden
    3D parçalar, efekt listesinden canlandırılan düşman turu. Ana sahnenin üstüne eklemeli yüklenir (`RaidLauncher`).
+13. **Ses (ilk tur, 2026-10-10):** `AudioDirector` + `SoundBank`, kodla üretilmiş yer tutucu sesler: illüzyonda "fazla
+   temiz" miks, tamamlanan YZ motifi, Tekillik'e bağlı müzik katmanları, ajans jingle'ları (sahtede yanlış nota), Son Şalter.
 
 ## Deneysel mod: saha ekipleri, zaman ölçeği, baskın (2026-10-10)
 
@@ -90,6 +92,10 @@ katmanı `S.Raid` varken durur.
 - **Yeni oyuncular için varsayılan rakip Solucan** (PlayerPrefs `corrigible.aiType` yoksa).
 
 ## Açık işler
+
+- **Ses:** yer tutucu sesler gerçekleriyle değiştirilmeli; AudioMixer yok. Ayarlar penceresi baskın sahnesinden açılamıyor.
+  Sonraki tur fikirleri: arayüz sesleri, izlenmeyen bölgelerin telsiz filtresi, hediye melodisi, sonlara özel
+  kapanışlar, YZ günlüğü harf sesleri, baskın sahnesi sesleri (ortam, niyet "kilit" sesleri, çarpışmalar).
 
 - **Baskın görselleri yer tutucu:** parçalar Unity primitive'lerinden. Gerçek modeller, ses, parçacık efektleri ve kamera
   sarsıntısı yok. Farklı en-boy oranlarında kadraj kontrol edilmeli (kamera 16:9'a göre ayarlı).

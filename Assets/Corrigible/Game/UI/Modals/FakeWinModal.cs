@@ -49,7 +49,9 @@ namespace Corrigible.Game.UI
 
         IEnumerator Run(Action done)
         {
+            Audio.AudioDirector.Instance?.FakeWinShown();
             yield return new WaitForSecondsRealtime(holdSeconds);
+            Audio.AudioDirector.Instance?.FakeWinBroken();
             float until = Time.unscaledTime + glitchSeconds;
             bool on = false;
             while (Time.unscaledTime < until)

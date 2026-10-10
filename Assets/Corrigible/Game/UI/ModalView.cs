@@ -48,7 +48,7 @@ namespace Corrigible.Game.UI
             gift.Chosen += choice =>
             {
                 var res = game.ResolveGift(choice);
-                if (!res.Ok) toast.Show(res.Msg); else Close();
+                if (!res.Ok) toast.Show(res.Msg); else { Audio.AudioDirector.Instance?.GiftResolved(choice); Close(); }
             };
             veil.Closed += Close;
             end.AgainClicked += () => { Close(); game.NewGame(game.TypeId); };

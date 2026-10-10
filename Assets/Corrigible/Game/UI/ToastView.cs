@@ -28,6 +28,7 @@ namespace Corrigible.Game.UI
             if (string.IsNullOrEmpty(msg) || text == null) return;
             text.text = msg;
             accent.color = ok ? theme.verify : theme.warn;
+            if (!ok) Audio.Sfx.Play(Audio.Cue.Deny);
             hideAt = Time.unscaledTime + seconds;
         }
 

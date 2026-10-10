@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Corrigible.Core;
+using Corrigible.Game.Audio;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -299,6 +300,7 @@ namespace Corrigible.Game.Raid
             if (!units.TryGetValue(unitId, out var p)) yield break;
             Busy = true;
             var a = p.transform.position; var b = W(x, y);
+            Sfx.Play(Cue.RaidStep, 1, Pan(b));
             float d = Mathf.Max(0.18f, Vector3.Distance(a, b) * 0.07f);
             for (float t = 0; t < 1; t += Time.deltaTime / d)
             {
@@ -324,22 +326,27 @@ namespace Corrigible.Game.Raid
                         if (units.TryGetValue(f.Unit, out var atk))
                         {
                             var u = after.Units.FirstOrDefault(z => z.Id == f.Unit);
-                            yield return u != null && u.Type == "dron" ? Shot(atk, f.X, f.Y) : Lunge(atk, f.X, f.Y);
+                            bool drone = u != null && u.Type == "dron";
+                            Sfx.Play(drone ? Cue.RaidDroneShot : Cue.RaidMelee, 1, Pan(atk.transform.position));
+                            yield return drone ? Shot(atk, f.X, f.Y) : Lunge(atk, f.X, f.Y);
                         }
                         break;
                     case "dmg":
                     {
                         RaidPiece p = f.Unit > 0 && units.TryGetValue(f.Unit, out var up) ? up : objects.TryGetValue(Key(f.X, f.Y), out var op) ? op : null;
                         p?.Flash(lib.threat);
+                        Sfx.Play(f.Unit > 0 ? Cue.RaidHit : Cue.RaidHitObject, 1, Pan(W(f.X, f.Y)));
                         StartCoroutine(Popup(W(f.X, f.Y), "−" + f.N, lib.threat, popups++ * 0.04f));
                         yield return Wait(enemyTurn ? 0.5f : 0.35f);
                         break;
                     }
                     case "armor":
                         StartCoroutine(Popup(W(f.X, f.Y), Loc.T("zırh"), lib.ink, 0));
+                        Sfx.Play(Cue.RaidArmor, 1, Pan(W(f.X, f.Y)));
                         break;
                     case "heal":
                         if (objects.TryGetValue(Key(f.X, f.Y), out var hp)) hp.Flash(lib.good);
+                        Sfx.Play(Cue.RaidRepair, 1, Pan(W(f.X, f.Y)));
                         StartCoroutine(Popup(W(f.X, f.Y), "+1", lib.good, 0));
                         yield return Wait(0.6f);
                         break;
@@ -348,23 +355,31 @@ namespace Corrigible.Game.Raid
                         if (units.TryGetValue(f.Unit, out var pu))
                         {
                             var u = after.Units.FirstOrDefault(z => z.Id == f.Unit);
-                            if (u != null) yield return Slide(pu, W(u.X, u.Y), 0.18f);
+                            if (u != null) { Sfx.Play(Cue.RaidPush, 1, Pan(W(u.X, u.Y))); yield return Slide(pu, W(u.X, u.Y), 0.18f); }
                         }
                         break;
                     case "hook":
                         yield return Burst(W(f.X, f.Y), lib.ink, 0.4f, 0.2f);
                         break;
                     case "emp":
+                        Sfx.Play(Cue.RaidEmpBlast, 1, Pan(W(f.X, f.Y)));
                         StartCoroutine(Burst(W(f.X, f.Y), new Color(0.55f, 0.85f, 1f, 0.9f), 1.6f, 0.35f));
                         yield return Wait(0.15f);
                         break;
                     case "die":
-                        if (units.TryGetValue(f.Unit, out var dp)) yield return Sink(dp);
+                        if (units.TryGetValue(f.Unit, out var dp))
+                        {
+                            var du = after.Units.FirstOrDefault(z => z.Id == f.Unit);
+                            Sfx.Play(du != null && du.Side == 'p' ? Cue.RaidUnitDown : Cue.RaidRobotDown, 1, Pan(dp.transform.position));
+                            yield return Sink(dp);
+                        }
                         break;
                     case "break":
+                        Sfx.Play(f.Obj == "civ" ? Cue.RaidCivilianBreak : f.Obj == "cool" ? Cue.RaidExplosion : Baskin.IsTarget(f.Obj) ? Cue.RaidCoreBreak : Cue.RaidBreak, 1, Pan(W(f.X, f.Y)));
                         if (objects.TryGetValue(Key(f.X, f.Y), out var bp)) yield return Collapse(bp);
                         break;
                     case "spawn":
+                        Sfx.Play(Cue.RaidSpawn, 1, Pan(W(f.X, f.Y)));
                         StartCoroutine(Burst(W(f.X, f.Y), lib.threat, 1.0f, 0.3f));
                         yield return Wait(0.2f);
                         break;
@@ -373,6 +388,8 @@ namespace Corrigible.Game.Raid
             yield return Wait(0.15f);
             Busy = false;
         }
+
+        public float Pan(Vector3 world) => Sfx.PanOf(cam, world);
 
         IEnumerator Wait(float s) { yield return new WaitForSeconds(s * stepTime / 0.32f); }
         static float Ease(float t) => 1 - (1 - t) * (1 - t);

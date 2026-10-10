@@ -1,5 +1,7 @@
+using Corrigible.Game.Audio;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Corrigible.Game.UI
@@ -9,7 +11,7 @@ namespace Corrigible.Game.UI
     /// Sekmelerde "border" alt çizgidir.
     /// </summary>
     [RequireComponent(typeof(Button))]
-    public sealed class StyledButton : MonoBehaviour
+    public sealed class StyledButton : MonoBehaviour, IPointerEnterHandler
     {
         [SerializeField] Button button;
         [SerializeField] Graphic background;
@@ -18,7 +20,14 @@ namespace Corrigible.Game.UI
         [SerializeField] CanvasGroup group;
         [SerializeField, Range(0, 1)] float disabledAlpha = 0.42f;
 
+        [Tooltip("Tıklama ve üzerine gelme sesi.")]
+        [SerializeField] bool sounds = true;
+
         public Button Button => button;
+
+        void Awake() { if (sounds && button != null) button.onClick.AddListener(() => Sfx.Play(Cue.Click)); }
+
+        public void OnPointerEnter(PointerEventData e) { if (sounds && button != null && button.interactable) Sfx.Play(Cue.Hover); }
         public TMP_Text Label => label;
         public Graphic Background => background;
         public Graphic Border => border;

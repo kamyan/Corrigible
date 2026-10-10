@@ -410,6 +410,9 @@ Zaman ölçeği: {0}×	Time scale: {0}×
 EĞİTİMLE BAŞLA	START WITH TUTORIAL
 EĞİTİMLE BAŞLA · ÖNERİLİR	START WITH TUTORIAL · RECOMMENDED
 KALDIĞIN YERDEN DEVAM ET · 	CONTINUE WHERE YOU LEFT OFF · 
+# Assets/Corrigible/Game/UI/Modals/SettingsModal.cs
+Ses: KAPALI	Sound: OFF
+Ses: AÇIK	Sound: ON
 # Assets/Corrigible/Game/UI/Modals/VeilModal.cs
 SAHA RAPORU · GÜN {0} · {1}	FIELD REPORT · DAY {0} · {1}
 Saha ekiplerin {0} altyapısının %{1}’inin YZ kontrolünde olduğunu buldu. Ekranların {2} gündür sana yalan söylüyordu: temiz haritalar, olumlu haberler, düşen Tekillik.	Your field teams found that {1}% of {0} infrastructure is under AI control. Your screens had been lying to you for {2} days: clean maps, good news, a falling Singularity.
@@ -652,6 +655,7 @@ CORRIGIBLE	CORRIGIBLE
 SON ŞALTER · KYGA KRİZ MASASI	KILL SWITCH · AISA CRISIS DESK
 RAKİP: MANİPÜLATÖR	OPPONENT: MANIPULATOR
 GÜN 000	DAY 000
+Ayarlar	Settings
 Duraklat	Pause
 FON	FUNDS
 bütçe %40	budget 40%
@@ -743,6 +747,7 @@ ZOR	HARD
 ELE GEÇİRİLMİŞ KAYIT · YZ GÜNLÜĞÜ	INTERCEPTED RECORD · AI LOG
 DENEYSEL	EXPERIMENTAL
 Zaman ölçeği: 1,5×	Time scale: 1.5×
+Ses ayarları	Sound settings
 GÖREVE BAŞLA	START MISSION
 KALDIĞIN YERDEN DEVAM ET	CONTINUE WHERE YOU LEFT OFF
 TEKLİF	OFFER
@@ -770,6 +775,16 @@ Gerçek ortalama sızma	Real average infiltration
 Sana gösterilen (kesik)	What you were shown (dashed)
 YZ SENİN HAKKINDA ŞUNLARI ÖĞRENDİ	WHAT THE AI LEARNED ABOUT YOU
 Haritaya bak	Look at the map
+AYARLAR	SETTINGS
+Ses	Sound
+Genel	Master
+%80	80%
+Müzik	Music
+Efektler	Effects
+Ortam	Ambience
+Ortam: şebeke uğultusu, baskında bina sesi ve saatler. Efektler: arayüz, olaylar, YZ motifi.	Ambience: grid hum, building sounds during raids, clocks. Effects: interface, events, the AI motif.
+KAPAT	CLOSE
+Esc: aç / kapat	Esc: open / close
 EĞİTİM · 1/10	TUTORIAL · 1/10
 Başlık	Title
 Açıklama	Description

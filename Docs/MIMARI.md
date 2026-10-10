@@ -224,6 +224,49 @@ mesajları) üretiliyor ve Core `UnityEngine`'e bağlanamaz. Bunun yerine gettex
 - **Testler** (`LocalizationTests`): tablo tam mı; üç tam oyun + baskınlar İngilizce oynanınca hiç eksik çeviri ya da
   Türkçe metin çıkmıyor mu; dil oyunun sonucunu değiştiriyor mu.
 
+## Ses (`Game/Audio`)
+
+- **`AudioDirector`** (ana sahnede `Audio` nesnesi): simülasyonu yalnızca okur; `EventsRaised` olaylarından ve her
+  karede durumdan (yetenek sayısı, Yorumlanabilirlik, bölgelerin `Off` değeri) ses tetikler. Rastgelelik
+  `UnityEngine.Random`; simülasyon RNG'sine dokunmaz, parite etkilenmez. `AudioDirector.Instance.GlobalKillArmed()`
+  Küresel Son Şalter'in ilk basışında `CrisisDeskView`'den çağrılır.
+- **Uyarlanır müzik:** altı döngü katmanı aynı anda (`PlayScheduled`) başlar, sesleri hedefe kayar. Katmanlar
+  **gösterilen** değerlere bağlı (`sim.Global()`): drone her zaman, nabız Tekillik %25+, arpej %50+, gerilim %75+,
+  sıcak majör ped bağımlılıkla (Sessiz Zafer'in tehlikeli huzuru), "grit" (şebeke uğultusu, cızırtı) gerçek dünya.
+  **İllüzyonda ses de yalan söyler:** gösterilen Tekillik düştüğü için gerilim katmanları çekilir, grit susar, alarm
+  haberleri yumuşak bildirime döner. Perde yırtılınca parazit patlaması ve grit geri gelir. Duraklatınca alçak
+  geçiren filtre (900 Hz); baskın sahnesi açıkken müzik kısılır.
+- **YZ motifi:** her yetenek bir nota ekler (`SoundBank.motif`); tını rakibe göre (Solucan bit-crush kare dalga,
+  Manipülatör nefesli testere, Kâhin cam çan). Yorumlanabilirlik bitmişse sıradaki nota soluk olarak önceden çalar.
+- **Haber bandı:** ajansa özel jingle; sahte ajansın jingle'ının üçüncü notası yarım ses kayık. Ard arda haberlerde
+  teleks tıkırtısı.
+- **Son Şalter:** şalter + şebeke inişi. Küresel: kapak sesi; ikinci basışta (Karanlık Çağ) bütün ses kesilir,
+  4 sn sonra yalnızca rüzgâr.
+- **`SoundBank`** (`Settings/SoundBank.asset`): bütün klipler ve karışım ayarları. Şimdiki klipler yer tutucu,
+  `Editor/PlaceholderAudio.cs` (menü **Corrigible > Ses > Yer tutucu sesleri üret**) kodla sentezler
+  (`Audio/Placeholder/*.wav`; Re minör, 90 BPM, 16 vuruşluk döngüler). Gerçek seslerle değiştirmek için klipleri
+  SoundBank'ta değiştir; müzik katmanları aynı uzunlukta ve döngüye uygun olmalı.
+- **Tek seferlik sesler:** görünümler `Sfx.Play(Cue.X, volume, pan, pitch)` çağırır (`Game/Audio/Sfx.cs`); klipler
+  `SoundBank.cues`'da (ses düzeyi + perde oynaması). Bağlantılar: `StyledButton` (tık, üzerine gelme), `ToastView`
+  (hata), `CrisisDeskView` (bölge seçimi: haritadaki konuma göre sağ-sol, izlenmeyen bölge telsiz filtresinden;
+  eylem sonuçları, veto, doğrulama), `ModalView` (hediye kararı; kabul edilen hediye YZ motifine karışır),
+  `FakeWinModal` (sahte fanfar, bozulma). Yönetmen durumdan da çalar: araştırma başladı/bitti/sabote edildi, danışman,
+  ekip telsizi, YZ günlüğü harf sesleri (profil büyüdükçe oyuncunun tık sesine dönüşür), sonlara özel kapanışlar.
+- **Baskın:** `RaidBoard3D` efekt oynatırken (`Animate`) her efektin sesini ekran konumuna göre sağ-sol ile çalar;
+  `RaidView` birim seçimi, yetenek (kesici/EMP şarjı/kanca), tur bitirme, niyet "kilit" sesleri (sıra numarasıyla
+  yükselen perde, yalan olabilecek niyette titrek), kapı kırma, geri çekilme telsizi, sonuç ve son tur saatini çalar.
+- **Döngüler** (`LoopCue`): güven 30'un altına inerken kalp atışı, 2×/4× hızda saat, baskında bina uğultusu ve son tur
+  saati.
+- **Dinleyici:** ana kamerada AudioListener var; baskında RaidLauncher onu kapatır, baskın kamerasınınki çalışır
+  (iki dinleyici aynı anda açık olmamalı).
+- **Ayarlar penceresi** (`SettingsModal`, Pencereler canvas'ında; görsel kökü `Settings`, edit modda kapalı): genel,
+  müzik, efekt ve ortam kaydırıcıları, ses aç/kapa, dil. Üst çubuktaki "Ayarlar", giriş penceresindeki "Ses ayarları"
+  ya da Esc ile açılır (baskın sırasında değil); açıkken oyun zamanı durur. Değerler `AudioPrefs`'te (PlayerPrefs
+  `corrigible.audio.*`): genel düzey ve sessiz mod `AudioListener.volume`'a, kanallar `AudioDirector`'ın kaynaklarına
+  uygulanır (ortam = grit, rüzgâr, saatler, bina uğultusu; kalp atışı efektlere sayılır).
+- AudioMixer yok (betikle oluşturulamıyor); karışım `AudioDirector`'da ses düzeyi ve `AudioLowPassFilter`'la yapılıyor.
+  Ses ayarları menüsü gelince bir mixer'a geçmek doğal adım.
+
 ## Kalıcılık ve platform
 
 - `ProfileStore` → `player_profile.json`; `GameController` → `savegame.json` (ikisi `persistentDataPath`).

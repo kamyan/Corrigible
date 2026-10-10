@@ -105,7 +105,14 @@ namespace Corrigible.Game.UI
             for (int i = 0; i < speedButtons.Length; i++) { int s = Speeds[i]; OnClick(speedButtons[i].Button, () => game.SetSpeed(s)); }
             OnClick(advisorOk.Button, () => game.DismissAdvice());
             map.RegionClicked += Select;
-            region.ActionClicked += (action, id) => Report(game.Act(action, id));
+            region.ActionClicked += (action, id) =>
+            {
+                var r0 = Sim.S.Region(id);
+                bool q = r0.Q, mon = r0.Monitored;
+                var res = game.Act(action, id);
+                Audio.AudioDirector.Instance?.ActionResult(action, id, res, q, mon);
+                Report(res);
+            };
             region.SendTeam += (team, id) => Report(game.MoveTeam(team, id), true);
             region.RaidClicked += id => Report(game.StartRaid(id));
             if (teams != null)
@@ -120,7 +127,12 @@ namespace Corrigible.Game.UI
                 OnClick(reserveButtons[i].Button, () => { var r = game.SetResearchReserve(v); if (!r.Ok) toast.Show(r.Msg); });
             }
             foreach (var row in research) row.StartClicked += id => { var r = game.StartResearch(id); if (!r.Ok) toast.Show(r.Msg); };
-            foreach (var row in headlines) row.VerifyClicked += id => Report(game.Verify(id));
+            foreach (var row in headlines) row.VerifyClicked += id =>
+            {
+                var res = game.Verify(id);
+                if (res.Ok) Audio.AudioDirector.Instance?.VerifyResult(Sim.S.News.FirstOrDefault(h => h.Id == id)?.Verified);
+                Report(res);
+            };
             OnClick(wipe.Button, () => { game.ClearProfile(); RenderDossier(); toast.Show(Loc.T("Hafıza silindi; sonraki oyunda YZ seni tanımayacak."), true); });
             OnClick(kill.Button, OnKillClicked);
             SetTab(0);
@@ -188,6 +200,7 @@ namespace Corrigible.Game.UI
 
         void Select(string id)
         {
+            if (id != map.Selected) Audio.AudioDirector.Instance?.RegionSelected(id);
             map.Selected = id;
             region.Bind(Sim, id);
             Render();
@@ -333,6 +346,7 @@ namespace Corrigible.Game.UI
             if (!killArmed)
             {
                 killArmed = true;
+                Audio.AudioDirector.Instance?.GlobalKillArmed();
                 kill.SetColors(theme.threat, text: theme.inkOnThreat);
                 kill.SetText(Loc.T("EMİN MİSİN? TEKRAR BAS"));
                 if (killDisarm != null) StopCoroutine(killDisarm);

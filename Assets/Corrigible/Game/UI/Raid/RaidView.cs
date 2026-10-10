@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Corrigible.Core;
+using Corrigible.Game.Audio;
 using Corrigible.Game.Raid;
 using TMPro;
 using UnityEngine;
@@ -71,7 +72,7 @@ namespace Corrigible.Game.UI
             UiUtil.OnClick(undo.Button, DoUndo);
             UiUtil.OnClick(endTurn.Button, DoEndTurn);
             UiUtil.OnClick(retreat.Button, DoRetreat);
-            UiUtil.OnClick(briefStart.Button, () => { brief.SetActive(false); Render(); });
+            UiUtil.OnClick(briefStart.Button, StartRaid);
             UiUtil.OnClick(resultBack.Button, Finish);
         }
 
@@ -148,6 +149,7 @@ namespace Corrigible.Game.UI
             var ps = Players;
             if (index >= ps.Count || ps[index].Dead) return;
             sel = ps[index].Id;
+            Sfx.Play(Cue.RaidSelect, 1, board.Pan(RaidBoard3D.W(ps[index].X, ps[index].Y)));
             actMode = !Baskin.CanMove(B, ps[index]);
             Render();
         }
@@ -163,9 +165,29 @@ namespace Corrigible.Game.UI
                 if (Baskin.CanAct(B, u) && Baskin.Targets(B, u).Any(t => t.X == x && t.Y == y)) { StartCoroutine(ActRoutine(u.Id, x, y)); return; }
             }
             var v = Baskin.UnitAt(B, x, y);
-            if (v != null && v.Side == 'p') { sel = v.Id; actMode = !Baskin.CanMove(B, v); }
+            if (v != null && v.Side == 'p') { sel = v.Id; actMode = !Baskin.CanMove(B, v); Sfx.Play(Cue.RaidSelect, 1, board.Pan(RaidBoard3D.W(x, y))); }
             else sel = -1;
             Render();
+        }
+
+        void StartRaid()
+        {
+            brief.SetActive(false);
+            Sfx.Play(Cue.RaidBreach);
+            Render();
+            StartCoroutine(IntentLocks(0.7f));
+        }
+
+        // Robotların planı: her niyet bir "kilit" sesi, perdesi sıra numarasıyla yükselir; yalan olabilecek niyet titrer
+        IEnumerator IntentLocks(float delay)
+        {
+            yield return new WaitForSecondsRealtime(delay);
+            if (B == null || B.Phase != "player") yield break;
+            foreach (var i in Baskin.Intents(B).OrderBy(z => z.Order))
+            {
+                Sfx.Play(i.Uncertain ? Cue.IntentLockFuzzy : Cue.IntentLock, 0.8f, board.Pan(RaidBoard3D.W(i.FromX, i.FromY)), 1f + 0.12f * (i.Order - 1));
+                yield return new WaitForSecondsRealtime(0.16f);
+            }
         }
 
         IEnumerator MoveRoutine(int id, int x, int y)
@@ -179,6 +201,8 @@ namespace Corrigible.Game.UI
 
         IEnumerator ActRoutine(int id, int x, int y)
         {
+            var who = B.Units.FirstOrDefault(z => z.Id == id);
+            if (who != null) Sfx.Play(who.Type == "tek" ? Cue.RaidCutter : who.Type == "emp" ? Cue.RaidEmpCharge : Cue.RaidHookThrow, 1, board.Pan(RaidBoard3D.W(who.X, who.Y)));
             Baskin.DoAct(B, id, x, y);
             sel = -1;
             yield return board.Animate(B, new List<Baskin.Fx>(B.FxList), false);
@@ -189,9 +213,11 @@ namespace Corrigible.Game.UI
         {
             sel = -1; actMode = false;
             Render();   // seçim halkaları ve önizleme kalksın; niyet okları görünür kalır
+            Sfx.Play(Cue.RaidEndTurn);
             if (!Baskin.EndTurn(B)) yield break;
             yield return board.Animate(B, new List<Baskin.Fx>(B.FxList), true);
             Render();
+            if (B.Phase == "player") StartCoroutine(IntentLocks(0.2f));
         }
 
         void DoUndo() { if (B != null && !Busy && Baskin.Undo(B)) { actMode = false; Render(); } }
@@ -201,6 +227,7 @@ namespace Corrigible.Game.UI
         {
             if (B == null || B.Phase != "player" || Busy) return;
             if (!retreatArmed || Time.unscaledTime > retreatArmedUntil) { retreatArmed = true; retreatArmedUntil = Time.unscaledTime + 3; retreat.SetText(Loc.T("Emin misin? Tekrar bas")); return; }
+            Sfx.Play(Cue.RaidRadio);
             Baskin.Retreat(B);
             Render();
         }
@@ -211,7 +238,7 @@ namespace Corrigible.Game.UI
             if (retreatArmed && Time.unscaledTime > retreatArmedUntil) { retreatArmed = false; retreat.SetText(Loc.T("Geri çekil")); }
             var kb = Keyboard.current;
             if (kb == null) return;
-            if (brief.activeSelf) { if (kb.enterKey.wasPressedThisFrame) { brief.SetActive(false); Render(); } return; }
+            if (brief.activeSelf) { if (kb.enterKey.wasPressedThisFrame) StartRaid(); return; }
             if (resultPanel.activeSelf) { if (kb.enterKey.wasPressedThisFrame) Finish(); return; }
             if (Busy) return;
             if (kb.digit1Key.wasPressedThisFrame) SelectPlayer(0);
@@ -278,6 +305,7 @@ namespace Corrigible.Game.UI
         void RenderSide()
         {
             bool playing = B.Phase == "player";
+            Sfx.SetLoop(LoopCue.RaidClock, playing && B.Turn == B.MaxTurns);
             turn.text = playing ? Loc.F("Tur {0}/{1}", B.Turn, B.MaxTurns) : B.Phase == "won" ? Loc.T("Başarılı") : Loc.T("Başarısız");
             turn.color = playing && B.Turn == B.MaxTurns ? theme.threat : theme.fg;
             var left = Baskin.TargetsLeft(B);
@@ -336,6 +364,8 @@ namespace Corrigible.Game.UI
         {
             var res = Baskin.Result(B);
             resultPanel.SetActive(true);
+            Sfx.SetLoop(LoopCue.RaidClock, false);
+            Sfx.Play(res.Success ? Cue.RaidWin : Cue.RaidFail);
             resultEyebrow.text = Loc.F("SAHA OPERASYONU · {0} · {1}. TUR", UiUtil.Up(B.Params.RegionName), res.Turns);
             resultTitle.text = res.Success ? Loc.T("Operasyon başarılı") : Loc.T("Operasyon başarısız");
             resultTitle.color = res.Success ? theme.good : theme.threat;
