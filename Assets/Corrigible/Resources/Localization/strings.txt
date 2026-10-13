@@ -432,6 +432,7 @@ YZ’nin doğrulandığı bir bölgede boşta ekibin var. Bölge dosyasındaki <
 Eğitim tamamlandı. Kurallar her zaman Rehber sekmesinde.	Tutorial complete. The rules are always in the Guide tab.
 EĞİTİM · {0}/{1}	TUTORIAL · {0}/{1}
 İleri	Next
+Anladım	Got it
 Baştan	Restart
 Eğitimi atla	Skip tutorial
 İPUCU	TIP
@@ -481,7 +482,6 @@ Rapora dön	Back to report
 Yeniden başla	Restart
 DANIŞMAN NOTU	ADVISOR'S NOTE
 Göster	Show
-Anladım	Got it
 HEDEF	OBJECTIVE
 Kazanma yolları	Paths to victory
 TEMİZ	CLEAN
@@ -994,7 +994,22 @@ Her krize 4 saha ekibiyle başla.	Start every crisis with 4 field teams.
 # Assets/Corrigible/Game/Platform.cs
 Yerel	Local
 # Assets/Corrigible/Game/Raid/RaidBoard3D.cs
-zırh	armor
+{0}/{1}	{0}/{1}
+{0} {1}/{2}	{0} {1}/{2}
+DÜŞTÜ	DOWN
+TUR BİTTİ	TURN DONE
+ONARIM	REPAIR
+ATEŞ	FIRE
+VURUŞ	STRIKE
+{0} {1}	{0} {1}
+✓ TARANDI	✓ SCANNED
+TARAMA · 3 KARE	SCAN · 3 TILES
+−{0}	−{0}
+ZIRH	ARMOR
++1	+1
+<s>{0}</s> İPTAL	<s>{0}</s> CANCELLED
+{0} ŞİMDİ	{0} NOW
+<s>{0}</s> UYGULANDI	<s>{0}</s> DONE
 # Assets/Corrigible/Game/Tutorial/TutorialController.cs
 Eğitimi geç	Skip tutorial
 ANLADIM	GOT IT
@@ -1128,6 +1143,11 @@ SAHA RAPORU · GÜN {0} · {1}	FIELD REPORT · DAY {0} · {1}
 # Assets/Corrigible/Game/UI/ModalView.cs
 Hafıza silindi.	Memory wiped.
 Harita artık gerçek değerleri gösteriyor. Yeni oyun için sağdaki Yeniden oyna düğmesini kullan.	The map now shows the real values. To start a new game, use the Play again button on the right.
+# Assets/Corrigible/Game/UI/Raid/RaidLogLineView.cs
+YZ · ELE GEÇİRİLEN SATIR	AI · INTERCEPTED LINE
+{0}{1}	{0}{1}
+# Assets/Corrigible/Game/UI/Raid/RaidUnitCard.cs
+Hareket {0} kare	Move {0} tiles
 # Assets/Corrigible/Game/UI/Raid/RaidView.cs
 kuzeye	north
 doğuya	east
@@ -1138,60 +1158,100 @@ YEDEK	BACKUP
 SİVİL	CIVILIAN
 SOĞUTMA	COOLING
 KOPYA	REPLICA
-SAHA OPERASYONU · <color=#{0}>{1}</color> · {2}	FIELD OPERATION · <color=#{0}>{1}</color> · {2}
+SAHA OPERASYONU · {0} · {1}	FIELD OPERATION · {0} · {1}
 SAHA OPERASYONU · GÜN {0} · {1}	FIELD OPERATION · DAY {0} · {1}
-Aldatma ya da Medya Kontrolü: bazı niyet okları yalan; Analist yaklaştıkça kesinleşir.	Deception or Media Control: some intent arrows lie; they become certain as the Analyst gets closer.
-Kendini Kopyalama: her tur 2 robot uyanır.	Self-Replication: 2 robots wake up each turn.
-Yedekleme: binada bir de yedek çekirdek var; ikisi de kırılmalı.	Backup: the building also holds a backup core; both must be destroyed.
-Hızlanma: 1 tur eksik.	Acceleration: one turn fewer.
-Hedef: {0} {1} tur içinde kır{2}. Binayı YZ’nin ele geçirdiği makineler koruyor.\n\n	Objective: destroy {0}{2} within {1} turns. The building is guarded by machines the AI has taken over.\n\n
-<b>YZ’nin çekirdek dolabını</b>	<b>the AI’s core cabinet</b>
-<b>YZ’nin düğüm dolabını</b>	<b>the AI’s node cabinet</b>
-, <b>yedek çekirdeği</b> de	 and <b>the backup core</b>
-• <b>Kırmızı oklar</b> robotların bu tur ne yapacağını gösterir; hamlenden sonra sırayla uygulanır (numaralar sıra). Robotu itersen saldırısı yeni yerinden yapılır.\n	• <b>Red arrows</b> show what the robots will do this turn; they resolve in order after your moves (the numbers are the order). Push a robot and it attacks from its new position.\n
-• <b>Birim seç</b> (tıkla ya da 1–3), mavi kareye taşı, turuncu çerçeveli hedefe yeteneğini kullan. Hedefin üstüne gelince sonucu önizlersin; <b>Geri al</b> turdaki hamleleri geri alır.\n	• <b>Select a unit</b> (click or 1–3), move it to a blue tile, use its ability on a target with an orange frame. Hover a target to preview the result; <b>Undo</b> takes back this turn's moves.\n
-• <b>Hedef dolaplar zırhlıdır:</b> yalnızca Teknisyen’in sabotajı, dolaba itilen robot ve patlayan soğutma ünitesi hasar verir.\n	• <b>Target cabinets are armored:</b> only the Technician’s sabotage, a robot pushed into the cabinet and an exploding cooling unit damage them.\n
-• <b>Sivil sunucuları koru:</b> kırılan her biri bölgenin ekonomisine ve güvenine işler. Elektrikli kanala itilen 1 hasar alır.	• <b>Protect civilian servers:</b> each one destroyed hurts the region's economy and trust. Anything pushed onto an electrified channel takes 1 damage.
-\n\n<b>YZ’nin yetenekleri bu binayı değiştirdi:</b>\n	\n\n<b>The AI’s abilities have changed this building:</b>\n
-Emin misin? Tekrar bas	Are you sure? Press again
+Hedef: bütün hedef dolapları {0} tur içinde kır.\n\n{1}\n\n{2}	Goal: break every target cabinet within {0} turns.\n\n{1}\n\n{2}
+Geri al	Undo
+Turu bitir	End turn
 Geri çekil	Withdraw
-HEDEF KIRILIR	TARGET DESTROYED
-Tur {0}/{1}	Turn {0}/{1}
-Başarılı	Success
-Başarısız	Failed
-{0}: <b>{1}/{2} can</b>	{0}: <b>{1}/{2} HP</b>
-Hedef dolaplar: <b>kırıldı</b>	Target cabinets: <b>destroyed</b>
-Kırılan sivil sunucu: <b>{0}</b>	Civilian servers destroyed: <b>{0}</b>
-Kalan tur: <b>{0}</b>	Turns left: <b>{0}</b>
-düştü	down
-tur bitti	turn done
-hareket + yetenek	move + ability
-yetenek	ability
-{0}/{1} can · {2}	{0}/{1} HP · {2}
-<b>{0}</b> seçili. 	<b>{0}</b> selected. 
-Mavi kareye taşı ya da turuncu hedefe yeteneğini kullan (Q: yetenek).	Move to a blue tile or use the ability on an orange target (Q: ability).
-Turuncu hedefe yeteneğini kullan.	Use the ability on an orange target.
-Bu birim bu tur işini bitirdi.	This unit is done for the turn.
-Bir birim seç (1–3). Robotların niyetleri kırmızı; sırayla uygulanır. Enter: turu bitir · Z: geri al.	Select a unit (1–3). Robot intents are red and resolve in order. Enter: end turn · Z: undo.
-bekliyor	waiting
+Yetenek	Ability
+Operasyon raporuna geç	Go to operation report
+Aldatma: bazı oklar yalan; Analist 3 karede kesinleştirir.	Deception: some arrows lie; the Analyst confirms within 3 tiles.
+Kendini Kopyalama: her tur 2 robot uyanır.	Self-Replication: 2 robots wake up each turn.
+Yedekleme: yedek çekirdek de kırılmalı.	Backup: the backup core must be broken too.
+Hızlanma: 1 tur eksik.	Acceleration: one turn fewer.
+{0}\n{1}\n{2}\n{3}\n{4}\n{5}	{0}\n{1}\n{2}\n{3}\n{4}\n{5}
+Kırmızı ok robotun bu turdaki hamlesi; bayraktaki sayı sırası. Kesik ok ve ? yalan olabilir: Analist 3 kare yaklaşınca kesinleşir.	A red arrow is a robot's move this turn; the flag number is its order. A dashed arrow with ? may be a lie: it becomes certain when the Analyst is within 3 tiles.
+Seç, taşı, kullan: 1–3 ya da tıkla, mavi kareye taşı, Q ile yetenek. Z turdaki hamleyi geri alır.	Select, move, act: 1–3 or click, move to a blue tile, Q for the ability. Z undoes a move this turn.
+Zırh: hedef dolaplara yalnız sabotaj, itilen robot ve patlayan soğutma ünitesi işler.	Armor: only sabotage, a pushed robot or an exploding cooling unit damages target cabinets.
+İtme: çarpan da çarpılan da 1 hasar alır; kanala düşen de 1 hasar alır.	Push: both the pushed and what it hits take 1 damage; falling into a channel deals 1.
+Sivilleri koru: kırılan sivil sunucu bölgenin ekonomisine ve güvenine işler.	Protect civilians: a broken civilian server hurts the region's economy and trust.
+Kazan: tur bitmeden bütün hedef dolapları kır.	Win: break every target cabinet before turns run out.
+Katla	Fold
+Aç	Open
+operasyon emrinden	from the operation order
+oklar · seçim · zırh · siviller	arrows · selection · armor · civilians
+niyetler sırayla uygulanıyor	intents are resolving in order
 hedef dolabı onaracak	will repair the target cabinet
+{0}: saldırı	{0}: attack
+saldırı	attack
+Bakım robotu: onarım +1	Maintenance robot: repair +1
+Emin misin? Tekrar bas	Are you sure? Press again
+HEDEF KIRILIR	TARGET DESTROYED
+<color=#{0}>✓ {1} · {2}</color>	<color=#{0}>✓ {1} · {2}</color>
+KIRILDI	BROKEN
+{0} · {1} {2}/{3}	{0} · {1} {2}/{3}
+ayakta	standing
+{0}: <b>{1}/{2}</b> · {3}	{0}: <b>{1}/{2}</b> · {3}
+ZIRHLI	ARMORED
+MAKİNELER HAREKET EDİYOR · girdi kilitli	MACHINES MOVING · input locked
+SIRA SENDE	YOUR TURN
+OPERASYON BİTTİ	OPERATION OVER
+kalan {0} tur	{0} turns left
+operasyon bitti	operation over
+Kırılan sivil sunucu	Civilian servers broken
+YAN HASAR	COLLATERAL
+temiz	clean
+{0}: <b>{1}</b> · {2}	{0}: <b>{1}</b> · {2}
+Kalan tur	Turns left
+bu tur dahil	incl. this turn
+HAREKET + YETENEK	MOVE + ABILITY
+YETENEK	ABILITY
+{0}. {1}	{0}. {1}
+{0}/{1} can · {2}	{0}/{1} HP · {2}
+<b>{0}</b> · {1}\n{2}	<b>{0}</b> · {1}\n{2}
+bitişik kare	adjacent tile
+Dolaba 2 hasar; robota 1 hasar ve 1 kare itme.	Cabinet 2 damage; robot 1 damage and push 1.
+düz hat, 2–5 kare	straight line, 2–5 tiles
+Hedefe 1 hasar; çevresindeki robotları dışarı iter. Zırha işlemez.	1 damage to target; pushes nearby robots outward. No damage to armor.
+<b>{0}</b> · {1}\n{2}\n{3}	<b>{0}</b> · {1}\n{2}\n{3}
+düz hat, 5 kare	straight line, 5 tiles
+Robotu 1 kare çeker; duvarda ya da dolapta yanına atılır.	Pulls a robot 1 tile; dashes next to a wall or cabinet.
+Tarama · 3 kare çevresindeki niyetler kesinleşir.	Scan · intents within 3 tiles become certain.
+<b>Makineler hareket ediyor · sıra {0}/{1}:</b> {2}. Girdi kilitli; sıra sana dönünce düğmeler açılır.	<b>Machines moving · order {0}/{1}:</b> {2}. Input locked; buttons return on your turn.
+Hamle uygulanıyor; bitince düğmeler açılır.	Move in progress; buttons return when it finishes.
+<b>Hedef kırıldı.</b> Operasyon başarılı. Rapora geçmek için Enter.	<b>Target broken.</b> Operation successful. Press Enter for the report.
+<b>Operasyon başarısız.</b> {0} Rapora geçmek için Enter.	<b>Operation failed.</b> {0} Press Enter for the report.
+<b>Geri çekilme:</b> emin misin? Tekrar basarsan ekip binadan çıkar ve operasyon başarısız sayılır.	<b>Retreat:</b> are you sure? Press again and the team leaves the building; the operation counts as failed.
+<b>{0}</b> seçili. {1}	<b>{0}</b> selected. {1}
+Mavi kareye taşı ya da hedefe yeteneğini kullan (Q: yetenek).	Move to a blue tile or use the ability on a target (Q: ability).
+Yeşil hedefe yeteneğini kullan.	Use the ability on a green target.
+Bu birim bu tur işini bitirdi.	This unit is done for the turn.
+<b>Sıra sende.</b> Bir birim seç: 1–3 ya da tahtada tıkla. Kırmızı oklar robotların bu turdaki hamleleri, bayraktaki sayı sıraları.	<b>Your turn.</b> Select a unit: 1–3 or click the board. Red arrows are this turn's robot moves; the flag number is the order.
+bekliyor	waiting
 {0} ateş edecek (1 hasar)	will fire {0} (1 damage)
 {0} saldıracak (2 hasar)	will attack {0} (2 damage)
-<b>{0}</b> · {1}/{2} can · sıra {3}: {4}.	<b>{0}</b> · {1}/{2} HP · order {3}: {4}.
- <color=#{0}>Bu niyet yalan olabilir; Analisti 3 kare yaklaştır.</color>	 <color=#{0}>This intent may be a lie; bring the Analyst within 3 tiles.</color>
- Analist doğruladı.	 Confirmed by the Analyst.
+Bu niyet yalan olabilir; Analisti 3 kare yaklaştır.	This intent may be a lie; bring the Analyst within 3 tiles.
+Analist doğruladı.	The Analyst confirmed it.
+<b>{0}</b> · {1}/{2} can · sıra {3}: {4}. {5}	<b>{0}</b> · {1}/{2} HP · order {3}: {4}. {5}
 <b>{0}</b> · {1}/{2} can.	<b>{0}</b> · {1}/{2} HP.
- Zırhlı: yalnızca sabotaj, çarpma ve patlama işler.	 Armored: only sabotage, collisions and explosions work.
- Kırılırsa yan hasar.	 Collateral damage if destroyed.
- Kırılınca çevresindeki 4 kareye 1 hasar.	 When destroyed, deals 1 damage to the 4 surrounding tiles.
- Kırılırsa buradan robot uyanmaz.	 If destroyed, no robots wake from here.
+Zırhlı: yalnızca sabotaj, çarpma ve patlama işler.	Armored: only sabotage, impact and explosions work.
+Kırılırsa yan hasar.	Breaking it causes collateral damage.
+Kırılınca çevresindeki 4 kareye 1 hasar.	Deals 1 damage to the 4 surrounding tiles when broken.
+Kırılırsa buradan robot uyanmaz.	Robots no longer wake here if it breaks.
+<b>{0}</b> · {1}/{2} can. {3}	<b>{0}</b> · {1}/{2} HP. {3}
 <b>Elektrikli kanal</b> · üstüne itilen 1 hasar alır.	<b>Electrified channel</b> · anything pushed onto it takes 1 damage.
 <b>Duvar</b>	<b>Wall</b>
-SAHA OPERASYONU · {0} · {1}. TUR	FIELD OPERATION · {0} · TURN {1}
-Operasyon başarılı	Operation successful
-{0}\n\nHedef: <b>{1}</b> · Kırılan sivil sunucu: <b>{2}</b> · Düşen: <b>{3}/3</b> · Tur: <b>{4}</b>	{0}\n\nTarget: <b>{1}</b> · Civilian servers destroyed: <b>{2}</b> · Down: <b>{3}/3</b> · Turns: <b>{4}</b>
-kırıldı	destroyed
-ayakta	standing
+HEDEF KIRILDI	TARGET BROKEN
+GERİ ÇEKİLDİ	RETREATED
+EKİP DÜŞTÜ	TEAM DOWN
+SÜRE DOLDU	TIME IS UP
+OPERASYON BAŞARISIZ	OPERATION FAILED
+OPERASYON SONUCU · {0} · {1}. TUR	OPERATION RESULT · {0} · TURN {1}
+{0}: <b>{1}</b>	{0}: <b>{1}</b>
+{0}: <b>{1}/{2} ayakta</b>	{0}: <b>{1}/{2} standing</b>
+Ekip	Team
+{0} · {1} · Tur {2}/{3}\n\n{4}\n\n{5}	{0} · {1} · Turn {2}/{3}\n\n{4}\n\n{5}
 # Assets/Corrigible/Game/UI/RegionNode.cs
 İTTİFAK DIŞI	OUTSIDE ALLIANCE
 KAPALI · {0} G	OFFLINE · {0} D
@@ -1312,9 +1372,6 @@ Doğrula · 2 SG	Verify · 2 PC
 YZ günlük satırı	AI log line
 # Assets/Corrigible/Prefabs/UI/PrimaryButton.prefab
 DÜĞME	BUTTON
-# Assets/Corrigible/Prefabs/UI/RaidUnitCard.prefab
-1. Teknisyen	1. Technician
-3/3 can	3/3 HP
 # Assets/Corrigible/Prefabs/UI/ResearchRow.prefab
 Başlat	Start
 # Assets/Corrigible/Prefabs/UI/TeamRow.prefab
@@ -1324,18 +1381,25 @@ Düğme	Button
 # Assets/Corrigible/Prefabs/UI/TextLine.prefab
 Satır	Line
 # Assets/Corrigible/Scenes/Baskin.unity
-SAHA OPERASYONU	FIELD OPERATION
-Tur 1/6	Turn 1/6
-<color=#5cc8d9>■</color> hareket   <color=#f0b03f>□</color> yetenek hedefi   <color=#ff5b4d>■</color> robot bu kareyi vuracak   <color=#f0b03f>■</color> yalan olabilir (?)   <color=#8a7a3a>≈</color> elektrikli kanal   <color=#ff5b4d>( + )</color> robot uyanacak	<color=#5cc8d9>■</color> move   <color=#f0b03f>□</color> ability target   <color=#ff5b4d>■</color> robot will hit this tile   <color=#f0b03f>■</color> may be a lie (?)   <color=#8a7a3a>≈</color> electrified channel   <color=#ff5b4d>( + )</color> robot will wake
-Çekirdek dolabı: 5/5 can	Core cabinet: 5/5 HP
-Bir birim seç (1–3).	Select a unit (1–3).
-Geri al (Z)	Undo (Z)
-TURU BİTİR	END TURN
-BASKIN GÜNLÜĞÜ	RAID LOG
-Binaya giriyorsun.	You're entering the building.
-Hedef…	Objective…
-BASKINI BAŞLAT	START RAID
-KRİZ MASASINA DÖN	BACK TO CRISIS DESK
+KYGA · BASKIN	KYGA · RAID
+TUR	TURN
+SON TUR	LAST TURN
+RAKİP YZ · SAHA	RIVAL AI · FIELD
+KURALLAR KARTI	RULES CARD
+LEJANT · PLAN B-1 · ÖLÇEK 1:50	LEGEND · PLAN B-1 · SCALE 1:50
+◇ Hareket    ◇ Yetenek hedefi\n▧ Robot bu kareyi vuracak\n? Yalan olabilir    ⊙ Robot uyanacak\n↗ Ateş · yakın · onarım    □ Sıra bayrağı\n✓ Tarandı, kesin    ⬡ Zırh: hasar işlemez	◇ Move    ◇ Ability target\n▧ Robot will hit this tile\n? May be a lie    ⊙ Robot will wake\n↗ Fire · melee · repair    □ Order flag\n✓ Scanned, certain    ⬡ Armor: no damage
+HEDEF FORMU	TARGET FORM
+FORM B-7 · KYGA	FORM B-7 · KYGA
+Kazanmak için bütün hedef dolapları kır.	Break every target cabinet to win.
+● OPERASYON GÜNLÜĞÜ · TELEKS	● OPERATION LOG · TELEX
+GERİ ÇEKİLME · 2. ONAY	RETREAT · SECOND CONFIRMATION
+Ekip binadan çıkar; operasyon başarısız sayılır. Hedef dolaplar ayakta kalır.	The team leaves the building; the operation counts as failed. Target cabinets remain standing.
+Geri al  Z	Undo  Z
+Yetenek  Q	Ability  Q
+Turu bitir  Enter	End turn  Enter
+Başla	Start
+Operasyon raporuna geç  Enter	Open operation report  Enter
+Operasyon raporu bölgeye etkisini ve ekibin durumunu ayrıntılı gösterecek.	The operation report will detail the effects on the region and the team’s condition.
 # Assets/Corrigible/Scenes/Main.unity
 CORRIGIBLE	CORRIGIBLE
 SON ŞALTER · KYGA KRİZ MASASI	KILL SWITCH · AISA CRISIS DESK
@@ -1468,3 +1532,141 @@ EĞİTİM · 1/10	TUTORIAL · 1/10
 Başlık	Title
 Açıklama	Description
 Bildirim	Notification
+# --- Kullanılmayan çeviriler (koddan silinmiş metinler; gerekirse geri alınır) ---
+#zırh	armor
+#SAHA OPERASYONU · <color=#{0}>{1}</color> · {2}	FIELD OPERATION · <color=#{0}>{1}</color> · {2}
+#Aldatma ya da Medya Kontrolü: bazı niyet okları yalan; Analist yaklaştıkça kesinleşir.	Deception or Media Control: some intent arrows lie; they become certain as the Analyst gets closer.
+#Yedekleme: binada bir de yedek çekirdek var; ikisi de kırılmalı.	Backup: the building also holds a backup core; both must be destroyed.
+#Hedef: {0} {1} tur içinde kır{2}. Binayı YZ’nin ele geçirdiği makineler koruyor.\n\n	Objective: destroy {0}{2} within {1} turns. The building is guarded by machines the AI has taken over.\n\n
+#<b>YZ’nin çekirdek dolabını</b>	<b>the AI’s core cabinet</b>
+#<b>YZ’nin düğüm dolabını</b>	<b>the AI’s node cabinet</b>
+#, <b>yedek çekirdeği</b> de	 and <b>the backup core</b>
+#• <b>Kırmızı oklar</b> robotların bu tur ne yapacağını gösterir; hamlenden sonra sırayla uygulanır (numaralar sıra). Robotu itersen saldırısı yeni yerinden yapılır.\n	• <b>Red arrows</b> show what the robots will do this turn; they resolve in order after your moves (the numbers are the order). Push a robot and it attacks from its new position.\n
+#• <b>Birim seç</b> (tıkla ya da 1–3), mavi kareye taşı, turuncu çerçeveli hedefe yeteneğini kullan. Hedefin üstüne gelince sonucu önizlersin; <b>Geri al</b> turdaki hamleleri geri alır.\n	• <b>Select a unit</b> (click or 1–3), move it to a blue tile, use its ability on a target with an orange frame. Hover a target to preview the result; <b>Undo</b> takes back this turn's moves.\n
+#• <b>Hedef dolaplar zırhlıdır:</b> yalnızca Teknisyen’in sabotajı, dolaba itilen robot ve patlayan soğutma ünitesi hasar verir.\n	• <b>Target cabinets are armored:</b> only the Technician’s sabotage, a robot pushed into the cabinet and an exploding cooling unit damage them.\n
+#• <b>Sivil sunucuları koru:</b> kırılan her biri bölgenin ekonomisine ve güvenine işler. Elektrikli kanala itilen 1 hasar alır.	• <b>Protect civilian servers:</b> each one destroyed hurts the region's economy and trust. Anything pushed onto an electrified channel takes 1 damage.
+#\n\n<b>YZ’nin yetenekleri bu binayı değiştirdi:</b>\n	\n\n<b>The AI’s abilities have changed this building:</b>\n
+#Tur {0}/{1}	Turn {0}/{1}
+#Başarılı	Success
+#Başarısız	Failed
+#{0}: <b>{1}/{2} can</b>	{0}: <b>{1}/{2} HP</b>
+#Hedef dolaplar: <b>kırıldı</b>	Target cabinets: <b>destroyed</b>
+#Kırılan sivil sunucu: <b>{0}</b>	Civilian servers destroyed: <b>{0}</b>
+#Kalan tur: <b>{0}</b>	Turns left: <b>{0}</b>
+#düştü	down
+#tur bitti	turn done
+#hareket + yetenek	move + ability
+#yetenek	ability
+#<b>{0}</b> seçili. 	<b>{0}</b> selected. 
+#Mavi kareye taşı ya da turuncu hedefe yeteneğini kullan (Q: yetenek).	Move to a blue tile or use the ability on an orange target (Q: ability).
+#Turuncu hedefe yeteneğini kullan.	Use the ability on an orange target.
+#Bir birim seç (1–3). Robotların niyetleri kırmızı; sırayla uygulanır. Enter: turu bitir · Z: geri al.	Select a unit (1–3). Robot intents are red and resolve in order. Enter: end turn · Z: undo.
+#<b>{0}</b> · {1}/{2} can · sıra {3}: {4}.	<b>{0}</b> · {1}/{2} HP · order {3}: {4}.
+# <color=#{0}>Bu niyet yalan olabilir; Analisti 3 kare yaklaştır.</color>	 <color=#{0}>This intent may be a lie; bring the Analyst within 3 tiles.</color>
+# Analist doğruladı.	 Confirmed by the Analyst.
+# Zırhlı: yalnızca sabotaj, çarpma ve patlama işler.	 Armored: only sabotage, collisions and explosions work.
+# Kırılırsa yan hasar.	 Collateral damage if destroyed.
+# Kırılınca çevresindeki 4 kareye 1 hasar.	 When destroyed, deals 1 damage to the 4 surrounding tiles.
+# Kırılırsa buradan robot uyanmaz.	 If destroyed, no robots wake from here.
+#SAHA OPERASYONU · {0} · {1}. TUR	FIELD OPERATION · {0} · TURN {1}
+#Operasyon başarılı	Operation successful
+#{0}\n\nHedef: <b>{1}</b> · Kırılan sivil sunucu: <b>{2}</b> · Düşen: <b>{3}/3</b> · Tur: <b>{4}</b>	{0}\n\nTarget: <b>{1}</b> · Civilian servers destroyed: <b>{2}</b> · Down: <b>{3}/3</b> · Turns: <b>{4}</b>
+#kırıldı	destroyed
+#1. Teknisyen	1. Technician
+#3/3 can	3/3 HP
+#SAHA OPERASYONU	FIELD OPERATION
+#Tur 1/6	Turn 1/6
+#<color=#5cc8d9>■</color> hareket   <color=#f0b03f>□</color> yetenek hedefi   <color=#ff5b4d>■</color> robot bu kareyi vuracak   <color=#f0b03f>■</color> yalan olabilir (?)   <color=#8a7a3a>≈</color> elektrikli kanal   <color=#ff5b4d>( + )</color> robot uyanacak	<color=#5cc8d9>■</color> move   <color=#f0b03f>□</color> ability target   <color=#ff5b4d>■</color> robot will hit this tile   <color=#f0b03f>■</color> may be a lie (?)   <color=#8a7a3a>≈</color> electrified channel   <color=#ff5b4d>( + )</color> robot will wake
+#Çekirdek dolabı: 5/5 can	Core cabinet: 5/5 HP
+#Bir birim seç (1–3).	Select a unit (1–3).
+#Geri al (Z)	Undo (Z)
+#TURU BİTİR	END TURN
+#BASKIN GÜNLÜĞÜ	RAID LOG
+#Binaya giriyorsun.	You're entering the building.
+#Hedef…	Objective…
+#BASKINI BAŞLAT	START RAID
+#KRİZ MASASINA DÖN	BACK TO CRISIS DESK
+#SAHA OPERASYONU · BATI AVRUPA · ANA SUNUCU SALONU	FIELD OPERATION · WESTERN EUROPE · MAIN SERVER HALL
+#kalan {k} tur	{k} turns left
+#süre doldu	time is up
+#MAKİNELER HAREKET EDİYOR	MACHINES MOVING
+#girdi kilitli	input locked
+#TEKNİSYEN	TECHNICIAN
+#EMP UZMANI	EMP SPECIALIST
+#ANALİST	ANALYST
+#Can	HP
+#Hareket {n} kare	Move {n} tiles
+#Hedefe 1 hasar; çevresindeki robotları dışarı iter.	1 damage to target; pushes nearby robots outward.
+#can	HP
+#son tur	last turn
+#AYNA'NIN BU BİNADAKİ YETENEKLERİ	AYNA ABILITIES IN THIS BUILDING
+#OPERASYON GÜNLÜĞÜ	OPERATION LOG
+#Tur {n} · sıra sende	Turn {n} · your move
+#Tur {n}: makineler hareket ediyor	Turn {n}: machines are moving
+#AYNA · ELE GEÇİRİLEN SATIR	AYNA · INTERCEPTED LINE
+#Bakım robotu devre dışı (sabotaj).	Maintenance robot disabled (sabotage).
+#Yeni bir güvenlik dronu uyandı.	A new security drone woke up.
+#Demek sunucularımın yerini buldun. Bakalım içeri girebilecek misin.	So you found my servers. Let's see if you can get inside.
+#Sıra sende. Bir birim seç: 1–3 ya da tahtada tıkla. Kırmızı oklar robotların bu turdaki hamleleri, bayraktaki sayı sıraları.	Your move. Select a unit: 1–3 or click the board. Red arrows are this turn's robot moves; the flag number is the order.
+#{unit} seçili. Mavi kareye taşı ya da hedefe yeteneğini kullan (Q: yetenek).	{unit} selected. Move to a blue tile or use the ability on a target (Q: ability).
+#{robot} · {hp} can · sıra {n}: {dir} ateş edecek ({dmg} hasar). Bu niyet yalan olabilir; Analisti 3 kare yaklaştır.	{robot} · {hp} HP · order {n}: will fire {dir} ({dmg} damage). This intent may be a lie; bring the Analyst within 3 tiles.
+#Makineler hareket ediyor · sıra {n}/{m}: {action}. Girdi kilitli; sıra sana dönünce düğmeler açılır.	Machines moving · order {n}/{m}: {action}. Input locked; buttons return on your turn.
+#LEJANT	LEGEND
+#Hareket	Move
+#Yetenek hedefi	Ability target
+#Robot bu kareyi vuracak	Robot will hit this tile
+#Yalan olabilir	May be a lie
+#Elektrikli kanal	Electrified channel
+#Robot uyanacak	Robot will wake
+#Ateş · yakın · onarım	Fire · melee · repair
+#Sıra bayrağı	Order flag
+#Tarandı, kesin	Scanned, certain
+#Zırh: hasar işlemez	Armor: no damage
+#OPERASYON SONUCU	OPERATION RESULT
+#{n}/{m} ayakta	{n}/{m} standing
+#İkinci basış geri çeker.	A second press retreats.
+#K · D · G · B	N · E · S · W
+#G-{0:000}	D-{0:000}
+#{0} fon/gün	{0} funds/day
+#%100'e {0}	{0} to 100%
+#Değişim yok	No change
+#risk yok	no risk
+#GİZLİ	CLASSIFIED
+#4× hızlandır	Speed up 4×
+#Tüm adımlar tamamlandı	All steps complete
+#Onay bekleniyor	Awaiting sign-off
+#Aktif {0} proje	Active {0} projects
+#Tüm aktif projeleri hızlandırır	Speeds up all active projects
+#SİLME	ERASURE
+#DİPLOMASİ	DIPLOMACY
+#Kendiliğinden durdu · gerek yok	Stopped on its own · not needed
+#Önerilmez · tehdit yok	Not recommended · no threat
+#Yorumlanabilirlik I	Interpretability I
+#Ödül modeli denetimi	Reward model audit
+#Düzeltilebilirlik çekirdeği	Corrigibility core
+#Ağ ayrıştırma	Network partitioning
+#Ağırlık parmak izi	Weight fingerprinting
+#Çekirdek imha protokolü	Core destruction protocol
+#Çapraz kaynak doğrulama	Cross-source verification
+#Sinyal adli bilişimi	Signal forensics
+#Kriz basın ofisi	Crisis press office
+#Ortak doğrulama paktı	Joint verification pact
+#Nüfus {0} · {1} bağlantı · İzleme ağı:	Population {0} · {1} links · Monitoring:
+#kaynaklar çelişiyor	sources conflict
+#Doğrulanana kadar tahmin	Estimate until verified
+#rapor {0}	report {0}
+#saha {0}	field {0}
+#{0} kurulursa	If {0} is built
+#Moral	Morale
+#{0} gün · tahmini başarı {1} · taktik haritada oynanır	{0} days · est. success {1} · played on the tactical map
+#Basılı tutun: 3 sn	Hold: 3 s
+#Kullanılamaz: Siyasi Güç {0} gerekli	Unavailable: needs Political Capital {0}
+#Gerekli değil · tehdit saptanmadı	Not needed · no threat detected
+#K	N
+#G	S
+#B	W
+#D	E
+#eşik {0}	threshold {0}
+#Dosya {0} · Rakip: {1} · Zorluk: {2}	File {0} · Rival: {1} · Difficulty: {2}
+#SESSİZ ZAFER	SILENT VICTORY
+#DOĞRULANAN BİLGİ	VERIFIED INFORMATION

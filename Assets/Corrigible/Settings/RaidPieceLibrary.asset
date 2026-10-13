@@ -28,16 +28,16 @@ MonoBehaviour:
   drone: {fileID: 6642452832963876291, guid: 398cd9db38ce74af7843a45fbc2d1c7d, type: 3}
   maintenance: {fileID: 6709368790409979924, guid: 89a3e9677507f41669f2b8b92e07a55f, type: 3}
   spawnMarker: {fileID: 3501207820214091994, guid: 763bb4dc072c24836996df755dee6e28, type: 3}
-  highlight: {fileID: 2100000, guid: 24963a51d5c224313be3b10d54787d1b, type: 2}
-  overlay: {fileID: 2100000, guid: 6eea27202a1474414a05236e2d9a66d7, type: 2}
-  font: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  labelMaterial: {fileID: 2100000, guid: d57af13c1dac345e08adcb3496c0d397, type: 2}
-  move: {r: 0.36, g: 0.78, b: 0.85, a: 0.42}
-  target: {r: 0.94, g: 0.69, b: 0.25, a: 1}
-  danger: {r: 1, g: 0.36, b: 0.3, a: 0.5}
-  uncertain: {r: 0.94, g: 0.69, b: 0.25, a: 0.38}
-  heal: {r: 0.45, g: 0.85, b: 0.5, a: 0.4}
-  hover: {r: 1, g: 1, b: 1, a: 0.9}
-  threat: {r: 1, g: 0.36, b: 0.3, a: 1}
-  good: {r: 0.45, g: 0.85, b: 0.5, a: 1}
-  ink: {r: 0.9, g: 0.95, b: 0.96, a: 1}
+  highlight: {fileID: 2100000, guid: face545e48fa24e4fa8ed3008a9ae282, type: 2}
+  overlay: {fileID: 2100000, guid: 1b9543ca7b17f4c86aaacec26b92becd, type: 2}
+  font: {fileID: 11400000, guid: a91d1b24a6e65437695595c6e400f25e, type: 2}
+  labelMaterial: {fileID: 2100000, guid: d8af87afb87bd4f33afad28fde36b25c, type: 2}
+  move: {r: 0.101960786, g: 0.2784314, b: 0.5372549, a: 0.16}
+  target: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 0.92}
+  danger: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 0.12}
+  uncertain: {r: 0.6627451, g: 0.32156864, b: 0.039215688, a: 0.08}
+  heal: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 0.06}
+  hover: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 0.88}
+  threat: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  good: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
+  ink: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}

@@ -13,7 +13,7 @@
 1. Kodu değiştir.
 2. `ucompile` → "HATA YOK" görmeden devam etme. (`recompile_status` hata bildirmez; konsolu zaman damgasıyla oku.
    Konsolda eski derlemelerden kalma hatalar durur; yalnızca son derlemeden sonrakilere bak.)
-3. `utest` → 13/13 (ya da yeni sayı). Domain reload sırasında `run_tests` zaman aşımına uğrar; `utest` yeniden dener.
+3. `utest` → başarısız test olmadığını doğrula. Domain reload sırasında `run_tests` zaman aşımına uğrar; `utest` yeniden dener.
 4. Oyunda dene (aşağıda). Görsel değişiklikte ekran görüntüsünü gerçekten aç ve bak.
 5. Simülasyon kuralı değiştiyse: `Prototype/sim.js`'i de değiştir, `parite.js` ile beklenenleri güncelle, denge testini
    önce/sonra karşılaştır.
@@ -46,6 +46,15 @@ ustop
   İş bitince eğitim anahtarlarını sıfırla (`PlayerPrefs.DeleteKey("corrigible.tutorialDone")`, `"corrigible.tipsSeen"`)
   ve kullanıcıya profilin değiştiğini söyle.
 - eval kodu tek tırnak içinde gönderilir; C# karakter sabiti (`' '`) kullanma, `"".PadLeft(n)` gibi dizgi kullan.
+- Uzun `eval` çağrılarında **iki ayrı zaman aşımı** var: ikinci konumsal argüman sunucudaki C# çalışma süresi
+  (milisaniye), global `--timeout` ise CLI'ın yanıtı bekleme süresi (saniye). Yalnızca `--timeout` artırmak sunucu
+  süresini uzatmaz. Örnek: sunucuda 60 sn, istemcide 90 sn:
+
+  ```bash
+  unity command eval 'return Corrigible.EditorTools.CorrigibleDebug.Capture("Temp/shot.png");' 60000 --timeout 90 --caller plugin --skill unity-cli
+  ```
+
+  `ueval` kısa çağrılar için mevcut varsayılanları kullanır; uzun asset/sahne işlemini bu doğrudan biçimle gönder.
 
 ## Testler (`Tests/EditMode/SimulationTests.cs`, `LocalizationTests.cs`)
 
@@ -109,9 +118,51 @@ Tarayıcıda test: `python3 -m http.server 8732 --directory Prototype`. Konsolda
 Unity'de baskını denemek (Play modunda, `source Tools/unity-helpers.sh` sonrası): bir ekibi `g.MoveTeam(...)` ile gönder,
 `CorrigibleDebug.Advance(n)` ile ilerlet, bölgeyi seçip `CorrigibleDebug.Click("Actions/Raid")`. Baskin sahnesi birkaç
 yüz milisaniyede eklemeli yüklenir. Kareye tıklama/üzerine gelme: `FindFirstObjectByType<Corrigible.Game.Raid.RaidBoard3D>()`
-üzerinde `Click(x, y)` / `Hover(x, y)`. Brifing ve sonuç düğmeleri: `Brief/Modal/Buttons/Start`, `Result/Modal/Buttons/Back`.
-Geri çekilme 3 sn içinde iki basış ister. Hamleler canlandırılırken (`Busy`) girdi yok sayılır; ekran görüntüsünden önce
-yaklaşık 3–5 sn bekle. Tahtayı hızlı denemek için `Scenes/Baskin.unity`'yi tek başına açıp Play'e bas (örnek baskın).
+üzerinde `Click(x, y)` / `Hover(x, y)`. Analist Masası sunumunda açık başlayan kurallar kartı vardır (`Rules/Toggle`);
+sonuç düğmesi `Result/Memo/Back`. Geri çekilme 3 sn içinde iki basış ister; arada onay fişi ve kararma gösterilir,
+Vazgeç/Esc onayı kapatır. Hamleler ve makineler evresi canlandırılırken (`Busy`) girdi yok sayılır; ekran görüntüsünden
+önce animasyonun bitmesini bekle. Tahtayı hızlı denemek için `Scenes/Baskin.unity`'yi tek başına açıp Play'e bas
+(örnek baskın). 1/2/3 ekip seçer, Q yetenek, Z geri al, Enter turu bitirir; sonuçta Enter rapora geçer.
+
+## Baskın sunumunu düzenlemek
+
+Görsel kaynak `Docs/SonSalter_Baskin_Paketi`: PNG'ler görünüşü, `reference/measure` TSV'leri sayısal yerleşimi,
+`spec/raid_tokens.json` kamera/malzeme/işaret değerlerini anlatır. `spec/board_states.json` tasarım örnekleridir;
+gerçek geçerli hamle, tarama, hasar ve niyet hesabı `Core/Baskin.cs`'ten gelir. Görseli uydurmak için Core kuralı
+değiştirme; aynı durumları gerçek kuralla kurup karşılaştır.
+
+- Kalıcı sahne `Assets/Corrigible/Scenes/Baskin.unity`; `RaidLauncher` onu Main veya DeskGame üstüne eklemeli yükler.
+  UI, bu sahnedeki Overlay `Baskin` Canvas'ındadır. Referanslar `[SerializeField]` ile bağlıdır.
+- Parçalar `Assets/Corrigible/Prefabs/Raid` altında; `BoardBase` kontrplak/ozalit maket, `OperationTable` masa/çuha.
+  Var olan parçayı güncellerken prefab'ı yerinde kaydet, GUID'ini ve `RaidPiece` referanslarını koru.
+- Dokular, mesh'ler, malzemeler ve `RaidPencil.shader`: `Assets/Corrigible/Art/Raid/Analyst`.
+  Parça/palet/font bağlantıları `Settings/RaidPieceLibrary.asset`, panel renkleri `Settings/RaidUiTheme.asset`.
+  URP malzemeleri mat; emission ve kamera post-processing kapalı. Kartın ön/arka/kenar malzemelerini birlikte koru.
+- UI prefab'ları `Prefabs/UI/RaidUnitCard.prefab`, `RaidLogLine.prefab`, `RaidLogLinePlain.prefab`;
+  panellerin yerleşimi sahnede. Courier Prime, Libre Franklin, Kalam ve DejaVu yedeği mevcut Desk TMP asset'lerinden.
+  Kurallar kartı katlanır; hedef formu uzun metne göre büyür, teleks günlüğünün yüksekliği ona göre değişir.
+
+**Izgara ve kamera:** bir karo bir dünya birimi, merkezler `RaidBoard3D.W(c, r) = (c − 3,5, TileTop, 3,5 − r)`.
+Kamera ortografik, rotasyon `(35°, 45°, 0)`. CanvasScaler `Scale With Screen Size`, referans `1920×1080`,
+genişlik/yükseklik eşleme `0,5`. `RaidCameraFraming` her `LateUpdate`'te
+`orthographicSize = camera.pixelHeight / canvas.scaleFactor / (88.3885 × 2)` hesaplar ve tahtanın merkezini
+`BoardViewport` merkezine kamera sağ/yukarı ekseninde kaydırır. Referansta ortografik boyut yaklaşık `6,1094`,
+karo elması yaklaşık `125×71,7 px`; ekran karosunu sabit `110 px` varsayma.
+
+Sol/sağ sütunlar Canvas referans uzayında `376 px` ve kendi kenarlarına çapalı; görüş alanı soldan/sağdan `408`,
+üstten `50`, alttan `78` payla gerilir (referansta `1104×952`). Alt bilgi/düğme grubu da bu alana çapalıdır.
+Kamera kadrajını veya karo ölçeğini elle sabitlemek yerine bu ilişkiyi koru. Dünya can/sıra/güven etiketleri
+`RaidWorldLabel` ile kameraya dönük TMP ve kâğıt mesh olarak çizilir; glif yüksekliği en az 11 ekran pikseli tutulur.
+Çakışma hesabı ekran uzayındadır; ekran/kamera boyutu değişince etiketler tekrar yerleştirilir.
+
+Kontrol: iki dilde gerçek baskın aç; erişilebilir kareleri, EMP önizlemesini/çarpışmayı, Aldatma tarama sınırını,
+makinelerin sıra vurgusunu ve girdi kilidini, düşmüş/tur bitirmiş figürleri, geri çekilme onayını ve sonuçtan rapora
+dönüşü dene. 1920×1080'e ek olarak 16:10 ve ultra geniş kadrajı görüntüle; metin taşması ve etiket çakışmasını açıp
+bak. Tasarım aktarımı simülasyon kuralını değiştirmediği için C#/JS parite değerleri yeniden üretilmez.
+
+Aktarımda kullanılan `BaskinPieceAuthoring` ve `BaskinSceneAuthoring` tek seferlik editör yardımcılarıdır;
+çalıştırılıp sahne/prefab/asset'ler kaydedildikten ve doğrulandıktan sonra silinir. Onları kalıcı kurucuya dönüştürme;
+sonraki değişikliklerin kaynağı kaydedilmiş asset'lerdir.
 
 ## Sık yapılan işler
 

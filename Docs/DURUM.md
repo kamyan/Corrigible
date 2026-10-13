@@ -1,14 +1,17 @@
 # Durum, kararlar ve açık işler
 
-_Son güncelleme: 2026-10-11_
+_Son güncelleme: 2026-10-13_
 
 ## Nerede kaldık
 
 Oyun baştan sona oynanabilir: giriş ve rakip seçimi, rehberli eğitim, kriz masası (harita, bölge eylemleri, araştırma,
 YZ günlüğü, haber bandı), hediye/perde/sahte zafer/son pencereleri, kayıt ve devam, Seni Tanıyan Rakip profili.
-111/111 EditMode testi geçiyor (oyun + analist masası); C# simülasyonu tarayıcı prototipiyle birebir aynı (deneysel mod ve baskın motoru dahil).
+112/112 EditMode testi geçiyor (oyun + analist masası); C# simülasyonu tarayıcı prototipiyle birebir aynı (deneysel mod ve baskın motoru dahil).
 Deneysel mod (saha ekipleri, zaman ölçeği, baskın) Unity'de oynanabilir ve varsayılan olarak açık. Oyun Türkçe ve
 İngilizce (giriş penceresindeki dil düğmesi; ilk açılışta sistem diline göre).
+Baskın sunumu `Docs/SonSalter_Baskin_Paketi` referansına taşınıyor: ayrı `Baskin` sahnesindeki operasyon maketi ve
+uGUI panelleri kalıcı prefab, malzeme ve doku asset'lerinde tutuluyor. Bu aktarımın son derleme, oyun ve görsel
+doğrulaması tamamlanınca sonuçları aşağıya eklenecek; yukarıdaki 111/111 önceki doğrulama sonucudur.
 
 **Git:** Depo `git@github.com:kamyan/Corrigible.git`, dal `main`. Bu belgelerdeki işin büyük kısmı **henüz commit
 edilmedi** (kullanıcı commit istemedi). Commit'i kullanıcı isteyince yap.
@@ -28,12 +31,14 @@ edilmedi** (kullanıcı commit istemedi). Commit'i kullanıcı isteyince yap.
 9. Oyun süresi kısa bulundu (1×'te ~3–4 dk simülasyon). Tarayıcı prototipinde **deneysel mod**: saha ekipleri,
    zaman ölçeği ve Into the Breach tarzı **baskın** (2026-10-10).
 10. Deneysel mod Unity'ye taşındı (2026-10-10): `Core/Teams.cs`, `Core/Baskin.cs`, ekip kartı, bölge panelinde Saha
-   bölümü, haritada ekip işaretleri, `Baskin` canvas'ındaki taktik ekran, eğitimde "Ekibini gönder" adımı.
+   bölümü, haritada ekip işaretleri, ilk taktik ekran, eğitimde "Ekibini gönder" adımı. Taktik ekran daha sonra ayrı
+   `Baskin` sahnesine taşındı (12. adım).
 11. **Türkçe/İngilizce lokalizasyon** (2026-10-10): gettext tarzı `Loc` (Core), çeviri tablosu, `LocalizedText`,
    editör aracı ve testler. ~730 metin. Terimler: KYGA → AISA, siyasi güç → political capital (PC), Son Şalter →
    Kill Switch, Düzeltilebilirlik → Corrigibility.
-12. **Baskın ayrı 3D sahnede** (2026-10-10): `Scenes/Baskin.unity`, Into the Breach tarzı izometrik tahta, primitive'lerden
-   3D parçalar, efekt listesinden canlandırılan düşman turu. Ana sahnenin üstüne eklemeli yüklenir (`RaidLauncher`).
+12. **Baskın ayrı 3D sahnede** (2026-10-10): `Scenes/Baskin.unity`, Into the Breach tarzı izometrik tahta ve efekt
+   listesinden canlandırılan düşman turu. Ana sahnenin üstüne eklemeli yüklenir (`RaidLauncher`). İlk primitive
+   görseller 2026-10-13'te operasyon maketi asset'leriyle değiştirildi (17. adım).
 13. **Ses (ilk tur, 2026-10-10):** `AudioDirector` + `SoundBank`, kodla üretilmiş yer tutucu sesler: illüzyonda "fazla
    temiz" miks, tamamlanan YZ motifi, Tekillik'e bağlı müzik katmanları, ajans jingle'ları (sahtede yanlış nota), Son Şalter.
 14. **Anlaşılırlık ve süre** (2026-10-10, doğrudan Unity'de): hedef kartı, gidişat tahmini, gösterge dökümleri, eylem
@@ -78,6 +83,24 @@ edilmedi** (kullanıcı commit istemedi). Commit'i kullanıcı isteyince yap.
    (ekip fişleri); olay seçeneklerinin önizlemesi her zaman açık. Edit önizlemesi oyun sahnesinde oyunun açılış masasını
    gösteriyor (Play'e basınca harita ve listeler yerinden oynamıyor). EditMode 111/111. Eğitim karartmasındaki dikişler
    giderildi; YZ'yi bekleyen adımlarda “Anladım” var.
+17. **Baskın Analist Masası diline aktarıldı** (2026-10-13, son doğrulama sürüyor): kaynak paket
+   `Docs/SonSalter_Baskin_Paketi` (PNG, ölçü TSV'leri, tokenlar, B1–B8 örnekleri). Tahta, kontrplak taban üstünde
+   ozalit kat planı; duvarlar mukavva, hedefler boyalı tahta dolap, ekipler krem/kraft karton figür, makineler metal
+   minyatür. Asetat işaretleri, kalem niyet okları, sıra/güven bayrakları, kâğıt can ve durum etiketleri kullanılıyor;
+   glow, bloom ve emission yok. Tarama sınırı Core'un Manhattan hesabını izler; hayaletler gerçek parçalardan çizilir.
+   `Prefabs/Raid` altındaki parça prefab'ları mevcut GUID'leri korunarak güncellendi; `BoardBase` ve `OperationTable`
+   eklendi. Dokular, mesh'ler, malzemeler ve kalem shader'ı `Art/Raid/Analyst` altında; görünüm ayarları
+   `Settings/RaidPieceLibrary.asset` ve `Settings/RaidUiTheme.asset` içinde.
+   Sahne/UI aktarımı ekip dizin kartları, katlanabilir kurallar kartı, ozalit lejant, hedef formu, teleks operasyon
+   günlüğü, alt ahşap şerit, geri çekilme onayı ve spotlu sonuç fişini içeriyor. `RaidUnitCard` ile günlük satırları
+   `Prefabs/UI` asset'lerinde; fontlar mevcut Desk TMP asset'lerinden. Makineler evresinde girdi kilitli, niyet sırası
+   ve günlük animasyonlarla birlikte ilerliyor. Kartın tur bitişi/ölümü tabandan ayrı kart gövdesinde canlandırılıyor.
+   Tahtada bir kare bir dünya birimi; `RaidCameraFraming`, Canvas ölçeğine ve iki sütun arasındaki görüş alanına göre
+   ortografik kamerayı her karede ayarlar. 16:9’dan geniş ekranda Canvas ölçeği yüksekliği korur; kurallar kartı ve lejant çakışmaz. 1920×1080 referansta karo izdüşümü yaklaşık 125×71,7 px; sabit 110 px değil.
+   Aktarım için kullanılan `BaskinPieceAuthoring` / `BaskinSceneAuthoring` editör yardımcıları tek sefer kullanıldı ve kaldırıldı. Kalıcı kaynak sahne, prefab ve asset'lerdir; oyun açılışında sahne üreten kurucu yok.
+   Oyun kuralları ve C#/JS paritesi bu görsel aktarımda değiştirilmedi.
+   Doğrulama: 112/112 EditMode testi; Play’de taşıma, geri alma, önizleme, makine evresinde girdi kilidi, geri çekilme ve başarı/başarısızlık fişleri kontrol edildi. TR/EN ve 1920×1080, 1920×1200, 2560×1440, 21:9 görüntüleri incelendi.
+   Önizleme: `Docs/Captures/Baskin_Analist_Masasi.png`.
 
 ## Deneysel mod: saha ekipleri, zaman ölçeği, baskın (2026-10-10)
 
@@ -105,8 +128,9 @@ seçilir (PlayerPrefs `corrigible.exp.teams`, `corrigible.exp.timeScale`; varsay
   oyuncu robotları iterek ya da araya girerek korur.
 
 Açık sorular (oyun testinde bakılacak): baskın eğlenceli mi, 6 tur doğru mu, yalan niyetler okunur mu, ekip lojistiği
-angarya mı yoksa ilginç karar mı, zaman ölçeği 1,5 mi 2 mi. Baskın ayrı sahne değil, Main sahnesinde ayrı bir canvas (`Baskin`, sıra 12); strateji
-katmanı `S.Raid` varken durur.
+angarya mı yoksa ilginç karar mı, zaman ölçeği 1,5 mi 2 mi. `RaidLauncher`, `Scenes/Baskin.unity`'yi Main ya da
+DeskGame'in üstüne eklemeli yükler; strateji katmanı `S.Raid` varken durur. Taktik UI'nın `Baskin` Canvas'ı ayrı
+baskın sahnesindedir.
 
 ## Önemli kararlar ve gerekçeleri
 
@@ -149,8 +173,10 @@ katmanı `S.Raid` varken durur.
   Sonraki tur fikirleri: arayüz sesleri, izlenmeyen bölgelerin telsiz filtresi, hediye melodisi, sonlara özel
   kapanışlar, YZ günlüğü harf sesleri, baskın sahnesi sesleri (ortam, niyet "kilit" sesleri, çarpışmalar).
 
-- **Baskın görselleri yer tutucu:** parçalar Unity primitive'lerinden. Gerçek modeller, ses, parçacık efektleri ve kamera
-  sarsıntısı yok. Farklı en-boy oranlarında kadraj kontrol edilmeli (kamera 16:9'a göre ayarlı).
+- **Baskın aktarımının son kontrolü:** yeni maket/panel asset'lerini gerçek baskın akışında, Türkçe ve İngilizceyle
+  doğrula; B1–B8 durumlarındaki etiket çakışmaları, sıra/güven işaretleri, tur bitişi/ölüm ve sonuç fişini kontrol et.
+  Responsive kamera uygulanmış olsa da 16:10 ve ultra geniş ekranlarda maketin kadrajı, sütunlar ve uzun metinler
+  ayrıca görülmeli. Sesler hâlâ ilk turdaki yer tutucu bankadan; yeni ses üretimi bu görsel aktarımın parçası değil.
 
 - **İngilizce metinlerin ana dili İngilizce olan biri tarafından gözden geçirilmesi** (çeviriler ajan tarafından yapıldı).
   Steam mağaza sayfası ve başarım adları henüz çevrilmedi. Tarayıcı prototipi yalnızca Türkçe.
@@ -163,8 +189,9 @@ katmanı `S.Raid` varken durur.
   aynı). YZ henüz fark edilmemişse `Detect` çekirdeği kaçırır ve baskın ekranı "çekirdek yok edildi" derken strateji
   tarafı yalnızca sunucu kümesini kırar. Normal oyunda erişilemiyor (baskın, doğrulanmış bölge ya da bilinen çekirdek
   ister; ikisi de YZ'nin fark edilmiş olmasını gerektirir) ama kural değişirse önce çekirdeği kontrol et (iki tarafta).
-- **Baskın ekranı yalnızca fare/klavye için;** kare boyutu 1080p'ye göre sabit (110 px). Farklı en-boy oranlarında
-  kontrol edilmeli.
+- **Baskın ekranı yalnızca fare/klavye için;** gamepad akışı yok. Karelerin ekrandaki boyutu CanvasScaler ölçeğiyle
+  değişir; kamera görüş alanının merkezini izler. Boyut ve kadrajı değiştirirken `RaidCameraFraming` kuralını koru
+  (bkz. `GELISTIRME.md` → Baskın sunumunu düzenlemek).
 - **Prototip arayüzü** (`Prototype/index.html`) acil durum fonu seçicisini ve fon göstergesindeki gelir notunu göstermiyor
   (simülasyonu güncel).
 - **Prototipin iki kopyası:** asıl çalışma kopyası artık `Prototype/` (repoda). Eski kopya
@@ -176,6 +203,8 @@ katmanı `S.Raid` varken durur.
 - **Yerelleştirme:** metinler kodda ve asset'lerde Türkçe; İngilizce için bir yerelleştirme katmanı gerekecek
   (Steam'de İngilizce şart). `GameData` ve `Simulation` içindeki oyuncuya görünen metinler ayrıştırılmalı.
 - **Kayıt sürümleme:** kural değişince eski kayıtlar farklı oynanır; `GameRecord.version` kontrolü eklenmedi.
-- **Çözünürlük:** 1920×1080 referans; 16:10 ve ultra geniş ekranlarda denenmedi; yan panel 400 px sabit.
+- **Çözünürlük:** 1920×1080 referans. Analist masasında F7 oran kontrolleri yapıldı; yeni baskın sunumunun oran
+  kontrolü bekliyor. Baskında yan sütunlar referans Canvas uzayında 376 px, görüş alanı aralarında gerilir; eski Main
+  arayüzünün 400 px yan paneli ayrı yerleşimdir.
 - **Denge:** Acemi bot Manipülatör/Kâhin'e karşı %5–8 kazanıyor; eğitim sonrası gerçek oyuncu testi gerekli.
 - **Test eksikleri:** PlayMode/UI testi yok; UI davranışı ajanlar tarafından `CorrigibleDebug` ile elle doğrulanıyor.

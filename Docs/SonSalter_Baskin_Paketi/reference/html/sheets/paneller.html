@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Baskın · panel sayfası</title>
+<link rel="stylesheet" href="../../../fonts/fonts.css">
+<style>
+body{margin:0;background:#1A110C}
+a{color:#1A4789}a:hover{color:#0F2F5E}
+body{margin:0;background:#1A110C}
+a{color:#1A4789}a:hover{color:#0F2F5E}
+.c{--wood:#2A1C13;--rail:#160F0A;--felt:#1C372C;--paper:#F1E9D6;--paper2:#E8DEC6;--edge:#C8B996;--onion:#E3E0D8;--manila:#D9C08B;--manila2:#B99D63;--index:#FBF7EC;--rule-r:#D2483F;--rule-b:#BCD0E1;--sticky:#F5DC63;--sticky2:#DDBF3E;--telex:#EFE4BC;--ink:#1E1B16;--ink2:#463F34;--ink3:#675F50;--graph:#4A4640;--red:#9A1E14;--red2:#B8241A;--blue:#1A4789;--green:#24592E;--orange:#854005;--orange2:#A9520A;--carbon:#524973;font-family:'Libre Franklin',Arial,sans-serif;font-size:13px;line-height:1.35;color:var(--ink);-webkit-font-smoothing:antialiased}
+.c *,.c *::before,.c *::after{box-sizing:border-box}
+.c button{font-family:inherit}
+.tw{font-family:'Courier Prime','Courier New',monospace;font-variant-numeric:tabular-nums}
+.hand{font-family:'Kalam','Segoe Print',cursive}
+.cap{font-family:'Courier Prime','Courier New',monospace;font-size:12px;font-weight:700;letter-spacing:.08em;line-height:1;color:var(--ink2)}
+.ico{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.felt{position:absolute;left:0;right:0;top:156px;height:844px;background-color:var(--felt);background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1.3px);background-size:5px 5px;border-top:2px solid #0E0906;border-bottom:2px solid #0E0906}
+.grain{position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,rgba(255,230,190,.025) 0 1px,transparent 1px 6px),repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0 2px,transparent 2px 19px)}
+.stamp{position:relative;display:inline-flex;align-items:center;justify-content:center;padding:3px 8px;border:2px solid currentColor;border-radius:3px;font-family:'Libre Franklin',Arial,sans-serif;font-weight:800;font-size:12px;letter-spacing:.12em;line-height:1;white-space:nowrap;opacity:.92}
+.stamp::before{content:'';position:absolute;inset:2px;border:1px solid currentColor;border-radius:1px}
+.stamp.sm{padding:3px 6px;font-size:11px;border-width:1.5px}
+.stamp.sm::before{inset:1.5px}
+.s-blue{color:var(--blue)}.s-red{color:var(--red)}.s-green{color:var(--green)}
+.seal{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--blue);flex:none}
+.seal svg{width:10px;height:10px}
+.slip{display:inline-flex;align-items:center;gap:3px;height:18px;padding:0 5px;background:var(--onion);border:1px dashed var(--carbon);border-radius:2px;color:var(--carbon);font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;letter-spacing:.05em;line-height:1;white-space:nowrap}
+.carbon{color:var(--carbon);text-shadow:1.2px .6px 0 rgba(82,73,115,.3)}
+.sus{display:inline-flex;align-items:center;gap:2px;font-family:'Kalam',cursive;font-weight:700;font-size:15px;line-height:1;color:var(--orange);white-space:nowrap}
+.sus svg{width:20px;height:18px;flex:none}
+.unk{display:inline-flex;align-items:center;gap:4px;font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;letter-spacing:.05em;color:var(--graph);white-space:nowrap}
+.unk i{font-style:normal;display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border:1.5px dashed var(--graph);border-radius:50%;font-family:'Kalam',cursive;font-size:13px;font-weight:700;line-height:1}
+.bt{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;height:30px;padding:0 12px;border-radius:3px;font-family:'Libre Franklin',Arial,sans-serif;font-size:13px;font-weight:600;line-height:1;white-space:nowrap;cursor:pointer;color:var(--ink);background:var(--paper);border:1px solid var(--ink2);box-shadow:0 2px 0 var(--ink2)}
+.bt.sm{height:24px;padding:0 8px;font-size:12px}
+.bt.ink{background:var(--ink);color:#F4ECD8;border-color:#000;box-shadow:0 2px 0 #000}
+.bt.link{height:24px;background:none;border:0;box-shadow:none;padding:0 6px;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.bt.icon{width:24px;padding:0}
+.key{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 4px;border:1px solid var(--ink3);border-bottom-width:2px;border-radius:3px;background:var(--index);font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;line-height:1;color:var(--ink2)}
+.xb{appearance:none;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--ink3);border-radius:2px;background:var(--paper);color:var(--ink2);cursor:pointer}
+.xb .ico{width:12px;height:12px}
+.grip{color:var(--ink3)}
+.rail{position:absolute;left:0;right:0;top:0;height:48px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding:0 16px;background:var(--rail);border-bottom:1px solid #000}
+.rl,.rc,.rr{display:flex;align-items:center;gap:12px}
+.rr{justify-content:flex-end}
+.plaque{display:flex;flex-direction:column;justify-content:center;gap:2px;height:36px;padding:0 12px;background:#0E0906;border:1px solid #6E5A33;border-radius:2px}
+.pl-t{font-family:'Courier Prime',monospace;font-size:15px;font-weight:700;letter-spacing:.16em;line-height:1;color:#C9A86A}
+.pl-s{font-family:'Courier Prime',monospace;font-size:11px;letter-spacing:.06em;line-height:1;color:#A48A55}
+.plabel{display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 10px;background:var(--paper);border-radius:2px;box-shadow:2px 2px 0 rgba(0,0,0,.55);font-size:12px;color:var(--ink2);white-space:nowrap}
+.plabel b{font-family:'Courier Prime',monospace;font-size:15px;font-weight:700;letter-spacing:.06em;color:var(--ink)}
+.cal{display:flex;flex-direction:column;width:58px;height:38px;overflow:hidden;border-radius:2px;background:var(--paper);box-shadow:2px 2px 0 rgba(0,0,0,.55)}
+.cal-h{height:13px;background:var(--red);color:#FFF3EE;font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;line-height:13px;letter-spacing:.12em;text-align:center}
+.cal-n{flex:1;display:flex;align-items:center;justify-content:center;font-family:'Courier Prime',monospace;font-size:19px;font-weight:700;line-height:1}
+.speed{display:flex;align-items:center;gap:7px;height:34px}
+.tk{appearance:none;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;padding:0;border-radius:50%;background:#1E1B16;border:2px solid #9A9284;box-shadow:0 2px 0 #000;color:#F1E9D6;font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;cursor:pointer}
+.tk.on{background:#F1E9D6;color:#1E1B16;border-color:#C9A86A;box-shadow:inset 0 2px 0 rgba(0,0,0,.28);transform:translateY(2px)}
+.tk .ico{width:12px;height:12px;stroke-width:2}
+.lamp{display:inline-block;width:9px;height:9px;border-radius:50%;background:#3E3A33;border:1px solid #000;flex:none}
+.lamp.on{background:#3DB36B;border-color:#14532D;box-shadow:0 0 0 2px rgba(61,179,107,.22)}
+.gbank{position:absolute;left:16px;right:16px;top:56px;height:92px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.gauge{position:relative;display:flex;gap:8px}
+.meter{display:block;flex:none;width:132px;height:92px}
+.gtag{position:relative;flex:1;min-width:0;height:88px;margin-top:2px;padding:7px 10px 7px;display:flex;flex-direction:column;justify-content:space-between;background:var(--paper);border:1px solid var(--edge);border-radius:2px;box-shadow:3px 3px 0 rgba(0,0,0,.45)}
+.gtag.onion{background:var(--onion);border-color:#C4C0B4}
+.g-h{display:flex;align-items:center;gap:6px;height:20px}
+.g-h > :last-child{margin-left:auto}
+.g-n{font-family:'Courier Prime',monospace;font-size:13px;font-weight:700;letter-spacing:.06em;line-height:1;color:var(--ink);white-space:nowrap}
+.g-m{position:relative;display:flex;align-items:baseline;gap:8px;white-space:nowrap}
+.g-v{font-family:'Courier Prime',monospace;font-size:26px;font-weight:700;line-height:1;letter-spacing:-.01em}
+.g-v small{font-size:13px;font-weight:700;margin-left:3px}
+.g-d{display:inline-flex;align-items:center;gap:2px;font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;line-height:1}
+.g-d .ico{width:12px;height:12px;stroke-width:2}
+.g-note{font-size:12px;line-height:1;color:var(--ink2);white-space:nowrap}
+.g-note b{font-family:'Courier Prime',monospace;font-weight:700;color:var(--ink)}
+.adv{position:absolute;left:16px;right:16px;top:163px;height:32px;display:flex;align-items:center;gap:14px;padding:0 34px;background:var(--sticky);box-shadow:2px 3px 0 rgba(0,0,0,.4)}
+.adv-t{font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--red);white-space:nowrap}
+.adv-m{flex:1;margin:0;font-size:14px;line-height:1;color:var(--ink);white-space:nowrap}
+.adv-m b{font-family:'Courier Prime',monospace;font-weight:700}
+.adv-a{display:flex;gap:4px}
+.tape{position:absolute;width:46px;height:15px;background:rgba(236,226,190,.78);border-left:1px dashed rgba(120,100,60,.35);border-right:1px dashed rgba(120,100,60,.35)}
+.mapsheet{position:absolute;left:404px;top:204px;width:1112px;height:788px;box-shadow:4px 5px 0 rgba(0,0,0,.42)}
+.mapsheet img{display:block}
+.mhead{position:absolute;left:420px;top:211px;width:1060px;display:flex;align-items:baseline;gap:16px;white-space:nowrap}
+.mhead b{font-family:'Courier Prime',monospace;font-size:13px;font-weight:700;letter-spacing:.06em}
+.mhead span{font-size:12px;color:var(--ink2)}
+.mhead span b{font-size:12px;letter-spacing:0;color:var(--ink)}
+.glbl{position:absolute;font-family:'Courier Prime',monospace;font-size:11px;line-height:1;color:var(--ink3);white-space:nowrap}
+.edge-l{position:absolute;font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;letter-spacing:.05em;line-height:1;color:var(--ink2);white-space:nowrap}
+.node{position:absolute;width:56px;height:56px;padding:0;margin:0;border:0;background:none;cursor:pointer}
+.node svg{display:block}
+.nv{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;line-height:1}
+.nv.hand{font-size:18px}
+.nl{position:absolute;width:160px;text-align:center;font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;letter-spacing:.05em;line-height:1.2;color:var(--ink2);white-space:nowrap;pointer-events:none}
+.nl span{display:inline-block;padding:1px 4px;background:rgba(236,230,212,.92);border-radius:1px}
+.nl .sel{color:var(--ink);background:#F5D646}
+.qm{position:absolute;font-family:'Kalam',cursive;font-size:22px;font-weight:700;line-height:1;color:var(--orange)}
+.tok{position:absolute;width:22px;height:22px;display:flex;align-items:center;justify-content:center}
+.tok::before{content:'';position:absolute;inset:3px;transform:rotate(45deg);background:#1E1B16;border:1.5px solid #F1E9D6;border-radius:2px;box-shadow:2px 2px 0 rgba(0,0,0,.35)}
+.tok span{position:relative;font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;line-height:1;color:#F1E9D6}
+.ttag{position:absolute;padding:2px 5px;background:var(--paper);border:1px solid var(--edge);font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;line-height:1.1;color:var(--ink2);white-space:nowrap;box-shadow:1px 1px 0 rgba(0,0,0,.25)}
+.note{position:absolute;font-family:'Kalam',cursive;font-size:15px;line-height:1.15;white-space:nowrap;pointer-events:none}
+.sticky{position:absolute;padding:14px 12px 10px;background:var(--sticky);box-shadow:2px 3px 0 rgba(0,0,0,.32);clip-path:polygon(0 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%)}
+.sticky::after{content:'';position:absolute;right:0;bottom:0;width:14px;height:14px;background:linear-gradient(315deg,transparent 50%,var(--sticky2) 50%)}
+.legend{position:absolute;left:560px;top:890px;width:700px;padding:7px 10px 8px;display:flex;flex-direction:column;gap:7px;background:#ECE6D4;border:1px solid var(--ink2)}
+.lg-r{display:flex;align-items:center;gap:11px;font-size:11px;line-height:1;color:var(--ink2);white-space:nowrap}
+.lg-k{font-family:'Courier Prime',monospace;font-weight:700;letter-spacing:.06em;color:var(--ink)}
+.lg-i{display:inline-flex;align-items:center;gap:5px}
+.lg-sw{display:inline-block;width:11px;height:11px;border-radius:50%;border:1px solid #1E1B16}
+.scale{position:absolute;left:1280px;top:892px;width:212px;display:flex;flex-direction:column;gap:5px;font-family:'Courier Prime',monospace;font-size:11px;color:var(--ink2)}
+.icard{position:absolute;background-color:var(--index);background-image:linear-gradient(to bottom,transparent 33px,var(--rule-r) 33px,var(--rule-r) 35px,transparent 35px),repeating-linear-gradient(to bottom,transparent 0 21px,var(--rule-b) 21px 22px);background-size:100% 100%,100% 22px;background-position:0 0,0 35px;background-repeat:no-repeat,repeat-y;border:1px solid #D9D0BC;border-radius:2px;box-shadow:3px 4px 0 rgba(0,0,0,.4)}
+.ic-h{height:33px;display:flex;align-items:center;gap:8px;padding:0 6px 0 10px}
+.ic-t{font-family:'Courier Prime',monospace;font-size:13px;font-weight:700;letter-spacing:.08em}
+.ic-s{font-size:13px;color:var(--ink2)}
+.ic-h .xb{margin-left:auto}
+.gl{height:22px;display:flex;align-items:flex-end;gap:10px;padding:0 14px 3px;font-size:13px;line-height:1}
+.gl-n{width:68px;font-weight:600}
+.bx{display:grid;grid-template-columns:repeat(7,22px);gap:4px}
+.bx i{display:block;height:12px;border:1px solid var(--ink2)}
+.bx i.f{background:repeating-linear-gradient(135deg,#4A4640 0 1.4px,transparent 1.4px 3.6px)}
+.gl b{margin-left:auto;font-family:'Courier Prime',monospace;font-size:14px;font-weight:700}
+.gl.nx{font-size:12px;color:var(--ink2);gap:6px}
+.gl.nx b{margin-left:0;font-family:'Libre Franklin',Arial,sans-serif;font-size:12px;font-weight:600;color:var(--ink)}
+.gl.nx a{margin-left:auto;font-weight:600}
+.folder{position:absolute;display:flex;flex-direction:column}
+.ftab{position:relative;z-index:1;height:30px;flex:none;display:flex;align-items:center;gap:8px;padding:0 5px 0 10px;background:var(--manila);border:1px solid var(--manila2);border-bottom:0;border-radius:7px 7px 0 0}
+.ft-t{font-family:'Courier Prime',monospace;font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--ink)}
+.ft-s{font-size:12px;color:var(--ink2)}
+.ftab .xb{margin-left:auto}
+.fbody{position:relative;flex:1;margin-top:-1px;padding:10px;background:var(--manila);border:1px solid var(--manila2);border-radius:0 4px 4px 4px;box-shadow:3px 4px 0 rgba(0,0,0,.4)}
+.fsheet{position:relative;background:var(--paper);border:1px solid var(--edge);border-radius:1px;box-shadow:1px 2px 0 rgba(90,70,30,.25)}
+.clip{position:absolute;width:16px;height:40px}
+.rs{height:100%;padding:12px 14px 12px;display:flex;flex-direction:column;gap:10px}
+.rs-h{display:flex;align-items:center;justify-content:space-between}
+.rs-sum{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink2)}
+.rs-sum b{color:var(--ink);font-weight:600}
+.rs-sum .r{margin-left:auto;display:inline-flex;align-items:center;gap:6px}
+.neg{color:var(--red)}
+.fund{display:flex;flex-direction:column;gap:7px;padding:8px 10px 9px;border:1px solid var(--ink3)}
+.fund-h{display:flex;align-items:center;justify-content:space-between}
+.fund-h span:last-child{font-size:11px;color:var(--ink3)}
+.opts{display:flex;align-items:center;gap:14px}
+.opt{appearance:none;display:inline-flex;align-items:center;gap:6px;height:24px;padding:0;border:0;background:none;font-size:13px;color:var(--ink);cursor:pointer;white-space:nowrap}
+.opt .tw{font-size:11px;color:var(--ink3)}
+.cb{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border:1.5px solid var(--ink);background:var(--index);font-family:'Courier Prime',monospace;font-size:14px;font-weight:700;line-height:1}
+.br-h{display:flex;align-items:center;gap:8px;height:18px;margin-bottom:2px}
+.br-h .ln{flex:1;height:0;border-top:1px solid var(--ink3)}
+.br-h .tw{font-size:11px;color:var(--ink3)}
+.rr{display:flex;align-items:center;gap:8px;min-height:31px;padding:2px 0;border-bottom:1px dotted #B9AC8E}
+.rr:last-child{border-bottom:0}
+.rr-n{flex:1;min-width:0;display:flex;flex-direction:column;font-size:13px;line-height:1.2;color:var(--ink)}
+.rr-n small{font-size:11px;color:var(--ink3)}
+.rr-r{display:flex;align-items:center;gap:7px;font-size:12px;white-space:nowrap;color:var(--ink2)}
+.rr.done .rr-n{color:var(--ink2)}
+.rr.lock .rr-n{color:var(--ink3)}
+.pbar{position:relative;display:block;width:48px;height:10px;border:1px solid var(--ink2)}
+.pbar span{position:absolute;left:0;top:0;bottom:0;background:repeating-linear-gradient(135deg,#4A4640 0 1.4px,transparent 1.4px 3.4px)}
+.clabel{position:relative;padding:8px 12px 9px;background:var(--index);border:1px solid #D9D0BC;box-shadow:1px 2px 0 rgba(90,70,30,.25)}
+.cl-t{display:flex;align-items:baseline;gap:8px}
+.cl-t b{font-family:'Courier Prime',monospace;font-size:20px;font-weight:700;letter-spacing:.04em;line-height:1}
+.cl-t .code{font-family:'Courier Prime',monospace;font-size:12px;color:var(--ink3)}
+.cl-t .stamp{margin-left:auto}
+.cl-m{margin-top:6px;font-size:12px;color:var(--ink2);display:flex;align-items:center;gap:5px;white-space:nowrap}
+.cl-m b{font-weight:700;color:var(--orange)}
+.sz{padding:9px 12px 6px;display:flex;flex-direction:column;gap:6px}
+.sz-h{display:flex;align-items:center;gap:8px}
+.sz-h .r{margin-left:auto;font-size:11px;color:var(--ink3)}
+.big{position:relative;display:flex;align-items:baseline;gap:8px;height:36px}
+.bigv{font-family:'Courier Prime',monospace;font-size:38px;font-weight:700;line-height:1;color:var(--ink)}
+.bigu{font-family:'Courier Prime',monospace;font-size:14px;font-weight:700;color:var(--ink3)}
+.bign{margin-left:auto;font-size:12px;color:var(--ink3)}
+.rng{position:relative;height:25px}
+.rng-t{position:absolute;left:0;right:0;top:8px;height:0;border-top:1.5px solid var(--ink2)}
+.rng-k{position:absolute;top:4px;width:1px;height:9px;background:var(--ink2)}
+.rng-b{position:absolute;top:5px;height:7px;background:repeating-linear-gradient(135deg,rgba(169,82,10,.75) 0 1.5px,transparent 1.5px 3.5px)}
+.rng-m{position:absolute;top:1px;width:3px;height:15px;margin-left:-1.5px;border-radius:1px}
+.rng-l{position:absolute;top:15px;font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;line-height:1;white-space:nowrap}
+.src{width:100%;border-collapse:collapse;font-size:12px}
+.src th{padding:0 0 4px;font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;letter-spacing:.05em;color:var(--ink3);text-align:left;border-bottom:1px solid var(--ink2)}
+.src td{height:25px;padding:0;border-bottom:1px dotted #B9AC8E;white-space:nowrap}
+.src tr:last-child td{border-bottom:0}
+.src .r{text-align:right;padding-right:8px}
+.src td.tw{font-size:12px;font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.st{display:flex;flex-direction:column;gap:3px;padding:6px 9px 7px;background:var(--index);border:1px solid #D9D0BC;box-shadow:1px 2px 0 rgba(90,70,30,.25)}
+.st.onion{background:var(--onion);border-color:#C4C0B4}
+.st-l{font-size:11px;color:var(--ink3)}
+.st-v{display:flex;align-items:center;gap:6px;font-family:'Courier Prime',monospace;font-size:19px;font-weight:700;line-height:1}
+.sh{display:flex;align-items:center;gap:8px}
+.sh .ln{flex:1;height:0;border-top:1px solid var(--ink2)}
+.sh .r{font-size:11px;color:var(--ink2)}
+.acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.acard{appearance:none;display:flex;flex-direction:column;gap:3px;padding:6px 9px 7px;text-align:left;color:var(--ink);background:var(--index);border:1px solid #CFC5AE;border-radius:2px;box-shadow:2px 2px 0 rgba(60,45,20,.35);cursor:pointer}
+.acard.is-hover{border:1.5px solid var(--ink);transform:translateY(-2px);box-shadow:3px 5px 0 rgba(60,45,20,.45);background:#FFFDF5}
+.ac-t{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:700;line-height:1.1}
+.ac-t .key{margin-left:auto}
+.ac-d{font-size:12px;line-height:1.15;color:var(--ink2)}
+.ac-c{font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;color:var(--ink2)}
+.acard.dng{border-top:3px solid var(--red)}
+.acard.dng .ac-t{color:var(--red)}
+.pv{position:relative;display:flex;flex-direction:column;gap:5px;padding:8px 11px 9px;background:var(--sticky);box-shadow:2px 2px 0 rgba(60,45,20,.35);font-size:12px;color:var(--ink)}
+.pv-r{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.pv-r .r{margin-left:auto;font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;color:var(--ink2)}
+.team{display:flex;align-items:center;gap:10px;padding:5px 10px;background:var(--index);border:1px solid #D9D0BC;box-shadow:1px 2px 0 rgba(90,70,30,.25)}
+.team .tok{position:relative}
+.tm-m{flex:1;display:flex;flex-direction:column;gap:2px;font-size:12px;color:var(--ink2)}
+.tm-m b{font-size:14px;color:var(--ink)}
+.tm-s{display:flex;flex-direction:column;align-items:flex-end;gap:4px;font-size:11px;color:var(--ink3)}
+.pips{display:inline-flex;gap:2px;vertical-align:-1px}
+.pips i{display:block;width:8px;height:8px;border:1px solid var(--ink2);background:var(--ink2)}
+.pips i.off{background:transparent}
+.op{font-size:12px;color:var(--ink2)}
+.op b{font-family:'Courier Prime',monospace;color:var(--ink)}
+.telex{position:absolute;left:16px;top:1004px;width:1572px;height:26px;display:flex;align-items:stretch;box-shadow:2px 3px 0 rgba(0,0,0,.45)}
+.tx-l{flex:none;display:flex;align-items:center;gap:7px;padding:0 10px;background:#0E0906;color:#C9A86A;font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;letter-spacing:.1em;border:1px solid #6E5A33}
+.tx-view{flex:1;position:relative;overflow:hidden;background-color:var(--telex);background-image:radial-gradient(circle,rgba(70,60,40,.32) 1px,transparent 1.5px),radial-gradient(circle,rgba(70,60,40,.32) 1px,transparent 1.5px);background-size:9px 26px,9px 26px;background-position:0 -10px,4px 10px}
+.tx-run{position:absolute;left:0;top:0;bottom:0;display:flex;align-items:center;gap:34px;padding-left:16px;white-space:nowrap;animation:tx 120s linear infinite}
+@keyframes tx{to{transform:translateX(-50%)}}
+.tx-i{display:inline-flex;align-items:center;gap:9px;font-family:'Courier Prime',monospace;font-size:13px;line-height:1;color:var(--ink)}
+.tx-i .d{color:var(--ink3)}
+.tx-i b{font-weight:700}
+.tx-i .strike{color:var(--ink3);text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:2px}
+.dock{position:absolute;left:16px;top:1036px;height:44px;display:flex;align-items:flex-end;gap:6px}
+.dtab{position:relative;appearance:none;display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 12px 6px;border:1px solid rgba(0,0,0,.5);border-bottom:0;border-radius:7px 7px 0 0;font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--ink);cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.dtab.on{height:44px;padding-bottom:12px;border-color:#000;border-width:1.5px}
+.dtab .ico{width:14px;height:14px}
+.dot{position:absolute;top:-8px;right:-7px;min-width:18px;height:18px;padding:0 4px;display:flex;align-items:center;justify-content:center;border-radius:9px;border:1.5px solid #1E1B16;font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;line-height:1}
+.env{position:absolute;left:1604px;top:1001px;width:300px;height:74px;appearance:none;padding:0;border:1px solid #5E0F0A;border-radius:3px;background:#9C1F17;box-shadow:3px 4px 0 rgba(0,0,0,.5);cursor:pointer;overflow:hidden;text-align:left}
+.env-l{position:absolute;left:14px;top:14px;width:204px;height:46px;padding:6px 10px;display:flex;flex-direction:column;justify-content:center;gap:4px;background:var(--paper);border-radius:1px;box-shadow:1px 1px 0 rgba(0,0,0,.35)}
+.env-t{font-family:'Courier Prime',monospace;font-size:15px;font-weight:700;letter-spacing:.04em;line-height:1;color:var(--ink);white-space:nowrap}
+.env-s{font-size:11px;line-height:1;color:var(--ink2);white-space:nowrap}
+.ov{position:absolute;left:0;top:0;pointer-events:none}
+
+/* ---------- BASKIN · taktik harita (C ailesine ek) ---------- */
+.felt2{position:absolute;left:0;right:0;top:48px;bottom:0;background-color:var(--felt);background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1.3px);background-size:5px 5px;border-top:2px solid #0E0906}
+.lamp-pool{position:absolute;left:0;top:48px;width:1920px;height:1032px;background:radial-gradient(ellipse 760px 520px at 900px 470px,rgba(255,224,170,.13),rgba(255,224,170,.04) 60%,rgba(0,0,0,0) 100%);pointer-events:none}
+.vign{position:absolute;left:0;top:48px;width:1920px;height:1032px;background:radial-gradient(ellipse 1200px 760px at 960px 520px,rgba(0,0,0,0) 55%,rgba(0,0,0,.28) 100%);pointer-events:none}
+.board{position:absolute;left:0;top:0;width:1920px;height:1080px;pointer-events:none}
+
+/* dünya içi etiketler (kameraya dönük TMP) */
+.wl{position:absolute;pointer-events:none;white-space:nowrap;line-height:1}
+.wl.up{transform:translate(-50%,-100%)}
+.wl.dn{transform:translate(-50%,0)}
+.wl.mid{transform:translate(-50%,-50%)}
+.wl.flg{transform:translate(0,-100%)}
+.wl.lft{transform:translate(-100%,-50%)}
+.hp{display:inline-flex;align-items:center;gap:3px;height:18px;padding:0 4px;background:#FBF7EC;border:1px solid #463F34;border-radius:2px;box-shadow:1px 1px 0 rgba(0,0,0,.35);font-family:'Courier Prime','Courier New',monospace;font-size:11px;font-weight:700;line-height:1;color:#463F34}
+.hp .pp{display:inline-flex;gap:2px}
+.hp i{display:block;width:7px;height:7px;border:1px solid currentColor;background:currentColor}
+.hp i.o{background:transparent}
+.hp svg{width:12px;height:12px;display:block;flex:none}
+.hp b{font-weight:700}
+.hp.ai{border-color:#9A1E14;color:#9A1E14}
+.hp.team{border-color:#1E1B16;color:#1E1B16}
+.hp.team.dim{background:#E9DDC6}
+.hp.team.dn{border-color:#9A1E14;color:#9A1E14;background:#F3E3DC}
+.hp .lt{font-size:12px}
+.cmp{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;border:1.5px solid #2F4E8C;background:#DCE1D8;color:#2F4E8C;font-family:'Courier Prime','Courier New',monospace;font-size:12px;font-weight:700;line-height:1}
+.wst{font-size:11px}
+.s-ink{color:#463F34}
+
+/* sıra bayrağı: iğne + kâğıt bayrak */
+.flag{position:relative;display:block;width:60px;height:34px}
+.flag .fp{position:absolute;left:0;bottom:0;width:2px;height:34px;background:#5E5A54;border-radius:1px}
+.flag .fb{position:absolute;left:2px;top:0;display:inline-flex;align-items:center;gap:3px;height:21px;padding:0 6px 0 5px;background:#FBF7EC;border:1.5px solid #9A1E14;border-radius:0 2px 2px 0;font-family:'Courier Prime','Courier New',monospace;font-size:14px;font-weight:700;line-height:1;color:#9A1E14;box-shadow:1px 1px 0 rgba(0,0,0,.35)}
+.flag .fq{display:inline-flex;align-items:center;position:relative;width:20px;height:18px;justify-content:center;font-family:'Kalam','Segoe Print',cursive;font-size:15px;font-weight:700;color:#854005}
+.flag .fq svg{position:absolute;inset:0;width:20px;height:18px}
+.flag.q .fb{border-color:#A9520A;border-style:dashed}
+.flag .fs{width:15px;height:15px}
+.flag .fs svg{width:9px;height:9px}
+.flag.ok .fb{border-color:#1A4789}
+.flag.now .fb{background:#9A1E14;color:#FBF7EC;height:24px;font-size:16px;box-shadow:2px 2px 0 rgba(0,0,0,.45)}
+.flag.done{opacity:.55}
+.flag.done .fb b{text-decoration:line-through;text-decoration-thickness:2px}
+.flag.cancel .fb{border-color:#675F50;color:#675F50}
+.flag.cancel .fb b{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:#9A1E14}
+
+/* açılır yazılar */
+.pop{display:inline-flex;align-items:center;gap:3px;height:22px;padding:0 6px;background:#FBF7EC;border:1.5px solid #9A1E14;border-radius:2px;font-family:'Courier Prime','Courier New',monospace;font-size:16px;font-weight:700;line-height:1;color:#9A1E14;box-shadow:2px 2px 0 rgba(0,0,0,.4)}
+.pop.heal{border-color:#854005;color:#854005}
+.pop.heal svg{width:13px;height:13px}
+.pop-st{gap:5px;padding:4px 8px;font-size:13px;background:#FBF7EC}
+.pop-st svg{width:13px;height:13px}
+.pop-win{padding:6px 10px;font-size:15px;background:#FBF7EC;border-width:2.5px}
+
+/* ---------- masa düzeni ---------- */
+.feltR{position:absolute;left:0;right:0;top:48px;height:956px;background-color:var(--felt);background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1.3px);background-size:5px 5px;border-top:2px solid #0E0906;border-bottom:2px solid #0E0906}
+.lampR{position:absolute;left:0;top:50px;width:1920px;height:952px;background:radial-gradient(ellipse 820px 560px at 900px 470px,rgba(255,224,170,.12),rgba(255,224,170,.035) 62%,rgba(0,0,0,0) 100%);pointer-events:none}
+.vignR{position:absolute;left:0;top:50px;width:1920px;height:952px;background:radial-gradient(ellipse 1250px 800px at 960px 520px,rgba(0,0,0,0) 58%,rgba(0,0,0,.26) 100%);pointer-events:none}
+
+/* üst ray ekleri */
+.ttl{display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 10px;background:var(--paper);border-radius:2px;box-shadow:2px 2px 0 rgba(0,0,0,.55);white-space:nowrap}
+.ttl b{font-family:'Courier Prime','Courier New',monospace;font-size:14px;font-weight:700;letter-spacing:.05em;color:var(--ink)}
+.turns{display:inline-flex;align-items:center;gap:4px;height:28px;padding:0 8px;background:var(--paper);border-radius:2px;box-shadow:2px 2px 0 rgba(0,0,0,.55)}
+.tb{position:relative;display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;border:1px solid var(--ink2);background:var(--index);font-family:'Courier Prime','Courier New',monospace;font-size:11px;font-weight:700;line-height:1;color:var(--ink2)}
+.tb.past{background:#E3DACA;color:var(--ink3)}
+.tb.past::after{content:'';position:absolute;inset:-1px;background:linear-gradient(45deg,transparent 46%,var(--ink2) 46%,var(--ink2) 54%,transparent 54%),linear-gradient(-45deg,transparent 46%,var(--ink2) 46%,var(--ink2) 54%,transparent 54%);opacity:.75}
+.tb.now{border:2px solid var(--blue);color:var(--blue);font-size:12px}
+.tb.last{border-color:var(--red);color:var(--red)}
+.tb.now.last{border:2px solid var(--red);background:#F7E1DB}
+.tb-l{margin-left:4px;font-size:12px;color:var(--ink2);white-space:nowrap}
+.tb-l b{font-family:'Courier Prime','Courier New',monospace;color:var(--ink)}
+.phase{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 10px;background:var(--paper);border-radius:2px;box-shadow:2px 2px 0 rgba(0,0,0,.55);white-space:nowrap}
+.phase b{font-family:'Courier Prime','Courier New',monospace;font-size:13px;font-weight:700;letter-spacing:.06em}
+.phase.you b{color:var(--blue)}
+.phase.ai b{color:var(--red)}
+.phase small{font-size:11px;color:var(--ink3)}
+.lamp.red{background:#C2342A;border-color:#5E0F0A;box-shadow:0 0 0 2px rgba(194,52,42,.22)}
+
+/* ekip kartı (dizin kartı) */
+.tcard{position:absolute;background-color:var(--index);background-image:linear-gradient(to bottom,transparent 33px,var(--rule-r) 33px,var(--rule-r) 35px,transparent 35px),repeating-linear-gradient(to bottom,transparent 0 21px,var(--rule-b) 21px 22px);background-size:100% 100%,100% 22px;background-position:0 0,0 35px;background-repeat:no-repeat,repeat-y;border:1px solid #D9D0BC;border-radius:2px;box-shadow:3px 4px 0 rgba(0,0,0,.4)}
+.tcard.sel{border:2px solid var(--ink);background-color:#FFFDF5;box-shadow:5px 8px 0 rgba(0,0,0,.5)}
+.tcard.done{background-color:#EEE6D3}
+.tcard.down{background-color:#E6DED0}
+.tc-h{height:33px;display:flex;align-items:center;gap:8px;padding:0 8px 0 9px}
+.tc-h .tok{position:relative;flex:none}
+.tc-n{font-family:'Courier Prime','Courier New',monospace;font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--ink);white-space:nowrap}
+.tc-h .stamp{margin-left:auto;gap:4px}
+.tc-h .stamp svg{width:12px;height:12px;flex:none}
+.tc-l{height:22px;display:flex;align-items:flex-end;gap:7px;padding:0 12px 3px 14px;font-size:13px;line-height:1;color:var(--ink);white-space:nowrap}
+.tc-l .lb{font-size:12px;color:var(--ink3)}
+.tc-l .tw{font-weight:700}
+.tc-l .sep{color:var(--ink3)}
+.tc-l.d{font-size:12.5px;color:var(--ink2)}
+.tc-l .key{height:17px;min-width:17px}
+.hpp{display:inline-flex;gap:3px;align-self:center;margin-top:3px}
+.hpp i{display:block;width:10px;height:10px;border:1.5px solid var(--ink);background:var(--ink)}
+.hpp i.o{background:transparent;border-color:var(--ink3)}
+.tcard.down .hpp i{border-color:var(--red)}
+.tok.kraft::before{background:#B89D74;border-color:#6E5536}
+.tok.kraft span{color:#3A2B17}
+.tok.red::before{background:#5C100A}
+.tcard .over{position:absolute;right:22px;top:58px;font-size:20px;padding:5px 12px;transform:rotate(-7deg);opacity:.9}
+.tcard.down .tc-n,.tcard.down .tc-l{color:var(--ink3)}
+.clipR{position:absolute;width:16px;height:40px}
+
+/* kurallar kartı */
+.rules{position:absolute;background:var(--paper);border:1px solid var(--edge);border-radius:2px;box-shadow:3px 4px 0 rgba(0,0,0,.4)}
+.ru-h{display:flex;align-items:center;gap:8px;height:38px;padding:0 6px 0 12px;border-bottom:3px double var(--ink)}
+.ru-h .ico{width:15px;height:15px}
+.ru-h .t{font-family:'Courier Prime','Courier New',monospace;font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--ink)}
+.ru-h .s{font-size:12px;color:var(--ink3)}
+.ru-h .bt{margin-left:auto}
+.rules.folded .ru-h{border-bottom:0}
+.ru-b{display:flex;flex-direction:column;gap:6px;padding:9px 13px 11px 12px}
+.ru-r{display:flex;gap:8px;font-size:12.5px;line-height:1.32;color:var(--ink2)}
+.ru-r .ico{width:14px;height:14px;margin-top:1px;color:var(--ink)}
+.ru-r b{color:var(--ink);font-weight:700}
+.ru-r .key{height:16px;min-width:16px;font-size:11px;vertical-align:1px}
+
+/* lejant (ozalit fişi) */
+.lgd{position:absolute;padding:8px 12px 10px;background:#D3DBD6;border:1px solid #2C4C8E;border-radius:1px;box-shadow:3px 4px 0 rgba(0,0,0,.4)}
+.lgd-h{display:flex;align-items:center;gap:8px;height:20px;margin-bottom:5px;border-bottom:1px solid rgba(44,76,142,.55)}
+.lgd-h b{font-family:'Courier Prime','Courier New',monospace;font-size:12px;font-weight:700;letter-spacing:.12em;color:#2C4C8E}
+.lgd-h span{margin-left:auto;font-family:'Courier Prime','Courier New',monospace;font-size:11px;color:#2C4C8E}
+.lgd-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:10px;row-gap:3px}
+.lg{display:flex;align-items:center;gap:7px;height:22px;font-size:12px;line-height:1.1;color:var(--ink)}
+.lg svg{flex:none}
+
+/* hedef formu */
+.tform{position:absolute;padding:11px 14px 10px;background:var(--paper);border:1px solid var(--edge);border-radius:1px;box-shadow:3px 4px 0 rgba(0,0,0,.4)}
+.tf-h{display:flex;align-items:center;gap:10px;padding-bottom:6px;border-bottom:3px double var(--ink)}
+.tf-h .t{font-family:'Courier Prime','Courier New',monospace;font-size:13px;font-weight:700;letter-spacing:.14em;color:var(--ink)}
+.tf-h .r{margin-left:auto;font-family:'Courier Prime','Courier New',monospace;font-size:11px;color:var(--ink3)}
+.tf-k{margin:7px 0 2px;font-size:12px;color:var(--ink2)}
+.tf-r{display:flex;align-items:center;gap:7px;height:30px;border-bottom:1px dotted #B9AC8E;font-size:13px;color:var(--ink);white-space:nowrap}
+.tf-r:last-child{border-bottom:0}
+.tf-r .ic{width:14px;height:14px;flex:none}
+.tf-r .nm{font-weight:600}
+.tf-r .r{margin-left:auto;display:inline-flex;align-items:center;gap:7px}
+.tf-r .v{font-family:'Courier Prime','Courier New',monospace;font-size:15px;font-weight:700}
+.tf-r .u{font-size:11px;color:var(--ink3)}
+.tf-r.broken .nm{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:2px;color:var(--ink3)}
+.tf-sep{height:0;margin:6px 0 2px;border-top:1px solid var(--ink3)}
+.tf-pp{display:inline-flex;gap:3px}
+.tf-pp i{display:block;width:10px;height:10px;border:1.5px solid var(--red);background:var(--red)}
+.tf-pp i.o{background:transparent}
+.tally{display:inline-flex;gap:3px}
+.tally i{position:relative;display:block;width:13px;height:13px;border:1px solid var(--ink2);background:var(--index)}
+.tally i.x{background:#F3D9D2;border-color:var(--red)}
+.tally i.x::after{content:'';position:absolute;inset:-1px;background:linear-gradient(45deg,transparent 44%,#9A1E14 44%,#9A1E14 56%,transparent 56%),linear-gradient(-45deg,transparent 44%,#9A1E14 44%,#9A1E14 56%,transparent 56%)}
+.ai-ab{display:flex;flex-direction:column;gap:3px;margin-top:5px}
+.ai-ab .cap{display:block;margin-bottom:2px}
+.ab{display:flex;align-items:center;gap:6px;font-size:12px;line-height:1.25;color:var(--ink2);white-space:nowrap}
+.ab b{color:var(--red);font-weight:700}
+.ab .ico{width:13px;height:13px;color:var(--red)}
+
+/* operasyon günlüğü (teleks rulosu) */
+.olog{position:absolute;display:flex;flex-direction:column;box-shadow:3px 4px 0 rgba(0,0,0,.45)}
+.ol-hd{flex:none;display:flex;align-items:center;gap:8px;height:30px;padding:0 10px;background:#0E0906;border:1px solid #6E5A33;color:#C9A86A;font-family:'Courier Prime','Courier New',monospace;font-size:12px;font-weight:700;letter-spacing:.1em}
+.ol-hd .r{margin-left:auto;letter-spacing:.02em;color:#A48A55;font-weight:400}
+.ol-pp{position:relative;flex:1;overflow:hidden;background-color:var(--telex);background-image:radial-gradient(circle,rgba(70,60,40,.34) 2.2px,transparent 2.7px),radial-gradient(circle,rgba(70,60,40,.34) 2.2px,transparent 2.7px);background-size:18px 18px,18px 18px;background-position:-2px 4px,calc(100% + 2px) 4px;background-repeat:repeat-y,repeat-y}
+.ol-pp::before,.ol-pp::after{content:'';position:absolute;top:0;bottom:0;width:0;border-left:1px dashed rgba(110,90,51,.45)}
+.ol-pp::before{left:17px}.ol-pp::after{right:17px}
+.ol-in{position:absolute;left:24px;right:24px;bottom:10px;display:flex;flex-direction:column;gap:5px}
+.ol-tear{position:absolute;left:0;right:0;top:0;height:16px;background:linear-gradient(to bottom,var(--telex),rgba(239,228,188,0))}
+.ln{display:flex;gap:6px;font-size:12.5px;line-height:1.32;color:var(--ink)}
+.ln .g{flex:none;width:14px;height:14px;margin-top:1px}
+.ln .n{flex:none;font-family:'Courier Prime','Courier New',monospace;font-size:12px;font-weight:700;color:var(--ink3);margin-top:1px}
+.ln.good .g{color:var(--green)}
+.ln.bad{color:var(--red)}
+.ln.bad .g{color:var(--red)}
+.ln.sys{color:var(--ink2)}
+.ln.sys .g{color:var(--ink3)}
+.ln.sep{justify-content:center;align-items:center;gap:8px;margin:5px 0 1px;font-family:'Courier Prime','Courier New',monospace;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--ink2);white-space:nowrap}
+.ln.sep::before,.ln.sep::after{content:'';flex:1;height:0;border-top:1px solid var(--ink3)}
+.ln.ai{display:block;padding:5px 8px 6px;background:#F1D8CF;border-left:3px solid #A7685B;font-family:'Courier Prime','Courier New',monospace;font-size:13px;font-weight:700;line-height:1.3;color:var(--red)}
+.ln.ai .who{display:block;margin-bottom:2px;font-size:11px;letter-spacing:.1em;color:#7A3A30}
+.ln.typing::after{content:'';display:inline-block;width:8px;height:13px;margin-left:3px;vertical-align:-2px;background:var(--ink)}
+
+/* alt ray: bilgi satırı + düğmeler */
+.info{position:absolute;display:flex;align-items:stretch;box-shadow:2px 3px 0 rgba(0,0,0,.45)}
+.inf-l{flex:none;display:flex;align-items:center;gap:7px;padding:0 10px;background:#0E0906;border:1px solid #6E5A33;color:#C9A86A;font-family:'Courier Prime','Courier New',monospace;font-size:11px;font-weight:700;letter-spacing:.1em}
+.inf-b{flex:1;display:flex;align-items:center;gap:9px;padding:0 14px;background:var(--index);border:1px solid #D9D0BC;border-left:0;font-size:14px;line-height:1.25;color:var(--ink);overflow:hidden}
+.inf-b .it{flex:1;min-width:0;white-space:normal}
+.inf-b .it > *{vertical-align:middle}
+.inf-b b{font-weight:700}
+.inf-b .tw{font-weight:700}
+.inf-b .tok{position:relative;flex:none}
+.inf-b .key{height:18px}
+.inf-b .sus{font-size:15px}
+.inf-b .rk{width:22px;height:22px;flex:none}
+.inf-b .m{color:var(--ink2)}
+.acts3{position:absolute;display:flex;gap:6px}
+.bt.btL{height:44px;font-size:14px;gap:7px;padding:0 12px}
+.bt.btL .ico{width:15px;height:15px}
+.bt.btL .key{margin-left:2px}
+.bt.btL.prim{height:48px;font-size:16px;font-weight:700;letter-spacing:.01em;gap:10px}
+.bt.btL.prim .ico{width:17px;height:17px}
+.bt.btL.prim .key{height:22px;min-width:22px;font-size:12px;padding:0 6px}
+.bt.ink .key{background:#F1E9D6;border-color:#9A9284;color:var(--ink)}
+.bt.off{color:var(--ink3);background:#D9D0BE;border-color:#8E8573;box-shadow:0 2px 0 #8E8573}
+.bt.ink.off{background:#4A4238;color:#B7AC98;border-color:#2B251E;box-shadow:0 2px 0 #2B251E}
+.bt.off .key{opacity:.6}
+.bt.retreat{color:var(--red);border-color:var(--red);box-shadow:0 2px 0 #5E0F0A}
+.bt.retreat.armed{background:var(--red);color:#FBF0E8;border-color:#5E0F0A;box-shadow:0 2px 0 #3A0805}
+.bt.retreat.armed .ico{color:#FBF0E8}
+
+.bt.btL.act{border:2px solid var(--ink);background:#FFFDF5;box-shadow:inset 0 2px 0 rgba(0,0,0,.18);transform:translateY(2px)}
+
+/* sonuç anı (B7) ve geri çekilme onayı (B8) */
+.spotR{position:absolute;border-radius:50%;box-shadow:0 0 0 14px rgba(14,9,5,.36),0 0 0 3000px rgba(14,9,5,.74);pointer-events:none}
+.resm{position:absolute;padding:18px 22px 16px;background:var(--paper);border:1px solid var(--edge);border-radius:2px;box-shadow:5px 6px 0 rgba(0,0,0,.5)}
+.resm-h{display:flex;align-items:center;gap:12px;padding-bottom:8px;border-bottom:3px double var(--ink)}
+.resm-h .t{font-family:'Courier Prime','Courier New',monospace;font-size:13px;font-weight:700;letter-spacing:.2em;line-height:1}
+.resm-h .r{margin-left:auto;font-family:'Courier Prime','Courier New',monospace;font-size:12px;color:var(--ink3)}
+.res-t{margin:14px 0 0;font-family:'Courier Prime','Courier New',monospace;font-size:34px;font-weight:700;letter-spacing:.04em;line-height:1;color:var(--ink)}
+.res-s{margin:7px 0 0;font-size:14px;font-weight:600;line-height:1.3;color:var(--ink2)}
+.res-l{margin-top:12px;display:flex;flex-direction:column}
+.res-r{display:flex;align-items:center;gap:8px;height:28px;border-bottom:1px dotted #B9AC8E;font-size:13px;line-height:1;color:var(--ink);white-space:nowrap}
+.res-r:last-child{border-bottom:0}
+.res-r .ico{width:14px;height:14px}
+.res-r .v{margin-left:auto;font-family:'Courier Prime','Courier New',monospace;font-size:14px;font-weight:700}
+.res-f{margin-top:14px;display:flex;align-items:center;gap:10px}
+.res-f .bt{flex:1;height:44px;font-size:15px}
+.res-f .key{background:#F1E9D6;border-color:#9A9284;color:var(--ink)}
+.res-n{margin-top:9px;font-size:12px;color:var(--ink3)}
+.bigst{position:absolute;font-size:30px;padding:10px 18px;border-width:4px;letter-spacing:.14em;background:rgba(251,247,236,.94)}
+.bigst::before{inset:4px;border-width:1.5px}
+.rconf{position:absolute;padding:11px 13px 12px;background:var(--paper);border:1.5px dashed var(--red);border-radius:1px;box-shadow:3px 4px 0 rgba(0,0,0,.45)}
+.rconf-h{display:flex;align-items:center;gap:7px;font-family:'Courier Prime','Courier New',monospace;font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--red)}
+.rconf-h .ico{width:15px;height:15px}
+.rconf p{margin:7px 0 0;font-size:13px;line-height:1.38;color:var(--ink)}
+.rconf p b{font-weight:700}
+.rconf-f{margin-top:9px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2)}
+.rconf-f .bt{margin-left:auto}
+.dimR{position:absolute;left:0;top:0;width:1920px;height:1080px;background:rgba(14,9,5,.32);pointer-events:none}
+
+.tc-n.hl{padding:2px 4px;margin:0 -4px;background:#F5D646;box-shadow:inset 0 -1px 0 rgba(0,0,0,.08)}
+.bt.retreat.off{color:var(--ink3);border-color:#8E8573;background:#D9D0BE;box-shadow:0 2px 0 #8E8573}
+.rail.raidrail{grid-template-columns:auto minmax(0,1fr) auto}
+.rail.raidrail .rc{justify-content:flex-start;padding-left:186px}
+
+.sheet{position:relative;width:1920px;background:#2A1C13}
+.sheet-in{position:relative;margin:0;padding:40px 48px 56px;background-color:var(--paper);background-image:repeating-linear-gradient(0deg,rgba(90,70,30,.035) 0 1px,transparent 1px 28px)}
+.sh-h{display:flex;align-items:baseline;gap:18px;padding-bottom:12px;border-bottom:3px double var(--ink)}
+.sh-h h1{margin:0;font-family:'Courier Prime','Courier New',monospace;font-size:40px;font-weight:700;letter-spacing:.04em;color:var(--ink)}
+.sh-h .r{margin-left:auto;font-family:'Courier Prime','Courier New',monospace;font-size:13px;color:var(--ink3)}
+.sh-p{margin:12px 0 0;max-width:1300px;font-size:14px;line-height:1.5;color:var(--ink2)}
+.pn{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0 6px}
+.pn-c{padding:10px 12px;background:var(--index);border:1px solid #D9D0BC;box-shadow:2px 3px 0 rgba(0,0,0,.18);font-size:12.5px;line-height:1.42;color:var(--ink2)}
+.pn-c b{display:block;margin-bottom:4px;font-family:'Courier Prime','Courier New',monospace;font-size:12px;letter-spacing:.1em;color:var(--ink)}
+.ps{margin-top:26px}
+.ps-h{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ps-h .ln{flex:1;height:0;border-top:1px solid var(--ink3)}
+.ps-n{font-size:12px;color:var(--ink3);max-width:900px;text-align:right}
+.ps-g{display:grid;gap:12px}
+.cp{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--ink2);white-space:nowrap}
+.cp i{display:block;width:13px;height:13px;border:1px solid rgba(0,0,0,.35)}
+.cp b{font-family:'Courier Prime','Courier New',monospace;font-size:11px;font-weight:700;color:var(--ink)}
+
+.pv-row{display:flex;flex-wrap:wrap;gap:22px 24px;align-items:flex-start}
+.pv-f{margin:0;display:flex;flex-direction:column;gap:8px}
+.pvx{position:relative}
+.pv-f figcaption{max-width:376px;font-size:12px;line-height:1.38;color:var(--ink2)}
+.pv-f figcaption b{display:block;margin-bottom:2px;font-family:'Courier Prime','Courier New',monospace;font-size:12px;letter-spacing:.08em;color:var(--ink)}
+.pv-f figcaption .pv-sp{display:block}
+.pvx[style*="width: 860px"] + figcaption,.pvx[style*="width: 1824px"] + figcaption{max-width:860px}
+.bt-f .pv-b{display:flex;align-items:center;gap:6px;min-height:52px}
+.ls{display:flex;flex-direction:column;gap:9px;padding:14px 16px;background:var(--index);border:1px solid #D9D0BC;font-size:12.5px;line-height:1.4;color:var(--ink2)}
+.ls b{font-family:'Courier Prime','Courier New',monospace;font-size:12px;color:var(--ink);margin-right:4px}
+
+</style>
+</head>
+<body>
+<div class="c sheet" style="position: relative; width: 1920px; background: #2A1C13">
+<div class="sheet-in">
+<div class="sh-h"><h1>PANELLER · MASA KÂĞITLARI</h1><span class="r">SON ŞALTER · BASKIN · PANEL SAYFASI</span></div>
+<p class="sh-p">Tahtanın çevresindeki uGUI parçaları; hepsi 9 dilimli sprite ya da düz şekil + TextMeshPro. Ölçüler 1920×1080 referansında px. C1–C5'in malzemeleri: dizin kartı, krem form, teleks rulosu, ozalit fişi, mürekkep damgası, tuş fişi.</p>
+<section class="ps">
+<div class="ps-h"><span class="cap">A · EKİP KARTI</span><span class="ln"></span><span class="ps-n">Dizin kartı (C1 HEDEF kartıyla aynı malzeme). 1–3 tuşları ya da tıklama seçer; durum = mürekkep rengi + simge + kelime.</span></div>
+<div class="pv-row"><figure class="pv-f">
+<div class="pvx" style="width: 376px; height: 140px"><section class="tcard" data-m="team-T" style="left: 0px; top: 0px; width: 376px; height: 140px" aria-label="Teknisyen, can 3/3">
+<div class="tc-h"><span class="key">1</span><span class="tok " aria-hidden="true"><span>T</span></span><span class="tc-n">TEKNİSYEN</span><span class="stamp sm s-blue" style="transform: rotate(-2deg)"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v12M2 8h12M8 2L6.2 3.8M8 2l1.8 1.8M8 14l-1.8-1.8M8 14l1.8-1.8M2 8l1.8-1.8M2 8l1.8 1.8M14 8l-1.8-1.8M14 8l-1.8 1.8"></path></svg>HAREKET + YETENEK</span></div>
+<div class="tc-l"><span class="lb">Can</span><span class="hpp" aria-hidden="true"><i></i><i></i><i></i></span><span class="tw">3/3</span><span class="sep">·</span><span class="lb">Hareket</span><span class="tw">3 kare</span></div>
+<div class="tc-l"><b>Sabotaj</b><span class="key">Q</span><span class="lb">bitişik kare</span></div>
+<div class="tc-l d">Dolaba 2 hasar; robota 1 hasar ve 1 kare itme.</div>
+<div class="tc-l d"></div>
+</section></div>
+<figcaption><b>HAREKET + YETENEK</b><div class="pv-sp">Tur başı. Mavi damga + hareket ve yetenek simgesi.</div></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 376px; height: 140px"><section class="tcard" data-m="team-T" style="left: 0px; top: 0px; width: 376px; height: 140px" aria-label="Teknisyen, can 3/3">
+<div class="tc-h"><span class="key">1</span><span class="tok " aria-hidden="true"><span>T</span></span><span class="tc-n">TEKNİSYEN</span><span class="stamp sm s-blue" style="transform: rotate(2deg)"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M9.2 1.6L3.8 9h4l-1 5.4L12.2 7h-4z"></path></svg>YETENEK</span></div>
+<div class="tc-l"><span class="lb">Can</span><span class="hpp" aria-hidden="true"><i></i><i></i><i></i></span><span class="tw">3/3</span><span class="sep">·</span><span class="lb">Hareket</span><span class="tw">3 kare</span></div>
+<div class="tc-l"><b>Sabotaj</b><span class="key">Q</span><span class="lb">bitişik kare</span></div>
+<div class="tc-l d">Dolaba 2 hasar; robota 1 hasar ve 1 kare itme.</div>
+<div class="tc-l d"></div>
+</section></div>
+<figcaption><b>YETENEK</b><div class="pv-sp">Hareket etti, yeteneği duruyor.</div></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 376px; height: 140px"><section class="tcard done" data-m="team-T" style="left: 0px; top: 0px; width: 376px; height: 140px" aria-label="Teknisyen, can 2/3">
+<div class="tc-h"><span class="key">1</span><span class="tok kraft" aria-hidden="true"><span>T</span></span><span class="tc-n">TEKNİSYEN</span><span class="stamp sm s-ink" style="transform: rotate(-3deg)"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"></circle><path d="M5.2 8.2l2 2 3.8-4.2"></path></svg>TUR BİTTİ</span></div>
+<div class="tc-l"><span class="lb">Can</span><span class="hpp" aria-hidden="true"><i></i><i></i><i class="o"></i></span><span class="tw">2/3</span><span class="sep">·</span><span class="lb">Hareket</span><span class="tw">3 kare</span></div>
+<div class="tc-l"><b>Sabotaj</b><span class="key">Q</span><span class="lb">bitişik kare</span></div>
+<div class="tc-l d">Dolaba 2 hasar; robota 1 hasar ve 1 kare itme.</div>
+<div class="tc-l d"></div>
+</section></div>
+<figcaption><b>TUR BİTTİ</b><div class="pv-sp">Kart kraft tonuna döner (#EEE6D3); jeton kraft.</div></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 376px; height: 140px"><section class="tcard down" data-m="team-T" style="left: 0px; top: 0px; width: 376px; height: 140px" aria-label="Teknisyen, can 0/3">
+<div class="tc-h"><span class="key">1</span><span class="tok red" aria-hidden="true"><span>T</span></span><span class="tc-n">TEKNİSYEN</span><span class="stamp sm s-red" style="transform: rotate(-4deg)"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"></path></svg>DÜŞTÜ</span></div>
+<div class="tc-l"><span class="lb">Can</span><span class="hpp" aria-hidden="true"><i class="o"></i><i class="o"></i><i class="o"></i></span><span class="tw">0/3</span><span class="sep">·</span><span class="lb">Hareket</span><span class="tw">3 kare</span></div>
+<div class="tc-l"><b>Sabotaj</b><span class="key">Q</span><span class="lb">bitişik kare</span></div>
+<div class="tc-l d">Dolaba 2 hasar; robota 1 hasar ve 1 kare itme.</div>
+<div class="tc-l d"></div><span class="stamp s-red over">DÜŞTÜ</span>
+</section></div>
+<figcaption><b>DÜŞTÜ</b><div class="pv-sp">Kırmızı damga kartın üstüne basılır; çizgiler soluk.</div></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 376px; height: 150px"><section class="tcard sel" data-m="team-A" style="left: 0px; top: 0px; width: 376px; height: 140px" aria-label="Analist, can 2/2">
+<div class="tc-h"><span class="key">3</span><span class="tok " aria-hidden="true"><span>A</span></span><span class="tc-n hl">ANALİST</span><span class="stamp sm s-blue" style="transform: rotate(-2deg)"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v12M2 8h12M8 2L6.2 3.8M8 2l1.8 1.8M8 14l-1.8-1.8M8 14l1.8-1.8M2 8l1.8-1.8M2 8l1.8 1.8M14 8l-1.8-1.8M14 8l-1.8 1.8"></path></svg>HAREKET + YETENEK</span></div>
+<div class="tc-l"><span class="lb">Can</span><span class="hpp" aria-hidden="true"><i></i><i></i></span><span class="tw">2/2</span><span class="sep">·</span><span class="lb">Hareket</span><span class="tw">4 kare</span></div>
+<div class="tc-l"><b>Kanca</b><span class="key">Q</span><span class="lb">düz hat, 5 kare</span></div>
+<div class="tc-l d">Robotu 1 kare çeker; duvarda ya da dolapta yanına atılır.</div>
+<div class="tc-l d"><b>Tarama</b> · 3 kare çevresindeki niyetler kesinleşir.</div>
+</section></div>
+<figcaption><b>SEÇİLİ</b><div class="pv-sp">Kart 5 px kalkar; 2 px mürekkep kenar, gölge 5/8 px, ad sarı kalemle (#F5D646).</div></figcaption>
+</figure><figure class="pv-f"><div class="ls" style="width: 376px"><div><b>ÖLÇÜLER</b></div><div>Kart 376 × 140 · başlık 33 px (kırmızı çizgi 33–35) · satır 22 px (mavi çizgi her 22 px) · iç boşluk 14 px · tuş fişi 18 px · jeton 22 px · damga 11 px Libre Franklin 800 · gölge S3 (3,4) α .40. Kısayol 1–3; Q yetenek.</div></div></figure></div>
+</section><section class="ps">
+<div class="ps-h"><span class="cap">B · HEDEF FORMU</span><span class="ln"></span><span class="ps-n">Kalan hedef dolaplar ve canları, kırılan sivil sunucu, kalan tur ve AYNA'nın bu binadaki yetenekleri.</span></div>
+<div class="pv-row"><figure class="pv-f">
+<div class="pvx" style="width: 376px; height: 262px"><section class="tform" data-m="target-form" style="left: 0px; top: 0px; width: 376px" aria-label="Hedef formu">
+<div class="tf-h"><span class="t">HEDEF FORMU</span><span class="r">FORM B-7 · KYGA</span></div>
+<p class="tf-k">Kazanmak için bütün hedef dolapları kır.</p>
+<div class="tf-r" data-m="tf-node"><svg class="ico ic" viewBox="0 0 16 16" style="color: #9A1E14" aria-hidden="true"><circle cx="8" cy="8" r="5"></circle><path d="M8 1v3M8 12v3M1 8h3M12 8h3"></path></svg><span class="nm">YZ düğüm dolabı</span><span class="stamp sm s-ink" style="gap: 3px; transform: rotate(-2deg)"><svg class="ico" viewBox="0 0 16 16" style="width: 11px; height: 11px" aria-hidden="true"><path d="M8 1.8l5 1.9v3.7c0 3-2.1 5.1-5 6.3-2.9-1.2-5-3.3-5-6.3V3.7z"></path></svg>ZIRHLI</span><span class="r"><span class="tf-pp" aria-hidden="true"><i></i><i></i><i></i><i class="o"></i></span><span class="v">3/4</span><span class="u">can</span></span></div><div class="tf-r" data-m="tf-backup"><svg class="ico ic" viewBox="0 0 16 16" style="color: #9A1E14" aria-hidden="true"><circle cx="8" cy="8" r="5"></circle><path d="M8 1v3M8 12v3M1 8h3M12 8h3"></path></svg><span class="nm">Yedek çekirdek</span><span class="r"><span class="tf-pp" aria-hidden="true"><i></i><i class="o"></i></span><span class="v">1/2</span><span class="u">can</span></span></div>
+<div class="tf-sep"></div>
+<div class="tf-r" data-m="tf-civil"><svg class="ico ic" viewBox="0 0 16 16" style="color: #1A4789" aria-hidden="true"><circle cx="8" cy="8" r="6"></circle><path d="M5 8h6M8 5v6"></path></svg><span class="nm">Kırılan sivil sunucu</span><span class="r"><span class="tally" aria-hidden="true"><i></i><i></i><i></i></span><span class="v" style="color: #1E1B16">0</span><span class="u">/ 3</span><span style="font-size: 11px; color: #24592E; display: inline-flex; align-items: center; gap: 3px"><svg class="ico" viewBox="0 0 16 16" style="width: 12px; height: 12px" aria-hidden="true"><circle cx="8" cy="8" r="6"></circle><path d="M5.2 8.2l2 2 3.8-4.2"></path></svg>temiz</span></span></div>
+<div class="tf-r" data-m="tf-turns"><svg class="ico ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 14.5V2M3.5 2.8h8.5l-2.2 3.1 2.2 3.1H3.5"></path></svg><span class="nm">Kalan tur</span><span class="r"><span class="v">4</span><span class="u">bu tur dahil</span><span class="u">· Tur 3/6</span></span></div>
+<div class="tf-sep"></div>
+<div class="ai-ab" data-m="tf-ai"><span class="cap">AYNA'NIN BU BİNADAKİ YETENEKLERİ</span><div class="ab"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2" width="8" height="8"></rect><rect x="6" y="6" width="8" height="8"></rect></svg><b>Yedekleme:</b>yedek çekirdek de kırılmalı.</div></div>
+</section></div>
+<figcaption><b>NORMAL · TUR 3/6</b><div class="pv-sp">Hedef satırı 30 px · kırmızı kutucuk 10 px · sayı Courier 15.</div></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 376px; height: 262px"><section class="tform" data-m="target-form" style="left: 0px; top: 0px; width: 376px" aria-label="Hedef formu">
+<div class="tf-h"><span class="t">HEDEF FORMU</span><span class="r">FORM B-7 · KYGA</span></div>
+<p class="tf-k">Kazanmak için bütün hedef dolapları kır.</p>
+<div class="tf-r" data-m="tf-node"><svg class="ico ic" viewBox="0 0 16 16" style="color: #9A1E14" aria-hidden="true"><circle cx="8" cy="8" r="5"></circle><path d="M8 1v3M8 12v3M1 8h3M12 8h3"></path></svg><span class="nm">YZ düğüm dolabı</span><span class="stamp sm s-ink" style="gap: 3px; transform: rotate(-2deg)"><svg class="ico" viewBox="0 0 16 16" style="width: 11px; height: 11px" aria-hidden="true"><path d="M8 1.8l5 1.9v3.7c0 3-2.1 5.1-5 6.3-2.9-1.2-5-3.3-5-6.3V3.7z"></path></svg>ZIRHLI</span><span class="r"><span class="tf-pp" aria-hidden="true"><i></i><i></i><i class="o"></i><i class="o"></i></span><span class="v">2/4</span><span class="u">can</span></span></div><div class="tf-r broken" data-m="tf-backup"><svg class="ico ic" viewBox="0 0 16 16" style="color: #9A1E14" aria-hidden="true"><circle cx="8" cy="8" r="5"></circle><path d="M8 1v3M8 12v3M1 8h3M12 8h3"></path></svg><span class="nm">Yedek çekirdek</span><span class="r"><span class="stamp sm s-green" style="transform: rotate(-3deg)">KIRILDI</span><span class="v">0/2</span></span></div>
+<div class="tf-sep"></div>
+<div class="tf-r" data-m="tf-civil"><svg class="ico ic" viewBox="0 0 16 16" style="color: #1A4789" aria-hidden="true"><circle cx="8" cy="8" r="6"></circle><path d="M5 8h6M8 5v6"></path></svg><span class="nm">Kırılan sivil sunucu</span><span class="r"><span class="tally" aria-hidden="true"><i class="x"></i><i></i><i></i></span><span class="v" style="color: #9A1E14">1</span><span class="u">/ 3</span><span class="stamp sm s-red" style="transform: rotate(-3deg)">YAN HASAR</span></span></div>
+<div class="tf-r" data-m="tf-turns"><svg class="ico ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 14.5V2M3.5 2.8h8.5l-2.2 3.1 2.2 3.1H3.5"></path></svg><span class="nm">Kalan tur</span><span class="r"><span class="v" style="color: #9A1E14">1</span><span class="u" style="color: #9A1E14; font-weight: 700">son tur</span><span class="u">· Tur 6/6</span></span></div>
+<div class="tf-sep"></div>
+<div class="ai-ab" data-m="tf-ai"><span class="cap">AYNA'NIN BU BİNADAKİ YETENEKLERİ</span><div class="ab"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2" width="8" height="8"></rect><rect x="6" y="6" width="8" height="8"></rect></svg><b>Yedekleme:</b>yedek çekirdek de kırılmalı.</div></div>
+</section></div>
+<figcaption><b>SON TUR · YAN HASAR 1</b><div class="pv-sp">Kırılan hedef üstü çizili + KIRILDI; kırılan sivil kırmızı çarpılı kutu + YAN HASAR.</div></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 376px; height: 262px"><section class="tform" data-m="target-form" style="left: 0px; top: 0px; width: 376px" aria-label="Hedef formu">
+<div class="tf-h"><span class="t">HEDEF FORMU</span><span class="r">FORM B-7 · KYGA</span></div>
+<p class="tf-k">Kazanmak için bütün hedef dolapları kır.</p>
+<div class="tf-r" data-m="tf-node"><svg class="ico ic" viewBox="0 0 16 16" style="color: #9A1E14" aria-hidden="true"><circle cx="8" cy="8" r="5"></circle><path d="M8 1v3M8 12v3M1 8h3M12 8h3"></path></svg><span class="nm">YZ düğüm dolabı</span><span class="stamp sm s-ink" style="gap: 3px; transform: rotate(-2deg)"><svg class="ico" viewBox="0 0 16 16" style="width: 11px; height: 11px" aria-hidden="true"><path d="M8 1.8l5 1.9v3.7c0 3-2.1 5.1-5 6.3-2.9-1.2-5-3.3-5-6.3V3.7z"></path></svg>ZIRHLI</span><span class="r"><span class="tf-pp" aria-hidden="true"><i></i><i></i><i class="o"></i><i class="o"></i></span><span class="v">2/4</span><span class="u">can</span></span></div>
+<div class="tf-sep"></div>
+<div class="tf-r" data-m="tf-civil"><svg class="ico ic" viewBox="0 0 16 16" style="color: #1A4789" aria-hidden="true"><circle cx="8" cy="8" r="6"></circle><path d="M5 8h6M8 5v6"></path></svg><span class="nm">Kırılan sivil sunucu</span><span class="r"><span class="tally" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="v" style="color: #1E1B16">0</span><span class="u">/ 4</span><span style="font-size: 11px; color: #24592E; display: inline-flex; align-items: center; gap: 3px"><svg class="ico" viewBox="0 0 16 16" style="width: 12px; height: 12px" aria-hidden="true"><circle cx="8" cy="8" r="6"></circle><path d="M5.2 8.2l2 2 3.8-4.2"></path></svg>temiz</span></span></div>
+<div class="tf-r" data-m="tf-turns"><svg class="ico ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 14.5V2M3.5 2.8h8.5l-2.2 3.1 2.2 3.1H3.5"></path></svg><span class="nm">Kalan tur</span><span class="r"><span class="v">3</span><span class="u">bu tur dahil</span><span class="u">· Tur 4/6</span></span></div>
+<div class="tf-sep"></div>
+<div class="ai-ab" data-m="tf-ai"><span class="cap">AYNA'NIN BU BİNADAKİ YETENEKLERİ</span><div class="ab"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 8s2.4-4.4 6.5-4.4S14.5 8 14.5 8 12.1 12.4 8 12.4 1.5 8 1.5 8z"></path><circle cx="8" cy="8" r="2"></circle></svg><b>Aldatma:</b>bazı oklar yalan; Analist 3 karede kesinleştirir.</div><div class="ab"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2" width="8" height="8"></rect><rect x="6" y="6" width="8" height="8"></rect></svg><b>Kendini Kopyalama:</b>her tur 2 robot uyanır.</div></div>
+</section></div>
+<figcaption><b>ALDATMA + KENDİNİ KOPYALAMA</b><div class="pv-sp">Yedekleme yoksa tek hedef; AYNA yetenekleri kırmızı simge + kelime.</div></figcaption>
+</figure><figure class="pv-f"><div class="ls" style="width: 376px"><div><b>ÖLÇÜLER</b></div><div>Form 376 × 262 · kâğıt #F1E9D6, kenar #C8B996 · başlık çift çizgi 3 px · iç boşluk 14/11 px · gölge S3. Sağ sütunun üstüne yaslanır.</div></div></figure></div>
+</section><section class="ps">
+<div class="ps-h"><span class="cap">C · OPERASYON GÜNLÜĞÜ</span><span class="ln"></span><span class="ps-n">Teleks rulosu; YZ'nin sözleri masadaki ele geçirilmiş YZ günlüğünün diliyle (C3).</span></div>
+<div class="pv-row"><figure class="pv-f">
+<div class="pvx" style="width: 376px; height: 460px"><section class="olog" data-m="oplog" style="left: 0px; top: 0px; width: 376px; height: 460px" aria-label="Operasyon günlüğü">
+<div class="ol-hd"><span class="lamp on"></span>OPERASYON GÜNLÜĞÜ<span class="r">teleks · T3</span></div>
+<div class="ol-pp"><div class="ol-in"><div class="ln sep">Tur 2: makineler hareket ediyor</div><div class="ln good"><svg class="ico g" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"></circle><path d="M5.2 8.2l2 2 3.8-4.2"></path></svg><span>Bakım robotu devre dışı (sabotaj).</span></div><div class="ln bad"><svg class="ico g" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"></path></svg><span>Sivil sunucu kırıldı: hastane ve banka hizmetleri kesildi.</span></div><div class="ln sys"><svg class="ico g" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h10.5M9 4.5L12.5 8 9 11.5"></path></svg><span>Yeni bir güvenlik dronu uyandı.</span></div><div class="ln bad"><svg class="ico g" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"></path></svg><span class="n">1</span><span>Güvenlik dronu ateş etti: Teknisyen −1 (2/3).</span></div><div class="ln ai"><span class="who">AYNA · ELE GEÇİRİLEN SATIR</span>&gt; Makinelerimin ne yapacağını gösterdiğimi mi sanıyorsun?</div><div class="ln sep">Tur 3 · sıra sende</div><div class="ln bad typing"><svg class="ico g" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"></path></svg><span class="n">3</span><span>Güvenlik dronu kuzeye ateş ediyor: EMP uzmanı</span></div></div><div class="ol-tear"></div></div>
+</section></div>
+<figcaption><b>OPERASYON GÜNLÜĞÜ</b></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 560px; height: 460px"><div class="ls"><div><b>Tur ayracı</b> Courier 12 bold, iki yanda 1 px çizgi.</div><div><b>İyi</b> yeşil ✓ simgesi + mürekkep metin.</div><div><b>Kötü</b> kırmızı ✗ + kırmızı metin.</div><div><b>Sistem</b> gri → + koyu gri metin.</div><div><b>Sıra no.</b> robot satırlarında Courier 12, gri.</div><div><b>YZ satırı</b> ele geçirilmiş günlük şeridi: #F1D8CF zemin, 3 px #A7685B sol kenar, Courier 13 bold kırmızı, “AYNA · ELE GEÇİRİLEN SATIR” başlığı.</div><div><b>Akış</b> en yeni satır altta; kâğıt yukarı kayar (26 px/sn, C teleksiyle aynı). Yazılırken satır sonunda imleç.</div><div><b>Kâğıt</b> teleks rulosu #EFE4BC, iki yanda delik sırası (18 px aralık) ve kesik kenar çizgisi.</div></div></div>
+<figcaption><b>SATIR TÜRLERİ</b></figcaption>
+</figure></div>
+</section><section class="ps">
+<div class="ps-h"><span class="cap">D · BİLGİ SATIRI</span><span class="ln"></span><span class="ps-n">Ne yapılabileceğini ya da üstüne gelinen şeyi anlatır. Tahtanın altında, ahşap şeritte.</span></div>
+<div class="pv-row"><figure class="pv-f">
+<div class="pvx" style="width: 854px; height: 44px"><div class="info" data-m="info" style="left: 0px; top: 0px; width: 854px; height: 44px" role="status">
+<div class="inf-l"><svg class="ico" viewBox="0 0 16 16" style="width: 13px; height: 13px" aria-hidden="true"><path d="M1.5 8s2.4-4.4 6.5-4.4S14.5 8 14.5 8 12.1 12.4 8 12.4 1.5 8 1.5 8z"></path><circle cx="8" cy="8" r="2"></circle></svg>BİLGİ</div>
+<div class="inf-b"><svg class="ico" viewBox="0 0 16 16" style="width: 16px; height: 16px; color: #1A4789" aria-hidden="true"><path d="M5 8.5V3.6a1.1 1.1 0 0 1 2.2 0V7.5M7.2 7V2.6a1.1 1.1 0 0 1 2.2 0V7M9.4 7V3.5a1.1 1.1 0 0 1 2.2 0V9c0 3-1.7 5.3-4.6 5.3-2 0-3.1-1-4.1-2.6L1.7 9.6a1.1 1.1 0 0 1 1.8-1.2L5 10"></path></svg><span class="it"><b>Sıra sende.</b> Bir birim seç: <span class="key">1</span>–<span class="key">3</span> ya da tahtada tıkla. <span class="m">Kırmızı oklar robotların bu turdaki hamleleri, bayraktaki sayı sıraları.</span></span></div>
+</div></div>
+<figcaption><b>Tur başı</b></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 854px; height: 44px"><div class="info" data-m="info" style="left: 0px; top: 0px; width: 854px; height: 44px" role="status">
+<div class="inf-l"><svg class="ico" viewBox="0 0 16 16" style="width: 13px; height: 13px" aria-hidden="true"><path d="M1.5 8s2.4-4.4 6.5-4.4S14.5 8 14.5 8 12.1 12.4 8 12.4 1.5 8 1.5 8z"></path><circle cx="8" cy="8" r="2"></circle></svg>BİLGİ</div>
+<div class="inf-b"><span class="tok" aria-hidden="true"><span>T</span></span><span class="it"><b>Teknisyen seçili.</b> Mavi kareye taşı ya da hedefe yeteneğini kullan (<span class="key">Q</span>: yetenek).</span></div>
+</div></div>
+<figcaption><b>Birim seçili</b></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 854px; height: 44px"><div class="info" data-m="info" style="left: 0px; top: 0px; width: 854px; height: 44px" role="status">
+<div class="inf-l"><svg class="ico" viewBox="0 0 16 16" style="width: 13px; height: 13px" aria-hidden="true"><path d="M1.5 8s2.4-4.4 6.5-4.4S14.5 8 14.5 8 12.1 12.4 8 12.4 1.5 8 1.5 8z"></path><circle cx="8" cy="8" r="2"></circle></svg>BİLGİ</div>
+<div class="inf-b"><span class="tok" aria-hidden="true"><span>E</span></span><span class="it"><b>EMP atışı → YZ düğüm dolabı:</b> zırh, hasar işlemez. Bakım robotu kuzeye itilir; dron güneye itilip bakım robotuna çarpar, ikisi de <b class="tw" style="color: #9A1E14">−1</b>.</span></div>
+</div></div>
+<figcaption><b>Önizleme (2 satıra kadar)</b></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 854px; height: 44px"><div class="info" data-m="info" style="left: 0px; top: 0px; width: 854px; height: 44px" role="status">
+<div class="inf-l"><svg class="ico" viewBox="0 0 16 16" style="width: 13px; height: 13px" aria-hidden="true"><path d="M1.5 8s2.4-4.4 6.5-4.4S14.5 8 14.5 8 12.1 12.4 8 12.4 1.5 8 1.5 8z"></path><circle cx="8" cy="8" r="2"></circle></svg>BİLGİ</div>
+<div class="inf-b"><svg class="rk" viewBox="0 0 22 22" aria-hidden="true"><ellipse cx="11" cy="17" rx="7" ry="3" fill="#1E1B16"></ellipse><path d="M11 15V9" stroke="#9FB0B6" stroke-width="1.6"></path><ellipse cx="11" cy="8" rx="7.5" ry="3" fill="#46494D" stroke="#1C1D1F"></ellipse><circle cx="9" cy="9.4" r="1.6" fill="#B8241A"></circle></svg><span class="it"><b>Güvenlik dronu · 2/2 can · sıra 2:</b> doğuya ateş edecek (1 hasar). <span class="sus"><svg viewBox="0 0 20 18" aria-hidden="true"><path d="M4.6 15C1.7 13.2 1.2 7.6 4.3 4.6 7.7 1.2 14.4 1.3 17.2 4.4c2.8 3.1 1.9 8.5-1.6 10.2-3 1.4-7.4 1.4-10.2-.2" fill="none" stroke="#A9520A" stroke-width="1.7" stroke-linecap="round"></path><text x="10" y="13.6" text-anchor="middle" font-family="Kalam, cursive" font-weight="700" font-size="12" fill="#854005">?</text></svg></span> Bu niyet yalan olabilir; Analisti 3 kare yaklaştır.</span></div>
+</div></div>
+<figcaption><b>Üstüne gelinen robot · yalan olabilir</b></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 854px; height: 44px"><div class="info" data-m="info" style="left: 0px; top: 0px; width: 854px; height: 44px" role="status">
+<div class="inf-l"><svg class="ico" viewBox="0 0 16 16" style="width: 13px; height: 13px" aria-hidden="true"><path d="M1.5 8s2.4-4.4 6.5-4.4S14.5 8 14.5 8 12.1 12.4 8 12.4 1.5 8 1.5 8z"></path><circle cx="8" cy="8" r="2"></circle></svg>BİLGİ</div>
+<div class="inf-b"><svg class="ico" viewBox="0 0 16 16" style="width: 16px; height: 16px; color: #9A1E14" aria-hidden="true"><rect x="3" y="5.5" width="10" height="7.5" rx="1.5"></rect><path d="M8 5.5V3M6.2 9.2h.01M9.8 9.2h.01M1.5 8.5v2M14.5 8.5v2"></path></svg><span class="it"><b>Makineler hareket ediyor · sıra 3/6:</b> güvenlik dronu kuzeye ateş ediyor → EMP uzmanı <b class="tw" style="color: #9A1E14">−1</b>. <span class="m">Girdi kilitli; sıra sana dönünce düğmeler açılır.</span></span></div>
+</div></div>
+<figcaption><b>Makineler hareket ediyor</b></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 854px; height: 44px"><div class="info" data-m="info" style="left: 0px; top: 0px; width: 854px; height: 44px" role="status">
+<div class="inf-l"><svg class="ico" viewBox="0 0 16 16" style="width: 13px; height: 13px" aria-hidden="true"><path d="M1.5 8s2.4-4.4 6.5-4.4S14.5 8 14.5 8 12.1 12.4 8 12.4 1.5 8 1.5 8z"></path><circle cx="8" cy="8" r="2"></circle></svg>BİLGİ</div>
+<div class="inf-b"><svg class="ico" viewBox="0 0 16 16" style="width: 16px; height: 16px; color: #9A1E14" aria-hidden="true"><path d="M3.5 14.5V2M3.5 2.8h8.5l-2.2 3.1 2.2 3.1H3.5"></path></svg><span class="it"><b>Geri çekilme:</b> emin misin? Tekrar basarsan ekip binadan çıkar ve operasyon başarısız sayılır.</span></div>
+</div></div>
+<figcaption><b>Geri çekilme onayı</b></figcaption>
+</figure><figure class="pv-f"><div class="ls" style="width: 860px"><div><b>ÖLÇÜLER</b></div><div>Şerit 854 × 44 · etiket plakası #0E0906 + pirinç yazı · metin Libre Franklin 14, en çok 2 satır (TMP: Overflow = Ellipsis değil, satır kaydır; EN için 2. satır payı) · baştaki simge 16 px (seçili birimin jetonu ya da üstüne gelinen şeyin simgesi).</div></div></figure></div>
+</section><section class="ps">
+<div class="ps-h"><span class="cap">E · DÜĞMELER VE TUŞ FİŞLERİ</span><span class="ln"></span><span class="ps-n">Birincil düğme mürekkep, ikincil kâğıt, üçüncül bağlantı. Kısayollar masadaki tuş fişiyle.</span></div>
+<div class="pv-row"><figure class="pv-f bt-f"><div class="pv-b"><button class="bt btL" type="button" style="width: 112px"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 5.5h5a3.2 3.2 0 0 1 0 6.4H7.2M5.5 5.5l2.6-2.6M5.5 5.5l2.6 2.6"></path></svg>Geri al<span class="key">Z</span></button></div><figcaption><b>Geri al · normal</b></figcaption></figure><figure class="pv-f bt-f"><div class="pv-b"><button class="bt btL off" type="button" style="width: 112px" aria-disabled="true"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="7.2" width="9" height="6.6" rx="1"></rect><path d="M5.5 7.2V5.3a2.5 2.5 0 0 1 5 0v1.9"></path></svg>Geri al<span class="key">Z</span></button></div><figcaption><b>Geri al · kilitli</b></figcaption></figure><figure class="pv-f bt-f"><div class="pv-b"><button class="bt btL" type="button" style="width: 120px"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M9.2 1.6L3.8 9h4l-1 5.4L12.2 7h-4z"></path></svg>Yetenek<span class="key">Q</span></button></div><figcaption><b>Yetenek · normal</b></figcaption></figure><figure class="pv-f bt-f"><div class="pv-b"><button class="bt btL act" type="button" style="width: 120px" aria-pressed="true"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M9.2 1.6L3.8 9h4l-1 5.4L12.2 7h-4z"></path></svg>Yetenek<span class="key">Q</span></button></div><figcaption><b>Yetenek · nişan modunda</b></figcaption></figure><figure class="pv-f bt-f"><div class="pv-b"><button class="bt btL off" type="button" style="width: 120px" aria-disabled="true"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="7.2" width="9" height="6.6" rx="1"></rect><path d="M5.5 7.2V5.3a2.5 2.5 0 0 1 5 0v1.9"></path></svg>Yetenek<span class="key">Q</span></button></div><figcaption><b>Yetenek · kilitli</b></figcaption></figure><figure class="pv-f bt-f"><div class="pv-b"><button class="bt btL prim ink" type="button" style="width: 376px"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M12.6 3.4v5.8H3.8M3.8 9.2l2.8-2.8M3.8 9.2l2.8 2.8"></path></svg>Turu bitir<span class="key">Enter</span></button></div><figcaption><b>Turu bitir · birincil</b></figcaption></figure><figure class="pv-f bt-f"><div class="pv-b"><button class="bt btL prim ink off" type="button" style="width: 376px" aria-disabled="true"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="7.2" width="9" height="6.6" rx="1"></rect><path d="M5.5 7.2V5.3a2.5 2.5 0 0 1 5 0v1.9"></path></svg>Turu bitir<span class="key">Enter</span></button></div><figcaption><b>Turu bitir · kilitli</b></figcaption></figure><figure class="pv-f bt-f"><div class="pv-b"><button class="bt btL retreat" type="button" style="width: 150px"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 14.5V2M3.5 2.8h8.5l-2.2 3.1 2.2 3.1H3.5"></path></svg>Geri çekil</button></div><figcaption><b>Geri çekil · normal</b></figcaption></figure><figure class="pv-f bt-f"><div class="pv-b"><button class="bt btL retreat armed" type="button" style="width: 236px"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 14.5V2M3.5 2.8h8.5l-2.2 3.1 2.2 3.1H3.5"></path></svg>Emin misin? Tekrar bas</button></div><figcaption><b>Geri çekil · 1. basıştan sonra</b></figcaption></figure><figure class="pv-f bt-f"><div class="pv-b"><button class="bt btL retreat off" type="button" style="width: 150px" aria-disabled="true"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="7.2" width="9" height="6.6" rx="1"></rect><path d="M5.5 7.2V5.3a2.5 2.5 0 0 1 5 0v1.9"></path></svg>Geri çekil</button></div><figcaption><b>Geri çekil · operasyon bitti</b></figcaption></figure><figure class="pv-f bt-f"><div class="pv-b"><button class="bt link" type="button">Katla</button></div><figcaption><b>Üçüncül · bağlantı</b></figcaption></figure><figure class="pv-f bt-f"><div class="pv-b"><span class="key">1</span> <span class="key">2</span> <span class="key">3</span> <span class="key">Q</span> <span class="key">Z</span> <span class="key">Enter</span> <span class="key">Esc</span> </div><figcaption><b>Tuş fişleri</b></figcaption></figure><figure class="pv-f"><div class="ls" style="width: 860px"><div><b>ÖLÇÜLER</b></div><div>Birincil: mürekkep #1E1B16, 48 px, Libre Franklin 16/700 · ikincil: kâğıt #F1E9D6, 44 px, 1 px #463F34 kenar + 2 px alt kenar · kilitli: #D9D0BE + kilit simgesi · nişan modunda: 2 px kenar, 2 px aşağı · Geri çekil: kırmızı mürekkep; 1. basışta kırmızı dolgu (#9A1E14), ikinci basış geri çeker.</div></div></figure></div>
+</section><section class="ps">
+<div class="ps-h"><span class="cap">F · ÜST RAY</span><span class="ln"></span><span class="ps-n">Başlık, tur sayacı ve evre. Son turda kırmızı SON TUR damgası.</span></div>
+<div class="pv-row"><figure class="pv-f">
+<div class="pvx" style="width: 1824px; height: 48px"><header class="rail raidrail" data-m="rail">
+<div class="rl">
+<div class="plaque" data-m="rail-plaque"><span class="pl-t">SON ŞALTER</span><span class="pl-s">KYGA · BASKIN</span></div>
+<div class="ttl" data-m="rail-title"><b>SAHA OPERASYONU · BATI AVRUPA · ANA SUNUCU SALONU</b></div>
+</div>
+<div class="rc">
+<div class="cal" data-m="rail-turn" aria-label="Tur 3/6"><span class="cal-h">TUR</span><span class="cal-n">3/6</span></div>
+<div class="turns" data-m="rail-turnboxes"><span class="tb past">1</span><span class="tb past">2</span><span class="tb now">3</span><span class="tb">4</span><span class="tb">5</span><span class="tb last">6</span><span class="tb-l">kalan <b>4</b> tur</span></div>
+<div class="phase you" data-m="rail-phase"><span class="lamp on"></span><svg class="ico" viewBox="0 0 16 16" style="width: 15px; height: 15px; color: #1A4789" aria-hidden="true"><path d="M5 8.5V3.6a1.1 1.1 0 0 1 2.2 0V7.5M7.2 7V2.6a1.1 1.1 0 0 1 2.2 0V7M9.4 7V3.5a1.1 1.1 0 0 1 2.2 0V9c0 3-1.7 5.3-4.6 5.3-2 0-3.1-1-4.1-2.6L1.7 9.6a1.1 1.1 0 0 1 1.8-1.2L5 10"></path></svg><b>SIRA SENDE</b></div>
+</div>
+<div class="rr">
+<span class="plabel" data-m="rail-ai"><span class="stamp sm s-red" style="transform: rotate(-3deg)">RAKİP YZ</span><b>AYNA</b></span>
+<button class="tk" type="button" aria-label="Ayarlar"><svg class="ico" viewBox="0 0 16 16" style="width: 14px; height: 14px" aria-hidden="true"><circle cx="8" cy="8" r="2.3"></circle><path d="M8 1.8v2M8 12.2v2M1.8 8h2M12.2 8h2M3.6 3.6l1.4 1.4M11 11l1.4 1.4M3.6 12.4L5 11M11 5l1.4-1.4"></path></svg></button>
+<span class="key" style="background: #F1E9D6">Esc</span>
+</div>
+</header></div>
+<figcaption><b>Tur 3/6 · sıra sende</b></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 1824px; height: 48px"><header class="rail raidrail" data-m="rail">
+<div class="rl">
+<div class="plaque" data-m="rail-plaque"><span class="pl-t">SON ŞALTER</span><span class="pl-s">KYGA · BASKIN</span></div>
+<div class="ttl" data-m="rail-title"><b>SAHA OPERASYONU · BATI AVRUPA · ANA SUNUCU SALONU</b></div>
+</div>
+<div class="rc">
+<div class="cal" data-m="rail-turn" aria-label="Tur 3/6"><span class="cal-h">TUR</span><span class="cal-n">3/6</span></div>
+<div class="turns" data-m="rail-turnboxes"><span class="tb past">1</span><span class="tb past">2</span><span class="tb now">3</span><span class="tb">4</span><span class="tb">5</span><span class="tb last">6</span><span class="tb-l">kalan <b>4</b> tur</span></div>
+<div class="phase ai" data-m="rail-phase"><span class="lamp red"></span><svg class="ico" viewBox="0 0 16 16" style="width: 15px; height: 15px; color: #9A1E14" aria-hidden="true"><rect x="3" y="5.5" width="10" height="7.5" rx="1.5"></rect><path d="M8 5.5V3M6.2 9.2h.01M9.8 9.2h.01M1.5 8.5v2M14.5 8.5v2"></path></svg><b>MAKİNELER HAREKET EDİYOR</b><small>girdi kilitli</small></div>
+</div>
+<div class="rr">
+<span class="plabel" data-m="rail-ai"><span class="stamp sm s-red" style="transform: rotate(-3deg)">RAKİP YZ</span><b>AYNA</b></span>
+<button class="tk" type="button" aria-label="Ayarlar"><svg class="ico" viewBox="0 0 16 16" style="width: 14px; height: 14px" aria-hidden="true"><circle cx="8" cy="8" r="2.3"></circle><path d="M8 1.8v2M8 12.2v2M1.8 8h2M12.2 8h2M3.6 3.6l1.4 1.4M11 11l1.4 1.4M3.6 12.4L5 11M11 5l1.4-1.4"></path></svg></button>
+<span class="key" style="background: #F1E9D6">Esc</span>
+</div>
+</header></div>
+<figcaption><b>Makineler hareket ediyor · girdi kilitli</b></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 1824px; height: 48px"><header class="rail raidrail" data-m="rail">
+<div class="rl">
+<div class="plaque" data-m="rail-plaque"><span class="pl-t">SON ŞALTER</span><span class="pl-s">KYGA · BASKIN</span></div>
+<div class="ttl" data-m="rail-title"><b>SAHA OPERASYONU · BATI AVRUPA · ANA SUNUCU SALONU</b></div>
+</div>
+<div class="rc">
+<div class="cal" data-m="rail-turn" aria-label="Tur 6/6"><span class="cal-h">TUR</span><span class="cal-n">6/6</span></div>
+<div class="turns" data-m="rail-turnboxes"><span class="tb past">1</span><span class="tb past">2</span><span class="tb past">3</span><span class="tb past">4</span><span class="tb past">5</span><span class="tb now last">6</span><span class="stamp sm s-red" style="margin-left: 6px; transform: rotate(-3deg)">SON TUR</span></div>
+<div class="phase you" data-m="rail-phase"><span class="lamp on"></span><svg class="ico" viewBox="0 0 16 16" style="width: 15px; height: 15px; color: #1A4789" aria-hidden="true"><path d="M5 8.5V3.6a1.1 1.1 0 0 1 2.2 0V7.5M7.2 7V2.6a1.1 1.1 0 0 1 2.2 0V7M9.4 7V3.5a1.1 1.1 0 0 1 2.2 0V9c0 3-1.7 5.3-4.6 5.3-2 0-3.1-1-4.1-2.6L1.7 9.6a1.1 1.1 0 0 1 1.8-1.2L5 10"></path></svg><b>SIRA SENDE</b></div>
+</div>
+<div class="rr">
+<span class="plabel" data-m="rail-ai"><span class="stamp sm s-red" style="transform: rotate(-3deg)">RAKİP YZ</span><b>AYNA</b></span>
+<button class="tk" type="button" aria-label="Ayarlar"><svg class="ico" viewBox="0 0 16 16" style="width: 14px; height: 14px" aria-hidden="true"><circle cx="8" cy="8" r="2.3"></circle><path d="M8 1.8v2M8 12.2v2M1.8 8h2M12.2 8h2M3.6 3.6l1.4 1.4M11 11l1.4 1.4M3.6 12.4L5 11M11 5l1.4-1.4"></path></svg></button>
+<span class="key" style="background: #F1E9D6">Esc</span>
+</div>
+</header></div>
+<figcaption><b>Son tur</b></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 1824px; height: 48px"><header class="rail raidrail" data-m="rail">
+<div class="rl">
+<div class="plaque" data-m="rail-plaque"><span class="pl-t">SON ŞALTER</span><span class="pl-s">KYGA · BASKIN</span></div>
+<div class="ttl" data-m="rail-title"><b>SAHA OPERASYONU · BATI AVRUPA · ANA SUNUCU SALONU</b></div>
+</div>
+<div class="rc">
+<div class="cal" data-m="rail-turn" aria-label="Tur 6/6"><span class="cal-h">TUR</span><span class="cal-n">6/6</span></div>
+<div class="turns" data-m="rail-turnboxes"><span class="tb past">1</span><span class="tb past">2</span><span class="tb past">3</span><span class="tb past">4</span><span class="tb past">5</span><span class="tb past last">6</span><span class="tb-l"><b>süre doldu</b></span></div>
+<div class="phase" data-m="rail-phase"><span class="lamp"></span><b style="color: #463F34">OPERASYON BİTTİ</b></div>
+</div>
+<div class="rr">
+<span class="plabel" data-m="rail-ai"><span class="stamp sm s-red" style="transform: rotate(-3deg)">RAKİP YZ</span><b>AYNA</b></span>
+<button class="tk" type="button" aria-label="Ayarlar"><svg class="ico" viewBox="0 0 16 16" style="width: 14px; height: 14px" aria-hidden="true"><circle cx="8" cy="8" r="2.3"></circle><path d="M8 1.8v2M8 12.2v2M1.8 8h2M12.2 8h2M3.6 3.6l1.4 1.4M11 11l1.4 1.4M3.6 12.4L5 11M11 5l1.4-1.4"></path></svg></button>
+<span class="key" style="background: #F1E9D6">Esc</span>
+</div>
+</header></div>
+<figcaption><b>Süre doldu</b></figcaption>
+</figure><figure class="pv-f"><div class="ls" style="width: 1824px"><div><b>ÖLÇÜLER</b></div><div>Ray 48 px #160F0A · sol: pirinç plaka + başlık etiketi (Courier 14 bold) · orta: TUR takvimi (C1 GÜN takvimi) + 6 kutu (geçen tur kurşun kalem çarpısı, şimdiki mavi çerçeve, son tur kırmızı) + evre etiketi (lamba + simge + kelime) · sağ: RAKİP YZ etiketi, ayarlar, Esc.</div></div></figure></div>
+</section><section class="ps">
+<div class="ps-h"><span class="cap">G · LEJANT VE KURALLAR KARTI</span><span class="ln"></span><span class="ps-n">Bugünkü ayrı brifing penceresinin yerine: tahtanın yanında katlanabilir kart. İçerik operasyon emrinden kısaltılmış.</span></div>
+<div class="pv-row"><figure class="pv-f">
+<div class="pvx" style="width: 376px; height: 168px"><section class="lgd" data-m="legend" style="left: 0px; top: 0px; width: 376px" aria-label="Lejant">
+<div class="lgd-h"><b>LEJANT</b><span>PLAN B-1 · ÖLÇEK 1:50</span></div>
+<div class="lgd-g"><div class="lg"><svg width="30" height="18" viewBox="0 0 30 18" aria-hidden="true"><path d="M15 1L29 9 15 17 1 9z" fill="#D3DBD6" stroke="#2C4C8E" stroke-opacity=".5" stroke-width=".8"></path><path d="M15 3L25.5 9 15 15 4.5 9z" fill="#1A4789" fill-opacity=".2" stroke="#1A4789" stroke-width="1.6"></path><path d="M10 9.5l6-3.4M13 11.2l6-3.4M16 12.9l4-2.3M8 7.8l4-2.3" stroke="#1A4789" stroke-opacity=".5" stroke-width="1.1"></path></svg><span>Hareket</span></div><div class="lg"><svg width="30" height="18" viewBox="0 0 30 18" aria-hidden="true"><path d="M15 1L29 9 15 17 1 9z" fill="#D3DBD6" stroke="#2C4C8E" stroke-opacity=".5" stroke-width=".8"></path><path d="M15 3L25.5 9 15 15 4.5 9z" fill="#24592E" fill-opacity=".1" stroke="#24592E" stroke-width="2"></path></svg><span>Yetenek hedefi</span></div><div class="lg"><svg width="30" height="18" viewBox="0 0 30 18" aria-hidden="true"><path d="M15 1L29 9 15 17 1 9z" fill="#D3DBD6" stroke="#2C4C8E" stroke-opacity=".5" stroke-width=".8"></path><path d="M15 3L25.5 9 15 15 4.5 9z" fill="#9A1E14" fill-opacity=".14" stroke="#9A1E14" stroke-width="1.8"></path><path d="M10 6.2l6 3.4M13 4.5l6 3.4M8 8l5 2.8M17 6.4l3 1.7" stroke="#9A1E14" stroke-opacity=".6" stroke-width="1.1"></path></svg><span>Robot bu kareyi vuracak</span></div><div class="lg"><svg width="30" height="18" viewBox="0 0 30 18" aria-hidden="true"><path d="M15 1L29 9 15 17 1 9z" fill="#D3DBD6" stroke="#2C4C8E" stroke-opacity=".5" stroke-width=".8"></path><path d="M15 3L25.5 9 15 15 4.5 9z" fill="#9A1E14" fill-opacity=".08" stroke="#A9520A" stroke-width="1.8" stroke-dasharray="3.5 2.2"></path><text x="15" y="12.6" text-anchor="middle" font-family="Kalam, cursive" font-weight="700" font-size="11" fill="#854005">?</text></svg><span>Yalan olabilir</span></div><div class="lg"><svg width="30" height="18" viewBox="0 0 30 18" aria-hidden="true"><path d="M15 1L29 9 15 17 1 9z" fill="#D3DBD6" stroke="#2C4C8E" stroke-opacity=".5" stroke-width=".8"></path><path d="M9 6.4L21.5 13.4 18 15.4 5.5 8.4z" fill="#2A2622" stroke="#1B1815" stroke-width=".8"></path><path d="M7.8 7.8L19.8 14.4" stroke="#B8682C" stroke-width="1.8"></path><path d="M11 4.6l1.2 1.4M14 6.3l1.2 1.4M17 8l1.2 1.4M20 9.7l1.2 1.4" stroke="#A9520A" stroke-width="1.2"></path></svg><span>Elektrikli kanal</span></div><div class="lg"><svg width="30" height="18" viewBox="0 0 30 18" aria-hidden="true"><path d="M15 1L29 9 15 17 1 9z" fill="#D3DBD6" stroke="#2C4C8E" stroke-opacity=".5" stroke-width=".8"></path><ellipse cx="15" cy="9" rx="7.5" ry="4.3" fill="#9A1E14" fill-opacity=".12" stroke="#9A1E14" stroke-width="1.6"></ellipse><path d="M15 9L14.4 4" stroke="#7E7C78" stroke-width="1.2"></path><circle cx="14.3" cy="3.6" r="2.4" fill="#B8241A"></circle></svg><span>Robot uyanacak</span></div><div class="lg"><svg width="30" height="18" viewBox="0 0 30 18" aria-hidden="true"><path d="M2 14L9 6" stroke="#B8241A" stroke-width="1.8"></path><path d="M10.5 4.2l-4.2 1.2 2.4 2.2z" fill="#B8241A"></path><path d="M12 15Q15 6 19 10" fill="none" stroke="#B8241A" stroke-width="2.6"></path><path d="M21 13Q24 5 28 9" fill="none" stroke="#B8241A" stroke-width="1.4"></path><circle cx="27" cy="7.5" r="2.6" fill="#FBF7EC" stroke="#B8241A" stroke-width="1"></circle></svg><span>Ateş · yakın · onarım</span></div><div class="lg"><svg width="30" height="18" viewBox="0 0 30 18" aria-hidden="true"><path d="M8 17V1.5" stroke="#5E5A54" stroke-width="1.6"></path><rect x="8.8" y="1" width="13" height="13" fill="#FBF7EC" stroke="#9A1E14" stroke-width="1.3"></rect><text x="15.3" y="11.2" text-anchor="middle" font-family="Courier Prime, monospace" font-weight="700" font-size="11" fill="#9A1E14">2</text></svg><span>Sıra bayrağı</span></div><div class="lg"><span style="display: inline-flex; width: 30px; justify-content: center"><span class="seal"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 5.2l2 2 4-4.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></span><span>Tarandı, kesin</span></div><div class="lg"><svg width="30" height="18" viewBox="0 0 30 18" aria-hidden="true"><path d="M15 1.6l5.6 2.1v4.1c0 3.4-2.4 5.7-5.6 7-3.2-1.3-5.6-3.6-5.6-7V3.7z" fill="#636562" stroke="#1E1B16" stroke-width="1"></path></svg><span>Zırh: hasar işlemez</span></div></div>
+</section></div>
+<figcaption><b>LEJANT</b><div class="pv-sp">Ozalit fişi: #D3DBD6 zemin, #2C4C8E kenar ve başlık.</div></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 376px; height: 300px"><section class="rules" data-m="rules" style="left: 0px; top: 0px; width: 376px" aria-label="Kurallar kartı">
+<span class="tape" style="left: 150px; top: -8px; transform: rotate(-3deg)"></span>
+<div class="ru-h"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.8" y="3.2" width="12.4" height="9.6" rx="1"></rect><path d="M4.4 6.4h7.2M4.4 9.2h4.6"></path></svg><span class="t">KURALLAR KARTI</span><span class="s">operasyon emrinden</span><button class="bt link" type="button" aria-expanded="true">Katla</button></div>
+<div class="ru-b"><div class="ru-r"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h10.5M9 4.5L12.5 8 9 11.5"></path></svg><span><b>Kırmızı ok</b> robotun bu turdaki hamlesi; bayraktaki sayı sırası. Kesik ok ve <b>?</b> yalan olabilir: Analist 3 kare yaklaşınca kesinleşir.</span></div><div class="ru-r"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5l8.5 4.7-3.7 1.2-1.4 3.9z"></path></svg><span><b>Seç, taşı, kullan:</b> <span class="key">1</span>–<span class="key">3</span> ya da tıkla, mavi kareye taşı, <span class="key">Q</span> ile yetenek. <span class="key">Z</span> turdaki hamleyi geri alır.</span></div><div class="ru-r"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8l5 1.9v3.7c0 3-2.1 5.1-5 6.3-2.9-1.2-5-3.3-5-6.3V3.7z"></path></svg><span><b>Zırh:</b> hedef dolaplara yalnız sabotaj, itilen robot ve patlayan soğutma ünitesi işler.</span></div><div class="ru-r"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8h8M8 5l3 3-3 3M13.5 3.5v9"></path></svg><span><b>İtme:</b> çarpan da çarpılan da 1 hasar alır; kanala düşen de 1 hasar alır.</span></div><div class="ru-r"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"></circle><path d="M5 8h6M8 5v6"></path></svg><span><b>Sivilleri koru:</b> kırılan sivil sunucu bölgenin ekonomisine ve güvenine işler.</span></div><div class="ru-r"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5"></circle><path d="M8 1v3M8 12v3M1 8h3M12 8h3"></path></svg><span><b>Kazan:</b> tur bitmeden bütün hedef dolapları kır.</span></div></div>
+</section></div>
+<figcaption><b>KURALLAR KARTI · AÇIK</b><div class="pv-sp">B1'de açık; ilk tur dışında katlı başlar. Tıklama ya da “Aç/Katla”.</div></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 376px; height: 40px"><section class="rules folded" data-m="rules" style="left: 0px; top: 0px; width: 376px; height: 40px" aria-label="Kurallar kartı (katlı)">
+<div class="ru-h"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.8" y="3.2" width="12.4" height="9.6" rx="1"></rect><path d="M4.4 6.4h7.2M4.4 9.2h4.6"></path></svg><span class="t">KURALLAR KARTI</span><span class="s">oklar · seçim · zırh · siviller</span><button class="bt link" type="button" aria-expanded="false">Aç</button></div>
+</section></div>
+<figcaption><b>KURALLAR KARTI · KATLI</b><div class="pv-sp">Yalnız başlık şeridi (40 px).</div></figcaption>
+</figure></div>
+</section><section class="ps">
+<div class="ps-h"><span class="cap">H · SONUÇ VE ONAY FİŞLERİ</span><span class="ln"></span><span class="ps-n">Sonuç anı (B7) ve geri çekilme onayı (B8).</span></div>
+<div class="pv-row"><figure class="pv-f">
+<div class="pvx" style="width: 440px; height: 400px"><section class="resm" data-m="result" style="left: 0px; top: 0px; width: 440px" role="dialog" aria-modal="true" aria-label="Operasyon sonucu">
+<span class="tape" style="left: 190px; top: -8px; transform: rotate(2deg)"></span>
+<div class="resm-h"><span class="t">OPERASYON SONUCU</span><span class="stamp sm s-green" style="transform: rotate(-3deg)">BAŞARILI</span><span class="r">G-074 · T6</span></div>
+<p class="res-t">HEDEF KIRILDI</p>
+<p class="res-s">Batı Avrupa · Ana sunucu salonu · Tur 6/6</p>
+<div class="res-l"><div class="res-r"><svg class="ico" viewBox="0 0 16 16" style="color: #24592E" aria-hidden="true"><circle cx="8" cy="8" r="6"></circle><path d="M5.2 8.2l2 2 3.8-4.2"></path></svg><span>YZ düğüm dolabı</span><span class="v" style="color: #24592E">kırıldı</span></div><div class="res-r"><svg class="ico" viewBox="0 0 16 16" style="color: #24592E" aria-hidden="true"><circle cx="8" cy="8" r="6"></circle><path d="M5.2 8.2l2 2 3.8-4.2"></path></svg><span>Yedek çekirdek</span><span class="v" style="color: #24592E">kırıldı</span></div><div class="res-r"><svg class="ico" viewBox="0 0 16 16" style="color: #9A1E14" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"></path></svg><span>Kırılan sivil sunucu</span><span class="v" style="color: #9A1E14">1</span></div><div class="res-r"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 14.5V2M3.5 2.8h8.5l-2.2 3.1 2.2 3.1H3.5"></path></svg><span>Ekip</span><span class="v">2/3 ayakta</span></div></div>
+<div class="res-f"><button class="bt ink" type="button">Operasyon raporuna geç<span class="key">Enter</span></button></div>
+<p class="res-n">Operasyon raporu bölgeye etkisini ve ekibin durumunu ayrıntılı gösterecek.</p>
+</section></div>
+<figcaption><b>SONUÇ FİŞİ · HEDEF KIRILDI</b><div class="pv-sp">Spot + büyük damga ile birlikte; kâğıt masaya düşer.</div></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 440px; height: 400px"><section class="resm" data-m="result" style="left: 0px; top: 0px; width: 440px" role="dialog" aria-modal="true" aria-label="Operasyon sonucu">
+<span class="tape" style="left: 190px; top: -8px; transform: rotate(2deg)"></span>
+<div class="resm-h"><span class="t">OPERASYON SONUCU</span><span class="stamp sm s-red" style="transform: rotate(-3deg)">BAŞARISIZ</span><span class="r">G-074 · T6</span></div>
+<p class="res-t">SÜRE DOLDU</p>
+<p class="res-s">Batı Avrupa · Ana sunucu salonu · Tur 6/6</p>
+<div class="res-l"><div class="res-r"><svg class="ico" viewBox="0 0 16 16" style="color: #9A1E14" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"></path></svg><span>YZ düğüm dolabı</span><span class="v" style="color: #9A1E14">ayakta · 3/4</span></div><div class="res-r"><svg class="ico" viewBox="0 0 16 16" style="color: #24592E" aria-hidden="true"><circle cx="8" cy="8" r="6"></circle><path d="M5.2 8.2l2 2 3.8-4.2"></path></svg><span>Yedek çekirdek</span><span class="v" style="color: #24592E">kırıldı</span></div><div class="res-r"><svg class="ico" viewBox="0 0 16 16" style="color: #9A1E14" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"></path></svg><span>Kırılan sivil sunucu</span><span class="v" style="color: #9A1E14">1</span></div><div class="res-r"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 14.5V2M3.5 2.8h8.5l-2.2 3.1 2.2 3.1H3.5"></path></svg><span>Ekip</span><span class="v">1/3 ayakta</span></div></div>
+<div class="res-f"><button class="bt ink" type="button">Operasyon raporuna geç<span class="key">Enter</span></button></div>
+<p class="res-n">Hedef ayakta kaldı; operasyon raporu sonuçları ayrıntılı gösterecek.</p>
+</section></div>
+<figcaption><b>SONUÇ FİŞİ · SÜRE DOLDU</b></figcaption>
+</figure><figure class="pv-f">
+<div class="pvx" style="width: 376px; height: 200px"><button class="bt btL retreat armed" data-m="retreat" type="button" style="position: absolute; left: 0px; top: 0px; width: 236px"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 14.5V2M3.5 2.8h8.5l-2.2 3.1 2.2 3.1H3.5"></path></svg>Emin misin? Tekrar bas</button><section class="rconf" data-m="retreat-confirm" style="left: 0px; top: 70px; width: 376px" role="alertdialog" aria-label="Geri çekilme onayı">
+<div class="rconf-h"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 14.5V2M3.5 2.8h8.5l-2.2 3.1 2.2 3.1H3.5"></path></svg>GERİ ÇEKİLME · 2. ONAY</div>
+<p>Ekip binadan çıkar; <b>operasyon başarısız sayılır</b>. Hedef dolaplar ayakta kalır.</p>
+<div class="rconf-f">İkinci basış geri çeker.<button class="bt sm" type="button">Vazgeç</button></div>
+</section></div>
+<figcaption><b>GERİ ÇEKİLME · 2. ONAY</b><div class="pv-sp">Ekran %32 kararır; düğme ve fiş üstte kalır.</div></figcaption>
+</figure></div>
+</section>
+</div>
+</div>
+</body>
+</html>
