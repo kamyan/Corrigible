@@ -22,6 +22,8 @@ namespace Corrigible.Game.UI
         [SerializeField] VeilModal veil;
         [SerializeField] FakeWinModal fakeWin;
         [SerializeField] EndModal end;
+        [SerializeField] DilemmaModal dilemma;
+        [SerializeField] CampaignModal campaign;
 
         bool endHandled;
         MonoBehaviour[] all;
@@ -33,7 +35,20 @@ namespace Corrigible.Game.UI
 
         void Awake()
         {
-            all = new MonoBehaviour[] { intro, gift, veil, fakeWin, end };
+            all = new MonoBehaviour[] { intro, gift, veil, fakeWin, end, dilemma, campaign };
+            intro.OnboardingToggled += () => game.SetOnboardingOff(!game.OnboardingOff);
+            intro.EventsToggled += () => game.SetEventsEnabled(!game.EventsEnabled);
+            intro.CampaignClicked += () => { if (game.Campaign != null) game.EndCampaign(); else game.StartCampaign(); };
+            dilemma.Chosen += i =>
+            {
+                var res = game.ResolveEvent(i);
+                if (!res.Ok) { toast.Show(res.Msg); return; }
+                Close();
+                if (res.Msg != null) toast.Show(res.Msg, true);
+            };
+            end.NextCrisisClicked += () => { campaign.Show(game.Campaign, game.ExpTeams); Open(campaign); };
+            campaign.UpgradeChosen += id => { Close(); game.NextCrisis(id); };
+            campaign.FinishClicked += () => { Close(); game.EndCampaign(); };
             intro.TypeChosen += id => game.NewGame(id);
             intro.ExpChanged += (teams, scale) => game.SetExperimental(teams, scale);
             intro.LanguageClicked += Localization.Next;
@@ -98,6 +113,7 @@ namespace Corrigible.Game.UI
             endHandled = false;
             intro.Show(game.TypeId, S.CounterLines, game.SavedGameSummary(), Tutorial.TutorialController.Completed, theme);
             intro.ShowExperimental(game.ExpTeams, game.ExpTimeScale, theme);
+            intro.ShowRules(game, theme);
             Open(intro);
         }
 
@@ -106,20 +122,29 @@ namespace Corrigible.Game.UI
             endHandled = false;
             Close();
             if (S.PendingGift != null) ShowGift();
+            else if (S.PendingEvent != null) ShowDilemma();
         }
 
         void OnEvents(List<SimEvent> events)
         {
-            bool giftE = false, endE = false, veilE = false;
+            bool giftE = false, endE = false, veilE = false, dilemmaE = false;
             foreach (var e in events)
             {
                 if (e.Type == SimEventType.Gift) giftE = true;
                 else if (e.Type == SimEventType.End) endE = true;
                 else if (e.Type == SimEventType.Veil) veilE = true;
+                else if (e.Type == SimEventType.Dilemma) dilemmaE = true;
             }
             if (endE) OnEnd();
             else if (veilE && !IsOpen) { veil.Show(S); Open(veil); }
             else if (giftE && S.PendingGift != null && !IsOpen) ShowGift();
+            else if (dilemmaE && S.PendingEvent != null && !IsOpen) ShowDilemma();
+        }
+
+        void ShowDilemma()
+        {
+            dilemma.Show(Sim);
+            Open(dilemma);
         }
 
         void ShowGift()
@@ -148,6 +173,7 @@ namespace Corrigible.Game.UI
             Sim.HideEnding = false;
             desk.Render();
             end.Show(Sim);
+            end.ShowCampaign(game.Campaign);
             Open(end);
             end.ShowChart(S);
         }

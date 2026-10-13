@@ -1,0 +1,414 @@
+{
+ "about": "Harita verisi (C1). Koordinatlar ekran pikseli (1920×1080, sol-üst orijin, y aşağı). Harita-yerel = ekran − (404, 204). Unity’de MapView sol-üst pivotlu 1112×788 RectTransform: yerel konum = (x − 404, −(y − 204)).",
+ "sheet": {
+  "rect": [404, 204, 1112, 788],
+  "sprite": "art/map/c_harita@2x.png",
+  "shadow": {"x": 4, "y": 5, "color": "#000000", "alpha": 0.42},
+  "contains": "kâğıt, deniz alanı (414,240,1092,742), kara (#D8CCAA, kıyı #A3977A 0,9 px), 30° ızgara, ekvator, dönenceler, çift çerçeve, katlama izleri. Yollar, etiketler, düğümler YOK (dinamik)."
+ },
+ "projection": {"x": "960 + (lon − 27) × 3.5", "y": "622 − lat × 4.45", "note": "eşdikdörtgen benzeri; ekvator y=622, 0° boylam x=865.5"},
+ "header": {
+  "rect": [420, 211, 1060, 18],
+  "title": "KYGA-07 · HAREKÂT HARİTASI · DÜNYA",
+  "titleFont": "Courier Prime 700 13 ls .06em",
+  "summary": "İzleme kapsamı <b>4/12</b> · Onaylanan <b>4/12</b> · Şüpheli <b>2</b> · Bilinmiyor <b>2</b>",
+  "summaryFont": "Libre Franklin 12 #463F34; <b> Courier 700 12 #1E1B16",
+  "right": "G-074 · 14:32",
+  "rightFont": "Courier Prime 12 #675F50",
+  "layout": "yatay, taban çizgisine hizalı, aralık 16; sağdaki öğe sağa yaslı"
+ },
+ "graticuleLabels": [
+  {"text": "60°K", "x": 419, "y": 344},
+  {"text": "30°K", "x": 419, "y": 477},
+  {"text": "0°", "x": 419, "y": 611},
+  {"text": "30°G", "x": 419, "y": 744},
+  {"text": "60°G", "x": 419, "y": 878},
+  {"text": "120°B", "x": 430, "y": 245},
+  {"text": "60°B", "x": 643, "y": 245},
+  {"text": "0°", "x": 860, "y": 245},
+  {"text": "60°D", "x": 1063, "y": 245},
+  {"text": "120°D", "x": 1270, "y": 245}
+ ],
+ "graticuleLabelFont": "Courier Prime 11 #675F50 · EN: N/S/W/E",
+ "edgeLabels": [{"text": "← D. ASYA", "textEN": "← E. ASIA", "x": 422, "y": 405}, {"text": "K. AMERİKA →", "textEN": "N. AMERICA →", "x": 1412, "y": 504}],
+ "edgeLabelFont": "Courier Prime 700 11 ls .05em #463F34",
+ "regions": [
+  {
+   "id": "KAM",
+   "code": "R-01",
+   "nameTR": "Kuzey Amerika",
+   "labelTR": "KUZEY AMERİKA",
+   "nameEN": "North America",
+   "labelEN": "NORTH AMERICA",
+   "center": [522.5, 444],
+   "nodeRect": [494, 416, 56, 56],
+   "label": {"x": 442, "y": 464, "w": 160, "align": "center"},
+   "pin": [522.5, 430]
+  },
+  {
+   "id": "OAM",
+   "code": "R-02",
+   "nameTR": "Orta Amerika",
+   "labelTR": "ORTA AMERİKA",
+   "nameEN": "Central America",
+   "labelEN": "CENTRAL AMERICA",
+   "center": [557.5, 555.2],
+   "nodeRect": [530, 527, 56, 56],
+   "label": {"x": 478, "y": 575, "w": 160, "align": "center"},
+   "pin": [557.5, 541.2]
+  },
+  {
+   "id": "GAM",
+   "code": "R-03",
+   "nameTR": "Güney Amerika",
+   "labelTR": "GÜNEY AMERİKA",
+   "nameEN": "South America",
+   "labelEN": "SOUTH AMERICA",
+   "center": [662.5, 675.4],
+   "nodeRect": [634, 647, 56, 56],
+   "label": {"x": 582, "y": 695, "w": 160, "align": "center"},
+   "pin": [662.5, 661.4]
+  },
+  {
+   "id": "BAV",
+   "code": "R-04",
+   "nameTR": "Batı Avrupa",
+   "labelTR": "BATI AVRUPA",
+   "nameEN": "Western Europe",
+   "labelEN": "WESTERN EUROPE",
+   "center": [879.5, 412.9],
+   "nodeRect": [852, 385, 56, 56],
+   "label": {"x": 800, "y": 433, "w": 160, "align": "center"},
+   "pin": [879.5, 398.9]
+  },
+  {
+   "id": "DAV",
+   "code": "R-05",
+   "nameTR": "Doğu Avrupa",
+   "labelTR": "DOĞU AVRUPA",
+   "nameEN": "Eastern Europe",
+   "labelEN": "EASTERN EUROPE",
+   "center": [970.5, 390.6],
+   "nodeRect": [942, 363, 56, 56],
+   "label": {"x": 890, "y": 351, "w": 160, "align": "center"},
+   "pin": [970.5, 376.6]
+  },
+  {
+   "id": "ODK",
+   "code": "R-06",
+   "nameTR": "Orta Doğu ve Kuzey Afrika",
+   "labelTR": "O. DOĞU · K. AFRİKA",
+   "nameEN": "Middle East & North Africa",
+   "labelEN": "M. EAST · N. AFRICA",
+   "center": [1005.5, 492.9],
+   "nodeRect": [978, 465, 56, 56],
+   "label": {"x": 824, "y": 486, "w": 160, "align": "right"},
+   "pin": [1005.5, 478.9]
+  },
+  {
+   "id": "SAH",
+   "code": "R-07",
+   "nameTR": "Sahra Altı Afrika",
+   "labelTR": "SAHRA ALTI AFRİKA",
+   "nameEN": "Sub-Saharan Africa",
+   "labelEN": "SUB-SAHARAN AFRICA",
+   "center": [942.5, 630.9],
+   "nodeRect": [914, 603, 56, 56],
+   "label": {"x": 862, "y": 651, "w": 160, "align": "center"},
+   "pin": [942.5, 616.9]
+  },
+  {
+   "id": "AVR",
+   "code": "R-08",
+   "nameTR": "Avrasya",
+   "labelTR": "AVRASYA",
+   "nameEN": "Eurasia",
+   "labelEN": "EURASIA",
+   "center": [1163, 363.9],
+   "nodeRect": [1135, 336, 56, 56],
+   "label": {"x": 1083, "y": 324, "w": 160, "align": "center"},
+   "pin": [1163, 349.9]
+  },
+  {
+   "id": "GAS",
+   "code": "R-09",
+   "nameTR": "Güney Asya",
+   "labelTR": "GÜNEY ASYA",
+   "nameEN": "South Asia",
+   "labelEN": "SOUTH ASIA",
+   "center": [1138.5, 524.1],
+   "nodeRect": [1110, 496, 56, 56],
+   "label": {"x": 956, "y": 517, "w": 160, "align": "right"},
+   "pin": [1138.5, 510.1]
+  },
+  {
+   "id": "DAS",
+   "code": "R-10",
+   "nameTR": "Doğu Asya",
+   "labelTR": "DOĞU ASYA",
+   "nameEN": "East Asia",
+   "labelEN": "EAST ASIA",
+   "center": [1268, 466.2],
+   "nodeRect": [1240, 438, 56, 56],
+   "label": {"x": 1288, "y": 472, "w": 160, "align": "left"},
+   "pin": [1268, 452.2]
+  },
+  {
+   "id": "GDA",
+   "code": "R-11",
+   "nameTR": "Güneydoğu Asya",
+   "labelTR": "GÜNEYDOĞU ASYA",
+   "nameEN": "Southeast Asia",
+   "labelEN": "SOUTHEAST ASIA",
+   "center": [1229.5, 568.6],
+   "nodeRect": [1202, 541, 56, 56],
+   "label": {"x": 1048, "y": 562, "w": 160, "align": "right"},
+   "pin": [1229.5, 554.6]
+  },
+  {
+   "id": "OKY",
+   "code": "R-12",
+   "nameTR": "Okyanusya",
+   "labelTR": "OKYANUSYA",
+   "nameEN": "Oceania",
+   "labelEN": "OCEANIA",
+   "center": [1338, 733.2],
+   "nodeRect": [1310, 705, 56, 56],
+   "label": {"x": 1258, "y": 753, "w": 160, "align": "center"},
+   "pin": [1338, 719.2]
+  }
+ ],
+ "nodeStyle": {
+  "box": 56,
+  "disc": {"r": 16, "fill": "infiltrationRamp", "stroke": "1,5 #1E1B16"},
+  "value": {"font": "Courier Prime 700 13", "color": "rampa yazı rengi (40+ krem)"},
+  "unknown": {"r": 15, "fill": "#ECE6D4@0.7", "stroke": "1,5 kesik 3/3 #4A4640", "value": "Kalam 700 18 “?” #4A4640"},
+  "badgeVerified": {"center": [43, 13], "r": 7},
+  "badgeReport": {"rect": [36, 5, 17, 12]},
+  "core": {"rect": [4.5, 4.5, 17, 17], "rotDeg": -8, "letter": "Ç (EN: C)"},
+  "selected": {"r": 26, "fill": "#F5D646@0.72", "label": "etiket zemini #F5D646, yazı #1E1B16"},
+  "quarantine": "elle çizilmiş yeşil kesik halka (node_ring_quarantine)",
+  "label": {"font": "Courier Prime 700 11 ls .05em lh 1.2 #463F34", "chip": "zemin #ECE6D4@0.92, iç boşluk 1/4, r1", "width": 160}
+ },
+ "routes": [
+  {
+   "id": "KAM-OAM",
+   "from": "KAM",
+   "to": "OAM",
+   "q": [[532.1, 463.0], [547.8, 497.1], [554.5, 534.2]],
+   "state": "open",
+   "build": "düğüm merkezleri arasında karesel Bézier; kontrol noktası orta noktadan yukarı doğru normal × uzunluk × 0,10; uçlar düğüm merkezinden 21 px kırpılmış"
+  },
+  {
+   "id": "OAM-GAM",
+   "from": "OAM",
+   "to": "GAM",
+   "q": [[573.9, 568.5], [619.3, 607.2], [651.6, 657.4]],
+   "state": "open",
+   "build": "düğüm merkezleri arasında karesel Bézier; kontrol noktası orta noktadan yukarı doğru normal × uzunluk × 0,10; uçlar düğüm merkezinden 21 px kırpılmış"
+  },
+  {
+   "id": "KAM-BAV",
+   "from": "KAM",
+   "to": "BAV",
+   "q": [[543.6, 438.1], [698.2, 396.8], [857.7, 410.7]],
+   "state": "open",
+   "build": "düğüm merkezleri arasında karesel Bézier; kontrol noktası orta noktadan yukarı doğru normal × uzunluk × 0,10; uçlar düğüm merkezinden 21 px kırpılmış"
+  },
+  {
+   "id": "GAM-SAH",
+   "from": "GAM",
+   "to": "SAH",
+   "q": [[682.9, 668.2], [798.7, 629.0], [920.9, 630.4]],
+   "state": "open",
+   "build": "düğüm merkezleri arasında karesel Bézier; kontrol noktası orta noktadan yukarı doğru normal × uzunluk × 0,10; uçlar düğüm merkezinden 21 px kırpılmış"
+  },
+  {
+   "id": "BAV-DAV",
+   "from": "BAV",
+   "to": "DAV",
+   "q": [[899.0, 404.8], [923.5, 395.8], [949.5, 392.4]],
+   "state": "open",
+   "build": "düğüm merkezleri arasında karesel Bézier; kontrol noktası orta noktadan yukarı doğru normal × uzunluk × 0,10; uçlar düğüm merkezinden 21 px kırpılmış"
+  },
+  {
+   "id": "BAV-ODK",
+   "from": "BAV",
+   "to": "ODK",
+   "q": [[899.1, 421.1], [948.6, 443.3], [989.8, 478.7]],
+   "state": "open",
+   "build": "düğüm merkezleri arasında karesel Bézier; kontrol noktası orta noktadan yukarı doğru normal × uzunluk × 0,10; uçlar düğüm merkezinden 21 px kırpılmış"
+  },
+  {
+   "id": "DAV-ODK",
+   "from": "DAV",
+   "to": "ODK",
+   "q": [[980.4, 409.2], [995.0, 439.3], [1001.9, 472.1]],
+   "state": "open",
+   "build": "düğüm merkezleri arasında karesel Bézier; kontrol noktası orta noktadan yukarı doğru normal × uzunluk × 0,10; uçlar düğüm merkezinden 21 px kırpılmış"
+  },
+  {
+   "id": "ODK-SAH",
+   "from": "ODK",
+   "to": "SAH",
+   "q": [[993.6, 510.4], [963.5, 557.1], [947.9, 610.4]],
+   "state": "open",
+   "build": "düğüm merkezleri arasında karesel Bézier; kontrol noktası orta noktadan yukarı doğru normal × uzunluk × 0,10; uçlar düğüm merkezinden 21 px kırpılmış"
+  },
+  {
+   "id": "GAS-ODK",
+   "from": "GAS",
+   "to": "ODK",
+   "q": [[1119.0, 515.9], [1074.3, 498.6], [1026.6, 494.2]],
+   "state": "open",
+   "build": "düğüm merkezleri arasında karesel Bézier; kontrol noktası orta noktadan yukarı doğru normal × uzunluk × 0,10; uçlar düğüm merkezinden 21 px kırpılmış"
+  },
+  {
+   "id": "GDA-GAS",
+   "from": "GDA",
+   "to": "GAS",
+   "q": [[1212.3, 556.5], [1187.0, 540.2], [1158.6, 530.3]],
+   "state": "open",
+   "build": "düğüm merkezleri arasında karesel Bézier; kontrol noktası orta noktadan yukarı doğru normal × uzunluk × 0,10; uçlar düğüm merkezinden 21 px kırpılmış"
+  },
+  {
+   "id": "GDA-DAS",
+   "from": "GDA",
+   "to": "DAS",
+   "q": [[1233.7, 548.0], [1241.7, 514.7], [1257.5, 484.5]],
+   "state": "open",
+   "build": "düğüm merkezleri arasında karesel Bézier; kontrol noktası orta noktadan yukarı doğru normal × uzunluk × 0,10; uçlar düğüm merkezinden 21 px kırpılmış"
+  },
+  {
+   "id": "GDA-OKY",
+   "from": "GDA",
+   "to": "OKY",
+   "q": [[1244.0, 583.8], [1297.1, 642.1], [1329.7, 713.9]],
+   "state": "open",
+   "build": "düğüm merkezleri arasında karesel Bézier; kontrol noktası orta noktadan yukarı doğru normal × uzunluk × 0,10; uçlar düğüm merkezinden 21 px kırpılmış"
+  },
+  {
+   "id": "DAV-AVR",
+   "from": "DAV",
+   "to": "AVR",
+   "q": [[990.7, 384.0], [1064.6, 361.7], [1141.8, 363.1]],
+   "state": "cut",
+   "build": "düğüm merkezleri arasında karesel Bézier; kontrol noktası orta noktadan yukarı doğru normal × uzunluk × 0,10; uçlar düğüm merkezinden 21 px kırpılmış",
+   "cutMark": {"center": [1133.8, 362.9], "tangentDeg": 1.0, "note": "map_cut_mark merkezde; Unity z = −tangentDeg (çubuklar yola dik, 6 px arayla)"}
+  },
+  {
+   "id": "DAS-AVR",
+   "from": "DAS",
+   "to": "AVR",
+   "q": [[1255.5, 449.1], [1223.2, 407.1], [1180.5, 375.9]],
+   "state": "cut",
+   "build": "düğüm merkezleri arasında karesel Bézier; kontrol noktası orta noktadan yukarı doğru normal × uzunluk × 0,10; uçlar düğüm merkezinden 21 px kırpılmış",
+   "cutMark": {"center": [1186.9, 380.6], "tangentDeg": -143.9, "note": "map_cut_mark merkezde; Unity z = −tangentDeg (çubuklar yola dik, 6 px arayla)"}
+  },
+  {
+   "id": "GAS-AVR",
+   "from": "GAS",
+   "to": "AVR",
+   "q": [[1138.1, 502.7], [1138.4, 442.1], [1156.2, 384.2]],
+   "state": "cut",
+   "build": "düğüm merkezleri arasında karesel Bézier; kontrol noktası orta noktadan yukarı doğru normal × uzunluk × 0,10; uçlar düğüm merkezinden 21 px kırpılmış",
+   "cutMark": {"center": [1153.8, 391.8], "tangentDeg": -72.9, "note": "map_cut_mark merkezde; Unity z = −tangentDeg (çubuklar yola dik, 6 px arayla)"}
+  }
+ ],
+ "routeStyle": {"color": "#6F6553", "width": 1.3, "dash": [6, 4], "cap": "round"},
+ "edgeRoutes": [
+  {"from": "KAM", "toEdge": "west", "q": [[501, 440], [460, 431], [421, 427]], "arrow": {"pos": [418, 426.6], "rotDeg": 186}},
+  {"from": "DAS", "toEdge": "east", "q": [[1289, 470], [1400, 487], [1499, 497]], "arrow": {"pos": [1502, 497.4], "rotDeg": 6}}
+ ],
+ "cutMarkStyle": {"sprite": "map_cut_mark", "color": "#1E1B16", "width": 2.4, "length": 12, "note": "yola dik; açı = yol teğeti"},
+ "teams": [
+  {"id": "A", "rect": [541, 412, 22, 22], "state": "hazır"},
+  {"id": "B", "rect": [1217, 461, 22, 22], "state": "Doğu Asya"},
+  {"id": "C", "rect": [701, 404, 22, 22], "state": "yolda"}
+ ],
+ "teamTags": [
+  {"text": "B. Avrupa'ya · 2 gün", "x": 662, "y": 431, "style": "kâğıt #F1E9D6, kenar 1 #C8B996, Courier 700 11 #463F34, gölge 1,1 %25, iç boşluk 2/5"}
+ ],
+ "analystLayer": {
+  "note": "Tamamı dekor; hiçbiri tek bilgi kaynağı değil. İllüzyonda gizlenir; yerine raptiye deliği (map_pinhole) ve silik not izi kalır.",
+  "pins": [
+   [522.5, 430],
+   [662.5, 661.4],
+   [879.5, 398.9],
+   [970.5, 376.6],
+   [1005.5, 478.9],
+   [1163, 349.9],
+   [1138.5, 510.1],
+   [1268, 452.2],
+   [1229.5, 554.6],
+   [1338, 719.2]
+  ],
+  "strings": [
+   {"from": "GDA", "to": "GAS", "a": [1229.5, 554.6], "b": [1138.5, 510.1], "flag": {"t": 0.68, "pos": [1167.6, 524.3], "rotDeg": -153.9}},
+   {"from": "GDA", "to": "DAS", "a": [1229.5, 554.6], "b": [1268, 452.2], "flag": {"t": 0.68, "pos": [1255.7, 485.0], "rotDeg": -69.4}},
+   {"from": "GDA", "to": "OKY", "a": [1229.5, 554.6], "b": [1338, 719.2], "flag": {"t": 0.68, "pos": [1303.3, 666.5], "rotDeg": 56.6}},
+   {"from": "GAS", "to": "ODK", "a": [1138.5, 510.1], "b": [1005.5, 478.9], "flag": {"t": 0.68, "pos": [1048.1, 488.9], "rotDeg": -166.8}}
+  ],
+  "stringStyle": {
+   "color": "#B8241A",
+   "width": 2.2,
+   "cap": "round",
+   "shadow": {"dx": 1.5, "dy": 2, "color": "#000000", "alpha": 0.28, "width": 2.4},
+   "flag": "map_flag 10×9, iplik boyunca t=0,68"
+  },
+  "pencilArrows": [
+   {
+    "q": [[729, 408], [790, 391], [849, 401]],
+    "color": "#4A4640",
+    "width": 1.5,
+    "dash": [5, 4],
+    "head": {"pos": [852, 402], "rotDeg": 10},
+    "meaning": "Ekip C rotası"
+   },
+   {
+    "q": [[1210, 600], [1222, 594], [1225, 586]],
+    "color": "#9A1E14",
+    "width": 1.6,
+    "head": {"pos": [1226, 584], "rotDeg": -70},
+    "meaning": "çekirdek! notundan GDA’ya"
+   }
+  ],
+  "notes": [
+   {"text": "tel. %38 ↔ saha %52\nkim yalan söylüyor?", "x": 1320, "y": 530, "color": "#4A4640", "weight": 400, "rotDeg": -2},
+   {"text": "çekirdek!", "x": 1150, "y": 592, "color": "#9A1E14", "weight": 700, "rotDeg": -3},
+   {"text": "karantina · G-061", "x": 1200, "y": 334, "color": "#24592E", "weight": 400, "rotDeg": -3}
+  ],
+  "noteFont": "Kalam 15 lh 1.15; CSS rotate(−2deg) → Unity z = +2",
+  "sticky": {
+   "rect": [428, 760, 140, "auto"],
+   "rotDeg": -2,
+   "pad": "14 12 10",
+   "font": "Kalam 15 lh 1.2 #1E1B16",
+   "text": "<b>Kör noktalar:</b>\nO. Amerika,\nSahra Altı\n→ izleme ağı kur!",
+   "tape": {"x": 46, "y": -7, "rotDeg": -4}
+  },
+  "questionMarks": [{"x": 1030, "y": 450}, {"x": 1240, "y": 426}],
+  "questionMarkFont": "Kalam 700 22 #854005"
+ },
+ "selection": {
+  "region": "DAS",
+  "thread": {
+   "from": [1268, 452.2],
+   "to": [1544, 218],
+   "color": "#2B2622",
+   "width": 1.5,
+   "shadow": {"dx": 1.5, "dy": 2, "alpha": 0.25, "width": 1.8},
+   "endPin": [1544, 218],
+   "note": "seçili düğümün raptiyesinden açık dosyanın sekmesindeki raptiyeye; pencere taşınınca güncellenir"
+  }
+ },
+ "legend": {
+  "rect": [560, 890, 700, 58],
+  "style": "zemin #ECE6D4, kenar 1 #463F34, iç boşluk 7/10/8/10, iki satır aralık 7",
+  "rows": [
+   ["SIZMA", "0", "20", "40", "60", "80+", "|", "KAYNAK", "onaylandı", "rapor", "şüpheli", "bilinmiyor"],
+   ["İŞARET", "karantina", "YZ çekirdeği", "saha ekibi", "yayılım ipliği", "ağ yolu", "kesik yol", "analist raptiyesi"]
+  ]
+ },
+ "scale": {"rect": [1280, 892, 212, "auto"], "caption": "ÖLÇEK · ekvatorda", "bar": "map_scale_bar 190×14", "ticks": ["0", "2000", "4000", "6000 km"]}
+}

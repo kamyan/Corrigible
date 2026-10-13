@@ -42,11 +42,13 @@ namespace Corrigible.Tests
             {
                 Loc.SetLanguage(Loc.English, Loc.ParseTable(File.ReadAllText(LocalizationTool.TableFile))[Loc.English]);
                 var texts = new List<string>();
+                var sim0Moments = new List<string>();
                 var profile = new PlayerProfile();
                 for (int game = 0; game < 2; game++)
                 {
                     var sim = PlayRandom(type, seed + (uint)game * 100, exp, profile, texts);
                     texts.AddRange(Profiling.LearnedLines(sim.S));
+                    sim0Moments.AddRange(sim.S.Moments.Select(m => m.Text));
                     profile = Profiling.UpdateProfile(profile, sim.S);
                 }
                 texts.AddRange(Profiling.ComputeCounters(profile, type).Lines);
@@ -57,6 +59,12 @@ namespace Corrigible.Tests
                 foreach (var e in GameData.Endings) texts.AddRange(new[] { e.Title, e.Text });
                 foreach (var g in GameData.Gifts) texts.AddRange(new[] { g.Title, g.Text });
                 foreach (var a in GameData.Agencies.Concat(GameData.FakeAgencies)) texts.Add(Loc.T(a));
+                foreach (var d in Simulation.AllDilemmas)
+                {
+                    texts.Add(Loc.F(d.Title, "X")); texts.Add(Loc.F(d.Body, "X"));
+                    foreach (var c in d.Choices) { texts.Add(Loc.T(c.Label)); texts.Add(Loc.T(c.Effect)); }
+                }
+                texts.AddRange(sim0Moments);
 
                 Assert.IsEmpty(missing, "Tabloda olmayan metinler:\n" + string.Join("\n", missing.Take(20)));
                 var turkish = texts.Where(t => t != null && (TurkishLetters.IsMatch(t) || TurkishWords.IsMatch(t))).Distinct().ToList();
@@ -83,13 +91,14 @@ namespace Corrigible.Tests
         /// <summary>Rastgele bir oyuncu: her eylemi dener (başarısız olanların mesajları da toplanır), baskınları taktik motorda oynar.</summary>
         static Simulation PlayRandom(string type, uint seed, bool exp, PlayerProfile profile, List<string> texts)
         {
-            var sim = Simulation.NewGame(profile, type, seed, null, exp ? new ExpOptions { TimeScale = 1.5 } : null);
+            var sim = Simulation.NewGame(profile, type, seed, null, exp ? new ExpOptions { TimeScale = 1.5 } : null, exp ? new RuleOptions { Stage = 4, Events = true } : null);
             var s = sim.S;
             var rng = new Rng(seed * 7 + 3);
             string[] ids = GameData.Regions.Select(r => r.Id).ToArray();
             void Res(ActResult r) => texts.Add(r.Msg);
             while (s.Ending == null && s.Day < 400)
             {
+                if (s.PendingEvent != null) { int n = Simulation.Dilemma(s.PendingEvent.Id).Choices.Length; var er = sim.ResolveEvent((int)(rng.Next() * n)); if (!er.Ok) er = sim.ResolveEvent(n - 1); Res(er); }
                 if (s.PendingGift != null) Res(sim.ResolveGift(rng.Pick(new[] { Simulation.GiftAccept, Simulation.GiftReject, Simulation.GiftControlled })));
                 if (rng.Next() < 0.3) Res(sim.Act(rng.Pick(Actions.All), rng.Pick(ids)));
                 if (rng.Next() < 0.05 && s.News.Count > 0) Res(sim.Verify(s.News[0].Id));

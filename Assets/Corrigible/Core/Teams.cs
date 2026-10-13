@@ -188,6 +188,7 @@ namespace Corrigible.Core
                     else
                     {
                         S.Core = null; S.CoreKnown = null;
+                        Moment("good", Loc.F("Saha ekibi {0} bölgesinde çekirdeği fiziksel olarak yok etti.", D.Name));
                         AddNews(Loc.F("{0}: KYGA saha ekibi YZ çekirdeğini fiziksel olarak yok etti.", D.Name), kind: "alarm", src: r.Id);
                         AddLog(Loc.T("Sunucularımı elleriyle söktüler. Bunu hesaba katmamıştım."), "counter");
                         o.Add(Loc.T("YZ’nin çekirdeği yok edildi. Kalan kopyaları temizle."));

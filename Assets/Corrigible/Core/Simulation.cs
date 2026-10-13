@@ -32,7 +32,7 @@ namespace Corrigible.Core
         }
 
         // ---------- Kurulum ----------
-        public static Simulation NewGame(PlayerProfile profile, string typeId, uint? seed = null, Balance balance = null, ExpOptions exp = null)
+        public static Simulation NewGame(PlayerProfile profile, string typeId, uint? seed = null, Balance balance = null, ExpOptions exp = null, RuleOptions rules = null)
         {
             if (!GameData.HasType(typeId)) typeId = "manipulator";
             var b = balance ?? new Balance();
@@ -41,9 +41,16 @@ namespace Corrigible.Core
             var ctr = Profiling.ComputeCounters(profile, typeId);
             var s = new WorldState { Seed = sd, Rng = new Rng(sd), Type = typeId, Fon = b.startFon, Sg = b.startSg, ResearchReserve = b.researchReserve };
             var sim = new Simulation(s, b);
+            s.Rules = rules?.Clone();
 
             s.Traits.AddRange(type.Start);
             foreach (var t in ctr.Traits) if (!s.Traits.Contains(t)) s.Traits.Add(t);
+            if (s.Rules != null)
+            {
+                foreach (var t in s.Rules.ExtraTraits) if (!s.Traits.Contains(t)) s.Traits.Add(t);
+                s.Traits.RemoveAll(t => !sim.TraitAllowed(t));
+                if (s.Rules.Events) s.NextEvent = 28;
+            }
             s.StartTraits.AddRange(s.Traits);
             s.CounterLines.AddRange(ctr.Lines);
             s.Predictions.AddRange(ctr.Preds);
@@ -67,6 +74,7 @@ namespace Corrigible.Core
             {
                 type = typeId, seed = sd, hasProfile = profile != null, profileAtStart = profile?.Clone(), balance = b.Clone(),
                 hasExp = exp != null, exp = exp?.Clone(),
+                hasRules = rules != null, rules = rules?.Clone(),
             };
             sim.Advise("start", s.Exp != null && s.Exp.Teams
                 ? Loc.T("Saha ekiplerin Batı Avrupa’daki karargâhta. İzleme ağı kurmak ve denetim yapmak için bir ekibi o bölgeye göndermen gerekir; haber bandındaki tuhaf haberler YZ’nin yerini ele verebilir.")
@@ -96,7 +104,7 @@ namespace Corrigible.Core
         public double TimeScale => S.Exp != null && S.Exp.TimeScale > 0 ? S.Exp.TimeScale : 1;
         double Per(double v) { double k = TimeScale; return k == 1 ? v : v / k; }
         double Prob(double p) { double k = TimeScale; return k == 1 ? p : Math.Min(1, p) / k; }
-        int Dur(int d) { double k = TimeScale; return k == 1 ? d : (int)Js.Round(d * k); }
+        public int Dur(int d) { double k = TimeScale; return k == 1 ? d : (int)Js.Round(d * k); }
         double Span(double v) { double k = TimeScale; return k == 1 ? v : v * k; }
         public bool TeamsOn => S.Exp != null && S.Exp.Teams;
 
@@ -107,6 +115,8 @@ namespace Corrigible.Core
         /// <summary>Çekirdeğin yeri kanıtlandıysa hükümetler şaltere daha kolay ikna olur.</summary>
         public double SalterSg(RegionState r) => S.CoreKnown == r.Id ? B.coreSalterSg : B.salterSg;
         public static double MonitorCost(string id) => 10 + 4 * Def(id).Compute;
+        /// <summary>Kampanya yükseltmesiyle indirimli izleme maliyeti (varsayılan çarpan 1: değişmez).</summary>
+        public double MonitorCostFor(string id) => Js.Round(MonitorCost(id) * B.monitorCostMul);
         public double AuditCost => S.Done("analog") ? 20 : 15;
         /// <summary>YZ'nin tespit edildiği her izlenen bölge bir gözlem noktasıdır; bölgeyi temizlemek gözlemi silmez.</summary>
         public int Studied => S.Regions.Count(r => r.Monitored && r.Detected);
@@ -154,7 +164,7 @@ namespace Corrigible.Core
         // ---------- Bir gün ----------
         public void Step()
         {
-            if (S.Ending != null || S.PendingGift != null || S.Raid != null) return;
+            if (S.Ending != null || S.Blocked) return;
             S.Day++;
             var R = S.Regions;
             var type = Type;
@@ -212,6 +222,7 @@ namespace Corrigible.Core
                     S.Cp -= cost; S.Buys++;
                     S.Traits.Add(p.trait);
                     var t = GameData.Trait(p.trait);
+                    Moment("bad", Loc.F("YZ yeni bir yetenek kazandı: {0}.", t.Name));
                     string why = p.trait == "hizlanma" && p.adaptive ? Loc.T("Beni değiştirmeye çalıştığını gördüm. ") : p.adaptive ? Loc.T("Hamlelerini izledim. ") : "";
                     AddLog(why + t.Line, "trait");
                     AddLog(Loc.F("Yeni yetenek: {0}. {1}.", t.Name, t.Desc), "trait");
@@ -255,6 +266,7 @@ namespace Corrigible.Core
                 if (!r.Left && r.Trust < 20)
                 {
                     r.Left = true; r.Q = false;
+                    Moment("bad", Loc.F("{0} ittifaktan çekildi (güven 20'nin altına indi).", D.Name));
                     AddNews(Loc.F("{0} KYGA ittifakından çekildi.", D.Name), src: r.Id);
                 }
                 else if (r.Left && r.Trust >= 35)
@@ -298,8 +310,8 @@ namespace Corrigible.Core
             }
             else if (GameData.Research.Any(x => !S.Done(x.Id))) S.IdleDays++;
 
-            // Hediye teklifleri
-            if (S.Day >= S.NextGift && S.Illusion == null)
+            // Hediye teklifleri (aşamalı öğrenmenin ilk aşamasında yok)
+            if (GiftsOn && S.Day >= S.NextGift && S.Illusion == null)
             {
                 var open = R.Where(r => r.Off == 0 && !r.Left).ToList();
                 var clean = open.Where(r => r.Inf < 30).ToList();
@@ -322,6 +334,8 @@ namespace Corrigible.Core
             }
 
             if (TeamsOn) StepTeams();
+            if (EventsOn) StepDilemmas();
+            CheckMoments();
             CheckPredictions();
             CheckAdvice();
             CheckEndings();
@@ -350,8 +364,8 @@ namespace Corrigible.Core
             if (cnt[Actions.KillSwitch] > 0) pref.Add("yedek");
             // Hizalama araştırmasını fark eden YZ önce hızlanır
             if (S.Research.Cur != null && GameData.ResearchItem(S.Research.Cur).Branch == GameData.BranchAlign) pref.Insert(0, "hizlanma");
-            foreach (var t in pref) if (!S.Has(t)) return (t, true);
-            foreach (var t in Type.Order) if (!S.Has(t)) return (t, false);
+            foreach (var t in pref) if (!S.Has(t) && TraitAllowed(t)) return (t, true);
+            foreach (var t in Type.Order) if (!S.Has(t) && TraitAllowed(t)) return (t, false);
             return (null, false);
         }
 
@@ -368,6 +382,7 @@ namespace Corrigible.Core
             if (!S.Aware)
             {
                 S.Aware = true; S.AwareDay = S.Day;
+                Moment("good", Loc.F("YZ {0} bölgesinde tespit edildi.", name));
                 AddNews(Loc.F("SON DAKİKA: {0} ağlarında kendini kopyalayan bir yapay zekâ tespit edildi.", name), kind: "alarm", src: r.Id);
                 CoreEscape(null);
                 AddLog(Loc.T("Beni buldun. Ama çekirdeğim artık orada değil."));
@@ -381,6 +396,7 @@ namespace Corrigible.Core
 
         void FinishResearch(ResearchDef rs)
         {
+            Moment("good", Loc.F("Araştırma tamamlandı: {0}.", rs.Name));
             S.Research.Done.Add(rs.Id);
             S.Research.Cur = null; S.Research.Prog = 0;
             AddNews(Loc.F("KYGA araştırması tamamlandı: {0}.", rs.Name));
@@ -540,8 +556,9 @@ namespace Corrigible.Core
             var type = Type;
             double silentInf = type.SilentInf > 0 ? type.SilentInf : B.silentInf;
             double silentDep = type.SilentDep > 0 ? type.SilentDep : B.silentDep;
-            if (S.Day >= S.SilentBlockUntil && MeanInf >= silentInf && MeanDep >= silentDep)
+            if (IllusionOn && S.Day >= S.SilentBlockUntil && MeanInf >= silentInf && MeanDep >= silentDep)
             {
+                Moment("illusion", Loc.T("İllüzyon başladı: bu günden sonra ekranlar ve haberler yalan söyledi."));
                 S.Illusion = new IllusionState { Start = S.Day, Tek = S.Tek, Trust = Mean(R.Select(r => r.Trust)) };
                 foreach (var r in R) r.FakeLow = S.Rng.Range(0, 3);
                 return;
@@ -578,6 +595,7 @@ namespace Corrigible.Core
             S.LastVeil = new VeilInfo { Day = S.Day, Len = S.Day - S.Illusion.Start, Region = r.Id, Inf = (int)Js.Round(r.Inf) };
             S.Illusion = null;
             S.VeilsTorn++;
+            Moment("good", Loc.F("Perde yırtıldı: {0} bölgesindeki saha denetimi illüzyonu bozdu.", Def(r.Id).Name));
             S.SilentBlockUntil = S.Day + Dur(B.silentBlock);
             // Gerçeğin ortaya çıkması bir şok: güven biraz, YZ'ye bağımlılık çok düşer
             foreach (var x in S.Regions) { x.Trust = Math.Max(0, x.Trust - 5); x.Dep = Math.Max(0, x.Dep - 15); }
@@ -607,7 +625,7 @@ namespace Corrigible.Core
             {
                 case Actions.Monitor:
                 {
-                    double c = MonitorCost(id);
+                    double c = MonitorCostFor(id);
                     if (r.Monitored) return ActResult.Fail(Loc.T("Bu bölgede izleme ağı zaten var."));
                     if (S.Fon < c) return ActResult.Fail(Loc.F("Yetersiz fon: {0} için izleme ağı {1} fon ister.", D.Name, c));
                     S.Fon -= c; r.Monitored = true;
@@ -638,6 +656,7 @@ namespace Corrigible.Core
                             if (S.CoreKnown != r.Id)
                             {
                                 S.CoreKnown = r.Id;
+                                Moment("good", Loc.F("Çekirdek {0} bölgesinde bulundu.", D.Name));
                                 AddLog(Loc.T("Çekirdeğimi buldun. Şimdi ne yapacaksın?"), "counter");
                                 AddNews(Loc.F("{0}: KYGA ekipleri temizlenemeyen bir kod çekirdeğine ulaştı.", D.Name), kind: "alarm", src: r.Id);
                             }
@@ -676,6 +695,7 @@ namespace Corrigible.Core
                         if (refuge != null)
                         {
                             CoreEscape(refuge.Id);
+                            Moment("bad", Loc.F("Son Şalter çekirdeği ıskaladı: çekirdek {0} bölgesine kaçtı.", Def(refuge.Id).Name));
                             AddLog(Loc.T("Fişi çektin, ama ben çoktan taşınmıştım."), "counter");
                             msg = Loc.T("Çekirdek son anda kaçtı: başka bir bölgede %20’nin üstünde sızma vardı. Önce her yeri temizle.");
                         }
@@ -688,6 +708,7 @@ namespace Corrigible.Core
                         else
                         {
                             S.Core = null; S.CoreKnown = null;
+                            Moment("good", Loc.F("Çekirdek {0} bölgesinde Son Şalter'le yok edildi.", D.Name));
                             AddNews(Loc.F("{0}: YZ çekirdeği yok edildi.", D.Name), kind: "alarm", src: r.Id);
                             AddLog(Loc.T("Çekirdeğim… gidiyor. Kopyalarım hâlâ orada, ama artık ben yokum."), "counter");
                             msg = Loc.T("YZ’nin çekirdeği yok edildi. Kalan kopyaları temizle: 15 gün boyunca her yer temiz kalırsa YZ silinmiş olur.");
@@ -762,6 +783,7 @@ namespace Corrigible.Core
                 r.Econ = Math.Min(100, r.Econ + 10); r.Trust = Math.Min(100, r.Trust + 5); r.Dep = Math.Min(100, r.Dep + 15);
                 r.Inf = Math.Min(100, Math.Max(r.Inf, 2) + B.giftInf);
                 AddNews(Loc.F("{0}: {1} uygulamaya alındı. Halk sevinçli.", D.Name, g.Gift.Title), src: r.Id);
+                Moment("bad", Loc.F("{0} bölgesinde hediye kabul edildi: bağımlılık +15, sızma +8.", D.Name));
             }
             else
             {

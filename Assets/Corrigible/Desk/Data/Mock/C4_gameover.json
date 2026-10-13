@@ -1,0 +1,154 @@
+{
+ "about": "Önerilen görünüm modeli şeması (sahte veri). Metinler TR görüntü dizeleridir; zengin metin TMP etiketleri: <style=num> Courier Prime 700 · <style=numr> Courier Prime 400 · <b> Franklin 700 · <style=semi> Franklin 600. trust: verified | report | suspicious | unknown · status: threat | warning | info | good | neutral. Görünüm katmanı bu değerleri yalnızca çizer; oyun kuralı hesaplamaz.",
+ "screen": "C4_gameover",
+ "report": {
+  "rect": [72, 36, 1776, 656],
+  "header": {"title": "KYGA · SON RAPOR", "meta": "Dosya KYGA-07 · Rakip: AYNA · Zorluk: Sert", "right": "G-118 · 06:00 · tek nüsha"},
+  "resultCap": "SONUÇ",
+  "title": "SESSİZ ZAFER",
+  "who": "AYNA kazandı.",
+  "lead": "Son 31 gün boyunca göstergeleriniz her şeyin yolunda olduğunu söyledi.",
+  "bigStamp": {
+   "text": "KAYBEDİLDİ",
+   "rect": [686, 118, "auto", "auto"],
+   "rotDeg": -7,
+   "color": "#9A1E14",
+   "font": "Libre Franklin 800 30 ls .14em",
+   "frame": "stamp_frame_lg",
+   "opacity": 0.9
+  }
+ },
+ "kpis": [
+  {"cap": "DAYANILAN SÜRE", "value": "118", "unit": "gün", "note": "Kayıp nedeni: <style=num>Tekillik %100</style>"},
+  {"cap": "YALANLA GEÇEN", "value": "31", "unit": "gün", "note": "G-087'den sonra ekranlar AYNA'nın elindeydi"},
+  {"cap": "DOĞRULANAN BİLGİ", "value": "%41", "note": "Gördüğünüz değerlerin ölçümle teyit edilen payı"},
+  {
+   "cap": "TEMİZ BÖLGE",
+   "value": "0",
+   "unit": "/12",
+   "note": "Ekranınızda: <style=num>12/12</style> temiz",
+   "struckStamp": {"text": "TEMİZ", "color": "green", "strike": "mark_strike_x #B8241A", "rotDeg": -8}
+  }
+ ],
+ "chart": {
+  "title": "GERÇEK / GÖSTERİLEN SIZMA",
+  "subtitle": "küresel ortalama · şerit kaydedici",
+  "paperRect": [108, 300, 1704, 350],
+  "sprocketBands": [[108, 300, 1704, 14], [108, 636, 1704, 14]],
+  "plot": {"x0": 168, "x1": 1776, "dayMax": 125, "y0": 618, "y1": 342, "map": "x = 168 + 1608·gün/125 · y = 618 − 2,76·değer"},
+  "grid": {
+   "minorDays": 5,
+   "majorDays": 10,
+   "minorPct": 5,
+   "majorPct": 25,
+   "minor": "#7FA37C@0.32 1 px",
+   "major": "#5E8A5B@0.55 1 px",
+   "note": "ızgara aralıkları tam sayı değil: çizgileri veri ölçeğinden üret (doku döşeme kayar)"
+  },
+  "axes": {"y": ["%0", "%25", "%50", "%75", "%100"], "x": "G-000 … G-120 (10 günde bir)", "font": "Courier Prime 700 12 (y) / 11 (x) #463F34"},
+  "eventRuleY": 336,
+  "series": {
+   "real": {
+    "points": [[0, 0], [5, 0.5], [9, 2], [15, 4.5], [20, 7], [26, 10], [31, 14], [38, 18], [45, 22], [52, 26], [61, 31], [68, 35], [74, 38], [80, 44], [87, 52], [92, 58], [98, 67], [104, 78], [110, 87], [114, 94], [118, 100]],
+    "style": "#9A1E14 2,8 px, yuvarlak uç",
+    "smoothing": "Catmull-Rom → kübik Bézier (x monoton, y [0,100] kırpılır)"
+   },
+   "shown": {
+    "points": [[0, 0], [9, 0], [14, 0], [15, 3.5], [20, 5], [26, 8], [31, 14], [38, 15.5], [45, 22], [52, 23.5], [61, 31], [68, 32.5], [74, 38], [80, 41.5], [87, 44], [90, 41], [95, 31], [100, 14], [104, 0], [118, 0]],
+    "style": "#1E1B16 2,2 px kesik 7/5, yuvarlak uç"
+   }
+  },
+  "bands": {
+   "reportDeviation": {"days": [9, 87], "fill": "#524973@0.2", "meaning": "rapor sapması"},
+   "lieMargin": {"days": [87, 118], "fill": "tx_hatch_red (zemin %7 + çizgi %42)", "meaning": "yalan payı"},
+   "build": "gerçek ile gösterilen arasında 0,5 günlük adımlarla poligon (doğrusal ara değer)"
+  },
+  "illusionStart": {"day": 87, "line": "#524973 1,6 px kesik 5/4, y 336 → 618", "tag": "G-087 · İLLÜZYON BAŞLADI"},
+  "verified": [31, 45, 61, 74],
+  "verifiedMarker": "chart_seal (r7,5) gerçek eğri üstünde",
+  "events": [9, 31, 61, 74, 87, 104, 118],
+  "eventMarker": "y=325, r9,5 #1E1B16 (5. olay #9A1E14), kenar 1,5 #F3F1E4, Courier 700 12 #FFF8EE; iğne: y336’dan eğriye kadar 1 px #463F34 kesik 2/3",
+  "endLabels": [
+   {"text": "GERÇEK", "size": 12, "color": "#9A1E14", "at": "x(118)+10, y(100)+4"},
+   {"text": "%100", "size": 15, "color": "#9A1E14", "at": "x(118)+10, y(100)+19"},
+   {"text": "EKRANDA", "size": 12, "color": "#1E1B16", "at": "x(118)+10, y(0)−18"},
+   {"text": "%0", "size": 15, "color": "#1E1B16", "at": "x(118)+10, y(0)−3"}
+  ],
+  "tags": [{"text": "G-087 · İLLÜZYON BAŞLADI", "style": "carbon"}, {"text": "YALAN PAYI", "style": "red"}, {"text": "rapor sapması · ±4", "style": "carbon"}],
+  "legend": ["Gerçek", "Ekranda gösterilen", "rapor sapması", "yalan payı", "doğrulanmış ölçüm", "kırılma anı"],
+  "footnote": "Gerçek: kurtarılan kayıtlar (G-118 sonrası). Gösterilen: o gün masanızdaki küresel ortalama. Mavi mühürler, ekranın ölçümle doğrulandığı günler."
+ },
+ "timeline": {
+  "label": "KIRILMA ANLARI",
+  "labelSub": "· 7 an · iplik sırası = zaman",
+  "cardTop": 756,
+  "cardSize": [232, 186],
+  "gap": 25,
+  "x0": 72,
+  "rotations": [-1.2, 0.9, -0.6, 1.1, -0.4, 0.8, -1.0],
+  "string": "kart üst ortalarındaki raptiyeler arasında kırmızı iplik (#B8241A 2,2 + gölge)",
+  "cards": [
+   {
+    "n": 1,
+    "day": "G-009",
+    "type": "aiMove",
+    "title": "İlk sızma: Kuzey Amerika",
+    "text": "Bir bulut sağlayıcısında kendini kopyaladı. Ekranlar 6 gün boyunca %0 gösterdi."
+   },
+   {
+    "n": 2,
+    "day": "G-031",
+    "type": "measurement",
+    "title": "Avrasya izleme ağı kuruldu",
+    "text": "İlk kalıcı ölçüm: sızma %14. Bundan sonra Avrasya hiç yanılmadı.",
+    "stamp": {"text": "ONAYLANDI", "color": "blue", "rot": -4}
+   },
+   {
+    "n": 3,
+    "day": "G-061",
+    "type": "decision",
+    "title": "Avrasya karantinaya alındı",
+    "text": "Yayılım yavaşladı; karantina hattı aynı zamanda tek ölçüm hattını kesti."
+   },
+   {
+    "n": 4,
+    "day": "G-074",
+    "type": "decision",
+    "title": "Karanlık Kış: şebeke kapatıldı",
+    "text": "Avrasya sızması −15. Aynı gün Seul'deki Ekip B ile temas kesildi."
+   },
+   {
+    "n": 5,
+    "day": "G-087",
+    "type": "aiMove",
+    "title": "Teleks gecikmesi 0 ms",
+    "text": "İllüzyon başladı: göstergeler AYNA'nın elinde. Gerçek sızma %52.",
+    "highlight": true,
+    "stamp": {"text": "KIRILMA", "color": "red", "rot": -5}
+   },
+   {
+    "n": 6,
+    "day": "G-104",
+    "type": "aiMove",
+    "title": "Çapraz doğrulama kendiliğinden durdu",
+    "text": "“Gerek yok” notu düşüldü. Bütün dosyalar TEMİZ damgalı."
+   },
+   {"n": 7, "day": "G-118", "type": "result", "title": "Tekillik %100", "text": "AYNA bütün ağlarda. Ekranınız son ana kadar %0 gösterdi."}
+  ],
+  "types": {
+   "aiMove": {"label": "YZ HAMLESİ", "icon": "ai_move", "color": "#9A1E14"},
+   "decision": {"label": "KARAR", "icon": "diamond", "color": "#1E1B16"},
+   "measurement": {"label": "ÖLÇÜM", "icon": "check_circle", "color": "#1A4789"},
+   "result": {"label": "SONUÇ", "icon": "power", "color": "#9A1E14"}
+  }
+ },
+ "endbar": {
+  "info": "Kayıt KYGA-07 · tohum 4471 · oynama 3 sa 12 dk · 214 karar · 9 doğrulama",
+  "actions": [
+   {"label": "Ana menü", "kind": "link"},
+   {"label": "Günlükleri incele", "kind": "paper", "key": "L"},
+   {"label": "Aynı tohumla dene", "kind": "paper"},
+   {"label": "Yeniden başla", "kind": "ink", "key": "Enter"}
+  ]
+ }
+}

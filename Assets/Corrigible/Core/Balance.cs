@@ -26,6 +26,8 @@ namespace Corrigible.Core
 
         // Ekonomi
         public double startFon = 60;
+        /// <summary>İzleme ağı maliyet çarpanı (kampanya yükseltmesi).</summary>
+        public double monitorCostMul = 1;
         public double startSg = 5;
         public double cpRate = 1.0;
         public double fonDiv = 150;

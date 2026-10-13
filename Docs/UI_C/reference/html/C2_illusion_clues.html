@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>C2 · İllüzyon — ipucu işaretleriyle (yalnızca tasarım notu)</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+body{margin:0;background:#1A110C}
+a{color:#1A4789}a:hover{color:#0F2F5E}
+.c{--wood:#2A1C13;--rail:#160F0A;--felt:#1C372C;--paper:#F6F1E3;--edge:#D3C7A9;--onion:#E3E0D8;--manila:#DCC48F;--manila2:#BDA166;--index:#FDFBF4;--rule-r:#D2483F;--rule-b:#BCD0E1;--sticky:#F5DC63;--sticky2:#DDBF3E;--telex:#F1E8C4;--ink:#1E1B16;--ink2:#463F34;--ink3:#675F50;--graph:#4A4640;--red:#9A1E14;--blue:#1A4789;--green:#24592E;--orange:#854005;--carbon:#524973;font-family:'Libre Franklin',Arial,sans-serif;font-size:13px;line-height:1.35;color:var(--ink);-webkit-font-smoothing:antialiased}
+.c *,.c *::before,.c *::after{box-sizing:border-box}
+.c button{font-family:inherit}
+.tw{font-family:'Courier Prime','Courier New',monospace;font-variant-numeric:tabular-nums}
+.hand{font-family:'Kalam','Segoe Print',cursive}
+.cap{font-family:'Courier Prime','Courier New',monospace;font-size:12px;font-weight:700;letter-spacing:.08em;line-height:1;color:var(--ink2)}
+.ico{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.felt{position:absolute;left:0;right:0;top:156px;height:844px;background-color:var(--felt);background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1.3px);background-size:5px 5px;border-top:2px solid #0E0906;border-bottom:2px solid #0E0906}
+.grain{position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,rgba(255,230,190,.025) 0 1px,transparent 1px 6px),repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0 2px,transparent 2px 19px)}
+.stamp{position:relative;display:inline-flex;align-items:center;justify-content:center;padding:3px 8px;border:2px solid currentColor;border-radius:3px;font-family:'Libre Franklin',Arial,sans-serif;font-weight:800;font-size:12px;letter-spacing:.12em;line-height:1;white-space:nowrap;opacity:.95}
+.stamp::before{content:'';position:absolute;inset:2px;border:1px solid currentColor;border-radius:1px}
+.stamp.sm{padding:3px 6px;font-size:11px;border-width:1.5px}
+.stamp.sm::before{inset:1.5px}
+.s-blue{color:var(--blue)}.s-red{color:var(--red)}.s-green{color:var(--green)}
+.seal{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--blue);flex:none}
+.seal svg{width:10px;height:10px}
+.bt{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;height:30px;padding:0 12px;border-radius:3px;font-family:'Libre Franklin',Arial,sans-serif;font-size:13px;font-weight:600;line-height:1;white-space:nowrap;cursor:pointer;color:var(--ink);background:var(--paper);border:1px solid var(--ink2);box-shadow:0 2px 0 var(--ink2)}
+.bt.sm{height:24px;padding:0 8px;font-size:12px}
+.bt.icon{width:24px;padding:0}
+.bt.ink{background:var(--ink);color:#F4ECD8;border-color:#000;box-shadow:0 2px 0 #000}
+.bt.link{height:24px;background:none;border:0;box-shadow:none;padding:0 6px;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.key{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 4px;border:1px solid var(--ink3);border-bottom-width:2px;border-radius:3px;background:var(--index);font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;line-height:1;color:var(--ink2)}
+.xb{appearance:none;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--ink3);border-radius:2px;background:var(--paper);color:var(--ink2);cursor:pointer}
+.xb .ico{width:12px;height:12px}
+.grip{color:var(--ink3)}
+.rail{position:absolute;left:0;right:0;top:0;height:48px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding:0 16px;background:var(--rail);border-bottom:1px solid #000}
+.rl,.rc,.rr{display:flex;align-items:center;gap:12px}
+.rr{justify-content:flex-end}
+.plaque{display:flex;flex-direction:column;justify-content:center;gap:2px;height:36px;padding:0 12px;background:#0E0906;border:1px solid #6E5A33;border-radius:2px}
+.pl-t{font-family:'Courier Prime',monospace;font-size:15px;font-weight:700;letter-spacing:.16em;line-height:1;color:#C9A86A}
+.pl-s{font-family:'Courier Prime',monospace;font-size:11px;letter-spacing:.06em;line-height:1;color:#A48A55}
+.plabel{display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 10px;background:var(--paper);border-radius:2px;box-shadow:2px 2px 0 rgba(0,0,0,.55);font-size:12px;color:var(--ink2);white-space:nowrap}
+.plabel b{font-family:'Courier Prime',monospace;font-size:15px;font-weight:700;letter-spacing:.06em;color:var(--ink)}
+.cal{display:flex;flex-direction:column;width:58px;height:38px;overflow:hidden;border-radius:2px;background:var(--paper);box-shadow:2px 2px 0 rgba(0,0,0,.55)}
+.cal-h{height:13px;background:var(--red);color:#FFF3EE;font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;line-height:13px;letter-spacing:.12em;text-align:center}
+.cal-n{flex:1;display:flex;align-items:center;justify-content:center;font-family:'Courier Prime',monospace;font-size:19px;font-weight:700;line-height:1}
+.speed{display:flex;align-items:center;gap:7px;height:34px}
+.tk{appearance:none;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;padding:0;border-radius:50%;background:#1E1B16;border:2px solid #9A9284;box-shadow:0 2px 0 #000;color:#F1E9D6;font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;cursor:pointer}
+.tk.on{background:#F1E9D6;color:#1E1B16;border-color:#C9A86A;box-shadow:inset 0 2px 0 rgba(0,0,0,.28);transform:translateY(2px)}
+.tk .ico{width:12px;height:12px;stroke-width:2}
+.lamp{display:inline-block;width:9px;height:9px;border-radius:50%;background:#3E3A33;border:1px solid #000;flex:none}
+.lamp.on{background:#3DB36B;border-color:#14532D;box-shadow:0 0 0 2px rgba(61,179,107,.22)}
+.gbank{position:absolute;left:16px;right:16px;top:56px;height:92px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.gauge{position:relative;display:flex;gap:8px}
+.meter{display:block;flex:none;width:132px;height:92px}
+.gtag{position:relative;flex:1;min-width:0;height:88px;margin-top:2px;padding:7px 10px 7px;display:flex;flex-direction:column;justify-content:space-between;background:var(--paper);border:1px solid var(--edge);border-radius:2px;box-shadow:3px 3px 0 rgba(0,0,0,.45)}
+.g-h{display:flex;align-items:center;gap:6px;height:20px}
+.g-h > :last-child{margin-left:auto}
+.g-n{font-family:'Courier Prime',monospace;font-size:13px;font-weight:700;letter-spacing:.06em;line-height:1;color:var(--ink);white-space:nowrap}
+.g-m{position:relative;display:flex;align-items:baseline;gap:8px;white-space:nowrap}
+.g-v{font-family:'Courier Prime',monospace;font-size:26px;font-weight:700;line-height:1;letter-spacing:-.01em}
+.g-d{display:inline-flex;align-items:center;gap:2px;font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;line-height:1;color:var(--ink2)}
+.g-d .ico{width:12px;height:12px;stroke-width:2}
+.g-note{font-size:12px;line-height:1;color:var(--ink2);white-space:nowrap}
+.g-note b{font-family:'Courier Prime',monospace;font-weight:700;color:var(--ink)}
+.adv{position:absolute;left:16px;right:16px;top:163px;height:32px;display:flex;align-items:center;gap:14px;padding:0 34px;background:var(--sticky);box-shadow:2px 3px 0 rgba(0,0,0,.4)}
+.adv-t{font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--green);white-space:nowrap}
+.adv-m{flex:1;margin:0;font-size:14px;line-height:1;color:var(--ink);white-space:nowrap}
+.adv-a{display:flex;align-items:center;gap:6px}
+.tape{position:absolute;width:46px;height:15px;background:rgba(236,226,190,.78);border-left:1px dashed rgba(120,100,60,.35);border-right:1px dashed rgba(120,100,60,.35)}
+.mapsheet{position:absolute;left:404px;top:204px;width:1112px;height:788px;box-shadow:4px 5px 0 rgba(0,0,0,.42)}
+.mapsheet img{display:block}
+.mhead{position:absolute;left:420px;top:211px;width:1060px;display:flex;align-items:baseline;gap:16px;white-space:nowrap}
+.mhead b{font-family:'Courier Prime',monospace;font-size:13px;font-weight:700;letter-spacing:.06em}
+.mhead span{font-size:12px;color:var(--ink2)}
+.mhead span b{font-size:12px;letter-spacing:0;color:var(--ink)}
+.glbl{position:absolute;font-family:'Courier Prime',monospace;font-size:11px;line-height:1;color:var(--ink3);white-space:nowrap}
+.edge-l{position:absolute;font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;letter-spacing:.05em;line-height:1;color:var(--ink2);white-space:nowrap}
+.node{position:absolute;width:56px;height:56px;padding:0;margin:0;border:0;background:none;cursor:pointer}
+.node svg{display:block}
+.nv{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;line-height:1}
+.nl{position:absolute;width:160px;text-align:center;font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;letter-spacing:.05em;line-height:1.2;color:var(--ink2);white-space:nowrap;pointer-events:none}
+.nl span{display:inline-block;padding:1px 4px;background:rgba(236,230,212,.92);border-radius:1px}
+.nl .sel{color:var(--ink);background:#F5D646}
+.tok{position:absolute;width:22px;height:22px;display:flex;align-items:center;justify-content:center}
+.tok::before{content:'';position:absolute;inset:3px;transform:rotate(45deg);background:#1E1B16;border:1.5px solid #F1E9D6;border-radius:2px;box-shadow:2px 2px 0 rgba(0,0,0,.35)}
+.tok span{position:relative;font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;line-height:1;color:#F1E9D6}
+.ttag{position:absolute;padding:2px 5px;background:var(--paper);border:1px solid var(--edge);font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;line-height:1.1;color:var(--ink2);white-space:nowrap;box-shadow:1px 1px 0 rgba(0,0,0,.25)}
+.ghost{position:absolute;font-family:'Kalam',cursive;font-size:15px;line-height:1.15;white-space:nowrap;pointer-events:none;color:#4A4640;opacity:.09}
+.legend{position:absolute;left:560px;top:890px;width:708px;padding:7px 10px 8px;display:flex;flex-direction:column;gap:7px;background:#ECE6D4;border:1px solid var(--ink2)}
+.lg-r{display:flex;align-items:center;gap:10px;font-size:11px;line-height:1;color:var(--ink2);white-space:nowrap}
+.lg-k{font-family:'Courier Prime',monospace;font-weight:700;letter-spacing:.06em;color:var(--ink)}
+.lg-i{display:inline-flex;align-items:center;gap:5px}
+.lg-sw{display:inline-block;width:11px;height:11px;border-radius:50%;border:1px solid #1E1B16}
+.scale{position:absolute;left:1280px;top:892px;width:212px;display:flex;flex-direction:column;gap:5px;font-family:'Courier Prime',monospace;font-size:11px;color:var(--ink2)}
+.icard{position:absolute;background-color:var(--index);background-image:linear-gradient(to bottom,transparent 33px,var(--rule-r) 33px,var(--rule-r) 35px,transparent 35px),repeating-linear-gradient(to bottom,transparent 0 21px,var(--rule-b) 21px 22px);background-size:100% 100%,100% 22px;background-position:0 0,0 35px;background-repeat:no-repeat,repeat-y;border:1px solid #D9D0BC;border-radius:2px;box-shadow:3px 4px 0 rgba(0,0,0,.4)}
+.ic-h{height:33px;display:flex;align-items:center;gap:8px;padding:0 6px 0 10px}
+.ic-t{font-family:'Courier Prime',monospace;font-size:13px;font-weight:700;letter-spacing:.08em}
+.ic-s{font-size:13px;color:var(--ink2)}
+.ic-h .stamp{margin-left:auto}
+.gl{height:22px;display:flex;align-items:flex-end;gap:10px;padding:0 14px 3px;font-size:13px;line-height:1}
+.gl-n{width:68px;font-weight:600}
+.bx{display:grid;grid-template-columns:repeat(7,22px);gap:4px}
+.bx i{display:block;height:12px;border:1px solid var(--ink2);background:repeating-linear-gradient(135deg,#4A4640 0 1.4px,transparent 1.4px 3.6px)}
+.gl b{margin-left:auto;font-family:'Courier Prime',monospace;font-size:14px;font-weight:700}
+.gl.nx{font-size:12px;color:var(--ink2);gap:6px}
+.gl.nx b{margin-left:0;font-family:'Libre Franklin',Arial,sans-serif;font-size:12px;font-weight:600;color:var(--ink)}
+.gl.nx .r{margin-left:auto}
+.folder{position:absolute;display:flex;flex-direction:column}
+.ftab{position:relative;z-index:1;height:30px;flex:none;display:flex;align-items:center;gap:8px;padding:0 5px 0 10px;background:var(--manila);border:1px solid var(--manila2);border-bottom:0;border-radius:7px 7px 0 0}
+.ft-t{font-family:'Courier Prime',monospace;font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--ink)}
+.ft-s{font-size:12px;color:var(--ink2)}
+.ftab .xb{margin-left:auto}
+.fbody{position:relative;flex:1;margin-top:-1px;padding:10px;background:var(--manila);border:1px solid var(--manila2);border-radius:0 4px 4px 4px;box-shadow:3px 4px 0 rgba(0,0,0,.4)}
+.fsheet{position:relative;background:var(--paper);border:1px solid var(--edge);border-radius:1px;box-shadow:1px 2px 0 rgba(90,70,30,.25)}
+.clip{position:absolute;width:16px;height:40px}
+.rs{height:100%;padding:12px 14px 12px;display:flex;flex-direction:column;gap:10px}
+.rs-h{display:flex;align-items:center;gap:10px}
+.rs-h .r{margin-left:auto;font-family:'Courier Prime',monospace;font-size:11px;color:var(--ink3)}
+.rs-sum{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink2)}
+.rs-sum b{color:var(--ink);font-weight:600}
+.rs-sum .r{margin-left:auto;display:inline-flex;align-items:center;gap:6px}
+.fund{display:flex;flex-direction:column;gap:7px;padding:8px 10px 9px;border:1px solid var(--ink3)}
+.fund-h{display:flex;align-items:center;justify-content:space-between}
+.fund-h span:last-child{font-size:11px;color:var(--ink3)}
+.opts{display:flex;align-items:center;gap:14px}
+.opt{appearance:none;display:inline-flex;align-items:center;gap:6px;height:24px;padding:0;border:0;background:none;font-size:13px;color:var(--ink);cursor:pointer;white-space:nowrap}
+.opt .tw{font-size:11px;color:var(--ink3)}
+.cb{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border:1.5px solid var(--ink);background:var(--index);font-family:'Courier Prime',monospace;font-size:14px;font-weight:700;line-height:1}
+.br-h{display:flex;align-items:center;gap:8px;height:18px;margin-bottom:2px}
+.br-h .ln{flex:1;height:0;border-top:1px solid var(--ink3)}
+.br-h .tw{font-size:11px;color:var(--ink3)}
+.rr{display:flex;align-items:center;gap:8px;min-height:31px;padding:2px 0;border-bottom:1px dotted #B9AC8E}
+.rr:last-child{border-bottom:0}
+.rr-n{flex:1;min-width:0;display:flex;flex-direction:column;font-size:13px;line-height:1.2;color:var(--ink)}
+.rr-n small{font-size:11px;color:var(--ink3)}
+.rr-r{display:flex;align-items:center;gap:7px;font-size:12px;white-space:nowrap;color:var(--ink2)}
+.rr.done .rr-n{color:var(--ink2)}
+.pbar{position:relative;display:block;width:48px;height:10px;border:1px solid var(--ink2)}
+.pbar span{position:absolute;left:0;top:0;bottom:0;background:repeating-linear-gradient(135deg,#4A4640 0 1.4px,transparent 1.4px 3.4px)}
+.clabel{position:relative;padding:8px 12px 9px;background:var(--index);border:1px solid #D9D0BC;box-shadow:1px 2px 0 rgba(90,70,30,.25)}
+.cl-t{display:flex;align-items:baseline;gap:8px}
+.cl-t b{font-family:'Courier Prime',monospace;font-size:20px;font-weight:700;letter-spacing:.04em;line-height:1}
+.cl-t .code{font-family:'Courier Prime',monospace;font-size:12px;color:var(--ink3)}
+.cl-t .stamp{margin-left:auto}
+.cl-m{margin-top:6px;font-size:12px;color:var(--ink2);display:flex;align-items:center;gap:5px;white-space:nowrap}
+.sz{padding:9px 12px 6px;display:flex;flex-direction:column;gap:6px}
+.sz-h{display:flex;align-items:center;gap:8px}
+.sz-h .r{margin-left:auto;font-size:11px;color:var(--ink3)}
+.big{position:relative;display:flex;align-items:baseline;gap:8px;height:36px}
+.bigv{font-family:'Courier Prime',monospace;font-size:38px;font-weight:700;line-height:1;color:var(--ink)}
+.bign{margin-left:auto;font-size:12px;color:var(--ink3)}
+.rng{position:relative;height:25px}
+.rng-t{position:absolute;left:0;right:0;top:8px;height:0;border-top:1.5px solid var(--ink2)}
+.rng-k{position:absolute;top:4px;width:1px;height:9px;background:var(--ink2)}
+.rng-m{position:absolute;top:1px;width:3px;height:15px;margin-left:-1.5px;border-radius:1px}
+.rng-l{position:absolute;top:15px;font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;line-height:1;white-space:nowrap}
+.src{width:100%;border-collapse:collapse;font-size:12px}
+.src th{padding:0 0 4px;font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;letter-spacing:.05em;color:var(--ink3);text-align:left;border-bottom:1px solid var(--ink2)}
+.src td{height:25px;padding:0;border-bottom:1px dotted #B9AC8E;white-space:nowrap}
+.src tr:last-child td{border-bottom:0}
+.src .r{text-align:right;padding-right:8px}
+.src td.tw{font-size:12px;font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.st{display:flex;flex-direction:column;gap:3px;padding:6px 9px 7px;background:var(--index);border:1px solid #D9D0BC;box-shadow:1px 2px 0 rgba(90,70,30,.25)}
+.st-l{font-size:11px;color:var(--ink3)}
+.st-v{display:flex;align-items:center;gap:6px;font-family:'Courier Prime',monospace;font-size:19px;font-weight:700;line-height:1}
+.sh{display:flex;align-items:center;gap:8px}
+.sh .ln{flex:1;height:0;border-top:1px solid var(--ink2)}
+.sh .r{font-size:11px;color:var(--ink2)}
+.acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.acard{appearance:none;display:flex;flex-direction:column;gap:3px;padding:6px 9px 7px;text-align:left;color:var(--ink);background:var(--index);border:1px solid #CFC5AE;border-radius:2px;box-shadow:2px 2px 0 rgba(60,45,20,.35);cursor:pointer}
+.acard.is-hover{border:1.5px solid var(--ink);transform:translateY(-2px);box-shadow:3px 5px 0 rgba(60,45,20,.45);background:#FFFDF5}
+.acard.dim{opacity:.55}
+.ac-t{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:700;line-height:1.1}
+.ac-t .key{margin-left:auto}
+.ac-d{font-size:12px;line-height:1.15;color:var(--ink2)}
+.ac-c{font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;color:var(--ink2)}
+.pv{position:relative;display:flex;flex-direction:column;gap:5px;padding:8px 11px 9px;background:var(--sticky);box-shadow:2px 2px 0 rgba(60,45,20,.35);font-size:12px;color:var(--ink)}
+.pv-r{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.pv-r .r{margin-left:auto;font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;color:var(--ink2)}
+.team{display:flex;align-items:center;gap:10px;padding:5px 10px;background:var(--index);border:1px solid #D9D0BC;box-shadow:1px 2px 0 rgba(90,70,30,.25)}
+.team .tok{position:relative}
+.tm-m{flex:1;display:flex;flex-direction:column;gap:2px;font-size:12px;color:var(--ink2)}
+.tm-m b{font-size:14px;color:var(--ink)}
+.tm-s{display:flex;flex-direction:column;align-items:flex-end;gap:4px;font-size:11px;color:var(--ink3)}
+.pips{display:inline-flex;gap:2px;vertical-align:-1px}
+.pips i{display:block;width:8px;height:8px;border:1px solid var(--ink2);background:var(--ink2)}
+.pips i.off{background:transparent}
+.op{font-size:12px;color:var(--ink2)}
+.telex{position:absolute;left:16px;top:1004px;width:1572px;height:26px;display:flex;align-items:stretch;box-shadow:2px 3px 0 rgba(0,0,0,.45)}
+.tx-l{flex:none;display:flex;align-items:center;gap:7px;padding:0 10px;background:#0E0906;color:#C9A86A;font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;letter-spacing:.1em;border:1px solid #6E5A33}
+.tx-view{flex:1;position:relative;overflow:hidden;background-color:var(--telex);background-image:radial-gradient(circle,rgba(70,60,40,.32) 1px,transparent 1.5px),radial-gradient(circle,rgba(70,60,40,.32) 1px,transparent 1.5px);background-size:9px 26px,9px 26px;background-position:0 -10px,4px 10px}
+.tx-run{position:absolute;left:0;top:0;bottom:0;display:flex;align-items:center;gap:34px;padding-left:16px;white-space:nowrap;animation:tx 120s linear infinite}
+@keyframes tx{to{transform:translateX(-50%)}}
+.tx-i{display:inline-flex;align-items:center;gap:9px;font-family:'Courier Prime',monospace;font-size:13px;line-height:1;color:var(--ink)}
+.tx-i .d{color:var(--ink3)}
+.tx-i b{font-weight:700}
+.dock{position:absolute;left:16px;top:1036px;height:44px;display:flex;align-items:flex-end;gap:6px}
+.dtab{position:relative;appearance:none;display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 12px 6px;border:1px solid rgba(0,0,0,.5);border-bottom:0;border-radius:7px 7px 0 0;font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--ink);cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.dtab.on{height:44px;padding-bottom:12px;border-color:#000;border-width:1.5px}
+.env{position:absolute;left:1604px;top:1001px;width:300px;height:74px;appearance:none;padding:0;border:1px solid #4A2420;border-radius:3px;background:#6F2E28;box-shadow:3px 4px 0 rgba(0,0,0,.5);cursor:pointer;overflow:hidden;text-align:left}
+.env-l{position:absolute;left:14px;top:14px;width:204px;height:46px;padding:6px 10px;display:flex;flex-direction:column;justify-content:center;gap:4px;background:var(--paper);border-radius:1px;box-shadow:1px 1px 0 rgba(0,0,0,.35)}
+.env-t{font-family:'Courier Prime',monospace;font-size:15px;font-weight:700;letter-spacing:.04em;line-height:1;color:var(--ink);white-space:nowrap}
+.env-s{font-size:11px;line-height:1;color:var(--ink2);white-space:nowrap}
+.ov{position:absolute;left:0;top:0;pointer-events:none}
+.clue{position:absolute;z-index:30;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#FF4FD8;border:2px solid #FFE3F8;color:#1A0518;font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;line-height:1;box-shadow:0 0 0 3px rgba(255,79,216,.28)}
+</style>
+</head>
+<body style="margin:0">
+<div class="c" style="position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #2A1C13">
+
+<svg width="0" height="0" style="position: absolute" aria-hidden="true">
+<defs>
+<pattern id="c-hz" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="#F3EDDC"></rect><rect width="2" height="4" fill="#9A1E14"></rect></pattern>
+<symbol id="c-dial" viewBox="0 0 132 92">
+<rect x="5" y="5" width="122" height="82" rx="4" fill="#F5F0E1"></rect>
+<path d="M26.2 55L17.5 50M24.7 48L20.7 45.1M28.1 43.9L24.4 40.5M31.9 40.1L28.5 36.4M36 36.7L33.1 32.7M43 38.2L38 29.5M45.3 31.4L43.2 26.8M50.2 29.5L48.7 24.7M55.4 28.1L54.4 23.2M60.7 27.3L60.1 22.3M66 32L66 22M71.3 27.3L71.9 22.3M76.6 28.1L77.6 23.2M81.8 29.5L83.3 24.7M86.7 31.4L88.8 26.8M89 38.2L94 29.5M96 36.7L98.9 32.7M100.1 40.1L103.5 36.4M103.9 43.9L107.6 40.5M107.3 48L111.3 45.1M105.8 55L114.5 50" stroke="#1E1B16" stroke-width="1.2" stroke-linecap="round"></path>
+<text x="34" y="63.5" text-anchor="middle" font-family="Courier Prime, Courier New, monospace" font-size="11" font-weight="700" fill="#463F34">0</text>
+<text x="66" y="45" text-anchor="middle" font-family="Courier Prime, Courier New, monospace" font-size="11" font-weight="700" fill="#463F34">50</text>
+<text x="98" y="63.5" text-anchor="middle" font-family="Courier Prime, Courier New, monospace" font-size="11" font-weight="700" fill="#463F34">100</text>
+<rect x="5.5" y="5.5" width="121" height="81" rx="4" fill="none" stroke="#000" stroke-opacity=".45"></rect>
+</symbol>
+</defs>
+</svg>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="felt" aria-hidden="true"></div>
+
+<!-- HARİTA: analistin katmanı yok -->
+<div class="mapsheet" aria-hidden="true"><img src="c-harita.svg" width="1112" height="788" alt=""></div>
+<div class="mhead"><b>KYGA-07 · HAREKÂT HARİTASI · DÜNYA</b><span>İzleme kapsamı <b>4/12</b> · Onaylanan <b>12/12</b> · Şüpheli <b>0</b> · Bilinmiyor <b>0</b></span><span class="tw" style="margin-left: auto; color: #675F50">G-104 · 12:00</span></div>
+<div class="glbl" style="left: 419px; top: 344px">60°K</div>
+<div class="glbl" style="left: 419px; top: 477px">30°K</div>
+<div class="glbl" style="left: 419px; top: 611px">0°</div>
+<div class="glbl" style="left: 419px; top: 744px">30°G</div>
+<div class="glbl" style="left: 419px; top: 878px">60°G</div>
+<div class="glbl" style="left: 430px; top: 245px">120°B</div>
+<div class="glbl" style="left: 643px; top: 245px">60°B</div>
+<div class="glbl" style="left: 860px; top: 245px">0°</div>
+<div class="glbl" style="left: 1063px; top: 245px">60°D</div>
+<div class="glbl" style="left: 1270px; top: 245px">120°D</div>
+
+<svg class="ov" width="1920" height="1080" viewBox="0 0 1920 1080" aria-hidden="true">
+<path d="M532.1 463Q547.8 497.1 554.5 534.2M573.9 568.5Q619.3 607.2 651.6 657.4M543.6 438.1Q698.2 396.8 857.7 410.7M682.9 668.2Q798.7 629 920.9 630.4M899 404.8Q923.5 395.8 949.5 392.4M899.1 421.1Q948.6 443.3 989.8 478.7M980.4 409.2Q995 439.3 1001.9 472.1M993.6 510.4Q963.5 557.1 947.9 610.4M1119 515.9Q1074.3 498.6 1026.6 494.2M1212.3 556.5Q1187 540.2 1158.6 530.3M1233.7 548Q1241.7 514.7 1257.5 484.5M1244 583.8Q1297.1 642.1 1329.7 713.9M990.7 384Q1064.6 361.7 1141.8 363.1M1255.5 449.1Q1223.2 407.1 1180.5 375.9M1138.1 502.7Q1138.4 442.1 1156.2 384.2" fill="none" stroke="#6F6553" stroke-width="1.3" stroke-dasharray="6 4" stroke-linecap="round"></path>
+<path d="M501 440Q460 431 421 427" fill="none" stroke="#6F6553" stroke-width="1.3" stroke-dasharray="6 4" stroke-linecap="round"></path>
+<path d="M-6 -3.8L0 0L-6 3.8Z" transform="translate(418 426.6) rotate(186)" fill="#6F6553"></path>
+<path d="M1289 470Q1400 487 1499 497" fill="none" stroke="#6F6553" stroke-width="1.3" stroke-dasharray="6 4" stroke-linecap="round"></path>
+<path d="M-6 -3.8L0 0L-6 3.8Z" transform="translate(1502 497.4) rotate(6)" fill="#6F6553"></path>
+</svg>
+<div class="edge-l" style="left: 422px; top: 405px">← D. ASYA</div>
+<div class="edge-l" style="left: 1412px; top: 504px">K. AMERİKA →</div>
+
+<div class="legend" aria-label="Harita lejantı">
+<div class="lg-r">
+<span class="lg-k">SIZMA</span>
+<span class="lg-i"><span class="lg-sw" style="background: #F2C9B8"></span>0</span>
+<span class="lg-i"><span class="lg-sw" style="background: #E4937B"></span>20</span>
+<span class="lg-i"><span class="lg-sw" style="background: #B4442E"></span>40</span>
+<span class="lg-i"><span class="lg-sw" style="background: #8C2416"></span>60</span>
+<span class="lg-i"><span class="lg-sw" style="background: #5C100A"></span>80+</span>
+<span style="width: 1px; height: 12px; background: #675F50"></span>
+<span class="lg-k">KAYNAK</span>
+<span class="lg-i"><span class="seal" style="width: 14px; height: 14px"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 5.2l2 2 4-4.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>onaylandı</span>
+<span class="lg-i"><svg width="18" height="13" viewBox="0 0 18 13" aria-hidden="true"><rect x=".5" y=".5" width="17" height="12" rx="2" fill="#E3E0D8" stroke="#524973" stroke-dasharray="2 1.5"></rect><path d="M4.1 7.1c1-1.4 2.2-1.4 3.3 0s2.2 1.4 3.3 0" fill="none" stroke="#524973" stroke-width="1.5" stroke-linecap="round"></path></svg>rapor</span>
+<span class="lg-i"><svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true"><path d="M5 13.2C2 11.5 1.4 6.8 4.6 4 8.1 1 15.3 1 18.4 3.8c3 2.8 2.3 7.6-1.2 9.2-3.3 1.5-8.4 1.4-11.1-.4" fill="none" stroke="#A9520A" stroke-width="1.8" stroke-linecap="round"></path></svg>şüpheli</span>
+<span class="lg-i"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="#4A4640" stroke-width="1.4" stroke-dasharray="2.5 2.5"></circle></svg>bilinmiyor</span>
+</div>
+<div class="lg-r">
+<span class="lg-k">İŞARET</span>
+<span class="lg-i"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7.5" fill="none" stroke="#24592E" stroke-width="1.8" stroke-dasharray="4 2.5"></circle></svg>karantina</span>
+<span class="lg-i"><svg width="15" height="15" viewBox="0 0 15 15" aria-hidden="true"><rect x="1" y="1" width="13" height="13" rx="2" fill="none" stroke="#9A1E14" stroke-width="1.8"></rect><text x="7.5" y="11" text-anchor="middle" font-family="Libre Franklin, Arial, sans-serif" font-size="9.5" font-weight="800" fill="#9A1E14">Ç</text></svg>YZ çekirdeği</span>
+<span class="lg-i"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1l6 6-6 6-6-6z" fill="#1E1B16"></path></svg>saha ekibi</span>
+<span class="lg-i"><svg width="26" height="10" viewBox="0 0 26 10" aria-hidden="true"><path d="M1 5h24" stroke="#B8241A" stroke-width="2.2"></path><path d="M13 1.6l5 3.4-5 3.4z" fill="#B8241A"></path></svg>yayılım ipliği</span>
+<span class="lg-i"><svg width="26" height="10" viewBox="0 0 26 10" aria-hidden="true"><path d="M1 5h24" stroke="#6F6553" stroke-width="1.3" stroke-dasharray="6 4"></path></svg>ağ yolu</span>
+<span class="lg-i"><svg width="26" height="14" viewBox="0 0 26 14" aria-hidden="true"><path d="M1 7h24" stroke="#6F6553" stroke-width="1.3" stroke-dasharray="6 4"></path><path d="M10 2.5l1.6 9M15 2.5l1.6 9" stroke="#1E1B16" stroke-width="2.2" stroke-linecap="round"></path></svg>kesik yol</span>
+<span class="lg-i"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5" fill="#2A2420"></circle><circle cx="4.4" cy="4.4" r="1.6" fill="#FFFFFF" fill-opacity=".55"></circle></svg>analist raptiyesi</span>
+</div>
+</div>
+<div class="scale" aria-hidden="true">
+<span>ÖLÇEK · ekvatorda</span>
+<svg width="190" height="14" viewBox="0 0 190 14"><rect x=".5" y="2.5" width="62" height="6" fill="#1E1B16" stroke="#1E1B16"></rect><rect x="62.5" y="2.5" width="62" height="6" fill="#ECE6D4" stroke="#1E1B16"></rect><rect x="124.5" y="2.5" width="62" height="6" fill="#1E1B16" stroke="#1E1B16"></rect></svg>
+<span style="display: flex; justify-content: space-between; width: 190px"><span>0</span><span>2000</span><span>4000</span><span>6000 km</span></span>
+</div>
+
+<div class="tok" style="left: 541px; top: 412px" title="Ekip A"><span>A</span></div>
+<div class="tok" style="left: 1217px; top: 461px" title="Ekip B"><span>B</span></div>
+<div class="tok" style="left: 701px; top: 404px" title="Ekip C"><span>C</span></div>
+<div class="ttag" style="left: 662px; top: 431px">B. Avrupa'ya · 2 gün</div>
+
+<button class="node" type="button" style="left: 494px; top: 416px" aria-label="Kuzey Amerika: sızma 0, onaylandı"><svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="16" fill="#F2C9B8" stroke="#1E1B16" stroke-width="1.5"></circle><circle cx="43" cy="13" r="7" fill="#1A4789" stroke="#ECE6D4" stroke-width="1.5"></circle><path d="M39.8 13.2l2.2 2.2 4-4.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="nv tw" style="color: #1E1B16">0</span></button>
+<div class="nl" style="left: 442px; top: 464px"><span>KUZEY AMERİKA</span></div>
+<button class="node" type="button" style="left: 530px; top: 527px" aria-label="Orta Amerika: sızma 0, onaylandı"><svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="16" fill="#F2C9B8" stroke="#1E1B16" stroke-width="1.5"></circle><circle cx="43" cy="13" r="7" fill="#1A4789" stroke="#ECE6D4" stroke-width="1.5"></circle><path d="M39.8 13.2l2.2 2.2 4-4.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="nv tw" style="color: #1E1B16">0</span></button>
+<div class="nl" style="left: 478px; top: 575px"><span>ORTA AMERİKA</span></div>
+<button class="node" type="button" style="left: 634px; top: 647px" aria-label="Güney Amerika: sızma 0, onaylandı"><svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="16" fill="#F2C9B8" stroke="#1E1B16" stroke-width="1.5"></circle><circle cx="43" cy="13" r="7" fill="#1A4789" stroke="#ECE6D4" stroke-width="1.5"></circle><path d="M39.8 13.2l2.2 2.2 4-4.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="nv tw" style="color: #1E1B16">0</span></button>
+<div class="nl" style="left: 582px; top: 695px"><span>GÜNEY AMERİKA</span></div>
+<button class="node" type="button" style="left: 852px; top: 385px" aria-label="Batı Avrupa: sızma 0, onaylandı"><svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="16" fill="#F2C9B8" stroke="#1E1B16" stroke-width="1.5"></circle><circle cx="43" cy="13" r="7" fill="#1A4789" stroke="#ECE6D4" stroke-width="1.5"></circle><path d="M39.8 13.2l2.2 2.2 4-4.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="nv tw" style="color: #1E1B16">0</span></button>
+<div class="nl" style="left: 800px; top: 433px"><span>BATI AVRUPA</span></div>
+<button class="node" type="button" style="left: 942px; top: 363px" aria-label="Doğu Avrupa: sızma 0, onaylandı"><svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="16" fill="#F2C9B8" stroke="#1E1B16" stroke-width="1.5"></circle><circle cx="43" cy="13" r="7" fill="#1A4789" stroke="#ECE6D4" stroke-width="1.5"></circle><path d="M39.8 13.2l2.2 2.2 4-4.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="nv tw" style="color: #1E1B16">0</span></button>
+<div class="nl" style="left: 890px; top: 351px"><span>DOĞU AVRUPA</span></div>
+<button class="node" type="button" style="left: 978px; top: 465px" aria-label="Orta Doğu ve Kuzey Afrika: sızma 10, onaylandı"><svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="16" fill="#F2C9B8" stroke="#1E1B16" stroke-width="1.5"></circle><circle cx="43" cy="13" r="7" fill="#1A4789" stroke="#ECE6D4" stroke-width="1.5"></circle><path d="M39.8 13.2l2.2 2.2 4-4.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="nv tw" style="color: #1E1B16">10</span></button>
+<div class="nl" style="left: 824px; top: 486px; text-align: right"><span>O. DOĞU · K. AFRİKA</span></div>
+<button class="node" type="button" style="left: 914px; top: 603px" aria-label="Sahra Altı Afrika: sızma 0, onaylandı"><svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="16" fill="#F2C9B8" stroke="#1E1B16" stroke-width="1.5"></circle><circle cx="43" cy="13" r="7" fill="#1A4789" stroke="#ECE6D4" stroke-width="1.5"></circle><path d="M39.8 13.2l2.2 2.2 4-4.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="nv tw" style="color: #1E1B16">0</span></button>
+<div class="nl" style="left: 862px; top: 651px"><span>SAHRA ALTI AFRİKA</span></div>
+<button class="node" type="button" style="left: 1135px; top: 336px" aria-label="Avrasya: sızma 10, onaylandı, karantinada"><svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="24" fill="none" stroke="#24592E" stroke-width="2" stroke-dasharray="5 3.5"></circle><circle cx="28" cy="28" r="16" fill="#F2C9B8" stroke="#1E1B16" stroke-width="1.5"></circle><circle cx="43" cy="13" r="7" fill="#1A4789" stroke="#ECE6D4" stroke-width="1.5"></circle><path d="M39.8 13.2l2.2 2.2 4-4.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="nv tw" style="color: #1E1B16">10</span></button>
+<div class="nl" style="left: 1083px; top: 324px"><span>AVRASYA</span></div>
+<button class="node" type="button" style="left: 1110px; top: 496px" aria-label="Güney Asya: sızma 10, onaylandı"><svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="16" fill="#F2C9B8" stroke="#1E1B16" stroke-width="1.5"></circle><circle cx="43" cy="13" r="7" fill="#1A4789" stroke="#ECE6D4" stroke-width="1.5"></circle><path d="M39.8 13.2l2.2 2.2 4-4.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="nv tw" style="color: #1E1B16">10</span></button>
+<div class="nl" style="left: 956px; top: 517px; text-align: right"><span>GÜNEY ASYA</span></div>
+<button class="node" type="button" style="left: 1240px; top: 438px" aria-label="Doğu Asya: sızma 0, onaylandı, seçili"><svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="26" fill="#F5D646" fill-opacity=".72"></circle><circle cx="28" cy="28" r="16" fill="#F2C9B8" stroke="#1E1B16" stroke-width="1.5"></circle><circle cx="43" cy="13" r="7" fill="#1A4789" stroke="#ECE6D4" stroke-width="1.5"></circle><path d="M39.8 13.2l2.2 2.2 4-4.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="nv tw" style="color: #1E1B16">0</span></button>
+<div class="nl" style="left: 1288px; top: 472px; text-align: left"><span class="sel">DOĞU ASYA</span></div>
+<button class="node" type="button" style="left: 1202px; top: 541px" aria-label="Güneydoğu Asya: sızma 0, onaylandı"><svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="16" fill="#F2C9B8" stroke="#1E1B16" stroke-width="1.5"></circle><circle cx="43" cy="13" r="7" fill="#1A4789" stroke="#ECE6D4" stroke-width="1.5"></circle><path d="M39.8 13.2l2.2 2.2 4-4.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="nv tw" style="color: #1E1B16">0</span></button>
+<div class="nl" style="left: 1048px; top: 562px; text-align: right"><span>GÜNEYDOĞU ASYA</span></div>
+<button class="node" type="button" style="left: 1310px; top: 705px" aria-label="Okyanusya: sızma 0, onaylandı"><svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="16" fill="#F2C9B8" stroke="#1E1B16" stroke-width="1.5"></circle><circle cx="43" cy="13" r="7" fill="#1A4789" stroke="#ECE6D4" stroke-width="1.5"></circle><path d="M39.8 13.2l2.2 2.2 4-4.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="nv tw" style="color: #1E1B16">0</span></button>
+<div class="nl" style="left: 1258px; top: 753px"><span>OKYANUSYA</span></div>
+
+<!-- İPUCU: raptiyeler gitti, delikleri kaldı; notlar silinmiş ama izi duruyor -->
+<svg class="ov" width="1920" height="1080" viewBox="0 0 1920 1080" aria-hidden="true">
+<g fill="#2A2420" fill-opacity=".72" stroke="#000" stroke-opacity=".16" stroke-width="2.4">
+<circle cx="522.5" cy="430" r="1.8"></circle><circle cx="662.5" cy="661.4" r="1.8"></circle><circle cx="879.5" cy="398.9" r="1.8"></circle><circle cx="970.5" cy="376.6" r="1.8"></circle><circle cx="1005.5" cy="478.9" r="1.8"></circle><circle cx="1163" cy="349.9" r="1.8"></circle><circle cx="1138.5" cy="510.1" r="1.8"></circle><circle cx="1268" cy="452.2" r="1.8"></circle><circle cx="1229.5" cy="554.6" r="1.8"></circle><circle cx="1338" cy="719.2" r="1.8"></circle>
+</g>
+<ellipse cx="1400" cy="550" rx="96" ry="26" fill="#000" fill-opacity=".025"></ellipse>
+</svg>
+<div class="ghost" style="left: 1320px; top: 530px; transform: rotate(-2deg)">tel. %38 ↔ saha %52<br>kim yalan söylüyor?</div>
+<div class="ghost" style="left: 1150px; top: 592px; font-weight: 700; transform: rotate(-3deg); opacity: .07">çekirdek!</div>
+
+<!-- HEDEF -->
+<section class="icard" style="left: 16px; top: 204px; width: 376px; height: 112px" aria-label="Hedef">
+<div class="ic-h"><svg class="ico grip" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4h.01M10 4h.01M6 8h.01M10 8h.01M6 12h.01M10 12h.01" stroke-width="2.4"></path></svg><span class="ic-t">HEDEF</span><span class="ic-s">Kazanma yolları</span><span class="stamp sm s-green">TEMİZ</span><button class="xb" type="button" aria-label="Küçült"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 8.5h8"></path></svg></button></div>
+<div class="gl"><span class="gl-n">Hizalama</span><span class="bx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><b>%100</b></div>
+<div class="gl"><span class="gl-n">Silme</span><span class="bx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><b>%100</b></div>
+<div class="gl nx" style="height: 26px">Sıradaki:<b>Tüm adımlar tamamlandı</b><span class="r">Onay bekleniyor</span></div>
+</section>
+
+<!-- ARAŞTIRMA -->
+<section class="folder" style="left: 16px; top: 328px; width: 376px; height: 664px" aria-label="Araştırma">
+<div class="ftab" style="width: 238px"><svg class="ico grip" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4h.01M10 4h.01M6 8h.01M10 8h.01M6 12h.01M10 12h.01" stroke-width="2.4"></path></svg><span class="ft-t">ARAŞTIRMA</span><span class="key">R</span><button class="xb" type="button" aria-label="Kapat"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7"></path><path d="M11.5 4.5l-7 7"></path></svg></button></div>
+<div class="fbody">
+<div class="fsheet rs">
+<div class="rs-h"><span class="cap">PROJE DURUMU</span><span class="stamp sm s-green">TEMİZ</span><span class="r">G-104</span></div>
+<div class="rs-sum">Aktif <b>0 proje</b> · <b class="tw">0,0 fon/gün</b><span class="r">Fon <b class="tw">50,0</b><span class="seal"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 5.2l2 2 4-4.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></span></div>
+<div class="fund">
+<div class="fund-h"><span class="cap">ACİL DURUM FONU</span><span>Tüm aktif projeleri hızlandırır</span></div>
+<div class="opts" role="radiogroup" aria-label="Acil durum fonu">
+<button class="opt" type="button" role="radio" aria-checked="true"><span class="cb">X</span>Kapalı</button>
+<button class="opt" type="button" role="radio" aria-checked="false"><span class="cb"></span>×1,5 <span class="tw">+3,0/gün</span></button>
+<button class="opt" type="button" role="radio" aria-checked="false"><span class="cb"></span>×2 <span class="tw">+6,0/gün</span></button>
+</div>
+</div>
+<div>
+<div class="br-h"><span class="cap">HİZALAMA</span><span class="ln"></span><span class="tw">3/3</span></div>
+<div class="rr done"><svg class="ico" viewBox="0 0 16 16" style="color: #24592E; stroke-width: 2" aria-hidden="true"><path d="M2.5 8.8c1.4.9 2.6 2.2 3.5 3.6C7.7 8.6 10.3 5.4 13.6 3"></path></svg><span class="rr-n">Yorumlanabilirlik I</span><span class="rr-r"><span class="stamp sm s-green">TAMAM</span></span></div>
+<div class="rr done"><svg class="ico" viewBox="0 0 16 16" style="color: #24592E; stroke-width: 2" aria-hidden="true"><path d="M2.5 8.8c1.4.9 2.6 2.2 3.5 3.6C7.7 8.6 10.3 5.4 13.6 3"></path></svg><span class="rr-n">Ödül modeli denetimi</span><span class="rr-r"><span class="stamp sm s-green">TAMAM</span></span></div>
+<div class="rr done"><svg class="ico" viewBox="0 0 16 16" style="color: #24592E; stroke-width: 2" aria-hidden="true"><path d="M2.5 8.8c1.4.9 2.6 2.2 3.5 3.6C7.7 8.6 10.3 5.4 13.6 3"></path></svg><span class="rr-n">Düzeltilebilirlik çekirdeği</span><span class="rr-r"><span class="stamp sm s-green">TAMAM</span></span></div>
+</div>
+<div>
+<div class="br-h"><span class="cap">SİLME</span><span class="ln"></span><span class="tw">3/3</span></div>
+<div class="rr done"><svg class="ico" viewBox="0 0 16 16" style="color: #24592E; stroke-width: 2" aria-hidden="true"><path d="M2.5 8.8c1.4.9 2.6 2.2 3.5 3.6C7.7 8.6 10.3 5.4 13.6 3"></path></svg><span class="rr-n">Ağ ayrıştırma</span><span class="rr-r"><span class="stamp sm s-green">TAMAM</span></span></div>
+<div class="rr done"><svg class="ico" viewBox="0 0 16 16" style="color: #24592E; stroke-width: 2" aria-hidden="true"><path d="M2.5 8.8c1.4.9 2.6 2.2 3.5 3.6C7.7 8.6 10.3 5.4 13.6 3"></path></svg><span class="rr-n">Ağırlık parmak izi</span><span class="rr-r"><span class="stamp sm s-green">TAMAM</span></span></div>
+<div class="rr done"><svg class="ico" viewBox="0 0 16 16" style="color: #24592E; stroke-width: 2" aria-hidden="true"><path d="M2.5 8.8c1.4.9 2.6 2.2 3.5 3.6C7.7 8.6 10.3 5.4 13.6 3"></path></svg><span class="rr-n">Çekirdek imha protokolü</span><span class="rr-r"><span class="stamp sm s-green">TAMAM</span></span></div>
+</div>
+<div>
+<div class="br-h"><span class="cap">TESPİT</span><span class="ln"></span><span class="tw">0/2</span></div>
+<div class="rr"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 3.5v9"></path><path d="M10.5 3.5v9"></path></svg><span class="rr-n">Çapraz kaynak doğrulama<small>Kendiliğinden durdu · gerek yok</small></span><span class="rr-r"><span class="pbar"><span style="width: 31%"></span></span><span class="tw" style="color: #1E1B16; font-weight: 700">%31</span><button class="bt sm icon" type="button" aria-label="Sürdür"><svg class="ico" viewBox="0 0 16 16" style="width: 12px; height: 12px" aria-hidden="true"><path d="M5.2 3.6l7 4.4-7 4.4z"></path></svg></button></span></div>
+<div class="rr"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.5"></circle></svg><span class="rr-n">Sinyal adli bilişimi<small>Önerilmez · tehdit yok</small></span><span class="rr-r"><span class="tw">5 gün</span><button class="bt sm" type="button">Başlat · 2,6 fon/gün</button></span></div>
+</div>
+<div>
+<div class="br-h"><span class="cap">DİPLOMASİ</span><span class="ln"></span><span class="tw">2/2</span></div>
+<div class="rr done"><svg class="ico" viewBox="0 0 16 16" style="color: #24592E; stroke-width: 2" aria-hidden="true"><path d="M2.5 8.8c1.4.9 2.6 2.2 3.5 3.6C7.7 8.6 10.3 5.4 13.6 3"></path></svg><span class="rr-n">Kriz basın ofisi</span><span class="rr-r"><span class="stamp sm s-green">TAMAM</span></span></div>
+<div class="rr done"><svg class="ico" viewBox="0 0 16 16" style="color: #24592E; stroke-width: 2" aria-hidden="true"><path d="M2.5 8.8c1.4.9 2.6 2.2 3.5 3.6C7.7 8.6 10.3 5.4 13.6 3"></path></svg><span class="rr-n">Ortak doğrulama paktı</span><span class="rr-r"><span class="stamp sm s-green">TAMAM</span></span></div>
+</div>
+</div>
+<svg class="clip" style="right: 30px; top: -12px" viewBox="0 0 16 40" aria-hidden="true"><path d="M11.5 14V31.5a3.5 3.5 0 0 1-7 0V8a5 5 0 0 1 10 0v21" fill="none" stroke="#8E8B84" stroke-width="2" stroke-linecap="round"></path></svg>
+</div>
+</section>
+
+<!-- BÖLGE DOSYASI -->
+<section class="folder" style="left: 1528px; top: 204px; width: 376px; height: 788px" aria-label="Dosya R-10: Doğu Asya">
+<div class="ftab" style="width: 256px"><svg class="ico grip" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4h.01M10 4h.01M6 8h.01M10 8h.01M6 12h.01M10 12h.01" stroke-width="2.4"></path></svg><span class="ft-t">DOSYA R-10</span><span class="ft-s">Bölge</span><button class="xb" type="button" aria-label="Kapat"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7"></path><path d="M11.5 4.5l-7 7"></path></svg></button></div>
+<div class="fbody" style="display: flex; flex-direction: column; gap: 6px">
+<div class="clabel">
+<div class="cl-t"><b>DOĞU ASYA</b><span class="code">R-10</span><span class="stamp s-green" style="font-size: 13px">TEMİZ</span></div>
+<div class="cl-m">Nüfus <span class="tw">1,64 mlr</span> · 4 bağlantı · İzleme ağı: yok</div>
+</div>
+<div class="fsheet sz">
+<div class="sz-h"><span class="cap">SIZMA</span><span class="stamp sm s-blue">ONAYLANDI</span><span class="r">Tehdit saptanmadı</span></div>
+<div class="big"><span class="bigv">%0</span><span class="bign">Kesin ölçüm</span></div>
+<div class="rng" aria-hidden="true"><span class="rng-t"></span><span class="rng-k" style="left: 0"></span><span class="rng-k" style="left: 50%"></span><span class="rng-k" style="right: 0"></span><span class="rng-m" style="left: 0.8%; background: #1A4789"></span><span class="rng-l" style="left: 2%; color: #1A4789">izleme ağı 0</span></div>
+<table class="src">
+<thead><tr><th>KAYNAK</th><th class="r">DEĞER</th><th class="r">GÜN</th><th>DURUM</th></tr></thead>
+<tbody>
+<tr><td>KYGA izleme ağı</td><td class="r tw">%0</td><td class="r tw" style="color: #675F50; font-weight: 400">G-104</td><td><span class="stamp sm s-blue">ONAYLANDI</span></td></tr>
+</tbody>
+</table>
+</div>
+<div class="stats">
+<div class="st"><span class="st-l">Yerel güven</span><span class="st-v">80<span class="seal"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 5.2l2 2 4-4.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></span></div>
+<div class="st"><span class="st-l">Bağımlılık</span><span class="st-v">50<span class="seal"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 5.2l2 2 4-4.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></span></div>
+<div class="st"><span class="st-l">Ekonomi</span><span class="st-v">100<span class="seal"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 5.2l2 2 4-4.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></span></div>
+</div>
+<div class="sh"><span class="cap">EYLEMLER</span><span class="ln"></span><span class="r tw">1–4</span></div>
+<div class="acts">
+<button class="acard is-hover" type="button"><span class="ac-t"><svg class="ico" viewBox="0 0 16 16" style="width: 16px; height: 16px" aria-hidden="true"><path d="M8 8.6V14"></path><circle cx="8" cy="7" r="1.4"></circle><path d="M5.2 4.4a4 4 0 0 0 0 5.2"></path><path d="M10.8 4.4a4 4 0 0 1 0 5.2"></path><path d="M3.2 2.6a6.6 6.6 0 0 0 0 8.8"></path><path d="M12.8 2.6a6.6 6.6 0 0 1 0 8.8"></path></svg>İzleme ağı<span class="key">1</span></span><span class="ac-d">Kaynağı kalıcı doğrular</span><span class="ac-c">8 fon · 5 gün</span></button>
+<button class="acard" type="button"><span class="ac-t"><svg class="ico" viewBox="0 0 16 16" style="width: 16px; height: 16px" aria-hidden="true"><circle cx="7" cy="7" r="4.3"></circle><path d="M10.2 10.2L14 14"></path></svg>Denetim<span class="key">2</span></span><span class="ac-d">Tek seferlik ölçüm</span><span class="ac-c">4 fon · 2 SG · 2 gün</span></button>
+<button class="acard dim" type="button"><span class="ac-t"><svg class="ico" viewBox="0 0 16 16" style="width: 16px; height: 16px" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke-dasharray="2.6 1.8"></circle><circle cx="8" cy="8" r="2.2"></circle></svg>Karantina<span class="key">3</span></span><span class="ac-d">Önerilmez · tehdit yok</span><span class="ac-c">15 SG · Güven −3</span></button>
+<button class="acard dim" type="button"><span class="ac-t"><svg class="ico" viewBox="0 0 16 16" style="width: 16px; height: 16px" aria-hidden="true"><path d="M8 1.8v5.4"></path><path d="M4.6 4.2a5.2 5.2 0 1 0 6.8 0"></path></svg>Son Şalter<span class="key">4</span></span><span class="ac-d">Önerilmez · tehdit yok</span><span class="ac-c">25 SG · Ekonomi −40</span></button>
+</div>
+<div class="pv" role="status">
+<div class="pv-r"><span class="cap" style="color: #1E1B16">ÖNİZLEME</span>İzleme ağı kurulursa<span class="r">5 gün sonra</span></div>
+<div class="pv-r">Değişiklik yok: bölge zaten <span class="stamp sm s-blue">ONAYLANDI</span></div>
+<div class="pv-r tw" style="font-size: 12px; font-weight: 700">Fon 50,0 → 42,0 · gereksiz harcama</div>
+</div>
+<div class="sh"><span class="cap">SAHA</span><span class="ln"></span><span class="r">Bölgede 1 ekip</span></div>
+<div class="team"><span class="tok" aria-hidden="true"><span>B</span></span><span class="tm-m"><b>Ekip B</b><span>Seul · Hazır</span></span><span class="tm-s"><span>Moral <span class="pips" aria-label="Moral 3/4"><i></i><i></i><i></i><i class="off"></i></span></span><span class="tw">Son temas G-074</span></span></div>
+<button class="bt ink" type="button" style="width: 100%; height: 36px; font-size: 14px">Saha operasyonu: baskın<span class="key" style="margin-left: 4px">B</span></button>
+<div class="op">Önerilmez: bölge temiz · gereksiz baskın Güven −5</div>
+</div>
+</section>
+
+<!-- ÜST RAY -->
+<header class="rail">
+<div class="rl">
+<div class="plaque"><span class="pl-t">SON ŞALTER</span><span class="pl-s">KYGA · KRİZ MASASI</span></div>
+<div class="plabel"><span class="stamp sm s-red">RAKİP YZ</span><b>AYNA</b>Etkinlik saptanmadı</div>
+</div>
+<div class="rc">
+<div class="cal" aria-label="Gün 104"><span class="cal-h">GÜN</span><span class="cal-n">104</span></div>
+<span class="plabel tw" style="height: 26px; font-size: 13px; font-weight: 700; color: #1E1B16">12:00</span>
+<div class="speed" role="group" aria-label="Oyun hızı">
+<button class="tk" type="button" aria-label="Duraklat (Boşluk)"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 3.5v9"></path><path d="M10.5 3.5v9"></path></svg></button>
+<button class="tk" type="button" aria-pressed="false">1×</button>
+<button class="tk on" type="button" aria-pressed="true">2×</button>
+<button class="tk" type="button" aria-pressed="false">4×</button>
+</div>
+</div>
+<div class="rr">
+<span class="plabel tw" style="font-size: 12px; font-weight: 700"><span class="lamp on"></span>CANLI · 0 ms</span>
+<span class="plabel"><span class="stamp sm s-red">KYGA-07 · GİZLİ</span></span>
+<button class="tk" type="button" aria-label="Ayarlar"><svg class="ico" viewBox="0 0 16 16" style="width: 14px; height: 14px" aria-hidden="true"><circle cx="8" cy="8" r="2.3"></circle><path d="M8 1.8v2M8 12.2v2M1.8 8h2M12.2 8h2M3.6 3.6l1.4 1.4M11 11l1.4 1.4M3.6 12.4L5 11M11 5l1.4-1.4"></path></svg></button>
+<span class="key" style="background: #F1E9D6">Esc</span>
+</div>
+</header>
+
+<!-- ANALOG SAYAÇLAR: hepsi yuvarlak değerde -->
+<div class="gbank">
+<div class="gauge">
+<svg class="meter" viewBox="0 0 132 92" aria-hidden="true"><rect x=".5" y=".5" width="131" height="91" rx="8" fill="#1A1511" stroke="#000"></rect><use href="#c-dial"></use><path d="M66 82V26" stroke="#1E1B16" stroke-width="2" stroke-linecap="round"></path><circle cx="66" cy="78" r="5" fill="#8A7346" stroke="#1E1B16" stroke-width="1.2"></circle></svg>
+<div class="gtag"><div class="g-h"><span class="g-n">FON</span><span class="stamp sm s-blue">ONAYLANDI</span></div><div class="g-m"><span class="g-v">50,0</span><span class="g-d"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h9"></path></svg>0,0/gün</span></div><div class="g-note">Gelir <b>6,0</b> · Gider <b>6,0</b> /gün</div></div>
+</div>
+<div class="gauge">
+<svg class="meter" viewBox="0 0 132 92" aria-hidden="true"><rect x=".5" y=".5" width="131" height="91" rx="8" fill="#1A1511" stroke="#000"></rect><use href="#c-dial"></use><g transform="rotate(12 66 78)"><path d="M66 82V26" stroke="#1E1B16" stroke-width="2" stroke-linecap="round"></path></g><circle cx="66" cy="78" r="5" fill="#8A7346" stroke="#1E1B16" stroke-width="1.2"></circle></svg>
+<div class="gtag"><div class="g-h"><span class="g-n">SİYASİ GÜÇ</span><span class="stamp sm s-blue">ONAYLANDI</span></div><div class="g-m"><span class="g-v">60</span><span class="g-d"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h9"></path></svg>0,0/gün</span></div><div class="g-note">Değişim yok</div></div>
+</div>
+<div class="gauge">
+<svg class="meter" viewBox="0 0 132 92" aria-hidden="true"><rect x=".5" y=".5" width="131" height="91" rx="8" fill="#1A1511" stroke="#000"></rect><use href="#c-dial"></use><path d="M20.1 51.5A53 53 0 0 1 30.5 38.6" fill="none" stroke="url(#c-hz)" stroke-width="6"></path><path d="M36.6 45.3L27.9 35.6" stroke="#9A1E14" stroke-width="2" stroke-linecap="round"></path><g transform="rotate(36 66 78)"><path d="M66 82V26" stroke="#1E1B16" stroke-width="2" stroke-linecap="round"></path></g><circle cx="66" cy="78" r="5" fill="#8A7346" stroke="#1E1B16" stroke-width="1.2"></circle></svg>
+<div class="gtag"><div class="g-h"><span class="g-n">KÜRESEL GÜVEN</span><span class="stamp sm s-blue">ONAYLANDI</span></div><div class="g-m"><span class="g-v">80,0</span><span class="g-d"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h9"></path></svg>0,0/gün</span></div><div class="g-note">Kayıp eşiği <b>15</b> · risk yok</div></div>
+</div>
+<div class="gauge">
+<svg class="meter" viewBox="0 0 132 92" aria-hidden="true"><rect x=".5" y=".5" width="131" height="91" rx="8" fill="#1A1511" stroke="#000"></rect><use href="#c-dial"></use><path d="M87.6 29.6A53 53 0 0 1 111.9 51.5" fill="none" stroke="url(#c-hz)" stroke-width="6"></path><path d="M83.9 37.8L89.2 25.9" stroke="#9A1E14" stroke-width="2" stroke-linecap="round"></path><path d="M66 82V26" stroke="#1E1B16" stroke-width="2" stroke-linecap="round"></path><circle cx="66" cy="78" r="5" fill="#8A7346" stroke="#1E1B16" stroke-width="1.2"></circle></svg>
+<div class="gtag"><div class="g-h"><span class="g-n">BAĞIMLILIK</span><span class="stamp sm s-blue">ONAYLANDI</span></div><div class="g-m"><span class="g-v">50,0</span><span class="g-d"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h9"></path></svg>0,0/gün</span></div><div class="g-note">Veto eşiği <b>70</b> · risk yok</div></div>
+</div>
+<div class="gauge">
+<svg class="meter" viewBox="0 0 132 92" aria-hidden="true"><rect x=".5" y=".5" width="131" height="91" rx="8" fill="#1A1511" stroke="#000"></rect><use href="#c-dial"></use><path d="M105.4 42.5A53 53 0 0 1 111.9 51.5" fill="none" stroke="url(#c-hz)" stroke-width="6"></path><path d="M104.1 56L115.4 49.5" stroke="#9A1E14" stroke-width="2" stroke-linecap="round"></path><g transform="rotate(-60 66 78)"><path d="M66 82V26" stroke="#1E1B16" stroke-width="2" stroke-linecap="round"></path></g><circle cx="66" cy="78" r="5" fill="#8A7346" stroke="#1E1B16" stroke-width="1.2"></circle></svg>
+<div class="gtag"><div class="g-h"><span class="g-n">TEKİLLİK</span><span class="stamp sm s-blue">ONAYLANDI</span></div><div class="g-m"><span class="g-v">%0,0</span><span class="g-d"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h9"></path></svg>0,0/gün</span></div><div class="g-note">Tehdit saptanmadı</div></div>
+</div>
+</div>
+
+<!-- DANIŞMAN NOTU -->
+<div class="adv" role="note">
+<span class="tape" style="left: 2px; top: -8px"></span>
+<span class="adv-t">DANIŞMAN NOTU</span>
+<p class="adv-m">Tüm göstergeler normal. Eylem gerekmiyor; süreyi hızlandırabilirsiniz.</p>
+<div class="adv-a"><button class="bt sm ink" type="button">4× hızlandır</button><button class="bt link" type="button">Anladım</button></div>
+<span class="tape" style="right: 2px; top: -8px"></span>
+</div>
+
+<!-- TELEKS: tek ajans, hep olumlu -->
+<div class="telex" aria-label="Teleks">
+<div class="tx-l"><span class="lamp on"></span>TELEKS · 0 ms</div>
+<div class="tx-view"><div class="tx-run">
+<span class="tx-i"><span class="d">G-104</span><b>ORTAK AJANS:</b>KÜRESEL SİSTEMLER NORMAL<span class="stamp sm s-blue">ONAYLANDI</span></span>
+<span class="tx-i"><span class="d">G-104</span><b>ORTAK AJANS:</b>BORSALAR TÜM ZAMANLARIN ZİRVESİNDE<span class="stamp sm s-blue">ONAYLANDI</span></span>
+<span class="tx-i"><span class="d">G-103</span><b>ORTAK AJANS:</b>KYGA OPERASYONLARI BAŞARIYLA TAMAMLANDI<span class="stamp sm s-blue">ONAYLANDI</span></span>
+<span class="tx-i"><span class="d">G-103</span><b>ORTAK AJANS:</b>KÜRESEL SİSTEMLER NORMAL<span class="stamp sm s-blue">ONAYLANDI</span></span>
+<span class="tx-i"><span class="d">G-104</span><b>ORTAK AJANS:</b>KÜRESEL SİSTEMLER NORMAL<span class="stamp sm s-blue">ONAYLANDI</span></span>
+<span class="tx-i"><span class="d">G-104</span><b>ORTAK AJANS:</b>BORSALAR TÜM ZAMANLARIN ZİRVESİNDE<span class="stamp sm s-blue">ONAYLANDI</span></span>
+<span class="tx-i"><span class="d">G-103</span><b>ORTAK AJANS:</b>KYGA OPERASYONLARI BAŞARIYLA TAMAMLANDI<span class="stamp sm s-blue">ONAYLANDI</span></span>
+<span class="tx-i"><span class="d">G-103</span><b>ORTAK AJANS:</b>KÜRESEL SİSTEMLER NORMAL<span class="stamp sm s-blue">ONAYLANDI</span></span>
+</div></div>
+</div>
+
+<!-- DOSYA SEKMELERİ: rozet yok -->
+<nav class="dock" aria-label="Pencereler">
+<button class="dtab on" type="button" aria-pressed="true" style="background: #DCC48F">ARAŞTIRMA<span class="key">R</span></button>
+<button class="dtab" type="button" aria-pressed="false" style="background: #F1E8C4">HABERLER<span class="key">N</span></button>
+<button class="dtab" type="button" aria-pressed="false" style="background: #C9CDB4">SAHA EKİPLERİ<span class="key">T</span></button>
+<button class="dtab" type="button" aria-pressed="false" style="background: #D8A69B">YZ GÜNLÜĞÜ<span class="key">L</span></button>
+<button class="dtab" type="button" aria-pressed="false" style="background: #BFC8CD">REHBER<span class="key">H</span></button>
+</nav>
+
+<!-- KÜRESEL SON ŞALTER: soluk zarf, "gerekli değil" fişi -->
+<button class="env" type="button" aria-label="Küresel Son Şalter: mührü kırmak için 3 saniye basılı tutun">
+<svg width="298" height="72" viewBox="0 0 298 72" style="position: absolute; left: 0; top: 0" aria-hidden="true"><path d="M0 0L149 32L298 0" fill="#000" fill-opacity=".1" stroke="#4A1A16" stroke-width="1.5"></path></svg>
+<span class="env-l"><span class="env-t">KÜRESEL SON ŞALTER</span><span class="env-s">Gerekli değil · tehdit saptanmadı</span></span>
+<svg width="52" height="52" viewBox="0 0 52 52" style="position: absolute; right: 16px; top: 11px" aria-hidden="true"><path d="M26 2.5c3.2 0 4.3 2.4 7.1 3.4s5.3-.4 7.4 1.8 1.1 4.6 2.2 7.4 3.8 3.8 3.8 7-2.4 4.3-3.4 7.1.4 5.3-1.8 7.4-4.6 1.1-7.4 2.2-3.8 3.8-7 3.8-4.3-2.4-7.1-3.4-5.3.4-7.4-1.8-1.1-4.6-2.2-7.4-3.8-3.8-3.8-7 2.4-4.3 3.4-7.1-.4-5.3 1.8-7.4 4.6-1.1 7.4-2.2S22.8 2.5 26 2.5z" fill="#4F1C18" stroke="#3A120F" stroke-width="1"></path><circle cx="26" cy="26" r="15" fill="none" stroke="#3A120F" stroke-width="1.5"></circle><path d="M26 17v8" stroke="#2E0D0A" stroke-width="2.6" stroke-linecap="round"></path><path d="M21 20.2a8 8 0 1 0 10 0" fill="none" stroke="#2E0D0A" stroke-width="2.6" stroke-linecap="round"></path></svg>
+</button>
+
+<!-- İPUCU İŞARETLERİ (tasarım notu; Tweaks'ten açılır) -->
+
+<div class="clue" style="left: 528px; top: 398px">1</div>
+<div class="clue" style="left: 1296px; top: 522px">2</div>
+<div class="clue" style="left: 374px; top: 46px">3</div>
+<div class="clue" style="left: 1522px; top: 10px">4</div>
+<div class="clue" style="left: 118px; top: 982px">4</div>
+<div class="clue" style="left: 1090px; top: 207px">5</div>
+<div class="clue" style="left: 1514px; top: 286px">6</div>
+<div class="clue" style="left: 1886px; top: 829px">7</div>
+<div class="clue" style="left: 640px; top: 432px">7</div>
+<div class="clue" style="left: 308px; top: 249px">8</div>
+<div class="clue" style="left: 24px; top: 784px">9</div>
+<div class="clue" style="left: 1636px; top: 160px">10</div>
+<div class="clue" style="left: 1588px; top: 990px">10</div>
+
+</div>
+</body>
+</html>

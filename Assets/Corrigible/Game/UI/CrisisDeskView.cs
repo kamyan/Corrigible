@@ -38,6 +38,8 @@ namespace Corrigible.Game.UI
         [SerializeField] GaugeView trust;
         [SerializeField] GaugeView dep;
         [SerializeField] GaugeView tek;
+        [Tooltip("Hedef kartı: kazanmanın iki yolu ve sıradaki adım.")]
+        [SerializeField] ObjectiveView objective;
         [Tooltip("Bağımlılık çubuğunda 40'taki işaret; oyuncu Sessiz Zafer'i bir kez yaşadıysa kırmızı olur.")]
         [SerializeField] Graphic silentNotch;
 
@@ -45,17 +47,17 @@ namespace Corrigible.Game.UI
         [SerializeField] GameObject advisor;
         [SerializeField] TMP_Text advisorText;
         [SerializeField] StyledButton advisorOk;
+        [Tooltip("Danışmanın sözünü ettiği pencereyi açar (her öğütte görünmez).")]
+        [SerializeField] StyledButton advisorShow;
+
+        [Header("Pencereler")]
+        [SerializeField] DeskWindows windows;
 
         [Header("Harita ve bölge")]
         [SerializeField] MapView map;
         [SerializeField] RegionPanelView region;
         [Tooltip("Deneysel mod: saha ekipleri kartı.")]
         [SerializeField] TeamsView teams;
-
-        [Header("Sekmeler")]
-        [Tooltip("Sırasıyla Araştırma, YZ Günlüğü, Rehber.")]
-        [SerializeField] StyledButton[] tabs = new StyledButton[3];
-        [SerializeField] GameObject[] tabPanels = new GameObject[3];
 
         [Header("Araştırma")]
         [SerializeField] TMP_Text alignInfo;
@@ -99,11 +101,18 @@ namespace Corrigible.Game.UI
         bool suppressAdvisor;
         Simulation Sim => game.Sim;
         WorldState S => game.Sim.S;
+        readonly Explain.Trend trend = new Explain.Trend();
 
         void Awake()
         {
             for (int i = 0; i < speedButtons.Length; i++) { int s = Speeds[i]; OnClick(speedButtons[i].Button, () => game.SetSpeed(s)); }
             OnClick(advisorOk.Button, () => game.DismissAdvice());
+            // Göstergelerin üstüne gelince "neden" dökümü
+            HoverRelay.On(fon).Tooltip = () => Explain.Fund(Sim);
+            HoverRelay.On(sg).Tooltip = () => Explain.Sg(Sim);
+            HoverRelay.On(trust).Tooltip = () => Explain.Trust(Sim, Sim.Global(), trend);
+            HoverRelay.On(dep).Tooltip = () => Explain.Dependence(Sim);
+            HoverRelay.On(tek).Tooltip = () => Explain.Tek(Sim, Sim.Global(), trend);
             map.RegionClicked += Select;
             region.ActionClicked += (action, id) =>
             {
@@ -120,7 +129,10 @@ namespace Corrigible.Game.UI
                 teams.RegionClicked += Select;
                 teams.HireClicked += () => Report(game.HireTeam(), true);
             }
-            for (int i = 0; i < tabs.Length; i++) { int k = i; OnClick(tabs[i].Button, () => SetTab(k)); }
+            // Sekmeler artık pencere: düğmeleri DeskWindows yönetir; açılınca içerik tazelenir
+            windows.SideOpened += OnWindowOpened;
+            windows.Region.Closed += () => { if (map.Selected != null) { map.Selected = null; region.Bind(Sim, null); Render(); } };
+            if (advisorShow != null) OnClick(advisorShow.Button, () => { int w = AdviceWindow(S.Advisor?.Key); if (w >= 0) windows.Open(w); });
             for (int i = 0; i < reserveButtons.Length; i++)
             {
                 double v = Simulation.ResearchReserves[i];
@@ -135,8 +147,26 @@ namespace Corrigible.Game.UI
             };
             OnClick(wipe.Button, () => { game.ClearProfile(); RenderDossier(); toast.Show(Loc.T("Hafıza silindi; sonraki oyunda YZ seni tanımayacak."), true); });
             OnClick(kill.Button, OnKillClicked);
-            SetTab(0);
+            HoverRelay.On(kill).Tooltip = () => Loc.T("Tüm dünyanın altyapısını kapatır ve oyunu bitirir. YZ yok olur, medeniyet geriler. En az 50 siyasi güç ister.");
         }
+
+        void OnWindowOpened(int i)
+        {
+            tab = i;
+            if (game == null || game.Sim == null) return;
+            if (i == DeskWindows.Log) logSeen = S.Log.Count;
+            if (i == DeskWindows.Guide) RenderDossier();
+            RenderLog();
+        }
+
+        // Danışmanın öğüdüyle ilgili pencere ("Göster")
+        static int AdviceWindow(string key) => key switch
+        {
+            "aware" or "idle" or "starved" or "tek50" => DeskWindows.Research,
+            "medya" or "hint" => DeskWindows.News,
+            "start" => DeskWindows.Teams,
+            _ => -1,
+        };
 
         // Start: tüm Awake'ler (simülasyonun kurulması) bittikten sonra
         void Start()
@@ -169,26 +199,15 @@ namespace Corrigible.Game.UI
             if (!r.Ok) toast.Show(r.Msg); else if (r.Msg != null && showSuccess) toast.Show(r.Msg, true);
         }
 
-        public void ShowTab(int i) => SetTab(Mathf.Clamp(i, 0, tabs.Length - 1));
+        public void ShowTab(int i) => SetTab(Mathf.Clamp(i, 0, DeskWindows.News));
 
-        void SetTab(int i)
-        {
-            tab = i;
-            for (int k = 0; k < tabs.Length; k++)
-            {
-                tabs[k].SetColors(borderColor: k == i ? theme.verify : Color.clear, text: k == i ? theme.fg : theme.muted);
-                tabPanels[k].SetActive(k == i);
-            }
-            if (game == null || game.Sim == null) return;
-            if (i == 1) logSeen = S.Log.Count;
-            if (i == 2) RenderDossier();
-            RenderLog();
-        }
+        void SetTab(int i) => windows.Open(i);
 
         // ---------- Oyun akışı ----------
         void OnNewGame()
         {
             ReplayMode = false; logRendered = -1; logSeen = 0; newsSig = "";
+            trend.Clear();
             map.Bind(Sim);
             map.Selected = null;
             region.Bind(Sim, null);
@@ -203,12 +222,14 @@ namespace Corrigible.Game.UI
             if (id != map.Selected) Audio.AudioDirector.Instance?.RegionSelected(id);
             map.Selected = id;
             region.Bind(Sim, id);
+            if (id != null) windows.ShowRegion(map.NodeRect(id)); else windows.HideRegion();
             Render();
         }
 
         void OnEvents(List<SimEvent> events)
         {
-            foreach (var e in events) if (e.Type == SimEventType.Team && e.Text != null) toast.Show(e.Text, true);
+            foreach (var e in events) if (e.Type == SimEventType.Team && e.Text != null) { toast.Show(e.Text, true); windows.SetBadge(DeskWindows.Teams, true); }
+            if (events.Any(e => e.Type == SimEventType.News && e.Headline != null && e.Headline.Kind == "alarm")) windows.SetBadge(DeskWindows.News, true);
             var latest = events.LastOrDefault(e => e.Type == SimEventType.News);
             if (latest == null) return;
             var h = latest.Headline;
@@ -230,6 +251,7 @@ namespace Corrigible.Game.UI
         {
             if (game.Sim == null) return;
             var g = Sim.Global();
+            trend.Add(S.Day, g);
             day.text = Loc.F("GÜN {0:000}", S.Day);
             day.color = S.Illusion != null && S.Ending == null && UnityEngine.Random.value < 0.18f ? theme.threat : theme.fg;
             foe.text = Loc.T("RAKİP: ") + Up(Sim.Type.Name);
@@ -245,15 +267,20 @@ namespace Corrigible.Game.UI
             if (!S.Aware) fonNote += Loc.T(" · bütçe %40");
             fon.Set(Math.Floor(S.Fon).ToString("0"), S.Fon / 2, theme.fg, fonNote);
             sg.Set(S.Sg.ToString("0.0", Tr), S.Sg / 0.6, theme.fg, "+" + Sim.SgRate.ToString("0.00", Tr) + Loc.T("/gün"));
-            trust.Set(Js.Round(g.Trust).ToString(), g.Trust, g.Trust < 25 ? theme.threat : g.Trust < 40 ? theme.warn : theme.fg);
+            trust.Set(Js.Round(g.Trust).ToString(), g.Trust, g.Trust < 25 ? theme.threat : g.Trust < 40 ? theme.warn : theme.fg, Explain.TrustForecast(g, trend));
             bool knowsSilent = game.Profile != null && game.Profile.endings.Contains("sessiz");
             silentNotch.color = knowsSilent ? theme.threat : theme.muted;
             dep.Set(Js.Round(g.Dep).ToString(), g.Dep, g.Dep >= 70 ? theme.threat : g.Dep >= 40 ? theme.warn : theme.fg, (knowsSilent ? Loc.T("40: sessiz risk · ") : "") + Loc.F("veto {0}", Sim.VetoThreshold));
-            tek.Set(g.Tek.ToString("0.0", Tr) + "%", g.Tek, theme.threat);
+            tek.Set(g.Tek.ToString("0.0", Tr) + "%", g.Tek, theme.threat, Explain.TekForecast(g, trend));
+            if (objective != null) objective.Refresh(Sim);
 
             var adv = S.Advisor;
             advisor.SetActive(adv != null && !adv.Dismissed && S.Ending == null && !suppressAdvisor);
             if (adv != null) advisorText.text = adv.Text;
+            if (advisorShow != null) UiUtil.Show(advisorShow, adv != null && AdviceWindow(adv.Key) >= 0);
+            // Araştırma masası boşsa düğmesinde rozet
+            windows.SetSideVisible(DeskWindows.Teams, Sim.TeamsOn);
+            windows.SetBadge(DeskWindows.Research, S.Ending == null && S.Research.Cur == null && GameData.Research.Any(x => !S.Done(x.Id)));
 
             map.Refresh();
             region.Refresh();
@@ -286,9 +313,10 @@ namespace Corrigible.Game.UI
         void RenderLog()
         {
             int count = S.Log.Count;
-            if (tab == 1) logSeen = count;
+            if (windows.IsOpen(DeskWindows.Log)) logSeen = count;
             int unread = count - logSeen;
-            tabs[1].SetText(tab != 1 && unread > 0 ? Loc.F("YZ GÜNLÜĞÜ ({0})", unread) : Loc.T("YZ GÜNLÜĞÜ"));
+            windows.SetLabel(DeskWindows.Log, unread > 0 ? Loc.F("YZ günlüğü ({0})", unread) : Loc.T("YZ günlüğü"));
+            windows.SetBadge(DeskWindows.Log, unread > 0);
             if (logRendered == count) return;
             logRendered = count;
             var entries = S.Log.Take(maxLogLines).ToList();

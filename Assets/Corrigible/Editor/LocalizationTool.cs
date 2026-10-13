@@ -128,6 +128,7 @@ namespace Corrigible.EditorTools
                 if (origin != lastOrigin) { sb.AppendLine("# " + origin); lastOrigin = origin; }
                 var tr = old.Get(kv.Key);
                 if (tr == null) added++;
+                tr = Seed(kv.Key, tr, langs);
                 sb.AppendLine(Row(kv.Key, langs, tr));
             }
             var unused = old.Rows.Where(r => !sources.ContainsKey(r.Source)).ToList();
@@ -142,6 +143,52 @@ namespace Corrigible.EditorTools
             string msg = $"Çeviri tablosu: {sources.Count} metin, {added} yeni, {unused.Count} kullanılmayan. Eksik çeviri: {Validate().Count}";
             Debug.Log(msg);
             return msg;
+        }
+
+        /// <summary>Analist masası (UI_C) dize tablosu: Türkçe → taslak İngilizce. Boş çeviriler buradan tohumlanır.</summary>
+        const string DeskStringsCsv = "Docs/UI_C/spec/strings_tr_en.csv";
+        static Dictionary<string, string> deskSeeds;
+
+        static Dictionary<string, string> Seed(string src, Dictionary<string, string> tr, List<string> langs)
+        {
+            if (!langs.Contains(Loc.English) || (tr != null && tr.TryGetValue(Loc.English, out var en) && !string.IsNullOrEmpty(en))) return tr;
+            if (deskSeeds == null)
+            {
+                deskSeeds = new Dictionary<string, string>();
+                if (File.Exists(DeskStringsCsv))
+                    foreach (var line in File.ReadAllLines(DeskStringsCsv).Skip(1))
+                    {
+                        var cells = CsvCells(line);
+                        if (cells.Count >= 3 && !string.IsNullOrEmpty(cells[1]) && !deskSeeds.ContainsKey(cells[1])) deskSeeds[cells[1]] = cells[2];
+                    }
+            }
+            if (!deskSeeds.TryGetValue(src, out var seed)) return tr;
+            var copy = tr != null ? new Dictionary<string, string>(tr) : new Dictionary<string, string>();
+            copy[Loc.English] = seed;
+            return copy;
+        }
+
+        /// <summary>Tırnaklı alanları destekleyen basit CSV satırı ayrıştırıcı.</summary>
+        static List<string> CsvCells(string line)
+        {
+            var cells = new List<string>();
+            var sb = new StringBuilder();
+            bool quoted = false;
+            for (int i = 0; i < line.Length; i++)
+            {
+                char c = line[i];
+                if (quoted)
+                {
+                    if (c == '"' && i + 1 < line.Length && line[i + 1] == '"') { sb.Append('"'); i++; }
+                    else if (c == '"') quoted = false;
+                    else sb.Append(c);
+                }
+                else if (c == '"') quoted = true;
+                else if (c == ',') { cells.Add(sb.ToString()); sb.Clear(); }
+                else sb.Append(c);
+            }
+            cells.Add(sb.ToString());
+            return cells;
         }
 
         // Kod dosyalarındaki sıra korunur; asset'ler sona

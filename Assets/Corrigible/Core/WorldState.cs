@@ -11,6 +11,8 @@ namespace Corrigible.Core
         public bool Monitored, Q, Left, Detected, MediaFlag;
         public int Off, Patch;
         public int RevealDay = -1, FieldDay = -1;
+        /// <summary>Kırılma anı bir kez yazıldı (izlenmeyen bölgede yüksek sızma, veto eşiği).</summary>
+        public bool HotNoted, VetoNoted;
     }
 
     [Serializable]
@@ -131,7 +133,7 @@ namespace Corrigible.Core
         public static readonly string[] All = { Monitor, Audit, Quarantine, KillSwitch };
     }
 
-    public enum SimEventType { Log, News, Gift, End, Advice, Veil, Team, Raid }
+    public enum SimEventType { Log, News, Gift, End, Advice, Veil, Team, Raid, Dilemma }
 
     public sealed class SimEvent
     {
@@ -261,6 +263,17 @@ namespace Corrigible.Core
         public List<RaidLogEntry> RaidLog = new List<RaidLogEntry>();
         public List<string> AdviceSeen = new List<string>();
         public Advice Advisor;
+
+        // Unity'ye özgü kurallar (null: temel kurallar, JS paritesi)
+        public RuleOptions Rules;
+        public PendingDilemma PendingEvent;
+        public int NextEvent;
+        public List<string> EventsSeen = new List<string>();
+        /// <summary>Oyun sonu zaman çizelgesi için kırılma anları (yalnızca metin; kararları etkilemez).</summary>
+        public List<Moment> Moments = new List<Moment>();
+
+        /// <summary>Zamanın ilerleyemediği durumlar: oyuncu kararı bekleniyor.</summary>
+        public bool Blocked => PendingGift != null || PendingEvent != null || Raid != null;
 
         [NonSerialized] public List<SimEvent> Events = new List<SimEvent>();
 

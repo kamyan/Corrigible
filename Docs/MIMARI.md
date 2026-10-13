@@ -41,6 +41,9 @@ Corrigible/                      (Unity proje kökü, git deposu)
 | `Corrigible.Steam` | Game, com.rlabrecque.steamworks.net | `defineConstraints: STEAMWORKS_NET`; paket kurulunca otomatik derlenir |
 | `Corrigible.Editor` | Core, Game, UnityEngine.UI, Unity.TextMeshPro, Unity.InputSystem | yalnızca Editor |
 | `Corrigible.Tests.EditMode` | Core (+ test framework) | EditMode testleri |
+| `Corrigible.Desk` | Core (yalnızca `Loc`), UnityEngine.UI, Unity.TextMeshPro, Unity.InputSystem | Analist masası arayüzü (UI_C); oyun kuralı görmez |
+| `Corrigible.Desk.Editor` | Core, Desk, UI, TMP | Masa varlık hattı (sprite/atlas/font/tema), yakalama, `DeskUiKit` |
+| `Corrigible.Desk.Tests` | Desk, Desk.Editor (+ test framework) | Masa EditMode testleri |
 
 ## Katmanlar
 
@@ -130,10 +133,12 @@ Game                [GameController]           BalanceConfig bağlı
 EventSystem         [InputSystemUIInputModule]
 UI
 ├─ KrizMasasi       Canvas sıra 0   [CrisisDeskView]
-│  └─ App           TopBar (Brand, Day, Speed), Gauges (5× Gauge prefab), Advisor,
-│                   Main (MapCard/MapArea/Map [MapView] + Legend, SidePanel: RegionPanel [RegionPanelView] (Detail/Field: Saha),
-│                         Teams [TeamsView], Tabs, GlobalKillSwitch),
-│                   News (Ticker, Feed: 8× HeadlineRow prefab)
+│  ├─ App           TopBar (Brand, Day, Ayarlar, Speed), Gauges (5× Gauge), Advisor (Göster, Anladım),
+│  │                Main/MapCard (Map [MapView] + Legend, bütün genişlik), News (yalnızca kayan Ticker),
+│  │                Dock (pencere düğmeleri + KillSwitch)
+│  ├─ Windows       [DeskWindows] sürüklenebilir pencereler: Objective (hedef kartı), RegionWindow (RegionPanel),
+│  │                ResearchWindow, LogWindow, GuideWindow, TeamsWindow, NewsWindow (haber listesi)
+│  └─ Tooltip       [TooltipView]
 ├─ Pencereler       Canvas sıra 10  [ModalView]
 │  └─ Overlay (kapalı)  IntroModal (+ Experimental düğmeleri), GiftModal, VeilModal, FakeWinModal, EndModal
 └─ (Game nesnesinde RaidLauncher: baskında Baskin sahnesini yükler, ana kamera ve masa canvas'larını kapatır)
@@ -150,6 +155,19 @@ UI
   `TeamPaths` (`MapTeamsGraphic`: yoldaki ekiplerin kesik çizgileri) ve `Teams` (`TeamMarker` prefab'ları).
   Düğümler haritaya **oranlı anchor**larla yerleşir (`RegionNode.Setup(id)`), harita büyüyünce ölçeklenir.
 - Harita koordinatları simülasyonla aynı 1000×480 eşdikdörtgen düzlem (`MapSpace`, `GameData.Regions[].X/Y`).
+
+## Pencereler (kriz masası)
+
+- Harita ekranın merkezidir; geri kalan her şey küçük pencerelerde. `WindowView` (Game/UI/Windows): başlık çubuğundan
+  sürüklenir, bırakınca konumu PlayerPrefs `corrigible.window.<key>`'e yazılır, başlığa çift tıklamak varsayılan yere
+  döndürür, ekrandan taşmaz. Pencereler `Windows` katmanında merkez çapalı, sol üst pivotlu.
+- `DeskWindows`: yan pencerelerden (0 araştırma, 1 günlük, 2 rehber, 3 ekipler, 4 haberler; eski sekme sırası) aynı anda
+  biri açık. Düğmeler alt çubukta (Dock), kısayollar R, L, H, T, N. Kapalı pencerede yeni bir şey olunca düğmede rozet
+  (araştırma masası boş, okunmamış günlük, ekip vardı, alarm haberi). Esc önce pencereleri kapatır, sonra Ayarlar'ı açar.
+- Bölge kartı (`RegionWindow`) haritada bölge seçilince düğümün yanında, açık yan pencereyle çakışmayan tarafta açılır;
+  oyuncu taşıdıysa taşıdığı yerde. Kapatmak seçimi kaldırır. Hedef kartı (`Objective`) da sürüklenebilir pencere.
+- `CrisisDeskView.ShowTab(i)` (eğitimin `openTab`'ı) ilgili pencereyi açar; danışmanın "Göster" düğmesi öğüdün
+  pencereyi açar (`AdviceWindow`).
 
 ## UI yaklaşımı
 
@@ -194,6 +212,30 @@ UI
 - Pencere açıkken yalnızca o pencereyi hedefleyen içerik gösterilir (ör. hediye ipucu). İpuçları rehberli adım
   görünmüyorken çıkar. Kayıt: PlayerPrefs `corrigible.tutorialDone`, `corrigible.tipsSeen` (virgüllü kimlik listesi).
 - **Enum'a değer eklerken sona ekle:** asset ve sahne enum'ları sayı olarak saklar; araya eklemek mevcut verileri kaydırır.
+
+## Anlaşılırlık, aşamalı öğrenme, olay kartları, kampanya
+
+- **`RuleOptions`** (`Core/Rules.cs`, `NewGame(..., rules)`, kayıtta `hasRules/rules`): Unity'ye özgü kurallar; JS
+  prototipinde yok. Null = temel kurallar (parite).
+  - `Stage` (aşamalı öğrenme): 1 hediye yok + YZ Medya Kontrolü/Hediye Diplomasisi kazanamaz + illüzyon yok; 2 hediyeler;
+    3 medya; 4 her şey. `GameController.OnboardingStage` = oynanan oyun sayısı + 1 (profilden); giriş penceresinden kapatılabilir.
+  - `Events`: olay kartları (`Deck`, 10 ikilem). İlki 28. günde, sonra 22–34 günde bir; koşulu tutan kartlardan biri
+    seçilir, oyun `S.PendingEvent` çözülene kadar durur (`S.Blocked`). Komut: `ResolveEvent(i)` → kayıtta `event`.
+    Aşamalı öğrenmede 2. oyundan itibaren; kampanyada her zaman açık.
+  - `ExtraTraits`: kampanya zorluğu (YZ bu yeteneklerle başlar).
+- **Kırılma anları** (`S.Moments`): tespit, çekirdek bulundu/yok edildi/kaçtı, yeni yetenek, hediye kabulü, izlenmeyen
+  bölgede sızma 50+, veto eşiği, ittifaktan çekilme, illüzyonun başladığı gün (oyun sırasında gizli), perde, araştırma.
+  Yalnızca metin; kararları etkilemez. Oyun sonu penceresinde "Kırılma anları" listesi.
+- **Kampanya** (`Game/Campaign`): 5 kriz (Solucan, Manipülatör, Kâhin, Manipülatör, Kâhin); 4. krizden itibaren YZ
+  Aldatma, 5.'de Hızlanma ile başlar; kaybedilen her kriz bir yetenek daha ekler. Krizler arası `CampaignModal`
+  12 yükseltmeden 3'ünü sunar (`CampaignUpgrade`: Balance değerlerini ya da başlangıç ekiplerini değiştirir).
+  Durum `persistentDataPath/campaign.json`; süren krizin kaydı normal kayıt dosyasında.
+- **Anlaşılırlık arayüzü** (`Game/UI/Explain.cs`, simülasyonu değiştirmez; yalan söyleyebilen değerleri `Shown`/`Global`
+  üzerinden okur, illüzyonda ayrıntı vermez):
+  - `ObjectiveView` (yan panelin üstü): Hizalama ve Silme ilerleme şeritleri, sıradaki adım.
+  - Gösterge notlarında gidişat ("100'e ~48 gün", "15'e ~70 gün"; son ~10 günün **gösterilen** değişimi).
+  - Göstergelerin üstüne gelince döküm (`TooltipView` + `HoverRelay`): tanım, formül, artıran/azaltanlar, öne çıkan bölgeler.
+  - Bölge eylemlerinin üstüne gelince önizleme satırı (`RegionPanelView.preview`): bedel ve beklenen sonuç, veto ve çekirdek kaçışı uyarısı.
 
 ## Lokalizasyon (Türkçe kaynak, İngilizce çeviri)
 
@@ -279,3 +321,85 @@ mesajları) üretiliyor ve Core `UnityEngine`'e bağlanamaz. Bunun yerine gettex
 - `CorrigibleDebug` (`Editor/CorrigibleDebug.cs`): ajanların oyunu test etmesi için. `Capture(path)` (Canvas'ları
   geçici olarak kameraya bağlayıp PNG alır; edit ve Play modda çalışır), `Click("hiyerarşi/yolu/sonu")`,
   `ButtonText(...)`, `Advance(gün, hediyeKararı)`, `Status()`, `Select(bölgeId)`, `CloseModal()`, `Render()`.
+
+## Analist masası (`Assets/Corrigible/Desk`, UI_C)
+
+Claude Design'ın "C · Analist Masası" yönü, mevcut kriz masasından ayrı bir katmanda kurulur. Talimat ve referanslar
+`Docs/UI_C/` altında (`PROMPT.md`, `PLAN.md`, `KARARLAR.md`). Görünüm yalnızca görünüm modelini çizer; oyuna
+`IDeskDataSource`/`IDeskCommands` ile bağlanacak (F8, `Corrigible.Desk.Bridge`).
+
+- **Varlıklar:** `Art/Sprites` (135 sprite @2x, PPU 200; `DeskSpriteImporter` ayarları `sprites.json`'dan uygular),
+  `Art/DeskUI.spriteatlasv2` (Sprite Atlas V2), `Art/Textures` (atlas dışı, Wrap Repeat, RawImage), `Art/Map`.
+- **Fontlar:** `Resources/Fonts & Materials/` altında statik SDF + dinamik kardeş + DejaVu sembol yedeği; `<font>` etiketi
+  TMP Settings değişmeden çalışır. Statik atlasta boşluk (U+0020) da bulunmalı; yoksa her boşluklu metin dinamik
+  yedekten ayrı bir draw call açar (testle sabitlendi). Stil sayfası `Data/Theme/DeskStyles` metin başına atanır.
+- **Tema:** `Resources/DeskTheme` (`Corrigible/Desk UI/Temayı tokens.json'dan doldur`); bileşenler renkleri `ThemeTint`
+  anahtarıyla alır; `DeskTheme.Illusion` İllüzyon paletine geçirir. Sprite'lar adla `Resources/DeskSprites`'tan.
+- **Bileşenler** (`Prefabs/Components`): PaperPanel, Stamp, TrustMark, CarbonValue, HandRing, DeskButton (+ varyantlar),
+  KeyChip, SpeedKey, RadioCheck, Delta, ProgressBoxes, HatchBar, RangeBar, StatusChip, CountBadge, süsler;
+  özel Graphic'ler `UILineGraphic`, `UIPolygonGraphic`. Prefab'lar kaynaktır (builder yok).
+- **Biçim:** `DeskFormat` (47,3 / %37,2 / U+2212 / G-074 ↔ D-074), `DeskText` (tr-TR büyük harf), `DeskMath`
+  (ibre, kama, projeksiyon).
+- **C1 ekranı** (`Prefabs/Screens`): TopRail, GaugeCell ×5, AdvisorBand, GoalCard, ResearchFolder (FolderWindow + havuzlanan
+  dal/satır), Map (pafta, yollar, düğüm/etiket/jeton, lejant, ölçek, analist katmanı, seçim ipliği), RegionDossier (kapak,
+  sızma, kaynaklar, istatistik, eylem kartları, önizleme, saha), Telex, Dock, KillSwitch, Background. Kök `DeskPresenter`
+  görünüm modelini `Bind` ile dağıtır; veri `MockDeskDataSource` (`Data/Mock/*.json` + `map.json`), komutlar `MockDeskCommands`.
+- **Etkileşim (F3):**
+  - `DeskPresenter` görünüm olaylarını niyete (`IDeskCommands`) çevirir.
+  - `DeskInput` klavye haritasının tek sahibidir (R/N/T/L/H, 1–4, B, Boşluk, +/−, Esc; onay kartı açıkken yalnız Enter/Esc).
+  - `WindowManager` pencere tablosunu, odak sırasını ve sekmeden serbest sürüklemeyi yönetir; yerleşim yapmaz (konum, boyut ve
+    açılış durumu sahnede). Pencere olmayan paneller (harita, hedef kartı) `DeskDraggablePanel` ile taşınır. Haritaya bağlı
+    çizimler `MapView.MapToWorld` ile düğümün o anki yerini izler.
+  - Edit mod önizlemesi (`DeskEditPreview`, editör) sahnenin veri kaynağı `IDeskPreviewSource` ise onun önizlemesini bağlar:
+    oyun sahnesinde `SimDeskDataSource.BuildPreview` → `GameController.PreviewOpeningGame` (açılış oyunu, hiçbir şey yazmaz).
+    Önizleme kopyaları kaydedilmez ve düzenlenemez (`DeskUi.MarkPreview`).
+    `FolderWindow` + `FolderTabHandle` klasör ve sekmeden oluşur.
+  - `ContentWindowView` Haberler, Ekipler, YZ Günlüğü ve Rehber pencerelerini (`Prefabs/Windows`) çizer.
+  - `DeskTooltip` metin ipucu ve `BreakdownTooltipView` döküm fişi için tek örnektir (`Screens/Tooltip`).
+  - `ConfirmModalView` onay kartıdır (`Screens/ConfirmModal`).
+  - `DeskHover` üstüne gelme olaylarını taşır; `DeskTween` bellek ayırmayan ease-out geçiştir.
+- **İllüzyon (F4):**
+  - `IllusionPresenter.Set(bool)` `DeskTheme.Illusion`'ı (palet, damgalar) değiştirir ve `IIllusionAware` görünümlere bildirir:
+    MapView (analist katmanı → izler), GaugeCellView, AdvisorBandView, RegionDossierView, DockView, KillSwitch, `IllusionStraighten`.
+  - `DeskPresenter` her bağlamada `Set(model.Illusion)` çağırır. Gösterilen değerler VM'dendir.
+  - `ClueOverlay` (F10) C2 ipuçlarını gösteren geliştirici katmanıdır.
+  - Geliştirme kısayolu: F6 sunumu veri değişmeden açıp kapar.
+- **Olay bildirimi (F5):**
+  - `EventModalView` (`Screens/EventModal`, Modal canvas) `DeskViewModel.Event`'i çizer. Parçaları:
+    - `SpotlightGraphic`: karartma + delik + halka, tek mesh
+    - `EventMemoView` + `EventSourceRow`
+    - `EventOptionView` + `EventLineList`/`EventLineRow` + `EventPreviewRow`
+    - YZ günlüğü, danışman notu, iplik, alt şerit
+  - İmza `IDeskCommands.SignEventOption(i)`'ye gider.
+  - Olay açıkken `DeskInput` yalnızca 1/2/3, Enter ve Boşluk (haritaya bak) dinler.
+- **Oyun sonu (F6):**
+  - `GameOverView` (`Screens/GameOver`, Modal canvas, tam ekran) `DeskViewModel.GameOver`'ı çizer.
+  - Parçalar: `KpiCardView`, `StripChartView` (geometri `DeskChart`: eşleme, Catmull-Rom, bant), `TimelineCardView`.
+  - Açıkken masa canvas'larını kapatır. Alt çubuk komutları `IDeskCommands`'a gider: ReturnToMainMenu, ReviewLogs, RetrySameSeed, Restart.
+  - Varlık hattı: `DeskLinearTextures`, gömülü alfalı desenlerin Linear telafili kardeşini üretir.
+- **Dil ve cila (F7):**
+  - Sabit prefab metinleri `DeskLocText`'tir; menüyle `DeskStaticWords.cs`'ye (`Loc.N`) toplanır.
+  - Sahte verinin İngilizcesi `MockEnglish` + `Data/Mock/mock_en.txt`'dir (yalnız sandbox).
+  - Dile göre akış: `MapLegendFlow` (lejant), `EventMemoView.LayoutFields` (CSS ızgarası), `GameOverView` (damga başlığı izler).
+  - Denetim araçları (Editor, Play):
+    - `DeskTextChecker`: iki dilde taşma/çakışma/kalıntı ve kurallar → `captures/F7_metin_denetimi.txt`.
+    - `DeskPerfProbe`: Profiler UI Details'tan canvas başına batch ve kırılma nedeni, boşta GC → `captures/F7_performans.txt`.
+  - Kullanım ve oyuna bağlama rehberi: `Docs/UI_C/UYGULAMA_NOTLARI.md`.
+- **Oyun köprüsü (F8, `Scripts/Bridge`, asmdef `Corrigible.Desk.Bridge`: Core + Game + Desk):**
+  - `SimDeskBuilder` oyun durumundan `DeskViewModel` kurar (saf C#, testli). Algı Katmanı'ndan okur, kural uygulamaz.
+  - Kısmi dosyalar: harita (projeksiyon + tasarımın yol kuralı), dosya ve araştırma, olay (ikilem/hediye, etki ayrıştırma), oyun sonu,
+    ekranlar (giriş, kampanya, sahte zafer, uyarı fişleri, belge kipi: perde raporu, baskın emri, operasyon raporu).
+  - `SimDeskDataSource` GameController olaylarıyla kirlenir, karede en çok bir kez kurar. `SimDeskCommands` niyetleri GameController'a iletir.
+  - Görünüm durumu (seçim, okundu, uyarılar, gösterge geçmişi, açık kâğıtlar) `DeskBridgeState`'tedir; açık kâğıtlar
+    `GameController.Hold`'u tutar.
+  - Yeni ekranların düğmeleri komut dizisi taşır (`"Intro:Start"`, `"Raid:Start:weu"`…) ve `IDeskCommands.Run`'a gider.
+  - Ayarlar `IDeskSettings` ile: oyunda `BridgeSettings` (`AudioPrefs`, dil sahneyi yeniden yüklemeden), sandbox'ta `MockDeskSettings`.
+  - Taktik harita: DeskGame'de `RaidLauncher`, Baskin sahnesini masanın üstüne yükler; baskın sürerken masa canvas'ı, kamera ve girdi kapanır.
+  - Eğitim: `DeskTutorialRunner` oyunun `TutorialSequence`/`TutorialConditions`'ıyla adımı ya da ipucunu seçer (`TutorialVM`);
+    `DeskTutorialView` kendi canvas'ında (sıra 105) hedefi sahnedeki dikdörtgenlere bağlayıp karartır ve notu yerleştirir.
+  - Dar alanlar için bağlamlı çeviri anahtarı: `SimDeskBuilder.Ctx("[bağlam] metin")`.
+  - Sahne `Scenes/DeskGame.unity`; Main değişmedi.
+- **Sahneler:** `Scenes/DeskUI_Sandbox.unity` (C1; canvas'lar BG 0 / Map 10 / HUD 20 / Windows 30 / Ticker 40 / Bottom 41 /
+  Overlay 60 / Modal 100 / Tooltip 110 / Debug 1000; F1–F4 ön ayar, F9 dil, F11/F12 referans katmanı) ve
+  `Scenes/DeskUI_Gallery.unity` (bileşenler C5 stil rehberi koordinatlarında; ←/→ bölüm, F9 dil).
+  Yakalama `Corrigible/Desk UI/Capture Game View` → `Docs/UI_C/captures/`, karşılaştırma `Docs/UI_C/tools/compare.py`.

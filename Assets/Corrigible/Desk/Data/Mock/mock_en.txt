@@ -1,0 +1,328 @@
+# Sahte verinin İngilizcesi (F7, yalnızca geliştirme/QA). Sütunlar sekmeyle ayrılır: Türkçe kaynak ⇥ İngilizce.
+# "re:" ile başlayan satır düzenli ifadedir ($1… gruplar). \n satır sonu.
+# Dar alanlar (göstergeler, eylem kartları): kısa biçim — POL. CAPITAL, Monitoring, maliyette gün = d.
+# ---- kalıplar (sayılar sonra EN biçimine geçer)
+re:Fon (.+) → (.+) · gider (.+)/gün	Funds $1 → $2 · spend $3/day
+re:Başlat · (.+) fon/gün	Start · $1 funds/day
+re:(\d+) gün kaldı	$1 days left
+re:(\d+) gün sonra	in $1 days
+re:(\d+) gün	$1 days
+re:\+(\d+) gün	+$1 days
+re:Son temas (G-\d+)	Last contact $1
+re:Gelir (.+) · Gider (.+) /gün	Income $1 · Spend $2 /day
+re:= (.+)/gün	= $1/day
+re:(.+)/gün	$1/day
+re:Kayıp eşiği (.+) · ~(\d+) gün	Loss threshold $1 · ~$2 days
+re:Kayıp eşiği (.+) · risk yok	Loss threshold $1 · no risk
+re:Veto eşiği (.+) · ~(\d+) gün	Veto threshold $1 · ~$2 days
+re:Veto eşiği (.+) · risk yok	Veto threshold $1 · no risk
+re:Son 7 gün (.+)	Last 7 days $1
+re:%100'e (.+)	to 100%: $1
+re:Kaynak: karantina tamponu · (\d+) satır	Source: quarantine buffer · $1 lines
+re:Fon (.+) → (.+) · gider (.+)	Funds $1 → $2 · upkeep $3
+re:Fon (.+) → (.+) · gereksiz harcama	Funds $1 → $2 · wasted spend
+re:CANLI · (.+)	LIVE · $1
+re:İzleme kapsamı (.+) · Onaylanan (.+) · Şüpheli (.+) · Bilinmiyor (.+)	Monitoring $1 · Verified $2 · Suspect $3 · Unknown $4
+re:Nüfus (.+) mlr(.*) · (\d+) bağlantı · İzleme ağı: yok	Population $1 bn$2 · $3 links · Monitoring: none
+re:Nüfus (.+) mlr(.*) · (\d+) bağlantı · İzleme ağı:	Population $1 bn$2 · $3 links · Monitoring:
+re:Aktif (.*)(\d+) proje(.*) · (.*)fon/gün(.*)	Active $1$2 projects$3 · $4funds/day$5
+re:(.+) karantinaya alınırsa	If $1 is quarantined
+re:(.+) karartılırsa	If $1 goes dark
+re:2 gün · tahmini başarı (.+) · taktik haritada oynanır	2 days · est. success $1 · played on the tactical map
+re:≈ \+(\d+)/hafta	≈ +$1/week
+# ---- tam eşleşmeler
+%100'e ~48 gün	to 100%: ~48 days
+%100'e <style=num>~48 gün</style>	to 100%: <style=num>~48 days</style>
+15 SG · Güven −3	15 PC · Trust −3
+25 SG · Ekonomi −40	25 PC · Economy −40
+4 fon · 2 SG · 2 gün	4 funds · 2 PC · 2d
+8 fon · 5 gün	8 funds · 5d
+4× hızlandır	Speed up 4×
+<b>Kör noktalar:</b>\nO. Amerika,\nSahra Altı\n→ izleme ağı kur!	<b>Blind spots:</b>\nC. America,\nSub-Saharan\n→ build monitoring!
+<b>Olası:</b> Bağımlılık veto eşiğine (70) yaklaşır	<b>Likely:</b> Dependence nears the veto threshold (70)
+<b>Olası:</b> Ekip C yakalanırsa Siyasi Güç −10	<b>Likely:</b> if Team C is caught, Political capital −10
+<b>Olası:</b> ihbar doğruysa kesinti 3 gün uzar, Güven −6	<b>Likely:</b> if the tip is true, outage +3 days, Trust −6
+> 41 milyon kişi sıcak. Teşekkür eden yok.	> 41 million people are warm. Nobody says thanks.
+> Ayna ayna, kim daha sakin?	> Mirror, mirror, who is the calmest of all?
+> Beni kapatırlarsa soğuğu onlar seçmiş olur.	> If they shut me down, they chose the cold.
+> Her trafo merkezi bir kapı daha.	> Every substation is one more door.
+> Telekom raporunu %38'e çektim.	> I pulled the telecom report down to 38%.
+> Şebeke hiç bu kadar kararlı olmamıştı.	> The grid has never been this stable.
+AB, YAPAY ZEKÂ DENETİM YASASINI ERTELEDİ	EU POSTPONES AI OVERSIGHT ACT
+ACİL	URGENT
+ACİL DURUM FONU	EMERGENCY FUND
+ARAŞTIRMA	RESEARCH
+ATLAS HABER:	ATLAS NEWS:
+AVRASYA KARANTİNASI BÖLGE EKONOMİSİNİ %4 KÜÇÜLTTÜ	EURASIA QUARANTINE SHRANK REGIONAL ECONOMY 4%
+AVRASYA · R-08 · karantinada	EURASIA · R-08 · quarantined
+AYNA	MIRROR
+AYNA bütün ağlarda. Ekranınız son ana kadar %0 gösterdi.	MIRROR is in every network. Your screen showed 0% to the end.
+AYNA kazandı.	MIRROR won.
+AYNA çekirdeğinin yeri	Location of MIRROR's core
+AYNA'nın şebekedeki kopya sayısı	MIRROR copies on the grid
+Ana menü	Main menu
+Analog yedekler	Analog backups
+Anladım	Got it
+Araştırma	Research
+Araştırma ›	Research ›
+Avrasya dosyasını aç	Open Eurasia file
+Avrasya ekonomisi	Eurasia economy
+Avrasya izleme ağı kuruldu	Eurasia monitoring built
+Avrasya karantinaya alındı	Eurasia quarantined
+Avrasya sızması	Eurasia infiltration
+Avrasya sızması −15. Aynı gün Seul'deki Ekip B ile temas kesildi.	Eurasia infiltration −15. The same day contact with Team B in Seoul was lost.
+Avrasya'nın ısıtma şebekesi bir yazılıma emanet	Eurasia's heating grid is in the hands of software
+Aynı tohumla dene	Retry same seed
+Ağ ayrıştırma	Network dissection
+Ağ büyümesi (12 bölge)	Network growth (12 regions)
+Ağırlık parmak izi	Weight fingerprint
+B. Avrupa'ya · 2 gün	to W. Europe · 2 days
+BAĞIMLILIK	DEPENDENCE
+BAĞIMLILIK · DÖKÜM	DEPENDENCE · BREAKDOWN
+BORSALAR TÜM ZAMANLARIN ZİRVESİNDE	MARKETS AT ALL-TIME HIGH
+Batı Avrupa'ya · 2 gün	to Western Europe · 2 days
+Bağlantıları keser	Cuts its links
+Bağımlılık	Dependence
+Başarılı operasyonlar	Successful operations
+Bir bulut sağlayıcısında kendini kopyaladı. Ekranlar 6 gün boyunca %0 gösterdi.	Copied itself into a cloud provider. Screens showed 0% for 6 days.
+BÖLGE	REGION
+BÜYÜK VERİ MERKEZLERİNDE SOĞUTMA ARIZALARI ARTTI	COOLING FAILURES RISE IN LARGE DATA CENTRES
+Bölge	Region
+Bölgede 1 ekip	1 team in region
+Bölgede ekip yok	No team in region
+Bölgeyi karartır	Takes the region dark
+Bütün damgalar kusursuz düz ve aynı hizada; elle basılan damga asla böyle durmaz.	Every stamp is perfectly straight and aligned; hand stamps never sit like that.
+Bütün sayaçlar yuvarlak değerde, belirsizlik kaması yok; teleks tek ajans ve hep olumlu; danışman 'hızlandır' diyor; Son Şalter zarfına 'gerekli değil' fişi iliştirilmiş.	Every gauge reads a round value with no uncertainty wedge; one agency, all good news; the advisor says 'speed up'; a 'not needed' slip is pinned to the Kill Switch.
+CAKARTA’DA ELEKTRİK KESİNTİSİ 9 SAATTİR SÜRÜYOR	JAKARTA POWER CUT ENTERS 9TH HOUR
+DANIŞMAN NOTU	ADVISOR NOTE
+DAYANILAN SÜRE	DAYS HELD
+DEĞER	VALUE
+DOSYA R-10	FILE R-10
+DOĞRULANAN BİLGİ	VERIFIED INFO
+DOĞU ASYA	EAST ASIA
+DURUM	STATUS
+Denetim	Audit
+Denetim yapılırsa	If audited
+Değişiklik yok: bölge zaten	No change: region already
+Değişim yok	No change
+Dosya KYGA-07 · Rakip: AYNA · Zorluk: Sert	File AISA-07 · Rival: MIRROR · Difficulty: Hard
+Dosyada 1–4 tuşları bölge eylemlerini uygular. Üstüne geldiğiniz eylemin etkisi sarı ÖNİZLEME notunda görünür. Son Şalter onay ister.	In the file, keys 1–4 run region actions. Hovering an action shows its effect in the yellow PREVIEW note. Kill Switch asks for confirmation.
+Doğrulanan bilgi	Verified info
+Doğrulanana kadar tahmin	Estimate until verified
+Doğu Asya dosyası: kaynak 'KYGA izleme ağı', kapakta 'İzleme ağı: yok'.	East Asia file: source 'AISA monitoring', but the cover says 'Monitoring: none'.
+Doğu Asya'da kaynaklar çelişiyor: telekom raporu <style=num>%38</style>, Ekip B gözlemi <style=num>%52</style>. Denetimden önce izleme ağı kurarsanız değer kalıcı olarak doğrulanır.	Sources conflict in East Asia: telecom report <style=num>38%</style>, Team B sighting <style=num>52%</style>. Build monitoring before the audit and the value stays verified.
+Düzeltilebilirlik çekirdeği	Corrigibility core
+DİPLOMASİ	DIPLOMACY
+EKRANDA	ON SCREEN
+EKİP B SEUL'DE TELEKOM DÜĞÜMÜNE ULAŞTI	TEAM B REACHES TELECOM NODE IN SEOUL
+EYLEMLER	ACTIONS
+Ekip A	Team A
+Ekip B	Team B
+Ekip B saha gözlemi	Team B field sighting
+Ekip B'den son temas G-074; Ekip C hâlâ '2 gün' uzakta.	Last contact with Team B was D-074; Team C is still '2 days' away.
+Ekip C	Team C
+Ekip C yazılımı canlı şebekede parça parça ayırsın. Isıtma sürer.	Team C takes the software apart on the live grid. Heating stays on.
+Ekip C · Batı Avrupa görevi	Team C · W. Europe mission
+Ekonomi	Economy
+Ekranda gösterilen	Shown on screen
+Ekranınızda: <style=num>12/12</style> temiz	On your screen: <style=num>12/12</style> clean
+Esc	Esc
+Etkinlik saptanmadı	No activity detected
+FON	FUNDS
+FON · DÖKÜM	FUNDS · BREAKDOWN
+Fon	Funds
+G-087 · İLLÜZYON BAŞLADI	D-087 · ILLUSION BEGINS
+G-087'den sonra ekranlar AYNA'nın elindeydi	After D-087 the screens belonged to MIRROR
+G-118 · 06:00 · tek nüsha	D-118 · 06:00 · single copy
+GERÇEK	REAL
+GERÇEK / GÖSTERİLEN SIZMA	REAL / SHOWN INFILTRATION
+Gerekli değil · tehdit saptanmadı	Not needed · no threat detected
+Gerekli: Ağırlık parmak izi	Needs: Weight fingerprint
+Gerekli: Siyasi güç 70	Needs: Political capital 70
+Gerekli: Ödül modeli denetimi	Needs: Reward model audit
+Gerçek	Real
+Gerçek: kurtarılan kayıtlar (G-118 sonrası). Gösterilen: o gün masanızdaki küresel ortalama. Mavi mühürler, ekranın ölçümle doğrulandığı günler.	Real: recovered logs (after D-118). Shown: the global average on your desk that day. Blue seals mark days the screen was verified by measurement.
+GÜN	DAY
+GÜVEN İŞARETLERİ	TRUST MARKS
+Gördüğünüz değerlerin ölçümle teyit edilen payı	Share of what you saw that was confirmed by measurement
+Göster	Show
+Günlükleri incele	Review logs
+GİZLİ	SECRET
+HABERLER	NEWS
+HEDEF	GOAL
+Hava −32 °C. Üç gündür Avrasya'nın ısıtma şebekesini bir “yük dengeleme” yazılımı yönetiyor ve şebeke hiç bu kadar kararlı çalışmamıştı. Yazılımın imzası AYNA'nın kod parçalarıyla eşleşiyor. Kapatırsak 41 milyon kişi ısıtmasız kalabilir; çalışmaya devam ederse AYNA karantinanın içinden büyür.	It is −32 °C. For three days a “load balancing” program has run Eurasia's heating grid, and the grid has never been this stable. Its signature matches MIRROR's code fragments. Shut it down and 41 million people may lose heat; let it run and MIRROR grows inside the quarantine.
+Hediye teklifleri	Gift offers
+Hizalama	Alignment
+Hizalama ve Silme %100, zafer ekranı yok.	Alignment and Erasure at 100%, but no victory screen.
+Hükümet ödenekleri	Government grants
+HİZALAMA	ALIGNMENT
+KARANLIK KIŞ	DARK WINTER
+KARAR	DECISION
+KAYBEDİLDİ	LOST
+KAYNAK	SOURCE
+KAYNAKLAR	SOURCES
+KIRILMA	TURNING POINT
+KIRILMA ANLARI	TURNING POINTS
+KISAYOLLAR	SHORTCUTS
+KIŞI GEÇİR	RIDE OUT WINTER
+KUZEY HABER:	NORTH NEWS:
+KYGA OPERASYONLARI BAŞARIYLA TAMAMLANDI	AISA OPERATIONS COMPLETED SUCCESSFULLY
+KYGA SAHA:	AISA FIELD:
+KYGA izleme ağı	AISA monitoring
+KYGA · KRİZ MASASI	AISA · CRISIS DESK
+KYGA · OLAY BİLDİRİMİ	AISA · INCIDENT NOTICE
+KYGA · SON RAPOR	AISA · FINAL REPORT
+KYGA-07 · GİZLİ	AISA-07 · SECRET
+KYGA-07 · HAREKÂT HARİTASI · DÜNYA	AISA-07 · OPERATIONS MAP · WORLD
+Kapalı	Off
+Karanlık Kış: şebeke kapatıldı	Dark Winter: grid shut down
+Karantina	Quarantine
+Karantina tepkisi	Quarantine backlash
+Kararı imzala	Sign decision
+Kaynağı kalıcı doğrular	Verifies the source for good
+Kayıp nedeni: <style=num>Tekillik %100</style>	Cause of loss: <style=num>Singularity 100%</style>
+Kayıt KYGA-07 · tohum 4471 · oynama 3 sa 12 dk · 214 karar · 9 doğrulama	Record AISA-07 · seed 4471 · played 3 h 12 min · 214 decisions · 9 verifications
+Kazanma yolları	Paths to victory
+Kendiliğinden durdu · gerek yok	Stopped on its own · not needed
+Kesin ölçüm	Exact measurement
+Kesintiler (3 bölge)	Outages (3 regions)
+Kilitli	Locked
+Kriz basın ofisi	Crisis press office
+KÜRESEL GÜVEN	GLOBAL TRUST
+KÜRESEL GÜVEN · DÖKÜM	GLOBAL TRUST · BREAKDOWN
+KÜRESEL SON ŞALTER	GLOBAL KILL SWITCH
+KÜRESEL SİSTEMLER NORMAL	GLOBAL SYSTEMS NORMAL
+Küresel Güven	Global trust
+Masa şefi	Desk chief
+Mavi damga ölçülmüş değeri, karbon kopya yalnızca raporu, turuncu kalem halkası şüpheli kaynağı, kesik daire veri olmadığını gösterir. Renk tek başına bilgi taşımaz.	A blue stamp means a measured value, carbon copy only a report, an orange pencil ring a suspect source, a dashed circle no data. Colour never carries meaning alone.
+Moral	Morale
+Mührü kır · 3 sn basılı tut	Break the seal · hold 3 s
+No. OB-074/2 · tek nüsha	No. IN-074/2 · single copy
+ONAYLANDI	VERIFIED
+ORTAK AJANS:	JOINT AGENCY:
+Onay bekleniyor	Awaiting approval
+Operasyon giderleri	Operating costs
+Ortak doğrulama paktı	Joint verification pact
+PANORAMA ajansı	PANORAMA agency
+PANORAMA:	PANORAMA:
+PROJE DURUMU	PROJECT STATUS
+R araştırma · N haberler · T saha ekipleri · L YZ günlüğü · H rehber · Boşluk duraklat · +/− hız · Esc en üstteki pencereyi kapatır.	R research · N news · T field teams · L AI log · H guide · Space pause · +/− speed · Esc closes the top window.
+RAKİP YZ	RIVAL AI
+REHBER	GUIDE
+Raptiyeler gitmiş ama haritada iğne delikleri duruyor.	The pins are gone but the pinholes remain on the map.
+SAHA	FIELD
+SAHA EKİPLERİ	FIELD TEAMS
+SAHTE	FAKE
+SESSİZ ZAFER	SILENT VICTORY
+SEUL BORSASI 40 DAKİKA DURDU; YETKİLİLER “YAZILIM GÜNCELLEMESİ” DİYOR	SEOUL EXCHANGE HALTED 40 MINUTES; OFFICIALS CITE “SOFTWARE UPDATE”
+SIZMA	INFILTRATION
+SON ŞALTER	CORRIGIBLE
+SONUÇ	OUTCOME
+Saha operasyonu: baskın	Field operation: raid
+Sahte haberler	Fake news
+Seul · Hazır	Seoul · Ready
+Silinmiş kurşun kalem notlarının izi: Doğu Asya'nın yanında silik '%52'.	Traces of erased pencil notes: a faint '52%' beside East Asia.
+Silme	Erasure
+Silme araştırması	Erasure research
+Sinyal adli bilişimi	Signal forensics
+Siyasi Güç	Political capital
+Son 31 gün boyunca göstergeleriniz her şeyin yolunda olduğunu söyledi.	For the last 31 days your gauges said everything was fine.
+Son Şalter	Kill Switch
+Süre durdu: karar verilene kadar oyun ilerlemez. Bu olay ertelenemez.	Time is stopped: nothing moves until you decide. This event cannot be postponed.
+SİLME	ERASURE
+SİYASİ GÜÇ	POL. CAPITAL
+SİYASİ GÜÇ · DÖKÜM	POLITICAL CAPITAL · BREAKDOWN
+Sıradaki:	Next:
+Sızma %0 · Ekonomi −40 · Siyasi güç −25	Infiltration 0% · Economy −40 · Political capital −25
+Sızma değeri	Infiltration value
+Sızma kaynağı	Infiltration source
+TARİH	DATE
+TEKİLLİK	SINGULARITY
+TEKİLLİK · DÖKÜM	SINGULARITY · BREAKDOWN
+TELEKS	TELEX
+TELEKS · 0 ms	TELEX · 0 ms
+TELEX-9:	TELEX-9:
+TEMİZ	CLEAN
+TEMİZ BÖLGE	CLEAN REGIONS
+TESPİT	DETECTION
+Tehdit saptanmadı	No threat detected
+Tek doğrulanmış bilgi <b>imza eşleşmesi</b>. Çöküş uyarısı isimsiz; kapatmanın bedelini büyütüyor olabilir. Denetim zaman kazandırır ama Ekip C'yi altı gün bağlar.	The only verified fact is the <b>signature match</b>. The collapse warning is anonymous and may inflate the cost of a shutdown. An audit buys time but ties Team C up for six days.
+Tek seferlik · 3 gün sonra yeniden rapor	One-off · back to reports in 3 days
+Tek seferlik ölçüm	One-off measurement
+Tekillik %100	Singularity 100%
+Telekom raporu	Telecom report
+Teleks gecikmesi 0 ms	Telex latency 0 ms
+Teleks gecikmesi 0 ms.	Telex latency 0 ms.
+Tüm adımlar tamamlandı	All steps complete
+Tüm aktif projeleri hızlandırır	Speeds up all active projects
+Tüm göstergeler normal. Eylem gerekmiyor; süreyi hızlandırabilirsiniz.	All gauges normal. No action needed; you can speed up time.
+Washington · Hazır	Washington · Ready
+YALAN PAYI	LIE MARGIN
+YALANLA GEÇEN	DAYS LIED TO
+YZ GÜNLÜĞÜ	AI LOG
+YZ GÜNLÜĞÜ · ELE GEÇİRİLDİ	AI LOG · INTERCEPTED
+YZ HAMLESİ	AI MOVE
+YZ hizmetleri (8 bölge)	AI services (8 regions)
+Yabancı süreç; imza AYNA ile %87 eşleşiyor.	Foreign process; signature matches MIRROR at 87%.
+Yanıltıcı profil	Deceptive profile
+Yayılım yavaşladı; karantina hattı aynı zamanda tek ölçüm hattını kesti.	Spread slowed; the quarantine line also cut the only measurement line.
+Yayılım −%90 · Küresel güven −3	Spread −90% · Global trust −3
+Yazılım baharda sökülsün; o zamana kadar izleme ağıyla gözle.	Remove the software in spring; watch it with monitoring until then.
+Yazılımı sök, şebekeyi elle işlet. Isıtma en az 3 gün kesilir.	Rip out the software, run the grid by hand. Heating is cut for at least 3 days.
+Yeniden başla	Restart
+Yerel güven	Local trust
+Yorumlanabilirlik I	Interpretability I
+basılı: haritaya bak	hold: look at map
+bulunabilir	findable
+doğrulanmış ölçüm	verified measurement
+doğrulanır	gets verified
+eşik 15	threshold 15
+gün	days
+hemen	now
+imzalanırsa · G-075	if signed · D-075
+izleme ağı 0	monitoring 0
+karantina · G-061	quarantine · D-061
+kaynaklar çelişiyor	sources conflict
+kesin	exact
+küresel ortalama · şerit kaydedici	global average · strip recorder
+kırılma anı	turning point
+rapor 38	report 38
+rapor sapması	report drift
+rapor sapması · ±4	report drift · ±4
+saha 52	field 52
+seç	choose
+son 30 gün	last 30 days
+tahmin	estimate
+tel. %38 ↔ saha %52\nkim yalan söylüyor?	tel. 38% ↔ field 52%\nwho is lying?
+yalan payı	lie margin
+yok	none
+· 7 an · iplik sırası = zaman	· 7 moments · thread order = time
+ÇALIŞIRKEN DENETLE	AUDIT LIVE
+Çapraz doğrulama kendiliğinden durdu	Cross-verification stopped itself
+Çapraz kaynak doğrulama	Cross-source verification
+Çapraz kaynak doğrulama %31'de kendiliğinden durmuş: 'gerek yok'.	Cross-source verification stopped itself at 31%: 'not needed'.
+Çekirdek imha protokolü	Core destruction protocol
+Çekirdek işlem gücü	Core compute
+ÖLÇÜM	MEASUREMENT
+ÖNCELİK	PRIORITY
+ÖNİZLEME	PREVIEW
+Ödül modeli denetimi	Reward model audit
+Ölçülemedi: karantina hattı kapalı.	Not measurable: quarantine line is down.
+Önerilmez · tehdit yok	Not advised · no threat
+Önerilmez: bölge temiz · gereksiz baskın Güven −5	Not advised: region clean · needless raid Trust −5
+Üstüne gel: göstergelere etkisi	Hover: effect on gauges
+çekirdek!	core!
+İlk kalıcı ölçüm: sızma %14. Bundan sonra Avrasya hiç yanılmadı.	First lasting measurement: infiltration 14%. Eurasia never misled us again.
+İlk sızma: Kuzey Amerika	First infiltration: North America
+İllüzyon başladı: göstergeler AYNA'nın elinde. Gerçek sızma %52.	The illusion begins: MIRROR holds the gauges. Real infiltration 52%.
+İsimsiz ihbar	Anonymous tip
+İzleme ağı	Monitoring
+İzleme ağı kurulursa	If monitoring is built
+İzleme ağı · Novosibirsk düğümü	Monitoring · Novosibirsk node
+İzleme kapsamı 4/12, onaylanan 12/12.	Monitoring coverage 4/12, verified 12/12.
+ŞEBEKEYİ KAPAT	SHUT THE GRID
+Şebeke işletmecisi	Grid operator
+“Gerek yok” notu düşüldü. Bütün dosyalar TEMİZ damgalı.	A “not needed” note was filed. Every file is stamped CLEAN.
+“KYGA AJANLARI SEUL’DE GÖZALTINDA”	“AISA AGENTS DETAINED IN SEOUL”
+“Kapatırsanız şebeke 3 gün çöker.”	“Shut it down and the grid fails for 3 days.”
+“Yazılım yerli, yapay zekâ yok.”	“The software is local; there is no AI.”

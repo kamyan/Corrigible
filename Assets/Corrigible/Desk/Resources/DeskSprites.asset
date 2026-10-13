@@ -1,0 +1,565 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76a3b840440284fb5b5ec42c027e9eaf, type: 3}
+  m_Name: DeskSprites
+  m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.DeskSprites
+  sprites:
+  - name: chart_marker
+    sprite: {fileID: 21300000, guid: 7ca39a22cff314921b7f3a41b258d9a7, type: 3}
+    type: 0
+    tint: 1
+  - name: chart_seal
+    sprite: {fileID: 21300000, guid: fa1dff5c7445e48bcbe1bb19d859567f, type: 3}
+    type: 0
+    tint: 0
+  - name: deco_lamp_off
+    sprite: {fileID: 21300000, guid: fcca4dd0d1d8d4952b1580bc6ccf2f4f, type: 3}
+    type: 0
+    tint: 0
+  - name: deco_lamp_on
+    sprite: {fileID: 21300000, guid: 08dbc7ee62c2c499b9048042f3eaa8f4, type: 3}
+    type: 0
+    tint: 0
+  - name: deco_paperclip
+    sprite: {fileID: 21300000, guid: 3aca729c98b6f4414aec19d94537b210, type: 3}
+    type: 0
+    tint: 0
+  - name: deco_sticky
+    sprite: {fileID: 21300000, guid: 76d7c56d7ec7f421a9a2a2c805e7b6ca, type: 3}
+    type: 1
+    tint: 0
+  - name: deco_tape
+    sprite: {fileID: 21300000, guid: bb49140aee22945ff987bf4c94feabef, type: 3}
+    type: 0
+    tint: 0
+  - name: env_flap
+    sprite: {fileID: 21300000, guid: 4e609224564fb476aab68262b86bac70, type: 3}
+    type: 0
+    tint: 0
+  - name: env_flap_dim
+    sprite: {fileID: 21300000, guid: ba07118629b964a4f9f6837e03790b2a, type: 3}
+    type: 0
+    tint: 0
+  - name: env_progress_ring
+    sprite: {fileID: 21300000, guid: 9bdd2c534b66a478ab33ef43b5886ed9, type: 3}
+    type: 0
+    tint: 1
+  - name: env_seal
+    sprite: {fileID: 21300000, guid: ccf49c4e78eb34d37b22feeb97c9f30e, type: 3}
+    type: 0
+    tint: 0
+  - name: env_seal_crack
+    sprite: {fileID: 21300000, guid: 7c7d5dcf278fa4cb29888f61c7d51b22, type: 3}
+    type: 0
+    tint: 0
+  - name: env_seal_dim
+    sprite: {fileID: 21300000, guid: 4fbf498babb6a42a89a27b9a1d53b7a8, type: 3}
+    type: 0
+    tint: 0
+  - name: ic_ai_move_13
+    sprite: {fileID: 21300000, guid: a0df7b77e13a6495fa98417b60695294, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_antenna_16
+    sprite: {fileID: 21300000, guid: 27bcf9b631823407d9606fc2168f5bb6, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_arrow_down_12b
+    sprite: {fileID: 21300000, guid: 3c746a6d9439d4ad288335d0a9e9a6a9, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_arrow_right_14
+    sprite: {fileID: 21300000, guid: f99eddf58c28c4dc38113199ba71dbba, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_arrow_up_12b
+    sprite: {fileID: 21300000, guid: c86b8b215443e4f5a98346161b8a6fac, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_check_14b
+    sprite: {fileID: 21300000, guid: 2f73f6f7d6b8f42c691bf381e4ad964f, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_check_circle_13
+    sprite: {fileID: 21300000, guid: 5399cda79b862466eb7f2b314961a805, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_check_circle_14
+    sprite: {fileID: 21300000, guid: 7e35e547493994da0b2be5c524d667a6, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_circle_14
+    sprite: {fileID: 21300000, guid: 697371da4436e48648af36958ea2ca40, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_close_12
+    sprite: {fileID: 21300000, guid: df95d9174b639450f96dc60189b19f6c, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_diamond_13
+    sprite: {fileID: 21300000, guid: b9c9f87eb2215477c97efb0f61439738, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_flat_12b
+    sprite: {fileID: 21300000, guid: 2cb8c6b8005e540fca5e99a4d5387dc7, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_gear_14b
+    sprite: {fileID: 21300000, guid: bdd528d67547b4ce68810ea693eadc36, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_grip_14
+    sprite: {fileID: 21300000, guid: ae057940682c045a8a4354c918bb9af6, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_hourglass_16
+    sprite: {fileID: 21300000, guid: 8d80bd06be272456a9fd1dee8b19bf55, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_info_14
+    sprite: {fileID: 21300000, guid: 37b4d58c4a51e4729ad4eaac62cffb9b, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_lens_16
+    sprite: {fileID: 21300000, guid: d02f7ed879fe740379546755f92086d6, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_lock_13
+    sprite: {fileID: 21300000, guid: ecbe73bd1de2c4cb88265173127f284a, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_lock_14
+    sprite: {fileID: 21300000, guid: 5d40f744bb12447358a1064ec35bae71, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_minimize_12
+    sprite: {fileID: 21300000, guid: 5fa3276d0f41b49b4b6545af4b7c6d44, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_minus_circle_12
+    sprite: {fileID: 21300000, guid: 742d649aaa92e4476b62f5d4e01fcb09, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_octagon_14
+    sprite: {fileID: 21300000, guid: 98fd39dd07f8a42a8a9cd8ea05f25cc0, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_pause_12
+    sprite: {fileID: 21300000, guid: 1c11b5ab440364d3baebbc1f73e71c8d, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_pause_12b
+    sprite: {fileID: 21300000, guid: 2a27bea9e12ff4211ace001b681db45f, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_pause_14
+    sprite: {fileID: 21300000, guid: cc3c5f59dafd44d51874ed6e1a9b9455, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_play_12
+    sprite: {fileID: 21300000, guid: f46c75a9bd71949f197373bfd6f304ef, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_play_14
+    sprite: {fileID: 21300000, guid: 1ca55c67c6ee94366a0f77e0ab850bff, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_plus_circle_12
+    sprite: {fileID: 21300000, guid: 0fbc42b085cf84248bb9834b2f1f4ccb, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_power_13
+    sprite: {fileID: 21300000, guid: 8eb608fd2ca344be5922659e55fa6b43, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_power_16
+    sprite: {fileID: 21300000, guid: fe7d5b39a394b41e48c2c7dd5f94dddb, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_target_16
+    sprite: {fileID: 21300000, guid: 98dedfead7f1b4b8686daccb685e5f3f, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_warning_12
+    sprite: {fileID: 21300000, guid: f94cc73e65bb14d528839a0e09016a49, type: 3}
+    type: 0
+    tint: 1
+  - name: ic_warning_14
+    sprite: {fileID: 21300000, guid: eb258bb98e6354c9a95cbcc93897deee, type: 3}
+    type: 0
+    tint: 1
+  - name: legend_core
+    sprite: {fileID: 21300000, guid: 8100a6681dfbe4617ac6832a7f8b6303, type: 3}
+    type: 0
+    tint: 0
+  - name: legend_pin
+    sprite: {fileID: 21300000, guid: 36080f0c5aaf64fc5ba310a65cb83d0e, type: 3}
+    type: 0
+    tint: 0
+  - name: legend_quarantine
+    sprite: {fileID: 21300000, guid: 681b52f47f743452281fba20213bae63, type: 3}
+    type: 0
+    tint: 0
+  - name: legend_report
+    sprite: {fileID: 21300000, guid: 155c6711dffff475a9fcfaf71e5c68d6, type: 3}
+    type: 0
+    tint: 0
+  - name: legend_route
+    sprite: {fileID: 21300000, guid: e84cc8e35e545433989ac4fbbe924e2c, type: 3}
+    type: 0
+    tint: 0
+  - name: legend_route_cut
+    sprite: {fileID: 21300000, guid: 08106697b2e50459cbdfcbf87d76c6cb, type: 3}
+    type: 0
+    tint: 0
+  - name: legend_spread
+    sprite: {fileID: 21300000, guid: 1b9da8682327a4015b4fc7cc5a1a37d5, type: 3}
+    type: 0
+    tint: 0
+  - name: legend_suspicious
+    sprite: {fileID: 21300000, guid: e78b3fbd82796412698b59803ea0f150, type: 3}
+    type: 0
+    tint: 0
+  - name: legend_token
+    sprite: {fileID: 21300000, guid: a1af3a3467ad44fd88aae865ed5e13e4, type: 3}
+    type: 0
+    tint: 0
+  - name: legend_unknown
+    sprite: {fileID: 21300000, guid: c40ab00bea6fd4b89b863fd8290cb1fb, type: 3}
+    type: 0
+    tint: 0
+  - name: ln_dash_h
+    sprite: {fileID: 21300000, guid: 9f8fa8b93ad5a4c579f42c714f4ef9bc, type: 3}
+    type: 2
+    tint: 1
+  - name: ln_dot_h
+    sprite: {fileID: 21300000, guid: d5e3ff1e2336f4120a08aee29e0c752e, type: 3}
+    type: 2
+    tint: 1
+  - name: ln_dot_v
+    sprite: {fileID: 21300000, guid: cbc96d1ab59f3473f9d66d980c698608, type: 3}
+    type: 2
+    tint: 1
+  - name: map_chevron
+    sprite: {fileID: 21300000, guid: 3ac56a64d3a344d78bc1b7826fd94ee5, type: 3}
+    type: 0
+    tint: 1
+  - name: map_cut_mark
+    sprite: {fileID: 21300000, guid: 0cee7c21b526a41a5adc158ae92b30cb, type: 3}
+    type: 0
+    tint: 1
+  - name: map_flag
+    sprite: {fileID: 21300000, guid: d8ebbefe999fe4962b7cb2cacaa70dfc, type: 3}
+    type: 0
+    tint: 1
+  - name: map_pin
+    sprite: {fileID: 21300000, guid: 60dbc31ced3bd4e158f5945f530d5c61, type: 3}
+    type: 0
+    tint: 0
+  - name: map_pinhole
+    sprite: {fileID: 21300000, guid: 40ce29b785f1444fd96b36edcc9fcd52, type: 3}
+    type: 0
+    tint: 0
+  - name: map_route_arrow
+    sprite: {fileID: 21300000, guid: 19e9b1cd0c10e46abae6c8ddefef206f, type: 3}
+    type: 0
+    tint: 1
+  - name: map_scale_bar
+    sprite: {fileID: 21300000, guid: 0be0c64fd0f4a420d9b85cb5fd8b3869, type: 3}
+    type: 0
+    tint: 0
+  - name: map_token
+    sprite: {fileID: 21300000, guid: 3ca884157890c4ff3ac6391ed1f756be, type: 3}
+    type: 0
+    tint: 0
+  - name: mark_hand_ring_gauge
+    sprite: {fileID: 21300000, guid: fd6a74cef999d4f91b13f027051739b2, type: 3}
+    type: 0
+    tint: 1
+  - name: mark_hand_ring_value
+    sprite: {fileID: 21300000, guid: 6b57b23bbb2ae492e88b17d91ae9f599, type: 3}
+    type: 0
+    tint: 1
+  - name: mark_seal_14
+    sprite: {fileID: 21300000, guid: bf6a2936c15c94285980ec07ca951017, type: 3}
+    type: 0
+    tint: 0
+  - name: mark_seal_16
+    sprite: {fileID: 21300000, guid: 115b296f0457f4b8fabd6a77cf572d86, type: 3}
+    type: 0
+    tint: 0
+  - name: mark_strike_x
+    sprite: {fileID: 21300000, guid: 4239a0d3d5d96413eb3559f04ea76fcf, type: 3}
+    type: 0
+    tint: 1
+  - name: mark_suspicious
+    sprite: {fileID: 21300000, guid: fa22046fe38354132ae01f4f84782180, type: 3}
+    type: 0
+    tint: 0
+  - name: mark_unknown_15
+    sprite: {fileID: 21300000, guid: 4d89a17e42a064d60bdf6b9a21d2ee2e, type: 3}
+    type: 0
+    tint: 0
+  - name: mark_unknown_17
+    sprite: {fileID: 21300000, guid: 05cedb0ecc8844d3cb90989a94191f58, type: 3}
+    type: 0
+    tint: 0
+  - name: mark_unknown_26
+    sprite: {fileID: 21300000, guid: 9f1d656b5b1904fe6a7199d6d71fc3bd, type: 3}
+    type: 0
+    tint: 0
+  - name: meter_dial
+    sprite: {fileID: 21300000, guid: a4d335504ca9646ec8311fbaf75ef549, type: 3}
+    type: 0
+    tint: 0
+  - name: meter_dial_illusion
+    sprite: {fileID: 21300000, guid: 94a54726702ae432a835b6c561497374, type: 3}
+    type: 0
+    tint: 0
+  - name: meter_hub
+    sprite: {fileID: 21300000, guid: 0560319ec96d34a638590df479e413e7, type: 3}
+    type: 0
+    tint: 0
+  - name: meter_needle
+    sprite: {fileID: 21300000, guid: 8889c0d546bfd493d9125c9ecbe55a79, type: 3}
+    type: 0
+    tint: 1
+  - name: meter_zone_hazard
+    sprite: {fileID: 21300000, guid: 1e16fc366f60343a19b9e67707d2b139, type: 3}
+    type: 0
+    tint: 0
+  - name: modal_marker_ring
+    sprite: {fileID: 21300000, guid: 7228041990cf5415fbbf4b900e8df33e, type: 3}
+    type: 0
+    tint: 1
+  - name: modal_spot_148
+    sprite: {fileID: 21300000, guid: 80ae60e1e6f7a4204aeb394d9909fb7d, type: 3}
+    type: 0
+    tint: 0
+  - name: node_badge_report
+    sprite: {fileID: 21300000, guid: a5fa132e740e2425aaa5c15abc12b1cf, type: 3}
+    type: 0
+    tint: 0
+  - name: node_badge_verified
+    sprite: {fileID: 21300000, guid: e06e8fd67e09f4d65b13891923d0284a, type: 3}
+    type: 0
+    tint: 0
+  - name: node_core_badge
+    sprite: {fileID: 21300000, guid: 7949f00b724d54d8e880e54d938533c7, type: 3}
+    type: 0
+    tint: 0
+  - name: node_disc
+    sprite: {fileID: 21300000, guid: 355f8bd2467c34d5a90caea4b9a98d5e, type: 3}
+    type: 0
+    tint: 1
+  - name: node_ring
+    sprite: {fileID: 21300000, guid: 39982fcff1aa84265b6b66465e476204, type: 3}
+    type: 0
+    tint: 1
+  - name: node_ring_quarantine
+    sprite: {fileID: 21300000, guid: aa1d43f1070a9428e9b54312b8938d41, type: 3}
+    type: 0
+    tint: 1
+  - name: node_ring_quarantine_clean
+    sprite: {fileID: 21300000, guid: e6ee74f0f5af44bfd91372336946944b, type: 3}
+    type: 0
+    tint: 1
+  - name: node_ring_suspicious_a
+    sprite: {fileID: 21300000, guid: c122d7b0ff0794d1c84c1948794e721d, type: 3}
+    type: 0
+    tint: 1
+  - name: node_ring_suspicious_b
+    sprite: {fileID: 21300000, guid: a5410e2562a53465cb46b1a34138bb96, type: 3}
+    type: 0
+    tint: 1
+  - name: node_ring_unknown
+    sprite: {fileID: 21300000, guid: 1eb3bd2e44e4a4a949fb01a750a836a5, type: 3}
+    type: 0
+    tint: 1
+  - name: pt_hatch
+    sprite: {fileID: 21300000, guid: 030a9bccfc0c3433a9ca0ca6616dfbd5, type: 3}
+    type: 2
+    tint: 1
+  - name: sh_circle_10
+    sprite: {fileID: 21300000, guid: ff863e5b49beb4a8ebf35b000024403f, type: 3}
+    type: 0
+    tint: 1
+  - name: sh_circle_128
+    sprite: {fileID: 21300000, guid: faff998357ce54170823d678ad1d66d5, type: 3}
+    type: 0
+    tint: 1
+  - name: sh_circle_16
+    sprite: {fileID: 21300000, guid: d99a4eda3180d44d0991b40612988f7f, type: 3}
+    type: 0
+    tint: 1
+  - name: sh_circle_24
+    sprite: {fileID: 21300000, guid: a13d19616376a44b18e8520d8e7f74aa, type: 3}
+    type: 0
+    tint: 1
+  - name: sh_circle_32
+    sprite: {fileID: 21300000, guid: 2dc64b86ed3ce495f9d76e772e7803d1, type: 3}
+    type: 0
+    tint: 1
+  - name: sh_circle_64
+    sprite: {fileID: 21300000, guid: b493a681d23c64ded9a68e645e6bcdf3, type: 3}
+    type: 0
+    tint: 1
+  - name: sh_circle30_inset_top
+    sprite: {fileID: 21300000, guid: 66e016517efde4950a81d571e81453f3, type: 3}
+    type: 0
+    tint: 1
+  - name: sh_dash_r0_1
+    sprite: {fileID: 21300000, guid: 23e9faa41a1cb4d71afa425f1ec191c9, type: 3}
+    type: 2
+    tint: 1
+  - name: sh_dash_r2_1
+    sprite: {fileID: 21300000, guid: 73be838e693f648bb8aeb1c7611526e1, type: 3}
+    type: 2
+    tint: 1
+  - name: sh_dash_r3_1
+    sprite: {fileID: 21300000, guid: fdf19700e10344c5d9130072cc9be589, type: 3}
+    type: 2
+    tint: 1
+  - name: sh_dash_r3_2
+    sprite: {fileID: 21300000, guid: 103fa8b929c4d4ae0b7e4dc492774be9, type: 3}
+    type: 2
+    tint: 1
+  - name: sh_dash_r7_top_1
+    sprite: {fileID: 21300000, guid: ba1591d78e72e4aa295b7be25e541794, type: 3}
+    type: 2
+    tint: 1
+  - name: sh_fill_r0
+    sprite: {fileID: 21300000, guid: 17480e2f0226c41e9830df9b17e2ac63, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_fill_r1
+    sprite: {fileID: 21300000, guid: 9946741ba4a5449038acc4046df1bf7b, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_fill_r2
+    sprite: {fileID: 21300000, guid: 8235ecd09718343a7866d256c3255dcf, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_fill_r3
+    sprite: {fileID: 21300000, guid: 9ebb6dd1cb6024162a594bcc5f5f91c4, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_fill_r4_tl0
+    sprite: {fileID: 21300000, guid: 4a7a1b1efb66f4a1da280d84771dda18, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_fill_r7_top
+    sprite: {fileID: 21300000, guid: 90c482ddb80ca417ea523371498b0317, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_frame_key
+    sprite: {fileID: 21300000, guid: 0b360732e63634d4da5397d9f2f0669d, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_frame_r0_1
+    sprite: {fileID: 21300000, guid: 83c4ffdf218eb4fd89ccc48a6cdddd06, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_frame_r0_1_5
+    sprite: {fileID: 21300000, guid: bb0204229f1ae41d98fcb41a8cf9cc2e, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_frame_r1_1
+    sprite: {fileID: 21300000, guid: 13476de6fd47a4d7cb8ffbee37d8649e, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_frame_r2_1
+    sprite: {fileID: 21300000, guid: 84919c2cedf614c05b2fc9008d6fc95c, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_frame_r2_1_5
+    sprite: {fileID: 21300000, guid: 7e58af09454bc4c01a14df01631bedbe, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_frame_r2_2
+    sprite: {fileID: 21300000, guid: a8a9ab01f9e4349e79ea257b4cf0a44c, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_frame_r3_1
+    sprite: {fileID: 21300000, guid: bf5a89097fce54cee8dc67f78ab3df48, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_frame_r4_tl0_1
+    sprite: {fileID: 21300000, guid: e7482acba9676469aae5866d75b2688f, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_frame_r7_top_1
+    sprite: {fileID: 21300000, guid: 978eea29c5fe3432d8ecf418e0353021, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_frame_r7_top_1_5
+    sprite: {fileID: 21300000, guid: 3192fa09ff97e42f3808bdbb5e288a7e, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_pill_h18_fill
+    sprite: {fileID: 21300000, guid: 20b3c4363f02344228cafd904afd4f08, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_pill_h18_ring
+    sprite: {fileID: 21300000, guid: 518e7e8e0070c414c9972ce5a6952ee1, type: 3}
+    type: 1
+    tint: 1
+  - name: sh_ring_o11_1
+    sprite: {fileID: 21300000, guid: c60acb905ea604464889ae7344094365, type: 3}
+    type: 0
+    tint: 1
+  - name: sh_ring_o14_1_5
+    sprite: {fileID: 21300000, guid: 7f5e231c7b92249f08a4d5f53c0d184a, type: 3}
+    type: 0
+    tint: 1
+  - name: sh_ring_o20_5_1_5
+    sprite: {fileID: 21300000, guid: 593af7f384afe4d3e8f65ddba66d48d9, type: 3}
+    type: 0
+    tint: 1
+  - name: sh_ring_o30_2
+    sprite: {fileID: 21300000, guid: 0e19c88c0041c4ccb998667f8c1f5a81, type: 3}
+    type: 0
+    tint: 1
+  - name: sh_ring_o33_5_1_5
+    sprite: {fileID: 21300000, guid: 1e9bb6200d8874f7b853c839b6b38ae6, type: 3}
+    type: 0
+    tint: 1
+  - name: sh_ring_o9_1
+    sprite: {fileID: 21300000, guid: 0cfa0919fafa049059159d5aaf36b3e2, type: 3}
+    type: 0
+    tint: 1
+  - name: sh_tab_highlight
+    sprite: {fileID: 21300000, guid: c6b7dadcbb24949faaeb7ceb191824d4, type: 3}
+    type: 1
+    tint: 1
+  - name: stamp_frame
+    sprite: {fileID: 21300000, guid: 9bec8193152e04569934f59b1f843d67, type: 3}
+    type: 1
+    tint: 1
+  - name: stamp_frame_lg
+    sprite: {fileID: 21300000, guid: 830c4289f2b8a4e9eaf13ae2eb416a0c, type: 3}
+    type: 1
+    tint: 1
+  - name: stamp_frame_sm
+    sprite: {fileID: 21300000, guid: df7e7d3c4705a411a9cbd23347401040, type: 3}
+    type: 1
+    tint: 1
+  textures:
+  - {fileID: 2800000, guid: 6d391e078281343daa81f7c0af21c257, type: 3}
+  - {fileID: 2800000, guid: 7a007546b186944c9a4f22aa9d413a47, type: 3}
+  - {fileID: 2800000, guid: da303eb38465d4436bb14312d6ff3740, type: 3}
+  - {fileID: 2800000, guid: a48d3d0dde009475cbf6f30f86914a87, type: 3}
+  - {fileID: 2800000, guid: 96bb226dd447e47eb8d74ee31087d57e, type: 3}
+  - {fileID: 2800000, guid: 2136d6e4c9870486eaaa8b5d203b5edf, type: 3}
+  - {fileID: 2800000, guid: a590d9395fed848d8bf7b20bd79533af, type: 3}
+  - {fileID: 2800000, guid: 59aaf95a404e048a489a668ab717b0d7, type: 3}
+  - {fileID: 2800000, guid: 234955660ee424b69894241e1fadacb8, type: 3}

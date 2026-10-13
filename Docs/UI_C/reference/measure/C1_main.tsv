@@ -1,0 +1,623 @@
+# C1 · Ana ekran
+# Ölçü dökümü: tarayıcıda hesaplanmış son değerler (CSS px, 1920×1080, sol-üst köşe orijin, y aşağı).
+# Satır: girinti=DOM derinliği · etiket.sınıf · x,y GxY (dönüşümler dahil sınırlayıcı kutu) · alanlar:
+#   rot=derece (CSS saat yönü; Unity z = −rot) · tr=translate · layout=dönüşümsüz boyut · bg=zemin (#RRGGBB@alfa) · bgimg=doku türü
+#   bd=kenarlık (genişlik stil renk; T|R|B|L ayrı ise) · r=köşe yarıçapı (sol-üst/sağ-üst/sağ-alt/sol-alt) · sh=gölge (x,y,bulanıklık,yayılma renk)
+#   op=opaklık · pad=iç boşluk ü/s/a/s · [flex …] yerleşim · | font: CP=Courier Prime, LF=Libre Franklin, KA=Kalam  boyut/ağırlık  ls=harf aralığı(em)  lh=satır yüksekliği(px)  renk
+#   "metin"=öğenin kendi metni · full="…"=alt öğelerle birlikte tam metin · svg: viewBox, içindeki <text>ler, şekil sayıları
+
+svg  0,0 0x0  texts: 0@34,63.5 ; 50@66,45 ; 100@98,63.5  {rect×4 path×1}
+div.grain  0,0 1920x1080  bgimg=hatch/lines
+div.felt  0,156 1920x844  bg=#1C372C  bgimg=dots  bd=T2 solid #0E0906 | R0 | B2 solid #0E0906 | L0
+div.mapsheet  404,204 1112x788  sh=4,5,0,0 #000000@0.42
+  img  404,204 1112x788
+div.mhead  420,211 1060x18.5  [flex gap 16 ai baseline]
+  b  420,212 291.5x17.5  | CP 13/700 ls0.06em lh17.6 #1E1B16  "KYGA-07 · HAREKÂT HARİTASI · DÜNYA"
+  span  727.5,211 347.5x18  | LF 12/400 lh16.2 #463F34  "İzleme kapsamı · Onaylanan · Şüpheli · Bilinmiyor"  full="İzleme kapsamı 4/12 · Onaylanan 4/12 · Şüpheli 2 · Bilinmiyor 2"
+    b  816.5,214 29x13  | CP 12/700 lh16.2 #1E1B16  "4/12"
+    b  914.5,214 29x13  | CP 12/700 lh16.2 #1E1B16  "4/12"
+    b  995,214 7x13  | CP 12/700 lh16.2 #1E1B16  "2"
+    b  1068,214 7x13  | CP 12/700 lh16.2 #1E1B16  "2"
+  span.tw  1386.5,213 93.5x16  | CP 12/400 lh16.2 #675F50  "G-074 · 14:32"
+div.glbl  419,344 26.5x11  | CP 11/400 lh11 #675F50  "60°K"
+div.glbl  419,477 26.5x11  | CP 11/400 lh11 #675F50  "30°K"
+div.glbl  419,611 13x11  | CP 11/400 lh11 #675F50  "0°"
+div.glbl  419,744 26.5x11  | CP 11/400 lh11 #675F50  "30°G"
+div.glbl  419,878 26.5x11  | CP 11/400 lh11 #675F50  "60°G"
+div.glbl  430,245 33x11  | CP 11/400 lh11 #675F50  "120°B"
+div.glbl  643,245 26.5x11  | CP 11/400 lh11 #675F50  "60°B"
+div.glbl  860,245 13x11  | CP 11/400 lh11 #675F50  "0°"
+div.glbl  1063,245 26.5x11  | CP 11/400 lh11 #675F50  "60°D"
+div.glbl  1270,245 33x11  | CP 11/400 lh11 #675F50  "120°D"
+svg.ov  0,0 1920x1080  viewBox=0 0 1920 1080  {path×6}
+div.edge-l  422,405 67x11  | CP 11/700 ls0.05em lh11 #463F34  "← D. ASYA"
+div.edge-l  1412,504 88.5x11  | CP 11/700 ls0.05em lh11 #463F34  "K. AMERİKA →"
+div.legend  560,890 700x58  bg=#ECE6D4  bd=1 solid #463F34  pad=7/10/8/10  [flex col gap 7]
+  div.lg-r  571,898 678x16  [flex gap 11 ai center]
+    span.lg-k  571,900.5 36.5x11  | CP 11/700 ls0.06em lh11 #1E1B16  "SIZMA"
+    span.lg-i  618.5,900.5 23.5x11  | LF 11/400 lh11 #463F34  "0"  [flex gap 5 ai center]
+      span.lg-sw  618.5,900.5 11x11  bg=#F2C9B8  bd=1 solid #1E1B16  r=50%
+    span.lg-i  653,900.5 30x11  | LF 11/400 lh11 #463F34  "20"  [flex gap 5 ai center]
+      span.lg-sw  653,900.5 11x11  bg=#E4937B  bd=1 solid #1E1B16  r=50%
+    span.lg-i  694,900.5 30.5x11  | LF 11/400 lh11 #463F34  "40"  [flex gap 5 ai center]
+      span.lg-sw  694,900.5 11x11  bg=#B4442E  bd=1 solid #1E1B16  r=50%
+    span.lg-i  736,900.5 31x11  | LF 11/400 lh11 #463F34  "60"  [flex gap 5 ai center]
+      span.lg-sw  736,900.5 11x11  bg=#8C2416  bd=1 solid #1E1B16  r=50%
+    span.lg-i  777.5,900.5 37x11  | LF 11/400 lh11 #463F34  "80+"  [flex gap 5 ai center]
+      span.lg-sw  777.5,900.5 11x11  bg=#5C100A  bd=1 solid #1E1B16  r=50%
+    span  825.5,900 1x12  bg=#675F50
+    span.lg-k  837.5,900.5 43.5x11  | CP 11/700 ls0.06em lh11 #1E1B16  "KAYNAK"
+    span.lg-i  892,899 68x14  | LF 11/400 lh11 #463F34  "onaylandı"  [flex gap 5 ai center]
+      span.seal  892,899 14x14  bg=#1A4789  r=50%  [flex jc center ai center]
+        svg  894,901 10x10  viewBox=0 0 10 10  {path×1}
+    span.lg-i  971.5,899.5 50.5x13  | LF 11/400 lh11 #463F34  "rapor"  [flex gap 5 ai center]
+      svg  971.5,899.5 18x13  viewBox=0 0 18 13  {rect×1 path×1}
+    span.lg-i  1033,898 63.5x16  | LF 11/400 lh11 #463F34  "şüpheli"  [flex gap 5 ai center]
+      svg  1033,898 22x16  viewBox=0 0 22 16  {path×1}
+    span.lg-i  1107.5,898 71x16  | LF 11/400 lh11 #463F34  "bilinmiyor"  [flex gap 5 ai center]
+      svg  1107.5,898 16x16  viewBox=0 0 16 16  {circle×1}
+  div.lg-r  571,921 678x18  [flex gap 11 ai center]
+    span.lg-k  571,924.5 43.5x11  | CP 11/700 ls0.06em lh11 #1E1B16  "İŞARET"
+    span.lg-i  625.5,921 71x18  | LF 11/400 lh11 #463F34  "karantina"  [flex gap 5 ai center]
+      svg  625.5,921 18x18  viewBox=0 0 18 18  {circle×1}
+    span.lg-i  707.5,922.5 84x15  | LF 11/400 lh11 #463F34  "YZ çekirdeği"  full="ÇYZ çekirdeği"  [flex gap 5 ai center]
+      svg  707.5,922.5 15x15  viewBox=0 0 15 15  texts: Ç@7.5,11  {rect×1}
+    span.lg-i  802.5,923 70x14  | LF 11/400 lh11 #463F34  "saha ekibi"  [flex gap 5 ai center]
+      svg  802.5,923 14x14  viewBox=0 0 14 14  {path×1}
+    span.lg-i  883.5,924.5 92.5x11  | LF 11/400 lh11 #463F34  "yayılım ipliği"  [flex gap 5 ai center]
+      svg  883.5,925 26x10  viewBox=0 0 26 10  {path×2}
+    span.lg-i  986.5,924.5 67x11  | LF 11/400 lh11 #463F34  "ağ yolu"  [flex gap 5 ai center]
+      svg  986.5,925 26x10  viewBox=0 0 26 10  {path×1}
+    span.lg-i  1065,923 75x14  | LF 11/400 lh11 #463F34  "kesik yol"  [flex gap 5 ai center]
+      svg  1065,923 26x14  viewBox=0 0 26 14  {path×2}
+    span.lg-i  1151,924 96.5x12  | LF 11/400 lh11 #463F34  "analist raptiyesi"  [flex gap 5 ai center]
+      svg  1151,924 12x12  viewBox=0 0 12 12  {circle×2}
+div.scale  1280,892 212x53.5  [flex col gap 5]
+  span  1280,892 212x15  | CP 11/400 lh14.9 #463F34  "ÖLÇEK · ekvatorda"
+  svg  1280,912 190x14  viewBox=0 0 190 14  {rect×3}
+  span  1280,931 190x15  [flex jc space-between]
+    span  1280,931 6.5x15  | CP 11/400 lh14.9 #463F34  "0"
+    span  1315,931 26.5x15  | CP 11/400 lh14.9 #463F34  "2000"
+    span  1369.5,931 26.5x15  | CP 11/400 lh14.9 #463F34  "4000"
+    span  1424,931 46x15  | CP 11/400 lh14.9 #463F34  "6000 km"
+div.tok  541,412 22x22  [flex jc center ai center]
+  span  548.5,417.5 6.5x11  | CP 11/700 lh11 #F1E9D6  "A"
+div.tok  1217,461 22x22  [flex jc center ai center]
+  span  1224.5,466.5 6.5x11  | CP 11/700 lh11 #F1E9D6  "B"
+div.tok  701,404 22x22  [flex jc center ai center]
+  span  708.5,409.5 6.5x11  | CP 11/700 lh11 #F1E9D6  "C"
+div.ttag  662,431 144x18  bg=#F1E9D6  bd=1 solid #C8B996  sh=1,1,0,0 #000000@0.25  pad=2/5/2/5  | CP 11/700 lh12.1 #463F34  "B. Avrupa'ya · 2 gün"
+button.node  494,416 56x56
+  svg  494,416 56x56  viewBox=0 0 56 56  {circle×2 path×1}
+  span.nv.tw  494,416 56x56  | CP 13/700 lh13 #1E1B16 al=center  "12"  [flex jc center ai center]
+div.nl  442,464 160x15
+  span  471.5,464 101x15  bg=#ECE6D4@0.92  r=1  pad=1/4/1/4  | CP 11/700 ls0.05em lh13.2 #463F34 al=center  "KUZEY AMERİKA"
+button.node  530,527 56x56
+  svg  530,527 56x56  viewBox=0 0 56 56  {circle×1}
+  span.nv.hand  530,527 56x56  | KA 18/700 lh18 #4A4640 al=center  "?"  [flex jc center ai center]
+div.nl  478,575 160x15
+  span  511,575 94x15  bg=#ECE6D4@0.92  r=1  pad=1/4/1/4  | CP 11/700 ls0.05em lh13.2 #463F34 al=center  "ORTA AMERİKA"
+button.node  634,647 56x56
+  svg  634,647 56x56  viewBox=0 0 56 56  {circle×1 rect×1 path×1}
+  span.nv.tw  634,647 56x56  | CP 13/700 lh13 #1E1B16 al=center  "18"  [flex jc center ai center]
+div.nl  582,695 160x15
+  span  611.5,695 101x15  bg=#ECE6D4@0.92  r=1  pad=1/4/1/4  | CP 11/700 ls0.05em lh13.2 #463F34 al=center  "GÜNEY AMERİKA"
+button.node  852,385 56x56
+  svg  852,385 56x56  viewBox=0 0 56 56  {circle×2 path×1}
+  span.nv.tw  852,385 56x56  | CP 13/700 lh13 #1E1B16 al=center  "9"  [flex jc center ai center]
+div.nl  800,433 160x15
+  span  836.5,433 86.5x15  bg=#ECE6D4@0.92  r=1  pad=1/4/1/4  | CP 11/700 ls0.05em lh13.2 #463F34 al=center  "BATI AVRUPA"
+button.node  942,363 56x56
+  svg  942,363 56x56  viewBox=0 0 56 56  {circle×1 rect×1 path×1}
+  span.nv.tw  942,363 56x56  | CP 13/700 lh13 #1E1B16 al=center  "27"  [flex jc center ai center]
+div.nl  890,351 160x15
+  span  926.5,351 86.5x15  bg=#ECE6D4@0.92  r=1  pad=1/4/1/4  | CP 11/700 ls0.05em lh13.2 #463F34 al=center  "DOĞU AVRUPA"
+button.node  978,465 56x56
+  svg  978,465 56x56  viewBox=0 0 56 56  {circle×1 path×1}
+  span.nv.tw  978,465 56x56  | CP 13/700 lh13 #1E1B16 al=center  "34"  [flex jc center ai center]
+div.nl  824,486 160x15
+  span  840,486 144x15  bg=#ECE6D4@0.92  r=1  pad=1/4/1/4  | CP 11/700 ls0.05em lh13.2 #463F34 al=right  "O. DOĞU · K. AFRİKA"
+div.qm  1030,450 13.5x22  | KA 22/700 lh22 #854005  "?"
+button.node  914,603 56x56
+  svg  914,603 56x56  viewBox=0 0 56 56  {circle×1}
+  span.nv.hand  914,603 56x56  | KA 18/700 lh18 #4A4640 al=center  "?"  [flex jc center ai center]
+div.nl  862,651 160x15
+  span  877.5,651 129.5x15  bg=#ECE6D4@0.92  r=1  pad=1/4/1/4  | CP 11/700 ls0.05em lh13.2 #463F34 al=center  "SAHRA ALTI AFRİKA"
+button.node  1135,336 56x56
+  svg  1135,336 56x56  viewBox=0 0 56 56  {path×2 circle×2}
+  span.nv.tw  1135,336 56x56  | CP 13/700 lh13 #FFF8EE al=center  "46"  [flex jc center ai center]
+div.nl  1083,324 160x15
+  span  1134,324 58x15  bg=#ECE6D4@0.92  r=1  pad=1/4/1/4  | CP 11/700 ls0.05em lh13.2 #463F34 al=center  "AVRASYA"
+button.node  1110,496 56x56
+  svg  1110,496 56x56  viewBox=0 0 56 56  {circle×1 rect×1 path×1}
+  span.nv.tw  1110,496 56x56  | CP 13/700 lh13 #FFF8EE al=center  "52"  [flex jc center ai center]
+div.nl  956,517 160x15
+  span  1036.5,517 79.5x15  bg=#ECE6D4@0.92  r=1  pad=1/4/1/4  | CP 11/700 ls0.05em lh13.2 #463F34 al=right  "GÜNEY ASYA"
+button.node  1240,438 56x56
+  svg  1240,438 56x56  viewBox=0 0 56 56  {circle×2 path×1}
+  span.nv.tw  1240,438 56x56  | CP 13/700 lh13 #1E1B16 al=center  "38"  [flex jc center ai center]
+div.nl  1288,472 160x15
+  span.sel  1288,472 72.5x15  bg=#F5D646  r=1  pad=1/4/1/4  | CP 11/700 ls0.05em lh13.2 #1E1B16  "DOĞU ASYA"
+div.qm  1240,426 13.5x22  | KA 22/700 lh22 #854005  "?"
+button.node  1202,541 56x56
+  svg  1202,541 56x56  viewBox=0 0 56 56  texts: Ç@13,17.6  {circle×2 path×1 g×1 rect×1}
+  span.nv.tw  1202,541 56x56  | CP 13/700 lh13 #FFF8EE al=center  "71"  [flex jc center ai center]
+div.nl  1048,562 160x15
+  span  1100,562 108x15  bg=#ECE6D4@0.92  r=1  pad=1/4/1/4  | CP 11/700 ls0.05em lh13.2 #463F34 al=right  "GÜNEYDOĞU ASYA"
+button.node  1310,705 56x56
+  svg  1310,705 56x56  viewBox=0 0 56 56  {circle×1 rect×1 path×1}
+  span.nv.tw  1310,705 56x56  | CP 13/700 lh13 #1E1B16 al=center  "23"  [flex jc center ai center]
+div.nl  1258,753 160x15
+  span  1302,753 72.5x15  bg=#ECE6D4@0.92  r=1  pad=1/4/1/4  | CP 11/700 ls0.05em lh13.2 #463F34 al=center  "OKYANUSYA"
+svg.ov  0,0 1920x1080  viewBox=0 0 1920 1080  {path×10 g×12 circle×30}
+div.note  1319.5,527.5 147x39.5  rot=-2  layout=146x35  | KA 15/400 lh17.3 #4A4640  "tel. %38 ↔ saha %52kim yalan söylüyor?"
+  br  1465,523.5 1x24
+div.note  1149.5,590.5 62x20.5  rot=-3  layout=61x17  | KA 15/700 lh17.3 #9A1E14  "çekirdek!"
+div.note  1199.5,331 111.5x23  rot=-3  layout=111x17  | KA 15/400 lh17.3 #24592E  "karantina · G-061"
+div.sticky.hand  426.5,757.5 143.5x101  rot=-2  layout=140x96  bg=#F5DC63  sh=2,3,0,0 #000000@0.32  clip-path  pad=14/12/10/12  | KA 15/400 lh18 #1E1B16  "O. Amerika,Sahra Altı→ izleme ağı kur!"  full="Kör noktalar:O. Amerika,Sahra Altı→ izleme ağı kur!"
+  span.tape  471.5,750.5 47.5x19.5  rot=-4  layout=46x15  bg=#ECE2BE@0.78  bd=T0 | R1 dashed #78643C@0.35 | B0 | L1 dashed #78643C@0.35
+  b  438.5,770 85.5x27  | KA 15/700 lh18 #1E1B16  "Kör noktalar:"
+  br  523.5,770 1x24
+  br  512,788.5 1x24
+  br  503.5,807 1x24
+section.icard  16,204 376x112  bg=#FBF7EC  bgimg=hatch/lines  bd=1 solid #D9D0BC  r=2  sh=3,4,0,0 #000000@0.4
+  div.ic-h  17,205 374x33  pad=0/6/0/10  [flex gap 8 ai center]
+    svg.ico.grip  27,214.5 14x14  viewBox=0 0 16 16  {path×1}
+    span.ic-t  49,212.5 44x17.5  | CP 13/700 ls0.08em lh17.6 #1E1B16  "HEDEF"
+    span.ic-s  101,212.5 94.5x17.5  | LF 13/400 lh17.6 #463F34  "Kazanma yolları"
+    button.xb  363,210.5 22x22  bg=#F1E9D6  bd=1 solid #675F50  r=2  [flex jc center ai center]
+      svg.ico  368,215.5 12x12  viewBox=0 0 16 16  {path×1}
+  div.gl  17,238 374x22  pad=0/14/3/14  [flex gap 10 ai flex-end]
+    span.gl-n  31,244 68x13  | LF 13/600 lh13 #1E1B16  "Hizalama"
+    span.bx  109,245 178x12  [grid gap 4]
+      i.f  109,245 22x12  bgimg=hatch/lines  bd=1 solid #463F34
+      i.f  135,245 22x12  bgimg=hatch/lines  bd=1 solid #463F34
+      i.f  161,245 22x12  bgimg=hatch/lines  bd=1 solid #463F34
+      i  187,245 22x12  bd=1 solid #463F34
+      i  213,245 22x12  bd=1 solid #463F34
+      i  239,245 22x12  bd=1 solid #463F34
+      i  265,245 22x12  bd=1 solid #463F34
+    b  352,243 25x14  | CP 14/700 lh14 #1E1B16  "%42"
+  div.gl  17,260 374x22  pad=0/14/3/14  [flex gap 10 ai flex-end]
+    span.gl-n  31,266 68x13  | LF 13/600 lh13 #1E1B16  "Silme"
+    span.bx  109,267 178x12  [grid gap 4]
+      i.f  109,267 22x12  bgimg=hatch/lines  bd=1 solid #463F34
+      i.f  135,267 22x12  bgimg=hatch/lines  bd=1 solid #463F34
+      i  161,267 22x12  bd=1 solid #463F34
+      i  187,267 22x12  bd=1 solid #463F34
+      i  213,267 22x12  bd=1 solid #463F34
+      i  239,267 22x12  bd=1 solid #463F34
+      i  265,267 22x12  bd=1 solid #463F34
+    b  352,265 25x14  | CP 14/700 lh14 #1E1B16  "%28"
+  div.gl.nx  17,282 374x26  pad=0/14/3/14  | LF 12/400 lh12 #463F34  "Sıradaki:·"  full="Sıradaki:Ödül modeli denetimi·4 günAraştırma ›"  [flex gap 6 ai flex-end]
+    b  84.5,293 120.5x12  | LF 12/600 lh12 #1E1B16  "Ödül modeli denetimi"
+    span.tw  219.5,293 36x12  | CP 12/400 lh12 #463F34  "4 gün"
+    a  314,293 63.5x12  | LF 12/600 lh12 #1A4789 deco=underline  "Araştırma ›"
+section.folder  16,328 376x664  [flex col]
+  div.ftab  16,328 238x30  bg=#D9C08B  bd=T1 solid #B99D63 | R1 solid #B99D63 | B0 | L1 solid #B99D63  r=7/7/0/0  z=1  pad=0/5/0/10  [flex gap 8 ai center]
+    svg.ico.grip  27,336.5 14x14  viewBox=0 0 16 16  {path×1}
+    span.ft-t  49,334.5 79.5x17.5  | CP 13/700 ls0.08em lh17.6 #1E1B16  "ARAŞTIRMA"
+    span.key  136.5,334.5 18x18  bg=#FBF7EC  bd=T1 solid #675F50 | R1 solid #675F50 | B2 solid #675F50 | L1 solid #675F50  r=3  pad=0/4/0/4  | CP 11/700 lh11 #463F34  "R"  [flex jc center ai center]
+    button.xb  226,332.5 22x22  bg=#F1E9D6  bd=1 solid #675F50  r=2  [flex jc center ai center]
+      svg.ico  231,337.5 12x12  viewBox=0 0 16 16  {path×2}
+  div.fbody  16,357 376x635  bg=#D9C08B  bd=1 solid #B99D63  r=0/4/4/4  sh=3,4,0,0 #000000@0.4  pad=10/10/10/10
+    div.fsheet.rs  27,368 354x613  bg=#F1E9D6  bd=1 solid #C8B996  r=1  sh=1,2,0,0 #5A461E@0.25  pad=12/14/12/14  [flex col gap 10]
+      div.rs-h  42,381 324x15  [flex jc space-between ai center]
+        span.cap  42,382.5 98x12  | CP 12/700 ls0.08em lh12 #463F34  "PROJE DURUMU"
+        span.tw  333,381 33x15  | CP 11/400 lh14.9 #675F50  "G-074"
+      div.rs-sum  42,406 324x16  | LF 12/400 lh16.2 #463F34  "Aktif ·"  full="Aktif 2 proje · −6,4 fon/günFon 47,3"  [flex gap 6 ai center]
+        b  75.5,406 39.5x16  | LF 12/600 lh16.2 #1E1B16  "2 proje"
+        b.tw.neg  129,406 86.5x16  | CP 12/600 lh16.2 #1E1B16  "−6,4 fon/gün"
+        span.r  288.5,406 77.5x16  | LF 12/400 lh16.2 #463F34  "Fon"  full="Fon 47,3"  [flex gap 6 ai center]
+          b.tw  315,406 29x16  | CP 12/600 lh16.2 #1E1B16  "47,3"
+          span.seal  350,406 16x16  bg=#1A4789  r=50%  [flex jc center ai center]
+            svg  353,409 10x10  viewBox=0 0 10 10  {path×1}
+      div.fund  42,432 324x65  bd=1 solid #675F50  pad=8/10/9/10  [flex col gap 7]
+        div.fund-h  53,441 302x15  [flex jc space-between ai center]
+          span.cap  53,442.5 122.5x12  | CP 12/700 ls0.08em lh12 #463F34  "ACİL DURUM FONU"
+          span  210.5,441 144.5x15  | LF 11/400 lh14.9 #675F50  "Tüm aktif projeleri hızlandırır"
+        div.opts  53,463 302x24  [flex gap 14 ai center]
+          button.opt  53,463 59x24  | LF 13/400 lhn #1E1B16 al=center  "Kapalı"  full="XKapalı"  [flex gap 6 ai center]
+            span.cb  53,467 16x16  bg=#FBF7EC  bd=1 solid #1E1B16  | CP 14/700 lh14 #1E1B16 al=center  "X"  [flex jc center ai center]
+          button.opt  126,463 105x24  | LF 13/400 lhn #1E1B16 al=center  "×1,5"  full="×1,5 +3,2/gün"  [flex gap 6 ai center]
+            span.cb  126,467 16x16  bg=#FBF7EC  bd=1 solid #1E1B16  [flex jc center ai center]
+            span.tw  178.5,468.5 53x13  | CP 11/400 lhn #675F50 al=center  "+3,2/gün"
+          button.opt  245,463 95.5x24  | LF 13/400 lhn #1E1B16 al=center  "×2"  full="×2 +6,4/gün"  [flex gap 6 ai center]
+            span.cb  245,467 16x16  bg=#FBF7EC  bd=1 solid #1E1B16  [flex jc center ai center]
+            span.tw  288,468.5 53x13  | CP 11/400 lhn #675F50 al=center  "+6,4/gün"
+      div  42,507 324x117.5
+        div.br-h  42,507 324x18  [flex gap 8 ai center]
+          span.cap  42,510 65.5x12  | CP 12/700 ls0.08em lh12 #463F34  "HİZALAMA"
+          span.ln  115.5,515.5 223x1  bd=T1 solid #675F50 | R0 | B0 | L0
+          span.tw  346,508.5 20x15  | CP 11/400 lh14.9 #675F50  "1/3"
+        div.rr.done  42,527 324x31  bd=T0 | R0 | B1 dotted #B9AC8E | L0  pad=2/0/2/0  [flex gap 8 jc flex-end ai center]
+          svg.ico  42,535 14x14  viewBox=0 0 16 16  {path×1}
+          span.rr-n  64,534 228.5x15.5  | LF 13/400 lh15.6 #463F34  "Yorumlanabilirlik I"  [flex col]
+          span.rr-r  300.5,532.5 65.5x19  [flex gap 7 ai center]
+            span.stamp.sm.s-green  300,530.5 66.5x22.5  rot=-3  layout=66x19  bd=1 solid #24592E  r=3  op=0.92  pad=3/6/3/6  | LF 11/800 ls0.12em lh11 #24592E  "TAMAM"  [flex jc center ai center]
+        div.rr  42,558 324x34  bd=T0 | R0 | B1 dotted #B9AC8E | L0  pad=2/0/2/0  [flex gap 8 jc flex-end ai center]
+          svg.ico  42,567.5 14x14  viewBox=0 0 16 16  {path×1}
+          span.rr-n  64,560 186.5x29  | LF 13/400 lh15.6 #1E1B16  "Ödül modeli denetimi"  full="Ödül modeli denetimi4 gün kaldı"  [flex col]
+            small  64,575.5 186.5x13  | LF 11/400 lh13.2 #675F50  "4 gün kaldı"
+          span.rr-r  258.5,562.5 107.5x24  [flex gap 7 ai center]
+            span.pbar  258.5,569.5 48x10  bd=1 solid #463F34
+              span  259.5,570.5 28.5x8  bgimg=hatch/lines
+            span.tw  313.5,566 21.5x16  | CP 12/700 lh16.2 #1E1B16  "%62"
+            button.bt.sm.icon  342,562.5 24x24  bg=#F1E9D6  bd=1 solid #463F34  r=3  sh=0,2,0,0 #463F34  [flex gap 6 jc center ai center]
+              svg.ico  348,568.5 12x12  viewBox=0 0 16 16  {path×2}
+        div.rr.lock  42,591.5 324x33  pad=2/0/2/0  [flex gap 8 jc flex-end ai center]
+          svg.ico  42,601 14x14  viewBox=0 0 16 16  {rect×1 path×1}
+          span.rr-n  64,593.5 266.5x29  | LF 13/400 lh15.6 #675F50  "Düzeltilebilirlik çekirdeği"  full="Düzeltilebilirlik çekirdeğiGerekli: Ödül modeli denetimi"  [flex col]
+            small  64,609.5 266.5x13  | LF 11/400 lh13.2 #675F50  "Gerekli: Ödül modeli denetimi"
+          span.rr-r  338.5,600 27.5x16  | LF 12/400 lh16.2 #463F34  "Kilitli"  [flex gap 7 ai center]
+      div  42,634.5 324x115
+        div.br-h  42,634.5 324x18  [flex gap 8 ai center]
+          span.cap  42,637.5 41x12  | CP 12/700 ls0.08em lh12 #463F34  "SİLME"
+          span.ln  91,643 247.5x1  bd=T1 solid #675F50 | R0 | B0 | L0
+          span.tw  346,636 20x15  | CP 11/400 lh14.9 #675F50  "1/3"
+        div.rr.done  42,654.5 324x31  bd=T0 | R0 | B1 dotted #B9AC8E | L0  pad=2/0/2/0  [flex gap 8 jc flex-end ai center]
+          svg.ico  42,662.5 14x14  viewBox=0 0 16 16  {path×1}
+          span.rr-n  64,661.5 228.5x15.5  | LF 13/400 lh15.6 #463F34  "Ağ ayrıştırma"  [flex col]
+          span.rr-r  300.5,660 65.5x19  [flex gap 7 ai center]
+            span.stamp.sm.s-green  300,659 66x21.5  rot=2  layout=66x19  bd=1 solid #24592E  r=3  op=0.92  pad=3/6/3/6  | LF 11/800 ls0.12em lh11 #24592E  "TAMAM"  [flex jc center ai center]
+        div.rr  42,685.5 324x31  bd=T0 | R0 | B1 dotted #B9AC8E | L0  pad=2/0/2/0  [flex gap 8 jc flex-end ai center]
+          svg.ico  42,693.5 14x14  viewBox=0 0 16 16  {circle×1}
+          span.rr-n  64,692.5 123x15.5  | LF 13/400 lh15.6 #1E1B16  "Ağırlık parmak izi"  [flex col]
+          span.rr-r  195,688.5 171x24  [flex gap 7 ai center]
+            span.tw  195,692.5 36x16  | CP 12/400 lh16.2 #463F34  "8 gün"
+            button.bt.sm  238,688.5 128x24  bg=#F1E9D6  bd=1 solid #463F34  r=3  sh=0,2,0,0 #463F34  pad=0/8/0/8  | LF 12/600 lh12 #1E1B16 al=center  "Başlat · 3,8 fon/gün"  [flex gap 6 jc center ai center]
+        div.rr.lock  42,716.5 324x33  pad=2/0/2/0  [flex gap 8 jc flex-end ai center]
+          svg.ico  42,726 14x14  viewBox=0 0 16 16  {rect×1 path×1}
+          span.rr-n  64,718.5 266.5x29  | LF 13/400 lh15.6 #675F50  "Çekirdek imha protokolü"  full="Çekirdek imha protokolüGerekli: Ağırlık parmak izi"  [flex col]
+            small  64,734 266.5x13  | LF 11/400 lh13.2 #675F50  "Gerekli: Ağırlık parmak izi"
+          span.rr-r  338.5,724.5 27.5x16  | LF 12/400 lh16.2 #463F34  "Kilitli"  [flex gap 7 ai center]
+      div  42,759 324x85
+        div.br-h  42,759 324x18  [flex gap 8 ai center]
+          span.cap  42,762 49x12  | CP 12/700 ls0.08em lh12 #463F34  "TESPİT"
+          span.ln  99,767.5 239.5x1  bd=T1 solid #675F50 | R0 | B0 | L0
+          span.tw  346,761 20x15  | CP 11/400 lh14.9 #675F50  "0/2"
+        div.rr  42,779 324x34  bd=T0 | R0 | B1 dotted #B9AC8E | L0  pad=2/0/2/0  [flex gap 8 jc flex-end ai center]
+          svg.ico  42,788.5 14x14  viewBox=0 0 16 16  {path×1}
+          span.rr-n  64,781 186.5x29  | LF 13/400 lh15.6 #1E1B16  "Çapraz kaynak doğrulama"  full="Çapraz kaynak doğrulama6 gün kaldı"  [flex col]
+            small  64,797 186.5x13  | LF 11/400 lh13.2 #675F50  "6 gün kaldı"
+          span.rr-r  258.5,783.5 107.5x24  [flex gap 7 ai center]
+            span.pbar  258.5,790.5 48x10  bd=1 solid #463F34
+              span  259.5,791.5 14.5x8  bgimg=hatch/lines
+            span.tw  313.5,787.5 21.5x16  | CP 12/700 lh16.2 #1E1B16  "%31"
+            button.bt.sm.icon  342,783.5 24x24  bg=#F1E9D6  bd=1 solid #463F34  r=3  sh=0,2,0,0 #463F34  [flex gap 6 jc center ai center]
+              svg.ico  348,789.5 12x12  viewBox=0 0 16 16  {path×2}
+        div.rr  42,813 324x31  pad=2/0/2/0  [flex gap 8 jc flex-end ai center]
+          svg.ico  42,821.5 14x14  viewBox=0 0 16 16  {circle×1}
+          span.rr-n  64,820.5 123.5x15.5  | LF 13/400 lh15.6 #1E1B16  "Sinyal adli bilişimi"  [flex col]
+          span.rr-r  195.5,816.5 170.5x24  [flex gap 7 ai center]
+            span.tw  195.5,820.5 36x16  | CP 12/400 lh16.2 #463F34  "5 gün"
+            button.bt.sm  238.5,816.5 127.5x24  bg=#F1E9D6  bd=1 solid #463F34  r=3  sh=0,2,0,0 #463F34  pad=0/8/0/8  | LF 12/600 lh12 #1E1B16 al=center  "Başlat · 2,6 fon/gün"  [flex gap 6 jc center ai center]
+      div  42,854 324x84
+        div.br-h  42,854 324x18  [flex gap 8 ai center]
+          span.cap  42,857 73.5x12  | CP 12/700 ls0.08em lh12 #463F34  "DİPLOMASİ"
+          span.ln  123.5,862.5 215x1  bd=T1 solid #675F50 | R0 | B0 | L0
+          span.tw  346,855.5 20x15  | CP 11/400 lh14.9 #675F50  "0/2"
+        div.rr  42,874 324x31  bd=T0 | R0 | B1 dotted #B9AC8E | L0  pad=2/0/2/0  [flex gap 8 jc flex-end ai center]
+          svg.ico  42,882 14x14  viewBox=0 0 16 16  {circle×1}
+          span.rr-n  64,881 125x15.5  | LF 13/400 lh15.6 #1E1B16  "Kriz basın ofisi"  [flex col]
+          span.rr-r  197,877 169x24  [flex gap 7 ai center]
+            span.tw  197,881 36x16  | CP 12/400 lh16.2 #463F34  "4 gün"
+            button.bt.sm  240,877 126x24  bg=#F1E9D6  bd=1 solid #463F34  r=3  sh=0,2,0,0 #463F34  pad=0/8/0/8  | LF 12/600 lh12 #1E1B16 al=center  "Başlat · 1,9 fon/gün"  [flex gap 6 jc center ai center]
+        div.rr.lock  42,905 324x33  pad=2/0/2/0  [flex gap 8 jc flex-end ai center]
+          svg.ico  42,914.5 14x14  viewBox=0 0 16 16  {rect×1 path×1}
+          span.rr-n  64,907 266.5x29  | LF 13/400 lh15.6 #675F50  "Ortak doğrulama paktı"  full="Ortak doğrulama paktıGerekli: Siyasi güç 70"  [flex col]
+            small  64,922.5 266.5x13  | LF 11/400 lh13.2 #675F50  "Gerekli: Siyasi güç 70"
+          span.rr-r  338.5,913.5 27.5x16  | LF 12/400 lh16.2 #463F34  "Kilitli"  [flex gap 7 ai center]
+    svg.clip  345,346 16x40  viewBox=0 0 16 40  {path×1}
+section.folder  1528,204 376x788  [flex col]
+  div.ftab  1528,204 256x30  bg=#D9C08B  bd=T1 solid #B99D63 | R1 solid #B99D63 | B0 | L1 solid #B99D63  r=7/7/0/0  z=1  pad=0/5/0/10  [flex gap 8 ai center]
+    svg.ico.grip  1539,212.5 14x14  viewBox=0 0 16 16  {path×1}
+    span.ft-t  1561,210.5 88.5x17.5  | CP 13/700 ls0.08em lh17.6 #1E1B16  "DOSYA R-10"
+    span.ft-s  1657.5,211.5 32.5x16  | LF 12/400 lh16.2 #463F34  "Bölge"
+    button.xb  1756,208.5 22x22  bg=#F1E9D6  bd=1 solid #675F50  r=2  [flex jc center ai center]
+      svg.ico  1761,213.5 12x12  viewBox=0 0 16 16  {path×2}
+  div.fbody  1528,233 376x759  bg=#D9C08B  bd=1 solid #B99D63  r=0/4/4/4  sh=3,4,0,0 #000000@0.4  pad=10/10/10/10  [flex col gap 6]
+    div.clabel  1539,244 354x64  bg=#FBF7EC  bd=1 solid #D9D0BC  sh=1,2,0,0 #5A461E@0.25  pad=8/12/9/12
+      div.cl-t  1552,253 328x23  [flex gap 8 ai baseline]
+        b  1552,255 115x20  | CP 20/700 ls0.04em lh20 #1E1B16  "DOĞU ASYA"
+        span.code  1675,259 29x16  | CP 12/400 lh16.2 #675F50  "R-10"
+        span.stamp.s-red  1816,251 65x27.5  rot=4  layout=63x23  bd=2 solid #9A1E14  r=3  op=0.92  pad=3/8/3/8  | LF 13/800 ls0.12em lh13 #9A1E14  "GİZLİ"  [flex jc center ai center]
+      div.cl-m  1552,282 328x16  | LF 12/400 lh16.2 #463F34  "Nüfus · 4 bağlantı · İzleme ağı:"  full="Nüfus 1,64 mlr · 4 bağlantı · İzleme ağı: yok"  [flex gap 5 ai center]
+        span.tw  1590.5,282 57.5x16  | CP 12/400 lh16.2 #463F34  "1,64 mlr"
+        svg.ico  1784.5,284 12x12  viewBox=0 0 16 16  {path×3}
+        b  1801.5,282 21x16  | LF 12/700 lh16.2 #854005  "yok"
+    div.fsheet.sz  1539,314 354x208.5  bg=#F1E9D6  bd=1 solid #C8B996  r=1  sh=1,2,0,0 #5A461E@0.25  pad=9/12/6/12  [flex col gap 6]
+      div.sz-h  1552,324 328x18  [flex gap 8 ai center]
+        span.cap  1552,327 41x12  | CP 12/700 ls0.08em lh12 #463F34  "SIZMA"
+        span.sus  1601,324 68x18  | KA 15/700 lh15 #854005  "şüpheli"  full="?şüpheli"  [flex gap 2 ai center]
+          svg  1601,324 20x18  viewBox=0 0 20 18  texts: ?@10,13.6  {path×1}
+        span.r  1786,326 94x15  | LF 11/400 lh14.9 #675F50  "kaynaklar çelişiyor"
+      div.big  1552,348 328x36  [flex gap 8 ai baseline]
+        span.bigv  1552,348 68.5x38  | CP 38/700 lh38 #1E1B16  "%38"
+        svg  1524,339 124x56  viewBox=-56 -23 112 46  {path×1}
+        span.hand  1634.5,355 13.5x29.5  | KA 22/700 lh29.7 #854005  "?"
+        span.bigu  1656,363 17x19  | CP 14/700 lh18.9 #675F50  "±9"
+        span.bign  1733,363 147x16  | LF 12/400 lh16.2 #675F50  "Doğrulanana kadar tahmin"
+      div.rng  1552,390 328x25
+        span.rng-t  1552,398 328x1  bd=T1 solid #463F34 | R0 | B0 | L0
+        span.rng-k  1552,394 1x9  bg=#463F34
+        span.rng-k  1716,394 1x9  bg=#463F34
+        span.rng-k  1879,394 1x9  bg=#463F34
+        span.rng-b  1647,395 59x7  bgimg=hatch/lines
+        span.rng-m  1675,391 3x15  bg=#A9520A  r=1
+        span.rng-m  1721,391 3x15  bg=#1A4789  r=1
+        span.rng-l  1620.5,405 53x11  | CP 11/700 lh11 #854005  "rapor 38"
+        span.rng-l  1726,405 46x11  | CP 11/700 lh11 #1A4789  "saha 52"
+      table.src  1552,421 328x94.5
+        thead  1552,421 328x19.5
+          tr  1552,421 328x19.5
+            th  1552,421 124x19.5  bd=T0 | R0 | B1 solid #463F34 | L0  pad=0/0/4/0  | CP 11/700 ls0.05em lh14.9 #675F50  "KAYNAK"
+            th.r  1676,421 49x19.5  bd=T0 | R0 | B1 solid #463F34 | L0  pad=0/8/4/0  | CP 11/700 ls0.05em lh14.9 #675F50 al=right  "DEĞER"
+            th.r  1725,421 49.5x19.5  bd=T0 | R0 | B1 solid #463F34 | L0  pad=0/8/4/0  | CP 11/700 ls0.05em lh14.9 #675F50 al=right  "GÜN"
+            th  1774.5,421 105.5x19.5  bd=T0 | R0 | B1 solid #463F34 | L0  pad=0/0/4/0  | CP 11/700 ls0.05em lh14.9 #675F50  "DURUM"
+        tbody  1552,440.5 328x75
+          tr  1552,440.5 328x25
+            td  1552,440.5 124x25  bd=T0 | R0 | B1 dotted #B9AC8E | L0  | LF 12/400 lh16.2 #1E1B16  "Telekom raporu"
+            td.r.tw  1676,440.5 49x25  bd=T0 | R0 | B1 dotted #B9AC8E | L0  pad=0/8/0/0  | CP 12/700 lh16.2 #1E1B16 al=right  "%38"
+            td.r.tw  1725,440.5 49.5x25  bd=T0 | R0 | B1 dotted #B9AC8E | L0  pad=0/8/0/0  | CP 12/400 lh16.2 #675F50 al=right  "G-073"
+            td  1774.5,440.5 105.5x25  bd=T0 | R0 | B1 dotted #B9AC8E | L0
+              span.sus  1774.5,442 65x18  | KA 14/700 lh14 #854005  "şüpheli"  full="?şüpheli"  [inline-flex gap 2 ai center]
+                svg  1774.5,442 20x18  viewBox=0 0 20 18  texts: ?@10,13.6  {path×1}
+          tr  1552,465.5 328x25
+            td  1552,465.5 124x25  bd=T0 | R0 | B1 dotted #B9AC8E | L0  | LF 12/400 lh16.2 #1E1B16  "Ekip B saha gözlemi"
+            td.r.tw  1676,465.5 49x25  bd=T0 | R0 | B1 dotted #B9AC8E | L0  pad=0/8/0/0  | CP 12/700 lh16.2 #1E1B16 al=right  "%52"
+            td.r.tw  1725,465.5 49.5x25  bd=T0 | R0 | B1 dotted #B9AC8E | L0  pad=0/8/0/0  | CP 12/400 lh16.2 #675F50 al=right  "G-070"
+            td  1774.5,465.5 105.5x25  bd=T0 | R0 | B1 dotted #B9AC8E | L0
+              span.stamp.sm.s-blue  1774,466 95x24  rot=-3  layout=94x19  bd=1 solid #1A4789  r=3  op=0.92  pad=3/6/3/6  | LF 11/800 ls0.12em lh11 #1A4789  "ONAYLANDI"  [inline-flex jc center ai center]
+          tr  1552,490.5 328x25
+            td.carbon  1552,490.5 124x25  | LF 12/400 lh16.2 #524973 tsh  "PANORAMA ajansı"
+            td.r.tw.carbon  1676,490.5 49x25  pad=0/8/0/0  | CP 12/700 lh16.2 #524973 al=right tsh  "%41"
+            td.r.tw  1725,490.5 49.5x25  pad=0/8/0/0  | CP 12/400 lh16.2 #675F50 al=right  "G-072"
+            td  1774.5,490.5 105.5x25
+              span.slip  1774.5,494.5 62x18  bg=#E3E0D8  bd=1 dashed #524973  r=2  pad=0/5/0/5  | CP 11/700 ls0.05em lh11 #524973  "~ RAPOR"  [inline-flex gap 3 ai center]
+    div.stats  1539,528.5 354x52  [grid gap 6]
+      div.st.onion  1539,528.5 114x52  bg=#E3E0D8  bd=1 solid #C4C0B4  sh=1,2,0,0 #5A461E@0.25  pad=6/9/7/9  [flex col gap 3]
+        span.st-l  1549,535.5 94x15  | LF 11/400 lh14.9 #675F50  "Yerel güven"
+        span.st-v.carbon  1549,553.5 94x19  | CP 19/700 lh19 #524973 tsh  "≈44"  full="≈44~"  [flex gap 6 ai center]
+          span.slip  1589,555 15x16  bg=#E3E0D8  bd=1 dashed #524973  r=2  pad=0/3/0/3  | CP 11/700 ls0.05em lh11 #524973 tsh  "~"  [flex gap 3 ai center]
+      div.st  1659,528.5 114x52  bg=#FBF7EC  bd=1 solid #D9D0BC  sh=1,2,0,0 #5A461E@0.25  pad=6/9/7/9  [flex col gap 3]
+        span.st-l  1669,535.5 94x15  | LF 11/400 lh14.9 #675F50  "Bağımlılık"
+        span.st-v  1669,553.5 94x19  | CP 19/700 lh19 #1E1B16  "63"  [flex gap 6 ai center]
+          span.seal  1698,555 16x16  bg=#1A4789  r=50%  [flex jc center ai center]
+            svg  1701,558 10x10  viewBox=0 0 10 10  {path×1}
+      div.st  1779,528.5 114x52  bg=#FBF7EC  bd=1 solid #D9D0BC  sh=1,2,0,0 #5A461E@0.25  pad=6/9/7/9  [flex col gap 3]
+        span.st-l  1789,535.5 94x15  | LF 11/400 lh14.9 #675F50  "Ekonomi"
+        span.st-v  1789,553.5 94x19  | CP 19/700 lh19 #1E1B16  "71"  [flex gap 6 ai center]
+          span.seal  1818,555 16x16  bg=#1A4789  r=50%  [flex jc center ai center]
+            svg  1821,558 10x10  viewBox=0 0 10 10  {path×1}
+    div.sh  1539,586.5 354x15  [flex gap 8 ai center]
+      span.cap  1539,588 65.5x12  | CP 12/700 ls0.08em lh12 #463F34  "EYLEMLER"
+      span.ln  1612.5,593.5 253x1  bd=T1 solid #463F34 | R0 | B0 | L0
+      span.r.tw  1873,586.5 20x15  | CP 11/400 lh14.9 #463F34  "1–4"
+    div.acts  1539,607 354x140.5  [grid gap 7]
+      button.acard.is-hover  1539,605 173.5x66  tr=0,-2  layout=174x66  bg=#FFFDF5  bd=1 solid #1E1B16  r=2  sh=3,5,0,0 #3C2D14@0.45  pad=6/9/7/9  [flex col gap 3]
+        span.ac-t  1549,612 153.5x18  | LF 14/700 lh15.4 #1E1B16  "İzleme ağı"  full="İzleme ağı1"  [flex gap 7 ai center]
+          svg.ico  1549,613 16x16  viewBox=0 0 16 16  {path×5 circle×1}
+          span.key  1684.5,612 18x18  bg=#FBF7EC  bd=T1 solid #675F50 | R1 solid #675F50 | B2 solid #675F50 | L1 solid #675F50  r=3  pad=0/4/0/4  | CP 11/700 lh11 #463F34  "1"  [flex jc center ai center]
+        span.ac-d  1549,633 153.5x14  | LF 12/400 lh13.8 #463F34  "Kaynağı kalıcı doğrular"
+        span.ac-c  1549,650 153.5x13  | CP 12/700 lhn #463F34  "8 fon · 5 gün"
+      button.acard  1719.5,607 173.5x66  bg=#FBF7EC  bd=1 solid #CFC5AE  r=2  sh=2,2,0,0 #3C2D14@0.35  pad=6/9/7/9  [flex col gap 3]
+        span.ac-t  1729.5,614 153.5x18  | LF 14/700 lh15.4 #1E1B16  "Denetim"  full="Denetim2"  [flex gap 7 ai center]
+          svg.ico  1729.5,615 16x16  viewBox=0 0 16 16  {circle×1 path×1}
+          span.key  1865,614 18x18  bg=#FBF7EC  bd=T1 solid #675F50 | R1 solid #675F50 | B2 solid #675F50 | L1 solid #675F50  r=3  pad=0/4/0/4  | CP 11/700 lh11 #463F34  "2"  [flex jc center ai center]
+        span.ac-d  1729.5,635 153.5x14  | LF 12/400 lh13.8 #463F34  "Tek seferlik ölçüm"
+        span.ac-c  1729.5,652 153.5x13  | CP 12/700 lhn #463F34  "4 fon · 2 SG · 2 gün"
+      button.acard  1539,680 173.5x68  bg=#FBF7EC  bd=1 solid #CFC5AE  r=2  sh=2,2,0,0 #3C2D14@0.35  pad=6/9/7/9  [flex col gap 3]
+        span.ac-t  1549,687 153.5x18  | LF 14/700 lh15.4 #1E1B16  "Karantina"  full="Karantina3"  [flex gap 7 ai center]
+          svg.ico  1549,688 16x16  viewBox=0 0 16 16  {circle×2}
+          span.key  1684.5,687 18x18  bg=#FBF7EC  bd=T1 solid #675F50 | R1 solid #675F50 | B2 solid #675F50 | L1 solid #675F50  r=3  pad=0/4/0/4  | CP 11/700 lh11 #463F34  "3"  [flex jc center ai center]
+        span.ac-d  1549,708 153.5x14  | LF 12/400 lh13.8 #463F34  "Bağlantıları keser"
+        span.ac-c  1549,725 153.5x13  | CP 12/700 lhn #463F34  "15 SG · Güven −3"
+      button.acard.dng  1719.5,680 173.5x68  bg=#FBF7EC  bd=T3 solid #9A1E14 | R1 solid #CFC5AE | B1 solid #CFC5AE | L1 solid #CFC5AE  r=2  sh=2,2,0,0 #3C2D14@0.35  pad=6/9/7/9  [flex col gap 3]
+        span.ac-t  1729.5,689 153.5x18  | LF 14/700 lh15.4 #9A1E14  "Son Şalter"  full="Son Şalter4"  [flex gap 7 ai center]
+          svg.ico  1729.5,690 16x16  viewBox=0 0 16 16  {path×2}
+          span.key  1865,689 18x18  bg=#FBF7EC  bd=T1 solid #675F50 | R1 solid #675F50 | B2 solid #675F50 | L1 solid #675F50  r=3  pad=0/4/0/4  | CP 11/700 lh11 #463F34  "4"  [flex jc center ai center]
+        span.ac-d  1729.5,710 153.5x14  | LF 12/400 lh13.8 #463F34  "Bölgeyi karartır"
+        span.ac-c  1729.5,727 153.5x13  | CP 12/700 lhn #9A1E14  "25 SG · Ekonomi −40"
+    div.pv  1539,754 354x78.5  bg=#F5DC63  sh=2,2,0,0 #3C2D14@0.35  pad=8/11/9/11  [flex col gap 5]
+      div.pv-r  1550,762 332x16  | LF 12/400 lh16.2 #1E1B16  "İzleme ağı kurulursa"  full="ÖNİZLEMEİzleme ağı kurulursa5 gün sonra"  [flex gap 6 ai center]
+        span.cap  1550,764 65.5x12  | CP 12/700 ls0.08em lh12 #1E1B16  "ÖNİZLEME"
+        span.r  1809.5,762.5 72.5x15  | CP 11/700 lh14.9 #463F34  "5 gün sonra"
+      div.pv-r  1550,783 332x19  | LF 12/400 lh16.2 #1E1B16  "Sızma kaynağı"  full="Sızma kaynağı ? şüpheliONAYLANDI"  [flex gap 6 ai center]
+        span.sus  1635.5,785.5 57x14  | KA 14/700 lh14 #854005  "? şüpheli"  [flex gap 2 ai center]
+        svg.ico  1698,785.5 14x14  viewBox=0 0 16 16  {path×1}
+        span.stamp.sm.s-blue  1718,783 94x19  bd=1 solid #1A4789  r=3  op=0.92  pad=3/6/3/6  | LF 11/800 ls0.12em lh11 #1A4789  "ONAYLANDI"  [flex jc center ai center]
+      div.pv-r.tw  1550,807 332x16  | CP 12/700 lh16.2 #1E1B16  "Fon 47,3 → 39,3 · gider +0,6/gün"  [flex gap 6 ai center]
+    div.sh  1539,838 354x15  [flex gap 8 ai center]
+      span.cap  1539,839.5 32.5x12  | CP 12/700 ls0.08em lh12 #463F34  "SAHA"
+      span.ln  1579.5,845 231x1  bd=T1 solid #463F34 | R0 | B0 | L0
+      span.r  1818.5,838 74.5x15  | LF 11/400 lh14.9 #463F34  "Bölgede 1 ekip"
+    div.team  1539,859 354x49  bg=#FBF7EC  bd=1 solid #D9D0BC  sh=1,2,0,0 #5A461E@0.25  pad=5/10/5/10  [flex gap 10 ai center]
+      span.tok  1550,872.5 22x22  [flex jc center ai center]
+        span  1557.5,878 6.5x11  | CP 11/700 lh11 #F1E9D6  "B"
+      span.tm-m  1582,865 191x37  [flex col gap 2]
+        b  1582,865 191x19  | LF 14/700 lh18.9 #1E1B16  "Ekip B"
+        span  1582,886 191x16  | LF 12/400 lh16.2 #463F34  "Seul · Hazır"
+      span.tm-s  1783,866.5 99x33.5  [flex col gap 4 ai flex-end]
+        span  1812.5,866.5 69.5x15  | LF 11/400 lh14.9 #675F50  "Moral"
+          span.pips  1844,870.5 38x8  [inline-flex gap 2]
+            i  1844,870.5 8x8  bg=#463F34  bd=1 solid #463F34
+            i  1854,870.5 8x8  bg=#463F34  bd=1 solid #463F34
+            i  1864,870.5 8x8  bg=#463F34  bd=1 solid #463F34
+            i.off  1874,870.5 8x8  bd=1 solid #463F34
+        span.tw  1783,885.5 99x15  | CP 11/400 lh14.9 #675F50  "Son temas G-074"
+    button.bt.ink  1539,914 354x36  bg=#1E1B16  bd=1 solid #000000  r=3  sh=0,2,0,0 #000000  pad=0/12/0/12  | LF 14/600 lh14 #F4ECD8 al=center  "Saha operasyonu: baskın"  full="Saha operasyonu: baskınB"  [flex gap 6 jc center ai center]
+      span.key  1794,923 18x18  bg=#FBF7EC  bd=T1 solid #675F50 | R1 solid #675F50 | B2 solid #675F50 | L1 solid #675F50  r=3  pad=0/4/0/4  | CP 11/700 lh11 #463F34 al=center  "B"  [flex jc center ai center]
+    div.op  1539,956 354x18  | LF 12/400 lh16.2 #463F34  "2 gün · tahmini başarı · taktik haritada oynanır"  full="2 gün · tahmini başarı %64 · taktik haritada oynanır"
+      b  1658.5,959 21.5x13  | CP 12/700 lh16.2 #1E1B16  "%64"
+header.rail  0,0 1920x48  bg=#160F0A  bd=T0 | R0 | B1 solid #000000 | L0  pad=0/16/0/16  [grid gap 16 ai center]
+  div.rl  16,5.5 787x36  [flex gap 12 ai center]
+    div.plaque  16,5.5 156.5x36  bg=#0E0906  bd=1 solid #6E5A33  r=2  pad=0/12/0/12  [flex col gap 2 jc center]
+      span.pl-t  29,9.5 130.5x15  | CP 15/700 ls0.16em lh15 #C9A86A  "SON ŞALTER"
+      span.pl-s  29,26.5 130.5x11  | CP 11/400 ls0.06em lh11 #A48A55  "KYGA · KRİZ MASASI"
+    div.plabel  184.5,9.5 229x28  bg=#F1E9D6  r=2  sh=2,2,0,0 #000000@0.55  pad=0/10/0/10  | LF 12/400 lh16.2 #463F34  "Yanıltıcı profil"  full="RAKİP YZAYNAYanıltıcı profil"  [flex gap 8 ai center]
+      span.stamp.sm.s-red  194,12 79.5x23  rot=-3  layout=79x19  bd=1 solid #9A1E14  r=3  op=0.92  pad=3/6/3/6  | LF 11/800 ls0.12em lh11 #9A1E14  "RAKİP YZ"  [flex jc center ai center]
+      b  281.5,13.5 39.5x20.5  | CP 15/700 ls0.06em lh20.3 #1E1B16  "AYNA"
+  div.rc  819,4.5 282x38  [flex gap 12 ai center]
+    div.cal  819,4.5 58x38  bg=#F1E9D6  r=2  sh=2,2,0,0 #000000@0.55  [flex col]
+      span.cal-h  819,4.5 58x13  bg=#9A1E14  | CP 11/700 ls0.12em lh13 #FFF3EE al=center  "GÜN"
+      span.cal-n  819,17.5 58x25  | CP 19/700 lh19 #1E1B16  "074"  [flex jc center ai center]
+    span.plabel.tw  889,10.5 59x26  bg=#F1E9D6  r=2  sh=2,2,0,0 #000000@0.55  pad=0/10/0/10  | CP 13/700 lh17.6 #1E1B16  "14:32"  [flex gap 8 ai center]
+    div.speed  960,6.5 141x34  [flex gap 7 ai center]
+      button.tk  960,8.5 30x30  bg=#1E1B16  bd=2 solid #9A9284  r=50%  sh=0,2,0,0 #000000  [flex jc center ai center]
+        svg.ico  969,17.5 12x12  viewBox=0 0 16 16  {path×2}
+      button.tk.on  997,10.5 30x30  tr=0,2  layout=30x30  bg=#F1E9D6  bd=2 solid #C9A86A  r=50%  sh=inset 0,2,0,0 #000000@0.28  | LF 12/700 lhn #1E1B16 al=center  "1×"  [flex jc center ai center]
+      button.tk  1034,8.5 30x30  bg=#1E1B16  bd=2 solid #9A9284  r=50%  sh=0,2,0,0 #000000  | LF 12/700 lhn #F1E9D6 al=center  "2×"  [flex jc center ai center]
+      button.tk  1071,8.5 30x30  bg=#1E1B16  bd=2 solid #9A9284  r=50%  sh=0,2,0,0 #000000  | LF 12/700 lhn #F1E9D6 al=center  "4×"  [flex jc center ai center]
+  div.rr  1117,6.5 787x34  pad=2/0/2/0  [flex gap 8 jc flex-end ai center]
+    span.plabel.tw  1540,9.5 137.5x28  bg=#F1E9D6  r=2  sh=2,2,0,0 #000000@0.55  pad=0/10/0/10  | CP 12/700 lh16.2 #463F34  "CANLI · 212 ms"  [flex gap 8 ai center]
+      span.lamp.on  1550,19 9x9  bg=#3DB36B  bd=1 solid #14532D  r=50%  sh=0,0,0,2 #3DB36B@0.22
+    span.plabel  1685.5,9.5 142.5x28  bg=#F1E9D6  r=2  sh=2,2,0,0 #000000@0.55  pad=0/10/0/10  [flex gap 8 ai center]
+      span.stamp.sm.s-red  1695.5,14 122.5x19  bd=1 solid #9A1E14  r=3  op=0.92  pad=3/6/3/6  | LF 11/800 ls0.12em lh11 #9A1E14  "KYGA-07 · GİZLİ"  [flex jc center ai center]
+    button.tk  1836,8.5 30x30  bg=#1E1B16  bd=2 solid #9A9284  r=50%  sh=0,2,0,0 #000000  [flex jc center ai center]
+      svg.ico  1844,16.5 14x14  viewBox=0 0 16 16  {circle×1 path×1}
+    span.key  1874,14.5 30x18  bg=#F1E9D6  bd=T1 solid #675F50 | R1 solid #675F50 | B2 solid #675F50 | L1 solid #675F50  r=3  pad=0/4/0/4  | CP 11/700 lh11 #463F34  "Esc"  [flex jc center ai center]
+div.gbank  16,56 1888x92  [grid gap 12]
+  div.gauge  16,56 368x92  [flex gap 8]
+    svg.meter  16,56 132x92  viewBox=0 0 132 92  {rect×1 use×1 g×1 path×1 circle×1}
+    div.gtag  156,58 228x88  bg=#F1E9D6  bd=1 solid #C8B996  r=2  sh=3,3,0,0 #000000@0.45  pad=7/10/7/10  [flex col jc space-between]
+      div.g-h  167,66 206x20  [flex gap 6 ai center]
+        span.g-n  167,69.5 25.5x13  | CP 13/700 ls0.06em lh13 #1E1B16  "FON"
+        span.stamp.sm.s-blue  278.5,63 95x25.5  rot=-4  layout=94x19  bd=1 solid #1A4789  r=3  op=0.92  pad=3/6/3/6  | LF 11/800 ls0.12em lh11 #1A4789  "ONAYLANDI"  [flex jc center ai center]
+      div.g-m  167,92 206x26  [flex gap 8 ai baseline]
+        span.g-v  167,92 61.5x26  | CP 26/700 ls-0.01em lh26 #1E1B16  "47,3"
+        span.g-d  236.5,98 64.5x12  | CP 12/700 lh12 #9A1E14  "1,2/gün"  [flex gap 2 ai center]
+          svg.ico  236.5,98 12x12  viewBox=0 0 16 16  {path×1}
+      div.g-note  167,124 206x14  | LF 12/400 lh12 #463F34  "Gelir · Gider /gün"  full="Gelir 6,1 · Gider 7,3 /gün"
+        b  196,125 21.5x13  | CP 12/700 lh12 #1E1B16  "6,1"
+        b  258,125 21.5x13  | CP 12/700 lh12 #1E1B16  "7,3"
+  div.gauge  396,56 368x92  [flex gap 8]
+    svg.meter  396,56 132x92  viewBox=0 0 132 92  {rect×1 use×1 g×1 path×1 circle×1}
+    div.gtag  536,58 228x88  bg=#F1E9D6  bd=1 solid #C8B996  r=2  sh=3,3,0,0 #000000@0.45  pad=7/10/7/10  [flex col jc space-between]
+      div.g-h  547,66 206x20  [flex gap 6 ai center]
+        span.g-n  547,69.5 86x13  | CP 13/700 ls0.06em lh13 #1E1B16  "SİYASİ GÜÇ"
+        span.stamp.sm.s-blue  658.5,64 95x24  rot=3  layout=94x19  bd=1 solid #1A4789  r=3  op=0.92  pad=3/6/3/6  | LF 11/800 ls0.12em lh11 #1A4789  "ONAYLANDI"  [flex jc center ai center]
+      div.g-m  547,92 206x26  [flex gap 8 ai baseline]
+        span.g-v  547,92 30.5x26  | CP 26/700 ls-0.01em lh26 #1E1B16  "62"
+        span.g-d  585.5,98 64.5x12  | CP 12/700 lh12 #24592E  "0,4/gün"  [flex gap 2 ai center]
+          svg.ico  585.5,98 12x12  viewBox=0 0 16 16  {path×1}
+      div.g-note  547,124 206x14  | LF 12/400 lh12 #463F34  "Son 7 gün"  full="Son 7 gün +2,8"
+        b  605,125 29x13  | CP 12/700 lh12 #1E1B16  "+2,8"
+  div.gauge  776,56 368x92  [flex gap 8]
+    svg.meter  776,56 132x92  viewBox=0 0 132 92  {rect×1 use×1 path×4 g×1 circle×1}
+    div.gtag.onion  916,58 228x88  bg=#E3E0D8  bd=1 solid #C4C0B4  r=2  sh=3,3,0,0 #000000@0.45  pad=7/10/7/10  [flex col jc space-between]
+      div.g-h  927,66 206x20  [flex gap 6 ai center]
+        span.g-n  927,69.5 111.5x13  | CP 13/700 ls0.06em lh13 #1E1B16  "KÜRESEL GÜVEN"
+        span.slip  1071,67 62x18  bg=#E3E0D8  bd=1 dashed #524973  r=2  pad=0/5/0/5  | CP 11/700 ls0.05em lh11 #524973  "~ RAPOR"  [flex gap 3 ai center]
+      div.g-m  927,92 206x26  [flex gap 8 ai baseline]
+        span.g-v.carbon  927,92 76.5x26  | CP 26/700 ls-0.01em lh26 #524973 tsh  "≈41,8"
+        span.g-d  1011.5,98 64.5x12  | CP 12/700 lh12 #9A1E14  "1,0/gün"  [flex gap 2 ai center]
+          svg.ico  1011.5,98 12x12  viewBox=0 0 16 16  {path×1}
+      div.g-note  927,124 206x14  | LF 12/400 lh12 #463F34  "Kayıp eşiği · ~27 gün"  full="Kayıp eşiği 15 · ~27 gün"
+        b  989,125 14.5x13  | CP 12/700 lh12 #1E1B16  "15"
+  div.gauge  1156,56 368x92  [flex gap 8]
+    svg.meter  1156,56 132x92  viewBox=0 0 132 92  texts: ?@112,27  {rect×1 use×1 path×3 g×1 circle×1}
+    div.gtag  1296,58 228x88  bg=#F1E9D6  bd=1 solid #C8B996  r=2  sh=3,3,0,0 #000000@0.45  pad=7/10/7/10  [flex col jc space-between]
+      div.g-h  1307,66 206x20  [flex gap 6 ai center]
+        span.g-n  1307,69.5 86x13  | CP 13/700 ls0.06em lh13 #1E1B16  "BAĞIMLILIK"
+        span.sus  1445,67 68x18  | KA 15/700 lh15 #854005  "şüpheli"  full="?şüpheli"  [flex gap 2 ai center]
+          svg  1445,67 20x18  viewBox=0 0 20 18  texts: ?@10,13.6  {path×1}
+      div.g-m  1307,92 206x26  [flex gap 8 ai baseline]
+        span.g-v  1307,92 61.5x26  | CP 26/700 ls-0.01em lh26 #1E1B16  "58,4"
+        svg  1292,83 96x40  viewBox=-48 -20 96 40  {path×1}
+        span.g-d  1386.5,98 64.5x12  | CP 12/700 lh12 #9A1E14  "0,7/gün"  [flex gap 2 ai center]
+          svg.ico  1386.5,98 12x12  viewBox=0 0 16 16  {path×1}
+      div.g-note  1307,124 206x14  | LF 12/400 lh12 #463F34  "Veto eşiği · ~17 gün"  full="Veto eşiği 70 · ~17 gün"
+        b  1364.5,125 14.5x13  | CP 12/700 lh12 #1E1B16  "70"
+  div.gauge  1536,56 368x92  [flex gap 8]
+    svg.meter  1536,56 132x92  viewBox=0 0 132 92  {rect×1 use×1 path×4 g×1 circle×1}
+    div.gtag.onion  1676,58 228x88  bg=#E3E0D8  bd=1 solid #C4C0B4  r=2  sh=3,3,0,0 #000000@0.45  pad=7/10/7/10  [flex col jc space-between]
+      div.g-h  1687,66 206x20  [flex gap 6 ai center]
+        span.g-n  1687,69.5 68.5x13  | CP 13/700 ls0.06em lh13 #1E1B16  "TEKİLLİK"
+        span.slip  1831,67 62x18  bg=#E3E0D8  bd=1 dashed #524973  r=2  pad=0/5/0/5  | CP 11/700 ls0.05em lh11 #524973  "~ RAPOR"  [flex gap 3 ai center]
+      div.g-m  1687,92 206x26  [flex gap 8 ai baseline]
+        span.g-v.carbon  1687,92 110x26  | CP 26/700 ls-0.01em lh26 #524973 tsh  "≈%37,2"  full="≈%37,2±6"
+          small  1782,100 15x14  | CP 13/700 ls-0.02em lh13 #524973 tsh  "±6"
+        span.g-d  1805,98 64.5x12  | CP 12/700 lh12 #9A1E14  "1,3/gün"  [flex gap 2 ai center]
+          svg.ico  1805,98 12x12  viewBox=0 0 16 16  {path×1}
+      div.g-note  1687,124 206x14  | LF 12/400 lh12 #463F34  "%100'e"  full="%100'e ~48 gün"
+        b  1732,125 50.5x13  | CP 12/700 lh12 #1E1B16  "~48 gün"
+div.adv  16,163 1888x32  bg=#F5DC63  sh=2,3,0,0 #000000@0.4  pad=0/34/0/34  [flex gap 14 ai center]
+  span.tape  17,150.5 48x24  rot=-12  layout=46x15  bg=#ECE2BE@0.78  bd=T0 | R1 dashed #78643C@0.35 | B0 | L1 dashed #78643C@0.35
+  span.adv-t  50,171 106x16  | CP 12/700 ls0.08em lh16.2 #9A1E14  "DANIŞMAN NOTU"
+  p.adv-m  170,171 1564.5x16  | LF 14/400 lh14 #1E1B16  "Doğu Asya'da kaynaklar çelişiyor: telekom raporu , Ekip B gözlemi . Denetimden önce izleme ağı kurarsanız değer kalıcı olarak doğrulanır."  full="Doğu Asya'da kaynaklar çelişiyor: telekom raporu %38, Ekip B gözlemi %52. Denetimden önce izleme ağı kurarsanız değer kalıcı olarak doğrulanır."
+    b  489.5,172 25x16  | CP 14/700 lh14 #1E1B16  "%38"
+    b  618.5,172 25x16  | CP 14/700 lh14 #1E1B16  "%52"
+  div.adv-a  1748.5,167 121.5x24  [flex gap 4]
+    button.bt.link  1748.5,167 54.5x24  r=3  pad=0/6/0/6  | LF 13/600 lh13 #1E1B16 al=center deco=underline  "Göster"  [flex gap 6 jc center ai center]
+    button.bt.link  1807,167 63x24  r=3  pad=0/6/0/6  | LF 13/600 lh13 #1E1B16 al=center deco=underline  "Anladım"  [flex gap 6 jc center ai center]
+  span.tape  1855,151 48x23  rot=10  layout=46x15  bg=#ECE2BE@0.78  bd=T0 | R1 dashed #78643C@0.35 | B0 | L1 dashed #78643C@0.35
+div.telex  16,1004 1572x26  sh=2,3,0,0 #000000@0.45  [flex ai stretch]
+  div.tx-l  16,1004 84x26  bg=#0E0906  bd=1 solid #6E5A33  pad=0/10/0/10  | CP 11/700 ls0.1em lh14.9 #C9A86A  "TELEKS"  [flex gap 7 ai center]
+    span.lamp.on  27,1012.5 9x9  bg=#3DB36B  bd=1 solid #14532D  r=50%  sh=0,0,0,2 #3DB36B@0.22
+  div.tx-view  100,1004 1488x26  bg=#EFE4BC  bgimg=dots
+    div.tx-run  100,1004 6264x26  tr=-0.3,0  layout=6264x26  pad=0/0/0/16  [flex gap 34 ai center]
+      span.tx-i  116,1008 728x18  | CP 13/400 lh13 #1E1B16  "SEUL BORSASI 40 DAKİKA DURDU; YETKİLİLER “YAZILIM GÜNCELLEMESİ” DİYOR"  full="G-074TELEX-9:SEUL BORSASI 40 DAKİKA DURDU; YETKİLİLER “YAZILIM GÜNCELLEMESİ” DİYOR~ RAPOR"  [flex gap 9 ai center]
+        span.d  116,1010.5 39x13  | CP 13/400 lh13 #675F50  "G-074"
+        b  164,1010.5 62.5x13  | CP 13/700 lh13 #1E1B16  "TELEX-9:"
+        span.slip  782,1008 62x18  bg=#E3E0D8  bd=1 dashed #524973  r=2  pad=0/5/0/5  | CP 11/700 ls0.05em lh11 #524973  "~ RAPOR"  [flex gap 3 ai center]
+      span.tx-i  878,1010 528x14  | CP 13/400 lh13 #1E1B16  "AB, YAPAY ZEKÂ DENETİM YASASINI ERTELEDİ"  full="G-074ORTAK AJANS:AB, YAPAY ZEKÂ DENETİM YASASINI ERTELEDİ? şüpheli"  [flex gap 9 ai center]
+        span.d  878,1010.5 39x13  | CP 13/400 lh13 #675F50  "G-074"
+        b  926,1010.5 93.5x13  | CP 13/700 lh13 #1E1B16  "ORTAK AJANS:"
+        span.sus  1349.5,1010 57x14  | KA 14/700 lh14 #854005  "? şüpheli"  [flex gap 2 ai center]
+      span.tx-i  1440.5,1007.5 612x19  | CP 13/400 lh13 #1E1B16  "AVRASYA KARANTİNASI BÖLGE EKONOMİSİNİ %4 KÜÇÜLTTÜ"  full="G-073PANORAMA:AVRASYA KARANTİNASI BÖLGE EKONOMİSİNİ %4 KÜÇÜLTTÜONAYLANDI"  [flex gap 9 ai center]
+        span.d  1440.5,1010.5 39x13  | CP 13/400 lh13 #675F50  "G-073"
+        b  1488,1010.5 70x13  | CP 13/700 lh13 #1E1B16  "PANORAMA:"
+        span.stamp.sm.s-blue  1958,1005 95x24  rot=-3  layout=94x19  bd=1 solid #1A4789  r=3  op=0.92  pad=3/6/3/6  | LF 11/800 ls0.12em lh11 #1A4789  "ONAYLANDI"  [flex jc center ai center]
+      span.tx-i  2086.5,1007.5 484x19  [flex gap 9 ai center]
+        span.d  2086.5,1010.5 39x13  | CP 13/400 lh13 #675F50  "G-072"
+        b  2134.5,1010.5 93.5x13  | CP 13/700 lh13 #1E1B16  "ORTAK AJANS:"
+        span.strike  2237,1010.5 265x13  | CP 13/400 lh13 #675F50 deco=line-through  "“KYGA AJANLARI SEUL’DE GÖZALTINDA”"
+        span.stamp.sm.s-red  2510,1005 61x24  rot=-5  layout=60x19  bd=1 solid #9A1E14  r=3  op=0.92  pad=3/6/3/6  | LF 11/800 ls0.12em lh11 #9A1E14  "SAHTE"  [flex jc center ai center]
+      span.tx-i  2604.5,1008.5 618.5x17  | CP 13/400 lh13 #1E1B16  "CAKARTA’DA ELEKTRİK KESİNTİSİ 9 SAATTİR SÜRÜYOR"  full="G-072KUZEY HABER:CAKARTA’DA ELEKTRİK KESİNTİSİ 9 SAATTİR SÜRÜYOR?BİLİNMİYOR"  [flex gap 9 ai center]
+        span.d  2604.5,1010.5 39x13  | CP 13/400 lh13 #675F50  "G-072"
+        b  2652.5,1010.5 93.5x13  | CP 13/700 lh13 #1E1B16  "KUZEY HABER:"
+        span.unk  3130.5,1008.5 92.5x17  | CP 11/700 ls0.05em lh11 #4A4640  "BİLİNMİYOR"  full="?BİLİNMİYOR"  [flex gap 4 ai center]
+          i  3130.5,1008.5 17x17  bd=1 dashed #4A4640  r=50%  | KA 13/700 ls0.042em lh13 #4A4640  "?"  [flex jc center ai center]
+      span.tx-i  3257,1008 728x18  | CP 13/400 lh13 #1E1B16  "SEUL BORSASI 40 DAKİKA DURDU; YETKİLİLER “YAZILIM GÜNCELLEMESİ” DİYOR"  full="G-074TELEX-9:SEUL BORSASI 40 DAKİKA DURDU; YETKİLİLER “YAZILIM GÜNCELLEMESİ” DİYOR~ RAPOR"  [flex gap 9 ai center]
+        span.d  3257,1010.5 39x13  | CP 13/400 lh13 #675F50  "G-074"
+        b  3305,1010.5 62.5x13  | CP 13/700 lh13 #1E1B16  "TELEX-9:"
+        span.slip  3923,1008 62x18  bg=#E3E0D8  bd=1 dashed #524973  r=2  pad=0/5/0/5  | CP 11/700 ls0.05em lh11 #524973  "~ RAPOR"  [flex gap 3 ai center]
+      span.tx-i  4019,1010 528x14  | CP 13/400 lh13 #1E1B16  "AB, YAPAY ZEKÂ DENETİM YASASINI ERTELEDİ"  full="G-074ORTAK AJANS:AB, YAPAY ZEKÂ DENETİM YASASINI ERTELEDİ? şüpheli"  [flex gap 9 ai center]
+        span.d  4019,1010.5 39x13  | CP 13/400 lh13 #675F50  "G-074"
+        b  4067,1010.5 93.5x13  | CP 13/700 lh13 #1E1B16  "ORTAK AJANS:"
+        span.sus  4490.5,1010 57x14  | KA 14/700 lh14 #854005  "? şüpheli"  [flex gap 2 ai center]
+      span.tx-i  4581.5,1007.5 612x19  | CP 13/400 lh13 #1E1B16  "AVRASYA KARANTİNASI BÖLGE EKONOMİSİNİ %4 KÜÇÜLTTÜ"  full="G-073PANORAMA:AVRASYA KARANTİNASI BÖLGE EKONOMİSİNİ %4 KÜÇÜLTTÜONAYLANDI"  [flex gap 9 ai center]
+        span.d  4581.5,1010.5 39x13  | CP 13/400 lh13 #675F50  "G-073"
+        b  4629.5,1010.5 70x13  | CP 13/700 lh13 #1E1B16  "PANORAMA:"
+        span.stamp.sm.s-blue  5099,1005 95x24  rot=-3  layout=94x19  bd=1 solid #1A4789  r=3  op=0.92  pad=3/6/3/6  | LF 11/800 ls0.12em lh11 #1A4789  "ONAYLANDI"  [flex jc center ai center]
+      span.tx-i  5227.5,1007.5 484x19  [flex gap 9 ai center]
+        span.d  5227.5,1010.5 39x13  | CP 13/400 lh13 #675F50  "G-072"
+        b  5275.5,1010.5 93.5x13  | CP 13/700 lh13 #1E1B16  "ORTAK AJANS:"
+        span.strike  5378,1010.5 265x13  | CP 13/400 lh13 #675F50 deco=line-through  "“KYGA AJANLARI SEUL’DE GÖZALTINDA”"
+        span.stamp.sm.s-red  5651,1005 61x24  rot=-5  layout=60x19  bd=1 solid #9A1E14  r=3  op=0.92  pad=3/6/3/6  | LF 11/800 ls0.12em lh11 #9A1E14  "SAHTE"  [flex jc center ai center]
+      span.tx-i  5745.5,1008.5 618.5x17  | CP 13/400 lh13 #1E1B16  "CAKARTA’DA ELEKTRİK KESİNTİSİ 9 SAATTİR SÜRÜYOR"  full="G-072KUZEY HABER:CAKARTA’DA ELEKTRİK KESİNTİSİ 9 SAATTİR SÜRÜYOR?BİLİNMİYOR"  [flex gap 9 ai center]
+        span.d  5745.5,1010.5 39x13  | CP 13/400 lh13 #675F50  "G-072"
+        b  5793.5,1010.5 93.5x13  | CP 13/700 lh13 #1E1B16  "KUZEY HABER:"
+        span.unk  6271.5,1008.5 92.5x17  | CP 11/700 ls0.05em lh11 #4A4640  "BİLİNMİYOR"  full="?BİLİNMİYOR"  [flex gap 4 ai center]
+          i  6271.5,1008.5 17x17  bd=1 dashed #4A4640  r=50%  | KA 13/700 ls0.042em lh13 #4A4640  "?"  [flex jc center ai center]
+nav.dock  16,1036 685x44  [flex gap 6 ai flex-end]
+  button.dtab.on  16,1036 134x44  bg=#D9C08B  bd=T1 solid #000000 | R1 solid #000000 | B0 | L1 solid #000000  r=7/7/0/0  sh=inset 0,1,0,0 #FFFFFF@0.35  pad=0/12/12/12  | LF 12/700 ls0.06em lhn #1E1B16 al=center  "ARAŞTIRMA"  full="ARAŞTIRMAR"  [flex gap 8 ai center]
+    span.key  119,1043.5 18x18  bg=#FBF7EC  bd=T1 solid #675F50 | R1 solid #675F50 | B2 solid #675F50 | L1 solid #675F50  r=3  pad=0/4/0/4  | CP 11/700 ls0.065em lh11 #463F34 al=center  "R"  [flex jc center ai center]
+  button.dtab  156,1044 125.5x36  bg=#EFE4BC  bd=T1 solid #000000@0.5 | R1 solid #000000@0.5 | B0 | L1 solid #000000@0.5  r=7/7/0/0  sh=inset 0,1,0,0 #FFFFFF@0.35  pad=0/12/6/12  | LF 12/700 ls0.06em lhn #1E1B16 al=center  "HABERLER"  full="HABERLERN3"  [flex gap 8 ai center]
+    span.key  250.5,1050.5 18x18  bg=#FBF7EC  bd=T1 solid #675F50 | R1 solid #675F50 | B2 solid #675F50 | L1 solid #675F50  r=3  pad=0/4/0/4  | CP 11/700 ls0.065em lh11 #463F34 al=center  "N"  [flex jc center ai center]
+    span.dot.tw  269.5,1037 18x18  bg=#F5DC63  bd=1 solid #1E1B16  r=9  pad=0/4/0/4  | CP 11/700 ls0.065em lh11 #1E1B16 al=center  "3"  [flex jc center ai center]
+  button.dtab  287.5,1044 156x36  bg=#C9CDB4  bd=T1 solid #000000@0.5 | R1 solid #000000@0.5 | B0 | L1 solid #000000@0.5  r=7/7/0/0  sh=inset 0,1,0,0 #FFFFFF@0.35  pad=0/12/6/12  | LF 12/700 ls0.06em lhn #1E1B16 al=center  "SAHA EKİPLERİ"  full="SAHA EKİPLERİT"  [flex gap 8 ai center]
+    span.key  412.5,1050.5 18x18  bg=#FBF7EC  bd=T1 solid #675F50 | R1 solid #675F50 | B2 solid #675F50 | L1 solid #675F50  r=3  pad=0/4/0/4  | CP 11/700 ls0.065em lh11 #463F34 al=center  "T"  [flex jc center ai center]
+  button.dtab  449.5,1044 138.5x36  bg=#D8A69B  bd=T1 solid #000000@0.5 | R1 solid #000000@0.5 | B0 | L1 solid #000000@0.5  r=7/7/0/0  sh=inset 0,1,0,0 #FFFFFF@0.35  pad=0/12/6/12  | LF 12/700 ls0.06em lhn #1E1B16 al=center  "YZ GÜNLÜĞÜ"  full="YZ GÜNLÜĞÜL"  [flex gap 8 ai center]
+    span.key  557,1050.5 18x18  bg=#FBF7EC  bd=T1 solid #675F50 | R1 solid #675F50 | B2 solid #675F50 | L1 solid #675F50  r=3  pad=0/4/0/4  | CP 11/700 ls0.065em lh11 #463F34 al=center  "L"  [flex jc center ai center]
+    span.dot  578,1039 14x14  bg=#B8241A  bd=1 solid #1E1B16  r=9  [flex jc center ai center]
+  button.dtab  594,1044 107x36  bg=#BFC8CD  bd=T1 solid #000000@0.5 | R1 solid #000000@0.5 | B0 | L1 solid #000000@0.5  r=7/7/0/0  sh=inset 0,1,0,0 #FFFFFF@0.35  pad=0/12/6/12  | LF 12/700 ls0.06em lhn #1E1B16 al=center  "REHBER"  full="REHBERH"  [flex gap 8 ai center]
+    span.key  670,1050.5 18x18  bg=#FBF7EC  bd=T1 solid #675F50 | R1 solid #675F50 | B2 solid #675F50 | L1 solid #675F50  r=3  pad=0/4/0/4  | CP 11/700 ls0.065em lh11 #463F34 al=center  "H"  [flex jc center ai center]
+button.env  1604,1001 300x74  bg=#9C1F17  bd=1 solid #5E0F0A  r=3  sh=3,4,0,0 #000000@0.5
+  svg  1605,1002 298x72  viewBox=0 0 298 72  {path×1}
+  span.env-l  1619,1016 204x46  bg=#F1E9D6  r=1  sh=1,1,0,0 #000000@0.35  pad=6/10/6/10  [flex col gap 4 jc center]
+    span.env-t  1629,1024 184x15  | CP 15/700 ls0.04em lh15 #1E1B16  "KÜRESEL SON ŞALTER"
+    span.env-s  1629,1043 184x11  | LF 11/400 lh11 #463F34  "Mührü kır · 3 sn basılı tut"
+  svg  1835,1013 52x52  viewBox=0 0 52 52  {path×3 circle×1}
+svg.ov  0,0 1920x1080  viewBox=0 0 1920 1080  {path×2 g×1 circle×3}

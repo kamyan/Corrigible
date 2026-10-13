@@ -27,6 +27,9 @@ namespace Corrigible.Game.UI
         public string Selected { get; set; }
         public event Action<string> RegionClicked;
 
+        /// <summary>Bölge düğümünün RectTransform'u (bölge kartını yanına açmak için).</summary>
+        public RectTransform NodeRect(string id) => id != null && byId.TryGetValue(id, out var n) ? (RectTransform)n.transform : null;
+
         void Awake()
         {
             foreach (var n in nodes)

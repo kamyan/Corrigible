@@ -1,0 +1,13 @@
+{
+ "about": "Tekrar eden dokular (@2x). Atlasa KOYMA. Import: Texture Type Default, Wrap Mode Repeat, Filter Bilinear, Mipmap kapalı. RawImage + uvRect = (ofsetX/w, ofsetY/h, alanGenişliği/w, alanYüksekliği/h); w,h = size1x.",
+ "textures": [
+  {"file": "tx_felt.png", "group": "textures", "size1x": [20, 20], "sizePx": [40, 40], "wrap": "repeat", "use": "yeşil keçe (masa, C4/C5 zemini)"},
+  {"file": "tx_wood_grain.png", "group": "textures", "size1x": [8, 114], "sizePx": [16, 228], "wrap": "repeat", "use": "ahşap masa kenarı (ray ile keçe arası, alt şerit) · y periyodu 114"},
+  {"file": "tx_telex.png", "group": "textures", "size1x": [18, 26], "sizePx": [36, 52], "wrap": "repeat", "use": "teleks şeridi delik deseni (yükseklik 26)"},
+  {"file": "tx_telex_illusion.png", "group": "textures", "size1x": [18, 26], "sizePx": [36, 52], "wrap": "repeat", "use": "teleks şeridi, İllüzyon tonu"},
+  {"file": "tx_index_lines.png", "group": "textures", "size1x": [8, 22], "sizePx": [16, 44], "wrap": "repeat", "use": "dizin kartı mavi çizgileri (şeffaf zemin) · ilk çizgi kart üstünden 56 px (kırmızı çizgi 33–35, sonra 22 px periyot)"},
+  {"file": "tx_sprocket.png", "group": "textures", "size1x": [22, 14], "sizePx": [44, 28], "wrap": "repeat", "use": "şerit grafik delik bandı (C4) · delik 7×6 r1.5 #2A1C13 %55, x=10, y=4"},
+  {"file": "tx_hatch_red.png", "group": "textures", "size1x": [10, 10], "sizePx": [20, 20], "wrap": "repeat", "use": "C4 “yalan payı” kırmızı tarama (#9A1E14: zemin %7 + çizgi %42) · poligonda UV = konum/10 px"},
+  {"file": "tx_hatch_ink.png", "group": "textures", "size1x": [5, 5], "sizePx": [10, 10], "wrap": "repeat", "use": "“/” tarama (beyaz) · büyük alanlarda RawImage ile; küçük kutularda pt_hatch sprite"}
+ ]
+}

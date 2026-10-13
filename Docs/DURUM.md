@@ -1,12 +1,12 @@
 # Durum, kararlar ve açık işler
 
-_Son güncelleme: 2026-10-10_
+_Son güncelleme: 2026-10-11_
 
 ## Nerede kaldık
 
 Oyun baştan sona oynanabilir: giriş ve rakip seçimi, rehberli eğitim, kriz masası (harita, bölge eylemleri, araştırma,
 YZ günlüğü, haber bandı), hediye/perde/sahte zafer/son pencereleri, kayıt ve devam, Seni Tanıyan Rakip profili.
-28/28 EditMode testi geçiyor; C# simülasyonu tarayıcı prototipiyle birebir aynı (deneysel mod ve baskın motoru dahil).
+111/111 EditMode testi geçiyor (oyun + analist masası); C# simülasyonu tarayıcı prototipiyle birebir aynı (deneysel mod ve baskın motoru dahil).
 Deneysel mod (saha ekipleri, zaman ölçeği, baskın) Unity'de oynanabilir ve varsayılan olarak açık. Oyun Türkçe ve
 İngilizce (giriş penceresindeki dil düğmesi; ilk açılışta sistem diline göre).
 
@@ -36,6 +36,48 @@ edilmedi** (kullanıcı commit istemedi). Commit'i kullanıcı isteyince yap.
    3D parçalar, efekt listesinden canlandırılan düşman turu. Ana sahnenin üstüne eklemeli yüklenir (`RaidLauncher`).
 13. **Ses (ilk tur, 2026-10-10):** `AudioDirector` + `SoundBank`, kodla üretilmiş yer tutucu sesler: illüzyonda "fazla
    temiz" miks, tamamlanan YZ motifi, Tekillik'e bağlı müzik katmanları, ajans jingle'ları (sahtede yanlış nota), Son Şalter.
+14. **Anlaşılırlık ve süre** (2026-10-10, doğrudan Unity'de): hedef kartı, gidişat tahmini, gösterge dökümleri, eylem
+   önizlemesi; aşamalı öğrenme (4 oyun), oyun sonu kırılma anları; 5 krizlik kampanya ve olay kartları.
+15. **Kriz masası pencerelere bölündü** (2026-10-10): harita tam genişlik; araştırma, günlük, rehber, ekipler, haberler ve
+   bölge kartı sürüklenebilir, konumu hatırlanan pencereler; alt çubukta düğmeler, kısayollar ve rozetler.
+16. **Analist masası (UI_C) başladı** (2026-10-11): Claude Design'ın C yönü uGUI+TMP ile ayrı bir katmanda
+   (`Assets/Corrigible/Desk`) kuruluyor. Talimat `Docs/UI_C/PROMPT.md`, plan `PLAN.md`, kararlar `KARARLAR.md`.
+   F0 (plan), F1 (varlık hattı, tema, fontlar, temel bileşenler, `DeskUI_Gallery`) ve F2 (C1 ana masa durağan,
+   `DeskUI_Sandbox`, sahte veri, referans katmanı, yakalama; referansla toplam fark %3,1) bitti; Main sahnesine
+   dokunulmadı, oyuna bağlama F8'de.
+   F3 (C1 etkileşim, 2026-10-12): pencere yöneticisi (iki sütun, yığın, arka sekme, sürükle-mıknatıs), dock, klavye
+   haritası, düğüm seçimi + dosya + iplik, ipuçları ve döküm fişi, eylem önizlemesi, araştırma/fon, teleks, Son Şalter
+   basılı tutma + onay kartı, danışman eylemleri, hedef kartı küçültme, ibre yumuşatma, dört yeni pencere. Boşta GC 0.
+   F4 (C2 İllüzyon, 2026-10-12): `IllusionPresenter` + `IIllusionAware`, C2 verisi, analist izleri (delik, silik not,
+   silgi), F10 ipucu katmanı, dosyanın dikey yığını; C2 referansla toplam fark %3,1 (C1 ile aynı). Çalışırken aç/kapa
+   yalnızca izinli öğeleri değiştirir, yerleşim zıplamaz.
+   F5 (C3 olay bildirimi, 2026-10-12): `EventModalView` (karartma + spot + kalem halkası, bildirim, iplik, üç seçenek
+   kartı, ele geçirilmiş YZ günlüğü, danışman notu, alt şerit), 1/2/3/Enter/Boşluk; C3 referansla toplam fark %2,2,
+   bölgeler ±1 px; Boşluk basılıyken harita tamamen görünür.
+   F6 (C4 oyun sonu, 2026-10-12): `GameOverView` (rapor, büyük damga, KPI'lar, şerit grafik: ızgara, bantlar, Catmull-Rom
+   seriler, mühürler, kırılma numaraları, etiketler, lejant; 7 zaman kartı + iplik; alt çubuk), Enter/L; C4 referansla
+   toplam fark %2,5; mock değişince grafik doğru yeniden çiziliyor.
+   F7 (cila ve teslim, 2026-10-12): EN sahte veri (`MockEnglish` + `mock_en.txt`), sabit metinler çeviri aracında,
+   dile göre akış (harita lejantı, olay alan ızgarası, oyun sonu damgası), metin denetimi (iki dil, bütün pencereler: 0 hata),
+   dört en-boy oranı ve EN son yakalamaları, performans ölçümü (Profiler UI Details). Statik fontlarda eksik boşluk
+   glifi bulundu: C1 98 → 65 batch. Boşta GC 0. `Docs/UI_C/UYGULAMA_NOTLARI.md` (bileşenler, F8 bağlama, sapmalar).
+   Referansla fark C1 %3,0 · C2 %3,0 · C3 %2,1 · C4 %2,5; EditMode 89/89.
+   F8.1 (oyuna bağlama, 2026-10-12): `Corrigible.Desk.Bridge` (oyun durumu → görünüm modeli, niyetler → GameController) ve
+   `Scenes/DeskGame.unity`; masa gerçek oyunla oynanıyor: harita (projeksiyon, yollar, ekipler, analist katmanı), dosya ve
+   eylemler, araştırma, ikilem kartları ve hediye (C3 kâğıdı), İllüzyon, oyun sonu raporu (C4) ve gerçeği inceleme. Main
+   dokunulmadı. İki dilde metin denetimi temiz; EditMode 98/98; sahte masa C1–C4 F7 ile piksel aynı.
+   F8.3 (tasarımı olmayan ekranlar, 2026-10-12): onaylı taslaklardan giriş dosyası, ayarlar, kampanya dosyası, uyarı
+   fişleri, belge kipi (perde raporu, baskın emri, operasyon raporu), sahte zafer; taktik harita DeskGame'den açılıyor
+   (RaidLauncher). Akışlar Play'de denendi; iki dilde metin denetimi 0 hata; EditMode 105/105; sahte C1, C2, C4 F7 ile
+   piksel aynı, C3'te 3 piksellik noktalı çizgi düzeltmesi.
+   F8.4 (eğitim, 2026-10-12): oyunun eğitim içeriği ve koşulları yeni masada (taslaktaki delikli karartma, adım notu, kalem
+   oku, ipucu notu); ilerleme eski oyunla ortak; Rehber'de “Eğitimi baştan oynat”. Masada sabit genişlikli düğmenin
+   etiketi boyut değişince yeniden ortalanıyor (ilk olay kâğıdındaki imza etiketi kayması giderildi). EditMode 107/107.
+   F8 sonrası (2026-10-12/13): edit modda sahte veriyle önizleme; yerleşim sahnede (pencereler, olay kâğıtları, analist
+   notu; Play yalnız veriyi doldurur); pencereler, harita ve hedef kartı sürükle bırak; dosyada gönderilecek ekip seçimi
+   (ekip fişleri); olay seçeneklerinin önizlemesi her zaman açık. Edit önizlemesi oyun sahnesinde oyunun açılış masasını
+   gösteriyor (Play'e basınca harita ve listeler yerinden oynamıyor). EditMode 111/111. Eğitim karartmasındaki dikişler
+   giderildi; YZ'yi bekleyen adımlarda “Anladım” var.
 
 ## Deneysel mod: saha ekipleri, zaman ölçeği, baskın (2026-10-10)
 
@@ -92,6 +134,16 @@ katmanı `S.Raid` varken durur.
 - **Yeni oyuncular için varsayılan rakip Solucan** (PlayerPrefs `corrigible.aiType` yoksa).
 
 ## Açık işler
+
+- **Analist masası (UI_C):** Faz 8 (F8.1–F8.4) onaylandı. F8 sonrası istekler: sahne yerleşimi, sürükle bırak, ekip
+  seçimi bitti, onay bekliyor. DeskGame'in Build Settings'e eklenmesi ayrıca sorulacak.
+  Ayrıntı `Docs/UI_C/KARARLAR.md` → Faz 8.
+  Proje Linear renk uzayında kalıyor (kullanıcı kararı); ince yazı TMP malzeme ayarıyla telafi edildi, sprite'taki 1 px
+  çizgiler referanstan biraz açık.
+
+- **Yeni kurallar JS prototipinde yok** (aşamalı öğrenme, olay kartları, kampanya); denge yalnızca Unity testleriyle
+  ve elle denendi. Olay kartlarının ve yükseltmelerin sayıları oyun testiyle ayarlanmalı. Kampanya yaklaşık 1,5–2 saat.
+- Olay kartı destesi 10 kart; tekrar oynanabilirlik için genişletilmeli. Kırılma anları grafiğe işaret olarak eklenebilir.
 
 - **Ses:** yer tutucu sesler gerçekleriyle değiştirilmeli; AudioMixer yok. Ayarlar penceresi baskın sahnesinden açılamıyor.
   Sonraki tur fikirleri: arayüz sesleri, izlenmeyen bölgelerin telsiz filtresi, hediye melodisi, sonlara özel

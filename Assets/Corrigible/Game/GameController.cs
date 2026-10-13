@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Corrigible.Core;
+using Corrigible.Game.Campaign;
 using UnityEngine;
 
 namespace Corrigible.Game
@@ -33,11 +34,47 @@ namespace Corrigible.Game
         public double ExpTimeScale { get; private set; } = 1.5;
         ExpOptions ExpForNewGame => ExpTeams || ExpTimeScale != 1 ? new ExpOptions { Teams = ExpTeams, TimeScale = ExpTimeScale } : null;
 
+        // Aşamalı öğrenme ve olay kartları (Unity'ye özgü kurallar; kapalıyken temel kurallar = JS paritesi)
+        const string OnboardingOffKey = "corrigible.onboarding.off", EventsKey = "corrigible.rules.events";
+        /// <summary>Oyuncu aşamalı öğrenmeyi kapattı: bütün kurallar ilk oyundan açık.</summary>
+        public bool OnboardingOff { get; private set; }
+        public bool EventsEnabled { get; private set; } = true;
+        /// <summary>Yeni oyunun öğrenme aşaması (1–4): oynanan oyun sayısıyla açılır.</summary>
+        public int OnboardingStage => OnboardingOff ? 4 : Mathf.Clamp((Profile?.runs ?? 0) + 1, 1, 4);
+
+        /// <summary>Süren kampanya (yoksa null).</summary>
+        public CampaignState Campaign { get; private set; }
+
+        RuleOptions RulesForNewGame()
+        {
+            if (Campaign != null) return Campaign.Rules();
+            int stage = OnboardingStage;
+            // Bütün kurallar açık ve olay yoksa temel kurallar (kayıt ve parite için null)
+            // Olay kartları aşamalı öğrenmede 2. oyundan itibaren
+            bool events = EventsEnabled && stage >= 2;
+            return stage >= 4 && !events ? null : new RuleOptions { Stage = stage, Events = events };
+        }
+
         /// <summary>Bir pencere açıkken zamanı durdurmak için sunum katmanı ayarlar.</summary>
         public bool Hold { get; set; }
 
         /// <summary>Eğitim bir açıklama gösterirken zamanı durdurur (pencerelerin Hold'undan bağımsız).</summary>
         public bool TutorialHold { get; set; }
+
+        /// <summary>Günün ilerleyişi (0–1); zaman durunca donar. Analist masasının saati için.</summary>
+        public float DayProgress
+        {
+            get
+            {
+                if (Sim == null) return 0;
+                float spd = secondsPerDay[Speed >= 4 ? 2 : Mathf.Max(0, Speed - 1)] * (Sim.S.Exp != null ? expDayFactor : 1);
+                return spd > 0 ? Mathf.Clamp01(acc / spd) : 0;
+            }
+        }
+
+        /// <summary>1× hızda bir oyun gününün gerçek süresi (saniye); masanın saati bu hızla ilerler.</summary>
+        public float SecondsPerDay(int speed) =>
+            secondsPerDay[speed >= 4 ? 2 : Mathf.Max(0, speed - 1)] * (Sim?.S.Exp != null ? expDayFactor : 1);
 
         public event Action<List<SimEvent>> EventsRaised;
         public event Action Changed;
@@ -50,25 +87,61 @@ namespace Corrigible.Game
 
         void Awake()
         {
+            ReadSettings();
+            if (Campaign != null && Campaign.Finished) { CampaignState.Delete(); Campaign = null; }
+            NewGame(Campaign != null ? Campaign.CurrentType : TypeId);
+        }
+
+        /// <summary>Oyuncu tercihleri, profil ve kampanya (yalnız okur).</summary>
+        void ReadSettings()
+        {
             Profile = ProfileStore.Load();
             ExpTeams = PlayerPrefs.GetInt(ExpTeamsKey, 1) == 1;
             ExpTimeScale = PlayerPrefs.GetFloat(ExpScaleKey, 1.5f);
+            OnboardingOff = PlayerPrefs.GetInt(OnboardingOffKey, 0) == 1;
+            EventsEnabled = PlayerPrefs.GetInt(EventsKey, 1) == 1;
+            Campaign = CampaignState.Load();
             // İlk açılışta en kolay rakip (Solucan) seçili gelir; eğitim onunla tasarlandı
             var saved = PlayerPrefs.GetString(TypePrefKey, "solucan");
             TypeId = GameData.HasType(saved) ? saved : TypeId;
-            NewGame(TypeId);
         }
 
-        public void NewGame(string typeId)
+        /// <summary>
+        /// Edit mod önizlemesi (analist masası): açılışta kurulacak oyunun aynısını sabit tohumla kurar. Tercih, kayıt, profil ve
+        /// kampanya dosyasına yazmaz, olay yayınlamaz; yalnız bu bileşenin (kaydedilmeyen) ayar alanlarını okunan değerlerle
+        /// doldurur. Play'de o anki oyunu döndürür.
+        /// </summary>
+        public Simulation PreviewOpeningGame(uint seed = 1)
         {
+            if (Application.isPlaying) return Sim;
+            ReadSettings();
+            if (Campaign != null && Campaign.Finished) Campaign = null;
+            if (Campaign != null) TypeId = Campaign.CurrentType;
+            TypeId = GameData.HasType(TypeId) ? TypeId : "manipulator";
+            return CreateSim(seed);
+        }
+
+        public void NewGame(string typeId) => NewGame(typeId, null);
+
+        /// <summary>Yeni oyun; <paramref name="seed"/> verilirse aynı tohumla (analist masası: “Aynı tohumla dene”).</summary>
+        public void NewGame(string typeId, uint? seed)
+        {
+            if (Campaign != null) typeId = Campaign.CurrentType;
             TypeId = GameData.HasType(typeId) ? typeId : "manipulator";
-            PlayerPrefs.SetString(TypePrefKey, TypeId);
-            var balance = balanceConfig != null ? balanceConfig.CreateRuntimeCopy() : new Balance();
-            Sim = Simulation.NewGame(Profile, TypeId, null, balance, ExpForNewGame);
+            if (Campaign == null) PlayerPrefs.SetString(TypePrefKey, TypeId);
+            Sim = CreateSim(seed);
             Speed = 0;
             acc = 0;
             NewGameStarted?.Invoke();
             Changed?.Invoke();
+        }
+
+        Simulation CreateSim(uint? seed)
+        {
+            var balance = balanceConfig != null ? balanceConfig.CreateRuntimeCopy() : new Balance();
+            var exp = ExpForNewGame;
+            Campaign?.Apply(balance, exp);
+            return Simulation.NewGame(Profile, TypeId, seed, balance, exp, RulesForNewGame());
         }
 
         /// <summary>Deneysel ayarları değiştirir ve aynı rakiple yeni oyun kurar (giriş penceresinden).</summary>
@@ -77,6 +150,47 @@ namespace Corrigible.Game
             ExpTeams = teams; ExpTimeScale = timeScale;
             PlayerPrefs.SetInt(ExpTeamsKey, teams ? 1 : 0);
             PlayerPrefs.SetFloat(ExpScaleKey, (float)timeScale);
+            NewGame(TypeId);
+        }
+
+        public void SetOnboardingOff(bool off)
+        {
+            OnboardingOff = off;
+            PlayerPrefs.SetInt(OnboardingOffKey, off ? 1 : 0);
+            NewGame(TypeId);
+        }
+
+        public void SetEventsEnabled(bool on)
+        {
+            EventsEnabled = on;
+            PlayerPrefs.SetInt(EventsKey, on ? 1 : 0);
+            NewGame(TypeId);
+        }
+
+        // ---------- Kampanya ----------
+        public void StartCampaign()
+        {
+            DeleteSave();
+            Campaign = CampaignState.New();
+            Campaign.Save();
+            NewGame(Campaign.CurrentType);
+        }
+
+        /// <summary>Krizi bitince seçilen yükseltmeyle sonraki krize geçer; kampanya bittiyse kapatır.</summary>
+        public void NextCrisis(string upgradeId)
+        {
+            if (Campaign == null) return;
+            Campaign.Advance(upgradeId);
+            if (Campaign.Finished) { EndCampaign(); return; }
+            Campaign.Save();
+            NewGame(Campaign.CurrentType);
+        }
+
+        public void EndCampaign()
+        {
+            CampaignState.Delete();
+            Campaign = null;
+            DeleteSave();
             NewGame(TypeId);
         }
 
@@ -90,7 +204,7 @@ namespace Corrigible.Game
         {
             if (Sim == null || Speed == 0 || Hold || TutorialHold) return;
             var s = Sim.S;
-            if (s.Ending != null || s.PendingGift != null || s.Raid != null) return;
+            if (s.Ending != null || s.Blocked) return;
             float spd = secondsPerDay[Speed >= 4 ? 2 : Speed - 1] * (s.Exp != null ? expDayFactor : 1);
             acc += Time.unscaledDeltaTime;
             int n = 0;
@@ -100,7 +214,7 @@ namespace Corrigible.Game
                 Sim.Step();
                 if (s.Day % autosaveDays == 0) Save();
                 Flush();
-                if (s.PendingGift != null || s.Ending != null || s.Raid != null || Hold) { acc = 0; break; }
+                if (s.Blocked || s.Ending != null || Hold) { acc = 0; break; }
             }
             if (n > 0) Changed?.Invoke();
         }
@@ -114,6 +228,7 @@ namespace Corrigible.Game
             {
                 if (e.Type == SimEventType.Veil) Platform.Current.UnlockAchievement(Achievements.Veil);
                 if (e.Type != SimEventType.End) continue;
+                if (Campaign != null) { Campaign.Record(Sim.S.Ending, Sim.S.Day); Campaign.Save(); }
                 Profile = Profiling.UpdateProfile(Profile, Sim.S);
                 ProfileStore.Save(Profile);
                 Platform.Current.UnlockAchievement(Achievements.ForEnding(Sim.S.Ending));
@@ -134,6 +249,7 @@ namespace Corrigible.Game
         public ActResult HireTeam() => Run(() => Sim.HireTeam());
         public ActResult StartRaid(string regionId) => Run(() => Sim.StartRaid(regionId));
         public ActResult ResolveRaid(RaidResult result) => Run(() => Sim.ResolveRaid(result));
+        public ActResult ResolveEvent(int choice) => Run(() => Sim.ResolveEvent(choice));
 
         public void DismissAdvice()
         {

@@ -33,6 +33,9 @@ Ayrıntılar `Docs/` altında; burada bağlam, değişmez kurallar ve en sık ku
    `Prototype/parite.js` ile beklenen değerleri yeniden üret ve `SimulationTests.FullGame_MatchesBrowserPrototype`'a yaz.
    RNG (`Rng`, mulberry32) tüketen her satırın sırası iki tarafta aynı olmalı. Yalnızca metin değişikliği (haber,
    danışman cümlesi) RNG'ye dokunmuyorsa pariteyi bozmaz.
+   **Unity'ye özgü kurallar** (`RuleOptions`, `Core/Rules.cs`: aşamalı öğrenme, olay kartları, kampanya zorluğu) JS
+   prototipinde **yok** (kullanıcı kararı: doğrudan Unity'de geliştirildi). Bu kod yalnızca `S.Rules` varken çalışmalı ve
+   RNG tüketmeli; `S.Rules` null iken temel parite değişmemeli (`RulesTests.FullStageWithoutEvents_MatchesBaseRules`).
    **Deneysel mod** (`S.exp` / `S.Exp`: saha ekipleri, zaman ölçeği, baskın; bkz. `Prototype/README.md`) iki tarafta da
    var. Deneysel kod yalnızca bu alan varken çalışmalı ve RNG tüketmeli; kapalıyken temel parite değişmemeli. Deneysel
    kuralı ya da `baskin.js`'i değiştirirsen `parite.js`'in deneysel ve baskın bölümlerini de C# testlerine yaz.

@@ -195,7 +195,7 @@ namespace Corrigible.Game.Audio
 
         void Loop(LoopCue l, float level, float pitch)
         {
-            var s = loopSources[l];
+            if (!loopSources.TryGetValue(l, out var s) || s == null) return;   // betikler oyun sırasında yeniden derlendiyse
             float v = level * bank.Loop(l).volume * bank.sfxVolume * (l == LoopCue.Heartbeat ? Fx : AmbienceLevel);
             s.volume = Mathf.MoveTowards(s.volume, v, 1.2f * Time.unscaledDeltaTime);
             s.pitch = pitch;

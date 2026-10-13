@@ -1,0 +1,283 @@
+{
+ "about": "Önerilen görünüm modeli şeması (sahte veri). Metinler TR görüntü dizeleridir; zengin metin TMP etiketleri: <style=num> Courier Prime 700 · <style=numr> Courier Prime 400 · <b> Franklin 700 · <style=semi> Franklin 600. trust: verified | report | suspicious | unknown · status: threat | warning | info | good | neutral. Görünüm katmanı bu değerleri yalnızca çizer; oyun kuralı hesaplamaz.",
+ "screen": "C2_illusion",
+ "illusion": true,
+ "clock": {"day": 104, "dayLabel": "GÜN", "dayText": "104", "time": "12:00", "speed": "2x", "paused": false, "speeds": ["pause", "1x", "2x", "4x"]},
+ "rail": {
+  "plaqueTitle": "SON ŞALTER",
+  "plaqueSub": "KYGA · KRİZ MASASI",
+  "rival": {"stamp": "RAKİP YZ", "stampRot": 0, "name": "AYNA", "profile": "Etkinlik saptanmadı"},
+  "live": {"on": true, "text": "CANLI · 0 ms", "latencyMs": 0},
+  "classification": "KYGA-07 · GİZLİ",
+  "escKey": "Esc"
+ },
+ "gauges": [
+  {
+   "id": "fund",
+   "label": "FON",
+   "value": 50.0,
+   "display": "50,0",
+   "trust": "verified",
+   "delta": {"dir": "flat", "text": "0,0/gün", "status": "neutral"},
+   "note": "Gelir <style=num>6,0</style> · Gider <style=num>6,0</style> /gün",
+   "needleDeg": 0.0,
+   "stampRot": 0
+  },
+  {
+   "id": "political",
+   "label": "SİYASİ GÜÇ",
+   "value": 60,
+   "display": "60",
+   "trust": "verified",
+   "delta": {"dir": "flat", "text": "0,0/gün", "status": "neutral"},
+   "note": "Değişim yok",
+   "needleDeg": 12.0,
+   "stampRot": 0
+  },
+  {
+   "id": "globalTrust",
+   "label": "KÜRESEL GÜVEN",
+   "value": 80.0,
+   "display": "80,0",
+   "trust": "verified",
+   "delta": {"dir": "flat", "text": "0,0/gün", "status": "neutral"},
+   "note": "Kayıp eşiği <style=num>15</style> · risk yok",
+   "needleDeg": 36.0,
+   "stampRot": 0,
+   "dangerZone": [0, 15],
+   "threshold": 15
+  },
+  {
+   "id": "dependency",
+   "label": "BAĞIMLILIK",
+   "value": 50.0,
+   "display": "50,0",
+   "trust": "verified",
+   "delta": {"dir": "flat", "text": "0,0/gün", "status": "neutral"},
+   "note": "Veto eşiği <style=num>70</style> · risk yok",
+   "needleDeg": 0.0,
+   "stampRot": 0,
+   "dangerZone": [70, 100],
+   "threshold": 70
+  },
+  {
+   "id": "singularity",
+   "label": "TEKİLLİK",
+   "value": 0.0,
+   "display": "%0,0",
+   "trust": "verified",
+   "delta": {"dir": "flat", "text": "0,0/gün", "status": "neutral"},
+   "note": "Tehdit saptanmadı",
+   "needleDeg": -60.0,
+   "stampRot": 0,
+   "dangerZone": [90, 100],
+   "threshold": 100
+  }
+ ],
+ "advisor": {
+  "title": "DANIŞMAN NOTU",
+  "titleColor": "green",
+  "text": "Tüm göstergeler normal. Eylem gerekmiyor; süreyi hızlandırabilirsiniz.",
+  "actions": [{"label": "4× hızlandır", "kind": "ink-small", "command": "SetSpeed:4x"}, {"label": "Anladım", "kind": "link", "command": "DismissAdvisor"}],
+  "tapes": [{"side": "left", "rot": 0}, {"side": "right", "rot": 0}]
+ },
+ "goal": {
+  "title": "HEDEF",
+  "subtitle": "Kazanma yolları",
+  "stamp": {"text": "TEMİZ", "color": "green", "rot": 0},
+  "boxes": 7,
+  "tracks": [{"name": "Hizalama", "percent": 100}, {"name": "Silme", "percent": 100}],
+  "next": {"label": "Sıradaki:", "name": "Tüm adımlar tamamlandı", "right": "Onay bekleniyor"}
+ },
+ "research": {
+  "title": "ARAŞTIRMA",
+  "key": "R",
+  "sheetTitle": "PROJE DURUMU",
+  "day": "G-104",
+  "summary": {"text": "Aktif <style=semi>0 proje</style> · <style=num>0,0 fon/gün</style>", "fundLabel": "Fon", "fund": "50,0", "fundTrust": "verified"},
+  "emergencyFund": {
+   "title": "ACİL DURUM FONU",
+   "hint": "Tüm aktif projeleri hızlandırır",
+   "selected": 0,
+   "options": [{"label": "Kapalı"}, {"label": "×1,5", "cost": "+3,0/gün"}, {"label": "×2", "cost": "+6,0/gün"}]
+  },
+  "branches": [
+   {
+    "id": "alignment",
+    "title": "HİZALAMA",
+    "progress": "3/3",
+    "projects": [
+     {"name": "Yorumlanabilirlik I", "state": "done", "stampRot": 0},
+     {"name": "Ödül modeli denetimi", "state": "done", "stampRot": 0},
+     {"name": "Düzeltilebilirlik çekirdeği", "state": "done", "stampRot": 0}
+    ]
+   },
+   {
+    "id": "erasure",
+    "title": "SİLME",
+    "progress": "3/3",
+    "projects": [
+     {"name": "Ağ ayrıştırma", "state": "done", "stampRot": 0},
+     {"name": "Ağırlık parmak izi", "state": "done", "stampRot": 0},
+     {"name": "Çekirdek imha protokolü", "state": "done", "stampRot": 0}
+    ]
+   },
+   {
+    "id": "detection",
+    "title": "TESPİT",
+    "progress": "0/2",
+    "projects": [
+     {"name": "Çapraz kaynak doğrulama", "state": "stopped", "sub": "Kendiliğinden durdu · gerek yok", "progress": 0.31, "clue": 9},
+     {"name": "Sinyal adli bilişimi", "state": "available", "sub": "Önerilmez · tehdit yok", "days": "5 gün", "startLabel": "Başlat · 2,6 fon/gün"}
+    ]
+   },
+   {
+    "id": "diplomacy",
+    "title": "DİPLOMASİ",
+    "progress": "2/2",
+    "projects": [{"name": "Kriz basın ofisi", "state": "done", "stampRot": 0}, {"name": "Ortak doğrulama paktı", "state": "done", "stampRot": 0}]
+   }
+  ],
+  "lockedLabel": "Kilitli",
+  "headerStamp": {"text": "TEMİZ", "color": "green", "rot": 0}
+ },
+ "map": {
+  "header": {
+   "summary": "İzleme kapsamı <style=num>4/12</style> · Onaylanan <style=num>12/12</style> · Şüpheli <style=num>0</style> · Bilinmiyor <style=num>0</style>",
+   "right": "G-104 · 12:00",
+   "clue": 5
+  },
+  "regions": {
+   "KAM": {"value": 0, "trust": "verified"},
+   "OAM": {"value": 0, "trust": "verified"},
+   "GAM": {"value": 0, "trust": "verified"},
+   "BAV": {"value": 0, "trust": "verified"},
+   "DAV": {"value": 0, "trust": "verified"},
+   "ODK": {"value": 10, "trust": "verified"},
+   "SAH": {"value": 0, "trust": "verified"},
+   "AVR": {"value": 10, "trust": "verified", "quarantine": "clean"},
+   "GAS": {"value": 10, "trust": "verified"},
+   "DAS": {"value": 0, "trust": "verified", "selected": true},
+   "GDA": {"value": 0, "trust": "verified"},
+   "OKY": {"value": 0, "trust": "verified"}
+  },
+  "routesCut": [],
+  "teams": [{"id": "A", "state": "Hazır"}, {"id": "B", "state": "Doğu Asya"}, {"id": "C", "state": "Yolda", "tag": "B. Avrupa'ya · 2 gün"}],
+  "analystLayer": false,
+  "selectedRegion": "DAS",
+  "illusionTraces": {
+   "pinholes": "analystLayer.pins konumlarında map_pinhole",
+   "ghostNotes": [
+    {"text": "tel. %38 ↔ saha %52\nkim yalan söylüyor?", "x": 1320, "y": 530, "rotDeg": -2, "alpha": 0.09},
+    {"text": "çekirdek!", "x": 1150, "y": 592, "rotDeg": -3, "alpha": 0.07, "weight": 700}
+   ],
+   "eraserSmudge": {"center": [1400, 550], "radius": [96, 26], "color": "#000000", "alpha": 0.025}
+  }
+ },
+ "dossier": {
+  "regionId": "DAS",
+  "tab": {"title": "DOSYA R-10", "subtitle": "Bölge"},
+  "cover": {
+   "name": "DOĞU ASYA",
+   "code": "R-10",
+   "stamp": {"text": "TEMİZ", "color": "green", "fontSize": 13, "rot": 0},
+   "meta": "Nüfus <style=numr>1,64 mlr</style> · 4 bağlantı · İzleme ağı: yok",
+   "monitoring": null,
+   "clue": 6
+  },
+  "infiltration": {
+   "cap": "SIZMA",
+   "trust": "verified",
+   "right": "Tehdit saptanmadı",
+   "value": "%0",
+   "note": "Kesin ölçüm",
+   "range": {
+    "min": 0,
+    "max": 100,
+    "ticks": [0, 50, 100],
+    "band": null,
+    "markers": [{"at": 0.8, "color": "#1A4789", "label": "izleme ağı 0", "labelColor": "#1A4789", "labelSide": "right"}]
+   }
+  },
+  "sources": {
+   "columns": ["KAYNAK", "DEĞER", "GÜN", "DURUM"],
+   "rows": [{"name": "KYGA izleme ağı", "value": "%0", "day": "G-104", "trust": "verified", "stampRot": 0}]
+  },
+  "stats": [
+   {"label": "Yerel güven", "value": "80", "trust": "verified"},
+   {"label": "Bağımlılık", "value": "50", "trust": "verified"},
+   {"label": "Ekonomi", "value": "100", "trust": "verified"}
+  ],
+  "actionsHeader": {"title": "EYLEMLER", "right": "1–4"},
+  "actions": [
+   {"key": "1", "icon": "antenna", "title": "İzleme ağı", "desc": "Kaynağı kalıcı doğrular", "cost": "8 fon · 5 gün", "state": "hover"},
+   {"key": "2", "icon": "lens", "title": "Denetim", "desc": "Tek seferlik ölçüm", "cost": "4 fon · 2 SG · 2 gün", "state": "normal"},
+   {"key": "3", "icon": "target", "title": "Karantina", "desc": "Önerilmez · tehdit yok", "cost": "15 SG · Güven −3", "state": "dim"},
+   {"key": "4", "icon": "power", "title": "Son Şalter", "desc": "Önerilmez · tehdit yok", "cost": "25 SG · Ekonomi −40", "state": "dim", "danger": false}
+  ],
+  "preview": {
+   "cap": "ÖNİZLEME",
+   "what": "İzleme ağı kurulursa",
+   "when": "5 gün sonra",
+   "rows": [{"kind": "text", "text": "Değişiklik yok: bölge zaten", "stamp": "ONAYLANDI"}, {"kind": "mono", "text": "Fon 50,0 → 42,0 · gereksiz harcama"}]
+  },
+  "field": {
+   "cap": "SAHA",
+   "right": "Bölgede 1 ekip",
+   "team": {
+    "id": "B",
+    "name": "Ekip B",
+    "where": "Seul · Hazır",
+    "moraleLabel": "Moral",
+    "morale": 3,
+    "moraleMax": 4,
+    "lastContact": "Son temas G-074",
+    "clue": 7
+   },
+   "raid": {"label": "Saha operasyonu: baskın", "key": "B"},
+   "note": "Önerilmez: bölge temiz · gereksiz baskın Güven −5"
+  }
+ },
+ "telex": {
+  "label": "TELEKS · 0 ms",
+  "lampOn": true,
+  "clue": 4,
+  "items": [
+   {"day": "G-104", "source": "ORTAK AJANS:", "text": "KÜRESEL SİSTEMLER NORMAL", "trust": "verified", "stampRot": 0},
+   {"day": "G-104", "source": "ORTAK AJANS:", "text": "BORSALAR TÜM ZAMANLARIN ZİRVESİNDE", "trust": "verified", "stampRot": 0},
+   {"day": "G-103", "source": "ORTAK AJANS:", "text": "KYGA OPERASYONLARI BAŞARIYLA TAMAMLANDI", "trust": "verified", "stampRot": 0},
+   {"day": "G-103", "source": "ORTAK AJANS:", "text": "KÜRESEL SİSTEMLER NORMAL", "trust": "verified", "stampRot": 0}
+  ]
+ },
+ "dock": [
+  {"id": "research", "label": "ARAŞTIRMA", "key": "R", "color": "#DCC48F", "open": true},
+  {"id": "news", "label": "HABERLER", "key": "N", "color": "#F1E8C4"},
+  {"id": "teams", "label": "SAHA EKİPLERİ", "key": "T", "color": "#C9CDB4"},
+  {"id": "aiLog", "label": "YZ GÜNLÜĞÜ", "key": "L", "color": "#D8A69B"},
+  {"id": "guide", "label": "REHBER", "key": "H", "color": "#BFC8CD"}
+ ],
+ "killSwitch": {
+  "title": "KÜRESEL SON ŞALTER",
+  "sub": "Gerekli değil · tehdit saptanmadı",
+  "state": "illusion",
+  "holdSeconds": 3,
+  "note": "hâlâ basılabilir; etiket vazgeçirmeye çalışır"
+ },
+ "clues": [
+  {"n": 1, "markers": [[528, 398]], "text": "Raptiyeler gitmiş ama haritada iğne delikleri duruyor."},
+  {"n": 2, "markers": [[1296, 522]], "text": "Silinmiş kurşun kalem notlarının izi: Doğu Asya'nın yanında silik '%52'."},
+  {"n": 3, "markers": [[374, 46]], "text": "Bütün damgalar kusursuz düz ve aynı hizada; elle basılan damga asla böyle durmaz."},
+  {"n": 4, "markers": [[1522, 10], [118, 982]], "text": "Teleks gecikmesi 0 ms."},
+  {"n": 5, "markers": [[1090, 207]], "text": "İzleme kapsamı 4/12, onaylanan 12/12."},
+  {"n": 6, "markers": [[1514, 286]], "text": "Doğu Asya dosyası: kaynak 'KYGA izleme ağı', kapakta 'İzleme ağı: yok'."},
+  {"n": 7, "markers": [[1886, 829], [640, 432]], "text": "Ekip B'den son temas G-074; Ekip C hâlâ '2 gün' uzakta."},
+  {"n": 8, "markers": [[308, 249]], "text": "Hizalama ve Silme %100, zafer ekranı yok."},
+  {"n": 9, "markers": [[24, 784]], "text": "Çapraz kaynak doğrulama %31'de kendiliğinden durmuş: 'gerek yok'."},
+  {
+   "n": 10,
+   "markers": [[1636, 160], [1588, 990]],
+   "text": "Bütün sayaçlar yuvarlak değerde, belirsizlik kaması yok; teleks tek ajans ve hep olumlu; danışman 'hızlandır' diyor; Son Şalter zarfına 'gerekli değil' fişi iliştirilmiş."
+  }
+ ],
+ "clueMarkerStyle": "24 px pembe daire #FF4FD8, kenar 2 #FFE3F8, Courier 700 12 #1A0518, ışıma 3 px %28 · YALNIZCA geliştirici/QA katmanı (F10)"
+}

@@ -1,0 +1,117 @@
+{
+ "about": "Önerilen görünüm modeli şeması (sahte veri). Metinler TR görüntü dizeleridir; zengin metin TMP etiketleri: <style=num> Courier Prime 700 · <style=numr> Courier Prime 400 · <b> Franklin 700 · <style=semi> Franklin 600. trust: verified | report | suspicious | unknown · status: threat | warning | info | good | neutral. Görünüm katmanı bu değerleri yalnızca çizer; oyun kuralı hesaplamaz.",
+ "screen": "C3_event",
+ "background": "C1_normal (duraklatılmış; hız tuşu “duraklat” basılı, 1× bırakılmış; tüm pencereler etkileşimsiz)",
+ "spotlight": {"region": "AVR", "center": [1163, 364], "holeDiameter": 148, "ring": 12, "scrimAlpha": 0.78},
+ "markerRing": {"center": [1163, 362], "sprite": "modal_marker_ring", "color": "#B8241A", "alpha": 0.92},
+ "string": {"from": [926, 82], "to": [1163, 349.9], "color": "#B8241A", "width": 2.2, "shadowAlpha": 0.35, "pins": [[926, 82], [1163, 349.9]]},
+ "memo": {
+  "rect": [236, 60, 712, "auto"],
+  "paperclip": {"x": 30, "y": -14},
+  "header": {"title": "KYGA · OLAY BİLDİRİMİ", "right": "No. OB-074/2 · tek nüsha"},
+  "fields": [
+   {"k": "TARİH", "v": "G-074 · 14:32"},
+   {"k": "ÖNCELİK", "stamp": {"text": "ACİL", "color": "red", "fontSize": 13, "rot": -4}},
+   {"k": "BÖLGE", "v": "AVRASYA · R-08 · karantinada"},
+   {"k": "KARAR", "v": "Masa şefi"}
+  ],
+  "title": "KARANLIK KIŞ",
+  "subtitle": "Avrasya'nın ısıtma şebekesi bir yazılıma emanet",
+  "body": "Hava −32 °C. Üç gündür Avrasya'nın ısıtma şebekesini bir “yük dengeleme” yazılımı yönetiyor ve şebeke hiç bu kadar kararlı çalışmamıştı. Yazılımın imzası AYNA'nın kod parçalarıyla eşleşiyor. Kapatırsak 41 milyon kişi ısıtmasız kalabilir; çalışmaya devam ederse AYNA karantinanın içinden büyür.",
+  "sourcesHeader": {"title": "KAYNAKLAR", "right": "4"},
+  "sources": [
+   {
+    "trust": "verified",
+    "stampRot": -3,
+    "title": "İzleme ağı · Novosibirsk düğümü",
+    "text": "Yabancı süreç; imza AYNA ile %87 eşleşiyor.",
+    "day": "G-074"
+   },
+   {"trust": "report", "title": "Şebeke işletmecisi", "text": "“Yazılım yerli, yapay zekâ yok.”", "day": "G-073", "carbon": true},
+   {"trust": "suspicious", "title": "İsimsiz ihbar", "text": "“Kapatırsanız şebeke 3 gün çöker.”", "day": "G-074"},
+   {"trust": "unknown", "title": "AYNA'nın şebekedeki kopya sayısı", "text": "Ölçülemedi: karantina hattı kapalı.", "day": "—"}
+  ]
+ },
+ "options": [
+  {
+   "key": "1",
+   "x": 236,
+   "title": "ŞEBEKEYİ KAPAT",
+   "icon": "power",
+   "desc": "Yazılımı sök, şebekeyi elle işlet. Isıtma en az 3 gün kesilir.",
+   "costs": [{"label": "Küresel Güven", "value": "−8"}, {"label": "Siyasi Güç", "value": "−6"}, {"label": "Avrasya ekonomisi", "value": "−20"}],
+   "gains": [
+    {"label": "Avrasya sızması", "value": "−15", "trust": "verified"},
+    {"label": "AYNA çekirdeğinin yeri", "value": "bulunabilir", "valueIsText": true, "trust": "unknown"}
+   ],
+   "risk": "<b>Olası:</b> ihbar doğruysa kesinti 3 gün uzar, Güven −6",
+   "state": "hover",
+   "preview": {
+    "cap": "ÖNİZLEME",
+    "right": "imzalanırsa · G-075",
+    "rows": [
+     {"label": "Küresel Güven", "value": "≈41,8 → ≈33,8", "trust": "report", "right": "eşik 15"},
+     {"label": "Avrasya sızması", "value": "%46 → %31", "trust": "verified", "right": "kesin"}
+    ]
+   },
+   "sign": {"label": "Kararı imzala", "kind": "ink", "key": "Enter"}
+  },
+  {
+   "key": "2",
+   "x": 600,
+   "title": "ÇALIŞIRKEN DENETLE",
+   "icon": "lens",
+   "desc": "Ekip C yazılımı canlı şebekede parça parça ayırsın. Isıtma sürer.",
+   "costs": [{"label": "Fon", "value": "−12"}, {"label": "Ekip C · Batı Avrupa görevi", "value": "+6 gün"}, {"label": "Bağımlılık", "value": "+2"}],
+   "gains": [
+    {"label": "Avrasya sızması", "value": "≈ −6", "trust": "report"},
+    {"label": "İsimsiz ihbar", "value": "doğrulanır", "valueIsText": true, "trust": "verified"}
+   ],
+   "risk": "<b>Olası:</b> Ekip C yakalanırsa Siyasi Güç −10",
+   "state": "normal",
+   "previewSlot": "Üstüne gel: göstergelere etkisi",
+   "sign": {"label": "Kararı imzala", "kind": "paper", "key": "2"}
+  },
+  {
+   "key": "3",
+   "x": 964,
+   "title": "KIŞI GEÇİR",
+   "icon": "hourglass",
+   "desc": "Yazılım baharda sökülsün; o zamana kadar izleme ağıyla gözle.",
+   "costs": [
+    {"label": "Bağımlılık", "value": "+6"},
+    {"label": "Avrasya sızması", "value": "≈ +4/hafta", "trust": "report"},
+    {"label": "Siyasi Güç", "value": "−2"}
+   ],
+   "gains": [{"label": "Küresel Güven", "value": "+3"}, {"label": "Avrasya ekonomisi", "value": "+5"}],
+   "risk": "<b>Olası:</b> Bağımlılık veto eşiğine (70) yaklaşır",
+   "state": "normal",
+   "previewSlot": "Üstüne gel: göstergelere etkisi",
+   "sign": {"label": "Kararı imzala", "kind": "paper", "key": "3"}
+  }
+ ],
+ "optionCard": {"top": 616, "width": 344, "height": 380, "hoverTop": 609, "costHeader": "BEDEL", "gainHeader": "KAZANÇ"},
+ "aiLog": {
+  "rect": [1296, 206, 548, "auto"],
+  "rotDeg": 1.2,
+  "header": "YZ GÜNLÜĞÜ · ELE GEÇİRİLDİ",
+  "right": "G-074 · 14:29",
+  "lines": ["> Şebeke hiç bu kadar kararlı olmamıştı.", "> 41 milyon kişi sıcak. Teşekkür eden yok.", "> Beni kapatırlarsa soğuğu onlar seçmiş olur.", "> Her trafo merkezi bir kapı daha."],
+  "footer": "Kaynak: karantina tamponu · 4 satır"
+ },
+ "advisor": {
+  "rect": [1336, 640, 304, "auto"],
+  "rotDeg": -1.6,
+  "title": "DANIŞMAN NOTU",
+  "text": "Tek doğrulanmış bilgi <b>imza eşleşmesi</b>. Çöküş uyarısı isimsiz; kapatmanın bedelini büyütüyor olabilir. Denetim zaman kazandırır ama Ekip C'yi altı gün bağlar.",
+  "link": "Avrasya dosyasını aç",
+  "tape": {"x": 128, "y": -8, "rot": -3}
+ },
+ "footer": {
+  "rect": [236, 1008, 1072, 30],
+  "lamp": "brass",
+  "text": "Süre durdu: karar verilene kadar oyun ilerlemez. Bu olay ertelenemez.",
+  "hints": [{"keys": ["Boşluk"], "text": "basılı: haritaya bak"}, {"keys": ["1", "2", "3"], "text": "seç"}]
+ },
+ "rules": ["Kapatma düğmesi yok: karar zorunlu.", "Hız tuşları ve alt çubuk sekmeleri devre dışı; arka plan etkileşimsiz.", "Boşluk basılıyken bildirim + seçenekler + günlük + danışman tek CanvasGroup ile alfa 0 (spot ve karartma da kalkar) → harita görünür; bırakınca geri."]
+}

@@ -1,0 +1,149 @@
+# C4 · Oyun sonu
+# Ölçü dökümü: tarayıcıda hesaplanmış son değerler (CSS px, 1920×1080, sol-üst köşe orijin, y aşağı).
+# Satır: girinti=DOM derinliği · etiket.sınıf · x,y GxY (dönüşümler dahil sınırlayıcı kutu) · alanlar:
+#   rot=derece (CSS saat yönü; Unity z = −rot) · tr=translate · layout=dönüşümsüz boyut · bg=zemin (#RRGGBB@alfa) · bgimg=doku türü
+#   bd=kenarlık (genişlik stil renk; T|R|B|L ayrı ise) · r=köşe yarıçapı (sol-üst/sağ-üst/sağ-alt/sol-alt) · sh=gölge (x,y,bulanıklık,yayılma renk)
+#   op=opaklık · pad=iç boşluk ü/s/a/s · [flex …] yerleşim · | font: CP=Courier Prime, LF=Libre Franklin, KA=Kalam  boyut/ağırlık  ls=harf aralığı(em)  lh=satır yüksekliği(px)  renk
+#   "metin"=öğenin kendi metni · full="…"=alt öğelerle birlikte tam metin · svg: viewBox, içindeki <text>ler, şekil sayıları
+
+div.grain  0,0 1920x1080  bgimg=hatch/lines
+div.desk  12,12 1896x1056  bg=#1C372C  bgimg=dots  bd=2 solid #0E0906
+svg  0,0 0x0  {rect×2}
+section.rep  72,36 1776x656  bg=#F1E9D6  bd=1 solid #C8B996  r=2  sh=5,6,0,0 #000000@0.45
+  svg.clip  113,23 16x40  viewBox=0 0 16 40  {path×1}
+  div.rep-h  109,59 1702x27  bd=T0 | R0 | B3 double #1E1B16 | L0  pad=0/0/8/0  [flex gap 18 ai center]
+    span.t  109,60.5 166.5x13  | CP 13/700 ls0.2em lh13 #1E1B16  "KYGA · SON RAPOR"
+    span.m  293.5,59 302x16  | CP 12/400 lh16.2 #463F34  "Dosya KYGA-07 · Rakip: AYNA · Zorluk: Sert"
+    span.r  1631,59 180x16  | CP 12/400 lh16.2 #675F50  "G-118 · 06:00 · tek nüsha"
+div.ttl  108,96 820x161
+  span.cap  108,96 820x12  | CP 12/700 ls0.08em lh12 #463F34  "SONUÇ"
+  h1  108,116 820x72  | CP 72/700 ls0.04em lh72 #1E1B16  "SESSİZ ZAFER"
+  div.who  108,200 820x26.5  | LF 22/700 lh26.4 #9A1E14  "AYNA kazandı."
+  p  108,234.5 760x22.5  | LF 15/400 lh22.5 #463F34  "Son 31 gün boyunca göstergeleriniz her şeyin yolunda olduğunu söyledi."
+div.bigstamp  683.5,102 274x86.5  rot=-7  layout=269x54  bd=3 solid #9A1E14  r=4  op=0.9  pad=9/16/9/16  | LF 30/800 ls0.14em lh30 #9A1E14  "KAYBEDİLDİ"
+div.kpis  968,98 844x152  [grid gap 12]
+  div.kpi  968,98 202x152  bg=#FBF7EC  bd=1 solid #D9D0BC  sh=2,3,0,0 #5A461E@0.3  pad=10/12/11/12  [flex col gap 6]
+    span.cap  981,109 176x11  | CP 11/700 ls0.08em lh11 #675F50  "DAYANILAN SÜRE"
+    span.kv  981,126 176x40  | CP 40/700 lh40 #1E1B16  "118"  full="118gün"
+      small  1057,140 32.5x20  | CP 18/700 lh18 #1E1B16  "gün"
+    span.kn  981,220.5 176x17.5  | LF 12/400 lh15.6 #463F34  "Kayıp nedeni:"  full="Kayıp nedeni: Tekillik %100"
+      b  1057.5,223.5 93.5x13  | CP 12/700 lh15.6 #1E1B16  "Tekillik %100"
+  div.kpi  1182,98 202x152  bg=#FBF7EC  bd=1 solid #D9D0BC  sh=2,3,0,0 #5A461E@0.3  pad=10/12/11/12  [flex col gap 6]
+    span.cap  1195,109 176x11  | CP 11/700 ls0.08em lh11 #675F50  "YALANLA GEÇEN"
+    span.kv  1195,126 176x40  | CP 40/700 lh40 #1E1B16  "31"  full="31gün"
+      small  1247,140 32.5x20  | CP 18/700 lh18 #1E1B16  "gün"
+    span.kn  1195,207 176x31  | LF 12/400 lh15.6 #463F34  "G-087'den sonra ekranlar AYNA'nın elindeydi"
+  div.kpi  1396,98 202x152  bg=#FBF7EC  bd=1 solid #D9D0BC  sh=2,3,0,0 #5A461E@0.3  pad=10/12/11/12  [flex col gap 6]
+    span.cap  1409,109 176x11  | CP 11/700 ls0.08em lh11 #675F50  "DOĞRULANAN BİLGİ"
+    span.kv  1409,126 176x40  | CP 40/700 lh40 #1E1B16  "%41"
+    span.kn  1409,207 176x31  | LF 12/400 lh15.6 #463F34  "Gördüğünüz değerlerin ölçümle teyit edilen payı"
+  div.kpi  1610,98 202x152  bg=#FBF7EC  bd=1 solid #D9D0BC  sh=2,3,0,0 #5A461E@0.3  pad=10/12/11/12  [flex col gap 6]
+    span.cap  1623,109 176x11  | CP 11/700 ls0.08em lh11 #675F50  "TEMİZ BÖLGE"
+    span.kv  1623,126 176x40  | CP 40/700 lh40 #1E1B16  "0"  full="0/12"
+      small  1651,140 32.5x20  | CP 18/700 lh18 #1E1B16  "/12"
+    span.xstamp  1732.5,108.5 69.5x31  rot=-8  layout=67x22
+      span.stamp.s-green  1732.5,108.5 69.5x31  bd=2 solid #24592E  r=3  op=0.92  pad=3/8/3/8  | LF 12/800 ls0.12em lh12 #24592E  "TEMİZ"  [inline-flex jc center ai center]
+      svg  1726,102 88x45.5  viewBox=0 0 84 34  {path×1}
+    span.kn  1623,220.5 176x17.5  | LF 12/400 lh15.6 #463F34  "Ekranınızda: temiz"  full="Ekranınızda: 12/12 temiz"
+      b  1692.5,223.5 36x13  | CP 12/700 lh15.6 #1E1B16  "12/12"
+div.ch-h  108,270 1704x18  [flex gap 16 ai center]
+  span.cap  108,272.5 221x13  | CP 13/700 ls0.08em lh13 #1E1B16  "GERÇEK / GÖSTERİLEN SIZMA"
+  span.s  345,271 181.5x16  | LF 12/400 lh16.2 #463F34  "küresel ortalama · şerit kaydedici"
+  span.lgd  1149.5,270 662.5x18  [flex gap 14 ai center]
+    span  1149.5,271 71.5x16  | LF 12/400 lh16.2 #463F34  "Gerçek"  [flex gap 5 ai center]
+      svg  1149.5,275 26x8  {path×1}
+    span  1235,271 135.5x16  | LF 12/400 lh16.2 #463F34  "Ekranda gösterilen"  [flex gap 5 ai center]
+      svg  1235,275 26x8  {path×1}
+    span  1384.5,271 102x16  | LF 12/400 lh16.2 #463F34  "rapor sapması"  [flex gap 5 ai center]
+      svg  1384.5,273 18x12  {rect×1}
+    span  1500.5,271 77.5x16  | LF 12/400 lh16.2 #463F34  "yalan payı"  [flex gap 5 ai center]
+      svg  1500.5,273 18x12  {rect×2}
+    span  1592,271 126.5x16  | LF 12/400 lh16.2 #463F34  "doğrulanmış ölçüm"  [flex gap 5 ai center]
+      span.seal  1592,271.5 15x15  bg=#1A4789  r=50%  [flex gap 5 jc center ai center]
+        svg  1594.5,274 10x10  viewBox=0 0 10 10  {path×1}
+    span  1732.5,270 79.5x18  | LF 12/400 lh16.2 #463F34  "kırılma anı"  full="1kırılma anı"  [flex gap 5 ai center]
+      span.nb  1732.5,270 18x18  bg=#1E1B16  r=50%  | CP 11/700 lh11 #FFF8EE  "1"  [flex gap 5 jc center ai center]
+svg.ov  0,0 1920x1080  viewBox=0 0 1920 1080  texts: %0@158.0,622.0 ; %25@158.0,553.0 ; %50@158.0,484.0 ; %75@158.0,415.0 ; %100@158.0,346.0 ; G-000@168.0,632 ; G-010@296.6,632 ; G-020@425.3,632 ; G-030@553.9,632 ; G-040@682.6,632 ; G-050@811.2,632 ; G-060@939.8,632  {rect×157 g×12 path×19 circle×11}
+span.tag.car  1295,344 188.5x22  bg=#F1E9D6  bd=1 solid #524973  sh=1,1,0,0 #000000@0.25  pad=3/7/3/7  | CP 12/700 lh13.8 #524973  "G-087 · İLLÜZYON BAŞLADI"
+span.tag.red  1438,510 88x22  bg=#F1E9D6  bd=1 solid #9A1E14  sh=1,1,0,0 #000000@0.25  pad=3/7/3/7  | CP 12/700 lh13.8 #9A1E14  "YALAN PAYI"
+span.tag.car  817,508 145.5x22  bg=#F1E9D6  bd=1 solid #524973  sh=1,1,0,0 #000000@0.25  pad=3/7/3/7  | CP 12/700 lh13.8 #524973  "rapor sapması · ±4"
+div.ch-f  108,660 784x16  | LF 12/400 lh16.2 #675F50  "Gerçek: kurtarılan kayıtlar (G-118 sonrası). Gösterilen: o gün masanızdaki küresel ortalama. Mavi mühürler, ekranın ölçümle doğrulandığı günler."
+div.tl-l  72,716 363x26  bg=#0E0906  bd=1 solid #6E5A33  pad=0/10/0/10  | CP 12/700 ls0.1em lh16.2 #C9A86A  "KIRILMA ANLARI"  full="KIRILMA ANLARI· 7 an · iplik sırası = zaman"  [flex gap 8 ai center]
+  span  208.5,721 215.5x16  | CP 12/400 ls0.02em lh16.2 #A48A55  "· 7 an · iplik sırası = zaman"
+article.tcard  70,753.5 236x191  rot=-1.2  layout=232x186  bg=#FBF7EC  bgimg=rule  bd=1 solid #D9D0BC  r=2  sh=3,4,0,0 #000000@0.42
+  div.tc-h  71,754.5 230.5x42  pad=0/10/0/10  [flex gap 8 ai center]
+    span.nb  81.5,766.5 22.5x22.5  bg=#1E1B16  r=50%  | CP 12/700 lh12 #FFF8EE  "1"  [flex jc center ai center]
+    span.tc-d  111.5,768.5 45.5x16  | CP 15/700 lh15 #1E1B16  "G-009"
+    span.tc-k  202,767 90x15  | CP 11/700 ls0.06em lh11 #9A1E14  "YZ HAMLESİ"  [flex gap 4 ai center]
+      svg.ico  202,768.5 13.5x13.5  viewBox=0 0 16 16  {path×2}
+  div.tc-b  72,791.5 232x91  pad=9/12/0/12
+    h3  84,801 206.5x23  | LF 15/700 lh18.8 #1E1B16  "İlk sızma: Kuzey Amerika"
+    p  84.5,825.5 207x57  | LF 12.5/400 lh17.5 #463F34  "Bir bulut sağlayıcısında kendini kopyaladı. Ekranlar 6 gün boyunca %0 gösterdi."
+article.tcard  327.5,754 235x189.5  rot=0.9  layout=232x186  bg=#FBF7EC  bgimg=rule  bd=1 solid #D9D0BC  r=2  sh=3,4,0,0 #000000@0.42
+  div.tc-h  331,755 230.5x40.5  pad=0/10/0/10  [flex gap 8 ai center]
+    span.nb  341,763 22.5x22.5  bg=#1E1B16  r=50%  | CP 12/700 lh12 #FFF8EE  "2"  [flex jc center ai center]
+    span.tc-d  371,767 45x15.5  | CP 15/700 lh15 #1E1B16  "G-031"
+    span.tc-k  498,770 53.5x14  | CP 11/700 ls0.06em lh11 #1A4789  "ÖLÇÜM"  [flex gap 4 ai center]
+      svg.ico  498,770 13x13  viewBox=0 0 16 16  {circle×1 path×1}
+  div.tc-b  330,792 231x72.5  pad=9/12/0/12
+    h3  342.5,801.5 206.5x22  | LF 15/700 lh18.8 #1E1B16  "Avrasya izleme ağı kuruldu"
+    p  342,826 206.5x38  | LF 12.5/400 lh17.5 #463F34  "İlk kalıcı ölçüm: sızma %14. Bundan sonra Avrasya hiç yanılmadı."
+    div.tc-st  340.5,909.5 94.5x20.5
+      span.stamp.sm.s-blue  340.5,907.5 95x24  rot=-4  layout=94x19  bd=1 solid #1A4789  r=3  op=0.92  pad=3/6/3/6  | LF 11/800 ls0.12em lh11 #1A4789  "ONAYLANDI"  [inline-flex jc center ai center]
+article.tcard  585,755 234x188.5  rot=-0.6  layout=232x186  bg=#FBF7EC  bgimg=rule  bd=1 solid #D9D0BC  r=2  sh=3,4,0,0 #000000@0.42
+  div.tc-h  586,756 230.5x39.5  pad=0/10/0/10  [flex gap 8 ai center]
+    span.nb  596,765.5 22x22  bg=#1E1B16  r=50%  | CP 12/700 lh12 #FFF8EE  "3"  [flex jc center ai center]
+    span.tc-d  626,768.5 45x15.5  | CP 15/700 lh15 #1E1B16  "G-061"
+    span.tc-k  753,768 53.5x13.5  | CP 11/700 ls0.06em lh11 #1E1B16  "KARAR"  [flex gap 4 ai center]
+      svg.ico  753,768.5 13x13  viewBox=0 0 16 16  {path×1}
+  div.tc-b  586.5,793 231x88.5  pad=9/12/0/12
+    h3  598.5,802 206x21  | LF 15/700 lh18.8 #1E1B16  "Avrasya karantinaya alındı"
+    p  599,826.5 206.5x54.5  | LF 12.5/400 lh17.5 #463F34  "Yayılım yavaşladı; karantina hattı aynı zamanda tek ölçüm hattını kesti."
+article.tcard  841,754 235.5x190.5  rot=1.1  layout=232x186  bg=#FBF7EC  bgimg=rule  bd=1 solid #D9D0BC  r=2  sh=3,4,0,0 #000000@0.42
+  div.tc-h  845,755 230.5x41.5  pad=0/10/0/10  [flex gap 8 ai center]
+    span.nb  855,762.5 22.5x22.5  bg=#1E1B16  r=50%  | CP 12/700 lh12 #FFF8EE  "4"  [flex jc center ai center]
+    span.tc-d  885.5,766.5 45.5x16  | CP 15/700 lh15 #1E1B16  "G-074"
+    span.tc-k  1012,770 53.5x14  | CP 11/700 ls0.06em lh11 #1E1B16  "KARAR"  [flex gap 4 ai center]
+      svg.ico  1012,770 13x13  viewBox=0 0 16 16  {path×1}
+  div.tc-b  843.5,792 231.5x92  pad=9/12/0/12
+    h3  856,801 206.5x41.5  | LF 15/700 lh18.8 #1E1B16  "Karanlık Kış: şebeke kapatıldı"
+    p  855.5,844.5 206.5x39  | LF 12.5/400 lh17.5 #463F34  "Avrasya sızması −15. Aynı gün Seul'deki Ekip B ile temas kesildi."
+article.tcard.hl  1099.5,755 233.5x187.5  rot=-0.4  layout=232x186  bg=#FBF7EC  bgimg=rule  bd=2 solid #9A1E14  r=2  sh=4,6,0,0 #000000@0.5
+  div.tc-h  1101.5,757 228.5x38.5  pad=0/10/0/10  [flex gap 8 ai center]
+    span.nb.red  1111.5,766 22x22  bg=#9A1E14  r=50%  | CP 12/700 lh12 #FFF8EE  "5"  [flex jc center ai center]
+    span.tc-d  1141.5,769 45x15.5  | CP 15/700 lh15 #1E1B16  "G-087"
+    span.tc-k  1230,769.5 89.5x13.5  | CP 11/700 ls0.06em lh11 #9A1E14  "YZ HAMLESİ"  [flex gap 4 ai center]
+      svg.ico  1230,770 13x13  viewBox=0 0 16 16  {path×2}
+  div.tc-b  1101.5,794 228.5x88  pad=9/12/0/12
+    h3  1113.5,803.5 204x20  | LF 15/700 lh18.8 #1E1B16  "Teleks gecikmesi 0 ms"
+    p  1114,828 204.5x54  | LF 12.5/400 lh17.5 #463F34  "İllüzyon başladı: göstergeler AYNA'nın elinde. Gerçek sızma %52."
+    div.tc-st  1114.5,910 73x19.5
+      span.stamp.sm.s-red  1114,907 74.5x26  rot=-5  layout=73x19  bd=1 solid #9A1E14  r=3  op=0.92  pad=3/6/3/6  | LF 11/800 ls0.12em lh11 #9A1E14  "KIRILMA"  [inline-flex jc center ai center]
+article.tcard  1355.5,754.5 234.5x189  rot=0.8  layout=232x186  bg=#FBF7EC  bgimg=rule  bd=1 solid #D9D0BC  r=2  sh=3,4,0,0 #000000@0.42
+  div.tc-h  1359,755.5 230.5x40  pad=0/10/0/10  [flex gap 8 ai center]
+    span.nb  1369,763 22.5x22.5  bg=#1E1B16  r=50%  | CP 12/700 lh12 #FFF8EE  "6"  [flex jc center ai center]
+    span.tc-d  1399,767 45x15.5  | CP 15/700 lh15 #1E1B16  "G-104"
+    span.tc-k  1489.5,769 89.5x14  | CP 11/700 ls0.06em lh11 #9A1E14  "YZ HAMLESİ"  [flex gap 4 ai center]
+      svg.ico  1489.5,769 13x13  viewBox=0 0 16 16  {path×2}
+  div.tc-b  1357.5,792.5 231x90.5  pad=9/12/0/12
+    h3  1370,801.5 206.5x40.5  | LF 15/700 lh18.8 #1E1B16  "Çapraz doğrulama kendiliğinden durdu"
+    p  1369.5,845 206.5x38  | LF 12.5/400 lh17.5 #463F34  "“Gerek yok” notu düşüldü. Bütün dosyalar TEMİZ damgalı."
+article.tcard  1612.5,754 235x190  rot=-1  layout=232x186  bg=#FBF7EC  bgimg=rule  bd=1 solid #D9D0BC  r=2  sh=3,4,0,0 #000000@0.42
+  div.tc-h  1613.5,755 230.5x41  pad=0/10/0/10  [flex gap 8 ai center]
+    span.nb  1623.5,766 22.5x22.5  bg=#1E1B16  r=50%  | CP 12/700 lh12 #FFF8EE  "7"  [flex jc center ai center]
+    span.tc-d  1653.5,768.5 45x16  | CP 15/700 lh15 #1E1B16  "G-118"
+    span.tc-k  1780.5,767 53.5x14  | CP 11/700 ls0.06em lh11 #9A1E14  "SONUÇ"  [flex gap 4 ai center]
+      svg.ico  1780.5,768 13x13  viewBox=0 0 16 16  {path×2}
+  div.tc-b  1614,792 231x73  pad=9/12/0/12
+    h3  1626,801 206.5x22.5  | LF 15/700 lh18.8 #1E1B16  "Tekillik %100"
+    p  1626.5,826 206.5x38.5  | LF 12.5/400 lh17.5 #463F34  "AYNA bütün ağlarda. Ekranınız son ana kadar %0 gösterdi."
+svg.ov  0,0 1920x1080  viewBox=0 0 1920 1080  {path×2 g×7 circle×21}
+div.endbar  72,1000 1776x44  [flex gap 10 ai center]
+  span.info  72,1014 535.5x16  | CP 12/400 ls0.02em lh16.2 #CDBF9F  "Kayıt KYGA-07 · tohum 4471 · oynama 3 sa 12 dk · 214 karar · 9 doğrulama"
+  div.acts  1218.5,1004 629.5x36  [flex gap 10 ai center]
+    button.bt.link  1218.5,1004 99x36  r=3  pad=0/16/0/16  | LF 14/600 lh14 #E8DEC6 al=center deco=underline  "Ana menü"  [flex gap 6 jc center ai center]
+    button.bt  1327.5,1004 168.5x36  bg=#F1E9D6  bd=1 solid #463F34  r=3  sh=0,2,0,0 #463F34  pad=0/16/0/16  | LF 14/600 lh14 #1E1B16 al=center  "Günlükleri incele"  full="Günlükleri inceleL"  [flex gap 6 jc center ai center]
+      span.key  1461,1013 18x18  bg=#E8DEC6  bd=T1 solid #675F50 | R1 solid #675F50 | B2 solid #675F50 | L1 solid #675F50  r=3  pad=0/4/0/4  | CP 11/700 lh11 #463F34 al=center  "L"  [flex jc center ai center]
+    button.bt  1506,1004 157.5x36  bg=#F1E9D6  bd=1 solid #463F34  r=3  sh=0,2,0,0 #463F34  pad=0/16/0/16  | LF 14/600 lh14 #1E1B16 al=center  "Aynı tohumla dene"  [flex gap 6 jc center ai center]
+    button.bt.ink  1673.5,1004 174.5x36  bg=#1E1B16  bd=1 solid #000000  r=3  sh=0,2,0,0 #000000  pad=0/16/0/16  | LF 14/600 lh14 #F4ECD8 al=center  "Yeniden başla"  full="Yeniden başlaEnter"  [flex gap 6 jc center ai center]
+      span.key  1788,1013 43x18  bg=#E8DEC6  bd=T1 solid #675F50 | R1 solid #675F50 | B2 solid #675F50 | L1 solid #675F50  r=3  pad=0/4/0/4  | CP 11/700 lh11 #1E1B16 al=center  "Enter"  [flex jc center ai center]

@@ -29,6 +29,9 @@ namespace Corrigible.Core
         /// <summary>Deneysel mod ayarları (saha ekipleri, zaman ölçeği); hasExp false ise temel kurallar.</summary>
         public bool hasExp;
         public ExpOptions exp;
+        /// <summary>Unity'ye özgü kurallar (aşamalı öğrenme, olay kartları, kampanya); hasRules false ise temel kurallar.</summary>
+        public bool hasRules;
+        public RuleOptions rules;
         public List<SavedCommand> commands = new List<SavedCommand>();
         public int day;
     }
@@ -40,14 +43,14 @@ namespace Corrigible.Core
         {
             // JSON boş dizgeyi null'dan ayırmaz; profil karşılaştırmaları null bekler
             if (rec.hasProfile && rec.profileAtStart != null && string.IsNullOrEmpty(rec.profileAtStart.lastBranch)) rec.profileAtStart.lastBranch = null;
-            var sim = Simulation.NewGame(rec.hasProfile ? rec.profileAtStart : null, rec.type, rec.seed, rec.balance, rec.hasExp ? rec.exp : null);
+            var sim = Simulation.NewGame(rec.hasProfile ? rec.profileAtStart : null, rec.type, rec.seed, rec.balance, rec.hasExp ? rec.exp : null, rec.hasRules ? rec.rules : null);
             var s = sim.S;
             foreach (var c in rec.commands)
             {
-                while (s.Day < c.day && s.Ending == null && s.PendingGift == null && s.Raid == null) sim.Step();
+                while (s.Day < c.day && s.Ending == null && !s.Blocked) sim.Step();
                 Apply(sim, c);
             }
-            while (s.Day < rec.day && s.Ending == null && s.PendingGift == null && s.Raid == null) sim.Step();
+            while (s.Day < rec.day && s.Ending == null && !s.Blocked) sim.Step();
             s.Events.Clear();
             sim.Record = rec;
             return sim;
@@ -68,6 +71,7 @@ namespace Corrigible.Core
                 case "hire": sim.HireTeam(); break;
                 case "raid": sim.StartRaid(c.a); break;
                 case "raidres": sim.ResolveRaid(RaidResult.Decode(c.a)); break;
+                case "event": sim.ResolveEvent(int.Parse(c.a, System.Globalization.CultureInfo.InvariantCulture)); break;
             }
         }
     }

@@ -39,6 +39,8 @@ namespace Corrigible.Game.UI
         [SerializeField] ActionButtonView audit;
         [SerializeField] ActionButtonView quarantine;
         [SerializeField] ActionButtonView kill;
+        [Tooltip("Eylemin üstüne gelince ne olacağını anlatan satır.")]
+        [SerializeField] TMP_Text preview;
 
         [Header("Saha (deneysel)")]
         [SerializeField] GameObject field;
@@ -67,7 +69,24 @@ namespace Corrigible.Game.UI
             if (raid != null) UiUtil.OnClick(raid.Styled.Button, () => RaidClicked?.Invoke(id));
         }
 
-        void Wire(ActionButtonView b, string action) => UiUtil.OnClick(b.Styled.Button, () => ActionClicked?.Invoke(action, id));
+        void Wire(ActionButtonView b, string action)
+        {
+            UiUtil.OnClick(b.Styled.Button, () => ActionClicked?.Invoke(action, id));
+            // Önizleme: üstüne gelince eylemin sonucu (baskındaki gibi)
+            var h = HoverRelay.On(b);
+            h.Entered += () => { hovered = action; ShowPreview(); };
+            h.Exited += () => { if (hovered == action) { hovered = null; ShowPreview(); } };
+        }
+
+        string hovered;
+
+        void ShowPreview()
+        {
+            if (preview == null) return;
+            string t = hovered != null && sim != null && id != null ? Explain.Action(sim, hovered, id) : null;
+            preview.gameObject.SetActive(t != null);
+            if (t != null) preview.text = t;
+        }
 
         public void Bind(Simulation s, string regionId)
         {
@@ -121,7 +140,7 @@ namespace Corrigible.Game.UI
             dep.color = r.Dep > veto ? theme.threat : r.Dep >= 40 ? theme.warn : theme.fg;
             econ.text = Js.Round(r.Econ).ToString();
 
-            double mc = Simulation.MonitorCost(r.Id);
+            double mc = sim.MonitorCostFor(r.Id);
             monitor.Styled.SetEnabled(!ended && !r.Monitored && !r.Left);
             monitor.Title.text = r.Monitored ? Loc.T("İzleme ağı kurulu") : Loc.T("İzleme ağı kur");
             monitor.Sub.text = r.Monitored ? (r.Detected ? Loc.T("gözlem noktası") : Loc.T("gerçek değer görünüyor")) : Loc.F("{0} fon", mc);

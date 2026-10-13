@@ -60,6 +60,7 @@ namespace Corrigible.Game.UI
             var kb = Keyboard.current;
             if (kb == null || !kb.escapeKey.wasPressedThisFrame) return;
             if (IsOpen) Close();
+            else if (DeskWindows.Instance != null && DeskWindows.Instance.AnyOpen) DeskWindows.Instance.CloseAll();   // önce açık pencereler kapanır
             else if (game.Sim == null || game.Sim.S.Raid == null) Open();
         }
 

@@ -1,0 +1,87 @@
+Desk performans ölçümü · 2026-10-12 11:45
+Kaynak: Profiler UI Details (canvas toplayıcısının ürettiği batch'ler; Game görünümünün çizilmesinden bağımsız).
+
+UI batch toplamı (son kare): 65
+  DeskUI       batch   0 (alt dahil   0) · köşe 0
+  BG           batch   3 (alt dahil   3) · köşe 16
+      NoBreaking                   1 öğe · [Default UI Material · tx_wood_grain] Wood
+      DifferentTexture             1 öğe · [Default UI Material · tx_felt] Felt
+      DifferentTexture             2 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] FeltTop, FeltBottom
+  Map          batch  17 (alt dahil  17) · köşe 9032
+      NoBreaking                   1 öğe · [Default UI Material · c_harita@2x] Sheet
+      DifferentMaterialInstance    1 öğe · [Kalam-Regular SDF Material · UnityWhite] Note 2
+      DifferentMaterialInstance    1 öğe · [LF-Regular SDF Material · UnityWhite] Summary
+      DifferentMaterialInstance    3 öğe · [CP-Bold SDF Material · UnityWhite] Title, Edge 0, Edge 1
+      DifferentMaterialInstance   16 öğe · [CP-Regular SDF Material · UnityWhite] HeaderRight, Label 0, Label 1, Label 2 …
+      DifferentMaterialInstance  111 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Route 0, Route 1, Route 2, Route 3 …
+      DifferentMaterialInstance    2 öğe · [CP-Bold SDF Material + DejaVuSans-Bold SDF Atlas] TMP SubMeshUI [CP-Bold SDF Material + DejaVuSans-Bold SDF Atlas], TMP SubMeshUI [CP-Bold SDF Material + DejaVuSans-Bold SDF Atlas]
+      DifferentMaterialInstance    5 öğe · [Kalam-Bold SDF Material · UnityWhite] Unknown, Unknown, Note 1, Question 0 …
+      DifferentMaterialInstance    1 öğe · [Kalam-Regular SDF Material · UnityWhite] Text
+      DifferentMaterialInstance    2 öğe · [LF-ExtraBold SDF Material · UnityWhite] CoreLetter, Letter
+      DifferentMaterialInstance   16 öğe · [LF-Regular SDF Material · UnityWhite] Item, Item, Item, Item …
+      DifferentMaterialInstance   30 öğe · [CP-Bold SDF Material · CP-Bold SDF Atlas] TMP SubMeshUI [CP-Bold SDF Material], Key, Key, Key …
+      DifferentMaterialInstance    1 öğe · [Kalam-Regular SDF Material + DejaVuSans SDF Atlas] TMP SubMeshUI [Kalam-Regular SDF Material + DejaVuSans SDF Atlas]
+      DifferentMaterialInstance   21 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] StringShadow 0, String 0, Flag 0, StringShadow 1 …
+      DifferentMaterialInstance    1 öğe · [Kalam-Regular SDF Material + Kalam-Bold SDF Atlas] TMP SubMeshUI [Kalam-Regular SDF Material + Kalam-Bold SDF Atlas]
+      DifferentMaterialInstance    1 öğe · [Kalam-Regular SDF Material · UnityWhite] Note 0
+      DifferentMaterialInstance    1 öğe · [Kalam-Regular SDF Material + DejaVuSans SDF Atlas] TMP SubMeshUI [Kalam-Regular SDF Material + DejaVuSans SDF Atlas]
+  HUD          batch  10 (alt dahil  10) · köşe 4532
+      NoBreaking                  77 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Bg, Bottom, Fill, Frame …
+      DifferentMaterialInstance    2 öğe · [Kalam-Bold SDF Material · UnityWhite] Question, Label
+      DifferentMaterialInstance    4 öğe · [LF-ExtraBold SDF Material · UnityWhite] Label, Label, Label, Label
+      DifferentMaterialInstance    3 öğe · [LF-Bold SDF Material · UnityWhite] Label, Label, Label
+      DifferentMaterialInstance    2 öğe · [LF-SemiBold SDF Material · UnityWhite] Label, Label
+      DifferentMaterialInstance    7 öğe · [LF-Regular SDF Material · UnityWhite] Profile, Note, Note, Note …
+      DifferentMaterialInstance   27 öğe · [CP-Bold SDF Material · UnityWhite] Title, Name, HeaderText, Day …
+      DifferentMaterialInstance    1 öğe · [CP-Regular SDF Material · UnityWhite] Sub
+      DifferentMaterialInstance    6 öğe · [CP-Bold SDF Material · CP-Bold SDF Atlas] TMP SubMeshUI [CP-Bold SDF Material], TMP SubMeshUI [CP-Bold SDF Material], TMP SubMeshUI [CP-Bold SDF Material], TMP SubMeshUI [CP-Bold SDF Material] …
+      DifferentMaterialInstance    1 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] HandRing
+  Windows      batch  19 (alt dahil  19) · köşe 12004
+      NoBreaking                 135 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Fill, Rule, Fill, Frame …
+      DifferentMaterialInstance    3 öğe · [Kalam-Bold SDF Material · UnityWhite] Label, Label, Label
+      DifferentMaterialInstance    5 öğe · [LF-ExtraBold SDF Material · UnityWhite] Label, Label, Label, Label …
+      DifferentMaterialInstance    6 öğe · [LF-Bold SDF Material · UnityWhite] MonText, Title, Title, Title …
+      DifferentMaterialInstance    4 öğe · [LF-SemiBold SDF Material · UnityWhite] Label, Label, Label, Label
+      DifferentMaterialInstance   45 öğe · [LF-Regular SDF Material · UnityWhite] Summary, Label, FundHint, Label …
+      DifferentMaterialInstance   48 öğe · [CP-Bold SDF Material · UnityWhite] Title, Label, Title, Value …
+      DifferentMaterialInstance   16 öğe · [CP-Regular SDF Material · UnityWhite] Day, Hint, Hint, Progress …
+      DifferentMaterialInstance    1 öğe · [Default UI Material · tx_index_lines] Lines
+      DifferentMaterialInstance    1 öğe · [CP-Bold SDF Material + DejaVuSans-Bold SDF Atlas] TMP SubMeshUI [CP-Bold SDF Material + DejaVuSans-Bold SDF Atlas]
+      DifferentMaterialInstance    2 öğe · [CP-Bold SDF Material · CP-Bold SDF Atlas] TMP SubMeshUI [CP-Bold SDF Material], TMP SubMeshUI [CP-Bold SDF Material]
+      DifferentMaterialInstance    1 öğe · [CP-Regular SDF Material · CP-Regular SDF Atlas] TMP SubMeshUI [CP-Regular SDF Material]
+      DifferentMaterialInstance   27 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Frame, Grip, Fill, Frame …
+      DifferentMaterialInstance    1 öğe · [Kalam-Bold SDF Material · UnityWhite] Question
+      DifferentMaterialInstance    5 öğe · [LF-SemiBold SDF Material · UnityWhite] TrackName0, TrackName1, Name, Label …
+      DifferentMaterialInstance    3 öğe · [LF-Regular SDF Material · UnityWhite] Subtitle, Label, Dot
+      DifferentMaterialInstance    3 öğe · [CP-Bold SDF Material · UnityWhite] Title, TrackPercent0, TrackPercent1
+      DifferentMaterialInstance    1 öğe · [CP-Regular SDF Material · UnityWhite] Eta
+      DifferentMaterialInstance    1 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Underline
+  Ticker       batch   9 (alt dahil   9) · köşe 876
+      NoBreaking                   4 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Shadow, Fill, Frame, Sprite
+      DifferentMaterialInstance    1 öğe · [CP-Bold SDF Material · UnityWhite] Label
+      DifferentMaterialInstance    1 öğe · [Default UI Material · tx_telex] Paper
+      DifferentMaterialInstance    1 öğe · [Kalam-Bold SDF Material · UnityWhite] Label
+      DifferentMaterialInstance    2 öğe · [CP-Bold SDF Material · UnityWhite] Source, Source
+      DifferentMaterialInstance    5 öğe · [CP-Regular SDF Material · UnityWhite] Text, Day, Text, Day …
+      DifferentMaterialInstance    2 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Frame, Frame
+      DifferentMaterialInstance    2 öğe · [LF-ExtraBold SDF Material · UnityWhite] Label, Label
+      DifferentMaterialInstance    1 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Strike
+  Bottom       batch   7 (alt dahil   7) · köşe 1584
+      NoBreaking                  31 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Fill, Highlight, Frame, Fill …
+      DifferentMaterialInstance    5 öğe · [LF-Bold SDF Material · UnityWhite] Label, Label, Label, Label …
+      DifferentMaterialInstance    6 öğe · [CP-Bold SDF Material · UnityWhite] Label, Label, Label, Label …
+      DifferentMaterialInstance    1 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Flap
+      DifferentRectClipping        2 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Fill, Seal
+      DifferentMaterialInstance    1 öğe · [LF-Regular SDF Material · UnityWhite] Sub
+      DifferentMaterialInstance    1 öğe · [CP-Bold SDF Material · UnityWhite] Title
+  Overlay      batch   0 (alt dahil   0) · köşe 0
+  Modal        batch   0 (alt dahil   0) · köşe 0
+  Tooltip      batch   0 (alt dahil   0) · köşe 0
+  Debug        batch   0 (alt dahil   0) · köşe 0
+
+Boşta 123 kare (Profiler):
+  GC UnityEngine.CoreModule.dll!UnityEngine::UnitySynchronizationContext.ExecuteTasks() [Invoke]: 464 B, 2 karede
+  Canvas.BuildBatch: 123/123 kare, ort. 0.007 ms
+  Canvas.SendWillRenderCanvases: 0/123 kare
+  Layout: 123/123 kare, ort. 0.001 ms
+  Graphic.PerformUpdate: 0/123 kare
