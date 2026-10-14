@@ -13,11 +13,23 @@ namespace Corrigible.Desk
         [SerializeField] TrustMarkView mark;
         [SerializeField] StampView stamp;
 
+        TelexItemVM lastBound;
+        DeskLang lastLanguage;
+        DeskTheme lastTheme;
+        bool lastIllusion;
+
         public float Width => ((RectTransform)transform).sizeDelta.x;
 
         public void Bind(TelexItemVM i)
         {
+            if (i == null) return;
             var T = DeskLoc.Instance;
+            if (SameContent(lastBound, i) && lastLanguage == T.Lang && lastTheme == DeskTheme.Active && lastIllusion == DeskTheme.Illusion) return;
+            // VM'ler her Flush'ta yeniden üretilir; ayrıca aynı VM yerinde değiştirilebilir.
+            lastBound = CopyContent(i);
+            lastLanguage = T.Lang;
+            lastTheme = DeskTheme.Active;
+            lastIllusion = DeskTheme.Illusion;
             DeskUi.SetText(day, i.Day);
             DeskUi.SetText(source, T.T(i.Source));
             DeskUi.SetText(text, T.T(i.Text));
@@ -42,5 +54,19 @@ namespace Corrigible.Desk
                 sr.sizeDelta = new Vector2(tr.sizeDelta.x, 2);
             }
         }
+
+        internal static bool SameContent(TelexItemVM a, TelexItemVM b)
+        {
+            if (a == null || b == null) return a == b;
+            if (a.Id != b.Id || a.Day != b.Day || a.Source != b.Source || a.Text != b.Text || a.Trust != b.Trust || a.Fake != b.Fake || a.StampRot != b.StampRot) return false;
+            if (a.Stamp == null || b.Stamp == null) return a.Stamp == b.Stamp;
+            return a.Stamp.Text == b.Stamp.Text && a.Stamp.Color == b.Stamp.Color && a.Stamp.FontSize == b.Stamp.FontSize && a.Stamp.Rot == b.Stamp.Rot;
+        }
+
+        internal static TelexItemVM CopyContent(TelexItemVM i) => i == null ? null : new TelexItemVM
+        {
+            Id = i.Id, Day = i.Day, Source = i.Source, Text = i.Text, Trust = i.Trust, Fake = i.Fake, StampRot = i.StampRot,
+            Stamp = i.Stamp == null ? null : new StampVM { Text = i.Stamp.Text, Color = i.Stamp.Color, FontSize = i.Stamp.FontSize, Rot = i.Stamp.Rot }
+        };
     }
 }

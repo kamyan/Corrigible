@@ -17,7 +17,8 @@ namespace Corrigible.Desk
         {
             var T = DeskLoc.Instance;
             DeskUi.SetText(day, i.Day);
-            DeskUi.SetText(source, T.T(i.Source));
+            DeskUi.SetText(source, i.Critical && !i.Fake ? Corrigible.Core.Loc.F("KRİTİK · {0}", T.T(i.Source)) : T.T(i.Source));
+            DeskUi.Tint(source, i.Critical && !i.Fake ? "ink.red" : "ink.ink2");
             var trust = DeskUi.ParseTrust(i.Trust);
             bool useStamp = i.Fake || trust == TrustLevel.Verified;
             DeskUi.SetActive(stamp, useStamp);

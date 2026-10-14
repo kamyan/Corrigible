@@ -15,6 +15,10 @@ namespace Corrigible.Core
         public const int TeamMonitorDays = 3, TeamAuditDays = 2;
         public const int TeamMax = 4, TeamHireDays = 4;
         public const double TeamHireFon = 45, RaidFon = 30, RaidSg = 6;
+        public double TeamHireCost => ModernEconomy ? B.teamHireCost : TeamHireFon;
+        public int TeamFormationDays => ModernEconomy ? B.teamHireDays : TeamHireDays;
+        public double RaidCost => ModernEconomy ? B.raidCost : RaidFon;
+        public double RaidSgCost => ModernEconomy ? B.raidSg : RaidSg;
         public static readonly string[] RaidTraits = { "kopya", "yedek", "hizlanma", "aldatma", "medya" };
 
         void SetupExperimental(ExpOptions exp)
@@ -64,7 +68,7 @@ namespace Corrigible.Core
             }
         }
 
-        public ActResult MoveTeam(string teamId, string regionId) => Rec(MoveTeamCore(teamId, regionId), "team", teamId, regionId);
+        public ActResult MoveTeam(string teamId, string regionId) => RunCommand(() => MoveTeamCore(teamId, regionId), "team", teamId, regionId);
 
         ActResult MoveTeamCore(string teamId, string regionId)
         {
@@ -80,17 +84,19 @@ namespace Corrigible.Core
             return ActResult.Success(Loc.F("{0} ekibi yola çıktı: {1}, {2} gün.", t.Name, Def(regionId).Name, t.Eta));
         }
 
-        public ActResult HireTeam() => Rec(HireTeamCore(), "hire");
+        public ActResult HireTeam() => RunCommand(HireTeamCore, "hire");
 
         ActResult HireTeamCore()
         {
             if (S.Ending != null) return ActResult.Fail(Loc.T("Oyun bitti."));
             if (S.Teams.Count >= TeamMax) return ActResult.Fail(Loc.F("En fazla {0} saha ekibi kurulabilir.", TeamMax));
-            if (S.Fon < TeamHireFon) return ActResult.Fail(Loc.F("Yeni ekip {0} fon ister.", TeamHireFon));
-            S.Fon -= TeamHireFon;
-            var t = NewTeam(S.Teams.Count, TeamHireDays);
+            if (S.Fon < TeamHireCost) return ActResult.Fail(Loc.F("Yeni ekip {0} fon ister.", TeamHireCost));
+            S.Fon -= TeamHireCost;
+            // Eski kayıtların kimlik üretimi korunur; yeni krizlerde kayıp ekibin boş kimliği yeniden kullanılır.
+            int index = ModernEconomy ? Array.FindIndex(TeamNames, name => !S.Teams.Any(member => member.Id == name.ToLowerInvariant())) : S.Teams.Count;
+            var t = NewTeam(index, TeamFormationDays);
             S.Teams.Add(t);
-            return ActResult.Success(Loc.F("{0} ekibi kuruluyor: {1} gün sonra karargâhta hazır.", t.Name, TeamHireDays));
+            return ActResult.Success(Loc.F("{0} ekibi kuruluyor: {1} gün sonra karargâhta hazır.", t.Name, TeamFormationDays));
         }
 
         /// <summary>Baskın yapılamıyorsa nedeni, yapılabiliyorsa null.</summary>
@@ -104,14 +110,14 @@ namespace Corrigible.Core
             if (r.Left) return Loc.T("Bölge ittifak dışı.");
             if (!r.Detected && S.CoreKnown != regionId) return Loc.T("Önce bu bölgede YZ varlığı doğrulanmalı.");
             if (IdleTeamAt(regionId) == null) return Loc.T("Bölgede boşta saha ekibi yok.");
-            if (S.Fon < RaidFon || S.Sg < RaidSg) return RaidCheckResources();
+            if (S.Fon < RaidCost || S.Sg < RaidSgCost) return RaidCheckResources();
             return null;
         }
 
-        public string RaidCheckResources() => Loc.F("Baskın {0} fon ve {1} siyasi güç ister.", RaidFon, RaidSg);
+        public string RaidCheckResources() => Loc.F("Baskın {0} fon ve {1} siyasi güç ister.", RaidCost, RaidSgCost);
 
         /// <summary>Bölgedeki boşta ekip binaya girer. Strateji katmanı baskın bitene kadar durur; sonucu ResolveRaid getirir.</summary>
-        public ActResult StartRaid(string regionId) => Rec(StartRaidCore(regionId), "raid", regionId);
+        public ActResult StartRaid(string regionId) => RunCommand(() => StartRaidCore(regionId), "raid", regionId);
 
         ActResult StartRaidCore(string regionId)
         {
@@ -119,7 +125,7 @@ namespace Corrigible.Core
             if (why != null) return ActResult.Fail(why);
             var r = S.Region(regionId);
             var t = IdleTeamAt(regionId);
-            S.Fon -= RaidFon; S.Sg -= RaidSg;
+            S.Fon -= RaidCost; S.Sg -= RaidSgCost;
             S.Raids++;
             int seed = (int)Math.Floor(S.Rng.Next() * 2147483647);
             S.Raid = new RaidState
@@ -137,7 +143,7 @@ namespace Corrigible.Core
             return ActResult.Success();
         }
 
-        public ActResult ResolveRaid(RaidResult result) => Rec(ResolveRaidCore(result), "raidres", result?.Encode());
+        public ActResult ResolveRaid(RaidResult result) => RunCommand(() => ResolveRaidCore(result), "raidres", result?.Encode());
 
         ActResult ResolveRaidCore(RaidResult result)
         {
@@ -152,9 +158,10 @@ namespace Corrigible.Core
             int col = result.Collateral;
             if (col > 0)
             {
-                r.Econ = Math.Max(5, r.Econ - 5 * col);
-                r.Trust = Math.Max(0, r.Trust - 2 * col * lm * DepMul(r));
-                o.Add(Loc.F("{0} sivil sunucu hasar gördü: ekonomi −{1}, güven düştü.", col, 5 * col));
+                double economyLoss = ModernEconomy ? B.raidEconomyLossPerCollateral : 5;
+                r.Econ = Math.Max(ModernEconomy ? B.damagedEconomyFloor : 5, r.Econ - economyLoss * col);
+                r.Trust = Math.Max(0, r.Trust - (ModernEconomy ? B.raidTrustLossPerCollateral : 2) * col * lm * DepMul(r));
+                o.Add(Loc.F("{0} sivil sunucu hasar gördü: ekonomi −{1}, güven düştü.", col, economyLoss * col));
             }
             int down = result.Down;
             if (t != null)
@@ -204,7 +211,7 @@ namespace Corrigible.Core
             else
             {
                 // Başarısızlık: YZ karşı saldırıya geçer ve binayı güçlendirir (sonraki baskında daha çok robot); çekirdek yerinde kalır
-                r.Trust = Math.Max(0, r.Trust - 10 * lm);
+                r.Trust = Math.Max(0, r.Trust - (ModernEconomy ? B.raidFailureTrustLoss : 10) * lm);
                 r.Inf = Math.Min(100, r.Inf + 15);
                 S.Cp += 10;
                 o.Add(result.Retreat ? Loc.T("Ekip geri çekildi. Operasyon başarısız.") : Loc.T("Operasyon başarısız: hedef dolap ayakta kaldı."));

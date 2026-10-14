@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Corrigible.Core;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -35,6 +36,18 @@ namespace Corrigible.Desk
         [SerializeField] float branchGap = 10;
         [SerializeField] float headerHeight = 20;
 
+        [Header("Proje ağacı")]
+        [Tooltip("Kâğıt proje kartı şablonu. Boşsa önceki tablo düzeni korunur.")]
+        [SerializeField] ResearchRowView cardTemplate;
+        [SerializeField] ResearchConnectionGraphic connections;
+        [SerializeField] TMP_Text[] stageHeaders = System.Array.Empty<TMP_Text>();
+        [SerializeField] float branchLabelWidth = 116;
+        [SerializeField] float cardWidth = 270;
+        [SerializeField] float columnGap = 28;
+        [SerializeField] float rowGap = 14;
+        [SerializeField] float stagesHeight = 38;
+        [SerializeField] Vector2 minimumTreeSize = new Vector2(1320, 650);
+
         DeskPool<RectTransform> branchPool;
         readonly List<Vector2> branchSpans = new List<Vector2>();
 
@@ -47,7 +60,9 @@ namespace Corrigible.Desk
             return true;
         }
         DeskPool<ResearchRowView> rowPool;
+        DeskPool<ResearchRowView> cardPool;
         readonly List<ResearchRowView> rows = new List<ResearchRowView>();
+        static readonly string[] StageNames = { Loc.N("Temeller"), Loc.N("Uygulama"), Loc.N("Dönüşüm"), Loc.N("Hizalama") };
 
         public FolderWindow Window => window;
         public event System.Action<string, bool> ResearchAction;
@@ -112,6 +127,7 @@ namespace Corrigible.Desk
             }
 
             if (!Application.isPlaying && !DeskUi.EditPreview) return;   // Dinamik listeler yalnızca çalışırken kurulur
+            if (cardTemplate != null) { BindTree(r); return; }
             branchPool ??= new DeskPool<RectTransform>(branchTemplate, branchesRoot);
             rowPool ??= new DeskPool<ResearchRowView>(rowTemplate, branchesRoot);
             rows.Clear();
@@ -149,6 +165,90 @@ namespace Corrigible.Desk
             }
             branchPool.Trim(r.Branches.Count);
             rowPool.Trim(ri);
+            branchesRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Mathf.Max(0, y - branchGap));
+        }
+
+        void BindTree(ResearchVM r)
+        {
+            branchPool ??= new DeskPool<RectTransform>(branchTemplate, branchesRoot);
+            cardPool ??= new DeskPool<ResearchRowView>(cardTemplate, branchesRoot);
+            if (rowPool != null) rowPool.Trim(0);
+            rows.Clear(); branchSpans.Clear();
+            for (int i = 0; i < stageHeaders.Length && i < StageNames.Length; i++)
+            {
+                var label = stageHeaders[i];
+                if (label == null) continue;
+                DeskUi.SetText(label, Loc.F("AŞAMA {0} · {1}", i + 1, Loc.T(StageNames[i])));
+                DeskUi.Place(label.rectTransform, branchLabelWidth + i * (cardWidth + columnGap), 0, cardWidth, 28);
+            }
+            var byId = new Dictionary<string, ResearchRowView>();
+            var projects = new Dictionary<string, ResearchProjectVM>();
+            int index = 0;
+            float y = stagesHeight;
+            for (int b = 0; b < r.Branches.Count; b++)
+            {
+                var branch = r.Branches[b];
+                float[] columnHeights = new float[4];
+                float laneHeight = 144;
+                for (int p = 0; p < branch.Projects.Count; p++)
+                {
+                    var vm = branch.Projects[p];
+                    bool fresh = index >= cardPool.Count;
+                    var row = cardPool.Get(index++);
+                    if (fresh) row.Action += (id, start) => ResearchAction?.Invoke(id, start);
+                    var rt = (RectTransform)row.transform;
+                    DeskUi.SetWidth(rt, cardWidth);
+                    row.Bind(vm, r.LockedLabel, true);
+                    // Eski galeri VM'leri aşama taşımıyorsa yalnızca sıra kullanılır; ikinci teknoloji tablosu yoktur.
+                    int stage = Mathf.Clamp(vm.Stage > 0 ? vm.Stage : p + 1, 1, 4) - 1;
+                    DeskUi.Place(rt, branchLabelWidth + stage * (cardWidth + columnGap), y + columnHeights[stage], cardWidth, row.Height);
+                    columnHeights[stage] += row.Height + 10;
+                    laneHeight = Mathf.Max(laneHeight, columnHeights[stage] - 10);
+                    rows.Add(row);
+                    if (!string.IsNullOrEmpty(row.ProjectId)) { byId[row.ProjectId] = row; projects[row.ProjectId] = vm; }
+                }
+                var header = branchPool.Get(b);
+                DeskUi.Place(header, 0, y + 12, branchLabelWidth - 12, 48);
+                var texts = header.GetComponentsInChildren<TMP_Text>(true);
+                if (texts.Length > 0)
+                {
+                    DeskUi.SetText(texts[0], DeskLoc.Instance.T(branch.Title));
+                    DeskUi.Place(texts[0].rectTransform, 0, 0, branchLabelWidth - 12, 23);
+                    texts[0].textWrappingMode = TextWrappingModes.Normal;
+                    texts[0].overflowMode = TextOverflowModes.Overflow;
+                    texts[0].alignment = TextAlignmentOptions.TopLeft;
+                }
+                if (texts.Length > 1)
+                {
+                    DeskUi.SetText(texts[1], branch.Progress);
+                    DeskUi.Place(texts[1].rectTransform, 0, 26, branchLabelWidth - 12, 20);
+                    texts[1].alignment = TextAlignmentOptions.TopLeft;
+                }
+                var rule = header.GetComponentInChildren<Image>(true);
+                if (rule != null) DeskUi.SetActive(rule, false);
+                branchSpans.Add(new Vector2(y, y + laneHeight));
+                y += laneHeight + rowGap;
+            }
+            branchPool.Trim(r.Branches.Count); cardPool.Trim(index);
+            float width = branchLabelWidth + 4 * cardWidth + 3 * columnGap + 12;
+            branchesRoot.sizeDelta = new Vector2(Mathf.Max(minimumTreeSize.x, width), Mathf.Max(minimumTreeSize.y, y + 4));
+            if (connections != null)
+            {
+                var links = new List<ResearchConnectionGraphic.Link>();
+                foreach (var pair in projects)
+                {
+                    var vm = pair.Value;
+                    if (string.IsNullOrEmpty(vm.PrerequisiteId) || !byId.TryGetValue(vm.PrerequisiteId, out var source)) continue;
+                    links.Add(new ResearchConnectionGraphic.Link
+                    {
+                        From = (RectTransform)source.transform, To = (RectTransform)byId[pair.Key].transform,
+                        Complete = vm.State == "done", Satisfied = projects[vm.PrerequisiteId].State == "done",
+                        Running = vm.State == "running" || vm.State == "paused" || vm.State == "stopped",
+                    });
+                }
+                connections.transform.SetAsFirstSibling();
+                connections.SetLinks(links);
+            }
         }
 
         static void Place(RectTransform rt, float y)

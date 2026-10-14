@@ -6,8 +6,8 @@ const K = globalThis.Baskin;
 const print = globalThis.print || console.log;
 
 // 1) Temel oyun — C# PlayScripted ile aynı senaryo: Kuzey Amerika ve Çin'e izleme, hediyeleri kabul, tespitte Yorumlanabilirlik
-function playScripted(type, seed) {
-  const S = P.newGame(null, type, seed);
+function playScripted(type, seed, economyVersion = 3) {
+  const S = P.newGame(null, type, seed, { economyVersion });
   P.act(S, 'izleme', 'na'); P.act(S, 'izleme', 'cn');
   while (!S.ending && S.day < 2000) {
     if (S.pendingGift) P.resolveGift(S, 'accept');
@@ -22,8 +22,8 @@ for (const [type, seed] of [['manipulator', 7], ['kahin', 99], ['solucan', 12345
 
 // 2) Deneysel mod — C# PlayScriptedExp ile aynı senaryo: Alfa→na, Bravo→cn; varınca izleme; tespitte Yorumlanabilirlik;
 // çekirdek bilinince Charlie'yi gönder ve baskın yap (sonuç sabit: başarılı, 1 sivil, 1 yaralı)
-function playScriptedExp(type, seed, ts) {
-  const S = P.newGame(null, type, seed, { exp: { teams: true, timeScale: ts, startTeams: 3 } });
+function playScriptedExp(type, seed, ts, economyVersion = 3) {
+  const S = P.newGame(null, type, seed, { economyVersion, exp: { teams: true, timeScale: ts, startTeams: 3 } });
   P.moveTeam(S, 'alfa', 'na'); P.moveTeam(S, 'bravo', 'cn');
   while (!S.ending && S.day < 3000) {
     if (S.pendingGift) P.resolveGift(S, 'accept');
@@ -40,6 +40,58 @@ function playScriptedExp(type, seed, ts) {
 print('// FullGameExp_MatchesBrowserPrototype');
 for (const [type, seed, ts] of [['manipulator', 7, 1.5], ['kahin', 99, 2], ['solucan', 12345, 1.5]])
   print(`[TestCase("${type}", ${seed}u, ${ts}, "${playScriptedExp(type, seed, ts)}")]`);
+
+// Eski ekonomi kuralı: yeni alanlar ve varsayılan rezerv eski kayıtların sayılarını değiştirmemeli.
+print('// LegacyFullGame_MatchesHistoricalBrowserPrototype');
+for (const [type, seed] of [['manipulator', 7], ['kahin', 99], ['solucan', 12345]])
+  print(`[TestCase("${type}", ${seed}u, "${playScripted(type, seed, 2)}")]`);
+print('// LegacyFullGameExp_MatchesHistoricalBrowserPrototype');
+for (const [type, seed, ts] of [['manipulator', 7, 1.5], ['kahin', 99, 2], ['solucan', 12345, 1.5]])
+  print(`[TestCase("${type}", ${seed}u, ${ts}, "${playScriptedExp(type, seed, ts, 2)}")]`);
+
+// Yeni komutların kaynak referansı: EconomyTests.PlayRecorded ile aynı, gerçek oyuncu komutlarıyla yürür.
+function playRecorded(seed, until) {
+  const oldFon = P.BAL.startFon, oldSg = P.BAL.startSg;
+  P.BAL.startFon = 2000; P.BAL.startSg = 200;
+  const S = P.newGame(null, 'manipulator', seed, { exp: { teams: false, timeScale: 1.5 } });
+  P.BAL.startFon = oldFon; P.BAL.startSg = oldSg;
+  for (const r of S.regions) P.act(S, 'izleme', r.id);
+  for (const node of ['anomali_1', 'anomali_2', 'dogrulama', 'guclu_1', 'guclu_2', 'kuantum', 'bilinc_1', 'bilinc_2', 'analog']) P.buyOperation(S, node);
+  P.act(S, 'karantina', 'weu');
+  let pausedAt = -1, pauseDone = false;
+  while (!S.ending && S.day < until) {
+    if (S.pendingGift) P.resolveGift(S, 'reject');
+    if (S.day === 10) {
+      P.act(S, 'karantina', 'weu'); P.startRecovery(S, 'weu');
+      P.diplomaticTalk(S, S.regions.find(r => r.trust < 70).id);
+    }
+    if (S.aware) {
+      if (S.budgetLevel < 2) P.buyBudgetUpgrade(S);
+      if (!S.research.cur && !P.done(S, 'yorum')) P.startResearch(S, 'yorum');
+    }
+    if (!pauseDone && S.research.cur && S.research.prog >= 2) {
+      P.setResearchPaused(S, true); pausedAt = S.day; pauseDone = true;
+    }
+    if (S.research.paused && S.day >= pausedAt + 8) P.setResearchPaused(S, false);
+    P.step(S); S.events = [];
+  }
+  return S;
+}
+function economyHash(S) {
+  const F = x => x.toFixed(6), bit = x => x ? 1 : 0;
+  const snapshot = [S.day, S.ending || '', F(S.fon), F(S.sg), F(S.tek), F(S.cp), S.rngState >>> 0,
+    S.economyVersion, S.budgetLevel, S.operations.join(','), S.research.cur || '', F(S.research.prog), bit(S.research.paused),
+    F(S.research.totalPaid), F(S.lastIncome.total), F(S.lastResearchPayment), S.core || '', S.coreKnown || '', S.traits.join(',')].join('|')
+    + '|' + S.regions.map(r => [r.id, F(r.inf), F(r.econ), F(r.trust), F(r.dep), bit(r.left), bit(r.q), r.off, r.diplomacyUntil].join('/')).join(';')
+    + '|' + S.recoveryJobs.map(j => [j.region, j.team || '', j.finishDay].join('/')).join(';')
+    + '|' + S.transactionLedger.map(t => [t.day, t.kind, t.id || '', F(t.fon), F(t.sg)].join('/')).join(';');
+  let hash = 2166136261;
+  for (let i = 0; i < snapshot.length; i++) hash = Math.imul(hash ^ snapshot.charCodeAt(i), 16777619);
+  return (hash >>> 0).toString(16).toUpperCase().padStart(8, '0');
+}
+print('// EconomyCommands_MatchBrowserPrototype');
+for (const [seed, until] of [[7, 12], [7, 80], [99, 12], [99, 80]])
+  print(`[TestCase(${seed}u, ${until}, "${economyHash(playRecorded(seed, until))}")]`);
 
 // 3) Baskın — basit senaryo oyuncusu oynar, hamleleri kaydedilir; C# aynı hamleleri tekrar oynayıp son durumu karşılaştırır
 function sig(B) {

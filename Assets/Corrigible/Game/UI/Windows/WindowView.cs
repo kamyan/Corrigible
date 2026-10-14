@@ -16,6 +16,8 @@ namespace Corrigible.Game.UI
         [Tooltip("Sürükleme yalnızca bu alandan başlar (başlık çubuğu). Boşsa pencerenin tamamı.")]
         [SerializeField] RectTransform handle;
         [SerializeField] StyledButton close;
+        [Tooltip("Kaydırmalı bölge penceresinin tamamını ekran içinde tutar.")]
+        [SerializeField] bool keepWholeWindowVisible;
 
         public string Key => key;
         public bool IsOpen => gameObject.activeSelf;
@@ -122,7 +124,8 @@ namespace Corrigible.Game.UI
             var a = Rt.anchoredPosition;
             float left = a.x - r.width * pv.x, top = a.y + r.height * (1 - pv.y);
             left = Mathf.Clamp(left, parent.xMin, Mathf.Max(parent.xMin, parent.xMax - r.width));
-            top = Mathf.Clamp(top, parent.yMin + Mathf.Min(r.height, 48), parent.yMax);
+            float visibleHeight = keepWholeWindowVisible ? Mathf.Min(r.height, parent.height) : Mathf.Min(r.height, 48);
+            top = Mathf.Clamp(top, parent.yMin + visibleHeight, parent.yMax);
             Rt.anchoredPosition = new Vector2(left + r.width * pv.x, top - r.height * (1 - pv.y));
         }
     }

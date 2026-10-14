@@ -1,12 +1,12 @@
 # Durum, kararlar ve açık işler
 
-_Son güncelleme: 2026-10-13_
+_Son güncelleme: 2026-10-14_
 
 ## Nerede kaldık
 
 Oyun baştan sona oynanabilir: giriş ve rakip seçimi, rehberli eğitim, kriz masası (harita, bölge eylemleri, araştırma,
 YZ günlüğü, haber bandı), hediye/perde/sahte zafer/son pencereleri, kayıt ve devam, Seni Tanıyan Rakip profili.
-112/112 EditMode testi geçiyor (oyun + analist masası); C# simülasyonu tarayıcı prototipiyle birebir aynı (deneysel mod ve baskın motoru dahil).
+229/229 EditMode testi geçiyor (oyun + analist masası); C# simülasyonu tarayıcı prototipiyle birebir aynı (deneysel mod ve baskın motoru dahil).
 Deneysel mod (saha ekipleri, zaman ölçeği, baskın) Unity'de oynanabilir ve varsayılan olarak açık. Oyun Türkçe ve
 İngilizce (giriş penceresindeki dil düğmesi; ilk açılışta sistem diline göre).
 Baskın sunumu `Docs/SonSalter_Baskin_Paketi` referansına taşınıyor: ayrı `Baskin` sahnesindeki operasyon maketi ve
@@ -15,6 +15,42 @@ doğrulaması tamamlanınca sonuçları aşağıya eklenecek; yukarıdaki 111/11
 
 **Git:** Depo `git@github.com:kamyan/Corrigible.git`, dal `main`. Bu belgelerdeki işin büyük kısmı **henüz commit
 edilmedi** (kullanıcı commit istemedi). Commit'i kullanıcı isteyince yap.
+
+## Gösterge ipuçları, bölge fonu ve kritik haberler (2026-10-14)
+
+- Üst gösterge döküm fişleri hücrenin altına sabitlendi. Panelin gerçek ebeveyn uzayı ve Canvas kamerası kullanılır;
+  ekran kenarları ve büyük içerik sınırlandırılır. Main'in fare ipucu da aynı koordinat sorununa karşı düzeltildi.
+- Bölge kartlarında güncel fon/gün katkısı, bölgesel gelirdeki pay ve katkı kesintisinin nedeni var. Merkez ödeneği
+  bölgelere dağıtılmaz; tespit, zaman ölçeği, bütçe, kampanya ve eski ekonomi kuralları gelir dökümünden korunur.
+- Yeni `alarm` haberi Haberler panelini öne getirip ilgili satıra kaydırır. Başlık kırmızı KRİTİK olarak işaretlenir;
+  haberin doğruluk işareti korunur. Giriş, olay, baskın, eğitim ve karar kartları sırasında bildirim bekler.
+  Kapatılmış eski haber veri yenilenince yeniden açılmaz; kayıt yüklemek geçmiş alarmları yeni bildirim yapmaz.
+- Teleks yeni VM nesnesi geldi diye başa alınmaz. Gerçek içerik karşılaştırılır, aynı metin tekrar ölçülmez;
+  haber ekleme/silmede görünür ortak haberin konumu korunur. Kısa listeler görünümü dolduracak kadar yinelenir;
+  kesirli kaydırma, döngü, hover ile durma ve ekran genişliği değişimi korunur.
+- 229/229 EditMode (33 yeni vaka); kontrollü Play'de beş gösterge fişi ekran içinde ve kaynağın 8 px altında,
+  canlı fon hesabı, çevrimdışı katkı kesintisi, kritik panelin açılması/kapatılması ve karar sırasında erteleme doğrulandı.
+- Karar kapanınca yeni veri yayını gerekmeksizin panel açılması ve 180 karede kesintisiz teleks ilerlemesi doğrulandı;
+  TR/EN metin denetimi 0 hata/0 uyarı, 1920×1080 ve 1280×720 görsel kontrolü tamamlandı.
+  Geçici düzenleyici kaldırıldıktan sonra temiz derlemede C# hatası yok. Özgün oyuncu verileri/tercihler geri yüklendi;
+  eşzamanlı oluşan yeni oyun kaydı korunup ayrıca yedeklendi.
+- Kanıt: `UI-BILDIRIM-DUZELTMELERI-SONUCLARI.json`; görüntüler `Captures/ui-*.png`.
+
+## Bütünleşik ekonomi v1 (2026-10-14)
+
+- Yeni krizlerde merkez + bölgesel katkı + bütçe anlaşması gelir modeli; 15 fon Hizalama rezervi.
+- 9 peşin operasyon, 2 bütçe kademesi ve 3 süreli Hizalama kartı. Elle duraklatma/sürdürme, gerçek ödeme ve önizleme.
+- Altyapı 2 fon/4 gün; diplomasi 8 fon +2 SG, ittifaka anlık dönüş ve 20×k gün bölgesel bekleme.
+- İşlem defteri, ayrı son ödeme ve canlı tahmin; GameController/komut kaydı/replay bağlantıları.
+- DeskGame ve Main'de yeni işlemler; ekip alımı/ikamesi Desk'te erişilebilir. Sahne/prefab referansları kalıcıdır.
+- Kayıt biçimi 3; ruleVersion1/2 kayıtlar eski ekonomi ve araştırma kurallarıyla devam eder.
+- Geçici sahne düzenleme script'leri kaldırıldıktan sonra son EditMode koşusu 196/196 geçti (50,91 sn).
+  C#/JS modern ve legacy parite; kontrollü Play'de satın alma, pause/resume, bütçe,
+  diplomasi, ekip alımı ve dört günlük onarım akışı. Yeni metinlerin TR/EN çevirileri tamamlandı.
+- Aynı 80 tohumlu orijinal bot karşılaştırmasında pasif her rakibe kaybediyor; usta kazanma oranları
+  Solucan %96→%89, Manipülatör %81→%93, Kâhin %70→%96. Botlar yeni bütçe/toparlanma araçlarını kullanmıyor.
+  Bu sonuç insan dengesi değildir; Kâhin'in yeni satın alma düzeninde kolaylaşması sonraki denge turunda incelenmeli.
+- Ayrıntı ve kanıt: `BUTUNLESIK-EKONOMI-SISTEMI.md`, `BUTUNLESIK-EKONOMI-UYGULAMA-SONUCLARI.json`.
 
 ## Gelişim sırası (kısa tarihçe)
 
@@ -102,6 +138,17 @@ edilmedi** (kullanıcı commit istemedi). Commit'i kullanıcı isteyince yap.
    Doğrulama: 112/112 EditMode testi; Play’de taşıma, geri alma, önizleme, makine evresinde girdi kilidi, geri çekilme ve başarı/başarısızlık fişleri kontrol edildi. TR/EN ve 1920×1080, 1920×1200, 2560×1440, 21:9 görüntüleri incelendi.
    Önizleme: `Docs/Captures/Baskin_Analist_Masasi.png`.
 
+18. **Araştırma proje panosu** (2026-10-14): dokuz proje dört aşamada ve mevcut dört dalda gösteriliyor. Kâğıt kartlar
+   etkiyi, maliyeti, ön koşulu ve ilerlemeyi taşır; iplikler gerçek araştırma bağımlılıklarını bağlar. Doğrulama Ağı artık
+   Anomali Algılama sonrasında açılır (C# ve JS birlikte). Diğer kilitler, maliyetler, süreler ve zafer yolları korunur.
+   Gözlemsiz Hizalama'da hayalî uzun ETA yerine yapılacak iş gösterilir. Pano **R** veya dock üzerinden açılır;
+   geniş pencere ilk açılışta haritayı örtmez. Kaynak prefab/sahnedir; tek seferlik düzenleyici kaldırıldı.
+   Kayıt sürümü 2; v1 araştırma geçmişi yeni Doğrulama ön koşulundan muaf oynatılır, yeni oyuncu komutları kurala uyar.
+   Doğrulama: **141/141 EditMode**, temel/deneysel/baskın paritesi aynı, N=200 sabit tohumlu denge çıktıları aynı.
+   Play'de karttan başlatma, komut kaydı, Anomali tamamlanınca Doğrulama'nın açılması, gözlem uyarısı ve pano kaydırması
+   kontrol edildi; TR/EN metin denetimi 0 hata/0 uyarı. Test öncesi kayıt/profil geri yüklendi.
+   Önizleme: `Docs/Captures/Arastirma_Proje_Panosu.png`.
+
 ## Deneysel mod: saha ekipleri, zaman ölçeği, baskın (2026-10-10)
 
 Ayrıntılı kurallar: `Prototype/README.md`. Unity'de de var: `ExpOptions` ile `NewGame`'e verilir (`S.Exp`); kapalıyken
@@ -144,12 +191,12 @@ baskın sahnesindedir.
   bu fikri sessizce bozar.
 - **Komut kaydı ile kayıt** (durum dökümü yerine). Küçük dosya, sürüm değişikliğine dayanıklı değil ama determinizmi
   sürekli test eder. Not: simülasyon kuralı değişirse eski kayıtlar farklı oynanır; yayın sonrası kayıt sürümlemesi gerekecek
-  (`GameRecord.version`).
+  (`GameRecord.version`). Ekonomi v3 bu ayrımı `ruleVersion` ile uygular; eski kayıtların kuralları korunur.
 - **uGUI, UI Toolkit değil.** Kullanıcı UI'yı Scene görünümünde görmek ve Canvas ile çalışmak istedi.
 - **Kalıcı sahne kurucusu yok.** Sahne ve prefab'lar elle düzenlenebilsin; koddan değişiklikler tek seferlik script'lerle.
 - **Acil durum fonu, gelir payı değil.** Kullanıcı "araştırma bütçesi" seçti. Gelirin %75'i sınırı denendi: Hizalama
   çok yavaşladı, usta botun kazanma oranı %86–95'ten %2–11'e düştü. Rezerv kuralına geçildi, varsayılan 0 (denge ve parite
-  korunur). Rezerv 15/30 da botlarda kazanmayı düşürüyor (botlar biriken parayı harcamıyor), bu yüzden ayar oyuncuya
+  korunur; bu önceki ekonominin kararıdır). Yeni ekonomi v3 varsayılanı 15'tir. Eski rezerv 15/30 da botlarda kazanmayı düşürüyor (botlar biriken parayı harcamıyor), bu yüzden ayar oyuncuya
   bırakılmış bir takas. Değer Kilidi'nin (4,34/gün) gelirden (~3,4/gün) pahalı olması bilinçli bir son düzlük gerilimi;
   fon göstergesi ("+3,5/gün · araştırma −4,3") ve "Araştırma bütün fonu yutuyor" ipucu bunu görünür kılar.
 - **Eğitimde kaynak gerektiren adımlar zamanı durdurmaz**, yoksa fonu yetmeyen oyuncu sonsuz duraklamada kalır.
@@ -202,7 +249,7 @@ baskın sahnesindedir.
 - **Ses yok**, animasyon yok (yalnızca sahte zafer glitch'i ve toast solması). Ayarlar menüsü (çözünürlük, ses, dil) yok.
 - **Yerelleştirme:** metinler kodda ve asset'lerde Türkçe; İngilizce için bir yerelleştirme katmanı gerekecek
   (Steam'de İngilizce şart). `GameData` ve `Simulation` içindeki oyuncuya görünen metinler ayrıştırılmalı.
-- **Kayıt sürümleme:** kural değişince eski kayıtlar farklı oynanır; `GameRecord.version` kontrolü eklenmedi.
+- **Kayıt sürümleme:** biçim v3 ve ekonomi `ruleVersion` 1/2/3 ayrımı uygulandı. Gelecekte yeni kural değişiklikleri için aynı profil disiplini sürdürülmeli.
 - **Çözünürlük:** 1920×1080 referans. Analist masasında F7 oran kontrolleri yapıldı; yeni baskın sunumunun oran
   kontrolü bekliyor. Baskında yan sütunlar referans Canvas uzayında 376 px, görüş alanı aralarında gerilir; eski Main
   arayüzünün 400 px yan paneli ayrı yerleşimdir.

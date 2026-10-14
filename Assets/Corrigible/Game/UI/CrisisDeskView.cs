@@ -88,6 +88,7 @@ namespace Corrigible.Game.UI
         int tab, logRendered = -1, logSeen, lastSpeed = 1;
         bool killArmed; Coroutine killDisarm;
         string newsSig = "";
+        bool criticalNewsPending;
 
         public bool ReplayMode { get; private set; }
         public string SelectedRegion => map.Selected;
@@ -124,6 +125,8 @@ namespace Corrigible.Game.UI
             };
             region.SendTeam += (team, id) => Report(game.MoveTeam(team, id), true);
             region.RaidClicked += id => Report(game.StartRaid(id));
+            region.RecoveryClicked += id => Report(game.StartRecovery(id));
+            region.DiplomacyClicked += id => Report(game.DiplomaticTalk(id));
             if (teams != null)
             {
                 teams.RegionClicked += Select;
@@ -138,7 +141,12 @@ namespace Corrigible.Game.UI
                 double v = Simulation.ResearchReserves[i];
                 OnClick(reserveButtons[i].Button, () => { var r = game.SetResearchReserve(v); if (!r.Ok) toast.Show(r.Msg); });
             }
-            foreach (var row in research) row.StartClicked += id => { var r = game.StartResearch(id); if (!r.Ok) toast.Show(r.Msg); };
+            foreach (var row in research) row.StartClicked += id =>
+            {
+                var r = Sim.ModernEconomy && GameData.HasOperation(id) ? game.BuyOperation(id)
+                    : Sim.ModernEconomy && S.Research.Cur == id ? game.SetResearchPaused(!Sim.ResearchPaused) : game.StartResearch(id);
+                Report(r);
+            };
             foreach (var row in headlines) row.VerifyClicked += id =>
             {
                 var res = game.Verify(id);
@@ -192,6 +200,11 @@ namespace Corrigible.Game.UI
             var kb = Keyboard.current;
             if (kb != null && kb.spaceKey.wasPressedThisFrame && !modals.IsOpen && game.Sim.S.Raid == null) game.SetSpeed(game.Speed == 0 ? lastSpeed : 0);
             if (game.Speed > 0) lastSpeed = game.Speed;
+            if (criticalNewsPending && S.Ending == null && !S.Blocked && !modals.IsOpen && !game.Hold && !game.TutorialHold)
+            {
+                criticalNewsPending = false;
+                windows.Open(DeskWindows.News);
+            }
         }
 
         void Report(ActResult r, bool showSuccess = true)
@@ -206,7 +219,7 @@ namespace Corrigible.Game.UI
         // ---------- Oyun akışı ----------
         void OnNewGame()
         {
-            ReplayMode = false; logRendered = -1; logSeen = 0; newsSig = "";
+            ReplayMode = false; logRendered = -1; logSeen = 0; newsSig = ""; criticalNewsPending = false;
             trend.Clear();
             map.Bind(Sim);
             map.Selected = null;
@@ -229,7 +242,11 @@ namespace Corrigible.Game.UI
         void OnEvents(List<SimEvent> events)
         {
             foreach (var e in events) if (e.Type == SimEventType.Team && e.Text != null) { toast.Show(e.Text, true); windows.SetBadge(DeskWindows.Teams, true); }
-            if (events.Any(e => e.Type == SimEventType.News && e.Headline != null && e.Headline.Kind == "alarm")) windows.SetBadge(DeskWindows.News, true);
+            if (events.Any(e => e.Type == SimEventType.News && e.Headline != null && e.Headline.Kind == "alarm"))
+            {
+                criticalNewsPending = S.Ending == null;
+                windows.SetBadge(DeskWindows.News, true);
+            }
             var latest = events.LastOrDefault(e => e.Type == SimEventType.News);
             if (latest == null) return;
             var h = latest.Headline;
@@ -265,6 +282,7 @@ namespace Corrigible.Game.UI
             double need = Sim.ResearchNeed;
             if (need > 0) fonNote += Loc.T(" · araştırma −") + need.ToString("0.0", Tr);
             if (!S.Aware) fonNote += Loc.T(" · bütçe %40");
+            if (Sim.ModernEconomy) fonNote = Loc.F("Son gün net {0:+0.00;-0.00;0} · sonraki gelir {1:0.00}", Sim.LastIncome.Total - Sim.LastResearchPayment, Sim.FundRate);
             fon.Set(Math.Floor(S.Fon).ToString("0"), S.Fon / 2, theme.fg, fonNote);
             sg.Set(S.Sg.ToString("0.0", Tr), S.Sg / 0.6, theme.fg, "+" + Sim.SgRate.ToString("0.00", Tr) + Loc.T("/gün"));
             trust.Set(Js.Round(g.Trust).ToString(), g.Trust, g.Trust < 25 ? theme.threat : g.Trust < 40 ? theme.warn : theme.fg, Explain.TrustForecast(g, trend));

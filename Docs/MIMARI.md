@@ -93,12 +93,14 @@ Corrigible/                      (Unity proje kökü, git deposu)
 
 - `GameRecord` (`Core/GameRecord.cs`): `type, seed, hasProfile, profileAtStart, balance, commands[], day`.
   `SavedCommand { day, kind, a, b }`; türler: `act, kill, research, gift, verify, advice, reserve` ve deneysel modda
-  `team, hire, raid, raidres` (`RaidResult.Encode`). Deneysel ayarlar `hasExp/exp` alanlarında.
+  `team, hire, raid, raidres` (`RaidResult.Encode`). Yeni ekonomi komutları `operation, recovery, diplomacy, research_pause`.
+  Deneysel ayarlar `hasExp/exp` alanlarında. Biçim `version=3`; ekonomik kural profili ayrı `ruleVersion` alanında.
+  v1/v2 kayıtlar eski kural profiliyle yeniden oynatılır ve devam eder.
 - `Simulation.Record` her başarılı komutu `Rec(...)` ile ekler. `Replay.Restore(rec)` yeni oyunu kurar, her komutun gününe
   kadar `Step` eder ve komutu uygular, sonra kayıt gününe kadar ilerler.
 - `GameController.Save()` → `persistentDataPath/savegame.json` (JsonUtility). `SaveAndRestore_ReproducesExactState`
   testi JSON gidiş-dönüşünü doğrular.
-- **Yeni bir oyuncu komutu eklerken:** `Simulation`'a `XCore` + `public ActResult X(...) => Rec(XCore(...), "kind", ...)`,
+- **Yeni bir oyuncu komutu eklerken:** `Simulation`'a `XCore` + `public ActResult X(...) => RunCommand(() => XCore(...), "kind", ...)`,
   `Replay.Restore`'a `case "kind"`, JS'e aynı fonksiyon, test.
 
 ## Baskın sahnesi (`Scenes/Baskin.unity`)
@@ -397,8 +399,18 @@ Claude Design'ın "C · Analist Masası" yönü, mevcut kriz masasından ayrı b
   - Taktik harita: DeskGame'de `RaidLauncher`, Baskin sahnesini masanın üstüne yükler; baskın sürerken masa canvas'ı, kamera ve girdi kapanır.
   - Eğitim: `DeskTutorialRunner` oyunun `TutorialSequence`/`TutorialConditions`'ıyla adımı ya da ipucunu seçer (`TutorialVM`);
     `DeskTutorialView` kendi canvas'ında (sıra 105) hedefi sahnedeki dikdörtgenlere bağlayıp karartır ve notu yerleştirir.
+  - Araştırma panosu: `ResearchFolderView` dört aşama sütununu ve mevcut dal sırasını korur; `ResearchProjectCardView`
+    kartları prefab şablonundan havuzlanır, `ResearchConnectionGraphic` gerçek `PrerequisiteId` bağlantılarını uGUI
+    mesh'iyle çizer. `Stage`/`Unlock` Core metadatasıdır; açılma kararını Core `Req` ve YZ tespit koşulu verir.
+    Kartlar yalnız `ResearchAction` yollar; köprü katalog kimliğiyle `BuyOperation`, Hizalama ile `StartResearch` /
+    `SetResearchPaused` komutlarını seçer. Yeni krizlerde 14 kart ve Bütçe dahil 5 dal; eski kayıtlarda 9 kart vardır.
+    Kaynak `ResearchFolder.prefab` ve `DeskGame.unity`dir; tek seferlik düzenleyici kaldırılmıştır. Taşan içerik dikey kayar.
+    `BranchSpan` Hizalama eğitim hedefini korur. Biçim sürümü 3'tür; eski 1/2 kural profilleri korunur.
   - Dar alanlar için bağlamlı çeviri anahtarı: `SimDeskBuilder.Ctx("[bağlam] metin")`.
-  - Sahne `Scenes/DeskGame.unity`; Main değişmedi.
+  - Ekonomi `SimDeskBuilder.ResearchEconomy` / `.Economy` ile sunulur; son günlük ödeme, canlı tahmin ve peşin
+    işlem defteri ayrıdır. `EconomyRecoveryView` bölge dosyasında `Economy:Recover` / `Economy:Diplomacy` emirlerini,
+    ekip penceresi `Team:Hire` emrini yayınlar. Düğme/metin/kaydırma referansları prefab ve sahnelerde serileştirilmiştir.
+  - `DeskGame.unity` ve eski `Main.unity` yeni ekonomi işlemlerini sunar; sandbox mock'ları eski 9 kartı korur.
 - **Sahneler:** `Scenes/DeskUI_Sandbox.unity` (C1; canvas'lar BG 0 / Map 10 / HUD 20 / Windows 30 / Ticker 40 / Bottom 41 /
   Overlay 60 / Modal 100 / Tooltip 110 / Debug 1000; F1–F4 ön ayar, F9 dil, F11/F12 referans katmanı) ve
   `Scenes/DeskUI_Gallery.unity` (bileşenler C5 stil rehberi koordinatlarında; ←/→ bölüm, F9 dil).

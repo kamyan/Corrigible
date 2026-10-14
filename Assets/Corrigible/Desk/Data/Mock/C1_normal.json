@@ -95,7 +95,7 @@
   "sheetTitle": "PROJE DURUMU",
   "day": "G-074",
   "summary": {
-   "text": "Aktif <style=semi>2 proje</style> · <color=#9A1E14><style=num>−6,4 fon/gün</style></color>",
+   "text": "Aktif <style=semi>1 proje</style> · <color=#9A1E14><style=num>−3,3 fon/gün</style></color>",
    "fundLabel": "Fon",
    "fund": "47,3",
    "fundTrust": "verified"
@@ -104,45 +104,174 @@
    "title": "ACİL DURUM FONU",
    "hint": "Tüm aktif projeleri hızlandırır",
    "selected": 0,
-   "options": [{"label": "Kapalı"}, {"label": "×1,5", "cost": "+3,2/gün"}, {"label": "×2", "cost": "+6,4/gün"}]
+   "options": [
+    {
+     "label": "Kapalı"
+    },
+    {
+     "label": "×1,5",
+     "cost": "+3,2/gün"
+    },
+    {
+     "label": "×2",
+     "cost": "+6,4/gün"
+    }
+   ]
   },
   "branches": [
    {
-    "id": "alignment",
+    "id": "Hizalama",
     "title": "HİZALAMA",
     "progress": "1/3",
     "projects": [
-     {"name": "Yorumlanabilirlik I", "state": "done", "stampRot": -3},
-     {"name": "Ödül modeli denetimi", "state": "running", "sub": "4 gün kaldı", "progress": 0.62},
-     {"name": "Düzeltilebilirlik çekirdeği", "state": "locked", "sub": "Gerekli: Ödül modeli denetimi"}
+     {
+      "id": "yorum",
+      "name": "Yorumlanabilirlik",
+      "stage": 2,
+      "prerequisiteId": null,
+      "unlock": "Çekirdek konumu · sıradaki YZ yeteneği",
+      "condition": null,
+      "state": "done",
+      "canStart": false,
+      "needsObservation": false,
+      "stampRot": 0
+     },
+     {
+      "id": "duzelt",
+      "name": "Düzeltilebilirlik",
+      "stage": 3,
+      "prerequisiteId": "yorum",
+      "unlock": "Tekillik artışı −%25",
+      "condition": "Gerekli: Yorumlanabilirlik",
+      "state": "running",
+      "canStart": false,
+      "needsObservation": false,
+      "sub": "4 gün kaldı",
+      "progress": 0.62
+     },
+     {
+      "id": "kilit",
+      "name": "Değer Kilidi",
+      "stage": 4,
+      "prerequisiteId": "duzelt",
+      "unlock": "Hizalama zaferi",
+      "condition": "Gerekli: Düzeltilebilirlik",
+      "state": "locked",
+      "canStart": false,
+      "needsObservation": false,
+      "sub": "38 gün · toplam 165 fon",
+      "days": "38 gün",
+      "lockReason": "Gerekli: Düzeltilebilirlik"
+     }
     ]
    },
    {
-    "id": "erasure",
-    "title": "SİLME",
-    "progress": "1/3",
-    "projects": [
-     {"name": "Ağ ayrıştırma", "state": "done", "stampRot": 2},
-     {"name": "Ağırlık parmak izi", "state": "available", "days": "8 gün", "startLabel": "Başlat · 3,8 fon/gün"},
-     {"name": "Çekirdek imha protokolü", "state": "locked", "sub": "Gerekli: Ağırlık parmak izi"}
-    ]
-   },
-   {
-    "id": "detection",
+    "id": "Tespit",
     "title": "TESPİT",
-    "progress": "0/2",
+    "progress": "1/2",
     "projects": [
-     {"name": "Çapraz kaynak doğrulama", "state": "running", "sub": "6 gün kaldı", "progress": 0.31},
-     {"name": "Sinyal adli bilişimi", "state": "available", "days": "5 gün", "startLabel": "Başlat · 2,6 fon/gün"}
+     {
+      "id": "anomali",
+      "name": "Anomali Algılama",
+      "stage": 1,
+      "prerequisiteId": null,
+      "unlock": "Tespit ihtimali ×2",
+      "condition": null,
+      "state": "done",
+      "canStart": false,
+      "needsObservation": false,
+      "stampRot": 0
+     },
+     {
+      "id": "dogrulama",
+      "name": "Doğrulama Ağı",
+      "stage": 2,
+      "prerequisiteId": "anomali",
+      "unlock": "Haber doğrulama · 2 SG",
+      "condition": "Gerekli: Anomali Algılama",
+      "state": "available",
+      "canStart": false,
+      "needsObservation": false,
+      "sub": "10 gün · toplam 40 fon",
+      "days": "10 gün",
+      "startLabel": "Başlat · 4,0 fon/gün",
+      "disabledReason": "Sırada",
+      "lockReason": "Aynı anda tek araştırma yürür."
+     }
     ]
    },
    {
-    "id": "diplomacy",
-    "title": "DİPLOMASİ",
+    "id": "Savunma",
+    "title": "SAVUNMA",
     "progress": "0/2",
     "projects": [
-     {"name": "Kriz basın ofisi", "state": "available", "days": "4 gün", "startLabel": "Başlat · 1,9 fon/gün"},
-     {"name": "Ortak doğrulama paktı", "state": "locked", "sub": "Gerekli: Siyasi güç 70"}
+     {
+      "id": "guclu",
+      "name": "Güçlendirilmiş Ağlar",
+      "stage": 1,
+      "prerequisiteId": null,
+      "unlock": "Yayılma −%30 · sabotaj −%50",
+      "condition": null,
+      "state": "available",
+      "canStart": false,
+      "needsObservation": false,
+      "sub": "10 gün · toplam 40 fon",
+      "days": "10 gün",
+      "startLabel": "Başlat · 4,0 fon/gün",
+      "disabledReason": "Sırada",
+      "lockReason": "Aynı anda tek araştırma yürür."
+     },
+     {
+      "id": "kuantum",
+      "name": "Kuantum Karantina",
+      "stage": 3,
+      "prerequisiteId": "guclu",
+      "unlock": "Karantina uydu yolunu da keser",
+      "condition": "Gerekli: Güçlendirilmiş Ağlar",
+      "state": "locked",
+      "canStart": false,
+      "needsObservation": false,
+      "sub": "14 gün · toplam 60 fon",
+      "days": "14 gün",
+      "lockReason": "Gerekli: Güçlendirilmiş Ağlar"
+     }
+    ]
+   },
+   {
+    "id": "Politika",
+    "title": "POLİTİKA",
+    "progress": "0/2",
+    "projects": [
+     {
+      "id": "bilinc",
+      "name": "Kamu Bilinçlendirme",
+      "stage": 1,
+      "prerequisiteId": null,
+      "unlock": "Güven kayıpları −%50",
+      "condition": null,
+      "state": "available",
+      "canStart": false,
+      "needsObservation": false,
+      "sub": "8 gün · toplam 35 fon",
+      "days": "8 gün",
+      "startLabel": "Başlat · 4,4 fon/gün",
+      "disabledReason": "Sırada",
+      "lockReason": "Aynı anda tek araştırma yürür."
+     },
+     {
+      "id": "analog",
+      "name": "Analog Yedekler",
+      "stage": 2,
+      "prerequisiteId": "bilinc",
+      "unlock": "Saha denetimi · denetimli hediye kabulü",
+      "condition": "Gerekli: Kamu Bilinçlendirme",
+      "state": "locked",
+      "canStart": false,
+      "needsObservation": false,
+      "sub": "12 gün · toplam 50 fon",
+      "days": "12 gün",
+      "lockReason": "Gerekli: Kamu Bilinçlendirme"
+     }
     ]
    }
   ],

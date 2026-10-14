@@ -42,7 +42,7 @@ namespace Corrigible.Desk.Bridge
         {
             var S = Sim.S;
             if (id == WindowId.AiLog) State.LogSeen = S.Log.Count;
-            else if (id == WindowId.News) State.NewsSeen = S.Seq;
+            else if (id == WindowId.News) { State.NewsSeen = S.Seq; State.CriticalNewsId = null; }
             else if (id == WindowId.Teams) State.TeamsBadge = false;
             source.MarkDirty();
         }
@@ -75,10 +75,17 @@ namespace Corrigible.Desk.Bridge
             Report(Game.MoveTeam(team.Id, regionId));
         }
 
-        public void StartResearch(string projectId) => Report(Game.StartResearch(projectId));
+        public void StartResearch(string projectId)
+        {
+            if (Sim.ModernEconomy && GameData.HasOperation(projectId)) Report(Game.BuyOperation(projectId));
+            else if (Sim.ModernEconomy && Sim.S.Research.Cur == projectId && Sim.ResearchPaused) Report(Game.SetResearchPaused(false));
+            else Report(Game.StartResearch(projectId));
+        }
 
-        /// <summary>Oyunda araştırma duraklatılamaz; düğme gizli (CanPause = false).</summary>
-        public void PauseResearch(string projectId) { }
+        public void PauseResearch(string projectId)
+        {
+            if (Sim.ModernEconomy && Sim.S.Research.Cur == projectId) Report(Game.SetResearchPaused(true));
+        }
 
         public void SetEmergencyFund(int option)
         {
@@ -171,12 +178,17 @@ namespace Corrigible.Desk.Bridge
                     break;
                 case "Doc": if (verb == "Close") CloseDoc(); break;
                 case "Team":
+                    if (verb == "Hire") Report(Game.HireTeam());
                     // Dosyadaki ekip fişi “Team:Send:<ekip>:<bölge>”: seçilen ekip yola çıkar (koşulları oyun denetler)
                     if (verb == "Send" && arg != null && Sim.TeamsOn)
                     {
                         var ta = arg.Split(new[] { ':' }, 2);
                         if (ta.Length == 2) Report(Game.MoveTeam(ta[0], ta[1]));
                     }
+                    break;
+                case "Economy":
+                    if (verb == "Recover" && arg != null) Report(Game.StartRecovery(arg));
+                    else if (verb == "Diplomacy" && arg != null) Report(Game.DiplomaticTalk(arg));
                     break;
                 case "Tutorial":
                     if (tutorial == null) break;

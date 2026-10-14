@@ -1,0 +1,99 @@
+{
+  "date": "2026-10-14",
+  "editMode": {
+    "Total": 229,
+    "Passed": 229,
+    "Failed": 0,
+    "Skipped": 0,
+    "Inconclusive": 0
+  },
+  "durationSeconds": 49.6,
+  "translations": 1621,
+  "playInitial": {
+    "popupChecks": [
+      {
+        "title": "FON",
+        "inside": true,
+        "tooltipTop": 384.0,
+        "sourceBottom": 392.0
+      },
+      {
+        "title": "SİYASİ GÜÇ",
+        "inside": true,
+        "tooltipTop": 384.0,
+        "sourceBottom": 392.0
+      },
+      {
+        "title": "KÜRESEL GÜVEN",
+        "inside": true,
+        "tooltipTop": 384.0,
+        "sourceBottom": 392.0
+      },
+      {
+        "title": "BAĞIMLILIK",
+        "inside": true,
+        "tooltipTop": 384.0,
+        "sourceBottom": 392.0
+      },
+      {
+        "title": "TEKİLLİK",
+        "inside": true,
+        "tooltipTop": 384.0,
+        "sourceBottom": 392.0
+      }
+    ],
+    "financeInitial": 0.08447999999999999,
+    "financeHalfTrust": 0.04224000000000001,
+    "offlineContribution": 0,
+    "telexPhasePreserved": true,
+    "criticalNewsOpened": true,
+    "criticalId": "0-1",
+    "screenWidth": 1546,
+    "screenHeight": 801
+  },
+  "playCritical": {
+    "criticalClosedStaysClosed": true,
+    "confirmDeferred": true,
+    "nonemptyTelexPhasePreserved": true
+  },
+  "motionTests": {
+    "automatedCases": 8,
+    "sameContentPhasePreservedInPlay": true
+  },
+  "screenshots": [
+    "ui-popup-funds-tr.png",
+    "ui-popup-singularity-tr.png",
+    "ui-region-funds-tr.png",
+    "ui-critical-news-tr.png",
+    "ui-news-region-en.png",
+    "ui-news-region-en-720.png"
+  ],
+  "playFinal": {
+    "confirmDeferred": true,
+    "confirmCloseOpenedWithoutFlush": true,
+    "closedDoesNotReopen": true,
+    "motion": {
+      "frames": 180,
+      "skipped": 0,
+      "elapsed": 0.4569077026644095,
+      "maxStepErrorPixels": 2.035551460721763e-08,
+      "minFrameSeconds": 0.0011049178004327587,
+      "maxFrameSeconds": 0.018213045634922764,
+      "passed": true
+    },
+    "trAudit": "[22:44] ui-feedback-tr: 0 hata, 0 uyarı",
+    "enAudit": "[22:44] ui-feedback-en: 0 hata, 0 uyarı",
+    "finance": "+0.08 funds/day · regional share 10.7%",
+    "financeNote": "Reduced contribution before detection · central grant excluded"
+  },
+  "cleanup": {
+    "temporaryAuthoringRemoved": true,
+    "cleanCompilationAfterRemoval": true,
+    "preexistingFontAssetChangesPreserved": true,
+    "originalGamePreferencesRestored": true,
+    "originalPlayerFilesRestored": true,
+    "originalTestResultsRestored": true,
+    "concurrentNonTestSavePreserved": true,
+    "note": "Kontrollü Play testleri 0. gündeydi; temizlik sırasında oluşan daha ileri günlü yeni oyun kaydı yerinde korundu ve ayrıca yedeklendi."
+  }
+}

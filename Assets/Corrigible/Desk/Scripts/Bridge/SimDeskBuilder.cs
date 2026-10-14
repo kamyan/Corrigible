@@ -16,6 +16,7 @@ namespace Corrigible.Desk.Bridge
     {
         public string Selected;
         public int LogSeen, NewsSeen;
+        public string CriticalNewsId;
         public bool TeamsBadge;
         /// <summary>Oyun sonunda “Günlükleri incele”: rapor kapanır, masa gerçek değerlerle açık kalır.</summary>
         public bool Review;
@@ -72,6 +73,7 @@ namespace Corrigible.Desk.Bridge
         public void Reset()
         {
             Selected = null; LogSeen = 0; NewsSeen = 0; TeamsBadge = false; Review = false;
+            CriticalNewsId = null;
             CampaignOpen = false; FakeWin = false; VeilOpen = false; RaidBrief = null; RaidTeam = null; RaidN = 0; TutorialRequested = false;
             Tutorial = null; SuppressAdvisor = false;
             Messages.Clear(); History.Clear();
@@ -221,6 +223,7 @@ namespace Corrigible.Desk.Bridge
             vm.Dossier = st.Selected != null ? Dossier(st.Selected) : null;
             vm.News = S.News.Select(TelexItem).ToList();
             vm.Teams = sim.TeamsOn ? S.Teams.Select(TeamRow).ToList() : new List<TeamRowVM>();
+            vm.TeamHire = TeamHire();
             vm.Dock = Dock();
             if (S.Raid != null) { st.RaidTeam = sim.Team(S.Raid.Team)?.Name; st.RaidN = S.Raid.N; }
             vm.Event = S.PendingEvent != null ? Dilemma() : S.PendingGift != null ? Gift() : Doc();
@@ -231,6 +234,10 @@ namespace Corrigible.Desk.Bridge
             vm.FakeWin = st.FakeWin ? FakeWin() : null;
             vm.Toasts = Toasts();
             vm.Tutorial = st.Tutorial;
+            // Kritik haber olay/hediye, giriş ve taktik haritayı örtmez; masa yeniden erişilebilir olunca açılır.
+            if (S.Ending == null && vm.Intro == null && vm.Event == null && vm.Campaign == null && vm.FakeWin == null
+                && !st.SettingsOpen && !inp.RaidScene && st.Tutorial?.Kind != "step")
+                vm.CriticalNewsId = st.CriticalNewsId;
             return vm;
         }
 
@@ -315,6 +322,7 @@ namespace Corrigible.Desk.Bridge
             fundG.Breakdown = Breakdown(fundG, x => x.Fund,
                 (Loc.T("Hükümet ödenekleri"), income),
                 (Loc.T("Araştırma"), -spend));
+            if (sim.ModernEconomy) EconomyBreakdown(fundG);
 
             float sg = (float)S.Sg, sgRate = (float)sim.SgRate;
             var week = h.Change(x => x.Sg, 7);
@@ -491,6 +499,8 @@ namespace Corrigible.Desk.Bridge
         {
             var it = new TelexItemVM
             {
+                Id = h.Id,
+                Critical = h.Kind == "alarm",
                 Day = Day(h.Day),
                 Source = Up(Loc.T(h.Agency)) + ":",
                 Text = Up(h.Text),

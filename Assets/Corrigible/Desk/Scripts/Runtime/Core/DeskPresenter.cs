@@ -47,6 +47,8 @@ namespace Corrigible.Desk
         IDeskDataSource source;
         DeskViewModel vm;
         bool syncing;
+        string focusedCriticalNews;
+        string pendingCriticalNews;
 
         public IDeskDataSource Source => source;
         public IDeskCommands Commands => commands as IDeskCommands;
@@ -199,6 +201,24 @@ namespace Corrigible.Desk
             else windows.Close(WindowId.Dossier);
             syncing = false;
             SyncDock();
+            if (model.CriticalNewsId == null) { focusedCriticalNews = null; pendingCriticalNews = null; }
+            else if (focusedCriticalNews != model.CriticalNewsId)
+                pendingCriticalNews = model.CriticalNewsId;
+            TryPresentCriticalNews();
+        }
+
+        // Karar onayının kapanması yeni simülasyon verisi gerektirmez; bekleyen haber o karede sunulur.
+        void LateUpdate() => TryPresentCriticalNews();
+
+        void TryPresentCriticalNews()
+        {
+            if (pendingCriticalNews == null || !Application.isPlaying || Commands == null) return;
+            if (confirm != null && confirm.IsOpen) return;
+            if (SettingsView.Instance != null && SettingsView.Instance.IsOpen) return;
+            focusedCriticalNews = pendingCriticalNews;
+            pendingCriticalNews = null;
+            OpenWindow(WindowId.News);
+            foreach (var w in contentWindows) w.FocusNews(focusedCriticalNews);
         }
 
         void SyncDock()

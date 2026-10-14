@@ -59,6 +59,22 @@ namespace Corrigible.Game.UI
         // ------------------------------------------------------------------ gösterge dökümleri
         public static string Fund(Simulation sim)
         {
+            if (sim.ModernEconomy)
+            {
+                var income = sim.IncomeBreakdown;
+                var paid = sim.LastIncome;
+                var modernLines = new List<string>
+                {
+                    Loc.T("<b>Fon</b>: eylemlerin ve araştırmanın bedeli."),
+                    Loc.F("Son ödenen gün: merkez +{0:0.00}, bölgeler +{1:0.00}, anlaşma +{2:0.00}.", paid.Central, paid.RegionalBase, paid.BudgetBonus),
+                    Loc.F("Hizalama son ödeme −{0:0.00} · net {1:+0.00;-0.00;0}.", sim.LastResearchPayment, paid.Total - sim.LastResearchPayment),
+                    Loc.F("Sonraki gün gelir tahmini +{0:0.00}; Hizalama tam hız ihtiyacı {1:0.00}, beklenen ödeme {2:0.00}.", income.Total, sim.ResearchNeed, sim.NextResearchPayment),
+                    Loc.T("Peşin geliştirmeler günlük gider değildir. Merkez ödeneği bölge kaybından etkilenmez."),
+                };
+                foreach (var t in sim.TransactionLedger.Where(t => t.Kind != "income" && t.Kind != "research").Reverse().Take(6))
+                    modernLines.Add(Loc.F("Gün {0}: {1:+0.##;-0.##;0} fon · {2:+0.##;-0.##;0} SG", t.Day, t.Fon, t.Sg));
+                return string.Join("\n", modernLines);
+            }
             var s = sim.S;
             var lines = new List<string>
             {
@@ -191,7 +207,7 @@ namespace Corrigible.Game.UI
             {
                 var rs = GameData.ResearchItem(AlignChain[i]);
                 if (s.Done(rs.Id)) { p += w[i]; continue; }
-                float part = s.Research.Cur == rs.Id ? Mathf.Clamp01((float)(s.Research.Prog / rs.Days)) : 0;
+                float part = s.Research.Cur == rs.Id ? Mathf.Clamp01((float)(s.Research.Prog / (sim.ModernEconomy ? sim.ResearchDays(rs.Id) : rs.Days))) : 0;
                 p += w[i] * part;
                 text = s.Research.Cur == rs.Id ? Loc.F("{0} %{1:0}", rs.Name, part * 100) : Loc.F("Sıradaki: {0}", rs.Name);
                 if (sim.Studied == 0) text += Loc.T(" · gözlem noktası yok");

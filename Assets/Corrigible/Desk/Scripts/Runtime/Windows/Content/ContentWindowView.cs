@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Corrigible.Desk
 {
@@ -16,6 +17,7 @@ namespace Corrigible.Desk
         [SerializeField] ContentKind kind;
         [SerializeField] FolderWindow window;
         [SerializeField] RectTransform content;
+        [SerializeField] ScrollRect scroll;
         [SerializeField] float gap = 6;
         [Header("Şablonlar (türe göre biri)")]
         [SerializeField] NewsRowView newsTemplate;
@@ -24,6 +26,16 @@ namespace Corrigible.Desk
         [SerializeField] GuideSectionView guideTemplate;
         [Header("YZ günlüğü başlığı")]
         [SerializeField] TMP_Text logTitle, logRight, logFooter;
+        [Header("Ekip alımı")]
+        [SerializeField] DeskButton hire;
+        [SerializeField] TMP_Text hireNote;
+        string hireCommand;
+        List<TelexItemVM> newsItems;
+
+        void Awake()
+        {
+            if (hire != null) hire.onClick.AddListener(() => { if (hireCommand != null) Invoked?.Invoke(hireCommand); });
+        }
 
         DeskPool<NewsRowView> news;
         DeskPool<TeamCardView> teams;
@@ -47,10 +59,20 @@ namespace Corrigible.Desk
                 case ContentKind.News:
                     news ??= new DeskPool<NewsRowView>(newsTemplate, content);
                     var items = vm.News ?? new List<TelexItemVM>();
+                    newsItems = items;
                     for (int i = 0; i < items.Count; i++) news.Get(i).Bind(items[i], w);
                     DeskList.Stack(news, items.Count, content, gap, r => r.Height);
                     break;
                 case ContentKind.Teams:
+                    hireCommand = vm.TeamHire?.Command;
+                    DeskUi.SetActive(hire, vm.TeamHire != null);
+                    DeskUi.SetActive(hireNote, vm.TeamHire != null);
+                    if (vm.TeamHire != null && hire != null)
+                    {
+                        hire.SetLabel(Corrigible.Core.Loc.T("Ekip işe al"));
+                        hire.SetDisabled(hireCommand == null ? vm.TeamHire.Label : null);
+                        DeskUi.SetText(hireNote, vm.TeamHire.Label);
+                    }
                     teams ??= new DeskPool<TeamCardView>(teamTemplate, content);
                     var t = vm.Teams ?? new List<TeamRowVM>();
                     for (int i = 0; i < t.Count; i++) teams.Get(i).Bind(t[i]);
@@ -78,6 +100,19 @@ namespace Corrigible.Desk
                     DeskList.Stack(guide, g.Count, content, 14, r => r.Height);
                     break;
             }
+        }
+
+        /// <summary>Yeni kritik haberi kaydırma alanında görünür kılar; kullanıcı kapattıktan sonra yeniden açılmaz.</summary>
+        public void FocusNews(string id)
+        {
+            if (kind != ContentKind.News || news == null || scroll == null || newsItems == null) return;
+            int index = newsItems.FindIndex(i => i.Id == id);
+            if (index < 0) return;
+            scroll.StopMovement();
+            var row = (RectTransform)news.Get(index).transform;
+            float overflow = Mathf.Max(0, content.rect.height - scroll.viewport.rect.height);
+            float top = -row.anchoredPosition.y;
+            content.anchoredPosition = new Vector2(content.anchoredPosition.x, Mathf.Clamp(top, 0, overflow));
         }
 
         /// <summary>Çeviri tablosuna toplanan sabit başlıklar.</summary>

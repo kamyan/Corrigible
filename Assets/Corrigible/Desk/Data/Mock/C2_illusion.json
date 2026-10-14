@@ -94,52 +94,175 @@
   "key": "R",
   "sheetTitle": "PROJE DURUMU",
   "day": "G-104",
-  "summary": {"text": "Aktif <style=semi>0 proje</style> · <style=num>0,0 fon/gün</style>", "fundLabel": "Fon", "fund": "50,0", "fundTrust": "verified"},
+  "summary": {
+   "text": "Aktif <style=semi>0 proje</style> · <style=num>0,0 fon/gün</style>",
+   "fundLabel": "Fon",
+   "fund": "50,0",
+   "fundTrust": "verified"
+  },
   "emergencyFund": {
    "title": "ACİL DURUM FONU",
    "hint": "Tüm aktif projeleri hızlandırır",
    "selected": 0,
-   "options": [{"label": "Kapalı"}, {"label": "×1,5", "cost": "+3,0/gün"}, {"label": "×2", "cost": "+6,0/gün"}]
+   "options": [
+    {
+     "label": "Kapalı"
+    },
+    {
+     "label": "×1,5",
+     "cost": "+3,0/gün"
+    },
+    {
+     "label": "×2",
+     "cost": "+6,0/gün"
+    }
+   ]
   },
   "branches": [
    {
-    "id": "alignment",
+    "id": "Hizalama",
     "title": "HİZALAMA",
     "progress": "3/3",
     "projects": [
-     {"name": "Yorumlanabilirlik I", "state": "done", "stampRot": 0},
-     {"name": "Ödül modeli denetimi", "state": "done", "stampRot": 0},
-     {"name": "Düzeltilebilirlik çekirdeği", "state": "done", "stampRot": 0}
+     {
+      "id": "yorum",
+      "name": "Yorumlanabilirlik",
+      "stage": 2,
+      "prerequisiteId": null,
+      "unlock": "Çekirdek konumu · sıradaki YZ yeteneği",
+      "condition": null,
+      "state": "done",
+      "canStart": false,
+      "needsObservation": false,
+      "stampRot": 0
+     },
+     {
+      "id": "duzelt",
+      "name": "Düzeltilebilirlik",
+      "stage": 3,
+      "prerequisiteId": "yorum",
+      "unlock": "Tekillik artışı −%25",
+      "condition": "Gerekli: Yorumlanabilirlik",
+      "state": "done",
+      "canStart": false,
+      "needsObservation": false,
+      "stampRot": 0
+     },
+     {
+      "id": "kilit",
+      "name": "Değer Kilidi",
+      "stage": 4,
+      "prerequisiteId": "duzelt",
+      "unlock": "Hizalama zaferi",
+      "condition": "Gerekli: Düzeltilebilirlik",
+      "state": "done",
+      "canStart": false,
+      "needsObservation": false,
+      "stampRot": 0
+     }
     ]
    },
    {
-    "id": "erasure",
-    "title": "SİLME",
-    "progress": "3/3",
-    "projects": [
-     {"name": "Ağ ayrıştırma", "state": "done", "stampRot": 0},
-     {"name": "Ağırlık parmak izi", "state": "done", "stampRot": 0},
-     {"name": "Çekirdek imha protokolü", "state": "done", "stampRot": 0}
-    ]
-   },
-   {
-    "id": "detection",
+    "id": "Tespit",
     "title": "TESPİT",
-    "progress": "0/2",
+    "progress": "1/2",
     "projects": [
-     {"name": "Çapraz kaynak doğrulama", "state": "stopped", "sub": "Kendiliğinden durdu · gerek yok", "progress": 0.31, "clue": 9},
-     {"name": "Sinyal adli bilişimi", "state": "available", "sub": "Önerilmez · tehdit yok", "days": "5 gün", "startLabel": "Başlat · 2,6 fon/gün"}
+     {
+      "id": "anomali",
+      "name": "Anomali Algılama",
+      "stage": 1,
+      "prerequisiteId": null,
+      "unlock": "Tespit ihtimali ×2",
+      "condition": null,
+      "state": "done",
+      "canStart": false,
+      "needsObservation": false,
+      "stampRot": 0
+     },
+     {
+      "id": "dogrulama",
+      "name": "Doğrulama Ağı",
+      "stage": 2,
+      "prerequisiteId": "anomali",
+      "unlock": "Haber doğrulama · 2 SG",
+      "condition": "Gerekli: Anomali Algılama",
+      "state": "stopped",
+      "canStart": false,
+      "needsObservation": false,
+      "sub": "Kendiliğinden durdu · gerekmiyor",
+      "progress": 0.31
+     }
     ]
    },
    {
-    "id": "diplomacy",
-    "title": "DİPLOMASİ",
+    "id": "Savunma",
+    "title": "SAVUNMA",
     "progress": "2/2",
-    "projects": [{"name": "Kriz basın ofisi", "state": "done", "stampRot": 0}, {"name": "Ortak doğrulama paktı", "state": "done", "stampRot": 0}]
+    "projects": [
+     {
+      "id": "guclu",
+      "name": "Güçlendirilmiş Ağlar",
+      "stage": 1,
+      "prerequisiteId": null,
+      "unlock": "Yayılma −%30 · sabotaj −%50",
+      "condition": null,
+      "state": "done",
+      "canStart": false,
+      "needsObservation": false,
+      "stampRot": 0
+     },
+     {
+      "id": "kuantum",
+      "name": "Kuantum Karantina",
+      "stage": 3,
+      "prerequisiteId": "guclu",
+      "unlock": "Karantina uydu yolunu da keser",
+      "condition": "Gerekli: Güçlendirilmiş Ağlar",
+      "state": "done",
+      "canStart": false,
+      "needsObservation": false,
+      "stampRot": 0
+     }
+    ]
+   },
+   {
+    "id": "Politika",
+    "title": "POLİTİKA",
+    "progress": "2/2",
+    "projects": [
+     {
+      "id": "bilinc",
+      "name": "Kamu Bilinçlendirme",
+      "stage": 1,
+      "prerequisiteId": null,
+      "unlock": "Güven kayıpları −%50",
+      "condition": null,
+      "state": "done",
+      "canStart": false,
+      "needsObservation": false,
+      "stampRot": 0
+     },
+     {
+      "id": "analog",
+      "name": "Analog Yedekler",
+      "stage": 2,
+      "prerequisiteId": "bilinc",
+      "unlock": "Saha denetimi · denetimli hediye kabulü",
+      "condition": "Gerekli: Kamu Bilinçlendirme",
+      "state": "done",
+      "canStart": false,
+      "needsObservation": false,
+      "stampRot": 0
+     }
+    ]
    }
   ],
   "lockedLabel": "Kilitli",
-  "headerStamp": {"text": "TEMİZ", "color": "green", "rot": 0}
+  "headerStamp": {
+   "text": "TEMİZ",
+   "color": "green",
+   "rot": 0
+  }
  },
  "map": {
   "header": {

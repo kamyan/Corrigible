@@ -36,7 +36,17 @@ namespace Corrigible.Tests
                     if (!sim.ResolveEvent((int)(rng.Next() * n)).Ok) Assert.IsTrue(sim.ResolveEvent(n - 1).Ok, s.PendingEvent?.Id);
                 }
                 if (rng.Next() < 0.25) sim.Act(rng.Pick(Actions.All), rng.Pick(ids));
-                if (s.Research.Cur == null && rng.Next() < 0.2) sim.StartResearch(rng.Pick(GameData.Research).Id);
+                if (s.Research.Cur == null && rng.Next() < 0.2)
+                {
+                    var project = rng.Pick(GameData.Research);
+                    if (project.Branch == GameData.BranchAlign) sim.StartResearch(project.Id);
+                    else
+                    {
+                        string id = project.Id;
+                        if (id == "anomali" || id == "guclu" || id == "bilinc") id += sim.OperationLevel(id) == 0 ? "_1" : "_2";
+                        sim.BuyOperation(id);
+                    }
+                }
                 sim.Step(); s.Events.Clear();
             }
             return (sim, events);
@@ -86,6 +96,20 @@ namespace Corrigible.Tests
         {
             var sim = Simulation.NewGame(null, "solucan", 5, null, null, new RuleOptions { Stage = 4, ExtraTraits = { "aldatma", "hizlanma" } });
             Assert.IsTrue(sim.S.Has("aldatma") && sim.S.Has("hizlanma"));
+        }
+
+        [Test]
+        public void PausedProject_IsNotEligibleForResearchProgressDilemmas()
+        {
+            var sim = Simulation.NewGame(null, "manipulator", 7);
+            sim.S.Aware = true; sim.S.Region("weu").Monitored = true; sim.S.Region("weu").Detected = true;
+            Assert.IsTrue(sim.StartResearch("yorum").Ok);
+            Assert.IsNotNull(Simulation.Dilemma("kostebek").Pick(sim));
+            Assert.IsNotNull(Simulation.Dilemma("atilim").Pick(sim));
+            Assert.IsTrue(sim.SetResearchPaused(true).Ok);
+            Assert.IsNull(Simulation.Dilemma("kostebek").Pick(sim));
+            Assert.IsNull(Simulation.Dilemma("atilim").Pick(sim));
+            Assert.IsNotNull(Simulation.Dilemma("rakip").Pick(sim), "Diğer ekonomi olayları duraklatmayla kapatılmaz");
         }
 
         [Test]

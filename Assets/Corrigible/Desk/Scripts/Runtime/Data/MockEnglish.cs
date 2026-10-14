@@ -18,7 +18,7 @@ namespace Corrigible.Desk
     {
         static readonly HashSet<string> SkipFields = new HashSet<string>
         {
-            "Id", "RegionId", "Region", "Trust", "State", "Icon", "Color", "TitleColor", "LabelColor", "LabelSide", "LabelAlign", "Kind",
+            "Id", "RegionId", "PrerequisiteId", "Region", "Trust", "State", "Icon", "Color", "TitleColor", "LabelColor", "LabelSide", "LabelAlign", "Kind",
             "Key", "Keys", "Style", "Type", "Command", "Screen", "Code", "RingVariant", "SelectedRegion", "Sprite", "Dir", "Status", "Speed",
             "Speeds", "From", "To", "Side", "FundTrust",
         };

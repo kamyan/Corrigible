@@ -164,6 +164,9 @@ namespace Corrigible.Desk.Bridge
             {
                 switch (e.Type)
                 {
+                    case SimEventType.News:
+                        if (e.Headline?.Kind == "alarm" && S.Ending == null) state.CriticalNewsId = e.Headline.Id;
+                        break;
                     case SimEventType.Team:
                         state.Push(e.Text, S.Day, "ok", builder.TimeNow);
                         state.TeamsBadge = true;
@@ -178,6 +181,7 @@ namespace Corrigible.Desk.Bridge
                         game.SetSpeed(0);
                         state.Review = false;
                         state.Messages.Clear();
+                        state.CriticalNewsId = null;
                         state.VeilOpen = false;
                         state.RaidBrief = null;
                         if (S.Ending == "sessiz")

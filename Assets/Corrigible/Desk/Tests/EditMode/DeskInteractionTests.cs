@@ -210,7 +210,7 @@ namespace Corrigible.Desk.Tests
                     var open = Enumerable.Range(0, list.arraySize)
                         .Select(i => (FolderWindow)list.GetArrayElementAtIndex(i).FindPropertyRelative("window").objectReferenceValue)
                         .Where(w => w.gameObject.activeSelf).Select(w => w.Id).ToList();
-                    CollectionAssert.AreEqual(new[] { WindowId.Research }, open, path + ": açılışta yalnız araştırma açık (sahnedeki durum)");
+                    Assert.IsEmpty(open, path + ": büyük proje panosu R ile açılır; başlangıçta harita görünmeli");
                     var em = roots.SelectMany(g => g.GetComponentsInChildren<EventModalView>(true)).Single();
                     Assert.IsNotNull(Field(em, "map"), path + ": olay spotu ve ipliği haritaya bağlı");
                 }

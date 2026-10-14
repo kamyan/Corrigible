@@ -5,6 +5,7 @@
 re:Fon (.+) → (.+) · gider (.+)/gün	Funds $1 → $2 · spend $3/day
 re:Başlat · (.+) fon/gün	Start · $1 funds/day
 re:(\d+) gün kaldı	$1 days left
+re:(\d+) gün · toplam (\d+) fon	$1 days · total $2 funds
 re:(\d+) gün sonra	in $1 days
 re:(\d+) gün	$1 days
 re:\+(\d+) gün	+$1 days
@@ -272,6 +273,34 @@ Yazılımı sök, şebekeyi elle işlet. Isıtma en az 3 gün kesilir.	Rip out t
 Yeniden başla	Restart
 Yerel güven	Local trust
 Yorumlanabilirlik I	Interpretability I
+Yorumlanabilirlik	Interpretability
+Düzeltilebilirlik	Corrigibility
+Değer Kilidi	Value Lock
+Anomali Algılama	Anomaly Detection
+Doğrulama Ağı	Verification Network
+Güçlendirilmiş Ağlar	Hardened Networks
+Kuantum Karantina	Quantum Quarantine
+Kamu Bilinçlendirme	Public Awareness
+Analog Yedekler	Analog Backups
+SAVUNMA	DEFENCE
+POLİTİKA	POLITICS
+Çekirdek konumu · sıradaki YZ yeteneği	Core location · next AI ability
+Tekillik artışı −%25	Singularity growth −25%
+Hizalama zaferi	Alignment victory
+Tespit ihtimali ×2	Detection chance ×2
+Haber doğrulama · 2 SG	News verification · 2 PC
+Yayılma −%30 · sabotaj −%50	Spread −30% · sabotage −50%
+Karantina uydu yolunu da keser	Quarantine also blocks satellite links
+Güven kayıpları −%50	Trust losses −50%
+Saha denetimi · denetimli hediye kabulü	Field audits · controlled gift acceptance
+Gerekli: Yorumlanabilirlik	Requires: Interpretability
+Gerekli: Düzeltilebilirlik	Requires: Corrigibility
+Gerekli: Anomali Algılama	Requires: Anomaly Detection
+Gerekli: Güçlendirilmiş Ağlar	Requires: Hardened Networks
+Gerekli: Kamu Bilinçlendirme	Requires: Public Awareness
+Sırada	Queued
+Aynı anda tek araştırma yürür.	Only one research project can run at a time.
+Kendiliğinden durdu · gerekmiyor	Stopped on its own · not needed
 basılı: haritaya bak	hold: look at map
 bulunabilir	findable
 doğrulanmış ölçüm	verified measurement

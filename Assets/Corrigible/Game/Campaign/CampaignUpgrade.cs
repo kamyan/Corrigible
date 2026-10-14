@@ -24,7 +24,7 @@ namespace Corrigible.Game.Campaign
             new CampaignUpgrade { Id = "guvenlik", Title = Loc.N("Laboratuvar güvenliği"), Desc = Loc.N("YZ'nin araştırmayı sabote etme ihtimali %40 azalır."), Apply = (b, e) => b.sabotage *= 0.6 },
             new CampaignUpgrade { Id = "yama", Title = Loc.N("Kalıcı yamalar"), Desc = Loc.N("Denetim yaması 20 yerine 30 gün sürer."), Apply = (b, e) => b.patchDays += 10 },
             new CampaignUpgrade { Id = "yasa", Title = Loc.N("Acil durum yasası"), Desc = Loc.N("Son Şalter veto eşiği 8 puan yükselir."), Apply = (b, e) => { b.vetoBase += 8; b.vetoAnalog += 8; } },
-            new CampaignUpgrade { Id = "fon", Title = Loc.N("Uluslararası fon"), Desc = Loc.N("Günlük fon geliri %15 artar."), Apply = (b, e) => b.fonDiv *= 0.85 },
+            new CampaignUpgrade { Id = "fon", Title = Loc.N("Uluslararası fon"), Desc = Loc.N("Bölgesel fon geliri %15 artar."), Apply = (b, e) => b.fonDiv /= 1.15 },
             new CampaignUpgrade { Id = "erken", Title = Loc.N("Erken uyarı bütçesi"), Desc = Loc.N("YZ fark edilmeden önceki gelir %40 yerine %60."), Apply = (b, e) => b.preAwareFund = 0.6 },
             new CampaignUpgrade { Id = "ekip", Title = Loc.N("Dördüncü saha ekibi"), Desc = Loc.N("Her krize 4 saha ekibiyle başla."), NeedsTeams = true, Apply = (b, e) => { if (e != null) e.StartTeams = Math.Max(e.StartTeams, 4); } },
         };

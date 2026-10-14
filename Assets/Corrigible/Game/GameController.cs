@@ -241,6 +241,10 @@ namespace Corrigible.Game
         // ---------- Komutlar ----------
         public ActResult Act(string action, string regionId) => Run(() => Sim.Act(action, regionId));
         public ActResult StartResearch(string id) => Run(() => Sim.StartResearch(id));
+        public ActResult BuyOperation(string id) => Run(() => Sim.BuyOperation(id));
+        public ActResult SetResearchPaused(bool paused) => Run(() => Sim.SetResearchPaused(paused));
+        public ActResult StartRecovery(string id) => Run(() => Sim.StartRecovery(id));
+        public ActResult DiplomaticTalk(string id) => Run(() => Sim.DiplomaticTalk(id));
         public ActResult ResolveGift(string choice) => Run(() => Sim.ResolveGift(choice));
         public ActResult Verify(string headlineId) => Run(() => Sim.Verify(headlineId));
         public ActResult GlobalKillSwitch() => Run(() => Sim.GlobalKillSwitch());

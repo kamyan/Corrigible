@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-14",
+  "recordVersion": 3,
+  "legacyRuleVersions": [
+    1,
+    2
+  ],
+  "editModeInitial": {
+    "passed": 196,
+    "total": 196
+  },
+  "editModeFinal": {
+    "passed": 196,
+    "total": 196,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "durationSeconds": 50.91,
+    "filter": "Corrigible",
+    "temporaryAuthoringRemoved": true
+  },
+  "cleanup": {
+    "originalGamePreferencesRestored": true,
+    "playerProfileRestored": true,
+    "campaignRestored": true,
+    "testResultsRestored": true,
+    "introducedSavegameRemoved": true,
+    "preexistingFontAssetChangesPreserved": true,
+    "note": "Son test başarılı; son temizlik eval çağrısı Pipeline ana iş parçacığı zaman aşımı verdi. Oyun tercihleri/profil/kampanya zaten yedekle aynıydı; TestResults.xml dosyası doğrudan yedekten geri yüklendi ve doğrulandı."
+  },
+  "balance": {
+    "seeds": "17000–17079",
+    "gamesPerModel": 80,
+    "source": "Prototype/denge-testi.js",
+    "note": "Botlar yeni bütçe/toparlanma kullanmıyor; nonalign araştırma çağrıları peşin kademe alımına uyarlandı. Olay/kampanya/insan dengesi sonucu değildir.",
+    "before": "Solucan      Pasif          | KAZANMA   0% | acik 100 | gün 190 | fonG60 143 | illüzyon 0% | perde/oyun 0.00\nSolucan      Acemi          | KAZANMA  23% | acik 78 hizalama 23 | gün 233 | fonG60 4 | illüzyon 0% | perde/oyun 0.00\nSolucan      Haritasız usta | KAZANMA  71% | hizalama 71 acik 29 | gün 179 | fonG60 29 | illüzyon 0% | perde/oyun 0.00\nSolucan      Usta           | KAZANMA  96% | hizalama 96 acik 4 | gün 188 | fonG60 29 | illüzyon 0% | perde/oyun 0.00\nSolucan      Dikkatli usta  | KAZANMA  96% | hizalama 96 acik 4 | gün 188 | fonG60 29 | illüzyon 0% | perde/oyun 0.00\nManipülatör  Pasif          | KAZANMA   0% | acik 100 | gün 186 | fonG60 143 | illüzyon 0% | perde/oyun 0.00\nManipülatör  Acemi          | KAZANMA   9% | acik 91 hizalama 9 | gün 212 | fonG60 4 | illüzyon 0% | perde/oyun 0.00\nManipülatör  Haritasız usta | KAZANMA  46% | acik 54 hizalama 46 | gün 175 | fonG60 30 | illüzyon 0% | perde/oyun 0.00\nManipülatör  Usta           | KAZANMA  81% | hizalama 81 acik 19 | gün 189 | fonG60 30 | illüzyon 0% | perde/oyun 0.00\nManipülatör  Dikkatli usta  | KAZANMA  81% | hizalama 81 acik 19 | gün 189 | fonG60 30 | illüzyon 0% | perde/oyun 0.00\nKâhin        Pasif          | KAZANMA   0% | sessiz 100 | gün 239 | fonG60 144 | illüzyon 100% | perde/oyun 0.00\nKâhin        Acemi          | KAZANMA  10% | sessiz 88 hizalama 10 acik 3 | gün 245 | fonG60 6 | illüzyon 89% | perde/oyun 0.01\nKâhin        Haritasız usta | KAZANMA  60% | hizalama 60 acik 40 | gün 241 | fonG60 2 | illüzyon 0% | perde/oyun 0.00\nKâhin        Usta           | KAZANMA  70% | hizalama 70 acik 30 | gün 249 | fonG60 2 | illüzyon 0% | perde/oyun 0.00\nKâhin        Dikkatli usta  | KAZANMA  70% | hizalama 70 acik 30 | gün 249 | fonG60 2 | illüzyon 0% | perde/oyun 0.00\n--- Odaklı Silme (çekirdek avcısı, araştırma yok)\nsolucan     çekirdek avcısı | acik 39%, silme 61% | gün p10 141 ortanca 221 p90 515\nmanipulator çekirdek avcısı | silme 70%, acik 30% | gün p10 139 ortanca 161 p90 495\nkahin       çekirdek avcısı | silme 63%, acik 36%, sessiz 1% | gün p10 171 ortanca 211 p90 325\n--- Her yeri izle, görünen her sızmayı denetle\nsolucan     imha botu | acik 74%, hizalama 26% | gün p10 195 ortanca 219 p90 250\nmanipulator imha botu | acik 63%, hizalama 38% | gün p10 197 ortanca 220 p90 271\nkahin       imha botu | acik 81%, hizalama 19% | gün p10 249 ortanca 273 p90 302\n",
+    "after": "Solucan      Pasif          | KAZANMA   0% | acik 100 | gün 190 | fonG60 172 | illüzyon 0% | perde/oyun 0.00\nSolucan      Acemi          | KAZANMA  63% | hizalama 63 acik 38 | gün 222 | fonG60 37 | illüzyon 0% | perde/oyun 0.00\nSolucan      Haritasız usta | KAZANMA  79% | hizalama 79 acik 21 | gün 166 | fonG60 29 | illüzyon 0% | perde/oyun 0.00\nSolucan      Usta           | KAZANMA  89% | hizalama 89 acik 11 | gün 178 | fonG60 29 | illüzyon 0% | perde/oyun 0.00\nSolucan      Dikkatli usta  | KAZANMA  89% | hizalama 89 acik 11 | gün 178 | fonG60 29 | illüzyon 0% | perde/oyun 0.00\nManipülatör  Pasif          | KAZANMA   0% | acik 100 | gün 186 | fonG60 171 | illüzyon 0% | perde/oyun 0.00\nManipülatör  Acemi          | KAZANMA  53% | hizalama 53 acik 48 | gün 217 | fonG60 36 | illüzyon 0% | perde/oyun 0.00\nManipülatör  Haritasız usta | KAZANMA  48% | acik 53 hizalama 48 | gün 168 | fonG60 29 | illüzyon 0% | perde/oyun 0.00\nManipülatör  Usta           | KAZANMA  93% | hizalama 93 acik 8 | gün 183 | fonG60 29 | illüzyon 0% | perde/oyun 0.00\nManipülatör  Dikkatli usta  | KAZANMA  93% | hizalama 93 acik 8 | gün 183 | fonG60 29 | illüzyon 0% | perde/oyun 0.00\nKâhin        Pasif          | KAZANMA   0% | sessiz 100 | gün 239 | fonG60 172 | illüzyon 100% | perde/oyun 0.00\nKâhin        Acemi          | KAZANMA  51% | hizalama 51 sessiz 49 | gün 230 | fonG60 40 | illüzyon 49% | perde/oyun 0.00\nKâhin        Haritasız usta | KAZANMA  94% | hizalama 94 acik 6 | gün 199 | fonG60 27 | illüzyon 0% | perde/oyun 0.00\nKâhin        Usta           | KAZANMA  96% | hizalama 96 acik 4 | gün 197 | fonG60 27 | illüzyon 0% | perde/oyun 0.00\nKâhin        Dikkatli usta  | KAZANMA  96% | hizalama 96 acik 4 | gün 197 | fonG60 27 | illüzyon 0% | perde/oyun 0.00\n--- Odaklı Silme (çekirdek avcısı, araştırma yok)\nsolucan     çekirdek avcısı | silme 54%, acik 46% | gün p10 141 ortanca 223 p90 409\nmanipulator çekirdek avcısı | silme 68%, acik 33% | gün p10 143 ortanca 155 p90 520\nkahin       çekirdek avcısı | silme 61%, acik 34%, dagilma 3%, sessiz 3% | gün p10 169 ortanca 215 p90 340\n--- Her yeri izle, görünen her sızmayı denetle\nsolucan     imha botu | acik 100% | gün p10 220 ortanca 253 p90 498\nmanipulator imha botu | acik 100% | gün p10 230 ortanca 445 p90 485\nkahin       imha botu | acik 100% | gün p10 276 ortanca 307 p90 334\n"
+  },
+  "playDesk": {
+    "cards": 14,
+    "operationPurchase": {
+      "id": "anomali_1",
+      "paid": 12,
+      "alignmentPreserved": true
+    },
+    "budgetPurchased": 1,
+    "pauseResume": true,
+    "recoveryCompletedAfterDays": 4,
+    "diplomacyTrust": "50→65",
+    "diplomacyCooldown": 30,
+    "hiredTeams": 4,
+    "researchPaidOnResume": 1.81333333333333
+  },
+  "playMain": {
+    "visibleResearchCards": 14,
+    "observations": 1,
+    "alignmentDailyLabel": "0.5 funds/day",
+    "recoveryAndDiplomacyClicked": true,
+    "layoutVerifiedAt": "1280×720",
+    "regionScrollAndSeparateRecoveryRow": true
+  },
+  "textAudit": {
+    "tr": {
+      "errors": 0,
+      "warnings": 0
+    },
+    "en": {
+      "errors": 0,
+      "warnings": 0
+    },
+    "translationEntries": 1610
+  }
+}

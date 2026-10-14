@@ -55,7 +55,7 @@ namespace Corrigible.Tests
                 foreach (var r in GameData.Regions) texts.AddRange(new[] { r.Name, r.LatLon });
                 foreach (var t in GameData.Traits) texts.AddRange(new[] { t.Name, t.Desc, t.Line });
                 foreach (var t in GameData.AiTypes) texts.AddRange(new[] { t.Name, t.Difficulty, t.Blurb });
-                foreach (var r in GameData.Research) texts.AddRange(new[] { r.Name, r.Desc, Loc.T(r.Branch) });
+                foreach (var r in GameData.Research) texts.AddRange(new[] { r.Name, r.Desc, r.Unlock, Loc.T(r.Branch) });
                 foreach (var e in GameData.Endings) texts.AddRange(new[] { e.Title, e.Text });
                 foreach (var g in GameData.Gifts) texts.AddRange(new[] { g.Title, g.Text });
                 foreach (var a in GameData.Agencies.Concat(GameData.FakeAgencies)) texts.Add(Loc.T(a));

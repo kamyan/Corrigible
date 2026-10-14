@@ -11,6 +11,8 @@ namespace Corrigible.Desk
     /// </summary>
     public sealed class ResearchRowView : MonoBehaviour
     {
+        [Tooltip("Ağaç düzenindeki proje kartı. Boşsa eski tablo satırı çizilir.")]
+        [SerializeField] ResearchProjectCardView card;
         [SerializeField] Image icon;
         [SerializeField] TMP_Text nameText;
         [SerializeField] TMP_Text subText;
@@ -29,23 +31,44 @@ namespace Corrigible.Desk
 
         void Awake()
         {
-            startButton.onClick.AddListener(() => Action?.Invoke(ProjectId, true));
-            pauseButton.onClick.AddListener(() => Action?.Invoke(ProjectId, paused));
+            if (card != null) { card.Action += ForwardAction; return; }
+            startButton.onClick.AddListener(() =>
+            {
+                if (project != null && (project.State ?? "available") == "available" && project.CanStart && string.IsNullOrEmpty(project.DisabledReason))
+                    Action?.Invoke(ProjectId, true);
+            });
+            pauseButton.onClick.AddListener(() =>
+            {
+                if (project != null && project.CanPause && string.IsNullOrEmpty(project.PauseDisabledReason)
+                    && (project.State == "running" || project.State == "paused" || project.State == "stopped"))
+                    Action?.Invoke(ProjectId, paused);
+            });
         }
 
-        public DeskButton StartButton => startButton;
-        public DeskButton PauseButton => pauseButton;
+        void OnDestroy() { if (card != null) card.Action -= ForwardAction; }
+        void ForwardAction(string id, bool start) => Action?.Invoke(id, start);
+
+        public DeskButton StartButton => card != null ? card.StartButton : startButton;
+        public DeskButton PauseButton => card != null ? card.PauseButton : pauseButton;
         public string ProjectId { get; private set; }
         bool paused;
+        ResearchProjectVM project;
 
         /// <summary>Satır yüksekliği (TSV): alt satırı olan 33 (+1 ayraç), olmayan en az 31.</summary>
         public float Height { get; private set; }
 
         public void Bind(ResearchProjectVM p, string lockedLabel, bool last)
         {
+            project = p;
             ProjectId = p.Id ?? p.Name;
+            if (card != null)
+            {
+                card.Bind(p);
+                Height = card.Height;
+                return;
+            }
             var state = p.State ?? "available";
-            paused = state == "paused" || state == "stopped";   // kendiliğinden durmuş (C2) duraklatılmış gibi çizilir
+            paused = p.ManuallyPaused ?? (state == "paused" || state == "stopped");
             bool hasSub = !string.IsNullOrEmpty(p.Sub);
 
             DeskSprites.Apply(icon, state switch
@@ -59,7 +82,7 @@ namespace Corrigible.Desk
             DeskUi.SetActive(subText, hasSub);
             if (hasSub) DeskUi.SetText(subText, DeskLoc.Instance.T(p.Sub));
 
-            bool done = state == "done", run = state == "running" || paused, avail = state == "available", lck = state == "locked";
+            bool done = state == "done", run = state == "running" || state == "paused" || state == "stopped", avail = state == "available", lck = state == "locked";
             DeskUi.SetActive(doneStamp, done);
             DeskUi.SetActive(bar, run);
             DeskUi.SetActive(percent, run);
@@ -73,6 +96,8 @@ namespace Corrigible.Desk
                 bar.Set(p.Progress);
                 DeskUi.SetText(percent, DeskFormat.Percent(p.Progress * 100));
                 pauseButton.SetIcon(paused ? "ic_play_12" : "ic_pause_12");
+                pauseButton.SetLabel(p.PauseLabel ?? (paused ? Corrigible.Core.Loc.T("Sürdür") : Corrigible.Core.Loc.T("Duraklat")));
+                pauseButton.SetDisabled(p.PauseDisabledReason);
             }
             if (avail)
             {

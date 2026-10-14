@@ -52,9 +52,9 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(2, vm.Map.EdgeRoutes.Count, "Pasifik bağlantısı iki kenar oku");
             Assert.IsTrue(vm.Map.Regions.All(n => n.Trust == "unknown" && n.Value == null), "başlangıçta hiçbir şey bilinmiyor");
             Assert.AreEqual(new Vector2(1138.5f, 524.1f), new Vector2(vm.Map.Regions.First(n => n.Id == "in").Center[0], vm.Map.Regions.First(n => n.Id == "in").Center[1]), "projeksiyon: Hindistan = tasarımdaki Güney Asya");
-            Assert.AreEqual(4, vm.Research.Branches.Count);
-            Assert.AreEqual(GameData.Research.Length, vm.Research.Branches.Sum(b => b.Projects.Count));
-            Assert.IsTrue(vm.Research.Branches.SelectMany(b => b.Projects).All(p => !p.CanPause), "oyunda araştırma duraklatılamaz");
+            Assert.AreEqual(5, vm.Research.Branches.Count);
+            Assert.AreEqual(14, vm.Research.Branches.Sum(b => b.Projects.Count));
+            Assert.IsTrue(vm.Research.Branches.SelectMany(b => b.Projects).All(p => !p.CanPause), "henüz yürüyen Hizalama projesi yok");
             Assert.AreEqual(Simulation.ResearchReserves.Length, vm.Research.EmergencyFund.Options.Count);
             Assert.AreEqual(3, vm.Map.Teams.Count, "deneysel mod: üç ekip karargâhta");
             Assert.IsNull(vm.Dossier);

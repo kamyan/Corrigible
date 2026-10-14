@@ -49,6 +49,8 @@ namespace Corrigible.Desk.Bridge
             d.Stats.Add(new StatVM { Label = Loc.T("Ekonomi"), Value = N(r.Econ, 0), Trust = "verified" });
             for (int i = 0; i < 4; i++) d.Actions.Add(Action(r, i, v, trust, unknown, val));
             if (sim.TeamsOn) d.Field = Field(r);
+            d.Recovery = Recovery(r);
+            d.Finance = Finance(r);
             return d;
         }
 
@@ -311,6 +313,7 @@ namespace Corrigible.Desk.Bridge
 
         ResearchVM Research()
         {
+            if (sim.ModernEconomy) return ModernResearch();
             var cur = S.Research.Cur != null ? GameData.ResearchItem(S.Research.Cur) : null;
             float spend = cur != null && !illusion ? CostPerDay(cur) : 0;
             int reserveIdx = System.Array.IndexOf(Simulation.ResearchReserves, S.ResearchReserve);
@@ -349,8 +352,25 @@ namespace Corrigible.Desk.Bridge
 
         ResearchProjectVM Project(ResearchDef rs, ResearchDef cur)
         {
-            var p = new ResearchProjectVM { Id = rs.Id, Name = rs.Name, CanPause = false };
-            if (S.Done(rs.Id)) { p.State = "done"; p.StampRot = (rs.Id.Length % 5) - 2; return p; }
+            bool done = S.Done(rs.Id);
+            bool align = rs.Branch == GameData.BranchAlign;
+            bool needsObservation = align && !done && sim.AlignSpeed <= 0;
+            var p = new ResearchProjectVM
+            {
+                Id = rs.Id, Name = rs.Name, Stage = rs.Stage, PrerequisiteId = rs.Req,
+                Unlock = string.IsNullOrEmpty(rs.Unlock) ? rs.Desc : rs.Unlock,
+                CanPause = false, CanStart = false, NeedsObservation = needsObservation,
+            };
+            if (rs.Req != null) p.Condition = Loc.F("Gerekli: {0}", GameData.ResearchItem(rs.Req).Name);
+            if (align && !S.Aware) p.Condition = ResearchCondition(p.Condition, Loc.T("Önce YZ'yi tespit et"));
+            if (needsObservation && S.Aware) p.Condition = ResearchCondition(p.Condition, Loc.T("İlerlemek için gözlem noktası kur."));
+            if (done) { p.State = "done"; p.StampRot = (rs.Id.Length % 5) - 2; return p; }
+
+            // Gözlem yokken hız sıfırdır; 0,01'e bölünmüş binlerce gün yerine oyuncunun yapacağı işi göster.
+            p.Days = needsObservation ? Loc.T("Gözlem gerekli") : Loc.F("{0} gün", ResearchDays(rs));
+            p.Sub = needsObservation ? Loc.F("Toplam {0} fon", N(rs.Cost, 0))
+                : Loc.F("{0} gün · toplam {1} fon", ResearchDays(rs), N(rs.Cost, 0));
+            p.StartLabel = needsObservation ? Loc.T("Başlat") : Loc.F("Başlat · {0} fon/gün", N(CostPerDay(rs)));
             if (cur == rs)
             {
                 p.Progress = Mathf.Clamp01((float)(S.Research.Prog / rs.Days));
@@ -359,21 +379,30 @@ namespace Corrigible.Desk.Bridge
                 else
                 {
                     p.State = "running";
-                    p.Sub = S.Research.Starved > 0 ? Loc.T("Fon yetmiyor · yavaşladı") : Loc.F("{0} gün kaldı", DaysLeft(rs));
+                    p.Sub = needsObservation ? Loc.T("Gözlem gerekli")
+                        : S.Research.Starved > 0 ? Loc.T("Fon yetmiyor · yavaşladı") : Loc.F("{0} gün kaldı", DaysLeft(rs));
                 }
                 return p;
             }
-            if (rs.Req != null && !S.Done(rs.Req)) { p.State = "locked"; p.Sub = Loc.F("Gerekli: {0}", GameData.ResearchItem(rs.Req).Name); return p; }
-            if (rs.Branch == GameData.BranchAlign && !S.Aware) { p.State = "locked"; p.Sub = Loc.T("Önce YZ'yi tespit et"); return p; }
+            if (rs.Req != null && !S.Done(rs.Req))
+            {
+                p.State = "locked"; p.LockReason = Loc.F("Gerekli: {0}", GameData.ResearchItem(rs.Req).Name);
+                p.DisabledReason = p.LockReason; return p;
+            }
+            if (align && !S.Aware)
+            {
+                p.State = "locked"; p.LockReason = Loc.T("Önce YZ'yi tespit et");
+                p.DisabledReason = p.LockReason; return p;
+            }
             p.State = "available";
-            // Süre ve toplam bedel alt satırda (oyundaki adlar uzun; sağ blokta yalnızca Başlat)
-            p.Days = "";
-            p.Sub = Loc.F("{0} gün · toplam {1} fon", ResearchDays(rs), N(rs.Cost, 0));
-            p.StartLabel = Loc.F("Başlat · {0} fon/gün", N(CostPerDay(rs)));
             // Düğme etiketinin yerine geçer: kısa (aynı anda tek araştırma yürür)
-            if (cur != null) p.DisabledReason = Loc.T("Sırada");
-            if (S.Ending != null) p.DisabledReason = Loc.T("Oyun bitti");
+            if (cur != null) { p.DisabledReason = Loc.T("Sırada"); p.LockReason = Loc.T("Aynı anda tek araştırma yürür."); }
+            if (S.Ending != null) { p.DisabledReason = Loc.T("Oyun bitti"); p.LockReason = p.DisabledReason; }
+            p.CanStart = p.DisabledReason == null;
             return p;
         }
+
+        static string ResearchCondition(string current, string next) =>
+            string.IsNullOrEmpty(current) ? next : Loc.F("{0} · {1}", current, next);
     }
 }

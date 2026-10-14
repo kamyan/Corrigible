@@ -13,6 +13,15 @@ const N = globalThis.N_GAMES || 300;
 const avg = a => a.reduce((s, v) => s + v, 0) / a.length;
 const COMPUTE_ORDER = ['na', 'cn', 'weu', 'jk', 'ru', 'me', 'in', 'eeu', 'sea', 'oc', 'sa', 'af'];
 
+// Botların eski dal sırası korunur; v3'te süreli olmayan projeler iki küçük kademe satın alır.
+function researchOrOperation(S, id) {
+  const rs = G2.RESEARCH.find(x => x.id === id);
+  if (!G2.modernEconomy || !G2.modernEconomy(S) || rs.branch === 'Hizalama') return G2.startResearch(S, id);
+  const node = ['anomali', 'guclu', 'bilinc'].includes(id)
+    ? id + (G2.operationLevel(S, id) === 0 ? '_1' : '_2') : id;
+  return G2.buyOperation(S, node);
+}
+
 function monitor(S, cap) {
   const R = S.regions;
   const hint = S.news.find(h => h.kind === 'hint');
@@ -27,7 +36,7 @@ function known(S) {
 function naive(S) {
   monitor(S, 3);
   // brifingi okumuş ilk oyuncu: bir tespit araştırması, sonra Hizalama, sonra kalanlar listedeki sırayla
-  if (!S.research.cur) for (const id of ['anomali', 'yorum', 'duzelt', 'kilit', 'dogrulama', 'guclu', 'bilinc', 'analog', 'kuantum']) if (!G2.done(S, id) && G2.startResearch(S, id).ok) break;
+  if (!S.research.cur) for (const id of ['anomali', 'yorum', 'duzelt', 'kilit', 'dogrulama', 'guclu', 'bilinc', 'analog', 'kuantum']) if (!G2.done(S, id) && researchOrOperation(S, id).ok) break;
   const k = known(S);
   if (k[0] && S.fon > 60 && S.sg > 2) G2.act(S, 'denetim', k[0].id);
   if (k[0] && !k[0].q && S.sg > 20) G2.act(S, 'karantina', k[0].id);
@@ -40,7 +49,7 @@ function smart(S, attentive, nomap) {
     const plan = ['yorum', 'duzelt', 'kilit'];
     if (S.type === 'kahin' || depAvg > 20) plan.unshift('bilinc', 'analog');
     plan.push('guclu', 'anomali');
-    for (const id of plan) if (!G2.done(S, id) && G2.startResearch(S, id).ok) break;
+    for (const id of plan) if (!G2.done(S, id) && researchOrOperation(S, id).ok) break;
   }
   if (attentive && S.illusion && S.day - S.illusion.start >= 5 && G2.done(S, 'analog')) {
     const r = R.filter(x => !x.off && !x.left)[0]; if (r) G2.act(S, 'denetim', r.id);

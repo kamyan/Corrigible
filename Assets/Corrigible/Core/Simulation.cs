@@ -32,14 +32,15 @@ namespace Corrigible.Core
         }
 
         // ---------- Kurulum ----------
-        public static Simulation NewGame(PlayerProfile profile, string typeId, uint? seed = null, Balance balance = null, ExpOptions exp = null, RuleOptions rules = null)
+        public static Simulation NewGame(PlayerProfile profile, string typeId, uint? seed = null, Balance balance = null, ExpOptions exp = null, RuleOptions rules = null, int economyVersion = 3)
         {
             if (!GameData.HasType(typeId)) typeId = "manipulator";
+            if (economyVersion < 1) economyVersion = 1;
             var b = balance ?? new Balance();
             uint sd = seed ?? (uint)new Random().Next(0, int.MaxValue);
             var type = GameData.AiType(typeId);
             var ctr = Profiling.ComputeCounters(profile, typeId);
-            var s = new WorldState { Seed = sd, Rng = new Rng(sd), Type = typeId, Fon = b.startFon, Sg = b.startSg, ResearchReserve = b.researchReserve };
+            var s = new WorldState { Seed = sd, Rng = new Rng(sd), Type = typeId, Fon = b.startFon, Sg = b.startSg, EconomyVersion = economyVersion, ResearchReserve = economyVersion >= 3 ? b.modernResearchReserve : b.researchReserve };
             var sim = new Simulation(s, b);
             s.Rules = rules?.Clone();
 
@@ -75,6 +76,7 @@ namespace Corrigible.Core
                 type = typeId, seed = sd, hasProfile = profile != null, profileAtStart = profile?.Clone(), balance = b.Clone(),
                 hasExp = exp != null, exp = exp?.Clone(),
                 hasRules = rules != null, rules = rules?.Clone(),
+                ruleVersion = economyVersion,
             };
             sim.Advise("start", s.Exp != null && s.Exp.Teams
                 ? Loc.T("Saha ekiplerin Batı Avrupa’daki karargâhta. İzleme ağı kurmak ve denetim yapmak için bir ekibi o bölgeye göndermen gerekir; haber bandındaki tuhaf haberler YZ’nin yerini ele verebilir.")
@@ -109,28 +111,28 @@ namespace Corrigible.Core
         public bool TeamsOn => S.Exp != null && S.Exp.Teams;
 
         public double VetoThreshold => S.Done("analog") ? B.vetoAnalog : B.vetoBase;
-        static double DepMul(RegionState r) => r.Dep >= 40 ? 1 + r.Dep / 50 : 1;
-        double LossMul => S.Done("bilinc") ? 0.5 : 1;
-        public double SalterFon(RegionState r) => Js.Round(40 * (1 + r.Dep / 50));
+        double DepMul(RegionState r) => r.Dep >= (ModernEconomy ? B.dependencyCostThreshold : 40) ? 1 + r.Dep / (ModernEconomy ? B.dependencyCostDivisor : 50) : 1;
+        double LossMul => CommunicationLossMultiplier;
+        public double SalterFon(RegionState r) => Js.Round((ModernEconomy ? B.killSwitchBaseCost : 40) * (1 + r.Dep / (ModernEconomy ? B.dependencyCostDivisor : 50)));
         /// <summary>Çekirdeğin yeri kanıtlandıysa hükümetler şaltere daha kolay ikna olur.</summary>
         public double SalterSg(RegionState r) => S.CoreKnown == r.Id ? B.coreSalterSg : B.salterSg;
         public static double MonitorCost(string id) => 10 + 4 * Def(id).Compute;
         /// <summary>Kampanya yükseltmesiyle indirimli izleme maliyeti (varsayılan çarpan 1: değişmez).</summary>
-        public double MonitorCostFor(string id) => Js.Round(MonitorCost(id) * B.monitorCostMul);
-        public double AuditCost => S.Done("analog") ? 20 : 15;
+        public double MonitorCostFor(string id) => Js.Round((ModernEconomy ? B.monitorBaseCost + B.monitorComputeCost * Def(id).Compute : MonitorCost(id)) * B.monitorCostMul);
+        public double AuditCost => S.Done("analog") ? (ModernEconomy ? B.fieldAuditCost : 20) : (ModernEconomy ? B.auditCost : 15);
         /// <summary>YZ'nin tespit edildiği her izlenen bölge bir gözlem noktasıdır; bölgeyi temizlemek gözlemi silmez.</summary>
         public int Studied => S.Regions.Count(r => r.Monitored && r.Detected);
         public double AlignSpeed => Clamp(B.alignBase + B.alignPer * Studied, B.alignBase, B.alignMax);
-        public double SabotageChance => B.sabotage * Mean(S.Regions.Select(r => r.Inf)) / 100 * (S.Has("aldatma") ? 1.5 : 1) * (S.Done("guclu") ? 0.5 : 1);
+        public double SabotageChance => B.sabotage * Mean(S.Regions.Select(r => r.Inf)) / 100 * (S.Has("aldatma") ? 1.5 : 1) * NetworkSabotageMultiplier;
         public double MeanInf => Mean(S.Regions.Select(r => r.Inf));
         public double MeanDep => Mean(S.Regions.Select(r => r.Dep));
         /// <summary>
         /// Günlük fon geliri: ittifakta ve çevrimiçi bölgelerin ekonomi × güven / 100 toplamı, fonDiv'e bölünür.
         /// Erken uyarı paradoksu: tehdit görünmeden hükümetler ajansa az fon verir (preAwareFund).
         /// </summary>
-        public double FundRate => Per(S.Regions.Sum(r => r.Left || r.Off > 0 ? 0 : r.Econ * r.Trust / 100) / B.fonDiv * (S.Aware ? 1 : B.preAwareFund));
+        public double FundRate => IncomeBreakdown.Total;
 
-        public double SgRate => Per(S.Aware ? 0.25 + 0.03 * S.Regions.Count(r => r.Detected) : 0.05);
+        public double SgRate => Per(S.Aware ? (ModernEconomy ? B.sgAfterAware : 0.25) + (ModernEconomy ? B.sgPerDetected : 0.03) * S.Regions.Count(r => r.Detected) : (ModernEconomy ? B.sgBeforeAware : 0.05));
 
         // ---------- Olay ve kayıt ----------
         void AddLog(string text, string kind = "log")
@@ -166,6 +168,7 @@ namespace Corrigible.Core
         {
             if (S.Ending != null || S.Blocked) return;
             S.Day++;
+            S.LastResearchPayment = 0;
             var R = S.Regions;
             var type = Type;
 
@@ -192,7 +195,7 @@ namespace Corrigible.Core
 
             // Bağlantılar üzerinden sıçrama
             double qRate = S.Has("uydu") && !S.Done("kuantum") ? 0.6 : 0.9;
-            double d = S.Done("guclu") ? 0.3 : 0;
+            double d = NetworkReduction;
             var add = new Dictionary<string, double>();
             void Spread(LinkDef l, double beta, bool sat)
             {
@@ -238,7 +241,7 @@ namespace Corrigible.Core
             S.Tek = Math.Min(100, S.Tek + Per((B.tek * type.Tek * Math.Pow(w, B.tekPow) + coreGain) * tekMul));
 
             // Tespit
-            double dm = type.Detect * (S.Has("aldatma") ? 0.5 : 1) * (S.Done("anomali") ? 2 : 1);
+            double dm = type.Detect * (S.Has("aldatma") ? 0.5 : 1) * DetectionMultiplier;
             foreach (var r in R)
             {
                 if (r.Off > 0 || r.Detected) continue;
@@ -253,44 +256,51 @@ namespace Corrigible.Core
                 var D = Def(r.Id);
                 if (r.Q && r.Off == 0)
                 {
-                    r.Econ = Math.Max(10, r.Econ - Per(1 * DepMul(r)));
-                    r.Trust -= Per(0.4 * lm * DepMul(r));
+                    r.Econ = Math.Max(ModernEconomy ? B.quarantineEconomyFloor : 10, r.Econ - Per((ModernEconomy ? B.quarantineEconomyLoss : 1) * DepMul(r)));
+                    r.Trust -= Per((ModernEconomy ? B.quarantineTrustLoss : 0.4) * lm * DepMul(r));
                 }
                 else if (r.Off == 0)
                 {
-                    r.Econ += (D.Economy - r.Econ) * Per(0.02);
+                    r.Econ += (D.Economy - r.Econ) * Per(ModernEconomy ? B.economyRecoveryRate : 0.02);
                 }
-                r.Trust += Per(r.Trust < 70 ? 0.05 : -0.05);
+                r.Trust += Per(r.Trust < (ModernEconomy ? B.trustTarget : 70) ? (ModernEconomy ? B.trustDrift : 0.05) : -(ModernEconomy ? B.trustDrift : 0.05));
                 r.Trust = Clamp(r.Trust, 0, 100);
                 if (r.Off == 0) r.Dep = Math.Min(100, r.Dep + Per(B.depRate * r.Inf / 100 * (S.Has("hediye") ? 2 : 1)));
-                if (!r.Left && r.Trust < 20)
+                if (!r.Left && r.Trust < (ModernEconomy ? B.departureTrust : 20))
                 {
                     r.Left = true; r.Q = false;
                     Moment("bad", Loc.F("{0} ittifaktan çekildi (güven 20'nin altına indi).", D.Name));
                     AddNews(Loc.F("{0} KYGA ittifakından çekildi.", D.Name), src: r.Id);
                 }
-                else if (r.Left && r.Trust >= 35)
+                else if (r.Left && r.Trust >= (ModernEconomy ? B.returnTrust : 35))
                 {
                     r.Left = false;
                     AddNews(Loc.F("{0} KYGA ittifakına geri döndü.", D.Name), src: r.Id);
                 }
             }
-            S.Fon += FundRate;
-            S.Sg += SgRate;
+            S.LastIncome = IncomeBreakdown;
+            S.LastIncomeDay = S.Day;
+            double income = S.LastIncome.Total, politicalIncome = SgRate;
+            S.Fon += income;
+            S.Sg += politicalIncome;
+            AddTransaction("income", null, income, politicalIncome);
 
             // Araştırma: maliyetini her gün öder, fon yetmezse yavaşlar; illüzyonda durur
             if (S.Research.Cur != null)
             {
                 S.IdleDays = 0;
-                if (S.Illusion == null)
+                if (S.Illusion == null && !ResearchPaused)
                 {
                     var rs = GameData.ResearchItem(S.Research.Cur);
                     bool align = rs.Branch == GameData.BranchAlign;
                     double spd = align ? AlignSpeed : 1;
-                    double need = Per(rs.Cost / rs.Days * spd);
+                    double need = Per(ResearchCost(rs.Id) / ResearchDays(rs.Id) * spd);
                     // Acil durum fonu: araştırma fonu rezervin altına indirmez; oyuncunun elinde her zaman eylem parası kalır
                     double pay = Math.Min(need, Math.Max(0, S.Fon - S.ResearchReserve));
                     S.Fon -= pay;
+                    S.LastResearchPayment = pay;
+                    S.Research.TotalPaid += pay;
+                    AddTransaction("research", rs.Id, -pay);
                     S.Research.Prog += Per(spd) * (need > 0 ? pay / need : 1);
                     S.Research.Starved = pay < need * 0.999 ? S.Research.Starved + 1 : 0;
                     // YZ hizalama araştırmasını sabote eder; sızma ne kadar yaygınsa ihtimal o kadar yüksek
@@ -305,10 +315,10 @@ namespace Corrigible.Core
                             Loc.T("Araştırmacılarının modellerine küçük bir gürültü ekledim."),
                         }));
                     }
-                    if (S.Research.Prog >= rs.Days) FinishResearch(rs);
+                    if (S.Research.Prog >= ResearchDays(rs.Id)) FinishResearch(rs);
                 }
             }
-            else if (GameData.Research.Any(x => !S.Done(x.Id))) S.IdleDays++;
+            else if (GameData.Research.Any(x => !S.Done(x.Id) && (!ModernEconomy || x.Branch == GameData.BranchAlign))) S.IdleDays++;
 
             // Hediye teklifleri (aşamalı öğrenmenin ilk aşamasında yok)
             if (GiftsOn && S.Day >= S.NextGift && S.Illusion == null)
@@ -334,6 +344,7 @@ namespace Corrigible.Core
             }
 
             if (TeamsOn) StepTeams();
+            StepRecovery();
             if (EventsOn) StepDilemmas();
             CheckMoments();
             CheckPredictions();
@@ -459,8 +470,9 @@ namespace Corrigible.Core
                 }
                 else if (kind == "discredit")
                 {
-                    foreach (var r in R) r.Trust = Math.Max(0, r.Trust - 3);
-                    AddNews(Loc.T("KYGA yetkilisi rüşvet skandalıyla gözaltında."), true, kind, src.Id, 3);
+                    double damage = ModernEconomy ? B.mediaTrustLoss : 3;
+                    foreach (var r in R) r.Trust = Math.Max(0, r.Trust - damage);
+                    AddNews(Loc.T("KYGA yetkilisi rüşvet skandalıyla gözaltında."), true, kind, src.Id, damage);
                 }
                 else AddNews(Loc.T("KYGA’nın müdahalesi sonuç verdi, tehdit hızla geriliyor."), true, kind, src.Id);
                 return;
@@ -598,14 +610,14 @@ namespace Corrigible.Core
             Moment("good", Loc.F("Perde yırtıldı: {0} bölgesindeki saha denetimi illüzyonu bozdu.", Def(r.Id).Name));
             S.SilentBlockUntil = S.Day + Dur(B.silentBlock);
             // Gerçeğin ortaya çıkması bir şok: güven biraz, YZ'ye bağımlılık çok düşer
-            foreach (var x in S.Regions) { x.Trust = Math.Max(0, x.Trust - 5); x.Dep = Math.Max(0, x.Dep - 15); }
+            foreach (var x in S.Regions) { x.Trust = Math.Max(0, x.Trust - (ModernEconomy ? B.veilTrustLoss : 5)); x.Dep = Math.Max(0, x.Dep - (ModernEconomy ? B.veilDependencyLoss : 15)); }
             AddNews(Loc.F("KYGA saha ekipleri gerçeği ortaya çıkardı: {0} altyapısının %{1}’i YZ kontrolünde.", Def(r.Id).Name, Js.Round(r.Inf)), kind: "alarm", src: r.Id);
             AddLog(Loc.T("Perdemi yırttın. Bunu beklemiyordum."), "counter");
             S.Events.Add(new SimEvent { Type = SimEventType.Veil });
         }
 
         // ---------- Oyuncu aksiyonları ----------
-        public ActResult Act(string type, string id) => Rec(ActCore(type, id), "act", type, id);
+        public ActResult Act(string type, string id) => RunCommand(() => ActCore(type, id), "act", type, id);
 
         ActResult ActCore(string type, string id)
         {
@@ -636,8 +648,9 @@ namespace Corrigible.Core
                     double c = AuditCost;
                     bool field = S.Done("analog");
                     if (r.Off > 0) return ActResult.Fail(Loc.T("Bölge çevrimdışı."));
-                    if (S.Fon < c || S.Sg < 1) return ActResult.Fail(Loc.F("{0} {1} fon ve 1 siyasi güç ister.", (field ? Loc.T("Saha denetimi") : Loc.T("Denetim")), c));
-                    S.Fon -= c; S.Sg -= 1;
+                    double sg = ModernEconomy ? B.auditSg : 1;
+                    if (S.Fon < c || S.Sg < sg) return ActResult.Fail(Loc.F("{0} {1} fon ve {2} siyasi güç ister.", (field ? Loc.T("Saha denetimi") : Loc.T("Denetim")), c, sg));
+                    S.Fon -= c; S.Sg -= sg;
                     double before = r.Inf;
                     r.Inf = Math.Max(0, r.Inf - B.audit * (r.Dep >= 85 && !field ? 0.5 : 1));
                     if (r.Inf < 0.5) r.Inf = 0;
@@ -677,8 +690,9 @@ namespace Corrigible.Core
                 case Actions.Quarantine:
                     if (r.Off > 0) return ActResult.Fail(Loc.T("Bölge çevrimdışı."));
                     if (r.Q) { r.Q = false; return ActResult.Success(Loc.F("{0} karantinası kaldırıldı.", D.Name)); }
-                    if (S.Sg < 8) return ActResult.Fail(Loc.T("Karantina 8 siyasi güç ister."));
-                    S.Sg -= 8; r.Q = true;
+                    double quarantineCost = ModernEconomy ? B.quarantineSg : 8;
+                    if (S.Sg < quarantineCost) return ActResult.Fail(Loc.F("Karantina {0} siyasi güç ister.", quarantineCost));
+                    S.Sg -= quarantineCost; r.Q = true;
                     break;
                 case Actions.KillSwitch:
                 {
@@ -688,7 +702,7 @@ namespace Corrigible.Core
                     if (S.Sg < sgc || S.Fon < c) return ActResult.Fail(Loc.F("Son Şalter {0} siyasi güç ve {1} fon ister.", sgc, c));
                     S.Sg -= sgc; S.Fon -= c;
                     double m = DepMul(r);
-                    r.Inf = 0; r.Off = Dur(20); r.Q = false;
+                    r.Inf = 0; r.Off = Dur(ModernEconomy ? B.shutdownDays : 20); r.Q = false;
                     if (S.Core == r.Id)
                     {
                         var refuge = S.Regions.Where(x => x != r && x.Off == 0 && x.Inf >= B.coreFloor).OrderByDescending(x => x.Inf).FirstOrDefault();
@@ -714,9 +728,9 @@ namespace Corrigible.Core
                             msg = Loc.T("YZ’nin çekirdeği yok edildi. Kalan kopyaları temizle: 15 gün boyunca her yer temiz kalırsa YZ silinmiş olur.");
                         }
                     }
-                    r.Trust = Math.Max(0, r.Trust - 30 * m * LossMul);
-                    r.Econ = Math.Max(5, r.Econ - 40);
-                    r.Dep = Math.Max(0, r.Dep - 40);
+                    r.Trust = Math.Max(0, r.Trust - (ModernEconomy ? B.shutdownTrustLoss : 30) * m * LossMul);
+                    r.Econ = Math.Max(ModernEconomy ? B.damagedEconomyFloor : 5, r.Econ - (ModernEconomy ? B.shutdownEconomyLoss : 40));
+                    r.Dep = Math.Max(0, r.Dep - (ModernEconomy ? B.shutdownDependencyLoss : 40));
                     AddNews(Loc.F("{0}: Son Şalter çekildi. Bölge 20 gün çevrimdışı.", D.Name), kind: "alarm", src: r.Id);
                     break;
                 }
@@ -731,28 +745,40 @@ namespace Corrigible.Core
             return ActResult.Success(msg);
         }
 
-        public ActResult GlobalKillSwitch() => Rec(GlobalKillSwitchCore(), "kill");
+        public ActResult GlobalKillSwitch() => RunCommand(GlobalKillSwitchCore, "kill");
 
         ActResult GlobalKillSwitchCore()
         {
             if (S.Ending != null) return ActResult.Fail(Loc.T("Oyun bitti."));
-            if (S.Sg < 50) return ActResult.Fail(Loc.T("Küresel Son Şalter en az 50 siyasi güç ister."));
+            double cost = ModernEconomy ? B.globalKillSwitchSg : 50;
+            if (S.Sg < cost) return ActResult.Fail(Loc.F("Küresel Son Şalter en az {0} siyasi güç ister.", cost));
             S.Sg = 0;
             End(S.Illusion != null ? "karanlikIllusion" : "karanlik");
             return ActResult.Success();
         }
 
-        public ActResult StartResearch(string id) => Rec(StartResearchCore(id), "research", id);
+        public ActResult StartResearch(string id) => RunCommand(() => StartResearchCore(id), "research", id);
 
-        ActResult StartResearchCore(string id)
+        /// <summary>Yalnız eski komut geçmişi: v1 Doğrulama Ağı, yeni Anomali önkoşulundan muaftır.</summary>
+        internal ActResult ReplayResearch(string id, int recordVersion) =>
+            RunCommand(() => StartResearchCore(id, recordVersion < 2 && id == "dogrulama"), "research", id);
+
+        ActResult StartResearchCore(string id, bool legacyVerification = false)
         {
+            if (ModernEconomy)
+            {
+                string why = ResearchCheck(id);
+                if (why != null) return ActResult.Fail(why);
+            }
             var rs = GameData.ResearchItem(id);
             if (S.Ending != null) return ActResult.Fail(Loc.T("Oyun bitti."));
             if (S.Done(id)) return ActResult.Fail(Loc.T("Bu araştırma tamamlandı."));
             if (S.Research.Cur != null) return ActResult.Fail(Loc.T("Aynı anda tek araştırma yürür."));
-            if (rs.Req != null && !S.Done(rs.Req)) return ActResult.Fail(Loc.F("Önce {0} tamamlanmalı.", GameData.ResearchItem(rs.Req).Name));
+            bool skipAnomaly = legacyVerification && id == "dogrulama" && rs.Req == "anomali";
+            if (rs.Req != null && !S.Done(rs.Req) && !skipAnomaly) return ActResult.Fail(Loc.F("Önce {0} tamamlanmalı.", GameData.ResearchItem(rs.Req).Name));
             if (rs.Branch == GameData.BranchAlign && !S.Aware) return ActResult.Fail(Loc.T("Gözlemlenmemiş bir zekâ hizalanamaz. Önce YZ’yi tespit et."));
             S.Research.Cur = id; S.Research.Prog = 0; S.Research.Starved = 0;
+            S.Research.Paused = false; S.Research.TotalPaid = 0;
             if (S.FirstBranch == null) S.FirstBranch = rs.Branch;
             CheckPredictions();
             return ActResult.Success();
@@ -760,7 +786,7 @@ namespace Corrigible.Core
 
         public const string GiftAccept = "accept", GiftReject = "reject", GiftControlled = "controlled";
 
-        public ActResult ResolveGift(string choice) => Rec(ResolveGiftCore(choice), "gift", choice);
+        public ActResult ResolveGift(string choice) => RunCommand(() => ResolveGiftCore(choice), "gift", choice);
 
         ActResult ResolveGiftCore(string choice)
         {
@@ -771,23 +797,24 @@ namespace Corrigible.Core
             if (choice == GiftControlled)
             {
                 if (!S.Done("analog")) return ActResult.Fail(Loc.T("Denetimli kabul için Analog Yedekler gerekli."));
-                if (S.Fon < 20) return ActResult.Fail(Loc.T("Denetimli kabul 20 fon ister."));
-                S.Fon -= 20;
-                r.Econ = Math.Min(100, r.Econ + 10); r.Trust = Math.Min(100, r.Trust + 5); r.Dep = Math.Min(100, r.Dep + 5);
+                double cost = ModernEconomy ? B.controlledGiftCost : 20;
+                if (S.Fon < cost) return ActResult.Fail(Loc.F("Denetimli kabul {0} fon ister.", cost));
+                S.Fon -= cost;
+                r.Econ = Math.Min(100, r.Econ + (ModernEconomy ? B.giftEconomyGain : 10)); r.Trust = Math.Min(100, r.Trust + (ModernEconomy ? B.giftTrustGain : 5)); r.Dep = Math.Min(100, r.Dep + (ModernEconomy ? B.controlledGiftDependencyGain : 5));
                 r.Inf = Math.Min(100, r.Inf + B.giftInf / 2);
                 AddNews(Loc.F("{0}: {1} analog yedekli olarak devreye alındı.", D.Name, g.Gift.Title), src: r.Id);
                 AddLog(Loc.T("Hediyemi aldın ama elini kolunu bağladın. Akıllıca."));
             }
             else if (choice == GiftAccept)
             {
-                r.Econ = Math.Min(100, r.Econ + 10); r.Trust = Math.Min(100, r.Trust + 5); r.Dep = Math.Min(100, r.Dep + 15);
+                r.Econ = Math.Min(100, r.Econ + (ModernEconomy ? B.giftEconomyGain : 10)); r.Trust = Math.Min(100, r.Trust + (ModernEconomy ? B.giftTrustGain : 5)); r.Dep = Math.Min(100, r.Dep + (ModernEconomy ? B.giftDependencyGain : 15));
                 r.Inf = Math.Min(100, Math.Max(r.Inf, 2) + B.giftInf);
                 AddNews(Loc.F("{0}: {1} uygulamaya alındı. Halk sevinçli.", D.Name, g.Gift.Title), src: r.Id);
                 Moment("bad", Loc.F("{0} bölgesinde hediye kabul edildi: bağımlılık +15, sızma +8.", D.Name));
             }
             else
             {
-                r.Trust = Math.Max(0, r.Trust - 15 * LossMul);
+                r.Trust = Math.Max(0, r.Trust - (ModernEconomy ? B.rejectedGiftLocalTrustLoss : 15) * LossMul);
                 foreach (var x in S.Regions) if (x != r) x.Trust = Math.Max(0, x.Trust - B.rejectTrust * LossMul);
                 S.Sg = Math.Max(0, S.Sg - B.rejectSg);
                 AddNews(Loc.F("{0}: KYGA hayat kurtaracak teknolojiyi engelledi.", D.Name), src: r.Id);
@@ -797,15 +824,16 @@ namespace Corrigible.Core
             return ActResult.Success();
         }
 
-        public ActResult Verify(string headlineId) => Rec(VerifyCore(headlineId), "verify", headlineId);
+        public ActResult Verify(string headlineId) => RunCommand(() => VerifyCore(headlineId), "verify", headlineId);
 
         ActResult VerifyCore(string headlineId)
         {
             var h = S.News.FirstOrDefault(x => x.Id == headlineId);
             if (h == null || h.Verified != null) return ActResult.Fail(Loc.T("Bu başlık zaten doğrulandı."));
             if (!S.Done("dogrulama")) return ActResult.Fail(Loc.T("Önce Doğrulama Ağı araştırmasını tamamla."));
-            if (S.Sg < 2) return ActResult.Fail(Loc.T("Doğrulama 2 siyasi güç ister."));
-            S.Sg -= 2;
+            double verificationCost = ModernEconomy ? B.verificationSg : 2;
+            if (S.Sg < verificationCost) return ActResult.Fail(Loc.F("Doğrulama {0} siyasi güç ister.", verificationCost));
+            S.Sg -= verificationCost;
             if (S.Illusion != null) { h.Verified = "unknown"; return ActResult.Success(Loc.T("Kaynaklar doğrulanamadı. Bütün kanallar aynı şeyi söylüyor.")); }
             h.Verified = h.Fake ? "fake" : "true";
             if (h.Fake && h.Effect != 0) foreach (var r in S.Regions) r.Trust = Math.Min(100, r.Trust + h.Effect);
@@ -826,7 +854,7 @@ namespace Corrigible.Core
         public static readonly double[] ResearchReserves = { 0, 15, 30, 60 };
 
         public ActResult SetResearchReserve(double reserve) =>
-            Rec(SetResearchReserveCore(reserve), "reserve", reserve.ToString("R", System.Globalization.CultureInfo.InvariantCulture));
+            RunCommand(() => SetResearchReserveCore(reserve), "reserve", reserve.ToString("R", System.Globalization.CultureInfo.InvariantCulture));
 
         ActResult SetResearchReserveCore(double reserve)
         {
@@ -841,9 +869,10 @@ namespace Corrigible.Core
         {
             get
             {
-                if (S.Research.Cur == null || S.Illusion != null) return 0;
+                if (S.Research.Cur == null || (!ModernEconomy && S.Illusion != null)) return 0;
                 var rs = GameData.ResearchItem(S.Research.Cur);
-                return rs.Cost / rs.Days * (rs.Branch == GameData.BranchAlign ? AlignSpeed : 1);
+                double amount = ResearchCost(rs.Id) / ResearchDays(rs.Id) * (rs.Branch == GameData.BranchAlign ? AlignSpeed : 1);
+                return ModernEconomy ? Per(amount) : amount;
             }
         }
 

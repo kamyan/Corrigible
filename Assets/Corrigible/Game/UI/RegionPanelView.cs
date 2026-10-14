@@ -33,6 +33,8 @@ namespace Corrigible.Game.UI
         [SerializeField] TMP_Text dep;
         [SerializeField] TMP_Text depSub;
         [SerializeField] TMP_Text econ;
+        [Header("Fon katkısı")]
+        [SerializeField] TMP_Text financeTitle, financeContribution, financeNote;
 
         [Header("Eylemler")]
         [SerializeField] ActionButtonView monitor;
@@ -48,6 +50,10 @@ namespace Corrigible.Game.UI
         [SerializeField] Transform sendButtons;
         [SerializeField] StyledButton sendPrefab;
         [SerializeField] ActionButtonView raid;
+        [Header("Toparlanma")]
+        [SerializeField] ActionButtonView recovery, diplomacy;
+        public event Action<string> RecoveryClicked;
+        public event Action<string> DiplomacyClicked;
 
         /// <summary>Ekibi bu bölgeye gönder: (ekip, bölge).</summary>
         public event Action<string, string> SendTeam;
@@ -67,6 +73,8 @@ namespace Corrigible.Game.UI
             Wire(quarantine, Actions.Quarantine);
             Wire(kill, Actions.KillSwitch);
             if (raid != null) UiUtil.OnClick(raid.Styled.Button, () => RaidClicked?.Invoke(id));
+            if (recovery != null) UiUtil.OnClick(recovery.Styled.Button, () => RecoveryClicked?.Invoke(id));
+            if (diplomacy != null) UiUtil.OnClick(diplomacy.Styled.Button, () => DiplomacyClicked?.Invoke(id));
         }
 
         void Wire(ActionButtonView b, string action)
@@ -139,6 +147,7 @@ namespace Corrigible.Game.UI
             dep.text = Js.Round(r.Dep).ToString(); depSub.text = r.Dep > veto ? Loc.T("veto ediyor") : Loc.F("veto {0}", veto);
             dep.color = r.Dep > veto ? theme.threat : r.Dep >= 40 ? theme.warn : theme.fg;
             econ.text = Js.Round(r.Econ).ToString();
+            RefreshFinance(r);
 
             double mc = sim.MonitorCostFor(r.Id);
             monitor.Styled.SetEnabled(!ended && !r.Monitored && !r.Left);
@@ -165,6 +174,30 @@ namespace Corrigible.Game.UI
             Short(kill, r.Dep <= veto && (S.Sg < ksg || S.Fon < kc));
 
             if (field != null) RefreshField(r, ended);
+            RefreshRecovery(r);
+        }
+
+        void RefreshFinance(RegionState r)
+        {
+            var finance = RegionFinance.Read(sim, r);
+            if (financeTitle != null) financeTitle.text = Loc.T("FON KATKISI");
+            if (financeContribution != null) financeContribution.text = finance.Summary;
+            if (financeNote != null) financeNote.text = finance.Note;
+        }
+
+        void RefreshRecovery(RegionState r)
+        {
+            UiUtil.Show(recovery, sim.ModernEconomy);
+            UiUtil.Show(diplomacy, sim.ModernEconomy);
+            if (!sim.ModernEconomy || recovery == null || diplomacy == null) return;
+            var repairWhy = sim.RecoveryCheck(r.Id);
+            recovery.Title.text = Loc.T("Altyapıyı toparla");
+            recovery.Sub.text = repairWhy ?? Loc.F("{0} fon · {1} gün · ekonomi +{2:0.#}", sim.RecoveryCost, sim.B.recoveryDays, sim.RecoveryExpectedGain(r.Id));
+            recovery.Styled.SetEnabled(repairWhy == null);
+            var talkWhy = sim.DiplomaticCheck(r.Id);
+            diplomacy.Title.text = Loc.T("Diplomatik görüşme");
+            diplomacy.Sub.text = talkWhy ?? Loc.F("{0} fon + {1} SG · güven {2:0} → {3:0}{4}", sim.DiplomacyCost, sim.B.diplomacySg, r.Trust, sim.DiplomaticTrustAfter(r.Id), r.Left ? Loc.T(" · ittifaka döner") : "");
+            diplomacy.Styled.SetEnabled(talkWhy == null);
         }
 
         // Deneysel mod: bölgedeki ekipler, ekip gönderme düğmeleri, baskın; izleme ve denetim için ekip şartı

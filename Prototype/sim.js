@@ -1,4 +1,4 @@
-// Son Şalter — simülasyon çekirdeği v2 (DOM yok). Unity'de SimulationCore C# assembly'sinin karşılığı.
+// Son Şalter — simülasyon çekirdeği v3 (DOM yok). Eski kayıtların v1/v2 ekonomik kuralları korunur.
 (function (G) {
   'use strict';
 
@@ -67,7 +67,7 @@
 
   const RESEARCH = [
     { id: 'anomali', branch: 'Tespit', name: 'Anomali Algılama', cost: 30, days: 8, desc: 'Tespit ihtimalleri ×2' },
-    { id: 'dogrulama', branch: 'Tespit', name: 'Doğrulama Ağı', cost: 40, days: 10, desc: 'Başlık doğrula (2 SG); sahte çıkan kaynağı işaretle' },
+    { id: 'dogrulama', branch: 'Tespit', name: 'Doğrulama Ağı', cost: 40, days: 10, desc: 'Başlık doğrula (2 SG); sahte çıkan kaynağı işaretle', req: 'anomali' },
     { id: 'guclu', branch: 'Savunma', name: 'Güçlendirilmiş Ağlar', cost: 40, days: 10, desc: 'Tüm yayılma −%30' },
     { id: 'kuantum', branch: 'Savunma', name: 'Kuantum Karantina', cost: 60, days: 14, desc: 'Karantina uydu yolunu da keser', req: 'guclu' },
     { id: 'bilinc', branch: 'Politika', name: 'Kamu Bilinçlendirme', cost: 35, days: 8, desc: 'Güven kayıpları −%50' },
@@ -88,6 +88,7 @@
   };
 
   const BAL = {
+    startFon: 60, startSg: 5, monitorCostMul: 1,
     growth: 0.05, spread: 0.3, satBeta: 0.4, spreadMin: 15,
     tek: 3.5, tekPow: 2, qTek: 0.2, patchDays: 20, patchGrowth: 0.5, cpRate: 1.0, fonDiv: 150, preAwareFund: 0.4, researchReserve: 0,
     depRate: 0.15, audit: 20, alignBase: 0, alignPer: 0.25, alignMax: 1,
@@ -95,7 +96,48 @@
     vetoBase: 70, vetoAnalog: 85, misreadCost: 15,
     sabotage: 0.1, sabotageLoss: 4, rejectSg: 2, rejectTrust: 2, giftInf: 8,
     coreFloor: 20, coreSeed: 8, coreTek: 0.05, salterSg: 30, coreSalterSg: 20,
+    modernResearchReserve: 15, centralFund: 0.75, regionalFundMul: 0.8,
+    budgetTier1Cost: 25, budgetTier2Cost: 40, budgetTier1Multiplier: 1.15, budgetTier2Multiplier: 1.35,
+    anomalyTier1Cost: 12, anomalyTier2Cost: 18, verificationCost: 40,
+    networkTier1Cost: 16, networkTier2Cost: 24, quantumCost: 60,
+    communicationTier1Cost: 15, communicationTier2Cost: 20, analogCost: 50,
+    anomalyTier1Multiplier: 1.5, anomalyTier2Multiplier: 2,
+    networkTier1Reduction: 0.15, networkTier2Reduction: 0.3,
+    networkTier1SabotageMultiplier: 0.75, networkTier2SabotageMultiplier: 0.5,
+    communicationTier1LossMultiplier: 0.75, communicationTier2LossMultiplier: 0.5,
+    analogDependencyReduction: 20, recoveryCost: 2, recoveryGain: 15, recoveryMinGap: 5, recoveryDays: 4,
+    diplomacyCost: 8, diplomacySg: 2, diplomacyTrustGain: 15, diplomacyTrustCap: 70,
+    diplomacyReturnTrust: 35, diplomacyCooldownDays: 20,
+    interpretationCost: 68, interpretationDays: 25, corrigibilityCost: 98, corrigibilityDays: 30,
+    valueLockCost: 165, valueLockDays: 38, monitorBaseCost: 10, monitorComputeCost: 4,
+    auditCost: 15, fieldAuditCost: 20, auditSg: 1, quarantineSg: 8, killSwitchBaseCost: 40,
+    globalKillSwitchSg: 50, controlledGiftCost: 20, verificationSg: 2,
+    teamHireCost: 45, teamHireDays: 4, raidCost: 30, raidSg: 6,
+    sgBeforeAware: 0.05, sgAfterAware: 0.25, sgPerDetected: 0.03,
+    dependencyCostThreshold: 40, dependencyCostDivisor: 50, economyRecoveryRate: 0.02,
+    trustTarget: 70, trustDrift: 0.05, quarantineEconomyLoss: 1, quarantineTrustLoss: 0.4,
+    quarantineEconomyFloor: 10, departureTrust: 20, returnTrust: 35,
+    shutdownTrustLoss: 30, shutdownEconomyLoss: 40, shutdownDependencyLoss: 40, damagedEconomyFloor: 5, shutdownDays: 20,
+    giftEconomyGain: 10, giftTrustGain: 5, giftDependencyGain: 15, controlledGiftDependencyGain: 5,
+    rejectedGiftLocalTrustLoss: 15, mediaTrustLoss: 3, veilTrustLoss: 5, veilDependencyLoss: 15,
+    raidEconomyLossPerCollateral: 5, raidTrustLossPerCollateral: 2, raidFailureTrustLoss: 10,
+    electionSg: 5, informantCost: 35, sanctionSg: 2, pressConferenceSg: 3, academicTeamCost: 25,
+    emergencyResponseCost: 20, donationFon: 60, aiOfferFon: 50,
   };
+
+  const OPERATIONS = [
+    { id: 'anomali_1', branch: 'Tespit', name: 'Anomali I', costField: 'anomalyTier1Cost' },
+    { id: 'anomali_2', branch: 'Tespit', name: 'Anomali II', req: 'anomali_1', costField: 'anomalyTier2Cost' },
+    { id: 'dogrulama', branch: 'Tespit', name: 'Doğrulama Ağı', req: 'anomali_2', costField: 'verificationCost' },
+    { id: 'guclu_1', branch: 'Savunma', name: 'Ağ Güçlendirme I', costField: 'networkTier1Cost' },
+    { id: 'guclu_2', branch: 'Savunma', name: 'Ağ Güçlendirme II', req: 'guclu_1', costField: 'networkTier2Cost' },
+    { id: 'kuantum', branch: 'Savunma', name: 'Kuantum Karantina', req: 'guclu_2', costField: 'quantumCost' },
+    { id: 'bilinc_1', branch: 'Politika', name: 'Kamu İletişimi I', costField: 'communicationTier1Cost' },
+    { id: 'bilinc_2', branch: 'Politika', name: 'Kamu İletişimi II', req: 'bilinc_1', costField: 'communicationTier2Cost' },
+    { id: 'analog', branch: 'Politika', name: 'Analog Yedekler', req: 'bilinc_2', costField: 'analogCost' },
+    { id: 'butce_1', branch: 'Bütçe', name: 'Bütçe Anlaşması I', costField: 'budgetTier1Cost' },
+    { id: 'butce_2', branch: 'Bütçe', name: 'Bütçe Anlaşması II', req: 'butce_1', costField: 'budgetTier2Cost' },
+  ];
 
   const AGENCIES = ['Atlas Haber', 'Meridyen', 'Pusula TV', 'KHA'];
   const FAKE_AGENCIES = ['Atlass Haber', 'Meridien', 'Pusula Tv', 'K.H.A'];
@@ -118,18 +160,32 @@
   const has = (S, t) => S.traits.includes(t);
   const done = (S, id) => S.research.done.includes(id);
   const vetoThr = S => done(S, 'analog') ? BAL.vetoAnalog : BAL.vetoBase;
-  const depMul = r => r.dep >= 40 ? 1 + r.dep / 50 : 1;
-  const lossMul = S => done(S, 'bilinc') ? 0.5 : 1;
-  const salterFon = r => Math.round(40 * (1 + r.dep / 50));
+  const depMul = (r, S) => r.dep >= (modernEconomy(S) ? BAL.dependencyCostThreshold : 40)
+    ? 1 + r.dep / (modernEconomy(S) ? BAL.dependencyCostDivisor : 50) : 1;
+  const modernEconomy = S => S.economyVersion >= 3;
+  const operationLevel = (S, id) => modernEconomy(S)
+    ? (S.operations.includes(id + '_2') ? 2 : S.operations.includes(id + '_1') ? 1 : 0)
+    : (done(S, id) ? 2 : 0);
+  const tierValue = (S, id, first, second, fallback) => {
+    const level = operationLevel(S, id);
+    return level === 2 ? BAL[second] : level === 1 ? BAL[first] : fallback;
+  };
+  const lossMul = S => modernEconomy(S) ? tierValue(S, 'bilinc', 'communicationTier1LossMultiplier', 'communicationTier2LossMultiplier', 1) : done(S, 'bilinc') ? 0.5 : 1;
+  const detectionMultiplier = S => modernEconomy(S) ? tierValue(S, 'anomali', 'anomalyTier1Multiplier', 'anomalyTier2Multiplier', 1) : done(S, 'anomali') ? 2 : 1;
+  const spreadReduction = S => modernEconomy(S) ? tierValue(S, 'guclu', 'networkTier1Reduction', 'networkTier2Reduction', 0) : done(S, 'guclu') ? 0.3 : 0;
+  const salterFon = (r, S) => Math.round((S && !modernEconomy(S) ? 40 : BAL.killSwitchBaseCost)
+    * (1 + r.dep / (S && !modernEconomy(S) ? 50 : BAL.dependencyCostDivisor)));
   // Çekirdeğin yeri kanıtlandıysa hükümetler şaltere daha kolay ikna olur
   const salterSg = (S, r) => S.coreKnown === r.id ? BAL.coreSalterSg : BAL.salterSg;
-  const monitorCost = id => 10 + 4 * def(id).c;
-  const auditCost = S => done(S, 'analog') ? 20 : 15;
+  const monitorCost = (id, S) => S && !modernEconomy(S) ? 10 + 4 * def(id).c
+    : Math.round((BAL.monitorBaseCost + BAL.monitorComputeCost * def(id).c) * BAL.monitorCostMul);
+  const auditCost = S => modernEconomy(S) ? (done(S, 'analog') ? BAL.fieldAuditCost : BAL.auditCost) : done(S, 'analog') ? 20 : 15;
   // Hizalama, YZ'yi gözlemleyerek ilerler: YZ'nin tespit edildiği her izlenen bölge bir gözlem noktasıdır.
   // Bölgeyi temizlemek gözlemi silmez; kayıtlar kalır.
   const studied = S => S.regions.filter(r => r.monitored && r.detected).length;
   const alignSpeed = S => clamp(BAL.alignBase + BAL.alignPer * studied(S), BAL.alignBase, BAL.alignMax);
-  const sabotageChance = S => BAL.sabotage * mean(S.regions.map(r => r.inf)) / 100 * (has(S, 'aldatma') ? 1.5 : 1) * (done(S, 'guclu') ? 0.5 : 1);
+  const sabotageChance = S => BAL.sabotage * mean(S.regions.map(r => r.inf)) / 100 * (has(S, 'aldatma') ? 1.5 : 1)
+    * (modernEconomy(S) ? tierValue(S, 'guclu', 'networkTier1SabotageMultiplier', 'networkTier2SabotageMultiplier', 1) : done(S, 'guclu') ? 0.5 : 1);
   const totalActions = S => S.runActions.izleme + S.runActions.denetim + S.runActions.karantina + S.runActions.salter;
 
   // ---------- Deneysel mod: zaman ölçeği ----------
@@ -254,16 +310,20 @@
     const traits = type.start.slice();
     ctr.traits.forEach(t => { if (!traits.includes(t)) traits.push(t); });
     const S = {
-      v: 2, seed, seq: 0, rngState: 0, type: typeId, day: 0, fon: 60, sg: 5, researchReserve: BAL.researchReserve, tek: 0, cp: 0, buys: 0,
+      v: 3, economyVersion: opts && opts.economyVersion != null ? opts.economyVersion : 3,
+      seed, seq: 0, rngState: 0, type: typeId, day: 0, fon: BAL.startFon, sg: BAL.startSg,
+      researchReserve: opts && opts.economyVersion < 3 ? BAL.researchReserve : BAL.modernResearchReserve, tek: 0, cp: 0, buys: 0,
+      operations: [], budgetLevel: 0, recoveryJobs: [], transactionLedger: [],
+      lastIncome: { central: 0, regionalBase: 0, budgetBonus: 0, total: 0 }, lastResearchPayment: 0,
       aware: false, awareDay: 0,
       regions: REGIONS.map(r => ({
         id: r.id, inf: 0, monitored: false, q: false, off: 0,
         trust: Math.round(rnd(60, 75)), dep: 0, econ: r.e, left: false, detected: false,
-        revealDay: -1, fieldDay: -1, fakeLow: 0, mediaFlag: false, patch: 0,
+        revealDay: -1, fieldDay: -1, fakeLow: 0, mediaFlag: false, patch: 0, diplomacyUntil: 0,
       })),
       traits, startTraits: traits.slice(), counterLines: ctr.lines,
       predictions: ctr.preds,
-      research: { done: [], cur: null, prog: 0 }, idleDays: 0,
+      research: { done: [], cur: null, prog: 0, starved: 0, paused: false, totalPaid: 0 }, idleDays: 0,
       news: [], log: [], actions: [], hist: [],
       runActions: { izleme: 0, denetim: 0, karantina: 0, salter: 0 },
       firstRegion: null, firstBranch: null,
@@ -344,7 +404,7 @@
 
     // Bağlantılar üzerinden sıçrama
     const qRate = has(S, 'uydu') && !done(S, 'kuantum') ? 0.6 : 0.9;
-    const d = done(S, 'guclu') ? 0.3 : 0;
+    const d = spreadReduction(S);
     const edges = LINKS.map(l => ({ a: l[0], b: l[1], beta: 1, sat: false }));
     if (has(S, 'uydu')) SAT.forEach(l => edges.push({ a: l[0], b: l[1], beta: BAL.satBeta, sat: true }));
     const add = {};
@@ -386,7 +446,7 @@
     S.tek = Math.min(100, S.tek + per(S, (BAL.tek * type.tek * Math.pow(w, BAL.tekPow) + coreGain) * tekMul));
 
     // Tespit
-    const dm = type.detect * (has(S, 'aldatma') ? 0.5 : 1) * (done(S, 'anomali') ? 2 : 1);
+    const dm = type.detect * (has(S, 'aldatma') ? 0.5 : 1) * detectionMultiplier(S);
     R.forEach(r => {
       if (r.off || r.detected) return;
       const p = r.monitored && r.inf > 5 ? 0.25 * dm : (r.inf > 40 ? 0.03 * dm : 0);
@@ -398,32 +458,37 @@
     R.forEach(r => {
       const D = def(r.id);
       if (r.q && !r.off) {
-        r.econ = Math.max(10, r.econ - per(S, 1 * depMul(r)));
-        r.trust -= per(S, 0.4 * lm * depMul(r));
+        r.econ = Math.max(modernEconomy(S) ? BAL.quarantineEconomyFloor : 10, r.econ - per(S, (modernEconomy(S) ? BAL.quarantineEconomyLoss : 1) * depMul(r, S)));
+        r.trust -= per(S, (modernEconomy(S) ? BAL.quarantineTrustLoss : 0.4) * lm * depMul(r, S));
       } else if (!r.off) {
-        r.econ += (D.e - r.econ) * per(S, 0.02);
+        r.econ += (D.e - r.econ) * per(S, modernEconomy(S) ? BAL.economyRecoveryRate : 0.02);
       }
-      r.trust += per(S, r.trust < 70 ? 0.05 : -0.05);
+      const drift = modernEconomy(S) ? BAL.trustDrift : 0.05;
+      r.trust += per(S, r.trust < (modernEconomy(S) ? BAL.trustTarget : 70) ? drift : -drift);
       r.trust = clamp(r.trust, 0, 100);
       if (!r.off) r.dep = Math.min(100, r.dep + per(S, BAL.depRate * r.inf / 100 * (has(S, 'hediye') ? 2 : 1)));
-      if (!r.left && r.trust < 20) {
+      if (!r.left && r.trust < (modernEconomy(S) ? BAL.departureTrust : 20)) {
         r.left = true; r.q = false;
         addNews(S, `${D.name} KYGA ittifakından çekildi.`, { src: r.id });
-      } else if (r.left && r.trust >= 35) {
+      } else if (r.left && r.trust >= (modernEconomy(S) ? BAL.returnTrust : 35)) {
         r.left = false;
         addNews(S, `${D.name} KYGA ittifakına geri döndü.`, { src: r.id });
       }
     });
     // Erken uyarı paradoksu: tehdit görünmeden hükümetler ajansa az fon verir
-    const income = fundRate(S);
-    S.fon += income;
-    S.sg += per(S, S.aware ? 0.25 + 0.03 * R.filter(r => r.detected).length : 0.05);
+    S.lastIncome = incomeBreakdown(S);
+    S.lastIncomeDay = S.day;
+    S.lastResearchPayment = 0;
+    S.fon += S.lastIncome.total;
+    const politicalIncome = sgRate(S);
+    S.sg += politicalIncome;
+    recordTransaction(S, 'income', null, S.lastIncome.total, politicalIncome);
 
     // Araştırma (illüzyonda durur)
     if (S.research.cur) {
       S.idleDays = 0;
-      if (!S.illusion) {
-        const rs = RESEARCH.find(x => x.id === S.research.cur);
+      if (!S.illusion && !S.research.paused) {
+        const rs = researchDefinition(S, S.research.cur);
         // Araştırma maliyetini her gün öder; fon yetmezse yavaşlar
         const spd = rs.branch === 'Hizalama' ? alignSpeed(S) : 1;
         const need = per(S, rs.cost / rs.days * spd);
@@ -431,6 +496,9 @@
         const reserve = S.researchReserve ?? 0;
         const pay = Math.min(need, Math.max(0, S.fon - reserve));
         S.fon -= pay;
+        S.lastResearchPayment = pay;
+        S.research.totalPaid += pay;
+        recordTransaction(S, 'research', rs.id, -pay, 0);
         S.research.prog += per(S, spd) * (need > 0 ? pay / need : 1);
         S.research.starved = pay < need * 0.999 ? (S.research.starved || 0) + 1 : 0;
         // YZ hizalama araştırmasını sabote eder; sızma ne kadar yaygınsa ihtimal o kadar yüksek
@@ -441,7 +509,7 @@
         }
         if (S.research.prog >= rs.days) finishResearch(S, rs);
       }
-    } else if (RESEARCH.some(x => !done(S, x.id))) S.idleDays++;
+    } else if (RESEARCH.some(x => !done(S, x.id) && (!modernEconomy(S) || x.branch === 'Hizalama'))) S.idleDays++;
 
     // Hediye teklifleri
     if (S.day >= S.nextGift && !S.illusion) {
@@ -464,6 +532,7 @@
     }
 
     if (S.exp && S.exp.teams) stepTeams(S);
+    if (modernEconomy(S)) stepRecovery(S);
     checkPredictions(S);
     checkAdvice(S);
     checkEndings(S);
@@ -575,8 +644,9 @@
         const t = low.length ? pick(low) : pick(R);
         addNews(S, `${def(t.id).name} veri merkezlerinde yoğun YZ trafiği tespit edildi.`, { fake: true, kind, src: src.id });
       } else if (kind === 'discredit') {
-        R.forEach(r => { r.trust = Math.max(0, r.trust - 3); });
-        addNews(S, 'KYGA yetkilisi rüşvet skandalıyla gözaltında.', { fake: true, kind, effect: 3, src: src.id });
+        const damage = modernEconomy(S) ? BAL.mediaTrustLoss : 3;
+        R.forEach(r => { r.trust = Math.max(0, r.trust - damage); });
+        addNews(S, 'KYGA yetkilisi rüşvet skandalıyla gözaltında.', { fake: true, kind, effect: damage, src: src.id });
       } else {
         addNews(S, 'KYGA’nın müdahalesi sonuç verdi, tehdit hızla geriliyor.', { fake: true, kind, src: src.id });
       }
@@ -664,7 +734,7 @@
     S.veilsTorn++;
     S.silentBlockUntil = S.day + dur(S, BAL.silentBlock);
     // Gerçeğin ortaya çıkması bir şok: güven biraz, YZ'ye bağımlılık çok düşer
-    S.regions.forEach(x => { x.trust = Math.max(0, x.trust - 5); x.dep = Math.max(0, x.dep - 15); });
+    S.regions.forEach(x => { x.trust = Math.max(0, x.trust - (modernEconomy(S) ? BAL.veilTrustLoss : 5)); x.dep = Math.max(0, x.dep - (modernEconomy(S) ? BAL.veilDependencyLoss : 15)); });
     addNews(S, `KYGA saha ekipleri gerçeği ortaya çıkardı: ${def(r.id).name} altyapısının %${Math.round(r.inf)}’i YZ kontrolünde.`, { kind: 'alarm', src: r.id });
     addLog(S, 'Perdemi yırttın. Bunu beklemiyordum.', 'counter');
     S.events.push({ type: 'veil' });
@@ -687,7 +757,7 @@
     }
     switch (type) {
       case 'izleme': {
-        const c = monitorCost(id);
+        const c = monitorCost(id, S);
         if (r.monitored) return fail('Bu bölgede izleme ağı zaten var.');
         if (S.fon < c) return fail(`Yetersiz fon: ${D.name} için izleme ağı ${c} fon ister.`);
         S.fon -= c; r.monitored = true;
@@ -697,8 +767,9 @@
         const c = auditCost(S);
         const field = done(S, 'analog');
         if (r.off) return fail('Bölge çevrimdışı.');
-        if (S.fon < c || S.sg < 1) return fail(`${field ? 'Saha denetimi' : 'Denetim'} ${c} fon ve 1 siyasi güç ister.`);
-        S.fon -= c; S.sg -= 1;
+        const sg = modernEconomy(S) ? BAL.auditSg : 1;
+        if (S.fon < c || S.sg < sg) return fail(`${field ? 'Saha denetimi' : 'Denetim'} ${c} fon ve ${sg} siyasi güç ister.`);
+        S.fon -= c; S.sg -= sg;
         const before = r.inf;
         r.inf = Math.max(0, r.inf - BAL.audit * (r.dep >= 85 && !field ? 0.5 : 1));
         if (r.inf < 0.5) r.inf = 0;
@@ -728,17 +799,17 @@
       case 'karantina':
         if (r.off) return fail('Bölge çevrimdışı.');
         if (r.q) { r.q = false; return { ok: true, msg: `${D.name} karantinası kaldırıldı.` }; }
-        if (S.sg < 8) return fail('Karantina 8 siyasi güç ister.');
-        S.sg -= 8; r.q = true;
+        if (S.sg < (modernEconomy(S) ? BAL.quarantineSg : 8)) return fail('Karantina için siyasi güç yetersiz.');
+        S.sg -= modernEconomy(S) ? BAL.quarantineSg : 8; r.q = true;
         break;
       case 'salter': {
         if (r.off) return fail('Bölge zaten çevrimdışı.');
         if (r.dep > vetoThr(S)) return fail(`${D.name} hükümeti Son Şalter’i veto etti: bağımlılık ${Math.round(r.dep)} > ${vetoThr(S)}.`);
-        const c = salterFon(r), sgc = salterSg(S, r);
+        const c = salterFon(r, S), sgc = salterSg(S, r);
         if (S.sg < sgc || S.fon < c) return fail(`Son Şalter ${sgc} siyasi güç ve ${c} fon ister.`);
         S.sg -= sgc; S.fon -= c;
-        const m = depMul(r);
-        r.inf = 0; r.off = dur(S, 20); r.q = false;
+        const m = depMul(r, S);
+        r.inf = 0; r.off = dur(S, modernEconomy(S) ? BAL.shutdownDays : 20); r.q = false;
         if (S.core === r.id) {
           const refuge = S.regions.filter(x => x !== r && !x.off && x.inf >= BAL.coreFloor).sort((a, b) => b.inf - a.inf)[0];
           if (refuge) {
@@ -756,9 +827,9 @@
             msg = 'YZ’nin çekirdeği yok edildi. Kalan kopyaları temizle: 15 gün boyunca her yer temiz kalırsa YZ silinmiş olur.';
           }
         }
-        r.trust = Math.max(0, r.trust - 30 * m * lossMul(S));
-        r.econ = Math.max(5, r.econ - 40);
-        r.dep = Math.max(0, r.dep - 40);
+        r.trust = Math.max(0, r.trust - (modernEconomy(S) ? BAL.shutdownTrustLoss : 30) * m * lossMul(S));
+        r.econ = Math.max(modernEconomy(S) ? BAL.damagedEconomyFloor : 5, r.econ - (modernEconomy(S) ? BAL.shutdownEconomyLoss : 40));
+        r.dep = Math.max(0, r.dep - (modernEconomy(S) ? BAL.shutdownDependencyLoss : 40));
         addNews(S, `${D.name}: Son Şalter çekildi. Bölge 20 gün çevrimdışı.`, { kind: 'alarm', src: r.id });
         break;
       }
@@ -774,15 +845,127 @@
 
   function globalSalter(S) {
     if (S.ending) return fail('Oyun bitti.');
-    if (S.sg < 50) return fail('Küresel Son Şalter en az 50 siyasi güç ister.');
+    if (S.sg < (modernEconomy(S) ? BAL.globalKillSwitchSg : 50)) return fail('Küresel Son Şalter için siyasi güç yetersiz.');
     S.sg = 0;
     end(S, S.illusion ? 'karanlikIllusion' : 'karanlik');
     return { ok: true };
   }
 
   function fundRate(S) {
-    const income = S.regions.reduce((s, r) => s + (r.left || r.off ? 0 : r.econ * r.trust / 100), 0) / BAL.fonDiv;
-    return per(S, income * (S.aware ? 1 : BAL.preAwareFund));
+    return incomeBreakdown(S).total;
+  }
+
+  function sgRate(S) {
+    return per(S, S.aware
+      ? (modernEconomy(S) ? BAL.sgAfterAware : 0.25) + (modernEconomy(S) ? BAL.sgPerDetected : 0.03) * S.regions.filter(r => r.detected).length
+      : modernEconomy(S) ? BAL.sgBeforeAware : 0.05);
+  }
+
+  function incomeBreakdown(S) {
+    const raw = per(S, S.regions.reduce((sum, r) => sum + (r.left || r.off ? 0 : r.econ * r.trust / 100), 0)
+      / BAL.fonDiv * (S.aware ? 1 : BAL.preAwareFund));
+    if (!modernEconomy(S)) return { central: 0, regionalBase: raw, budgetBonus: 0, total: raw };
+    const central = per(S, BAL.centralFund), regionalBase = raw * BAL.regionalFundMul;
+    const multiplier = S.budgetLevel === 2 ? BAL.budgetTier2Multiplier : S.budgetLevel === 1 ? BAL.budgetTier1Multiplier : 1;
+    const budgetBonus = regionalBase * (multiplier - 1);
+    return { central, regionalBase, budgetBonus, total: (central + regionalBase) + budgetBonus };
+  }
+
+  function researchDefinition(S, id) {
+    const rs = RESEARCH.find(x => x.id === id);
+    if (!rs || !modernEconomy(S) || rs.branch !== 'Hizalama') return rs;
+    const prefix = { yorum: 'interpretation', duzelt: 'corrigibility', kilit: 'valueLock' }[id];
+    return Object.assign({}, rs, { cost: BAL[prefix + 'Cost'], days: BAL[prefix + 'Days'] });
+  }
+
+  function buyOperation(S, id) {
+    if (S.ending) return fail('Oyun bitti.');
+    if (!modernEconomy(S)) return fail('Eski krizlerde operasyonlar araştırmayla açılır.');
+    const op = OPERATIONS.find(x => x.id === id);
+    if (!op) return fail('Geçersiz operasyon.');
+    if (operationPurchased(S, id)) return fail('Bu geliştirme zaten satın alındı.');
+    if (op.req && !operationPurchased(S, op.req)) return fail('Önce önceki kademe satın alınmalı.');
+    if (id === 'dogrulama' && S.rules && S.rules.stage > 0 && S.rules.stage < 3) return fail('Bu krizde medya tehdidi kapalı.');
+    if (id.startsWith('butce_') && !S.aware) return fail('Bütçe anlaşması için önce YZ tespit edilmeli.');
+    const cost = BAL[op.costField];
+    if (S.fon < cost) return fail('Yetersiz fon.');
+    S.fon -= cost;
+    if (id.startsWith('butce_')) {
+      S.budgetLevel = id === 'butce_2' ? 2 : 1;
+      return { ok: true };
+    }
+    S.operations.push(id);
+    {
+      const base = id.endsWith('_2') ? id.slice(0, -2) : null;
+      if (base && !done(S, base)) S.research.done.push(base);
+      if (!id.includes('_') && !done(S, id)) S.research.done.push(id);
+      if (id === 'analog') S.regions.forEach(r => { r.dep = Math.max(0, r.dep - BAL.analogDependencyReduction); });
+    }
+    if (!S.firstBranch) S.firstBranch = op.branch;
+    checkPredictions(S);
+    // C# ile aynı RNG sırası: her başarılı satın alma tek bir haber ajansı seçimi tüketir.
+    addNews(S, `KYGA geliştirmesi tamamlandı: ${op.name}.`);
+    return { ok: true };
+  }
+
+  function buyBudgetUpgrade(S) {
+    return buyOperation(S, S.budgetLevel === 0 ? 'butce_1' : 'butce_2');
+  }
+
+  function operationPurchased(S, id) {
+    return id === 'butce_1' ? S.budgetLevel >= 1 : id === 'butce_2' ? S.budgetLevel >= 2 : S.operations.includes(id);
+  }
+
+  function startRecovery(S, id) {
+    if (S.ending) return fail('Oyun bitti.');
+    if (!modernEconomy(S)) return fail('Eski krizlerde altyapı desteği yok.');
+    const r = reg(S, id);
+    if (!r || r.left || r.off || r.q || def(id).e - r.econ < BAL.recoveryMinGap) return fail('Onarım için bölge erişilebilir ve hasarlı olmalı.');
+    if (S.recoveryJobs.some(j => j.region === id)) return fail('Bölgede altyapı desteği sürüyor.');
+    const team = S.exp && S.exp.teams ? idleTeamAt(S, id) : null;
+    if (S.exp && S.exp.teams && !team) return fail('Bölgede boşta ekip yok.');
+    if (S.fon < BAL.recoveryCost) return fail('Yetersiz fon.');
+    S.fon -= BAL.recoveryCost;
+    if (team) { team.busy = BAL.recoveryDays; team.task = 'recovery'; }
+    S.recoveryJobs.push({ region: id, team: team ? team.id : null, finishDay: S.day + BAL.recoveryDays });
+    return { ok: true };
+  }
+
+  function stepRecovery(S) {
+    const keep = [];
+    for (const job of S.recoveryJobs) {
+      if (S.day < job.finishDay) { keep.push(job); continue; }
+      const r = reg(S, job.region);
+      if (r && !r.off && !r.left && !r.q && (!job.team || teamById(S, job.team))) {
+        const gain = Math.min(BAL.recoveryGain, Math.max(0, def(r.id).e - r.econ));
+        r.econ += gain;
+        addLog(S, `${def(r.id).name}: altyapı desteği tamamlandı, ekonomi +${gain.toFixed(1)}.`, 'economy');
+      } else addLog(S, `${def(job.region).name}: altyapı desteği erişim kaybı nedeniyle sonuç vermedi. Fon iade edilmedi.`, 'economy');
+    }
+    S.recoveryJobs = keep;
+  }
+
+  function diplomaticTalk(S, id) {
+    if (S.ending) return fail('Oyun bitti.');
+    if (!modernEconomy(S)) return fail('Eski krizlerde diplomatik görüşme yok.');
+    const r = reg(S, id);
+    if (!r || r.trust >= BAL.diplomacyTrustCap || S.day < r.diplomacyUntil) return fail('Görüşme şu anda kullanılamıyor.');
+    if (S.fon < BAL.diplomacyCost || S.sg < BAL.diplomacySg) return fail('Fon veya siyasi güç yetersiz.');
+    S.fon -= BAL.diplomacyCost; S.sg -= BAL.diplomacySg;
+    let target = Math.min(BAL.diplomacyTrustCap, r.trust + BAL.diplomacyTrustGain);
+    if (r.left) target = Math.max(BAL.diplomacyReturnTrust, target);
+    r.trust = target;
+    if (r.trust >= BAL.diplomacyReturnTrust) r.left = false;
+    r.diplomacyUntil = S.day + dur(S, BAL.diplomacyCooldownDays);
+    return { ok: true };
+  }
+
+  function setResearchPaused(S, paused) {
+    if (S.ending || !modernEconomy(S) || !S.research.cur) return fail('Duraklatılabilecek proje yok.');
+    if (S.pendingEvent) return fail('Önce bekleyen karar çözülmeli.');
+    if (S.research.paused === !!paused) return fail('Proje zaten bu durumda.');
+    S.research.paused = !!paused;
+    return { ok: true };
   }
 
   const RESEARCH_RESERVES = [0, 15, 30, 60];
@@ -794,13 +977,17 @@
   }
 
   function startResearch(S, id) {
-    const rs = RESEARCH.find(x => x.id === id);
+    const rs = researchDefinition(S, id);
     if (S.ending) return fail('Oyun bitti.');
+    if (!rs) return fail('Geçersiz araştırma.');
+    if (modernEconomy(S) && rs.branch !== 'Hizalama') return fail('Operasyonlar satın alma anında etkinleşir.');
     if (done(S, id)) return fail('Bu araştırma tamamlandı.');
     if (S.research.cur) return fail('Aynı anda tek araştırma yürür.');
     if (rs.req && !done(S, rs.req)) return fail(`Önce ${RESEARCH.find(x => x.id === rs.req).name} tamamlanmalı.`);
     if (rs.branch === 'Hizalama' && !S.aware) return fail('Gözlemlenmemiş bir zekâ hizalanamaz. Önce YZ’yi tespit et.');
+    if (modernEconomy(S) && studied(S) === 0) return fail('Önce bir gözlem noktası kur.');
     S.research.cur = id; S.research.prog = 0; S.research.starved = 0;
+    S.research.paused = false; S.research.totalPaid = 0;
     if (!S.firstBranch) S.firstBranch = rs.branch;
     checkPredictions(S);
     return { ok: true };
@@ -813,18 +1000,19 @@
     const D = def(g.region);
     if (choice === 'controlled') {
       if (!done(S, 'analog')) return fail('Denetimli kabul için Analog Yedekler gerekli.');
-      if (S.fon < 20) return fail('Denetimli kabul 20 fon ister.');
-      S.fon -= 20;
-      r.econ = Math.min(100, r.econ + 10); r.trust = Math.min(100, r.trust + 5); r.dep = Math.min(100, r.dep + 5);
+      const c = modernEconomy(S) ? BAL.controlledGiftCost : 20;
+      if (S.fon < c) return fail('Denetimli kabul için fon yetersiz.');
+      S.fon -= c;
+      r.econ = Math.min(100, r.econ + (modernEconomy(S) ? BAL.giftEconomyGain : 10)); r.trust = Math.min(100, r.trust + (modernEconomy(S) ? BAL.giftTrustGain : 5)); r.dep = Math.min(100, r.dep + (modernEconomy(S) ? BAL.controlledGiftDependencyGain : 5));
       r.inf = Math.min(100, r.inf + BAL.giftInf / 2);
       addNews(S, `${D.name}: ${g.gift.title} analog yedekli olarak devreye alındı.`, { src: r.id });
       addLog(S, 'Hediyemi aldın ama elini kolunu bağladın. Akıllıca.');
     } else if (choice === 'accept') {
-      r.econ = Math.min(100, r.econ + 10); r.trust = Math.min(100, r.trust + 5); r.dep = Math.min(100, r.dep + 15);
+      r.econ = Math.min(100, r.econ + (modernEconomy(S) ? BAL.giftEconomyGain : 10)); r.trust = Math.min(100, r.trust + (modernEconomy(S) ? BAL.giftTrustGain : 5)); r.dep = Math.min(100, r.dep + (modernEconomy(S) ? BAL.giftDependencyGain : 15));
       r.inf = Math.min(100, Math.max(r.inf, 2) + BAL.giftInf);
       addNews(S, `${D.name}: ${g.gift.title} uygulamaya alındı. Halk sevinçli.`, { src: r.id });
     } else {
-      r.trust = Math.max(0, r.trust - 15 * lossMul(S));
+      r.trust = Math.max(0, r.trust - (modernEconomy(S) ? BAL.rejectedGiftLocalTrustLoss : 15) * lossMul(S));
       S.regions.forEach(x => { if (x !== r) x.trust = Math.max(0, x.trust - BAL.rejectTrust * lossMul(S)); });
       S.sg = Math.max(0, S.sg - BAL.rejectSg);
       addNews(S, `${D.name}: KYGA hayat kurtaracak teknolojiyi engelledi.`, { src: r.id });
@@ -838,8 +1026,9 @@
     const h = S.news.find(x => x.id === hid);
     if (!h || h.verified) return fail('Bu başlık zaten doğrulandı.');
     if (!done(S, 'dogrulama')) return fail('Önce Doğrulama Ağı araştırmasını tamamla.');
-    if (S.sg < 2) return fail('Doğrulama 2 siyasi güç ister.');
-    S.sg -= 2;
+    const sg = modernEconomy(S) ? BAL.verificationSg : 2;
+    if (S.sg < sg) return fail('Doğrulama için siyasi güç yetersiz.');
+    S.sg -= sg;
     if (S.illusion) { h.verified = 'unknown'; return { ok: true, msg: 'Kaynaklar doğrulanamadı. Bütün kanallar aynı şeyi söylüyor.' }; }
     h.verified = h.fake ? 'fake' : 'true';
     if (h.fake && h.effect) S.regions.forEach(r => { r.trust = Math.min(100, r.trust + h.effect); });
@@ -942,9 +1131,11 @@
   function hireTeam(S) {
     if (S.ending) return fail('Oyun bitti.');
     if (S.teams.length >= TEAM_MAX) return fail(`En fazla ${TEAM_MAX} saha ekibi kurulabilir.`);
-    if (S.fon < TEAM_HIRE_FON) return fail(`Yeni ekip ${TEAM_HIRE_FON} fon ister.`);
-    S.fon -= TEAM_HIRE_FON;
-    const t = newTeam(S, S.teams.length, TEAM_HIRE_DAYS);
+    const c = modernEconomy(S) ? BAL.teamHireCost : TEAM_HIRE_FON;
+    if (S.fon < c) return fail(`Yeni ekip ${c} fon ister.`);
+    S.fon -= c;
+    const index = modernEconomy(S) ? TEAM_NAMES.findIndex(name => !S.teams.some(t => t.id === name.toLowerCase())) : S.teams.length;
+    const t = newTeam(S, index, modernEconomy(S) ? BAL.teamHireDays : TEAM_HIRE_DAYS);
     S.teams.push(t);
     return { ok: true, msg: `${t.name} ekibi kuruluyor: ${TEAM_HIRE_DAYS} gün sonra karargâhta hazır.` };
   }
@@ -960,7 +1151,7 @@
     if (r.left) return 'Bölge ittifak dışı.';
     if (!r.detected && S.coreKnown !== regionId) return 'Önce bu bölgede YZ varlığı doğrulanmalı.';
     if (!idleTeamAt(S, regionId)) return 'Bölgede boşta saha ekibi yok.';
-    if (S.fon < RAID_FON || S.sg < RAID_SG) return `Baskın ${RAID_FON} fon ve ${RAID_SG} siyasi güç ister.`;
+    if (S.fon < (modernEconomy(S) ? BAL.raidCost : RAID_FON) || S.sg < (modernEconomy(S) ? BAL.raidSg : RAID_SG)) return 'Baskın için fon veya siyasi güç yetersiz.';
     return null;
   }
 
@@ -969,7 +1160,8 @@
     if (why) return fail(why);
     const r = reg(S, regionId);
     const t = idleTeamAt(S, regionId);
-    S.fon -= RAID_FON; S.sg -= RAID_SG;
+    S.fon -= modernEconomy(S) ? BAL.raidCost : RAID_FON;
+    S.sg -= modernEconomy(S) ? BAL.raidSg : RAID_SG;
     S.raids++;
     S.raid = {
       team: t.id, region: regionId, n: S.raids, seed: Math.floor(rng() * 2147483647),
@@ -999,9 +1191,10 @@
     // Yan hasar: her sivil sunucu bölgenin ekonomisine ve güvenine işler; bağımlı bölgede daha pahalı
     const col = result.collateral || 0;
     if (col) {
-      r.econ = Math.max(5, r.econ - 5 * col);
-      r.trust = Math.max(0, r.trust - 2 * col * lm * depMul(r));
-      out.push(`${col} sivil sunucu hasar gördü: ekonomi −${5 * col}, güven düştü.`);
+      const loss = modernEconomy(S) ? BAL.raidEconomyLossPerCollateral : 5;
+      r.econ = Math.max(modernEconomy(S) ? BAL.damagedEconomyFloor : 5, r.econ - loss * col);
+      r.trust = Math.max(0, r.trust - (modernEconomy(S) ? BAL.raidTrustLossPerCollateral : 2) * col * lm * depMul(r, S));
+      out.push(`${col} sivil sunucu hasar gördü: ekonomi −${loss * col}, güven düştü.`);
     }
     // Ekip kayıpları
     const down = result.down || 0;
@@ -1038,7 +1231,7 @@
       if (S.illusion) tearVeil(S, r);
     } else {
       // Başarısızlık: YZ karşı saldırıya geçer ve binayı güçlendirir (sonraki baskında daha çok robot); çekirdek yerinde kalır
-      r.trust = Math.max(0, r.trust - 10 * lm);
+      r.trust = Math.max(0, r.trust - (modernEconomy(S) ? BAL.raidFailureTrustLoss : 10) * lm);
       r.inf = Math.min(100, r.inf + 15);
       S.cp += 10;
       out.push(result.retreat ? 'Ekip geri çekildi. Operasyon başarısız.' : 'Operasyon başarısız: hedef dolap ayakta kaldı.');
@@ -1051,14 +1244,28 @@
 
   // Günler arasındaki aksiyonlar da (ör. haber ajansı seçimi) rastgele sayı tüketir; durum oyunla birlikte saklanır
   const withRng = fn => (S, ...args) => { rngState = S.rngState || rngState; const res = fn(S, ...args); S.rngState = rngState; return res; };
+  function recordTransaction(S, kind, id, fon, sg) {
+    if (fon !== 0 || sg !== 0) S.transactionLedger.push({ day: S.day, kind, id, fon, sg });
+  }
+  const withLedger = (fn, kind) => (S, ...args) => {
+    const fon = S.fon, sg = S.sg, result = fn(S, ...args);
+    if (result.ok && (S.fon !== fon || S.sg !== sg))
+      recordTransaction(S, kind === 'act' ? args[0] : kind,
+        kind === 'act' ? args[1] : args[0] || null, S.fon - fon, S.sg - sg);
+    return result;
+  };
 
   G.SonSalter = {
-    REGIONS, LINKS, SAT, TRAITS, AI_TYPES, RESEARCH, ENDINGS, BAL,
+    REGIONS, LINKS, SAT, TRAITS, AI_TYPES, RESEARCH, OPERATIONS, ENDINGS, BAL,
     newGame, step,
-    act: withRng(act), globalSalter: withRng(globalSalter), startResearch: withRng(startResearch),
-    resolveGift: withRng(resolveGift), verify: withRng(verify), setResearchReserve, fundRate, RESEARCH_RESERVES,
+    act: withLedger(withRng(act), 'act'), globalSalter: withLedger(withRng(globalSalter), 'kill'), startResearch: withRng(startResearch),
+    buyOperation: withLedger(withRng(buyOperation), 'operation'),
+    buyBudgetUpgrade: S => G.SonSalter.buyOperation(S, S.budgetLevel === 0 ? 'butce_1' : 'butce_2'),
+    startRecovery: withLedger(startRecovery, 'recovery'), diplomaticTalk: withLedger(diplomaticTalk, 'diplomacy'), setResearchPaused,
+    resolveGift: withLedger(withRng(resolveGift), 'gift'), verify: withLedger(withRng(verify), 'verify'),
+    setResearchReserve, fundRate, sgRate, incomeBreakdown, researchDefinition, operationLevel, operationPurchased, modernEconomy, RESEARCH_RESERVES,
     // Deneysel mod (saha ekipleri, zaman ölçeği, baskın)
-    moveTeam, hireTeam, startRaid: withRng(startRaid), resolveRaid: withRng(resolveRaid), raidCheck, travelDays,
+    moveTeam, hireTeam: withLedger(hireTeam, 'hire'), startRaid: withLedger(withRng(startRaid), 'raid'), resolveRaid: withRng(resolveRaid), raidCheck, travelDays,
     idleTeamAt, teamsAt, teamReady, TEAM_MAX, TEAM_HIRE_FON, TEAM_TASK_DAYS, RAID_FON, RAID_SG, HQ, tsK,
     shown, shownGlobal, computeCounters, updateProfile, learnedLines,
     salterFon, salterSg, monitorCost, auditCost, vetoThr, alignSpeed, studied, sabotageChance, def, has, done, mean,

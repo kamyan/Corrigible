@@ -46,9 +46,11 @@ namespace Corrigible.Desk
         void Awake()
         {
             if (hover == null) return;
-            hover.Entered += _ => DeskTooltip.ShowBreakdown(this, breakdown);
+            hover.Entered += _ => DeskTooltip.ShowBreakdown(this, breakdown, (RectTransform)hover.transform);
             hover.Exited += _ => DeskTooltip.Hide(this);
         }
+
+        void OnDisable() { DeskTooltip.Hide(this); }
 
         public void Bind(GaugeVM g)
         {
@@ -64,6 +66,7 @@ namespace Corrigible.Desk
             if (!Application.isPlaying || frozen || !bound) SetNeedle(needleTarget);
             bound = true;
             breakdown = g.Breakdown;
+            DeskTooltip.RefreshBreakdown(this, breakdown);
 
             bool hasZone = g.DangerZone != null && g.DangerZone.Length == 2;
             DeskUi.SetActive(zone, hasZone);

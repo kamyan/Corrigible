@@ -719,10 +719,17 @@ button:focus-visible, .node:focus-visible, [role="radio"]:focus-visible { outlin
         <button type="button" class="act" data-a="denetim"><span data-f="alabel"></span><small data-f="acost"></small></button>
         <button type="button" class="act" data-a="karantina"><span data-f="qlabel"></span><small data-f="qcost"></small></button>
         <button type="button" class="act kill" data-a="salter">Son Şalter<small data-f="kcost"></small></button>
+        <button type="button" class="act" data-economic="recovery">Altyapı desteği<small data-f="recovery"></small></button>
+        <button type="button" class="act" data-economic="diplomacy">Diplomatik görüşme<small data-f="diplomacy"></small></button>
         ${teamsOn() ? '<button type="button" class="act raidbtn" data-raid="1">Saha operasyonu: baskın<small data-f="rcost"></small></button>' : ''}
       </div>
       ${teamsOn() ? '<div class="field"><div class="fl">Saha</div><div class="here" data-f="here"></div><div class="sendrow" data-f="send"></div></div>' : ''}`;
     box.querySelectorAll('[data-a]').forEach(b => b.addEventListener('click', () => doAct(b.dataset.a)));
+    box.querySelectorAll('[data-economic]').forEach(b => b.addEventListener('click', () => {
+      const result = b.dataset.economic === 'recovery' ? SS.startRecovery(S, sel) : SS.diplomaticTalk(S, sel);
+      if (!result.ok) toast(result.msg);
+      flushEvents(); renderAll();
+    }));
     const rb = box.querySelector('[data-raid]');
     if (rb) rb.addEventListener('click', () => {
       const r = SS.startRaid(S, sel);
@@ -786,10 +793,23 @@ button:focus-visible, .node:focus-visible, [role="radio"]:focus-visible { outlin
     btn('salter').disabled = ended || r.off > 0 || r.left || r.dep > veto;
     f('kcost').textContent = r.dep > veto ? `veto: bağımlılık ${Math.round(r.dep)} > ${veto}` : isCore ? `${ksg} SG · ${kc} fon · çekirdeği yok eder (başka yerde %20+ varsa kaçar)` : `${ksg} SG · ${kc} fon · 20 gün kapanır`;
     f('kcost').classList.toggle('short', r.dep <= veto && (S.sg < ksg || S.fon < kc));
+    const repair = $('#region').querySelector('[data-economic="recovery"]');
+    const job = S.recoveryJobs.find(j => j.region === r.id), gap = Math.max(0, SS.def(r.id).e - r.econ);
+    repair.disabled = ended || r.off || r.left || r.q || gap < SS.BAL.recoveryMinGap || !!job
+      || S.fon < SS.BAL.recoveryCost || (teamsOn() && !SS.idleTeamAt(S, r.id));
+    f('recovery').textContent = job ? `${job.finishDay - S.day} gün kaldı`
+      : `${SS.BAL.recoveryCost} fon · ${SS.BAL.recoveryDays} gün · ekonomi en fazla +${Math.min(gap, SS.BAL.recoveryGain).toFixed(0)} · erişim kaybında iade yok`;
+    const dip = $('#region').querySelector('[data-economic="diplomacy"]');
+    let after = Math.min(SS.BAL.diplomacyTrustCap, r.trust + SS.BAL.diplomacyTrustGain);
+    if (r.left) after = Math.max(SS.BAL.diplomacyReturnTrust, after);
+    dip.disabled = ended || r.trust >= SS.BAL.diplomacyTrustCap || S.day < r.diplomacyUntil
+      || S.fon < SS.BAL.diplomacyCost || S.sg < SS.BAL.diplomacySg;
+    f('diplomacy').textContent = S.day < r.diplomacyUntil ? `${r.diplomacyUntil - S.day} gün bekle`
+      : `${SS.BAL.diplomacyCost} fon · ${SS.BAL.diplomacySg} SG · güven ${Math.round(r.trust)}→${Math.round(after)}${r.left ? ' · ittifaka dönüş' : ''}`;
     if (teamsOn()) updateField(r, ended);
   }
 
-  const TASK_TR = { izleme: 'izleme ağı kuruyor', denetim: 'denetimde', baskin: 'baskında' };
+  const TASK_TR = { izleme: 'izleme ağı kuruyor', denetim: 'denetimde', baskin: 'baskında', recovery: 'altyapıyı onarıyor' };
   function teamStatus(t) {
     if (t.down > 0) return { cls: 'down', text: `${t.downWhy || 'iyileşiyor'} · ${t.down} g` };
     if (t.dest) return { cls: 'busy', text: `→ ${SS.def(t.dest).name} · ${t.eta} g` };
@@ -870,7 +890,11 @@ button:focus-visible, .node:focus-visible, [role="radio"]:focus-visible { outlin
   // ---------- Araştırma ----------
   function buildResearch() {
     let html = '', last = '';
-    SS.RESEARCH.forEach(rs => {
+    SS.OPERATIONS.forEach(op => {
+      if (op.branch !== last) { html += `<div class="branch">${op.branch} · anlık geliştirmeler</div>`; last = op.branch; }
+      html += `<div class="rs" data-o="${op.id}"><span class="n">${esc(op.name)}</span><span class="d">${SS.BAL[op.costField]} fon · hemen etkinleşir</span><span class="slot"></span></div>`;
+    });
+    SS.RESEARCH.filter(rs => rs.branch === 'Hizalama').forEach(rs => {
       if (rs.branch !== last) { html += `<div class="branch">${rs.branch}</div>`; last = rs.branch; }
       html += `<div class="rs${rs.branch === 'Hizalama' ? ' align' : ''}" data-r="${rs.id}"><span class="n">${esc(rs.name)}</span><span class="d">${esc(rs.desc)} · ${rs.cost} fon, ${rs.days} gün</span><span class="slot"></span></div>`;
     });
@@ -881,11 +905,33 @@ button:focus-visible, .node:focus-visible, [role="radio"]:focus-visible { outlin
     const studied = SS.studied(S), spd = SS.alignSpeed(S), sab = SS.sabotageChance(S) * 100;
     const ab = $('#alignbox');
     if (!S.aware) ab.innerHTML = 'Hizalama kolu kilitli: <b>gözlemlenmemiş bir zekâ hizalanamaz.</b> Önce YZ’yi tespit et.';
-    else ab.innerHTML = `Hizalama hızı <b>%${Math.round(spd * 100)}</b> · gözlem noktası <b>${studied}/4</b><br>Sabotaj riski <span class="risk">%${dec(sab, 1)}/gün</span> · sızma düştükçe azalır`;
-    $('#rslist').querySelectorAll('.rs').forEach(row => {
-      const rs = SS.RESEARCH.find(x => x.id === row.dataset.r);
+    else ab.innerHTML = `Hizalama hızı <b>%${Math.round(spd * 100)}</b> · gözlem noktası <b>${studied}/4</b><br>Sabotaj riski <span class="risk">%${dec(sab / SS.tsK(S), 1)}/gün</span> · sızma düştükçe azalır`;
+    const income = SS.incomeBreakdown(S);
+    ab.insertAdjacentHTML('beforeend', `<br>Gelir tahmini +${dec(income.total, 2)}/gün · son gerçek araştırma ödemesi −${dec(S.lastResearchPayment, 2)}<br>Acil durum fonu: `
+      + SS.RESEARCH_RESERVES.map(x => `<button type="button" data-reserve="${x}" ${x === S.researchReserve ? 'disabled' : ''}>${x}</button>`).join(' ')
+      + (S.research.cur && !S.ending ? `<br><button type="button" data-pause>${S.research.paused ? 'Hizalama projesini sürdür' : 'Hizalama projesini duraklat'}</button>` : ''));
+    ab.querySelectorAll('[data-reserve]').forEach(b => b.onclick = () => { SS.setResearchReserve(S, Number(b.dataset.reserve)); renderAll(); });
+    const pause = ab.querySelector('[data-pause]');
+    if (pause) pause.onclick = () => { const result = SS.setResearchPaused(S, !S.research.paused); if (!result.ok) toast(result.msg); renderAll(); };
+    $('#rslist').querySelectorAll('.rs[data-o]').forEach(row => {
+      const op = SS.OPERATIONS.find(x => x.id === row.dataset.o), slot = row.querySelector('.slot');
+      const purchased = SS.operationPurchased(S, op.id), want = purchased ? 'done' : 'btn';
+      if (slot.dataset.state !== want) {
+        slot.dataset.state = want;
+        slot.innerHTML = purchased ? '<span class="done">✓ Satın alındı</span>' : `<button type="button">Satın al · ${SS.BAL[op.costField]} fon</button>`;
+        if (!purchased) slot.querySelector('button').onclick = () => { const result = SS.buyOperation(S, op.id); if (!result.ok) toast(result.msg); flushEvents(); renderAll(); };
+      }
+      if (!purchased) {
+        const button = slot.querySelector('button'), missing = op.req && !SS.operationPurchased(S, op.req);
+        button.disabled = !!S.ending || missing || S.fon < SS.BAL[op.costField] || (op.branch === 'Bütçe' && !S.aware);
+        button.title = missing ? 'Önce ' + SS.OPERATIONS.find(x => x.id === op.req).name
+          : `Satın alma sonrası fon: ${Math.max(0, S.fon - SS.BAL[op.costField]).toFixed(1)} · rezerv ${S.researchReserve}`;
+      }
+    });
+    $('#rslist').querySelectorAll('.rs[data-r]').forEach(row => {
+      const rs = SS.researchDefinition(S, row.dataset.r);
       const slot = row.querySelector('.slot');
-      const lockedAlign = rs.branch === 'Hizalama' && !S.aware;
+      const lockedAlign = rs.branch === 'Hizalama' && (!S.aware || studied < 1);
       let want;
       if (SS.done(S, rs.id)) want = 'done';
       else if (S.research.cur === rs.id) want = 'cur';
@@ -895,10 +941,10 @@ button:focus-visible, .node:focus-visible, [role="radio"]:focus-visible { outlin
         slot.dataset.state = want;
         row.querySelector('.prog') && row.querySelector('.prog').remove();
         if (want === 'done') slot.innerHTML = '<span class="done">✓ Tamam</span>';
-        else if (want === 'lock') slot.innerHTML = '<span class="lock">tespit bekleniyor</span>';
+        else if (want === 'lock') slot.innerHTML = `<span class="lock">${S.aware ? 'gözlem gerekli' : 'tespit bekleniyor'}</span>`;
         else if (want === 'cur') { slot.innerHTML = '<span class="cur" data-days></span>'; row.insertAdjacentHTML('beforeend', '<div class="prog"><i></i></div>'); }
         else {
-          slot.innerHTML = `<button type="button">Başlat · ${dec(rs.cost / rs.days, 1)} fon/gün</button>`;
+          slot.innerHTML = `<button type="button">Başlat · ${dec(rs.cost / rs.days * spd / SS.tsK(S), 2)} fon/gün</button>`;
           slot.querySelector('button').addEventListener('click', () => {
             const r = SS.startResearch(S, rs.id);
             if (!r.ok) toast(r.msg);
@@ -911,12 +957,13 @@ button:focus-visible, .node:focus-visible, [role="radio"]:focus-visible { outlin
         const sp = rs.branch === 'Hizalama' ? spd : 1;
         const starved = (S.research.starved || 0) > 0;
         const c = slot.querySelector('[data-days]');
-        c.textContent = S.illusion ? 'veri bekleniyor' : starved ? 'fon yetmiyor' : sp > 0 ? `~${Math.ceil(left / sp)} gün` : 'gözlem yok';
+        c.textContent = S.research.paused ? 'elle duraklatıldı' : S.illusion ? 'veri bekleniyor' : starved ? 'fon yetmiyor' : sp > 0 ? `~${Math.ceil(left / (sp / SS.tsK(S)))} gün` : 'gözlem yok';
         c.classList.toggle('starved', starved || sp === 0 || !!S.illusion);
         row.querySelector('.prog i').style.width = (S.research.prog / rs.days * 100) + '%';
       }
       if (want === 'btn') {
         const b = slot.querySelector('button');
+        b.textContent = `Başlat · ${dec(rs.cost / rs.days * spd / SS.tsK(S), 2)} fon/gün`;
         const reqMissing = rs.req && !SS.done(S, rs.req);
         b.disabled = reqMissing || !!S.research.cur || !!S.ending;
         b.title = reqMissing ? 'Önce ' + SS.RESEARCH.find(x => x.id === rs.req).name : S.research.cur ? 'Aynı anda tek araştırma yürür' : '';

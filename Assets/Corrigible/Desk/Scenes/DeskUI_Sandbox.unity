@@ -168,7 +168,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
   m_IgnoreReversedGraphics: 1
   m_BlockingObjects: 0
@@ -210,6 +210,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ResearchFolder
       objectReference: {fileID: 0}
+    - target: {fileID: 3908252528160038330, guid: f18af1c928c2f4876954a98c0645d01a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4337889876757296088, guid: f18af1c928c2f4876954a98c0645d01a, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -232,15 +236,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4337889876757296088, guid: f18af1c928c2f4876954a98c0645d01a, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4337889876757296088, guid: f18af1c928c2f4876954a98c0645d01a, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 376
+      value: 1400
       objectReference: {fileID: 0}
     - target: {fileID: 4337889876757296088, guid: f18af1c928c2f4876954a98c0645d01a, type: 3}
       propertyPath: m_SizeDelta.y
-      value: -416
+      value: 900
       objectReference: {fileID: 0}
     - target: {fileID: 4337889876757296088, guid: f18af1c928c2f4876954a98c0645d01a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -272,11 +276,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4337889876757296088, guid: f18af1c928c2f4876954a98c0645d01a, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 16
+      value: 260
       objectReference: {fileID: 0}
     - target: {fileID: 4337889876757296088, guid: f18af1c928c2f4876954a98c0645d01a, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -328
+      value: -80
       objectReference: {fileID: 0}
     - target: {fileID: 4337889876757296088, guid: f18af1c928c2f4876954a98c0645d01a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -309,7 +313,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a9b83ae4be6f247b9be8214816d86eed, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.ResearchFolderView
 --- !u!114 &212859916 stripped
 MonoBehaviour:
@@ -320,7 +324,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 96f3275f35eb14694b6598ccf6df1d67, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.FolderWindow
 --- !u!224 &212859917 stripped
 RectTransform:
@@ -463,7 +467,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 96f3275f35eb14694b6598ccf6df1d67, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.FolderWindow
 --- !u!114 &290335876 stripped
 MonoBehaviour:
@@ -474,7 +478,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2cd8434a24c6142e48cd211bf61f55f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.ContentWindowView
 --- !u!1001 &338901768
 PrefabInstance:
@@ -490,7 +494,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: research
-      value: 
+      value:
       objectReference: {fileID: 212859915}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: targets.Array.size
@@ -706,95 +710,95 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[0].rects.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 1938691137}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[1].rects.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 1797183577}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[2].rects.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 1609392497}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[3].rects.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 751931224}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[4].rects.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 1507445174}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[5].rects.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 1693620628}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[6].rects.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 1693620638}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[6].rects.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 1693620637}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[6].rects.Array.data[2]'
-      value: 
+      value:
       objectReference: {fileID: 1693620636}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[6].rects.Array.data[3]'
-      value: 
+      value:
       objectReference: {fileID: 1693620635}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[7].rects.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 1693620634}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[7].rects.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 1693620633}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[7].rects.Array.data[2]'
-      value: 
+      value:
       objectReference: {fileID: 1693620632}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[7].rects.Array.data[3]'
-      value: 
+      value:
       objectReference: {fileID: 1693620631}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[7].rects.Array.data[4]'
-      value: 
+      value:
       objectReference: {fileID: 985428197}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[8].rects.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 1867124756}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[9].rects.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 1579386009}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[10].rects.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 212859914}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[11].rects.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 1960021193}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[12].rects.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 1238898537}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[13].rects.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 212859918}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[14].rects.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 212859917}
     - target: {fileID: 7054817296622662028, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: 'targets.Array.data[15].rects.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 392777043}
     - target: {fileID: 8724963186917495560, guid: 509149be29712440096090f8c53a11ed, type: 3}
       propertyPath: m_Pivot.x
@@ -895,7 +899,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 39d28d0f8f0cb4870b761a1fc13542a7, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.DeskTutorialView
 --- !u!1001 &392777042
 PrefabInstance:
@@ -997,6 +1001,22 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4606713345794841643, guid: 3c4a54fabf97f416e91f6e673fdfe425, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 28
+      objectReference: {fileID: 0}
+    - target: {fileID: 4606713345794841643, guid: 3c4a54fabf97f416e91f6e673fdfe425, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -72
+      objectReference: {fileID: 0}
+    - target: {fileID: 7016150068391492385, guid: 3c4a54fabf97f416e91f6e673fdfe425, type: 3}
+      propertyPath: hire
+      value:
+      objectReference: {fileID: 1286460647}
+    - target: {fileID: 7016150068391492385, guid: 3c4a54fabf97f416e91f6e673fdfe425, type: 3}
+      propertyPath: hireNote
+      value:
+      objectReference: {fileID: 818389557}
     - target: {fileID: 8189342079348903686, guid: 3c4a54fabf97f416e91f6e673fdfe425, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -1007,7 +1027,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 5070712430395422109, guid: 3c4a54fabf97f416e91f6e673fdfe425, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1286460646}
+    - targetCorrespondingSourceObject: {fileID: 5070712430395422109, guid: 3c4a54fabf97f416e91f6e673fdfe425, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 818389555}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3c4a54fabf97f416e91f6e673fdfe425, type: 3}
 --- !u!224 &392777043 stripped
@@ -1024,7 +1050,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 96f3275f35eb14694b6598ccf6df1d67, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.FolderWindow
 --- !u!114 &392777045 stripped
 MonoBehaviour:
@@ -1035,8 +1061,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2cd8434a24c6142e48cd211bf61f55f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.ContentWindowView
+--- !u!224 &392777046 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5070712430395422109, guid: 3c4a54fabf97f416e91f6e673fdfe425, type: 3}
+  m_PrefabInstance: {fileID: 392777042}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &397554284
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1156,7 +1187,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6225f6994ee3f46cbb185392a1d17be1, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.ConfirmModalView
 --- !u!1 &411743633
 GameObject:
@@ -1217,7 +1248,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
   m_IgnoreReversedGraphics: 1
   m_BlockingObjects: 0
@@ -1234,7 +1265,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
@@ -1397,7 +1428,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 96f3275f35eb14694b6598ccf6df1d67, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.FolderWindow
 --- !u!114 &562206325 stripped
 MonoBehaviour:
@@ -1408,7 +1439,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2cd8434a24c6142e48cd211bf61f55f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.ContentWindowView
 --- !u!1 &747818292
 GameObject:
@@ -1439,7 +1470,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1a5d8f86379cd4f769650e1f248bccfb, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.ReferenceOverlay
   screenName: C1_main
   folder: Docs/UI_C/reference/screens
@@ -1458,7 +1489,7 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1617,8 +1648,160 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 482781f7a65464bba834d6b2f54e2664, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.GaugeCellView
+--- !u!1 &818389554
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 818389555}
+  - component: {fileID: 818389558}
+  - component: {fileID: 818389557}
+  - component: {fileID: 818389556}
+  m_Layer: 5
+  m_Name: HireTeamNote
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &818389555
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 818389554}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 392777046}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: -34}
+  m_SizeDelta: {x: 326, y: 30}
+  m_Pivot: {x: 0, y: 1}
+--- !u!114 &818389556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 818389554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d3f77548570d481b9987159461590df, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.ThemeTint
+  key: ink.ink
+  alpha: 1
+--- !u!114 &818389557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 818389554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text:
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: f542d27e014da4e7d906d23fb2fcd19d, type: 2}
+  m_sharedMaterial: {fileID: 3587553841977844472, guid: f542d27e014da4e7d906d23fb2fcd19d, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 11400000, guid: cda843c5121d346a8bfdaa6e73f23c2b, type: 2}
+  m_TextStyleHashCode: 0
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 12
+  m_fontSizeBase: 12
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 0
+  m_fontSizeMax: 0
+  m_fontStyle: 0
+  m_HorizontalAlignment: 1
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_characterHorizontalScale: 1
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 00000000
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 0
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &818389558
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 818389554}
+  m_CullTransparentMesh: 1
 --- !u!1001 &868519103
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1739,7 +1922,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 160cd1b40711a480396acc5bb9b5ee81, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.ClueOverlay
 --- !u!1001 &960152094
 PrefabInstance:
@@ -1852,7 +2035,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bff6f93fb3e7646b0a183cd11124fe18, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.DockView
 --- !u!1001 &965490506
 PrefabInstance:
@@ -1965,7 +2148,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 87b970e71095e4f67a9233eed5a5a69d, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.ToastStackView
 --- !u!1001 &966451335
 PrefabInstance:
@@ -1977,7 +2160,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 554173987317302867, guid: 3e1bf9ecd51e34e5baf1925565f49d70, type: 3}
       propertyPath: canvasRoot
-      value: 
+      value:
       objectReference: {fileID: 999361861}
     - target: {fileID: 5793859717633451454, guid: 3e1bf9ecd51e34e5baf1925565f49d70, type: 3}
       propertyPath: m_Name
@@ -2186,7 +2369,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
   m_IgnoreReversedGraphics: 1
   m_BlockingObjects: 0
@@ -2512,7 +2695,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f35c37353a1140348dcc8d1b215eccc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.FakeWinView
 --- !u!1001 &1138903826
 PrefabInstance:
@@ -2625,7 +2808,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 81deeeed0b59f474ea77272b5b31c51f, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.SelectionThreadView
 --- !u!1001 &1157451977
 PrefabInstance:
@@ -2742,7 +2925,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 91b21b4b2f0174512a19c4ec197a5074, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.CampaignView
 --- !u!1001 &1163332463
 PrefabInstance:
@@ -2855,7 +3038,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b18bfee8f9d61421b8a0818b25a3d2de, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.SettingsView
 --- !u!1 &1221390173
 GameObject:
@@ -2885,7 +3068,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.UI.InputSystemUIInputModule
   m_SendPointerHoverToParent: 1
   m_MoveRepeatDelay: 0.5
@@ -2916,7 +3099,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventSystem
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
@@ -3062,7 +3245,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8558758479352394287, guid: c55ca66387b88471ebfa3f1450ef8fac, type: 3}
       propertyPath: map
-      value: 
+      value:
       objectReference: {fileID: 1507445173}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3083,7 +3266,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c964fc0c0ac6a46ce88aff491be3e8d8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.EventModalView
 --- !u!224 &1238898537 stripped
 RectTransform:
@@ -3205,8 +3388,129 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 482781f7a65464bba834d6b2f54e2664, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.GaugeCellView
+--- !u!1001 &1286460645
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 392777046}
+    m_Modifications:
+    - target: {fileID: 1116147438001554622, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: autoWidth
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1116147438001554622, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: fontSizeOverride
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_Pivot.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 260
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8625396104995437706, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+      propertyPath: m_Name
+      value: HireTeam
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+--- !u!224 &1286460646 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8318150592880409869, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+  m_PrefabInstance: {fileID: 1286460645}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1286460647 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1116147438001554622, guid: 18d9942b3a39440e5810592aad07bda2, type: 3}
+  m_PrefabInstance: {fileID: 1286460645}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fc5658ca815547b3947555abc865b5f, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.DeskButton
 --- !u!1 &1288124147
 GameObject:
   m_ObjectHideFlags: 0
@@ -3262,7 +3566,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
   m_IgnoreReversedGraphics: 1
   m_BlockingObjects: 0
@@ -3302,7 +3606,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0223774b6b8514f03abedeb453ae5503, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.WindowManager
   windows:
   - window: {fileID: 212859916}
@@ -3383,7 +3687,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
   m_IgnoreReversedGraphics: 1
   m_BlockingObjects: 0
@@ -3438,7 +3742,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
   m_IgnoreReversedGraphics: 1
   m_BlockingObjects: 0
@@ -3478,7 +3782,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3011762837814429009, guid: 3546f1a35792445cdb6fca6f82744a43, type: 3}
       propertyPath: selection
-      value: 
+      value:
       objectReference: {fileID: 1138903828}
     - target: {fileID: 3741165155441036629, guid: 3546f1a35792445cdb6fca6f82744a43, type: 3}
       propertyPath: m_Name
@@ -3583,7 +3887,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0d6c709f3025b40129be6a5d50117727, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.MapView
 --- !u!224 &1507445174 stripped
 RectTransform:
@@ -3624,31 +3928,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3315529050917914928, guid: 57d7cde57712a423db2519838e9759bc, type: 3}
       propertyPath: 'hideWhileOpen.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 1945043220}
     - target: {fileID: 3315529050917914928, guid: 57d7cde57712a423db2519838e9759bc, type: 3}
       propertyPath: 'hideWhileOpen.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 116055957}
     - target: {fileID: 3315529050917914928, guid: 57d7cde57712a423db2519838e9759bc, type: 3}
       propertyPath: 'hideWhileOpen.Array.data[2]'
-      value: 
+      value:
       objectReference: {fileID: 2052214303}
     - target: {fileID: 3315529050917914928, guid: 57d7cde57712a423db2519838e9759bc, type: 3}
       propertyPath: 'hideWhileOpen.Array.data[3]'
-      value: 
+      value:
       objectReference: {fileID: 1288124150}
     - target: {fileID: 3315529050917914928, guid: 57d7cde57712a423db2519838e9759bc, type: 3}
       propertyPath: 'hideWhileOpen.Array.data[4]'
-      value: 
+      value:
       objectReference: {fileID: 1502919185}
     - target: {fileID: 3315529050917914928, guid: 57d7cde57712a423db2519838e9759bc, type: 3}
       propertyPath: 'hideWhileOpen.Array.data[5]'
-      value: 
+      value:
       objectReference: {fileID: 1784439087}
     - target: {fileID: 3315529050917914928, guid: 57d7cde57712a423db2519838e9759bc, type: 3}
       propertyPath: 'hideWhileOpen.Array.data[6]'
-      value: 
+      value:
       objectReference: {fileID: 1344138616}
     - target: {fileID: 4801931143788889057, guid: 57d7cde57712a423db2519838e9759bc, type: 3}
       propertyPath: m_Pivot.x
@@ -3753,7 +4057,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 120018dc2c1cb454ebf2356f5386526c, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.GameOverView
 --- !u!1001 &1553967958
 PrefabInstance:
@@ -3866,7 +4170,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a9ab854e7ddbb4f259ffbfe2b9acf188, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.AdvisorBandView
 --- !u!1001 &1579386006
 PrefabInstance:
@@ -3987,7 +4291,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 96991754443b14e5d8af3afba5932a14, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.TopRailView
 --- !u!224 &1579386009 stripped
 RectTransform:
@@ -4109,7 +4413,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 482781f7a65464bba834d6b2f54e2664, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.GaugeCellView
 --- !u!1 &1624158478
 GameObject:
@@ -4165,7 +4469,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
   m_IgnoreReversedGraphics: 1
   m_BlockingObjects: 0
@@ -4306,7 +4610,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1519217d6211d486aa5c513c8309e7a9, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.GoalCardView
 --- !u!1001 &1693620627
 PrefabInstance:
@@ -4515,7 +4819,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 013f6d4d6a1a54485bd335c8c220e293, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.RegionDossierView
 --- !u!114 &1693620630 stripped
 MonoBehaviour:
@@ -4526,7 +4830,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 96f3275f35eb14694b6598ccf6df1d67, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.FolderWindow
 --- !u!224 &1693620631 stripped
 RectTransform:
@@ -4617,7 +4921,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
   m_IgnoreReversedGraphics: 1
   m_BlockingObjects: 0
@@ -4762,7 +5066,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 482781f7a65464bba834d6b2f54e2664, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.GaugeCellView
 --- !u!1001 &1797183576
 PrefabInstance:
@@ -4879,7 +5183,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 482781f7a65464bba834d6b2f54e2664, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.GaugeCellView
 --- !u!1001 &1867124755
 PrefabInstance:
@@ -4996,7 +5300,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1514b84b364c24c8199ee29edcea483b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.TelexStripView
 --- !u!1001 &1889592145
 PrefabInstance:
@@ -5109,7 +5413,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 96a046893e34347dc9bdcc4e1bacf653, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.IntroView
 --- !u!1 &1891645243
 GameObject:
@@ -5183,7 +5487,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
   m_IgnoreReversedGraphics: 1
   m_BlockingObjects: 0
@@ -5401,7 +5705,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5e64176c4fc51415aa3e76663662662f, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.KillSwitchEnvelopeView
 --- !u!1001 &2031682606
 PrefabInstance:
@@ -5530,7 +5834,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 96f3275f35eb14694b6598ccf6df1d67, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.FolderWindow
 --- !u!114 &2031682609 stripped
 MonoBehaviour:
@@ -5541,7 +5845,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2cd8434a24c6142e48cd211bf61f55f8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.ContentWindowView
 --- !u!1 &2052214300
 GameObject:
@@ -5593,7 +5897,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
   m_IgnoreReversedGraphics: 1
   m_BlockingObjects: 0
@@ -5656,7 +5960,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e6a169e7320b40b2b53ea89628d78da, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.DeskDebugMenu
   source: {fileID: 2105123670}
   overlay: {fileID: 747818293}
@@ -5677,7 +5981,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9396e5423f0f34cec9ee2744b4568643, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.DeskPresenter
   dataSource: {fileID: 2105123670}
   commands: {fileID: 2105123669}
@@ -5724,7 +6028,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b8f172dbde683495887b2d02488d13e5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.MockDeskCommands
   source: {fileID: 2105123670}
   log: 1
@@ -5738,7 +6042,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e2be7c2054cc4397b2baeac8ae3b9d1, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.MockDeskDataSource
   presets:
   - {fileID: 4900000, guid: 2dd796d3002f84c0cb6c09b582314884, type: 3}
@@ -5773,7 +6077,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1d682189b26124b69bf4aa82dd0bbf72, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.DeskInput
   presenter: {fileID: 2105123668}
 --- !u!114 &2105123673
@@ -5786,7 +6090,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e71c7818916f54e31947689a1649e292, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.IllusionPresenter
   roots:
   - {fileID: 411743634}
@@ -5801,7 +6105,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 55c0e68d0e5134ad5b81a2890c7a8a1e, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.MockDeskSettings
   levels:
   - 0.8

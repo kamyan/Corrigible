@@ -26,7 +26,10 @@ namespace Corrigible.Desk
 
         // Tasarlanmamış pencereler (açık karar 3): mevcut bileşenlerle sade içerik
         public List<TelexItemVM> News = new List<TelexItemVM>();
+        /// <summary>Yeni kritik haberin kimliği; öncelikli kâğıtlar kapandıktan sonra Haberler penceresine odaklanır.</summary>
+        public string CriticalNewsId;
         public List<TeamRowVM> Teams = new List<TeamRowVM>();
+        public CommandVM TeamHire;
         public AiLogVM AiLog;
         public GuideVM Guide;
 
@@ -237,6 +240,8 @@ namespace Corrigible.Desk
     public sealed class ResearchVM
     {
         public string Title, Key, SheetTitle, Day, LockedLabel;
+        /// <summary>Yeni kriz: anlık operasyonlar, bütçe anlaşmaları ve uzun Hizalama aynı panodadır.</summary>
+        public bool ModernEconomy;
         /// <summary>Sayfa başlığındaki küçük damga (C2: yeşil TEMİZ); yoksa null.</summary>
         public StampVM HeaderStamp;
         public ResearchSummaryVM Summary;
@@ -267,12 +272,35 @@ namespace Corrigible.Desk
     public sealed class ResearchProjectVM
     {
         public string Id, Name, Sub, Days, StartLabel;
+        /// <summary>operation, budget, alignment; boşsa eski araştırma ve galeri davranışı korunur.</summary>
+        public string Kind;
+        /// <summary>Gerçek ödeme, tam hız talebi ve sonraki gün tahmini; kartın maliyet gövdesinde görünür.</summary>
+        public string Funding;
+        /// <summary>Peşin satın alma sonrası fon/rezerv ve yürüyen projenin finansman önizlemesi.</summary>
+        public string PurchasePreview;
+        /// <summary>Ağaç sütunu (1–4); eski sahte veriler ilk aşamada gösterilir.</summary>
+        public int Stage = 1;
+        /// <summary>Ön koşul oku için kimlik; yoksa bu proje dalın başlangıcıdır.</summary>
+        public string PrerequisiteId;
+        /// <summary>Projenin kazandırdığı somut araç/etki; kilitli ve tamamlanmış projelerde de görünür.</summary>
+        public string Unlock;
+        /// <summary>Ön koşul ve ilerleme uyarısı; eski kayıtta gözlem eksikliği yalnız ilerlemeyi durdurur.</summary>
+        public string Condition;
+        /// <summary>Güncel başlatma engelinin tam açıklaması; koşullar sağlanmışsa null.</summary>
+        public string LockReason;
+        /// <summary>Eski sahte verinin açık projeleri çalışır; gerçek kaynak uygunluğu her durumda açıkça yazar.</summary>
+        public bool CanStart = true;
+        /// <summary>Hizalama hızı sıfır: sonlu bir bitiş tahmini veya günlük maliyet gösterilmez.</summary>
+        public bool NeedsObservation;
         /// <summary>done, running, available, locked, paused, stopped (kendiliğinden durmuş; duraklatılmış gibi çizilir).</summary>
         public string State;
         public float Progress;
         public float? StampRot;
-        /// <summary>Oyunda araştırma duraklatılamaz (F8): false ise duraklat düğmesi gizlenir.</summary>
+        /// <summary>Uzun projede pause/sürdür kontrolü bulunur; false ise düğme gizlenir.</summary>
         public bool CanPause = true;
+        /// <summary>Elle duraklatma, İllüzyonun otomatik duruşundan ayrıdır; null eski galeri durumunu kullanır.</summary>
+        public bool? ManuallyPaused;
+        public string PauseDisabledReason, PauseLabel, StatusLabel;
         /// <summary>Başlat düğmesi neden kapalı (ör. aynı anda tek araştırma); null ise açık.</summary>
         public string DisabledReason;
     }
@@ -391,6 +419,8 @@ namespace Corrigible.Desk
         public List<ActionVM> Actions = new List<ActionVM>();
         public PreviewVM Preview;
         public FieldVM Field;
+        public EconomyRecoveryVM Recovery;
+        public RegionFinanceVM Finance;
     }
 
     [Serializable] public sealed class TabVM { public string Title, Subtitle; }
@@ -483,6 +513,8 @@ namespace Corrigible.Desk
     [Serializable]
     public sealed class TelexItemVM
     {
+        public string Id;
+        public bool Critical;
         public string Day, Source, Text, Trust;
         public bool Fake;
         public float? StampRot;

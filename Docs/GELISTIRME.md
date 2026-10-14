@@ -42,9 +42,11 @@ ustop
   kayda girmez; kayıt/devam testinde kullanma.
 - Sahte zafer gibi zamanlı akışları yakalamak için süreyi yansıma ile uzat:
   `FakeWinModal.holdSeconds`. Bütün değişiklikler Play'den çıkınca geri döner.
-- Test oyunları **gerçek oyuncu profilini ve PlayerPrefs'i değiştirir** (`player_profile.json`, `corrigible.*`).
-  İş bitince eğitim anahtarlarını sıfırla (`PlayerPrefs.DeleteKey("corrigible.tutorialDone")`, `"corrigible.tipsSeen"`)
-  ve kullanıcıya profilin değiştiğini söyle.
+- Test oyunları **gerçek oyuncu profilini ve PlayerPrefs'i değiştirir**. Play öncesi `player_profile.json`,
+  `campaign.json`, `savegame.json` ve `corrigible.*` tercihlerini yedekle; test sonunda özgün dosya/tercihleri geri yükle.
+  Önceden olmayan test kaydını temizle. Geri yükleyemediğin değişiklik varsa kullanıcıya açıkça söyle.
+- Play sırasında script derlemek statik tekil örnekleri sıfırlayabilir. Script değişikliklerini Edit modunda yap;
+  yeniden derleme sırasında Play açıksa doğrulamadan önce oturumu kapatıp tekrar aç.
 - eval kodu tek tırnak içinde gönderilir; C# karakter sabiti (`' '`) kullanma, `"".PadLeft(n)` gibi dizgi kullan.
 - Uzun `eval` çağrılarında **iki ayrı zaman aşımı** var: ikinci konumsal argüman sunucudaki C# çalışma süresi
   (milisaniye), global `--timeout` ise CLI'ın yanıtı bekleme süresi (saniye). Yalnızca `--timeout` artırmak sunucu

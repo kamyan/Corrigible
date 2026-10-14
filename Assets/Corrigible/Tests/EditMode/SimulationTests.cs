@@ -28,13 +28,21 @@ namespace Corrigible.Tests
             Assert.AreEqual(a, b);
         }
 
-        [TestCase("manipulator", 7u, "acik@185 fon=350.837433")]
-        [TestCase("kahin", 99u, "sessiz@230 fon=698.699413")]
-        [TestCase("solucan", 12345u, "acik@192 fon=414.256816")]
+        [TestCase("manipulator", 7u, "acik@185 fon=405.247933")]
+        [TestCase("kahin", 99u, "sessiz@230 fon=715.547530")]
+        [TestCase("solucan", 12345u, "acik@192 fon=442.271948")]
         public void FullGame_MatchesBrowserPrototype(string type, uint seed, string expected)
         {
             // Aynı tohum ve aynı komutlarla prototipteki sim.js'in verdiği sonuç
             Assert.AreEqual(expected, PlayScripted(type, seed));
+        }
+
+        [TestCase("manipulator", 7u, "acik@185 fon=350.837433")]
+        [TestCase("kahin", 99u, "sessiz@230 fon=698.699413")]
+        [TestCase("solucan", 12345u, "acik@192 fon=414.256816")]
+        public void LegacyFullGame_MatchesHistoricalBrowserPrototype(string type, uint seed, string expected)
+        {
+            Assert.AreEqual(expected, PlayScripted(type, seed, 2));
         }
 
         [Test]
@@ -89,6 +97,56 @@ namespace Corrigible.Tests
             StringAssert.Contains("Gözlemlenmemiş", res.Msg);
         }
 
+        [TestCase("dogrulama", "anomali")]
+        [TestCase("kuantum", "guclu")]
+        [TestCase("analog", "bilinc")]
+        [TestCase("duzelt", "yorum")]
+        [TestCase("kilit", "duzelt")]
+        public void ResearchPrerequisite_BlocksUntilParentCompletes(string id, string prerequisite)
+        {
+            // Eski kayıtların süreli operasyon araştırmaları ve ön koşulları ayrıca korunur.
+            var sim = Simulation.NewGame(null, "manipulator", 5, economyVersion: 2);
+            sim.S.Aware = true;
+            uint rng = sim.S.Rng.State;
+            var blocked = sim.StartResearch(id);
+            Assert.IsFalse(blocked.Ok);
+            StringAssert.Contains(GameData.ResearchItem(prerequisite).Name, blocked.Msg);
+            Assert.IsNull(sim.S.Research.Cur);
+            Assert.IsEmpty(sim.Record.commands, "Reddedilen araştırma kayıt/replay geçmişine girmemeli");
+            Assert.AreEqual(rng, sim.S.Rng.State, "Önkoşul kontrolü rastgele sayı tüketmemeli");
+
+            sim.S.Research.Done.Add(prerequisite);
+            Assert.IsTrue(sim.StartResearch(id).Ok);
+            Assert.AreEqual(id, sim.S.Research.Cur);
+            Assert.AreEqual(1, sim.Record.commands.Count);
+        }
+
+        [Test]
+        public void Alignment_AfterDetectionNeedsNoOtherResearch()
+        {
+            var sim = Simulation.NewGame(null, "manipulator", 5);
+            sim.S.Aware = true;
+            sim.S.Region("weu").Monitored = true;
+            sim.S.Region("weu").Detected = true;
+            Assert.IsEmpty(sim.S.Research.Done);
+            Assert.IsTrue(sim.StartResearch("yorum").Ok);
+            Assert.AreEqual("yorum", sim.S.Research.Cur);
+        }
+
+        [TestCase(Actions.Monitor)]
+        [TestCase(Actions.Audit)]
+        [TestCase(Actions.Quarantine)]
+        [TestCase(Actions.KillSwitch)]
+        public void BasicAction_NeedsNoResearch(string action)
+        {
+            var sim = Simulation.NewGame(null, "manipulator", 5);
+            sim.S.Fon = 1000; sim.S.Sg = 1000;
+            var region = sim.S.Region("weu");
+            region.Dep = 0; region.Trust = 100; region.Left = false;
+            Assert.IsEmpty(sim.S.Research.Done);
+            Assert.IsTrue(sim.Act(action, region.Id).Ok);
+        }
+
         [Test]
         public void Core_EscapesOnFirstDetection()
         {
@@ -118,17 +176,105 @@ namespace Corrigible.Tests
             {
                 if (s.PendingGift != null) sim.ResolveGift(rng.Pick(new[] { Simulation.GiftAccept, Simulation.GiftReject, Simulation.GiftControlled }));
                 if (rng.Next() < 0.3) sim.Act(rng.Pick(Actions.All), rng.Pick(ids));
-                if (s.Research.Cur == null && rng.Next() < 0.2) sim.StartResearch(rng.Pick(GameData.Research).Id);
+                if (s.Research.Cur == null && rng.Next() < 0.2) ResearchOrOperation(sim, rng.Pick(GameData.Research).Id);
                 if (s.News.Count > 0 && rng.Next() < 0.05) sim.Verify(s.News[0].Id);
                 if (rng.Next() < 0.02) sim.DismissAdvice();
                 if (rng.Next() < 0.03) sim.SetResearchReserve(rng.Pick(Simulation.ResearchReserves));
                 sim.Step(); s.Events.Clear();
             }
             sim.Record.day = s.Day;
+            Assert.AreEqual(3, sim.Record.version);
             var json = UnityEngine.JsonUtility.ToJson(sim.Record);
             var restored = Replay.Restore(UnityEngine.JsonUtility.FromJson<GameRecord>(json));
             Assert.Greater(sim.Record.commands.Count, 10);
+            Assert.AreEqual(3, restored.Record.version);
             Assert.AreEqual(Signature(sim), Signature(restored));
+        }
+
+        [Test]
+        public void LegacyReplay_VerificationMatchesHistoricalStateAfterCompletion()
+        {
+            var record = SavedResearchRecord(1, "dogrulama", 20);
+            var json = UnityEngine.JsonUtility.ToJson(record);
+            var restored = Replay.Restore(UnityEngine.JsonUtility.FromJson<GameRecord>(json));
+            Assert.AreEqual(20, restored.S.Day);
+            Assert.IsTrue(restored.S.Done("dogrulama"));
+            Assert.IsFalse(restored.S.Done("anomali"));
+            Assert.IsNull(restored.S.Research.Cur);
+            Assert.AreEqual(3, restored.Record.version);
+            Assert.AreEqual(1, restored.Record.ruleVersion);
+            Assert.AreEqual(1, restored.Record.commands.Count);
+            // Bağımsız tarihî JS referansı: seed 7, gün 0 Doğrulama, gün 20; o sürümün Req'si yoktu.
+            Assert.AreEqual("883B8B44", ResearchSnapshotHash(restored));
+
+            var resumed = Replay.Restore(UnityEngine.JsonUtility.FromJson<GameRecord>(UnityEngine.JsonUtility.ToJson(restored.Record)));
+            Assert.AreEqual(Signature(restored), Signature(resumed));
+            Assert.AreEqual(ResearchSnapshotHash(restored), ResearchSnapshotHash(resumed));
+        }
+
+        [Test]
+        public void CurrentReplay_RejectsVerificationWithoutAnomaly()
+        {
+            var restored = Replay.Restore(SavedResearchRecord(2, "dogrulama", 20));
+            var expected = Simulation.NewGame(null, "manipulator", 7, economyVersion: 2);
+            while (expected.S.Day < 20) expected.Step();
+            Assert.IsFalse(restored.S.Done("dogrulama"));
+            Assert.IsNull(restored.S.Research.Cur);
+            Assert.AreEqual(Signature(expected), Signature(restored));
+            Assert.AreEqual(ResearchSnapshotHash(expected), ResearchSnapshotHash(restored));
+        }
+
+        [Test]
+        public void LegacyRestoredGame_NewPlayerResearchUsesCurrentPrerequisite()
+        {
+            var record = new GameRecord { version = 1, type = "manipulator", seed = 7 };
+            var restored = Replay.Restore(record);
+            Assert.AreEqual(3, restored.Record.version);
+            Assert.AreEqual(1, restored.Record.ruleVersion);
+            Assert.IsFalse(restored.StartResearch("dogrulama").Ok);
+            Assert.IsNull(restored.S.Research.Cur);
+            Assert.IsEmpty(restored.Record.commands);
+        }
+
+        [TestCase("kuantum")]
+        [TestCase("analog")]
+        [TestCase("duzelt")]
+        [TestCase("kilit")]
+        [TestCase("yorum")]
+        public void LegacyReplay_DoesNotRelaxOtherResearchRequirements(string id)
+        {
+            var restored = Replay.Restore(SavedResearchRecord(1, id, 0));
+            Assert.IsNull(restored.S.Research.Cur);
+            Assert.IsEmpty(restored.S.Research.Done);
+            Assert.AreEqual(Signature(Simulation.NewGame(null, "manipulator", 7, economyVersion: 1)), Signature(restored));
+        }
+
+        static GameRecord SavedResearchRecord(int version, string id, int day) => new GameRecord
+        {
+            version = version, type = "manipulator", seed = 7, day = day,
+            commands = { new SavedCommand { day = 0, kind = "research", a = id } },
+        };
+
+        // FNV-1a: dil bağımsız araştırma/ekonomi/RNG/bölge alanları; JS referansıyla sayılar 6 hanede karşılaştırılır.
+        static string ResearchSnapshotHash(Simulation sim)
+        {
+            string F(double value) => value.ToString("F6", Inv);
+            string Bit(bool value) => value ? "1" : "0";
+            var s = sim.S;
+            var snapshot = string.Join("|", new object[]
+            {
+                s.Day, F(s.Fon), F(s.Sg), F(s.Tek), F(s.Cp), s.Buys, Bit(s.Aware), s.AwareDay,
+                s.Core, s.CoreKnown, s.CoreEscapes, Bit(s.CoreBackup), string.Join(",", s.Traits), s.News.Count,
+                s.Rng.State, F(s.ResearchReserve), F(s.Research.Prog), s.Research.Starved, string.Join(",", s.Research.Done),
+                s.Research.Cur, s.FirstBranch, s.IdleDays, s.NextGift, s.NextNews, s.Seq,
+            }) + "|" + string.Join(";", s.Regions.Select(r => string.Join("/", new object[]
+            {
+                r.Id, F(r.Inf), F(r.Trust), F(r.Dep), F(r.Econ), Bit(r.Monitored), Bit(r.Q),
+                Bit(r.Left), Bit(r.Detected), r.Off, r.Patch, r.RevealDay, r.FieldDay, F(r.FakeLow), Bit(r.MediaFlag),
+            })));
+            uint hash = 2166136261;
+            foreach (char c in snapshot) hash = unchecked((hash ^ c) * 16777619);
+            return hash.ToString("X8", Inv);
         }
 
         /// <summary>
@@ -165,19 +311,27 @@ namespace Corrigible.Tests
         static string Signature(Simulation sim)
         {
             var s = sim.S;
-            return $"{s.Day}|{s.Ending}|{s.Fon.ToString("R", Inv)}|{s.Sg.ToString("R", Inv)}|{s.Tek.ToString("R", Inv)}|{s.Core}|{s.CoreKnown}|{string.Join(",", s.Traits)}|{s.News.Count}|{s.Rng.State}|{s.ResearchReserve}|"
+            return $"{s.Day}|{s.Ending}|{s.Fon.ToString("R", Inv)}|{s.Sg.ToString("R", Inv)}|{s.Tek.ToString("R", Inv)}|{s.Core}|{s.CoreKnown}|{string.Join(",", s.Traits)}|{s.News.Count}|{s.Rng.State}|{s.ResearchReserve}|{s.Research.Cur}|{s.Research.Prog.ToString("R", Inv)}|{s.Research.Starved}|{string.Join(",", s.Research.Done)}|{s.FirstBranch}|"
                 + string.Join(";", s.Regions.Select(r => r.Inf.ToString("R", Inv) + "/" + r.Trust.ToString("R", Inv)));
         }
 
         // ---------- Deneysel mod: saha ekipleri, zaman ölçeği, baskın ----------
 
-        [TestCase("manipulator", 7u, 1.5, "acik@275 fon=357.230322 raids=0")]
-        [TestCase("kahin", 99u, 2, "acik@390 fon=506.263642 raids=1")]
-        [TestCase("solucan", 12345u, 1.5, "acik@280 fon=367.141110 raids=0")]
+        [TestCase("manipulator", 7u, 1.5, "acik@276 fon=413.019987 raids=0")]
+        [TestCase("kahin", 99u, 2, "acik@390 fon=531.592914 raids=1")]
+        [TestCase("solucan", 12345u, 1.5, "acik@282 fon=404.659309 raids=1")]
         public void FullGameExp_MatchesBrowserPrototype(string type, uint seed, double timeScale, string expected)
         {
             // Beklenenler Prototype/parite.js çıktısıdır (aynı senaryo, deneysel mod açık)
             Assert.AreEqual(expected, PlayScriptedExp(type, seed, timeScale));
+        }
+
+        [TestCase("manipulator", 7u, 1.5, "acik@275 fon=357.230322 raids=0")]
+        [TestCase("kahin", 99u, 2, "acik@390 fon=506.263642 raids=1")]
+        [TestCase("solucan", 12345u, 1.5, "acik@280 fon=367.141110 raids=0")]
+        public void LegacyFullGameExp_MatchesHistoricalBrowserPrototype(string type, uint seed, double timeScale, string expected)
+        {
+            Assert.AreEqual(expected, PlayScriptedExp(type, seed, timeScale, 2));
         }
 
         [TestCase(11, 5, 45, true, 1, "",
@@ -248,7 +402,7 @@ namespace Corrigible.Tests
                 if (rng.Next() < 0.15) sim.MoveTeam(rng.Pick(Simulation.TeamNames).ToLowerInvariant(), rng.Pick(ids));
                 if (rng.Next() < 0.3) sim.Act(rng.Pick(Actions.All), rng.Pick(ids));
                 if (rng.Next() < 0.02) sim.HireTeam();
-                if (s.Research.Cur == null && rng.Next() < 0.2) sim.StartResearch(rng.Pick(GameData.Research).Id);
+                if (s.Research.Cur == null && rng.Next() < 0.2) ResearchOrOperation(sim, rng.Pick(GameData.Research).Id);
                 foreach (var r in s.Regions)
                     if (sim.RaidCheck(r.Id) == null && rng.Next() < 0.5)
                     {
@@ -268,10 +422,17 @@ namespace Corrigible.Tests
 
         static string TeamSig(Simulation sim) => string.Join(";", sim.S.Teams.Select(t => $"{t.Id}@{t.At}>{t.Dest}:{t.Eta}/{t.Busy}/{t.Down}")) + $"|r{sim.S.Raids}";
 
-        /// <summary>Prototype/parite.js'teki deneysel senaryonun aynısı.</summary>
-        static string PlayScriptedExp(string type, uint seed, double ts)
+        static ActResult ResearchOrOperation(Simulation sim, string id)
         {
-            var sim = Simulation.NewGame(null, type, seed, null, new ExpOptions { Teams = true, TimeScale = ts, StartTeams = 3 });
+            if (!sim.ModernEconomy || GameData.ResearchItem(id).Branch == GameData.BranchAlign) return sim.StartResearch(id);
+            string node = id == "anomali" || id == "guclu" || id == "bilinc" ? id + (sim.OperationLevel(id) == 0 ? "_1" : "_2") : id;
+            return sim.BuyOperation(node);
+        }
+
+        /// <summary>Prototype/parite.js'teki deneysel senaryonun aynısı.</summary>
+        static string PlayScriptedExp(string type, uint seed, double ts, int economyVersion = 3)
+        {
+            var sim = Simulation.NewGame(null, type, seed, null, new ExpOptions { Teams = true, TimeScale = ts, StartTeams = 3 }, economyVersion: economyVersion);
             var s = sim.S;
             sim.MoveTeam("alfa", "na"); sim.MoveTeam("bravo", "cn");
             while (s.Ending == null && s.Day < 3000)
@@ -290,9 +451,9 @@ namespace Corrigible.Tests
         }
 
         /// <summary>Prototipteki sim.js ile karşılaştırma için kullanılan sabit oyun senaryosu.</summary>
-        static string PlayScripted(string type, uint seed)
+        static string PlayScripted(string type, uint seed, int economyVersion = 3)
         {
-            var sim = Simulation.NewGame(null, type, seed);
+            var sim = Simulation.NewGame(null, type, seed, economyVersion: economyVersion);
             var s = sim.S;
             sim.Act(Actions.Monitor, "na"); sim.Act(Actions.Monitor, "cn");
             while (s.Ending == null && s.Day < 2000)

@@ -118,7 +118,7 @@ namespace Corrigible.Core
         }
 
         /// <summary>Bekleyen olay kartında bir seçenek seçer.</summary>
-        public ActResult ResolveEvent(int choice) => Rec(ResolveEventCore(choice), "event", choice.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        public ActResult ResolveEvent(int choice) => RunCommand(() => ResolveEventCore(choice), "event", choice.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
         ActResult ResolveEventCore(int choice)
         {
@@ -157,8 +157,8 @@ namespace Corrigible.Core
                 Pick = s => s.S.Regions.Where(r => !r.Left && r.Off == 0 && r.Trust < 45).OrderBy(r => r.Trust).FirstOrDefault(),
                 Choices = new[]
                 {
-                    new DilemmaChoice { Label = Loc.N("Kampanyayı destekle"), Effect = Loc.N("−5 SG · bölgede güven +15"), Check = (s, r) => NeedSg(s, 5),
-                        Apply = (s, r) => { s.S.Sg -= 5; r.Trust = Math.Min(100, r.Trust + 15); return Loc.T("Ilımlı aday kazandı."); } },
+                    new DilemmaChoice { Label = Loc.N("Kampanyayı destekle"), Effect = Loc.N("−5 SG · bölgede güven +15"), Check = (s, r) => NeedSg(s, s.ModernEconomy ? s.B.electionSg : 5),
+                        Apply = (s, r) => { s.S.Sg -= s.ModernEconomy ? s.B.electionSg : 5; r.Trust = Math.Min(100, r.Trust + 15); return Loc.T("Ilımlı aday kazandı."); } },
                     new DilemmaChoice { Label = Loc.N("Karışma"), Effect = Loc.N("bölgede güven −12"),
                         Apply = (s, r) => { r.Trust = Math.Max(0, r.Trust - 12 * s.LossMul); return Loc.T("KYGA karşıtı aday kazandı."); } },
                 },
@@ -170,10 +170,10 @@ namespace Corrigible.Core
                 Pick = s => s.S.Aware && s.S.Core != null && s.S.CoreKnown == null ? s.S.Regions[0] : null,
                 Choices = new[]
                 {
-                    new DilemmaChoice { Label = Loc.N("Ödeme yap"), Effect = Loc.N("−35 fon · %65 ihtimalle çekirdeğin yeri ortaya çıkar"), Check = (s, r) => NeedFon(s, 35),
+                    new DilemmaChoice { Label = Loc.N("Ödeme yap"), Effect = Loc.N("−35 fon · %65 ihtimalle çekirdeğin yeri ortaya çıkar"), Check = (s, r) => NeedFon(s, s.ModernEconomy ? s.B.informantCost : 35),
                         Apply = (s, r) =>
                         {
-                            s.S.Fon -= 35;
+                            s.S.Fon -= s.ModernEconomy ? s.B.informantCost : 35;
                             if (s.S.Rng.Next() < 0.65)
                             {
                                 s.S.CoreKnown = s.S.Core;
@@ -190,7 +190,7 @@ namespace Corrigible.Core
             {
                 Id = "kostebek", Title = Loc.N("Laboratuvarda köstebek"),
                 Body = Loc.N("Güvenlik ekibi, araştırma verilerinin dışarı sızdığını fark etti. Sızıntıyı kesmek araştırmayı yavaşlatır."),
-                Pick = s => s.S.Research.Cur != null && s.S.Aware ? s.S.Regions[0] : null,
+                Pick = s => s.S.Research.Cur != null && !s.ResearchPaused && s.S.Aware ? s.S.Regions[0] : null,
                 Choices = new[]
                 {
                     new DilemmaChoice { Label = Loc.N("Personeli tasfiye et"), Effect = Loc.N("araştırma 3 gün geriler"),
@@ -208,8 +208,8 @@ namespace Corrigible.Core
                 {
                     new DilemmaChoice { Label = Loc.N("Destek ver"), Effect = Loc.N("bölgede ekonomi +10, bağımlılık +15"),
                         Apply = (s, r) => { r.Econ = Math.Min(100, r.Econ + 10); r.Dep = Math.Min(100, r.Dep + 15); return null; } },
-                    new DilemmaChoice { Label = Loc.N("Yaptırım uygula"), Effect = Loc.N("−2 SG · bölgede bağımlılık −15, güven −10"), Check = (s, r) => NeedSg(s, 2),
-                        Apply = (s, r) => { s.S.Sg -= 2; r.Dep = Math.Max(0, r.Dep - 15); r.Trust = Math.Max(0, r.Trust - 10 * s.LossMul); return null; } },
+                    new DilemmaChoice { Label = Loc.N("Yaptırım uygula"), Effect = Loc.N("−2 SG · bölgede bağımlılık −15, güven −10"), Check = (s, r) => NeedSg(s, s.ModernEconomy ? s.B.sanctionSg : 2),
+                        Apply = (s, r) => { s.S.Sg -= s.ModernEconomy ? s.B.sanctionSg : 2; r.Dep = Math.Max(0, r.Dep - 15); r.Trust = Math.Max(0, r.Trust - 10 * s.LossMul); return null; } },
                 },
             },
             new DilemmaDef
@@ -219,8 +219,8 @@ namespace Corrigible.Core
                 Pick = s => s.S.Day > 30 ? s.S.Regions[0] : null,
                 Choices = new[]
                 {
-                    new DilemmaChoice { Label = Loc.N("Açıklama yap"), Effect = Loc.N("−3 SG"), Check = (s, r) => NeedSg(s, 3),
-                        Apply = (s, r) => { s.S.Sg -= 3; return Loc.T("Basın toplantısı fırtınayı dindirdi."); } },
+                    new DilemmaChoice { Label = Loc.N("Açıklama yap"), Effect = Loc.N("−3 SG"), Check = (s, r) => NeedSg(s, s.ModernEconomy ? s.B.pressConferenceSg : 3),
+                        Apply = (s, r) => { s.S.Sg -= s.ModernEconomy ? s.B.pressConferenceSg : 3; return Loc.T("Basın toplantısı fırtınayı dindirdi."); } },
                     new DilemmaChoice { Label = Loc.N("Sessiz kal"), Effect = Loc.N("bütün bölgelerde güven −5"),
                         Apply = (s, r) => { foreach (var x in s.S.Regions) x.Trust = Math.Max(0, x.Trust - 5 * s.LossMul); return null; } },
                 },
@@ -229,11 +229,11 @@ namespace Corrigible.Core
             {
                 Id = "atilim", Title = Loc.N("Akademik atılım"),
                 Body = Loc.N("Bir üniversite ekibi araştırmana katkı teklif ediyor. Çalışmalarında ticari yapay zekâ araçları kullanıyorlar."),
-                Pick = s => s.S.Research.Cur != null ? s.S.Regions[0] : null,
+                Pick = s => s.S.Research.Cur != null && !s.ResearchPaused ? s.S.Regions[0] : null,
                 Choices = new[]
                 {
-                    new DilemmaChoice { Label = Loc.N("Bağımsız ekip kur"), Effect = Loc.N("−25 fon · araştırma +4 gün"), Check = (s, r) => NeedFon(s, 25),
-                        Apply = (s, r) => { s.S.Fon -= 25; s.S.Research.Prog += 4; return null; } },
+                    new DilemmaChoice { Label = Loc.N("Bağımsız ekip kur"), Effect = Loc.N("−25 fon · araştırma +4 gün"), Check = (s, r) => NeedFon(s, s.ModernEconomy ? s.B.academicTeamCost : 25),
+                        Apply = (s, r) => { s.S.Fon -= s.ModernEconomy ? s.B.academicTeamCost : 25; s.S.Research.Prog += 4; return null; } },
                     new DilemmaChoice { Label = Loc.N("Araçlarıyla kabul et"), Effect = Loc.N("araştırma +4 gün · YZ +10 hesaplama puanı"),
                         Apply = (s, r) => { s.S.Research.Prog += 4; s.S.Cp += 10; return null; } },
                     new DilemmaChoice { Label = Loc.N("Reddet"), Effect = Loc.N("hiçbir şey olmaz"), Apply = (s, r) => null },
@@ -246,8 +246,8 @@ namespace Corrigible.Core
                 Pick = s => s.S.Aware ? s.S.Regions.Where(r => !r.Left && r.Off == 0 && r.Inf > 25).OrderByDescending(r => r.Inf).FirstOrDefault() : null,
                 Choices = new[]
                 {
-                    new DilemmaChoice { Label = Loc.N("Acil müdahale ekibi"), Effect = Loc.N("−20 fon · sızma −12, güven +6"), Check = (s, r) => NeedFon(s, 20),
-                        Apply = (s, r) => { s.S.Fon -= 20; r.Inf = Math.Max(0, r.Inf - 12); r.Trust = Math.Min(100, r.Trust + 6); r.RevealDay = s.S.Day; return null; } },
+                    new DilemmaChoice { Label = Loc.N("Acil müdahale ekibi"), Effect = Loc.N("−20 fon · sızma −12, güven +6"), Check = (s, r) => NeedFon(s, s.ModernEconomy ? s.B.emergencyResponseCost : 20),
+                        Apply = (s, r) => { s.S.Fon -= s.ModernEconomy ? s.B.emergencyResponseCost : 20; r.Inf = Math.Max(0, r.Inf - 12); r.Trust = Math.Min(100, r.Trust + 6); r.RevealDay = s.S.Day; return null; } },
                     new DilemmaChoice { Label = Loc.N("Yerel yönetime bırak"), Effect = Loc.N("bölgede güven −10"),
                         Apply = (s, r) => { r.Trust = Math.Max(0, r.Trust - 10 * s.LossMul); return null; } },
                 },
@@ -260,7 +260,7 @@ namespace Corrigible.Core
                 Choices = new[]
                 {
                     new DilemmaChoice { Label = Loc.N("Kabul et"), Effect = Loc.N("+60 fon · bütün bölgelerde bağımlılık +4"),
-                        Apply = (s, r) => { s.S.Fon += 60; foreach (var x in s.S.Regions) x.Dep = Math.Min(100, x.Dep + 4); return null; } },
+                        Apply = (s, r) => { s.S.Fon += s.ModernEconomy ? s.B.donationFon : 60; foreach (var x in s.S.Regions) x.Dep = Math.Min(100, x.Dep + 4); return null; } },
                     new DilemmaChoice { Label = Loc.N("Reddet"), Effect = Loc.N("+2 SG (bağımsızlık takdir edilir)"),
                         Apply = (s, r) => { s.S.Sg += 2; return null; } },
                 },
@@ -286,7 +286,7 @@ namespace Corrigible.Core
                 Choices = new[]
                 {
                     new DilemmaChoice { Label = Loc.N("Parayı al"), Effect = Loc.N("+50 fon · bütün bölgelerde bağımlılık +8"),
-                        Apply = (s, r) => { s.S.Fon += 50; foreach (var x in s.S.Regions) x.Dep = Math.Min(100, x.Dep + 8); s.AddLog(Loc.T("Anlaştık o zaman. Seni izliyor olacağım."), "counter"); return null; } },
+                        Apply = (s, r) => { s.S.Fon += s.ModernEconomy ? s.B.aiOfferFon : 50; foreach (var x in s.S.Regions) x.Dep = Math.Min(100, x.Dep + 8); s.AddLog(Loc.T("Anlaştık o zaman. Seni izliyor olacağım."), "counter"); return null; } },
                     new DilemmaChoice { Label = Loc.N("Mesajı yayımla"), Effect = Loc.N("+4 SG · YZ +10 hesaplama puanı"),
                         Apply = (s, r) => { s.S.Sg += 4; s.S.Cp += 10; s.AddLog(Loc.T("Herkese gösterdin. Cesur. Aptalca."), "counter"); return null; } },
                 },

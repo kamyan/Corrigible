@@ -11,6 +11,7 @@ namespace Corrigible.Core
         public bool Monitored, Q, Left, Detected, MediaFlag;
         public int Off, Patch;
         public int RevealDay = -1, FieldDay = -1;
+        public int DiplomacyUntil;
         /// <summary>Kırılma anı bir kez yazıldı (izlenmeyen bölgede yüksek sızma, veto eşiği).</summary>
         public bool HotNoted, VetoNoted;
     }
@@ -95,6 +96,9 @@ namespace Corrigible.Core
         public string Cur;
         public double Prog;
         public int Starved;
+        public bool Paused;
+        /// <summary>Yürüyen veya son tamamlanan aşamaya gerçekten ödenen toplam fon.</summary>
+        public double TotalPaid;
     }
 
     [Serializable]
@@ -221,6 +225,15 @@ namespace Corrigible.Core
         public string Type;
         public int Day;
         public double Fon, Sg, Tek, Cp;
+        /// <summary>1/2 eski kurallar; 3 bütünleşik ekonomi. Kayıt biçimi sürümünden bağımsızdır.</summary>
+        public int EconomyVersion;
+        public List<string> Operations = new List<string>();
+        public int BudgetLevel;
+        public List<RecoveryJob> RecoveryJobs = new List<RecoveryJob>();
+        public IncomeBreakdown LastIncome;
+        public int LastIncomeDay;
+        public double LastResearchPayment;
+        public List<EconomyTransaction> TransactionLedger = new List<EconomyTransaction>();
         /// <summary>Acil durum fonu: araştırma fonu bu değerin altına indirmez (oyuncu ayarlar).</summary>
         public double ResearchReserve;
         public int Buys;

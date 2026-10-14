@@ -45,7 +45,7 @@ namespace Corrigible.Desk.Tests
                 Assert.AreEqual("TEMİZ", vm.Goal.Stamp.Text);
                 Assert.AreEqual("Onay bekleniyor", vm.Goal.Next.Right);
                 Assert.AreEqual("TEMİZ", vm.Research.HeaderStamp.Text);
-                Assert.AreEqual("stopped", vm.Research.Branches.SelectMany(b => b.Projects).Single(p => p.Name == "Çapraz kaynak doğrulama").State);
+                Assert.AreEqual("stopped", vm.Research.Branches.SelectMany(b => b.Projects).Single(p => p.Id == "dogrulama").State);
                 Assert.AreEqual("ink-small", vm.Advisor.Actions[0].Kind);
                 Assert.AreEqual(2, vm.Dossier.Actions.Count(a => a.State == "dim"));
                 Assert.AreEqual("text", vm.Dossier.Preview.Rows[0].Kind);
@@ -117,7 +117,10 @@ namespace Corrigible.Desk.Tests
             Assert.IsNotNull(Field(goal, "stamp")); Assert.IsNotNull(Field(goal, "nextRight"));
             var res = Prefab("Screens/ResearchFolder").GetComponent<ResearchFolderView>();
             Assert.IsNotNull(Field(res, "headerStamp"));
-            Assert.AreEqual(7, Count(res, "belowHeader"));
+            Assert.GreaterOrEqual(new SerializedObject(res).FindProperty("headerBaseHeight").floatValue, 19,
+                "Yeni panonun başlık satırı illüzyon damgasını kaydırmadan sığdırmalı");
+            Assert.AreEqual(4, Count(res, "stageHeaders"));
+            Assert.IsNotNull(Field(res, "cardTemplate")); Assert.IsNotNull(Field(res, "connections"));
             var dos = Prefab("Screens/RegionDossier").GetComponent<RegionDossierView>();
             Assert.IsNotNull(Field(dos, "infStamp")); Assert.IsNotNull(Field(dos, "coverPanel")); Assert.IsNotNull(Field(dos, "infPanel"));
             Assert.AreEqual(3, Count(dos, "statsRow")); Assert.AreEqual(3, Count(dos, "actionsHead")); Assert.AreEqual(3, Count(dos, "fieldHead"));

@@ -57,11 +57,26 @@ namespace Corrigible.Core
     {
         /// <summary>Kol: kimlik olarak karşılaştırılır; gösterirken <c>Loc.T(Branch)</c>.</summary>
         public string Id, Branch, Req;
-        string name, desc;
+        string name, desc, unlock;
         public string Name { get => Loc.T(name); set => name = value; }
         public string Desc { get => Loc.T(desc); set => desc = value; }
+        /// <summary>Araştırmanın açtığı somut etki; yalnız sunum metadatası.</summary>
+        public string Unlock { get => Loc.T(unlock); set => unlock = value; }
         public double Cost;
         public int Days;
+        /// <summary>Araştırma ağacındaki sütun (1–4); oyun kuralı Req üzerinden uygulanır.</summary>
+        public int Stage;
+    }
+
+    /// <summary>Peşin geliştirme kataloğu; gerçek fiyat Simulation.OperationCost ile Balance'tan okunur.</summary>
+    public sealed class OperationDef
+    {
+        public string Id, Branch, Req, LegacyId;
+        public int Tier, Stage;
+        string name, desc, unlock;
+        public string Name { get => Loc.T(name); set => name = value; }
+        public string Desc { get => Loc.T(desc); set => desc = value; }
+        public string Unlock { get => Loc.T(unlock); set => unlock = value; }
     }
 
     public enum EndingKind { Win, Bitter, Loss }
@@ -158,15 +173,34 @@ namespace Corrigible.Core
 
         public static readonly ResearchDef[] Research =
         {
-            Rs("anomali", Loc.N("Tespit"), Loc.N("Anomali Algılama"), 30, 8, Loc.N("Tespit ihtimalleri ×2")),
-            Rs("dogrulama", Loc.N("Tespit"), Loc.N("Doğrulama Ağı"), 40, 10, Loc.N("Başlık doğrula (2 SG); sahte çıkan kaynağı işaretle")),
-            Rs("guclu", Loc.N("Savunma"), Loc.N("Güçlendirilmiş Ağlar"), 40, 10, Loc.N("Tüm yayılma −%30; sabotaj ihtimali yarıya iner")),
-            Rs("kuantum", Loc.N("Savunma"), Loc.N("Kuantum Karantina"), 60, 14, Loc.N("Karantina uydu yolunu da keser"), "guclu"),
-            Rs("bilinc", Loc.N("Politika"), Loc.N("Kamu Bilinçlendirme"), 35, 8, Loc.N("Güven kayıpları −%50")),
-            Rs("analog", Loc.N("Politika"), Loc.N("Analog Yedekler"), 50, 12, Loc.N("Bağımlılık −20, veto eşiği 85; denetim saha denetimine dönüşür"), "bilinc"),
-            Rs("yorum", BranchAlign, Loc.N("Yorumlanabilirlik"), 68, 25, Loc.N("YZ’nin sıradaki yeteneği ve çekirdeğin yeri görünür")),
-            Rs("duzelt", BranchAlign, Loc.N("Düzeltilebilirlik"), 98, 30, Loc.N("Tekillik artışı −%25"), "yorum"),
-            Rs("kilit", BranchAlign, Loc.N("Değer Kilidi"), 165, 38, Loc.N("Tamamlanırsa Hizalama sonu"), "duzelt"),
+            Rs("anomali", Loc.N("Tespit"), Loc.N("Anomali Algılama"), 30, 8, Loc.N("Tespit ihtimalleri ×2"), 1, Loc.N("Tespit ihtimali ×2")),
+            Rs("dogrulama", Loc.N("Tespit"), Loc.N("Doğrulama Ağı"), 40, 10, Loc.N("Başlık doğrula (2 SG); sahte çıkan kaynağı işaretle"), 2, Loc.N("Haber doğrulama · 2 SG"), "anomali"),
+            Rs("guclu", Loc.N("Savunma"), Loc.N("Güçlendirilmiş Ağlar"), 40, 10, Loc.N("Tüm yayılma −%30; sabotaj ihtimali yarıya iner"), 1, Loc.N("Yayılma −%30 · sabotaj −%50")),
+            Rs("kuantum", Loc.N("Savunma"), Loc.N("Kuantum Karantina"), 60, 14, Loc.N("Karantina uydu yolunu da keser"), 3, Loc.N("Karantina uydu yolunu da keser"), "guclu"),
+            Rs("bilinc", Loc.N("Politika"), Loc.N("Kamu Bilinçlendirme"), 35, 8, Loc.N("Güven kayıpları −%50"), 1, Loc.N("Güven kayıpları −%50")),
+            Rs("analog", Loc.N("Politika"), Loc.N("Analog Yedekler"), 50, 12, Loc.N("Bağımlılık −20, veto eşiği 85; denetim saha denetimine dönüşür"), 2, Loc.N("Saha denetimi · denetimli hediye kabulü"), "bilinc"),
+            Rs("yorum", BranchAlign, Loc.N("Yorumlanabilirlik"), 68, 25, Loc.N("YZ’nin sıradaki yeteneği ve çekirdeğin yeri görünür"), 2, Loc.N("Çekirdek konumu · sıradaki YZ yeteneği")),
+            Rs("duzelt", BranchAlign, Loc.N("Düzeltilebilirlik"), 98, 30, Loc.N("Tekillik artışı −%25"), 3, Loc.N("Tekillik artışı −%25"), "yorum"),
+            Rs("kilit", BranchAlign, Loc.N("Değer Kilidi"), 165, 38, Loc.N("Tamamlanırsa Hizalama sonu"), 4, Loc.N("Hizalama zaferi"), "duzelt"),
+        };
+
+        public static readonly OperationDef[] Operations =
+        {
+            Op("anomali_1", Loc.N("Tespit"), Loc.N("Anomali Algılama I"), Loc.N("Otomatik tespit ihtimali ×1,5; izleme ağı kurmaz."), Loc.N("Tespit ihtimali ×1,5"), 1, 1, "anomali"),
+            Op("anomali_2", Loc.N("Tespit"), Loc.N("Anomali Algılama II"), Loc.N("Otomatik tespit ihtimali toplam ×2."), Loc.N("Tespit ihtimali ×2"), 2, 2, "anomali", "anomali_1"),
+            Op("dogrulama", Loc.N("Tespit"), Loc.N("Doğrulama Ağı"), Loc.N("Başlık doğrulama; sahte kaynakları işaretler ve karalama zararını geri alır. Başlık başına 2 SG."), Loc.N("Haber doğrulama · 2 SG"), 3, 0, "dogrulama", "anomali_2"),
+            Op("guclu_1", Loc.N("Savunma"), Loc.N("Ağ Güçlendirme I"), Loc.N("Bölgeler arası yayılma −%15; Hizalama sabotaj ihtimali −%25. Bölge içi büyüme değişmez."), Loc.N("Sıçrama −%15 · sabotaj −%25"), 1, 1, "guclu"),
+            Op("guclu_2", Loc.N("Savunma"), Loc.N("Ağ Güçlendirme II"), Loc.N("Bölgeler arası yayılma toplam −%30; Hizalama sabotaj ihtimali toplam −%50."), Loc.N("Sıçrama −%30 · sabotaj −%50"), 2, 2, "guclu", "guclu_1"),
+            Op("kuantum", Loc.N("Savunma"), Loc.N("Kuantum Karantina"), Loc.N("Mevcut karantinalar uydu geçişini keser ve kara bağlantılarında etkisini korur. Yeni karantina oluşturmaz."), Loc.N("Uydu ve kara karantinası"), 3, 0, "kuantum", "guclu_2"),
+            Op("bilinc_1", Loc.N("Politika"), Loc.N("Kamu İletişimi I"), Loc.N("İlgili müdahale ve olay güven kayıpları −%25. Medya karalaması ve perde şoku değişmez."), Loc.N("İlgili güven kayıpları −%25"), 1, 1, "bilinc"),
+            Op("bilinc_2", Loc.N("Politika"), Loc.N("Kamu İletişimi II"), Loc.N("İlgili müdahale ve olay güven kayıpları toplam −%50."), Loc.N("İlgili güven kayıpları −%50"), 2, 2, "bilinc", "bilinc_1"),
+            Op("analog", Loc.N("Politika"), Loc.N("Analog Yedekler"), Loc.N("Bir kez bağımlılık −20; Analog veto eşiği, saha denetimi ve denetimli hediye kabulü. Denetim 15 yerine 20 fon olur."), Loc.N("Saha denetimi · denetimli hediye kabulü"), 3, 0, "analog", "bilinc_2"),
+        };
+
+        public static readonly OperationDef[] BudgetUpgrades =
+        {
+            Op("butce_1", Loc.N("Bütçe"), Loc.N("Bütçe Anlaşması I"), Loc.N("Bölgesel katkı ×1,15; merkez ödeneği değişmez. Günlük ödeme sonraki gün adımında."), Loc.N("Bölgesel katkı ×1,15"), 1, 1, null),
+            Op("butce_2", Loc.N("Bütçe"), Loc.N("Bütçe Anlaşması II"), Loc.N("Bölgesel katkı toplam ×1,35; ilk kademe ile çarpılmaz."), Loc.N("Bölgesel katkı ×1,35"), 2, 2, null, "butce_1"),
         };
 
         public static readonly EndingDef[] Endings =
@@ -196,6 +230,7 @@ namespace Corrigible.Core
         static readonly Dictionary<string, TraitDef> traitById = Traits.ToDictionary(t => t.Id);
         static readonly Dictionary<string, AiTypeDef> typeById = AiTypes.ToDictionary(t => t.Id);
         static readonly Dictionary<string, ResearchDef> researchById = Research.ToDictionary(r => r.Id);
+        static readonly Dictionary<string, OperationDef> operationById = Operations.Concat(BudgetUpgrades).ToDictionary(r => r.Id);
         static readonly Dictionary<string, EndingDef> endingById = Endings.ToDictionary(e => e.Id);
 
         public static RegionDef Region(string id) => regionById[id];
@@ -203,6 +238,9 @@ namespace Corrigible.Core
         public static bool HasType(string id) => id != null && typeById.ContainsKey(id);
         public static AiTypeDef AiType(string id) => typeById[id];
         public static ResearchDef ResearchItem(string id) => researchById[id];
+        public static OperationDef OperationItem(string id) => operationById[id];
+        public static OperationDef Operation(string id) => id != null && operationById.TryGetValue(id, out var op) ? op : null;
+        public static bool HasOperation(string id) => id != null && operationById.ContainsKey(id);
         public static EndingDef Ending(string id) => endingById[id];
         public static int TotalCompute { get; } = Regions.Sum(r => r.Compute);
 
@@ -214,8 +252,10 @@ namespace Corrigible.Core
 
         static LinkDef L(string a, string b, bool cable, bool wrap = false) => new LinkDef { A = a, B = b, Cable = cable, Wrap = wrap };
         static TraitDef T(string id, string name, string desc, string line) => new TraitDef { Id = id, Name = name, Desc = desc, Line = line };
-        static ResearchDef Rs(string id, string branch, string name, double cost, int days, string desc, string req = null) =>
-            new ResearchDef { Id = id, Branch = branch, Name = name, Cost = cost, Days = days, Desc = desc, Req = req };
+        static ResearchDef Rs(string id, string branch, string name, double cost, int days, string desc, int stage, string unlock, string req = null) =>
+            new ResearchDef { Id = id, Branch = branch, Name = name, Cost = cost, Days = days, Desc = desc, Stage = stage, Unlock = unlock, Req = req };
+        static OperationDef Op(string id, string branch, string name, string desc, string unlock, int stage, int tier, string legacyId, string req = null) =>
+            new OperationDef { Id = id, Branch = branch, Name = name, Desc = desc, Unlock = unlock, Stage = stage, Tier = tier, LegacyId = legacyId, Req = req };
         static EndingDef E(string id, EndingKind kind, string title, string text) => new EndingDef { Id = id, Kind = kind, Title = title, Text = text };
     }
 }

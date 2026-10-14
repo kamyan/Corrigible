@@ -41,12 +41,15 @@ Formüller `Simulation.Step()` içindedir (`Assets/Corrigible/Core/Simulation.cs
 7. **Ekonomi, güven, bağımlılık:** karantinada ekonomi ve güven düşer; diğer bölgeler tabana %2/gün toparlanır.
    Güven 70'e doğru 0,05/gün kayar. Bağımlılık `+ depRate × inf/100` (Hediye Diplomasisi ×2). Güven 20 altı → bölge
    ittifaktan çekilir (35'te döner).
-8. **Fon geliri** (`Simulation.FundRate`): `Σ(ekonomi × güven/100) / 150`, tespit öncesi ×0,4 ("erken uyarı paradoksu").
-   Çekilmiş ve çevrimdışı bölgeler gelir vermez. Tipik: tespit öncesi ~1,4/gün, sonrası ~3,4/gün.
+8. **Fon geliri** (`Simulation.FundRate`, yeni krizler): `0,75/k + 0,8 × Σ(online üye ekonomi × güven/100) / 150 × A/k × M`.
+   `A` tespit öncesi 0,4, sonrası 1; bütçe anlaşması `M=1/1,15/1,35`. Merkez ödeneği bölge kaybından etkilenmez.
+   k=1,5 ve başlangıç ekonomi/güveninde gelir tespit öncesi 1,2616, sonrası 2,4040 fon/gün; ikinci anlaşmayla 3,0704.
+   Günlük ödeme yalnız gün adımında yapılır. Son gelir/araştırma ödemesi ve peşin işlemler ayrı tutulur. Eski kayıtlar eski formülü korur.
    **Siyasi güç (SG):** tespit öncesi 0,05/gün; sonra `0,25 + 0,03 × tespitEdilenBölge`.
-9. **Araştırma:** maliyetini her gün öder (`maliyet/gün × hız`); fon yetmezse orantılı yavaşlar. Fonu **acil durum fonu**nun
+9. **Hizalama:** maliyetini her gün öder (`maliyet/gün × gözlem hızı/k`); fon yetmezse orantılı yavaşlar. Fonu **acil durum fonu**nun
    (oyuncu ayarı, 0/15/30/60) altına indirmez. Hizalama dalında YZ sabotajı (`sabotage × ortalamaSızma/100`, ilerleme −4 gün).
-   İllüzyon sırasında araştırma durur.
+   İllüzyon sırasında araştırma durur. Elle duraklatma projeyi/ilerlemeyi korur; ödeme ve sabotaj durur, dünya sürer.
+   Operasyon geliştirmeleri peşin alınır, etkin proje veya duraklatma durumunu değiştirmez.
 10. Hediye teklifi zamanı geldiyse teklif (oyun teklif yanıtlanana kadar durur), haber üretimi, tahmin kontrolü,
     danışman, son kontrolü, oyun sonu grafiği için geçmiş kaydı.
 
@@ -61,7 +64,9 @@ Formüller `Simulation.Step()` içindedir (`Assets/Corrigible/Core/Simulation.cs
 | Küresel Son Şalter | ≥50 SG, iki kez basılır | Oyunu bitirir: Karanlık Çağ |
 | Başlık doğrula | 2 SG (Doğrulama Ağı gerekir) | Haber doğru/sahte; sahte kaynağı işaretler |
 | Hediye kararı | — | Kabul: ekonomi +10, güven +5, bağımlılık +15, sızma +8 (en az 2'den). Denetimli (Analog gerekir, 20 fon): ekonomi +10, güven +5, bağımlılık +5, sızma +4. Ret: güven −15 (diğerleri −2), SG −2 |
-| Acil durum fonu | — | Araştırmanın fonu indiremeyeceği taban (0/15/30/60) |
+| Acil durum fonu | — | Hizalama ödemesinin fonu indiremeyeceği taban (0/15/30/60; yeni krizlerde 15). Peşin işlemler rezervi harcayabilir |
+| Altyapıyı toparla | 2 fon peşin | En az 5 ekonomi açığı olan online üye ve karantinasız bölgede 4 gün; +15 ekonomi, bölge tabanı üstüne çıkarmaz. Ekip modunda boşta ekip gerekir. Bitişte erişim kaybolursa iade yok; gelir etkisi ertesi gün |
+| Diplomatik görüşme | 8 fon + 2 SG | Güven +15, en fazla 70. İttifak dışı bölge en az 35 güvenle hemen döner; çevrimdışı/karantina kaldırılmaz. Bölge başına 20×k gün bekleme |
 
 ## Deneysel mod: saha ekipleri, zaman ölçeği, baskın
 
@@ -77,22 +82,31 @@ Giriş penceresindeki **Deneysel** düğmeleriyle açılır (varsayılan açık,
   bina çekirdeğinse çekirdek yok olur (Yedekleme varsa yedek dolap da kırılmalı). Başarısızlık: güven −10, sızma +15,
   YZ +10 hesaplama puanı. Kırılan sivil sunucular ekonomi/güven cezası, düşen üyeler ekibi yaralar.
 
-## Araştırma (`GameData.Research`)
+## Operasyonlar ve Hizalama (`GameData.Operations`, `GameData.BudgetUpgrades`, `GameData.Research`)
 
-| Dal | Araştırma | Fon / gün | Etki |
-|---|---|---|---|
-| Tespit | Anomali Algılama | 30 / 8 | Tespit ×2 |
-| Tespit | Doğrulama Ağı | 40 / 10 | Başlık doğrulama |
-| Savunma | Güçlendirilmiş Ağlar | 40 / 10 | Yayılma −%30, sabotaj yarıya |
-| Savunma | Kuantum Karantina (Güçlendirilmiş gerekir) | 60 / 14 | Karantina uydu yolunu da keser |
-| Politika | Kamu Bilinçlendirme | 35 / 8 | Güven kayıpları −%50 |
-| Politika | Analog Yedekler (Bilinçlendirme gerekir) | 50 / 12 | Bağımlılık −20, veto 85, saha denetimi, denetimli hediye kabulü |
-| **Hizalama** | Yorumlanabilirlik | 68 / 25 | YZ'nin sıradaki yeteneği ve çekirdeğin yeri görünür |
-| **Hizalama** | Düzeltilebilirlik | 98 / 30 | Tekillik artışı −%25 |
-| **Hizalama** | Değer Kilidi | 165 / 38 | Tamamlanırsa **Hizalama** sonu |
+Yeni krizlerde araştırma panosu 5 dalda 14 kart gösterir. Operasyonlar ve bütçe anlaşmaları peşin alınır;
+yalnız Hizalama zaman isteyen projedir. Dört aşama bir sunum sırasıdır, diğer dalları bitirme şartı değildir.
 
-- Hizalama YZ tespit edilmeden başlamaz. Hızı `0,25 × gözlemNoktası` (en fazla 1): gözlem noktası yoksa **hiç ilerlemez**.
-- Değer Kilidi günde 4,34 fon ister, gelir ~3,4: acil durum fonu yoksa fon sıfıra çakılır (bilinçli gerilim; bkz. DURUM.md).
+| Dal | Peşin kademeler ve araç | Etki |
+|---|---|---|
+| Tespit | Anomali I 12 → II 18 → Doğrulama 40 fon | Tespit ×1,5 → toplam ×2; Doğrulama 2 SG/başlık, medya tehdidi açık olmalı |
+| Savunma | Güçlendirme I 16 → II 24 → Kuantum 60 fon | Sıçrama −%15 → toplam −%30, sabotaj −%25 → toplam −%50; Kuantum karantinadaki uydu sızıntısını durdurur |
+| Politika | Kamu İletişimi I 15 → II 20 → Analog 50 fon | İlgili güven kayıpları −%25 → toplam −%50; medya karalaması/perde şoku hariç. Analog bir kez bağımlılık −20, veto 85, saha denetimi/denetimli hediye |
+| Bütçe | Anlaşma I 25 → II 40 fon | Bölgesel taban katkısı ×1,15 → toplam ×1,35; merkez ödeneği değişmez; tespit gerekir |
+
+| Hizalama | Katalog fon / iş günü | Etki |
+|---|---|---|
+| Yorumlanabilirlik | 68 / 25 | Çekirdeğin o anki konumu ve sıradaki yetenek tahmini |
+| Düzeltilebilirlik | 98 / 30 | Bundan sonraki Tekillik artışı −%25 |
+| Değer Kilidi | 165 / 38 | Hizalama zaferi |
+
+Hizalama ilk tespit ve en az bir gözlem noktası ister. Hız `min(1, 0,25 × gözlemNoktası)`; günlük ilerleme /k.
+Dört gözlemle, k=1,5, yeterli fon ve sabotajsız koşulda üç projenin ideal toplamı 140 simülasyon günüdür.
+Sonraki aşama elle başlatılır. Duraklatılmış veya İllüzyon nedeniyle duran proje ödeme/sabotaj üretmez;
+İllüzyon yırtılınca elle duraklatma tercihi korunur. Peşin araçlar İllüzyon sırasında da alınabilir.
+
+Eski `ruleVersion=1/2` kayıtlarında dokuz süreli araştırma, eski fon formülü ve başlangıç rezervi korunur.
+Tam fiyat/koşul/kampanya matrisi: [Bütünleşik Ekonomi Sistemi](BUTUNLESIK-EKONOMI-SISTEMI.md).
 
 ## Rakipler (`GameData.AiTypes`)
 

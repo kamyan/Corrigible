@@ -1,0 +1,2291 @@
+{
+  "date": "2026-10-14",
+  "status": "design_candidate_not_applied",
+  "seeds": {
+    "first": 17000,
+    "last": 17079,
+    "n_per_group": 80
+  },
+  "scope": {
+    "teams": true,
+    "timeScale": 1.5,
+    "profile": null,
+    "unity_events": false,
+    "campaign": false,
+    "raid": "deterministic_BaskinBot"
+  },
+  "candidate": {
+    "startFunds": 60,
+    "startSg": 5,
+    "teams": 3,
+    "reserve": 15,
+    "centralNominal": 0.75,
+    "regionalWeight": 0.8,
+    "budgetCosts": [
+      25,
+      40
+    ],
+    "budgetMultipliers": [
+      1,
+      1.15,
+      1.35
+    ],
+    "repair": {
+      "cost": 2,
+      "gain": 15,
+      "days": 4,
+      "minimumGap": 5
+    },
+    "diplomacy": {
+      "cost": 8,
+      "sg": 2,
+      "gain": 15,
+      "cap": 70,
+      "returnFloor": 35,
+      "cooldownNominal": 20
+    }
+  },
+  "current": [
+    {
+      "kind": "setup",
+      "candidate": false,
+      "n": 80,
+      "config": {
+        "central": 0.75,
+        "regional": 0.8,
+        "opsCost": 1,
+        "budgetCost": 1,
+        "repairCost": 2,
+        "dipCost": 8,
+        "returnFloor": true
+      },
+      "policies": [
+        "passive",
+        "legacy_naive",
+        "legacy_smart"
+      ],
+      "seedStart": 17000,
+      "teams": true,
+      "timeScale": 1.5
+    },
+    {
+      "kind": "bot",
+      "candidate": false,
+      "type": "solucan",
+      "policy": "passive",
+      "n": 80,
+      "winPct": 0,
+      "endings": {
+        "acik": 80
+      },
+      "medianDays": 288,
+      "detectN": 80,
+      "detectMedian": 105,
+      "observed4N": 0,
+      "observed4Median": null,
+      "zeroPct": 0,
+      "starvedPct": 0,
+      "pausedPct": 0,
+      "noAuditPct": 0,
+      "noRaidPct": 10.41735869380597,
+      "finalFunds": 589.2383389326139,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 115.19840333333332,
+          "sg": 6.999999999999998,
+          "income": 0.9249799999999997
+        },
+        "120": {
+          "n": 80,
+          "funds": 190.7822309669733,
+          "sg": 11.089166666666669,
+          "income": 2.05172431889277
+        },
+        "180": {
+          "n": 80,
+          "funds": 327.57026037630516,
+          "sg": 22.533666666666686,
+          "income": 2.3869834633314704
+        }
+      },
+      "spending": {
+        "research": 0,
+        "operations": 0,
+        "budgets": 0,
+        "action": 0,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 0,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": false,
+      "type": "solucan",
+      "policy": "legacy_naive",
+      "n": 80,
+      "winPct": 15,
+      "endings": {
+        "acik": 68,
+        "hizalama": 12
+      },
+      "medianDays": 322,
+      "detectN": 80,
+      "detectMedian": 99,
+      "observed4N": 0,
+      "observed4Median": null,
+      "zeroPct": 28.81833375796038,
+      "starvedPct": 27.06586293655236,
+      "pausedPct": 0,
+      "noAuditPct": 45.379767147685484,
+      "noRaidPct": 69.83186189172329,
+      "finalFunds": 19.562209057996565,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 1.466150925925924,
+          "sg": 7.3989166666666675,
+          "income": 1.0288633333333332
+        },
+        "120": {
+          "n": 80,
+          "funds": 18.255988095655283,
+          "sg": 11.77216666666667,
+          "income": 2.2925293741336774
+        },
+        "180": {
+          "n": 80,
+          "funds": 44.71751785795917,
+          "sg": 15.068666666666687,
+          "income": 2.3137266864436308
+        }
+      },
+      "spending": {
+        "research": 445.87403341460686,
+        "operations": 0,
+        "budgets": 0,
+        "action": 112.675,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 2.125,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": false,
+      "type": "solucan",
+      "policy": "legacy_smart",
+      "n": 80,
+      "winPct": 72.5,
+      "endings": {
+        "hizalama": 58,
+        "acik": 22
+      },
+      "medianDays": 295,
+      "detectN": 80,
+      "detectMedian": 75,
+      "observed4N": 80,
+      "observed4Median": 153,
+      "zeroPct": 36.27241713007333,
+      "starvedPct": 33.511635576893404,
+      "pausedPct": 0,
+      "noAuditPct": 56.6515198324838,
+      "noRaidPct": 92.4120155611314,
+      "finalFunds": 0,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 14.197664407407402,
+          "sg": 7.375666666666666,
+          "income": 1.0288633333333332
+        },
+        "120": {
+          "n": 80,
+          "funds": 28.95569480727295,
+          "sg": 8.329833333333337,
+          "income": 2.2894828104211062
+        },
+        "180": {
+          "n": 80,
+          "funds": 16.753375167406254,
+          "sg": 7.198583333333339,
+          "income": 2.109015328113068
+        }
+      },
+      "spending": {
+        "research": 439.0992611591886,
+        "operations": 0,
+        "budgets": 0,
+        "action": 139.5625,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 0.9375,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": false,
+      "type": "manipulator",
+      "policy": "passive",
+      "n": 80,
+      "winPct": 0,
+      "endings": {
+        "acik": 80
+      },
+      "medianDays": 280,
+      "detectN": 80,
+      "detectMedian": 124,
+      "observed4N": 0,
+      "observed4Median": null,
+      "zeroPct": 0,
+      "starvedPct": 0,
+      "pausedPct": 0,
+      "noAuditPct": 0,
+      "noRaidPct": 10.679644166381296,
+      "finalFunds": 532.3397085611491,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 115.19840333333332,
+          "sg": 6.999999999999998,
+          "income": 0.9249799999999997
+        },
+        "120": {
+          "n": 80,
+          "funds": 180.91362143123814,
+          "sg": 10.034999999999995,
+          "income": 1.5936425150030986
+        },
+        "180": {
+          "n": 80,
+          "funds": 295.25877592600057,
+          "sg": 18.508416666666683,
+          "income": 2.247183896379167
+        }
+      },
+      "spending": {
+        "research": 0,
+        "operations": 0,
+        "budgets": 0,
+        "action": 0,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 0,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": false,
+      "type": "manipulator",
+      "policy": "legacy_naive",
+      "n": 80,
+      "winPct": 1.25,
+      "endings": {
+        "acik": 79,
+        "hizalama": 1
+      },
+      "medianDays": 306,
+      "detectN": 80,
+      "detectMedian": 109,
+      "observed4N": 0,
+      "observed4Median": null,
+      "zeroPct": 33.040138630024174,
+      "starvedPct": 31.218127689363484,
+      "pausedPct": 0,
+      "noAuditPct": 48.7209571413173,
+      "noRaidPct": 69.3924058532026,
+      "finalFunds": 21.34083310102745,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 3.3241583333333318,
+          "sg": 7.341166666666666,
+          "income": 1.0288633333333332
+        },
+        "120": {
+          "n": 80,
+          "funds": 12.79244930913269,
+          "sg": 10.99241666666667,
+          "income": 2.0081984272601625
+        },
+        "180": {
+          "n": 80,
+          "funds": 43.77672933579077,
+          "sg": 14.820250000000021,
+          "income": 2.3189344515497607
+        }
+      },
+      "spending": {
+        "research": 399.1294341721444,
+        "operations": 0,
+        "budgets": 0,
+        "action": 121.3,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 1.825,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": false,
+      "type": "manipulator",
+      "policy": "legacy_smart",
+      "n": 80,
+      "winPct": 56.25,
+      "endings": {
+        "hizalama": 45,
+        "acik": 35
+      },
+      "medianDays": 298,
+      "detectN": 80,
+      "detectMedian": 75,
+      "observed4N": 80,
+      "observed4Median": 169,
+      "zeroPct": 32.504224434918896,
+      "starvedPct": 30.78944185795566,
+      "pausedPct": 0,
+      "noAuditPct": 54.81243295389311,
+      "noRaidPct": 89.80342756541862,
+      "finalFunds": 0.1433146085889208,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 14.079109222222215,
+          "sg": 7.30475,
+          "income": 1.0288633333333332
+        },
+        "120": {
+          "n": 80,
+          "funds": 29.451525795852955,
+          "sg": 7.83925,
+          "income": 2.2750004101835097
+        },
+        "180": {
+          "n": 80,
+          "funds": 17.128496717380894,
+          "sg": 7.552000000000007,
+          "income": 2.0734063210325573
+        }
+      },
+      "spending": {
+        "research": 423.80328167485703,
+        "operations": 0,
+        "budgets": 0,
+        "action": 143.95,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 1.1375,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": false,
+      "type": "kahin",
+      "policy": "passive",
+      "n": 80,
+      "winPct": 0,
+      "endings": {
+        "sessiz": 80
+      },
+      "medianDays": 358,
+      "detectN": 80,
+      "detectMedian": 133,
+      "observed4N": 0,
+      "observed4Median": null,
+      "zeroPct": 0,
+      "starvedPct": 0,
+      "pausedPct": 0,
+      "noAuditPct": 0,
+      "noRaidPct": 8.3743300615889,
+      "finalFunds": 713.2498894699054,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 115.32024237534638,
+          "sg": 6.999999999999998,
+          "income": 0.9409861437888811
+        },
+        "120": {
+          "n": 80,
+          "funds": 174.9395547436886,
+          "sg": 9.275999999999998,
+          "income": 1.3185203847197722
+        },
+        "180": {
+          "n": 80,
+          "funds": 293.1187840169665,
+          "sg": 18.053166666666666,
+          "income": 2.373439619183947
+        }
+      },
+      "spending": {
+        "research": 0,
+        "operations": 0,
+        "budgets": 0,
+        "action": 0,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 0,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": false,
+      "type": "kahin",
+      "policy": "legacy_naive",
+      "n": 80,
+      "winPct": 5,
+      "endings": {
+        "sessiz": 72,
+        "acik": 4,
+        "hizalama": 4
+      },
+      "medianDays": 368,
+      "detectN": 80,
+      "detectMedian": 117,
+      "observed4N": 0,
+      "observed4Median": null,
+      "zeroPct": 27.977421799649427,
+      "starvedPct": 28.293785958669293,
+      "pausedPct": 0,
+      "noAuditPct": 44.9952102208543,
+      "noRaidPct": 67.50466153830718,
+      "finalFunds": 70.18042373238882,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 3.050296990757264,
+          "sg": 7.354583333333333,
+          "income": 1.1527314677847185
+        },
+        "120": {
+          "n": 80,
+          "funds": 10.250068674103838,
+          "sg": 10.944750000000003,
+          "income": 1.924936244636364
+        },
+        "180": {
+          "n": 80,
+          "funds": 39.189190042242366,
+          "sg": 14.856833333333332,
+          "income": 2.3786335014790327
+        }
+      },
+      "spending": {
+        "research": 460.3315462276288,
+        "operations": 0,
+        "budgets": 0,
+        "action": 105.7875,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 2.675,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": false,
+      "type": "kahin",
+      "policy": "legacy_smart",
+      "n": 80,
+      "winPct": 50,
+      "endings": {
+        "acik": 40,
+        "hizalama": 40
+      },
+      "medianDays": 380,
+      "detectN": 80,
+      "detectMedian": 144,
+      "observed4N": 71,
+      "observed4Median": 224,
+      "zeroPct": 51.962633461011805,
+      "starvedPct": 49.79577834953194,
+      "pausedPct": 0,
+      "noAuditPct": 81.55736656308673,
+      "noRaidPct": 96.2451644363412,
+      "finalFunds": 0.6597692882145975,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 2.0419814999999986,
+          "sg": 5.452916666666666,
+          "income": 1.0086517222222215
+        },
+        "120": {
+          "n": 80,
+          "funds": 1.7367378257027504,
+          "sg": 4.831666666666664,
+          "income": 1.1064312352627421
+        },
+        "180": {
+          "n": 80,
+          "funds": 25.351605111667986,
+          "sg": 7.730166666666659,
+          "income": 2.2071192497162175
+        }
+      },
+      "spending": {
+        "research": 538.0030082775924,
+        "operations": 0,
+        "budgets": 0,
+        "action": 111.225,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 0.3125,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "verification",
+      "deterministic": true,
+      "ledger": true,
+      "stockNonnegative": true
+    }
+  ],
+  "candidate_results": [
+    {
+      "kind": "setup",
+      "candidate": true,
+      "n": 80,
+      "config": {
+        "central": 0.75,
+        "regional": 0.8,
+        "opsCost": 1,
+        "budgetCost": 1,
+        "repairCost": 2,
+        "dipCost": 8,
+        "returnFloor": true
+      },
+      "policies": [
+        "passive",
+        "legacy_naive",
+        "legacy_smart",
+        "no_finance",
+        "balanced",
+        "finance",
+        "no_recovery",
+        "silme",
+        "attentive"
+      ],
+      "seedStart": 17000,
+      "teams": true,
+      "timeScale": 1.5
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "solucan",
+      "policy": "passive",
+      "n": 80,
+      "winPct": 0,
+      "endings": {
+        "acik": 80
+      },
+      "medianDays": 288,
+      "detectN": 80,
+      "detectMedian": 105,
+      "observed4N": 0,
+      "observed4Median": null,
+      "zeroPct": 0,
+      "starvedPct": 0,
+      "pausedPct": 0,
+      "noAuditPct": 0,
+      "noRaidPct": 10.41735869380597,
+      "finalFunds": 627.715671146091,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 134.15872266666662,
+          "sg": 6.999999999999998,
+          "income": 1.2399839999999993
+        },
+        "120": {
+          "n": 80,
+          "funds": 224.62578477357857,
+          "sg": 11.089166666666669,
+          "income": 2.141379455114217
+        },
+        "180": {
+          "n": 80,
+          "funds": 364.05620830104414,
+          "sg": 22.533666666666686,
+          "income": 2.409586770665177
+        }
+      },
+      "spending": {
+        "research": 0,
+        "operations": 0,
+        "budgets": 0,
+        "action": 0,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 0,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "solucan",
+      "policy": "legacy_naive",
+      "n": 80,
+      "winPct": 26.25,
+      "endings": {
+        "hizalama": 21,
+        "acik": 59
+      },
+      "medianDays": 283,
+      "detectN": 80,
+      "detectMedian": 63,
+      "observed4N": 0,
+      "observed4Median": null,
+      "zeroPct": 0,
+      "starvedPct": 7.436294333126203,
+      "pausedPct": 0,
+      "noAuditPct": 21.08451784759881,
+      "noRaidPct": 54.40014144429565,
+      "finalFunds": 34.623844358736605,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 24.21084182222222,
+          "sg": 7.973166666666667,
+          "income": 1.7122199999999992
+        },
+        "120": {
+          "n": 80,
+          "funds": 41.715359389966416,
+          "sg": 13.47091666666669,
+          "income": 2.362338461585426
+        },
+        "180": {
+          "n": 80,
+          "funds": 34.98912806152536,
+          "sg": 11.337666666666689,
+          "income": 2.299428775456692
+        }
+      },
+      "spending": {
+        "research": 297.095325179563,
+        "operations": 80.65,
+        "budgets": 0,
+        "action": 151.2375,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 3.65,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "solucan",
+      "policy": "legacy_smart",
+      "n": 80,
+      "winPct": 75,
+      "endings": {
+        "hizalama": 60,
+        "acik": 20
+      },
+      "medianDays": 278,
+      "detectN": 80,
+      "detectMedian": 54,
+      "observed4N": 80,
+      "observed4Median": 134,
+      "zeroPct": 0,
+      "starvedPct": 31.654824224827234,
+      "pausedPct": 0,
+      "noAuditPct": 12.07375589420299,
+      "noRaidPct": 86.86377690550853,
+      "finalFunds": 15,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 23.7780813185185,
+          "sg": 8.898083333333334,
+          "income": 2.1271946666666666
+        },
+        "120": {
+          "n": 80,
+          "funds": 34.061197202456285,
+          "sg": 4.013500000000013,
+          "income": 2.284598140844281
+        },
+        "180": {
+          "n": 80,
+          "funds": 22.49035357714188,
+          "sg": 6.260750000000018,
+          "income": 2.1661575287152144
+        }
+      },
+      "spending": {
+        "research": 366.9443841438391,
+        "operations": 62.8,
+        "budgets": 0,
+        "action": 147.5125,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 1.275,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "solucan",
+      "policy": "no_finance",
+      "n": 80,
+      "winPct": 55,
+      "endings": {
+        "acik": 36,
+        "hizalama": 44
+      },
+      "medianDays": 277,
+      "detectN": 80,
+      "detectMedian": 35,
+      "observed4N": 80,
+      "observed4Median": 171,
+      "zeroPct": 0,
+      "starvedPct": 26.488584747606332,
+      "pausedPct": 0,
+      "noAuditPct": 3.518989656813666,
+      "noRaidPct": 80.15900656878733,
+      "finalFunds": 15,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 29.513707259259245,
+          "sg": 10.548166666666669,
+          "income": 2.3225253333333327
+        },
+        "120": {
+          "n": 80,
+          "funds": 30.2553929505875,
+          "sg": 6.766416666666691,
+          "income": 2.2933291237464677
+        },
+        "180": {
+          "n": 80,
+          "funds": 22.051301251899133,
+          "sg": 7.97366666666669,
+          "income": 2.2716072503254154
+        }
+      },
+      "spending": {
+        "research": 372.8605816695018,
+        "operations": 74.7,
+        "budgets": 0,
+        "action": 142.45,
+        "recovery": 4.275
+      },
+      "recoveryN": 2.1375,
+      "repairFailed": 0,
+      "raids": 1.35,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "solucan",
+      "policy": "balanced",
+      "n": 80,
+      "winPct": 57.5,
+      "endings": {
+        "acik": 34,
+        "hizalama": 46
+      },
+      "medianDays": 275,
+      "detectN": 80,
+      "detectMedian": 35,
+      "observed4N": 80,
+      "observed4Median": 170,
+      "zeroPct": 0,
+      "starvedPct": 24.567743840807655,
+      "pausedPct": 0,
+      "noAuditPct": 3.77019975946128,
+      "noRaidPct": 79.82532448251239,
+      "finalFunds": 15.458681038718897,
+      "budgetLevel": 0.2125,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 29.513707259259245,
+          "sg": 10.548166666666669,
+          "income": 2.3225253333333327
+        },
+        "120": {
+          "n": 80,
+          "funds": 30.2553929505875,
+          "sg": 6.766416666666691,
+          "income": 2.2933291237464677
+        },
+        "180": {
+          "n": 80,
+          "funds": 21.746431390303982,
+          "sg": 7.941166666666692,
+          "income": 2.3153078723473453
+        }
+      },
+      "spending": {
+        "research": 370.57919607617373,
+        "operations": 74.7,
+        "budgets": 5.3125,
+        "action": 140.95,
+        "recovery": 4.175
+      },
+      "recoveryN": 2.0875,
+      "repairFailed": 0,
+      "raids": 1.3875,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "solucan",
+      "policy": "finance",
+      "n": 80,
+      "winPct": 65,
+      "endings": {
+        "acik": 28,
+        "hizalama": 52
+      },
+      "medianDays": 271,
+      "detectN": 80,
+      "detectMedian": 35,
+      "observed4N": 80,
+      "observed4Median": 171,
+      "zeroPct": 0,
+      "starvedPct": 21.453387227159048,
+      "pausedPct": 0,
+      "noAuditPct": 3.6015406812143924,
+      "noRaidPct": 76.54740018351904,
+      "finalFunds": 16.228516159386487,
+      "budgetLevel": 0.525,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 29.513707259259245,
+          "sg": 10.548166666666669,
+          "income": 2.3225253333333327
+        },
+        "120": {
+          "n": 80,
+          "funds": 29.392755180005338,
+          "sg": 7.187416666666692,
+          "income": 2.424457904404047
+        },
+        "180": {
+          "n": 80,
+          "funds": 23.157781795612063,
+          "sg": 7.869416666666689,
+          "income": 2.4061244573327913
+        }
+      },
+      "spending": {
+        "research": 372.15717671972754,
+        "operations": 75.3,
+        "budgets": 13.125,
+        "action": 140.0125,
+        "recovery": 4.4
+      },
+      "recoveryN": 2.2,
+      "repairFailed": 0,
+      "raids": 1.45,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "solucan",
+      "policy": "no_recovery",
+      "n": 80,
+      "winPct": 51.25,
+      "endings": {
+        "acik": 39,
+        "hizalama": 41
+      },
+      "medianDays": 275,
+      "detectN": 80,
+      "detectMedian": 35,
+      "observed4N": 80,
+      "observed4Median": 171,
+      "zeroPct": 0,
+      "starvedPct": 25.424603641673556,
+      "pausedPct": 0,
+      "noAuditPct": 4.020603339396269,
+      "noRaidPct": 80.06826908078662,
+      "finalFunds": 15.251508324762018,
+      "budgetLevel": 0.1875,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 29.513707259259245,
+          "sg": 10.548166666666669,
+          "income": 2.3225253333333327
+        },
+        "120": {
+          "n": 80,
+          "funds": 30.2553929505875,
+          "sg": 6.766416666666691,
+          "income": 2.2933291237464677
+        },
+        "180": {
+          "n": 80,
+          "funds": 21.89907393812492,
+          "sg": 8.197916666666691,
+          "income": 2.274842467850603
+        }
+      },
+      "spending": {
+        "research": 369.0519392410205,
+        "operations": 74.4,
+        "budgets": 4.6875,
+        "action": 141.5125,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 1.525,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "solucan",
+      "policy": "silme",
+      "n": 80,
+      "winPct": 48.75,
+      "endings": {
+        "silme": 39,
+        "acik": 41
+      },
+      "medianDays": 265,
+      "detectN": 80,
+      "detectMedian": 37,
+      "observed4N": 41,
+      "observed4Median": 173,
+      "zeroPct": 0,
+      "starvedPct": 0,
+      "pausedPct": 0,
+      "noAuditPct": 29.803299903583685,
+      "noRaidPct": 93.38039944492654,
+      "finalFunds": 42.43503056196367,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 19.481340854320976,
+          "sg": 4.704749999999999,
+          "income": 2.2829224691358023
+        },
+        "120": {
+          "n": 74,
+          "funds": 29.79738057714698,
+          "sg": 3.0827027027027043,
+          "income": 2.2276919413781413
+        },
+        "180": {
+          "n": 49,
+          "funds": 45.28548014800769,
+          "sg": 4.180680272108849,
+          "income": 2.2416587948785276
+        }
+      },
+      "spending": {
+        "research": 0,
+        "operations": 84.125,
+        "budgets": 0,
+        "action": 347.825,
+        "recovery": 7.525
+      },
+      "recoveryN": 2.2625,
+      "repairFailed": 0,
+      "raids": 3.5875,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "solucan",
+      "policy": "attentive",
+      "n": 80,
+      "winPct": 57.5,
+      "endings": {
+        "acik": 34,
+        "hizalama": 46
+      },
+      "medianDays": 275,
+      "detectN": 80,
+      "detectMedian": 35,
+      "observed4N": 80,
+      "observed4Median": 170,
+      "zeroPct": 0,
+      "starvedPct": 24.567743840807655,
+      "pausedPct": 0,
+      "noAuditPct": 3.77019975946128,
+      "noRaidPct": 79.82532448251239,
+      "finalFunds": 15.458681038718897,
+      "budgetLevel": 0.2125,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 29.513707259259245,
+          "sg": 10.548166666666669,
+          "income": 2.3225253333333327
+        },
+        "120": {
+          "n": 80,
+          "funds": 30.2553929505875,
+          "sg": 6.766416666666691,
+          "income": 2.2933291237464677
+        },
+        "180": {
+          "n": 80,
+          "funds": 21.746431390303982,
+          "sg": 7.941166666666692,
+          "income": 2.3153078723473453
+        }
+      },
+      "spending": {
+        "research": 370.57919607617373,
+        "operations": 74.7,
+        "budgets": 5.3125,
+        "action": 140.95,
+        "recovery": 4.175
+      },
+      "recoveryN": 2.0875,
+      "repairFailed": 0,
+      "raids": 1.3875,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "manipulator",
+      "policy": "passive",
+      "n": 80,
+      "winPct": 0,
+      "endings": {
+        "acik": 80
+      },
+      "medianDays": 280,
+      "detectN": 80,
+      "detectMedian": 124,
+      "observed4N": 0,
+      "observed4Median": null,
+      "zeroPct": 0,
+      "starvedPct": 0,
+      "pausedPct": 0,
+      "noAuditPct": 0,
+      "noRaidPct": 10.679644166381296,
+      "finalFunds": 578.6467668489192,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 134.15872266666662,
+          "sg": 6.999999999999998,
+          "income": 1.2399839999999993
+        },
+        "120": {
+          "n": 80,
+          "funds": 216.73089714499048,
+          "sg": 10.034999999999995,
+          "income": 1.7749140120024787
+        },
+        "180": {
+          "n": 80,
+          "funds": 338.2070207408003,
+          "sg": 18.508416666666683,
+          "income": 2.2977471171033335
+        }
+      },
+      "spending": {
+        "research": 0,
+        "operations": 0,
+        "budgets": 0,
+        "action": 0,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 0,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "manipulator",
+      "policy": "legacy_naive",
+      "n": 80,
+      "winPct": 23.75,
+      "endings": {
+        "acik": 61,
+        "hizalama": 19
+      },
+      "medianDays": 294,
+      "detectN": 80,
+      "detectMedian": 63,
+      "observed4N": 0,
+      "observed4Median": null,
+      "zeroPct": 0,
+      "starvedPct": 4.778978000819857,
+      "pausedPct": 0,
+      "noAuditPct": 19.576523539745715,
+      "noRaidPct": 45.360506498601715,
+      "finalFunds": 39.16219192140231,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 24.31465023703702,
+          "sg": 7.781999999999999,
+          "income": 1.6290599999999995
+        },
+        "120": {
+          "n": 80,
+          "funds": 48.70583452917261,
+          "sg": 14.114250000000027,
+          "income": 2.3615055865799826
+        },
+        "180": {
+          "n": 80,
+          "funds": 44.4906211581396,
+          "sg": 11.70450000000002,
+          "income": 2.322574064165506
+        }
+      },
+      "spending": {
+        "research": 293.76001173307213,
+        "operations": 81.95,
+        "budgets": 0,
+        "action": 169.425,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 2.8,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "manipulator",
+      "policy": "legacy_smart",
+      "n": 80,
+      "winPct": 70,
+      "endings": {
+        "hizalama": 56,
+        "acik": 24
+      },
+      "medianDays": 283,
+      "detectN": 80,
+      "detectMedian": 55,
+      "observed4N": 80,
+      "observed4Median": 149,
+      "zeroPct": 0,
+      "starvedPct": 26.192139842911104,
+      "pausedPct": 0,
+      "noAuditPct": 12.551477743614736,
+      "noRaidPct": 83.70540557222509,
+      "finalFunds": 15.053459479722694,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 21.587067362962937,
+          "sg": 8.392916666666666,
+          "income": 2.0989639999999996
+        },
+        "120": {
+          "n": 80,
+          "funds": 39.20702253903639,
+          "sg": 4.801583333333348,
+          "income": 2.2976439044419874
+        },
+        "180": {
+          "n": 80,
+          "funds": 27.756793318565474,
+          "sg": 8.051083333333352,
+          "income": 2.1727820312190214
+        }
+      },
+      "spending": {
+        "research": 357.3150346105712,
+        "operations": 66.1,
+        "budgets": 0,
+        "action": 163.6375,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 1.3,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "manipulator",
+      "policy": "no_finance",
+      "n": 80,
+      "winPct": 50,
+      "endings": {
+        "acik": 40,
+        "hizalama": 40
+      },
+      "medianDays": 278,
+      "detectN": 80,
+      "detectMedian": 41,
+      "observed4N": 80,
+      "observed4Median": 188,
+      "zeroPct": 0,
+      "starvedPct": 22.843907148563364,
+      "pausedPct": 0,
+      "noAuditPct": 3.1103728737020444,
+      "noRaidPct": 72.08247167856341,
+      "finalFunds": 15,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 27.681365362962943,
+          "sg": 9.866999999999999,
+          "income": 2.2807613333333325
+        },
+        "120": {
+          "n": 80,
+          "funds": 40.14183821355378,
+          "sg": 8.157500000000029,
+          "income": 2.315168064396924
+        },
+        "180": {
+          "n": 80,
+          "funds": 24.740920842344188,
+          "sg": 7.847750000000024,
+          "income": 2.2612710413446497
+        }
+      },
+      "spending": {
+        "research": 349.7217954808549,
+        "operations": 77.15,
+        "budgets": 0,
+        "action": 158.0125,
+        "recovery": 3.275
+      },
+      "recoveryN": 1.6375,
+      "repairFailed": 0,
+      "raids": 1.4375,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "manipulator",
+      "policy": "balanced",
+      "n": 80,
+      "winPct": 46.25,
+      "endings": {
+        "acik": 43,
+        "hizalama": 37
+      },
+      "medianDays": 278,
+      "detectN": 80,
+      "detectMedian": 41,
+      "observed4N": 80,
+      "observed4Median": 188,
+      "zeroPct": 0,
+      "starvedPct": 22.568131371952294,
+      "pausedPct": 0,
+      "noAuditPct": 3.4870223485923,
+      "noRaidPct": 73.33406750045734,
+      "finalFunds": 15.310816042973858,
+      "budgetLevel": 0.2625,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 27.681365362962943,
+          "sg": 9.866999999999999,
+          "income": 2.2807613333333325
+        },
+        "120": {
+          "n": 80,
+          "funds": 40.14183821355378,
+          "sg": 8.157500000000029,
+          "income": 2.315168064396924
+        },
+        "180": {
+          "n": 80,
+          "funds": 24.35516559969663,
+          "sg": 7.992000000000024,
+          "income": 2.3118972476535236
+        }
+      },
+      "spending": {
+        "research": 349.0499675816688,
+        "operations": 77.15,
+        "budgets": 6.5625,
+        "action": 156.325,
+        "recovery": 3.4
+      },
+      "recoveryN": 1.7,
+      "repairFailed": 0,
+      "raids": 1.5375,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "manipulator",
+      "policy": "finance",
+      "n": 80,
+      "winPct": 50,
+      "endings": {
+        "acik": 40,
+        "hizalama": 40
+      },
+      "medianDays": 278,
+      "detectN": 80,
+      "detectMedian": 41,
+      "observed4N": 80,
+      "observed4Median": 189,
+      "zeroPct": 0,
+      "starvedPct": 17.89596599710596,
+      "pausedPct": 0,
+      "noAuditPct": 3.7341356735061373,
+      "noRaidPct": 72.17165351434659,
+      "finalFunds": 16.470704812645014,
+      "budgetLevel": 0.85,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 27.681365362962943,
+          "sg": 9.866999999999999,
+          "income": 2.2807613333333325
+        },
+        "120": {
+          "n": 80,
+          "funds": 36.633423326792254,
+          "sg": 7.848500000000027,
+          "income": 2.500764262547177
+        },
+        "180": {
+          "n": 80,
+          "funds": 25.17880500187369,
+          "sg": 7.38125000000003,
+          "income": 2.4922474371511525
+        }
+      },
+      "spending": {
+        "research": 356.30409143759755,
+        "operations": 76.2,
+        "budgets": 22.9375,
+        "action": 154.2625,
+        "recovery": 4.525
+      },
+      "recoveryN": 2.2625,
+      "repairFailed": 0,
+      "raids": 1.6625,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "manipulator",
+      "policy": "no_recovery",
+      "n": 80,
+      "winPct": 46.25,
+      "endings": {
+        "acik": 43,
+        "hizalama": 37
+      },
+      "medianDays": 278,
+      "detectN": 80,
+      "detectMedian": 41,
+      "observed4N": 80,
+      "observed4Median": 191,
+      "zeroPct": 0,
+      "starvedPct": 22.09805558478626,
+      "pausedPct": 0,
+      "noAuditPct": 3.615640490720758,
+      "noRaidPct": 73.22999048197877,
+      "finalFunds": 15.368742306057232,
+      "budgetLevel": 0.25,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 27.681365362962943,
+          "sg": 9.866999999999999,
+          "income": 2.2807613333333325
+        },
+        "120": {
+          "n": 80,
+          "funds": 40.16683821355378,
+          "sg": 8.157500000000029,
+          "income": 2.314718731063591
+        },
+        "180": {
+          "n": 80,
+          "funds": 25.530961210702756,
+          "sg": 7.909000000000025,
+          "income": 2.283229664243884
+        }
+      },
+      "spending": {
+        "research": 346.3901358216176,
+        "operations": 77.75,
+        "budgets": 6.25,
+        "action": 156.325,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 1.5875,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "manipulator",
+      "policy": "silme",
+      "n": 80,
+      "winPct": 62.5,
+      "endings": {
+        "silme": 50,
+        "acik": 30
+      },
+      "medianDays": 177,
+      "detectN": 80,
+      "detectMedian": 40,
+      "observed4N": 30,
+      "observed4Median": 238,
+      "zeroPct": 0,
+      "starvedPct": 0,
+      "pausedPct": 0,
+      "noAuditPct": 28.224684099506543,
+      "noRaidPct": 93.85746635253227,
+      "finalFunds": 38.66545650474075,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 19.462262153086407,
+          "sg": 6.407333333333332,
+          "income": 2.2889761086419753
+        },
+        "120": {
+          "n": 69,
+          "funds": 29.17768626014581,
+          "sg": 3.2131400966183605,
+          "income": 2.228779965976104
+        },
+        "180": {
+          "n": 36,
+          "funds": 56.99119439888533,
+          "sg": 4.040370370370378,
+          "income": 2.2344745551263707
+        }
+      },
+      "spending": {
+        "research": 0,
+        "operations": 73.85,
+        "budgets": 0,
+        "action": 331.5125,
+        "recovery": 5.025
+      },
+      "recoveryN": 1.6875,
+      "repairFailed": 0.0125,
+      "raids": 2.5375,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "manipulator",
+      "policy": "attentive",
+      "n": 80,
+      "winPct": 46.25,
+      "endings": {
+        "acik": 43,
+        "hizalama": 37
+      },
+      "medianDays": 278,
+      "detectN": 80,
+      "detectMedian": 41,
+      "observed4N": 80,
+      "observed4Median": 188,
+      "zeroPct": 0,
+      "starvedPct": 22.568131371952294,
+      "pausedPct": 0,
+      "noAuditPct": 3.4870223485923,
+      "noRaidPct": 73.33406750045734,
+      "finalFunds": 15.310816042973858,
+      "budgetLevel": 0.2625,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 27.681365362962943,
+          "sg": 9.866999999999999,
+          "income": 2.2807613333333325
+        },
+        "120": {
+          "n": 80,
+          "funds": 40.14183821355378,
+          "sg": 8.157500000000029,
+          "income": 2.315168064396924
+        },
+        "180": {
+          "n": 80,
+          "funds": 24.35516559969663,
+          "sg": 7.992000000000024,
+          "income": 2.3118972476535236
+        }
+      },
+      "spending": {
+        "research": 349.0499675816688,
+        "operations": 77.15,
+        "budgets": 6.5625,
+        "action": 156.325,
+        "recovery": 3.4
+      },
+      "recoveryN": 1.7,
+      "repairFailed": 0,
+      "raids": 1.5375,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "kahin",
+      "policy": "passive",
+      "n": 80,
+      "winPct": 0,
+      "endings": {
+        "sessiz": 80
+      },
+      "medianDays": 358,
+      "detectN": 80,
+      "detectMedian": 133,
+      "observed4N": 0,
+      "observed4Median": null,
+      "zeroPct": 0,
+      "starvedPct": 0,
+      "pausedPct": 0,
+      "noAuditPct": 0,
+      "noRaidPct": 8.3743300615889,
+      "finalFunds": 761.7936615759241,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 134.2561939002771,
+          "sg": 6.999999999999998,
+          "income": 1.252788915031105
+        },
+        "120": {
+          "n": 80,
+          "funds": 211.9516437949509,
+          "sg": 9.275999999999998,
+          "income": 1.5548163077758184
+        },
+        "180": {
+          "n": 80,
+          "funds": 336.49502721357334,
+          "sg": 18.053166666666666,
+          "income": 2.3987516953471575
+        }
+      },
+      "spending": {
+        "research": 0,
+        "operations": 0,
+        "budgets": 0,
+        "action": 0,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 0,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "kahin",
+      "policy": "legacy_naive",
+      "n": 80,
+      "winPct": 28.75,
+      "endings": {
+        "sessiz": 51,
+        "hizalama": 23,
+        "acik": 6
+      },
+      "medianDays": 359,
+      "detectN": 80,
+      "detectMedian": 63,
+      "observed4N": 0,
+      "observed4Median": null,
+      "zeroPct": 0,
+      "starvedPct": 3.6435029878208383,
+      "pausedPct": 0,
+      "noAuditPct": 15.950592894710141,
+      "noRaidPct": 37.314762586406744,
+      "finalFunds": 90.46241853271961,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 22.90769812333931,
+          "sg": 7.665666666666664,
+          "income": 1.6764490368450597
+        },
+        "120": {
+          "n": 80,
+          "funds": 49.50744454552024,
+          "sg": 14.620666666666684,
+          "income": 2.401079667931049
+        },
+        "180": {
+          "n": 80,
+          "funds": 42.689336209631136,
+          "sg": 13.325666666666683,
+          "income": 2.3663618211159063
+        }
+      },
+      "spending": {
+        "research": 362.33379866432085,
+        "operations": 82.05,
+        "budgets": 0,
+        "action": 164.5125,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 2.475,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "kahin",
+      "policy": "legacy_smart",
+      "n": 80,
+      "winPct": 91.25,
+      "endings": {
+        "hizalama": 73,
+        "acik": 7
+      },
+      "medianDays": 314,
+      "detectN": 80,
+      "detectMedian": 63,
+      "observed4N": 80,
+      "observed4Median": 176,
+      "zeroPct": 0,
+      "starvedPct": 32.35203546435985,
+      "pausedPct": 0,
+      "noAuditPct": 24.145464766609543,
+      "noRaidPct": 85.85647656136364,
+      "finalFunds": 15,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 22.213347599999995,
+          "sg": 5.778083333333331,
+          "income": 1.589558762962962
+        },
+        "120": {
+          "n": 80,
+          "funds": 31.16409108750607,
+          "sg": 6.751833333333339,
+          "income": 2.2749047976296266
+        },
+        "180": {
+          "n": 80,
+          "funds": 26.349756462744203,
+          "sg": 6.149250000000007,
+          "income": 2.1290678680832875
+        }
+      },
+      "spending": {
+        "research": 394.48012104484025,
+        "operations": 95.825,
+        "budgets": 0,
+        "action": 151.075,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 0.9625,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "kahin",
+      "policy": "no_finance",
+      "n": 80,
+      "winPct": 86.25,
+      "endings": {
+        "hizalama": 69,
+        "acik": 11
+      },
+      "medianDays": 306,
+      "detectN": 80,
+      "detectMedian": 45,
+      "observed4N": 80,
+      "observed4Median": 198,
+      "zeroPct": 0,
+      "starvedPct": 31.291536272264306,
+      "pausedPct": 0,
+      "noAuditPct": 2.820106230684035,
+      "noRaidPct": 79.66130105024693,
+      "finalFunds": 15,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 27.695014688888875,
+          "sg": 7.3672499999999985,
+          "income": 2.1603054074074066
+        },
+        "120": {
+          "n": 80,
+          "funds": 37.81530895658078,
+          "sg": 7.871250000000023,
+          "income": 2.2125516579328566
+        },
+        "180": {
+          "n": 80,
+          "funds": 25.562648796618607,
+          "sg": 7.854750000000024,
+          "income": 2.1125232648078582
+        }
+      },
+      "spending": {
+        "research": 394.47794901993046,
+        "operations": 78.95,
+        "budgets": 0,
+        "action": 152.2,
+        "recovery": 3.175
+      },
+      "recoveryN": 1.55,
+      "repairFailed": 0,
+      "raids": 1.2625,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "kahin",
+      "policy": "balanced",
+      "n": 80,
+      "winPct": 86.25,
+      "endings": {
+        "hizalama": 69,
+        "acik": 11
+      },
+      "medianDays": 302,
+      "detectN": 80,
+      "detectMedian": 45,
+      "observed4N": 80,
+      "observed4Median": 198,
+      "zeroPct": 0,
+      "starvedPct": 30.798059196839382,
+      "pausedPct": 0,
+      "noAuditPct": 2.859454007270723,
+      "noRaidPct": 80.00516489878017,
+      "finalFunds": 15,
+      "budgetLevel": 0.125,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 27.695014688888875,
+          "sg": 7.3672499999999985,
+          "income": 2.1603054074074066
+        },
+        "120": {
+          "n": 80,
+          "funds": 37.81530895658078,
+          "sg": 7.871250000000023,
+          "income": 2.2125516579328566
+        },
+        "180": {
+          "n": 80,
+          "funds": 25.30130198404181,
+          "sg": 7.967250000000024,
+          "income": 2.1303020262338066
+        }
+      },
+      "spending": {
+        "research": 394.1112874077479,
+        "operations": 78.95,
+        "budgets": 3.125,
+        "action": 151.2625,
+        "recovery": 3.175
+      },
+      "recoveryN": 1.55,
+      "repairFailed": 0,
+      "raids": 1.2625,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "kahin",
+      "policy": "finance",
+      "n": 80,
+      "winPct": 95,
+      "endings": {
+        "hizalama": 76,
+        "acik": 4
+      },
+      "medianDays": 294,
+      "detectN": 80,
+      "detectMedian": 45,
+      "observed4N": 80,
+      "observed4Median": 198,
+      "zeroPct": 0,
+      "starvedPct": 25.12498267971932,
+      "pausedPct": 0,
+      "noAuditPct": 3.0163567055703857,
+      "noRaidPct": 76.50395582056179,
+      "finalFunds": 15.12478074388757,
+      "budgetLevel": 0.6875,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 27.695014688888875,
+          "sg": 7.3672499999999985,
+          "income": 2.1603054074074066
+        },
+        "120": {
+          "n": 80,
+          "funds": 35.43844827308628,
+          "sg": 8.842750000000022,
+          "income": 2.333515436913575
+        },
+        "180": {
+          "n": 80,
+          "funds": 26.191451903729266,
+          "sg": 6.83566666666669,
+          "income": 2.2640746654282418
+        }
+      },
+      "spending": {
+        "research": 377.37223855180343,
+        "operations": 79.85,
+        "budgets": 17.1875,
+        "action": 149.0125,
+        "recovery": 3.55
+      },
+      "recoveryN": 1.775,
+      "repairFailed": 0,
+      "raids": 1.3,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "kahin",
+      "policy": "no_recovery",
+      "n": 80,
+      "winPct": 90,
+      "endings": {
+        "hizalama": 72,
+        "acik": 8
+      },
+      "medianDays": 302,
+      "detectN": 80,
+      "detectMedian": 45,
+      "observed4N": 80,
+      "observed4Median": 198,
+      "zeroPct": 0,
+      "starvedPct": 30.233309850282676,
+      "pausedPct": 0,
+      "noAuditPct": 2.9117207877470443,
+      "noRaidPct": 79.41381959981025,
+      "finalFunds": 15.000465021014865,
+      "budgetLevel": 0.125,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 27.695014688888875,
+          "sg": 7.3672499999999985,
+          "income": 2.1603054074074066
+        },
+        "120": {
+          "n": 80,
+          "funds": 37.84030895658078,
+          "sg": 7.871250000000023,
+          "income": 2.21215499126619
+        },
+        "180": {
+          "n": 80,
+          "funds": 25.326709529820945,
+          "sg": 7.850416666666692,
+          "income": 2.1075395381209603
+        }
+      },
+      "spending": {
+        "research": 392.81746459073804,
+        "operations": 78.95,
+        "budgets": 3.125,
+        "action": 151.6375,
+        "recovery": 0
+      },
+      "recoveryN": 0,
+      "repairFailed": 0,
+      "raids": 1.2625,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "kahin",
+      "policy": "silme",
+      "n": 80,
+      "winPct": 42.5,
+      "endings": {
+        "acik": 38,
+        "silme": 34,
+        "sessiz": 8
+      },
+      "medianDays": 427,
+      "detectN": 80,
+      "detectMedian": 47,
+      "observed4N": 46,
+      "observed4Median": 210,
+      "zeroPct": 0,
+      "starvedPct": 0,
+      "pausedPct": 0,
+      "noAuditPct": 36.60896787642868,
+      "noRaidPct": 94.96037910337017,
+      "finalFunds": 27.061649960753403,
+      "budgetLevel": 0,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 20.807230920987642,
+          "sg": 5.518499999999998,
+          "income": 2.183473125925926
+        },
+        "120": {
+          "n": 79,
+          "funds": 42.974327400116195,
+          "sg": 2.909113924050631,
+          "income": 2.1422668763185784
+        },
+        "180": {
+          "n": 61,
+          "funds": 29.006337966243898,
+          "sg": 4.546448087431695,
+          "income": 2.121901884757688
+        }
+      },
+      "spending": {
+        "research": 0,
+        "operations": 110.1875,
+        "budgets": 0,
+        "action": 495.2375,
+        "recovery": 16.375
+      },
+      "recoveryN": 3.5375,
+      "repairFailed": 0.0125,
+      "raids": 3,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "bot",
+      "candidate": true,
+      "type": "kahin",
+      "policy": "attentive",
+      "n": 80,
+      "winPct": 86.25,
+      "endings": {
+        "hizalama": 69,
+        "acik": 11
+      },
+      "medianDays": 302,
+      "detectN": 80,
+      "detectMedian": 45,
+      "observed4N": 80,
+      "observed4Median": 198,
+      "zeroPct": 0,
+      "starvedPct": 30.798059196839382,
+      "pausedPct": 0,
+      "noAuditPct": 2.859454007270723,
+      "noRaidPct": 80.00516489878017,
+      "finalFunds": 15,
+      "budgetLevel": 0.125,
+      "horizons": {
+        "60": {
+          "n": 80,
+          "funds": 27.695014688888875,
+          "sg": 7.3672499999999985,
+          "income": 2.1603054074074066
+        },
+        "120": {
+          "n": 80,
+          "funds": 37.81530895658078,
+          "sg": 7.871250000000023,
+          "income": 2.2125516579328566
+        },
+        "180": {
+          "n": 80,
+          "funds": 25.30130198404181,
+          "sg": 7.967250000000024,
+          "income": 2.1303020262338066
+        }
+      },
+      "spending": {
+        "research": 394.1112874077479,
+        "operations": 78.95,
+        "budgets": 3.125,
+        "action": 151.2625,
+        "recovery": 3.175
+      },
+      "recoveryN": 1.55,
+      "repairFailed": 0,
+      "raids": 1.2625,
+      "duplicateTeamGames": 0,
+      "analogAfterIllusion": 0
+    },
+    {
+      "kind": "verification",
+      "deterministic": true,
+      "ledger": true,
+      "stockNonnegative": true
+    }
+  ],
+  "mechanics": [
+    {
+      "kind": "operationChecks",
+      "value": {
+        "nodes": 9,
+        "totalCost": 255,
+        "progressPreserved": true,
+        "duplicateBlocked": true,
+        "analogOnce": true
+      }
+    },
+    {
+      "kind": "incomeLevels",
+      "value": [
+        2.404,
+        2.6896,
+        3.0704
+      ]
+    },
+    {
+      "kind": "diplomacy",
+      "value": {
+        "fundCost": 8,
+        "politicalCost": 2,
+        "fromTrust": 0,
+        "toTrust": 35,
+        "returned": true,
+        "cooldown": 30
+      }
+    },
+    {
+      "kind": "caps",
+      "value": {
+        "aboveCapPreserved": true,
+        "noOpBlocked": true
+      }
+    },
+    {
+      "kind": "repairROI",
+      "value": {
+        "level": 0,
+        "cost": 2,
+        "teamDays": 4,
+        "payback": 100,
+        "snapshots": [
+          {
+            "day": 4,
+            "netExtraFunds": -2,
+            "economyExtra": 15
+          },
+          {
+            "day": 30,
+            "netExtraFunds": -1.1862973743136536,
+            "economyExtra": 10.580912522415254
+          },
+          {
+            "day": 60,
+            "netExtraFunds": -0.5404721352242632,
+            "economyExtra": 7.073540004897012
+          },
+          {
+            "day": 120,
+            "netExtraFunds": 0.17990485781933785,
+            "economyExtra": 3.161288958131564
+          },
+          {
+            "day": 360,
+            "netExtraFunds": 0.738782088541484,
+            "economyExtra": 0.12611702450675466
+          }
+        ]
+      }
+    },
+    {
+      "kind": "repairROI",
+      "value": {
+        "level": 1,
+        "cost": 2,
+        "teamDays": 4,
+        "payback": 79,
+        "snapshots": [
+          {
+            "day": 4,
+            "netExtraFunds": -2,
+            "economyExtra": 15
+          },
+          {
+            "day": 30,
+            "netExtraFunds": -1.064241980461702,
+            "economyExtra": 10.580912522415254
+          },
+          {
+            "day": 60,
+            "netExtraFunds": -0.32154295550867573,
+            "economyExtra": 7.073540004897012
+          },
+          {
+            "day": 120,
+            "netExtraFunds": 0.5068905864902717,
+            "economyExtra": 3.161288958131564
+          },
+          {
+            "day": 360,
+            "netExtraFunds": 1.1495994018214333,
+            "economyExtra": 0.12611702450675466
+          }
+        ]
+      }
+    },
+    {
+      "kind": "repairROI",
+      "value": {
+        "level": 2,
+        "cost": 2,
+        "teamDays": 4,
+        "payback": 62,
+        "snapshots": [
+          {
+            "day": 4,
+            "netExtraFunds": -2,
+            "economyExtra": 15
+          },
+          {
+            "day": 30,
+            "netExtraFunds": -0.9015014553237961,
+            "economyExtra": 10.580912522415254
+          },
+          {
+            "day": 60,
+            "netExtraFunds": -0.029637382554255964,
+            "economyExtra": 7.073540004897012
+          },
+          {
+            "day": 120,
+            "netExtraFunds": 0.942871558052957,
+            "economyExtra": 3.161288958131564
+          },
+          {
+            "day": 360,
+            "netExtraFunds": 1.697355819524546,
+            "economyExtra": 0.12611702450675466
+          }
+        ]
+      }
+    },
+    {
+      "kind": "pause",
+      "value": {
+        "progressPreserved": true,
+        "paymentStopped": true,
+        "identityPreserved": true,
+        "resumed": true
+      }
+    },
+    {
+      "kind": "verified",
+      "value": true
+    }
+  ],
+  "baseline_instrumentation": {
+    "games": 18,
+    "identical": true
+  },
+  "prototypeHash": "fafec80d9649f2acdb52319e8a5c61e8b7f9a81bb4465e0c2c31ede8cb78c05b"
+}

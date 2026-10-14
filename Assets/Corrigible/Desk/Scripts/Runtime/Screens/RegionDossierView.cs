@@ -42,6 +42,7 @@ namespace Corrigible.Desk
 
         [Header("İstatistik, eylemler")]
         [SerializeField] StatRefs[] stats = System.Array.Empty<StatRefs>();
+        [SerializeField] RegionFinanceView finance;
         [SerializeField] TMP_Text actionsCap, actionsRight;
         [SerializeField] ActionCardView[] actions = System.Array.Empty<ActionCardView>();
 
@@ -68,6 +69,8 @@ namespace Corrigible.Desk
         [SerializeField] TMP_Text sendLabel;
         [SerializeField] DeskButton[] sendChips = System.Array.Empty<DeskButton>();
         [SerializeField] TMP_Text fieldNote;
+        [SerializeField] EconomyRecoveryView recovery;
+        [SerializeField] RectTransform scrollContent;
 
         [Header("Dikey yığın (CSS .fbody: flex sütun, aralık 6; C2'de tek kaynak satırıyla bloklar yukarı kayar)")]
         [SerializeField] RectTransform coverPanel;
@@ -122,6 +125,7 @@ namespace Corrigible.Desk
 
         void Awake()
         {
+            if (recovery != null) recovery.Invoked += c => SendInvoked?.Invoke(c);
             for (int i = 0; i < sendChips.Length; i++)
             {
                 int k = i;
@@ -228,6 +232,7 @@ namespace Corrigible.Desk
                 st.value.Apply();
             }
 
+            if (finance != null) finance.Bind(d.Finance);
             DeskUi.SetText(actionsCap, T.T(d.ActionsHeader?.Title));
             DeskUi.SetText(actionsRight, d.ActionsHeader?.Right);
             for (int i = 0; i < actions.Length; i++)
@@ -239,6 +244,14 @@ namespace Corrigible.Desk
 
             ShowPreviewFor(-1);
 
+            foreach (var item in fieldHead) DeskUi.SetActive(item, d.Field != null);
+            DeskUi.SetActive(fieldNote, d.Field != null);
+            if (d.Field == null)
+            {
+                DeskUi.SetActive(teamCard, false);
+                DeskUi.SetActive(raid, false);
+                DeskUi.SetActive(sendRow, false);
+            }
             if (d.Field != null)
             {
                 DeskUi.SetText(fieldCap, T.T(d.Field.Cap));
@@ -272,6 +285,7 @@ namespace Corrigible.Desk
                 BindSend(d.Field);
                 DeskUi.SetText(fieldNote, T.T(d.Field.Note));
             }
+            if (recovery != null) recovery.Bind(d.Recovery);
             Restack(d);
         }
 
@@ -327,6 +341,11 @@ namespace Corrigible.Desk
 
             SetSection(statsRow, y);
             y += statsHeight + gap;
+            if (finance != null && d.Finance != null)
+            {
+                SetTop((RectTransform)finance.transform, y);
+                y += ((RectTransform)finance.transform).rect.height + gap;
+            }
             SetSection(actionsHead, y);
             y += actionsHeadAdvance;
 
@@ -352,13 +371,23 @@ namespace Corrigible.Desk
             y += gap;
 
             if (previewNote != null) { SetTop((RectTransform)previewNote.transform, y); y += previewAdvance; }
-            SetSection(fieldHead, y);
-            y += fieldHeadAdvance;
-            if (teamCard != null && teamCard.activeSelf) { SetTop((RectTransform)teamCard.transform, y); y += teamAdvance; }
-            SetTop((RectTransform)raid.transform, y);
-            if (sendRow != null) SetTop((RectTransform)sendRow.transform, y);
-            y += raidAdvance;
-            SetTop(fieldNote.rectTransform, y);
+            if (d.Field != null)
+            {
+                SetSection(fieldHead, y);
+                y += fieldHeadAdvance;
+                if (teamCard != null && teamCard.activeSelf) { SetTop((RectTransform)teamCard.transform, y); y += teamAdvance; }
+                SetTop((RectTransform)raid.transform, y);
+                if (sendRow != null) SetTop((RectTransform)sendRow.transform, y);
+                y += raidAdvance;
+                SetTop(fieldNote.rectTransform, y);
+                y += fieldNote.rectTransform.rect.height + gap;
+            }
+            if (recovery != null && d.Recovery != null)
+            {
+                SetTop((RectTransform)recovery.transform, y);
+                y += ((RectTransform)recovery.transform).rect.height + gap;
+            }
+            if (scrollContent != null) scrollContent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, y);
         }
 
         /// <summary>Sol-üst çapalı, pivotu üstte öğenin üst kenarını <paramref name="top"/>'a koyar.</summary>
