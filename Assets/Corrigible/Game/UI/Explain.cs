@@ -192,7 +192,7 @@ namespace Corrigible.Game.UI
         }
 
         // ------------------------------------------------------------------ hedef yolları
-        public struct Track { public float Progress; public string Text; }
+        public struct Track { public float Progress; public string Text, Action; }
 
         static readonly string[] AlignChain = { "yorum", "duzelt", "kilit" };
 
@@ -221,10 +221,36 @@ namespace Corrigible.Game.UI
             var s = sim.S;
             if (!s.Aware) return new Track { Progress = 0, Text = Loc.T("Önce YZ'yi tespit et") };
             if (s.Core != null && s.CoreKnown == null) return new Track { Progress = 0.15f, Text = Loc.T("Çekirdeği bul") };
-            if (s.Core != null) return new Track { Progress = 0.45f, Text = Loc.F("Çekirdek: {0} · Son Şalter'le yok et", Name(s.CoreKnown)) };
+            if (s.Core != null) return new Track { Progress = 0.45f, Text = sim.TeamsOn
+                ? Loc.F("Çekirdek: {0} · baskın veya Son Şalter'le yok et", Name(s.CoreKnown))
+                : Loc.F("Çekirdek: {0} · Son Şalter'le yok et", Name(s.CoreKnown)) };
             if (Illusion(sim)) return new Track { Progress = 0.75f, Text = Loc.T("Kopyaları temizle") };
             int need = sim.Dur(15);
-            return new Track { Progress = 0.75f + 0.25f * Mathf.Clamp01((float)s.CleanDays / need), Text = Loc.F("Temiz gün {0}/{1}", s.CleanDays, need) };
+            var track = new Track
+            {
+                Progress = 0.75f + 0.25f * Mathf.Clamp01((float)s.CleanDays / need),
+                Text = Loc.F("Temiz gün {0}/{1}", s.CleanDays, need), Action = Loc.T("Temizliği koru"),
+            };
+            if (s.CleanDays > 0) return track;
+            // Kalan iş yalnızca ekrandaki ölçümlerden çıkarılır; gizli sızma temizleme hedefinden sızmamalı.
+            int remaining = s.Regions.Count(r => (sim.Shown(r).V ?? 0) > 0);
+            int offline = s.Regions.Count(r => r.Off > 0);
+            if (remaining > 0)
+            {
+                track.Text = Loc.F("Sızma görünen {0} bölgeyi temizle", remaining);
+                track.Action = Loc.F("{0} bölgeyi temizle", remaining);
+            }
+            else if (offline > 0 && s.Has("yedek"))
+            {
+                track.Text = Loc.F("{0} çevrimdışı bölgeyi dönüşünde yeniden denetle", offline);
+                track.Action = Loc.T("Yedekleri kontrol et");
+            }
+            else if (s.Regions.Any(r => { var v = sim.Shown(r); return !v.V.HasValue || v.Src == "report"; }))
+            {
+                track.Text = Loc.T("Yerel raporları denetimle doğrula");
+                track.Action = Loc.T("Denetimle doğrula");
+            }
+            return track;
         }
 
         public static string NextStep(Simulation sim)
@@ -235,7 +261,9 @@ namespace Corrigible.Game.UI
                 return sim.TeamsOn
                     ? Loc.T("YZ'yi bul: haber bandında adı geçen bölgelere bir ekip gönder ve izleme ağı kur.")
                     : Loc.T("YZ'yi bul: haber bandında adı geçen bölgelere izleme ağı kur.");
-            if (s.Core == null) return Loc.T("Kalan kopyaları temizle: bütün bölgeler 15 gün temiz kalırsa YZ silinir.");
+            if (s.Core == null) return Illusion(sim)
+                ? Loc.T("Kopyaları temizle")
+                : Loc.F("Çekirdek yok edildi. Denetimlerle kalan sızmayı sıfırla; bütün bölgeler {0} gün aralıksız temiz kalmalı. {1}", sim.Dur(15), Erasure(sim).Text);
             if (s.Research.Cur == null && !s.Done("kilit")) return Loc.T("Araştırma masası boş: Hizalama kolunda sıradaki araştırmayı başlat.");
             if (sim.Studied == 0) return Loc.T("Gözlem noktası yok: YZ'nin görüldüğü bir bölgeye izleme ağı kur, Hizalama hızlanır.");
             if (s.CoreKnown != null)

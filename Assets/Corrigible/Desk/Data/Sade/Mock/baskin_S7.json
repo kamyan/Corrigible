@@ -1,0 +1,337 @@
+{
+ "title": "Sade · Baskın — son tur, düşen birim, kazandıran hamle",
+ "turn": 6,
+ "turns": 6,
+ "phase": "you",
+ "outcome": null,
+ "yedekleme": true,
+ "objects_override": {
+  "6,3": {
+   "hp": 2
+  },
+  "6,6": {
+   "hp": 0,
+   "broken": true
+  },
+  "7,1": {
+   "hp": 0,
+   "broken": true
+  },
+  "4,7": {
+   "broken": true
+  },
+  "6,0": {
+   "hp": 1
+  }
+ },
+ "units": [
+  {
+   "id": "T",
+   "letter": "T",
+   "pos": [
+    6,
+    4
+   ],
+   "hp": 2,
+   "max": 3
+  },
+  {
+   "id": "E",
+   "letter": "E",
+   "pos": [
+    3,
+    3
+   ],
+   "hp": 0,
+   "max": 3,
+   "state": "down"
+  },
+  {
+   "id": "A",
+   "letter": "A",
+   "pos": [
+    4,
+    5
+   ],
+   "hp": 1,
+   "max": 2
+  }
+ ],
+ "robots": [
+  {
+   "id": "Dx",
+   "type": "drone",
+   "pos": [
+    7,
+    4
+   ],
+   "hp": 2,
+   "max": 2,
+   "intent": {
+    "kind": "fire",
+    "dir": "W",
+    "order": 1
+   }
+  },
+  {
+   "id": "B1",
+   "type": "maint",
+   "pos": [
+    6,
+    2
+   ],
+   "hp": 2,
+   "max": 2,
+   "intent": {
+    "kind": "repair",
+    "dst": [
+     6,
+     3
+    ],
+    "order": 2
+   }
+  },
+  {
+   "id": "B3",
+   "type": "maint",
+   "pos": [
+    3,
+    5
+   ],
+   "hp": 2,
+   "max": 2,
+   "intent": {
+    "kind": "melee",
+    "dst": [
+     4,
+     5
+    ],
+    "order": 3
+   }
+  }
+ ],
+ "wakes": [
+  [
+   5,
+   0
+  ],
+  [
+   6,
+   7
+  ]
+ ],
+ "marks": {
+  "sel": [
+   [
+    6,
+    4
+   ]
+  ],
+  "target": [
+   [
+    6,
+    3
+   ]
+  ],
+  "hover": [
+   [
+    6,
+    3
+   ]
+  ]
+ },
+ "ghosts": [],
+ "pushes": [],
+ "team": [
+  {
+   "letter": "T",
+   "hp": 2,
+   "max": 3,
+   "status": "go",
+   "sel": true
+  },
+  {
+   "letter": "E",
+   "hp": 0,
+   "max": 3,
+   "status": "down",
+   "sel": false
+  },
+  {
+   "letter": "A",
+   "hp": 1,
+   "max": 2,
+   "status": "go",
+   "sel": false
+  }
+ ],
+ "targets": [
+  {
+   "id": "node",
+   "name": "YZ düğüm dolabı",
+   "hp": 2,
+   "max": 4,
+   "armor": true,
+   "broken": false
+  },
+  {
+   "id": "backup",
+   "name": "Yedek çekirdek",
+   "hp": 0,
+   "max": 2,
+   "broken": true
+  }
+ ],
+ "civilianBroken": 1,
+ "civilianTotal": 3,
+ "aiAbilities": [
+  "Yedekleme"
+ ],
+ "popups": [
+  {
+   "kind": "dmg",
+   "text": "−2",
+   "at": [
+    6,
+    3
+   ],
+   "z": 1.2,
+   "dx": 60,
+   "dy": -6
+  }
+ ],
+ "hud": {
+  "turnPlaque": {
+   "turn": 6,
+   "turns": 6,
+   "phase": "you",
+   "last": true
+  },
+  "objective": {
+   "targets": [
+    {
+     "id": "node",
+     "thumb": "thumb_cabinet_node",
+     "nameKey": "raid.target.node",
+     "hp": 2,
+     "max": 4,
+     "armor": true
+    },
+    {
+     "id": "backup",
+     "thumb": "thumb_debris_backup",
+     "nameKey": "raid.target.backup",
+     "hp": 0,
+     "max": 2,
+     "broken": true
+    }
+   ],
+   "subKey": "raid.objective.both",
+   "civilians": {
+    "broken": 1,
+    "total": 3
+   },
+   "aiAbilities": [
+    {
+     "id": "backup",
+     "icon": "mk_copy_13",
+     "labelKey": "raid.ai.backup",
+     "tipKey": "raid.ai.backup.tip"
+    }
+   ]
+  },
+  "topButtons": {
+   "logUnread": true,
+   "open": null,
+   "retreatArmed": false
+  },
+  "team": [
+   {
+    "letter": "T",
+    "hp": 2,
+    "max": 3,
+    "move": false,
+    "ability": "armed",
+    "selected": true
+   },
+   {
+    "letter": "E",
+    "hp": 0,
+    "max": 3,
+    "status": "down"
+   },
+   {
+    "letter": "A",
+    "hp": 1,
+    "max": 2,
+    "move": true,
+    "ability": true
+   }
+  ],
+  "end": "normal",
+  "locked": false,
+  "unitCard": {
+   "letter": "T",
+   "hp": 2,
+   "max": 3,
+   "rows": [
+    {
+     "kind": "move",
+     "state": "used"
+    },
+    {
+     "kind": "ability",
+     "nameKey": "raid.ab.sabotage",
+     "state": "armed"
+    }
+   ],
+   "effects": [
+    {
+     "value": -2,
+     "textKey": "raid.fx.cabinet"
+    },
+    {
+     "value": -1,
+     "textKey": "raid.fx.robot",
+     "icon": "push"
+    }
+   ],
+   "rect": [
+    16,
+    744,
+    360,
+    216
+   ]
+  },
+  "hoverCard": {
+   "thumb": "thumb_cabinet_node_s",
+   "titleKey": "raid.target.nodeFull",
+   "hp": 2,
+   "max": 4,
+   "lines": [
+    {
+     "icon": "shield",
+     "textKey": "raid.preview.armorOk",
+     "good": true
+    },
+    {
+     "icon": "bolt",
+     "textKey": "raid.ab.sabotage",
+     "from": 2,
+     "to": 0,
+     "max": 4
+    }
+   ],
+   "win": {
+    "stampKey": "raid.stamp.targetBreaks",
+    "textKey": "raid.preview.opWins"
+   },
+   "rect": [
+    1646,
+    795,
+    258,
+    173
+   ]
+  }
+ }
+}

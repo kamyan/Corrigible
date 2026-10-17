@@ -21,6 +21,7 @@ namespace Corrigible.Game.Raid
         float lastPixelHeight;
         Vector3 anchor;
         Shader overlayShader;
+        RaidScreenLabel screenLabel;
         int textRenderQueue;
         readonly Dictionary<Material, Material> overlayMaterials = new Dictionary<Material, Material>();
 
@@ -50,6 +51,7 @@ namespace Corrigible.Game.Raid
         {
             get
             {
+                if (screenLabel != null) { screenLabel.Refresh(transform.position); return screenLabel.ScreenBounds; }
                 Refresh();
                 if (view == null || glyphHeight <= 0) return default;
                 var center = view.WorldToScreenPoint(transform.position);
@@ -58,11 +60,25 @@ namespace Corrigible.Game.Raid
             }
         }
 
+        public void ConfigureScreen(Camera camera, Canvas layer, RaidScreenLabel label, TMP_FontAsset font, Color paperInk, float fontPixels, float minimumFontPixels = 11)
+        {
+            view = camera; screenLabel = label; paperColor = paperInk; pixels = fontPixels;
+            screenLabel.Configure(camera, layer, font, minimumFontPixels); screenLabel.SetPaperColor(paperInk);
+        }
+
+        public void ShowHealth(int hp, int max, Color ink, bool target = false, bool armor = false)
+        {
+            if (screenLabel == null) { Show(Corrigible.Core.Loc.F("{0}/{1}", hp, max), ink, ink); return; }
+            gameObject.SetActive(true); screenLabel.SetPaperColor(paperColor);
+            screenLabel.ShowHealth(hp, max, ink, target, armor); screenLabel.Refresh(transform.position);
+        }
+
         public void OffsetPixels(Vector2 offset)
         {
             if (view == null) return;
             var screen = view.WorldToScreenPoint(anchor);
             transform.position = view.ScreenToWorldPoint(screen + new Vector3(offset.x, offset.y, 0));
+            if (screenLabel != null) screenLabel.Refresh(transform.position);
         }
 
         public void Configure(Camera camera, TMP_FontAsset font, Material fontMaterial, Material paperMaterial, Color paperInk, float fontPixels = 12, float minimumFontPixels = 11, Shader overlayFontShader = null)
@@ -103,6 +119,11 @@ namespace Corrigible.Game.Raid
 
         public void Show(string value, Color ink, Color edge, bool dashedEdge = false)
         {
+            if (screenLabel != null)
+            {
+                gameObject.SetActive(true); screenLabel.SetPaperColor(paperColor);
+                screenLabel.ShowText(value, ink, edge, pixels); screenLabel.Refresh(transform.position); return;
+            }
             if (text.text == value && textColor == ink && edgeColor == edge && dashed == dashedEdge && preferred.y > 0)
             {
                 gameObject.SetActive(true); Refresh(); return;
@@ -122,13 +143,14 @@ namespace Corrigible.Game.Raid
             Refresh();
         }
 
-        public void SetOpacity(float value) { if (Mathf.Approximately(opacity, value)) return; opacity = value; dirty = true; Refresh(); }
-        public void SetPaperColor(Color value) { if (paperColor == value) return; paperColor = value; dirty = true; Refresh(); }
+        public void SetOpacity(float value) { if (Mathf.Approximately(opacity, value)) return; opacity = value; screenLabel?.SetOpacity(value); dirty = true; Refresh(); }
+        public void SetPaperColor(Color value) { if (paperColor == value) return; paperColor = value; screenLabel?.SetPaperColor(value); dirty = true; Refresh(); }
 
-        void LateUpdate() { if (view != null && text != null) Refresh(); }
+        void LateUpdate() { if (view != null && (text != null || screenLabel != null)) Refresh(); }
 
         void Refresh()
         {
+            if (screenLabel != null) { screenLabel.Refresh(transform.position); return; }
             if (view == null || text == null || preferred.y <= 0) return;
             transform.rotation = view.transform.rotation;
             float canvasScale = Mathf.Min(Screen.width / 1920f, Screen.height / 1080f);
@@ -170,9 +192,11 @@ namespace Corrigible.Game.Raid
 
         void OnDestroy()
         {
+            if (screenLabel != null) Destroy(screenLabel.gameObject);
             if (paper != null) Destroy(paper);
             foreach (var material in overlayMaterials.Values) if (material != null) Destroy(material);
             overlayMaterials.Clear();
         }
+        void OnDisable() { if (screenLabel != null) screenLabel.gameObject.SetActive(false); }
     }
 }

@@ -8,7 +8,7 @@ namespace Corrigible.Core
     public sealed class SavedCommand
     {
         public int day;
-        /// <summary>act, research, gift, verify, kill, advice, reserve; deneysel: team, hire, raid, raidres.</summary>
+        /// <summary>act, research, gift, verify, kill, advice, reserve, report, reports_enable; deneysel: team, hire, raid, raidres.</summary>
         public string kind;
         public string a, b;
     }
@@ -82,6 +82,8 @@ namespace Corrigible.Core
                 case "recovery": sim.StartRecovery(c.a); break;
                 case "diplomacy": sim.DiplomaticTalk(c.a); break;
                 case "research_pause": sim.SetResearchPaused(c.a == "1"); break;
+                case "reports_enable": sim.EnableFieldReports(); break;
+                case "report": sim.CollectFieldReport(c.a); break;
             }
         }
     }

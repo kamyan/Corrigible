@@ -12,19 +12,26 @@ namespace Corrigible.Desk.EditorTools
     public static class DeskAtlasSetup
     {
         public const string AtlasPath = DeskSpriteManifest.Root + "/Art/DeskUI.spriteatlasv2";
+        /// <summary>Sade kitinin ayrı atlası (Sade PROMPT §4.6): DeskUI atlası değişmesin.</summary>
+        public const string SadeAtlasPath = DeskSpriteManifest.Root + "/Art/SadeUI.spriteatlasv2";
 
         [MenuItem("Corrigible/Desk UI/Atlası kur")]
-        public static void Build()
+        public static void Build() => Build(AtlasPath, DeskSpriteManifest.SpritesDir);
+
+        [MenuItem("Corrigible/Sade UI/Atlası kur")]
+        public static void BuildSade() => Build(SadeAtlasPath, SadeSpriteManifest.SpritesDir);
+
+        static void Build(string atlasPath, string folder)
         {
-            if (AssetDatabase.LoadMainAssetAtPath(AtlasPath) == null)
+            if (AssetDatabase.LoadMainAssetAtPath(atlasPath) == null)
             {
                 var atlas = new SpriteAtlasAsset();
-                atlas.Add(new Object[] { AssetDatabase.LoadAssetAtPath<DefaultAsset>(DeskSpriteManifest.SpritesDir) });
-                SpriteAtlasAsset.Save(atlas, AtlasPath);
+                atlas.Add(new Object[] { AssetDatabase.LoadAssetAtPath<DefaultAsset>(folder) });
+                SpriteAtlasAsset.Save(atlas, atlasPath);
                 AssetDatabase.Refresh();
             }
 
-            var imp = (SpriteAtlasImporter)AssetImporter.GetAtPath(AtlasPath);
+            var imp = (SpriteAtlasImporter)AssetImporter.GetAtPath(atlasPath);
             imp.includeInBuild = true;
             imp.packingSettings = new SpriteAtlasPackingSettings
             {
@@ -41,7 +48,7 @@ namespace Corrigible.Desk.EditorTools
             });
             imp.SaveAndReimport();
             SpriteAtlasUtility.PackAllAtlases(EditorUserBuildSettings.activeBuildTarget);
-            Debug.Log("[Desk] Atlas hazır: " + AtlasPath);
+            Debug.Log("[Desk] Atlas hazır: " + atlasPath);
         }
     }
 }

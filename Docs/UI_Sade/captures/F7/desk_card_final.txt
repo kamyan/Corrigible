@@ -1,0 +1,67 @@
+Desk performans ölçümü · 2026-10-18 01:18
+Kaynak: Profiler UI Details (canvas toplayıcısının ürettiği batch'ler; Game görünümünün çizilmesinden bağımsız).
+
+UI batch toplamı (son kare): 50
+  SadeMapCanvas batch  20 (alt dahil  25) · köşe 45855
+      NoBreaking                   1 öğe · [Default UI Material · map_base@2x] MapBase
+      DifferentTexture            11 öğe · [Default UI Material · UnityWhite] KA, GA, BA, DA …
+      DifferentTexture             1 öğe · [Default UI Material · tx_quar_hatch] Hatch
+      DifferentTexture             2 öğe · [Default UI Material · tx_fog] OA, SAA
+      DifferentTexture             1 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Ring
+      DifferentTexture             1 öğe · [Default UI Material · map_lines@2x] MapLines
+      DifferentTexture             1 öğe · [Default UI Material · tx_paper_grain] PaperGrain
+      DifferentTexture            38 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Ring, Ring, Ring, Ring …
+      DifferentTexture             1 öğe · [Default UI Material · tx_lamp_desk_linear] DeskLamp
+      DifferentTexture             1 öğe · [Default UI Material · UnityWhite] Fill
+      DifferentTexture             3 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] TeamRoute, Fill, Frame
+      DifferentTexture            28 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-SadeUI-942e7bf9] DiscShadow, Disc, Ring, Verified …
+      DifferentMaterialInstance    2 öğe · [CP-Bold SDF Material · UnityWhite] Letter, Text
+      DifferentMaterialInstance   18 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Highlighter, Ink, Highlighter, Ink …
+      DifferentTexture             3 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-SadeUI-942e7bf9] RouteArrow, Token, Clock
+      DifferentMaterialInstance    1 öğe · [CP-Bold SDF Material · UnityWhite] Letter
+      DifferentMaterialInstance    9 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-SadeUI-942e7bf9] Outer, Inner, Arrow, SuspiciousRing …
+      DifferentMaterialInstance    1 öğe · [CP-Bold SDF Material · UnityWhite] Letter
+      DifferentMaterialInstance    6 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] UnityEngine.UI.Shadow, Thread, UnityEngine.UI.Shadow, Thread …
+      DifferentTexture            16 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-SadeUI-942e7bf9] Arrow, Arrow, Arrow, Halo …
+  MapTextLayer batch   5 (alt dahil   5) · köşe 816
+      NoBreaking                  11 öğe · [Sade Map Label · UnityWhite] Label, Label, Label, Label …
+      DifferentMaterialInstance    4 öğe · [Kalam-Bold SDF Material · UnityWhite] Unknown, Question, Unknown, Question
+      DifferentMaterialInstance   10 öğe · [CP-Bold SDF Material · UnityWhite] Value, Value, Value, Value …
+      DifferentMaterialInstance    1 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] SelectedChip
+      DifferentMaterialInstance    1 öğe · [CP-Bold SDF Material · UnityWhite] Label
+  SadeHudCanvas batch  11 (alt dahil  11) · köşe 4428
+      NoBreaking                  82 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Fill, Frame, Seal, DeltaIcon …
+      DifferentMaterialInstance    1 öğe · [Kalam-Bold SDF Material · UnityWhite] Question
+      DifferentMaterialInstance    9 öğe · [LF-Bold SDF Material · UnityWhite] Label, Label, Label, Label …
+      DifferentMaterialInstance    2 öğe · [LF-SemiBold SDF Material · UnityWhite] Name0, Name1
+      DifferentMaterialInstance    1 öğe · [LF-Regular SDF Material · UnityWhite] Hint
+      DifferentMaterialInstance   33 öğe · [CP-Bold SDF Material · UnityWhite] Label, Main, DeltaText, Label …
+      DifferentMaterialInstance    3 öğe · [Default UI Material · tx_hazard] Hazard, Hazard, Hazard
+      DifferentTexture            26 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-SadeUI-942e7bf9] Fill, Ring, Icon, Fill …
+      DifferentTexture             1 öğe · [Default UI Material · tx_carbon_hatch] Uncertainty
+      DifferentTexture             4 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-SadeUI-942e7bf9] Frame, HandRing, Frame, Frame
+      DifferentTexture             2 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Marker, Marker
+  SadeContextCanvas batch  14 (alt dahil  14) · köşe 3128
+      NoBreaking                   2 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Shadow, Thread
+      DifferentTexture             2 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-SadeUI-942e7bf9] PinFrom, PinTo
+      DifferentTexture            52 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Fill, Frame, Fill, Frame …
+      DifferentMaterialInstance    1 öğe · [Kalam-Bold SDF Material · UnityWhite] Question
+      DifferentMaterialInstance    1 öğe · [LF-ExtraBold SDF Material · UnityWhite] Label
+      DifferentMaterialInstance    5 öğe · [LF-Bold SDF Material · UnityWhite] Name, Name, Name, Name …
+      DifferentMaterialInstance    2 öğe · [LF-SemiBold SDF Material · UnityWhite] Label, Label
+      DifferentMaterialInstance    6 öğe · [LF-Regular SDF Material · UnityWhite] Name, Name, Name, Result …
+      DifferentMaterialInstance   16 öğe · [CP-Bold SDF Material · UnityWhite] Title, Caption, Value, Report Label …
+      DifferentMaterialInstance    1 öğe · [CP-Regular SDF Material · UnityWhite] Code
+      DifferentMaterialInstance   12 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-SadeUI-942e7bf9] Status Ring, Field Icon, Icon, Icon …
+      DifferentMaterialInstance    1 öğe · [Kalam-Bold SDF Material · UnityWhite] Status Question
+      DifferentMaterialInstance    1 öğe · [LF-SemiBold SDF Material · UnityWhite] Status
+      DifferentMaterialInstance    1 öğe · [CP-Bold SDF Material · UnityWhite] Letter
+  SadeModalCanvas batch   0 (alt dahil   0) · köşe 0
+  SadeReferenceCanvas batch   0 (alt dahil   0) · köşe 0
+
+Boşta 122 kare (Profiler):
+  GC UnityEngine.CoreModule.dll!UnityEngine::UnitySynchronizationContext.ExecuteTasks() [Invoke]: 2632 B, 7 karede
+  Canvas.BuildBatch: 0/122 kare
+  Canvas.SendWillRenderCanvases: 0/122 kare
+  Layout: 122/122 kare, ort. 0.002 ms
+  Graphic.PerformUpdate: 0/122 kare

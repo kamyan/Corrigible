@@ -43,6 +43,8 @@ namespace Corrigible.Desk
         [SerializeField] DeskTutorialView tutorial;
         [Tooltip("IDeskSettings uygulayan bileşen (oyunda ses tercihleri, sahte kaynakta bellek).")]
         [SerializeField] MonoBehaviour settingsSource;
+        [Header("Sade masa (S-Masa)")]
+        [SerializeField] SadeDeskInteraction sade;
 
         IDeskDataSource source;
         DeskViewModel vm;
@@ -54,13 +56,14 @@ namespace Corrigible.Desk
         public IDeskCommands Commands => commands as IDeskCommands;
         public TelexStripView Telex => telex;
         public WindowManager Windows => windows;
+        public SadeDeskInteraction Sade => sade;
 
         void Start()
         {
             source = dataSource as IDeskDataSource;
             if (source == null) { Debug.LogError("[Desk] Veri kaynağı IDeskDataSource değil", this); return; }
             source.Changed += Bind;
-            if (map.Selection != null) map.Selection.SetTarget(dossier.Window.Tab);
+            if (sade == null && map != null && map.Selection != null) map.Selection.SetTarget(dossier.Window.Tab);
             Wire();
             Bind(source.Current);
         }
@@ -74,37 +77,49 @@ namespace Corrigible.Desk
         void Wire()
         {
             var cmd = Commands;
-            var sp = rail.Speeds;
-            if (sp.Length >= 4)
+            if (sade == null)
             {
-                sp[0].onClick.AddListener(() => cmd.TogglePause());
-                sp[1].onClick.AddListener(() => cmd.SetSpeed(GameSpeed.X1));
-                sp[2].onClick.AddListener(() => cmd.SetSpeed(GameSpeed.X2));
-                sp[3].onClick.AddListener(() => cmd.SetSpeed(GameSpeed.X4));
+                var sp = rail.Speeds;
+                if (sp.Length >= 4)
+                {
+                    sp[0].onClick.AddListener(() => cmd.TogglePause());
+                    sp[1].onClick.AddListener(() => cmd.SetSpeed(GameSpeed.X1));
+                    sp[2].onClick.AddListener(() => cmd.SetSpeed(GameSpeed.X2));
+                    sp[3].onClick.AddListener(() => cmd.SetSpeed(GameSpeed.X4));
+                }
+                advisor.ActionInvoked += c =>
+                {
+                    if (c == "DismissAdvisor") cmd.DismissAdvisor();
+                    // Pencere açmak görünümün işi; niyet yine yayınlanır (okundu işaretleri için)
+                    else if (c != null && c.StartsWith("OpenWindow:") && System.Enum.TryParse(c.Substring("OpenWindow:".Length), out WindowId w)) OpenWindow(w);
+                    else cmd.RunAdvisorAction(c);
+                };
+                goal.NextLink.onClick.AddListener(() => OpenWindow(WindowId.Research));
+                research.ResearchAction += (id, start) => { if (start) cmd.StartResearch(id); else cmd.PauseResearch(id); };
+                research.FundSelected += cmd.SetEmergencyFund;
+                map.NodeClicked += id => cmd.SelectRegion(id);
+                map.ReportClicked += command => cmd.Run(command);
+                for (int i = 0; i < dossier.Actions.Count; i++)
+                {
+                    var card = dossier.Actions[i];
+                    card.Clicked += c => RegionAction(c.Index);
+                    card.Hovered += (c, on) => dossier.ShowPreviewFor(on ? c.Index : -1);
+                }
+                dossier.Raid.onClick.AddListener(FieldOperation);
+                dossier.SendInvoked += c => { if (windows.IsOpen(WindowId.Dossier)) Run(c); };
+                telex.ItemClicked += () => OpenWindow(WindowId.News);
+                foreach (var tab in dock.Tabs) tab.Clicked += t => ToggleWindow(IdOf(t.TabId));
+                killSwitch.Completed += () => confirm.Show(Loc.N("Küresel ağları kapat"),
+                    Loc.N("Bütün bölgelerin ağları aynı anda karartılır. Geri dönüşü yok."), () => cmd.ConfirmGlobalKillSwitch());
+                if (rail.Settings != null && settingsView != null) rail.Settings.onClick.AddListener(settingsView.Toggle);
+                foreach (var w in contentWindows) w.Invoked += Run;
+                windows.Changed += SyncDock;
+                windows.Closed += id =>
+                {
+                    // Açık karar 9: dosya kapanınca seçim kalkar, iplik kaybolur
+                    if (id == WindowId.Dossier && !syncing && vm?.Dossier != null) cmd.SelectRegion(null);
+                };
             }
-            advisor.ActionInvoked += c =>
-            {
-                if (c == "DismissAdvisor") cmd.DismissAdvisor();
-                // Pencere açmak görünümün işi; niyet yine yayınlanır (okundu işaretleri için)
-                else if (c != null && c.StartsWith("OpenWindow:") && System.Enum.TryParse(c.Substring("OpenWindow:".Length), out WindowId w)) OpenWindow(w);
-                else cmd.RunAdvisorAction(c);
-            };
-            goal.NextLink.onClick.AddListener(() => OpenWindow(WindowId.Research));
-            research.ResearchAction += (id, start) => { if (start) cmd.StartResearch(id); else cmd.PauseResearch(id); };
-            research.FundSelected += cmd.SetEmergencyFund;
-            map.NodeClicked += id => cmd.SelectRegion(id);
-            for (int i = 0; i < dossier.Actions.Count; i++)
-            {
-                var card = dossier.Actions[i];
-                card.Clicked += c => RegionAction(c.Index);
-                card.Hovered += (c, on) => dossier.ShowPreviewFor(on ? c.Index : -1);
-            }
-            dossier.Raid.onClick.AddListener(FieldOperation);
-            dossier.SendInvoked += c => { if (windows.IsOpen(WindowId.Dossier)) Run(c); };
-            telex.ItemClicked += () => OpenWindow(WindowId.News);
-            foreach (var tab in dock.Tabs) tab.Clicked += t => ToggleWindow(IdOf(t.TabId));
-            killSwitch.Completed += () => confirm.Show(Loc.N("Küresel ağları kapat"),
-                Loc.N("Bütün bölgelerin ağları aynı anda karartılır. Geri dönüşü yok."), () => cmd.ConfirmGlobalKillSwitch());
             if (eventModal != null)
             {
                 eventModal.Signed += i => cmd.SignEventOption(i);
@@ -124,7 +139,6 @@ namespace Corrigible.Desk
                 };
             // F8.3: yeni ekranlar komut dizisini yayınlar; ayarları açmak görünümün işi
             if (settingsView != null) settingsView.Init(settingsSource as IDeskSettings);
-            if (rail.Settings != null && settingsView != null) rail.Settings.onClick.AddListener(settingsView.Toggle);
             if (intro != null) intro.Invoked += Run;
             if (campaign != null) campaign.Invoked += Run;
             if (eventModal != null) eventModal.DocInvoked += Run;
@@ -135,13 +149,6 @@ namespace Corrigible.Desk
             }
             if (toasts != null) toasts.Dismissed += id => cmd.Run("Toast:Dismiss:" + id);
             if (tutorial != null) tutorial.Invoked += Run;
-            foreach (var w in contentWindows) w.Invoked += Run;
-            windows.Changed += SyncDock;
-            windows.Closed += id =>
-            {
-                // Açık karar 9: dosya kapanınca seçim kalkar, iplik kaybolur
-                if (id == WindowId.Dossier && !syncing && vm?.Dossier != null) cmd.SelectRegion(null);
-            };
         }
 
         void Run(string c)
@@ -159,8 +166,11 @@ namespace Corrigible.Desk
         public void Preview(DeskViewModel model)
         {
             if (Application.isPlaying || model == null) return;
-            windows.EnsureInit();
-            if (map.Selection != null) map.Selection.SetTarget(dossier.Window.Tab);
+            if (sade == null)
+            {
+                windows.EnsureInit();
+                if (map.Selection != null) map.Selection.SetTarget(dossier.Window.Tab);
+            }
             Bind(model);
         }
 
@@ -170,22 +180,29 @@ namespace Corrigible.Desk
             vm = model;
             // İllüzyon sunumu önce (palet, damgalar, analist katmanı); görünümler yeni VM'yi bu bayrakla çizer
             if (illusion != null) illusion.Set(model.Illusion); else DeskTheme.Illusion = model.Illusion;
-            rail.Bind(model.Rail, model.Clock);
-            for (int i = 0; i < gauges.Length; i++)
+            if (sade != null)
             {
-                bool on = model.Gauges != null && i < model.Gauges.Count;
-                DeskUi.SetActive(gauges[i], on);
-                if (on) gauges[i].Bind(model.Gauges[i]);
+                sade.BindGame(model, Commands, Application.isPlaying);
             }
-            advisor.Bind(model.Advisor);
-            goal.Bind(model.Goal);
-            research.Bind(model.Research);
-            map.Bind(model.Map);
-            dossier.Bind(model.Dossier);
-            telex.Bind(model.Telex);
-            dock.Bind(model.Dock);
-            killSwitch.Bind(model.KillSwitch);
-            foreach (var w in contentWindows) w.Bind(model);
+            else
+            {
+                rail.Bind(model.Rail, model.Clock);
+                for (int i = 0; i < gauges.Length; i++)
+                {
+                    bool on = model.Gauges != null && i < model.Gauges.Count;
+                    DeskUi.SetActive(gauges[i], on);
+                    if (on) gauges[i].Bind(model.Gauges[i]);
+                }
+                advisor.Bind(model.Advisor);
+                goal.Bind(model.Goal);
+                research.Bind(model.Research);
+                map.Bind(model.Map);
+                dossier.Bind(model.Dossier);
+                telex.Bind(model.Telex);
+                dock.Bind(model.Dock);
+                killSwitch.Bind(model.KillSwitch);
+                foreach (var w in contentWindows) w.Bind(model);
+            }
             if (clues != null) clues.Bind(model.Clues);
             if (eventModal != null) eventModal.Bind(model.Event);
             if (gameOver != null) gameOver.Bind(model.GameOver);
@@ -195,12 +212,15 @@ namespace Corrigible.Desk
             if (toasts != null) toasts.Bind(model.Toasts);
             if (tutorial != null) tutorial.Bind(model.Tutorial);
 
-            // Seçim varsa dosya açılır, yoksa kapanır
-            syncing = true;
-            if (model.Dossier != null) windows.Open(WindowId.Dossier);
-            else windows.Close(WindowId.Dossier);
-            syncing = false;
-            SyncDock();
+            if (sade == null)
+            {
+                // Seçim varsa dosya açılır, yoksa kapanır
+                syncing = true;
+                if (model.Dossier != null) windows.Open(WindowId.Dossier);
+                else windows.Close(WindowId.Dossier);
+                syncing = false;
+                SyncDock();
+            }
             if (model.CriticalNewsId == null) { focusedCriticalNews = null; pendingCriticalNews = null; }
             else if (focusedCriticalNews != model.CriticalNewsId)
                 pendingCriticalNews = model.CriticalNewsId;
@@ -218,7 +238,8 @@ namespace Corrigible.Desk
             focusedCriticalNews = pendingCriticalNews;
             pendingCriticalNews = null;
             OpenWindow(WindowId.News);
-            foreach (var w in contentWindows) w.FocusNews(focusedCriticalNews);
+            if (sade == null)
+                foreach (var w in contentWindows) w.FocusNews(focusedCriticalNews);
         }
 
         void SyncDock()
@@ -232,14 +253,30 @@ namespace Corrigible.Desk
             "news" => WindowId.News, "teams" => WindowId.Teams, "aiLog" => WindowId.AiLog, "guide" => WindowId.Guide, _ => WindowId.Research,
         };
 
-        // ------------------------------------------------------------------ klavye ve kısayollar
-        public void ToggleWindow(WindowId id) { windows.Toggle(id); Commands.ToggleWindow(id); }
+        static string DrawerOf(WindowId id) => id switch
+        {
+            WindowId.News => "news", WindowId.Teams => "teams", WindowId.AiLog => "aiLog", WindowId.Guide => "guide", _ => "research",
+        };
 
-        public void OpenWindow(WindowId id) { windows.Open(id); Commands.ToggleWindow(id); }
+        // ------------------------------------------------------------------ klavye ve kısayollar
+        public void ToggleWindow(WindowId id)
+        {
+            if (sade != null) { sade.ToggleDrawer(DrawerOf(id)); return; }
+            windows.Toggle(id);
+            Commands.ToggleWindow(id);
+        }
+
+        public void OpenWindow(WindowId id)
+        {
+            if (sade != null) { sade.OpenDrawer(DrawerOf(id)); return; }
+            windows.Open(id);
+            Commands.ToggleWindow(id);
+        }
 
         /// <summary>1–4: dosyadaki bölge eylemi (tıklamayla aynı); tehlikeli eylem (Son Şalter) onay ister.</summary>
         public void RegionAction(int index)
         {
+            if (sade != null) { sade.RegionAction((index + 1).ToString()); return; }
             var d = vm?.Dossier;
             if (d == null || !windows.IsOpen(WindowId.Dossier) || index < 0 || index >= d.Actions.Count) return;
             var a = d.Actions[index];
@@ -254,6 +291,12 @@ namespace Corrigible.Desk
         /// <summary>B: dosyadaki saha komutu (baskın ya da ekip gönder; VM tuş verdiyse açık).</summary>
         public void FieldOperation()
         {
+            if (sade != null)
+            {
+                if (!string.IsNullOrEmpty(vm?.Dossier?.Field?.Raid?.Key))
+                    Commands.LaunchFieldOperation(vm.Dossier.RegionId);
+                return;
+            }
             var d = vm?.Dossier;
             if (string.IsNullOrEmpty(d?.Field?.Raid?.Key) || !windows.IsOpen(WindowId.Dossier)) return;
             Commands.LaunchFieldOperation(d.RegionId);
@@ -263,6 +306,7 @@ namespace Corrigible.Desk
         public void Escape()
         {
             if (confirm != null && confirm.IsOpen) return;
+            if (sade != null) { sade.Escape(); return; }
             var top = windows.Top;
             if (top != null) windows.Close(top.Id);
             else if (settingsView != null && settingsSource is IDeskSettings) settingsView.Open();
@@ -272,6 +316,7 @@ namespace Corrigible.Desk
         /// <summary>+/−: hız 1× ↔ 2× ↔ 4× (açık karar 1).</summary>
         public void StepSpeed(int dir)
         {
+            if (sade != null) { sade.StepSpeed(dir); return; }
             var c = vm?.Clock;
             if (c == null) return;
             string[] order = { "1x", "2x", "4x" };

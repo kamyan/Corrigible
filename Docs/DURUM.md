@@ -1,12 +1,12 @@
 # Durum, kararlar ve açık işler
 
-_Son güncelleme: 2026-10-14_
+_Son güncelleme: 2026-10-18_
 
 ## Nerede kaldık
 
 Oyun baştan sona oynanabilir: giriş ve rakip seçimi, rehberli eğitim, kriz masası (harita, bölge eylemleri, araştırma,
 YZ günlüğü, haber bandı), hediye/perde/sahte zafer/son pencereleri, kayıt ve devam, Seni Tanıyan Rakip profili.
-229/229 EditMode testi geçiyor (oyun + analist masası); C# simülasyonu tarayıcı prototipiyle birebir aynı (deneysel mod ve baskın motoru dahil).
+345/345 EditMode testi geçiyor (oyun + analist masası + Sade arayüz); C# simülasyonu tarayıcı prototipiyle birebir aynı (deneysel mod ve baskın motoru dahil, Unity'ye özgü seçenekler kapalıyken).
 Deneysel mod (saha ekipleri, zaman ölçeği, baskın) Unity'de oynanabilir ve varsayılan olarak açık. Oyun Türkçe ve
 İngilizce (giriş penceresindeki dil düğmesi; ilk açılışta sistem diline göre).
 Baskın sunumu `Docs/SonSalter_Baskin_Paketi` referansına taşınıyor: ayrı `Baskin` sahnesindeki operasyon maketi ve
@@ -15,6 +15,48 @@ doğrulaması tamamlanınca sonuçları aşağıya eklenecek; yukarıdaki 111/11
 
 **Git:** Depo `git@github.com:kamyan/Corrigible.git`, dal `main`. Bu belgelerdeki işin büyük kısmı **henüz commit
 edilmedi** (kullanıcı commit istemedi). Commit'i kullanıcı isteyince yap.
+
+## Haritada toplanan saha raporları (2026-10-15)
+
+- İttifaktaki çevrimiçi bölgede izleme ağı veya yerleşmiş sağlam ekip varsa haritada RAPOR fişi çıkabilir. Birlikte
+  bulunmaları seçim ağırlığını ×1,25 yapar; aynı yerde birden fazla ekip bonusu çoğaltmaz. Görünen YZ varlığı seçim
+  ağırlığına en fazla %50 ekler; %60'ta doyar. Gerçek sızma/çekirdek bilgisi üretim veya ödüle girmez.
+- Fiş +1 fon verir. Ödenek havuzu yalnız kapsamlı günlerdeki düzenli gelirin %8'iyle dolar (en çok 2 fon); fiş
+  doğarken ödeme ayrılır. Aynı anda en fazla iki fiş, bölge başına bir fiş. Bütün harita 6×k gün aralık ve bölgeler
+  12×k gün bekleme paylaşır. 30×k gün içinde toplanmazsa haber arşive kalır, ödül düşer. Erişim kaybı fişi iptal eder.
+- Haber doğduğu günün görünen ölçümünü taşır; toplamada telekse/arşive geçer ve fon işlem defterinde ayrı görünür.
+  Yanlış rapor da ödenek verir. Saha tahmini haber doğrulamayla kesin ölçüme dönüşmez; bölge denetimi gerekir.
+- Özellik Unity `RuleOptions.FieldReports` seçeneğine bağlı. Yeni oyunlarda açık; bütünleşik ekonomi kullanan eski
+  kayda devam edilince `reports_enable` komutu yükleme gününden itibaren açar. Başlangıç kuralları/önceki RNG
+  değişmez; `report` toplama komutu kayda ve replay'e bağlıdır. v1/v2 ekonomi korunur.
+- DeskGame sahnesinde kalıcı fiş şablonu ve serialized MapView referansı var; tek seferlik yazar kaldırıldı.
+  Yerleşim düğüm/ad/diğer fiş çakışmalarını azaltır; tooltip bölge, tarih, haber, ödül ve kalan süreyi açıklar.
+  Yeni 16 metin TR/EN çevrildi; 1647 kaynakta 0 eksik/0 kullanılmayan.
+- 267/267 EditMode geçti (27 yeni vaka). 192 yalıtılmış ekonomi senaryosunda bütçe invariantı her gün geçti:
+  toplanan fişler tek kapsamda ortalama %3,06, 3/12 kapsamda %5,80 ek gelir; koşu maksimumu %7,98. Bu ölçüm
+  insan oyuncu dengesi veya gerçek rakiple kazanma oranı değildir. JS önce/sonra 200 tohumlu denge ve parite
+  çıktıları birebir aynı. Eski JSON yeni Balance alanlarını doğru varsayılanlarla yüklüyor.
+- Tasarım ve sayılar: `SAHA-RAPORLARI.md`; ölçüm: `SAHA-RAPORLARI-DENGE-SONUCLARI.json`.
+- Gerçek Play'de raycast ile düğmenin açıkta olduğu, Button → komut köprüsü → GameController → Simulation yoluyla
+  tam +1 fon ödendiği ve aynı komutun tekrar ödemediği doğrulandı. TR/EN 1920×1080 ve 1280×720 görüntülendi;
+  illüzyon sırasında iki fiş görünür kaldı. Görüntüler `Captures/field-reports-tr.png`, `field-reports-en.png` ve
+  `field-report-collected-tr.png`. QA, ayrı simülasyonda ve kayıt yazımı kapalı çalıştı; profil ve oyun tercihleri
+  değişmedi, başlangıçta olmayan kayıt dosyası oluşturulmadı. Oyun kendi açılış durumuna döndürülüp Play kapatıldı.
+
+## Silme sonunun doğrulanması (2026-10-15)
+
+- Çekirdeği başarılı baskında yok etmek kalan kopyaları silmez: baskın yerel sızmayı 40 puan azaltır. Silme için
+  çekirdek yokken bütün bölgeler gerçek sızma 0,5'in altında ve çevrimdışı yedek olmadan 15×k gün temiz kalmalı;
+  varsayılan k=1,5 için 23 gün. Tek bir kopya bu eşiğe ulaşırsa sayaç sıfırlanır.
+- Oyuncunun 250. gün kaydında çekirdek 138. gündeki baskında yok edilmişti; 10 bölgede sızma kaldığı için sayaç 0/23'tü.
+  Kaydın bağımsız kopyası yalnız geçerli komutlarla (Hizalamayı duraklatma, 10 ekip hareketi, 10 denetim) devam ettirildi:
+  323. günde Silme. Devam kaydının yeniden oynatılmasında sonuç/gün/RNG birebir eşleşti; asıl kayıt değiştirilmedi.
+- Analist masası çekirdek yokken temizliği hedef gösterir; kalan bölge sayısı ve temiz gün X/Y sayacı görünür.
+  Yerel raporlar, çevrimdışı yedekler ve küçük pozitif ölçümler için açıklama var; illüzyon gerçeği açığa çıkarılmaz.
+  Eski Main'in sıradaki adımındaki sabit 15 gün, zaman ölçeğine bağlandı; çekirdek hedefi baskını da anıyor.
+  Zafer açıklamasındaki sabit "15 gün önce" ifadesi iki uygulamada da kaldırıldı.
+- 240/240 EditMode geçti (11 yeni vaka). Simülasyon kuralı, denge ve kayıt biçimi değişmedi; yeni metinlerin TR/EN
+  çeviri denetimi hatasız. `ErasureTests` fiziksel imha + denetim + 15/23/30 gün sonunda gerçek Silme zaferini kilitler.
 
 ## Gösterge ipuçları, bölge fonu ve kritik haberler (2026-10-14)
 
@@ -204,6 +246,56 @@ baskın sahnesindedir.
   oyuncuların takıldığı yer. Eğitime bunun için adım eklendi.
 - **Yeni oyuncular için varsayılan rakip Solucan** (PlayerPrefs `corrigible.aiType` yoksa).
 
+## Sade arayüz · F3 ve DeskGame Oyun Köprüsü (17 Ekim 2026)
+
+- **DeskGame sahnesi entegrasyonu tamamlandı:** `Assets/Corrigible/Desk/Scenes/DeskGame.unity` sahnesinde eski C1 düzeni kaldırılarak Sade Analist Masası (`SadeDeskView`, `SadeMapView`, `SadeDeskInteraction`, `SadeRegionCardView`, `SadeFullDossierView`, 5 çekmece, `SadeLegendCardView`, `CardStringView`) yerleştirildi.
+- **Tüm oyun modalleri ve katmanları korundu:** `IntroScreen` (`GÖREV DOSYASI`), `CampaignScreen`, `EventModal`, `ConfirmModal`, `FakeWinScreen`, `GameOverView`, `SettingsCard`, `ToastStackView`, `TutorialLayer`, `RaidLauncher`, `DeskPresenter`, `EventSystem`, `Main Camera` ve `AudioDirector` referansları eksiksiz bağlandı.
+- **Çokgen Eşleme A (Polygon Mapping A) ve Seçim Düzeltmesi:** Çin (`cn`) ve Japonya-Kore (`jk`) `SelectionLayer` polyline hiyerarşisi düzeltildi; `cn` anakara + Tayvan + Hainan'ı (7 parça), `jk` ise Hokkaido, Kyushu, Shikoku, Honshu ve Jeju'yu (10 parça) kapsar. Canlı seçimde sarı fosforlu kalem sınırı anakarayı sarar.
+- **Tam oyun mekaniği desteği:**
+  - Araştırma çekmecesinde acil durum fonu rezervi `0 / 15 / 30`.
+  - Modern ekonomi altında peşin operasyonlar, bütçe anlaşmaları ve 5 dallı araştırma ağacı.
+  - Tam dosyada bölge finans katkısı, toparlanma ve diplomasi eylemleri.
+  - Haritada toplanabilir saha raporu fişleri (`FieldReportView`).
+  - Kritik haber odaklanması ve haber doğrulama akışı.
+  - 16 eğitim hedefi (`TutorialTarget`) S-Masa bileşenlerine bağlandı.
+- **Doğrulama ve test:**
+  - **EditMode:** 306/306 test geçti (%100 yeşil, 0 hata, 0 atlanan).
+  - **Canlı PlayMode:** Gerçek `GameController` + `Simulation` ile giriş dosyası, saat ilerlemesi (GÜN 000 → 150+), bölge seçimi, Event modal imzalamaları, tam dosya ve çekmece geçişleri denendi; 0 konsol hatası / 0 null reference exception.
+  - **Veri koruma:** `player_profile.json` ve `savegame.json` yedeklenip test sonrasında özgün durumuna geri yüklendi.
+  - Yalıtılmış `SadeDesk_Sandbox.unity` ve `DeskUI_Sandbox.unity` sahneleri korundu.
+- Sonraki adımlar: F4 (Baskın 3D tahtası, k=1,5 kamera, arka plan, sade dünya etiketleri) ve devamındaki baskın fazları.
+
+### F3 kullanıcı bildirimi sonrası denetim (17 Ekim 2026)
+
+- **Giriş/zorluk menüsü:** `DeskUI` kamera Canvas'ı, Sade overlay Canvas'larının arkasında kalıyordu. `DeskUI` de overlay yapıldı; modal 100, eğitim 105 ve ipucu 110 sırası korundu. Görünmeyen girişin `Game.Hold` ile zamanı durdurması da böylece giderildi.
+- **1× hız:** `SadeDeskInteraction.clock` boştu; düğmelerin `SpeedClicked` olayı komutlara ulaşmıyordu. Görünen `ClockPlaqueView` bağlandı.
+- Aynı aktarımda kaybolan harita ölçeği, çekmece, deniz, HUD ipuçları, uyarı, lejant ve şalter zarfı başvuruları; ayrıca HUD'un üç metin başvurusu tamamlandı. Dört paneldeki geçersiz `sade.paper.card` rengi `sade.paper` ile düzeltildi.
+- **Doğrulama:** 308/308 EditMode; gerçek `GameController` ile 128/128 canlı kontrol (üç rakip, başla, tüm hız geçişleri, gerçek zaman ilerlemesi, beş çekmece, lejant, 12 bölge kartı). 1×/2×/4× ayrıca Game View'de gerçek fareyle denendi. Kanıtlar ve kapsam: `Docs/UI_Sade/F3_NOTLARI.md` son bölümü.
+- Profil, kayıt, 11 `corrigible.*` tercihi geri yüklendi; `ProjectSettings.asset` aynı. Editör temiz `DeskGame` sahnesinde Edit modunda. **F4 başlatılmadı.**
+
+## Sade arayüz · F4 baskın tahtası (17 Ekim 2026)
+
+- `Assets/Corrigible/Desk/Scenes/RaidBoard_Sandbox.unity`: mevcut 3D maket, k=1,5 ortografik kadraj (35°/45°), keçe/lamba ve tabanın izdüşümünden çizilen gölge.
+- `RaidScreenLabel.prefab` ve ayrı `WorldLabels` Canvas'ı: can noktaları, hedef/zırh simgeleri ve sıra/güven fişleri. Sivil/soğutma can etiketleri ile robot harfi kaldırıldı; pusula taşınmadı.
+- `MockRaidBoardDataSource`: RNG tüketmeden dokuz paket ön ayarı (B1–B8; B7a/B7b ayrı). Inspector'daki `Preset` alanı Play sırasında değiştirilebilir.
+- 322/322 EditMode, 230/230 canlı kontrol; 14 TR/EN ve farklı ekran oranı görüntüsü. Kamera izdüşümü ±1 px test edildi. Sonuçlar, karşılaştırma ve kapsam sınırları: `Docs/UI_Sade/F4_NOTLARI.md`.
+- Canlı `Baskin.unity` sahnesi korunur. F5 HUD ve kartlar; F6 durum panelleri ve oyun köprüsü. F5 daha sonra tamamlandı (aşağıdaki not).
+
+## Sade arayüz · F5 baskın HUD ve kartlar (17 Ekim 2026)
+
+- `RaidBoard_Sandbox` üzerinde tur/HEDEF/ekip HUD'u; birim ve gecikmeli inceleme kartları; YZ yeteneği ipucu, hak simgeleri, önizleme hasarı/çarpışma/iptal sunumu.
+- `IRaidDataSource`, `IRaidCommands`, `RaidViewModel`; ayrı BState üzerinde çalışan mock hareket/yetenek/geri alma ve girdi sırası. Ana oyun kaydına bağlı değildir. Kanonik prefab ve serileştirilmiş sahne bağlantıları kullanılır.
+- 330/330 EditMode, 439/439 Play, 10/10 gerçek fare/klavye kontrolü; sekiz TR/EN ve farklı oran yakalaması. Kayıt/profil/11 tercih/ProjectSettings korundu; editör temiz sandbox'ta Edit modunda.
+- Canlı Baskın aktarımı, makinelerin niyet yürütmesi ve S3–S9 tam panelleri F6'dadır. Ayrıntılar: `Docs/UI_Sade/F5_NOTLARI.md`. F6 daha sonra tamamlandı (aşağıdaki not).
+
+## Sade arayüz · F6 durum panelleri ve canlı Baskın (18 Ekim 2026)
+
+- S3–S9: sıra/son olay, tur sonu onayı ve kesin tehdit, kaydırılabilir günlük, kurallar/lejant, son tur/kırılan hedef/düşen birim, iki aşamalı geri çekilme, sonuç spotu ve rapora geçiş.
+- Ortak `RaidDataSource` + `RaidCommands`; mock paket örnekleri ve canlı `LiveRaidDataSource`. `Baskin.unity` aynı GUID ile Sade prefab'larına aktarıldı. Eski RaidView kodu korunur, sahnede kullanılmaz.
+- Gerçek sonuç mevcut `GameController.ResolveRaid` → `raidres` yoluna bir kez yazılır. Taktik sahne kapanır; RaidLauncher ana masayı geri açar. Masa kısayolları ve EventSystem çakışması önlendi. Core/Prototype/ekonomi kuralları değiştirilmedi.
+- 341/341 EditMode; 826/826 Play denetimi; sanal klavye/fare ile gerçek Update/EventSystem üzerinden 16/16 girdi; gerçek baskın komutlarıyla 56/56 canlı kontrol. Başarı, süre dolması ve geri çekilmede masaya rapor dönüşü ve replay eşitliği doğrulandı.
+- 19 durum/oran yakalaması + gerçek operasyon raporu; TR/EN metin taşması yok. Kayıt/profil/11 tercih/ProjectSettings geri yüklendi ve eşitliği doğrulandı. Ayrıntı ve kanıtlar: `Docs/UI_Sade/F6_NOTLARI.md`. F7 daha sonra uygulandı (aşağıdaki not).
+
 ## Açık işler
 
 - **Analist masası (UI_C):** Faz 8 (F8.1–F8.4) onaylandı. F8 sonrası istekler: sahne yerleşimi, sürükle bırak, ekip
@@ -255,3 +347,12 @@ baskın sahnesindedir.
   arayüzünün 400 px yan paneli ayrı yerleşimdir.
 - **Denge:** Acemi bot Manipülatör/Kâhin'e karşı %5–8 kazanıyor; eğitim sonrası gerçek oyuncu testi gerekli.
 - **Test eksikleri:** PlayMode/UI testi yok; UI davranışı ajanlar tarafından `CorrigibleDebug` ile elle doğrulanıyor.
+
+
+## Sade arayüz · F7 cila ve doğrulama (18 Ekim 2026)
+
+- Giriş profili satırları ve Baskın sonuç bölgesi dil değişiminde güncellenir. Baskın'daki 14 küçük alan 11 px'e çıkarıldı; metin denetimi glif sınırlarını da kontrol eder.
+- Harita yazıları ortak Canvas'ta: varsayılan masa 35→30, kart açıkken 55→50 UI batch. Düğüm hover/ölçek/görünürlük çapaları ve kayıt/yükleme sonrası 48 yazı doğrulandı. Baskın durumları 10–15 UI batch; durağan Corrigible betik GC'si 0 ve Canvas.BuildBatch 0.
+- Shift/Ctrl ön ayar kısayolları ve referans katmanı bağlandı; canlı kaynağa örnek komutları uygulanmaz. Spot/alpha/kamera/yıldız güncellemeleri değişiklik olmadıkça tekrar yazılmaz.
+- 345/345 EditMode; 144 görünüm/dil/çözünürlük birleşimi, 11.344 metin kontrolü ve 0 ihlal; 54 yakalama. 24 sanal girdi, 3 yerel fare/klavye ve 59 canlı köprü kontrolü başarılı.
+- Açılır masa panellerinin tümünde ≤30 batch ve referansın ±2/±4 px tam ekran eşliği sağlanmış değildir; sınırlar ve karşılaştırmalar açıkça raporlandı. Kayıt/profil/tercih/ayar geri yükleme kanıtı `captures/F7/data_restore.json` içindedir. Ayrıntılar: `Docs/UI_Sade/F7_NOTLARI.md`, teslim: `UYGULAMA_NOTLARI.md`. Commit/push yapılmadı.

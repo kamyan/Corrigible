@@ -1,0 +1,2163 @@
+{
+  "success": true,
+  "command": "command run_tests",
+  "data": {
+    "command": "run_tests",
+    "parameters": {
+      "mode": "editor",
+      "filter": "Corrigible"
+    },
+    "result": {
+      "Summary": {
+        "Total": 304,
+        "Passed": 304,
+        "Failed": 0,
+        "Skipped": 0,
+        "Inconclusive": 0
+      },
+      "Results": [
+        {
+          "FullName": "Corrigible.Desk.Tests.CriticalNewsTests.CriticalMetadata_DoesNotRevealHiddenNewsTruth",
+          "Status": "Passed",
+          "Duration": 1.3841088,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.CriticalNewsTests.CriticalNotice_IsDeferredByIntroSettingsEventRaidAndTutorial",
+          "Status": "Passed",
+          "Duration": 0.028717,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.CriticalNewsTests.NewsWindow_FocusesRequestedCriticalRow",
+          "Status": "Passed",
+          "Duration": 0.6951389,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskAssetTests.Fonts_FallbackAndWeights",
+          "Status": "Passed",
+          "Duration": 0.0015091,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskAssetTests.Registry_HasEverySpriteWithImageType",
+          "Status": "Passed",
+          "Duration": 0.0120223,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskAssetTests.SadeTextures_AreNotBlank",
+          "Status": "Passed",
+          "Duration": 0.0169413,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskAssetTests.SadeThemeKeys_UsedInCode_Exist",
+          "Status": "Passed",
+          "Duration": 0.0471811,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskAssetTests.SpriteImport_FollowsManifest",
+          "Status": "Passed",
+          "Duration": 0.0391189,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskAssetTests.Textures_RepeatAndOutsideAtlas",
+          "Status": "Passed",
+          "Duration": 0.0059814,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskAssetTests.ThemeKeys_UsedInCode_Exist",
+          "Status": "Passed",
+          "Duration": 0.0227579,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskBridgeTests.DeskGameScene_IsWired",
+          "Status": "Passed",
+          "Duration": 0.9296085,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskBridgeTests.Dilemma_RegionalAndGlobalCards",
+          "Status": "Passed",
+          "Duration": 0.0062279,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskBridgeTests.EditPreview_UsesOpeningGameWithoutWriting",
+          "Status": "Passed",
+          "Duration": 0.1956994,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskBridgeTests.GameOver_FromPlayedGame",
+          "Status": "Passed",
+          "Duration": 0.0227059,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskBridgeTests.Gift_UsesEventPaperWithThreeChoices",
+          "Status": "Passed",
+          "Duration": 0.0025917,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskBridgeTests.Messages_NewestFirstAndExpire",
+          "Status": "Passed",
+          "Duration": 0.0007545,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskBridgeTests.NewGame_BuildsWholeDesk",
+          "Status": "Passed",
+          "Duration": 0.0024082,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskBridgeTests.ParseEffect_CoversWholeDeck",
+          "Status": "Passed",
+          "Duration": 0.0020073,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskBridgeTests.RouteCurve_ReproducesDesignRoutes",
+          "Status": "Passed",
+          "Duration": 0.0037731,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskBridgeTests.SelectedRegion_OpensDossierWithRuleChecks",
+          "Status": "Passed",
+          "Duration": 0.3861042,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskErasureTests.CleanCountdown_IsVisibleInTheGoalCard",
+          "Status": "Passed",
+          "Duration": 0.0035608,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskErasureTests.DestroyedCore_PrioritizesRemainingCopiesOverAnActiveResearchProject",
+          "Status": "Passed",
+          "Duration": 0.00178,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskErasureTests.Illusion_DoesNotExposeTheRealCleanupOrCountdown",
+          "Status": "Passed",
+          "Duration": 0.0017947,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskErasureTests.OfflineBackup_ExplainsWhyZeroDoesNotStartTheCountdown",
+          "Status": "Passed",
+          "Duration": 0.001677,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskErasureTests.UnverifiedZeroReport_RequestsAnAuditInsteadOfGuaranteeingCleanliness",
+          "Status": "Passed",
+          "Duration": 0.0031988,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskEventTests.C3_BuildsEventOverPausedDesk",
+          "Status": "Passed",
+          "Duration": 0.0600499,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskEventTests.C3_SignClosesEventAndResumes",
+          "Status": "Passed",
+          "Duration": 0.0064689,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskEventTests.EventModalPrefab_IsWired",
+          "Status": "Passed",
+          "Duration": 0.0022925,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskEventTests.KeyChip_DefaultsUnchanged",
+          "Status": "Passed",
+          "Duration": 0.0003729,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskEventTests.Sandbox_HasEventModalUnderConfirm",
+          "Status": "Passed",
+          "Duration": 0.1103313,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskEventTests.Spotlight_HoleIsClearAndOuterCovers",
+          "Status": "Passed",
+          "Duration": 0.0053788,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskFieldReportTests.Illusion_DoesNotHideOrRewriteAnExistingPaper",
+          "Status": "Passed",
+          "Duration": 0.0057923,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskFieldReportTests.InaccessibleExpiredAndEndedReports_AreNotClickableOnTheMap",
+          "Status": "Passed",
+          "Duration": 0.0038815,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskFieldReportTests.LegacyJson_DefaultsAllowReportsWithoutRewritingExistingBalance",
+          "Status": "Passed",
+          "Duration": 0.0002342,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskFieldReportTests.PendingReport_HasACollectCommandAndDoesNotPayDuringPresentation",
+          "Status": "Passed",
+          "Duration": 0.001768,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskFoundationTests.DayCode_TrEn",
+          "Status": "Passed",
+          "Duration": 0.0000918,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskFoundationTests.Format_IndependentOfThreadCulture",
+          "Status": "Passed",
+          "Duration": 0.0009887,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskFoundationTests.LineSpacing",
+          "Status": "Passed",
+          "Duration": 0.0000871,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskFoundationTests.MapProjection",
+          "Status": "Passed",
+          "Duration": 0.0000674,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskFoundationTests.MarkPreview_CopiesAreUnsavedAndLocked",
+          "Status": "Passed",
+          "Duration": 0.000343,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskFoundationTests.NeedleAndWedge",
+          "Status": "Passed",
+          "Duration": 0.0001882,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskFoundationTests.Number_TrEn",
+          "Status": "Passed",
+          "Duration": 0.0000784,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskFoundationTests.Ramp",
+          "Status": "Passed",
+          "Duration": 0.0005327,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskFoundationTests.Signed_And_Percent",
+          "Status": "Passed",
+          "Duration": 0.000098,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskFoundationTests.StampAngle_IsStableAndBounded",
+          "Status": "Passed",
+          "Duration": 0.0001898,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskFoundationTests.TsvToRect",
+          "Status": "Passed",
+          "Duration": 0.0001643,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskFoundationTests.TurkishCase",
+          "Status": "Passed",
+          "Duration": 0.0003723,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskGameOverTests.C4_BuildsGameOver",
+          "Status": "Passed",
+          "Duration": 0.0179097,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskGameOverTests.Chart_BandFollowsSeriesInHalfDaySteps",
+          "Status": "Passed",
+          "Duration": 0.0004248,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskGameOverTests.Chart_MapsDaysAndValues",
+          "Status": "Passed",
+          "Duration": 0.0000706,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskGameOverTests.Chart_SmoothClampsControlsToPlot",
+          "Status": "Passed",
+          "Duration": 0.0008768,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskGameOverTests.Chart_SmoothMatchesSvgBezier",
+          "Status": "Passed",
+          "Duration": 0.0002533,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskGameOverTests.Chart_ValueAtInterpolates",
+          "Status": "Passed",
+          "Duration": 0.0001062,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskGameOverTests.GameOverPrefab_IsWired",
+          "Status": "Passed",
+          "Duration": 0.0007407,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskGameOverTests.Sandbox_GameOverHidesDeskCanvases",
+          "Status": "Passed",
+          "Duration": 0.1093698,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskIllusionTests.C1_HasNoIllusionTraces",
+          "Status": "Passed",
+          "Duration": 0.0036384,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskIllusionTests.C2_BuildsIllusionModel",
+          "Status": "Passed",
+          "Duration": 0.0053625,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskIllusionTests.Prefabs_AreWiredForIllusion",
+          "Status": "Passed",
+          "Duration": 0.0012338,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskIllusionTests.Sandbox_HasIllusionPresenterAndClues",
+          "Status": "Passed",
+          "Duration": 0.1073602,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskIllusionTests.StampAngle_IsZeroInIllusion",
+          "Status": "Passed",
+          "Duration": 0.0004629,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskIllusionTests.Straighten_RestoresAuthoredAngle",
+          "Status": "Passed",
+          "Duration": 0.0004398,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskInteractionTests.ContentWindows_AreWired(\"Windows/HABERLER\",\"newsTemplate\")",
+          "Status": "Passed",
+          "Duration": 0.0005106,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskInteractionTests.ContentWindows_AreWired(\"Windows/SAHAEKİPLERİ\",\"teamTemplate\")",
+          "Status": "Passed",
+          "Duration": 0.0001014,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskInteractionTests.ContentWindows_AreWired(\"Windows/YZGÜNLÜĞÜ\",\"logTemplate\")",
+          "Status": "Passed",
+          "Duration": 0.0001028,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskInteractionTests.ContentWindows_AreWired(\"Windows/REHBER\",\"guideTemplate\")",
+          "Status": "Passed",
+          "Duration": 0.0000847,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskInteractionTests.Dossier_SendChipsReplaceRaid",
+          "Status": "Passed",
+          "Duration": 0.6797069,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskInteractionTests.InteractivePrefabs_HaveHitAreasAndLiftChild",
+          "Status": "Passed",
+          "Duration": 0.002915,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskInteractionTests.Layout_IsAuthoredInScenes",
+          "Status": "Passed",
+          "Duration": 0.2303298,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskInteractionTests.LinearOverlayAlpha_MatchesCssBlend",
+          "Status": "Passed",
+          "Duration": 0.0002726,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskInteractionTests.Mock_SelectRegion_BuildsDossier",
+          "Status": "Passed",
+          "Duration": 0.0058945,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskInteractionTests.Mock_SpeedAndResearch",
+          "Status": "Passed",
+          "Duration": 0.0037349,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskInteractionTests.Mock_UnknownRegion_UsesUnknownDossier",
+          "Status": "Passed",
+          "Duration": 0.0033448,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskInteractionTests.Sandbox_WindowManagerAndInput",
+          "Status": "Passed",
+          "Duration": 0.1025316,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskInteractionTests.Tween_DefaultIsIdle",
+          "Status": "Passed",
+          "Duration": 0.0001873,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskInteractionTests.Tween_EasesOutAndStops",
+          "Status": "Passed",
+          "Duration": 0.0001864,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskPolishTests.MapPrefab_LegendFlows",
+          "Status": "Passed",
+          "Duration": 0.000258,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskPolishTests.MockEnglish_LooksTurkishIgnoresTags",
+          "Status": "Passed",
+          "Duration": 0.0005692,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskPolishTests.MockEnglish_TranslatesExactPatternsAndFormats",
+          "Status": "Passed",
+          "Duration": 0.0018297,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskPolishTests.MockPresets_HaveNoTurkishLeftoversInEnglish",
+          "Status": "Passed",
+          "Duration": 0.0526733,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskPolishTests.StaticFonts_ContainSpace",
+          "Status": "Passed",
+          "Duration": 0.001364,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskResearchTests.AlignmentWithoutObservation_CanStartButShowsNoFiniteEstimate",
+          "Status": "Passed",
+          "Duration": 0.0069957,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskResearchTests.FundingPreview_UsesRuntimePricesAndActualPaymentWhileReserveLimitsProgress",
+          "Status": "Passed",
+          "Duration": 0.0029072,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskResearchTests.MockResearchFixtures_HaveExplicitMetadataAndKeepIdsInEnglish(\"C1_normal\")",
+          "Status": "Passed",
+          "Duration": 0.0045788,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskResearchTests.MockResearchFixtures_HaveExplicitMetadataAndKeepIdsInEnglish(\"C2_illusion\")",
+          "Status": "Passed",
+          "Duration": 0.0017835,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskResearchTests.ModernAlignment_RequiresObservationAndSeparatesManualPauseFromIllusion",
+          "Status": "Passed",
+          "Duration": 0.0041959,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskResearchTests.ModernOperations_RemainPurchasableWhileAlignmentRuns",
+          "Status": "Passed",
+          "Duration": 0.0027325,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskResearchTests.ModernPanel_HasFourteenCardsAndPreservesSimulationWhileBuilding",
+          "Status": "Passed",
+          "Duration": 0.002756,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskResearchTests.ModernPanelPrefab_LaysOutAllCardsInsideScrollableContent",
+          "Status": "Passed",
+          "Duration": 0.0370517,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskResearchTests.ModernPrerequisites_AndMediaGateMatchCoreChecks",
+          "Status": "Passed",
+          "Duration": 0.0036744,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskResearchTests.PendingEvent_DisablesPauseAndExplainsTheBlock",
+          "Status": "Passed",
+          "Duration": 0.0015926,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskResearchTests.ProjectEffect_RemainsVisibleInEveryState(\"available\")",
+          "Status": "Passed",
+          "Duration": 0.001409,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskResearchTests.ProjectEffect_RemainsVisibleInEveryState(\"locked\")",
+          "Status": "Passed",
+          "Duration": 0.0010403,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskResearchTests.ProjectEffect_RemainsVisibleInEveryState(\"running\")",
+          "Status": "Passed",
+          "Duration": 0.0009907,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskResearchTests.ProjectEffect_RemainsVisibleInEveryState(\"done\")",
+          "Status": "Passed",
+          "Duration": 0.0009328,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskResearchTests.ProjectEffect_RemainsVisibleInEveryState(\"stopped\")",
+          "Status": "Passed",
+          "Duration": 0.0009793,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskResearchTests.ResearchTree_KeepsBranchesAndConnectsEveryPrerequisite",
+          "Status": "Passed",
+          "Duration": 0.0015401,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskResearchTests.SingleProjectLimit_HasAnExplanationWithoutHidingTheNextEffect",
+          "Status": "Passed",
+          "Duration": 0.001107,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskResearchTests.Verification_StatesPrerequisiteAndUnlocksAfterAnomaly",
+          "Status": "Passed",
+          "Duration": 0.0021336,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskScreensTests.Campaign_OffersUpgradesThenEnds",
+          "Status": "Passed",
+          "Duration": 0.0088654,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskScreensTests.Docs_VeilBriefAndReport",
+          "Status": "Passed",
+          "Duration": 0.0122465,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskScreensTests.FakeWin_HidesReportUntilDone",
+          "Status": "Passed",
+          "Duration": 0.0015372,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskScreensTests.GameOver_InCampaignOffersNextCrisis",
+          "Status": "Passed",
+          "Duration": 0.0066909,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskScreensTests.Intro_FromGameInfo",
+          "Status": "Passed",
+          "Duration": 0.0053817,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskScreensTests.Scenes_WireNewScreens",
+          "Status": "Passed",
+          "Duration": 0.211631,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskScreensTests.Toasts_KindsAndMonotonicIds",
+          "Status": "Passed",
+          "Duration": 0.0022463,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskScreensTests.Tutorial_AssetMatchesDesk",
+          "Status": "Passed",
+          "Duration": 0.1173551,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskScreensTests.Tutorial_GameWaitingStepsCanBeHidden",
+          "Status": "Passed",
+          "Duration": 0.0027799,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.DeskScreensTests.Tutorial_NoteInVmAndAdvisorQuiet",
+          "Status": "Passed",
+          "Duration": 0.0026329,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.RegionFinanceTests.Contribution_UsesAwarenessBudgetAndTimeScaleWithoutCentral(1,1,False)",
+          "Status": "Passed",
+          "Duration": 0.0005393,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.RegionFinanceTests.Contribution_UsesAwarenessBudgetAndTimeScaleWithoutCentral(1,2,True)",
+          "Status": "Passed",
+          "Duration": 0.0000602,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.RegionFinanceTests.Contribution_UsesAwarenessBudgetAndTimeScaleWithoutCentral(2,1.5d,True)",
+          "Status": "Passed",
+          "Duration": 0.0000475,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.RegionFinanceTests.Contribution_UsesAwarenessBudgetAndTimeScaleWithoutCentral(3,1,False)",
+          "Status": "Passed",
+          "Duration": 0.0000478,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.RegionFinanceTests.Contribution_UsesAwarenessBudgetAndTimeScaleWithoutCentral(3,1.5d,True)",
+          "Status": "Passed",
+          "Duration": 0.0000453,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.RegionFinanceTests.Contribution_UsesAwarenessBudgetAndTimeScaleWithoutCentral(3,2,True)",
+          "Status": "Passed",
+          "Duration": 0.0000503,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.RegionFinanceTests.Contribution_UsesCurrentCampaignBalanceAndBudgetChangesImmediately",
+          "Status": "Passed",
+          "Duration": 0.000134,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.RegionFinanceTests.Dossier_UpdatesFinanceFromCurrentPublicEconomy",
+          "Status": "Passed",
+          "Duration": 0.0026881,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.RegionFinanceTests.OfflineOrLeft_StopsContributionAndReweightsOtherMembers",
+          "Status": "Passed",
+          "Duration": 0.0002674,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.RegionFinanceTests.Quarantine_KeepsCurrentContributionAndShowsStatusWithoutReadingInfiltration",
+          "Status": "Passed",
+          "Duration": 0.0001125,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.RegionFinanceTests.ZeroEconomyOrTrust_ShowsDifferentReasonsAndFiniteZeroShare",
+          "Status": "Passed",
+          "Duration": 0.0000988,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeCardTests.FullDossier_AdditionalPresentedSourcesGrowScrollablePage",
+          "Status": "Passed",
+          "Duration": 0.6989368,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeCardTests.FullDossier_EmptyHistoryClearsPreviousRegionMarkers",
+          "Status": "Passed",
+          "Duration": 0.0101775,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeCardTests.RegionAction_DisabledDoesNotExecuteAndRebindUsesCurrentCommand",
+          "Status": "Passed",
+          "Duration": 0.0093693,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeCardTests.RegionPreview_ImmediatePowerCostDoesNotInventZeroDayOrFundCost",
+          "Status": "Passed",
+          "Duration": 0.0065719,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeDeskPreviewTests.Illusion_MasksMockSnapshotAndRestoresUnknownRegions",
+          "Status": "Passed",
+          "Duration": 0.004605,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeDeskPreviewTests.S1_AcceptsNullBadgesAndKeepsClockStatic",
+          "Status": "Passed",
+          "Duration": 0.0007687,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeDeskPreviewTests.S1_LeavesUnknownInfiltrationHiddenAndKeepsUncertainty",
+          "Status": "Passed",
+          "Duration": 0.0021061,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeDeskPreviewTests.S1_ReparseKeepsSourcesStableAcrossLanguagesAndDoesNotShareMutableState",
+          "Status": "Passed",
+          "Duration": 0.0016132,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeDeskPreviewTests.S1_RoutesTeamsAndThreadsKeepRegionIdentities",
+          "Status": "Passed",
+          "Duration": 0.0011198,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeDeskPreviewTests.Source_ReenableRebuildsNullableValuesFromSample",
+          "Status": "Passed",
+          "Duration": 0.0012574,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeDrawerTests.RowHoverAndClick_SendOnlyExplicitCommandsAndClearMapHighlight",
+          "Status": "Passed",
+          "Duration": 0.000742,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeDrawerTests.SerializedDrawer_RebindsBothLanguagesWithoutCreatingHierarchyOrChangingModel(\"research\",3)",
+          "Status": "Passed",
+          "Duration": 0.0226543,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeDrawerTests.SerializedDrawer_RebindsBothLanguagesWithoutCreatingHierarchyOrChangingModel(\"news\",4)",
+          "Status": "Passed",
+          "Duration": 0.0210544,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeDrawerTests.SerializedDrawer_RebindsBothLanguagesWithoutCreatingHierarchyOrChangingModel(\"teams\",5)",
+          "Status": "Passed",
+          "Duration": 0.0144496,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeDrawerTests.SerializedDrawer_RebindsBothLanguagesWithoutCreatingHierarchyOrChangingModel(\"aiLog\",6)",
+          "Status": "Passed",
+          "Duration": 0.0124876,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeDrawerTests.SerializedDrawer_RebindsBothLanguagesWithoutCreatingHierarchyOrChangingModel(\"guide\",7)",
+          "Status": "Passed",
+          "Duration": 0.0104039,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeInteractionStateTests.ClosingDossierOrDrawer_PreservesSelectedRegionAndEndsAssignment",
+          "Status": "Passed",
+          "Duration": 0.0002855,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeInteractionStateTests.DrawerAndDossier_ExcludeEachOther_AndKeepSelection",
+          "Status": "Passed",
+          "Duration": 0.0001343,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeInteractionStateTests.Escape_ClosesOnlyTheHighestLayerBeforeOpeningPause",
+          "Status": "Passed",
+          "Duration": 0.0002061,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeInteractionStateTests.SelectingRegionKeepsDrawer_AndDossierNeedsASelection",
+          "Status": "Passed",
+          "Duration": 0.0000768,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeMapTests.Cover_KeepsMapCenteredAndRoundTripsMarkers(1920,1080,1)",
+          "Status": "Passed",
+          "Duration": 0.0004104,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeMapTests.Cover_KeepsMapCenteredAndRoundTripsMarkers(1920,1200,1.111111f)",
+          "Status": "Passed",
+          "Duration": 0.0000223,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeMapTests.Cover_KeepsMapCenteredAndRoundTripsMarkers(2580,1080,1.34375f)",
+          "Status": "Passed",
+          "Duration": 0.0000194,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeMapTests.MillerProjection_MatchesReferenceSamples(127,37.5d,1598.951d,392.344d)",
+          "Status": "Passed",
+          "Duration": 0.0004078,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeMapTests.MillerProjection_MatchesReferenceSamples(-88,40.5d,245.508d,370.263d)",
+          "Status": "Passed",
+          "Duration": 0.0000286,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeMapTests.MillerProjection_MatchesReferenceSamples(-36,47,572.852d,320.277d)",
+          "Status": "Passed",
+          "Duration": 0.0000239,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeMapTests.MillerProjection_MatchesReferenceSamples(25.5d,0,960,640)",
+          "Status": "Passed",
+          "Duration": 0.0000218,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeMapTests.PreparedRegion_SurvivesSerializedReloadAndKeepsDesignTexturePhase",
+          "Status": "Passed",
+          "Duration": 0.004432,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeMapTests.ReferenceData_PreservesTwelveRegionsAndPreparedTriangleIndices",
+          "Status": "Passed",
+          "Duration": 0.0954638,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeMapTests.RegionRaycast_ExcludesHoleSeaAndSpaceBetweenIslands",
+          "Status": "Passed",
+          "Duration": 0.0005251,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeMapTests.ThreadVisibility_FollowsControllerAcrossSeparateRenderLayers",
+          "Status": "Passed",
+          "Duration": 0.0006304,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeTooltipTests.FundBreakdown_IllusionKeepsPresentedCoverageClueWithoutInventingTransactions",
+          "Status": "Passed",
+          "Duration": 0.0108563,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeTooltipTests.FundBreakdown_S3ShownTotalsAgreeWithNet_AndSourceRemainsUnchanged",
+          "Status": "Passed",
+          "Duration": 0.0010051,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeTooltipTests.NodeTooltip_UsesOnlyShownValue_UnknownAndNullStayUnknown",
+          "Status": "Passed",
+          "Duration": 0.0006793,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.SadeTooltipTests.NodeTooltip_ZeroIsAValidShownReading",
+          "Status": "Passed",
+          "Duration": 0.0000938,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TelexScrollTests.DifferentFrameCadences_TravelTheSameFractionalDistance",
+          "Status": "Passed",
+          "Duration": 0.6713419,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TelexScrollTests.EquivalentFreshModel_PreservesPhaseAndMeasuredItems",
+          "Status": "Passed",
+          "Duration": 0.0075981,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TelexScrollTests.HeadlinePrependAndRemoval_KeepVisibleSurvivingHeadlineInPlace",
+          "Status": "Passed",
+          "Duration": 0.0090524,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TelexScrollTests.HoverAndFreeze_PauseAndResume_EmptyNewsClearThePool",
+          "Status": "Passed",
+          "Duration": 0.0052947,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TelexScrollTests.InPlaceTrustMutation_IsReboundWithoutMovingTheHeadline",
+          "Status": "Passed",
+          "Duration": 0.0051922,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TelexScrollTests.ShortSingleHeadline_FillsWideViewportAcrossEveryCycle",
+          "Status": "Passed",
+          "Duration": 0.0155413,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TelexScrollTests.ViewportResize_ChangesCoverageWithoutRestartingFlow",
+          "Status": "Passed",
+          "Duration": 0.0128523,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TelexScrollTests.WrapAndLongFrame_PreserveSubpixelDistance",
+          "Status": "Passed",
+          "Duration": 0.0041415,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TooltipPlacementTests.Corners_UseActualParentCoordinates(True,0.01f,0.01f)",
+          "Status": "Passed",
+          "Duration": 0.0022392,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TooltipPlacementTests.Corners_UseActualParentCoordinates(True,0.99f,0.01f)",
+          "Status": "Passed",
+          "Duration": 0.000108,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TooltipPlacementTests.Corners_UseActualParentCoordinates(True,0.01f,0.99f)",
+          "Status": "Passed",
+          "Duration": 0.0000863,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TooltipPlacementTests.Corners_UseActualParentCoordinates(True,0.99f,0.99f)",
+          "Status": "Passed",
+          "Duration": 0.0000861,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TooltipPlacementTests.Corners_UseActualParentCoordinates(False,0.01f,0.01f)",
+          "Status": "Passed",
+          "Duration": 0.0006176,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TooltipPlacementTests.Corners_UseActualParentCoordinates(False,0.99f,0.01f)",
+          "Status": "Passed",
+          "Duration": 0.0000838,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TooltipPlacementTests.Corners_UseActualParentCoordinates(False,0.01f,0.99f)",
+          "Status": "Passed",
+          "Duration": 0.0000799,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TooltipPlacementTests.Corners_UseActualParentCoordinates(False,0.99f,0.99f)",
+          "Status": "Passed",
+          "Duration": 0.0000853,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TooltipPlacementTests.GaugeBreakdown_StaysBelowSourceWhilePointerMoves",
+          "Status": "Passed",
+          "Duration": 0.0003189,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TooltipPlacementTests.OversizedContent_FitsAndRecoversAfterResize(True)",
+          "Status": "Passed",
+          "Duration": 0.0005083,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Desk.Tests.TooltipPlacementTests.OversizedContent_FitsAndRecoversAfterResize(False)",
+          "Status": "Passed",
+          "Duration": 0.0001085,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.Alignment_RequiresObservedRegionAndConsumesOnlyAvailableReserveExcess",
+          "Status": "Passed",
+          "Duration": 0.0010879,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.Analog_CanBeBoughtDuringIllusionAndDoesNotTearItAutomatically",
+          "Status": "Passed",
+          "Duration": 0.001491,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.BlockedOrEndedWorld_DoesNotPayAnotherDay",
+          "Status": "Passed",
+          "Duration": 0.0001585,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.CommunicationTiers_ReplaceEarlierLossFactor",
+          "Status": "Passed",
+          "Duration": 0.0001271,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.Diplomacy_DoesNotReduceHighTrustOrOpenOfflineIncome",
+          "Status": "Passed",
+          "Duration": 0.0001678,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.Diplomacy_ReturnsFormerMemberImmediatelyAndEnforcesRegionalCooldown(0)",
+          "Status": "Passed",
+          "Duration": 0.000439,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.Diplomacy_ReturnsFormerMemberImmediatelyAndEnforcesRegionalCooldown(18)",
+          "Status": "Passed",
+          "Duration": 0.0000352,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.EconomyCommands_MatchBrowserPrototype(7,12,\"FA3F1EC8\")",
+          "Status": "Passed",
+          "Duration": 0.0021842,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.EconomyCommands_MatchBrowserPrototype(7,80,\"3FF4F88B\")",
+          "Status": "Passed",
+          "Duration": 0.0013578,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.EconomyCommands_MatchBrowserPrototype(99,12,\"A4629295\")",
+          "Status": "Passed",
+          "Duration": 0.0002808,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.EconomyCommands_MatchBrowserPrototype(99,80,\"28A5313E\")",
+          "Status": "Passed",
+          "Duration": 0.0012275,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.Income_CentralRegionalAndBudgetUseSeparateMultipliers",
+          "Status": "Passed",
+          "Duration": 0.0002852,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.LostTeamReplacement_UsesVacantIdentityAfterFailedRecovery",
+          "Status": "Passed",
+          "Duration": 0.0020036,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.NetworkTiers_HalveSabotageAndReduceOnlyCrossRegionSpread",
+          "Status": "Passed",
+          "Duration": 0.0001909,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.NewEconomyCommands_AreLanguageIndependent",
+          "Status": "Passed",
+          "Duration": 0.0056279,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.NewEconomyCommands_RestoreExactlyIncludingLedgerAndRunningRecovery(7)",
+          "Status": "Passed",
+          "Duration": 0.0046016,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.NewEconomyCommands_RestoreExactlyIncludingLedgerAndRunningRecovery(99)",
+          "Status": "Passed",
+          "Duration": 0.0035594,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.NewGame_UsesModernReserveAndEmptyUpgradeState",
+          "Status": "Passed",
+          "Duration": 0.0002564,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.OperationPrerequisiteFailure_DoesNotSpendOrRecord(\"anomali_2\")",
+          "Status": "Passed",
+          "Duration": 0.0003562,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.OperationPrerequisiteFailure_DoesNotSpendOrRecord(\"dogrulama\")",
+          "Status": "Passed",
+          "Duration": 0.0000377,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.OperationPrerequisiteFailure_DoesNotSpendOrRecord(\"guclu_2\")",
+          "Status": "Passed",
+          "Duration": 0.000025,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.OperationPrerequisiteFailure_DoesNotSpendOrRecord(\"kuantum\")",
+          "Status": "Passed",
+          "Duration": 0.0000224,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.OperationPrerequisiteFailure_DoesNotSpendOrRecord(\"bilinc_2\")",
+          "Status": "Passed",
+          "Duration": 0.0000217,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.OperationPrerequisiteFailure_DoesNotSpendOrRecord(\"analog\")",
+          "Status": "Passed",
+          "Duration": 0.0000245,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.OperationPrerequisiteFailure_DoesNotSpendOrRecord(\"butce_2\")",
+          "Status": "Passed",
+          "Duration": 0.0000276,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.Operations_AreAtomicInstantAndDoNotReplaceAlignment",
+          "Status": "Passed",
+          "Duration": 0.0002206,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.PausedResearch_PreservesProgressAndSkipsSabotageRngButAiRemembersProject",
+          "Status": "Passed",
+          "Duration": 0.0003213,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.PendingDilemma_PreventsChangingResearchPauseState",
+          "Status": "Passed",
+          "Duration": 0.0000721,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.Quantum_BlocksSatelliteLeaksButDoesNotBuyQuarantine",
+          "Status": "Passed",
+          "Duration": 0.0001909,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.Recovery_CompletesAfterFourDaysAndIncomeUsesItOnlyOnFifth(False)",
+          "Status": "Passed",
+          "Duration": 0.0005452,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.Recovery_CompletesAfterFourDaysAndIncomeUsesItOnlyOnFifth(True)",
+          "Status": "Passed",
+          "Duration": 0.0002861,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.Recovery_InvalidCompletionDoesNotRefundOrRaiseEconomy(\"offline\")",
+          "Status": "Passed",
+          "Duration": 0.000374,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.Recovery_InvalidCompletionDoesNotRefundOrRaiseEconomy(\"left\")",
+          "Status": "Passed",
+          "Duration": 0.0000712,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.Recovery_InvalidCompletionDoesNotRefundOrRaiseEconomy(\"quarantine\")",
+          "Status": "Passed",
+          "Duration": 0.0000702,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.Recovery_InvalidCompletionDoesNotRefundOrRaiseEconomy(\"team_lost\")",
+          "Status": "Passed",
+          "Duration": 0.0001002,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.Recovery_RespectsGapAndDoesNotReduceGiftEconomyAboveBaseline",
+          "Status": "Passed",
+          "Duration": 0.0001209,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.UnaffordableCommand_DoesNotCreateDebtJobsOrHistory(\"operation\")",
+          "Status": "Passed",
+          "Duration": 0.0002305,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.UnaffordableCommand_DoesNotCreateDebtJobsOrHistory(\"recovery\")",
+          "Status": "Passed",
+          "Duration": 0.0000462,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.UnaffordableCommand_DoesNotCreateDebtJobsOrHistory(\"diplomacy\")",
+          "Status": "Passed",
+          "Duration": 0.000032,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.Verification_IsUnavailableWhenMediaRulesAreOff(1)",
+          "Status": "Passed",
+          "Duration": 0.0002617,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.EconomyTests.Verification_IsUnavailableWhenMediaRulesAreOff(2)",
+          "Status": "Passed",
+          "Duration": 0.0000416,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.ErasureTests.OfflineBackup_PreventsTheCountdownAndReturnsAsACopy",
+          "Status": "Passed",
+          "Duration": 0.0013591,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.ErasureTests.RaidThenAudit_WinsAfterExactlyTheRequiredCleanDays(1.0d,15)",
+          "Status": "Passed",
+          "Duration": 0.0006104,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.ErasureTests.RaidThenAudit_WinsAfterExactlyTheRequiredCleanDays(1.5d,23)",
+          "Status": "Passed",
+          "Duration": 0.0005099,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.ErasureTests.RaidThenAudit_WinsAfterExactlyTheRequiredCleanDays(2.0d,30)",
+          "Status": "Passed",
+          "Duration": 0.0006522,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.ErasureTests.ResidualCopy_ResetsTheConsecutiveCleanDays",
+          "Status": "Passed",
+          "Duration": 0.0004298,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.ErasureTests.SurvivingBackup_LetsTheCoreEscapeAndPreventsErasure",
+          "Status": "Passed",
+          "Duration": 0.0003365,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.CollectingOrMovingTeams_DoesNotResetRegionOrGlobalCooldown",
+          "Status": "Passed",
+          "Duration": 0.0016223,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.Collection_PaysOnceAddsUnverifiedNewsAndRecordsTheCommand",
+          "Status": "Passed",
+          "Duration": 0.0015521,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.DisabledReports_PreserveBaseRngAndEconomicState",
+          "Status": "Passed",
+          "Duration": 0.001282,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.Eligibility_RequiresOnlineMembershipAndNetworkOrStationedHealthyTeam",
+          "Status": "Passed",
+          "Duration": 0.0001964,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.EnablingExistingSave_IsRecordedWithoutChangingTheInitialRules",
+          "Status": "Passed",
+          "Duration": 0.0029099,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.Expiration_ForfeitsReservedRewardAndArchivesTheOriginalDay",
+          "Status": "Passed",
+          "Duration": 0.0002678,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.FieldEstimate_CannotBeDeclaredTrueByNewsVerification",
+          "Status": "Passed",
+          "Duration": 0.0005086,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.GlobalIntervalAndPendingLimit_ApplyAcrossAllRegions",
+          "Status": "Passed",
+          "Duration": 0.0004474,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.HighShownInfiltration_IsCappedAndDuplicateTeamsDoNotMultiplyCoverageBonus",
+          "Status": "Passed",
+          "Duration": 0.000091,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.Illusion_EqualDisplayedValuesProduceEqualWeightsDespiteDifferentReality",
+          "Status": "Passed",
+          "Duration": 0.0001091,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.InvalidCollection_IsAtomic(\"expired\")",
+          "Status": "Passed",
+          "Duration": 0.0003611,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.InvalidCollection_IsAtomic(\"blocked\")",
+          "Status": "Passed",
+          "Duration": 0.0001133,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.InvalidCollection_IsAtomic(\"ended\")",
+          "Status": "Passed",
+          "Duration": 0.0000998,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.InvalidCollection_IsAtomic(\"offline\")",
+          "Status": "Passed",
+          "Duration": 0.0001049,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.InvalidCollection_IsAtomic(\"left\")",
+          "Status": "Passed",
+          "Duration": 0.0001035,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.InvalidCollection_IsAtomic(\"missing\")",
+          "Status": "Passed",
+          "Duration": 0.0001265,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.LostCoverage_CancelsTheSlipWithoutRefundingItsReward",
+          "Status": "Passed",
+          "Duration": 0.0002951,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.NewGameReplay_RestoresCollectedAndPendingReportsExactly",
+          "Status": "Passed",
+          "Duration": 0.0007604,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.NoCoverage_AccumulatesNeitherBudgetNorReports",
+          "Status": "Passed",
+          "Duration": 0.0005453,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.PaidAndPendingRewards_NeverExceedEightPercentOfEligibleIncome",
+          "Status": "Passed",
+          "Duration": 0.0046176,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.Timers_UseTheSimulationTimeScale(1.0d,6,30,12)",
+          "Status": "Passed",
+          "Duration": 0.0002827,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.Timers_UseTheSimulationTimeScale(1.5d,9,45,18)",
+          "Status": "Passed",
+          "Duration": 0.0001613,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.FieldReportTests.Timers_UseTheSimulationTimeScale(2.0d,12,60,24)",
+          "Status": "Passed",
+          "Duration": 0.0001917,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.LocalizationTests.EnglishGame_ProducesNoTurkishText(\"manipulator\",41,False)",
+          "Status": "Passed",
+          "Duration": 0.0266807,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.LocalizationTests.EnglishGame_ProducesNoTurkishText(\"kahin\",42,True)",
+          "Status": "Passed",
+          "Duration": 0.1225235,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.LocalizationTests.EnglishGame_ProducesNoTurkishText(\"solucan\",43,True)",
+          "Status": "Passed",
+          "Duration": 0.1289356,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.LocalizationTests.Language_DoesNotChangeTheGame",
+          "Status": "Passed",
+          "Duration": 0.0355708,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.LocalizationTests.Table_CoversAllSources",
+          "Status": "Passed",
+          "Duration": 1.1215293,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.RulesTests.Events_AreReplayableFromSave(\"manipulator\",11)",
+          "Status": "Passed",
+          "Duration": 0.006088,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.RulesTests.Events_AreReplayableFromSave(\"kahin\",12)",
+          "Status": "Passed",
+          "Duration": 0.0081742,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.RulesTests.Events_AreReplayableFromSave(\"solucan\",13)",
+          "Status": "Passed",
+          "Duration": 0.0082658,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.RulesTests.ExtraTraits_AreGivenAtStart",
+          "Status": "Passed",
+          "Duration": 0.0002995,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.RulesTests.FullStageWithoutEvents_MatchesBaseRules",
+          "Status": "Passed",
+          "Duration": 0.0050883,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.RulesTests.Moments_AreRecorded",
+          "Status": "Passed",
+          "Duration": 0.0032856,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.RulesTests.PausedProject_IsNotEligibleForResearchProgressDilemmas",
+          "Status": "Passed",
+          "Duration": 0.0001526,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.RulesTests.Stage1_HasNoGiftsMediaOrIllusion(\"kahin\",3)",
+          "Status": "Passed",
+          "Duration": 0.0038579,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.RulesTests.Stage1_HasNoGiftsMediaOrIllusion(\"manipulator\",4)",
+          "Status": "Passed",
+          "Duration": 0.0027617,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.Alignment_AfterDetectionNeedsNoOtherResearch",
+          "Status": "Passed",
+          "Duration": 0.0001775,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.Alignment_CannotStartBeforeDetection",
+          "Status": "Passed",
+          "Duration": 0.0000861,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.BasicAction_NeedsNoResearch(\"izleme\")",
+          "Status": "Passed",
+          "Duration": 0.0001446,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.BasicAction_NeedsNoResearch(\"denetim\")",
+          "Status": "Passed",
+          "Duration": 0.0000247,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.BasicAction_NeedsNoResearch(\"karantina\")",
+          "Status": "Passed",
+          "Duration": 0.0000257,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.BasicAction_NeedsNoResearch(\"salter\")",
+          "Status": "Passed",
+          "Duration": 0.0000244,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.Core_EscapesOnFirstDetection",
+          "Status": "Passed",
+          "Duration": 0.000451,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.CurrentReplay_RejectsVerificationWithoutAnomaly",
+          "Status": "Passed",
+          "Duration": 0.0011638,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.FullGame_MatchesBrowserPrototype(\"manipulator\",7,\"acik@185 fon=405.247933\")",
+          "Status": "Passed",
+          "Duration": 0.0029814,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.FullGame_MatchesBrowserPrototype(\"kahin\",99,\"sessiz@230 fon=715.547530\")",
+          "Status": "Passed",
+          "Duration": 0.0039081,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.FullGame_MatchesBrowserPrototype(\"solucan\",12345,\"acik@192 fon=442.271948\")",
+          "Status": "Passed",
+          "Duration": 0.0028595,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.FullGameExp_MatchesBrowserPrototype(\"manipulator\",7,1.5d,\"acik@276 fon=413.019987 raids=0\")",
+          "Status": "Passed",
+          "Duration": 0.004223,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.FullGameExp_MatchesBrowserPrototype(\"kahin\",99,2,\"acik@390 fon=531.592914 raids=1\")",
+          "Status": "Passed",
+          "Duration": 0.0065183,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.FullGameExp_MatchesBrowserPrototype(\"solucan\",12345,1.5d,\"acik@282 fon=404.659309 raids=1\")",
+          "Status": "Passed",
+          "Duration": 0.0041424,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.LegacyFullGame_MatchesHistoricalBrowserPrototype(\"manipulator\",7,\"acik@185 fon=350.837433\")",
+          "Status": "Passed",
+          "Duration": 0.002352,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.LegacyFullGame_MatchesHistoricalBrowserPrototype(\"kahin\",99,\"sessiz@230 fon=698.699413\")",
+          "Status": "Passed",
+          "Duration": 0.0030161,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.LegacyFullGame_MatchesHistoricalBrowserPrototype(\"solucan\",12345,\"acik@192 fon=414.256816\")",
+          "Status": "Passed",
+          "Duration": 0.0022192,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.LegacyFullGameExp_MatchesHistoricalBrowserPrototype(\"manipulator\",7,1.5d,\"acik@275 fon=357.230322 raids=0\")",
+          "Status": "Passed",
+          "Duration": 0.003172,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.LegacyFullGameExp_MatchesHistoricalBrowserPrototype(\"kahin\",99,2,\"acik@390 fon=506.263642 raids=1\")",
+          "Status": "Passed",
+          "Duration": 0.0049016,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.LegacyFullGameExp_MatchesHistoricalBrowserPrototype(\"solucan\",12345,1.5d,\"acik@280 fon=367.141110 raids=0\")",
+          "Status": "Passed",
+          "Duration": 0.0034539,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.LegacyReplay_DoesNotRelaxOtherResearchRequirements(\"kuantum\")",
+          "Status": "Passed",
+          "Duration": 0.0001947,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.LegacyReplay_DoesNotRelaxOtherResearchRequirements(\"analog\")",
+          "Status": "Passed",
+          "Duration": 0.0000473,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.LegacyReplay_DoesNotRelaxOtherResearchRequirements(\"duzelt\")",
+          "Status": "Passed",
+          "Duration": 0.0000469,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.LegacyReplay_DoesNotRelaxOtherResearchRequirements(\"kilit\")",
+          "Status": "Passed",
+          "Duration": 0.0000449,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.LegacyReplay_DoesNotRelaxOtherResearchRequirements(\"yorum\")",
+          "Status": "Passed",
+          "Duration": 0.0000554,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.LegacyReplay_VerificationMatchesHistoricalStateAfterCompletion",
+          "Status": "Passed",
+          "Duration": 0.0008521,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.LegacyRestoredGame_NewPlayerResearchUsesCurrentPrerequisite",
+          "Status": "Passed",
+          "Duration": 0.0000748,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.MonitorEverythingAuditEverything_CannotEradicateEarly",
+          "Status": "Passed",
+          "Duration": 0.2067669,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.PassivePlayer_AlwaysLoses",
+          "Status": "Passed",
+          "Duration": 0.1600233,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.Raid_MatchesBrowserPrototype(11,5,45,True,1,\"\",\"m4.1.3 m5.2.4 a5.5.4 m6.0.3 e m4.1.2 m5.1.3 a5.6.3 m6.2.4 a6.3.4 e m4.3.1 m5.1.2 m6.1.3 e m4.4.3 a4.3.3 m5.3.1 a5.5.1 m6.3.3 e m4.6.4 a4.6.3 m5.4.3 a5.6.3 m6.6.4 a6.6.3 e m4.5.4 a4.4.4 m6.6.5 a6.6.3 e\",\"lost|t7|c3|rs-383647171|dron74:1,bakim33:0x,dron14:1,tek54:2,emp43:0x,ana64:0x,dron44:0x,bakim62:1,dron02:2,bakim56:2,dron67:2|spawner60:2,core63:3,civ16:1,spawner77:2\")",
+          "Status": "Passed",
+          "Duration": 0.0030617,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.Raid_MatchesBrowserPrototype(12345,3,60,False,2,\"aldatma\",\"m4.1.3 m5.2.4 a5.5.4 m6.3.3 e m4.3.4 a4.4.4 m5.4.3 a5.6.3 m6.4.4 a6.5.4 e m4.3.3 m5.4.5 m6.4.3 e m4.5.4 m5.6.4 a5.3.4 m6.7.4 a6.7.1 e m4.7.3 a4.6.3 m5.5.4 a5.3.4 m6.6.4 a6.6.3 e m5.4.3 a5.6.3 e\",\"lost|t7|c3|rs-199387546|dron44:0x,bakim34:0x,dron54:0x,tek73:0x,emp43:2,ana64:0x,dron04:1,dron34:0x,bakim73:1,dron74:0x,bakim65:1,dron46:1,dron20:2,dron70:2|spawner60:2,cool42:1,node63:3,civ16:1,spawner77:2\")",
+          "Status": "Passed",
+          "Duration": 0.001819,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.Raid_MatchesBrowserPrototype(777,4,30,True,1,\"yedek,kopya,hizlanma\",\"m4.1.3 m5.2.4 a5.4.4 m6.3.3 e m4.3.4 m5.4.3 a5.6.3 m6.4.4 a6.5.4 e m4.5.4 a4.6.4 m5.6.4 a5.6.6 m6.4.3 e m4.4.4 m5.5.4 a5.5.1 m6.6.4 a6.6.3 e m4.4.3 m5.4.4 a5.4.0 e\",\"lost|t6|c1|rs-1583376548|dron64:1,bakim74:2,dron44:0x,tek43:3,emp44:0x,ana64:0x,dron64:0x,bakim40:1,dron73:2,bakim45:1,dron20:0x,dron62:2|civ00:1,spawner60:2,cool42:1,core63:4,civ16:1,backup66:2,spawner77:2\")",
+          "Status": "Passed",
+          "Duration": 0.0009902,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.Raid_UndoRestoresExactState",
+          "Status": "Passed",
+          "Duration": 0.0005941,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.ResearchPrerequisite_BlocksUntilParentCompletes(\"dogrulama\",\"anomali\")",
+          "Status": "Passed",
+          "Duration": 0.0004659,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.ResearchPrerequisite_BlocksUntilParentCompletes(\"kuantum\",\"guclu\")",
+          "Status": "Passed",
+          "Duration": 0.0000462,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.ResearchPrerequisite_BlocksUntilParentCompletes(\"analog\",\"bilinc\")",
+          "Status": "Passed",
+          "Duration": 0.0000341,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.ResearchPrerequisite_BlocksUntilParentCompletes(\"duzelt\",\"yorum\")",
+          "Status": "Passed",
+          "Duration": 0.0000318,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.ResearchPrerequisite_BlocksUntilParentCompletes(\"kilit\",\"duzelt\")",
+          "Status": "Passed",
+          "Duration": 0.0000287,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.ResearchReserve_KeepsFundsForActions",
+          "Status": "Passed",
+          "Duration": 0.001171,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.Rng_MatchesBrowserPrototype",
+          "Status": "Passed",
+          "Duration": 0.0000599,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.SameSeedAndCommands_GiveSameGame",
+          "Status": "Passed",
+          "Duration": 0.0048261,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.SaveAndRestore_ReproducesExactState(\"manipulator\",21)",
+          "Status": "Passed",
+          "Duration": 0.007113,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.SaveAndRestore_ReproducesExactState(\"kahin\",22)",
+          "Status": "Passed",
+          "Duration": 0.0048055,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.SaveAndRestore_ReproducesExactState(\"solucan\",23)",
+          "Status": "Passed",
+          "Duration": 0.0051943,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.SaveAndRestoreExp_ReproducesExactState(\"manipulator\",31)",
+          "Status": "Passed",
+          "Duration": 0.0086678,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.SaveAndRestoreExp_ReproducesExactState(\"kahin\",32)",
+          "Status": "Passed",
+          "Duration": 0.008484,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "Corrigible.Tests.SimulationTests.Teams_AreRequiredForFieldWork",
+          "Status": "Passed",
+          "Duration": 0.00028,
+          "Message": null,
+          "StackTrace": null
+        }
+      ],
+      "Duration": 59.51,
+      "StatusPath": null,
+      "Mode": "EditMode",
+      "FilterApplied": "testname: Corrigible",
+      "success": true,
+      "result": null
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "/Users/selimkamyan/Gits/Corrigible"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

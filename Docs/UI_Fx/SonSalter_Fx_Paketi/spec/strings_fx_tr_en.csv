@@ -1,0 +1,41 @@
+key,tr,en_draft,maxWidthPxTR,note
+ai.state.1,UYUMLU,COMPLIANT,,YZ hâl adı (0–30)
+ai.state.2,KARARSIZ,UNSTABLE,,30–70
+ai.state.3,UYANMIŞ,AWAKENED,,70–100
+ai.state.unknown,BİLİNMİYOR,UNKNOWN,,değer yok
+ai.state.full,HÂL {n} · {name},STATE {n} · {name},,"F-Masa2 kart, F-YZ, rehber"
+ai.state.short,HÂL {n},STATE {n},,"baskın HEDEF çipi, F-YZ kart başı"
+ai.state.zone,{n} · {name},{n} · {name},,ölçek bölge adları (CP 600 11 .08em tx3)
+ai.state.range,sızma {from}–{to},infiltration {from}–{to},,F-YZ
+card.aiState,YZ HÂLİ,AI STATE,,bölge kartı + düğüm ipucu
+card.aiState.bothSources,iki kaynakta da,in both sources,,iki kaynak aynı hâlde
+card.aiState.split,kaynağa göre {a}–{b},{a}–{b} by source,,kaynaklar farklı hâlde (tasarımda örneği yok)
+card.sourceGap,{n} puan fark,{n} pt gap,,kart durum satırı sağı
+dossier.gapState,kaynaklar {n} puan ayrışıyor · YZ hâli {s},sources differ by {n} points · AI state {s},,dossier.gap yerine
+legend.ramp,YZ KÜRESİ · SIZMA %,AI ORB · INFILTRATION %,,Sade metnini DEĞİŞTİRİR
+legend.trust.fake,yalan,false,,lejant güven satırı 5. öğe
+guide.topic.aiStates,YZ hâlleri,AI states,120,rehber YENİ ilk konu
+guide.aiStates.title,YZ HÂLLERİ,AI STATES,,
+guide.aiStates.sub,"Haritadaki küre, o bölgedeki YZ sızmasını gösterir. Değer arttıkça küre akıcı biçimde hâl değiştirir.",The orb on the map shows AI infiltration in that region. As the value rises the orb shifts smoothly between states.,,
+guide.aiStates.1,"YZ yerleşiyor, düzenli ve sakin. İzleme ağı kurmanın en ucuz anı.","The AI is settling in, orderly and calm. The cheapest moment for a monitoring net.",,
+guide.aiStates.2,"Kabuk dağılır, şimşekler çıkar; yayılım hızlanır. Denetim ve karantina.",The shell breaks up and lightning appears; spread speeds up. Audit and quarantine.,,
+guide.aiStates.3,Kristal kabuk: çekirdek olabilir. Baskın ya da Son Şalter.,Crystal shell: this may be a core. Raid or Kill Switch.,,
+guide.aiStates.core,çekirdek,core,,özel küre etiketi
+guide.aiStates.live,GEÇİŞ,TRANSITION,,canlı şerit başlığı (mor)
+raid.ai.nodeState.tip,YZ düğümünün hâli,State of the AI node,,HEDEF çipi ve tahta küresi ipucu
+orbLab.eyebrow,YZ ÇEKİRDEĞİ · BÖLGE KÜRESİ,AI CORE · REGION ORB,,FxOrbLab (F-YZ)
+orbLab.title,Sızma arttıkça küre hâl değiştirir,The orb changes state as infiltration rises,,
+orbLab.body,"Haritada her bölgenin üstünde, o bölgedeki YZ sızmasını gösteren bir küre döner. Değer değiştikçe küre üç hâl arasında akıcı geçer.","Above each region on the map an orb spins, showing AI infiltration there. As the value changes the orb flows between three states.",,
+orbLab.trait.1a,altın veri küresi,golden data sphere,,
+orbLab.trait.1b,"düzenli enlemler, yörünge halkaları","orderly latitudes, orbit rings",,
+orbLab.trait.1c,yavaş ve sakin dönüş,"slow, calm rotation",,
+orbLab.trait.2a,altın ve mavi parçacıklar karışır,gold and blue particles mix,,
+orbLab.trait.2b,"şimşek lifleri, çekirdekte parlama","lightning filaments, core flare",,
+orbLab.trait.2c,"titreşen, dağılan kabuk","jittering, breaking shell",,
+orbLab.trait.3a,buz mavisi kristal kabuk,ice-blue crystal shell,,
+orbLab.trait.3b,"sivri uçlar, yörüngede kırıklar","spikes, shards in orbit",,
+orbLab.trait.3c,"hızlı dönüş, kıvılcımlar","fast rotation, sparks",,
+orbLab.live,CANLI GEÇİŞ,LIVE TRANSITION,,
+orbLab.liveValue,sızma {v},infiltration {v},,Mono 600 30
+orbLab.hint,ölçeğe tıkla ya da sürükle,click or drag the scale,,
+orbLab.auto,OTOMATİK,AUTO,,aç/kapa düğmesi

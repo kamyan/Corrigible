@@ -25,6 +25,8 @@ namespace Corrigible.Game.Raid
             /// <summary>Tehlikeli kare → kesin mi (yalan olabilecek niyetler kesin değildir).</summary>
             public Dictionary<int, bool> Danger = new Dictionary<int, bool>();
             public HashSet<int> Spent = new HashSet<int>();
+            /// <summary>Salt sunum örneğinde başlangıçta kırık gelen dolaplar; canlı oyunda boş kalır.</summary>
+            public HashSet<int> Rubble = new HashSet<int>();
             public int Selected = -1;
             public Dictionary<int, (string order, string flag, Color flagColor)> Badges = new Dictionary<int, (string, string, Color)>();
             public List<(int fx, int fy, int tx, int ty, Color color, bool dashed)> Arrows = new List<(int, int, int, int, Color, bool)>();
@@ -41,6 +43,11 @@ namespace Corrigible.Game.Raid
         [SerializeField] Material handLabelMaterial;
         [Tooltip("Dünya kâğıtları için TMP Overlay shader'ı; player build'de shader referansını korur.")]
         [SerializeField] Shader worldLabelShader;
+        [Tooltip("Sade tahta: ekran etiket prefab'ı atanırsa can sayıları yerine noktalar çizilir.")]
+        [SerializeField] RaidScreenLabel screenLabelPrefab;
+        [SerializeField] Canvas screenLabelCanvas;
+        [SerializeField] Color spentPaperColor = new Color(.914f, .867f, .776f);
+        [SerializeField, Min(.1f)] float markScale = 1;
         [SerializeField] Color paperColor = new Color(0.984f, 0.969f, 0.925f);
         [SerializeField] Color verifiedColor = new Color(0.102f, 0.278f, 0.537f);
         [SerializeField] Color graphiteColor = new Color(0.118f, 0.106f, 0.086f);
@@ -53,6 +60,11 @@ namespace Corrigible.Game.Raid
         public event Action<Baskin.Fx, int, int> EffectPlaying;
         public bool Busy { get; private set; }
         public bool InputEnabled { get; set; } = true;
+        public bool FastMachines { get; set; }
+        public float MachineDelay { get; set; }
+        (int x, int y)? externalHover;
+        /// <summary>Ekip kartı üstüne gelme işareti; UI seçimi ya da simülasyonu değiştirmez.</summary>
+        public void SetExternalHover((int x, int y)? tile) => externalHover = tile;
         public Camera Camera => cam;
 
         public const float TileTop = 0f;
@@ -94,7 +106,7 @@ namespace Corrigible.Game.Raid
         float layoutCameraSize;
         static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
         static readonly int MainColor = Shader.PropertyToID("_Color");
-        float PixelWorld => cam != null ? Mathf.Max(0.001f, 2 * cam.orthographicSize / Mathf.Max(1, cam.pixelHeight) * Mathf.Min(Screen.width / 1920f, Screen.height / 1080f)) : 0.0113f;
+        float PixelWorld => (cam != null ? Mathf.Max(0.001f, 2 * cam.orthographicSize / Mathf.Max(1, cam.pixelHeight) * Mathf.Min(cam.pixelWidth / 1920f, cam.pixelHeight / 1080f)) : 0.0113f) * markScale;
         static Color Alpha(Color c, float alpha) => new Color(c.r, c.g, c.b, alpha);
         static readonly Vector2[] LabelDirections =
         {
@@ -205,6 +217,13 @@ namespace Corrigible.Game.Raid
             var go = new GameObject(name, typeof(RaidWorldLabel));
             go.transform.SetParent(marksRoot, false);
             var label = go.GetComponent<RaidWorldLabel>();
+            if (screenLabelPrefab != null && screenLabelCanvas != null)
+            {
+                var screen = Instantiate(screenLabelPrefab, screenLabelCanvas.transform);
+                screen.name = name;
+                label.ConfigureScreen(cam, screenLabelCanvas, screen, hand && handFont != null ? handFont : lib.font, paperColor, pixels, hand ? 15 : 11);
+                return label;
+            }
             label.Configure(cam, hand && handFont != null ? handFont : lib.font, hand && handFont != null ? handLabelMaterial : lib.labelMaterial, lib.overlay, paperColor, pixels, hand ? 15 : 11, worldLabelShader);
             return label;
         }
@@ -250,11 +269,15 @@ namespace Corrigible.Game.Raid
                     }
                     piece.SetHp(o.Hp, o.Max);
                     piece.SetWorldLabelsVisible(false);
-                    var tag = PieceLabel(hpLabels, -k - 1, "Object HP");
-                    tag.SetAnchor(W(x, y) + Vector3.up * (piece.VisualHeight + 0.12f));
-                    var ink = Baskin.IsTarget(o.K) || o.K == "spawner" ? lib.threat : graphiteColor;
-                    tag.Show(Loc.F("{0}/{1}", o.Hp, o.Max), ink, ink);
-                    labelGroups.Add(new[] { tag });
+                    if (screenLabelPrefab == null || (o.K != "civ" && o.K != "cool"))
+                    {
+                        var tag = PieceLabel(hpLabels, -k - 1, "Object HP");
+                        tag.SetAnchor(W(x, y) + Vector3.up * (piece.VisualHeight + 0.12f));
+                        var ink = Baskin.IsTarget(o.K) || o.K == "spawner" ? lib.threat : graphiteColor;
+                        if (screenLabelPrefab != null) tag.ShowHealth(o.Hp, o.Max, ink, Baskin.IsTarget(o.K), o.K == "node" || o.K == "core");
+                        else tag.Show(Loc.F("{0}/{1}", o.Hp, o.Max), ink, ink);
+                        labelGroups.Add(new[] { tag });
+                    }
                     if (rubble.TryGetValue(k, out var rb)) { Destroy(rb); rubble.Remove(k); }
                 }
                 else if (piece != null)
@@ -262,6 +285,8 @@ namespace Corrigible.Game.Raid
                     Destroy(piece.gameObject); objects.Remove(k);
                     if (lib.rubble != null && !rubble.ContainsKey(k)) rubble[k] = Instantiate(lib.rubble, W(x, y), Quaternion.Euler(0, (x * 37 + y * 53) % 360, 0), piecesRoot);
                 }
+                else if (m.Rubble.Contains(k) && lib.rubble != null && !rubble.ContainsKey(k))
+                    rubble[k] = Instantiate(lib.rubble, W(x, y), Quaternion.identity, piecesRoot);
             }
             // Birimler
             var alive = new HashSet<int>();
@@ -288,7 +313,12 @@ namespace Corrigible.Game.Raid
                 var hpTag = PieceLabel(hpLabels, u.Id, "Unit HP");
                 hpTag.SetAnchor(u.Side == 'p' && !u.Dead ? W(u.X, u.Y) + Vector3.up * (p.VisualHeight + 0.12f) : W(u.X, u.Y) + Vector3.up * 0.18f - cam.transform.up * 0.26f);
                 var hpInk = u.Side == 'e' || u.Dead ? lib.threat : graphiteColor;
-                hpTag.Show(Loc.F("{0} {1}/{2}", letter, u.Dead ? 0 : u.Hp, u.Max), hpInk, hpInk);
+                if (screenLabelPrefab != null)
+                {
+                    hpTag.SetPaperColor(m.Spent.Contains(u.Id) ? spentPaperColor : paperColor);
+                    hpTag.ShowHealth(u.Dead ? 0 : u.Hp, u.Max, hpInk);
+                }
+                else hpTag.Show(Loc.F("{0} {1}/{2}", letter, u.Dead ? 0 : u.Hp, u.Max), hpInk, hpInk);
                 if (u.Dead || m.Spent.Contains(u.Id))
                 {
                     var state = PieceLabel(stateLabels, u.Id, "Unit state");
@@ -313,7 +343,7 @@ namespace Corrigible.Game.Raid
                     border.a = 1;
                     order.SetOpacity(1);
                     order.SetPaperColor(paperColor);
-                    order.Show(Loc.F("{0} {1}", intent.Order, kind), lib.threat, border, intent.Uncertain);
+                    order.Show(screenLabelPrefab != null ? intent.Order.ToString() : Loc.F("{0} {1}", intent.Order, kind), lib.threat, border, intent.Uncertain);
                     if (intent.Uncertain || intent.IsScanned)
                     {
                         var flag = PieceLabel(intent.Uncertain ? questionLabels : flagLabels, u.Id, "Trust flag", intent.Uncertain ? 18 : 12, intent.Uncertain);
@@ -488,7 +518,7 @@ namespace Corrigible.Game.Raid
         }
 
         // ------------------------------------------------------------------ önizleme
-        public void SetPreview(IList<(float x, float y, string text, Color color)> texts, IList<(int fx, int fy, int tx, int ty)> moves)
+        public void SetPreview(IList<(float x, float y, string text, Color color)> texts, IList<(int fx, int fy, int tx, int ty)> moves, ISet<int> blockedMoves = null)
         {
             ClearPreview();
             for (int i = 0; i < moves.Count; i++)
@@ -500,6 +530,7 @@ namespace Corrigible.Game.Raid
                 var source = units.Values.FirstOrDefault(p => p.X == mv.fx && p.Y == mv.fy && p.gameObject.activeSelf);
                 if (i == ghosts.Count) ghosts.Add(null);
                 if (ghosts[i] != null) Destroy(ghosts[i]);
+                if (blockedMoves != null && blockedMoves.Contains(i)) { ghosts[i] = null; continue; }
                 ghosts[i] = source != null ? Ghost(source) : Frame("Ghost position", Vector3.zero, graphiteColor, 0.7f, PixelWorld * 2);
                 ghosts[i].transform.position = W(mv.tx, mv.ty);
                 ghosts[i].SetActive(true);
@@ -554,7 +585,7 @@ namespace Corrigible.Game.Raid
         void Update()
         {
             if (cam == null || hoverFrame == null || Mouse.current == null) return;
-            (int x, int y)? h = null;
+            (int x, int y)? h = InputEnabled && !Busy ? externalHover : null;
             bool overUi = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
             if (InputEnabled && !Busy && !overUi && Physics.Raycast(cam.ScreenPointToRay(Mouse.current.position.ReadValue()), out var hit, 200f))
             {
@@ -569,7 +600,7 @@ namespace Corrigible.Game.Raid
                 if (h != null) hoverFrame.transform.position = W(h.Value.x, h.Value.y) + Vector3.up * 0.035f;
                 HoverChanged?.Invoke(h);
             }
-            if (h != null && Mouse.current.leftButton.wasPressedThisFrame) TileClicked?.Invoke(h.Value.x, h.Value.y);
+            if (h != null && !overUi && Mouse.current.leftButton.wasPressedThisFrame) TileClicked?.Invoke(h.Value.x, h.Value.y);
         }
 
         /// <summary>Kare tıklanmış gibi davranır (test ve klavye için).</summary>
@@ -613,6 +644,7 @@ namespace Corrigible.Game.Raid
             foreach (var f in fx)
             {
                 if (version != buildVersion) yield break;
+                if(enemyTurn&&f.K=="attack"&&fxIndex>0&&MachineDelay>0)yield return new WaitForSecondsRealtime(MachineDelay);
                 EffectPlaying?.Invoke(f, fxIndex++, fx.Count);
                 switch (f.K)
                 {
@@ -709,7 +741,7 @@ namespace Corrigible.Game.Raid
             if (orderLabels.TryGetValue(id, out var flag) && shownIntents.TryGetValue(id, out var intent))
             {
                 flag.SetPaperColor(lib.threat);
-                flag.Show(Loc.F("{0} ŞİMDİ", intent.Order), paperColor, lib.threat);
+                flag.Show(screenLabelPrefab != null ? intent.Order.ToString() : Loc.F("{0} ŞİMDİ", intent.Order), paperColor, lib.threat);
                 LayoutLabels();
             }
         }
@@ -721,14 +753,27 @@ namespace Corrigible.Game.Raid
             if (orderLabels.TryGetValue(id, out var flag) && shownIntents.TryGetValue(id, out var intent))
             {
                 flag.SetPaperColor(paperColor); flag.SetOpacity(0.55f);
-                flag.Show(Loc.F("<s>{0}</s> UYGULANDI", intent.Order), lib.threat, lib.threat);
+                flag.Show(screenLabelPrefab != null ? intent.Order.ToString() : Loc.F("<s>{0}</s> UYGULANDI", intent.Order), lib.threat, lib.threat);
                 LayoutLabels();
+            }
+        }
+
+        /// <summary>Örnek tahta ya da sunum köprüsü: komut yürütmeden mevcut niyetin görsel evresini seçer.</summary>
+        public void SetIntentPresentation(int id, string state)
+        {
+            if (!shownIntents.TryGetValue(id, out var intent)) return;
+            if (state == "done") FinishExecuting(id);
+            else if (state == "now") ShowExecuting(id, intent.TargetX, intent.TargetY);
+            else if (state == "cancel" && orderLabels.TryGetValue(id, out var cancelled))
+            {
+                cancelled.SetOpacity(0.55f);
+                cancelled.Show(screenLabelPrefab != null ? Loc.F("<s>{0}</s>", intent.Order) : Loc.F("<s>{0}</s> İPTAL", intent.Order), lib.threat, graphiteColor);
             }
         }
 
         public float Pan(Vector3 world) => Sfx.PanOf(cam, world);
 
-        IEnumerator Wait(float s) { yield return new WaitForSeconds(s * stepTime / 0.32f); }
+        IEnumerator Wait(float s) { yield return new WaitForSeconds(s * stepTime / 0.32f / (FastMachines ? 3.125f : 1)); }
         static float Ease(float t) => 1 - (1 - t) * (1 - t);
 
         IEnumerator Lunge(RaidPiece p, int x, int y)

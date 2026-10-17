@@ -1,0 +1,812 @@
+{
+ "meta": {
+  "extends": "UI_Sade/spec/map_regions.json — projeksiyon, kapak kuralı, bölge çokgenleri + üçgenler, düğüm konumları AYNEN kullanılır. Bu dosya yalnız FX görünümünü tanımlar.",
+  "units": "1920×1080 tasarım px; sol üst orijin, y aşağı (Unity: anchoredPosition = (x, −y)).",
+  "reference": [
+   "art/map/_fx_map_full_ref.jpg (tüm katmanlar, mock değerlerle)",
+   "reference/html/fx-harita.svg (kaynak SVG)",
+   "reference/zoom/F-Masa1_harita_*@2x"
+  ],
+  "mock": "mock* alanları F-Masa1 anının değerleridir (Sade mock masa_S1.json ile aynı). Oyunda değerler VM'den gelir; formüller aşağıda."
+ },
+ "layers": [
+  {
+   "order": 1,
+   "id": "base",
+   "kind": "static texture",
+   "file": "art/map/fx_map_base@2x.jpg",
+   "size": [
+    3840,
+    2160
+   ],
+   "contains": "deniz geçişi, 14 px nokta ızgarası, enlem-boylam, dönenceler, ekvator, kıyı parıltısı, kara zemini #061220"
+  },
+  {
+   "order": 2,
+   "id": "regions",
+   "kind": "runtime (RegionFxGraphic ×12)",
+   "contains": "bölge başına: etki parıltısı + nokta matrisi (YZ rengi) · bilinmiyor taraması · karantina altıgeni. Değer değişince yeniden boyanır (bkz. regionShader)."
+  },
+  {
+   "order": 3,
+   "id": "lines",
+   "kind": "static texture (alfa)",
+   "file": "art/map/fx_map_lines@2x.png",
+   "size": [
+    3840,
+    2160
+   ],
+   "contains": "ülke sınırları α.07, bölge sınırları kesik 4/4 α.38, kıyı çizgisi #6FE6FF α.66 0,9 px"
+  },
+  {
+   "order": 4,
+   "id": "quarOutline",
+   "kind": "runtime çizgi",
+   "contains": "karantinadaki bölgenin dış hattı: #3DFFB4 α.7, 1,5 px, kesik 8/5 (durağan)"
+  },
+  {
+   "order": 5,
+   "id": "overlay",
+   "kind": "runtime çizgi + dolgu",
+   "contains": "seçim, vurgu, yayılım iplikleri, ekip rotası, panel bağ çizgisi"
+  },
+  {
+   "order": 6,
+   "id": "screenFx",
+   "kind": "ekran katmanları",
+   "contains": "tarama çizgileri, tarama ışığı, vinyet (bkz. screenFx)"
+  },
+  {
+   "order": 7,
+   "id": "nodes",
+   "kind": "UI",
+   "contains": "küreler (RenderTexture), nişangâh, üstüne gelme halkası, değer çipi, bölge adı, ekip jetonları, ETA etiketi, danışman uyarısı"
+  }
+ ],
+ "aiColor": {
+  "gold": [
+   255,
+   176,
+   64
+  ],
+  "blue": [
+   58,
+   140,
+   255
+  ],
+  "formula": "t = ss(0.24, 0.80, v/100); renk = lerp(gold, blue, t)  (ss = smoothstep; küre motoruyla AYNI eğri)",
+  "samples": {
+   "0": "#FFB040",
+   "10": "#FFB040",
+   "20": "#FFB040",
+   "30": "#F9AF46",
+   "40": "#D8A966",
+   "50": "#A7A095",
+   "60": "#7396C7",
+   "70": "#4B8FEF",
+   "80": "#3A8CFF",
+   "90": "#3A8CFF",
+   "100": "#3A8CFF"
+  }
+ },
+ "regionShader": {
+  "levelSource": "Bölgenin küresinin GÖRÜNEN (yumuşatılmış) düzeyi — küre ile bölge boyası aynı anda değişir. lv += (hedef − lv)·min(1, dt·3).",
+  "dotMatrix": {
+   "tile": "art/textures/tx_fx_land_dot_7.png",
+   "periodPx": 7,
+   "dotRadiusPx": 1.05,
+   "color": "aiColor(lv)",
+   "alpha": ".26 + .30·s  (s = lv/100)",
+   "clip": "bölge çokgeni"
+  },
+  "glow": {
+   "type": "radyal geçiş, merkez = düğüm, yarıçap = glowRadius",
+   "stops": [
+    [
+     0,
+     "a0"
+    ],
+    [
+     0.45,
+     "a0 × 0.38"
+    ],
+    [
+     1,
+     0
+    ]
+   ],
+   "a0": ".20 + .40·s",
+   "color": "aiColor(lv)",
+   "clip": "bölge çokgeni",
+   "blend": "normal (alfa) — kara zemininin üstüne"
+  },
+  "unknown": {
+   "when": "infiltration = null ya da trust = unknown",
+   "glow": "yok",
+   "dotMatrix": {
+    "color": "#7FA3B3",
+    "radiusPx": 0.9,
+    "alpha": 0.3
+   },
+   "hatch": {
+    "tile": "art/textures/tx_fx_unk_hatch.png",
+    "periodPx": 8.485,
+    "angleDeg": 45,
+    "lineWidthPx": 1,
+    "color": "#7FA3B3",
+    "alpha": 0.16
+   }
+  },
+  "quarantine": {
+   "pattern": {
+    "tile": "art/textures/tx_fx_quar_hex.png",
+    "tilePx": [
+     13.856,
+     24
+    ],
+    "color": "#3DFFB4",
+    "alpha": 0.22,
+    "lineWidthPx": 1
+   },
+   "outline": "layers.quarOutline",
+   "orb": "küre türü quar (nane kafes, dönüş × 0,45)"
+  },
+  "orderInsideRegion": [
+   "glow (ya da hatch)",
+   "dotMatrix",
+   "quarantine pattern"
+  ],
+  "glowRadiusPx": {
+   "KA": 400,
+   "OA": 160,
+   "GA": 320,
+   "BA": 260,
+   "DA": 170,
+   "ODKA": 250,
+   "SAA": 300,
+   "AV": 470,
+   "GuA": 170,
+   "DoA": 240,
+   "GDA": 230,
+   "OK": 260
+  },
+  "implementation": "Tek shader (UI, alfa karışım). Mesh: Sade üçgenleri; UV0 = tasarım px konumu. Parça: dot = tex(land_dot, pos/7).a; glow = parçalı doğrusal (d/R: 0→a0, .45→a0·.38, 1→0), d = |pos − node|. Çıktı: glow ve nokta üst üste (önce glow). Renk, alfalar, düğüm ve R materyal özelliği (MaterialPropertyBlock değil — UI'da bölge başına materyal örneği ya da vertex rengi + UV1). Düzey değişince yalnız özellikler güncellenir."
+ },
+ "regions": [
+  {
+   "id": "KA",
+   "mockInfiltration": 12,
+   "mockTrust": "verified",
+   "orbKind": "normal",
+   "node": [
+    176.3,
+    343.7
+   ],
+   "orbRadius": 31.9,
+   "orbCanvas": 140,
+   "seed": 3,
+   "valueChipTopCenter": [
+    176.3,
+    378.0
+   ],
+   "labelTopCenter": [
+    176.3,
+    406.0
+   ],
+   "glowRadius": 400,
+   "mockColor": "#FFB040",
+   "mockDotAlpha": 0.296,
+   "mockGlowA0": 0.248
+  },
+  {
+   "id": "OA",
+   "mockInfiltration": null,
+   "mockTrust": "unknown",
+   "orbKind": "unknown",
+   "node": [
+    226.6,
+    535.2
+   ],
+   "orbRadius": 27.0,
+   "orbCanvas": 119,
+   "seed": 10,
+   "valueChipTopCenter": [
+    226.6,
+    564.9
+   ],
+   "labelTopCenter": [
+    226.6,
+    592.9
+   ],
+   "glowRadius": 160
+  },
+  {
+   "id": "GA",
+   "mockInfiltration": 18,
+   "mockTrust": "report",
+   "orbKind": "normal",
+   "node": [
+    440.7,
+    709.5
+   ],
+   "orbRadius": 32.9,
+   "orbCanvas": 145,
+   "seed": 17,
+   "valueChipTopCenter": [
+    440.7,
+    744.7
+   ],
+   "labelTopCenter": [
+    440.7,
+    772.7
+   ],
+   "glowRadius": 320,
+   "mockColor": "#FFB040",
+   "mockDotAlpha": 0.314,
+   "mockGlowA0": 0.272
+  },
+  {
+   "id": "BA",
+   "mockInfiltration": 9,
+   "mockTrust": "verified",
+   "orbKind": "normal",
+   "node": [
+    818.4,
+    316.3
+   ],
+   "orbRadius": 31.4,
+   "orbCanvas": 138,
+   "seed": 24,
+   "valueChipTopCenter": [
+    818.4,
+    350.2
+   ],
+   "labelTopCenter": [
+    818.4,
+    378.2
+   ],
+   "glowRadius": 260,
+   "mockColor": "#FFB040",
+   "mockDotAlpha": 0.287,
+   "mockGlowA0": 0.236
+  },
+  {
+   "id": "DA",
+   "mockInfiltration": 27,
+   "mockTrust": "report",
+   "orbKind": "normal",
+   "node": [
+    975.7,
+    287.8
+   ],
+   "orbRadius": 34.3,
+   "orbCanvas": 151,
+   "seed": 31,
+   "valueChipTopCenter": [
+    975.7,
+    229.2
+   ],
+   "labelTopCenter": [
+    975.7,
+    209.2
+   ],
+   "glowRadius": 170,
+   "mockColor": "#FDB042",
+   "mockDotAlpha": 0.341,
+   "mockGlowA0": 0.308
+  },
+  {
+   "id": "ODKA",
+   "mockInfiltration": 34,
+   "mockTrust": "suspicious",
+   "orbKind": "normal",
+   "node": [
+    1057.6,
+    465.9
+   ],
+   "orbRadius": 35.4,
+   "orbCanvas": 156,
+   "seed": 38,
+   "valueChipTopCenter": [
+    1057.6,
+    503.6
+   ],
+   "labelTopCenter": [
+    1057.6,
+    531.6
+   ],
+   "glowRadius": 250,
+   "mockColor": "#EEAD50",
+   "mockDotAlpha": 0.362,
+   "mockGlowA0": 0.336
+  },
+  {
+   "id": "SAA",
+   "mockInfiltration": null,
+   "mockTrust": "unknown",
+   "orbKind": "unknown",
+   "node": [
+    938,
+    627.4
+   ],
+   "orbRadius": 27.0,
+   "orbCanvas": 119,
+   "seed": 45,
+   "valueChipTopCenter": [
+    938,
+    657.0
+   ],
+   "labelTopCenter": [
+    938,
+    685.0
+   ],
+   "glowRadius": 300
+  },
+  {
+   "id": "AV",
+   "mockInfiltration": 46,
+   "mockTrust": "verified",
+   "orbKind": "quar",
+   "node": [
+    1353.4,
+    208.3
+   ],
+   "orbRadius": 37.4,
+   "orbCanvas": 164,
+   "seed": 52,
+   "valueChipTopCenter": [
+    1353.4,
+    247.8
+   ],
+   "labelTopCenter": [
+    1353.4,
+    275.8
+   ],
+   "glowRadius": 470,
+   "mockColor": "#BCA481",
+   "mockDotAlpha": 0.398,
+   "mockGlowA0": 0.384
+  },
+  {
+   "id": "GuA",
+   "mockInfiltration": 52,
+   "mockTrust": "report",
+   "orbKind": "normal",
+   "node": [
+    1293.6,
+    496
+   ],
+   "orbRadius": 38.3,
+   "orbCanvas": 169,
+   "seed": 59,
+   "valueChipTopCenter": [
+    1293.6,
+    536.4
+   ],
+   "labelTopCenter": [
+    1293.6,
+    564.4
+   ],
+   "glowRadius": 170,
+   "mockColor": "#9C9EA0",
+   "mockDotAlpha": 0.416,
+   "mockGlowA0": 0.408
+  },
+  {
+   "id": "DoA",
+   "mockInfiltration": 38,
+   "mockTrust": "suspicious",
+   "orbKind": "normal",
+   "node": [
+    1473,
+    410.3
+   ],
+   "orbRadius": 36.1,
+   "orbCanvas": 159,
+   "seed": 66,
+   "valueChipTopCenter": [
+    1473,
+    448.6
+   ],
+   "labelTopCenter": [
+    1473,
+    476.6
+   ],
+   "glowRadius": 240,
+   "mockColor": "#E0AA5E",
+   "mockDotAlpha": 0.374,
+   "mockGlowA0": 0.352
+  },
+  {
+   "id": "GDA",
+   "mockInfiltration": 71,
+   "mockTrust": "verified",
+   "orbKind": "core",
+   "node": [
+    1454.2,
+    557.7
+   ],
+   "orbRadius": 46.4,
+   "orbCanvas": 204,
+   "seed": 73,
+   "valueChipTopCenter": [
+    1454.2,
+    605.7
+   ],
+   "labelTopCenter": [
+    1454.2,
+    633.7
+   ],
+   "glowRadius": 230,
+   "mockColor": "#488EF2",
+   "mockDotAlpha": 0.473,
+   "mockGlowA0": 0.484
+  },
+  {
+   "id": "OK",
+   "mockInfiltration": 23,
+   "mockTrust": "report",
+   "orbKind": "normal",
+   "node": [
+    1643,
+    800.7
+   ],
+   "orbRadius": 33.7,
+   "orbCanvas": 148,
+   "seed": 80,
+   "valueChipTopCenter": [
+    1643,
+    836.7
+   ],
+   "labelTopCenter": [
+    1643,
+    864.7
+   ],
+   "glowRadius": 260,
+   "mockColor": "#FFB040",
+   "mockDotAlpha": 0.329,
+   "mockGlowA0": 0.292
+  }
+ ],
+ "node": {
+  "orbRadius": "30 + 0.16·v  (+5 çekirdek; bilinmiyor 27, v = null)",
+  "orbCanvas": "round(r × 4.4) kare, düğüm merkezli (ışıma ve şimşekler bu alana sığar)",
+  "valueChip": {
+   "topCenter": "(x, y + 0.95r + 4)",
+   "height": 22,
+   "text": "v · rapor: ≈v · bilinmiyor: ?",
+   "trustBadge": "çipin sağında, 5 px boşluk",
+   "hot": "v ≥ 60: kenar #3D8BFF α.7, metin #D7ECFF, ışıma 12 px α.35",
+   "unknown": "kenar kesik, metin tx3"
+  },
+  "label": {
+   "topCenter": "(x, değer çipi üstü + 28)",
+   "selected": "zemin cy, metin #02050A, dolgu 3/6, ışıma 12 px"
+  },
+  "exceptionDA": "DOĞU AVRUPA: değer çipi (x, y − 0.95r − 26), etiket (x, y − 0.95r − 46) — küre üstünde (Batı Avrupa ile çakışmasın)",
+  "reticle": {
+   "sprite": "fx_reticle",
+   "size": "r × 3.2",
+   "spinSec": 12,
+   "tint": "#5BE4FF",
+   "glow": "4 px α.8"
+  },
+  "hoverRing": {
+   "sprite": "fx_hover_ring",
+   "size": "r × 2.5",
+   "pulseSec": 1.6
+  },
+  "hitArea": "daire, yarıçap max(r, 26)"
+ },
+ "overlay": {
+  "selection": {
+   "fill": {
+    "hex": "#5BE4FF",
+    "alpha": 0.07
+   },
+   "outline": {
+    "hex": "#5BE4FF",
+    "widthPx": 2.4,
+    "glowPx": 6,
+    "glowAlpha": 0.9,
+    "pulse": {
+     "periodSec": 2.4,
+     "alpha": [
+      0.55,
+      1
+     ]
+    }
+   }
+  },
+  "highlight": {
+   "use": "F-Masa4: haberin bölgesi",
+   "outline": {
+    "hex": "#FFB547",
+    "widthPx": 2,
+    "dashPx": [
+     6,
+     5
+    ],
+    "glowPx": 5,
+    "flowPxPerSec": 25
+   }
+  },
+  "spreadThreads": {
+   "endpoints": "düğüm merkezinden (r + 8) içeride; kontrol = orta nokta + (0, 10)",
+   "arrowhead": "YOK — yön akışla okunur (kaynak → hedef)",
+   "strokes": [
+    {
+     "name": "taban",
+     "hex": "#3D8BFF",
+     "alpha": 0.35,
+     "widthPx": 6,
+     "blurPx": 3
+    },
+    {
+     "name": "çizgi",
+     "hex": "#8FD3FF",
+     "widthPx": 1.6,
+     "dashPx": [
+      10,
+      8
+     ],
+     "flowPxPerSec": 37.5
+    },
+    {
+     "name": "parçacık",
+     "hex": "#FFFFFF",
+     "widthPx": 2.4,
+     "dashPx": [
+      2,
+      58
+     ],
+     "cap": "round",
+     "flowPxPerSec": 50
+    }
+   ],
+   "items": [
+    {
+     "from": "GDA",
+     "to": "GuA",
+     "quadBezier": [
+      [
+       1403.5,
+       538.2
+      ],
+      [
+       1370.1,
+       535.4
+      ],
+      [
+       1336.8,
+       512.6
+      ]
+     ]
+    },
+    {
+     "from": "GDA",
+     "to": "DoA",
+     "quadBezier": [
+      [
+       1461.1,
+       503.8
+      ],
+      [
+       1464.3,
+       488.9
+      ],
+      [
+       1467.4,
+       454.0
+      ]
+     ]
+    },
+    {
+     "from": "GDA",
+     "to": "OK",
+     "quadBezier": [
+      [
+       1487.6,
+       600.6
+      ],
+      [
+       1552.5,
+       694.2
+      ],
+      [
+       1617.4,
+       767.8
+      ]
+     ]
+    },
+    {
+     "from": "GuA",
+     "to": "ODKA",
+     "quadBezier": [
+      [
+       1247.7,
+       490.1
+      ],
+      [
+       1174.2,
+       490.8
+      ],
+      [
+       1100.7,
+       471.4
+      ]
+     ]
+    }
+   ]
+  },
+  "teamRoute": {
+   "team": "C",
+   "quadBezier": [
+    [
+     590.9,
+     320.0
+    ],
+    [
+     683.9,
+     300.5
+    ],
+    [
+     777.0,
+     317.0
+    ]
+   ],
+   "style": {
+    "hex": "#3DFFB4",
+    "widthPx": 1.6,
+    "dashPx": [
+     3,
+     7
+    ],
+    "cap": "round",
+    "flowPxPerSec": 17.1
+   },
+   "arrow": {
+    "path": "M−8 −5 L0 0 L−8 5 (açık), 1,8 px nane",
+    "at": [
+     777.0,
+     317.0
+    ],
+    "rotDeg": 10.0
+   }
+  },
+  "teams": [
+   {
+    "id": "A",
+    "center": [
+     250.3,
+     349.7
+    ]
+   },
+   {
+    "id": "B",
+    "center": [
+     1599,
+     392.3
+    ]
+   },
+   {
+    "id": "C",
+    "center": [
+     572.9,
+     320.3
+    ],
+    "etaTagTopLeft": [
+     546.9,
+     342.3
+    ]
+   }
+  ],
+  "teamToken": {
+   "size": 34,
+   "diamond": {
+    "inset": 8,
+    "fill": "#030E14 α.9",
+    "stroke": "#3DFFB4 1.5",
+    "glow": "10 px α.55 + iç 6 px α.35"
+   },
+   "ring": {
+    "sprite": "fx_ring_dash_34",
+    "alpha": 0.55,
+    "spinSec": 6
+   },
+   "letter": "Chakra 700 12 nane",
+   "highlight": "halka kehribar 1,5 px düz, inset −6, ışıma 12 px α.6 (F-Masa5)"
+  },
+  "etaTag": {
+   "height": 20,
+   "padding": [
+    0,
+    6
+   ],
+   "bg": "#030E14 α.82",
+   "border": "#3DFFB4 α.45",
+   "text": "Mono 500 12 nane",
+   "icon": "clock 12"
+  },
+  "alert": {
+   "region": "DoA",
+   "topLeft": [
+    1409,
+    348.3
+   ],
+   "size": [
+    30,
+    28
+   ],
+   "sprite": "fx_alert_tri",
+   "mark": "! Chakra 700 15 #1A1000",
+   "wave": {
+    "sprite": "fx_ring_44",
+    "center": "üçgenin %60 yüksekliği",
+    "scale": [
+     0.6,
+     1.9
+    ],
+    "alpha": [
+     0.9,
+     0
+    ],
+    "periodSec": 1.8
+   }
+  },
+  "panelLeader": {
+   "use": "F-Masa2: düğümden bölge kartına",
+   "from": "(x + 1.15r, y − 4)",
+   "to": "(kart solu, y − 4)",
+   "strokes": [
+    {
+     "hex": "#5BE4FF",
+     "alpha": 0.25,
+     "widthPx": 5,
+     "blurPx": 2
+    },
+    {
+     "hex": "#B4F5FF",
+     "widthPx": 1.4,
+     "dashPx": [
+      6,
+      4
+     ],
+     "flowPxPerSec": 22.2
+    }
+   ],
+   "endDots": {
+    "radius": 3.5,
+    "hex": "#B4F5FF"
+   }
+  }
+ },
+ "screenFx": {
+  "scanlines": {
+   "texture": "art/textures/tx_fx_scanlines_1x3.png",
+   "tile": "EKRAN pikseli (1×3), ölçeklenmez",
+   "alpha": 0.025,
+   "blend": "additive (screen)"
+  },
+  "scanBeam": {
+   "texture": "art/textures/tx_fx_map_scan_160.png",
+   "widthPx": 160,
+   "travel": "x −200 → 2100",
+   "periodSec": 12,
+   "blend": "additive (screen)",
+   "note": "referans karelerinde gizlidir (QUIET); oyunda açık"
+  },
+  "vignette": {
+   "texture": "art/textures/tx_fx_map_vignette_960.png",
+   "stretch": "1920×1080",
+   "note": "HUD'un altında, haritanın üstünde"
+  }
+ },
+ "entrance": {
+  "map": "opaklık 0→1, 1,2 sn ease-out",
+  "nodes": "küre içi büyüme (ORB_ALGORITHM §4 intro), gecikme 0,25 + 0,05·i",
+  "valueChips": "y +16→0 + opaklık, 0,6 sn, gecikme 0,5 + 0,05·i",
+  "labels": "opaklık 0,8 sn",
+  "teamTokens": "ölçek .94→1 + opaklık 0,6 sn"
+ }
+}

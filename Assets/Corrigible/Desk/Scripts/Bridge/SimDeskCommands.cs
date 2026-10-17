@@ -40,10 +40,13 @@ namespace Corrigible.Desk.Bridge
 
         public void ToggleWindow(WindowId id)
         {
-            var S = Sim.S;
-            if (id == WindowId.AiLog) State.LogSeen = S.Log.Count;
-            else if (id == WindowId.News) { State.NewsSeen = S.Seq; State.CriticalNewsId = null; }
-            else if (id == WindowId.Teams) State.TeamsBadge = false;
+            var S = Sim?.S;
+            if (S != null)
+            {
+                if (id == WindowId.AiLog) State.LogSeen = S.Log.Count;
+                else if (id == WindowId.News) { State.NewsSeen = S.Seq; State.CriticalNewsId = null; }
+                else if (id == WindowId.Teams) State.TeamsBadge = false;
+            }
             source.MarkDirty();
         }
 
@@ -171,6 +174,16 @@ namespace Corrigible.Desk.Bridge
             string screen = p[0], verb = p.Length > 1 ? p[1] : "", arg = p.Length > 2 ? p[2] : null;
             switch (screen)
             {
+                case "Verify":
+                    if (!string.IsNullOrEmpty(verb)) Report(Game.Verify(verb));
+                    break;
+                case "Report":
+                    if (verb == "Collect" && arg != null)
+                    {
+                        var result = Game.CollectFieldReport(arg);
+                        Report(result);
+                    }
+                    break;
                 case "Intro": RunIntro(verb, arg); break;
                 case "Campaign": RunCampaign(verb, arg); break;
                 case "Toast":

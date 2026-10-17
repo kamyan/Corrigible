@@ -51,6 +51,7 @@ namespace Corrigible.Desk
         [Header("Hedefler")]
         [SerializeField] Target[] targets = Array.Empty<Target>();
         [SerializeField] ResearchFolderView research;
+        [SerializeField] SadeDeskInteraction sade;
         [Header("Yerleşim")]
         [SerializeField] float holePad = 4, noteGap = 56, tipGap = 18, margin = 16;
         [SerializeField] float stepBodyTop = 73.5f, stepFooterGap = 5, stepBottom = 11, tipBodyTop = 62, tipBottom = 10;
@@ -148,11 +149,32 @@ namespace Corrigible.Desk
             if (openedFor != key)
             {
                 openedFor = key;
-                if (model.OpenWindow >= 0) WindowManager.Instance?.Open((WindowId)model.OpenWindow);
+                if (model.OpenWindow >= 0) OpenTargetWindow((WindowId)model.OpenWindow);
                 var t = Find(model.Target);
-                if (t.HasValue && t.Value.openWindow) WindowManager.Instance?.Open(t.Value.window);
+                if (t.HasValue && t.Value.openWindow) OpenTargetWindow(t.Value.window);
             }
             Layout();
+        }
+
+        void OpenTargetWindow(WindowId w)
+        {
+            if (sade != null)
+            {
+                if (w == WindowId.Dossier)
+                {
+                    if (string.IsNullOrEmpty(sade.State.SelectedRegion)) sade.SelectRegion("cn");
+                }
+                else
+                {
+                    string d = w switch
+                    {
+                        WindowId.News => "news", WindowId.Teams => "teams", WindowId.AiLog => "aiLog", WindowId.Guide => "guide", _ => "research",
+                    };
+                    sade.OpenDrawer(d);
+                }
+                return;
+            }
+            WindowManager.Instance?.Open(w);
         }
 
         /// <summary>Metni sarar, notun yüksekliğini metne göre verir; metnin alt kenarını (notun üstünden) döner.</summary>

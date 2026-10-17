@@ -206,13 +206,22 @@ namespace Corrigible.Desk.Tests
                 try
                 {
                     var roots = scene.GetRootGameObjects();
-                    var list = new SerializedObject(roots.SelectMany(g => g.GetComponentsInChildren<WindowManager>(true)).Single()).FindProperty("windows");
-                    var open = Enumerable.Range(0, list.arraySize)
-                        .Select(i => (FolderWindow)list.GetArrayElementAtIndex(i).FindPropertyRelative("window").objectReferenceValue)
-                        .Where(w => w.gameObject.activeSelf).Select(w => w.Id).ToList();
-                    Assert.IsEmpty(open, path + ": büyük proje panosu R ile açılır; başlangıçta harita görünmeli");
+                    var wm = roots.SelectMany(g => g.GetComponentsInChildren<WindowManager>(true)).SingleOrDefault();
+                    if (wm != null)
+                    {
+                        var list = new SerializedObject(wm).FindProperty("windows");
+                        var open = Enumerable.Range(0, list.arraySize)
+                            .Select(i => (FolderWindow)list.GetArrayElementAtIndex(i).FindPropertyRelative("window").objectReferenceValue)
+                            .Where(w => w.gameObject.activeSelf).Select(w => w.Id).ToList();
+                        Assert.IsEmpty(open, path + ": büyük proje panosu R ile açılır; başlangıçta harita görünmeli");
+                    }
+                    else
+                    {
+                        var sade = roots.SelectMany(g => g.GetComponentsInChildren<SadeDeskInteraction>(true)).Single();
+                        Assert.IsNotNull(Field(sade, "deskView"), path + ": sade masa görünümü bağlı");
+                    }
                     var em = roots.SelectMany(g => g.GetComponentsInChildren<EventModalView>(true)).Single();
-                    Assert.IsNotNull(Field(em, "map"), path + ": olay spotu ve ipliği haritaya bağlı");
+                    Assert.IsTrue(Field(em, "map") != null || Field(em, "sadeMap") != null, path + ": olay spotu ve ipliği haritaya bağlı");
                 }
                 finally { EditorSceneManager.CloseScene(scene, true); }
             }

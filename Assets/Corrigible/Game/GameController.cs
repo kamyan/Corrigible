@@ -47,12 +47,16 @@ namespace Corrigible.Game
 
         RuleOptions RulesForNewGame()
         {
-            if (Campaign != null) return Campaign.Rules();
+            if (Campaign != null)
+            {
+                var rules = Campaign.Rules().Clone();
+                rules.FieldReports = true;
+                return rules;
+            }
             int stage = OnboardingStage;
-            // Bütün kurallar açık ve olay yoksa temel kurallar (kayıt ve parite için null)
             // Olay kartları aşamalı öğrenmede 2. oyundan itibaren
             bool events = EventsEnabled && stage >= 2;
-            return stage >= 4 && !events ? null : new RuleOptions { Stage = stage, Events = events };
+            return new RuleOptions { Stage = stage, Events = events, FieldReports = true };
         }
 
         /// <summary>Bir pencere açıkken zamanı durdurmak için sunum katmanı ayarlar.</summary>
@@ -247,6 +251,7 @@ namespace Corrigible.Game
         public ActResult DiplomaticTalk(string id) => Run(() => Sim.DiplomaticTalk(id));
         public ActResult ResolveGift(string choice) => Run(() => Sim.ResolveGift(choice));
         public ActResult Verify(string headlineId) => Run(() => Sim.Verify(headlineId));
+        public ActResult CollectFieldReport(string id) => Run(() => Sim.CollectFieldReport(id));
         public ActResult GlobalKillSwitch() => Run(() => Sim.GlobalKillSwitch());
         public ActResult SetResearchReserve(double reserve) => Run(() => Sim.SetResearchReserve(reserve));
         public ActResult MoveTeam(string teamId, string regionId) => Run(() => Sim.MoveTeam(teamId, regionId));
@@ -322,6 +327,8 @@ namespace Corrigible.Game
             try
             {
                 Sim = Replay.Restore(rec);
+                // Eski komut geçmişi önce kendi kurallarıyla yürütülür; raporlar yalnızca devam gününden itibaren açılır.
+                if (Sim.ModernEconomy && !Sim.ReportsOn && Sim.S.Ending == null) Sim.EnableFieldReports();
             }
             catch (Exception e)
             {

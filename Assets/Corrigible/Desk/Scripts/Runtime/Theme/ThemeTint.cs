@@ -25,16 +25,20 @@ namespace Corrigible.Desk
             Apply();
         }
 
-        void OnEnable() { DeskTheme.Changed += Apply; Apply(); }
+        void OnEnable() { DeskTheme.Changed -= Apply; DeskTheme.Changed += Apply; Apply(); }
         void OnDisable() => DeskTheme.Changed -= Apply;
+        void OnDestroy() => DeskTheme.Changed -= Apply;
         void OnValidate() => Apply();
 
         public void Apply()
         {
+            // Eklemeli sahne denetiminde yok edilen editör örneği olay listesinde kalabilir.
+            if (this == null) { DeskTheme.Changed -= Apply; return; }
             if (string.IsNullOrEmpty(key)) return;
             var theme = DeskTheme.Active;
             if (theme == null) return;
             if (graphic == null) graphic = GetComponent<Graphic>();
+            if (graphic == null) return;
             var c = theme.Get(key);
             c.a *= alpha;
             if (graphic.color != c) graphic.color = c;

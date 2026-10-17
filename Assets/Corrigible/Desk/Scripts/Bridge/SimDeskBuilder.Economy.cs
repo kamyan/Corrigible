@@ -50,12 +50,20 @@ namespace Corrigible.Desk.Bridge
             Item(Loc.T("Sonraki gün brüt tahmin"), income.Total);
             Item(Loc.T("Hizalama · tam hız ihtiyacı"), -sim.ResearchNeed);
             Item(Loc.T("Sonraki gün araştırma tahmini"), -sim.NextResearchPayment);
+            if (sim.ReportsOn)
+                b.Items.Add(new BreakdownItemVM
+                {
+                    Label = Loc.T("Saha raporları · ek ödenek sınırı"),
+                    Value = Loc.F("Düzenli gelirin %{0:0}", sim.B.reportIncomeShare * 100),
+                    Status = "neutral",
+                });
             foreach (var t in sim.TransactionLedger.Where(t => t.Kind != "income" && t.Kind != "research" && (t.Fon != 0 || t.Sg != 0)).Reverse().Take(4))
             {
                 string kind = t.Kind switch
                 {
                     "operation" => GameData.Operation(t.Id)?.Name ?? Loc.T("Geliştirme"), "recovery" => Loc.T("Altyapı"), "diplomacy" => Loc.T("Diplomasi"),
                     "gift" => Loc.T("Hediye"), "donation" => Loc.T("Bağış"), "hire" => Loc.T("Ekip"),
+                    "report" => Loc.T("Saha raporu"),
                     _ => Loc.T("Tek seferlik işlem"),
                 };
                 b.Items.Add(new BreakdownItemVM

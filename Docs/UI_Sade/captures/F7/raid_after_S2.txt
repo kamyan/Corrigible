@@ -1,0 +1,30 @@
+Desk performans ölçümü · 2026-10-18 00:45
+Kaynak: Profiler UI Details (canvas toplayıcısının ürettiği batch'ler; Game görünümünün çizilmesinden bağımsız).
+
+UI batch toplamı (son kare): 14
+  WorldLabels  batch   3 (alt dahil   3) · köşe 6188
+      NoBreaking                  22 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Paper, Paper, Paper, Paper …
+      DifferentMaterialInstance    9 öğe · [CP-Bold Dyn SDF Material · UnityWhite] Caption, Caption, Caption, Caption …
+      DifferentMaterialInstance   33 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-SadeUI-942e7bf9] Pip0, Pip1, Target, Armor …
+  RaidHUDCanvas batch   8 (alt dahil   8) · köşe 7962
+      NoBreaking                   2 öğe · [Default UI Material · UnityWhite] Outline, Fill
+      DifferentTexture            63 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] TurnPlaque, Border, Calendar, Border …
+      DifferentMaterialInstance   16 öğe · [LF-SemiBold SDF Material · UnityWhite] Sub, TargetName0, TargetName1, Label …
+      DifferentMaterialInstance   28 öğe · [CP-Bold SDF Material · UnityWhite] Turn, Number, N, N …
+      DifferentMaterialInstance   64 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-SadeUI-942e7bf9] Lamp, Icon, TargetThumb0, Armor0 …
+      DifferentTexture             4 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] KeyFrame, KeyFrame, KeyFrame, Rule
+      DifferentMaterialInstance    1 öğe · [LF-SemiBold SDF Material · UnityWhite] Text
+      DifferentMaterialInstance    1 öğe · [CP-Bold SDF Material · UnityWhite] Value
+  RaidPanelCanvas batch   0 (alt dahil   0) · köşe 0
+  SadeDebug    batch   0 (alt dahil   0) · köşe 0
+  BoardBackground batch   3 (alt dahil   3) · köşe 13
+      NoBreaking                   1 öğe · [Default UI Material · tx_felt] Felt
+      DifferentTexture             1 öğe · [Default UI Material · tx_lamp_raid] Lamp
+      DifferentTexture             1 öğe · [Default UI Material · UnityWhite] BoardShadow
+
+Boşta 121 kare (Profiler):
+  GC UnityEngine.CoreModule.dll!UnityEngine::UnitySynchronizationContext.ExecuteTasks() [Invoke]: 2320 B, 10 karede
+  Canvas.BuildBatch: 0/121 kare
+  Canvas.SendWillRenderCanvases: 0/121 kare
+  Layout: 121/121 kare, ort. 0.002 ms
+  Graphic.PerformUpdate: 0/121 kare

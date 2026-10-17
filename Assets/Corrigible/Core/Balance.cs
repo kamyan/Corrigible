@@ -41,6 +41,17 @@ namespace Corrigible.Core
         public double modernResearchReserve = 15;
         public double centralFund = 0.75;
         public double regionalFundMul = 0.8;
+        // Saha raporları: ödenek yalnızca düzenli gelirin bir payından oluşur.
+        public double reportReward = 1;
+        public double reportIncomeShare = 0.08;
+        public double reportBudgetCap = 2;
+        public int reportMaxPending = 2;
+        public int reportIntervalDays = 6;
+        public int reportLifetimeDays = 30;
+        public int reportRegionCooldownDays = 12;
+        public double reportInfiltrationWeight = 0.5;
+        public double reportBothBonus = 0.25;
+        public double reportSaturation = 60;
         public double budgetTier1Cost = 25;
         public double budgetTier2Cost = 40;
         public double budgetTier1Multiplier = 1.15;

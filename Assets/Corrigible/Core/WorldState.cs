@@ -233,6 +233,11 @@ namespace Corrigible.Core
         public IncomeBreakdown LastIncome;
         public int LastIncomeDay;
         public double LastResearchPayment;
+        /// <summary>Üretilmiş fişlerin ödülü bu havuzdan ayrılır; kaybolan fiş havuza geri dönmez.</summary>
+        public double FieldReportBudget;
+        public int FieldReportSequence, NextFieldReportDay;
+        public List<FieldReport> FieldReports = new List<FieldReport>();
+        public Dictionary<string, int> FieldReportCooldowns = new Dictionary<string, int>();
         public List<EconomyTransaction> TransactionLedger = new List<EconomyTransaction>();
         /// <summary>Acil durum fonu: araştırma fonu bu değerin altına indirmez (oyuncu ayarlar).</summary>
         public double ResearchReserve;

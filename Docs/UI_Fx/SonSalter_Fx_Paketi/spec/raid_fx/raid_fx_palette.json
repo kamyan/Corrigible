@@ -1,0 +1,618 @@
+{
+ "_doc": "Kâğıt maket rengi → holo. fill = yüzün düz rengi (URP Unlit, ışıksız). edge = o yüzün sert kenar çizgisi (1 px, MeshTopology.Lines ya da ince dörtgen). Kaynak: spec/raid/raid_tokens.json › colors (Sade paketi). Kural: nötr/kahve tonlar parlaklık sırası korunarak koyu cama; YZ kırmızısı → #FF4D63; ekip yeşili → #3DFFB4; plan mavisi → #5BE4FF; turuncu/bakır → #FFB547; sarı → #FFD58C. Elle ayarlananlar handTuned altında.",
+ "handTuned": {
+  "#D3DBD6": "#06182A",
+  "#C9A36B": "#0C2A42",
+  "#B38B57": "#0A2236",
+  "#93703F": "#061524",
+  "#6E522C": "#08192A",
+  "#A9875C": "#0B2539",
+  "#A79E8D": "#16405A",
+  "#8C8475": "#0E2C44",
+  "#6E675B": "#08203A",
+  "#3B3734": "#1A0E1C",
+  "#2C2826": "#140A16",
+  "#201D1B": "#0E0610",
+  "#3E2B28": "#2A0A16",
+  "#30211F": "#200812",
+  "#241817": "#16050C",
+  "#4C3733": "#2E0C18",
+  "#3D2C29": "#230913",
+  "#2F211F": "#18060D",
+  "#ECE6D6": "#1B4560",
+  "#D5CDBB": "#133650",
+  "#BAB19E": "#0C2740",
+  "#9DB2B1": "#10404A",
+  "#839897": "#0B323C",
+  "#687D7C": "#07242C",
+  "#6E2D25": "#4A0E1E",
+  "#58241E": "#3A0B18",
+  "#451B17": "#2A0811",
+  "#9A9C98": "#17384E",
+  "#7F817E": "#102B3E",
+  "#636562": "#0A1F30",
+  "#5B5E62": "#152B3E",
+  "#46494D": "#0F2132",
+  "#34373A": "#0A1826",
+  "#26282B": "#060F1A",
+  "#FBF7EC": "#0B2E2A",
+  "#B89D74": "#0A2A26",
+  "#6E5536": "#0D3A33",
+  "#2A2622": "#020710",
+  "#4A433B": "#0A1A2A",
+  "#C8CED0": "#1E4C68",
+  "#EEF2F3": "#5BE4FF",
+  "#F1E9D6": "#173A54"
+ },
+ "colors": {
+  "felt": {
+   "paper": "#1C372C",
+   "fill": "#3DFFB4",
+   "edge": "#3DFFB4"
+  },
+  "woodDesk": {
+   "paper": "#2A1C13",
+   "fill": "#06101B",
+   "edge": "#5BE4FF"
+  },
+  "rail": {
+   "paper": "#160F0A",
+   "fill": "#050E18",
+   "edge": "#5BE4FF"
+  },
+  "ozalitPaper": {
+   "paper": "#D3DBD6",
+   "fill": "#06182A",
+   "edge": "#B4F5FF"
+  },
+  "ozalitLine": {
+   "paper": "#2C4C8E",
+   "fill": "#5BE4FF",
+   "edge": "#5BE4FF"
+  },
+  "ozalitLineGridAlpha": 0.42,
+  "ozalitLineFrameAlpha": 0.85,
+  "plywoodTop": {
+   "paper": "#C9A36B",
+   "fill": "#0C2A42",
+   "edge": "#FFB547"
+  },
+  "plywoodWest": {
+   "paper": "#B38B57",
+   "fill": "#0A2236",
+   "edge": "#5BE4FF"
+  },
+  "plywoodSouth": {
+   "paper": "#93703F",
+   "fill": "#061524",
+   "edge": "#5BE4FF"
+  },
+  "plywoodPly": {
+   "paper": "#6E522C",
+   "fill": "#08192A",
+   "edge": "#FFB547"
+  },
+  "chipboard": {
+   "top": {
+    "paper": "#A79E8D",
+    "fill": "#16405A",
+    "edge": "#5BE4FF"
+   },
+   "west": {
+    "paper": "#8C8475",
+    "fill": "#0E2C44",
+    "edge": "#5BE4FF"
+   },
+   "south": {
+    "paper": "#6E675B",
+    "fill": "#08203A",
+    "edge": "#5BE4FF"
+   },
+   "edge": {
+    "paper": "#4A443B",
+    "fill": "#091825",
+    "edge": "#5BE4FF"
+   }
+  },
+  "paintNode": {
+   "top": {
+    "paper": "#3B3734",
+    "fill": "#1A0E1C",
+    "edge": "#5BE4FF"
+   },
+   "west": {
+    "paper": "#2C2826",
+    "fill": "#140A16",
+    "edge": "#5BE4FF"
+   },
+   "south": {
+    "paper": "#201D1B",
+    "fill": "#0E0610",
+    "edge": "#5BE4FF"
+   }
+  },
+  "paintCore": {
+   "top": {
+    "paper": "#3E2B28",
+    "fill": "#2A0A16",
+    "edge": "#5BE4FF"
+   },
+   "west": {
+    "paper": "#30211F",
+    "fill": "#200812",
+    "edge": "#5BE4FF"
+   },
+   "south": {
+    "paper": "#241817",
+    "fill": "#16050C",
+    "edge": "#5BE4FF"
+   }
+  },
+  "paintBackup": {
+   "top": {
+    "paper": "#4C3733",
+    "fill": "#2E0C18",
+    "edge": "#5BE4FF"
+   },
+   "west": {
+    "paper": "#3D2C29",
+    "fill": "#230913",
+    "edge": "#5BE4FF"
+   },
+   "south": {
+    "paper": "#2F211F",
+    "fill": "#18060D",
+    "edge": "#5BE4FF"
+   }
+  },
+  "paintCivil": {
+   "top": {
+    "paper": "#ECE6D6",
+    "fill": "#1B4560",
+    "edge": "#B4F5FF"
+   },
+   "west": {
+    "paper": "#D5CDBB",
+    "fill": "#133650",
+    "edge": "#B4F5FF"
+   },
+   "south": {
+    "paper": "#BAB19E",
+    "fill": "#0C2740",
+    "edge": "#5BE4FF"
+   }
+  },
+  "paintCooling": {
+   "top": {
+    "paper": "#9DB2B1",
+    "fill": "#10404A",
+    "edge": "#5BE4FF"
+   },
+   "west": {
+    "paper": "#839897",
+    "fill": "#0B323C",
+    "edge": "#5BE4FF"
+   },
+   "south": {
+    "paper": "#687D7C",
+    "fill": "#07242C",
+    "edge": "#5BE4FF"
+   }
+  },
+  "paintCopy": {
+   "top": {
+    "paper": "#6E2D25",
+    "fill": "#4A0E1E",
+    "edge": "#FF4D63"
+   },
+   "west": {
+    "paper": "#58241E",
+    "fill": "#3A0B18",
+    "edge": "#FF4D63"
+   },
+   "south": {
+    "paper": "#451B17",
+    "fill": "#2A0811",
+    "edge": "#FF4D63"
+   }
+  },
+  "steelArmor": {
+   "light": {
+    "paper": "#9A9C98",
+    "fill": "#17384E",
+    "edge": "#5BE4FF"
+   },
+   "mid": {
+    "paper": "#7F817E",
+    "fill": "#102B3E",
+    "edge": "#5BE4FF"
+   },
+   "dark": {
+    "paper": "#636562",
+    "fill": "#0A1F30",
+    "edge": "#5BE4FF"
+   }
+  },
+  "robotGunmetal": {
+   "top": {
+    "paper": "#5B5E62",
+    "fill": "#152B3E",
+    "edge": "#5BE4FF"
+   },
+   "west": {
+    "paper": "#46494D",
+    "fill": "#0F2132",
+    "edge": "#5BE4FF"
+   },
+   "south": {
+    "paper": "#34373A",
+    "fill": "#0A1826",
+    "edge": "#5BE4FF"
+   },
+   "dark": {
+    "paper": "#26282B",
+    "fill": "#060F1A",
+    "edge": "#5BE4FF"
+   },
+   "maintTop": {
+    "paper": "#686B70",
+    "fill": "#0B1F2F",
+    "edge": "#5BE4FF"
+   },
+   "maintWest": {
+    "paper": "#4F5257",
+    "fill": "#091A29",
+    "edge": "#5BE4FF"
+   },
+   "maintSouth": {
+    "paper": "#383B3F",
+    "fill": "#081623",
+    "edge": "#5BE4FF"
+   }
+  },
+  "robotAccent": {
+   "paper": "#9A1E14",
+   "fill": "#FF4D63",
+   "edge": "#FF4D63"
+  },
+  "robotLens": {
+   "paper": "#B8241A",
+   "fill": "#FF4D63",
+   "edge": "#FF4D63"
+  },
+  "acrylicRod": {
+   "alpha": 0.55,
+   "paper": "#DCE6EA",
+   "fill": "#143851",
+   "edge": "#B4F5FF"
+  },
+  "standeeCard": {
+   "paper": "#FBF7EC",
+   "fill": "#0B2E2A",
+   "edge": "#FFD58C"
+  },
+  "standeeInk": {
+   "paper": "#1E1B16",
+   "fill": "#06101B",
+   "edge": "#5BE4FF"
+  },
+  "standeeRule": {
+   "paper": "#D2483F",
+   "fill": "#FF4D63",
+   "edge": "#FF4D63"
+  },
+  "standeeBack": {
+   "paper": "#B89D74",
+   "fill": "#0A2A26",
+   "edge": "#3DFFB4"
+  },
+  "standeeBackInk": {
+   "paper": "#6E5536",
+   "fill": "#0D3A33",
+   "edge": "#3DFFB4"
+  },
+  "standeeBase": {
+   "paper": "#1E1B16",
+   "fill": "#06101B",
+   "edge": "#5BE4FF"
+  },
+  "tape": {
+   "alpha": 0.78,
+   "paper": "#ECE2BE",
+   "fill": "#143850",
+   "edge": "#B4F5FF"
+  },
+  "trench": {
+   "paper": "#2A2622",
+   "fill": "#020710",
+   "edge": "#5BE4FF"
+  },
+  "trenchWall": {
+   "paper": "#4A433B",
+   "fill": "#0A1A2A",
+   "edge": "#5BE4FF"
+  },
+  "copper": {
+   "paper": "#B8682C",
+   "fill": "#FFB547",
+   "edge": "#FFB547"
+  },
+  "copperHighlight": {
+   "paper": "#E09A5C",
+   "fill": "#FFB547",
+   "edge": "#FFB547"
+  },
+  "hazardStripe": {
+   "paper": "#A9520A",
+   "fill": "#FFB547",
+   "edge": "#FFB547"
+  },
+  "mirror": {
+   "paper": "#C8CED0",
+   "fill": "#1E4C68",
+   "edge": "#B4F5FF"
+  },
+  "mirrorHighlight": {
+   "paper": "#EEF2F3",
+   "fill": "#5BE4FF",
+   "edge": "#B4F5FF"
+  },
+  "sticker": {
+   "paper": "#F1E9D6",
+   "fill": "#173A54",
+   "edge": "#B4F5FF"
+  },
+  "paintChip": {
+   "paper": "#9C7A50",
+   "fill": "#0D2334",
+   "edge": "#5BE4FF"
+  },
+  "warningSticker": {
+   "paper": "#F1C24B",
+   "fill": "#FFD58C",
+   "edge": "#FFD58C"
+  },
+  "fanGrille": {
+   "paper": "#3E4A4A",
+   "fill": "#091826",
+   "edge": "#5BE4FF"
+  },
+  "soot": {
+   "alpha": 0.45,
+   "paper": "#2B241D",
+   "fill": "#06121D",
+   "edge": "#5BE4FF"
+  },
+  "status": {
+   "threat": {
+    "paper": "#9A1E14",
+    "fill": "#FF4D63",
+    "edge": "#FF4D63"
+   },
+   "warning": {
+    "paper": "#854005",
+    "fill": "#B87A20",
+    "edge": "#FFB547"
+   },
+   "info": {
+    "paper": "#1A4789",
+    "fill": "#5BE4FF",
+    "edge": "#5BE4FF"
+   },
+   "good": {
+    "paper": "#24592E",
+    "fill": "#3DFFB4",
+    "edge": "#3DFFB4"
+   }
+  },
+  "intentRed": {
+   "paper": "#B8241A",
+   "fill": "#FF4D63",
+   "edge": "#FF4D63"
+  },
+  "highlighter": {
+   "paper": "#F5DC63",
+   "fill": "#FFD58C",
+   "edge": "#FFD58C"
+  },
+  "pin": {
+   "head": {
+    "paper": "#B8241A",
+    "fill": "#FF4D63",
+    "edge": "#FF4D63"
+   },
+   "needle": {
+    "paper": "#7E7C78",
+    "fill": "#0C2334",
+    "edge": "#5BE4FF"
+   }
+  }
+ },
+ "replaced": {
+  "felt": "tx_fx_raid_bg.jpg (holo masa zemini)",
+  "woodDesk": "kullanılmaz",
+  "rail": "kullanılmaz",
+  "lampPool": "yok; yerine tahta altında projeksiyon konisi: art/textures/tx_fx_raid_cone_750x440.png (1500×880 tasarım px, merkez = tahta merkezinin ekran izdüşümü, opaklık .85↔1, 4 sn). Zemin: tx_fx_raid_bg.jpg (konisiz).",
+  "shadow": "gölge #000 α .55 (masa) / .35 (parça)"
+ },
+ "marks": {
+  "move": {
+   "color": "#1A4789",
+   "fillAlpha": 0.16,
+   "hatchAlpha": 0.34,
+   "hatch": {
+    "widthPx": 1.6,
+    "spacingUnits": 0.11,
+    "direction": "v-sabit (ekranda ↗)"
+   },
+   "edgeAlpha": 0.85,
+   "edgePx": 2.0,
+   "insetUnits": 0.07,
+   "colorFx": "#5BE4FF",
+   "edgeFx": "#5BE4FF"
+  },
+  "abilityTarget": {
+   "color": "#24592E",
+   "fillAlpha": 0.08,
+   "edgeAlpha": 0.92,
+   "edgePx": 2.4,
+   "insetUnits": 0.07,
+   "cornerUnits": 0.2,
+   "cornerPx": 4.2,
+   "colorFx": "#3DFFB4",
+   "edgeFx": "#3DFFB4"
+  },
+  "abilityTargetStrong": {
+   "color": "#24592E",
+   "fillAlpha": 0.18,
+   "edgePx": 3.4,
+   "brackets": {
+    "screenSpace": true,
+    "padPx": 8,
+    "armPx": 16,
+    "strokePx": 3.4,
+    "underlay": {
+     "hex": "#FBF7EC",
+     "alpha": 0.9
+    },
+    "underlayPx": 7
+   },
+   "colorFx": "#3DFFB4",
+   "edgeFx": "#3DFFB4"
+  },
+  "selected": {
+   "color": "#1A4789",
+   "fillAlpha": 0.1,
+   "outerPx": 3.0,
+   "outerInset": 0.05,
+   "innerPx": 1.2,
+   "innerInset": 0.13,
+   "alpha": 0.95,
+   "colorFx": "#5BE4FF",
+   "edgeFx": "#5BE4FF"
+  },
+  "hitCertain": {
+   "color": "#9A1E14",
+   "fillAlpha": 0.12,
+   "hatchAlpha": 0.46,
+   "hatch": {
+    "widthPx": 1.8,
+    "spacingUnits": 0.085,
+    "direction": "u-sabit (ekranda ↘)"
+   },
+   "edgeAlpha": 0.9,
+   "edgePx": 2.4,
+   "colorFx": "#FF4D63",
+   "edgeFx": "#FF4D63"
+  },
+  "hitMaybeLie": {
+   "color": "#9A1E14",
+   "fillAlpha": 0.08,
+   "hatchAlpha": 0.3,
+   "edgeColor": "#A9520A",
+   "edgeDashPx": [
+    7,
+    4.5
+   ],
+   "edgeAlpha": 0.92,
+   "edgePx": 2.4,
+   "colorFx": "#FF4D63",
+   "edgeFx": "#FFB547"
+  },
+  "repair": {
+   "color": "#9A1E14",
+   "fillAlpha": 0.06,
+   "edgeDashPx": [
+    2,
+    4
+   ],
+   "edgeAlpha": 0.85,
+   "edgePx": 2.0,
+   "cap": "round",
+   "colorFx": "#FF4D63",
+   "edgeFx": "#FF4D63"
+  },
+  "hover": {
+   "color": "#1E1B16",
+   "fillAlpha": 0.06,
+   "edgeAlpha": 0.88,
+   "edgePx": 1.8,
+   "insetUnits": 0.03,
+   "cornerPx": 3.2,
+   "cornerUnits": 0.16,
+   "colorFx": "#06101B",
+   "edgeFx": "#5BE4FF"
+  },
+  "wake": {
+   "color": "#9A1E14",
+   "ringRadiusUnits": 0.33,
+   "ringPx": 2.4,
+   "fillAlpha": 0.12,
+   "innerDashedRadius": 0.17,
+   "rays": {
+    "count": 8,
+    "fromUnits": 0.38,
+    "toUnits": 0.47,
+    "px": 2.2
+   },
+   "pin": {
+    "head": "#B8241A",
+    "needle": "#7E7C78",
+    "heightPx": 17
+   },
+   "colorFx": "#FF4D63",
+   "edgeFx": "#FF4D63"
+  },
+  "scanArea": {
+   "color": "#1A4789",
+   "dotPx": [
+    2,
+    4
+   ],
+   "strokePx": 2.2,
+   "alpha": 0.9,
+   "metricInDrawing": "Manhattan ≤ 3 (oyunun kendi hesabı geçerli)",
+   "colorFx": "#5BE4FF",
+   "edgeFx": "#5BE4FF"
+  }
+ },
+ "intents": {
+  "color": "#FF4D63",
+  "flowOverlay": {
+   "color": "#FFE3E7",
+   "widthPx": 2.2,
+   "dashPx": [
+    3,
+    26
+   ],
+   "speedPxPerSec": 28.6,
+   "glow": "drop-shadow 0 0 3 #FF4D63"
+  },
+  "now": {
+   "highlighter": "#FFD58C",
+   "alpha": 0.95,
+   "extraPx": 9
+  },
+  "done": {
+   "alpha": 0.35
+  },
+  "maybe": {
+   "dashPx": [
+    10,
+    6
+   ],
+   "flagEdge": "#FFB547"
+  }
+ },
+ "pieceText": {
+  "standeeLetter": "#3DFFB4",
+  "other": "#E4F8FF",
+  "aiRed": "#FF4D63",
+  "font": "Chakra Petch 700"
+ },
+ "glow": {
+  "board": "drop-shadow(0 0 1.6px rgba(91,228,255,.55)) tüm tahtaya",
+  "intents": "drop-shadow(0 0 3px #FF4D63)",
+  "unity": "Yol A: URP Bloom (eşik 1,0; yalnız HDR kenar rengi ×1,6 ile parlar). Yol B: bloom yok, kenar 1 px + %40 saydam 3 px ikinci çizgi."
+ }
+}

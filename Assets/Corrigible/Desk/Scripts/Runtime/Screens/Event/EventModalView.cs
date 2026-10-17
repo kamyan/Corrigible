@@ -50,6 +50,7 @@ namespace Corrigible.Desk
         [SerializeField] Vector2 threadShadowOffset = new Vector2(1.5f, 2);
         [Tooltip("Spot, halka ve ipliğin bölge ucu bu haritadaki düğümün gerçek yerinden (boşsa tasarım koordinatı).")]
         [SerializeField] MapView map;
+        [SerializeField] SadeMapView sadeMap;
         [Tooltip("İpliğin bildirimdeki raptiyesi: bildirim kâğıdının sol-üst köşesinden uzaklık (px, y aşağı).")]
         [SerializeField] Vector2 memoPinOffset = new Vector2(690, 22);
 
@@ -172,14 +173,15 @@ namespace Corrigible.Desk
                 DeskUi.SetActive(markerRing, false);
                 return;
             }
-            Vector2 local = scrim.rectTransform.InverseTransformPoint(MapWorld(s.Center));
+            Vector2 local = scrim.rectTransform.InverseTransformPoint(SpotWorld(s.Region, s.Center));
             // CSS: delik çevresinde .38 halka .78 karartmanın üstünde (≈ .86); Linear'da eşdeğer alfalar
             var c = DeskTheme.Active.Get("modal.scrim");
             float outer = DeskMath.LinearOverlayAlpha(c, s.ScrimAlpha);
             float ring = DeskMath.LinearOverlayAlpha(c, 1 - (1 - 0.38f) * (1 - s.ScrimAlpha));
             scrim.color = new Color(c.r, c.g, c.b, outer);
             // Harita sahnede ölçeklenmişse delik düğümle birlikte küçülür/büyür
-            float k = map != null ? map.WorldScale / Mathf.Max(1e-5f, scrim.rectTransform.lossyScale.x) : 1;
+            float k = map != null ? map.WorldScale / Mathf.Max(1e-5f, scrim.rectTransform.lossyScale.x)
+                : sadeMap != null ? sadeMap.WorldScale / Mathf.Max(1e-5f, scrim.rectTransform.lossyScale.x) : 1;
             scrim.SetSpot(local, s.HoleDiameter / 2 * k, s.Ring * k, new Color(c.r, c.g, c.b, ring));
 
             var m = e.MarkerRing;
@@ -199,7 +201,7 @@ namespace Corrigible.Desk
             if (m?.Center == null) return;
             var rr = markerRing.rectTransform;
             rr.anchorMin = rr.anchorMax = new Vector2(0, 1); rr.pivot = new Vector2(0.5f, 0.5f);
-            var tl = TopLeft((RectTransform)rr.parent, MapWorld(m.Center));
+            var tl = TopLeft((RectTransform)rr.parent, SpotWorld(vm?.Spotlight?.Region, m.Center));
             rr.anchoredPosition = new Vector2(tl.x, -tl.y);
         }
 
@@ -221,7 +223,7 @@ namespace Corrigible.Desk
         void PlaceThread(EventStringVM s)
         {
             if (s?.From == null || s.To == null) return;
-            Vector3 from = MemoPinWorld(s.From), to = MapWorld(s.To);
+            Vector3 from = MemoPinWorld(s.From), to = SpotWorld(vm?.Spotlight?.Region, s.To);
             Line(thread, from, to, Vector2.zero);
             Line(threadShadow, from, to, threadShadowOffset);
             Pin(pinFrom, from); Pin(pinTo, to);
@@ -235,7 +237,7 @@ namespace Corrigible.Desk
         {
             var c = e.Spotlight?.Center;
             if (c == null) return;
-            var world = MapWorld(c);
+            var world = SpotWorld(e.Spotlight.Region, c);
             bool under = Covers(memo != null ? memo.Paper : null, world) || Covers(log, world) || Covers(advisor, world);
             foreach (var o in options) under |= o != null && Covers((RectTransform)o.transform, world);
             if (!under) return;
@@ -248,7 +250,10 @@ namespace Corrigible.Desk
             r != null && r.gameObject.activeInHierarchy && r.rect.Contains(r.InverseTransformPoint(world));
 
         /// <summary>Harita koordinatının ekrandaki yeri: harita bağlıysa düğümlerin gerçek yeri, değilse tasarım kökü.</summary>
-        Vector3 MapWorld(float[] p) => map != null ? map.MapToWorld(p[0], p[1]) : design.TransformPoint(Design(p[0], p[1]));
+        Vector3 MapWorld(float[] p) => map != null ? map.MapToWorld(p[0], p[1]) : sadeMap != null ? sadeMap.MapToWorld(p[0], p[1]) : design.TransformPoint(Design(p[0], p[1]));
+
+        Vector3 SpotWorld(string regionId, float[] fallback) =>
+            sadeMap != null && !string.IsNullOrEmpty(regionId) ? sadeMap.RegionWorld(regionId) : MapWorld(fallback);
 
         Vector3 MemoPinWorld(float[] fallback)
         {

@@ -29,12 +29,21 @@ namespace Corrigible.Desk.EditorTools
                 var type = e.imageType switch { "sliced" => Image.Type.Sliced, "tiled" => Image.Type.Tiled, _ => Image.Type.Simple };
                 list.Add(new DeskSprites.Entry { name = e.Name, sprite = sp, type = type, tint = e.tint });
             }
+            // Sade kiti (Art/Sade/Sprites): adlar C kitiyle çakışmaz, aynı kayıtta aranır
+            foreach (var e in SadeSpriteManifest.All.OrderBy(e => e.name))
+            {
+                var sp = AssetDatabase.LoadAssetAtPath<Sprite>(SadeSpriteManifest.SpritesDir + "/" + e.name + ".png");
+                if (sp == null) { Debug.LogWarning("[Sade] Sprite yok: " + e.name); continue; }
+                var type = e.imageType switch { "sliced" => Image.Type.Sliced, "tiled" => Image.Type.Tiled, _ => Image.Type.Simple };
+                list.Add(new DeskSprites.Entry { name = e.name, sprite = sp, type = type, tint = e.tint });
+            }
             reg.sprites = list;
 
-            reg.textures = AssetDatabase.FindAssets("t:Texture2D", new[] { DeskSpriteManifest.TexturesDir })
+            reg.textures = AssetDatabase.FindAssets("t:Texture2D", new[] { DeskSpriteManifest.TexturesDir, SadeSpriteManifest.TexturesDir })
                 .Select(g => AssetDatabase.LoadAssetAtPath<Texture2D>(AssetDatabase.GUIDToAssetPath(g)))
                 .OrderBy(t => t.name).ToList();
 
+            reg.Invalidate();
             EditorUtility.SetDirty(reg);
             AssetDatabase.SaveAssets();
             Debug.Log($"[Desk] Sprite kaydı: {list.Count} sprite, {reg.textures.Count} doku.");

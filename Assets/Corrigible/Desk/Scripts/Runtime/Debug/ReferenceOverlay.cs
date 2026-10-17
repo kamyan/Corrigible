@@ -15,6 +15,7 @@ namespace Corrigible.Desk
     {
         [SerializeField] string screenName = "C1_main";
         [SerializeField] string folder = "Docs/UI_C/reference/screens";
+        [SerializeField] string extension = ".png";
         [SerializeField] float[] opacities = { 0.25f, 0.5f, 0.75f, 1f };
 
         RawImage image;
@@ -58,7 +59,7 @@ namespace Corrigible.Desk
         void Load()
         {
             if (loaded == screenName && tex != null) return;
-            var path = Path.Combine(Application.dataPath, "..", folder, screenName + ".png");
+            var path = Path.Combine(Application.dataPath, "..", folder, screenName + extension);
             if (!File.Exists(path)) { Debug.LogWarning("[Desk] Referans yok: " + path); return; }
             if (tex == null) tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
             tex.LoadImage(File.ReadAllBytes(path));

@@ -1,0 +1,26 @@
+Desk performans ölçümü · 2026-10-18 00:45
+Kaynak: Profiler UI Details (canvas toplayıcısının ürettiği batch'ler; Game görünümünün çizilmesinden bağımsız).
+
+UI batch toplamı (son kare): 10
+  WorldLabels  batch   3 (alt dahil   3) · köşe 2828
+      NoBreaking                  10 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Paper, Paper, Paper, Paper …
+      DifferentMaterialInstance    2 öğe · [CP-Bold Dyn SDF Material · UnityWhite] Caption, Caption
+      DifferentMaterialInstance   18 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-SadeUI-942e7bf9] Pip0, Pip1, Pip0, Pip1 …
+  RaidHUDCanvas batch   0 (alt dahil   0) · köşe 0
+  RaidPanelCanvas batch   4 (alt dahil   4) · köşe 3184
+      NoBreaking                   1 öğe · [Default UI Material · UnityWhite] Dim
+      DifferentTexture             7 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] ResultMemo, Border, Rule, Continue …
+      DifferentMaterialInstance    3 öğe · [LF-SemiBold SDF Material · UnityWhite] Subtitle, Rows, Text
+      DifferentMaterialInstance    3 öğe · [CP-Bold SDF Material · UnityWhite] Eyebrow, Title, Text
+  SadeDebug    batch   0 (alt dahil   0) · köşe 0
+  BoardBackground batch   3 (alt dahil   3) · köşe 13
+      NoBreaking                   1 öğe · [Default UI Material · tx_felt] Felt
+      DifferentTexture             1 öğe · [Default UI Material · tx_lamp_raid] Lamp
+      DifferentTexture             1 öğe · [Default UI Material · UnityWhite] BoardShadow
+
+Boşta 121 kare (Profiler):
+  GC UnityEngine.CoreModule.dll!UnityEngine::UnitySynchronizationContext.ExecuteTasks() [Invoke]: 2088 B, 9 karede
+  Canvas.BuildBatch: 0/121 kare
+  Canvas.SendWillRenderCanvases: 0/121 kare
+  Layout: 121/121 kare, ort. 0.002 ms
+  Graphic.PerformUpdate: 0/121 kare

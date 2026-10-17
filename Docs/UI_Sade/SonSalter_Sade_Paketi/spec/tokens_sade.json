@@ -1,0 +1,2872 @@
+{
+ "meta": {
+  "name": "Son Şalter · Sade arayüz tokenları (S-Masa, S-Baskın)",
+  "version": "1.1",
+  "date": "2026-10-16",
+  "extends": [
+   "Docs/UI_C/spec/tokens.json (renk, yazı, gölge, malzeme — aynen geçerli)",
+   "spec/raid/raid_tokens.json (3D tahta: kamera, ışık, malzeme, işaret, niyet, hareket)"
+  ],
+  "units": "UI: 1920×1080 referans px, sol-üst orijin. Gölge = (x, y) düz ofset, bulanıklık 0. Renk sRGB hex, alfa 0–1.",
+  "truthOrder": "görünüş: reference/screens PNG · sayı: reference/measure TSV · davranış: PROMPT.md",
+  "changes": "1.1: açılır paneller çizildi (S-Masa3–9, S-Baskin3–9); HEDEF kartına YZ yeteneği çipi (S-Baskin1–2 dahil); HEDEF yüksekliği 92 → 96."
+ },
+ "colors": {
+  "ink": "#1E1B16",
+  "ink2": "#463F34",
+  "ink3": "#675F50",
+  "paper": "#F1E9D6",
+  "edge": "#C8B996",
+  "index": "#FBF7EC",
+  "onion": "#E3E0D8",
+  "carbon": "#524973",
+  "sticky": "#F5DC63",
+  "highlighter": "#F5D646",
+  "ruleRed": "#D2483F",
+  "status": {
+   "threat": "#9A1E14",
+   "threatBright": "#B8241A",
+   "warning": "#854005",
+   "warningLine": "#A9520A",
+   "info": "#1A4789",
+   "good": "#24592E"
+  },
+  "plaque": {
+   "bg": "#0E0906",
+   "border": "#6E5A33",
+   "divider": "#4A3C22",
+   "brass": "#C9A86A",
+   "clock": "#E6CF9C"
+  },
+  "map": {
+   "oceanCenter": "#DCE0D6",
+   "oceanEdge": "#C6CCC1",
+   "oceanGradient": "radyal; merkez (%50, %46), yarıçap %70 (map_base dokusunda)",
+   "graticule": {
+    "hex": "#56604F",
+    "alpha": 0.2
+   },
+   "tropics": {
+    "hex": "#56604F",
+    "alpha": 0.24
+   },
+   "equator": {
+    "hex": "#56604F",
+    "alpha": 0.34
+   },
+   "coastHaloWide": {
+    "hex": "#E4E7DE",
+    "alpha": 0.75
+   },
+   "coastHaloNarrow": {
+    "hex": "#B9C1B4",
+    "alpha": 0.9
+   },
+   "countryBorder": {
+    "hex": "#3A2A20",
+    "alpha": 0.22
+   },
+   "regionBorderUnder": {
+    "hex": "#F4EEDD",
+    "alpha": 0.9
+   },
+   "regionBorder": {
+    "hex": "#2C251E",
+    "alpha": 0.75
+   },
+   "coast": {
+    "hex": "#3E3529",
+    "alpha": 0.8
+   },
+   "unknownLand": "#C8C2B0",
+   "fogStripe": {
+    "hex": "#8E8673",
+    "alpha": 0.55
+   },
+   "quarantinePaper": {
+    "hex": "#EFE8D6",
+    "alpha": 0.38
+   },
+   "quarantineHatch": {
+    "hex": "#1F5A33",
+    "alpha": 0.3
+   },
+   "quarantineLine": {
+    "hex": "#24592E",
+    "alpha": 0.85
+   },
+   "labelInk": "#2E2820",
+   "labelHalo": "#F1E9D6",
+   "lampWarm": {
+    "hex": "#FFECC8",
+    "alpha": 0.1
+   },
+   "lampEdge": {
+    "hex": "#160D07",
+    "alpha": 0.34
+   }
+  },
+  "infiltrationRamp": [
+   {
+    "from": 0,
+    "hex": "#F2C9B8"
+   },
+   {
+    "from": 20,
+    "hex": "#E4937B"
+   },
+   {
+    "from": 40,
+    "hex": "#B4442E"
+   },
+   {
+    "from": 60,
+    "hex": "#8C2416"
+   },
+   {
+    "from": 80,
+    "hex": "#5C100A"
+   }
+  ],
+  "infiltrationText": {
+   "light": "#1E1B16",
+   "dark": "#FFF8EE",
+   "darkFrom": 40
+  },
+  "dockTabs": {
+   "research": "#D9C08B",
+   "news": "#EFE4BC",
+   "teams": "#C9CDB4",
+   "aiLog": "#D8A69B",
+   "guide": "#BFC8CD"
+  },
+  "raid": {
+   "felt": "#1C372C",
+   "availOnRing": "#1A4789",
+   "availOnFill": "#E4EAF2",
+   "availOffRing": "#B9AF9B",
+   "availOffIcon": "#A79D88",
+   "turnPast": "#6E5A33",
+   "turnFuture": "#A48A55",
+   "turnLast": "#B8241A",
+   "turnLastText": "#D8806F",
+   "phaseAiBg": "#F3E3DC",
+   "pipAiEmpty": "#C79B92",
+   "chipDone": "#EEE6D3",
+   "usedDash": "#C9BEA6"
+  },
+  "panels": {
+   "drawer": {
+    "research": [
+     "#D9C08B",
+     "#B99D63"
+    ],
+    "news": [
+     "#EFE4BC",
+     "#C9B98A"
+    ],
+    "teams": [
+     "#C9CDB4",
+     "#9EA486"
+    ],
+    "aiLog": [
+     "#D8A69B",
+     "#B07E72"
+    ],
+    "guide": [
+     "#BFC8CD",
+     "#939FA6"
+    ],
+    "dossier": [
+     "#D9C08B",
+     "#B99D63"
+    ],
+    "_": "[gövde, kenar]; gövde = sekme rengi"
+   },
+   "telexPaper": "#EFE4BC",
+   "feedHole": {
+    "hex": "#463C28",
+    "alpha": 0.34
+   },
+   "feedLine": {
+    "hex": "#6E5A33",
+    "alpha": 0.45
+   },
+   "aiPaper": "#F4E7E1",
+   "aiBand": {
+    "hex": "#9A1E14",
+    "alpha": 0.07
+   },
+   "aiInk": "#9A1E14",
+   "aiMeta": "#7A3A30",
+   "aiHeadText": "#E58B7B",
+   "aiHeadSub": "#B9806F",
+   "aiNewBg": "#F7D9CF",
+   "aiNewPill": "#B8241A",
+   "hoverPaper": "#FFFDF5",
+   "selection": "#F5D646",
+   "dividerDotted": "#B9AC8E",
+   "chipBorderAi": "#C79B92",
+   "chipBgAi": "#F3E3DC",
+   "node": {
+    "done": "#24592E",
+    "doneRing": "#163A1D",
+    "runTrack": "#D9D0BC",
+    "run": "#1A4789",
+    "lockFill": "#E3DACA",
+    "lockRing": "#A79D88",
+    "lockIcon": "#8E8573",
+    "availRing": "#463F34"
+   }
+  }
+ },
+ "type": {
+  "_": "Aile · ağırlık · boyut px · harf aralığı em. TSV’deki son değer geçerlidir.",
+  "chipLabel": [
+   "Courier Prime",
+   700,
+   11,
+   0.08
+  ],
+  "chipValue": [
+   "Courier Prime",
+   700,
+   24,
+   0
+  ],
+  "chipValueSmall": [
+   "Courier Prime",
+   700,
+   13,
+   0
+  ],
+  "delta": [
+   "Courier Prime",
+   700,
+   12,
+   0
+  ],
+  "goalName": [
+   "Libre Franklin",
+   600,
+   12,
+   0
+  ],
+  "goalValue": [
+   "Courier Prime",
+   700,
+   13,
+   0
+  ],
+  "clock": [
+   "Courier Prime",
+   700,
+   22,
+   0.04
+  ],
+  "calHead": [
+   "Courier Prime",
+   700,
+   11,
+   0.12
+  ],
+  "calNum": [
+   "Courier Prime",
+   700,
+   19,
+   0
+  ],
+  "speedKey": [
+   "Libre Franklin",
+   700,
+   12,
+   0
+  ],
+  "dockTab": [
+   "Libre Franklin",
+   700,
+   13,
+   0.06
+  ],
+  "legendButton": [
+   "Libre Franklin",
+   700,
+   12,
+   0.06
+  ],
+  "regionLabel": [
+   "Courier Prime",
+   700,
+   12,
+   0.04
+  ],
+  "nodeValue": [
+   "Courier Prime",
+   700,
+   17,
+   0
+  ],
+  "nodeUnknown": [
+   "Kalam",
+   700,
+   24,
+   0
+  ],
+  "suspiciousQ": [
+   "Kalam",
+   700,
+   20,
+   0
+  ],
+  "teamLetter": [
+   "Courier Prime",
+   700,
+   13,
+   0
+  ],
+  "etaTag": [
+   "Courier Prime",
+   700,
+   12,
+   0
+  ],
+  "alertMark": [
+   "Libre Franklin",
+   800,
+   19,
+   0
+  ],
+  "envTitle": [
+   "Courier Prime",
+   700,
+   13,
+   0.04
+  ],
+  "envSub": [
+   "Libre Franklin",
+   400,
+   11,
+   0
+  ],
+  "cardTitle": [
+   "Courier Prime",
+   700,
+   21,
+   0.04
+  ],
+  "cardCode": [
+   "Courier Prime",
+   400,
+   12,
+   0
+  ],
+  "cardStatus": [
+   "Libre Franklin",
+   600,
+   13,
+   0
+  ],
+  "cardBig": [
+   "Courier Prime",
+   700,
+   40,
+   0
+  ],
+  "cardBigQ": [
+   "Kalam",
+   700,
+   24,
+   0
+  ],
+  "rangeLabel": [
+   "Courier Prime",
+   700,
+   12,
+   0
+  ],
+  "statValue": [
+   "Courier Prime",
+   700,
+   19,
+   0
+  ],
+  "statLabel": [
+   "Libre Franklin",
+   400,
+   11,
+   0
+  ],
+  "actionName": [
+   "Libre Franklin",
+   700,
+   13,
+   0
+  ],
+  "preview": [
+   "Libre Franklin",
+   400,
+   13,
+   0
+  ],
+  "previewNum": [
+   "Courier Prime",
+   700,
+   13,
+   0
+  ],
+  "teamName": [
+   "Libre Franklin",
+   700,
+   14,
+   0
+  ],
+  "teamSub": [
+   "Libre Franklin",
+   400,
+   12,
+   0
+  ],
+  "cardMore": [
+   "Libre Franklin",
+   400,
+   12,
+   0
+  ],
+  "cardMoreLink": [
+   "Libre Franklin",
+   600,
+   12,
+   0
+  ],
+  "raidTurnNum": [
+   "Courier Prime",
+   700,
+   18,
+   0
+  ],
+  "turnBox": [
+   "Courier Prime",
+   700,
+   12,
+   0
+  ],
+  "turnBoxNow": [
+   "Courier Prime",
+   700,
+   14,
+   0
+  ],
+  "phase": [
+   "Courier Prime",
+   700,
+   14,
+   0.06
+  ],
+  "objectiveSub": [
+   "Libre Franklin",
+   400,
+   12,
+   0
+  ],
+  "targetName": [
+   "Libre Franklin",
+   700,
+   13,
+   0
+  ],
+  "plus": [
+   "Courier Prime",
+   700,
+   20,
+   0
+  ],
+  "topButton": [
+   "Libre Franklin",
+   700,
+   13,
+   0.06
+  ],
+  "unitName": [
+   "Courier Prime",
+   700,
+   12,
+   0.06
+  ],
+  "unitCardTitle": [
+   "Courier Prime",
+   700,
+   17,
+   0.06
+  ],
+  "abilityName": [
+   "Libre Franklin",
+   700,
+   14,
+   0
+  ],
+  "abilityDetail": [
+   "Libre Franklin",
+   400,
+   12,
+   0
+  ],
+  "fxNum": [
+   "Courier Prime",
+   700,
+   14,
+   0
+  ],
+  "fxText": [
+   "Libre Franklin",
+   400,
+   12,
+   0
+  ],
+  "hoverTitle": [
+   "Courier Prime",
+   700,
+   13,
+   0.05
+  ],
+  "hoverLine": [
+   "Libre Franklin",
+   400,
+   13,
+   0
+  ],
+  "hoverNum": [
+   "Courier Prime",
+   700,
+   14,
+   0
+  ],
+  "endTurn": [
+   "Libre Franklin",
+   700,
+   17,
+   0.06
+  ],
+  "undo": [
+   "Libre Franklin",
+   600,
+   14,
+   0
+  ],
+  "drawerTitle": [
+   "Courier Prime",
+   700,
+   14,
+   0.08
+  ],
+  "sectionCap": [
+   "Courier Prime",
+   700,
+   11,
+   0.08
+  ],
+  "sectionNote": [
+   "Libre Franklin",
+   400,
+   12,
+   0
+  ],
+  "researchBranch": [
+   "Courier Prime",
+   700,
+   12,
+   0.06
+  ],
+  "researchCount": [
+   "Courier Prime",
+   700,
+   11,
+   0
+  ],
+  "researchNode": [
+   "Libre Franklin",
+   600,
+   12,
+   0
+  ],
+  "researchMeta": [
+   "Courier Prime",
+   700,
+   11,
+   0
+  ],
+  "researchPct": [
+   "Courier Prime",
+   700,
+   12,
+   0
+  ],
+  "researchCost": [
+   "Courier Prime",
+   700,
+   17,
+   0
+  ],
+  "speedOption": [
+   "Courier Prime",
+   700,
+   15,
+   0
+  ],
+  "speedSub": [
+   "Libre Franklin",
+   400,
+   11,
+   0
+  ],
+  "detailTitle": [
+   "Libre Franklin",
+   700,
+   15,
+   0
+  ],
+  "detailNum": [
+   "Courier Prime",
+   700,
+   14,
+   0
+  ],
+  "tipHead": [
+   "Courier Prime",
+   700,
+   15,
+   0
+  ],
+  "tipRow": [
+   "Libre Franklin",
+   400,
+   12,
+   0
+  ],
+  "tipNum": [
+   "Courier Prime",
+   700,
+   14,
+   0
+  ],
+  "tipNet": [
+   "Courier Prime",
+   700,
+   16,
+   0
+  ],
+  "tipAxis": [
+   "Courier Prime",
+   400,
+   11,
+   0
+  ],
+  "newsSource": [
+   "Courier Prime",
+   700,
+   11,
+   0.05
+  ],
+  "newsHeadline": [
+   "Libre Franklin",
+   600,
+   14,
+   0
+  ],
+  "newsTrust": [
+   "Libre Franklin",
+   400,
+   12,
+   0
+  ],
+  "filterChip": [
+   "Libre Franklin",
+   600,
+   12,
+   0
+  ],
+  "daySep": [
+   "Courier Prime",
+   700,
+   12,
+   0.04
+  ],
+  "regionChip": [
+   "Courier Prime",
+   700,
+   11,
+   0.03
+  ],
+  "teamCardName": [
+   "Courier Prime",
+   700,
+   16,
+   0.06
+  ],
+  "teamLoc": [
+   "Libre Franklin",
+   400,
+   12,
+   0
+  ],
+  "routeLabel": [
+   "Courier Prime",
+   700,
+   11,
+   0
+  ],
+  "aiHead": [
+   "Courier Prime",
+   700,
+   12,
+   0.1
+  ],
+  "aiMeta": [
+   "Courier Prime",
+   700,
+   12,
+   0.04
+  ],
+  "aiLine": [
+   "Courier Prime",
+   700,
+   13,
+   0
+  ],
+  "aiNote": [
+   "Kalam",
+   700,
+   17,
+   0
+  ],
+  "aiWarn": [
+   "Libre Franklin",
+   400,
+   12.5,
+   0
+  ],
+  "guideNav": [
+   "Libre Franklin",
+   600,
+   13,
+   0
+  ],
+  "guideTitle": [
+   "Courier Prime",
+   700,
+   17,
+   0.08
+  ],
+  "guideSub": [
+   "Libre Franklin",
+   400,
+   13,
+   0
+  ],
+  "guideMark": [
+   "Courier Prime",
+   700,
+   13,
+   0.06
+  ],
+  "guideText": [
+   "Libre Franklin",
+   400,
+   12.5,
+   0
+  ],
+  "legendTitle": [
+   "Courier Prime",
+   700,
+   15,
+   0.1
+  ],
+  "legendItem": [
+   "Libre Franklin",
+   400,
+   12,
+   0
+  ],
+  "legendTick": [
+   "Courier Prime",
+   700,
+   11,
+   0
+  ],
+  "miniNodeValue": [
+   "Courier Prime",
+   700,
+   12,
+   0
+  ],
+  "nodeTipName": [
+   "Courier Prime",
+   700,
+   13,
+   0.06
+  ],
+  "nodeTipValue": [
+   "Courier Prime",
+   700,
+   28,
+   0
+  ],
+  "nodeTipHint": [
+   "Libre Franklin",
+   400,
+   11,
+   0
+  ],
+  "dossierTitle": [
+   "Courier Prime",
+   700,
+   24,
+   0.04
+  ],
+  "dossierMeta": [
+   "Libre Franklin",
+   400,
+   12,
+   0
+  ],
+  "sourceName": [
+   "Libre Franklin",
+   600,
+   13,
+   0
+  ],
+  "sourceValue": [
+   "Courier Prime",
+   700,
+   15,
+   0
+  ],
+  "actionRowName": [
+   "Libre Franklin",
+   700,
+   13,
+   0
+  ],
+  "actionRowCost": [
+   "Courier Prime",
+   700,
+   12,
+   0
+  ],
+  "actionRowEffect": [
+   "Libre Franklin",
+   400,
+   12,
+   0
+  ],
+  "aiChip": [
+   "Courier Prime",
+   700,
+   11,
+   0.06
+  ],
+  "queueBox": [
+   "Courier Prime",
+   700,
+   12,
+   0
+  ],
+  "queueBoxNow": [
+   "Courier Prime",
+   700,
+   14,
+   0
+  ],
+  "eventLine": [
+   "Libre Franklin",
+   400,
+   14,
+   0
+  ],
+  "confirmHead": [
+   "Courier Prime",
+   700,
+   13,
+   0.08
+  ],
+  "confirmLine": [
+   "Libre Franklin",
+   400,
+   14,
+   0
+  ],
+  "confirmButton": [
+   "Libre Franklin",
+   700,
+   17,
+   0.06
+  ]
+ },
+ "shadows": {
+  "chip": [
+   3,
+   3,
+   "#000000",
+   0.45
+  ],
+  "plaque": [
+   3,
+   3,
+   "#000000",
+   0.5
+  ],
+  "legendButton": [
+   2,
+   3,
+   "#000000",
+   0.45
+  ],
+  "env": [
+   3,
+   4,
+   "#000000",
+   0.5
+  ],
+  "card": [
+   4,
+   5,
+   "#000000",
+   0.42
+  ],
+  "sticky": [
+   2,
+   3,
+   "#000000",
+   0.35
+  ],
+  "token": [
+   2,
+   3,
+   "#000000",
+   0.4
+  ],
+  "tag": [
+   1,
+   1,
+   "#000000",
+   0.3
+  ],
+  "teamChip": [
+   3,
+   4,
+   "#000000",
+   0.42
+  ],
+  "teamChipSelected": [
+   4,
+   10,
+   "#000000",
+   0.45
+  ],
+  "unitCard": [
+   4,
+   6,
+   "#000000",
+   0.45
+  ],
+  "hoverCard": [
+   3,
+   5,
+   "#000000",
+   0.45
+  ],
+  "topButton": [
+   [
+    0,
+    3,
+    "#463F34",
+    1
+   ],
+   [
+    2,
+    4,
+    "#000000",
+    0.35
+   ]
+  ],
+  "action": [
+   0,
+   3,
+   "#8E8166",
+   1
+  ],
+  "actionHover": [
+   0,
+   5,
+   "#6E634D",
+   1
+  ],
+  "preview": [
+   2,
+   2,
+   "#3C2D14",
+   0.35
+  ],
+  "drawer": [
+   4,
+   5,
+   "#000000",
+   0.42
+  ],
+  "drawerSheet": [
+   1,
+   2,
+   "#5A461E",
+   0.25
+  ],
+  "tooltip": [
+   3,
+   5,
+   "#000000",
+   0.45
+  ],
+  "legendCard": [
+   4,
+   6,
+   "#000000",
+   0.45
+  ],
+  "newsHover": [
+   2,
+   3,
+   "#000000",
+   0.25
+  ],
+  "teamCard": [
+   2,
+   3,
+   "#3C2D14",
+   0.3
+  ],
+  "teamCardHover": [
+   3,
+   5,
+   "#000000",
+   0.35
+  ],
+  "eventSlip": [
+   3,
+   4,
+   "#000000",
+   0.42
+  ],
+  "confirmNote": [
+   3,
+   4,
+   "#000000",
+   0.4
+  ],
+  "detailStrip": [
+   2,
+   2,
+   "#3C2D14",
+   0.3
+  ]
+ },
+ "desk": {
+  "layout1080": {
+   "_": "[x, y, w, h]; sol öğeler sola, sağ öğeler sağa, zaman ortaya çapalı. Genişlikler TR metinle ölçüldü; EN için içerik büyürse kutu genişler, çapa tarafı sabit kalır.",
+   "chipFund": [
+    16,
+    14,
+    171.2,
+    62
+   ],
+   "chipPower": [
+    196,
+    14,
+    166.8,
+    62
+   ],
+   "chipGoal": [
+    376,
+    14,
+    274,
+    62
+   ],
+   "time": [
+    795.3,
+    14,
+    329.4,
+    62
+   ],
+   "chipTrust": [
+    1298,
+    14,
+    204,
+    62
+   ],
+   "chipDependence": [
+    1488,
+    14,
+    204,
+    62
+   ],
+   "chipSingularity": [
+    1682,
+    14,
+    222,
+    62
+   ],
+   "dock": {
+    "left": 16,
+    "bottom": 0,
+    "gap": 6,
+    "tabH": 42,
+    "tabOpenH": 50,
+    "tabsTR": [
+     [
+      "research",
+      165
+     ],
+     [
+      "news",
+      154.8
+     ],
+     [
+      "teams",
+      138.5
+     ],
+     [
+      "aiLog",
+      169.2
+     ],
+     [
+      "guide",
+      135
+     ]
+    ]
+   },
+   "legendButton": {
+    "right": 282,
+    "bottom": 26,
+    "w": 98.3,
+    "h": 36
+   },
+   "envelope": {
+    "right": 16,
+    "bottom": 14,
+    "w": 250,
+    "h": 62,
+    "label": [
+     12,
+     12,
+     170,
+     38
+    ],
+    "seal": {
+     "right": 12,
+     "top": 9,
+     "size": 44
+    }
+   },
+   "regionCard": {
+    "rect": [
+     1540,
+     96,
+     364,
+     463
+    ],
+    "sections": {
+     "head": 52,
+     "status": 32,
+     "infiltration": 61,
+     "stats": 58,
+     "actions": 98,
+     "preview": 50,
+     "team": 70,
+     "more": 40
+    }
+   },
+   "safeArea": "HUD öğeleri 16 px kenar boşluğu; harita kenara kadar."
+  },
+  "chip": {
+   "height": 62,
+   "padding": [
+    0,
+    14,
+    0,
+    10
+   ],
+   "gap": 10,
+   "paper": "#F1E9D6",
+   "border": [
+    1,
+    "#C8B996"
+   ],
+   "radius": 2,
+   "iconCircle": {
+    "size": 36,
+    "fill": "#FBF7EC",
+    "ring": [
+     1.5,
+     "#1E1B16"
+    ],
+    "ringThreat": [
+     1.5,
+     "#9A1E14"
+    ],
+    "icon": 19
+   },
+   "rows": "etiket satırı 14 px (etiket + güven işareti, aralık 6) · 5 px · değer satırı 24 px (değer + değişim, aralık 7) · 1 px · çubuk 7 px",
+   "trustMark": {
+    "verified": "mühür 14 px",
+    "report": "“~” fişi 15 px yükseklik + değer karbon #524973 ve “≈”",
+    "suspicious": "Kalam 700 18 turuncu “?” + değerde turuncu halka (hand_ring_value_76x37, değerin sol-üstünden −9, −7)"
+   },
+   "delta": {
+    "icon": 12,
+    "stroke": 2.2,
+    "colors": {
+     "bad": "#9A1E14",
+     "good": "#24592E"
+    },
+    "rule": "renk kötü/iyi’ye göre, yön değere göre (VM verir)"
+   }
+  },
+  "bar": {
+   "h": 7,
+   "border": [
+    1,
+    "#463F34"
+   ],
+   "bg": "#FBF7EC",
+   "widths": {
+    "trust": 132,
+    "dependence": 132,
+    "singularity": 150,
+    "goal": 96
+   },
+   "hazard": {
+    "texture": "tx_hazard.png",
+    "tileDesignPx": 4.808,
+    "colors": [
+     "#9A1E14",
+     "#F3EDDC"
+    ]
+   },
+   "fill": {
+    "singularity": "#9A1E14",
+    "alignment": "#24592E",
+    "deletion": "#1A4789"
+   },
+   "uncertainty": {
+    "texture": "tx_carbon_hatch.png",
+    "tileDesignPx": 4.525
+   },
+   "marker": {
+    "w": 3,
+    "h": 13,
+    "top": -4,
+    "color": "#1E1B16",
+    "radius": 1
+   },
+   "values": {
+    "trust": {
+     "hazard": [
+      0,
+      15
+     ],
+     "marker": 41.8
+    },
+    "dependence": {
+     "hazard": [
+      70,
+      100
+     ],
+     "marker": 58.4
+    },
+    "singularity": {
+     "hazard": [
+      94,
+      100
+     ],
+     "fill": 37,
+     "uncertainty": [
+      31,
+      43
+     ]
+    }
+   }
+  },
+  "goalRows": {
+   "rowH": 13,
+   "gap": 5,
+   "nameW": 62,
+   "valueW": 30,
+   "gapInRow": 7
+  },
+  "time": {
+   "h": 62,
+   "padding": [
+    0,
+    12,
+    0,
+    10
+   ],
+   "gap": 12,
+   "cal": [
+    60,
+    42,
+    14
+   ],
+   "divider": [
+    1,
+    34
+   ],
+   "speedKeys": {
+    "size": 30,
+    "gap": 6
+   }
+  },
+  "map": {
+   "root": "1920×1080 tasarım dikdörtgeni; ekranı KAPLAR (s = max(W/1920, H/1080)), ortalı",
+   "layers": [
+    "map_base@2x (RawImage)",
+    "bölge dolguları (12 mesh; rampa rengi / sis dokusu)",
+    "karantina örtüsü (kâğıt α .38 + tx_quar_hatch)",
+    "map_lines@2x (RawImage, saydam)",
+    "tx_paper_grain (RawImage, döşeme 256 px = 128 tasarım px)",
+    "karantina sınırı (UILineGraphic)",
+    "tx_lamp_desk (RawImage, ekran boyu)",
+    "seçim dolgusu + sınırı",
+    "çekirdek dalgası",
+    "yayılım iplikleri",
+    "ekip rotası",
+    "düğümler",
+    "etiketler",
+    "ekipler",
+    "uyarı notu"
+   ]
+  },
+  "node": {
+   "box": 64,
+   "disc": {
+    "r": 20,
+    "ring": [
+     1.8,
+     "#1E1B16"
+    ],
+    "shadow": [
+     1.5,
+     2,
+     "#000000",
+     0.25
+    ]
+   },
+   "value": "CP 700 17, ortalı; rampa yazı rengi",
+   "unknown": {
+    "disc": "#EDE7D6 α .9",
+    "ring": "1,8 #4A4640 kesik 4/3",
+    "mark": "Kalam 700 24 “?” #4A4640"
+   },
+   "suspicious": {
+    "ring": "node_ring_sus_64",
+    "q": {
+     "font": "Kalam 700 20 #854005",
+     "topLeftFromCenter": [
+      17,
+      -41
+     ]
+    }
+   },
+   "quarantine": {
+    "ring": "r28, 2,4 px #24592E, kesik 6/4"
+   },
+   "selectedHalo": {
+    "r": 31,
+    "color": {
+     "hex": "#F5D646",
+     "alpha": 0.8
+    }
+   },
+   "badges": {
+    "verifiedCenterOffset": [
+     18,
+     -19
+    ],
+    "reportTopLeftOffset": [
+     9,
+     -27
+    ],
+    "coreCenterOffset": [
+     -18.5,
+     -18.5
+    ]
+   },
+   "labelOffsetY": {
+    "default": 30,
+    "DA": -46,
+    "AV": 33
+   }
+  },
+  "label": {
+   "halo": "metin gölgesi yerine TMP Underlay: renk #F1E9D6, dilation ~0,6, softness ~0,3 (yaklaşık 3–5 px hale)",
+   "selected": {
+    "bg": "#F5D646",
+    "padding": [
+     2,
+     5
+    ],
+    "shadow": [
+     1,
+     1,
+     "#000000",
+     0.3
+    ]
+   }
+  },
+  "teamToken": {
+   "size": 30,
+   "sprite": "team_token_30",
+   "eta": {
+    "h": 20,
+    "padding": [
+     0,
+     6
+    ],
+    "gap": 4,
+    "icon": 12
+   }
+  },
+  "alert": {
+   "sprite": "map_alert_sticky",
+   "size": 30,
+   "rotDeg": -6
+  },
+  "regionCard": {
+   "paper": "#FBF7EC",
+   "border": [
+    1,
+    "#D2C7AF"
+   ],
+   "radius": 2,
+   "headRule": [
+    2,
+    "#D2483F"
+   ],
+   "padX": 16,
+   "range": {
+    "trackTop": 14,
+    "trackH": 8,
+    "segments": "rampa 5 eşit dilim",
+    "band": {
+     "from": 29,
+     "to": 47,
+     "border": "1,5 kesik #A9520A",
+     "fill": {
+      "hex": "#F5D646",
+      "alpha": 0.25
+     },
+     "top": 10,
+     "h": 16
+    },
+    "markers": [
+     {
+      "value": 38,
+      "color": "#A9520A",
+      "label": "rapor 38",
+      "align": "sağı %37’de biter"
+     },
+     {
+      "value": 52,
+      "color": "#1A4789",
+      "label": "saha 52",
+      "align": "solu %53’ten başlar"
+     }
+    ],
+    "markerSize": [
+     4,
+     24
+    ],
+    "labelTop": 33
+   },
+   "stats": {
+    "cols": 3,
+    "gap": 8,
+    "h": 46,
+    "icon": 20
+   },
+   "actions": {
+    "cols": 4,
+    "gap": 8,
+    "h": 84,
+    "icon": 26,
+    "key": "sağ-üst (5, 5), 16 px",
+    "hover": "2 px ink kenar, #FFFDF5, −2 px kalkar, gölge 0,5",
+    "danger": {
+     "text": "#9A1E14",
+     "border": "#B97F76",
+     "shadow": [
+      0,
+      3,
+      "#7A2A20",
+      1
+     ]
+    }
+   },
+   "preview": {
+    "h": 40,
+    "padding": [
+     0,
+     12
+    ],
+    "gap": 8,
+    "bg": "#F5DC63"
+   },
+   "team": {
+    "h": 56,
+    "button": "mürekkep düğme 36 px: “Baskın” + %64 (CP 700 #E6CF9C) + B fişi"
+   },
+   "string": {
+    "width": 1.6,
+    "color": "#2B2622",
+    "shadow": [
+     1.5,
+     2,
+     "#000000",
+     0.25
+    ],
+    "pins": "pin_black_14 iki uçta"
+   }
+  },
+  "panels": {
+   "_": "S-Masa3–9. Kutular TSV’den (reference/measure). Tek büyük panel kuralı: çekmece YA DA tam dosya; bölge kartı çekmeceyle birlikte durabilir.",
+   "drawer": {
+    "rect": {
+     "left": 16,
+     "bottom": 1016,
+     "w": 500,
+     "hTR": {
+      "research": 704,
+      "news": 652,
+      "teams": 548,
+      "aiLog": 538,
+      "guide": 600
+     },
+     "topMin": 96,
+     "rule": "yükseklik içeriğe göre; 920’yi aşarsa (üst 96) sayfa kaydırılır, sekme ve kapat düğmesi sabit"
+    },
+    "tab": {
+     "h": 38,
+     "minW": 244,
+     "padding": [
+      0,
+      7,
+      1,
+      12
+     ],
+     "gap": 8,
+     "radius": [
+      8,
+      8,
+      0,
+      0
+     ],
+     "border": "1 px kenar rengi, alt kenar yok",
+     "highlight": "iç üst 1 px beyaz α .35",
+     "icon": 17,
+     "title": "drawerTitle",
+     "key": 17,
+     "close": "C xb 22 px, margin-left auto"
+    },
+    "body": {
+     "padding": 10,
+     "radius": [
+      0,
+      5,
+      5,
+      5
+     ],
+     "border": 1,
+     "overlapTab": 1,
+     "shadow": "drawer"
+    },
+    "sheet": {
+     "paper": "#F1E9D6",
+     "border": [
+      1,
+      "#C8B996"
+     ],
+     "radius": 1,
+     "padding": [
+      12,
+      14,
+      14,
+      14
+     ],
+     "innerW": 448,
+     "shadow": "drawerSheet"
+    },
+    "sectionHead": {
+     "h": 16,
+     "cap": "sectionCap",
+     "rule": "1 px ink3, başlıktan 8 px sonra, sağdaki nota kadar",
+     "note": "sectionNote ink3"
+    },
+    "dockTab": "açık çekmecenin sekmesi “açık” (50 px); rozet okununca söner (YZ günlüğü)"
+   },
+   "research": {
+    "summary": {
+     "rect": [
+      42,
+      373,
+      448,
+      26
+     ],
+     "count": "LF 700 13 “2 proje” + LF 13 ink2 “sürüyor”",
+     "cost": "researchCost #9A1E14 + LF 12 ink3 “fon/gün”"
+    },
+    "speed": {
+     "rect": [
+      42,
+      407,
+      448,
+      42
+     ],
+     "border": [
+      1,
+      "#463F34"
+     ],
+     "radius": 3,
+     "shadow": [
+      0,
+      2,
+      "#463F34",
+      0.35
+     ],
+     "label": {
+      "bg": "#E8DEC6",
+      "padding": [
+       0,
+       10,
+       0,
+       9
+      ],
+      "icon": 15,
+      "text": "sectionCap “HIZ”",
+      "divider": "1 px #463F34"
+     },
+     "option": {
+      "title": "speedOption",
+      "sub": "speedSub ink3",
+      "gap": 4,
+      "divider": "1 px #CFC5AE",
+      "selected": {
+       "bg": "#1E1B16",
+       "text": "#F4ECD8",
+       "sub": "#CFC4AC"
+      }
+     },
+     "options": [
+      [
+       "×1",
+       "normal"
+      ],
+      [
+       "×1,5",
+       "+3,2 fon/gün"
+      ],
+      [
+       "×2",
+       "+6,4 fon/gün"
+      ]
+     ]
+    },
+    "tree": {
+     "rect": [
+      42,
+      461,
+      448,
+      400
+     ],
+     "rowH": 100,
+     "rowDivider": "1 px noktalı #B9AC8E (ilk satırda yok)",
+     "labelCol": {
+      "w": 86,
+      "top": 13,
+      "gap": 6,
+      "name": "researchBranch",
+      "count": "researchCount ink3 “1/3 bitti”",
+      "goal": "ic_goal_s 12 + çubuk 40×6 + CP 700 12; renk dalın HEDEF rengi"
+     },
+     "nodeCentersX": [
+      151,
+      270,
+      389
+     ],
+     "nodeCenterY": 32,
+     "nodeBox": 52,
+     "nodeR": 21,
+     "states": {
+      "done": "rn_disc_42 #24592E + rn_ring_42_w1_5 #163A1D + mk_check_bold_26 beyaz",
+      "run": "rn_disc_42 #FBF7EC + rn_ring_42_w1_5 ink + rn_progress_34_w4 iz #D9D0BC ve dolum #1A4789 (Radial360, Top, saat yönü) + ortada “%62” researchPct #1A4789",
+      "avail": "rn_disc_42 #FBF7EC + rn_ring_dash_42 #463F34 + mk_plus_bold_20 #463F34",
+      "lock": "rn_disc_42 #E3DACA + rn_ring_42_w1_5 #A79D88 + ic_lock_l 18 #8E8573"
+     },
+     "shadow": "bitti ve sürüyor: aynı disk siyah α .2 (+1,6, +2)",
+     "selected": "node_halo_64 53 px #F5D646 α .9 düğümün arkasında; ad fosforlu çip (#F5D646, iç boşluk 1/4, gölge 1,1 α .18)",
+     "name": {
+      "font": "researchNode",
+      "w": 118,
+      "maxLines": 2,
+      "top": "düğüm kutusunun 3 px altı",
+      "lock": "ink3",
+      "done": "ink2"
+     },
+     "meta": {
+      "font": "researchMeta",
+      "icon": 11,
+      "done": "#24592E “bitti”",
+      "run": "#1A4789 “4 gün”",
+      "avail": "ink3 “8 gün”",
+      "lock": "ink3 “kilitli” ya da koşul “SG 70”"
+     },
+     "connector": {
+      "y": 32,
+      "from": "düğüm kenarı +3",
+      "solid": "2,4 px #463F34",
+      "toLocked": "2 px #8E8573 kesik 5/4",
+      "head": "arrow_open 7×9, aynı renk"
+     }
+    },
+    "detail": {
+     "rect": [
+      42,
+      871,
+      448,
+      104
+     ],
+     "paper": "#FBF7EC",
+     "border": [
+      1,
+      "#D2C7AF"
+     ],
+     "leftBar": [
+      5,
+      "#F5D646"
+     ],
+     "padding": [
+      10,
+      12,
+      11,
+      13
+     ],
+     "shadow": "detailStrip",
+     "rows": [
+      "ad detailTitle + sağda sectionCap “HİZALAMA · 2/3”",
+      "ilerleme çubuğu 10 px (1 px ink2, dolum #1A4789) + “%62” + “4 gün kaldı” (#1A4789)",
+      "ic_fund_s + “3,2” CP 700 13 + “fon/gün” · ok + kilit + açılacak düğüm adı (LF 600) · sağda “Duraklat” (bt 26 px)"
+     ]
+    }
+   },
+   "breakdownTip": {
+    "_": "Üst etiketlerin döküm fişi. S-Masa3’te FON; diğer etiketler aynı kabı kullanır (C GaugeBreakdownTooltip içeriği).",
+    "rect": [
+     16,
+     86,
+     286,
+     208
+    ],
+    "paper": "#FBF7EC",
+    "border": [
+     1.5,
+     "#1E1B16"
+    ],
+    "radius": 2,
+    "shadow": "tooltip",
+    "delayMs": 400,
+    "pointer": {
+     "size": 14,
+     "rotDeg": 45,
+     "xFromLeft": 28,
+     "top": -8,
+     "border": "sol ve üst 1,5 ink"
+    },
+    "chipHover": "2 px ink çerçeve (iç), zemin #FFFDF5",
+    "head": {
+     "h": 36,
+     "rule": [
+      1.5,
+      "#D2483F"
+     ],
+     "left": "sectionCap “FON” + LF 12 ink3 “günlük denge”",
+     "right": "tipHead #9A1E14 “−1,2” + LF 11 ink3 “/gün”"
+    },
+    "balance": {
+     "rowH": 22,
+     "cols": [
+      40,
+      "1fr",
+      40
+     ],
+     "bar": {
+      "h": 12,
+      "border": [
+       1,
+       "#463F34"
+      ],
+      "max": "gider toplamı = %100"
+     },
+     "income": {
+      "fill": "#24592E",
+      "deficit": "gelirin bittiği yerden %100’e: #9A1E14 tarama (tx_hazard benzeri, 135°, 1,5/3,6)"
+     },
+     "expense": {
+      "segments": [
+       [
+        "araştırma",
+        "#9A1E14"
+       ],
+       [
+        "ekipler",
+        "#D8806F"
+       ]
+      ]
+     },
+     "key": {
+      "h": 18,
+      "indent": 48,
+      "swatch": 9,
+      "gap": 10,
+      "font": "LF 11 ink3"
+     }
+    },
+    "net": {
+     "h": 30,
+     "ruleTop": "1 px ink3",
+     "value": "tipNet #9A1E14",
+     "right": "ic_clock 13 + “0’a ≈39 gün”"
+    },
+    "sparkline": {
+     "w": 259,
+     "h": 40,
+     "days": 31,
+     "line": [
+      1.8,
+      "#463F34"
+     ],
+     "area": {
+      "hex": "#9A1E14",
+      "alpha": 0.08
+     },
+     "baseline": [
+      1,
+      "#B9AC8E"
+     ],
+     "event": "1 px #24592E kesik 2/2 dikey çizgi (ödenek günü)",
+     "end": "r3,6 #9A1E14 + 1,4 #FBF7EC kenar",
+     "axis": "tipAxis ink3: sol “G-044 · 58,0”, orta yeşil olay, sağ “bugün · 47,3”"
+    }
+   },
+   "news": {
+    "sheet": "B günlük kâğıdı (ol-pp): #EFE4BC + iki yanda 18 px’de bir delik (r2,2) ve 17 px içte kesik çizgi; iç boşluk 10/28/12",
+    "filter": {
+     "h": 28,
+     "chip": {
+      "h": 26,
+      "radius": 13,
+      "padding": [
+       0,
+       10
+      ],
+      "border": [
+       1,
+       "#463F34"
+      ],
+      "font": "filterChip + CP 700 13 sayı",
+      "on": "ink zemin #F4ECD8 yazı",
+      "dot": "8 px #F5DC63 + 1 px ink"
+     },
+     "right": "CP 700 11 ink3 “G-074 · 14:32”"
+    },
+    "daySep": {
+     "h": 22,
+     "margin": [
+      8,
+      0,
+      2,
+      0
+     ],
+     "font": "daySep ink2",
+     "lines": "1 px ink3 iki yanda"
+    },
+    "item": {
+     "h": 90.9,
+     "grid": [
+      30,
+      "1fr",
+      "auto"
+     ],
+     "colGap": 10,
+     "rowGap": 5,
+     "padding": [
+      9,
+      8,
+      10,
+      8
+     ],
+     "divider": "1 px noktalı ink2 α .5",
+     "mark": "30×30, üç satırı kaplar; güven işaretinin büyük hâli",
+     "source": "newsSource ink3 “TELEX-9 · 14:05”",
+     "region": "bölge çipi sağa yaslı",
+     "headline": "newsHeadline, 2 sütunu kaplar",
+     "footer": "newsTrust: güven kelimesi + açıklama; doğrulanmamışta sağda “Denetle” (bt 22 px)",
+     "hover": {
+      "paper": "#FFFDF5",
+      "border": [
+       1.5,
+       "#1E1B16"
+      ],
+      "shadow": "newsHover",
+      "map": "haberin bölgesi: sarı #F5D646 α .9 6 px + ink 1,4 px kesik 6/4 + dolgu α .12"
+     },
+     "fake": {
+      "headline": "ink3 + 2 px #9A1E14 üstü çizili",
+      "stamp": "C damgası “SAHTE” büyük (15 px, 2,5 kenar), sağ 14 üst 30, −8°"
+     }
+    },
+    "marks": {
+     "verified": "node_badge_seal 24",
+     "report": "C “~” fişi 22 px (CP 700 16)",
+     "suspicious": "hand_ring_q 22×20 + Kalam 700 18 “?”",
+     "unknown": "ring_dash_24 #4A4640 + Kalam 700 16 “?”",
+     "fake": "mark_fake_24"
+    }
+   },
+   "regionChip": {
+    "h": 20,
+    "padding": [
+     0,
+     6,
+     0,
+     4
+    ],
+    "gap": 5,
+    "paper": "#FBF7EC",
+    "border": [
+     1,
+     "#C8B996"
+    ],
+    "radius": 2,
+    "font": "regionChip ink2",
+    "dot": "dot_12 11 px bölge rengi + ring_12_w1 ink; bilinmiyorsa tx_fog + kesik çerçeve",
+    "short": "spec/strings: region.short.*"
+   },
+   "teams": {
+    "summary": {
+     "h": 24,
+     "font": "LF 13 ink2 + CP 700 15 sayılar",
+     "right": "LF 12 ink3 “yeni ekip: 30 fon”"
+    },
+    "card": {
+     "w": 448,
+     "h": 132,
+     "gap": 10,
+     "paper": "#FBF7EC",
+     "border": [
+      1,
+      "#D9D0BC"
+     ],
+     "radius": 2,
+     "shadow": "teamCard",
+     "head": {
+      "h": 42,
+      "rule": [
+       2,
+       "#D2483F"
+      ],
+      "token": "team_token_30",
+      "name": "teamCardName",
+      "loc": "ic_scope_s 13 + teamLoc ink2",
+      "stamp": "C küçük damga, −2°, sağa yaslı"
+     },
+     "body": {
+      "h": 88,
+      "members": "thumb_standee_* 40×56 + altında 9 px can noktaları (aralık 2); üye kutusu 48, aralık 8",
+      "divider": [
+       1,
+       50,
+       "#C8B996"
+      ],
+      "action": "sağa yaslı: düğme 34 px + altında LF 11 ink3 açıklama"
+     },
+     "hover": {
+      "border": [
+       2,
+       "#1E1B16"
+      ],
+      "paper": "#FFFDF5",
+      "shadow": "teamCardHover",
+      "map": "ekibin jetonu: 3,5 px #F5D646 + 1,5 px ink halka (jeton kutusundan 8 px dışarı)"
+     },
+     "route": {
+      "bar": "uçlarda 10 px halka (2 px ink), arada 2 px kesik ink; kat edilen kısım 4 px ink; jeton %60’ta, 0,8 ölçek",
+      "labels": "routeLabel ink2: çıkış · ic_clock + kalan gün (CP 700 13 ink) · varış"
+     }
+    }
+   },
+   "aiLog": {
+    "sheet": {
+     "paper": "#F4E7E1",
+     "bands": "25 px şeritler, her ikincisi #9A1E14 α .07",
+     "padding": [
+      0,
+      14,
+      12,
+      14
+     ]
+    },
+    "head": {
+     "h": 32,
+     "bg": "#0E0906",
+     "rule": "1 px #6E5A33",
+     "lamp": "kırmızı lamba",
+     "text": "aiHead #E58B7B “AYNA · ELE GEÇİRİLEN KAYIT”",
+     "right": "CP 12 #B9806F"
+    },
+    "entry": {
+     "padding": [
+      9,
+      0,
+      10,
+      0
+     ],
+     "divider": "1 px kesik #9A1E14 α .35",
+     "meta": "aiMeta #7A3A30 · YENİ hapı 17 px #B8241A · bölge çipi sağa yaslı",
+     "line": "aiLine #9A1E14, “> ” ile başlar",
+     "new": "satır zemini #F7D9CF (yanlara 6 px taşar)",
+     "redaction": "62×13 ink kutu",
+     "note": "aiNote #A9520A, −1,5°; solunda 26×18 el çizimi ok"
+    },
+    "warn": {
+     "paper": "#FBF7EC",
+     "border": "1,5 px kesik #A9520A",
+     "padding": [
+      9,
+      12,
+      10,
+      10
+     ],
+     "mark": "şüpheli halka 20×18",
+     "text": "aiWarn ink2, başlık #854005 700"
+    }
+   },
+   "guide": {
+    "grid": [
+     140,
+     "1fr"
+    ],
+    "nav": {
+     "itemH": 34,
+     "gap": 3,
+     "padding": [
+      0,
+      8
+     ],
+     "icon": 15,
+     "font": "guideNav ink2",
+     "divider": "1 px #C8B996 sağda",
+     "on": {
+      "bg": "#F5D646",
+      "text": "ink",
+      "bar": "iç sol 3 px ink",
+      "shadow": [
+       1,
+       1,
+       "#000000",
+       0.15
+      ]
+     }
+    },
+    "page": {
+     "paddingLeft": 16,
+     "title": "guideTitle",
+     "sub": "guideSub ink2",
+     "row": {
+      "minH": 54,
+      "cols": [
+       34,
+       "1fr"
+      ],
+      "gap": 10,
+      "divider": "1 px noktalı #B9AC8E",
+      "mark": "güven işaretinin büyük hâli",
+      "name": "guideMark (renk = güven rengi)",
+      "text": "guideText ink2"
+     },
+     "example": {
+      "bg": "#F5DC63",
+      "padding": [
+       10,
+       12
+      ],
+      "shadow": [
+       2,
+       2,
+       "#3C2D14",
+       0.35
+      ],
+      "mini": "küçük düğüm 40 px"
+     },
+     "pager": "altta: “‹ önceki” · “1 / 6” · “sonraki ›” (bt.link)"
+    }
+   },
+   "legendCard": {
+    "rect": [
+     1484,
+     665,
+     420,
+     327
+    ],
+    "anchor": "sağ 16, alt 88 (LEJANT düğmesinin üstü)",
+    "paper": "#FBF7EC",
+    "border": [
+     1.5,
+     "#1E1B16"
+    ],
+    "radius": 2,
+    "shadow": "legendCard",
+    "head": {
+     "h": 42,
+     "rule": [
+      2,
+      "#D2483F"
+     ],
+     "icon": 16,
+     "title": "legendTitle",
+     "sub": "LF 12 ink3 “harita”",
+     "close": "xb"
+    },
+    "section": {
+     "padding": [
+      12,
+      14,
+      0,
+      14
+     ],
+     "cap": "sectionCap, 8 px alt boşluk"
+    },
+    "ramp": {
+     "h": 16,
+     "border": [
+      1,
+      "#463F34"
+     ],
+     "segments": 5,
+     "ticks": "legendTick: 0 20 40 60 80 100"
+    },
+    "trust": {
+     "item": 78,
+     "gap": 16,
+     "mini": "küçük düğüm 38 px (12, 23, 38, ?)",
+     "label": "legendItem ink2"
+    },
+    "region": {
+     "swatch": [
+      34,
+      22
+     ],
+     "fog": "tx_fog",
+     "quarantine": "rampa 40 + kâğıt α .38 + tx_quar_hatch + 2 px kesik #24592E",
+     "core": "küçük düğüm 38 px + Ç damgası"
+    },
+    "marks": [
+     "yayılım: 44×18 kırmızı iplik + arrowhead_tri",
+     "ekip ve rota: jeton + 2 px noktalı ink",
+     "danışman notu: map_alert_sticky 22 px"
+    ],
+    "buttonOn": "2 px ink, #FFFDF5, içe gölge, +2 px aşağı"
+   },
+   "nodeTip": {
+    "rect": [
+     1099.6,
+     526,
+     214,
+     119
+    ],
+    "place": "düğümün sol altı: sağ kenarı düğüm merkezinden +20, üstü düğüm merkezinden +30; işaretçi düğüm merkezinin altında",
+    "delayMs": 400,
+    "replacesLabel": true,
+    "nodeLift": -1,
+    "rows": [
+     "ad nodeTipName + sağda güven fişi",
+     "değer nodeTipValue (raporsa karbon “≈”) + değişim",
+     "sızma rampası 8 px + değer işaretçisi 4×16 ink (1,5 px kâğıt halesi)",
+     "ic_cursor 12 + nodeTipHint ink3 “tıkla: bölge kartı”"
+    ],
+    "padding": [
+     9,
+     12,
+     10,
+     12
+    ]
+   },
+   "dossier": {
+    "rect": [
+     16,
+     96,
+     480,
+     906
+    ],
+    "side": "bölge ekranın sağ yarısındaysa sol 16; sol yarısındaysa sağ 16 (x = 1904 − 480)",
+    "tab": "“BÖLGE DOSYASI” + LF 12 ink2 “tam dosya” + kapat",
+    "sections": {
+     "head": [
+      61,
+      "ad dossierTitle + kod + GİZLİ damgası; meta: nüfus · bağlantı · izleme ağı"
+     ],
+     "infiltration": [
+      66,
+      "bölge kartıyla aynı: SIZMA %38 ? + aralık çubuğu + LF 12 turuncu fark notu"
+     ],
+     "sources": [
+      130,
+      "tablo: ad (LF 600 13) + alt not · değer · tarih · güven işareti; değiştirilmiş kaynağın altında kırmızı ic_term + “YZ günlüğü: elle değiştirildi”"
+     ],
+     "chart": [
+      126,
+      "426×104: ızgara 0/20/40/60, rapor çizgisi 2 px #524973, son ayarlama kırmızı kesik + halka, saha ölçümü mavi baklava + etiket"
+     ],
+     "links": [
+      100,
+      "2 sütun, 36 px çipler: küçük düğüm 30 + ad; yayılım kaynağı kırmızı zemin #FBEFEA + “← yayılım”"
+     ],
+     "actions": [
+      173,
+      "4 satır 34 px: tuş + simge + ad (92) + maliyet (CP 700 12) + etki (LF 12 ink3); Son Şalter kırmızı"
+     ],
+     "team": [
+      78,
+      "bölge kartındaki ekip satırı"
+     ]
+    },
+    "gap": 14
+   }
+  }
+ },
+ "raid": {
+  "camera": {
+   "k": 1.5,
+   "gridOriginPx": [
+    210,
+    528
+   ],
+   "boardCenterPx": [
+    960,
+    528
+   ],
+   "pixelsPerUnitAt1080": 132.58,
+   "orthographicSizeAt1080": 4.0729,
+   "orthographicSizeFormula": "orthoSize = (Screen.height / canvasScale) / 265.165",
+   "eulerDeg": [
+    35,
+    45,
+    0
+   ],
+   "screenFromGrid1080": "x = 210 + (u + v) · 93.75 ; y = 528 + (v − u) · 53.775 − z · 108.62  (u = sütun, v = satır; kare merkezi +0,5)",
+   "framing": "ızgara ortası (4,4) ekranda (960, 528); tahta tabanı (8,6 birim) 1612×972 px kaplar; HUD dört köşede"
+  },
+  "background": {
+   "felt": "C kitindeki tx_felt (RawImage, döşeme) #1C372C",
+   "lamp": "tx_lamp_raid (ekran boyu; sıcak havuz + kenar kararması tek dokuda)"
+  },
+  "layout1080": {
+   "turn": [
+    16,
+    14,
+    397.4,
+    62
+   ],
+   "objective": [
+    16,
+    88,
+    394,
+    96
+   ],
+   "topButtons": {
+    "right": 16,
+    "top": 14,
+    "h": 44,
+    "gap": 8,
+    "widthsTR": {
+     "log": 134.8,
+     "rules": 153.8,
+     "retreat": 131.1
+    }
+   },
+   "teamRow": {
+    "left": 16,
+    "bottom": 16,
+    "chip": [
+     198,
+     74
+    ],
+    "gap": 8,
+    "selectedLift": 10
+   },
+   "end": {
+    "right": 16,
+    "bottom": 18,
+    "gap": 10,
+    "undo": [
+     117.3,
+     44
+    ],
+    "endTurn": [
+     218,
+     56
+    ]
+   },
+   "unitCard": [
+    16,
+    744,
+    360,
+    216
+   ],
+   "hoverCard": [
+    1646,
+    818,
+    258,
+    150
+   ],
+   "hoverCardBottom": 968,
+   "eventSlip": [
+    16,
+    196,
+    394,
+    90
+   ],
+   "endConfirm": [
+    1574,
+    843,
+    330,
+    143
+   ],
+   "logDrawer": [
+    1528,
+    66,
+    376,
+    560
+   ],
+   "rulesCard": [
+    1484,
+    66,
+    420,
+    455.5
+   ],
+   "retreatConfirm": [
+    1528,
+    66,
+    376,
+    118.4
+   ],
+   "result": [
+    1240,
+    560,
+    440,
+    374.6
+   ]
+  },
+  "turnPlaque": {
+   "bg": "#0E0906",
+   "border": [
+    1,
+    "#6E5A33"
+   ],
+   "radius": 3,
+   "padding": [
+    0,
+    12,
+    0,
+    10
+   ],
+   "gap": 12,
+   "cal": [
+    60,
+    42,
+    14
+   ],
+   "boxes": {
+    "size": 22,
+    "nowSize": 26,
+    "gap": 4,
+    "radius": 2,
+    "border": [
+     1,
+     "#6E5A33"
+    ],
+    "past": {
+     "bg": "#6E5A33",
+     "text": "#1A1208"
+    },
+    "now": {
+     "bg": "#F1E9D6",
+     "text": "#1A4789",
+     "border": [
+      2,
+      "#C9A86A"
+     ]
+    },
+    "future": {
+     "text": "#A48A55"
+    },
+    "last": {
+     "border": "#B8241A",
+     "text": "#D8806F"
+    }
+   },
+   "phase": {
+    "h": 34,
+    "padding": [
+     0,
+     12
+    ],
+    "gap": 8,
+    "you": {
+     "bg": "#F1E9D6",
+     "text": "#1A4789",
+     "lamp": "yeşil (C .lamp.on)"
+    },
+    "ai": {
+     "bg": "#F3E3DC",
+     "text": "#9A1E14",
+     "lamp": "kırmızı"
+    }
+   }
+  },
+  "objective": {
+   "paper": "#F1E9D6",
+   "border": [
+    1,
+    "#C8B996"
+   ],
+   "radius": 2,
+   "padding": [
+    8,
+    12,
+    8,
+    12
+   ],
+   "thumb": [
+    46,
+    58
+   ],
+   "pips": 10,
+   "pipGap": 3,
+   "civil": {
+    "icon": 20,
+    "gap": 4
+   },
+   "divider": [
+    1,
+    40,
+    "#C8B996"
+   ]
+  },
+  "topButton": {
+   "paper": "#F1E9D6",
+   "border": [
+    1,
+    "#463F34"
+   ],
+   "radius": 3,
+   "padding": [
+    0,
+    12,
+    0,
+    11
+   ],
+   "gap": 8,
+   "icon": 16,
+   "key": 17,
+   "retreat": {
+    "text": "#9A1E14",
+    "border": "#9A1E14",
+    "shadow": [
+     0,
+     3,
+     "#5E0F0A",
+     1
+    ]
+   }
+  },
+  "teamChip": {
+   "size": [
+    198,
+    74
+   ],
+   "paper": "#FBF7EC",
+   "border": [
+    1,
+    "#D2C7AF"
+   ],
+   "radius": 2,
+   "key": {
+    "posFromOuter": [
+     7,
+     7
+    ],
+    "size": 16
+   },
+   "thumb": [
+    40,
+    56,
+    "sol-üstü kartın dış sol-üstünden (19, 13)"
+   ],
+   "name": "CP 700 12 ls .06em",
+   "pips": 10,
+   "avail": {
+    "size": 24,
+    "gap": 4,
+    "icon": 14,
+    "stroke": 1.8
+   },
+   "states": {
+    "selected": "2 px ink kenar, #FFFDF5, −10 px kalkar, gölge 4,10 %45, ad fosforlu (#F5D646)",
+    "done": "zemin #EEE6D3, küçük resim _done"
+   }
+  },
+  "unitCard": {
+   "w": 360,
+   "paper": "#FBF7EC",
+   "border": [
+    2,
+    "#1E1B16"
+   ],
+   "radius": 2,
+   "headH": 62,
+   "thumbOverhangTop": 10,
+   "headRule": [
+    2,
+    "#D2483F"
+   ],
+   "rowH": 44,
+   "rowGap": 8,
+   "rowMargin": 12,
+   "used": {
+    "text": "#675F50",
+    "border": "1 px kesik #C9BEA6"
+   },
+   "armed": {
+    "bg": "#F5D646",
+    "border": [
+     2,
+     "#1E1B16"
+    ],
+    "shadow": [
+     0,
+     2,
+     "#000000",
+     0.25
+    ]
+   },
+   "fx": {
+    "h": 26,
+    "padding": [
+     0,
+     8
+    ],
+    "gap": 8,
+    "indentLeft": 40
+   },
+   "pointer": {
+    "sprite": "card_pointer_down",
+    "centerXFromCardLeft": 79,
+    "topFromOuterBottom": -3,
+    "tipBelowOuterBottom": 13
+   }
+  },
+  "hoverCard": {
+   "w": 258,
+   "paper": "#FBF7EC",
+   "border": [
+    1.5,
+    "#1E1B16"
+   ],
+   "radius": 2,
+   "headH": 50,
+   "headRule": [
+    1.5,
+    "#D2483F"
+   ],
+   "lineH": 30,
+   "icon": 15
+  },
+  "worldLabels": {
+   "_": "B paketinin dünya etiketleri (raid_tokens.labels) şu farklarla:",
+   "robotHp": "yalnız can noktaları: kâğıt etiket 15 px yükseklik, iç boşluk 0/3, nokta 8 px (pip_*_8), kenar #9A1E14",
+   "unitHp": "yalnız can noktaları (aynı ölçü), kenar ink; tur bitti #E9DDC6 zemin",
+   "targets": "hedef dolaplarda hedef + zırh simgesi + can noktaları kalır (sayı “3/4” yok)",
+   "copyCabinet": "yalnız can noktaları",
+   "civilCooling": "etiket YOK (parçanın kendi boyası/işareti yeter)",
+   "compass": "YOK",
+   "flags": "aynen (sıra bayrağı)",
+   "cancelFlag": "bayrak kutusunun üstünden −28° kırmızı #B8241A 3 px çizgi; rakam çizilmez"
+  },
+  "panels": {
+   "aiChip": {
+    "h": 18,
+    "padding": [
+     0,
+     6,
+     0,
+     5
+    ],
+    "gap": 4,
+    "border": [
+     1,
+     "#C79B92"
+    ],
+    "bg": "#F3E3DC",
+    "radius": 2,
+    "font": "aiChip #9A1E14",
+    "icon": "mk_copy_13 (12)",
+    "place": "HEDEF başlık satırının sağı; başlık satırı 18 px (kart 96 px)",
+    "tooltip": "tek cümle (B AB_S1/AB_S2)"
+   },
+   "brokenTarget": {
+    "thumb": "thumb_debris_backup",
+    "name": "ink3 + 2 px #9A1E14 üstü çizili",
+    "stamp": "küçük yeşil damga “KIRILDI” −4°, can noktalarının yerinde"
+   },
+   "lastTurn": {
+    "box": "şimdiki + son: zemin #F7E1DB, kenar #B8241A, yazı #9A1E14",
+    "stamp": "küçük kırmızı damga “SON TUR” −3°, zemin #F7E1DB; evre etiketinin solunda (plaka 476,8 genişler)"
+   },
+   "teamChip": {
+    "down": {
+     "paper": "#E6DED0",
+     "thumb": "thumb_standee_*_done α .7 + pencil_x_40x56",
+     "pips": "boş, kenar #9A1E14",
+     "stamp": "küçük kırmızı damga “DÜŞTÜ” sağ 8 üst 43, −7°",
+     "avail": "gizli",
+     "input": "tıklanmaz"
+    },
+    "warn": {
+     "border": [
+      2,
+      "#1E1B16"
+     ],
+     "paper": "#FFFDF5",
+     "ring": "4 px #F5D646 dış halka",
+     "shadow": [
+      4,
+      6,
+      "#000000",
+      0.4
+     ],
+     "avail": "açık hak simgelerine 3 px #F5D646 α .9 halka"
+    },
+    "locked": "kartlar α .6, tıklanmaz"
+   },
+   "topButtonOn": {
+    "border": [
+     2,
+     "#1E1B16"
+    ],
+    "paper": "#FFFDF5",
+    "shadow": "iç üst 2 px α .16",
+    "offsetY": 3
+   },
+   "retreatArmed": {
+    "bg": "#9A1E14",
+    "text": "#FBF0E8",
+    "border": "#5E0F0A",
+    "shadow": [
+     [
+      0,
+      3,
+      "#3A0805",
+      1
+     ],
+     [
+      2,
+      4,
+      "#000000",
+      0.35
+     ]
+    ],
+    "label": "EMİN MİSİN? TEKRAR BAS",
+    "w": 238.3,
+    "dim": "ekran #0E0905 α .32; yalnız bu düğme ve onay fişi üstte"
+   },
+   "eventSlip": {
+    "rect": [
+     16,
+     196,
+     394,
+     90
+    ],
+    "paper": "#EFE4BC",
+    "border": [
+     1,
+     "#C9B98A"
+    ],
+    "leftBar": [
+     4,
+     "#9A1E14"
+    ],
+    "padding": [
+     8,
+     12,
+     10,
+     12
+    ],
+    "shadow": "eventSlip",
+    "queue": {
+     "h": 24,
+     "gap": 5,
+     "box": 22,
+     "boxNow": 26,
+     "border": [
+      1.5,
+      "#9A1E14"
+     ],
+     "states": {
+      "pending": "#FBF7EC zemin, kırmızı yazı",
+      "done": "kenar #C79B92, yazı #B9806F, ortadan 2 px çizgi",
+      "now": "dolu #9A1E14, #FBF0E8 yazı 14, gölge 2,2 α .35",
+      "cancel": "zemin #E3DACA, kenar ve yazı #8E8573, −30° 2,5 px #B8241A çizgi"
+     },
+     "right": "Boşluk tuş fişi + LF 11 ink3 “hızlandır”"
+    },
+    "line": "robot_mini_22 (20) + CP 700 14 #9A1E14 sıra + eventLine metin; hedef kalın; hasar CP 700 #9A1E14",
+    "life": "makineler evresi boyunca durur; her niyette satır değişir"
+   },
+   "endConfirm": {
+    "button": {
+     "bg": "#F5D646",
+     "text": "ink",
+     "border": [
+      2,
+      "#1E1B16"
+     ],
+     "shadow": [
+      0,
+      3,
+      "#000000",
+      1
+     ],
+     "label": "EMİN MİSİN? [Enter]"
+    },
+    "note": {
+     "rect": [
+      1574,
+      843,
+      330,
+      143
+     ],
+     "paper": "#F5DC63 (C yapışkan not, sağ alt köşe kıvrık)",
+     "padding": [
+      12,
+      14,
+      12,
+      14
+     ],
+     "shadow": "confirmNote",
+     "rows": [
+      "ic_hand 15 + confirmHead “HAKKI DURAN BİRİM”",
+      "jeton 26 + ad (LF 700) + hak simgeleri 22 + “kullanılmadı”",
+      "tehdit kutusu: #FBF7EC α .7, 1 px kesik #9A1E14: robot_mini + “#2 dron onu vuracak” + “−1”",
+      "Enter “yine de bitir” · Esc “vazgeç”"
+     ]
+    },
+    "chip": "hakkı duran birimin kartı warn; tahtada karesine üstüne gelme köşeleri"
+   },
+   "hoverTarget": {
+    "rect": [
+     1646,
+     795,
+     258,
+     173
+    ],
+    "rows": [
+     "ic_shield 15 + “Zırh: sabotaj işler” + yeşil onay",
+     "ic_bolt 15 + “Sabotaj” + CP 700 “2/4 → 0”"
+    ],
+    "win": {
+     "margin": [
+      6,
+      12,
+      2,
+      12
+     ],
+     "padding": [
+      7,
+      8
+     ],
+     "bg": "#F7E1DB",
+     "border": "1 px kesik #9A1E14",
+     "stamp": "küçük kırmızı “HEDEF KIRILIR” −3°",
+     "text": "LF 600 12 #24592E “operasyon kazanılır”"
+    }
+   },
+   "logDrawer": {
+    "rect": [
+     1528,
+     66,
+     376,
+     560
+    ],
+    "content": "B operasyon günlüğü (ol-hd + ol-pp); başlığın sağına 20 px kapat (zemin #2A221A, kenar #6E5A33, simge #C9A86A)"
+   },
+   "rulesCard": {
+    "rect": [
+     1484,
+     66,
+     420,
+     455.5
+    ],
+    "content": "B kurallar kartı başlığı + 6 satır + B lejantı (ozalit fişi, 2 sütun) içte 14 px boşlukla; başlıkta kapat"
+   },
+   "outcome": {
+    "hud": "köşe arayüzü 200 ms’de α 0",
+    "spot": {
+     "center": "ızgara (6,5; 3,5; z 0,15) → (1147,5; 350,4)",
+     "r": 150
+    },
+    "bigStamp": {
+     "rect": [
+      976.1,
+      445.9,
+      328.8,
+      86.1
+     ],
+     "rotDeg": -5,
+     "note": "spotun alt kenarına biner"
+    },
+    "memo": {
+     "rect": [
+      1240,
+      560,
+      440,
+      374.6
+     ],
+     "content": "B sonuç fişi"
+    }
+   }
+  }
+ },
+ "motion": {
+  "popOpenS": 0.12,
+  "popCloseS": 0.09,
+  "drawerOpenS": 0.14,
+  "chipHoverS": 0.08,
+  "cardStringS": 0.12,
+  "teamChipLiftS": 0.1,
+  "regionHighlightFadeS": 0.12,
+  "easing": "ease-out",
+  "tooltipDelayS": 0.4,
+  "tooltipFadeS": 0.08,
+  "newsHoverHighlightS": 0.12,
+  "eventLineSwapS": 0.12,
+  "confirmArmS": 0.08,
+  "drawerSwapS": 0.14,
+  "dimS": 0.15
+ }
+}

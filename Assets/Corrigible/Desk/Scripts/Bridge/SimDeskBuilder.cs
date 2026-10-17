@@ -238,6 +238,7 @@ namespace Corrigible.Desk.Bridge
             if (S.Ending == null && vm.Intro == null && vm.Event == null && vm.Campaign == null && vm.FakeWin == null
                 && !st.SettingsOpen && !inp.RaidScene && st.Tutorial?.Kind != "step")
                 vm.CriticalNewsId = st.CriticalNewsId;
+            vm.Sade = BuildSade(vm, g);
             return vm;
         }
 
@@ -471,6 +472,15 @@ namespace Corrigible.Desk.Bridge
             };
             if (illusion) vm.Stamp = new StampVM { Text = Loc.T("TEMİZ"), Color = "green", Rot = -3 };
             if (S.Ending != null) { vm.Next = new GoalNextVM { Label = Loc.T("Sıradaki:"), Name = Loc.T("Oyun bitti"), Right = "" }; return vm; }
+            if (S.Aware && S.Core == null && !illusion)
+            {
+                vm.Next = new GoalNextVM
+                {
+                    Label = Loc.T("Silme:"), Name = erase.Action,
+                    Right = Loc.F("{0}/{1} gün", S.CleanDays, sim.Dur(15)),
+                };
+                return vm;
+            }
             if (S.Research.Cur != null)
             {
                 var rs = GameData.ResearchItem(S.Research.Cur);
@@ -608,6 +618,13 @@ namespace Corrigible.Desk.Bridge
                 },
             };
             var p = input.Profile;
+            if (sim.ReportsOn)
+                vm.Sections.Add(new GuideSectionVM
+                {
+                    Title = Loc.T("SAHA RAPORLARI"),
+                    Body = Loc.F("İttifaktaki çevrimiçi bölgelerde ekip veya izleme ağı rapor fişi üretir. Fişe tıklayın: haber arşivlenir ve +{0:0.#} fon alınır. Ek ödenek, kapsam varken kazanılan düzenli gelirin en fazla %{1:0}'idir. Haritada en fazla {2} fiş bekler; ödenek {3} gün sonra sona erer. Raporlar yanlış olabilir; fon kazanmak doğruluk kanıtı değildir.",
+                        sim.B.reportReward, sim.B.reportIncomeShare * 100, sim.B.reportMaxPending, sim.Dur(sim.B.reportLifetimeDays)),
+                });
             if (p != null && p.runs > 0)
             {
                 var top = p.TopAction();

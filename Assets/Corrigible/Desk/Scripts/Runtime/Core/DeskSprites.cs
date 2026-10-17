@@ -37,6 +37,10 @@ namespace Corrigible.Desk
         }
 
         void OnEnable() { map = null; texMap = null; }
+        void OnValidate() => Invalidate();
+
+        /// <summary>Kayıt yeniden kurulunca arama tablolarını boşaltır.</summary>
+        public void Invalidate() { map = null; texMap = null; }
 
         public bool TryGet(string name, out Entry e)
         {

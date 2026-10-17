@@ -114,6 +114,14 @@ namespace Corrigible.Desk
 
         public bool TryGet(string key, bool inIllusion, out Color color)
         {
+            // Sade arayüz anahtarları (“sade.status.threat”) kendi temasından
+            if (key != null && key.StartsWith(SadeTheme.KeyPrefix, StringComparison.Ordinal))
+            {
+                var sade = SadeTheme.Active;
+                if (sade != null && sade.TryGet(key.Substring(SadeTheme.KeyPrefix.Length), out color)) return true;
+                color = default;
+                return false;
+            }
             if (map == null) Build();
             if (inIllusion && illusionMap.TryGetValue(key, out color)) return true;
             return map.TryGetValue(key, out color);

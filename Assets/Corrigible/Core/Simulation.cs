@@ -69,6 +69,7 @@ namespace Corrigible.Core
             s.Origin = ctr.Origin ?? s.Rng.Pick(GameData.Regions).Id;
             s.Core = s.Origin;
             s.Region(s.Origin).Inf = 2;
+            if (sim.ReportsOn) s.NextFieldReportDay = sim.Dur(b.reportIntervalDays);
             foreach (var line in ctr.Lines) sim.AddLog(line, "counter");
             foreach (var t in s.StartTraits) sim.AddLog(Loc.F("Başlangıç yeteneği: {0}.", GameData.Trait(t).Name), "trait");
             sim.Record = new GameRecord
@@ -345,6 +346,7 @@ namespace Corrigible.Core
 
             if (TeamsOn) StepTeams();
             StepRecovery();
+            if (ReportsOn) StepFieldReports();
             if (EventsOn) StepDilemmas();
             CheckMoments();
             CheckPredictions();
@@ -830,6 +832,7 @@ namespace Corrigible.Core
         {
             var h = S.News.FirstOrDefault(x => x.Id == headlineId);
             if (h == null || h.Verified != null) return ActResult.Fail(Loc.T("Bu başlık zaten doğrulandı."));
+            if (h.Kind == "field") return ActResult.Fail(Loc.T("Saha raporundaki oran bir tahmindir. Güncel durumu bölgeye denetim göndererek doğrula."));
             if (!S.Done("dogrulama")) return ActResult.Fail(Loc.T("Önce Doğrulama Ağı araştırmasını tamamla."));
             double verificationCost = ModernEconomy ? B.verificationSg : 2;
             if (S.Sg < verificationCost) return ActResult.Fail(Loc.F("Doğrulama {0} siyasi güç ister.", verificationCost));

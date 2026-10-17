@@ -18,6 +18,8 @@ namespace Corrigible.Core
         public int Stage;
         /// <summary>Olay kartları (ikilemler).</summary>
         public bool Events;
+        /// <summary>Haritadaki saha raporları ve sınırlı operasyon ödeneği (yalnızca Unity).</summary>
+        public bool FieldReports;
         /// <summary>Kampanya zorluğu: YZ bu yeteneklerle başlar.</summary>
         public List<string> ExtraTraits = new List<string>();
 

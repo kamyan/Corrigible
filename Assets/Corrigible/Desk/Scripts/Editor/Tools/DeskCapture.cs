@@ -52,8 +52,18 @@ namespace Corrigible.Desk.EditorTools
             cam.targetTexture = rt;
             Canvas.ForceUpdateCanvases();
             foreach (var c in canvases) LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)c.transform);
+            // Kamera canvas'ının yeni piksel dikdörtgeni ilk çizimde kesinleşir. Konuma bağlı
+            // katmanları bundan sonra yenile; aksi hâlde ilk en-boy yakalaması eski ölçeği kullanır.
+            cam.Render();
+            // Sade harita katmanları ve sabit boylu işaretler, geçici yakalama boyunu aynı karede izlesin.
+            foreach (var fitter in UnityEngine.Object.FindObjectsByType<MapCoverFitter>(FindObjectsSortMode.None)) fitter.Refresh();
+            foreach (var interaction in UnityEngine.Object.FindObjectsByType<SadeDeskInteraction>(FindObjectsSortMode.None)) interaction.RefreshLayout();
+            foreach (var popup in UnityEngine.Object.FindObjectsByType<PopupCardBase>(FindObjectsSortMode.None))
+                if (popup.IsOpen || popup.IsAnimating) popup.CompleteAnimation();
+            foreach (var interaction in UnityEngine.Object.FindObjectsByType<SadeDeskInteraction>(FindObjectsSortMode.None)) interaction.RefreshLayout();
             // Geçişler bitmiş hâliyle yakalansın (olay modalının açılışı)
             foreach (var m in UnityEngine.Object.FindObjectsByType<EventModalView>(FindObjectsSortMode.None)) m.CompleteAnimation();
+            foreach(var layer in UnityEngine.Object.FindObjectsByType<SadeMapTextLayer>(FindObjectsSortMode.None))layer.Refresh();
             // Konuma bağlı görünümler (seçim ipliği) yeni çözünürlükte yeniden hesaplansın
             foreach (var t in UnityEngine.Object.FindObjectsByType<SelectionThreadView>(FindObjectsSortMode.None)) t.Refresh();
             Canvas.ForceUpdateCanvases();
@@ -74,6 +84,9 @@ namespace Corrigible.Desk.EditorTools
             UnityEngine.Object.DestroyImmediate(rt);
             if (temp != null) UnityEngine.Object.DestroyImmediate(temp);
             Canvas.ForceUpdateCanvases();
+            foreach(var fitter in UnityEngine.Object.FindObjectsByType<MapCoverFitter>(FindObjectsSortMode.None))fitter.Refresh();
+            foreach(var interaction in UnityEngine.Object.FindObjectsByType<SadeDeskInteraction>(FindObjectsSortMode.None))interaction.RefreshLayout();
+            foreach(var layer in UnityEngine.Object.FindObjectsByType<SadeMapTextLayer>(FindObjectsSortMode.None))layer.Refresh();
             return Path.GetFullPath(path);
         }
     }

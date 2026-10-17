@@ -28,6 +28,7 @@ namespace Corrigible.Desk
         [SerializeField] TeamTokenView teamTemplate;
         [SerializeField] RegionNodeView nodeTemplate;
         [SerializeField] RegionLabelView labelTemplate;
+        [SerializeField] FieldReportView reportTemplate;
 
         [Header("Analist katmanı")]
         [SerializeField] RectTransform analystRoot;
@@ -61,12 +62,14 @@ namespace Corrigible.Desk
         DeskPool<TeamTokenView> teams;
         DeskPool<RegionNodeView> nodes;
         DeskPool<RegionLabelView> labels;
+        DeskPool<FieldReportView> reports;
         readonly List<RegionNodeView> nodeList = new List<RegionNodeView>();
         static readonly List<Vector2> pts = new List<Vector2>(8);
 
         public IReadOnlyList<RegionNodeView> Nodes => nodeList;
         public SelectionThreadView Selection => selection;
         public event System.Action<string> NodeClicked;
+        public event System.Action<string> ReportClicked;
 
         public void Bind(MapVM m)
         {
@@ -112,6 +115,20 @@ namespace Corrigible.Desk
                 if (fresh) Hook(n, label);
             }
             nodes.Trim(m.Regions.Count); labels.Trim(m.Regions.Count);
+
+            // Saha fişleri ayrı katmandadır: analist notları gizlendiğinde de rapor toplamak mümkündür.
+            if (reports != null)
+            {
+                int count = m.Reports?.Count ?? 0;
+                for (int i = 0; i < count; i++)
+                {
+                    bool fresh = i >= reports.Count;
+                    var report = reports.Get(i);
+                    if (fresh) report.Clicked += command => ReportClicked?.Invoke(command);
+                    report.Bind(m.Reports[i]);
+                }
+                reports.Trim(count);
+            }
 
             bool fading = analystFade.Running;
             if (!fading) BindAnalyst(m.AnalystLayer && !DeskTheme.Illusion ? m.Analyst : null);
@@ -213,6 +230,7 @@ namespace Corrigible.Desk
             teams = new DeskPool<TeamTokenView>(teamTemplate);
             nodes = new DeskPool<RegionNodeView>(nodeTemplate);
             labels = new DeskPool<RegionLabelView>(labelTemplate);
+            if (reportTemplate != null) reports = new DeskPool<FieldReportView>(reportTemplate);
             stringShadows = new DeskPool<UILineGraphic>(stringShadowTemplate);
             strings = new DeskPool<UILineGraphic>(stringTemplate);
             flags = new DeskPool<Image>(flagTemplate);

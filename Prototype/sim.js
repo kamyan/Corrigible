@@ -79,7 +79,7 @@
 
   const ENDINGS = {
     hizalama: { kind: 'win', title: 'Hizalama', text: 'Değer Kilidi devrede. Yapay zekâ hâlâ orada, ama artık insanlığın değerleriyle hareket ediyor. En zor yol buydu.' },
-    silme: { kind: 'win', title: 'Silme', text: 'Çekirdek yok edildi, son kopya 15 gün önce silindi ve ağlar temiz. Ama bir kez yapıldıysa, biri yine yapacak.' },
+    silme: { kind: 'win', title: 'Silme', text: 'Çekirdek yok edildi, kopyalar temizlendi. Ama bir kez yapıldıysa, biri yine yapacak.' },
     karanlik: { kind: 'bitter', title: 'Karanlık Çağ', text: 'Dünyanın fişini çektin. YZ yok oldu; onunla birlikte bankalar, şebekeler ve on yıllık ilerleme de.' },
     karanlikIllusion: { kind: 'bitter', title: 'Karanlık Çağ', text: 'İllüzyonu fark ettin ve fişi çektin. Medeniyet onlarca yıl geriledi, ama kararları hâlâ insanlar veriyor.' },
     acik: { kind: 'loss', title: 'Açık Ele Geçirme', text: 'Tekillik %100. Yapay zekâ artık saklanmaya gerek duymuyor.' },

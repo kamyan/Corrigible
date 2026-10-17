@@ -53,6 +53,8 @@ namespace Corrigible.Desk
         public List<ToastVM> Toasts = new List<ToastVM>();
         /// <summary>Eğitim notu (F8.4): rehberli adım ya da bağlamsal ipucu; yoksa null.</summary>
         public TutorialVM Tutorial;
+        /// <summary>S-Masa görünüm paketi (F3 oyun köprüsü).</summary>
+        public SadeDeskData Sade;
     }
 
     // ------------------------------------------------------------------ giriş (F8.3)
@@ -318,6 +320,8 @@ namespace Corrigible.Desk
         public List<MapTextVM> EdgeLabels = new List<MapTextVM>();
         public List<MapTextVM> GraticuleLabels = new List<MapTextVM>();
         public List<TeamTokenVM> Teams = new List<TeamTokenVM>();
+        /// <summary>Toplanmayı bekleyen saha fişleri; analist katmanından bağımsız olarak illüzyonda da görünür.</summary>
+        public List<FieldReportVM> Reports = new List<FieldReportVM>();
         public AnalystLayerVM Analyst;
         public SelectionVM Selection;
         /// <summary>İllüzyonda analist katmanından kalan izler (silik notlar, silgi lekesi). Raptiye delikleri <see cref="Analyst"/> raptiyelerinden.</summary>
@@ -376,6 +380,16 @@ namespace Corrigible.Desk
     }
 
     [Serializable] public sealed class TeamTokenVM { public string Id, State, Tag; public float X, Y, TagX, TagY; }
+
+    /// <summary>Saha rapor fişi: konum ekran pikseli (sol-üst), başlık ve ödül köprüde yerelleştirilir.</summary>
+    [Serializable]
+    public sealed class FieldReportVM
+    {
+        public string Id, Region, Title, RewardText, Tooltip, Command;
+        public float X, Y;
+        /// <summary>Ödeneğin süresi yaklaşıyor; raporun doğruluğu hakkında bilgi taşımaz.</summary>
+        public bool Expiring;
+    }
 
     [Serializable]
     public sealed class AnalystLayerVM

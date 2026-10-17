@@ -94,6 +94,8 @@ Corrigible/                      (Unity proje kökü, git deposu)
 - `GameRecord` (`Core/GameRecord.cs`): `type, seed, hasProfile, profileAtStart, balance, commands[], day`.
   `SavedCommand { day, kind, a, b }`; türler: `act, kill, research, gift, verify, advice, reserve` ve deneysel modda
   `team, hire, raid, raidres` (`RaidResult.Encode`). Yeni ekonomi komutları `operation, recovery, diplomacy, research_pause`.
+  Unity saha raporları `reports_enable` (eski kayıtta devam gününden itibaren açar) ve `report` (fiş kimliğini toplar)
+  komutlarını ekler. Başlangıç `Record.rules` geçmişi değiştirilmez.
   Deneysel ayarlar `hasExp/exp` alanlarında. Biçim `version=3`; ekonomik kural profili ayrı `ruleVersion` alanında.
   v1/v2 kayıtlar eski kural profiliyle yeniden oynatılır ve devam eder.
 - `Simulation.Record` her başarılı komutu `Rec(...)` ile ekler. `Replay.Restore(rec)` yeni oyunu kurar, her komutun gününe
@@ -106,18 +108,22 @@ Corrigible/                      (Unity proje kökü, git deposu)
 ## Baskın sahnesi (`Scenes/Baskin.unity`)
 
 ```
-Raid Camera     ortografik, (35°, 45°) izometrik; tahta ekranın solunda. URP son işlem açık
-Key Light, Rim Light, Global Volume (Art/Raid/RaidVolume: bloom, ton eşleme, vinyet)
-Board           [RaidBoard3D] Tiles / Pieces / Marks çalışma anında kurulur (Settings/RaidPieceLibrary)
-Baskin          Canvas sıra 12 [RaidView]: Root → Title, Turn, Side (hedef, ekip kartları, düğmeler, günlük),
-                Legend, WinLabel, Brief, Result
+Raid Camera     ortografik, k=1,5; SadeRaidCameraFraming, tahta merkezde
+Key Light / Rim Light; keçe, lamba ve tahta gölgesi BoardBackgroundView tarafından çizilir
+Board           [RaidBoard3D] Tiles / Pieces / Marks (Settings/RaidPieceLibrary)
+RaidHudCanvas   Overlay 20, RaidHud + ekip/birim/inceleme kartları
+RaidLabelCanvas Overlay 30, RaidScreenLabel prefab'ları
+RaidPanelCanvas Overlay 50, RaidPanels + olay/onay/günlük/kurallar/geri çekilme/sonuç
+LiveRaidDataSource + RaidCommands (Bridge); RaidEventSystemGate
 ```
 
 - `RaidLauncher` (ana sahnede, Game nesnesi): `S.Raid` oluşunca sahneyi `LoadSceneMode.Additive` ile yükler, etkin
   sahne yapar (ışık ayarları için) ve ana kamerayı, dinleyicisini, KrizMasasi/Pencereler/Egitim canvas'larını kapatır
   (nesneleri değil bileşenleri; görünümlerin olay abonelikleri sürer). Sahne kapanınca hepsini geri açar.
-- `RaidView` sahne açılınca `GameController`'ı bulur ve `S.Raid.Params` ile `Baskin.Create`'i çağırır; bitince
-  `ResolveRaid` ve sahneyi kapatır. Ana sahne yoksa (sahne editörde tek başına açıldı) örnek bir baskın kurar.
+- `LiveRaidDataSource`, eklemeli ana sahnedeki `GameController` ve `S.Raid.Params` ile `Baskin.Create`'i bir kez çağırır.
+  Oyuncu sonuçtan rapora geçtiğinde `GameController.ResolveRaid` çalışır; mevcut `raidres` kaydı/replay yolu korunur.
+  `LiveRaidDataSource` taktik sahneyi kaldırır; `RaidLauncher` masayı geri açar. Baskın boyunca masa `DeskInput` bileşenleri askıya alınır;
+  `RaidEventSystemGate` ana EventSystem varken yerel olanı kapatır. Ana sahne yoksa bağımsız örnek baskın açılır.
 - `RaidBoard3D`: kare (x, y) → dünya `(x−3.5, 0, 3.5−y)`. Karolar `RaidCell`, parçalar `RaidPiece` taşır; fare ışını
   hangi kareye çarptığını buradan okur (arayüzün üstündeyse yok sayılır). Vurgular ve oklar `UI/Default` tabanlı
   malzemelerle (renk köşe renginden/MPB'den; oklar `unity_GUIZTestMode = Always` ile her zaman üstte).
@@ -225,6 +231,10 @@ UI
     seçilir, oyun `S.PendingEvent` çözülene kadar durur (`S.Blocked`). Komut: `ResolveEvent(i)` → kayıtta `event`.
     Aşamalı öğrenmede 2. oyundan itibaren; kampanyada her zaman açık.
   - `ExtraTraits`: kampanya zorluğu (YZ bu yeteneklerle başlar).
+  - `FieldReports`: ekip/ağ kapsamındaki bölgelerden toplanan raporlar ve en fazla %8 ek fon. Günlük durum
+    `WorldState.FieldReports/FieldReportBudget/FieldReportCooldowns` içindedir; yalnız seçenek açıkken RNG tüketir.
+    Yeni Unity oyunlarında açıktır. Eski bütünleşik ekonomi kaydı yükleme sonrası kaydedilen komutla geçer;
+    v1/v2 kayıtlar korunur. Kalıcı fiş şablonu DeskGame sahnesindeki `MapView.reportTemplate` referansına bağlıdır.
 - **Kırılma anları** (`S.Moments`): tespit, çekirdek bulundu/yok edildi/kaçtı, yeni yetenek, hediye kabulü, izlenmeyen
   bölgede sızma 50+, veto eşiği, ittifaktan çekilme, illüzyonun başladığı gün (oyun sırasında gizli), perde, araştırma.
   Yalnızca metin; kararları etkilemez. Oyun sonu penceresinde "Kırılma anları" listesi.
@@ -415,3 +425,33 @@ Claude Design'ın "C · Analist Masası" yönü, mevcut kriz masasından ayrı b
   Overlay 60 / Modal 100 / Tooltip 110 / Debug 1000; F1–F4 ön ayar, F9 dil, F11/F12 referans katmanı) ve
   `Scenes/DeskUI_Gallery.unity` (bileşenler C5 stil rehberi koordinatlarında; ←/→ bölüm, F9 dil).
   Yakalama `Corrigible/Desk UI/Capture Game View` → `Docs/UI_C/captures/`, karşılaştırma `Docs/UI_C/tools/compare.py`.
+
+### Sade baskın tahtası · F4
+
+`Desk/Scenes/RaidBoard_Sandbox.unity`, canlı `Baskin` sahnesinden bağımsızdır. Tahta/parça sunumu `Corrigible.Game` içinde kalır; `Desk.Bridge` içindeki `SadeRaidCameraFraming`, `BoardBackgroundView` ve `MockRaidBoardDataSource` ona serileştirilmiş referanslarla bağlanır. Köprüden Game'e ters assembly bağımlılığı eklenmez.
+
+`RaidBoard3D.screenLabelPrefab` ve `screenLabelCanvas` atanınca `RaidWorldLabel`, dünya çapası olarak kalıp ekran görünümünü `RaidScreenLabel` prefab'ına iletir. Konum/kamera/ölçek değişmedikçe UI yerleşimi yenilenmez. Atanmamış eski sahne, mevcut 3D yazı yolunu kullanır. Sade can etiketleri ayrı Overlay Canvas'ındadır; siviller ve soğutma üniteleri için etiket kurulmaz. Prefab ve Canvas sahnenin asıl kaynaklarıdır; kalıcı sahne kurucu yoktur.
+
+Örnek ön ayarlar `Data/Sade/Mock/raid_board_states.json` içinden kurulur; Core kuralı, RNG, oyuncu kaydı ve komutu çalıştırılmaz. Sade HUD/kartlar F5; gerçek simülasyon köprüsü ve durum panelleri F6 kapsamındadır. Doğrulama ve bilinen görsel farklar: `Docs/UI_Sade/F4_NOTLARI.md`.
+
+### Sade baskın HUD ve mock komutlar · F5
+
+`Desk/Scripts/Runtime/Raid` veri/komut arayüzlerini ve HUD, ekip, birim, inceleme kartlarını içerir. `RaidViewModel`, HUD verisinin yanında Core tarafından hesaplanan hareket/hedef karelerini ve çarpışma noktalarını taşır. UI kural veya hasar hesaplamaz. Kanonik `RaidHud`, `RaidTeamCard`, `UnitCard`, `HoverInspector` prefab'ları Overlay 20 üzerinde, serileştirilmiş referanslarla bağlıdır.
+
+`MockRaidDataSource` ve `MockRaidCommands` Bridge assembly'sindedir. S1/S2 örneklerinden ayrı bir `Baskin.BState` kurup Core hareket/yetenek/önizleme/geri alma API'lerini kullanırlar; GameController, Simulation, oyuncu kaydı ve profil bağlantısı yoktur. Eski F4 kaynağı sahnede kapalı tutulur. `RaidPreviewOverlay`, VM'deki engellenen itmeleri kamera izdüşümüyle sahnede hazırlanmış dört yıldızda gösterir. `RaidBoard3D.SetExternalHover` ekip kartı üstüne gelme işaretini, ek bir komut üretmeden sunar.
+
+Klavye tek giriş noktası `RaidHudView`'dur; düğmelerde otomatik Navigation kapalıdır. Kare incelemesi 150 ms gecikir, kartlar 120 ms açılır. Enter onayı, Esc sırası, makineler kilidi ve panel istekleri mock durumunda çalışır. Tam S3–S9 panelleri ve canlı Baskın köprüsü F6 kapsamındadır; ayrıntı `Docs/UI_Sade/F5_NOTLARI.md`.
+
+### Sade baskın durumları ve canlı köprü · F6
+
+`RaidDataSource` mock ve canlı kaynakların ortak taktik komut/sunum sınırıdır. `RaidCommands`, `IRaidCommands` çağrılarını bu kaynağa iletir. Kurallar, hedefler ve önizleme Core'dan; görünür niyetler `Baskin.Intents` üzerinden gelir. UI, gizli yönü veya RNG'yi okumaz. `MockRaidDataSource` S1–S9/B3/B4/B7b örneklerini, `LiveRaidDataSource` gerçek bekleyen operasyonu açar.
+
+`RaidPanels` ve `RaidLogRow` kanonik prefab'lardır. Günlük satırları bu prefab'dan havuzlanır; kaydırılabilir geçmiş kesilmez. `RaidPanelsView` son olay/sıra, kullanılmamış hak ve kesin tehdit, kurallar/lejant, geri çekilme ve sonucu gösterir. `RaidOutcomeSpot` hedef karesini aynı tahta kamerasıyla karartma katmanına izdüşürür. Sonuç yalnız rapora geç komutunda stratejiye uygulanır; tekrar basış ikinci sonuç üretmez.
+
+Makine turunda Core tek seferde ilerler; ekran, efekt sırasıyla ilerleyen ayrı bir önceki durum kopyasını gösterir. Tahta animasyonu bitene kadar girdi kilitlidir. Boşluk, beklemeyi 0,25'ten 0,08 saniyeye düşürür. Canlı `Scenes/Baskin.unity`, aynı sandbox prefab/kamera/tahta düzenini kullanır; eski `RaidView` sahne bileşeni kaldırılmıştır, eski C# dosyaları uyumluluk için korunur. Ayrıntı: `Docs/UI_Sade/F6_NOTLARI.md`.
+
+### Sade ortak yazı katmanı ve F7 denetimleri
+
+`SadeMapTextLayer`, masa haritasının etiketlerini ve düğüm yazılarını tek alt Canvas'ta tutar. Her yazı grubu serileştirilmiş `Source`/`Target`/`CanvasGroup` çapasıyla düğümün konumunu, dönüşünü, ölçeğini ve görünürlüğünü izler; yalnız değişen özellik yazılır. Düğümün hover hareketi korunur. Bu sahne örnekleri prefab'dan bağımsızlaştırılmıştır: prefab altındaki metni başka ebeveyne taşımak kayıt/yüklemede eski yerine dönebildiği için son sahneler yeniden açılarak doğrulanır. Görünüm modeli ve komut referansları aynıdır.
+
+`SadeDebugMenu`, yalnız `IRaidPreviewSource` kabul eden kaynakta Shift+F1–F9 / Ctrl+F1–F3 örneklerini açar. `LiveRaidDataSource` bu arayüzü uygulamaz. `SadeTextChecker` etkin masa/baskın TMP'lerini gerçek glif sınırları ve tipografi kurallarıyla denetler; `DeskPerfProbe.Run(path, idleFrames)` özel rapor yolu alır. Faz doğrulaması ve dört çözünürlükteki yakalamalar `Docs/UI_Sade/captures/F7/` altındadır.

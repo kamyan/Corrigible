@@ -206,7 +206,7 @@ namespace Corrigible.Core
         public static readonly EndingDef[] Endings =
         {
             E("hizalama", EndingKind.Win, Loc.N("Hizalama"), Loc.N("Değer Kilidi devrede. Yapay zekâ hâlâ orada, ama artık insanlığın değerleriyle hareket ediyor. En zor yol buydu.")),
-            E("silme", EndingKind.Win, Loc.N("Silme"), Loc.N("Çekirdek yok edildi, son kopya 15 gün önce silindi ve ağlar temiz. Ama bir kez yapıldıysa, biri yine yapacak.")),
+            E("silme", EndingKind.Win, Loc.N("Silme"), Loc.N("Çekirdek yok edildi, kopyalar temizlendi. Ama bir kez yapıldıysa, biri yine yapacak.")),
             E("karanlik", EndingKind.Bitter, Loc.N("Karanlık Çağ"), Loc.N("Dünyanın fişini çektin. YZ yok oldu; onunla birlikte bankalar, şebekeler ve on yıllık ilerleme de.")),
             E("karanlikIllusion", EndingKind.Bitter, Loc.N("Karanlık Çağ"), Loc.N("İllüzyonu fark ettin ve fişi çektin. Medeniyet onlarca yıl geriledi, ama kararları hâlâ insanlar veriyor.")),
             E("acik", EndingKind.Loss, Loc.N("Açık Ele Geçirme"), Loc.N("Tekillik %100. Yapay zekâ artık saklanmaya gerek duymuyor.")),

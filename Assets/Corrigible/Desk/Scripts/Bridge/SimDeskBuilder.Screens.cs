@@ -47,8 +47,10 @@ namespace Corrigible.Desk.Bridge
                 });
             }
             // YZ'nin oyuncu hakkındaki kaydı: profilden üretilen karşı satırlar (ilk oyunda yok)
-            var lines = S.CounterLines.Take(3).Select(l => "> " + l).ToList();
-            if (lines.Count == 0) lines.Add("> " + Loc.T("Seni henüz tanımıyorum. İlk hamleni bekliyorum."));
+            // Başlangıç profili salt okunur: dil değişirken karşı satırlar güncel dilde yeniden kurulur.
+            var startProfile=sim.Record?.profileAtStart??input.Profile;
+            var lines = Profiling.ComputeCounters(startProfile,S.Type).Lines.Take(3).Select(l => Loc.F("> {0}",l)).ToList();
+            if (lines.Count == 0) lines.Add(Loc.F("> {0}",Loc.T("Seni henüz tanımıyorum. İlk hamleni bekliyorum.")));
             vm.Intercept = new EventLogVM
             {
                 Header = Loc.T("YZ GÜNLÜĞÜ · SENİN HAKKINDA · ELE GEÇİRİLDİ"),

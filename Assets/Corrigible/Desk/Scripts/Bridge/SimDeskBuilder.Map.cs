@@ -93,6 +93,7 @@ namespace Corrigible.Desk.Bridge
             }
 
             if (sim.TeamsOn) Teams(map);
+            FieldReports(map);
             map.Analyst = Analyst(map, shown);
             if (illusion) map.IllusionTraces = Traces(map.Analyst);
             if (st.Selected != null) map.Selection = new SelectionVM { From = A(PinOf(st.Selected)), To = new[] { 1544f, 218f } };

@@ -162,6 +162,11 @@ Oyun sonu ekranı: istatistikler, gerçek ve gösterilen ortalama sızma grafiğ
 
 ## Haber bandı ve danışman
 
+- **Saha rapor fişleri (Unity):** İttifaktaki çevrimiçi bir bölgede ekip veya izleme ağı varsa haritada toplanabilir
+  rapor çıkar. Fiş +1 fon verir; toplam ek ödül kapsamlı günlerin düzenli gelirinin %8'iyle sınırlıdır. Görünen YZ
+  oranı raporun bölgesini ağırlıklandırır, ödülü artırmaz. Aynı anda iki fiş; kontrol 6×k, bölge beklemesi 12×k,
+  ödenek ömrü 30×k gün. Toplanan veya süresi dolan haber arşive geçer; süresi dolana fon verilmez. İllüzyonda da
+  raporlar yanıltıcı olabilir. Ayrıntı: `SAHA-RAPORLARI.md`.
 - Haberler 3–5 günde bir (`GenNews`): YZ'nin başladığı bölgeyi ele veren ipucu haberleri (`kind: hint`), sahte ajans adları
   (Atlass Haber, Meridien…), Medya Kontrolü altında yalan haberler, illüzyon sırasında tamamen sahte akış. Oyun sonunda
   sahte haberler "SAHTEYDİ" diye işaretlenir.

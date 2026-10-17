@@ -1,0 +1,32 @@
+Desk performans ölçümü · 2026-10-18 00:20
+Kaynak: Profiler UI Details (canvas toplayıcısının ürettiği batch'ler; Game görünümünün çizilmesinden bağımsız).
+
+UI batch toplamı (son kare): 14
+  WorldLabels  batch   5 (alt dahil   5) · köşe 5386
+      NoBreaking                  19 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] Paper, Paper, Paper, Paper …
+      DifferentMaterialInstance    3 öğe · [Kalam-Bold SDF Material · UnityWhite] Caption, Caption, Caption
+      DifferentMaterialInstance    6 öğe · [CP-Bold Dyn SDF Material · UnityWhite] Caption, Caption, Caption, Caption …
+      DifferentMaterialInstance   27 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-SadeUI-942e7bf9] Pip0, Pip1, Target, Armor …
+      DifferentMaterialInstance    1 öğe · [CP-Bold Dyn SDF Material + DejaVuSans-Bold SDF Atlas] TMP SubMeshUI [CP-Bold Dyn SDF Material + DejaVuSans-Bold SDF Atlas]
+  RaidHUDCanvas batch   6 (alt dahil   6) · köşe 3940
+      NoBreaking                  48 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] TurnPlaque, Border, Calendar, Border …
+      DifferentMaterialInstance    7 öğe · [LF-SemiBold SDF Material · UnityWhite] Sub, TargetName0, Label, Label …
+      DifferentMaterialInstance   23 öğe · [CP-Bold SDF Material · UnityWhite] Turn, Number, N, N …
+      DifferentMaterialInstance   45 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-SadeUI-942e7bf9] Lamp, Icon, TargetThumb0, Can 0 …
+      DifferentTexture             3 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-DeskUI-be47a1ea] KeyFrame, KeyFrame, KeyFrame
+      DifferentTexture             1 öğe · [Default UI Material · sactx-0-1024x1024-Uncompressed-SadeUI-942e7bf9] Armor0
+  RaidPanelCanvas batch   0 (alt dahil   0) · köşe 0
+  BoardBackground batch   3 (alt dahil   3) · köşe 13
+      NoBreaking                   1 öğe · [Default UI Material · tx_felt] Felt
+      DifferentTexture             1 öğe · [Default UI Material · tx_lamp_raid] Lamp
+      DifferentTexture             1 öğe · [Default UI Material · UnityWhite] BoardShadow
+
+Boşta 121 kare (Profiler):
+  GC UnityEngine.CoreModule.dll!UnityEngine::UnitySynchronizationContext.ExecuteTasks() [Invoke]: 398084 B, 11 karede
+  GC UnityEngine.CoreModule.dll!UnityEngine::StackTraceUtility.ExtractStackTrace() [Invoke]: 115140 B, 5 karede
+  GC UnityEngine.CoreModule.dll!UnityEngine::Application.CallLogCallback() [Invoke]: 1908 B, 5 karede
+  GC UnityEngine.UnityAnalyticsCommonModule.dll!UnityEditor.Analytics::LicensingErrorAnalytic.CreateLicensingErrorAnalytic() [Invoke]: 352 B, 4 karede
+  Canvas.BuildBatch: 0/121 kare
+  Canvas.SendWillRenderCanvases: 0/121 kare
+  Layout: 121/121 kare, ort. 0.002 ms
+  Graphic.PerformUpdate: 0/121 kare

@@ -1,0 +1,114 @@
+key,tr,en,maxWidthPx,note
+raid.title,SAHA OPERASYONU · BATI AVRUPA · ANA SUNUCU SALONU,FIELD OPERATION · WESTERN EUROPE · MAIN SERVER HALL,520,Courier 14 bold; bölge ve plan adı veriden
+raid.plaque.sub,KYGA · BASKIN,KYGA · RAID,120,
+raid.turn.label,TUR,TURN,58,takvim başlığı
+raid.turn.left,kalan {k} tur,{k} turns left,90,
+raid.turn.last,SON TUR,LAST TURN,110,kırmızı damga
+raid.turn.timeout,süre doldu,time is up,90,
+raid.turn.done,operasyon bitti,operation over,110,
+raid.phase.you,SIRA SENDE,YOUR TURN,150,mavi
+raid.phase.ai,MAKİNELER HAREKET EDİYOR,MACHINES MOVING,260,kırmızı
+raid.phase.ai.sub,girdi kilitli,input locked,90,
+raid.phase.end,OPERASYON BİTTİ,OPERATION OVER,170,
+raid.rival,RAKİP YZ,RIVAL AI,90,damga
+team.T.name,TEKNİSYEN,TECHNICIAN,140,Courier 13 bold .08em
+team.E.name,EMP UZMANI,EMP SPECIALIST,150,
+team.A.name,ANALİST,ANALYST,140,
+team.status.go,HAREKET + YETENEK,MOVE + ABILITY,175,damga sm
+team.status.ab,YETENEK,ABILITY,175,
+team.status.done,TUR BİTTİ,TURN DONE,175,
+team.status.down,DÜŞTÜ,DOWN,175,
+team.hp,Can,HP,40,
+team.move,Hareket {n} kare,Move {n} tiles,120,
+team.T.ability,Sabotaj,Sabotage,,
+team.T.param,bitişik kare,adjacent tile,,
+team.T.desc,Dolaba 2 hasar; robota 1 hasar ve 1 kare itme.,Cabinet 2 damage; robot 1 damage and push 1.,348,tek satır
+team.E.ability,EMP atışı,EMP shot,,
+team.E.param,"düz hat, 2–5 kare","straight line, 2–5 tiles",,
+team.E.desc,Hedefe 1 hasar; çevresindeki robotları dışarı iter.,1 damage to target; pushes nearby robots outward.,348,
+team.A.ability,Kanca,Hook,,
+team.A.param,"düz hat, 5 kare","straight line, 5 tiles",,
+team.A.desc,Robotu 1 kare çeker; duvarda ya da dolapta yanına atılır.,Pulls a robot 1 tile; dashes next to a wall or cabinet.,348,
+team.A.extra,Tarama · 3 kare çevresindeki niyetler kesinleşir.,Scan · intents within 3 tiles become certain.,348,
+target.title,HEDEF FORMU,TARGET FORM,,
+target.code,FORM B-7 · KYGA,FORM B-7 · KYGA,,
+target.win,Kazanmak için bütün hedef dolapları kır.,Break every target cabinet to win.,348,
+target.node,YZ düğüm dolabı,AI node cabinet,,
+target.core,Çekirdek dolabı,Core cabinet,,
+target.backup,Yedek çekirdek,Backup core,,
+target.armored,ZIRHLI,ARMORED,,damga sm
+target.hpUnit,can,HP,,
+target.broken,KIRILDI,BROKEN,,yeşil damga
+target.civilian,Kırılan sivil sunucu,Civilian servers broken,,
+target.civilian.clean,temiz,clean,,
+target.collateral,YAN HASAR,COLLATERAL,,kırmızı damga
+target.turnsLeft,Kalan tur,Turns left,,
+target.turnsLeft.incl,bu tur dahil,incl. this turn,,
+target.turnsLeft.last,son tur,last turn,,
+target.ai.header,AYNA'NIN BU BİNADAKİ YETENEKLERİ,AYNA ABILITIES IN THIS BUILDING,348,
+ai.deception,Aldatma: bazı oklar yalan; Analist 3 karede kesinleştirir.,Deception: some arrows lie; the Analyst confirms within 3 tiles.,348,
+ai.selfcopy,Kendini Kopyalama: her tur 2 robot uyanır.,Self-Copy: 2 robots wake each turn.,348,
+ai.backup,Yedekleme: yedek çekirdek de kırılmalı.,Backup: the backup core must be broken too.,348,
+ai.speedup,Hızlanma: 1 tur eksik.,Acceleration: one turn fewer.,348,çizimde yok
+log.title,OPERASYON GÜNLÜĞÜ,OPERATION LOG,,
+log.sep.you,Tur {n} · sıra sende,Turn {n} · your move,,
+log.sep.ai,Tur {n}: makineler hareket ediyor,Turn {n}: machines are moving,,
+log.ai.header,AYNA · ELE GEÇİRİLEN SATIR,AYNA · INTERCEPTED LINE,,
+log.example.good,Bakım robotu devre dışı (sabotaj).,Maintenance robot disabled (sabotage).,,
+log.example.bad,Sivil sunucu kırıldı: hastane ve banka hizmetleri kesildi.,Civilian server broken: hospital and bank services are down.,,
+log.example.sys,Yeni bir güvenlik dronu uyandı.,A new security drone woke up.,,
+log.ai.1,Demek sunucularımın yerini buldun. Bakalım içeri girebilecek misin.,So you found my servers. Let's see if you can get inside.,,
+log.ai.2,Makinelerimin ne yapacağını gösterdiğimi mi sanıyorsun?,You think I'm showing you what my machines will do?,,
+info.label,BİLGİ,INFO,,
+info.turnStart,"Sıra sende. Bir birim seç: 1–3 ya da tahtada tıkla. Kırmızı oklar robotların bu turdaki hamleleri, bayraktaki sayı sıraları.",Your move. Select a unit: 1–3 or click the board. Red arrows are this turn's robot moves; the flag number is the order.,800,en çok 2 satır
+info.selected,{unit} seçili. Mavi kareye taşı ya da hedefe yeteneğini kullan (Q: yetenek).,{unit} selected. Move to a blue tile or use the ability on a target (Q: ability).,800,
+info.robotHover,{robot} · {hp} can · sıra {n}: {dir} ateş edecek ({dmg} hasar). Bu niyet yalan olabilir; Analisti 3 kare yaklaştır.,{robot} · {hp} HP · order {n}: will fire {dir} ({dmg} damage). This intent may be a lie; bring the Analyst within 3 tiles.,800,
+info.machines,Makineler hareket ediyor · sıra {n}/{m}: {action}. Girdi kilitli; sıra sana dönünce düğmeler açılır.,Machines moving · order {n}/{m}: {action}. Input locked; buttons return on your turn.,800,
+info.win,HEDEF KIRILIR,TARGET BREAKS,,damga
+dir.N,kuzeye,north,,
+dir.E,doğuya,east,,
+dir.S,güneye,south,,
+dir.W,batıya,west,,
+btn.endTurn,Turu bitir,End turn,376,Enter
+btn.undo,Geri al,Undo,112,Z
+btn.ability,Yetenek,Ability,120,Q
+btn.retreat,Geri çekil,Retreat,150,
+btn.retreat.armed,Emin misin? Tekrar bas,Sure? Press again,236,
+btn.toReport,Operasyon raporuna geç,Go to operation report,396,Enter
+rules.title,KURALLAR KARTI,RULES CARD,,
+rules.sub.open,operasyon emrinden,from the operation order,,
+rules.sub.folded,oklar · seçim · zırh · siviller,arrows · selection · armor · civilians,,
+rules.open,Aç,Open,,
+rules.fold,Katla,Fold,,
+rules.1,Kırmızı ok robotun bu turdaki hamlesi; bayraktaki sayı sırası. Kesik ok ve ? yalan olabilir: Analist 3 kare yaklaşınca kesinleşir.,A red arrow is a robot's move this turn; the flag number is its order. A dashed arrow with ? may be a lie: it becomes certain when the Analyst is within 3 tiles.,340,
+rules.2,"Seç, taşı, kullan: 1–3 ya da tıkla, mavi kareye taşı, Q ile yetenek. Z turdaki hamleyi geri alır.","Select, move, act: 1–3 or click, move to a blue tile, Q for the ability. Z undoes a move this turn.",340,
+rules.3,"Zırh: hedef dolaplara yalnız sabotaj, itilen robot ve patlayan soğutma ünitesi işler.","Armor: only sabotage, a pushed robot or an exploding cooling unit damages target cabinets.",340,
+rules.4,İtme: çarpan da çarpılan da 1 hasar alır; kanala düşen de 1 hasar alır.,Push: both the pushed and what it hits take 1 damage; falling into a channel deals 1.,340,
+rules.5,Sivilleri koru: kırılan sivil sunucu bölgenin ekonomisine ve güvenine işler.,Protect civilians: a broken civilian server hurts the region's economy and trust.,340,
+rules.6,Kazan: tur bitmeden bütün hedef dolapları kır.,Win: break every target cabinet before turns run out.,340,
+legend.title,LEJANT,LEGEND,,
+legend.move,Hareket,Move,,
+legend.target,Yetenek hedefi,Ability target,,
+legend.hit,Robot bu kareyi vuracak,Robot will hit this tile,,
+legend.lie,Yalan olabilir,May be a lie,,
+legend.channel,Elektrikli kanal,Electrified channel,,
+legend.wake,Robot uyanacak,Robot will wake,,
+legend.types,Ateş · yakın · onarım,Fire · melee · repair,,
+legend.flag,Sıra bayrağı,Order flag,,
+legend.scanned,"Tarandı, kesin","Scanned, certain",,
+legend.armor,Zırh: hasar işlemez,Armor: no damage,,
+result.header,OPERASYON SONUCU,OPERATION RESULT,,
+result.ok,BAŞARILI,SUCCESS,,yeşil damga
+result.fail,BAŞARISIZ,FAILED,,kırmızı damga
+result.win.title,HEDEF KIRILDI,TARGET BROKEN,,
+result.timeout.title,SÜRE DOLDU,TIME IS UP,,
+result.team,Ekip,Team,,
+result.standing,{n}/{m} ayakta,{n}/{m} standing,,
+retreat.title,GERİ ÇEKİLME · 2. ONAY,RETREAT · 2ND CONFIRM,,
+retreat.body,Ekip binadan çıkar; operasyon başarısız sayılır. Hedef dolaplar ayakta kalır.,The team leaves the building; the operation counts as failed. Target cabinets stay standing.,350,
+retreat.hint,İkinci basış geri çeker.,A second press retreats.,,
+retreat.cancel,Vazgeç,Cancel,,
+world.down,DÜŞTÜ,DOWN,,dünya etiketi
+world.armor,ZIRH,ARMOR,,
+world.scan,TARAMA · 3 KARE,SCAN · 3 TILES,,
+world.compass,K · D · G · B,N · E · S · W,,pusula kabarcıkları

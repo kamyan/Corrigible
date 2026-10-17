@@ -1,0 +1,3149 @@
+{
+ "_": "Yeni sprite'lar @2x (PPU 200). tint=true → beyaz çizildi, rengi Image.color verir. Ölçüler 1x referans px. pivot Unity normundadır (0,0 = sol-alt). C kitindeki malzemeler (sh_fill_*, sh_frame_*, stamp_*, sh_dash_*, tab, env_*, meter_*) bu listede yok: Docs/UI_C/art/sprites.",
+ "sprites": [
+  {
+   "name": "ic_move_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. "
+  },
+  {
+   "name": "ic_move_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. "
+  },
+  {
+   "name": "ic_bolt_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. yetenek hakkı (14–18)"
+  },
+  {
+   "name": "ic_bolt_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. yetenek hakkı (14–18)"
+  },
+  {
+   "name": "ic_check_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. kullanıldı (16)"
+  },
+  {
+   "name": "ic_check_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. kullanıldı (16)"
+  },
+  {
+   "name": "ic_x_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. kapat / iptal (12–15)"
+  },
+  {
+   "name": "ic_x_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. kapat / iptal (12–15)"
+  },
+  {
+   "name": "ic_lock_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. kilitli düğüm / kilitli düğme (13–15)"
+  },
+  {
+   "name": "ic_lock_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. kilitli düğüm / kilitli düğme (13–15)"
+  },
+  {
+   "name": "ic_robot_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. makineler (15)"
+  },
+  {
+   "name": "ic_robot_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. makineler (15)"
+  },
+  {
+   "name": "ic_flag_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. "
+  },
+  {
+   "name": "ic_flag_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. "
+  },
+  {
+   "name": "ic_undo_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. Geri al (15)"
+  },
+  {
+   "name": "ic_undo_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. Geri al (15)"
+  },
+  {
+   "name": "ic_enter_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. "
+  },
+  {
+   "name": "ic_enter_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. "
+  },
+  {
+   "name": "ic_card_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. BÖLGE DOSYASI sekmesi (17), KURALLAR KARTI (15)"
+  },
+  {
+   "name": "ic_card_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. BÖLGE DOSYASI sekmesi (17), KURALLAR KARTI (15)"
+  },
+  {
+   "name": "ic_arrow_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. önizleme oku (14)"
+  },
+  {
+   "name": "ic_arrow_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. önizleme oku (14)"
+  },
+  {
+   "name": "ic_cursor_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. ipucu: tıkla (12)"
+  },
+  {
+   "name": "ic_cursor_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. ipucu: tıkla (12)"
+  },
+  {
+   "name": "ic_eye_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. "
+  },
+  {
+   "name": "ic_eye_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. "
+  },
+  {
+   "name": "ic_shield_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. zırh satırı (15)"
+  },
+  {
+   "name": "ic_shield_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. zırh satırı (15)"
+  },
+  {
+   "name": "ic_target_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. kazanma kuralı (14)"
+  },
+  {
+   "name": "ic_target_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. kazanma kuralı (14)"
+  },
+  {
+   "name": "ic_civil_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. siviller (14)"
+  },
+  {
+   "name": "ic_civil_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. siviller (14)"
+  },
+  {
+   "name": "ic_copy_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. "
+  },
+  {
+   "name": "ic_copy_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. "
+  },
+  {
+   "name": "ic_push_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. itme (13–15)"
+  },
+  {
+   "name": "ic_push_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. itme (13–15)"
+  },
+  {
+   "name": "ic_zap_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. patlama (15)"
+  },
+  {
+   "name": "ic_zap_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. patlama (15)"
+  },
+  {
+   "name": "ic_hand_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. hakkı duran birim (15)"
+  },
+  {
+   "name": "ic_hand_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. hakkı duran birim (15)"
+  },
+  {
+   "name": "ic_wrench_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. "
+  },
+  {
+   "name": "ic_wrench_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. "
+  },
+  {
+   "name": "ic_up_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. artış (12)"
+  },
+  {
+   "name": "ic_up_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. artış (12)"
+  },
+  {
+   "name": "ic_down_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. azalış (12)"
+  },
+  {
+   "name": "ic_down_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. azalış (12)"
+  },
+  {
+   "name": "ic_gear_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. "
+  },
+  {
+   "name": "ic_gear_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. "
+  },
+  {
+   "name": "ic_scan_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. "
+  },
+  {
+   "name": "ic_scan_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. "
+  },
+  {
+   "name": "ic_grip_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. "
+  },
+  {
+   "name": "ic_grip_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. "
+  },
+  {
+   "name": "ic_min_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. "
+  },
+  {
+   "name": "ic_min_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. "
+  },
+  {
+   "name": "ic_plus_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. "
+  },
+  {
+   "name": "ic_plus_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. "
+  },
+  {
+   "name": "ic_fund_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. FON etiketi (19)"
+  },
+  {
+   "name": "ic_fund_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. FON etiketi (19)"
+  },
+  {
+   "name": "ic_power_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. SİYASİ GÜÇ (19)"
+  },
+  {
+   "name": "ic_power_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. SİYASİ GÜÇ (19)"
+  },
+  {
+   "name": "ic_goal_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. HEDEF (19)"
+  },
+  {
+   "name": "ic_goal_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. HEDEF (19)"
+  },
+  {
+   "name": "ic_globe_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. KÜRESEL GÜVEN (19)"
+  },
+  {
+   "name": "ic_globe_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. KÜRESEL GÜVEN (19)"
+  },
+  {
+   "name": "ic_chain_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. BAĞIMLILIK (19), bölge kartı (20)"
+  },
+  {
+   "name": "ic_chain_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. BAĞIMLILIK (19), bölge kartı (20)"
+  },
+  {
+   "name": "ic_chip_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. TEKİLLİK (19, kırmızı)"
+  },
+  {
+   "name": "ic_chip_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. TEKİLLİK (19, kırmızı)"
+  },
+  {
+   "name": "ic_flask_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. ARAŞTIRMA sekmesi (17)"
+  },
+  {
+   "name": "ic_flask_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. ARAŞTIRMA sekmesi (17)"
+  },
+  {
+   "name": "ic_news_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. HABERLER (17)"
+  },
+  {
+   "name": "ic_news_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. HABERLER (17)"
+  },
+  {
+   "name": "ic_teams_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. EKİPLER (17), saha etiketi (12)"
+  },
+  {
+   "name": "ic_teams_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. EKİPLER (17), saha etiketi (12)"
+  },
+  {
+   "name": "ic_term_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. YZ GÜNLÜĞÜ (17), GÜNLÜK (16)"
+  },
+  {
+   "name": "ic_term_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. YZ GÜNLÜĞÜ (17), GÜNLÜK (16)"
+  },
+  {
+   "name": "ic_book_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. REHBER (17), KURALLAR (16)"
+  },
+  {
+   "name": "ic_book_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. REHBER (17), KURALLAR (16)"
+  },
+  {
+   "name": "ic_legend_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. LEJANT (16)"
+  },
+  {
+   "name": "ic_legend_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. LEJANT (16)"
+  },
+  {
+   "name": "ic_pause_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. hız: duraklat (12)"
+  },
+  {
+   "name": "ic_pause_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. hız: duraklat (12)"
+  },
+  {
+   "name": "ic_antenna_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. İzleme ağı (26)"
+  },
+  {
+   "name": "ic_antenna_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. İzleme ağı (26)"
+  },
+  {
+   "name": "ic_search_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. Denetim (26)"
+  },
+  {
+   "name": "ic_search_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. Denetim (26)"
+  },
+  {
+   "name": "ic_quar_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. Karantina (26)"
+  },
+  {
+   "name": "ic_quar_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. Karantina (26)"
+  },
+  {
+   "name": "ic_kill_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. Son Şalter (26)"
+  },
+  {
+   "name": "ic_kill_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. Son Şalter (26)"
+  },
+  {
+   "name": "ic_door_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. GERİ ÇEKİL (16)"
+  },
+  {
+   "name": "ic_door_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. GERİ ÇEKİL (16)"
+  },
+  {
+   "name": "ic_people_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. Yerel güven (20)"
+  },
+  {
+   "name": "ic_people_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. Yerel güven (20)"
+  },
+  {
+   "name": "ic_econ_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. Ekonomi (20)"
+  },
+  {
+   "name": "ic_econ_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. Ekonomi (20)"
+  },
+  {
+   "name": "ic_dots_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. Kısayollar (15)"
+  },
+  {
+   "name": "ic_dots_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. Kısayollar (15)"
+  },
+  {
+   "name": "ic_chev_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. Tüm dosya › (12)"
+  },
+  {
+   "name": "ic_chev_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. Tüm dosya › (12)"
+  },
+  {
+   "name": "ic_clock_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. süre (12–14)"
+  },
+  {
+   "name": "ic_clock_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. süre (12–14)"
+  },
+  {
+   "name": "ic_scope_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. ekip konumu (13)"
+  },
+  {
+   "name": "ic_scope_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. ekip konumu (13)"
+  },
+  {
+   "name": "ic_hp_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. can (14)"
+  },
+  {
+   "name": "ic_hp_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. can (14)"
+  },
+  {
+   "name": "ic_boots_s",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "≤16 px kullanım. hareket hakkı (14–18)"
+  },
+  {
+   "name": "ic_boots_l",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "17–26 px kullanım. hareket hakkı (14–18)"
+  },
+  {
+   "name": "node_disc_44",
+   "size1x": [
+    44,
+    44
+   ],
+   "png": [
+    88,
+    88
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "düğüm diski r20; renk = sızma rampası. Gölge: aynı sprite siyah α .25, (+1,5, +2)"
+  },
+  {
+   "name": "node_ring_44",
+   "size1x": [
+    44,
+    44
+   ],
+   "png": [
+    88,
+    88
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "düğüm çerçevesi, ink #1E1B16"
+  },
+  {
+   "name": "node_unknown_44",
+   "size1x": [
+    44,
+    44
+   ],
+   "png": [
+    88,
+    88
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "BİLİNMİYOR düğümü; içine Kalam 700 24 “?” #4A4640"
+  },
+  {
+   "name": "node_ring_sus_64",
+   "size1x": [
+    64,
+    64
+   ],
+   "png": [
+    128,
+    128
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "ŞÜPHELİ: turuncu kalem halkası (düğüm merkezine ortalı). “?”: Kalam 700 20 #854005, sol-üstü düğüm merkezine göre (+17, −41)"
+  },
+  {
+   "name": "node_ring_quar_64",
+   "size1x": [
+    64,
+    64
+   ],
+   "png": [
+    128,
+    128
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "karantina halkası"
+  },
+  {
+   "name": "node_halo_64",
+   "size1x": [
+    64,
+    64
+   ],
+   "png": [
+    128,
+    128
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "seçili düğüm fosforu #F5D646 α .8"
+  },
+  {
+   "name": "node_badge_seal_20",
+   "size1x": [
+    20,
+    20
+   ],
+   "png": [
+    40,
+    40
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "ONAYLANDI rozeti; merkezi düğüm merkezine göre (+18, −19)"
+  },
+  {
+   "name": "node_badge_report_22x16",
+   "size1x": [
+    22,
+    16
+   ],
+   "png": [
+    44,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "RAPOR rozeti “~”; sol-üstü düğüm merkezine göre (+9, −27)"
+  },
+  {
+   "name": "node_badge_core_26",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "YZ çekirdeği damgası (−8° içinde); merkezi düğüm merkezine göre (−18,5, −18,5)"
+  },
+  {
+   "name": "ring_r40_w2",
+   "size1x": [
+    84,
+    84
+   ],
+   "png": [
+    168,
+    168
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "çekirdek dalgası 1: #9A1E14 α .5"
+  },
+  {
+   "name": "ring_r53_w1_4",
+   "size1x": [
+    110,
+    110
+   ],
+   "png": [
+    220,
+    220
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "çekirdek dalgası 2: #9A1E14 α .25"
+  },
+  {
+   "name": "team_token_30",
+   "size1x": [
+    40,
+    40
+   ],
+   "png": [
+    80,
+    80
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "saha ekibi jetonu (gölge dahil); harf: Courier Prime 700 13 #F1E9D6; jeton merkezi = sprite merkezi"
+  },
+  {
+   "name": "map_alert_sticky",
+   "size1x": [
+    40,
+    46
+   ],
+   "png": [
+    80,
+    92
+   ],
+   "pivot": [
+    0.5,
+    0.45
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "danışman uyarısı (−6°); kâğıt sol-üstü = sprite (5, 10)"
+  },
+  {
+   "name": "arrowhead_tri",
+   "size1x": [
+    12,
+    10
+   ],
+   "png": [
+    24,
+    20
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "iplik ok ucu #B8241A; açı = eğri teğeti"
+  },
+  {
+   "name": "arrow_open",
+   "size1x": [
+    10,
+    12
+   ],
+   "png": [
+    20,
+    24
+   ],
+   "pivot": [
+    0.85,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "ekip rotası ucu (açık ok), ink"
+  },
+  {
+   "name": "pin_black_14",
+   "size1x": [
+    16,
+    16
+   ],
+   "png": [
+    32,
+    32
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "kart ipliği raptiyesi"
+  },
+  {
+   "name": "circle_36",
+   "size1x": [
+    36,
+    36
+   ],
+   "png": [
+    72,
+    72
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "etiket simge dairesi zemini #FBF7EC"
+  },
+  {
+   "name": "ring_36_w1_5",
+   "size1x": [
+    36,
+    36
+   ],
+   "png": [
+    72,
+    72
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "etiket simge dairesi çerçevesi (ink; TEKİLLİK #9A1E14)"
+  },
+  {
+   "name": "circle_24",
+   "size1x": [
+    24,
+    24
+   ],
+   "png": [
+    48,
+    48
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "hareket/yetenek hakkı zemini"
+  },
+  {
+   "name": "ring_24_w1_5",
+   "size1x": [
+    24,
+    24
+   ],
+   "png": [
+    48,
+    48
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "hareket/yetenek hakkı çerçevesi"
+  },
+  {
+   "name": "rect_frame_1",
+   "size1x": [
+    8,
+    8
+   ],
+   "png": [
+    16,
+    16
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "sliced",
+   "usage": "1 px çerçeve (çubuk, tur kutusu)",
+   "spriteBorderPx_LBRT": [
+    4,
+    4,
+    4,
+    4
+   ]
+  },
+  {
+   "name": "rect_frame_2",
+   "size1x": [
+    8,
+    8
+   ],
+   "png": [
+    16,
+    16
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "sliced",
+   "usage": "2 px çerçeve (seçili kart, şimdiki tur kutusu)",
+   "spriteBorderPx_LBRT": [
+    6,
+    6,
+    6,
+    6
+   ]
+  },
+  {
+   "name": "pip_full_10",
+   "size1x": [
+    10,
+    10
+   ],
+   "png": [
+    20,
+    20
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "HUD can noktası (dolu)"
+  },
+  {
+   "name": "pip_empty_10",
+   "size1x": [
+    10,
+    10
+   ],
+   "png": [
+    20,
+    20
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "HUD can noktası (boş)"
+  },
+  {
+   "name": "pip_full_8",
+   "size1x": [
+    8,
+    8
+   ],
+   "png": [
+    16,
+    16
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "dünya etiketi can noktası (dolu)"
+  },
+  {
+   "name": "pip_empty_8",
+   "size1x": [
+    8,
+    8
+   ],
+   "png": [
+    16,
+    16
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "dünya etiketi can noktası (boş)"
+  },
+  {
+   "name": "hand_ring_value_76x37",
+   "size1x": [
+    76,
+    37
+   ],
+   "png": [
+    152,
+    74
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "şüpheli değer halkası (BAĞIMLILIK 58,4): değerin sol-üstünden (−9, −7)"
+  },
+  {
+   "name": "hand_ring_q_38x31",
+   "size1x": [
+    38,
+    31
+   ],
+   "png": [
+    76,
+    62
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "bölge kartı “? Kaynaklar çelişiyor” halkası"
+  },
+  {
+   "name": "card_pointer_down",
+   "size1x": [
+    26,
+    18
+   ],
+   "png": [
+    52,
+    36
+   ],
+   "pivot": [
+    0.5,
+    1.0
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "birim kartı alt işaretçisi: üst kenarı kartın DIŞ alt kenarının 3 px üstünde (kartın 2 px kenarını örter), ortası kartın solundan 79 px"
+  },
+  {
+   "name": "civ_ok_20",
+   "size1x": [
+    20,
+    20
+   ],
+   "png": [
+    40,
+    40
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "sağlam sivil sunucu"
+  },
+  {
+   "name": "civ_broken_20",
+   "size1x": [
+    20,
+    20
+   ],
+   "png": [
+    40,
+    40
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "kırılmış sivil sunucu"
+  },
+  {
+   "name": "mk_armor_13",
+   "size1x": [
+    13,
+    13
+   ],
+   "png": [
+    26,
+    26
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "zırh işareti (dünya etiketi / HUD)"
+  },
+  {
+   "name": "mk_target_12",
+   "size1x": [
+    12,
+    12
+   ],
+   "png": [
+    24,
+    24
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "hedef işareti (dünya etiketi / HUD)"
+  },
+  {
+   "name": "mk_cool_13",
+   "size1x": [
+    13,
+    13
+   ],
+   "png": [
+    26,
+    26
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "patlar işareti (dünya etiketi / HUD)"
+  },
+  {
+   "name": "mk_copy_13",
+   "size1x": [
+    13,
+    13
+   ],
+   "png": [
+    26,
+    26
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "kopya dolabı işareti (dünya etiketi / HUD)"
+  },
+  {
+   "name": "mk_wrench_13",
+   "size1x": [
+    13,
+    13
+   ],
+   "png": [
+    26,
+    26
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "onarım işareti (dünya etiketi / HUD)"
+  },
+  {
+   "name": "rn_disc_42",
+   "size1x": [
+    42,
+    42
+   ],
+   "png": [
+    84,
+    84
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "araştırma düğümü zemini r21: bitti #24592E · sürüyor ve açık #FBF7EC · kilitli #E3DACA. Gölge: aynı sprite siyah α .2, (+1,6, +2)"
+  },
+  {
+   "name": "rn_ring_42_w1_5",
+   "size1x": [
+    42,
+    42
+   ],
+   "png": [
+    84,
+    84
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "araştırma düğümü çerçevesi: bitti #163A1D · sürüyor ink · kilitli #A79D88"
+  },
+  {
+   "name": "rn_ring_dash_42",
+   "size1x": [
+    42,
+    42
+   ],
+   "png": [
+    84,
+    84
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "araştırma düğümü “açık” (başlatılabilir) kesik çerçeve, #463F34"
+  },
+  {
+   "name": "rn_progress_34_w4",
+   "size1x": [
+    34,
+    34
+   ],
+   "png": [
+    68,
+    68
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "sürüyor halkası r17 (merkez çizgisi), 4 px. İz #D9D0BC (Simple) + ilerleme #1A4789 (Filled · Radial360 · Top · saat yönü · fillAmount = oran)"
+  },
+  {
+   "name": "mk_check_bold_26",
+   "size1x": [
+    26,
+    26
+   ],
+   "png": [
+    52,
+    52
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "bitti düğümünün beyaz onayı"
+  },
+  {
+   "name": "mk_plus_bold_20",
+   "size1x": [
+    20,
+    20
+   ],
+   "png": [
+    40,
+    40
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "açık düğümün artısı, #463F34"
+  },
+  {
+   "name": "pencil_x_40x56",
+   "size1x": [
+    40,
+    56
+   ],
+   "png": [
+    80,
+    112
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "düşen birim: küçük resmin (thumb_standee_*_done) tam üstüne, aynı kutuya"
+  },
+  {
+   "name": "ring_dash_24",
+   "size1x": [
+    24,
+    24
+   ],
+   "png": [
+    48,
+    48
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "BİLİNMİYOR işareti (haber, rehber, kaynak tablosu) #4A4640; içine Kalam 700 16 “?”"
+  },
+  {
+   "name": "mark_fake_24",
+   "size1x": [
+    24,
+    24
+   ],
+   "png": [
+    48,
+    48
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "SAHTE işareti (haber, rehber)"
+  },
+  {
+   "name": "dot_12",
+   "size1x": [
+    12,
+    12
+   ],
+   "png": [
+    24,
+    24
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "bölge çipi noktası (11 px; renk = bölgenin sızma rengi)"
+  },
+  {
+   "name": "ring_12_w1",
+   "size1x": [
+    12,
+    12
+   ],
+   "png": [
+    24,
+    24
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": true,
+   "imageType": "simple",
+   "usage": "bölge çipi noktasının çerçevesi (ink)"
+  },
+  {
+   "name": "robot_mini_22",
+   "size1x": [
+    22,
+    22
+   ],
+   "png": [
+    44,
+    44
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "son olay fişi ve onay notunda robot simgesi (20 px)"
+  },
+  {
+   "name": "thumb_standee_T",
+   "size1x": [
+    40,
+    56
+   ],
+   "png": [
+    80,
+    112
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "ekip kartı (40×56) · tahta parçasıyla aynı çizim, ölçek k=0.62"
+  },
+  {
+   "name": "thumb_standee_E",
+   "size1x": [
+    40,
+    56
+   ],
+   "png": [
+    80,
+    112
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "ekip kartı · tahta parçasıyla aynı çizim, ölçek k=0.62"
+  },
+  {
+   "name": "thumb_standee_E_damaged",
+   "size1x": [
+    40,
+    56
+   ],
+   "png": [
+    80,
+    112
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "ekip kartı · hasarlı (yırtık + bant) · tahta parçasıyla aynı çizim, ölçek k=0.62"
+  },
+  {
+   "name": "thumb_standee_A",
+   "size1x": [
+    40,
+    56
+   ],
+   "png": [
+    80,
+    112
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "ekip kartı · tahta parçasıyla aynı çizim, ölçek k=0.62"
+  },
+  {
+   "name": "thumb_standee_T_done",
+   "size1x": [
+    40,
+    56
+   ],
+   "png": [
+    80,
+    112
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "ekip kartı · tur bitti (kraft arka yüz) · tahta parçasıyla aynı çizim, ölçek k=0.62"
+  },
+  {
+   "name": "thumb_standee_E_done",
+   "size1x": [
+    40,
+    56
+   ],
+   "png": [
+    80,
+    112
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "ekip kartı · tur bitti · tahta parçasıyla aynı çizim, ölçek k=0.62"
+  },
+  {
+   "name": "thumb_standee_A_done",
+   "size1x": [
+    40,
+    56
+   ],
+   "png": [
+    80,
+    112
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "ekip kartı · tur bitti · tahta parçasıyla aynı çizim, ölçek k=0.62"
+  },
+  {
+   "name": "thumb_standee_T_card",
+   "size1x": [
+    46,
+    64
+   ],
+   "png": [
+    92,
+    128
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "birim kartı başlığı (46×64) · tahta parçasıyla aynı çizim, ölçek k=0.72"
+  },
+  {
+   "name": "thumb_standee_E_card",
+   "size1x": [
+    46,
+    64
+   ],
+   "png": [
+    92,
+    128
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "birim kartı başlığı · tahta parçasıyla aynı çizim, ölçek k=0.72"
+  },
+  {
+   "name": "thumb_standee_A_card",
+   "size1x": [
+    46,
+    64
+   ],
+   "png": [
+    92,
+    128
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "birim kartı başlığı · tahta parçasıyla aynı çizim, ölçek k=0.72"
+  },
+  {
+   "name": "thumb_cabinet_node",
+   "size1x": [
+    46,
+    58
+   ],
+   "png": [
+    92,
+    116
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "hedef: YZ düğüm dolabı · tahta parçasıyla aynı çizim, ölçek k=0.4"
+  },
+  {
+   "name": "thumb_cabinet_backup",
+   "size1x": [
+    46,
+    58
+   ],
+   "png": [
+    92,
+    116
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "hedef: yedek çekirdek (hasarlı) · tahta parçasıyla aynı çizim, ölçek k=0.4"
+  },
+  {
+   "name": "thumb_cabinet_core",
+   "size1x": [
+    46,
+    58
+   ],
+   "png": [
+    92,
+    116
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "hedef: çekirdek dolabı · tahta parçasıyla aynı çizim, ölçek k=0.4"
+  },
+  {
+   "name": "thumb_drone",
+   "size1x": [
+    40,
+    46
+   ],
+   "png": [
+    80,
+    92
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "üstüne gelinen kart: güvenlik dronu · tahta parçasıyla aynı çizim, ölçek k=0.62"
+  },
+  {
+   "name": "thumb_maint",
+   "size1x": [
+    40,
+    46
+   ],
+   "png": [
+    80,
+    92
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "üstüne gelinen kart: bakım robotu · tahta parçasıyla aynı çizim, ölçek k=0.62"
+  },
+  {
+   "name": "thumb_cooling",
+   "size1x": [
+    40,
+    46
+   ],
+   "png": [
+    80,
+    92
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "üstüne gelinen kart: soğutma ünitesi · tahta parçasıyla aynı çizim, ölçek k=0.62"
+  },
+  {
+   "name": "thumb_cabinet_node_s",
+   "size1x": [
+    40,
+    50
+   ],
+   "png": [
+    80,
+    100
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "üstüne gelinen kart: YZ düğüm dolabı (S-Baskin7) · tahta parçasıyla aynı çizim, ölçek k=0.44"
+  },
+  {
+   "name": "thumb_debris_backup",
+   "size1x": [
+    46,
+    58
+   ],
+   "png": [
+    92,
+    116
+   ],
+   "pivot": [
+    0.5,
+    0.5
+   ],
+   "tint": false,
+   "imageType": "simple",
+   "usage": "HEDEF: kırılmış yedek çekirdek (enkaz) · tahta parçasıyla aynı çizim, ölçek k=0.4"
+  }
+ ]
+}

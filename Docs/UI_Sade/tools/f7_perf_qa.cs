@@ -1,0 +1,10 @@
+const string dir="Docs/UI_Sade/captures/F7";
+var steps=new List<Func<bool>>();
+steps.Add(()=>{UnityEditor.SceneManagement.EditorSceneManager.LoadSceneInPlayMode("Assets/Corrigible/Desk/Scenes/SadeDesk_Sandbox.unity",new UnityEngine.SceneManagement.LoadSceneParameters(UnityEngine.SceneManagement.LoadSceneMode.Single));return true;});steps.Add(()=>true);
+steps.Add(()=>{Corrigible.Desk.DeskLoc.Instance.SetLanguage(Corrigible.Desk.DeskLang.Tr);UnityEngine.Object.FindFirstObjectByType<Corrigible.Desk.MockSadeDeskDataSource>().LoadSample(1);return true;});
+steps.Add(()=>{Corrigible.Desk.EditorTools.DeskCapture.Capture("desk_final",1920,1080,dir+"/desk_final.png");Corrigible.Desk.EditorTools.DeskPerfProbe.Run(dir+"/desk_final.txt");return true;});steps.Add(()=>!Corrigible.Desk.EditorTools.DeskPerfProbe.Running);
+steps.Add(()=>{UnityEngine.Object.FindFirstObjectByType<Corrigible.Desk.MockSadeDeskDataSource>().LoadSample(2);return true;});steps.Add(()=>{Corrigible.Desk.EditorTools.DeskPerfProbe.Run(dir+"/desk_card_final.txt");return true;});steps.Add(()=>!Corrigible.Desk.EditorTools.DeskPerfProbe.Running);
+steps.Add(()=>{UnityEditor.SceneManagement.EditorSceneManager.LoadSceneInPlayMode("Assets/Corrigible/Desk/Scenes/RaidBoard_Sandbox.unity",new UnityEngine.SceneManagement.LoadSceneParameters(UnityEngine.SceneManagement.LoadSceneMode.Single));return true;});steps.Add(()=>true);
+steps.Add(()=>{UnityEngine.Object.FindFirstObjectByType<Corrigible.Desk.Bridge.MockRaidDataSource>().LoadPreset(1);System.IO.File.WriteAllText(dir+"/perf_final_done.txt","Tamam");return true;});
+int step=0;double next=EditorApplication.timeSinceStartup+.5;EditorApplication.CallbackFunction tick=null;
+tick=()=>{if(EditorApplication.timeSinceStartup<next)return;next=EditorApplication.timeSinceStartup+.2;try{if(steps[step]())step++;}catch(Exception e){System.IO.File.WriteAllText(dir+"/perf_final_error.txt",e.ToString());step=steps.Count;}if(step>=steps.Count)EditorApplication.update-=tick;};EditorApplication.update+=tick;return true;

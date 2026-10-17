@@ -18,8 +18,9 @@ namespace Corrigible.Desk.EditorTools
     /// </summary>
     public static class DeskPerfProbe
     {
-        const string ReportPath = "Docs/UI_C/captures/F7_performans.txt";
-        const int Settle = 4, IdleFrames = 120;
+        const string DefaultReportPath = "Docs/UI_C/captures/F7_performans.txt";
+        const int Settle = 12;
+        static string reportPath;
 
         static readonly Queue<System.Func<bool>> steps = new Queue<System.Func<bool>>();
         static StringBuilder sb;
@@ -27,10 +28,14 @@ namespace Corrigible.Desk.EditorTools
         public static string Last { get; private set; } = "";
 
         [MenuItem("Corrigible/Desk UI/Performans ölçümü (Play)")]
-        public static string Run()
+        static void Menu()=>Debug.Log(Run());
+
+        public static string Run(string path=null,int idleFrames=120)
         {
             if (!Application.isPlaying) return "Play modunda çalıştırın (DeskUI_Sandbox).";
             if (Running) return "Zaten çalışıyor.";
+            reportPath=path??DefaultReportPath;
+            Directory.CreateDirectory(Path.GetDirectoryName(reportPath));
             sb = new StringBuilder();
             sb.AppendLine($"Desk performans ölçümü · {System.DateTime.Now:yyyy-MM-dd HH:mm}");
             sb.AppendLine("Kaynak: Profiler UI Details (canvas toplayıcısının ürettiği batch'ler; Game görünümünün çizilmesinden bağımsız).");
@@ -44,11 +49,14 @@ namespace Corrigible.Desk.EditorTools
                 ProfilerDriver.SetAreaEnabled(UnityEngine.Profiling.ProfilerArea.UIDetails, true);
                 ProfilerDriver.enabled = true;
                 UnityEngine.Profiling.Profiler.enabled = true;
+                // Yeniden kurulum PlayerLoop içinde olsun; Editor callback ölçüm dışında kalabilir.
+                var host=Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).FirstOrDefault(x=>x.isActiveAndEnabled);
+                if(host!=null)host.StartCoroutine(PrimeCanvas());
                 return true;
             });
             Wait(Settle);
             steps.Enqueue(() => { first = ProfilerDriver.lastFrameIndex; return true; });
-            Wait(IdleFrames);
+            Wait(idleFrames);
             steps.Enqueue(() =>
             {
                 int last = ProfilerDriver.lastFrameIndex;
@@ -56,13 +64,21 @@ namespace Corrigible.Desk.EditorTools
                 UnityEngine.Profiling.Profiler.enabled = false;
                 Batches(last - 1);
                 Analyze(System.Math.Max(first, ProfilerDriver.firstFrameIndex), last);
-                File.WriteAllText(ReportPath, sb.ToString());
+                File.WriteAllText(reportPath, sb.ToString());
                 Last = sb.ToString();
                 return true;
             });
             EditorApplication.update -= Tick;
             EditorApplication.update += Tick;
-            return "Başladı; bitince " + ReportPath;
+            return "Başladı; bitince " + reportPath;
+        }
+
+        static System.Collections.IEnumerator PrimeCanvas()
+        {
+            yield return null;
+            foreach(var graphic in Object.FindObjectsByType<UnityEngine.UI.Graphic>(FindObjectsSortMode.None))graphic.SetAllDirty();
+            Canvas.ForceUpdateCanvases();
+            InternalEditorUtility.RepaintAllViews();
         }
 
         static void Wait(int frames)

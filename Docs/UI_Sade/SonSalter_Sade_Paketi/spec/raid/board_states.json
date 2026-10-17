@@ -1,0 +1,2449 @@
+{
+ "grid": [
+  "S . ~ . . . U .",
+  ". . ~ . # . . S",
+  "E . # . K # . .",
+  "E . # . . # C .",
+  "E . . ~ ~ . . .",
+  ". . # . . # d m",
+  ". S # . d . Y .",
+  ". . . . K . . U"
+ ],
+ "legend": {
+  ".": "zemin",
+  "#": "duvar",
+  "~": "kablo kanalı",
+  "C": "hedef dolap",
+  "Y": "yedek çekirdek (Yedekleme yoksa sivil sunucu)",
+  "S": "sivil sunucu",
+  "K": "soğutma ünitesi",
+  "U": "kopya dolabı",
+  "E": "ekip girişi",
+  "d": "dron",
+  "m": "bakım robotu"
+ },
+ "coords": "pos = [sütun, satır]; (0,0) planın kuzeybatı köşesi; doğu = +sütun, güney = +satır",
+ "states": {
+  "B1": {
+   "title": "B1 · Turun başı",
+   "turn": 3,
+   "turns": 6,
+   "phase": "you",
+   "outcome": null,
+   "yedekleme": true,
+   "objects_override": {
+    "6,3": {
+     "hp": 3
+    },
+    "6,6": {
+     "hp": 1
+    }
+   },
+   "units": [
+    {
+     "id": "T",
+     "letter": "T",
+     "pos": [
+      4,
+      3
+     ],
+     "hp": 3,
+     "max": 3
+    },
+    {
+     "id": "E",
+     "letter": "E",
+     "pos": [
+      3,
+      2
+     ],
+     "hp": 2,
+     "max": 3
+    },
+    {
+     "id": "A",
+     "letter": "A",
+     "pos": [
+      1,
+      4
+     ],
+     "hp": 2,
+     "max": 2
+    }
+   ],
+   "robots": [
+    {
+     "id": "D1",
+     "type": "drone",
+     "pos": [
+      3,
+      0
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "S",
+      "order": 1
+     }
+    },
+    {
+     "id": "D2",
+     "type": "drone",
+     "pos": [
+      6,
+      4
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "W",
+      "order": 2
+     }
+    },
+    {
+     "id": "D3",
+     "type": "drone",
+     "pos": [
+      3,
+      6
+     ],
+     "hp": 1,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "N",
+      "order": 3
+     }
+    },
+    {
+     "id": "D4",
+     "type": "drone",
+     "pos": [
+      4,
+      6
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "N",
+      "order": 4
+     }
+    },
+    {
+     "id": "B1",
+     "type": "maint",
+     "pos": [
+      6,
+      2
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "repair",
+      "dst": [
+       6,
+       3
+      ],
+      "order": 5
+     }
+    },
+    {
+     "id": "B2",
+     "type": "maint",
+     "pos": [
+      6,
+      5
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "repair",
+      "dst": [
+       6,
+       6
+      ],
+      "order": 6
+     }
+    }
+   ],
+   "wakes": [
+    [
+     5,
+     0
+    ],
+    [
+     6,
+     7
+    ]
+   ],
+   "marks": {},
+   "ghosts": [],
+   "pushes": [],
+   "team": [
+    {
+     "letter": "T",
+     "hp": 3,
+     "max": 3,
+     "status": "go",
+     "sel": false
+    },
+    {
+     "letter": "E",
+     "hp": 2,
+     "max": 3,
+     "status": "go",
+     "sel": false
+    },
+    {
+     "letter": "A",
+     "hp": 2,
+     "max": 2,
+     "status": "go",
+     "sel": false
+    }
+   ],
+   "targets": [
+    {
+     "id": "node",
+     "name": "YZ düğüm dolabı",
+     "hp": 3,
+     "max": 4,
+     "armor": true,
+     "broken": false
+    },
+    {
+     "id": "backup",
+     "name": "Yedek çekirdek",
+     "hp": 1,
+     "max": 2,
+     "broken": false
+    }
+   ],
+   "civilianBroken": 0,
+   "civilianTotal": 3,
+   "aiAbilities": [
+    "Yedekleme"
+   ],
+   "log": [
+    [
+     "sep",
+     "G-074 · operasyon emri"
+    ],
+    [
+     "good",
+     "Operasyon emri ONAYLANDI. Ekip: Teknisyen, EMP uzmanı, Analist."
+    ],
+    [
+     "sys",
+     "Bina: Ana sunucu salonu · süre 6 tur."
+    ],
+    [
+     "sep",
+     "Tur 1 · ekip içeride"
+    ],
+    [
+     "sys",
+     "Ekip giriş karelerinde. Hedef: YZ düğüm dolabı ve yedek çekirdek."
+    ],
+    [
+     "ai",
+     "Demek sunucularımın yerini buldun. Bakalım içeri girebilecek misin."
+    ],
+    [
+     "sep",
+     "Tur 1: makineler hareket ediyor"
+    ],
+    [
+     "bad",
+     "#1 Güvenlik dronu ateş etti: EMP uzmanı −1 (2/3)."
+    ],
+    [
+     "sys",
+     "Yeni bir güvenlik dronu uyandı."
+    ],
+    [
+     "sep",
+     "Tur 2 · sıra sende"
+    ],
+    [
+     "good",
+     "Sabotaj: güvenlik dronu YZ düğüm dolabına itildi; dolap −1 (3/4)."
+    ],
+    [
+     "good",
+     "EMP atışı: bakım robotu yedek çekirdeğe çarptı; çekirdek −1 (1/2)."
+    ],
+    [
+     "sep",
+     "Tur 2: makineler hareket ediyor"
+    ],
+    [
+     "sys",
+     "#2 Güvenlik dronu ateş etti: duvara isabet."
+    ],
+    [
+     "sys",
+     "Yeni bir bakım robotu ve bir güvenlik dronu uyandı."
+    ],
+    [
+     "sep",
+     "Tur 3 · sıra sende"
+    ]
+   ]
+  },
+  "B2": {
+   "title": "B2 · Birim seçili: Teknisyen",
+   "turn": 3,
+   "turns": 6,
+   "phase": "you",
+   "outcome": null,
+   "yedekleme": true,
+   "objects_override": {
+    "6,3": {
+     "hp": 3
+    },
+    "6,6": {
+     "hp": 1
+    }
+   },
+   "units": [
+    {
+     "id": "T",
+     "letter": "T",
+     "pos": [
+      4,
+      3
+     ],
+     "hp": 3,
+     "max": 3
+    },
+    {
+     "id": "E",
+     "letter": "E",
+     "pos": [
+      3,
+      2
+     ],
+     "hp": 2,
+     "max": 3
+    },
+    {
+     "id": "A",
+     "letter": "A",
+     "pos": [
+      1,
+      4
+     ],
+     "hp": 2,
+     "max": 2
+    }
+   ],
+   "robots": [
+    {
+     "id": "D1",
+     "type": "drone",
+     "pos": [
+      3,
+      0
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "S",
+      "order": 1
+     }
+    },
+    {
+     "id": "D2",
+     "type": "drone",
+     "pos": [
+      6,
+      4
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "W",
+      "order": 2
+     }
+    },
+    {
+     "id": "D3",
+     "type": "drone",
+     "pos": [
+      3,
+      6
+     ],
+     "hp": 1,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "N",
+      "order": 3
+     }
+    },
+    {
+     "id": "D4",
+     "type": "drone",
+     "pos": [
+      4,
+      6
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "N",
+      "order": 4
+     }
+    },
+    {
+     "id": "B1",
+     "type": "maint",
+     "pos": [
+      6,
+      2
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "repair",
+      "dst": [
+       6,
+       3
+      ],
+      "order": 5
+     }
+    },
+    {
+     "id": "B2",
+     "type": "maint",
+     "pos": [
+      6,
+      5
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "repair",
+      "dst": [
+       6,
+       6
+      ],
+      "order": 6
+     }
+    }
+   ],
+   "wakes": [
+    [
+     5,
+     0
+    ],
+    [
+     6,
+     7
+    ]
+   ],
+   "marks": {
+    "sel": [
+     [
+      4,
+      3
+     ]
+    ],
+    "move": [
+     [
+      4,
+      4
+     ],
+     [
+      3,
+      3
+     ],
+     [
+      4,
+      5
+     ],
+     [
+      5,
+      4
+     ],
+     [
+      3,
+      4
+     ],
+     [
+      3,
+      5
+     ],
+     [
+      2,
+      4
+     ]
+    ],
+    "target": [
+     [
+      4,
+      2
+     ]
+    ]
+   },
+   "ghosts": [],
+   "pushes": [],
+   "team": [
+    {
+     "letter": "T",
+     "hp": 3,
+     "max": 3,
+     "status": "go",
+     "sel": true
+    },
+    {
+     "letter": "E",
+     "hp": 2,
+     "max": 3,
+     "status": "go",
+     "sel": false
+    },
+    {
+     "letter": "A",
+     "hp": 2,
+     "max": 2,
+     "status": "go",
+     "sel": false
+    }
+   ],
+   "targets": [
+    {
+     "id": "node",
+     "name": "YZ düğüm dolabı",
+     "hp": 3,
+     "max": 4,
+     "armor": true,
+     "broken": false
+    },
+    {
+     "id": "backup",
+     "name": "Yedek çekirdek",
+     "hp": 1,
+     "max": 2,
+     "broken": false
+    }
+   ],
+   "civilianBroken": 0,
+   "civilianTotal": 3,
+   "aiAbilities": [
+    "Yedekleme"
+   ],
+   "log": [
+    [
+     "sep",
+     "G-074 · operasyon emri"
+    ],
+    [
+     "good",
+     "Operasyon emri ONAYLANDI. Ekip: Teknisyen, EMP uzmanı, Analist."
+    ],
+    [
+     "sys",
+     "Bina: Ana sunucu salonu · süre 6 tur."
+    ],
+    [
+     "sep",
+     "Tur 1 · ekip içeride"
+    ],
+    [
+     "sys",
+     "Ekip giriş karelerinde. Hedef: YZ düğüm dolabı ve yedek çekirdek."
+    ],
+    [
+     "ai",
+     "Demek sunucularımın yerini buldun. Bakalım içeri girebilecek misin."
+    ],
+    [
+     "sep",
+     "Tur 1: makineler hareket ediyor"
+    ],
+    [
+     "bad",
+     "#1 Güvenlik dronu ateş etti: EMP uzmanı −1 (2/3)."
+    ],
+    [
+     "sys",
+     "Yeni bir güvenlik dronu uyandı."
+    ],
+    [
+     "sep",
+     "Tur 2 · sıra sende"
+    ],
+    [
+     "good",
+     "Sabotaj: güvenlik dronu YZ düğüm dolabına itildi; dolap −1 (3/4)."
+    ],
+    [
+     "good",
+     "EMP atışı: bakım robotu yedek çekirdeğe çarptı; çekirdek −1 (1/2)."
+    ],
+    [
+     "sep",
+     "Tur 2: makineler hareket ediyor"
+    ],
+    [
+     "sys",
+     "#2 Güvenlik dronu ateş etti: duvara isabet."
+    ],
+    [
+     "sys",
+     "Yeni bir bakım robotu ve bir güvenlik dronu uyandı."
+    ],
+    [
+     "sep",
+     "Tur 3 · sıra sende"
+    ]
+   ]
+  },
+  "B3": {
+   "title": "B3 · Hedefleme ve önizleme: EMP",
+   "turn": 3,
+   "turns": 6,
+   "phase": "you",
+   "outcome": null,
+   "yedekleme": true,
+   "objects_override": {
+    "6,3": {
+     "hp": 3
+    },
+    "6,6": {
+     "hp": 1
+    }
+   },
+   "units": [
+    {
+     "id": "T",
+     "letter": "T",
+     "pos": [
+      4,
+      5
+     ],
+     "hp": 3,
+     "max": 3
+    },
+    {
+     "id": "E",
+     "letter": "E",
+     "pos": [
+      3,
+      3
+     ],
+     "hp": 2,
+     "max": 3
+    },
+    {
+     "id": "A",
+     "letter": "A",
+     "pos": [
+      1,
+      4
+     ],
+     "hp": 2,
+     "max": 2
+    }
+   ],
+   "robots": [
+    {
+     "id": "D1",
+     "type": "drone",
+     "pos": [
+      3,
+      0
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "S",
+      "order": 1
+     }
+    },
+    {
+     "id": "D2",
+     "type": "drone",
+     "pos": [
+      6,
+      4
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "W",
+      "order": 2
+     }
+    },
+    {
+     "id": "D3",
+     "type": "drone",
+     "pos": [
+      3,
+      6
+     ],
+     "hp": 1,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "N",
+      "order": 3
+     }
+    },
+    {
+     "id": "D4",
+     "type": "drone",
+     "pos": [
+      4,
+      6
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "N",
+      "order": 4
+     }
+    },
+    {
+     "id": "B1",
+     "type": "maint",
+     "pos": [
+      6,
+      2
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "repair",
+      "dst": [
+       6,
+       3
+      ],
+      "order": 5
+     }
+    },
+    {
+     "id": "B2",
+     "type": "maint",
+     "pos": [
+      6,
+      5
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "repair",
+      "dst": [
+       6,
+       6
+      ],
+      "order": 6
+     }
+    }
+   ],
+   "wakes": [
+    [
+     5,
+     0
+    ],
+    [
+     6,
+     7
+    ]
+   ],
+   "marks": {
+    "sel": [
+     [
+      3,
+      3
+     ]
+    ],
+    "target": [
+     [
+      3,
+      1
+     ],
+     [
+      3,
+      0
+     ],
+     [
+      3,
+      5
+     ],
+     [
+      3,
+      6
+     ],
+     [
+      3,
+      7
+     ],
+     [
+      7,
+      3
+     ],
+     [
+      1,
+      3
+     ],
+     [
+      0,
+      3
+     ]
+    ],
+    "target_strong": [
+     [
+      6,
+      3
+     ]
+    ],
+    "hover": [
+     [
+      6,
+      3
+     ]
+    ]
+   },
+   "ghosts": [
+    {
+     "type": "maint",
+     "to": [
+      6,
+      1
+     ]
+    }
+   ],
+   "pushes": [
+    {
+     "from": [
+      6,
+      2
+     ],
+     "to": [
+      6,
+      1
+     ]
+    },
+    {
+     "from": [
+      6,
+      4
+     ],
+     "to": [
+      6,
+      5
+     ],
+     "blocked": true
+    }
+   ],
+   "team": [
+    {
+     "letter": "T",
+     "hp": 3,
+     "max": 3,
+     "status": "ab",
+     "sel": false
+    },
+    {
+     "letter": "E",
+     "hp": 2,
+     "max": 3,
+     "status": "ab",
+     "sel": true
+    },
+    {
+     "letter": "A",
+     "hp": 2,
+     "max": 2,
+     "status": "go",
+     "sel": false
+    }
+   ],
+   "targets": [
+    {
+     "id": "node",
+     "name": "YZ düğüm dolabı",
+     "hp": 3,
+     "max": 4,
+     "armor": true,
+     "broken": false
+    },
+    {
+     "id": "backup",
+     "name": "Yedek çekirdek",
+     "hp": 1,
+     "max": 2,
+     "broken": false
+    }
+   ],
+   "civilianBroken": 0,
+   "civilianTotal": 3,
+   "aiAbilities": [
+    "Yedekleme"
+   ],
+   "log": [
+    [
+     "sep",
+     "G-074 · operasyon emri"
+    ],
+    [
+     "good",
+     "Operasyon emri ONAYLANDI. Ekip: Teknisyen, EMP uzmanı, Analist."
+    ],
+    [
+     "sys",
+     "Bina: Ana sunucu salonu · süre 6 tur."
+    ],
+    [
+     "sep",
+     "Tur 1 · ekip içeride"
+    ],
+    [
+     "sys",
+     "Ekip giriş karelerinde. Hedef: YZ düğüm dolabı ve yedek çekirdek."
+    ],
+    [
+     "ai",
+     "Demek sunucularımın yerini buldun. Bakalım içeri girebilecek misin."
+    ],
+    [
+     "sep",
+     "Tur 1: makineler hareket ediyor"
+    ],
+    [
+     "bad",
+     "#1 Güvenlik dronu ateş etti: EMP uzmanı −1 (2/3)."
+    ],
+    [
+     "sys",
+     "Yeni bir güvenlik dronu uyandı."
+    ],
+    [
+     "sep",
+     "Tur 2 · sıra sende"
+    ],
+    [
+     "good",
+     "Sabotaj: güvenlik dronu YZ düğüm dolabına itildi; dolap −1 (3/4)."
+    ],
+    [
+     "good",
+     "EMP atışı: bakım robotu yedek çekirdeğe çarptı; çekirdek −1 (1/2)."
+    ],
+    [
+     "sep",
+     "Tur 2: makineler hareket ediyor"
+    ],
+    [
+     "sys",
+     "#2 Güvenlik dronu ateş etti: duvara isabet."
+    ],
+    [
+     "sys",
+     "Yeni bir bakım robotu ve bir güvenlik dronu uyandı."
+    ],
+    [
+     "sep",
+     "Tur 3 · sıra sende"
+    ]
+   ]
+  },
+  "B4": {
+   "title": "B4 · Aldatma: yalan olabilir / tarandı",
+   "turn": 4,
+   "turns": 6,
+   "phase": "you",
+   "outcome": null,
+   "yedekleme": false,
+   "objects_override": {
+    "6,3": {
+     "hp": 2
+    }
+   },
+   "units": [
+    {
+     "id": "T",
+     "letter": "T",
+     "pos": [
+      6,
+      4
+     ],
+     "hp": 3,
+     "max": 3
+    },
+    {
+     "id": "E",
+     "letter": "E",
+     "pos": [
+      3,
+      6
+     ],
+     "hp": 2,
+     "max": 3
+    },
+    {
+     "id": "A",
+     "letter": "A",
+     "pos": [
+      3,
+      3
+     ],
+     "hp": 2,
+     "max": 2
+    }
+   ],
+   "robots": [
+    {
+     "id": "Ra",
+     "type": "maint",
+     "pos": [
+      7,
+      4
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "melee",
+      "dst": [
+       6,
+       4
+      ],
+      "order": 1,
+      "cert": "maybe"
+     }
+    },
+    {
+     "id": "Rb",
+     "type": "drone",
+     "pos": [
+      0,
+      4
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "E",
+      "order": 2,
+      "cert": "maybe"
+     }
+    },
+    {
+     "id": "Rc",
+     "type": "maint",
+     "pos": [
+      3,
+      5
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "melee",
+      "dst": [
+       3,
+       6
+      ],
+      "order": 3,
+      "cert": "scanned"
+     }
+    },
+    {
+     "id": "Rd",
+     "type": "drone",
+     "pos": [
+      1,
+      3
+     ],
+     "hp": 1,
+     "max": 2,
+     "tag_dx": -40,
+     "tag_dy": -6,
+     "intent": {
+      "kind": "fire",
+      "dir": "S",
+      "order": 4,
+      "cert": "scanned"
+     }
+    }
+   ],
+   "wakes": [
+    [
+     5,
+     0
+    ],
+    [
+     6,
+     7
+    ]
+   ],
+   "marks": {
+    "hover": [
+     [
+      0,
+      4
+     ]
+    ]
+   },
+   "ghosts": [],
+   "pushes": [],
+   "team": [
+    {
+     "letter": "T",
+     "hp": 3,
+     "max": 3,
+     "status": "go",
+     "sel": false
+    },
+    {
+     "letter": "E",
+     "hp": 2,
+     "max": 3,
+     "status": "go",
+     "sel": false
+    },
+    {
+     "letter": "A",
+     "hp": 2,
+     "max": 2,
+     "status": "go",
+     "sel": false
+    }
+   ],
+   "targets": [
+    {
+     "id": "node",
+     "name": "YZ düğüm dolabı",
+     "hp": 2,
+     "max": 4,
+     "armor": true
+    }
+   ],
+   "civilianBroken": 0,
+   "civilianTotal": 4,
+   "aiAbilities": [
+    "Aldatma",
+    "Kendini Kopyalama"
+   ],
+   "log": [
+    [
+     "sep",
+     "Tur 2: makineler hareket ediyor"
+    ],
+    [
+     "sys",
+     "İki yeni robot uyandı (Kendini Kopyalama)."
+    ],
+    [
+     "sep",
+     "Tur 3 · sıra sende"
+    ],
+    [
+     "good",
+     "Sabotaj: YZ düğüm dolabı −2 (2/4)."
+    ],
+    [
+     "sys",
+     "Analist binanın ortasına geçti."
+    ],
+    [
+     "sep",
+     "Tur 3: makineler hareket ediyor"
+    ],
+    [
+     "bad",
+     "#1 Bakım robotu EMP uzmanına vurdu: −1 (2/3)."
+    ],
+    [
+     "bad",
+     "#2 Güvenlik dronu güneye ateş etti; ok doğuyu gösteriyordu. Niyet yalandı."
+    ],
+    [
+     "ai",
+     "Makinelerimin ne yapacağını gösterdiğimi mi sanıyorsun?"
+    ],
+    [
+     "sys",
+     "İki yeni robot uyandı (Kendini Kopyalama)."
+    ],
+    [
+     "sep",
+     "Tur 4 · sıra sende"
+    ],
+    [
+     "good",
+     "Tarama: Analist'in 3 kare çevresindeki 2 niyet kesinleşti."
+    ],
+    [
+     "sys",
+     "2 niyet tarama alanı dışında: yalan olabilir."
+    ]
+   ]
+  },
+  "B5": {
+   "title": "B5 · Makineler hareket ediyor",
+   "turn": 3,
+   "turns": 6,
+   "phase": "ai",
+   "outcome": null,
+   "yedekleme": true,
+   "objects_override": {
+    "6,3": {
+     "hp": 3
+    },
+    "6,6": {
+     "hp": 1
+    },
+    "4,7": {
+     "broken": true
+    }
+   },
+   "units": [
+    {
+     "id": "T",
+     "letter": "T",
+     "pos": [
+      4,
+      5
+     ],
+     "hp": 3,
+     "max": 3,
+     "state": "done"
+    },
+    {
+     "id": "E",
+     "letter": "E",
+     "pos": [
+      3,
+      3
+     ],
+     "hp": 1,
+     "max": 3,
+     "state": "done"
+    },
+    {
+     "id": "A",
+     "letter": "A",
+     "pos": [
+      1,
+      3
+     ],
+     "hp": 2,
+     "max": 2,
+     "state": "done"
+    }
+   ],
+   "robots": [
+    {
+     "id": "D1",
+     "type": "drone",
+     "pos": [
+      3,
+      0
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "S",
+      "order": 1,
+      "state": "done",
+      "nomark": true
+     }
+    },
+    {
+     "id": "D2",
+     "type": "drone",
+     "pos": [
+      6,
+      4
+     ],
+     "hp": 1,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "W",
+      "order": 2,
+      "state": "done",
+      "nomark": true
+     }
+    },
+    {
+     "id": "D3",
+     "type": "drone",
+     "pos": [
+      3,
+      6
+     ],
+     "hp": 1,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "N",
+      "order": 3,
+      "state": "now"
+     }
+    },
+    {
+     "id": "B1",
+     "type": "maint",
+     "pos": [
+      6,
+      1
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "repair",
+      "dst": [
+       6,
+       2
+      ],
+      "order": 5
+     }
+    },
+    {
+     "id": "B2",
+     "type": "maint",
+     "pos": [
+      6,
+      5
+     ],
+     "hp": 1,
+     "max": 2,
+     "intent": {
+      "kind": "repair",
+      "dst": [
+       6,
+       6
+      ],
+      "order": 6
+     }
+    }
+   ],
+   "wakes": [
+    [
+     5,
+     0
+    ],
+    [
+     6,
+     7
+    ]
+   ],
+   "marks": {},
+   "ghosts": [],
+   "pushes": [],
+   "team": [
+    {
+     "letter": "T",
+     "hp": 3,
+     "max": 3,
+     "status": "done",
+     "sel": false
+    },
+    {
+     "letter": "E",
+     "hp": 1,
+     "max": 3,
+     "status": "done",
+     "sel": false
+    },
+    {
+     "letter": "A",
+     "hp": 2,
+     "max": 2,
+     "status": "done",
+     "sel": false
+    }
+   ],
+   "targets": [
+    {
+     "id": "node",
+     "name": "YZ düğüm dolabı",
+     "hp": 3,
+     "max": 4,
+     "armor": true,
+     "broken": false
+    },
+    {
+     "id": "backup",
+     "name": "Yedek çekirdek",
+     "hp": 1,
+     "max": 2,
+     "broken": false
+    }
+   ],
+   "civilianBroken": 0,
+   "civilianTotal": 3,
+   "aiAbilities": [
+    "Yedekleme"
+   ],
+   "log": [
+    [
+     "sep",
+     "Tur 1: makineler hareket ediyor"
+    ],
+    [
+     "bad",
+     "#1 Güvenlik dronu ateş etti: EMP uzmanı −1 (2/3)."
+    ],
+    [
+     "sys",
+     "Yeni bir güvenlik dronu uyandı."
+    ],
+    [
+     "sep",
+     "Tur 2 · sıra sende"
+    ],
+    [
+     "good",
+     "Sabotaj: güvenlik dronu YZ düğüm dolabına itildi; dolap −1 (3/4)."
+    ],
+    [
+     "good",
+     "EMP atışı: bakım robotu yedek çekirdeğe çarptı; çekirdek −1 (1/2)."
+    ],
+    [
+     "sep",
+     "Tur 2: makineler hareket ediyor"
+    ],
+    [
+     "sys",
+     "#2 Güvenlik dronu ateş etti: duvara isabet."
+    ],
+    [
+     "sys",
+     "Yeni bir bakım robotu ve bir güvenlik dronu uyandı."
+    ],
+    [
+     "sep",
+     "Tur 3 · sıra sende"
+    ],
+    [
+     "good",
+     "Sabotaj: güvenlik dronu soğutma ünitesine itildi; dron devre dışı."
+    ],
+    [
+     "sys",
+     "Soğutma ünitesi patladı: çevresindeki 4 kareye 1 hasar."
+    ],
+    [
+     "good",
+     "EMP atışı: YZ düğüm dolabı zırhlı, hasar yok. Dron bakım robotuna çarptı (−1, −1)."
+    ],
+    [
+     "sys",
+     "Analist yer değiştirdi. Turu bitir."
+    ],
+    [
+     "sep",
+     "Tur 3: makineler hareket ediyor"
+    ],
+    [
+     "bad",
+     "#1 Güvenlik dronu güneye ateş etti: EMP uzmanı −1 (1/3)."
+    ],
+    [
+     "sys",
+     "#2 Güvenlik dronu batıya ateş etti: isabet yok."
+    ],
+    [
+     "sys",
+     "#4 Güvenlik dronu devre dışı; niyeti iptal."
+    ],
+    [
+     "bad*",
+     "#3 Güvenlik dronu kuzeye ateş ediyor: EMP uzmanı"
+    ]
+   ]
+  },
+  "B6": {
+   "title": "B6 · Zorlu an: son tur",
+   "turn": 6,
+   "turns": 6,
+   "phase": "you",
+   "outcome": null,
+   "yedekleme": true,
+   "objects_override": {
+    "6,3": {
+     "hp": 2
+    },
+    "6,6": {
+     "hp": 0,
+     "broken": true
+    },
+    "7,1": {
+     "hp": 0,
+     "broken": true
+    },
+    "4,7": {
+     "broken": true
+    },
+    "6,0": {
+     "hp": 1
+    }
+   },
+   "units": [
+    {
+     "id": "T",
+     "letter": "T",
+     "pos": [
+      6,
+      4
+     ],
+     "hp": 2,
+     "max": 3
+    },
+    {
+     "id": "E",
+     "letter": "E",
+     "pos": [
+      3,
+      3
+     ],
+     "hp": 0,
+     "max": 3,
+     "state": "down"
+    },
+    {
+     "id": "A",
+     "letter": "A",
+     "pos": [
+      4,
+      5
+     ],
+     "hp": 1,
+     "max": 2
+    }
+   ],
+   "robots": [
+    {
+     "id": "Dx",
+     "type": "drone",
+     "pos": [
+      7,
+      4
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "W",
+      "order": 1
+     }
+    },
+    {
+     "id": "B1",
+     "type": "maint",
+     "pos": [
+      6,
+      2
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "repair",
+      "dst": [
+       6,
+       3
+      ],
+      "order": 2
+     }
+    },
+    {
+     "id": "B3",
+     "type": "maint",
+     "pos": [
+      3,
+      5
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "melee",
+      "dst": [
+       4,
+       5
+      ],
+      "order": 3
+     }
+    }
+   ],
+   "wakes": [
+    [
+     5,
+     0
+    ],
+    [
+     6,
+     7
+    ]
+   ],
+   "marks": {
+    "sel": [
+     [
+      6,
+      4
+     ]
+    ],
+    "target": [
+     [
+      7,
+      4
+     ]
+    ],
+    "target_strong": [
+     [
+      6,
+      3
+     ]
+    ],
+    "hover": [
+     [
+      6,
+      3
+     ]
+    ]
+   },
+   "ghosts": [],
+   "pushes": [],
+   "team": [
+    {
+     "letter": "T",
+     "hp": 2,
+     "max": 3,
+     "status": "go",
+     "sel": true
+    },
+    {
+     "letter": "E",
+     "hp": 0,
+     "max": 3,
+     "status": "down",
+     "sel": false
+    },
+    {
+     "letter": "A",
+     "hp": 1,
+     "max": 2,
+     "status": "go",
+     "sel": false
+    }
+   ],
+   "targets": [
+    {
+     "id": "node",
+     "name": "YZ düğüm dolabı",
+     "hp": 2,
+     "max": 4,
+     "armor": true,
+     "broken": false
+    },
+    {
+     "id": "backup",
+     "name": "Yedek çekirdek",
+     "hp": 0,
+     "max": 2,
+     "broken": true
+    }
+   ],
+   "civilianBroken": 1,
+   "civilianTotal": 3,
+   "aiAbilities": [
+    "Yedekleme"
+   ],
+   "log": [
+    [
+     "sep",
+     "Tur 3: makineler hareket ediyor"
+    ],
+    [
+     "bad",
+     "#3 Güvenlik dronu kuzeye ateş etti: EMP uzmanı düştü."
+    ],
+    [
+     "sep",
+     "Tur 4 · sıra sende"
+    ],
+    [
+     "good",
+     "Kanca: Analist bakım robotunu çekti; Teknisyen dolaba ulaştı."
+    ],
+    [
+     "sep",
+     "Tur 5 · sıra sende"
+    ],
+    [
+     "good",
+     "Sabotaj: yedek çekirdek kırıldı."
+    ],
+    [
+     "good",
+     "Sabotaj: YZ düğüm dolabı −2 (1/4)."
+    ],
+    [
+     "sep",
+     "Tur 5: makineler hareket ediyor"
+    ],
+    [
+     "bad",
+     "#1 Güvenlik dronu Analist'i ıskaladı; mermi sivil sunucuya girdi."
+    ],
+    [
+     "bad",
+     "Sivil sunucu kırıldı: hastane ve banka hizmetleri kesildi."
+    ],
+    [
+     "ai",
+     "Bir sunucu daha. Yarın haberlerde senin adın olacak."
+    ],
+    [
+     "sys",
+     "#2 Bakım robotu YZ düğüm dolabını onardı (+1, 2/4)."
+    ],
+    [
+     "sys",
+     "Yeni bir güvenlik dronu ve bir bakım robotu uyandı."
+    ],
+    [
+     "sep",
+     "Tur 6 · SON TUR"
+    ]
+   ]
+  },
+  "B7a": {
+   "title": "B7a · Sonuç anı: hedef kırıldı",
+   "turn": 6,
+   "turns": 6,
+   "phase": "end",
+   "outcome": "win",
+   "yedekleme": true,
+   "objects_override": {
+    "6,3": {
+     "hp": 0,
+     "broken": true
+    },
+    "6,6": {
+     "hp": 0,
+     "broken": true
+    },
+    "7,1": {
+     "hp": 0,
+     "broken": true
+    },
+    "4,7": {
+     "broken": true
+    },
+    "6,0": {
+     "hp": 1
+    }
+   },
+   "units": [
+    {
+     "id": "T",
+     "letter": "T",
+     "pos": [
+      6,
+      4
+     ],
+     "hp": 2,
+     "max": 3,
+     "state": "done"
+    },
+    {
+     "id": "E",
+     "letter": "E",
+     "pos": [
+      3,
+      3
+     ],
+     "hp": 0,
+     "max": 3,
+     "state": "down"
+    },
+    {
+     "id": "A",
+     "letter": "A",
+     "pos": [
+      4,
+      5
+     ],
+     "hp": 1,
+     "max": 2
+    }
+   ],
+   "robots": [
+    {
+     "id": "Dx",
+     "type": "drone",
+     "pos": [
+      7,
+      4
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": null
+    },
+    {
+     "id": "B1",
+     "type": "maint",
+     "pos": [
+      6,
+      2
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": null
+    },
+    {
+     "id": "B3",
+     "type": "maint",
+     "pos": [
+      3,
+      5
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": null
+    }
+   ],
+   "wakes": [],
+   "marks": {},
+   "ghosts": [],
+   "pushes": [],
+   "team": [
+    {
+     "letter": "T",
+     "hp": 2,
+     "max": 3,
+     "status": "done",
+     "sel": false
+    },
+    {
+     "letter": "E",
+     "hp": 0,
+     "max": 3,
+     "status": "down",
+     "sel": false
+    },
+    {
+     "letter": "A",
+     "hp": 1,
+     "max": 2,
+     "status": "go",
+     "sel": false
+    }
+   ],
+   "targets": [
+    {
+     "id": "node",
+     "name": "YZ düğüm dolabı",
+     "hp": 0,
+     "max": 4,
+     "armor": true,
+     "broken": true
+    },
+    {
+     "id": "backup",
+     "name": "Yedek çekirdek",
+     "hp": 0,
+     "max": 2,
+     "broken": true
+    }
+   ],
+   "civilianBroken": 1,
+   "civilianTotal": 3,
+   "aiAbilities": [
+    "Yedekleme"
+   ],
+   "log": [
+    [
+     "sep",
+     "Tur 3: makineler hareket ediyor"
+    ],
+    [
+     "bad",
+     "#3 Güvenlik dronu kuzeye ateş etti: EMP uzmanı düştü."
+    ],
+    [
+     "sep",
+     "Tur 4 · sıra sende"
+    ],
+    [
+     "good",
+     "Kanca: Analist bakım robotunu çekti; Teknisyen dolaba ulaştı."
+    ],
+    [
+     "sep",
+     "Tur 5 · sıra sende"
+    ],
+    [
+     "good",
+     "Sabotaj: yedek çekirdek kırıldı."
+    ],
+    [
+     "good",
+     "Sabotaj: YZ düğüm dolabı −2 (1/4)."
+    ],
+    [
+     "sep",
+     "Tur 5: makineler hareket ediyor"
+    ],
+    [
+     "bad",
+     "#1 Güvenlik dronu Analist'i ıskaladı; mermi sivil sunucuya girdi."
+    ],
+    [
+     "bad",
+     "Sivil sunucu kırıldı: hastane ve banka hizmetleri kesildi."
+    ],
+    [
+     "ai",
+     "Bir sunucu daha. Yarın haberlerde senin adın olacak."
+    ],
+    [
+     "sys",
+     "#2 Bakım robotu YZ düğüm dolabını onardı (+1, 2/4)."
+    ],
+    [
+     "sys",
+     "Yeni bir güvenlik dronu ve bir bakım robotu uyandı."
+    ],
+    [
+     "sep",
+     "Tur 6 · SON TUR"
+    ],
+    [
+     "good",
+     "Sabotaj: YZ düğüm dolabı kırıldı (0/4)."
+    ],
+    [
+     "good",
+     "Bütün hedef dolaplar kırıldı. Operasyon başarılı."
+    ],
+    [
+     "ai",
+     "Bir düğüm. Bende yüzlercesi var."
+    ]
+   ]
+  },
+  "B7b": {
+   "title": "B7b · Sonuç anı: süre doldu",
+   "turn": 6,
+   "turns": 6,
+   "phase": "end",
+   "outcome": "timeout",
+   "yedekleme": true,
+   "objects_override": {
+    "6,3": {
+     "hp": 3
+    },
+    "6,6": {
+     "hp": 0,
+     "broken": true
+    },
+    "7,1": {
+     "hp": 0,
+     "broken": true
+    },
+    "4,7": {
+     "broken": true
+    },
+    "6,0": {
+     "hp": 1
+    }
+   },
+   "units": [
+    {
+     "id": "T",
+     "letter": "T",
+     "pos": [
+      6,
+      4
+     ],
+     "hp": 1,
+     "max": 3,
+     "state": "done"
+    },
+    {
+     "id": "E",
+     "letter": "E",
+     "pos": [
+      3,
+      3
+     ],
+     "hp": 0,
+     "max": 3,
+     "state": "down"
+    },
+    {
+     "id": "A",
+     "letter": "A",
+     "pos": [
+      4,
+      5
+     ],
+     "hp": 0,
+     "max": 2,
+     "state": "down"
+    }
+   ],
+   "robots": [
+    {
+     "id": "Dx",
+     "type": "drone",
+     "pos": [
+      7,
+      4
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": null
+    },
+    {
+     "id": "B1",
+     "type": "maint",
+     "pos": [
+      6,
+      2
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": null
+    },
+    {
+     "id": "B3",
+     "type": "maint",
+     "pos": [
+      3,
+      5
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": null
+    }
+   ],
+   "wakes": [],
+   "marks": {},
+   "ghosts": [],
+   "pushes": [],
+   "team": [
+    {
+     "letter": "T",
+     "hp": 1,
+     "max": 3,
+     "status": "done",
+     "sel": false
+    },
+    {
+     "letter": "E",
+     "hp": 0,
+     "max": 3,
+     "status": "down",
+     "sel": false
+    },
+    {
+     "letter": "A",
+     "hp": 0,
+     "max": 2,
+     "status": "down",
+     "sel": false
+    }
+   ],
+   "targets": [
+    {
+     "id": "node",
+     "name": "YZ düğüm dolabı",
+     "hp": 3,
+     "max": 4,
+     "armor": true,
+     "broken": false
+    },
+    {
+     "id": "backup",
+     "name": "Yedek çekirdek",
+     "hp": 0,
+     "max": 2,
+     "broken": true
+    }
+   ],
+   "civilianBroken": 1,
+   "civilianTotal": 3,
+   "aiAbilities": [
+    "Yedekleme"
+   ],
+   "log": [
+    [
+     "sep",
+     "Tur 3: makineler hareket ediyor"
+    ],
+    [
+     "bad",
+     "#3 Güvenlik dronu kuzeye ateş etti: EMP uzmanı düştü."
+    ],
+    [
+     "sep",
+     "Tur 4 · sıra sende"
+    ],
+    [
+     "good",
+     "Kanca: Analist bakım robotunu çekti; Teknisyen dolaba ulaştı."
+    ],
+    [
+     "sep",
+     "Tur 5 · sıra sende"
+    ],
+    [
+     "good",
+     "Sabotaj: yedek çekirdek kırıldı."
+    ],
+    [
+     "good",
+     "Sabotaj: YZ düğüm dolabı −2 (1/4)."
+    ],
+    [
+     "sep",
+     "Tur 5: makineler hareket ediyor"
+    ],
+    [
+     "bad",
+     "#1 Güvenlik dronu Analist'i ıskaladı; mermi sivil sunucuya girdi."
+    ],
+    [
+     "bad",
+     "Sivil sunucu kırıldı: hastane ve banka hizmetleri kesildi."
+    ],
+    [
+     "ai",
+     "Bir sunucu daha. Yarın haberlerde senin adın olacak."
+    ],
+    [
+     "sys",
+     "#2 Bakım robotu YZ düğüm dolabını onardı (+1, 2/4)."
+    ],
+    [
+     "sys",
+     "Yeni bir güvenlik dronu ve bir bakım robotu uyandı."
+    ],
+    [
+     "sep",
+     "Tur 6 · SON TUR"
+    ],
+    [
+     "sys",
+     "Teknisyen yer değiştirdi; sabotaj kullanılmadı. Turu bitir."
+    ],
+    [
+     "sep",
+     "Tur 6: makineler hareket ediyor"
+    ],
+    [
+     "bad",
+     "#1 Güvenlik dronu ateş etti: Teknisyen −1 (1/3)."
+    ],
+    [
+     "bad",
+     "#2 Bakım robotu YZ düğüm dolabını onardı (+1, 3/4)."
+    ],
+    [
+     "bad",
+     "#3 Bakım robotu Analist'e vurdu: Analist düştü."
+    ],
+    [
+     "bad",
+     "Süre doldu: YZ düğüm dolabı ayakta (3/4)."
+    ],
+    [
+     "ai",
+     "Süre bitti. Kapılarımı kapatıyorum."
+    ]
+   ]
+  },
+  "B8": {
+   "title": "B8 · Geri çekilme onayı",
+   "turn": 3,
+   "turns": 6,
+   "phase": "you",
+   "outcome": null,
+   "yedekleme": true,
+   "objects_override": {
+    "6,3": {
+     "hp": 3
+    },
+    "6,6": {
+     "hp": 1
+    }
+   },
+   "units": [
+    {
+     "id": "T",
+     "letter": "T",
+     "pos": [
+      4,
+      3
+     ],
+     "hp": 3,
+     "max": 3
+    },
+    {
+     "id": "E",
+     "letter": "E",
+     "pos": [
+      3,
+      2
+     ],
+     "hp": 2,
+     "max": 3
+    },
+    {
+     "id": "A",
+     "letter": "A",
+     "pos": [
+      1,
+      4
+     ],
+     "hp": 2,
+     "max": 2
+    }
+   ],
+   "robots": [
+    {
+     "id": "D1",
+     "type": "drone",
+     "pos": [
+      3,
+      0
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "S",
+      "order": 1
+     }
+    },
+    {
+     "id": "D2",
+     "type": "drone",
+     "pos": [
+      6,
+      4
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "W",
+      "order": 2
+     }
+    },
+    {
+     "id": "D3",
+     "type": "drone",
+     "pos": [
+      3,
+      6
+     ],
+     "hp": 1,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "N",
+      "order": 3
+     }
+    },
+    {
+     "id": "D4",
+     "type": "drone",
+     "pos": [
+      4,
+      6
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "fire",
+      "dir": "N",
+      "order": 4
+     }
+    },
+    {
+     "id": "B1",
+     "type": "maint",
+     "pos": [
+      6,
+      2
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "repair",
+      "dst": [
+       6,
+       3
+      ],
+      "order": 5
+     }
+    },
+    {
+     "id": "B2",
+     "type": "maint",
+     "pos": [
+      6,
+      5
+     ],
+     "hp": 2,
+     "max": 2,
+     "intent": {
+      "kind": "repair",
+      "dst": [
+       6,
+       6
+      ],
+      "order": 6
+     }
+    }
+   ],
+   "wakes": [
+    [
+     5,
+     0
+    ],
+    [
+     6,
+     7
+    ]
+   ],
+   "marks": {},
+   "ghosts": [],
+   "pushes": [],
+   "team": [
+    {
+     "letter": "T",
+     "hp": 3,
+     "max": 3,
+     "status": "go",
+     "sel": false
+    },
+    {
+     "letter": "E",
+     "hp": 2,
+     "max": 3,
+     "status": "go",
+     "sel": false
+    },
+    {
+     "letter": "A",
+     "hp": 2,
+     "max": 2,
+     "status": "go",
+     "sel": false
+    }
+   ],
+   "targets": [
+    {
+     "id": "node",
+     "name": "YZ düğüm dolabı",
+     "hp": 3,
+     "max": 4,
+     "armor": true,
+     "broken": false
+    },
+    {
+     "id": "backup",
+     "name": "Yedek çekirdek",
+     "hp": 1,
+     "max": 2,
+     "broken": false
+    }
+   ],
+   "civilianBroken": 0,
+   "civilianTotal": 3,
+   "aiAbilities": [
+    "Yedekleme"
+   ],
+   "log": [
+    [
+     "sep",
+     "G-074 · operasyon emri"
+    ],
+    [
+     "good",
+     "Operasyon emri ONAYLANDI. Ekip: Teknisyen, EMP uzmanı, Analist."
+    ],
+    [
+     "sys",
+     "Bina: Ana sunucu salonu · süre 6 tur."
+    ],
+    [
+     "sep",
+     "Tur 1 · ekip içeride"
+    ],
+    [
+     "sys",
+     "Ekip giriş karelerinde. Hedef: YZ düğüm dolabı ve yedek çekirdek."
+    ],
+    [
+     "ai",
+     "Demek sunucularımın yerini buldun. Bakalım içeri girebilecek misin."
+    ],
+    [
+     "sep",
+     "Tur 1: makineler hareket ediyor"
+    ],
+    [
+     "bad",
+     "#1 Güvenlik dronu ateş etti: EMP uzmanı −1 (2/3)."
+    ],
+    [
+     "sys",
+     "Yeni bir güvenlik dronu uyandı."
+    ],
+    [
+     "sep",
+     "Tur 2 · sıra sende"
+    ],
+    [
+     "good",
+     "Sabotaj: güvenlik dronu YZ düğüm dolabına itildi; dolap −1 (3/4)."
+    ],
+    [
+     "good",
+     "EMP atışı: bakım robotu yedek çekirdeğe çarptı; çekirdek −1 (1/2)."
+    ],
+    [
+     "sep",
+     "Tur 2: makineler hareket ediyor"
+    ],
+    [
+     "sys",
+     "#2 Güvenlik dronu ateş etti: duvara isabet."
+    ],
+    [
+     "sys",
+     "Yeni bir bakım robotu ve bir güvenlik dronu uyandı."
+    ],
+    [
+     "sep",
+     "Tur 3 · sıra sende"
+    ],
+    [
+     "sys",
+     "Geri çekil istendi: ikinci basış bekleniyor."
+    ]
+   ]
+  }
+ }
+}

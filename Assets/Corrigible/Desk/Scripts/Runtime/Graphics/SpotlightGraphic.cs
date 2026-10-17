@@ -26,6 +26,7 @@ namespace Corrigible.Desk
 
         public void SetSpot(Vector2 localCenter, float radius, float ring, Color ringCol, bool showHole = true)
         {
+            if(center==localCenter && holeRadius==radius && ringWidth==ring && ringColor==ringCol && hole==showHole)return;
             center = localCenter; holeRadius = radius; ringWidth = ring; ringColor = ringCol; hole = showHole;
             SetVerticesDirty();
         }

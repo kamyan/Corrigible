@@ -1,0 +1,2378 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b90ccf2d56ca847ff8a729f83ac3308b, type: 3}
+  m_Name: SadeTheme
+  m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.SadeTheme
+  colors:
+  - key: ink
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: ink2
+    color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
+  - key: ink3
+    color: {r: 0.40392157, g: 0.37254903, b: 0.3137255, a: 1}
+  - key: paper
+    color: {r: 0.94509804, g: 0.9137255, b: 0.8392157, a: 1}
+  - key: edge
+    color: {r: 0.78431374, g: 0.7254902, b: 0.5882353, a: 1}
+  - key: index
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: onion
+    color: {r: 0.8901961, g: 0.8784314, b: 0.84705883, a: 1}
+  - key: carbon
+    color: {r: 0.32156864, g: 0.28627452, b: 0.4509804, a: 1}
+  - key: sticky
+    color: {r: 0.9607843, g: 0.8627451, b: 0.3882353, a: 1}
+  - key: highlighter
+    color: {r: 0.9607843, g: 0.8392157, b: 0.27450982, a: 1}
+  - key: ruleRed
+    color: {r: 0.8235294, g: 0.28235295, b: 0.24705882, a: 1}
+  - key: status.threat
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: status.threatBright
+    color: {r: 0.72156864, g: 0.14117648, b: 0.101960786, a: 1}
+  - key: status.warning
+    color: {r: 0.52156866, g: 0.2509804, b: 0.019607844, a: 1}
+  - key: status.warningLine
+    color: {r: 0.6627451, g: 0.32156864, b: 0.039215688, a: 1}
+  - key: status.info
+    color: {r: 0.101960786, g: 0.2784314, b: 0.5372549, a: 1}
+  - key: status.good
+    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
+  - key: plaque.bg
+    color: {r: 0.05490196, g: 0.03529412, b: 0.023529412, a: 1}
+  - key: plaque.border
+    color: {r: 0.43137255, g: 0.3529412, b: 0.2, a: 1}
+  - key: plaque.divider
+    color: {r: 0.2901961, g: 0.23529412, b: 0.13333334, a: 1}
+  - key: plaque.brass
+    color: {r: 0.7882353, g: 0.65882355, b: 0.41568628, a: 1}
+  - key: plaque.clock
+    color: {r: 0.9019608, g: 0.8117647, b: 0.6117647, a: 1}
+  - key: map.oceanCenter
+    color: {r: 0.8627451, g: 0.8784314, b: 0.8392157, a: 1}
+  - key: map.oceanEdge
+    color: {r: 0.7764706, g: 0.8, b: 0.75686276, a: 1}
+  - key: map.graticule
+    color: {r: 0.3372549, g: 0.3764706, b: 0.30980393, a: 0.2}
+  - key: map.tropics
+    color: {r: 0.3372549, g: 0.3764706, b: 0.30980393, a: 0.24}
+  - key: map.equator
+    color: {r: 0.3372549, g: 0.3764706, b: 0.30980393, a: 0.34}
+  - key: map.coastHaloWide
+    color: {r: 0.89411765, g: 0.90588236, b: 0.87058824, a: 0.75}
+  - key: map.coastHaloNarrow
+    color: {r: 0.7254902, g: 0.75686276, b: 0.7058824, a: 0.9}
+  - key: map.countryBorder
+    color: {r: 0.22745098, g: 0.16470589, b: 0.1254902, a: 0.22}
+  - key: map.regionBorderUnder
+    color: {r: 0.95686275, g: 0.93333334, b: 0.8666667, a: 0.9}
+  - key: map.regionBorder
+    color: {r: 0.17254902, g: 0.14509805, b: 0.11764706, a: 0.75}
+  - key: map.coast
+    color: {r: 0.24313726, g: 0.20784314, b: 0.16078432, a: 0.8}
+  - key: map.unknownLand
+    color: {r: 0.78431374, g: 0.7607843, b: 0.6901961, a: 1}
+  - key: map.fogStripe
+    color: {r: 0.5568628, g: 0.5254902, b: 0.4509804, a: 0.55}
+  - key: map.quarantinePaper
+    color: {r: 0.9372549, g: 0.9098039, b: 0.8392157, a: 0.38}
+  - key: map.quarantineHatch
+    color: {r: 0.12156863, g: 0.3529412, b: 0.2, a: 0.3}
+  - key: map.quarantineLine
+    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 0.85}
+  - key: map.labelInk
+    color: {r: 0.18039216, g: 0.15686275, b: 0.1254902, a: 1}
+  - key: map.labelHalo
+    color: {r: 0.94509804, g: 0.9137255, b: 0.8392157, a: 1}
+  - key: map.lampWarm
+    color: {r: 1, g: 0.9254902, b: 0.78431374, a: 0.1}
+  - key: map.lampEdge
+    color: {r: 0.08627451, g: 0.050980393, b: 0.02745098, a: 0.34}
+  - key: 'infiltrationRamp[0]'
+    color: {r: 0.9490196, g: 0.7882353, b: 0.72156864, a: 1}
+  - key: 'infiltrationRamp[1]'
+    color: {r: 0.89411765, g: 0.5764706, b: 0.48235294, a: 1}
+  - key: 'infiltrationRamp[2]'
+    color: {r: 0.7058824, g: 0.26666668, b: 0.18039216, a: 1}
+  - key: 'infiltrationRamp[3]'
+    color: {r: 0.54901963, g: 0.14117648, b: 0.08627451, a: 1}
+  - key: 'infiltrationRamp[4]'
+    color: {r: 0.36078432, g: 0.0627451, b: 0.039215688, a: 1}
+  - key: infiltrationText.light
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: infiltrationText.dark
+    color: {r: 1, g: 0.972549, b: 0.93333334, a: 1}
+  - key: dockTabs.research
+    color: {r: 0.8509804, g: 0.7529412, b: 0.54509807, a: 1}
+  - key: dockTabs.news
+    color: {r: 0.9372549, g: 0.89411765, b: 0.7372549, a: 1}
+  - key: dockTabs.teams
+    color: {r: 0.7882353, g: 0.8039216, b: 0.7058824, a: 1}
+  - key: dockTabs.aiLog
+    color: {r: 0.84705883, g: 0.6509804, b: 0.60784316, a: 1}
+  - key: dockTabs.guide
+    color: {r: 0.7490196, g: 0.78431374, b: 0.8039216, a: 1}
+  - key: raid.felt
+    color: {r: 0.10980392, g: 0.21568628, b: 0.17254902, a: 1}
+  - key: raid.availOnRing
+    color: {r: 0.101960786, g: 0.2784314, b: 0.5372549, a: 1}
+  - key: raid.availOnFill
+    color: {r: 0.89411765, g: 0.91764706, b: 0.9490196, a: 1}
+  - key: raid.availOffRing
+    color: {r: 0.7254902, g: 0.6862745, b: 0.60784316, a: 1}
+  - key: raid.availOffIcon
+    color: {r: 0.654902, g: 0.6156863, b: 0.53333336, a: 1}
+  - key: raid.turnPast
+    color: {r: 0.43137255, g: 0.3529412, b: 0.2, a: 1}
+  - key: raid.turnFuture
+    color: {r: 0.6431373, g: 0.5411765, b: 0.33333334, a: 1}
+  - key: raid.turnLast
+    color: {r: 0.72156864, g: 0.14117648, b: 0.101960786, a: 1}
+  - key: raid.turnLastText
+    color: {r: 0.84705883, g: 0.5019608, b: 0.43529412, a: 1}
+  - key: raid.phaseAiBg
+    color: {r: 0.9529412, g: 0.8901961, b: 0.8627451, a: 1}
+  - key: raid.pipAiEmpty
+    color: {r: 0.78039217, g: 0.60784316, b: 0.57254905, a: 1}
+  - key: raid.chipDone
+    color: {r: 0.93333334, g: 0.9019608, b: 0.827451, a: 1}
+  - key: raid.usedDash
+    color: {r: 0.7882353, g: 0.74509805, b: 0.6509804, a: 1}
+  - key: 'panels.drawer.research[0]'
+    color: {r: 0.8509804, g: 0.7529412, b: 0.54509807, a: 1}
+  - key: 'panels.drawer.research[1]'
+    color: {r: 0.7254902, g: 0.6156863, b: 0.3882353, a: 1}
+  - key: 'panels.drawer.news[0]'
+    color: {r: 0.9372549, g: 0.89411765, b: 0.7372549, a: 1}
+  - key: 'panels.drawer.news[1]'
+    color: {r: 0.7882353, g: 0.7254902, b: 0.5411765, a: 1}
+  - key: 'panels.drawer.teams[0]'
+    color: {r: 0.7882353, g: 0.8039216, b: 0.7058824, a: 1}
+  - key: 'panels.drawer.teams[1]'
+    color: {r: 0.61960787, g: 0.6431373, b: 0.5254902, a: 1}
+  - key: 'panels.drawer.aiLog[0]'
+    color: {r: 0.84705883, g: 0.6509804, b: 0.60784316, a: 1}
+  - key: 'panels.drawer.aiLog[1]'
+    color: {r: 0.6901961, g: 0.49411765, b: 0.44705883, a: 1}
+  - key: 'panels.drawer.guide[0]'
+    color: {r: 0.7490196, g: 0.78431374, b: 0.8039216, a: 1}
+  - key: 'panels.drawer.guide[1]'
+    color: {r: 0.5764706, g: 0.62352943, b: 0.6509804, a: 1}
+  - key: 'panels.drawer.dossier[0]'
+    color: {r: 0.8509804, g: 0.7529412, b: 0.54509807, a: 1}
+  - key: 'panels.drawer.dossier[1]'
+    color: {r: 0.7254902, g: 0.6156863, b: 0.3882353, a: 1}
+  - key: panels.telexPaper
+    color: {r: 0.9372549, g: 0.89411765, b: 0.7372549, a: 1}
+  - key: panels.feedHole
+    color: {r: 0.27450982, g: 0.23529412, b: 0.15686275, a: 0.34}
+  - key: panels.feedLine
+    color: {r: 0.43137255, g: 0.3529412, b: 0.2, a: 0.45}
+  - key: panels.aiPaper
+    color: {r: 0.95686275, g: 0.90588236, b: 0.88235295, a: 1}
+  - key: panels.aiBand
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 0.07}
+  - key: panels.aiInk
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: panels.aiMeta
+    color: {r: 0.47843137, g: 0.22745098, b: 0.1882353, a: 1}
+  - key: panels.aiHeadText
+    color: {r: 0.8980392, g: 0.54509807, b: 0.48235294, a: 1}
+  - key: panels.aiHeadSub
+    color: {r: 0.7254902, g: 0.5019608, b: 0.43529412, a: 1}
+  - key: panels.aiNewBg
+    color: {r: 0.96862745, g: 0.8509804, b: 0.8117647, a: 1}
+  - key: panels.aiNewPill
+    color: {r: 0.72156864, g: 0.14117648, b: 0.101960786, a: 1}
+  - key: panels.hoverPaper
+    color: {r: 1, g: 0.99215686, b: 0.9607843, a: 1}
+  - key: panels.selection
+    color: {r: 0.9607843, g: 0.8392157, b: 0.27450982, a: 1}
+  - key: panels.dividerDotted
+    color: {r: 0.7254902, g: 0.6745098, b: 0.5568628, a: 1}
+  - key: panels.chipBorderAi
+    color: {r: 0.78039217, g: 0.60784316, b: 0.57254905, a: 1}
+  - key: panels.chipBgAi
+    color: {r: 0.9529412, g: 0.8901961, b: 0.8627451, a: 1}
+  - key: panels.node.done
+    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
+  - key: panels.node.doneRing
+    color: {r: 0.08627451, g: 0.22745098, b: 0.11372549, a: 1}
+  - key: panels.node.runTrack
+    color: {r: 0.8509804, g: 0.8156863, b: 0.7372549, a: 1}
+  - key: panels.node.run
+    color: {r: 0.101960786, g: 0.2784314, b: 0.5372549, a: 1}
+  - key: panels.node.lockFill
+    color: {r: 0.8901961, g: 0.85490197, b: 0.7921569, a: 1}
+  - key: panels.node.lockRing
+    color: {r: 0.654902, g: 0.6156863, b: 0.53333336, a: 1}
+  - key: panels.node.lockIcon
+    color: {r: 0.5568628, g: 0.52156866, b: 0.4509804, a: 1}
+  - key: panels.node.availRing
+    color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
+  - key: desk.chip.paper
+    color: {r: 0.94509804, g: 0.9137255, b: 0.8392157, a: 1}
+  - key: desk.chip.border
+    color: {r: 0.78431374, g: 0.7254902, b: 0.5882353, a: 1}
+  - key: desk.chip.iconCircle.fill
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: desk.chip.iconCircle.ring
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: desk.chip.iconCircle.ringThreat
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: desk.chip.delta.colors.bad
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: desk.chip.delta.colors.good
+    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
+  - key: desk.bar.border
+    color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
+  - key: desk.bar.bg
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: 'desk.bar.hazard.colors[0]'
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: 'desk.bar.hazard.colors[1]'
+    color: {r: 0.9529412, g: 0.92941177, b: 0.8627451, a: 1}
+  - key: desk.bar.fill.singularity
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: desk.bar.fill.alignment
+    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
+  - key: desk.bar.fill.deletion
+    color: {r: 0.101960786, g: 0.2784314, b: 0.5372549, a: 1}
+  - key: desk.bar.marker.color
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: desk.node.disc.ring
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: desk.node.disc.shadow
+    color: {r: 0, g: 0, b: 0, a: 0.25}
+  - key: desk.node.unknown.disc
+    color: {r: 0.92941177, g: 0.90588236, b: 0.8392157, a: 0.9}
+  - key: desk.node.selectedHalo.color
+    color: {r: 0.9607843, g: 0.8392157, b: 0.27450982, a: 0.8}
+  - key: desk.label.selected.bg
+    color: {r: 0.9607843, g: 0.8392157, b: 0.27450982, a: 1}
+  - key: desk.label.selected.shadow
+    color: {r: 0, g: 0, b: 0, a: 0.3}
+  - key: desk.regionCard.paper
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: desk.regionCard.border
+    color: {r: 0.8235294, g: 0.78039217, b: 0.6862745, a: 1}
+  - key: desk.regionCard.headRule
+    color: {r: 0.8235294, g: 0.28235295, b: 0.24705882, a: 1}
+  - key: desk.regionCard.range.band.fill
+    color: {r: 0.9607843, g: 0.8392157, b: 0.27450982, a: 0.25}
+  - key: desk.regionCard.range.markers[0].color
+    color: {r: 0.6627451, g: 0.32156864, b: 0.039215688, a: 1}
+  - key: desk.regionCard.range.markers[1].color
+    color: {r: 0.101960786, g: 0.2784314, b: 0.5372549, a: 1}
+  - key: desk.regionCard.actions.danger.text
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: desk.regionCard.actions.danger.border
+    color: {r: 0.7254902, g: 0.49803922, b: 0.4627451, a: 1}
+  - key: desk.regionCard.actions.danger.shadow
+    color: {r: 0.47843137, g: 0.16470589, b: 0.1254902, a: 1}
+  - key: desk.regionCard.preview.bg
+    color: {r: 0.9607843, g: 0.8627451, b: 0.3882353, a: 1}
+  - key: desk.regionCard.string.color
+    color: {r: 0.16862746, g: 0.14901961, b: 0.13333334, a: 1}
+  - key: desk.regionCard.string.shadow
+    color: {r: 0, g: 0, b: 0, a: 0.25}
+  - key: desk.panels.drawer.sheet.paper
+    color: {r: 0.94509804, g: 0.9137255, b: 0.8392157, a: 1}
+  - key: desk.panels.drawer.sheet.border
+    color: {r: 0.78431374, g: 0.7254902, b: 0.5882353, a: 1}
+  - key: desk.panels.research.speed.border
+    color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
+  - key: desk.panels.research.speed.shadow
+    color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 0.35}
+  - key: desk.panels.research.speed.label.bg
+    color: {r: 0.9098039, g: 0.87058824, b: 0.7764706, a: 1}
+  - key: desk.panels.research.speed.option.selected.bg
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: desk.panels.research.speed.option.selected.text
+    color: {r: 0.95686275, g: 0.9254902, b: 0.84705883, a: 1}
+  - key: desk.panels.research.speed.option.selected.sub
+    color: {r: 0.8117647, g: 0.76862746, b: 0.6745098, a: 1}
+  - key: desk.panels.research.tree.meta.done
+    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
+  - key: desk.panels.research.tree.meta.run
+    color: {r: 0.101960786, g: 0.2784314, b: 0.5372549, a: 1}
+  - key: desk.panels.research.detail.paper
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: desk.panels.research.detail.border
+    color: {r: 0.8235294, g: 0.78039217, b: 0.6862745, a: 1}
+  - key: desk.panels.research.detail.leftBar
+    color: {r: 0.9607843, g: 0.8392157, b: 0.27450982, a: 1}
+  - key: desk.panels.breakdownTip.paper
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: desk.panels.breakdownTip.border
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: desk.panels.breakdownTip.head.rule
+    color: {r: 0.8235294, g: 0.28235295, b: 0.24705882, a: 1}
+  - key: desk.panels.breakdownTip.balance.bar.border
+    color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
+  - key: desk.panels.breakdownTip.balance.income.fill
+    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
+  - key: 'desk.panels.breakdownTip.balance.expense.segments[0][1]'
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: 'desk.panels.breakdownTip.balance.expense.segments[1][1]'
+    color: {r: 0.84705883, g: 0.5019608, b: 0.43529412, a: 1}
+  - key: desk.panels.breakdownTip.sparkline.line
+    color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
+  - key: desk.panels.breakdownTip.sparkline.area
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 0.08}
+  - key: desk.panels.breakdownTip.sparkline.baseline
+    color: {r: 0.7254902, g: 0.6745098, b: 0.5568628, a: 1}
+  - key: desk.panels.news.filter.chip.border
+    color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
+  - key: desk.panels.news.item.hover.paper
+    color: {r: 1, g: 0.99215686, b: 0.9607843, a: 1}
+  - key: desk.panels.news.item.hover.border
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: desk.panels.regionChip.paper
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: desk.panels.regionChip.border
+    color: {r: 0.78431374, g: 0.7254902, b: 0.5882353, a: 1}
+  - key: desk.panels.teams.card.paper
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: desk.panels.teams.card.border
+    color: {r: 0.8509804, g: 0.8156863, b: 0.7372549, a: 1}
+  - key: desk.panels.teams.card.head.rule
+    color: {r: 0.8235294, g: 0.28235295, b: 0.24705882, a: 1}
+  - key: 'desk.panels.teams.card.body.divider[2]'
+    color: {r: 0.78431374, g: 0.7254902, b: 0.5882353, a: 1}
+  - key: desk.panels.teams.card.hover.border
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: desk.panels.teams.card.hover.paper
+    color: {r: 1, g: 0.99215686, b: 0.9607843, a: 1}
+  - key: desk.panels.aiLog.sheet.paper
+    color: {r: 0.95686275, g: 0.90588236, b: 0.88235295, a: 1}
+  - key: desk.panels.aiLog.head.bg
+    color: {r: 0.05490196, g: 0.03529412, b: 0.023529412, a: 1}
+  - key: desk.panels.aiLog.warn.paper
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: desk.panels.guide.nav.on.bg
+    color: {r: 0.9607843, g: 0.8392157, b: 0.27450982, a: 1}
+  - key: desk.panels.guide.nav.on.shadow
+    color: {r: 0, g: 0, b: 0, a: 0.15}
+  - key: desk.panels.guide.page.example.bg
+    color: {r: 0.9607843, g: 0.8627451, b: 0.3882353, a: 1}
+  - key: desk.panels.guide.page.example.shadow
+    color: {r: 0.23529412, g: 0.1764706, b: 0.078431375, a: 0.35}
+  - key: desk.panels.legendCard.paper
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: desk.panels.legendCard.border
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: desk.panels.legendCard.head.rule
+    color: {r: 0.8235294, g: 0.28235295, b: 0.24705882, a: 1}
+  - key: desk.panels.legendCard.ramp.border
+    color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
+  - key: raid.turnPlaque.bg
+    color: {r: 0.05490196, g: 0.03529412, b: 0.023529412, a: 1}
+  - key: raid.turnPlaque.border
+    color: {r: 0.43137255, g: 0.3529412, b: 0.2, a: 1}
+  - key: raid.turnPlaque.boxes.border
+    color: {r: 0.43137255, g: 0.3529412, b: 0.2, a: 1}
+  - key: raid.turnPlaque.boxes.past.bg
+    color: {r: 0.43137255, g: 0.3529412, b: 0.2, a: 1}
+  - key: raid.turnPlaque.boxes.past.text
+    color: {r: 0.101960786, g: 0.07058824, b: 0.03137255, a: 1}
+  - key: raid.turnPlaque.boxes.now.bg
+    color: {r: 0.94509804, g: 0.9137255, b: 0.8392157, a: 1}
+  - key: raid.turnPlaque.boxes.now.text
+    color: {r: 0.101960786, g: 0.2784314, b: 0.5372549, a: 1}
+  - key: raid.turnPlaque.boxes.now.border
+    color: {r: 0.7882353, g: 0.65882355, b: 0.41568628, a: 1}
+  - key: raid.turnPlaque.boxes.future.text
+    color: {r: 0.6431373, g: 0.5411765, b: 0.33333334, a: 1}
+  - key: raid.turnPlaque.boxes.last.border
+    color: {r: 0.72156864, g: 0.14117648, b: 0.101960786, a: 1}
+  - key: raid.turnPlaque.boxes.last.text
+    color: {r: 0.84705883, g: 0.5019608, b: 0.43529412, a: 1}
+  - key: raid.turnPlaque.phase.you.bg
+    color: {r: 0.94509804, g: 0.9137255, b: 0.8392157, a: 1}
+  - key: raid.turnPlaque.phase.you.text
+    color: {r: 0.101960786, g: 0.2784314, b: 0.5372549, a: 1}
+  - key: raid.turnPlaque.phase.ai.bg
+    color: {r: 0.9529412, g: 0.8901961, b: 0.8627451, a: 1}
+  - key: raid.turnPlaque.phase.ai.text
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: raid.objective.paper
+    color: {r: 0.94509804, g: 0.9137255, b: 0.8392157, a: 1}
+  - key: raid.objective.border
+    color: {r: 0.78431374, g: 0.7254902, b: 0.5882353, a: 1}
+  - key: 'raid.objective.divider[2]'
+    color: {r: 0.78431374, g: 0.7254902, b: 0.5882353, a: 1}
+  - key: raid.topButton.paper
+    color: {r: 0.94509804, g: 0.9137255, b: 0.8392157, a: 1}
+  - key: raid.topButton.border
+    color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
+  - key: raid.topButton.retreat.text
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: raid.topButton.retreat.border
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: raid.topButton.retreat.shadow
+    color: {r: 0.36862746, g: 0.05882353, b: 0.039215688, a: 1}
+  - key: raid.teamChip.paper
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: raid.teamChip.border
+    color: {r: 0.8235294, g: 0.78039217, b: 0.6862745, a: 1}
+  - key: raid.unitCard.paper
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: raid.unitCard.border
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: raid.unitCard.headRule
+    color: {r: 0.8235294, g: 0.28235295, b: 0.24705882, a: 1}
+  - key: raid.unitCard.used.text
+    color: {r: 0.40392157, g: 0.37254903, b: 0.3137255, a: 1}
+  - key: raid.unitCard.armed.bg
+    color: {r: 0.9607843, g: 0.8392157, b: 0.27450982, a: 1}
+  - key: raid.unitCard.armed.border
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: raid.unitCard.armed.shadow
+    color: {r: 0, g: 0, b: 0, a: 0.25}
+  - key: raid.hoverCard.paper
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: raid.hoverCard.border
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: raid.hoverCard.headRule
+    color: {r: 0.8235294, g: 0.28235295, b: 0.24705882, a: 1}
+  - key: raid.panels.aiChip.border
+    color: {r: 0.78039217, g: 0.60784316, b: 0.57254905, a: 1}
+  - key: raid.panels.aiChip.bg
+    color: {r: 0.9529412, g: 0.8901961, b: 0.8627451, a: 1}
+  - key: raid.panels.teamChip.down.paper
+    color: {r: 0.9019608, g: 0.87058824, b: 0.8156863, a: 1}
+  - key: raid.panels.teamChip.warn.border
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: raid.panels.teamChip.warn.paper
+    color: {r: 1, g: 0.99215686, b: 0.9607843, a: 1}
+  - key: raid.panels.teamChip.warn.shadow
+    color: {r: 0, g: 0, b: 0, a: 0.4}
+  - key: raid.panels.topButtonOn.border
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: raid.panels.topButtonOn.paper
+    color: {r: 1, g: 0.99215686, b: 0.9607843, a: 1}
+  - key: raid.panels.retreatArmed.bg
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: raid.panels.retreatArmed.text
+    color: {r: 0.9843137, g: 0.9411765, b: 0.9098039, a: 1}
+  - key: raid.panels.retreatArmed.border
+    color: {r: 0.36862746, g: 0.05882353, b: 0.039215688, a: 1}
+  - key: raid.panels.eventSlip.paper
+    color: {r: 0.9372549, g: 0.89411765, b: 0.7372549, a: 1}
+  - key: raid.panels.eventSlip.border
+    color: {r: 0.7882353, g: 0.7254902, b: 0.5411765, a: 1}
+  - key: raid.panels.eventSlip.leftBar
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: raid.panels.eventSlip.queue.border
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: raid.panels.eventSlip.queue.states.pending
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: raid.panels.endConfirm.button.bg
+    color: {r: 0.9607843, g: 0.8392157, b: 0.27450982, a: 1}
+  - key: raid.panels.endConfirm.button.border
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: raid.panels.endConfirm.button.shadow
+    color: {r: 0, g: 0, b: 0, a: 1}
+  - key: raid.panels.endConfirm.note.paper
+    color: {r: 0.9607843, g: 0.8627451, b: 0.3882353, a: 1}
+  - key: raid.panels.hoverTarget.win.bg
+    color: {r: 0.96862745, g: 0.88235295, b: 0.85882354, a: 1}
+  - key: desk.time.calHeadText
+    color: {r: 1, g: 0.9529412, b: 0.93333334, a: 1}
+  - key: desk.dock.tabBorder
+    color: {r: 0, g: 0, b: 0, a: 1}
+  - key: raid.worldLabels.spentPaper
+    color: {r: 0.9137255, g: 0.8666667, b: 0.7764706, a: 1}
+  numbers:
+  - key: infiltrationText.darkFrom
+    value: 40
+  - key: 'desk.layout1080.chipFund[0]'
+    value: 16
+  - key: 'desk.layout1080.chipFund[1]'
+    value: 14
+  - key: 'desk.layout1080.chipFund[2]'
+    value: 171.2
+  - key: 'desk.layout1080.chipFund[3]'
+    value: 62
+  - key: 'desk.layout1080.chipPower[0]'
+    value: 196
+  - key: 'desk.layout1080.chipPower[1]'
+    value: 14
+  - key: 'desk.layout1080.chipPower[2]'
+    value: 166.8
+  - key: 'desk.layout1080.chipPower[3]'
+    value: 62
+  - key: 'desk.layout1080.chipGoal[0]'
+    value: 376
+  - key: 'desk.layout1080.chipGoal[1]'
+    value: 14
+  - key: 'desk.layout1080.chipGoal[2]'
+    value: 274
+  - key: 'desk.layout1080.chipGoal[3]'
+    value: 62
+  - key: 'desk.layout1080.time[0]'
+    value: 795.3
+  - key: 'desk.layout1080.time[1]'
+    value: 14
+  - key: 'desk.layout1080.time[2]'
+    value: 329.4
+  - key: 'desk.layout1080.time[3]'
+    value: 62
+  - key: 'desk.layout1080.chipTrust[0]'
+    value: 1298
+  - key: 'desk.layout1080.chipTrust[1]'
+    value: 14
+  - key: 'desk.layout1080.chipTrust[2]'
+    value: 204
+  - key: 'desk.layout1080.chipTrust[3]'
+    value: 62
+  - key: 'desk.layout1080.chipDependence[0]'
+    value: 1488
+  - key: 'desk.layout1080.chipDependence[1]'
+    value: 14
+  - key: 'desk.layout1080.chipDependence[2]'
+    value: 204
+  - key: 'desk.layout1080.chipDependence[3]'
+    value: 62
+  - key: 'desk.layout1080.chipSingularity[0]'
+    value: 1682
+  - key: 'desk.layout1080.chipSingularity[1]'
+    value: 14
+  - key: 'desk.layout1080.chipSingularity[2]'
+    value: 222
+  - key: 'desk.layout1080.chipSingularity[3]'
+    value: 62
+  - key: desk.layout1080.dock.left
+    value: 16
+  - key: desk.layout1080.dock.bottom
+    value: 0
+  - key: desk.layout1080.dock.gap
+    value: 6
+  - key: desk.layout1080.dock.tabH
+    value: 42
+  - key: desk.layout1080.dock.tabOpenH
+    value: 50
+  - key: 'desk.layout1080.dock.tabsTR[0][1]'
+    value: 165
+  - key: 'desk.layout1080.dock.tabsTR[1][1]'
+    value: 154.8
+  - key: 'desk.layout1080.dock.tabsTR[2][1]'
+    value: 138.5
+  - key: 'desk.layout1080.dock.tabsTR[3][1]'
+    value: 169.2
+  - key: 'desk.layout1080.dock.tabsTR[4][1]'
+    value: 135
+  - key: desk.layout1080.legendButton.right
+    value: 282
+  - key: desk.layout1080.legendButton.bottom
+    value: 26
+  - key: desk.layout1080.legendButton.w
+    value: 98.3
+  - key: desk.layout1080.legendButton.h
+    value: 36
+  - key: desk.layout1080.envelope.right
+    value: 16
+  - key: desk.layout1080.envelope.bottom
+    value: 14
+  - key: desk.layout1080.envelope.w
+    value: 250
+  - key: desk.layout1080.envelope.h
+    value: 62
+  - key: 'desk.layout1080.envelope.label[0]'
+    value: 12
+  - key: 'desk.layout1080.envelope.label[1]'
+    value: 12
+  - key: 'desk.layout1080.envelope.label[2]'
+    value: 170
+  - key: 'desk.layout1080.envelope.label[3]'
+    value: 38
+  - key: desk.layout1080.envelope.seal.right
+    value: 12
+  - key: desk.layout1080.envelope.seal.top
+    value: 9
+  - key: desk.layout1080.envelope.seal.size
+    value: 44
+  - key: 'desk.layout1080.regionCard.rect[0]'
+    value: 1540
+  - key: 'desk.layout1080.regionCard.rect[1]'
+    value: 96
+  - key: 'desk.layout1080.regionCard.rect[2]'
+    value: 364
+  - key: 'desk.layout1080.regionCard.rect[3]'
+    value: 463
+  - key: desk.layout1080.regionCard.sections.head
+    value: 52
+  - key: desk.layout1080.regionCard.sections.status
+    value: 32
+  - key: desk.layout1080.regionCard.sections.infiltration
+    value: 61
+  - key: desk.layout1080.regionCard.sections.stats
+    value: 58
+  - key: desk.layout1080.regionCard.sections.actions
+    value: 98
+  - key: desk.layout1080.regionCard.sections.preview
+    value: 50
+  - key: desk.layout1080.regionCard.sections.team
+    value: 70
+  - key: desk.layout1080.regionCard.sections.more
+    value: 40
+  - key: desk.chip.height
+    value: 62
+  - key: 'desk.chip.padding[0]'
+    value: 0
+  - key: 'desk.chip.padding[1]'
+    value: 14
+  - key: 'desk.chip.padding[2]'
+    value: 0
+  - key: 'desk.chip.padding[3]'
+    value: 10
+  - key: desk.chip.gap
+    value: 10
+  - key: desk.chip.border.width
+    value: 1
+  - key: desk.chip.radius
+    value: 2
+  - key: desk.chip.iconCircle.size
+    value: 36
+  - key: desk.chip.iconCircle.ring.width
+    value: 1.5
+  - key: desk.chip.iconCircle.ringThreat.width
+    value: 1.5
+  - key: desk.chip.iconCircle.icon
+    value: 19
+  - key: desk.chip.delta.icon
+    value: 12
+  - key: desk.chip.delta.stroke
+    value: 2.2
+  - key: desk.bar.h
+    value: 7
+  - key: desk.bar.border.width
+    value: 1
+  - key: desk.bar.widths.trust
+    value: 132
+  - key: desk.bar.widths.dependence
+    value: 132
+  - key: desk.bar.widths.singularity
+    value: 150
+  - key: desk.bar.widths.goal
+    value: 96
+  - key: desk.bar.hazard.tileDesignPx
+    value: 4.808
+  - key: desk.bar.uncertainty.tileDesignPx
+    value: 4.525
+  - key: desk.bar.marker.w
+    value: 3
+  - key: desk.bar.marker.h
+    value: 13
+  - key: desk.bar.marker.top
+    value: -4
+  - key: desk.bar.marker.radius
+    value: 1
+  - key: 'desk.bar.values.trust.hazard[0]'
+    value: 0
+  - key: 'desk.bar.values.trust.hazard[1]'
+    value: 15
+  - key: desk.bar.values.trust.marker
+    value: 41.8
+  - key: 'desk.bar.values.dependence.hazard[0]'
+    value: 70
+  - key: 'desk.bar.values.dependence.hazard[1]'
+    value: 100
+  - key: desk.bar.values.dependence.marker
+    value: 58.4
+  - key: 'desk.bar.values.singularity.hazard[0]'
+    value: 94
+  - key: 'desk.bar.values.singularity.hazard[1]'
+    value: 100
+  - key: desk.bar.values.singularity.fill
+    value: 37
+  - key: 'desk.bar.values.singularity.uncertainty[0]'
+    value: 31
+  - key: 'desk.bar.values.singularity.uncertainty[1]'
+    value: 43
+  - key: desk.goalRows.rowH
+    value: 13
+  - key: desk.goalRows.gap
+    value: 5
+  - key: desk.goalRows.nameW
+    value: 62
+  - key: desk.goalRows.valueW
+    value: 30
+  - key: desk.goalRows.gapInRow
+    value: 7
+  - key: desk.time.h
+    value: 62
+  - key: 'desk.time.padding[0]'
+    value: 0
+  - key: 'desk.time.padding[1]'
+    value: 12
+  - key: 'desk.time.padding[2]'
+    value: 0
+  - key: 'desk.time.padding[3]'
+    value: 10
+  - key: desk.time.gap
+    value: 12
+  - key: 'desk.time.cal[0]'
+    value: 60
+  - key: 'desk.time.cal[1]'
+    value: 42
+  - key: 'desk.time.cal[2]'
+    value: 14
+  - key: 'desk.time.divider[0]'
+    value: 1
+  - key: 'desk.time.divider[1]'
+    value: 34
+  - key: desk.time.speedKeys.size
+    value: 30
+  - key: desk.time.speedKeys.gap
+    value: 6
+  - key: desk.node.box
+    value: 64
+  - key: desk.node.disc.r
+    value: 20
+  - key: desk.node.disc.ring.width
+    value: 1.8
+  - key: 'desk.node.suspicious.q.topLeftFromCenter[0]'
+    value: 17
+  - key: 'desk.node.suspicious.q.topLeftFromCenter[1]'
+    value: -41
+  - key: desk.node.selectedHalo.r
+    value: 31
+  - key: 'desk.node.badges.verifiedCenterOffset[0]'
+    value: 18
+  - key: 'desk.node.badges.verifiedCenterOffset[1]'
+    value: -19
+  - key: 'desk.node.badges.reportTopLeftOffset[0]'
+    value: 9
+  - key: 'desk.node.badges.reportTopLeftOffset[1]'
+    value: -27
+  - key: 'desk.node.badges.coreCenterOffset[0]'
+    value: -18.5
+  - key: 'desk.node.badges.coreCenterOffset[1]'
+    value: -18.5
+  - key: desk.node.labelOffsetY.default
+    value: 30
+  - key: desk.node.labelOffsetY.DA
+    value: -46
+  - key: desk.node.labelOffsetY.AV
+    value: 33
+  - key: 'desk.label.selected.padding[0]'
+    value: 2
+  - key: 'desk.label.selected.padding[1]'
+    value: 5
+  - key: desk.teamToken.size
+    value: 30
+  - key: desk.teamToken.eta.h
+    value: 20
+  - key: 'desk.teamToken.eta.padding[0]'
+    value: 0
+  - key: 'desk.teamToken.eta.padding[1]'
+    value: 6
+  - key: desk.teamToken.eta.gap
+    value: 4
+  - key: desk.teamToken.eta.icon
+    value: 12
+  - key: desk.alert.size
+    value: 30
+  - key: desk.alert.rotDeg
+    value: -6
+  - key: desk.regionCard.border.width
+    value: 1
+  - key: desk.regionCard.radius
+    value: 2
+  - key: desk.regionCard.headRule.width
+    value: 2
+  - key: desk.regionCard.padX
+    value: 16
+  - key: desk.regionCard.range.trackTop
+    value: 14
+  - key: desk.regionCard.range.trackH
+    value: 8
+  - key: desk.regionCard.range.band.from
+    value: 29
+  - key: desk.regionCard.range.band.to
+    value: 47
+  - key: desk.regionCard.range.band.top
+    value: 10
+  - key: desk.regionCard.range.band.h
+    value: 16
+  - key: desk.regionCard.range.markers[0].value
+    value: 38
+  - key: desk.regionCard.range.markers[1].value
+    value: 52
+  - key: 'desk.regionCard.range.markerSize[0]'
+    value: 4
+  - key: 'desk.regionCard.range.markerSize[1]'
+    value: 24
+  - key: desk.regionCard.range.labelTop
+    value: 33
+  - key: desk.regionCard.stats.cols
+    value: 3
+  - key: desk.regionCard.stats.gap
+    value: 8
+  - key: desk.regionCard.stats.h
+    value: 46
+  - key: desk.regionCard.stats.icon
+    value: 20
+  - key: desk.regionCard.actions.cols
+    value: 4
+  - key: desk.regionCard.actions.gap
+    value: 8
+  - key: desk.regionCard.actions.h
+    value: 84
+  - key: desk.regionCard.actions.icon
+    value: 26
+  - key: desk.regionCard.preview.h
+    value: 40
+  - key: 'desk.regionCard.preview.padding[0]'
+    value: 0
+  - key: 'desk.regionCard.preview.padding[1]'
+    value: 12
+  - key: desk.regionCard.preview.gap
+    value: 8
+  - key: desk.regionCard.team.h
+    value: 56
+  - key: desk.regionCard.string.width
+    value: 1.6
+  - key: desk.panels.drawer.rect.left
+    value: 16
+  - key: desk.panels.drawer.rect.bottom
+    value: 1016
+  - key: desk.panels.drawer.rect.w
+    value: 500
+  - key: desk.panels.drawer.rect.hTR.research
+    value: 704
+  - key: desk.panels.drawer.rect.hTR.news
+    value: 652
+  - key: desk.panels.drawer.rect.hTR.teams
+    value: 548
+  - key: desk.panels.drawer.rect.hTR.aiLog
+    value: 538
+  - key: desk.panels.drawer.rect.hTR.guide
+    value: 600
+  - key: desk.panels.drawer.rect.topMin
+    value: 96
+  - key: desk.panels.drawer.tab.h
+    value: 38
+  - key: desk.panels.drawer.tab.minW
+    value: 244
+  - key: 'desk.panels.drawer.tab.padding[0]'
+    value: 0
+  - key: 'desk.panels.drawer.tab.padding[1]'
+    value: 7
+  - key: 'desk.panels.drawer.tab.padding[2]'
+    value: 1
+  - key: 'desk.panels.drawer.tab.padding[3]'
+    value: 12
+  - key: desk.panels.drawer.tab.gap
+    value: 8
+  - key: 'desk.panels.drawer.tab.radius[0]'
+    value: 8
+  - key: 'desk.panels.drawer.tab.radius[1]'
+    value: 8
+  - key: 'desk.panels.drawer.tab.radius[2]'
+    value: 0
+  - key: 'desk.panels.drawer.tab.radius[3]'
+    value: 0
+  - key: desk.panels.drawer.tab.icon
+    value: 17
+  - key: desk.panels.drawer.tab.key
+    value: 17
+  - key: desk.panels.drawer.body.padding
+    value: 10
+  - key: 'desk.panels.drawer.body.radius[0]'
+    value: 0
+  - key: 'desk.panels.drawer.body.radius[1]'
+    value: 5
+  - key: 'desk.panels.drawer.body.radius[2]'
+    value: 5
+  - key: 'desk.panels.drawer.body.radius[3]'
+    value: 5
+  - key: desk.panels.drawer.body.border
+    value: 1
+  - key: desk.panels.drawer.body.overlapTab
+    value: 1
+  - key: desk.panels.drawer.sheet.border.width
+    value: 1
+  - key: desk.panels.drawer.sheet.radius
+    value: 1
+  - key: 'desk.panels.drawer.sheet.padding[0]'
+    value: 12
+  - key: 'desk.panels.drawer.sheet.padding[1]'
+    value: 14
+  - key: 'desk.panels.drawer.sheet.padding[2]'
+    value: 14
+  - key: 'desk.panels.drawer.sheet.padding[3]'
+    value: 14
+  - key: desk.panels.drawer.sheet.innerW
+    value: 448
+  - key: desk.panels.drawer.sectionHead.h
+    value: 16
+  - key: 'desk.panels.research.summary.rect[0]'
+    value: 42
+  - key: 'desk.panels.research.summary.rect[1]'
+    value: 373
+  - key: 'desk.panels.research.summary.rect[2]'
+    value: 448
+  - key: 'desk.panels.research.summary.rect[3]'
+    value: 26
+  - key: 'desk.panels.research.speed.rect[0]'
+    value: 42
+  - key: 'desk.panels.research.speed.rect[1]'
+    value: 407
+  - key: 'desk.panels.research.speed.rect[2]'
+    value: 448
+  - key: 'desk.panels.research.speed.rect[3]'
+    value: 42
+  - key: desk.panels.research.speed.border.width
+    value: 1
+  - key: desk.panels.research.speed.radius
+    value: 3
+  - key: 'desk.panels.research.speed.label.padding[0]'
+    value: 0
+  - key: 'desk.panels.research.speed.label.padding[1]'
+    value: 10
+  - key: 'desk.panels.research.speed.label.padding[2]'
+    value: 0
+  - key: 'desk.panels.research.speed.label.padding[3]'
+    value: 9
+  - key: desk.panels.research.speed.label.icon
+    value: 15
+  - key: desk.panels.research.speed.option.gap
+    value: 4
+  - key: 'desk.panels.research.tree.rect[0]'
+    value: 42
+  - key: 'desk.panels.research.tree.rect[1]'
+    value: 461
+  - key: 'desk.panels.research.tree.rect[2]'
+    value: 448
+  - key: 'desk.panels.research.tree.rect[3]'
+    value: 400
+  - key: desk.panels.research.tree.rowH
+    value: 100
+  - key: desk.panels.research.tree.labelCol.w
+    value: 86
+  - key: desk.panels.research.tree.labelCol.top
+    value: 13
+  - key: desk.panels.research.tree.labelCol.gap
+    value: 6
+  - key: 'desk.panels.research.tree.nodeCentersX[0]'
+    value: 151
+  - key: 'desk.panels.research.tree.nodeCentersX[1]'
+    value: 270
+  - key: 'desk.panels.research.tree.nodeCentersX[2]'
+    value: 389
+  - key: desk.panels.research.tree.nodeCenterY
+    value: 32
+  - key: desk.panels.research.tree.nodeBox
+    value: 52
+  - key: desk.panels.research.tree.nodeR
+    value: 21
+  - key: desk.panels.research.tree.name.w
+    value: 118
+  - key: desk.panels.research.tree.name.maxLines
+    value: 2
+  - key: desk.panels.research.tree.meta.icon
+    value: 11
+  - key: desk.panels.research.tree.connector.y
+    value: 32
+  - key: 'desk.panels.research.detail.rect[0]'
+    value: 42
+  - key: 'desk.panels.research.detail.rect[1]'
+    value: 871
+  - key: 'desk.panels.research.detail.rect[2]'
+    value: 448
+  - key: 'desk.panels.research.detail.rect[3]'
+    value: 104
+  - key: desk.panels.research.detail.border.width
+    value: 1
+  - key: desk.panels.research.detail.leftBar.width
+    value: 5
+  - key: 'desk.panels.research.detail.padding[0]'
+    value: 10
+  - key: 'desk.panels.research.detail.padding[1]'
+    value: 12
+  - key: 'desk.panels.research.detail.padding[2]'
+    value: 11
+  - key: 'desk.panels.research.detail.padding[3]'
+    value: 13
+  - key: 'desk.panels.breakdownTip.rect[0]'
+    value: 16
+  - key: 'desk.panels.breakdownTip.rect[1]'
+    value: 86
+  - key: 'desk.panels.breakdownTip.rect[2]'
+    value: 286
+  - key: 'desk.panels.breakdownTip.rect[3]'
+    value: 208
+  - key: desk.panels.breakdownTip.border.width
+    value: 1.5
+  - key: desk.panels.breakdownTip.radius
+    value: 2
+  - key: desk.panels.breakdownTip.delayMs
+    value: 400
+  - key: desk.panels.breakdownTip.pointer.size
+    value: 14
+  - key: desk.panels.breakdownTip.pointer.rotDeg
+    value: 45
+  - key: desk.panels.breakdownTip.pointer.xFromLeft
+    value: 28
+  - key: desk.panels.breakdownTip.pointer.top
+    value: -8
+  - key: desk.panels.breakdownTip.head.h
+    value: 36
+  - key: desk.panels.breakdownTip.head.rule.width
+    value: 1.5
+  - key: desk.panels.breakdownTip.balance.rowH
+    value: 22
+  - key: 'desk.panels.breakdownTip.balance.cols[0]'
+    value: 40
+  - key: 'desk.panels.breakdownTip.balance.cols[2]'
+    value: 40
+  - key: desk.panels.breakdownTip.balance.bar.h
+    value: 12
+  - key: desk.panels.breakdownTip.balance.bar.border.width
+    value: 1
+  - key: desk.panels.breakdownTip.balance.key.h
+    value: 18
+  - key: desk.panels.breakdownTip.balance.key.indent
+    value: 48
+  - key: desk.panels.breakdownTip.balance.key.swatch
+    value: 9
+  - key: desk.panels.breakdownTip.balance.key.gap
+    value: 10
+  - key: desk.panels.breakdownTip.net.h
+    value: 30
+  - key: desk.panels.breakdownTip.sparkline.w
+    value: 259
+  - key: desk.panels.breakdownTip.sparkline.h
+    value: 40
+  - key: desk.panels.breakdownTip.sparkline.days
+    value: 31
+  - key: desk.panels.breakdownTip.sparkline.line.width
+    value: 1.8
+  - key: desk.panels.breakdownTip.sparkline.baseline.width
+    value: 1
+  - key: desk.panels.news.filter.h
+    value: 28
+  - key: desk.panels.news.filter.chip.h
+    value: 26
+  - key: desk.panels.news.filter.chip.radius
+    value: 13
+  - key: 'desk.panels.news.filter.chip.padding[0]'
+    value: 0
+  - key: 'desk.panels.news.filter.chip.padding[1]'
+    value: 10
+  - key: desk.panels.news.filter.chip.border.width
+    value: 1
+  - key: desk.panels.news.daySep.h
+    value: 22
+  - key: 'desk.panels.news.daySep.margin[0]'
+    value: 8
+  - key: 'desk.panels.news.daySep.margin[1]'
+    value: 0
+  - key: 'desk.panels.news.daySep.margin[2]'
+    value: 2
+  - key: 'desk.panels.news.daySep.margin[3]'
+    value: 0
+  - key: desk.panels.news.item.h
+    value: 90.9
+  - key: 'desk.panels.news.item.grid[0]'
+    value: 30
+  - key: desk.panels.news.item.colGap
+    value: 10
+  - key: desk.panels.news.item.rowGap
+    value: 5
+  - key: 'desk.panels.news.item.padding[0]'
+    value: 9
+  - key: 'desk.panels.news.item.padding[1]'
+    value: 8
+  - key: 'desk.panels.news.item.padding[2]'
+    value: 10
+  - key: 'desk.panels.news.item.padding[3]'
+    value: 8
+  - key: desk.panels.news.item.hover.border.width
+    value: 1.5
+  - key: desk.panels.regionChip.h
+    value: 20
+  - key: 'desk.panels.regionChip.padding[0]'
+    value: 0
+  - key: 'desk.panels.regionChip.padding[1]'
+    value: 6
+  - key: 'desk.panels.regionChip.padding[2]'
+    value: 0
+  - key: 'desk.panels.regionChip.padding[3]'
+    value: 4
+  - key: desk.panels.regionChip.gap
+    value: 5
+  - key: desk.panels.regionChip.border.width
+    value: 1
+  - key: desk.panels.regionChip.radius
+    value: 2
+  - key: desk.panels.teams.summary.h
+    value: 24
+  - key: desk.panels.teams.card.w
+    value: 448
+  - key: desk.panels.teams.card.h
+    value: 132
+  - key: desk.panels.teams.card.gap
+    value: 10
+  - key: desk.panels.teams.card.border.width
+    value: 1
+  - key: desk.panels.teams.card.radius
+    value: 2
+  - key: desk.panels.teams.card.head.h
+    value: 42
+  - key: desk.panels.teams.card.head.rule.width
+    value: 2
+  - key: desk.panels.teams.card.body.h
+    value: 88
+  - key: 'desk.panels.teams.card.body.divider[0]'
+    value: 1
+  - key: 'desk.panels.teams.card.body.divider[1]'
+    value: 50
+  - key: desk.panels.teams.card.hover.border.width
+    value: 2
+  - key: 'desk.panels.aiLog.sheet.padding[0]'
+    value: 0
+  - key: 'desk.panels.aiLog.sheet.padding[1]'
+    value: 14
+  - key: 'desk.panels.aiLog.sheet.padding[2]'
+    value: 12
+  - key: 'desk.panels.aiLog.sheet.padding[3]'
+    value: 14
+  - key: desk.panels.aiLog.head.h
+    value: 32
+  - key: 'desk.panels.aiLog.entry.padding[0]'
+    value: 9
+  - key: 'desk.panels.aiLog.entry.padding[1]'
+    value: 0
+  - key: 'desk.panels.aiLog.entry.padding[2]'
+    value: 10
+  - key: 'desk.panels.aiLog.entry.padding[3]'
+    value: 0
+  - key: 'desk.panels.aiLog.warn.padding[0]'
+    value: 9
+  - key: 'desk.panels.aiLog.warn.padding[1]'
+    value: 12
+  - key: 'desk.panels.aiLog.warn.padding[2]'
+    value: 10
+  - key: 'desk.panels.aiLog.warn.padding[3]'
+    value: 10
+  - key: 'desk.panels.guide.grid[0]'
+    value: 140
+  - key: desk.panels.guide.nav.itemH
+    value: 34
+  - key: desk.panels.guide.nav.gap
+    value: 3
+  - key: 'desk.panels.guide.nav.padding[0]'
+    value: 0
+  - key: 'desk.panels.guide.nav.padding[1]'
+    value: 8
+  - key: desk.panels.guide.nav.icon
+    value: 15
+  - key: desk.panels.guide.page.paddingLeft
+    value: 16
+  - key: desk.panels.guide.page.row.minH
+    value: 54
+  - key: 'desk.panels.guide.page.row.cols[0]'
+    value: 34
+  - key: desk.panels.guide.page.row.gap
+    value: 10
+  - key: 'desk.panels.guide.page.example.padding[0]'
+    value: 10
+  - key: 'desk.panels.guide.page.example.padding[1]'
+    value: 12
+  - key: 'desk.panels.legendCard.rect[0]'
+    value: 1484
+  - key: 'desk.panels.legendCard.rect[1]'
+    value: 665
+  - key: 'desk.panels.legendCard.rect[2]'
+    value: 420
+  - key: 'desk.panels.legendCard.rect[3]'
+    value: 327
+  - key: desk.panels.legendCard.border.width
+    value: 1.5
+  - key: desk.panels.legendCard.radius
+    value: 2
+  - key: desk.panels.legendCard.head.h
+    value: 42
+  - key: desk.panels.legendCard.head.rule.width
+    value: 2
+  - key: desk.panels.legendCard.head.icon
+    value: 16
+  - key: 'desk.panels.legendCard.section.padding[0]'
+    value: 12
+  - key: 'desk.panels.legendCard.section.padding[1]'
+    value: 14
+  - key: 'desk.panels.legendCard.section.padding[2]'
+    value: 0
+  - key: 'desk.panels.legendCard.section.padding[3]'
+    value: 14
+  - key: desk.panels.legendCard.ramp.h
+    value: 16
+  - key: desk.panels.legendCard.ramp.border.width
+    value: 1
+  - key: desk.panels.legendCard.ramp.segments
+    value: 5
+  - key: desk.panels.legendCard.trust.item
+    value: 78
+  - key: desk.panels.legendCard.trust.gap
+    value: 16
+  - key: 'desk.panels.legendCard.region.swatch[0]'
+    value: 34
+  - key: 'desk.panels.legendCard.region.swatch[1]'
+    value: 22
+  - key: 'desk.panels.nodeTip.rect[0]'
+    value: 1099.6
+  - key: 'desk.panels.nodeTip.rect[1]'
+    value: 526
+  - key: 'desk.panels.nodeTip.rect[2]'
+    value: 214
+  - key: 'desk.panels.nodeTip.rect[3]'
+    value: 119
+  - key: desk.panels.nodeTip.delayMs
+    value: 400
+  - key: desk.panels.nodeTip.replacesLabel
+    value: 1
+  - key: desk.panels.nodeTip.nodeLift
+    value: -1
+  - key: 'desk.panels.nodeTip.padding[0]'
+    value: 9
+  - key: 'desk.panels.nodeTip.padding[1]'
+    value: 12
+  - key: 'desk.panels.nodeTip.padding[2]'
+    value: 10
+  - key: 'desk.panels.nodeTip.padding[3]'
+    value: 12
+  - key: 'desk.panels.dossier.rect[0]'
+    value: 16
+  - key: 'desk.panels.dossier.rect[1]'
+    value: 96
+  - key: 'desk.panels.dossier.rect[2]'
+    value: 480
+  - key: 'desk.panels.dossier.rect[3]'
+    value: 906
+  - key: 'desk.panels.dossier.sections.head[0]'
+    value: 61
+  - key: 'desk.panels.dossier.sections.infiltration[0]'
+    value: 66
+  - key: 'desk.panels.dossier.sections.sources[0]'
+    value: 130
+  - key: 'desk.panels.dossier.sections.chart[0]'
+    value: 126
+  - key: 'desk.panels.dossier.sections.links[0]'
+    value: 100
+  - key: 'desk.panels.dossier.sections.actions[0]'
+    value: 173
+  - key: 'desk.panels.dossier.sections.team[0]'
+    value: 78
+  - key: desk.panels.dossier.gap
+    value: 14
+  - key: raid.camera.k
+    value: 1.5
+  - key: 'raid.camera.gridOriginPx[0]'
+    value: 210
+  - key: 'raid.camera.gridOriginPx[1]'
+    value: 528
+  - key: 'raid.camera.boardCenterPx[0]'
+    value: 960
+  - key: 'raid.camera.boardCenterPx[1]'
+    value: 528
+  - key: raid.camera.pixelsPerUnitAt1080
+    value: 132.58
+  - key: raid.camera.orthographicSizeAt1080
+    value: 4.0729
+  - key: 'raid.camera.eulerDeg[0]'
+    value: 35
+  - key: 'raid.camera.eulerDeg[1]'
+    value: 45
+  - key: 'raid.camera.eulerDeg[2]'
+    value: 0
+  - key: 'raid.layout1080.turn[0]'
+    value: 16
+  - key: 'raid.layout1080.turn[1]'
+    value: 14
+  - key: 'raid.layout1080.turn[2]'
+    value: 397.4
+  - key: 'raid.layout1080.turn[3]'
+    value: 62
+  - key: 'raid.layout1080.objective[0]'
+    value: 16
+  - key: 'raid.layout1080.objective[1]'
+    value: 88
+  - key: 'raid.layout1080.objective[2]'
+    value: 394
+  - key: 'raid.layout1080.objective[3]'
+    value: 96
+  - key: raid.layout1080.topButtons.right
+    value: 16
+  - key: raid.layout1080.topButtons.top
+    value: 14
+  - key: raid.layout1080.topButtons.h
+    value: 44
+  - key: raid.layout1080.topButtons.gap
+    value: 8
+  - key: raid.layout1080.topButtons.widthsTR.log
+    value: 134.8
+  - key: raid.layout1080.topButtons.widthsTR.rules
+    value: 153.8
+  - key: raid.layout1080.topButtons.widthsTR.retreat
+    value: 131.1
+  - key: raid.layout1080.teamRow.left
+    value: 16
+  - key: raid.layout1080.teamRow.bottom
+    value: 16
+  - key: 'raid.layout1080.teamRow.chip[0]'
+    value: 198
+  - key: 'raid.layout1080.teamRow.chip[1]'
+    value: 74
+  - key: raid.layout1080.teamRow.gap
+    value: 8
+  - key: raid.layout1080.teamRow.selectedLift
+    value: 10
+  - key: raid.layout1080.end.right
+    value: 16
+  - key: raid.layout1080.end.bottom
+    value: 18
+  - key: raid.layout1080.end.gap
+    value: 10
+  - key: 'raid.layout1080.end.undo[0]'
+    value: 117.3
+  - key: 'raid.layout1080.end.undo[1]'
+    value: 44
+  - key: 'raid.layout1080.end.endTurn[0]'
+    value: 218
+  - key: 'raid.layout1080.end.endTurn[1]'
+    value: 56
+  - key: 'raid.layout1080.unitCard[0]'
+    value: 16
+  - key: 'raid.layout1080.unitCard[1]'
+    value: 744
+  - key: 'raid.layout1080.unitCard[2]'
+    value: 360
+  - key: 'raid.layout1080.unitCard[3]'
+    value: 216
+  - key: 'raid.layout1080.hoverCard[0]'
+    value: 1646
+  - key: 'raid.layout1080.hoverCard[1]'
+    value: 818
+  - key: 'raid.layout1080.hoverCard[2]'
+    value: 258
+  - key: 'raid.layout1080.hoverCard[3]'
+    value: 150
+  - key: raid.layout1080.hoverCardBottom
+    value: 968
+  - key: 'raid.layout1080.eventSlip[0]'
+    value: 16
+  - key: 'raid.layout1080.eventSlip[1]'
+    value: 196
+  - key: 'raid.layout1080.eventSlip[2]'
+    value: 394
+  - key: 'raid.layout1080.eventSlip[3]'
+    value: 90
+  - key: 'raid.layout1080.endConfirm[0]'
+    value: 1574
+  - key: 'raid.layout1080.endConfirm[1]'
+    value: 843
+  - key: 'raid.layout1080.endConfirm[2]'
+    value: 330
+  - key: 'raid.layout1080.endConfirm[3]'
+    value: 143
+  - key: 'raid.layout1080.logDrawer[0]'
+    value: 1528
+  - key: 'raid.layout1080.logDrawer[1]'
+    value: 66
+  - key: 'raid.layout1080.logDrawer[2]'
+    value: 376
+  - key: 'raid.layout1080.logDrawer[3]'
+    value: 560
+  - key: 'raid.layout1080.rulesCard[0]'
+    value: 1484
+  - key: 'raid.layout1080.rulesCard[1]'
+    value: 66
+  - key: 'raid.layout1080.rulesCard[2]'
+    value: 420
+  - key: 'raid.layout1080.rulesCard[3]'
+    value: 455.5
+  - key: 'raid.layout1080.retreatConfirm[0]'
+    value: 1528
+  - key: 'raid.layout1080.retreatConfirm[1]'
+    value: 66
+  - key: 'raid.layout1080.retreatConfirm[2]'
+    value: 376
+  - key: 'raid.layout1080.retreatConfirm[3]'
+    value: 118.4
+  - key: 'raid.layout1080.result[0]'
+    value: 1240
+  - key: 'raid.layout1080.result[1]'
+    value: 560
+  - key: 'raid.layout1080.result[2]'
+    value: 440
+  - key: 'raid.layout1080.result[3]'
+    value: 374.6
+  - key: raid.turnPlaque.border.width
+    value: 1
+  - key: raid.turnPlaque.radius
+    value: 3
+  - key: 'raid.turnPlaque.padding[0]'
+    value: 0
+  - key: 'raid.turnPlaque.padding[1]'
+    value: 12
+  - key: 'raid.turnPlaque.padding[2]'
+    value: 0
+  - key: 'raid.turnPlaque.padding[3]'
+    value: 10
+  - key: raid.turnPlaque.gap
+    value: 12
+  - key: 'raid.turnPlaque.cal[0]'
+    value: 60
+  - key: 'raid.turnPlaque.cal[1]'
+    value: 42
+  - key: 'raid.turnPlaque.cal[2]'
+    value: 14
+  - key: raid.turnPlaque.boxes.size
+    value: 22
+  - key: raid.turnPlaque.boxes.nowSize
+    value: 26
+  - key: raid.turnPlaque.boxes.gap
+    value: 4
+  - key: raid.turnPlaque.boxes.radius
+    value: 2
+  - key: raid.turnPlaque.boxes.border.width
+    value: 1
+  - key: raid.turnPlaque.boxes.now.border.width
+    value: 2
+  - key: raid.turnPlaque.phase.h
+    value: 34
+  - key: 'raid.turnPlaque.phase.padding[0]'
+    value: 0
+  - key: 'raid.turnPlaque.phase.padding[1]'
+    value: 12
+  - key: raid.turnPlaque.phase.gap
+    value: 8
+  - key: raid.objective.border.width
+    value: 1
+  - key: raid.objective.radius
+    value: 2
+  - key: 'raid.objective.padding[0]'
+    value: 8
+  - key: 'raid.objective.padding[1]'
+    value: 12
+  - key: 'raid.objective.padding[2]'
+    value: 8
+  - key: 'raid.objective.padding[3]'
+    value: 12
+  - key: 'raid.objective.thumb[0]'
+    value: 46
+  - key: 'raid.objective.thumb[1]'
+    value: 58
+  - key: raid.objective.pips
+    value: 10
+  - key: raid.objective.pipGap
+    value: 3
+  - key: raid.objective.civil.icon
+    value: 20
+  - key: raid.objective.civil.gap
+    value: 4
+  - key: 'raid.objective.divider[0]'
+    value: 1
+  - key: 'raid.objective.divider[1]'
+    value: 40
+  - key: raid.topButton.border.width
+    value: 1
+  - key: raid.topButton.radius
+    value: 3
+  - key: 'raid.topButton.padding[0]'
+    value: 0
+  - key: 'raid.topButton.padding[1]'
+    value: 12
+  - key: 'raid.topButton.padding[2]'
+    value: 0
+  - key: 'raid.topButton.padding[3]'
+    value: 11
+  - key: raid.topButton.gap
+    value: 8
+  - key: raid.topButton.icon
+    value: 16
+  - key: raid.topButton.key
+    value: 17
+  - key: 'raid.teamChip.size[0]'
+    value: 198
+  - key: 'raid.teamChip.size[1]'
+    value: 74
+  - key: raid.teamChip.border.width
+    value: 1
+  - key: raid.teamChip.radius
+    value: 2
+  - key: 'raid.teamChip.key.posFromOuter[0]'
+    value: 7
+  - key: 'raid.teamChip.key.posFromOuter[1]'
+    value: 7
+  - key: raid.teamChip.key.size
+    value: 16
+  - key: 'raid.teamChip.thumb[0]'
+    value: 40
+  - key: 'raid.teamChip.thumb[1]'
+    value: 56
+  - key: raid.teamChip.pips
+    value: 10
+  - key: raid.teamChip.avail.size
+    value: 24
+  - key: raid.teamChip.avail.gap
+    value: 4
+  - key: raid.teamChip.avail.icon
+    value: 14
+  - key: raid.teamChip.avail.stroke
+    value: 1.8
+  - key: raid.unitCard.w
+    value: 360
+  - key: raid.unitCard.border.width
+    value: 2
+  - key: raid.unitCard.radius
+    value: 2
+  - key: raid.unitCard.headH
+    value: 62
+  - key: raid.unitCard.thumbOverhangTop
+    value: 10
+  - key: raid.unitCard.headRule.width
+    value: 2
+  - key: raid.unitCard.rowH
+    value: 44
+  - key: raid.unitCard.rowGap
+    value: 8
+  - key: raid.unitCard.rowMargin
+    value: 12
+  - key: raid.unitCard.armed.border.width
+    value: 2
+  - key: raid.unitCard.fx.h
+    value: 26
+  - key: 'raid.unitCard.fx.padding[0]'
+    value: 0
+  - key: 'raid.unitCard.fx.padding[1]'
+    value: 8
+  - key: raid.unitCard.fx.gap
+    value: 8
+  - key: raid.unitCard.fx.indentLeft
+    value: 40
+  - key: raid.unitCard.pointer.centerXFromCardLeft
+    value: 79
+  - key: raid.unitCard.pointer.topFromOuterBottom
+    value: -3
+  - key: raid.unitCard.pointer.tipBelowOuterBottom
+    value: 13
+  - key: raid.hoverCard.w
+    value: 258
+  - key: raid.hoverCard.border.width
+    value: 1.5
+  - key: raid.hoverCard.radius
+    value: 2
+  - key: raid.hoverCard.headH
+    value: 50
+  - key: raid.hoverCard.headRule.width
+    value: 1.5
+  - key: raid.hoverCard.lineH
+    value: 30
+  - key: raid.hoverCard.icon
+    value: 15
+  - key: raid.panels.aiChip.h
+    value: 18
+  - key: 'raid.panels.aiChip.padding[0]'
+    value: 0
+  - key: 'raid.panels.aiChip.padding[1]'
+    value: 6
+  - key: 'raid.panels.aiChip.padding[2]'
+    value: 0
+  - key: 'raid.panels.aiChip.padding[3]'
+    value: 5
+  - key: raid.panels.aiChip.gap
+    value: 4
+  - key: raid.panels.aiChip.border.width
+    value: 1
+  - key: raid.panels.aiChip.radius
+    value: 2
+  - key: raid.panels.teamChip.warn.border.width
+    value: 2
+  - key: raid.panels.topButtonOn.border.width
+    value: 2
+  - key: raid.panels.topButtonOn.offsetY
+    value: 3
+  - key: raid.panels.retreatArmed.w
+    value: 238.3
+  - key: 'raid.panels.eventSlip.rect[0]'
+    value: 16
+  - key: 'raid.panels.eventSlip.rect[1]'
+    value: 196
+  - key: 'raid.panels.eventSlip.rect[2]'
+    value: 394
+  - key: 'raid.panels.eventSlip.rect[3]'
+    value: 90
+  - key: raid.panels.eventSlip.border.width
+    value: 1
+  - key: raid.panels.eventSlip.leftBar.width
+    value: 4
+  - key: 'raid.panels.eventSlip.padding[0]'
+    value: 8
+  - key: 'raid.panels.eventSlip.padding[1]'
+    value: 12
+  - key: 'raid.panels.eventSlip.padding[2]'
+    value: 10
+  - key: 'raid.panels.eventSlip.padding[3]'
+    value: 12
+  - key: raid.panels.eventSlip.queue.h
+    value: 24
+  - key: raid.panels.eventSlip.queue.gap
+    value: 5
+  - key: raid.panels.eventSlip.queue.box
+    value: 22
+  - key: raid.panels.eventSlip.queue.boxNow
+    value: 26
+  - key: raid.panels.eventSlip.queue.border.width
+    value: 1.5
+  - key: raid.panels.endConfirm.button.border.width
+    value: 2
+  - key: 'raid.panels.endConfirm.note.rect[0]'
+    value: 1574
+  - key: 'raid.panels.endConfirm.note.rect[1]'
+    value: 843
+  - key: 'raid.panels.endConfirm.note.rect[2]'
+    value: 330
+  - key: 'raid.panels.endConfirm.note.rect[3]'
+    value: 143
+  - key: 'raid.panels.endConfirm.note.padding[0]'
+    value: 12
+  - key: 'raid.panels.endConfirm.note.padding[1]'
+    value: 14
+  - key: 'raid.panels.endConfirm.note.padding[2]'
+    value: 12
+  - key: 'raid.panels.endConfirm.note.padding[3]'
+    value: 14
+  - key: 'raid.panels.hoverTarget.rect[0]'
+    value: 1646
+  - key: 'raid.panels.hoverTarget.rect[1]'
+    value: 795
+  - key: 'raid.panels.hoverTarget.rect[2]'
+    value: 258
+  - key: 'raid.panels.hoverTarget.rect[3]'
+    value: 173
+  - key: 'raid.panels.hoverTarget.win.margin[0]'
+    value: 6
+  - key: 'raid.panels.hoverTarget.win.margin[1]'
+    value: 12
+  - key: 'raid.panels.hoverTarget.win.margin[2]'
+    value: 2
+  - key: 'raid.panels.hoverTarget.win.margin[3]'
+    value: 12
+  - key: 'raid.panels.hoverTarget.win.padding[0]'
+    value: 7
+  - key: 'raid.panels.hoverTarget.win.padding[1]'
+    value: 8
+  - key: 'raid.panels.logDrawer.rect[0]'
+    value: 1528
+  - key: 'raid.panels.logDrawer.rect[1]'
+    value: 66
+  - key: 'raid.panels.logDrawer.rect[2]'
+    value: 376
+  - key: 'raid.panels.logDrawer.rect[3]'
+    value: 560
+  - key: 'raid.panels.rulesCard.rect[0]'
+    value: 1484
+  - key: 'raid.panels.rulesCard.rect[1]'
+    value: 66
+  - key: 'raid.panels.rulesCard.rect[2]'
+    value: 420
+  - key: 'raid.panels.rulesCard.rect[3]'
+    value: 455.5
+  - key: raid.panels.outcome.spot.r
+    value: 150
+  - key: 'raid.panels.outcome.bigStamp.rect[0]'
+    value: 976.1
+  - key: 'raid.panels.outcome.bigStamp.rect[1]'
+    value: 445.9
+  - key: 'raid.panels.outcome.bigStamp.rect[2]'
+    value: 328.8
+  - key: 'raid.panels.outcome.bigStamp.rect[3]'
+    value: 86.1
+  - key: raid.panels.outcome.bigStamp.rotDeg
+    value: -5
+  - key: 'raid.panels.outcome.memo.rect[0]'
+    value: 1240
+  - key: 'raid.panels.outcome.memo.rect[1]'
+    value: 560
+  - key: 'raid.panels.outcome.memo.rect[2]'
+    value: 440
+  - key: 'raid.panels.outcome.memo.rect[3]'
+    value: 374.6
+  - key: motion.popOpenS
+    value: 0.12
+  - key: motion.popCloseS
+    value: 0.09
+  - key: motion.drawerOpenS
+    value: 0.14
+  - key: motion.chipHoverS
+    value: 0.08
+  - key: motion.cardStringS
+    value: 0.12
+  - key: motion.teamChipLiftS
+    value: 0.1
+  - key: motion.regionHighlightFadeS
+    value: 0.12
+  - key: motion.tooltipDelayS
+    value: 0.4
+  - key: motion.tooltipFadeS
+    value: 0.08
+  - key: motion.newsHoverHighlightS
+    value: 0.12
+  - key: motion.eventLineSwapS
+    value: 0.12
+  - key: motion.confirmArmS
+    value: 0.08
+  - key: motion.drawerSwapS
+    value: 0.14
+  - key: motion.dimS
+    value: 0.15
+  type:
+  - role: chipLabel
+    font: 1
+    size: 11
+    letterSpacingEm: 0.08
+  - role: chipValue
+    font: 1
+    size: 24
+    letterSpacingEm: 0
+  - role: chipValueSmall
+    font: 1
+    size: 13
+    letterSpacingEm: 0
+  - role: delta
+    font: 1
+    size: 12
+    letterSpacingEm: 0
+  - role: goalName
+    font: 4
+    size: 12
+    letterSpacingEm: 0
+  - role: goalValue
+    font: 1
+    size: 13
+    letterSpacingEm: 0
+  - role: clock
+    font: 1
+    size: 22
+    letterSpacingEm: 0.04
+  - role: calHead
+    font: 1
+    size: 11
+    letterSpacingEm: 0.12
+  - role: calNum
+    font: 1
+    size: 19
+    letterSpacingEm: 0
+  - role: speedKey
+    font: 5
+    size: 12
+    letterSpacingEm: 0
+  - role: dockTab
+    font: 5
+    size: 13
+    letterSpacingEm: 0.06
+  - role: legendButton
+    font: 5
+    size: 12
+    letterSpacingEm: 0.06
+  - role: regionLabel
+    font: 1
+    size: 12
+    letterSpacingEm: 0.04
+  - role: nodeValue
+    font: 1
+    size: 17
+    letterSpacingEm: 0
+  - role: nodeUnknown
+    font: 8
+    size: 24
+    letterSpacingEm: 0
+  - role: suspiciousQ
+    font: 8
+    size: 20
+    letterSpacingEm: 0
+  - role: teamLetter
+    font: 1
+    size: 13
+    letterSpacingEm: 0
+  - role: etaTag
+    font: 1
+    size: 12
+    letterSpacingEm: 0
+  - role: alertMark
+    font: 6
+    size: 19
+    letterSpacingEm: 0
+  - role: envTitle
+    font: 1
+    size: 13
+    letterSpacingEm: 0.04
+  - role: envSub
+    font: 2
+    size: 11
+    letterSpacingEm: 0
+  - role: cardTitle
+    font: 1
+    size: 21
+    letterSpacingEm: 0.04
+  - role: cardCode
+    font: 0
+    size: 12
+    letterSpacingEm: 0
+  - role: cardStatus
+    font: 4
+    size: 13
+    letterSpacingEm: 0
+  - role: cardBig
+    font: 1
+    size: 40
+    letterSpacingEm: 0
+  - role: cardBigQ
+    font: 8
+    size: 24
+    letterSpacingEm: 0
+  - role: rangeLabel
+    font: 1
+    size: 12
+    letterSpacingEm: 0
+  - role: statValue
+    font: 1
+    size: 19
+    letterSpacingEm: 0
+  - role: statLabel
+    font: 2
+    size: 11
+    letterSpacingEm: 0
+  - role: actionName
+    font: 5
+    size: 13
+    letterSpacingEm: 0
+  - role: preview
+    font: 2
+    size: 13
+    letterSpacingEm: 0
+  - role: previewNum
+    font: 1
+    size: 13
+    letterSpacingEm: 0
+  - role: teamName
+    font: 5
+    size: 14
+    letterSpacingEm: 0
+  - role: teamSub
+    font: 2
+    size: 12
+    letterSpacingEm: 0
+  - role: cardMore
+    font: 2
+    size: 12
+    letterSpacingEm: 0
+  - role: cardMoreLink
+    font: 4
+    size: 12
+    letterSpacingEm: 0
+  - role: raidTurnNum
+    font: 1
+    size: 18
+    letterSpacingEm: 0
+  - role: turnBox
+    font: 1
+    size: 12
+    letterSpacingEm: 0
+  - role: turnBoxNow
+    font: 1
+    size: 14
+    letterSpacingEm: 0
+  - role: phase
+    font: 1
+    size: 14
+    letterSpacingEm: 0.06
+  - role: objectiveSub
+    font: 2
+    size: 12
+    letterSpacingEm: 0
+  - role: targetName
+    font: 5
+    size: 13
+    letterSpacingEm: 0
+  - role: plus
+    font: 1
+    size: 20
+    letterSpacingEm: 0
+  - role: topButton
+    font: 5
+    size: 13
+    letterSpacingEm: 0.06
+  - role: unitName
+    font: 1
+    size: 12
+    letterSpacingEm: 0.06
+  - role: unitCardTitle
+    font: 1
+    size: 17
+    letterSpacingEm: 0.06
+  - role: abilityName
+    font: 5
+    size: 14
+    letterSpacingEm: 0
+  - role: abilityDetail
+    font: 2
+    size: 12
+    letterSpacingEm: 0
+  - role: fxNum
+    font: 1
+    size: 14
+    letterSpacingEm: 0
+  - role: fxText
+    font: 2
+    size: 12
+    letterSpacingEm: 0
+  - role: hoverTitle
+    font: 1
+    size: 13
+    letterSpacingEm: 0.05
+  - role: hoverLine
+    font: 2
+    size: 13
+    letterSpacingEm: 0
+  - role: hoverNum
+    font: 1
+    size: 14
+    letterSpacingEm: 0
+  - role: endTurn
+    font: 5
+    size: 17
+    letterSpacingEm: 0.06
+  - role: undo
+    font: 4
+    size: 14
+    letterSpacingEm: 0
+  - role: drawerTitle
+    font: 1
+    size: 14
+    letterSpacingEm: 0.08
+  - role: sectionCap
+    font: 1
+    size: 11
+    letterSpacingEm: 0.08
+  - role: sectionNote
+    font: 2
+    size: 12
+    letterSpacingEm: 0
+  - role: researchBranch
+    font: 1
+    size: 12
+    letterSpacingEm: 0.06
+  - role: researchCount
+    font: 1
+    size: 11
+    letterSpacingEm: 0
+  - role: researchNode
+    font: 4
+    size: 12
+    letterSpacingEm: 0
+  - role: researchMeta
+    font: 1
+    size: 11
+    letterSpacingEm: 0
+  - role: researchPct
+    font: 1
+    size: 12
+    letterSpacingEm: 0
+  - role: researchCost
+    font: 1
+    size: 17
+    letterSpacingEm: 0
+  - role: speedOption
+    font: 1
+    size: 15
+    letterSpacingEm: 0
+  - role: speedSub
+    font: 2
+    size: 11
+    letterSpacingEm: 0
+  - role: detailTitle
+    font: 5
+    size: 15
+    letterSpacingEm: 0
+  - role: detailNum
+    font: 1
+    size: 14
+    letterSpacingEm: 0
+  - role: tipHead
+    font: 1
+    size: 15
+    letterSpacingEm: 0
+  - role: tipRow
+    font: 2
+    size: 12
+    letterSpacingEm: 0
+  - role: tipNum
+    font: 1
+    size: 14
+    letterSpacingEm: 0
+  - role: tipNet
+    font: 1
+    size: 16
+    letterSpacingEm: 0
+  - role: tipAxis
+    font: 0
+    size: 11
+    letterSpacingEm: 0
+  - role: newsSource
+    font: 1
+    size: 11
+    letterSpacingEm: 0.05
+  - role: newsHeadline
+    font: 4
+    size: 14
+    letterSpacingEm: 0
+  - role: newsTrust
+    font: 2
+    size: 12
+    letterSpacingEm: 0
+  - role: filterChip
+    font: 4
+    size: 12
+    letterSpacingEm: 0
+  - role: daySep
+    font: 1
+    size: 12
+    letterSpacingEm: 0.04
+  - role: regionChip
+    font: 1
+    size: 11
+    letterSpacingEm: 0.03
+  - role: teamCardName
+    font: 1
+    size: 16
+    letterSpacingEm: 0.06
+  - role: teamLoc
+    font: 2
+    size: 12
+    letterSpacingEm: 0
+  - role: routeLabel
+    font: 1
+    size: 11
+    letterSpacingEm: 0
+  - role: aiHead
+    font: 1
+    size: 12
+    letterSpacingEm: 0.1
+  - role: aiMeta
+    font: 1
+    size: 12
+    letterSpacingEm: 0.04
+  - role: aiLine
+    font: 1
+    size: 13
+    letterSpacingEm: 0
+  - role: aiNote
+    font: 8
+    size: 17
+    letterSpacingEm: 0
+  - role: aiWarn
+    font: 2
+    size: 12.5
+    letterSpacingEm: 0
+  - role: guideNav
+    font: 4
+    size: 13
+    letterSpacingEm: 0
+  - role: guideTitle
+    font: 1
+    size: 17
+    letterSpacingEm: 0.08
+  - role: guideSub
+    font: 2
+    size: 13
+    letterSpacingEm: 0
+  - role: guideMark
+    font: 1
+    size: 13
+    letterSpacingEm: 0.06
+  - role: guideText
+    font: 2
+    size: 12.5
+    letterSpacingEm: 0
+  - role: legendTitle
+    font: 1
+    size: 15
+    letterSpacingEm: 0.1
+  - role: legendItem
+    font: 2
+    size: 12
+    letterSpacingEm: 0
+  - role: legendTick
+    font: 1
+    size: 11
+    letterSpacingEm: 0
+  - role: miniNodeValue
+    font: 1
+    size: 12
+    letterSpacingEm: 0
+  - role: nodeTipName
+    font: 1
+    size: 13
+    letterSpacingEm: 0.06
+  - role: nodeTipValue
+    font: 1
+    size: 28
+    letterSpacingEm: 0
+  - role: nodeTipHint
+    font: 2
+    size: 11
+    letterSpacingEm: 0
+  - role: dossierTitle
+    font: 1
+    size: 24
+    letterSpacingEm: 0.04
+  - role: dossierMeta
+    font: 2
+    size: 12
+    letterSpacingEm: 0
+  - role: sourceName
+    font: 4
+    size: 13
+    letterSpacingEm: 0
+  - role: sourceValue
+    font: 1
+    size: 15
+    letterSpacingEm: 0
+  - role: actionRowName
+    font: 5
+    size: 13
+    letterSpacingEm: 0
+  - role: actionRowCost
+    font: 1
+    size: 12
+    letterSpacingEm: 0
+  - role: actionRowEffect
+    font: 2
+    size: 12
+    letterSpacingEm: 0
+  - role: aiChip
+    font: 1
+    size: 11
+    letterSpacingEm: 0.06
+  - role: queueBox
+    font: 1
+    size: 12
+    letterSpacingEm: 0
+  - role: queueBoxNow
+    font: 1
+    size: 14
+    letterSpacingEm: 0
+  - role: eventLine
+    font: 2
+    size: 14
+    letterSpacingEm: 0
+  - role: confirmHead
+    font: 1
+    size: 13
+    letterSpacingEm: 0.08
+  - role: confirmLine
+    font: 2
+    size: 14
+    letterSpacingEm: 0
+  - role: confirmButton
+    font: 5
+    size: 17
+    letterSpacingEm: 0.06
+  - role: chipSlip
+    font: 1
+    size: 11
+    letterSpacingEm: 0.05
+  - role: chipQuestion
+    font: 8
+    size: 18
+    letterSpacingEm: 0
+  shadows:
+  - key: chip
+    layers:
+    - offset: {x: 3, y: 3}
+      color: {r: 0, g: 0, b: 0, a: 0.45}
+  - key: plaque
+    layers:
+    - offset: {x: 3, y: 3}
+      color: {r: 0, g: 0, b: 0, a: 0.5}
+  - key: legendButton
+    layers:
+    - offset: {x: 2, y: 3}
+      color: {r: 0, g: 0, b: 0, a: 0.45}
+  - key: env
+    layers:
+    - offset: {x: 3, y: 4}
+      color: {r: 0, g: 0, b: 0, a: 0.5}
+  - key: card
+    layers:
+    - offset: {x: 4, y: 5}
+      color: {r: 0, g: 0, b: 0, a: 0.42}
+  - key: sticky
+    layers:
+    - offset: {x: 2, y: 3}
+      color: {r: 0, g: 0, b: 0, a: 0.35}
+  - key: token
+    layers:
+    - offset: {x: 2, y: 3}
+      color: {r: 0, g: 0, b: 0, a: 0.4}
+  - key: tag
+    layers:
+    - offset: {x: 1, y: 1}
+      color: {r: 0, g: 0, b: 0, a: 0.3}
+  - key: teamChip
+    layers:
+    - offset: {x: 3, y: 4}
+      color: {r: 0, g: 0, b: 0, a: 0.42}
+  - key: teamChipSelected
+    layers:
+    - offset: {x: 4, y: 10}
+      color: {r: 0, g: 0, b: 0, a: 0.45}
+  - key: unitCard
+    layers:
+    - offset: {x: 4, y: 6}
+      color: {r: 0, g: 0, b: 0, a: 0.45}
+  - key: hoverCard
+    layers:
+    - offset: {x: 3, y: 5}
+      color: {r: 0, g: 0, b: 0, a: 0.45}
+  - key: topButton
+    layers:
+    - offset: {x: 0, y: 3}
+      color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
+    - offset: {x: 2, y: 4}
+      color: {r: 0, g: 0, b: 0, a: 0.35}
+  - key: action
+    layers:
+    - offset: {x: 0, y: 3}
+      color: {r: 0.5568628, g: 0.5058824, b: 0.4, a: 1}
+  - key: actionHover
+    layers:
+    - offset: {x: 0, y: 5}
+      color: {r: 0.43137255, g: 0.3882353, b: 0.3019608, a: 1}
+  - key: preview
+    layers:
+    - offset: {x: 2, y: 2}
+      color: {r: 0.23529412, g: 0.1764706, b: 0.078431375, a: 0.35}
+  - key: drawer
+    layers:
+    - offset: {x: 4, y: 5}
+      color: {r: 0, g: 0, b: 0, a: 0.42}
+  - key: drawerSheet
+    layers:
+    - offset: {x: 1, y: 2}
+      color: {r: 0.3529412, g: 0.27450982, b: 0.11764706, a: 0.25}
+  - key: tooltip
+    layers:
+    - offset: {x: 3, y: 5}
+      color: {r: 0, g: 0, b: 0, a: 0.45}
+  - key: legendCard
+    layers:
+    - offset: {x: 4, y: 6}
+      color: {r: 0, g: 0, b: 0, a: 0.45}
+  - key: newsHover
+    layers:
+    - offset: {x: 2, y: 3}
+      color: {r: 0, g: 0, b: 0, a: 0.25}
+  - key: teamCard
+    layers:
+    - offset: {x: 2, y: 3}
+      color: {r: 0.23529412, g: 0.1764706, b: 0.078431375, a: 0.3}
+  - key: teamCardHover
+    layers:
+    - offset: {x: 3, y: 5}
+      color: {r: 0, g: 0, b: 0, a: 0.35}
+  - key: eventSlip
+    layers:
+    - offset: {x: 3, y: 4}
+      color: {r: 0, g: 0, b: 0, a: 0.42}
+  - key: confirmNote
+    layers:
+    - offset: {x: 3, y: 4}
+      color: {r: 0, g: 0, b: 0, a: 0.4}
+  - key: detailStrip
+    layers:
+    - offset: {x: 2, y: 2}
+      color: {r: 0.23529412, g: 0.1764706, b: 0.078431375, a: 0.3}
+  - key: desk.node.disc.shadow
+    layers:
+    - offset: {x: 1.5, y: 2}
+      color: {r: 0, g: 0, b: 0, a: 0.25}
+  - key: desk.label.selected.shadow
+    layers:
+    - offset: {x: 1, y: 1}
+      color: {r: 0, g: 0, b: 0, a: 0.3}
+  - key: desk.regionCard.actions.danger.shadow
+    layers:
+    - offset: {x: 0, y: 3}
+      color: {r: 0.47843137, g: 0.16470589, b: 0.1254902, a: 1}
+  - key: desk.regionCard.string.shadow
+    layers:
+    - offset: {x: 1.5, y: 2}
+      color: {r: 0, g: 0, b: 0, a: 0.25}
+  - key: desk.panels.research.speed.shadow
+    layers:
+    - offset: {x: 0, y: 2}
+      color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 0.35}
+  - key: desk.panels.guide.nav.on.shadow
+    layers:
+    - offset: {x: 1, y: 1}
+      color: {r: 0, g: 0, b: 0, a: 0.15}
+  - key: desk.panels.guide.page.example.shadow
+    layers:
+    - offset: {x: 2, y: 2}
+      color: {r: 0.23529412, g: 0.1764706, b: 0.078431375, a: 0.35}
+  - key: raid.topButton.retreat.shadow
+    layers:
+    - offset: {x: 0, y: 3}
+      color: {r: 0.36862746, g: 0.05882353, b: 0.039215688, a: 1}
+  - key: raid.unitCard.armed.shadow
+    layers:
+    - offset: {x: 0, y: 2}
+      color: {r: 0, g: 0, b: 0, a: 0.25}
+  - key: raid.panels.teamChip.warn.shadow
+    layers:
+    - offset: {x: 4, y: 6}
+      color: {r: 0, g: 0, b: 0, a: 0.4}
+  - key: raid.panels.retreatArmed.shadow
+    layers:
+    - offset: {x: 0, y: 3}
+      color: {r: 0.22745098, g: 0.03137255, b: 0.019607844, a: 1}
+    - offset: {x: 2, y: 4}
+      color: {r: 0, g: 0, b: 0, a: 0.35}
+  - key: raid.panels.endConfirm.button.shadow
+    layers:
+    - offset: {x: 0, y: 3}
+      color: {r: 0, g: 0, b: 0, a: 1}
+  - key: dockTab
+    layers:
+    - offset: {x: 2, y: 0}
+      color: {r: 0, g: 0, b: 0, a: 0.28}
+  infiltrationRamp:
+  - from: 0
+    fill: {r: 0.9490196, g: 0.7882353, b: 0.72156864, a: 1}
+  - from: 20
+    fill: {r: 0.89411765, g: 0.5764706, b: 0.48235294, a: 1}
+  - from: 40
+    fill: {r: 0.7058824, g: 0.26666668, b: 0.18039216, a: 1}
+  - from: 60
+    fill: {r: 0.54901963, g: 0.14117648, b: 0.08627451, a: 1}
+  - from: 80
+    fill: {r: 0.36078432, g: 0.0627451, b: 0.039215688, a: 1}
+  rampTextLight: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  rampTextDark: {r: 1, g: 0.972549, b: 0.93333334, a: 1}
+  rampTextDarkFrom: 40

@@ -228,5 +228,123 @@ namespace Corrigible.Desk.Tests
             }
             finally { UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene, true); }
         }
+
+        [Test]
+        public void DeskGameScene_SadeSpeedButtonsAreWiredToTheDisplayedClock()
+        {
+            var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root + "/Scenes/DeskGame.unity", UnityEditor.SceneManagement.OpenSceneMode.Additive);
+            try
+            {
+                var roots = scene.GetRootGameObjects();
+                var interaction = roots.SelectMany(g => g.GetComponentsInChildren<SadeDeskInteraction>(true)).Single();
+                var hud = roots.SelectMany(g => g.GetComponentsInChildren<SadeDeskView>(true)).Single();
+                var clock = roots.SelectMany(g => g.GetComponentsInChildren<ClockPlaqueView>(true)).Single();
+                var wiring = new SerializedObject(interaction);
+                Assert.AreSame(clock, wiring.FindProperty("clock").objectReferenceValue,
+                    "Hız tuşlarının SpeedClicked olayı oyun komutlarına bağlanmalı.");
+                Assert.AreSame(clock, new SerializedObject(hud).FindProperty("clock").objectReferenceValue,
+                    "Gösterilen saat ve komut alan saat aynı olmalı.");
+                Assert.AreEqual(4, clock.Speeds.Length);
+                Assert.IsTrue(clock.Speeds.All(b => b != null && b.interactable));
+                foreach (string field in new[] { "cover", "dock", "sea", "legendButton", "legendPaper", "legendTransform", "envelope" })
+                    Assert.IsNotNull(wiring.FindProperty(field).objectReferenceValue, field + ": masa etkileşim bağlantısı");
+                foreach (string field in new[] { "hudTargets", "alerts" })
+                {
+                    var targets = wiring.FindProperty(field);
+                    Assert.Greater(targets.arraySize, 0, field);
+                    for (int i = 0; i < targets.arraySize; i++)
+                        Assert.IsNotNull(targets.GetArrayElementAtIndex(i).objectReferenceValue, field + "[" + i + "]");
+                }
+                var hudWiring = new SerializedObject(hud);
+                Assert.AreSame(hudWiring.FindProperty("dock").objectReferenceValue, wiring.FindProperty("dock").objectReferenceValue);
+                foreach (string field in new[] { "legendLabel", "envelopeTitle", "envelopeHint" })
+                    Assert.IsNotNull(hudWiring.FindProperty(field).objectReferenceValue, field);
+                Assert.IsNull(wiring.FindProperty("source").objectReferenceValue,
+                    "Gerçek oyunda örnek veri kaynağı kullanılmamalı.");
+                Assert.IsEmpty(roots.SelectMany(g => g.GetComponentsInChildren<SadeDeskInput>(true)),
+                    "Klavye girdisini yalnız DeskInput yönetmeli.");
+            }
+            finally { UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene, true); }
+        }
+
+        [Test]
+        public void DeskGameScene_RetainedScreensRenderAboveTheSadeDesk()
+        {
+            var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root + "/Scenes/DeskGame.unity", UnityEditor.SceneManagement.OpenSceneMode.Additive);
+            try
+            {
+                var roots = scene.GetRootGameObjects();
+                var presenter = roots.SelectMany(g => g.GetComponentsInChildren<DeskPresenter>(true)).Single();
+                foreach (var tint in roots.SelectMany(g => g.GetComponentsInChildren<ThemeTint>(true)))
+                    if (!string.IsNullOrEmpty(tint.Key))
+                        Assert.IsTrue(DeskTheme.Active.TryGet(tint.Key, false, out _), tint.name + ": " + tint.Key);
+                var interaction = presenter.Sade;
+                var context = (RectTransform)new SerializedObject(interaction).FindProperty("context").objectReferenceValue;
+                var contextCanvas = context.GetComponentInParent<Canvas>(true);
+                Assert.AreEqual(RenderMode.ScreenSpaceOverlay, contextCanvas.rootCanvas.renderMode);
+                var serialized = new SerializedObject(presenter);
+                foreach (string field in new[] { "intro", "campaign", "eventModal", "confirm", "fakeWin", "gameOver", "settingsView", "tutorial" })
+                {
+                    var view = serialized.FindProperty(field).objectReferenceValue as Component;
+                    Assert.IsNotNull(view, field);
+                    var canvas = view.GetComponentInParent<Canvas>(true);
+                    Assert.IsNotNull(canvas, field);
+                    Assert.AreEqual(contextCanvas.rootCanvas.renderMode, canvas.rootCanvas.renderMode,
+                        field + ": kamera Canvas'ı overlay haritanın arkasında kalır.");
+                    Assert.Greater(canvas.sortingOrder, contextCanvas.sortingOrder,
+                        field + ": menü ve zorunlu kararlar masa panellerinin önünde olmalı.");
+                }
+            }
+            finally { UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene, true); }
+        }
+
+        [Test]
+        public void SadeDeskData_BuildsFromGameAndRespectsPerceptionBoundary()
+        {
+            var sim = NewGame();
+            sim.S.Region("cn").Inf = 68;
+            var st = new DeskBridgeState { Selected = "cn" };
+            var vm = Build(sim, st);
+
+            Assert.IsNotNull(vm.Sade);
+            CollectionAssert.AreEqual(GameData.Regions.Select(r => r.Id), vm.Sade.View.Map.Regions.Select(r => r.Id));
+            var cnNode = vm.Sade.View.Map.Regions.Single(r => r.Id == "cn");
+            Assert.IsNull(cnNode.Value, "İzlenmeyen bölgenin gerçek sızması Algı Katmanı dışına sızmamalı.");
+            Assert.AreEqual("unknown", cnNode.Trust);
+
+            sim.S.Day = 10;
+            sim.S.Region("cn").Monitored = true;
+            sim.S.Region("cn").Detected = true;
+            sim.S.Illusion = new IllusionState { Start = 1, Tek = 40, Trust = 75 };
+            sim.S.Region("cn").FakeLow = 12;
+            vm = Build(sim, st);
+            cnNode = vm.Sade.View.Map.Regions.Single(r => r.Id == "cn");
+            Assert.AreEqual(12, cnNode.Value, "İllüzyon sırasında yalnız sim.Shown(r) gösterilmeli.");
+
+            Assert.IsTrue(vm.Sade.Cards.ContainsKey("cn"));
+            Assert.AreEqual("cn", (string)vm.Sade.Cards["cn"]["regionId"]);
+            Assert.IsNotNull(vm.Sade.Dossiers["cn"]["finance"]);
+            Assert.IsNotNull(vm.Sade.Dossiers["cn"]["recovery"]);
+            Assert.AreEqual(5, ((JArray)vm.Sade.Drawers["research"]["research"]["branches"]).Count, "ModernEconomy açıkken 5 araştırma dalı.");
+        }
+
+        [Test]
+        public void DeskGameScene_UsesSadeHierarchyAndPolygonMappingA()
+        {
+            var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root + "/Scenes/DeskGame.unity", UnityEditor.SceneManagement.OpenSceneMode.Additive);
+            try
+            {
+                var roots = scene.GetRootGameObjects();
+                var pres = roots.SelectMany(g => g.GetComponentsInChildren<DeskPresenter>(true)).Single();
+                Assert.IsNotNull(pres.Sade, "DeskGame.unity SadeDeskInteraction'a bağlı olmalı.");
+                var mapView = roots.SelectMany(g => g.GetComponentsInChildren<SadeMapView>(true)).Single();
+                CollectionAssert.AreEqual(GameData.Regions.Select(r => r.Id), mapView.Regions.Select(s => s.Id));
+                Assert.AreEqual(90, mapView.Regions.Single(s => s.Id == "na").Fill.PolygonCount, "na = KA (81) + OA (9)");
+                Assert.AreEqual(3, mapView.Regions.Single(s => s.Id == "cn").Fill.PolygonCount, "cn = DoA [0, 1, 7]");
+                Assert.AreEqual(5, mapView.Regions.Single(s => s.Id == "jk").Fill.PolygonCount, "jk = DoA [2, 3, 4, 5, 6]");
+                Assert.AreEqual(4, mapView.Reports.Length, "4 toplanabilir saha raporu fişi yuvası.");
+            }
+            finally { UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene, true); }
+        }
     }
 }

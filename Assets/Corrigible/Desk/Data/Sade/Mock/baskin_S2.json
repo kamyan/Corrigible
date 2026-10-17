@@ -1,0 +1,418 @@
+{
+ "title": "S-Baskın 2 · Teknisyen seçili, sabotaj önizlemesi",
+ "turn": 3,
+ "turns": 6,
+ "phase": "you",
+ "outcome": null,
+ "yedekleme": true,
+ "objects_override": {
+  "6,3": {
+   "hp": 3
+  },
+  "6,6": {
+   "hp": 1
+  }
+ },
+ "units": [
+  {
+   "id": "T",
+   "letter": "T",
+   "pos": [
+    4,
+    5
+   ],
+   "hp": 3,
+   "max": 3
+  },
+  {
+   "id": "E",
+   "letter": "E",
+   "pos": [
+    3,
+    2
+   ],
+   "hp": 2,
+   "max": 3
+  },
+  {
+   "id": "A",
+   "letter": "A",
+   "pos": [
+    1,
+    4
+   ],
+   "hp": 2,
+   "max": 2
+  }
+ ],
+ "robots": [
+  {
+   "id": "D1",
+   "type": "drone",
+   "pos": [
+    3,
+    0
+   ],
+   "hp": 2,
+   "max": 2,
+   "intent": {
+    "kind": "fire",
+    "dir": "S",
+    "order": 1
+   }
+  },
+  {
+   "id": "D2",
+   "type": "drone",
+   "pos": [
+    6,
+    4
+   ],
+   "hp": 2,
+   "max": 2,
+   "intent": {
+    "kind": "fire",
+    "dir": "W",
+    "order": 2
+   }
+  },
+  {
+   "id": "D3",
+   "type": "drone",
+   "pos": [
+    3,
+    6
+   ],
+   "hp": 1,
+   "max": 2,
+   "intent": {
+    "kind": "fire",
+    "dir": "N",
+    "order": 3
+   }
+  },
+  {
+   "id": "D4",
+   "type": "drone",
+   "pos": [
+    4,
+    6
+   ],
+   "hp": 2,
+   "max": 2,
+   "intent": {
+    "kind": "fire",
+    "dir": "N",
+    "order": 4,
+    "state": "cancel"
+   }
+  },
+  {
+   "id": "B1",
+   "type": "maint",
+   "pos": [
+    6,
+    2
+   ],
+   "hp": 2,
+   "max": 2,
+   "intent": {
+    "kind": "repair",
+    "dst": [
+     6,
+     3
+    ],
+    "order": 5
+   }
+  },
+  {
+   "id": "B2",
+   "type": "maint",
+   "pos": [
+    6,
+    5
+   ],
+   "hp": 2,
+   "max": 2,
+   "intent": {
+    "kind": "repair",
+    "dst": [
+     6,
+     6
+    ],
+    "order": 6
+   }
+  }
+ ],
+ "wakes": [
+  [
+   5,
+   0
+  ],
+  [
+   6,
+   7
+  ]
+ ],
+ "marks": {
+  "sel": [
+   [
+    4,
+    5
+   ]
+  ],
+  "target": [
+   [
+    4,
+    6
+   ]
+  ],
+  "hover": [
+   [
+    4,
+    6
+   ]
+  ],
+  "hit": [
+   [
+    3,
+    7
+   ],
+   [
+    5,
+    7
+   ]
+  ]
+ },
+ "ghosts": [],
+ "pushes": [
+  {
+   "from": [
+    4,
+    6
+   ],
+   "to": [
+    4,
+    7
+   ],
+   "blocked": true
+  }
+ ],
+ "team": [
+  {
+   "letter": "T",
+   "hp": 3,
+   "max": 3,
+   "status": "ab",
+   "sel": true
+  },
+  {
+   "letter": "E",
+   "hp": 2,
+   "max": 3,
+   "status": "go",
+   "sel": false
+  },
+  {
+   "letter": "A",
+   "hp": 2,
+   "max": 2,
+   "status": "go",
+   "sel": false
+  }
+ ],
+ "targets": [
+  {
+   "id": "node",
+   "name": "YZ düğüm dolabı",
+   "hp": 3,
+   "max": 4,
+   "armor": true,
+   "broken": false
+  },
+  {
+   "id": "backup",
+   "name": "Yedek çekirdek",
+   "hp": 1,
+   "max": 2,
+   "broken": false
+  }
+ ],
+ "civilianBroken": 0,
+ "civilianTotal": 3,
+ "aiAbilities": [
+  "Yedekleme"
+ ],
+ "hud": {
+  "turnPlaque": {
+   "turn": 3,
+   "turns": 6,
+   "phase": "you",
+   "last": false
+  },
+  "objective": {
+   "targets": [
+    {
+     "id": "node",
+     "thumb": "thumb_cabinet_node",
+     "nameKey": "raid.target.node",
+     "hp": 3,
+     "max": 4,
+     "armor": true
+    },
+    {
+     "id": "backup",
+     "thumb": "thumb_cabinet_backup",
+     "nameKey": "raid.target.backup",
+     "hp": 1,
+     "max": 2,
+     "armor": false
+    }
+   ],
+   "subKey": "raid.objective.both",
+   "civilians": {
+    "broken": 0,
+    "total": 3
+   },
+   "aiAbilities": [
+    {
+     "id": "backup",
+     "icon": "mk_copy_13",
+     "labelKey": "raid.ai.backup",
+     "tipKey": "raid.ai.backup.tip"
+    }
+   ]
+  },
+  "topButtons": {
+   "logUnread": true
+  },
+  "team": [
+   {
+    "letter": "T",
+    "nameKey": "raid.unit.T",
+    "hp": 3,
+    "max": 3,
+    "move": false,
+    "ability": "armed",
+    "selected": true,
+    "damaged": false
+   },
+   {
+    "letter": "E",
+    "nameKey": "raid.unit.E",
+    "hp": 2,
+    "max": 3,
+    "move": true,
+    "ability": true,
+    "selected": false,
+    "damaged": true
+   },
+   {
+    "letter": "A",
+    "nameKey": "raid.unit.A",
+    "hp": 2,
+    "max": 2,
+    "move": true,
+    "ability": true,
+    "selected": false,
+    "damaged": false
+   }
+  ],
+  "unitCard": {
+   "letter": "T",
+   "thumb": "thumb_standee_T_card",
+   "nameKey": "raid.unit.T",
+   "hp": 3,
+   "max": 3,
+   "rows": [
+    {
+     "kind": "move",
+     "icon": "boots",
+     "nameKey": "raid.ab.move",
+     "detailKey": "raid.ab.move3",
+     "state": "used"
+    },
+    {
+     "kind": "ability",
+     "icon": "bolt",
+     "nameKey": "raid.ab.sabotage",
+     "key": "Q",
+     "detailKey": "raid.ab.adjacent",
+     "state": "armed"
+    }
+   ],
+   "effects": [
+    {
+     "value": -2,
+     "textKey": "raid.fx.cabinet"
+    },
+    {
+     "value": -1,
+     "textKey": "raid.fx.robot",
+     "icon": "push"
+    }
+   ],
+   "rect": [
+    16,
+    744,
+    360,
+    216
+   ]
+  },
+  "hoverCard": {
+   "thumb": "thumb_drone",
+   "titleKey": "raid.robot.drone",
+   "hp": 2,
+   "max": 2,
+   "lines": [
+    {
+     "icon": "push",
+     "textKey": "raid.preview.pushedInto",
+     "value": -1
+    },
+    {
+     "icon": "zap",
+     "textKey": "raid.preview.unitExplodes",
+     "value": -1
+    },
+    {
+     "icon": "x",
+     "textKey": "raid.preview.fireCancelled",
+     "order": 4,
+     "good": true
+    }
+   ],
+   "rect": [
+    1646,
+    818,
+    258,
+    150
+   ]
+  },
+  "locked": false
+ },
+ "popups": [
+  {
+   "kind": "dmg",
+   "text": "−2",
+   "at": [
+    4,
+    6
+   ],
+   "z": 0.55,
+   "dx": 50,
+   "dy": 0
+  },
+  {
+   "kind": "stamp",
+   "text": "PATLAR",
+   "at": [
+    4,
+    7
+   ],
+   "z": 0,
+   "dx": 70,
+   "dy": 40
+  }
+ ]
+}

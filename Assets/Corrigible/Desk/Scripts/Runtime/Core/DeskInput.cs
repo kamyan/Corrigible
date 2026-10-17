@@ -85,6 +85,11 @@ namespace Corrigible.Desk
             if (kb.tKey.wasPressedThisFrame) presenter.ToggleWindow(WindowId.Teams);
             if (kb.lKey.wasPressedThisFrame) presenter.ToggleWindow(WindowId.AiLog);
             if (kb.hKey.wasPressedThisFrame) presenter.ToggleWindow(WindowId.Guide);
+            if (presenter.Sade != null)
+            {
+                if (kb.jKey.wasPressedThisFrame) presenter.Sade.ToggleLegend();
+                if (kb.tabKey.wasPressedThisFrame) presenter.Sade.SelectNext(kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed ? -1 : 1);
+            }
 
             if (kb.digit1Key.wasPressedThisFrame || kb.numpad1Key.wasPressedThisFrame) presenter.RegionAction(0);
             if (kb.digit2Key.wasPressedThisFrame || kb.numpad2Key.wasPressedThisFrame) presenter.RegionAction(1);

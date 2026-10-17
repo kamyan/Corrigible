@@ -47,10 +47,30 @@ namespace Corrigible.Desk.Tests
         {
             var reg = DeskSprites.Instance;
             Assert.IsNotNull(reg);
-            Assert.AreEqual(DeskSpriteManifest.All.Count(), reg.sprites.Count);
+            Assert.AreEqual(DeskSpriteManifest.All.Count() + SadeSpriteManifest.All.Count(), reg.sprites.Count);
             Assert.IsTrue(reg.TryGet("sh_dash_r3_1", out var dash) && dash.type == Image.Type.Tiled);
             Assert.IsTrue(reg.TryGet("stamp_frame", out var stamp) && stamp.type == Image.Type.Sliced);
             Assert.IsNotNull(reg.Texture("tx_felt"));
+            // Sade (KARARLAR UI_Sade › F1): aynı kayıtta, kendi atlasında
+            Assert.IsTrue(reg.TryGet("sh_frame_r7_top_1", out var tab) && tab.type == Image.Type.Sliced);
+            Assert.IsTrue(reg.TryGet("mark_seal_14", out _));
+            Assert.IsNotNull(reg.Texture("tx_carbon_hatch"));
+        }
+
+        /// <summary>Paketteki tx_carbon_hatch ve tx_quar_hatch tamamen saydamdı; yeniden üretildi (KARARLAR UI_Sade › F1).</summary>
+        [Test]
+        public void SadeTextures_AreNotBlank()
+        {
+            foreach (var path in Directory.GetFiles(SadeSpriteManifest.TexturesDir, "*.png"))
+            {
+                var tex = new Texture2D(2, 2);
+                try
+                {
+                    Assert.IsTrue(tex.LoadImage(File.ReadAllBytes(path)), path);
+                    Assert.IsTrue(tex.GetPixels32().Any(p => p.a > 0), path + " tamamen saydam");
+                }
+                finally { Object.DestroyImmediate(tex); }
+            }
         }
 
         /// <summary>Bileşen kodunda geçen her tema anahtarı temada tanımlı olmalı (eksik anahtar eflatun çizer).</summary>
@@ -59,10 +79,26 @@ namespace Corrigible.Desk.Tests
         {
             var theme = DeskTheme.Active;
             var rx = new Regex(@"""((?:ink|paper|desk|trust|status|badges|lamp|envelope|modal|button|speed|close|action|dockTabs|advisor)\.[A-Za-z.]+|black|white)""");
+            // Sade tema içe aktarıcısı ön eksiz Sade yollarını tanımlar (kullanmaz); onları aşağıdaki test denetler
             var missing = Directory.GetFiles(DeskSpriteManifest.Root + "/Scripts", "*.cs", SearchOption.AllDirectories)
+                .Where(f => Path.GetFileName(f) != "SadeThemeSetup.cs" && Path.GetFileName(f) != "SadePanelText.cs")
                 .SelectMany(f => rx.Matches(File.ReadAllText(f)).Cast<Match>().Select(m => m.Groups[1].Value))
                 .Distinct().Where(k => !theme.TryGet(k, false, out _)).ToList();
             Assert.IsEmpty(missing, "temada olmayan anahtarlar: " + string.Join(", ", missing));
+        }
+
+        /// <summary>Koddaki her “sade.” anahtarı Sade temasında tanımlı olmalı (DeskTheme.TryGet onu SadeTheme'e yönlendirir).</summary>
+        [Test]
+        public void SadeThemeKeys_UsedInCode_Exist()
+        {
+            var theme = DeskTheme.Active;
+            var rx = new Regex(@"""(sade\.[A-Za-z.]*[A-Za-z])""");
+            var keys = Directory.GetFiles(DeskSpriteManifest.Root + "/Scripts", "*.cs", SearchOption.AllDirectories)
+                .SelectMany(f => rx.Matches(File.ReadAllText(f)).Cast<Match>().Select(m => m.Groups[1].Value))
+                .Distinct().ToList();
+            Assert.IsNotEmpty(keys);
+            var missing = keys.Where(k => !theme.TryGet(k, false, out _)).ToList();
+            Assert.IsEmpty(missing, "Sade temasında olmayan anahtarlar: " + string.Join(", ", missing));
         }
 
         [Test]

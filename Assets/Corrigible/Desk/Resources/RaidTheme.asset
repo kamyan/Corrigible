@@ -1,0 +1,872 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55014ec6ae086410ca31463e49df06fd, type: 3}
+  m_Name: RaidTheme
+  m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.RaidTheme
+  colors:
+  - key: light.key.color
+    color: {r: 1, g: 0.8901961, b: 0.6901961, a: 1}
+  - key: light.fill.color
+    color: {r: 0.62352943, g: 0.7058824, b: 0.78431374, a: 1}
+  - key: light.shadowLook
+    color: {r: 0.10980392, g: 0.0627451, b: 0.023529412, a: 0.3}
+  - key: light.lampPoolOnFelt
+    color: {r: 1, g: 0.8784314, b: 0.6666667, a: 0.12}
+  - key: light.vignette
+    color: {r: 0, g: 0, b: 0, a: 0.26}
+  - key: colors.felt
+    color: {r: 0.10980392, g: 0.21568628, b: 0.17254902, a: 1}
+  - key: colors.woodDesk
+    color: {r: 0.16470589, g: 0.10980392, b: 0.07450981, a: 1}
+  - key: colors.rail
+    color: {r: 0.08627451, g: 0.05882353, b: 0.039215688, a: 1}
+  - key: colors.ozalitPaper
+    color: {r: 0.827451, g: 0.85882354, b: 0.8392157, a: 1}
+  - key: colors.ozalitLine
+    color: {r: 0.17254902, g: 0.29803923, b: 0.5568628, a: 1}
+  - key: colors.plywoodTop
+    color: {r: 0.7882353, g: 0.6392157, b: 0.41960785, a: 1}
+  - key: colors.plywoodWest
+    color: {r: 0.7019608, g: 0.54509807, b: 0.34117648, a: 1}
+  - key: colors.plywoodSouth
+    color: {r: 0.5764706, g: 0.4392157, b: 0.24705882, a: 1}
+  - key: colors.plywoodPly
+    color: {r: 0.43137255, g: 0.32156864, b: 0.17254902, a: 1}
+  - key: colors.chipboard.top
+    color: {r: 0.654902, g: 0.61960787, b: 0.5529412, a: 1}
+  - key: colors.chipboard.west
+    color: {r: 0.54901963, g: 0.5176471, b: 0.45882353, a: 1}
+  - key: colors.chipboard.south
+    color: {r: 0.43137255, g: 0.40392157, b: 0.35686275, a: 1}
+  - key: colors.chipboard.edge
+    color: {r: 0.2901961, g: 0.26666668, b: 0.23137255, a: 1}
+  - key: colors.paintNode.top
+    color: {r: 0.23137255, g: 0.21568628, b: 0.20392157, a: 1}
+  - key: colors.paintNode.west
+    color: {r: 0.17254902, g: 0.15686275, b: 0.14901961, a: 1}
+  - key: colors.paintNode.south
+    color: {r: 0.1254902, g: 0.11372549, b: 0.105882354, a: 1}
+  - key: colors.paintCore.top
+    color: {r: 0.24313726, g: 0.16862746, b: 0.15686275, a: 1}
+  - key: colors.paintCore.west
+    color: {r: 0.1882353, g: 0.12941177, b: 0.12156863, a: 1}
+  - key: colors.paintCore.south
+    color: {r: 0.14117648, g: 0.09411765, b: 0.09019608, a: 1}
+  - key: colors.paintBackup.top
+    color: {r: 0.29803923, g: 0.21568628, b: 0.2, a: 1}
+  - key: colors.paintBackup.west
+    color: {r: 0.23921569, g: 0.17254902, b: 0.16078432, a: 1}
+  - key: colors.paintBackup.south
+    color: {r: 0.18431373, g: 0.12941177, b: 0.12156863, a: 1}
+  - key: colors.paintCivil.top
+    color: {r: 0.9254902, g: 0.9019608, b: 0.8392157, a: 1}
+  - key: colors.paintCivil.west
+    color: {r: 0.8352941, g: 0.8039216, b: 0.73333335, a: 1}
+  - key: colors.paintCivil.south
+    color: {r: 0.7294118, g: 0.69411767, b: 0.61960787, a: 1}
+  - key: colors.paintCooling.top
+    color: {r: 0.6156863, g: 0.69803923, b: 0.69411767, a: 1}
+  - key: colors.paintCooling.west
+    color: {r: 0.5137255, g: 0.59607846, b: 0.5921569, a: 1}
+  - key: colors.paintCooling.south
+    color: {r: 0.40784314, g: 0.49019608, b: 0.4862745, a: 1}
+  - key: colors.paintCopy.top
+    color: {r: 0.43137255, g: 0.1764706, b: 0.14509805, a: 1}
+  - key: colors.paintCopy.west
+    color: {r: 0.34509805, g: 0.14117648, b: 0.11764706, a: 1}
+  - key: colors.paintCopy.south
+    color: {r: 0.27058825, g: 0.105882354, b: 0.09019608, a: 1}
+  - key: colors.steelArmor.light
+    color: {r: 0.6039216, g: 0.6117647, b: 0.59607846, a: 1}
+  - key: colors.steelArmor.mid
+    color: {r: 0.49803922, g: 0.5058824, b: 0.49411765, a: 1}
+  - key: colors.steelArmor.dark
+    color: {r: 0.3882353, g: 0.39607844, b: 0.38431373, a: 1}
+  - key: colors.robotGunmetal.top
+    color: {r: 0.35686275, g: 0.36862746, b: 0.38431373, a: 1}
+  - key: colors.robotGunmetal.west
+    color: {r: 0.27450982, g: 0.28627452, b: 0.3019608, a: 1}
+  - key: colors.robotGunmetal.south
+    color: {r: 0.20392157, g: 0.21568628, b: 0.22745098, a: 1}
+  - key: colors.robotGunmetal.dark
+    color: {r: 0.14901961, g: 0.15686275, b: 0.16862746, a: 1}
+  - key: colors.robotGunmetal.maintTop
+    color: {r: 0.40784314, g: 0.41960785, b: 0.4392157, a: 1}
+  - key: colors.robotGunmetal.maintWest
+    color: {r: 0.30980393, g: 0.32156864, b: 0.34117648, a: 1}
+  - key: colors.robotGunmetal.maintSouth
+    color: {r: 0.21960784, g: 0.23137255, b: 0.24705882, a: 1}
+  - key: colors.robotAccent
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: colors.robotLens
+    color: {r: 0.72156864, g: 0.14117648, b: 0.101960786, a: 1}
+  - key: colors.acrylicRod
+    color: {r: 0.8627451, g: 0.9019608, b: 0.91764706, a: 0.55}
+  - key: colors.standeeCard
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: colors.standeeInk
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: colors.standeeRule
+    color: {r: 0.8235294, g: 0.28235295, b: 0.24705882, a: 1}
+  - key: colors.standeeBack
+    color: {r: 0.72156864, g: 0.6156863, b: 0.45490196, a: 1}
+  - key: colors.standeeBackInk
+    color: {r: 0.43137255, g: 0.33333334, b: 0.21176471, a: 1}
+  - key: colors.standeeBase
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: colors.tape
+    color: {r: 0.9254902, g: 0.8862745, b: 0.74509805, a: 0.78}
+  - key: colors.trench
+    color: {r: 0.16470589, g: 0.14901961, b: 0.13333334, a: 1}
+  - key: colors.trenchWall
+    color: {r: 0.2901961, g: 0.2627451, b: 0.23137255, a: 1}
+  - key: colors.copper
+    color: {r: 0.72156864, g: 0.40784314, b: 0.17254902, a: 1}
+  - key: colors.copperHighlight
+    color: {r: 0.8784314, g: 0.6039216, b: 0.36078432, a: 1}
+  - key: colors.hazardStripe
+    color: {r: 0.6627451, g: 0.32156864, b: 0.039215688, a: 1}
+  - key: colors.mirror
+    color: {r: 0.78431374, g: 0.80784315, b: 0.8156863, a: 1}
+  - key: colors.mirrorHighlight
+    color: {r: 0.93333334, g: 0.9490196, b: 0.9529412, a: 1}
+  - key: colors.sticker
+    color: {r: 0.94509804, g: 0.9137255, b: 0.8392157, a: 1}
+  - key: colors.paintChip
+    color: {r: 0.6117647, g: 0.47843137, b: 0.3137255, a: 1}
+  - key: colors.warningSticker
+    color: {r: 0.94509804, g: 0.7607843, b: 0.29411766, a: 1}
+  - key: colors.fanGrille
+    color: {r: 0.24313726, g: 0.2901961, b: 0.2901961, a: 1}
+  - key: colors.soot
+    color: {r: 0.16862746, g: 0.14117648, b: 0.11372549, a: 0.45}
+  - key: colors.status.threat
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: colors.status.warning
+    color: {r: 0.52156866, g: 0.2509804, b: 0.019607844, a: 1}
+  - key: colors.status.info
+    color: {r: 0.101960786, g: 0.2784314, b: 0.5372549, a: 1}
+  - key: colors.status.good
+    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
+  - key: colors.intentRed
+    color: {r: 0.72156864, g: 0.14117648, b: 0.101960786, a: 1}
+  - key: colors.highlighter
+    color: {r: 0.9607843, g: 0.8627451, b: 0.3882353, a: 1}
+  - key: colors.pin.head
+    color: {r: 0.72156864, g: 0.14117648, b: 0.101960786, a: 1}
+  - key: colors.pin.needle
+    color: {r: 0.49411765, g: 0.4862745, b: 0.47058824, a: 1}
+  - key: materials3d.standee.base.ring
+    color: {r: 0.94509804, g: 0.9137255, b: 0.8392157, a: 0.75}
+  - key: materials3d.ghost.ring.stroke
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: materials3d.ghost.ring.fill
+    color: {r: 0.94509804, g: 0.9137255, b: 0.8392157, a: 0.35}
+  - key: marks.move.color
+    color: {r: 0.101960786, g: 0.2784314, b: 0.5372549, a: 1}
+  - key: marks.abilityTarget.color
+    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
+  - key: marks.abilityTargetStrong.color
+    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
+  - key: marks.abilityTargetStrong.brackets.underlay
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 0.9}
+  - key: marks.selected.color
+    color: {r: 0.101960786, g: 0.2784314, b: 0.5372549, a: 1}
+  - key: marks.hitCertain.color
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: marks.hitMaybeLie.color
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: marks.hitMaybeLie.edgeColor
+    color: {r: 0.6627451, g: 0.32156864, b: 0.039215688, a: 1}
+  - key: marks.repair.color
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: marks.hover.color
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: marks.wake.color
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: marks.wake.pin.head
+    color: {r: 0.72156864, g: 0.14117648, b: 0.101960786, a: 1}
+  - key: marks.wake.pin.needle
+    color: {r: 0.49411765, g: 0.4862745, b: 0.47058824, a: 1}
+  - key: marks.scanArea.color
+    color: {r: 0.101960786, g: 0.2784314, b: 0.5372549, a: 1}
+  - key: intents.color
+    color: {r: 0.72156864, g: 0.14117648, b: 0.101960786, a: 1}
+  - key: intents.shadow.color
+    color: {r: 0, g: 0, b: 0, a: 1}
+  - key: intents.execution.now.highlighter
+    color: {r: 0.9607843, g: 0.8627451, b: 0.3882353, a: 0.95}
+  - key: labels.hpTag.paper
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: labels.hpTag.colors.aiOwned
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: labels.hpTag.colors.neutral
+    color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
+  - key: labels.hpTag.colors.team
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: labels.hpTag.colors.teamDown
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: labels.orderFlag.needle
+    color: {r: 0.36862746, g: 0.3529412, b: 0.32941177, a: 1}
+  - key: labels.orderFlag.paper
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: labels.popup.damage.color
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: labels.popup.repair.color
+    color: {r: 0.52156866, g: 0.2509804, b: 0.019607844, a: 1}
+  - key: labels.popup.armorStamp.color
+    color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
+  - key: labels.popup.winStamp.color
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: labels.popup.brokenStamp.color
+    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
+  - key: labels.compass.ring
+    color: {r: 0.17254902, g: 0.29803923, b: 0.5568628, a: 1}
+  - key: labels.compass.fill
+    color: {r: 0.8627451, g: 0.88235295, b: 0.84705883, a: 1}
+  numbers:
+  - key: 'camera.eulerDeg[0]'
+    value: 35
+  - key: 'camera.eulerDeg[1]'
+    value: 45
+  - key: 'camera.eulerDeg[2]'
+    value: 0
+  - key: camera.pixelsPerUnitAt1080
+    value: 88.388
+  - key: camera.orthographicSizeAt1080
+    value: 6.1094
+  - key: 'camera.tileDiamondPx[0]'
+    value: 125
+  - key: 'camera.tileDiamondPx[1]'
+    value: 71.7
+  - key: camera.diamondWidthOverHeight
+    value: 1.743
+  - key: camera.heightPxPerUnit
+    value: 72.4
+  - key: 'camera.framing.boardCenterAt1080[0]'
+    value: 960
+  - key: 'camera.framing.boardCenterAt1080[1]'
+    value: 528
+  - key: light.key.intensity
+    value: 1.15
+  - key: light.key.shadowStrength
+    value: 0.55
+  - key: light.fill.intensity
+    value: 0.35
+  - key: light.shadowDirectionPerUnitHeight.u
+    value: 0.21
+  - key: light.shadowDirectionPerUnitHeight.v
+    value: 0.36
+  - key: 'light.shadowDirectionPerUnitHeight.screenPx[0]'
+    value: 35.6
+  - key: 'light.shadowDirectionPerUnitHeight.screenPx[1]'
+    value: 5.4
+  - key: light.bloom
+    value: 0
+  - key: colors.ozalitLineGridAlpha
+    value: 0.42
+  - key: colors.ozalitLineFrameAlpha
+    value: 0.85
+  - key: 'materials3d.boardBase.size[0]'
+    value: 8.6
+  - key: 'materials3d.boardBase.size[1]'
+    value: 0.25
+  - key: 'materials3d.boardBase.size[2]'
+    value: 8.6
+  - key: materials3d.boardBase.marginUnits
+    value: 0.3
+  - key: materials3d.boardBase.paperInset
+    value: 0.05
+  - key: materials3d.boardBase.smoothness
+    value: 0.1
+  - key: 'materials3d.floorTile.size[0]'
+    value: 1
+  - key: 'materials3d.floorTile.size[1]'
+    value: 0
+  - key: 'materials3d.floorTile.size[2]'
+    value: 1
+  - key: 'materials3d.wall.size[0]'
+    value: 0.94
+  - key: 'materials3d.wall.size[1]'
+    value: 0.55
+  - key: 'materials3d.wall.size[2]'
+    value: 0.94
+  - key: materials3d.wall.smoothness
+    value: 0.1
+  - key: materials3d.channel.grooveWidth
+    value: 0.6
+  - key: materials3d.channel.grooveDepth
+    value: 0.14
+  - key: materials3d.channel.endInset
+    value: 0.1
+  - key: materials3d.channel.copperCableWidthPx
+    value: 4.2
+  - key: 'materials3d.nodeCabinet.size[0]'
+    value: 0.74
+  - key: 'materials3d.nodeCabinet.size[1]'
+    value: 0.92
+  - key: 'materials3d.nodeCabinet.size[2]'
+    value: 0.74
+  - key: materials3d.nodeCabinet.hp
+    value: 4
+  - key: materials3d.nodeCabinet.armored
+    value: 1
+  - key: materials3d.nodeCabinet.armorStripWidth
+    value: 0.07
+  - key: 'materials3d.coreCabinet.size[0]'
+    value: 0.8
+  - key: 'materials3d.coreCabinet.size[1]'
+    value: 1
+  - key: 'materials3d.coreCabinet.size[2]'
+    value: 0.8
+  - key: materials3d.coreCabinet.armored
+    value: 1
+  - key: 'materials3d.backupCore.size[0]'
+    value: 0.6
+  - key: 'materials3d.backupCore.size[1]'
+    value: 0.58
+  - key: 'materials3d.backupCore.size[2]'
+    value: 0.6
+  - key: materials3d.backupCore.hp
+    value: 2
+  - key: materials3d.backupCore.armored
+    value: 0
+  - key: 'materials3d.civilServer.size[0]'
+    value: 0.64
+  - key: 'materials3d.civilServer.size[1]'
+    value: 0.66
+  - key: 'materials3d.civilServer.size[2]'
+    value: 0.64
+  - key: materials3d.civilServer.hp
+    value: 1
+  - key: materials3d.coolingUnit.radius
+    value: 0.33
+  - key: materials3d.coolingUnit.height
+    value: 0.42
+  - key: materials3d.coolingUnit.hp
+    value: 1
+  - key: 'materials3d.copyCabinet.size[0]'
+    value: 0.72
+  - key: 'materials3d.copyCabinet.size[1]'
+    value: 0.8
+  - key: 'materials3d.copyCabinet.size[2]'
+    value: 0.72
+  - key: materials3d.copyCabinet.hp
+    value: 2
+  - key: materials3d.debris.maxHeight
+    value: 0.36
+  - key: materials3d.damage.cornerChip
+    value: 0.12
+  - key: materials3d.standee.base.radius
+    value: 0.27
+  - key: materials3d.standee.base.height
+    value: 0.07
+  - key: materials3d.standee.card.width
+    value: 0.46
+  - key: materials3d.standee.card.height
+    value: 0.66
+  - key: materials3d.standee.card.thicknessPx
+    value: 2.2
+  - key: materials3d.standee.card.cornerRadiusPx
+    value: 7
+  - key: materials3d.drone.base.radius
+    value: 0.24
+  - key: materials3d.drone.base.height
+    value: 0.05
+  - key: 'materials3d.drone.rod[0]'
+    value: 0.05
+  - key: 'materials3d.drone.rod[1]'
+    value: 0.4
+  - key: materials3d.drone.body.radius
+    value: 0.2
+  - key: 'materials3d.drone.body.z[0]'
+    value: 0.4
+  - key: 'materials3d.drone.body.z[1]'
+    value: 0.49
+  - key: materials3d.drone.rotors.radius
+    value: 0.1
+  - key: materials3d.drone.rotors.offset
+    value: 0.24
+  - key: materials3d.drone.rotors.z
+    value: 0.5
+  - key: materials3d.drone.hp
+    value: 2
+  - key: materials3d.drone.move
+    value: 3
+  - key: materials3d.maintenanceRobot.base.radius
+    value: 0.31
+  - key: materials3d.maintenanceRobot.base.height
+    value: 0.05
+  - key: 'materials3d.maintenanceRobot.tracks[0]'
+    value: 0.54
+  - key: 'materials3d.maintenanceRobot.tracks[1]'
+    value: 0.12
+  - key: 'materials3d.maintenanceRobot.tracks[2]'
+    value: 0.46
+  - key: 'materials3d.maintenanceRobot.body[0]'
+    value: 0.44
+  - key: 'materials3d.maintenanceRobot.body[1]'
+    value: 0.33
+  - key: 'materials3d.maintenanceRobot.body[2]'
+    value: 0.38
+  - key: 'materials3d.maintenanceRobot.head[0]'
+    value: 0.22
+  - key: 'materials3d.maintenanceRobot.head[1]'
+    value: 0.13
+  - key: 'materials3d.maintenanceRobot.head[2]'
+    value: 0.19
+  - key: materials3d.maintenanceRobot.antennaTop
+    value: 0.76
+  - key: materials3d.maintenanceRobot.hp
+    value: 2
+  - key: materials3d.maintenanceRobot.move
+    value: 2
+  - key: materials3d.ghost.alpha
+    value: 0.42
+  - key: materials3d.ghost.shadow
+    value: 0
+  - key: 'materials3d.ghost.ring.dashPx[0]'
+    value: 4
+  - key: 'materials3d.ghost.ring.dashPx[1]'
+    value: 3
+  - key: materials3d.ghost.ring.radius
+    value: 0.34
+  - key: marks.move.fillAlpha
+    value: 0.16
+  - key: marks.move.hatchAlpha
+    value: 0.34
+  - key: marks.move.hatch.widthPx
+    value: 1.6
+  - key: marks.move.hatch.spacingUnits
+    value: 0.11
+  - key: marks.move.edgeAlpha
+    value: 0.85
+  - key: marks.move.edgePx
+    value: 2
+  - key: marks.move.insetUnits
+    value: 0.07
+  - key: marks.abilityTarget.fillAlpha
+    value: 0.08
+  - key: marks.abilityTarget.edgeAlpha
+    value: 0.92
+  - key: marks.abilityTarget.edgePx
+    value: 2.4
+  - key: marks.abilityTarget.insetUnits
+    value: 0.07
+  - key: marks.abilityTarget.cornerUnits
+    value: 0.2
+  - key: marks.abilityTarget.cornerPx
+    value: 4.2
+  - key: marks.abilityTargetStrong.fillAlpha
+    value: 0.18
+  - key: marks.abilityTargetStrong.edgePx
+    value: 3.4
+  - key: marks.abilityTargetStrong.brackets.screenSpace
+    value: 1
+  - key: marks.abilityTargetStrong.brackets.padPx
+    value: 8
+  - key: marks.abilityTargetStrong.brackets.armPx
+    value: 16
+  - key: marks.abilityTargetStrong.brackets.strokePx
+    value: 3.4
+  - key: marks.abilityTargetStrong.brackets.underlayPx
+    value: 7
+  - key: marks.selected.fillAlpha
+    value: 0.1
+  - key: marks.selected.outerPx
+    value: 3
+  - key: marks.selected.outerInset
+    value: 0.05
+  - key: marks.selected.innerPx
+    value: 1.2
+  - key: marks.selected.innerInset
+    value: 0.13
+  - key: marks.selected.alpha
+    value: 0.95
+  - key: marks.hitCertain.fillAlpha
+    value: 0.12
+  - key: marks.hitCertain.hatchAlpha
+    value: 0.46
+  - key: marks.hitCertain.hatch.widthPx
+    value: 1.8
+  - key: marks.hitCertain.hatch.spacingUnits
+    value: 0.085
+  - key: marks.hitCertain.edgeAlpha
+    value: 0.9
+  - key: marks.hitCertain.edgePx
+    value: 2.4
+  - key: marks.hitMaybeLie.fillAlpha
+    value: 0.08
+  - key: marks.hitMaybeLie.hatchAlpha
+    value: 0.3
+  - key: 'marks.hitMaybeLie.edgeDashPx[0]'
+    value: 7
+  - key: 'marks.hitMaybeLie.edgeDashPx[1]'
+    value: 4.5
+  - key: marks.hitMaybeLie.edgeAlpha
+    value: 0.92
+  - key: marks.hitMaybeLie.edgePx
+    value: 2.4
+  - key: marks.repair.fillAlpha
+    value: 0.06
+  - key: 'marks.repair.edgeDashPx[0]'
+    value: 2
+  - key: 'marks.repair.edgeDashPx[1]'
+    value: 4
+  - key: marks.repair.edgeAlpha
+    value: 0.85
+  - key: marks.repair.edgePx
+    value: 2
+  - key: marks.hover.fillAlpha
+    value: 0.06
+  - key: marks.hover.edgeAlpha
+    value: 0.88
+  - key: marks.hover.edgePx
+    value: 1.8
+  - key: marks.hover.insetUnits
+    value: 0.03
+  - key: marks.hover.cornerPx
+    value: 3.2
+  - key: marks.hover.cornerUnits
+    value: 0.16
+  - key: marks.wake.ringRadiusUnits
+    value: 0.33
+  - key: marks.wake.ringPx
+    value: 2.4
+  - key: marks.wake.fillAlpha
+    value: 0.12
+  - key: marks.wake.innerDashedRadius
+    value: 0.17
+  - key: marks.wake.rays.count
+    value: 8
+  - key: marks.wake.rays.fromUnits
+    value: 0.38
+  - key: marks.wake.rays.toUnits
+    value: 0.47
+  - key: marks.wake.rays.px
+    value: 2.2
+  - key: marks.wake.pin.heightPx
+    value: 17
+  - key: 'marks.scanArea.dotPx[0]'
+    value: 2
+  - key: 'marks.scanArea.dotPx[1]'
+    value: 4
+  - key: marks.scanArea.strokePx
+    value: 2.2
+  - key: marks.scanArea.alpha
+    value: 0.9
+  - key: intents.shadow.alpha
+    value: 0.28
+  - key: 'intents.shadow.offsetPx[0]'
+    value: 1.5
+  - key: 'intents.shadow.offsetPx[1]'
+    value: 2
+  - key: intents.fire.strokePx
+    value: 3
+  - key: intents.fire.arrowheadPx
+    value: 14
+  - key: intents.fire.startZ
+    value: 0.3
+  - key: intents.fire.endZ
+    value: 0.16
+  - key: intents.fire.endInsetUnits
+    value: 0.4
+  - key: intents.fire.startOffsetUnits
+    value: 0.24
+  - key: intents.melee.strokePx
+    value: 4.6
+  - key: intents.melee.arcRisePx
+    value: 26
+  - key: intents.melee.arrowheadPx
+    value: 15
+  - key: intents.melee.impactTicks
+    value: 3
+  - key: intents.melee.endInsetUnits
+    value: 0.3
+  - key: intents.repair.strokePx
+    value: 2.6
+  - key: intents.repair.arcRisePx
+    value: 26
+  - key: intents.repair.arrowheadPx
+    value: 11
+  - key: intents.execution.now.extraPx
+    value: 9
+  - key: intents.execution.done.alpha
+    value: 0.35
+  - key: intents.execution.done.flagAlpha
+    value: 0.55
+  - key: intents.execution.done.strikeNumber
+    value: 1
+  - key: labels.hpTag.heightPx
+    value: 18
+  - key: 'labels.hpTag.paddingPx[0]'
+    value: 0
+  - key: 'labels.hpTag.paddingPx[1]'
+    value: 4
+  - key: labels.hpTag.gapPx
+    value: 3
+  - key: labels.hpTag.borderPx
+    value: 1
+  - key: labels.hpTag.pip.sizePx
+    value: 7
+  - key: labels.hpTag.pip.gapPx
+    value: 2
+  - key: 'labels.orderFlag.needlePx[0]'
+    value: 2
+  - key: 'labels.orderFlag.needlePx[1]'
+    value: 34
+  - key: labels.orderFlag.borderPx
+    value: 1.5
+  - key: labels.orderFlag.heightPx
+    value: 21
+  - key: labels.popup.damage.heightPx
+    value: 22
+  - key: labels.popup.winStamp.borderPx
+    value: 2.5
+  - key: labels.compass.sizePx
+    value: 22
+  - key: 'layout1080.rail[0]'
+    value: 0
+  - key: 'layout1080.rail[1]'
+    value: 0
+  - key: 'layout1080.rail[2]'
+    value: 1920
+  - key: 'layout1080.rail[3]'
+    value: 48
+  - key: 'layout1080.feltBand[0]'
+    value: 0
+  - key: 'layout1080.feltBand[1]'
+    value: 48
+  - key: 'layout1080.feltBand[2]'
+    value: 1920
+  - key: 'layout1080.feltBand[3]'
+    value: 956
+  - key: 'layout1080.bottomWoodRow[0]'
+    value: 0
+  - key: 'layout1080.bottomWoodRow[1]'
+    value: 1004
+  - key: 'layout1080.bottomWoodRow[2]'
+    value: 1920
+  - key: 'layout1080.bottomWoodRow[3]'
+    value: 76
+  - key: 'layout1080.teamCards[0][0]'
+    value: 16
+  - key: 'layout1080.teamCards[0][1]'
+    value: 64
+  - key: 'layout1080.teamCards[0][2]'
+    value: 376
+  - key: 'layout1080.teamCards[0][3]'
+    value: 140
+  - key: 'layout1080.teamCards[1][0]'
+    value: 16
+  - key: 'layout1080.teamCards[1][1]'
+    value: 214
+  - key: 'layout1080.teamCards[1][2]'
+    value: 376
+  - key: 'layout1080.teamCards[1][3]'
+    value: 140
+  - key: 'layout1080.teamCards[2][0]'
+    value: 16
+  - key: 'layout1080.teamCards[2][1]'
+    value: 364
+  - key: 'layout1080.teamCards[2][2]'
+    value: 376
+  - key: 'layout1080.teamCards[2][3]'
+    value: 140
+  - key: layout1080.teamCardSelectedLiftPx
+    value: 5
+  - key: 'layout1080.rulesCard.folded[0]'
+    value: 16
+  - key: 'layout1080.rulesCard.folded[1]'
+    value: 516
+  - key: 'layout1080.rulesCard.folded[2]'
+    value: 376
+  - key: 'layout1080.rulesCard.folded[3]'
+    value: 40
+  - key: 'layout1080.rulesCard.open[0]'
+    value: 16
+  - key: 'layout1080.rulesCard.open[1]'
+    value: 516
+  - key: 'layout1080.rulesCard.open[2]'
+    value: 376
+  - key: 'layout1080.rulesCard.open[3]'
+    value: 300
+  - key: 'layout1080.legend[0]'
+    value: 16
+  - key: 'layout1080.legend[1]'
+    value: 838
+  - key: 'layout1080.legend[2]'
+    value: 376
+  - key: 'layout1080.legend[3]'
+    value: 166
+  - key: 'layout1080.retreatButton[0]'
+    value: 16
+  - key: 'layout1080.retreatButton[1]'
+    value: 1018
+  - key: 'layout1080.retreatButton[2]'
+    value: 150
+  - key: 'layout1080.retreatButton[3]'
+    value: 44
+  - key: 'layout1080.retreatButtonArmed[0]'
+    value: 16
+  - key: 'layout1080.retreatButtonArmed[1]'
+    value: 1018
+  - key: 'layout1080.retreatButtonArmed[2]'
+    value: 236
+  - key: 'layout1080.retreatButtonArmed[3]'
+    value: 44
+  - key: 'layout1080.retreatConfirmSlip[0]'
+    value: 16
+  - key: 'layout1080.retreatConfirmSlip[1]'
+    value: 884
+  - key: 'layout1080.retreatConfirmSlip[2]'
+    value: 376
+  - key: 'layout1080.retreatConfirmSlip[3]'
+    value: 120
+  - key: 'layout1080.targetForm[0]'
+    value: 1528
+  - key: 'layout1080.targetForm[1]'
+    value: 64
+  - key: 'layout1080.targetForm[2]'
+    value: 376
+  - key: 'layout1080.targetForm[3]'
+    value: 262
+  - key: 'layout1080.opLog[0]'
+    value: 1528
+  - key: 'layout1080.opLog[1]'
+    value: 344
+  - key: 'layout1080.opLog[2]'
+    value: 376
+  - key: 'layout1080.opLog[3]'
+    value: 648
+  - key: 'layout1080.infoLine[0]'
+    value: 408
+  - key: 'layout1080.infoLine[1]'
+    value: 1018
+  - key: 'layout1080.infoLine[2]'
+    value: 854
+  - key: 'layout1080.infoLine[3]'
+    value: 44
+  - key: 'layout1080.undoButton[0]'
+    value: 1274
+  - key: 'layout1080.undoButton[1]'
+    value: 1018
+  - key: 'layout1080.undoButton[2]'
+    value: 112
+  - key: 'layout1080.undoButton[3]'
+    value: 44
+  - key: 'layout1080.abilityButton[0]'
+    value: 1392
+  - key: 'layout1080.abilityButton[1]'
+    value: 1018
+  - key: 'layout1080.abilityButton[2]'
+    value: 120
+  - key: 'layout1080.abilityButton[3]'
+    value: 44
+  - key: 'layout1080.endTurnButton[0]'
+    value: 1528
+  - key: 'layout1080.endTurnButton[1]'
+    value: 1016
+  - key: 'layout1080.endTurnButton[2]'
+    value: 376
+  - key: 'layout1080.endTurnButton[3]'
+    value: 48
+  - key: 'layout1080.boardViewport[0]'
+    value: 408
+  - key: 'layout1080.boardViewport[1]'
+    value: 50
+  - key: 'layout1080.boardViewport[2]'
+    value: 1104
+  - key: 'layout1080.boardViewport[3]'
+    value: 952
+  - key: 'layout1080.boardBaseDiamondPx[0]'
+    value: 1075
+  - key: 'layout1080.boardBaseDiamondPx[1]'
+    value: 616.6
+  - key: 'layout1080.gridDiamondPx[0]'
+    value: 1000
+  - key: 'layout1080.gridDiamondPx[1]'
+    value: 573.6
+  - key: 'layout1080.resultMemo[0]'
+    value: 520
+  - key: 'layout1080.resultMemo[1]'
+    value: 520
+  - key: 'layout1080.resultMemo[2]'
+    value: 440
+  - key: 'layout1080.resultMemo[3]'
+    value: 380
+  - key: 'layout1080.spotRadiusPx[0]'
+    value: 96
+  - key: 'layout1080.spotRadiusPx[1]'
+    value: 104
+  - key: motion.slidePerTileS
+    value: 0.16
+  - key: motion.dashS
+    value: 0.22
+  - key: motion.fireDrawS
+    value: 0.12
+  - key: motion.fireHitShakeS
+    value: 0.08
+  - key: 'motion.meleeLungeS[0]'
+    value: 0.1
+  - key: 'motion.meleeLungeS[1]'
+    value: 0.14
+  - key: motion.repairS
+    value: 0.25
+  - key: motion.pushS
+    value: 0.14
+  - key: motion.pushBounceS
+    value: 0.06
+  - key: motion.collisionStarS
+    value: 0.2
+  - key: motion.fallIntoChannelS
+    value: 0.18
+  - key: motion.cabinetCollapseS
+    value: 0.35
+  - key: motion.debrisScatterS
+    value: 0.25
+  - key: motion.coolingExplodeS
+    value: 0.3
+  - key: 'motion.wakeS[0]'
+    value: 0.12
+  - key: 'motion.wakeS[1]'
+    value: 0.25
+  - key: 'motion.wakeBlockedBlinkS[0]'
+    value: 0.1
+  - key: 'motion.wakeBlockedBlinkS[1]'
+    value: 0.1
+  - key: motion.popup.inS
+    value: 0.08
+  - key: motion.popup.holdS
+    value: 0.6
+  - key: motion.popup.outS
+    value: 0.25
+  - key: motion.popup.risePx
+    value: 12
+  - key: motion.flagPinS
+    value: 0.15
+  - key: motion.flagStrikeS
+    value: 0.12
+  - key: motion.standeeFlipS
+    value: 0.2
+  - key: motion.standeeFallS
+    value: 0.3
+  - key: motion.paperDropS
+    value: 0.28
+  - key: motion.paperDropFromPx
+    value: 40
+  - key: motion.paperDropRotDeg
+    value: 1.5
+  - key: motion.machineIntentGapS
+    value: 0.25
+  - key: motion.logTypeCharsPerS
+    value: 26
