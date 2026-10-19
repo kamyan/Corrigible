@@ -45,6 +45,8 @@ namespace Corrigible.Desk
         [SerializeField] MonoBehaviour settingsSource;
         [Header("Sade masa (S-Masa)")]
         [SerializeField] SadeDeskInteraction sade;
+        [SerializeField] MonoBehaviour alternateSurface;
+        IDeskSurface Surface => alternateSurface as IDeskSurface;
 
         IDeskDataSource source;
         DeskViewModel vm;
@@ -63,7 +65,7 @@ namespace Corrigible.Desk
             source = dataSource as IDeskDataSource;
             if (source == null) { Debug.LogError("[Desk] Veri kaynağı IDeskDataSource değil", this); return; }
             source.Changed += Bind;
-            if (sade == null && map != null && map.Selection != null) map.Selection.SetTarget(dossier.Window.Tab);
+            if (Surface == null && sade == null && map != null && map.Selection != null) map.Selection.SetTarget(dossier.Window.Tab);
             Wire();
             Bind(source.Current);
         }
@@ -77,7 +79,7 @@ namespace Corrigible.Desk
         void Wire()
         {
             var cmd = Commands;
-            if (sade == null)
+            if (Surface == null && sade == null)
             {
                 var sp = rail.Speeds;
                 if (sp.Length >= 4)
@@ -166,7 +168,7 @@ namespace Corrigible.Desk
         public void Preview(DeskViewModel model)
         {
             if (Application.isPlaying || model == null) return;
-            if (sade == null)
+            if (Surface == null && sade == null)
             {
                 windows.EnsureInit();
                 if (map.Selection != null) map.Selection.SetTarget(dossier.Window.Tab);
@@ -180,7 +182,8 @@ namespace Corrigible.Desk
             vm = model;
             // İllüzyon sunumu önce (palet, damgalar, analist katmanı); görünümler yeni VM'yi bu bayrakla çizer
             if (illusion != null) illusion.Set(model.Illusion); else DeskTheme.Illusion = model.Illusion;
-            if (sade != null)
+            if (Surface != null) Surface.BindGame(model, Commands);
+            else if (sade != null)
             {
                 sade.BindGame(model, Commands, Application.isPlaying);
             }
@@ -212,7 +215,7 @@ namespace Corrigible.Desk
             if (toasts != null) toasts.Bind(model.Toasts);
             if (tutorial != null) tutorial.Bind(model.Tutorial);
 
-            if (sade == null)
+            if (Surface == null && sade == null)
             {
                 // Seçim varsa dosya açılır, yoksa kapanır
                 syncing = true;
@@ -234,11 +237,12 @@ namespace Corrigible.Desk
         {
             if (pendingCriticalNews == null || !Application.isPlaying || Commands == null) return;
             if (confirm != null && confirm.IsOpen) return;
+            if (Surface?.InputBlocked == true) return;
             if (SettingsView.Instance != null && SettingsView.Instance.IsOpen) return;
             focusedCriticalNews = pendingCriticalNews;
             pendingCriticalNews = null;
             OpenWindow(WindowId.News);
-            if (sade == null)
+            if (Surface == null && sade == null)
                 foreach (var w in contentWindows) w.FocusNews(focusedCriticalNews);
         }
 
@@ -261,6 +265,7 @@ namespace Corrigible.Desk
         // ------------------------------------------------------------------ klavye ve kısayollar
         public void ToggleWindow(WindowId id)
         {
+            if (Surface != null) { Surface.ToggleWindow(id); return; }
             if (sade != null) { sade.ToggleDrawer(DrawerOf(id)); return; }
             windows.Toggle(id);
             Commands.ToggleWindow(id);
@@ -268,6 +273,7 @@ namespace Corrigible.Desk
 
         public void OpenWindow(WindowId id)
         {
+            if (Surface != null) { Surface.OpenWindow(id); return; }
             if (sade != null) { sade.OpenDrawer(DrawerOf(id)); return; }
             windows.Open(id);
             Commands.ToggleWindow(id);
@@ -276,6 +282,7 @@ namespace Corrigible.Desk
         /// <summary>1–4: dosyadaki bölge eylemi (tıklamayla aynı); tehlikeli eylem (Son Şalter) onay ister.</summary>
         public void RegionAction(int index)
         {
+            if (Surface != null) { Surface.RegionAction(index); return; }
             if (sade != null) { sade.RegionAction((index + 1).ToString()); return; }
             var d = vm?.Dossier;
             if (d == null || !windows.IsOpen(WindowId.Dossier) || index < 0 || index >= d.Actions.Count) return;
@@ -291,6 +298,7 @@ namespace Corrigible.Desk
         /// <summary>B: dosyadaki saha komutu (baskın ya da ekip gönder; VM tuş verdiyse açık).</summary>
         public void FieldOperation()
         {
+            if (Surface != null) { Surface.FieldOperation(); return; }
             if (sade != null)
             {
                 if (!string.IsNullOrEmpty(vm?.Dossier?.Field?.Raid?.Key))
@@ -305,6 +313,7 @@ namespace Corrigible.Desk
         /// <summary>Esc: en üstteki pencereyi kapatır; pencere yoksa ayarlar (eski oyundaki gibi; ayarlar yoksa duraklat).</summary>
         public void Escape()
         {
+            if (Surface != null) { Surface.Escape(); return; }
             if (confirm != null && confirm.IsOpen) return;
             if (sade != null) { sade.Escape(); return; }
             var top = windows.Top;
@@ -316,6 +325,7 @@ namespace Corrigible.Desk
         /// <summary>+/−: hız 1× ↔ 2× ↔ 4× (açık karar 1).</summary>
         public void StepSpeed(int dir)
         {
+            if (Surface != null) { Surface.StepSpeed(dir); return; }
             if (sade != null) { sade.StepSpeed(dir); return; }
             var c = vm?.Clock;
             if (c == null) return;

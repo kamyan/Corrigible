@@ -1,0 +1,78 @@
+{
+  "hardware": "Apple M4 Pro",
+  "gpu": "Apple M4 Pro",
+  "gpuTimingAvailable": false,
+  "resolution": [
+    1920,
+    1080
+  ],
+  "scope": "Mac Editor Metal; FX saat alt ağacı GC, native UI collector ve GPU süreleri. Windows PC ölçümü değildir.",
+  "samples": [
+    {
+      "mode": "F-Masa7",
+      "frames": 40,
+      "orbs": 19,
+      "uiBatches": {
+        "mean": 35.85,
+        "max": 36
+      },
+      "fxMs": {
+        "mean": 2.4002125203609466,
+        "max": 3.9712910652160645
+      },
+      "fxGcBytes": {
+        "mean": 0.0,
+        "max": 0.0
+      },
+      "orbMs": {
+        "mean": 2.1636875,
+        "max": 2.2467
+      },
+      "canvasMs": {
+        "mean": 0.011802124930545688,
+        "max": 0.014375000260770321
+      },
+      "graphicMs": {
+        "mean": 0.0,
+        "max": 0.0
+      },
+      "frameMs": {
+        "mean": 10.56883849525,
+        "max": 15.6066666
+      }
+    },
+    {
+      "mode": "F-Baskin3",
+      "frames": 40,
+      "orbs": 2,
+      "uiBatches": {
+        "mean": 30,
+        "max": 30
+      },
+      "fxMs": {
+        "mean": 1.4311124324798583,
+        "max": 1.9447920322418213
+      },
+      "fxGcBytes": {
+        "mean": 0.0,
+        "max": 0.0
+      },
+      "orbMs": {
+        "mean": 0.458785,
+        "max": 0.4806
+      },
+      "canvasMs": {
+        "mean": 0.016881474939873443,
+        "max": 0.025792999658733606
+      },
+      "graphicMs": {
+        "mean": 0.0,
+        "max": 0.0
+      },
+      "frameMs": {
+        "mean": 9.3052395,
+        "max": 11.2051249
+      }
+    }
+  ]
+}

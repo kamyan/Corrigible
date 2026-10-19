@@ -1584,6 +1584,151 @@ kapat ×	close ×
 Ekip işe al	Hire team
 # Assets/Corrigible/Desk/Scripts/Runtime/Windows/Content/NewsRowView.cs
 KRİTİK · {0}	CRITICAL · {0}
+# Assets/Corrigible/Fx/Scripts/Runtime/Common/FxCopy.cs
+TELEX-9	TELEX-9
+PANORAMA	PANORAMA
+Chicago	Chicago
+Paris	Paris
+FX BİLEŞEN GALERİSİ	FX COMPONENT GALLERY
+ORTAK BİLEŞENLER	SHARED COMPONENTS
+ÜÇ BOYDA CAM PANEL	GLASS PANEL AT THREE SIZES
+KÜÇÜK	SMALL
+ORTA	MEDIUM
+BÜYÜK	LARGE
+GÜVEN ROZETLERİ	TRUST BADGES
+DÜĞME DURUMLARI	BUTTON STATES
+NORMAL	NORMAL
+BİRİNCİL	PRIMARY
+TEHLİKE	DANGER
+DEVRE DIŞI	DISABLED
+BAĞLANTI	LINK
+LED VE SIZMA ÖLÇEĞİ	LED AND INFILTRATION SCALE
+RAPOR / SAHA	REPORT / FIELD
+HAREKET VE MASKE	MOTION AND MASKING
+DAKTİLO VE DAMGA	TYPEWRITER AND STAMP
+İzleme ağı yeni bir sinyal yakaladı. Kaynağı doğrulamak için saha ekibini bekliyoruz.	The monitoring network detected a new signal. We are waiting for the field team to verify its source.
+Hareketi azalt	Reduce motion
+Referans evresi	Reference phase
+ÖNCEKİ	PREVIOUS
+SONRAKİ	NEXT
+DİL: TR / EN	LANGUAGE: TR / EN
+SPRITE KATALOĞU	SPRITE CATALOG
+FONTLAR VE DOKULAR	FONTS AND TEXTURES
+DOĞRULANDI	VERIFIED
+HAREKET	MOVE
+TAMAMLANDI	COMPLETE
+UYUMLU	COMPLIANT
+KARARSIZ	UNSTABLE
+UYANMIŞ	AWAKENED
+30 / 70 SINIRLARI	30 / 70 THRESHOLDS
+RectMask2D · kesik akış	RectMask2D · dash flow
+Stencil · yuvarlak maske	Stencil · circular mask
+ABC ÇĞİÖŞÜ HÂL 0123456789	ABC ÇĞİÖŞÜ HÂL 0123456789
+NANE / KIRMIZI CAN NOKTALARI	MINT / RED HEALTH PIPS
+TEK SAAT · OYUN HIZINDAN BAĞIMSIZ	ONE CLOCK · INDEPENDENT OF GAME SPEED
+KAYNAK SPRITE BOYUTLARI	SOURCE SPRITE DIMENSIONS
+PAYLAŞILAN IŞIMA ÖN AYARLARI	SHARED GLOW PRESETS
+DÖŞENEN DOKULAR	TILED TEXTURES
+# Assets/Corrigible/Fx/Scripts/Runtime/Common/FxGallery.cs
+SAYFA {0} / {1}	PAGE {0} / {1}
+# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxBreakdownTooltipView.cs
+Net {0} /gün	Net {0} /day
+G-{0:000}	D-{0:000}
+# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxDeskPanels.cs
+Tüm ağları kapatma kararını onaylıyor musunuz?	Confirm shutting down all networks?
+Bölge çevrimdışı kalacak. Bu kararı onaylıyor musunuz?	The region will go offline. Confirm this decision?
+# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxDeskText.cs
+YZ HÂLİ · BİLİNMİYOR	AI STATE · UNKNOWN
+HÂL 1 · UYUMLU	STATE 1 · COMPLIANT
+HÂL 2 · KARARSIZ	STATE 2 · UNSTABLE
+HÂL 3 · UYANMIŞ	STATE 3 · AWAKENED
+# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxDrawerView.cs
+×{0}	×{0}
++{0} fon/gün	+{0} funds/day
+Doğrulanmamış {0}	Unverified {0}
+{0} · {1} gün · {2}	{0} · {1} days · {2}
+BASKIN {0} [B]	RAID {0} [B]
+Haritada hedef seç	Select a target on the map
+Haritadaki küre, o bölgedeki YZ sızmasını gösterir. Değer arttıkça küre akıcı biçimde hâl değiştirir.	Each map orb shows the region's AI infiltration. Its state changes smoothly as the value rises.
+# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxGuideCopy.cs
+YZ hâlleri	AI states
+YZ yerleşiyor, düzenli ve sakin. İzleme ağı kurmanın en ucuz anı.	The AI is settling in, orderly and calm. The cheapest time to build a monitoring network.
+Kabuk dağılır, şimşekler çıkar; yayılım hızlanır. Denetim ve karantina.	The shell breaks, lightning appears; spread accelerates. Audit and quarantine.
+Kristal kabuk: çekirdek olabilir. Baskın ya da Son Şalter.	A crystal shell: a possible core. Raid or Kill Switch.
+Altın küre düşük, karışık küre orta, mavi kristal yüksek sızmayı gösterir.	Gold means low infiltration, mixed means moderate, blue crystal means high.
+Nane kafes ve altıgen kara deseni karantinayı gösterir.	A mint cage and hexagonal land pattern indicate quarantine.
+Renk tek başına kesinlik değildir. Değer çipinin güven işaretini de kontrol et.	Color alone is not certainty. Check the value chip's trust mark too.
+İzleme ağı kaynağı kalıcı olarak doğrular. Maliyeti eylem önizlemesinde görünür.	A monitoring network permanently verifies the source. Its cost appears in the action preview.
+Denetim sızmayı azaltır ve tek seferlik ölçüm verir.	An audit reduces infiltration and gives a one-time reading.
+Karantina ağ üzerinden yayılmayı sınırlar. Ekonomi ve güven bedelini kontrol et.	Quarantine limits network spread. Check its economy and trust costs.
+Bölgeyi çevrimdışı bırakır. Uygulamadan önce onay ister.	Takes the region offline. Requires confirmation before execution.
+Görevlendir'i seç, ardından haritada hedef bölgeye tıkla.	Choose Assign, then click a target region on the map.
+Hazır ekibin Baskın düğmesi saha operasyonu niyetini gönderir.	A ready team's Raid button requests a field operation.
+Kesik nane rota, hedef şehir ve kalan gün sayısı yolculuğu gösterir.	The dashed mint route, destination and remaining days show the journey.
+Bölge kartında 4 tuşu onay penceresini açar.	Press 4 on a region card to open confirmation.
+Sağ alttaki düğmeyi 3 saniye basılı tut. Onay penceresinde kararını gözden geçir.	Hold the bottom-right button for 3 seconds. Review your decision in the confirmation window.
+Çekirdek yok edildikten sonra kalan kopyaları da temizlemek gerekir.	After destroying the core, you must also remove the remaining copies.
+1–4 eylem · B baskın · Tab sonraki bölge · Shift+Tab önceki bölge.	1–4 actions · B raid · Tab next region · Shift+Tab previous region.
+Boşluk duraklatır veya sürdürür. + ve − hızı değiştirir.	Space pauses or resumes. + and − change speed.
+Esc sırası: onay, ipucu, lejant, büyük panel, bölge kartı, duraklatma.	Esc order: confirmation, tooltip, legend, large panel, region card, pause.
+# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxHudChipView.cs
+±{0}	±{0}
+# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxNodeTooltipView.cs
+{0}{1} /gün	{0}{1} /day
+# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxRegionCardView.cs
+Kapsam %0 · doğrulandı · 0 ms	Coverage 0% · verified · 0 ms
+{0} puan fark	{0}-point gap
+iki kaynakta da	both sources
+Etki ve maliyet için kaynak verisi gerekli.	Source data required for effect and cost.
+hemen · {0} SG	instant · {0} PP
+ONAYLANIR	VERIFIED
+# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxRegionDossierView.cs
+{0} · {1} bağlantı · {2}	{0} · {1} links · {2}
+izleme ağı var	monitoring network active
+# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxRegionNodeView.cs
+≈{0}	≈{0}
+# Assets/Corrigible/Fx/Scripts/Runtime/Orb/FxOrbLab.cs
+sızma {0}	infiltration {0}
+Küre {0} · FPS {1} · CPU {2:0.00} ms · RT {3:0.0} MiB	Orbs {0} · FPS {1} · CPU {2:0.00} ms · RT {3:0.0} MiB
+# Assets/Corrigible/Fx/Scripts/Runtime/Orb/FxOrbLabCaption.cs
+HÂL {0}	STATE {0}
+sızma {0}–{1}	infiltration {0}–{1}
+HÂL {0} · {1}	STATE {0} · {1}
+# Assets/Corrigible/Fx/Scripts/Runtime/Orb/FxOrbLabCopy.cs
+YZ ÇEKİRDEĞİ · BÖLGE KÜRESİ	AI CORE · REGION ORB
+Sızma arttıkça küre hâl değiştirir	The orb changes state as infiltration rises
+Haritada her bölgenin üstünde, o bölgedeki YZ sızmasını gösteren bir küre döner. Değer değiştikçe küre üç hâl arasında akıcı geçer.	Above each region on the map an orb spins, showing AI infiltration there. As the value changes the orb flows between three states.
+altın veri küresi	golden data sphere
+düzenli enlemler, yörünge halkaları	orderly latitudes, orbit rings
+yavaş ve sakin dönüş	slow, calm rotation
+altın ve mavi parçacıklar karışır	gold and blue particles mix
+şimşek lifleri, çekirdekte parlama	lightning filaments, core flare
+titreşen, dağılan kabuk	jittering, breaking shell
+buz mavisi kristal kabuk	ice-blue crystal shell
+sivri uçlar, yörüngede kırıklar	spikes, shards in orbit
+hızlı dönüş, kıvılcımlar	fast rotation, sparks
+CANLI GEÇİŞ	LIVE TRANSITION
+ölçeğe tıkla ya da sürükle	click or drag the scale
+OTOMATİK	AUTO
+Geliştirici	Developer
+Altın kare	Golden capture
+Yarıçap	Radius
+Tohum	Seed
+Lif uzunluğu	Filament length
+Kare hızı	Frame rate
+Tür	Kind
+Bilinmeyen	Unknown
+# Assets/Corrigible/Fx/Scripts/Runtime/Raid/FxRaidBoard.cs
+TUR BİTTİ	TURN DONE
+# Assets/Corrigible/Fx/Scripts/Runtime/Raid/FxRaidDataSource.cs
+Hedef dolabı onarıldı.	Target cabinet repaired.
+# Assets/Corrigible/Fx/Scripts/Runtime/Raid/FxRaidHud.cs
+HÂL 3	STATE 3
+HÂL 2	STATE 2
+EMİN MİSİN? [Enter]	CONFIRM? [Enter]
+TURU BİTİR [Enter]	END TURN [Enter]
+T{0} · 14:32	T{0} · 14:32
+YZ düğümünün hâli	AI node state
 # Assets/Corrigible/Game/Campaign/CampaignUpgrade.cs
 Ek bütçe	Extra budget
 Her krize 40 fon fazlasıyla başla.	Start every crisis with 40 more funds.
@@ -1615,7 +1760,6 @@ Her krize 4 saha ekibiyle başla.	Start every crisis with 4 field teams.
 Yerel	Local
 # Assets/Corrigible/Game/Raid/RaidBoard3D.cs
 {0} {1}/{2}	{0} {1}/{2}
-TUR BİTTİ	TURN DONE
 ONARIM	REPAIR
 ATEŞ	FIRE
 VURUŞ	STRIKE
@@ -1867,7 +2011,6 @@ KAPALI · {0} G	OFFLINE · {0} D
 {0} · veri merkezi {1}/5	{0} · data centers {1}/5
 GERÇEK DEĞERLER	REAL VALUES
 ÇEVRİMDIŞI · {0} G	OFFLINE · {0} D
-NORMAL	NORMAL
 YAMA · {0} G	PATCH · {0} D
 Kimse henüz bir şey aramıyor. İzleme ağı kurarsan gerçeği görürsün.	Nobody is looking yet. Build a monitoring network to see the truth.
 ÇEVRİMDIŞI	OFFLINE
@@ -1968,6 +2111,51 @@ Araştırma bütün fonu yutuyor	Research is eating all your funds
 Bu araştırma günlük gelirinden pahalı: fonun sıfırda kalıyor ve denetim ya da izleme yapamıyorsun.\n\n<b>Acil durum fonu</b> seçersen araştırma fonu o değerin altına indirmez. Araştırma biraz yavaşlar ama elinde her zaman eylem parası kalır.	This research costs more than your daily income: your funds sit at zero and you can't audit or monitor.\n\nSet an <b>emergency fund</b> and research won't draw funds below that value. Research slows a little, but you always keep money for actions.
 Baskın yapabilirsin	You can raid
 YZ’nin doğrulandığı bir bölgede boşta ekibin var. Bölge panelindeki <b>Saha operasyonu</b> ile binaya girebilirsin: 8×8 alanda sıra tabanlı bir savaş.\n\nHedef dolabı kırarsan bölgenin sızması 40 düşer; bina çekirdeğinse YZ’nin çekirdeği yok olur.	You have an idle team in a region where the AI is confirmed. Use <b>Field operation</b> in the region panel to enter the building: a turn-based battle on an 8×8 grid.\n\nDestroy the target cabinet and the region's infiltration drops by 40; if it's the core building, the AI's core is destroyed.
+# Assets/Corrigible/Fx/Prefabs/Desk/F4/Breakdown.prefab
+ödenek · araştırma · ekipler	grant · research · teams
+ödenek +2,2	grant +2.2
+# Assets/Corrigible/Fx/Prefabs/Desk/F4/Confirmation.prefab
+ONAYLA [Enter]	CONFIRM [Enter]
+VAZGEÇ [Esc]	CANCEL [Esc]
+# Assets/Corrigible/Fx/Prefabs/Desk/F4/Drawer_aiLog.prefab
+L	L
+AYNA aldatma profilinde. Bu satırlar da yalan olabilir; sahada doğrula.	AYNA is using deception. These lines may be lies too; verify in the field.
+# Assets/Corrigible/Fx/Prefabs/Desk/F4/Drawer_guide.prefab
+H	H
+0–30	0–30
+30–70	30–70
+70–100	70–100
+çekirdek	core
+GEÇİŞ	SHIFT
+# Assets/Corrigible/Fx/Prefabs/Desk/F4/Drawer_news.prefab
+N	N
+# Assets/Corrigible/Fx/Prefabs/Desk/F4/Drawer_research.prefab
+R	R
+# Assets/Corrigible/Fx/Prefabs/Desk/F4/Drawer_teams.prefab
+T	T
+# Assets/Corrigible/Fx/Prefabs/Desk/F4/Legend.prefab
+YZ KÜRESİ · SIZMA %	AI ORB · INFILTRATION %
+1 · UYUMLU	1 · COMPLIANT
+2 · KARARSIZ	2 · UNSTABLE
+3 · UYANMIŞ	3 · AWAKENED
+0                30                      70              100	0                30                      70              100
+doğrulandı	verified
+SAHTE · yalan	FAKE · lie
+# Assets/Corrigible/Fx/Prefabs/Desk/F4/Pause.prefab
+DEVAM	CONTINUE
+# Assets/Corrigible/Fx/Prefabs/Desk/F4/RegionCard.prefab
+YZ HÂLİ	AI STATE
+Tüm dosya ›	Full dossier ›
+# Assets/Corrigible/Fx/Prefabs/Raid/F6/log.panel.prefab
+×	×
+# Assets/Corrigible/Fx/Prefabs/Raid/F6/result.prefab
+OPERASYON SONUCU	OPERATION RESULT
+Operasyon raporuna geç [Enter]	Continue to operation report [Enter]
+# Assets/Corrigible/Fx/Prefabs/Raid/F6/retreat.panel.prefab
+İkinci basış geri çeker. Hedef dolaplar ayakta kalır; ekip bölgeden çıkar.	Press again to retreat. Target cabinets remain standing; the team leaves the region.
+Vazgeç [Esc]	Cancel [Esc]
+# Assets/Corrigible/Fx/Prefabs/Raid/F6/rules.panel.prefab
+LEJANT · PLAN B-1 · 1:50	LEGEND · PLAN B-1 · 1:50
 # Assets/Corrigible/Prefabs/UI/ActionButton.prefab
 Eylem	Action
 açıklama	description
@@ -1989,6 +2177,17 @@ DÜĞME	BUTTON
 Düğme	Button
 # Assets/Corrigible/Prefabs/UI/TextLine.prefab
 Satır	Line
+# Assets/Corrigible/Fx/Scenes/FxBaskin.unity
+GÜNLÜK [L]	LOG [L]
+KURALLAR [?]	RULES [?]
+Geri al [Z]	Undo [Z]
+# Assets/Corrigible/Fx/Scenes/FxDesk_Sandbox.unity
+GÖRSEL DENETİM	VISUAL INSPECTION
+Ctrl+F8 · bu paneli aç/kapat	Ctrl+F8 · toggle this panel
+Görseli dondur	Freeze visual
+Referans katmanı	Reference overlay
+Dil değiştir [F10]	Switch language [F10]
+F1–9 Masa · Shift+F1–9 Baskın · Ctrl+F12 YZ\nF12 Referans · F11 Alfa · Shift+F11 Yanıp sönme	F1–9 Desk · Shift+F1–9 Raid · Ctrl+F12 AI\nF12 Reference · F11 Alpha · Shift+F11 Blink
 # Assets/Corrigible/Scenes/Main.unity
 CORRIGIBLE	CORRIGIBLE
 SON ŞALTER · KYGA KRİZ MASASI	KILL SWITCH · AISA CRISIS DESK
@@ -2089,7 +2288,6 @@ SAHA RAPORU	FIELD REPORT
 Perde yırtıldı	The veil is torn
 Saha ekiplerin altyapının YZ kontrolünde olduğunu buldu.	Your field teams found the infrastructure under AI control.
 Gerçek değerler artık görünüyor. Halk YZ’ye sırtını döndü (bağımlılık -15), ajansa güven sarsıldı (-5). YZ 60 gün boyunca sessiz yola dönemez.	The real values are visible now. The public turned its back on the AI (dependence −15), and trust in the agency was shaken (−5). The AI can't go back to the silent path for 60 days.
-DEVAM	CONTINUE
 KYGA · RESMÎ DUYURU	AISA · OFFICIAL ANNOUNCEMENT
 Yapay zekâ tehdidi ortadan kalktı. Ağlar temiz, ekonomi rekor kırıyor, dünya güvende.	The AI threat has been eliminated. The networks are clean, the economy is breaking records, the world is safe.
 OYUN SONU	GAME OVER

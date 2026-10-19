@@ -1,12 +1,12 @@
 # Durum, kararlar ve açık işler
 
-_Son güncelleme: 2026-10-18_
+_Son güncelleme: 2026-10-19_
 
 ## Nerede kaldık
 
 Oyun baştan sona oynanabilir: giriş ve rakip seçimi, rehberli eğitim, kriz masası (harita, bölge eylemleri, araştırma,
 YZ günlüğü, haber bandı), hediye/perde/sahte zafer/son pencereleri, kayıt ve devam, Seni Tanıyan Rakip profili.
-345/345 EditMode testi geçiyor (oyun + analist masası + Sade arayüz); C# simülasyonu tarayıcı prototipiyle birebir aynı (deneysel mod ve baskın motoru dahil, Unity'ye özgü seçenekler kapalıyken).
+445/445 EditMode testi geçiyor (oyun + analist masası + Sade arayüz); C# simülasyonu tarayıcı prototipiyle birebir aynı (deneysel mod ve baskın motoru dahil, Unity'ye özgü seçenekler kapalıyken).
 Deneysel mod (saha ekipleri, zaman ölçeği, baskın) Unity'de oynanabilir ve varsayılan olarak açık. Oyun Türkçe ve
 İngilizce (giriş penceresindeki dil düğmesi; ilk açılışta sistem diline göre).
 Baskın sunumu `Docs/SonSalter_Baskin_Paketi` referansına taşınıyor: ayrı `Baskin` sahnesindeki operasyon maketi ve
@@ -285,7 +285,7 @@ baskın sahnesindedir.
 
 - `RaidBoard_Sandbox` üzerinde tur/HEDEF/ekip HUD'u; birim ve gecikmeli inceleme kartları; YZ yeteneği ipucu, hak simgeleri, önizleme hasarı/çarpışma/iptal sunumu.
 - `IRaidDataSource`, `IRaidCommands`, `RaidViewModel`; ayrı BState üzerinde çalışan mock hareket/yetenek/geri alma ve girdi sırası. Ana oyun kaydına bağlı değildir. Kanonik prefab ve serileştirilmiş sahne bağlantıları kullanılır.
-- 330/330 EditMode, 439/439 Play, 10/10 gerçek fare/klavye kontrolü; sekiz TR/EN ve farklı oran yakalaması. Kayıt/profil/11 tercih/ProjectSettings korundu; editör temiz sandbox'ta Edit modunda.
+- 330/330 EditMode, 440/440 Play, 10/10 gerçek fare/klavye kontrolü; sekiz TR/EN ve farklı oran yakalaması. Kayıt/profil/11 tercih/ProjectSettings korundu; editör temiz sandbox'ta Edit modunda.
 - Canlı Baskın aktarımı, makinelerin niyet yürütmesi ve S3–S9 tam panelleri F6'dadır. Ayrıntılar: `Docs/UI_Sade/F5_NOTLARI.md`. F6 daha sonra tamamlandı (aşağıdaki not).
 
 ## Sade arayüz · F6 durum panelleri ve canlı Baskın (18 Ekim 2026)
@@ -356,3 +356,24 @@ baskın sahnesindedir.
 - Shift/Ctrl ön ayar kısayolları ve referans katmanı bağlandı; canlı kaynağa örnek komutları uygulanmaz. Spot/alpha/kamera/yıldız güncellemeleri değişiklik olmadıkça tekrar yazılmaz.
 - 345/345 EditMode; 144 görünüm/dil/çözünürlük birleşimi, 11.344 metin kontrolü ve 0 ihlal; 54 yakalama. 24 sanal girdi, 3 yerel fare/klavye ve 59 canlı köprü kontrolü başarılı.
 - Açılır masa panellerinin tümünde ≤30 batch ve referansın ±2/±4 px tam ekran eşliği sağlanmış değildir; sınırlar ve karşılaştırmalar açıkça raporlandı. Kayıt/profil/tercih/ayar geri yükleme kanıtı `captures/F7/data_restore.json` içindedir. Ayrıntılar: `Docs/UI_Sade/F7_NOTLARI.md`, teslim: `UYGULAMA_NOTLARI.md`. Commit/push yapılmadı.
+
+## Fütüristik arayüz · F5 holo tahta (19 Ekim 2026)
+
+Ayrı `Fx/Scenes/FxRaid_Sandbox.unity` sahnesine holo palet/kenarlar, tarama/titreme, niyet akışı, dünya etiketleri ve düğüm küresi uygulandı. Sade geometri/kamera ve mock veri paylaşılır; canlı sahneler ve kurallar korunur. 419/419 EditMode,76/76 Play; dört oranda TR/EN72 görüntü ve0 taşma. Kamera sapması0,026px; sekiz saniyelik video var. Ayrıntılar, performansın kapsamı ve raster farkları `Docs/UI_Fx/F5_NOTLARI.md` içinde. F6 HUD/durumlar sonraki adımdır; canlı FX geçişi ayrıca ele alınır.
+
+### FX F6 — Baskın HUD ve durumlar (19 Ekim 2026)
+
+Ayrı `FxRaidHud_Sandbox` sahnesine tur/hedef/ekip HUD’u, birim/hover/olay/günlük/kurallar, tur onayı, makine kilidi ve hızlandırma, çift geri çekilme onayı, sonuç spotu/damgası/çöküş küresi eklendi. Ortak RaidDataSource ve Baskın komutları paylaşılır; Core/Prototype/canlı sahneler değişmedi. 436/436 EditMode, 102/102 Play, dört oranda TR/EN 75 yakalama ve 0 taşma; iki 8 saniyelik video var. Sıcak saat+Canvas ortalama 0,182–0,462 ms / 0 B. Başlangıçtaki temiz FxDesk_Sandbox, profil/PlayerPrefs ve ayarlar geri yüklendi; yazıcı kaldırıldı. Görsel farklar ve birleşik bütçe F7 için açık; `Docs/UI_Fx/F6_NOTLARI.md`. F7 başlatılmadı.
+
+### FX F7 — geliştirme araçları ve doğrulama (19 Ekim 2026)
+
+Masa/Baskın/YZ örnek sahnelerine ortak F1–9/Shift+F1–9/Ctrl+F12, referans alfa/blink, dil ve kalıcı Hareketi azalt denetimi eklendi. Capture Game View ve iki dilli Check Text araçları var. Masa'da ilk ölçüm/11 px sorunları düzeltildi. Baskın'da iki kenar mesh'i ve ortak UI grupları; dinamik mesh kopyası tahsislerini kaldıran tekrar kullanılan tamponlar var. 440/440 EditMode; 176 görünümde13.392 metin/0 hata; küre22/22. Native M4 Pro/1080p: Masa≤36, Baskın30 UI batch; iki FX saatinde0 B; 19 küre ort.2,164 ms. Görsel piksel eşliği, geçerli GPU zamanı ve Windows PC bütçesi açık kabul maddeleridir. Canlı oyun/Sade/Core/Prototype kuralı değiştirilmedi. Ayrıntılar `Docs/UI_Fx/F7_NOTLARI.md` ve `UYGULAMA_NOTLARI.md`.
+
+
+### FX · canlı entegrasyon (19 Ekim 2026)
+
+Build başlangıcı `FxDeskGame`, eklemeli taktik sahne `FxBaskin` oldu; özgün Sade/Main sahneleri korunur. FX harita ve çekmeceler gerçek Algı Katmanı/komut köprüsüne bağlandı. Giriş/zorluk, eğitim, kampanya, olay/hediye, ayarlar, operasyon raporu ve son ekranları ortak mevcut sunumdan gelir. Bölgesel fon, toparlanma/diplomasi, ekip sevki, saha fişleri ve peşin operasyon alımı erişilebilir. Canlı örnek/debug kısayolları kapalıdır.
+
+Baskında tek saat/EventSystem, tek makine çözümü ve tek `raidres` kaydı; dönüşte masa ve rapor, bekleyen baskını kayıtla açma doğrulandı. Olay/eğitim hedefleri farklı Canvas koordinatlarında dönüştürülür. Geçerli baskını kapalı gösteren ortak `RaidCheck ?? kaynak-hatası` kontrolü düzeltildi. Core/Prototype/kayıt biçimi değişmedi.
+
+445/445 EditMode; Play masa48/48, baskın12/12, dönüş7/7, bekleyen baskın1/1, raycast/menü/diplomasi5/5, eğitim/son ekranları7/7. TR/EN üç oranda48 görüntü,6.366 metin/0 hata;18/18 yerleşim/hedef kontrolü. Ayrıntılar `Docs/UI_Fx/CANLI_ENTEGRASYON.md`, kanıtlar `captures/Live/`. Test sonrası profil/tercih/yan asset geri yüklemesi birebir doğrulandı (`data-restore.json`: all_restored=true). Canlı native Windows/GPU ve tam piksel kabulü ayrıca gereklidir. Commit/push yok.

@@ -72,7 +72,7 @@ namespace Corrigible.Desk.Bridge
         public void MarkDirty() => dirty = true;
 
         /// <summary>Taktik harita kapandı: operasyon raporu açılsın.</summary>
-        void OnSceneUnloaded(Scene s) { if (s.name == RaidLauncher.SceneName) MarkDirty(); }
+        void OnSceneUnloaded(Scene s) { MarkDirty(); }
 
         void Update()
         {

@@ -1,0 +1,28 @@
+{
+  "name": "Corrigible.Fx.Tests",
+  "references": [
+    "Corrigible.Fx",
+    "Corrigible.Fx.Editor",
+    "Corrigible.Core",
+    "Corrigible.Desk",
+    "UnityEngine.UI",
+    "Unity.TextMeshPro",
+    "UnityEngine.TestRunner",
+    "UnityEditor.TestRunner",
+    "Corrigible.Fx.Orb",
+    "Corrigible.Game",
+    "Corrigible.Desk.Bridge"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "nunit.framework.dll",
+    "Newtonsoft.Json.dll"
+  ],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ]
+}

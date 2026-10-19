@@ -1,0 +1,45 @@
+Shader "UI/FxRaidUI"
+{
+ Properties {
+ [PerRendererData] _MainTex("Overlay",2D)="black"{}
+ _Color("Tint",Color)=(1,1,1,1)
+ _Saturation("Saturation",Range(0,1))=1
+ _StencilComp("Stencil Comparison",Float)=8
+ _Stencil("Stencil ID",Float)=0
+ _StencilOp("Stencil Operation",Float)=0
+ _StencilWriteMask("Stencil Write Mask",Float)=255
+ _StencilReadMask("Stencil Read Mask",Float)=255
+ _ColorMask("Color Mask",Float)=15
+ [Toggle(UNITY_UI_ALPHACLIP)] _UseUIAlphaClip("Use Alpha Clip",Float)=0
+ }
+ SubShader {Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "PreviewType"="Plane"}
+ Stencil{Ref [_Stencil] Comp [_StencilComp] Pass [_StencilOp] ReadMask [_StencilReadMask] WriteMask [_StencilWriteMask]}
+ Cull Off Lighting Off ZWrite Off ZTest [unity_GUIZTestMode] Blend One OneMinusSrcAlpha ColorMask [_ColorMask]
+ Pass {CGPROGRAM
+ #pragma vertex vert
+ #pragma fragment frag
+ #pragma multi_compile_local _ UNITY_UI_CLIP_RECT
+ #pragma multi_compile_local _ UNITY_UI_ALPHACLIP
+ #include "UnityCG.cginc"
+ #include "UnityUI.cginc"
+ struct appdata{float4 vertex:POSITION;float2 uv:TEXCOORD0;fixed4 color:COLOR;float4 fx:TEXCOORD1;UNITY_VERTEX_INPUT_INSTANCE_ID};
+ struct v2f{float4 vertex:SV_POSITION;float2 uv:TEXCOORD0;fixed4 color:COLOR;float4 world:TEXCOORD1;float4 fx:TEXCOORD2;UNITY_VERTEX_OUTPUT_STEREO};
+ sampler2D _MainTex;fixed4 _Color;float _Saturation;float4 _ClipRect;float _FxTime,_FxStatic;
+ v2f vert(appdata v){v2f o;UNITY_SETUP_INSTANCE_ID(v);UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);o.vertex=UnityObjectToClipPos(v.vertex);o.world=v.vertex;o.uv=v.uv;o.color=v.color*_Color;o.fx=v.fx;return o;}
+ fixed4 frag(v2f i):SV_Target {float4 c=tex2D(_MainTex,i.uv);float alpha=c.a*i.color.a;if(i.fx.x>0&&abs(i.fx.z-31)<.1&&_FxStatic<.5)alpha*=lerp(i.fx.y,1,.5-.5*cos(_FxTime*i.fx.x*6.2831853));
+ #ifdef UNITY_UI_CLIP_RECT
+ alpha*=UnityGet2DClipping(i.world.xy,_ClipRect);
+ #endif
+ #ifndef UNITY_COLORSPACE_GAMMA
+ float3 rgb=LinearToGammaSpace(c.rgb)*LinearToGammaSpace(i.color.rgb);rgb=lerp(dot(rgb,float3(.2126,.7152,.0722)).xxx,rgb,_Saturation);c.rgb=GammaToLinearSpace(rgb*alpha);
+ #else
+ c.rgb*=i.color.rgb;c.rgb=lerp(dot(c.rgb,float3(.2126,.7152,.0722)).xxx,c.rgb,_Saturation)*alpha;
+ #endif
+ c.a=1-pow(1-alpha,2.2);
+ #ifdef UNITY_UI_ALPHACLIP
+ clip(c.a-.001);
+ #endif
+ return c;}
+ ENDCG
+ } }
+}

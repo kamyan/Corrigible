@@ -411,7 +411,7 @@ namespace Corrigible.Desk.Bridge
             {
                 var t = here[0];
                 string letter = TeamLetter(t);
-                string raidWhy = sim.RaidCheck(r.Id) ?? sim.RaidCheckResources();
+                string raidWhy = sim.RaidCheck(r.Id);
                 bool canRaid = raidWhy == null && S.Ending == null && !revealed;
                 int chance = Mathf.Clamp(85 - def.Compute * 6, 45, 90);
                 return new JObject
@@ -838,7 +838,7 @@ namespace Corrigible.Desk.Bridge
 
                     string atId = t.At ?? t.From ?? "na";
                     var atDef = Def(atId);
-                    string raidWhy = t.At != null ? (sim.RaidCheck(t.At) ?? sim.RaidCheckResources()) : "yolda";
+                    string raidWhy = t.At != null ? sim.RaidCheck(t.At) : "yolda";
                     bool canRaid = !isTravelling && raidWhy == null && S.Ending == null && !revealed;
                     int chance = Mathf.Clamp(85 - atDef.Compute * 6, 45, 90);
 

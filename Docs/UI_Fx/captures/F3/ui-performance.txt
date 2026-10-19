@@ -1,0 +1,45 @@
+Desk performans ölçümü · 2026-10-18 16:45
+Kaynak: Profiler UI Details (canvas toplayıcısının ürettiği batch'ler; Game görünümünün çizilmesinden bağımsız).
+
+UI batch toplamı (son kare): 33
+  FxDesk_Sandbox batch  33 (alt dahil  33) · köşe 42897
+      NoBreaking                   1 öğe · [Default UI Material · fx_map_base@2x] MapBase
+      DifferentMaterialInstance   12 öğe · [FX Region Shared · UnityWhite] Paint_KA, Paint_OA, Paint_GA, Paint_BA …
+      DifferentMaterialInstance    1 öğe · [OrbScanlines · fx_map_lines@2x] CoastAndBorders
+      DifferentMaterialInstance   53 öğe · [FxDeskLine · UnityWhite] Coast, Coast, Coast, Coast …
+      DifferentMaterialInstance    1 öğe · [OrbScanlines · tx_fx_scanlines_1x3] Scanlines
+      DifferentMaterialInstance    1 öğe · [FxDeskUI · tx_fx_map_vignette_960] Vignette
+      DifferentTexture            12 öğe · [FxDeskUI · sactx-0-1024x1024-Uncompressed-FxUI-9ae4fb5a] Ring, Ring, Mark, Mark …
+      DifferentMaterialInstance    1 öğe · [IBMPlexMono-Medium Base · UnityWhite] Text
+      DifferentMaterialInstance    1 öğe · [OrbComposite · FX Orb Canvas] OrbView
+      DifferentTexture             1 öğe · [OrbComposite · FX Orb Canvas] OrbView
+      DifferentTexture             1 öğe · [OrbComposite · FX Orb Canvas] OrbView
+      DifferentTexture             1 öğe · [OrbComposite · FX Orb Canvas] OrbView
+      DifferentTexture             1 öğe · [OrbComposite · FX Orb Canvas] OrbView
+      DifferentTexture             1 öğe · [OrbComposite · FX Orb Canvas] OrbView
+      DifferentTexture             1 öğe · [OrbComposite · FX Orb Canvas] OrbView
+      DifferentTexture             1 öğe · [OrbComposite · FX Orb Canvas] OrbView
+      DifferentTexture             1 öğe · [OrbComposite · FX Orb Canvas] OrbView
+      DifferentTexture             1 öğe · [OrbComposite · FX Orb Canvas] OrbView
+      DifferentTexture             1 öğe · [OrbComposite · FX Orb Canvas] OrbView
+      DifferentMaterialInstance   11 öğe · [FxDeskUI · sactx-0-1024x1024-Uncompressed-FxUI-9ae4fb5a] Wave, Ring, Mark, Mark …
+      DifferentMaterialInstance    1 öğe · [OrbComposite · FX Orb Canvas] OrbView
+      DifferentMaterialInstance    4 öğe · [FxDeskUI · sactx-0-1024x1024-Uncompressed-FxUI-9ae4fb5a] Mark, Mark, Mark, Batch_-3600678:139992
+      DifferentMaterialInstance    1 öğe · [ChakraPetch-Bold Base · ChakraPetch-Bold Atlas] Batch_-71014:-71012
+      DifferentMaterialInstance    1 öğe · [IBMPlexMono-Medium Base · IBMPlexMono-Medium Atlas] Batch_-71050:-71048
+      DifferentMaterialInstance    1 öğe · [IBMPlexMono-SemiBold Base · IBMPlexMono-SemiBold Atlas] Batch_-71068:-71066
+      DifferentMaterialInstance    1 öğe · [ChakraPetch-SemiBold Base · ChakraPetch-SemiBold Atlas] Batch_-70996:-70994
+      DifferentMaterialInstance    1 öğe · [FxAdditive · sactx-0-1024x1024-Uncompressed-FxUI-9ae4fb5a] Batch_-71150:-18430
+      DifferentMaterialInstance    1 öğe · [IBMPlexSans-Regular Base · IBMPlexSans-Regular Atlas] Batch_-71086:-71084
+      DifferentMaterialInstance    1 öğe · [FxDeskAdditive · sactx-0-1024x1024-Uncompressed-FxUI-9ae4fb5a] Batch_-3600692:139992
+      DifferentMaterialInstance    1 öğe · [IBMPlexSans-Medium Base · IBMPlexSans-Medium Atlas] Batch_-71104:-71102
+      DifferentMaterialInstance    1 öğe · [IBMPlexMono-Regular Base · IBMPlexMono-Regular Atlas] Batch_-71032:-71030
+      DifferentMaterialInstance    1 öğe · [FxDeskAdditive · UnityWhite] Batch_-3600692:-18430
+      DifferentMaterialInstance    1 öğe · [FxLine · UnityWhite] Batch_-71164:-18430
+
+Boşta 31 kare (Profiler):
+  Betik GC ayırması: 0 B (hiçbir …[Invoke] örneğinde GC yok)
+  Canvas.BuildBatch: 31/31 kare, ort. 0.012 ms
+  Canvas.SendWillRenderCanvases: 0/31 kare
+  Layout: 31/31 kare, ort. 0.002 ms
+  Graphic.PerformUpdate: 0/31 kare

@@ -16,19 +16,25 @@ namespace Corrigible.Game.Raid
         public const string SceneName = "Baskin";
 
         [SerializeField] GameController game;
+        [SerializeField] string raidSceneName = SceneName;
+        public string RaidSceneName => raidSceneName;
+        static readonly HashSet<string> activeScenes = new HashSet<string>();
+        readonly Dictionary<Behaviour, bool> visibility = new Dictionary<Behaviour, bool>();
         [Tooltip("Baskın sürerken kapatılan bileşenler (ana kamera ve dinleyicisi, kriz masası, pencere ve eğitim canvas'ları). " +
                  "Nesneler değil bileşenler kapatılır ki görünümlerin olay abonelikleri sürsün.")]
         [SerializeField] Behaviour[] hideDuringRaid = new Behaviour[0];
 
-        bool loading;
+        bool loading, unloading;
         Scene mainScene;
 
-        public static bool IsRaidLoaded => SceneManager.GetSceneByName(SceneName).isLoaded;
+        public static bool IsRaidLoaded => SceneManager.GetSceneByName(SceneName).isLoaded || activeScenes.Any(n => SceneManager.GetSceneByName(n).isLoaded);
 
         void Start()
         {
             mainScene = gameObject.scene;
+            activeScenes.Add(raidSceneName);
             game.EventsRaised += OnEvents;
+            game.Changed += Sync;
             game.GameLoaded += Sync;
             game.NewGameStarted += Sync;
             SceneManager.sceneUnloaded += OnUnloaded;
@@ -38,8 +44,10 @@ namespace Corrigible.Game.Raid
         void OnDestroy()
         {
             SceneManager.sceneUnloaded -= OnUnloaded;
+            activeScenes.Remove(raidSceneName);
             if (game == null) return;
             game.EventsRaised -= OnEvents;
+            game.Changed -= Sync;
             game.GameLoaded -= Sync;
             game.NewGameStarted -= Sync;
         }
@@ -49,35 +57,44 @@ namespace Corrigible.Game.Raid
         void Sync()
         {
             bool want = game.Sim != null && game.Sim.S.Raid != null;
-            var scene = SceneManager.GetSceneByName(SceneName);
-            if (want && !scene.isLoaded && !loading) Load();
-            else if (!want && scene.isLoaded) SceneManager.UnloadSceneAsync(scene);
+            var scene = SceneManager.GetSceneByName(raidSceneName);
+            if (want && !scene.isLoaded && !loading && !unloading) Load();
+            else if (!want && scene.isLoaded && !unloading) { unloading=true; SceneManager.UnloadSceneAsync(scene); }
         }
 
         void Load()
         {
             loading = true;
             SetMainVisible(false);
-            var op = SceneManager.LoadSceneAsync(SceneName, LoadSceneMode.Additive);
+            var op = SceneManager.LoadSceneAsync(raidSceneName, LoadSceneMode.Additive);
             op.completed += _ =>
             {
                 loading = false;
                 // Işıklandırma ve ortam ayarları etkin sahneden gelir
-                var s = SceneManager.GetSceneByName(SceneName);
+                var s = SceneManager.GetSceneByName(raidSceneName);
                 if (s.isLoaded) SceneManager.SetActiveScene(s);
+                Sync();
             };
         }
 
         void OnUnloaded(Scene s)
         {
-            if (s.name != SceneName) return;
+            if (s.name != raidSceneName) return;
+            unloading=false;
             if (mainScene.isLoaded) SceneManager.SetActiveScene(mainScene);
             SetMainVisible(true);
+            Sync();
         }
 
         void SetMainVisible(bool on)
         {
-            foreach (var b in hideDuringRaid) if (b != null) b.enabled = on;
+            foreach (var b in hideDuringRaid)
+            {
+                if (b == null) continue;
+                if (!on) { if (!visibility.ContainsKey(b)) visibility.Add(b, b.enabled); b.enabled = false; }
+                else if (visibility.TryGetValue(b, out bool wasEnabled)) b.enabled = wasEnabled;
+            }
+            if (on) visibility.Clear();
         }
     }
 }

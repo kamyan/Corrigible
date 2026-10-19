@@ -26,6 +26,19 @@ namespace Corrigible.Desk.Tests
             Simulation.NewGame(null, "manipulator", seed, new Balance(), teams ? new ExpOptions() : null, new RuleOptions { Stage = 4, Events = true });
 
         [Test]
+        public void SadeRaidAvailabilityMatchesCanonicalCheckAndShowsChanceWhenReady()
+        {
+            var sim=NewGame();sim.S.Region("weu").Detected=true;sim.S.Fon=100;sim.S.Sg=100;
+            Assert.That(sim.RaidCheck("weu"),Is.Null);
+            var vm=Build(sim,new DeskBridgeState {Selected="weu"});
+            Assert.That((bool)vm.Sade.Cards["weu"]["team"]["raidEnabled"],Is.True);
+            Assert.That(vm.Sade.Cards["weu"]["team"]["raidSuccess"].Type,Is.EqualTo(JTokenType.Integer));
+            Assert.That(((JArray)vm.Sade.Drawers["teams"]["teams"]["teams"]).All(t=>(string)t["action"]["kind"]=="raid"),Is.True);
+            sim.S.Sg=0;vm=Build(sim,new DeskBridgeState {Selected="weu"});
+            Assert.That((bool)vm.Sade.Cards["weu"]["team"]["raidEnabled"],Is.False);
+        }
+
+        [Test]
         public void RouteCurve_ReproducesDesignRoutes()
         {
             // map.json routes[].build: kontrol orta noktadan yukarı normal × uzunluk × 0,10; uçlar 21 px kırpılmış

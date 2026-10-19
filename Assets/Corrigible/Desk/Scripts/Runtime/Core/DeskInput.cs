@@ -12,6 +12,7 @@ namespace Corrigible.Desk
     public sealed class DeskInput : MonoBehaviour
     {
         [SerializeField] DeskPresenter presenter;
+        [SerializeField] bool modalOnly;
 
         void Update()
         {
@@ -79,6 +80,8 @@ namespace Corrigible.Desk
                 else if (kb.escapeKey.wasPressedThisFrame) modal.Cancel();
                 return;
             }
+
+            if (modalOnly) return;
 
             if (kb.rKey.wasPressedThisFrame) presenter.ToggleWindow(WindowId.Research);
             if (kb.nKey.wasPressedThisFrame) presenter.ToggleWindow(WindowId.News);

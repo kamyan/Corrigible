@@ -51,6 +51,8 @@ namespace Corrigible.Desk
         [Tooltip("Spot, halka ve ipliğin bölge ucu bu haritadaki düğümün gerçek yerinden (boşsa tasarım koordinatı).")]
         [SerializeField] MapView map;
         [SerializeField] SadeMapView sadeMap;
+        [SerializeField] MonoBehaviour alternateMap;
+        IDeskMapGeometry AlternateMap=>alternateMap as IDeskMapGeometry;
         [Tooltip("İpliğin bildirimdeki raptiyesi: bildirim kâğıdının sol-üst köşesinden uzaklık (px, y aşağı).")]
         [SerializeField] Vector2 memoPinOffset = new Vector2(690, 22);
 
@@ -181,6 +183,7 @@ namespace Corrigible.Desk
             scrim.color = new Color(c.r, c.g, c.b, outer);
             // Harita sahnede ölçeklenmişse delik düğümle birlikte küçülür/büyür
             float k = map != null ? map.WorldScale / Mathf.Max(1e-5f, scrim.rectTransform.lossyScale.x)
+                : AlternateMap!=null?AlternateScale()
                 : sadeMap != null ? sadeMap.WorldScale / Mathf.Max(1e-5f, scrim.rectTransform.lossyScale.x) : 1;
             scrim.SetSpot(local, s.HoleDiameter / 2 * k, s.Ring * k, new Color(c.r, c.g, c.b, ring));
 
@@ -250,9 +253,24 @@ namespace Corrigible.Desk
             r != null && r.gameObject.activeInHierarchy && r.rect.Contains(r.InverseTransformPoint(world));
 
         /// <summary>Harita koordinatının ekrandaki yeri: harita bağlıysa düğümlerin gerçek yeri, değilse tasarım kökü.</summary>
-        Vector3 MapWorld(float[] p) => map != null ? map.MapToWorld(p[0], p[1]) : sadeMap != null ? sadeMap.MapToWorld(p[0], p[1]) : design.TransformPoint(Design(p[0], p[1]));
+        // Kamera canvas'ındaki harita noktası, olay canvas'ının koordinat uzayına ekran üzerinden çevrilir.
+        // Overlay ile kamera canvas'ının dünya birimleri farklıdır.
+        Vector3 AlternatePoint(Vector3 world)
+        {
+            var from=alternateMap.GetComponentInParent<Canvas>();var to=scrim.canvas;
+            var screen=RectTransformUtility.WorldToScreenPoint(from!=null&&from.renderMode!=RenderMode.ScreenSpaceOverlay?from.worldCamera:null,world);
+            RectTransformUtility.ScreenPointToWorldPointInRectangle(design,screen,to!=null&&to.renderMode!=RenderMode.ScreenSpaceOverlay?to.worldCamera:null,out var point);
+            return point;
+        }
+        float AlternateScale()
+        {
+            var from=alternateMap.GetComponentInParent<Canvas>();var to=scrim.canvas;
+            return AlternateMap.WorldScale/Mathf.Max(1e-5f,from.transform.lossyScale.x)*from.scaleFactor/Mathf.Max(1e-5f,to.scaleFactor);
+        }
+        Vector3 MapWorld(float[] p) => AlternateMap!=null?AlternatePoint(AlternateMap.MapToWorld(p[0],p[1])):map != null ? map.MapToWorld(p[0], p[1]) : sadeMap != null ? sadeMap.MapToWorld(p[0], p[1]) : design.TransformPoint(Design(p[0], p[1]));
 
         Vector3 SpotWorld(string regionId, float[] fallback) =>
+            AlternateMap!=null&&!string.IsNullOrEmpty(regionId)?AlternatePoint(AlternateMap.RegionWorld(regionId)):
             sadeMap != null && !string.IsNullOrEmpty(regionId) ? sadeMap.RegionWorld(regionId) : MapWorld(fallback);
 
         Vector3 MemoPinWorld(float[] fallback)

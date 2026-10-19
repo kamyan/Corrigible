@@ -52,6 +52,7 @@ namespace Corrigible.Desk
         [SerializeField] Target[] targets = Array.Empty<Target>();
         [SerializeField] ResearchFolderView research;
         [SerializeField] SadeDeskInteraction sade;
+        [SerializeField] MonoBehaviour alternateSurface;
         [Header("Yerleşim")]
         [SerializeField] float holePad = 4, noteGap = 56, tipGap = 18, margin = 16;
         [SerializeField] float stepBodyTop = 73.5f, stepFooterGap = 5, stepBottom = 11, tipBodyTop = 62, tipBottom = 10;
@@ -158,6 +159,12 @@ namespace Corrigible.Desk
 
         void OpenTargetWindow(WindowId w)
         {
+            if (alternateSurface is IDeskSurface surface)
+            {
+                if (w == WindowId.Dossier) surface.SelectRegion("cn");
+                else surface.OpenWindow(w);
+                return;
+            }
             if (sade != null)
             {
                 if (w == WindowId.Dossier)
@@ -217,7 +224,16 @@ namespace Corrigible.Desk
                 {
                     if (rt == null || !rt.gameObject.activeInHierarchy) continue;
                     rt.GetWorldCorners(corners);
-                    for (int i = 0; i < 4; i++) b.Add(area.InverseTransformPoint(corners[i]));
+                    var from=rt.GetComponentInParent<Canvas>();var to=area.GetComponentInParent<Canvas>();
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if(alternateSurface!=null&&from!=null&&to!=null)
+                        {
+                            var screen=RectTransformUtility.WorldToScreenPoint(from.renderMode==RenderMode.ScreenSpaceOverlay?null:from.worldCamera,corners[i]);
+                            RectTransformUtility.ScreenPointToLocalPointInRectangle(area,screen,to.renderMode==RenderMode.ScreenSpaceOverlay?null:to.worldCamera,out var local);b.Add(local);
+                        }
+                        else b.Add(area.InverseTransformPoint(corners[i]));
+                    }
                 }
             }
             if (!b.Any) return false;
