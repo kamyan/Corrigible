@@ -1,0 +1,83 @@
+{
+  "editor": {
+    "playing": false,
+    "compiling": false,
+    "compilationFailed": false,
+    "optimization": "Release",
+    "profiler": false,
+    "deepProfiling": false,
+    "scenes": [
+      {
+        "path": "Assets/Corrigible/Desk/Scenes/DeskGame.unity",
+        "dirty": false
+      }
+    ],
+    "job": "{\"Running\":false,\"Completed\":2,\"Requested\":2,\"Result\":\"{\\\"Run\\\":\\\"20261019_115505_098\\\",\\\"Seconds\\\":0.1891572,\\\"MedianCycles\\\":7.5,\\\"BeforeLimitRate\\\":1.0,\\\"AverageBattles\\\":5.0,\\\"PlannerMedianMs\\\":0.0,\\\"PlannerP95Ms\\\":0.0,\\\"PlayerWinRate\\\":1.0,\\\"Failures\\\":[],\\\"json\\\":\\\"Temp/AynaAsyncTest/20261019_115505_098_Aggro_Stealth_2.json\\\",\\\"markdown\\\":\\\"Temp/AynaAsyncTest/20261019_115505_098_Aggro_Stealth_2.md\\\"}\",\"Error\":null}"
+  },
+  "consoleGroundTruth": {
+    "sampledUtc": "2026-10-19T11:58:30.589525Z",
+    "ageMs": 255,
+    "compilationFailed": false,
+    "compiling": false,
+    "consoleErrors": 0,
+    "consoleWarnings": 2,
+    "consoleLogs": 9,
+    "seeded": true
+  },
+  "newErrorsSinceFinalCompilation": [],
+  "protectedFiles": [
+    {
+      "path": "/Users/selimkamyan/Library/Application Support/DefaultCompany/Corrigible/savegame.json",
+      "unchanged": true,
+      "mtime_unchanged": true
+    },
+    {
+      "path": "/Users/selimkamyan/Library/Application Support/DefaultCompany/Corrigible/player_profile.json",
+      "unchanged": true,
+      "mtime_unchanged": true
+    },
+    {
+      "path": "/Users/selimkamyan/Library/Application Support/DefaultCompany/Corrigible/ayna_savegame.json",
+      "unchanged": true,
+      "mtime_unchanged": true
+    },
+    {
+      "path": "/Users/selimkamyan/Library/Application Support/DefaultCompany/Corrigible/ayna_profile.json",
+      "unchanged": true,
+      "mtime_unchanged": true
+    },
+    {
+      "path": "/Users/selimkamyan/Library/Application Support/DefaultCompany/Corrigible/campaign.json",
+      "unchanged": true,
+      "mtime_unchanged": true
+    },
+    {
+      "path": "/Users/selimkamyan/Library/Application Support/DefaultCompany/Corrigible/TestResults.xml",
+      "unchanged": true,
+      "mtime_unchanged": true
+    },
+    {
+      "path": "/Users/selimkamyan/Library/Preferences/unity.DefaultCompany.Corrigible.plist",
+      "unchanged": true,
+      "mtime_unchanged": true
+    }
+  ],
+  "existingTrackedFilesChanged": [],
+  "missingMeta": [],
+  "tests": {
+    "Total": 520,
+    "Passed": 520,
+    "Failed": 0,
+    "Skipped": 0,
+    "Inconclusive": 0
+  },
+  "benchmark": {
+    "candidate": "Docs/AYNA/denge/F1/strategy_verify/20261019_115158_725_Mind_Mind_500.json",
+    "default": "Docs/AYNA/denge/F1/final_default/20261019_115545_963_Mind_Mind_500.json",
+    "games": 500,
+    "all_game_outcomes_equal": true,
+    "all_balance_values_equal": true,
+    "current_source_matches_report": true,
+    "current_source": "AYNA-F1/b36e058f294a40ce4ccfcc35100798c9dbcf61074b55e6de31456c1a8154a946"
+  }
+}

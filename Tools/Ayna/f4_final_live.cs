@@ -1,0 +1,11 @@
+var game=UnityEngine.Object.FindFirstObjectByType<Corrigible.Ayna.Game.AynaGameController>();
+if(game==null||!UnityEditor.EditorApplication.isPlaying)throw new System.InvalidOperationException("play scene");
+game.Initialize("Temp/AynaF4FinalPlay");
+var view=UnityEngine.Object.FindFirstObjectByType<Corrigible.Ayna.Game.AynaDebugView>();var so=new UnityEditor.SerializedObject(view);
+System.Func<string,UnityEngine.UI.Button> button=name=>(UnityEngine.UI.Button)so.FindProperty(name).objectReferenceValue;
+button("eraseButton").onClick.Invoke();bool asked=game.EraseConfirmationPending&&button("confirmEraseButton").gameObject.activeSelf;
+button("startButton").onClick.Invoke();bool cancelled=!game.EraseConfirmationPending&&!button("confirmEraseButton").gameObject.activeSelf;
+game.Queue(Corrigible.Ayna.Core.Order.Expand("weu",1));string before=game.ExportSave();button("saveButton").onClick.Invoke();button("clearButton").onClick.Invoke();button("loadButton").onClick.Invoke();
+var balance=game.Match.Simulation.View(Corrigible.Ayna.Core.Side.Player).BalanceSnapshot();
+var result=new {ConfirmationAsked=asked,ConfirmationCancelled=cancelled,SaveRestored=before==game.ExportSave(),Rules=game.Match.Simulation.Record.RulesVersion,balance.SurprisePolicy,balance.SurpriseEvidence,balance.SurpriseThreshold,game.Phase};
+System.IO.File.WriteAllText("Docs/AYNA/F4/son_canli_kontrol.json",Corrigible.Ayna.Core.AynaJson.Write(result));return result;

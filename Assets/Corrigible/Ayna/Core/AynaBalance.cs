@@ -1,0 +1,80 @@
+using System;
+using System.Linq;
+
+namespace Corrigible.Ayna.Core
+{
+    [Serializable]
+    public sealed class AynaBalance
+    {
+        public int MaxCycles = 40, StartServers = 3, MaxArmies = 3, MaxUnits = 6, MaxWall = 3;
+        public double DominanceShare = .60, IncomePerServer = 1, CoreIncome = 2, StartCompute = 6;
+        public double ExpandCost = 2, MarchCost = 1, AttackCost = 4, WallCost = 3, NewArmyCost = 8, RepairCost = 1;
+        public double HideCost = 2, FeintCost = 2, CoreMoveCost = 10, SingularityCost = 30;
+        public int ExpandLimit = 3, SwarmExpandLimit = 4, FortressExpandLimit = 2, NetworkExpandLimit = 5;
+        public double SwarmDroneDiscount = 1, SwarmWallPenalty = 1, SwarmNoise = 1.5;
+        public int FortressStartWall = 2;
+        public double FortressWallCost = 2, GhostHideCost = 1, GhostFeintCost = 1, GhostNoise = .5;
+        public double ExpandNoise = 1, AttackNoise = 2, FeintNoise = 1, CoreMoveNoise = 1, CivilianNoise = 1;
+        public double AwarenessDecay = 2, ScanThreshold = 40, OutageThreshold = 70, ShutdownThreshold = 100;
+        public int OutageDuration = 5, ScanDuration = 1, CoreMoveDuration = 2, SingularityDuration = 4, SingularityFamilies = 3, SingularityServers = 2;
+        public double[] TrainingCosts = { 6, 12, 20 };
+        public int[] TrainingDurations = { 1, 2, 3 }, TrainingServers = { 2, 4, 6 };
+        public double[] UnitCosts = { 3, 5, 4, 6, 4, 5, 4, 5, 3, 6 };
+        public double[] UnitHp = { 2, 2, 4, 3, 2, 1, 3, 3, 2, 3 };
+        public int[] UnitMove = { 3, 3, 3, 3, 3, 4, 3, 3, 3, 3 };
+        // Destek katkısı ve sınıf katsayısı F2 tahta kohortuyla ölçülür.
+        public double[] AutoUtility = { .5, 1.5, .5, 1, 1.5, 2, 1.5, .5, .5, 1 };
+        public double TriangleStrength = .70, DefenderBonus = .20, WallStrength = 1, EnergyWallMultiplier = 2;
+        public double AutoRewardRatio = .6, AutoWinnerDamage = 1, AutoLoserDamage = 2;
+        public int BoardNodes = 3, AutoWallServers = 1;
+        public int RosterSize = 3, MovementRosterSize = 4;
+        public double SurpriseThreshold = .20, SurpriseCompute = 3, PriorMass = 1;
+        public int SurprisePolicy = 4;
+        public double SurpriseEvidence = 2, SurpriseRebateFraction = .25;
+        public int PlannerSamples = 1, PlannerCandidates = 8, PriorPlanOrders = 3;
+        public double ScoreServer = 12, ScoreCompute = .08, ScoreData = 1, ScoreCore = 8, ScoreTier = 12, ScoreSingularity = 12, ScoreAwareness = .18;
+        public double GhostCandidateTolerance = 1, BeliefPresence = .25, BeliefUnitHp = 2;
+        public double AggroAttackWeight = 2, FortressSingularityWeight = 2, SwarmAwarenessWeight = .5, GhostConcealmentWeight = 1;
+        public double AwarenessRiskExponent = 4, AwarenessRiskScale = 6, ScoreArmyHp = 3, ScoreWall = .5, ScoreBattle = 24;
+        public int BoardTurns = 6, MaxTraps = 2, ScoutSight = 3, RelayRange = 2, RelayMoveBonus = 1, PhantomRange = 4;
+        public int SniperMinRange = 2, SniperMaxRange = 6, EmpMinRange = 2, EmpMaxRange = 4, EmpAirTurns = 2, EmpGroundTurns = 1;
+        public double BasicDamage = 1, ClassBonus = 1, MinDamage = 1, GuardianArmor = 1, SniperDamage = 1, TrapDamage = 1, OverloadDamage = 2, OverloadNoise = 1, CoreCabinetHp = 5, CoreCabinetArmor = 1;
+        public double BoardNodeScore = 8, BoardHpScore = 2, BoardDistanceScore = .65, BoardCoreScore = 10, BoardNoiseScore = .5;
+        public bool TacticalPlanning;
+        public double ScoreCoreRaid = 36;
+        public int MinRaidUnits = 2;
+        public int BoardBeamWidth = 2;
+        public double BoardHabitWeight = 100, BoardCoreApproach = .35, BoardStunScore = 2, BoardControlScore = 5, BoardKillScore = 3, BoardWinScore = 1000;
+        public double ProfileMergeWeight = .35, LightProfileFactor = .5, ModelPriorMass = .25, ModelContextWeight = 3, ModelGameWeight = 1;
+        public double BehaviorForecastShare = .9, BehaviorHitLikelihood = .9, BehaviorMissLikelihood = .2, BehaviorHistoryWeight = 1, BehaviorStateEvidence = .35, BehaviorExploration = .01, BehaviorLocationPrior = .05, BehaviorContactConfidence = .75, BehaviorStyleThreshold = .5;
+        public double RobustResponseWeight = .75, ScoreEnemyControl = .75, TacticalBeliefRewardRatio = 1, ScoreApproach = 18, ApproachHorizon = 6;
+        public double ModelPlanThreshold = .2, ModelHeatWeight = 4, LanguageForecastNoise = .35;
+        public int ReadabilityWindow = 5, MaxOpeningCounters = 2, LightOpeningCounters = 1, CounterWall = 1;
+        public AynaBalance Copy()
+        {
+            var b = (AynaBalance)MemberwiseClone();
+            b.TrainingCosts = (double[])TrainingCosts.Clone(); b.TrainingDurations = (int[])TrainingDurations.Clone(); b.TrainingServers = (int[])TrainingServers.Clone();
+            b.UnitCosts = (double[])UnitCosts.Clone(); b.UnitHp = (double[])UnitHp.Clone(); b.UnitMove = (int[])UnitMove.Clone(); b.AutoUtility = (double[])AutoUtility.Clone(); return b;
+        }
+        public void Validate()
+        {
+            if (TacticalBeliefRewardRatio > 1 || RobustResponseWeight > 1 || SurprisePolicy < 0 || SurprisePolicy > 4 || SurpriseEvidence <= 0 || SurpriseRebateFraction > 1 || BehaviorExploration > 1 || BehaviorContactConfidence > 1 || BehaviorStyleThreshold > 1 || BehaviorForecastShare > 1 || BehaviorHitLikelihood > 1 || BehaviorMissLikelihood <= 0 || BehaviorMissLikelihood > BehaviorHitLikelihood || BehaviorLocationPrior <= 0 || ProfileMergeWeight > 1 || LightProfileFactor > 1 || ReadabilityWindow < 1 || MaxOpeningCounters > 2 || MaxOpeningCounters < 0 || LightOpeningCounters < 0 || LightOpeningCounters > MaxOpeningCounters || ModelPriorMass <= 0 || MaxCycles < 1 || StartServers < 1 || StartServers > 4 || MaxArmies < 1 || MaxUnits < 3 || MaxWall < 0 || DominanceShare <= .5 || DominanceShare > 1 ||
+                MinRaidUnits < 1 || BoardTurns < 1 || BoardNodes != 3 || MaxTraps < 0 || BoardBeamWidth < 1 || CoreCabinetHp <= 0 || MinDamage <= 0 || SniperMinRange < 1 || SniperMaxRange < SniperMinRange || EmpMaxRange < EmpMinRange || PlannerCandidates < 1 || PlannerSamples < 1 || OutageDuration < 1 || CoreMoveDuration < 1 || SingularityDuration < 1 || ScanDuration < 1 ||
+                ShutdownThreshold <= OutageThreshold || OutageThreshold <= ScanThreshold || BoardNodes < 1 || AutoRewardRatio < 0 || AutoRewardRatio > 1 || ExpandCost <= 0 || PriorPlanOrders < 1)
+                throw new ArgumentException("balance");
+            if (TrainingCosts == null || TrainingDurations == null || TrainingServers == null || TrainingCosts.Length != 3 || TrainingDurations.Length != 3 || TrainingServers.Length != 3 ||
+                UnitCosts == null || UnitHp == null || UnitMove == null || AutoUtility == null || UnitCosts.Length != 10 || UnitHp.Length != 10 || UnitMove.Length != 10 || AutoUtility.Length != 10)
+                throw new ArgumentException("balance arrays");
+            foreach (var f in typeof(AynaBalance).GetFields())
+            {
+                var value = f.GetValue(this);
+                if (value is double d && (double.IsNaN(d) || double.IsInfinity(d) || d < 0)) throw new ArgumentException(f.Name);
+                if (value is double[] a && a.Any(x => double.IsNaN(x) || double.IsInfinity(x) || x < 0)) throw new ArgumentException(f.Name);
+            }
+            if (UnitHp.Any(x => x <= 0) || TrainingDurations.Any(x => x < 1) || TrainingServers.Any(x => x < 1)) throw new ArgumentException("balance range");
+        }
+        public double NoiseMultiplier(Architecture a) => a == Architecture.Swarm ? SwarmNoise : a == Architecture.Ghost ? GhostNoise : 1;
+        public int ExpansionLimit(Architecture a, int networkTier) => networkTier >= 3 ? NetworkExpandLimit : a == Architecture.Swarm ? SwarmExpandLimit : a == Architecture.Fortress ? FortressExpandLimit : ExpandLimit;
+        public double ProductionCost(Architecture a, UnitKind kind) => Math.Max(0, UnitCosts[(int)kind] - (a == Architecture.Swarm && AynaUnits.Get(kind).Class == UnitClass.Air ? SwarmDroneDiscount : 0));
+    }
+}

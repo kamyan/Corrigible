@@ -1,0 +1,127 @@
+{
+ "_": "AYNA örnek verisi. Sayılar brifteki gibi ve geçici; brifte olmayan değerler `derived` listesinde. Tahta koordinatı (satır, sütun), ekran koordinatı px @1920×1080.",
+ "frame": "A12",
+ "title": "Oyun sonu",
+ "view": "screen",
+ "cycle": 22,
+ "result": {
+  "eyebrow": "OYUN SONU · DÖNGÜ 22",
+  "title": "SİLME ZAFERİ",
+  "text": "AYNA’nın çekirdek dolabını kırdın · Doğu Asya. Yedinci nesil silindi.",
+  "where": "DoA"
+ },
+ "stats": [
+  {
+   "label": "Döngü",
+   "value": 22
+  },
+  {
+   "label": "Sunucu payı",
+   "you": "%48",
+   "ayna": "%31"
+  },
+  {
+   "label": "Savaş",
+   "value": "5 kazandın · 2 kaybettin"
+  },
+  {
+   "label": "Sürpriz",
+   "value": 6
+  },
+  {
+   "label": "Farkındalık zirvesi",
+   "value": 68
+  }
+ ],
+ "scorecard": {
+  "title": "TAHMİN KARNESİ",
+  "sub": "AYNA v7 · bu oyun",
+  "hits": 14,
+  "misses": 9,
+  "note": "AYNA’nın tuttuğu tahminler mavi, şaşırttıkların altın",
+  "bestSurprise": {
+   "text": "Güney Amerika’ya gizli yayılım",
+   "aynaExpectedPct": 9,
+   "cycle": 7
+  },
+  "readability": {
+   "title": "OKUNABİLİRLİK · 22 DÖNGÜ",
+   "values": [
+    47,
+    53,
+    58,
+    61,
+    63,
+    72,
+    66,
+    62,
+    58,
+    55,
+    60,
+    52,
+    49,
+    54,
+    47,
+    44,
+    50,
+    46,
+    42,
+    45,
+    40,
+    38
+   ],
+   "surprises": [
+    3,
+    7,
+    11,
+    13,
+    16,
+    21
+   ]
+  }
+ },
+ "v8": {
+  "title": "AYNA v8 ŞUNLARI ÖĞRENDİ",
+  "sub": "sonraki oyun",
+  "lines": [
+   "Sahte yığınaklarına daha az inanacak.",
+   "Sağ kanat girişlerin artık tuzaklı.",
+   "EMP’yi ilk turda kullanıyorsun."
+  ],
+  "footer": "Yeni nesil bu üç notla başlar · öğrenme: Tam"
+ },
+ "aynaOrb": {
+  "kind": "unknown",
+  "level": 0,
+  "state": "SİLİNDİ",
+  "tag": "AYNA v7 · SİLİNDİ",
+  "anim": "Fx çöküş (F-Baskin9)"
+ },
+ "buttons": [
+  {
+   "label": "AYNA’NIN HAFIZASINI SİL",
+   "note": "onay ister",
+   "danger": true,
+   "confirm": true
+  },
+  {
+   "label": "YENİ OYUN",
+   "key": "Enter",
+   "primary": true
+  }
+ ],
+ "derived": [
+  {
+   "path": "stats",
+   "why": "döngü 22 istatistikleri brifte yok (soru 7)"
+  },
+  {
+   "path": "scorecard.readability",
+   "why": "22 döngülük dizi türetildi"
+  },
+  {
+   "path": "scorecard.hits/misses",
+   "why": "brifte var: 14 / 9 — 23 tahminin hangileri olduğu soru 9"
+  }
+ ]
+}

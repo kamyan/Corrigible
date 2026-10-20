@@ -1,0 +1,42 @@
+{
+  "source": "Docs/AYNA/denge/F2/final_calibrated_boards/20261019_140143_094.json",
+  "method": "2.000 tekrarlı %95 yüzdelik bootstrap; kadro matrisinde tohum kümeleri birlikte örneklenir, aynı tohumun kadro/rol bağımlılığı korunur. 192 üçgen düzeni sonlu sayım olduğu için sabit kalır. Tuzakta 100 oyun kümesi örneklenir.",
+  "seedClusters": 32,
+  "triangle": "4×8×2 düzenin tamamı; tekrarlı bağımsız Bernoulli deneyi sayılmaz, güven aralığı verilmez.",
+  "calibrationSignedGapCI": [
+    {
+      "bucket": 3,
+      "low": -0.0970947358240496,
+      "high": -0.03146973582404959
+    },
+    {
+      "bucket": 4,
+      "low": -0.0753247286393952,
+      "high": -0.0018872286393952018
+    },
+    {
+      "bucket": 5,
+      "low": -0.009041608906360066,
+      "high": 0.02433907291182175
+    },
+    {
+      "bucket": 6,
+      "low": 0.021459931439008373,
+      "high": 0.06833493143900837
+    }
+  ],
+  "trapHitCI": {
+    "Habit": {
+      "games": 100,
+      "low": 1.0,
+      "high": 1.0
+    },
+    "Random": {
+      "games": 100,
+      "low": 0.08,
+      "high": 0.175
+    }
+  },
+  "limits": "Bunlar sabit bot/harita kataloğundaki örnekleme aralıklarıdır; bütün kadrolara, haritalara veya insan oyunculara genellenmez. Kabul kapısı nokta tahminleriyle değerlendirilir.",
+  "bootstrapSeed": 191026
+}

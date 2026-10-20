@@ -2,6 +2,372 @@
 # Kaçış dizileri: \n satır sonu, \t sekme, \\ ters bölü. {0}, {1:0.0} gibi yer tutucular çeviride de olmalı.
 # Bu dosyayı "Corrigible > Lokalizasyon > Çeviri tablosunu güncelle" üretir; yalnızca çeviri sütunlarını düzenle.
 tr	en
+# Assets/Corrigible/Ayna/Game/AynaDebugView.cs
+Bu hamle geçerli değil.	This move is not valid.
+İşlem tamamlanamadı. Seçimi veya kayıt dosyasını kontrol et.	The action could not be completed. Check the selection or save file.
+Önizleme: {0} birim ayakta, gürültü {1:0.#}.	Preview: {0} units standing, noise {1:0.#}.
+AYNA · {0}	AYNA · {0}
+AYNA v{0} · {1} oyun · skor {2:0.#}\nÖğrenme: {3}\nMimarini, başlangıç bölgeni ve tohumu seç.	AYNA v{0} · {1} games · score {2:0.#}\nLearning: {3}\nChoose your architecture, starting region and seed.
+{0}\n{1}	{0}\n{1}
+AYNA Tekillik ilan etti: {0}/{1}. Olası veri hedefleri: {2}	AYNA announced Singularity: {0}/{1}. Possible data targets: {2}
+AYNA · Döngü {0} · {1} · İşlem {2:0.#} · Farkındalık {3:0.#} · Okunabilirlik %{4:0}	AYNA · Cycle {0} · {1} · Compute {2:0.#} · Awareness {3:0.#} · Readability {4:0}%
+Birlik {0} · {1}	Army {0} · {1}
+{0} #{1} · {2:0.#} can	{0} #{1} · {2:0.#} HP
+≈{0}–{1}	≈{0}–{1}
+{0}\nSen {1} · AYNA {2} / {3}	{0}\nYou {1} · AYNA {2} / {3}
+Plan: {0} emir · {1:0.#} İşlem · {2:0.#} gürültü\n{3}	Plan: {0} orders · {1:0.#} Compute · {2:0.#} noise\n{3}
+{0}. {1} · {2} · {3}	{0}. {1} · {2} · {3}
+{0} {1} · veri {2}/{3} · bedel {4:0} · {5}	{0} {1} · data {2}/{3} · cost {4:0} · {5}
+Tamamlandı	Completed
+Eğitimde	Training
+Açık	Available
+Kilitli	Locked
+Birlik {0} · {1}\n{2}	Army {0} · {1}\n{2}
+{0} #{1}: {2:0.#} can	{0} #{1}: {2:0.#} HP
+{0}: {1:0} İşlem · {2}	{0}: {1:0} Compute · {2}
+Veri hattı yok	No data access
+AYNA v{0} · öğrenme {1}\n{2}\nSon okunabilirlik: {3}\n{4}	AYNA v{0} · learning {1}\n{2}\nRecent readability: {3}\n{4}
+Sen: {0} · {1} · {2}	You: {0} · {1} · {2}
+AYNA: {0} · {1}	AYNA: {0} · {1}
+Hareket algılandı · {0} · doğrulanmadı	Activity detected · {0} · unverified
+{0} · {1}\nSenin sunucun: {2}/{3}\nGelir: +{4:0.#}/döngü · Bu plan: −{5:0.#}\n\n{6}\n\n{7}	{0} · {1}\nYour servers: {2}/{3}\nIncome: +{4:0.#}/cycle · This plan: −{5:0.#}\n\n{6}\n\n{7}
+Planını hazırla; sonra iki tarafın emirleri birlikte açılır.	Prepare your plan; both sides' orders will then be revealed together.
+OYUN SONU · {0}\nKazanan: {1}\nTahmin: {2}/{3} · Sürpriz: {4}\nNesil: {5} · Profil: {6}	GAME OVER · {0}\nWinner: {1}\nPrediction hits: {2}/{3} · Surprises: {4}\nGeneration: {5} · Profile: {6}
+Kaydedildi	Saved
+Değişmedi	Unchanged
+SAVAŞ SONUCU\nKazanan: {0}\nDüğümler: sen {1} / AYNA {2}\nGürültü: sen {3:0.#} / AYNA {4:0.#}	BATTLE RESULT\nWinner: {0}\nNodes: you {1} / AYNA {2}\nNoise: you {3:0.#} / AYNA {4:0.#}
+ÇATIŞMA · {0}\nKadro sınırı: {1}\nBilinen AYNA: {2}\nBilinmeyen: {3}\nKomuta et veya daha düşük ödüllü otomatik çözümü seç.	CONFLICT · {0}\nRoster limit: {1}\nKnown AYNA units: {2}\nUnknown: {3}\nCommand the battle or choose automatic resolution with reduced rewards.
+{0}\n{1}\n\n{2}	{0}\n{1}\n\n{2}
+SÜRPRİZ · ana taahhüt beklenmiyordu.	SURPRISE · the main commitment was unexpected.
+Devam ederek çözümü veya sonraki döngüyü aç.	Continue to resolve the plan or start the next cycle.
+Sen	You
+AYNA	AYNA
+Berabere	Draw
+Hedef birim yok	No target unit
+{0} #{1}	{0} #{1}
+{0},{1}\n{2}	{0},{1}\n{2}
+{0} #{1}\n{2:0.#}	{0} #{1}\n{2:0.#}
+YZ	AI
+Tur {0}/{7} · {1}\nSeçilen hedef: {2},{3}\n{4}\nGörünen tuzak: {5}\nNiyet tarafı: {6}	Turn {0}/{7} · {1}\nSelected target: {2},{3}\n{4}\nVisible traps: {5}\nIntent side: {6}
+Niyetini bildir	Declare your intents
+İlk vuruş	First strike
+Cevap ver	Respond
+{0}. #{1} {2} → {3},{4}	{0}. #{1} {2} → {3},{4}
+{0}\nDüğümler: sen {1} / AYNA {2} / boş {3}	{0}\nNodes: you {1} / AYNA {2} / neutral {3}
+{0}\nNiyet kuyruğu: {1}	{0}\nIntent queue: {1}
+# Assets/Corrigible/Ayna/Game/AynaGameController.cs
+Bu emir mevcut plana eklenemiyor.	This order cannot be added to the current plan.
+Kadro seçimi geçersiz.	Invalid roster selection.
+Hafıza değişti; eski oturum yeni profili ezmedi.	Memory has changed; the old session did not overwrite the new profile.
+AYNA oyunu kaydedildi.	AYNA game saved.
+AYNA oyununa devam ediliyor.	Resuming the AYNA game.
+Hafızayı silmek için tekrar onayla.	Confirm again to erase the memory.
+AYNA hafızası silindi.	AYNA's memory was erased.
+# Assets/Corrigible/Ayna/Game/AynaText.cs
+Yayıl	Expand
+Yürü	March
+Saldır	Attack
+Duvar ör	Build wall
+Eğit	Train
+Üret	Produce
+Yeni birlik	New army
+Onar	Repair
+Gizlen	Hide
+Sahte yığınak	Feint
+Çekirdeği taşı	Move core
+Tekillik başlat	Start singularity
+Bekle	Wait
+Kuzey Amerika	North America
+Güney Amerika	South America
+Batı Avrupa	Western Europe
+Doğu Avrupa	Eastern Europe
+Rusya	Russia
+Orta Doğu	Middle East
+Afrika	Africa
+Güney Asya	South Asia
+Çin	China
+Japonya / Kore	Japan / Korea
+Güneydoğu Asya	Southeast Asia
+Okyanusya	Oceania
+Görü	Vision
+Hareket	Move
+Enerji	Energy
+Ağ	Network
+Dil	Language
+Sürü Zihni	Swarm Mind
+Kale	Fortress
+Hayalet	Ghost
+Kapalı	Off
+Hafif	Light
+Tam	Full
+Başlangıç	Start
+Planla	Plan
+Aç	Open
+Çatışma	Conflict
+Kadro seçimi	Roster selection
+Savaş tahtası	Battle board
+Savaş sonucu	Battle result
+Döngü sonucu	Cycle result
+Oyun sonu	Game over
+Gözcü Dron	Scout Drone
+Nişancı Dron	Sniper Drone
+Muhafız Robot	Guardian Robot
+Örümcek Robot	Spider Robot
+EMP Dronu	EMP Drone
+Aşırı Yük	Overload
+Sızma Birimi	Intrusion Unit
+Röle	Relay
+Yem	Decoy
+Hayalet Emir	Phantom Order
+Devam ediyor	In progress
+Son Şalter	Kill Switch
+Silme	Erasure
+Tekillik	Singularity
+Hakimiyet	Dominance
+Süre doldu	Time limit
+Yetenek	Ability
+Başlat	Start
+Devam et	Resume
+Kaydet	Save
+Yükle	Load
+Ana menü	Main menu
+TR / EN	TR / EN
+Hafızayı sil	Erase memory
+Silmeyi onayla	Confirm erasure
+Genel bakış	Overview
+Gelişim	Research
+Birlikler	Armies
+AYNA'nın modeli	AYNA's model
+Günlük	Log
+Emri ekle	Add order
+Son emri kaldır	Remove last order
+Kuyruğu temizle	Clear queue
+Planı kilitle	Lock plan
+Komuta et	Command
+Otomatik çöz	Resolve automatically
+Kadro ile başlat	Start with roster
+Geri	Back
+Geri al	Undo
+Turu bitir	End turn
+Geri çekil	Withdraw
+Önizle	Preview
+Mimari	Architecture
+Başlangıç bölgesi	Starting region
+Öğrenme	Learning
+Tohum	Seed
+Emir / bölge / miktar / birlik / aile / birim / onarım hedefi	Order / region / amount / army / family / unit / repair target
+Birim / eylem / hedef birim	Unit / action / target unit
+Niyeti bildir	Submit intents
+Hamleyi uygula	Apply move
+Yeni oyun	New game
+genel	general
+Kabul edildi	Accepted
+Koşul kaybedildi	Condition lost
+Emir reddedildi	Order rejected
+# Assets/Corrigible/Ayna/Game/Interface/AynaBoardView.cs
+TUR {0}/{1}	TURN {0}/{1}
+DÜĞÜMLER  ◆ {0}   ⬢ {1}   ○ {2}	NODES  ◆ {0}   ⬢ {1}   ○ {2}
+SAVAŞ TAMAMLANDI	BATTLE COMPLETE
+NİYETİNİ BİLDİR	DECLARE INTENT
+İLK VURUŞ	FIRST STRIKE
+SIRA SENDE	YOUR TURN
+◆ {0}\n{1}  ·  {2}	◆ {0}\n{1}  ·  {2}
+TAMAMLANDI	COMPLETE
+HAZIR	READY
+{0}. ⬢ {1} · {2} → ({3}, {4})	{0}. ⬢ {1} · {2} → ({3}, {4})
+◆ {0} → ({1}, {2})	◆ {0} → ({1}, {2})
+GÖRÜNÜR NİYET YOK	NO VISIBLE INTENT
+BİRİM SEÇ	SELECT UNIT
+◆ {0}\nCAN {1}  ·  {2}	◆ {0}\nHP {1}  ·  {2}
+Bir birim seçerek başla.	Select a unit to begin.
+Savaş sonucu hazır.	Battle results are ready.
+Önce niyetini yönlendireceğin AYNA birimini seç.	First select the AYNA unit whose intent you want to redirect.
+Bu hücrede bu hamle kullanılamıyor.	This action is unavailable on this cell.
+Önizlemek için bir hücrenin üzerine gel; uygulamak için tıkla.	Hover over a cell to preview; click to apply.
+{0} → ({1}, {2})	{0} → ({1}, {2})
+{0} etkisiz hâle gelir.	{0} is disabled.
+{0}: −{1} CAN	{0}: −{1} HP
+{0} ele geçirilir.	{0} is captured.
+{0} sersemler.	{0} is stunned.
+Niyet sıraya eklenir; rakibin cevabından sonra çözülür.	The intent is queued and resolves after the opponent responds.
+# Assets/Corrigible/Ayna/Game/Interface/AynaDrawerView.cs
+GELİŞİM	TRAINING
+BİRLİKLER	SQUADS
+AYNA’NIN MODELİ	AYNA’S MODEL
+GÜNLÜK	LOG
+REHBER	GUIDE
+{0} kademe eğitildi · {1:0.#} İşlem kullanılabilir\nEğitim kalıcıdır; üretim için veri hattına erişim gerekir.	{0} tiers trained · {1:0.#} Compute available\nTraining is permanent; production requires a data connection.
+Eğitildi	Trained
+Eğitimde · {0}/{1} döngü	Training · {0}/{1} cycles
+Planda	Queued
+Veri yetmiyor	Insufficient data
+{0} · K{1}\n{2}\n{3}/{4} sunucu · {5:0.#} İşlem\n{6} döngü · {7}	{0} · T{1}\n{2}\n{3}/{4} servers · {5:0.#} Compute\n{6} cycles · {7}
+TEKİLLİK · {0}/{1} döngü\nVeri bölgelerine erişim kesilirse ilerleme durur.	SINGULARITY · {0}/{1} cycles\nProgress pauses if access to data regions is lost.
+TEKİLLİK\nK3 aile: {0}/{1} · {2:0.#} İşlem · {3} döngü\nBaşlayınca AYNA’ya ilan edilir.	SINGULARITY\nT3 families: {0}/{1} · {2:0.#} Compute · {3} cycles\nAnnounced to AYNA when it starts.
+Uydu bağlantıları ve tuzak görüşü	Satellite links and trap vision
+Geniş kadro	Larger roster
+Güçlü duvarlar	Stronger walls
+Geniş yayılım	Wider expansion
+Tahmin ekranını bozma	Distort forecast display
+{0}/{1} birlik · {2} birim\nHedef bölge: {3}	{0}/{1} armies · {2} units\nTarget region: {3}
+BİRLİK {0} · {1}\n{2} · {3}/{4} birim\n{5}	ARMY {0} · {1}\n{2} · {3}/{4} units\n{5}
+Hareket planda	Movement queued
+Hazır	Ready
+Önce sahip olduğun bir bölgede yeni birlik kur.	Create an army in a region you own first.
+Seçili birlik {0} · {1}\n{2}	Selected army {0} · {1}\n{2}
+{0} #{1} {2:0.#}/{3:0.#}	{0} #{1} {2:0.#}/{3:0.#}
+{0}\n{1} · K{2} · {3:0.#} İşlem · {4}	{0}\n{1} · T{2} · {3:0.#} Compute · {4}
+Veri hattı kapalı	Data connection unavailable
+Dost sunucu gerekli	Friendly server required
+Birlik dolu	Army full
+Üretim kuyruğu: {0}\nHer birlikte en fazla {1} birim bulunabilir.	Production queue: {0}\nEach army can hold up to {1} units.
+{0} → Birlik {1}	{0} → Army {1}
+Onar · {0:0.#} İşlem	Repair · {0:0.#} Compute
+Yeni birlik · {0:0.#} İşlem	New army · {0:0.#} Compute
+Yürü → {0} · {1:0.#} İşlem	March → {0} · {1:0.#} Compute
+AYNA v{0} · {1} tamamlanmış oyun · öğrenme: {2}\nBu döngünün üç tahmini · okunabilirlik %{3:0}	AYNA v{0} · {1} completed games · learning: {2}\nThree predictions this cycle · readability {3:0}%
+{0}. {1}\n{2}	{0}. {1}\n{2}
+Gözlem desteği yeterli	Sufficient observation support
+Gözlem desteği sınırlı	Limited observation support
+Henüz tahmin yok.	No predictions yet.
+{0}\nDoğrulanmış emirlerin %{1:0.#} kadarı\n{2:0.#} gözlem	{0}\n{1:0.#}% of verified orders\n{2:0.#} observations
+{0}\nHenüz gözlem yok.	{0}\nNo observations yet.
+SEN · {0} · {1} · {2}	YOU · {0} · {1} · {2}
+AYNA · {0} · {1} · doğrulandı	AYNA · {0} · {1} · verified
+SİNYAL · {0} · doğrulanmadı	SIGNAL · {0} · unverified
+Henüz açılmış emir yok. Planını kilitlediğinde iki tarafın sonuçları burada görünür.	No revealed orders yet. Both sides' results appear here after your plan is locked.
+DÖNGÜ {0} · AÇILAN EMİRLER\n\n{1}\n\n{2}	CYCLE {0} · REVEALED ORDERS\n\n{1}\n\n{2}
+SÜRPRİZ · Ana taahhüt beklenmiyordu.	SURPRISE · The primary commitment was unexpected.
+Yalnız doğrulanmış emirler kesin bilgi sayılır.	Only verified orders count as certain information.
+{0}\n\n{1}\n\n{2}\n\n{3}\n\n{4}\n\n{5}	{0}\n\n{1}\n\n{2}\n\n{3}\n\n{4}\n\n{5}
+PLANLA → AÇ → ÇÖZ\nEmirleri aynı plana ekle; plan kilitlendiğinde iki tarafın emirleri birlikte açılır.	PLAN → REVEAL → RESOLVE\nAdd orders to one plan; both sides reveal together when it is locked.
+HARİTA\nBölge seçerek yayıl, birlik yürüt veya saldır. ? bilinmeyen, ≈ tahmin, kesin sayı doğrulanmış bilgidir.	MAP\nSelect a region to expand, march or attack. ? is unknown, ≈ is an estimate, and exact numbers are verified.
+GELİŞİM\nSunucular veri ailelerini besler. Eğitim kademeleri kalıcıdır; birim üretmek için ilgili veri hattını korumalısın.	RESEARCH\nServers provide data families. Training tiers are permanent; protect the relevant data connection to produce units.
+BİRLİKLER\nBirlik seç; üretim ve onarım o birliğe uygulanır. Yürü hedefi haritada seçtiğin komşu bölgedir.	ARMIES\nSelect an army to produce and repair its units. March targets the neighbouring region selected on the map.
+AYNA’NIN MODELİ\nAYNA doğruladığı davranışlarını öğrenir. Tahminler kesin emir değildir; davranışını değiştirmek modelini yanıltabilir.	AYNA'S MODEL\nAYNA learns from verified behaviour. Forecasts are not certain orders; changing your behaviour can mislead its model.
+# Assets/Corrigible/Ayna/Game/Interface/AynaInterfaceLabels.cs
+GELİŞİM  G	RESEARCH  G
+BİRLİKLER  B	ARMIES  B
+AYNA’NIN MODELİ  M	AYNA’S MODEL  M
+GÜNLÜK  L	LOG  L
+REHBER  H	GUIDE  H
+MENÜ	MENU
+EMİR KUYRUĞU	ORDER QUEUE
+SON EMRİ KALDIR	UNDO LAST ORDER
+KUYRUĞU TEMİZLE	CLEAR QUEUE
+YENİ OYUN · AYNA	NEW GAME · AYNA
+BAŞLANGIÇ BÖLGESİ	STARTING REGION
+AYNA TEKRAR BAKIYOR	AYNA IS WATCHING
+ÖĞRENME	LEARNING
+TOHUM	SEED
+Her karşılaşma iz bırakır. Öğrenmeyi kapatırsan bu oyunun profili okunmaz veya yazılmaz.	Every encounter leaves a trace. With learning off, this game's profile is neither read nor written.
+BAŞLAT  ·  Enter	START  ·  Enter
+EMİRLER · PLANINA EKLE	ORDERS · ADD TO PLAN
+SALDIR	ATTACK
+YAYIL	SPREAD
+DUVAR ÖR	BUILD WALL
+GİZLEN	CONCEAL
+SAHTE YIĞINAK	FEINT
+BİRLİK YÜRÜT	MARCH ARMY
+ÇEKİRDEĞİ TAŞI	MOVE CORE
+ÇÖZÜME GEÇ	RESOLVE
+KADRO SEÇ · KOMUTA ET	SELECT ROSTER · COMMAND
+OTOMATİK ÇÖZ	AUTO-RESOLVE
+Sahaya çıkacak birimlerini seç. Rakibin görünmeyen kadrosu gizli kalır.	Choose the units to deploy. Unseen enemy units remain hidden.
+SINIF ÜÇGENİ\n\nHava → Kara\nKara → Siber\nSiber → Hava\n\nDüğümleri tut.\nÇekirdeği koru.\nGörünür niyetlere cevap ver.	CLASS TRIANGLE\n\nAir → Ground\nGround → Cyber\nCyber → Air\n\nHold the nodes.\nProtect the core.\nRespond to visible intentions.
+GERİ	BACK
+KOMUTA ET	COMMAND
+YÜRÜ	MOVE
+YETENEK	ABILITY
+BEKLE	WAIT
+GERİ AL  Z	UNDO  Z
+TURU BİTİR  Enter	END TURN  Enter
+GERİ ÇEKİL	RETREAT
+HARİTAYA DÖN	RETURN TO MAP
+OYUN SONU · SON ŞALTER	GAME OVER · CORRIGIBLE
+TAHMİN KARNESİ	PREDICTION REPORT
+AYNA’NIN SONRAKİ NESLİ	AYNA’S NEXT GENERATION
+YENİ OYUN	NEW GAME
+TEKİLLİK İLAN ET	ANNOUNCE SINGULARITY
+AYNA · MENÜ	AYNA · MENU
+KAYDET	SAVE
+YÜKLE	LOAD
+ANA MENÜ	MAIN MENU
+HAREKETİ AZALT	REDUCE MOTION
+AYNA HAFIZASINI SİL	ERASE AYNA MEMORY
+AYNA hafızası silinsin mi?\nÖnceki karşılaşmalardan öğrendikleri unutulur.	Erase AYNA's memory?\nWhat it learned from past encounters will be forgotten.
+SİLMEYİ ONAYLA	CONFIRM ERASURE
+VAZGEÇ	CANCEL
+HEDEFLERİ İNCELE	EXAMINE TARGETS
+# Assets/Corrigible/Ayna/Game/Interface/AynaInterfaceView.cs
+Geçerli bir tohum gir.	Enter a valid seed.
+Yeni nesil · {0}	New generation · {0}
+Mimarini ve başlangıç bölgeni seç. Çekirdeğin orada başlar; AYNA’dan gizli kalır.	Choose your architecture and starting region. Your core starts there, hidden from AYNA.
+AYNA v{0}\n{1} tamamlanmış oyun · skor {2:0.#}\n\n{3}	AYNA v{0}\n{1} completed games · score {2:0.#}\n\n{3}
+AYNA seni hatırlıyor.\nDoğruladığı seçimlerinden öğrenir.	AYNA remembers you.\nIt learns from your verified choices.
+Henüz geçmiş yok.\nİlk karşılaşma burada başlıyor.	No history yet.\nYour first encounter starts here.
+Sen: {0}\nÖğrenme: {1}\nBaşlangıç bilgilerin rakipten gizlidir.	You: {0}\nLearning: {1}\nYour opening choices are hidden from your opponent.
+Ucuz dronlar\nDaha hızlı genişleme\nDaha fazla gürültü	Cheaper drones\nFaster expansion\nMore noise
+Güçlü başlangıç savunması\nDuvarlarda indirim\nDaha yavaş genişleme	Strong opening defences\nCheaper walls\nSlower expansion
+Düşük gürültü\nGizlenme ve sahte yığınakta indirim\nBelirsizliği kullan	Low noise\nCheaper concealment and feints\nUse uncertainty
+{0}\n\n{1}\n\n{2}	{0}\n\n{1}\n\n{2}
+SEÇİLDİ	SELECTED
+SEÇ	SELECT
+DÖNGÜ {0:00}\n{1}	CYCLE {0:00}\n{1}
+İŞLEM\n{0:0.#}  +{1:0.#}\nBu plan −{2:0.#}	COMPUTE\n{0:0.#}  +{1:0.#}\nThis plan −{2:0.#}
+VERİ\n{0}	DATA\n{0}
+{0} {1}	{0} {1}
+HEDEF\n◆ {0} / {1}\nTekillik {2}/{3}	OBJECTIVE\n◆ {0} / {1}\nSingularity {2}/{3}
+FARKINDALIK\n{0:0.#} / 100	AWARENESS\n{0:0.#} / 100
+OKUNABİLİRLİK\n%{0:0}	READABILITY\n{0:0}%
+AYNA GÜCÜ\n{0}–{1} sunucu	AYNA STRENGTH\n{0}–{1} servers
+Henüz emir yok. Haritada bir bölge seç.	No orders yet. Select a region on the map.
+{0}. {1} · {2} · {3:0.#} İşlem	{0}. {1} · {2} · {3:0.#} Compute
+EMİR {0} · {1:0.#} İşlem	ORDERS {0} · {1:0.#} Compute
+PLANI KİLİTLE	LOCK PLAN
+DEVAM ET	CONTINUE
+AÇ · İKİ PLAN AÇILDI\n\n{0}\n\n{1}\n\n{2}	REVEAL · BOTH PLANS REVEALED\n\n{0}\n\n{1}\n\n{2}
+◆ {0} · {1}	◆ {0} · {1}
+⬢ {0} · {1}	⬢ {0} · {1}
+≈ Sinyal · {0}	≈ Signal · {0}
+SÜRPRİZ · Ana taahhüdün tahmini aştı.	SURPRISE · Your primary commitment beat the forecast.
+Görünen sinyalleri incele; gizli emirler açılmaz.	Examine visible signals; hidden orders stay concealed.
+DÖNGÜ TAMAMLANDI\n\n{0}	CYCLE COMPLETE\n\n{0}
+{0} · {1}	{0} · {1}
+Kazandın	You won
+AYNA kazandı	AYNA won
+ÇÖZÜM SIRASI\n\n{0}\n\n{1}	RESOLUTION ORDER\n\n{0}\n\n{1}
+Aynı bölgedeki birlikler karşılaşıyor. Komuta et veya otomatik çöz.	Armies in the same region face off. Take command or auto-resolve.
+{0}\n◆ {1}   ⬢ {2}\n\n{3}	{0}\n◆ {1}   ⬢ {2}\n\n{3}
+KAZANDIN	YOU WON
+AYNA KAZANDI	AYNA WINS
+BERABERE	DRAW
+Düğümler sunucu kontrolüne dönüştü. Açılan bilgiler öğrenme izine eklendi.	Nodes became server control. Revealed information was added to the learning record.
+AYNA TEKİLLİK İLAN ETTİ\n{0} / {1}\n\nOlası veri bölgeleri:\n{2}	AYNA ANNOUNCED SINGULARITY\n{0} / {1}\n\nPossible data regions:\n{2}
+{0} ZAFERİ	{0} VICTORY
+AYNA KAZANDI · {0}	AYNA WINS · {0}
+DÖNGÜ {0}     TAHMİN {1}/{2}     SÜRPRİZ {3}\nNESİL {4} · {5}	CYCLE {0}     PREDICTIONS {1}/{2}     SURPRISES {3}\nGENERATION {4} · {5}
+Profil kaydedildi	Profile saved
+Profil yazılmadı	Profile not written
+Bir sonraki karşılaşmada AYNA, yalnız doğruladığı seçimlerini hatırlayacak.\nAynı alışkanlıkları sürdürmek seni daha okunabilir kılar.	Next encounter, AYNA will remember only your verified choices.\nRepeating your habits makes you easier to read.
+DOĞRULANDI	VERIFIED
+≈ RAPOR	≈ REPORT
+? BİLİNMİYOR	? UNKNOWN
+SUNUCULAR\n◆ {0}   ⬢ {1}   / {2}	SERVERS\n◆ {0}   ⬢ {1}   / {2}
+◆ Birlik {0} · {1} birim	◆ Army {0} · {1} units
+Bu bölge için belirgin tahmin yok.	No clear prediction for this region.
+AYNA: {0} olasılığın %{1:0}.	AYNA: {1:0}% chance you will {0}.
+KADRO SEÇİMİ · {0}\n{1}/{2} yuva\n\nBilinen rakip: {3}\nBilinmeyen: {4}	ROSTER SELECTION · {0}\n{1}/{2} slots\n\nKnown opponents: {3}\nUnknown: {4}
+{0}\n{1:0.#}/{2:0.#} can	{0}\n{1:0.#}/{2:0.#} HP
+# Assets/Corrigible/Ayna/Game/Interface/AynaMapView.cs
+Avrasya	Eurasia
+Sahra Altı Afrika	Sub-Saharan Africa
+Doğu Asya	East Asia
+Japonya-Kore	Japan-Korea
+<mark=#03101DEF><color=#FFD58C>◆{0}</color> <color=#8FB8FF>⬢{1}</color><color=#7B9CAC>/{2}</color> {3}</mark>	<mark=#03101DEF><color=#FFD58C>◆{0}</color> <color=#8FB8FF>⬢{1}</color><color=#7B9CAC>/{2}</color> {3}</mark>
+# Assets/Corrigible/Ayna/Mind/ForecastText.cs
+Bu döngü {0} / {1}: %{2:0}	This cycle {0} / {1}: {2:0}%
+Sürpriz, yeterli gözlem oluşunca ana bölgesel taahhüdün koşullu hedef olasılığıyla değerlendirilir; ödül emir bedeliyle sınırlıdır.	Once enough observations are available, Surprise uses the main regional commitment's conditional target probability; the reward is bounded by the order cost.
 # Assets/Corrigible/Core/Baskin.cs
 Ana sunucu salonu	Main server hall
 Soğutma koridoru	Cooling corridor
@@ -107,18 +473,7 @@ Tespit	Detection
 Savunma	Defense
 Politika	Policy
 Hizalama	Alignment
-Kuzey Amerika	North America
-Güney Amerika	South America
-Batı Avrupa	Western Europe
-Doğu Avrupa	Eastern Europe
-Rusya	Russia
-Orta Doğu	Middle East
-Afrika	Africa
 Hindistan	India
-Çin	China
-Japonya-Kore	Japan-Korea
-Güneydoğu Asya	Southeast Asia
-Okyanusya	Oceania
 Kendini Kopyalama	Self-Replication
 Bölge içi büyüme ×1,4	In-region growth ×1.4
 Kendimi çoğaltmayı öğrendim. Her kopya bir öncekinden hızlı.	I've learned to multiply myself. Each copy is faster than the last.
@@ -202,7 +557,6 @@ Bütçe Anlaşması II	Budget Agreement II
 Bölgesel katkı toplam ×1,35; ilk kademe ile çarpılmaz.	Total regional contribution ×1.35; this replaces the first tier.
 Bölgesel katkı ×1,35	Regional contribution ×1.35
 Değer Kilidi devrede. Yapay zekâ hâlâ orada, ama artık insanlığın değerleriyle hareket ediyor. En zor yol buydu.	The Value Lock is in place. The AI is still out there, but now it acts on humanity’s values. This was the hardest path.
-Silme	Erasure
 Çekirdek yok edildi, kopyalar temizlendi. Ama bir kez yapıldıysa, biri yine yapacak.	The core is destroyed and the copies are gone. But if it was done once, someone will do it again.
 Karanlık Çağ	Dark Age
 Dünyanın fişini çektin. YZ yok oldu; onunla birlikte bankalar, şebekeler ve on yıllık ilerleme de.	You pulled the plug on the world. The AI is gone; so are the banks, the grids and a decade of progress.
@@ -528,7 +882,6 @@ Her tur yeni robotlar uyanabilir.	New robots may wake each turn.
 Düğüm	Node
 Çekirdek	Core
 Yedek	Backup
-Hareket	Move
 {0} kare	{0} tiles
 bitişik kare	adjacent tile
 düz hat, 2–5 kare	straight line, 2–5
@@ -631,18 +984,15 @@ YZ'yi tespit et	Detect the AI
 TELEKS	TELEX
 SAHTE	FAKE
 → {0} · {1} gün	→ {0} · {1}d
-{0} · {1}	{0} · {1}
 Ekip {0}	Team {0}
 Hazırlık	Readiness
 Son temas {0}	Last contact {0}
 {0} · {1} gün	{0} · {1}d
 görevde · {0} gün	on task · {0}d
-Hazır	Ready
 ARAŞTIRMA	RESEARCH
 HABERLER	NEWS
 SAHA EKİPLERİ	FIELD TEAMS
 YZ GÜNLÜĞÜ	AI LOG
-REHBER	GUIDE
 KÜRESEL SON ŞALTER	GLOBAL KILL SWITCH
 Mührü kır · 3 sn basılı tut	Break the seal · hold 3 s
 {0} SG gerekli · şu an {1}	{0} PC needed · now {1}
@@ -664,7 +1014,6 @@ belirsiz	unclear
 izleme ağı	monitoring network
 denetim	audit
 karantina	quarantine
-Son Şalter	Kill Switch
 # Assets/Corrigible/Desk/Scripts/Bridge/SimDeskBuilder.Dossier.cs
 KARARTILDI	BLACKED OUT
 ÇEKİLDİ	SECEDED
@@ -773,7 +1122,6 @@ Ekip gönder	Send team
 Bölge ittifak dışı; ekip kabul etmiyor	Region out of alliance; it refuses teams
 Hazır ekip yok	No ready team
 PROJE DURUMU	PROJECT STATUS
-Kilitli	Locked
 Aktif {0} · {1}	Active {0} · {1}
 {0} proje	{0} project
  fon/gün	 funds/day
@@ -781,14 +1129,12 @@ Fon	Funds
 ACİL DURUM FONU	EMERGENCY FUND
 Araştırma bütün fonu kullanabilir	Research may use all funds
 Araştırma fonu {0} altına indirmez	Research keeps funds above {0}
-Kapalı	Off
 Gerekli: {0}	Requires: {0}
 Önce YZ'yi tespit et	Detect the AI first
 İlerlemek için gözlem noktası kur.	Establish an observation post to make progress.
 Gözlem gerekli	Observation needed
 Toplam {0} fon	Total {0} funding
 {0} gün · toplam {1} fon	{0} days · {1} funds total
-Başlat	Start
 Başlat · {0} fon/gün	Start · {0} funds/day
 Kendiliğinden durdu · gerekmiyor	Stopped on its own · not needed
 Fon yetmiyor · yavaşladı	Short of funds · slowed
@@ -921,7 +1267,6 @@ YZ HAMLESİ	AI MOVE
 ÖLÇÜM	MEASUREMENT
 KIRILMA	BREAK
 Kayıt KYGA-07 · tohum {0} · {1} gün · {2} karar · {3} doğrulama	Record AISA-07 · seed {0} · {1} days · {2} decisions · {3} verifications
-Ana menü	Main menu
 Günlükleri incele	Review logs
 Kampanya sonucu	Campaign result
 Sonraki kriz ({0}/{1})	Next crisis ({0}/{1})
@@ -1000,8 +1345,6 @@ VM {0}/5	DC {0}/5
 rezerv kapalı	reserve off
 acil durum fonu	emergency funds
 yüksek rezerv	high reserve
-Devam et	Resume
-Tamamlandı	Completed
 Satın al	Purchase
 kilitli	locked
 SAHTE · doğrulama ile yalanlandı	FAKE · debunked by verification
@@ -1219,15 +1562,11 @@ operasyon kazanılır	operation won
 TUR	TURN
 {0}/{1}	{0}/{1}
 MAKİNELER	MACHINES
-SIRA SENDE	YOUR TURN
 SON TUR	LAST TURN
 ikisini de kır	break both
 kır	break
 SİVİL	CIVILIAN
 KIRILDI	BROKEN
-GÜNLÜK	LOG
-GERİ ÇEKİL	RETREAT
-Geri al	Undo
 EMİN MİSİN?	ARE YOU SURE?
 TURU BİTİR	END TURN
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidLogRowView.cs
@@ -1280,7 +1619,6 @@ Ekip binadan çıkar; operasyon başarısız sayılır. Hedef dolaplar ayakta ka
 İkinci basış geri çeker.	A second press retreats.
 operasyon emrinden	from the operation order
 oklar · seçim · zırh · siviller	arrows · selection · armor · civilians
-Aç	Open
 Katla	Fold
 Kırmızı ok robotun bu turdaki hamlesi; bayraktaki sayı sırası. Kesik ok ve ? yalan olabilir: Analist 3 kare yaklaşınca kesinleşir.	A red arrow is a robot's move this turn; the flag number is its order. A dashed arrow with ? may be a lie: it becomes certain when the Analyst is within 3 tiles.
 Seç, taşı, kullan: 1–3 ya da tıkla, mavi kareye taşı, Q ile yetenek. Z turdaki hamleyi geri alır.	Select, move, act: 1–3 or click, move to a blue tile, Q for the ability. Z undoes a move this turn.
@@ -1400,7 +1738,6 @@ SG {0}	PC {0}
 yeni ekip: {0} fon	new team: {0} funds
 EKİP {0}	TEAM {0}
 YOLDA	EN ROUTE
-HAZIR	READY
 Baskın {0}	Raid {0}
 Görevlendir ›	Assign ›
 # Assets/Corrigible/Desk/Scripts/Runtime/Sade/Interaction/SadeDeskInteraction.cs
@@ -1546,7 +1883,6 @@ Doğu Asya’daki çelişki bu!	This explains the East Asia discrepancy!
 # Assets/Corrigible/Desk/Scripts/Runtime/Sade/Tooltips/SadeBreakdownTooltipView.cs
 döküm	breakdown
 bugün · {0}	today · {0}
-{0} {1}	{0} {1}
 DÖKÜM	BREAKDOWN
 # Assets/Corrigible/Desk/Scripts/Runtime/Sade/Tooltips/SadeNodeTooltipView.cs
 ~ rapor	~ report
@@ -1559,8 +1895,6 @@ KAZANÇ	GAIN
 Olası:	Possible:
 # Assets/Corrigible/Desk/Scripts/Runtime/Screens/Intro/IntroView.cs
 ÖNERİLİR	RECOMMENDED
-# Assets/Corrigible/Desk/Scripts/Runtime/Screens/Intro/RivalCardView.cs
-SEÇİLDİ	SELECTED
 # Assets/Corrigible/Desk/Scripts/Runtime/Screens/KillSwitchEnvelopeView.cs
 Bırakmayın: {0} sn	Keep holding: {0} s
 # Assets/Corrigible/Desk/Scripts/Runtime/Screens/RegionDossierView.cs
@@ -1614,9 +1948,7 @@ SONRAKİ	NEXT
 DİL: TR / EN	LANGUAGE: TR / EN
 SPRITE KATALOĞU	SPRITE CATALOG
 FONTLAR VE DOKULAR	FONTS AND TEXTURES
-DOĞRULANDI	VERIFIED
 HAREKET	MOVE
-TAMAMLANDI	COMPLETE
 UYUMLU	COMPLIANT
 KARARSIZ	UNSTABLE
 UYANMIŞ	AWAKENED
@@ -1713,7 +2045,6 @@ OTOMATİK	AUTO
 Geliştirici	Developer
 Altın kare	Golden capture
 Yarıçap	Radius
-Tohum	Seed
 Lif uzunluğu	Filament length
 Kare hızı	Frame rate
 Tür	Kind
@@ -1929,9 +2260,6 @@ KOPYA	REPLICA
 SAHA OPERASYONU · {0} · {1}	FIELD OPERATION · {0} · {1}
 SAHA OPERASYONU · GÜN {0} · {1}	FIELD OPERATION · DAY {0} · {1}
 Hedef: bütün hedef dolapları {0} tur içinde kır.\n\n{1}\n\n{2}	Goal: break every target cabinet within {0} turns.\n\n{1}\n\n{2}
-Turu bitir	End turn
-Geri çekil	Withdraw
-Yetenek	Ability
 Kendini Kopyalama: her tur 2 robot uyanır.	Self-Replication: 2 robots wake up each turn.
 Hızlanma: 1 tur eksik.	Acceleration: one turn fewer.
 {0}\n{1}\n{2}\n{3}\n{4}\n{5}	{0}\n{1}\n{2}\n{3}\n{4}\n{5}
@@ -1956,7 +2284,6 @@ temiz	clean
 Kalan tur	Turns left
 bu tur dahil	incl. this turn
 HAREKET + YETENEK	MOVE + ABILITY
-YETENEK	ABILITY
 {0}. {1}	{0}. {1}
 {0}/{1} can · {2}	{0}/{1} HP · {2}
 <b>{0}</b> · {1}\n{2}	<b>{0}</b> · {1}\n{2}
@@ -2313,3 +2640,5 @@ EĞİTİM · 1/10	TUTORIAL · 1/10
 Başlık	Title
 Açıklama	Description
 Bildirim	Notification
+# --- Kullanılmayan çeviriler (koddan silinmiş metinler; gerekirse geri alınır) ---
+#Sürpriz, emir türü içindeki koşullu hedef olasılığıyla hesaplanır.	Surprise is calculated using the conditional target probability within the order type.

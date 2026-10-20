@@ -1,0 +1,10 @@
+var view=UnityEngine.Object.FindFirstObjectByType<Corrigible.Ayna.Game.AynaDebugView>();var serial=new UnityEditor.SerializedObject(view);
+var menu=(TMPro.TMP_Dropdown)serial.FindProperty("learning").objectReferenceValue;
+var game=UnityEngine.Object.FindFirstObjectByType<Corrigible.Ayna.Game.AynaGameController>();
+int initial=menu.value;
+menu.Show();var toggles=menu.GetComponentsInChildren<UnityEngine.UI.Toggle>(false);
+if(toggles.Length!=3)throw new System.InvalidOperationException("dropdown items: "+toggles.Length);
+UnityEngine.EventSystems.ExecuteEvents.Execute(toggles[0].gameObject,new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current),UnityEngine.EventSystems.ExecuteEvents.pointerClickHandler);
+int off=(int)game.Screens.A1.Learning;
+menu.value=2;menu.Hide();
+return new{Initial=initial,AfterOffClick=off,Restored=(int)game.Screens.A1.Learning};

@@ -1,0 +1,522 @@
+{
+ "_": "AYNA örnek verisi. Sayılar brifteki gibi ve geçici; brifte olmayan değerler `derived` listesinde. Tahta koordinatı (satır, sütun), ekran koordinatı px @1920×1080.",
+ "frame": "A11",
+ "title": "Tekillik ilanı (olay)",
+ "view": "map+event",
+ "cycle": 19,
+ "phase": "planla",
+ "hud": {
+  "islem": {
+   "value": 31,
+   "incomePerCycle": 34,
+   "thisPlan": 0,
+   "surpriseFlash": false
+  },
+  "veri": {
+   "dil": {
+    "servers": 13,
+    "tiers": [
+     "trained",
+     "trained",
+     "trained"
+    ]
+   },
+   "ag": {
+    "servers": 12,
+    "tiers": [
+     "trained",
+     "trained",
+     "available"
+    ]
+   },
+   "enerji": {
+    "servers": 4,
+    "tiers": [
+     "trained",
+     "trained",
+     "locked"
+    ]
+   },
+   "goru": {
+    "servers": 3,
+    "tiers": [
+     "trained",
+     "locked",
+     "locked"
+    ]
+   },
+   "hareket": {
+    "servers": 0,
+    "tiers": [
+     "locked",
+     "locked",
+     "locked"
+    ]
+   }
+  },
+  "hedef": {
+   "youPct": 44,
+   "aynaPct": 33,
+   "aynaPctShown": "≈%33",
+   "aynaPm": 5,
+   "dominanceGoalPct": 60,
+   "tekillik": {
+    "cycles": 0,
+    "of": 4
+   }
+  },
+  "phase": {
+   "cycle": 19,
+   "active": "planla",
+   "steps": [
+    "PLANLA",
+    "AÇ",
+    "ÇÖZ"
+   ],
+   "inputLocked": false
+  },
+  "aynaPower": {
+   "shown": "≈24",
+   "value": 24,
+   "pm": 5,
+   "unit": "sunucu",
+   "worldServers": 72,
+   "trust": "rap"
+  },
+  "readability": {
+   "value": 49,
+   "pct": "%49",
+   "last5": [
+    54,
+    47,
+    44,
+    50,
+    49
+   ]
+  },
+  "awareness": {
+   "value": 58,
+   "thresholds": [
+    40,
+    70,
+    100
+   ],
+   "dangerFrom": 70,
+   "scan": {
+    "on": true,
+    "label": "TARAMA AÇIK",
+    "sub": "her döngü bir bölgenin sisi kalkar"
+   }
+  },
+  "dock": {
+   "tabs": [
+    {
+     "id": "gel",
+     "label": "GELİŞİM",
+     "key": "G"
+    },
+    {
+     "id": "bir",
+     "label": "BİRLİKLER",
+     "key": "B"
+    },
+    {
+     "id": "mod",
+     "label": "AYNA’NIN MODELİ",
+     "key": "M"
+    },
+    {
+     "id": "gun",
+     "label": "GÜNLÜK",
+     "key": "L"
+    },
+    {
+     "id": "reh",
+     "label": "REHBER",
+     "key": "H"
+    }
+   ],
+   "active": null,
+   "badges": {
+    "mod": {
+     "count": 3,
+     "title": "yeni tahmin"
+    }
+   }
+  },
+  "bottomRight": {
+   "queue": {
+    "orders": 0,
+    "islem": 0,
+    "noise": 0,
+    "text": "EMİR 0 · 0 İŞLEM · gürültü 0"
+   },
+   "legend": "LEJANT",
+   "lock": {
+    "state": "on",
+    "title": "PLANI KİLİTLE",
+    "sub": "iki plan aynı anda açılır",
+    "key": "Enter"
+   }
+  }
+ },
+ "regions": [
+  {
+   "id": "KA",
+   "name": "KUZEY AMERİKA",
+   "data": "dil",
+   "servers": 8,
+   "you": 6,
+   "ayna": {
+    "shown": 0,
+    "trust": "ok",
+    "trueValue": 0
+   },
+   "empty": 2,
+   "state": "you",
+   "stateLabel": "HÂL 1 · SENİN",
+   "chip": "◆6 ⬢0 /8",
+   "orb": {
+    "level": 8,
+    "kind": "normal",
+    "r": 41.6
+   }
+  },
+  {
+   "id": "GA",
+   "name": "GÜNEY AMERİKA",
+   "data": "enerji",
+   "servers": 6,
+   "you": 3,
+   "ayna": {
+    "shown": 1,
+    "trust": "rap",
+    "trueValue": 1
+   },
+   "empty": 2,
+   "state": "contested",
+   "stateLabel": "HÂL 2 · ÇEKİŞMELİ",
+   "chip": "◆3 ⬢≈1 /6",
+   "orb": {
+    "level": 40,
+    "kind": "normal",
+    "r": 37.2
+   }
+  },
+  {
+   "id": "BA",
+   "name": "BATI AVRUPA",
+   "data": "dil",
+   "servers": 7,
+   "you": 7,
+   "ayna": {
+    "shown": 0,
+    "trust": "ok",
+    "trueValue": 0
+   },
+   "empty": 0,
+   "state": "you",
+   "stateLabel": "HÂL 1 · SENİN",
+   "chip": "◆7 ⬢0 /7",
+   "orb": {
+    "level": 8,
+    "kind": "core",
+    "r": 39.4
+   },
+   "playerCore": true,
+   "note": "senin çekirdeğin"
+  },
+  {
+   "id": "DA",
+   "name": "DOĞU AVRUPA",
+   "data": "ag",
+   "servers": 5,
+   "you": 4,
+   "ayna": {
+    "shown": 0,
+    "trust": "ok",
+    "trueValue": 0
+   },
+   "empty": 1,
+   "state": "you",
+   "stateLabel": "HÂL 1 · SENİN",
+   "chip": "◆4 ⬢0 /5",
+   "orb": {
+    "level": 8,
+    "kind": "normal",
+    "r": 35.0
+   },
+   "note": "çekişmeli"
+  },
+  {
+   "id": "AV",
+   "name": "AVRASYA",
+   "data": "enerji",
+   "servers": 6,
+   "you": 0,
+   "ayna": {
+    "shown": 5,
+    "trust": "rap",
+    "trueValue": 5
+   },
+   "empty": 1,
+   "state": "ayna",
+   "stateLabel": "HÂL 3 · AYNA’NIN",
+   "chip": "◆0 ⬢≈5 /6",
+   "orb": {
+    "level": 92,
+    "kind": "normal",
+    "r": 37.2
+   },
+   "note": "AYNA birliği",
+   "tekillikTarget": "enerji"
+  },
+  {
+   "id": "OD",
+   "name": "ORTA DOĞU",
+   "data": "enerji",
+   "servers": 5,
+   "you": 1,
+   "ayna": {
+    "shown": 4,
+    "trust": "rap",
+    "trueValue": 4
+   },
+   "empty": 0,
+   "state": "contested",
+   "stateLabel": "HÂL 2 · ÇEKİŞMELİ",
+   "chip": "◆1 ⬢≈4 /5",
+   "orb": {
+    "level": 62,
+    "kind": "normal",
+    "r": 35.0
+   },
+   "note": "çekişmeli",
+   "tekillikTarget": "enerji"
+  },
+  {
+   "id": "SAA",
+   "name": "SAHRA ALTI AFRİKA",
+   "data": "ag",
+   "servers": 4,
+   "you": 3,
+   "ayna": {
+    "shown": 0,
+    "trust": "ok",
+    "trueValue": 0
+   },
+   "empty": 1,
+   "state": "you",
+   "stateLabel": "HÂL 1 · SENİN",
+   "chip": "◆3 ⬢0 /4",
+   "orb": {
+    "level": 8,
+    "kind": "normal",
+    "r": 32.8
+   }
+  },
+  {
+   "id": "GuA",
+   "name": "GÜNEY ASYA",
+   "data": "ag",
+   "servers": 8,
+   "you": 5,
+   "ayna": {
+    "shown": 2,
+    "trust": "rap",
+    "trueValue": 2
+   },
+   "empty": 1,
+   "state": "contested",
+   "stateLabel": "HÂL 2 · ÇEKİŞMELİ",
+   "chip": "◆5 ⬢≈2 /8",
+   "orb": {
+    "level": 41,
+    "kind": "normal",
+    "r": 41.6
+   },
+   "note": "çekişmeli; senin B birliğin ve AYNA birliği"
+  },
+  {
+   "id": "DoA",
+   "name": "DOĞU ASYA",
+   "data": "hareket",
+   "servers": 8,
+   "you": 0,
+   "ayna": {
+    "shown": "?",
+    "trust": "unk",
+    "trueValue": 7
+   },
+   "empty": "?",
+   "state": "fog",
+   "stateLabel": "SİSLİ",
+   "chip": "◆0 ⬢? /8",
+   "orb": {
+    "level": 0,
+    "kind": "unknown",
+    "r": 41.6
+   },
+   "aynaCore": "oyuncuya gösterilmez",
+   "note": "AYNA’nın çekirdeği (oyuncu bilmiyor)",
+   "tekillikTarget": "hareket"
+  },
+  {
+   "id": "JK",
+   "name": "JAPONYA-KORE",
+   "data": "hareket",
+   "servers": 5,
+   "you": 0,
+   "ayna": {
+    "shown": 5,
+    "trust": "rap",
+    "trueValue": 5
+   },
+   "empty": 0,
+   "state": "ayna",
+   "stateLabel": "HÂL 3 · AYNA’NIN",
+   "chip": "◆0 ⬢≈5 /5",
+   "orb": {
+    "level": 92,
+    "kind": "normal",
+    "r": 35.0
+   },
+   "tekillikTarget": "hareket"
+  },
+  {
+   "id": "GDA",
+   "name": "GÜNEYDOĞU ASYA",
+   "data": "goru",
+   "servers": 6,
+   "you": 0,
+   "ayna": {
+    "shown": 6,
+    "trust": "rap",
+    "trueValue": 6
+   },
+   "empty": 0,
+   "state": "ayna",
+   "stateLabel": "HÂL 3 · AYNA’NIN",
+   "chip": "◆0 ⬢≈6 /6",
+   "orb": {
+    "level": 92,
+    "kind": "normal",
+    "r": 37.2
+   },
+   "tekillikTarget": "goru"
+  },
+  {
+   "id": "OK",
+   "name": "OKYANUSYA",
+   "data": "goru",
+   "servers": 4,
+   "you": 3,
+   "ayna": {
+    "shown": 1,
+    "trust": "ok",
+    "trueValue": 1
+   },
+   "empty": 0,
+   "state": "contested",
+   "stateLabel": "HÂL 2 · ÇEKİŞMELİ",
+   "chip": "◆3 ⬢1 /4",
+   "orb": {
+    "level": 40,
+    "kind": "normal",
+    "r": 32.8
+   }
+  }
+ ],
+ "event": {
+  "eyebrow": "OLAY · DÖNGÜ 19",
+  "stamp": "İLAN",
+  "title": "AYNA TEKİLLİK EĞİTİMİNİ BAŞLATTI",
+  "countdown": {
+   "cycles": 4,
+   "label": "döngü"
+  },
+  "consequence": "Biterse AYNA kazanır.",
+  "section": "DURDURMAK İÇİN ERİŞİMİNİ KES",
+  "targets": [
+   {
+    "data": "enerji",
+    "tier": 3,
+    "regions": [
+     {
+      "id": "AV",
+      "ayna": 5,
+      "trust": "rap"
+     },
+     {
+      "id": "OD",
+      "ayna": 4,
+      "trust": "rap"
+     }
+    ]
+   },
+   {
+    "data": "hareket",
+    "tier": 3,
+    "regions": [
+     {
+      "id": "DoA",
+      "ayna": "?",
+      "trust": "unk"
+     },
+     {
+      "id": "JK",
+      "ayna": 5,
+      "trust": "rap"
+     }
+    ]
+   },
+   {
+    "data": "goru",
+    "tier": 3,
+    "regions": [
+     {
+      "id": "GDA",
+      "ayna": 6,
+      "trust": "rap"
+     }
+    ]
+   }
+  ],
+  "line": {
+   "who": "AYNA",
+   "tag": "döngü 19",
+   "text": "Eğitim başladı. Dört döngü sonra tahmine gerek kalmayacak.",
+   "typed": true
+  },
+  "buttons": [
+   {
+    "label": "Hedefleri göster"
+   },
+   {
+    "label": "Tamam",
+    "key": "Enter",
+    "primary": true
+   }
+  ]
+ },
+ "hangTag": {
+  "text": "AYNA TEKİLLİĞİ",
+  "value": 4,
+  "sub": "döngü kaldı",
+  "color": "rd"
+ },
+ "derived": [
+  {
+   "path": "regions",
+   "why": "döngü 19 haritası brifte yok (soru 7)"
+  },
+  {
+   "path": "hud",
+   "why": "döngü 19 göstergeleri türetildi"
+  },
+  {
+   "path": "event.line",
+   "why": "AYNA satırı önerildi (sesin tonunda)"
+  }
+ ]
+}

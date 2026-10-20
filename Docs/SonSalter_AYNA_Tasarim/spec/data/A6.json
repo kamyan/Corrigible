@@ -1,0 +1,356 @@
+{
+ "_": "AYNA örnek verisi. Sayılar brifteki gibi ve geçici; brifte olmayan değerler `derived` listesinde. Tahta koordinatı (satır, sütun), ekran koordinatı px @1920×1080.",
+ "frame": "A6",
+ "title": "Savaş tahtası: tur 2/6",
+ "view": "board",
+ "cycle": 7,
+ "phase": "coz",
+ "board": {
+  "region": "GuA",
+  "grid": [
+   "M M . # . . S .",
+   "M . . # . N . .",
+   ". . . . . . # .",
+   ". # N . . . . .",
+   ". . . . . t # S",
+   "S . # . . . N t",
+   ". . # . . . . G",
+   ". S . . . . G G"
+  ],
+  "turn": 2,
+  "turns": 6,
+  "side": "you",
+  "sideLabel": "SIRA SENDE"
+ },
+ "nodes": [
+  {
+   "at": [
+    1,
+    5
+   ],
+   "owner": "ayna"
+  },
+  {
+   "at": [
+    3,
+    2
+   ],
+   "owner": "empty"
+  },
+  {
+   "at": [
+    5,
+    6
+   ],
+   "owner": "you"
+  }
+ ],
+ "nodeCount": {
+  "you": 1,
+  "ayna": 1,
+  "empty": 1
+ },
+ "units": [
+  {
+   "side": "you",
+   "at": [
+    4,
+    3
+   ],
+   "unit": "gozcu",
+   "name": "Gözcü Dron",
+   "cls": "hava",
+   "letter": "G",
+   "hp": 2,
+   "hpMax": 2,
+   "selected": false
+  },
+  {
+   "side": "you",
+   "at": [
+    5,
+    4
+   ],
+   "unit": "emp",
+   "name": "EMP Dronu",
+   "cls": "hava",
+   "letter": "E",
+   "hp": 2,
+   "hpMax": 2,
+   "selected": true
+  },
+  {
+   "side": "you",
+   "at": [
+    4,
+    2
+   ],
+   "unit": "sizma",
+   "name": "Sızma Birimi",
+   "cls": "siber",
+   "letter": "S",
+   "hp": 2,
+   "hpMax": 2,
+   "selected": false
+  },
+  {
+   "side": "ayna",
+   "at": [
+    4,
+    0
+   ],
+   "unit": "nisanci",
+   "name": "Nişancı Dron",
+   "cls": "hava",
+   "letter": "N",
+   "hp": 2,
+   "hpMax": 2
+  },
+  {
+   "side": "ayna",
+   "at": [
+    2,
+    1
+   ],
+   "unit": "muhafiz",
+   "name": "Muhafız Robot",
+   "cls": "kara",
+   "letter": "M",
+   "hp": 4,
+   "hpMax": 4
+  },
+  {
+   "side": "ayna",
+   "at": [
+    2,
+    4
+   ],
+   "unit": "emp",
+   "name": "EMP Dronu",
+   "cls": "hava",
+   "letter": "E",
+   "hp": 2,
+   "hpMax": 2
+  }
+ ],
+ "aynaIntents": [
+  {
+   "n": 1,
+   "unit": "nisanci",
+   "kind": "fire",
+   "from": [
+    4,
+    0
+   ],
+   "target": [
+    4,
+    2
+   ],
+   "text": "Nişancı → Sızma Birimi",
+   "cancelledByPreview": true
+  },
+  {
+   "n": 2,
+   "unit": "muhafiz",
+   "kind": "move+melee",
+   "path": [
+    [
+     2,
+     1
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     3,
+     2
+    ]
+   ],
+   "target": [
+    4,
+    2
+   ],
+   "text": "Muhafız → (3,2) düğümüne yürür, bitişiğe vurur"
+  },
+  {
+   "n": 3,
+   "unit": "emp",
+   "kind": "stun",
+   "from": [
+    2,
+    4
+   ],
+   "area": {
+    "center": [
+     4,
+     3
+    ],
+    "size": [
+     3,
+     3
+    ]
+   },
+   "text": "EMP → Gözcü’nün alanı"
+  }
+ ],
+ "threatTiles": {
+  "hit": [
+   [
+    4,
+    2
+   ]
+  ],
+  "stun": [
+   [
+    4,
+    3
+   ],
+   [
+    5,
+    4
+   ]
+  ]
+ },
+ "traps": [
+  {
+   "at": [
+    4,
+    5
+   ],
+   "state": "open",
+   "by": "gozcu",
+   "label": "TUZAK · Gözcü açtı"
+  },
+  {
+   "at": [
+    5,
+    7
+   ],
+   "state": "hidden",
+   "shownToPlayer": false
+  }
+ ],
+ "selection": {
+  "unit": "emp",
+  "ability": "EMP",
+  "key": "Q",
+  "area": {
+   "center": [
+    4,
+    1
+   ],
+   "size": [
+    3,
+    3
+   ]
+  },
+  "preview": {
+   "stamp": "SERSEMLER",
+   "sub": "dron 2 tur",
+   "affects": [
+    "nisanci"
+   ],
+   "effects": [
+    "Nişancı sersem 2 tur",
+    "niyet 1 iptal"
+   ]
+  }
+ },
+ "hud": {
+  "turn": "TUR 2/6",
+  "objective": {
+   "title": "HEDEF",
+   "sub": "6. turun sonunda tuttuğun düğümler sunucu olur",
+   "nodes": {
+    "you": 1,
+    "ayna": 1,
+    "empty": 1
+   }
+  },
+  "firstStrike": {
+   "state": "used",
+   "label": "İLK VURUŞ kullanıldı"
+  },
+  "traps": {
+   "open": 1,
+   "max": 2,
+   "text": "Tuzak 1 açık · en fazla 2"
+  },
+  "topRight": [
+   "GÜNLÜK",
+   "KURALLAR",
+   "GERİ ÇEKİL"
+  ],
+  "bottomRight": [
+   {
+    "label": "Geri al",
+    "key": "Z"
+   },
+   {
+    "label": "TURU BİTİR",
+    "key": "Enter",
+    "primary": true
+   }
+  ],
+  "team": [
+   {
+    "unit": "gozcu",
+    "name": "Gözcü Dron",
+    "cls": "hava",
+    "letter": "G",
+    "hp": 2,
+    "hpMax": 2,
+    "key": "1",
+    "move": "on",
+    "ability": "on"
+   },
+   {
+    "unit": "emp",
+    "name": "EMP Dronu",
+    "cls": "hava",
+    "letter": "E",
+    "hp": 2,
+    "hpMax": 2,
+    "key": "2",
+    "move": "on",
+    "ability": "arm"
+   },
+   {
+    "unit": "sizma",
+    "name": "Sızma Birimi",
+    "cls": "siber",
+    "letter": "S",
+    "hp": 2,
+    "hpMax": 2,
+    "key": "3",
+    "move": "on",
+    "ability": "on"
+   }
+  ]
+ },
+ "aynaLine": {
+  "who": "ELE GEÇİRİLEN TAHMİN",
+  "tag": "tur 2",
+  "text": "AYNA sağ kanattan gireceğini bekliyordu (%71).",
+  "pct": 71
+ },
+ "derived": [
+  {
+   "path": "units[].at",
+   "why": "tur 2 dizilimi brifte yok; niyetlere uyacak biçimde yerleştirildi (soru 13)"
+  },
+  {
+   "path": "aynaIntents[].from/path",
+   "why": "dizilimden"
+  },
+  {
+   "path": "aynaIntents[0].cancelledByPreview",
+   "why": "EMP önizlemesi Nişancı’yı sersemletirse 1 numaralı atış düşer"
+  },
+  {
+   "path": "selection.area.center",
+   "why": "EMP hedefi (4,1)"
+  }
+ ]
+}

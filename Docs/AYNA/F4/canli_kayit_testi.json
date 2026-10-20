@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var game=UnityEngine.Object.FindFirstObjectByType<Corrigible.Ayna.Game.AynaGameController>(); return new { Queue=game.Screens.A2.Queue.Length, Exact=game.ExportSave()==System.IO.File.ReadAllText(\"Temp/AynaF4ExpectedSave.json\") };",
+      "timeout": "60000"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "Queue": 1,
+        "Exact": true
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "/Users/selimkamyan/Gits/Corrigible"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

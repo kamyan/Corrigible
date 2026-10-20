@@ -1,0 +1,45 @@
+{
+  "success": true,
+  "command": "command eval_file",
+  "data": {
+    "command": "eval_file",
+    "parameters": {
+      "file": "Tools/Ayna/f3_editor_state.cs",
+      "timeout": "60000"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "Playing": false,
+        "Compiling": false,
+        "Scenes": [
+          {
+            "path": "Assets/Corrigible/Desk/Scenes/DeskGame.unity",
+            "isDirty": false,
+            "isLoaded": true
+          }
+        ],
+        "CoreReferences": [
+          "netstandard",
+          "Newtonsoft.Json",
+          "Corrigible.Core"
+        ],
+        "MindReferences": [
+          "netstandard",
+          "Corrigible.Ayna.Core",
+          "Corrigible.Core",
+          "Newtonsoft.Json"
+        ]
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "/Users/selimkamyan/Gits/Corrigible"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

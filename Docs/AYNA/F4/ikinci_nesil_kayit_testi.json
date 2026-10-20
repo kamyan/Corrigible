@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var c=UnityEngine.Object.FindFirstObjectByType<Corrigible.Ayna.Game.AynaGameController>();var before=c.ExportSave();for(int i=0;i<2;i++){c.SaveGame();c.LoadGame();}return new{Generation=c.Match.Simulation.Record.ProfileAtStart.Generation,Exact=before==c.ExportSave()};",
+      "timeout": "60000"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "Generation": 1,
+        "Exact": true
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "/Users/selimkamyan/Gits/Corrigible"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

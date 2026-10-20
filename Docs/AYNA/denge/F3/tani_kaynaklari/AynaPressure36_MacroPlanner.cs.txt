@@ -1,0 +1,104 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Corrigible.Ayna.Core;
+using Corrigible.Ayna.Mind.Bots;
+
+namespace Corrigible.Ayna.Mind
+{
+    public static class MacroPlanner
+    {
+        public static Plan Choose(SideView view, MindSession session)
+        {
+            session.Observe(view);
+            var b = view.BalanceSnapshot(); var candidates = new List<Plan>(); var keys = new HashSet<string>();
+            for (int k = 0; k < b.PlannerCandidates; k++)
+            {
+                var style = k == b.PlannerCandidates - 1 ? BotStyle.Greedy : k % 4 == 0 ? BotStyle.Aggro : k % 4 == 1 ? BotStyle.Stealth : BotStyle.Balanced;
+                var plan = PlanFactory.Build(view, style, k, balance: b);
+                if (k == 4 || k == 5) plan = PlanFactory.Withdraw(view, plan, b);
+                // Ek makro seçenekler de aynı doğrulama/ödeme sırasından geçer; gizli gerçek bilgi gerekmez.
+                if (k == 2 && view.CoreMove == null && view.Region(view.CoreRegion).EnemyMin > 0)
+                {
+                    var refuge = view.Regions.Where(r => r.OwnServers > 0 && r.Id != view.CoreRegion).OrderBy(r => r.EnemyMin).ThenByDescending(r => r.OwnServers).ThenBy(r => r.Id, StringComparer.Ordinal).FirstOrDefault();
+                    if (refuge != null) plan.Orders.Insert(0, new Order { Kind = OrderKind.MoveCore, Region = refuge.Id });
+                }
+                if (k == 3 && view.Armies.Count < b.MaxArmies && view.Compute >= b.NewArmyCost)
+                    plan.Orders.Insert(0, new Order { Kind = OrderKind.NewArmy, Region = view.CoreRegion });
+                if (k == 6 && view.Architecture == Architecture.Ghost)
+                    plan.Orders.Insert(0, new Order { Kind = OrderKind.Feint, Region = view.EnemyCoreRegion ?? view.CoreRegion });
+                if (k == 7)
+                {
+                    var target = plan.Orders.FirstOrDefault(o => o.Kind == OrderKind.Attack)?.Region;
+                    if (target != null) plan.Orders.Insert(0, new Order { Kind = OrderKind.Hide, Region = target });
+                }
+                if (keys.Add(AynaJson.Write(plan))) candidates.Add(plan);
+            }
+            if (session.HasEvidence)
+            {
+                var forecast = session.Predict(view);
+                var targets = forecast.Where(p => p.Kind == OrderKind.Expand && p.Region != null).ToDictionary(p => p.Region, p => p.Probability);
+                var counter = PlanFactory.Build(view, BotStyle.Balanced, 0, balance: b, targetWeights: targets);
+                var attack = forecast.Where(p => p.Kind == OrderKind.Attack && p.Region != null && view.Region(p.Region).OwnServers > 0).OrderByDescending(p => p.Probability).FirstOrDefault();
+                if (attack != null && MindSession.TargetProbability(forecast, attack.Kind, attack.Region) >= b.ModelPlanThreshold && view.Region(attack.Region).OwnWall < b.MaxWall)
+                    counter.Orders.Insert(0, new Order { Kind = OrderKind.BuildWall, Region = attack.Region });
+                candidates.Insert(0, counter); if (candidates.Count > b.PlannerCandidates) candidates.RemoveAt(candidates.Count - 1);
+            }
+            if (candidates.Count == 0) return new Plan();
+            var samples = new List<(BeliefSimulator Sim, Plan Opponent, Plan Reactive)>();
+            for (int n = 0; n < b.PlannerSamples; n++)
+            {
+                var guess = session.SampleBelief(view); var sim = new BeliefSimulator(view, guess);
+                if (b.SurprisePolicy >= 2) sim.PublishForecast(view.Side, session.Predict(view));
+                var enemy = sim.View(view.Side.Other());
+                var style = session.SuggestedStyle(guess.EnemyArchitecture == Architecture.Fortress ? BotStyle.Stealth : guess.EnemyArchitecture == Architecture.Swarm ? BotStyle.Aggro : BotStyle.Balanced, b);
+                var targetWeights = session.HasEvidence && style != BotStyle.Surprise ? session.Predict(view).Where(p => p.Kind == OrderKind.Expand && p.Region != null).ToDictionary(p => p.Region, p => p.Probability) : null;
+                samples.Add((sim, PlanFactory.Build(enemy, style, n, balance: b, targetWeights: targetWeights), PlanFactory.Build(enemy, BotStyle.Surprise, n, balance: b)));
+            }
+            string pursuitTarget = session.HasEvidence && session.Checkpoint().Behavior.LocationConfidence >= b.BehaviorContactConfidence ? samples[0].Sim.View(view.Side.Other()).CoreRegion : null;
+            if(pursuitTarget != null) {
+                var pursuit = PlanFactory.Build(view,BotStyle.Aggro,0,balance:b);
+                foreach(var army in view.Armies.Where(a=>a.Count>=b.MinRaidUnits && a.Region!=pursuitTarget)) {
+                    var step=AynaWorldData.Neighbours(army.Region,view.Tiers[0]>=3).Where(n=>view.Linked(army.Region,n)).OrderBy(n=>AynaWorldData.Distance(n,pursuitTarget)).ThenBy(n=>n,StringComparer.Ordinal).FirstOrDefault();
+                    if(step==null || AynaWorldData.Distance(step,pursuitTarget)>=AynaWorldData.Distance(army.Region,pursuitTarget))continue;
+                    pursuit.Orders.RemoveAll(o=>o.ArmyId==army.Id&&(o.Kind==OrderKind.March||o.Kind==OrderKind.Attack));
+                    pursuit.Orders.Insert(0,new Order{Kind=OrderKind.March,ArmyId=army.Id,Region=step});
+                }
+                if(keys.Add(AynaJson.Write(pursuit))){candidates.Insert(0,pursuit);if(candidates.Count>b.PlannerCandidates)candidates.RemoveAt(candidates.Count-1);}
+            }
+            double Approach(SideView end) => pursuitTarget==null?0:end.Armies.Where(a=>a.Count>=b.MinRaidUnits).Sum(a=>36.0*(6-AynaWorldData.Distance(a.Region,pursuitTarget)));
+            double best = double.NegativeInfinity; var scored = new List<(Plan Plan, double Score)>();
+            foreach (var plan in candidates)
+            {
+                double total = 0;
+                foreach (var sample in samples)
+                {
+                    double Value(Plan enemy){var end=sample.Sim.Evaluate(view.Side,plan,enemy);return Evaluate(end,b)+Approach(end);}
+                    double expected = Value(sample.Opponent);
+                    double reactive = b.SurprisePolicy >= 2 ? Value(sample.Reactive) : expected;
+                    total += (1 - b.RobustResponseWeight) * expected + b.RobustResponseWeight * Math.Min(expected, reactive);
+                }
+                double score = total / samples.Count; scored.Add((plan, score)); if (score > best) best = score;
+            }
+            double tolerance = view.Architecture == Architecture.Ghost ? b.GhostCandidateTolerance : 0;
+            var tied = scored.Where(x => x.Score >= best - tolerance).ToArray();
+            return tied[(int)Math.Floor(session.Rng.Next() * tied.Length)].Plan.Copy();
+        }
+        public static double Evaluate(SideView v, AynaBalance b)
+        {
+            if (v.Outcome.Finished) return v.Outcome.Winner == v.Side ? AynaWorldData.TotalServers * b.ScoreServer : v.Outcome.Winner == Side.None ? -b.ScoreCore : -AynaWorldData.TotalServers * b.ScoreServer;
+            double raid = b.TacticalPlanning && v.EnemyCoreRegion != null && v.Armies.Any(a => a.Region == v.EnemyCoreRegion && a.Count >= b.MinRaidUnits) ?
+                v.Battles.Count(battle => battle.Region == v.EnemyCoreRegion) * b.ScoreCoreRaid : 0;
+            double tier = v.Tiers.Sum();
+            if (v.Training != null) tier += v.Training.Progress / (double)b.TrainingDurations[v.Training.Tier - 1];
+            double noiseWeight = v.Architecture == Architecture.Swarm ? b.SwarmAwarenessWeight : 1;
+            double singularity = (v.Singularity?.Progress ?? 0) * (v.Architecture == Architecture.Fortress ? b.FortressSingularityWeight : 1);
+            double danger = v.CoreRegion == null ? b.ScoreCore : Math.Max(0, v.Region(v.CoreRegion).EnemyMin - v.Region(v.CoreRegion).OwnServers);
+            double risk = v.Awareness * (1 + b.AwarenessRiskScale * Math.Pow(v.Awareness / b.OutageThreshold, b.AwarenessRiskExponent));
+            double denial = b.SurprisePolicy >= 2 ? v.Regions.Sum(r => r.EnemyMin) * b.ScoreServer * b.ScoreEnemyControl : 0;
+            return raid - denial + v.OwnServers * b.ScoreServer + v.Compute * b.ScoreCompute + Enumerable.Range(0, 5).Count(f => v.Data((DataFamily)f) > 0) * b.ScoreData +
+                tier * b.ScoreTier + singularity * b.ScoreSingularity + v.Armies.SelectMany(a => a.Units).Sum(u => u.Hp) * b.ScoreArmyHp +
+                v.Regions.Sum(r => r.OwnWall) * b.ScoreWall - risk * b.ScoreAwareness * noiseWeight - danger * b.ScoreCore - v.Battles.Count * b.ScoreBattle;
+        }
+    }
+}

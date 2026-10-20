@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 660b07ccec25f4af8a737cf2fce68fde, type: 3}
+  m_Name: AynaInterfaceTheme
+  m_EditorClassIdentifier: Corrigible.Ayna.Game::Corrigible.Ayna.Game.AynaInterfaceTheme
+  Background: {r: 0.008, g: 0.025, b: 0.045, a: 1}
+  Panel: {r: 0.018, g: 0.045, b: 0.075, a: 1}
+  Text: {r: 0.89, g: 0.97, b: 1, a: 1}
+  Muted: {r: 0.5, g: 0.68, b: 0.76, a: 1}
+  Chrome: {r: 0.36, g: 0.89, b: 1, a: 1}
+  Player: {r: 1, g: 0.71, b: 0.28, a: 1}
+  Enemy: {r: 0.24, g: 0.55, b: 1, a: 1}
+  Uncertain: {r: 0.68, g: 0.51, b: 1, a: 1}
+  Danger: {r: 1, g: 0.25, b: 0.36, a: 1}
+  Verified: {r: 0.24, g: 1, b: 0.71, a: 1}
+  HeadingFont: {fileID: 11400000, guid: fb2b99fc013f34380b7f8f90dfc1c7fb, type: 2}
+  BodyFont: {fileID: 11400000, guid: 8ce9e404e184c474e895a406c4327348, type: 2}
+  MonoFont: {fileID: 11400000, guid: b5122ef9748c3482ca19070a68f0ad35, type: 2}
+  TypewriterDelay: 0.5
+  TypewriterDuration: 1.8
+  PanelFade: 0.2

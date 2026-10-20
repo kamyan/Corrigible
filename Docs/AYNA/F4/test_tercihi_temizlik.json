@@ -1,0 +1,26 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "var p=Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText(\"/private/tmp/AynaF4UserBackup/pref_restore_payload.json\"));bool same=UnityEngine.PlayerPrefs.GetString(\"PT_Run\")==((string)p[\"expected\"]);if(same){if((bool)p[\"existed\"])UnityEngine.PlayerPrefs.SetString(\"PT_Run\",(string)p[\"old\"]);else UnityEngine.PlayerPrefs.DeleteKey(\"PT_Run\");UnityEngine.PlayerPrefs.Save();}return new{TestPreferenceRestored=same};",
+      "timeout": "60000"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "TestPreferenceRestored": false
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "/Users/selimkamyan/Gits/Corrigible"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

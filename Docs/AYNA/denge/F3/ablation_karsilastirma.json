@@ -1,0 +1,15 @@
+{
+  "CodeVersion": "451303e16672264bb3e1007e672397b9fcb6461779189b88b4d256e544fba7f1",
+  "On": "Docs/AYNA/denge/F3/final/20261019_195723_485_Surprise_Full.json",
+  "Off": "Docs/AYNA/denge/F3/ablation/20261020_042736_894_Surprise_Full.json",
+  "Series": 20,
+  "Games": 100,
+  "PlayerWinOn": 0.96,
+  "PlayerWinOff": 0.74,
+  "Difference": 0.21999999999999997,
+  "PairedSeries95CI": [
+    0.14,
+    0.3
+  ],
+  "Caveat": "Aynı politika/tohumlarda ödül+ilk vuruşu kaldırma etkisi; 20 seri tanısıdır, 100 seri kabulü değildir. İki oyun yolunun ayrılması normaldir. Greedy ile politika farkını ayırmaz."
+}

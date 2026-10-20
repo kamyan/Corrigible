@@ -1,0 +1,62 @@
+{
+  "source": "Docs/AYNA/denge/F2/measurement/20261019_122600_296.json",
+  "train": "çift tohumlar",
+  "heldout": "tek tohumlar",
+  "trainGames": 200,
+  "heldoutGames": 200,
+  "AutoTacticalValue": [
+    2.5546398812227715,
+    2.95,
+    2.5,
+    4.0,
+    19.084457137591773,
+    2.534865603285678,
+    2.1418522867210927,
+    1.712723253354092,
+    3.4192829497005075,
+    2.153110720194907
+  ],
+  "TriangleStrength": 0,
+  "trainBrier": 0.20984312094888924,
+  "heldoutBrier": 0.1939579939368483,
+  "baselineTrainBrier": 0.2565790733766287,
+  "baselineHeldoutBrier": 0.26019588357707907,
+  "heldoutBuckets": [
+    {
+      "bucket": 1,
+      "n": 32,
+      "prediction": 0.15933371479637362,
+      "actual": 0.09375
+    },
+    {
+      "bucket": 3,
+      "n": 8,
+      "prediction": 0.39008690174036187,
+      "actual": 0.375
+    },
+    {
+      "bucket": 4,
+      "n": 40,
+      "prediction": 0.45240656292079884,
+      "actual": 0.375
+    },
+    {
+      "bucket": 5,
+      "n": 80,
+      "prediction": 0.5237967185396006,
+      "actual": 0.5625
+    },
+    {
+      "bucket": 6,
+      "n": 8,
+      "prediction": 0.6099130982596381,
+      "actual": 0.625
+    },
+    {
+      "bucket": 8,
+      "n": 32,
+      "prediction": 0.8406662852036264,
+      "actual": 0.90625
+    }
+  ]
+}

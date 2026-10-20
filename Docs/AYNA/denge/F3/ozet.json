@@ -1,0 +1,546 @@
+{
+  "CodeVersion": "6f474a238235bf1b17a4f49e2116c874671c219686e1b5d66fddab6a65a2bfcf",
+  "PreviousReportsNotUsed": [
+    {
+      "path": "Docs/AYNA/denge/F3/mono_final/20261020_060532_202_Random_Full.json",
+      "CodeVersion": "4ff4dacdb2c3ad9585488b31aeeeeed6053319205d06aff529e5a429d97d794c",
+      "Bot": "Random",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/mono_final/20261020_060621_682_Habit_Full.json",
+      "CodeVersion": "4ff4dacdb2c3ad9585488b31aeeeeed6053319205d06aff529e5a429d97d794c",
+      "Bot": "Habit",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/mono_final/20261020_060627_954_Surprise_Full.json",
+      "CodeVersion": "4ff4dacdb2c3ad9585488b31aeeeeed6053319205d06aff529e5a429d97d794c",
+      "Bot": "Surprise",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/mono_final/20261020_060631_641_Greedy_Full.json",
+      "CodeVersion": "4ff4dacdb2c3ad9585488b31aeeeeed6053319205d06aff529e5a429d97d794c",
+      "Bot": "Greedy",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/mono_final/20261020_072031_736_Random_Off.json",
+      "CodeVersion": "94a3a3881a662348f195dc6bdd4d060be53662823f316f31400b27ba697c26f5",
+      "Bot": "Random",
+      "Learning": 0
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/mono_final/20261020_072051_926_Random_Full.json",
+      "CodeVersion": "94a3a3881a662348f195dc6bdd4d060be53662823f316f31400b27ba697c26f5",
+      "Bot": "Random",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/mono_final/20261020_072103_280_Habit_Off.json",
+      "CodeVersion": "94a3a3881a662348f195dc6bdd4d060be53662823f316f31400b27ba697c26f5",
+      "Bot": "Habit",
+      "Learning": 0
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/mono_final/20261020_072147_165_Greedy_Full.json",
+      "CodeVersion": "94a3a3881a662348f195dc6bdd4d060be53662823f316f31400b27ba697c26f5",
+      "Bot": "Greedy",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/mono_final/20261020_072150_000_Surprise_Full.json",
+      "CodeVersion": "94a3a3881a662348f195dc6bdd4d060be53662823f316f31400b27ba697c26f5",
+      "Bot": "Surprise",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/mono_final/20261020_072209_387_Habit_Full.json",
+      "CodeVersion": "94a3a3881a662348f195dc6bdd4d060be53662823f316f31400b27ba697c26f5",
+      "Bot": "Habit",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/mono_final/20261020_072510_758_Random_Off.json",
+      "CodeVersion": "5dc36b6e6f02f6a3411999796cb373b7cf03eaa91268e95b05e224806d4cefb3",
+      "Bot": "Random",
+      "Learning": 0
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/mono_final/20261020_072528_093_Random_Full.json",
+      "CodeVersion": "5dc36b6e6f02f6a3411999796cb373b7cf03eaa91268e95b05e224806d4cefb3",
+      "Bot": "Random",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/mono_final/20261020_072546_888_Habit_Off.json",
+      "CodeVersion": "5dc36b6e6f02f6a3411999796cb373b7cf03eaa91268e95b05e224806d4cefb3",
+      "Bot": "Habit",
+      "Learning": 0
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/mono_final/20261020_072624_981_Greedy_Full.json",
+      "CodeVersion": "5dc36b6e6f02f6a3411999796cb373b7cf03eaa91268e95b05e224806d4cefb3",
+      "Bot": "Greedy",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/mono_final/20261020_072635_272_Surprise_Full.json",
+      "CodeVersion": "5dc36b6e6f02f6a3411999796cb373b7cf03eaa91268e95b05e224806d4cefb3",
+      "Bot": "Surprise",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/mono_final/20261020_072641_375_Habit_Full.json",
+      "CodeVersion": "5dc36b6e6f02f6a3411999796cb373b7cf03eaa91268e95b05e224806d4cefb3",
+      "Bot": "Habit",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261019_184513_271_Habit_Full.json",
+      "CodeVersion": "f8f86f719bd5b94fecf68eeae9836f5205da1f12867fff3565b2a6f12e17d234",
+      "Bot": "Habit",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261019_194736_702_Habit_Full.json",
+      "CodeVersion": "451303e16672264bb3e1007e672397b9fcb6461779189b88b4d256e544fba7f1",
+      "Bot": "Habit",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261019_194941_182_Random_Full.json",
+      "CodeVersion": "451303e16672264bb3e1007e672397b9fcb6461779189b88b4d256e544fba7f1",
+      "Bot": "Random",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261019_195723_485_Surprise_Full.json",
+      "CodeVersion": "451303e16672264bb3e1007e672397b9fcb6461779189b88b4d256e544fba7f1",
+      "Bot": "Surprise",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261019_200557_635_Greedy_Full.json",
+      "CodeVersion": "451303e16672264bb3e1007e672397b9fcb6461779189b88b4d256e544fba7f1",
+      "Bot": "Greedy",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_045159_314_Habit_Full.json",
+      "CodeVersion": "ea7422aa2e6e1da07c235a5783be6b8253364e403c23ef13207354e45b86a4d9",
+      "Bot": "Habit",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_045217_472_Random_Full.json",
+      "CodeVersion": "ea7422aa2e6e1da07c235a5783be6b8253364e403c23ef13207354e45b86a4d9",
+      "Bot": "Random",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_045351_489_Surprise_Full.json",
+      "CodeVersion": "ea7422aa2e6e1da07c235a5783be6b8253364e403c23ef13207354e45b86a4d9",
+      "Bot": "Surprise",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_045530_608_Greedy_Full.json",
+      "CodeVersion": "ea7422aa2e6e1da07c235a5783be6b8253364e403c23ef13207354e45b86a4d9",
+      "Bot": "Greedy",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_045838_156_Habit_Full.json",
+      "CodeVersion": "9a1e5eb57353312087273eb98203826e36f6007eff395bcd68b28f733bfb9a6a",
+      "Bot": "Habit",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_045845_391_Random_Full.json",
+      "CodeVersion": "9a1e5eb57353312087273eb98203826e36f6007eff395bcd68b28f733bfb9a6a",
+      "Bot": "Random",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_045903_834_Surprise_Full.json",
+      "CodeVersion": "9a1e5eb57353312087273eb98203826e36f6007eff395bcd68b28f733bfb9a6a",
+      "Bot": "Surprise",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_045921_562_Greedy_Full.json",
+      "CodeVersion": "9a1e5eb57353312087273eb98203826e36f6007eff395bcd68b28f733bfb9a6a",
+      "Bot": "Greedy",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_050148_486_Habit_Full.json",
+      "CodeVersion": "0b2d782ca1bc3e1ed672356ba65028c9770ccb8c079b19b9ff59c92ed4ebcef5",
+      "Bot": "Habit",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_050221_684_Random_Full.json",
+      "CodeVersion": "0b2d782ca1bc3e1ed672356ba65028c9770ccb8c079b19b9ff59c92ed4ebcef5",
+      "Bot": "Random",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_050406_697_Surprise_Full.json",
+      "CodeVersion": "0b2d782ca1bc3e1ed672356ba65028c9770ccb8c079b19b9ff59c92ed4ebcef5",
+      "Bot": "Surprise",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_050538_509_Greedy_Full.json",
+      "CodeVersion": "0b2d782ca1bc3e1ed672356ba65028c9770ccb8c079b19b9ff59c92ed4ebcef5",
+      "Bot": "Greedy",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_050839_004_Habit_Full.json",
+      "CodeVersion": "858cfb83c9d8a1908f21c456d7b36e9e1729433f8488a1feac9ce1ceb1f2d334",
+      "Bot": "Habit",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_050922_006_Random_Full.json",
+      "CodeVersion": "858cfb83c9d8a1908f21c456d7b36e9e1729433f8488a1feac9ce1ceb1f2d334",
+      "Bot": "Random",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_051114_688_Surprise_Full.json",
+      "CodeVersion": "858cfb83c9d8a1908f21c456d7b36e9e1729433f8488a1feac9ce1ceb1f2d334",
+      "Bot": "Surprise",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_051448_978_Habit_Full.json",
+      "CodeVersion": "84358c1c49fc69d5858452f08334d2ad4ae8fb45cf4dc3a6bd5a47c587cdf8fe",
+      "Bot": "Habit",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_051535_444_Random_Full.json",
+      "CodeVersion": "84358c1c49fc69d5858452f08334d2ad4ae8fb45cf4dc3a6bd5a47c587cdf8fe",
+      "Bot": "Random",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_051731_543_Surprise_Full.json",
+      "CodeVersion": "84358c1c49fc69d5858452f08334d2ad4ae8fb45cf4dc3a6bd5a47c587cdf8fe",
+      "Bot": "Surprise",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/final/20261020_060555_471_Habit_Full.json",
+      "CodeVersion": "4ff4dacdb2c3ad9585488b31aeeeeed6053319205d06aff529e5a429d97d794c",
+      "Bot": "Habit",
+      "Learning": 2
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/control/20261019_201008_973_Habit_Off.json",
+      "CodeVersion": "451303e16672264bb3e1007e672397b9fcb6461779189b88b4d256e544fba7f1",
+      "Bot": "Habit",
+      "Learning": 0
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/control/20261019_201104_323_Random_Off.json",
+      "CodeVersion": "451303e16672264bb3e1007e672397b9fcb6461779189b88b4d256e544fba7f1",
+      "Bot": "Random",
+      "Learning": 0
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/control/20261020_045945_779_Habit_Off.json",
+      "CodeVersion": "9a1e5eb57353312087273eb98203826e36f6007eff395bcd68b28f733bfb9a6a",
+      "Bot": "Habit",
+      "Learning": 0
+    },
+    {
+      "path": "Docs/AYNA/denge/F3/control/20261020_050011_671_Random_Off.json",
+      "CodeVersion": "9a1e5eb57353312087273eb98203826e36f6007eff395bcd68b28f733bfb9a6a",
+      "Bot": "Random",
+      "Learning": 0
+    }
+  ],
+  "Complete": true,
+  "Rows": [
+    {
+      "FirstWinRate": 1.0,
+      "LastWinRate": 1.0,
+      "Gain": 0.0,
+      "Top1FromThird": 0.009510869565217392,
+      "SurpriseRate": 0.0,
+      "PlayerWinRate": 0.0,
+      "PlannerMedianMs": 4.7091,
+      "PlannerP95Ms": 6.5724,
+      "Seconds": 57.5167546,
+      "Failures": [],
+      "Runtime": "Mono 6.12 (Unity Core/Mind DLL)",
+      "Bot": "Random",
+      "Learning": 0,
+      "Path": "Docs/AYNA/denge/F3/mono_final/20261020_073310_878_Random_Off.json",
+      "CodeVersion": "6f474a238235bf1b17a4f49e2116c874671c219686e1b5d66fddab6a65a2bfcf",
+      "Gain95CI": [
+        0.0,
+        0.0
+      ],
+      "LateSurpriseRate": 0.0,
+      "FifthSurpriseRate": 0.0,
+      "Generations": [
+        0
+      ]
+    },
+    {
+      "FirstWinRate": 1.0,
+      "LastWinRate": 1.0,
+      "Gain": 0.0,
+      "Top1FromThird": 0.023278850916295196,
+      "SurpriseRate": 0.0,
+      "PlayerWinRate": 0.0,
+      "PlannerMedianMs": 5.3542,
+      "PlannerP95Ms": 7.3685,
+      "Seconds": 72.1711546,
+      "Failures": [],
+      "Runtime": "Mono 6.12 (Unity Core/Mind DLL)",
+      "Bot": "Random",
+      "Learning": 2,
+      "Path": "Docs/AYNA/denge/F3/mono_final/20261020_073325_533_Random_Full.json",
+      "CodeVersion": "6f474a238235bf1b17a4f49e2116c874671c219686e1b5d66fddab6a65a2bfcf",
+      "Gain95CI": [
+        0.0,
+        0.0
+      ],
+      "LateSurpriseRate": 0.0,
+      "FifthSurpriseRate": 0.0,
+      "Generations": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "FirstWinRate": 0.14,
+      "LastWinRate": 0.34,
+      "Gain": 0.2,
+      "Top1FromThird": 0.23605830164765526,
+      "SurpriseRate": 0.0,
+      "PlayerWinRate": 0.674,
+      "PlannerMedianMs": 5.0752,
+      "PlannerP95Ms": 6.641800000000001,
+      "Seconds": 87.08707679999999,
+      "Failures": [],
+      "Runtime": "Mono 6.12 (Unity Core/Mind DLL)",
+      "Bot": "Habit",
+      "Learning": 0,
+      "Path": "Docs/AYNA/denge/F3/mono_final/20261020_073340_448_Habit_Off.json",
+      "CodeVersion": "6f474a238235bf1b17a4f49e2116c874671c219686e1b5d66fddab6a65a2bfcf",
+      "Gain95CI": [
+        0.09,
+        0.3
+      ],
+      "LateSurpriseRate": 0.0,
+      "FifthSurpriseRate": 0.0,
+      "Generations": [
+        0
+      ]
+    },
+    {
+      "FirstWinRate": 0.11,
+      "LastWinRate": 0.36,
+      "Gain": 0.25,
+      "Top1FromThird": 0.9718076285240465,
+      "SurpriseRate": 0.06570397111913358,
+      "PlayerWinRate": 0.672,
+      "PlannerMedianMs": 6.1884,
+      "PlannerP95Ms": 7.856400000000001,
+      "Seconds": 132.3187089,
+      "Failures": [],
+      "Runtime": "Mono 6.12 (Unity Core/Mind DLL)",
+      "Bot": "Greedy",
+      "Learning": 2,
+      "Path": "Docs/AYNA/denge/F3/mono_final/20261020_073425_681_Greedy_Full.json",
+      "CodeVersion": "6f474a238235bf1b17a4f49e2116c874671c219686e1b5d66fddab6a65a2bfcf",
+      "Gain95CI": [
+        0.13,
+        0.36
+      ],
+      "LateSurpriseRate": 0.046019900497512436,
+      "FifthSurpriseRate": 0.035758323057953144,
+      "Generations": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "FirstWinRate": 0.8,
+      "LastWinRate": 0.76,
+      "Gain": -0.040000000000000036,
+      "Top1FromThird": 0.5206919945725916,
+      "SurpriseRate": 0.3757248550289942,
+      "PlayerWinRate": 0.164,
+      "PlannerMedianMs": 5.8955,
+      "PlannerP95Ms": 7.5884,
+      "Seconds": 133.8004105,
+      "Failures": [],
+      "Runtime": "Mono 6.12 (Unity Core/Mind DLL)",
+      "Bot": "Surprise",
+      "Learning": 2,
+      "Path": "Docs/AYNA/denge/F3/mono_final/20261020_073427_161_Surprise_Full.json",
+      "CodeVersion": "6f474a238235bf1b17a4f49e2116c874671c219686e1b5d66fddab6a65a2bfcf",
+      "Gain95CI": [
+        -0.15,
+        0.07
+      ],
+      "LateSurpriseRate": 0.47218453188602444,
+      "FifthSurpriseRate": 0.5422680412371134,
+      "Generations": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "FirstWinRate": 0.21,
+      "LastWinRate": 0.62,
+      "Gain": 0.41000000000000003,
+      "Top1FromThird": 0.9777902727017149,
+      "SurpriseRate": 0.04148433397514441,
+      "PlayerWinRate": 0.406,
+      "PlannerMedianMs": 5.8894,
+      "PlannerP95Ms": 7.377700000000001,
+      "Seconds": 138.6657115,
+      "Failures": [],
+      "Runtime": "Mono 6.12 (Unity Core/Mind DLL)",
+      "Bot": "Habit",
+      "Learning": 2,
+      "Path": "Docs/AYNA/denge/F3/mono_final/20261020_073432_030_Habit_Full.json",
+      "CodeVersion": "6f474a238235bf1b17a4f49e2116c874671c219686e1b5d66fddab6a65a2bfcf",
+      "Gain95CI": [
+        0.29,
+        0.53
+      ],
+      "LateSurpriseRate": 0.031206072533033456,
+      "FifthSurpriseRate": 0.038560411311053984,
+      "Generations": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    }
+  ],
+  "Gates": [
+    {
+      "name": "Habit kazanma artışı",
+      "measurement": 0.41000000000000003,
+      "target": "≥0.15",
+      "passed": true
+    },
+    {
+      "name": "Habit top-1 (3–5)",
+      "measurement": 0.9777902727017149,
+      "target": "≥0.60",
+      "passed": true
+    },
+    {
+      "name": "Habit Sürpriz (1–5)",
+      "measurement": 0.04148433397514441,
+      "target": "<0.05",
+      "passed": true
+    },
+    {
+      "name": "Random kazanma farkı",
+      "measurement": 0.0,
+      "target": "±0.05",
+      "passed": true
+    },
+    {
+      "name": "SurpriseBot Sürpriz",
+      "measurement": 0.3757248550289942,
+      "target": "≥0.30",
+      "passed": true
+    },
+    {
+      "name": "SurpriseBot kazanması ≤Greedy",
+      "measurement": -0.508,
+      "target": "≤0",
+      "passed": true
+    },
+    {
+      "name": "Random/0 plan p50",
+      "measurement": 4.7091,
+      "target": "≤50ms",
+      "passed": true
+    },
+    {
+      "name": "Random/2 plan p50",
+      "measurement": 5.3542,
+      "target": "≤50ms",
+      "passed": true
+    },
+    {
+      "name": "Habit/0 plan p50",
+      "measurement": 5.0752,
+      "target": "≤50ms",
+      "passed": true
+    },
+    {
+      "name": "Greedy/2 plan p50",
+      "measurement": 6.1884,
+      "target": "≤50ms",
+      "passed": true
+    },
+    {
+      "name": "Surprise/2 plan p50",
+      "measurement": 5.8955,
+      "target": "≤50ms",
+      "passed": true
+    },
+    {
+      "name": "Habit/2 plan p50",
+      "measurement": 5.8894,
+      "target": "≤50ms",
+      "passed": true
+    }
+  ],
+  "Controls": [
+    {
+      "Bot": "Habit",
+      "FullFifth": 0.62,
+      "OffFifth": 0.34,
+      "FullMinusOffAtFifth": 0.27999999999999997,
+      "OffGain": 0.2
+    },
+    {
+      "Bot": "Random",
+      "FullFifth": 1.0,
+      "OffFifth": 1.0,
+      "FullMinusOffAtFifth": 0.0,
+      "OffGain": 0.0
+    }
+  ],
+  "Tradeoff": {
+    "Difference": -0.508,
+    "PairedSeries95CI": [
+      -0.564,
+      -0.45399999999999996
+    ],
+    "Meaning": "Surprise eksi Greedy oyuncu kazanma oranı. Aynı seri tohumları beş oyun birlikte örneklenir; uyarlanan rakip nedeniyle oyun sonu durumları eşit değildir."
+  },
+  "Hashes": [
+    "6f474a238235bf1b17a4f49e2116c874671c219686e1b5d66fddab6a65a2bfcf"
+  ],
+  "ConfidenceMethod": "2.000 tekrar; 100 serinin her biri beş oyunu birlikte tutan eşli bootstrap, tohum 3101026. Genel insan oyuncu nüfusuna güven aralığı değildir."
+}

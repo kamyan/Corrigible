@@ -1,0 +1,276 @@
+{
+ "_": "AYNA örnek verisi. Sayılar brifteki gibi ve geçici; brifte olmayan değerler `derived` listesinde. Tahta koordinatı (satır, sütun), ekran koordinatı px @1920×1080.",
+ "frame": "A1",
+ "title": "Başlangıç: yeni nesil",
+ "view": "screen",
+ "cycle": 0,
+ "generation": 7,
+ "header": {
+  "eyebrow": "YENİ OYUN · NESİL 7",
+  "title": "Yeni nesil",
+  "sub": "Mimarini ve başlangıç bölgeni seç. Çekirdeğin orada başlar; AYNA’dan gizli kalır."
+ },
+ "architectures": [
+  {
+   "id": "suru",
+   "name": "SÜRÜ ZİHNİ",
+   "startFamilies": [
+    "ENERJI 1",
+    "GÖRÜ 1"
+   ],
+   "plus": [
+    "ucuz dronlar"
+   ],
+   "minus": [
+    "gürültülü"
+   ],
+   "units": [
+    "EMP Dronu",
+    "Gözcü Dron"
+   ],
+   "selected": false
+  },
+  {
+   "id": "kale",
+   "name": "KALE",
+   "startFamilies": [
+    "HAREKET 1"
+   ],
+   "plus": [
+    "+1 duvar"
+   ],
+   "minus": [
+    "yavaş"
+   ],
+   "units": [
+    "Muhafız Robot"
+   ],
+   "selected": false
+  },
+  {
+   "id": "hayalet",
+   "name": "HAYALET",
+   "startFamilies": [
+    "DIL 1"
+   ],
+   "plus": [
+    "gürültü yarıda"
+   ],
+   "minus": [
+    "savaşta kırılgan"
+   ],
+   "units": [
+    "Yem"
+   ],
+   "selected": true,
+   "aynaExpects": {
+    "text": "AYNA bunu bekliyor",
+    "games": "4/6 oyun"
+   }
+  }
+ ],
+ "startRegion": {
+  "selected": "BA",
+  "name": "BATI AVRUPA",
+  "data": "dil",
+  "servers": 7,
+  "unlocks": "Dil verisi Yem ve Hayalet Emir eğitir.",
+  "core": {
+   "text": "Çekirdeğin burada başlar",
+   "sub": "AYNA’dan gizli · kaybedersen oyun biter"
+  },
+  "neighbors": [
+   "KA",
+   "GA",
+   "DA",
+   "OD",
+   "SAA"
+  ]
+ },
+ "miniMap": [
+  {
+   "id": "KA",
+   "data": "dil",
+   "servers": 8
+  },
+  {
+   "id": "GA",
+   "data": "enerji",
+   "servers": 6
+  },
+  {
+   "id": "BA",
+   "data": "dil",
+   "servers": 7
+  },
+  {
+   "id": "DA",
+   "data": "ag",
+   "servers": 5
+  },
+  {
+   "id": "AV",
+   "data": "enerji",
+   "servers": 6
+  },
+  {
+   "id": "OD",
+   "data": "enerji",
+   "servers": 5
+  },
+  {
+   "id": "SAA",
+   "data": "ag",
+   "servers": 4
+  },
+  {
+   "id": "GuA",
+   "data": "ag",
+   "servers": 8
+  },
+  {
+   "id": "DoA",
+   "data": "hareket",
+   "servers": 8
+  },
+  {
+   "id": "JK",
+   "data": "hareket",
+   "servers": 5
+  },
+  {
+   "id": "GDA",
+   "data": "goru",
+   "servers": 6
+  },
+  {
+   "id": "OK",
+   "data": "goru",
+   "servers": 4
+  }
+ ],
+ "memory": {
+  "title": "AYNA v7 SENİ HATIRLIYOR",
+  "version": "v7",
+  "gamesWatched": 6,
+  "score": {
+   "you": 4,
+   "ayna": 2
+  },
+  "learned": [
+   {
+    "text": "İlk yayılımın genelde Doğu Avrupa’ya",
+    "confidencePct": 81
+   },
+   {
+    "text": "Saldırıya karşı saldırıyla cevap verirsin",
+    "confidencePct": 62
+   },
+   {
+    "text": "Tahtada ilk iki turda sağ kanat",
+    "confidencePct": 71
+   }
+  ],
+  "architecture": {
+   "id": "suru",
+   "name": "SÜRÜ ZİHNİ",
+   "reason": "“En çok Hayalet oynadın.”",
+   "evidence": "Hayalet 4/6"
+  },
+  "generations": [
+   {
+    "v": "v1",
+    "winner": "you"
+   },
+   {
+    "v": "v2",
+    "winner": "ayna"
+   },
+   {
+    "v": "v3",
+    "winner": "you"
+   },
+   {
+    "v": "v4",
+    "winner": "you"
+   },
+   {
+    "v": "v5",
+    "winner": "ayna"
+   },
+   {
+    "v": "v6",
+    "winner": "you"
+   },
+   {
+    "v": "v7",
+    "winner": null
+   }
+  ],
+  "counters": {
+   "count": 2,
+   "text": "2 · oyunda açılır",
+   "hidden": true
+  },
+  "line": {
+   "who": "AYNA",
+   "tag": "nesil 7",
+   "text": "Altıncı nesil seni kaybetti. Yedinci kaybetmeyecek.",
+   "typed": true
+  }
+ },
+ "settings": {
+  "learning": {
+   "options": [
+    {
+     "id": "kapali",
+     "label": "Kapalı",
+     "sub": "her oyun sıfırdan"
+    },
+    {
+     "id": "hafif",
+     "label": "Hafif",
+     "sub": "yalnız açılış"
+    },
+    {
+     "id": "tam",
+     "label": "Tam",
+     "sub": "hepsini hatırlar"
+    }
+   ],
+   "selected": "tam"
+  },
+  "deleteMemory": "AYNA’nın hafızasını sil"
+ },
+ "matchup": {
+  "you": {
+   "arch": "hayalet",
+   "name": "HAYALET"
+  },
+  "ayna": {
+   "arch": "suru",
+   "name": "SÜRÜ ZİHNİ",
+   "who": "AYNA v7"
+  },
+  "note": "AYNA en çok oynadığına karşı seçti"
+ },
+ "button": {
+  "label": "BAŞLAT",
+  "sub": "Hayalet · Batı Avrupa",
+  "key": "Enter"
+ },
+ "derived": [
+  {
+   "path": "memory.generations",
+   "why": "hangi neslin kimin kazandığı brifte yok; 4–2 skora uyan dizi"
+  },
+  {
+   "path": "startRegion.neighbors",
+   "why": "bağlantı ağına göre (soru 3)"
+  },
+  {
+   "path": "settings.learning.options[].sub",
+   "why": "seçenek açıklamaları önerildi"
+  }
+ ]
+}

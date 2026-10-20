@@ -1,0 +1,81 @@
+{
+  "source": "Docs/AYNA/denge/F2/final_boards/20261019_135234_491.json",
+  "trainGames": 296,
+  "heldoutGames": 296,
+  "exponent": 0.75,
+  "trainBrierBefore": 0.24326385058091324,
+  "trainBrierAfter": 0.24291316969398297,
+  "heldoutBrierBefore": 0.23510619859021434,
+  "heldoutBrierAfter": 0.2375676167196721,
+  "buckets": {
+    "train": [
+      {
+        "bucket": 4,
+        "count": 80,
+        "prediction": 0.44705103072793484,
+        "actual": 0.425,
+        "gap": 0.02205103072793485
+      },
+      {
+        "bucket": 5,
+        "count": 184,
+        "prediction": 0.5323521711597453,
+        "actual": 0.5978260869565217,
+        "gap": 0.06547391579677642
+      },
+      {
+        "bucket": 6,
+        "count": 32,
+        "prediction": 0.6130904690224619,
+        "actual": 0.5625,
+        "gap": 0.05059046902246189
+      }
+    ],
+    "heldout": [
+      {
+        "bucket": 4,
+        "count": 80,
+        "prediction": 0.44705103072793484,
+        "actual": 0.3125,
+        "gap": 0.13455103072793484
+      },
+      {
+        "bucket": 5,
+        "count": 184,
+        "prediction": 0.5323521711597453,
+        "actual": 0.6521739130434783,
+        "gap": 0.11982174188373296
+      },
+      {
+        "bucket": 6,
+        "count": 32,
+        "prediction": 0.6130904690224619,
+        "actual": 0.65625,
+        "gap": 0.04315953097753811
+      }
+    ],
+    "all": [
+      {
+        "bucket": 4,
+        "count": 160,
+        "prediction": 0.44705103072793484,
+        "actual": 0.36875,
+        "gap": 0.07830103072793482
+      },
+      {
+        "bucket": 5,
+        "count": 368,
+        "prediction": 0.5323521711597453,
+        "actual": 0.625,
+        "gap": 0.09264782884025469
+      },
+      {
+        "bucket": 6,
+        "count": 64,
+        "prediction": 0.6130904690224619,
+        "actual": 0.609375,
+        "gap": 0.0037154690224618925
+      }
+    ]
+  }
+}

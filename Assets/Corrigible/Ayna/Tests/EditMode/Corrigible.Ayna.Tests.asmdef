@@ -1,0 +1,27 @@
+{
+  "name": "Corrigible.Ayna.Tests",
+  "references": [
+    "Corrigible.Ayna.Core",
+    "Corrigible.Ayna.Mind",
+    "Corrigible.Ayna.Editor",
+    "Corrigible.Core",
+    "UnityEngine.TestRunner",
+    "UnityEditor.TestRunner",
+    "Corrigible.Ayna.Game",
+    "Corrigible.Ayna.Presentation",
+    "Unity.ugui",
+    "Unity.TextMeshPro"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "nunit.framework.dll",
+    "Newtonsoft.Json.dll"
+  ],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ]
+}

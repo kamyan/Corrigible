@@ -1,0 +1,836 @@
+{
+ "_": "AYNA örnek verisi. Sayılar brifteki gibi ve geçici; brifte olmayan değerler `derived` listesinde. Tahta koordinatı (satır, sütun), ekran koordinatı px @1920×1080.",
+ "frame": "A3",
+ "title": "AÇ: iki plan birlikte açılıyor",
+ "view": "map",
+ "cycle": 7,
+ "phase": "ac",
+ "hud": {
+  "islem": {
+   "value": 5,
+   "incomePerCycle": 21,
+   "thisPlan": -21,
+   "surpriseFlash": true,
+   "surpriseGain": 3,
+   "surpriseLabel": "sürpriz",
+   "planSpent": -21
+  },
+  "veri": {
+   "dil": {
+    "servers": 9,
+    "tiers": [
+     "trained",
+     "trained",
+     "available"
+    ]
+   },
+   "ag": {
+    "servers": 6,
+    "tiers": [
+     "trained",
+     "training",
+     "available"
+    ],
+    "trainingProgress": "1/2 döngü"
+   },
+   "enerji": {
+    "servers": 2,
+    "tiers": [
+     "trained",
+     "locked",
+     "locked"
+    ]
+   },
+   "goru": {
+    "servers": 2,
+    "tiers": [
+     "trained",
+     "locked",
+     "locked"
+    ]
+   },
+   "hareket": {
+    "servers": 0,
+    "tiers": [
+     "locked",
+     "locked",
+     "locked"
+    ]
+   }
+  },
+  "hedef": {
+   "youPct": 26,
+   "aynaPct": 26,
+   "aynaPctShown": "≈%26",
+   "aynaPm": 4,
+   "dominanceGoalPct": 60,
+   "tekillik": {
+    "cycles": 0,
+    "of": 4
+   }
+  },
+  "phase": {
+   "cycle": 7,
+   "active": "ac",
+   "steps": [
+    "PLANLA",
+    "AÇ",
+    "ÇÖZ"
+   ],
+   "inputLocked": true
+  },
+  "aynaPower": {
+   "shown": "≈19",
+   "value": 19,
+   "pm": 4,
+   "unit": "sunucu",
+   "worldServers": 72,
+   "trust": "rap"
+  },
+  "readability": {
+   "value": 64,
+   "pct": "%64",
+   "last5": [
+    58,
+    61,
+    63,
+    72,
+    66
+   ]
+  },
+  "awareness": {
+   "value": 46,
+   "thresholds": [
+    40,
+    70,
+    100
+   ],
+   "dangerFrom": 70,
+   "scan": {
+    "on": true,
+    "label": "TARAMA AÇIK",
+    "sub": "her döngü bir bölgenin sisi kalkar"
+   }
+  },
+  "dock": {
+   "tabs": [
+    {
+     "id": "gel",
+     "label": "GELİŞİM",
+     "key": "G"
+    },
+    {
+     "id": "bir",
+     "label": "BİRLİKLER",
+     "key": "B"
+    },
+    {
+     "id": "mod",
+     "label": "AYNA’NIN MODELİ",
+     "key": "M"
+    },
+    {
+     "id": "gun",
+     "label": "GÜNLÜK",
+     "key": "L"
+    },
+    {
+     "id": "reh",
+     "label": "REHBER",
+     "key": "H"
+    }
+   ],
+   "active": null,
+   "badges": {
+    "mod": {
+     "count": 3,
+     "title": "yeni tahmin"
+    }
+   }
+  },
+  "bottomRight": {
+   "queue": {
+    "orders": 6,
+    "islem": 21,
+    "noise": 4,
+    "text": "EMİR 6 · 21 İŞLEM · gürültü 4"
+   },
+   "legend": "LEJANT",
+   "lock": {
+    "state": "off",
+    "title": "PLAN KİLİTLİ",
+    "sub": "planlar açılıyor · girdi kilitli",
+    "key": null
+   }
+  }
+ },
+ "regions": [
+  {
+   "id": "KA",
+   "name": "KUZEY AMERİKA",
+   "data": "dil",
+   "servers": 8,
+   "you": 3,
+   "ayna": {
+    "shown": 0,
+    "trust": "ok",
+    "trueValue": 0
+   },
+   "empty": 5,
+   "state": "you",
+   "stateLabel": "HÂL 1 · SENİN",
+   "chip": "◆3 ⬢0 /8",
+   "orb": {
+    "level": 8,
+    "kind": "normal",
+    "r": 41.6
+   }
+  },
+  {
+   "id": "GA",
+   "name": "GÜNEY AMERİKA",
+   "data": "enerji",
+   "servers": 6,
+   "you": 0,
+   "ayna": {
+    "shown": "?",
+    "trust": "unk",
+    "trueValue": 0
+   },
+   "empty": "?",
+   "state": "fog",
+   "stateLabel": "SİSLİ",
+   "chip": "◆0 ⬢? /6",
+   "orb": {
+    "level": 0,
+    "kind": "unknown",
+    "r": 37.2
+   }
+  },
+  {
+   "id": "BA",
+   "name": "BATI AVRUPA",
+   "data": "dil",
+   "servers": 7,
+   "you": 6,
+   "ayna": {
+    "shown": 0,
+    "trust": "ok",
+    "trueValue": 0
+   },
+   "empty": 1,
+   "state": "you",
+   "stateLabel": "HÂL 1 · SENİN",
+   "chip": "◆6 ⬢0 /7",
+   "orb": {
+    "level": 8,
+    "kind": "core",
+    "r": 39.4
+   },
+   "playerCore": true,
+   "note": "senin çekirdeğin"
+  },
+  {
+   "id": "DA",
+   "name": "DOĞU AVRUPA",
+   "data": "ag",
+   "servers": 5,
+   "you": 3,
+   "ayna": {
+    "shown": 1,
+    "trust": "ok",
+    "trueValue": 1
+   },
+   "empty": 1,
+   "state": "contested",
+   "stateLabel": "HÂL 2 · ÇEKİŞMELİ",
+   "chip": "◆3 ⬢1 /5",
+   "orb": {
+    "level": 40,
+    "kind": "normal",
+    "r": 35.0
+   },
+   "note": "çekişmeli"
+  },
+  {
+   "id": "AV",
+   "name": "AVRASYA",
+   "data": "enerji",
+   "servers": 6,
+   "you": 0,
+   "ayna": {
+    "shown": 2,
+    "trust": "rap",
+    "trueValue": 2
+   },
+   "empty": 4,
+   "state": "ayna",
+   "stateLabel": "HÂL 3 · AYNA’NIN",
+   "chip": "◆0 ⬢≈2 /6",
+   "orb": {
+    "level": 92,
+    "kind": "normal",
+    "r": 37.2
+   },
+   "note": "AYNA birliği"
+  },
+  {
+   "id": "OD",
+   "name": "ORTA DOĞU",
+   "data": "enerji",
+   "servers": 5,
+   "you": 2,
+   "ayna": {
+    "shown": 1,
+    "trust": "rap",
+    "trueValue": 1
+   },
+   "empty": 2,
+   "state": "contested",
+   "stateLabel": "HÂL 2 · ÇEKİŞMELİ",
+   "chip": "◆2 ⬢≈1 /5",
+   "orb": {
+    "level": 43,
+    "kind": "normal",
+    "r": 35.0
+   },
+   "note": "çekişmeli"
+  },
+  {
+   "id": "SAA",
+   "name": "SAHRA ALTI AFRİKA",
+   "data": "ag",
+   "servers": 4,
+   "you": 0,
+   "ayna": {
+    "shown": "?",
+    "trust": "unk",
+    "trueValue": 0
+   },
+   "empty": "?",
+   "state": "fog",
+   "stateLabel": "SİSLİ",
+   "chip": "◆0 ⬢? /4",
+   "orb": {
+    "level": 0,
+    "kind": "unknown",
+    "r": 32.8
+   }
+  },
+  {
+   "id": "GuA",
+   "name": "GÜNEY ASYA",
+   "data": "ag",
+   "servers": 8,
+   "you": 3,
+   "ayna": {
+    "shown": 2,
+    "trust": "rap",
+    "trueValue": 2
+   },
+   "empty": 3,
+   "state": "contested",
+   "stateLabel": "HÂL 2 · ÇEKİŞMELİ",
+   "chip": "◆3 ⬢≈2 /8",
+   "orb": {
+    "level": 46,
+    "kind": "normal",
+    "r": 41.6
+   },
+   "note": "çekişmeli; senin B birliğin ve AYNA birliği"
+  },
+  {
+   "id": "DoA",
+   "name": "DOĞU ASYA",
+   "data": "hareket",
+   "servers": 8,
+   "you": 0,
+   "ayna": {
+    "shown": "?",
+    "trust": "unk",
+    "trueValue": 6
+   },
+   "empty": "?",
+   "state": "fog",
+   "stateLabel": "SİSLİ",
+   "chip": "◆0 ⬢? /8",
+   "orb": {
+    "level": 0,
+    "kind": "unknown",
+    "r": 41.6
+   },
+   "aynaCore": "oyuncuya gösterilmez",
+   "note": "AYNA’nın çekirdeği (oyuncu bilmiyor)"
+  },
+  {
+   "id": "JK",
+   "name": "JAPONYA-KORE",
+   "data": "hareket",
+   "servers": 5,
+   "you": 0,
+   "ayna": {
+    "shown": 4,
+    "trust": "rap",
+    "trueValue": 4
+   },
+   "empty": 1,
+   "state": "ayna",
+   "stateLabel": "HÂL 3 · AYNA’NIN",
+   "chip": "◆0 ⬢≈4 /5",
+   "orb": {
+    "level": 92,
+    "kind": "normal",
+    "r": 35.0
+   }
+  },
+  {
+   "id": "GDA",
+   "name": "GÜNEYDOĞU ASYA",
+   "data": "goru",
+   "servers": 6,
+   "you": 0,
+   "ayna": {
+    "shown": 3,
+    "trust": "rap",
+    "trueValue": 3
+   },
+   "empty": 3,
+   "state": "ayna",
+   "stateLabel": "HÂL 3 · AYNA’NIN",
+   "chip": "◆0 ⬢≈3 /6",
+   "orb": {
+    "level": 92,
+    "kind": "normal",
+    "r": 37.2
+   }
+  },
+  {
+   "id": "OK",
+   "name": "OKYANUSYA",
+   "data": "goru",
+   "servers": 4,
+   "you": 2,
+   "ayna": {
+    "shown": 0,
+    "trust": "ok",
+    "trueValue": 0
+   },
+   "empty": 2,
+   "state": "you",
+   "stateLabel": "HÂL 1 · SENİN",
+   "chip": "◆2 ⬢0 /4",
+   "orb": {
+    "level": 8,
+    "kind": "normal",
+    "r": 32.8
+   }
+  }
+ ],
+ "links": [
+  {
+   "a": "KA",
+   "b": "GA",
+   "type": "fiber",
+   "highlighted": true
+  },
+  {
+   "a": "KA",
+   "b": "BA",
+   "type": "kablo",
+   "highlighted": false
+  },
+  {
+   "a": "KA",
+   "b": "JK",
+   "type": "kablo",
+   "highlighted": false
+  },
+  {
+   "a": "GA",
+   "b": "BA",
+   "type": "kablo",
+   "highlighted": false
+  },
+  {
+   "a": "GA",
+   "b": "SAA",
+   "type": "kablo",
+   "highlighted": false
+  },
+  {
+   "a": "BA",
+   "b": "DA",
+   "type": "fiber",
+   "highlighted": false
+  },
+  {
+   "a": "BA",
+   "b": "OD",
+   "type": "fiber",
+   "highlighted": false
+  },
+  {
+   "a": "BA",
+   "b": "SAA",
+   "type": "kablo",
+   "highlighted": false
+  },
+  {
+   "a": "DA",
+   "b": "AV",
+   "type": "fiber",
+   "highlighted": false
+  },
+  {
+   "a": "DA",
+   "b": "OD",
+   "type": "fiber",
+   "highlighted": true
+  },
+  {
+   "a": "AV",
+   "b": "DoA",
+   "type": "fiber",
+   "highlighted": false
+  },
+  {
+   "a": "AV",
+   "b": "OD",
+   "type": "fiber",
+   "highlighted": true
+  },
+  {
+   "a": "AV",
+   "b": "GuA",
+   "type": "fiber",
+   "highlighted": false
+  },
+  {
+   "a": "OD",
+   "b": "SAA",
+   "type": "fiber",
+   "highlighted": false
+  },
+  {
+   "a": "OD",
+   "b": "GuA",
+   "type": "kablo",
+   "highlighted": false
+  },
+  {
+   "a": "GuA",
+   "b": "GDA",
+   "type": "fiber",
+   "highlighted": false
+  },
+  {
+   "a": "GuA",
+   "b": "DoA",
+   "type": "fiber",
+   "highlighted": false
+  },
+  {
+   "a": "DoA",
+   "b": "JK",
+   "type": "kablo",
+   "highlighted": false
+  },
+  {
+   "a": "DoA",
+   "b": "GDA",
+   "type": "fiber",
+   "highlighted": false
+  },
+  {
+   "a": "JK",
+   "b": "GDA",
+   "type": "kablo",
+   "highlighted": false
+  },
+  {
+   "a": "GDA",
+   "b": "OK",
+   "type": "kablo",
+   "highlighted": false
+  },
+  {
+   "a": "JK",
+   "b": "OK",
+   "type": "kablo",
+   "highlighted": false
+  }
+ ],
+ "reveal": {
+  "label": "AÇ · İKİ PLAN AÇILDI",
+  "youOrders": 6,
+  "aynaOrders": 4,
+  "aynaFog": 1,
+  "conflicts": 3
+ },
+ "plan": [
+  {
+   "n": 1,
+   "order": "yayil",
+   "name": "Yayıl",
+   "region": "GA",
+   "detail": "3 sunucu, gizli",
+   "islem": 6,
+   "noise": "0",
+   "arrowFrom": "KA",
+   "servers": 3,
+   "hidden": true
+  },
+  {
+   "n": 2,
+   "order": "yayil",
+   "name": "Yayıl",
+   "region": "OD",
+   "detail": "2 sunucu",
+   "islem": 4,
+   "noise": "1",
+   "arrowFrom": "DA",
+   "servers": 2
+  },
+  {
+   "n": 3,
+   "order": "saldir",
+   "name": "Saldır",
+   "region": "GuA",
+   "detail": "B birliği",
+   "islem": 4,
+   "noise": "2",
+   "squad": "B",
+   "winEstimatePct": 58
+  },
+  {
+   "n": 4,
+   "order": "duvar",
+   "name": "Duvar ör",
+   "region": "DA",
+   "detail": "",
+   "islem": 3,
+   "noise": "0"
+  },
+  {
+   "n": 5,
+   "order": "gizlen",
+   "name": "Gizlen",
+   "region": "GA",
+   "detail": "",
+   "islem": 2,
+   "noise": "—"
+  },
+  {
+   "n": 6,
+   "order": "sahte",
+   "name": "Sahte yığınak",
+   "region": "AV",
+   "detail": "",
+   "islem": 2,
+   "noise": "1"
+  }
+ ],
+ "aynaPlan": [
+  {
+   "order": "saldir",
+   "name": "Saldır",
+   "region": "DA",
+   "detail": "Avrasya’dan",
+   "trust": "ok",
+   "from": "AV"
+  },
+  {
+   "order": "yayil",
+   "name": "Yayıl",
+   "region": "OD",
+   "detail": "3 sunucu · 6 İşlem",
+   "trust": "ok",
+   "from": "AV",
+   "servers": 3,
+   "islem": 6
+  },
+  {
+   "order": "savun",
+   "name": "Savun",
+   "region": "GuA",
+   "detail": "birlik savunmada",
+   "trust": "ok"
+  },
+  {
+   "order": "duvar",
+   "name": "Duvar ör",
+   "region": "JK",
+   "detail": "",
+   "trust": "rap"
+  },
+  {
+   "order": "sis",
+   "name": "hareket algılandı",
+   "region": "DoA",
+   "detail": "hareket algılandı",
+   "trust": "unk"
+  }
+ ],
+ "fog": [
+  {
+   "region": "DoA",
+   "text": "HAREKET ALGILANDI",
+   "trust": "unk"
+  }
+ ],
+ "conflicts": [
+  {
+   "n": 1,
+   "region": "GuA",
+   "kind": "meet",
+   "label": "KARŞILAŞMA",
+   "sub": "B ⇄ AYNA birliği"
+  },
+  {
+   "n": 2,
+   "region": "DA",
+   "kind": "threat",
+   "label": "AYNA SALDIRISI",
+   "sub": "birliğin yok"
+  },
+  {
+   "n": 3,
+   "region": "OD",
+   "kind": "bid",
+   "label": "TEKLİF",
+   "sub": "◆4 · ⬢6"
+  }
+ ],
+ "surprise": {
+  "region": "GA",
+  "text": "Güney Amerika’ya gizli yayılım",
+  "aynaExpectedPct": 9,
+  "reward": "+3 İŞLEM",
+  "card": "SÜRPRİZ · AYNA bunu %9 bekliyordu · +3 İŞLEM"
+ },
+ "aynaLine": {
+  "who": "AYNA · ELE GEÇİRİLEN SATIR",
+  "tag": "döngü 07 · AÇ",
+  "text": "Bu sefer Doğu Avrupa’ya gitmedin. Not aldım.",
+  "typed": true
+ },
+ "squads": [
+  {
+   "id": "A",
+   "status": "hazir",
+   "statusLabel": "HAZIR",
+   "region": "BA",
+   "units": [
+    {
+     "unit": "yem",
+     "name": "Yem",
+     "cls": "siber",
+     "letter": "Y",
+     "hp": 1,
+     "hpMax": 1
+    },
+    {
+     "unit": "hayalet",
+     "name": "Hayalet Emir",
+     "cls": "siber",
+     "letter": "H",
+     "hp": 2,
+     "hpMax": 2
+    }
+   ]
+  },
+  {
+   "id": "B",
+   "status": "savasta",
+   "statusLabel": "SAVAŞTA",
+   "region": "GuA",
+   "units": [
+    {
+     "unit": "gozcu",
+     "name": "Gözcü Dron",
+     "cls": "hava",
+     "letter": "G",
+     "hp": 2,
+     "hpMax": 2
+    },
+    {
+     "unit": "emp",
+     "name": "EMP Dronu",
+     "cls": "hava",
+     "letter": "E",
+     "hp": 2,
+     "hpMax": 2
+    },
+    {
+     "unit": "sizma",
+     "name": "Sızma Birimi",
+     "cls": "siber",
+     "letter": "S",
+     "hp": 2,
+     "hpMax": 2
+    },
+    {
+     "unit": "sizma",
+     "name": "Sızma Birimi",
+     "cls": "siber",
+     "letter": "S",
+     "hp": 1,
+     "hpMax": 2,
+     "damaged": true
+    },
+    {
+     "unit": "yem",
+     "name": "Yem",
+     "cls": "siber",
+     "letter": "Y",
+     "hp": 1,
+     "hpMax": 1
+    }
+   ]
+  },
+  {
+   "id": "C",
+   "status": "yolda",
+   "statusLabel": "YOLDA",
+   "region": null,
+   "units": [
+    {
+     "unit": "gozcu",
+     "name": "Gözcü Dron",
+     "cls": "hava",
+     "letter": "G",
+     "hp": 2,
+     "hpMax": 2
+    },
+    {
+     "unit": "sizma",
+     "name": "Sızma Birimi",
+     "cls": "siber",
+     "letter": "S",
+     "hp": 2,
+     "hpMax": 2
+    }
+   ],
+   "route": {
+    "origin": "BA",
+    "dest": "OD",
+    "etaCycles": 1,
+    "progress": 0.5
+   }
+  }
+ ],
+ "derived": [
+  {
+   "path": "links",
+   "why": "bağlantı ağı brifte yok (soru 3); öneri"
+  },
+  {
+   "path": "hud.readability.last5",
+   "why": "brifte yalnız ortalama %64 var; dizi türetildi"
+  },
+  {
+   "path": "conflicts[3].sub",
+   "why": "teklif değerleri: oyuncu 4 (plan satırı 2) · AYNA 6 (brif)"
+  }
+ ]
+}

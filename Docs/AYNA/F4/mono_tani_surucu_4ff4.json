@@ -1,0 +1,20 @@
+{
+  "purpose": "Mevcut saf Core/Mind DLL ile Editor Steps yönteminin değişmeden bağımsız çalışma zamanı tanısı. Kabulün Unity süre ölçümünün yerine geçmez. Yeni paket kurulmadı.",
+  "steps_sha256": "f07aa2cb05309b0a8609be2a9a0b99708935f7ee6a02dbc08f610bb56a024f8e",
+  "dlls": {
+    "Corrigible.Core.dll": "034826c8368ff77369fd67a42f8e72b0743c363c05ef212a611af54b429dd713",
+    "Corrigible.Ayna.Core.dll": "2156a249c36ad61c37128345e01fb8e3b2132a63aeb753db414a6ebae8e14da4",
+    "Corrigible.Ayna.Mind.dll": "047b343e98d0ea50f8f8c419759f6367f7fcbd459e747e80def7cce34f1ca194",
+    "Newtonsoft.Json.dll": "7292d3eb508652d14726749dd27094f2d481aeccf2db6427b62f68a71460897e",
+    "netstandard.dll": "a5a0274fb4141529c87713489386cc2d52d485569586b8ceea269a672d13a9cf"
+  },
+  "runtime": "Mono 6.12.0.182 amd64",
+  "equivalence": {
+    "Bot": "Habit",
+    "Series": 100,
+    "Games": 500,
+    "AllGameFieldsEqual": true,
+    "UnityReport": "Docs/AYNA/denge/F3/final/20261020_060555_471_Habit_Full.json",
+    "MonoReport": "Docs/AYNA/denge/F3/mono_final/20261020_060621_682_Habit_Full.json"
+  }
+}
