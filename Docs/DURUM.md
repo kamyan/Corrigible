@@ -1,12 +1,13 @@
 # Durum, kararlar ve açık işler
 
-_Son güncelleme: 2026-10-19_
+_Son güncelleme: 2026-10-20_
 
 ## Nerede kaldık
 
 Oyun baştan sona oynanabilir: giriş ve rakip seçimi, rehberli eğitim, kriz masası (harita, bölge eylemleri, araştırma,
 YZ günlüğü, haber bandı), hediye/perde/sahte zafer/son pencereleri, kayıt ve devam, Seni Tanıyan Rakip profili.
-445/445 EditMode testi geçiyor (oyun + analist masası + Sade arayüz); C# simülasyonu tarayıcı prototipiyle birebir aynı (deneysel mod ve baskın motoru dahil, Unity'ye özgü seçenekler kapalıyken).
+3D komuta masası ve rapor fişi düzeltmeleriyle son tam EditMode doğrulaması **624/624** geçti.
+C# simülasyonu tarayıcı prototipiyle birebir aynı (deneysel mod ve baskın motoru dahil, Unity'ye özgü seçenekler kapalıyken).
 Deneysel mod (saha ekipleri, zaman ölçeği, baskın) Unity'de oynanabilir ve varsayılan olarak açık. Oyun Türkçe ve
 İngilizce (giriş penceresindeki dil düğmesi; ilk açılışta sistem diline göre).
 Baskın sunumu `Docs/SonSalter_Baskin_Paketi` referansına taşınıyor: ayrı `Baskin` sahnesindeki operasyon maketi ve
@@ -15,6 +16,27 @@ doğrulaması tamamlanınca sonuçları aşağıya eklenecek; yukarıdaki 111/11
 
 **Git:** Depo `git@github.com:kamyan/Corrigible.git`, dal `main`. Bu belgelerdeki işin büyük kısmı **henüz commit
 edilmedi** (kullanıcı commit istemedi). Commit'i kullanıcı isteyince yap.
+
+## DeskGame · AIBunker komuta masası (2026-10-20)
+
+- Mevcut `Desk/Scenes/DeskGame.unity`, AIBunker'daki analog masa/oda düzenine göre 3D'ye taşındı. Primitive çevre,
+  pafta ve fiziksel cihazlar sahnede kalıcıdır. Sade harita World Space; HUD, bölge kartları, çekmeceler ve ortak modallar
+  Overlay kalır. Perspektifte harita etiketleri `labelScale=1.6` ile büyütüldü.
+- `CommandPostDesk` aynı görünüm modelinden kaynak defteri, telsiz ve faksı besler; `CommandPostControl` mevcut
+  presenter komutlarını çağırır. Telsiz/faks Haberler, evrak tepsisi Araştırma, sekmeler harita odağı/Ekipler/YZ Günlüğü,
+  kılavuz fişi Rehber, kol duraklatma işlevindedir. Dock ve eski kısayollar korunur.
+- Sağ tuş bakışı, tekerlek yaklaşmayı, F harita odağını, Home başlangıca dönüşü yönetir. Açık overlay dosyasında
+  kaydırma kameraya geçmez. `DeskCanvasProjection` kart/tooltip/iplik, olay spotu ve eğitim hedeflerini 3D haritaya bağlar;
+  kamera hareketinde izdüşümler sürekli yenilenir.
+- Baskında oda meshleri, üç ışık, masa kamerası/dinleyicisi ve girdi katmanları kapanır; raporla masaya dönüldüğünde
+  önceki etkinlik durumlarıyla geri döner. Canlı kontrolde 69 mesh, 3 ışık ve 16 raycaster'ın dönüşü doğrulandı.
+- Gerçek fareyle harita bölgesi seçimi ve telsizden Haberler açılması; üçüncü gün kaydı ve devam akışı doğrulandı.
+  Perspektif/overlay ve hareketli kamera için 4, rapor fişinin etkinliği/tek komutla ödemesi için 2 regresyon vakası
+  eklendi; son tam koşu **624/624** geçti. Canlı oyunda 18. gün oluşan fiş gerçek UI ışınıyla toplandı ve tam +1 fon
+  ödedi. Dosya üstündeki tekerlek kamera FOV değerini değiştirmedi. TR/EN, 1920×1080 ve 1920×1200 görüntüleri
+  kontrol edildi; yeni derleme hatası ve eksik çeviri yok. Oyuncu profili ve tercihleri test öncesindeki hâliyle korundu.
+  Önizlemeler: `Docs/Gorseller/DeskGame3D.png`, `DeskGame3D_Harita.png`.
+  `Core`, `Prototype/sim.js`, oyun dengesi ve kayıt/komut biçimi değişmedi.
 
 ## Haritada toplanan saha raporları (2026-10-15)
 

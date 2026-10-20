@@ -1520,6 +1520,14 @@ Yapılamadı.	Not possible.
 Hazır ekip yok.	No ready team.
 Kayıt yüklendi: {0}. gün. Oyun duraklatıldı.	Save loaded: day {0}. Game paused.
 Kayıt yüklenemedi.	The save couldn't be loaded.
+# Assets/Corrigible/Desk/Scripts/Runtime/CommandPost/CommandPostDesk.cs
+KAYNAK DEFTERİ\n\nGün {0:000}\nFon: {1}\nSiyasi güç: {2}	RESOURCE LEDGER\n\nDay {0:000}\nFunds: {1}\nPolitical power: {2}
+GELEN: {0:00}	INBOX: {0:00}
+SON HABER\n\n{0}	LATEST NEWS\n\n{0}
+SAHA FAKSI\n\nYeni rapor bekleniyor.	FIELD FAX\n\nAwaiting a new report.
+SAHA TELSİZİ\n\nEkipler: {0}\nHaberler için DİNLE.	FIELD RADIO\n\nTeams: {0}\nLISTEN for news.
+Sağ tuş: bakış · Tekerlek: yaklaş · F: haritaya odaklan · Home: masaya dön	Right mouse: look · Wheel: zoom · F: focus map · Home: return to desk
+{0} · Sol tık: kullan	{0} · Left click: use
 # Assets/Corrigible/Desk/Scripts/Runtime/Components/StatusChipView.cs
 TEHDİT	THREAT
 UYARI	WARNING
@@ -2504,6 +2512,17 @@ DÜĞME	BUTTON
 Düğme	Button
 # Assets/Corrigible/Prefabs/UI/TextLine.prefab
 Satır	Line
+# Assets/Corrigible/Desk/Scenes/DeskGame.unity
+KYGA / SIĞINAK 07	KYGA / BUNKER 07
+AĞA BAĞLANMA\nANALOG KAL	STAY OFF THE NETWORK\nSTAY ANALOG
+KOMUTA MASASI / KULLANIM KILAVUZU	COMMAND DESK / FIELD MANUAL
+DİNLE	LISTEN
+KYGA / 07	KYGA / 07
+DURAKLAT / SÜRDÜR	PAUSE / RESUME
+ARAŞTIRMA\nDOSYALARI	RESEARCH\nFILES
+01 / HARİTA	01 / MAP
+02 / EKİPLER	02 / TEAMS
+03 / YZ GÜNLÜĞÜ	03 / AI LOG
 # Assets/Corrigible/Fx/Scenes/FxBaskin.unity
 GÜNLÜK [L]	LOG [L]
 KURALLAR [?]	RULES [?]
@@ -2640,5 +2659,3 @@ EĞİTİM · 1/10	TUTORIAL · 1/10
 Başlık	Title
 Açıklama	Description
 Bildirim	Notification
-# --- Kullanılmayan çeviriler (koddan silinmiş metinler; gerekirse geri alınır) ---
-#Sürpriz, emir türü içindeki koşullu hedef olasılığıyla hesaplanır.	Surprise is calculated using the conditional target probability within the order type.

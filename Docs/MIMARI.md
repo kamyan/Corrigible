@@ -426,6 +426,27 @@ Claude Design'ın "C · Analist Masası" yönü, mevcut kriz masasından ayrı b
   `Scenes/DeskUI_Gallery.unity` (bileşenler C5 stil rehberi koordinatlarında; ←/→ bölüm, F9 dil).
   Yakalama `Corrigible/Desk UI/Capture Game View` → `Docs/UI_C/captures/`, karşılaştırma `Docs/UI_C/tools/compare.py`.
 
+### 3D komuta masası · DeskGame
+
+`Desk/Scenes/DeskGame.unity`, AIBunker'daki analog komuta masasına dayanan primitive oda, masa ve cihaz düzenini
+kalıcı sahne nesneleriyle kullanır. Yatay `SadeMapCanvas` World Space'tedir; `SadeHudCanvas`, `SadeContextCanvas` ve
+ortak giriş/ayar/olay/eğitim katmanları okunabilirlik için Overlay kalır. Harita etiketlerinin sahne ayarı
+`SadeRegionLabelView.labelScale=1.6`dır.
+Runtime oda kurucusu yoktur; yerleşim ve bileşen bağlantıları sahnede serileştirilir.
+
+`Scripts/Runtime/CommandPost` içindeki `CommandPostDesk`, aynı `DeskPresenter.Source` görünüm modelinden kaynak
+defterini, telsiz notunu ve son haber faksını doldurur. `CommandPostControl` düğmeleri mevcut presenter komutlarını
+çağırır: telsiz/faks Haberler'i, evrak tepsisi Araştırma'yı; masa sekmeleri harita odağını, Ekipler'i ve YZ Günlüğü'nü,
+kılavuz fişi Rehber'i, kol duraklatmayı açar. Eski dock ve klavye kısayolları çalışır. Modal açıkken dünya raycaster'ları
+engellenir. `CommandPostCamera`: sağ tuşla sınırlı bakış, tekerlekle yaklaşma, F ile harita odağı, Home ile başlangıca dönüş;
+overlay dosya üstündeki tekerlek kamerayı değiştirmez.
+
+`DeskCanvasProjection`, dünya paftasındaki noktaları kaynak canvas kamerası üzerinden ekran kâğıtlarına taşır.
+`SadeDeskInteraction`, `CardStringView`, `EventModalView` ve `DeskTutorialView` kart, iplik, olay spotu ve eğitim hedeflerini
+kamera hareketinden sonra yeniler; aynı overlay düzlemindeki eski davranış korunur. `RaidLauncher`, baskında kamera,
+dinleyici, oda ışıkları, canvas/raycaster ve masa girdilerini kapatır; `CommandPostDesk` oda renderer'larını gizler.
+Dönüşte bileşenlerin ve oda renderer'larının önceki `enabled` durumları geri yüklenir. `Core`, JS simülasyonu ve kayıt/komut biçimi değişmez.
+
 ### Sade baskın tahtası · F4
 
 `Desk/Scenes/RaidBoard_Sandbox.unity`, canlı `Baskin` sahnesinden bağımsızdır. Tahta/parça sunumu `Corrigible.Game` içinde kalır; `Desk.Bridge` içindeki `SadeRaidCameraFraming`, `BoardBackgroundView` ve `MockRaidBoardDataSource` ona serileştirilmiş referanslarla bağlanır. Köprüden Game'e ters assembly bağımlılığı eklenmez.

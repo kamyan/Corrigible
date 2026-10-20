@@ -13,6 +13,7 @@ namespace Corrigible.Desk
     /// doğrudan etkileşir. Hedefler kimlikle (oyunun TutorialTarget adları) sahnedeki dikdörtgenlere bağlanır; yerleşim her
     /// karede yeniden hesaplanır (pencereler sürüklenebilir), bellek ayırmaz.
     /// </summary>
+    [DefaultExecutionOrder(120)]
     public sealed class DeskTutorialView : MonoBehaviour
     {
         [Serializable]
@@ -215,8 +216,10 @@ namespace Corrigible.Desk
             if (t.Value.researchBranch >= 0 && research != null && research.BranchSpan(t.Value.researchBranch, out var broot, out float top, out float bottom))
             {
                 var br = broot.rect;
-                b.Add(area.InverseTransformPoint(broot.TransformPoint(new Vector3(br.xMin, br.yMax - top))));
-                b.Add(area.InverseTransformPoint(broot.TransformPoint(new Vector3(br.xMax, br.yMax - bottom))));
+                b.Add(DeskCanvasProjection.LocalPoint(broot, broot.TransformPoint(new Vector3(br.xMin, br.yMax - top)), area));
+                b.Add(DeskCanvasProjection.LocalPoint(broot, broot.TransformPoint(new Vector3(br.xMax, br.yMax - top)), area));
+                b.Add(DeskCanvasProjection.LocalPoint(broot, broot.TransformPoint(new Vector3(br.xMin, br.yMax - bottom)), area));
+                b.Add(DeskCanvasProjection.LocalPoint(broot, broot.TransformPoint(new Vector3(br.xMax, br.yMax - bottom)), area));
             }
             else if (t.Value.rects != null)
             {
@@ -224,16 +227,8 @@ namespace Corrigible.Desk
                 {
                     if (rt == null || !rt.gameObject.activeInHierarchy) continue;
                     rt.GetWorldCorners(corners);
-                    var from=rt.GetComponentInParent<Canvas>();var to=area.GetComponentInParent<Canvas>();
                     for (int i = 0; i < 4; i++)
-                    {
-                        if(alternateSurface!=null&&from!=null&&to!=null)
-                        {
-                            var screen=RectTransformUtility.WorldToScreenPoint(from.renderMode==RenderMode.ScreenSpaceOverlay?null:from.worldCamera,corners[i]);
-                            RectTransformUtility.ScreenPointToLocalPointInRectangle(area,screen,to.renderMode==RenderMode.ScreenSpaceOverlay?null:to.worldCamera,out var local);b.Add(local);
-                        }
-                        else b.Add(area.InverseTransformPoint(corners[i]));
-                    }
+                        b.Add(DeskCanvasProjection.LocalPoint(rt, corners[i], area));
                 }
             }
             if (!b.Any) return false;

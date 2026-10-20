@@ -12,7 +12,7 @@
 
 CORRIGIBLE_ROOT="${CORRIGIBLE_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]:-${(%):-%x}}")/.." && pwd)}"
 
-_u() { (cd "$CORRIGIBLE_ROOT" && unity command --caller plugin --skill unity-cli --no-banner --format json "$@" 2>&1); }
+_u() { (cd "$CORRIGIBLE_ROOT" && unity command --project-path "$CORRIGIBLE_ROOT" --caller plugin --skill unity-cli --no-banner --format json "$@" 2>&1); }
 
 ueval() {
   _u eval --code "$1" | python3 -c "

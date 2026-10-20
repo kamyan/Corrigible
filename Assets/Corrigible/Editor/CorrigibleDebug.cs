@@ -27,7 +27,8 @@ namespace Corrigible.EditorTools
             var saved = new List<(Canvas, RenderMode, Camera, float)>();
             foreach (var c in canvases)
             {
-                if (!c.isRootCanvas) continue;
+                // Fiziksel masa üzerindeki paftalar kendi dünya konumlarında çizilir.
+                if (!c.isRootCanvas || c.renderMode == RenderMode.WorldSpace) continue;
                 saved.Add((c, c.renderMode, c.worldCamera, c.planeDistance));
                 c.renderMode = RenderMode.ScreenSpaceCamera;
                 c.worldCamera = cam;

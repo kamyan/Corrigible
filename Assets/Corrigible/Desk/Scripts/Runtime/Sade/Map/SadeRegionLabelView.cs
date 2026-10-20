@@ -13,6 +13,8 @@ namespace Corrigible.Desk
         [SerializeField] TMP_Text label;
         [SerializeField] Image selectedChip;
         [SerializeField] Material haloMaterial, plainMaterial;
+        [Tooltip("Perspektif paftada yazının okunabilmesi için sahneye özgü büyütme.")]
+        [SerializeField, Min(1)] float labelScale = 1;
 
         public RegionNodeVM Data { get; private set; }
         public TMP_Text Label => label;
@@ -24,14 +26,15 @@ namespace Corrigible.Desk
             string text = DeskLoc.Instance.T(string.IsNullOrEmpty(vm.Label) ? vm.Name : vm.Label);
             DeskUi.SetText(label, text);
             SadeUi.Type(label, "regionLabel");
+            label.fontSize *= labelScale;
             DeskUi.Tint(label, "sade.map.labelInk");
             var material = vm.Selected ? plainMaterial : haloMaterial;
             if (material != null && label.fontSharedMaterial != material) label.fontSharedMaterial = material;
             float width = Mathf.Ceil(SadeUi.Width(label, text));
             var rt = (RectTransform)transform;
             rt.pivot = new Vector2(0.5f, 1);
-            rt.sizeDelta = new Vector2(width + 10, 18);
-            SadeUi.Place(label, 5, -2, width, 14);
+            rt.sizeDelta = new Vector2(width + 10, 18 * labelScale);
+            SadeUi.Place(label, 5, -2, width, 14 * labelScale);
             label.alignment = TextAlignmentOptions.Center;
             DeskUi.SetActive(selectedChip, vm.Selected);
             if (vm.Selected) SadeUi.Sprite(selectedChip, "sh_fill_r0", "sade.highlighter");

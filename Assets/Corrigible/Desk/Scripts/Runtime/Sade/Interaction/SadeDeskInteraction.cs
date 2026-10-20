@@ -9,6 +9,7 @@ using UnityEngine.UI;
 namespace Corrigible.Desk
 {
     /// <summary>F3 örnek masasının seçim, panel ve komut yönlendiricisi. Simülasyon başlatmaz.</summary>
+    [DefaultExecutionOrder(100)]
     public sealed class SadeDeskInteraction : MonoBehaviour
     {
         [SerializeField] MockSadeDeskDataSource source;
@@ -216,10 +217,10 @@ namespace Corrigible.Desk
             }
         }
 
-        void OnReportClicked(string id)
+        void OnReportClicked(string command)
         {
-            if (IsGameMode && !string.IsNullOrEmpty(id))
-                gameCommands?.Run("Report:Collect:" + id);
+            if (IsGameMode && !string.IsNullOrEmpty(command))
+                gameCommands?.Run(command);
         }
 
         void SourceChanged()
@@ -710,10 +711,15 @@ namespace Corrigible.Desk
             var from = slot.Node.transform.TransformPoint(new Vector3(24, 8));
             var rt = (RectTransform)regionCard.transform;
             var to = rt.TransformPoint(new Vector3(rt.rect.xMin + 18, rt.rect.yMax - 14));
-            if (animate || !cardString.Visible) cardString.SetEnds(from, to, animate);
-            else cardString.FollowEnds(from, to);
+            if (animate || !cardString.Visible) cardString.SetEnds(from, to, animate, slot.Node, regionCard);
+            else cardString.FollowEnds(from, to, slot.Node, regionCard);
         }
-        void LateUpdate() { if (regionCard != null && regionCard.IsOpen && Time.unscaledTime <= followUntil) RefreshString(false); }
+        void LateUpdate()
+        {
+            // 3D masada kamera kayarken simülasyon aynı karede güncellenmeyebilir; izdüşümler yine kamerayı izler.
+            if (DeskCanvasProjection.IsWorldSpace(map)) RefreshLayout();
+            else if (regionCard != null && regionCard.IsOpen && Time.unscaledTime <= followUntil) RefreshString(false);
+        }
         static void Show(PopupCardBase panel, Vector2 point, bool animate) { if (panel.IsOpen) panel.MoveTo(point); else panel.Open(point, animate); }
 
         SadeMapView.RegionSlot Find(string id) { foreach (var r in map.Regions) if (r.Id == id) return r; return null; }
@@ -727,14 +733,22 @@ namespace Corrigible.Desk
         Vector2 NodePosition(string id)
         {
             var slot = Find(id); if (slot?.Node == null) return Vector2.zero;
-            var local = context.InverseTransformPoint(slot.Node.transform.position);
+            var local = DeskCanvasProjection.LocalPoint(slot.Node, slot.Node.transform.position, context);
             return new Vector2(local.x - context.rect.xMin, context.rect.yMax - local.y);
         }
         Rect ContextRect(RectTransform rt)
         {
             rt.GetWorldCorners(corners);
-            var a = context.InverseTransformPoint(corners[1]); var b = context.InverseTransformPoint(corners[3]);
-            return new Rect(a.x - context.rect.xMin, context.rect.yMax - a.y, b.x - a.x, a.y - b.y);
+            var min = new Vector2(float.MaxValue, float.MaxValue);
+            var max = new Vector2(float.MinValue, float.MinValue);
+            // Yatay masadaki bir etiketin dört köşesi perspektifte eğik bir dörtgen olur.
+            foreach (var corner in corners)
+            {
+                var local = DeskCanvasProjection.LocalPoint(rt, corner, context);
+                var point = new Vector2(local.x - context.rect.xMin, context.rect.yMax - local.y);
+                min = Vector2.Min(min, point); max = Vector2.Max(max, point);
+            }
+            return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
         }
 
         JObject CardData()

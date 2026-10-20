@@ -18,6 +18,7 @@ namespace Corrigible.Desk
         [SerializeField] float thickness = 1.6f;
 
         Vector3 fromWorld, toWorld;
+        Component fromSource, toSource;
         DeskTween grow;
         bool hasEnds;
         readonly Vector2[] pts = new Vector2[2];
@@ -36,9 +37,10 @@ namespace Corrigible.Desk
         }
 
         /// <summary>Uçları ayarlar; <paramref name="animate"/> ise iplik baştan çizilir (kart açılışı), değilse hemen tam.</summary>
-        public void SetEnds(Vector3 from, Vector3 to, bool animate)
+        public void SetEnds(Vector3 from, Vector3 to, bool animate, Component fromCanvasSource = null, Component toCanvasSource = null)
         {
             fromWorld = from; toWorld = to; hasEnds = true;
+            fromSource = fromCanvasSource; toSource = toCanvasSource;
             DeskUi.SetActive(this, true);
             if (animate && Application.isPlaying) { grow.Snap(0); var th = SadeTheme.Active; grow.To(1, th != null ? th.Number("motion.cardStringS", 0.12f) : 0.12f); }
             else grow.Snap(1);
@@ -48,9 +50,13 @@ namespace Corrigible.Desk
         public void Hide() { hasEnds = false; DeskUi.SetActive(this, false); }
 
         /// <summary>Kart hareket ederken uçları izler; çizilme ilerlemesini başa sarmaz.</summary>
-        public void FollowEnds(Vector3 from, Vector3 to)
+        public void FollowEnds(Vector3 from, Vector3 to, Component fromCanvasSource = null, Component toCanvasSource = null)
         {
-            if (!hasEnds || (fromWorld == from && toWorld == to)) return;
+            if (!hasEnds) return;
+            bool changed = fromWorld != from || toWorld != to || fromSource != fromCanvasSource || toSource != toCanvasSource;
+            fromSource = fromCanvasSource; toSource = toCanvasSource;
+            var rt = (RectTransform)transform;
+            if (!changed && !DeskCanvasProjection.RequiresProjection(fromSource, rt) && !DeskCanvasProjection.RequiresProjection(toSource, rt)) return;
             fromWorld = from; toWorld = to; Redraw();
         }
 
@@ -62,13 +68,15 @@ namespace Corrigible.Desk
         void Redraw()
         {
             var rt = (RectTransform)transform;
-            Vector2 a = rt.InverseTransformPoint(fromWorld), b = rt.InverseTransformPoint(toWorld);
+            var projectedFrom = DeskCanvasProjection.WorldPoint(fromSource, fromWorld, rt);
+            var projectedTo = DeskCanvasProjection.WorldPoint(toSource, toWorld, rt);
+            Vector2 a = rt.InverseTransformPoint(projectedFrom), b = rt.InverseTransformPoint(projectedTo);
             var end = Vector2.Lerp(a, b, grow.Value);
             Set(thread, a, end, Vector2.zero);
             Set(shadow, a, end, new Vector2(shadowOffset.x, -shadowOffset.y));
-            if (pinFrom != null) pinFrom.rectTransform.position = fromWorld;
+            if (pinFrom != null) pinFrom.rectTransform.position = projectedFrom;
             DeskUi.SetActive(pinTo, grow.Value >= 1);
-            if (pinTo != null) pinTo.rectTransform.position = toWorld;
+            if (pinTo != null) pinTo.rectTransform.position = projectedTo;
         }
 
         void Set(UILineGraphic g, Vector2 a, Vector2 b, Vector2 offset)

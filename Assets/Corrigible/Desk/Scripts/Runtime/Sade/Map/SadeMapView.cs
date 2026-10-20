@@ -192,6 +192,7 @@ namespace Corrigible.Desk
                 if (report == null) continue;
                 var r = vm.Reports != null && i < vm.Reports.Count ? vm.Reports[i] : null;
                 report.Bind(r);
+                DeskUi.SetActive(report, r != null);
                 if (r != null)
                     report.GetComponent<SadeMarkerAnchor>()?.SetPoint(new Vector2(r.X, r.Y), Vector2.zero);
             }

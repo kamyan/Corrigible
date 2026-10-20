@@ -7,6 +7,8 @@
 - Prototip ve denge testleri: macOS'ta yerleşik JavaScriptCore
   (`/System/Library/Frameworks/JavaScriptCore.framework/Versions/Current/Helpers/jsc`). Node gerekmez (varsa o da çalışır).
 - Yardımcılar: `source Tools/unity-helpers.sh` → `ueval`, `ucompile`, `utest`, `uplay`, `ustop`, `ushot`, `uerrors`.
+  Yardımcılar `--project-path` ile Corrigible'a bağlanır; AIBunker gibi başka bir Editor açıkken doğrudan CLI çağrılarında
+  da `--project-path /Users/selimkamyan/Gits/Corrigible` belirt. Çalışma dizini tek başına doğru Editor'ü seçmeyebilir.
 
 ## Döngü
 
@@ -23,6 +25,7 @@
 
 Editor arka plandayken Game görünümü güncellenmez; bu yüzden ekran görüntüsü `CorrigibleDebug.Capture` ile alınır
 (Canvas'ları geçici olarak kameraya bağlar, edit modda da çalışır).
+3D DeskGame'deki dünya uzayı paftaları yerinde bırakılır; yalnız Overlay tuvalleri yakalama kamerasına bağlanır.
 
 ```bash
 source Tools/unity-helpers.sh
