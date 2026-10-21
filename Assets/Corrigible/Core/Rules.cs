@@ -20,6 +20,8 @@ namespace Corrigible.Core
         public bool Events;
         /// <summary>Haritadaki saha raporları ve sınırlı operasyon ödeneği (yalnızca Unity).</summary>
         public bool FieldReports;
+        /// <summary>İşgal altındaki dünyayı sektör baskınlarıyla geri alma; yalnızca yeni 3B masa kampanyası.</summary>
+        public bool LiberationCampaign;
         /// <summary>Kampanya zorluğu: YZ bu yeteneklerle başlar.</summary>
         public List<string> ExtraTraits = new List<string>();
 

@@ -81,7 +81,7 @@ namespace Corrigible.Desk
                 return;
             }
 
-            if (modalOnly) return;
+            if (modalOnly || presenter.SurfaceBlocked) return;
 
             if (kb.rKey.wasPressedThisFrame) presenter.ToggleWindow(WindowId.Research);
             if (kb.nKey.wasPressedThisFrame) presenter.ToggleWindow(WindowId.News);

@@ -65,11 +65,11 @@ namespace Corrigible.Desk
                 turnFills[i].color=DeskTheme.Active.Get(i+1==vm.Turn?(vm.LastTurn?"sade.raid.phaseAiBg":"sade.paper"):i+1<vm.Turn?"sade.plaque.border":"sade.plaque.bg");
                 turnBoxes[i].color=DeskTheme.Active.Get(i+1==vm.Turn?(vm.LastTurn?"ink.red":"sade.status.info"):"sade.plaque.brass");
             }
-            objective.text=Loc.T("HEDEF");objectiveSub.text=vm.Targets.Length>1?Loc.T("ikisini de kır"):Loc.T("kır");civilianLabel.text=Loc.T("SİVİL");abilityLabel.text=vm.AbilityLabel;
+            objective.text=vm.IsLootMission?Loc.T("İKMAL"):Loc.T("HEDEF");objectiveSub.text=vm.IsLootMission?Loc.T("kasayı al"):vm.Targets.Length>1?Loc.T("ikisini de kır"):Loc.T("kır");civilianLabel.text=Loc.T("SİVİL");abilityLabel.text=vm.AbilityLabel;
             for(int i=0;i<targetNames.Length;i++)
             {
                 bool show=i<vm.Targets.Length;targetThumbs[i].gameObject.SetActive(show);targetNames[i].gameObject.SetActive(show);targetArmor[i].enabled=show&&vm.Targets[i].Armor;
-                if(brokenStamps!=null&&i<brokenStamps.Length){brokenStamps[i].gameObject.SetActive(show&&vm.Targets[i].Broken);brokenStamps[i].text=Loc.T("KIRILDI");}
+                if(brokenStamps!=null&&i<brokenStamps.Length){brokenStamps[i].gameObject.SetActive(show&&vm.Targets[i].Broken);brokenStamps[i].text=vm.IsLootMission&&vm.Success?Loc.T("ALINDI"):Loc.T("KIRILDI");}
                 if(show){targetNames[i].fontStyle=vm.Targets[i].Broken?FontStyles.Strikethrough:FontStyles.Normal;targetNames[i].text=vm.Targets[i].Name;DeskSprites.Apply(targetThumbs[i],vm.Targets[i].Thumb);}
                 for(int j=0;j<4;j++){var pip=targetPips[i*4+j];pip.gameObject.SetActive(show&&!vm.Targets[i].Broken&&j<vm.Targets[i].Max);if(show)DeskSprites.Apply(pip,j<vm.Targets[i].Hp?"pip_full_10":"pip_empty_10");}
             }

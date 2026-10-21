@@ -173,6 +173,8 @@ namespace Corrigible.Core
     {
         public int Seed, Compute = 3, RaidNumber = 1;
         public string Region, RegionName = Loc.T("Bölge");
+        /// <summary>Eski kayıtların varsayılanı sunucu imhasıdır. Yağma yalnız işgal kampanyasında açılır.</summary>
+        public string MissionKind = "server", SectorId;
         public double Inf = 30, Dep;
         public bool IsCore, Illusion;
         public List<string> Traits = new List<string>();
@@ -213,6 +215,9 @@ namespace Corrigible.Core
         public int Day, Collateral, Down;
         public string Region;
         public bool Success;
+        /// <summary>Yalnız kurtuluş harekâtı: rapor, aynı günkü önceki baskını yeni sektörden tahmin etmez.</summary>
+        public string SectorId, MissionKind;
+        public LiberationRaidReward LiberationReward;
     }
 
     /// <summary>Simülasyonun gerçek durumu (WorldState). Sunum katmanı bunu okumaz; PerceivedWorld üzerinden görür.</summary>
@@ -284,6 +289,7 @@ namespace Corrigible.Core
 
         // Unity'ye özgü kurallar (null: temel kurallar, JS paritesi)
         public RuleOptions Rules;
+        public LiberationCampaignState Liberation;
         public PendingDilemma PendingEvent;
         public int NextEvent;
         public List<string> EventsSeen = new List<string>();

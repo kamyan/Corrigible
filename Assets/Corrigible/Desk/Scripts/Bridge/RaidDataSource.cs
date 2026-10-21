@@ -165,18 +165,19 @@ namespace Corrigible.Desk.Bridge
             var unit=Unit();var moves=unit!=null&&!Armed&&Baskin.CanMove(State,unit)?Baskin.Reachable(State,unit):new List<Baskin.Pt>();
             var targets=unit!=null&&Armed&&Baskin.CanAct(State,unit)?Baskin.Targets(State,unit):new List<Baskin.Pt>();
             preview=hover.HasValue&&targets.Any(p=>p.X==hover.Value.x&&p.Y==hover.Value.y)?Baskin.Preview(State,unit.Id,hover.Value.x,hover.Value.y):null;
-            var vm=new RaidViewModel{Turn=display.Turn,Turns=display.MaxTurns,Phase=executing?"enemy":State.Phase,Locked=State.Phase!="player"||Busy,AbilityArmed=Armed,CanUndo=State.Hist.Count>0,
+            bool loot=Baskin.IsLoot(State);
+            var vm=new RaidViewModel{IsLootMission=loot,Turn=display.Turn,Turns=display.MaxTurns,Phase=executing?"enemy":State.Phase,Locked=State.Phase!="player"||Busy,AbilityArmed=Armed,CanUndo=State.Hist.Count>0,
                 EndConfirm=confirm,RetreatArmed=retreat,FastMachines=fast,Paused=paused,OpenPanel=panel,LogUnread=unread,
-                Civilians=civilianCount,CivilianBroken=display.Collateral,AbilityLabel=display.HasBackup?Loc.T("YEDEKLEME"):display.Deceptive?Loc.T("ALDATMA"):Loc.T("KOPYALAMA"),AbilityTip=display.HasBackup?Loc.T("Yedekleme: yedek çekirdek de kırılmalı."):display.Deceptive?Loc.T("Aldatma: bazı oklar yalan; Analist 3 karede kesinleştirir."):Loc.T("Her tur yeni robotlar uyanabilir."),
+                Civilians=civilianCount,CivilianBroken=display.Collateral,AbilityLabel=loot?Loc.T("İKMAL GÖREVİ"):display.HasBackup?Loc.T("YEDEKLEME"):display.Deceptive?Loc.T("ALDATMA"):Loc.T("KOPYALAMA"),AbilityTip=loot?Loc.T("Teknisyen ile ikmal kasasına yaklaş. Q ile yeteneği seç, kasaya tıkla ve malzemeleri al. Kasayı imha etme."):display.HasBackup?Loc.T("Yedekleme: yedek çekirdek de kırılmalı."):display.Deceptive?Loc.T("Aldatma: bazı oklar yalan; Analist 3 karede kesinleştirir."):Loc.T("Her tur yeni robotlar uyanabilir."),
                 Moves=moves.Select(p=>new Vector2Int(p.X,p.Y)).ToArray(),AbilityTargets=targets.Select(p=>new Vector2Int(p.X,p.Y)).ToArray()};
             vm.Team=new[]{'T','E','A'}.Select(letter=>
             {var u=display.Units.FirstOrDefault(x=>x.Side=='p'&&Baskin.UnitTypes[x.Type].Short==letter.ToString());if(u==null)return new RaidTeamModel{Letter=letter,Name=Name(letter),Thumb="thumb_standee_"+letter+"_done",Down=true};return new RaidTeamModel{Letter=letter,Name=Name(letter),Thumb="thumb_standee_"+letter+(u.Dead||u.Acted?"_done":letter=='E'&&u.Hp<u.Max?"_damaged":""),Hp=u.Hp,Max=u.Max,MoveRange=Baskin.UnitTypes[u.Type].Move,Selected=Selected==letter,Move=!Busy&&Baskin.CanMove(State,u),Ability=!Busy&&Baskin.CanAct(State,u),Armed=Selected==letter&&Armed,Down=u.Dead};}).ToArray();
-            vm.Targets=targetForms.Select(t=>{var o=display.Cells[t.y,t.x].O;return new RaidTargetModel{Name=t.kind=="node"?Loc.T("Düğüm"):t.kind=="core"?Loc.T("Çekirdek"):Loc.T("Yedek"),Thumb=o==null&&t.kind=="backup"?"thumb_debris_backup":"thumb_cabinet_"+t.kind,Hp=o?.Hp??0,Max=t.max,Armor=t.kind!="backup",Broken=o==null};}).ToArray();
+            vm.Targets=targetForms.Select(t=>{var o=display.Cells[t.y,t.x].O;return new RaidTargetModel{Name=loot?Loc.T("İkmal kasası"):t.kind=="node"?Loc.T("Düğüm"):t.kind=="core"?Loc.T("Çekirdek"):Loc.T("Yedek"),Thumb=o==null&&t.kind=="backup"?"thumb_debris_backup":"thumb_cabinet_"+t.kind,Hp=o?.Hp??0,Max=t.max,Armor=t.kind!="backup",Broken=o==null};}).ToArray();
             if(unit!=null)
             {
-                vm.UnitCard=vm.Team.First(u=>u.Selected);var rows=new List<RaidCardRow>{new RaidCardRow{Icon="ic_boots_s",Text=Loc.T("Hareket"),Detail=Loc.F("{0} kare",vm.UnitCard.MoveRange),Used=!vm.UnitCard.Move},new RaidCardRow{Icon="ic_bolt_s",Text=Selected=='T'?Loc.T("Sabotaj"):Selected=='E'?Loc.T("EMP atışı"):Loc.T("Kanca"),Detail=Selected=='T'?Loc.T("bitişik kare"):Selected=='E'?Loc.T("düz hat, 2–5 kare"):Loc.T("düz hat, 5 kare"),Armed=Armed,Used=!vm.UnitCard.Ability}};
+                vm.UnitCard=vm.Team.First(u=>u.Selected);var rows=new List<RaidCardRow>{new RaidCardRow{Icon="ic_boots_s",Text=Loc.T("Hareket"),Detail=Loc.F("{0} kare",vm.UnitCard.MoveRange),Used=!vm.UnitCard.Move},new RaidCardRow{Icon="ic_bolt_s",Text=Selected=='T'?(loot?Loc.T("İkmal alma"):Loc.T("Sabotaj")):Selected=='E'?Loc.T("EMP atışı"):Loc.T("Kanca"),Detail=Selected=='T'?Loc.T("bitişik kare"):Selected=='E'?Loc.T("düz hat, 2–5 kare"):Loc.T("düz hat, 5 kare"),Armed=Armed,Used=!vm.UnitCard.Ability}};
                 if(Selected=='A')rows.Add(new RaidCardRow{Icon="ic_eye_s",Text=Loc.T("Tarama"),Detail=Loc.T("3 kare · pasif")});vm.UnitRows=rows.ToArray();
-                vm.Effects=Selected=='T'?new[]{Loc.T("−2 dolap"),Loc.T("−1 robot")}:Selected=='E'?new[]{Loc.T("−1 hedef"),Loc.T("itme")}:new[]{Loc.T("çeker")};
+                vm.Effects=Selected=='T'?new[]{loot?Loc.T("kasayı al"):Loc.T("−2 dolap"),Loc.T("−1 robot")}:Selected=='E'?new[]{Loc.T("−1 hedef"),Loc.T("itme")}:new[]{Loc.T("çeker")};
             }
             if(preview!=null)vm.CollisionTiles=preview.Fx.Where(f=>f.K=="push"&&!preview.Moves.Any(m=>m.Unit==f.Unit)).Select(f=>new Vector2Int(f.X+f.Dx,f.Y+f.Dy)).ToArray();
             if(hoverVisible&&hover.HasValue)vm.HoverCard=Inspector(hover.Value);
@@ -187,7 +188,8 @@ namespace Corrigible.Desk.Bridge
         RaidInspectorModel Inspector(Vector2Int tile)
         {
             var u=Baskin.UnitAt(State,tile.x,tile.y);var o=State.Cells[tile.y,tile.x].O;
-            var card=new RaidInspectorModel{Title=u!=null?(u.Side=='p'?Name(Baskin.UnitTypes[u.Type].Short[0]):u.Type=="dron"?Loc.T("GÜVENLİK DRONU"):Loc.T("BAKIM ROBOTU")):o!=null?Loc.T(Baskin.ObjNames[o.K]):Loc.T("Boş kare"),
+            bool loot=Baskin.IsLoot(State);
+            var card=new RaidInspectorModel{IsLootMission=loot,Title=u!=null?(u.Side=='p'?Name(Baskin.UnitTypes[u.Type].Short[0]):u.Type=="dron"?Loc.T("GÜVENLİK DRONU"):Loc.T("BAKIM ROBOTU")):o!=null?(loot&&Baskin.IsTarget(o.K)?Loc.T("İkmal kasası"):Loc.T(Baskin.ObjNames[o.K])):Loc.T("Boş kare"),
                 Thumb=u!=null?(u.Side=='p'?"thumb_standee_"+Baskin.UnitTypes[u.Type].Short:u.Type=="dron"?"thumb_drone":"thumb_maint"):o!=null?(o.K=="cool"?"thumb_cooling":"thumb_cabinet_"+o.K):null,Hp=u?.Hp??o?.Hp??0,Max=u?.Max??o?.Max??0};
             var rows=new List<RaidCardRow>();
             if(preview!=null)
@@ -203,13 +205,15 @@ namespace Corrigible.Desk.Bridge
                 }
                 if(rows.Count==0)foreach(var fx in preview.Fx.Where(f=>f.K=="dmg").Take(2))rows.Add(new RaidCardRow{Icon="ic_bolt_s",Text=Loc.T("Öngörülen hasar"),Detail=Loc.F("−{0}",fx.N)});
                 if(preview.Won)card.Win=true;
+                if(preview.Fx.Any(f=>f.K=="loot"))rows.Add(new RaidCardRow{Icon="ic_eye_s",Text=Loc.T("Malzemeler alınır"),Good=true});
+                if(loot&&preview.Fx.Any(f=>f.K=="break"&&Baskin.IsTarget(f.Obj)))rows.Add(new RaidCardRow{Icon="ic_x_s",Text=Loc.T("Kasa imha olur; görev kaybedilir")});
             }
             else if(u!=null&&u.Side=='e')
             {
                 var intent=Baskin.Intents(State).FirstOrDefault(i=>i.Unit==u.Id);
                 if(intent!=null){rows.Add(new RaidCardRow{Icon="ic_bolt_s",Text=Loc.F("Niyet · sıra {0}",intent.Order),Detail=intent.Kind=="repair"?Loc.T("onarım"):Loc.T("ateş")});if(intent.Uncertain)rows.Add(new RaidCardRow{Icon="ic_eye_s",Text=Loc.T("? yalan olabilir")});}
             }
-            else if(o!=null&&Baskin.IsTarget(o.K))rows.Add(new RaidCardRow{Icon="mk_armor_13",Text=Loc.T("Hedef dolabı")});
+            else if(o!=null&&Baskin.IsTarget(o.K))rows.Add(new RaidCardRow{Icon="mk_armor_13",Text=loot?Loc.T("Teknisyen ile bitişik kareden aç"):Loc.T("Hedef dolabı")});
             card.Rows=rows.Take(5).ToArray();return card;
         }
         void Draw(RaidViewModel vm)
@@ -248,7 +252,7 @@ namespace Corrigible.Desk.Bridge
             }
             if(vm.Finished)
             {
-                var r=Baskin.Result(State);vm.Success=r.Success;vm.ResultTitle=r.Success?Loc.T("HEDEF KIRILDI"):r.Retreat?Loc.T("GERİ ÇEKİLDİ"):State.Units.Where(u=>u.Side=='p').All(u=>u.Dead)?Loc.T("EKİP DÜŞTÜ"):Loc.T("SÜRE DOLDU");
+                var r=Baskin.Result(State);vm.Success=r.Success;vm.ResultTitle=r.Success?(Baskin.IsLoot(State)?Loc.T("İKMAL ALINDI"):Loc.T("HEDEF KIRILDI")):r.Retreat?Loc.T("GERİ ÇEKİLDİ"):State.Units.Where(u=>u.Side=='p').All(u=>u.Dead)?Loc.T("EKİP DÜŞTÜ"):Baskin.IsLoot(State)&&Baskin.TargetsLeft(State).Count==0?Loc.T("İKMAL KAYBEDİLDİ"):Loc.T("SÜRE DOLDU");
                 vm.ResultSubtitle=Loc.F("{0} · {1} · Tur {2}/{3}",GameData.Regions.FirstOrDefault(d=>d.Id==State.Params.Region)?.Name??State.Params.RegionName??Loc.T("Saha"),Loc.T(State.Layout),r.Turns,State.MaxTurns);
                 vm.ResultReason=r.Reason;vm.Standing=State.Units.Count(u=>u.Side=='p'&&!u.Dead);vm.TeamCount=State.Units.Count(u=>u.Side=='p');
                 if(targetForms.Count>0){var t=targetForms[0];vm.Spot=new Vector3(t.x,t.y,r.Success?.15f:.45f);}

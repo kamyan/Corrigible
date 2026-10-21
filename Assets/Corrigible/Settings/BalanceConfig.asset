@@ -13,6 +13,15 @@ MonoBehaviour:
   m_Name: BalanceConfig
   m_EditorClassIdentifier: Corrigible.Game::Corrigible.Game.BalanceConfig
   balance:
+    liberationRaidCost: 12
+    liberationDailyFunds: 2
+    liberationRegionIncome: 0.5
+    liberationLootFunds: 22
+    liberationServerFunds: 10
+    liberationCaptureFunds: 30
+    liberationInjuryDays: 2
+    liberationRaidThreat: 30
+    liberationRaidThreatPerRegion: 5
     growth: 0.05
     spread: 0.3
     satBeta: 0.4
@@ -23,34 +32,14 @@ MonoBehaviour:
     patchDays: 20
     patchGrowth: 0.5
     startFon: 60
+    monitorCostMul: 1
     startSg: 5
     cpRate: 1
     fonDiv: 150
     preAwareFund: 0.4
+    researchReserve: 0
     depRate: 0.15
     audit: 20
-    alignBase: 0
-    alignPer: 0.25
-    alignMax: 1
-    sabotage: 0.1
-    sabotageLoss: 4
-    silentInf: 60
-    silentDep: 40
-    illusionDays: 30
-    silentBlock: 60
-    vetoBase: 70
-    vetoAnalog: 85
-    misreadCost: 15
-    rejectSg: 2
-    rejectTrust: 2
-    giftInf: 8
-    coreFloor: 20
-    coreSeed: 8
-    coreTek: 0.05
-    salterSg: 30
-    coreSalterSg: 20
-    monitorCostMul: 1
-    researchReserve: 0
     modernResearchReserve: 15
     centralFund: 0.75
     regionalFundMul: 0.8
@@ -153,3 +142,52 @@ MonoBehaviour:
     emergencyResponseCost: 20
     donationFon: 60
     aiOfferFon: 50
+    shelterStartPopulation: 6
+    shelterStartSupplies: 24
+    shelterStartMaterials: 14
+    shelterMaxRoomLevel: 3
+    shelterResidentsPerLevel: 8
+    shelterWorkersPerLevel: 2
+    shelterSuppliesPerWorker: 1
+    shelterSuppliesPerResident: 0.2
+    shelterSuppliesStoragePerLevel: 40
+    shelterMaterialsStorage: 100
+    shelterMaterialsPerWorker: 0.5
+    shelterStarvingWorkMultiplier: 0.5
+    shelterEnergyPerLevel: 4
+    shelterWorkerEnergy: 1
+    shelterRoomEnergy: 2
+    shelterHealingWorkers: 1
+    shelterHealingDays: 1
+    shelterLivingFon: 8
+    shelterLivingMaterials: 6
+    shelterGeneratorFon: 6
+    shelterGeneratorMaterials: 4
+    shelterWorkshopFon: 10
+    shelterWorkshopMaterials: 6
+    shelterInfirmaryFon: 12
+    shelterInfirmaryMaterials: 8
+    shelterLootMaterials: 10
+    shelterLootSupplies: 10
+    shelterLootResidents: 1
+    shelterServerMaterials: 6
+    alignBase: 0
+    alignPer: 0.25
+    alignMax: 1
+    sabotage: 0.1
+    sabotageLoss: 4
+    silentInf: 60
+    silentDep: 40
+    illusionDays: 30
+    silentBlock: 60
+    vetoBase: 70
+    vetoAnalog: 85
+    misreadCost: 15
+    rejectSg: 2
+    rejectTrust: 2
+    giftInf: 8
+    coreFloor: 20
+    coreSeed: 8
+    coreTek: 0.05
+    salterSg: 30
+    coreSalterSg: 20

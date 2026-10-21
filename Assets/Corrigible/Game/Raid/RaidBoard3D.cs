@@ -679,6 +679,12 @@ namespace Corrigible.Game.Raid
                         StartCoroutine(Popup(W(f.X, f.Y), Loc.T("+1"), lib.good, 0));
                         yield return Wait(0.6f);
                         break;
+                    case "loot":
+                        if (objects.TryGetValue(Key(f.X, f.Y), out var cargo)) cargo.Flash(lib.good);
+                        Sfx.Play(Cue.RaidRepair, 1, Pan(W(f.X, f.Y)));
+                        StartCoroutine(Popup(W(f.X, f.Y), Loc.T("İKMAL ALINDI"), lib.good, 0));
+                        yield return Wait(0.45f);
+                        break;
                     case "push":
                     case "pull":
                         if (units.TryGetValue(f.Unit, out var pu))

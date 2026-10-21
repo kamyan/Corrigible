@@ -17,8 +17,8 @@ namespace Corrigible.Core
         public const double TeamHireFon = 45, RaidFon = 30, RaidSg = 6;
         public double TeamHireCost => ModernEconomy ? B.teamHireCost : TeamHireFon;
         public int TeamFormationDays => ModernEconomy ? B.teamHireDays : TeamHireDays;
-        public double RaidCost => ModernEconomy ? B.raidCost : RaidFon;
-        public double RaidSgCost => ModernEconomy ? B.raidSg : RaidSg;
+        public double RaidCost => LiberationOn ? B.liberationRaidCost : ModernEconomy ? B.raidCost : RaidFon;
+        public double RaidSgCost => LiberationOn ? 0 : ModernEconomy ? B.raidSg : RaidSg;
         public static readonly string[] RaidTraits = { "kopya", "yedek", "hizlanma", "aldatma", "medya" };
 
         void SetupExperimental(ExpOptions exp)
@@ -102,6 +102,7 @@ namespace Corrigible.Core
         /// <summary>Baskın yapılamıyorsa nedeni, yapılabiliyorsa null.</summary>
         public string RaidCheck(string regionId)
         {
+            if (LiberationOn) return LiberationRaidCheck(NextLiberationSector(regionId)?.Id);
             if (!TeamsOn) return Loc.T("Baskın yalnızca saha ekipleri modunda var.");
             if (S.Ending != null) return Loc.T("Oyun bitti.");
             if (S.Raid != null) return Loc.T("Zaten bir baskın sürüyor.");
@@ -121,6 +122,7 @@ namespace Corrigible.Core
 
         ActResult StartRaidCore(string regionId)
         {
+            if (LiberationOn) return StartLiberationRaidCore(NextLiberationSector(regionId)?.Id);
             var why = RaidCheck(regionId);
             if (why != null) return ActResult.Fail(why);
             var r = S.Region(regionId);
@@ -147,6 +149,8 @@ namespace Corrigible.Core
 
         ActResult ResolveRaidCore(RaidResult result)
         {
+            if (result == null) return ActResult.Fail(Loc.T("Baskın sonucu eksik."));
+            if (LiberationOn) return ResolveLiberationRaidCore(result);
             var R0 = S.Raid;
             if (R0 == null) return ActResult.Fail(Loc.T("Süren baskın yok."));
             var r = S.Region(R0.Region); var D = Def(R0.Region); var t = Team(R0.Team);

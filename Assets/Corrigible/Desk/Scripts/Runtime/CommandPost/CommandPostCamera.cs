@@ -14,8 +14,10 @@ namespace Corrigible.Desk
         [SerializeField] Camera view;
         [SerializeField] Transform homePose;
         [SerializeField] Transform mapPose;
+        [SerializeField] Transform shelterPose;
+        [SerializeField] Transform operationsPose;
         [SerializeField, Range(.01f, .3f)] float sensitivity = .09f;
-        [SerializeField] Vector2 pitchLimits = new Vector2(20f, 60f);
+        [SerializeField] Vector2 pitchLimits = new Vector2(10f, 60f);
         [SerializeField, Range(0f, 60f)] float yawLimit = 28f;
         [SerializeField, Range(26f, 60f)] float homeFieldOfView = 52f;
         [SerializeField, Range(26f, 60f)] float mapFieldOfView = 34f;
@@ -35,6 +37,17 @@ namespace Corrigible.Desk
         bool focused;
 
         public bool IsFocused => focused;
+        public void FocusShelter() { Initialize(); SetTargetPose(shelterPose, 48); }
+        public void FocusOperations() { Initialize(); SetTargetPose(operationsPose, 46); }
+
+        void SetTargetPose(Transform pose, float fov)
+        {
+            if (pose == null) return;
+            focused = false; dragging = false; yaw = 0;
+            targetPosition = pose.position; baseYaw = pose.eulerAngles.y;
+            pitch = Mathf.Clamp(Mathf.DeltaAngle(0, pose.eulerAngles.x), pitchLimits.x, pitchLimits.y);
+            targetFieldOfView = fov;
+        }
 
         void Awake()
         {
@@ -89,6 +102,12 @@ namespace Corrigible.Desk
             Keyboard keyboard = Keyboard.current;
             if (keyboard != null && !TextFieldSelected())
             {
+                if (shelterPose != null && keyboard.digit2Key.wasPressedThisFrame) FocusShelter();
+                else if (operationsPose != null && keyboard.digit3Key.wasPressedThisFrame) FocusOperations();
+                else if (keyboard.digit1Key.wasPressedThisFrame)
+                {
+                    if (operationsPose != null) FocusMap(); else ResetView();
+                }
                 if (keyboard.homeKey.wasPressedThisFrame) ResetView();
                 else if (keyboard.fKey.wasPressedThisFrame)
                 {

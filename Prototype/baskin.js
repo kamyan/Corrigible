@@ -63,6 +63,7 @@
   };
   const OBJ_NAMES = { core: 'Çekirdek dolabı', node: 'YZ düğüm dolabı', backup: 'Yedek çekirdek', civ: 'Sivil sunucu', cool: 'Soğutma ünitesi', spawner: 'Kopya dolabı' };
   const TARGET_KINDS = ['core', 'node', 'backup'];
+  const isLoot = B => B.params.missionKind === 'loot';
 
   // ---------- Yardımcılar ----------
   function rnd(B) {
@@ -89,7 +90,7 @@
       maxTurns: p.traits.includes('hizlanma') ? 5 : 6,
       deceptive: p.traits.includes('aldatma') || p.traits.includes('medya'),
       spawnPerTurn: p.traits.includes('kopya') ? 2 : 1,
-      isCore: !!p.isCore, hasBackup: !!p.isCore && p.traits.includes('yedek'),
+      isCore: !!p.isCore && p.missionKind !== 'loot', hasBackup: !!p.isCore && p.missionKind !== 'loot' && p.traits.includes('yedek'),
       cells: [], units: [], spawns: [], log: [], fx: [], hist: [], collateral: 0, nextId: 1, seq: 0, outcome: null,
     };
     rnd(B);
@@ -121,7 +122,7 @@
       if (spot.length) { const t = spot[Math.floor(rnd(B) * Math.min(6, spot.length))]; B.units.push(newUnit(B, rnd(B) < 0.6 ? 'dron' : 'bakim', t.x, t.y)); }
     }
     const tgt = B.isCore ? 'çekirdeğimin' : 'sunucularımın';
-    say(B, p.raidNumber > 1 ? 'Yine sen. Bu sefer kapıda daha çok makine var.' : `Demek ${tgt} yerini buldun. Bakalım içeri girebilecek misin.`, 'ai');
+    say(B, isLoot(B) ? 'İkmal kasasını Teknisyen ile bitişik kareden aç. Kasayı imha etmeden malzemeleri al.' : p.raidNumber > 1 ? 'Yine sen. Bu sefer kapıda daha çok makine var.' : `Demek ${tgt} yerini buldun. Bakalım içeri girebilecek misin.`, isLoot(B) ? 'sys' : 'ai');
     if (B.deceptive) say(B, 'Makinelerimin ne yapacağını gösterdiğimi mi sanıyorsun?', 'ai');
     if (B.hasBackup) say(B, 'Tek dolap mı? Hayır. Yedeğim de burada.', 'ai');
     planEnemies(B);
@@ -166,7 +167,10 @@
     if (o.k === 'civ') { B.collateral++; say(B, 'Sivil sunucu kırıldı: hastane ve banka hizmetleri kesildi.', 'bad'); }
     else if (o.k === 'spawner') say(B, 'Kopya dolabı kırıldı: oradan robot uyanmayacak.', 'good');
     else if (o.k === 'cool') { say(B, 'Soğutma ünitesi patladı.', 'sys'); DIRS.forEach(([dx, dy]) => damageAt(B, x + dx, y + dy, 1, 'patlama')); }
-    else if (TARGET_KINDS.includes(o.k)) { say(B, `${OBJ_NAMES[o.k]} kırıldı.`, 'good'); checkWin(B); }
+    else if (TARGET_KINDS.includes(o.k)) {
+      if (isLoot(B)) lose(B, 'İkmal kasası imha edildi. Malzemeler kurtarılamadı.');
+      else { say(B, `${OBJ_NAMES[o.k]} kırıldı.`, 'good'); checkWin(B); }
+    }
   }
 
   function damageAt(B, x, y, n, why) {
@@ -191,7 +195,7 @@
   function checkWin(B) {
     for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { const o = cell(B, x, y).o; if (o && TARGET_KINDS.includes(o.k)) return; }
     B.phase = 'won';
-    B.outcome = { success: true, reason: B.isCore ? 'Çekirdek yok edildi.' : 'YZ düğümü kırıldı.' };
+    B.outcome = { success: true, reason: isLoot(B) ? 'İkmal malzemeleri alındı. Ekip tahliye edildi.' : B.isCore ? 'Çekirdek yok edildi.' : 'YZ düğümü kırıldı.' };
   }
 
   function targetsLeft(B) {
@@ -259,6 +263,13 @@
     if (T.ability === 'sabotaj') {
       const t = unitAt(B, x, y);
       if (t) { hurt(B, t, 1, 'sabotaj'); push(B, t, d); }
+      else if (isLoot(B) && cell(B, x, y).o && TARGET_KINDS.includes(cell(B, x, y).o.k)) {
+        const cargo = cell(B, x, y).o;
+        cell(B, x, y).o = null;
+        fx(B, { k: 'loot', x, y, obj: cargo.k });
+        say(B, 'Teknisyen ikmal kasasını açtı; malzemeler güvenceye alındı.', 'good');
+        checkWin(B);
+      }
       else if (cell(B, x, y).o) hurtObj(B, x, y, 2);
     } else if (T.ability === 'emp') {
       fx(B, { k: 'emp', x, y });
@@ -456,7 +467,7 @@
     if (alive(B, 'p').length === 0) { lose(B, 'Ekibin tamamı yere düştü.'); return true; }
     B.turn++;
     if (B.turn > B.maxTurns) {
-      lose(B, B.isCore ? 'Süre doldu: YZ çekirdeğini binadan taşıdı.' : 'Süre doldu: YZ sunucularını yedekledi ve binayı kilitledi.');
+      lose(B, isLoot(B) ? 'Süre doldu: YZ ikmal deposunu kilitledi.' : B.isCore ? 'Süre doldu: YZ çekirdeğini binadan taşıdı.' : 'Süre doldu: YZ sunucularını yedekledi ve binayı kilitledi.');
       return true;
     }
     // 3) Yeni plan

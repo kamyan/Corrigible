@@ -14,6 +14,7 @@ namespace Corrigible.Desk
         [SerializeField] DeskPresenter presenter;
         [SerializeField] Camera view;
         [SerializeField] CommandPostCamera cameraRig;
+        [Tooltip("Yalnız dünya uzayındaki masa yüzeyleri. Açılış ekranı ve Overlay kontrolleri bu kilide girmez.")]
         [SerializeField] GraphicRaycaster[] worldRaycasters = System.Array.Empty<GraphicRaycaster>();
         [SerializeField] Renderer[] roomRenderers = System.Array.Empty<Renderer>();
         [SerializeField] TMP_Text ledger, faxPaper, faxStatus, radioNote, help;
@@ -25,7 +26,8 @@ namespace Corrigible.Desk
         bool[] rendererVisibility;
         bool renderersHidden;
 
-        public bool InteractionBlocked => !isActiveAndEnabled || view == null || !view.enabled ||
+        public bool ExternalBlocked { get; set; }
+        public bool InteractionBlocked => ExternalBlocked || !isActiveAndEnabled || view == null || !view.enabled ||
             presenter == null || presenter.Commands == null ||
             (IntroView.Instance != null && IntroView.Instance.IsOpen) ||
             (CampaignView.Instance != null && CampaignView.Instance.IsOpen) ||
@@ -78,7 +80,7 @@ namespace Corrigible.Desk
             }
             bool enabledInput = !InteractionBlocked;
             foreach (var raycaster in worldRaycasters)
-                if (raycaster != null && raycaster.enabled != enabledInput) raycaster.enabled = enabledInput;
+                if (IsWorldRaycaster(raycaster) && raycaster.enabled != enabledInput) raycaster.enabled = enabledInput;
             if (!enabledInput && hoverLabel != null) SetHover(null);
         }
 
@@ -87,7 +89,7 @@ namespace Corrigible.Desk
             DeskLoc.Instance.Changed -= Refresh;
             if (source != null) source.Changed -= Bind;
             source = null;
-            foreach (var raycaster in worldRaycasters) if (raycaster != null) raycaster.enabled = false;
+            foreach (var raycaster in worldRaycasters) if (IsWorldRaycaster(raycaster)) raycaster.enabled = false;
             if (rendererVisibility == null || rendererVisibility.Length != roomRenderers.Length)
                 rendererVisibility = new bool[roomRenderers.Length];
             for (int i = 0; i < roomRenderers.Length; i++)
@@ -95,6 +97,9 @@ namespace Corrigible.Desk
             renderersHidden = true;
             hoverLabel = null;
         }
+
+        static bool IsWorldRaycaster(GraphicRaycaster raycaster) => raycaster != null &&
+            raycaster.GetComponent<Canvas>() is Canvas canvas && canvas.renderMode == RenderMode.WorldSpace;
 
         void Refresh() { if (source != null) Bind(source.Current); SetHover(hoverLabel); }
 
@@ -118,7 +123,7 @@ namespace Corrigible.Desk
         {
             hoverLabel = sourceLabel;
             DeskUi.SetText(help, string.IsNullOrEmpty(sourceLabel)
-                ? Loc.T("Sağ tuş: bakış · Tekerlek: yaklaş · F: haritaya odaklan · Home: masaya dön")
+                ? Loc.T("Sağ tuş: bakış · Tekerlek: yaklaş · F: harita · 1: komuta · 2: sığınak · 3: operasyon")
                 : Loc.F("{0} · Sol tık: kullan", DeskLoc.Instance.T(sourceLabel)));
         }
 

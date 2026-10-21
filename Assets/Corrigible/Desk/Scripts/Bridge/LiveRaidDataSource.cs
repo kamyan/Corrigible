@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Corrigible.Core;
 using Corrigible.Game;
+using Corrigible.Game.Raid;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 namespace Corrigible.Desk.Bridge
@@ -28,8 +29,9 @@ namespace Corrigible.Desk.Bridge
             var result=Baskin.Result(State);var resolved=game.ResolveRaid(result);
             if(!resolved.Ok){Debug.LogError(resolved.Msg);return;}
             finished=true;game.Hold=previousHold;
-            // Sonucu bir kez kaydet, taktik sahneyi kapat; RaidLauncher ana masayı geri açar.
-            if(gameObject.scene.isLoaded&&SceneManager.sceneCount>1)SceneManager.UnloadSceneAsync(gameObject.scene);
+            // ResolveRaid'in Changed olayı başlatıcıya kapatma emrini zaten verdi. Aynı sahneyi ikinci kez kapatma.
+            // Başlatıcısız eklemeli test/entegrasyon sahnelerinde eski bağımsız kapatma yolu sürer.
+            if(!RaidLauncher.ManagesScene(gameObject.scene.name)&&gameObject.scene.isLoaded&&SceneManager.sceneCount>1)SceneManager.UnloadSceneAsync(gameObject.scene);
         }
         void OnDestroy(){foreach(var input in suspendedInputs)if(input!=null)input.enabled=true;if(game!=null&&!finished)game.Hold=previousHold;}
     }

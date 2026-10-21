@@ -15,7 +15,7 @@ namespace Corrigible.Desk
         public void Render(RaidInspectorModel model)
         {
             gameObject.SetActive(model!=null);if(model==null)return;
-            if(winBox!=null){winBox.SetActive(model.Win);winStamp.text=Corrigible.Core.Loc.T("HEDEF KIRILIR");winText.text=Corrigible.Core.Loc.T("operasyon kazanılır");}
+            if(winBox!=null){winBox.SetActive(model.Win);winStamp.text=model.IsLootMission?Corrigible.Core.Loc.T("İKMAL ALINIR"):Corrigible.Core.Loc.T("HEDEF KIRILIR");winText.text=Corrigible.Core.Loc.T("operasyon kazanılır");}
             title.text=model.Title;DeskSprites.Apply(thumbnail,model.Thumb);thumbnail.enabled=!string.IsNullOrEmpty(model.Thumb);
             RaidHudView.Pips(pips,model.Hp,model.Max,"ink.red");
             ((RectTransform)transform).sizeDelta=new Vector2(258,Mathf.Max(90,60+30*model.Rows.Length)+(model.Win?36:0));

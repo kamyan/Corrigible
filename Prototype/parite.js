@@ -128,3 +128,10 @@ for (const [seed, compute, inf, isCore, n, traits] of [[11, 5, 45, true, 1, ''],
   const r = playRaid({ seed, compute, inf, isCore, raidNumber: n, traits: traits ? traits.split(',') : [] });
   print(`[TestCase(${seed}, ${compute}, ${inf}, ${isCore}, ${n}, "${traits}",\n    "${r.moves}",\n    "${r.sig}")]`);
 }
+
+// İkmal görevi aynı tahtada kırmak yerine Teknisyen ile kasayı açar; eski sunucu senaryoları değişmez.
+print('// LootRaid_MatchesBrowserPrototype (tohum, hamleler, imza)');
+for (const seed of [11, 99]) {
+  const r = playRaid({ seed, compute: 3, inf: 30, raidNumber: 1, missionKind: 'loot' });
+  print(`[TestCase(${seed},\n    "${r.moves}",\n    "${r.sig}")]`);
+}

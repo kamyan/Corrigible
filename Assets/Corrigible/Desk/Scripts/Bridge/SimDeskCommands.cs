@@ -99,6 +99,7 @@ namespace Corrigible.Desk.Bridge
 
         public void TogglePause()
         {
+            if (Sim.LiberationOn) { Game.AdvanceLiberationDay(); return; }
             if (Sim.S.Ending != null) return;
             int last = State.LastSpeed == "4x" ? 4 : State.LastSpeed == "2x" ? 2 : 1;
             Game.SetSpeed(Game.Speed == 0 ? last : 0);
@@ -106,6 +107,7 @@ namespace Corrigible.Desk.Bridge
 
         public void SetSpeed(GameSpeed speed)
         {
+            if (Sim.LiberationOn) return;
             if (Sim.S.Ending != null) return;
             Game.SetSpeed(speed switch { GameSpeed.X1 => 1, GameSpeed.X2 => 2, GameSpeed.X4 => 4, _ => 0 });
         }

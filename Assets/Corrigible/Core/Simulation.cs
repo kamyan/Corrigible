@@ -82,6 +82,7 @@ namespace Corrigible.Core
             sim.Advise("start", s.Exp != null && s.Exp.Teams
                 ? Loc.T("Saha ekiplerin Batı Avrupa’daki karargâhta. İzleme ağı kurmak ve denetim yapmak için bir ekibi o bölgeye göndermen gerekir; haber bandındaki tuhaf haberler YZ’nin yerini ele verebilir.")
                 : Loc.T("İlk izleme ağını kur. YZ’nin nerede başladığını bilmiyoruz; haber bandındaki tuhaf haberler onu ele verebilir."));
+            if (s.Rules != null && s.Rules.LiberationCampaign) sim.SetupLiberation();
             s.Events.Clear();
             return sim;
         }
@@ -168,6 +169,7 @@ namespace Corrigible.Core
         public void Step()
         {
             if (S.Ending != null || S.Blocked) return;
+            if (LiberationOn) { StepLiberation(); return; }
             S.Day++;
             S.LastResearchPayment = 0;
             var R = S.Regions;
@@ -623,6 +625,7 @@ namespace Corrigible.Core
 
         ActResult ActCore(string type, string id)
         {
+            if (LiberationOn) return ActResult.Fail(Loc.T("İşgal altındaki sektörler yalnızca başarılı baskınlarla geri alınabilir."));
             if (S.Ending != null) return ActResult.Fail(Loc.T("Oyun bitti."));
             var r = S.Region(id);
             var D = Def(id);
@@ -751,6 +754,7 @@ namespace Corrigible.Core
 
         ActResult GlobalKillSwitchCore()
         {
+            if (LiberationOn) return ActResult.Fail(Loc.T("Son Şalter'e ulaşmak için bütün bölgeleri geri al."));
             if (S.Ending != null) return ActResult.Fail(Loc.T("Oyun bitti."));
             double cost = ModernEconomy ? B.globalKillSwitchSg : 50;
             if (S.Sg < cost) return ActResult.Fail(Loc.F("Küresel Son Şalter en az {0} siyasi güç ister.", cost));

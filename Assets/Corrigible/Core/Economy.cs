@@ -43,6 +43,11 @@ namespace Corrigible.Core
         {
             get
             {
+                if (LiberationOn) return new IncomeBreakdown
+                {
+                    Central = B.liberationDailyFunds,
+                    RegionalBase = S.Liberation.Regions.Count(r => r.Completed) * B.liberationRegionIncome,
+                };
                 double regional = Per(S.Regions.Sum(r => r.Left || r.Off > 0 ? 0 : r.Econ * r.Trust / 100) / B.fonDiv * (S.Aware ? 1 : B.preAwareFund));
                 if (!ModernEconomy) return new IncomeBreakdown { RegionalBase = regional };
                 double baseContribution = regional * B.regionalFundMul;
@@ -134,6 +139,7 @@ namespace Corrigible.Core
 
         public string ResearchCheck(string id)
         {
+            if (LiberationOn) return Loc.T("Bu harekâtta ilerlemek için sektörleri geri al ve sığınağı geliştir.");
             if (!GameData.Research.Any(r => r.Id == id)) return Loc.T("Geçersiz araştırma.");
             var rs = GameData.ResearchItem(id);
             if (S.Ending != null) return Loc.T("Oyun bitti.");

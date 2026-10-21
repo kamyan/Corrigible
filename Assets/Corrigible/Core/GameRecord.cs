@@ -84,6 +84,10 @@ namespace Corrigible.Core
                 case "research_pause": sim.SetResearchPaused(c.a == "1"); break;
                 case "reports_enable": sim.EnableFieldReports(); break;
                 case "report": sim.CollectFieldReport(c.a); break;
+                case "liberation_region": sim.SelectLiberationRegion(c.a); break;
+                case "liberation_raid": sim.StartLiberationRaid(c.a); break;
+                case "shelter_upgrade": sim.ShelterUpgrade(c.a); break;
+                case "shelter_assign": sim.ShelterAssign(c.a, int.Parse(c.b, System.Globalization.CultureInfo.InvariantCulture)); break;
             }
         }
     }

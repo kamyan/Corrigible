@@ -23,13 +23,13 @@ namespace Corrigible.Desk
     [Serializable] public sealed class RaidCardRow
     { public string Icon, Text, Detail; public bool Good, Used, Armed; }
     [Serializable] public sealed class RaidInspectorModel
-    { public string Thumb, Title; public int Hp, Max; public bool Win; public RaidCardRow[] Rows = Array.Empty<RaidCardRow>(); }
+    { public string Thumb, Title; public int Hp, Max; public bool Win, IsLootMission; public RaidCardRow[] Rows = Array.Empty<RaidCardRow>(); }
     [Serializable] public sealed class RaidQueueItem { public int Order; public string State; }
     [Serializable] public sealed class RaidLogModel { public string Text,Kind; }
     [Serializable] public sealed class RaidUnusedModel { public char Letter; public string Name; public bool Move,Ability; public int ThreatOrder; }
     [Serializable] public sealed class RaidViewModel
     {
-        public bool LastTurn,Finished,Success,EventVisible;
+        public bool LastTurn,Finished,Success,EventVisible,IsLootMission;
         public string EventLine,ResultTitle,ResultSubtitle,ResultReason;
         public int Standing,TeamCount;public Vector3 Spot;
         public RaidQueueItem[] Queue=Array.Empty<RaidQueueItem>();

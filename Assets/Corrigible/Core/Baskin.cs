@@ -59,6 +59,7 @@ namespace Corrigible.Core
         };
 
         public static bool IsTarget(string k) => k == "core" || k == "node" || k == "backup";
+        public static bool IsLoot(BState state) => state.Params?.MissionKind == "loot";
 
         // ---------- Durum ----------
         public sealed class Obj { public string K; public int Hp, Max; public Obj Clone() => (Obj)MemberwiseClone(); }
@@ -165,9 +166,9 @@ namespace Corrigible.Core
                 MaxTurns = p.Traits.Contains("hizlanma") ? 5 : 6,
                 Deceptive = p.Traits.Contains("aldatma") || p.Traits.Contains("medya"),
                 SpawnPerTurn = p.Traits.Contains("kopya") ? 2 : 1,
-                IsCore = p.IsCore,
+                IsCore = p.IsCore && p.MissionKind != "loot",
             };
-            B.HasBackup = p.IsCore && p.Traits.Contains("yedek");
+            B.HasBackup = B.IsCore && p.Traits.Contains("yedek");
             Rnd(B);
             var L = Layouts[(p.Compute + p.RaidNumber + (p.Seed & 7)) % Layouts.Length];
             B.Layout = L.Name;
@@ -201,7 +202,7 @@ namespace Corrigible.Core
                 }
             }
             string tgt = B.IsCore ? Loc.T("çekirdeğimin") : Loc.T("sunucularımın");
-            Say(B, p.RaidNumber > 1 ? Loc.T("Yine sen. Bu sefer kapıda daha çok makine var.") : Loc.F("Demek {0} yerini buldun. Bakalım içeri girebilecek misin.", tgt), "ai");
+            Say(B, IsLoot(B) ? Loc.T("İkmal kasasını Teknisyen ile bitişik kareden aç. Kasayı imha etmeden malzemeleri al.") : p.RaidNumber > 1 ? Loc.T("Yine sen. Bu sefer kapıda daha çok makine var.") : Loc.F("Demek {0} yerini buldun. Bakalım içeri girebilecek misin.", tgt), IsLoot(B) ? "sys" : "ai");
             if (B.Deceptive) Say(B, Loc.T("Makinelerimin ne yapacağını gösterdiğimi mi sanıyorsun?"), "ai");
             if (B.HasBackup) Say(B, Loc.T("Tek dolap mı? Hayır. Yedeğim de burada."), "ai");
             PlanEnemies(B);
@@ -237,7 +238,11 @@ namespace Corrigible.Core
             if (o.K == "civ") { B.Collateral++; Say(B, Loc.T("Sivil sunucu kırıldı: hastane ve banka hizmetleri kesildi."), "bad"); }
             else if (o.K == "spawner") Say(B, Loc.T("Kopya dolabı kırıldı: oradan robot uyanmayacak."), "good");
             else if (o.K == "cool") { Say(B, Loc.T("Soğutma ünitesi patladı."), "sys"); foreach (var d in Dirs) DamageAt(B, x + d[0], y + d[1], 1, Loc.T("patlama")); }
-            else if (IsTarget(o.K)) { Say(B, Loc.F("{0} kırıldı.", Loc.T(ObjNames[o.K])), "good"); CheckWin(B); }
+            else if (IsTarget(o.K))
+            {
+                if (IsLoot(B)) Lose(B, Loc.T("İkmal kasası imha edildi. Malzemeler kurtarılamadı."));
+                else { Say(B, Loc.F("{0} kırıldı.", Loc.T(ObjNames[o.K])), "good"); CheckWin(B); }
+            }
         }
 
         static void DamageAt(BState B, int x, int y, int n, string why)
@@ -266,7 +271,7 @@ namespace Corrigible.Core
             if (TargetsLeft(B).Count > 0) return;
             B.Phase = "won";
             B.OutcomeSuccess = true;
-            B.OutcomeReason = B.IsCore ? Loc.T("Çekirdek yok edildi.") : Loc.T("YZ düğümü kırıldı.");
+            B.OutcomeReason = IsLoot(B) ? Loc.T("İkmal malzemeleri alındı. Ekip tahliye edildi.") : B.IsCore ? Loc.T("Çekirdek yok edildi.") : Loc.T("YZ düğümü kırıldı.");
         }
 
         public static List<(int X, int Y, Obj O)> TargetsLeft(BState B)
@@ -351,6 +356,14 @@ namespace Corrigible.Core
             {
                 var t = UnitAt(B, x, y);
                 if (t != null) { Hurt(B, t, 1, Loc.T("sabotaj")); Push(B, t, d); }
+                else if (IsLoot(B) && CellAt(B, x, y).O is Obj cargo && IsTarget(cargo.K))
+                {
+                    // Aynı yetenek komutu ve önizleme yolu kullanılır; ikmal görevi dolabı kırmak yerine açar.
+                    CellAt(B, x, y).O = null;
+                    AddFx(B, new Fx { K = "loot", X = x, Y = y, Obj = cargo.K });
+                    Say(B, Loc.T("Teknisyen ikmal kasasını açtı; malzemeler güvenceye alındı."), "good");
+                    CheckWin(B);
+                }
                 else if (CellAt(B, x, y).O != null) HurtObj(B, x, y, 2);
             }
             else if (ab == "emp")
@@ -632,7 +645,7 @@ namespace Corrigible.Core
             B.Turn++;
             if (B.Turn > B.MaxTurns)
             {
-                Lose(B, B.IsCore ? Loc.T("Süre doldu: YZ çekirdeğini binadan taşıdı.") : Loc.T("Süre doldu: YZ sunucularını yedekledi ve binayı kilitledi."));
+                Lose(B, IsLoot(B) ? Loc.T("Süre doldu: YZ ikmal deposunu kilitledi.") : B.IsCore ? Loc.T("Süre doldu: YZ çekirdeğini binadan taşıdı.") : Loc.T("Süre doldu: YZ sunucularını yedekledi ve binayı kilitledi."));
                 return true;
             }
             // 3) Yeni plan

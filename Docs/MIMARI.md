@@ -102,8 +102,13 @@ Corrigible/                      (Unity proje kökü, git deposu)
   kadar `Step` eder ve komutu uygular, sonra kayıt gününe kadar ilerler.
 - `GameController.Save()` → `persistentDataPath/savegame.json` (JsonUtility). `SaveAndRestore_ReproducesExactState`
   testi JSON gidiş-dönüşünü doğrular.
+- DeskGame kurtuluş modu, `GameController.liberationCampaign` açıkken ayrı `liberation_savegame.json` kullanır.
+  `Record.rules.LiberationCampaign` başlangıçta kaydedilir; yükleme, kayıt kuralının sahnenin moduyla uyuşmasını ister.
+  İlk gündeki başarılı komutlar da kaydedilebilir. `liberation_region`, `liberation_raid`, `shelter_upgrade` ve
+  `shelter_assign` komutları replay'de yeniden uygulanır; baskın sonucu mevcut `raidres` biçimini kullanır.
 - **Yeni bir oyuncu komutu eklerken:** `Simulation`'a `XCore` + `public ActResult X(...) => RunCommand(() => XCore(...), "kind", ...)`,
-  `Replay.Restore`'a `case "kind"`, JS'e aynı fonksiyon, test.
+  `Replay.Restore`'a `case "kind"`, ortak kurallarsa JS'e aynı fonksiyon, test. `RuleOptions` ile yalıtılmış Unity
+  kampanyası komutları JS simülasyonuna eklenmez.
 
 ## Baskın sahnesi (`Scenes/Baskin.unity`)
 
@@ -323,7 +328,8 @@ mesajları) üretiliyor ve Core `UnityEngine`'e bağlanamaz. Bunun yerine gettex
 
 ## Kalıcılık ve platform
 
-- `ProfileStore` → `player_profile.json`; `GameController` → `savegame.json` (ikisi `persistentDataPath`).
+- `ProfileStore` → `player_profile.json`; `GameController` → eski kriz için `savegame.json`, kurtuluş harekâtı için
+  `liberation_savegame.json` (hepsi `persistentDataPath`).
 - `Platform.Current` (`IPlatformServices`): varsayılan `LocalPlatform` başarımları konsola yazar. `Corrigible.Steam`
   derlenince `SteamPlatform` kendini `RuntimeInitializeOnLoadMethod` ile kaydeder. Steam Cloud için
   `persistentDataPath` Steamworks'te Auto-Cloud'a eklenir (kod gerekmez).
@@ -445,7 +451,29 @@ overlay dosya üstündeki tekerlek kamerayı değiştirmez.
 `SadeDeskInteraction`, `CardStringView`, `EventModalView` ve `DeskTutorialView` kart, iplik, olay spotu ve eğitim hedeflerini
 kamera hareketinden sonra yeniler; aynı overlay düzlemindeki eski davranış korunur. `RaidLauncher`, baskında kamera,
 dinleyici, oda ışıkları, canvas/raycaster ve masa girdilerini kapatır; `CommandPostDesk` oda renderer'larını gizler.
-Dönüşte bileşenlerin ve oda renderer'larının önceki `enabled` durumları geri yüklenir. `Core`, JS simülasyonu ve kayıt/komut biçimi değişmez.
+Dönüşte bileşenlerin ve oda renderer'larının önceki `enabled` durumları geri yüklenir. İlk 3B masa aktarımı oyun
+kurallarını değiştirmemişti; aşağıdaki kurtuluş kampanyası bu sunuma yeni, seçenekle yalıtılmış kurallar ekler.
+
+### DeskGame · kurtuluş harekâtı ve sığınak
+
+- **Core durumu:** `CampaignLiberation.cs`, `WorldState.Liberation` içindeki bölge/sektör ilerlemesini ve sığınak
+  durumunu kurar. Etkinlik kontrolü hem `Rules.LiberationCampaign` hem durum varlığını ister. Kapalı/null seçenek
+  eski `Simulation.Step` ve RNG sırasını değiştirmez. Açıkken `StepLiberation` günlük fon, ekip ve sığınak adımını
+  çalıştırır; eski yayılma/son kontrolü çalışmaz. İşgal oranı sektörlerden türetilir; harita yine `Shown(r)` okur.
+- **Komutlar:** `StartLiberationRaid`, `SelectLiberationRegion`, `ShelterUpgrade`, `ShelterAssign` → GameController
+  kapısı → `RunCommand/Rec`. Bölge başına üç sıralı sektör; sınır `GameData.Links` ve bütün tamamlanmış bölgelerden
+  hesaplanır. `RaidParams.SectorId/MissionKind`, mevcut `S.Raid` eklemeli sahne yoluna hedefi taşır. Eksik/eski
+  `MissionKind` sunucu imhası davranışını korur; `loot` hedefi sağlam almayı gerektirir.
+- **Sığınak:** `ShelterState` odaları, seviyeleri, personeli, erzak/malzeme ve vardiya farklarını tutar.
+  `ShelterLogic.Create/Advance/RewardLoot/RewardServer` deterministiktir ve RNG tüketmez. Yaşam alanı barınma/erzak,
+  jeneratör enerji, atölye malzeme, revir ekip toparlanması sağlar. Formüller `Balance.shelter*` alanlarını kullanır.
+- **Manuel vardiya:** `GameController.AdvanceLiberationDay` bir simülasyon günü ilerletip olayları yayımlar ve
+  ayrı kaydı yazar. Baskın veya oyun sonu varken ilerleyemez. Normal krizin 1×/2×/4× saat yolu ayrı kalır.
+- **Oda ve geçiş:** Sol pencere sığınak yan kesitinin durum/geliştirme yüzeyidir; sağ operasyon masası CRT
+  monitörüdür. `RaidLauncher` serialized `mainCamera`, `monitorFocusPose`, süre/FOV ve giriş kilidi referanslarıyla
+  önce monitöre yaklaşır, sonra Baskın sahnesini eklemeli yükler. Kamera/girdi durumunu dönüşte geri yükler;
+  yaklaşma sırasında eski baskın iptal edilmişse yüklemeyi bırakır. Monitör geçişi atanmayan eski sahnelerde
+  doğrudan yükleme sürer. Oda yerleşimi sahne kaynağındadır; kalıcı runtime sahne kurucusu eklenmez.
 
 ### Sade baskın tahtası · F4
 

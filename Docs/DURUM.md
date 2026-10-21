@@ -1,12 +1,12 @@
 # Durum, kararlar ve açık işler
 
-_Son güncelleme: 2026-10-20_
+_Son güncelleme: 2026-10-21_
 
 ## Nerede kaldık
 
 Oyun baştan sona oynanabilir: giriş ve rakip seçimi, rehberli eğitim, kriz masası (harita, bölge eylemleri, araştırma,
 YZ günlüğü, haber bandı), hediye/perde/sahte zafer/son pencereleri, kayıt ve devam, Seni Tanıyan Rakip profili.
-3D komuta masası ve rapor fişi düzeltmeleriyle son tam EditMode doğrulaması **624/624** geçti.
+DeskGame kurtuluş kampanyası, sığınak ve görev raporu kapsamıyla ve açılış girdi düzeltmesiyle son tam EditMode doğrulaması **654/654** geçti.
 C# simülasyonu tarayıcı prototipiyle birebir aynı (deneysel mod ve baskın motoru dahil, Unity'ye özgü seçenekler kapalıyken).
 Deneysel mod (saha ekipleri, zaman ölçeği, baskın) Unity'de oynanabilir ve varsayılan olarak açık. Oyun Türkçe ve
 İngilizce (giriş penceresindeki dil düğmesi; ilk açılışta sistem diline göre).
@@ -16,6 +16,55 @@ doğrulaması tamamlanınca sonuçları aşağıya eklenecek; yukarıdaki 111/11
 
 **Git:** Depo `git@github.com:kamyan/Corrigible.git`, dal `main`. Bu belgelerdeki işin büyük kısmı **henüz commit
 edilmedi** (kullanıcı commit istemedi). Commit'i kullanıcı isteyince yap.
+
+## DeskGame · açılış düğmesinin fare girişi (2026-10-21)
+
+- `CommandPostDesk.worldRaycasters` listesine yanlışlıkla `LiberationStoryCanvas` ve `LiberationHudCanvas`
+  eklenmişti. Hikâye masayı kilitlediğinde kendi başlatma düğmesinin fare girişi de kapanıyordu.
+- Sahne bağlantıları yalnız 18 World Space masa yüzeyine indirildi; çalışma zamanındaki kilit de Overlay
+  canvas'larını değiştirmiyor. Açılış ve HUD kendi fare girişini koruyor.
+- Yeni sahne regresyon testiyle **654/654** EditMode geçti. Canlı EventSystem ışını `Begin story` düğmesine
+  isabet etti; pointer down/up/click ile hikâye kapandı, TutorialHold ve InputBlocked false oldu.
+  Mevcut kayıt/profil korundu; oyun kuralı ve parite değişmedi.
+
+## DeskGame · kurtuluş harekâtı, sığınak ve CRT (2026-10-21)
+
+- Yeni akış tam YZ işgaliyle başlıyor: 12 bölge bilinen %100 işgalde, Batı Avrupa'da tek Alfa ekibi ve sığınak.
+  `RuleOptions.LiberationCampaign` / `WorldState.Liberation` yeni kuralları yalıtıyor; kapalıyken eski kriz ve
+  JS paritesi yolu korunuyor.
+- Her bölgede sıralı iki yağma ve bir sunucu imhası var. Yağmada Teknisyen bitişik kasayı sağlam alıyor;
+  kasayı imha etmek başarısızlık. Başarılı sonuç masaya dönüldüğünde sektörü bir kez geri alıp ödülü veriyor.
+  Üç sektör tamamlanınca kurtarılmış bölgelerin ortak komşu sınırından yeni bölge seçiliyor; 36 sektör zafer.
+- Günler manuel vardiya eylemiyle ilerliyor. Bu modda günlük fon, sığınak üretim/tüketimi ve ekip iyileşmesi var;
+  eski yayılma, Tekillik, hediye/illüzyon ve temiz gün son koşulları çalışmıyor. Denetim/şalter/Hizalama ile
+  sektör atlama kapalı. Başarısız baskın yeniden denenebiliyor; son ekibin kalıcı silinmesi engelleniyor.
+- `ShelterState`, `ShelterLogic` ve `Simulation.Shelter`: yaşam alanı barınma/erzak, jeneratör enerji, atölye
+  malzeme, revir toparlanma sağlıyor. Onarım/geliştirme, personel dağıtımı, enerji ve erzak sınırları komutla
+  yönetiliyor. Ödüller ve bütün denge sayıları `Balance.liberation*` / `shelter*` içinde.
+- GameController'da sahneye özel mod seçimi ve **ayrı `liberation_savegame.json`** yolu var; eski kayıtla mod
+  uyuşmazsa yüklenmiyor. Yeni bölge/baskın/oda/personel komutları kayda ve replay'e eklendi; ilk gündeki başarılı
+  komutlar da kaydedilebiliyor.
+- Sol pencere dört odalı sığınak yan kesitini, sağ masa tüplü operasyon monitörünü gösteriyor. `RaidLauncher`, atanan
+  kamera pozuna yumuşak yaklaşmadan sonra mevcut Baskın sahnesini açıyor; dönüşte kamera ve girdi durumunu
+  geri yüklüyor. Ortadaki komuta masası dünya/bölge/sektör kararlarını taşıyor.
+- Sektör sırası, komşuluk, tek ödül, başarısızlıktan dönüş, bütün haritayı bitirme, eski kuralların yalıtımı,
+  kayıt/replay, sığınak kaynak/enerji ve yağma hedefi için regresyon testleri eklendi. Tam EditMode koşusu **653/653** geçti.
+- Canlı oyunda sığınak odasına UI ışınıyla tıklama, atölye onarımı, personel atama, manuel vardiya ve üretim; ayrı kayıttan
+  oda/personel/kaynak/bekleyen baskın geri yüklenmesi doğrulandı. Gerçek taktik hamlelerle ilk loot 6. turda alındı;
+  ödül yalnız masaya dönüşte işlendi, sonraki sektör açıldı, kamera konumu/dönüşü/FOV ve duraklatılmış zaman korundu.
+  Test sonucuyla kalan iki sektör tamamlanınca harita UI ışınıyla Doğu Avrupa seçildi ve cephe açma düğmesi yeni
+  bölgeyi kayda geçirdi. Rapor kapanırken düğmelerin yeniden etkinleşmesi de canlı kontrolde doğrulandı.
+- Görev raporu artık görev kimliğini ve alınan gerçek kaynakları kaydediyor; depo sınırını aşan kaynak, eski sızma/yama
+  cezaları veya kalıcı ekip kaybı iddiaları gösterilmiyor. Altı ek rapor testi bu ayrımı kilitliyor.
+- Temel JS paritesinin önceki bütün çıktıları aynı; yeni loot tohumları C# ile eşleşiyor. Aynı rastgele tohum dizisiyle
+  yapılan önce/sonra denge koşuları da birebir aynı. Yeni modun uzun kampanya zorluğu ayrıca oynanarak ayarlanmalı.
+
+Ayrıntılar `OYUN-TASARIMI.md` → "DeskGame · işgalden kurtuluş kampanyası" ve `MIMARI.md` → "DeskGame · kurtuluş
+harekâtı ve sığınak". Sahne hiyerarşisi kalıcı, tek seferlik düzenleme yardımcıları silindi. TR/EN metinler ve 1920×1080 görünüm incelendi;
+oyuncunun eski kayıt/profil dosyaları ve tercihleri korundu, yalnız testin oluşturduğu kurtuluş kaydı temizlendi.
+Önizlemeler: `Docs/Gorseller/DeskGame_Kurtulus.png`, `DeskGame_Operasyon.png`, `DeskGame_Siginak.png`.
+Kontroller: 1 komuta haritası, 2 sığınak, 3 operasyon; Home oda görünümü, F harita odağı, Boşluk vardiya.
+`CorrigibleDebug.Capture`, kamera arka planının uzaklığını korur ve iç içe Overlay canvas’larını da yakalar.
 
 ## DeskGame · AIBunker komuta masası (2026-10-20)
 

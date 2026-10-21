@@ -243,7 +243,7 @@ namespace Corrigible.Desk.Tests
         }
 
         [Test]
-        public void DeskGameScene_SadeSpeedButtonsAreWiredToTheDisplayedClock()
+        public void DeskGameScene_UsesManualShiftsAndRetainsTheInactiveLegacyClock()
         {
             var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root + "/Scenes/DeskGame.unity", UnityEditor.SceneManagement.OpenSceneMode.Additive);
             try
@@ -253,6 +253,10 @@ namespace Corrigible.Desk.Tests
                 var hud = roots.SelectMany(g => g.GetComponentsInChildren<SadeDeskView>(true)).Single();
                 var clock = roots.SelectMany(g => g.GetComponentsInChildren<ClockPlaqueView>(true)).Single();
                 var wiring = new SerializedObject(interaction);
+                Assert.IsFalse(interaction.enabled, "Kurtuluş masasında eski hız/eylem dinleyicileri çalışmamalı.");
+                Assert.IsFalse(clock.gameObject.activeInHierarchy, "Eski hız arayüzü yeni vardiya arayüzünün arkasında etkin kalmamalı.");
+                var liberation = roots.SelectMany(g => g.GetComponentsInChildren<LiberationDeskView>(true)).Single();
+                Assert.IsNotNull(new SerializedObject(liberation).FindProperty("advanceDay").objectReferenceValue);
                 Assert.AreSame(clock, wiring.FindProperty("clock").objectReferenceValue,
                     "Hız tuşlarının SpeedClicked olayı oyun komutlarına bağlanmalı.");
                 Assert.AreSame(clock, new SerializedObject(hud).FindProperty("clock").objectReferenceValue,
@@ -281,7 +285,7 @@ namespace Corrigible.Desk.Tests
         }
 
         [Test]
-        public void DeskGameScene_RetainedScreensRenderAboveTheSadeDesk()
+        public void DeskGameScene_RetainedScreensRenderAboveTheStationControls()
         {
             var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root + "/Scenes/DeskGame.unity", UnityEditor.SceneManagement.OpenSceneMode.Additive);
             try
@@ -291,9 +295,9 @@ namespace Corrigible.Desk.Tests
                 foreach (var tint in roots.SelectMany(g => g.GetComponentsInChildren<ThemeTint>(true)))
                     if (!string.IsNullOrEmpty(tint.Key))
                         Assert.IsTrue(DeskTheme.Active.TryGet(tint.Key, false, out _), tint.name + ": " + tint.Key);
-                var interaction = presenter.Sade;
-                var context = (RectTransform)new SerializedObject(interaction).FindProperty("context").objectReferenceValue;
-                var contextCanvas = context.GetComponentInParent<Canvas>(true);
+                var liberation = roots.SelectMany(g => g.GetComponentsInChildren<LiberationDeskView>(true)).Single();
+                var dayButton = (Component)new SerializedObject(liberation).FindProperty("advanceDay").objectReferenceValue;
+                var contextCanvas = dayButton.GetComponentInParent<Canvas>(true);
                 Assert.AreEqual(RenderMode.ScreenSpaceOverlay, contextCanvas.rootCanvas.renderMode);
                 var serialized = new SerializedObject(presenter);
                 foreach (string field in new[] { "intro", "campaign", "eventModal", "confirm", "fakeWin", "gameOver", "settingsView", "tutorial" })
@@ -342,6 +346,37 @@ namespace Corrigible.Desk.Tests
         }
 
         [Test]
+        public void DeskGameScene_StoryButtonsStayOutsideTheWorldInputLock()
+        {
+            var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root + "/Scenes/DeskGame.unity", UnityEditor.SceneManagement.OpenSceneMode.Additive);
+            try
+            {
+                var roots = scene.GetRootGameObjects();
+                var desk = roots.SelectMany(g => g.GetComponentsInChildren<CommandPostDesk>(true)).Single();
+                var surface = roots.SelectMany(g => g.GetComponentsInChildren<LiberationDeskView>(true)).Single();
+                var fields = new SerializedObject(surface);
+                var begin = (UnityEngine.UI.Button)fields.FindProperty("beginStory").objectReferenceValue;
+                var storyCanvas = begin.GetComponentInParent<Canvas>(true);
+                var storyInput = storyCanvas.GetComponent<UnityEngine.UI.GraphicRaycaster>();
+                Assert.AreEqual(RenderMode.ScreenSpaceOverlay, storyCanvas.renderMode);
+                Assert.IsTrue(storyInput.enabled, "Hikâye açıkken başlatma düğmesine fareyle ulaşılmalı.");
+                Assert.IsTrue(begin.interactable);
+                Assert.IsTrue(begin.targetGraphic.raycastTarget);
+                var gated = new SerializedObject(desk).FindProperty("worldRaycasters");
+                Assert.Greater(gated.arraySize, 0);
+                for (int i = 0; i < gated.arraySize; i++)
+                {
+                    var input = (UnityEngine.UI.GraphicRaycaster)gated.GetArrayElementAtIndex(i).objectReferenceValue;
+                    Assert.IsNotNull(input);
+                    Assert.AreEqual(RenderMode.WorldSpace, input.GetComponent<Canvas>().renderMode,
+                        input.name + ": masa kilidi Overlay ekranların girişini kapatmamalı.");
+                    Assert.AreNotSame(storyInput, input);
+                }
+            }
+            finally { UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene, true); }
+        }
+
+        [Test]
         public void DeskGameScene_UsesSadeHierarchyAndPolygonMappingA()
         {
             var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root + "/Scenes/DeskGame.unity", UnityEditor.SceneManagement.OpenSceneMode.Additive);
@@ -349,7 +384,20 @@ namespace Corrigible.Desk.Tests
             {
                 var roots = scene.GetRootGameObjects();
                 var pres = roots.SelectMany(g => g.GetComponentsInChildren<DeskPresenter>(true)).Single();
-                Assert.IsNotNull(pres.Sade, "DeskGame.unity SadeDeskInteraction'a bağlı olmalı.");
+                var surface = new SerializedObject(pres).FindProperty("alternateSurface").objectReferenceValue;
+                Assert.IsInstanceOf<LiberationDeskView>(surface, "DeskGame üç fiziksel istasyona bağlı olmalı.");
+                Assert.IsNull(pres.Sade, "Harita tıklaması eski eylem kartlarını da açmamalı.");
+                var stationWiring = new SerializedObject(surface);
+                foreach (string field in new[] { "game", "source", "map", "cameraRig", "desk", "launcher", "storyRoot", "upgradeRoom", "workerMinus", "workerPlus" })
+                    Assert.IsNotNull(stationWiring.FindProperty(field).objectReferenceValue, field);
+                Assert.AreEqual(3, stationWiring.FindProperty("sectorButtons").arraySize);
+                Assert.AreEqual(4, stationWiring.FindProperty("roomButtons").arraySize);
+                var controller = roots.SelectMany(g => g.GetComponentsInChildren<Corrigible.Game.GameController>(true)).Single();
+                Assert.IsTrue(controller.LiberationCampaign);
+                var raidLauncher = roots.SelectMany(g => g.GetComponentsInChildren<Corrigible.Game.Raid.RaidLauncher>(true)).Single();
+                var raidWiring = new SerializedObject(raidLauncher);
+                Assert.IsTrue(raidWiring.FindProperty("enableMonitorTransition").boolValue);
+                Assert.IsNotNull(raidWiring.FindProperty("monitorFocusPose").objectReferenceValue);
                 var mapView = roots.SelectMany(g => g.GetComponentsInChildren<SadeMapView>(true)).Single();
                 CollectionAssert.AreEqual(GameData.Regions.Select(r => r.Id), mapView.Regions.Select(s => s.Id));
                 Assert.AreEqual(90, mapView.Regions.Single(s => s.Id == "na").Fill.PolygonCount, "na = KA (81) + OA (9)");

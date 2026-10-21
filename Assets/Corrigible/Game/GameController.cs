@@ -16,6 +16,9 @@ namespace Corrigible.Game
         const string TypePrefKey = "corrigible.aiType";
 
         [SerializeField] BalanceConfig balanceConfig;
+        [Tooltip("Tam işgalden sektör baskınlarıyla geri alma ve sığınak yönetimi.")]
+        [SerializeField] bool liberationCampaign;
+        public bool LiberationCampaign => liberationCampaign;
         [Tooltip("1×, 2× ve 4× hızlarda bir oyun gününün süresi (saniye).")]
         [SerializeField] float[] secondsPerDay = { 0.9f, 0.45f, 0.22f };
         [Tooltip("Deneysel modda (saha ekipleri / zaman ölçeği) bir günün ekranda kaç kat uzun süreceği.")]
@@ -47,6 +50,7 @@ namespace Corrigible.Game
 
         RuleOptions RulesForNewGame()
         {
+            if (liberationCampaign) return new RuleOptions { Stage = 4, LiberationCampaign = true };
             if (Campaign != null)
             {
                 var rules = Campaign.Rules().Clone();
@@ -85,7 +89,7 @@ namespace Corrigible.Game
         public event Action NewGameStarted;
         public event Action GameLoaded;
 
-        static string SavePath => Path.Combine(Application.persistentDataPath, "savegame.json");
+        string SavePath => Path.Combine(Application.persistentDataPath, liberationCampaign ? "liberation_savegame.json" : "savegame.json");
 
         float acc;
 
@@ -104,7 +108,7 @@ namespace Corrigible.Game
             ExpTimeScale = PlayerPrefs.GetFloat(ExpScaleKey, 1.5f);
             OnboardingOff = PlayerPrefs.GetInt(OnboardingOffKey, 0) == 1;
             EventsEnabled = PlayerPrefs.GetInt(EventsKey, 1) == 1;
-            Campaign = CampaignState.Load();
+            Campaign = liberationCampaign ? null : CampaignState.Load();
             // İlk açılışta en kolay rakip (Solucan) seçili gelir; eğitim onunla tasarlandı
             var saved = PlayerPrefs.GetString(TypePrefKey, "solucan");
             TypeId = GameData.HasType(saved) ? saved : TypeId;
@@ -132,7 +136,7 @@ namespace Corrigible.Game
         {
             if (Campaign != null) typeId = Campaign.CurrentType;
             TypeId = GameData.HasType(typeId) ? typeId : "manipulator";
-            if (Campaign == null) PlayerPrefs.SetString(TypePrefKey, TypeId);
+            if (Campaign == null && !liberationCampaign) PlayerPrefs.SetString(TypePrefKey, TypeId);
             Sim = CreateSim(seed);
             Speed = 0;
             acc = 0;
@@ -143,7 +147,7 @@ namespace Corrigible.Game
         Simulation CreateSim(uint? seed)
         {
             var balance = balanceConfig != null ? balanceConfig.CreateRuntimeCopy() : new Balance();
-            var exp = ExpForNewGame;
+            var exp = liberationCampaign ? new ExpOptions { Teams = true, TimeScale = 1.5, StartTeams = 1 } : ExpForNewGame;
             Campaign?.Apply(balance, exp);
             return Simulation.NewGame(Profile, TypeId, seed, balance, exp, RulesForNewGame());
         }
@@ -174,6 +178,7 @@ namespace Corrigible.Game
         // ---------- Kampanya ----------
         public void StartCampaign()
         {
+            if (liberationCampaign) return;
             DeleteSave();
             Campaign = CampaignState.New();
             Campaign.Save();
@@ -183,6 +188,7 @@ namespace Corrigible.Game
         /// <summary>Krizi bitince seçilen yükseltmeyle sonraki krize geçer; kampanya bittiyse kapatır.</summary>
         public void NextCrisis(string upgradeId)
         {
+            if (liberationCampaign) return;
             if (Campaign == null) return;
             Campaign.Advance(upgradeId);
             if (Campaign.Finished) { EndCampaign(); return; }
@@ -192,6 +198,7 @@ namespace Corrigible.Game
 
         public void EndCampaign()
         {
+            if (liberationCampaign) return;
             CampaignState.Delete();
             Campaign = null;
             DeleteSave();
@@ -200,13 +207,13 @@ namespace Corrigible.Game
 
         public void SetSpeed(int speed)
         {
-            Speed = Mathf.Clamp(speed, 0, 4);
+            Speed = Sim != null && Sim.LiberationOn ? 0 : Mathf.Clamp(speed, 0, 4);
             Changed?.Invoke();
         }
 
         void Update()
         {
-            if (Sim == null || Speed == 0 || Hold || TutorialHold) return;
+            if (Sim == null || Sim.LiberationOn || Speed == 0 || Hold || TutorialHold) return;
             var s = Sim.S;
             if (s.Ending != null || s.Blocked) return;
             float spd = secondsPerDay[Speed >= 4 ? 2 : Speed - 1] * (s.Exp != null ? expDayFactor : 1);
@@ -258,6 +265,16 @@ namespace Corrigible.Game
         public ActResult HireTeam() => Run(() => Sim.HireTeam());
         public ActResult StartRaid(string regionId) => Run(() => Sim.StartRaid(regionId));
         public ActResult ResolveRaid(RaidResult result) => Run(() => Sim.ResolveRaid(result));
+        public ActResult StartLiberationRaid(string sectorId) => Run(() => Sim.StartLiberationRaid(sectorId));
+        public ActResult SelectLiberationRegion(string regionId) => Run(() => Sim.SelectLiberationRegion(regionId));
+        public ActResult ShelterUpgrade(string roomId) => Run(() => Sim.ShelterUpgrade(roomId));
+        public ActResult ShelterAssign(string roomId, int workers) => Run(() => Sim.ShelterAssign(roomId, workers));
+
+        public void AdvanceLiberationDay()
+        {
+            if (Sim == null || !Sim.LiberationOn || Sim.S.Blocked || Sim.S.Ending != null || TutorialHold) return;
+            Sim.Step(); Flush(); Save(); Changed?.Invoke();
+        }
         public ActResult ResolveEvent(int choice) => Run(() => Sim.ResolveEvent(choice));
 
         public void DismissAdvice()
@@ -292,13 +309,15 @@ namespace Corrigible.Game
             catch (Exception e) { Debug.LogWarning($"Oyun kaydedilemedi: {e.Message}"); }
         }
 
-        static GameRecord LoadRecord()
+        GameRecord LoadRecord()
         {
             try
             {
                 if (!File.Exists(SavePath)) return null;
                 var rec = JsonUtility.FromJson<GameRecord>(File.ReadAllText(SavePath));
-                return rec != null && GameData.HasType(rec.type) && rec.day > 0 ? rec : null;
+                return rec != null && GameData.HasType(rec.type) &&
+                    ((rec.hasRules && rec.rules != null && rec.rules.LiberationCampaign) == liberationCampaign) &&
+                    (rec.day > 0 || liberationCampaign && rec.commands.Count > 0) ? rec : null;
             }
             catch (Exception e)
             {
@@ -307,7 +326,7 @@ namespace Corrigible.Game
             }
         }
 
-        static void DeleteSave()
+        void DeleteSave()
         {
             try { if (File.Exists(SavePath)) File.Delete(SavePath); }
             catch (Exception e) { Debug.LogWarning($"Kayıt silinemedi: {e.Message}"); }
@@ -328,7 +347,7 @@ namespace Corrigible.Game
             {
                 Sim = Replay.Restore(rec);
                 // Eski komut geçmişi önce kendi kurallarıyla yürütülür; raporlar yalnızca devam gününden itibaren açılır.
-                if (Sim.ModernEconomy && !Sim.ReportsOn && Sim.S.Ending == null) Sim.EnableFieldReports();
+                if (!Sim.LiberationOn && Sim.ModernEconomy && !Sim.ReportsOn && Sim.S.Ending == null) Sim.EnableFieldReports();
             }
             catch (Exception e)
             {

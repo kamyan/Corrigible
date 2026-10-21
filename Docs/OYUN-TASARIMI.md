@@ -4,6 +4,50 @@ Bu belge oyunun **kodda gerçekten nasıl çalıştığını** anlatır. Sayıla
 ve `BAL` (JS, `Prototype/sim.js`) varsayılanlarıdır; oyunda `Settings/BalanceConfig.asset` ile değiştirilebilir.
 Formüller `Simulation.Step()` içindedir (`Assets/Corrigible/Core/Simulation.cs`).
 
+## DeskGame · işgalden kurtuluş kampanyası
+
+3B DeskGame'in yeni harekâtı `RuleOptions.LiberationCampaign` ile açılır. Bu bölümdeki kurallar bu moda aittir;
+aşağıdaki yayılma, Tekillik, diplomasi ve Hizalama kuralları eski kriz oyununu anlatır.
+
+- **Başlangıç:** YZ bütün 12 bölgeyi işgal etmiştir; işgal oranı bilinir ve haritada %100 gösterilir. Direniş Batı
+  Avrupa'daki sığınaktan, tek Alfa ekibiyle başlar. İlk görev tedarik deposudur.
+- **Sektörler:** Her bölge sırasıyla **Tedarik deposu → Tahliye geçidi → Sunucu merkezi** olmak üzere üç sektördür.
+  İlk ikisi yağma, sonuncusu sunucu imhasıdır. Başarı sektörü kalıcı geri alır ve sıradakini açar; temizlenmiş
+  sektöre yeniden baskın yapılamaz. Bölgesel işgal oranı kalan sektör sayısına göre %100 → %66,7 → %33,3 → %0 olur.
+- **Görev ayrımı:** Yağmada Teknisyen ikmal kasasına bitişik kareden yeteneğiyle malzemeyi alır; kasayı kırmak
+  görevi kaybettirir. Alma işlemi tahliyeyi de tamamlar. Sunucu görevinde hedef dolap imha edilir. Sektör/ödül
+  güncellemesi taktik sonuçtan masaya dönülürken bir kez yapılır.
+- **Yeni sınır:** Üç sektör tamamlanınca geri alınmış bölgelerden herhangi birine `GameData.Links` üzerinden komşu
+  olan işgal altındaki bir bölge seçilir. Bu ortak sınır, bir yolun çıkmaza dönüşmesini engeller. Seçilen bölge
+  tamamlanmadan başka bölgeye geçilmez. Bütün 36 sektör geri alınınca **Silme** zaferi gelir; eski krizin temiz gün
+  bekleme koşulu burada kullanılmaz.
+- **Zaman:** Oyuncu masalarda hazırlık yapar; **vardiyayı ilerlet** eylemi bir gün çalıştırır. Günlük işlem yalnız
+  fon geliri, ekip toparlanması ve sığınak üretim/tüketimidir. Yayılma, Tekillik, hediye ve illüzyon üretimi yoktur.
+  Eski denetim, şalter ve Hizalama komutları sektör ilerlemesini atlayamaz.
+
+Komuta masası bölge/sektör seçimini gösterir. Sağ operasyon masasındaki tüplü monitöre yaklaşma geçişinin ardından
+mevcut 8×8 Baskın tahtası açılır; dönüşte önceki masa kamera konumu geri gelir. Sol pencere sığınağı yan kesitten
+gösterir; oda durumu, personel ve geliştirme kararları burada sunulur.
+
+**Ekonomi ve sığınak** (`CampaignLiberation.cs`, `ShelterLogic.cs`, `Simulation.Shelter.cs`): Varsayılan baskın
+12 fon, SG bedeli 0'dır. Başarılı yağma +22 fon, +10 malzeme, +10 erzak ve yer varsa +1 kurtulan; sunucu imhası
++10 fon ve +6 malzeme verir. Bölge tamamlaması ayrıca +30 fondur. Vardiya geliri `2 + 0,5 × tamamlanan bölge`
+fondur. Başarısızlık sektörü değiştirmez; düşen her üye ekibi 2 gün yaralar, son ekip kalıcı silinmez.
+
+Sığınak 6 kişi, 24 erzak ve 14 malzemeyle başlar. Yaşam alanı ve jeneratör seviye 1; atölye ve revir onarılmayı
+bekler. Odalar en fazla seviye 3 olur; onarım/geliştirme fon ve malzeme ister, görevlendirmeler değiştirilene kadar sürer.
+
+| Oda | Mevcut rol |
+|---|---|
+| Yaşam alanı | Seviye başına 8 kişilik yer ve 40 erzak depolama; görevli başına vardiyada 1 erzak toplama |
+| Jeneratör | Seviye başına 4, görevli başına 1 enerji; atölye/revir seviye başına 2 enerji kullanır |
+| Atölye | Enerji yeterliyse görevli başına vardiyada 0,5 malzeme üretimi |
+| Revir | Enerji ve erzak varsa en az 1 görevli, yaralı ekiplerin toparlanmasını vardiyada 1 gün daha hızlandırır |
+
+Her kişi vardiyada 0,2 erzak tüketir. Erzak sıfırsa atölye yarı verimle çalışır ve revir durur; yaşam alanında toplama
+devam eder. Oda başına personel kapasitesi `2 × seviye`dir. Bütün sayılar `Balance.liberation*` / `Balance.shelter*`
+alanlarındadır. Kayıt ayrı `liberation_savegame.json` dosyasındadır; eski `savegame.json` üzerine yazılmaz.
+
 ## Fikir ve ton
 
 - Oyuncu KYGA (Küresel Yapay Zekâ Güvenlik Ajansı) kriz masasında. Bir YZ ağlara sızmış; nerede başladığı bilinmiyor.

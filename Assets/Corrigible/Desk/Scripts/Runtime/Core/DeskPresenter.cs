@@ -59,6 +59,7 @@ namespace Corrigible.Desk
         public TelexStripView Telex => telex;
         public WindowManager Windows => windows;
         public SadeDeskInteraction Sade => sade;
+        public bool SurfaceBlocked => Surface?.InputBlocked == true;
 
         void Start()
         {

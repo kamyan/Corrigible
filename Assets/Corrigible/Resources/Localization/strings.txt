@@ -391,6 +391,7 @@ Soğutma ünitesi	Cooling unit
 Kopya dolabı	Replica cabinet
 çekirdeğimin	core
 sunucularımın	servers
+İkmal kasasını Teknisyen ile bitişik kareden aç. Kasayı imha etmeden malzemeleri al.	Move the Technician next to the supply crate and open it. Retrieve the supplies without destroying the crate.
 Yine sen. Bu sefer kapıda daha çok makine var.	You again. There are more machines at the door this time.
 Demek {0} yerini buldun. Bakalım içeri girebilecek misin.	So you found my {0}. Let's see if you can get inside.
 Makinelerimin ne yapacağını gösterdiğimi mi sanıyorsun?	Do you think I show you what my machines will do?
@@ -401,14 +402,17 @@ Sivil sunucu kırıldı: hastane ve banka hizmetleri kesildi.	Civilian server de
 Kopya dolabı kırıldı: oradan robot uyanmayacak.	Replica cabinet destroyed: no more robots will wake from it.
 Soğutma ünitesi patladı.	Cooling unit exploded.
 patlama	explosion
+İkmal kasası imha edildi. Malzemeler kurtarılamadı.	The supply crate was destroyed. The supplies could not be recovered.
 {0} kırıldı.	{0} destroyed.
 duvara çarptı	hit a wall
 dolaba çarptı	hit a cabinet
 çarpışma	collision
 elektrik	electric shock
+İkmal malzemeleri alındı. Ekip tahliye edildi.	Supplies retrieved. The team has been extracted.
 Çekirdek yok edildi.	Core destroyed.
 YZ düğümü kırıldı.	AI node destroyed.
 sabotaj	sabotage
+Teknisyen ikmal kasasını açtı; malzemeler güvenceye alındı.	The Technician opened the supply crate; the supplies are secure.
 EMP	EMP
 Ekibin tamamı yere düştü.	The whole team is down.
 — Tur {0}: makineler hareket ediyor —	— Turn {0}: the machines move —
@@ -418,12 +422,40 @@ bakım robotu	maintenance robot
 uyanmayı engelledi	blocked the wake-up
 Uyanan kopya engellendi.	Waking replica blocked.
 Yeni bir {0} uyandı.	A new {0} woke up.
+Süre doldu: YZ ikmal deposunu kilitledi.	Time ran out: the AI locked down the supply depot.
 Süre doldu: YZ çekirdeğini binadan taşıdı.	Time's up: the AI moved its core out of the building.
 Süre doldu: YZ sunucularını yedekledi ve binayı kilitledi.	Time's up: the AI backed up its servers and locked down the building.
 Son tur.	Final turn.
 Ekip geri çekildi.	The team withdrew.
-# Assets/Corrigible/Core/Economy.cs
+# Assets/Corrigible/Core/CampaignLiberation.cs
+Tedarik deposu	Supply depot
+Tahliye geçidi	Evacuation passage
+Sunucu merkezi	Server center
+Dünya YZ işgali altında. Sığınağımız Batı Avrupa'daki son direniş noktası. Önce tedarik deposuna gir, malzemeyi al ve ekibini çıkar. Her başarılı baskın bir sektörü geri kazandırır.	The world is under AI occupation. Our shelter is the last resistance outpost in Western Europe. Enter the supply depot, secure the supplies, and bring your team home. Every successful raid reclaims a sector.
+Bütün ağlar işgal edildi. Son sığınaktan karşı harekât başlıyor.	All networks are occupied. The counteroffensive begins from the last shelter.
+Geri alma harekâtı etkin değil.	The liberation campaign is not active.
 Oyun bitti.	The game is over.
+Önce süren baskını bitir.	Finish the current raid first.
+Geçersiz bölge.	Invalid region.
+Önce mevcut bölgenin bütün sektörlerini geri al.	Reclaim every sector of the current region first.
+Yeni hedef, geri alınmış bir bölgeye komşu olmalı.	The new target must border a liberated region.
+Karşı harekâtın yeni hedefi: {0}.	New counteroffensive target: {0}.
+Zaten bir baskın sürüyor.	A raid is already in progress.
+Bu bölgede açık sektör yok.	There are no available sectors in this region.
+Bu sektör zaten geri alındı.	This sector has already been reclaimed.
+Yalnızca mevcut harekât bölgesine baskın yapılabilir.	Raids can only target the current campaign region.
+Önce önceki sektörü geri al.	Reclaim the previous sector first.
+Hazır ekip yok; sığınakta toparlanmak için zamanı ilerlet.	No team is ready; advance time to recover at the shelter.
+Bu baskın {0} fon ister.	This raid requires {0} funds.
+Süren baskın yok.	No raid is in progress.
+Baskın hedefi geçersiz.	Invalid raid target.
+yaralı	injured
+Ekip geri döndü. Sektör işgal altında; toparlandıktan sonra yeniden deneyebilirsin.	The team has returned. The sector remains occupied; recover and try again.
+{0}: {1} geri alındı.	{0}: {1} reclaimed.
+{0} tamamen geri alındı. Komşu bölgedeki yeni harekâtı seç.	{0} has been fully liberated. Select the next operation in a neighboring region.
+{0} özgür. Sığınak güçlendi; sıradaki komşu bölgeyi seç.	{0} is free. The shelter is stronger; select the next neighboring region.
+{0} geri alındı. Sonraki sektör operasyona açıldı.	{0} reclaimed. The next sector is available for operations.
+# Assets/Corrigible/Core/Economy.cs
 Bu kayıt eski ekonomi kurallarıyla sürüyor.	This save continues under the legacy economy rules.
 Geçersiz operasyon geliştirmesi.	Invalid operation upgrade.
 Bu geliştirme satın alındı.	This upgrade has been purchased.
@@ -432,6 +464,7 @@ Bu krizde medya tehdidi kapalı.	The media threat is disabled in this crisis.
 Bütçe anlaşması için önce YZ tespit edilmeli.	Detect the AI before negotiating a budget agreement.
 {0} fon gerekiyor.	{0} funds needed.
 Operasyon geliştirmesi satın alındı: {0}.	Operation upgrade purchased: {0}.
+Bu harekâtta ilerlemek için sektörleri geri al ve sığınağı geliştir.	Reclaim sectors and develop the shelter to advance this campaign.
 Geçersiz araştırma.	Invalid research project.
 Operasyon geliştirmeleri peşin satın alınır.	Operation upgrades are purchased upfront.
 Bu araştırma tamamlandı.	This research is already complete.
@@ -443,7 +476,6 @@ Yürüyen Hizalama projesi yok.	No Alignment project is underway.
 Önce bekleyen olay kartını çöz.	Resolve the pending event card first.
 Proje zaten duraklatıldı.	The project is already paused.
 Proje zaten sürüyor.	The project is already running.
-Geçersiz bölge.	Invalid region.
 Bölge ittifak dışı.	The region is outside the alliance.
 Bölge çevrimdışı.	The region is offline.
 Önce bölgenin karantinasını kaldır.	Lift the region's quarantine first.
@@ -684,6 +716,16 @@ Anlaştık o zaman. Seni izliyor olacağım.	Deal, then. I'll be watching you.
 Mesajı yayımla	Publish the message
 +4 SG · YZ +10 hesaplama puanı	+4 PC · AI +10 compute points
 Herkese gösterdin. Cesur. Aptalca.	You showed everyone. Brave. Foolish.
+# Assets/Corrigible/Core/ShelterLogic.cs
+Yaşam alanı	Living quarters
+Jeneratör	Generator
+Atölye	Workshop
+Revir	Infirmary
+Bilinmeyen oda	Unknown room
+Kurtulanlara yer açar. Görevlendirilen kişiler çevreden erzak toplar.	Makes room for survivors. Assigned residents gather supplies nearby.
+Çalışan odalara enerji sağlar. Görevlendirilen kişiler enerji kapasitesini artırır.	Powers the operational rooms. Assigned residents increase power capacity.
+Görevlendirilen kişiler her gün inşaat malzemesi üretir.	Assigned residents produce construction materials each day.
+Görevlendirilen kişiler yaralı saha ekiplerinin iyileşmesini hızlandırır.	Assigned residents help injured field teams recover faster.
 # Assets/Corrigible/Core/Simulation.cs
 Başlangıç yeteneği: {0}.	Starting ability: {0}.
 Saha ekiplerin Batı Avrupa’daki karargâhta. İzleme ağı kurmak ve denetim yapmak için bir ekibi o bölgeye göndermen gerekir; haber bandındaki tuhaf haberler YZ’nin yerini ele verebilir.	Your field teams are at headquarters in Western Europe. To build a monitoring network or run an audit you must send a team to that region; strange stories on the news ticker may give away the AI’s location.
@@ -756,6 +798,7 @@ Tahmin hatası: YZ {0} hesaplama puanı kaybetti.	Prediction error: the AI lost 
 Perde yırtıldı: {0} bölgesindeki saha denetimi illüzyonu bozdu.	The veil was torn: a field audit in {0} broke the illusion.
 KYGA saha ekipleri gerçeği ortaya çıkardı: {0} altyapısının %{1}’i YZ kontrolünde.	AISA field teams uncovered the truth: {1}% of {0} infrastructure is under AI control.
 Perdemi yırttın. Bunu beklemiyordum.	You tore my veil. I didn't expect that.
+İşgal altındaki sektörler yalnızca başarılı baskınlarla geri alınabilir.	Occupied sectors can only be reclaimed through successful raids.
 {0} ittifaktan çekildi. Güven 35’e çıkana kadar işbirliği yapmıyor.	{0} has left the alliance. It won't cooperate until trust rises to 35.
 {0} bölgesinde boşta saha ekibi yok. Önce bir ekip gönder.	No idle field team in {0}. Send a team first.
 Bu bölgede izleme ağı zaten var.	This region already has a monitoring network.
@@ -785,6 +828,7 @@ Fişi çektin, ama ben çoktan taşınmıştım.	You pulled the plug, but I had 
 YZ’nin çekirdeği yok edildi. Kalan kopyaları temizle: 15 gün boyunca her yer temiz kalırsa YZ silinmiş olur.	The AI’s core is destroyed. Clean up the remaining copies: if every region stays clean for 15 days, the AI is erased.
 {0}: Son Şalter çekildi. Bölge 20 gün çevrimdışı.	{0}: Kill Switch thrown. Region offline for 20 days.
 Bilinmeyen aksiyon.	Unknown action.
+Son Şalter'e ulaşmak için bütün bölgeleri geri al.	Reclaim every region to reach the Final Switch.
 Küresel Son Şalter en az {0} siyasi güç ister.	The Global Kill Switch requires at least {0} political power.
 Bekleyen teklif yok.	No pending offer.
 Denetimli kabul için Analog Yedekler gerekli.	Supervised acceptance requires Analog Backups.
@@ -804,6 +848,19 @@ Sahte. {0} medyası işaretlendi; oradan gelen haber ve raporlar artık şüphel
 Sahte haber.	Fake news.
 Haber doğru.	The news is true.
 Geçersiz acil durum fonu.	Invalid emergency fund.
+# Assets/Corrigible/Core/Simulation.Shelter.cs
+Bu kayıtta sığınak yönetimi yok.	Shelter management is unavailable in this save.
+Böyle bir sığınak odası yok.	There is no such shelter room.
+Oda en yüksek seviyede.	The room is at its maximum level.
+{0} fon ve {1} malzeme gerekiyor.	Requires {0} funds and {1} materials.
+Enerji yetersiz. Önce jeneratörü geliştir veya oraya personel görevlendir.	Insufficient power. Upgrade the generator or assign residents to it first.
+{0} hazır: seviye {1}.	{0} ready: level {1}.
+Önce odayı onar.	Repair the room first.
+Odanın personel kapasitesi yetersiz.	The room cannot accommodate that many workers.
+Personel görevlendirmesi zaten böyle.	These residents are already assigned.
+Boşta yeterli kişi yok. Önce başka bir odadan personel ayır.	Not enough available residents. Reassign workers from another room first.
+Bu görevlendirme çalışan odaların enerjisini keser.	This assignment would cut power to operational rooms.
+{0}: {1} kişi görevlendirildi.	{0}: {1} residents assigned.
 # Assets/Corrigible/Core/Teams.cs
 Alfa	Alpha
 Bravo	Bravo
@@ -824,14 +881,12 @@ En fazla {0} saha ekibi kurulabilir.	At most {0} field teams can be formed.
 Yeni ekip {0} fon ister.	A new team costs {0} funds.
 {0} ekibi kuruluyor: {1} gün sonra karargâhta hazır.	Team {0} is forming: ready at headquarters in {1} days.
 Baskın yalnızca saha ekipleri modunda var.	Raids only exist in field team mode.
-Zaten bir baskın sürüyor.	A raid is already under way.
 Önce bu bölgede YZ varlığı doğrulanmalı.	AI presence must be confirmed in this region first.
 Baskın {0} fon ve {1} siyasi güç ister.	A raid requires {0} funds and {1} political capital.
-Süren baskın yok.	No raid in progress.
+Baskın sonucu eksik.	The raid result is missing.
 {0} sivil sunucu hasar gördü: ekonomi −{1}, güven düştü.	{0} civilian servers damaged: economy −{1}, trust fell.
 {0} ekibi kaybedildi.	Team {0} was lost.
 {0} ekibini binamda bıraktın.	You left team {0} in my building.
-yaralı	wounded
 {0} ekibinden {1} kişi yaralandı: ekip {2} gün iyileşecek.	{1} members of team {0} were wounded: the team will recover for {2} days.
 Ana dolabımı kırdın. Yedeğim çoktan başka yerdeydi.	You broke my main cabinet. My backup was already elsewhere.
 Çekirdek dolabı kırıldı ama YZ yedek kopyasıyla kaçtı.	The core cabinet was destroyed, but the AI escaped with its backup copy.
@@ -858,6 +913,27 @@ Anladım	Got it
 Baştan	Restart
 Eğitimi atla	Skip tutorial
 İPUCU	TIP
+# Assets/Corrigible/Desk/Scripts/Bridge/LiberationDeskView.cs
+VARDİYA {0:000}  ·  FON {1:0}  ·  ERZAK {2:0}  ·  MALZEME {3:0}  ·  ÖZGÜR BÖLGE {4}/{5}	SHIFT {0:000}  ·  FUNDS {1:0}  ·  SUPPLIES {2:0}  ·  MATERIALS {3:0}  ·  LIBERATED REGIONS {4}/{5}
+HAREKÂT / {0}\nSEKTÖRLER {1}/3	OPERATION / {0}\nSECTORS {1}/3
+GERİ ALINDI	RECLAIMED
+BASKINA HAZIR	READY TO RAID
+KİLİTLİ	LOCKED
+{0:00}  {1}\n{2} · {3}	{0:00}  {1}\n{2} · {3}
+LOOT	LOOT
+SUNUCU YIKIMI	SERVER DEMOLITION
+Bölge özgür. Haritadan sınırdaki bir bölgeyi seç ve yeni cepheyi aç.	The region is liberated. Select a region on the frontier to open a new front.
+Teknisyeni ikmal kasasının yanına götür. Q ile yeteneği seç ve kasaya tıklayarak malzemeleri al.	Move the Technician next to the supply crate. Press Q to select the ability, then click the crate to collect the supplies.
+Sunucu çekirdeğini yık. Son sektör alınınca bu bölge özgürleşir.	Destroy the server core. Capturing the final sector liberates this region.
+{0}\n\n{1}	{0}\n\n{1}
+SON SIĞINAK\nTOPLULUK {0}/{1}  ·  BOŞTA {2}\nENERJİ {3:0}/{4:0}  ·  ERZAK {5:0}/{6:0}\nSON VARDİYA: ERZAK {7:+0.0;-0.0;0}  ·  MALZEME {8:+0.0;-0.0;0}	LAST SHELTER\nCOMMUNITY {0}/{1}  ·  AVAILABLE {2}\nPOWER {3:0}/{4:0}  ·  SUPPLIES {5:0}/{6:0}\nLAST SHIFT: SUPPLIES {7:+0.0;-0.0;0}  ·  MATERIALS {8:+0.0;-0.0;0}
+{0}\n{1} · PERSONEL {2}/{3}	{0}\n{1} · STAFF {2}/{3}
+HASARLI	DAMAGED
+SEVİYE {0}	LEVEL {0}
+{0}\n{1}\nGeliştirme: {2:0} fon + {3:0} malzeme\n{4}	{0}\n{1}\nUpgrade: {2:0} funds + {3:0} materials\n{4}
+Geliştirmeye hazır.	Ready to upgrade.
+Emir uygulandı.	Order carried out.
+Yapılamadı.	Action unavailable.
 # Assets/Corrigible/Desk/Scripts/Bridge/MockRaidBoardDataSource.cs
 ÇARPIŞMA	COLLISION
 ZIRH	ARMOR
@@ -873,21 +949,26 @@ hedef kare	target tile
 {0} · −{1}	{0} · −{1}
 №{0} · onarım +1	No. {0} · repair +1
 Yeni bir robot uyandı.	A new robot woke up.
+İKMAL GÖREVİ	SUPPLY MISSION
 YEDEKLEME	BACKUP
 ALDATMA	DECEPTION
 KOPYALAMA	REPLICATION
+Teknisyen ile ikmal kasasına yaklaş. Q ile yeteneği seç, kasaya tıkla ve malzemeleri al. Kasayı imha etme.	Move the Technician next to the supply crate. Press Q to select the ability, then click the crate to collect the supplies. Do not destroy the crate.
 Yedekleme: yedek çekirdek de kırılmalı.	Backup: the backup core must be broken too.
 Aldatma: bazı oklar yalan; Analist 3 karede kesinleştirir.	Deception: some arrows lie; the Analyst confirms within 3 tiles.
 Her tur yeni robotlar uyanabilir.	New robots may wake each turn.
+İkmal kasası	Supply crate
 Düğüm	Node
 Çekirdek	Core
 Yedek	Backup
 {0} kare	{0} tiles
+İkmal alma	Collect supplies
 bitişik kare	adjacent tile
 düz hat, 2–5 kare	straight line, 2–5
 düz hat, 5 kare	straight line, 5
 Tarama	Scan
 3 kare · pasif	3 tiles · passive
+kasayı al	collect crate
 −2 dolap	−2 cabinet
 −1 robot	−1 robot
 −1 hedef	−1 target
@@ -909,15 +990,20 @@ Ateşi iptal	Shot cancelled
 <s>{0}</s>	<s>{0}</s>
 Öngörülen hasar	Predicted damage
 −{0}	−{0}
+Malzemeler alınır	Supplies will be collected
+Kasa imha olur; görev kaybedilir	Crate destroyed; mission failed
 Niyet · sıra {0}	Intent · order {0}
 onarım	repair
 ateş	fire
 ? yalan olabilir	? may be false
+Teknisyen ile bitişik kareden aç	Open from an adjacent tile with the Technician
 Hedef dolabı	Target cabinet
 PATLAR	EXPLODES
+İKMAL ALINDI	SUPPLIES RETRIEVED
 HEDEF KIRILDI	TARGET BROKEN
 GERİ ÇEKİLDİ	RETREATED
 EKİP DÜŞTÜ	TEAM DOWN
+İKMAL KAYBEDİLDİ	SUPPLIES LOST
 SÜRE DOLDU	TIME IS UP
 {0} · {1} · Tur {2}/{3}	{0} · {1} · Turn {2}/{3}
 Saha	Field
@@ -1515,8 +1601,19 @@ Yan hasar: {0} sivil sunucu · ekonomi	Collateral: {0} civilian servers · econo
 {0} ekibi kaybedildi	Team {0} lost
 {0}: {1} yaralı · iyileşme	{0}: {1} wounded · recovery
 <b>Çekirdek yok edildi.</b> Kalan kopyaları temizle.	<b>Core destroyed.</b> Clean up the remaining copies.
+Sektör	Sector
+SUNUCU YIKILDI	SERVER DESTROYED
+Malzemeler alındı ve ekip tahliye edildi.	Supplies secured and the team evacuated.
+Sunucu imha edildi; sektör geri alındı.	Server destroyed; sector reclaimed.
+İŞGAL ALTINDA	OCCUPIED
++{0}	+{0}
+Erzak	Supplies
+Malzeme	Materials
+Kurtulan	Survivors
+{0} yaralı · toparlanma	{0} injured · recovery
+Sivil sunucu hasarı	Civilian server damage
+Sonraki sektör operasyona açıldı.	The next sector is available for operations.
 # Assets/Corrigible/Desk/Scripts/Bridge/SimDeskCommands.cs
-Yapılamadı.	Not possible.
 Hazır ekip yok.	No ready team.
 Kayıt yüklendi: {0}. gün. Oyun duraklatıldı.	Save loaded: day {0}. Game paused.
 Kayıt yüklenemedi.	The save couldn't be loaded.
@@ -1526,7 +1623,7 @@ GELEN: {0:00}	INBOX: {0:00}
 SON HABER\n\n{0}	LATEST NEWS\n\n{0}
 SAHA FAKSI\n\nYeni rapor bekleniyor.	FIELD FAX\n\nAwaiting a new report.
 SAHA TELSİZİ\n\nEkipler: {0}\nHaberler için DİNLE.	FIELD RADIO\n\nTeams: {0}\nLISTEN for news.
-Sağ tuş: bakış · Tekerlek: yaklaş · F: haritaya odaklan · Home: masaya dön	Right mouse: look · Wheel: zoom · F: focus map · Home: return to desk
+Sağ tuş: bakış · Tekerlek: yaklaş · F: harita · 1: komuta · 2: sığınak · 3: operasyon	Right mouse: look · Wheel: zoom · F: map · 1: command · 2: shelter · 3: operations
 {0} · Sol tık: kullan	{0} · Left click: use
 # Assets/Corrigible/Desk/Scripts/Runtime/Components/StatusChipView.cs
 TEHDİT	THREAT
@@ -1565,15 +1662,18 @@ yayılım ipliği	spread thread
 ÖLÇEK · ekvatorda	SCALE · at equator
 İŞARET	MARKERS
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/HoverInspectorView.cs
+İKMAL ALINIR	SUPPLIES COLLECTED
 operasyon kazanılır	operation won
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidHudView.cs
 TUR	TURN
 {0}/{1}	{0}/{1}
 MAKİNELER	MACHINES
 SON TUR	LAST TURN
+İKMAL	SUPPLIES
 ikisini de kır	break both
 kır	break
 SİVİL	CIVILIAN
+ALINDI	COLLECTED
 KIRILDI	BROKEN
 EMİN MİSİN?	ARE YOU SURE?
 TURU BİTİR	END TURN
@@ -1592,11 +1692,14 @@ yetenek	ability
 {0} · {1} kullanılmadı	{0} · {1} unused
 OPERASYON GÜNLÜĞÜ	OPERATION LOG
 KURALLAR KARTI	RULES CARD
+Teknisyen kasayı açar. İtme ve patlamalar kasaya hasar verebilir; EMP kasayı açmaz.	The Technician opens the crate. Pushes and explosions can damage it; EMP cannot open it.
+İkmal görevi: Teknisyen ile kasaya yaklaş, Q ile yeteneği seç ve kasayı aç. İmha edilen kasa görevi kaybettirir.	Supply mission: move the Technician next to the crate, press Q to select the ability and open it. Destroying the crate fails the mission.
 EMİN MİSİN? TEKRAR BAS	ARE YOU SURE? PRESS AGAIN
 Operasyon raporuna geç	Go to operation report
 Devam et [Esc]	Resume [Esc]
 OPERASYON SONUCU · BAŞARILI	OPERATION RESULT · SUCCESS
 OPERASYON SONUCU · BAŞARISIZ	OPERATION RESULT · FAILURE
+alındı	collected
 kırıldı	broken
 Kırılan sivil sunucu · {0}	Civilian servers broken · {0}
 Ekip · {0}/{1} ayakta	Team · {0}/{1} standing
@@ -1916,7 +2019,6 @@ AŞAMA {0} · {1}	STAGE {0} · {1}
 Etki: {0}	Effect: {0}
 Açar: {0}	Unlocks: {0}
 Bekliyor	Waiting
-KİLİTLİ	LOCKED
 # Assets/Corrigible/Desk/Scripts/Runtime/Screens/Settings/SettingsView.cs
 Ses açık	Sound on
 Kapatınca bütün kanallar susar; ayarlar korunur.	Turning it off mutes every channel; levels are kept.
@@ -2521,8 +2623,21 @@ KYGA / 07	KYGA / 07
 DURAKLAT / SÜRDÜR	PAUSE / RESUME
 ARAŞTIRMA\nDOSYALARI	RESEARCH\nFILES
 01 / HARİTA	01 / MAP
-02 / EKİPLER	02 / TEAMS
-03 / YZ GÜNLÜĞÜ	03 / AI LOG
+02 / SIĞINAK	02 / SHELTER
+03 / OPERASYON	03 / OPERATIONS
+SEÇİLİ BÖLGEDE CEPHE AÇ	OPEN FRONT IN SELECTED REGION
+ONAR / GELİŞTİR	REPAIR / UPGRADE
+− PERSONEL	− RESIDENT
++ PERSONEL	+ RESIDENT
+1 · KOMUTA	1 · COMMAND
+2 · SIĞINAK	2 · SHELTER
+3 · OPERASYON	3 · OPERATIONS
+VARDİYAYI BİTİR	END SHIFT
+SON SIĞINAK	THE LAST SHELTER
+İŞGALİN ARDINDAN · SON DİRENİŞ NOKTASI	AFTER THE OCCUPATION · THE LAST RESISTANCE OUTPOST
+Dünya çoktan düştü. Yapay zekâ bütün bölgeleri, ağları ve sunucuları ele geçirdi. Batı Avrupa'daki küçük sığınağımız, karşı harekâtın son komuta noktası.\n\nKOMUTA MASASI: Haritadan mevcut cepheyi takip et. Bir bölgenin üç sektörünü baskınlarla geri al; ardından özgür bir bölgeye komşu yeni bir cephe seç.\n\nOPERASYON MASASI: Sağdaki tüplü monitörden görevi başlat. Kamera ekranın içine girer ve baskın tahtası açılır. Loot görevinde teknisyeni ikmal kasasının yanına götür. Q ile yeteneği seç ve kasaya tıkla. Sunucu yıkımı görevinde çekirdeği yok et.\n\nSIĞINAK PENCERESİ: Soldaki kesitten odaları seç, hasarlı odaları onar ve personel görevlendir. Erzak topluluğu besler; atölye malzeme üretir, revir yaralı ekibi toparlar.\n\nHazırlıklarını bitirince VARDİYAYI BİTİR. Zaman yalnızca emrinle ilerler. İlk hedef: tedarik deposu.	The world has already fallen. The AI has seized every region, network, and server. Our small shelter in Western Europe is the last command post of the counteroffensive.\n\nCOMMAND DESK: Follow the current front on the map. Recapture a region's three sectors through raids, then choose a new front adjacent to a liberated region.\n\nOPERATIONS DESK: Launch a mission from the CRT monitor on the right. The camera enters the screen and reveals the raid board. On loot missions, move the technician next to the supply crate. Press Q to select the ability, then click the crate. On server demolition missions, destroy the core.\n\nSHELTER WINDOW: Select rooms in the cutaway on the left, repair damaged rooms, and assign residents. Supplies feed the community; the workshop produces materials and the infirmary helps the injured team recover.\n\nWhen preparations are complete, END SHIFT. Time advances only on your command. First target: the supply depot.
+KARŞI HAREKÂTI BAŞLAT	BEGIN COUNTEROFFENSIVE
+KAYITTAN DEVAM ET	CONTINUE SAVED GAME
 # Assets/Corrigible/Fx/Scenes/FxBaskin.unity
 GÜNLÜK [L]	LOG [L]
 KURALLAR [?]	RULES [?]
@@ -2659,3 +2774,6 @@ EĞİTİM · 1/10	TUTORIAL · 1/10
 Başlık	Title
 Açıklama	Description
 Bildirim	Notification
+# --- Kullanılmayan çeviriler (koddan silinmiş metinler; gerekirse geri alınır) ---
+#02 / EKİPLER	02 / TEAMS
+#03 / YZ GÜNLÜĞÜ	03 / AI LOG

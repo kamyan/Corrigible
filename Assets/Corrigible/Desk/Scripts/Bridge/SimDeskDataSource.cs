@@ -143,7 +143,7 @@ namespace Corrigible.Desk.Bridge
         void OnNewGame()
         {
             state.Reset();
-            state.IntroOpen = true;
+            state.IntroOpen = !game.Sim.LiberationOn;
             state.RaidLogSeen = game.Sim.S.RaidLog.Count;
             MarkDirty();
         }
