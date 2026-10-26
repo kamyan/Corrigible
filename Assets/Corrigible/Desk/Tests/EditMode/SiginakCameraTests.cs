@@ -100,9 +100,9 @@ namespace Corrigible.Desk.Tests
         }
 
         [Test]
-        public void FocusSamePose_DoesNotRestart_AndInterfaceMapsToPoses()
+        public void FocusSamePose_DoesNotRestart_AndStationsMapToPoses()
         {
-            IDeskCameraRig face = rig;
+            var face = rig;
             face.FocusMap();
             rig.Step(1);
             face.FocusMap();
@@ -115,7 +115,7 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(SiginakPose.Shelf, rig.Current, "pozu olmayan istek yok sayılır");
         }
 
-        /// <summary>Sahnede: rig ana kamerada, eski görünümde kapalı; LiberationDeskView ve RaidLauncher'a bağlı; beş poz tanımlı.</summary>
+        /// <summary>Sahnede: rig ana kamerada ve açık; LiberationDeskView ve RaidLauncher'a bağlı; beş poz tanımlı.</summary>
         [Test]
         public void DeskGameScene_RigIsWired()
         {
@@ -124,7 +124,7 @@ namespace Corrigible.Desk.Tests
             {
                 var roots = scene.GetRootGameObjects();
                 var sceneRig = roots.SelectMany(g => g.GetComponentsInChildren<SiginakCameraRig>(true)).Single();
-                Assert.IsFalse(sceneRig.enabled, "eski görünümde kapalı");
+                Assert.IsTrue(sceneRig.enabled, "DeskGame'in tek kamerası");
                 foreach (var pose in new[] { SiginakPose.Desk, SiginakPose.Map, SiginakPose.Shelf, SiginakPose.Crt, SiginakPose.Shift })
                     Assert.IsTrue(sceneRig.TryGetPose(pose, out _), pose.ToString());
                 sceneRig.TryGetPose(SiginakPose.Shift, out var shift);
@@ -136,15 +136,7 @@ namespace Corrigible.Desk.Tests
                 var locks = new SerializedObject(launcher).FindProperty("lockDuringTransition");
                 Assert.IsTrue(Enumerable.Range(0, locks.arraySize).Any(i => locks.GetArrayElementAtIndex(i).objectReferenceValue == sceneRig),
                     "baskına yaklaşırken rig kilitlenir");
-
-                var sw = roots.SelectMany(g => g.GetComponentsInChildren<SiginakPresentationSwitch>(true)).Single();
-                var legacyPose = launcher.MonitorFocusPose;
-                sw.Apply(true);
-                Assert.IsTrue(sceneRig.enabled);
-                Assert.AreEqual("CrtDive", launcher.MonitorFocusPose.name);
-                sw.Apply(false);
-                Assert.IsFalse(sceneRig.enabled);
-                Assert.AreSame(legacyPose, launcher.MonitorFocusPose);
+                Assert.AreEqual("CrtDive", launcher.MonitorFocusPose.name, "baskına yaklaşma CRT'ye");
             }
             finally { EditorSceneManager.CloseScene(scene, true); }
         }

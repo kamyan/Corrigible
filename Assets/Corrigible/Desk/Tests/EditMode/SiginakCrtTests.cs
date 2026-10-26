@@ -66,8 +66,8 @@ namespace Corrigible.Desk.Tests
                 var crt = roots.SelectMany(g => g.GetComponentsInChildren<SiginakCrt>(true)).Single();
                 var so = new SerializedObject(crt);
                 foreach (var f in new[] { "game", "screen", "overlay" }) Assert.IsNotNull(so.FindProperty(f).objectReferenceValue, f);
-                var sw = roots.SelectMany(g => g.GetComponentsInChildren<SiginakPresentationSwitch>(true)).Single();
-                Assert.AreSame(crt, new SerializedObject(sw).FindProperty("raidTransition").objectReferenceValue, "yeni görünüm geçiş kancası");
+                var link = roots.SelectMany(g => g.GetComponentsInChildren<SiginakRaidLink>(true)).Single();
+                Assert.AreSame(crt, new SerializedObject(link).FindProperty("transition").objectReferenceValue, "baskın geçiş kancası");
 
                 // Geçiş katmanı oda kökünün dışında (baskında oda gizlenir), kapalı başlar, odanın HUD'unun üstünde
                 var overlay = (CrtTransition)so.FindProperty("overlay").objectReferenceValue;

@@ -1,13 +1,11 @@
 using System.IO;
-using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Corrigible.Desk.EditorTools
 {
     /// <summary>
-    /// Sığınak odasının 3B görüntüsü (PROMPT §7; reference/renders ile karşılaştırma için Overlay arayüz olmadan).
-    /// Görünüm geçici olarak yenisine çevrilir, ana kamera pozdan render edilir, sonra eski hâline döner.
+    /// Sığınak odasının 3B görüntüsü (PROMPT §7; reference/renders ile karşılaştırma için Overlay arayüz olmadan): ana kamera
+    /// rig pozundan render edilir, sonra eski pozuna döner. Overlay dahil durumlu set için <see cref="SiginakCaptureSet"/>.
     /// </summary>
     public static class SiginakCapture
     {
@@ -20,47 +18,34 @@ namespace Corrigible.Desk.EditorTools
             ["K4"] = SiginakPose.Shelf, ["K5a"] = SiginakPose.Crt, ["K6a"] = SiginakPose.Shift, ["K6b"] = SiginakPose.Map, ["K7"] = SiginakPose.Map,
         };
 
-        [MenuItem("Corrigible/Sığınak/Görünümü değiştir (eski ↔ yeni)")]
-        public static string Toggle()
-        {
-            var sw = SiginakRoomBuilder.FindSwitch();
-            if (sw == null) return "Sahnede SiginakPresentationSwitch yok; önce “Odayı kur”.";
-            sw.Apply(!sw.IsNew);
-            EditorSceneManager.MarkSceneDirty(sw.gameObject.scene);
-            return sw.IsNew ? "yeni görünüm" : "eski görünüm";
-        }
+        static SiginakCameraRig Rig() => Object.FindFirstObjectByType<SiginakCameraRig>(FindObjectsInactive.Include);
 
         /// <summary>Pozu (K1, Map/K2/K3/K6b/K7, K4, K5a, K6a) sığınak rig'iyle render eder; <paramref name="gray"/> renk körlüğü denetimi için gri kopya da yazar.</summary>
         public static string Render(string pose = "K1", string file = null, bool gray = false, int width = 1920, int height = 1080)
         {
-            var sw = SiginakRoomBuilder.FindSwitch();
-            if (sw == null) return "Sahnede SiginakPresentationSwitch yok; önce “Odayı kur”.";
-            bool wasNew = sw.IsNew;
-            sw.Apply(true);
-            var cam = sw.MainCamera;
+            var rig = Rig();
+            if (rig == null) return "Sahnede SiginakCameraRig yok (DeskGame açık mı?)";
+            if (!PoseNames.TryGetValue(pose, out var rigPose)) return "Poz yok: " + pose + " (K1, Map, K4, K5a, K6a)";
+            var cam = rig.GetComponent<Camera>();
+            var before = rig.Current;
             try
             {
-                if (!PoseNames.TryGetValue(pose, out var rigPose)) return "Poz yok: " + pose + " (K1, Map, K4, K5a, K6a)";
-                sw.CameraRig.Snap(rigPose);
+                rig.Snap(rigPose);
                 string path = Path.Combine(OutDir, file ?? pose + ".png");
                 Write(cam, width, height, path, false);
                 if (gray) Write(cam, width, height, Path.ChangeExtension(path, null) + "_gray.png", true);
                 return path;
             }
-            finally
-            {
-                sw.Apply(wasNew);
-            }
+            finally { rig.Snap(before); }
         }
 
         /// <summary>Serbest bakış (ayrıntı denetimi): dünya konumundan hedefe, dikey FOV.</summary>
         public static string RenderFrom(Vector3 position, Vector3 target, float fieldOfView, string file, int width = 1920, int height = 1080)
         {
-            var sw = SiginakRoomBuilder.FindSwitch();
-            if (sw == null) return "Sahnede SiginakPresentationSwitch yok; önce “Odayı kur”.";
-            bool wasNew = sw.IsNew;
-            sw.Apply(true);
-            var cam = sw.MainCamera;
+            var rig = Rig();
+            if (rig == null) return "Sahnede SiginakCameraRig yok (DeskGame açık mı?)";
+            var cam = rig.GetComponent<Camera>();
+            var before = rig.Current;
             try
             {
                 cam.usePhysicalProperties = false;
@@ -71,7 +56,7 @@ namespace Corrigible.Desk.EditorTools
                 Write(cam, width, height, path, false);
                 return path;
             }
-            finally { sw.Apply(wasNew); }
+            finally { rig.Snap(before); }
         }
 
         static void Write(Camera cam, int width, int height, string path, bool gray)

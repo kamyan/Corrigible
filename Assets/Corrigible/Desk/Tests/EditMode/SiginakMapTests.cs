@@ -182,11 +182,8 @@ namespace Corrigible.Desk.Tests
                     Assert.IsTrue(m.Hit.ContainsMapPoint(layer.TeamAnchor(m.RegionId)), m.RegionId + " ekip noktası kendi bölgesinde olmalı");
                 }
 
-                var sw = roots.SelectMany(g => g.GetComponentsInChildren<SiginakPresentationSwitch>(true)).Single();
-                var only = new SerializedObject(sw).FindProperty("siginakObjects");
-                var names = Enumerable.Range(0, only.arraySize).Select(i => ((GameObject)only.GetArrayElementAtIndex(i).objectReferenceValue).name).ToArray();
-                CollectionAssert.AreEquivalent(new[] { "Liberation fills", "Liberation marks" }, names);
-                Assert.IsFalse(layer.gameObject.activeSelf, "eski görünümde kurtuluş katmanı kapalı");
+                Assert.IsTrue(layer.gameObject.activeSelf, "kurtuluş katmanı sahnede açık (tek sunum)");
+                Assert.IsTrue(map.transform.root.GetComponentsInChildren<Transform>(true).Any(t => t.name == "Liberation fills" && t.gameObject.activeSelf));
                 var figure = map.transform.root.GetComponentsInChildren<TeamFigure>(true).Single();
                 Assert.Greater(figure.GetComponent<BoxCollider>().size.x, 0.1f, "tık hedefi K1'de de ≥ 44 px");
             }

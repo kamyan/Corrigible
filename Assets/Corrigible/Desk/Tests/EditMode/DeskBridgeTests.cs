@@ -255,8 +255,8 @@ namespace Corrigible.Desk.Tests
                 var wiring = new SerializedObject(interaction);
                 Assert.IsFalse(interaction.enabled, "Kurtuluş masasında eski hız/eylem dinleyicileri çalışmamalı.");
                 Assert.IsFalse(clock.gameObject.activeInHierarchy, "Eski hız arayüzü yeni vardiya arayüzünün arkasında etkin kalmamalı.");
-                var liberation = roots.SelectMany(g => g.GetComponentsInChildren<LiberationDeskView>(true)).Single();
-                Assert.IsNotNull(new SerializedObject(liberation).FindProperty("advanceDay").objectReferenceValue);
+                var desk = roots.SelectMany(g => g.GetComponentsInChildren<SiginakDesk>(true)).Single();
+                Assert.IsNotNull(new SerializedObject(desk).FindProperty("shiftSwitch").objectReferenceValue, "vardiya şalterle biter");
                 Assert.AreSame(clock, wiring.FindProperty("clock").objectReferenceValue,
                     "Hız tuşlarının SpeedClicked olayı oyun komutlarına bağlanmalı.");
                 Assert.AreSame(clock, new SerializedObject(hud).FindProperty("clock").objectReferenceValue,
@@ -295,9 +295,8 @@ namespace Corrigible.Desk.Tests
                 foreach (var tint in roots.SelectMany(g => g.GetComponentsInChildren<ThemeTint>(true)))
                     if (!string.IsNullOrEmpty(tint.Key))
                         Assert.IsTrue(DeskTheme.Active.TryGet(tint.Key, false, out _), tint.name + ": " + tint.Key);
-                var liberation = roots.SelectMany(g => g.GetComponentsInChildren<LiberationDeskView>(true)).Single();
-                var dayButton = (Component)new SerializedObject(liberation).FindProperty("advanceDay").objectReferenceValue;
-                var contextCanvas = dayButton.GetComponentInParent<Canvas>(true);
+                // Sığınak odasının ekran katmanı (kenar satırı, plaka, teleks şeridi, rapor, emir belgesi)
+                var contextCanvas = (Canvas)new SerializedObject(roots.SelectMany(g => g.GetComponentsInChildren<HoverTag>(true)).Single()).FindProperty("canvas").objectReferenceValue;
                 Assert.AreEqual(RenderMode.ScreenSpaceOverlay, contextCanvas.rootCanvas.renderMode);
                 var serialized = new SerializedObject(presenter);
                 foreach (string field in new[] { "intro", "campaign", "eventModal", "confirm", "fakeWin", "gameOver", "settingsView", "tutorial" })
@@ -346,68 +345,37 @@ namespace Corrigible.Desk.Tests
         }
 
         [Test]
-        public void DeskGameScene_StoryButtonsStayOutsideTheWorldInputLock()
+        public void DeskGameScene_BriefingButtonsStayOutsideTheWorldInputLock()
         {
             var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root + "/Scenes/DeskGame.unity", UnityEditor.SceneManagement.OpenSceneMode.Additive);
             try
             {
                 var roots = scene.GetRootGameObjects();
-                var desk = roots.SelectMany(g => g.GetComponentsInChildren<CommandPostDesk>(true)).Single();
-                var surface = roots.SelectMany(g => g.GetComponentsInChildren<LiberationDeskView>(true)).Single();
-                var fields = new SerializedObject(surface);
-                var begin = (UnityEngine.UI.Button)fields.FindProperty("beginStory").objectReferenceValue;
-                var storyCanvas = begin.GetComponentInParent<Canvas>(true);
-                var storyInput = storyCanvas.GetComponent<UnityEngine.UI.GraphicRaycaster>();
-                Assert.AreEqual(RenderMode.ScreenSpaceOverlay, storyCanvas.renderMode);
-                Assert.IsTrue(storyInput.enabled, "Hikâye açıkken başlatma düğmesine fareyle ulaşılmalı.");
+                var view = roots.SelectMany(g => g.GetComponentsInChildren<BriefingView>(true)).Single();
+                var begin = (UnityEngine.UI.Button)new SerializedObject(view).FindProperty("action").objectReferenceValue;
+                var canvas = begin.GetComponentInParent<Canvas>(true).rootCanvas;
+                Assert.AreEqual(RenderMode.ScreenSpaceOverlay, canvas.renderMode, "emir belgesi Overlay: oda kilitliyken de fareyle ulaşılır");
+                Assert.IsTrue(canvas.GetComponent<UnityEngine.UI.GraphicRaycaster>().enabled);
                 Assert.IsTrue(begin.interactable);
                 Assert.IsTrue(begin.targetGraphic.raycastTarget);
-                var gated = new SerializedObject(desk).FindProperty("worldRaycasters");
-                Assert.Greater(gated.arraySize, 0);
-                for (int i = 0; i < gated.arraySize; i++)
-                {
-                    var input = (UnityEngine.UI.GraphicRaycaster)gated.GetArrayElementAtIndex(i).objectReferenceValue;
-                    Assert.IsNotNull(input);
-                    Assert.AreEqual(RenderMode.WorldSpace, input.GetComponent<Canvas>().renderMode,
-                        input.name + ": masa kilidi Overlay ekranların girişini kapatmamalı.");
-                    Assert.AreNotSame(storyInput, input);
-                }
             }
             finally { UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene, true); }
         }
 
         [Test]
-        public void DeskGameScene_RegionPlanningStaysOnMapAndOnlyRaidUsesMonitor()
+        public void DeskGameScene_MissionSlipStaysOnMapAndOnlyRaidUsesMonitor()
         {
             var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root + "/Scenes/DeskGame.unity", UnityEditor.SceneManagement.OpenSceneMode.Additive);
             try
             {
                 var roots = scene.GetRootGameObjects();
+                var slip = roots.SelectMany(g => g.GetComponentsInChildren<OperationSlip>(true)).Single();
+                var mount = roots.Single(g => g.name == "SiginakRoom").transform.Find("Desk/MapMount");
+                Assert.IsTrue(slip.transform.IsChildOf(mount), "görev fişi masadaki haritanın üstünde");
+                Assert.AreEqual(RenderMode.WorldSpace, slip.GetComponentInParent<Canvas>(true).renderMode);
                 var surface = roots.SelectMany(g => g.GetComponentsInChildren<LiberationDeskView>(true)).Single();
-                var fields = new SerializedObject(surface);
-                var paper = (RectTransform)fields.FindProperty("briefingRoot").objectReferenceValue;
-                var canvasRect = (RectTransform)fields.FindProperty("briefingCanvas").objectReferenceValue;
-                Assert.IsNotNull(paper);
-                var canvas = canvasRect.GetComponent<Canvas>();
-                Assert.AreEqual(RenderMode.ScreenSpaceOverlay, canvas.renderMode);
-                foreach (string field in new[] { "missionTitle", "missionDetail", "chooseRegion", "closeBriefing" })
-                    Assert.IsTrue(((Component)fields.FindProperty(field).objectReferenceValue).transform.IsChildOf(paper), field);
-                var sectors = fields.FindProperty("sectorButtons");
-                for (int i = 0; i < sectors.arraySize; i++)
-                    Assert.IsTrue(((Component)sectors.GetArrayElementAtIndex(i).objectReferenceValue).transform.IsChildOf(paper));
-                var monitor = (Component)fields.FindProperty("monitorStatus").objectReferenceValue;
-                Assert.IsFalse(monitor.transform.IsChildOf(canvasRect));
-                Assert.AreEqual(RenderMode.WorldSpace, monitor.GetComponentInParent<Canvas>(true).renderMode);
-                var link = (UnityEngine.UI.Graphic)fields.FindProperty("briefingLink").objectReferenceValue;
-                Assert.IsFalse(link.raycastTarget, "Bağlantı çizgisi bölge tıklamasını engellememeli.");
-                var launcher = new SerializedObject(fields.FindProperty("launcher").objectReferenceValue);
-                var hidden = launcher.FindProperty("hideDuringRaid");
-                Assert.IsTrue(Enumerable.Range(0, hidden.arraySize).Any(i => hidden.GetArrayElementAtIndex(i).objectReferenceValue == canvas));
-                var locked = launcher.FindProperty("lockDuringTransition");
-                var input = canvas.GetComponent<UnityEngine.UI.GraphicRaycaster>();
-                Assert.IsTrue(Enumerable.Range(0, locked.arraySize).Any(i => locked.GetArrayElementAtIndex(i).objectReferenceValue == input));
-                var gated = new SerializedObject(fields.FindProperty("desk").objectReferenceValue).FindProperty("worldRaycasters");
-                Assert.IsFalse(Enumerable.Range(0, gated.arraySize).Any(i => gated.GetArrayElementAtIndex(i).objectReferenceValue == input));
+                var launcher = (Corrigible.Game.Raid.RaidLauncher)new SerializedObject(surface).FindProperty("launcher").objectReferenceValue;
+                Assert.AreEqual("CrtDive", launcher.MonitorFocusPose.name, "yalnız baskın CRT'ye yaklaşır");
             }
             finally { UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene, true); }
         }
@@ -424,10 +392,8 @@ namespace Corrigible.Desk.Tests
                 Assert.IsInstanceOf<LiberationDeskView>(surface, "DeskGame üç fiziksel istasyona bağlı olmalı.");
                 Assert.IsNull(pres.Sade, "Harita tıklaması eski eylem kartlarını da açmamalı.");
                 var stationWiring = new SerializedObject(surface);
-                foreach (string field in new[] { "game", "source", "map", "cameraRig", "desk", "launcher", "storyRoot", "upgradeRoom", "workerMinus", "workerPlus" })
+                foreach (string field in new[] { "game", "source", "map", "siginakRig", "desk", "launcher", "telex", "siginak", "siginakMap", "siginakBriefing" })
                     Assert.IsNotNull(stationWiring.FindProperty(field).objectReferenceValue, field);
-                Assert.AreEqual(3, stationWiring.FindProperty("sectorButtons").arraySize);
-                Assert.AreEqual(4, stationWiring.FindProperty("roomButtons").arraySize);
                 var controller = roots.SelectMany(g => g.GetComponentsInChildren<Corrigible.Game.GameController>(true)).Single();
                 Assert.IsTrue(controller.LiberationCampaign);
                 var raidLauncher = roots.SelectMany(g => g.GetComponentsInChildren<Corrigible.Game.Raid.RaidLauncher>(true)).Single();

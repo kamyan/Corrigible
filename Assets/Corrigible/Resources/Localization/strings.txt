@@ -916,28 +916,6 @@ Eğitimi atla	Skip tutorial
 # Assets/Corrigible/Desk/Scripts/Bridge/LiberationDeskView.cs
 Yeni cephe: {0}	New front: {0}
 Baskın emri: {0} · {1} · {2} fon	Raid order: {0} · {1} · {2} funds
-VARDİYA {0:000}  ·  FON {1:0}  ·  ERZAK {2:0}  ·  MALZEME {3:0}  ·  ÖZGÜR BÖLGE {4}/{5}	SHIFT {0:000}  ·  FUNDS {1:0}  ·  SUPPLIES {2:0}  ·  MATERIALS {3:0}  ·  LIBERATED REGIONS {4}/{5}
-HAREKÂT / {0}\nSEKTÖRLER {1}/3	OPERATION / {0}\nSECTORS {1}/3
-GERİ ALINDI	RETAKEN
-BASKINA HAZIR	READY TO RAID
-KİLİTLİ	LOCKED
-{0:00}  {1}\n{2} · {3}	{0:00}  {1}\n{2} · {3}
-YAĞMA	LOOT
-SUNUCU YIKIMI	SERVER DEMOLITION
-Bölge özgür. Haritadan sınırdaki bir bölgeyi seç ve yeni cepheyi aç.	The region is liberated. Select a region on the frontier to open a new front.
-Teknisyeni ikmal kasasının yanına götür. Q ile yeteneği seç ve kasaya tıklayarak malzemeleri al.	Move the Technician next to the supply crate. Press Q to select the ability, then click the crate to collect the supplies.
-Sunucu çekirdeğini yık. Son sektör alınınca bu bölge özgürleşir.	Destroy the server core. Capturing the final sector liberates this region.
-{0}\n\n{1}	{0}\n\n{1}
-SON SIĞINAK\nTOPLULUK {0}/{1}  ·  BOŞTA {2}\nENERJİ {3:0}/{4:0}  ·  ERZAK {5:0}/{6:0}\nSON VARDİYA: ERZAK {7:+0.0;-0.0;0}  ·  MALZEME {8:+0.0;-0.0;0}	LAST SHELTER\nCOMMUNITY {0}/{1}  ·  AVAILABLE {2}\nPOWER {3:0}/{4:0}  ·  SUPPLIES {5:0}/{6:0}\nLAST SHIFT: SUPPLIES {7:+0.0;-0.0;0}  ·  MATERIALS {8:+0.0;-0.0;0}
-{0}\n{1} · PERSONEL {2}/{3}	{0}\n{1} · STAFF {2}/{3}
-HASARLI	DAMAGED
-SEVİYE {0}	LEVEL {0}
-{0}\n{1}\nGeliştirme: {2:0} fon + {3:0} malzeme\n{4}	{0}\n{1}\nUpgrade: {2:0} funds + {3:0} materials\n{4}
-Geliştirmeye hazır.	Ready to upgrade.
-BAĞLANTI KURULUYOR\n\nSAHA YAYINI AÇILIYOR	CONNECTING\n\nOPENING FIELD TRANSMISSION
-SAHA YAYINI\n\nBAĞLANTI BEKLENİYOR\n\nBaskın emrini harita üzerindeki görev fişinden ver.	FIELD TRANSMISSION\n\nAWAITING CONNECTION\n\nIssue a raid order from the mission briefing on the map.
-Emir uygulandı.	Order carried out.
-Yapılamadı.	Action unavailable.
 EMİR UYGULANDI	ORDER EXECUTED
 YAPILAMADI	FAILED
 # Assets/Corrigible/Desk/Scripts/Bridge/MockRaidBoardDataSource.cs
@@ -1061,6 +1039,8 @@ Boşluk	Space
 atla	skip
 KYGA-07 · ANALOG HAT	KYGA-07 · ANALOG LINE
 V.{0:000}	S.{0:000}
+YAĞMA	LOOT
+SUNUCU YIKIMI	SERVER DEMOLITION
 V.{0:000} · OP-{1:00}	S.{0:000} · OP-{1:00}
 {0} · {1} / {2:00} {3}	{0} · {1} / {2:00} {3}
 KAMERA 2 · TAKTİK TAHTA 8×8 · GÖREV: {0}	CAMERA 2 · TACTICAL BOARD 8×8 · MISSION: {0}
@@ -1070,10 +1050,13 @@ HAREKÂT FORMU · OP-{0:00}	OPERATION FORM · OP-{0:00}
 HAREKÂT FORMU	OPERATION FORM
 SEKTÖRLER {0}/{1} · ÖZGÜR	SECTORS {0}/{1} · FREE
 SEKTÖRLER {0}/{1} · İŞGAL {2}	SECTORS {0}/{1} · OCCUPIED {2}
+Bölge özgür. Haritadan sınırdaki bir bölgeyi seç ve yeni cepheyi aç.	The region is liberated. Select a region on the frontier to open a new front.
 Bölge özgür.	Region free.
 Cephe açık: {0} {1}/{2}. Aynı anda tek cephe açık olabilir.	Front open: {0} {1}/{2}. Only one front can be open at a time.
 Cephe açmak için komşusunu özgürleştir.	Free a neighbouring region to open a front here.
 GÖREV · {0:00} {1}	MISSION · {0:00} {1}
+Teknisyeni ikmal kasasının yanına götür. Q ile yeteneği seç ve kasaya tıklayarak malzemeleri al.	Move the Technician next to the supply crate. Press Q to select the ability, then click the crate to collect the supplies.
+Sunucu çekirdeğini yık. Son sektör alınınca bu bölge özgürleşir.	Destroy the server core. Capturing the final sector liberates this region.
 {0} fon	{0} funds
 {0} fon · {1} malzeme · {2} erzak · {3} kurtulan	{0} funds · {1} materials · {2} rations · {3} rescued
 {0} fon · {1} malzeme · bölge özgür: {2} fon	{0} funds · {1} materials · region free: {2} funds
@@ -1116,6 +1099,7 @@ GELİŞTİR	UPGRADE
 {0} malzeme	{0} materials
 {0} fon + {1} malzeme	{0} funds + {1} materials
 Onarıma hazır.	Ready to repair.
+Geliştirmeye hazır.	Ready to upgrade.
 Eksik: {0}	Missing: {0}
 EKSİK	SHORT
 − PERS.	− STAFF
@@ -1143,6 +1127,7 @@ Erzak tüketimi	Ration use
 {0} kişi × {1}	{0} people × {1}
 Depo sınırı · {0}	Storage limit · {0}
 Erzak tükendi	Rations ran out
+HASARLI	DAMAGED
 ENERJİSİZ {0}/{1}	NO POWER {0}/{1}
 {0} kişi × {1} · açlık × {2}	{0} people × {1} · starving × {2}
 Malzeme · atölye	Materials · workshop
@@ -1807,6 +1792,7 @@ Sektör	Sector
 SUNUCU YIKILDI	SERVER DESTROYED
 Malzemeler alındı ve ekip tahliye edildi.	Supplies secured and the team evacuated.
 Sunucu imha edildi; sektör geri alındı.	Server destroyed; sector reclaimed.
+GERİ ALINDI	RETAKEN
 İŞGAL ALTINDA	OCCUPIED
 +{0}	+{0}
 Erzak	Supplies
@@ -1816,17 +1802,10 @@ Kurtulan	Survivors
 Sivil sunucu hasarı	Civilian server damage
 Sonraki sektör operasyona açıldı.	The next sector is available for operations.
 # Assets/Corrigible/Desk/Scripts/Bridge/SimDeskCommands.cs
+Yapılamadı.	Action unavailable.
 Hazır ekip yok.	No ready team.
 Kayıt yüklendi: {0}. gün. Oyun duraklatıldı.	Save loaded: day {0}. Game paused.
 Kayıt yüklenemedi.	The save couldn't be loaded.
-# Assets/Corrigible/Desk/Scripts/Runtime/CommandPost/CommandPostDesk.cs
-KAYNAK DEFTERİ\n\nGün {0:000}\nFon: {1}\nSiyasi güç: {2}	RESOURCE LEDGER\n\nDay {0:000}\nFunds: {1}\nPolitical power: {2}
-GELEN: {0:00}	INBOX: {0:00}
-SON HABER\n\n{0}	LATEST NEWS\n\n{0}
-SAHA FAKSI\n\nYeni rapor bekleniyor.	FIELD FAX\n\nAwaiting a new report.
-SAHA TELSİZİ\n\nEkipler: {0}\nHaberler için DİNLE.	FIELD RADIO\n\nTeams: {0}\nLISTEN for news.
-Sağ tuş: bakış · Tekerlek: yaklaş · F: harita · 1: komuta · 2: sığınak · 3: görevler	Right mouse: look · Wheel: zoom · F: map · 1: command · 2: shelter · 3: missions
-{0} · Sol tık: kullan	{0} · Left click: use
 # Assets/Corrigible/Desk/Scripts/Runtime/Components/StatusChipView.cs
 TEHDİT	THREAT
 UYARI	WARNING
@@ -2218,6 +2197,7 @@ AŞAMA {0} · {1}	STAGE {0} · {1}
 Etki: {0}	Effect: {0}
 Açar: {0}	Unlocks: {0}
 Bekliyor	Waiting
+KİLİTLİ	LOCKED
 # Assets/Corrigible/Desk/Scripts/Runtime/Screens/Settings/SettingsView.cs
 Ses açık	Sound on
 Kapatınca bütün kanallar susar; ayarlar korunur.	Turning it off mutes every channel; levels are kept.
@@ -2230,6 +2210,8 @@ BOŞTA {0}	IDLE {0}
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/LiberationRegionMarks.cs
 {0} · ADAY	{0} · CANDIDATE
 ÖZGÜR	FREE
+# Assets/Corrigible/Desk/Scripts/Runtime/Siginak/OperationSlip.cs
+BASKINA HAZIR	READY TO RAID
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/RoomView.cs
 ENERJİSİZ	NO POWER
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/SiginakRoomWords.cs
@@ -2871,27 +2853,6 @@ DÜĞME	BUTTON
 Düğme	Button
 # Assets/Corrigible/Prefabs/UI/TextLine.prefab
 Satır	Line
-# Assets/Corrigible/Desk/Scenes/DeskGame.unity
-AĞA BAĞLANMA\nANALOG KAL	STAY OFF THE NETWORK\nSTAY ANALOG
-KOMUTA MASASI / KULLANIM KILAVUZU	COMMAND DESK / FIELD MANUAL
-DİNLE	LISTEN
-KYGA / 07	KYGA / 07
-DURAKLAT / SÜRDÜR	PAUSE / RESUME
-ARAŞTIRMA\nDOSYALARI	RESEARCH\nFILES
-01 / HARİTA	01 / MAP
-02 / SIĞINAK	02 / SHELTER
-03 / GÖREVLER	03 / MISSIONS
-ONAR / GELİŞTİR	REPAIR / UPGRADE
-− PERSONEL	− RESIDENT
-+ PERSONEL	+ RESIDENT
-1 · KOMUTA	1 · COMMAND
-2 · SIĞINAK	2 · SHELTER
-3 · GÖREVLER	3 · MISSIONS
-SON SIĞINAK	THE LAST SHELTER
-İŞGALİN ARDINDAN · SON DİRENİŞ NOKTASI	AFTER THE OCCUPATION · THE LAST RESISTANCE OUTPOST
-Dünya çoktan düştü. Yapay zekâ bütün bölgeleri, ağları ve sunucuları ele geçirdi. Batı Avrupa'daki küçük sığınağımız, karşı harekâtın son komuta noktası.\n\nKOMUTA MASASI: Bölgeyi haritada seç. Bölge bilgilerini ve görevleri harita üzerindeki fişten incele; baskın emrini buradan ver. Bir bölgenin üç sektörünü baskınlarla geri al; ardından özgür bir bölgeye komşu yeni bir cephe seç.\n\nOPERASYON MONİTÖRÜ: Baskın emrinden sonra kamera sağdaki tüplü monitöre yaklaşır. Ekranın içine girer ve saha yayınındaki baskın tahtası açılır. Yağma görevinde teknisyeni ikmal kasasının yanına götür. Q ile yeteneği seç ve kasaya tıkla. Sunucu yıkımı görevinde çekirdeği yok et.\n\nSIĞINAK PENCERESİ: Soldaki kesitten odaları seç, hasarlı odaları onar ve personel görevlendir. Erzak topluluğu besler; atölye malzeme üretir, revir yaralı ekibi toparlar.\n\nHazırlıklarını bitirince VARDİYAYI BİTİR. Zaman yalnızca emrinle ilerler. İlk hedef: tedarik deposu.	The world has already fallen. The AI has seized every region, network, and server. Our small shelter in Western Europe is the last command post of the counteroffensive.\n\nCOMMAND DESK: Select a region on the map. Read its briefing and missions on the map, then issue the raid order from there. Recapture a region's three sectors through raids, then choose a new front adjacent to a liberated region.\n\nOPERATIONS MONITOR: After a raid order, the camera approaches the CRT monitor on the right. It enters the screen and reveals the raid board in the field transmission. On loot missions, move the technician next to the supply crate. Press Q to select the ability, then click the crate. On server demolition missions, destroy the core.\n\nSHELTER WINDOW: Select rooms in the cutaway on the left, repair damaged rooms, and assign residents. Supplies feed the community; the workshop produces materials and the infirmary helps the injured team recover.\n\nWhen preparations are complete, END SHIFT. Time advances only on your command. First target: the supply depot.
-KARŞI HAREKÂTI BAŞLAT	BEGIN COUNTEROFFENSIVE
-KAYITTAN DEVAM ET	CONTINUE SAVED GAME
 # Assets/Corrigible/Fx/Scenes/FxBaskin.unity
 GÜNLÜK [L]	LOG [L]
 KURALLAR [?]	RULES [?]
@@ -3027,3 +2988,42 @@ EĞİTİM · 1/10	TUTORIAL · 1/10
 Başlık	Title
 Açıklama	Description
 Bildirim	Notification
+# --- Kullanılmayan çeviriler (koddan silinmiş metinler; gerekirse geri alınır) ---
+#VARDİYA {0:000}  ·  FON {1:0}  ·  ERZAK {2:0}  ·  MALZEME {3:0}  ·  ÖZGÜR BÖLGE {4}/{5}	SHIFT {0:000}  ·  FUNDS {1:0}  ·  SUPPLIES {2:0}  ·  MATERIALS {3:0}  ·  LIBERATED REGIONS {4}/{5}
+#HAREKÂT / {0}\nSEKTÖRLER {1}/3	OPERATION / {0}\nSECTORS {1}/3
+#{0:00}  {1}\n{2} · {3}	{0:00}  {1}\n{2} · {3}
+#{0}\n\n{1}	{0}\n\n{1}
+#SON SIĞINAK\nTOPLULUK {0}/{1}  ·  BOŞTA {2}\nENERJİ {3:0}/{4:0}  ·  ERZAK {5:0}/{6:0}\nSON VARDİYA: ERZAK {7:+0.0;-0.0;0}  ·  MALZEME {8:+0.0;-0.0;0}	LAST SHELTER\nCOMMUNITY {0}/{1}  ·  AVAILABLE {2}\nPOWER {3:0}/{4:0}  ·  SUPPLIES {5:0}/{6:0}\nLAST SHIFT: SUPPLIES {7:+0.0;-0.0;0}  ·  MATERIALS {8:+0.0;-0.0;0}
+#{0}\n{1} · PERSONEL {2}/{3}	{0}\n{1} · STAFF {2}/{3}
+#SEVİYE {0}	LEVEL {0}
+#{0}\n{1}\nGeliştirme: {2:0} fon + {3:0} malzeme\n{4}	{0}\n{1}\nUpgrade: {2:0} funds + {3:0} materials\n{4}
+#BAĞLANTI KURULUYOR\n\nSAHA YAYINI AÇILIYOR	CONNECTING\n\nOPENING FIELD TRANSMISSION
+#SAHA YAYINI\n\nBAĞLANTI BEKLENİYOR\n\nBaskın emrini harita üzerindeki görev fişinden ver.	FIELD TRANSMISSION\n\nAWAITING CONNECTION\n\nIssue a raid order from the mission briefing on the map.
+#Emir uygulandı.	Order carried out.
+#KAYNAK DEFTERİ\n\nGün {0:000}\nFon: {1}\nSiyasi güç: {2}	RESOURCE LEDGER\n\nDay {0:000}\nFunds: {1}\nPolitical power: {2}
+#GELEN: {0:00}	INBOX: {0:00}
+#SON HABER\n\n{0}	LATEST NEWS\n\n{0}
+#SAHA FAKSI\n\nYeni rapor bekleniyor.	FIELD FAX\n\nAwaiting a new report.
+#SAHA TELSİZİ\n\nEkipler: {0}\nHaberler için DİNLE.	FIELD RADIO\n\nTeams: {0}\nLISTEN for news.
+#Sağ tuş: bakış · Tekerlek: yaklaş · F: harita · 1: komuta · 2: sığınak · 3: görevler	Right mouse: look · Wheel: zoom · F: map · 1: command · 2: shelter · 3: missions
+#{0} · Sol tık: kullan	{0} · Left click: use
+#AĞA BAĞLANMA\nANALOG KAL	STAY OFF THE NETWORK\nSTAY ANALOG
+#KOMUTA MASASI / KULLANIM KILAVUZU	COMMAND DESK / FIELD MANUAL
+#DİNLE	LISTEN
+#KYGA / 07	KYGA / 07
+#DURAKLAT / SÜRDÜR	PAUSE / RESUME
+#ARAŞTIRMA\nDOSYALARI	RESEARCH\nFILES
+#01 / HARİTA	01 / MAP
+#02 / SIĞINAK	02 / SHELTER
+#03 / GÖREVLER	03 / MISSIONS
+#ONAR / GELİŞTİR	REPAIR / UPGRADE
+#− PERSONEL	− RESIDENT
+#+ PERSONEL	+ RESIDENT
+#1 · KOMUTA	1 · COMMAND
+#2 · SIĞINAK	2 · SHELTER
+#3 · GÖREVLER	3 · MISSIONS
+#SON SIĞINAK	THE LAST SHELTER
+#İŞGALİN ARDINDAN · SON DİRENİŞ NOKTASI	AFTER THE OCCUPATION · THE LAST RESISTANCE OUTPOST
+#Dünya çoktan düştü. Yapay zekâ bütün bölgeleri, ağları ve sunucuları ele geçirdi. Batı Avrupa'daki küçük sığınağımız, karşı harekâtın son komuta noktası.\n\nKOMUTA MASASI: Bölgeyi haritada seç. Bölge bilgilerini ve görevleri harita üzerindeki fişten incele; baskın emrini buradan ver. Bir bölgenin üç sektörünü baskınlarla geri al; ardından özgür bir bölgeye komşu yeni bir cephe seç.\n\nOPERASYON MONİTÖRÜ: Baskın emrinden sonra kamera sağdaki tüplü monitöre yaklaşır. Ekranın içine girer ve saha yayınındaki baskın tahtası açılır. Yağma görevinde teknisyeni ikmal kasasının yanına götür. Q ile yeteneği seç ve kasaya tıkla. Sunucu yıkımı görevinde çekirdeği yok et.\n\nSIĞINAK PENCERESİ: Soldaki kesitten odaları seç, hasarlı odaları onar ve personel görevlendir. Erzak topluluğu besler; atölye malzeme üretir, revir yaralı ekibi toparlar.\n\nHazırlıklarını bitirince VARDİYAYI BİTİR. Zaman yalnızca emrinle ilerler. İlk hedef: tedarik deposu.	The world has already fallen. The AI has seized every region, network, and server. Our small shelter in Western Europe is the last command post of the counteroffensive.\n\nCOMMAND DESK: Select a region on the map. Read its briefing and missions on the map, then issue the raid order from there. Recapture a region's three sectors through raids, then choose a new front adjacent to a liberated region.\n\nOPERATIONS MONITOR: After a raid order, the camera approaches the CRT monitor on the right. It enters the screen and reveals the raid board in the field transmission. On loot missions, move the technician next to the supply crate. Press Q to select the ability, then click the crate. On server demolition missions, destroy the core.\n\nSHELTER WINDOW: Select rooms in the cutaway on the left, repair damaged rooms, and assign residents. Supplies feed the community; the workshop produces materials and the infirmary helps the injured team recover.\n\nWhen preparations are complete, END SHIFT. Time advances only on your command. First target: the supply depot.
+#KARŞI HAREKÂTI BAŞLAT	BEGIN COUNTEROFFENSIVE
+#KAYITTAN DEVAM ET	CONTINUE SAVED GAME

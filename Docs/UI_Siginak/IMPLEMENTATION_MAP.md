@@ -193,6 +193,8 @@ Kısaltmalar: `Lib` = `Sim.S.Liberation`, `Sh` = `Sim.Shelter`, `B` = `Sim.B` (B
 
 ## 5. Sunum anahtarı nasıl çalışacak
 
+> Tarihsel: anahtar Aşama 10 sonunda kaldırıldı; baskın kısmı `SiginakRaidLink`'te (bkz. CHANGELOG).
+
 - `SiginakSettings.asset` (Resources): `newPresentation`, `hopeMarks`, `edgeLine` varsayılanı. Geliştirmede debug menüsünden
   Play içinde de değiştirilebilir.
 - `SiginakPresentationSwitch` (Bridge, sahnede) şu işleri yapar:
@@ -376,6 +378,42 @@ Açık farklar (sahibi olan aşama):
 ---
 
 ## CHANGELOG
+
+- **2026-10-26 · Aşama 10 sonu: eski görünüm ve kurucu kaldırıldı** (Aşama 1–10 önce `eed2824` olarak commit edildi):
+  - **Sahne asıl kaynak** (AGENTS kural 5): sahne tek seferlik bir editör script'iyle yeni görünüme kalıcı geçirildi (script
+    silindi). `CommandPost3D` altında yalnız `Main Camera` kaldı (`SiginakCameraRig` açık, `CommandPostCamera` bileşeni
+    silindi); 13 eski oda nesnesi, `LiberationHudCanvas` (üst HUD, alt çubuk, sonuç notu), eski hikâye kâğıdı
+    (`LiberationStoryCanvas`), eski görev fişi canvas'ı (`LiberationMapCanvas`) ve eski kamera pozları silindi. Kâğıt harita
+    canvas'ı `SiginakRoom/Desk/MapMount` altında; ortam ışığı (üç renkli, yansıma .15) sahnenin ışık ayarına işli;
+    `RaidLauncher`'ın monitör pozu CrtDive. Baskında gizlenecekler listesinden yalnız silinen nesneler düştü (60 → 21).
+    Eksik script 0; sahne dosyası ~35 000 satır kısaldı.
+  - **Baskın bağlantısı** `SiginakRaidLink` (Bridge, sahne kökünde, odanın dışında): açılışta `RaidLauncher`'a CRT geçişini ve
+    emirden sonraki 0,3 s beklemeyi verir; baskın sahnesi ek yüklüyken odayı gizler. Sunum anahtarından yalnız bu kısım kaldı.
+  - **Silinen kod:** `SiginakRoomBuilder*.cs` (12 dosya), `SiginakMaterials`, `SiginakMeshLib` (yalnız kurucuya hizmet
+    ediyordu; mesh ve malzemeler `Art/Siginak` altında varlık olarak kalır), `SiginakPresentationSwitch`, `CommandPostCamera`,
+    `CommandPostControl`, `IDeskCameraRig`, “Görünümü değiştir” menüsü. `SiginakSettings` yalnız `hopeMarks` taşır (ışık ve
+    kamera ayarları kurucunun girdisiydi, değerleri sahnede). `LiberationDeskView` eski HUD alanlarından ve dallarından
+    arındı: komut kapısı, teleks gerekçesi, açılış ve hikâye kilidi. `CommandPostDesk` yalnız girdi kapısı
+    (`ExternalBlocked`, `InteractionBlocked`, `PointerOverOverlay`). Kalan editör araçları: `SiginakCapture`,
+    `SiginakCaptureSet`, `SiginakTextScan`, `SiginakFixtures`, token içe aktarıcı, `SiginakTextureBaker`.
+  - **Oda artık sahnede düzenlenir**; yeniden üretme yolu yok. Kurucunun son hâli `eed2824`'te
+    (`Desk/Scripts/Editor/Siginak/SiginakRoomBuilder*.cs`); bölüm 5'teki anahtar tarifi tarihsel kayıttır.
+  - **Punto taraması kâğıt haritayı da kapsıyor:** harita canvas'ı kayıtlı sahnede odanın dışında olduğu için önceki tarama
+    onu hiç görmemişti (275 → 393 metin). Görünür harita yazıları (bölge adı 28, alt satır ve lejant 23) eşiği geçiyor.
+    Aşama 5'in ÖZGÜR damgası istisnası ölü bir yola (`Free stamp/`) yazılmıştı; gerçek yol (`/Stamp/Word`, `/Stamp/Day`)
+    düzeltildi. Sızma kipinin harita işaretleri (`SadeMapCanvas/MapMarkers/`: ekip, düğüm, saha raporu, bölge adı katmanı)
+    kurtuluş biçiminde çizilmediği için gerekçeli istisna. Sonuç **0 ihlal**, 113 istisna.
+  - Çeviri tablosu: silinen kodun ve eski sahne nesnelerinin 38 metni “#” ile emekliye ayrıldı; yeni metin yok.
+  - Testler eski görünüm yerine yeni sahneyi denetler: `SiginakRoomTests` (oda tek sunum; `CommandPost3D`'de yalnız kamera;
+    `SiginakRaidLink` bağlantıları), `DeskBridgeTests` (vardiya şalterle biter; ekran katmanları HUD canvas'ının üstünde; emir
+    belgesinin BAŞLA'sı Overlay'de, dünya kilidinden bağımsız; görev fişi masadaki haritada, yalnız baskın CRT'ye yaklaşır;
+    `LiberationDeskView` bağlantıları), `SiginakCameraTests`, `SiginakCrtTests`, `SiginakDeskTests`, `SiginakMapTests`.
+    Tam EditMode **713/713**: kurucunun ve anahtarın 2 testi silindi (`ThreeEuler_MatchesMirroredThreeRotation`,
+    `PresentationSwitch_AppliesAndRestores`); `DeskBridgeTests`'in eski hikâye ve görev fişi testleri yeni karşılıklarıyla değişti.
+  - Oyunda: yeni oyun → açılış dizisi ve emir belgesi (oda kilitli, harita pozu) → BAŞLA (kayıt uyarısı, ikinci basışta
+    onay) → belge tepsiye, kilit açık → şalter → vardiya raporu → tepsiye → baskın emri (FON −12) → CRT “BAĞLANTI
+    KURULUYOR” → baskın tahtası (oda gizli) → geri çekil → odaya dönüş, operasyon raporu açık, rig etkin. Konsolda hata yok.
+    Kayıt dosyaları geri yüklendi.
 
 - **2026-10-26 · Aşama 10 (dil, erişilebilirlik, performans; kaldırma onay bekliyor):**
   - **Punto taraması** (`SiginakTextScan`, menü “Corrigible/Sığınak/Punto taraması”, rapor `Docs/UI_Siginak/punto_taramasi.txt`,

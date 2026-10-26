@@ -434,24 +434,21 @@ Claude Design'ın "C · Analist Masası" yönü, mevcut kriz masasından ayrı b
 
 ### 3D komuta masası · DeskGame
 
-`Desk/Scenes/DeskGame.unity`, AIBunker'daki analog komuta masasına dayanan primitive oda, masa ve cihaz düzenini
-kalıcı sahne nesneleriyle kullanır. Yatay `SadeMapCanvas` World Space'tedir; `SadeHudCanvas`, `SadeContextCanvas` ve
-ortak giriş/ayar/olay/eğitim katmanları okunabilirlik için Overlay kalır. Harita etiketlerinin sahne ayarı
-`SadeRegionLabelView.labelScale=1.6`dır.
-Runtime oda kurucusu yoktur; yerleşim ve bileşen bağlantıları sahnede serileştirilir.
+`Desk/Scenes/DeskGame.unity`'nin tek sunumu Sığınak komuta odasıdır (`SiginakRoom`; tasarım ve eşleme
+`Docs/UI_Siginak/IMPLEMENTATION_MAP.md`). Yatay `SadeMapCanvas` World Space'te, odanın masasındaki `MapMount` altındadır;
+`SadeHudCanvas`, `SadeContextCanvas` ve ortak giriş/ayar/olay/eğitim katmanları okunabilirlik için Overlay kalır.
+Runtime ya da editör oda kurucusu yoktur; oda, yerleşim ve bileşen bağlantıları sahnede serileştirilir ve orada
+düzenlenir (ilk kurucu `eed2824`'te kaldı).
 
-`Scripts/Runtime/CommandPost` içindeki `CommandPostDesk`, aynı `DeskPresenter.Source` görünüm modelinden kaynak
-defterini, telsiz notunu ve son haber faksını doldurur. `CommandPostControl` düğmeleri mevcut presenter komutlarını
-çağırır: telsiz/faks Haberler'i, evrak tepsisi Araştırma'yı; masa sekmeleri harita odağını, Ekipler'i ve YZ Günlüğü'nü,
-kılavuz fişi Rehber'i, kol duraklatmayı açar. Eski dock ve klavye kısayolları çalışır. Modal açıkken dünya raycaster'ları
-engellenir. `CommandPostCamera`: sağ tuşla sınırlı bakış, tekerlekle yaklaşma, F ile harita odağı, Home ile başlangıca dönüş;
-overlay dosya üstündeki tekerlek kamerayı değiştirmez.
+`Scripts/Runtime/CommandPost` içindeki `CommandPostDesk` yalnız masa kamerasının girdi kapısıdır: açık bir ekran (giriş,
+ayarlar, olay, onay, oyun sonu) ya da sunumun kilidi (`ExternalBlocked`: hikâye, baskına yaklaşma) varken kamera girdisi
+kapalıdır; tekerlek ve sağ tuş Overlay bir yüzeyin üstündeyse kameraya gitmez. Kamerayı `SiginakCameraRig` sürer.
 
 `DeskCanvasProjection`, dünya paftasındaki noktaları kaynak canvas kamerası üzerinden ekran kâğıtlarına taşır.
 `SadeDeskInteraction`, `CardStringView`, `EventModalView` ve `DeskTutorialView` kart, iplik, olay spotu ve eğitim hedeflerini
 kamera hareketinden sonra yeniler; aynı overlay düzlemindeki eski davranış korunur. `RaidLauncher`, baskında kamera,
-dinleyici, oda ışıkları, canvas/raycaster ve masa girdilerini kapatır; `CommandPostDesk` oda renderer'larını gizler.
-Dönüşte bileşenlerin ve oda renderer'larının önceki `enabled` durumları geri yüklenir. İlk 3B masa aktarımı oyun
+dinleyici, canvas/raycaster ve masa girdilerini kapatır; `SiginakRaidLink` baskın sahnesi yüklüyken odayı gizler.
+Dönüşte bileşenlerin önceki `enabled` durumları geri yüklenir. İlk 3B masa aktarımı oyun
 kurallarını değiştirmemişti; aşağıdaki kurtuluş kampanyası bu sunuma yeni, seçenekle yalıtılmış kurallar ekler.
 
 ### DeskGame · kurtuluş harekâtı ve sığınak
@@ -469,15 +466,14 @@ kurallarını değiştirmemişti; aşağıdaki kurtuluş kampanyası bu sunuma y
   jeneratör enerji, atölye malzeme, revir ekip toparlanması sağlar. Formüller `Balance.shelter*` alanlarını kullanır.
 - **Manuel vardiya:** `GameController.AdvanceLiberationDay` bir simülasyon günü ilerletip olayları yayımlar ve
   ayrı kaydı yazar. Baskın veya oyun sonu varken ilerleyemez. Normal krizin 1×/2×/4× saat yolu ayrı kalır.
-- **Oda ve geçiş:** Sol pencere sığınak yan kesitinin durum/geliştirme yüzeyidir; sağ operasyon masası CRT
-  monitörüdür. Bölge/görev düğmeleri `LiberationMapCanvas` üzerindeki sahnede saklanan görev fişindedir.
-  `LiberationDeskView`, seçili bölgenin harita konumunu `DeskCanvasProjection` ile fişe bağlar; fişi ekran sınırında tutar,
-  sığınak/oda bakışında ve modal/baskın sırasında gizler. Bu Overlay raycaster dünya girdi kilidine dahil edilmez;
-  baskına yaklaşırken kilitlenir ve taktik sahne boyunca canvas kapanır. CRT yalnız yayın durumunu gösterir.
-  Bölge seçimi ve görev kısayolu haritaya odaklanır. Baskın emrinde `RaidLauncher` serialized `mainCamera`, `monitorFocusPose`, süre/FOV ve giriş kilidi referanslarıyla
-  önce monitöre yaklaşır, sonra Baskın sahnesini eklemeli yükler. Kamera/girdi durumunu dönüşte geri yükler;
-  yaklaşma sırasında eski baskın iptal edilmişse yüklemeyi bırakır. Monitör geçişi atanmayan eski sahnelerde
-  doğrudan yükleme sürer. Oda yerleşimi sahne kaynağındadır; kalıcı runtime sahne kurucusu eklenmez.
+- **Oda ve geçiş:** Sığınak odası (`SiginakRoom`): masadaki kâğıt harita (görev fişi, cephe onay fişi, ekip figürü),
+  sayaç bankası, anahtar rayı, vardiya şalteri, teleks; raftaki sığınak kesit maketi (odalar, personel, geliştirme);
+  sağdaki CRT (saha yayını). `LiberationDeskView` komut kapısıdır: komutlar buradan geçer, sonuç gerekçesiyle teleksten
+  basılır; çizim Siginak bağlayıcılarındadır (`SiginakDesk`, `SiginakMap`, `SiginakShelter`, `SiginakCrt`, `SiginakShift`,
+  `SiginakBriefing`). Baskın emrinde `RaidLauncher` serialized `mainCamera`, `monitorFocusPose` (CrtDive), süre/FOV ve
+  giriş kilidi referanslarıyla önce CRT'ye dalar (`SiginakCrt`: `IRaidTransition`), sonra Baskın sahnesini eklemeli
+  yükler. Kamera/girdi durumunu dönüşte geri yükler; yaklaşma sırasında eski baskın iptal edilmişse yüklemeyi bırakır.
+  Oda yerleşimi sahne kaynağındadır; kalıcı sahne kurucusu eklenmez.
 
 ### Sade baskın tahtası · F4
 

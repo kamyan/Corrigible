@@ -7,59 +7,57 @@ using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Corrigible.Desk.Tests
 {
-    /// <summary>Sığınak Aşama 2: oda kurulumu, koordinat dönüşümü, sunum anahtarı ve oda yazıları.</summary>
+    /// <summary>
+    /// Sığınak odası (Aşama 2, Aşama 10'dan beri DeskGame'in tek sunumu): sahnenin kurulu hâli, baskın bağlantısı, eski
+    /// komuta odasının kalmadığı, oda yazıları ve malzemeler.
+    /// </summary>
     public class SiginakRoomTests
     {
         const string ScenePath = DeskSpriteManifest.Root + "/Scenes/DeskGame.unity";
 
-        static void Near(Quaternion expected, Quaternion actual, string what) =>
-            Assert.Less(Quaternion.Angle(expected, actual), 0.01f, what);
-
-        /// <summary>three.js (sağ el, z koltuğa) → Unity (sol el, z duvara): X ve Y açısı işaret değiştirir, Z değiştirmez.</summary>
         [Test]
-        public void ThreeEuler_MatchesMirroredThreeRotation()
+        public void DeskGameScene_SiginakRoomIsTheOnlyPresentation()
         {
-            const float a = 0.6f;
-            Near(Quaternion.Euler(-a * Mathf.Rad2Deg, 0, 0), SiginakRoomBuilder.ThreeEuler(a, 0, 0), "x");
-            Near(Quaternion.Euler(0, -a * Mathf.Rad2Deg, 0), SiginakRoomBuilder.ThreeEuler(0, a, 0), "y");
-            Near(Quaternion.Euler(0, 0, a * Mathf.Rad2Deg), SiginakRoomBuilder.ThreeEuler(0, 0, a), "z (README'nin aksine işaret korunur)");
-
-            // Birleşik açı: three'de (Rx·Ry·Rz) döndürüp z'yi aynalamak = Unity'de döndürmek
-            float rx = 0.3f, ry = -0.5f, rz = 0.7f;
-            var three = new Quaternion(Mathf.Sin(rx / 2), 0, 0, Mathf.Cos(rx / 2)) * new Quaternion(0, Mathf.Sin(ry / 2), 0, Mathf.Cos(ry / 2)) *
-                        new Quaternion(0, 0, Mathf.Sin(rz / 2), Mathf.Cos(rz / 2));
-            var v = new Vector3(0.2f, -0.7f, 0.4f);
-            var mirrored = three * new Vector3(v.x, v.y, -v.z);
-            var expected = new Vector3(mirrored.x, mirrored.y, -mirrored.z);
-            Assert.Less(Vector3.Distance(expected, SiginakRoomBuilder.ThreeEuler(rx, ry, rz) * v), 1e-5f);
-        }
-
-        [Test]
-        public void DeskGameScene_SiginakRoomIsWired_NewByDefault()
-        {
-            Assert.IsTrue(SiginakSettings.Active.newPresentation, "Aşama 10'dan beri varsayılan yeni görünüm (anahtar açılışta uygular)");
             var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
             try
             {
                 var roots = scene.GetRootGameObjects();
-                var sw = roots.SelectMany(g => g.GetComponentsInChildren<SiginakPresentationSwitch>(true)).Single();
-                var so = new SerializedObject(sw);
-                foreach (var field in new[] { "settings", "siginakRoot", "mapCanvas", "legacyMapParent", "siginakMapMount", "mainCamera", "legacyCameraRig", "cameraRig", "launcher", "crtDivePose", "legacyMonitorPose" })
-                    Assert.IsNotNull(so.FindProperty(field).objectReferenceValue, field);
-                var legacy = so.FindProperty("legacyObjects");
-                Assert.AreEqual(13, legacy.arraySize, "eski oda + LiberationHudCanvas (üst HUD, alt çubuk, sonuç notu)");
-                for (int i = 0; i < legacy.arraySize; i++) Assert.IsNotNull(legacy.GetArrayElementAtIndex(i).objectReferenceValue, "eski nesne " + i);
-
-                var room = (GameObject)so.FindProperty("siginakRoot").objectReferenceValue;
-                Assert.IsFalse(room.activeSelf, "sahne dosyası eski görünümle kaydedilir; yeni görünümü anahtar Awake'te açar");
+                var room = roots.Single(g => g.name == "SiginakRoom");
+                Assert.IsTrue(room.activeSelf, "oda sahnede açık kayıtlı");
                 foreach (var path in new[] { "Shell", "Desk", "Desk/MapMount", "Desk/Counter bank", "Desk/Key rail", "Desk/Shift switch", "Desk/Teleprinter",
                              "Shelf", "Shelf/Diorama", "CRT desk", "CRT desk/CRT/Screen", "Ceiling bulb", "Poses/K1", "Poses/Map", "Poses/K4", "Poses/K5a", "Poses/K6a" })
                     Assert.IsNotNull(room.transform.Find(path), path);
                 var mount = room.transform.Find("Desk/MapMount");
                 Assert.Less(Vector3.Distance(new Vector3(0, 0.7612f, 1.3175f), mount.position), 1e-4f);
+
+                // Eski komuta odası, eski HUD / alt çubuk, eski hikâye kâğıdı ve eski görev fişi yok
+                var commandPost = roots.Single(g => g.name == "CommandPost3D").transform;
+                Assert.AreEqual(new[] { "Main Camera" }, commandPost.Cast<Transform>().Select(t => t.name).ToArray());
+                Assert.IsFalse(roots.Any(g => g.name == "LiberationMapCanvas"));
+
+                // Kâğıt harita odanın masasında (1,2 m), kamera fiziksel ve K1'de, odanın fizik ışını açık
+                var map = roots.SelectMany(g => g.GetComponentsInChildren<SadeMapView>(true)).Single();
+                Assert.IsTrue(map.transform.IsChildOf(mount));
+                Assert.AreEqual(1.2f / 1920f, map.transform.parent.localScale.x * map.transform.localScale.x, 1e-7f);
+                var cam = commandPost.GetComponentInChildren<Camera>(true);
+                var rig = cam.GetComponent<SiginakCameraRig>();
+                Assert.IsTrue(rig.enabled);
+                Assert.IsTrue(cam.usePhysicalProperties);
+                Assert.AreEqual(-0.324f, cam.lensShift.y, 1e-4f);
+                Assert.IsTrue(cam.GetComponent<PhysicsRaycaster>().enabled);
+
+                // Baskın bağlantısı: CRT geçişi, monitöre yaklaşma pozu, baskında odanın gizlenmesi
+                var link = roots.SelectMany(g => g.GetComponentsInChildren<SiginakRaidLink>(true)).Single();
+                Assert.IsNull(link.transform.parent, "odanın kökünün dışında (oda gizliyken de çalışır)");
+                var ls = new SerializedObject(link);
+                Assert.AreSame(room, ls.FindProperty("room").objectReferenceValue);
+                Assert.IsInstanceOf<SiginakCrt>(ls.FindProperty("transition").objectReferenceValue);
+                var launcher = (Corrigible.Game.Raid.RaidLauncher)ls.FindProperty("launcher").objectReferenceValue;
+                Assert.AreEqual("CrtDive", launcher.MonitorFocusPose.name);
 
                 var lights = room.GetComponentsInChildren<Light>(true);
                 var bulb = lights.Single(l => l.name == "Bulb light");
@@ -71,42 +69,9 @@ namespace Corrigible.Desk.Tests
                 Assert.IsNotNull(room.GetComponentInChildren<BulbFlicker>(true));
                 // Primitive çarpıştırıcıları silinir; kalanların hepsi tıklanır hedeflerindir (Aşama 4)
                 Assert.IsTrue(room.GetComponentsInChildren<Collider>(true).All(c => c.GetComponent<DeskTarget>() != null), "hedef dışı çarpıştırıcı");
-            }
-            finally { EditorSceneManager.CloseScene(scene, true); }
-        }
-
-        /// <summary>Anahtar haritayı yeni masaya taşır, eski odayı kapatır, kamerayı K1'e koyar; geri alınca her şey eski yerinde.</summary>
-        [Test]
-        public void PresentationSwitch_AppliesAndRestores()
-        {
-            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
-            try
-            {
-                var sw = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<SiginakPresentationSwitch>(true)).Single();
-                var so = new SerializedObject(sw);
-                var map = (RectTransform)so.FindProperty("mapCanvas").objectReferenceValue;
-                var legacyParent = map.parent;
-                var legacyScale = map.localScale;
-                var cam = sw.MainCamera;
-                var camPos = cam.transform.position;
-                var oldRoom = (GameObject)so.FindProperty("legacyObjects").GetArrayElementAtIndex(0).objectReferenceValue;
-
-                sw.Apply(true);
-                Assert.IsTrue(sw.IsNew);
-                Assert.AreSame(so.FindProperty("siginakMapMount").objectReferenceValue, map.parent);
-                Assert.AreEqual(1.2f / 1920f, map.localScale.x, 1e-7f);
-                Assert.IsFalse(oldRoom.activeSelf);
-                Assert.IsTrue(cam.usePhysicalProperties);
-                Assert.AreEqual(-0.324f, cam.lensShift.y, 1e-4f);
-                Assert.AreEqual(56.7f, Camera.FocalLengthToFieldOfView(cam.focalLength, cam.sensorSize.y), 0.05f);
-
-                sw.Apply(false);
-                Assert.IsFalse(sw.IsNew);
-                Assert.AreSame(legacyParent, map.parent);
-                Assert.AreEqual(legacyScale, map.localScale);
-                Assert.IsTrue(oldRoom.activeSelf);
-                Assert.IsFalse(cam.usePhysicalProperties);
-                Assert.AreEqual(camPos, cam.transform.position);
+                // Hareket etmeyen parçalar statik birleşir (Aşama 10 performans)
+                Assert.IsTrue(GameObjectUtility.GetStaticEditorFlags(room.transform.Find("Desk/Top").gameObject).HasFlag(StaticEditorFlags.BatchingStatic));
+                Assert.IsFalse(GameObjectUtility.GetStaticEditorFlags(room.GetComponentInChildren<StationKey>(true).gameObject).HasFlag(StaticEditorFlags.BatchingStatic));
             }
             finally { EditorSceneManager.CloseScene(scene, true); }
         }
@@ -118,7 +83,7 @@ namespace Corrigible.Desk.Tests
             var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
             try
             {
-                var room = scene.GetRootGameObjects().Single(g => g.name == SiginakRoomBuilder.RootName);
+                var room = scene.GetRootGameObjects().Single(g => g.name == "SiginakRoom");
                 var texts = room.GetComponentsInChildren<TextMeshPro>(true);
                 Assert.Greater(texts.Length, 30);
                 var table = Corrigible.Core.Loc.ParseTable(File.ReadAllText("Assets/Corrigible/Resources/Localization/strings.txt"));
@@ -139,7 +104,7 @@ namespace Corrigible.Desk.Tests
         [Test]
         public void RoomMaterials_ComeFromTokens()
         {
-            var mats = Directory.GetFiles(SiginakMaterials.Dir, "*.mat", SearchOption.AllDirectories)
+            var mats = Directory.GetFiles(SiginakSpriteManifest.Root + "/Materials", "*.mat", SearchOption.AllDirectories)
                 .Select(p => AssetDatabase.LoadAssetAtPath<Material>(p.Replace('\\', '/'))).ToList();
             Assert.Greater(mats.Count, 50);
             foreach (var m in mats)

@@ -170,13 +170,10 @@ namespace Corrigible.Desk.Tests
                 var hud = room.GetComponentInChildren<HoverTag>(true).GetComponent<Canvas>();
                 Assert.AreEqual(RenderMode.ScreenSpaceOverlay, hud.renderMode);
 
-                var sw = roots.SelectMany(g => g.GetComponentsInChildren<SiginakPresentationSwitch>(true)).Single();
-                var physics = (Behaviour)new SerializedObject(sw).FindProperty("physicsRaycaster").objectReferenceValue;
-                Assert.IsInstanceOf<PhysicsRaycaster>(physics);
-                Assert.IsFalse(physics.enabled, "eski görünümde fizik ışını kapalı");
-                var legacy = new SerializedObject(sw).FindProperty("legacyObjects");
-                Assert.IsTrue(Enumerable.Range(0, legacy.arraySize).Any(i => ((GameObject)legacy.GetArrayElementAtIndex(i).objectReferenceValue).name == "LiberationHudCanvas"),
-                    "yeni görünümde eski HUD ve alt çubuk gizlenir");
+                var physics = roots.SelectMany(g => g.GetComponentsInChildren<PhysicsRaycaster>(true)).Single();
+                Assert.IsTrue(physics.enabled, "odadaki hedefler için fizik ışını açık");
+                Assert.IsFalse(roots.SelectMany(g => g.GetComponentsInChildren<Transform>(true)).Any(t => t.name == "LiberationHudCanvas"),
+                    "eski HUD ve alt çubuk kaldırıldı (Aşama 10)");
                 Assert.IsFalse(room.transform.Find("Hope marks/Second mug").gameObject.activeSelf, "umut işaretleri açılışta gizli");
             }
             finally { EditorSceneManager.CloseScene(scene, true); }

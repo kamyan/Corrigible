@@ -26,10 +26,9 @@ namespace Corrigible.Desk
     /// Sığınak kamerası: pozlar arasında 0,45 s ease-in-out geçiş (K1 → harita önce 0,15 s yükselir, sonra eğilir),
     /// sağ tuşla sınırlı bakış, tekerlekle yaklaşma, 1/2/3/F/Home kısayolları. Kamera her pozda fiziksel kalır: dikey FOV
     /// odak uzaklığıyla, K1'in ufuk kaydırması lens kaydırmasıyla verilir; geçişte ikisi birlikte değişir (sıçrama olmaz).
-    /// Eski <see cref="CommandPostCamera"/> ile aynı <see cref="IDeskCameraRig"/> yüzünü taşır; ikisinden yalnız biri etkindir.
     /// </summary>
     [RequireComponent(typeof(Camera))]
-    public sealed class SiginakCameraRig : MonoBehaviour, IDeskCameraRig
+    public sealed class SiginakCameraRig : MonoBehaviour
     {
         [Serializable] public struct PoseSlot
         {
@@ -40,7 +39,7 @@ namespace Corrigible.Desk
         }
 
         [SerializeField] Camera view;
-        [Tooltip("Girdi kilidi ve Overlay üstündeki imleç için (eski masanın bileşeni, iki görünümde de etkin).")]
+        [Tooltip("Girdi kilidi ve Overlay üstündeki imleç (CommandPostDesk).")]
         [SerializeField] CommandPostDesk desk;
         [SerializeField] PoseSlot[] poses = Array.Empty<PoseSlot>();
         [SerializeField] Vector2 sensorSizeMm = new Vector2(36, 20.25f);

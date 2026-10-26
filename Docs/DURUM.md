@@ -1,12 +1,13 @@
 # Durum, kararlar ve açık işler
 
-_Son güncelleme: 2026-10-21_
+_Son güncelleme: 2026-10-26_
 
 ## Nerede kaldık
 
 Oyun baştan sona oynanabilir: giriş ve rakip seçimi, rehberli eğitim, kriz masası (harita, bölge eylemleri, araştırma,
 YZ günlüğü, haber bandı), hediye/perde/sahte zafer/son pencereleri, kayıt ve devam, Seni Tanıyan Rakip profili.
 DeskGame kurtuluş kampanyası, sığınak ve görev raporu kapsamıyla ve açılış girdi düzeltmesiyle son tam EditMode doğrulaması **654/654** geçti.
+DeskGame'in sunumu 2026-10-26'da Sığınak komuta odası oldu (`Docs/UI_Siginak`); son tam EditMode **713/713**.
 C# simülasyonu tarayıcı prototipiyle birebir aynı (deneysel mod ve baskın motoru dahil, Unity'ye özgü seçenekler kapalıyken).
 Deneysel mod (saha ekipleri, zaman ölçeği, baskın) Unity'de oynanabilir ve varsayılan olarak açık. Oyun Türkçe ve
 İngilizce (giriş penceresindeki dil düğmesi; ilk açılışta sistem diline göre).
@@ -15,7 +16,17 @@ uGUI panelleri kalıcı prefab, malzeme ve doku asset'lerinde tutuluyor. Bu akta
 doğrulaması tamamlanınca sonuçları aşağıya eklenecek; yukarıdaki 111/111 önceki doğrulama sonucudur.
 
 **Git:** Depo `git@github.com:kamyan/Corrigible.git`, dal `main`. Bu belgelerdeki işin büyük kısmı **henüz commit
-edilmedi** (kullanıcı commit istemedi). Commit'i kullanıcı isteyince yap.
+edilmedi** (kullanıcı commit istemedi). Commit'i kullanıcı isteyince yap. Sığınak işi `siginak-ui` dalında (Aşama 1–10: `eed2824`).
+
+## DeskGame · Sığınak komuta odası (2026-10-26)
+
+- `Docs/UI_Siginak/PROMPT.md`'deki on aşama uygulandı: oda ve ışık, kamera rig'i, masa (sayaçlar, anahtar rayı, şalter,
+  teleks), kâğıt harita (görev fişi, cephe onayı, ekip figürü), sığınak maketi, CRT ve baskın dalışı, vardiya raporu,
+  açılış ve emir belgesi, punto/TR-EN/performans geçişi. Ayrıntı ve kararlar `Docs/UI_Siginak/IMPLEMENTATION_MAP.md`.
+- Eski AIBunker komuta masası (oda nesneleri, üst HUD, alt çubuk, hikâye kâğıdı, görev fişi canvas'ı, `CommandPostCamera`,
+  `CommandPostControl`) ve odayı koddan kuran geçici kurucu kaldırıldı; sahne asıl kaynak (kural 5). Baskında odayı
+  `SiginakRaidLink` gizler. Aşağıdaki 2026-10-20/21 bölümleri o eski sunumu anlatır.
+- Karar bekleyen: ampul ve lamba gölgelerini sert yapmak ~0,5 ms kazandırır, görünüşü değiştirir.
 
 ## DeskGame · açılış düğmesinin fare girişi (2026-10-21)
 
