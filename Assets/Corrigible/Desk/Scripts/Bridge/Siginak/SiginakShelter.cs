@@ -150,6 +150,7 @@ namespace Corrigible.Desk.Bridge
                 var c = t.GetComponent<Collider>();
                 if (c != null && c.enabled != atShelf) c.enabled = atShelf;
             }
+            foreach (var r in rooms) if (r != null) r.SelectionShown = atShelf;
 
             // K4 ışığı: oda ampulleri ve ortam ışığı poza göre (lights.*.k4Scale; three.js'te ×2,4 / 0,22, ACES'siz URP'de
             // referans render'la ölçülerek); geçiş poz süresince

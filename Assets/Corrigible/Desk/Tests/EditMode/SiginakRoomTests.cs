@@ -76,6 +76,44 @@ namespace Corrigible.Desk.Tests
             finally { EditorSceneManager.CloseScene(scene, true); }
         }
 
+        /// <summary>
+        /// Tıklanır hedefin kutusu kendi eksenindeki modele oturur: dönük nesnede dünya eksenli kutu derinliği de kapsayıp
+        /// boşluğu (ve önündeki nesneleri) yakalıyordu.
+        /// </summary>
+        [Test]
+        public void RoomTargets_CollidersFitTheirModels()
+        {
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
+            try
+            {
+                var room = scene.GetRootGameObjects().Single(g => g.name == "SiginakRoom");
+                int checkedTargets = 0;
+                foreach (var target in room.GetComponentsInChildren<DeskTarget>(true))
+                {
+                    var box = target.GetComponent<BoxCollider>();
+                    var meshes = target.GetComponentsInChildren<MeshFilter>(true)
+                        .Where(f => f.sharedMesh != null && f.GetComponent<TMP_Text>() == null).ToList();
+                    if (box == null || meshes.Count == 0) continue;
+                    var min = Vector3.positiveInfinity; var max = Vector3.negativeInfinity;
+                    foreach (var f in meshes)
+                    {
+                        var b = f.sharedMesh.bounds;
+                        for (int i = 0; i < 8; i++)
+                        {
+                            var corner = b.center + Vector3.Scale(b.extents, new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
+                            var local = target.transform.InverseTransformPoint(f.transform.TransformPoint(corner));
+                            min = Vector3.Min(min, local); max = Vector3.Max(max, local);
+                        }
+                    }
+                    var slack = box.size - (max - min);
+                    Assert.LessOrEqual(Mathf.Max(slack.x, slack.y, slack.z), 0.05f, target.name + ": çarpıştırıcı modelden büyük " + slack.ToString("F3"));
+                    checkedTargets++;
+                }
+                Assert.Greater(checkedTargets, 8);
+            }
+            finally { EditorSceneManager.CloseScene(scene, true); }
+        }
+
         /// <summary>Odadaki her yazı: çevrilebilir sabit metinse kaynak = yazı; fontun statik atlası her glifi içerir (TR + EN).</summary>
         [Test]
         public void RoomTexts_AreLocalizableAndCovered()

@@ -9116,7 +9116,6 @@ GameObject:
   - component: {fileID: 27936985}
   - component: {fileID: 27936984}
   - component: {fileID: 27936983}
-  - component: {fileID: 27936981}
   - component: {fileID: 27936988}
   m_Layer: 5
   m_Name: SiginakHud
@@ -9125,22 +9124,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &27936981
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 27936980}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da1ff449411cb4def8d300cf2c3df07d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.HoverHighlight
-  frame: {fileID: 759861134}
-  canvas: {fileID: 27936982}
-  view: {fileID: 1126207688}
-  padding: 6
 --- !u!223 &27936982
 Canvas:
   m_ObjectHideFlags: 0
@@ -9310,7 +9293,6 @@ RectTransform:
   - {fileID: 1959165539}
   - {fileID: 249045791}
   - {fileID: 1715462894}
-  - {fileID: 759861134}
   - {fileID: 991290640}
   m_Father: {fileID: 1225546078}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -243977,102 +243959,6 @@ RectTransform:
   m_AnchoredPosition: {x: 9, y: -52}
   m_SizeDelta: {x: 48, y: 70}
   m_Pivot: {x: 0, y: 1}
---- !u!1 &551382528
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 551382529}
-  - component: {fileID: 551382532}
-  - component: {fileID: 551382531}
-  - component: {fileID: 551382530}
-  m_Layer: 5
-  m_Name: Ink
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &551382529
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 551382528}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 759861134}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 3, y: 3}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &551382530
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 551382528}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
-  m_IgnoreLayout: 1
-  m_MinWidth: -1
-  m_MinHeight: -1
-  m_PreferredWidth: -1
-  m_PreferredHeight: -1
-  m_FlexibleWidth: -1
-  m_FlexibleHeight: -1
-  m_LayoutPriority: 1
---- !u!114 &551382531
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 551382528}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
-  m_RaycastTarget: 0
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 0029f1844e58c484ebb91153849d231a, type: 3}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &551382532
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 551382528}
-  m_CullTransparentMesh: 1
 --- !u!1 &551494583
 GameObject:
   m_ObjectHideFlags: 0
@@ -268232,11 +268118,8 @@ MonoBehaviour:
   title: "At\xF6lye"
   keyHint: 
   line: "T\u0131kla: oda kart\u0131 panoda a\xE7\u0131l\u0131r"
-  frame: 0
   lift: {fileID: 0}
-  bounds: []
   hoverTag: {fileID: 27936988}
-  highlight: {fileID: 27936981}
 --- !u!65 &629022765
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -268563,118 +268446,8 @@ MonoBehaviour:
   title: "SI\u011EINAK"
   keyHint: 2
   line: "Kesit maketi \xB7 odalar\u0131 y\xF6net"
-  frame: 1
   lift: {fileID: 0}
-  bounds:
-  - {fileID: 806445159}
-  - {fileID: 1534470781}
-  - {fileID: 513803456}
-  - {fileID: 477139836}
-  - {fileID: 1931925168}
-  - {fileID: 333587983}
-  - {fileID: 1338161588}
-  - {fileID: 1756083138}
-  - {fileID: 1624247950}
-  - {fileID: 283742898}
-  - {fileID: 25483605}
-  - {fileID: 224440959}
-  - {fileID: 1643259761}
-  - {fileID: 239331325}
-  - {fileID: 1770045390}
-  - {fileID: 1340344134}
-  - {fileID: 1591149015}
-  - {fileID: 101776809}
-  - {fileID: 1956268810}
-  - {fileID: 2027761653}
-  - {fileID: 1942322006}
-  - {fileID: 746311797}
-  - {fileID: 1724731601}
-  - {fileID: 1432082691}
-  - {fileID: 146299032}
-  - {fileID: 173489734}
-  - {fileID: 1038623291}
-  - {fileID: 1904875965}
-  - {fileID: 1262037641}
-  - {fileID: 584231752}
-  - {fileID: 1383320507}
-  - {fileID: 697463659}
-  - {fileID: 1044047633}
-  - {fileID: 998861595}
-  - {fileID: 2137034568}
-  - {fileID: 1302021264}
-  - {fileID: 1658645853}
-  - {fileID: 861859434}
-  - {fileID: 571612003}
-  - {fileID: 1273189891}
-  - {fileID: 1719596156}
-  - {fileID: 1153138322}
-  - {fileID: 599907883}
-  - {fileID: 1692537533}
-  - {fileID: 331351392}
-  - {fileID: 81782099}
-  - {fileID: 742525547}
-  - {fileID: 1800378625}
-  - {fileID: 2039097330}
-  - {fileID: 1697673328}
-  - {fileID: 1222456463}
-  - {fileID: 1554636746}
-  - {fileID: 2097947980}
-  - {fileID: 1357886970}
-  - {fileID: 669409489}
-  - {fileID: 1359876433}
-  - {fileID: 1713994986}
-  - {fileID: 1543860093}
-  - {fileID: 1949320647}
-  - {fileID: 1943574816}
-  - {fileID: 245798422}
-  - {fileID: 444788326}
-  - {fileID: 773856960}
-  - {fileID: 1811267906}
-  - {fileID: 2101947388}
-  - {fileID: 532028134}
-  - {fileID: 878818655}
-  - {fileID: 345259325}
-  - {fileID: 700439523}
-  - {fileID: 1684576190}
-  - {fileID: 1748678043}
-  - {fileID: 1138447828}
-  - {fileID: 1554057668}
-  - {fileID: 714398040}
-  - {fileID: 260801347}
-  - {fileID: 1874762182}
-  - {fileID: 1220348594}
-  - {fileID: 1740694185}
-  - {fileID: 1143942080}
-  - {fileID: 1132079949}
-  - {fileID: 2068150500}
-  - {fileID: 1159125769}
-  - {fileID: 1079974683}
-  - {fileID: 1889132166}
-  - {fileID: 506191798}
-  - {fileID: 2005287829}
-  - {fileID: 1281328424}
-  - {fileID: 1220205049}
-  - {fileID: 600694137}
-  - {fileID: 135099552}
-  - {fileID: 909878520}
-  - {fileID: 736509777}
-  - {fileID: 2139841519}
-  - {fileID: 675559573}
-  - {fileID: 1305157997}
-  - {fileID: 866010038}
-  - {fileID: 771054229}
-  - {fileID: 1612582285}
-  - {fileID: 2087266174}
-  - {fileID: 359774616}
-  - {fileID: 487917139}
-  - {fileID: 1185236409}
-  - {fileID: 760780096}
-  - {fileID: 1202321578}
-  - {fileID: 116109333}
-  - {fileID: 21846886}
-  - {fileID: 1273278278}
   hoverTag: {fileID: 27936988}
-  highlight: {fileID: 27936981}
 --- !u!4 &631240308
 Transform:
   m_ObjectHideFlags: 0
@@ -268717,8 +268490,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.1194956, y: 0.6610001, z: 1.0917542}
-  m_Center: {x: -0.000000029802322, y: 0.33049998, z: 0}
+  m_Size: {x: 0.81000006, y: 0.671, z: 0.35000008}
+  m_Center: {x: 0, y: 0.3305, z: 0.000000007450581}
 --- !u!1 &631428903
 GameObject:
   m_ObjectHideFlags: 0
@@ -312726,43 +312499,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 8, y: 8}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &759861133
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 759861134}
-  m_Layer: 5
-  m_Name: Highlight
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &759861134
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 759861133}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 551382529}
-  - {fileID: 1631990350}
-  m_Father: {fileID: 27936989}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0, y: 0}
 --- !u!1 &760319285
 GameObject:
   m_ObjectHideFlags: 0
@@ -371283,11 +371019,8 @@ MonoBehaviour:
   title: Revir
   keyHint: 
   line: "T\u0131kla: oda kart\u0131 panoda a\xE7\u0131l\u0131r"
-  frame: 0
   lift: {fileID: 0}
-  bounds: []
   hoverTag: {fileID: 27936988}
-  highlight: {fileID: 27936981}
 --- !u!65 &922331676
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -421873,16 +421606,8 @@ MonoBehaviour:
   title: "G\xD6REVLER"
   keyHint: 3
   line: "G\xF6rev fi\u015Fi \xB7 bask\u0131n emri"
-  frame: 0
   lift: {fileID: 0}
-  bounds:
-  - {fileID: 453421668}
-  - {fileID: 755382810}
-  - {fileID: 2061085068}
-  - {fileID: 1675386868}
-  - {fileID: 2004615538}
   hoverTag: {fileID: 27936988}
-  highlight: {fileID: 27936981}
 --- !u!65 &1016676709
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -476481,11 +476206,8 @@ MonoBehaviour:
   title: "Ya\u015Fam alan\u0131"
   keyHint: 
   line: "T\u0131kla: oda kart\u0131 panoda a\xE7\u0131l\u0131r"
-  frame: 0
   lift: {fileID: 0}
-  bounds: []
   hoverTag: {fileID: 27936988}
-  highlight: {fileID: 27936981}
 --- !u!65 &1187722083
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -508558,16 +508280,8 @@ MonoBehaviour:
   title: KILAVUZ
   keyHint: H
   line: "Harek\xE2t emrini yeniden oku"
-  frame: 0
   lift: {fileID: 0}
-  bounds:
-  - {fileID: 385843804}
-  - {fileID: 605125874}
-  - {fileID: 1854908476}
-  - {fileID: 937610754}
-  - {fileID: 165761392}
   hoverTag: {fileID: 27936988}
-  highlight: {fileID: 27936981}
 --- !u!65 &1278631410
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -535833,19 +535547,8 @@ MonoBehaviour:
   keyHint: 
   line: "Yaln\u0131z bask\u0131n emriyle a\xE7\u0131l\u0131r. Emri g\xF6rev fi\u015Finden
     ver (3)."
-  frame: 0
   lift: {fileID: 0}
-  bounds:
-  - {fileID: 1352583827}
-  - {fileID: 1965255412}
-  - {fileID: 384977021}
-  - {fileID: 1550794470}
-  - {fileID: 1309942220}
-  - {fileID: 2088917282}
-  - {fileID: 690311942}
-  - {fileID: 282170565}
   hoverTag: {fileID: 27936988}
-  highlight: {fileID: 27936981}
 --- !u!4 &1330749263
 Transform:
   m_ObjectHideFlags: 0
@@ -535888,8 +535591,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.75828934, y: 0.34000003, z: 0.8682894}
-  m_Center: {x: -0.000000014901161, y: 0.17000002, z: 0.056809306}
+  m_Size: {x: 0.43000004, y: 0.35000002, z: 0.55200005}
+  m_Center: {x: 0.000000014901161, y: 0.17000002, z: 0.07900001}
 --- !u!1 &1331871179
 GameObject:
   m_ObjectHideFlags: 0
@@ -538237,11 +537940,8 @@ MonoBehaviour:
   title: "Jenerat\xF6r"
   keyHint: 
   line: "T\u0131kla: oda kart\u0131 panoda a\xE7\u0131l\u0131r"
-  frame: 0
   lift: {fileID: 0}
-  bounds: []
   hoverTag: {fileID: 27936988}
-  highlight: {fileID: 27936981}
 --- !u!65 &1341788475
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -576973,24 +576673,8 @@ MonoBehaviour:
   title: "EK\u0130P ALFA"
   keyHint: 
   line: 
-  frame: 0
   lift: {fileID: 0}
-  bounds:
-  - {fileID: 456658879}
-  - {fileID: 543659506}
-  - {fileID: 1176977357}
-  - {fileID: 1849180223}
-  - {fileID: 1863906791}
-  - {fileID: 1178806952}
-  - {fileID: 1732719928}
-  - {fileID: 2002502959}
-  - {fileID: 454510161}
-  - {fileID: 808984486}
-  - {fileID: 1423907095}
-  - {fileID: 1217078538}
-  - {fileID: 384837804}
   hoverTag: {fileID: 27936988}
-  highlight: {fileID: 27936981}
 --- !u!4 &1411187424
 Transform:
   m_ObjectHideFlags: 0
@@ -600810,16 +600494,8 @@ MonoBehaviour:
   title: MASA
   keyHint: Home
   line: "Masaya d\xF6n"
-  frame: 0
   lift: {fileID: 0}
-  bounds:
-  - {fileID: 1561440156}
-  - {fileID: 747444133}
-  - {fileID: 1036675289}
-  - {fileID: 1591801331}
-  - {fileID: 190793300}
   hoverTag: {fileID: 27936988}
-  highlight: {fileID: 27936981}
 --- !u!4 &1474350526
 Transform:
   m_ObjectHideFlags: 0
@@ -668448,102 +668124,6 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1631718950}
-  m_CullTransparentMesh: 1
---- !u!1 &1631990349
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1631990350}
-  - component: {fileID: 1631990353}
-  - component: {fileID: 1631990352}
-  - component: {fileID: 1631990351}
-  m_Layer: 5
-  m_Name: Yellow
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1631990350
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1631990349}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 759861134}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1631990351
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1631990349}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
-  m_IgnoreLayout: 1
-  m_MinWidth: -1
-  m_MinHeight: -1
-  m_PreferredWidth: -1
-  m_PreferredHeight: -1
-  m_FlexibleWidth: -1
-  m_FlexibleHeight: -1
-  m_LayoutPriority: 1
---- !u!114 &1631990352
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1631990349}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.9607843, g: 0.8392157, b: 0.27450982, a: 1}
-  m_RaycastTarget: 0
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f6006463402c245c588bff06dcd8dd67, type: 3}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1.6
---- !u!222 &1631990353
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1631990349}
   m_CullTransparentMesh: 1
 --- !u!1 &1632084712
 GameObject:
@@ -741105,16 +740685,8 @@ MonoBehaviour:
   title: KOMUTA
   keyHint: 1
   line: "D\xFCnya haritas\u0131 \xB7 cepheyi planla"
-  frame: 0
   lift: {fileID: 0}
-  bounds:
-  - {fileID: 594115281}
-  - {fileID: 1050021113}
-  - {fileID: 82248172}
-  - {fileID: 239467001}
-  - {fileID: 631428905}
   hoverTag: {fileID: 27936988}
-  highlight: {fileID: 27936981}
 --- !u!65 &1799588108
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -776829,19 +776401,8 @@ MonoBehaviour:
   title: EVRAK
   keyHint: 
   line: "Brifing ve vardiya raporlar\u0131"
-  frame: 0
   lift: {fileID: 0}
-  bounds:
-  - {fileID: 1357258125}
-  - {fileID: 1800473123}
-  - {fileID: 933796099}
-  - {fileID: 1728770796}
-  - {fileID: 1253975641}
-  - {fileID: 1281497320}
-  - {fileID: 589200800}
-  - {fileID: 554829559}
   hoverTag: {fileID: 27936988}
-  highlight: {fileID: 27936981}
 --- !u!4 &1891355926
 Transform:
   m_ObjectHideFlags: 0
@@ -776885,8 +776446,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.3119271, y: 0.049999952, z: 0.37218502}
-  m_Center: {x: 0, y: 0.024999976, z: 0}
+  m_Size: {x: 0.27600005, y: 0.06000001, z: 0.34749997}
+  m_Center: {x: 0, y: 0.025000006, z: -0.000749968}
 --- !u!114 &1891355928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -779016,16 +778577,8 @@ MonoBehaviour:
   title: "SI\u011EINAK"
   keyHint: 2
   line: "Kesit maketi \xB7 odalar\u0131 y\xF6net"
-  frame: 0
   lift: {fileID: 0}
-  bounds:
-  - {fileID: 1076215854}
-  - {fileID: 949520968}
-  - {fileID: 1229384703}
-  - {fileID: 1929286741}
-  - {fileID: 719433065}
   hoverTag: {fileID: 27936988}
-  highlight: {fileID: 27936981}
 --- !u!65 &1897308125
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -826278,25 +825831,8 @@ MonoBehaviour:
   title: "VARD\u0130YAYI B\u0130T\u0130R"
   keyHint: Enter
   line: "Kapa\u011F\u0131 kald\u0131r, kolu indir: bir g\xFCn ge\xE7er"
-  frame: 0
   lift: {fileID: 0}
-  bounds:
-  - {fileID: 547727355}
-  - {fileID: 180974193}
-  - {fileID: 274776447}
-  - {fileID: 697330383}
-  - {fileID: 748909991}
-  - {fileID: 929568375}
-  - {fileID: 76271530}
-  - {fileID: 1195092273}
-  - {fileID: 736835466}
-  - {fileID: 1023513776}
-  - {fileID: 379746387}
-  - {fileID: 1416079233}
-  - {fileID: 660997517}
-  - {fileID: 1016367391}
   hoverTag: {fileID: 27936988}
-  highlight: {fileID: 27936981}
 --- !u!65 &2008772337
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -826316,8 +825852,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.3818243, y: 0.20100003, z: 0.3192975}
-  m_Center: {x: -0.000000007450581, y: 0.10050002, z: -0.0016356036}
+  m_Size: {x: 0.32000005, y: 0.2118, z: 0.22498135}
+  m_Center: {x: 0, y: 0.100899994, z: -0.0024906471}
 --- !u!114 &2008772338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -834983,21 +834519,8 @@ MonoBehaviour:
   title: TELEKS
   keyHint: 
   line: "Son emirler ve sonu\xE7lar"
-  frame: 0
   lift: {fileID: 0}
-  bounds:
-  - {fileID: 341780810}
-  - {fileID: 1296961219}
-  - {fileID: 1957019361}
-  - {fileID: 1003154480}
-  - {fileID: 142222923}
-  - {fileID: 322264297}
-  - {fileID: 323722610}
-  - {fileID: 129211639}
-  - {fileID: 1871394446}
-  - {fileID: 1771307088}
   hoverTag: {fileID: 27936988}
-  highlight: {fileID: 27936981}
 --- !u!4 &2014839911
 Transform:
   m_ObjectHideFlags: 0
@@ -835043,8 +834566,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.44642526, y: 0.2600001, z: 0.70168424}
-  m_Center: {x: 0, y: 0.13000005, z: -0.1098316}
+  m_Size: {x: 0.31000006, y: 0.26999998, z: 0.61}
+  m_Center: {x: 0.000000007450581, y: 0.13, z: -0.12000002}
 --- !u!114 &2014839913
 MonoBehaviour:
   m_ObjectHideFlags: 0

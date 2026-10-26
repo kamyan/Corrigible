@@ -34,6 +34,7 @@ namespace Corrigible.Desk
         [SerializeField] GameObject openingFrame;
 
         ShelterRoomData data;
+        bool selectionShown;
         int shownWorkers = -1;
         float lightOnAt = -1;
         readonly float[] hopAt = new float[8];
@@ -86,9 +87,7 @@ namespace Corrigible.Desk
             // Kart: seçiliyken #FFFDF5 + iç sarı; damga: HASARLI · ENERJİSİZ · EMİR UYGULANDI (yeni, bir vardiya)
             cardName.text = d.Name;
             cardLine.text = d.Line;
-            cardPaper.color = t.ColorOf(d.Selected ? "ui.frameButtonHover" : "index");
-            cardSelect.enabled = d.Selected;
-            if (openingFrame.activeSelf != d.Selected) openingFrame.SetActive(d.Selected);
+            ApplySelection();
             string key = d.Condition == RoomCondition.Damaged ? "stamp.damaged" : d.Condition == RoomCondition.NoPower ? "stamp.noPower" : d.Fresh ? "stamp.orderDone" : null;
             stamp.gameObject.SetActive(key != null);
             if (key != null)
@@ -99,6 +98,29 @@ namespace Corrigible.Desk
                 stampText.text = d.Condition == RoomCondition.Damaged ? Corrigible.Core.Loc.T("HASARLI")
                     : d.Condition == RoomCondition.NoPower ? Corrigible.Core.Loc.T("ENERJİSİZ") : Corrigible.Core.Loc.T("EMİR UYGULANDI");
             }
+        }
+
+        /// <summary>
+        /// Seçim (açıklıktaki ve karttaki sarı çerçeve, açık kart kâğıdı) yalnız raf pozunda (K4) görünür; K1'de maket bütün
+        /// olarak tek hedeftir. Bağlayıcı poza göre kurar.
+        /// </summary>
+        public bool SelectionShown
+        {
+            get => selectionShown;
+            set
+            {
+                if (selectionShown == value) return;
+                selectionShown = value;
+                if (data != null) ApplySelection();
+            }
+        }
+
+        void ApplySelection()
+        {
+            bool on = data.Selected && selectionShown;
+            cardPaper.color = SiginakTheme.Active.ColorOf(on ? "ui.frameButtonHover" : "index");
+            cardSelect.enabled = on;
+            if (openingFrame.activeSelf != on) openingFrame.SetActive(on);
         }
 
         /// <summary>Yuvadaki piyonun dünya konumu (− PERS.: tepsiye bu noktadan zıplar).</summary>

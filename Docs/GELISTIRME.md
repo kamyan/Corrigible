@@ -232,6 +232,12 @@ Ajan olarak: `ueval 'return Corrigible.EditorTools.LocalizationTool.UpdateTable(
 - **Edit modda sahne kurulumu:** `EditorSceneManager.NewScene` kullanılmayan asset'leri boşaltır; asset referanslarını
   sahne oluşturulduktan sonra yükle.
 - **Pencere/eğitim katmanı açık kaydedilirse** oyun açılışında masanın üstünde görünür; kaydetmeden önce kapat.
+- **Testten sonra açık sahneyi kaydetme:** sahne testleri (`DeskGameScene_*`, `Siginak*Tests`) sahneyi `Additive` açar; sahne
+  editörde zaten açıksa aynı bellekteki sahneyi kullanıp nesnelerini değiştirir. Sonra kaydedilen sahneye düzen çapaları
+  ve test durumu yazılır. Sahneyi koddan değiştireceksen önce boş sahneye geç, sahneyi diskten yeniden aç, değiştir, kaydet;
+  `git diff`'te yalnız beklediğin satırlar olmalı.
+- **Dönük nesnenin çarpıştırıcısı:** `Renderer.bounds` dünya eksenlidir; 35° dönük bir nesnede derinliği de kapsar. Kutu
+  çarpıştırıcıyı nesnenin kendi ekseninde, mesh sınırlarından hesapla (`SiginakRoomTests.RoomTargets_CollidersFitTheirModels`).
 - **Hold çakışması:** pencereler `GameController.Hold`, eğitim `TutorialHold` kullanır; birbirini sıfırlamasınlar diye ayrı.
 - **Sahte zafer:** son olayı geldiğinde `Sim.HideEnding = true` yapılmazsa harita ve haberler gerçeği erkenden gösterir.
 - **Kazanma oranı deneyleri:** botlar biriken fonu harcamayı bilmez; fonu "saklayan" kurallar (rezerv, gelir payı) botlarda

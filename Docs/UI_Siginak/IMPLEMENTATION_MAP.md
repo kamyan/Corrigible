@@ -94,7 +94,7 @@ Kısaltmalar: `Lib` = `Sim.S.Liberation`, `Sh` = `Sim.Shelter`, `B` = `Sim.B` (B
 | **Anahtar rayı** (1 · 2 · 3 · H · Home) | `Station controls` (`commandStation`, `shelterStation`, `operationStation`), eski `CommandPost3D/Tabs` | YENİ `StationKeyRail`, `StationKey`; tıklama mevcut çağrılara gider (`ShowPlanning`, `FocusShelter`, `OpenWindow(Guide)`, `ResetView`) | etkin = rig pozu; devre dışı = `InputBlocked` / baskın |
 | **Vardiya şalteri** | `advanceDay` düğmesi + Boşluk kısayolu | YENİ `ShiftSwitch` (Idle → Hover → CoverOpen 4 s → Thrown → Sequence · Disabled) → `G.AdvanceLiberationDay()` | devre dışı: `S.Raid != null`, `S.Blocked`, `S.Ending != null`, rapor açık. Ön kontrol satırı: `AvailableWorkers`, enerji açığı, hazır ekip ve hazır sektör varken verilmemiş baskın |
 | **Teleks + teleks şeridi** | `Result note` (Overlay TMP, `LiberationDeskView.Report`), eski `Fax`/`Radio` World canvas'ları (haber), C1 `TelexStripView` | YENİ `TelexFeed.Post(code, status, message, kind)` (tek kapı), `Teleprinter` (World), `TelexStrip` (Overlay 820 × 52). Bütün `Report()` çağrıları buraya taşınır | `ActResult.Ok/Msg`, `*Check()` gerekçeleri, kod `VVV/NN` (vardiya / o vardiyanın satır sayacı, yalnız sunum) |
-| Üzerinde etiketi + sarı çerçeve | `CommandPostControl` (IPointerEnter) + `CommandPostDesk.SetHover` (alt yardım satırı) | YENİ `HoverTag` (400 ms, kâğıt), `HoverHighlight` (Image çerçeve). Etkileşim kalıbı `CommandPostControl`'den alınır | — |
+| Üzerinde etiketi + sarı çerçeve | `CommandPostControl` (IPointerEnter) + `CommandPostDesk.SetHover` (alt yardım satırı) | YENİ `HoverTag` (400 ms, kâğıt); `HoverHighlight` (Image çerçeve) 2026-10-27'de kaldırıldı. Etkileşim kalıbı `CommandPostControl`'den alınır | — |
 | AYARLAR plakası / ATLA | `Campaign settings` → `SettingsView.Instance.Open()` | DEĞİŞTİR → `SettingsPlaque` (aynı çağrı; kilitli dizide ATLA) | dizi durumu |
 | EVRAK tepsisi | `CommandPost3D/Files` (dekor) | YENİ `EvrakTray` (son 5 rapor + brifing) | oturum içi liste (bkz. Soru 4) |
 | Kupa, kalem, talaş, damga rafı | yok | YENİ dekor (tıklanmaz) | — |
@@ -378,6 +378,24 @@ Açık farklar (sahibi olan aşama):
 ---
 
 ## CHANGELOG
+
+- **2026-10-26/27 · Maketin sarı çerçevesi kaldırıldı, hedef kutuları modele oturtuldu:**
+  - **Sorun:** kesit maketinin üzerine gelince çıkan sarı çerçeve maketin çok dışına (ekran kenarı, sayaç rafı, teleks)
+    taşıyordu. Çerçeve ~150 parçanın dünya eksenli sınır kutularından hesaplanıyordu; 35° dönük rafta kutu derinliği de
+    kapsıyor. Aynı hata kurucunun çarpıştırıcılarında da vardı: dönük beş hedefin kutusu modelden çok büyüktü (maket
+    1,12 × 1,09 m, model 0,80 × 0,34 m; maketin 45 cm önündeki teleks bile “SIĞINAK” etiketi çıkarıyordu).
+  - **Hedef kutuları:** maket, CRT, teleks, vardiya şalteri ve evrak tepsisinin çarpıştırıcıları kendi eksenlerindeki mesh
+    sınırlarına + 5 mm pay oturtuldu (tek seferlik script, sahnede). Test:
+    `SiginakRoomTests.RoomTargets_CollidersFitTheirModels` (hiçbir hedefin kutusu modelini 5 cm'den fazla aşmaz). Oyunda:
+    fare maketin üstünde → SIĞINAK etiketi; CRT üstünde → CRT; maketin önünde → teleks.
+  - **Büyük hedef çerçevesi kaldırıldı** (kullanıcı kararı; K1 notundaki “büyük hedeflerde sarı çerçeve” uygulanmıyor).
+    Çerçeve önce çarpıştırıcının yerel kutusundan sıkı çizilecek biçimde düzeltildi, sonra tümüyle kaldırıldı:
+    `HoverHighlight`, sahnedeki `SiginakHud/Highlight` nesnesi, `DeskTarget`'ın `frame`, `highlight` ve `bounds` alanları.
+    Üzerine gelince nesne yine 4 mm kalkar ve kâğıt etiket çıkar. Sarı çerçeve yalnız seçili odada kalır.
+  - **Seçili oda yalnız K4'te:** açıklıktaki sarı çerçeve, karttaki iç sarı çerçeve ve açık kart kâğıdı artık yalnız raf
+    pozunda görünür (`RoomView.SelectionShown`, `SiginakShelter` poza göre kurar). K1'de maket bütün olarak tek hedeftir;
+    referans K1'de de oda çerçevesi yok. Seçim durumu korunur, K4'e dönünce aynı oda seçili. `K1.png`, `K1_EN.png`,
+    `K1_gray.png` yeniden çekildi.
 
 - **2026-10-26 · Aşama 10 sonu: eski görünüm ve kurucu kaldırıldı** (Aşama 1–10 önce `eed2824` olarak commit edildi):
   - **Sahne asıl kaynak** (AGENTS kural 5): sahne tek seferlik bir editör script'iyle yeni görünüme kalıcı geçirildi (script
