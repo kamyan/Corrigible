@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>K2 · Uygulama notu</title>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&family=Kalam:wght@700&display=swap">
+<style>
+body{margin:0;background:#1C372C}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../../sprites/tx_paper_grain.png);background-size:128px 128px}
+</style>
+</helmet>
+<div class="grain" style="width: 1200px; height: 1080px; box-sizing: border-box; background-color: #F1E9D6; color: #1E1B16; font-family: 'Libre Franklin', Arial, sans-serif; display: flex; flex-direction: column">
+  <div style="padding: 26px 32px 14px 32px; border-bottom: 2px solid #D2483F; display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+    <div style="font: 700 28px 'Courier Prime', monospace; letter-spacing: 0.04em">K2 · KOMUTA / HARİTA ODAĞI</div>
+    <div style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em; color: #675F50">UYGULAMA NOTU · TR + EN</div>
+  </div>
+  <div style="flex: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; padding: 20px 32px 22px 32px; min-height: 0; font-size: 14.5px; line-height: 1.42">
+    <div style="display: flex; flex-direction: column; gap: 13px; min-width: 0">
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">KAMERA</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div>Konum <b style="font: 700 13px 'Courier Prime', monospace">(0 · 2,75 · 1,30)</b>, hedef <b style="font: 700 13px 'Courier Prime', monospace">(0 · 0,76 · 1,36)</b>, dikey FOV <b style="font: 700 13px 'Courier Prime', monospace">30°</b>. Neredeyse dik bakış: harita 1210 × 684 px, yazı basıklığı yok (eğik pozda üst kenar %21 basılıyordu). Sayaç rafı üstte, anahtar rayı altta kalır; HUD gerekmez.</div>
+        <div>K1 → K2: 0,45 s, kamera önce 0,15 s yükselir sonra eğilir. Kısayol 1 veya F; bölgeye çift tık da yakınlaştırır.</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">KÂĞIT HARİTA</span><span style="flex: 1; height: 1px; background: #675F50"></span><span style="font: 400 12px 'Libre Franklin', Arial, sans-serif; color: #675F50">World Space Canvas 1920 × 1080</span></div>
+        <div>Sade çerçevesi aynen: Miller, 6,25 px/derece, λ0 24,7° D, ekvator y 639. Katmanlar: map_base → bölge dolgu meshleri + tarama dokusu → sınırlar (kâğıt altlık 4,2 px + mürekkep 1,6 px) → kıyı → etiketler → işaretler → halka, raptiye, ip → tx_lamp_desk.</div>
+        <div style="display: grid; grid-template-columns: 88px minmax(0, 1fr); row-gap: 5px; column-gap: 10px">
+          <b style="font: 700 13px 'Courier Prime', monospace; color: #9A1E14">İŞGAL</b><span>Çapraz kırmızı tarama #9A1E14: 45° α .50 + −45° α .32, aralık 11 px. Alt satır “%100”.</span>
+          <b style="font: 700 13px 'Courier Prime', monospace">CEPHE</b><span>Tek yön tarama (%66,7: 11 px · %33,3: 22 px) + 5 px mürekkep iç kontur + yağlı kalem halkası + kırmızı raptiye + ekip figürü (3D, sürüklenir; bkz. Ekip figürü panosu).</span>
+          <b style="font: 700 13px 'Courier Prime', monospace; color: #463F34">ADAY</b><span>Tarama korunur + kesik grafit iç kontur (12/8) + kesik halka + “%100 · ADAY”.</span>
+          <b style="font: 700 13px 'Courier Prime', monospace; color: #1A4789">ÖZGÜR</b><span>Tarama silinir (α .07 hayalet iz + silgi lekesi) + mavi yuvarlak damga “ÖZGÜR · V.011” + üç ✓.</span>
+        </div>
+        <div>Etiket CP 700 28 harita px → ekranda 17,6 px · alt satır 23 → 14,5 px · işaret kutusu 26 → 16,4 px. 330 px’i aşan ad “·” noktasından iki satıra bölünür. Basılı lejant sol altta (Güney Pasifik); EN’de sütunlar metne göre açılır.</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">DURUM VE ETKİLEŞİM</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div><b>Bölgeye tıkla:</b> fişi açılır. Pasif işgal bölgesinde fiş yalnız bilgi verir: “Cephe açmak için komşusunu özgürleştir.”</div>
+        <div><b>Üzerine gel:</b> bölge dolgusuna #F5D646 α .12, etiket fosforlu çipe döner (Sade seçimi).</div>
+        <div><b>Baskın emri:</b> “EMİR VERİLDİ” damgası 0,1 s’de iner (kırmızı, −6°), FON tekeri 12 geri sayar, 0,3 s sonra kamera CRT’ye döner (K5b).</div>
+        <div><b>Yapılamadı:</b> düğme devre dışı + gerekçe teleksi: “YAPILAMADI · fon yetersiz (12 gerekli / 9 var)”.</div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 13px; min-width: 0">
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">GÖREV FİŞİ</span><span style="flex: 1; height: 1px; background: #675F50"></span><span style="font: 400 12px 'Libre Franklin', Arial, sans-serif; color: #675F50">haritanın 2 mm üstünde</span></div>
+        <div>436 × ~650 ekran px · 9 dilim dizin kâğıdı #FBF7EC + tx_paper_grain · kenar 1 px #D2C7AF · gölge (4, 5) α .42 · −1° dönük.</div>
+        <div><b>Yerleşim kuralı:</b> fiş, cepheyi, özgür bölgeleri ve adayları örtmeyen yarıya konur (Doğu Avrupa → sağ, Asya üstü). Raptiye fişin sol üstünde; kırmızı ip #A3241A 2,6 px + gölge, cephe raptiyesine bağlanır (UILineGraphic, 3 noktalı eğri).</div>
+        <div style="display: grid; grid-template-columns: 112px minmax(0, 1fr); row-gap: 4px; column-gap: 10px">
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">başlık · 104</span><span>OP kodu CP 700 14 · bölge CP 700 28 · ilerleme CP 700 15 · altında 2 px #D2483F.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">sektör · 3 × 62</span><span>İşaret 26 + no + ad LF 600 18 + tür CP 700 14 + damga. Seçili satır #F5D646 α .32.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">görev · 120</span><span>Başlık CP 700 13 + açıklama LF 400 18 / 1,38 (EN’de 4 satıra kadar).</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">bedel/ödül · 72</span><span>BEDEL CP 700 20 #9A1E14 · ÖDÜL LF 15, sayılar CP 700 #24592E.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">ekip · 56</span><span>Figür simgesi 34 × 26 + ad CP 700 15 + üyeler LF 15 + HAZIR / YARALI · n gün damgası.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">eylem · 72</span><span>Mürekkep düğme 54 px, LF 700 20, “Enter” fişi + bedel. Kapat: Esc.</span>
+        </div>
+        <div><b>Damgalar</b> renk + kenar deseni + işaretle ayrılır: GERİ ALINDI mavi düz ✓ · BASKINA HAZIR kırmızı düz ▸ · KİLİTLİ gri kesik kilit. Sektör türü TR’de <b>YAĞMA</b>, EN’de <b>LOOT</b>; “LOOT” TR arayüzde kullanılmaz.</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">HAREKET VE SES</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div style="display: grid; grid-template-columns: 74px minmax(0, 1fr); row-gap: 4px; column-gap: 10px">
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">0,14 s</span><span>Fiş açılır: 12 px yukarıdan kayar, hışırtı; ip 0,12 s’de gerilir.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">0,09 s</span><span>Fiş kapanır, K1’deki katlı etikete döner.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">0,10 s</span><span>Damga iner + tok “tak”; mürekkep 0,2 s’de koyulaşır.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">0,35 s</span><span>FON tekeri döner; modülün altında “−12” fişi 1,5 s.</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">EN VARYANTI</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div>Ölçüler aynı; metin %20–30 uzar. Fiş 452 px’e açılır, satır yükseklikleri sabit kalır. Harita etiketleri ve sayaç plakaları dile göre ayrı doku/TMP metni; “MIDDLE EAST · N. AFRICA” iki satır.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1200,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

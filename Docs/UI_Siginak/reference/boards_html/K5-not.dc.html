@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>K5 · Uygulama notu</title>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&family=Kalam:wght@700&display=swap">
+<style>
+body{margin:0;background:#1C372C}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../../sprites/tx_paper_grain.png);background-size:128px 128px}
+</style>
+</helmet>
+<div class="grain" style="width: 1200px; height: 1080px; box-sizing: border-box; background-color: #F1E9D6; color: #1E1B16; font-family: 'Libre Franklin', Arial, sans-serif; display: flex; flex-direction: column">
+  <div style="padding: 26px 32px 14px 32px; border-bottom: 2px solid #D2483F; display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+    <div style="font: 700 28px 'Courier Prime', monospace; letter-spacing: 0.04em">K5 · CRT SAHA YAYINI</div>
+    <div style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em; color: #675F50">UYGULAMA NOTU · K5a BEKLEME · K5b GEÇİŞ</div>
+  </div>
+  <div style="flex: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; padding: 18px 32px 20px 32px; min-height: 0; font-size: 14px; line-height: 1.4">
+    <div style="display: flex; flex-direction: column; gap: 12px; min-width: 0">
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">KAMERA</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div><b>K5a:</b> ekran yerelinde <b style="font: 700 13px 'Courier Prime', monospace">(0 · −0,02 · 0,62)</b> m, hedef ekran merkezinin 3,5 cm altı, FOV 46°. İstasyon değil: CRT’ye tıklayınca ya da sağ tuşla bakarken açılır. Kenar satırı görünür, etkin istasyon yok.</div>
+        <div><b>K5b:</b> baskın emrinden 0,3 s sonra kamera 0,5 s’de CRT’ye yaklaşır; son 0,25 s’de camı geçer ve görüntü tam ekran Overlay Canvas’a devredilir.</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">NESNELER</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div style="display: grid; grid-template-columns: 90px minmax(0, 1fr); row-gap: 4px; column-gap: 10px">
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">CRT kasası</span><span>0,42 × 0,34 × 0,36 + arka huni 0,30 × 0,26 × 0,18 · #4F5446 R .62 · çerçeve #1C1F19.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">ekran</span><span>0,30 × 0,225 · emissive; içerik World Space Canvas (TMP) ya da Render Texture · zemin #07100B · fosfor #A6E8B8 · sönük #5E9C73 · R .9 (yansıma ve parlama yok).</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">ışık</span><span>Point Light #7FD9A0, 0,8, menzil 2,4 m; klavyeye ve duvara soğuk yeşil sızıntı. Bloom yok.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">ekler</span><span>Pirinç plaka “SAHA YAYINI · K-07” · yeşil güç LED’i · 2 düğme · dokulu klavye · sağda tüplü telsiz (kadran #E9A948 emissive, Point Light #FFA850 0,12).</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">katmanlar</span><span>Tarama çizgisi (4 px’te 2 px siyah α .28, tiling) + radyal köşe kararması sprite’ı. İkisi de 9 dilim/tiling, shader gerekmez.</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">K5a · BEKLEME İÇERİĞİ</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div>SAHA YAYINI · KANAL 07 · <b>BAĞLANTI BEKLENİYOR</b> (doku px 78) · ALFA · HAZIR · CEPHE: DOĞU AVRUPA / 02 · “Görev fişinden baskın emri verildiğinde yayın açılır.” · imleç ▮ 0,53 s’de yanıp söner. Sağ altta %28 test deseni (daire, artı, K-07).</div>
+        <div>Ekip yaralıysa satır ters video olur (fosfor zemin, koyu yazı): “ALFA · YARALI · 2 GÜN”. Fosfor tek renk kalır; durum renkle değil biçimle ayrılır.</div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 12px; min-width: 0">
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">K5b · GEÇİŞ KARESİ</span><span style="flex: 1; height: 1px; background: #675F50"></span><span style="font: 400 12px 'Libre Franklin', Arial, sans-serif; color: #675F50">Overlay Canvas</span></div>
+        <div>Cam: köşe 74/64 px, çerçeve #1A1D16 → #0F120D. Ortada BAĞLANTI KURULUYOR (CP 700 76, 7 px yatay hayalet α .22), SENKRON 10 kutu + yüzde, hedef satırı (CP 700 32), kamera satırı (CP 700 24 sönük).</div>
+        <div>Arkada 8×8 taktik tahta ızgarası, baskın kamerasının birebir çerçevesinde (gridOrigin 210, 528 · u/v adımı 93,75 / 53,775 px), α .2. Tahta yerine oturunca çizgiler söner ve gerçek sahne kalır — geçiş “ekranın içine” girer.</div>
+        <div>Statik: tx_crt_static (256 px döşeme, α .55, her kare rastgele ofset). Yuvarlanan parlak bant 96 px, 1,2 s’de yukarıdan aşağı. “Boşluk · atla” sol altta.</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">ZAMAN ÇİZELGESİ</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div style="display: grid; grid-template-columns: 64px minmax(0, 1fr); row-gap: 4px; column-gap: 10px">
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">0,00</span><span>K2’de “EMİR VERİLDİ” damgası, röle tıkı.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">0,30</span><span>Kamera CRT’ye döner (0,5 s ease-in); ampul bir kez titrer.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">0,80</span><span>Ekranda 4 px yatay çizgi açılır, 0,15 s’de tam boy (CRT açılışı).</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">0,95</span><span>Statik + BAĞLANTI KURULUYOR; senkron kutuları 0,1 s arayla dolar, her kutuda telsizden kısa bip.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">2,00</span><span>Tahta ızgarası parlar, statik %20’ye iner.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">2,30</span><span>Baskın sahnesi açılır, ızgara 0,2 s’de söner, tok “tunk”.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">dönüş</span><span>Sonuç raporundan sonra tersi (0,6 s); masa, kamera ve görev fişi önceki hâline döner.</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">DURUMLAR · SES</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div>Bekleniyor · Kuruluyor · Yayın açık (baskın) · Kesildi (“BAĞLANTI KESİLDİ · SONUÇ TELEKSTE”) · Devre dışı (ekip yaralı). Ses: CRT’nin ince vızıltısı (çok kısık), statik hışırtı, senkron bipleri, röle ve “tunk”. Hepsi oda yankısıyla.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1200,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

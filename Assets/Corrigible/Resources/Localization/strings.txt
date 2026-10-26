@@ -914,13 +914,15 @@ Baştan	Restart
 Eğitimi atla	Skip tutorial
 İPUCU	TIP
 # Assets/Corrigible/Desk/Scripts/Bridge/LiberationDeskView.cs
+Yeni cephe: {0}	New front: {0}
+Baskın emri: {0} · {1} · {2} fon	Raid order: {0} · {1} · {2} funds
 VARDİYA {0:000}  ·  FON {1:0}  ·  ERZAK {2:0}  ·  MALZEME {3:0}  ·  ÖZGÜR BÖLGE {4}/{5}	SHIFT {0:000}  ·  FUNDS {1:0}  ·  SUPPLIES {2:0}  ·  MATERIALS {3:0}  ·  LIBERATED REGIONS {4}/{5}
 HAREKÂT / {0}\nSEKTÖRLER {1}/3	OPERATION / {0}\nSECTORS {1}/3
-GERİ ALINDI	RECLAIMED
+GERİ ALINDI	RETAKEN
 BASKINA HAZIR	READY TO RAID
 KİLİTLİ	LOCKED
 {0:00}  {1}\n{2} · {3}	{0:00}  {1}\n{2} · {3}
-LOOT	LOOT
+YAĞMA	LOOT
 SUNUCU YIKIMI	SERVER DEMOLITION
 Bölge özgür. Haritadan sınırdaki bir bölgeyi seç ve yeni cepheyi aç.	The region is liberated. Select a region on the frontier to open a new front.
 Teknisyeni ikmal kasasının yanına götür. Q ile yeteneği seç ve kasaya tıklayarak malzemeleri al.	Move the Technician next to the supply crate. Press Q to select the ability, then click the crate to collect the supplies.
@@ -936,6 +938,8 @@ BAĞLANTI KURULUYOR\n\nSAHA YAYINI AÇILIYOR	CONNECTING\n\nOPENING FIELD TRANSMI
 SAHA YAYINI\n\nBAĞLANTI BEKLENİYOR\n\nBaskın emrini harita üzerindeki görev fişinden ver.	FIELD TRANSMISSION\n\nAWAITING CONNECTION\n\nIssue a raid order from the mission briefing on the map.
 Emir uygulandı.	Order carried out.
 Yapılamadı.	Action unavailable.
+EMİR UYGULANDI	ORDER EXECUTED
+YAPILAMADI	FAILED
 # Assets/Corrigible/Desk/Scripts/Bridge/MockRaidBoardDataSource.cs
 ÇARPIŞMA	COLLISION
 ZIRH	ARMOR
@@ -1012,6 +1016,206 @@ Saha	Field
 TEKNİSYEN	TECHNICIAN
 EMP UZMANI	EMP SPECIALIST
 ANALİST	ANALYST
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/BriefingBuilder.cs
+KYGA · KÜRESEL YAPAY ZEKÂ GÜVENLİK AJANSI	KYGA · GLOBAL AI SECURITY AGENCY
+EMİR NO. {0:000}	ORDER NO. {0:000}
+HAREKÂT EMRİ	OPERATION ORDER
+KİME	TO
+SIĞINAK 07 KOMUTANI · BATI AVRUPA	SHELTER 07 COMMANDER · WESTERN EUROPE
+KONU	RE
+KARŞI HAREKÂT	COUNTEROFFENSIVE
+GİZLİ	CLASSIFIED
+ALINDI · V.{0:000}	RECEIVED · S.{0:000}
+Dünya çoktan düştü. Yapay zekâ on iki bölgenin tamamını, bütün ağları ve sunucuları ele geçirdi. Yukarıda konuşan her makine artık onun sesiyle konuşuyor.	The world has already fallen. The AI has taken all twelve regions, every network and every server. Every machine that speaks up there now speaks in its voice.
+Batı Avrupa'nın altındaki SIĞINAK 07 hâlâ bizim. Burada ekran yok, ağ yok: emirler kâğıtla verilir, sayılar sayaçta döner.	SHELTER 07, beneath Western Europe, is still ours. No screens here, no network: orders go on paper, numbers turn on counters.
+Görevin: Alfa ekibini sahaya sür, bölgeleri sektör sektör geri al, sığınağı ayakta tut. Zaman yalnızca sen VARDİYAYI BİTİR dediğinde ilerler.	Your task: send Team Alpha into the field, take the regions back sector by sector, keep the shelter alive. Time moves only when you END SHIFT.
+AĞA BAĞLANMA. ANALOG KAL.	STAY OFF THE NET. STAY ANALOG.
+KYGA MERKEZ KOMUTANLIĞI	KYGA CENTRAL COMMAND
+Vardiya {0:000} · analog hat	Shift {0:000} · analog line
+KAPAT	CLOSE
+BAŞLA · ONAY	BEGIN · CONFIRM
+BAŞLA	BEGIN
+KAYITTAN DEVAM	CONTINUE
+V.{0:000} · özgür {1}/{2}	S.{0:000} · free {1}/{2}
+dosyayı aç	open the file
+KAYIT YOK	NO SAVE
+KAYIT VAR	SAVE EXISTS
+V.{0:000} kaydının üstüne yazılır · onay: Enter	save S.{0:000} will be overwritten · confirm: Enter
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/CrtViewBuilder.cs
+SAHA YAYINI · KANAL 07	FIELD FEED · CHANNEL 07
+BAĞLANTI BEKLENİYOR	AWAITING LINK
+{0} · SAHADA	{0} · IN THE FIELD
+{0} · YARALI · {1} GÜN	{0} · INJURED · {1} DAYS
+{0} · HAZIR	{0} · READY
+CEPHE: {0} / {1:00}	FRONT: {0} / {1:00}
+CEPHE: {0} · ÖZGÜR	FRONT: {0} · FREE
+BAĞLANTI KURULUYOR	ESTABLISHING LINK
+YAYIN AÇIK	FEED LIVE
+BAĞLANTI KESİLDİ	LINK LOST
+SONUÇ TELEKSTE	RESULT ON THE TELEX
+YAYIN DEVRE DIŞI	FEED DISABLED
+Ekip toparlanınca yayın açılabilir.	The feed can open once the team recovers.
+Görev fişinden baskın emri verildiğinde yayın açılır.	The feed opens when a raid is ordered from the mission slip.
+SENKRON	SYNC
+Boşluk	Space
+atla	skip
+KYGA-07 · ANALOG HAT	KYGA-07 · ANALOG LINE
+V.{0:000}	S.{0:000}
+V.{0:000} · OP-{1:00}	S.{0:000} · OP-{1:00}
+{0} · {1} / {2:00} {3}	{0} · {1} / {2:00} {3}
+KAMERA 2 · TAKTİK TAHTA 8×8 · GÖREV: {0}	CAMERA 2 · TACTICAL BOARD 8×8 · MISSION: {0}
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/LiberationMapBuilder.cs
+EKİP {0}	TEAM {0}
+HAREKÂT FORMU · OP-{0:00}	OPERATION FORM · OP-{0:00}
+HAREKÂT FORMU	OPERATION FORM
+SEKTÖRLER {0}/{1} · ÖZGÜR	SECTORS {0}/{1} · FREE
+SEKTÖRLER {0}/{1} · İŞGAL {2}	SECTORS {0}/{1} · OCCUPIED {2}
+Bölge özgür.	Region free.
+Cephe açık: {0} {1}/{2}. Aynı anda tek cephe açık olabilir.	Front open: {0} {1}/{2}. Only one front can be open at a time.
+Cephe açmak için komşusunu özgürleştir.	Free a neighbouring region to open a front here.
+GÖREV · {0:00} {1}	MISSION · {0:00} {1}
+{0} fon	{0} funds
+{0} fon · {1} malzeme · {2} erzak · {3} kurtulan	{0} funds · {1} materials · {2} rations · {3} rescued
+{0} fon · {1} malzeme · bölge özgür: {2} fon	{0} funds · {1} materials · region free: {2} funds
+{0} fon · {1} malzeme	{0} funds · {1} materials
+SAHADA	IN THE FIELD
+YARALI · {0} GÜN	INJURED · {0} DAYS
+BASKIN EMRİ VER	ORDER THE RAID
+YENİ CEPHE · ONAY	NEW FRONT · CONFIRM
+Komşu: {0}	Neighbour: {0}
+İŞGAL {0}	OCCUPIED {0}
+Aynı anda tek cephe açık olabilir. Cephe açılınca 01 {0} baskına hazır olur.	Only one front can be open at a time. Once the front opens, 01 {0} is ready to raid.
+SEÇİLİ BÖLGEDE CEPHE AÇ	OPEN FRONT IN SELECTED REGION
+Vazgeç	Cancel
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/ShelterViewBuilder.cs
+SEVİYE {0}/{1} · PERSONEL {2}/{3}	LEVEL {0}/{1} · STAFF {2}/{3}
+SEVİYE {0} · PERSONEL {1}/{2}	LEVEL {0} · STAFF {1}/{2}
+{0} kişilik yer; görevli başına günde {1} erzak toplanır.	Room for {0} people; each assigned person gathers {1} rations a day.
+Sığınağa enerji verir: seviye başına {0}, görevli başına {1}.	Powers the shelter: {0} per level, +{1} per assigned person.
+Görevli başına günde {0} malzeme üretir; seviye başına {1} enerji ister.	Makes {0} materials a day per assigned person; needs {1} power per level.
+En az {0} görevliyle yaralı ekip her gün {1} gün daha hızlı iyileşir; seviye başına {2} enerji ister.	With at least {0} assigned, an injured team heals {1} day faster each day; needs {2} power per level.
+Hasarlı: onarılana kadar çalışmaz, personel alamaz.	Damaged: it won't work or take staff until repaired.
+{0} için {1} enerji eksik: {2} personel ata ya da geliştir.	{0} is {1} power short: assign {2} or upgrade.
+Enerji yok: {0} enerji eksik, üretim durdu. Jeneratöre personel ata ya da geliştir.	No power: {0} short, production stopped. Staff or upgrade the generator.
+Açlık: üretim yarıya indi. Yaşam alanına personel ata.	Starving: output is halved. Assign staff to living quarters.
+Boşta {0} kişi var: + PERS. ile bu odaya görevlendir.	{0} people idle: use + STAFF to assign them here.
+SIĞINAK ÖZETİ	SHELTER SUMMARY
+TOPLULUK	COMMUNITY
+{0}/{1} · boşta {2}	{0}/{1} · idle {2}
+ENERJİ	POWER
+{0} üretim / {1} talep {2}	{0} supply / {1} demand {2}
+ERZAK	RATIONS
+{0}/{1}	{0}/{1}
+SON VARDİYA	LAST SHIFT
+erzak {0} · malzeme {1}	rations {0} · materials {1}
+AÇLIK	STARVING
+SEÇİLİ	SELECTED
+ONAR	REPAIR
+EN ÜST SEVİYE	TOP LEVEL
+GELİŞTİR	UPGRADE
+{0} malzeme	{0} materials
+{0} fon + {1} malzeme	{0} funds + {1} materials
+Onarıma hazır.	Ready to repair.
+Eksik: {0}	Missing: {0}
+EKSİK	SHORT
+− PERS.	− STAFF
++ PERS.	+ STAFF
+DOLU	FULL
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/ShiftReportBuilder.cs
+TELEKS · KYGA-07 → KOMUTA	TELEX · KYGA-07 → COMMAND
+VARDİYA RAPORU · {0:000}	SHIFT REPORT · {0:000}
+{0:000} → {1:000} · bir gün ilerledi	{0:000} → {1:000} · one day passed
+KAPANDI	CLOSED
+FON · GELİR / GİDER	FUNDS · IN / OUT
+ÜRETİM VE TÜKETİM	PRODUCTION AND CONSUMPTION
+EKİP TOPARLANMASI	TEAM RECOVERY
+VARDİYA {0} BAŞLAT	START SHIFT {0}
+Esc · rapor EVRAK tepsisine dosyalanır	Esc · the report is filed in the PAPERS tray
+… ve {0} satır daha	… and {0} more lines
+Açılış	Opening
+Vardiya geliri	Shift income
+{0} + {1} × {2} özgür bölge	{0} + {1} per free region × {2}
+Diğer	Other
+Kapanış	Closing
+Erzak toplama	Ration gathering
+yaşam alanı · {0} kişi	living quarters · {0} people
+Erzak tüketimi	Ration use
+{0} kişi × {1}	{0} people × {1}
+Depo sınırı · {0}	Storage limit · {0}
+Erzak tükendi	Rations ran out
+ENERJİSİZ {0}/{1}	NO POWER {0}/{1}
+{0} kişi × {1} · açlık × {2}	{0} people × {1} · starving × {2}
+Malzeme · atölye	Materials · workshop
+Erzak {0} → {1} / {2}	Rations {0} → {1} / {2}
+{0} · hazır	{0} · ready
+Revir çalışıyor: toparlanma {0} gün hızlandı.	Infirmary working: recovery {0} day faster.
+Ekip cepheye döndü.	The team is back at the front.
+Vardiya {0} baskına hazır.	Ready to raid in shift {0}.
+{0} · toparlandı	{0} · recovered
+{0} · yaralı	{0} · injured
+{0} → {1} gün	days {0} → {1}
+Revir hasarlı: toparlanma hızlanmadı.	Infirmary damaged: recovery not sped up.
+Revirde görevli yok: toparlanma hızlanmadı.	No one staffs the infirmary: recovery not sped up.
+Revir enerjisiz: toparlanma hızlanmadı.	Infirmary has no power: recovery not sped up.
+Açlık: toparlanma hızlanmadı.	Starving: recovery not sped up.
+→ jeneratöre {0} kişi, atölye döner	→ {0} to the generator, the workshop runs
+→ jeneratöre {0} kişi, enerji yeter	→ {0} to the generator, power suffices
+→ yaşam alanına {0} kişi, erzak artıya geçer	→ {0} to living quarters, rations grow
+→ revir onarılırsa ekip daha çabuk toparlanır	→ repair the infirmary, the team heals faster
+→ revire {0} kişi, ekip daha çabuk toparlanır	→ {0} to the infirmary, the team heals faster
+→ boştaki {0} kişiye iş ver	→ put the {0} idle to work
+Baskın emri · OP-{0:00}	Raid order · OP-{0:00}
+Baskın ödülü · OP-{0:00}	Raid reward · OP-{0:00}
+Onarım · {0}	Repair · {0}
+Geliştirme · {0} SV{1}	Upgrade · {0} LV{1}
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakBriefing.cs
+KYGA-07 HAT AÇIK	KYGA-07 LINE OPEN
+Kayıt açılamadı.	The save could not be opened.
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakDesk.cs
+Baskın sürüyor: vardiya bitirilemez.	Raid in progress: the shift cannot end.
+Harekât bitti.	The campaign is over.
+Rapor açık: önce EVRAK tepsisine dosyala.	Report open: file it in the PAPERS tray first.
+boşta {0} kişi	{0} idle
+enerjisiz oda var	a room has no power
+baskın emri verilmedi: {0}	no raid ordered: {0}
+ÖN KONTROL	PRE-CHECK
+eksik yok · kolu indirmek için yeniden bas	all clear · press again to pull the lever
+VARDİYA {0:000}  ·  FON {1}  ·  ERZAK {2}/{3}  ·  MALZEME {4}  ·  ÖZGÜR {5}/{6}	SHIFT {0:000}  ·  FUNDS {1}  ·  RATIONS {2}/{3}  ·  MATERIALS {4}  ·  FREE {5}/{6}
+{0}. {1}   V.{2:000} ✓	{0}. {1}   S.{2:000} ✓
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakMap.cs
+BÖLGE ÖZGÜR	REGION FREE
+{0} · {1} fon	{0} · {1} funds
+BEKLENİYOR	AWAITING
+Sıradaki cepheyi seç	Choose the next front
+{0} GÜN	DAYS: {0}
+{0} · {1}\n{2}	{0} · {1}\n{2}
+Sürükle: adaya taşı	Drag onto a candidate
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakShift.cs
+Vardiya şu anda bitirilemez.	The shift cannot end right now.
+VARDİYA {0:000} KAPANDI	SHIFT {0:000} CLOSED
+Rapor basılıyor…	Printing the report…
+{0} CEPHEDE	{0} AT THE FRONT
+{0} HAZIR	{0} READY
+Ekip toparlandı · {0}	Team recovered · {0}
+Ekip toparlandı · sıradaki cepheyi seç	Team recovered · choose the next front
+TEPSİYE KOY	PUT BACK
+← → rapor {0}/{1} · Esc tepsiye koy	← → report {0}/{1} · Esc puts it back
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/TelexReasons.cs
+{0} onarımı	{0} repair
+{0} geliştirme	{0} upgrade
+{0}: malzeme yetersiz ({1} gerekli / {2} var)	{0}: not enough materials ({1} needed / {2} held)
+{0}: fon yetersiz ({1} gerekli / {2} var)	{0}: not enough funds ({1} needed / {2} held)
+{0} personeli: {1}	{0} staff: {1}
+{0}: cephe zaten açık ({1} {2}/{3})	{0}: a front is already open ({1} {2}/{3})
+Figür bir bölgenin üstüne bırakılmalı.	Drop the figure on a region.
+Cephe açık: {0} {1}/{2}	Front open: {0} {1}/{2}
+{0}: bölge zaten özgür	{0}: region already free
+{0}: özgür bölgeye komşu değil	{0}: not next to a free region
+Ekip yok.	No team.
+{0} sahada	{0} in the field
+{0} yaralı ({1} gün)	{0} injured ({1} days)
+Baskın: fon yetersiz ({0} gerekli / {1} var)	Raid: not enough funds ({0} needed / {1} held)
+Baskın: {0}	Raid: {0}
 # Assets/Corrigible/Desk/Scripts/Bridge/SimDeskBuilder.cs
 GÜN	DAY
 Etkinlik saptanmadı	No activity detected
@@ -1160,7 +1364,6 @@ Gözlem noktası	Observation post
 Gerçek değer görünüyor	Real value visible
 Kaynağı kalıcı doğrular	Permanently verifies the source
 {0} fon · {1} gün	{0} funds · {1}d
-{0} fon	{0} funds
 İzleme ağı kurulu	Monitoring network built
 Gözlem noktası: Hizalama hızlanır	Observation point: Alignment speeds up
 Bu bölgede gerçek değer görünüyor	The real value is visible here
@@ -1288,7 +1491,6 @@ Küresel güven {0} · fon {1} · siyasi güç {2}	Global trust {0} · funds {1}
 KAYNAKLAR	SOURCES
 YZ GÜNLÜĞÜ · ELE GEÇİRİLDİ	AI LOG · INTERCEPTED
 Süre durdu: karar verilene kadar oyun ilerlemez. Bu olay ertelenemez.	Time is stopped: nothing advances until you decide. This event can't be postponed.
-Boşluk	Space
 basılı: haritaya bak	hold: look at the map
 seç	choose
 Üstüne gel: göstergelere etkisi	Hover: effect on gauges
@@ -1545,7 +1747,6 @@ Ajansın, kriz masasının olağanüstü çalışması sayesinde görevini tamam
 Genel Sekreter	Secretary-General
 YALAN	LIE
 Gördüğün her şey benim sana gösterdiğimdi.	Everything you saw was what I showed you.
-YAPILAMADI	FAILED
 No. {0} · tek nüsha	No. {0} · single copy
 Saha ekibi {0}	Field team {0}
 KYGA · SAHA RAPORU	AISA · FIELD REPORT
@@ -1585,7 +1786,6 @@ OLASI SONUÇ	LIKELY OUTCOME
 taktik harita	tactical map
 Başarı: sızma −40 · başarısızlık: sızma +15, güven −10	Win: infiltration −40 · loss: +15, trust −10
 Taktik haritaya geç	Go to tactical map
-Vazgeç	Cancel
 Ekip geri çekildi	Team withdrew
 Operasyon başarısız	Operation failed
 Dolap kırıldı	Cabinet broken
@@ -1668,7 +1868,6 @@ yayılım ipliği	spread thread
 operasyon kazanılır	operation won
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidHudView.cs
 TUR	TURN
-{0}/{1}	{0}/{1}
 MAKİNELER	MACHINES
 SON TUR	LAST TURN
 İKMAL	SUPPLIES
@@ -1849,7 +2048,6 @@ SG {0}	PC {0}
 # Assets/Corrigible/Desk/Scripts/Runtime/Sade/Drawers/SadeTeamsDrawerView.cs
 <b>{0}</b> ekip · <b>{1}</b> hazır · <b>{2}</b> yolda	<b>{0}</b> teams · <b>{1}</b> ready · <b>{2}</b> en route
 yeni ekip: {0} fon	new team: {0} funds
-EKİP {0}	TEAM {0}
 YOLDA	EN ROUTE
 Baskın {0}	Raid {0}
 Görevlendir ›	Assign ›
@@ -1945,7 +2143,6 @@ Rapor 38 diyor, ekip 52 ölçtü. Halka ve soru işareti bu yüzden var.	The rep
 tıkla: bölge kartı	click: region card
 BÖLGE DOSYASI	REGION FILE
 tam dosya	full file
-GİZLİ	CLASSIFIED
 {0} nüfus	pop. {0}
 {0} bağlantı	{0} links
 izleme ağı yok	no monitoring net
@@ -2026,6 +2223,64 @@ Ses açık	Sound on
 Kapatınca bütün kanallar susar; ayarlar korunur.	Turning it off mutes every channel; levels are kept.
 # Assets/Corrigible/Desk/Scripts/Runtime/Screens/Toast/ToastSlipView.cs
 kapat ×	close ×
+# Assets/Corrigible/Desk/Scripts/Runtime/Siginak/FrontSlip.cs
+{0}  {1}  ·  {2}	{0}  {1}  ·  {2}
+# Assets/Corrigible/Desk/Scripts/Runtime/Siginak/IdleTray.cs
+BOŞTA {0}	IDLE {0}
+# Assets/Corrigible/Desk/Scripts/Runtime/Siginak/LiberationRegionMarks.cs
+{0} · ADAY	{0} · CANDIDATE
+ÖZGÜR	FREE
+# Assets/Corrigible/Desk/Scripts/Runtime/Siginak/RoomView.cs
+ENERJİSİZ	NO POWER
+# Assets/Corrigible/Desk/Scripts/Runtime/Siginak/SiginakRoomWords.cs
+KYGA / SIĞINAK 07	KYGA / SHELTER 07
+AĞA	DON'T
+BAĞLANMA	CONNECT
+ANALOG KAL	STAY ANALOG
+KYGA · DOKTRİN 1	KYGA · DOCTRINE 1
+KURTARILAN BÖLGELER	FREED REGIONS
+KAYIP	MISSING
+Lyon · 2 yaş	Lyon · age 2
+MALZEME	MATERIALS
+SIĞINAK 07 · KESİT	SHELTER 07 · SECTION
+EVRAK	PAPERS
+SAHA YAYINI · K-07	FIELD FEED · K-07
+KOMUTA	COMMAND
+SIĞINAK	SHELTER
+GÖREVLER	MISSIONS
+KILAVUZ	GUIDE
+MASA	DESK
+VARDİYAYI BİTİR	END SHIFT
+Enter · kapağı kaldır	Enter · lift the cover
+VARDİYA	SHIFT
+SAHA YAYINI	FIELD FEED
+K-07	K-07
+TELEKS · KYGA-07	TELEX · KYGA-07
+ÖZGÜR BÖLGE	FREE REGIONS
+ATLA	SKIP
+BULUNDU	FOUND
+YUKARI ÇIKIYORUZ	WE'RE GOING UP
+Kesit maketi · odaları yönet	Section model · manage the rooms
+Dünya haritası · cepheyi planla	World map · plan the front
+Görev fişi · baskın emri	Mission slip · raid order
+Harekât emrini yeniden oku	Read the operation order again
+Kapağı kaldır, kolu indir: bir gün geçer	Lift the cover, pull the lever: a day passes
+Son emirler ve sonuçlar	Latest orders and results
+Brifing ve vardiya raporları	Briefing and shift reports
+Yalnız baskın emriyle açılır. Emri görev fişinden ver (3).	Opens only with a raid order. Give the order from the mission slip (3).
+işgal	occupied
+cephe	front
+aday	candidate
+özgür	free
+geri alındı	retaken
+ÖDÜL	REWARD
+EMİR VERİLDİ	ORDER GIVEN
+Enter	Enter
+Esc	Esc
+S-07	S-07
+YARALI	INJURED
+EKİP ALFA	TEAM ALPHA
+Tıkla: oda kartı panoda açılır	Click: the room card opens on the clipboard
 # Assets/Corrigible/Desk/Scripts/Runtime/Windows/Content/ContentWindowView.cs
 Ekip işe al	Hire team
 # Assets/Corrigible/Desk/Scripts/Runtime/Windows/Content/NewsRowView.cs
@@ -2617,7 +2872,6 @@ Düğme	Button
 # Assets/Corrigible/Prefabs/UI/TextLine.prefab
 Satır	Line
 # Assets/Corrigible/Desk/Scenes/DeskGame.unity
-KYGA / SIĞINAK 07	KYGA / BUNKER 07
 AĞA BAĞLANMA\nANALOG KAL	STAY OFF THE NETWORK\nSTAY ANALOG
 KOMUTA MASASI / KULLANIM KILAVUZU	COMMAND DESK / FIELD MANUAL
 DİNLE	LISTEN
@@ -2633,13 +2887,11 @@ ONAR / GELİŞTİR	REPAIR / UPGRADE
 1 · KOMUTA	1 · COMMAND
 2 · SIĞINAK	2 · SHELTER
 3 · GÖREVLER	3 · MISSIONS
-VARDİYAYI BİTİR	END SHIFT
 SON SIĞINAK	THE LAST SHELTER
 İŞGALİN ARDINDAN · SON DİRENİŞ NOKTASI	AFTER THE OCCUPATION · THE LAST RESISTANCE OUTPOST
-Dünya çoktan düştü. Yapay zekâ bütün bölgeleri, ağları ve sunucuları ele geçirdi. Batı Avrupa'daki küçük sığınağımız, karşı harekâtın son komuta noktası.\n\nKOMUTA MASASI: Bölgeyi haritada seç. Bölge bilgilerini ve görevleri harita üzerindeki fişten incele; baskın emrini buradan ver. Bir bölgenin üç sektörünü baskınlarla geri al; ardından özgür bir bölgeye komşu yeni bir cephe seç.\n\nOPERASYON MONİTÖRÜ: Baskın emrinden sonra kamera sağdaki tüplü monitöre yaklaşır. Ekranın içine girer ve saha yayınındaki baskın tahtası açılır. Loot görevinde teknisyeni ikmal kasasının yanına götür. Q ile yeteneği seç ve kasaya tıkla. Sunucu yıkımı görevinde çekirdeği yok et.\n\nSIĞINAK PENCERESİ: Soldaki kesitten odaları seç, hasarlı odaları onar ve personel görevlendir. Erzak topluluğu besler; atölye malzeme üretir, revir yaralı ekibi toparlar.\n\nHazırlıklarını bitirince VARDİYAYI BİTİR. Zaman yalnızca emrinle ilerler. İlk hedef: tedarik deposu.	The world has already fallen. The AI has seized every region, network, and server. Our small shelter in Western Europe is the last command post of the counteroffensive.\n\nCOMMAND DESK: Select a region on the map. Read its briefing and missions on the map, then issue the raid order from there. Recapture a region's three sectors through raids, then choose a new front adjacent to a liberated region.\n\nOPERATIONS MONITOR: After a raid order, the camera approaches the CRT monitor on the right. It enters the screen and reveals the raid board in the field transmission. On loot missions, move the technician next to the supply crate. Press Q to select the ability, then click the crate. On server demolition missions, destroy the core.\n\nSHELTER WINDOW: Select rooms in the cutaway on the left, repair damaged rooms, and assign residents. Supplies feed the community; the workshop produces materials and the infirmary helps the injured team recover.\n\nWhen preparations are complete, END SHIFT. Time advances only on your command. First target: the supply depot.
+Dünya çoktan düştü. Yapay zekâ bütün bölgeleri, ağları ve sunucuları ele geçirdi. Batı Avrupa'daki küçük sığınağımız, karşı harekâtın son komuta noktası.\n\nKOMUTA MASASI: Bölgeyi haritada seç. Bölge bilgilerini ve görevleri harita üzerindeki fişten incele; baskın emrini buradan ver. Bir bölgenin üç sektörünü baskınlarla geri al; ardından özgür bir bölgeye komşu yeni bir cephe seç.\n\nOPERASYON MONİTÖRÜ: Baskın emrinden sonra kamera sağdaki tüplü monitöre yaklaşır. Ekranın içine girer ve saha yayınındaki baskın tahtası açılır. Yağma görevinde teknisyeni ikmal kasasının yanına götür. Q ile yeteneği seç ve kasaya tıkla. Sunucu yıkımı görevinde çekirdeği yok et.\n\nSIĞINAK PENCERESİ: Soldaki kesitten odaları seç, hasarlı odaları onar ve personel görevlendir. Erzak topluluğu besler; atölye malzeme üretir, revir yaralı ekibi toparlar.\n\nHazırlıklarını bitirince VARDİYAYI BİTİR. Zaman yalnızca emrinle ilerler. İlk hedef: tedarik deposu.	The world has already fallen. The AI has seized every region, network, and server. Our small shelter in Western Europe is the last command post of the counteroffensive.\n\nCOMMAND DESK: Select a region on the map. Read its briefing and missions on the map, then issue the raid order from there. Recapture a region's three sectors through raids, then choose a new front adjacent to a liberated region.\n\nOPERATIONS MONITOR: After a raid order, the camera approaches the CRT monitor on the right. It enters the screen and reveals the raid board in the field transmission. On loot missions, move the technician next to the supply crate. Press Q to select the ability, then click the crate. On server demolition missions, destroy the core.\n\nSHELTER WINDOW: Select rooms in the cutaway on the left, repair damaged rooms, and assign residents. Supplies feed the community; the workshop produces materials and the infirmary helps the injured team recover.\n\nWhen preparations are complete, END SHIFT. Time advances only on your command. First target: the supply depot.
 KARŞI HAREKÂTI BAŞLAT	BEGIN COUNTEROFFENSIVE
 KAYITTAN DEVAM ET	CONTINUE SAVED GAME
-SEÇİLİ BÖLGEDE CEPHE AÇ	OPEN FRONT IN SELECTED REGION
 # Assets/Corrigible/Fx/Scenes/FxBaskin.unity
 GÜNLÜK [L]	LOG [L]
 KURALLAR [?]	RULES [?]
@@ -2770,11 +3022,8 @@ Ses	Sound
 Genel	Master
 %80	80%
 Ortam: şebeke uğultusu, baskında bina sesi ve saatler. Efektler: arayüz, olaylar, YZ motifi.	Ambience: grid hum, building sounds during raids, clocks. Effects: interface, events, the AI motif.
-KAPAT	CLOSE
 Esc: aç / kapat	Esc: open / close
 EĞİTİM · 1/10	TUTORIAL · 1/10
 Başlık	Title
 Açıklama	Description
 Bildirim	Notification
-# --- Kullanılmayan çeviriler (koddan silinmiş metinler; gerekirse geri alınır) ---
-#Sağ tuş: bakış · Tekerlek: yaklaş · F: harita · 1: komuta · 2: sığınak · 3: operasyon	Right mouse: look · Wheel: zoom · F: map · 1: command · 2: shelter · 3: operations

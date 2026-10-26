@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>K7 · Uygulama notu</title>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&family=Kalam:wght@700&display=swap">
+<style>
+body{margin:0;background:#1C372C}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../../sprites/tx_paper_grain.png);background-size:128px 128px}
+</style>
+</helmet>
+<div class="grain" style="width: 1200px; height: 1080px; box-sizing: border-box; background-color: #F1E9D6; color: #1E1B16; font-family: 'Libre Franklin', Arial, sans-serif; display: flex; flex-direction: column">
+  <div style="padding: 26px 32px 14px 32px; border-bottom: 2px solid #D2483F; display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+    <div style="font: 700 28px 'Courier Prime', monospace; letter-spacing: 0.04em">K7 · BRİFİNG / EMİR BELGESİ</div>
+    <div style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em; color: #675F50">UYGULAMA NOTU · AÇILIŞ</div>
+  </div>
+  <div style="flex: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; padding: 16px 32px 18px 32px; min-height: 0; font-size: 14px; line-height: 1.38">
+    <div style="display: flex; flex-direction: column; gap: 11px; min-width: 0">
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">AÇILIŞ AKIŞI · SIRA VE SÜRE</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div style="display: grid; grid-template-columns: 22px minmax(0, 1fr); row-gap: 4px; column-gap: 8px">
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">1</span><span>Siyah ekran, jeneratör marşı (0,8 s); tavan ampulü üç kırpışmayla yanar (0,6 s).</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">2</span><span>Kamera K2 üst harita pozunda açılır. Sayaçlar başlangıç değerlerine döner (V.001 · 40,0 · 24/40 · 14 · 0/12). Teleks: “001/00 KYGA-07 HAT AÇIK”.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">3</span><span>Emir belgesi teleks yönünden kayıp haritaya düşer (A4, World Space, 0,35 s, kâğıt sesi), sonra okuma görünümüne kalkar (0,25 s). K7 bu görünüm.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">4</span><span>BAŞLA (Enter): belgeye “ALINDI” damgası (0,1 s, “tak”), belge küçülerek EVRAK tepsisine kayar (0,4 s), kamera K1 başlangıç pozuna (0,8 s). Belge tepsiden yeniden okunabilir.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">5</span><span>KAYITTAN DEVAM (tık ya da Tab → Enter): dosya açılır, içindeki son vardiya raporu 0,3 s görünür, kamera kayıttaki poza geçer.</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">NESNELER</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div style="display: grid; grid-template-columns: 96px minmax(0, 1fr); row-gap: 4px; column-gap: 10px">
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">emir belgesi</span><span>Masada A4 kâğıt 0,21 × 0,30 m (#FBF7EC R .92). Okuma görünümü Overlay Canvas 760 × ~660 px · 9 dilim kâğıt + tx_paper_grain · kenar 1 px #D2C7AF · gölge (5, 7) α .45 · −0,8°.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">dosya</span><span>Manila #D9C08B, kenar #B99D63, +2° · sağ kenarda sekme 236 × 112 içinde beyaz etiket (kayıt özeti).</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">ekler</span><span>Ataş sprite 18 × 76 (#9AA0A0) · GİZLİ damgası CP 700 26, 3 px #9A1E14, −8° · imza sprite’ı (mürekkep #1A2F5A) · kahve halkası decal α .16 (anlatı, tıklanmaz).</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">TİPOGRAFİ</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div>Kurum satırı CP 700 14 · başlık CP 700 36 · KİME/KONU CP 700 15 · gövde CP 400 20, satır 1,5 · son satır CP 700 20, aralık .06em · imza altı CP 700 14 + CP 400 14 · düğme LF 700 22. Belge daktiloyla yazılmış gibi: gövde Courier Prime.</div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 11px; min-width: 0">
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">DURUMLAR</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div style="display: grid; grid-template-columns: 96px minmax(0, 1fr); row-gap: 4px; column-gap: 10px">
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">BAŞLA</span><span>Mürekkep düğme: üzerinde 2 px kalkar, gölge 3 → 5 · basılı 3 px iner, gölge 0. Kayıt varken ilk Enter teleks uyarısı basar: “KAYIT VAR · yeni harekât V.014 kaydının yerine geçer · onay için yeniden Enter”.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">KAYITTAN DEVAM</span><span>Kayıt varsa sekme etkin, etikette vardiya ve özgür bölge. Üzerinde: sekme 6 px dışarı kayar. Kayıt yoksa sekme soluk #CFC6AE, etikette kesik kenarlı “KAYIT YOK” damgası; tıklanmaz, Tab atlar.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">Esc</span><span>AYARLAR (bu ekranda da). Belge açıkken zaman zaten durmuştur.</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">METİN · TASLAK</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div>Brif yalnız ilk cümleyi veriyor; gövde metni yer tutucu taslaktır, son metin anlatı tarafından yazılır. Sınır: 4 paragraf, TR ≤ 520 karakter (bugün 451), EN ≤ 680.</div>
+        <div class="grain" style="background-color: #FBF7EC; border: 1px solid #D2C7AF; padding: 10px 12px; font: 400 14px 'Courier Prime', monospace; line-height: 1.45; display: flex; flex-direction: column; gap: 6px">
+          <span><b>EN ·</b> The world has already fallen. The AI has taken all twelve regions, every network and every server. Every machine that speaks up there now speaks in its voice.</span>
+          <span>SHELTER 07, beneath Western Europe, is still ours. No screens here, no network: orders go on paper, numbers turn on counters.</span>
+          <span>Your task: send Alfa team into the field, take the regions back sector by sector, keep the shelter alive. Time moves only when you END SHIFT.</span>
+          <span><b>STAY OFF THE NET. STAY ANALOG.</b></span>
+          <span style="color: #463F34">Düğmeler: BEGIN · CONTINUE (sekme 2. satır “Shift 014 · free 1/12”). Başlık: OPERATION ORDER · TO: SHELTER 07 COMMANDER · RE: COUNTEROFFENSIVE · TOP SECRET damgası.</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">SES</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div>Jeneratör marşı (dizel öksürüğü → uğultu) · ampul cızırtısı · teleks tıkırtısı · kâğıt kayma ve düşme · damga “tak” · dosya kapağı. Müzik yok; oda tonu −24 dB.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1200,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

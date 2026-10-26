@@ -339,6 +339,9 @@ namespace Corrigible.Game
             return rec == null ? null : Loc.F("{0}, {1}. gün", GameData.AiType(rec.type).Name, rec.day);
         }
 
+        /// <summary>Kayıttaki oyunun kaydı (geri yüklemeden; özet ve sunum dosyası eşlemesi için), yoksa null.</summary>
+        public GameRecord SavedRecord() => LoadRecord();
+
         public bool ContinueSaved()
         {
             var rec = LoadRecord();

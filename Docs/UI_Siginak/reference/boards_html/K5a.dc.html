@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>K5a · CRT · Bağlantı bekleniyor</title>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&family=Kalam:wght@700&display=swap">
+<style>
+body{margin:0;background:#0E0906}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../../sprites/tx_paper_grain.png);background-size:128px 128px}
+</style>
+</helmet>
+<div style="position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #0E0906; font-family: 'Libre Franklin', Arial, sans-serif; color: #1E1B16">
+  <img src="../renders/K5a.jpg" alt="CRT yakın bakış: yeşil fosfor ekranda saha yayını bağlantı bekleniyor yazısı" style="position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: block">
+
+  <div class="grain" style="position: absolute; left: 1404px; top: 596px; width: 300px; padding: 9px 12px 10px 12px; background-color: #FBF7EC; border: 1.5px solid #1E1B16; border-radius: 2px; box-shadow: 3px 5px 0 rgba(0,0,0,0.45); display: flex; flex-direction: column; gap: 4px; box-sizing: border-box">
+    <span style="font: 700 18px 'Courier Prime', monospace; letter-spacing: 0.06em">SAHA YAYINI</span>
+    <span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; color: #463F34; line-height: 1.35">Yalnız baskın emriyle açılır. Emri görev fişinden ver (3).</span>
+  </div>
+  <svg width="1920" height="1080" viewBox="0 0 1920 1080" style="position: absolute; left: 0; top: 0; pointer-events: none" aria-hidden="true">
+    <path d="M1352 690 L1352 720 L1359 713 L1364 725 L1369 723 L1364 711 L1374 711 Z" fill="#FBF7EC" stroke="#1E1B16" stroke-width="1.6" stroke-linejoin="round"></path>
+  </svg>
+
+  <div style="position: absolute; left: 0; top: 0; width: 1920px; height: 40px; box-sizing: border-box; padding: 0 16px; background: rgba(14,9,6,0.92); border-bottom: 1px solid #6E5A33; display: flex; align-items: center; justify-content: space-between; gap: 24px; font: 700 16px 'Courier Prime', monospace; letter-spacing: 0.06em; color: #C9A86A">
+    <div style="display: flex; align-items: center; gap: 18px">
+      <span>VARDİYA <b style="color: #E6CF9C">014</b></span><span style="color: #6E5A33">·</span>
+      <span>FON <b style="color: #E6CF9C">62,0</b></span><span style="color: #6E5A33">·</span>
+      <span>ERZAK <b style="color: #E6CF9C">31/40</b></span><span style="color: #6E5A33">·</span>
+      <span>MALZEME <b style="color: #E6CF9C">19</b></span><span style="color: #6E5A33">·</span>
+      <span>ÖZGÜR <b style="color: #E6CF9C">1/12</b></span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 14px">
+      <span style="display: flex; align-items: center; gap: 6px"><span style="display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 4px; border: 1px solid #6E5A33; border-radius: 2px; color: #E6CF9C; font-size: 13px; letter-spacing: 0">1</span>KOMUTA</span>
+      <span style="display: flex; align-items: center; gap: 6px"><span style="display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 4px; border: 1px solid #6E5A33; border-radius: 2px; color: #E6CF9C; font-size: 13px; letter-spacing: 0">2</span>SIĞINAK</span>
+      <span style="display: flex; align-items: center; gap: 6px"><span style="display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 4px; border: 1px solid #6E5A33; border-radius: 2px; color: #E6CF9C; font-size: 13px; letter-spacing: 0">3</span>GÖREVLER</span>
+      <span style="display: flex; align-items: center; gap: 6px"><span style="display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 4px; border: 1px solid #6E5A33; border-radius: 2px; color: #E6CF9C; font-size: 13px; letter-spacing: 0">H</span>KILAVUZ</span>
+      <span style="display: flex; align-items: center; gap: 6px"><span style="display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 4px; border: 1px solid #6E5A33; border-radius: 2px; color: #E6CF9C; font-size: 13px; letter-spacing: 0">Home</span>MASA</span>
+      <span style="width: 1px; height: 22px; background: #6E5A33"></span>
+      <span style="display: flex; align-items: center; gap: 6px"><span style="display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 4px; border: 1px solid #6E5A33; border-radius: 2px; color: #E6CF9C; font-size: 13px; letter-spacing: 0">Esc</span>AYARLAR</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

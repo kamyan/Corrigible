@@ -1,0 +1,736 @@
+{
+  "meta": {
+    "name": "Son Şalter · Sığınak komuta odası tokenları (K1–K8)",
+    "version": "1.0",
+    "date": "2026-10-26",
+    "extends": ["tokens_sade.json 1.1 (renk, yazı, gölge, hareket — aynen geçerli)"],
+    "units": "UI: 1920×1080 referans px, sol-üst orijin. Gölge = (x, y) düz ofset, bulanıklık 0. Renk sRGB hex, alfa 0–1. 3D: metre, Unity koordinatı. “tex” = dünya dokusu px.",
+    "truthOrder": "görünüş: Design artifact K1–K8 · sayı: bu dosya · davranış: K1–K7 uygulama notları",
+    "newMarker": "YENİ token’lar: “_new” listesi (nokta yolu) + her yeni grubun “_” açıklamasında ★. Sade’den aynen gelenler “reuse” altında adıyla.",
+    "changes": "1.0: üst HUD → sayaç rafı + kenar satırı; alt çubuk → anahtar rayı; VARDİYAYI BİTİR → kapaklı şalter; geri bildirim → teleks satırı/bandı; vardiya raporu, emir belgesi, oda kartları, kurtuluş haritası durumları; haritada sürüklenen 3D ekip figürü; oda malzemeleri, ışık, kamera."
+  },
+  "_new": ["colors.brass.metal", "colors.brass.dark", "colors.brass.light", "colors.brass.engraving", "colors.brass.edge", "colors.bakelite.body", "colors.bakelite.cap", "colors.bakelite.deep", "colors.bakelite.red", "colors.counter.wheel", "colors.counter.digit", "colors.counter.tenths", "colors.counter.window", "colors.counter.bezel", "colors.counter.decimalDot", "colors.bunker.concrete", "colors.bunker.concreteSide", "colors.bunker.floor", "colors.bunker.ceiling", "colors.bunker.steel", "colors.bunker.steelDark", "colors.bunker.galv", "colors.bunker.pipe", "colors.bunker.olive", "colors.bunker.oliveLight", "colors.bunker.lino", "colors.bunker.chrome", "colors.bunker.wood", "colors.bunker.woodLight", "colors.bunker.cork", "colors.bunker.roomWall", "colors.bunker.roomWallOff", "colors.bunker.soil", "colors.bunker.rubble", "colors.bunker.genGreen", "colors.bunker.stencilPaint", "colors.bunker.posterPaper", "colors.bunker.pawn", "colors.bunker.coverRed", "colors.bunker.hazard", "colors.crt.case", "colors.crt.bezel", "colors.crt.glass", "colors.crt.phosphor", "colors.crt.phosphorDim", "colors.crt.frame", "colors.crt.scanline", "colors.crt.static", "colors.crt.rollBar", "colors.crt.vignette", "colors.crt.ghost", "colors.light.bulb", "colors.light.bulbLight", "colors.light.deskLamp", "colors.light.lampGlass", "colors.light.crtLeak", "colors.light.amber", "colors.light.readyLamp", "colors.light.readyLampOff", "colors.light.keyJewelOn", "colors.light.keyJewelOff", "colors.light.radioDial", "colors.light.mastRed", "colors.light.roomBulb", "colors.pen.graphite", "colors.pen.signature", "colors.pen.grease", "colors.pen.coffee", "colors.stamp.retaken", "colors.stamp.ready", "colors.stamp.locked", "colors.stamp.free", "colors.stamp.teamReady", "colors.stamp.injured", "colors.stamp.damaged", "colors.stamp.noPower", "colors.stamp.orderDone", "colors.stamp.failed", "colors.stamp.closed", "colors.stamp.secret", "colors.stamp.missing", "colors.stamp.full", "colors.stamp.received", "colors.stamp.noSave", "colors.ui.edgeLine", "colors.ui.edgeLineBorder", "colors.ui.edgeLineValue", "colors.ui.edgeLineActive", "colors.ui.folder", "colors.ui.slipTag", "colors.ui.telexStrip", "colors.ui.inkButton", "colors.ui.inkButtonText", "colors.ui.inkButtonPressed", "colors.ui.frameButton", "colors.ui.frameButtonHover", "colors.ui.frameButtonPressed", "colors.ui.disabledFill", "colors.ui.disabledLine", "colors.ui.disabledText", "colors.ui.focusRing", "colors.ui.selectFrame", "colors.mapLiberation.occupiedHatch", "colors.mapLiberation.hatchSpacing", "colors.mapLiberation.frontHatch", "colors.mapLiberation.frontContour", "colors.mapLiberation.frontRing", "colors.mapLiberation.frontPin", "colors.mapLiberation.candidateContour", "colors.mapLiberation.freeGhost", "colors.mapLiberation.freeStamp", "colors.mapLiberation.selectFill", "colors.mapLiberation.hoverFill", "colors.team.base", "colors.team.rim", "colors.team.plate", "colors.team.plateRing", "colors.team.letter", "colors.team.pawnWood", "colors.team.technician", "colors.team.empSpecialist", "colors.team.analyst", "colors.team.selectRing", "colors.team.carryShadow", "type.plateLabel", "type.counterDigitTex", "type.counterLabelTex", "type.keyCapTex", "type.hoverTagTitle", "type.hoverTagLine", "type.plaqueButton", "type.keyChip", "type.edgeLine", "type.telexCode", "type.telexStatus", "type.telexMessage", "type.slipCode", "type.slipRegion", "type.slipProgress", "type.sectorNo", "type.sectorName", "type.sectorType", "type.stamp", "type.taskHead", "type.taskBody", "type.costValue", "type.rewardLine", "type.inkButton", "type.frameButton", "type.roomCardNameTex", "type.roomCardLineTex", "type.panelTitleTex", "type.panelValueTex", "type.cardSelectedNameTex", "type.cardBodyTex", "type.cardNoteTex", "type.reportHead", "type.reportTitle", "type.reportSub", "type.reportSection", "type.reportRow", "type.reportRowNote", "type.reportValue", "type.reportTotal", "type.deltaTag", "type.analystNote", "type.orderAgency", "type.orderTitle", "type.orderMeta", "type.orderBody", "type.orderClosing", "type.orderButton", "type.secretStamp", "type.folderTab", "type.crtHead", "type.crtBig", "type.crtLine", "type.crtSub", "type.crtTexLine", "type.mapLabelTex", "type.mapSubTex", "type.wallStencil", "shadows.report", "shadows.order", "shadows.folder", "shadows.slipTag", "shadows.worldCard", "shadows.inkButtonHover", "shadows.frameButton", "shadows.frameButtonHover", "shadows.swatch", "space.safe", "space.edgeLine", "space.plaque", "space.inkButtonH", "space.frameButtonH", "space.paperPad", "space.rowGap", "space.sectionGap", "space.cardGap", "space.hitMin", "space.telexStrip", "space.deltaTag", "space.hoverTagW", "space.teamFigure", "space.slipW", "space.reportW", "space.orderW", "space.folderTab", "space.roomCardTex", "space.panelTex", "motion.poseS", "motion.poseRiseS", "motion.keyClickS", "motion.lampOnS", "motion.hoverLiftMm", "motion.keyPressMm", "motion.slipOpenS", "motion.slipCloseS", "motion.stringS", "motion.stampS", "motion.inkDarkenS", "motion.counterRollS", "motion.counterWheelDelayS", "motion.deltaTagHoldS", "motion.deltaTagFadeS", "motion.telexLineS", "motion.telexCharS", "motion.telexStripInS", "motion.telexStripHoldS", "motion.telexStripOutS", "motion.crtTurnS", "motion.crtOpenLineS", "motion.crtSyncBoxS", "motion.crtTotalS", "motion.crtReturnS", "motion.shiftSequenceS", "motion.coverLiftS", "motion.coverAutoCloseS", "motion.bulbDimS", "motion.bulbDimTo", "motion.generatorBackS", "motion.reportDropS", "motion.reportFileS", "motion.briefDropS", "motion.briefLiftS", "motion.bulbFlicker", "motion.team", "cameras.K1", "cameras.map", "cameras.K4", "cameras.K5a", "cameras.K6a", "lights.bulb", "lights.deskLamp", "lights.crtLeak", "lights.roomBulb", "lights.amberSwitch", "lights.radioDial", "lights.ambient", "lights.dim", "materials.concreteWall", "materials.floor", "materials.ceiling", "materials.steel", "materials.steelDark", "materials.galv", "materials.pipe", "materials.brass", "materials.brassDark", "materials.bakelite", "materials.olive", "materials.oliveLight", "materials.lino", "materials.chrome", "materials.coverRed", "materials.crtCase", "materials.crtScreen", "materials.counterFace", "materials.lampGlass", "materials.wood", "materials.cork", "materials.paper", "materials.pawn", "materials.roomWall", "materials.rubble", "materials.genGreen", "materials.teamBase", "materials.teamRim", "materials.teamPlate"],
+  "reuse": {
+    "_": "tokens_sade.json’dan değer değişmeden kullanılanlar (burada tekrar edilmedi).",
+    "colors": ["ink", "ink2", "ink3", "paper", "edge", "index", "onion", "sticky", "highlighter", "ruleRed", "status.*", "plaque.*", "map.labelInk", "map.labelHalo", "dockTabs.research", "panels.telexPaper", "panels.feedHole", "panels.hoverPaper", "panels.selection", "panels.dividerDotted", "panels.drawer.research", "panels.drawer.news", "raid.felt"],
+    "type": ["hoverTitle → hoverTagTitle (18 px’e büyüdü)", "confirmButton → inkButton (20 px’e büyüdü)"],
+    "shadows": ["card", "hoverCard (üzerinde etiketi)", "plaque (AYARLAR / ATLA)", "eventSlip (teleks bandı)", "topButton (mürekkep düğme)", "action", "actionHover"],
+    "motion": ["popOpenS", "popCloseS", "tooltipDelayS", "easing", "dimS"]
+  },
+  "colors": {
+    "_": "★ Bu dosyadaki bütün renk grupları YENİ. Sade’deki ink/paper/status/plaque/panels aynen geçerli; burada tekrar yazılmadı (bkz. reuse).",
+    "brass": {
+      "_": "★ pirinç: plaka, çerçeve, kol tabanı. Doku: plateTex (kazınmış CP 700).",
+      "metal": "#B8955A",
+      "dark": "#8C6F3E",
+      "light": "#DCBD7D",
+      "engraving": "#2A1E10",
+      "edge": "#5C4826"
+    },
+    "bakelite": {
+      "_": "★ bakalit: sayaç rafı, anahtar rayı, tuş başlığı.",
+      "body": "#24180F",
+      "cap": "#2A1E14",
+      "deep": "#120C07",
+      "red": "#5A1A12"
+    },
+    "counter": {
+      "_": "★ mekanik sayaç: çark, rakam, onda bir çarkı.",
+      "wheel": "#1C150E",
+      "digit": "#EFDCAE",
+      "tenths": "#801810",
+      "window": "#0E0906",
+      "bezel": "#8C6F3E",
+      "decimalDot": "#C9A86A"
+    },
+    "bunker": {
+      "_": "★ oda ve donanım (3D malzeme taban rengi).",
+      "concrete": "#7C837F",
+      "concreteSide": "#737A76",
+      "floor": "#5A5B54",
+      "ceiling": "#2C2D29",
+      "steel": "#4A5045",
+      "steelDark": "#33382F",
+      "galv": "#70756E",
+      "pipe": "#3F4A3D",
+      "olive": "#4B5340",
+      "oliveLight": "#5C6455",
+      "lino": "#34503F",
+      "chrome": "#C8CCCC",
+      "wood": "#6B4A2E",
+      "woodLight": "#9A7448",
+      "cork": "#A27B52",
+      "roomWall": "#CFC6AE",
+      "roomWallOff": "#5A554B",
+      "soil": ["#6E5A40", "#5A4632", "#3F3328"],
+      "rubble": "#77746A",
+      "genGreen": "#3E6B4A",
+      "stencilPaint": "#D9D2BF",
+      "posterPaper": "#EAD9C0",
+      "pawn": "#C9A77A",
+      "coverRed": "#B8241A",
+      "hazard": ["#F5D646", "#1E1B16"]
+    },
+    "crt": {
+      "_": "★ tüplü monitör; tek renk fosfor, durum biçimle (ters video) ayrılır.",
+      "case": "#4F5446",
+      "bezel": "#1C1F19",
+      "glass": "#07100B",
+      "phosphor": "#A6E8B8",
+      "phosphorDim": "#5E9C73",
+      "frame": ["#1A1D16", "#0F120D"],
+      "scanline": {
+        "hex": "#000000",
+        "alpha": 0.3
+      },
+      "static": {
+        "hex": "#FFFFFF",
+        "alpha": 0.55
+      },
+      "rollBar": {
+        "hex": "#A6E8B8",
+        "alpha": 0.1
+      },
+      "vignette": {
+        "hex": "#000000",
+        "alpha": 0.72
+      },
+      "ghost": {
+        "hex": "#A6E8B8",
+        "alpha": 0.22
+      }
+    },
+    "light": {
+      "_": "★ ışık ve emissive renkleri.",
+      "bulb": "#FFD27A",
+      "bulbLight": "#FFCF86",
+      "deskLamp": "#FFD9A0",
+      "lampGlass": "#1E5236",
+      "crtLeak": "#7FD9A0",
+      "amber": "#FFB060",
+      "readyLamp": "#7FE08F",
+      "readyLampOff": "#3E4A3A",
+      "keyJewelOn": "#FFB347",
+      "keyJewelOff": "#4A2F12",
+      "radioDial": "#E9A948",
+      "mastRed": "#B8241A",
+      "roomBulb": "#FFD8A0"
+    },
+    "pen": {
+      "_": "★ kalem, mürekkep, anlatı izleri.",
+      "graphite": "#4A4A48",
+      "signature": "#1A2F5A",
+      "grease": "#2B2622",
+      "coffee": {
+        "hex": "#7A4A22",
+        "alpha": 0.16
+      }
+    },
+    "stamp": {
+      "_": "★ [renk, kenar]; CP 700 13–21, kenar 2–3 px, −3…−8° dönük. Durum renk + kelime + kenar deseniyle ayrılır.",
+      "retaken": ["#1A4789", "solid"],
+      "ready": ["#9A1E14", "solid"],
+      "locked": ["#675F50", "dashed"],
+      "free": ["#1A4789", "round"],
+      "teamReady": ["#24592E", "solid"],
+      "injured": ["#9A1E14", "solid"],
+      "damaged": ["#9A1E14", "solid"],
+      "noPower": ["#9A1E14", "solid"],
+      "orderDone": ["#24592E", "solid"],
+      "failed": ["#9A1E14", "solid"],
+      "closed": ["#9A1E14", "solid"],
+      "secret": ["#9A1E14", "solid"],
+      "missing": ["#9A1E14", "solid"],
+      "full": ["#9A1E14", "solid"],
+      "received": ["#1A4789", "solid"],
+      "noSave": ["#675F50", "dashed"]
+    },
+    "ui": {
+      "_": "★ ekran kenarı ve kâğıt kontrolleri. Bazı değerler sade ile aynı (yanında belirtildi).",
+      "edgeLine": {
+        "hex": "#0E0906",
+        "alpha": 0.92
+      },
+      "edgeLineBorder": "#6E5A33",
+      "edgeLineValue": "#E6CF9C",
+      "edgeLineActive": "#C9A86A",
+      "folder": ["#D9C08B", "#B99D63"],
+      "slipTag": ["#EFE4BC", "#C9B98A"],
+      "telexStrip": ["#EFE4BC", "#C9B98A"],
+      "inkButton": "#1E1B16",
+      "inkButtonText": "#F4ECD8",
+      "inkButtonPressed": "#2A2620",
+      "frameButton": "#FBF7EC",
+      "frameButtonHover": "#FFFDF5",
+      "frameButtonPressed": "#EFE7D3",
+      "disabledFill": "#E3E0D8",
+      "disabledLine": "#A79D88",
+      "disabledText": "#8E8573",
+      "focusRing": "#F5D646",
+      "selectFrame": ["#F5D646", "#1E1B16"]
+    },
+    "team": {
+      "_": "★ ekip figürü (3D, haritada, sürüklenir).",
+      "base": "#A8844E",
+      "rim": "#5C4826",
+      "plate": "#24180F",
+      "plateRing": "#C9A86A",
+      "letter": "#EFDCAE",
+      "pawnWood": "#C9A77A",
+      "technician": "#3F5F8A",
+      "empSpecialist": "#B07A2A",
+      "analyst": "#3E6B4A",
+      "selectRing": "#F5D646",
+      "carryShadow": {
+        "hex": "#000000",
+        "alpha": 0.28
+      }
+    },
+    "mapLiberation": {
+      "_": "★ işgalden kurtuluş haritası (K2–K3). Etiket mürekkebi ve hale sade map.labelInk / labelHalo.",
+      "occupiedHatch": [
+        {
+          "hex": "#9A1E14",
+          "alpha": 0.5,
+          "angle": 45
+        },
+        {
+          "hex": "#9A1E14",
+          "alpha": 0.32,
+          "angle": -45
+        }
+      ],
+      "hatchSpacing": 11,
+      "frontHatch": {
+        "hex": "#9A1E14",
+        "alpha": 0.5,
+        "angle": 45,
+        "spacing667": 11,
+        "spacing333": 22
+      },
+      "frontContour": [5, "#1E1B16"],
+      "frontRing": "#2B2622",
+      "frontPin": "#B8241A",
+      "candidateContour": {
+        "hex": "#463F34",
+        "width": 2.5,
+        "dash": [12, 8]
+      },
+      "freeGhost": {
+        "hex": "#9A1E14",
+        "alpha": 0.07
+      },
+      "freeStamp": "#1A4789",
+      "selectFill": {
+        "hex": "#F5D646",
+        "alpha": 0.34
+      },
+      "hoverFill": {
+        "hex": "#F5D646",
+        "alpha": 0.12
+      }
+    }
+  },
+  "type": {
+    "_": "★ Hepsi YENİ. Aile · ağırlık · boyut px · harf aralığı em. “tex” ile biten = dünya dokusu px (ekrandaki karşılığı yanındaki notta).",
+    "plateLabel": ["Courier Prime", 700, 16, 0.06],
+    "counterDigitTex": ["Courier Prime", 700, 176, 0],
+    "counterLabelTex": ["Courier Prime", 700, 72, 0],
+    "keyCapTex": ["Courier Prime", 700, 30, 0],
+    "hoverTagTitle": ["Courier Prime", 700, 18, 0.06],
+    "hoverTagLine": ["Libre Franklin", 400, 15, 0],
+    "plaqueButton": ["Courier Prime", 700, 15, 0.08],
+    "keyChip": ["Courier Prime", 700, 13, 0],
+    "edgeLine": ["Courier Prime", 700, 16, 0.06],
+    "telexCode": ["Courier Prime", 700, 17, 0],
+    "telexStatus": ["Courier Prime", 700, 17, 0],
+    "telexMessage": ["Courier Prime", 400, 17, 0],
+    "slipCode": ["Courier Prime", 700, 14, 0.08],
+    "slipRegion": ["Courier Prime", 700, 28, 0.04],
+    "slipProgress": ["Courier Prime", 700, 15, 0],
+    "sectorNo": ["Courier Prime", 700, 15, 0],
+    "sectorName": ["Libre Franklin", 600, 18, 0],
+    "sectorType": ["Courier Prime", 700, 14, 0.06],
+    "stamp": ["Courier Prime", 700, 13, 0.08],
+    "taskHead": ["Courier Prime", 700, 13, 0.08],
+    "taskBody": ["Libre Franklin", 400, 18, 0],
+    "costValue": ["Courier Prime", 700, 20, 0],
+    "rewardLine": ["Libre Franklin", 400, 15, 0],
+    "inkButton": ["Libre Franklin", 700, 20, 0.06],
+    "frameButton": ["Libre Franklin", 700, 20, 0],
+    "roomCardNameTex": ["Courier Prime", 700, 29, 0.05],
+    "roomCardLineTex": ["Courier Prime", 700, 21, 0],
+    "panelTitleTex": ["Courier Prime", 700, 34, 0.05],
+    "panelValueTex": ["Courier Prime", 700, 30, 0],
+    "cardSelectedNameTex": ["Courier Prime", 700, 42, 0.04],
+    "cardBodyTex": ["Libre Franklin", 400, 28, 0],
+    "cardNoteTex": ["Libre Franklin", 600, 26, 0],
+    "reportHead": ["Courier Prime", 700, 14, 0.08],
+    "reportTitle": ["Courier Prime", 700, 30, 0.04],
+    "reportSub": ["Courier Prime", 400, 17, 0],
+    "reportSection": ["Courier Prime", 700, 14, 0.08],
+    "reportRow": ["Libre Franklin", 400, 18, 0],
+    "reportRowNote": ["Libre Franklin", 400, 15, 0],
+    "reportValue": ["Courier Prime", 700, 20, 0],
+    "reportTotal": ["Courier Prime", 700, 22, 0],
+    "deltaTag": ["Courier Prime", 700, 18, 0],
+    "analystNote": ["Kalam", 700, 22, 0],
+    "orderAgency": ["Courier Prime", 700, 14, 0.08],
+    "orderTitle": ["Courier Prime", 700, 36, 0.05],
+    "orderMeta": ["Courier Prime", 700, 15, 0],
+    "orderBody": ["Courier Prime", 400, 20, 0],
+    "orderClosing": ["Courier Prime", 700, 20, 0.06],
+    "orderButton": ["Libre Franklin", 700, 22, 0.08],
+    "secretStamp": ["Courier Prime", 700, 26, 0.14],
+    "folderTab": ["Courier Prime", 700, 18, 0.04],
+    "crtHead": ["Courier Prime", 700, 26, 0.06],
+    "crtBig": ["Courier Prime", 700, 76, 0.06],
+    "crtLine": ["Courier Prime", 700, 32, 0.04],
+    "crtSub": ["Courier Prime", 700, 24, 0.06],
+    "crtTexLine": ["Courier Prime", 700, 46, 0],
+    "mapLabelTex": ["Courier Prime", 700, 28, 0.04],
+    "mapSubTex": ["Courier Prime", 700, 23, 0],
+    "wallStencil": ["Big Shoulders Stencil Display", 800, 0, 0.06],
+    "_notes": {
+      "lineHeight": "taskBody 1,38 · reportRow 1,34 · orderBody 1,5 · cardBodyTex 1,32",
+      "screenEquivalents": "counterDigitTex 176 → K1’de ~34 px · mapLabelTex 28 → 17,6 · mapSubTex 23 → 14,5 · roomCardNameTex 29 → 20 · roomCardLineTex 21 → 14,7 · cardBodyTex 28 → ~18",
+      "wallStencil": "ÖNERİ: yalnız boyalı tabela/duvar decal’i; boyut nesneye göre. uGUI/TMP’de kullanılmaz. Yedek: Courier Prime 700 + köprü maskesi.",
+      "minimums": "gövde ≥ 18 px, ikincil ≥ 14 px (1920×1080). EN %30 uzunluk payı: punto küçülmez, satır sarar."
+    }
+  },
+  "shadows": {
+    "_": "★ (x, y, renk, alfa) düz ofset, bulanıklık 0. Sade card/hoverCard/topButton/action aynen geçerli.",
+    "report": [5, 7, "#000000", 0.45],
+    "order": [5, 7, "#000000", 0.45],
+    "folder": [4, 6, "#000000", 0.4],
+    "slipTag": [2, 3, "#000000", 0.35],
+    "worldCard": [4, 6, "#000000", 0.35],
+    "inkButtonHover": [0, 5, "#463F34", 1],
+    "frameButton": [0, 4, "#8E8166", 1],
+    "frameButtonHover": [0, 6, "#6E634D", 1],
+    "swatch": [2, 3, "#000000", 0.18],
+    "_reuse": "üzerinde etiketi = sade hoverCard · AYARLAR/ATLA plakası = sade plaque · teleks bandı = sade eventSlip · mürekkep düğme = sade topButton"
+  },
+  "space": {
+    "_": "★ boşluk ve ölçü (ekran px, 1920×1080).",
+    "safe": 16,
+    "edgeLine": {
+      "h": 40,
+      "padX": 16,
+      "gap": 18,
+      "border": [1, "#6E5A33"]
+    },
+    "plaque": {
+      "h": 36,
+      "padding": [0, 12, 0, 8],
+      "gap": 8,
+      "keyChipH": 22,
+      "radius": 3
+    },
+    "inkButtonH": {
+      "slip": 54,
+      "report": 54,
+      "order": 58,
+      "worldCard": 72
+    },
+    "frameButtonH": 54,
+    "paperPad": {
+      "hoverTag": [9, 12, 10, 12],
+      "slip": [12, 14, 10, 18],
+      "report": [12, 46, 16, 46],
+      "order": [26, 48, 26, 48],
+      "telexStrip": [9, 34, 10, 34]
+    },
+    "rowGap": [2, 6],
+    "sectionGap": [10, 14],
+    "cardGap": 20,
+    "hitMin": 44,
+    "telexStrip": {
+      "w": 820,
+      "h": 52,
+      "holeColumn": 10,
+      "holePitch": 13
+    },
+    "deltaTag": [84, 36],
+    "hoverTagW": [270, 300],
+    "teamFigure": {
+      "_": "mm = dünya ölçüsü",
+      "baseMm": [70, 48, 6],
+      "pawnHeightMm": 26,
+      "pawnRadiusMm": 6,
+      "pawnSpacingMm": 19,
+      "plateDiameterMm": 21,
+      "screenPx": {
+        "K2": 70,
+        "K1": 30
+      },
+      "anchorOffsetMapPx": [0, 110],
+      "hitMinPx": 44,
+      "formIconPx": [34, 26]
+    },
+    "slipW": {
+      "tr": 436,
+      "en": 452
+    },
+    "reportW": 600,
+    "orderW": 760,
+    "folderTab": [236, 112],
+    "roomCardTex": [380, 110],
+    "panelTex": [600, 800]
+  },
+  "motion": {
+    "_": "★ saniye. Sade motion aynen geçerli; bunlar oda/fiziksel kontrol süreleri.",
+    "poseS": 0.45,
+    "poseRiseS": 0.15,
+    "keyClickS": 0.06,
+    "lampOnS": 0.08,
+    "hoverLiftMm": 4,
+    "keyPressMm": 6,
+    "slipOpenS": 0.14,
+    "slipCloseS": 0.09,
+    "stringS": 0.12,
+    "stampS": 0.1,
+    "inkDarkenS": 0.2,
+    "counterRollS": 0.35,
+    "counterWheelDelayS": 0.12,
+    "deltaTagHoldS": 1.5,
+    "deltaTagFadeS": 0.2,
+    "telexLineS": 0.4,
+    "telexCharS": 0.03,
+    "telexStripInS": 0.15,
+    "telexStripHoldS": 3,
+    "telexStripOutS": 0.12,
+    "crtTurnS": 0.5,
+    "crtOpenLineS": 0.15,
+    "crtSyncBoxS": 0.1,
+    "crtTotalS": 2.3,
+    "crtReturnS": 0.6,
+    "shiftSequenceS": 2.6,
+    "coverLiftS": 0.25,
+    "coverAutoCloseS": 4,
+    "bulbDimS": 0.35,
+    "bulbDimTo": 0.3,
+    "generatorBackS": 1.4,
+    "reportDropS": 0.35,
+    "reportFileS": 0.4,
+    "briefDropS": 0.35,
+    "briefLiftS": 0.25,
+    "bulbFlicker": {
+      "periodS": [3, 9],
+      "blinks": [2, 3],
+      "blinkS": [0.06, 0.12],
+      "min": 0.6
+    },
+    "team": {
+      "dragThresholdPx": 6,
+      "holdS": 0.15,
+      "pickUpS": 0.12,
+      "liftMm": 25,
+      "tiltDeg": 6,
+      "followLagS": 0.08,
+      "dropS": 0.15,
+      "bounceMm": 2,
+      "bounceBackS": 0.25,
+      "autoMoveS": 0.6,
+      "autoArcMm": 10
+    }
+  },
+  "cameras": {
+    "_": "★ Unity koordinatı (x sağ, y yukarı, z ileri), metre. K1 Physical Camera + lens shift; diğerleri bakış hedefli.",
+    "K1": {
+      "pos": [0, 1.52, -0.15],
+      "rotDeg": [0, 0, 0],
+      "fovV": 56.7,
+      "lensShiftY": -0.324
+    },
+    "map": {
+      "_": "K2, K3, K6b, K7",
+      "pos": [0, 2.75, 1.3],
+      "target": [0, 0.76, 1.36],
+      "fovV": 30
+    },
+    "K4": {
+      "shelf": {
+        "pos": [-1.5, 0, 1.72],
+        "yawDeg": -35
+      },
+      "localPos": [0, 1.15, 1.04],
+      "localTarget": [0, 1.1, 0],
+      "fovV": 48
+    },
+    "K5a": {
+      "screenLocalPos": [0, -0.02, 0.62],
+      "screenLocalTarget": [0, -0.035, 0],
+      "fovV": 46
+    },
+    "K6a": {
+      "pos": [0.32, 1.28, -0.36],
+      "target": [0.38, 0.86, 1.25],
+      "fovV": 60
+    }
+  },
+  "lights": {
+    "_": "★ “preview” = referans render’daki three.js değerleri (fiziksel, decay 2, range 0 = sonsuz). “urpStart” = URP için başlangıç önerisi; referans render ile ekran görüntüsü karşılaştırarak ayarla. Bloom ve post-processing yok.",
+    "bulb": {
+      "type": "Point",
+      "color": "#FFCF86",
+      "kelvin": 2700,
+      "pos": [0.12, 1.99, 1.7],
+      "shadows": true,
+      "emissive": {
+        "color": "#FFD27A",
+        "intensity": 2.5
+      },
+      "preview": {
+        "intensity": 4.2,
+        "decay": 2,
+        "range": 0
+      },
+      "urpStart": {
+        "intensity": 1.0,
+        "range": 6
+      }
+    },
+    "deskLamp": {
+      "type": "Spot",
+      "color": "#FFD9A0",
+      "angle": 47,
+      "penumbra": 0.55,
+      "target": [0.02, 0.76, 1.22],
+      "shadows": true,
+      "preview": {
+        "intensity": 9.0,
+        "decay": 2,
+        "range": 0
+      },
+      "urpStart": {
+        "intensity": 1.2,
+        "range": 3,
+        "innerAngle": 30
+      }
+    },
+    "crtLeak": {
+      "type": "Point",
+      "color": "#7FD9A0",
+      "pos": "CRT ekranının 0,42 m önü, 0,05 m altı",
+      "shadows": false,
+      "preview": {
+        "intensity": 0.8,
+        "decay": 2,
+        "range": 2.4
+      },
+      "urpStart": {
+        "intensity": 0.6,
+        "range": 2.4
+      }
+    },
+    "roomBulb": {
+      "type": "Point",
+      "color": "#FFD8A0",
+      "only": "çalışan oda",
+      "preview": {
+        "intensity": 0.144,
+        "decay": 2,
+        "range": 0.45
+      },
+      "urpStart": {
+        "intensity": 0.15,
+        "range": 0.45
+      }
+    },
+    "amberSwitch": {
+      "type": "Point",
+      "color": "#FFB060",
+      "only": "K6a",
+      "preview": {
+        "intensity": 0.35,
+        "decay": 2,
+        "range": 0.8
+      },
+      "urpStart": {
+        "intensity": 0.35,
+        "range": 0.8
+      }
+    },
+    "radioDial": {
+      "type": "Point",
+      "color": "#FFA850",
+      "preview": {
+        "intensity": 0.12,
+        "decay": 2,
+        "range": 0.6
+      },
+      "urpStart": {
+        "intensity": 0.1,
+        "range": 0.6
+      }
+    },
+    "ambient": {
+      "type": "Gradient",
+      "sky": "#7F90A6",
+      "ground": "#16140F",
+      "preview": {
+        "default": 0.6,
+        "K4": 0.22,
+        "K6a": 0.42
+      },
+      "urpStart": "Environment Lighting: Gradient sky #7F90A6 → ground #16140F, yoğunluk 0,6"
+    },
+    "dim": {
+      "_": "Vardiya dizisinde (K6a) ampul ×0,3, masa lambası ×0,6; 1,4 s’de geri gelir.",
+      "bulbScale": 0.3,
+      "deskLampScale": 0.6
+    }
+  },
+  "materials": {
+    "_": "★ URP Lit; renk + pürüzlülük + metal, gerekirse küçük doku. Özel shader yok.",
+    "concreteWall": {
+      "hex": "#7C837F",
+      "roughness": 0.96,
+      "metal": 0,
+      "texture": "tx_concrete_2k (15 cm kalıp izi + nem lekesi)"
+    },
+    "floor": {
+      "hex": "#5A5B54",
+      "roughness": 0.95,
+      "metal": 0
+    },
+    "ceiling": {
+      "hex": "#2C2D29",
+      "roughness": 0.95,
+      "metal": 0
+    },
+    "steel": {
+      "hex": "#4A5045",
+      "roughness": 0.55,
+      "metal": 0.25
+    },
+    "steelDark": {
+      "hex": "#33382F",
+      "roughness": 0.6,
+      "metal": 0.25
+    },
+    "galv": {
+      "hex": "#70756E",
+      "roughness": 0.5,
+      "metal": 0.45
+    },
+    "pipe": {
+      "hex": "#3F4A3D",
+      "roughness": 0.55,
+      "metal": 0.2
+    },
+    "brass": {
+      "hex": "#B8955A",
+      "roughness": 0.36,
+      "metal": 0.85
+    },
+    "brassDark": {
+      "hex": "#8C6F3E",
+      "roughness": 0.45,
+      "metal": 0.8
+    },
+    "bakelite": {
+      "hex": "#24180F",
+      "roughness": 0.38,
+      "metal": 0
+    },
+    "olive": {
+      "hex": "#4B5340",
+      "roughness": 0.62,
+      "metal": 0.15
+    },
+    "oliveLight": {
+      "hex": "#5C6455",
+      "roughness": 0.6,
+      "metal": 0.15
+    },
+    "lino": {
+      "hex": "#34503F",
+      "roughness": 0.72,
+      "metal": 0
+    },
+    "chrome": {
+      "hex": "#C8CCCC",
+      "roughness": 0.22,
+      "metal": 1
+    },
+    "coverRed": {
+      "hex": "#B8241A",
+      "roughness": 0.42,
+      "metal": 0.05
+    },
+    "crtCase": {
+      "hex": "#4F5446",
+      "roughness": 0.62,
+      "metal": 0.05
+    },
+    "crtScreen": {
+      "hex": "#07100B",
+      "roughness": 0.9,
+      "metal": 0,
+      "emissive": "#A6E8B8"
+    },
+    "counterFace": {
+      "hex": "#1B130C",
+      "roughness": 0.45,
+      "metal": 0.35,
+      "emissiveIntensity": 0.16
+    },
+    "lampGlass": {
+      "hex": "#1E5236",
+      "roughness": 0.18,
+      "metal": 0.1
+    },
+    "wood": {
+      "hex": "#6B4A2E",
+      "roughness": 0.7,
+      "metal": 0
+    },
+    "cork": {
+      "hex": "#A27B52",
+      "roughness": 0.97,
+      "metal": 0
+    },
+    "paper": {
+      "hex": "#EFE6D0",
+      "roughness": 0.92,
+      "metal": 0
+    },
+    "pawn": {
+      "hex": "#C9A77A",
+      "roughness": 0.75,
+      "metal": 0
+    },
+    "roomWall": {
+      "hex": "#CFC6AE",
+      "roughness": 0.9,
+      "metal": 0
+    },
+    "rubble": {
+      "hex": "#77746A",
+      "roughness": 0.95,
+      "metal": 0
+    },
+    "genGreen": {
+      "hex": "#3E6B4A",
+      "roughness": 0.5,
+      "metal": 0.2
+    },
+    "teamBase": {
+      "hex": "#A8844E",
+      "roughness": 0.5,
+      "metal": 0.7
+    },
+    "teamRim": {
+      "hex": "#5C4826",
+      "roughness": 0.5,
+      "metal": 0.6
+    },
+    "teamPlate": {
+      "hex": "#24180F",
+      "roughness": 0.38,
+      "metal": 0
+    }
+  }
+}

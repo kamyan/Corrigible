@@ -33,7 +33,12 @@ namespace Corrigible.Desk
         [SerializeField] RectTransform[] teamRouteArrows = Array.Empty<RectTransform>();
         [SerializeField] FieldReportView[] reports = Array.Empty<FieldReportView>();
         bool illusion;
+        bool liberationStyle;
+        Color liberationLand;
+        SadeMapStateVM last;
         public RegionSlot[] Regions => regions;
+        /// <summary>Sığınak görünümünün kurtuluş haritası: Sade işaretleri gizli, bölgeler düz kâğıt (çizimi başka katman yapar).</summary>
+        public bool LiberationStyle => liberationStyle;
         public SadeTeamTokenView[] Teams => teams;
         public FieldReportView[] Reports => reports;
         public event Action<string> ReportClicked;
@@ -70,6 +75,18 @@ namespace Corrigible.Desk
                     if (line != null) line.SetDash(on ? Array.Empty<float>() : new[] { 7f, 4f });
         }
 
+        /// <summary>
+        /// Kurtuluş biçimi (Docs/UI_Siginak Aşama 5): düğüm, Sade etiketi, karantina, iplik, ekip jetonu, rapor ve uyarı
+        /// gizlenir; bölge dolgusu <paramref name="land"/> rengini alır. Tıklama alanı olarak dolgular etkin kalır.
+        /// </summary>
+        public void SetLiberationStyle(bool on, Color land)
+        {
+            if (liberationStyle == on && liberationLand == land) return;
+            liberationStyle = on;
+            liberationLand = land;
+            if (last != null) Bind(last);
+        }
+
         public void HighlightRegion(string id)
         {
             foreach (var slot in regions) DeskUi.SetActive(slot.Highlight, slot.Id == id);
@@ -83,6 +100,8 @@ namespace Corrigible.Desk
         public void Bind(SadeMapStateVM vm)
         {
             if (vm == null) return;
+            last = vm;
+            if (liberationStyle) { BindLiberation(vm); return; }
             var theme = SadeTheme.Active;
             foreach (var slot in regions)
             {
@@ -196,6 +215,31 @@ namespace Corrigible.Desk
                 if (r != null)
                     report.GetComponent<SadeMarkerAnchor>()?.SetPoint(new Vector2(r.X, r.Y), Vector2.zero);
             }
+        }
+
+        void BindLiberation(SadeMapStateVM vm)
+        {
+            foreach (var slot in regions)
+            {
+                bool visible = false;
+                foreach (var r in vm.Regions) if (r.Id == slot.Id) { visible = true; break; }
+                if (slot.Fill != null)
+                {
+                    slot.Fill.gameObject.SetActive(visible);
+                    slot.Fill.SetAppearance(liberationLand);
+                }
+                if (slot.Node != null) slot.Node.gameObject.SetActive(false);
+                if (slot.Label != null) slot.Label.gameObject.SetActive(false);
+                DeskUi.SetActive(slot.Quarantine, false); DeskUi.SetActive(slot.QuarantineHatch, false);
+                DeskUi.SetActive(slot.QuarantineOutline, false); DeskUi.SetActive(slot.Ripple, false);
+                DeskUi.SetActive(slot.Alert, false); DeskUi.SetActive(slot.Selection, false); DeskUi.SetActive(slot.Highlight, false);
+            }
+            if (sharedAlert != null) DeskUi.SetActive(sharedAlert, false);
+            foreach (var thread in threads) if (thread != null) DeskUi.SetActive(thread, false);
+            foreach (var token in teams) if (token != null) DeskUi.SetActive(token, false);
+            foreach (var line in teamRouteLines) if (line != null) DeskUi.SetActive(line, false);
+            foreach (var arrow in teamRouteArrows) if (arrow != null) DeskUi.SetActive(arrow, false);
+            foreach (var report in reports) if (report != null) DeskUi.SetActive(report, false);
         }
 
         RegionSlot Find(string id)

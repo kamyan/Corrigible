@@ -1,0 +1,191 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Corrigible.Desk
+{
+    /// <summary>
+    /// Kurtuluş haritasının çizim katmanı (K2/K3): bölge işaretleri, S-07 fişi, lejant, kırmızı ip ve masa lambası
+    /// dairesi. Sade haritanın dünya canvas'ı içinde, tasarım dikdörtgeninde (1920 × 1080, sol üst) durur; tıklama ve
+    /// üzerine gelme Sade bölge dolgularından gelir. Harita ↔ dünya dönüşümü ve bölge isabeti (figür bırakma) buradadır.
+    /// Yalnız yeni görünümde etkindir.
+    /// </summary>
+    public sealed class LiberationMapLayer : MonoBehaviour
+    {
+        [Serializable] public struct Anchor { public string id; public Vector2 point; }
+
+        [Tooltip("Tasarım dikdörtgeni (1920 × 1080, pivot sol üst); harita pikseli bunun yerel uzayıdır.")]
+        [SerializeField] RectTransform frame;
+        [SerializeField] LiberationRegionMarks[] regions = Array.Empty<LiberationRegionMarks>();
+        [Tooltip("Ekip noktası (bölge başına; yoksa etiket + 110 px). Data/Siginak/team_anchors.json'dan kurulur.")]
+        [SerializeField] Anchor[] teamAnchors = Array.Empty<Anchor>();
+        [Tooltip("Sığınak (S-07) fişinin yeri ve yaralı ekibin durduğu nokta.")]
+        [SerializeField] Vector2 shelterPoint, shelterTeamPoint;
+        [SerializeField] UILineGraphic stringLine, stringShadow;
+        [Tooltip("Basılı lejant (fiş yerleşimi onu da örtmemeye çalışır).")]
+        [SerializeField] RectTransform legend;
+
+        readonly List<Vector2> curve = new List<Vector2>(3);
+        string hovered;
+        LiberationMapState state;
+
+        public event Action<string> RegionClicked;
+        public LiberationMapState State => state;
+        public IReadOnlyList<LiberationRegionMarks> Regions => regions;
+        public Vector2 ShelterTeamPoint => shelterTeamPoint;
+
+        public void Configure(RectTransform designFrame, LiberationRegionMarks[] marks, Anchor[] anchors, Vector2 shelter, Vector2 shelterTeam,
+            UILineGraphic redString, UILineGraphic redStringShadow, RectTransform legendBox)
+        {
+            frame = designFrame; regions = marks; teamAnchors = anchors; shelterPoint = shelter; shelterTeamPoint = shelterTeam;
+            stringLine = redString; stringShadow = redStringShadow; legend = legendBox;
+        }
+
+        /// <summary>Lejantın harita dikdörtgeni (sol üst orijin).</summary>
+        public Rect LegendRect
+        {
+            get
+            {
+                if (legend == null) return default;
+                var corners = new Vector3[4];
+                legend.GetWorldCorners(corners);
+                Vector2 a = WorldToMap(corners[0]), b = WorldToMap(corners[2]);
+                return Rect.MinMaxRect(Mathf.Min(a.x, b.x), Mathf.Min(a.y, b.y), Mathf.Max(a.x, b.x), Mathf.Max(a.y, b.y));
+            }
+        }
+
+        void OnEnable()
+        {
+            foreach (var r in regions)
+            {
+                if (r == null || r.Hit == null) continue;
+                r.Hit.Clicked += Clicked;
+                r.Hit.Hovered += Hovered;
+            }
+        }
+
+        void OnDisable()
+        {
+            foreach (var r in regions)
+            {
+                if (r == null || r.Hit == null) continue;
+                r.Hit.Clicked -= Clicked;
+                r.Hit.Hovered -= Hovered;
+            }
+            SetHovered(null);
+        }
+
+        /// <summary>Girdi kilidi (modal, baskın); bağlayıcı kurar.</summary>
+        public Func<bool> Blocked;
+
+        void Clicked(string id)
+        {
+            if (Blocked != null && Blocked()) return;
+            RegionClicked?.Invoke(id);
+        }
+
+        void Hovered(string id, bool on)
+        {
+            if (on && Blocked != null && Blocked()) return;
+            SetHovered(on ? id : hovered == id ? null : hovered);
+        }
+
+        public void SetHovered(string id)
+        {
+            if (hovered == id) return;
+            hovered = id;
+            foreach (var r in regions) if (r != null) r.SetHovered(r.RegionId == id);
+        }
+
+        public void Bind(LiberationMapState s)
+        {
+            state = s;
+            foreach (var r in regions) if (r != null) r.Bind(s?.Find(r.RegionId));
+        }
+
+        public LiberationRegionMarks Marks(string id)
+        {
+            foreach (var r in regions) if (r != null && r.RegionId == id) return r;
+            return null;
+        }
+
+        // ---------- Harita ↔ dünya ----------
+
+        public Vector3 MapToWorld(Vector2 p)
+        {
+            var r = frame.rect;
+            return frame.TransformPoint(new Vector3(r.xMin + p.x, r.yMax - p.y, 0));
+        }
+
+        public Vector2 WorldToMap(Vector3 world)
+        {
+            var r = frame.rect;
+            var local = frame.InverseTransformPoint(world);
+            return new Vector2(local.x - r.xMin, r.yMax - local.y);
+        }
+
+        /// <summary>Haritanın dünyadaki dönüşü (fişler aynı düzlemde yatar).</summary>
+        public Quaternion MapRotation => frame.rotation;
+
+        /// <summary>Haritanın düzlemi (normal yukarı, kâğıdın görünen yüzü).</summary>
+        public Plane MapPlane => new Plane(-frame.forward, frame.position);
+
+        /// <summary>Haritadaki bir metre kaç harita pikseli (masada 1600 px/m).</summary>
+        public float PixelsPerMeter => 1f / Mathf.Max(1e-6f, frame.lossyScale.x);
+
+        /// <summary>Dünya noktasının altındaki bölge (deniz ve delikler hariç); yoksa null.</summary>
+        public string RegionAt(Vector3 world)
+        {
+            var p = WorldToMap(world);
+            foreach (var r in regions)
+                if (r != null && r.Hit != null && r.gameObject.activeInHierarchy && r.Hit.ContainsMapPoint(p)) return r.RegionId;
+            return null;
+        }
+
+        /// <summary>Ekip noktası: bölge verisi <c>teamAnchor</c>; yoksa etiket + (0, 110).</summary>
+        public Vector2 TeamAnchor(string id)
+        {
+            foreach (var a in teamAnchors) if (a.id == id) return a.point;
+            var m = Marks(id);
+            return m != null ? m.LabelPoint + SiginakTheme.Active.Vector2Of("space.teamFigure.anchorOffsetMapPx") : shelterTeamPoint;
+        }
+
+        // ---------- Kırmızı ip (K2: fişin raptiyesinden cephe raptiyesine, 3 noktalı eğri) ----------
+
+        public void SetString(bool on, Vector2 from = default, Vector2 to = default)
+        {
+            stringLine.gameObject.SetActive(on);
+            stringShadow.gameObject.SetActive(on);
+            if (!on) return;
+            var mid = (from + to) * 0.5f;
+            // İp kâğıt üstünde hafifçe sarkar: orta nokta aşağı (haritada y artar)
+            float sag = Mathf.Min(60, Vector2.Distance(from, to) * 0.12f);
+            curve.Clear();
+            curve.Add(from); curve.Add(mid + new Vector2(0, sag)); curve.Add(to);
+            stringLine.Curve = LineCurve.Quadratic;
+            stringLine.SetPointsTopLeft(curve, Vector2.zero);
+            var offset = SiginakTheme.Active.Vector2Of("space.stringShadowPx");
+            if (offset == Vector2.zero) offset = new Vector2(2, 3);
+            for (int i = 0; i < curve.Count; i++) curve[i] += offset;
+            stringShadow.Curve = LineCurve.Quadratic;
+            stringShadow.SetPointsTopLeft(curve, Vector2.zero);
+        }
+
+        // ---------- K3 dizisi ----------
+
+        /// <summary>Özgürleşen bölge: damga ve silinme.</summary>
+        public void PlayFreed(string id, float delay) => Marks(id)?.AnimateFreed(delay);
+
+        /// <summary>Adaylar 0,12 s arayla kesik kalem halkasıyla çizilir (0,3 s).</summary>
+        public float PlayCandidates(IList<string> ids, float delay)
+        {
+            var t = SiginakTheme.Active;
+            float step = t.NumberOf("motion.candidateStepS", 0.12f), draw = t.NumberOf("motion.candidateDrawS", 0.3f);
+            for (int i = 0; i < ids.Count; i++) Marks(ids[i])?.AnimateRing(delay + i * step, draw);
+            return delay + Mathf.Max(0, ids.Count - 1) * step + draw;
+        }
+
+        /// <summary>Yeni cephe: yağlı kalem halkası 0,4 s'de çizilir.</summary>
+        public void PlayFrontOpened(string id) => Marks(id)?.AnimateRing(0, SiginakTheme.Active.NumberOf("motion.greaseRingS", 0.4f));
+    }
+}

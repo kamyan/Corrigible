@@ -8,7 +8,7 @@ namespace Corrigible.Desk
 {
     /// <summary>Komuta masasında oturan oyuncunun sınırlı bakışını ve harita odağını yönetir.</summary>
     [RequireComponent(typeof(Camera))]
-    public sealed class CommandPostCamera : MonoBehaviour
+    public sealed class CommandPostCamera : MonoBehaviour, IDeskCameraRig
     {
         [SerializeField] CommandPostDesk desk;
         [SerializeField] Camera view;

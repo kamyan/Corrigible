@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>K3 · Uygulama notu</title>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&family=Kalam:wght@700&display=swap">
+<style>
+body{margin:0;background:#1C372C}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../../sprites/tx_paper_grain.png);background-size:128px 128px}
+</style>
+</helmet>
+<div class="grain" style="width: 1200px; height: 1080px; box-sizing: border-box; background-color: #F1E9D6; color: #1E1B16; font-family: 'Libre Franklin', Arial, sans-serif; display: flex; flex-direction: column">
+  <div style="padding: 26px 32px 14px 32px; border-bottom: 2px solid #D2483F; display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+    <div style="font: 700 28px 'Courier Prime', monospace; letter-spacing: 0.04em">K3 · YENİ CEPHE SEÇİMİ</div>
+    <div style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em; color: #675F50">UYGULAMA NOTU · KAMERA K2 İLE AYNI</div>
+  </div>
+  <div style="flex: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; padding: 20px 32px 22px 32px; min-height: 0; font-size: 14.5px; line-height: 1.42">
+    <div style="display: flex; flex-direction: column; gap: 14px; min-width: 0">
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">SAHNE DURUMU</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div>Vardiya 019. Doğu Avrupa · 03 Sunucu merkezi yıkıldı, bölge özgür (2/12). Adaylar <span style="font: 700 13px 'Courier Prime', monospace">GameData.Links</span>’ten: Kuzey Amerika (Batı Avrupa’ya komşu), O. Doğu · K. Afrika (iki özgür bölgeye komşu), Avrasya (Doğu Avrupa’ya komşu). Seçili: Avrasya.</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">AKIŞ · SIRA VE SÜRE</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div style="display: grid; grid-template-columns: 26px minmax(0, 1fr); row-gap: 6px; column-gap: 8px">
+          <b style="font: 700 13px 'Courier Prime', monospace; color: #675F50">1</b><span>Baskın sonucu → masaya dönüş (CRT’den geri çıkış, 0,6 s).</span>
+          <b style="font: 700 13px 'Courier Prime', monospace; color: #675F50">2</b><span>0,2 s: Doğu Avrupa’ya mavi ÖZGÜR damgası iner (+6°, “tak”); tarama 0,5 s’de silinir, silgi kırıntıları 0,8 s kalır.</span>
+          <b style="font: 700 13px 'Courier Prime', monospace; color: #675F50">3</b><span>0,3 s: tekerler döner: FON +40,0 · MALZEME +6 · ÖZGÜR BÖLGE +1; altlarında kâğıt fişler 1,5 s.</span>
+          <b style="font: 700 13px 'Courier Prime', monospace; color: #675F50">4</b><span>Teleks iki satır basar: “BÖLGE ÖZGÜR · Doğu Avrupa · +30 fon”, “BEKLENİYOR · Sıradaki cepheyi seç”.</span>
+          <b style="font: 700 13px 'Courier Prime', monospace; color: #675F50">5</b><span>Adaylar 0,12 s arayla kesik kalem halkasıyla çizilir (0,3 s, kalem sesi).</span>
+          <b style="font: 700 13px 'Courier Prime', monospace; color: #675F50">6</b><span>Adaya tıkla ya da ekip figürünü adaya taşı: dolgu #F5D646 α .34, etiket fosforlu çip, figürün altında sarı halka; onay fişi ipiyle açılır (0,14 s).</span>
+          <b style="font: 700 13px 'Courier Prime', monospace; color: #675F50">7</b><span>Onay: yağlı kalem halkası çizilir (0,4 s), raptiye iner, 01 BASKINA HAZIR olur; diğer adayların halkası α .5’e iner ve fiş K2 görev fişine dönüşür. Vazgeç (Esc): figür eski yerine kayar (0,25 s).</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">BÖLGE DURUMLARI</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div style="display: grid; grid-template-columns: 118px minmax(0, 1fr); row-gap: 5px; column-gap: 10px">
+          <b style="font: 700 13px 'Courier Prime', monospace">aday</b><span>Kesik grafit halka + iç kontur (12/8) + “%100 · ADAY”.</span>
+          <b style="font: 700 13px 'Courier Prime', monospace">aday · üzerinde</b><span>Dolgu #F5D646 α .12, imleç işaretçi, 400 ms sonra etiket.</span>
+          <b style="font: 700 13px 'Courier Prime', monospace">aday · seçili</b><span>Dolgu α .34 + etiket çipi + 4 px kesik halka.</span>
+          <b style="font: 700 13px 'Courier Prime', monospace">işgal (aday değil)</b><span>Tıklanınca bilgi fişi: “Önce komşu bir bölgeyi özgürleştir.” Eylem yok.</span>
+          <b style="font: 700 13px 'Courier Prime', monospace; color: #1A4789">yeni özgür</b><span>Damga α .97 (taze mürekkep) + koyu silgi lekesi; bir vardiya sonra normal özgüre (α .86) döner.</span>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 14px; min-width: 0">
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">ONAY FİŞİ</span><span style="flex: 1; height: 1px; background: #675F50"></span><span style="font: 400 12px 'Libre Franklin', Arial, sans-serif; color: #675F50">World Space Canvas</span></div>
+        <div>404 × ~360 px · 9 dilim dizin kâğıdı #FBF7EC · gölge (4, 5) α .42 · +1,2° dönük. Raptiye sağ üstte; kırmızı ip seçili adayın halkasına bağlanır.</div>
+        <div><b>Yerleşim:</b> seçili adayı ve diğer adayları örtmeyen boş alan (burada Hint Okyanusu). Okyanusya ve Güneydoğu Asya etiketlerini örtebilir; bu bölgeler bu anda pasiftir.</div>
+        <div style="display: grid; grid-template-columns: 106px minmax(0, 1fr); row-gap: 4px; column-gap: 10px">
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">başlık</span><span>CP 700 14 “YENİ CEPHE · ONAY” · bölge CP 700 28 · komşu satırı LF 16.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">sektörler</span><span>CP 700 15, tür ink3. Bu bölgenin 3 sektörü baştan kilitli; ilki onayla açılır.</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">kural</span><span>LF 15 ink2: “Aynı anda tek cephe açık olabilir.”</span>
+          <span style="font: 700 12px 'Courier Prime', monospace; color: #675F50">eylem</span><span>Mürekkep düğme 52 px “Enter · SEÇİLİ BÖLGEDE CEPHE AÇ” · Vazgeç 30 px (Esc).</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">GERİ BİLDİRİM</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div><b>Sayaç fişi:</b> teleks kâğıdı #EFE4BC, 1 px #C9B98A, gölge (2, 3) α .35, CP 700 18; artış #24592E, azalış #9A1E14 ve başta “+ / −” işareti (renk tek başına taşımaz). 1,5 s sonra 0,2 s’de solar. Modül penceresinin alt kenarına asılır.</div>
+        <div><b>Teleks:</b> her emir ve sonuç sol uçtaki telekste bir satır; bu pozda şeridin sonu görünür.</div>
+        <div><b>Hata örneği:</b> “YAPILAMADI · Avrasya: cephe zaten açık (Doğu Avrupa 2/3)” — K2 durumundayken aday seçilmeye çalışılırsa.</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 5px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 13px 'Courier Prime', monospace; letter-spacing: 0.08em">SES</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+        <div>Damga: tok kısa “tak” (kauçuk + tahta). Silgi: 0,5 s kuru sürtme. Kalem: 0,3 s grafit çizgi. Tekerler: her rakam için hafif tık. Teleks: 0,4 s tıkırtı dizisi. Hepsi oda yankısıyla (küçük beton oda, 0,4 s).</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1200,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

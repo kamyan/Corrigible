@@ -1,0 +1,87 @@
+using System;
+using UnityEngine;
+using UnityEngine.EventSystems;
+
+namespace Corrigible.Desk
+{
+    /// <summary>
+    /// Odadaki tıklanır nesne (K1 notu › etkileşim): “pirinç plakası olan her nesne tıklanır”. Üzerine gelince nesne 4 mm
+    /// kalkar, 400 ms sonra kâğıt etiket (ad + kısayol + tek satır) çıkar; büyük hedeflerde sarı çerçeve. Kamerada
+    /// PhysicsRaycaster ve nesnede çarpıştırıcı gerekir. Metinler Türkçe kaynaktır, gösterirken çevrilir.
+    /// </summary>
+    [RequireComponent(typeof(Collider))]
+    public sealed class DeskTarget : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+    {
+        /// <summary>Girdi kilidi (modal, hikâye, baskın); bağlayıcı kurar.</summary>
+        public static Func<bool> Blocked;
+
+        [SerializeField] string title, keyHint, line;
+        [Tooltip("Büyük hedef: üzerindeyken sarı çerçeve (kesit maketi, harita).")]
+        [SerializeField] bool frame;
+        [Tooltip("Üzerindeyken kalkan parça (yoksa kalkmaz).")]
+        [SerializeField] Transform lift;
+        [SerializeField] Renderer[] bounds = Array.Empty<Renderer>();
+        [SerializeField] HoverTag hoverTag;
+        [SerializeField] HoverHighlight highlight;
+
+        Vector3 rest;
+        float lifted, target;
+        bool hovered;
+
+        public event Action Clicked;
+        public event Action<bool> Hovered;
+        public bool Interactable { get; set; } = true;
+        public bool IsHovered => hovered;
+        /// <summary>Etiketin satırını değiştirir (ör. devre dışı gerekçesi); kaynak metin değil, gösterilecek metin.</summary>
+        public string LineOverride { get; set; }
+        public string Title => title;
+        public string KeyHint => keyHint;
+        public string Line => LineOverride ?? (string.IsNullOrEmpty(line) ? null : Corrigible.Core.Loc.T(line));
+        public Renderer[] Bounds => bounds;
+
+        public void Configure(string titleSource, string key, string lineSource, bool bigFrame, Transform liftPart, Renderer[] boundRenderers,
+            HoverTag hoverTag, HoverHighlight hoverHighlight)
+        {
+            title = titleSource; keyHint = key; line = lineSource; frame = bigFrame; lift = liftPart; bounds = boundRenderers;
+            this.hoverTag = hoverTag; highlight = hoverHighlight;
+        }
+
+        void Awake() { if (lift != null) rest = lift.localPosition; }
+
+        static bool IsBlocked => Blocked != null && Blocked();
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            if (IsBlocked) return;
+            SetHovered(true);
+        }
+
+        public void OnPointerExit(PointerEventData eventData) => SetHovered(false);
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (eventData.button != PointerEventData.InputButton.Left || IsBlocked || !Interactable) return;
+            Clicked?.Invoke();
+        }
+
+        void SetHovered(bool on)
+        {
+            if (hovered == on) return;
+            hovered = on;
+            target = on ? SiginakTheme.Active.Number("motion.hoverLiftMm", 4) / 1000f : 0;
+            if (hoverTag != null) { if (on) hoverTag.Show(this); else hoverTag.Hide(this); }
+            if (highlight != null && frame) { if (on) highlight.Show(bounds); else highlight.Hide(bounds); }
+            Hovered?.Invoke(on);
+        }
+
+        void OnDisable() => SetHovered(false);
+
+        void Update()
+        {
+            if (hovered && IsBlocked) SetHovered(false);
+            if (lift == null || Mathf.Approximately(lifted, target)) return;
+            lifted = Mathf.MoveTowards(lifted, target, Time.unscaledDeltaTime / 0.08f * 0.004f);
+            lift.localPosition = rest + Vector3.up * lifted;
+        }
+    }
+}

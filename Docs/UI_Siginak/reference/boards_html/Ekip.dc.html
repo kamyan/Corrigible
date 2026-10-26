@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Ekip figürü · harita üstünde taşıma</title>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&family=Kalam:wght@700&display=swap">
+<style>
+body{margin:0;background:#1C372C}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../../sprites/tx_paper_grain.png);background-size:128px 128px}
+</style>
+</helmet>
+<div class="grain" style="width: 1920px; height: 1080px; box-sizing: border-box; background-color: #F1E9D6; color: #1E1B16; font-family: 'Libre Franklin', Arial, sans-serif; padding: 30px 48px 30px 48px; display: flex; flex-direction: column; gap: 18px; overflow: hidden">
+  <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 24px; border-bottom: 2px solid #D2483F; padding-bottom: 10px">
+    <div style="display: flex; align-items: baseline; gap: 16px"><span style="font: 700 15px 'Courier Prime', monospace; letter-spacing: 0.1em; color: #675F50">K2–K3 · K6</span><span style="font: 700 32px 'Courier Prime', monospace; letter-spacing: 0.04em">EKİP FİGÜRÜ · HARİTA ÜSTÜNDE TAŞIMA</span></div>
+    <span style="font: 400 19px 'Libre Franklin', Arial, sans-serif; color: #463F34">Düz jeton yerine masadaki fiziksel figür: yeri oyun durumundan gelir, elle taşınır.</span>
+  </div>
+  <div style="flex: 1; min-height: 0; display: grid; grid-template-columns: 1100px minmax(0, 1fr); gap: 40px">
+    <div style="display: flex; flex-direction: column; gap: 14px; min-width: 0">
+      <div style="position: relative; width: 1100px; height: 640px">
+        <img src="../board_assets/team_carry.jpg" alt="Ekip figürü Doğu Avrupa'dan Avrasya'ya taşınıyor; Avrasya aday bölgesi sarı" style="width: 1100px; height: 640px; object-fit: cover; display: block; border: 1px solid #1E1B16; box-shadow: 4px 5px 0 rgba(0,0,0,0.3)">
+        <div class="grain" style="position: absolute; left: 760px; top: 420px; width: 300px; padding: 9px 12px 10px 12px; background-color: #FBF7EC; border: 1.5px solid #1E1B16; border-radius: 2px; box-shadow: 3px 5px 0 rgba(0,0,0,0.45); display: flex; flex-direction: column; gap: 4px; box-sizing: border-box">
+          <span style="font: 700 18px 'Courier Prime', monospace; letter-spacing: 0.06em">BIRAK: AVRASYA</span>
+          <span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; color: #463F34; line-height: 1.35">Cephe onay fişi açılır. Enter cepheyi açar, Esc figürü geri gönderir.</span>
+        </div>
+        <svg width="1100" height="640" viewBox="0 0 1100 640" style="position: absolute; left: 0; top: 0; pointer-events: none" aria-hidden="true">
+          <path d="M452 372 Q500 400 552 356" fill="none" stroke="#4A4A48" stroke-width="3" stroke-dasharray="9 6" stroke-linecap="round"></path>
+          <path d="M538.2 358.5 L552 356 L547.3 369.2" fill="none" stroke="#4A4A48" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M760 432 L706 374" stroke="#1E1B16" stroke-width="1.5"></path>
+        </svg>
+        <span style="position: absolute; left: 14px; top: 12px; font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em; color: #FBF7EC; background: rgba(14,9,6,0.85); padding: 3px 8px">K3 · ÜST HARİTA POZU · TAŞIMA ANI</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <img src="../board_assets/team_states.jpg" alt="Ekip figürünün dört hali: hazır, seçili, taşınıyor, yaralı" style="width: 1100px; height: 214px; object-fit: cover; display: block; border: 1px solid #1E1B16">
+        <div style="position: relative; height: 40px"><div style="position: absolute; left: -4px; top: 0; width: 220px; display: flex; flex-direction: column; align-items: center; gap: 1px"><span style="font: 700 15px 'Courier Prime', monospace; letter-spacing: 0.06em">HAZIR</span><span style="font: 400 14px 'Libre Franklin', Arial, sans-serif; color: #463F34">cephede, dik</span></div><div style="position: absolute; left: 287px; top: 0; width: 220px; display: flex; flex-direction: column; align-items: center; gap: 1px"><span style="font: 700 15px 'Courier Prime', monospace; letter-spacing: 0.06em">ÜZERİNDE / SEÇİLİ</span><span style="font: 400 14px 'Libre Franklin', Arial, sans-serif; color: #463F34">sarı halka</span></div><div style="position: absolute; left: 577px; top: 0; width: 220px; display: flex; flex-direction: column; align-items: center; gap: 1px"><span style="font: 700 15px 'Courier Prime', monospace; letter-spacing: 0.06em">TAŞINIYOR</span><span style="font: 400 14px 'Libre Franklin', Arial, sans-serif; color: #463F34">25 mm havada, −6°</span></div><div style="position: absolute; left: 868px; top: 0; width: 220px; display: flex; flex-direction: column; align-items: center; gap: 1px"><span style="font: 700 15px 'Courier Prime', monospace; letter-spacing: 0.06em">YARALI</span><span style="font: 400 14px 'Libre Franklin', Arial, sans-serif; color: #463F34">düşen üye yatık</span></div></div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 13px; min-width: 0">
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">YERİ · OYUN DURUMUNDAN GELİR</span><span style="flex: 1; height: 1px; background: #8E8166"></span></div>
+        <div style="display: grid; grid-template-columns: 104px minmax(0, 1fr); row-gap: 5px; column-gap: 10px"><span style="font: 700 13px 'Courier Prime', monospace; color: #675F50; padding-top: 1px">hazır</span><span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; line-height: 1.36">Cephe bölgesinde, etiketin altındaki <b>ekip noktasında</b> (bölge verisi <span style="font: 700 13px 'Courier Prime', monospace">teamAnchor</span>; yoksa etiket + 110 harita px).</span><span style="font: 700 13px 'Courier Prime', monospace; color: #675F50; padding-top: 1px">baskın</span><span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; line-height: 1.36">Figür haritadan kalkar (sahada). Masaya dönünce sonuca göre iner.</span><span style="font: 700 13px 'Courier Prime', monospace; color: #675F50; padding-top: 1px">başarısız</span><span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; line-height: 1.36">Figür 0,6 s’de <b>S-07</b>’ye kayar; düşen üye kadar piyon yatık, yanında “ALFA · YARALI · n GÜN”.</span><span style="font: 700 13px 'Courier Prime', monospace; color: #675F50; padding-top: 1px">iyileşince</span><span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; line-height: 1.36">Vardiya dizisinde S-07’den cepheye kayar; teleks “ALFA CEPHEDE”.</span><span style="font: 700 13px 'Courier Prime', monospace; color: #675F50; padding-top: 1px">bölge özgür</span><span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; line-height: 1.36">Figür özgür bölgede bekler; adaylar kesik halkayla çizilir (K3).</span></div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">TAŞIMA · SÜRÜKLE VE BIRAK</span><span style="flex: 1; height: 1px; background: #8E8166"></span></div>
+        <div style="display: grid; grid-template-columns: 104px minmax(0, 1fr); row-gap: 5px; column-gap: 10px"><span style="font: 700 13px 'Courier Prime', monospace; color: #675F50; padding-top: 1px">al</span><span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; line-height: 1.36">Figüre bas, 6 px sürükle (ya da 150 ms basılı tut). Geçerli bölgeler parlar, imleç el olur.</span><span style="font: 700 13px 'Courier Prime', monospace; color: #675F50; padding-top: 1px">bırak</span><span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; line-height: 1.36">K3’te adaya bırakmak = o adayı seçmek: onay fişi açılır (tıklamayla aynı). Cephe açıkken (K2) yalnız kendi cephesine bırakılır; bırakınca görev fişi açılır.</span><span style="font: 700 13px 'Courier Prime', monospace; color: #675F50; padding-top: 1px">geçersiz</span><span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; line-height: 1.36">Figür 0,25 s’de geri kayar, teleks gerekçeyi basar:</span><span style="font: 700 13px 'Courier Prime', monospace; color: #675F50; padding-top: 1px">tıkla</span><span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; line-height: 1.36">Sürükleme zorunlu değil: bölgeye tıklamak ve Enter aynı işi yapar.</span></div>
+        <div class="grain" style="margin-left: 114px; background-color: #EFE4BC; border: 1px solid #C9B98A; box-shadow: 2px 3px 0 rgba(0,0,0,0.3); padding: 7px 12px; display: flex; flex-direction: column; gap: 3px">
+          <div style="display: flex; align-items: baseline; gap: 10px; font: 700 15px 'Courier Prime', monospace"><span style="color: #675F50">019/06</span><span style="color: #9A1E14">YAPILAMADI</span><span style="font-weight: 400">Kuzey Afrika: özgür bölgeye komşu değil</span></div>
+          <div style="display: flex; align-items: baseline; gap: 10px; font: 700 15px 'Courier Prime', monospace"><span style="color: #675F50">014/09</span><span style="color: #9A1E14">YAPILAMADI</span><span style="font-weight: 400">Cephe açık: Doğu Avrupa 1/3</span></div>
+          <div style="display: flex; align-items: baseline; gap: 10px; font: 700 15px 'Courier Prime', monospace"><span style="color: #675F50">015/01</span><span style="color: #9A1E14">YAPILAMADI</span><span style="font-weight: 400">Alfa yaralı (1 gün)</span></div>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">NESNE · 3D</span><span style="flex: 1; height: 1px; background: #8E8166"></span></div>
+        <div style="display: grid; grid-template-columns: 104px minmax(0, 1fr); row-gap: 5px; column-gap: 10px"><span style="font: 700 13px 'Courier Prime', monospace; color: #675F50; padding-top: 1px">taban</span><span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; line-height: 1.36">Pirinç oval 70 × 48 × 6 mm · #A8844E R .5 M .7 · kenar #5C4826.</span><span style="font: 700 13px 'Courier Prime', monospace; color: #675F50; padding-top: 1px">piyonlar</span><span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; line-height: 1.36">3 ahşap piyon, boy 26 mm (#C9A77A), renkli baş + bant: Teknisyen #3F5F8A · EMP uzmanı #B07A2A · Analist #3E6B4A.</span><span style="font: 700 13px 'Courier Prime', monospace; color: #675F50; padding-top: 1px">plaka</span><span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; line-height: 1.36">Bakalit disk Ø 21 mm #24180F, pirinç halka #C9A86A, CP 700 “A” #EFDCAE.</span><span style="font: 700 13px 'Courier Prime', monospace; color: #675F50; padding-top: 1px">boyut</span><span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; line-height: 1.36">Ekranda K2’de ~70 px, K1’de ~30 px. Tık hedefi en az 44 px (görünmez kutu).</span><span style="font: 700 13px 'Courier Prime', monospace; color: #675F50; padding-top: 1px">halka · gölge</span><span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; line-height: 1.36">Seçili: haritada sarı halka (Quad). Taşırken altta yumuşak oval gölge (Quad, α .28), yükseldikçe büyür ve kayar.</span><span style="font: 700 13px 'Courier Prime', monospace; color: #675F50; padding-top: 1px">fişte</span><span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; line-height: 1.36"><span style="display: inline-flex; vertical-align: middle"><svg width="34" height="26" viewBox="0 0 34 26" aria-hidden="true"><ellipse cx="17" cy="14" rx="15.5" ry="10.5" fill="#B8955A" stroke="#5C4826" stroke-width="1.5"></ellipse><circle cx="9.5" cy="10" r="3.3" fill="#3F5F8A"></circle><circle cx="17" cy="8.8" r="3.3" fill="#B07A2A"></circle><circle cx="24.5" cy="10" r="3.3" fill="#3E6B4A"></circle><circle cx="17" cy="18.4" r="5.2" fill="#24180F" stroke="#C9A86A" stroke-width="1"></circle><text x="17" y="21.2" text-anchor="middle" font-family="Courier Prime, monospace" font-weight="700" font-size="8" fill="#EFDCAE">A</text></svg></span> Görev fişi ve raporda aynı figürün üstten simgesi.</span></div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">HAREKET · SES</span><span style="flex: 1; height: 1px; background: #8E8166"></span></div>
+        <div style="display: grid; grid-template-columns: 104px minmax(0, 1fr); row-gap: 5px; column-gap: 10px"><span style="font: 700 13px 'Courier Prime', monospace; color: #675F50; padding-top: 1px">al</span><span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; line-height: 1.36">0,12 s kalkar (ahşap “tık”); imleci 0,08 s gecikmeyle izler.</span><span style="font: 700 13px 'Courier Prime', monospace; color: #675F50; padding-top: 1px">bırak</span><span style="font: 400 15px 'Libre Franklin', Arial, sans-serif; line-height: 1.36">0,15 s iner, 2 mm seker (“tok”). Geri kayma 0,25 s (kâğıtta sürtünme). Kendiliğinden taşıma 0,6 s, 10 mm yay.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

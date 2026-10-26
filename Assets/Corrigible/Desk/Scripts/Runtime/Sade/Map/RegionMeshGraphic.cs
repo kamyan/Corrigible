@@ -10,7 +10,7 @@ namespace Corrigible.Desk
     /// yüklendiğinde JSON'u ya da editör kurucusunu gerektirmez. Doku UV'si tüm bölgelerde aynı tasarım fazındadır.
     /// </summary>
     [RequireComponent(typeof(CanvasRenderer))]
-    public sealed class RegionMeshGraphic : MaskableGraphic, ICanvasRaycastFilter, IPointerClickHandler
+    public sealed class RegionMeshGraphic : MaskableGraphic, ICanvasRaycastFilter, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {
         [Serializable]
         public sealed class Polygon
@@ -32,11 +32,43 @@ namespace Corrigible.Desk
         public string RegionId => regionId;
         public int PolygonCount => polygons.Length;
         public event Action<string> Clicked;
+        /// <summary>Üzerine gelme (true) ve çıkma (false); kurtuluş haritasının sarı dolgusu için.</summary>
+        public event Action<string, bool> Hovered;
         public override Texture mainTexture => texture != null ? texture : s_WhiteTexture;
 
         public void OnPointerClick(PointerEventData e)
         {
             if (e.button == PointerEventData.InputButton.Left) Clicked?.Invoke(regionId);
+        }
+
+        public void OnPointerEnter(PointerEventData e) => Hovered?.Invoke(regionId, true);
+        public void OnPointerExit(PointerEventData e) => Hovered?.Invoke(regionId, false);
+
+        /// <summary>En büyük çokgenin dış halkası (tasarım pikseli, y aşağı); kontur çizgisi için.</summary>
+        public Vector2[] LargestOuterRing()
+        {
+            Polygon best = null;
+            float bestArea = -1;
+            foreach (var polygon in polygons)
+            {
+                if (polygon == null || polygon.RingOffsets.Length < 2) continue;
+                float area = (polygon.Bounds.z - polygon.Bounds.x) * (polygon.Bounds.w - polygon.Bounds.y);
+                if (area > bestArea) { bestArea = area; best = polygon; }
+            }
+            if (best == null) return Array.Empty<Vector2>();
+            int start = best.RingOffsets[0], end = best.RingOffsets[1];
+            var ring = new Vector2[end - start];
+            Array.Copy(best.Vertices, start, ring, 0, ring.Length);
+            return ring;
+        }
+
+        /// <summary>Aynı geometriyi başka bir grafiğe kopyalar (kurucu: tarama ve seçim katmanları aynı çokgeni çizer).</summary>
+        public void CopyGeometryFrom(RegionMeshGraphic other)
+        {
+            if (other == null) return;
+            regionId = other.regionId;
+            polygons = other.polygons;
+            SetVerticesDirty();
         }
 
         /// <summary>Yalnız geometri değişince hazırlar; oluşan düz diziler sahne/prefab içinde kalıcıdır.</summary>

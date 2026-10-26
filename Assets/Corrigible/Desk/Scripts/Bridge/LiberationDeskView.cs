@@ -16,6 +16,8 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] SimDeskDataSource source;
         [SerializeField] SadeMapView map;
         [SerializeField] CommandPostCamera cameraRig;
+        [Tooltip("Sığınak görünümünün kamerası; etkinse eski komuta odası kamerasının yerine sürülür.")]
+        [SerializeField] SiginakCameraRig siginakRig;
         [SerializeField] CommandPostDesk desk;
         [SerializeField] RaidLauncher launcher;
         [SerializeField] GameObject storyRoot;
@@ -32,15 +34,29 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] UILineGraphic briefingLink;
         [SerializeField] Button closeBriefing;
         [SerializeField] TMP_Text monitorStatus;
+        [Header("Sığınak görünümü")]
+        [Tooltip("Emir sonuçları ve gerekçeleri buraya da basılır (yeni görünümde tek geri bildirim kapısı).")]
+        [SerializeField] TelexFeed telex;
+        [SerializeField] SiginakDesk siginak;
+        [Tooltip("Kurtuluş haritası (görev fişi, aday, ekip figürü); etkinken eski görev fişi gizlenir, bölge tıklaması ona gider.")]
+        [SerializeField] SiginakMap siginakMap;
+        [Tooltip("Açılış dizisi ve emir belgesi (K7); etkinken eski hikâye kâğıdının yerine geçer, H onu okuma kipinde açar.")]
+        [SerializeField] SiginakBriefing siginakBriefing;
         readonly string[] roomIds = { ShelterLogic.Living, ShelterLogic.Generator, ShelterLogic.Workshop, ShelterLogic.Infirmary };
         IDeskCommands commands;
         string selectedRegion, selectedRoom = ShelterLogic.Living;
         bool storyOpen, lastBlocked, briefingOpen = true;
         readonly Vector2[] linkPoints = new Vector2[2];
         Simulation Sim => game != null ? game.Sim : null;
+        IDeskCameraRig Rig => siginakRig != null && siginakRig.enabled ? siginakRig : cameraRig;
+        bool NewMap => siginakMap != null && siginakMap.isActiveAndEnabled;
+        bool NewBriefing => siginakBriefing != null && siginakBriefing.isActiveAndEnabled;
+        /// <summary>Baskın sonucu henüz okunmadı: operasyon raporu modalı açılacak ya da açık (K3 dizisi onu bekler).</summary>
+        public bool RaidReportPending => Sim != null && source != null && Sim.S.Raid == null && Sim.S.RaidLog.Count > source.State.RaidLogSeen;
         public bool InputBlocked => storyOpen || launcher != null && launcher.IsTransitioning || RaidLauncher.IsRaidLoaded ||
             SettingsView.Instance != null && SettingsView.Instance.IsOpen || GameOverView.Instance != null && GameOverView.Instance.IsOpen ||
-            EventModalView.Instance != null && EventModalView.Instance.IsOpen || ConfirmModalView.Instance != null && ConfirmModalView.Instance.IsOpen;
+            EventModalView.Instance != null && EventModalView.Instance.IsOpen || ConfirmModalView.Instance != null && ConfirmModalView.Instance.IsOpen ||
+            siginak != null && siginak.isActiveAndEnabled && siginak.ShiftBusy || NewBriefing && siginakBriefing.Busy;
 
         void Start()
         {
@@ -51,15 +67,15 @@ namespace Corrigible.Desk.Bridge
                 if (r.Node != null) r.Node.Clicked += SelectRegion;
                 if (r.Fill != null) r.Fill.Clicked += SelectRegion;
             }
-            chooseRegion.onClick.AddListener(() => { if (!InputBlocked) Report(game.SelectLiberationRegion(selectedRegion)); });
-            upgradeRoom.onClick.AddListener(() => { if (!InputBlocked) Report(game.ShelterUpgrade(selectedRoom)); });
+            chooseRegion.onClick.AddListener(() => OpenFront(selectedRegion));
+            upgradeRoom.onClick.AddListener(() => UpgradeRoom(selectedRoom));
             workerMinus.onClick.AddListener(() => Assign(-1));
             workerPlus.onClick.AddListener(() => Assign(1));
-            advanceDay.onClick.AddListener(() => { if (!InputBlocked) { game.AdvanceLiberationDay(); Refresh(); } });
+            advanceDay.onClick.AddListener(() => AdvanceShift());
             beginStory.onClick.AddListener(CloseStory);
             continueStory.onClick.AddListener(() => { if (game.ContinueSaved()) CloseStory(); });
             commandStation.onClick.AddListener(ShowPlanning);
-            shelterStation.onClick.AddListener(() => { if (!InputBlocked) cameraRig.FocusShelter(); });
+            shelterStation.onClick.AddListener(ShowShelter);
             operationStation.onClick.AddListener(ShowPlanning);
             closeBriefing.onClick.AddListener(() => { briefingOpen = false; UpdateBriefingPlacement(); });
             if (settingsButton != null) settingsButton.onClick.AddListener(() => { if (!InputBlocked) SettingsView.Instance?.Open(); });
@@ -89,18 +105,70 @@ namespace Corrigible.Desk.Bridge
             UpdateBriefingPlacement();
         }
 
-        void ShowPlanning()
+        /// <summary>Harita pozu ve görev fişi (3 GÖREVLER).</summary>
+        public void ShowPlanning()
         {
             if (InputBlocked) return;
+            if (NewMap) { siginakMap.ShowMissions(); return; }
             briefingOpen = true;
-            cameraRig.FocusMap();
+            Rig.FocusMap();
             Refresh();
+        }
+
+        public void ShowShelter() { if (!InputBlocked) Rig.FocusShelter(); }
+
+        public void OpenGuide() => OpenWindow(WindowId.Guide);
+
+        /// <summary>Şu anki vardiyanın numarası (kurtuluşta gün + 1: ilk vardiya 001).</summary>
+        public int Shift => (Sim?.S.Day ?? 0) + 1;
+
+        // ---------- Komutlar: düğmeler ve sığınak nesneleri aynı yolu kullanır; sonuç teleksten gerekçesiyle basılır ----------
+
+        public ActResult UpgradeRoom(string roomId)
+        {
+            if (InputBlocked || Sim?.Shelter == null) return null;
+            string why = TelexReasons.Upgrade(Sim, roomId);
+            return Report(game.ShelterUpgrade(roomId), why);
+        }
+
+        public ActResult AssignRoom(string roomId, int workers)
+        {
+            if (InputBlocked || Sim?.Shelter == null) return null;
+            string why = TelexReasons.Assign(Sim, roomId, workers);
+            return Report(game.ShelterAssign(roomId, workers), why);
+        }
+
+        public ActResult OpenFront(string regionId)
+        {
+            if (InputBlocked || Sim?.LiberationOn != true) return null;
+            string why = TelexReasons.Front(Sim, regionId);
+            string done = Loc.F("Yeni cephe: {0}", RegionName(regionId));
+            return Report(game.SelectLiberationRegion(regionId), why, done);
+        }
+
+        public ActResult LaunchSector(string sectorId)
+        {
+            if (InputBlocked || Sim?.LiberationOn != true) return null;
+            string why = TelexReasons.Raid(Sim, sectorId);
+            var sector = Sim.LiberationSector(sectorId);
+            string done = sector == null ? null : Loc.F("Baskın emri: {0} · {1} · {2} fon", RegionName(sector.Region), sector.Name,
+                DeskFormat.Signed(-Sim.B.liberationRaidCost, 0));
+            return Report(game.StartLiberationRaid(sectorId), why, done);
+        }
+
+        /// <summary>Vardiyayı bitirir (şalterin kolu ya da eski düğme). Yapılamazsa false.</summary>
+        public bool AdvanceShift()
+        {
+            if (InputBlocked || Sim?.LiberationOn != true || Sim.S.Blocked || Sim.S.Ending != null || Sim.S.Raid != null) return false;
+            game.AdvanceLiberationDay();
+            Refresh();
+            return true;
         }
 
         void UpdateBriefingPlacement()
         {
             if (briefingRoot == null || briefingCanvas == null) return;
-            bool show = briefingOpen && !InputBlocked && cameraRig.IsFocused && Sim?.LiberationOn == true;
+            bool show = !NewMap && briefingOpen && !InputBlocked && Rig.IsFocused && Sim?.LiberationOn == true;
             briefingRoot.gameObject.SetActive(show);
             if (briefingLink != null) briefingLink.gameObject.SetActive(show);
             if (!show) return;
@@ -130,10 +198,15 @@ namespace Corrigible.Desk.Bridge
             storyOpen = true;
             game.TutorialHold = true;
             if (desk != null) desk.ExternalBlocked = true;
-            storyRoot.SetActive(true);
+            // Yeni görünümde açılış dizisi ve emir belgesi (K7); BAŞLA / KAYITTAN DEVAM buraya döner (BeginCampaign, Loaded)
+            if (NewBriefing) siginakBriefing.OpenOpening();
+            else storyRoot.SetActive(true);
             source.State.IntroOpen = false;
             Refresh();
         }
+
+        /// <summary>Emir belgesinde BAŞLA (yeni görünüm): hikâye kapanır, harekât başlar.</summary>
+        public void BeginCampaign() => CloseStory();
 
         void Loaded()
         {
@@ -150,7 +223,7 @@ namespace Corrigible.Desk.Bridge
             source.State.IntroOpen = false;
             briefingOpen = true;
             source.State.Selected = selectedRegion;
-            cameraRig.FocusMap();
+            Rig.FocusMap();
             source.MarkDirty();
             Refresh();
         }
@@ -182,7 +255,7 @@ namespace Corrigible.Desk.Bridge
                 string check = sector != null ? Sim.LiberationRaidCheck(sector.Id) : "—";
                 string status = sector?.Captured == true ? Loc.T("GERİ ALINDI") : check == null ? Loc.T("BASKINA HAZIR") : Loc.T("KİLİTLİ");
                 DeskUi.SetText(sectorLabels[i], sector == null ? "—" : Loc.F("{0:00}  {1}\n{2} · {3}", i + 1, sector.Name,
-                    sector.MissionKind == "loot" ? Loc.T("LOOT") : Loc.T("SUNUCU YIKIMI"), status));
+                    sector.MissionKind == "loot" ? Loc.T("YAĞMA") : Loc.T("SUNUCU YIKIMI"), status));
                 sectorButtons[i].interactable = !InputBlocked && check == null;
             }
             var next = Sim.NextLiberationSector(selectedRegion);
@@ -225,16 +298,22 @@ namespace Corrigible.Desk.Bridge
             UpdateBriefingPlacement();
         }
 
-        void Report(ActResult result)
+        ActResult Report(ActResult result, string failDetail = null, string doneDetail = null)
         {
             DeskUi.SetText(resultNote, result?.Msg ?? (result?.Ok == true ? Loc.T("Emir uygulandı.") : Loc.T("Yapılamadı.")));
+            // Başarılı komutun iletisi boşsa (baskın emri, cephe) teleks satırı neyin uygulandığını yazar
+            if (telex != null && result != null)
+                telex.Post(Shift, result.Ok ? Loc.T("EMİR UYGULANDI") : Loc.T("YAPILAMADI"),
+                    result.Ok ? (string.IsNullOrEmpty(result.Msg) ? doneDetail ?? "" : result.Msg) : failDetail ?? result.Msg,
+                    result.Ok ? TelexKind.Done : TelexKind.Failed);
             source.MarkDirty();
             Refresh();
+            return result;
         }
 
         void Assign(int delta)
         {
-            if (!InputBlocked && Sim?.Shelter != null) Report(game.ShelterAssign(selectedRoom, Sim.Shelter.Room(selectedRoom).Workers + delta));
+            if (!InputBlocked && Sim?.Shelter != null) AssignRoom(selectedRoom, Sim.Shelter.Room(selectedRoom).Workers + delta);
         }
 
         void Launch(int slot)
@@ -242,33 +321,40 @@ namespace Corrigible.Desk.Bridge
             if (InputBlocked || Sim?.LiberationOn != true) return;
             var area = Sim.LiberationRegion(selectedRegion);
             if (area == null || slot >= area.Sectors.Count) return;
-            Report(game.StartLiberationRaid(area.Sectors[slot].Id));
+            LaunchSector(area.Sectors[slot].Id);
         }
 
         public void SelectRegion(string region)
         {
-            if (InputBlocked || string.IsNullOrEmpty(region)) return;
+            // Yeni görünümde bölge tıklamasını kurtuluş haritası işler (görev fişi / aday)
+            if (InputBlocked || string.IsNullOrEmpty(region) || NewMap) return;
             selectedRegion = region;
             commands?.SelectRegion(region);
             briefingOpen = true;
             Refresh();
-            cameraRig.FocusMap();
+            Rig.FocusMap();
         }
 
         public void OpenWindow(WindowId window)
         {
             if (InputBlocked) return;
+            if (window == WindowId.Guide && NewBriefing) { siginakBriefing.OpenReading(); return; }
             if (window == WindowId.Guide)
             {
                 storyOpen = true; storyRoot.SetActive(true); game.TutorialHold = true; desk.ExternalBlocked = true;
             }
-            else if (window == WindowId.Research || window == WindowId.Teams) cameraRig.FocusShelter();
+            else if (window == WindowId.Research || window == WindowId.Teams) Rig.FocusShelter();
             else ShowPlanning();
         }
         public void ToggleWindow(WindowId window) => OpenWindow(window);
         public void RegionAction(int index) { if (index == 0 || index == 2) ShowPlanning(); }
         public void FieldOperation() => ShowPlanning();
-        public void Escape() { if (storyOpen) CloseStory(); else if (!InputBlocked) SettingsView.Instance?.Open(); }
+        public void Escape()
+        {
+            if (storyOpen) { CloseStory(); return; }
+            if (siginak != null && siginak.isActiveAndEnabled && siginak.HandleEscape()) return;
+            if (!InputBlocked) SettingsView.Instance?.Open();
+        }
         public void StepSpeed(int direction) { }
     }
 }

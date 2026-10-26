@@ -123,6 +123,42 @@ namespace Corrigible.Desk.EditorTools
             return log.Length == 0 ? "Hepsinde boşluk var." : log.ToString();
         }
 
+        /// <summary>
+        /// <c>charset.txt</c>'e sonradan eklenen karakterleri mevcut statik asset'lere ekler (atlas baştan çizilmez, GUID'ler
+        /// korunur). Ana fontta glifi olmayan karakter, <see cref="Build(bool)"/>'deki gibi DejaVu sembol asset'lerine gider.
+        /// </summary>
+        [MenuItem("Corrigible/Desk UI/Karakter setindeki eksikleri ekle")]
+        public static string AddMissingCharacters()
+        {
+            var charset = File.ReadAllText(FontsDir + "/charset.txt").Replace("\n", "").Replace("\r", "");
+            var fonts = Specs.ToDictionary(s => s.Name, s => AssetDatabase.LoadAssetAtPath<Font>(FontsDir + "/" + s.Ttf + ".ttf"));
+            var has = Specs.ToDictionary(s => s.Name, s => Glyphs(fonts[s.Name], charset + FallbackGlyphs));
+            var missingInMain = new HashSet<char>(FallbackGlyphs);
+            foreach (var s in Specs.Where(s => !s.Symbol))
+                foreach (var c in charset) if (!has[s.Name].Contains(c)) missingInMain.Add(c);
+
+            var log = new StringBuilder();
+            foreach (var s in Specs)
+            {
+                var fa = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(AssetPath(s.Name));
+                if (fa == null) { log.AppendLine($"{s.Name}: asset yok, önce “Font asset'lerini kur”"); continue; }
+                var source = s.Symbol ? missingInMain : (IEnumerable<char>)charset;
+                var add = new string(source.Where(c => c > ' ' && has[s.Name].Contains(c) && !fa.characterLookupTable.ContainsKey(c))
+                    .Distinct().ToArray());
+                if (add.Length == 0) continue;
+                fa.atlasPopulationMode = AtlasPopulationMode.Dynamic;
+                bool ok = fa.TryAddCharacters(add, out string miss, true);
+                fa.atlasPopulationMode = AtlasPopulationMode.Static;
+                EditorUtility.SetDirty(fa);
+                foreach (var tex in fa.atlasTextures) if (tex != null) EditorUtility.SetDirty(tex);
+                log.AppendLine($"{s.Name}: +{add}{(ok ? "" : " (EKLENEMEDİ: " + miss + ")")} → {fa.characterTable.Count} karakter");
+            }
+            AssetDatabase.SaveAssets();
+            string result = log.Length == 0 ? "Eksik karakter yok." : log.ToString();
+            Debug.Log("[Desk] " + result);
+            return result;
+        }
+
         static HashSet<char> Glyphs(Font font, string chars)
         {
             FontEngine.LoadFontFace(font, 90);

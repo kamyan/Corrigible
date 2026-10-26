@@ -1,0 +1,193 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="/node_modules/@fontsource/courier-prime/400.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/courier-prime/700.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/libre-franklin/400.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/libre-franklin/600.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/libre-franklin/700.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/kalam/700.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/big-shoulders-stencil-display/800.css">
+<style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+</head><body>
+<script type="module">
+import * as THREE from 'three';
+import { U, D2R, loadFonts } from './lib.js';
+import { buildRoom } from './room.js';
+import { mapCanvasK1 } from './mapk1.js';
+import * as T from './textures.js';
+import * as ALT from './alt.js';
+
+const q = new URLSearchParams(location.search);
+const pose = q.get('pose') || 'K1';
+const lang = q.get('lang') || 'tr';
+const W = 1920, H = 1080;
+await loadFonts();
+
+const TRN = lang === 'en';
+const state = {
+  counters: [{ digits: '014' }, { digits: '062', frac: 0 }, { digits: '31', fixed: '/40' }, { digits: '019' }, { digits: '01', fixed: '/12' }],
+  idle: 4,
+  rooms: {
+    yasam: { name: TRN ? 'LIVING QUARTERS' : 'YAŞAM ALANI', line2: TRN ? 'LEVEL 1 · STAFF 2/2' : 'SEVİYE 1 · PERSONEL 2/2', level: 1, staff: 2, cap: 2, powered: true },
+    jen: { name: TRN ? 'GENERATOR' : 'JENERATÖR', line2: TRN ? 'LEVEL 1 · STAFF 0/2' : 'SEVİYE 1 · PERSONEL 0/2', level: 1, staff: 0, cap: 2, powered: true },
+    atolye: { name: TRN ? 'WORKSHOP' : 'ATÖLYE', line2: TRN ? 'LEVEL 3 · STAFF 2/6' : 'SEVİYE 3 · PERSONEL 2/6', level: 3, staff: 2, cap: 6, powered: false, stamp: TRN ? 'NO POWER' : 'ENERJİSİZ' },
+    revir: { name: TRN ? 'INFIRMARY' : 'REVİR', line2: TRN ? 'DAMAGED · STAFF 0/0' : 'HASARLI · PERSONEL 0/0', level: 0, staff: 0, cap: 0, powered: false, stamp: TRN ? 'DAMAGED' : 'HASARLI' },
+  },
+};
+const opts = { lang, state, activeKey: 4, bakeCards: false };
+
+// pose-specific scene options
+const S2 = T.STR[lang];
+const mapFor = (v) => mapCanvasK1(lang, v === 'start' ? '/out/map_K7.svg' : v === 'freed' ? '/out/map_K3.svg' : '/out/map_K2.svg', v);
+if (pose === 'K1') { opts.mapTexture = await mapFor('mid_tag'); opts.bakeCards = true; opts.activeKey = 4; }
+if (pose === 'K2') { opts.mapTexture = await mapFor('mid_open'); opts.activeKey = 0; }
+if (pose === 'K3') { opts.mapTexture = await mapFor('freed'); opts.activeKey = 0;
+  state.counters = [{ digits: '019' }, { digits: '096', frac: 5 }, { digits: '33', fixed: '/40' }, { digits: '030' }, { digits: '02', fixed: '/12' }];
+  opts.telexLines = TRN ? [['019/03', 'ORDER EXECUTED', 'Server hub destroyed: Eastern Europe 03'], ['019/04', 'REGION FREE', 'Eastern Europe · +30 funds'], ['019/05', 'AWAITING', 'Pick the next front']] : [['019/03', 'EMİR UYGULANDI', 'Sunucu merkezi yıkıldı: Doğu Avrupa 03'], ['019/04', 'BÖLGE ÖZGÜR', 'Doğu Avrupa · +30 fon'], ['019/05', 'BEKLENİYOR', 'Sıradaki cepheyi seç']]; }
+if (pose === 'K4') { opts.activeKey = 1; opts.ambient = 0.22; opts.dioLight = 2.4; }
+if (pose === 'K5a') { opts.activeKey = 2; opts.crtTexture = T.crtTex([['SAHA YAYINI · KANAL 07', 50], ['', 18], ['BAĞLANTI BEKLENİYOR', 78], ['', 14], ['ALFA · HAZIR', 46, '#5e9c73'], ['CEPHE: DOĞU AVRUPA / 02', 46, '#5e9c73'], ['', 14], ['Görev fişinden baskın emri', 40, '#5e9c73'], ['verildiğinde yayın açılır.', 40, '#5e9c73'], ['▮', 56]], { testCard: true }); }
+if (pose === 'K6a') { opts.dim = 0.3; opts.switchOpen = true; opts.activeKey = 4; opts.ambient = 0.42; opts.switchLamp = false; opts.amberSwitch = true; opts.mapTexture = await mapFor('mid_tag');
+  state.counters = [{ digits: '014', roll: [null, null, 0.45], rollPair: [null, null, ['4', '5']] }, { digits: '050', frac: 0 }, { digits: '31', fixed: '/40' }, { digits: '019' }, { digits: '01', fixed: '/12' }];
+  opts.telexLines = TRN ? [['014/09', 'FAILED', 'Raid: Eastern Europe 02 · team down'], ['014/10', 'SHIFT 014 CLOSED', 'Report printing…']] : [['014/09', 'BAŞARISIZ', 'Baskın: Doğu Avrupa 02 · ekip yaralı'], ['014/10', 'VARDİYA 014 KAPANDI', 'Rapor basılıyor…']]; }
+if (pose === 'K6b') { opts.activeKey = 4; opts.mapTexture = await mapFor('mid_tag');
+  state.counters = [{ digits: '015' }, { digits: '052', frac: 5 }, { digits: '31', fixed: '/40' }, { digits: '019' }, { digits: '01', fixed: '/12' }];
+  opts.telexLines = TRN ? [['014/09', 'FAILED', 'Raid: Eastern Europe 02 · team down'], ['014/10', 'SHIFT 014 CLOSED', 'Report printed']] : [['014/09', 'BAŞARISIZ', 'Baskın: Doğu Avrupa 02 · ekip yaralı'], ['014/10', 'VARDİYA 014 KAPANDI', 'Rapor basıldı']]; }
+if (pose === 'K7') { opts.activeKey = 4; opts.mapTexture = await mapFor('start');
+  state.counters = [{ digits: '001' }, { digits: '040', frac: 0 }, { digits: '24', fixed: '/40' }, { digits: '014' }, { digits: '00', fixed: '/12' }]; state.idle = 2;
+  opts.telexLines = TRN ? [['001/00', 'KYGA-07 ONLINE', 'Analog line open. Orders by paper.']] : [['001/00', 'KYGA-07 HAT AÇIK', 'Analog hat açık. Emirler kâğıtla.']]; }
+
+if (pose === 'D1B') { opts.alt = 'ledger'; opts.mapTexture = await mapFor('mid_tag'); opts.bakeCards = true; opts.activeKey = 4; }
+if (pose === 'D2A') { opts.activeKey = 4; opts.mapTexture = await mapFor('mid_tag'); }
+if (pose === 'D2B') { opts.alt = 'stamp'; opts.activeKey = 4; opts.mapTexture = await mapFor('mid_tag'); }
+if (pose === 'D3B') { opts.activeKey = 1; opts.mapTexture = ALT.blueprintTex(lang); }
+
+// team figure placement (map px); 'front' = next to the open front's label, 'bunker' = by the S-07 marker
+const TM = opts.mapTexture && opts.mapTexture.userData ? opts.mapTexture.userData : {};
+const TEAM = {
+  K1: [{ pos: TM.teamFront, state: 'ready' }], K2: [{ pos: TM.teamFront, state: 'ready' }], K3: [{ pos: [1353, 318], state: 'ready', ring: true }],
+  K6a: [{ pos: TM.teamBunker, state: 'injured' }], K6b: [{ pos: TM.teamBunker, state: 'injured' }], K7: [{ pos: TM.teamBunker, state: 'ready' }],
+  D1B: [{ pos: TM.teamFront, state: 'ready' }], D2A: [{ pos: TM.teamFront, state: 'ready' }], D2B: [{ pos: TM.teamFront, state: 'ready' }],
+};
+if (TEAM[pose] && TEAM[pose][0].pos) opts.teams = TEAM[pose];
+if (pose === 'TFS') { opts.activeKey = 0; opts.mapTexture = await mapFor('mid_tag');
+  opts.teams = [{ pos: [610, 812], state: 'ready' }, { pos: [800, 812], state: 'ready', ring: true, lift: 0.004 }, { pos: [990, 812], state: 'ready', lift: 0.025 }, { pos: [1180, 812], state: 'injured' }]; }
+if (pose === 'TFC') { opts.activeKey = 0; opts.mapTexture = await mapFor('freed');
+  const a = opts.mapTexture.userData.teamFront, b = [1353, 262];
+  opts.teams = [{ pos: [a[0] + (b[0] - a[0]) * 0.55, a[1] + (b[1] - a[1]) * 0.55], state: 'ready', lift: 0.025 }]; }
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(W, H);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = +(q.get('exp') || 1.0);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x050505);
+if (q.get('bulb')) opts.bulbI = +q.get('bulb');
+if (q.get('lamp')) opts.lampI = +q.get('lamp');
+if (q.get('amb')) opts.ambient = +q.get('amb');
+if (q.get('nolamp')) opts.noLamp = true;
+const room = buildRoom(scene, opts);
+
+// ---------- cameras
+function shiftCam(pos, yawDeg, f, yh, near = 0.03) {
+  const Hf = 2 * (H - yh);
+  const fov = 2 * Math.atan((Hf / 2) / f) / D2R;
+  const cam = new THREE.PerspectiveCamera(fov, W / Hf, near, 30);
+  cam.position.copy(U(...pos));
+  cam.rotation.order = 'YXZ'; cam.rotation.y = -yawDeg * D2R; cam.rotation.x = 0;
+  cam.setViewOffset(W, Hf, 0, Hf / 2 - yh, W, H);
+  cam.updateMatrixWorld(); cam.updateProjectionMatrix();
+  return cam;
+}
+function lookCam(pos, target, fovV, near = 0.03) {
+  const cam = new THREE.PerspectiveCamera(fovV, W / H, near, 30);
+  cam.position.copy(U(...pos)); cam.lookAt(U(...target));
+  cam.updateMatrixWorld(); cam.updateProjectionMatrix();
+  return cam;
+}
+function num(k, d) { return q.get(k) != null ? +q.get(k) : d; }
+const P = {
+  K1: () => shiftCam([num('cx', 0), num('cy', 1.52), num('cz', -0.15)], num('yaw', 0), num('f', 1000), num('yh', 190)),
+  K2: () => lookCam([0, num('cy', 2.75), num('cz', 1.30)], [0, 0.76, num('tz', 1.36)], num('fov', 30)),
+  K3: () => lookCam([0, num('cy', 2.75), num('cz', 1.30)], [0, 0.76, num('tz', 1.36)], num('fov', 30)),
+  K4: () => {
+    const s = room.shelf; s.updateWorldMatrix(true, true);
+    const c = new THREE.Vector3(); s.localToWorld(c.set(num('lx', 0.0), num('ly', 1.15), num('lz', 1.04)));
+    const t = new THREE.Vector3(); s.localToWorld(t.set(num('tx', 0.0), num('ty', 1.10), 0));
+    const cam = new THREE.PerspectiveCamera(num('fov', 48), W / H, 0.03, 30); cam.position.copy(c); cam.lookAt(t); cam.updateMatrixWorld(); return cam;
+  },
+  K5a: () => {
+    const m = room.A.crtScreen.mesh; m.updateWorldMatrix(true, false);
+    const c = new THREE.Vector3(); m.localToWorld(c.set(num('lx', 0.0), num('ly', -0.02), num('lz', 0.62)));
+    const t = new THREE.Vector3(); m.localToWorld(t.set(0, num('ty', -0.035), 0));
+    const cam = new THREE.PerspectiveCamera(num('fov', 46), W / H, 0.03, 30); cam.position.copy(c); cam.lookAt(t); cam.updateMatrixWorld(); return cam;
+  },
+  K6a: () => lookCam([num('cx', 0.32), num('cy', 1.28), num('cz', 0.36)], [num('tx', 0.38), num('ty', 0.86), num('tz', 1.25)], num('fov', 60)),
+  K6b: () => lookCam([0, num('cy', 2.75), num('cz', 1.30)], [0, 0.76, num('tz', 1.36)], num('fov', 30)),
+  K7: () => lookCam([0, num('cy', 2.75), num('cz', 1.30)], [0, 0.76, num('tz', 1.36)], num('fov', 30)),
+};
+P.K1x = P.K1;
+P.D1B = P.K1; P.D2A = P.K6a; P.D2B = P.K6a; P.D3B = P.K2;
+P.TFS = () => lookCam([num('cx', -0.0375), num('cy', 1.02), num('cz', 0.80)], [num('tx', -0.0375), num('ty', 0.77), num('tz', 1.142)], num('fov', 40));
+P.TFC = P.K2;
+const cam = P[pose]();
+renderer.render(scene, cam);
+
+// ---------- overlay quads
+function proj(v) { const p = v.clone().project(cam); return [+((p.x + 1) / 2 * W).toFixed(2), +((1 - p.y) / 2 * H).toFixed(2)]; }
+function homog(w, h, qd) {
+  const [[x0, y0], [x1, y1], [x2, y2], [x3, y3]] = qd;
+  const sx = x0 - x1 + x2 - x3, sy = y0 - y1 + y2 - y3;
+  let a, b, c, d, e, f, g, hh;
+  if (Math.abs(sx) < 1e-9 && Math.abs(sy) < 1e-9) { a = x1 - x0; b = x2 - x1; c = x0; d = y1 - y0; e = y2 - y1; f = y0; g = 0; hh = 0; }
+  else {
+    const dx1 = x1 - x2, dx2 = x3 - x2, dy1 = y1 - y2, dy2 = y3 - y2, den = dx1 * dy2 - dx2 * dy1;
+    g = (sx * dy2 - dx2 * sy) / den; hh = (dx1 * sy - sx * dy1) / den;
+    a = x1 - x0 + g * x1; b = x3 - x0 + hh * x3; c = x0; d = y1 - y0 + g * y1; e = y3 - y0 + hh * y3; f = y0;
+  }
+  const r = (v, n = 6) => +v.toFixed(n);
+  return `matrix3d(${[a / w, d / w, 0, g / w, b / h, e / h, 0, hh / h, 0, 0, 1, 0, c, f, 0, 1].map((v, i) => r(v, [3, 7].includes(i) ? 9 : 6)).join(',')})`;
+}
+const out = { pose, lang, quads: {} };
+out.team = (room.A.teamFigs || []).map(t => ({ top: (() => { const p = t.top.clone().project(cam); return [+((p.x + 1) / 2 * W).toFixed(1), +((1 - p.y) / 2 * H).toFixed(1)]; })(), base: (() => { const p = t.base.clone().project(cam); return [+((p.x + 1) / 2 * W).toFixed(1), +((1 - p.y) / 2 * H).toFixed(1)]; })() }));
+function addQuad(name, corners, w, h) { const qd = corners.map(proj); out.quads[name] = { q: qd, w, h, m: homog(w, h, qd) }; }
+const A = room.A;
+// map (TL = far-left, TR = far-right, BR = near-right, BL = near-left) in 1920x1080 local
+addQuad('map', [A.map[3], A.map[2], A.map[1], A.map[0]], 1920, 1080);
+addQuad('counterFace', [A.counterFace[3], A.counterFace[2], A.counterFace[1], A.counterFace[0]], 2800, 420);
+// paper on the map in map-local px: helper converting map local px to world
+const mapPt = (px, py, lift = 0.0015) => U(-0.60 + px / 1920 * 1.20, 0.7612 + lift, 1.655 - py / 1080 * 0.675);
+out.mapScale = { pxPerM: 1920 / 1.20 };
+for (const [name, x, y, w, h] of JSON.parse(q.get('papers') || '[]')) addQuad(name, [mapPt(x, y), mapPt(x + w, y), mapPt(x + w, y + h), mapPt(x, y + h)], w, h);
+// rooms (diorama) cards + openings
+if (A.rooms) {
+  const dio = A.dioGroup; dio.updateWorldMatrix(true, true);
+  const wp = ([x, y, z]) => dio.localToWorld(new THREE.Vector3(x, y, -z));
+  for (const [k, r] of Object.entries(A.rooms)) {
+    addQuad('card_' + k, [r.card[3], r.card[2], r.card[1], r.card[0]].map(wp), 380, 110);
+    addQuad('room_' + k, [r.opening[3], r.opening[2], r.opening[1], r.opening[0]].map(wp), 650, 340);
+  }
+}
+{ const cp = A.clipPaper; cp.group.updateWorldMatrix(true, true);
+  const w = cp.w, h = cp.h, cy = cp.cy, z = cp.z;
+  const pts = [[-w / 2, cy + h / 2], [w / 2, cy + h / 2], [w / 2, cy - h / 2], [-w / 2, cy - h / 2]].map(([x, y]) => cp.group.localToWorld(new THREE.Vector3(x, y, z)));
+  addQuad('clip', pts, 600, 800); }
+{ const it = A.idleTray.group; it.updateWorldMatrix(true, true);
+  const pts = [[-0.13, 0.026], [0.13, 0.026], [0.13, 0.0], [-0.13, 0.0]].map(([x, y]) => it.localToWorld(new THREE.Vector3(x, y, 0.0385)));
+  addQuad('idle', pts, 520, 52); }
+{ const s = A.crtScreen; s.mesh.updateWorldMatrix(true, false);
+  const pts = [[-s.w / 2, s.h / 2], [s.w / 2, s.h / 2], [s.w / 2, -s.h / 2], [-s.w / 2, -s.h / 2]].map(([x, y]) => s.mesh.localToWorld(new THREE.Vector3(x, y, 0.001)));
+  addQuad('crt', pts, 1200, 900); }
+{ const tf = A.telexFlat; tf.group.updateWorldMatrix(true, true);
+  const pts = [[-tf.w / 2, 0.18], [tf.w / 2, 0.18], [tf.w / 2, 0.18 + tf.len], [-tf.w / 2, 0.18 + tf.len]].map(([x, z]) => tf.group.localToWorld(new THREE.Vector3(x, 0.003, z)));
+  addQuad('telex', pts, 400, 560); }
+// screen-space anchors
+const anchors = { shelfFront: [-1.50, 1.20, 1.50], switch: [0.765, 0.86, 0.885], teleprinter: [-0.77, 0.95, 1.255], crt: [1.40, 1.05, 1.60], bulb: [0.12, 2.0, 1.70] };
+out.anchors = Object.fromEntries(Object.entries(anchors).map(([k, v]) => [k, proj(U(...v))]));
+out.cam = { pos: cam.position.toArray().map(v => +v.toFixed(3)), fov: +cam.fov.toFixed(2) };
+console.log('[r] done');
+window.__done = out;
+</script></body></html>

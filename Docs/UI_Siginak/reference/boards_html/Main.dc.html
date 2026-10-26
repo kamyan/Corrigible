@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>K1 · Başlangıç pozu</title>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&family=Kalam:wght@700&display=swap">
+<style>
+body{margin:0;background:#0E0906}
+a{color:#C9A86A}a:hover{color:#E6CF9C}
+.grain{background-image:url(../../sprites/tx_paper_grain.png);background-size:128px 128px}
+</style>
+</helmet>
+<div style="position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #0E0906; font-family: 'Libre Franklin', Arial, sans-serif">
+  <img src="../renders/K1.jpg" alt="Sığınak komuta odası, başlangıç pozu: solda kesit maketi, ortada harita masası ve sayaç rafı, sağda CRT masası" style="position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: block">
+
+  <svg width="1920" height="1080" viewBox="0 0 1920 1080" style="position: absolute; left: 0; top: 0; pointer-events: none" aria-hidden="true">
+    <polygon points="6,296 516,266 516,566 6,632" fill="#F5D646" fill-opacity="0.06" stroke="#F5D646" stroke-opacity="0.9" stroke-width="5" stroke-linejoin="round"></polygon>
+    <polygon points="6,296 516,266 516,566 6,632" fill="none" stroke="#1E1B16" stroke-width="1.5" stroke-linejoin="round"></polygon>
+    <path d="M306 338 L306 368 L313 361 L318 373 L323 371 L318 359 L328 359 Z" fill="#FBF7EC" stroke="#1E1B16" stroke-width="1.6" stroke-linejoin="round"></path>
+  </svg>
+
+  <div class="grain" style="position: absolute; left: 186px; top: 196px; width: 292px; padding: 9px 12px 10px 12px; background-color: #FBF7EC; border: 1.5px solid #1E1B16; border-radius: 2px; box-shadow: 3px 5px 0 rgba(0,0,0,0.45); display: flex; flex-direction: column; gap: 4px; box-sizing: border-box">
+    <div style="display: flex; align-items: center; gap: 8px">
+      <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 5px; background: #1E1B16; color: #E6CF9C; font: 700 15px 'Courier Prime', monospace; border-radius: 2px; box-sizing: border-box">2</span>
+      <span style="font: 700 18px 'Courier Prime', monospace; letter-spacing: 0.06em; color: #1E1B16">SIĞINAK</span>
+    </div>
+    <div style="font: 400 15px 'Libre Franklin', Arial, sans-serif; color: #463F34">Kesit maketi · odaları yönet</div>
+  </div>
+
+  <button type="button" style="position: absolute; right: 16px; top: 14px; height: 36px; padding: 0 12px 0 8px; display: flex; align-items: center; gap: 8px; background: #0E0906; border: 1px solid #6E5A33; border-radius: 3px; color: #C9A86A; font: 700 15px 'Courier Prime', monospace; letter-spacing: 0.08em; box-shadow: 3px 3px 0 rgba(0,0,0,0.5); cursor: pointer">
+    <span style="display: inline-flex; align-items: center; justify-content: center; height: 22px; padding: 0 6px; border: 1px solid #6E5A33; border-radius: 2px; color: #E6CF9C; font: 700 13px 'Courier Prime', monospace; letter-spacing: 0">Esc</span>
+    AYARLAR
+  </button>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

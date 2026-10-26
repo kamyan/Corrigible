@@ -82,6 +82,8 @@ namespace Corrigible.Desk.Tests
             // Sade tema içe aktarıcısı ön eksiz Sade yollarını tanımlar (kullanmaz); onları aşağıdaki test denetler
             var missing = Directory.GetFiles(DeskSpriteManifest.Root + "/Scripts", "*.cs", SearchOption.AllDirectories)
                 .Where(f => Path.GetFileName(f) != "SadeThemeSetup.cs" && Path.GetFileName(f) != "SadePanelText.cs")
+                // Sığınak kodu kendi temasını okur (SiginakTheme → Sade); anahtarlarını SiginakFoundationTests denetler
+                .Where(f => !f.Replace('\\', '/').Contains("/Siginak/") && !Path.GetFileName(f).StartsWith("Siginak"))
                 .SelectMany(f => rx.Matches(File.ReadAllText(f)).Cast<Match>().Select(m => m.Groups[1].Value))
                 .Distinct().Where(k => !theme.TryGet(k, false, out _)).ToList();
             Assert.IsEmpty(missing, "temada olmayan anahtarlar: " + string.Join(", ", missing));

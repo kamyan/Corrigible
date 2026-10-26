@@ -40,6 +40,18 @@ namespace Corrigible.Game.Raid
         float cameraFieldOfView;
         bool cameraPoseSaved;
         public bool IsTransitioning { get; private set; }
+        public Transform MonitorFocusPose => monitorFocusPose;
+        public float MonitorFieldOfView => monitorFieldOfView;
+
+        /// <summary>
+        /// Monitöre yaklaşmanın hedefini değiştirir (sığınak sunumu kendi CRT'sini kullanır; eski görünüme dönünce geri yazar).
+        /// Yalnız ekleme API'si: yükleme ve geri dönüş akışı aynıdır.
+        /// </summary>
+        public void SetMonitorTransition(Transform pose, float fieldOfView)
+        {
+            monitorFocusPose = pose;
+            monitorFieldOfView = fieldOfView;
+        }
 
         bool loading, unloading;
         Scene mainScene;
@@ -89,8 +101,26 @@ namespace Corrigible.Game.Raid
             StartCoroutine(LoadRoutine());
         }
 
+        /// <summary>
+        /// Emir ile yaklaşma arasındaki bekleme (sığınak görünümü: “EMİR VERİLDİ” damgası iner, 0,3 s sonra kamera CRT'ye).
+        /// Bu sürede girdi kilitlidir (<see cref="IsTransitioning"/>). Varsayılan 0: eski davranış.
+        /// </summary>
+        public float TransitionDelaySeconds { get; set; }
+
+        /// <summary>
+        /// Geçiş kancası (sığınak görünümünün CRT dizisi). Varsa yaklaşma süresini verir, sahne yüklenmeden önce dizisi beklenir,
+        /// sahne açılınca/kapanınca haber alır. Yoksa (varsayılan) akış eskisi gibidir.
+        /// </summary>
+        public IRaidTransition Transition { get; set; }
+
         IEnumerator LoadRoutine()
         {
+            if (TransitionDelaySeconds > 0)
+            {
+                IsTransitioning = true;
+                yield return new WaitForSecondsRealtime(TransitionDelaySeconds);
+                IsTransitioning = false;
+            }
             if (enableMonitorTransition && mainCamera != null && monitorFocusPose != null)
             {
                 cameraPosition = mainCamera.transform.position;
@@ -104,17 +134,21 @@ namespace Corrigible.Game.Raid
                     b.enabled = false;
                 }
                 IsTransitioning = true;
+                float seconds = Transition != null && Transition.ApproachSeconds > 0 ? Transition.ApproachSeconds : transitionSeconds;
+                Transition?.BeginApproach();
                 float elapsed = 0;
-                while (elapsed < transitionSeconds)
+                while (elapsed < seconds)
                 {
                     elapsed += Time.unscaledDeltaTime;
-                    float t = Mathf.SmoothStep(0, 1, Mathf.Clamp01(elapsed / transitionSeconds));
+                    float t = Mathf.SmoothStep(0, 1, Mathf.Clamp01(elapsed / seconds));
                     mainCamera.transform.SetPositionAndRotation(Vector3.Lerp(cameraPosition, monitorFocusPose.position, t), Quaternion.Slerp(cameraRotation, monitorFocusPose.rotation, t));
                     mainCamera.fieldOfView = Mathf.Lerp(cameraFieldOfView, monitorFieldOfView, t);
                     yield return null;
                 }
                 mainCamera.transform.SetPositionAndRotation(monitorFocusPose.position, monitorFocusPose.rotation);
                 mainCamera.fieldOfView = monitorFieldOfView;
+                // Geçiş dizisi (CRT açılışı, senkron); bitene kadar yükleme bekler, giriş kilitli kalır
+                if (Transition != null) yield return Transition.Run();
                 IsTransitioning = false;
             }
             // Yaklaşma sırasında yeni oyun açılmışsa artık eski baskını yükleme.
@@ -139,6 +173,7 @@ namespace Corrigible.Game.Raid
                 // Işıklandırma ve ortam ayarları etkin sahneden gelir
                 var s = SceneManager.GetSceneByName(raidSceneName);
                 if (s.isLoaded) SceneManager.SetActiveScene(s);
+                Transition?.SceneLoaded();
                 Sync();
             };
         }
@@ -150,6 +185,7 @@ namespace Corrigible.Game.Raid
             if (mainScene.isLoaded) SceneManager.SetActiveScene(mainScene);
             SetMainVisible(true);
             RestoreCameraAndLocks();
+            if (Transition != null) StartCoroutine(Transition.Return());
             Sync();
         }
 

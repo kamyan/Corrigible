@@ -99,7 +99,9 @@ namespace Corrigible.Desk.Bridge
 
         public void TogglePause()
         {
-            if (Sim.LiberationOn) { Game.AdvanceLiberationDay(); return; }
+            // Kurtuluşta Boşluk vardiyayı bitirmez; vardiya şalterle (iki adım) ya da düğmeyle biter. Boşluk yeni
+            // görünümde yalnız kilitli diziyi atlar (IMPLEMENTATION_MAP › Soru 3).
+            if (Sim.LiberationOn) return;
             if (Sim.S.Ending != null) return;
             int last = State.LastSpeed == "4x" ? 4 : State.LastSpeed == "2x" ? 2 : 1;
             Game.SetSpeed(Game.Speed == 0 ? last : 0);
