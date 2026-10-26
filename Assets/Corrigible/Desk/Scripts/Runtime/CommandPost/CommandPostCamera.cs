@@ -103,7 +103,7 @@ namespace Corrigible.Desk
             if (keyboard != null && !TextFieldSelected())
             {
                 if (shelterPose != null && keyboard.digit2Key.wasPressedThisFrame) FocusShelter();
-                else if (operationsPose != null && keyboard.digit3Key.wasPressedThisFrame) FocusOperations();
+                else if (operationsPose != null && keyboard.digit3Key.wasPressedThisFrame) FocusMap();
                 else if (keyboard.digit1Key.wasPressedThisFrame)
                 {
                     if (operationsPose != null) FocusMap(); else ResetView();

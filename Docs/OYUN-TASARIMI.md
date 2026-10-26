@@ -25,8 +25,10 @@ aşağıdaki yayılma, Tekillik, diplomasi ve Hizalama kuralları eski kriz oyun
   fon geliri, ekip toparlanması ve sığınak üretim/tüketimidir. Yayılma, Tekillik, hediye ve illüzyon üretimi yoktur.
   Eski denetim, şalter ve Hizalama komutları sektör ilerlemesini atlayamaz.
 
-Komuta masası bölge/sektör seçimini gösterir. Sağ operasyon masasındaki tüplü monitöre yaklaşma geçişinin ardından
-mevcut 8×8 Baskın tahtası açılır; dönüşte önceki masa kamera konumu geri gelir. Sol pencere sığınağı yan kesitten
+Komuta masasında bölge seçilince haritadaki konumuna bağlı görev fişi açılır; bölge bilgisi, sektörler ve cephe açma
+emri burada kalır. `1 / KOMUTA` ve `3 / GÖREVLER` harita planlamasını açar. Sağdaki tüplü monitör saha yayınını bekler;
+yalnız görev fişinden baskın başlatılınca kamera monitöre yaklaşır ve mevcut 8×8 Baskın tahtası açılır.
+Dönüşte önceki harita kamera konumu ve görev fişi geri gelir. Sol pencere sığınağı yan kesitten
 gösterir; oda durumu, personel ve geliştirme kararları burada sunulur.
 
 **Ekonomi ve sığınak** (`CampaignLiberation.cs`, `ShelterLogic.cs`, `Simulation.Shelter.cs`): Varsayılan baskın

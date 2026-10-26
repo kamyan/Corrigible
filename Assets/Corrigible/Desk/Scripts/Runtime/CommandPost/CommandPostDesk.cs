@@ -123,7 +123,7 @@ namespace Corrigible.Desk
         {
             hoverLabel = sourceLabel;
             DeskUi.SetText(help, string.IsNullOrEmpty(sourceLabel)
-                ? Loc.T("Sağ tuş: bakış · Tekerlek: yaklaş · F: harita · 1: komuta · 2: sığınak · 3: operasyon")
+                ? Loc.T("Sağ tuş: bakış · Tekerlek: yaklaş · F: harita · 1: komuta · 2: sığınak · 3: görevler")
                 : Loc.F("{0} · Sol tık: kullan", DeskLoc.Instance.T(sourceLabel)));
         }
 

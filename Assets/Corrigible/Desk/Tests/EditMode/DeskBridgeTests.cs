@@ -377,6 +377,42 @@ namespace Corrigible.Desk.Tests
         }
 
         [Test]
+        public void DeskGameScene_RegionPlanningStaysOnMapAndOnlyRaidUsesMonitor()
+        {
+            var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root + "/Scenes/DeskGame.unity", UnityEditor.SceneManagement.OpenSceneMode.Additive);
+            try
+            {
+                var roots = scene.GetRootGameObjects();
+                var surface = roots.SelectMany(g => g.GetComponentsInChildren<LiberationDeskView>(true)).Single();
+                var fields = new SerializedObject(surface);
+                var paper = (RectTransform)fields.FindProperty("briefingRoot").objectReferenceValue;
+                var canvasRect = (RectTransform)fields.FindProperty("briefingCanvas").objectReferenceValue;
+                Assert.IsNotNull(paper);
+                var canvas = canvasRect.GetComponent<Canvas>();
+                Assert.AreEqual(RenderMode.ScreenSpaceOverlay, canvas.renderMode);
+                foreach (string field in new[] { "missionTitle", "missionDetail", "chooseRegion", "closeBriefing" })
+                    Assert.IsTrue(((Component)fields.FindProperty(field).objectReferenceValue).transform.IsChildOf(paper), field);
+                var sectors = fields.FindProperty("sectorButtons");
+                for (int i = 0; i < sectors.arraySize; i++)
+                    Assert.IsTrue(((Component)sectors.GetArrayElementAtIndex(i).objectReferenceValue).transform.IsChildOf(paper));
+                var monitor = (Component)fields.FindProperty("monitorStatus").objectReferenceValue;
+                Assert.IsFalse(monitor.transform.IsChildOf(canvasRect));
+                Assert.AreEqual(RenderMode.WorldSpace, monitor.GetComponentInParent<Canvas>(true).renderMode);
+                var link = (UnityEngine.UI.Graphic)fields.FindProperty("briefingLink").objectReferenceValue;
+                Assert.IsFalse(link.raycastTarget, "Bağlantı çizgisi bölge tıklamasını engellememeli.");
+                var launcher = new SerializedObject(fields.FindProperty("launcher").objectReferenceValue);
+                var hidden = launcher.FindProperty("hideDuringRaid");
+                Assert.IsTrue(Enumerable.Range(0, hidden.arraySize).Any(i => hidden.GetArrayElementAtIndex(i).objectReferenceValue == canvas));
+                var locked = launcher.FindProperty("lockDuringTransition");
+                var input = canvas.GetComponent<UnityEngine.UI.GraphicRaycaster>();
+                Assert.IsTrue(Enumerable.Range(0, locked.arraySize).Any(i => locked.GetArrayElementAtIndex(i).objectReferenceValue == input));
+                var gated = new SerializedObject(fields.FindProperty("desk").objectReferenceValue).FindProperty("worldRaycasters");
+                Assert.IsFalse(Enumerable.Range(0, gated.arraySize).Any(i => gated.GetArrayElementAtIndex(i).objectReferenceValue == input));
+            }
+            finally { UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene, true); }
+        }
+
+        [Test]
         public void DeskGameScene_UsesSadeHierarchyAndPolygonMappingA()
         {
             var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root + "/Scenes/DeskGame.unity", UnityEditor.SceneManagement.OpenSceneMode.Additive);

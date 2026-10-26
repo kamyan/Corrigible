@@ -47,6 +47,10 @@ edilmedi** (kullanıcı commit istemedi). Commit'i kullanıcı isteyince yap.
 - Sol pencere dört odalı sığınak yan kesitini, sağ masa tüplü operasyon monitörünü gösteriyor. `RaidLauncher`, atanan
   kamera pozuna yumuşak yaklaşmadan sonra mevcut Baskın sahnesini açıyor; dönüşte kamera ve girdi durumunu
   geri yüklüyor. Ortadaki komuta masası dünya/bölge/sektör kararlarını taşıyor.
+- Bölge/sektör bilgileri monitörden harita üzerindeki bağlı görev fişine taşındı. Bölge tıklaması ve `1 / 3`
+  harita planlamasında kalır; yalnız fişten verilen baskın emri kamerayı CRT'ye götürür. Fiş kapatılabilir;
+  sığınakta, oda görünümünde ve baskında gizlenir. Türkçe/İngilizce görünüm, UI ışınıyla bölge/görev seçimi,
+  monitöre geçiş ve geri çekilme sonrası aynı harita pozuna dönüş canlı doğrulandı. EditMode: **655/655**.
 - Sektör sırası, komşuluk, tek ödül, başarısızlıktan dönüş, bütün haritayı bitirme, eski kuralların yalıtımı,
   kayıt/replay, sığınak kaynak/enerji ve yağma hedefi için regresyon testleri eklendi. Tam EditMode koşusu **653/653** geçti.
 - Canlı oyunda sığınak odasına UI ışınıyla tıklama, atölye onarımı, personel atama, manuel vardiya ve üretim; ayrı kayıttan

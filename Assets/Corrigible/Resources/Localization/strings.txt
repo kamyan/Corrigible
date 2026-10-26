@@ -932,6 +932,8 @@ HASARLI	DAMAGED
 SEVİYE {0}	LEVEL {0}
 {0}\n{1}\nGeliştirme: {2:0} fon + {3:0} malzeme\n{4}	{0}\n{1}\nUpgrade: {2:0} funds + {3:0} materials\n{4}
 Geliştirmeye hazır.	Ready to upgrade.
+BAĞLANTI KURULUYOR\n\nSAHA YAYINI AÇILIYOR	CONNECTING\n\nOPENING FIELD TRANSMISSION
+SAHA YAYINI\n\nBAĞLANTI BEKLENİYOR\n\nBaskın emrini harita üzerindeki görev fişinden ver.	FIELD TRANSMISSION\n\nAWAITING CONNECTION\n\nIssue a raid order from the mission briefing on the map.
 Emir uygulandı.	Order carried out.
 Yapılamadı.	Action unavailable.
 # Assets/Corrigible/Desk/Scripts/Bridge/MockRaidBoardDataSource.cs
@@ -1623,7 +1625,7 @@ GELEN: {0:00}	INBOX: {0:00}
 SON HABER\n\n{0}	LATEST NEWS\n\n{0}
 SAHA FAKSI\n\nYeni rapor bekleniyor.	FIELD FAX\n\nAwaiting a new report.
 SAHA TELSİZİ\n\nEkipler: {0}\nHaberler için DİNLE.	FIELD RADIO\n\nTeams: {0}\nLISTEN for news.
-Sağ tuş: bakış · Tekerlek: yaklaş · F: harita · 1: komuta · 2: sığınak · 3: operasyon	Right mouse: look · Wheel: zoom · F: map · 1: command · 2: shelter · 3: operations
+Sağ tuş: bakış · Tekerlek: yaklaş · F: harita · 1: komuta · 2: sığınak · 3: görevler	Right mouse: look · Wheel: zoom · F: map · 1: command · 2: shelter · 3: missions
 {0} · Sol tık: kullan	{0} · Left click: use
 # Assets/Corrigible/Desk/Scripts/Runtime/Components/StatusChipView.cs
 TEHDİT	THREAT
@@ -2624,20 +2626,20 @@ DURAKLAT / SÜRDÜR	PAUSE / RESUME
 ARAŞTIRMA\nDOSYALARI	RESEARCH\nFILES
 01 / HARİTA	01 / MAP
 02 / SIĞINAK	02 / SHELTER
-03 / OPERASYON	03 / OPERATIONS
-SEÇİLİ BÖLGEDE CEPHE AÇ	OPEN FRONT IN SELECTED REGION
+03 / GÖREVLER	03 / MISSIONS
 ONAR / GELİŞTİR	REPAIR / UPGRADE
 − PERSONEL	− RESIDENT
 + PERSONEL	+ RESIDENT
 1 · KOMUTA	1 · COMMAND
 2 · SIĞINAK	2 · SHELTER
-3 · OPERASYON	3 · OPERATIONS
+3 · GÖREVLER	3 · MISSIONS
 VARDİYAYI BİTİR	END SHIFT
 SON SIĞINAK	THE LAST SHELTER
 İŞGALİN ARDINDAN · SON DİRENİŞ NOKTASI	AFTER THE OCCUPATION · THE LAST RESISTANCE OUTPOST
-Dünya çoktan düştü. Yapay zekâ bütün bölgeleri, ağları ve sunucuları ele geçirdi. Batı Avrupa'daki küçük sığınağımız, karşı harekâtın son komuta noktası.\n\nKOMUTA MASASI: Haritadan mevcut cepheyi takip et. Bir bölgenin üç sektörünü baskınlarla geri al; ardından özgür bir bölgeye komşu yeni bir cephe seç.\n\nOPERASYON MASASI: Sağdaki tüplü monitörden görevi başlat. Kamera ekranın içine girer ve baskın tahtası açılır. Loot görevinde teknisyeni ikmal kasasının yanına götür. Q ile yeteneği seç ve kasaya tıkla. Sunucu yıkımı görevinde çekirdeği yok et.\n\nSIĞINAK PENCERESİ: Soldaki kesitten odaları seç, hasarlı odaları onar ve personel görevlendir. Erzak topluluğu besler; atölye malzeme üretir, revir yaralı ekibi toparlar.\n\nHazırlıklarını bitirince VARDİYAYI BİTİR. Zaman yalnızca emrinle ilerler. İlk hedef: tedarik deposu.	The world has already fallen. The AI has seized every region, network, and server. Our small shelter in Western Europe is the last command post of the counteroffensive.\n\nCOMMAND DESK: Follow the current front on the map. Recapture a region's three sectors through raids, then choose a new front adjacent to a liberated region.\n\nOPERATIONS DESK: Launch a mission from the CRT monitor on the right. The camera enters the screen and reveals the raid board. On loot missions, move the technician next to the supply crate. Press Q to select the ability, then click the crate. On server demolition missions, destroy the core.\n\nSHELTER WINDOW: Select rooms in the cutaway on the left, repair damaged rooms, and assign residents. Supplies feed the community; the workshop produces materials and the infirmary helps the injured team recover.\n\nWhen preparations are complete, END SHIFT. Time advances only on your command. First target: the supply depot.
+Dünya çoktan düştü. Yapay zekâ bütün bölgeleri, ağları ve sunucuları ele geçirdi. Batı Avrupa'daki küçük sığınağımız, karşı harekâtın son komuta noktası.\n\nKOMUTA MASASI: Bölgeyi haritada seç. Bölge bilgilerini ve görevleri harita üzerindeki fişten incele; baskın emrini buradan ver. Bir bölgenin üç sektörünü baskınlarla geri al; ardından özgür bir bölgeye komşu yeni bir cephe seç.\n\nOPERASYON MONİTÖRÜ: Baskın emrinden sonra kamera sağdaki tüplü monitöre yaklaşır. Ekranın içine girer ve saha yayınındaki baskın tahtası açılır. Loot görevinde teknisyeni ikmal kasasının yanına götür. Q ile yeteneği seç ve kasaya tıkla. Sunucu yıkımı görevinde çekirdeği yok et.\n\nSIĞINAK PENCERESİ: Soldaki kesitten odaları seç, hasarlı odaları onar ve personel görevlendir. Erzak topluluğu besler; atölye malzeme üretir, revir yaralı ekibi toparlar.\n\nHazırlıklarını bitirince VARDİYAYI BİTİR. Zaman yalnızca emrinle ilerler. İlk hedef: tedarik deposu.	The world has already fallen. The AI has seized every region, network, and server. Our small shelter in Western Europe is the last command post of the counteroffensive.\n\nCOMMAND DESK: Select a region on the map. Read its briefing and missions on the map, then issue the raid order from there. Recapture a region's three sectors through raids, then choose a new front adjacent to a liberated region.\n\nOPERATIONS MONITOR: After a raid order, the camera approaches the CRT monitor on the right. It enters the screen and reveals the raid board in the field transmission. On loot missions, move the technician next to the supply crate. Press Q to select the ability, then click the crate. On server demolition missions, destroy the core.\n\nSHELTER WINDOW: Select rooms in the cutaway on the left, repair damaged rooms, and assign residents. Supplies feed the community; the workshop produces materials and the infirmary helps the injured team recover.\n\nWhen preparations are complete, END SHIFT. Time advances only on your command. First target: the supply depot.
 KARŞI HAREKÂTI BAŞLAT	BEGIN COUNTEROFFENSIVE
 KAYITTAN DEVAM ET	CONTINUE SAVED GAME
+SEÇİLİ BÖLGEDE CEPHE AÇ	OPEN FRONT IN SELECTED REGION
 # Assets/Corrigible/Fx/Scenes/FxBaskin.unity
 GÜNLÜK [L]	LOG [L]
 KURALLAR [?]	RULES [?]
@@ -2775,5 +2777,4 @@ Başlık	Title
 Açıklama	Description
 Bildirim	Notification
 # --- Kullanılmayan çeviriler (koddan silinmiş metinler; gerekirse geri alınır) ---
-#02 / EKİPLER	02 / TEAMS
-#03 / YZ GÜNLÜĞÜ	03 / AI LOG
+#Sağ tuş: bakış · Tekerlek: yaklaş · F: harita · 1: komuta · 2: sığınak · 3: operasyon	Right mouse: look · Wheel: zoom · F: map · 1: command · 2: shelter · 3: operations

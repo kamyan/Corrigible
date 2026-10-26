@@ -470,7 +470,11 @@ kurallarını değiştirmemişti; aşağıdaki kurtuluş kampanyası bu sunuma y
 - **Manuel vardiya:** `GameController.AdvanceLiberationDay` bir simülasyon günü ilerletip olayları yayımlar ve
   ayrı kaydı yazar. Baskın veya oyun sonu varken ilerleyemez. Normal krizin 1×/2×/4× saat yolu ayrı kalır.
 - **Oda ve geçiş:** Sol pencere sığınak yan kesitinin durum/geliştirme yüzeyidir; sağ operasyon masası CRT
-  monitörüdür. `RaidLauncher` serialized `mainCamera`, `monitorFocusPose`, süre/FOV ve giriş kilidi referanslarıyla
+  monitörüdür. Bölge/görev düğmeleri `LiberationMapCanvas` üzerindeki sahnede saklanan görev fişindedir.
+  `LiberationDeskView`, seçili bölgenin harita konumunu `DeskCanvasProjection` ile fişe bağlar; fişi ekran sınırında tutar,
+  sığınak/oda bakışında ve modal/baskın sırasında gizler. Bu Overlay raycaster dünya girdi kilidine dahil edilmez;
+  baskına yaklaşırken kilitlenir ve taktik sahne boyunca canvas kapanır. CRT yalnız yayın durumunu gösterir.
+  Bölge seçimi ve görev kısayolu haritaya odaklanır. Baskın emrinde `RaidLauncher` serialized `mainCamera`, `monitorFocusPose`, süre/FOV ve giriş kilidi referanslarıyla
   önce monitöre yaklaşır, sonra Baskın sahnesini eklemeli yükler. Kamera/girdi durumunu dönüşte geri yükler;
   yaklaşma sırasında eski baskın iptal edilmişse yüklemeyi bırakır. Monitör geçişi atanmayan eski sahnelerde
   doğrudan yükleme sürer. Oda yerleşimi sahne kaynağındadır; kalıcı runtime sahne kurucusu eklenmez.
