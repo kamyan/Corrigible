@@ -596,7 +596,7 @@ GameObject:
   - component: {fileID: 7533811478099160124}
   - component: {fileID: 7943380110676074903}
   - component: {fileID: 8575697089093222465}
-  - component: {fileID: 182109022688620142}
+  - component: {fileID: 5213125117878845026}
   m_Layer: 0
   m_Name: CoreSymbol
   m_TagString: Untagged
@@ -767,7 +767,7 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 7943380110676074903}
   m_maskType: 0
---- !u!114 &182109022688620142
+--- !u!114 &5213125117878845026
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -776,9 +776,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1678923311155153947}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56d86558491724eb494a5c893d0e65ee, type: 3}
+  m_Script: {fileID: 11500000, guid: 6b8081cbb44c546f28bcd1c8d900cf2e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Corrigible.Game::Corrigible.Game.LocalizedText
+  m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.DeskLocText
   source: "\xC7"
 --- !u!1 &1743190159217949975
 GameObject:
@@ -2877,6 +2877,7 @@ MonoBehaviour:
   standee: 0
   stateLabel: {fileID: 0}
   damageMark: {fileID: 1006591897190039820}
+  spentTint: {r: 0.46, g: 0.42, b: 0.35, a: 1}
   hover: 0
   X: 0
   Y: 0

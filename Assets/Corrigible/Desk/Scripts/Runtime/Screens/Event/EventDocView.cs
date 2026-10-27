@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,9 +6,8 @@ using UnityEngine.UI;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Bildirim kâğıdının belge kipi (F8.3; taslaklar <c>drafts/perde</c>, <c>baskin_brifing</c>, <c>baskin_sonuc</c>): kaynakların
-    /// altında sonuç satırları (bedel/kazanç rengiyle), yan yana sarı kutular, kesik çerçeveli risk satırı ve düğmeler
-    /// (ilki mürekkep + Enter, ikincisi kâğıt + Esc). Kâğıdın yüksekliğine eklenecek boyu döner.
+    /// Rapor kâğıdının belge bölümü (taslak <c>baskin_sonuc</c>): sonuç satırları (bedel/kazanç rengiyle), kesik çerçeveli uyarı
+    /// satırı ve düğmeler (ilki mürekkep + Enter, ikincisi kâğıt + Esc). Kâğıdın yüksekliğine eklenecek boyu döner.
     /// </summary>
     public sealed class EventDocView : MonoBehaviour
     {
@@ -17,16 +15,12 @@ namespace Corrigible.Desk
         [SerializeField] RectTransform linesRule;
         [SerializeField] RectTransform lines;
         [SerializeField] EventLineRow lineTemplate;
-        [SerializeField] RectTransform[] boxes = Array.Empty<RectTransform>();
-        [SerializeField] TMP_Text[] boxCaps = Array.Empty<TMP_Text>();
-        [SerializeField] TMP_Text[] boxRights = Array.Empty<TMP_Text>();
-        [SerializeField] TMP_Text[] boxTexts = Array.Empty<TMP_Text>();
         [SerializeField] RectTransform risk;
         [SerializeField] TMP_Text riskText;
         [SerializeField] RectTransform buttons;
         [SerializeField] DeskButton primary, secondary;
         [SerializeField] KeyChipView primaryKey, secondaryKey;
-        [SerializeField] float width = 656, capHeight = 22, lineHeight = 22, gap = 12, boxHeight = 50, boxGap = 10, buttonHeight = 30;
+        [SerializeField] float width = 656, capHeight = 22, lineHeight = 22, gap = 12, buttonHeight = 30;
 
         DeskPool<EventLineRow> rows;
         EventDocVM vm;
@@ -80,23 +74,6 @@ namespace Corrigible.Desk
             }
             rows.Trim(d.Lines.Count);
             if (hasLines) y += d.Lines.Count * lineHeight + gap;
-
-            int nb = Mathf.Min(d.Boxes.Count, boxes.Length);
-            float bw = nb > 0 ? (width - (nb - 1) * boxGap) / nb : 0;
-            for (int i = 0; i < boxes.Length; i++)
-            {
-                bool on = i < nb;
-                DeskUi.SetActive(boxes[i], on);
-                if (!on) continue;
-                var b = d.Boxes[i];
-                boxes[i].anchoredPosition = new Vector2(Mathf.Round(i * (bw + boxGap)), -Mathf.Round(y));
-                boxes[i].sizeDelta = new Vector2(Mathf.Round(bw), boxHeight);
-                DeskUi.SetText(boxCaps[i], T.T(b.Cap));
-                DeskUi.SetText(boxRights[i], T.T(b.Right));
-                var row = b.Rows.Count > 0 ? b.Rows[0] : null;
-                DeskUi.SetText(boxTexts[i], row == null ? "" : T.T(row.Label) + (string.IsNullOrEmpty(row.Value) ? "" : " <style=num>" + row.Value + "</style>"));
-            }
-            if (nb > 0) y += boxHeight + gap;
 
             bool hasRisk = !string.IsNullOrEmpty(d.Risk);
             DeskUi.SetActive(risk, hasRisk);

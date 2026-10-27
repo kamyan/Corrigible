@@ -5,7 +5,7 @@ namespace Corrigible.Steam
 {
     /// <summary>
     /// Steam sürümü: başarımları Steamworks'e yazar. Bu assembly yalnızca Steamworks.NET paketi kuruluyken derlenir
-    /// (STEAMWORKS_NET). Oyuncu profili ve kayıt dosyası persistentDataPath altındadır; Steam Cloud için bu klasör
+    /// (STEAMWORKS_NET). Kayıt dosyaları persistentDataPath altındadır; Steam Cloud için bu klasör
     /// Steamworks'te Auto-Cloud'a eklenir, kod gerekmez.
     /// </summary>
     public sealed class SteamPlatform : Game.IPlatformServices

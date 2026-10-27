@@ -13,8 +13,7 @@ namespace Corrigible.Desk.Tests
     /// <summary>Sığınak Aşama 7: CRT durumları, bekleme ve geçiş metinleri, ızgaranın baskın kamerasına oturması, sahne bağlantıları.</summary>
     public class SiginakCrtTests
     {
-        static Simulation NewLiberation(double fon = 100) => Simulation.NewGame(null, "manipulator", 731, new Balance { startFon = fon },
-            rules: new RuleOptions { LiberationCampaign = true });
+        static Simulation NewLiberation(double fon = 100) => Simulation.NewGame(731, new Balance { startFon = fon });
 
         [Test]
         public void State_FollowsRaidLifecycle()

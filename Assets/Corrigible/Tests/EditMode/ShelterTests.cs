@@ -7,22 +7,7 @@ namespace Corrigible.Tests
     /// <summary>Sığınak harcamaları, personel sınırları ve kayıt/devam için regresyonlar.</summary>
     public class ShelterTests
     {
-        static Simulation Ready(Balance b = null) => Simulation.NewGame(null, "manipulator", 79, b,
-            rules: new RuleOptions { LiberationCampaign = true });
-
-        [Test]
-        public void OrdinaryGame_HasNoShelterAndRejectsCommandsWithoutChangingRecord()
-        {
-            var sim = Simulation.NewGame(null, "manipulator", 79);
-            double fon = sim.S.Fon;
-            uint rng = sim.S.Rng.State;
-            Assert.IsNull(sim.Shelter);
-            Assert.IsFalse(sim.ShelterUpgrade(ShelterLogic.Workshop).Ok);
-            Assert.IsFalse(sim.ShelterAssign(ShelterLogic.Living, 1).Ok);
-            Assert.AreEqual(fon, sim.S.Fon);
-            Assert.AreEqual(rng, sim.S.Rng.State);
-            Assert.IsEmpty(sim.Record.commands);
-        }
+        static Simulation Ready(Balance b = null) => Simulation.NewGame(79, b);
 
         [Test]
         public void Repair_PaysOnceAndFailureDoesNotSpendOrRecord()

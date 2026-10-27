@@ -22,7 +22,7 @@ namespace Corrigible.Desk
         [SerializeField] SpotlightGraphic dim;
         [SerializeField] RectTransform stampRect;
         IRaidCommands commands;RaidViewModel current;readonly List<RaidLogRowView> logRows=new List<RaidLogRowView>();string logKey;
-        static readonly string[] Legend={"legend.move","legend.target","legend.hit","legend.lie","legend.channel","legend.wake","legend.types","legend.flag","legend.scanned","legend.armor"};
+        static readonly string[] Legend={"legend.move","legend.target","legend.hit","legend.channel","legend.wake","legend.types","legend.flag","legend.armor"};
         public void Bind(IRaidCommands value)
         {
             commands=value;Button(closeLog,commands.ToggleLog);Button(closeRules,commands.ToggleRules);Button(cancelRetreat,commands.CancelPending);Button(retreatAgain,commands.RequestRetreat);Button(continueButton,commands.ContinueToReport);Button(resumeButton,commands.CancelPending);
@@ -45,11 +45,11 @@ namespace Corrigible.Desk
                 unusedRows[i].text=u.ThreatOrder>0?Loc.F("{0} · {1} kullanılmadı\n#{2} dron onu vuracak · −1",u.Name,rights,u.ThreatOrder):Loc.F("{0} · {1} kullanılmadı",u.Name,rights);
             }
             ((RectTransform)confirmNote.transform).sizeDelta=new Vector2(330,Mathf.Max(143,72+vm.Unused.Length*52));
-            logTitle.text=Loc.T("OPERASYON GÜNLÜĞÜ");rulesTitle.text=Loc.T("KURALLAR KARTI");for(int i=0;i<ruleRows.Length;i++)ruleRows[i].text=RaidText.Get("rules."+(i+1));for(int i=0;i<legendRows.Length;i++)legendRows[i].text=RaidText.Get(Legend[i]);
+            logTitle.text=Loc.T("OPERASYON GÜNLÜĞÜ");rulesTitle.text=Loc.T("KURALLAR KARTI");for(int i=0;i<ruleRows.Length;i++)ruleRows[i].text=RaidText.Get("rules."+(i+1));for(int i=0;i<legendRows.Length&&i<Legend.Length;i++)legendRows[i].text=RaidText.Get(Legend[i]);
             if(vm.IsLootMission&&ruleRows.Length>2)ruleRows[2].text=Loc.T("Teknisyen kasayı açar. İtme ve patlamalar kasaya hasar verebilir; EMP kasayı açmaz.");
             if(vm.IsLootMission&&ruleRows.Length>5)ruleRows[5].text=Loc.T("İkmal görevi: Teknisyen ile kasaya yaklaş, Q ile yeteneği seç ve kasayı aç. İmha edilen kasa görevi kaybettirir.");
             float ry=52;foreach(var t in ruleRows){float h=Mathf.Max(30,t.GetPreferredValues(t.text,366,float.PositiveInfinity).y+8);var r=(RectTransform)t.transform.parent;r.anchoredPosition=new Vector2(14,-ry);r.sizeDelta=new Vector2(392,h);t.rectTransform.sizeDelta=new Vector2(366,h);ry+=h;}
-            if(legendRoot!=null){legendRoot.anchoredPosition=new Vector2(14,-ry-8);((RectTransform)rulesCard.transform).sizeDelta=new Vector2(420,Mathf.Max(455.5f,ry+160));}
+            if(legendRoot!=null){legendRoot.anchoredPosition=new Vector2(14,-ry-8);((RectTransform)rulesCard.transform).sizeDelta=new Vector2(420,Mathf.Max(431.5f,ry+136));}
             retreatTitle.text=RaidText.Get("raid.retreat.title");retreatBody.text=RaidText.Get("raid.retreat.body");retreatFoot.text=RaidText.Get("raid.retreat.foot");retreatAgainLabel.text=Loc.T("EMİN MİSİN? TEKRAR BAS");
             continueLabel.text=Loc.T("Operasyon raporuna geç");resumeLabel.text=Loc.T("Devam et [Esc]");pauseLabel.text=Loc.T("DURAKLATILDI");
             dim.gameObject.SetActive(vm.Finished||vm.RetreatArmed||vm.Paused);dim.color=DeskTheme.Active.Get("sade.plaque.bg");var col=dim.color;col.a=vm.Finished ? .74f : .32f;dim.color=col;

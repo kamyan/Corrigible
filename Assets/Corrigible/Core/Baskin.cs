@@ -5,7 +5,7 @@ using System.Linq;
 namespace Corrigible.Core
 {
     /// <summary>
-    /// Baskın: hücre tabanlı taktik savaş (Into the Breach esinli). Tarayıcı prototipindeki baskin.js'in birebir karşılığı.
+    /// Baskın: hücre tabanlı taktik savaş (Into the Breach esinli).
     /// Durum (BState) kopyalanabilir: geri alma ve önizleme kopya üzerinde çalışır. Rastgelelik yalnızca durumdaki
     /// mulberry32 (Rs) ile; aynı parametreler + aynı hamleler = aynı savaş.
     ///
@@ -15,12 +15,11 @@ namespace Corrigible.Core
     public static class Baskin
     {
         public const int N = 8;
-        public const int ScanRadius = 3;
         const int MaxEnemies = 7;
         public static readonly int[][] Dirs = { new[] { 0, -1 }, new[] { 1, 0 }, new[] { 0, 1 }, new[] { -1, 0 } };
 
-        // '.' zemin, '#' duvar, '~' elektrikli kablo kanalı, 'C' hedef dolap, 'Y' yedek çekirdek (Yedekleme yoksa sivil),
-        // 'S' sivil sunucu, 'K' soğutma ünitesi, 'U' kopya dolabı, 'E' ekip girişi, 'd' dron, 'm' bakım robotu
+        // '.' zemin, '#' duvar, '~' elektrikli kablo kanalı, 'C' hedef dolap, 'Y' ve 'S' sivil sunucu,
+        // 'K' soğutma ünitesi, 'U' kopya dolabı, 'E' ekip girişi, 'd' dron, 'm' bakım robotu
         public static readonly (string Name, string[] Rows)[] Layouts =
         {
             (Loc.N("Ana sunucu salonu"), new[] { "S.~...U.", "..~.#..S", "E.#.K#..", "E.#..#C.", "E..~~...", "..#..#dm", ".S#.d.Y.", "....K..U" }),
@@ -54,11 +53,11 @@ namespace Corrigible.Core
 
         public static readonly Dictionary<string, string> ObjNames = new Dictionary<string, string>
         {
-            ["core"] = Loc.N("Çekirdek dolabı"), ["node"] = Loc.N("YZ düğüm dolabı"), ["backup"] = Loc.N("Yedek çekirdek"),
+            ["core"] = Loc.N("Çekirdek dolabı"), ["node"] = Loc.N("YZ düğüm dolabı"),
             ["civ"] = Loc.N("Sivil sunucu"), ["cool"] = Loc.N("Soğutma ünitesi"), ["spawner"] = Loc.N("Kopya dolabı"),
         };
 
-        public static bool IsTarget(string k) => k == "core" || k == "node" || k == "backup";
+        public static bool IsTarget(string k) => k == "core" || k == "node";
         public static bool IsLoot(BState state) => state.Params?.MissionKind == "loot";
 
         // ---------- Durum ----------
@@ -71,7 +70,7 @@ namespace Corrigible.Core
             public Cell Clone() => new Cell { T = T, O = O?.Clone() };
         }
 
-        public sealed class Intent { public string Kind; public int Dir, Shown; public bool Fake; public Intent Clone() => (Intent)MemberwiseClone(); }
+        public sealed class Intent { public string Kind; public int Dir; public Intent Clone() => (Intent)MemberwiseClone(); }
 
         public sealed class Unit
         {
@@ -98,7 +97,7 @@ namespace Corrigible.Core
             public RaidParams Params;
             public int Rs, Turn = 1, MaxTurns, SpawnPerTurn, Collateral, NextId = 1;
             public string Phase = "player", Layout, OutcomeReason;
-            public bool Deceptive, IsCore, HasBackup, OutcomeSuccess, Retreated;
+            public bool IsCore, OutcomeSuccess, Retreated;
             public Cell[,] Cells = new Cell[N, N]; // [y, x]
             public List<Unit> Units = new List<Unit>();
             public List<Pt> Spawns = new List<Pt>();
@@ -163,12 +162,10 @@ namespace Corrigible.Core
             var B = new BState
             {
                 Params = p, Rs = p.Seed,
-                MaxTurns = p.Traits.Contains("hizlanma") ? 5 : 6,
-                Deceptive = p.Traits.Contains("aldatma") || p.Traits.Contains("medya"),
+                MaxTurns = 6,
                 SpawnPerTurn = p.Traits.Contains("kopya") ? 2 : 1,
                 IsCore = p.IsCore && p.MissionKind != "loot",
             };
-            B.HasBackup = B.IsCore && p.Traits.Contains("yedek");
             Rnd(B);
             var L = Layouts[(p.Compute + p.RaidNumber + (p.Seed & 7)) % Layouts.Length];
             B.Layout = L.Name;
@@ -178,9 +175,8 @@ namespace Corrigible.Core
                 {
                     char ch = L.Rows[y][x];
                     var c = new Cell { T = ch == '#' ? "wall" : ch == '~' ? "cable" : "floor" };
-                    if (ch == 'C') c.O = NewObj(B.IsCore ? "core" : "node", B.HasBackup ? 4 : B.IsCore ? 5 : 4);
-                    else if (ch == 'Y') c.O = B.HasBackup ? NewObj("backup", 2) : NewObj("civ", 1);
-                    else if (ch == 'S') c.O = NewObj("civ", 1);
+                    if (ch == 'C') c.O = NewObj(B.IsCore ? "core" : "node", B.IsCore ? 5 : 4);
+                    else if (ch == 'Y' || ch == 'S') c.O = NewObj("civ", 1);
                     else if (ch == 'K') c.O = NewObj("cool", 1);
                     else if (ch == 'U') c.O = NewObj("spawner", 2);
                     B.Cells[y, x] = c;
@@ -203,8 +199,6 @@ namespace Corrigible.Core
             }
             string tgt = B.IsCore ? Loc.T("çekirdeğimin") : Loc.T("sunucularımın");
             Say(B, IsLoot(B) ? Loc.T("İkmal kasasını Teknisyen ile bitişik kareden aç. Kasayı imha etmeden malzemeleri al.") : p.RaidNumber > 1 ? Loc.T("Yine sen. Bu sefer kapıda daha çok makine var.") : Loc.F("Demek {0} yerini buldun. Bakalım içeri girebilecek misin.", tgt), IsLoot(B) ? "sys" : "ai");
-            if (B.Deceptive) Say(B, Loc.T("Makinelerimin ne yapacağını gösterdiğimi mi sanıyorsun?"), "ai");
-            if (B.HasBackup) Say(B, Loc.T("Tek dolap mı? Hayır. Yedeğim de burada."), "ai");
             PlanEnemies(B);
             PlaceSpawns(B);
             B.FxList.Clear();
@@ -443,7 +437,7 @@ namespace Corrigible.Core
             var c = src.Clone();
             dst.Params = c.Params; dst.Rs = c.Rs; dst.Turn = c.Turn; dst.MaxTurns = c.MaxTurns; dst.SpawnPerTurn = c.SpawnPerTurn;
             dst.Collateral = c.Collateral; dst.NextId = c.NextId; dst.Phase = c.Phase; dst.Layout = c.Layout; dst.OutcomeReason = c.OutcomeReason;
-            dst.Deceptive = c.Deceptive; dst.IsCore = c.IsCore; dst.HasBackup = c.HasBackup; dst.OutcomeSuccess = c.OutcomeSuccess; dst.Retreated = c.Retreated;
+            dst.IsCore = c.IsCore; dst.OutcomeSuccess = c.OutcomeSuccess; dst.Retreated = c.Retreated;
             dst.Cells = c.Cells; dst.Units = c.Units; dst.Spawns = c.Spawns; dst.Log = c.Log; dst.FxList = c.FxList;
         }
 
@@ -544,10 +538,7 @@ namespace Corrigible.Core
                 }
                 var pk = best[(int)Math.Floor(Rnd(B) * best.Count)];
                 e.X = pk.pos.X; e.Y = pk.pos.Y;
-                var it = new Intent { Kind = pk.kind, Dir = pk.dir, Shown = pk.dir };
-                // Aldatma: bazı niyetler yalan gösterilir; Analistin tarama alanındakiler her zaman doğru görünür
-                if (B.Deceptive && it.Kind != "repair" && Rnd(B) < 0.35) { it.Fake = true; it.Shown = (it.Dir + 1 + (int)Math.Floor(Rnd(B) * 3)) % 4; }
-                e.Intent = it;
+                e.Intent = new Intent { Kind = pk.kind, Dir = pk.dir };
                 e.Order = ++order;
             }
         }
@@ -578,14 +569,11 @@ namespace Corrigible.Core
             }
         }
 
-        /// <summary>Analistin tarama alanındaki düşmanın niyeti kesin görünür.</summary>
-        public static bool Scanned(BState B, Unit e) => Alive(B, 'p').Any(p => p.Type == "ana" && Man(p.X, p.Y, e.X, e.Y) <= ScanRadius);
-
         public sealed class IntentView
         {
             public int Unit, Order, Dir, FromX, FromY, TargetX, TargetY;
             public string Kind;
-            public bool Uncertain, IsScanned, HasTarget, TargetNone;
+            public bool HasTarget, TargetNone;
         }
 
         /// <summary>Arayüz için: her düşmanın gösterilen niyeti (yalan olabilir).</summary>
@@ -594,13 +582,11 @@ namespace Corrigible.Core
             var list = new List<IntentView>();
             foreach (var e in Alive(B, 'e').Where(u => u.Intent != null).OrderBy(u => u.Order))
             {
-                bool sc = Scanned(B, e);
-                bool uncertain = B.Deceptive && !sc && e.Intent.Kind != "repair";
-                int dir = uncertain ? e.Intent.Shown : e.Intent.Dir;
+                int dir = e.Intent.Dir;
                 var t = IntentTarget(B, e, e.Intent.Kind, dir, e.X, e.Y);
                 list.Add(new IntentView
                 {
-                    Unit = e.Id, Order = e.Order, Kind = e.Intent.Kind, Dir = dir, Uncertain = uncertain, IsScanned = sc && B.Deceptive,
+                    Unit = e.Id, Order = e.Order, Kind = e.Intent.Kind, Dir = dir,
                     FromX = e.X, FromY = e.Y, HasTarget = t != null, TargetNone = t != null && t.None, TargetX = t?.X ?? 0, TargetY = t?.Y ?? 0,
                 });
             }
@@ -624,7 +610,7 @@ namespace Corrigible.Core
                 if (e.Intent.Kind == "repair")
                 {
                     var o = CellAt(B, t.X, t.Y).O;
-                    if (o != null && IsTarget(o.K) && o.Hp < o.Max) { o.Hp++; AddFx(B, new Fx { K = "heal", X = t.X, Y = t.Y }); Say(B, Loc.F("Bakım robotu {0} onardı.", Loc.T(ObjNames[o.K]).ToLower(UiCulture)), "bad"); }
+                    if (o != null && IsTarget(o.K) && o.Hp < o.Max) { o.Hp++; AddFx(B, new Fx { K = "heal", X = t.X, Y = t.Y }); Say(B, Loc.F("Bakım robotu {0} onardı.", LowerName(Loc.T(ObjNames[o.K]))), "bad"); }
                 }
                 else DamageAt(B, t.X, t.Y, e.Type == "dron" ? 1 : 2, e.Type == "dron" ? Loc.T("dron ateşi") : Loc.T("bakım robotu"));
             }
@@ -638,7 +624,7 @@ namespace Corrigible.Core
                 var tp = Rnd(B) < 0.6 ? "dron" : "bakim";
                 B.Units.Add(NewUnit(B, tp, s.X, s.Y));
                 AddFx(B, new Fx { K = "spawn", X = s.X, Y = s.Y });
-                Say(B, Loc.F("Yeni bir {0} uyandı.", UnitTypes[tp].Name.ToLower(Loc.IsSource ? UiCulture : System.Globalization.CultureInfo.InvariantCulture)), "bad");
+                Say(B, Loc.F("Yeni bir {0} uyandı.", LowerName(UnitTypes[tp].Name)), "bad");
             }
             B.Spawns = new List<Pt>();
             if (Alive(B, 'p').Count == 0) { Lose(B, Loc.T("Ekibin tamamı yere düştü.")); return true; }
@@ -658,6 +644,13 @@ namespace Corrigible.Core
 
         static readonly System.Globalization.CultureInfo UiCulture = new System.Globalization.CultureInfo("tr-TR");
 
+        /// <summary>Cümle içi ad: oyun dilinin küçük harfi (Türkçede “İ → i”); kısaltmalar (YZ, AI) korunur.</summary>
+        static string LowerName(string name)
+        {
+            var culture = Loc.IsSource ? UiCulture : System.Globalization.CultureInfo.InvariantCulture;
+            return string.Join(" ", name.Split(' ').Select(w => w.Length > 1 && w.ToUpper(culture) == w ? w : w.ToLower(culture)));
+        }
+
         public static bool Retreat(BState B)
         {
             if (B.Phase != "player") return false;
@@ -668,17 +661,15 @@ namespace Corrigible.Core
 
         public static RaidResult Result(BState B)
         {
-            var left = TargetsLeft(B);
             return new RaidResult
             {
                 Success = B.Phase == "won", Retreat = B.Retreated, Collateral = B.Collateral,
                 Down = B.Units.Count(u => u.Side == 'p' && u.Dead), Turns = Math.Min(B.Turn, B.MaxTurns),
-                TargetWasCore = B.IsCore, BackupDestroyed = !B.HasBackup || !left.Any(t => t.O.K == "backup"),
                 Reason = B.OutcomeReason ?? "",
             };
         }
 
-        /// <summary>Parite testleri için durumun özeti (JS'teki baskın parite çıktısıyla aynı biçim).</summary>
+        /// <summary>Gerileme testleri için durumun özeti (RaidEngineTests).</summary>
         public static string Signature(BState B)
         {
             var objs = new List<string>();

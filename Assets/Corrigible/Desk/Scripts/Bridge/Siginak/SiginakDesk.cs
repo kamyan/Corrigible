@@ -152,7 +152,7 @@ namespace Corrigible.Desk.Bridge
             bool playing = shift != null && shift.Playing || briefing != null && briefing.OpeningPlaying;
             plaque.SetMode(playing, !playing && edge.Visible);
             var sim = Sim;
-            if (sim?.LiberationOn == true)
+            if (sim != null)
             {
                 bool raid = sim.S.Raid != null || RaidLauncher.IsRaidLoaded, reportOpen = shift != null && shift.ReportOpen;
                 shiftSwitch.SetDisabled(raid || sim.S.Ending != null || reportOpen,
@@ -233,7 +233,7 @@ namespace Corrigible.Desk.Bridge
         void Refresh()
         {
             var sim = Sim;
-            if (sim?.LiberationOn != true) return;
+            if (sim == null) return;
             var shelter = sim.Shelter;
             var lib = sim.S.Liberation;
             int free = lib.Regions.Count(r => r.Completed), regions = lib.Regions.Count;
@@ -251,7 +251,7 @@ namespace Corrigible.Desk.Bridge
         public void ShowCounters(bool animate, float stagger = 0, float shiftRoll = -1, bool slips = true)
         {
             var sim = Sim;
-            if (sim?.LiberationOn != true) return;
+            if (sim == null) return;
             var shelter = sim.Shelter;
             var lib = sim.S.Liberation;
             counters.Show(surface.Shift, sim.S.Fon, shelter.Supplies, ShelterLogic.SuppliesCapacity(shelter, sim.B), shelter.Materials,

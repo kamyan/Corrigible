@@ -8,9 +8,10 @@ using UnityEngine.SceneManagement;
 namespace Corrigible.Game.Raid
 {
     /// <summary>
-    /// Ana sahnede: strateji simülasyonu bir baskın başlatınca (ya da kayıtta süren bir baskın varsa) Baskin sahnesini ana
-    /// sahnenin üstüne yükler ve kriz masasını gizler. Baskın bitip sahne kapanınca masayı geri açar. Simülasyon ve oyun
-    /// durumu hep ana sahnede kalır; Baskin sahnesi yalnızca taktik savaşı oynatır ve sonucu GameController'a verir.
+    /// DeskGame'de: simülasyon bir baskın başlatınca (ya da kayıtta süren bir baskın varsa) Baskin sahnesini komuta odasının
+    /// üstüne yükler ve odanın kamera, canvas ve girdilerini kapatır. Baskın bitip sahne kapanınca hepsini geri açar.
+    /// Simülasyon ve oyun durumu hep DeskGame'de kalır; Baskin sahnesi yalnızca taktik savaşı oynatır ve sonucu
+    /// GameController'a verir.
     /// </summary>
     public sealed class RaidLauncher : MonoBehaviour
     {
@@ -21,7 +22,7 @@ namespace Corrigible.Game.Raid
         public string RaidSceneName => raidSceneName;
         static readonly HashSet<string> activeScenes = new HashSet<string>();
         readonly Dictionary<Behaviour, bool> visibility = new Dictionary<Behaviour, bool>();
-        [Tooltip("Baskın sürerken kapatılan bileşenler (ana kamera ve dinleyicisi, kriz masası, pencere ve eğitim canvas'ları). " +
+        [Tooltip("Baskın sürerken kapatılan bileşenler (ana kamera ve dinleyicisi, odanın canvas'ları ve girdileri). " +
                  "Nesneler değil bileşenler kapatılır ki görünümlerin olay abonelikleri sürsün.")]
         [SerializeField] Behaviour[] hideDuringRaid = new Behaviour[0];
 

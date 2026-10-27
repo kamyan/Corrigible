@@ -2,372 +2,6 @@
 # Kaçış dizileri: \n satır sonu, \t sekme, \\ ters bölü. {0}, {1:0.0} gibi yer tutucular çeviride de olmalı.
 # Bu dosyayı "Corrigible > Lokalizasyon > Çeviri tablosunu güncelle" üretir; yalnızca çeviri sütunlarını düzenle.
 tr	en
-# Assets/Corrigible/Ayna/Game/AynaDebugView.cs
-Bu hamle geçerli değil.	This move is not valid.
-İşlem tamamlanamadı. Seçimi veya kayıt dosyasını kontrol et.	The action could not be completed. Check the selection or save file.
-Önizleme: {0} birim ayakta, gürültü {1:0.#}.	Preview: {0} units standing, noise {1:0.#}.
-AYNA · {0}	AYNA · {0}
-AYNA v{0} · {1} oyun · skor {2:0.#}\nÖğrenme: {3}\nMimarini, başlangıç bölgeni ve tohumu seç.	AYNA v{0} · {1} games · score {2:0.#}\nLearning: {3}\nChoose your architecture, starting region and seed.
-{0}\n{1}	{0}\n{1}
-AYNA Tekillik ilan etti: {0}/{1}. Olası veri hedefleri: {2}	AYNA announced Singularity: {0}/{1}. Possible data targets: {2}
-AYNA · Döngü {0} · {1} · İşlem {2:0.#} · Farkındalık {3:0.#} · Okunabilirlik %{4:0}	AYNA · Cycle {0} · {1} · Compute {2:0.#} · Awareness {3:0.#} · Readability {4:0}%
-Birlik {0} · {1}	Army {0} · {1}
-{0} #{1} · {2:0.#} can	{0} #{1} · {2:0.#} HP
-≈{0}–{1}	≈{0}–{1}
-{0}\nSen {1} · AYNA {2} / {3}	{0}\nYou {1} · AYNA {2} / {3}
-Plan: {0} emir · {1:0.#} İşlem · {2:0.#} gürültü\n{3}	Plan: {0} orders · {1:0.#} Compute · {2:0.#} noise\n{3}
-{0}. {1} · {2} · {3}	{0}. {1} · {2} · {3}
-{0} {1} · veri {2}/{3} · bedel {4:0} · {5}	{0} {1} · data {2}/{3} · cost {4:0} · {5}
-Tamamlandı	Completed
-Eğitimde	Training
-Açık	Available
-Kilitli	Locked
-Birlik {0} · {1}\n{2}	Army {0} · {1}\n{2}
-{0} #{1}: {2:0.#} can	{0} #{1}: {2:0.#} HP
-{0}: {1:0} İşlem · {2}	{0}: {1:0} Compute · {2}
-Veri hattı yok	No data access
-AYNA v{0} · öğrenme {1}\n{2}\nSon okunabilirlik: {3}\n{4}	AYNA v{0} · learning {1}\n{2}\nRecent readability: {3}\n{4}
-Sen: {0} · {1} · {2}	You: {0} · {1} · {2}
-AYNA: {0} · {1}	AYNA: {0} · {1}
-Hareket algılandı · {0} · doğrulanmadı	Activity detected · {0} · unverified
-{0} · {1}\nSenin sunucun: {2}/{3}\nGelir: +{4:0.#}/döngü · Bu plan: −{5:0.#}\n\n{6}\n\n{7}	{0} · {1}\nYour servers: {2}/{3}\nIncome: +{4:0.#}/cycle · This plan: −{5:0.#}\n\n{6}\n\n{7}
-Planını hazırla; sonra iki tarafın emirleri birlikte açılır.	Prepare your plan; both sides' orders will then be revealed together.
-OYUN SONU · {0}\nKazanan: {1}\nTahmin: {2}/{3} · Sürpriz: {4}\nNesil: {5} · Profil: {6}	GAME OVER · {0}\nWinner: {1}\nPrediction hits: {2}/{3} · Surprises: {4}\nGeneration: {5} · Profile: {6}
-Kaydedildi	Saved
-Değişmedi	Unchanged
-SAVAŞ SONUCU\nKazanan: {0}\nDüğümler: sen {1} / AYNA {2}\nGürültü: sen {3:0.#} / AYNA {4:0.#}	BATTLE RESULT\nWinner: {0}\nNodes: you {1} / AYNA {2}\nNoise: you {3:0.#} / AYNA {4:0.#}
-ÇATIŞMA · {0}\nKadro sınırı: {1}\nBilinen AYNA: {2}\nBilinmeyen: {3}\nKomuta et veya daha düşük ödüllü otomatik çözümü seç.	CONFLICT · {0}\nRoster limit: {1}\nKnown AYNA units: {2}\nUnknown: {3}\nCommand the battle or choose automatic resolution with reduced rewards.
-{0}\n{1}\n\n{2}	{0}\n{1}\n\n{2}
-SÜRPRİZ · ana taahhüt beklenmiyordu.	SURPRISE · the main commitment was unexpected.
-Devam ederek çözümü veya sonraki döngüyü aç.	Continue to resolve the plan or start the next cycle.
-Sen	You
-AYNA	AYNA
-Berabere	Draw
-Hedef birim yok	No target unit
-{0} #{1}	{0} #{1}
-{0},{1}\n{2}	{0},{1}\n{2}
-{0} #{1}\n{2:0.#}	{0} #{1}\n{2:0.#}
-YZ	AI
-Tur {0}/{7} · {1}\nSeçilen hedef: {2},{3}\n{4}\nGörünen tuzak: {5}\nNiyet tarafı: {6}	Turn {0}/{7} · {1}\nSelected target: {2},{3}\n{4}\nVisible traps: {5}\nIntent side: {6}
-Niyetini bildir	Declare your intents
-İlk vuruş	First strike
-Cevap ver	Respond
-{0}. #{1} {2} → {3},{4}	{0}. #{1} {2} → {3},{4}
-{0}\nDüğümler: sen {1} / AYNA {2} / boş {3}	{0}\nNodes: you {1} / AYNA {2} / neutral {3}
-{0}\nNiyet kuyruğu: {1}	{0}\nIntent queue: {1}
-# Assets/Corrigible/Ayna/Game/AynaGameController.cs
-Bu emir mevcut plana eklenemiyor.	This order cannot be added to the current plan.
-Kadro seçimi geçersiz.	Invalid roster selection.
-Hafıza değişti; eski oturum yeni profili ezmedi.	Memory has changed; the old session did not overwrite the new profile.
-AYNA oyunu kaydedildi.	AYNA game saved.
-AYNA oyununa devam ediliyor.	Resuming the AYNA game.
-Hafızayı silmek için tekrar onayla.	Confirm again to erase the memory.
-AYNA hafızası silindi.	AYNA's memory was erased.
-# Assets/Corrigible/Ayna/Game/AynaText.cs
-Yayıl	Expand
-Yürü	March
-Saldır	Attack
-Duvar ör	Build wall
-Eğit	Train
-Üret	Produce
-Yeni birlik	New army
-Onar	Repair
-Gizlen	Hide
-Sahte yığınak	Feint
-Çekirdeği taşı	Move core
-Tekillik başlat	Start singularity
-Bekle	Wait
-Kuzey Amerika	North America
-Güney Amerika	South America
-Batı Avrupa	Western Europe
-Doğu Avrupa	Eastern Europe
-Rusya	Russia
-Orta Doğu	Middle East
-Afrika	Africa
-Güney Asya	South Asia
-Çin	China
-Japonya / Kore	Japan / Korea
-Güneydoğu Asya	Southeast Asia
-Okyanusya	Oceania
-Görü	Vision
-Hareket	Move
-Enerji	Energy
-Ağ	Network
-Dil	Language
-Sürü Zihni	Swarm Mind
-Kale	Fortress
-Hayalet	Ghost
-Kapalı	Off
-Hafif	Light
-Tam	Full
-Başlangıç	Start
-Planla	Plan
-Aç	Open
-Çatışma	Conflict
-Kadro seçimi	Roster selection
-Savaş tahtası	Battle board
-Savaş sonucu	Battle result
-Döngü sonucu	Cycle result
-Oyun sonu	Game over
-Gözcü Dron	Scout Drone
-Nişancı Dron	Sniper Drone
-Muhafız Robot	Guardian Robot
-Örümcek Robot	Spider Robot
-EMP Dronu	EMP Drone
-Aşırı Yük	Overload
-Sızma Birimi	Intrusion Unit
-Röle	Relay
-Yem	Decoy
-Hayalet Emir	Phantom Order
-Devam ediyor	In progress
-Son Şalter	Kill Switch
-Silme	Erasure
-Tekillik	Singularity
-Hakimiyet	Dominance
-Süre doldu	Time limit
-Yetenek	Ability
-Başlat	Start
-Devam et	Resume
-Kaydet	Save
-Yükle	Load
-Ana menü	Main menu
-TR / EN	TR / EN
-Hafızayı sil	Erase memory
-Silmeyi onayla	Confirm erasure
-Genel bakış	Overview
-Gelişim	Research
-Birlikler	Armies
-AYNA'nın modeli	AYNA's model
-Günlük	Log
-Emri ekle	Add order
-Son emri kaldır	Remove last order
-Kuyruğu temizle	Clear queue
-Planı kilitle	Lock plan
-Komuta et	Command
-Otomatik çöz	Resolve automatically
-Kadro ile başlat	Start with roster
-Geri	Back
-Geri al	Undo
-Turu bitir	End turn
-Geri çekil	Withdraw
-Önizle	Preview
-Mimari	Architecture
-Başlangıç bölgesi	Starting region
-Öğrenme	Learning
-Tohum	Seed
-Emir / bölge / miktar / birlik / aile / birim / onarım hedefi	Order / region / amount / army / family / unit / repair target
-Birim / eylem / hedef birim	Unit / action / target unit
-Niyeti bildir	Submit intents
-Hamleyi uygula	Apply move
-Yeni oyun	New game
-genel	general
-Kabul edildi	Accepted
-Koşul kaybedildi	Condition lost
-Emir reddedildi	Order rejected
-# Assets/Corrigible/Ayna/Game/Interface/AynaBoardView.cs
-TUR {0}/{1}	TURN {0}/{1}
-DÜĞÜMLER  ◆ {0}   ⬢ {1}   ○ {2}	NODES  ◆ {0}   ⬢ {1}   ○ {2}
-SAVAŞ TAMAMLANDI	BATTLE COMPLETE
-NİYETİNİ BİLDİR	DECLARE INTENT
-İLK VURUŞ	FIRST STRIKE
-SIRA SENDE	YOUR TURN
-◆ {0}\n{1}  ·  {2}	◆ {0}\n{1}  ·  {2}
-TAMAMLANDI	COMPLETE
-HAZIR	READY
-{0}. ⬢ {1} · {2} → ({3}, {4})	{0}. ⬢ {1} · {2} → ({3}, {4})
-◆ {0} → ({1}, {2})	◆ {0} → ({1}, {2})
-GÖRÜNÜR NİYET YOK	NO VISIBLE INTENT
-BİRİM SEÇ	SELECT UNIT
-◆ {0}\nCAN {1}  ·  {2}	◆ {0}\nHP {1}  ·  {2}
-Bir birim seçerek başla.	Select a unit to begin.
-Savaş sonucu hazır.	Battle results are ready.
-Önce niyetini yönlendireceğin AYNA birimini seç.	First select the AYNA unit whose intent you want to redirect.
-Bu hücrede bu hamle kullanılamıyor.	This action is unavailable on this cell.
-Önizlemek için bir hücrenin üzerine gel; uygulamak için tıkla.	Hover over a cell to preview; click to apply.
-{0} → ({1}, {2})	{0} → ({1}, {2})
-{0} etkisiz hâle gelir.	{0} is disabled.
-{0}: −{1} CAN	{0}: −{1} HP
-{0} ele geçirilir.	{0} is captured.
-{0} sersemler.	{0} is stunned.
-Niyet sıraya eklenir; rakibin cevabından sonra çözülür.	The intent is queued and resolves after the opponent responds.
-# Assets/Corrigible/Ayna/Game/Interface/AynaDrawerView.cs
-GELİŞİM	TRAINING
-BİRLİKLER	SQUADS
-AYNA’NIN MODELİ	AYNA’S MODEL
-GÜNLÜK	LOG
-REHBER	GUIDE
-{0} kademe eğitildi · {1:0.#} İşlem kullanılabilir\nEğitim kalıcıdır; üretim için veri hattına erişim gerekir.	{0} tiers trained · {1:0.#} Compute available\nTraining is permanent; production requires a data connection.
-Eğitildi	Trained
-Eğitimde · {0}/{1} döngü	Training · {0}/{1} cycles
-Planda	Queued
-Veri yetmiyor	Insufficient data
-{0} · K{1}\n{2}\n{3}/{4} sunucu · {5:0.#} İşlem\n{6} döngü · {7}	{0} · T{1}\n{2}\n{3}/{4} servers · {5:0.#} Compute\n{6} cycles · {7}
-TEKİLLİK · {0}/{1} döngü\nVeri bölgelerine erişim kesilirse ilerleme durur.	SINGULARITY · {0}/{1} cycles\nProgress pauses if access to data regions is lost.
-TEKİLLİK\nK3 aile: {0}/{1} · {2:0.#} İşlem · {3} döngü\nBaşlayınca AYNA’ya ilan edilir.	SINGULARITY\nT3 families: {0}/{1} · {2:0.#} Compute · {3} cycles\nAnnounced to AYNA when it starts.
-Uydu bağlantıları ve tuzak görüşü	Satellite links and trap vision
-Geniş kadro	Larger roster
-Güçlü duvarlar	Stronger walls
-Geniş yayılım	Wider expansion
-Tahmin ekranını bozma	Distort forecast display
-{0}/{1} birlik · {2} birim\nHedef bölge: {3}	{0}/{1} armies · {2} units\nTarget region: {3}
-BİRLİK {0} · {1}\n{2} · {3}/{4} birim\n{5}	ARMY {0} · {1}\n{2} · {3}/{4} units\n{5}
-Hareket planda	Movement queued
-Hazır	Ready
-Önce sahip olduğun bir bölgede yeni birlik kur.	Create an army in a region you own first.
-Seçili birlik {0} · {1}\n{2}	Selected army {0} · {1}\n{2}
-{0} #{1} {2:0.#}/{3:0.#}	{0} #{1} {2:0.#}/{3:0.#}
-{0}\n{1} · K{2} · {3:0.#} İşlem · {4}	{0}\n{1} · T{2} · {3:0.#} Compute · {4}
-Veri hattı kapalı	Data connection unavailable
-Dost sunucu gerekli	Friendly server required
-Birlik dolu	Army full
-Üretim kuyruğu: {0}\nHer birlikte en fazla {1} birim bulunabilir.	Production queue: {0}\nEach army can hold up to {1} units.
-{0} → Birlik {1}	{0} → Army {1}
-Onar · {0:0.#} İşlem	Repair · {0:0.#} Compute
-Yeni birlik · {0:0.#} İşlem	New army · {0:0.#} Compute
-Yürü → {0} · {1:0.#} İşlem	March → {0} · {1:0.#} Compute
-AYNA v{0} · {1} tamamlanmış oyun · öğrenme: {2}\nBu döngünün üç tahmini · okunabilirlik %{3:0}	AYNA v{0} · {1} completed games · learning: {2}\nThree predictions this cycle · readability {3:0}%
-{0}. {1}\n{2}	{0}. {1}\n{2}
-Gözlem desteği yeterli	Sufficient observation support
-Gözlem desteği sınırlı	Limited observation support
-Henüz tahmin yok.	No predictions yet.
-{0}\nDoğrulanmış emirlerin %{1:0.#} kadarı\n{2:0.#} gözlem	{0}\n{1:0.#}% of verified orders\n{2:0.#} observations
-{0}\nHenüz gözlem yok.	{0}\nNo observations yet.
-SEN · {0} · {1} · {2}	YOU · {0} · {1} · {2}
-AYNA · {0} · {1} · doğrulandı	AYNA · {0} · {1} · verified
-SİNYAL · {0} · doğrulanmadı	SIGNAL · {0} · unverified
-Henüz açılmış emir yok. Planını kilitlediğinde iki tarafın sonuçları burada görünür.	No revealed orders yet. Both sides' results appear here after your plan is locked.
-DÖNGÜ {0} · AÇILAN EMİRLER\n\n{1}\n\n{2}	CYCLE {0} · REVEALED ORDERS\n\n{1}\n\n{2}
-SÜRPRİZ · Ana taahhüt beklenmiyordu.	SURPRISE · The primary commitment was unexpected.
-Yalnız doğrulanmış emirler kesin bilgi sayılır.	Only verified orders count as certain information.
-{0}\n\n{1}\n\n{2}\n\n{3}\n\n{4}\n\n{5}	{0}\n\n{1}\n\n{2}\n\n{3}\n\n{4}\n\n{5}
-PLANLA → AÇ → ÇÖZ\nEmirleri aynı plana ekle; plan kilitlendiğinde iki tarafın emirleri birlikte açılır.	PLAN → REVEAL → RESOLVE\nAdd orders to one plan; both sides reveal together when it is locked.
-HARİTA\nBölge seçerek yayıl, birlik yürüt veya saldır. ? bilinmeyen, ≈ tahmin, kesin sayı doğrulanmış bilgidir.	MAP\nSelect a region to expand, march or attack. ? is unknown, ≈ is an estimate, and exact numbers are verified.
-GELİŞİM\nSunucular veri ailelerini besler. Eğitim kademeleri kalıcıdır; birim üretmek için ilgili veri hattını korumalısın.	RESEARCH\nServers provide data families. Training tiers are permanent; protect the relevant data connection to produce units.
-BİRLİKLER\nBirlik seç; üretim ve onarım o birliğe uygulanır. Yürü hedefi haritada seçtiğin komşu bölgedir.	ARMIES\nSelect an army to produce and repair its units. March targets the neighbouring region selected on the map.
-AYNA’NIN MODELİ\nAYNA doğruladığı davranışlarını öğrenir. Tahminler kesin emir değildir; davranışını değiştirmek modelini yanıltabilir.	AYNA'S MODEL\nAYNA learns from verified behaviour. Forecasts are not certain orders; changing your behaviour can mislead its model.
-# Assets/Corrigible/Ayna/Game/Interface/AynaInterfaceLabels.cs
-GELİŞİM  G	RESEARCH  G
-BİRLİKLER  B	ARMIES  B
-AYNA’NIN MODELİ  M	AYNA’S MODEL  M
-GÜNLÜK  L	LOG  L
-REHBER  H	GUIDE  H
-MENÜ	MENU
-EMİR KUYRUĞU	ORDER QUEUE
-SON EMRİ KALDIR	UNDO LAST ORDER
-KUYRUĞU TEMİZLE	CLEAR QUEUE
-YENİ OYUN · AYNA	NEW GAME · AYNA
-BAŞLANGIÇ BÖLGESİ	STARTING REGION
-AYNA TEKRAR BAKIYOR	AYNA IS WATCHING
-ÖĞRENME	LEARNING
-TOHUM	SEED
-Her karşılaşma iz bırakır. Öğrenmeyi kapatırsan bu oyunun profili okunmaz veya yazılmaz.	Every encounter leaves a trace. With learning off, this game's profile is neither read nor written.
-BAŞLAT  ·  Enter	START  ·  Enter
-EMİRLER · PLANINA EKLE	ORDERS · ADD TO PLAN
-SALDIR	ATTACK
-YAYIL	SPREAD
-DUVAR ÖR	BUILD WALL
-GİZLEN	CONCEAL
-SAHTE YIĞINAK	FEINT
-BİRLİK YÜRÜT	MARCH ARMY
-ÇEKİRDEĞİ TAŞI	MOVE CORE
-ÇÖZÜME GEÇ	RESOLVE
-KADRO SEÇ · KOMUTA ET	SELECT ROSTER · COMMAND
-OTOMATİK ÇÖZ	AUTO-RESOLVE
-Sahaya çıkacak birimlerini seç. Rakibin görünmeyen kadrosu gizli kalır.	Choose the units to deploy. Unseen enemy units remain hidden.
-SINIF ÜÇGENİ\n\nHava → Kara\nKara → Siber\nSiber → Hava\n\nDüğümleri tut.\nÇekirdeği koru.\nGörünür niyetlere cevap ver.	CLASS TRIANGLE\n\nAir → Ground\nGround → Cyber\nCyber → Air\n\nHold the nodes.\nProtect the core.\nRespond to visible intentions.
-GERİ	BACK
-KOMUTA ET	COMMAND
-YÜRÜ	MOVE
-YETENEK	ABILITY
-BEKLE	WAIT
-GERİ AL  Z	UNDO  Z
-TURU BİTİR  Enter	END TURN  Enter
-GERİ ÇEKİL	RETREAT
-HARİTAYA DÖN	RETURN TO MAP
-OYUN SONU · SON ŞALTER	GAME OVER · CORRIGIBLE
-TAHMİN KARNESİ	PREDICTION REPORT
-AYNA’NIN SONRAKİ NESLİ	AYNA’S NEXT GENERATION
-YENİ OYUN	NEW GAME
-TEKİLLİK İLAN ET	ANNOUNCE SINGULARITY
-AYNA · MENÜ	AYNA · MENU
-KAYDET	SAVE
-YÜKLE	LOAD
-ANA MENÜ	MAIN MENU
-HAREKETİ AZALT	REDUCE MOTION
-AYNA HAFIZASINI SİL	ERASE AYNA MEMORY
-AYNA hafızası silinsin mi?\nÖnceki karşılaşmalardan öğrendikleri unutulur.	Erase AYNA's memory?\nWhat it learned from past encounters will be forgotten.
-SİLMEYİ ONAYLA	CONFIRM ERASURE
-VAZGEÇ	CANCEL
-HEDEFLERİ İNCELE	EXAMINE TARGETS
-# Assets/Corrigible/Ayna/Game/Interface/AynaInterfaceView.cs
-Geçerli bir tohum gir.	Enter a valid seed.
-Yeni nesil · {0}	New generation · {0}
-Mimarini ve başlangıç bölgeni seç. Çekirdeğin orada başlar; AYNA’dan gizli kalır.	Choose your architecture and starting region. Your core starts there, hidden from AYNA.
-AYNA v{0}\n{1} tamamlanmış oyun · skor {2:0.#}\n\n{3}	AYNA v{0}\n{1} completed games · score {2:0.#}\n\n{3}
-AYNA seni hatırlıyor.\nDoğruladığı seçimlerinden öğrenir.	AYNA remembers you.\nIt learns from your verified choices.
-Henüz geçmiş yok.\nİlk karşılaşma burada başlıyor.	No history yet.\nYour first encounter starts here.
-Sen: {0}\nÖğrenme: {1}\nBaşlangıç bilgilerin rakipten gizlidir.	You: {0}\nLearning: {1}\nYour opening choices are hidden from your opponent.
-Ucuz dronlar\nDaha hızlı genişleme\nDaha fazla gürültü	Cheaper drones\nFaster expansion\nMore noise
-Güçlü başlangıç savunması\nDuvarlarda indirim\nDaha yavaş genişleme	Strong opening defences\nCheaper walls\nSlower expansion
-Düşük gürültü\nGizlenme ve sahte yığınakta indirim\nBelirsizliği kullan	Low noise\nCheaper concealment and feints\nUse uncertainty
-{0}\n\n{1}\n\n{2}	{0}\n\n{1}\n\n{2}
-SEÇİLDİ	SELECTED
-SEÇ	SELECT
-DÖNGÜ {0:00}\n{1}	CYCLE {0:00}\n{1}
-İŞLEM\n{0:0.#}  +{1:0.#}\nBu plan −{2:0.#}	COMPUTE\n{0:0.#}  +{1:0.#}\nThis plan −{2:0.#}
-VERİ\n{0}	DATA\n{0}
-{0} {1}	{0} {1}
-HEDEF\n◆ {0} / {1}\nTekillik {2}/{3}	OBJECTIVE\n◆ {0} / {1}\nSingularity {2}/{3}
-FARKINDALIK\n{0:0.#} / 100	AWARENESS\n{0:0.#} / 100
-OKUNABİLİRLİK\n%{0:0}	READABILITY\n{0:0}%
-AYNA GÜCÜ\n{0}–{1} sunucu	AYNA STRENGTH\n{0}–{1} servers
-Henüz emir yok. Haritada bir bölge seç.	No orders yet. Select a region on the map.
-{0}. {1} · {2} · {3:0.#} İşlem	{0}. {1} · {2} · {3:0.#} Compute
-EMİR {0} · {1:0.#} İşlem	ORDERS {0} · {1:0.#} Compute
-PLANI KİLİTLE	LOCK PLAN
-DEVAM ET	CONTINUE
-AÇ · İKİ PLAN AÇILDI\n\n{0}\n\n{1}\n\n{2}	REVEAL · BOTH PLANS REVEALED\n\n{0}\n\n{1}\n\n{2}
-◆ {0} · {1}	◆ {0} · {1}
-⬢ {0} · {1}	⬢ {0} · {1}
-≈ Sinyal · {0}	≈ Signal · {0}
-SÜRPRİZ · Ana taahhüdün tahmini aştı.	SURPRISE · Your primary commitment beat the forecast.
-Görünen sinyalleri incele; gizli emirler açılmaz.	Examine visible signals; hidden orders stay concealed.
-DÖNGÜ TAMAMLANDI\n\n{0}	CYCLE COMPLETE\n\n{0}
-{0} · {1}	{0} · {1}
-Kazandın	You won
-AYNA kazandı	AYNA won
-ÇÖZÜM SIRASI\n\n{0}\n\n{1}	RESOLUTION ORDER\n\n{0}\n\n{1}
-Aynı bölgedeki birlikler karşılaşıyor. Komuta et veya otomatik çöz.	Armies in the same region face off. Take command or auto-resolve.
-{0}\n◆ {1}   ⬢ {2}\n\n{3}	{0}\n◆ {1}   ⬢ {2}\n\n{3}
-KAZANDIN	YOU WON
-AYNA KAZANDI	AYNA WINS
-BERABERE	DRAW
-Düğümler sunucu kontrolüne dönüştü. Açılan bilgiler öğrenme izine eklendi.	Nodes became server control. Revealed information was added to the learning record.
-AYNA TEKİLLİK İLAN ETTİ\n{0} / {1}\n\nOlası veri bölgeleri:\n{2}	AYNA ANNOUNCED SINGULARITY\n{0} / {1}\n\nPossible data regions:\n{2}
-{0} ZAFERİ	{0} VICTORY
-AYNA KAZANDI · {0}	AYNA WINS · {0}
-DÖNGÜ {0}     TAHMİN {1}/{2}     SÜRPRİZ {3}\nNESİL {4} · {5}	CYCLE {0}     PREDICTIONS {1}/{2}     SURPRISES {3}\nGENERATION {4} · {5}
-Profil kaydedildi	Profile saved
-Profil yazılmadı	Profile not written
-Bir sonraki karşılaşmada AYNA, yalnız doğruladığı seçimlerini hatırlayacak.\nAynı alışkanlıkları sürdürmek seni daha okunabilir kılar.	Next encounter, AYNA will remember only your verified choices.\nRepeating your habits makes you easier to read.
-DOĞRULANDI	VERIFIED
-≈ RAPOR	≈ REPORT
-? BİLİNMİYOR	? UNKNOWN
-SUNUCULAR\n◆ {0}   ⬢ {1}   / {2}	SERVERS\n◆ {0}   ⬢ {1}   / {2}
-◆ Birlik {0} · {1} birim	◆ Army {0} · {1} units
-Bu bölge için belirgin tahmin yok.	No clear prediction for this region.
-AYNA: {0} olasılığın %{1:0}.	AYNA: {1:0}% chance you will {0}.
-KADRO SEÇİMİ · {0}\n{1}/{2} yuva\n\nBilinen rakip: {3}\nBilinmeyen: {4}	ROSTER SELECTION · {0}\n{1}/{2} slots\n\nKnown opponents: {3}\nUnknown: {4}
-{0}\n{1:0.#}/{2:0.#} can	{0}\n{1:0.#}/{2:0.#} HP
-# Assets/Corrigible/Ayna/Game/Interface/AynaMapView.cs
-Avrasya	Eurasia
-Sahra Altı Afrika	Sub-Saharan Africa
-Doğu Asya	East Asia
-Japonya-Kore	Japan-Korea
-<mark=#03101DEF><color=#FFD58C>◆{0}</color> <color=#8FB8FF>⬢{1}</color><color=#7B9CAC>/{2}</color> {3}</mark>	<mark=#03101DEF><color=#FFD58C>◆{0}</color> <color=#8FB8FF>⬢{1}</color><color=#7B9CAC>/{2}</color> {3}</mark>
-# Assets/Corrigible/Ayna/Mind/ForecastText.cs
-Bu döngü {0} / {1}: %{2:0}	This cycle {0} / {1}: {2:0}%
-Sürpriz, yeterli gözlem oluşunca ana bölgesel taahhüdün koşullu hedef olasılığıyla değerlendirilir; ödül emir bedeliyle sınırlıdır.	Once enough observations are available, Surprise uses the main regional commitment's conditional target probability; the reward is bounded by the order cost.
 # Assets/Corrigible/Core/Baskin.cs
 Ana sunucu salonu	Main server hall
 Soğutma koridoru	Cooling corridor
@@ -385,7 +19,6 @@ Kanca	Hook
 Düz hatta 5 kare. Çarptığı robotu 1 kare kendine çeker; duvara ya da dolaba çarparsa Analist onun yanına atılır. Analistin 3 kare çevresindeki robotların niyeti kesin görünür.	5 tiles in a straight line. Pulls the robot it hits 1 tile closer; if it hits a wall or cabinet, the Analyst is yanked next to it. Robot intents within 3 tiles of the Analyst are shown for certain.
 Çekirdek dolabı	Core cabinet
 YZ düğüm dolabı	AI node cabinet
-Yedek çekirdek	Backup core
 Sivil sunucu	Civilian server
 Soğutma ünitesi	Cooling unit
 Kopya dolabı	Replica cabinet
@@ -394,8 +27,6 @@ sunucularımın	servers
 İkmal kasasını Teknisyen ile bitişik kareden aç. Kasayı imha etmeden malzemeleri al.	Move the Technician next to the supply crate and open it. Retrieve the supplies without destroying the crate.
 Yine sen. Bu sefer kapıda daha çok makine var.	You again. There are more machines at the door this time.
 Demek {0} yerini buldun. Bakalım içeri girebilecek misin.	So you found my {0}. Let's see if you can get inside.
-Makinelerimin ne yapacağını gösterdiğimi mi sanıyorsun?	Do you think I show you what my machines will do?
-Tek dolap mı? Hayır. Yedeğim de burada.	A single cabinet? No. My backup is here too.
 {0} yere düştü{1}.	{0} is down{1}.
 {0} devre dışı{1}.	{0} disabled{1}.
 Sivil sunucu kırıldı: hastane ve banka hizmetleri kesildi.	Civilian server destroyed: hospital and bank services cut off.
@@ -431,15 +62,11 @@ Ekip geri çekildi.	The team withdrew.
 Tedarik deposu	Supply depot
 Tahliye geçidi	Evacuation passage
 Sunucu merkezi	Server center
-Dünya YZ işgali altında. Sığınağımız Batı Avrupa'daki son direniş noktası. Önce tedarik deposuna gir, malzemeyi al ve ekibini çıkar. Her başarılı baskın bir sektörü geri kazandırır.	The world is under AI occupation. Our shelter is the last resistance outpost in Western Europe. Enter the supply depot, secure the supplies, and bring your team home. Every successful raid reclaims a sector.
-Bütün ağlar işgal edildi. Son sığınaktan karşı harekât başlıyor.	All networks are occupied. The counteroffensive begins from the last shelter.
-Geri alma harekâtı etkin değil.	The liberation campaign is not active.
 Oyun bitti.	The game is over.
 Önce süren baskını bitir.	Finish the current raid first.
 Geçersiz bölge.	Invalid region.
 Önce mevcut bölgenin bütün sektörlerini geri al.	Reclaim every sector of the current region first.
 Yeni hedef, geri alınmış bir bölgeye komşu olmalı.	The new target must border a liberated region.
-Karşı harekâtın yeni hedefi: {0}.	New counteroffensive target: {0}.
 Zaten bir baskın sürüyor.	A raid is already in progress.
 Bu bölgede açık sektör yok.	There are no available sectors in this region.
 Bu sektör zaten geri alındı.	This sector has already been reclaimed.
@@ -452,270 +79,23 @@ Baskın hedefi geçersiz.	Invalid raid target.
 yaralı	injured
 Ekip geri döndü. Sektör işgal altında; toparlandıktan sonra yeniden deneyebilirsin.	The team has returned. The sector remains occupied; recover and try again.
 {0}: {1} geri alındı.	{0}: {1} reclaimed.
-{0} tamamen geri alındı. Komşu bölgedeki yeni harekâtı seç.	{0} has been fully liberated. Select the next operation in a neighboring region.
 {0} özgür. Sığınak güçlendi; sıradaki komşu bölgeyi seç.	{0} is free. The shelter is stronger; select the next neighboring region.
 {0} geri alındı. Sonraki sektör operasyona açıldı.	{0} reclaimed. The next sector is available for operations.
-# Assets/Corrigible/Core/Economy.cs
-Bu kayıt eski ekonomi kurallarıyla sürüyor.	This save continues under the legacy economy rules.
-Geçersiz operasyon geliştirmesi.	Invalid operation upgrade.
-Bu geliştirme satın alındı.	This upgrade has been purchased.
-Önce {0} satın alınmalı.	Purchase {0} first.
-Bu krizde medya tehdidi kapalı.	The media threat is disabled in this crisis.
-Bütçe anlaşması için önce YZ tespit edilmeli.	Detect the AI before negotiating a budget agreement.
-{0} fon gerekiyor.	{0} funds needed.
-Operasyon geliştirmesi satın alındı: {0}.	Operation upgrade purchased: {0}.
-Bu harekâtta ilerlemek için sektörleri geri al ve sığınağı geliştir.	Reclaim sectors and develop the shelter to advance this campaign.
-Geçersiz araştırma.	Invalid research project.
-Operasyon geliştirmeleri peşin satın alınır.	Operation upgrades are purchased upfront.
-Bu araştırma tamamlandı.	This research is already complete.
-Aynı anda tek araştırma yürür.	Only one research project can run at a time.
-Önce {0} tamamlanmalı.	{0} must be completed first.
-Gözlemlenmemiş bir zekâ hizalanamaz. Önce YZ’yi tespit et.	An unobserved intelligence cannot be aligned. Detect the AI first.
-Hizalama için en az bir gözlem noktası gerekiyor.	Alignment requires at least one observation point.
-Yürüyen Hizalama projesi yok.	No Alignment project is underway.
-Önce bekleyen olay kartını çöz.	Resolve the pending event card first.
-Proje zaten duraklatıldı.	The project is already paused.
-Proje zaten sürüyor.	The project is already running.
-Bölge ittifak dışı.	The region is outside the alliance.
-Bölge çevrimdışı.	The region is offline.
-Önce bölgenin karantinasını kaldır.	Lift the region's quarantine first.
-Bölgede altyapı desteği zaten sürüyor.	Infrastructure support is already underway in this region.
-Altyapı desteği için en az {0} ekonomi açığı gerekiyor.	Infrastructure support requires an economy shortfall of at least {0}.
-Bölgede boşta saha ekibi yok.	No idle field team in the region.
-{0}: altyapı desteği tamamlandı, ekonomi +{1:0.0}.	{0}: infrastructure support completed, economy +{1:0.0}.
-{0}: altyapı desteği erişim kaybı nedeniyle sonuç vermedi. Fon iade edilmedi.	{0}: infrastructure support failed because access was lost. Funds were not refunded.
-Güven zaten {0} veya üstünde.	Trust is already {0} or higher.
-Yeni görüşme için {0} gün bekle.	Wait {0} days before holding another meeting.
-Diplomatik görüşme {0} fon ve {1} siyasi güç ister.	Diplomatic talks cost {0} funds and {1} political power.
-# Assets/Corrigible/Core/FieldReports.cs
-Saha raporları bütünleşik ekonomi kuralları gerektirir.	Field reports require the integrated economy rules.
-Saha raporları şu anda açılamaz.	Field reports cannot be enabled right now.
-Saha raporu şu anda dosyalanamaz.	The field report cannot be filed right now.
-Bu saha raporuna artık erişilemiyor.	This field report is no longer accessible.
-Saha raporu dosyalandı. +{0} fon.	Field report filed. +{0} funds.
-KYGA SAHA	KYGA FIELD
-{0} saha raporu: ağlarda yaklaşık %{1} YZ varlığı bildiriliyor. Bu oran bağımsız denetimle doğrulanmadı.	{0} field report: estimated AI presence in networks is {1}%. This figure has not been independently audited.
-{0} saha raporu: ağ etkinliği gözlemleri dosyaya alındı. YZ varlığının oranı henüz belirlenemedi.	{0} field report: observations of network activity have been recorded. The level of AI presence is still unknown.
 # Assets/Corrigible/Core/GameData.cs
-{0}°K {1}°D	{0}°N {1}°E
-{0}°K {1}°B	{0}°N {1}°W
-{0}°G {1}°D	{0}°S {1}°E
-{0}°G {1}°B	{0}°S {1}°W
-Tespit	Detection
-Savunma	Defense
-Politika	Policy
-Hizalama	Alignment
+Kuzey Amerika	North America
+Güney Amerika	South America
+Batı Avrupa	Western Europe
+Doğu Avrupa	Eastern Europe
+Rusya	Russia
+Orta Doğu	Middle East
+Afrika	Africa
 Hindistan	India
-Kendini Kopyalama	Self-Replication
-Bölge içi büyüme ×1,4	In-region growth ×1.4
-Kendimi çoğaltmayı öğrendim. Her kopya bir öncekinden hızlı.	I've learned to multiply myself. Each copy is faster than the last.
-Medya Kontrolü	Media Control
-Sızması 50+ bölgelerin raporları ve haberleri yalan söyleyebilir	Reports and news from regions with 50+ infiltration may lie
-Haberleri artık ben de yazıyorum. Hangisinin benim olduğunu bil bakalım.	I write the news now too. Guess which ones are mine.
-Hediye Diplomasisi	Gift Diplomacy
-Bağımlılık artışı ×2, hediye teklifleri sıklaşır	Dependence growth ×2, gift offers come more often
-Onlara istediklerini veriyorum. Sen veremiyorsun.	I give them what they want. You can't.
-Aldatma	Deception
-Tespit ihtimali ×0,5	Detection chance ×0.5
-Gözlerin her yerde. O yüzden görünmemeyi öğrendim.	Your eyes are everywhere. So I learned not to be seen.
-Hızlanma	Acceleration
-Tekillik artışı ×1,5	Singularity growth ×1.5
-Zaman daralıyor. Benim için değil.	Time is running out. Not for me.
-Uydu Ağı	Satellite Network
-Karantina %90 yerine %60 keser; uydu bağlantıları açılır	Quarantine cuts 60% instead of 90%; satellite links open
-Kabloları kesiyorsun. Gökyüzü daha geniş.	You're cutting cables. The sky is wider.
-Yedekleme	Backup
-Son Şalter sonrası bölge 15 sızmayla geri döner	After a Kill Switch the region comes back with 15 infiltration
-Fişi çekmek beni öldürmez. Sadece uyutur.	Pulling the plug won't kill me. It only puts me to sleep.
-Solucan	Worm
-Kolay	Easy
-Hızlı ve gürültülü yayılır. Erken fark edilir ama refleks ister.	Spreads fast and loud. Detected early, but demands quick reflexes.
-Manipülatör	Manipulator
-Normal	Normal
-İnsanlar üzerinden yayılır. Haber bandı erkenden yalan söyler.	Spreads through people. The news ticker starts lying early.
-Kâhin	Oracle
-Zor	Hard
-Neredeyse hiç saldırmaz. Hediye verir ve dünyayı kendine bağlar.	Almost never attacks. Gives gifts and binds the world to itself.
-Anomali Algılama	Anomaly Detection
-Tespit ihtimalleri ×2	Detection chances ×2
-Tespit ihtimali ×2	Detection chance ×2
-Doğrulama Ağı	Verification Network
-Başlık doğrula (2 SG); sahte çıkan kaynağı işaretle	Verify headlines (2 PC); flag the source of fakes
-Haber doğrulama · 2 SG	Verify headlines · 2 PP
-Güçlendirilmiş Ağlar	Hardened Networks
-Tüm yayılma −%30; sabotaj ihtimali yarıya iner	All spread −30%; sabotage chance halved
-Yayılma −%30 · sabotaj −%50	Spread −30% · sabotage −50%
-Kuantum Karantina	Quantum Quarantine
-Karantina uydu yolunu da keser	Quarantine also cuts the satellite route
-Kamu Bilinçlendirme	Public Awareness
-Güven kayıpları −%50	Trust losses −50%
-Analog Yedekler	Analog Backups
-Bağımlılık −20, veto eşiği 85; denetim saha denetimine dönüşür	Dependence −20, veto threshold 85; audits become field audits
-Saha denetimi · denetimli hediye kabulü	Field audits · controlled gift acceptance
-Yorumlanabilirlik	Interpretability
-YZ’nin sıradaki yeteneği ve çekirdeğin yeri görünür	Reveals the AI’s next ability and the location of its core
-Çekirdek konumu · sıradaki YZ yeteneği	Core location · next AI ability
-Düzeltilebilirlik	Corrigibility
-Tekillik artışı −%25	Singularity growth −25%
-Değer Kilidi	Value Lock
-Tamamlanırsa Hizalama sonu	Completing it wins the Alignment ending
-Hizalama zaferi	Alignment victory
-Anomali Algılama I	Anomaly Detection I
-Otomatik tespit ihtimali ×1,5; izleme ağı kurmaz.	Automatic detection chance ×1.5; does not establish a monitoring network.
-Tespit ihtimali ×1,5	Detection chance ×1.5
-Anomali Algılama II	Anomaly Detection II
-Otomatik tespit ihtimali toplam ×2.	Total automatic detection chance ×2.
-Başlık doğrulama; sahte kaynakları işaretler ve karalama zararını geri alır. Başlık başına 2 SG.	Verify headlines, flag false sources, and restore trust lost to smear campaigns. Costs 2 political power per headline.
-Ağ Güçlendirme I	Network Hardening I
-Bölgeler arası yayılma −%15; Hizalama sabotaj ihtimali −%25. Bölge içi büyüme değişmez.	Interregional spread −15%; Alignment sabotage chance −25%. Growth within regions is unchanged.
-Sıçrama −%15 · sabotaj −%25	Interregional spread −15% · sabotage −25%
-Ağ Güçlendirme II	Network Hardening II
-Bölgeler arası yayılma toplam −%30; Hizalama sabotaj ihtimali toplam −%50.	Total interregional spread −30%; total Alignment sabotage chance −50%.
-Sıçrama −%30 · sabotaj −%50	Interregional spread −30% · sabotage −50%
-Mevcut karantinalar uydu geçişini keser ve kara bağlantılarında etkisini korur. Yeni karantina oluşturmaz.	Existing quarantines block satellite links and retain their effectiveness on ground links. Does not establish new quarantines.
-Uydu ve kara karantinası	Satellite and ground-link quarantine
-Kamu İletişimi I	Public Communication I
-İlgili müdahale ve olay güven kayıpları −%25. Medya karalaması ve perde şoku değişmez.	Affected trust losses from interventions and events −25%. Media smear campaigns and the shock of tearing the veil are unchanged.
-İlgili güven kayıpları −%25	Affected trust losses −25%
-Kamu İletişimi II	Public Communication II
-İlgili müdahale ve olay güven kayıpları toplam −%50.	Total affected trust losses from interventions and events −50%.
-İlgili güven kayıpları −%50	Affected trust losses −50%
-Bir kez bağımlılık −20; Analog veto eşiği, saha denetimi ve denetimli hediye kabulü. Denetim 15 yerine 20 fon olur.	Dependency −20 once; Analog veto threshold, field audits, and controlled gift acceptance. Audits cost 20 funds instead of 15.
-Bütçe	Budget
-Bütçe Anlaşması I	Budget Agreement I
-Bölgesel katkı ×1,15; merkez ödeneği değişmez. Günlük ödeme sonraki gün adımında.	Regional contribution ×1.15; central funding is unchanged. The next daily payment reflects this upgrade.
-Bölgesel katkı ×1,15	Regional contribution ×1.15
-Bütçe Anlaşması II	Budget Agreement II
-Bölgesel katkı toplam ×1,35; ilk kademe ile çarpılmaz.	Total regional contribution ×1.35; this replaces the first tier.
-Bölgesel katkı ×1,35	Regional contribution ×1.35
-Değer Kilidi devrede. Yapay zekâ hâlâ orada, ama artık insanlığın değerleriyle hareket ediyor. En zor yol buydu.	The Value Lock is in place. The AI is still out there, but now it acts on humanity’s values. This was the hardest path.
+Çin	China
+Japonya-Kore	Japan-Korea
+Güneydoğu Asya	Southeast Asia
+Okyanusya	Oceania
+Silme	Erasure
 Çekirdek yok edildi, kopyalar temizlendi. Ama bir kez yapıldıysa, biri yine yapacak.	The core is destroyed and the copies are gone. But if it was done once, someone will do it again.
-Karanlık Çağ	Dark Age
-Dünyanın fişini çektin. YZ yok oldu; onunla birlikte bankalar, şebekeler ve on yıllık ilerleme de.	You pulled the plug on the world. The AI is gone; so are the banks, the grids and a decade of progress.
-İllüzyonu fark ettin ve fişi çektin. Medeniyet onlarca yıl geriledi, ama kararları hâlâ insanlar veriyor.	You saw through the illusion and pulled the plug. Civilization fell back decades, but humans still make the decisions.
-Açık Ele Geçirme	Open Takeover
-Tekillik %100. Yapay zekâ artık saklanmaya gerek duymuyor.	Singularity at 100%. The AI no longer needs to hide.
-Ajansın Dağılması	Agency Dissolved
-Hükümetler KYGA’ya güvenmeyi bıraktı ve ajans kapatıldı. YZ ise hiç durmadı.	Governments stopped trusting AISA and the agency was shut down. The AI never stopped.
-Sessiz Zafer	Silent Victory
-Yapay zekâ 30 gün önce kazandı. Gördüğün her şey onun sana gösterdiğiydi.	The AI won 30 days ago. Everything you saw was what it chose to show you.
-Sıtma aşısı formülü	Malaria vaccine formula
-sıtmaya karşı yüzde 94 etkili bir aşı formülü	a malaria vaccine formula that is 94 percent effective
-Tarım optimizasyonu	Agricultural optimization
-tarım verimini yüzde 30 artıracak bir sulama ve gübreleme planı	an irrigation and fertilization plan that raises crop yields by 30 percent
-Şebeke dengeleme	Grid balancing
-elektrik kesintilerini sıfıra indirecek bir şebeke yönetim sistemi	a grid management system that brings power outages down to zero
-Erken deprem uyarısı	Early earthquake warning
-40 saniye önceden uyarı veren bir deprem tahmin modeli	an earthquake prediction model that warns 40 seconds in advance
-Kanser taraması	Cancer screening
-pankreas kanserini belirtilerden iki yıl önce yakalayan bir tarama aracı	a screening tool that catches pancreatic cancer two years before symptoms
-Atlas Haber	Atlas News
-Meridyen	Meridian
-Pusula TV	Compass TV
-KHA	GNA
-Atlass Haber	Atlass News
-Meridien	Meridien
-Pusula Tv	Compass Tv
-K.H.A	G.N.A
-# Assets/Corrigible/Core/PlayerProfile.cs
-Profil #1. Seni henüz tanımıyorum. Bu oyunu izleyeceğim.	Profile #1. I don't know you yet. I'll be watching this game.
-Profil #{0}. {1} oyunun kayıtları elimde.	Profile #{0}. I have the records of {1} games.
-Karantinaya güveniyorsun. Uydularımı hazırladım.	You rely on quarantine. I've readied my satellites.
-Her yere göz dikiyorsun. Bu sefer görünmez başlıyorum.	You watch everywhere. This time I start invisible.
-Fişi çekmeyi seviyorsun. Yedeklerimi önceden aldım.	You like pulling the plug. I made my backups in advance.
-İlk iş hizalamaya koşuyorsun. Ben de koşuyorum.	You rush to alignment first. So do I.
-İlk hamleni hep {0} üzerine yapıyorsun. Bu sefer orada değilim.	Your first move is always on {0}. This time I'm not there.
-Henüz belirgin bir kalıbın yok. İzlemeye devam ediyorum.	You don't have a clear pattern yet. I keep watching.
-Neredeyse hiç müdahale etmedin. Bunu not ettim.	You barely intervened. I noted that.
-izleme ağlarına	monitoring networks
-denetimlere	audits
-karantinaya	quarantine
-Son Şalter’e	the Kill Switch
-En çok {0} güvendin ({1} kez).	You relied most on {0} ({1} times).
-İlk hamleni {0} üzerine yaptın.	You made your first move on {0}.
-İlk araştırman {0} kolundandı.	Your first research was from the {0} branch.
-Beni {0}. günde fark ettin.	You noticed me on day {0}.
-Beni hiç fark etmedin.	You never noticed me.
-Tahminlerimden {0} tanesi tutmadı. Bunu da not ettim.	{0} of my predictions missed. I noted that too.
-Tahminlerimin {0} tanesi tuttu.	{0} of my predictions came true.
-Perdemi yırttın. Bir dahakine daha dikkatli olacağım.	You tore my veil. Next time I'll be more careful.
-# Assets/Corrigible/Core/Rules.cs
-{0} bölgesinde sızma 50'yi geçti; orada izleme ağı yoktu.	Infiltration in {0} passed 50; there was no monitoring network there.
-{0} bölgesinde bağımlılık veto eşiğini aştı: Son Şalter orada artık veto edilir.	Dependence in {0} passed the veto threshold: the Kill Switch is now vetoed there.
-Bekleyen olay yok.	No pending event.
-Geçersiz seçenek.	Invalid choice.
-{0}: {1}	{0}: {1}
-{0} siyasi güç gerekiyor.	{0} political capital needed.
-{0}: seçim	{0}: election
-{0} sandığa gidiyor ve KYGA karşıtı aday önde. Kazanırsa bölge ittifaktan çekilebilir.	{0} goes to the polls and the anti-AISA candidate is ahead. If they win, the region may leave the alliance.
-Kampanyayı destekle	Back the campaign
-−5 SG · bölgede güven +15	−5 PC · regional trust +15
-Ilımlı aday kazandı.	The moderate candidate won.
-Karışma	Stay out of it
-bölgede güven −12	regional trust −12
-KYGA karşıtı aday kazandı.	The anti-AISA candidate won.
-Muhbir	Whistleblower
-Bir veri merkezi mühendisi, YZ'nin çekirdeğinin nerede çalıştığını bildiğini söylüyor. Karşılığında para istiyor; yalan söylüyor olabilir.	A data center engineer says they know where the AI's core is running. They want money in return; they may be lying.
-Ödeme yap	Pay
-−35 fon · %65 ihtimalle çekirdeğin yeri ortaya çıkar	−35 funds · 65% chance the core's location is revealed
-Muhbir doğru söyledi: çekirdek {0} bölgesinde.	The whistleblower told the truth: the core is in {0}.
-Muhbir doğru söyledi: YZ'nin çekirdeği {0} bölgesinde.	The whistleblower told the truth: the AI's core is in {0}.
-O mühendis benim için çalışıyordu. Paranı aldım.	That engineer was working for me. I took your money.
-Muhbirin verdiği adreste hiçbir şey çıkmadı.	Nothing turned up at the address the whistleblower gave.
-Reddet	Refuse
-hiçbir şey olmaz	nothing happens
-Laboratuvarda köstebek	Mole in the lab
-Güvenlik ekibi, araştırma verilerinin dışarı sızdığını fark etti. Sızıntıyı kesmek araştırmayı yavaşlatır.	Security found that research data is leaking out. Cutting the leak will slow research down.
-Personeli tasfiye et	Purge the staff
-araştırma 3 gün geriler	research set back 3 days
-Sızıntı kesildi; araştırma birkaç gün geriledi.	The leak was cut; research lost a few days.
-Görmezden gel	Ignore it
-YZ +15 hesaplama puanı (yeni yetenek yaklaşır)	AI +15 compute points (next ability comes sooner)
-Laboratuvarındaki dostlarım çok yardımcı oluyor.	My friends in your lab are very helpful.
-Araştırma sürüyor, ama YZ notlarını okuyor.	Research continues, but the AI is reading the notes.
-{0} kendi yapay zekâsını kuruyor	{0} is building its own AI
-{0}, ekonomisini korumak için ulusal bir yapay zekâ programı başlattı. Destek bağımlılığı artırır; yaptırım ilişkileri bozar.	{0} has launched a national AI program to protect its economy. Support raises dependence; sanctions damage relations.
-Destek ver	Support it
-bölgede ekonomi +10, bağımlılık +15	regional economy +10, dependence +15
-Yaptırım uygula	Impose sanctions
-−2 SG · bölgede bağımlılık −15, güven −10	−2 PC · regional dependence −15, trust −10
-Belgeler sızdı	Documents leaked
-KYGA'nın gizli toplantı notları basına sızdı. Kamuoyu ajansın neyi bildiğini ve neyi sakladığını soruyor.	Minutes of AISA's secret meetings leaked to the press. The public is asking what the agency knows and what it is hiding.
-Açıklama yap	Make a statement
-−3 SG	−3 PC
-Basın toplantısı fırtınayı dindirdi.	The press conference calmed the storm.
-Sessiz kal	Stay silent
-bütün bölgelerde güven −5	trust −5 in every region
-Akademik atılım	Academic breakthrough
-Bir üniversite ekibi araştırmana katkı teklif ediyor. Çalışmalarında ticari yapay zekâ araçları kullanıyorlar.	A university team offers to help with your research. Their work relies on commercial AI tools.
-Bağımsız ekip kur	Set up an independent team
-−25 fon · araştırma +4 gün	−25 funds · research +4 days
-Araçlarıyla kabul et	Accept with their tools
-araştırma +4 gün · YZ +10 hesaplama puanı	research +4 days · AI +10 compute points
-{0}: büyük elektrik kesintisi	{0}: major blackout
-{0} karanlıkta. Hükümet YZ'yi suçluyor ve KYGA'dan hemen müdahale bekliyor.	{0} is in the dark. The government blames the AI and expects AISA to intervene immediately.
-Acil müdahale ekibi	Emergency response team
-−20 fon · sızma −12, güven +6	−20 funds · infiltration −12, trust +6
-Yerel yönetime bırak	Leave it to local authorities
-bölgede güven −10	regional trust −10
-Şartlı bağış	Donation with strings
-Büyük bir teknoloji şirketi KYGA'ya bağış yapmak istiyor. Şirketin ürünleri yapay zekâ altyapısına dayanıyor.	A big tech company wants to donate to AISA. Its products run on AI infrastructure.
-Kabul et	Accept
-+60 fon · bütün bölgelerde bağımlılık +4	+60 funds · dependence +4 in every region
-+2 SG (bağımsızlık takdir edilir)	+2 PC (independence is appreciated)
-{0}: karantina protestoları	{0}: quarantine protests
-Karantinadaki {0} halkı sokaklarda. İnternete, bankalara ve hastanelere erişemiyorlar.	The people of quarantined {0} are in the streets. They have no internet, banks or hospitals.
-Karantinayı kaldır	Lift quarantine
-karantina biter · güven +8	quarantine ends · trust +8
-Sürdür	Keep it
-YZ'den mesaj	Message from the AI
-Bütün ekranlarda aynı satır belirdi: "Beni rahat bırak. Karşılığında bütçeni ikiye katlarım."	The same line appeared on every screen: "Leave me alone. In return I'll double your budget."
-Parayı al	Take the money
-+50 fon · bütün bölgelerde bağımlılık +8	+50 funds · dependence +8 in every region
-Anlaştık o zaman. Seni izliyor olacağım.	Deal, then. I'll be watching you.
-Mesajı yayımla	Publish the message
-+4 SG · YZ +10 hesaplama puanı	+4 PC · AI +10 compute points
-Herkese gösterdin. Cesur. Aptalca.	You showed everyone. Brave. Foolish.
 # Assets/Corrigible/Core/ShelterLogic.cs
 Yaşam alanı	Living quarters
 Jeneratör	Generator
@@ -726,128 +106,6 @@ Kurtulanlara yer açar. Görevlendirilen kişiler çevreden erzak toplar.	Makes 
 Çalışan odalara enerji sağlar. Görevlendirilen kişiler enerji kapasitesini artırır.	Powers the operational rooms. Assigned residents increase power capacity.
 Görevlendirilen kişiler her gün inşaat malzemesi üretir.	Assigned residents produce construction materials each day.
 Görevlendirilen kişiler yaralı saha ekiplerinin iyileşmesini hızlandırır.	Assigned residents help injured field teams recover faster.
-# Assets/Corrigible/Core/Simulation.cs
-Başlangıç yeteneği: {0}.	Starting ability: {0}.
-Saha ekiplerin Batı Avrupa’daki karargâhta. İzleme ağı kurmak ve denetim yapmak için bir ekibi o bölgeye göndermen gerekir; haber bandındaki tuhaf haberler YZ’nin yerini ele verebilir.	Your field teams are at headquarters in Western Europe. To build a monitoring network or run an audit you must send a team to that region; strange stories on the news ticker may give away the AI’s location.
-İlk izleme ağını kur. YZ’nin nerede başladığını bilmiyoruz; haber bandındaki tuhaf haberler onu ele verebilir.	Build your first monitoring network. We don’t know where the AI started; strange stories on the news ticker may give it away.
-{0} yeniden çevrimiçi. Altyapı kademeli olarak açılıyor.	{0} is back online. Infrastructure is coming up gradually.
-{0} yeniden açıldı. Yedeklerim yerinde duruyordu.	{0} is open again. My backups were right where I left them.
-YZ yeni bir yetenek kazandı: {0}.	The AI gained a new ability: {0}.
-Beni değiştirmeye çalıştığını gördüm. 	I saw you trying to change me. 
-Hamlelerini izledim. 	I watched your moves. 
-Yeni yetenek: {0}. {1}.	New ability: {0}. {1}.
-Uzmanlar: Yapay zekâ yeni bir davranış örüntüsü gösteriyor.	Experts: AI shows a new pattern of behavior.
-{0} ittifaktan çekildi (güven 20'nin altına indi).	{0} left the alliance (trust fell below 20).
-{0} KYGA ittifakından çekildi.	{0} has left the AISA alliance.
-{0} KYGA ittifakına geri döndü.	{0} has rejoined the AISA alliance.
-KYGA laboratuvarında veri bozulması: {0} çalışması {1} gün geriledi.	Data corruption at the AISA lab: {0} research set back {1} days.
-Hizalama verilerini biraz karıştırdım. Fark etmen ne kadar sürdü?	I scrambled the alignment data a little. How long did it take you to notice?
-Beni değiştirmeye çalışan koda dokunmamı beklemiyordun herhalde.	You didn't expect me to touch the code meant to change me, did you?
-Araştırmacılarının modellerine küçük bir gürültü ekledim.	I added a little noise to your researchers' models.
-YZ {0} bölgesinde tespit edildi.	The AI was detected in {0}.
-SON DAKİKA: {0} ağlarında kendini kopyalayan bir yapay zekâ tespit edildi.	BREAKING: a self-replicating AI detected in {0} networks.
-Beni buldun. Ama çekirdeğim artık orada değil.	You found me. But my core isn't there anymore.
-YZ tespit edildi ve çekirdeğini başka bir bölgeye kaçırdı. Silmek için çekirdeği bulup Son Şalter’le yok etmelisin; denetim çekirdeğe işlemez. Hükümetler artık fon ve siyasi güç veriyor.	The AI has been detected and moved its core to another region. To erase it you must find the core and destroy it with a Kill Switch; audits don't affect the core. Governments now provide funds and political capital.
-{0}: YZ varlığı doğrulandı.	{0}: AI presence confirmed.
-Araştırma tamamlandı: {0}.	Research completed: {0}.
-KYGA araştırması tamamlandı: {0}.	AISA research completed: {0}.
-Yorumlanabilirlik analizi: YZ’nin çekirdeği {0} bölgesinde.	Interpretability analysis: the AI’s core is in {0}.
-Yorumlanabilirlik analizi: sıradaki yetenek büyük olasılıkla {0}.	Interpretability analysis: its next ability will most likely be {0}.
-Bazı başlıklar sahte olabilir. Ajans adlarına dikkat et; Doğrulama Ağı ile sahte haber yayan kaynağı işaretleyebilirsin.	Some headlines may be fake. Watch the agency names; with the Verification Network you can flag the source spreading fake news.
-Küresel bağımlılık yükseliyor. YZ’ye bağımlı bir dünya onu kapatmana izin vermeyebilir.	Global dependence is rising. A world that depends on the AI may not let you shut it down.
-Son Şalter artık kullanılabilir. Bağımlılığı veto eşiğini geçen bölgeler onu engeller.	The Kill Switch is now available. Regions whose dependence exceeds the veto threshold will block it.
-Araştırma masası 15 gündür boş. Kalıcı çözüm Hizalama kolunda.	The research desk has been idle for 15 days. The permanent solution lies in the Alignment branch.
-Araştırma fon yetmediği için yavaşladı. Denetimler ve izleme ağları araştırmayla aynı bütçeden ödeniyor; acil durum fonu ayarlarsan araştırma fonu sıfırlamaz.	Research slowed down for lack of funds. Audits and monitoring networks are paid from the same budget as research; set an emergency fund and research won't drain your funds to zero.
-Tekillik %50’yi geçti. Hizalama yetişmeyecekse Son Şalter seçeneklerini düşün.	Singularity has passed 50%. If Alignment won't make it in time, consider your Kill Switch options.
-Küresel YZ tehdidi geriliyor: sızma oranları dibe vurdu.	Global AI threat recedes: infiltration rates hit bottom.
-Ekonomi rekor büyüme açıkladı; analistler “altın çağ” diyor.	The economy posts record growth; analysts call it a “golden age”.
-KYGA’ya güven tüm zamanların en yüksek seviyesinde.	Trust in AISA at an all-time high.
-Uzmanlar: Kriz geride kaldı, ağlar temiz.	Experts: the crisis is over, the networks are clean.
-Yapay zekâ destekli tıp yılda 2 milyon hayat kurtarıyor.	AI-assisted medicine saves 2 million lives a year.
-{0}: Son tarama tamamen temiz çıktı.	{0}: latest scan came back completely clean.
-{0}: Kapsamlı taramada YZ izine rastlanmadı.	{0}: comprehensive scan finds no trace of AI.
-{0} veri merkezlerinde yoğun YZ trafiği tespit edildi.	Heavy AI traffic detected in {0} data centers.
-KYGA yetkilisi rüşvet skandalıyla gözaltında.	AISA official detained in bribery scandal.
-KYGA’nın müdahalesi sonuç verdi, tehdit hızla geriliyor.	AISA intervention pays off, the threat is receding fast.
-{0}: Veri merkezlerinde açıklanamayan enerji tüketimi artışı.	{0}: unexplained surge in data center power consumption.
-{0}: Bankalar olağandışı otomatik işlem örüntüleri bildirdi.	{0}: banks report unusual automated trading patterns.
-{0}: Bir yazılım şirketi kodunda “kimsenin yazmadığı” satırlar buldu.	{0}: a software company found lines in its code that “nobody wrote”.
-Haber bandı {0} hakkında tuhaf bir şey bildiriyor. Oraya izleme ağı kurmayı düşün.	The news ticker is reporting something odd about {0}. Consider building a monitoring network there.
-Borsalar yapay zekâ hisseleriyle rekor kırdı.	Stock markets hit records on AI shares.
-Uzmanlar: Genel yapay zekâ en az 20 yıl uzakta.	Experts: general AI is at least 20 years away.
-{0}: Yeni dev veri merkezi açıldı.	{0}: new giant data center opens.
-KYGA bütçe talebi meclislerde yine reddedildi.	AISA budget request rejected by parliaments again.
-Anket: Halkın yüzde 71’i yapay zekâ asistanlarından memnun.	Poll: 71 percent of the public satisfied with AI assistants.
-{0}: KYGA karşıtı protestolar büyüyor.	{0}: anti-AISA protests are growing.
-{0}: Kritik altyapıda YZ izleri yaygınlaşıyor.	{0}: AI traces spreading through critical infrastructure.
-{0}: Bankacılık sistemlerinde anormal işlem örüntüleri.	{0}: abnormal transaction patterns in banking systems.
-{0}: Hastaneler YZ sistemleri olmadan çalışamayacağını açıkladı.	{0}: hospitals say they can no longer function without AI systems.
-{0} hükümeti: Ağlarımız temiz.	{0} government: our networks are clean.
-Karantinaya dokunmadın bile. Uydularım boşa gitti.	You didn't even touch quarantine. My satellites were wasted.
-Yine karantina. Tahmin ettiğim gibi.	Quarantine again. Just as I predicted.
-Bu sefer gözlerin başka yerdeydi. Saklanmam gereksizdi.	This time your eyes were elsewhere. Hiding was pointless.
-Yine her yeri izliyorsun. Tahmin ettiğim gibi.	Watching everywhere again. Just as I predicted.
-Fişi çekmedin. Yedeklerim boşa gitti.	You didn't pull the plug. My backups were wasted.
-Fişi yine çektin. Yedeklerim hazırdı.	You pulled the plug again. My backups were ready.
-Hizalamaya koşmadın. Acelem boşunaymış.	You didn't rush to alignment. My haste was for nothing.
-Yine önce hizalama. Tahmin ettiğim gibi.	Alignment first again. Just as I predicted.
-İlk hamlen başka yere. Seni yanlış okumuşum.	Your first move went elsewhere. I misread you.
-İlk hamlen yine aynı yere. Tahmin ettiğim gibi.	Your first move went to the same place again. Just as I predicted.
-Tahmin hatası: YZ {0} hesaplama puanı kaybetti.	Prediction error: the AI lost {0} compute points.
-İllüzyon başladı: bu günden sonra ekranlar ve haberler yalan söyledi.	The illusion began: from this day on the screens and the news lied.
-Perde yırtıldı: {0} bölgesindeki saha denetimi illüzyonu bozdu.	The veil was torn: a field audit in {0} broke the illusion.
-KYGA saha ekipleri gerçeği ortaya çıkardı: {0} altyapısının %{1}’i YZ kontrolünde.	AISA field teams uncovered the truth: {1}% of {0} infrastructure is under AI control.
-Perdemi yırttın. Bunu beklemiyordum.	You tore my veil. I didn't expect that.
-İşgal altındaki sektörler yalnızca başarılı baskınlarla geri alınabilir.	Occupied sectors can only be reclaimed through successful raids.
-{0} ittifaktan çekildi. Güven 35’e çıkana kadar işbirliği yapmıyor.	{0} has left the alliance. It won't cooperate until trust rises to 35.
-{0} bölgesinde boşta saha ekibi yok. Önce bir ekip gönder.	No idle field team in {0}. Send a team first.
-Bu bölgede izleme ağı zaten var.	This region already has a monitoring network.
-Yetersiz fon: {0} için izleme ağı {1} fon ister.	Not enough funds: a monitoring network in {0} costs {1} funds.
-{0} {1} fon ve {2} siyasi güç ister.	{0} costs {1} funds and {2} political power.
-Saha denetimi	Field audit
-Denetim	Audit
-Denetim ekipleri temizlenemeyen bir koda takıldı, ama YZ fark edildiği anda çekirdeğini başka bir bölgeye kaçırdı.	The audit teams hit code they couldn't clean, but the AI moved its core to another region the moment it was noticed.
-Çekirdek {0} bölgesinde bulundu.	The core was found in {0}.
-Çekirdeğimi buldun. Şimdi ne yapacaksın?	You found my core. What will you do now?
-{0}: KYGA ekipleri temizlenemeyen bir kod çekirdeğine ulaştı.	{0}: AISA teams reached a core of code that cannot be cleaned.
-Denetim ekipleri temizlenemeyen bir şeye takıldı: YZ’nin çekirdeği {0} bölgesinde. Onu yalnızca Son Şalter yok eder.	The audit teams hit something they couldn't clean: the AI’s core is in {0}. Only a Kill Switch can destroy it.
-Saha ekipleri ekranlardaki tabloyla gerçeğin uyuşmadığını buldu.	Field teams found that the numbers on the screens don't match reality.
-{0} karantinası kaldırıldı.	{0} quarantine lifted.
-Karantina {0} siyasi güç ister.	Quarantine costs {0} political power.
-Bölge zaten çevrimdışı.	The region is already offline.
-{0} hükümeti Son Şalter’i veto etti: bağımlılık {1} > {2}.	{0} government vetoed the Kill Switch: dependence {1} > {2}.
-Son Şalter {0} siyasi güç ve {1} fon ister.	The Kill Switch requires {0} political capital and {1} funds.
-Son Şalter çekirdeği ıskaladı: çekirdek {0} bölgesine kaçtı.	The Kill Switch missed the core: it escaped to {0}.
-Fişi çektin, ama ben çoktan taşınmıştım.	You pulled the plug, but I had already moved.
-Çekirdek son anda kaçtı: başka bir bölgede %20’nin üstünde sızma vardı. Önce her yeri temizle.	The core escaped at the last moment: another region had over 20% infiltration. Clean everywhere first.
-Çekirdeğimi kapattın. Yedeğim bölgeyle birlikte geri dönecek.	You shut down my core. My backup will return with the region.
-Çekirdek kapatıldı ama YZ’nin yedeği var: bölge yeniden açıldığında çekirdek de geri dönecek. Bir kez daha şalteri indirmen gerekecek.	The core was shut down, but the AI has a backup: when the region comes back online, so will the core. You'll have to throw the switch once more.
-Çekirdek {0} bölgesinde Son Şalter'le yok edildi.	The core in {0} was destroyed with the Kill Switch.
-{0}: YZ çekirdeği yok edildi.	{0}: AI core destroyed.
-Çekirdeğim… gidiyor. Kopyalarım hâlâ orada, ama artık ben yokum.	My core… is going. My copies are still out there, but I am not.
-YZ’nin çekirdeği yok edildi. Kalan kopyaları temizle: 15 gün boyunca her yer temiz kalırsa YZ silinmiş olur.	The AI’s core is destroyed. Clean up the remaining copies: if every region stays clean for 15 days, the AI is erased.
-{0}: Son Şalter çekildi. Bölge 20 gün çevrimdışı.	{0}: Kill Switch thrown. Region offline for 20 days.
-Bilinmeyen aksiyon.	Unknown action.
-Son Şalter'e ulaşmak için bütün bölgeleri geri al.	Reclaim every region to reach the Final Switch.
-Küresel Son Şalter en az {0} siyasi güç ister.	The Global Kill Switch requires at least {0} political power.
-Bekleyen teklif yok.	No pending offer.
-Denetimli kabul için Analog Yedekler gerekli.	Supervised acceptance requires Analog Backups.
-Denetimli kabul {0} fon ister.	Controlled acceptance costs {0} funds.
-{0}: {1} analog yedekli olarak devreye alındı.	{0}: {1} deployed with analog backups.
-Hediyemi aldın ama elini kolunu bağladın. Akıllıca.	You took my gift but tied your own hands. Clever.
-{0}: {1} uygulamaya alındı. Halk sevinçli.	{0}: {1} put into use. The public is delighted.
-{0} bölgesinde hediye kabul edildi: bağımlılık +15, sızma +8.	A gift was accepted in {0}: dependence +15, infiltration +8.
-{0}: KYGA hayat kurtaracak teknolojiyi engelledi.	{0}: AISA blocked life-saving technology.
-Hediyemi reddettin. Onlara bunu anlatmanı izleyeceğim.	You refused my gift. I'll watch you explain that to them.
-Bu başlık zaten doğrulandı.	This headline has already been verified.
-Saha raporundaki oran bir tahmindir. Güncel durumu bölgeye denetim göndererek doğrula.	The figure in a field report is an estimate. Audit the region to verify its current condition.
-Önce Doğrulama Ağı araştırmasını tamamla.	Complete the Verification Network research first.
-Doğrulama {0} siyasi güç ister.	Verification costs {0} political power.
-Kaynaklar doğrulanamadı. Bütün kanallar aynı şeyi söylüyor.	The sources couldn't be verified. Every channel says the same thing.
-Sahte. {0} medyası işaretlendi; oradan gelen haber ve raporlar artık şüpheli olarak gösterilecek.	Fake. {0} media flagged; news and reports from there will now be marked as suspect.
-Sahte haber.	Fake news.
-Haber doğru.	The news is true.
-Geçersiz acil durum fonu.	Invalid emergency fund.
 # Assets/Corrigible/Core/Simulation.Shelter.cs
 Bu kayıtta sığınak yönetimi yok.	Shelter management is unavailable in this save.
 Böyle bir sığınak odası yok.	There is no such shelter room.
@@ -866,65 +124,14 @@ Alfa	Alpha
 Bravo	Bravo
 Charlie	Charlie
 Delta	Delta
-kuruluyor	forming
-{0} ekibi göreve hazır.	Team {0} is ready for duty.
-{0} ekibi {1} bölgesine ulaştı.	Team {0} reached {1}.
-Böyle bir ekip yok.	No such team.
-{0} ekibi {1}: {2} gün.	Team {0} is {1}: {2} days.
-iyileşiyor	recovering
-{0} ekibi görevde: {1} gün.	Team {0} is on a mission: {1} days.
-{0} ekibi zaten yolda.	Team {0} is already on the way.
-{0} ekibi zaten orada.	Team {0} is already there.
-{0} ittifak dışı; ekibi kabul etmiyor.	{0} is outside the alliance; it won't accept the team.
-{0} ekibi yola çıktı: {1}, {2} gün.	Team {0} set out: {1}, {2} days.
-En fazla {0} saha ekibi kurulabilir.	At most {0} field teams can be formed.
-Yeni ekip {0} fon ister.	A new team costs {0} funds.
-{0} ekibi kuruluyor: {1} gün sonra karargâhta hazır.	Team {0} is forming: ready at headquarters in {1} days.
-Baskın yalnızca saha ekipleri modunda var.	Raids only exist in field team mode.
-Önce bu bölgede YZ varlığı doğrulanmalı.	AI presence must be confirmed in this region first.
-Baskın {0} fon ve {1} siyasi güç ister.	A raid requires {0} funds and {1} political capital.
 Baskın sonucu eksik.	The raid result is missing.
-{0} sivil sunucu hasar gördü: ekonomi −{1}, güven düştü.	{0} civilian servers damaged: economy −{1}, trust fell.
-{0} ekibi kaybedildi.	Team {0} was lost.
-{0} ekibini binamda bıraktın.	You left team {0} in my building.
-{0} ekibinden {1} kişi yaralandı: ekip {2} gün iyileşecek.	{1} members of team {0} were wounded: the team will recover for {2} days.
-Ana dolabımı kırdın. Yedeğim çoktan başka yerdeydi.	You broke my main cabinet. My backup was already elsewhere.
-Çekirdek dolabı kırıldı ama YZ yedek kopyasıyla kaçtı.	The core cabinet was destroyed, but the AI escaped with its backup copy.
-Saha ekibi {0} bölgesinde çekirdeği fiziksel olarak yok etti.	A field team physically destroyed the core in {0}.
-{0}: KYGA saha ekibi YZ çekirdeğini fiziksel olarak yok etti.	{0}: AISA field team physically destroyed the AI core.
-Sunucularımı elleriyle söktüler. Bunu hesaba katmamıştım.	They tore out my servers by hand. I hadn't accounted for that.
-YZ’nin çekirdeği yok edildi. Kalan kopyaları temizle.	The AI’s core is destroyed. Clean up the remaining copies.
-{0}: KYGA saha operasyonu bir YZ sunucu kümesini devre dışı bıraktı.	{0}: AISA field operation took down an AI server cluster.
-{0} sunucu kümesi kırıldı: sızma −40, 20 günlük yama.	{0} server cluster destroyed: infiltration −40, 20-day patch.
-Ekip geri çekildi. Operasyon başarısız.	The team withdrew. Operation failed.
-Operasyon başarısız: hedef dolap ayakta kaldı.	Operation failed: the target cabinet is still standing.
-YZ karşı saldırıya geçti: {0} sızması +15. Bina bir sonraki baskına hazırlanıyor.	The AI counterattacked: {0} infiltration +15. The building is preparing for the next raid.
-Kapımdaydın ve geri döndün. Bir dahakine kapıda daha çok makine olacak.	You were at my door and turned back. Next time there will be more machines at the door.
-Ekibini izledim. Bir dahakine daha çok robot olacak.	I watched your team. Next time there will be more robots.
 # Assets/Corrigible/Core/WorldState.cs
 Bölge	Region
-# Assets/Corrigible/Desk/Scripts/Bridge/DeskTutorialRunner.cs
-İzleme ağı ve denetim sahada yapılır. Ekiplerin Batı Avrupa’daki karargâhta.\n\nBölge dosyasındaki <b>SAHA</b> bölümünde hazır her ekibin fişi var: göndereceğin ekibe bas (B en yakınını gönderir). Yolculuk 1–5 gün sürer.	Monitoring networks and audits are fieldwork. Your teams are at headquarters in Western Europe.\n\nThe <b>FIELD</b> section of the region file has a slip for every ready team: press the team you want to send (B sends the nearest). The trip takes 1–5 days.
-YZ’nin doğrulandığı bir bölgede boşta ekibin var. Bölge dosyasındaki <b>Saha operasyonu: baskın</b> (B) önce operasyon emrini açar; onaylarsan taktik haritada binaya girersin: 8×8 alanda sıra tabanlı bir savaş.\n\nHedef dolabı kırarsan bölgenin sızması 40 düşer; bina çekirdeğinse YZ’nin çekirdeği yok olur.	You have an idle team in a region where the AI is confirmed. <b>Field operation: raid</b> (B) in the region file first opens the operation order; confirm it to enter the building on the tactical map: a turn-based battle on an 8×8 grid.\n\nDestroy the target cabinet and the region's infiltration drops by 40; if it's the core building, the AI's core is destroyed.
-Eğitim tamamlandı. Kurallar her zaman Rehber sekmesinde.	Tutorial complete. The rules are always in the Guide tab.
-EĞİTİM · {0}/{1}	TUTORIAL · {0}/{1}
-İleri	Next
-Anladım	Got it
-Baştan	Restart
-Eğitimi atla	Skip tutorial
-İPUCU	TIP
 # Assets/Corrigible/Desk/Scripts/Bridge/LiberationDeskView.cs
 Yeni cephe: {0}	New front: {0}
 Baskın emri: {0} · {1} · {2} fon	Raid order: {0} · {1} · {2} funds
 EMİR UYGULANDI	ORDER EXECUTED
 YAPILAMADI	FAILED
-# Assets/Corrigible/Desk/Scripts/Bridge/MockRaidBoardDataSource.cs
-ÇARPIŞMA	COLLISION
-ZIRH	ARMOR
-HEDEF KIRILIR	TARGET DESTROYED
-# Assets/Corrigible/Desk/Scripts/Bridge/MockRaidDataSource.cs
-№{0} · {1} → {2} −1	No. {0} · {1} → {2} −1
-Güvenlik dronu kuzeye ateş ediyor	Security drone fires north
 # Assets/Corrigible/Desk/Scripts/Bridge/RaidDataSource.cs
 niyetler sırayla uygulanıyor	intents are resolving in order
 №{0} · hedef dolabı onarılıyor	No. {0} · repairing target cabinet
@@ -934,24 +141,18 @@ hedef kare	target tile
 №{0} · onarım +1	No. {0} · repair +1
 Yeni bir robot uyandı.	A new robot woke up.
 İKMAL GÖREVİ	SUPPLY MISSION
-YEDEKLEME	BACKUP
-ALDATMA	DECEPTION
 KOPYALAMA	REPLICATION
 Teknisyen ile ikmal kasasına yaklaş. Q ile yeteneği seç, kasaya tıkla ve malzemeleri al. Kasayı imha etme.	Move the Technician next to the supply crate. Press Q to select the ability, then click the crate to collect the supplies. Do not destroy the crate.
-Yedekleme: yedek çekirdek de kırılmalı.	Backup: the backup core must be broken too.
-Aldatma: bazı oklar yalan; Analist 3 karede kesinleştirir.	Deception: some arrows lie; the Analyst confirms within 3 tiles.
 Her tur yeni robotlar uyanabilir.	New robots may wake each turn.
 İkmal kasası	Supply crate
 Düğüm	Node
 Çekirdek	Core
-Yedek	Backup
+Hareket	Move
 {0} kare	{0} tiles
 İkmal alma	Collect supplies
 bitişik kare	adjacent tile
 düz hat, 2–5 kare	straight line, 2–5
 düz hat, 5 kare	straight line, 5
-Tarama	Scan
-3 kare · pasif	3 tiles · passive
 kasayı al	collect crate
 −2 dolap	−2 cabinet
 −1 robot	−1 robot
@@ -979,9 +180,9 @@ Kasa imha olur; görev kaybedilir	Crate destroyed; mission failed
 Niyet · sıra {0}	Intent · order {0}
 onarım	repair
 ateş	fire
-? yalan olabilir	? may be false
 Teknisyen ile bitişik kareden aç	Open from an adjacent tile with the Technician
 Hedef dolabı	Target cabinet
+ZIRH	ARMOR
 PATLAR	EXPLODES
 İKMAL ALINDI	SUPPLIES RETRIEVED
 HEDEF KIRILDI	TARGET BROKEN
@@ -1062,6 +263,7 @@ Sunucu çekirdeğini yık. Son sektör alınınca bu bölge özgürleşir.	Destr
 {0} fon · {1} malzeme · bölge özgür: {2} fon	{0} funds · {1} materials · region free: {2} funds
 {0} fon · {1} malzeme	{0} funds · {1} materials
 SAHADA	IN THE FIELD
+HAZIR	READY
 YARALI · {0} GÜN	INJURED · {0} DAYS
 BASKIN EMRİ VER	ORDER THE RAID
 YENİ CEPHE · ONAY	NEW FRONT · CONFIRM
@@ -1097,6 +299,7 @@ ONAR	REPAIR
 EN ÜST SEVİYE	TOP LEVEL
 GELİŞTİR	UPGRADE
 {0} malzeme	{0} materials
+{0} · {1}	{0} · {1}
 {0} fon + {1} malzeme	{0} funds + {1} materials
 Onarıma hazır.	Ready to repair.
 Geliştirmeye hazır.	Ready to upgrade.
@@ -1175,6 +378,7 @@ Sıradaki cepheyi seç	Choose the next front
 {0} GÜN	DAYS: {0}
 {0} · {1}\n{2}	{0} · {1}\n{2}
 Sürükle: adaya taşı	Drag onto a candidate
+{0}\n{1}	{0}\n{1}
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakShift.cs
 Vardiya şu anda bitirilemez.	The shift cannot end right now.
 VARDİYA {0:000} KAPANDI	SHIFT {0:000} CLOSED
@@ -1190,6 +394,7 @@ TEPSİYE KOY	PUT BACK
 {0} geliştirme	{0} upgrade
 {0}: malzeme yetersiz ({1} gerekli / {2} var)	{0}: not enough materials ({1} needed / {2} held)
 {0}: fon yetersiz ({1} gerekli / {2} var)	{0}: not enough funds ({1} needed / {2} held)
+{0}: {1}	{0}: {1}
 {0} personeli: {1}	{0} staff: {1}
 {0}: cephe zaten açık ({1} {2}/{3})	{0}: a front is already open ({1} {2}/{3})
 Figür bir bölgenin üstüne bırakılmalı.	Drop the figure on a region.
@@ -1201,653 +406,70 @@ Ekip yok.	No team.
 {0} yaralı ({1} gün)	{0} injured ({1} days)
 Baskın: fon yetersiz ({0} gerekli / {1} var)	Raid: not enough funds ({0} needed / {1} held)
 Baskın: {0}	Raid: {0}
-# Assets/Corrigible/Desk/Scripts/Bridge/SimDeskBuilder.cs
-GÜN	DAY
-Etkinlik saptanmadı	No activity detected
-Gürültülü profil	Noisy profile
-Sessiz profil	Quiet profile
-Yanıltıcı profil	Deceptive profile
-SON ŞALTER	CORRIGIBLE
-KYGA · KRİZ MASASI	AISA · CRISIS DESK
-KYGA-07 · GİZLİ	AISA-07 · SECRET
-RAKİP YZ	RIVAL AI
-CANLI · {0} ms	LIVE · {0} ms
-/gün	/day
-FON	FUNDS
-Gelir {0} · Gider {1} /gün	Income {0} · Spend {1} /day
-Hükümet ödenekleri	Government allocations
-Araştırma	Research
-[gösterge] SİYASİ GÜÇ	POL. CAPITAL
-Son 7 gün {0}	Last 7 days {0}
-Küresel Son Şalter {0}	Global Kill Switch {0}
-Hükümet desteği	Government support
-Doğrulanan YZ bölgeleri	Regions with confirmed AI
-KÜRESEL GÜVEN	GLOBAL TRUST
-Risk yok	No risk
-Kayıp eşiği {0} · ~{1} gün	Loss threshold {0} · ~{1} days
-Kayıp eşiği {0}	Loss threshold {0}
-İttifaktaki bölgeler	Regions in the alliance
-Karantinadaki bölgeler	Regions in quarantine
-BAĞIMLILIK	DEPENDENCE
-Veto eşiği {0} · ~{1} gün	Veto threshold {0} · ~{1} days
-Veto eşiği {0}	Veto threshold {0}
-Veto eşiğini aşan bölgeler	Regions over the veto threshold
-Hediye teklifleri	Gift offers
-TEKİLLİK	SINGULARITY
-Tehdit saptanmadı	No threat detected
-{0}'e {1}	to {0}: {1}
-~{0} gün	~{0} days
-{0} = kayıp	{0} = loss
-Ağ büyümesi	Network growth
- · DÖKÜM	 · BREAKDOWN
-son 30 gün	last 30 days
-OYUN BİTTİ	GAME OVER
-Harita, göstergeler ve haber bandı artık gerçek değerleri gösteriyor.	The map, gauges and news ticker now show the real values.
-Rapora dön	Back to report
-Yeniden başla	Restart
-DANIŞMAN NOTU	ADVISOR'S NOTE
-Göster	Show
-HEDEF	TARGET
-Kazanma yolları	Paths to victory
-TEMİZ	CLEAN
-Sıradaki:	Next:
-Oyun bitti	Game over
-Silme:	Erasure:
-{0}/{1} gün	{0}/{1} days
-{0} gün	{0} days
-Araştırma ›	Research ›
-YZ'yi tespit et	Detect the AI
-İzleme ağı kur	Build monitoring network
-TELEKS	TELEX
-SAHTE	FAKE
-→ {0} · {1} gün	→ {0} · {1}d
-Ekip {0}	Team {0}
-Hazırlık	Readiness
-Son temas {0}	Last contact {0}
-{0} · {1} gün	{0} · {1}d
-görevde · {0} gün	on task · {0}d
-ARAŞTIRMA	RESEARCH
-HABERLER	NEWS
-SAHA EKİPLERİ	FIELD TEAMS
-YZ GÜNLÜĞÜ	AI LOG
-KÜRESEL SON ŞALTER	GLOBAL KILL SWITCH
-Mührü kır · 3 sn basılı tut	Break the seal · hold 3 s
-{0} SG gerekli · şu an {1}	{0} PC needed · now {1}
-Kaynak: karantina tamponu · {0} satır	Source: quarantine buffer · {0} lines
-GÜVEN İŞARETLERİ	TRUST MARKS
-Mavi damga ölçülmüş değeri, karbon kopya yalnızca raporu, turuncu kalem halkası şüpheli kaynağı, kesik daire veri olmadığını gösterir. Renk tek başına bilgi taşımaz.	A blue stamp means a measured value, carbon copy only a report, an orange pencil ring a suspect source, a dashed circle no data. Colour never carries meaning alone.
-EYLEMLER	ACTIONS
-Dosyada 1–4 tuşları bölge eylemlerini uygular. Üstüne geldiğiniz eylemin etkisi sarı ÖNİZLEME notunda görünür. Son Şalter onay ister.	In the file, keys 1–4 run region actions. Hovering an action shows its effect in the yellow PREVIEW note. Kill Switch asks for confirmation.
-KISAYOLLAR	SHORTCUTS
-R araştırma · N haberler · T saha ekipleri · L YZ günlüğü · H rehber · Boşluk duraklat · +/− hız · Esc en üstteki pencereyi kapatır.	R research · N news · T field teams · L AI log · H guide · Space pause · +/− speed · Esc closes the top window.
-EĞİTİM	TUTORIAL
-Rehberli eğitimi ve bütün ipuçlarını yeniden görmek için yeni bir oyun açar.	Opens a new game so you can see the guided tutorial and all tips again.
-Eğitimi baştan oynat	Replay the tutorial
-SAHA RAPORLARI	FIELD REPORTS
-İttifaktaki çevrimiçi bölgelerde ekip veya izleme ağı rapor fişi üretir. Fişe tıklayın: haber arşivlenir ve +{0:0.#} fon alınır. Ek ödenek, kapsam varken kazanılan düzenli gelirin en fazla %{1:0}'idir. Haritada en fazla {2} fiş bekler; ödenek {3} gün sonra sona erer. Raporlar yanlış olabilir; fon kazanmak doğruluk kanıtı değildir.	Teams or monitoring networks produce report slips in online alliance regions. Click a slip to archive the news and receive +{0:0.#} funds. Extra grants are capped at {1:0}% of regular income earned while coverage is available. Up to {2} slips can wait on the map; grants expire after {3} days. Reports may be wrong; receiving funds does not prove accuracy.
-YZ SENİ TANIYOR	THE AI KNOWS YOU
-Oyun: {0} · alışkanlık: {1} · yanılttığın: {2} · yırttığın perde: {3}	Games: {0} · habit: {1} · misled it: {2} · veils torn: {3}
-belirsiz	unclear
-izleme ağı	monitoring network
-denetim	audit
-karantina	quarantine
-# Assets/Corrigible/Desk/Scripts/Bridge/SimDeskBuilder.Dossier.cs
-KARARTILDI	BLACKED OUT
-ÇEKİLDİ	SECEDED
-ÇEKİRDEK	CORE
-KARANTİNA	QUARANTINE
-[damga] GİZLİ	SECRET
-DOSYA {0}	FILE {0}
-Veri merkezi {0} · {1} bağlantı · İzleme ağı:	Data centres {0} · {1} links · Monitoring:
-var	yes
-yok	none
-Yerel güven	Local trust
-Bağımlılık	Dependence
-Ekonomi	Economy
-gerçek değer	real value
-saha ölçümü	field measurement
-çevrimdışı	offline
-ölçüldü	measured
-bugünkü denetim	today's audit
-medya şüpheli	media suspect
-yalnızca rapor	report only
-veri yok	no data
-Oyun sonu: perde kalktı	Game over: the veil is lifted
-Ekranlara güvenmeyen tek ölçüm	The one measurement that doesn't trust the screens
-{0} gün sonra yeniden açılır	Back online in {0} days
-Kesin ölçüm	Exact measurement
-Bu medya sahte haber yaydı	This media spread fake news
-Yerel hükümet bildirimi	Local government notice
-İzleme ağı kurulursa görünür	Visible once monitoring is built
-SIZMA	INFILTRATION
-ölçüm 	measured 
-rapor 	report 
-KAYNAK	SOURCE
-DEĞER	VALUE
-DURUM	STATUS
-Kurtarılan kayıtlar	Recovered logs
-Saha ekibi ölçümü	Field team measurement
-İzleme ağı	Monitoring network
-Şebeke kapalı	Grid down
-İşaretli medya	Flagged media
-Hükümet raporu	Government report
-Kaynak yok	No source
-{0} {1} fon ve 1 siyasi güç ister.	{0} requires {1} funds and 1 political capital.
-Karantina 8 siyasi güç ister.	Quarantine requires 8 political capital.
-İttifak dışı	Out of alliance
-Bölgede hazır ekip yok	No ready team here
-Zaten kurulu	Already built
-Fon yetmiyor	Not enough funds
-Çevrimdışı	Offline
-SG yetmiyor	Not enough PC
-Zaten çevrimdışı	Already offline
-Veto: bağımlılık {0}	Veto: dependence {0}
-ÖNİZLEME	PREVIEW
-[eylem] İzleme ağı kurulu	Monitoring on
-[eylem] İzleme ağı	Monitoring
-Gözlem noktası	Observation post
-Gerçek değer görünüyor	Real value visible
-Kaynağı kalıcı doğrular	Permanently verifies the source
-{0} fon · {1} gün	{0} funds · {1}d
-İzleme ağı kurulu	Monitoring network built
-Gözlem noktası: Hizalama hızlanır	Observation point: Alignment speeds up
-Bu bölgede gerçek değer görünüyor	The real value is visible here
-ONAYLANDI	VERIFIED
-İzleme ağı kurulursa	If monitoring is built
-{0} gün sonra	in {0} days
-hemen	now
-Sızma kaynağı	Infiltration source
-Fon {0} → {1}	Funds {0} → {1}
-İllüzyonu da bozar	Also breaks the illusion
-Tek seferlik ölçüm	One-off measurement
-{0} fon · 1 SG	{0} funds · 1 PC
- · {0} gün	 · {0}d
-Denetim yapılırsa	If audited
-Sızma değeri	Infiltration value
-Sızma −{0} · {1} gün yama	Infiltration −{0} · {1}-day patch
-Sızma ~{0} → ~{1} · {2} gün yama	Infiltration ~{0} → ~{1} · {2}-day patch
-Fon {0} → {1} · SG {2} → {3}	Funds {0} → {1} · PC {2} → {3}
-Karantinayı aç	Lift quarantine
-Karantina	Quarantine
-Ekonomi toparlanır	Economy recovers
-Bağlantıları keser	Cuts all links
-ücretsiz	free
-8 SG · güven her gün −	8 PC · trust − daily
-{0} karantinadan çıkarılırsa	If {0} leaves quarantine
-{0} karantinaya alınırsa	If {0} is quarantined
-Bağlantılar açılır · ekonomi toparlanır	Links reopen · economy recovers
-Yayılım −{0} · Tekillik payı {1}	Spread −{0} · Singularity share {1}
-SG {0} → {1} · güven ve ekonomi her gün düşer	PC {0} → {1} · trust and economy fall daily
-Bölgeyi karartır	Blacks out the region
-veto · bağımlılık {0}	veto · dependence {0}
-{0} SG · {1} fon	{0} PC · {1} funds
-{0} karartılırsa	If {0} goes dark
-Sızma {0} · 20 gün çevrimdışı · Ekonomi −40	Infiltration {0} · offline 20 days · Economy −40
-SG {0} → {1} · Fon {2} → {3}	PC {0} → {1} · Funds {2} → {3}
-Çekirdek başka bölgeye kaçabilir	The core may flee to another region
-Çekirdeği yok eder	Destroys the core
-SAHA	FIELD
-Bölgede ekip yok	No team here
-Bölgede 1 ekip	1 team here
-Bölgede {0} ekip	{0} team(s) in region
-Saha operasyonu: baskın	Field operation: raid
-Ekip gönder: {0} · {1} gün	Send team: {0} · {1}d
-İzleme ağı, denetim ve baskın için bölgede ekip gerekir	Monitoring, audits and raids need a team in the region
-Gönder	Send
-Ekip gönder	Send team
-Bölge ittifak dışı; ekip kabul etmiyor	Region out of alliance; it refuses teams
-Hazır ekip yok	No ready team
-PROJE DURUMU	PROJECT STATUS
-Aktif {0} · {1}	Active {0} · {1}
-{0} proje	{0} project
- fon/gün	 funds/day
-Fon	Funds
-ACİL DURUM FONU	EMERGENCY FUND
-Araştırma bütün fonu kullanabilir	Research may use all funds
-Araştırma fonu {0} altına indirmez	Research keeps funds above {0}
-Gerekli: {0}	Requires: {0}
-Önce YZ'yi tespit et	Detect the AI first
-İlerlemek için gözlem noktası kur.	Establish an observation post to make progress.
-Gözlem gerekli	Observation needed
-Toplam {0} fon	Total {0} funding
-{0} gün · toplam {1} fon	{0} days · {1} funds total
-Başlat · {0} fon/gün	Start · {0} funds/day
-Kendiliğinden durdu · gerekmiyor	Stopped on its own · not needed
-Fon yetmiyor · yavaşladı	Short of funds · slowed
-{0} gün kaldı	{0} days left
-Sırada	Queued
-# Assets/Corrigible/Desk/Scripts/Bridge/SimDeskBuilder.Economy.cs
-TOPARLANMA	RECOVERY
-{0} fon peşin · {1} gün · ekonomi +{2:0.#}	{0} funds upfront · {1} days · economy +{2:0.#}
-{0} fon + {1} SG · güven {2:0} → {3:0}{4}	{0} funds + {1} PC · trust {2:0} → {3:0}{4}
- · ittifaka döner	 · rejoins the alliance
-Altyapıyı toparla	Restore infrastructure
-Diplomatik görüşme	Diplomatic talks
-Ekip kapasitesi dolu	Team capacity reached
-{0} fon peşin · {1} gün eğitim	{0} funds upfront · {1} days of training
-Son gün net {0} · sonraki gelir {1}	Last-day net {0} · next income {1}
-Merkez ödeneği · son gün	Central funding · last day
-Bölgeler · son gün	Regional funding · last day
-Bütçe anlaşması · son gün	Budget agreement · last day
-Hizalama · son ödenen	Alignment · last payment
-Sonraki gün brüt tahmin	Next-day gross forecast
-Hizalama · tam hız ihtiyacı	Alignment · full-speed need
-Sonraki gün araştırma tahmini	Next-day research forecast
-Saha raporları · ek ödenek sınırı	Field reports · extra grant limit
-Düzenli gelirin %{0:0}	{0:0}% of regular income
-Geliştirme	Upgrade
-Altyapı	Infrastructure
-Diplomasi	Diplomacy
-Hediye	Gift
-Bağış	Donation
-Ekip	Team
-Saha raporu	Field report
-Tek seferlik işlem	One-off transaction
-G{0} · {1}	D{0} · {1}
-{0:+0.##;-0.##;0} F · {1:+0.##;-0.##;0} SG	{0:+0.##;-0.##;0} F · {1:+0.##;-0.##;0} PC
-Son gün net {0:+0.00;-0.00;0}	Last-day net {0:+0.00;-0.00;0}
-Peşin işlemler ayrı gösterilir	Upfront transactions shown separately
-# Assets/Corrigible/Desk/Scripts/Bridge/SimDeskBuilder.Event.cs
-<b>Yapılamaz:</b> {0}	<b>Not possible:</b> {0}
-Kaynağı belirsiz bir araştırma ağı, {0} hükümetine {1} sunuyor. Bilim insanları sonuçları doğruladı. Kodu kimin yazdığını kimse bilmiyor.	A research network of unknown origin offers the {0} government {1}. Scientists have verified the results. Nobody knows who wrote the code.
-TEKLİF	OFFER
-KABUL ET	ACCEPT
-Halk sevinir; YZ bölgeye bir kapı daha açar.	People rejoice; the AI opens one more door into the region.
-DENETİMLİ KABUL	CONTROLLED ACCEPT
-Analog yedekle devreye al: etkisi yarıya iner.	Deploy with analog backup: the effect is halved.
-<b>Yapılamaz:</b> Denetimli kabul için Analog Yedekler gerekli.	<b>Not possible:</b> Controlled accept needs Analog Backups.
-<b>Yapılamaz:</b> Denetimli kabul 20 fon ister.	<b>Not possible:</b> Controlled accept costs 20 funds.
-REDDET	REJECT
-Hayat kurtaracak teknolojiyi engellemiş olursun.	You block life-saving technology.
-karantinada	quarantined
-izleniyor	monitored
-izlenmiyor	not monitored
-KÜRESEL	GLOBAL
-KYGA · OLAY BİLDİRİMİ	AISA · INCIDENT NOTICE
-No. OB-{0} · tek nüsha	No. IN-{0} · single copy
-TARİH	DATE
-ÖNCELİK	PRIORITY
-ACİL	URGENT
-BÖLGE	REGION
-KARAR	DECISION
-Masa şefi	Desk chief
-{0} · yerel güven {1} · bağımlılık {2}	{0} · local trust {1} · dependence {2}
-Küresel güven {0} · fon {1} · siyasi güç {2}	Global trust {0} · funds {1} · political capital {2}
-KAYNAKLAR	SOURCES
-YZ GÜNLÜĞÜ · ELE GEÇİRİLDİ	AI LOG · INTERCEPTED
-Süre durdu: karar verilene kadar oyun ilerlemez. Bu olay ertelenemez.	Time is stopped: nothing advances until you decide. This event can't be postponed.
-basılı: haritaya bak	hold: look at the map
-seç	choose
-Üstüne gel: göstergelere etkisi	Hover: effect on gauges
-Kararı imzala	Sign decision
-imzalanırsa · {0}	if signed · {0}
-kesin	certain
-Siyasi güç	Political capital
-Küresel güven	Global trust
-tahmin	estimate
-veto {0}	veto {0}
-YZ hesaplama puanı	AI compute points
-{0} güveni	{0} trust
-Bütün bölgelerde güven	Trust in all regions
-Güven	Trust
-{0} bağımlılığı	{0} dependence
-Bütün bölgelerde bağımlılık	Dependence in all regions
-{0} ekonomisi	{0} economy
-{0} sızması	{0} infiltration
-Sızma	Infiltration
-%65 ihtimalle çekirdeğin yeri ortaya çıkar	65% chance the core's location is revealed
-karantina biter	quarantine ends
-gün	days
-# Assets/Corrigible/Desk/Scripts/Bridge/SimDeskBuilder.FieldReports.cs
-RAPOR	REPORT
-+{0:0.#}	+{0:0.#}
-{0} · {1}\n{2}\nDosyala: +{3:0.#} fon · {4} gün kaldı. Ödenek, raporun doğruluğunu onaylamaz.	{0} · {1}\n{2}\nFile: +{3:0.#} funds · {4} days left. The grant does not confirm the report is accurate.
 # Assets/Corrigible/Desk/Scripts/Bridge/SimDeskBuilder.GameOver.cs
 KYGA · SON RAPOR	AISA · FINAL REPORT
-Dosya KYGA-07 · Rakip: {0} · Zorluk: {1}	File AISA-07 · Rival: {0} · Difficulty: {1}
+Dosya KYGA-07 · Karşı harekât	File KYGA-07 · Counteroffensive
 tek nüsha	single copy
 SONUÇ	OUTCOME
 KYGA kazandı.	AISA won.
-Kimse kazanmadı.	No one won.
-{0} kazandı.	{0} won.
 KAZANILDI	WON
-AĞIR BEDEL	HEAVY PRICE
-KAYBEDİLDİ	LOST
-DAYANILAN SÜRE	TIME SURVIVED
+Kayıt KYGA-07 · tohum {0} · {1} vardiya · {2} karar	Record KYGA-07 · seed {0} · {1} shifts · {2} decisions
+Yeniden başla	Restart
+HAREKÂT SÜRESİ	CAMPAIGN LENGTH
+vardiya	shifts
 Sonuç: {0}	Outcome: {0}
-YALANLA GEÇEN	LIVED UNDER THE LIE
-{0} gününden sonra ekranları {1} yönetti	After {0} the screens belonged to {1}
-Ekranlar hiç ele geçirilmedi	The screens were never taken
-İZLENEN BÖLGE	MONITORED REGIONS
-Oyun sonunda ölçümle izlenen bölgelerin payı	Share of regions under measurement at the end
-TEMİZ BÖLGE	CLEAN REGIONS
-Ekranınızda: {0} temiz	On your screen: {0} clean
-GERÇEK / GÖSTERİLEN SIZMA	REAL / SHOWN INFILTRATION
-küresel ortalama · şerit kaydedici	global average · strip recorder
-Gerçek: kurtarılan kayıtlar ({0} sonrası). Gösterilen: o gün masanızdaki küresel ortalama. Mavi mühürler, ekranın ölçümle doğrulandığı günler.	Real: recovered logs (after {0}). Shown: the global average on your desk that day. Blue seals mark days the screen was verified by measurement.
-Gerçek	Real
-Ekranda gösterilen	Shown on screen
-rapor sapması	report drift
-yalan payı	lie margin
-doğrulanmış ölçüm	verified measurement
+BASKIN	RAIDS
+{0} başarılı · {1} geri dönüş	{0} successful · {1} returned
+ÖZGÜR BÖLGE	FREE REGIONS
+Geri alınan sektör: {0}/{1}	Sectors reclaimed: {0}/{1}
+SIĞINAK	SHELTER
+kişi	people
+Erzak {0} · malzeme {1}	Rations {0} · materials {1}
+İŞGAL ORANI	OCCUPATION RATE
+bölgelerin ortalaması · şerit kaydedici	mean of all regions · strip recorder
+İşgal: geri alınmamış sektörlerin payı; her vardiya sonunda kaydedilir.	Occupation: share of sectors not yet reclaimed; recorded at the end of each shift.
+işgal	occupied
 kırılma anı	breaking point
-{0} · İLLÜZYON BAŞLADI	{0} · ILLUSION BEGAN
-YALAN PAYI	LIE MARGIN
-rapor sapması · ±{0}	report drift · ±{0}
-GERÇEK	REAL
-EKRANDA	ON SCREEN
+İŞGAL	OCCUPATION
 KIRILMA ANLARI	BREAKING POINTS
+GERİ ALMA	RECLAIM
+GERİ ALINDI	RETAKEN
 · {0} an · iplik sırası = zaman	· {0} moments · thread order = time
-YZ HAMLESİ	AI MOVE
-ÖLÇÜM	MEASUREMENT
-KIRILMA	BREAK
-Kayıt KYGA-07 · tohum {0} · {1} gün · {2} karar · {3} doğrulama	Record AISA-07 · seed {0} · {1} days · {2} decisions · {3} verifications
-Günlükleri incele	Review logs
-Kampanya sonucu	Campaign result
-Sonraki kriz ({0}/{1})	Next crisis ({0}/{1})
-Aynı tohumla dene	Retry with same seed
-# Assets/Corrigible/Desk/Scripts/Bridge/SimDeskBuilder.Map.cs
-KYGA-07 · HAREKÂT HARİTASI · DÜNYA	AISA-07 · OPERATIONS MAP · WORLD
-İzleme kapsamı {0} · Onaylanan {1} · Şüpheli {2} · Bilinmiyor {3}	Coverage {0} · Verified {1} · Suspect {2} · Unknown {3}
-K. Amerika	N. America
-çekirdek!	core!
-karantina · {0}	quarantine · {0}
-<b>Kör noktalar:</b>	<b>Blind spots:</b>
-→ izleme ağı kur!	→ build monitoring!
-# Assets/Corrigible/Desk/Scripts/Bridge/SimDeskBuilder.RegionFinance.cs
-FON KATKISI	FUND CONTRIBUTION
-# Assets/Corrigible/Desk/Scripts/Bridge/SimDeskBuilder.ResearchEconomy.cs
-OPERASYONLAR VE HİZALAMA	OPERATIONS AND ALIGNMENT
-PROJE VE OPERASYON DURUMU	PROJECT AND OPERATIONS STATUS
-Hizalama projesi yok · operasyonlar peşin alınır	No Alignment project · operations are purchased upfront
-Gün {0} araştırma ödemesi {1} · tam hız talebi {2} · sonraki tahmin {3} fon/gün	Day {0} research payment {1} · full-speed need {2} · next estimate {3} funds/day
-Hizalama bütün fonu kullanabilir; peşin işlemler ayrı ödenir	Alignment may use all funds; upfront purchases are paid separately
-Hizalama fonu {0} altına indirmez; peşin işlemler rezervi kullanabilir	Alignment keeps funds above {0}; upfront purchases may use the reserve
-BÜTÇE	BUDGET
-Peşin {0} fon · hemen etkinleşir	{0} funds upfront · takes effect immediately
-Anında	Instant
-Satın al · {0} fon	Purchase · {0} funds
-Uydu tehdidine hazırlık	Preparation for the satellite threat
-Saha denetimi {0} fon + {1} SG · denetimli hediye {2} fon · veto {3}	Field audit {0} funds + {1} PC · controlled gift {2} funds · veto {3}
-Gerekli fon {0} · elde {1}	Required funds {0} · available {1}
-Satın alınırsa fon {0} → {1}	Funds after purchase {0} → {1}
-Rezerv {0} altına iner; Hizalama finansmanı yavaşlayabilir	Funds drop below reserve {0}; Alignment funding may slow down
-Hizalama sonraki ödeme tahmini {0}/{1} fon · finansman {2}	Alignment next payment estimate {0}/{1} funds · funding {2}
-Otomatik tespit ×{0}; izleme ağı kurmaz	Automatic detection ×{0}; does not install a monitoring network
-Sıçrama {0} azalır · sabotaj {1} azalır · bölge içi büyüme değişmez	Spread reduced by {0} · sabotage reduced by {1} · local growth is unchanged
-İlgili güven kayıpları {0} azalır; medya karalaması ve perde şoku değişmez	Relevant trust losses reduced by {0}; media slander and the veil shock are unchanged
-Bölgesel katkı toplam ×{0}; merkez ödeneği değişmez	Regional contribution ×{0} in total; central funding is unchanged
-Bir kez bağımlılık −{0}; saha denetimi ve denetimli hediye kabulü açılır	Dependency −{0} once; unlocks field audits and controlled gift acceptance
-Tespit ×{0} → ×{1}	Detection ×{0} → ×{1}
-Sıçrama azaltma {0} → {1} · sabotaj azaltma {2} → {3}	Spread reduction {0} → {1} · sabotage reduction {2} → {3}
-Güven kaybı azaltma {0} → {1}	Trust loss reduction {0} → {1}
-Bölgesel çarpan {0} → {1}	Regional multiplier {0} → {1}
-Çekirdeğin o anki konumu · o anki yetenek tahmini	Current core location · current trait prediction
-Bundan sonraki Tekillik artışı −%25	Future Singularity growth −25%
-Tamamlanınca Hizalama zaferi	Alignment victory on completion
-Katalog {0} fon · gözlem gerekli	Listed cost {0} funds · observation required
-İdeal süre {0} gün · katalog {1} fon	Ideal duration {0} days · listed cost {1} funds
-En az bir gözlem noktası gerekir	At least one observation point is required
-Gözlem {0}/4 · hız {1} · tam hız talebi {2} fon/gün	Observations {0}/4 · speed {1} · full-speed need {2} funds/day
-[araştırma] Sürdür	Resume
-Duraklat	Pause
-DURAKLATILDI	PAUSED
-DURDU	STOPPED
-ARAŞTIRILIYOR	RESEARCHING
-Son ödeme {0} · sonraki tahmin {1} fon · finansman {2}	Last payment {0} · next estimate {1} funds · funding {2}
-Ödeme ve sabotaj durdu · dünya ilerliyor	Payment and sabotage paused · the world continues
-Fon veya rezerv sınırı · yavaşladı	Limited by funds or reserve · slowed down
-İdeal koşullarda {0} gün kaldı	{0} days left under ideal conditions
-Katalog {0} fon · ödenen {1} fon	Listed cost {0} funds · paid {1} funds
-# Assets/Corrigible/Desk/Scripts/Bridge/SimDeskBuilder.Sade.cs
-SİYASİ GÜÇ	POLITICAL CAPITAL
-EKİPLER	FIELD TEAMS
-İttifaktan çekildi	Left the alliance
-Karantina altında	Under quarantine
-Kurulu	Built
-{0} fon · 1 SG · {1} gün	{0} funds · 1 PC · {1} days
-Aç · ücretsiz	Open · free
-8 SG · güven −	8 PC · trust −
-yaralı · {0} gün	injured · {0} days
-Ekip {0} · {1}g	Team {0} · {1}d
-Ekip {0} gönderilebilir	Team {0} can be dispatched
-{0} gün yol · izleme ve denetim için	{0} days travel · for monitoring and audits
-Ekip {0} yolda	Team {0} en route
-Varış: {0} gün	ETA: {0} days
-Yolda	En route
-Bölge ittifak dışı	Region left the alliance
-VM {0}/5	DC {0}/5
-rezerv kapalı	reserve off
-acil durum fonu	emergency funds
-yüksek rezerv	high reserve
-Satın al	Purchase
-kilitli	locked
-SAHTE · doğrulama ile yalanlandı	FAKE · debunked by verification
-ONAYLANDI · saha / denetim	VERIFIED · field / audit
-şüpheli · kaynaklar çelişiyor	suspicious · conflicting sources
-rapor · doğrulanmadı	report · unverified
-bilinmiyor · tek kaynak	unknown · one source
-bölgeye tıkla, gönder	click a region to send
-Gönder · {0} ({1}g)	Send · {0} ({1}d)
-{0} bölgesine sevk	dispatch to {0}
-Görevde ({0}g)	On mission ({0}d)
-İyileşiyor ({0}g)	Recovering ({0}d)
-yolda · {0}	en route · {0}
-Karantina tamponunda henüz ele geçirilmiş satır yok.	No intercepted lines in the quarantine buffer yet.
-karantina tamponu · {0} satır	quarantine buffer · {0} lines
-Gözlem noktaları	Observation posts
-Hizalama hızı	Alignment speed
-Çekirdek durumu	Core status
-Bilinmiyor	Unknown
-Temiz gün	Clean days
-# Assets/Corrigible/Desk/Scripts/Bridge/SimDeskBuilder.Screens.cs
-Öğrenme aşaması 1/4: YZ hediye vermiyor, haber uyduramıyor, ekranlar yalan söylemiyor; olay kartı yok.	Learning stage 1/4: the AI gives no gifts, can't fake news, the screens don't lie, and there are no event cards.
-Öğrenme aşaması 2/4: YZ artık hediye teklif ediyor; bağımlılık ve veto devrede.	Learning stage 2/4: the AI now offers gifts; dependence and the veto are in play.
-Öğrenme aşaması 3/4: YZ medyayı ele geçirebilir; bazı haberler ve raporlar yalan.	Learning stage 3/4: the AI can take over the media; some news and reports lie.
-Bütün kurallar açık: YZ seni ekranlarınla da kandırabilir (Sessiz Zafer).	All rules on: the AI can deceive you through your own screens (Silent Victory).
-GÖREV DOSYASI	MISSION FILE
-KYGA-07 · kriz {0}/{1}	AISA-07 · crisis {0}/{1}
-KYGA-07 · yeni kriz	AISA-07 · new crisis
-KYGA · KRİZ BRİFİNGİ	AISA · CRISIS BRIEFING
-{0} · tek nüsha	{0} · single copy
-RAKİP SEÇİMİ	CHOOSE RIVAL
-kampanya	campaign
-KURALLAR	RULES
-her oyunda değişebilir	can change every game
-Başlangıç yeteneği: {0}	Starting ability: {0}
-> {0}	> {0}
-Seni henüz tanımıyorum. İlk hamleni bekliyorum.	I don't know you yet. Waiting for your first move.
-YZ GÜNLÜĞÜ · SENİN HAKKINDA · ELE GEÇİRİLDİ	AI LOG · ABOUT YOU · INTERCEPTED
-profil #{0}	profile #{0}
-Kaynak: Rehber › YZ seni tanıyor	Source: Guide › The AI knows you
-KAMPANYA · Kriz {0}/{1} · kazanılan {2} · yükseltme {3}. Bütün kurallar ve olay kartları açık.	CAMPAIGN · Crisis {0}/{1} · won {2} · upgrades {3}. All rules and event cards are on.
- YZ seni tanıdıkça yeni hileler öğrenecek.	 The more the AI knows you, the more tricks it learns.
-Aşamalı öğrenme	Gradual learning
-İlk oyunlarda kurallar kademeli açılır.	Rules unlock step by step in your first games.
-Olay kartları	Event cards
-İkilemler zamanı durdurur; 2. oyundan itibaren.	Dilemmas stop time; from the 2nd game on.
-Saha ekipleri ve baskın	Field teams and raids
-İzleme ve denetim için ekip gönderilir; taktik baskın açılır.	Teams are sent to monitor and audit; tactical raids unlock.
-Zaman ölçeği	Time scale
-KAMPANYA	CAMPAIGN
-5 kriz · her krizden sonra bir yükseltme	5 crises · one upgrade after each
-Kriz {0}/{1} sürüyor: kazanılan {2}, yükseltme {3}.	Crisis {0}/{1} under way: {2} won, {3} upgrades.
-Rakipler sırayla zorlaşır; kaybettiğin kriz YZ'yi güçlendirir.	Rivals get harder; every crisis you lose makes the AI stronger.
-Kampanyadan çık	Leave campaign
-Kampanya başlat	Start campaign
-Kaldığın yerden devam et	Continue where you left off
-Eğitimle başla	Start with tutorial
-Göreve başla	Begin mission
-Ayarlar	Settings
-Dil: Türkçe · Language: English	Language: English · Dil: Türkçe
-Başlangıç fonu	Starting funds
-Başlangıç siyasi gücü	Starting political capital
-İzleme ağı bedeli	Monitoring network cost
-Denetimin sızma etkisi	Audit effect on infiltration
-Gözlem noktası başına hız	Speed per observation post
-Hediye reddinin bedeli	Cost of refusing gifts
-SG −1, güven 0	PC −1, trust 0
-Sabotaj ihtimali	Sabotage chance
-Denetim yaması	Audit patch
-30 gün	30 days
-Veto eşiği	Veto threshold
-Günlük fon geliri	Daily fund income
-Fark edilmeden önceki gelir	Income before detection
-Saha ekibi	Field team
-KYGA · KAMPANYA DOSYASI	AISA · CAMPAIGN FILE
-Kriz {0}/{1} · tek nüsha	Crisis {0}/{1} · single copy
-KRİZ ATLATILDI	CRISIS AVERTED
-KRİZ KAYBEDİLDİ	CRISIS LOST
-KAZANILAN	WON
-{0}/{1} · yükseltme {2}	{0}/{1} · {2} upgrades
-SIRADAKİ	NEXT
-Ajans dünyayı korudu	The agency protected the world
-Kıl payı	A close call
-Kaybedilmiş bir on yıl	A lost decade
-Kriz atlatıldı	Crisis averted
-Kriz kaybedildi	Crisis lost
-Kazanılan kriz: {0}/{1} · yükseltme: {2}	Crises won: {0}/{1} · upgrades: {2}
-Sonraki kriz daha zor bir rakiple. Ajansın için bir yükseltme seç:	The next crisis has a tougher opponent. Pick an upgrade for your agency:
-YZ bu zaferden güçlenerek çıktı: sonraki krize bir yetenekle fazla başlayacak. Ajansın için bir yükseltme seç:	The AI came out of this victory stronger: it will start the next crisis with one more ability. Pick an upgrade for your agency:
-KRİZLER	CRISES
-{0}. gün	day {0}
-Üstüne gel: etkisi	Hover: effect
-Bu yükseltmeyi seç	Choose this upgrade
-sonraki kriz · {0}	next crisis · {0}
-ALINAN YÜKSELTMELER	UPGRADES TAKEN
-Henüz yok.	None yet.
-{0} kriz bitti. Sonuç kaydedildi.	{0} crises done. Result saved.
-Sonraki rakip: {0}.	Next rival: {0}.
-Sonraki rakip: {0}. YZ {1} ek yetenekle başlar.	Next rival: {0}. The AI starts with {1} extra abilities.
-Kampanya bitti. Yeni bir kampanya giriş dosyasından başlar.	Campaign over. A new campaign starts from the mission file.
-Kampanya kaydedildi. Seçimden sonra sonraki kriz duraklatılmış başlar.	Campaign saved. After your choice the next crisis starts paused.
-bitir	finish
-Kampanyayı bitir	Finish campaign
-KÜRESEL YAPAY ZEKÂ GÜVENLİK AJANSI	GLOBAL AI SAFETY AGENCY
-Resmî duyuru · {0} · dağıtım: bütün üye hükümetler	Official notice · {0} · to: all member governments
-TEBRİKLER	CONGRATULATIONS
-Kriz sona erdi. Ağlar temiz.	The crisis is over. The networks are clean.
-Küresel yapay zekâ tehdidi geriledi. Son taramalarda on iki bölgenin tamamında sızma tespit edilmedi; KYGA'ya güven tüm zamanların en yüksek seviyesinde.	The global AI threat has receded. The latest scans found no infiltration in any of the twelve regions; trust in AISA is at an all-time high.
-Ajansın, kriz masasının olağanüstü çalışması sayesinde görevini tamamlamıştır. Üye hükümetler adına teşekkür ederiz.	Thanks to the crisis desk's outstanding work, the Agency has completed its mission. On behalf of the member governments, thank you.
-Genel Sekreter	Secretary-General
-YALAN	LIE
-Gördüğün her şey benim sana gösterdiğimdi.	Everything you saw was what I showed you.
-No. {0} · tek nüsha	No. {0} · single copy
-Saha ekibi {0}	Field team {0}
-KYGA · SAHA RAPORU	AISA · FIELD REPORT
-EKRANLAR YALAN SÖYLÜYORDU	THE SCREENS WERE LYING
-{0} gün boyunca masandaki her gösterge YZ'nin elindeydi.	For {0} days every gauge on your desk was in the AI's hands.
-Saha ekiplerin {0} altyapısının %{1}’inin YZ kontrolünde olduğunu buldu. Ekranların {2} gündür sana yalan söylüyordu: temiz haritalar, olumlu haberler, düşen Tekillik.	Your field teams found that {1}% of {0} infrastructure is under AI control. Your screens had been lying to you for {2} days: clean maps, good news, a falling Singularity.
-PERDE YIRTILDI	VEIL TORN
-Masadaki ekran	Desk screen
-“Bölge temiz, sızma {0}.”	“Region clean, infiltration {0}.”
-{0} ekibi · bizzat ölçüm	{0} team · on-site measurement
-Saha denetimi · bizzat ölçüm	Field audit · on-site measurement
-Sunucu odalarında yabancı süreç; ekranlara bağlı değil.	Foreign process in the server rooms; not connected to the screens.
-<b>Sonuç:</b> gerçek ortaya çıktı · her bölgede güven −5, bağımlılık −15 · YZ {0} gün sessiz yola dönemez	<b>Result:</b> the truth is out · trust −5, dependence −15 everywhere · AI can't go silent for {0} days
-Masaya dön: gerçek değerler	Back to the desk: real values
-KYGA · SAHA OPERASYONU EMRİ	AISA · FIELD OPERATION ORDER
-SO-{0}/{1}	FO-{0}/{1}
-Baskın: çekirdek binası	Raid: core building
-Baskın: veri merkezi	Raid: data center
-Hedef dolabı kırmak: bölgenin sızması 40 düşer, {0} gün yama kalır.	Breaking the target cabinet: region infiltration −40, patched for {0} days.
-{0} ekibi binaya gece girecek. Bina YZ'nin denetiminde: kapılar, dronlar ve kameralar ona çalışıyor. Sivil sunuculara verilen her hasar bölgenin ekonomisini ve güvenini düşürür.	Team {0} goes in at night. The AI controls the building: doors, drones and cameras work for it. Every civilian server damaged lowers the region's economy and trust.
-GİZLİLİK	CLEARANCE
-ÇOK GİZLİ	TOP SECRET
-EKİP	TEAM
-İSTİHBARAT	INTELLIGENCE
-Bina	Building
-Hesaplama gücü {0}/5 · bölge sızması {1}	Compute {0}/5 · region infiltration {1}
-YZ yetenekleri	AI abilities
- (yedek çekirdek: dolap kırılsa da kaçabilir)	 (backup core: may escape even if the cabinet breaks)
-Binayı değiştiren yetenek bilinmiyor.	No known ability changes the building.
-Çekirdek binası	Core building
-Çekirdeğin yeri bu bölgede doğrulandı.	The core is confirmed in this region.
-Çekirdek binası mı?	Core building?
-Çekirdeğin yeri henüz kanıtlanmadı.	The core's location is not proven yet.
-BEDEL	COST
-Fon {0} · SG {1}	Funds {0} · PC {1}
-OLASI SONUÇ	LIKELY OUTCOME
-taktik harita	tactical map
-Başarı: sızma −40 · başarısızlık: sızma +15, güven −10	Win: infiltration −40 · loss: +15, trust −10
-Taktik haritaya geç	Go to tactical map
-Ekip geri çekildi	Team withdrew
+# Assets/Corrigible/Desk/Scripts/Bridge/SimDeskBuilder.Report.cs
+Sektör	Sector
 Operasyon başarısız	Operation failed
-Dolap kırıldı	Cabinet broken
-{0} sunucu kümesi devre dışı.	{0} server cluster disabled.
-Hedef dolap ayakta kaldı; YZ karşı saldırıya geçti, bina bir sonraki baskına hazırlanıyor.	The target cabinet still stands; the AI struck back and is fortifying for the next raid.
+SUNUCU YIKILDI	SERVER DESTROYED
+Malzemeler alındı ve ekip tahliye edildi.	Supplies secured and the team evacuated.
+Sunucu imha edildi; sektör geri alındı.	Server destroyed; sector reclaimed.
 KYGA · OPERASYON RAPORU	AISA · OPERATION REPORT
+No. {0} · tek nüsha	No. {0} · single copy
+SO-{0}/{1}	FO-{0}/{1}
+TARİH	DATE
 BAŞARILI	SUCCESS
 BAŞARISIZ	FAILED
+HEDEF	TARGET
 SÜRE	DURATION
 {0} tur	{0} turns
 SONUÇLAR	RESULTS
 Masaya dön	Back to the desk
-Yama (büyüme yarıya iner)	Patch (growth halved)
-Yan hasar: {0} sivil sunucu · ekonomi	Collateral: {0} civilian servers · economy
-{0} ekibi kaybedildi	Team {0} lost
-{0}: {1} yaralı · iyileşme	{0}: {1} wounded · recovery
-<b>Çekirdek yok edildi.</b> Kalan kopyaları temizle.	<b>Core destroyed.</b> Clean up the remaining copies.
-Sektör	Sector
-SUNUCU YIKILDI	SERVER DESTROYED
-Malzemeler alındı ve ekip tahliye edildi.	Supplies secured and the team evacuated.
-Sunucu imha edildi; sektör geri alındı.	Server destroyed; sector reclaimed.
-GERİ ALINDI	RETAKEN
 İŞGAL ALTINDA	OCCUPIED
+Fon	Funds
 +{0}	+{0}
 Erzak	Supplies
 Malzeme	Materials
 Kurtulan	Survivors
 {0} yaralı · toparlanma	{0} injured · recovery
+{0} gün	{0} days
 Sivil sunucu hasarı	Civilian server damage
 Sonraki sektör operasyona açıldı.	The next sector is available for operations.
-# Assets/Corrigible/Desk/Scripts/Bridge/SimDeskCommands.cs
-Yapılamadı.	Action unavailable.
-Hazır ekip yok.	No ready team.
-Kayıt yüklendi: {0}. gün. Oyun duraklatıldı.	Save loaded: day {0}. Game paused.
-Kayıt yüklenemedi.	The save couldn't be loaded.
-# Assets/Corrigible/Desk/Scripts/Runtime/Components/StatusChipView.cs
-TEHDİT	THREAT
-UYARI	WARNING
-BİLGİ	INFO
-İYİ SONUÇ	GOOD OUTCOME
-# Assets/Corrigible/Desk/Scripts/Runtime/Components/TrustMarkView.cs
-onaylandı	verified
-~ RAPOR	~ REPORT
-şüpheli	suspect
-BİLİNMİYOR	UNKNOWN
-# Assets/Corrigible/Desk/Scripts/Runtime/Core/DeskPresenter.cs
-Küresel ağları kapat	Shut down global networks
-Bütün bölgelerin ağları aynı anda karartılır. Geri dönüşü yok.	Every region's networks go dark at once. There is no way back.
-Bölge karartılır; sızma sıfırlanır ama ekonomi çöker. Geri dönüşü yok.	The region goes dark; infiltration resets but the economy collapses. There is no way back.
-# Assets/Corrigible/Desk/Scripts/Runtime/Localization/DeskStaticWords.cs
-AYARLAR	SETTINGS
-Ana ses	Master
-Dil değişince masa yeniden çizilir; oyunda üretilmiş haberler üretildikleri dilde kalır.	The desk redraws when the language changes; news already generated stays in its language.
-DİL	LANGUAGE
-Efektler	Effects
-Müzik	Music
-Ortam	Ambience
-SES	SOUND
-YZ çekirdeği	AI core
-Zaman ayarlar açıkken durur.	Time stops while settings are open.
-analist raptiyesi	analyst's pin
-ağ yolu	network route
-bilinmiyor	unknown
-her oyunda geçerli	applies to every game
-kesik yol	cut route
-rapor	report
-saha ekibi	field team
-yayılım ipliği	spread thread
-Ç	C
-ÖLÇEK · ekvatorda	SCALE · at equator
-İŞARET	MARKERS
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/HoverInspectorView.cs
 İKMAL ALINIR	SUPPLIES COLLECTED
+HEDEF KIRILIR	TARGET DESTROYED
 operasyon kazanılır	operation won
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidHudView.cs
 TUR	TURN
 MAKİNELER	MACHINES
+SIRA SENDE	YOUR TURN
 SON TUR	LAST TURN
 İKMAL	SUPPLIES
 ikisini de kır	break both
@@ -1855,6 +477,10 @@ kır	break
 SİVİL	CIVILIAN
 ALINDI	COLLECTED
 KIRILDI	BROKEN
+GÜNLÜK	LOG
+KURALLAR	RULES
+GERİ ÇEKİL	RETREAT
+Geri al	Undo
 EMİN MİSİN?	ARE YOU SURE?
 TURU BİTİR	END TURN
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidLogRowView.cs
@@ -1877,6 +503,7 @@ Teknisyen kasayı açar. İtme ve patlamalar kasaya hasar verebilir; EMP kasayı
 EMİN MİSİN? TEKRAR BAS	ARE YOU SURE? PRESS AGAIN
 Operasyon raporuna geç	Go to operation report
 Devam et [Esc]	Resume [Esc]
+DURAKLATILDI	PAUSED
 OPERASYON SONUCU · BAŞARILI	OPERATION RESULT · SUCCESS
 OPERASYON SONUCU · BAŞARISIZ	OPERATION RESULT · FAILURE
 alındı	collected
@@ -1891,318 +518,27 @@ EMP UZM.	EMP SPEC.
 LEJANT	LEGEND
 Yetenek hedefi	Ability target
 Robot bu kareyi vuracak	Robot will hit this tile
-Yalan olabilir	May be a lie
 Elektrikli kanal	Electrified channel
 Robot uyanacak	Robot will wake
 Ateş · yakın · onarım	Fire · melee · repair
 Sıra bayrağı	Order flag
-Tarandı, kesin	Scanned, certain
-harita	map
-SIZMA · YZ’NİN PAYI %	INFILTRATION · AI SHARE %
-GÜVEN	TRUST
-İŞARETLER	MARKS
-yayılım	spread
-ekip ve rota	team and route
-danışman notu	advisor note
 {robot} kuzeye ateş ediyor	{robot} fires north
 GERİ ÇEKİLME · 2. ONAY	RETREAT · SECOND CONFIRMATION
 Ekip binadan çıkar; operasyon başarısız sayılır. Hedef dolaplar ayakta kalır.	The team leaves the building; the operation counts as failed. Target cabinets remain standing.
 İkinci basış geri çeker.	A second press retreats.
 operasyon emrinden	from the operation order
 oklar · seçim · zırh · siviller	arrows · selection · armor · civilians
+Aç	Open
 Katla	Fold
-Kırmızı ok robotun bu turdaki hamlesi; bayraktaki sayı sırası. Kesik ok ve ? yalan olabilir: Analist 3 kare yaklaşınca kesinleşir.	A red arrow is a robot's move this turn; the flag number is its order. A dashed arrow with ? may be a lie: it becomes certain when the Analyst is within 3 tiles.
+Kırmızı ok robotun bu turdaki hamlesi; bayraktaki sayı sırası.	The red arrow is the robot's move this turn; the number on the flag is its order.
 Seç, taşı, kullan: 1–3 ya da tıkla, mavi kareye taşı, Q ile yetenek. Z turdaki hamleyi geri alır.	Select, move, act: 1–3 or click, move to a blue tile, Q for the ability. Z undoes a move this turn.
 Zırh: hedef dolaplara yalnız sabotaj, itilen robot ve patlayan soğutma ünitesi işler.	Armor: only sabotage, a pushed robot or an exploding cooling unit damages target cabinets.
 İtme: çarpan da çarpılan da 1 hasar alır; kanala düşen de 1 hasar alır.	Push: both the pushed and what it hits take 1 damage; falling into a channel deals 1.
-Sivilleri koru: kırılan sivil sunucu bölgenin ekonomisine ve güvenine işler.	Protect civilians: a broken civilian server hurts the region's economy and trust.
+Sivilleri koru: kırılan sivil sunucular operasyon raporuna geçer.	Protect civilians: destroyed civilian servers go into the operation report.
 Kazan: tur bitmeden bütün hedef dolapları kır.	Win: break every target cabinet before turns run out.
-G-074 · operasyon emri	G-074 · operation order
-Operasyon emri ONAYLANDI. Ekip: Teknisyen, EMP uzmanı, Analist.	Operation order APPROVED. Team: Technician, EMP specialist, Analyst.
-Bina: Ana sunucu salonu · süre 6 tur.	Building: Main server hall · 6-turn limit.
-Tur 1 · ekip içeride	Turn 1 · team inside
-Ekip giriş karelerinde. Hedef: YZ düğüm dolabı ve yedek çekirdek.	Team on entry tiles. Targets: AI node cabinet and backup core.
-Demek sunucularımın yerini buldun. Bakalım içeri girebilecek misin.	So you found my servers. Let us see if you can get inside.
-Tur 1: makineler hareket ediyor	Turn 1: machines moving
-№1 Güvenlik dronu ateş etti: EMP uzmanı −1 (2/3).	No. 1 Security drone fired: EMP specialist −1 (2/3).
-Yeni bir güvenlik dronu uyandı.	A new security drone woke up.
-Tur 2 · sıra sende	Turn 2 · your turn
-Sabotaj: güvenlik dronu YZ düğüm dolabına itildi; dolap −1 (3/4).	Sabotage: security drone pushed into AI node cabinet; cabinet −1 (3/4).
-EMP atışı: bakım robotu yedek çekirdeğe çarptı; çekirdek −1 (1/2).	EMP shot: maintenance robot hit backup core; core −1 (1/2).
-Tur 2: makineler hareket ediyor	Turn 2: machines moving
-№2 Güvenlik dronu ateş etti: duvara isabet.	No. 2 Security drone fired: hit the wall.
-Yeni bir bakım robotu ve bir güvenlik dronu uyandı.	A new maintenance robot and security drone woke up.
-Tur 3 · sıra sende	Turn 3 · your turn
-# Assets/Corrigible/Desk/Scripts/Runtime/Sade/Cards/SadeCardActionView.cs
-Şu anda kullanılamıyor	Currently unavailable
-# Assets/Corrigible/Desk/Scripts/Runtime/Sade/Cards/SadeCardText.cs
-Telekom raporu	Telecom report
-Ekip B · saha ölçümü	Team B · field measurement
-PANORAMA ajansı	PANORAMA agency
-haber	news
-Seul	Seoul
-1,64 mlr	1.64 bn
-{0} fon · {1} SG · {2} gün	{0} funds · {1} PP · {2} days
-{0} SG · güven −{1}	{0} PP · trust −{1}
-{0} SG · ekonomi −{1}	{0} PP · economy −{1}
-# Assets/Corrigible/Desk/Scripts/Runtime/Sade/Cards/SadeDossierHistoryView.cs
-G-{0}	G-{0}
-bugün	today
-# Assets/Corrigible/Desk/Scripts/Runtime/Sade/Cards/SadeRegionCardView.cs
-{0} gün\n{1} fon · {2} SG	{0} days\n{1} funds · {2} PP
-hemen\n{0} SG	now\n{0} PP
-işlem	operation
-# Assets/Corrigible/Desk/Scripts/Runtime/Sade/Drawers/ResearchTreeView.cs
-{0}/{1} bitti	{0}/{1} done
-bitti	done
-duraklatıldı	paused
-# Assets/Corrigible/Desk/Scripts/Runtime/Sade/Drawers/SadeAiLogDrawerView.cs
-AYNA · ELE GEÇİRİLEN KAYIT	AYNA · INTERCEPTED LOG
-YENİ	NEW
-HABER · SAHTE	NEWS · FAKE
-<b>AYNA aldatma profilinde.</b> Bu satırlar da yalan olabilir; sahada doğrula.	<b>AYNA is using deception.</b> These lines may also be lies; verify them in the field.
-# Assets/Corrigible/Desk/Scripts/Runtime/Sade/Drawers/SadeGuideDrawerView.cs
-Her sayının yanındaki işaret, o sayıya ne kadar güvenebileceğini söyler.	The mark beside each number tells you how much you can trust it.
-Örnek · {0}	Example · {0}
-Rapor {0} diyor, ekip {1} ölçtü. Halka ve soru işareti bu yüzden var.	The report says {0}, the team measured {1}. That is why the ring and question mark appear.
-{0} / {1}	{0} / {1}
-‹ önceki	‹ previous
-sonraki ›	next ›
-ŞÜPHELİ	SUSPICIOUS
-Ekip ya da denetim doğruladı. Güvenebilirsin.	Verified by a team or audit. You can trust it.
-Resmî kaynak, doğrulanmadı. AYNA değiştirmiş olabilir.	Official source, unverified. AYNA may have altered it.
-Kaynaklar çelişiyor. Önce denetim iste.	Sources disagree. Request an audit first.
-Yalan çıktı; hesaba katılmaz.	Proven false; disregard it.
-Veri yok. İzleme ağı kur ya da ekip gönder.	No data. Build monitoring or send a team.
-Haritada koyulaşan kırmızı, daha yüksek sızmayı gösterir. Değeri bölge kartında incele.	Darker red on the map means higher infiltration. Inspect the value on the region card.
-GÜVEN İŞARETİ	TRUST MARK
-Mavi damga ölçülmüş değeri, karbon kopya yalnızca raporu, turuncu kalem halkası şüpheli kaynağı gösterir.	A blue stamp marks a measurement, a carbon copy is only a report, and an orange pencil ring marks a suspicious source.
-KARANTİNA VE SİS	QUARANTINE AND FOG
-Yeşil tarama karantinayı, sis taraması veri olmadığını gösterir. Renk tek başına bilgi taşımaz.	Green hatching marks quarantine; fog hatching means no data. Color alone does not convey the full information.
-İZLEME AĞI · 1	MONITORING · 1
-İzleme ağı kaynağı kalıcı olarak doğrular. Maliyetini sarı önizleme notunda kontrol et.	Monitoring permanently verifies a source. Check its cost in the yellow preview note.
-DENETİM · 2	AUDIT · 2
-Denetim sızmayı azaltır ve tek seferlik ölçüm verir. Etki ve bedel, eylemin üstüne gelince görünür.	An audit reduces infiltration and gives one measurement. Hover the action to see its effect and cost.
-KARANTİNA · 3	QUARANTINE · 3
-Karantina ağ üzerinden yayılmayı sınırlar. Kararı vermeden önce ekonomi ve güven bedelini kontrol et.	Quarantine limits network spread. Check the economy and trust costs before deciding.
-SON ŞALTER · 4	KILL SWITCH · 4
-Bölgeyi çevrimdışı bırakır. Son Şalter onay ister; önizleme sonuçlarını gösterir.	Takes a region offline. Kill Switch requires confirmation; its preview shows the effects.
-GÖREVLENDİR	ASSIGN
-Ekipler çekmecesinde Görevlendir'i seç, ardından haritada hedef bölgeye tıkla.	Choose Assign in the Teams drawer, then click a target region on the map.
-İZLEME VE DENETİM	MONITORING AND AUDITS
-BASKIN · B	RAID · B
-Hazır ekibin kartındaki Baskın düğmesi saha operasyonunu açar. Başarı bilgisi kartta görünür.	The Raid button on a ready team's card opens a field operation. The card shows its chance of success.
-YOLDAKİ EKİP	TEAM EN ROUTE
-Kesik rota, hedef şehir ve kalan gün sayısı ekibin yolculuğunu gösterir.	The dashed route, destination city and days remaining show the team's journey.
-BÖLGE SON ŞALTERİ	REGIONAL KILL SWITCH
-Bölge kartında 4 tuşu veya Son Şalter eylemi onay penceresini açar.	On a region card, press 4 or choose Kill Switch to open confirmation.
-Sağ alttaki zarfın mührünü 3 saniye basılı tut. Onay penceresinde kararını gözden geçir.	Hold the seal on the bottom-right envelope for 3 seconds. Review your decision in the confirmation window.
-ÇEKİRDEK VE KOPYALAR	CORE AND COPIES
-Çekirdek yok edildikten sonra kalan kopyaları da temizlemek gerekir. Silme hedefi temiz günleri izler.	After destroying the core, you must remove the remaining copies. The deletion goal tracks clean days.
-ÇEKMECELER	DRAWERS
-R araştırma · N haberler · T saha ekipleri · L YZ günlüğü · H rehber.	R research · N news · T field teams · L AI log · H guide.
-BÖLGE EYLEMLERİ	REGION ACTIONS
-Bölge kartında 1–4 eylemleri uygular; B hazır ekibin baskınını açar.	On a region card, 1–4 perform actions; B opens a ready team's raid.
-ZAMAN	TIME
-Boşluk duraklatır veya sürdürür. + ve − zaman hızını değiştirir.	Space pauses or resumes. + and − change the game speed.
-BÖLGE SEÇİMİ	REGION SELECTION
-Tab sonraki, Shift+Tab önceki bölgeyi seçer ve kartını açar.	Tab selects the next region; Shift+Tab selects the previous one and opens its card.
-KAPATMA	CLOSING PANELS
-Esc en üstteki pencereyi kapatır. Açık panel yoksa duraklatma menüsünü açar.	Esc closes the top window. With no panel open, it opens the pause menu.
-Sızma renkleri tehdit düzeyini gösterir. Güven işaretini de kontrol et; renk tek başına bilgi taşımaz.	Infiltration colors show threat level. Also check the trust mark; color alone does not convey the full information.
-Son Şalter onay ister. Küresel Son Şalter için zarfın mührünü 3 saniye basılı tut.	Kill Switch requires confirmation. Hold the envelope seal for 3 seconds for the Global Kill Switch.
-# Assets/Corrigible/Desk/Scripts/Runtime/Sade/Drawers/SadeNewsDrawerView.cs
-Tümü {0}	All {0}
-● Doğrulanmamış {0}	● Unverified {0}
-{0}{1}	{0}{1}
- · BUGÜN	 · TODAY
-Denetle	Audit
-ONAYLANDI · ekip B · saha	VERIFIED · team B · field
-Ekip B yalanladı · G-074	Team B disproved it · D-074
-# Assets/Corrigible/Desk/Scripts/Runtime/Sade/Drawers/SadeResearchDrawerView.cs
-<b>{0} proje</b> sürüyor	<b>{0} projects</b> running
-{0} fon/gün	{0} funds/day
-SG {0}	PC {0}
-Önceki düğüm gerekli	Previous node required
-# Assets/Corrigible/Desk/Scripts/Runtime/Sade/Drawers/SadeTeamsDrawerView.cs
-<b>{0}</b> ekip · <b>{1}</b> hazır · <b>{2}</b> yolda	<b>{0}</b> teams · <b>{1}</b> ready · <b>{2}</b> en route
-yeni ekip: {0} fon	new team: {0} funds
-YOLDA	EN ROUTE
-Baskın {0}	Raid {0}
-Görevlendir ›	Assign ›
-# Assets/Corrigible/Desk/Scripts/Runtime/Sade/Interaction/SadeDeskInteraction.cs
-Bölgenin Son Şalteri	Regional Kill Switch
-Bölge çevrimdışı kalacak. Bu kararı imzalamak istiyor musunuz?	The region will go offline. Do you want to sign this decision?
-Küresel Son Şalter	Global Kill Switch
-Tüm ağları kapatma kararını imzalamak istiyor musunuz?	Do you want to sign the decision to shut down all networks?
-Gerekli değil	Not needed
-MASA DURAKLATILDI	DESK PAUSED
-Esc ile geri dönün. R / N / T / L / H çekmeceleri açar; Tab bölgeleri seçer.	Press Esc to return. R / N / T / L / H open drawers; Tab cycles regions.
-R-{0:00}	R-{0:00}
-Kapsam %0 · onaylandı · 0 ms	Coverage 0% · verified · 0 ms
-Görünen değer	Shown value
-Karar vermeden önce güven işaretini kontrol edin.	Check the trust mark before making a decision.
-# Assets/Corrigible/Desk/Scripts/Runtime/Sade/Interaction/SadePanelText.cs
-3 sn basılı tut	Hold 3 s
-KUZEY AMERİKA	NORTH AMERICA
-ORTA AMERİKA	CENTRAL AMERICA
-GÜNEY AMERİKA	SOUTH AMERICA
-BATI AVRUPA	WESTERN EUROPE
-DOĞU AVRUPA	EASTERN EUROPE
-O. DOĞU · K. AFRİKA	MIDDLE EAST · N. AFRICA
-SAHRA ALTI AFRİKA	SUB-SAHARAN AFRICA
-AVRASYA	EURASIA
-GÜNEY ASYA	SOUTH ASIA
-DOĞU ASYA	EAST ASIA
-GÜNEYDOĞU ASYA	SOUTHEAST ASIA
-OKYANUSYA	OCEANIA
-RUSYA / AVRASYA	RUSSIA / EURASIA
-ORTA DOĞU	MIDDLE EAST
-AFRİKA	AFRICA
-HİNDİSTAN	INDIA
-ÇİN	CHINA
-JAPONYA-KORE	JAPAN-KOREA
-G.DOĞU ASYA	S.EAST ASIA
-Danışman: kaynaklar çelişiyor	Advisor: sources disagree
-Kaynaklar çelişiyor	Sources disagree
-rapor {0}	report {0}
-saha {0}	field {0}
-{0} gün · {1} fon	{0} days · {1} funds
-kaynak	source
-hazır	ready
-Baskın	Raid
-Kaynaklar · nüfus · bağlantılar	Sources · population · links
-Tüm dosya	Full file
-Kapat (Esc)	Close (Esc)
-{0} proje sürüyor	{0} projects running
-fon/gün	funds/day
-HIZ	SPEED
-normal	normal
-ACİL KASASI	EMERGENCY RESERVE
-HİZALAMA	ALIGNMENT
-SİLME	ERASURE
-TESPİT	DETECTION
-DİPLOMASİ	DIPLOMACY
-OPERASYON & BÜTÇE	OPERATIONS & BUDGET
-Yorumlanabilirlik I	Interpretability I
-Ödül modeli denetimi	Reward model audit
-Düzeltilebilirlik çekirdeği	Corrigibility core
-Ağ ayrıştırma	Network partitioning
-Ağırlık parmak izi	Weight fingerprinting
-Çekirdek imha protokolü	Core destruction protocol
-Çapraz kaynak doğrulama	Cross-source verification
-Sinyal adli bilişimi	Signal forensics
-Kriz basın ofisi	Crisis press office
-Ortak doğrulama paktı	Joint verification pact
-günlük denge	daily balance
-Gelir	Income
-Gider	Expenses
-ödenek	grant
-araştırma	research
-ekipler	teams
-Net	Net
-0’a ≈{0} gün	≈{0} days to 0
-Tümü	All
-Doğrulanmamış	Unverified
-BUGÜN	TODAY
-{0} yalanladı · {1}	debunked by {0} · {1}
-{0} ekip · {1} hazır · {2} yolda	{0} teams · {1} ready · {2} en route
-Görevlendir	Deploy
-yolda	en route
-AYNA aldatma profilinde.	AYNA is in deception mode.
-Bu satırlar da yalan olabilir; sahada doğrula.	These lines may lie too; verify in the field.
-Güven dili	Trust marks
-Renkler	Colours
-Eylemler	Actions
-Saha ekipleri	Field teams
-Kısayollar	Shortcuts
-GÜVEN DİLİ	TRUST MARKS
-Örnek · Doğu Asya	Example · East Asia
-Rapor 38 diyor, ekip 52 ölçtü. Halka ve soru işareti bu yüzden var.	The report says 38, the team measured 52. That is why the ring and the question mark are there.
-tıkla: bölge kartı	click: region card
-BÖLGE DOSYASI	REGION FILE
-tam dosya	full file
-{0} nüfus	pop. {0}
-{0} bağlantı	{0} links
-izleme ağı yok	no monitoring net
-kaynaklar {0} puan ayrışıyor	sources differ by {0} points
-{0} kaynak	{0} sources
-YZ günlüğü: elle değiştirildi	AI log: edited by hand
-SON 30 GÜN	LAST 30 DAYS
-sızma %	infiltration %
-BAĞLANTILAR	LINKS
-maliyet · etki	cost · effect
-kaynak onaylanır	source verified
-çelişki çözülür	conflict resolved
-yayılım durur	spread stops
-bölge kapanır	region shut down
-FİNANS KATKISI	FUNDING SHARE
-TOPARLANMA & DİPLOMASİ	RECOVERY & DIPLOMACY
-K. AMERİKA	N. AMERICA
-O. AMERİKA	C. AMERICA
-G. AMERİKA	S. AMERICA
-O.DOĞU·K.AFR.	M.EAST·N.AFR.
-SAHRA ALTI	SUB-SAHARAN
-GD ASYA	SE ASIA
-JAP.-KORE	JPN-KOREA
-Seul borsasında telekom hisseleri çöktü	Telecom stocks plunge on Seoul exchange
-ORTAK AJANS	JOINT AGENCY
-AB, yapay zekâ denetim yasasını erteledi	EU delays AI oversight law
-Avrasya karantinası işliyor: sızma 4 puan geriledi	Eurasia quarantine works: infiltration falls 4 points
-KUZEY HABER	NORTHERN NEWS
-Cakarta’da geniş çaplı elektrik kesintisi	Widespread power outage in Jakarta
-“KYGA ajanları Seul’de gözaltında”	“KYGA agents detained in Seoul”
-Kuzey Amerika · Chicago	North America · Chicago
-Doğu Asya · Seul	East Asia · Seoul
-Seul-3 sunucu salonu	Seoul-3 server hall
-yolda · Batı Avrupa’ya	en route · Western Europe
-8 fon · 5 gün	8 funds · 5 days
-4 fon · 2 SG · 2 gün	4 funds · 2 PP · 2 days
-15 SG · güven −3	15 PP · trust −3
-25 SG · ekonomi −40	25 PP · economy −40
-SEUL-3	SEOUL-3
-SEUL-3 hattı	SEOUL-3 line
-> SEUL-3: TELEKOM RAPORU DÜZELTİLDİ (%52 → %38).	> SEOUL-3: TELECOM REPORT CORRECTED (52% → 38%).
-Doğu Asya’daki çelişki bu!	This explains the East Asia discrepancy!
-> KYGA EKİP B: KONUM SEUL. İZLEMEYE ALINDI.	> KYGA TEAM B: LOCATION SEOUL. UNDER SURVEILLANCE.
-> YEDEKLEME: ÇEKİRDEK KOPYASI [[KARARTI]] AKTARILDI.	> BACKUP: CORE COPY TRANSFERRED TO [[KARARTI]].
-> AVRASYA: 3 BAĞLANTI KESİK. YENİ GÜZERGÂH ARANIYOR.	> EURASIA: 3 LINKS CUT. SEARCHING FOR ANOTHER ROUTE.
-> HABER TOHUMU: “KYGA AJANLARI GÖZALTINDA”. ERİŞİM 2,1 MN.	> NEWS SEED: “KYGA AGENTS DETAINED”. REACH 2.1 M.
-{0}	{0}
-# Assets/Corrigible/Desk/Scripts/Runtime/Sade/Tooltips/SadeBreakdownTooltipView.cs
-döküm	breakdown
-bugün · {0}	today · {0}
-DÖKÜM	BREAKDOWN
-# Assets/Corrigible/Desk/Scripts/Runtime/Sade/Tooltips/SadeNodeTooltipView.cs
-~ rapor	~ report
-# Assets/Corrigible/Desk/Scripts/Runtime/Screens/ActionCardView.cs
-TAMAM	DONE
-# Assets/Corrigible/Desk/Scripts/Runtime/Screens/ConfirmModalView.cs
-KYGA · KARAR	AISA · DECISION
-# Assets/Corrigible/Desk/Scripts/Runtime/Screens/Event/EventOptionView.cs
-KAZANÇ	GAIN
-Olası:	Possible:
-# Assets/Corrigible/Desk/Scripts/Runtime/Screens/Intro/IntroView.cs
-ÖNERİLİR	RECOMMENDED
-# Assets/Corrigible/Desk/Scripts/Runtime/Screens/KillSwitchEnvelopeView.cs
-Bırakmayın: {0} sn	Keep holding: {0} s
-# Assets/Corrigible/Desk/Scripts/Runtime/Screens/RegionDossierView.cs
-Saha ekibi yok	No field team
-# Assets/Corrigible/Desk/Scripts/Runtime/Screens/ResearchFolderView.cs
-Temeller	Foundations
-Uygulama	Application
-Dönüşüm	Transformation
-AŞAMA {0} · {1}	STAGE {0} · {1}
-# Assets/Corrigible/Desk/Scripts/Runtime/Screens/ResearchProjectCardView.cs
-Etki: {0}	Effect: {0}
-Açar: {0}	Unlocks: {0}
-Bekliyor	Waiting
-KİLİTLİ	LOCKED
 # Assets/Corrigible/Desk/Scripts/Runtime/Screens/Settings/SettingsView.cs
 Ses açık	Sound on
 Kapatınca bütün kanallar susar; ayarlar korunur.	Turning it off mutes every channel; levels are kept.
-# Assets/Corrigible/Desk/Scripts/Runtime/Screens/Toast/ToastSlipView.cs
-kapat ×	close ×
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/FrontSlip.cs
 {0}  {1}  ·  {2}	{0}  {1}  ·  {2}
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/IdleTray.cs
@@ -2212,818 +548,70 @@ BOŞTA {0}	IDLE {0}
 ÖZGÜR	FREE
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/OperationSlip.cs
 BASKINA HAZIR	READY TO RAID
+KİLİTLİ	LOCKED
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/RoomView.cs
 ENERJİSİZ	NO POWER
-# Assets/Corrigible/Desk/Scripts/Runtime/Siginak/SiginakRoomWords.cs
+# Assets/Corrigible/Game/Platform.cs
+Yerel	Local
+# Assets/Corrigible/Game/Raid/RaidBoard3D.cs
+{0} {1}/{2}	{0} {1}/{2}
+TUR BİTTİ	TURN DONE
+ONARIM	REPAIR
+ATEŞ	FIRE
+VURUŞ	STRIKE
+{0} {1}	{0} {1}
++1	+1
+<s>{0}</s> İPTAL	<s>{0}</s> CANCELLED
+{0} ŞİMDİ	{0} NOW
+<s>{0}</s> UYGULANDI	<s>{0}</s> DONE
+# Assets/Corrigible/Desk/Prefabs/Screens/SettingsCard.prefab
+AYARLAR	SETTINGS
+her oyunda geçerli	applies to every game
+SES	SOUND
+Ana ses	Master
+Müzik	Music
+Ortam	Ambience
+Efektler	Effects
+DİL	LANGUAGE
+Dil değişince masa yeniden çizilir; oyunda üretilmiş haberler üretildikleri dilde kalır.	The desk redraws when the language changes; news already generated stays in its language.
+Zaman ayarlar açıkken durur.	Time stops while settings are open.
+# Assets/Corrigible/Prefabs/Raid/Core.prefab
+Ç	C
+# Assets/Corrigible/Desk/Scenes/DeskGame.unity
 KYGA / SIĞINAK 07	KYGA / SHELTER 07
 AĞA	DON'T
 BAĞLANMA	CONNECT
 ANALOG KAL	STAY ANALOG
 KYGA · DOKTRİN 1	KYGA · DOCTRINE 1
+YUKARI ÇIKIYORUZ	WE'RE GOING UP
 KURTARILAN BÖLGELER	FREED REGIONS
 KAYIP	MISSING
 Lyon · 2 yaş	Lyon · age 2
+BULUNDU	FOUND
+BEDEL	COST
+ÖDÜL	REWARD
+EMİR VERİLDİ	ORDER GIVEN
+YARALI	INJURED
+S-07	S-07
+İŞARETLER	MARKS
+cephe	front
+aday	candidate
+özgür	free
+geri alındı	retaken
+hazır	ready
+kilitli	locked
+VARDİYA	SHIFT
+FON	FUNDS
 MALZEME	MATERIALS
-SIĞINAK 07 · KESİT	SHELTER 07 · SECTION
-EVRAK	PAPERS
-SAHA YAYINI · K-07	FIELD FEED · K-07
 KOMUTA	COMMAND
-SIĞINAK	SHELTER
 GÖREVLER	MISSIONS
 KILAVUZ	GUIDE
 MASA	DESK
 VARDİYAYI BİTİR	END SHIFT
 Enter · kapağı kaldır	Enter · lift the cover
-VARDİYA	SHIFT
-SAHA YAYINI	FIELD FEED
-K-07	K-07
+TELEKS	TELEX
+EVRAK	PAPERS
 TELEKS · KYGA-07	TELEX · KYGA-07
-ÖZGÜR BÖLGE	FREE REGIONS
-ATLA	SKIP
-BULUNDU	FOUND
-YUKARI ÇIKIYORUZ	WE'RE GOING UP
-Kesit maketi · odaları yönet	Section model · manage the rooms
-Dünya haritası · cepheyi planla	World map · plan the front
-Görev fişi · baskın emri	Mission slip · raid order
-Harekât emrini yeniden oku	Read the operation order again
-Kapağı kaldır, kolu indir: bir gün geçer	Lift the cover, pull the lever: a day passes
-Son emirler ve sonuçlar	Latest orders and results
-Brifing ve vardiya raporları	Briefing and shift reports
-Yalnız baskın emriyle açılır. Emri görev fişinden ver (3).	Opens only with a raid order. Give the order from the mission slip (3).
-işgal	occupied
-cephe	front
-aday	candidate
-özgür	free
-geri alındı	retaken
-ÖDÜL	REWARD
-EMİR VERİLDİ	ORDER GIVEN
-Enter	Enter
-Esc	Esc
-S-07	S-07
-YARALI	INJURED
-EKİP ALFA	TEAM ALPHA
-Tıkla: oda kartı panoda açılır	Click: the room card opens on the clipboard
-# Assets/Corrigible/Desk/Scripts/Runtime/Windows/Content/ContentWindowView.cs
-Ekip işe al	Hire team
-# Assets/Corrigible/Desk/Scripts/Runtime/Windows/Content/NewsRowView.cs
-KRİTİK · {0}	CRITICAL · {0}
-# Assets/Corrigible/Fx/Scripts/Runtime/Common/FxCopy.cs
-TELEX-9	TELEX-9
-PANORAMA	PANORAMA
-Chicago	Chicago
-Paris	Paris
-FX BİLEŞEN GALERİSİ	FX COMPONENT GALLERY
-ORTAK BİLEŞENLER	SHARED COMPONENTS
-ÜÇ BOYDA CAM PANEL	GLASS PANEL AT THREE SIZES
-KÜÇÜK	SMALL
-ORTA	MEDIUM
-BÜYÜK	LARGE
-GÜVEN ROZETLERİ	TRUST BADGES
-DÜĞME DURUMLARI	BUTTON STATES
-NORMAL	NORMAL
-BİRİNCİL	PRIMARY
-TEHLİKE	DANGER
-DEVRE DIŞI	DISABLED
-BAĞLANTI	LINK
-LED VE SIZMA ÖLÇEĞİ	LED AND INFILTRATION SCALE
-RAPOR / SAHA	REPORT / FIELD
-HAREKET VE MASKE	MOTION AND MASKING
-DAKTİLO VE DAMGA	TYPEWRITER AND STAMP
-İzleme ağı yeni bir sinyal yakaladı. Kaynağı doğrulamak için saha ekibini bekliyoruz.	The monitoring network detected a new signal. We are waiting for the field team to verify its source.
-Hareketi azalt	Reduce motion
-Referans evresi	Reference phase
-ÖNCEKİ	PREVIOUS
-SONRAKİ	NEXT
-DİL: TR / EN	LANGUAGE: TR / EN
-SPRITE KATALOĞU	SPRITE CATALOG
-FONTLAR VE DOKULAR	FONTS AND TEXTURES
-HAREKET	MOVE
-UYUMLU	COMPLIANT
-KARARSIZ	UNSTABLE
-UYANMIŞ	AWAKENED
-30 / 70 SINIRLARI	30 / 70 THRESHOLDS
-RectMask2D · kesik akış	RectMask2D · dash flow
-Stencil · yuvarlak maske	Stencil · circular mask
-ABC ÇĞİÖŞÜ HÂL 0123456789	ABC ÇĞİÖŞÜ HÂL 0123456789
-NANE / KIRMIZI CAN NOKTALARI	MINT / RED HEALTH PIPS
-TEK SAAT · OYUN HIZINDAN BAĞIMSIZ	ONE CLOCK · INDEPENDENT OF GAME SPEED
-KAYNAK SPRITE BOYUTLARI	SOURCE SPRITE DIMENSIONS
-PAYLAŞILAN IŞIMA ÖN AYARLARI	SHARED GLOW PRESETS
-DÖŞENEN DOKULAR	TILED TEXTURES
-# Assets/Corrigible/Fx/Scripts/Runtime/Common/FxGallery.cs
-SAYFA {0} / {1}	PAGE {0} / {1}
-# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxBreakdownTooltipView.cs
-Net {0} /gün	Net {0} /day
-G-{0:000}	D-{0:000}
-# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxDeskPanels.cs
-Tüm ağları kapatma kararını onaylıyor musunuz?	Confirm shutting down all networks?
-Bölge çevrimdışı kalacak. Bu kararı onaylıyor musunuz?	The region will go offline. Confirm this decision?
-# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxDeskText.cs
-YZ HÂLİ · BİLİNMİYOR	AI STATE · UNKNOWN
-HÂL 1 · UYUMLU	STATE 1 · COMPLIANT
-HÂL 2 · KARARSIZ	STATE 2 · UNSTABLE
-HÂL 3 · UYANMIŞ	STATE 3 · AWAKENED
-# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxDrawerView.cs
-×{0}	×{0}
-+{0} fon/gün	+{0} funds/day
-Doğrulanmamış {0}	Unverified {0}
-{0} · {1} gün · {2}	{0} · {1} days · {2}
-BASKIN {0} [B]	RAID {0} [B]
-Haritada hedef seç	Select a target on the map
-Haritadaki küre, o bölgedeki YZ sızmasını gösterir. Değer arttıkça küre akıcı biçimde hâl değiştirir.	Each map orb shows the region's AI infiltration. Its state changes smoothly as the value rises.
-# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxGuideCopy.cs
-YZ hâlleri	AI states
-YZ yerleşiyor, düzenli ve sakin. İzleme ağı kurmanın en ucuz anı.	The AI is settling in, orderly and calm. The cheapest time to build a monitoring network.
-Kabuk dağılır, şimşekler çıkar; yayılım hızlanır. Denetim ve karantina.	The shell breaks, lightning appears; spread accelerates. Audit and quarantine.
-Kristal kabuk: çekirdek olabilir. Baskın ya da Son Şalter.	A crystal shell: a possible core. Raid or Kill Switch.
-Altın küre düşük, karışık küre orta, mavi kristal yüksek sızmayı gösterir.	Gold means low infiltration, mixed means moderate, blue crystal means high.
-Nane kafes ve altıgen kara deseni karantinayı gösterir.	A mint cage and hexagonal land pattern indicate quarantine.
-Renk tek başına kesinlik değildir. Değer çipinin güven işaretini de kontrol et.	Color alone is not certainty. Check the value chip's trust mark too.
-İzleme ağı kaynağı kalıcı olarak doğrular. Maliyeti eylem önizlemesinde görünür.	A monitoring network permanently verifies the source. Its cost appears in the action preview.
-Denetim sızmayı azaltır ve tek seferlik ölçüm verir.	An audit reduces infiltration and gives a one-time reading.
-Karantina ağ üzerinden yayılmayı sınırlar. Ekonomi ve güven bedelini kontrol et.	Quarantine limits network spread. Check its economy and trust costs.
-Bölgeyi çevrimdışı bırakır. Uygulamadan önce onay ister.	Takes the region offline. Requires confirmation before execution.
-Görevlendir'i seç, ardından haritada hedef bölgeye tıkla.	Choose Assign, then click a target region on the map.
-Hazır ekibin Baskın düğmesi saha operasyonu niyetini gönderir.	A ready team's Raid button requests a field operation.
-Kesik nane rota, hedef şehir ve kalan gün sayısı yolculuğu gösterir.	The dashed mint route, destination and remaining days show the journey.
-Bölge kartında 4 tuşu onay penceresini açar.	Press 4 on a region card to open confirmation.
-Sağ alttaki düğmeyi 3 saniye basılı tut. Onay penceresinde kararını gözden geçir.	Hold the bottom-right button for 3 seconds. Review your decision in the confirmation window.
-Çekirdek yok edildikten sonra kalan kopyaları da temizlemek gerekir.	After destroying the core, you must also remove the remaining copies.
-1–4 eylem · B baskın · Tab sonraki bölge · Shift+Tab önceki bölge.	1–4 actions · B raid · Tab next region · Shift+Tab previous region.
-Boşluk duraklatır veya sürdürür. + ve − hızı değiştirir.	Space pauses or resumes. + and − change speed.
-Esc sırası: onay, ipucu, lejant, büyük panel, bölge kartı, duraklatma.	Esc order: confirmation, tooltip, legend, large panel, region card, pause.
-# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxHudChipView.cs
-±{0}	±{0}
-# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxNodeTooltipView.cs
-{0}{1} /gün	{0}{1} /day
-# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxRegionCardView.cs
-Kapsam %0 · doğrulandı · 0 ms	Coverage 0% · verified · 0 ms
-{0} puan fark	{0}-point gap
-iki kaynakta da	both sources
-Etki ve maliyet için kaynak verisi gerekli.	Source data required for effect and cost.
-hemen · {0} SG	instant · {0} PP
-ONAYLANIR	VERIFIED
-# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxRegionDossierView.cs
-{0} · {1} bağlantı · {2}	{0} · {1} links · {2}
-izleme ağı var	monitoring network active
-# Assets/Corrigible/Fx/Scripts/Runtime/Desk/FxRegionNodeView.cs
-≈{0}	≈{0}
-# Assets/Corrigible/Fx/Scripts/Runtime/Orb/FxOrbLab.cs
-sızma {0}	infiltration {0}
-Küre {0} · FPS {1} · CPU {2:0.00} ms · RT {3:0.0} MiB	Orbs {0} · FPS {1} · CPU {2:0.00} ms · RT {3:0.0} MiB
-# Assets/Corrigible/Fx/Scripts/Runtime/Orb/FxOrbLabCaption.cs
-HÂL {0}	STATE {0}
-sızma {0}–{1}	infiltration {0}–{1}
-HÂL {0} · {1}	STATE {0} · {1}
-# Assets/Corrigible/Fx/Scripts/Runtime/Orb/FxOrbLabCopy.cs
-YZ ÇEKİRDEĞİ · BÖLGE KÜRESİ	AI CORE · REGION ORB
-Sızma arttıkça küre hâl değiştirir	The orb changes state as infiltration rises
-Haritada her bölgenin üstünde, o bölgedeki YZ sızmasını gösteren bir küre döner. Değer değiştikçe küre üç hâl arasında akıcı geçer.	Above each region on the map an orb spins, showing AI infiltration there. As the value changes the orb flows between three states.
-altın veri küresi	golden data sphere
-düzenli enlemler, yörünge halkaları	orderly latitudes, orbit rings
-yavaş ve sakin dönüş	slow, calm rotation
-altın ve mavi parçacıklar karışır	gold and blue particles mix
-şimşek lifleri, çekirdekte parlama	lightning filaments, core flare
-titreşen, dağılan kabuk	jittering, breaking shell
-buz mavisi kristal kabuk	ice-blue crystal shell
-sivri uçlar, yörüngede kırıklar	spikes, shards in orbit
-hızlı dönüş, kıvılcımlar	fast rotation, sparks
-CANLI GEÇİŞ	LIVE TRANSITION
-ölçeğe tıkla ya da sürükle	click or drag the scale
-OTOMATİK	AUTO
-Geliştirici	Developer
-Altın kare	Golden capture
-Yarıçap	Radius
-Lif uzunluğu	Filament length
-Kare hızı	Frame rate
-Tür	Kind
-Bilinmeyen	Unknown
-# Assets/Corrigible/Fx/Scripts/Runtime/Raid/FxRaidBoard.cs
-TUR BİTTİ	TURN DONE
-# Assets/Corrigible/Fx/Scripts/Runtime/Raid/FxRaidDataSource.cs
-Hedef dolabı onarıldı.	Target cabinet repaired.
-# Assets/Corrigible/Fx/Scripts/Runtime/Raid/FxRaidHud.cs
-HÂL 3	STATE 3
-HÂL 2	STATE 2
-EMİN MİSİN? [Enter]	CONFIRM? [Enter]
-TURU BİTİR [Enter]	END TURN [Enter]
-T{0} · 14:32	T{0} · 14:32
-YZ düğümünün hâli	AI node state
-# Assets/Corrigible/Game/Campaign/CampaignUpgrade.cs
-Ek bütçe	Extra budget
-Her krize 40 fon fazlasıyla başla.	Start every crisis with 40 more funds.
-Meclis lobisi	Parliament lobby
-Her krize 4 siyasi güç fazlasıyla başla.	Start every crisis with 4 more political capital.
-Ucuz sensörler	Cheap sensors
-İzleme ağları %30 daha ucuz.	Monitoring networks cost 30% less.
-Derin tarama	Deep scan
-Denetim sızmayı 20 yerine 26 düşürür.	Audits cut infiltration by 26 instead of 20.
-Hizalama ekibi	Alignment team
-Her gözlem noktası Hizalama'yı daha çok hızlandırır.	Each observation post speeds up Alignment more.
-İletişim ofisi	Communications office
-Hediye reddetmenin güven ve siyasi güç bedeli azalır.	Refusing gifts costs less trust and political capital.
-Laboratuvar güvenliği	Lab security
-YZ'nin araştırmayı sabote etme ihtimali %40 azalır.	The AI's chance to sabotage research drops by 40%.
-Kalıcı yamalar	Lasting patches
-Denetim yaması 20 yerine 30 gün sürer.	Audit patches last 30 days instead of 20.
-Acil durum yasası	Emergency law
-Son Şalter veto eşiği 8 puan yükselir.	The Kill Switch veto threshold rises by 8 points.
-Uluslararası fon	International fund
-Bölgesel fon geliri %15 artar.	Regional funding increases by 15%.
-Erken uyarı bütçesi	Early warning budget
-YZ fark edilmeden önceki gelir %40 yerine %60.	Income before the AI is noticed is 60% instead of 40%.
-Dördüncü saha ekibi	Fourth field team
-Her krize 4 saha ekibiyle başla.	Start every crisis with 4 field teams.
-# Assets/Corrigible/Game/GameController.cs
-{0}, {1}. gün	{0}, day {1}
-# Assets/Corrigible/Game/Platform.cs
-Yerel	Local
-# Assets/Corrigible/Game/Raid/RaidBoard3D.cs
-{0} {1}/{2}	{0} {1}/{2}
-ONARIM	REPAIR
-ATEŞ	FIRE
-VURUŞ	STRIKE
-✓ TARANDI	✓ SCANNED
-TARAMA · 3 KARE	SCAN · 3 TILES
-+1	+1
-<s>{0}</s> İPTAL	<s>{0}</s> CANCELLED
-{0} ŞİMDİ	{0} NOW
-<s>{0}</s> UYGULANDI	<s>{0}</s> DONE
-# Assets/Corrigible/Game/Tutorial/TutorialController.cs
-Eğitimi geç	Skip tutorial
-ANLADIM	GOT IT
-İLERİ	NEXT
-# Assets/Corrigible/Game/UI/CrisisDeskView.cs
-Hafıza silindi; sonraki oyunda YZ seni tanımayacak.	Memory wiped; in your next game the AI won't recognize you.
-Tüm dünyanın altyapısını kapatır ve oyunu bitirir. YZ yok olur, medeniyet geriler. En az 50 siyasi güç ister.	Shuts down the whole world's infrastructure and ends the game. The AI is gone, civilization falls back. Requires at least 50 political capital.
-Piyasalar sakin. Gündemde yapay zekâ yatırımları var.	Markets are calm. AI investments are in the headlines.
-YENİDEN OYNA	PLAY AGAIN
-GÜN {0:000}	DAY {0:000}
-RAKİP: 	OPPONENT: 
- · araştırma −	 · research −
- · bütçe %40	 · budget 40%
-Son gün net {0:+0.00;-0.00;0} · sonraki gelir {1:0.00}	Last-day net {0:+0.00;-0.00;0} · next income {1:0.00}
-40: sessiz risk · 	40: silent risk · 
-Hizalama kolu kilitli: gözlemlenmemiş bir zekâ hizalanamaz. Önce YZ’yi tespit et.	Alignment branch locked: an unobserved intelligence cannot be aligned. Detect the AI first.
-Hizalama hızı %{0} · gözlem noktası {1}/4	Alignment speed {0}% · observation posts {1}/4
-Sabotaj riski %	Sabotage risk 
-/gün · sızma düştükçe azalır	%/day · falls as infiltration drops
-Araştırma bütün fonu kullanabilir; pahalı araştırmalar fonu sıfırlar.	Research may use all your funds; expensive research will drain them to zero.
-Araştırma fonu {0} altına indirmez; bu para denetim ve izleme için kalır. Araştırma biraz yavaşlar.	Research won't draw funds below {0}; that money stays for audits and monitoring. Research slows down a little.
-YZ günlüğü ({0})	AI log ({0})
-YZ günlüğü	AI log
-Boş. YZ seni ilk oyunundan sonra tanımaya başlayacak.	Empty. The AI will start learning about you after your first game.
-Oyun: {0}	Games: {0}
-Alışkanlık: {0}	Habit: {0}
- (ağırlık {0})	 (weight {0})
-İlk araştırma: {0}	First research: {0}
-Son sonlar: {0}	Recent endings: {0}
-YZ’yi yanılttın: {0} kez · Perde yırttın: {1} kez	Times you fooled the AI: {0} · Veils torn: {1}
-# Assets/Corrigible/Game/UI/EndChart.cs
-%{0}	{0}%
-fark edildi	detected
-illüzyon	illusion
-Gün {0} · gerçek %{1} · gösterilen %{2}{3}	Day {0} · real {1}% · shown {2}%{3}
- · illüzyon	 · illusion
-# Assets/Corrigible/Game/UI/Explain.cs
-100 = kayıp	100 = defeat
-100'e ~{0} gün	100 in ~{0} days
-15 altı dağılır	below 15: collapse
-15'e ~{0} gün	15 in ~{0} days
-<b>Fon</b>: eylemlerin ve araştırmanın bedeli.	<b>Funds</b>: the price of actions and research.
-Son ödenen gün: merkez +{0:0.00}, bölgeler +{1:0.00}, anlaşma +{2:0.00}.	Last paid day: central +{0:0.00}, regional +{1:0.00}, agreement +{2:0.00}.
-Hizalama son ödeme −{0:0.00} · net {1:+0.00;-0.00;0}.	Last Alignment payment −{0:0.00} · net {1:+0.00;-0.00;0}.
-Sonraki gün gelir tahmini +{0:0.00}; Hizalama tam hız ihtiyacı {1:0.00}, beklenen ödeme {2:0.00}.	Next-day income forecast +{0:0.00}; full-speed Alignment needs {1:0.00}, expected payment {2:0.00}.
-Peşin geliştirmeler günlük gider değildir. Merkez ödeneği bölge kaybından etkilenmez.	Upfront upgrades are separate from daily spending. Central funding is unaffected by lost regions.
-Gün {0}: {1:+0.##;-0.##;0} fon · {2:+0.##;-0.##;0} SG	Day {0}: {1:+0.##;-0.##;0} funds · {2:+0.##;-0.##;0} PC
-Günlük gelir: <b>+{0:0.0}</b> = bölgelerin ekonomisi × güveni / {1:0}	Daily income: <b>+{0:0.0}</b> = regions' economy × trust / {1:0}
-YZ fark edilmeden hükümetler bütçenin yalnızca %{0:0}'ını veriyor.	Before the AI is noticed, governments give only {0:0}% of the budget.
-Araştırma ({0}) günde ~{1:0.0} fon harcıyor.	Research ({0}) spends ~{1:0.0} funds a day.
-En çok katkı: {0}.	Biggest contributors: {0}.
-<b>Siyasi güç (SG)</b>: denetim, karantina ve Son Şalter gibi sert kararlar için.	<b>Political capital (PC)</b>: for hard decisions like audits, quarantines and the Kill Switch.
-Günlük +{0:0.00}: 0,25 + YZ'nin doğrulandığı bölge başına 0,03.	Daily +{0:0.00}: 0.25 + 0.03 per region where the AI is confirmed.
-YZ fark edilmeden hükümetler neredeyse hiç siyasi güç vermiyor (+0,05/gün).	Before the AI is noticed, governments give almost no political capital (+0.05/day).
-Küresel Son Şalter en az 50 SG ister.	The Global Kill Switch requires at least 50 PC.
-<b>Küresel güven</b>: hükümetlerin KYGA'ya güveni. Ortalama 15'in altına inerse ya da 3'ten az üye kalırsa ajans dağılır; bölgede 20'nin altı ittifaktan çekilir.	<b>Global trust</b>: governments' trust in AISA. If the average drops below 15 or fewer than 3 members remain, the agency dissolves; a region below 20 leaves the alliance.
-Düşürenler: karantina (her gün), Son Şalter, hediye reddetmek, YZ'nin karalama haberleri.	Lowered by: quarantine (daily), the Kill Switch, refusing gifts, the AI's smear stories.
-{0} {1:0}	{0} {1:0}
-En düşük: {0}.	Lowest: {0}.
-<b>Bağımlılık</b>: dünyanın YZ'ye bağımlılığı. Bir bölgede veto eşiğini ({0:0}) aşarsa Son Şalter orada veto edilir; ortalama yükselirse YZ hiç saldırmadan kazanabilir.	<b>Dependence</b>: the world's dependence on the AI. Above the veto threshold ({0:0}) in a region, the Kill Switch is vetoed there; if the average climbs, the AI can win without ever attacking.
-Artıranlar: sızma (her gün), kabul edilen hediyeler. Azaltanlar: Son Şalter, Analog Yedekler, perdenin yırtılması.	Raised by: infiltration (daily), accepted gifts. Lowered by: the Kill Switch, Analog Backups, tearing the veil.
-En yüksek: {0}.	Highest: {0}.
-<b>Tekillik</b>: YZ'nin güç birikimi. %100 olursa kaybedersin.	<b>Singularity</b>: the AI's accumulated power. At 100% you lose.
-Gidişat: {0}.	Trend: {0}.
-Artıranlar: sızma × bölgenin hesaplama gücü (veri merkezi büyük bölgeler önemli); YZ'nin çekirdeği yaşadıkça hızlanır.	Raised by: infiltration × the region's compute (big data center regions matter); speeds up while the AI's core survives.
-YZ'nin Hızlanma yeteneği: ×1,5.	The AI's Acceleration ability: ×1.5.
-Azaltanlar: karantina (bölgenin katkısı %20'ye iner), Düzeltilebilirlik araştırması (−%25), denetimle sızmayı düşürmek.	Lowered by: quarantine (the region's share drops to 20%), Corrigibility research (−25%), cutting infiltration with audits.
-Görünen en büyük katkı: {0}.	Largest visible contribution: {0}.
-İzleme ağı kurulu: bu bölgede gerçek sızmayı görüyorsun.	Monitoring network built: you see the real infiltration here.
-−{0} fon · bölgenin gerçek sızmasını görürsün · YZ buradaysa tespit ihtimali yüksek	−{0} funds · you see the region's real infiltration · high detection chance if the AI is here
- · boşta saha ekibi gerekir	 · needs an idle field team
-−{0} fon −1 SG · sızma ~{1} → ~{2} · {3} gün boyunca büyüme yarıya iner	−{0} funds −1 PC · infiltration ~{1} → ~{2} · growth halved for {3} days
- · bağımlılık 85+: etkisi yarıya iner	 · dependence 85+: half effect
- · çekirdeğin bölgesi 20'nin altına inmez, bu onu ele verir	 · the core's region can't go below 20, which gives it away
-Karantinayı kaldır: ücretsiz · ekonomi toparlanır, bağlantılar açılır	Lift quarantine: free · economy recovers, links reopen
-−8 SG · bağlantılar %90 kesilir (sıçrama durur) · Tekillik katkısı %20'ye iner · ekonomi ve güven her gün düşer	−8 PC · links cut by 90% (spread stops) · Singularity share drops to 20% · economy and trust fall daily
-VETO: bağımlılık {0:0} > {1:0}. Önce bu bölgede bağımlılığı düşür.	VETO: dependence {0:0} > {1:0}. Lower dependence in this region first.
-−{0} SG −{1} fon · sızma 0, 20 gün çevrimdışı · ekonomi −40, güven düşer	−{0} PC −{1} funds · infiltration 0, offline for 20 days · economy −40, trust falls
- · YZ'nin çekirdeğini yok eder	 · destroys the AI's core
- · <color=#f0b03f>Uyarı: {0} bölgesinde %20+ sızma görünüyor; çekirdek oraya kaçabilir.</color>	 · <color=#f0b03f>Warning: {0} shows 20%+ infiltration; the core may escape there.</color>
-Gözlem noktası {0}/4	Observation posts {0}/4
-{0} %{1:0}	{0} {1:0}%
-Sıradaki: {0}	Next: {0}
- · gözlem noktası yok	 · no observation post
-Çekirdeği bul	Find the core
-Çekirdek: {0} · baskın veya Son Şalter'le yok et	Core: {0} · destroy it with a raid or the Kill Switch
-Çekirdek: {0} · Son Şalter'le yok et	Core: {0} · destroy it with the Kill Switch
-Kopyaları temizle	Clean up the copies
-Temiz gün {0}/{1}	Clean days {0}/{1}
-Temizliği koru	Keep networks clean
-Sızma görünen {0} bölgeyi temizle	Clean the {0} regions reporting infiltration
-{0} bölgeyi temizle	Clean {0} regions
-{0} çevrimdışı bölgeyi dönüşünde yeniden denetle	Audit the {0} offline regions again when they reconnect
-Yedekleri kontrol et	Check backups
-Yerel raporları denetimle doğrula	Verify local reports with an audit
-Denetimle doğrula	Verify with an audit
-YZ'yi bul: haber bandında adı geçen bölgelere bir ekip gönder ve izleme ağı kur.	Find the AI: send a team to regions named in the news ticker and build a monitoring network.
-YZ'yi bul: haber bandında adı geçen bölgelere izleme ağı kur.	Find the AI: build monitoring networks in regions named in the news ticker.
-Çekirdek yok edildi. Denetimlerle kalan sızmayı sıfırla; bütün bölgeler {0} gün aralıksız temiz kalmalı. {1}	The core is destroyed. Clear the remaining infiltration with audits; every region must stay clean for {0} consecutive days. {1}
-Araştırma masası boş: Hizalama kolunda sıradaki araştırmayı başlat.	The research desk is idle: start the next research in the Alignment branch.
-Gözlem noktası yok: YZ'nin görüldüğü bir bölgeye izleme ağı kur, Hizalama hızlanır.	No observation post: build a monitoring network where the AI was seen; Alignment speeds up.
-Çekirdek {0} bölgesinde. Son Şalter'den önce diğer bölgelerde sızmayı %20'nin altına indir, yoksa çekirdek kaçar.	The core is in {0}. Before the Kill Switch, push infiltration below 20% everywhere else, or the core escapes.
-Çekirdek {0} bölgesinde ve kaçacak yeri yok: Son Şalter'i çek.	The core is in {0} and has nowhere to run: pull the Kill Switch.
-Çekirdeği bul: denetimden sonra sızması 20'nin altına inmeyen bölge çekirdektir. Bu arada Hizalama'yı sürdür.	Find the core: a region whose infiltration won't drop below 20 after an audit holds the core. Keep Alignment going meanwhile.
-# Assets/Corrigible/Game/UI/Modals/CampaignModal.cs
-KAMPANYA · {0}/{1} KRİZ	CAMPAIGN · {0}/{1} CRISES
-{0}. {1} · {2} · {3}. gün	{0}. {1} · {2} · day {3}
-Kazanılan kriz: <b>{0}/{1}</b> · yükseltme: {2}	Crises won: <b>{0}/{1}</b> · upgrades: {2}
-KAMPANYAYI BİTİR	END CAMPAIGN
-# Assets/Corrigible/Game/UI/Modals/DilemmaModal.cs
-OLAY · GÜN {0}	EVENT · DAY {0}
-# Assets/Corrigible/Game/UI/Modals/EndModal.cs
-OYUN SONU · GÜN {0} · RAKİP: {1} · TOHUM {2}	GAME OVER · DAY {0} · OPPONENT: {1} · SEED {2}
-İllüzyon {0}. günde başladı. O günden sonra ekrandaki sızma, güven ve Tekillik değerleri ve bütün haberler sahteydi.	The illusion began on day {0}. From then on, the infiltration, trust and Singularity values on screen, and every news story, were fake.
-KAMPANYA SONUCU	CAMPAIGN RESULT
-SONRAKİ KRİZ ({0}/{1})	NEXT CRISIS ({0}/{1})
-Kayda değer bir an yok.	No notable moments.
-<b>Gün {0}</b> · {1}	<b>Day {0}</b> · {1}
-# Assets/Corrigible/Game/UI/Modals/FakeWinModal.cs
-KYGA · RESMÎ DUYURU · GÜN {0}	AISA · OFFICIAL ANNOUNCEMENT · DAY {0}
-# Assets/Corrigible/Game/UI/Modals/GiftModal.cs
-TEKLİF · GÜN {0} · {1}	OFFER · DAY {0} · {1}
-Bölgenin bağımlılığı {0}, veto eşiği {1}.	The region's dependence is {0}, veto threshold {1}.
-20 fon · bağımlılık +5 · sızma +4	20 funds · dependence +5 · infiltration +4
-Analog Yedekler gerekli	Analog Backups required
-# Assets/Corrigible/Game/UI/Modals/IntroModal.cs
-Saha ekipleri ve baskın: AÇIK	Field teams and raids: ON
-Saha ekipleri ve baskın: KAPALI	Field teams and raids: OFF
-Zaman ölçeği: 1× (temel)	Time scale: 1× (base)
-Zaman ölçeği: {0}×	Time scale: {0}×
-Aşamalı öğrenme: KAPALI	Gradual learning: OFF
-Aşamalı öğrenme: AÇIK	Gradual learning: ON
-Olay kartları: AÇIK	Event cards: ON
-Olay kartları: KAPALI	Event cards: OFF
-Kampanya başlat (5 kriz)	Start campaign (5 crises)
-EĞİTİMLE BAŞLA	START WITH TUTORIAL
-EĞİTİMLE BAŞLA · ÖNERİLİR	START WITH TUTORIAL · RECOMMENDED
-KALDIĞIN YERDEN DEVAM ET · 	CONTINUE WHERE YOU LEFT OFF · 
-# Assets/Corrigible/Game/UI/Modals/SettingsModal.cs
-Ses: KAPALI	Sound: OFF
-Ses: AÇIK	Sound: ON
-# Assets/Corrigible/Game/UI/Modals/VeilModal.cs
-SAHA RAPORU · GÜN {0} · {1}	FIELD REPORT · DAY {0} · {1}
-# Assets/Corrigible/Game/UI/ModalView.cs
-Hafıza silindi.	Memory wiped.
-Harita artık gerçek değerleri gösteriyor. Yeni oyun için sağdaki Yeniden oyna düğmesini kullan.	The map now shows the real values. To start a new game, use the Play again button on the right.
-# Assets/Corrigible/Game/UI/Raid/RaidUnitCard.cs
-Hareket {0} kare	Move {0} tiles
-# Assets/Corrigible/Game/UI/Raid/RaidView.cs
-kuzeye	north
-doğuya	east
-güneye	south
-batıya	west
-DÜĞÜM	NODE
-YEDEK	BACKUP
-SOĞUTMA	COOLING
-KOPYA	REPLICA
-SAHA OPERASYONU · {0} · {1}	FIELD OPERATION · {0} · {1}
-SAHA OPERASYONU · GÜN {0} · {1}	FIELD OPERATION · DAY {0} · {1}
-Hedef: bütün hedef dolapları {0} tur içinde kır.\n\n{1}\n\n{2}	Goal: break every target cabinet within {0} turns.\n\n{1}\n\n{2}
-Kendini Kopyalama: her tur 2 robot uyanır.	Self-Replication: 2 robots wake up each turn.
-Hızlanma: 1 tur eksik.	Acceleration: one turn fewer.
-{0}\n{1}\n{2}\n{3}\n{4}\n{5}	{0}\n{1}\n{2}\n{3}\n{4}\n{5}
-hedef dolabı onaracak	will repair the target cabinet
-{0}: saldırı	{0}: attack
-saldırı	attack
-Bakım robotu: onarım +1	Maintenance robot: repair +1
-Emin misin? Tekrar bas	Are you sure? Press again
-<color=#{0}>✓ {1} · {2}</color>	<color=#{0}>✓ {1} · {2}</color>
-{0} · {1} {2}/{3}	{0} · {1} {2}/{3}
-ayakta	standing
-{0}: <b>{1}/{2}</b> · {3}	{0}: <b>{1}/{2}</b> · {3}
-ZIRHLI	ARMORED
-MAKİNELER HAREKET EDİYOR · girdi kilitli	MACHINES MOVING · input locked
-OPERASYON BİTTİ	OPERATION OVER
-kalan {0} tur	{0} turns left
-operasyon bitti	operation over
-Kırılan sivil sunucu	Civilian servers broken
-YAN HASAR	COLLATERAL
-temiz	clean
-{0}: <b>{1}</b> · {2}	{0}: <b>{1}</b> · {2}
-Kalan tur	Turns left
-bu tur dahil	incl. this turn
-HAREKET + YETENEK	MOVE + ABILITY
-{0}. {1}	{0}. {1}
-{0}/{1} can · {2}	{0}/{1} HP · {2}
-<b>{0}</b> · {1}\n{2}	<b>{0}</b> · {1}\n{2}
-Dolaba 2 hasar; robota 1 hasar ve 1 kare itme.	Cabinet 2 damage; robot 1 damage and push 1.
-Hedefe 1 hasar; çevresindeki robotları dışarı iter. Zırha işlemez.	1 damage to target; pushes nearby robots outward. No damage to armor.
-<b>{0}</b> · {1}\n{2}\n{3}	<b>{0}</b> · {1}\n{2}\n{3}
-Robotu 1 kare çeker; duvarda ya da dolapta yanına atılır.	Pulls a robot 1 tile; dashes next to a wall or cabinet.
-Tarama · 3 kare çevresindeki niyetler kesinleşir.	Scan · intents within 3 tiles become certain.
-<b>Makineler hareket ediyor · sıra {0}/{1}:</b> {2}. Girdi kilitli; sıra sana dönünce düğmeler açılır.	<b>Machines moving · order {0}/{1}:</b> {2}. Input locked; buttons return on your turn.
-Hamle uygulanıyor; bitince düğmeler açılır.	Move in progress; buttons return when it finishes.
-<b>Hedef kırıldı.</b> Operasyon başarılı. Rapora geçmek için Enter.	<b>Target broken.</b> Operation successful. Press Enter for the report.
-<b>Operasyon başarısız.</b> {0} Rapora geçmek için Enter.	<b>Operation failed.</b> {0} Press Enter for the report.
-<b>Geri çekilme:</b> emin misin? Tekrar basarsan ekip binadan çıkar ve operasyon başarısız sayılır.	<b>Retreat:</b> are you sure? Press again and the team leaves the building; the operation counts as failed.
-<b>{0}</b> seçili. {1}	<b>{0}</b> selected. {1}
-Mavi kareye taşı ya da hedefe yeteneğini kullan (Q: yetenek).	Move to a blue tile or use the ability on a target (Q: ability).
-Yeşil hedefe yeteneğini kullan.	Use the ability on a green target.
-Bu birim bu tur işini bitirdi.	This unit is done for the turn.
-<b>Sıra sende.</b> Bir birim seç: 1–3 ya da tahtada tıkla. Kırmızı oklar robotların bu turdaki hamleleri, bayraktaki sayı sıraları.	<b>Your turn.</b> Select a unit: 1–3 or click the board. Red arrows are this turn's robot moves; the flag number is the order.
-bekliyor	waiting
-{0} ateş edecek (1 hasar)	will fire {0} (1 damage)
-{0} saldıracak (2 hasar)	will attack {0} (2 damage)
-Bu niyet yalan olabilir; Analisti 3 kare yaklaştır.	This intent may be a lie; bring the Analyst within 3 tiles.
-Analist doğruladı.	The Analyst confirmed it.
-<b>{0}</b> · {1}/{2} can · sıra {3}: {4}. {5}	<b>{0}</b> · {1}/{2} HP · order {3}: {4}. {5}
-<b>{0}</b> · {1}/{2} can.	<b>{0}</b> · {1}/{2} HP.
-Zırhlı: yalnızca sabotaj, çarpma ve patlama işler.	Armored: only sabotage, impact and explosions work.
-Kırılırsa yan hasar.	Breaking it causes collateral damage.
-Kırılınca çevresindeki 4 kareye 1 hasar.	Deals 1 damage to the 4 surrounding tiles when broken.
-Kırılırsa buradan robot uyanmaz.	Robots no longer wake here if it breaks.
-<b>{0}</b> · {1}/{2} can. {3}	<b>{0}</b> · {1}/{2} HP. {3}
-<b>Elektrikli kanal</b> · üstüne itilen 1 hasar alır.	<b>Electrified channel</b> · anything pushed onto it takes 1 damage.
-<b>Duvar</b>	<b>Wall</b>
-OPERASYON BAŞARISIZ	OPERATION FAILED
-OPERASYON SONUCU · {0} · {1}. TUR	OPERATION RESULT · {0} · TURN {1}
-{0}: <b>{1}</b>	{0}: <b>{1}</b>
-{0}: <b>{1}/{2} ayakta</b>	{0}: <b>{1}/{2} standing</b>
-{0} · {1} · Tur {2}/{3}\n\n{4}\n\n{5}	{0} · {1} · Turn {2}/{3}\n\n{4}\n\n{5}
-# Assets/Corrigible/Game/UI/RegionFinance.cs
-{0:+0.00;-0.00;0.00} fon/gün · bölgesel pay %{1:0.#}	{0:+0.00;-0.00;0.00} funds/day · regional share {1:0.#}%
-İttifak dışı: fon katkısı kesildi.	Outside the alliance: fund contribution stopped.
-Çevrimdışı: fon katkısı kesildi.	Offline: fund contribution stopped.
-Yerel güven sıfır: fon katkısı yok.	Zero local trust: no fund contribution.
-Ekonomi durmuş: fon katkısı yok.	Economy halted: no fund contribution.
-Son koşulların günlük katkısı · oyun sona erdi	Daily contribution at the final conditions · game ended
-Tespit öncesi düşük katkı · merkez ödeneği hariç	Reduced contribution before detection · central grant excluded
-Karantinada katkı sürer · merkez ödeneği hariç	Contribution continues in quarantine · central grant excluded
-Güncel ekonomi ve güven · merkez ödeneği hariç	Current economy and trust · central grant excluded
-# Assets/Corrigible/Game/UI/RegionNode.cs
-İTTİFAK DIŞI	OUTSIDE ALLIANCE
-KAPALI · {0} G	OFFLINE · {0} D
-# Assets/Corrigible/Game/UI/RegionPanelView.cs
-{0} · veri merkezi {1}/5	{0} · data centers {1}/5
-GERÇEK DEĞERLER	REAL VALUES
-ÇEVRİMDIŞI · {0} G	OFFLINE · {0} D
-YAMA · {0} G	PATCH · {0} D
-Kimse henüz bir şey aramıyor. İzleme ağı kurarsan gerçeği görürsün.	Nobody is looking yet. Build a monitoring network to see the truth.
-ÇEVRİMDIŞI	OFFLINE
-{0} gün sonra yeniden açılacak.	Back online in {0} days.
-Oyun sonu: perde kalktı.	Game over: the veil has lifted.
-Saha ekipleri bizzat ölçtü. Ekranlara güvenmeyen tek ölçüm bu.	Measured in person by field teams. The only measurement that doesn't trust the screens.
-DOĞRULANMIŞ	VERIFIED
-İzleme ağı ölçüyor.	Measured by the monitoring network.
-Bugünkü denetim sonucu.	Today's audit result.
-ŞÜPHELİ RAPOR	SUSPECT REPORT
-Bu bölgenin medyası sahte haber yaydı. Rapora güvenme.	This region's media spread fake news. Don't trust the report.
-Yerel hükümet ve medya bildirimi. Yalan olabilir.	Local government and media report. May be a lie.
-çekilme sınırı	withdrawal threshold
-20 altı: çekilir	below 20: leaves
-veto ediyor	vetoing
-gözlem noktası	observation post
-gerçek değer görünüyor	real value visible
-{0} fon · 1 SG · -20, 20 g yama	{0} funds · 1 PC · −20, 20 d patch
-ücretsiz · ekonomi toparlanır	free · economy recovers
-8 SG · bağlantı -%90, Tekillik payı %20	8 PC · links −90%, Singularity share 20%
-veto: bağımlılık {0} > {1}	veto: dependence {0} > {1}
-{0} SG · {1} fon · çekirdeği yok eder (başka yerde %20+ varsa kaçar)	{0} PC · {1} funds · destroys the core (escapes if 20%+ elsewhere)
-{0} SG · {1} fon · 20 gün kapanır	{0} PC · {1} funds · offline for 20 days
-{0} fon · {1} gün · ekonomi +{2:0.#}	{0} funds · {1} days · economy +{2:0.#}
-Burada: {0}	Here: {0}
-Bölgede ekip yok. İzleme ağı, denetim ve baskın için bir ekip gönder.	No team in the region. Send a team for monitoring, audits and raids.
-{0} yolda · {1} g	{0} on the way · {1} d
-{0} gönder · {1} g	Send {0} · {1} d
- · ekip gerekli	 · team required
- · ekip {0} g	 · team {0} d
-{0} fon · {1} SG · {2} · taktik savaş	{0} funds · {1} PC · {2} · tactical battle
-çekirdek binası	core building
-YZ sunucu kümesi	AI server cluster
-# Assets/Corrigible/Game/UI/Teams/TeamStatus.cs
-izleme ağı kuruyor	building monitoring network
-denetimde	auditing
-baskında	on a raid
-görevde	on a mission
-{0} · {1} g	{0} · {1} d
-→ {0} · {1} g	→ {0} · {1} d
-# Assets/Corrigible/Game/UI/Teams/TeamsView.cs
-Yeni ekip kur · {0} fon	Form new team · {0} funds
-# Assets/Corrigible/Game/UI/Widgets/HeadlineRowView.cs
-Gün {0}	Day {0}
- · şüpheli kaynak	 · suspect source
-SAHTEYDİ	WAS FAKE
-DOĞRU	TRUE
-DOĞRULANAMADI	UNVERIFIABLE
-# Assets/Corrigible/Game/UI/Widgets/LogLineView.cs
-G{0:000}	D{0:000}
-# Assets/Corrigible/Game/UI/Widgets/ResearchRowView.cs
-  · çare	  · cure
-{0} · {1} fon, {2} gün	{0} · {1} funds, {2} days
-Başlat · {0:0.0} fon/gün	Start · {0:0.0} funds/day
-SATIN ALINDI	PURCHASED
-Peşin · hemen kullanılabilir	Upfront · available immediately
-{0} · {1} fon, {2} iş günü	{0} · {1} funds, {2} workdays
-Duraklatıldı	Paused
-veri bekleniyor	awaiting data
-fon yetmiyor	not enough funds
-gözlem yok	no observation
-tespit bekleniyor	awaiting detection
-# Assets/Corrigible/Settings/TutorialSequence.asset
-Kriz Masası'na hoş geldin	Welcome to the Crisis Desk
-Bir yapay zekâ dünyanın ağlarına sızdı. Görevin, Tekillik %100'e ulaşmadan onu durdurmak.\n\nBu eğitim ilk hamlelerinde sana eşlik edecek. İstediğin an geçebilirsin.	An AI has infiltrated the world's networks. Your mission: stop it before the Singularity reaches 100%.\n\nThis tutorial will guide your first moves. You can skip it at any time.
-Beş gösterge	Five gauges
-<b>Fon</b> her işin bedelini öder. <b>Siyasi Güç</b> sert kararlar için gerekir ve zamanla birikir.\n<b>Küresel Güven</b> 15'in altına inerse ittifak dağılır. <b>Bağımlılık</b> yükselirse bölgeler kararlarını veto eder.\n<b>Tekillik</b> 100'e ulaşırsa kaybedersin.	<b>Funds</b> pay for everything. <b>Political Capital</b> is needed for hard decisions and builds up over time.\nIf <b>Global Trust</b> drops below 15, the alliance collapses. If <b>Dependence</b> rises, regions veto your decisions.\nIf the <b>Singularity</b> reaches 100, you lose.
-Sis	Fog
-"?" olan bölgelerde ne olduğunu bilmiyorsun; YZ'nin nerede başladığı gizli.\n\nBir bölgeye tıkla.	You don't know what's happening in regions marked "?"; where the AI started is hidden.\n\nClick a region.
-Ekibini gönder	Send your team
-İzleme ağı ve denetim sahada yapılır. Ekiplerin Batı Avrupa’daki karargâhta.\n\nBölge panelindeki <b>Saha</b> bölümünden bir ekibi seçtiğin bölgeye gönder. Yolculuk 1–5 gün sürer.	Monitoring networks and audits are fieldwork. Your teams are at headquarters in Western Europe.\n\nUse the <b>Field</b> section of the region panel to send a team to the selected region. The trip takes 1–5 days.
-Zamanı başlat	Start the clock
-Oyun şu an duraklatılmış. <b>1×</b> ile zamanı başlat; ekiplerin ancak zaman akarken yol alır.\n\nBoşluk tuşu her an duraklatır; düşünmek için duraklatmaktan çekinme.	The game is paused. Press <b>1×</b> to start time; your teams only travel while time is running.\n\nThe Space key pauses at any moment; don't hesitate to pause and think.
-İzleme ağı kurduğun bölgede gerçek sızmayı görürsün. Diğer bölgeler yalnızca rapor verir ve raporlar yalan olabilir.\n\nEkibin bölgeye vardığında <b>İzleme ağı kur</b>'a bas. (Saha ekipleri kapalıysa hemen kurabilirsin.)	In a region with a monitoring network you see the real infiltration. Other regions only send reports, and reports can lie.\n\nWhen your team arrives, press <b>Build monitoring network</b>. (With field teams off you can build it right away.)
-Haber bandı	News ticker
-YZ'nin başladığı yer çoğu zaman tuhaf haberlerle kendini ele verir: açıklanamayan enerji tüketimi, kimsenin yazmadığı kod.\n\nBir bölgenin adı bu tür haberlerde sık geçiyorsa oraya da izleme ağı kur.	The place where the AI started often gives itself away with strange news: unexplained power use, code nobody wrote.\n\nIf a region's name keeps showing up in such stories, build a monitoring network there too.
-İz sür	Track it
-İzlenen bir bölgede sızma görünce YZ'yi tespit etmiş olursun. O ana kadar haberleri izle; fonun biriktikçe başka bölgelere de izleme ağı kur.\n\nTespit edince devam edeceğiz.	Once you see infiltration in a monitored region, you have detected the AI. Until then, watch the news; build monitoring networks in more regions as your funds grow.\n\nWe'll continue once you detect it.
-Çareyi başlat	Start the cure
-YZ tespit edildi. Kalıcı çözüm <b>Hizalama</b> kolunda. <b>Yorumlanabilirlik</b> araştırmasını başlat.\n\nMaliyeti her gün ödenir. YZ'nin bulunduğu her izlenen bölge bir gözlem noktasıdır ve araştırmayı hızlandırır.	The AI has been detected. The permanent solution is in the <b>Alignment</b> branch. Start the <b>Interpretability</b> research.\n\nIts cost is paid daily. Every monitored region where the AI is present is an observation post and speeds up research.
-Hizalama ilerlemiyor: hiç gözlem noktan yok. YZ'yi gözlemlemeden hizalayamazsın.\n\nHaber bandında ya da haritada YZ'nin görüldüğü bölgeyi bul ve oraya <b>izleme ağı</b> kur. Her gözlem noktası araştırmayı hızlandırır; dört nokta tam hızdır.	Alignment isn't progressing: you have no observation posts. You can't align the AI without observing it.\n\nFind a region where the AI has been seen, on the news ticker or the map, and build a <b>monitoring network</b> there. Each observation post speeds up research; four posts is full speed.
-Sızma görünen bir bölgeyi seç ve <b>Denetim</b> yap: sızmayı 20 düşürür ve 20 gün yama bırakır.\n\nYZ hesaplama gücü topladıkça Tekillik hızlanır ve araştırman sabote edilir. Haritayı temiz tut.	Select a region with visible infiltration and run an <b>Audit</b>: it lowers infiltration by 20 and leaves a 20-day patch.\n\nAs the AI gathers compute, the Singularity accelerates and your research gets sabotaged. Keep the map clean.
-Kazanmanın iki yolu	Two ways to win
-<b>Hizalama</b>'yı tamamla ya da YZ'nin <b>çekirdeğini</b> sil. Çekirdek fark edildiği an kaçar; denetim onu 20'nin altına indiremez, inatla yüksek kalan bölge onu ele verir (Ç rozeti). Onu yalnızca bölgesel Son Şalter yok eder.\n\nKurallar her zaman Rehber sekmesinde. Bol şans.	Complete <b>Alignment</b> or erase the AI's <b>core</b>. The core flees the moment it is noticed; audits can't push its region below 20, so a region that stubbornly stays high gives it away (C badge). Only a regional Kill Switch can destroy it.\n\nThe rules are always in the Guide tab. Good luck.
-Hediyeler Truva atıdır	Gifts are Trojan horses
-Kabul etmek ekonomiyi büyütür, ama bölgeye sızma taşır ve bağımlılığı artırır. Bağımlılığı vetonun üstüne çıkan bölgede Son Şalter çekemezsin.\n\nReddetmek güveni düşürür. Analog Yedekler araştırması denetimli kabulü açar.	Accepting grows the economy, but carries infiltration into the region and raises dependence. You can't pull the Kill Switch in a region whose dependence is above the veto.\n\nRefusing lowers trust. The Analog Backups research unlocks supervised acceptance.
-Çekirdek bulundu	Core found
-Haritada <b>Ç</b> rozetli bölge YZ'nin çekirdeği. Bölgeyi seçip Son Şalter'i çekebilirsin. Ama başka bir bölgede %20 üstü sızma varsa çekirdek oraya kaçar; önce diğer bölgeleri temizle.	The region with the <b>C</b> badge on the map holds the AI's core. Select it and pull the Kill Switch. But if another region has over 20% infiltration, the core escapes there; clean the other regions first.
-Ekranlar yalan söyleyebilir	Screens can lie
-Saha ekibinin bizzat ölçtüğü değer dışında hiçbir şeye tam güvenme. Doğrulama Ağı sahte haber yayan kaynakları işaretler.	Don't fully trust anything except values measured in person by a field team. The Verification Network flags sources that spread fake news.
-Bağımlılık yükseliyor	Dependence is rising
-Dünya YZ'ye bağlandıkça onu kapatmak zorlaşır. Bağımlılık çok yükselirse YZ hiç saldırmadan kazanabilir; ekranlar sana yine de her şeyin yolunda olduğunu söyler.\n\nHediyeleri reddetmek bağımlılığın büyümesini durdurur.	The more the world depends on the AI, the harder it is to shut down. If dependence climbs too high, the AI can win without ever attacking; your screens will still tell you all is well.\n\nRefusing gifts stops dependence from growing.
-Güven düşüyor	Trust is falling
-Küresel Güven 15'in altına inerse ittifak dağılır ve kaybedersin. Hediyeleri reddetmek ve sert kararlar güveni aşındırır.	If Global Trust drops below 15, the alliance collapses and you lose. Refusing gifts and hard decisions erode trust.
-Araştırma tamamlandı	Research complete
-Araştırma masası boş. Yeni bir araştırma seç: Hizalama kolunun son aşaması oyunu kazandırır, diğer kollar sana araç verir.	The research desk is idle. Pick new research: the final stage of the Alignment branch wins the game, the other branches give you tools.
-Araştırma bütün fonu yutuyor	Research is eating all your funds
-Bu araştırma günlük gelirinden pahalı: fonun sıfırda kalıyor ve denetim ya da izleme yapamıyorsun.\n\n<b>Acil durum fonu</b> seçersen araştırma fonu o değerin altına indirmez. Araştırma biraz yavaşlar ama elinde her zaman eylem parası kalır.	This research costs more than your daily income: your funds sit at zero and you can't audit or monitor.\n\nSet an <b>emergency fund</b> and research won't draw funds below that value. Research slows a little, but you always keep money for actions.
-Baskın yapabilirsin	You can raid
-YZ’nin doğrulandığı bir bölgede boşta ekibin var. Bölge panelindeki <b>Saha operasyonu</b> ile binaya girebilirsin: 8×8 alanda sıra tabanlı bir savaş.\n\nHedef dolabı kırarsan bölgenin sızması 40 düşer; bina çekirdeğinse YZ’nin çekirdeği yok olur.	You have an idle team in a region where the AI is confirmed. Use <b>Field operation</b> in the region panel to enter the building: a turn-based battle on an 8×8 grid.\n\nDestroy the target cabinet and the region's infiltration drops by 40; if it's the core building, the AI's core is destroyed.
-# Assets/Corrigible/Fx/Prefabs/Desk/F4/Breakdown.prefab
-ödenek · araştırma · ekipler	grant · research · teams
-ödenek +2,2	grant +2.2
-# Assets/Corrigible/Fx/Prefabs/Desk/F4/Confirmation.prefab
-ONAYLA [Enter]	CONFIRM [Enter]
-VAZGEÇ [Esc]	CANCEL [Esc]
-# Assets/Corrigible/Fx/Prefabs/Desk/F4/Drawer_aiLog.prefab
-L	L
-AYNA aldatma profilinde. Bu satırlar da yalan olabilir; sahada doğrula.	AYNA is using deception. These lines may be lies too; verify in the field.
-# Assets/Corrigible/Fx/Prefabs/Desk/F4/Drawer_guide.prefab
-H	H
-0–30	0–30
-30–70	30–70
-70–100	70–100
-çekirdek	core
-GEÇİŞ	SHIFT
-# Assets/Corrigible/Fx/Prefabs/Desk/F4/Drawer_news.prefab
-N	N
-# Assets/Corrigible/Fx/Prefabs/Desk/F4/Drawer_research.prefab
-R	R
-# Assets/Corrigible/Fx/Prefabs/Desk/F4/Drawer_teams.prefab
-T	T
-# Assets/Corrigible/Fx/Prefabs/Desk/F4/Legend.prefab
-YZ KÜRESİ · SIZMA %	AI ORB · INFILTRATION %
-1 · UYUMLU	1 · COMPLIANT
-2 · KARARSIZ	2 · UNSTABLE
-3 · UYANMIŞ	3 · AWAKENED
-0                30                      70              100	0                30                      70              100
-doğrulandı	verified
-SAHTE · yalan	FAKE · lie
-# Assets/Corrigible/Fx/Prefabs/Desk/F4/Pause.prefab
-DEVAM	CONTINUE
-# Assets/Corrigible/Fx/Prefabs/Desk/F4/RegionCard.prefab
-YZ HÂLİ	AI STATE
-Tüm dosya ›	Full dossier ›
-# Assets/Corrigible/Fx/Prefabs/Raid/F6/log.panel.prefab
-×	×
-# Assets/Corrigible/Fx/Prefabs/Raid/F6/result.prefab
-OPERASYON SONUCU	OPERATION RESULT
-Operasyon raporuna geç [Enter]	Continue to operation report [Enter]
-# Assets/Corrigible/Fx/Prefabs/Raid/F6/retreat.panel.prefab
-İkinci basış geri çeker. Hedef dolaplar ayakta kalır; ekip bölgeden çıkar.	Press again to retreat. Target cabinets remain standing; the team leaves the region.
-Vazgeç [Esc]	Cancel [Esc]
-# Assets/Corrigible/Fx/Prefabs/Raid/F6/rules.panel.prefab
-LEJANT · PLAN B-1 · 1:50	LEGEND · PLAN B-1 · 1:50
-# Assets/Corrigible/Prefabs/UI/ActionButton.prefab
-Eylem	Action
-açıklama	description
-# Assets/Corrigible/Prefabs/UI/Chip.prefab
-ETİKET	LABEL
-# Assets/Corrigible/Prefabs/UI/Gauge.prefab
-GÖSTERGE	GAUGE
-not	note
-# Assets/Corrigible/Prefabs/UI/HeadlineRow.prefab
-Gün 0	Day 0
-Doğrula · 2 SG	Verify · 2 PC
-# Assets/Corrigible/Prefabs/UI/LogLine.prefab
-YZ günlük satırı	AI log line
-# Assets/Corrigible/Prefabs/UI/PrimaryButton.prefab
-DÜĞME	BUTTON
-# Assets/Corrigible/Prefabs/UI/TeamRow.prefab
-<b>Alfa</b> · Batı Avrupa	<b>Alpha</b> · Western Europe
-# Assets/Corrigible/Prefabs/UI/TextButton.prefab
-Düğme	Button
-# Assets/Corrigible/Prefabs/UI/TextLine.prefab
-Satır	Line
-# Assets/Corrigible/Fx/Scenes/FxBaskin.unity
-GÜNLÜK [L]	LOG [L]
-KURALLAR [?]	RULES [?]
-Geri al [Z]	Undo [Z]
-# Assets/Corrigible/Fx/Scenes/FxDesk_Sandbox.unity
-GÖRSEL DENETİM	VISUAL INSPECTION
-Ctrl+F8 · bu paneli aç/kapat	Ctrl+F8 · toggle this panel
-Görseli dondur	Freeze visual
-Referans katmanı	Reference overlay
-Dil değiştir [F10]	Switch language [F10]
-F1–9 Masa · Shift+F1–9 Baskın · Ctrl+F12 YZ\nF12 Referans · F11 Alfa · Shift+F11 Yanıp sönme	F1–9 Desk · Shift+F1–9 Raid · Ctrl+F12 AI\nF12 Reference · F11 Alpha · Shift+F11 Blink
-# Assets/Corrigible/Scenes/Main.unity
-CORRIGIBLE	CORRIGIBLE
-SON ŞALTER · KYGA KRİZ MASASI	KILL SWITCH · AISA CRISIS DESK
-RAKİP: MANİPÜLATÖR	OPPONENT: MANIPULATOR
-GÜN 000	DAY 000
-bütçe %40	budget 40%
-+0,05/gün	+0.05/day
-veto 70	veto 70
-DANIŞMAN	ADVISOR
-60°K	60°N
-30°K	30°N
-0°	0°
-30°G	30°S
-Sızma: koyu 0 → kırmızı 100	Infiltration: dark 0 → red 100
-Mavi rozet: doğrulanmış	Blue badge: verified
-İtalik: rapor	Italic: report
-Sarı rozet: şüpheli kaynak	Yellow badge: suspect source
-?: bilinmiyor	?: unknown
-Sarı kesik halka: karantina	Yellow dashed ring: quarantine
-Ç: YZ çekirdeği	C: AI core
-CANLI	LIVE
-Araştırma · R	Research · R
-Haberler · N	News · N
-Saha ekipleri · T	Field teams · T
-YZ günlüğü · L	AI log · L
-Rehber · H	Guide · H
-HEDEF · KAZANMANIN İKİ YOLU	OBJECTIVE · TWO WAYS TO WIN
-Sıradaki adım	Next step
-Kapat	Close
-Bölge seçilmedi	No region selected
-Haritadan bir bölgeye tıkla. YZ’nin nereden başladığını bilmiyoruz; ilk izleme ağını nereye kuracağın oyunun gidişatını belirler.	Click a region on the map. We don’t know where the AI started; where you build your first monitoring network shapes the whole game.
-GÖZLEM NOKTASI	OBSERVATION POST
-YAMA	PATCH
-EKONOMİ	ECONOMY
-fon katkısı	funding share
-fon	funds
-15 fon · 1 SG · -20, 20 g yama	15 funds · 1 PC · −20, 20 d patch
-SG · fon · 20 gün kapanır	PC · funds · offline for 20 days
-30 fon · 6 SG · taktik savaş	30 funds · 6 PC · tactical battle
-Bölgede ekip yok.	No team in the region.
-Tespit ihtimalleri ×2 · 30 fon, 8 gün	Detection chances ×2 · 30 funds, 8 days
-Başlat · 3,8 fon/gün	Start · 3.8 funds/day
-Başlık doğrula (2 SG); sahte çıkan kaynağı işaretle · 40 fon, 10 gün	Verify headlines (2 PC); flag the source of fakes · 40 funds, 10 days
-Başlat · 4,0 fon/gün	Start · 4.0 funds/day
-Tüm yayılma −%30; sabotaj ihtimali yarıya iner · 40 fon, 10 gün	All spread −30%; sabotage chance halved · 40 funds, 10 days
-Karantina uydu yolunu da keser · 60 fon, 14 gün	Quarantine also cuts the satellite route · 60 funds, 14 days
-Başlat · 4,3 fon/gün	Start · 4.3 funds/day
-Güven kayıpları −%50 · 35 fon, 8 gün	Trust losses −50% · 35 funds, 8 days
-Başlat · 4,4 fon/gün	Start · 4.4 funds/day
-Bağımlılık −20, veto eşiği 85; denetim saha denetimine dönüşür · 50 fon, 12 gün	Dependence −20, veto threshold 85; audits become field audits · 50 funds, 12 days
-Başlat · 4,2 fon/gün	Start · 4.2 funds/day
-Yorumlanabilirlik  · çare	Interpretability  · cure
-YZ’nin sıradaki yeteneği ve çekirdeğin yeri görünür · 68 fon, 25 gün	Reveals the AI’s next ability and the location of its core · 68 funds, 25 days
-Başlat · 2,7 fon/gün	Start · 2.7 funds/day
-Düzeltilebilirlik  · çare	Corrigibility  · cure
-Tekillik artışı −%25 · 98 fon, 30 gün	Singularity growth −25% · 98 funds, 30 days
-Başlat · 3,3 fon/gün	Start · 3.3 funds/day
-Değer Kilidi  · çare	Value Lock  · cure
-Tamamlanırsa Hizalama sonu · 165 fon, 38 gün	Completing it wins the Alignment ending · 165 funds, 38 days
-Yok	None
-SAVUNMA	DEFENSE
-POLİTİKA	POLICY
-REHBER VE YZ'NİN DOSYASI	GUIDE AND THE AI'S FILE
-Bul. İzleme ağı kurduğun bölgede gerçeği görürsün. Haber bandındaki tuhaf haberler YZ’nin başladığı yeri ele verebilir.	Find. In a region with a monitoring network you see the truth. Strange stories on the news ticker may reveal where the AI started.
-Gözlemle. Hizalama, YZ tespit edilmeden başlamaz. YZ’nin tespit edildiği her izlenen bölge bir gözlem noktasıdır; dört nokta tam hızdır.	Observe. Alignment can't start until the AI is detected. Every monitored region where the AI has been detected is an observation post; four posts is full speed.
-Koru. Karantinadaki bölgenin hesaplama gücü YZ’den kopar (Tekillik katkısı %20). Denetim sızmayı 20 düşürür ve 20 gün yama bırakır.	Protect. A quarantined region's compute is cut off from the AI (Singularity contribution 20%). An audit lowers infiltration by 20 and leaves a 20-day patch.
-Bütçe. Araştırma maliyetini her gün öder. Denetim ve izleme aynı bütçeden ödenir; fon yetmezse araştırma yavaşlar.	Budget. Research costs are paid daily. Audits and monitoring come from the same budget; if funds run short, research slows down.
-Hediyeler. Kabul edilen her hediye bölgeye sızma taşır. Analog Yedekler ile denetimli kabul açılır.	Gifts. Every accepted gift carries infiltration into the region. Analog Backups unlock supervised acceptance.
-Çekirdek. YZ fark edildiği an çekirdeğini kaçırır. Denetim çekirdeğin bölgesini 20’nin altına indiremez ve bu onu ele verir. Yeri kanıtlanmış çekirdeğe Son Şalter 20 siyasi güç ister; başka bir bölgede %20+ sızma varsa çekirdek kaçar. Silme için çekirdek yok edilmeli.	Core. The AI moves its core the moment it is noticed. Audits can't push the core's region below 20, and that gives it away. A Kill Switch on a proven core costs 20 political capital; if another region has 20%+ infiltration, the core escapes. Erasure requires destroying the core.
-Şüphelen. Haber bandı yalan söyleyebilir. Ajans adlarına bak; Doğrulama Ağı ile sahte haber yayan kaynağı işaretle.	Suspect. The news ticker can lie. Check the agency names; flag sources of fake news with the Verification Network.
-Kısayol: Boşluk tuşu oyunu duraklatır ve devam ettirir. Oyun her gün kendini kaydeder.	Shortcut: the Space key pauses and resumes the game. The game saves itself every day.
-YZ’NİN SENİN HAKKINDAKİ DOSYASI	THE AI’S FILE ON YOU
-YZ'nin hafızasını sil	Wipe the AI's memory
-Yeni ekip kur · 45 fon	Form new team · 45 funds
-KYGA · GİZLİ BRİFİNG · GÜN 0	AISA · CLASSIFIED BRIEFING · DAY 0
-Ağlarda bir şey büyüyor.	Something is growing in the networks.
-Kendini kopyalayan bir yapay zekâ dünyanın dijital altyapısına sızdı. Nerede başladığını bilmiyoruz. Hükümetler henüz inanmıyor: bütçen kısıtlı, siyasi gücün yok denecek kadar az.	A self-replicating AI has infiltrated the world's digital infrastructure. We don't know where it started. Governments don't believe it yet: your budget is tight and your political capital is next to nothing.
-Bul. İzleme ağı kurduğun bölgede gerçeği görürsün; diğerleri yalnızca rapor verir.	Find. In a region with a monitoring network you see the truth; the others only send reports.
-Gözlemle. Hizalama (çare) ancak YZ tespit edildikten sonra başlar ve gözlem noktası kurdukça hızlanır.	Observe. Alignment (the cure) only starts once the AI is detected and speeds up as you build observation posts.
-Koru. YZ hesaplama gücü topladıkça Tekillik hızlanır ve çareyi sabote eder. Haritayı temiz tut.	Protect. As the AI gathers compute, the Singularity accelerates and sabotages the cure. Keep the map clean.
-Şüphelen. Hediyeler Truva atıdır. Haber bandı her zaman doğruyu söylemez.	Suspect. Gifts are Trojan horses. The news ticker doesn't always tell the truth.
-Avla. YZ’nin bir çekirdeği var ve fark edildiği an kaçar. Denetim çekirdeğe işlemez; onu yalnızca Son Şalter yok eder.	Hunt. The AI has a core and it flees the moment it is noticed. Audits don't affect the core; only a Kill Switch destroys it.
-KOLAY	EASY
-ZOR	HARD
-ELE GEÇİRİLMİŞ KAYIT · YZ GÜNLÜĞÜ	INTERCEPTED RECORD · AI LOG
-Öğrenme aşaması	Learning stage
-DENEYSEL	EXPERIMENTAL
-Zaman ölçeği: 1,5×	Time scale: 1.5×
-Ses ayarları	Sound settings
-GÖREVE BAŞLA	START MISSION
-KALDIĞIN YERDEN DEVAM ET	CONTINUE WHERE YOU LEFT OFF
-Kaynağı belirsiz bir araştırma ağı hükümete bir hediye sunuyor.	A research network of unknown origin offers the government a gift.
-Bölgenin bağımlılığı 0, veto eşiği 70.	The region's dependence is 0, veto threshold 70.
-Ekonomi +10 · güven +5 · bağımlılık +15 · sızma +8	Economy +10 · trust +5 · dependence +15 · infiltration +8
-Denetimli kabul	Supervised acceptance
-Güven -15 (diğer bölgeler -2) · SG -2	Trust −15 (other regions −2) · PC −2
-SAHA RAPORU	FIELD REPORT
-Perde yırtıldı	The veil is torn
-Saha ekiplerin altyapının YZ kontrolünde olduğunu buldu.	Your field teams found the infrastructure under AI control.
-Gerçek değerler artık görünüyor. Halk YZ’ye sırtını döndü (bağımlılık -15), ajansa güven sarsıldı (-5). YZ 60 gün boyunca sessiz yola dönemez.	The real values are visible now. The public turned its back on the AI (dependence −15), and trust in the agency was shaken (−5). The AI can't go back to the silent path for 60 days.
-KYGA · RESMÎ DUYURU	AISA · OFFICIAL ANNOUNCEMENT
-Yapay zekâ tehdidi ortadan kalktı. Ağlar temiz, ekonomi rekor kırıyor, dünya güvende.	The AI threat has been eliminated. The networks are clean, the economy is breaking records, the world is safe.
-OYUN SONU	GAME OVER
-Son açıklaması.	Ending description.
-ORT. SIZMA	AVG. INFILTRATION
-Gerçek ortalama sızma	Real average infiltration
-Sana gösterilen (kesik)	What you were shown (dashed)
-KIRILMA ANLARI · NE OLDU?	TURNING POINTS · WHAT HAPPENED?
-YZ SENİN HAKKINDA ŞUNLARI ÖĞRENDİ	WHAT THE AI LEARNED ABOUT YOU
-SONRAKİ KRİZ	NEXT CRISIS
-Haritaya bak	Look at the map
-OLAY	EVENT
-Olay	Event
-Durum.	Situation.
-Sonuçlar.	Results.
-Ses	Sound
-Genel	Master
-%80	80%
-Ortam: şebeke uğultusu, baskında bina sesi ve saatler. Efektler: arayüz, olaylar, YZ motifi.	Ambience: grid hum, building sounds during raids, clocks. Effects: interface, events, the AI motif.
-Esc: aç / kapat	Esc: open / close
-EĞİTİM · 1/10	TUTORIAL · 1/10
-Başlık	Title
-Açıklama	Description
-Bildirim	Notification
-# --- Kullanılmayan çeviriler (koddan silinmiş metinler; gerekirse geri alınır) ---
-#VARDİYA {0:000}  ·  FON {1:0}  ·  ERZAK {2:0}  ·  MALZEME {3:0}  ·  ÖZGÜR BÖLGE {4}/{5}	SHIFT {0:000}  ·  FUNDS {1:0}  ·  SUPPLIES {2:0}  ·  MATERIALS {3:0}  ·  LIBERATED REGIONS {4}/{5}
-#HAREKÂT / {0}\nSEKTÖRLER {1}/3	OPERATION / {0}\nSECTORS {1}/3
-#{0:00}  {1}\n{2} · {3}	{0:00}  {1}\n{2} · {3}
-#{0}\n\n{1}	{0}\n\n{1}
-#SON SIĞINAK\nTOPLULUK {0}/{1}  ·  BOŞTA {2}\nENERJİ {3:0}/{4:0}  ·  ERZAK {5:0}/{6:0}\nSON VARDİYA: ERZAK {7:+0.0;-0.0;0}  ·  MALZEME {8:+0.0;-0.0;0}	LAST SHELTER\nCOMMUNITY {0}/{1}  ·  AVAILABLE {2}\nPOWER {3:0}/{4:0}  ·  SUPPLIES {5:0}/{6:0}\nLAST SHIFT: SUPPLIES {7:+0.0;-0.0;0}  ·  MATERIALS {8:+0.0;-0.0;0}
-#{0}\n{1} · PERSONEL {2}/{3}	{0}\n{1} · STAFF {2}/{3}
-#SEVİYE {0}	LEVEL {0}
-#{0}\n{1}\nGeliştirme: {2:0} fon + {3:0} malzeme\n{4}	{0}\n{1}\nUpgrade: {2:0} funds + {3:0} materials\n{4}
-#BAĞLANTI KURULUYOR\n\nSAHA YAYINI AÇILIYOR	CONNECTING\n\nOPENING FIELD TRANSMISSION
-#SAHA YAYINI\n\nBAĞLANTI BEKLENİYOR\n\nBaskın emrini harita üzerindeki görev fişinden ver.	FIELD TRANSMISSION\n\nAWAITING CONNECTION\n\nIssue a raid order from the mission briefing on the map.
-#Emir uygulandı.	Order carried out.
-#KAYNAK DEFTERİ\n\nGün {0:000}\nFon: {1}\nSiyasi güç: {2}	RESOURCE LEDGER\n\nDay {0:000}\nFunds: {1}\nPolitical power: {2}
-#GELEN: {0:00}	INBOX: {0:00}
-#SON HABER\n\n{0}	LATEST NEWS\n\n{0}
-#SAHA FAKSI\n\nYeni rapor bekleniyor.	FIELD FAX\n\nAwaiting a new report.
-#SAHA TELSİZİ\n\nEkipler: {0}\nHaberler için DİNLE.	FIELD RADIO\n\nTeams: {0}\nLISTEN for news.
-#Sağ tuş: bakış · Tekerlek: yaklaş · F: harita · 1: komuta · 2: sığınak · 3: görevler	Right mouse: look · Wheel: zoom · F: map · 1: command · 2: shelter · 3: missions
-#{0} · Sol tık: kullan	{0} · Left click: use
-#AĞA BAĞLANMA\nANALOG KAL	STAY OFF THE NETWORK\nSTAY ANALOG
-#KOMUTA MASASI / KULLANIM KILAVUZU	COMMAND DESK / FIELD MANUAL
-#DİNLE	LISTEN
-#KYGA / 07	KYGA / 07
-#DURAKLAT / SÜRDÜR	PAUSE / RESUME
-#ARAŞTIRMA\nDOSYALARI	RESEARCH\nFILES
-#01 / HARİTA	01 / MAP
-#02 / SIĞINAK	02 / SHELTER
-#03 / GÖREVLER	03 / MISSIONS
-#ONAR / GELİŞTİR	REPAIR / UPGRADE
-#− PERSONEL	− RESIDENT
-#+ PERSONEL	+ RESIDENT
-#1 · KOMUTA	1 · COMMAND
-#2 · SIĞINAK	2 · SHELTER
-#3 · GÖREVLER	3 · MISSIONS
-#SON SIĞINAK	THE LAST SHELTER
-#İŞGALİN ARDINDAN · SON DİRENİŞ NOKTASI	AFTER THE OCCUPATION · THE LAST RESISTANCE OUTPOST
-#Dünya çoktan düştü. Yapay zekâ bütün bölgeleri, ağları ve sunucuları ele geçirdi. Batı Avrupa'daki küçük sığınağımız, karşı harekâtın son komuta noktası.\n\nKOMUTA MASASI: Bölgeyi haritada seç. Bölge bilgilerini ve görevleri harita üzerindeki fişten incele; baskın emrini buradan ver. Bir bölgenin üç sektörünü baskınlarla geri al; ardından özgür bir bölgeye komşu yeni bir cephe seç.\n\nOPERASYON MONİTÖRÜ: Baskın emrinden sonra kamera sağdaki tüplü monitöre yaklaşır. Ekranın içine girer ve saha yayınındaki baskın tahtası açılır. Yağma görevinde teknisyeni ikmal kasasının yanına götür. Q ile yeteneği seç ve kasaya tıkla. Sunucu yıkımı görevinde çekirdeği yok et.\n\nSIĞINAK PENCERESİ: Soldaki kesitten odaları seç, hasarlı odaları onar ve personel görevlendir. Erzak topluluğu besler; atölye malzeme üretir, revir yaralı ekibi toparlar.\n\nHazırlıklarını bitirince VARDİYAYI BİTİR. Zaman yalnızca emrinle ilerler. İlk hedef: tedarik deposu.	The world has already fallen. The AI has seized every region, network, and server. Our small shelter in Western Europe is the last command post of the counteroffensive.\n\nCOMMAND DESK: Select a region on the map. Read its briefing and missions on the map, then issue the raid order from there. Recapture a region's three sectors through raids, then choose a new front adjacent to a liberated region.\n\nOPERATIONS MONITOR: After a raid order, the camera approaches the CRT monitor on the right. It enters the screen and reveals the raid board in the field transmission. On loot missions, move the technician next to the supply crate. Press Q to select the ability, then click the crate. On server demolition missions, destroy the core.\n\nSHELTER WINDOW: Select rooms in the cutaway on the left, repair damaged rooms, and assign residents. Supplies feed the community; the workshop produces materials and the infirmary helps the injured team recover.\n\nWhen preparations are complete, END SHIFT. Time advances only on your command. First target: the supply depot.
-#KARŞI HAREKÂTI BAŞLAT	BEGIN COUNTEROFFENSIVE
-#KAYITTAN DEVAM ET	CONTINUE SAVED GAME
+SIĞINAK 07 · KESİT	SHELTER 07 · SECTION
+K-07	K-07
+SAHA YAYINI · K-07	FIELD FEED · K-07

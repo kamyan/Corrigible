@@ -15,7 +15,6 @@ namespace Corrigible.Game.Raid
         [Header("Dolaplar")]
         public RaidPiece core;
         public RaidPiece node;
-        public RaidPiece backup;
         public RaidPiece civilian;
         public RaidPiece cooling;
         public RaidPiece spawner;
@@ -44,7 +43,6 @@ namespace Corrigible.Game.Raid
         public Color move = new Color(0.36f, 0.78f, 0.85f, 0.42f);
         public Color target = new Color(0.94f, 0.69f, 0.25f, 1f);
         public Color danger = new Color(1f, 0.36f, 0.3f, 0.5f);
-        public Color uncertain = new Color(0.94f, 0.69f, 0.25f, 0.38f);
         public Color heal = new Color(0.45f, 0.85f, 0.5f, 0.4f);
         public Color hover = new Color(1f, 1f, 1f, 0.9f);
         public Color threat = new Color(1f, 0.36f, 0.3f, 1f);
@@ -53,7 +51,7 @@ namespace Corrigible.Game.Raid
 
         public RaidPiece Object(string kind) => kind switch
         {
-            "core" => core, "node" => node, "backup" => backup, "civ" => civilian, "cool" => cooling, "spawner" => spawner, _ => civilian,
+            "core" => core, "node" => node, "civ" => civilian, "cool" => cooling, "spawner" => spawner, _ => civilian,
         };
 
         public RaidPiece Unit(string type) => type switch

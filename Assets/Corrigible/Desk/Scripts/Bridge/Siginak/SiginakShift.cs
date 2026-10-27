@@ -82,7 +82,7 @@ namespace Corrigible.Desk.Bridge
         void Throw()
         {
             var sim = Sim;
-            if (sim?.LiberationOn != true) { shiftSwitch.Release(); return; }
+            if (sim == null) { shiftSwitch.Release(); return; }
             closing = surface.Shift;
             var before = ShiftReportBuilder.Capture(sim);
             var ledger = ShiftReportBuilder.Ledger(sim);

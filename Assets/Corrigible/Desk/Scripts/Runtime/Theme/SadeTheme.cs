@@ -6,8 +6,8 @@ using UnityEngine;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Sade arayüz teması (Docs/UI_Sade › tokens_sade.json): renkler ve sayılar JSON yoluyla, yazı tablosu, gölgeler, sızma
-    /// rampası. C'nin <see cref="DeskTheme"/>'i üstüne kurulur: fontlar ve C renkleri oradan gelir; “sade.” önekli tema
+    /// Sade arayüz teması (Docs/UI_Sade › tokens_sade.json): renkler ve sayılar JSON yoluyla, yazı tablosu, gölgeler.
+    /// C'nin <see cref="DeskTheme"/>'i üstüne kurulur: fontlar ve C renkleri oradan gelir; “sade.” önekli tema
     /// anahtarları (ThemeTint, DeskUi.Tint) buradan okunur. İçeriği “Corrigible/Sade UI/Tokenları içe aktar” doldurur.
     /// </summary>
     [CreateAssetMenu(menuName = "Corrigible/Sade Theme", fileName = "SadeTheme")]
@@ -19,13 +19,9 @@ namespace Corrigible.Desk
         [Serializable] public struct TypeStyle { public string role; public DeskFont font; public float size; public float letterSpacingEm; }
         [Serializable] public struct ShadowLayer { public Vector2 offset; public Color color; }
         [Serializable] public struct NamedShadow { public string key; public ShadowLayer[] layers; }
-        [Serializable] public struct RampStep { public float from; public Color fill; }
 
         public List<TypeStyle> type = new List<TypeStyle>();
         public List<NamedShadow> shadows = new List<NamedShadow>();
-        public RampStep[] infiltrationRamp = Array.Empty<RampStep>();
-        public Color rampTextLight = new Color(0.118f, 0.106f, 0.086f), rampTextDark = new Color(1f, 0.973f, 0.933f);
-        public float rampTextDarkFrom = 40;
 
         Dictionary<string, TypeStyle> typeMap;
         Dictionary<string, ShadowLayer[]> shadowMap;
@@ -72,17 +68,5 @@ namespace Corrigible.Desk
             if (t.enableAutoSizing) t.enableAutoSizing = false;
             return true;
         }
-
-        /// <summary>Sızma rampasının rengi (0–100); sınırlar VM'den gelirse onlar kullanılır.</summary>
-        public Color RampFill(float infiltration)
-        {
-            if (infiltrationRamp.Length == 0) return Color.magenta;
-            var c = infiltrationRamp[0].fill;
-            foreach (var s in infiltrationRamp) if (infiltration >= s.from) c = s.fill;
-            return c;
-        }
-
-        /// <summary>Rampa üstündeki değerin rengi: 40'tan itibaren krem, altında mürekkep.</summary>
-        public Color RampText(float infiltration) => infiltration >= rampTextDarkFrom ? rampTextDark : rampTextLight;
     }
 }

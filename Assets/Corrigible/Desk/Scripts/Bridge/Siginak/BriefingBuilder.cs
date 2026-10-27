@@ -24,7 +24,7 @@ namespace Corrigible.Desk.Bridge
             try
             {
                 var sim = Replay.Restore(record);
-                if (sim?.LiberationOn != true) return null;
+                if (sim == null) return null;
                 var lib = sim.S.Liberation;
                 return new SavedSummary { Shift = sim.S.Day + 1, Free = lib.Regions.Count(r => r.Completed), Regions = lib.Regions.Count };
             }

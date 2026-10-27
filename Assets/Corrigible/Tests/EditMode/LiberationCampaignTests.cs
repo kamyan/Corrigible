@@ -7,8 +7,7 @@ namespace Corrigible.Tests
     /// <summary>İşgal harekâtı: sektör sırası, sınır ilerlemesi, tek ödül ve kayıt bütünlüğü.</summary>
     public class LiberationCampaignTests
     {
-        static Simulation New(uint seed = 101) => Simulation.NewGame(null, "manipulator", seed,
-            new Balance { startFon = 100 }, rules: new RuleOptions { LiberationCampaign = true });
+        static Simulation New(uint seed = 101) => Simulation.NewGame(seed, new Balance { startFon = 100 });
 
         static void CaptureNext(Simulation sim)
         {
@@ -26,10 +25,9 @@ namespace Corrigible.Tests
         public void Opening_IsKnownFullOccupation_WithOneTeamAndThreeSectorSequence()
         {
             var sim = New();
-            Assert.IsTrue(sim.LiberationOn);
             Assert.AreEqual("weu", sim.S.Liberation.CurrentRegion);
             Assert.AreEqual(GameData.Regions.Length, sim.S.Liberation.Regions.Count);
-            Assert.IsTrue(sim.S.Regions.All(r => sim.Shown(r).V == 100));
+            Assert.AreEqual(100, sim.Occupation);
             Assert.AreEqual(1, sim.S.Teams.Count);
             Assert.AreEqual(new[] { "loot", "loot", "server" }, sim.LiberationRegion("weu").Sectors.Select(s => s.MissionKind).ToArray());
             Assert.IsNotNull(sim.Shelter);
@@ -50,7 +48,7 @@ namespace Corrigible.Tests
             Assert.AreEqual(before - sim.B.liberationRaidCost + sim.B.liberationLootFunds, sim.S.Fon);
             Assert.IsTrue(sim.LiberationSector("weu_1").Captured);
             Assert.AreEqual(2, sim.LiberationRegion("weu").Sectors.Count(s => !s.Captured));
-            Assert.AreEqual(100.0 * 2 / 3, sim.Shown(sim.S.Region("weu")).V);
+            Assert.AreEqual(100.0 * 35 / 36, sim.Occupation, 1e-9);
             before = sim.S.Fon;
             Assert.IsFalse(sim.StartLiberationRaid("weu_1").Ok);
             Assert.IsFalse(sim.ResolveRaid(new RaidResult { Success = true }).Ok);
@@ -84,7 +82,7 @@ namespace Corrigible.Tests
             double before = sim.S.Fon;
             Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true }).Ok);
             Assert.AreEqual(before + sim.B.liberationServerFunds + sim.B.liberationCaptureFunds, sim.S.Fon);
-            Assert.AreEqual(0, sim.Shown(sim.S.Region("weu")).V);
+            Assert.IsTrue(sim.LiberationRegion("weu").Completed);
             CollectionAssert.AreEquivalent(new[] { "na", "eeu", "af", "me" }, sim.LiberationFrontier);
             Assert.IsFalse(sim.SelectLiberationRegion("cn").Ok);
             Assert.IsTrue(sim.SelectLiberationRegion("eeu").Ok);
@@ -92,15 +90,11 @@ namespace Corrigible.Tests
         }
 
         [Test]
-        public void WorldTick_DoesNotTriggerLegacyLoss_AndRaidFreezesClock()
+        public void Shifts_NeverEndTheCampaign_AndRaidFreezesClock()
         {
             var sim = New();
             for (int i = 0; i < 400; i++) sim.Step();
-            Assert.IsNull(sim.S.Ending);
-            Assert.IsNull(sim.S.Illusion);
-            Assert.IsNull(sim.S.PendingGift);
-            Assert.IsNull(sim.S.PendingEvent);
-            Assert.AreEqual(0, sim.S.Tek);
+            Assert.IsNull(sim.S.Ending, "Harekât yalnız bütün bölgeler geri alınınca biter.");
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
             int day = sim.S.Day;
             sim.Step();
@@ -108,17 +102,18 @@ namespace Corrigible.Tests
         }
 
         [Test]
-        public void LegacyActionsAndResearch_CannotBypassCampaign()
+        public void MachinesCopyThemselves_AfterTwoLiberatedRegions()
         {
             var sim = New();
-            Assert.IsFalse(sim.Act(Actions.Audit, "weu").Ok);
-            Assert.IsFalse(sim.Act(Actions.KillSwitch, "weu").Ok);
-            Assert.IsFalse(sim.GlobalKillSwitch().Ok);
-            Assert.IsFalse(sim.StartResearch("yorum").Ok);
-            Assert.AreEqual(100, sim.Shown(sim.S.Region("weu")).V);
-            Assert.IsTrue(sim.StartRaid("weu").Ok, "Eski masa komutu sıradaki sektöre yönlenir.");
-            Assert.AreEqual(sim.B.liberationRaidCost, sim.RaidCost);
-            Assert.AreEqual(0, sim.RaidSgCost);
+            CompleteRegion(sim);
+            Assert.IsTrue(sim.SelectLiberationRegion("eeu").Ok);
+            Assert.IsTrue(sim.StartLiberationRaid("eeu_1").Ok);
+            Assert.IsEmpty(sim.S.Raid.Params.Traits, "Bir bölge özgürken makineler henüz kopyalanmaz.");
+            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true }).Ok);
+            CompleteRegion(sim);
+            Assert.IsTrue(sim.SelectLiberationRegion(sim.LiberationFrontier.First()).Ok);
+            Assert.IsTrue(sim.StartLiberationRaid(sim.NextLiberationSector(sim.S.Liberation.CurrentRegion).Id).Ok);
+            CollectionAssert.AreEqual(new[] { "kopya" }, sim.S.Raid.Params.Traits);
         }
 
         [Test]
@@ -138,7 +133,7 @@ namespace Corrigible.Tests
             }
             Assert.AreEqual("silme", sim.S.Ending);
             Assert.IsTrue(sim.S.Liberation.Regions.All(r => r.Completed));
-            Assert.IsTrue(sim.S.Regions.All(r => sim.Shown(r).V == 0));
+            Assert.AreEqual(0, sim.Occupation);
         }
 
         [Test]
@@ -158,20 +153,6 @@ namespace Corrigible.Tests
             Assert.AreEqual(sim.S.Rng.State, restored.S.Rng.State);
             Assert.IsTrue(restored.ResolveRaid(new RaidResult { Success = true }).Ok);
             Assert.IsTrue(restored.LiberationSector("eeu_1").Captured);
-        }
-
-        [Test]
-        public void FlagFalse_PreservesNormalSimulationAndRng()
-        {
-            var a = Simulation.NewGame(null, "manipulator", 173);
-            var b = Simulation.NewGame(null, "manipulator", 173, rules: new RuleOptions { LiberationCampaign = false });
-            Assert.IsNull(a.S.Liberation);
-            Assert.IsNull(b.S.Liberation);
-            for (int i = 0; i < 40 && a.S.Ending == null; i++) { a.Step(); b.Step(); }
-            Assert.AreEqual(a.S.Rng.State, b.S.Rng.State);
-            Assert.AreEqual(a.S.Fon, b.S.Fon);
-            Assert.AreEqual(a.S.Tek, b.S.Tek);
-            CollectionAssert.AreEqual(a.S.Regions.Select(r => r.Inf), b.S.Regions.Select(r => r.Inf));
         }
     }
 }

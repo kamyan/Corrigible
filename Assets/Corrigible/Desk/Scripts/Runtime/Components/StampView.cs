@@ -57,7 +57,7 @@ namespace Corrigible.Desk
             if (fontSizeOverride > 0) font = fontSizeOverride;
             if (paddingOverride.x > 0) padX = paddingOverride.x;
             if (paddingOverride.y > 0) padY = paddingOverride.y;
-            float opacity = DeskTheme.Illusion ? theme.stampOpacityIllusion : theme.stampOpacity;
+            float opacity = theme.stampOpacity;
 
             DeskSprites.Apply(frame, sprite);
             DeskUi.Tint(frame, DeskUi.StampKey(ink), opacity);

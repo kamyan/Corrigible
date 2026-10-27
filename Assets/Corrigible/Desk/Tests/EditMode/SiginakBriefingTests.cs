@@ -18,8 +18,7 @@ namespace Corrigible.Desk.Tests
     /// </summary>
     public class SiginakBriefingTests
     {
-        static Simulation NewLiberation(double fon = 100) => Simulation.NewGame(null, "manipulator", 731, new Balance { startFon = fon },
-            rules: new RuleOptions { LiberationCampaign = true });
+        static Simulation NewLiberation(double fon = 100) => Simulation.NewGame(731, new Balance { startFon = fon });
 
         [Test]
         public void Build_Modes_NoSave_Save_Armed_Reading()

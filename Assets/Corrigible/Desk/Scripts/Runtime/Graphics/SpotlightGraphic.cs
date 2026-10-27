@@ -31,7 +31,13 @@ namespace Corrigible.Desk
             SetVerticesDirty();
         }
 
-        Vector2 SolidUV() => DeskSolidGraphic.SolidUV(sprite);
+        /// <summary>Sprite'ın ortasının UV'si (boşsa beyaz dokunun ortası): düz renk tek UV'den örneklenir.</summary>
+        Vector2 SolidUV()
+        {
+            if (sprite == null) return new Vector2(0.5f, 0.5f);
+            var o = UnityEngine.Sprites.DataUtility.GetOuterUV(sprite);
+            return new Vector2((o.x + o.z) * 0.5f, (o.y + o.w) * 0.5f);
+        }
 
         protected override void OnPopulateMesh(VertexHelper vh)
         {

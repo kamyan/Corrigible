@@ -18,18 +18,17 @@ namespace Corrigible.Game.Raid
     /// </summary>
     public sealed class RaidBoard3D : MonoBehaviour
     {
-        /// <summary>Karoların ve vurguların çizildiği bilgi: RaidView hesaplar, tahta yalnızca gösterir.</summary>
+        /// <summary>Karoların ve vurguların çizildiği bilgi: baskın veri kaynağı hesaplar, tahta yalnızca gösterir.</summary>
         public sealed class Marks
         {
             public HashSet<int> Moves = new HashSet<int>(), Targets = new HashSet<int>(), Heal = new HashSet<int>(), Spawns = new HashSet<int>();
-            /// <summary>Tehlikeli kare → kesin mi (yalan olabilecek niyetler kesin değildir).</summary>
-            public Dictionary<int, bool> Danger = new Dictionary<int, bool>();
+            /// <summary>Düşman niyetinin ya da önizlenen hamlenin vuracağı kareler.</summary>
+            public HashSet<int> Danger = new HashSet<int>();
             public HashSet<int> Spent = new HashSet<int>();
             /// <summary>Salt sunum örneğinde başlangıçta kırık gelen dolaplar; canlı oyunda boş kalır.</summary>
             public HashSet<int> Rubble = new HashSet<int>();
             public int Selected = -1;
-            public Dictionary<int, (string order, string flag, Color flagColor)> Badges = new Dictionary<int, (string, string, Color)>();
-            public List<(int fx, int fy, int tx, int ty, Color color, bool dashed)> Arrows = new List<(int, int, int, int, Color, bool)>();
+            public List<(int fx, int fy, int tx, int ty)> Arrows = new List<(int, int, int, int)>();
         }
 
         [SerializeField] RaidPieceLibrary lib;
@@ -80,8 +79,7 @@ namespace Corrigible.Game.Raid
         readonly RaidArrow[] moveFrames = new RaidArrow[64], dangerFrames = new RaidArrow[64], repairFrames = new RaidArrow[64];
         readonly RaidArrow[] moveHatches = new RaidArrow[64], dangerHatches = new RaidArrow[64], wakeRings = new RaidArrow[64];
         readonly Dictionary<int, RaidWorldLabel> hpLabels = new Dictionary<int, RaidWorldLabel>();
-        readonly Dictionary<int, RaidWorldLabel> orderLabels = new Dictionary<int, RaidWorldLabel>(), flagLabels = new Dictionary<int, RaidWorldLabel>(), stateLabels = new Dictionary<int, RaidWorldLabel>();
-        readonly Dictionary<int, RaidWorldLabel> questionLabels = new Dictionary<int, RaidWorldLabel>();
+        readonly Dictionary<int, RaidWorldLabel> orderLabels = new Dictionary<int, RaidWorldLabel>(), stateLabels = new Dictionary<int, RaidWorldLabel>();
         readonly Dictionary<int, GameObject> flagPins = new Dictionary<int, GameObject>();
         readonly Dictionary<int, RaidArrow> downMarks = new Dictionary<int, RaidArrow>();
         readonly List<RaidWorldLabel> paperLabels = new List<RaidWorldLabel>();
@@ -90,9 +88,8 @@ namespace Corrigible.Game.Raid
         readonly List<Mesh> effectMeshes = new List<Mesh>();
         readonly Dictionary<int, Baskin.IntentView> shownIntents = new Dictionary<int, Baskin.IntentView>();
         readonly Dictionary<int, RaidArrow> intentArrowByUnit = new Dictionary<int, RaidArrow>();
-        RaidArrow scanOutline, selectionFrame;
+        RaidArrow selectionFrame;
         RaidArrow activeIntentHighlight;
-        RaidWorldLabel scanLabel;
         GameObject hoverFrame;
         readonly List<RaidArrow> arrows = new List<RaidArrow>();
         readonly List<RaidArrow> previewArrows = new List<RaidArrow>();
@@ -123,7 +120,7 @@ namespace Corrigible.Game.Raid
             mpb ??= new MaterialPropertyBlock();
             Clear(tilesRoot); Clear(piecesRoot); Clear(marksRoot);
             units.Clear(); objects.Clear(); rubble.Clear(); arrows.Clear(); previewArrows.Clear(); ghosts.Clear(); labelGroups.Clear();
-            hpLabels.Clear(); orderLabels.Clear(); flagLabels.Clear(); questionLabels.Clear(); stateLabels.Clear(); paperLabels.Clear(); shownIntents.Clear(); intentArrowByUnit.Clear(); flagPins.Clear(); downMarks.Clear();
+            hpLabels.Clear(); orderLabels.Clear(); stateLabels.Clear(); paperLabels.Clear(); shownIntents.Clear(); intentArrowByUnit.Clear(); flagPins.Clear(); downMarks.Clear();
             for (int y = 0; y < Baskin.N; y++)
             for (int x = 0; x < Baskin.N; x++)
             {
@@ -158,9 +155,6 @@ namespace Corrigible.Game.Raid
             hoverFrame.SetActive(false);
             selectionFrame = Mark("Selected double frame", Vector3.zero, 0.04f);
             selectionFrame.SetFrame(0.90f, PixelWorld * 2, verifiedColor, false, true);
-            scanOutline = Mark("Analyst scan boundary", Vector3.zero, 0.042f);
-            scanLabel = NewPaperLabel("Scan label", 12);
-            scanLabel.gameObject.SetActive(false);
             activeIntentHighlight = NewArrow("Current intent highlighter");
             activeIntentHighlight.gameObject.SetActive(false);
         }
@@ -241,15 +235,13 @@ namespace Corrigible.Game.Raid
             labelGroups.Clear();
             foreach (var label in hpLabels.Values) label.gameObject.SetActive(false);
             foreach (var label in orderLabels.Values) label.gameObject.SetActive(false);
-            foreach (var label in flagLabels.Values) label.gameObject.SetActive(false);
-            foreach (var label in questionLabels.Values) label.gameObject.SetActive(false);
             foreach (var label in stateLabels.Values) label.gameObject.SetActive(false);
             foreach (var pin in flagPins.Values) pin.SetActive(false);
             foreach (var mark in downMarks.Values) mark.gameObject.SetActive(false);
             shownIntents.Clear();
             intentArrowByUnit.Clear();
             activeIntentHighlight.gameObject.SetActive(false);
-            // Bu görünüş gerçek Intent.Dir alanını okumaz; yalan olabilen yön Core'un algı API'sinden gelir.
+            // Niyetler Core'un görünüm API'sinden (Baskin.Intents) okunur.
             foreach (var intent in Baskin.Intents(B)) shownIntents[intent.Unit] = intent;
             // Dolaplar ve enkaz
             for (int y = 0; y < Baskin.N; y++)
@@ -339,19 +331,12 @@ namespace Corrigible.Game.Raid
                     var order = PieceLabel(orderLabels, u.Id, "Order flag", 14);
                     order.SetAnchor(W(u.X, u.Y) + Vector3.up * (p.VisualHeight + 0.35f) + cam.transform.right * 0.26f);
                     string kind = intent.Kind == "repair" ? Loc.T("ONARIM") : intent.Kind == "shoot" ? Loc.T("ATEŞ") : Loc.T("VURUŞ");
-                    Color border = intent.Uncertain ? lib.uncertain : intent.IsScanned ? verifiedColor : lib.threat;
+                    Color border = lib.threat;
                     border.a = 1;
                     order.SetOpacity(1);
                     order.SetPaperColor(paperColor);
-                    order.Show(screenLabelPrefab != null ? intent.Order.ToString() : Loc.F("{0} {1}", intent.Order, kind), lib.threat, border, intent.Uncertain);
-                    if (intent.Uncertain || intent.IsScanned)
-                    {
-                        var flag = PieceLabel(intent.Uncertain ? questionLabels : flagLabels, u.Id, "Trust flag", intent.Uncertain ? 18 : 12, intent.Uncertain);
-                        flag.SetAnchor(order.transform.position + cam.transform.up * 0.32f);
-                        flag.Show(intent.Uncertain ? "?" : Loc.T("✓ TARANDI"), border, border, intent.Uncertain);
-                        labelGroups.Add(new[] { order, flag });
-                    }
-                    else labelGroups.Add(new[] { order });
+                    order.Show(screenLabelPrefab != null ? intent.Order.ToString() : Loc.F("{0} {1}", intent.Order, kind), lib.threat, border, false);
+                    labelGroups.Add(new[] { order });
                 }
             }
             foreach (var id in units.Keys.Where(id => !alive.Contains(id)).ToList()) { if (units[id] != null) Destroy(units[id].gameObject); units.Remove(id); }
@@ -361,21 +346,21 @@ namespace Corrigible.Game.Raid
             {
                 Color c = default; bool on = false;
                 if (m.Moves.Contains(k)) { c = lib.move; on = true; }
-                if (m.Danger.TryGetValue(k, out var sure)) { c = Alpha(lib.threat, sure ? 0.12f : 0.08f); on = true; }
+                if (m.Danger.Contains(k)) { c = Alpha(lib.threat, 0.12f); on = true; }
                 else if (m.Heal.Contains(k)) { c = lib.heal; on = true; }
                 else if (m.Targets.Contains(k) && !on) { c = Alpha(lib.target, 0.08f); on = true; }
                 tint[k].enabled = on;
                 if (on) SetColor(tint[k], c);
                 frames[k].SetActive(m.Targets.Contains(k));
                 moveFrames[k].gameObject.SetActive(m.Moves.Contains(k));
-                moveHatches[k].gameObject.SetActive(m.Moves.Contains(k) && !m.Danger.ContainsKey(k));
-                bool hit = m.Danger.TryGetValue(k, out bool certain);
+                moveHatches[k].gameObject.SetActive(m.Moves.Contains(k) && !m.Danger.Contains(k));
+                bool hit = m.Danger.Contains(k);
                 dangerFrames[k].gameObject.SetActive(hit);
                 dangerHatches[k].gameObject.SetActive(hit);
                 if (hit)
                 {
-                    dangerFrames[k].SetFrame(0.88f, PixelWorld * 2.4f, Alpha(certain ? lib.threat : lib.uncertain, 0.92f), !certain);
-                    dangerHatches[k].SetHatch(0.86f, Alpha(lib.threat, certain ? 0.46f : 0.30f), PixelWorld * 1.8f, false);
+                    dangerFrames[k].SetFrame(0.88f, PixelWorld * 2.4f, Alpha(lib.threat, 0.92f), false);
+                    dangerHatches[k].SetHatch(0.86f, Alpha(lib.threat, 0.46f), PixelWorld * 1.8f, false);
                 }
                 repairFrames[k].gameObject.SetActive(m.Heal.Contains(k));
                 wakeRings[k].gameObject.SetActive(m.Spawns.Contains(k));
@@ -384,7 +369,6 @@ namespace Corrigible.Game.Raid
             var selected = B.Units.FirstOrDefault(u => u.Id == m.Selected && !u.Dead);
             selectionFrame.gameObject.SetActive(selected != null);
             if (selected != null) selectionFrame.transform.position = W(selected.X, selected.Y) + Vector3.up * 0.045f;
-            DrawScan(B, selected != null && selected.Type == "ana");
             // Niyet okları
             for (int i = 0; i < m.Arrows.Count; i++)
             {
@@ -398,7 +382,7 @@ namespace Corrigible.Game.Raid
                 var direction = (end - start).normalized;
                 start += direction * 0.24f; end -= direction * 0.30f;
                 bool curved = intent != null && intent.Kind != "shoot";
-                arrows[i].Set(start, end, a.dashed ? Alpha(lib.threat, 0.85f) : lib.threat, a.dashed, PixelWorld * (curved ? 4.2f : 3), curved ? 0.30f : 0);
+                arrows[i].Set(start, end, lib.threat, false, PixelWorld * (curved ? 4.2f : 3), curved ? 0.30f : 0);
             }
             for (int i = m.Arrows.Count; i < arrows.Count; i++) arrows[i].gameObject.SetActive(false);
             LayoutLabels();
@@ -421,29 +405,7 @@ namespace Corrigible.Game.Raid
             pin.transform.localScale = new Vector3(PixelWorld * 2, Vector3.Distance(from, to) * 0.5f, PixelWorld * 2);
         }
 
-        void DrawScan(Baskin.BState B, bool selectedAnalyst)
-        {
-            var analysts = Baskin.Alive(B, 'p').Where(u => u.Type == "ana").ToList();
-            bool show = analysts.Count > 0 && (B.Deceptive || selectedAnalyst) && B.Phase == "player";
-            scanOutline.gameObject.SetActive(show); scanLabel.gameObject.SetActive(show);
-            if (!show) return;
-            bool Inside(int x, int y) => x >= 0 && x < 8 && y >= 0 && y < 8 && analysts.Any(a => Mathf.Abs(x - a.X) + Mathf.Abs(y - a.Y) <= Baskin.ScanRadius);
-            var lines = new List<(Vector3, Vector3)>();
-            for (int y = 0; y < 8; y++) for (int x = 0; x < 8; x++) if (Inside(x, y))
-            {
-                var p = W(x, y);
-                if (!Inside(x, y - 1)) lines.Add((p + new Vector3(-0.5f, 0, 0.5f), p + new Vector3(0.5f, 0, 0.5f)));
-                if (!Inside(x + 1, y)) lines.Add((p + new Vector3(0.5f, 0, 0.5f), p + new Vector3(0.5f, 0, -0.5f)));
-                if (!Inside(x, y + 1)) lines.Add((p + new Vector3(0.5f, 0, -0.5f), p + new Vector3(-0.5f, 0, -0.5f)));
-                if (!Inside(x - 1, y)) lines.Add((p + new Vector3(-0.5f, 0, -0.5f), p + new Vector3(-0.5f, 0, 0.5f)));
-            }
-            scanOutline.SetLines(lines, Alpha(verifiedColor, 0.9f), PixelWorld * 2.2f, true);
-            scanLabel.SetAnchor(W(analysts[0].X, analysts[0].Y) - cam.transform.up * 0.65f);
-            scanLabel.Show(Loc.T("TARAMA · 3 KARE"), verifiedColor, verifiedColor);
-            labelGroups.Add(new[] { scanLabel });
-        }
-
-        // Yakın etiketler birlikte taşınır; bayrak ile ?/TARANDI ilişkisi dil ve çözünürlükte korunur.
+        // Yakın etiketler birlikte taşınır; ilişkileri dil ve çözünürlükte korunur.
         void LayoutLabels()
         {
             if (cam == null) return;
@@ -635,7 +597,6 @@ namespace Corrigible.Game.Raid
             Busy = true;
             hoverFrame.SetActive(false);
             ClearPreview();
-            scanOutline.gameObject.SetActive(false); scanLabel.gameObject.SetActive(false);
             selectionFrame.gameObject.SetActive(false);
             if (enemyTurn) foreach (var pair in units)
                 if (after.Units.Any(u => u.Id == pair.Key && u.Side == 'p' && !u.Dead)) pair.Value.SetSpent(true);

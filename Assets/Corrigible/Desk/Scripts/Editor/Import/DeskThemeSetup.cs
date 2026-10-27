@@ -8,18 +8,11 @@ using UnityEngine;
 
 namespace Corrigible.Desk.EditorTools
 {
-    /// <summary><c>Docs/UI_C/spec/tokens.json</c> → <c>Resources/DeskTheme.asset</c> (renkler, İllüzyon paleti, rampa, fontlar, gölgeler, hareket).</summary>
+    /// <summary><c>Docs/UI_C/spec/tokens.json</c> → <c>Resources/DeskTheme.asset</c> (renkler, fontlar, gölgeler, hareket).</summary>
     public static class DeskThemeSetup
     {
         public const string TokensPath = "Docs/UI_C/spec/tokens.json";
         public const string ThemePath = DeskSpriteManifest.Root + "/Resources/DeskTheme.asset";
-
-        /// <summary>İllüzyonda değişen kâğıt tonları: tema anahtarı ← tokens.json'daki illusion anahtarı.</summary>
-        static readonly (string key, string from)[] IllusionMap =
-        {
-            ("paper.page", "page"), ("paper.pageEdge", "pageEdge"), ("paper.manila", "manila"), ("paper.manilaEdge", "manilaEdge"),
-            ("paper.index", "index"), ("paper.telex", "telex"), ("paper.dialFace", "dialFace"), ("advisor.title", "advisorTitle"),
-        };
 
         [MenuItem("Corrigible/Desk UI/Temayı tokens.json'dan doldur")]
         public static void Fill()
@@ -73,20 +66,6 @@ namespace Corrigible.Desk.EditorTools
             }
             theme.colors = colors;
 
-            var ill = (JObject)col["illusion"];
-            theme.illusionOverrides = new List<DeskTheme.NamedColor>();
-            foreach (var (key, from) in IllusionMap)
-                if (ill[from] is JValue v && TryColor((string)v, out var c)) theme.illusionOverrides.Add(new DeskTheme.NamedColor { key = key, color = c });
-            theme.stampOpacityIllusion = (float)ill["stampOpacity"];
-
-            var ramp = new List<DeskTheme.RampStep>();
-            foreach (var r in col["infiltrationRamp"])
-            {
-                TryColor((string)r["fill"], out var fill); TryColor((string)r["text"], out var text);
-                ramp.Add(new DeskTheme.RampStep { min = (int)r["min"], max = (int)r["max"], fill = fill, text = text });
-            }
-            theme.infiltrationRamp = ramp.ToArray();
-
             // Gölgeler
             var sh = json["shadows"]["presets"];
             theme.s1 = Shadow(sh["S1"]); theme.s2 = Shadow(sh["S2"]); theme.s3 = Shadow(sh["S3"]); theme.s5 = Shadow(sh["S5"]);
@@ -104,7 +83,7 @@ namespace Corrigible.Desk.EditorTools
             EditorUtility.SetDirty(theme);
             AssetDatabase.SaveAssets();
             DeskTheme.Active = theme;
-            Debug.Log($"[Desk] Tema dolduruldu: {colors.Count} renk, {theme.illusionOverrides.Count} İllüzyon tonu, {ramp.Count} rampa adımı.");
+            Debug.Log($"[Desk] Tema dolduruldu: {colors.Count} renk.");
         }
 
         static void Walk(JToken t, string path, List<DeskTheme.NamedColor> list)

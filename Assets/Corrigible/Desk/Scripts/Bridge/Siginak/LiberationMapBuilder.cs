@@ -19,7 +19,7 @@ namespace Corrigible.Desk.Bridge
         public static LiberationMapState Build(Simulation sim, string selected = null, string pendingCandidate = null)
         {
             var s = new LiberationMapState { Shelter = Simulation.HQ };
-            if (sim?.LiberationOn != true) return s;
+            if (sim == null) return s;
             var lib = sim.S.Liberation;
             s.Front = lib.CurrentRegion;
             var current = sim.LiberationRegion(lib.CurrentRegion);

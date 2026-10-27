@@ -85,7 +85,7 @@ namespace Corrigible.Desk.Tests
                 // Sığınak kodu kendi temasını okur (SiginakTheme → Sade); anahtarlarını SiginakFoundationTests denetler
                 .Where(f => !f.Replace('\\', '/').Contains("/Siginak/") && !Path.GetFileName(f).StartsWith("Siginak"))
                 .SelectMany(f => rx.Matches(File.ReadAllText(f)).Cast<Match>().Select(m => m.Groups[1].Value))
-                .Distinct().Where(k => !theme.TryGet(k, false, out _)).ToList();
+                .Distinct().Where(k => !theme.TryGet(k, out _)).ToList();
             Assert.IsEmpty(missing, "temada olmayan anahtarlar: " + string.Join(", ", missing));
         }
 
@@ -99,7 +99,7 @@ namespace Corrigible.Desk.Tests
                 .SelectMany(f => rx.Matches(File.ReadAllText(f)).Cast<Match>().Select(m => m.Groups[1].Value))
                 .Distinct().ToList();
             Assert.IsNotEmpty(keys);
-            var missing = keys.Where(k => !theme.TryGet(k, false, out _)).ToList();
+            var missing = keys.Where(k => !theme.TryGet(k, out _)).ToList();
             Assert.IsEmpty(missing, "Sade temasında olmayan anahtarlar: " + string.Join(", ", missing));
         }
 

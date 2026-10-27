@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 namespace Corrigible.Desk
 {
-    /// <summary>F5 sunumu. Tahta kurallarını hesaplamaz; mock ya da canlı veri/komut sınırına bağlanır.</summary>
+    /// <summary>Baskın HUD'u. Tahta kurallarını hesaplamaz; veri kaynağı ve komut sınırına bağlanır.</summary>
     public sealed class RaidHudView : MonoBehaviour
     {
         [SerializeField] MonoBehaviour dataSource, commandSource;

@@ -16,8 +16,7 @@ namespace Corrigible.Desk.Tests
     {
         static readonly int StId = Shader.PropertyToID("_BaseMap_ST");
 
-        static Simulation NewLiberation(double fon) => Simulation.NewGame(null, "manipulator", 731, new Balance { startFon = fon },
-            rules: new RuleOptions { LiberationCampaign = true });
+        static Simulation NewLiberation(double fon) => Simulation.NewGame(731, new Balance { startFon = fon });
 
         static CounterWheel Wheel(GameObject parent)
         {

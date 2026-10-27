@@ -2,7 +2,6 @@ using System.Linq;
 using Corrigible.Core;
 using Corrigible.Desk.Bridge;
 using Corrigible.Game.Raid;
-using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -11,10 +10,10 @@ using UnityEngine.UI;
 
 namespace Corrigible.Desk.Tests
 {
+    /// <summary>Taktik harita sunumu: kamera izdüşümü, birim etiketi, Baskin sahnesinin katmanları.</summary>
     public class SadeRaidBoardTests
     {
         const string Root = "Assets/Corrigible/Desk";
-        static JObject Data() => JObject.Parse(AssetDatabase.LoadAssetAtPath<TextAsset>(Root + "/Data/Sade/Mock/raid_board_states.json").text);
         static T Ref<T>(Object owner, string field) where T : Object => new SerializedObject(owner).FindProperty(field).objectReferenceValue as T;
 
         [TestCase(1920, 1080)]
@@ -46,32 +45,6 @@ namespace Corrigible.Desk.Tests
             finally { Object.DestroyImmediate(go); Object.DestroyImmediate(target); }
         }
 
-        [TestCase("B1")][TestCase("B2")][TestCase("B3")][TestCase("B4")][TestCase("B5")]
-        [TestCase("B6")][TestCase("B7a")][TestCase("B7b")][TestCase("B8")]
-        public void Presets_PreserveFixturePositionsHealthAndDoNotConsumeRandom(string id)
-        {
-            var data = Data(); var raw = data["states"][id];
-            var snapshot = MockRaidBoardDataSource.Parse(data, id); var state = snapshot.State;
-            Assert.AreEqual(64, state.Cells.Length);
-            Assert.AreEqual(raw["units"].Count() + raw["robots"].Count(), state.Units.Count);
-            foreach (var pair in raw["units"].Concat(raw["robots"]).Zip(state.Units, (fixture, unit) => (fixture, unit)))
-            {
-                Assert.AreEqual((int)pair.fixture["pos"][0], pair.unit.X);
-                Assert.AreEqual((int)pair.fixture["pos"][1], pair.unit.Y);
-                Assert.AreEqual((int)pair.fixture["hp"], pair.unit.Hp);
-                Assert.AreEqual((int)pair.fixture["max"], pair.unit.Max);
-            }
-            Assert.AreEqual(0, state.Rs, "Örnek kurulum RNG tüketmez.");
-            if (id == "B2") Assert.AreEqual(7, snapshot.Marks.Moves.Count);
-            if (id == "B4")
-            {
-                var intents = Baskin.Intents(state);
-                Assert.AreEqual(2, intents.Count(i => i.Uncertain));
-                Assert.AreEqual(2, intents.Count(i => i.IsScanned));
-            }
-            if (id == "B6") { Assert.IsTrue(state.Units.Any(u => u.Type == "emp" && u.Dead)); Assert.Greater(snapshot.Marks.Rubble.Count, 0); }
-        }
-
         [Test]
         public void LabelPrefab_ShowsPipsAndTargetArmorWithoutHealthText()
         {
@@ -96,21 +69,20 @@ namespace Corrigible.Desk.Tests
         }
 
         [Test]
-        public void Sandbox_IsIsolatedAndUsesCameraBackgroundAndOverlayLabels()
+        public void BaskinScene_UsesCameraBackgroundAndOverlayLabels()
         {
-            var scene = EditorSceneManager.OpenScene(Root + "/Scenes/RaidBoard_Sandbox.unity", OpenSceneMode.Additive);
+            var scene = EditorSceneManager.OpenScene("Assets/Corrigible/Scenes/Baskin.unity", OpenSceneMode.Additive);
             try
             {
                 var components = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<Component>(true)).ToArray();
-                Assert.IsFalse(components.Any(c => c is Corrigible.Game.GameController || c is Corrigible.Game.UI.RaidView || c is RaidCameraFraming));
                 var board = components.OfType<RaidBoard3D>().Single();
                 Assert.IsNotNull(Ref<RaidScreenLabel>(board, "screenLabelPrefab"));
                 var labels = Ref<Canvas>(board, "screenLabelCanvas");
-                Assert.AreEqual(RenderMode.ScreenSpaceOverlay, labels.renderMode); Assert.AreEqual(10, labels.sortingOrder);
+                Assert.AreEqual(RenderMode.ScreenSpaceOverlay, labels.renderMode);
                 var background = components.OfType<BoardBackgroundView>().Single();
                 var canvas = Ref<Canvas>(background, "background");
                 Assert.AreEqual(RenderMode.ScreenSpaceCamera, canvas.renderMode); Assert.AreSame(board.Camera, canvas.worldCamera);
-                Assert.IsNotNull(components.OfType<MockRaidBoardDataSource>().Single());
+                Assert.AreEqual(1, components.OfType<SadeRaidCameraFraming>().Count());
             }
             finally { EditorSceneManager.CloseScene(scene, true); }
         }

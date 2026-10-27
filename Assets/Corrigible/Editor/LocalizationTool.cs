@@ -4,9 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Corrigible.Core;
-using Corrigible.Game;
-using Corrigible.Game.Tutorial;
-using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -15,8 +12,8 @@ using UnityEngine.SceneManagement;
 namespace Corrigible.EditorTools
 {
     /// <summary>
-    /// Çeviri tablosunun bakımı. Kaynak metinleri dört yerden toplar: koddaki <c>Loc.T/F/N("...")</c> sabitleri,
-    /// <see cref="TutorialSequence"/> asset'leri, prefab'lardaki ve sahnelerdeki <see cref="LocalizedText"/> bileşenleri.
+    /// Çeviri tablosunun bakımı. Kaynak metinleri iki yerden toplar: koddaki <c>Loc.T/F/N("...")</c> sabitleri ve prefab'lardaki
+    /// ve sahnelerdeki sabit yazıların <c>DeskLocText</c> bileşenleri (kaynak alanı).
     /// Tabloyu (<c>Resources/Localization/strings.txt</c>) bunlara göre günceller: yeni metinler boş çeviriyle eklenir,
     /// artık kullanılmayanlar dosyanın sonunda saklanır (çeviri kaybolmasın).
     /// </summary>
@@ -46,19 +43,10 @@ namespace Corrigible.EditorTools
                 foreach (Match m in LocCall.Matches(File.ReadAllText(path))) Add(UnescapeCs(m.Groups[1].Value), path);
             }
 
-            foreach (var guid in AssetDatabase.FindAssets("t:TutorialSequence", new[] { Root }))
-            {
-                var path = AssetDatabase.GUIDToAssetPath(guid);
-                var seq = AssetDatabase.LoadAssetAtPath<TutorialSequence>(path);
-                foreach (var s in seq.steps) { Add(s.title, path); Add(s.body, path); }
-                foreach (var t in seq.tips) { Add(t.title, path); Add(t.body, path); }
-            }
-
             foreach (var guid in AssetDatabase.FindAssets("t:Prefab", new[] { Root }))
             {
                 var path = AssetDatabase.GUIDToAssetPath(guid);
-                var go = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-                foreach (var lt in go.GetComponentsInChildren<LocalizedText>(true)) Add(lt.Source, path);
+                foreach (var src in SceneTextSources(AssetDatabase.LoadAssetAtPath<GameObject>(path))) Add(src, path);
             }
 
             foreach (var guid in AssetDatabase.FindAssets("t:Scene", new[] { Root }))
@@ -67,10 +55,21 @@ namespace Corrigible.EditorTools
                 WithScene(path, scene =>
                 {
                     foreach (var root in scene.GetRootGameObjects())
-                    foreach (var lt in root.GetComponentsInChildren<LocalizedText>(true)) Add(lt.Source, path);
+                    foreach (var src in SceneTextSources(root)) Add(src, path);
                 });
             }
             return found;
+        }
+
+        /// <summary>Sabit yazıların kaynakları: <c>DeskLocText</c> bileşenlerinin kaynak alanı (bu assembly Desk'e başvurmaz).</summary>
+        static IEnumerable<string> SceneTextSources(GameObject root)
+        {
+            foreach (var mb in root.GetComponentsInChildren<MonoBehaviour>(true))
+            {
+                if (mb == null || mb.GetType().Name != "DeskLocText") continue;
+                var p = new SerializedObject(mb).FindProperty("source");
+                if (p != null && !string.IsNullOrEmpty(p.stringValue)) yield return p.stringValue;
+            }
         }
 
         /// <summary>Sahneyi açık değilse geçici olarak ekler, işi yapar, kapatır.</summary>
@@ -248,55 +247,6 @@ namespace Corrigible.EditorTools
                 }
             }
             return sb.ToString();
-        }
-
-        // ------------------------------------------------------------------ LocalizedText ekleme
-        /// <summary>Harf içeren ve henüz LocalizedText'i olmayan her TMP metnine bileşeni ekler (prefab'lar + Main sahnesi).</summary>
-        [MenuItem("Corrigible/Lokalizasyon/Sahne ve prefab'lardaki metinlere LocalizedText ekle")]
-        public static string AddLocalizedTexts()
-        {
-            int n = 0;
-            foreach (var guid in AssetDatabase.FindAssets("t:Prefab", new[] { Root }))
-            {
-                var path = AssetDatabase.GUIDToAssetPath(guid);
-                var go = PrefabUtility.LoadPrefabContents(path);
-                int added = AddTo(go);
-                if (added > 0) PrefabUtility.SaveAsPrefabAsset(go, path);
-                PrefabUtility.UnloadPrefabContents(go);
-                n += added;
-            }
-            foreach (var guid in AssetDatabase.FindAssets("t:Scene", new[] { Root }))
-            {
-                var path = AssetDatabase.GUIDToAssetPath(guid);
-                WithScene(path, scene =>
-                {
-                    int added = 0;
-                    foreach (var root in scene.GetRootGameObjects()) added += AddTo(root);
-                    if (added > 0) { EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene); }
-                    n += added;
-                });
-            }
-            return $"{n} metne LocalizedText eklendi";
-        }
-
-        static readonly Regex Letters = new Regex(@"\p{L}{2,}");
-
-        static int AddTo(GameObject root)
-        {
-            int n = 0;
-            foreach (var t in root.GetComponentsInChildren<TMP_Text>(true))
-            {
-                if (!Letters.IsMatch(t.text ?? "")) continue;
-                var lt = t.GetComponent<LocalizedText>();
-                if (lt != null && lt.Source == t.text) continue;
-                // Prefab örneğinde metin üzerine yazılmışsa kaynak da örnekte üzerine yazılır
-                if (lt == null) lt = t.gameObject.AddComponent<LocalizedText>();
-                var so = new SerializedObject(lt);
-                so.FindProperty("source").stringValue = t.text;
-                so.ApplyModifiedPropertiesWithoutUndo();
-                n++;
-            }
-            return n;
         }
     }
 }

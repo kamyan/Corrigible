@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Dinamik listeler için şablon havuzu (araştırma satırları, teleks öğeleri, kaynak satırları, harita düğümleri).
+    /// Dinamik listeler için şablon havuzu (rapor satırları, grafik çizgileri ve işaretleri).
     /// Şablon prefab'da kapalı durur; öğeler yalnızca liste büyüyünce yaratılır, fazlası gizlenir (veri değişince çalışır).
     /// </summary>
     public sealed class DeskPool<T> where T : Component

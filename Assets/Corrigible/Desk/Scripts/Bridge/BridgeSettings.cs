@@ -27,13 +27,6 @@ namespace Corrigible.Desk.Bridge
         public DeskLang Language => DeskLoc.Instance.Lang;
         public void SetLanguage(DeskLang lang) => ApplyLanguage(lang, source != null ? source.Game : null);
 
-        public void SetOpen(bool open)
-        {
-            if (source == null) return;
-            source.State.SettingsOpen = open;
-            source.MarkDirty();
-        }
-
         /// <summary>Kaydırırken nasıl duyulduğunu dinlet (müzik hariç; sık tetiklenmesin).</summary>
         public void Preview(int channel)
         {
@@ -56,7 +49,7 @@ namespace Corrigible.Desk.Bridge
             PlayerPrefs.SetString(LanguageKey, lang == DeskLang.En ? Loc.English : Loc.Turkish);
             PlayerPrefs.Save();
             if (game?.Sim != null && game.Sim.S.Day == 0 && game.Sim.Record != null && game.Sim.Record.commands.Count == 0)
-                game.NewGame(game.TypeId);
+                game.NewGame();
         }
     }
 }

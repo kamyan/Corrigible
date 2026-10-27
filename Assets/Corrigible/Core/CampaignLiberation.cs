@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Corrigible.Core
 {
-    /// <summary>Oyuncunun bildiği kalıcı harekât ilerlemesi; gizli sızma bilgisi içermez.</summary>
+    /// <summary>Bir sektör: iki ikmal deposu (yağma) ve bir sunucu merkezi (yıkım); sırayla geri alınır.</summary>
     [Serializable]
     public sealed class LiberationSectorState
     {
@@ -42,7 +42,6 @@ namespace Corrigible.Core
 
     public sealed partial class Simulation
     {
-        public bool LiberationOn => S.Rules != null && S.Rules.LiberationCampaign && S.Liberation != null;
         public LiberationRegionState LiberationRegion(string id) => S.Liberation?.Regions.FirstOrDefault(r => r.Id == id);
         public LiberationSectorState LiberationSector(string id) => S.Liberation?.Regions.SelectMany(r => r.Sectors).FirstOrDefault(s => s.Id == id);
 
@@ -51,7 +50,6 @@ namespace Corrigible.Core
         {
             get
             {
-                if (!LiberationOn) return Array.Empty<string>();
                 var cleared = new HashSet<string>(S.Liberation.Regions.Where(r => r.Completed).Select(r => r.Id));
                 return GameData.Regions.Where(r => !cleared.Contains(r.Id) && GameData.Links.Any(l =>
                     l.A == r.Id && cleared.Contains(l.B) || l.B == r.Id && cleared.Contains(l.A))).Select(r => r.Id);
@@ -71,44 +69,13 @@ namespace Corrigible.Core
                     Id = def.Id + "_" + (i + 1), Region = def.Id, Index = i, MissionKind = i < 2 ? "loot" : "server",
                 });
                 S.Liberation.Regions.Add(area);
-                var region = S.Region(def.Id);
-                region.Inf = 100; region.Dep = 100;
-                region.Monitored = region.Detected = true;
-                region.Left = region.Q = false;
-                region.RevealDay = 0;
             }
-            // Bu kampanyanın tek başlangıç ekibi sığınakta toparlanır; eski kriz kayıtlarına dokunulmaz.
-            if (S.Exp == null) S.Exp = new ExpOptions();
-            S.Exp.Teams = true;
-            S.Teams.Clear();
-            S.Teams.Add(NewTeam(0, 0));
-            S.Aware = true; S.AwareDay = 0; S.Tek = 0;
-            S.Core = S.CoreKnown = null;
-            S.PendingGift = null; S.PendingEvent = null; S.Illusion = null;
-            S.Advisor = new Advice
-            {
-                Key = "liberation_start", Day = 0,
-                Text = Loc.T("Dünya YZ işgali altında. Sığınağımız Batı Avrupa'daki son direniş noktası. Önce tedarik deposuna gir, malzemeyi al ve ekibini çıkar. Her başarılı baskın bir sektörü geri kazandırır."),
-            };
-            AddLog(Loc.T("Bütün ağlar işgal edildi. Son sığınaktan karşı harekât başlıyor."), "insight");
-        }
-
-        void StepLiberation()
-        {
-            S.Day++;
-            S.LastResearchPayment = 0;
-            S.LastIncome = IncomeBreakdown;
-            S.LastIncomeDay = S.Day;
-            S.Fon += S.LastIncome.Total;
-            AddTransaction("income", null, S.LastIncome.Total);
-            StepTeams();
-            ShelterLogic.Advance(S, B);
-            S.Hist.Add(new HistPoint { Day = S.Day, Real = Js.Round(MeanInf * 10) / 10, Shown = Js.Round(MeanInf * 10) / 10 });
+            // Tek başlangıç ekibi sığınakta
+            S.Teams.Add(NewTeam(0));
         }
 
         public string SelectLiberationRegionCheck(string regionId)
         {
-            if (!LiberationOn) return Loc.T("Geri alma harekâtı etkin değil.");
             if (S.Ending != null) return Loc.T("Oyun bitti.");
             if (S.Raid != null) return Loc.T("Önce süren baskını bitir.");
             if (LiberationRegion(regionId) == null) return Loc.T("Geçersiz bölge.");
@@ -122,14 +89,12 @@ namespace Corrigible.Core
             var why = SelectLiberationRegionCheck(regionId);
             if (why != null) return ActResult.Fail(why);
             S.Liberation.CurrentRegion = regionId;
-            foreach (var t in S.Teams.Where(t => TeamReady(t))) { t.At = t.From = regionId; t.Dest = null; }
-            AddLog(Loc.F("Karşı harekâtın yeni hedefi: {0}.", Def(regionId).Name), "insight");
+            foreach (var t in S.Teams.Where(TeamReady)) t.At = regionId;
             return ActResult.Success();
         }, "liberation_region", regionId);
 
         public string LiberationRaidCheck(string sectorId)
         {
-            if (!LiberationOn) return Loc.T("Geri alma harekâtı etkin değil.");
             if (S.Ending != null) return Loc.T("Oyun bitti.");
             if (S.Raid != null) return Loc.T("Zaten bir baskın sürüyor.");
             var sector = LiberationSector(sectorId);
@@ -164,10 +129,11 @@ namespace Corrigible.Core
                     SectorId = sector.Id, MissionKind = sector.MissionKind,
                     Inf = B.liberationRaidThreat + clearedRegions * B.liberationRaidThreatPerRegion,
                     RaidNumber = Math.Min(3, clearedRegions + 1), IsCore = sector.MissionKind == "server" && clearedRegions == GameData.Regions.Length - 1,
-                    Traits = clearedRegions < 2 ? new List<string>() : S.Traits.Where(t => t == "kopya" || t == "aldatma").ToList(),
+                    // Harekât ilerledikçe makineler kendini kopyalar: baskında daha çok robot
+                    Traits = clearedRegions < B.liberationCopyFromRegion ? new List<string>() : new List<string> { "kopya" },
                 },
             };
-            team.At = sector.Region; team.Dest = null; team.Busy = 1; team.Task = "baskin";
+            team.At = sector.Region; team.Busy = 1; team.Task = "baskin";
             S.Events.Add(new SimEvent { Type = SimEventType.Raid });
             return ActResult.Success();
         }
@@ -209,15 +175,11 @@ namespace Corrigible.Core
                 ShelterLogic.RewardServer(S, B);
             }
             var area = LiberationRegion(sector.Region);
-            var region = S.Region(sector.Region);
-            region.Inf = 100.0 * (area.Sectors.Count - area.CapturedCount) / area.Sectors.Count;
-            region.Dep = region.Inf;
-            region.FieldDay = S.Day;
             Moment("good", Loc.F("{0}: {1} geri alındı.", Def(sector.Region).Name, sector.Name));
             if (area.Completed)
             {
                 S.Fon += B.liberationCaptureFunds;
-                AddNews(Loc.F("{0} tamamen geri alındı. Komşu bölgedeki yeni harekâtı seç.", Def(sector.Region).Name), kind: "alarm", src: sector.Region);
+                S.Events.Add(new SimEvent { Type = SimEventType.RegionLiberated, Key = sector.Region });
                 if (S.Liberation.Regions.All(r => r.Completed)) End("silme");
             }
             reward.Fon = S.Fon - oldFon;

@@ -6,9 +6,9 @@ using UnityEngine;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Oyun sonu (PROMPT §7.4, C4): ahşap + keçe zemin üstünde son rapor (başlık satırı, SONUÇ bloğu, büyük KAYBEDİLDİ
-    /// damgası, KPI'lar, şerit grafik), kırılma anları (plaka, 7 kart, raptiyeler arası iplik) ve alt çubuk. Tam ekrandır;
-    /// açıkken masanın canvas'ları kapatılır (fazladan çizim olmasın). Enter yeniden başlatır, L günlükleri açar.
+    /// Harekâtın sonu: ahşap + keçe zemin üstünde son rapor (başlık satırı, SONUÇ bloğu, büyük damga, KPI'lar, şerit grafik),
+    /// kırılma anları (plaka, 7 kart, raptiyeler arası iplik) ve alt çubuk. Tam ekrandır; açıkken verilen canvas'lar kapatılır
+    /// (fazladan çizim olmasın). Enter yeniden başlatır.
     /// </summary>
     public sealed class GameOverView : MonoBehaviour
     {
@@ -43,7 +43,7 @@ namespace Corrigible.Desk
         public static GameOverView Instance { get; private set; }
         public bool IsOpen => root != null && root.activeSelf;
 
-        /// <summary>Alt çubuk eylemi (komut: MainMenu, ReviewLogs, RetrySameSeed, Restart).</summary>
+        /// <summary>Alt çubuk eylemi (komut: Restart).</summary>
         public event Action<string> ActionInvoked;
 
         void Awake()
@@ -62,22 +62,16 @@ namespace Corrigible.Desk
         void Invoke(int index)
         {
             if (vm?.Endbar == null || index >= vm.Endbar.Actions.Count) return;
-            ActionInvoked?.Invoke(CommandOf(vm.Endbar.Actions[index], index));
+            var c = vm.Endbar.Actions[index].Command;
+            if (!string.IsNullOrEmpty(c)) ActionInvoked?.Invoke(c);
         }
 
-        /// <summary>Tuşla eylem (Enter, L): VM'de o tuşa bağlı eylem.</summary>
+        /// <summary>Tuşla eylem (Enter): VM'de o tuşa bağlı eylem.</summary>
         public void InvokeKey(string key)
         {
             if (vm?.Endbar == null) return;
             for (int i = 0; i < vm.Endbar.Actions.Count; i++)
                 if (string.Equals(vm.Endbar.Actions[i].Key, key, StringComparison.OrdinalIgnoreCase)) { Invoke(i); return; }
-        }
-
-        /// <summary>Komut VM'de yoksa sıradan çıkarılır (C4: ana menü, günlükler, aynı tohum, yeniden başla).</summary>
-        static string CommandOf(CommandVM c, int index)
-        {
-            if (!string.IsNullOrEmpty(c.Command)) return c.Command;
-            return index switch { 0 => "MainMenu", 1 => "ReviewLogs", 2 => "RetrySameSeed", _ => "Restart" };
         }
 
         bool canvasesHidden;

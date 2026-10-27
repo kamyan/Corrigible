@@ -6,9 +6,8 @@ using UnityEngine;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Olay bildirimi kâğıdı (PROMPT §7.3, CSS .memo): başlık + çift çizgi, 2×2 alan ızgarası (ÖNCELİK kırmızı damga), büyük başlık,
-    /// alt başlık, paragraf, KAYNAKLAR. Yükseklik içerikten: paragrafın satır sayısı ve kaynak sayısı (CSS akışı).
-    /// Koordinatlar kâğıdın sol-üstüne göre (y aşağı).
+    /// Rapor kâğıdı (CSS .memo): başlık + çift çizgi, 2×2 alan ızgarası (SONUÇ damgası), büyük başlık, alt başlık, paragraf,
+    /// altında belge (sonuç satırları ve düğmeler). Yükseklik içerikten (CSS akışı). Koordinatlar kâğıdın sol-üstüne göre (y aşağı).
     /// </summary>
     public sealed class EventMemoView : MonoBehaviour
     {
@@ -23,18 +22,12 @@ namespace Corrigible.Desk
         [SerializeField] TMP_Text headerTitle, headerRight;
         [SerializeField] FieldRefs[] fields = Array.Empty<FieldRefs>();
         [SerializeField] TMP_Text title, subtitle, body;
-        [SerializeField] RectTransform sources;
-        [SerializeField] TMP_Text sourcesCap, sourcesCount;
-        [SerializeField] RectTransform sourcesLine;
-        [SerializeField] EventSourceRow rowTemplate;
         [Tooltip("Paragraf satır yüksekliği (LF 14,5 × 1,52 = 22).")]
         [SerializeField] float bodyLineHeight = 22;
-        [SerializeField] float bodyGap = 14, sourcesHeadHeight = 20, rowHeight = 41.5f, lastRowHeight = 40.5f, bottom = 19, innerRight = 683;
+        [SerializeField] float bodyGap = 14, bottom = 19, innerRight = 683;
 
         [Tooltip("Alan ızgarası (CSS .mf: auto 1fr auto 1fr, column-gap 12): içerik sol kenarı ve sütun aralığı.")]
         [SerializeField] float fieldsLeft = 29, fieldGap = 12;
-
-        DeskPool<EventSourceRow> rows;
 
         static float Half(float v) => Mathf.Round(v * 2) / 2;
 
@@ -111,9 +104,8 @@ namespace Corrigible.Desk
         [SerializeField] float shrinkTitleTo = 40;
         float titleFontSize;
 
-        [Header("Belge kipi (F8.3)")]
+        [Header("Belge")]
         [SerializeField] EventDocView doc;
-        [SerializeField] float docGap = 14;
         [Tooltip("Yırtık alt kenar: kâğıt renginde dişli şerit (belge kipinde).")]
         [SerializeField] UIPolygonGraphic tornEdge;
         [SerializeField] float tornDepth = 10, tornStep = 18;
@@ -123,8 +115,6 @@ namespace Corrigible.Desk
 
         /// <summary>Bildirim kâğıdı (yeri sahnede; iplik raptiyesi buna göre).</summary>
         public RectTransform Paper => paper;
-
-        public void Bind(EventMemoVM m) => Bind(m, null);
 
         public void Bind(EventMemoVM m, EventDocVM docVm)
         {
@@ -152,41 +142,13 @@ namespace Corrigible.Desk
             DeskUi.SetText(body, T.T(m.Body));
             WrapTitle();
 
-            // Paragraf yüksekliği satır sayısından (CSS line-height 1,52)
+            // Paragraf yüksekliği satır sayısından (CSS line-height 1,52); paragrafsız raporda belge alt başlığın hemen altında
             body.ForceMeshUpdate();
-            // Paragrafsız belge (ör. operasyon raporu): kaynaklar alt başlığın hemen altından başlar
             float bodyH = string.IsNullOrEmpty(m.Body) ? 0 : Mathf.Max(1, body.textInfo.lineCount) * bodyLineHeight;
             var br = body.rectTransform;
             br.sizeDelta = new Vector2(br.sizeDelta.x, bodyH);
             float y = -br.anchoredPosition.y + bodyH + (bodyH > 0 ? bodyGap : 0);
 
-            // Kaynak yoksa başlık ve çizgisi de yok (oyundaki kaynaksız olay kartları, belge kipi)
-            bool hasSources = m.SourcesHeader != null;
-            DeskUi.SetActive(sourcesCap, hasSources);
-            DeskUi.SetActive(sourcesCount, hasSources);
-            DeskUi.SetActive(sourcesLine, hasSources);
-            DeskUi.SetText(sourcesCap, T.T(m.SourcesHeader?.Title));
-            DeskUi.SetText(sourcesCount, m.SourcesHeader?.Right);
-            float capW = Mathf.Round(DeskUi.TextWidth(sourcesCap, sourcesCap.text));
-            float countW = Mathf.Round(DeskUi.TextWidth(sourcesCount, sourcesCount.text));
-            float lineX = sourcesCap.rectTransform.anchoredPosition.x + capW + 8;
-            sourcesLine.anchoredPosition = new Vector2(lineX, sourcesLine.anchoredPosition.y);
-            sourcesLine.sizeDelta = new Vector2(innerRight - sources.anchoredPosition.x - countW - 8 - lineX, sourcesLine.sizeDelta.y);
-            sources.anchoredPosition = new Vector2(sources.anchoredPosition.x, -y);
-
-            rows ??= new DeskPool<EventSourceRow>(rowTemplate, sources);
-            int n = m.Sources.Count;
-            float ry = hasSources ? sourcesHeadHeight : 0;
-            for (int i = 0; i < n; i++)
-            {
-                var r = rows.Get(i);
-                var rt = (RectTransform)r.transform;
-                rt.anchorMin = rt.anchorMax = new Vector2(0, 1); rt.pivot = new Vector2(0, 1);
-                rt.anchoredPosition = new Vector2(0, -ry);
-                r.Bind(m.Sources[i], i, i == n - 1);
-                ry += i == n - 1 ? lastRowHeight : rowHeight;
-            }
-            rows.Trim(n);
             float docH = 0;
             if (doc != null)
             {
@@ -194,12 +156,11 @@ namespace Corrigible.Desk
                 if (docVm != null)
                 {
                     var dr = (RectTransform)doc.transform;
-                    float top = y + ry + (hasSources ? docGap : 0);
-                    dr.anchoredPosition = new Vector2(dr.anchoredPosition.x, -Mathf.Round(top));
-                    docH = (hasSources ? docGap : 0) + doc.Bind(docVm);
+                    dr.anchoredPosition = new Vector2(dr.anchoredPosition.x, -Mathf.Round(y));
+                    docH = doc.Bind(docVm);
                 }
             }
-            float h = Mathf.Round((y + ry + docH + bottom) * 2) / 2;
+            float h = Mathf.Round((y + docH + bottom) * 2) / 2;
             paper.sizeDelta = new Vector2(paper.sizeDelta.x, h);
             Tear(docVm != null && docVm.Torn, h);
         }

@@ -88,7 +88,7 @@ namespace Corrigible.Desk.Bridge
             return new ShiftReportInput
             {
                 before = before, after = Capture(sim), ledger = ledger ?? new List<ShiftLedgerEntry>(),
-                incomeCentral = income.Central, incomeRegional = income.RegionalBase + income.BudgetBonus,
+                incomeCentral = income.Central, incomeRegional = income.RegionalBase,
                 failures = failures?.ToList() ?? new List<TelexLine>(),
                 rates = Rates(sim.B),
             };

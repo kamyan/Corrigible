@@ -45,7 +45,6 @@ namespace Corrigible.Desk.EditorTools
             ("Test pattern", "CRT test deseni K-07 (tasarım: %28 desen)"),
             ("/Stamp/Word", "haritadaki ÖZGÜR damgasının bandı (tasarım ~9 ekran px, Aşama 5; durum tarama ve lejantta da var)"),
             ("/Stamp/Day", "haritadaki ÖZGÜR damgasının vardiya kodu (tasarım ~9 ekran px, Aşama 5)"),
-            ("SadeMapCanvas/MapMarkers/", "sızma kipinin harita işaretleri (ekip, düğüm, saha raporu, bölge adı); kurtuluş biçiminde çizilmez"),
             ("Team figure/Body/Letter", "figür plakasındaki “A” harfi (simge)"),
             ("Report sheet/", "EVRAK tepsisindeki A5 kâğıt başlığı (okuma görünümü ayrıca açılır)"),
             ("/Stencil", "boyalı şablon yazı (dekor)"),

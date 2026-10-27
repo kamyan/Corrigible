@@ -1,18 +1,15 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using Corrigible.Core;
+using System.Linq;
 using Corrigible.Game;
-using Corrigible.Game.UI;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Corrigible.EditorTools
 {
     /// <summary>
-    /// Test yardımcıları: oyunu hızlıca ilerletir, düğmelere tıklar ve arayüzün ekran görüntüsünü alır.
-    /// Görüntü için Canvas'lar geçici olarak kameraya bağlanıp bir RenderTexture'a çizilir; edit ve Play modda çalışır.
+    /// Test yardımcıları: harekâtın durum satırı ve arayüz dahil ekran görüntüsü. Görüntü için Overlay canvas'lar geçici olarak
+    /// ayrı bir kameraya bağlanıp RenderTexture'a çizilir; edit ve Play modda çalışır.
     /// </summary>
     public static class CorrigibleDebug
     {
@@ -99,62 +96,13 @@ namespace Corrigible.EditorTools
             return Path.GetFullPath(path);
         }
 
-        /// <summary>Açık pencereyi kapatır ve oyunu belirtilen gün kadar ilerletir. Hediyeler verilen kararla yanıtlanır.</summary>
-        public static string Advance(int days, string giftChoice = Simulation.GiftReject)
-        {
-            var g = Game;
-            CloseModal();
-            for (int i = 0; i < days && g.Sim.S.Ending == null; i++)
-            {
-                if (g.Sim.S.PendingGift != null) { g.ResolveGift(giftChoice); CloseModal(); }
-                g.Sim.Step();
-                g.Flush();
-                if (g.Sim.S.Ending == null) CloseModal();
-            }
-            Render();
-            return Status();
-        }
-
+        /// <summary>Harekâtın kısa durumu: gün, fon, cephe, özgür bölgeler, baskın, son.</summary>
         public static string Status()
         {
-            var s = Game.Sim.S;
-            return $"gün {s.Day}, son {s.Ending ?? "-"}, fark edildi {s.Aware}, çekirdek {s.Core ?? "yok"}/{s.CoreKnown ?? "?"}, fon {s.Fon:0}, sg {s.Sg:0.0}, tekillik {s.Tek:0.0}, illüzyon {(s.Illusion != null)}";
-        }
-
-        /// <summary>Adı verilen düğmeye tıklanmış gibi davranır (tüm canvas'larda arar).</summary>
-        public static string Click(string buttonName)
-        {
-            var b = FindButton(buttonName);
-            if (b == null) return buttonName + ": bulunamadı";
-            if (!b.IsActive() || !b.interactable) return buttonName + ": devre dışı";
-            b.onClick.Invoke();
-            return buttonName + ": tıklandı";
-        }
-
-        public static string ButtonText(string buttonName)
-        {
-            var b = FindButton(buttonName);
-            return b == null ? null : (b.GetComponent<StyledButton>()?.Label ?? b.GetComponentInChildren<TMP_Text>(true))?.text;
-        }
-
-        /// <summary>Düğmeyi hiyerarşi yolunun sonuyla bulur (ör. "IntroModal/Buttons/Start" ya da "Kuzey Amerika").</summary>
-        static Button FindButton(string path)
-        {
-            foreach (var b in Object.FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-                if (PathOf(b.transform).EndsWith("/" + path)) return b;
-            return null;
-        }
-
-        static string PathOf(Transform t) => t.parent == null ? "/" + t.name : PathOf(t.parent) + "/" + t.name;
-
-        public static void Select(string regionId) => Invoke<CrisisDeskView>("Select", regionId);
-        public static void CloseModal() => Invoke<ModalView>("Close");
-        public static void Render() => Invoke<CrisisDeskView>("Render");
-
-        static void Invoke<T>(string method, params object[] args) where T : Object
-        {
-            var c = Object.FindFirstObjectByType<T>();
-            typeof(T).GetMethod(method, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).Invoke(c, args);
+            var sim = Game?.Sim;
+            if (sim == null) return "oyun yok";
+            var s = sim.S;
+            return $"gün {s.Day}, fon {s.Fon:0.0}, cephe {s.Liberation.CurrentRegion}, özgür {s.Liberation.Regions.Count(r => r.Completed)}/{s.Liberation.Regions.Count}, baskın {(s.Raid != null ? s.Raid.Params.SectorId : "-")}, son {s.Ending ?? "-"}";
         }
     }
 }

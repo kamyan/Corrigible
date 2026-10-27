@@ -32,7 +32,7 @@ namespace Corrigible.Desk.EditorTools
         {
             if (!Application.isPlaying) return "Play gerekli (yeni görünüm açık)";
             var game = Object.FindFirstObjectByType<GameController>();
-            if (game?.Sim?.LiberationOn != true) return "Kurtuluş oyunu yok";
+            if (game?.Sim == null) return "Kurtuluş oyunu yok";
             if (Object.FindFirstObjectByType<SiginakBriefing>() == null) return "Yeni görünüm kapalı";
             File.WriteAllText(StatusPath, "başladı\n");
             game.StartCoroutine(Run(game, lang == "en"));
@@ -71,7 +71,7 @@ namespace Corrigible.Desk.EditorTools
             Shot("K7");
 
             // V.014: K1, K2, K4, K5a, K5b
-            game.NewGame(game.TypeId);
+            game.NewGame();
             yield return null;
             log.AppendLine(SiginakFixtures.Load("V014"));
             yield return Wait(0.6f);
@@ -110,7 +110,7 @@ namespace Corrigible.Desk.EditorTools
             Shot("K3");
 
             // V.014 → 015: baskın başarısız, şalter iki adım
-            game.NewGame(game.TypeId);
+            game.NewGame();
             yield return null;
             log.AppendLine(SiginakFixtures.Load("K6"));
             yield return Wait(0.6f);

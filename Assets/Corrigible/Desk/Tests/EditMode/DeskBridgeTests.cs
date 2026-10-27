@@ -1,413 +1,172 @@
-using System.Collections.Generic;
 using System.Linq;
 using Corrigible.Core;
 using Corrigible.Desk.Bridge;
-using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Corrigible.Desk.Tests
 {
-    /// <summary>F8 oyun köprüsü: harita geometrisi tasarım kuralıyla, oyun durumundan görünüm modeli, olay/hediye/oyun sonu, etki ayrıştırma.</summary>
+    /// <summary>Oyun köprüsü: DeskGame sahnesinin bağlantıları, baskın raporu ve son raporun simülasyondan kurulması.</summary>
     public class DeskBridgeTests
     {
-        const string Root = "Assets/Corrigible/Desk";
+        const string ScenePath = "Assets/Corrigible/Desk/Scenes/DeskGame.unity";
 
-        static JObject MapSpec() => JObject.Parse(AssetDatabase.LoadAssetAtPath<TextAsset>(Root + "/Data/Mock/map.json").text);
+        static Simulation New() => Simulation.NewGame(731, new Balance { startFon = 100 });
 
-        static DeskViewModel Build(Simulation sim, DeskBridgeState st = null, int speed = 0) =>
-            new SimDeskBuilder().Build(new DeskBuildInput
-            {
-                Sim = sim, Speed = speed, DayProgress = 0.5f, SecondsPerDay = 0.9f, State = st ?? new DeskBridgeState(), MapSpec = MapSpec(),
-            });
+        static DeskViewModel Build(Simulation sim, DeskBridgeState st = null, bool raidScene = false) =>
+            new SimDeskBuilder().Build(sim, st ?? new DeskBridgeState(), raidScene);
 
-        static Simulation NewGame(uint seed = 7, bool teams = true) =>
-            Simulation.NewGame(null, "manipulator", seed, new Balance(), teams ? new ExpOptions() : null, new RuleOptions { Stage = 4, Events = true });
-
-        [Test]
-        public void SadeRaidAvailabilityMatchesCanonicalCheckAndShowsChanceWhenReady()
+        static void CaptureNext(Simulation sim)
         {
-            var sim=NewGame();sim.S.Region("weu").Detected=true;sim.S.Fon=100;sim.S.Sg=100;
-            Assert.That(sim.RaidCheck("weu"),Is.Null);
-            var vm=Build(sim,new DeskBridgeState {Selected="weu"});
-            Assert.That((bool)vm.Sade.Cards["weu"]["team"]["raidEnabled"],Is.True);
-            Assert.That(vm.Sade.Cards["weu"]["team"]["raidSuccess"].Type,Is.EqualTo(JTokenType.Integer));
-            Assert.That(((JArray)vm.Sade.Drawers["teams"]["teams"]["teams"]).All(t=>(string)t["action"]["kind"]=="raid"),Is.True);
-            sim.S.Sg=0;vm=Build(sim,new DeskBridgeState {Selected="weu"});
-            Assert.That((bool)vm.Sade.Cards["weu"]["team"]["raidEnabled"],Is.False);
+            string id = sim.NextLiberationSector(sim.S.Liberation.CurrentRegion).Id;
+            Assert.IsTrue(sim.StartLiberationRaid(id).Ok, id);
+            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true, Turns = 4 }).Ok, id);
+        }
+
+        static T[] All<T>(Scene scene) where T : Component => scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<T>(true)).ToArray();
+        static Object Ref(Object owner, string field) => new SerializedObject(owner).FindProperty(field).objectReferenceValue;
+
+        static void InScene(System.Action<Scene> check)
+        {
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
+            try { check(scene); }
+            finally { EditorSceneManager.CloseScene(scene, true); }
         }
 
         [Test]
-        public void RouteCurve_ReproducesDesignRoutes()
+        public void RaidReport_OpensOnceAfterTheRaidAndWaitsWhileTheRaidSceneIsOpen()
         {
-            // map.json routes[].build: kontrol orta noktadan yukarı normal × uzunluk × 0,10; uçlar 21 px kırpılmış
-            var spec = MapSpec();
-            var centers = spec["regions"].ToDictionary(r => (string)r["id"], r => new Vector2((float)r["center"][0], (float)r["center"][1]));
-            foreach (var r in spec["routes"])
-            {
-                var (p0, c, p1) = SimDeskBuilder.RouteCurve(centers[(string)r["from"]], centers[(string)r["to"]]);
-                var q = r["q"];
-                Assert.AreEqual((float)q[0][0], p0.x, 1.2f, (string)r["id"]); Assert.AreEqual((float)q[0][1], p0.y, 1.2f, (string)r["id"]);
-                Assert.AreEqual((float)q[1][0], c.x, 1.2f, (string)r["id"]); Assert.AreEqual((float)q[1][1], c.y, 1.2f, (string)r["id"]);
-                Assert.AreEqual((float)q[2][0], p1.x, 1.2f, (string)r["id"]); Assert.AreEqual((float)q[2][1], p1.y, 1.2f, (string)r["id"]);
-            }
-        }
-
-        [Test]
-        public void NewGame_BuildsWholeDesk()
-        {
-            var vm = Build(NewGame());
-            Assert.AreEqual("C1", vm.Screen);
-            Assert.AreEqual(5, vm.Gauges.Count);
-            Assert.AreEqual(12, vm.Map.Regions.Count);
-            Assert.AreEqual(GameData.Links.Count(l => !l.Wrap), vm.Map.Routes.Count);
-            Assert.AreEqual(2, vm.Map.EdgeRoutes.Count, "Pasifik bağlantısı iki kenar oku");
-            Assert.IsTrue(vm.Map.Regions.All(n => n.Trust == "unknown" && n.Value == null), "başlangıçta hiçbir şey bilinmiyor");
-            Assert.AreEqual(new Vector2(1138.5f, 524.1f), new Vector2(vm.Map.Regions.First(n => n.Id == "in").Center[0], vm.Map.Regions.First(n => n.Id == "in").Center[1]), "projeksiyon: Hindistan = tasarımdaki Güney Asya");
-            Assert.AreEqual(5, vm.Research.Branches.Count);
-            Assert.AreEqual(14, vm.Research.Branches.Sum(b => b.Projects.Count));
-            Assert.IsTrue(vm.Research.Branches.SelectMany(b => b.Projects).All(p => !p.CanPause), "henüz yürüyen Hizalama projesi yok");
-            Assert.AreEqual(Simulation.ResearchReserves.Length, vm.Research.EmergencyFund.Options.Count);
-            Assert.AreEqual(3, vm.Map.Teams.Count, "deneysel mod: üç ekip karargâhta");
-            Assert.IsNull(vm.Dossier);
-            Assert.IsNull(vm.Event);
-            Assert.IsNull(vm.GameOver);
-            Assert.AreEqual(0, vm.Clock.MinutesPerSecond, "duraklatılmışken saat durur");
-            Assert.AreEqual("12:00", vm.Clock.Time);
-        }
-
-        [Test]
-        public void SelectedRegion_OpensDossierWithRuleChecks()
-        {
-            var sim = NewGame();
-            var st = new DeskBridgeState { Selected = "cn" };
-            var vm = Build(sim, st);
-            var d = vm.Dossier;
-            Assert.IsNotNull(d);
-            Assert.AreEqual("cn", d.RegionId);
-            Assert.AreEqual(4, d.Actions.Count);
-            Assert.IsTrue(d.Actions[3].Danger);
-            // Bölgede ekip yok: izleme ve denetim kapalı, saha düğmesi en yakın ekibi gönderir
-            Assert.AreEqual("disabled", d.Actions[0].State);
-            Assert.IsNotNull(d.Field);
-            Assert.AreEqual("B", d.Field.Raid.Key);
-            StringAssert.StartsWith("MoveTeam:", d.Field.Raid.Command);
-            // Oyuncu göndereceği ekibi seçer: hazır her ekip için bir fiş (haritadaki harf · yol günü); en yakını mürekkep, B
-            Assert.AreEqual(sim.S.Teams.Count(Simulation.TeamReady), d.Field.Send.Count, "karargâhtaki üç hazır ekip");
-            Assert.IsTrue(d.Field.Send.All(c => c.Command.StartsWith("Team:Send:") && c.Command.EndsWith(":cn")), "komut ekibi ve bölgeyi taşır");
-            Assert.AreEqual(1, d.Field.Send.Count(c => c.Kind == "ink-small" && c.Key == "B"), "yalnız en yakını B ile");
-            Assert.AreEqual("Team:Send:" + sim.S.Teams[0].Id + ":cn", d.Field.Send.Single(c => c.Key == "B").Command, "eşit uzaklıkta kadro sırası");
-            CollectionAssert.AreEqual(sim.S.Teams.Select(t => t.Name.Substring(0, 1).ToUpperInvariant()), d.Field.Send.Select(c => c.Label.Substring(0, 1)));
-            Assert.IsTrue(vm.Map.Regions.Single(n => n.Id == "cn").Selected);
-            Assert.IsNotNull(vm.Map.Selection);
-        }
-
-        [Test]
-        public void ParseEffect_CoversWholeDeck()
-        {
-            var known = new HashSet<string> { "%65 ihtimalle çekirdeğin yeri ortaya çıkar", "karantina biter" };
-            foreach (var d in Simulation.AllDilemmas)
-                foreach (var c in d.Choices)
-                {
-                    var lines = SimDeskBuilder.ParseEffect(c.Effect, "Çin");
-                    foreach (var l in lines.Where(x => x.Text != null))
-                        Assert.IsTrue(known.Contains(l.Text), $"{d.Id}: ayrıştırılamayan parça «{l.Text}»");
-                }
-            var e = SimDeskBuilder.ParseEffect("−2 SG · bölgede bağımlılık −15, güven −10", "Çin");
-            Assert.AreEqual(3, e.Count);
-            Assert.AreEqual(("SG", -2f), (e[0].Metric, e[0].Value));
-            Assert.AreEqual(("bağımlılık", -15f, "Çin"), (e[1].Metric, e[1].Value, e[1].Region));
-            Assert.AreEqual(("güven", -10f, "Çin"), (e[2].Metric, e[2].Value, e[2].Region), "kapsam (bölgede) sonraki parçaya geçer");
-            Assert.IsTrue(e[1].Good, "bağımlılık düşüşü kazançtır");
-            Assert.IsFalse(e[2].Good);
-            var r = SimDeskBuilder.ParseEffect("araştırma 3 gün geriler", null);
-            Assert.AreEqual(-3f, r[0].Value);
-            Assert.IsEmpty(SimDeskBuilder.ParseEffect("hiçbir şey olmaz", null));
-        }
-
-        [Test]
-        public void Dilemma_RegionalAndGlobalCards()
-        {
-            var sim = NewGame();
-            sim.S.PendingEvent = new PendingDilemma { Id = "secim", Region = "weu", Day = sim.S.Day };
-            var vm = Build(sim);
-            Assert.AreEqual("C3", vm.Screen);
-            Assert.IsNotNull(vm.Event);
-            Assert.AreEqual(2, vm.Event.Options.Count);
-            Assert.AreEqual("weu", vm.Event.Spotlight.Region, "bölgeye bağlı kart: spot");
-            Assert.AreEqual(2, vm.Event.Footer.Hints.Last().Keys.Count, "alt şerit tuşları seçenek sayısı kadar");
-            Assert.IsTrue(vm.Event.Options[0].Costs.Any(l => l.Label.Contains("Siyasi")), "−5 SG bedel");
-
-            sim.S.PendingEvent = new PendingDilemma { Id = "bagis", Region = sim.S.Regions[0].Id, Day = sim.S.Day };
-            vm = Build(sim);
-            Assert.IsNull(vm.Event.Spotlight, "küresel kart: spot yok");
-            Assert.IsNull(vm.Event.String);
-        }
-
-        [Test]
-        public void Gift_UsesEventPaperWithThreeChoices()
-        {
-            var sim = NewGame();
-            sim.S.PendingGift = new PendingGift { Region = "af", Gift = GameData.Gifts[0] };
-            var vm = Build(sim);
-            Assert.AreEqual(3, vm.Event.Options.Count);
-            Assert.AreEqual(new[] { Simulation.GiftAccept, Simulation.GiftControlled, Simulation.GiftReject }, SimDeskBuilder.GiftChoices);
-            StringAssert.Contains("Yapılamaz", vm.Event.Options[1].Risk, "denetimli kabul Analog Yedekler ister");
-        }
-
-        [Test]
-        public void GameOver_FromPlayedGame()
-        {
-            var sim = NewGame(3, false);
-            for (int i = 0; i < 2000 && sim.S.Ending == null; i++)
-            {
-                if (sim.S.PendingGift != null) { sim.ResolveGift(Simulation.GiftReject); continue; }
-                if (sim.S.PendingEvent != null) { if (!sim.ResolveEvent(0).Ok) sim.ResolveEvent(1); continue; }
-                sim.Step();
-            }
-            Assert.IsNotNull(sim.S.Ending, "oyun bir sonla bitti");
+            var sim = New();
             var st = new DeskBridgeState();
-            var vm = Build(sim, st);
-            Assert.AreEqual("C4", vm.Screen);
-            var g = vm.GameOver;
-            Assert.IsNotNull(g);
-            Assert.AreEqual(4, g.Kpis.Count);
-            Assert.GreaterOrEqual(g.Chart.Plot.DayMax, sim.S.Day);
-            Assert.AreEqual(sim.S.Hist.Count > 0, g.Chart.Series.Real.Points.Count > 1);
-            Assert.LessOrEqual(g.Timeline.Cards.Count, 7);
-            Assert.AreEqual("result", g.Timeline.Cards.Last().Type, "son kart sonuç");
-            Assert.AreEqual(g.Timeline.Cards.Count, g.Chart.Events.Count, "grafikteki numaralar kartlarla aynı");
-            Assert.AreEqual(4, g.Endbar.Actions.Count);
-            foreach (var t in g.Chart.Tags) Assert.That(t.X, Is.InRange(108f, 1812f), t.Text);
-
-            st.Review = true;
-            vm = Build(sim, st);
-            Assert.IsNull(vm.GameOver, "günlükleri incele: rapor kapalı, masa gerçekle");
-            Assert.AreEqual("ShowReport", vm.Advisor.Actions[0].Command);
-            Assert.IsTrue(vm.Map.Regions.All(n => n.Trust == "verified"), "oyun sonunda harita gerçeği gösterir");
+            Assert.IsNull(Build(sim, st).Event, "baskın yokken rapor yok");
+            CaptureNext(sim);
+            Assert.IsNull(Build(sim, st, raidScene: true).Event, "taktik harita açıkken rapor bekler");
+            var report = Build(sim, st).Event;
+            Assert.IsNotNull(report);
+            Assert.AreEqual("Doc:Close", report.Doc.Buttons.Single().Command);
+            st.RaidLogSeen = sim.S.RaidLog.Count;
+            Assert.IsNull(Build(sim, st).Event, "okunan rapor yeniden açılmaz");
         }
 
         [Test]
-        public void Messages_NewestFirstAndExpire()
+        public void GameOver_AfterWholeCampaign_ReportsLiberationAndOffersRestart()
         {
-            var st = new DeskBridgeState();
-            st.Push("a", 10); st.Push("b", 11); st.Push("a", 12);
-            Assert.AreEqual(new[] { "a", "b" }, st.Messages.Select(m => m.Text).ToArray(), "en yeni önce, tekrar yok");
-            st.Expire(16);
-            Assert.AreEqual(new[] { "a" }, st.Messages.Select(m => m.Text).ToArray(), "4 günden eski düşer");
-        }
-
-        [Test]
-        public void EditPreview_UsesOpeningGameWithoutWriting()
-        {
-            // Edit mod önizlemesi oyun sahnesinde Play'deki açılış masasını kurar: aynı bölgeler (aynı yerler), pencere düzeni;
-            // tercihe, kayda ve profile yazmaz
-            var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root + "/Scenes/DeskGame.unity", UnityEditor.SceneManagement.OpenSceneMode.Additive);
-            string save = System.IO.Path.Combine(Application.persistentDataPath, "savegame.json");
-            var saveTime = System.IO.File.Exists(save) ? System.IO.File.GetLastWriteTimeUtc(save) : default;
-            string type = PlayerPrefs.GetString("corrigible.aiType", null);
-            try
+            var sim = New();
+            for (int i = 0; i < GameData.Regions.Length; i++)
             {
-                var src = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<SimDeskDataSource>(true)).Single();
-                Assert.IsInstanceOf<IDeskPreviewSource>(src);
-                var vm = src.BuildPreview(false);
-                CollectionAssert.AreEqual(GameData.Regions.Select(r => r.Id), vm.Map.Regions.Select(n => n.Id), "oyunun bölgeleri");
-                var expect = Build(NewGame()).Map.Regions;
-                for (int i = 0; i < expect.Count; i++)
-                    Assert.AreEqual(expect[i].Center, vm.Map.Regions[i].Center, "aynı projeksiyon: düğümler Play'deki yerde");
-                Assert.IsNull(vm.Intro, "masa kipi: giriş kâğıdı kapalı");
-                Assert.IsNull(vm.Dossier, "açılışta seçim yok: dosya kapalı");
-                Assert.IsNotNull(src.BuildPreview(true).Intro, "giriş kipi");
+                while (!sim.LiberationRegion(sim.S.Liberation.CurrentRegion).Completed) CaptureNext(sim);
+                if (i < GameData.Regions.Length - 1) Assert.IsTrue(sim.SelectLiberationRegion(sim.LiberationFrontier.First()).Ok);
             }
-            finally { UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene, true); }
-            Assert.AreEqual(type, PlayerPrefs.GetString("corrigible.aiType", null), "tercih yazılmadı");
-            if (saveTime != default) Assert.AreEqual(saveTime, System.IO.File.GetLastWriteTimeUtc(save), "kayıt yazılmadı");
+            Assert.AreEqual("silme", sim.S.Ending);
+
+            var vm = Build(sim);
+            Assert.IsNull(vm.Event, "son rapor açıkken baskın raporu açılmaz");
+            var over = vm.GameOver;
+            Assert.IsNotNull(over);
+            Assert.AreEqual(DeskText.Upper(GameData.Ending("silme").Title), over.Report.Title);
+            Assert.AreEqual(4, over.Kpis.Count);
+            Assert.AreEqual(GameData.Regions.Length.ToString(), over.Kpis[2].Value, "bütün bölgeler özgür");
+            CollectionAssert.AreEqual(new[] { 0f, 100f }, over.Chart.Series.Points[0], "harekât tam işgalle başlar");
+            Assert.AreEqual(0f, over.Chart.Series.Points.Last()[1], "ve işgalsiz biter");
+            Assert.AreEqual("result", over.Timeline.Cards.Last().Type);
+            Assert.AreEqual("Restart", over.Endbar.Actions.Single().Command);
         }
 
         [Test]
         public void DeskGameScene_IsWired()
         {
-            var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root + "/Scenes/DeskGame.unity", UnityEditor.SceneManagement.OpenSceneMode.Additive);
-            try
+            InScene(scene =>
             {
-                var roots = scene.GetRootGameObjects();
-                var pres = roots.SelectMany(g => g.GetComponentsInChildren<DeskPresenter>(true)).Single();
-                var so = new SerializedObject(pres);
-                Assert.IsInstanceOf<SimDeskDataSource>(so.FindProperty("dataSource").objectReferenceValue);
-                Assert.IsInstanceOf<SimDeskCommands>(so.FindProperty("commands").objectReferenceValue);
-                Assert.IsTrue(roots.Any(g => g.GetComponent<Corrigible.Game.GameController>() != null));
-                Assert.IsFalse(roots.SelectMany(g => g.GetComponentsInChildren<MockDeskDataSource>(true)).Any(), "oyun sahnesinde sahte kaynak yok");
-            }
-            finally { UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene, true); }
+                var presenter = All<DeskPresenter>(scene).Single();
+                Assert.IsInstanceOf<SimDeskDataSource>(Ref(presenter, "dataSource"));
+                Assert.IsInstanceOf<SimDeskCommands>(Ref(presenter, "commands"));
+                Assert.IsInstanceOf<BridgeSettings>(Ref(presenter, "settingsSource"));
+                foreach (string field in new[] { "eventModal", "gameOver", "settingsView" })
+                    Assert.IsNotNull(Ref(presenter, field), field);
+                var surface = Ref(presenter, "surface");
+                Assert.IsInstanceOf<LiberationDeskView>(surface, "masa sığınak odasına bağlı");
+                foreach (string field in new[] { "game", "source", "siginakRig", "desk", "launcher", "telex", "siginak", "siginakMap", "siginakBriefing" })
+                    Assert.IsNotNull(Ref(surface, field), field);
+                Assert.AreEqual(1, All<Corrigible.Game.GameController>(scene).Length);
+            });
         }
 
         [Test]
-        public void DeskGameScene_UsesManualShiftsAndRetainsTheInactiveLegacyClock()
+        public void DeskGameScene_UsesManualShifts()
         {
-            var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root + "/Scenes/DeskGame.unity", UnityEditor.SceneManagement.OpenSceneMode.Additive);
-            try
+            InScene(scene =>
             {
-                var roots = scene.GetRootGameObjects();
-                var interaction = roots.SelectMany(g => g.GetComponentsInChildren<SadeDeskInteraction>(true)).Single();
-                var hud = roots.SelectMany(g => g.GetComponentsInChildren<SadeDeskView>(true)).Single();
-                var clock = roots.SelectMany(g => g.GetComponentsInChildren<ClockPlaqueView>(true)).Single();
-                var wiring = new SerializedObject(interaction);
-                Assert.IsFalse(interaction.enabled, "Kurtuluş masasında eski hız/eylem dinleyicileri çalışmamalı.");
-                Assert.IsFalse(clock.gameObject.activeInHierarchy, "Eski hız arayüzü yeni vardiya arayüzünün arkasında etkin kalmamalı.");
-                var desk = roots.SelectMany(g => g.GetComponentsInChildren<SiginakDesk>(true)).Single();
-                Assert.IsNotNull(new SerializedObject(desk).FindProperty("shiftSwitch").objectReferenceValue, "vardiya şalterle biter");
-                Assert.AreSame(clock, wiring.FindProperty("clock").objectReferenceValue,
-                    "Hız tuşlarının SpeedClicked olayı oyun komutlarına bağlanmalı.");
-                Assert.AreSame(clock, new SerializedObject(hud).FindProperty("clock").objectReferenceValue,
-                    "Gösterilen saat ve komut alan saat aynı olmalı.");
-                Assert.AreEqual(4, clock.Speeds.Length);
-                Assert.IsTrue(clock.Speeds.All(b => b != null && b.interactable));
-                foreach (string field in new[] { "cover", "dock", "sea", "legendButton", "legendPaper", "legendTransform", "envelope" })
-                    Assert.IsNotNull(wiring.FindProperty(field).objectReferenceValue, field + ": masa etkileşim bağlantısı");
-                foreach (string field in new[] { "hudTargets", "alerts" })
-                {
-                    var targets = wiring.FindProperty(field);
-                    Assert.Greater(targets.arraySize, 0, field);
-                    for (int i = 0; i < targets.arraySize; i++)
-                        Assert.IsNotNull(targets.GetArrayElementAtIndex(i).objectReferenceValue, field + "[" + i + "]");
-                }
-                var hudWiring = new SerializedObject(hud);
-                Assert.AreSame(hudWiring.FindProperty("dock").objectReferenceValue, wiring.FindProperty("dock").objectReferenceValue);
-                foreach (string field in new[] { "legendLabel", "envelopeTitle", "envelopeHint" })
-                    Assert.IsNotNull(hudWiring.FindProperty(field).objectReferenceValue, field);
-                Assert.IsNull(wiring.FindProperty("source").objectReferenceValue,
-                    "Gerçek oyunda örnek veri kaynağı kullanılmamalı.");
-                Assert.IsEmpty(roots.SelectMany(g => g.GetComponentsInChildren<SadeDeskInput>(true)),
-                    "Klavye girdisini yalnız DeskInput yönetmeli.");
-            }
-            finally { UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene, true); }
+                var desk = All<SiginakDesk>(scene).Single();
+                Assert.IsNotNull(Ref(desk, "shiftSwitch"), "vardiya şalterle biter");
+            });
         }
 
         [Test]
         public void DeskGameScene_RetainedScreensRenderAboveTheStationControls()
         {
-            var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root + "/Scenes/DeskGame.unity", UnityEditor.SceneManagement.OpenSceneMode.Additive);
-            try
+            InScene(scene =>
             {
-                var roots = scene.GetRootGameObjects();
-                var presenter = roots.SelectMany(g => g.GetComponentsInChildren<DeskPresenter>(true)).Single();
-                foreach (var tint in roots.SelectMany(g => g.GetComponentsInChildren<ThemeTint>(true)))
+                foreach (var tint in All<ThemeTint>(scene))
                     if (!string.IsNullOrEmpty(tint.Key))
-                        Assert.IsTrue(DeskTheme.Active.TryGet(tint.Key, false, out _), tint.name + ": " + tint.Key);
+                        Assert.IsTrue(DeskTheme.Active.TryGet(tint.Key, out _), tint.name + ": " + tint.Key);
                 // Sığınak odasının ekran katmanı (kenar satırı, plaka, teleks şeridi, rapor, emir belgesi)
-                var contextCanvas = (Canvas)new SerializedObject(roots.SelectMany(g => g.GetComponentsInChildren<HoverTag>(true)).Single()).FindProperty("canvas").objectReferenceValue;
+                var contextCanvas = (Canvas)Ref(All<HoverTag>(scene).Single(), "canvas");
                 Assert.AreEqual(RenderMode.ScreenSpaceOverlay, contextCanvas.rootCanvas.renderMode);
-                var serialized = new SerializedObject(presenter);
-                foreach (string field in new[] { "intro", "campaign", "eventModal", "confirm", "fakeWin", "gameOver", "settingsView", "tutorial" })
+                var presenter = All<DeskPresenter>(scene).Single();
+                foreach (string field in new[] { "eventModal", "gameOver", "settingsView" })
                 {
-                    var view = serialized.FindProperty(field).objectReferenceValue as Component;
-                    Assert.IsNotNull(view, field);
-                    var canvas = view.GetComponentInParent<Canvas>(true);
+                    var canvas = ((Component)Ref(presenter, field)).GetComponentInParent<Canvas>(true);
                     Assert.IsNotNull(canvas, field);
-                    Assert.AreEqual(contextCanvas.rootCanvas.renderMode, canvas.rootCanvas.renderMode,
-                        field + ": kamera Canvas'ı overlay haritanın arkasında kalır.");
-                    Assert.Greater(canvas.sortingOrder, contextCanvas.sortingOrder,
-                        field + ": menü ve zorunlu kararlar masa panellerinin önünde olmalı.");
+                    Assert.AreEqual(RenderMode.ScreenSpaceOverlay, canvas.rootCanvas.renderMode, field + ": kamera Canvas'ı oda katmanının arkasında kalır.");
+                    Assert.Greater(canvas.sortingOrder, contextCanvas.sortingOrder, field + ": rapor ve ayarlar oda katmanının önünde olmalı.");
                 }
-            }
-            finally { UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene, true); }
-        }
-
-        [Test]
-        public void SadeDeskData_BuildsFromGameAndRespectsPerceptionBoundary()
-        {
-            var sim = NewGame();
-            sim.S.Region("cn").Inf = 68;
-            var st = new DeskBridgeState { Selected = "cn" };
-            var vm = Build(sim, st);
-
-            Assert.IsNotNull(vm.Sade);
-            CollectionAssert.AreEqual(GameData.Regions.Select(r => r.Id), vm.Sade.View.Map.Regions.Select(r => r.Id));
-            var cnNode = vm.Sade.View.Map.Regions.Single(r => r.Id == "cn");
-            Assert.IsNull(cnNode.Value, "İzlenmeyen bölgenin gerçek sızması Algı Katmanı dışına sızmamalı.");
-            Assert.AreEqual("unknown", cnNode.Trust);
-
-            sim.S.Day = 10;
-            sim.S.Region("cn").Monitored = true;
-            sim.S.Region("cn").Detected = true;
-            sim.S.Illusion = new IllusionState { Start = 1, Tek = 40, Trust = 75 };
-            sim.S.Region("cn").FakeLow = 12;
-            vm = Build(sim, st);
-            cnNode = vm.Sade.View.Map.Regions.Single(r => r.Id == "cn");
-            Assert.AreEqual(12, cnNode.Value, "İllüzyon sırasında yalnız sim.Shown(r) gösterilmeli.");
-
-            Assert.IsTrue(vm.Sade.Cards.ContainsKey("cn"));
-            Assert.AreEqual("cn", (string)vm.Sade.Cards["cn"]["regionId"]);
-            Assert.IsNotNull(vm.Sade.Dossiers["cn"]["finance"]);
-            Assert.IsNotNull(vm.Sade.Dossiers["cn"]["recovery"]);
-            Assert.AreEqual(5, ((JArray)vm.Sade.Drawers["research"]["research"]["branches"]).Count, "ModernEconomy açıkken 5 araştırma dalı.");
+            });
         }
 
         [Test]
         public void DeskGameScene_BriefingButtonsStayOutsideTheWorldInputLock()
         {
-            var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root + "/Scenes/DeskGame.unity", UnityEditor.SceneManagement.OpenSceneMode.Additive);
-            try
+            InScene(scene =>
             {
-                var roots = scene.GetRootGameObjects();
-                var view = roots.SelectMany(g => g.GetComponentsInChildren<BriefingView>(true)).Single();
-                var begin = (UnityEngine.UI.Button)new SerializedObject(view).FindProperty("action").objectReferenceValue;
+                var begin = (UnityEngine.UI.Button)Ref(All<BriefingView>(scene).Single(), "action");
                 var canvas = begin.GetComponentInParent<Canvas>(true).rootCanvas;
                 Assert.AreEqual(RenderMode.ScreenSpaceOverlay, canvas.renderMode, "emir belgesi Overlay: oda kilitliyken de fareyle ulaşılır");
                 Assert.IsTrue(canvas.GetComponent<UnityEngine.UI.GraphicRaycaster>().enabled);
                 Assert.IsTrue(begin.interactable);
                 Assert.IsTrue(begin.targetGraphic.raycastTarget);
-            }
-            finally { UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene, true); }
+            });
         }
 
         [Test]
         public void DeskGameScene_MissionSlipStaysOnMapAndOnlyRaidUsesMonitor()
         {
-            var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root + "/Scenes/DeskGame.unity", UnityEditor.SceneManagement.OpenSceneMode.Additive);
-            try
+            InScene(scene =>
             {
-                var roots = scene.GetRootGameObjects();
-                var slip = roots.SelectMany(g => g.GetComponentsInChildren<OperationSlip>(true)).Single();
-                var mount = roots.Single(g => g.name == "SiginakRoom").transform.Find("Desk/MapMount");
+                var slip = All<OperationSlip>(scene).Single();
+                var mount = scene.GetRootGameObjects().Single(g => g.name == "SiginakRoom").transform.Find("Desk/MapMount");
                 Assert.IsTrue(slip.transform.IsChildOf(mount), "görev fişi masadaki haritanın üstünde");
                 Assert.AreEqual(RenderMode.WorldSpace, slip.GetComponentInParent<Canvas>(true).renderMode);
-                var surface = roots.SelectMany(g => g.GetComponentsInChildren<LiberationDeskView>(true)).Single();
-                var launcher = (Corrigible.Game.Raid.RaidLauncher)new SerializedObject(surface).FindProperty("launcher").objectReferenceValue;
+                var launcher = All<Corrigible.Game.Raid.RaidLauncher>(scene).Single();
+                Assert.AreSame(launcher, Ref(All<LiberationDeskView>(scene).Single(), "launcher"));
+                Assert.IsTrue(new SerializedObject(launcher).FindProperty("enableMonitorTransition").boolValue);
                 Assert.AreEqual("CrtDive", launcher.MonitorFocusPose.name, "yalnız baskın CRT'ye yaklaşır");
-            }
-            finally { UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene, true); }
+            });
         }
 
         [Test]
-        public void DeskGameScene_UsesSadeHierarchyAndPolygonMappingA()
+        public void DeskGameScene_MapRegionsUsePolygonMappingA()
         {
-            var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(Root + "/Scenes/DeskGame.unity", UnityEditor.SceneManagement.OpenSceneMode.Additive);
-            try
+            InScene(scene =>
             {
-                var roots = scene.GetRootGameObjects();
-                var pres = roots.SelectMany(g => g.GetComponentsInChildren<DeskPresenter>(true)).Single();
-                var surface = new SerializedObject(pres).FindProperty("alternateSurface").objectReferenceValue;
-                Assert.IsInstanceOf<LiberationDeskView>(surface, "DeskGame üç fiziksel istasyona bağlı olmalı.");
-                Assert.IsNull(pres.Sade, "Harita tıklaması eski eylem kartlarını da açmamalı.");
-                var stationWiring = new SerializedObject(surface);
-                foreach (string field in new[] { "game", "source", "map", "siginakRig", "desk", "launcher", "telex", "siginak", "siginakMap", "siginakBriefing" })
-                    Assert.IsNotNull(stationWiring.FindProperty(field).objectReferenceValue, field);
-                var controller = roots.SelectMany(g => g.GetComponentsInChildren<Corrigible.Game.GameController>(true)).Single();
-                Assert.IsTrue(controller.LiberationCampaign);
-                var raidLauncher = roots.SelectMany(g => g.GetComponentsInChildren<Corrigible.Game.Raid.RaidLauncher>(true)).Single();
-                var raidWiring = new SerializedObject(raidLauncher);
-                Assert.IsTrue(raidWiring.FindProperty("enableMonitorTransition").boolValue);
-                Assert.IsNotNull(raidWiring.FindProperty("monitorFocusPose").objectReferenceValue);
-                var mapView = roots.SelectMany(g => g.GetComponentsInChildren<SadeMapView>(true)).Single();
-                CollectionAssert.AreEqual(GameData.Regions.Select(r => r.Id), mapView.Regions.Select(s => s.Id));
-                Assert.AreEqual(90, mapView.Regions.Single(s => s.Id == "na").Fill.PolygonCount, "na = KA (81) + OA (9)");
-                Assert.AreEqual(3, mapView.Regions.Single(s => s.Id == "cn").Fill.PolygonCount, "cn = DoA [0, 1, 7]");
-                Assert.AreEqual(5, mapView.Regions.Single(s => s.Id == "jk").Fill.PolygonCount, "jk = DoA [2, 3, 4, 5, 6]");
-                Assert.AreEqual(4, mapView.Reports.Length, "4 toplanabilir saha raporu fişi yuvası.");
-            }
-            finally { UnityEditor.SceneManagement.EditorSceneManager.CloseScene(scene, true); }
+                var map = All<SadeMapView>(scene).Single();
+                CollectionAssert.AreEqual(GameData.Regions.Select(r => r.Id), map.Regions.Select(s => s.Id));
+                Assert.AreEqual(90, map.Regions.Single(s => s.Id == "na").Fill.PolygonCount, "na = KA (81) + OA (9)");
+                Assert.AreEqual(3, map.Regions.Single(s => s.Id == "cn").Fill.PolygonCount, "cn = DoA [0, 1, 7]");
+                Assert.AreEqual(5, map.Regions.Single(s => s.Id == "jk").Fill.PolygonCount, "jk = DoA [2, 3, 4, 5, 6]");
+            });
         }
     }
 }

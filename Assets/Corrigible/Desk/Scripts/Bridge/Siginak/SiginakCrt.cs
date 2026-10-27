@@ -48,7 +48,7 @@ namespace Corrigible.Desk.Bridge
         void Refresh()
         {
             var sim = Sim;
-            if (sim?.LiberationOn != true) return;
+            if (sim == null) return;
             var d = CrtViewBuilder.Screen(sim, RaidLauncher.IsRaidLoaded);
             shown = d.State;
             screen.Bind(d);

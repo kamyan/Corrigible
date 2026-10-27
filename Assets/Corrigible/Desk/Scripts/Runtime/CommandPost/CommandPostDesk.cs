@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Masa kamerasının girdi kapısı: açık bir ekran (giriş, ayarlar, olay, onay, oyun sonu…) ya da sunumun kilidi
+    /// Masa kamerasının girdi kapısı: açık bir ekran (ayarlar, baskın raporu, oyun sonu) ya da sunumun kilidi
     /// (<see cref="ExternalBlocked"/>: hikâye, baskına yaklaşma) varken kamera girdisi kapalıdır; tekerlek ve sağ tuş Overlay
     /// bir yüzeyin üstündeyse kameraya gitmez. Sığınak kamerası (<see cref="SiginakCameraRig"/>) okur.
     /// </summary>
@@ -22,14 +22,9 @@ namespace Corrigible.Desk
         public bool ExternalBlocked { get; set; }
         public bool InteractionBlocked => ExternalBlocked || !isActiveAndEnabled || view == null || !view.enabled ||
             presenter == null || presenter.Commands == null ||
-            (IntroView.Instance != null && IntroView.Instance.IsOpen) ||
-            (CampaignView.Instance != null && CampaignView.Instance.IsOpen) ||
             (SettingsView.Instance != null && SettingsView.Instance.IsOpen) ||
-            (FakeWinView.Instance != null && FakeWinView.Instance.IsOpen) ||
             (GameOverView.Instance != null && GameOverView.Instance.IsOpen) ||
-            (EventModalView.Instance != null && EventModalView.Instance.IsOpen) ||
-            (ConfirmModalView.Instance != null && ConfirmModalView.Instance.IsOpen) ||
-            (presenter.Sade != null && presenter.Sade.State.Pause);
+            (EventModalView.Instance != null && EventModalView.Instance.IsOpen);
 
         /// <summary>İmleç ekranda en üstteki tıklanabilir yüzey olarak bir Overlay canvas'ın üstünde mi.</summary>
         public bool PointerOverOverlay

@@ -1,27 +1,17 @@
 using System.Linq;
 using Corrigible.Core;
 using Corrigible.Desk.Bridge;
-using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using UnityEditor;
 using UnityEngine;
 
 namespace Corrigible.Desk.Tests
 {
-    /// <summary>Yeni harekât raporu gerçek görev/ödül kaydını kullanır; eski baskın raporu korunur.</summary>
+    /// <summary>Baskın raporu gerçek görev/ödül kaydını kullanır; kayıttan devamda aynı raporu kurar.</summary>
     public class LiberationReportTests
     {
-        static Simulation New() => Simulation.NewGame(null, "manipulator", 731, new Balance { startFon = 100 },
-            rules: new RuleOptions { LiberationCampaign = true });
+        static Simulation New() => Simulation.NewGame(731, new Balance { startFon = 100 });
 
-        static EventVM Build(Simulation sim)
-        {
-            var map = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Corrigible/Desk/Data/Mock/map.json");
-            return new SimDeskBuilder().Build(new DeskBuildInput
-            {
-                Sim = sim, State = new DeskBridgeState(), MapSpec = JObject.Parse(map.text),
-            }).Event;
-        }
+        static EventVM Build(Simulation sim) => new SimDeskBuilder().Build(sim, new DeskBridgeState(), false).Event;
 
         static void Finish(Simulation sim, string sector, RaidResult result = null)
         {
@@ -109,18 +99,6 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(original.Memo.Title, replayed.Memo.Title);
             CollectionAssert.AreEqual(original.Doc.Lines.Select(r => r.Value), replayed.Doc.Lines.Select(r => r.Value));
             Assert.AreEqual(original.Doc.Risk, replayed.Doc.Risk);
-        }
-
-        [Test]
-        public void LegacyReport_StillShowsOriginalRaidEffects()
-        {
-            var sim = Simulation.NewGame(null, "manipulator", 731);
-            sim.S.RaidLog.Add(new RaidLogEntry { Day = 0, Region = "weu", Success = true, Down = 1 });
-            var report = Build(sim);
-            Assert.AreEqual(DeskText.Upper(Loc.T("Dolap kırıldı")), report.Memo.Title);
-            Assert.AreEqual("−40", report.Doc.Lines[0].Value);
-            Assert.IsTrue(report.Doc.Lines.Any(r => r.Label == Loc.T("Yama (büyüme yarıya iner)")));
-            Assert.AreEqual(Loc.F("{0} gün", 4), report.Doc.Lines.Last().Value);
         }
     }
 }

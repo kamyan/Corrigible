@@ -6,8 +6,8 @@ using UnityEngine.EventSystems;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Hazır earcut üçgenlerinden bölge dolgusu. Halka başlangıçları ve düz köşeler serileştirilir; sahne yeniden
-    /// yüklendiğinde JSON'u ya da editör kurucusunu gerektirmez. Doku UV'si tüm bölgelerde aynı tasarım fazındadır.
+    /// Hazır earcut üçgenlerinden bölge dolgusu. Halka başlangıçları, düz köşeler ve üçgenler sahnede serileştirilir.
+    /// Doku UV'si tüm bölgelerde aynı tasarım fazındadır.
     /// </summary>
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class RegionMeshGraphic : MaskableGraphic, ICanvasRaycastFilter, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
@@ -28,7 +28,6 @@ namespace Corrigible.Desk
         [Tooltip("Desenin tasarım pikseli cinsinden tekrar aralığı; 0 = düz renk.")]
         [SerializeField] float tileSize;
 
-        SadeMapRegion source;
         public string RegionId => regionId;
         public int PolygonCount => polygons.Length;
         public event Action<string> Clicked;
@@ -43,48 +42,6 @@ namespace Corrigible.Desk
 
         public void OnPointerEnter(PointerEventData e) => Hovered?.Invoke(regionId, true);
         public void OnPointerExit(PointerEventData e) => Hovered?.Invoke(regionId, false);
-
-        /// <summary>En büyük çokgenin dış halkası (tasarım pikseli, y aşağı); kontur çizgisi için.</summary>
-        public Vector2[] LargestOuterRing()
-        {
-            Polygon best = null;
-            float bestArea = -1;
-            foreach (var polygon in polygons)
-            {
-                if (polygon == null || polygon.RingOffsets.Length < 2) continue;
-                float area = (polygon.Bounds.z - polygon.Bounds.x) * (polygon.Bounds.w - polygon.Bounds.y);
-                if (area > bestArea) { bestArea = area; best = polygon; }
-            }
-            if (best == null) return Array.Empty<Vector2>();
-            int start = best.RingOffsets[0], end = best.RingOffsets[1];
-            var ring = new Vector2[end - start];
-            Array.Copy(best.Vertices, start, ring, 0, ring.Length);
-            return ring;
-        }
-
-        /// <summary>Aynı geometriyi başka bir grafiğe kopyalar (kurucu: tarama ve seçim katmanları aynı çokgeni çizer).</summary>
-        public void CopyGeometryFrom(RegionMeshGraphic other)
-        {
-            if (other == null) return;
-            regionId = other.regionId;
-            polygons = other.polygons;
-            SetVerticesDirty();
-        }
-
-        /// <summary>Yalnız geometri değişince hazırlar; oluşan düz diziler sahne/prefab içinde kalıcıdır.</summary>
-        public void Configure(SadeMapRegion geometry, Texture fillTexture = null, float tileSize = 0)
-        {
-            if (!ReferenceEquals(source, geometry))
-            {
-                source = geometry;
-                regionId = geometry?.Id;
-                var input = geometry?.Polygons ?? Array.Empty<SadeMapPolygon>();
-                polygons = new Polygon[input.Length];
-                for (int p = 0; p < input.Length; p++) polygons[p] = Prepare(input[p]);
-                SetVerticesDirty();
-            }
-            SetAppearance(color, fillTexture, tileSize);
-        }
 
         /// <summary>VM'den gelen rengi/dokuyu uygular; aynı değerle tekrar bağlama mesh'i kirletmez.</summary>
         public void SetAppearance(Color fill, Texture fillTexture = null, float tileDesignPx = 0)
@@ -171,37 +128,6 @@ namespace Corrigible.Desk
             if (Mathf.Abs(cross) > 0.0001f * Mathf.Sqrt(length)) return false;
             float dot = Vector2.Dot(delta, edge);
             return dot >= -0.0001f && dot <= length + 0.0001f;
-        }
-
-        static Polygon Prepare(SadeMapPolygon input)
-        {
-            var rings = input?.Rings ?? Array.Empty<float[][]>();
-            int count = 0;
-            foreach (var ring in rings) count += ring?.Length ?? 0;
-            var result = new Polygon
-            {
-                Vertices = new Vector2[count],
-                RingOffsets = new int[rings.Length + 1],
-                Triangles = input?.Triangles != null ? (int[])input.Triangles.Clone() : Array.Empty<int>(),
-                Bounds = new Vector4(float.MaxValue, float.MaxValue, float.MinValue, float.MinValue)
-            };
-            int index = 0;
-            for (int r = 0; r < rings.Length; r++)
-            {
-                result.RingOffsets[r] = index;
-                foreach (var point in rings[r] ?? Array.Empty<float[]>())
-                {
-                    if (point == null || point.Length < 2) throw new ArgumentException("Harita köşesi iki koordinat taşımalıdır.");
-                    var vertex = new Vector2(point[0], point[1]);
-                    result.Vertices[index++] = vertex;
-                    result.Bounds = new Vector4(Mathf.Min(result.Bounds.x, vertex.x), Mathf.Min(result.Bounds.y, vertex.y),
-                        Mathf.Max(result.Bounds.z, vertex.x), Mathf.Max(result.Bounds.w, vertex.y));
-                }
-            }
-            result.RingOffsets[rings.Length] = index;
-            foreach (int triangle in result.Triangles)
-                if (triangle < 0 || triangle >= count) throw new ArgumentException("Harita üçgen indisi köşe dizisinin dışında.");
-            return result;
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Corrigible.Tests
         [TearDown]
         public void RestoreTurkish() => Loc.SetLanguage(Loc.Turkish);
 
-        /// <summary>Koddaki, eğitimdeki, prefab ve sahnedeki her kaynak metnin çevirisi var; yer tutucular ve etiketler uyuşuyor.</summary>
+        /// <summary>Koddaki, prefab ve sahnedeki her kaynak metnin çevirisi var; yer tutucular ve etiketler uyuşuyor.</summary>
         [Test]
         public void Table_CoversAllSources()
         {
@@ -27,13 +27,12 @@ namespace Corrigible.Tests
         }
 
         /// <summary>
-        /// İngilizce oynanan oyunlarda (temel, deneysel + baskın) üretilen hiçbir metin tabloda eksik değil ve Türkçe harf
-        /// içermiyor. Kodda Loc'a uğramadan birleştirilen bir metni ya da çevrilmeden gösterilen bir adı yakalar.
+        /// İngilizce oynanan harekâtlarda (sektör baskınları, cephe seçimi, sığınak komutları) üretilen hiçbir metin tabloda eksik
+        /// değil ve Türkçe harf içermiyor. Kodda Loc'a uğramadan birleştirilen bir metni ya da çevrilmeden gösterilen bir adı yakalar.
         /// </summary>
-        [TestCase("manipulator", 41u, false)]
-        [TestCase("kahin", 42u, true)]
-        [TestCase("solucan", 43u, true)]
-        public void EnglishGame_ProducesNoTurkishText(string type, uint seed, bool exp)
+        [TestCase(41u)]
+        [TestCase(42u)]
+        public void EnglishGame_ProducesNoTurkishText(uint seed)
         {
             var missing = new HashSet<string>();
             void OnMissing(string s) => missing.Add(s);
@@ -42,29 +41,13 @@ namespace Corrigible.Tests
             {
                 Loc.SetLanguage(Loc.English, Loc.ParseTable(File.ReadAllText(LocalizationTool.TableFile))[Loc.English]);
                 var texts = new List<string>();
-                var sim0Moments = new List<string>();
-                var profile = new PlayerProfile();
-                for (int game = 0; game < 2; game++)
-                {
-                    var sim = PlayRandom(type, seed + (uint)game * 100, exp, profile, texts);
-                    texts.AddRange(Profiling.LearnedLines(sim.S));
-                    sim0Moments.AddRange(sim.S.Moments.Select(m => m.Text));
-                    profile = Profiling.UpdateProfile(profile, sim.S);
-                }
-                texts.AddRange(Profiling.ComputeCounters(profile, type).Lines);
-                foreach (var r in GameData.Regions) texts.AddRange(new[] { r.Name, r.LatLon });
-                foreach (var t in GameData.Traits) texts.AddRange(new[] { t.Name, t.Desc, t.Line });
-                foreach (var t in GameData.AiTypes) texts.AddRange(new[] { t.Name, t.Difficulty, t.Blurb });
-                foreach (var r in GameData.Research) texts.AddRange(new[] { r.Name, r.Desc, r.Unlock, Loc.T(r.Branch) });
+                var sim = PlayRandom(seed, texts);
+                texts.AddRange(sim.S.Moments.Select(m => m.Text));
+                foreach (var r in GameData.Regions) texts.Add(r.Name);
                 foreach (var e in GameData.Endings) texts.AddRange(new[] { e.Title, e.Text });
-                foreach (var g in GameData.Gifts) texts.AddRange(new[] { g.Title, g.Text });
-                foreach (var a in GameData.Agencies.Concat(GameData.FakeAgencies)) texts.Add(Loc.T(a));
-                foreach (var d in Simulation.AllDilemmas)
-                {
-                    texts.Add(Loc.F(d.Title, "X")); texts.Add(Loc.F(d.Body, "X"));
-                    foreach (var c in d.Choices) { texts.Add(Loc.T(c.Label)); texts.Add(Loc.T(c.Effect)); }
-                }
-                texts.AddRange(sim0Moments);
+                foreach (var r in sim.S.Liberation.Regions) texts.AddRange(r.Sectors.Select(x => x.Name));
+                foreach (var room in sim.Shelter.Rooms) texts.AddRange(new[] { ShelterLogic.RoomName(room.Id), ShelterLogic.RoomDescription(room.Id) });
+                texts.AddRange(sim.S.Teams.Select(t => t.Name));
 
                 Assert.IsEmpty(missing, "Tabloda olmayan metinler:\n" + string.Join("\n", missing.Take(20)));
                 var turkish = texts.Where(t => t != null && (TurkishLetters.IsMatch(t) || TurkishWords.IsMatch(t))).Distinct().ToList();
@@ -74,59 +57,58 @@ namespace Corrigible.Tests
             finally { Loc.Missing -= OnMissing; }
         }
 
-        /// <summary>Dil yalnızca metni değiştirir: aynı tohum ve komutlarla iki dilde aynı oyun oynanır.</summary>
+        /// <summary>Dil yalnızca metni değiştirir: aynı tohum ve komutlarla iki dilde aynı harekât oynanır.</summary>
         [Test]
         public void Language_DoesNotChangeTheGame()
         {
             string Play()
             {
-                var sim = PlayRandom("manipulator", 77, true, null, new List<string>());
-                return $"{sim.S.Ending}@{sim.S.Day} fon={sim.S.Fon:R} rng={sim.S.Rng.State} raids={sim.S.Raids}";
+                var sim = PlayRandom(77, new List<string>());
+                return $"{sim.S.Ending}@{sim.S.Day} fon={sim.S.Fon:R} rng={sim.S.Rng.State} raids={sim.S.Raids} occ={sim.Occupation:R}";
             }
             string tr = Play();
             Loc.SetLanguage(Loc.English, Loc.ParseTable(File.ReadAllText(LocalizationTool.TableFile))[Loc.English]);
             Assert.AreEqual(tr, Play());
         }
 
-        /// <summary>Rastgele bir oyuncu: her eylemi dener (başarısız olanların mesajları da toplanır), baskınları taktik motorda oynar.</summary>
-        static Simulation PlayRandom(string type, uint seed, bool exp, PlayerProfile profile, List<string> texts)
+        /// <summary>
+        /// Rastgele bir oyuncu: sığınağı geliştirir ve personel atar (başarısız olanların mesajları da toplanır), sıradaki sektöre
+        /// baskın yapıp taktik motorda oynar, bölge bitince sınırdan yeni cephe seçer, vardiyayı bitirir.
+        /// </summary>
+        static Simulation PlayRandom(uint seed, List<string> texts)
         {
-            var sim = Simulation.NewGame(profile, type, seed, null, exp ? new ExpOptions { TimeScale = 1.5 } : null, exp ? new RuleOptions { Stage = 4, Events = true } : null);
+            var sim = Simulation.NewGame(seed);
             var s = sim.S;
             var rng = new Rng(seed * 7 + 3);
-            string[] ids = GameData.Regions.Select(r => r.Id).ToArray();
+            string[] rooms = { ShelterLogic.Living, ShelterLogic.Generator, ShelterLogic.Workshop, ShelterLogic.Infirmary };
             void Res(ActResult r) => texts.Add(r.Msg);
-            while (s.Ending == null && s.Day < 400)
+            while (s.Ending == null && s.Day < 300)
             {
-                if (s.PendingEvent != null) { int n = Simulation.Dilemma(s.PendingEvent.Id).Choices.Length; var er = sim.ResolveEvent((int)(rng.Next() * n)); if (!er.Ok) er = sim.ResolveEvent(n - 1); Res(er); }
-                if (s.PendingGift != null) Res(sim.ResolveGift(rng.Pick(new[] { Simulation.GiftAccept, Simulation.GiftReject, Simulation.GiftControlled })));
-                if (rng.Next() < 0.3) Res(sim.Act(rng.Pick(Actions.All), rng.Pick(ids)));
-                if (rng.Next() < 0.05 && s.News.Count > 0) Res(sim.Verify(s.News[0].Id));
-                if (s.Research.Cur == null && rng.Next() < 0.2) Res(sim.StartResearch(rng.Pick(GameData.Research).Id));
-                if (exp)
+                string room = rng.Pick(rooms);
+                texts.Add(sim.ShelterUpgradeCheck(room));
+                if (rng.Next() < 0.3) Res(sim.ShelterUpgrade(room));
+                if (rng.Next() < 0.3) Res(sim.ShelterAssign(room, (int)(rng.Next() * 4)));
+                var area = sim.LiberationRegion(s.Liberation.CurrentRegion);
+                if (area.Completed)
                 {
-                    if (rng.Next() < 0.15) Res(sim.MoveTeam(rng.Pick(Simulation.TeamNames).ToLowerInvariant(), rng.Pick(ids)));
-                    if (rng.Next() < 0.02) Res(sim.HireTeam());
-                    foreach (var r in s.Regions)
+                    var next = sim.LiberationFrontier.FirstOrDefault();
+                    if (next != null) Res(sim.SelectLiberationRegion(next));
+                }
+                var sector = sim.NextLiberationSector(s.Liberation.CurrentRegion);
+                if (sector != null)
+                {
+                    texts.Add(sim.LiberationRaidCheck(sector.Id));
+                    if (sim.LiberationRaidCheck(sector.Id) == null)
                     {
-                        texts.Add(sim.RaidCheck(r.Id));
-                        if (sim.RaidCheck(r.Id) != null || rng.Next() < 0.5) continue;
-                        Res(sim.StartRaid(r.Id));
+                        Res(sim.StartLiberationRaid(sector.Id));
                         Res(sim.ResolveRaid(PlayRaid(s.Raid, rng, texts)));
-                        break;
                     }
                 }
                 sim.Step();
-                foreach (var e in s.Events) { texts.Add(e.Text); texts.Add(e.Headline?.Text); }
                 s.Events.Clear();
-                if (s.Advisor != null) texts.Add(s.Advisor.Text);
             }
-            texts.AddRange(s.News.Select(n => n.Text));
-            texts.AddRange(s.Log.Select(l => l.Text));
-            if (s.Day > 3) Res(sim.GlobalKillSwitch());
             return sim;
         }
-
         static RaidResult PlayRaid(RaidState raid, Rng rng, List<string> texts)
         {
             var B = Baskin.Create(raid.Params);

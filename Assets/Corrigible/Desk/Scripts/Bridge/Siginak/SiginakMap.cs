@@ -68,7 +68,7 @@ namespace Corrigible.Desk.Bridge
             drag.Clicked += FigureClicked;
             drag.Over += layer.SetHovered;
             figureTarget.Hovered += FigureHovered;
-            sadeMap.SetLiberationStyle(true, SiginakTheme.Active.ColorOf("mapLiberation.land"));
+            sadeMap.SetLand(SiginakTheme.Active.ColorOf("mapLiberation.land"));
             Refresh();
         }
 
@@ -88,7 +88,6 @@ namespace Corrigible.Desk.Bridge
             drag.Clicked -= FigureClicked;
             drag.Over -= layer.SetHovered;
             figureTarget.Hovered -= FigureHovered;
-            if (sadeMap != null) sadeMap.SetLiberationStyle(false, default);
         }
 
         /// <summary>Yeni oyun / kayıttan devam: fişler kapanır, figür yerine konur, özgürleşme dizisi yeniden hazırlanır.</summary>
@@ -107,7 +106,7 @@ namespace Corrigible.Desk.Bridge
         void Refresh()
         {
             var sim = Sim;
-            if (sim?.LiberationOn != true) return;
+            if (sim == null) return;
             // K3: yeni özgürleşen bölge (yükleme ve yeni oyunda dizi yok)
             var free = sim.S.Liberation.Regions.Where(r => r.Completed).Select(r => r.Id).ToList();
             if (primed) foreach (var id in free) if (!knownFree.Contains(id)) revealQueued = id;
@@ -133,7 +132,7 @@ namespace Corrigible.Desk.Bridge
 
         void Update()
         {
-            if (Sim?.LiberationOn != true) return;
+            if (Sim == null) return;
             // K3 dizisi kilit (baskın sahnesi, operasyon raporu modalı) kalktıktan kısa süre sonra başlar; rapor henüz
             // açılmadıysa onu da bekler (modal bir sonraki bağlamada gelir)
             if (Locked || RaidLauncher.IsRaidLoaded || surface.RaidReportPending) unlockedSince = -1;

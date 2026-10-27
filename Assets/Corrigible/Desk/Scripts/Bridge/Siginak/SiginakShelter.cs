@@ -88,7 +88,7 @@ namespace Corrigible.Desk.Bridge
         void Refresh(bool animate)
         {
             var sim = Sim;
-            if (sim?.LiberationOn != true || sim.Shelter == null) return;
+            if (sim == null) return;
             var data = ShelterViewBuilder.Rooms(sim, selected);
             // ± PERS. hareketi: piyon tepsiden yuvaya ya da yuvadan tepsiye zıplar (bağlamadan önceki konumlar)
             Vector3 fromTray = tray.LastPawnWorld();

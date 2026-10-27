@@ -8,7 +8,7 @@ namespace Corrigible.Desk.Bridge
 {
     /// <summary>
     /// Kayda girmeyen sunum durumu için yan dosya (IMPLEMENTATION_MAP › Soru 4/b): <c>liberation_desk.json</c>, kaydın
-    /// yanında. Kayıt biçimi değişmez; dosya kayıttaki tohum ve rakiple eşleşmezse yok sayılır. Teleks satırları ve
+    /// yanında. Kayıt biçimi değişmez; dosya kayıttaki tohumla eşleşmezse yok sayılır. Teleks satırları ve
     /// EVRAK tepsisindeki son 5 vardiya raporunun girdisi (metin değil: dil değişince yeniden kurulur).
     /// </summary>
     public static class SiginakDeskStore
@@ -17,7 +17,6 @@ namespace Corrigible.Desk.Bridge
         sealed class Notes
         {
             public uint seed;
-            public string type;
             public List<TelexLine> telex = new List<TelexLine>();
             public List<ShiftReportInput> reports = new List<ShiftReportInput>();
             /// <summary>Kamera pozu (KAYITTAN DEVAM bu poza döner).</summary>
@@ -30,7 +29,7 @@ namespace Corrigible.Desk.Bridge
         public static void Save(GameRecord record, IReadOnlyList<TelexLine> telex, IReadOnlyList<ShiftReportInput> reports, string pose = null)
         {
             if (record == null) return;
-            var notes = new Notes { seed = record.seed, type = record.type, pose = pose };
+            var notes = new Notes { seed = record.seed, pose = pose };
             if (telex != null) notes.telex.AddRange(telex);
             if (reports != null) notes.reports.AddRange(reports);
             try { File.WriteAllText(FilePath, JsonUtility.ToJson(notes)); }
@@ -53,7 +52,7 @@ namespace Corrigible.Desk.Bridge
             {
                 if (!File.Exists(FilePath)) return null;
                 var notes = JsonUtility.FromJson<Notes>(File.ReadAllText(FilePath));
-                return notes != null && notes.seed == record.seed && notes.type == record.type ? notes : null;
+                return notes != null && notes.seed == record.seed ? notes : null;
             }
             catch (Exception e)
             {

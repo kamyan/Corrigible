@@ -33,7 +33,7 @@ namespace Corrigible.Desk.EditorTools
         /// <summary>Yeni oyundan V.014: üç baskınla Batı Avrupa, cephe Doğu Avrupa, 01 geri alındı; gün 13 (vardiya 014).</summary>
         public static void ApplyV014(Simulation sim)
         {
-            if (!sim.LiberationOn || sim.S.Day != 0) throw new InvalidOperationException("Fikstür yeni bir kurtuluş oyunu ister (gün 0).");
+            if (sim.S.Day != 0) throw new InvalidOperationException("Fikstür yeni bir harekât ister (gün 0).");
             Raid(sim, "weu_1");
             StepTo(sim, 3);
             Raid(sim, "weu_2");
@@ -92,7 +92,7 @@ namespace Corrigible.Desk.EditorTools
             if (!Application.isPlaying) return "Play gerekli";
             var game = Game;
             var sim = game != null ? game.Sim : null;
-            if (sim?.LiberationOn != true) return "Kurtuluş oyunu yok";
+            if (sim == null) return "Kurtuluş oyunu yok";
             bool loaded = false;
             switch (name)
             {

@@ -379,6 +379,19 @@ Açık farklar (sahibi olan aşama):
 
 ## CHANGELOG
 
+- **2026-10-27 · Proje sadeleşti: yalnız DeskGame ve Baskin** (ayrıntı `Docs/DURUM.md`):
+  - Eski kriz oyunu, analist masasının kriz ekranları, Sade/Fx/AYNA denemeleri, sandbox ve galeri sahneleri, tarayıcı
+    prototipi silindi. Oda ve kurtuluş kuralları değişmedi; kayıt biçimi 4 (eski kayıtlar yüklenmez).
+  - **Sahne:** `SadeMapCanvas` altından sızma kipinin katmanları (`MapOverlay`: iplikler, dalgalar, rotalar;
+    `MapMarkers`: düğüm, ekip, saha raporu, bölge adı katmanı), `MapRoot/QuarantineOutlines`, `RegionFills` altındaki 12
+    karantina nesnesi, kapalı `DeskLamp` ve eksik script'ler silindi; `RaidLauncher.hideDuringRaid`'den düşen öğe çıktı.
+    `DeskUI` yalnız `Modal` (EventModal, GameOver, SettingsCard) taşır. Punto taramasının `SadeMapCanvas/MapMarkers/`
+    istisnası kaldırıldı.
+  - **Kod:** `SadeMapView` yalnız bölge dolgularını, `WorldScale`, `RegionWorld`, `MapToWorld` ve `SetLand`'i taşır;
+    `RegionMeshGraphic` sahnede serileştirilmiş çokgenleri çizer (JSON'dan kurma yolu silindi). `DeskPresenter.surface`
+    (eski `alternateSurface`) odanın `IDeskSurface`'idir.
+  - Testler: `DeskBridgeTests` sahne bağlantılarını ve köprünün raporlarını denetler. Tam EditMode **127/127**.
+
 - **2026-10-26/27 · Maketin sarı çerçevesi kaldırıldı, hedef kutuları modele oturtuldu:**
   - **Sorun:** kesit maketinin üzerine gelince çıkan sarı çerçeve maketin çok dışına (ekran kenarı, sayaç rafı, teleks)
     taşıyordu. Çerçeve ~150 parçanın dünya eksenli sınır kutularından hesaplanıyordu; 35° dönük rafta kutu derinliği de

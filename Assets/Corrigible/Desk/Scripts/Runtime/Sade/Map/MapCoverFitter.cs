@@ -4,8 +4,8 @@ using UnityEngine;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Haritanın tasarım dikdörtgenini ekranı kaplayacak kadar büyütür. Düğümler ve yazılar ayrı, ölçeklenmeyen
-    /// MapMarkers katmanında kalır; sahibi Changed sonrasında ToCanvas ile yalnız konumlarını yeniler.
+    /// Haritanın tasarım dikdörtgenini kâğıdı kaplayacak kadar büyütür; harita üstündeki işaretler Changed sonrasında
+    /// ToCanvas ile yalnız konumlarını yeniler.
     /// </summary>
     [ExecuteAlways]
     public sealed class MapCoverFitter : MonoBehaviour

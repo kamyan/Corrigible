@@ -103,18 +103,6 @@ namespace Corrigible.Desk.EditorTools
             foreach (var x in ExtraColors) sink.colors[x.key] = Hex(x.hex, x.alpha);
             foreach (var x in ExtraShadows) sink.shadows[x.key] = new List<SadeTheme.ShadowLayer> { new SadeTheme.ShadowLayer { offset = new Vector2(x.x, x.y), color = Hex(x.hex, x.alpha) } };
 
-            // Sızma rampası ve rampa üstündeki yazı rengi
-            var ramp = new List<SadeTheme.RampStep>();
-            if (root["colors"]?["infiltrationRamp"] is JArray r)
-                foreach (var s in r) ramp.Add(new SadeTheme.RampStep { from = (float)s["from"], fill = Hex((string)s["hex"], 1) });
-            theme.infiltrationRamp = ramp.ToArray();
-            if (root["colors"]?["infiltrationText"] is JObject it)
-            {
-                theme.rampTextLight = Hex((string)it["light"], 1);
-                theme.rampTextDark = Hex((string)it["dark"], 1);
-                theme.rampTextDarkFrom = (float)(it["darkFrom"] ?? 40);
-            }
-
             Fill(theme, sink);
             theme.type = types;
             theme.shadows = new List<SadeTheme.NamedShadow>();

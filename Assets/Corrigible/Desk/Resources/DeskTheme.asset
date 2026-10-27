@@ -279,44 +279,6 @@ MonoBehaviour:
     color: {r: 0, g: 0, b: 0, a: 1}
   - key: white
     color: {r: 1, g: 1, b: 1, a: 1}
-  illusionOverrides:
-  - key: paper.page
-    color: {r: 0.9647059, g: 0.94509804, b: 0.8901961, a: 1}
-  - key: paper.pageEdge
-    color: {r: 0.827451, g: 0.78039217, b: 0.6627451, a: 1}
-  - key: paper.manila
-    color: {r: 0.8627451, g: 0.76862746, b: 0.56078434, a: 1}
-  - key: paper.manilaEdge
-    color: {r: 0.7411765, g: 0.6313726, b: 0.4, a: 1}
-  - key: paper.index
-    color: {r: 0.99215686, g: 0.9843137, b: 0.95686275, a: 1}
-  - key: paper.telex
-    color: {r: 0.94509804, g: 0.9098039, b: 0.76862746, a: 1}
-  - key: paper.dialFace
-    color: {r: 0.9607843, g: 0.9411765, b: 0.88235295, a: 1}
-  - key: advisor.title
-    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
-  infiltrationRamp:
-  - min: 0
-    max: 19
-    fill: {r: 0.9490196, g: 0.7882353, b: 0.72156864, a: 1}
-    text: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
-  - min: 20
-    max: 39
-    fill: {r: 0.89411765, g: 0.5764706, b: 0.48235294, a: 1}
-    text: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
-  - min: 40
-    max: 59
-    fill: {r: 0.7058824, g: 0.26666668, b: 0.18039216, a: 1}
-    text: {r: 1, g: 0.972549, b: 0.93333334, a: 1}
-  - min: 60
-    max: 79
-    fill: {r: 0.54901963, g: 0.14117648, b: 0.08627451, a: 1}
-    text: {r: 1, g: 0.972549, b: 0.93333334, a: 1}
-  - min: 80
-    max: 100
-    fill: {r: 0.36078432, g: 0.0627451, b: 0.039215688, a: 1}
-    text: {r: 1, g: 0.972549, b: 0.93333334, a: 1}
   cpRegular: {fileID: 11400000, guid: 98e1364759f1641baa0092f1ffa93aa5, type: 2}
   cpBold: {fileID: 11400000, guid: 7df497da40be24ff7a218b963615307f, type: 2}
   lfRegular: {fileID: 11400000, guid: f542d27e014da4e7d906d23fb2fcd19d, type: 2}
@@ -341,14 +303,8 @@ MonoBehaviour:
     color: {r: 0, g: 0, b: 0, a: 0.5}
   stampRotationRange: {x: -5, y: 5}
   stampOpacity: 0.92
-  stampOpacityIllusion: 0.95
   hoverLift: 0.08
   press: 0.06
-  needleSmooth: 0.5
   telexSpeed: 26
-  folderOpen: 0.12
   modalScrim: 0.15
   modalDrop: 0.18
-  killSwitchHold: 3
-  killSwitchRewind: 0.2
-  tooltipDelay: 0.4

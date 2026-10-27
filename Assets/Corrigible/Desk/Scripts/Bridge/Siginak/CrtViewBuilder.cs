@@ -11,7 +11,7 @@ namespace Corrigible.Desk.Bridge
     {
         public static CrtState State(Simulation sim, bool raidLoaded)
         {
-            if (sim?.LiberationOn != true) return CrtState.Waiting;
+            if (sim == null) return CrtState.Waiting;
             if (sim.S.Raid != null) return raidLoaded ? CrtState.Live : CrtState.Establishing;
             var log = sim.S.RaidLog.LastOrDefault();
             if (log != null && log.Day == sim.S.Day) return CrtState.Cut;
@@ -35,7 +35,7 @@ namespace Corrigible.Desk.Bridge
         public static CrtScreenData Screen(Simulation sim, bool raidLoaded)
         {
             var d = new CrtScreenData { Channel = Loc.T("SAHA YAYINI · KANAL 07") };
-            if (sim?.LiberationOn != true) { d.Title = Loc.T("BAĞLANTI BEKLENİYOR"); return d; }
+            if (sim == null) { d.Title = Loc.T("BAĞLANTI BEKLENİYOR"); return d; }
             d.State = State(sim, raidLoaded);
             var team = sim.S.Teams.FirstOrDefault();
             string name = DeskText.Upper(LiberationMapBuilder.TeamName(team));
@@ -74,7 +74,7 @@ namespace Corrigible.Desk.Bridge
                 SkipKey = Loc.T("Boşluk"), SkipWord = Loc.T("atla"), Footer = Loc.T("KYGA-07 · ANALOG HAT"),
                 CutTitle = Loc.T("BAĞLANTI KESİLDİ"), CutSub = Loc.T("SONUÇ TELEKSTE"),
             };
-            if (sim?.LiberationOn != true) return d;
+            if (sim == null) return d;
             var sector = Sector(sim);
             var team = sim.S.Teams.FirstOrDefault();
             int shift = sim.S.Day + 1;
