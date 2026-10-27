@@ -22,6 +22,9 @@ namespace Corrigible.Desk.Bridge
         public Baskin.BState State { get; protected set; }
         public char Selected { get; protected set; }
         public bool Armed { get; protected set; }
+        /// <summary>Eğitim baskınının rehberi: yalnız sıradaki adıma izin verir (yoksa baskın serbest).</summary>
+        public RaidGuide Guide { get; protected set; }
+        bool Guided=>Guide!=null&&!Guide.Done;
         protected bool confirm,retreat,fast,paused,unread=true;protected string panel;
         protected bool resolving,executing;
         protected readonly List<(int x,int y,string kind,int max)> targetForms=new List<(int,int,string,int)>();
@@ -39,9 +42,9 @@ namespace Corrigible.Desk.Bridge
         {
             if(hover.HasValue&&!hoverVisible&&Time.unscaledTime-hoverAt>=theme.Number("raid.hoverCard.delayMs",150)/1000f){hoverVisible=true;Publish(false);}
         }
-        protected void OpenState(Baskin.BState value)
+        protected void OpenState(Baskin.BState value,RaidGuide guide=null)
         {
-            StopAllCoroutines();State=value;Selected='\0';Armed=confirm=retreat=fast=paused=resolving=executing=false;panel=null;hover=null;hoverVisible=false;preview=null;unread=true;visibleLogs=int.MaxValue;eventLine=null;
+            StopAllCoroutines();State=value;Guide=guide;Selected='\0';Armed=confirm=retreat=fast=paused=resolving=executing=false;panel=null;hover=null;hoverVisible=false;preview=null;unread=true;visibleLogs=int.MaxValue;eventLine=null;
             targetForms.Clear();civilianCount=0;
             foreach(var t in Baskin.TargetsLeft(State))targetForms.Add((t.X,t.Y,t.O.K,t.O.Max));
             for(int y=0;y<8;y++)for(int x=0;x<8;x++)if(State.Cells[y,x].O?.K=="civ")civilianCount++;
@@ -49,15 +52,20 @@ namespace Corrigible.Desk.Bridge
         }
         void CaptureRoster(){roster=Baskin.Intents(State);queue.Clear();foreach(var i in roster)queue[i.Unit]="pending";}
         public bool Busy=>resolving||(board!=null&&board.Busy);
+        /// <summary>Makineler oynuyor (tur bitirildi, düşman hamleleri canlandırılıyor).</summary>
+        public bool Executing=>executing;
         public void Select(char letter)
         {
             if(!CanInput)return;var u=Unit(letter);if(u==null||u.Dead)return;
-            Selected=letter;Armed=false;confirm=retreat=false;ClearHover(false);Publish();
+            if(Guided&&!Guide.Expects(RaidGuideStep.Select,letter))return;
+            Selected=letter;Armed=false;confirm=retreat=false;ClearHover(false);
+            if(Guided)Guide.Advance();
+            Publish();
         }
         bool CanInput=>State!=null&&State.Phase=="player"&&!paused&&!Busy;
         Baskin.Unit Unit(char letter)=>State?.Units.FirstOrDefault(u=>u.Side=='p'&&Baskin.UnitTypes[u.Type].Short==letter.ToString());
         Baskin.Unit Unit()=>Unit(Selected);
-        public void ClearSelection(){if(Busy)return;Selected='\0';Armed=false;confirm=false;ClearHover(false);Publish();}
+        public void ClearSelection(){if(Busy||Guided)return;Selected='\0';Armed=false;confirm=false;ClearHover(false);Publish();}
         public void Hover(Vector2Int tile)
         {
             if(Busy||retreat||paused)return;
@@ -77,27 +85,40 @@ namespace Corrigible.Desk.Bridge
         }
         public void Move(Vector2Int tile)
         {
-            var u=Unit();if(!CanInput||u==null)return;if(!Baskin.DoMove(State,u.Id,tile.x,tile.y))return;
+            var u=Unit();if(!CanInput||u==null)return;
+            if(Guided&&!Guide.Expects(RaidGuideStep.Move,Selected,tile.x,tile.y))return;
+            if(!Baskin.DoMove(State,u.Id,tile.x,tile.y))return;
+            if(Guided)Guide.Advance();
             confirm=retreat=false;ClearHover(false);
             if(animateActions&&Application.isPlaying&&board!=null)StartCoroutine(MoveRoutine(u.Id,tile));else Publish();
         }
         IEnumerator MoveRoutine(int id,Vector2Int tile)
         {resolving=true;board.InputEnabled=false;board.ClearPreview();Publish(false);yield return board.AnimateMove(id,tile.x,tile.y);resolving=false;Publish();}
-        public void Arm(){var u=Unit();if(!CanInput||u==null||!Baskin.CanAct(State,u))return;Armed=!Armed;confirm=false;Publish();}
+        public void Arm()
+        {
+            var u=Unit();if(!CanInput||u==null||!Baskin.CanAct(State,u))return;
+            if(Guided){if(Armed||!Guide.Expects(RaidGuideStep.Arm,Selected))return;Guide.Advance();}
+            Armed=!Armed;confirm=false;Publish();
+        }
         public void Use(Vector2Int tile)
         {
-            var u=Unit();if(!CanInput||u==null||!Armed)return;if(!Baskin.DoAct(State,u.Id,tile.x,tile.y))return;
+            var u=Unit();if(!CanInput||u==null||!Armed)return;
+            if(Guided&&!Guide.Expects(RaidGuideStep.Use,Selected,tile.x,tile.y))return;
+            if(!Baskin.DoAct(State,u.Id,tile.x,tile.y))return;
+            if(Guided)Guide.Advance();
             Armed=false;confirm=retreat=false;ClearHover(false);
             foreach(var fx in State.FxList.Where(f=>f.K=="die"))if(queue.ContainsKey(fx.Unit))queue[fx.Unit]="cancel";
             if(animateActions&&Application.isPlaying&&board!=null)StartCoroutine(ActRoutine());else Publish();
         }
         IEnumerator ActRoutine(){resolving=true;board.InputEnabled=false;board.ClearPreview();Publish(false);yield return board.Animate(State,new List<Baskin.Fx>(State.FxList),false);resolving=false;Publish();}
-        public void Undo(){if(!CanInput)return;if(Baskin.Undo(State)){Armed=false;confirm=false;CaptureRoster();ClearHover(false);Publish();}}
+        public void Undo(){if(!CanInput||Guided)return;if(Baskin.Undo(State)){Armed=false;confirm=false;CaptureRoster();ClearHover(false);Publish();}}
         public void EndTurn()
         {
             if(State!=null&&(State.Phase=="won"||State.Phase=="lost")){Continue();return;}
             if(!CanInput)return;
-            if(confirmUnusedActions&&!confirm&&State.Units.Any(u=>u.Side=='p'&&!u.Dead&&(!u.Moved||!u.Acted))){confirm=true;Publish(false);return;}
+            if(Guided&&!Guide.Expects(RaidGuideStep.End))return;
+            // Eğitim baskınında boşta kalan uzman senaryonun parçası: onay sorulmaz
+            if(confirmUnusedActions&&!confirm&&!Guided&&State.Units.Any(u=>u.Side=='p'&&!u.Dead&&(!u.Moved||!u.Acted))){confirm=true;Publish(false);return;}
             if(!Application.isPlaying||board==null){confirm=false;Selected='\0';Armed=false;State.Phase="enemy";ClearHover(false);Publish();return;}
             StartCoroutine(Machines());
         }
@@ -109,7 +130,9 @@ namespace Corrigible.Desk.Bridge
             if(!Baskin.EndTurn(State)){executing=resolving=false;yield break;}Publish(false);
             yield return board.Animate(State,new List<Baskin.Fx>(State.FxList),true);
             foreach(var key in queue.Keys.ToArray())if(queue[key]!="cancel")queue[key]="done";
-            executing=resolving=false;machineBefore=null;visibleLogs=int.MaxValue;eventUntil=Time.unscaledTime+.3f;Publish();
+            executing=resolving=false;machineBefore=null;visibleLogs=int.MaxValue;eventUntil=Time.unscaledTime+.3f;
+            if(Guided&&Guide.Expects(RaidGuideStep.End))Guide.Advance();
+            Publish();
             yield return new WaitForSecondsRealtime(.3f);eventLine=null;if(State.Phase=="player")CaptureRoster();Publish(false);
         }
         void OnEffect(Baskin.Fx fx,int index,int count)
@@ -121,7 +144,10 @@ namespace Corrigible.Desk.Bridge
                 var i=roster.FirstOrDefault(x=>x.Unit==fx.Unit);if(i!=null){currentOrder=i.Order;queue[i.Unit]="now";}
                 // Gerçek hedef yalnız yürütülen efekt başladıktan sonra açıklanır.
                 var victim=Baskin.UnitAt(machineBefore,fx.X,fx.Y);
-                eventLine=i?.Kind=="repair"?Loc.F("№{0} · hedef dolabı onarılıyor",currentOrder):Loc.F("№{0} · saldırı → {1}",currentOrder,victim?.Side=='p'?Name(Baskin.UnitTypes[victim.Type].Short[0]):Loc.T("hedef kare"));
+                string to=victim?.Side=='p'?Name(Baskin.UnitTypes[victim.Type].Short[0]):Loc.T("hedef kare");
+                eventLine=i?.Kind switch{"repair"=>Loc.F("№{0} · hedef dolabı onarılıyor",currentOrder),"shield"=>Loc.F("№{0} · makine zırhlanıyor",currentOrder),
+                    "clone"=>Loc.F("№{0} · yeni dron uyanıyor",currentOrder),"blast"=>Loc.F("№{0} · patlama",currentOrder),"lock"=>Loc.F("№{0} · kilit → {1}",currentOrder,to),
+                    _=>Loc.F("№{0} · saldırı → {1}",currentOrder,to)};
             }
             // Canlandırılan anın sunum kopyası ilerler; strateji ve taktik sonuç durumu değiştirilmez.
             if(fx.K=="dmg")
@@ -142,36 +168,45 @@ namespace Corrigible.Desk.Bridge
         {
             if(Busy){if(panel!=null){panel=null;Publish(false);}return;}
             if(confirm||retreat){confirm=retreat=false;Publish(false);return;}
-            if(Armed){Armed=false;Publish();return;}
-            if(Selected!='\0'){ClearSelection();return;}
+            // Eğitim baskınında seçim ve Q geri alınmaz (rehber adımı kayar); Esc yalnız paneli kapatır ya da duraklatır
+            if(Armed&&!Guided){Armed=false;Publish();return;}
+            if(Selected!='\0'&&!Guided){ClearSelection();return;}
             if(panel!=null){panel=null;Publish(false);return;}
             paused=!paused;Publish(false);
         }
         public void Speed(bool on){if(!executing&&State?.Phase!="enemy")return;fast=on;if(board!=null){board.FastMachines=on;board.MachineDelay=on ? .08f : .25f;}Publish(false);}
         public void Retreat()
-        {if(!CanInput)return;panel=null;if(!retreat){retreat=true;Publish(false);return;}Baskin.Retreat(State);retreat=false;Publish();}
+        {if(!CanInput||Guided)return;panel=null;if(!retreat){retreat=true;Publish(false);return;}Baskin.Retreat(State);retreat=false;Publish();}
         public void Panel(string id){if(retreat||State==null||State.Phase=="won"||State.Phase=="lost")return;panel=panel==id?null:id;if(id=="log")unread=false;Publish(false);}
         public void Continue(){if(Busy||State==null||State.Phase=="player"||State.Phase=="enemy")return;Finish();}
         protected abstract void Finish();
+        /// <summary>Harekâtın sivil güveni (baskından önceki değer, tavan, sunucu başına bedel); harekât yoksa tavan 0.</summary>
+        protected virtual (int Trust,int Max,int PerCivilian) TrustStake=>(0,0,0);
         protected void Publish()=>Publish(true);
         protected void Publish(bool redraw)
         {
             if(State==null)return;
+            // Beklenen hamle tahtada yapılamıyorsa (olmamalı) rehber çekilir, baskın serbest oynanır
+            if(Guided&&State.Phase=="player"&&!Busy&&!Guide.Possible(State,Selected)){Debug.LogWarning("Eğitim baskını: beklenen hamle yapılamıyor, rehber kalktı.");Guide=null;}
             var display=executing?machineBefore:State;
             var unit=Unit();var moves=unit!=null&&!Armed&&Baskin.CanMove(State,unit)?Baskin.Reachable(State,unit):new List<Baskin.Pt>();
             var targets=unit!=null&&Armed&&Baskin.CanAct(State,unit)?Baskin.Targets(State,unit):new List<Baskin.Pt>();
             preview=hover.HasValue&&targets.Any(p=>p.X==hover.Value.x&&p.Y==hover.Value.y)?Baskin.Preview(State,unit.Id,hover.Value.x,hover.Value.y):null;
             bool loot=Baskin.IsLoot(State);
-            var vm=new RaidViewModel{IsLootMission=loot,Turn=display.Turn,Turns=display.MaxTurns,Phase=executing?"enemy":State.Phase,Locked=State.Phase!="player"||Busy,AbilityArmed=Armed,CanUndo=State.Hist.Count>0,
+            var vm=new RaidViewModel{IsLootMission=loot,Turn=display.Turn,Turns=display.MaxTurns,Phase=executing?"enemy":State.Phase,Locked=State.Phase!="player"||Busy,AbilityArmed=Armed,CanUndo=State.Hist.Count>0&&!Guided,
                 EndConfirm=confirm,RetreatArmed=retreat,FastMachines=fast,Paused=paused,OpenPanel=panel,LogUnread=unread,
-                Civilians=civilianCount,CivilianBroken=display.Collateral,AbilityLabel=loot?Loc.T("İKMAL GÖREVİ"):Loc.T("KOPYALAMA"),AbilityTip=loot?Loc.T("Teknisyen ile ikmal kasasına yaklaş. Q ile yeteneği seç, kasaya tıkla ve malzemeleri al. Kasayı imha etme."):Loc.T("Her tur yeni robotlar uyanabilir."),
+                Civilians=civilianCount,CivilianBroken=display.Collateral,AbilityLabel=RegionLabel(loot),AbilityTip=RegionTip(loot),
                 Moves=moves.Select(p=>new Vector2Int(p.X,p.Y)).ToArray(),AbilityTargets=targets.Select(p=>new Vector2Int(p.X,p.Y)).ToArray()};
+            var stake=TrustStake;vm.TrustMax=stake.Max;vm.Trust=Math.Max(0,stake.Trust-display.Collateral*stake.PerCivilian);
             vm.Team=new[]{'T','E','A'}.Select(letter=>
-            {var u=display.Units.FirstOrDefault(x=>x.Side=='p'&&Baskin.UnitTypes[x.Type].Short==letter.ToString());if(u==null)return new RaidTeamModel{Letter=letter,Name=Name(letter),Thumb="thumb_standee_"+letter+"_done",Down=true};return new RaidTeamModel{Letter=letter,Name=Name(letter),Thumb="thumb_standee_"+letter+(u.Dead||u.Acted?"_done":letter=='E'&&u.Hp<u.Max?"_damaged":""),Hp=u.Hp,Max=u.Max,MoveRange=Baskin.UnitTypes[u.Type].Move,Selected=Selected==letter,Move=!Busy&&Baskin.CanMove(State,u),Ability=!Busy&&Baskin.CanAct(State,u),Armed=Selected==letter&&Armed,Down=u.Dead};}).ToArray();
+            // Kadroda olmayan uzman sığınakta yaralı (yedek de yok): kart kapalı, YARALI damgalı
+            {var u=display.Units.FirstOrDefault(x=>x.Side=='p'&&Baskin.UnitTypes[x.Type].Short==letter.ToString());if(u==null)return new RaidTeamModel{Letter=letter,Name=Name(letter),Thumb="thumb_standee_"+letter+"_done",Down=true,Absent=true};return new RaidTeamModel{Letter=letter,Name=Name(letter),Thumb="thumb_standee_"+letter+(u.Dead||u.Acted?"_done":letter=='E'&&u.Hp<u.Max?"_damaged":""),Hp=u.Hp,Max=u.Max,MoveRange=Baskin.UnitTypes[u.Type].Move,Selected=Selected==letter,Move=!Busy&&Baskin.CanMove(State,u),Ability=!Busy&&Baskin.CanAct(State,u),Armed=Selected==letter&&Armed,Down=u.Dead,Armor=u.Armor,Rookie=Rookie(u)};}).ToArray();
             vm.Targets=targetForms.Select(t=>{var o=display.Cells[t.y,t.x].O;return new RaidTargetModel{Name=loot?Loc.T("İkmal kasası"):t.kind=="node"?Loc.T("Düğüm"):Loc.T("Çekirdek"),Thumb="thumb_cabinet_"+t.kind,Hp=o?.Hp??0,Max=t.max,Armor=true,Broken=o==null};}).ToArray();
             if(unit!=null)
             {
                 vm.UnitCard=vm.Team.First(u=>u.Selected);var rows=new List<RaidCardRow>{new RaidCardRow{Icon="ic_boots_s",Text=Loc.T("Hareket"),Detail=Loc.F("{0} kare",vm.UnitCard.MoveRange),Used=!vm.UnitCard.Move},new RaidCardRow{Icon="ic_bolt_s",Text=Selected=='T'?(loot?Loc.T("İkmal alma"):Loc.T("Sabotaj")):Selected=='E'?Loc.T("EMP atışı"):Loc.T("Kanca"),Detail=Selected=='T'?Loc.T("bitişik kare"):Selected=='E'?Loc.T("düz hat, 2–5 kare"):Loc.T("düz hat, 5 kare"),Armed=Armed,Used=!vm.UnitCard.Ability}};
+                // Kartta üç satır yeri var: yedek olduğu başlıkta (“· YEDEK”), plaka üçüncü satırda
+                rows.AddRange(KitRows(unit,false));
                 vm.UnitRows=rows.ToArray();
                 vm.Effects=Selected=='T'?new[]{loot?Loc.T("kasayı al"):Loc.T("−2 dolap"),Loc.T("−1 robot")}:Selected=='E'?new[]{Loc.T("−1 hedef"),Loc.T("itme")}:new[]{Loc.T("çeker")};
             }
@@ -181,13 +216,21 @@ namespace Corrigible.Desk.Bridge
             Enrich(vm,display);ApplyFixture(vm);Current=vm;if(redraw&&board!=null&&!Busy)Draw(vm);Changed?.Invoke(vm);
         }
         protected virtual void ApplyFixture(RaidViewModel vm){}
+        /// <summary>Kadro sığınaktan gelir: yedek uzman (acemi) ve takılı zırh plakası.</summary>
+        bool Rookie(Baskin.Unit u)=>State?.Params?.Squad?.FirstOrDefault(s=>s.Type==u.Type)?.Rookie==true;
+        IEnumerable<RaidCardRow> KitRows(Baskin.Unit u,bool rookie)
+        {
+            if(u.Armor>0)yield return new RaidCardRow{Icon="mk_armor_13",Text=Loc.T("Zırh plakası"),Detail=Loc.T("ilk hasarı karşılar"),Good=true};
+            if(rookie&&Rookie(u))yield return new RaidCardRow{Icon="ic_bolt_s",Text=Loc.T("Yedek uzman"),Detail=Loc.T("bir eksik canla")};
+        }
         RaidInspectorModel Inspector(Vector2Int tile)
         {
             var u=Baskin.UnitAt(State,tile.x,tile.y);var o=State.Cells[tile.y,tile.x].O;
             bool loot=Baskin.IsLoot(State);
-            var card=new RaidInspectorModel{IsLootMission=loot,Title=u!=null?(u.Side=='p'?Name(Baskin.UnitTypes[u.Type].Short[0]):u.Type=="dron"?Loc.T("GÜVENLİK DRONU"):Loc.T("BAKIM ROBOTU")):o!=null?(loot&&Baskin.IsTarget(o.K)?Loc.T("İkmal kasası"):Loc.T(Baskin.ObjNames[o.K])):Loc.T("Boş kare"),
-                Thumb=u!=null?(u.Side=='p'?"thumb_standee_"+Baskin.UnitTypes[u.Type].Short:u.Type=="dron"?"thumb_drone":"thumb_maint"):o!=null?(o.K=="cool"?"thumb_cooling":"thumb_cabinet_"+o.K):null,Hp=u?.Hp??o?.Hp??0,Max=u?.Max??o?.Max??0};
+            var card=new RaidInspectorModel{IsLootMission=loot,Title=u!=null?(u.Side=='p'?Name(Baskin.UnitTypes[u.Type].Short[0]):DeskText.Upper(Baskin.UnitTypes[u.Type].Name)):o!=null?(loot&&Baskin.IsTarget(o.K)?Loc.T("İkmal kasası"):Loc.T(Baskin.ObjNames[o.K])):Loc.T("Boş kare"),
+                Thumb=u!=null?(u.Side=='p'?"thumb_standee_"+Baskin.UnitTypes[u.Type].Short:EnemyThumb(u.Type)):o!=null?(o.K=="cool"?"thumb_cooling":"thumb_cabinet_"+o.K):null,Hp=u?.Hp??o?.Hp??0,Max=u?.Max??o?.Max??0};
             var rows=new List<RaidCardRow>();
+            if(u!=null&&u.Side=='p')rows.AddRange(KitRows(u,true));
             if(preview!=null)
             {
                 if(preview.Fx.Any(f=>f.K=="armor"))rows.Add(new RaidCardRow{Icon="mk_armor_13",Text=Loc.T("Zırh: hasar işlemez")});
@@ -207,17 +250,28 @@ namespace Corrigible.Desk.Bridge
             else if(u!=null&&u.Side=='e')
             {
                 var intent=Baskin.Intents(State).FirstOrDefault(i=>i.Unit==u.Id);
-                if(intent!=null)rows.Add(new RaidCardRow{Icon="ic_bolt_s",Text=Loc.F("Niyet · sıra {0}",intent.Order),Detail=intent.Kind=="repair"?Loc.T("onarım"):Loc.T("ateş")});
+                if(intent!=null)rows.Add(new RaidCardRow{Icon="ic_bolt_s",Text=Loc.F("Niyet · sıra {0}",intent.Order),Detail=IntentName(intent.Kind)});
+                if(u.Armor>0)rows.Add(new RaidCardRow{Icon="mk_armor_13",Text=Loc.T("Zırh"),Detail=Loc.T("ilk hasarı karşılar")});
+                if(u.Type==State.Signature)rows.Add(new RaidCardRow{Icon="ic_eye_s",Text=Loc.T("Bölgenin imza makinesi")});
+                rows.Add(new RaidCardRow{Icon="ic_eye_s",Text=Baskin.UnitTypes[u.Type].Desc});
             }
             else if(o!=null&&Baskin.IsTarget(o.K))rows.Add(new RaidCardRow{Icon="mk_armor_13",Text=loot?Loc.T("Teknisyen ile bitişik kareden aç"):Loc.T("Hedef dolabı")});
             card.Rows=rows.Take(5).ToArray();return card;
         }
         void Draw(RaidViewModel vm)
         {
-            var marks=new RaidBoard3D.Marks{Selected=Unit()?.Id??-1};foreach(var p in vm.Moves)marks.Moves.Add(p.y*8+p.x);foreach(var p in vm.AbilityTargets)marks.Targets.Add(p.y*8+p.x);
+            var guideTile=Guided&&State.Phase=="player"?Guide.Tile(State):null;
+            var marks=new RaidBoard3D.Marks{Selected=Unit()?.Id??-1,Guide=guideTile.HasValue?guideTile.Value.Y*8+guideTile.Value.X:-1};foreach(var p in vm.Moves)marks.Moves.Add(p.y*8+p.x);foreach(var p in vm.AbilityTargets)marks.Targets.Add(p.y*8+p.x);
             foreach(var u in State.Units)if(u.Acted)marks.Spent.Add(u.Id);
-            foreach(var p in State.Spawns)marks.Spawns.Add(p.Y*8+p.X);
-            foreach(var i in Baskin.Intents(State))if(i.HasTarget&&!i.TargetNone){int key=i.TargetY*8+i.TargetX;if(i.Kind=="repair")marks.Heal.Add(key);else marks.Danger.Add(key);marks.Arrows.Add((i.FromX,i.FromY,i.TargetX,i.TargetY));}
+            // Kum fırtınası: uyanacak makinelerin yeri görünmez (çoğaltıcının niyeti yine görünür)
+            if(!State.Fog)foreach(var p in State.Spawns)marks.Spawns.Add(p.Y*8+p.X);
+            foreach(var i in Baskin.Intents(State))if(i.HasTarget&&!i.TargetNone)
+            {
+                int key=i.TargetY*8+i.TargetX;
+                if(i.Kind=="blast"){foreach(var a in i.Area)marks.Danger.Add(a.Y*8+a.X);continue;}
+                if(i.Kind=="repair"||i.Kind=="shield")marks.Heal.Add(key);else if(i.Kind=="clone")marks.Spawns.Add(key);else marks.Danger.Add(key);
+                marks.Arrows.Add((i.FromX,i.FromY,i.TargetX,i.TargetY));
+            }
             if(preview!=null)foreach(var fx in preview.Fx.Where(f=>f.K=="dmg"))marks.Danger.Add(fx.Y*8+fx.X);
             board.Sync(State,marks);
             if(previewOverlay!=null)previewOverlay.Render(vm.CollisionTiles);
@@ -243,7 +297,7 @@ namespace Corrigible.Desk.Bridge
             if(confirm)
             {
                 vm.Unused=State.Units.Where(u=>u.Side=='p'&&!u.Dead&&(!u.Moved||!u.Acted)).Select(u=>new RaidUnusedModel{Letter=Baskin.UnitTypes[u.Type].Short[0],Name=Name(Baskin.UnitTypes[u.Type].Short[0]),Move=!u.Moved,Ability=!u.Acted,
-                    ThreatOrder=Baskin.Intents(State).FirstOrDefault(i=>i.Kind!="repair"&&i.HasTarget&&!i.TargetNone&&i.TargetX==u.X&&i.TargetY==u.Y)?.Order??0}).ToArray();
+                    ThreatOrder=Baskin.Intents(State).FirstOrDefault(i=>Threatens(i,u.X,u.Y))?.Order??0}).ToArray();
                 foreach(var t in vm.Team)t.Warn=vm.Unused.Any(u=>u.Letter==t.Letter);
             }
             if(vm.Finished)
@@ -255,5 +309,39 @@ namespace Corrigible.Desk.Bridge
             }
         }
         static string Name(char letter)=>letter=='T'?Loc.T("TEKNİSYEN"):letter=='E'?Loc.T("EMP UZMANI"):Loc.T("ANALİST");
+        /// <summary>Niyet bu kareye zarar verir mi (onarım, kalkan, çoğaltma vermez; patlama çevresine verir).</summary>
+        static bool Threatens(Baskin.IntentView i,int x,int y)=>i.HasTarget&&!i.TargetNone&&i.Kind!="repair"&&i.Kind!="shield"&&i.Kind!="clone"&&
+            (i.Kind=="blast"?i.Area.Any(a=>a.X==x&&a.Y==y):i.TargetX==x&&i.TargetY==y);
+        static string IntentName(string kind)=>kind switch{"repair"=>Loc.T("onarım"),"melee"=>Loc.T("vuruş"),"lob"=>Loc.T("havan"),"blast"=>Loc.T("patlama"),
+            "lock"=>Loc.T("kilit"),"shield"=>Loc.T("kalkan"),"clone"=>Loc.T("çoğaltma"),_=>Loc.T("ateş")};
+        /// <summary>Havada olan makineler dron resmiyle, yerdekiler bakım robotu resmiyle.</summary>
+        static string EnemyThumb(string type)=>type=="dron"||type=="zdron"||type=="kalkan"?"thumb_drone":"thumb_maint";
+        /// <summary>Görev çipi: bölgenin özelliği (yoksa görev türü).</summary>
+        string RegionLabel(bool loot)
+        {
+            var trait=State.Params?.Traits?.FirstOrDefault(t=>Baskin.RegionTraits.ContainsKey(t));
+            return trait!=null?DeskText.Upper(Loc.T(Baskin.RegionTraits[trait].Name)):loot?Loc.T("İKMAL GÖREVİ"):Loc.T("KOPYALAMA");
+        }
+        /// <summary>Çipin açıklaması (kart dört satır): bölge özelliği, imza makinesi ve kademe; bölgesiz baskında görev ipucu.</summary>
+        string RegionTip(bool loot)
+        {
+            var parts=new List<string>();
+            var p=State.Params;
+            var trait=p?.Traits?.FirstOrDefault(t=>Baskin.RegionTraits.ContainsKey(t));
+            if(trait==null)return loot?Loc.T("Teknisyen ile ikmal kasasına yaklaş. Q ile yeteneği seç, kasaya tıkla ve malzemeleri al. Kasayı imha etme."):Loc.T("Her tur yeni robotlar uyanabilir.");
+            parts.Add(Loc.F("{0}: {1}",Loc.T(Baskin.RegionTraits[trait].Name),Loc.T(Baskin.RegionTraits[trait].Desc)));
+            // Makinenin ne yaptığı ipucu kartında (üstüne gel); burada yalnız adı
+            if(State.Signature!=null)parts.Add(Loc.F("İmza makinesi: {0}",Baskin.UnitTypes[State.Signature].Name));
+            if(p!=null)parts.Add(TierText(p.Tier));
+            return string.Join("\n",parts);
+        }
+        /// <summary>Zorluk kademesi cümlesi (görev çipi, görev fişi).</summary>
+        public static string TierText(int tier)=>tier switch
+        {
+            1=>Loc.F("Tehdit {0}/4: makineler alışılmış düzende.",1),
+            2=>Loc.F("Tehdit {0}/4: başta bir makine fazla.",2),
+            3=>Loc.F("Tehdit {0}/4: iki makine fazla, turda iki uyanma.",3),
+            _=>Loc.F("Tehdit {0}/4: üç makine fazla, turda iki uyanma, canları +1.",4),
+        };
     }
 }

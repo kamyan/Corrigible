@@ -19,7 +19,7 @@ namespace Corrigible.Desk
 
         static string Icon(string id) => id switch
         {
-            "check_circle" => "ic_check_circle_13", "power" => "ic_power_13",
+            "check_circle" => "ic_check_circle_13", "power" => "ic_power_13", "ai_move" => "ic_ai_move_13",
             _ => "ic_circle_14",
         };
 

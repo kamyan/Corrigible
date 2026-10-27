@@ -69,14 +69,14 @@ namespace Corrigible.Desk.Bridge
             return null;
         }
 
-        /// <summary>Figür alınabilir mi: yaralıyken “Alfa yaralı (1 gün)”; baskında sahada. Alınabiliyorsa null.</summary>
+        /// <summary>Figür alınabilir mi: Teknisyen yatıp yedek de yokken “Alfa: Teknisyen yaralı (1 gün)”; baskında sahada. Alınabiliyorsa null.</summary>
         public static string Pick(Simulation sim)
         {
             var team = System.Linq.Enumerable.FirstOrDefault(sim.S.Teams);
             if (team == null) return Loc.T("Ekip yok.");
             string name = LiberationMapBuilder.TeamName(team);
             if (sim.S.Raid != null) return Loc.F("{0} sahada", name);
-            if (team.Down > 0) return Loc.F("{0} yaralı ({1} gün)", name, team.Down);
+            if (!sim.SquadCanRaid(team)) return Loc.F("{0}: Teknisyen yaralı ({1} gün)", name, LiberationMapBuilder.TechnicianDown(team));
             return null;
         }
 
@@ -86,9 +86,9 @@ namespace Corrigible.Desk.Bridge
             if (why == null) return null;
             if (sim.S.Raid == null && sim.S.Fon < sim.B.liberationRaidCost && FundsAreTheOnlyBlock(sim, sectorId))
                 return Loc.F("Baskın: fon yetersiz ({0} gerekli / {1} var)", N(sim.B.liberationRaidCost), N(sim.S.Fon, 1));
-            foreach (var team in sim.S.Teams)
-                if (team.Down > 0 && !System.Linq.Enumerable.Any(sim.S.Teams, Simulation.TeamReady))
-                    return Loc.F("{0} yaralı ({1} gün)", LiberationMapBuilder.TeamName(team), team.Down);
+            var ready = System.Linq.Enumerable.FirstOrDefault(sim.S.Teams, Simulation.TeamReady);
+            if (sim.S.Raid == null && ready != null && !sim.SquadCanRaid(ready))
+                return Loc.F("{0}: Teknisyen yaralı ({1} gün), yedek uzman yok", LiberationMapBuilder.TeamName(ready), LiberationMapBuilder.TechnicianDown(ready));
             return Loc.F("Baskın: {0}", why);
         }
 

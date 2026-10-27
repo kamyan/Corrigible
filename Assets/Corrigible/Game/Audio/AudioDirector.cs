@@ -148,6 +148,7 @@ namespace Corrigible.Game.Audio
             foreach (var e in events)
             {
                 if (e.Type == SimEventType.RegionLiberated) Play(bank.alarm, 0.5f);
+                else if (e.Type == SimEventType.Counterattack) Play(bank.alarm, 0.9f);
                 else if (e.Type == SimEventType.End) { ended = true; PlayCue(Cue.EndErase); }
             }
         }

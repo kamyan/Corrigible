@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Corrigible.Core
 {
-    /// <summary>Özgürleştirme kampanyasının sığınak durumu; eski oyunlarda oluşturulmaz.</summary>
+    /// <summary>Sığınak: baskının hazırlık yeri (odalar, erzak, malzeme, zırh plakaları, yedek uzmanlar).</summary>
     [Serializable]
     public sealed class ShelterState
     {
@@ -12,6 +12,12 @@ namespace Corrigible.Core
         public bool Starving;
         public double LastSuppliesChange, LastMaterialsChange;
         public List<ShelterRoomState> Rooms = new List<ShelterRoomState>();
+        /// <summary>Atölyenin döktüğü zırh plakaları; baskında takılır, kırılan düşer.</summary>
+        public int Plates;
+        /// <summary>Atölyenin plaka ve revirin yara sarma birikimi (vardiya vardiya dolar).</summary>
+        public double PlateProgress, HealProgress;
+        /// <summary>Yaşam alanının yedek uzmanları: düşen ya da yatan uzmanın yerine çıkar.</summary>
+        public List<SpecialistState> Reserves = new List<SpecialistState>();
 
         public ShelterRoomState Room(string id) => Rooms.Find(r => r.Id == id);
     }

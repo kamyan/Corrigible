@@ -17,10 +17,10 @@ namespace Corrigible.Desk
         [Tooltip("Tasarım dikdörtgeni (1920 × 1080, pivot sol üst); harita pikseli bunun yerel uzayıdır.")]
         [SerializeField] RectTransform frame;
         [SerializeField] LiberationRegionMarks[] regions = Array.Empty<LiberationRegionMarks>();
-        [Tooltip("Ekip noktası (bölge başına; yoksa etiket + 110 px). Data/Siginak/team_anchors.json'dan kurulur.")]
+        [Tooltip("Ekip noktası (bölge başına; yoksa etiket + 110 px). Kaynağı Data/Siginak/team_anchors.json.")]
         [SerializeField] Anchor[] teamAnchors = Array.Empty<Anchor>();
-        [Tooltip("Sığınak (S-07) fişinin yeri ve yaralı ekibin durduğu nokta.")]
-        [SerializeField] Vector2 shelterPoint, shelterTeamPoint;
+        [Tooltip("Sığınak (S-07) fişinin yeri.")]
+        [SerializeField] Vector2 shelterPoint;
         [SerializeField] UILineGraphic stringLine, stringShadow;
         [Tooltip("Basılı lejant (fiş yerleşimi onu da örtmemeye çalışır).")]
         [SerializeField] RectTransform legend;
@@ -32,12 +32,10 @@ namespace Corrigible.Desk
         public event Action<string> RegionClicked;
         public LiberationMapState State => state;
         public IReadOnlyList<LiberationRegionMarks> Regions => regions;
-        public Vector2 ShelterTeamPoint => shelterTeamPoint;
-
-        public void Configure(RectTransform designFrame, LiberationRegionMarks[] marks, Anchor[] anchors, Vector2 shelter, Vector2 shelterTeam,
+        public void Configure(RectTransform designFrame, LiberationRegionMarks[] marks, Anchor[] anchors, Vector2 shelter,
             UILineGraphic redString, UILineGraphic redStringShadow, RectTransform legendBox)
         {
-            frame = designFrame; regions = marks; teamAnchors = anchors; shelterPoint = shelter; shelterTeamPoint = shelterTeam;
+            frame = designFrame; regions = marks; teamAnchors = anchors; shelterPoint = shelter;
             stringLine = redString; stringShadow = redStringShadow; legend = legendBox;
         }
 
@@ -147,8 +145,14 @@ namespace Corrigible.Desk
         {
             foreach (var a in teamAnchors) if (a.id == id) return a.point;
             var m = Marks(id);
-            return m != null ? m.LabelPoint + SiginakTheme.Active.Vector2Of("space.teamFigure.anchorOffsetMapPx") : shelterTeamPoint;
+            return m != null ? m.LabelPoint + SiginakTheme.Active.Vector2Of("space.teamFigure.anchorOffsetMapPx") : shelterPoint;
         }
+
+        /// <summary>
+        /// Figürün durduğu nokta: bölgesinin ekip noktası. Yaralı ekibin bölgesi sığınak bölgesidir (Batı Avrupa, S-07);
+        /// figür orada karada durur, ilk cephede cepheyle aynı yer.
+        /// </summary>
+        public Vector2 TeamPoint(TeamFigureState team) => TeamAnchor(team.Region);
 
         // ---------- Kırmızı ip (K2: fişin raptiyesinden cephe raptiyesine, 3 noktalı eğri) ----------
 

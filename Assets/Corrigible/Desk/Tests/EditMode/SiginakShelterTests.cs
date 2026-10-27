@@ -23,7 +23,7 @@ namespace Corrigible.Desk.Tests
             var rooms = ShelterViewBuilder.Rooms(sim, ShelterLogic.Living);
             CollectionAssert.AreEqual(ShelterViewBuilder.Order, rooms.Select(r => r.Id).ToArray());
             Assert.AreEqual(RoomCondition.Working, Room(sim, ShelterLogic.Living).Condition);
-            Assert.AreEqual(RoomCondition.Working, Room(sim, ShelterLogic.Generator).Condition);
+            Assert.AreEqual(RoomCondition.Working, Room(sim, ShelterLogic.Radio).Condition);
             Assert.AreEqual(RoomCondition.Damaged, Room(sim, ShelterLogic.Workshop).Condition);
             Assert.AreEqual(RoomCondition.Damaged, Room(sim, ShelterLogic.Infirmary).Condition);
             Assert.IsTrue(rooms.Single(r => r.Id == ShelterLogic.Living).Selected);
@@ -31,22 +31,41 @@ namespace Corrigible.Desk.Tests
         }
 
         [Test]
-        public void V014_EnergyDeficit_DarkensConsumersAndNotesGenerator()
+        public void V014_RadioWithoutStaff_NotesAlarm_AndSummaryShowsSquadAndPlates()
         {
             var sim = NewLiberation();
             SiginakFixtures.ApplyShelterV014(sim);
-            Assert.AreEqual(RoomCondition.NoPower, Room(sim, ShelterLogic.Workshop).Condition, "enerji açığı odayı karartır");
+            Assert.AreEqual(RoomCondition.Working, Room(sim, ShelterLogic.Workshop).Condition, "malzeme var, depo boş: döküm sürer");
             Assert.AreEqual(RoomCondition.Damaged, Room(sim, ShelterLogic.Infirmary).Condition);
             Assert.IsTrue(Room(sim, ShelterLogic.Workshop).Top, "atölye SV3: en üst seviye");
             StringAssert.Contains("3/3", Room(sim, ShelterLogic.Workshop).Line, "K8: kartta 3/3");
 
-            var d = ShelterViewBuilder.Board(sim, ShelterLogic.Generator);
-            Assert.AreEqual(Loc.F("{0} için {1} enerji eksik: {2} personel ata ya da geliştir.", ShelterLogic.RoomName(ShelterLogic.Workshop), "2", 2), d.Note);
-            Assert.AreEqual(SlipButtonState.Normal, d.Action.State, "62 fon / 19 malzeme jeneratör geliştirmeye yeter");
-            Assert.AreEqual(Loc.T("GELİŞTİR"), d.Action.Label);
-            Assert.IsTrue(d.ReadinessOk);
+            var d = ShelterViewBuilder.Board(sim, ShelterLogic.Radio);
+            Assert.AreEqual(Loc.F("Görevli yok: alarm her vardiya +{0} yükselir.", "1"), d.Note);
+            // Seviye 2 iki özgür bölge ister; fon ve malzeme yetse de düğme kilitli
+            Assert.AreEqual(SlipButtonState.Disabled, d.Action.State);
+            Assert.AreEqual(Loc.T("KİLİTLİ"), d.Action.Stamp);
+            Assert.AreEqual(sim.ShelterLevelLock(ShelterLogic.Radio), d.Readiness);
+            Assert.IsFalse(d.ReadinessOk);
             Assert.AreEqual(Loc.F("V.{0:000}", sim.S.Day + 1), d.Shift);
-            StringAssert.Contains(DeskFormat.Signed(-2, 0), d.Summary[1].value, "ENERJİ satırında açık kırmızı");
+            Assert.AreEqual(Loc.T("UZMANLAR"), d.Summary[1].label);
+            StringAssert.Contains("T 3/3", d.Summary[1].value);
+            Assert.AreEqual(Loc.T("PLAKA"), d.Summary[3].label);
+            StringAssert.Contains("0/3", d.Summary[3].value);
+        }
+
+        [Test]
+        public void Workshop_StopsWhenStorageFullOrNoMaterials()
+        {
+            var sim = NewLiberation();
+            Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Workshop).Ok);
+            sim.Shelter.Plates = ShelterLogic.PlateCapacity(sim.Shelter, sim.B);
+            Assert.AreEqual(RoomCondition.Stopped, Room(sim, ShelterLogic.Workshop).Condition);
+            Assert.AreEqual(Loc.F("Depo dolu: {0} plaka hazır. Kırılan plakanın yerine yenisi dökülür; geliştirirsen depo büyür.", 1),
+                ShelterViewBuilder.Board(sim, ShelterLogic.Workshop).Note);
+            sim.Shelter.Plates = 0; sim.Shelter.Materials = 1;
+            Assert.AreEqual(RoomCondition.Stopped, Room(sim, ShelterLogic.Workshop).Condition);
+            Assert.AreEqual(Loc.F("Malzeme yetmiyor: plaka {0} malzeme ister. İkmal baskını malzeme getirir.", "4"), ShelterViewBuilder.Board(sim, ShelterLogic.Workshop).Note);
         }
 
         [Test]
@@ -83,12 +102,12 @@ namespace Corrigible.Desk.Tests
         public void Upgrade_StampsRoomForOneShift()
         {
             var sim = NewLiberation();
-            Assert.IsFalse(Room(sim, ShelterLogic.Generator).Fresh);
-            Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Generator).Ok);
-            Assert.IsTrue(Room(sim, ShelterLogic.Generator).Fresh, "EMİR UYGULANDI damgası");
+            Assert.IsFalse(Room(sim, ShelterLogic.Workshop).Fresh);
+            Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Workshop).Ok, "onarım (seviye 1) bölge istemez");
+            Assert.IsTrue(Room(sim, ShelterLogic.Workshop).Fresh, "EMİR UYGULANDI damgası");
             Assert.IsFalse(Room(sim, ShelterLogic.Living).Fresh);
             sim.Step();
-            Assert.IsFalse(Room(sim, ShelterLogic.Generator).Fresh, "bir vardiya sonra kalkar");
+            Assert.IsFalse(Room(sim, ShelterLogic.Workshop).Fresh, "bir vardiya sonra kalkar");
         }
 
         [Test]

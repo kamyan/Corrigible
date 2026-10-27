@@ -5,7 +5,7 @@ namespace Corrigible.Desk.Bridge
 {
     /// <summary>
     /// CRT (K5) metinleri simülasyondan. Durum: kuruluyor (baskın emri verildi, sahne henüz açılmadı) · yayın açık (sahne
-    /// yüklü) · kesildi (bu vardiyada baskın oldu, sonuç teleksde) · devre dışı (ekip yaralı) · bekleniyor.
+    /// yüklü) · kesildi (bu vardiyada baskın oldu, sonuç teleksde) · devre dışı (Teknisyen yaralı, yedek yok) · bekleniyor.
     /// </summary>
     public static class CrtViewBuilder
     {
@@ -16,7 +16,7 @@ namespace Corrigible.Desk.Bridge
             var log = sim.S.RaidLog.LastOrDefault();
             if (log != null && log.Day == sim.S.Day) return CrtState.Cut;
             var team = sim.S.Teams.FirstOrDefault();
-            if (team != null && team.Down > 0) return CrtState.Disabled;
+            if (team != null && !sim.SquadCanRaid(team)) return CrtState.Disabled;
             return CrtState.Waiting;
         }
 
@@ -32,6 +32,10 @@ namespace Corrigible.Desk.Bridge
 
         static string Region(string id) => DeskText.Upper(Loc.T(GameData.Region(id).Name));
 
+        /// <summary>Kanal YZ trafiğini dinler: alarm eşiğe ulaşınca YZ karşı saldırır.</summary>
+        static string Alarm(Simulation sim) =>
+            Loc.F("YZ ALARMI {0}/{1}", DeskFormat.Number(sim.S.Alarm, 0), DeskFormat.Number(sim.B.liberationAlarmThreshold, 0));
+
         public static CrtScreenData Screen(Simulation sim, bool raidLoaded)
         {
             var d = new CrtScreenData { Channel = Loc.T("SAHA YAYINI · KANAL 07") };
@@ -39,11 +43,16 @@ namespace Corrigible.Desk.Bridge
             d.State = State(sim, raidLoaded);
             var team = sim.S.Teams.FirstOrDefault();
             string name = DeskText.Upper(LiberationMapBuilder.TeamName(team));
-            bool injured = team != null && team.Down > 0;
+            // Teknisyensiz kadro baskına çıkamaz: Teknisyen yatıyor ve yerine çıkacak yedek yok
+            bool injured = team != null && !sim.SquadCanRaid(team);
+            // Baskın vardiyayı doldurur: dönen ekip sonraki vardiyada hazır
+            bool back = team != null && team.Busy > 0 && sim.S.Raid == null;
+            int days = team?.Members.FirstOrDefault(m => m.Role == "tek")?.Down ?? 0;
             d.TeamLine = sim.S.Raid != null ? Loc.F("{0} · SAHADA", name)
-                : injured ? Loc.F("{0} · YARALI · {1} GÜN", name, team.Down) : Loc.F("{0} · HAZIR", name);
+                : back ? Loc.F("{0} · DÖNDÜ · SONRAKİ VARDİYA", name)
+                : injured ? Loc.F("{0} · TEKNİSYEN YARALI · {1} GÜN", name, days) : Loc.F("{0} · HAZIR", name);
             // K5a: yaralı ekip satırı ters video (renk değil biçim)
-            d.TeamInverse = injured && sim.S.Raid == null;
+            d.TeamInverse = injured && !back && sim.S.Raid == null;
             var sector = Sector(sim);
             var lib = sim.S.Liberation;
             d.FrontLine = sector != null
@@ -56,10 +65,12 @@ namespace Corrigible.Desk.Bridge
                 case CrtState.Cut: d.Title = Loc.T("BAĞLANTI KESİLDİ"); d.Sub = Loc.T("SONUÇ TELEKSTE"); break;
                 case CrtState.Disabled:
                     d.Title = Loc.T("YAYIN DEVRE DIŞI");
-                    d.Hint = Loc.T("Ekip toparlanınca yayın açılabilir.");
+                    d.Sub = Alarm(sim);
+                    d.Hint = Loc.T("Teknisyen kalkınca ya da bir yedek uzman hazır olunca yayın açılabilir.");
                     break;
                 default:
                     d.Title = Loc.T("BAĞLANTI BEKLENİYOR");
+                    d.Sub = Alarm(sim);
                     d.Hint = Loc.T("Görev fişinden baskın emri verildiğinde yayın açılır.");
                     break;
             }

@@ -327,11 +327,7 @@ namespace Corrigible.Desk.Bridge
 
         // ---------- Ekip figürü ----------
 
-        Vector3 TeamWorld()
-        {
-            var team = state.Team;
-            return layer.MapToWorld(team.AtShelter ? layer.ShelterTeamPoint : layer.TeamAnchor(team.Region));
-        }
+        Vector3 TeamWorld() => layer.MapToWorld(layer.TeamPoint(state.Team));
 
         /// <summary>Figür oyun durumuna geçer: iyileşen ekip S-07'den cepheye 0,6 s'de kayar (atlanınca anında).</summary>
         public void ReleaseFigure(bool instant)
@@ -351,7 +347,7 @@ namespace Corrigible.Desk.Bridge
                 team.AtShelter ? Loc.F("{0} GÜN", team.Days) : null);
             figureTarget.LineOverride = team.Ready
                 ? Loc.F("{0} · {1}\n{2}", Loc.T("HAZIR"), team.Members, Loc.T("Sürükle: adaya taşı"))
-                : Loc.F("{0}\n{1}", Loc.F("YARALI · {0} GÜN", team.Days), team.Members);
+                : Loc.F("{0}\n{1}", Loc.F("TEKNİSYEN YARALI · {0} GÜN", team.Days), team.Members);
             if (drag.Carrying || figureDisplaced) return;
             figure.Place(TeamWorld(), instant);
         }

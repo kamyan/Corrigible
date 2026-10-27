@@ -16,12 +16,10 @@ MonoBehaviour:
     liberationRaidCost: 12
     liberationDailyFunds: 2
     liberationRegionIncome: 0.5
-    liberationLootFunds: 22
-    liberationServerFunds: 10
-    liberationCaptureFunds: 30
-    liberationInjuryDays: 2
-    liberationRaidThreat: 30
-    liberationRaidThreatPerRegion: 5
+    liberationLootFunds: 12
+    liberationServerFunds: 8
+    liberationCaptureFunds: 15
+    liberationInjuryDays: 3
     growth: 0.05
     spread: 0.3
     satBeta: 0.4
@@ -152,17 +150,13 @@ MonoBehaviour:
     shelterSuppliesPerResident: 0.2
     shelterSuppliesStoragePerLevel: 40
     shelterMaterialsStorage: 100
-    shelterMaterialsPerWorker: 0.5
     shelterStarvingWorkMultiplier: 0.5
-    shelterEnergyPerLevel: 4
-    shelterWorkerEnergy: 1
-    shelterRoomEnergy: 2
     shelterHealingWorkers: 1
     shelterHealingDays: 1
     shelterLivingFon: 8
     shelterLivingMaterials: 6
-    shelterGeneratorFon: 6
-    shelterGeneratorMaterials: 4
+    shelterRadioFon: 6
+    shelterRadioMaterials: 4
     shelterWorkshopFon: 10
     shelterWorkshopMaterials: 6
     shelterInfirmaryFon: 12

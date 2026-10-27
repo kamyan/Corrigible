@@ -4,7 +4,8 @@ using System.Collections.Generic;
 namespace Corrigible.Desk
 {
     /// <summary>Kesit maketinde odanın hâli (K4 notu, K8 › oda durumları). Seçili ayrı bayraktır.</summary>
-    public enum RoomCondition { Working, NoPower, Damaged }
+    /// <summary>Oda hâli: çalışıyor · durdu (atölye plaka dökemiyor, revir açlıkta) · hasarlı (onarılmayı bekliyor).</summary>
+    public enum RoomCondition { Working, Stopped, Damaged }
 
     /// <summary>Düğme hâli (K8 › düğme durumları): normal · devre dışı (soluk, kesik kenar) · yetersiz kaynak (kırmızı kenar + damga).</summary>
     public enum SlipButtonState { Normal, Disabled, Short }

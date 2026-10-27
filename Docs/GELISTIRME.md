@@ -29,8 +29,11 @@ ueval 'UnityEditor.SceneManagement.EditorSceneManager.NewScene(UnityEditor.Scene
 | Dosya | Ne kilitler |
 |---|---|
 | `Tests/EditMode/LiberationCampaignTests` | açılış, sektör sırası, ödüller, sınır seçimi, bütün harekâtın kazanılabilmesi, makinelerin kopyalanması, kayıt/devam |
-| `Tests/EditMode/ShelterTests` | sığınak üretimi, tüketimi, enerji, revir, depo sınırları |
+| `Tests/EditMode/ShelterTests` | sığınak tüketimi, plaka dökümü, revir, yedekler, telsiz, depo sınırları |
 | `Tests/EditMode/RaidEngineTests` | mulberry32, aynı hamlelerle aynı savaş (beklenen imzalar), geri alma, önizleme, ikmal görevi |
+| `Desk/Tests/EditMode/TutorialFlowTests` | eğitim adımlarının sırası, geçilen adımlar, raporlar, atlama, sahne bağlantıları |
+| `Desk/Tests/EditMode/TutorialRaidTests` | senaryolu ilk baskın: her harekât tohumunda aynı tahta, rehberin adımları hasarsız zafere varır |
+| `Tests/EditMode/RegionIdentityTests` | bölge özellikleri ve imza makineleri, zorluk kademesi, yeni makinelerin niyetleri, oda seviyesi kilidi |
 | `Tests/EditMode/LocalizationTests` | çeviri tablosu tam; İngilizce oynanan harekâtta Türkçe metin yok; dil sonucu değiştirmez |
 | `Desk/Tests/EditMode/DeskBridgeTests` | DeskGame bağlantıları, ekran katmanlarının sırası, baskın raporu ve son raporun kurulması |
 | `Desk/Tests/EditMode/LiberationReportTests` | operasyon raporunun satırları, depo sınırı, kayıttan aynı rapor |

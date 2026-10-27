@@ -33,11 +33,19 @@ namespace Corrigible.Desk.Bridge
                 population = s.Population, idle = ShelterLogic.AvailableWorkers(s),
                 supplies = s.Supplies, suppliesCapacity = ShelterLogic.SuppliesCapacity(s, b),
                 materials = s.Materials, materialsCapacity = b.shelterMaterialsStorage,
-                energyCapacity = ShelterLogic.EnergyCapacity(s, b), energyDemand = ShelterLogic.EnergyDemand(s, b),
+                plates = s.Plates, plateCapacity = ShelterLogic.PlateCapacity(s, b), plateProgress = s.PlateProgress,
+                reserves = s.Reserves.Count(r => r.Down <= 0),
                 starving = s.Starving,
+                alarm = sim.S.Alarm, alarmThreshold = b.liberationAlarmThreshold,
+                counterattacks = sim.S.Counterattacks, lastCounterattack = sim.S.LastCounterattack,
             };
             foreach (var r in s.Rooms) snap.rooms.Add(new ShiftRoomSnapshot { id = r.Id, level = r.Level, workers = r.Workers });
-            foreach (var t in sim.S.Teams) snap.teams.Add(new ShiftTeamSnapshot { id = t.Id, name = t.Name, down = t.Down });
+            foreach (var t in sim.S.Teams)
+            {
+                var team = new ShiftTeamSnapshot { id = t.Id, name = t.Name, busy = !Simulation.TeamReady(t), canRaid = sim.SquadCanRaid(t) };
+                foreach (var m in t.Members) team.members.Add(new ShiftMemberSnapshot { role = m.Role, wounds = m.Wounds, down = m.Down });
+                snap.teams.Add(team);
+            }
             return snap;
         }
 
@@ -76,9 +84,10 @@ namespace Corrigible.Desk.Bridge
         {
             dailyFunds = b.liberationDailyFunds, regionIncome = b.liberationRegionIncome,
             suppliesPerWorker = b.shelterSuppliesPerWorker, suppliesPerResident = b.shelterSuppliesPerResident,
-            materialsPerWorker = b.shelterMaterialsPerWorker, starvingMultiplier = b.shelterStarvingWorkMultiplier,
-            workerEnergy = b.shelterWorkerEnergy, workersPerLevel = b.shelterWorkersPerLevel,
-            healingDays = b.shelterHealingDays, healingWorkers = b.shelterHealingWorkers,
+            starvingMultiplier = b.shelterStarvingWorkMultiplier, workersPerLevel = b.shelterWorkersPerLevel,
+            platesPerWorker = b.shelterPlatesPerWorker, plateMaterials = b.shelterPlateMaterials, healPerWorker = b.shelterHealPerWorker,
+            healingDays = b.shelterHealingDays, healingWorkers = b.shelterHealingWorkers, restHeal = b.liberationRestHeal,
+            counterattackTrust = b.liberationCounterattackTrust,
         };
 
         /// <summary>Adımdan sonra: kapanış öncesi görüntü + defter + hatalarla raporun girdisi (teleks kodu sonra yazılır).</summary>
@@ -116,7 +125,7 @@ namespace Corrigible.Desk.Bridge
                 Stamp = Loc.T("KAPANDI"),
                 FundsTitle = Loc.T("FON · GELİR / GİDER"),
                 ProductionTitle = Loc.T("ÜRETİM VE TÜKETİM"),
-                TeamTitle = Loc.T("EKİP TOPARLANMASI"),
+                TeamTitle = Loc.T("EKİP VE YZ ALARMI"),
                 FailedTitle = Loc.T("YAPILAMADI"),
                 Action = Loc.F("VARDİYA {0} BAŞLAT", TrNumber.WithAccusative(a.shift, "000", true)),
                 Hint = Loc.T("Esc · rapor EVRAK tepsisine dosyalanır"),
@@ -126,6 +135,7 @@ namespace Corrigible.Desk.Bridge
             Production(input, d);
             d.Analyst = Analyst(input);
             Teams(input, d);
+            Alarm(input, d);
             foreach (var f in input.failures.Take(MaxFailures)) d.Failures.Add((f.code, f.message));
             if (input.failures.Count > MaxFailures) d.MoreFailures = Loc.F("… ve {0} satır daha", input.failures.Count - MaxFailures);
 
@@ -173,23 +183,58 @@ namespace Corrigible.Desk.Bridge
                 d.Production.Add(Row(why, null, Delta(rest, 1), Tone(rest, 1)));
             }
 
+            // Atölye: plaka dökümü (malzeme harcar); depo dolu ya da malzeme yoksa döküm bekler
             var workshop = b.Room(ShelterLogic.Workshop);
             d.MaterialsNet = a.materials - b.materials;
+            int cast = a.plates - b.plates;
             string note = null, badge = null;
             if (workshop == null || workshop.level <= 0) badge = Loc.T("HASARLI");
-            else if (!b.EnergyEnough) badge = Loc.F("ENERJİSİZ {0}/{1}", Compact(b.energyCapacity), Compact(b.energyDemand));
+            else if (b.plates >= b.plateCapacity) badge = Loc.T("DEPO DOLU");
+            else if (cast == 0 && b.materials < r.plateMaterials) badge = Loc.T("MALZEME YOK");
             else note = a.starving
-                ? Loc.F("{0} kişi × {1} · açlık × {2}", workshop.workers, Compact(r.materialsPerWorker), Compact(r.starvingMultiplier))
-                : Loc.F("{0} kişi × {1}", workshop.workers, Compact(r.materialsPerWorker));
+                ? Loc.F("{0} kişi × {1} · açlık × {2} · plaka {3} malzeme", workshop.workers, Compact(r.platesPerWorker), Compact(r.starvingMultiplier), Compact(r.plateMaterials))
+                : Loc.F("{0} kişi × {1} · plaka {2} malzeme", workshop.workers, Compact(r.platesPerWorker), Compact(r.plateMaterials));
             d.Production.Add(new ReportRow
             {
-                Label = Loc.T("Malzeme · atölye"), Note = note, Badge = badge,
-                Value = Delta(d.MaterialsNet, 1), Tone = Tone(d.MaterialsNet, 1),
+                Label = Loc.F("Zırh plakası · {0}/{1}", a.plates, a.plateCapacity), Note = note, Badge = badge,
+                Value = Delta(cast, 0), Tone = Tone(cast, 0),
             });
             d.Production.Add(Total(Loc.F("Erzak {0} → {1} / {2}", DeskFormat.Number(b.supplies, 1), DeskFormat.Number(a.supplies, 1),
                 Compact(a.suppliesCapacity)), Delta(d.SuppliesNet, 1), Tone(d.SuppliesNet, 1)));
         }
 
+        /// <summary>YZ alarmı satırı (ekiplerin altında): vardiya yükseltir; eşikte YZ son geri alınan sektörü yeniden işgal eder.</summary>
+        static void Alarm(ShiftReportInput input, ShiftReportData d)
+        {
+            var b = input.before;
+            var a = input.after;
+            var row = new ReportTeamRow { Label = Loc.T("YZ alarmı"), HideIcon = true };
+            if (a.counterattacks > b.counterattacks)
+            {
+                d.Counterattack = Loc.F("{0} yeniden işgal altında · sivil güven −{1}", SectorLabel(a.lastCounterattack), input.rates.counterattackTrust);
+                row.Value = Loc.T("KARŞI SALDIRI");
+                row.Detail = Loc.F("Alarm eşiği aştı; YZ karşı saldırdı: {0}. Alarm sıfırlandı.", d.Counterattack);
+            }
+            else
+            {
+                row.Value = Loc.F("{0} → {1} / {2}", Compact(b.alarm), Compact(a.alarm), Compact(a.alarmThreshold));
+                row.Detail = Loc.T("Her vardiya ve her başarısız baskın yükseltir, kırılan YZ sunucusu düşürür. Eşikte YZ son geri alınan sektörü yeniden işgal eder.");
+            }
+            d.Teams.Add(row);
+        }
+
+        /// <summary>“Bölge · Sektör” (sektör kimliği “weu_3”); geri alınacak sektör yoksa “—”.</summary>
+        static string SectorLabel(string id)
+        {
+            int cut = id?.LastIndexOf('_') ?? -1;
+            if (cut <= 0 || !int.TryParse(id.Substring(cut + 1), NumberStyles.Integer, CultureInfo.InvariantCulture, out int n)) return "—";
+            return Loc.F("{0} · {1}", Loc.T(GameData.Region(id.Substring(0, cut)).Name), new LiberationSectorState { Index = n - 1 }.Name);
+        }
+
+        /// <summary>
+        /// Ekip satırı: uzmanların toplam yarası önce → sonra; altında dinlenme (baskına çıkmayan vardiya), revirin sardığı yara,
+        /// yatan uzmanlar ve Teknisyen yatıp yedek de yoksa ekibin ne zaman hazır olacağı.
+        /// </summary>
         static void Teams(ShiftReportInput input, ShiftReportData d)
         {
             var b = input.before;
@@ -198,71 +243,64 @@ namespace Corrigible.Desk.Bridge
             foreach (var t in a.teams)
             {
                 string name = LiberationMapBuilder.TeamName(t.id, t.name);
-                int from = b.Team(t.id)?.down ?? t.down, to = t.down;
-                if (from == 0 && to == 0)
+                var bt = b.Team(t.id) ?? t;
+                int from = bt.members.Where(m => m.down <= 0).Sum(m => m.wounds), to = t.members.Where(m => m.down <= 0).Sum(m => m.wounds);
+                var lying = t.members.Where(m => m.down > 0).ToList();
+                var back = t.members.Where(m => m.down <= 0 && (bt.Member(m.role)?.down ?? 0) > 0).ToList();
+                if (from == 0 && to == 0 && lying.Count == 0 && back.Count == 0)
                 {
                     d.Teams.Add(new ReportTeamRow { Label = Loc.F("{0} · hazır", name), Value = Loc.T("HAZIR") });
                     continue;
                 }
-                int healed = from - to;
-                bool infirmary = healed > 1;
-                string heal = infirmary ? Loc.F("Revir çalışıyor: toparlanma {0} gün hızlandı.", healed - 1) : null;
-                string ready;
-                if (to == 0)
+                // Dinlenme önce sarar (ekip baskına çıkmadıysa her ayaktaki uzman), kalan iyileşme revirindir
+                int rested = bt.busy ? 0 : bt.members.Where(m => m.down <= 0).Sum(m => Math.Min(m.wounds, r.restHeal));
+                int healed = Math.Max(0, from - to - rested);
+                var lines = new List<string>();
+                if (rested > 0) lines.Add(Loc.F("Dinlenme {0} yara toparladı.", rested));
+                if (healed > 0) lines.Add(Loc.F("Revir {0} yara sardı.", healed));
+                else if (to > 0 || lying.Count > 0) { string idle = InfirmaryIdle(b, a, r); if (idle != null) lines.Add(idle); }
+                foreach (var m in back) lines.Add(Loc.F("{0} ayağa kalktı.", Role(m.role)));
+                foreach (var m in lying) lines.Add(Loc.F("{0} yaralı: {1} gün.", Role(m.role), m.down));
+                if (!t.canRaid)
                 {
-                    // Toparlandı: revirin neden çalışmadığı artık önemsiz
-                    ready = Loc.T("Ekip cepheye döndü.");
-                    d.TeamReturned = true;
+                    var tech = t.Member("tek");
+                    int perShift = 1 + (healed > 0 || InfirmaryIdle(b, a, r) == null ? r.healingDays : 0);
+                    lines.Add(Loc.F("Teknisyen kalkana kadar baskın yok: vardiya {0} hazır.", TrNumber.WithLocative(a.shift + ((tech?.down ?? 1) + perShift - 1) / perShift)));
                 }
-                else
-                {
-                    heal ??= InfirmaryIdle(b, a, r);
-                    int perShift = infirmary ? 1 + r.healingDays : 1;
-                    int shift = a.shift + (to + perShift - 1) / perShift;
-                    ready = Loc.F("Vardiya {0} baskına hazır.", TrNumber.WithLocative(shift));
-                }
+                // Teknisyen kalktı ya da bir yedek hazır: ekip sığınaktan cepheye döner
+                if (!bt.canRaid && t.canRaid) d.TeamReturned = true;
                 d.Teams.Add(new ReportTeamRow
                 {
-                    Label = to == 0 ? Loc.F("{0} · toparlandı", name) : Loc.F("{0} · yaralı", name),
-                    Value = Loc.F("{0} → {1} gün", from, to),
-                    Detail = heal == null ? ready : heal + " " + ready,
+                    Label = lying.Count > 0 ? Loc.F("{0} · {1} yaralı", name, lying.Count) : Loc.F("{0} · uzmanlar", name),
+                    Value = from > 0 || to > 0 ? Loc.F("yara {0} → {1}", from, to)
+                        : lying.Count > 0 ? (t.canRaid ? Loc.T("YEDEKLE HAZIR") : Loc.T("BEKLİYOR")) : Loc.T("HAZIR"),
+                    Detail = string.Join(" ", lines),
                 });
             }
         }
 
-        /// <summary>Revir toparlanmayı neden hızlandırmadı (ShelterLogic.Advance koşulları); hızlandırması gerekmiyorsa null.</summary>
+        static string Role(string role) => Baskin.UnitTypes.TryGetValue(role ?? "", out var type) ? type.Name : role;
+
+        /// <summary>Revir neden yara sarmadı (ShelterLogic.Advance koşulları); sarabiliyorsa null.</summary>
         static string InfirmaryIdle(ShiftSnapshot b, ShiftSnapshot a, ShiftRates r)
         {
             var room = b.Room(ShelterLogic.Infirmary);
-            if (room == null || room.level <= 0) return Loc.T("Revir hasarlı: toparlanma hızlanmadı.");
-            if (room.workers < r.healingWorkers) return Loc.T("Revirde görevli yok: toparlanma hızlanmadı.");
-            if (!b.EnergyEnough) return Loc.T("Revir enerjisiz: toparlanma hızlanmadı.");
-            if (a.starving) return Loc.T("Açlık: toparlanma hızlanmadı.");
+            if (room == null || room.level <= 0) return Loc.T("Revir hasarlı: yara sarılmadı.");
+            if (room.workers < r.healingWorkers) return Loc.T("Revirde görevli yok: yara sarılmadı.");
+            if (a.starving) return Loc.T("Açlık: revir durdu.");
             return null;
         }
 
         /// <summary>
-        /// Analist notu (Kalam, tek satır, yalnız öneri): yeni vardiyanın hâlinden en önemli tek iş. Enerji açığı → jeneratör,
-        /// erzak eksiye gidiyor → yaşam alanı, yaralı ekip → revir, boşta kişi → iş. Öneri yoksa null.
+        /// Analist notu (Kalam, tek satır, yalnız öneri): yeni vardiyanın hâlinden en önemli tek iş. Erzak eksiye gidiyor →
+        /// yaşam alanı, yaralı uzman → revir, telsizde kimse yok → telsiz, boşta kişi → iş. Öneri yoksa null.
         /// </summary>
         static string Analyst(ShiftReportInput input)
         {
             var a = input.after;
             var r = input.rates;
-            if (a.idle <= 0 && !a.teams.Any(t => t.down > 1)) return null;
-            var generator = a.Room(ShelterLogic.Generator);
-            if (!a.EnergyEnough && generator != null && generator.level > 0 && r.workerEnergy > 0)
-            {
-                int need = (int)Math.Ceiling((a.energyDemand - a.energyCapacity) / r.workerEnergy - 1e-9);
-                int room = generator.level * r.workersPerLevel - generator.workers;
-                if (need <= a.idle && need <= room)
-                {
-                    var workshop = a.Room(ShelterLogic.Workshop);
-                    return workshop != null && workshop.level > 0 && workshop.workers > 0
-                        ? Loc.F("→ jeneratöre {0} kişi, atölye döner", need)
-                        : Loc.F("→ jeneratöre {0} kişi, enerji yeter", need);
-                }
-            }
+            bool hurt = a.teams.Any(t => t.members.Any(m => m.wounds > 0 || m.down > 0));
+            if (a.idle <= 0 && !hurt) return null;
             var living = a.Room(ShelterLogic.Living);
             double gather = (living?.workers ?? 0) * r.suppliesPerWorker, eat = a.population * r.suppliesPerResident;
             if (gather < eat && living != null && r.suppliesPerWorker > 0)
@@ -271,13 +309,15 @@ namespace Corrigible.Desk.Bridge
                 if (need <= a.idle && need <= living.level * r.workersPerLevel - living.workers)
                     return Loc.F("→ yaşam alanına {0} kişi, erzak artıya geçer", need);
             }
-            if (a.teams.Any(t => t.down > 1))
+            if (hurt)
             {
                 var infirmary = a.Room(ShelterLogic.Infirmary);
-                if (infirmary == null || infirmary.level <= 0) return Loc.T("→ revir onarılırsa ekip daha çabuk toparlanır");
+                if (infirmary == null || infirmary.level <= 0) return Loc.T("→ revir onarılırsa yaralar sarılır");
                 if (infirmary.workers < r.healingWorkers && a.idle > 0)
-                    return Loc.F("→ revire {0} kişi, ekip daha çabuk toparlanır", r.healingWorkers - infirmary.workers);
+                    return Loc.F("→ revire {0} kişi, yaralar sarılır", r.healingWorkers - infirmary.workers);
             }
+            var radio = a.Room(ShelterLogic.Radio);
+            if (radio != null && radio.level > 0 && radio.workers == 0 && a.idle > 0) return Loc.T("→ telsize 1 kişi, alarm yavaşlar");
             return a.idle > 0 ? Loc.F("→ boştaki {0} kişiye iş ver", a.idle) : null;
         }
 
@@ -307,8 +347,9 @@ namespace Corrigible.Desk.Bridge
             return rounded > 0 ? ReportTone.Good : rounded < 0 ? ReportTone.Bad : ReportTone.Neutral;
         }
 
-        /// <summary>Formül sayısı: tam sayı ondalıksız (“2”, “40”), değilse bir ondalık (“0,5”).</summary>
-        static string Compact(double v) => DeskFormat.Number(v, Math.Abs(v - Math.Round(v)) < 1e-9 ? 0 : 1);
+        /// <summary>Formül sayısı: tam sayı ondalıksız (“2”, “40”), değilse gereken kadar ondalık (“0,5”, “0,25”).</summary>
+        static string Compact(double v) =>
+            DeskFormat.Number(v, Math.Abs(v - Math.Round(v)) < 1e-9 ? 0 : Math.Abs(v * 10 - Math.Round(v * 10)) < 1e-9 ? 1 : 2);
 
         static ReportRow Row(string label, string note, string value, ReportTone tone) =>
             new ReportRow { Label = label, Note = note, Value = value, Tone = tone };

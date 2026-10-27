@@ -16,6 +16,8 @@ namespace Corrigible.Desk
         [SerializeField] TMP_Text nameLabel, key;
         [SerializeField] Image thumbnail, nameHighlight;
         [SerializeField] Image[] pips, rightFill, rightRing, rightIcon;
+        [Tooltip("Zırh plakası noktası (mavi): son can noktasının sağında.")]
+        [SerializeField] Image armorPip;
         RaidTeamModel model; IRaidCommands commands; bool hover; float lift;
         public Button Button => button;
         public void Bind(IRaidCommands value, int index) { commands=value; key.text=(index+1).ToString(); button.onClick.AddListener(Select); }
@@ -23,12 +25,12 @@ namespace Corrigible.Desk
         public void Render(RaidTeamModel value, bool locked)
         {
             model=value;if(group!=null)group.alpha=locked ? .6f : 1;if(warnRing!=null)warnRing.enabled=value.Warn;if(downCross!=null)downCross.enabled=value.Down;
-            if(downStamp!=null){downStamp.gameObject.SetActive(value.Down);downStamp.text=Loc.T("DÜŞTÜ");}
+            if(downStamp!=null){downStamp.gameObject.SetActive(value.Down);downStamp.text=value.Absent?Loc.T("YARALI"):Loc.T("DÜŞTÜ");}
             nameLabel.text=value.Name;
             // Dar ekip kartında İngilizce uzun adın brifteki kısa karşılığı.
             if(value.Letter=='E' && DeskLoc.Instance.Lang==DeskLang.En) nameLabel.text=Loc.T("EMP UZM.");
             DeskSprites.Apply(thumbnail,value.Thumb); nameHighlight.enabled=value.Selected;
-            RaidHudView.Pips(pips,value.Hp,value.Max,value.Down?"ink.red":"ink.ink");thumbnail.color=new Color(1,1,1,value.Down?.7f:1); button.interactable=!locked&&!value.Down;
+            RaidHudView.Pips(pips,value.Hp,value.Max,value.Down?"ink.red":"ink.ink");RaidHudView.ArmorPip(armorPip,pips,value.Max,value.Down?0:value.Armor);thumbnail.color=new Color(1,1,1,value.Down?.7f:1); button.interactable=!locked&&!value.Down;
             for(int i=0;i<2;i++)
             {
                 bool available=i==0?value.Move:value.Ability, armed=i==1&&value.Armed;

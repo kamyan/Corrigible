@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Kesit maketinde bir oda (K4 notu, K8 › oda durumları): çalışan oda aydınlık (ampul + nokta ışık), enerjisiz ve
+    /// Kesit maketinde bir oda (K4 notu, K8 › oda durumları): çalışan oda aydınlık (ampul + nokta ışık), durmuş ve
     /// hasarlı oda karanlık (duvar #5A554B, sönük ampul); hasarlıda moloz ve düşmüş kiriş. Kapasite = pirinç disk yuva,
     /// dolu yuva = piyon. Pirinç çerçevede dizin kartı (ad, satır, damga); seçiliyken oda ağzına 8 px sarı + 2 px mürekkep,
     /// kartta iç sarı çerçeve. Durumu bağlayıcı verir; burada yalnız görünüm ve kısa hareketler vardır.
@@ -84,11 +84,11 @@ namespace Corrigible.Desk
             }
             shownWorkers = d.Workers;
 
-            // Kart: seçiliyken #FFFDF5 + iç sarı; damga: HASARLI · ENERJİSİZ · EMİR UYGULANDI (yeni, bir vardiya)
+            // Kart: seçiliyken #FFFDF5 + iç sarı; damga: HASARLI · DURDU · EMİR UYGULANDI (yeni, bir vardiya)
             cardName.text = d.Name;
             cardLine.text = d.Line;
             ApplySelection();
-            string key = d.Condition == RoomCondition.Damaged ? "stamp.damaged" : d.Condition == RoomCondition.NoPower ? "stamp.noPower" : d.Fresh ? "stamp.orderDone" : null;
+            string key = d.Condition == RoomCondition.Damaged ? "stamp.damaged" : d.Condition == RoomCondition.Stopped ? "stamp.noPower" : d.Fresh ? "stamp.orderDone" : null;
             stamp.gameObject.SetActive(key != null);
             if (key != null)
             {
@@ -96,7 +96,7 @@ namespace Corrigible.Desk
                 stampFrame.color = c;
                 stampText.color = c;
                 stampText.text = d.Condition == RoomCondition.Damaged ? Corrigible.Core.Loc.T("HASARLI")
-                    : d.Condition == RoomCondition.NoPower ? Corrigible.Core.Loc.T("ENERJİSİZ") : Corrigible.Core.Loc.T("EMİR UYGULANDI");
+                    : d.Condition == RoomCondition.Stopped ? Corrigible.Core.Loc.T("DURDU") : Corrigible.Core.Loc.T("EMİR UYGULANDI");
             }
         }
 

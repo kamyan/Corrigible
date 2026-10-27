@@ -13,10 +13,28 @@ namespace Corrigible.Desk
     }
 
     [Serializable]
+    public sealed class ShiftMemberSnapshot
+    {
+        /// <summary>Rol (tek, emp, ana); yara (eksik can) ve yatacağı gün.</summary>
+        public string role;
+        public int wounds, down;
+    }
+
+    [Serializable]
     public sealed class ShiftTeamSnapshot
     {
         public string id, name;
-        public int down;
+        /// <summary>Ekip bu vardiya baskına çıktı (dinlenmedi).</summary>
+        public bool busy;
+        public List<ShiftMemberSnapshot> members = new List<ShiftMemberSnapshot>();
+        /// <summary>Kadroda Teknisyen var (asıl ya da yedek): baskına çıkabilir.</summary>
+        public bool canRaid = true;
+
+        public ShiftMemberSnapshot Member(string role)
+        {
+            foreach (var m in members) if (m.role == role) return m;
+            return null;
+        }
     }
 
     /// <summary>Vardiyadaki tek fon hareketi (simülasyonun işlem defterinden): tür, hedef, tutar ve sunum için bir sayı.</summary>
@@ -34,8 +52,10 @@ namespace Corrigible.Desk
     public sealed class ShiftRates
     {
         public double dailyFunds, regionIncome;
-        public double suppliesPerWorker, suppliesPerResident, materialsPerWorker, starvingMultiplier, workerEnergy;
-        public int healingDays, healingWorkers, workersPerLevel;
+        public double suppliesPerWorker, suppliesPerResident, starvingMultiplier;
+        public double platesPerWorker, plateMaterials, healPerWorker;
+        public int healingDays, healingWorkers, workersPerLevel, restHeal;
+        public int counterattackTrust;
     }
 
     /// <summary>Vardiyanın bir anı: kol inmeden önce (kapanış öncesi) ya da sonra (yeni vardiyanın başı).</summary>
@@ -43,8 +63,15 @@ namespace Corrigible.Desk
     public sealed class ShiftSnapshot
     {
         public int shift, freeRegions, regions, population, idle;
-        public double fon, supplies, suppliesCapacity, materials, materialsCapacity, energyCapacity, energyDemand;
+        public double fon, supplies, suppliesCapacity, materials, materialsCapacity;
         public bool starving;
+        /// <summary>Zırh plakaları, deposu ve sıradaki plakanın birikimi; hazır yedek uzman.</summary>
+        public int plates, plateCapacity, reserves;
+        public double plateProgress;
+        /// <summary>YZ alarmı ve eşiği; karşı saldırı sayısı ve sonuncusunda yeniden işgal edilen sektör.</summary>
+        public double alarm, alarmThreshold;
+        public int counterattacks;
+        public string lastCounterattack;
         public List<ShiftRoomSnapshot> rooms = new List<ShiftRoomSnapshot>();
         public List<ShiftTeamSnapshot> teams = new List<ShiftTeamSnapshot>();
 
@@ -59,8 +86,6 @@ namespace Corrigible.Desk
             foreach (var t in teams) if (t.id == id) return t;
             return null;
         }
-
-        public bool EnergyEnough => energyCapacity >= energyDemand;
     }
 
     /// <summary>
@@ -89,7 +114,7 @@ namespace Corrigible.Desk
     {
         /// <summary>Satır adı (LF 400 18) ve yanındaki açıklama (LF 400 15, ör. “2 + 0,5 × 1 özgür bölge”).</summary>
         public string Label, Note;
-        /// <summary>Satır içi damga (ör. “ENERJİSİZ 4/6”); yoksa null.</summary>
+        /// <summary>Satır içi damga (ör. “DEPO DOLU”); yoksa null.</summary>
         public string Badge;
         public string Value;
         public ReportTone Tone;
@@ -97,10 +122,12 @@ namespace Corrigible.Desk
         public bool Total;
     }
 
-    /// <summary>Ekip toparlanması satırı: ad · durum, “2 → 1 gün”, altında revir ve hazır olma cümlesi.</summary>
+    /// <summary>Ekip satırı: ad · durum, “yara 3 → 1”, altında dinlenme, revir ve yatan uzmanlar.</summary>
     public sealed class ReportTeamRow
     {
         public string Label, Value, Detail;
+        /// <summary>Ekip simgesi gösterilmez (ekip olmayan satır: YZ alarmı).</summary>
+        public bool HideIcon;
     }
 
     /// <summary>Vardiya raporunun gösterime hazır hâli (K6b): <see cref="ShiftReportView"/> yalnız bunu çizer.</summary>
@@ -124,5 +151,7 @@ namespace Corrigible.Desk
         // Testler ve dizi için sayılar
         public double Opening, Closing, Income, SuppliesNet, MaterialsNet;
         public bool TeamReturned;
+        /// <summary>Bu vardiyada YZ karşı saldırdıysa teleks iletisi; yoksa null.</summary>
+        public string Counterattack;
     }
 }

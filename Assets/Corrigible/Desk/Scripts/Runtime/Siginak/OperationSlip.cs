@@ -63,6 +63,21 @@ namespace Corrigible.Desk
             pin = pinPoint; markDone = done; markReady = ready; markLocked = locked; frameSolid = solid; frameDashed = dashed;
         }
 
+        float membersSize = -1;
+        readonly Vector3[] stampCorners = new Vector3[4];
+
+        /// <summary>Kadro satırı damganın soluna sığar: uzun kadroda (yedek, eksik rol, plaka) yazı küçülür.</summary>
+        void FitMembers()
+        {
+            if (membersSize < 0) membersSize = teamMembers.fontSize;
+            teamMembers.fontSize = membersSize;
+            teamStampFrame.rectTransform.GetWorldCorners(stampCorners);
+            var r = teamMembers.rectTransform;
+            float room = r.InverseTransformPoint(stampCorners[0]).x - r.rect.xMin - 6;
+            float need = teamMembers.GetPreferredValues(teamMembers.text).x;
+            if (room > 0 && need > room) teamMembers.fontSize = Mathf.Max(10, membersSize * room / need);
+        }
+
         void Awake()
         {
             rest = paper.anchoredPosition;
@@ -116,6 +131,7 @@ namespace Corrigible.Desk
             teamName.text = d.TeamName ?? "";
             teamMembers.text = d.TeamMembers ?? "";
             Stamp(teamStampFrame, teamStamp, (d.TeamReady ? "stamp.teamReady" : "stamp.injured", d.TeamStamp ?? ""));
+            FitMembers();
 
             actionBlock.SetActive(d.HasAction);
             action.interactable = d.ActionEnabled;

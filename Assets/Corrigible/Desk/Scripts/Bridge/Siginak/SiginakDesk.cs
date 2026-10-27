@@ -188,7 +188,7 @@ namespace Corrigible.Desk.Bridge
 
         // ---------- Vardiya şalteri ----------
 
-        /// <summary>Kapak kalkınca ön kontrol: boşta kişi, enerjisiz oda, verilmemiş baskın emri (K6 notu). Pencere açılmaz.</summary>
+        /// <summary>Kapak kalkınca ön kontrol: boşta kişi, görevlisi olup duran oda, verilmemiş baskın emri (K6 notu). Pencere açılmaz.</summary>
         void PreCheck()
         {
             var sim = Sim;
@@ -196,8 +196,9 @@ namespace Corrigible.Desk.Bridge
             var notes = new System.Collections.Generic.List<string>();
             int idle = ShelterLogic.AvailableWorkers(sim.Shelter);
             if (idle > 0) notes.Add(Loc.F("boşta {0} kişi", idle));
-            bool energyShort = ShelterLogic.EnergyCapacity(sim.Shelter, sim.B) < ShelterLogic.EnergyDemand(sim.Shelter, sim.B);
-            if (energyShort) notes.Add(Loc.T("enerjisiz oda var"));
+            foreach (var room in sim.Shelter.Rooms)
+                if (room.Workers > 0 && ShelterViewBuilder.Condition(sim, room) == RoomCondition.Stopped)
+                    notes.Add(Loc.F("{0} durdu", ShelterLogic.RoomName(room.Id)));
             var next = sim.NextLiberationSector(sim.S.Liberation.CurrentRegion);
             if (next != null && sim.LiberationRaidCheck(next.Id) == null) notes.Add(Loc.F("baskın emri verilmedi: {0}", next.Name));
             telex.Post(surface.Shift, Loc.T("ÖN KONTROL"),
@@ -240,9 +241,10 @@ namespace Corrigible.Desk.Bridge
             double capacity = ShelterLogic.SuppliesCapacity(shelter, sim.B);
             // Vardiya dizisinde sayaçlar 0,40'a kadar eski değerde bekler (SiginakShift sırayla döndürür)
             if (shift == null || !shift.HoldCounters) ShowCounters(countersShown);
-            edge.SetValues(Loc.F("VARDİYA {0:000}  ·  FON {1}  ·  ERZAK {2}/{3}  ·  MALZEME {4}  ·  ÖZGÜR {5}/{6}", surface.Shift,
+            edge.SetValues(Loc.F("VARDİYA {0:000}  ·  FON {1}  ·  ERZAK {2}/{3}  ·  MALZEME {4}  ·  ÖZGÜR {5}/{6}  ·  GÜVEN {7}/{8}  ·  ALARM {9}/{10}", surface.Shift,
                 DeskFormat.Number(sim.S.Fon, 1), DeskFormat.Number(System.Math.Floor(shelter.Supplies), 0), DeskFormat.Number(capacity, 0),
-                DeskFormat.Number(System.Math.Floor(shelter.Materials), 0), free, regions));
+                DeskFormat.Number(System.Math.Floor(shelter.Materials), 0), free, regions, sim.S.Trust, sim.B.liberationTrustStart,
+                DeskFormat.Number(sim.S.Alarm, 0), DeskFormat.Number(sim.B.liberationAlarmThreshold, 0)));
             hope.Show(free, settings == null || settings.hopeMarks);
             FreedList(sim);
         }
@@ -255,7 +257,7 @@ namespace Corrigible.Desk.Bridge
             var shelter = sim.Shelter;
             var lib = sim.S.Liberation;
             counters.Show(surface.Shift, sim.S.Fon, shelter.Supplies, ShelterLogic.SuppliesCapacity(shelter, sim.B), shelter.Materials,
-                lib.Regions.Count(r => r.Completed), lib.Regions.Count, animate, stagger, shiftRoll, slips);
+                lib.Regions.Count(r => r.Completed), lib.Regions.Count, sim.S.Trust, sim.B.liberationTrustStart, animate, stagger, shiftRoll, slips);
             countersShown = true;
         }
 

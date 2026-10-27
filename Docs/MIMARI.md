@@ -121,7 +121,11 @@ SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
   eşlemesi, poz/kamera ayrıntısı ve değişiklik günlüğü: `Docs/UI_Siginak/IMPLEMENTATION_MAP.md`.
 - **Bağlayıcılar** (Bridge/Siginak): `SiginakDesk` (sayaçlar, anahtarlar, şalter), `SiginakMap` (kâğıt harita, görev ve
   cephe fişleri, ekip figürü), `SiginakShelter` (maket ve oda kartları), `SiginakCrt` (saha yayını, `IRaidTransition`),
-  `SiginakShift` (vardiya dizisi, vardiya raporu, evrak tepsisi), `SiginakBriefing` (açılış ve emir belgesi). Modelleri saf
+  `SiginakShift` (vardiya dizisi, vardiya raporu, evrak tepsisi), `SiginakBriefing` (açılış ve emir belgesi),
+  `SiginakTutorial` (eğitim: sahne kökünde kendi tuvali `SiginakTutorial`, sıralama 70, baskın HUD'unun üstünde; odanın
+  dışında olduğu için baskında da çalışır; adımlar saf C# `TutorialFlow`, not `TutorialNoteView`; senaryolu ilk baskın
+  `TutorialRaid` ve rehberi `RaidGuide`: `LiveRaidDataSource` eğitim baskın adımındaysa tahtayı senaryonun tohumuyla kurar,
+  `RaidDataSource` girdiyi rehberin sıradaki adımıyla süzer, `RaidBoard3D.Marks.Guide` sarı çerçeveyi çizer). Modelleri saf
   C# kurucular üretir (`LiberationMapBuilder`, `ShelterViewBuilder`, `CrtViewBuilder`, `ShiftReportBuilder`,
   `BriefingBuilder`); odanın bileşenleri (Runtime/Siginak) yalnız modeli çizer.
 - `CommandPostDesk` masa kamerasının girdi kapısıdır: açık bir ekran kâğıdı ya da sunumun kilidi (`ExternalBlocked`)

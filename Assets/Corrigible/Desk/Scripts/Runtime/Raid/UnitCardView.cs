@@ -8,6 +8,8 @@ namespace Corrigible.Desk
         [SerializeField] Image thumb, pointer;
         [SerializeField] TMP_Text title, effects;
         [SerializeField] Image[] pips, rowFill, rowFrame, rowCheck;
+        [Tooltip("Zırh plakası noktası (mavi): son can noktasının sağında.")]
+        [SerializeField] Image armorPip;
         [SerializeField] TMP_Text[] effectLabels;
         [SerializeField] Image[] effectIcons;
         [SerializeField] TMP_Text[] rowName, rowDetail;
@@ -17,9 +19,10 @@ namespace Corrigible.Desk
         public void Render(RaidViewModel vm)
         {
             gameObject.SetActive(vm.UnitCard!=null); if(vm.UnitCard==null)return;
-            var unit=vm.UnitCard; title.text=unit.Name; DeskSprites.Apply(thumb,"thumb_standee_"+unit.Letter+"_card");
-            RaidHudView.Pips(pips,unit.Hp,unit.Max,"ink.ink");
-            var rect=(RectTransform)transform;float height=unit.Letter=='A'?268:216;
+            var unit=vm.UnitCard; title.text=unit.Rookie?Corrigible.Core.Loc.F("{0} · YEDEK",unit.Name):unit.Name; DeskSprites.Apply(thumb,"thumb_standee_"+unit.Letter+"_card");
+            RaidHudView.Pips(pips,unit.Hp,unit.Max,"ink.ink");RaidHudView.ArmorPip(armorPip,pips,unit.Max,unit.Armor);
+            // Üçüncü satır (zırh plakası, yedek uzman) kartı bir satır uzatır; etkiler satırların altında kalır
+            var rect=(RectTransform)transform;float height=(unit.Letter=='A'?268:216)+52*Mathf.Max(0,Mathf.Min(rows.Length,vm.UnitRows.Length)-2);
             rect.sizeDelta=new Vector2(360,height);
             // Kart her ekip sütununa bağlanır; alt kenar ve işaretçi sabit kalır.
             rect.anchoredPosition=new Vector2(16+206*System.Array.FindIndex(vm.Team,x=>x.Letter==unit.Letter),120+height);

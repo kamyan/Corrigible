@@ -12,6 +12,8 @@ namespace Corrigible.Desk.Bridge
         GameOverVM GameOver()
         {
             var end = GameData.Ending(S.Ending);
+            // Silme zaferdir; Dağılma (sivil güven tükendi) yenilgi
+            bool won = S.Ending == "silme";
             var vm = new GameOverVM
             {
                 Report = new GameOverReportVM
@@ -22,8 +24,9 @@ namespace Corrigible.Desk.Bridge
                         Meta = Loc.T("Dosya KYGA-07 · Karşı harekât"),
                         Right = Day(S.Day) + " · " + Loc.T("tek nüsha"),
                     },
-                    ResultCap = Loc.T("SONUÇ"), Title = Up(end.Title), Who = Loc.T("KYGA kazandı."), Lead = end.Text,
-                    BigStamp = new BigStampVM { Text = Loc.T("KAZANILDI"), Color = "#24592E", RotDeg = -7, Opacity = 0.9f },
+                    ResultCap = Loc.T("SONUÇ"), Title = Up(end.Title), Who = won ? Loc.T("KYGA kazandı.") : Loc.T("YZ kazandı."), Lead = end.Text,
+                    BigStamp = won ? new BigStampVM { Text = Loc.T("KAZANILDI"), Color = "#24592E", RotDeg = -7, Opacity = 0.9f }
+                        : new BigStampVM { Text = Loc.T("KAYBEDİLDİ"), Color = "#9A1E14", RotDeg = -7, Opacity = 0.9f },
                 },
                 Chart = Chart(),
                 Timeline = Timeline(end),
@@ -121,6 +124,7 @@ namespace Corrigible.Desk.Bridge
                 Types =
                 {
                     ["capture"] = new TimelineTypeVM { Label = Loc.T("GERİ ALMA"), Icon = "check_circle", Color = "#1A4789" },
+                    ["counter"] = new TimelineTypeVM { Label = Loc.T("KARŞI SALDIRI"), Icon = "ai_move", Color = "#9A1E14" },
                     ["result"] = new TimelineTypeVM { Label = Loc.T("SONUÇ"), Icon = "power", Color = "#9A1E14" },
                 },
             };
@@ -131,10 +135,12 @@ namespace Corrigible.Desk.Bridge
                 string title = m.Text, text = "";
                 int colon = m.Text.IndexOf(": ", System.StringComparison.Ordinal);
                 if (colon > 0 && colon < 60) { title = m.Text.Substring(0, colon); text = m.Text.Substring(colon + 2); }
+                // “bad”: YZ karşı saldırısı (sektör yeniden işgal altında)
+                bool counter = m.Kind == "bad";
                 t.Cards.Add(new TimelineCardVM
                 {
-                    N = i + 1, Day = Day(m.Day), Type = "capture", Title = title.TrimEnd('.'), Text = text,
-                    Stamp = new StampVM { Text = Loc.T("GERİ ALINDI"), Color = "blue", Rot = -4 },
+                    N = i + 1, Day = Day(m.Day), Type = counter ? "counter" : "capture", Title = title.TrimEnd('.'), Text = text,
+                    Stamp = counter ? new StampVM { Text = Loc.T("YZ ALDI"), Color = "red", Rot = -4 } : new StampVM { Text = Loc.T("GERİ ALINDI"), Color = "blue", Rot = -4 },
                 });
             }
             // Son kart her zaman sonuç

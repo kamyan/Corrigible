@@ -27,6 +27,13 @@ namespace Corrigible.Game.Raid
         public RaidPiece analyst;
         public RaidPiece drone;
         public RaidPiece maintenance;
+        [Header("Bölge imza düşmanları")]
+        public RaidPiece armoredDrone;
+        public RaidPiece mortar;
+        public RaidPiece bomber;
+        public RaidPiece locker;
+        public RaidPiece shieldDrone;
+        public RaidPiece replicator;
 
         [Header("İşaretler")]
         [Tooltip("Robotun uyanacağı kare.")]
@@ -54,9 +61,16 @@ namespace Corrigible.Game.Raid
             "core" => core, "node" => node, "civ" => civilian, "cool" => cooling, "spawner" => spawner, _ => civilian,
         };
 
+        // Unity nesnesinde ?? sahte null'u görmez
+        static RaidPiece Or(RaidPiece piece, RaidPiece fallback) => piece != null ? piece : fallback;
+
         public RaidPiece Unit(string type) => type switch
         {
-            "tek" => technician, "emp" => emp, "ana" => analyst, "dron" => drone, "bakim" => maintenance, _ => drone,
+            "tek" => technician, "emp" => emp, "ana" => analyst, "dron" => drone, "bakim" => maintenance,
+            // Yeni parça henüz atanmadıysa ailesinin parçası (havada olanlar dron, yerdekiler bakım robotu)
+            "zdron" => Or(armoredDrone, drone), "kalkan" => Or(shieldDrone, drone), "havan" => Or(mortar, maintenance),
+            "bomba" => Or(bomber, maintenance), "kilit" => Or(locker, maintenance), "cogalt" => Or(replicator, maintenance),
+            _ => drone,
         };
     }
 }

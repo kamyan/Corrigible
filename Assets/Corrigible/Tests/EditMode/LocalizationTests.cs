@@ -80,7 +80,7 @@ namespace Corrigible.Tests
             var sim = Simulation.NewGame(seed);
             var s = sim.S;
             var rng = new Rng(seed * 7 + 3);
-            string[] rooms = { ShelterLogic.Living, ShelterLogic.Generator, ShelterLogic.Workshop, ShelterLogic.Infirmary };
+            string[] rooms = { ShelterLogic.Living, ShelterLogic.Radio, ShelterLogic.Workshop, ShelterLogic.Infirmary };
             void Res(ActResult r) => texts.Add(r.Msg);
             while (s.Ending == null && s.Day < 300)
             {

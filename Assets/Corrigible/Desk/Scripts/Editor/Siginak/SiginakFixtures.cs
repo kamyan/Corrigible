@@ -12,9 +12,9 @@ namespace Corrigible.Desk.EditorTools
     /// (komutlar doğrudan simülasyona gider, olaylar boşaltılır). Kayıt dosyası bir sonraki komutta güncellenir:
     /// deneme öncesi yedek alınmalıdır.
     /// V.014 — Batı Avrupa özgür, Doğu Avrupa cephe 1/3, ekip hazır; sığınak PROMPT §7'deki gibi (bellekte). V.019 — V.014'ten devam, Doğu Avrupa özgürleşir
-    /// (K3 dizisi oynar). V.015-yaralı — V.014'ten devam, baskın başarısız, Alfa yaralı (figür S-07'de).
-    /// K6 — V.014'te baskın başarısız (fon 62 → 50, Alfa 2 gün yaralı) ve bir YAPILAMADI satırı; şalter indirilince
-    /// V.014 → 015 raporu K6b'deki sayıları verir.
+    /// (K3 dizisi oynar). V.015-yaralı — V.014'ten devam, baskın başarısız, Teknisyen düştü (yerine yedek çıkar, piyon yatık).
+    /// K6 — V.014'te baskın başarısız (fon 62 → 50, Teknisyen düştü) ve bir YAPILAMADI satırı; şalter indirilince
+    /// V.014 → 015 raporu çıkar.
     /// </summary>
     public static class SiginakFixtures
     {
@@ -24,7 +24,11 @@ namespace Corrigible.Desk.EditorTools
         {
             var r = sim.StartLiberationRaid(sector);
             if (!r.Ok) throw new InvalidOperationException(sector + ": " + r.Msg);
-            r = sim.ResolveRaid(new RaidResult { Success = success, Down = down, Turns = 6 });
+            // Düşen üyeler kadronun başından (önce Teknisyen); ayaktakiler çıktıkları canla ve plakalarıyla döner
+            var squad = sim.S.Raid.Params.Squad;
+            var result = new RaidResult { Success = success, Down = down, Turns = 6 };
+            for (int i = 0; i < squad.Count; i++) { result.Hp.Add(i < down ? 0 : squad[i].Hp); result.Armor.Add(squad[i].Armor); }
+            r = sim.ResolveRaid(result);
             if (!r.Ok) throw new InvalidOperationException(sector + " sonuç: " + r.Msg);
         }
 
@@ -47,8 +51,8 @@ namespace Corrigible.Desk.EditorTools
         }
 
         /// <summary>
-        /// V.014'ün sığınağı (PROMPT §7): yaşam SV1 2/2, jeneratör SV1 0/2, atölye SV3 2/6 (enerjisiz), revir hasarlı, boşta 4,
-        /// topluluk 8/8, erzak 31/40, malzeme 19, fon 62,0. Enerjisiz hâl kurallarla oluşamadığından (Soru 1) yalnız bellekte
+        /// V.014'ün sığınağı (PROMPT §7): yaşam SV1 2/2, telsiz SV1 0/2, atölye SV3 2/6, revir hasarlı, boşta 4,
+        /// topluluk 8/8, erzak 31/40, malzeme 19, fon 62,0, alarm 4. Kurallarla bu vardiyada oluşamayacağından yalnız bellekte
         /// kurulur; kayda yazılmaz, simülasyon kodu değişmez.
         /// </summary>
         public static void ApplyShelterV014(Simulation sim)
@@ -56,12 +60,14 @@ namespace Corrigible.Desk.EditorTools
             var s = sim.Shelter;
             s.Population = 8;
             s.Room(ShelterLogic.Living).Level = 1; s.Room(ShelterLogic.Living).Workers = 2;
-            s.Room(ShelterLogic.Generator).Level = 1; s.Room(ShelterLogic.Generator).Workers = 0;
+            s.Room(ShelterLogic.Radio).Level = 1; s.Room(ShelterLogic.Radio).Workers = 0;
             s.Room(ShelterLogic.Workshop).Level = 3; s.Room(ShelterLogic.Workshop).Workers = 2;
             s.Room(ShelterLogic.Infirmary).Level = 0; s.Room(ShelterLogic.Infirmary).Workers = 0;
             s.Supplies = 31; s.Materials = 19; s.Starving = false;
             s.LastSuppliesChange = 0.4; s.LastMaterialsChange = 0;
             sim.S.Fon = 62;
+            // Alarm 4/10: K6'nın başarısız baskını (+3) ve vardiyası (+1) eşiğe varmaz
+            sim.S.Alarm = 4;
         }
 
         /// <summary>V.014'ten V.019: Doğu Avrupa'nın iki sektörü daha; bölge vardiya 019'da özgürleşir.</summary>
@@ -72,14 +78,14 @@ namespace Corrigible.Desk.EditorTools
             Raid(sim, "eeu_3");
         }
 
-        /// <summary>V.014'ten V.015: baskın başarısız, bir üye düştü (Alfa 2 gün yaralı).</summary>
+        /// <summary>V.014'ten V.015: baskın başarısız, Teknisyen düştü (yerine yedek çıkar).</summary>
         public static void ApplyInjured(Simulation sim)
         {
             StepTo(sim, 14);
             Raid(sim, "eeu_2", false, 1);
         }
 
-        /// <summary>V.014'ün kendi vardiyasında baskın başarısız: bir üye düştü, Alfa 2 gün yaralı (K6 öncesi).</summary>
+        /// <summary>V.014'ün kendi vardiyasında baskın başarısız: Teknisyen düştü (K6 öncesi).</summary>
         public static void ApplyFailedRaid(Simulation sim) => Raid(sim, "eeu_2", false, 1);
 
         /// <summary>

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Globalization;
 
 namespace Corrigible.Core
@@ -21,13 +22,22 @@ namespace Corrigible.Core
             var room = Shelter.Room(roomId);
             if (room == null) return Loc.T("Böyle bir sığınak odası yok.");
             if (room.Level >= B.shelterMaxRoomLevel) return Loc.T("Oda en yüksek seviyede.");
+            string locked = ShelterLevelLock(roomId);
+            if (locked != null) return locked;
             var cost = ShelterLogic.UpgradeCost(Shelter, roomId, B);
             if (S.Fon < cost.Fon || Shelter.Materials < cost.Materials)
                 return Loc.F("{0} fon ve {1} malzeme gerekiyor.", cost.Fon, cost.Materials);
-            if ((roomId == ShelterLogic.Workshop || roomId == ShelterLogic.Infirmary) &&
-                ShelterLogic.EnergyDemand(Shelter, B) + B.shelterRoomEnergy > ShelterLogic.EnergyCapacity(Shelter, B))
-                return Loc.T("Enerji yetersiz. Önce jeneratörü geliştir veya oraya personel görevlendir.");
             return null;
+        }
+
+        /// <summary>Özgür bölge sayısı odanın sıradaki seviyesine yetmiyorsa gerekçe (seviye 2 ve 3 bölgeyle açılır); yetiyorsa null.</summary>
+        public string ShelterLevelLock(string roomId)
+        {
+            var room = Shelter?.Room(roomId);
+            if (room == null) return null;
+            int next = room.Level + 1, free = S.Liberation.Regions.Count(r => r.Completed);
+            int need = next >= 3 ? B.shelterLevel3Regions : next == 2 ? B.shelterLevel2Regions : 0;
+            return free >= need ? null : Loc.F("Seviye {0} için {1} özgür bölge gerekiyor (şimdi {2}).", next, need, free);
         }
 
         public ActResult ShelterUpgrade(string roomId) => RunCommand(() =>
@@ -39,6 +49,8 @@ namespace Corrigible.Core
             Shelter.Materials -= cost.Materials;
             var room = Shelter.Room(roomId);
             room.Level++;
+            // Yaşam alanının yeni seviyesi bir yedek uzman getirir
+            ShelterLogic.SyncReserves(Shelter, B);
             return ActResult.Success(Loc.F("{0} hazır: seviye {1}.", ShelterLogic.RoomName(roomId), room.Level));
         }, "shelter_upgrade", roomId);
 
@@ -52,9 +64,6 @@ namespace Corrigible.Core
             if (workers < 0 || workers > ShelterLogic.WorkerCapacity(room, B)) return Loc.T("Odanın personel kapasitesi yetersiz.");
             if (workers == room.Workers) return Loc.T("Personel görevlendirmesi zaten böyle.");
             if (workers - room.Workers > ShelterLogic.AvailableWorkers(Shelter)) return Loc.T("Boşta yeterli kişi yok. Önce başka bir odadan personel ayır.");
-            if (roomId == ShelterLogic.Generator &&
-                ShelterLogic.EnergyCapacity(Shelter, B) + (workers - room.Workers) * B.shelterWorkerEnergy < ShelterLogic.EnergyDemand(Shelter, B))
-                return Loc.T("Bu görevlendirme çalışan odaların enerjisini keser.");
             return null;
         }
 

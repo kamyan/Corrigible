@@ -89,7 +89,7 @@ Kısaltmalar: `Lib` = `Sim.S.Liberation`, `Sh` = `Sim.Shelter`, `B` = `Sim.B` (B
 | Masa (linolyum, çelik, pirinç şerit) | `Table` (meşe 4,8 × 2,6) | YENİ | `materials.lino/steel/brass` |
 | Banker lambası (sağ arka, Spot) | `Lamp` + `Warm tungsten pool` (Point) | YENİ | `lights.deskLamp` |
 | Ortam ışığı Gradient | `RenderSettings` Flat (0,22, 0,26, 0,24) | DEĞİŞTİR (sahne ayarı, anahtarla birlikte) | `lights.ambient` |
-| **Sayaç rafı** (5 modül, çark, ± fişi) | `LiberationHudCanvas/Top summary backing` (Overlay TMP), eski `Ledger` (World TMP) | YENİ `CounterBank`, `CounterWheel` (Quad + `mainTextureOffset`), `DeltaSlip` | VARDİYA `S.Day` · FON `S.Fon` (onda bir çarkı) · ERZAK `Sh.Supplies` / `ShelterLogic.SuppliesCapacity` · MALZEME `Sh.Materials` · ÖZGÜR `Lib.Regions.Count(Completed)` / 12. Fark = önceki çizim ile yenisi |
+| **Sayaç rafı** (6 modül, çark, ± fişi; 6. GÜVEN 2026-10-27) | `LiberationHudCanvas/Top summary backing` (Overlay TMP), eski `Ledger` (World TMP) | YENİ `CounterBank`, `CounterWheel` (Quad + `mainTextureOffset`), `DeltaSlip` | VARDİYA `S.Day` · FON `S.Fon` (onda bir çarkı) · ERZAK `Sh.Supplies` / `ShelterLogic.SuppliesCapacity` · MALZEME `Sh.Materials` · ÖZGÜR `Lib.Regions.Count(Completed)` / 12. Fark = önceki çizim ile yenisi |
 | Kenar satırı (40 px) | aynı Top summary | YENİ `EdgeLine` (Otomatik / Her zaman / Kapalı; tercih `PlayerPrefs` `corrigible.siginak.edgeLine`) | sayaçla aynı + etkin istasyon |
 | **Anahtar rayı** (1 · 2 · 3 · H · Home) | `Station controls` (`commandStation`, `shelterStation`, `operationStation`), eski `CommandPost3D/Tabs` | YENİ `StationKeyRail`, `StationKey`; tıklama mevcut çağrılara gider (`ShowPlanning`, `FocusShelter`, `OpenWindow(Guide)`, `ResetView`) | etkin = rig pozu; devre dışı = `InputBlocked` / baskın |
 | **Vardiya şalteri** | `advanceDay` düğmesi + Boşluk kısayolu | YENİ `ShiftSwitch` (Idle → Hover → CoverOpen 4 s → Thrown → Sequence · Disabled) → `G.AdvanceLiberationDay()` | devre dışı: `S.Raid != null`, `S.Blocked`, `S.Ending != null`, rapor açık. Ön kontrol satırı: `AvailableWorkers`, enerji açığı, hazır ekip ve hazır sektör varken verilmemiş baskın |
@@ -378,6 +378,52 @@ Açık farklar (sahibi olan aşama):
 ---
 
 ## CHANGELOG
+
+- **2026-10-27 · Senaryolu ilk baskın:** taktik tahtada sıradaki kare için sarı çift çerçeve (`RaidBoard3D` "Tutorial guide
+  frame": 0,97 kare, 5 px, `highlighterColor`, sinüsle %6 nabız; canlandırma sırasında gizli). Eğitim notu baskında
+  "BASKIN · ADIM n/21" başlığıyla talimat ve ders yazar; not "ANALİST NOTU · n/12". Not masa pozunda ve baskın bitince
+  sağ üstte (−16, −64), başka yerde sağ altta (−16, 96); kâğıt tıklamayı yutmaz, yalnız düğmeler tıklanır. Rehberde Geri al
+  sönük.
+
+- **2026-10-27 · Eğitim notu:** sahne kökünde `SiginakTutorial` (Screen Space Overlay, sıralama 70, 1920 × 1080 ölçek):
+  sağ altta 340 × 258 px kâğıt kart (görev fişinin dolgu, gren, kenar ve kırmızı çizgisi; CP-Bold başlık, LF gövde),
+  "ANALİST NOTU · n/16", "Eğitimi atla" ve TAMAM; yeni adımda 24 px sağdan kayar. Görev fişi, baskındaki TURU BİTİR ve
+  raporlarla çakışmaz.
+- **2026-10-27 · Bölge kimliği ve zorluk kademesi:** telsiz odasının maketinde üç yeşil tank ve boru kalktı, yerine telsiz
+  masası (ahşap tabla ve ayaklar), koyu çelik telsiz cihazı (pirinç panel, iki kadran, kırmızı frekans bandı), mikrofon
+  ve tepesi kırmızı anten (sahnede `Props` altında 16 nesne; malzemeler odanın kendi malzemeleri). Ekip kartı ve birim
+  kartına zırh noktası (`armorPip`, üçüncü can noktasının kopyası; son can noktasının sağında mavi). Görev fişinde bölge
+  kimliği ve tehdit kademesi; kadro satırı damgaya sığacak kadar küçülür. Sığınak panosunda oda seviyesi kilidi (KİLİTLİ).
+  Baskın HUD'unda görev çipi bölge özelliğinin adını taşır; "ELEKTRİK ŞEBEKESİ"ne yetsin diye 94 → 185 px sola
+  genişledi (`RaidHud.prefab › Objective/AiAbility`, etiket 70 → 161 px); açıklaması özellik, imza makinesi ve kademe.
+- **2026-10-27 · Hazırlık sığınağı:** jeneratör odası telsiz odası oldu (sahnede `roomId: radio`, maket ve kart aynı;
+  ad ve açıklama `ShelterLogic`'ten). Enerji kalktı: `RoomCondition.NoPower` → `Stopped` (DURDU: atölye deposu dolu ya da
+  malzemesiz, revir açlıkta; damga rengi `stamp.noPower`). Pano özeti TOPLULUK (yedek dahil) · UZMANLAR · ERZAK (son
+  vardiya farkı) · PLAKA; notlar telsiz, atölye ve revire göre. Vardiya öncesi kontrolde "enerjisiz oda" yerine
+  "Atölye durdu". Görev fişinde kadro satırı ve TEKNİSYEN YARALI damgası; CRT devre dışı ve harita figürü yalnız Teknisyen
+  yatıp yedek yokken. Vardiya raporu: "Zırh plakası · n/m" üretim satırı (DEPO DOLU, MALZEME YOK), ekip satırında yara,
+  dinlenme, revir ve yatanlar, analist notu revir ve telsiz. Baskın: `plate` efekti (PLAKA KIRILDI), birim kartında Zırh
+  plakası ve Yedek uzman satırları, kadroda olmayan uzmanın kartı YARALI.
+- **2026-10-27 · YZ alarmı:** CRT bekleme ve devre dışı ekranının alt satırı "YZ ALARMI n/14"; baskından dönen ekip
+  "ALFA · DÖNDÜ · SONRAKİ VARDİYA" (kesildi ekranında da). Kenar satırına ALARM. Vardiya raporunun ekip bölümü
+  "EKİP VE YZ ALARMI": ikinci yuva alarm satırı (`ReportTeamRow.HideIcon` ile ekip simgesi gizlenir; `TeamSlot.icon`
+  sahnede bağlı), karşı saldırıda değer KARŞI SALDIRI ve teleks satırı (`TelexKind.Alarm`). Görev fişinin ekip damgası
+  dönen ekipte "SONRAKİ VARDİYA" (eskiden "YARALI · 0 GÜN" yazabilirdi). Son raporun kırılma anlarında "bad" anlar
+  kırmızı "YZ ALDI" damgalı KARŞI SALDIRI kartı (`ic_ai_move_13`). Sahne bu kez yeniden açılıp kaydedildi; Unity'nin
+  kaydı yalnız iki `icon` satırı yazdı (uzun süre açık kalan sahnede düzenleme anı değerleri birikiyordu).
+- **2026-10-27 · Sivil güven sayacı:** sayaç rafına altıncı modül GÜVEN x/10 (`CounterBank.Slot.Trust`; ÖZGÜR BÖLGE
+  modülünün kopyası). Altı modül 1,56 m panele sığsın diye merkezler 0,308 → 0,26 m aralığa çekildi, etiket plakası,
+  pencere ve çerçeve çubukları x'te %85'e indi; çarklar ve ekler aynı boyda (FON'un dört çarkı 0,224 m pencereye sığar).
+  Sahne tek seferlik editör koduyla değişti; Unity'nin kaydında ilgisiz ~260 nesneye yazılan düzenleme anı değerleri
+  (TMP `m_TextStyleHashCode`, renkler, layout boyutları) ayıklandı. Dikkat: sayaç modülleri sıradan Transform olduğu için
+  altlarındaki TMP RectTransform'ları `localPosition` ile taşımak kaydedilmez; `anchoredPosition` kaydedilir.
+  Kenar satırına GÜVEN eklendi. Baskın HUD'unda dar sivil sütunu (76 px) "GÜVEN n" gösterir; üç simge yuvası 4–5 sivilli
+  tahtada ilk kırılanı da işaretler. Kural ve sayılar: `Docs/OYUN-TASARIMI.md` → Sivil güven.
+- **2026-10-27 · Yaralı ekip figürü karada:** başarısız baskından dönen figür S-07 fişinin altındaki ayrı noktada
+  (`shelterTeamPoint`, harita 640 × 452) okyanusta duruyordu. Artık her zaman bölgesinin ekip noktasında durur; yaralı
+  ekibin bölgesi sığınak bölgesi (`Simulation.HQ`) olduğundan figür Batı Avrupa'da karadadır ve ilk cephede tasarımdaki
+  gibi cepheyle aynı yerdedir. `shelterTeamPoint` sahneden ve `team_anchors.json`'dan silindi. Aynı gün baskın tahtasında
+  boş karenin kartı (küçük resmi yok) `DeskSprites`'ta `ArgumentNullException` veriyordu; boş ad artık “sprite yok” sayılır.
 
 - **2026-10-27 · Proje sadeleşti: yalnız DeskGame ve Baskin** (ayrıntı `Docs/DURUM.md`):
   - Eski kriz oyunu, analist masasının kriz ekranları, Sade/Fx/AYNA denemeleri, sandbox ve galeri sahneleri, tarayıcı
@@ -691,7 +737,8 @@ Açık farklar (sahibi olan aşama):
     kalem halkası 0,4 s, fiş görev fişine döner, figür yeni cepheye kayar. Yüklemede ve yeni oyunda dizi oynamaz.
   - **Ekip figürü** (`TeamFigure`, `TeamFigureDrag`; room.js › buildTeamFigure): pirinç oval taban, üç piyon (mavi, kehribar,
     yeşil bant), “A” plakası; seçim halkası, taşıma gölgesi, YARALI etiketi. Yer oyun durumundan (kayda yazılmaz): baskında
-    kalkık, yaralıyken S-07 (son baskında düşen üye kadar piyon yatık), yoksa cephe / özgürleşen bölge. Taşıma: 6 px ya da
+    kalkık, yaralıyken S-07'nin bölgesinde (Batı Avrupa'nın ekip noktası; son baskında düşen üye kadar piyon yatık), yoksa
+    cephe / özgürleşen bölge (`LiberationMapLayer.TeamPoint`). Taşıma: 6 px ya da
     150 ms → 25 mm kalkar, −6°; harita düzlemine ışın; kamera bakışı ve tekerlek kapalı. Bırakma kuralı `TelexReasons.Drop`:
     cephe açıkken yalnız kendi cephesi (görev fişi açılır), cephe özgürken yalnız aday (onay fişi; figür adayda bekler, Esc
     0,25 s'de geri kayar). Geçersiz: geri kayar + teleks (“Cephe açık: Rusya 0/3”, “Okyanusya: özgür bölgeye komşu değil”).

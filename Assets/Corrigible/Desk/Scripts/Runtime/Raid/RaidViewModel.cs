@@ -17,6 +17,8 @@ namespace Corrigible.Desk
     {
         public char Letter; public string Name, Thumb; public int Hp, Max, MoveRange;
         public bool Selected, Move, Ability, Armed, Down, Warn;
+        /// <summary>Zırh plakası (ilk hasarı karşılar); yedek uzman (acemi); baskına çıkmadı (sığınakta yaralı).</summary>
+        public int Armor; public bool Rookie, Absent;
     }
     [Serializable] public sealed class RaidTargetModel
     { public string Name, Thumb; public int Hp, Max; public bool Armor, Broken; }
@@ -36,6 +38,8 @@ namespace Corrigible.Desk
         public RaidLogModel[] Log=Array.Empty<RaidLogModel>();
         public RaidUnusedModel[] Unused=Array.Empty<RaidUnusedModel>();
         public int Turn, Turns, Civilians, CivilianBroken;
+        /// <summary>Sivil güven: bu baskında kırılanlar düşülmüş hâli ve tavanı (tavan 0: harekâtsız önizleme, etiket SİVİL kalır).</summary>
+        public int Trust, TrustMax;
         public bool Locked, AbilityArmed, CanUndo, EndConfirm, RetreatArmed, FastMachines, Paused, LogUnread;
         public string Phase, OpenPanel, AbilityTip, AbilityLabel, Status;
         public RaidTeamModel[] Team = Array.Empty<RaidTeamModel>();

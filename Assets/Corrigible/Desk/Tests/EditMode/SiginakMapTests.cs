@@ -20,6 +20,7 @@ namespace Corrigible.Desk.Tests
             var sim = NewLiberation();
             foreach (var id in new[] { "weu_1", "weu_2", "weu_3" })
             {
+                while (!sim.S.Teams.Any(Simulation.TeamReady)) sim.Step();
                 Assert.IsTrue(sim.StartLiberationRaid(id).Ok, id);
                 Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true }).Ok, id);
             }
@@ -63,15 +64,18 @@ namespace Corrigible.Desk.Tests
         {
             var sim = WeuFreed();
             Assert.IsTrue(sim.SelectLiberationRegion("eeu").Ok);
+            sim.Step();
             Assert.IsTrue(sim.StartLiberationRaid("eeu_1").Ok);
             Assert.IsTrue(LiberationMapBuilder.Build(sim).Team.Hidden, "baskında figür haritadan kalkar");
+            // Teknisyen düşer ve yerine çıkacak yedek yok: ekip sığınakta bekler
+            sim.Shelter.Reserves.Clear();
             Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = false, Down = 1 }).Ok);
             var team = LiberationMapBuilder.Build(sim).Team;
             Assert.IsTrue(team.AtShelter);
             Assert.AreEqual(Simulation.HQ, team.Region);
-            Assert.AreEqual(1, team.Down, "düşen üye kadar piyon yatık");
+            Assert.AreEqual(1, team.Down, "yatan uzman kadar piyon yatık");
             Assert.AreEqual(sim.B.liberationInjuryDays, team.Days);
-            StringAssert.Contains(sim.B.liberationInjuryDays.ToString(), TelexReasons.Pick(sim), "yaralı ekip alınamaz: gün sayısıyla");
+            StringAssert.Contains(sim.B.liberationInjuryDays.ToString(), TelexReasons.Pick(sim), "Teknisyensiz ekip alınamaz: gün sayısıyla");
         }
 
         [Test]
@@ -98,7 +102,8 @@ namespace Corrigible.Desk.Tests
             var sim = NewLiberation();
             var info = LiberationMapBuilder.Slip(sim, "cn");
             Assert.IsFalse(info.HasAction);
-            Assert.AreEqual(Loc.T("Cephe açmak için komşusunu özgürleştir."), info.Info);
+            Assert.AreEqual(Loc.T("Cephe açmak için komşusunu özgürleştir.") + "\n" + LiberationMapBuilder.Identity("cn", true), info.Info,
+                "henüz özgür olmayan bölgenin özelliği ve imza makinesi");
             Assert.IsTrue(info.Sectors.All(x => x.Mark == SectorMark.Locked));
 
             var freed = WeuFreed();
@@ -185,6 +190,27 @@ namespace Corrigible.Desk.Tests
                 Assert.IsTrue(map.transform.root.GetComponentsInChildren<Transform>(true).Any(t => t.name == "Liberation fills" && t.gameObject.activeSelf));
                 var figure = map.transform.root.GetComponentsInChildren<TeamFigure>(true).Single();
                 Assert.Greater(figure.GetComponent<BoxCollider>().size.x, 0.1f, "tık hedefi K1'de de ≥ 44 px");
+            }
+            finally { EditorSceneManager.CloseScene(scene, true); }
+        }
+
+        [Test]
+        public void DeskGameScene_InjuredTeamStandsOnLandInShelterRegion()
+        {
+            var sim = NewLiberation();
+            Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
+            sim.Shelter.Reserves.Clear();
+            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = false, Down = 2 }).Ok);
+            var team = LiberationMapBuilder.Build(sim).Team;
+            Assert.IsTrue(team.AtShelter);
+            var scene = EditorSceneManager.OpenScene(DeskSpriteManifest.Root + "/Scenes/DeskGame.unity", OpenSceneMode.Additive);
+            try
+            {
+                var layer = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<LiberationMapLayer>(true)).Single();
+                var shelter = layer.Regions.Single(m => m.RegionId == Simulation.HQ);
+                // Baskından yaralı dönen figür S-07 fişinin altında okyanusta duruyordu
+                Assert.IsTrue(shelter.Hit.ContainsMapPoint(layer.TeamPoint(team)), "yaralı ekip sığınak bölgesinde, karada");
+                Assert.AreEqual(layer.TeamAnchor(Simulation.HQ), layer.TeamPoint(team), "ilk cephede S-07 ile cephe aynı yer");
             }
             finally { EditorSceneManager.CloseScene(scene, true); }
         }

@@ -23,14 +23,16 @@ namespace Corrigible.Desk.Tests
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
             Assert.AreEqual(CrtState.Establishing, CrtViewBuilder.State(sim, false), "emir verildi, sahne açılmadı");
             Assert.AreEqual(CrtState.Live, CrtViewBuilder.State(sim, true));
+            // Teknisyen düşer, yerine çıkacak yedek yok: ekip baskına çıkamaz
+            sim.Shelter.Reserves.Clear();
             Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = false, Down = 1 }).Ok);
             Assert.AreEqual(CrtState.Cut, CrtViewBuilder.State(sim, false), "bu vardiyada baskın: sonuç teleks");
             sim.Step();
-            Assert.AreEqual(CrtState.Disabled, CrtViewBuilder.State(sim, false), "ekip yaralı");
+            Assert.AreEqual(CrtState.Disabled, CrtViewBuilder.State(sim, false), "Teknisyen yaralı");
             var screen = CrtViewBuilder.Screen(sim, false);
             Assert.IsTrue(screen.TeamInverse, "yaralı ekip satırı ters video (renk değil biçim)");
-            StringAssert.Contains(Loc.F("{0} · YARALI · {1} GÜN", DeskText.Upper(LiberationMapBuilder.TeamName(sim.S.Teams[0])), sim.S.Teams[0].Down),
-                screen.TeamLine);
+            StringAssert.Contains(Loc.F("{0} · TEKNİSYEN YARALI · {1} GÜN", DeskText.Upper(LiberationMapBuilder.TeamName(sim.S.Teams[0])),
+                LiberationMapBuilder.TechnicianDown(sim.S.Teams[0])), screen.TeamLine);
         }
 
         [Test]

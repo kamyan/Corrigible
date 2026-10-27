@@ -22,6 +22,7 @@ namespace Corrigible.Desk.Tests
         static void CaptureNext(Simulation sim)
         {
             string id = sim.NextLiberationSector(sim.S.Liberation.CurrentRegion).Id;
+            while (!sim.S.Teams.Any(Simulation.TeamReady)) sim.Step();
             Assert.IsTrue(sim.StartLiberationRaid(id).Ok, id);
             Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true, Turns = 4 }).Ok, id);
         }
@@ -73,6 +74,59 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(0f, over.Chart.Series.Points.Last()[1], "ve işgalsiz biter");
             Assert.AreEqual("result", over.Timeline.Cards.Last().Type);
             Assert.AreEqual("Restart", over.Endbar.Actions.Single().Command);
+        }
+
+        [Test]
+        public void RaidReport_ShowsTrustLoss_AndWarnsWhenLow()
+        {
+            var sim = New();
+            int max = sim.B.liberationTrustStart;
+            Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
+            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true, Collateral = 2, Turns = 4 }).Ok);
+            var doc = Build(sim).Event.Doc;
+            var line = doc.Lines.Single(l => l.Label == Loc.T("Sivil güven"));
+            Assert.AreEqual("threat", line.Status);
+            StringAssert.EndsWith($"{max - 2}/{max}", line.Value);
+            StringAssert.DoesNotContain(Loc.T("Sivil güven"), doc.Risk, "güven yüksekken uyarı yok");
+
+            while (!sim.S.Teams.Any(Simulation.TeamReady)) sim.Step();
+            Assert.IsTrue(sim.StartLiberationRaid("weu_2").Ok);
+            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = false, Collateral = max - 3, Turns = 6 }).Ok);
+            doc = Build(sim).Event.Doc;
+            StringAssert.StartsWith($"Sivil güven 1/{max}.", doc.Risk, "güven azalınca rapor uyarır");
+        }
+
+        [Test]
+        public void GameOver_WhenTrustRunsOut_ReportsDefeat()
+        {
+            var sim = New();
+            Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
+            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = false, Collateral = sim.B.liberationTrustStart, Turns = 6 }).Ok);
+            Assert.AreEqual("dagilma", sim.S.Ending);
+            var over = Build(sim).GameOver;
+            Assert.IsNotNull(over);
+            Assert.AreEqual(DeskText.Upper(GameData.Ending("dagilma").Title), over.Report.Title);
+            Assert.AreEqual(Loc.T("KAYBEDİLDİ"), over.Report.BigStamp.Text);
+            Assert.AreEqual(Loc.T("YZ kazandı."), over.Report.Who);
+            Assert.AreEqual("Restart", over.Endbar.Actions.Single().Command);
+        }
+
+        [Test]
+        public void GameOver_TimelineMarksCounterattacks()
+        {
+            var sim = New();
+            CaptureNext(sim);
+            sim.S.Alarm = sim.B.liberationAlarmThreshold;
+            sim.Step();
+            sim.S.Trust = 1;
+            sim.S.Alarm = sim.B.liberationAlarmThreshold;
+            sim.Step();
+            Assert.AreEqual("dagilma", sim.S.Ending);
+            var cards = Build(sim).GameOver.Timeline.Cards;
+            var counter = cards.Single(c => c.Type == "counter");
+            Assert.AreEqual(Loc.T("YZ ALDI"), counter.Stamp.Text);
+            Assert.AreEqual("red", counter.Stamp.Color);
+            Assert.AreEqual(Loc.T("Batı Avrupa"), counter.Title);
         }
 
         [Test]

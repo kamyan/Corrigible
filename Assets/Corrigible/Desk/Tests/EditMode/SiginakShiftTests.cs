@@ -46,6 +46,22 @@ namespace Corrigible.Desk.Tests
         }
 
         [Test]
+        public void Report_CounterattackDuringShift_IsReportedAndSentToTelex()
+        {
+            var sim = NewLiberation();
+            Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
+            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true, Turns = 4 }).Ok);
+            sim.S.Alarm = sim.B.liberationAlarmThreshold - sim.B.liberationAlarmPerShift;
+            var before = ShiftReportBuilder.Capture(sim);
+            sim.Step();
+            var d = ShiftReportBuilder.Build(ShiftReportBuilder.Input(sim, before, ShiftReportBuilder.Ledger(sim), null));
+            string lost = Loc.F("{0} · {1}", Loc.T("Batı Avrupa"), Loc.T("Tedarik deposu"));
+            Assert.AreEqual(Loc.F("{0} yeniden işgal altında · sivil güven −{1}", lost, sim.B.liberationCounterattackTrust), d.Counterattack);
+            Assert.AreEqual(Loc.T("KARŞI SALDIRI"), d.Teams[1].Value);
+            Assert.IsTrue(d.Teams[1].HideIcon, "YZ alarmı satırında ekip simgesi yok");
+        }
+
+        [Test]
         public void Report_V014_MatchesK6b()
         {
             var (input, d) = K6();
@@ -66,24 +82,31 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(52.5, d.Closing, 1e-9);
             Assert.AreEqual(d.Opening + input.ledger.Sum(e => e.fon) + d.Income, d.Closing, 1e-9, "satırlar kapanışa çıkar");
 
-            // ÜRETİM: toplama +2,0 · tüketim −1,6 · atölye ENERJİSİZ 4/6 ±0 · Erzak 31,0 → 31,4 / 40 +0,4
+            // ÜRETİM: toplama +2,0 · tüketim −1,6 · zırh plakası 0/3 ±0 (döküm yarıda) · Erzak 31,0 → 31,4 / 40 +0,4
             Assert.AreEqual(4, d.Production.Count);
             Row(d.Production[0], Loc.T("Erzak toplama"), S(2), ReportTone.Good);
             Assert.AreEqual(Loc.F("yaşam alanı · {0} kişi", 2), d.Production[0].Note);
             Row(d.Production[1], Loc.T("Erzak tüketimi"), S(-1.6), ReportTone.Bad);
             Assert.AreEqual(Loc.F("{0} kişi × {1}", 8, DeskFormat.Number(0.2, 1)), d.Production[1].Note);
-            Row(d.Production[2], Loc.T("Malzeme · atölye"), "±0", ReportTone.Neutral);
-            Assert.AreEqual(Loc.F("ENERJİSİZ {0}/{1}", 4, 6), d.Production[2].Badge);
+            Row(d.Production[2], Loc.F("Zırh plakası · {0}/{1}", 0, 3), "±0", ReportTone.Neutral);
+            Assert.IsNull(d.Production[2].Badge);
+            Assert.AreEqual(Loc.F("{0} kişi × {1} · plaka {2} malzeme", 2, DeskFormat.Number(0.25, 2), 4), d.Production[2].Note);
+            Assert.AreEqual(0.5, input.after.plateProgress, 1e-9);
             Row(d.Production[3], Loc.F("Erzak {0} → {1} / {2}", N(31), N(31.4), 40), S(0.4), ReportTone.Good, true);
 
-            Assert.AreEqual(Loc.F("→ jeneratöre {0} kişi, atölye döner", 2), d.Analyst);
+            Assert.AreEqual(Loc.T("→ revir onarılırsa yaralar sarılır"), d.Analyst);
 
-            // EKİP: Alfa yaralı 2 → 1 gün; revir hasarlı; vardiya 016'da hazır
-            Assert.AreEqual(1, d.Teams.Count);
-            Assert.AreEqual(Loc.F("{0} · yaralı", Loc.T("Alfa")), d.Teams[0].Label);
-            Assert.AreEqual(Loc.F("{0} → {1} gün", 2, 1), d.Teams[0].Value);
-            StringAssert.Contains(Loc.T("Revir hasarlı: toparlanma hızlanmadı."), d.Teams[0].Detail);
-            StringAssert.Contains(Loc.F("Vardiya {0} baskına hazır.", TrNumber.WithLocative(16)), d.Teams[0].Detail);
+            // EKİP: Teknisyen düştü (3 → 2 gün), yerine yedek çıkar; revir hasarlı
+            // Ekiplerin altında YZ alarmı: vardiya +1, karşı saldırı yok
+            Assert.AreEqual(2, d.Teams.Count);
+            Assert.AreEqual(Loc.T("YZ alarmı"), d.Teams[1].Label);
+            Assert.AreEqual(input.before.alarm + 1, input.after.alarm, 1e-9);
+            StringAssert.EndsWith("/ " + DeskFormat.Number(input.after.alarmThreshold, 0), d.Teams[1].Value);
+            Assert.IsNull(d.Counterattack);
+            Assert.AreEqual(Loc.F("{0} · {1} yaralı", Loc.T("Alfa"), 1), d.Teams[0].Label);
+            Assert.AreEqual(Loc.T("YEDEKLE HAZIR"), d.Teams[0].Value);
+            StringAssert.Contains(Loc.T("Revir hasarlı: yara sarılmadı."), d.Teams[0].Detail);
+            StringAssert.Contains(Loc.F("{0} yaralı: {1} gün.", Baskin.UnitTypes["tek"].Name, 2), d.Teams[0].Detail);
             Assert.IsFalse(d.TeamReturned);
 
             // Sayaç fişleri: +1 · +2,5 · +0,4 · ±0
@@ -114,18 +137,23 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(Loc.F("… ve {0} satır daha", 2), d.MoreFailures);
         }
 
-        static ShiftSnapshot Snap(int shift, double fon, double supplies, int down, int infirmaryLevel = 0, int infirmaryWorkers = 0)
+        /// <summary>Elle kurulan anlık görüntü: uzmanların yarası (T, E, A), Teknisyenin yatacağı gün, revir, baskına çıktı mı.</summary>
+        static ShiftSnapshot Snap(int shift, double fon, double supplies, int[] wounds = null, int techDown = 0, int infirmaryLevel = 0,
+            int infirmaryWorkers = 0, bool busy = false, bool canRaid = true)
         {
             var s = new ShiftSnapshot
             {
                 shift = shift, fon = fon, supplies = supplies, suppliesCapacity = 40, materials = 10, materialsCapacity = 100,
-                population = 8, idle = 0, energyCapacity = 8, energyDemand = 4, freeRegions = 2, regions = 12,
+                population = 8, idle = 0, freeRegions = 2, regions = 12, plates = 0, plateCapacity = 1,
             };
             s.rooms.Add(new ShiftRoomSnapshot { id = ShelterLogic.Living, level = 1, workers = 4 });
-            s.rooms.Add(new ShiftRoomSnapshot { id = ShelterLogic.Generator, level = 1, workers = 2 });
+            s.rooms.Add(new ShiftRoomSnapshot { id = ShelterLogic.Radio, level = 1, workers = 2 });
             s.rooms.Add(new ShiftRoomSnapshot { id = ShelterLogic.Workshop, level = 1, workers = 2 });
             s.rooms.Add(new ShiftRoomSnapshot { id = ShelterLogic.Infirmary, level = infirmaryLevel, workers = infirmaryWorkers });
-            s.teams.Add(new ShiftTeamSnapshot { id = "alfa", name = "Alfa", down = down });
+            var team = new ShiftTeamSnapshot { id = "alfa", name = "Alfa", busy = busy, canRaid = canRaid };
+            for (int i = 0; i < Simulation.Roles.Length; i++)
+                team.members.Add(new ShiftMemberSnapshot { role = Simulation.Roles[i], wounds = wounds?[i] ?? 0, down = i == 0 ? techDown : 0 });
+            s.teams.Add(team);
             return s;
         }
 
@@ -134,18 +162,18 @@ namespace Corrigible.Desk.Tests
             before = before, after = after, ledger = ledger.ToList(), incomeCentral = 2, incomeRegional = 1,
             rates = new ShiftRates
             {
-                dailyFunds = 2, regionIncome = 0.5, suppliesPerWorker = 1, suppliesPerResident = 0.2, materialsPerWorker = 0.5,
-                starvingMultiplier = 0.5, workerEnergy = 1, workersPerLevel = 2, healingDays = 1, healingWorkers = 1,
+                dailyFunds = 2, regionIncome = 0.5, suppliesPerWorker = 1, suppliesPerResident = 0.2, platesPerWorker = 0.25, plateMaterials = 4,
+                healPerWorker = 0.34, starvingMultiplier = 0.5, workersPerLevel = 2, healingDays = 1, healingWorkers = 1, restHeal = 1,
             },
         };
 
         [Test]
         public void Report_Signs_CorrectionRows_AndLedgerLabels()
         {
-            // Depo sınırı: 38 + 4 − 1,6 = 40,4 → 40 (−0,4 düzeltme); malzeme +1,0; gelirden başka fon hareketi (“Diğer”)
-            var before = Snap(20, 30, 38, 0);
-            var after = Snap(21, 34, 40, 0);
-            after.materials = 11;
+            // Depo sınırı: 38 + 4 − 1,6 = 40,4 → 40 (−0,4 düzeltme); atölye bir plaka döktü (−4 malzeme); gelirden başka fon hareketi (“Diğer”)
+            var before = Snap(20, 30, 38);
+            var after = Snap(21, 34, 40);
+            after.plates = 1; after.materials = 6;
             var input = Synthetic(before, after,
                 new ShiftLedgerEntry { kind = "shelter_upgrade", id = ShelterLogic.Infirmary, fon = -12, number = 1 },
                 new ShiftLedgerEntry { kind = "shelter_upgrade", id = ShelterLogic.Workshop, fon = -10, number = 2 },
@@ -161,9 +189,10 @@ namespace Corrigible.Desk.Tests
             Row(d.Funds[6], Loc.T("Kapanış"), N(34), ReportTone.Plain, true);
 
             Row(d.Production[2], Loc.F("Depo sınırı · {0}", 40), S(-0.4), ReportTone.Bad);
-            Row(d.Production[3], Loc.T("Malzeme · atölye"), S(1), ReportTone.Good);
+            Row(d.Production[3], Loc.F("Zırh plakası · {0}/{1}", 1, 1), "+1", ReportTone.Good);
             Assert.IsNull(d.Production[3].Badge);
-            Assert.AreEqual(Loc.F("{0} kişi × {1}", 2, DeskFormat.Number(0.5, 1)), d.Production[3].Note);
+            Assert.AreEqual(Loc.F("{0} kişi × {1} · plaka {2} malzeme", 2, DeskFormat.Number(0.25, 2), 4), d.Production[3].Note);
+            Assert.AreEqual(Loc.T("DEPO DOLU"), ShiftReportBuilder.Build(Synthetic(after, Snap(22, 36, 40))).Production.Single(r => r.Badge != null).Badge, "depo doluyken döküm bekler");
             Row(d.Production[4], Loc.F("Erzak {0} → {1} / {2}", N(38), N(40), 40), S(2), ReportTone.Good, true);
             Assert.AreEqual(("±0", ReportTone.Neutral), (ShiftReportBuilder.Delta(0.04, 1), ShiftReportBuilder.Tone(0.04, 1)), "yuvarlanınca sıfır");
             Assert.AreEqual(ReportTone.Bad, ShiftReportBuilder.Tone(-0.05, 1));
@@ -172,23 +201,32 @@ namespace Corrigible.Desk.Tests
         }
 
         [Test]
-        public void Report_TeamRecovery_InfirmaryAndReturn()
+        public void Report_TeamWounds_RestInfirmaryAndReturn()
         {
-            // Revir çalışıyor: 3 → 1 (1 gün hızlı), hazır olma vardiyası 1 / 2 gün = +1
-            var d = ShiftReportBuilder.Build(Synthetic(Snap(9, 10, 20, 3, 1, 1), Snap(10, 13, 21.4, 1, 1, 1)));
-            StringAssert.Contains(Loc.F("Revir çalışıyor: toparlanma {0} gün hızlandı.", 1), d.Teams[0].Detail);
-            StringAssert.Contains(Loc.F("Vardiya {0} baskına hazır.", TrNumber.WithLocative(11)), d.Teams[0].Detail);
+            // Baskınsız vardiya: dinlenme her ayaktaki uzmanı bir toparlar (2), kalanını revir sarar (1)
+            var d = ShiftReportBuilder.Build(Synthetic(Snap(9, 10, 20, new[] { 2, 1, 0 }, 0, 1, 1), Snap(10, 13, 21.4, new[] { 0, 0, 0 }, 0, 1, 1)));
+            Assert.AreEqual(Loc.F("{0} · uzmanlar", Loc.T("Alfa")), d.Teams[0].Label);
+            Assert.AreEqual(Loc.F("yara {0} → {1}", 3, 0), d.Teams[0].Value);
+            StringAssert.Contains(Loc.F("Dinlenme {0} yara toparladı.", 2), d.Teams[0].Detail);
+            StringAssert.Contains(Loc.F("Revir {0} yara sardı.", 1), d.Teams[0].Detail);
+            Assert.IsNull(d.Analyst, "yara kalmadı, boşta kişi yok");
+
+            // Baskın vardiyası, revirde kimse yok: yara kalır, neden yazılır
+            d = ShiftReportBuilder.Build(Synthetic(Snap(9, 10, 20, new[] { 1, 0, 0 }, 0, 1, 0, true), Snap(10, 13, 21.4, new[] { 1, 0, 0 }, 0, 1, 0)));
+            Assert.AreEqual(Loc.F("yara {0} → {1}", 1, 1), d.Teams[0].Value);
+            StringAssert.Contains(Loc.T("Revirde görevli yok: yara sarılmadı."), d.Teams[0].Detail);
+
+            // Teknisyen yatıyor, yedek yok: ekip bekler, ne zaman hazır olacağı yazılır
+            d = ShiftReportBuilder.Build(Synthetic(Snap(9, 10, 20, null, 3, canRaid: false), Snap(10, 13, 21.4, null, 2, canRaid: false)));
+            Assert.AreEqual(Loc.T("BEKLİYOR"), d.Teams[0].Value);
+            StringAssert.Contains(Loc.F("Teknisyen kalkana kadar baskın yok: vardiya {0} hazır.", TrNumber.WithLocative(12)), d.Teams[0].Detail);
             Assert.IsFalse(d.TeamReturned);
 
-            // Revirde kimse yok, ekip yine de toparlandı (1 → 0): neden cümlesi yazılmaz
-            d = ShiftReportBuilder.Build(Synthetic(Snap(9, 10, 20, 1, 1, 0), Snap(10, 13, 21.4, 0, 1, 0)));
-            Assert.AreEqual(Loc.F("{0} · toparlandı", Loc.T("Alfa")), d.Teams[0].Label);
-            Assert.AreEqual(Loc.T("Ekip cepheye döndü."), d.Teams[0].Detail);
+            // Teknisyen kalktı: ekip cepheye döner (teleks)
+            d = ShiftReportBuilder.Build(Synthetic(Snap(9, 10, 20, null, 1, canRaid: false), Snap(10, 13, 21.4, null, 0)));
+            StringAssert.Contains(Loc.F("{0} ayağa kalktı.", Baskin.UnitTypes["tek"].Name), d.Teams[0].Detail);
+            Assert.AreEqual(Loc.T("HAZIR"), d.Teams[0].Value);
             Assert.IsTrue(d.TeamReturned);
-
-            // Revirde kimse yok, hâlâ yaralı (3 → 2): neden yazılır
-            d = ShiftReportBuilder.Build(Synthetic(Snap(9, 10, 20, 3, 1, 0), Snap(10, 13, 21.4, 2, 1, 0)));
-            StringAssert.Contains(Loc.T("Revirde görevli yok: toparlanma hızlanmadı."), d.Teams[0].Detail);
         }
 
         [Test]
@@ -290,6 +328,15 @@ namespace Corrigible.Desk.Tests
                 Assert.AreEqual(8, view.FindProperty("fundsRows").arraySize);
                 Assert.AreEqual(6, view.FindProperty("productionRows").arraySize);
                 Assert.AreEqual(4, view.FindProperty("failures").arraySize);
+                // Ekip bölümü: Alfa + YZ alarmı; alarm satırı ekip simgesini gizleyebilsin
+                var teamRows = view.FindProperty("teamRows");
+                Assert.AreEqual(2, teamRows.arraySize);
+                for (int i = 0; i < teamRows.arraySize; i++)
+                {
+                    var icon = (UnityEngine.UI.Image)teamRows.GetArrayElementAtIndex(i).FindPropertyRelative("icon").objectReferenceValue;
+                    Assert.IsNotNull(icon, "ekip satırı simgesi " + i);
+                    Assert.IsTrue(icon.transform.IsChildOf(((GameObject)teamRows.GetArrayElementAtIndex(i).FindPropertyRelative("root").objectReferenceValue).transform));
+                }
 
                 var sequence = (ShiftSequence)so.FindProperty("sequence").objectReferenceValue;
                 var amber = (Light)new SerializedObject(sequence).FindProperty("amber").objectReferenceValue;

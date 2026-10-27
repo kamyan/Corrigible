@@ -143,6 +143,33 @@ namespace Corrigible.Desk.Tests
         }
 
         [Test]
+        public void DeskGameScene_CounterBankHasSixDialsInOrder()
+        {
+            var scene = EditorSceneManager.OpenScene(DeskSpriteManifest.Root + "/Scenes/DeskGame.unity", OpenSceneMode.Additive);
+            try
+            {
+                var bank = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<CounterBank>(true)).Single();
+                var modules = new SerializedObject(bank).FindProperty("modules");
+                Assert.AreEqual(System.Enum.GetValues(typeof(CounterBank.Slot)).Length, modules.arraySize);
+                float last = float.NegativeInfinity;
+                for (int i = 0; i < modules.arraySize; i++)
+                {
+                    var module = (CounterModule)modules.GetArrayElementAtIndex(i).objectReferenceValue;
+                    Assert.IsNotNull(module, "sayaç " + i);
+                    var label = module.transform.Find("Label");
+                    float x = module.transform.Find("Window bezel").localPosition.x;
+                    // Etiket kendi penceresinin üstünde; sayaçlar soldan sağa sırayla
+                    Assert.AreEqual(x, label.localPosition.x, 1e-3f, module.name + " etiketi");
+                    Assert.Greater(x, last, module.name);
+                    last = x;
+                }
+                var trust = (CounterModule)modules.GetArrayElementAtIndex((int)CounterBank.Slot.Trust).objectReferenceValue;
+                Assert.AreEqual("GÜVEN", trust.transform.Find("Label").GetComponent<DeskLocText>().Source);
+            }
+            finally { EditorSceneManager.CloseScene(scene, true); }
+        }
+
+        [Test]
         public void DeskGameScene_DeskControlsAreWired()
         {
             var scene = EditorSceneManager.OpenScene(DeskSpriteManifest.Root + "/Scenes/DeskGame.unity", OpenSceneMode.Additive);

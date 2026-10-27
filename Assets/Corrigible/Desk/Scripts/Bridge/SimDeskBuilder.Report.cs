@@ -11,6 +11,39 @@ namespace Corrigible.Desk.Bridge
     {
         static readonly float[] MemoRect = { 236, 60, 712, -1 };
         static readonly float[] MemoPin = { 926, 82 };
+        /// <summary>Güven bu değere ya da altına inince rapor uyarı bandında hatırlatır.</summary>
+        const int TrustWarning = 3;
+
+        /// <summary>“Bölge · Sektör”; karşı saldırıda geri alınacak sektör kalmadıysa “—”.</summary>
+        string SectorLabel(string id)
+        {
+            var sector = string.IsNullOrEmpty(id) ? null : sim.LiberationSector(id);
+            return sector == null ? "—" : Loc.F("{0} · {1}", Def(sector.Region).Name, sector.Name);
+        }
+
+        static string RoleName(SquadOutcome o) =>
+            o.Rookie ? Loc.F("{0} (yedek)", Baskin.UnitTypes[o.Type].Name) : Baskin.UnitTypes[o.Type].Name;
+
+        /// <summary>Kadronun dönüşü: düşenler (yatacakları gün), yeni yaralar ve kırılan zırh plakaları.</summary>
+        void SquadLines(EventDocVM doc, LiberationRaidReward reward)
+        {
+            if (reward == null) return;
+            var down = reward.Squad.Where(o => o.Down).ToList();
+            if (down.Count > 0) doc.Lines.Add(new EventLineVM
+            {
+                Label = Loc.F("Düştü: {0}", string.Join(", ", down.Select(RoleName))),
+                Value = Loc.F("{0} gün", sim.B.liberationInjuryDays), Status = "threat",
+            });
+            var hurt = reward.Squad.Where(o => !o.Down && !o.Rookie && o.HpAfter < o.HpBefore).ToList();
+            if (hurt.Count > 0) doc.Lines.Add(new EventLineVM
+            {
+                Label = Loc.T("Yeni yara"),
+                Value = string.Join(" · ", hurt.Select(o => Loc.F("{0} −{1}", Baskin.UnitTypes[o.Type].Short, o.HpBefore - o.HpAfter))),
+                ValueIsText = true, Status = "threat",
+            });
+            int plates = reward.Squad.Count(o => o.PlateBroken);
+            if (plates > 0) doc.Lines.Add(new EventLineVM { Label = Loc.T("Zırh plakası kırıldı"), Value = N(plates, 0), Status = "threat" });
+        }
 
         EventVM RaidReport(RaidLogEntry log)
         {
@@ -64,14 +97,34 @@ namespace Corrigible.Desk.Bridge
                 if (reward.Materials > 0) doc.Lines.Add(new EventLineVM { Label = Loc.T("Malzeme"), Value = Loc.F("+{0}", N(reward.Materials)), Status = "good" });
                 if (reward.Residents > 0) doc.Lines.Add(new EventLineVM { Label = Loc.T("Kurtulan"), Value = Loc.F("+{0}", reward.Residents), Status = "good" });
             }
-            if (log.Down > 0) doc.Lines.Add(new EventLineVM
-            {
-                Label = Loc.F("{0} yaralı · toparlanma", log.Down),
-                Value = Loc.F("{0} gün", log.Down * sim.B.liberationInjuryDays), Status = "threat",
-            });
+            SquadLines(doc, reward);
             if (log.Collateral > 0) doc.Lines.Add(new EventLineVM { Label = Loc.T("Sivil sunucu hasarı"), Value = N(log.Collateral, 0), Status = "threat" });
+            // Rapor yalnız son baskın için kurulur; kalan güven bugünkü değerdir (güven tükenince son rapor açılır)
+            int trustMax = sim.B.liberationTrustStart;
+            if (reward != null && reward.Trust != 0) doc.Lines.Add(new EventLineVM
+            {
+                Label = Loc.T("Sivil güven"),
+                Value = Loc.F("{0} · {1}/{2}", DeskFormat.Signed(reward.Trust, 0), S.Trust, trustMax),
+                Status = reward.Trust > 0 ? "good" : "threat",
+            });
+            double threshold = sim.B.liberationAlarmThreshold;
+            bool counter = reward?.Counterattack != null;
+            if (reward != null && (reward.Alarm != 0 || counter)) doc.Lines.Add(new EventLineVM
+            {
+                Label = Loc.T("YZ alarmı"),
+                Value = counter ? Loc.T("EŞİK AŞILDI") : Loc.F("{0} · {1}/{2}", DeskFormat.Signed(reward.Alarm, 0), N(S.Alarm, 0), N(threshold, 0)),
+                ValueIsText = counter, Status = counter || reward.Alarm > 0 ? "threat" : "good",
+            });
+            string lost = counter ? SectorLabel(reward.Counterattack) : null;
+            if (counter) doc.Lines.Add(new EventLineVM { Label = Loc.T("YZ karşı saldırısı"), Value = lost, ValueIsText = true, Status = "threat" });
             doc.LinesHeader.Right = doc.Lines.Count.ToString();
-            doc.Risk = !log.Success ? subtitle : reward?.RegionCompleted == true
+            var team = S.Teams.FirstOrDefault();
+            doc.Risk = counter ? Loc.F("YZ karşı saldırdı: {0} yeniden işgal altında. Alarm sıfırlandı.", lost)
+                : team != null && !sim.SquadCanRaid(team)
+                    ? Loc.F("Teknisyen düştü ve yerine çıkacak yedek yok: {0} gün baskın yapılamaz. Revir kalkışı hızlandırır.", LiberationMapBuilder.TechnicianDown(team))
+                : reward != null && reward.Trust < 0 && S.Trust <= TrustWarning
+                    ? Loc.F("Sivil güven {0}/{1}. Sıfıra inerse halk direnişten çekilir; atıştan kaçan ekip arkasındaki sunucuyu açıkta bırakır.", S.Trust, trustMax)
+                : !log.Success ? subtitle : reward?.RegionCompleted == true
                 ? Loc.T("Bölge özgür. Haritadan sınırdaki bir bölgeyi seç ve yeni cepheyi aç.")
                 : Loc.T("Sonraki sektör operasyona açıldı.");
             e.Doc = doc;

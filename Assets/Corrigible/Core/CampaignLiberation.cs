@@ -38,6 +38,22 @@ namespace Corrigible.Core
         public double Fon, Supplies, Materials;
         public int Residents;
         public bool RegionCompleted;
+        /// <summary>Sivil güvenin bu baskındaki net değişimi (kırılan sunucular, özgürleşen bölge, karşı saldırı).</summary>
+        public int Trust;
+        /// <summary>YZ alarmının bu baskındaki değişimi (karşı saldırının sıfırlaması hariç) ve karşı saldırıda geri alınan sektör.</summary>
+        public double Alarm;
+        public string Counterattack;
+        /// <summary>Kadronun baskından dönüşü (kadro sırasıyla).</summary>
+        public List<SquadOutcome> Squad = new List<SquadOutcome>();
+    }
+
+    /// <summary>Bir uzmanın baskın sonucu: çıktığı ve döndüğü can, düştü mü, zırh plakası kırıldı mı.</summary>
+    [Serializable]
+    public sealed class SquadOutcome
+    {
+        public string Type;
+        public bool Rookie, Down, PlateBroken;
+        public int HpBefore, HpAfter;
     }
 
     public sealed partial class Simulation
@@ -61,6 +77,7 @@ namespace Corrigible.Core
         void SetupLiberation()
         {
             S.Liberation = new LiberationCampaignState { CurrentRegion = HQ, Shelter = ShelterLogic.Create(B) };
+            S.Trust = B.liberationTrustStart;
             foreach (var def in GameData.Regions)
             {
                 var area = new LiberationRegionState { Id = def.Id };
@@ -102,7 +119,10 @@ namespace Corrigible.Core
             if (sector.Captured) return Loc.T("Bu sektör zaten geri alındı.");
             if (sector.Region != S.Liberation.CurrentRegion) return Loc.T("Yalnızca mevcut harekât bölgesine baskın yapılabilir.");
             if (NextLiberationSector(sector.Region)?.Id != sectorId) return Loc.T("Önce önceki sektörü geri al.");
-            if (!S.Teams.Any(TeamReady)) return Loc.T("Hazır ekip yok; sığınakta toparlanmak için zamanı ilerlet.");
+            var team = S.Teams.FirstOrDefault(TeamReady);
+            if (team == null) return Loc.T("Ekip bu vardiya baskına çıktı; vardiyayı bitir, sonraki vardiyada hazır.");
+            if (!SquadCanRaid(team))
+                return Loc.F("Teknisyen yaralı ({0} gün); yerine çıkacak yedek uzman yok.", team.Members.First(m => m.Role == "tek").Down);
             if (S.Fon < B.liberationRaidCost) return Loc.F("Bu baskın {0} fon ister.", B.liberationRaidCost);
             return null;
         }
@@ -116,6 +136,12 @@ namespace Corrigible.Core
             var sector = LiberationSector(sectorId);
             var team = S.Teams.First(TeamReady);
             int clearedRegions = S.Liberation.Regions.Count(r => r.Completed);
+            int tier = RaidTier(clearedRegions);
+            var def = Def(sector.Region);
+            // Bölgenin özelliği her baskında; kademe 3'ten makineler kopyalanır, 4'te güçlenir
+            var traits = new List<string> { def.Trait };
+            if (tier >= 3) traits.Add("kopya");
+            if (tier >= 4) traits.Add("guclu");
             int seed = (int)Math.Floor(S.Rng.Next() * 2147483647);
             S.Fon -= B.liberationRaidCost;
             S.Raids++; sector.Attempts++;
@@ -125,14 +151,17 @@ namespace Corrigible.Core
                 Team = team.Id, Region = sector.Region, N = S.Raids, Seed = seed,
                 Params = new RaidParams
                 {
-                    Seed = seed, Region = sector.Region, RegionName = Def(sector.Region).Name, Compute = Def(sector.Region).Compute,
+                    Seed = seed, Region = sector.Region, RegionName = def.Name, Compute = def.Compute,
                     SectorId = sector.Id, MissionKind = sector.MissionKind,
-                    Inf = B.liberationRaidThreat + clearedRegions * B.liberationRaidThreatPerRegion,
-                    RaidNumber = Math.Min(3, clearedRegions + 1), IsCore = sector.MissionKind == "server" && clearedRegions == GameData.Regions.Length - 1,
-                    // Harekât ilerledikçe makineler kendini kopyalar: baskında daha çok robot
-                    Traits = clearedRegions < B.liberationCopyFromRegion ? new List<string>() : new List<string> { "kopya" },
+                    RaidNumber = tier, Tier = tier, IsCore = sector.MissionKind == "server" && clearedRegions == GameData.Regions.Length - 1,
+                    Traits = traits, Signature = def.Enemy,
+                    Squad = Squad(team),
                 },
             };
+            // Zırh plakaları en düşük canlı uzmandan başlayarak birer tane takılır (eşitlikte rol sırası); kırılan baskın dönüşünde düşer
+            int plates = Shelter.Plates;
+            foreach (var slot in S.Raid.Params.Squad.OrderBy(x => x.Hp))
+                if (plates > 0) { slot.Armor = 1; plates--; }
             team.At = sector.Region; team.Busy = 1; team.Task = "baskin";
             S.Events.Add(new SimEvent { Type = SimEventType.Raid });
             return ActResult.Success();
@@ -147,19 +176,26 @@ namespace Corrigible.Core
             var team = Team(raid.Team);
             S.Raid = null; S.Liberation.ActiveSector = null;
             int down = Math.Max(0, Math.Min(3, result.Down));
+            var reward = new LiberationRaidReward();
             if (team != null)
             {
-                team.Task = null; team.Busy = 0;
-                team.Down = down * B.liberationInjuryDays;
-                team.DownWhy = team.Down > 0 ? Loc.T("yaralı") : null;
+                // Baskın vardiyayı doldurur: ekip sonraki vardiyada hazır (Busy adımda düşer)
+                team.Task = null; team.Busy = 1;
+                ReturnSquad(team, raid.Params.Squad, result, reward);
             }
-            var reward = new LiberationRaidReward();
             S.RaidLog.Add(new RaidLogEntry
             {
                 Day = S.Day, Region = raid.Region, Success = result.Success, Collateral = result.Collateral, Down = down,
                 SectorId = sector.Id, MissionKind = sector.MissionKind, LiberationReward = reward,
             });
-            if (!result.Success) return ActResult.Success(Loc.T("Ekip geri döndü. Sektör işgal altında; toparlandıktan sonra yeniden deneyebilirsin."));
+            int civilianLoss = Math.Max(0, result.Collateral) * B.liberationTrustPerCivilian;
+            if (!result.Success)
+            {
+                ChangeAlarm(B.liberationAlarmPerFailure, reward);
+                ChangeTrust(reward, -civilianLoss);
+                return ActResult.Success(S.Ending != null ? Loc.T("Sivil güven tükendi. Halk direnişe sırtını döndü.")
+                    : Loc.T("Ekip geri döndü. Sektör işgal altında; toparlandıktan sonra yeniden deneyebilirsin."));
+            }
 
             double oldFon = S.Fon, oldSupplies = Shelter.Supplies, oldMaterials = Shelter.Materials;
             int oldResidents = Shelter.Population;
@@ -173,6 +209,7 @@ namespace Corrigible.Core
             {
                 S.Fon += B.liberationServerFunds;
                 ShelterLogic.RewardServer(S, B);
+                ChangeAlarm(-B.liberationAlarmPerServer, reward);
             }
             var area = LiberationRegion(sector.Region);
             Moment("good", Loc.F("{0}: {1} geri alındı.", Def(sector.Region).Name, sector.Name));
@@ -187,9 +224,86 @@ namespace Corrigible.Core
             reward.Materials = Shelter.Materials - oldMaterials;
             reward.Residents = Shelter.Population - oldResidents;
             reward.RegionCompleted = area.Completed;
+            // Bölgeyi özgürleştiren baskının sivil bedeli, bölgenin geri verdiği güvenle birlikte sayılır; çekirdek düştüyse zafer önce gelir.
+            ChangeTrust(reward, (area.Completed ? B.liberationTrustPerRegion : 0) - civilianLoss);
+            if (S.Ending == "dagilma") return ActResult.Success(Loc.T("Sivil güven tükendi. Halk direnişe sırtını döndü."));
             return ActResult.Success(area.Completed
                 ? Loc.F("{0} özgür. Sığınak güçlendi; sıradaki komşu bölgeyi seç.", Def(sector.Region).Name)
                 : Loc.F("{0} geri alındı. Sonraki sektör operasyona açıldı.", sector.Name));
         }
+
+        /// <summary>
+        /// Kadro döner: ayaktaki uzmanın eksik canı yara olarak kalır, düşen uzman (ya da yedek) yatar ve sağlam kalkar; kırılan
+        /// zırh plakası sığınaktan düşer. Sonuçta can bilgisi yoksa (test, fikstür) kadronun ilk <c>Down</c> üyesi düşer, ötekiler
+        /// çıktıkları canla ve plakalarıyla döner.
+        /// </summary>
+        void ReturnSquad(TeamState team, List<SquadSlot> squad, RaidResult result, LiberationRaidReward reward)
+        {
+            if (squad == null) return;
+            var hps = result.Hp != null && result.Hp.Count > 0 ? result.Hp : squad.Select((x, i) => i < result.Down ? 0 : x.Hp).ToList();
+            var armor = result.Armor != null && result.Armor.Count > 0 ? result.Armor : squad.Select(x => x.Armor).ToList();
+            for (int i = 0; i < squad.Count && i < hps.Count; i++)
+            {
+                var slot = squad[i];
+                int hp = Math.Max(0, hps[i]);
+                bool broken = slot.Armor > 0 && i < armor.Count && armor[i] < slot.Armor;
+                if (broken) Shelter.Plates = Math.Max(0, Shelter.Plates - 1);
+                var member = slot.Rookie ? Shelter.Reserves[slot.Reserve] : team.Members.First(m => m.Role == slot.Type);
+                if (hp <= 0) { member.Down = B.liberationInjuryDays; member.Wounds = 0; }
+                else if (!slot.Rookie) member.Wounds = Math.Max(0, MaxHp(slot.Type) - hp);
+                reward.Squad.Add(new SquadOutcome { Type = slot.Type, Rookie = slot.Rookie, HpBefore = slot.Hp, HpAfter = hp, Down = hp <= 0, PlateBroken = broken });
+            }
+        }
+
+        /// <summary>Sivil güveni değiştirir (tavan başlangıç değeri); sıfıra inerse direniş dağılır.</summary>
+        void ChangeTrust(LiberationRaidReward reward, int delta)
+        {
+            int before = S.Trust;
+            S.Trust = Math.Max(0, Math.Min(B.liberationTrustStart, S.Trust + delta));
+            if (reward != null) reward.Trust += S.Trust - before;
+            if (S.Trust <= 0) End("dagilma");
+        }
+
+        /// <summary>YZ alarmını değiştirir; eşiğe ulaşınca alarm sıfırlanır ve YZ karşı saldırır.</summary>
+        void ChangeAlarm(double delta, LiberationRaidReward reward)
+        {
+            if (S.Ending != null) return;
+            double before = S.Alarm;
+            S.Alarm = Math.Max(0, S.Alarm + delta);
+            if (reward != null) reward.Alarm += S.Alarm - before;
+            if (S.Alarm < B.liberationAlarmThreshold) return;
+            S.Alarm = 0;
+            Counterattack(reward);
+        }
+
+        /// <summary>Karşı saldırı: YZ son geri alınan sektörü yeniden işgal eder (bölge özgürse yeniden cephe olur), güven düşer.</summary>
+        void Counterattack(LiberationRaidReward reward)
+        {
+            S.Counterattacks++;
+            var sector = S.Liberation.Regions.SelectMany(r => r.Sectors).Where(x => x.Captured)
+                .OrderByDescending(x => x.CapturedDay).ThenByDescending(x => x.Index).FirstOrDefault();
+            S.LastCounterattack = sector?.Id;
+            if (sector != null)
+            {
+                sector.Captured = false; sector.CapturedDay = -1;
+                Moment("bad", Loc.F("{0}: {1} yeniden işgal altında.", Def(sector.Region).Name, sector.Name));
+            }
+            if (reward != null) reward.Counterattack = sector?.Id;
+            S.Events.Add(new SimEvent { Type = SimEventType.Counterattack, Key = sector?.Id });
+            ChangeTrust(reward, -B.liberationCounterattackTrust);
+        }
+
+        /// <summary>Zorluk kademesi (1–4): özgür bölge sayısıyla artar (<c>Balance.liberationTier*At</c>).</summary>
+        public int RaidTier(int clearedRegions) =>
+            clearedRegions >= B.liberationTier4At ? 4 : clearedRegions >= B.liberationTier3At ? 3 : clearedRegions >= B.liberationTier2At ? 2 : 1;
+
+        /// <summary>Şimdiki zorluk kademesi.</summary>
+        public int Tier => RaidTier(S.Liberation.Regions.Count(r => r.Completed));
+
+        /// <summary>Vardiya alarmı: telsiz odasındaki her görevli yükselişi yavaşlatır (eksiye inmez).</summary>
+        public double AlarmPerShift => Math.Max(0, B.liberationAlarmPerShift - ShelterLogic.RadioWorkers(Shelter) * B.shelterRadioAlarmPerWorker);
+
+        /// <summary>Vardiya sonu: alarm bir vardiyalık yükselir (adım çağırır).</summary>
+        void StepAlarm() => ChangeAlarm(AlarmPerShift, null);
     }
 }

@@ -147,6 +147,7 @@ namespace Corrigible.Desk.Bridge
             report.Show(data, false, !skipped);
             PinSlips(data);
             map.ReleaseFigure(skipped);
+            if (data.Counterattack != null) telex.Post(surface.Shift, Loc.T("YZ KARŞI SALDIRISI"), data.Counterattack, TelexKind.Alarm);
             if (data.TeamReturned && Sim?.S.Teams.FirstOrDefault() is TeamState team)
             {
                 string name = DeskText.Upper(LiberationMapBuilder.TeamName(team));

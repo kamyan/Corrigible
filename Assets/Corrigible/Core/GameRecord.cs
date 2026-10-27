@@ -20,8 +20,8 @@ namespace Corrigible.Core
     [System.Serializable]
     public sealed class GameRecord
     {
-        /// <summary>Dosya biçimi. Bu sürümden eski (kriz oyunu dönemi) kayıtlar yüklenmez.</summary>
-        public const int CurrentVersion = 4;
+        /// <summary>Dosya biçimi. Bu sürümden eski kayıtlar yüklenmez (8: bölge kimliği ve zorluk kademesi; 7: hazırlık sığınağı, uzman yarası ve kadro; 6: YZ alarmı ve bir baskın bir vardiya; 5: sivil güven; öncekiler başka kurallarla oynandı).</summary>
+        public const int CurrentVersion = 8;
         public int version = CurrentVersion;
         public uint seed;
         public Balance balance;

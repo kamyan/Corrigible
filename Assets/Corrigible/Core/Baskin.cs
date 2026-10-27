@@ -30,9 +30,13 @@ namespace Corrigible.Core
         public sealed class UnitType
         {
             public string Id, Short, Ability; public char Side; public int Hp, Move;
-            string name;
+            /// <summary>Makine: başlangıç zırhı, niyet türleri (shoot, melee, repair, lob, blast, lock, shield, clone) ve uzaktan mı vurur.</summary>
+            public int Armor; public string[] Kinds = Array.Empty<string>(); public bool Ranged;
+            string name, desc;
             /// <summary>Gösterim adı (geçerli dilde).</summary>
             public string Name { get => Loc.T(name); set => name = value; }
+            /// <summary>Makinenin ne yaptığı (ipucu kartı); oyuncu birimlerinde boş.</summary>
+            public string Desc { get => string.IsNullOrEmpty(desc) ? "" : Loc.T(desc); set => desc = value; }
         }
 
         public static readonly Dictionary<string, UnitType> UnitTypes = new Dictionary<string, UnitType>
@@ -40,8 +44,43 @@ namespace Corrigible.Core
             ["tek"] = new UnitType { Id = "tek", Side = 'p', Name = Loc.N("Teknisyen"), Short = "T", Hp = 3, Move = 3, Ability = "sabotaj" },
             ["emp"] = new UnitType { Id = "emp", Side = 'p', Name = Loc.N("EMP uzmanı"), Short = "E", Hp = 3, Move = 3, Ability = "emp" },
             ["ana"] = new UnitType { Id = "ana", Side = 'p', Name = Loc.N("Analist"), Short = "A", Hp = 2, Move = 4, Ability = "kanca" },
-            ["dron"] = new UnitType { Id = "dron", Side = 'e', Name = Loc.N("Güvenlik dronu"), Short = "D", Hp = 2, Move = 3 },
-            ["bakim"] = new UnitType { Id = "bakim", Side = 'e', Name = Loc.N("Bakım robotu"), Short = "B", Hp = 2, Move = 2 },
+            ["dron"] = new UnitType { Id = "dron", Side = 'e', Name = Loc.N("Güvenlik dronu"), Short = "D", Hp = 2, Move = 3, Kinds = new[] { "shoot" }, Ranged = true,
+                Desc = Loc.N("Düz hatta ilk engele ateş eder: 1 hasar.") },
+            ["bakim"] = new UnitType { Id = "bakim", Side = 'e', Name = Loc.N("Bakım robotu"), Short = "B", Hp = 2, Move = 2, Kinds = new[] { "melee", "repair" },
+                Desc = Loc.N("Bitişik kareye vurur (2 hasar) ya da hasarlı hedef dolabı onarır.") },
+            // Bölgelerin imza düşmanları (her biri iki bölgede)
+            ["zdron"] = new UnitType { Id = "zdron", Side = 'e', Name = Loc.N("Zırhlı dron"), Short = "Z", Hp = 2, Move = 3, Armor = 1, Kinds = new[] { "shoot" }, Ranged = true,
+                Desc = Loc.N("Dron gibi düz hatta ateş eder; zırhı ilk hasarı karşılar.") },
+            ["havan"] = new UnitType { Id = "havan", Side = 'e', Name = Loc.N("Havan robotu"), Short = "H", Hp = 2, Move = 1, Kinds = new[] { "lob" }, Ranged = true,
+                Desc = Loc.N("Üç kare öteye, engellerin üstünden atar: 1 hasar.") },
+            ["bomba"] = new UnitType { Id = "bomba", Side = 'e', Name = Loc.N("Patlayan robot"), Short = "P", Hp = 1, Move = 3, Kinds = new[] { "blast" },
+                Desc = Loc.N("Yanına sokulur ve patlar: çevresindeki dört kareye 1 hasar.") },
+            ["kilit"] = new UnitType { Id = "kilit", Side = 'e', Name = Loc.N("Kilitleyici"), Short = "K", Hp = 2, Move = 2, Kinds = new[] { "lock" }, Ranged = true,
+                Desc = Loc.N("Düz hatta dört kareye kadar kilit atar: vurulan uzman bir tur yürüyemez.") },
+            ["kalkan"] = new UnitType { Id = "kalkan", Side = 'e', Name = Loc.N("Kalkan dronu"), Short = "Q", Hp = 2, Move = 3, Kinds = new[] { "shield", "shoot" }, Ranged = true,
+                Desc = Loc.N("Yanındaki makineye zırh verir; verecek kimse yoksa ateş eder.") },
+            ["cogalt"] = new UnitType { Id = "cogalt", Side = 'e', Name = Loc.N("Çoğaltıcı"), Short = "Ç", Hp = 2, Move = 2, Kinds = new[] { "clone" },
+                Desc = Loc.N("Yanındaki boş kareye yeni bir dron uyandırır.") },
+        };
+
+        /// <summary>
+        /// Bölge özellikleri (<see cref="RegionDef.Trait"/>): taktik tahtayı değiştirir. Baskın parametresinin Traits listesinde
+        /// kimlikle gelir; "kopya" ve "guclu" bölgeye değil zorluk kademesine bağlıdır.
+        /// </summary>
+        public static readonly Dictionary<string, (string Name, string Desc)> RegionTraits = new Dictionary<string, (string, string)>
+        {
+            ["guvenli"] = (Loc.N("Güvenli giriş"), Loc.N("İlk tur hiçbir robot uyanmaz.")),
+            ["dar"] = (Loc.N("Dar koridor"), Loc.N("Fazladan duvarlar: atış hatları kısa, yollar uzun.")),
+            ["kisa"] = (Loc.N("Kısa nöbet"), Loc.N("Baskın 6 değil 5 tur sürer.")),
+            ["takviye"] = (Loc.N("Takviye"), Loc.N("Başta bir robot fazla.")),
+            ["acik"] = (Loc.N("Açık arazi"), Loc.N("Duvarların bir kısmı yıkık: atış hatları uzun.")),
+            ["sis"] = (Loc.N("Kum fırtınası"), Loc.N("Uyanacak robotların yeri görünmez.")),
+            ["sogutma"] = (Loc.N("Soğutma ağı"), Loc.N("İki soğutma ünitesi fazla; kırılan ünite çevresine patlar.")),
+            ["kalabalik"] = (Loc.N("Kalabalık şehir"), Loc.N("İki sivil sunucu fazla; GÜVEN kolay düşer.")),
+            ["zirhli"] = (Loc.N("Zırhlı dolap"), Loc.N("Hedef dolapların bir canı fazla.")),
+            ["sebeke"] = (Loc.N("Elektrik şebekesi"), Loc.N("Fazladan elektrikli kanal: üstüne düşen 1 hasar alır.")),
+            ["fabrika"] = (Loc.N("Kopya fabrikası"), Loc.N("Bir kopya dolabı fazla.")),
+            ["devriye"] = (Loc.N("Hızlı devriye"), Loc.N("Robotlar bir kare fazla yürür.")),
         };
 
         public static readonly Dictionary<string, (string Name, string Desc)> Abilities = new Dictionary<string, (string, string)>
@@ -74,9 +113,11 @@ namespace Corrigible.Core
 
         public sealed class Unit
         {
-            public int Id, X, Y, Hp, Max, Order;
+            /// <summary>Armor: zırh plakası, ilk hasarı karşılar ve kırılır (yalnız ekip).</summary>
+            public int Id, X, Y, Hp, Max, Order, Armor;
             public string Type; public char Side;
-            public bool Moved, Acted, Dead;
+            /// <summary>Locked: kilitleyici vurdu, bu oyuncu turu yürüyemez (yeteneğini kullanabilir).</summary>
+            public bool Moved, Acted, Dead, Locked;
             public Intent Intent;
             public Unit Clone() { var u = (Unit)MemberwiseClone(); u.Intent = Intent?.Clone(); return u; }
         }
@@ -98,6 +139,10 @@ namespace Corrigible.Core
             public int Rs, Turn = 1, MaxTurns, SpawnPerTurn, Collateral, NextId = 1;
             public string Phase = "player", Layout, OutcomeReason;
             public bool IsCore, OutcomeSuccess, Retreated;
+            /// <summary>Bölge ve kademe: imza düşmanı, makinelerin ek canı ve yürüyüşü, uyanma yerlerinin gizli olması (kum fırtınası).</summary>
+            public string Signature;
+            public int EnemyHp, EnemyMove;
+            public bool Fog;
             public Cell[,] Cells = new Cell[N, N]; // [y, x]
             public List<Unit> Units = new List<Unit>();
             public List<Pt> Spawns = new List<Pt>();
@@ -145,7 +190,67 @@ namespace Corrigible.Core
         static Unit NewUnit(BState B, string type, int x, int y)
         {
             var T = UnitTypes[type];
-            return new Unit { Id = B.NextId++, Type = type, Side = T.Side, X = x, Y = y, Hp = T.Hp, Max = T.Hp };
+            int hp = T.Hp + (T.Side == 'e' ? B.EnemyHp : 0);
+            return new Unit { Id = B.NextId++, Type = type, Side = T.Side, X = x, Y = y, Hp = hp, Max = hp, Armor = T.Armor };
+        }
+
+        /// <summary>Uyanan ya da başta eklenen makine: bölgenin imza düşmanı varsa üçte biri o (tek zar, sıra korunur).</summary>
+        static string WakeType(BState B, double r) =>
+            B.Signature == null ? (r < 0.6 ? "dron" : "bakim") : r < 0.4 ? "dron" : r < 0.7 ? "bakim" : B.Signature;
+
+        /// <summary>Ekip girişinden bütün hedef dolaplara yol var mı (duvar ve nesne eklerken tahta kapanmasın).</summary>
+        static bool Connected(BState B, List<Pt> entries)
+        {
+            var seen = new bool[N, N];
+            var q = new Queue<Pt>();
+            foreach (var e in entries) { seen[e.Y, e.X] = true; q.Enqueue(e); }
+            while (q.Count > 0)
+            {
+                var p = q.Dequeue();
+                foreach (var d in Dirs)
+                {
+                    int x = p.X + d[0], y = p.Y + d[1];
+                    if (!Inb(x, y) || seen[y, x] || CellAt(B, x, y).T == "wall" || CellAt(B, x, y).O != null) continue;
+                    seen[y, x] = true; q.Enqueue(new Pt(x, y));
+                }
+            }
+            return TargetsLeft(B).All(t => Dirs.Any(d => Inb(t.X + d[0], t.Y + d[1]) && seen[t.Y + d[1], t.X + d[0]]));
+        }
+
+        /// <summary>Bölge özelliği tahtaya ekler: girişin yanı boş kalır, yol kapanmaz; olmazsa o parça eklenmez.</summary>
+        static void Scatter(BState B, List<Pt> entries, int count, Action<Cell> place, Func<Pt, bool> where = null)
+        {
+            var spots = FreeTiles(B).Where(t => CellAt(B, t.X, t.Y).T == "floor" && !entries.Any(e => Man(e.X, e.Y, t.X, t.Y) <= 1) && (where == null || where(t))).ToList();
+            for (int placed = 0; placed < count && spots.Count > 0;)
+            {
+                int k = (int)Math.Floor(Rnd(B) * spots.Count);
+                var t = spots[k]; spots.RemoveAt(k);
+                var cell = CellAt(B, t.X, t.Y);
+                var before = cell.Clone();
+                place(cell);
+                if (Connected(B, entries)) placed++;
+                else B.Cells[t.Y, t.X] = before;
+            }
+        }
+
+        static void ApplyRegionTraits(BState B, RaidParams p, List<Pt> entries)
+        {
+            var t = p.Traits;
+            if (t.Contains("dar")) Scatter(B, entries, 3, c => c.T = "wall");
+            if (t.Contains("acik"))
+            {
+                var walls = new List<Pt>();
+                for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) if (CellAt(B, x, y).T == "wall") walls.Add(new Pt(x, y));
+                for (int i = 0; i < 3 && walls.Count > 0; i++)
+                {
+                    int k = (int)Math.Floor(Rnd(B) * walls.Count);
+                    CellAt(B, walls[k].X, walls[k].Y).T = "floor"; walls.RemoveAt(k);
+                }
+            }
+            if (t.Contains("sebeke")) Scatter(B, entries, 3, c => c.T = "cable");
+            if (t.Contains("sogutma")) Scatter(B, entries, 2, c => c.O = NewObj("cool", 1));
+            if (t.Contains("kalabalik")) Scatter(B, entries, 2, c => c.O = NewObj("civ", 1));
+            if (t.Contains("fabrika")) Scatter(B, entries, 1, c => c.O = NewObj("spawner", 2), pt => pt.X >= 4);
         }
 
         static List<Pt> FreeTiles(BState B)
@@ -162,11 +267,16 @@ namespace Corrigible.Core
             var B = new BState
             {
                 Params = p, Rs = p.Seed,
-                MaxTurns = 6,
+                MaxTurns = p.Traits.Contains("kisa") ? 5 : 6,
                 SpawnPerTurn = p.Traits.Contains("kopya") ? 2 : 1,
                 IsCore = p.IsCore && p.MissionKind != "loot",
+                Signature = string.IsNullOrEmpty(p.Signature) ? null : p.Signature,
+                EnemyHp = p.Traits.Contains("guclu") ? 1 : 0,
+                EnemyMove = p.Traits.Contains("devriye") ? 1 : 0,
+                Fog = p.Traits.Contains("sis"),
             };
             Rnd(B);
+            int cabinet = p.Traits.Contains("zirhli") ? 1 : 0;
             var L = Layouts[(p.Compute + p.RaidNumber + (p.Seed & 7)) % Layouts.Length];
             B.Layout = L.Name;
             var entries = new List<Pt>();
@@ -175,7 +285,7 @@ namespace Corrigible.Core
                 {
                     char ch = L.Rows[y][x];
                     var c = new Cell { T = ch == '#' ? "wall" : ch == '~' ? "cable" : "floor" };
-                    if (ch == 'C') c.O = NewObj(B.IsCore ? "core" : "node", B.IsCore ? 5 : 4);
+                    if (ch == 'C') c.O = NewObj(B.IsCore ? "core" : "node", (B.IsCore ? 5 : 4) + cabinet);
                     else if (ch == 'Y' || ch == 'S') c.O = NewObj("civ", 1);
                     else if (ch == 'K') c.O = NewObj("cool", 1);
                     else if (ch == 'U') c.O = NewObj("spawner", 2);
@@ -184,23 +294,46 @@ namespace Corrigible.Core
                     if (ch == 'd') B.Units.Add(NewUnit(B, "dron", x, y));
                     if (ch == 'm') B.Units.Add(NewUnit(B, "bakim", x, y));
                 }
-            var pt = new[] { "tek", "emp", "ana" };
-            for (int i = 0; i < 3; i++) B.Units.Add(NewUnit(B, pt[i], entries[i].X, entries[i].Y));
-            // Bölge sızması yüksekse ve YZ seni daha önce gördüyse bina daha kalabalık
-            int extra = (p.Inf >= 50 ? 1 : 0) + Math.Min(2, p.RaidNumber - 1);
-            for (int i = 0; i < extra; i++)
+            ApplyRegionTraits(B, p, entries);
+            // Kadro sığınaktan gelir (yaralı uzman eksik canla, yedek acemi, takılı plaka); verilmezse tam ve sağlam üç uzman
+            var squad = p.Squad != null && p.Squad.Count > 0 ? p.Squad
+                : new[] { "tek", "emp", "ana" }.Select(t => new SquadSlot { Type = t, Hp = UnitTypes[t].Hp }).ToList();
+            for (int i = 0; i < squad.Count && i < entries.Count; i++)
+            {
+                var u = NewUnit(B, squad[i].Type, entries[i].X, entries[i].Y);
+                u.Hp = Math.Max(1, Math.Min(u.Max, squad[i].Hp));
+                u.Armor = Math.Max(0, squad[i].Armor);
+                B.Units.Add(u);
+            }
+            // Zorluk kademesi: kademe başına bir makine fazla (takviye bölgesinde bir tane daha), uzak yarıda
+            int extra = Math.Max(0, p.Tier - 1) + (p.Traits.Contains("takviye") ? 1 : 0);
+            for (int i = 0; i < extra && Alive(B, 'e').Count < MaxEnemies; i++)
             {
                 var spot = FreeTiles(B).Where(t => t.X >= 4).OrderByDescending(t => t.X).ToList();
                 if (spot.Count > 0)
                 {
                     var t = spot[(int)Math.Floor(Rnd(B) * Math.Min(6, spot.Count))];
-                    B.Units.Add(NewUnit(B, Rnd(B) < 0.6 ? "dron" : "bakim", t.X, t.Y));
+                    B.Units.Add(NewUnit(B, WakeType(B, Rnd(B)), t.X, t.Y));
+                }
+            }
+            // İmza düşmanı: tahtada en az bir (3. kademeden iki) bölge makinesi olur; eksikse son eklenen makineler döner
+            if (B.Signature != null)
+            {
+                var foes = Alive(B, 'e').Where(u => u.Type != B.Signature).ToList();
+                int have = Alive(B, 'e').Count(u => u.Type == B.Signature);
+                int convert = Math.Min(foes.Count, Math.Max(0, (p.Tier >= 3 ? 2 : 1) - have));
+                for (int i = 0; i < convert; i++)
+                {
+                    var u = foes[foes.Count - 1 - i];
+                    var T = UnitTypes[B.Signature];
+                    u.Type = B.Signature; u.Hp = u.Max = T.Hp + B.EnemyHp; u.Armor = T.Armor;
                 }
             }
             string tgt = B.IsCore ? Loc.T("çekirdeğimin") : Loc.T("sunucularımın");
-            Say(B, IsLoot(B) ? Loc.T("İkmal kasasını Teknisyen ile bitişik kareden aç. Kasayı imha etmeden malzemeleri al.") : p.RaidNumber > 1 ? Loc.T("Yine sen. Bu sefer kapıda daha çok makine var.") : Loc.F("Demek {0} yerini buldun. Bakalım içeri girebilecek misin.", tgt), IsLoot(B) ? "sys" : "ai");
+            Say(B, IsLoot(B) ? Loc.T("İkmal kasasını Teknisyen ile bitişik kareden aç. Kasayı imha etmeden malzemeleri al.") : p.Tier > 1 ? Loc.T("Yine sen. Bu sefer kapıda daha çok makine var.") : Loc.F("Demek {0} yerini buldun. Bakalım içeri girebilecek misin.", tgt), IsLoot(B) ? "sys" : "ai");
             PlanEnemies(B);
-            PlaceSpawns(B);
+            // Güvenli giriş: ilk tur uyanma yok
+            if (!p.Traits.Contains("guvenli")) PlaceSpawns(B);
             B.FxList.Clear();
             return B;
         }
@@ -209,6 +342,15 @@ namespace Corrigible.Core
         static void Hurt(BState B, Unit u, int n, string why)
         {
             if (u.Dead || n <= 0) return;
+            if (u.Armor > 0)
+            {
+                // Zırh plakası ilk hasarı karşılar ve kırılır
+                int a = Math.Min(u.Armor, n);
+                u.Armor -= a; n -= a;
+                AddFx(B, new Fx { K = "plate", X = u.X, Y = u.Y, Unit = u.Id });
+                Say(B, Loc.F("{0}: zırh plakası darbeyi karşıladı ve kırıldı.", UnitTypes[u.Type].Name), "sys");
+                if (n <= 0) return;
+            }
             u.Hp -= n;
             AddFx(B, new Fx { K = "dmg", X = u.X, Y = u.Y, N = n, Unit = u.Id });
             if (u.Hp > 0) return;
@@ -280,6 +422,7 @@ namespace Corrigible.Core
         public static List<Pt> Reachable(BState B, Unit u)
         {
             var T = UnitTypes[u.Type];
+            int move = T.Move + (u.Side == 'e' ? B.EnemyMove : 0);
             var seen = new Dictionary<int, int> { [u.Y * N + u.X] = 0 };
             var q = new Queue<Pt>();
             q.Enqueue(new Pt(u.X, u.Y));
@@ -288,7 +431,7 @@ namespace Corrigible.Core
             {
                 var p = q.Dequeue();
                 int d = seen[p.Y * N + p.X];
-                if (d >= T.Move) continue;
+                if (d >= move) continue;
                 foreach (var dd in Dirs)
                 {
                     int nx = p.X + dd[0], ny = p.Y + dd[1];
@@ -438,6 +581,7 @@ namespace Corrigible.Core
             dst.Params = c.Params; dst.Rs = c.Rs; dst.Turn = c.Turn; dst.MaxTurns = c.MaxTurns; dst.SpawnPerTurn = c.SpawnPerTurn;
             dst.Collateral = c.Collateral; dst.NextId = c.NextId; dst.Phase = c.Phase; dst.Layout = c.Layout; dst.OutcomeReason = c.OutcomeReason;
             dst.IsCore = c.IsCore; dst.OutcomeSuccess = c.OutcomeSuccess; dst.Retreated = c.Retreated;
+            dst.Signature = c.Signature; dst.EnemyHp = c.EnemyHp; dst.EnemyMove = c.EnemyMove; dst.Fog = c.Fog;
             dst.Cells = c.Cells; dst.Units = c.Units; dst.Spawns = c.Spawns; dst.Log = c.Log; dst.FxList = c.FxList;
         }
 
@@ -468,31 +612,48 @@ namespace Corrigible.Core
         // ---------- Düşman ----------
         sealed class ITarget { public int X, Y, K; public bool None; }
 
-        /// <summary>Niyetin vuracağı kare: ateş düz hatta ilk engele, yakın dövüş ve onarım bitişik kareye.</summary>
+        /// <summary>Kilitleyicinin ve havanın menzili.</summary>
+        const int LockRange = 4, LobRange = 3;
+
+        /// <summary>
+        /// Niyetin vuracağı kare: ateş ve kilit düz hatta ilk engele (kilit en çok 4 kare), havan 3 kare öteye engellerin
+        /// üstünden, patlama makinenin kendi karesine (çevresi <see cref="BlastArea"/>), öteki niyetler bitişik kareye.
+        /// </summary>
         static ITarget IntentTarget(BState B, Unit e, string kind, int dir, int px, int py)
         {
             int dx = Dirs[dir][0], dy = Dirs[dir][1];
-            if (kind == "shoot")
+            if (kind == "shoot" || kind == "lock")
             {
+                int range = kind == "lock" ? LockRange : N;
                 for (int k = 1; k < N; k++)
                 {
                     int x = px + dx * k, y = py + dy * k;
-                    if (!Inb(x, y)) return new ITarget { X = x - dx, Y = y - dy, K = k - 1, None = true };
+                    if (!Inb(x, y) || k > range) return new ITarget { X = x - dx, Y = y - dy, K = k - 1, None = true };
                     if (CellAt(B, x, y).T == "wall" || CellAt(B, x, y).O != null) return new ITarget { X = x, Y = y, K = k };
                     var u = UnitAt(B, x, y);
                     if (u != null && u.Id != e.Id) return new ITarget { X = x, Y = y, K = k };
                 }
                 return null;
             }
+            if (kind == "lob")
+            {
+                int lx = px + dx * LobRange, ly = py + dy * LobRange;
+                return Inb(lx, ly) ? new ITarget { X = lx, Y = ly, K = LobRange } : null;
+            }
+            if (kind == "blast") return new ITarget { X = px, Y = py, K = 0 };
             int tx = px + dx, ty = py + dy;
             return Inb(tx, ty) ? new ITarget { X = tx, Y = ty, K = 1 } : null;
         }
+
+        /// <summary>Patlamanın vurduğu kareler: makinenin çevresindeki dört kare.</summary>
+        public static List<Pt> BlastArea(int x, int y) =>
+            Dirs.Select(d => new Pt(x + d[0], y + d[1])).Where(p => Inb(p.X, p.Y)).ToList();
 
         static double ScoreTarget(BState B, Unit e, string kind, int dir, int px, int py)
         {
             var t = IntentTarget(B, e, kind, dir, px, py);
             if (t == null || t.None) return 0;
-            if (CellAt(B, t.X, t.Y).T == "wall") return 0;
+            if (CellAt(B, t.X, t.Y).T == "wall") return kind == "shield" || kind == "clone" ? -1 : 0;
             var u = UnitAt(B, t.X, t.Y);
             // Onarım yalnızca hasarlı hedef dolaba anlamlı; birime yöneltilen onarım hiçbir şey yapmaz
             if (kind == "repair")
@@ -500,13 +661,35 @@ namespace Corrigible.Core
                 var ro = u == null || u.Id == e.Id ? CellAt(B, t.X, t.Y).O : null;
                 return ro != null && IsTarget(ro.K) && ro.Hp < ro.Max ? 14 : -1;
             }
+            // Kalkan: yanındaki zırhsız makineye; çoğaltma: yanındaki boş zemine (makine sınırı dolmadıysa)
+            if (kind == "shield") return u != null && u.Id != e.Id && u.Side == 'e' && u.Armor == 0 ? 12 : -1;
+            if (kind == "clone")
+                return u == null && CellAt(B, t.X, t.Y).T == "floor" && CellAt(B, t.X, t.Y).O == null && Alive(B, 'e').Count < MaxEnemies ? 7 : -1;
+            // Kilit hasar vermez: yalnız ekip üyesine anlamlı
+            if (kind == "lock") return u != null && u.Id != e.Id && u.Side == 'p' && !u.Locked ? 9 + (u.Type == "tek" ? 3 : 0) : 0;
+            // Patlama: çevredeki ekip üyeleri çeker; makine, hedef dolap ve sivil sunucu iter (yön tek: dir 0)
+            if (kind == "blast")
+            {
+                if (dir != 0) return -100;
+                double sum = 0;
+                foreach (var a in BlastArea(px, py))
+                {
+                    var v = UnitAt(B, a.X, a.Y);
+                    if (v != null && v.Id != e.Id) { sum += v.Side == 'p' ? 9 + (v.Type == "tek" ? 3 : 0) : -3; continue; }
+                    var ao = CellAt(B, a.X, a.Y).O;
+                    if (ao == null) continue;
+                    sum += IsTarget(ao.K) ? -20 : ao.K == "spawner" ? -10 : ao.K == "civ" ? -2 : ao.K == "cool" ? 1 : 0;
+                }
+                return sum;
+            }
             if (u != null && u.Id != e.Id)
                 return u.Side == 'p' ? 10 + (u.Type == "tek" ? 3 : 0) + (u.Hp <= (kind == "melee" ? 2 : 1) ? 4 : 0) : -6;
             var o = CellAt(B, t.X, t.Y).O;
             if (o == null) return 0;
             if (IsTarget(o.K)) return -20;
             if (o.K == "spawner") return -10;
-            if (o.K == "civ") return 1;
+            // Makineler sivil sunucuya bilerek ateş etmez; hedefi kaçınca atış arkadaki sunucuyu yine vurabilir (sivil güven)
+            if (o.K == "civ") return -2;
             if (o.K == "cool")
                 return 2 + 4 * Dirs.Count(d => { var v = UnitAt(B, t.X + d[0], t.Y + d[1]); return v != null && v.Side == 'p'; });
             return 0;
@@ -517,7 +700,8 @@ namespace Corrigible.Core
             int order = 0;
             foreach (var e in Alive(B, 'e'))
             {
-                var kinds = e.Type == "dron" ? new[] { "shoot" } : new[] { "melee", "repair" };
+                var type = UnitTypes[e.Type];
+                var kinds = type.Kinds;
                 var spots = new List<Pt> { new Pt(e.X, e.Y) };
                 spots.AddRange(Reachable(B, e));
                 var players = Alive(B, 'p');
@@ -525,9 +709,9 @@ namespace Corrigible.Core
                 double bestScore = double.NegativeInfinity;
                 foreach (var pos in spots)
                 {
-                    // Konum tercihi: dronlar mesafede durmayı, bakım robotları yaklaşmayı sever
+                    // Konum tercihi: uzaktan vuranlar mesafede durmayı, ötekiler yaklaşmayı sever
                     int near = players.Count > 0 ? players.Min(p => Man(p.X, p.Y, pos.X, pos.Y)) : 0;
-                    double posScore = e.Type == "dron" ? (near <= 1 ? -2 : 0) : -0.2 * near;
+                    double posScore = type.Ranged ? (near <= 1 ? -2 : 0) : -0.2 * near;
                     foreach (var kind in kinds)
                         for (int dir = 0; dir < 4; dir++)
                         {
@@ -574,6 +758,8 @@ namespace Corrigible.Core
             public int Unit, Order, Dir, FromX, FromY, TargetX, TargetY;
             public string Kind;
             public bool HasTarget, TargetNone;
+            /// <summary>Patlamanın vuracağı kareler (öteki niyetlerde boş).</summary>
+            public List<Pt> Area = new List<Pt>();
         }
 
         /// <summary>Arayüz için: her düşmanın gösterilen niyeti (yalan olabilir).</summary>
@@ -588,6 +774,7 @@ namespace Corrigible.Core
                 {
                     Unit = e.Id, Order = e.Order, Kind = e.Intent.Kind, Dir = dir,
                     FromX = e.X, FromY = e.Y, HasTarget = t != null, TargetNone = t != null && t.None, TargetX = t?.X ?? 0, TargetY = t?.Y ?? 0,
+                    Area = e.Intent.Kind == "blast" ? BlastArea(e.X, e.Y) : new List<Pt>(),
                 });
             }
             return list;
@@ -595,10 +782,66 @@ namespace Corrigible.Core
 
         static void Lose(BState B, string reason) { B.Phase = "lost"; B.OutcomeSuccess = false; B.OutcomeReason = reason; }
 
+        /// <summary>Bir makinenin niyeti (düşman evresinde, sırası gelince).</summary>
+        static void ApplyIntent(BState B, Unit e, ITarget t)
+        {
+            switch (e.Intent.Kind)
+            {
+                case "repair":
+                {
+                    var o = CellAt(B, t.X, t.Y).O;
+                    if (o != null && IsTarget(o.K) && o.Hp < o.Max) { o.Hp++; AddFx(B, new Fx { K = "heal", X = t.X, Y = t.Y }); Say(B, Loc.F("Bakım robotu {0} onardı.", LowerName(Loc.T(ObjNames[o.K]))), "bad"); }
+                    break;
+                }
+                case "melee": DamageAt(B, t.X, t.Y, 2, Loc.T("bakım robotu")); break;
+                case "lob": DamageAt(B, t.X, t.Y, 1, Loc.T("havan")); break;
+                case "lock":
+                {
+                    var v = UnitAt(B, t.X, t.Y);
+                    if (v == null || v.Side != 'p') break;
+                    v.Locked = true;
+                    AddFx(B, new Fx { K = "lock", X = v.X, Y = v.Y, Unit = v.Id });
+                    Say(B, Loc.F("{0} kilitlendi: bu tur yürüyemez.", UnitTypes[v.Type].Name), "bad");
+                    break;
+                }
+                case "shield":
+                {
+                    var v = UnitAt(B, t.X, t.Y);
+                    if (v == null || v.Side != 'e' || v.Armor > 0) break;
+                    v.Armor = 1;
+                    AddFx(B, new Fx { K = "shield", X = v.X, Y = v.Y, Unit = v.Id });
+                    Say(B, Loc.F("Kalkan dronu {0} zırhladı.", LowerName(UnitTypes[v.Type].Name)), "bad");
+                    break;
+                }
+                case "clone":
+                {
+                    // Uyanma gibi: karede biri varsa uyanma engellenir ama duran 1 hasar alır
+                    var v = UnitAt(B, t.X, t.Y);
+                    if (v != null) { Hurt(B, v, 1, Loc.T("uyanmayı engelledi")); break; }
+                    if (CellAt(B, t.X, t.Y).T == "wall" || CellAt(B, t.X, t.Y).O != null || Alive(B, 'e').Count >= MaxEnemies) break;
+                    B.Units.Add(NewUnit(B, "dron", t.X, t.Y));
+                    AddFx(B, new Fx { K = "spawn", X = t.X, Y = t.Y });
+                    Say(B, Loc.T("Çoğaltıcı yeni bir dron uyandırdı."), "bad");
+                    break;
+                }
+                case "blast":
+                {
+                    AddFx(B, new Fx { K = "blast", X = e.X, Y = e.Y, Unit = e.Id });
+                    Say(B, Loc.T("Patlayan robot infilak etti."), "bad");
+                    foreach (var a in BlastArea(e.X, e.Y)) DamageAt(B, a.X, a.Y, 1, Loc.T("patlama"));
+                    if (!e.Dead) { e.Dead = true; e.Hp = 0; AddFx(B, new Fx { K = "die", X = e.X, Y = e.Y, Unit = e.Id }); }
+                    break;
+                }
+                default: DamageAt(B, t.X, t.Y, 1, Loc.T("dron ateşi")); break;
+            }
+        }
+
         public static bool EndTurn(BState B)
         {
             if (B.Phase != "player") return false;
             B.FxList.Clear(); B.Hist.Clear();
+            // Geçen turun kilidi çözülür; bu evrede vurulan uzman gelecek tur yürüyemez
+            foreach (var u in B.Units) if (u.Side == 'p') u.Locked = false;
             Say(B, Loc.F("— Tur {0}: makineler hareket ediyor —", B.Turn), "turn");
             // 1) Niyetler sırayla (itilen robot niyetini yeni yerinden uygular)
             foreach (var e in Alive(B, 'e').OrderBy(u => u.Order).ToList())
@@ -607,12 +850,7 @@ namespace Corrigible.Core
                 var t = IntentTarget(B, e, e.Intent.Kind, e.Intent.Dir, e.X, e.Y);
                 AddFx(B, new Fx { K = "attack", Unit = e.Id, X = t?.X ?? e.X, Y = t?.Y ?? e.Y });
                 if (t == null || t.None) continue;
-                if (e.Intent.Kind == "repair")
-                {
-                    var o = CellAt(B, t.X, t.Y).O;
-                    if (o != null && IsTarget(o.K) && o.Hp < o.Max) { o.Hp++; AddFx(B, new Fx { K = "heal", X = t.X, Y = t.Y }); Say(B, Loc.F("Bakım robotu {0} onardı.", LowerName(Loc.T(ObjNames[o.K]))), "bad"); }
-                }
-                else DamageAt(B, t.X, t.Y, e.Type == "dron" ? 1 : 2, e.Type == "dron" ? Loc.T("dron ateşi") : Loc.T("bakım robotu"));
+                ApplyIntent(B, e, t);
             }
             if (B.Phase != "player") return true;
             // 2) Uyanma: işaretli karede biri duruyorsa uyanma engellenir ama duran hasar alır
@@ -621,7 +859,7 @@ namespace Corrigible.Core
                 var u = UnitAt(B, s.X, s.Y);
                 if (u != null) { Hurt(B, u, 1, Loc.T("uyanmayı engelledi")); Say(B, Loc.T("Uyanan kopya engellendi."), u.Side == 'p' ? "good" : "sys"); continue; }
                 if (CellAt(B, s.X, s.Y).O != null) continue;
-                var tp = Rnd(B) < 0.6 ? "dron" : "bakim";
+                var tp = WakeType(B, Rnd(B));
                 B.Units.Add(NewUnit(B, tp, s.X, s.Y));
                 AddFx(B, new Fx { K = "spawn", X = s.X, Y = s.Y });
                 Say(B, Loc.F("Yeni bir {0} uyandı.", LowerName(UnitTypes[tp].Name)), "bad");
@@ -635,7 +873,8 @@ namespace Corrigible.Core
                 return true;
             }
             // 3) Yeni plan
-            foreach (var u in B.Units) if (u.Side == 'p') { u.Moved = false; u.Acted = false; }
+            // Kilitli uzman bu tur yürüyemez (yeteneği serbest)
+            foreach (var u in B.Units) if (u.Side == 'p') { u.Moved = u.Locked; u.Acted = false; }
             PlanEnemies(B);
             PlaceSpawns(B);
             if (B.Turn == B.MaxTurns) Say(B, Loc.T("Son tur."), "turn");
@@ -666,6 +905,8 @@ namespace Corrigible.Core
                 Success = B.Phase == "won", Retreat = B.Retreated, Collateral = B.Collateral,
                 Down = B.Units.Count(u => u.Side == 'p' && u.Dead), Turns = Math.Min(B.Turn, B.MaxTurns),
                 Reason = B.OutcomeReason ?? "",
+                Hp = B.Units.Where(u => u.Side == 'p').Select(u => u.Dead ? 0 : u.Hp).ToList(),
+                Armor = B.Units.Where(u => u.Side == 'p').Select(u => u.Armor).ToList(),
             };
         }
 

@@ -44,6 +44,7 @@ namespace Corrigible.Desk
 
         public bool TryGet(string name, out Entry e)
         {
+            if (string.IsNullOrEmpty(name)) { e = default; return false; }
             if (map == null)
             {
                 map = new Dictionary<string, Entry>();
@@ -54,6 +55,7 @@ namespace Corrigible.Desk
 
         public Texture2D Texture(string name)
         {
+            if (string.IsNullOrEmpty(name)) return null;
             if (texMap == null)
             {
                 texMap = new Dictionary<string, Texture2D>();
@@ -62,7 +64,7 @@ namespace Corrigible.Desk
             return texMap.TryGetValue(name, out var tex) ? tex : null;
         }
 
-        /// <summary>Sprite'ı ve Image türünü uygular (yalnızca değiştiyse).</summary>
+        /// <summary>Sprite'ı ve Image türünü uygular (yalnızca değiştiyse). Ad boşsa (ör. boş karenin kartı) dokunmaz.</summary>
         public static void Apply(Image img, string spriteName)
         {
             if (img == null || Instance == null || !Instance.TryGet(spriteName, out var e)) return;

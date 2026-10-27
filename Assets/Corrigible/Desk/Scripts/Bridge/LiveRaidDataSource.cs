@@ -18,10 +18,16 @@ namespace Corrigible.Desk.Bridge
             if(game==null)game=FindFirstObjectByType<GameController>();
             foreach(var input in FindObjectsByType<DeskInput>(FindObjectsSortMode.None))if(input.enabled){suspendedInputs.Add(input);input.enabled=false;}
             // Baskin sahnesi tek başına açıldıysa (ana masa yok) örnek bir sunucu baskını kurulur
-            var p=game?.Sim?.S.Raid?.Params??new RaidParams{Seed=731,Region="cn",RegionName=GameData.Region("cn").Name,Compute=5,IsCore=true,Inf=60,Traits=new List<string>{"kopya"}};
-            OpenState(Baskin.Create(p));
+            var p=game?.Sim?.S.Raid?.Params??new RaidParams{Seed=731,Region="cn",RegionName=GameData.Region("cn").Name,Compute=5,IsCore=true,Tier=3,RaidNumber=3,
+                Traits=new List<string>{GameData.Region("cn").Trait,"kopya"},Signature=GameData.Region("cn").Enemy};
+            // Rehberli ilk vardiyalarda harekâtın ilk baskını senaryolu: sabit tohum, adım adım çözüm (TutorialRaid)
+            var tutorial=FindFirstObjectByType<SiginakTutorial>();
+            var scripted=tutorial!=null&&tutorial.AtRaid?TutorialRaid.For(p):null;
+            if(scripted!=null)OpenState(Baskin.Create(scripted),new RaidGuide());
+            else OpenState(Baskin.Create(p));
         }
         public void OpenForValidation(Baskin.BState state)=>OpenState(state);
+        protected override (int Trust,int Max,int PerCivilian) TrustStake=>game?.Sim==null?(0,0,0):(game.Sim.S.Trust,game.Sim.B.liberationTrustStart,game.Sim.B.liberationTrustPerCivilian);
         protected override void Finish()
         {
             if(finished)return;

@@ -69,6 +69,26 @@ namespace Corrigible.Desk.Tests
         }
 
         [Test]
+        public void HoverInspector_RendersEmptySquareWithoutThumbnail()
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<HoverInspectorView>(Root + "/Prefabs/Sade/Raid/HoverInspector.prefab");
+            Assert.IsNotNull(prefab);
+            var canvasObject = new GameObject("Kart testi", typeof(RectTransform), typeof(Canvas));
+            try
+            {
+                var card = Object.Instantiate(prefab, canvasObject.transform);
+                var thumbnail = Ref<Image>(card, "thumbnail");
+                card.Render(new RaidInspectorModel { Title = "Robot", Thumb = "thumb_maint", Hp = 2, Max = 2 });
+                Assert.IsTrue(thumbnail.enabled);
+                // Boş karenin kartında küçük resim yok (Thumb null); kart yine çizilir, resim gizlenir.
+                Assert.DoesNotThrow(() => card.Render(new RaidInspectorModel { Title = "Boş kare" }));
+                Assert.IsTrue(card.gameObject.activeSelf);
+                Assert.IsFalse(thumbnail.enabled);
+            }
+            finally { Object.DestroyImmediate(canvasObject); }
+        }
+
+        [Test]
         public void BaskinScene_UsesCameraBackgroundAndOverlayLabels()
         {
             var scene = EditorSceneManager.OpenScene("Assets/Corrigible/Scenes/Baskin.unity", OpenSceneMode.Additive);

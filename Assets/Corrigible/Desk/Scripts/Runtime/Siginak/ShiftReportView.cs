@@ -31,6 +31,8 @@ namespace Corrigible.Desk
         {
             public GameObject root;
             public TMP_Text label, value, detail;
+            /// <summary>Satırın ekip simgesi; YZ alarmı satırında gizlenir (yer tutar, hizalama bozulmaz).</summary>
+            public Image icon;
         }
 
         [SerializeField] RectTransform paper;
@@ -139,6 +141,7 @@ namespace Corrigible.Desk
                 if (!on) continue;
                 slot.label.text = d.Teams[i].Label;
                 slot.value.text = d.Teams[i].Value;
+                if (slot.icon != null) slot.icon.enabled = !d.Teams[i].HideIcon;
                 slot.detail.gameObject.SetActive(!string.IsNullOrEmpty(d.Teams[i].Detail));
                 slot.detail.text = d.Teams[i].Detail ?? "";
             }

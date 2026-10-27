@@ -65,7 +65,7 @@ namespace Corrigible.Desk
                 turnFills[i].color=DeskTheme.Active.Get(i+1==vm.Turn?(vm.LastTurn?"sade.raid.phaseAiBg":"sade.paper"):i+1<vm.Turn?"sade.plaque.border":"sade.plaque.bg");
                 turnBoxes[i].color=DeskTheme.Active.Get(i+1==vm.Turn?(vm.LastTurn?"ink.red":"sade.status.info"):"sade.plaque.brass");
             }
-            objective.text=vm.IsLootMission?Loc.T("İKMAL"):Loc.T("HEDEF");objectiveSub.text=vm.IsLootMission?Loc.T("kasayı al"):vm.Targets.Length>1?Loc.T("ikisini de kır"):Loc.T("kır");civilianLabel.text=Loc.T("SİVİL");abilityLabel.text=vm.AbilityLabel;
+            objective.text=vm.IsLootMission?Loc.T("İKMAL"):Loc.T("HEDEF");objectiveSub.text=vm.IsLootMission?Loc.T("kasayı al"):vm.Targets.Length>1?Loc.T("ikisini de kır"):Loc.T("kır");civilianLabel.text=vm.TrustMax>0?Loc.F("GÜVEN {0}",vm.Trust):Loc.T("SİVİL");abilityLabel.text=vm.AbilityLabel;
             for(int i=0;i<targetNames.Length;i++)
             {
                 bool show=i<vm.Targets.Length;targetThumbs[i].gameObject.SetActive(show);targetNames[i].gameObject.SetActive(show);targetArmor[i].enabled=show&&vm.Targets[i].Armor;
@@ -73,7 +73,7 @@ namespace Corrigible.Desk
                 if(show){targetNames[i].fontStyle=vm.Targets[i].Broken?FontStyles.Strikethrough:FontStyles.Normal;targetNames[i].text=vm.Targets[i].Name;DeskSprites.Apply(targetThumbs[i],vm.Targets[i].Thumb);}
                 for(int j=0;j<4;j++){var pip=targetPips[i*4+j];pip.gameObject.SetActive(show&&!vm.Targets[i].Broken&&j<vm.Targets[i].Max);if(show)DeskSprites.Apply(pip,j<vm.Targets[i].Hp?"pip_full_10":"pip_empty_10");}
             }
-            for(int i=0;i<civilians.Length;i++){civilians[i].gameObject.SetActive(i<vm.Civilians);DeskSprites.Apply(civilians[i],i>=vm.Civilians-vm.CivilianBroken?"civ_broken_20":"civ_ok_20");}
+            int civShown=Mathf.Min(vm.Civilians,civilians.Length),civBroken=Mathf.Min(vm.CivilianBroken,civShown);for(int i=0;i<civilians.Length;i++){civilians[i].gameObject.SetActive(i<civShown);DeskSprites.Apply(civilians[i],i>=civShown-civBroken?"civ_broken_20":"civ_ok_20");}
             for(int i=0;i<team.Length;i++)team[i].Render(vm.Team[i],vm.Locked||vm.Paused);
             logLabel.text=Loc.T("GÜNLÜK");rulesLabel.text=Loc.T("KURALLAR");retreatLabel.text=Loc.T("GERİ ÇEKİL");retreat.gameObject.SetActive(!vm.RetreatArmed);
             ((RectTransform)rules.transform).anchoredPosition=new Vector2(vm.RetreatArmed?-262.3f:-155.1f,-14);((RectTransform)log.transform).anchoredPosition=new Vector2(vm.RetreatArmed?-424.1f:-316.9f,-14);
@@ -90,6 +90,14 @@ namespace Corrigible.Desk
         }
         public static void Pips(Image[] pips,int hp,int max,string color)
         { for(int i=0;i<pips.Length;i++){pips[i].gameObject.SetActive(i<max);DeskSprites.Apply(pips[i],i<hp?"pip_full_10":"pip_empty_10");pips[i].color=DeskTheme.Active.Get(color);} }
+        /// <summary>Zırh plakası: son can noktasının sağında, mavi bir nokta (can değil; ilk hasarı karşılar).</summary>
+        public static void ArmorPip(Image armor,Image[] pips,int max,int plates)
+        {
+            if(armor==null)return;bool on=plates>0&&max>0&&pips.Length>1;armor.gameObject.SetActive(on);if(!on)return;
+            var first=pips[0].rectTransform.anchoredPosition;var step=pips[1].rectTransform.anchoredPosition-first;
+            armor.rectTransform.anchoredPosition=first+step*Mathf.Min(max,pips.Length);
+            DeskSprites.Apply(armor,"pip_full_10");armor.color=DeskTheme.Active.Get("sade.status.info");
+        }
         void Update()
         {
             if(cornerGroup!=null)

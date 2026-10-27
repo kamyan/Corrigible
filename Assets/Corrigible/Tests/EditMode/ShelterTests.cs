@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace Corrigible.Tests
 {
-    /// <summary>Sığınak harcamaları, personel sınırları ve kayıt/devam için regresyonlar.</summary>
+    /// <summary>Sığınak harcamaları, personel sınırları, plaka dökümü, revir, yedekler, telsiz ve kayıt/devam için regresyonlar.</summary>
     public class ShelterTests
     {
         static Simulation Ready(Balance b = null) => Simulation.NewGame(79, b);
@@ -34,7 +34,7 @@ namespace Corrigible.Tests
         }
 
         [Test]
-        public void PersonnelAndPower_CannotExceedPopulationSlotsOrGeneratorOutput()
+        public void Personnel_CannotExceedPopulationOrRoomSlots()
         {
             var sim = Ready(new Balance { shelterStartMaterials = 100 });
             Assert.IsFalse(sim.ShelterAssign(ShelterLogic.Workshop, 1).Ok, "Bozuk oda çalıştırılamaz");
@@ -45,12 +45,12 @@ namespace Corrigible.Tests
             Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Infirmary).Ok);
             Assert.IsTrue(sim.ShelterAssign(ShelterLogic.Infirmary, 2).Ok);
             Assert.AreEqual(0, ShelterLogic.AvailableWorkers(sim.Shelter));
-            Assert.IsFalse(sim.ShelterAssign(ShelterLogic.Generator, 1).Ok, "Nüfus birden çok odada kullanılamaz");
-            Assert.IsFalse(sim.ShelterUpgrade(ShelterLogic.Workshop).Ok, "Enerji yetmeden oda büyütülemez");
+            Assert.IsFalse(sim.ShelterAssign(ShelterLogic.Radio, 1).Ok, "Nüfus birden çok odada kullanılamaz");
             Assert.IsTrue(sim.ShelterAssign(ShelterLogic.Infirmary, 0).Ok);
-            Assert.IsTrue(sim.ShelterAssign(ShelterLogic.Generator, 2).Ok);
-            Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Workshop).Ok);
-            Assert.IsFalse(sim.ShelterAssign(ShelterLogic.Generator, 0).Ok, "Çalışan odaların enerjisi kesilemez");
+            Assert.IsTrue(sim.ShelterAssign(ShelterLogic.Radio, 2).Ok);
+            // Seviye 2 iki özgür bölge ister; enerji yok, büyütmeyi yalnız bölge, fon ve malzeme sınırlar
+            foreach (var r in sim.S.Liberation.Regions.Take(sim.B.shelterLevel2Regions)) foreach (var s in r.Sectors) s.Captured = true;
+            Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Workshop).Ok, "Enerji yok: oda büyütmeyi yalnız fon ve malzeme sınırlar");
         }
 
         [Test]
@@ -72,23 +72,75 @@ namespace Corrigible.Tests
         }
 
         [Test]
-        public void WorkshopAndInfirmary_ProduceAndShortenTeamRecovery()
+        public void Workshop_CastsPlatesFromMaterials_UpToStorage()
+        {
+            var sim = Ready(new Balance { shelterStartMaterials = 100 });
+            var s = sim.Shelter;
+            Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Workshop).Ok);
+            Assert.IsTrue(sim.ShelterAssign(ShelterLogic.Living, 0).Ok);
+            Assert.IsTrue(sim.ShelterAssign(ShelterLogic.Workshop, 2).Ok);
+            double materials = s.Materials;
+            // İki görevli × 0,25: iki vardiyada bir plaka
+            ShelterLogic.Advance(sim.S, sim.B);
+            Assert.AreEqual(0, s.Plates);
+            Assert.AreEqual(0.5, s.PlateProgress, 1e-9);
+            ShelterLogic.Advance(sim.S, sim.B);
+            Assert.AreEqual(1, s.Plates);
+            Assert.AreEqual(materials - sim.B.shelterPlateMaterials, s.Materials, 1e-9);
+            // Birinci seviye depo bir plaka: döküm bekler, malzeme harcanmaz
+            ShelterLogic.Advance(sim.S, sim.B);
+            ShelterLogic.Advance(sim.S, sim.B);
+            Assert.AreEqual(1, s.Plates);
+            Assert.AreEqual(1, s.PlateProgress, 1e-9, "birikim bir plakada bekler");
+            Assert.AreEqual(materials - sim.B.shelterPlateMaterials, s.Materials, 1e-9);
+            // Malzeme yoksa da bekler
+            s.Plates = 0; s.Materials = 1;
+            ShelterLogic.Advance(sim.S, sim.B);
+            Assert.AreEqual(0, s.Plates);
+            Assert.AreEqual(1, s.Materials, 1e-9);
+        }
+
+        [Test]
+        public void Infirmary_HealsMostWoundedFirst_AndGetsTheDownedUpEarly()
+        {
+            var sim = Ready(new Balance { shelterHealPerWorker = 0.5 });
+            Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Infirmary).Ok);
+            Assert.IsTrue(sim.ShelterAssign(ShelterLogic.Living, 0).Ok);
+            Assert.IsTrue(sim.ShelterAssign(ShelterLogic.Infirmary, 2).Ok);
+            var team = sim.S.Teams[0];
+            team.Members[0].Wounds = 1; team.Members[1].Wounds = 2; team.Members[2].Down = 3;
+            ShelterLogic.Advance(sim.S, sim.B);
+            Assert.AreEqual(1, team.Members[1].Wounds, "en yaralı önce sarılır");
+            Assert.AreEqual(1, team.Members[0].Wounds);
+            Assert.AreEqual(2, team.Members[2].Down, "yatan uzman bir gün erken kalkar");
+            sim.Shelter.Supplies = 0;
+            ShelterLogic.Advance(sim.S, sim.B);
+            Assert.IsTrue(sim.Shelter.Starving);
+            Assert.AreEqual(2, team.Members[1].Wounds + team.Members[0].Wounds, "erzak yokken revir durur");
+            Assert.AreEqual(2, team.Members[2].Down);
+        }
+
+        [Test]
+        public void LivingArea_HoldsOneReservePerLevel()
+        {
+            var sim = Ready(new Balance { shelterStartMaterials = 100, startFon = 200 });
+            Assert.AreEqual(1, sim.Shelter.Reserves.Count);
+            foreach (var r in sim.S.Liberation.Regions.Take(sim.B.shelterLevel2Regions)) foreach (var s in r.Sectors) s.Captured = true;
+            Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Living).Ok);
+            Assert.AreEqual(2, sim.Shelter.Reserves.Count, "yeni seviye bir yedek getirir");
+            Assert.IsTrue(sim.Shelter.Reserves.All(r => r.Down == 0 && r.Role == null));
+        }
+
+        [Test]
+        public void Radio_SlowsTheShiftAlarm()
         {
             var sim = Ready();
-            Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Workshop).Ok);
-            Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Infirmary).Ok);
-            Assert.IsTrue(sim.ShelterAssign(ShelterLogic.Workshop, 1).Ok);
-            Assert.IsTrue(sim.ShelterAssign(ShelterLogic.Infirmary, 1).Ok);
-            var team = sim.S.Teams[0]; team.Down = 3;
-            double materials = sim.Shelter.Materials;
-            ShelterLogic.Advance(sim.S, sim.B);
-            Assert.AreEqual(materials + sim.B.shelterMaterialsPerWorker, sim.Shelter.Materials);
-            Assert.AreEqual(2, team.Down);
-            sim.Shelter.Supplies = 0;
-            sim.Shelter.Room(ShelterLogic.Living).Workers = 0;
-            ShelterLogic.Advance(sim.S, sim.B);
-            Assert.AreEqual(2, team.Down, "Erzak yokken revir ek iyileşme vermez");
-            Assert.AreEqual(sim.B.shelterMaterialsPerWorker * sim.B.shelterStarvingWorkMultiplier, sim.Shelter.LastMaterialsChange);
+            Assert.AreEqual(sim.B.liberationAlarmPerShift, sim.AlarmPerShift, 1e-9);
+            Assert.IsTrue(sim.ShelterAssign(ShelterLogic.Living, 0).Ok);
+            Assert.IsTrue(sim.ShelterAssign(ShelterLogic.Radio, 2).Ok);
+            Assert.AreEqual(sim.B.liberationAlarmPerShift - 2 * sim.B.shelterRadioAlarmPerWorker, sim.AlarmPerShift, 1e-9);
+            sim.Step();
+            Assert.AreEqual(sim.AlarmPerShift, sim.S.Alarm, 1e-9);
         }
 
         [Test]
@@ -128,6 +180,8 @@ namespace Corrigible.Tests
                 Assert.AreEqual(room.Level, restored.Shelter.Room(room.Id).Level);
                 Assert.AreEqual(room.Workers, restored.Shelter.Room(room.Id).Workers);
             }
+            Assert.AreEqual(sim.Shelter.Plates, restored.Shelter.Plates);
+            Assert.AreEqual(sim.Shelter.PlateProgress, restored.Shelter.PlateProgress);
             Assert.AreEqual(sim.S.Rng.State, restored.S.Rng.State);
             Assert.AreEqual(4, restored.Record.commands.Count);
         }

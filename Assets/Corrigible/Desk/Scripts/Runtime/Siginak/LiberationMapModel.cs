@@ -32,14 +32,14 @@ namespace Corrigible.Desk
     public sealed class TeamFigureState
     {
         public string Name, Members;
-        /// <summary>Figürün durduğu bölge; yaralıyken sığınak bölgesi (S-07).</summary>
+        /// <summary>Figürün durduğu bölge; Teknisyen yatıp yedek de yokken sığınak bölgesi (S-07).</summary>
         public string Region;
         /// <summary>Ekip sahada (baskın): figür haritadan kalkar.</summary>
         public bool Hidden;
         public bool AtShelter;
-        /// <summary>Yatık piyon sayısı (0–3).</summary>
+        /// <summary>Yatık piyon sayısı (0–3): yatan uzmanlar.</summary>
         public int Down;
-        /// <summary>Kalan iyileşme günü.</summary>
+        /// <summary>Ekip sığınakta beklerken Teknisyenin kalkmasına kalan gün.</summary>
         public int Days;
         public bool Ready => !Hidden && Days <= 0;
     }
