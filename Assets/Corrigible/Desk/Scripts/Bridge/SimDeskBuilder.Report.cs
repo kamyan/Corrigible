@@ -99,8 +99,11 @@ namespace Corrigible.Desk.Bridge
             }
             SquadLines(doc, reward);
             if (log.Collateral > 0) doc.Lines.Add(new EventLineVM { Label = Loc.T("Sivil sunucu hasarı"), Value = N(log.Collateral, 0), Status = "threat" });
+            // Kazanılan baskında ayakta kalan siviller güveni geri kazandırır (net değişim alttaki güven satırında)
+            if (log.Success && reward != null && reward.CiviliansLeft > 0)
+                doc.Lines.Add(new EventLineVM { Label = Loc.T("Ayakta kalan sivil sunucu"), Value = N(reward.CiviliansLeft, 0), Status = "good" });
             // Rapor yalnız son baskın için kurulur; kalan güven bugünkü değerdir (güven tükenince son rapor açılır)
-            int trustMax = sim.B.liberationTrustStart;
+            int trustMax = sim.TrustMax;
             if (reward != null && reward.Trust != 0) doc.Lines.Add(new EventLineVM
             {
                 Label = Loc.T("Sivil güven"),

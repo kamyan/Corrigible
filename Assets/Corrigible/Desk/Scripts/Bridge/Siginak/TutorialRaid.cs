@@ -17,8 +17,9 @@ namespace Corrigible.Desk.Bridge
 
     /// <summary>
     /// İlk baskının eğitim senaryosu: Batı Avrupa'nın ilk sektörü sabit bir tohumla kurulur ve oyuncu bilinen bir çözümü adım
-    /// adım oynar (üç tur: EMP itişiyle zırh kırmak, kancayla çekmek, makinelerin sırasını okumak, atıştan kaçmak, kasayı
-    /// almak). Taktik motor aynı parametre ve hamlelerle aynı savaşı verir; simülasyon yalnız sonucu görür, kayıt bozulmaz.
+    /// adım oynar (beş tur: EMP itişiyle zırh kırmak, kancayla çekmek, makinelerin sırasını okumak, atıştan kaçmak, kasayı
+    /// almak, EMP ile dönüş yolunu açıp malzemeyi girişe taşımak). Makineler temel akılla oynar (<c>RaidParams.Tactics</c> 0).
+    /// Taktik motor aynı parametre ve hamlelerle aynı savaşı verir; simülasyon yalnız sonucu görür, kayıt bozulmaz.
     /// </summary>
     public static class TutorialRaid
     {
@@ -29,7 +30,9 @@ namespace Corrigible.Desk.Bridge
         {
             "mT.1.4", "aE.5.3", "mA.3.4", "aA.1.4", "e",
             "mT.4.3", "mE.0.5", "aE.5.5", "e",
-            "mT.6.4", "aT.6.3",
+            "mT.6.4", "aT.6.3", "aE.3.5", "e",
+            "mT.3.4", "e",
+            "mT.0.4",
         };
 
         /// <summary>Arayüz adımlarının dersleri (adım sırası: <see cref="Steps"/>).</summary>
@@ -39,14 +42,18 @@ namespace Corrigible.Desk.Bridge
             [1] = Loc.N("Mavi kareler Teknisyenin gidebileceği yerler."),
             [3] = Loc.N("EMP atışı 2–5 kare öteye, engellerin üstünden gider; hedefin çevresindeki robotları iter."),
             [4] = Loc.N("Zırhlı dronun üstündeki duvara at: dron aşağıdaki duvara itilir, çarpınca zırhı kırılır. Oklara bak: 2 numaralı bakım robotu ona vuracak."),
-            [7] = Loc.N("Kanca düz hatta 5 kare gider ve çarptığı birimi bir kare çeker; dost uzmanı da."),
+            [7] = Loc.N("Kanca düz hatta 5 kare gider: çarptığı robota 1 hasar verip onu bir kare çeker, dost uzmanı hasarsız çeker."),
             [8] = Loc.N("Teknisyene at: kasaya bir kare yaklaşır."),
             [9] = Loc.N("Makineler sırayla oynar: 1 numaralı dron bakım robotunu, 2 numaralı bakım robotu zırhı kırılan dronu vurur. Zırhlı dron ateş edemeden düşer."),
             [11] = Loc.N("Uzmanlar birbirinin üstünden geçebilir."),
             [15] = Loc.N("Dronun altındaki duvara at: dron yukarı itilir, duvara çarpıp 1 hasar alır."),
             [16] = Loc.N("Analist bakım robotunun hedefinde, ama 1 numaralı dron önce ateş edip bakım robotunu düşürür: sıra önemli. Analist bu tur boşta kalır."),
             [18] = Loc.N("Dron Teknisyenin sütununa ateş edecek: kasanın yanındaki kareye geç."),
-            [20] = Loc.N("Kasaya tıkla: malzemeler alınır, baskın kazanılır."),
+            [20] = Loc.N("Kasaya tıkla: Teknisyen malzemeleri alır. Baskın bitmedi: malzemeyi yeşil kesik çerçeveli giriş karelerinden birine geri taşı."),
+            [21] = Loc.N("Dron dönüş yolunda. Yolu EMP uzmanı açacak."),
+            [23] = Loc.N("Analistin altındaki kareye at: hasarlı dron duvara itilip düşer, Analist yukarı itilir ve Teknisyen'e yol açılır. EMP dostları da iter."),
+            [26] = Loc.N("Teknisyen kablo kanalının üstünden yürüyebilir; kanal yalnız üstüne itilene hasar verir."),
+            [29] = Loc.N("Yeni dron Teknisyen'in satırına nişan aldı: çıkışa yürü. Taşıyıcı çıkışa varınca ekip tahliye edilir, baskın kazanılır."),
         };
 
         /// <summary>Çözümün arayüz adımları: her hamle gerekirse uzmanı seçer; yetenek önce Q ile seçilir; tur bitince seçim kalkar.</summary>
@@ -88,6 +95,7 @@ namespace Corrigible.Desk.Bridge
                 Seed = Seed, Region = campaign.Region, RegionName = campaign.RegionName, Compute = campaign.Compute, RaidNumber = campaign.RaidNumber,
                 Tier = campaign.Tier, MissionKind = campaign.MissionKind, SectorId = campaign.SectorId, IsCore = campaign.IsCore,
                 Traits = new List<string>(campaign.Traits), Signature = campaign.Signature, Squad = campaign.Squad,
+                ExtraTurns = campaign.ExtraTurns,
             };
         }
 

@@ -82,23 +82,27 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(52.5, d.Closing, 1e-9);
             Assert.AreEqual(d.Opening + input.ledger.Sum(e => e.fon) + d.Income, d.Closing, 1e-9, "satırlar kapanışa çıkar");
 
-            // ÜRETİM: toplama +2,0 · tüketim −1,6 · zırh plakası 0/3 ±0 (döküm yarıda) · Erzak 31,0 → 31,4 / 40 +0,4
+            // ÜRETİM: toplama +1,4 · tüketim −2,8 · zırh plakası 0/3 ±0 (döküm yarıda) · Erzak 22,0 → 20,6 / 30 −1,4 (erzak kıt)
             Assert.AreEqual(4, d.Production.Count);
-            Row(d.Production[0], Loc.T("Erzak toplama"), S(2), ReportTone.Good);
+            Row(d.Production[0], Loc.T("Erzak toplama"), S(1.4), ReportTone.Good);
             Assert.AreEqual(Loc.F("yaşam alanı · {0} kişi", 2), d.Production[0].Note);
-            Row(d.Production[1], Loc.T("Erzak tüketimi"), S(-1.6), ReportTone.Bad);
-            Assert.AreEqual(Loc.F("{0} kişi × {1}", 8, DeskFormat.Number(0.2, 1)), d.Production[1].Note);
+            Row(d.Production[1], Loc.T("Erzak tüketimi"), S(-2.8), ReportTone.Bad);
+            Assert.AreEqual(Loc.F("{0} kişi × {1}", 8, DeskFormat.Number(0.35, 2)), d.Production[1].Note);
             Row(d.Production[2], Loc.F("Zırh plakası · {0}/{1}", 0, 3), "±0", ReportTone.Neutral);
             Assert.IsNull(d.Production[2].Badge);
             Assert.AreEqual(Loc.F("{0} kişi × {1} · plaka {2} malzeme", 2, DeskFormat.Number(0.25, 2), 4), d.Production[2].Note);
             Assert.AreEqual(0.5, input.after.plateProgress, 1e-9);
-            Row(d.Production[3], Loc.F("Erzak {0} → {1} / {2}", N(31), N(31.4), 40), S(0.4), ReportTone.Good, true);
+            Row(d.Production[3], Loc.F("Erzak {0} → {1} / {2}", N(22), N(20.6), 30), S(-1.4), ReportTone.Bad, true);
 
             Assert.AreEqual(Loc.T("→ revir onarılırsa yaralar sarılır"), d.Analyst);
 
             // EKİP: Teknisyen düştü (3 → 2 gün), yerine yedek çıkar; revir hasarlı
-            // Ekiplerin altında YZ alarmı: vardiya +1, karşı saldırı yok
-            Assert.AreEqual(2, d.Teams.Count);
+            // Ekiplerin altında YZ alarmı: vardiya +1, karşı saldırı yok; fikstür vardiyayı kapıdaki ziyaretçiyi açmadan kapatır
+            Assert.AreEqual(3, d.Teams.Count);
+            StringAssert.StartsWith(Loc.F("Kapı · {0}", ""), d.Teams[2].Label);
+            Assert.AreEqual(Loc.T("AÇILMADI"), d.Teams[2].Value);
+            Assert.IsTrue(d.Teams[2].HideIcon, "kapı satırında ekip simgesi yok");
+            Assert.AreEqual(1, input.door.Count);
             Assert.AreEqual(Loc.T("YZ alarmı"), d.Teams[1].Label);
             Assert.AreEqual(input.before.alarm + 1, input.after.alarm, 1e-9);
             StringAssert.EndsWith("/ " + DeskFormat.Number(input.after.alarmThreshold, 0), d.Teams[1].Value);
@@ -109,10 +113,10 @@ namespace Corrigible.Desk.Tests
             StringAssert.Contains(Loc.F("{0} yaralı: {1} gün.", Baskin.UnitTypes["tek"].Name, 2), d.Teams[0].Detail);
             Assert.IsFalse(d.TeamReturned);
 
-            // Sayaç fişleri: +1 · +2,5 · +0,4 · ±0
+            // Sayaç fişleri: +1 · +2,5 · −1,4 · ±0
             Assert.AreEqual(("+1", ReportTone.Good), d.Slips[0]);
             Assert.AreEqual((S(2.5), ReportTone.Good), d.Slips[1]);
-            Assert.AreEqual((S(0.4), ReportTone.Good), d.Slips[2]);
+            Assert.AreEqual((S(-1.4), ReportTone.Bad), d.Slips[2]);
             Assert.AreEqual(("±0", ReportTone.Neutral), d.Slips[3]);
             Assert.AreEqual(Loc.F("VARDİYA {0} BAŞLAT", TrNumber.WithAccusative(15, "000", true)), d.Action);
         }
@@ -198,6 +202,22 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(ReportTone.Bad, ShiftReportBuilder.Tone(-0.05, 1));
             Assert.IsNull(d.Analyst, "boşta kişi ve yaralı yok: öneri yok");
             Assert.AreEqual(Loc.F("{0} · hazır", Loc.T("Alfa")), d.Teams[0].Label);
+        }
+
+        [Test]
+        public void Analyst_WarnsWhenGatherersCannotFeedTheShelter()
+        {
+            // Yaşam alanı dolu (seviye 1, 2 kişi), 16 kişi: toplama 2, tüketim 3,2; boşta kimse yok
+            ShiftReportData Report(double supplies)
+            {
+                var after = Snap(10, 10, supplies);
+                after.population = 16;
+                after.Room(ShelterLogic.Living).workers = 2;
+                return ShiftReportBuilder.Build(Synthetic(Snap(9, 10, supplies), after));
+            }
+            Assert.AreEqual(Loc.F("→ erzak {0} vardiyaya yeter, ikmale çık", 4), Report(5).Analyst, "5 / 1,2 → 4 vardiya");
+            Assert.AreEqual(Loc.T("→ erzak bitti, ikmale çık"), Report(0).Analyst);
+            Assert.IsNull(Report(20).Analyst, "erzak daha 16 vardiya yeter: öneri yok");
         }
 
         [Test]
@@ -330,7 +350,7 @@ namespace Corrigible.Desk.Tests
                 Assert.AreEqual(4, view.FindProperty("failures").arraySize);
                 // Ekip bölümü: Alfa + YZ alarmı; alarm satırı ekip simgesini gizleyebilsin
                 var teamRows = view.FindProperty("teamRows");
-                Assert.AreEqual(2, teamRows.arraySize);
+                Assert.AreEqual(3, teamRows.arraySize, "ekip, YZ alarmı ve kapı");
                 for (int i = 0; i < teamRows.arraySize; i++)
                 {
                     var icon = (UnityEngine.UI.Image)teamRows.GetArrayElementAtIndex(i).FindPropertyRelative("icon").objectReferenceValue;

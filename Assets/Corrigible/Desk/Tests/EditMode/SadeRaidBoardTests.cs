@@ -46,6 +46,24 @@ namespace Corrigible.Desk.Tests
         }
 
         [Test]
+        public void TilePrefabs_CollidersReachWhatTheyShow()
+        {
+            // Kare görünen gövdesinin her yerinden tıklanır: duvar bloğunun tepesine tıklayan arkadaki kareyi seçmemeli
+            foreach (var name in new[] { "Floor", "Cable", "Wall" })
+            {
+                var go = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Corrigible/Prefabs/Raid/" + name + ".prefab"));
+                try
+                {
+                    var box = go.GetComponent<BoxCollider>();
+                    float top = go.GetComponentsInChildren<Renderer>().Select(r => r.bounds.max.y).DefaultIfEmpty(0).Max();
+                    Assert.GreaterOrEqual(box.center.y + box.size.y / 2, top - 0.05f, name + " çarpıştırıcısı görünen tepesine uzanır");
+                    Assert.AreEqual(1, box.size.x, 1e-3, name); Assert.AreEqual(1, box.size.z, 1e-3, name);
+                }
+                finally { Object.DestroyImmediate(go); }
+            }
+        }
+
+        [Test]
         public void LabelPrefab_ShowsPipsAndTargetArmorWithoutHealthText()
         {
             var prefab = AssetDatabase.LoadAssetAtPath<RaidScreenLabel>(Root + "/Prefabs/Sade/Raid/RaidScreenLabel.prefab");

@@ -61,7 +61,7 @@ namespace Corrigible.Core
         }
 
         // ---------- Bir vardiya ----------
-        /// <summary>Vardiyayı bitirir: gelir, ekiplerin toparlanması, sığınağın üretimi ve tüketimi, YZ alarmı.</summary>
+        /// <summary>Vardiyayı bitirir: gelir, ekiplerin toparlanması, sığınağın üretimi ve tüketimi, YZ alarmı, kapı.</summary>
         public void Step()
         {
             if (S.Ending != null || S.Blocked) return;
@@ -74,6 +74,7 @@ namespace Corrigible.Core
             ShelterLogic.Advance(S, B);
             StepAlarm();
             S.Hist.Add(new HistPoint { Day = S.Day, Real = Js.Round(Occupation * 10) / 10 });
+            StepDoor();
         }
 
         public List<SimEvent> DrainEvents()

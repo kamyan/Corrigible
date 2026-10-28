@@ -55,23 +55,27 @@ namespace Corrigible.Desk
         {
             turnLabel.text=Loc.T("TUR");turnNumber.text=Loc.F("{0}/{1}",vm.Turn,vm.Turns);
             phase.text=vm.Phase=="enemy"?Loc.T("MAKİNELER"):Loc.T("SIRA SENDE");
-            if(turnPlaque!=null)turnPlaque.sizeDelta=new Vector2(vm.LastTurn?476.8f:vm.Phase=="enemy"?388:397.4f,62);
-            if(lastStamp!=null){lastStamp.gameObject.SetActive(vm.LastTurn);lastStamp.text=Loc.T("SON TUR");}
-            if(phaseCard!=null){phaseCard.anchoredPosition=new Vector2(vm.LastTurn?330:251,-14);phaseCard.GetComponent<Image>().color=DeskTheme.Active.Get(vm.Phase=="enemy"?"sade.raid.phaseAiBg":"sade.paper");}
+            // Plaka 6 kutuya göre çizildi; uzun (ikmal) ya da kısa baskında kutu başına 26 px kayar
+            float extra=(Mathf.Clamp(vm.Turns,1,turnBoxes.Length)-6)*26f;
+            if(turnPlaque!=null)turnPlaque.sizeDelta=new Vector2((vm.LastTurn?476.8f:vm.Phase=="enemy"?388:397.4f)+extra,62);
+            if(lastStamp!=null){lastStamp.gameObject.SetActive(vm.LastTurn);lastStamp.text=Loc.T("SON TUR");lastStamp.rectTransform.anchoredPosition=new Vector2(239+extra,lastStamp.rectTransform.anchoredPosition.y);}
+            if(phaseCard!=null){phaseCard.anchoredPosition=new Vector2((vm.LastTurn?330:251)+extra,-14);phaseCard.GetComponent<Image>().color=DeskTheme.Active.Get(vm.Phase=="enemy"?"sade.raid.phaseAiBg":"sade.paper");}
             phase.color=DeskTheme.Active.Get(vm.Phase=="enemy"?"ink.red":"ink.blue");if(phaseLamp!=null)phaseLamp.color=DeskTheme.Active.Get(vm.Phase=="enemy"?"ink.red":"ink.green");
             for(int i=0;i<turnBoxes.Length;i++)
             {
-                turnBoxes[i].gameObject.SetActive(i<vm.Turns);turnBoxes[i].text=(i+1).ToString();
+                turnFills[i].gameObject.SetActive(i<vm.Turns);turnBoxes[i].gameObject.SetActive(i<vm.Turns);turnBoxes[i].text=(i+1).ToString();
                 turnFills[i].color=DeskTheme.Active.Get(i+1==vm.Turn?(vm.LastTurn?"sade.raid.phaseAiBg":"sade.paper"):i+1<vm.Turn?"sade.plaque.border":"sade.plaque.bg");
                 turnBoxes[i].color=DeskTheme.Active.Get(i+1==vm.Turn?(vm.LastTurn?"ink.red":"sade.status.info"):"sade.plaque.brass");
             }
-            objective.text=vm.IsLootMission?Loc.T("İKMAL"):Loc.T("HEDEF");objectiveSub.text=vm.IsLootMission?Loc.T("kasayı al"):vm.Targets.Length>1?Loc.T("ikisini de kır"):Loc.T("kır");civilianLabel.text=vm.TrustMax>0?Loc.F("GÜVEN {0}",vm.Trust):Loc.T("SİVİL");abilityLabel.text=vm.AbilityLabel;
+            objective.text=vm.IsLootMission?Loc.T("İKMAL"):Loc.T("HEDEF");objectiveSub.text=vm.IsLootMission?(vm.Escaping?Loc.T("girişe dön"):Loc.T("kasayı al")):vm.Targets.Length>1?Loc.T("ikisini de kır"):Loc.T("kır");civilianLabel.text=vm.TrustMax>0?Loc.F("GÜVEN {0}",vm.Trust):Loc.T("SİVİL");abilityLabel.text=vm.AbilityLabel;
             for(int i=0;i<targetNames.Length;i++)
             {
                 bool show=i<vm.Targets.Length;targetThumbs[i].gameObject.SetActive(show);targetNames[i].gameObject.SetActive(show);targetArmor[i].enabled=show&&vm.Targets[i].Armor;
-                if(brokenStamps!=null&&i<brokenStamps.Length){brokenStamps[i].gameObject.SetActive(show&&vm.Targets[i].Broken);brokenStamps[i].text=vm.IsLootMission&&vm.Success?Loc.T("ALINDI"):Loc.T("KIRILDI");}
+                if(brokenStamps!=null&&i<brokenStamps.Length){brokenStamps[i].gameObject.SetActive(show&&vm.Targets[i].Broken);brokenStamps[i].text=vm.IsLootMission&&(vm.Success||vm.Escaping)?Loc.T("ALINDI"):Loc.T("KIRILDI");}
                 if(show){targetNames[i].fontStyle=vm.Targets[i].Broken?FontStyles.Strikethrough:FontStyles.Normal;targetNames[i].text=vm.Targets[i].Name;DeskSprites.Apply(targetThumbs[i],vm.Targets[i].Thumb);}
-                for(int j=0;j<4;j++){var pip=targetPips[i*4+j];pip.gameObject.SetActive(show&&!vm.Targets[i].Broken&&j<vm.Targets[i].Max);if(show)DeskSprites.Apply(pip,j<vm.Targets[i].Hp?"pip_full_10":"pip_empty_10");}
+                // Hedef başına nokta sayısı diziden (8: sertleştirilmiş düğüm ve çekirdek 6–7 can)
+                int per=targetPips.Length/Mathf.Max(1,targetNames.Length);
+                for(int j=0;j<per;j++){var pip=targetPips[i*per+j];pip.gameObject.SetActive(show&&!vm.Targets[i].Broken&&j<vm.Targets[i].Max);if(show)DeskSprites.Apply(pip,j<vm.Targets[i].Hp?"pip_full_10":"pip_empty_10");}
             }
             int civShown=Mathf.Min(vm.Civilians,civilians.Length),civBroken=Mathf.Min(vm.CivilianBroken,civShown);for(int i=0;i<civilians.Length;i++){civilians[i].gameObject.SetActive(i<civShown);DeskSprites.Apply(civilians[i],i>=civShown-civBroken?"civ_broken_20":"civ_ok_20");}
             for(int i=0;i<team.Length;i++)team[i].Render(vm.Team[i],vm.Locked||vm.Paused);

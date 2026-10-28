@@ -2,8 +2,8 @@
 
 Bu belge oyunun **kodda gerçekten nasıl çalıştığını** anlatır. Sayılar `Balance` varsayılanlarıdır
 (`Assets/Corrigible/Core/Balance.cs`); oyunda `Settings/BalanceConfig.asset` ile değiştirilebilir. Kurallar
-`Core/CampaignLiberation.cs`, `Core/Simulation.cs`, `Core/ShelterLogic.cs` ve taktik tahta için `Core/Baskin.cs`
-içindedir.
+`Core/CampaignLiberation.cs`, `Core/Simulation.cs`, `Core/ShelterLogic.cs`, kapı için `Core/Door.cs` ve `Core/DoorCards.cs`,
+taktik tahta için `Core/Baskin.cs` içindedir.
 
 ## Fikir ve ton
 
@@ -26,7 +26,8 @@ içindedir.
   bir yolun çıkmaza dönmesini engeller. Seçilen bölge tamamlanmadan başka bölgeye geçilmez.
 - **Son:** Bütün 36 sektör geri alınınca **Silme** (`"silme"`, zafer): "Çekirdek yok edildi, kopyalar temizlendi." Sivil
   güven sıfıra inerse **Dağılma** (`"dagilma"`, yenilgi; aşağıda). Çekirdeği düşüren baskın aynı anda güveni bitirse de
-  zaferdir.
+  zaferdir. Kapıyı yanlış kişiye açmak da harekâtı bitirir: **Vuruldu** (`"vuruldu"`, silahlı bir ziyaretçi) ve **Sızma**
+  (`"sizma"`, YZ'nin kopyası); ikisi de yenilgidir (aşağıda, Sığınağın kapısı).
 - Son bölgenin sunucu merkezinde YZ çekirdeği vardır (`IsCore`).
 
 ## Zorluk kademesi (`Simulation.RaidTier`, `RaidParams.Tier`)
@@ -54,7 +55,7 @@ birinin (3. kademeden ikisinin) yerini alır. Görev fişi ve bölge bilgi fişi
 |---|---|---|---|
 | Batı Avrupa (başlangıç) | Güvenli giriş | İlk tur uyanma yok | Zırhlı dron |
 | Doğu Avrupa | Dar koridor | +3 duvar | Kilitleyici |
-| Kuzey Amerika | Kısa nöbet | Baskın 5 tur | Havan robotu |
+| Kuzey Amerika | Kısa nöbet | Baskın bir tur kısa | Havan robotu |
 | Güney Amerika | Takviye | Başta +1 makine | Patlayan robot |
 | Afrika | Açık arazi | −3 duvar | Havan robotu |
 | Orta Doğu | Kum fırtınası | Uyanma yerleri gizli | Patlayan robot |
@@ -70,24 +71,30 @@ parça eklenmez.
 
 ## Sivil güven (`S.Trust`, `CampaignLiberation.cs → ChangeTrust`)
 
-- Harekât `liberationTrustStart` (10) güvenle başlar; bu aynı zamanda tavandır.
+- Harekât `liberationTrustStart` (10) güvenle başlar; tavan `liberationTrustMax` (20, `Simulation.TrustMax`).
 - Baskında kırılan her sivil sunucu (`RaidResult.Collateral`, kimin kırdığına bakılmaz) güveni `liberationTrustPerCivilian`
-  (1) düşürür; başarılı ya da başarısız her baskında. Özgürleşen her bölge `liberationTrustPerRegion` (2) geri verir.
-  Değişim `LiberationRaidReward.Trust`'a yazılır; operasyon raporu "Sivil güven −2 · 8/10" satırını, güven 3 ve altına
-  inince uyarı bandını gösterir.
+  (1) düşürür; başarılı ya da başarısız her baskında. **Kazanılan** baskında tahtada ayakta kalan her
+  `liberationCiviliansPerTrust` (2) sivil sunucu +1 geri verir (`RaidResult.CiviliansLeft`; kaybedilen baskının sivilleri
+  işgal altında kalır). Özgürleşen her bölge `liberationTrustPerRegion` (3) geri verir. Değişim `LiberationRaidReward.Trust`'a
+  yazılır; operasyon raporu "Ayakta kalan sivil sunucu 4" ve "Sivil güven +1 · 11/20" satırlarını, güven 3 ve altına inince
+  uyarı bandını gösterir. Kampanyada sivil sunucu `liberationCivilianHp` (2) canlıdır.
 - Güven 0 olunca harekât **Dağılma** ile biter; son rapor KAYBEDİLDİ damgası ve "YZ kazandı." ile açılır.
-- **Makineler sivil sunucuya bilerek ateş etmez** (`Baskin.ScoreTarget`: sivil hattı −2). Sivil sunucu yine kırılabilir:
-  hedefi atıştan kaçan ekip arkasındaki sunucuyu açıkta bırakır (niyet önceden sabitlenir, atış hattındaki ilk engeli vurur),
-  EMP, itme ve patlayan soğutma ünitesi de kırar. Karar şudur: kaçmak mı (sunucu gider), atışı göğüslemek mi (1 hasar).
-- **Denge ölçümü** (2026-10-27, açgözlü taktik bot, 10'ar harekât): dikkatsiz bot 10 harekâtın 10'unda 16–41. vardiyada
-  dağıldı; orta dikkatte 9/10, dikkatli 10/10 kazandı. Dikkatli bot baskın başına ~0,3, dikkatsiz ~0,6 sivil sunucu kırıyor.
-  Makineler sivili hedeflerken (eski kural) dikkatli bot da ~2,5 kırıyordu; güven beceri ölçmüyordu.
+- **Ekibe ulaşamayan makine sivile nişan alır** (gelişmiş akıl; `Baskin.CanReachTeam`, `ScoreTarget(..., hostage)`; turda en
+  çok bir makine, niyeti önceden görünür). Ulaşabilen makine sivili hedeflemez (sivil hattı −2). Sivil sunucu başka yoldan da
+  kırılır: hedefi atıştan kaçan ekip arkasındaki sunucuyu açıkta bırakır, EMP, itme ve patlayan soğutma ünitesi de kırar.
+  Oyuncunun işi: uzaktaki makineyi düşürmek ya da araya girmek; kaçmak mı (sunucu gider), atışı göğüslemek mi (1 hasar).
+- **Denge ölçümü** (2026-10-28, açgözlü taktik bot, havuz haritaları, 10'ar harekât; ayrıntı `Docs/DURUM.md`): kural açıkken
+  makineler baskın başına ~1 sivil kırıyor, ~3,6 sivil ayakta kalıyor. Ödülsüz ve tavan 10 iken hiçbir harekât
+  kazanılmıyordu (0/10); ayakta kalan her sivil +1 iken güven hiç düşmüyordu. Seçilen ayarla (kanca hasarı, her 2 sivil +1,
+  tavan 40) orta ve dikkatli bot 8/10 kazanıyor, harekâtların ~%20'si dağılıyor; baskın başarısı %60–65. Kapı geldikten
+  sonra tavan 20'ye indi (kullanıcının seçimi): orta bot 30'ar harekâtta kapısız 20/30 kazanıyor, ~%30'u dağılıyor; dağılmalar
+  harekâtın sonunda (gün 49–76), güven her harekâtta tavana değiyor ve biriktirilemiyor.
 
 ## YZ alarmı ve karşı saldırı (`S.Alarm`, `CampaignLiberation.cs → ChangeAlarm, Counterattack`)
 
 - **Bir baskın, bir vardiya:** baskından dönen ekip (yaralı olmasa da) o vardiya yeniden çıkamaz; `Busy` adımda düşer.
   Eskiden ekip dönüşte hazırdı; bütün harekât 1–3 vardiyada bitebiliyordu, vardiya şalterinin anlamı yoktu.
-- **Alarm** her vardiya `liberationAlarmPerShift` (+1), her başarısız baskın `liberationAlarmPerFailure` (+3) yükselir;
+- **Alarm** her vardiya `liberationAlarmPerShift` (+1), her başarısız baskın `liberationAlarmPerFailure` (+1) yükselir;
   kırılan her YZ sunucusu (sunucu merkezi sektörü) `liberationAlarmPerServer` (−4) düşürür.
 - **Telsiz odası** (sığınak) vardiya alarmını yavaşlatır: görevli başına `shelterRadioAlarmPerWorker` (−0,05; eksiye inmez,
   `Simulation.AlarmPerShift`).
@@ -95,7 +102,9 @@ parça eklenmez.
   işgal altına girer (özgür bölgeyse bölge yeniden cephe olur, sınırdan seçilir) ve sivil güven
   `liberationCounterattackTrust` (1) düşer. Geri alınacak sektör yoksa yalnız güven düşer; boşta beklemek de sonunda
   Dağılma'ya varır. Yeniden özgürleşen bölge güveni ve bölge fonunu yeniden verir (ölçümde de böyleydi).
-- **Gösterim:** CRT'de "YZ ALARMI n/10" (bekleme ve devre dışı ekranı), kenar satırında ALARM, vardiya raporunun
+- **Gösterim:** arka duvarda **YZ ALARMI panosu** (`AlarmPanel`: mekanik sayaç n/10 ve kırmızı ışık; eşiğe 3 basamak
+  kala yanar, son basamakta yanıp söner; üzerine gelince eşik ve bu vardiyanın artışı), CRT'de "YZ ALARMI n/10" (bekleme
+  ve devre dışı ekranı), kenar satırında ALARM, vardiya raporunun
   EKİP VE YZ ALARMI bölümünde alarm satırı, operasyon raporunda "YZ alarmı" ve karşı saldırı satırları, karşı saldırıda
   teleks (YZ KARŞI SALDIRISI) ve ses, son raporda kırmızı damgalı "KARŞI SALDIRI" kartı.
 - **Denge ölçümü** (2026-10-27, açgözlü bot, 10'ar harekât): eşik 14'ken (sığınak baskına bağlanmadan önce) saldırgan
@@ -114,6 +123,7 @@ Oyuncu vardiya şalterini indirince (`GameController.AdvanceShift`) bir gün ge�
 3. **Sığınak:** erzak toplama ve tüketim, atölyede plaka dökümü, revirde yara sarma (`ShelterLogic.Advance`, aşağıda).
 4. **YZ alarmı:** +1 eksi telsiz; eşikte karşı saldırı (yukarıda).
 5. **Kayıt:** son rapordaki şerit grafik için işgal oranı (`S.Hist`).
+6. **Kapı:** kapıda bekleyen ziyaretçi açılmadı sayılır; sırası geldiyse biri kapıyı çalar (`StepDoor`, aşağıda).
 
 Baskın sürerken (`S.Raid`), harekât bitmişken ya da açılış/emir belgesi açıkken vardiya bitirilemez.
 
@@ -126,8 +136,33 @@ Baskın sürerken (`S.Raid`), harekât bitmişken ya da açılış/emir belgesi 
   yarasıyla (eksik canla) çıkar; yatan uzmanın yerine boştaki ilk yedek uzman, rolün canından `liberationRookieHpPenalty`
   (1) eksik; yedek de yoksa rol boş kalır, tahtada o birim olmaz. Zırh plakaları en düşük canlı uzmandan başlayarak birer
   tane takılır; plaka ilk hasarı karşılar ve kırılır (`Baskin.Hurt`, efekt `plate`).
-- **Taktik tahta** (`Core/Baskin.cs`, 8×8, 6 tur; Kısa nöbette 5): oyuncu birimleri **Teknisyen** (sabotaj), **EMP uzmanı**
-  (EMP atışı, iter), **Analist** (kanca). Kopya dolapları her tur makine uyandırır. Makineler (`Baskin.UnitTypes`; niyet
+- **Harita havuzu** (`Core/RaidMaps.cs`): her harekâtın kendi 30 haritası olur, yeni oyunun tohumundan üretilir (adlar
+  30 oda adından: Kablo galerisi, Arşiv katı, Kazan dairesi…). Harekât ~57 baskın sürdüğü için her harita ~2 kez gelir
+  (havuz 10 iken ~6 kez). Baskınlar havuzu karıştırılmış torbalardan sırayla çeker (`RaidMaps.Slot`,
+  `RaidParams.MapSlot` = harekâttaki baskın sırası): her harita bir kez gelmeden hiçbiri tekrar etmez, aynı harita art
+  arda gelmez. Eski seçim (kademe + hesaplama gücü + tohumun son üç biti) iki haritayı iki kat sık getiriyordu.
+  Bölge özelliği (dar koridor, şebeke…) haritanın üstüne eklenir. Eğitim baskını ve kampanya dışı baskınlar elle çizilmiş
+  üç haritada (`Baskin.Layouts`) kalır.
+- **Harita türleri** (`RaidMaps.Kinds`; havuzda her türden 5 harita, her türün kendi 5 oda adı; `RaidMaps.KindOf(ad)`):
+
+  | Tür | Ad örneği | Yerleşim | Taktik sorun | Hedefe adım |
+  |---|---|---|---|---|
+  | Koridor | Kablo galerisi | hedef 6. sütunda korunağıyla, dağınık 2–3 karelik duvarlar | (önceki haritalar) | 7–10 |
+  | Kasa odası | Arşiv katı | hedef sağ kenara dayalı 2–3 × 2–3'lük odada, iki kapı; bakım robotu içeride | kapıdan girmek, onaran robot | 6–9 |
+  | İki hat | Montaj hattı | uzun bölme duvarı tahtayı iki şeride ayırır (bazen ortada geçit); hedef bölmeye dayalı | şerit seçmek, dönüş yolu | 8–11 |
+  | Açık salon | Sunucu salonu | 5–7 tek karelik sütun, birbirine değmez | açık atış hatları, az siper | 8–10 |
+  | Şebeke | Trafo merkezi | 3.–4. sütunda boydan boya kablo kuşağı | itilen yanar (EMP, kanca, makineler) | 7–10 |
+  | Rehine | Kazan dairesi | üç sivil yolun ortasında (2.–5. sütun) | ateş hattındaki siviller | 7–10 |
+
+  Ortak kurallar (`RaidMaps.Valid`): sol kenarda üç giriş, tek hedef dolap ve yanında duvar, 5–13 duvar, 2–8 kablo, 4–5
+  sivil, 2 soğutma, 2 kopya dolabı, 2 dron + 1 bakım robotu, dronların girişe açık hattı yok, hedefe 6–11 adım; türün
+  kuralları `Valid(rows, kind)`. **Ölçüm** (2026-10-28, açgözlü bot, türü başına 40 harita × 4 kademe × 2 görev = 320
+  baskın, bölge özellikleri ve makineleri; adım aralıkları bununla ayarlandı): baskın başarısı koridor %72, kasa odası %72
+  (ilk denemede tek kapı ve 8–11 adımla %55), iki hat %74, açık salon %69 (ilk denemede %83), şebeke %75, rehine %72.
+  4. kademede koridor en zor tür (%38; ötekiler %47–61). Harekât ölçümünde (30 harekât) yalnız koridorlu havuz 19/30,
+  türlü havuz 24/30 kazandı; baskın başarısı %66 → %68 (fark gürültü sınırında, ama 4. kademedeki farkla uyumlu).
+- **Taktik tahta** (`Core/Baskin.cs`, 8×8, 6 tur; kampanyada ikmal görevinde 8, `liberationLootExtraTurns`; Kısa nöbette bir tur az): oyuncu birimleri **Teknisyen** (sabotaj), **EMP uzmanı**
+  (EMP atışı, iter), **Analist** (kanca: robota 1 hasar ve çekme; dost uzmanı hasarsız çeker). Kopya dolapları her tur makine uyandırır. Makineler (`Baskin.UnitTypes`; niyet
   türü `Kinds`):
 
   | Makine | Can · yürüyüş | Niyet |
@@ -142,11 +177,26 @@ Baskın sürerken (`S.Raid`), harekât bitmişken ya da açılış/emir belgesi 
   | Çoğaltıcı | 2 · 2 | Çoğaltma: yanındaki boş kareye bir dron uyandırır (karede biri varsa o 1 hasar alır) |
  Makinelerin bu turdaki hamlesi kırmızı okla, sırası bayrakla görünür. Hamleler geri
   alınabilir (`Undo`), önizleme durumu değiştirmez. Kırılan sivil sunucular sivil güveni düşürür (aşağıda).
-  - **İkmal:** Teknisyen ikmal kasasına bitişik kareden yeteneğiyle malzemeyi alır; kasayı kırmak görevi kaybettirir.
-  - **Sunucu:** tur bitmeden bütün hedef dolaplar kırılır.
+  - **İkmal:** Teknisyen ikmal kasasına bitişik kareden yeteneğiyle malzemeyi alır ve **taşır** (`BState.Carrier`); baskın
+    ancak taşıyıcı giriş karelerinden birine (`BState.Exits`, yeşil kesik çerçeve) varınca kazanılır (yürüyüş, kanca ya da
+    itme). Kasayı kırmak, taşıyıcının düşmesi ya da sürenin bitmesi görevi kaybettirir. Dönüş için ikmal görevi kampanyada iki tur uzun.
+  - **Makine aklı** (`RaidParams.Tactics`; kampanyada 1, eğitim baskınında ve kilitli motor testlerinde 0): gelişmiş akıl
+    kilit kareleri tutar: kasa alınmadan hedef dolapların yanındaki boş kareler (sunucu görevinde daha ağır), kasa
+    alındıysa taşıyıcının çıkışa en kısa yolu ve çıkışlar. Vuracak birim yoksa ateş ve kilit hattını bu karelerden
+    geçirir (mermi sırası gelince yeniden nişan alır, hatta adım atan vurulur); yakın dövüşçüler kilit kareyi bedeniyle
+    tutar; herkes taşıyıcıyı (yoksa Teknisyen'i) kovalar; taşıyıcı ve hedefin yanındaki Teknisyen öncelikli hedef. Ekibe
+    hiçbir kareden ulaşamayan makine sivil sunucuya nişan alır (turda en çok bir; yukarıda "Sivil güven").
+    Makineler sırayla plan yaparken öncekilerin tuttuğu kareleri saymaz (eşgüdüm). Rastgele tüketimi temel akılla aynı.
+  - **Zorluk ölçümü** (açgözlü bot, havuz haritaları, 1440 baskın): önceki oyun her kademede ~%92. Şimdi (kaçış, gelişmiş
+    akıl, 7 turluk ikmal, düğüm +2 can): **toplam %72, ikmal %67, sunucu %76; kademe 1/2/3 %79/%75/%61**. 6 turluk ikmal
+    %45'te kalıyordu, 8 tur %80. Sunucuda gelişmiş akıl tek başına etkisizdi (%89: niyetler önceden göründüğü için
+    Teknisyen tutulmayan kareden sabotaj yapar); düğümün canı +1 %83, +2 %76; ek makine %89 (etkisiz).
+  - **Sunucu:** tur bitmeden bütün hedef dolaplar kırılır. Kampanyada düğüm dolabı `liberationServerTargetHp` (+2) canla
+    sertleşir (4 → 6; zırhlı dolapta 7); son bölgenin çekirdeği hariç (5 can, 6 turda yetişilsin). Ek makine ayarı
+    `liberationServerMachines` 0 (ölçümde etkisiz).
 - **Sonuç** (`ResolveRaid`, taktik sonuçtan masaya dönülürken bir kez):
-  - İkmal başarısı: +12 fon, +10 malzeme, +10 erzak, yer varsa +1 kurtulan.
-  - Sunucu başarısı: +8 fon, +6 malzeme.
+  - İkmal başarısı: +10 fon, +7 malzeme, +6 erzak, yer varsa +1 kurtulan.
+  - Sunucu başarısı: +8 fon, +5 malzeme.
   - Bölge tamamlanınca ayrıca +15 fon.
   - Başarısızlık ya da geri çekilme sektörü değiştirmez.
   - **Kadro döner** (`ReturnSquad`, sonuçta kadronun kalan canı ve plakası `RaidResult.Hp/Armor`): ayaktaki uzmanın eksik
@@ -167,13 +217,23 @@ kapasitesi `2 × seviye`dir. Enerji yoktur.
 
 | Oda | Rol | Onarım/geliştirme |
 |---|---|---|
-| Yaşam alanı | Seviye başına 8 kişilik yer, 40 erzak deposu ve **1 yedek uzman**; görevli başına vardiyada 1 erzak toplama | 8 fon + 6 malzeme |
+| Yaşam alanı | Seviye başına 8 kişilik yer, 30 erzak deposu ve **1 yedek uzman**; görevli başına vardiyada 0,7 erzak toplama | 8 fon + 6 malzeme |
 | Telsiz odası | Görevli başına vardiya alarmı −0,05 | 6 fon + 4 malzeme |
 | Atölye | Görevli başına vardiyada 0,25 **zırh plakası** (plaka 4 malzeme); depo seviye başına 1 plaka | 10 fon + 6 malzeme |
 | Revir | Görevli başına vardiyada 0,34 **yara** sarar (en yaralıdan); en az 1 görevliyle yatan uzman 1 gün erken kalkar | 12 fon + 8 malzeme |
 
-Her kişi vardiyada 0,2 erzak tüketir. Erzak biterse atölye yarı hızda döker ve revir durur; yaşam alanında toplama sürer.
-Atölye artık malzeme üretmez: malzeme baskınlardan gelir (ikmal +10, sunucu +6) ve odalarla plakalar arasında paylaşılır.
+Her kişi vardiyada 0,35 erzak tüketir. Erzak biterse atölye yarı hızda döker ve revir durur; yaşam alanında toplama sürer.
+Atölye artık malzeme üretmez: malzeme baskınlardan gelir (ikmal +7, sunucu +5) ve odalarla plakalar arasında paylaşılır;
+depo 60.
+
+**Kıtlık** (2026-10-28): bir toplayıcı iki kişiyi doyurur, yaşam alanı ise nüfusun yarısı kadar yer tutar (seviye başına 8 kişi,
+2 görevli). Nüfus büyüdükçe toplama tüketimi karşılamaz; açığı ikmal baskınlarının erzağı kapatır. Başarısız ikmal serisi
+açlık getirir: erzak nüfusun altına inince kapının açlık sayacı işler, iki aç vardiyadan sonra aç sakinlerin heyeti gelir
+(geri çevrilirse silahlı sakin). Vardiya raporunun analist notu toplayıcılar yetmezken erzak 6 vardiya içinde bitecekse
+"→ erzak N vardiyaya yeter, ikmale çık" yazar. Bot ölçümü (30 harekât, orta oyuncu, kapıya en iyi cevap; önce → sonra):
+erzak ortalama deponun %95'i → %52'si; aç vardiya 0 → 13 (vardiyaların ~%20'si, harekâta göre 0–33); erzağın tükendiği
+vardiya 0 → 2,7 (0–10); heyet 0 → 0,8; malzeme ortalama 44 → 15 (depo hiç dolmuyor); fon ortalama 35 → 26; kazanılan
+21/30 → 19/30. Odalar yine tamamlanıyor (ortalama 45. gün), ama malzeme plakayla odalar arasında paylaşılıyor.
 Plaka ve yara birikimi `PlateProgress`, `HealProgress`'te vardiya vardiya dolar. Bütün sayılar `Balance.shelter*`
 alanlarındadır.
 
@@ -189,10 +249,72 @@ başarısı (açgözlü bot) ikmalde %98 → %95 → %77 → %59, sunucuda %95 �
 güveni +2'ye çekildi. Önceki sığınakta (enerji, malzeme üreten atölye)
 dört plan da aynı harekâtı oynuyordu: üç oda sonuca hiç dokunmuyordu, fon 450–770 artıkla bitiyordu.
 
+## Sığınağın kapısı (`Core/Door.cs`, `Core/DoorCards.cs`)
+
+Birkaç vardiyada bir biri sığınağın kapısını çalar: erzak isteyen bir anne, kurtarılan bölgeden bir kurye, bir kaçakçı, YZ'den
+kaçmış bir teknisyen… Kapı erzağa, güvene ve alarma bir yüz verir; baskının sonucu da kapıya döner (hastanesi kararan baba).
+
+- **Zaman:** ilk vuruş 2. günün sonunda (`doorFirstKnock`; eğitimden sonra), senaryolu ve dostça: Nermin bir kese erzak
+  getirir ve kapıyı öğretir ("Önce bak, sonra aç."). Sonra her 2–4 günde bir (`doorKnockMin/Max`). Kapının kendi tohumu
+  vardır (harekât tohumu + gün + amaç, `DoorRng`); ana rastgelelik sırasına (`S.Rng`) dokunmaz.
+- **Kapalı kapı:** kâğıt kapıdan duyulanı yazar (vuruşun ritmi, ses). **Gözetleme deliği** görüneni, **interkom** parolaya
+  ("Yedi") verilen cevabı ekler; ikisi de sunumdur, durum değiştirmez. Sonra **Kapıyı aç** ya da **Açma**; silahlı
+  ziyaretçiyle kapı kapalıyken interkomdan konuşulur.
+- **Açık kapı:** ziyaretçi söyler, seçenekler çıkar. Bedeller (erzak, malzeme, fon) düğmede yazar; yetmiyorsa ya da oda
+  çalışmıyorsa (revir, telsiz) seçilemez, gerekçesi yazar. Sonuç kâğıtta metin ve etki satırı olarak görünür ("Erzak +6 ·
+  Güven +1"). Her karar `door_answer` komutudur (kayda girer).
+- **Açılmayan kapı:** ziyaretçi kapıdayken vardiyayı bitirmek **Açma** sayılır (ön kontrol uyarır; teleks ve vardiya raporu
+  "KAPI AÇILMADI" yazar). Muhtaç ziyaretçiyi geri çevirmek güvene dokunur (anne, aile −1; dışarıda kalan −2; aç heyet −2).
+- **Kart seçimi** (`PickDoorCard`): ilk vuruş; sonra zamanı gelen zincir kartı; yoksa koşulu tutan kartlardan ağırlıkla
+  biri. Son 4 ziyaretteki kart gelmez (`doorRepeatGap`), tek seferlikler bir kez gelir. Uygun kart yoksa kapı o gün çalmaz.
+- **Zincirler:** anneye yardım edersen oğlu birkaç gün sonra gelir; kaçakçıyı ihbar edersen kapına paket bırakılır;
+  sığınağa alınan teknisyen ya sadık çıkar (plaka) ya da YZ'ye yayın yapar (alarm); geri çevrilen aç heyet silahla döner.
+- **Etkiler** kartın içeriğidir (birim türlerinin canı gibi, `DoorCards.All`): erzak, malzeme, fon, güven, YZ alarmı, sakin
+  (gelen ya da ayrılan; görevli fazlası arka odalardan düşer, `ShelterLogic.Leave`), zırh plakası (depo doluysa malzeme),
+  uzmanların yarası (hekim sarar; heyete ekibin payını vermek yara açar). Güven çoğunlukla kıt şeylerle (fon, malzeme)
+  kazanılır; erzakla yapılan yardım güven kaybını önler. Vuruş sıklığı, güvenli günler, açlık eşiği `Balance.door*`'dadır.
+
+- **Denge ölçümü** (2026-10-28, bot, orta oyuncu, 30'ar harekât, güven tavanı 20): kapısız 20/30 zafer; kapıya en iyi cevap
+  21/30 (+4,2 güven, çoğu tavana çarpar); kapıyı hiç açmamak 17/30 (−8,2 güven). Harekât başına ~24 ziyaret. Tavan 40 iken
+  27/30, 30/30 ve 24/30 idi: iyi oynanan kapı oyunu kolaylaştırıyordu; 20'de kapı kazandırmaz, ihmal edilirse kaybettirir.
+
+**Ölüm kuralları.** Kapıyı açmak iki ziyaretçide harekâtı bitirir; ikisi de haksız olmasın diye üç kurala bağlıdır:
+
+1. **Bir duruma bağlı:** **kopya** ("Dışarıda kalan biri") yalnız kopyalar konusunda uyarıldıysan (yaralı gözcünün ya da
+   radyo amatörünün kapısını açtıysan) ve YZ alarmı eşiğin %60'ına vardıysa ya da son 4 günde karşı saldırı olduysa gelir
+   (`doorCopyAlarm`, `doorCopyAfterCounterattack`). **Silahlı sakin** yalnız aç sakinlerin heyetini geri çevirdiysen ve
+   açlık sürüyorsa gelir (erzak nüfustan azsa vardiya aç sayılır, `doorHungerSupplies`; heyet iki aç vardiyadan sonra).
+   **Siyah bantlı baba** yalnız sivil hasarlı bir baskından sonra ona sessiz kaldıysan ve güven 10 ya da altındaysa döner.
+2. **Önceden haber verir:** uyarı kopyanın üç işaretini söyler: saat gibi vurur, camı buğulamaz, parolayı bilmez. Aynı
+   başlıkla gerçek bir insan da gelir: telaşla vurur, nefesi camı buğular, parolayı bilir (onu kapıda bırakmak −2 güven).
+   Silahlının namlusu gözetleme deliğinden görünür.
+3. **Her zaman bir çıkış vardır:** Açma. Silahlıyla interkomdan konuşmak: erzak 8 ve üstüyse erzağı alıp gider, güven 20
+   ve üstüyse ikna olur, yoksa kapıyı zorlar (malzeme −8, güven −2); kimse ölmez. İlk 8 gün (`doorSafeShifts`) ölümcül
+   ziyaretçi gelmez.
+
+| Ziyaretçi | Ne zaman | Seçenekler |
+|---|---|---|
+| Nermin (ilk vuruş) | 2. gün | Keseyi al (erzak +6) · Sakinlere geri ver (güven +1) |
+| Alt kattan bir anne | Her zaman | Erzak ver (−8) · Revire götür (revirde görevli) · "İlaç yok" de (güven −1) |
+| İyileşen çocuğun ağabeyi | Anneye yardımdan 4–7 gün sonra | Yaşam alanına al (sakin +1, güven +1) · Hurda toplasın (malzeme +8) |
+| Özgür bölgeden bir kurye | Özgür bölge başına bir kez | Depoya al (erzak +6, malzeme +6) · Sakinlere dağıt (güven +1) |
+| Bir kaçakçı | Fon 30 ve üstü | Fonla erzak al (−10 fon, +12 erzak) · Reddet · İhbar et (güven +1, sonra paket) |
+| Kapının önünde bir paket | İhbardan 3–5 gün sonra | Açarsan patlar (malzeme −10, güven −1); açmazsan koridorda (malzeme −4) |
+| YZ'den kaçmış bir teknisyen | 10. günden sonra, bir kez | Sığınağa al (sakin +1, malzeme +4; sonra sadık ya da casus) · Geri çevir |
+| Yaralı bir gözcü | 5. günden sonra, alarm 5+ ya da karşı saldırı | Kopya uyarısı; Revire al · Sargı ve erzak ver |
+| Dışarıda kalan biri (insan) | 6. günden sonra | Yaşam alanına götür (sakin +1); açmazsan güven −2 |
+| Dışarıda kalan biri (kopya) | Yukarıda | Açarsan **Sızma** |
+| Aç sakinlerin heyeti | İki aç vardiyadan sonra | Fonla erzak bul (−8 fon) · Ekibin payını dağıt (uzmanlara yara) · "Bekleyin" de (güven −1, silahlı döner) |
+| Silahlı bir sakin | Heyetten 2–3 gün sonra, açlık sürüyorsa | İnterkomdan konuş · Açarsan **Vuruldu** |
+| Kolunda siyah bant olan bir baba | 2+ sivil kırılan baskından sonra | Özür dile, erzak ver (güven +1) · Sessiz kal (güven −1; güven düşükse silahla döner) |
+| Gezgin bir hekim | Yaralı uzman varsa | Uzmanlara baktır (−6 erzak, yaralar sarılır) · Sakinlere ilaç al (−5 fon, güven +1) |
+| Çocuklar, radyo amatörü, aile, zarf, öğretmen, hırsız | Özgür bölge, telsiz ve alarm, yer, alarm, nüfus, erzak | Resim (güven +1) · Frekans çizelgesi (malzeme → alarm −3; kopya uyarısı) · Aileyi al (+3 sakin) · YZ'nin zarfı · Okul (malzeme → güven +2) · Hırsızı affet ya da çıkar |
+
 ## Komuta odası (sunum)
 
 - **Masa (K1):** sayaç bankası (VARDİYA, FON, ERZAK, MALZEME, ÖZGÜR BÖLGE, GÜVEN), anahtar rayı (1 KOMUTA, 2 SIĞINAK,
-  3 GÖREVLER, H KILAVUZ, Home MASA), vardiya şalteri, teleks, evrak tepsisi.
+  3 GÖREVLER, H KILAVUZ, Home MASA), vardiya şalteri, teleks, evrak tepsisi. Arka duvarda, mantar pano ile posterin
+  arasında YZ ALARMI panosu (rafta yedinci sayaca yer yok: masa ve lamba sınırı).
 - **Harita (K2, K3):** bölge seçilince görev fişi (sektörler, bedel/ödül, baskın emri); bölge tamamlanınca cephe onay fişi.
   Ekip figürü haritada sürüklenebilir.
 - **Sığınak maketi (K4):** odaların durumu (çalışıyor, DURDU, HASARLI), personeli ve geliştirme kararları; pano özetinde
@@ -210,28 +332,36 @@ dört plan da aynı harekâtı oynuyordu: üç oda sonuca hiç dokunmuyordu, fon
   bitince (sonuç kartı sağ altta) not sağ üste çıkar.
 - **Senaryolu ilk baskın (`TutorialRaid`):** eğitimin taktik tahta adımında açılan baskın harekâtın ilk baskınıysa (Batı
   Avrupa'nın ilk sektörü, kademe 1, tam ve sağlam kadro) sabit tohumla (129) kurulur ve oyuncu bilinen çözümü adım adım
-  oynar: 11 hamle, 21 arayüz adımı (uzmanı seç, yürü, Q, hedefe tıkla, turu bitir), üç tur. Ders sırası: yürümek, EMP
-  itişiyle zırhlı dronu duvara çarptırıp zırhını kırmak, kancayla dost uzmanı çekmek, makinelerin sırasını okumak (birbirini
-  vururlar), atış hattından çıkmak, kasayı almak; hasarsız zafer. Sıradaki kare tahtada nabız gibi atan sarı çift
-  çerçeveyle işaretlenir; not "BASKIN · ADIM n/21" başlığıyla talimatı ve dersi yazar, makineler oynarken sırayı izlemeyi
+  oynar: 16 hamle, 30 arayüz adımı (uzmanı seç, yürü, Q, hedefe tıkla, turu bitir), beş tur, temel makine aklı ve elle
+  çizilmiş harita. Ders sırası: yürümek, EMP itişiyle zırhlı dronu duvara çarptırıp zırhını kırmak, kancayla dost uzmanı
+  çekmek, makinelerin sırasını okumak (birbirini vururlar), atış hattından çıkmak, kasayı almak, EMP ile dönüş yolunu açmak
+  (dronu duvara iter, Analisti kenara çeker), malzemeyi girişe taşımak; hasarsız zafer. Sıradaki kare tahtada nabız gibi atan sarı çift
+  çerçeveyle işaretlenir; not "BASKIN · ADIM n/30" başlığıyla talimatı ve dersi yazar, makineler oynarken sırayı izlemeyi
   söyler. Yalnız sıradaki eyleme izin verilir: başka uzman, başka kare, geri alma, geri çekilme, Q'yu ya da seçimi Esc ile
   bırakma kapalı; boşta uzman kalınca tur bitirme onayı sorulmaz. Beklenen hamle tahtada yapılamazsa (olmamalı) rehber
   çekilir, baskın serbest oynanır. Simülasyon yalnız baskının sonucunu gördüğü için kayıt bozulmaz.
   "Eğitimi atla" ya da kapanış eğitimi bitirir (PlayerPrefs `Corrigible.TutorialDone`; editörde Corrigible › Eğitim ›
   Eğitimi sıfırla). Kayıttan devam eden oyunda eğitim yoktur. Simülasyona dokunmaz.
+- **Kapı (K8):** sağ duvarda çarklı çelik kapı (üstünde kırmızı lamba, yanında interkom), arkasında kısa bir koridor.
+  Biri çalınca (vardiya raporu dosyalanıp masa boşalınca) vuruş sesi gelir, lamba yanıp söner, tavan ampulü titrer, teleks "KAPI ÇALIYOR" basar
+  ve kamera kapıya döner; kâğıt ekranın solunda açılır. 1–6 seçenek, Esc masaya döner (ziyaretçi vardiya bitene kadar
+  bekler; K ya da kapıya tıklamak kâğıdı geri getirir), Enter sonucu kapatır. Kapı açılınca çark döner, kanat odaya açılır
+  ve koridorun ışığında ziyaretçinin silueti görünür. Harekâtı bitiren kararda kâğıtta kırmızı damga (VURULDU, SIZMA) ve
+  "Son rapor" düğmesi çıkar; son rapor ona basılınca açılır. Vardiya raporu açılmayan kapıyı EKİP VE YZ ALARMI bölümünde
+  yazar; ön kontrol kapıda bekleyeni uyarır.
 - Komutların gerekçesi ve sonucu teleksten basılır (`TelexReasons`). Ayrıntı: `Docs/UI_Siginak/IMPLEMENTATION_MAP.md`.
 
 ## Son rapor
 
-Harekât bitince tam ekran son rapor açılır: sonuç damgası (Silme: KAZANILDI; Dağılma: KAYBEDİLDİ, "YZ kazandı."), dört gösterge (harekât süresi, baskın sayısı, özgür bölge,
+Harekât bitince tam ekran son rapor açılır: sonuç damgası (Silme: KAZANILDI; Dağılma, Vuruldu, Sızma: KAYBEDİLDİ, "YZ kazandı."), dört gösterge (harekât süresi, baskın sayısı, özgür bölge,
 sığınak nüfusu), işgal oranı şerit grafiği, kırılma anları (geri alınan sektörler ve sonuç) ve **Yeniden başla**.
 
 ## Kayıt ve kalıcılık
 
-- Kayıt = tohum + denge değerleri + **komut geçmişi** (`GameRecord`, biçim 8: bölge kimliği ve zorluk kademesi); devam,
-  komutları yeniden oynatır (`Replay.Restore`). Baskın sonucu kadronun kalan canını ve plakasını da taşır
-  (`RaidResult.Encode`). Her başarılı komutta ve uygulama kapanırken kaydedilir; harekât bitince silinir.
-  Biçim 7 ve öncesi kayıtlar yüklenmez.
+- Kayıt = tohum + denge değerleri + **komut geçmişi** (`GameRecord`, biçim 11: 30 haritalık havuz ve kıt sığınak ekonomisi); devam, komutları
+  yeniden oynatır (`Replay.Restore`). Baskın sonucu kadronun kalan canını, plakasını ve ayakta kalan sivilleri de taşır
+  (`RaidResult.Encode`); kapı kararları `door_answer` komutudur. Her başarılı komutta ve uygulama kapanırken kaydedilir;
+  harekât bitince silinir. Biçim 10 ve öncesi kayıtlar yüklenmez.
 - Dosyalar `Application.persistentDataPath` altında: `liberation_savegame.json` (oyun) ve kayda girmeyen sunum durumu
   için `liberation_desk.json` (teleks satırları, evrak tepsisindeki son 5 vardiya raporu, kamera pozu; tohum
   eşleşmezse yok sayılır).

@@ -38,8 +38,10 @@ namespace Corrigible.Core
         public double Fon, Supplies, Materials;
         public int Residents;
         public bool RegionCompleted;
-        /// <summary>Sivil güvenin bu baskındaki net değişimi (kırılan sunucular, özgürleşen bölge, karşı saldırı).</summary>
+        /// <summary>Sivil güvenin bu baskındaki net değişimi (kırılan ve ayakta kalan sunucular, özgürleşen bölge, karşı saldırı).</summary>
         public int Trust;
+        /// <summary>Kazanılan baskında ayakta kalan sivil sunucular ve geri kazandırdıkları güven (tavandan önce).</summary>
+        public int CiviliansLeft, TrustFromCivilians;
         /// <summary>YZ alarmının bu baskındaki değişimi (karşı saldırının sıfırlaması hariç) ve karşı saldırıda geri alınan sektör.</summary>
         public double Alarm;
         public string Counterattack;
@@ -60,6 +62,8 @@ namespace Corrigible.Core
     {
         public LiberationRegionState LiberationRegion(string id) => S.Liberation?.Regions.FirstOrDefault(r => r.Id == id);
         public LiberationSectorState LiberationSector(string id) => S.Liberation?.Regions.SelectMany(r => r.Sectors).FirstOrDefault(s => s.Id == id);
+        /// <summary>Sivil güvenin tavanı (sayaçlar ve rapor bunu gösterir).</summary>
+        public int TrustMax => Math.Max(B.liberationTrustStart, B.liberationTrustMax);
 
         /// <summary>Tamamlanmış bölgelerin sınırı. Çıkmazda kalan bir bölge tüm harekâtı kilitlemez.</summary>
         public IEnumerable<string> LiberationFrontier
@@ -89,6 +93,7 @@ namespace Corrigible.Core
             }
             // Tek başlangıç ekibi sığınakta
             S.Teams.Add(NewTeam(0));
+            SetupDoor();
         }
 
         public string SelectLiberationRegionCheck(string regionId)
@@ -155,7 +160,11 @@ namespace Corrigible.Core
                     SectorId = sector.Id, MissionKind = sector.MissionKind,
                     RaidNumber = tier, Tier = tier, IsCore = sector.MissionKind == "server" && clearedRegions == GameData.Regions.Length - 1,
                     Traits = traits, Signature = def.Enemy,
-                    Squad = Squad(team),
+                    Squad = Squad(team), MapSeed = S.Seed, MapSlot = S.Raids, Tactics = 1,
+                    TargetHpBonus = sector.MissionKind == "server" ? B.liberationServerTargetHp : 0,
+                    ExtraMachines = sector.MissionKind == "server" ? B.liberationServerMachines : 0,
+                    ExtraTurns = sector.MissionKind == "loot" ? B.liberationLootExtraTurns : 0,
+                    CivilianHp = B.liberationCivilianHp,
                 },
             };
             // Zırh plakaları en düşük canlı uzmandan başlayarak birer tane takılır (eşitlikte rol sırası); kırılan baskın dönüşünde düşer
@@ -225,7 +234,10 @@ namespace Corrigible.Core
             reward.Residents = Shelter.Population - oldResidents;
             reward.RegionCompleted = area.Completed;
             // Bölgeyi özgürleştiren baskının sivil bedeli, bölgenin geri verdiği güvenle birlikte sayılır; çekirdek düştüyse zafer önce gelir.
-            ChangeTrust(reward, (area.Completed ? B.liberationTrustPerRegion : 0) - civilianLoss);
+            // Ayakta kalan siviller güveni geri kazandırır (her liberationCiviliansPerTrust sunucu +1)
+            reward.CiviliansLeft = Math.Max(0, result.CiviliansLeft);
+            reward.TrustFromCivilians = B.liberationCiviliansPerTrust > 0 ? reward.CiviliansLeft / B.liberationCiviliansPerTrust : 0;
+            ChangeTrust(reward, (area.Completed ? B.liberationTrustPerRegion : 0) + reward.TrustFromCivilians - civilianLoss);
             if (S.Ending == "dagilma") return ActResult.Success(Loc.T("Sivil güven tükendi. Halk direnişe sırtını döndü."));
             return ActResult.Success(area.Completed
                 ? Loc.F("{0} özgür. Sığınak güçlendi; sıradaki komşu bölgeyi seç.", Def(sector.Region).Name)
@@ -255,11 +267,11 @@ namespace Corrigible.Core
             }
         }
 
-        /// <summary>Sivil güveni değiştirir (tavan başlangıç değeri); sıfıra inerse direniş dağılır.</summary>
+        /// <summary>Sivil güveni değiştirir (<see cref="TrustMax"/> aşılmaz); sıfıra inerse direniş dağılır.</summary>
         void ChangeTrust(LiberationRaidReward reward, int delta)
         {
             int before = S.Trust;
-            S.Trust = Math.Max(0, Math.Min(B.liberationTrustStart, S.Trust + delta));
+            S.Trust = Math.Max(0, Math.Min(TrustMax, S.Trust + delta));
             if (reward != null) reward.Trust += S.Trust - before;
             if (S.Trust <= 0) End("dagilma");
         }
@@ -280,6 +292,7 @@ namespace Corrigible.Core
         void Counterattack(LiberationRaidReward reward)
         {
             S.Counterattacks++;
+            S.LastCounterattackDay = S.Day;
             var sector = S.Liberation.Regions.SelectMany(r => r.Sectors).Where(x => x.Captured)
                 .OrderByDescending(x => x.CapturedDay).ThenByDescending(x => x.Index).FirstOrDefault();
             S.LastCounterattack = sector?.Id;

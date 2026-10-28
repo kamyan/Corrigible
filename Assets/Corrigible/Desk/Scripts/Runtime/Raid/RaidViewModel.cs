@@ -32,6 +32,8 @@ namespace Corrigible.Desk
     [Serializable] public sealed class RaidViewModel
     {
         public bool LastTurn,Finished,Success,EventVisible,IsLootMission;
+        /// <summary>İkmal görevinde kasa alındı: Teknisyen malzemeyi girişe geri taşıyor.</summary>
+        public bool Escaping;
         public string EventLine,ResultTitle,ResultSubtitle,ResultReason;
         public int Standing,TeamCount;public Vector3 Spot;
         public RaidQueueItem[] Queue=Array.Empty<RaidQueueItem>();

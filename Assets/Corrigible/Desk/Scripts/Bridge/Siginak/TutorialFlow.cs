@@ -29,7 +29,7 @@ namespace Corrigible.Desk.Bridge
         public static readonly TutorialStep[] Steps =
         {
             Info("intro", Loc.N("KOMUTA ODASI"),
-                Loc.N("Burası Sığınak 07. Üstteki sayaçlar fonu, erzakı, malzemeyi, özgür bölgeleri ve sivil GÜVEN'i sayar; ALARM kenar satırında. Zaman yalnız vardiya şalterini indirince ilerler.")),
+                Loc.N("Burası Sığınak 07. Üstteki sayaçlar fonu, erzakı, malzemeyi, özgür bölgeleri ve sivil GÜVEN'i sayar; duvardaki YZ ALARMI eşiğe varınca YZ karşı saldırır. Zaman yalnız vardiya şalterini indirince ilerler.")),
             Wait("slip", Loc.N("GÖREV FİŞİ"),
                 Loc.N("3'e bas (GÖREVLER): harita açılır, cephedeki Batı Avrupa'nın görev fişi gelir."),
                 (c, f) => c.SlipOpen || c.RaidOrdered),

@@ -72,6 +72,8 @@ namespace Corrigible.Desk
         public double alarm, alarmThreshold;
         public int counterattacks;
         public string lastCounterattack;
+        /// <summary>Biten kapı ziyareti sayısı (vardiya sonunda açılmadı sayılanları ayırmak için).</summary>
+        public int doorVisits;
         public List<ShiftRoomSnapshot> rooms = new List<ShiftRoomSnapshot>();
         public List<ShiftTeamSnapshot> teams = new List<ShiftTeamSnapshot>();
 
@@ -86,6 +88,16 @@ namespace Corrigible.Desk
             foreach (var t in teams) if (t.id == id) return t;
             return null;
         }
+    }
+
+    /// <summary>Vardiya biterken kapıda kalan, açılmadı sayılan ziyaretçi: kart kimliği ve gerçekleşen etki.</summary>
+    [Serializable]
+    public sealed class ShiftDoorEntry
+    {
+        public string card, result;
+        public double supplies, materials, alarm;
+        public int trust;
+        public bool counterattack;
     }
 
     /// <summary>
@@ -103,6 +115,8 @@ namespace Corrigible.Desk
         public double incomeCentral, incomeRegional;
         public List<TelexLine> failures = new List<TelexLine>();
         public ShiftRates rates = new ShiftRates();
+        /// <summary>Vardiya biterken açılmadı sayılan kapı ziyaretleri.</summary>
+        public List<ShiftDoorEntry> door = new List<ShiftDoorEntry>();
     }
 
     // ---------- Görünüm verisi ----------

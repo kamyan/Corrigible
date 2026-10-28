@@ -20,6 +20,8 @@ namespace Corrigible.Desk
         Crt,
         /// <summary>K6a vardiya anı (yalnız dizide).</summary>
         Shift,
+        /// <summary>Sığınağın kapısı (sağ duvar; yalnız biri kapıyı çalınca).</summary>
+        Door,
     }
 
     /// <summary>

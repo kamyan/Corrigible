@@ -27,7 +27,7 @@ namespace Corrigible.Desk.Bridge
             else OpenState(Baskin.Create(p));
         }
         public void OpenForValidation(Baskin.BState state)=>OpenState(state);
-        protected override (int Trust,int Max,int PerCivilian) TrustStake=>game?.Sim==null?(0,0,0):(game.Sim.S.Trust,game.Sim.B.liberationTrustStart,game.Sim.B.liberationTrustPerCivilian);
+        protected override (int Trust,int Max,int PerCivilian) TrustStake=>game?.Sim==null?(0,0,0):(game.Sim.S.Trust,game.Sim.TrustMax,game.Sim.B.liberationTrustPerCivilian);
         protected override void Finish()
         {
             if(finished)return;

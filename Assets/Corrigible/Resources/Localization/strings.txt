@@ -30,7 +30,7 @@ Güvenli giriş	Safe entry
 Dar koridor	Narrow halls
 Fazladan duvarlar: atış hatları kısa, yollar uzun.	Extra walls: short lines of fire, long paths.
 Kısa nöbet	Short watch
-Baskın 6 değil 5 tur sürer.	The raid lasts 5 turns, not 6.
+Baskın bir tur kısa sürer.	The raid is one turn shorter.
 Takviye	Reinforced
 Başta bir robot fazla.	One extra robot at the start.
 Açık arazi	Open ground
@@ -54,7 +54,7 @@ Bitişik kare. Dolaba 2 hasar; robota 1 hasar ve 1 kare itme.	Adjacent tile. 2 d
 EMP atışı	EMP shot
 Düz hatta 2–5 kare uzağa, engellerin üstünden. Hedefteki robota ya da sıradan dolaba 1 hasar (zırhlı hedef dolaplara işlemez); çevresindeki 4 karedeki robotları dışarı iter.	2–5 tiles away in a straight line, over obstacles. 1 damage to the robot or ordinary cabinet on the target (no effect on armored target cabinets); pushes robots on the 4 surrounding tiles outward.
 Kanca	Hook
-Düz hatta 5 kare. Çarptığı robotu 1 kare kendine çeker; duvara ya da dolaba çarparsa Analist onun yanına atılır. Analistin 3 kare çevresindeki robotların niyeti kesin görünür.	5 tiles in a straight line. Pulls the robot it hits 1 tile closer; if it hits a wall or cabinet, the Analyst is yanked next to it. Robot intents within 3 tiles of the Analyst are shown for certain.
+Düz hatta 5 kare. Çarptığı robota 1 hasar verir ve onu 1 kare kendine çeker (dost uzmanı hasarsız çeker); duvara ya da dolaba çarparsa Analist onun yanına atılır. Analistin 3 kare çevresindeki robotların niyeti kesin görünür.	5 tiles in a straight line. Deals 1 damage to the robot it hits and pulls it 1 tile closer (friendly specialists are pulled unharmed); if it hits a wall or cabinet, the Analyst is yanked next to it. Robot intents within 3 tiles of the Analyst are shown for certain.
 Çekirdek dolabı	Core cabinet
 YZ düğüm dolabı	AI node cabinet
 Sivil sunucu	Civilian server
@@ -62,12 +62,13 @@ Soğutma ünitesi	Cooling unit
 Kopya dolabı	Replica cabinet
 çekirdeğimin	core
 sunucularımın	servers
-İkmal kasasını Teknisyen ile bitişik kareden aç. Kasayı imha etmeden malzemeleri al.	Move the Technician next to the supply crate and open it. Retrieve the supplies without destroying the crate.
+İkmal kasasını Teknisyen ile bitişik kareden aç, malzemeyi girişe geri taşı. Kasayı imha etme.	Open the supply crate with the Technician from an adjacent tile and carry the supplies back to the entry. Don't destroy the crate.
 Yine sen. Bu sefer kapıda daha çok makine var.	You again. There are more machines at the door this time.
 Demek {0} yerini buldun. Bakalım içeri girebilecek misin.	So you found my {0}. Let's see if you can get inside.
 {0}: zırh plakası darbeyi karşıladı ve kırıldı.	{0}: armor plate took the hit and broke.
 {0} yere düştü{1}.	{0} is down{1}.
 {0} devre dışı{1}.	{0} disabled{1}.
+Teknisyen düştü: ikmal malzemeleri kaybedildi.	The Technician is down: the supplies are lost.
 Sivil sunucu kırıldı: hastane ve banka hizmetleri kesildi.	Civilian server destroyed: hospital and bank services cut off.
 Kopya dolabı kırıldı: oradan robot uyanmayacak.	Replica cabinet destroyed: no more robots will wake from it.
 Soğutma ünitesi patladı.	Cooling unit exploded.
@@ -82,8 +83,9 @@ elektrik	electric shock
 Çekirdek yok edildi.	Core destroyed.
 YZ düğümü kırıldı.	AI node destroyed.
 sabotaj	sabotage
-Teknisyen ikmal kasasını açtı; malzemeler güvenceye alındı.	The Technician opened the supply crate; the supplies are secure.
+Teknisyen malzemeleri aldı: girişe geri dön, ekip oradan tahliye edilir.	The Technician has the supplies: get back to the entry, the team extracts from there.
 EMP	EMP
+kanca	hook
 Ekibin tamamı yere düştü.	The whole team is down.
 Bakım robotu {0} onardı.	A maintenance robot repaired the {0}.
 bakım robotu	maintenance robot
@@ -97,6 +99,7 @@ dron ateşi	drone fire
 — Tur {0}: makineler hareket ediyor —	— Turn {0}: the machines move —
 Uyanan kopya engellendi.	Waking replica blocked.
 Yeni bir {0} uyandı.	A new {0} woke up.
+Süre doldu: ekip malzemelerle çıkamadı.	Time's up: the team couldn't get out with the supplies.
 Süre doldu: YZ ikmal deposunu kilitledi.	Time ran out: the AI locked down the supply depot.
 Süre doldu: YZ çekirdeğini binadan taşıdı.	Time's up: the AI moved its core out of the building.
 Süre doldu: YZ sunucularını yedekledi ve binayı kilitledi.	Time's up: the AI backed up its servers and locked down the building.
@@ -127,6 +130,240 @@ Ekip geri döndü. Sektör işgal altında; toparlandıktan sonra yeniden deneye
 {0} özgür. Sığınak güçlendi; sıradaki komşu bölgeyi seç.	{0} is free. The shelter is stronger; select the next neighboring region.
 {0} geri alındı. Sonraki sektör operasyona açıldı.	{0} reclaimed. The next sector is available for operations.
 {0}: {1} yeniden işgal altında.	{0}: {1} is occupied again.
+# Assets/Corrigible/Core/Door.cs
+Kapıyı aç	Open the door
+Açma	Don't open
+Baskın sürüyor.	A raid is under way.
+Kapıda kimse yok.	There's no one at the door.
+Bu seçenek yok.	That option isn't available.
+{0} erzak gerekiyor.	Needs {0} supplies.
+{0} malzeme gerekiyor.	Needs {0} materials.
+{0} fon gerekiyor.	Needs {0} funds.
+# Assets/Corrigible/Core/DoorCards.cs
+Nermin, yaşam alanından	Nermin, from the living quarters
+Üç kısa, bir uzun vuruş. Yaşlı bir kadın sesi: "Komutan? Benim, Nermin. Yaşam alanından."	Three short knocks, one long. An old woman's voice: "Commander? It's me, Nermin. From the living quarters."
+Koridor lambasının altında yaşlı bir kadın. Kucağında bez bir kese; nefesi camı buğuluyor.	An old woman under the corridor lamp, a cloth sack in her arms. Her breath fogs the glass.
+Parolayı soruyorsun. "Yedi," diyor gülerek. "Kapının üstünde yazıyor ya, evladım."	You ask for the password. "Seven," she laughs. "It's written right above the door, dear."
+"Mutfakta artanları kuruttuk, ekip yesin diye getirdim." Giderken dönüyor: "Bu kapıyı her çalan dost değildir. Önce bak, sonra aç."	"We dried the kitchen leftovers. I brought them for the team." Turning to leave, she adds: "Not everyone who knocks on this door is a friend. Look first, then open."
+Keseyi al	Take the sack
+Kese depoya girdi. Yaşam alanında konuşuluyor: komuta kapıyı açıyor.	The sack goes into the stores. Word spreads in the living quarters: command opens its door.
+Sakinlere geri ver	Give it back to the residents
+"Onlar daha aç," diyorsun. Nermin keseyi geri götürüyor; adın yaşam alanında iyi anılıyor.	"They're hungrier," you say. Nermin takes the sack back; your name is spoken kindly in the living quarters.
+Kese kapının önünde kaldı. Sabaha biri almıştı.	The sack sat outside the door. By morning someone had taken it.
+Alt kattan bir anne	A mother from downstairs
+Aceleci, düzensiz vuruşlar. "Lütfen! Oğlum ateşler içinde, yardım edin!"	Hurried, uneven knocks. "Please! My son is burning up, help us!"
+Genç bir kadın; omzunda battaniyeye sarılı bir çocuk. Nefesi camı buğuluyor.	A young woman with a child wrapped in a blanket on her shoulder. Her breath fogs the glass.
+"Parola?" "Yedi! Yedi, lütfen açın!"	"Password?" "Seven! Seven, please open!"
+Çocuğun dudakları kurumuş. "İlaç yoksa biraz yiyecek… İki gündür bir şey yemedi."	The child's lips are cracked. "If there's no medicine, some food… He hasn't eaten in two days."
+Erzak ver	Give supplies
+Kadın keseyi göğsüne bastırıyor. "Bunu unutmayacağım."	She presses the sack to her chest. "I won't forget this."
+Revire götür	Take him to the infirmary
+Revirdeki görevli çocuğu yatırıyor. Ateş gece düşüyor.	The infirmary orderly puts the boy to bed. The fever breaks in the night.
+"İlaç yok" de	Say "there's no medicine"
+Kadın bir şey demeden dönüyor. Ayak sesleri merdivende kayboluyor.	She turns away without a word. Her footsteps fade down the stairs.
+Vuruşlar bir süre sürdü, sonra kesildi. Alt katta komutanın kapıyı açmadığı konuşuluyor.	The knocking went on for a while, then stopped. Downstairs they're saying the commander wouldn't open the door.
+İyileşen çocuğun ağabeyi	The recovered boy's older brother
+İki sert vuruş. "Komutan, ben Deniz. Kardeşim iyileşti."	Two firm knocks. "Commander, it's Deniz. My little brother pulled through."
+Yirmilerinde bir genç; sırtında alet çantası.	A young man in his twenties with a tool bag on his back.
+"Parola?" "Yedi. Annem her gece söylüyor zaten."	"Password?" "Seven. Mum says it every night anyway."
+"Kardeşim için borcumuz var. Kablo çekerim, kaynak yaparım; nerede lazımsam."	"We owe you for my brother. I can run cable, I can weld. Wherever you need me."
+Yaşam alanına al	Take him into the living quarters
+Deniz yaşam alanına yerleşti. Bir çift el daha.	Deniz settles into the living quarters. One more pair of hands.
+Hurda toplasın	Have him scavenge scrap
+Deniz iki gün sonra bir çuval kablo ve sacla döndü.	Two days later Deniz came back with a sack of cable and sheet metal.
+Genç bir süre bekledi, sonra alet çantasından birkaç parçayı kapının önüne bırakıp gitti.	He waited a while, then left a few parts from his tool bag outside the door and went away.
+Özgür bölgeden bir kurye	A courier from a freed region
+Hızlı, kendinden emin üç vuruş. "Kurye! İmza lazım."	Three quick, confident knocks. "Courier! Need a signature."
+Yağmurluklu bir kadın, sırtında mühürlü bir koli. Botları çamur içinde.	A woman in a raincoat with a sealed parcel on her back. Her boots are caked in mud.
+"Parola?" "Yedi. Haritanızdaki mavi bölgeden geliyorum."	"Password?" "Seven. I've come from the blue region on your map."
+Kolide konserve, kablo ve bir mektup: "Elektrik geri geldi, çocuklar okula dönüyor. Teşekkürler, Yedi."	Inside: tinned food, cable and a letter. "The power's back on, the children are going back to school. Thank you, Seven."
+Koliyi depoya al	Put the parcel in the stores
+Koli depoya girdi; mektup mantar panoya iğnelendi.	The parcel goes into the stores; the letter is pinned to the corkboard.
+Sakinlere dağıt	Share it with the residents
+Konserveler yaşam alanında paylaşıldı, mektup yüksek sesle okundu.	The tins are shared out in the living quarters and the letter is read aloud.
+Kurye koliyi kapının önüne bıraktı; sabaha yarısı kayıptı.	The courier left the parcel outside the door; by morning half of it was gone.
+Bir kaçakçı	A smuggler
+Kapı tıklatılıyor, neredeyse kibarca. "Komutan, iş konuşalım."	A tap at the door, almost polite. "Commander, let's talk business."
+Deri ceketli bir adam; ayağının dibinde iki kasa. Arkasında kimse yok.	A man in a leather jacket with two crates at his feet. Nobody behind him.
+"Parola?" "Yedi. Parolanızı bilmeyen kalmadı, komutan." Gülüyor.	"Password?" "Seven. Everybody knows your password, commander." He laughs.
+"Konserve, pirinç, kuru et. YZ'nin depolarından. Fiyatı fon; soru yok."	"Tins, rice, dried meat. Straight from the AI's depots. Paid in funds, no questions."
+Fonla erzak al	Buy supplies with funds
+Kasalar depoya girdi. Adam fonu sayıp karanlığa karıştı.	The crates go into the stores. He counts the money and melts into the dark.
+Reddet	Refuse
+"Fiyat yükselir," diyor ve kasalarını alıp gidiyor.	"The price goes up," he says, and leaves with his crates.
+İhbar et	Turn him in
+Sakinler adamı merdivende yakaladı; kasalar paylaşıldı. Giderken bağırıyordu: "Bunu ödeyeceksiniz!"	Residents caught him on the stairs and shared out the crates. As they dragged him off he shouted: "You'll pay for this!"
+Adam bir süre bekledi, sonra kasalarını alıp gitti.	He waited a while, then left with his crates.
+Kapının önünde bir paket	A package at the door
+Tek bir vuruş, sonra koşan ayak sesleri.	A single knock, then running footsteps.
+Koridor boş. Kapının dibinde kahverengi bir paket; bir köşesinden tel uçları görünüyor.	The corridor is empty. A brown package sits against the door, wire ends poking out of one corner.
+İnterkomdan sesleniyorsun. Cevap yok; yalnız paketten gelen bir tıkırtı.	You call over the intercom. No answer, only a ticking from the package.
+Kapıyı açtığın anda paket patladı. Kimse ölmedi ama depo hasar gördü. Duvarda tebeşirle: "Muhbir."	The package went off the moment you opened the door. No one died, but the stores were damaged. Chalked on the wall: "Snitch."
+Paket koridorda patladı. Kapı dayandı ama yandaki depo bölmesi hasar gördü; yaralanan olmadı.	The package went off in the corridor. The door held, but the storage bay next to it was damaged; no one was hurt.
+YZ'den kaçmış bir teknisyen	A technician who escaped the AI
+Temkinli, aralıklı vuruşlar. "Ağ'dan kaçtım. Bakım ünitesindeydim."	Cautious, spaced-out knocks. "I got away from the Network. I was in a maintenance unit."
+Zayıf bir adam; boynunda kesik bir veri kablosunun izi. Elleri titriyor, nefesi camı buğuluyor.	A thin man with the scar of a severed data cable on his neck. His hands shake; his breath fogs the glass.
+"Parola?" Bir an duraksıyor. "Yedi… değil mi? Yolda bir kadın söyledi."	"Password?" He hesitates. "Seven… right? A woman on the road told me."
+"YZ'nin bakım rotalarını biliyorum. Plaka kalıpları, frekanslar… Beni içeri alın, işe yararım."	"I know the AI's maintenance routes. Plate moulds, frequencies… Let me in, I'll be useful."
+Sığınağa al	Take him into the shelter
+Teknisyen atölyenin köşesine yerleşti. İlk gece hiç uyumadı.	The technician settles in a corner of the workshop. He doesn't sleep at all the first night.
+Geri çevir	Turn him away
+Adam başını eğip karanlığa döndü.	He lowers his head and turns back into the dark.
+Vuruşlar kesildi. Sabah koridorda bir kablo parçası buldular.	The knocking stopped. In the morning they found a scrap of cable in the corridor.
+Kaçak teknisyen	The runaway technician
+Atölye tarafından iki vuruş. "Komutan, bir şey göstereceğim."	Two knocks from the workshop side. "Commander, I've got something to show you."
+Kaçak teknisyen; elinde gri, yeni dökülmüş bir plaka.	The runaway technician, holding a grey, freshly cast plate.
+"Parola?" "Yedi, komutan. Artık ben de buradanım."	"Password?" "Seven, commander. I'm one of you now."
+"YZ'nin kalıbını hatırladım: daha ince, daha sağlam. İlkini ekibe getirdim."	"I remembered the AI's mould: thinner, tougher. I brought the first one for the team."
+Plakayı al	Take the plate
+Plaka rafa kondu. Atölye yeni kalıpla çalışıyor.	The plate goes on the rack. The workshop is using the new mould.
+Teknisyen plakayı kapının önüne bıraktı.	The technician left the plate outside the door.
+Telsiz görevlisi	The radio operator
+Hızlı vuruşlar. "Komutan! Telsiz odasından geliyorum, acil!"	Rapid knocks. "Commander! I'm from the radio room, it's urgent!"
+Telsiz görevlisi; elinde bir kâğıt şerit, yüzü bembeyaz.	The radio operator, a paper strip in hand, face white as a sheet.
+"Parola?" "Yedi! Açın, vakit yok!"	"Password?" "Seven! Open up, there's no time!"
+"Kaçak teknisyen geceleri YZ frekansına yayın yapıyormuş. Yerimizi veriyor olabilir."	"The runaway technician has been transmitting on the AI's frequency at night. He could be giving away our position."
+Teknisyeni sığınaktan çıkar	Throw the technician out
+Teknisyen koridordan çıkarıldı. Yayın kesildi ama YZ bir şeyler duymuş.	The technician is marched out. The transmissions stop, but the AI heard something.
+Frekansı karıştır	Jam the frequency
+Telsizciler bütün gece parazit bastı. Teknisyen sabah ortadan kaybolmuştu.	The radio crew pumped out static all night. By morning the technician had vanished.
+Kimse bir şey yapmadı. Yayın sabaha kadar sürdü.	Nobody did anything. The transmission ran until morning.
+Yaralı bir gözcü	A wounded scout
+Zayıf, düzensiz vuruşlar; biri kapıya yaslanmış. "Komutan… dışarıdan geliyorum."	Weak, uneven knocks; someone is leaning on the door. "Commander… I've come in from outside."
+Yerde oturan bir adam, kolu kanlı bir sargıda. Her nefeste cam buğulanıp açılıyor.	A man sitting on the floor, his arm in a bloody bandage. The glass fogs and clears with every breath.
+"Parola?" "Yedi… yedi numara." Öksürüyor.	"Password?" "Seven… number seven." He coughs.
+"Dinleyin. YZ'nin yeni kopyaları insan sesiyle konuşuyor, kusursuz. Açmadan parolayı sorun: bilmiyorlar. Bir de vuruşları… saat gibi."	"Listen. The AI's new copies speak with human voices, flawless ones. Ask for the password before you open: they don't know it. And the way they knock… like a clock."
+Revire al	Take him to the infirmary
+Gözcü revirde. Uyarısı telsizden bütün kata okundu.	The scout is in the infirmary. His warning is read out over the radio to the whole floor.
+Sargı ve erzak ver	Give bandages and supplies
+Gözcü sargısını yenileyip yeniden karanlığa çıktı.	The scout changes his bandage and heads back out into the dark.
+Vuruşlar kesildi. Sabah kapının önünde kan izleri vardı.	The knocking stopped. In the morning there was blood outside the door.
+Dışarıda kalan biri	Someone locked outside
+Vuruşlar saat gibi: tık, tık, tık, hep aynı aralıkla. "Dışarıda kaldım. Açın lütfen, çok soğuk."	The knocks come like a clock: tock, tock, tock, always the same interval. "I'm locked out. Please open, it's so cold."
+Koridor ışığı sönük. Siluet kıpırdamıyor; camda nefes buğusu yok.	The corridor light is dim. The figure doesn't move; no breath fogs the glass.
+"Parola?" Kısa bir sessizlik. "Parola… Açın lütfen, çok soğuk." Ses, ilk cümleyle aynı tonda.	"Password?" A short silence. "Password… Please open, it's so cold." The same tone as the first sentence.
+Kapı aralandığı anda soğuk bir el içeri uzandı. Koridordaki şeyin yüzü yoktu; yalnız bir mercek ve senin sesin.	The moment the door cracked open, a cold hand reached in. The thing in the corridor had no face, just a lens and your own voice.
+Vuruşlar bir saat boyunca aynı aralıkla sürdü, sonra kesildi. Sabah koridordaki lamba kırıktı.	The knocks kept the same interval for an hour, then stopped. In the morning the corridor lamp was smashed.
+Telaşlı, düzensiz vuruşlar. "Dışarıda kaldım! Açın lütfen, çok soğuk!"	Frantic, uneven knocks. "I'm locked out! Please open, it's so cold!"
+Omuzları karla kaplı bir adam, ellerini koltuk altına sokmuş. Nefesi camı buğuluyor.	A man with snow on his shoulders, hands jammed in his armpits. His breath fogs the glass.
+"Parola?" "Yedi! Yemin ederim. Bulut Usta'nın oğluyum, ikinci kat!"	"Password?" "Seven! I swear. I'm Master Bulut's son, second floor!"
+Adam içeri yığılıyor. Parmakları morarmış ama yaşıyor. "Devriye yolu kesti. Saatlerdir bekliyorum."	He collapses inside. His fingers are blue, but he's alive. "A patrol cut me off. I've been waiting for hours."
+Yaşam alanına götür	Take him to the living quarters
+Battaniye, sıcak çay. Bulut Usta oğlunu sabaha kadar bırakmadı.	Blankets, hot tea. Master Bulut doesn't let go of his son until morning.
+Vuruşlar sabaha karşı kesildi. Koridorda donmuş bir adam buldular: Bulut Usta'nın oğlu.	The knocking stopped towards dawn. They found a man frozen in the corridor: Master Bulut's son.
+Aç sakinlerin heyeti	A delegation of hungry residents
+Birçok yumruk aynı anda. "Komutan! Konuşmamız lazım!"	Many fists at once. "Commander! We need to talk!"
+Koridorda altı yedi kişi; önde tanıdık yüzler. Kimsenin elinde silah yok.	Six or seven people in the corridor, familiar faces at the front. No one is armed.
+"Parola?" "Yedi! Biz buranın insanıyız, komutan. Ve açız."	"Password?" "Seven! We're your own people, commander. And we're hungry."
+"Paylar yarıya indi, çocuklar geceleri ağlıyor. Ekibe ayrılan erzaktan pay istiyoruz."	"Rations are down by half and the children cry at night. We want a share of what's set aside for the team."
+Fonla erzak bul	Find supplies with funds
+Telsizle bir kaçakçıya ulaştın. Erzak geceye gelmeden dağıtıldı.	You raised a smuggler on the radio. The food was handed out before nightfall.
+Ekibin payını dağıt	Share out the team's rations
+Ekip bu hafta yarım payla. Uzmanlar yorgun ama sakinler yatıştı.	The team is on half rations this week. The specialists are worn out, but the residents have calmed down.
+"Bekleyin" de	Tell them to wait
+Heyet sessizce dağıldı. Biri giderken kapıyı tekmeledi.	The delegation breaks up in silence. Someone kicks the door on the way out.
+Kapıyı açmadın. Bağırışlar gece yarısına kadar sürdü.	You didn't open the door. The shouting went on until midnight.
+Silahlı bir sakin	An armed resident
+Önce yumruk, sonra dipçik. "Aç şu kapıyı! Çocuklar açken siz depoda oturuyorsunuz!"	First a fist, then a rifle butt. "Open this door! The children are starving and you sit on the stores!"
+Bir tüfeğin namlusu cama dayalı. Arkasında kimse yok; adam titriyor.	A rifle muzzle is pressed against the glass. No one behind him; the man is shaking.
+"Silahı indir, konuşalım." "Önce erzak! Ya da bir söz… ama artık sözlere inanmıyorum."	"Lower the rifle, let's talk." "Food first! Or a promise… but I don't believe in promises any more."
+Kapı açılır açılmaz silah patladı. Adam ne yaptığını ancak sonra anladı.	The rifle went off the moment the door opened. Only afterwards did the man understand what he'd done.
+İnterkomdan konuş	Talk over the intercom
+Erzağı kapının altındaki kapaktan itiyorsun. Ayak sesleri uzaklaşıyor; tüfek koridorda kalmış.	You push food through the hatch under the door. The footsteps move away; the rifle is left lying in the corridor.
+Sesini tanıyor. "Söz verdin," diyor ve namluyu indiriyor.	He knows your voice. "You promised," he says, and lowers the barrel.
+Konuşma uzadıkça vuruşlar sertleşti. Kilit kırıldı; adam depodan ne bulduysa alıp kaçtı.	The longer you talked, the harder he pounded. The lock broke; he grabbed whatever he could from the stores and ran.
+Kapıyı zorladılar. Kilit kırıldı, depodan malzeme gitti; yaralanan olmadı.	They forced the door. The lock broke and materials were taken from the stores; no one was hurt.
+Kolunda siyah bant olan bir baba	A father with a black armband
+Ağır, yavaş vuruşlar. "Komutan. Sizinle yüz yüze konuşmak istiyorum."	Heavy, slow knocks. "Commander. I want to speak to you face to face."
+Orta yaşlı bir adam; kolunda siyah bir bant. Elleri boş.	A middle-aged man with a black band on his arm. His hands are empty.
+"Parola?" "Yedi. Kızım da bilirdi."	"Password?" "Seven. My daughter knew it too."
+"Baskınınızda hastanenin sunucusu kırıldı. Kızım solunum cihazındaydı." Bir süre susuyor. "Neden?"	"Your raid broke the hospital's server. My daughter was on a ventilator." He falls silent for a while. "Why?"
+Özür dile, erzak ver	Apologise and give supplies
+Adam erzağı almıyor ama elini sıkıyor. "Bir dahaki sefere dikkat edin."	He won't take the food, but he shakes your hand. "Be more careful next time."
+Sessiz kal	Stay silent
+Adam cevap bekledi. Gelmeyince arkasını dönüp gitti.	He waited for an answer. When none came, he turned and left.
+Kapıyı açmadın. Adam sabaha kadar kapının önünde oturdu.	You didn't open the door. He sat outside it until morning.
+Kolunda siyah bant olan adam	The man with the black armband
+Tek, ağır bir vuruş. "Komutan. Bu sefer konuşmaya gelmedim."	A single heavy knock. "Commander. I'm not here to talk this time."
+Siyah bantlı adam. Elinde bir tabanca; namlusu yere bakıyor.	The man with the black armband. A pistol in his hand, pointed at the floor.
+"Silahı bırak." "Kızım da nefes almak istemişti."	"Put the pistol down." "My daughter wanted to breathe too."
+Kapıyı açtın. Adam bir an yüzüne baktı, sonra tetiği çekti.	You opened the door. He looked you in the face for a moment, then pulled the trigger.
+İnterkomdan özür dile	Apologise over the intercom
+Uzun bir sessizlik. Sonra tabancanın yere düştüğünü duyuyorsun.	A long silence. Then you hear the pistol hit the floor.
+Kapıya üç el ateş etti ve kayboldu. Kilit parçalandı, depo yağmalandı.	He fired three rounds into the door and disappeared. The lock was shattered and the stores were looted.
+Gezgin bir hekim	A travelling doctor
+Kibar iki vuruş. "İyi akşamlar. Hekimim; sığınak sığınak dolaşıyorum."	Two polite knocks. "Good evening. I'm a doctor; I go from shelter to shelter."
+Yaşlı bir kadın, deri bir çanta. Gözlüğü buğulanmış.	An old woman with a leather bag. Her glasses have fogged up.
+"Parola?" "Yedi. Kuzeydeki sığınaklar sizi soruyor."	"Password?" "Seven. The shelters up north ask after you."
+"Yaralılarınız var, değil mi? Bir gecelik yer ve bir tas çorba yeter."	"You have wounded, don't you? A bed for the night and a bowl of soup is all I ask."
+Uzmanlara baktır	Have her see the specialists
+Hekim gece boyunca ekiple uğraştı. Sabah yaralar sarılmıştı.	The doctor worked on the team through the night. By morning their wounds were dressed.
+Sakinlere ilaç al	Buy medicine for the residents
+Hekimin çantasındaki ilaçlar yaşam alanında dağıtıldı; çocuklara aşı yapıldı.	The medicine from her bag is handed out in the living quarters, and the children are vaccinated.
+Hekim bir süre bekledi, sonra bir sonraki sığınağa yürüdü.	The doctor waited a while, then walked on to the next shelter.
+Yaşam alanından çocuklar	Children from the living quarters
+Kapının alt kısmına küçük yumruklar. Kıkırdamalar.	Small fists at the bottom of the door. Giggling.
+Üç çocuk; birinin elinde katlanmış bir kâğıt.	Three children; one is holding a folded sheet of paper.
+"Parola?" Hep bir ağızdan: "Yeediii!"	"Password?" All together: "Seeeven!"
+Kâğıtta bir resim: güneş, bir ev, haritada maviye boyanmış bir bölge. "Bunu panonuza asın!"	A drawing: a sun, a house, a region of the map coloured blue. "Put it up on your board!"
+Panoya as	Pin it on the board
+Resim mantar panoya iğnelendi. Çocuklar koşarak gitti.	The drawing is pinned to the corkboard. The children run off.
+Resmi kapının altından içeri ittiler.	They slid the drawing under the door.
+Bir radyo amatörü	A radio amateur
+Kısa, uzun, kısa: mors gibi. "Komutan, elimde bir frekans çizelgesi var."	Short, long, short, like Morse. "Commander, I've got a frequency chart."
+Kulaklıklı genç bir kadın; kucağında el yapımı bir alıcı. Nefesi camı buğuluyor.	A young woman in headphones with a home-made receiver in her arms. Her breath fogs the glass.
+"Parola?" "Yedi. Telsizinizi her gece dinliyorum."	"Password?" "Seven. I listen to your radio every night."
+"YZ'nin devriye frekanslarını çıkardım. Bir de şunu bilin: kopyalar insan sesiyle konuşuyor ama parolayı bilmiyor. Çizelgenin karşılığı biraz malzeme."	"I've worked out the AI's patrol frequencies. And know this: the copies speak with human voices, but they don't know the password. The chart will cost you some materials."
+Malzemeyle satın al	Pay for it with materials
+Çizelge telsiz odasına asıldı. YZ'nin devriyeleri bir süre yanlış yerde arayacak.	The chart goes up in the radio room. The AI's patrols will be searching in the wrong places for a while.
+"Başka sığınaklar alır," diyor ve gidiyor.	"Other shelters will buy it," she says, and leaves.
+Mors vuruşları kesildi.	The Morse knocking stopped.
+Dışarıdan bir aile	A family from outside
+Çekingen vuruşlar, ardında bir bebek ağlıyor. "Yer var mı? Kuzeyden yürüdük."	Timid knocks, a baby crying behind them. "Is there room? We walked from the north."
+Bir kadın, bir adam, kucakta bebek. Sırtlarında bütün eşyaları; nefesleri camı buğuluyor.	A woman, a man, a baby in arms. Everything they own on their backs; their breath fogs the glass.
+"Parola?" "Bilmiyoruz… Yolda biri yedi dedi. Yedi mi?"	"Password?" "We don't know… Someone on the road said seven. Is it seven?"
+"İki gündür yürüyoruz. Ne iş olsa yaparız."	"We've been walking for two days. We'll do any work you need."
+İçeri al	Let them in
+Aile yaşam alanında bir köşeye yerleşti. Üç ağız daha, üç çift el daha.	The family settles in a corner of the living quarters. Three more mouths, three more pairs of hands.
+Erzak verip yolla	Give supplies and send them on
+Aile erzağı alıp güneydeki sığınağa yürüdü.	The family takes the supplies and walks on to the shelter in the south.
+Kadın bir şey demedi. Bebeğin ağlaması merdivende uzun süre duyuldu.	The woman said nothing. The baby's crying echoed on the stairs for a long time.
+Ağlama sesi sabaha kadar koridorda yankılandı.	The crying echoed in the corridor until morning.
+Kapının altından bir zarf	An envelope under the door
+Vuruş yok. Kapının altından bir zarf kayıyor.	No knock. An envelope slides under the door.
+Koridor boş. Lamba titriyor.	The corridor is empty. The lamp flickers.
+İnterkomdan sesleniyorsun. Hoparlörden bir saniye gecikmeyle kendi sesin dönüyor.	You call over the intercom. Your own voice comes back through the speaker, a second late.
+Zarfta tek satır, kusursuz harflerle: "Teslim olursanız kimse incinmeyecek. Siz de bunu biliyorsunuz, komutan."	One line inside, in flawless lettering: "Surrender and no one gets hurt. You know that too, commander."
+Yak	Burn it
+Kâğıt kül oldu. Kokusu bütün gece odada kaldı.	The paper turns to ash. The smell hangs in the room all night.
+Telsize ver, izini sür	Give it to the radio room to trace
+Mürekkep bir devriye noktasını ele verdi. Telsizciler izleri karıştırdı.	The ink gave away a patrol post. The radio crew scrambled the trail.
+Herkes okudu; öfke korkudan ağır bastı. Ama YZ mesajın ulaştığını biliyor.	Everyone read it; anger outweighed fear. But the AI knows its message arrived.
+Zarf sabaha kadar kapının altında kaldı, sonra kayboldu.	The envelope lay under the door until morning, then it was gone.
+Bir öğretmen	A teacher
+Düzenli ama yumuşak vuruşlar. "Komutan, beş dakikanızı alabilir miyim?"	Steady but gentle knocks. "Commander, could I have five minutes?"
+Gözlüklü bir kadın, koltuğunun altında defterler.	A woman in glasses with exercise books under her arm.
+"Parola?" "Yedi. Çocuklara da öğrettim, kusura bakmayın."	"Password?" "Seven. I taught it to the children too, sorry."
+"Yaşam alanında çocuklar boş duruyor. Bir köşe, biraz ışık, biraz kâğıt istiyorum. Okul."	"The children in the living quarters have nothing to do. I want a corner, some light, some paper. A school."
+Okul aç	Open a school
+Yaşam alanının köşesine bir karatahta asıldı. Akşamları alfabe sesleri geliyor.	A blackboard goes up in a corner of the living quarters. In the evenings you hear the alphabet being recited.
+Şimdi değil	Not now
+"Anlıyorum," diyor. "Ama çocuklar beklemez."	"I understand," she says. "But children don't wait."
+Öğretmen kapının altından bir not itti: "Okul için yine geleceğim."	The teacher slid a note under the door: "I'll be back about the school."
+Bir hırsız ve iki sakin	A thief and two residents
+İki kişi konuşuyor, biri itiraz ediyor. "Komutan! Depodan erzak çalarken yakaladık!"	Two voices, one protesting. "Commander! We caught him stealing from the stores!"
+İki sakin, aralarında kolundan tutulan bir genç. Gencin ceplerinden konserve kutuları taşıyor.	Two residents holding a young man by the arms. Tins are bulging from his pockets.
+"Parola?" "Yedi! Ne parolası komutan, hırsızı getirdik!"	"Password?" "Seven! What password, commander, we've brought you a thief!"
+Genç başını kaldırmıyor. "Kız kardeşim için aldım. Payı yetmiyor."	He won't look up. "I took it for my sister. Her ration isn't enough."
+Affet, erzak onun olsun	Forgive him, let him keep it
+Sakinler söylendi ama gence kimse dokunmadı. Ertesi gün depoda gönüllü çalışıyordu.	The residents grumbled, but no one laid a hand on him. The next day he was volunteering in the stores.
+Erzağı geri al, uyar	Take it back and warn him
+Konserveler depoya döndü. Genç bir daha göze görünmedi.	The tins went back to the stores. The young man kept out of sight after that.
+Sığınaktan çıkar	Throw him out of the shelter
+Gencin arkasından kapı kapandı. Kız kardeşi iki gün ağladı.	The door closed behind him. His sister cried for two days.
+Kapıyı açmadın; sakinler genci salıverdi. Konserveler de onunla gitti.	You didn't open the door; the residents let him go. The tins went with him.
+Revirde görevli yok.	Infirmary unstaffed.
+Telsiz odasında görevli yok.	Radio room unstaffed.
 # Assets/Corrigible/Core/GameData.cs
 Kuzey Amerika	North America
 Güney Amerika	South America
@@ -144,6 +381,41 @@ Silme	Erasure
 Çekirdek yok edildi, kopyalar temizlendi. Ama bir kez yapıldıysa, biri yine yapacak.	The core is destroyed and the copies are gone. But if it was done once, someone will do it again.
 Dağılma	Collapse
 Hastaneler ve bankalar bizim baskınlarımızda karardı. Halk direnişe sırtını döndü; sığınağın kapısını artık kimse çalmıyor.	Hospitals and banks went dark in our raids. The people turned their backs on the resistance; no one knocks on the shelter door anymore.
+Vuruldu	Shot
+Kapıyı açtın ve silah patladı. Sığınak bir gecede komutansız kaldı; sabah telsizden yalnız parazit geliyordu.	You opened the door and a shot rang out. The shelter lost its commander in a single night; by morning the radio gave nothing but static.
+Sızma	Infiltration
+Kapıyı bir kopyaya açtın. Sığınak 07'nin yeri artık YZ'nin haritasında; kopyalar bir sonraki kapıyı çalıyor.	You opened the door to a copy. Shelter 07 is on the AI's map now; the copies are knocking on the next door.
+# Assets/Corrigible/Core/RaidMaps.cs
+Kablo galerisi	Cable gallery
+Bakım tüneli	Maintenance tunnel
+Güvenlik koridoru	Security corridor
+Yük asansörü holü	Freight elevator hall
+Havalandırma şaftı	Ventilation shaft
+Arşiv katı	Archive floor
+Kontrol odası	Control room
+Yedekleme merkezi	Backup centre
+Batarya odası	Battery room
+Sinyal odası	Signal room
+Depolama dizisi	Storage array
+Montaj hattı	Assembly line
+Yükleme rampası	Loading dock
+Metro peronu	Metro platform
+Atık su kanalı	Sewer channel
+Sunucu salonu	Server hall
+Ağ geçidi	Network gateway
+Veri ambarı	Data warehouse
+Otopark katı	Parking level
+Soğuk depo	Cold storage
+Fiber santrali	Fiber exchange
+Trafo merkezi	Transformer station
+Yedek güç odası	Backup power room
+Röle istasyonu	Relay station
+Telefon santrali	Telephone exchange
+Uydu bağlantı odası	Satellite uplink room
+Laboratuvar katı	Laboratory floor
+Pompa dairesi	Pump room
+Kazan dairesi	Boiler room
+Soğutma kulesi	Cooling tower
 # Assets/Corrigible/Core/ShelterLogic.cs
 Yaşam alanı	Living quarters
 Telsiz odası	Radio room
@@ -177,8 +449,8 @@ Bölge	Region
 # Assets/Corrigible/Desk/Scripts/Bridge/LiberationDeskView.cs
 Yeni cephe: {0}	New front: {0}
 Baskın emri: {0} · {1} · {2} fon	Raid order: {0} · {1} · {2} funds
-EMİR UYGULANDI	ORDER EXECUTED
 YAPILAMADI	FAILED
+EMİR UYGULANDI	ORDER EXECUTED
 # Assets/Corrigible/Desk/Scripts/Bridge/RaidDataSource.cs
 niyetler sırayla uygulanıyor	intents are resolving in order
 hedef kare	target tile
@@ -229,8 +501,10 @@ Kasa imha olur; görev kaybedilir	Crate destroyed; mission failed
 Niyet · sıra {0}	Intent · order {0}
 Zırh	Armor
 Bölgenin imza makinesi	This region's signature machine
-Teknisyen ile bitişik kareden aç	Open from an adjacent tile with the Technician
+Teknisyen ile bitişik kareden aç, malzemeyi girişe taşı	Open with the Technician from an adjacent tile, carry the supplies to the entry
 Hedef dolabı	Target cabinet
+Çıkış	Exit
+Teknisyen malzemeyle buradan tahliye edilir	The Technician extracts here with the supplies
 ZIRH	ARMOR
 PATLAR	EXPLODES
 İKMAL ALINDI	SUPPLIES RETRIEVED
@@ -312,6 +586,32 @@ SUNUCU YIKIMI	SERVER DEMOLITION
 V.{0:000} · OP-{1:00}	S.{0:000} · OP-{1:00}
 {0} · {1} / {2:00} {3}	{0} · {1} / {2:00} {3}
 KAMERA 2 · TAKTİK TAHTA 8×8 · GÖREV: {0}	CAMERA 2 · TACTICAL BOARD 8×8 · MISSION: {0}
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/DoorViewBuilder.cs
+KAPI · SIĞINAK 07	DOOR · SHELTER 07
+VARDİYA {0:000}	SHIFT {0:000}
+Gözetleme deliğinden bak	Look through the peephole
+İnterkomdan parolayı sor	Ask for the password over the intercom
+Esc · masaya dön; ziyaretçi vardiya bitene kadar bekler	Esc · back to the desk; they wait until the shift ends
+Esc · masaya dön; kapı açık bekler	Esc · back to the desk; the door stays open
+Son rapor	Final report
+Enter · son rapor	Enter · final report
+Kapıyı kapat	Close the door
+Enter · kapıyı kapat	Enter · close the door
+Gözetleme deliği.	Peephole.
+İnterkom.	Intercom.
+{0} erzak	{0} supplies
+{0} malzeme	{0} materials
+{0} fon	{0} funds
+Erzak {0}	Supplies {0}
+Malzeme {0}	Materials {0}
+Fon {0}	Funds {0}
+Sakin {0}	Residents {0}
+Zırh plakası {0}	Armour plates {0}
+{0} yara sarıldı	{0} wounds dressed
+Uzmanlara {0} yara	Specialists wounded {0}
+Güven {0}	Trust {0}
+YZ alarmı {0}	AI alarm {0}
+YZ karşı saldırdı	AI counterattacked
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/LiberationMapBuilder.cs
 EKİP {0}	TEAM {0}
 {0}: {1} İmza makinesi {2}: {3}	{0}: {1} Signature machine {2}: {3}
@@ -332,7 +632,6 @@ GÖREV · {0:00} {1}	MISSION · {0:00} {1}
 Teknisyeni ikmal kasasının yanına götür. Q ile yeteneği seç ve kasaya tıklayarak malzemeleri al.	Move the Technician next to the supply crate. Press Q to select the ability, then click the crate to collect the supplies.
 Sunucu çekirdeğini yık. Son sektör alınınca bu bölge özgürleşir.	Destroy the server core. Capturing the final sector liberates this region.
 {0} · Tehdit {1}/4	{0} · Threat {1}/4
-{0} fon	{0} funds
 {0} fon · {1} malzeme · {2} erzak · {3} kurtulan	{0} funds · {1} materials · {2} rations · {3} rescued
 {0} fon · {1} malzeme · bölge özgür: {2} fon	{0} funds · {1} materials · region free: {2} funds
 {0} fon · {1} malzeme	{0} funds · {1} materials
@@ -377,7 +676,6 @@ SEÇİLİ	SELECTED
 ONAR	REPAIR
 EN ÜST SEVİYE	TOP LEVEL
 GELİŞTİR	UPGRADE
-{0} malzeme	{0} materials
 {0} · {1}	{0} · {1}
 {0} fon + {1} malzeme	{0} funds + {1} materials
 Onarıma hazır.	Ready to repair.
@@ -408,6 +706,7 @@ Erzak toplama	Ration gathering
 yaşam alanı · {0} kişi	living quarters · {0} people
 Erzak tüketimi	Ration use
 {0} kişi × {1}	{0} people × {1}
+Kapı · açılmadı	Door · not opened
 Depo sınırı · {0}	Storage limit · {0}
 Erzak tükendi	Rations ran out
 HASARLI	DAMAGED
@@ -423,6 +722,8 @@ KARŞI SALDIRI	COUNTERATTACK
 Alarm eşiği aştı; YZ karşı saldırdı: {0}. Alarm sıfırlandı.	The alarm crossed the threshold and the AI struck back: {0}. Alarm reset.
 {0} → {1} / {2}	{0} → {1} / {2}
 Her vardiya ve her başarısız baskın yükseltir, kırılan YZ sunucusu düşürür. Eşikte YZ son geri alınan sektörü yeniden işgal eder.	Every shift and every failed raid raises it; each destroyed AI server lowers it. At the threshold the AI retakes the last sector you took back.
+Kapı · {0}	Door · {0}
+AÇILMADI	NOT OPENED
 {0} · hazır	{0} · ready
 Dinlenme {0} yara toparladı.	Rest healed {0} wounds.
 Revir {0} yara sardı.	The infirmary dressed {0} wounds.
@@ -438,6 +739,8 @@ Revir hasarlı: yara sarılmadı.	Infirmary damaged: no wounds dressed.
 Revirde görevli yok: yara sarılmadı.	No one in the infirmary: no wounds dressed.
 Açlık: revir durdu.	Starvation: the infirmary stopped.
 → yaşam alanına {0} kişi, erzak artıya geçer	→ {0} to living quarters, rations grow
+→ erzak bitti, ikmale çık	→ out of supplies, run a supply raid
+→ erzak {0} vardiyaya yeter, ikmale çık	→ supplies last {0} shifts, run a supply raid
 → revir onarılırsa yaralar sarılır	→ repair the infirmary to dress wounds
 → revire {0} kişi, yaralar sarılır	→ {0} to the infirmary, wounds get dressed
 → telsize 1 kişi, alarm yavaşlar	→ 1 to the radio, the alarm slows
@@ -455,11 +758,21 @@ Harekât bitti.	The campaign is over.
 Rapor açık: önce EVRAK tepsisine dosyala.	Report open: file it in the PAPERS tray first.
 boşta {0} kişi	{0} idle
 {0} durdu	{0} stopped
+kapıda biri bekliyor: açılmadı sayılır	someone is at the door: counts as not opened
 baskın emri verilmedi: {0}	no raid ordered: {0}
 ÖN KONTROL	PRE-CHECK
 eksik yok · kolu indirmek için yeniden bas	all clear · press again to pull the lever
 VARDİYA {0:000}  ·  FON {1}  ·  ERZAK {2}/{3}  ·  MALZEME {4}  ·  ÖZGÜR {5}/{6}  ·  GÜVEN {7}/{8}  ·  ALARM {9}/{10}	SHIFT {0:000}  ·  FUNDS {1}  ·  RATIONS {2}/{3}  ·  MATERIALS {4}  ·  FREE {5}/{6}  ·  TRUST {7}/{8}  ·  ALARM {9}/{10}
+Eşiğe ({0}) varınca YZ karşı saldırır, bir sektör yeniden işgal edilir. Her vardiya +{1}; telsiz odası düşürür.	At the threshold ({0}) the AI counterattacks and retakes a sector. +{1} each shift; the radio room lowers it.
 {0}. {1}   V.{2:000} ✓	{0}. {1}   S.{2:000} ✓
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakDoor.cs
+SIĞINAK KAPISI	SHELTER DOOR
+Biri çalınca: gözetleme deliği, interkom, kapıyı aç ya da açma.	When someone knocks: peephole, intercom, open the door or don't.
+KAPI ÇALIYOR	KNOCK AT THE DOOR
+Sığınağın kapısında biri var · K ile kapıya bak	Someone is at the shelter door · K to look
+KAPI	DOOR
+KAPI AÇILDI	DOOR OPENED
+KAPI AÇILMADI	DOOR NOT OPENED
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakMap.cs
 BÖLGE ÖZGÜR	REGION FREE
 {0} · {1} fon	{0} · {1} funds
@@ -505,7 +818,7 @@ Baskın: fon yetersiz ({0} gerekli / {1} var)	Raid: not enough funds ({0} needed
 Baskın: {0}	Raid: {0}
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/TutorialFlow.cs
 KOMUTA ODASI	COMMAND ROOM
-Burası Sığınak 07. Üstteki sayaçlar fonu, erzakı, malzemeyi, özgür bölgeleri ve sivil GÜVEN'i sayar; ALARM kenar satırında. Zaman yalnız vardiya şalterini indirince ilerler.	This is Shelter 07. The counters above track funds, supplies, materials, liberated regions and civilian TRUST; the ALARM sits on the edge line. Time moves only when you pull the shift switch.
+Burası Sığınak 07. Üstteki sayaçlar fonu, erzakı, malzemeyi, özgür bölgeleri ve sivil GÜVEN'i sayar; duvardaki YZ ALARMI eşiğe varınca YZ karşı saldırır. Zaman yalnız vardiya şalterini indirince ilerler.	This is Shelter 07. The counters above track funds, supplies, materials, liberated regions and civilian TRUST; when the AI ALARM on the wall reaches its threshold, the AI counterattacks. Time moves only when you pull the shift switch.
 GÖREV FİŞİ	MISSION SLIP
 3'e bas (GÖREVLER): harita açılır, cephedeki Batı Avrupa'nın görev fişi gelir.	Press 3 (MISSIONS): the map opens with the slip for Western Europe, the current front.
 BASKIN EMRİ	RAID ORDER
@@ -533,14 +846,18 @@ Bu ilk baskını birlikte oynayalım; sıradaki hedef sarı çerçeveli. Kırmı
 Mavi kareler Teknisyenin gidebileceği yerler.	Blue tiles are where the Technician can go.
 EMP atışı 2–5 kare öteye, engellerin üstünden gider; hedefin çevresindeki robotları iter.	The EMP shot lands 2–5 tiles away, over obstacles; it pushes the robots around the target.
 Zırhlı dronun üstündeki duvara at: dron aşağıdaki duvara itilir, çarpınca zırhı kırılır. Oklara bak: 2 numaralı bakım robotu ona vuracak.	Fire at the wall above the armored drone: the drone is pushed into the wall below and the impact breaks its armor. Watch the arrows: maintenance robot no. 2 will hit it.
-Kanca düz hatta 5 kare gider ve çarptığı birimi bir kare çeker; dost uzmanı da.	The hook flies 5 tiles in a straight line and pulls the first unit it hits one tile closer, friendly specialists too.
+Kanca düz hatta 5 kare gider: çarptığı robota 1 hasar verip onu bir kare çeker, dost uzmanı hasarsız çeker.	The hook flies 5 tiles in a straight line: it deals 1 damage to the robot it hits and pulls it one tile closer; friendly specialists are pulled unharmed.
 Teknisyene at: kasaya bir kare yaklaşır.	Throw it at the Technician: they move one tile closer to the crate.
 Makineler sırayla oynar: 1 numaralı dron bakım robotunu, 2 numaralı bakım robotu zırhı kırılan dronu vurur. Zırhlı dron ateş edemeden düşer.	Machines act in order: drone no. 1 hits the maintenance robot, maintenance robot no. 2 hits the drone whose armor broke. The armored drone goes down before it can fire.
 Uzmanlar birbirinin üstünden geçebilir.	Specialists can pass through each other.
 Dronun altındaki duvara at: dron yukarı itilir, duvara çarpıp 1 hasar alır.	Fire at the wall below the drone: the drone is pushed up, hits the wall and takes 1 damage.
 Analist bakım robotunun hedefinde, ama 1 numaralı dron önce ateş edip bakım robotunu düşürür: sıra önemli. Analist bu tur boşta kalır.	The Analyst is the maintenance robot's target, but drone no. 1 fires first and takes the robot down: order matters. The Analyst stays idle this turn.
 Dron Teknisyenin sütununa ateş edecek: kasanın yanındaki kareye geç.	The drone will fire down the Technician's column: step onto the tile next to the crate.
-Kasaya tıkla: malzemeler alınır, baskın kazanılır.	Click the crate: the supplies are taken and the raid is won.
+Kasaya tıkla: Teknisyen malzemeleri alır. Baskın bitmedi: malzemeyi yeşil kesik çerçeveli giriş karelerinden birine geri taşı.	Click the crate: the Technician takes the supplies. The raid isn't over: carry them back to one of the entry tiles with the dashed green frame.
+Dron dönüş yolunda. Yolu EMP uzmanı açacak.	A drone blocks the way back. The EMP specialist will clear it.
+Analistin altındaki kareye at: hasarlı dron duvara itilip düşer, Analist yukarı itilir ve Teknisyen'e yol açılır. EMP dostları da iter.	Fire at the tile below the Analyst: the damaged drone is pushed into the wall and goes down, the Analyst is pushed up and the Technician's path opens. EMP pushes allies too.
+Teknisyen kablo kanalının üstünden yürüyebilir; kanal yalnız üstüne itilene hasar verir.	The Technician can walk over the cable channel; it only hurts whoever is pushed onto it.
+Yeni dron Teknisyen'in satırına nişan aldı: çıkışa yürü. Taşıyıcı çıkışa varınca ekip tahliye edilir, baskın kazanılır.	The new drone is aiming at the Technician's row: walk to the exit. When the carrier reaches it, the team extracts and the raid is won.
 Teknisyeni seç: 1'e bas ya da ona tıkla.	Select the Technician: press 1 or click them.
 EMP uzmanını seç: 2'ye bas ya da ona tıkla.	Select the EMP specialist: press 2 or click them.
 Analisti seç: 3'e bas ya da ona tıkla.	Select the Analyst: press 3 or click them.
@@ -610,6 +927,7 @@ Erzak	Supplies
 Malzeme	Materials
 Kurtulan	Survivors
 Sivil sunucu hasarı	Civilian server damage
+Ayakta kalan sivil sunucu	Civilian servers left standing
 Sivil güven	Civilian trust
 {0} · {1}/{2}	{0} · {1}/{2}
 EŞİK AŞILDI	THRESHOLD CROSSED
@@ -628,6 +946,7 @@ MAKİNELER	MACHINES
 SIRA SENDE	YOUR TURN
 SON TUR	LAST TURN
 İKMAL	SUPPLIES
+girişe dön	back to entry
 ikisini de kır	break both
 kır	break
 GÜVEN {0}	TRUST {0}
@@ -655,8 +974,8 @@ yetenek	ability
 {0} · {1} kullanılmadı	{0} · {1} unused
 OPERASYON GÜNLÜĞÜ	OPERATION LOG
 KURALLAR KARTI	RULES CARD
-Teknisyen kasayı açar. İtme ve patlamalar kasaya hasar verebilir; EMP kasayı açmaz.	The Technician opens the crate. Pushes and explosions can damage it; EMP cannot open it.
-İkmal görevi: Teknisyen ile kasaya yaklaş, Q ile yeteneği seç ve kasayı aç. İmha edilen kasa görevi kaybettirir.	Supply mission: move the Technician next to the crate, press Q to select the ability and open it. Destroying the crate fails the mission.
+Teknisyen kasayı açar ve malzemeyi taşır. İtme ve patlamalar kasaya hasar verebilir; EMP kasayı açmaz.	The Technician opens the crate and carries the supplies. Pushes and explosions can damage the crate; EMP doesn't open it.
+İkmal görevi: Teknisyen ile kasayı aç, sonra malzemeyi giriş karelerinden birine geri taşı. Kasa imha olursa, Teknisyen düşerse ya da süre biterse görev kaybedilir.	Supply mission: open the crate with the Technician, then carry the supplies back to one of the entry tiles. The mission fails if the crate is destroyed, the Technician goes down or time runs out.
 EMİN MİSİN? TEKRAR BAS	ARE YOU SURE? PRESS AGAIN
 Operasyon raporuna geç	Go to operation report
 Devam et [Esc]	Resume [Esc]
@@ -692,7 +1011,7 @@ Kırmızı ok robotun bu turdaki hamlesi; bayraktaki sayı sırası.	The red arr
 Seç, taşı, kullan: 1–3 ya da tıkla, mavi kareye taşı, Q ile yetenek. Z turdaki hamleyi geri alır.	Select, move, act: 1–3 or click, move to a blue tile, Q for the ability. Z undoes a move this turn.
 Zırh: hedef dolaplara yalnız sabotaj, itilen robot ve patlayan soğutma ünitesi işler.	Armor: only sabotage, a pushed robot or an exploding cooling unit damages target cabinets.
 İtme: çarpan da çarpılan da 1 hasar alır; kanala düşen de 1 hasar alır.	Push: both the pushed and what it hits take 1 damage; falling into a channel deals 1.
-Sivilleri koru: makineler sivile nişan almaz, ama atıştan kaçarsan arkadaki sunucu vurulur. Kırılan her sunucu GÜVEN'i düşürür.	Protect civilians: machines don't aim at civilians, but if you dodge a shot the server behind you is hit. Every broken server lowers TRUST.
+Sivilleri koru: ekibe ulaşamayan makine sivil sunucuya nişan alır. Kırılan her sunucu GÜVEN'i düşürür; kazanınca ayakta kalan her 2 sunucu +1 GÜVEN.	Protect civilians: a machine that can't reach the team aims at a civilian server. Every broken server lowers TRUST; win the raid and every 2 servers left standing give +1 TRUST.
 Kazan: tur bitmeden bütün hedef dolapları kır. Alınan hasar sığınağa yara olarak döner; zırh plakası ilk darbeyi karşılar.	Win: break every target cabinet before the turns run out. Damage taken comes home as wounds; an armor plate takes the first hit.
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/UnitCardView.cs
 {0} · YEDEK	{0} · RESERVE
@@ -713,6 +1032,7 @@ DURDU	STOPPED
 # Assets/Corrigible/Game/Platform.cs
 Yerel	Local
 # Assets/Corrigible/Game/Raid/RaidBoard3D.cs
+YÜKLÜ	CARRYING
 TUR BİTTİ	TURN DONE
 ONARIM	REPAIR
 ATEŞ	FIRE
@@ -749,6 +1069,7 @@ KURTARILAN BÖLGELER	FREED REGIONS
 KAYIP	MISSING
 Lyon · 2 yaş	Lyon · age 2
 BULUNDU	FOUND
+YZ ALARMI	AI ALARM
 BEDEL	COST
 ÖDÜL	REWARD
 EMİR VERİLDİ	ORDER GIVEN

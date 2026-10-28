@@ -58,6 +58,7 @@ namespace Corrigible.Game
         public ActResult SelectLiberationRegion(string regionId) => Run(() => Sim.SelectLiberationRegion(regionId));
         public ActResult ShelterUpgrade(string roomId) => Run(() => Sim.ShelterUpgrade(roomId));
         public ActResult ShelterAssign(string roomId, int workers) => Run(() => Sim.ShelterAssign(roomId, workers));
+        public ActResult AnswerDoor(string option) => Run(() => Sim.AnswerDoor(option));
 
         /// <summary>Vardiyayı bitirir (baskın sürerken, harekât bitmişken ya da hikâye açıkken olmaz).</summary>
         public void AdvanceShift()

@@ -26,6 +26,8 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] Camera view;
         [Header("Masa")]
         [SerializeField] CounterBank counters;
+        [Tooltip("Arka duvardaki YZ ALARMI panosu (sayaç + kırmızı ışık).")]
+        [SerializeField] AlarmPanel alarm;
         [SerializeField] StationKeyRail rail;
         [SerializeField] ShiftSwitch shiftSwitch;
         [SerializeField] TelexFeed telex;
@@ -199,6 +201,7 @@ namespace Corrigible.Desk.Bridge
             foreach (var room in sim.Shelter.Rooms)
                 if (room.Workers > 0 && ShelterViewBuilder.Condition(sim, room) == RoomCondition.Stopped)
                     notes.Add(Loc.F("{0} durdu", ShelterLogic.RoomName(room.Id)));
+            if (sim.DoorVisitor != null) notes.Add(Loc.T("kapıda biri bekliyor: açılmadı sayılır"));
             var next = sim.NextLiberationSector(sim.S.Liberation.CurrentRegion);
             if (next != null && sim.LiberationRaidCheck(next.Id) == null) notes.Add(Loc.F("baskın emri verilmedi: {0}", next.Name));
             telex.Post(surface.Shift, Loc.T("ÖN KONTROL"),
@@ -243,13 +246,16 @@ namespace Corrigible.Desk.Bridge
             if (shift == null || !shift.HoldCounters) ShowCounters(countersShown);
             edge.SetValues(Loc.F("VARDİYA {0:000}  ·  FON {1}  ·  ERZAK {2}/{3}  ·  MALZEME {4}  ·  ÖZGÜR {5}/{6}  ·  GÜVEN {7}/{8}  ·  ALARM {9}/{10}", surface.Shift,
                 DeskFormat.Number(sim.S.Fon, 1), DeskFormat.Number(System.Math.Floor(shelter.Supplies), 0), DeskFormat.Number(capacity, 0),
-                DeskFormat.Number(System.Math.Floor(shelter.Materials), 0), free, regions, sim.S.Trust, sim.B.liberationTrustStart,
+                DeskFormat.Number(System.Math.Floor(shelter.Materials), 0), free, regions, sim.S.Trust, sim.TrustMax,
                 DeskFormat.Number(sim.S.Alarm, 0), DeskFormat.Number(sim.B.liberationAlarmThreshold, 0)));
             hope.Show(free, settings == null || settings.hopeMarks);
             FreedList(sim);
         }
 
-        /// <summary>Sayaç rafı simülasyonun değerleriyle; vardiya dizisi sırayla döndürür, fişleri kendisi iğneler.</summary>
+        /// <summary>
+        /// Sayaç rafı ve alarm panosu simülasyonun değerleriyle; vardiya dizisi sırayla döndürür, rafın fişlerini kendisi
+        /// iğneler (alarm panosu kendi fişini asar).
+        /// </summary>
         public void ShowCounters(bool animate, float stagger = 0, float shiftRoll = -1, bool slips = true)
         {
             var sim = Sim;
@@ -257,7 +263,11 @@ namespace Corrigible.Desk.Bridge
             var shelter = sim.Shelter;
             var lib = sim.S.Liberation;
             counters.Show(surface.Shift, sim.S.Fon, shelter.Supplies, ShelterLogic.SuppliesCapacity(shelter, sim.B), shelter.Materials,
-                lib.Regions.Count(r => r.Completed), lib.Regions.Count, sim.S.Trust, sim.B.liberationTrustStart, animate, stagger, shiftRoll, slips);
+                lib.Regions.Count(r => r.Completed), lib.Regions.Count, sim.S.Trust, sim.TrustMax, animate, stagger, shiftRoll, slips);
+            if (alarm != null)
+                alarm.Show(sim.S.Alarm, sim.B.liberationAlarmThreshold, animate, stagger * 6,
+                    Loc.F("Eşiğe ({0}) varınca YZ karşı saldırır, bir sektör yeniden işgal edilir. Her vardiya +{1}; telsiz odası düşürür.",
+                        DeskFormat.Number(sim.B.liberationAlarmThreshold, 0), ShelterViewBuilder.Rate(sim.AlarmPerShift)));
             countersShown = true;
         }
 

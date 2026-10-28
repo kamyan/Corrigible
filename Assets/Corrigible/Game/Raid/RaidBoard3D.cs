@@ -28,6 +28,9 @@ namespace Corrigible.Game.Raid
             /// <summary>Salt sunum örneğinde başlangıçta kırık gelen dolaplar; canlı oyunda boş kalır.</summary>
             public HashSet<int> Rubble = new HashSet<int>();
             public int Selected = -1;
+            /// <summary>İkmal görevinde kasa alındıysa çıkışlar (giriş kareleri) ve malzemeyi taşıyan birim; yoksa boş / −1.</summary>
+            public HashSet<int> Exits = new HashSet<int>();
+            public int Carrier = -1;
             /// <summary>Eğitim baskınında sıradaki hedef kare (sarı, nabız gibi atan çift çerçeve); yoksa −1.</summary>
             public int Guide = -1;
             public List<(int fx, int fy, int tx, int ty)> Arrows = new List<(int, int, int, int)>();
@@ -78,8 +81,14 @@ namespace Corrigible.Game.Raid
         readonly Renderer[] tint = new Renderer[64];
         readonly GameObject[] frames = new GameObject[64];
         readonly GameObject[] spawnMarks = new GameObject[64];
+        /// <summary>Duvar kareleri ve vurgulu kareler (yürüme, hedef, eğitim çerçevesi): tıklamanın hangi kareye düşeceği.</summary>
+        readonly bool[] walls = new bool[64];
+        readonly HashSet<int> pickable = new HashSet<int>();
+        int guideKey = -1;
+        readonly RaycastHit[] hits = new RaycastHit[16];
+        static readonly Comparer<RaycastHit> ByDistance = Comparer<RaycastHit>.Create((a, b) => a.distance.CompareTo(b.distance));
         readonly RaidArrow[] moveFrames = new RaidArrow[64], dangerFrames = new RaidArrow[64], repairFrames = new RaidArrow[64];
-        readonly RaidArrow[] moveHatches = new RaidArrow[64], dangerHatches = new RaidArrow[64], wakeRings = new RaidArrow[64];
+        readonly RaidArrow[] moveHatches = new RaidArrow[64], dangerHatches = new RaidArrow[64], wakeRings = new RaidArrow[64], exitFrames = new RaidArrow[64];
         readonly Dictionary<int, RaidWorldLabel> hpLabels = new Dictionary<int, RaidWorldLabel>();
         readonly Dictionary<int, RaidWorldLabel> orderLabels = new Dictionary<int, RaidWorldLabel>(), stateLabels = new Dictionary<int, RaidWorldLabel>();
         readonly Dictionary<int, GameObject> flagPins = new Dictionary<int, GameObject>();
@@ -133,6 +142,7 @@ namespace Corrigible.Game.Raid
                 var cell = go.GetComponent<RaidCell>() ?? go.AddComponent<RaidCell>();
                 cell.X = x; cell.Y = y;
                 int k = Key(x, y);
+                walls[k] = c.T == "wall";
                 tint[k] = Flat($"Tint {x},{y}", W(x, y) + Vector3.up * 0.02f, 0.94f, lib.highlight).GetComponent<Renderer>();
                 tint[k].enabled = false;
                 frames[k] = Frame($"Frame {x},{y}", W(x, y), lib.target, 0.86f, PixelWorld * 2.4f);
@@ -147,6 +157,8 @@ namespace Corrigible.Game.Raid
                 repairFrames[k].SetFrame(0.88f, PixelWorld * 2, Alpha(lib.threat, 0.85f), true);
                 wakeRings[k] = Mark("Wake pin ring", W(x, y), 0.04f);
                 wakeRings[k].SetCircle(0.33f, lib.threat, PixelWorld * 2.4f, false, true);
+                exitFrames[k] = Mark("Exit edge", W(x, y), 0.036f);
+                exitFrames[k].SetFrame(0.80f, PixelWorld * 3.5f, lib.good, true);
                 if (lib.spawnMarker != null)
                 {
                     spawnMarks[k] = Instantiate(lib.spawnMarker, W(x, y), Quaternion.identity, marksRoot);
@@ -316,11 +328,11 @@ namespace Corrigible.Game.Raid
                     hpTag.ShowHealth(u.Dead ? 0 : u.Hp, u.Max, hpInk);
                 }
                 else hpTag.Show(Loc.F("{0} {1}/{2}", letter, u.Dead ? 0 : u.Hp, u.Max), hpInk, hpInk);
-                if (u.Dead || m.Spent.Contains(u.Id) || u.Locked)
+                if (u.Dead || m.Spent.Contains(u.Id) || u.Locked || u.Id == m.Carrier)
                 {
                     var state = PieceLabel(stateLabels, u.Id, "Unit state");
                     state.SetAnchor(hpTag.transform.position - cam.transform.up * 0.30f);
-                    state.Show(u.Dead ? Loc.T("DÜŞTÜ") : m.Spent.Contains(u.Id) ? Loc.T("TUR BİTTİ") : Loc.T("KİLİTLİ"), hpInk, hpInk);
+                    state.Show(u.Dead ? Loc.T("DÜŞTÜ") : u.Locked ? Loc.T("KİLİTLİ") : u.Id == m.Carrier ? Loc.T("YÜKLÜ") : Loc.T("TUR BİTTİ"), hpInk, hpInk);
                     labelGroups.Add(new[] { hpTag, state });
                 }
                 else labelGroups.Add(new[] { hpTag });
@@ -369,11 +381,15 @@ namespace Corrigible.Game.Raid
                 }
                 repairFrames[k].gameObject.SetActive(m.Heal.Contains(k));
                 wakeRings[k].gameObject.SetActive(m.Spawns.Contains(k));
+                exitFrames[k].gameObject.SetActive(m.Exits.Contains(k));
                 if (spawnMarks[k] != null) spawnMarks[k].SetActive(m.Spawns.Contains(k));
             }
             var selected = B.Units.FirstOrDefault(u => u.Id == m.Selected && !u.Dead);
             selectionFrame.gameObject.SetActive(selected != null);
             if (selected != null) selectionFrame.transform.position = W(selected.X, selected.Y) + Vector3.up * 0.045f;
+            pickable.Clear(); pickable.UnionWith(m.Moves); pickable.UnionWith(m.Targets);
+            if (m.Guide >= 0) pickable.Add(m.Guide);
+            guideKey = m.Guide;
             guideFrame.gameObject.SetActive(m.Guide >= 0);
             if (m.Guide >= 0) guideFrame.transform.position = W(m.Guide % Baskin.N, m.Guide / Baskin.N) + Vector3.up * 0.06f;
             // Niyet okları
@@ -558,12 +574,7 @@ namespace Corrigible.Game.Raid
             if (cam == null || hoverFrame == null || Mouse.current == null) return;
             (int x, int y)? h = InputEnabled && !Busy ? externalHover : null;
             bool overUi = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
-            if (InputEnabled && !Busy && !overUi && Physics.Raycast(cam.ScreenPointToRay(Mouse.current.position.ReadValue()), out var hit, 200f))
-            {
-                var cell = hit.collider.GetComponentInParent<RaidCell>();
-                if (cell != null) h = (cell.X, cell.Y);
-                else { var p = hit.collider.GetComponentInParent<RaidPiece>(); if (p != null) h = (p.X, p.Y); }
-            }
+            if (InputEnabled && !Busy && !overUi) h = Pick(cam.ScreenPointToRay(Mouse.current.position.ReadValue())) ?? h;
             if (h != hover)
             {
                 hover = h;
@@ -572,6 +583,32 @@ namespace Corrigible.Game.Raid
                 HoverChanged?.Invoke(h);
             }
             if (h != null && !overUi && Mouse.current.leftButton.wasPressedThisFrame) TileClicked?.Invoke(h.Value.x, h.Value.y);
+        }
+
+        /// <summary>
+        /// Işının ilk çarptığı kare ya da parça. Duvar bloğu yarım kare yüksekliğindedir ve arkasındaki karenin yarısını örter:
+        /// vurgusuz bir duvar, arkasındaki vurgulu kareyi (yürüme, hedef) bırakır. Eğitim çerçevesinin karesi ışının üstündeyse
+        /// önünde ne olursa olsun o seçilir. Işın zemine değince tarama biter (zeminin altındaki çarpışmalar sayılmaz).
+        /// </summary>
+        (int x, int y)? Pick(Ray ray)
+        {
+            int n = Physics.RaycastNonAlloc(ray, hits, 200f);
+            Array.Sort(hits, 0, n, ByDistance);
+            (int x, int y)? first = null;
+            bool throughWall = false;
+            for (int i = 0; i < n; i++)
+            {
+                var cell = hits[i].collider.GetComponentInParent<RaidCell>();
+                var piece = cell == null ? hits[i].collider.GetComponentInParent<RaidPiece>() : null;
+                if (cell == null && piece == null) continue;
+                var t = cell != null ? (cell.X, cell.Y) : (piece.X, piece.Y);
+                int k = Key(t.Item1, t.Item2);
+                if (k == guideKey) return t;
+                if (first == null) { first = t; throughWall = cell != null && walls[k] && !pickable.Contains(k); }
+                else if (throughWall && pickable.Contains(k)) return t;
+                if (cell != null && !walls[k]) break;
+            }
+            return first;
         }
 
         /// <summary>Kare tıklanmış gibi davranır (test ve klavye için).</summary>

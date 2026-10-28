@@ -8,6 +8,8 @@ namespace Corrigible.Desk.Bridge
     {
         /// <summary>Okunmuş baskın raporu sayısı; fazlası rapor belgesi olarak açılır.</summary>
         public int RaidLogSeen;
+        /// <summary>Son rapor bekletiliyor: harekâtı kapıda biten kararın kâğıdı henüz açık.</summary>
+        public bool HoldEnding;
     }
 
     /// <summary>
@@ -31,7 +33,7 @@ namespace Corrigible.Desk.Bridge
         {
             sim = simulation; S = simulation.S; st = state;
             var vm = new DeskViewModel();
-            if (S.Ending != null) vm.GameOver = GameOver();
+            if (S.Ending != null) { if (!st.HoldEnding) vm.GameOver = GameOver(); }
             else if (!raidScene && S.Raid == null && S.RaidLog.Count > st.RaidLogSeen) vm.Event = RaidReport(S.RaidLog[S.RaidLog.Count - 1]);
             return vm;
         }

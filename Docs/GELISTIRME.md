@@ -28,9 +28,12 @@ ueval 'UnityEditor.SceneManagement.EditorSceneManager.NewScene(UnityEditor.Scene
 
 | Dosya | Ne kilitler |
 |---|---|
-| `Tests/EditMode/LiberationCampaignTests` | açılış, sektör sırası, ödüller, sınır seçimi, bütün harekâtın kazanılabilmesi, makinelerin kopyalanması, kayıt/devam |
+| `Tests/EditMode/LiberationCampaignTests` | açılış, sektör sırası, ödüller, sınır seçimi, bütün harekâtın kazanılabilmesi, makinelerin kopyalanması, sivil güven (kayıp, ayakta kalan sivil ödülü, tavan), kayıt/devam |
+| `Tests/EditMode/DoorTests` | sığınağın kapısı: ilk vuruş, aç/açma ve seçim, cevapsız ziyaretçi, vuruş aralığı ve ana RNG'ye dokunmama, kopya ve silahlı sakinin koşulları, bedeller, kart tablosunun bütünlüğü, kayıttan devam |
 | `Tests/EditMode/ShelterTests` | sığınak tüketimi, plaka dökümü, revir, yedekler, telsiz, depo sınırları |
-| `Tests/EditMode/RaidEngineTests` | mulberry32, aynı hamlelerle aynı savaş (beklenen imzalar), geri alma, önizleme, ikmal görevi |
+| `Tests/EditMode/RaidEngineTests` | mulberry32, aynı hamlelerle aynı savaş (beklenen imzalar, ikmal kaçışla), geri alma, önizleme, ikmal görevi ve kaçışı, sunucu sertliği (düğüm canı, ek makine; kasa ve çekirdek hariç) |
+| `Tests/EditMode/RaidMapsTests` | harekâtın harita havuzu: aynı tohum aynı havuz, harekâtlar harita paylaşmaz, üretilen haritaların kuralları, altı türden eşit sayıda ve her harita türünün kurallarına uyar, torba (her harita bir kez, art arda tekrar yok), havuz yalnız `MapSeed` ile |
+| `Desk/Tests/EditMode/SiginakDoorTests` | kapı kâğıdının evreleri (bak, sor, aç, açma; bedel ve gerekçe; sonuç ve damga), son raporun bekletilmesi, vardiya raporunun kapı satırı, sahne bağlantıları ve kapı pozu |
 | `Desk/Tests/EditMode/TutorialFlowTests` | eğitim adımlarının sırası, geçilen adımlar, raporlar, atlama, sahne bağlantıları |
 | `Desk/Tests/EditMode/TutorialRaidTests` | senaryolu ilk baskın: her harekât tohumunda aynı tahta, rehberin adımları hasarsız zafere varır |
 | `Tests/EditMode/RegionIdentityTests` | bölge özellikleri ve imza makineleri, zorluk kademesi, yeni makinelerin niyetleri, oda seviyesi kilidi |
@@ -160,5 +163,14 @@ Ajan olarak: `ueval 'return Corrigible.EditorTools.LocalizationTool.UpdateTable(
   sahne oluşturulduktan sonra yükle.
 - **Dönük nesnenin çarpıştırıcısı:** `Renderer.bounds` dünya eksenlidir; 35° dönük bir nesnede derinliği de kapsar. Kutu
   çarpıştırıcıyı nesnenin kendi ekseninde, mesh sınırlarından hesapla (`SiginakRoomTests.RoomTargets_CollidersFitTheirModels`).
+- **Kapalı kameranın ışını:** `PhysicsRaycaster` kameradan ayrı bir bileşendir; kamera kapalıyken de ışın atar. Baskında
+  odanın ışını açık kalırsa tahtanın parçaları "arayüz" sayılır ve karelere tıklanamaz; `RaidLauncher.hideDuringRaid`'de
+  durur (testli). Tıklama yolunu doğrularken `RaidDataSource` metotlarını doğrudan çağırma: fareyi
+  `InputSystem.QueueStateEvent(Mouse.current, new MouseState { position = cam.WorldToScreenPoint(RaidBoard3D.W(x, y)), buttons = 1 })`
+  ile sür.
+- **Tahtada tıklama yükseklik ister:** karonun çarpıştırıcısı görünen gövdesine uzanmalı (duvar bloğu 0,55; testli), yoksa
+  tepesine tıklayan arkadaki kareyi seçer. Kareyi seçen kural `RaidBoard3D.Pick` (vurgusuz duvar arkasındaki vurgulu
+  kareyi bırakır, eğitim çerçevesi ışın üstündeyse kazanır). Tıklamayı doğrularken karo merkezine değil oyuncunun
+  tıklayacağı yere (gövde, blok tepesi) tıkla.
 - **Vardiya kaydı vardiya sonunda alınır:** işgal geçmişi (`S.Hist`) yalnız `Step`'te yazılır; vardiya içinde değişen
   değeri gösteren sunum (son rapor grafiği) güncel değeri ayrıca ekler.

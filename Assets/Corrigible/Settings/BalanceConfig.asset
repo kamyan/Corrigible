@@ -13,146 +13,62 @@ MonoBehaviour:
   m_Name: BalanceConfig
   m_EditorClassIdentifier: Corrigible.Game::Corrigible.Game.BalanceConfig
   balance:
+    startFon: 60
     liberationRaidCost: 12
     liberationDailyFunds: 2
     liberationRegionIncome: 0.5
-    liberationLootFunds: 12
+    liberationLootFunds: 10
     liberationServerFunds: 8
     liberationCaptureFunds: 15
     liberationInjuryDays: 3
-    growth: 0.05
-    spread: 0.3
-    satBeta: 0.4
-    spreadMin: 15
-    tek: 3.5
-    tekPow: 2
-    qTek: 0.2
-    patchDays: 20
-    patchGrowth: 0.5
-    startFon: 60
-    monitorCostMul: 1
-    startSg: 5
-    cpRate: 1
-    fonDiv: 150
-    preAwareFund: 0.4
-    researchReserve: 0
-    depRate: 0.15
-    audit: 20
-    modernResearchReserve: 15
-    centralFund: 0.75
-    regionalFundMul: 0.8
-    reportReward: 1
-    reportIncomeShare: 0.08
-    reportBudgetCap: 2
-    reportMaxPending: 2
-    reportIntervalDays: 6
-    reportLifetimeDays: 30
-    reportRegionCooldownDays: 12
-    reportInfiltrationWeight: 0.5
-    reportBothBonus: 0.25
-    reportSaturation: 60
-    budgetTier1Cost: 25
-    budgetTier2Cost: 40
-    budgetTier1Multiplier: 1.15
-    budgetTier2Multiplier: 1.35
-    anomalyTier1Cost: 12
-    anomalyTier2Cost: 18
-    verificationCost: 40
-    networkTier1Cost: 16
-    networkTier2Cost: 24
-    quantumCost: 60
-    communicationTier1Cost: 15
-    communicationTier2Cost: 20
-    analogCost: 50
-    anomalyTier1Multiplier: 1.5
-    anomalyTier2Multiplier: 2
-    networkTier1Reduction: 0.15
-    networkTier2Reduction: 0.3
-    networkTier1SabotageMultiplier: 0.75
-    networkTier2SabotageMultiplier: 0.5
-    communicationTier1LossMultiplier: 0.75
-    communicationTier2LossMultiplier: 0.5
-    analogDependencyReduction: 20
-    recoveryCost: 2
-    recoveryGain: 15
-    recoveryMinGap: 5
-    recoveryDays: 4
-    diplomacyCost: 8
-    diplomacySg: 2
-    diplomacyTrustGain: 15
-    diplomacyTrustCap: 70
-    diplomacyReturnTrust: 35
-    diplomacyCooldownDays: 20
-    interpretationCost: 68
-    interpretationDays: 25
-    corrigibilityCost: 98
-    corrigibilityDays: 30
-    valueLockCost: 165
-    valueLockDays: 38
-    monitorBaseCost: 10
-    monitorComputeCost: 4
-    auditCost: 15
-    fieldAuditCost: 20
-    auditSg: 1
-    quarantineSg: 8
-    killSwitchBaseCost: 40
-    globalKillSwitchSg: 50
-    controlledGiftCost: 20
-    verificationSg: 2
-    teamHireCost: 45
-    teamHireDays: 4
-    raidCost: 30
-    raidSg: 6
-    sgBeforeAware: 0.05
-    sgAfterAware: 0.25
-    sgPerDetected: 0.03
-    dependencyCostThreshold: 40
-    dependencyCostDivisor: 50
-    economyRecoveryRate: 0.02
-    trustTarget: 70
-    trustDrift: 0.05
-    quarantineEconomyLoss: 1
-    quarantineTrustLoss: 0.4
-    quarantineEconomyFloor: 10
-    departureTrust: 20
-    returnTrust: 35
-    shutdownTrustLoss: 30
-    shutdownEconomyLoss: 40
-    shutdownDependencyLoss: 40
-    damagedEconomyFloor: 5
-    shutdownDays: 20
-    giftEconomyGain: 10
-    giftTrustGain: 5
-    giftDependencyGain: 15
-    controlledGiftDependencyGain: 5
-    rejectedGiftLocalTrustLoss: 15
-    mediaTrustLoss: 3
-    veilTrustLoss: 5
-    veilDependencyLoss: 15
-    raidEconomyLossPerCollateral: 5
-    raidTrustLossPerCollateral: 2
-    raidFailureTrustLoss: 10
-    electionSg: 5
-    informantCost: 35
-    sanctionSg: 2
-    pressConferenceSg: 3
-    academicTeamCost: 25
-    emergencyResponseCost: 20
-    donationFon: 60
-    aiOfferFon: 50
+    liberationRestHeal: 1
+    liberationRookieHpPenalty: 1
+    liberationTier2At: 2
+    liberationTier3At: 6
+    liberationTier4At: 10
+    liberationTrustStart: 10
+    liberationTrustMax: 20
+    liberationTrustPerCivilian: 1
+    liberationCiviliansPerTrust: 2
+    liberationTrustPerRegion: 3
+    liberationAlarmPerShift: 1
+    liberationAlarmPerFailure: 1
+    liberationAlarmPerServer: 4
+    liberationAlarmThreshold: 10
+    liberationCounterattackTrust: 1
+    liberationServerTargetHp: 2
+    liberationServerMachines: 0
+    liberationLootExtraTurns: 2
+    liberationCivilianHp: 2
+    doorFirstKnock: 2
+    doorKnockMin: 2
+    doorKnockMax: 4
+    doorSafeShifts: 8
+    doorRepeatGap: 4
+    doorHungerSupplies: 1
+    doorCopyAlarm: 0.6
+    doorCopyAfterCounterattack: 4
     shelterStartPopulation: 6
     shelterStartSupplies: 24
     shelterStartMaterials: 14
     shelterMaxRoomLevel: 3
+    shelterLevel2Regions: 2
+    shelterLevel3Regions: 5
     shelterResidentsPerLevel: 8
     shelterWorkersPerLevel: 2
-    shelterSuppliesPerWorker: 1
-    shelterSuppliesPerResident: 0.2
-    shelterSuppliesStoragePerLevel: 40
-    shelterMaterialsStorage: 100
+    shelterSuppliesPerWorker: 0.7
+    shelterSuppliesPerResident: 0.35
+    shelterSuppliesStoragePerLevel: 30
+    shelterMaterialsStorage: 60
     shelterStarvingWorkMultiplier: 0.5
+    shelterReservesPerLevel: 1
+    shelterPlatesPerWorker: 0.25
+    shelterPlateMaterials: 4
+    shelterPlatesPerLevel: 1
+    shelterHealPerWorker: 0.34
     shelterHealingWorkers: 1
     shelterHealingDays: 1
+    shelterRadioAlarmPerWorker: 0.05
     shelterLivingFon: 8
     shelterLivingMaterials: 6
     shelterRadioFon: 6
@@ -161,27 +77,7 @@ MonoBehaviour:
     shelterWorkshopMaterials: 6
     shelterInfirmaryFon: 12
     shelterInfirmaryMaterials: 8
-    shelterLootMaterials: 10
-    shelterLootSupplies: 10
+    shelterLootMaterials: 7
+    shelterLootSupplies: 6
     shelterLootResidents: 1
-    shelterServerMaterials: 6
-    alignBase: 0
-    alignPer: 0.25
-    alignMax: 1
-    sabotage: 0.1
-    sabotageLoss: 4
-    silentInf: 60
-    silentDep: 40
-    illusionDays: 30
-    silentBlock: 60
-    vetoBase: 70
-    vetoAnalog: 85
-    misreadCost: 15
-    rejectSg: 2
-    rejectTrust: 2
-    giftInf: 8
-    coreFloor: 20
-    coreSeed: 8
-    coreTek: 0.05
-    salterSg: 30
-    coreSalterSg: 20
+    shelterServerMaterials: 5

@@ -26,6 +26,26 @@ namespace Corrigible.Tests
         }
 
         [Test]
+        public void ServerRaid_CarriesTheServerHardness_LootRaidDoesNot()
+        {
+            var sim = Simulation.NewGame(101, new Balance { startFon = 100, liberationServerTargetHp = 2, liberationServerMachines = 1 });
+            Ready(sim);
+            Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
+            Assert.AreEqual(0, sim.S.Raid.Params.TargetHpBonus);
+            Assert.AreEqual(0, sim.S.Raid.Params.ExtraMachines);
+            Assert.AreEqual(sim.B.liberationLootExtraTurns, sim.S.Raid.Params.ExtraTurns, "ikmalde dönüş turu");
+            Assert.AreEqual(sim.B.liberationCivilianHp, sim.S.Raid.Params.CivilianHp);
+            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true }).Ok);
+            CaptureNext(sim);
+            Ready(sim);
+            Assert.IsTrue(sim.StartLiberationRaid("weu_3").Ok);
+            Assert.AreEqual("server", sim.S.Raid.Params.MissionKind);
+            Assert.AreEqual(2, sim.S.Raid.Params.TargetHpBonus);
+            Assert.AreEqual(1, sim.S.Raid.Params.ExtraMachines);
+            Assert.AreEqual(0, sim.S.Raid.Params.ExtraTurns, "sunucuda ek tur yok");
+        }
+
+        [Test]
         public void Opening_IsKnownFullOccupation_WithOneTeamAndThreeSectorSequence()
         {
             var sim = New();
@@ -253,8 +273,10 @@ namespace Corrigible.Tests
             var sim = New();
             int guard = 0;
             while (sim.S.Ending == null && guard++ < 1000) sim.Step();
-            Assert.AreEqual("dagilma", sim.S.Ending, "beklemek de bedelsiz değil: karşı saldırılar güveni bitirir");
-            Assert.AreEqual(sim.B.liberationTrustStart / sim.B.liberationCounterattackTrust, sim.S.Counterattacks);
+            Assert.AreEqual("dagilma", sim.S.Ending, "beklemek de bedelsiz değil: karşı saldırılar ve açılmayan kapı güveni bitirir");
+            int doorLoss = -sim.S.Door.Log.Sum(v => v.Trust);
+            Assert.Greater(doorLoss, 0, "kapıyı hiç açmamanın da bedeli var");
+            Assert.AreEqual(sim.B.liberationTrustStart, sim.S.Counterattacks * sim.B.liberationCounterattackTrust + doorLoss);
             Assert.IsNull(sim.S.LastCounterattack, "geri alınacak sektör yokken de saldırı güveni düşürür");
         }
 
@@ -323,21 +345,55 @@ namespace Corrigible.Tests
         }
 
         [Test]
-        public void LiberatedRegion_RestoresTrust_UpToStart()
+        public void LiberatedRegion_RestoresTrust_UpToTheCap()
         {
             var sim = New();
-            int start = sim.B.liberationTrustStart;
+            int start = sim.B.liberationTrustStart, perRegion = sim.B.liberationTrustPerRegion;
+            Assert.AreEqual(System.Math.Max(start, sim.B.liberationTrustMax), sim.TrustMax);
+            sim.B.liberationTrustMax = start + perRegion + 1;
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
             Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true, Collateral = 1 }).Ok);
             CaptureNext(sim);
             Assert.AreEqual(start - 1, sim.S.Trust);
             CaptureNext(sim);
             Assert.IsTrue(sim.LiberationRegion("weu").Completed);
-            Assert.AreEqual(System.Math.Min(start, start - 1 + sim.B.liberationTrustPerRegion), sim.S.Trust);
+            Assert.AreEqual(start - 1 + perRegion, sim.S.Trust, "Bölge güveni başlangıcın üstüne çıkarabilir.");
             Assert.IsTrue(sim.SelectLiberationRegion("eeu").Ok);
             CompleteRegion(sim);
-            Assert.AreEqual(start, sim.S.Trust, "Güven başlangıç değerini aşmaz.");
-            Assert.AreEqual(0, sim.S.RaidLog.Last().LiberationReward.Trust);
+            Assert.AreEqual(sim.TrustMax, sim.S.Trust, "Güven tavanı aşmaz.");
+            Assert.AreEqual(2, sim.S.RaidLog.Last().LiberationReward.Trust);
+        }
+
+        [Test]
+        public void CiviliansLeftStanding_WinBackTrust_OnlyWhenTheRaidIsWon()
+        {
+            var sim = New();
+            int start = sim.B.liberationTrustStart, per = sim.B.liberationCiviliansPerTrust;
+            Assert.Greater(per, 0);
+            Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
+            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true, Collateral = 1, CiviliansLeft = 2 * per + 1 }).Ok);
+            var reward = sim.S.RaidLog.Last().LiberationReward;
+            Assert.AreEqual(2 * per + 1, reward.CiviliansLeft);
+            Assert.AreEqual(2, reward.TrustFromCivilians, "Her liberationCiviliansPerTrust sunucu +1; artan sayılmaz.");
+            Assert.AreEqual(1, reward.Trust);
+            Assert.AreEqual(start + 1, sim.S.Trust);
+            Ready(sim);
+            Assert.IsTrue(sim.StartLiberationRaid("weu_2").Ok);
+            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = false, CiviliansLeft = 6 }).Ok);
+            reward = sim.S.RaidLog.Last().LiberationReward;
+            Assert.AreEqual(0, reward.TrustFromCivilians, "Kaybedilen baskının sivilleri işgal altında kalır.");
+            Assert.AreEqual(start + 1, sim.S.Trust);
+            var restored = Replay.Restore(UnityEngine.JsonUtility.FromJson<GameRecord>(UnityEngine.JsonUtility.ToJson(sim.Record)));
+            Assert.AreEqual(start + 1, restored.S.Trust, "Ayakta kalan sivil sayısı kayda yazılır.");
+        }
+
+        [Test]
+        public void RaidResult_CarriesCiviliansLeft_ThroughTheRecord()
+        {
+            var r = RaidResult.Decode(new RaidResult { Success = true, Collateral = 1, Turns = 4, CiviliansLeft = 3, Hp = { 2, 0, 1 } }.Encode());
+            Assert.AreEqual(3, r.CiviliansLeft);
+            Assert.AreEqual(new[] { 2, 0, 1 }, r.Hp.ToArray());
+            Assert.AreEqual(0, RaidResult.Decode("1|0|1|0|4|2,0,1|0,0,0").CiviliansLeft, "Eski biçimde alan yok: sıfır.");
         }
 
         [Test]

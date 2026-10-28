@@ -379,6 +379,45 @@ Açık farklar (sahibi olan aşama):
 
 ## CHANGELOG
 
+- **2026-10-28 · Kıt sığınak ekonomisi:** vardiya raporunun analist notuna erzak uyarısı (`ShiftReportBuilder.Analyst`:
+  toplayıcılar yetmezken erzak 6 vardiya içinde bitecekse "→ erzak N vardiyaya yeter, ikmale çık"). ERZAK sayacı depo
+  sınırını (`/30`) simülasyondan okur; sahne ve prefab değişmedi. V.014 fikstürü erzak 22/30.
+
+- **2026-10-28 · Güven tavanı 20:** `liberationTrustMax` 40 → 20 (denge değeri; GÜVEN sayacı, operasyon raporu ve baskın
+  HUD'u `Simulation.TrustMax`'tan okuduğu için sahne ve prefab değişmedi).
+
+- **2026-10-28 · Sığınağın kapısı (K8):** sağ duvarda çarklı çelik kapı (`SiginakRoom/Bunker door`: kasa, tehlike bandı,
+  menteşe pivotunda kanat, kırmızı çark, gözetleme deliği ve kayan kapağı, "07" şablonu, üstte lamba ve kırmızı ışık, yanda
+  interkom; `DoorProp`, `DeskTarget` "SIĞINAK KAPISI · K"). Duvarın mesh'i kapı boşluklu (`Meshes/wall_doorway.asset`, UV'ler
+  özgün dörtgenle aynı), ardında kısa koridor (`Corridor`: zemin, tavan, üç duvar, lamba, soğuk nokta ışığı, siluet; ışık
+  ve siluet yalnız kapı açıkken). Kamera pozu `Poses/K8` (0,05 · 1,35 · 0,80; 5°, 85°; FOV 58): kapı ekranın sağ-ortasında,
+  kâğıt solda. Kâğıt (`SiginakHud/Door card`, `DoorCardView`) vardiya raporunun kâğıdından türedi: başlık, gövde, 6 düğme
+  yuvası (koyu mürekkep asıl eylem, çerçeveli kâğıt öteki; numara kısayolu, sağda bedel ya da gerekçe), kısayol satırı,
+  sağ altta kırmızı damga. Vardiya raporuna üçüncü ekip yuvası (`Team 2`, kapı satırı). Bağlayıcı `Door controller`
+  (`SiginakDoor`). Sesler `Cue.DoorKnock/DoorOpen/DoorShot` (yer tutucu, sentez).
+
+- **2026-10-28 · Güven tavanı ve ayakta kalan siviller:** GÜVEN sayacı ve baskın HUD'u tavanı `Simulation.TrustMax`'tan
+  okur (10 → 40; önceden başlangıç değeri tavandı). Operasyon raporunda kazanılan baskından sonra "Ayakta kalan sivil
+  sunucu" satırı (`SimDeskBuilder.Report`), "Sivil güven" satırının üstünde. Analist kartı efektleri "−1 robot · çeker";
+  kurallar kartının sivil satırı yeni kuralı anlatır. Prefab ve sahne değişmedi.
+
+- **2026-10-28 · Hedef can noktaları:** baskın HUD'unun hedef kartında hedef başına 8 can noktası (`RaidHud.prefab ›
+  Objective/Can 4–7`, 13 px arayla; dizi `targetPips` hedef başına 8, `RaidHudView` sayıyı diziden okur). Önceden 4'te
+  kesiliyordu: 5 canlı çekirdek ve zırhlı düğüm de eksik görünüyordu; sertleştirilmiş düğüm 6–7 can.
+
+- **2026-10-28 · İkmal kaçışı:** baskın HUD'unun tur şeridine iki kutu (`RaidHud.prefab › TurnPlaque/Turn7, Turn8`, 26 px
+  arayla); plaka genişliği, faz kartı ve SON TUR damgası tur sayısıyla kutu başına 26 px kayar, sayının dışındaki kutular
+  gizli (ikmal 7 tur, kısa nöbet bir tur az). Kasa alınınca giriş karelerinde yeşil kesik çerçeve (`RaidBoard3D` "Exit
+  edge": 0,80 kare, 3,5 px, `lib.good`), taşıyıcıda "YÜKLÜ" durum etiketi, HUD hedefi "girişe dön", kasa küçük resminde
+  ALINDI; çıkış karesinin kartı "Çıkış" ve taşıyıcı seçiliyken oraya yürüyüş "operasyon kazanılır".
+
+- **2026-10-27 · YZ ALARMI panosu:** arka duvarda, mantar pano ile posterin arasında (`SiginakRoom/Shell/Alarm panel`,
+  dünya (0,06; 1,34; 2,285), ölçek 1,3): bakalit plaka ve pirinç şerit, GÜVEN modülünün kopyası sayaç ("YZ ALARMI", iki
+  çark + "/10" eki, fark fişi) çerçevesiyle, sağında pirinç yuvalı kırmızı ışık (`beaconOff` #5A1A12 tokenı
+  `colors.bakelite.red`; yanınca `mastRed`). Rafta yedinci modüle yer yok (masa üstü ±0,92, raf ±0,80, sağda lamba).
+  `AlarmPanel` eşiğe 3 basamak kala ışığı yakar, son basamakta 0,5 s'de bir yakıp söndürür; `DeskTarget` üzerine gelince
+  eşiği ve bu vardiyanın artışını yazar (satırı `SiginakDesk`). Eğitimin ilk notu panoyu gösterir.
+
 - **2026-10-27 · Senaryolu ilk baskın:** taktik tahtada sıradaki kare için sarı çift çerçeve (`RaidBoard3D` "Tutorial guide
   frame": 0,97 kare, 5 px, `highlighterColor`, sinüsle %6 nabız; canlandırma sırasında gizli). Eğitim notu baskında
   "BASKIN · ADIM n/21" başlığıyla talimat ve ders yazar; not "ANALİST NOTU · n/12". Not masa pozunda ve baskın bitince

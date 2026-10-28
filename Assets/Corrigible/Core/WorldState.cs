@@ -21,7 +21,7 @@ namespace Corrigible.Core
         public string Text;
     }
 
-    public enum SimEventType { Raid, RegionLiberated, End, Counterattack }
+    public enum SimEventType { Raid, RegionLiberated, End, Counterattack, Door }
 
     public sealed class SimEvent
     {
@@ -76,6 +76,20 @@ namespace Corrigible.Core
         public string Signature;
         /// <summary>Kadro (sırasıyla giriş kareleri); boşsa tam ve sağlam üç uzman.</summary>
         public List<SquadSlot> Squad;
+        /// <summary>Harekâtın harita havuzunun tohumu (yeni oyunun tohumu, <see cref="RaidMaps"/>); 0 ise elle çizilmiş üç harita.</summary>
+        public uint MapSeed;
+        /// <summary>Harekâttaki baskın sırası (1'den): havuzun torbasından hangi haritanın geleceği (<see cref="RaidMaps.Slot"/>); 0 ise eski seçim.</summary>
+        public int MapSlot;
+        /// <summary>Makinelerin aklı: 0 temel (eğitim baskını, örnek baskın, kilitli motor testleri); 1 kampanyanın gelişmiş aklı
+        /// (hedefin önünü ve kaçış yolunu tutar, ateş hattını Teknisyen'in geçeceği karelere çevirir, taşıyıcıyı kovalar).</summary>
+        public int Tactics;
+        /// <summary>Sunucu görevinin sertliği (dengeden, <c>liberationServerTargetHp/Machines</c>): düğüm dolabının ek canı (çekirdek
+        /// hariç) ve baştaki ek makine; ikmal görevinde ve havuzsuz baskında 0.</summary>
+        public int TargetHpBonus, ExtraMachines;
+        /// <summary>Baskının ek turu (dengeden: ikmal görevinde dönüş yolu için <c>liberationLootExtraTurns</c>).</summary>
+        public int ExtraTurns;
+        /// <summary>Sivil sunucunun canı (dengeden <c>liberationCivilianHp</c>); 0 ise 1.</summary>
+        public int CivilianHp;
     }
 
     [Serializable]
@@ -92,11 +106,13 @@ namespace Corrigible.Core
     {
         public bool Success, Retreat;
         public int Collateral, Down, Turns;
+        /// <summary>Baskın bitince tahtada ayakta kalan sivil sunucu sayısı (kazanılan baskında güven geri kazandırır).</summary>
+        public int CiviliansLeft;
         public string Reason;
         /// <summary>Kadronun sırasıyla kalan canı (düşen 0) ve kalan zırh plakası.</summary>
         public List<int> Hp = new List<int>(), Armor = new List<int>();
 
-        public string Encode() => $"{(Success ? 1 : 0)}|{(Retreat ? 1 : 0)}|{Collateral}|{Down}|{Turns}|{string.Join(",", Hp)}|{string.Join(",", Armor)}";
+        public string Encode() => $"{(Success ? 1 : 0)}|{(Retreat ? 1 : 0)}|{Collateral}|{Down}|{Turns}|{string.Join(",", Hp)}|{string.Join(",", Armor)}|{CiviliansLeft}";
 
         public static RaidResult Decode(string s)
         {
@@ -106,6 +122,7 @@ namespace Corrigible.Core
                 Success = p[0] == "1", Retreat = p[1] == "1",
                 Collateral = int.Parse(p[2]), Down = int.Parse(p[3]), Turns = int.Parse(p[4]),
                 Hp = p.Length > 5 ? Ints(p[5]) : new List<int>(), Armor = p.Length > 6 ? Ints(p[6]) : new List<int>(),
+                CiviliansLeft = p.Length > 7 ? int.Parse(p[7]) : 0,
             };
         }
 
@@ -137,6 +154,8 @@ namespace Corrigible.Core
         public int Counterattacks;
         /// <summary>Son karşı saldırıda yeniden işgal edilen sektör (hiç yoksa ya da geri alınacak sektör yoksa null).</summary>
         public string LastCounterattack;
+        /// <summary>Son karşı saldırının günü (hiç olmadıysa −1).</summary>
+        public int LastCounterattackDay = -1;
         public IncomeBreakdown LastIncome;
         public int LastIncomeDay;
         public List<EconomyTransaction> TransactionLedger = new List<EconomyTransaction>();
@@ -146,6 +165,8 @@ namespace Corrigible.Core
         public int Raids;
         public List<RaidLogEntry> RaidLog = new List<RaidLogEntry>();
         public LiberationCampaignState Liberation;
+        /// <summary>Sığınağın kapısı: bekleyen ziyaretçi, sıradaki vuruş, bayraklar ve ziyaretler.</summary>
+        public DoorState Door;
 
         public List<HistPoint> Hist = new List<HistPoint>();
         public List<Moment> Moments = new List<Moment>();

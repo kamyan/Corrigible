@@ -7,7 +7,8 @@ using UnityEditor;
 
 namespace Corrigible.Desk.Tests
 {
-    /// <summary>Senaryolu ilk baskın: harekâtın ilk baskını hangi tohumla başlarsa başlasın aynı tahta kurulur ve rehberin adımları hasarsız zafere varır.</summary>
+    /// <summary>Senaryolu ilk baskın: harekâtın ilk baskını hangi tohumla başlarsa başlasın aynı tahta kurulur (temel makine aklı,
+    /// elle çizilmiş harita) ve rehberin adımları kasayı alıp girişe dönerek hasarsız zafere varır.</summary>
     public class TutorialRaidTests
     {
         static RaidParams FirstRaid(uint seed)
@@ -49,6 +50,7 @@ namespace Corrigible.Desk.Tests
                     guide.Advance();
                 }
                 Assert.AreEqual("won", b.Phase, "tohum {0}", seed);
+                Assert.AreNotEqual(0, b.Carrier, "kasa alındı ve malzeme girişe taşındı");
                 Assert.AreEqual(0, b.Collateral);
                 Assert.IsTrue(b.Units.Where(v => v.Side == 'p').All(v => !v.Dead && v.Hp == v.Max), "uzmanlar yara almaz");
             }
@@ -58,9 +60,9 @@ namespace Corrigible.Desk.Tests
         public void Steps_SelectBeforeActing_AndCarryTheLessons()
         {
             var steps = TutorialRaid.Steps();
-            Assert.AreEqual(21, steps.Count);
+            Assert.AreEqual(30, steps.Count);
             Assert.AreEqual(RaidGuideStep.Select, steps[0].Kind);
-            Assert.AreEqual(2, steps.Count(s => s.Kind == RaidGuideStep.End), "üç tur: iki kez tur bitirilir, üçüncüde kasa alınır");
+            Assert.AreEqual(4, steps.Count(s => s.Kind == RaidGuideStep.End), "beş tur: üçüncüde kasa alınır, beşincide çıkışa varılır");
             Assert.IsTrue(steps.Where(s => s.Kind == RaidGuideStep.Use).All(s => steps[steps.IndexOf(s) - 1].Kind == RaidGuideStep.Arm), "yetenekten önce Q");
             Assert.IsNotNull(steps[0].Lesson);
             Assert.IsNotNull(steps.Last().Lesson);
@@ -73,6 +75,8 @@ namespace Corrigible.Desk.Tests
             var first = FirstRaid(5);
             Assert.IsNotNull(TutorialRaid.For(first));
             Assert.AreEqual(TutorialRaid.Seed, TutorialRaid.For(first).Seed);
+            Assert.AreEqual(0, TutorialRaid.For(first).Tactics, "eğitimde temel makine aklı");
+            Assert.AreEqual(0u, TutorialRaid.For(first).MapSeed, "eğitimde elle çizilmiş harita");
             Assert.AreNotSame(first, TutorialRaid.For(first), "harekâtın parametreleri değişmez");
 
             var wounded = FirstRaid(5);

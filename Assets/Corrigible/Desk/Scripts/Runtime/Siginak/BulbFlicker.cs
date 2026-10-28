@@ -40,6 +40,13 @@ namespace Corrigible.Desk
 
         void OnDisable() => Apply(1);
 
+        /// <summary>Hemen bir kırpışma (ör. biri kapıyı yumrukladı): 2–3 kez, sonra her zamanki aralık.</summary>
+        public void Burst()
+        {
+            if (!isActiveAndEnabled || blinksLeft > 0) return;
+            nextBurst = Time.time;
+        }
+
         void Update()
         {
             float now = Time.time;

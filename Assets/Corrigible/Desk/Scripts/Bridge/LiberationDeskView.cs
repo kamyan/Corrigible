@@ -24,12 +24,16 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] SiginakMap siginakMap;
         [Tooltip("Açılış dizisi ve emir belgesi (K7); H onu okuma kipinde açar.")]
         [SerializeField] SiginakBriefing siginakBriefing;
+        [Tooltip("Sığınağın kapısı: kâğıdı açıkken masa kilitli.")]
+        [SerializeField] SiginakDoor siginakDoor;
 
         bool storyOpen;
         Simulation Sim => game != null ? game.Sim : null;
         /// <summary>Baskın sonucu henüz okunmadı: operasyon raporu modalı açılacak ya da açık (K3 dizisi onu bekler).</summary>
         public bool RaidReportPending => Sim != null && source != null && Sim.S.Raid == null && Sim.S.RaidLog.Count > source.State.RaidLogSeen;
-        public bool InputBlocked => storyOpen || launcher != null && launcher.IsTransitioning || RaidLauncher.IsRaidLoaded ||
+        public bool InputBlocked => BlockedExceptDoor || siginakDoor != null && siginakDoor.isActiveAndEnabled && siginakDoor.Busy;
+        /// <summary>Kapının kendisi dışındaki kilitler (kapı ancak bunlar yokken çalar ve açılır).</summary>
+        public bool BlockedExceptDoor => storyOpen || launcher != null && launcher.IsTransitioning || RaidLauncher.IsRaidLoaded ||
             SettingsView.Instance != null && SettingsView.Instance.IsOpen || GameOverView.Instance != null && GameOverView.Instance.IsOpen ||
             EventModalView.Instance != null && EventModalView.Instance.IsOpen ||
             siginak != null && siginak.isActiveAndEnabled && siginak.ShiftBusy || siginakBriefing != null && siginakBriefing.Busy;
@@ -98,6 +102,20 @@ namespace Corrigible.Desk.Bridge
             string done = sector == null ? null : Loc.F("Baskın emri: {0} · {1} · {2} fon", RegionName(sector.Region), sector.Name,
                 DeskFormat.Signed(-Sim.B.liberationRaidCost, 0));
             return Report(game.StartLiberationRaid(sectorId), why, done);
+        }
+
+        /// <summary>
+        /// Kapıdaki ziyaretçiye cevap (kapının kâğıdından; kâğıt açıkken masa kilitli olduğu için yalnız öteki kilitlere bakar).
+        /// Yapılamazsa gerekçe teleksten basılır; yapılanı kapının bağlayıcısı basar.
+        /// </summary>
+        public ActResult AnswerDoor(string option)
+        {
+            if (BlockedExceptDoor) return null;
+            string why = Sim.DoorAnswerCheck(option);
+            var result = game.AnswerDoor(option);
+            if (!result.Ok && telex != null) telex.Post(Shift, Loc.T("YAPILAMADI"), why ?? result.Msg, TelexKind.Failed);
+            source.MarkDirty();
+            return result;
         }
 
         /// <summary>Vardiyayı bitirir (şalterin kolu). Yapılamazsa false.</summary>

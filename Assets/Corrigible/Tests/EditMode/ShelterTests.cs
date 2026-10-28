@@ -56,7 +56,7 @@ namespace Corrigible.Tests
         [Test]
         public void Starvation_IsRecoverableAndDoesNotKillResidents()
         {
-            var sim = Ready();
+            var sim = Ready(new Balance { shelterLootResidents = 0 });
             var shelter = sim.Shelter;
             shelter.Supplies = 0;
             Assert.IsTrue(sim.ShelterAssign(ShelterLogic.Living, 0).Ok);
@@ -64,7 +64,10 @@ namespace Corrigible.Tests
             ShelterLogic.Advance(sim.S, sim.B);
             Assert.IsTrue(shelter.Starving);
             Assert.AreEqual(population, shelter.Population);
+            // Erzak kıt: toplayıcılar açlıkta da çalışır ama bütün nüfusu doyurmaz; ikmal baskınının erzağı açlığı bitirir
             Assert.IsTrue(sim.ShelterAssign(ShelterLogic.Living, 2).Ok);
+            Assert.Less(2 * sim.B.shelterSuppliesPerWorker, population * sim.B.shelterSuppliesPerResident);
+            ShelterLogic.RewardLoot(sim.S, sim.B);
             ShelterLogic.Advance(sim.S, sim.B);
             Assert.IsFalse(shelter.Starving);
             Assert.Greater(shelter.Supplies, 0);

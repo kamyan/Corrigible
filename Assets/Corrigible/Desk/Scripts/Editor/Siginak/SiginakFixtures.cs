@@ -52,7 +52,7 @@ namespace Corrigible.Desk.EditorTools
 
         /// <summary>
         /// V.014'ün sığınağı (PROMPT §7): yaşam SV1 2/2, telsiz SV1 0/2, atölye SV3 2/6, revir hasarlı, boşta 4,
-        /// topluluk 8/8, erzak 31/40, malzeme 19, fon 62,0, alarm 4. Kurallarla bu vardiyada oluşamayacağından yalnız bellekte
+        /// topluluk 8/8, erzak 22/30, malzeme 19, fon 62,0, alarm 4. Kurallarla bu vardiyada oluşamayacağından yalnız bellekte
         /// kurulur; kayda yazılmaz, simülasyon kodu değişmez.
         /// </summary>
         public static void ApplyShelterV014(Simulation sim)
@@ -63,8 +63,8 @@ namespace Corrigible.Desk.EditorTools
             s.Room(ShelterLogic.Radio).Level = 1; s.Room(ShelterLogic.Radio).Workers = 0;
             s.Room(ShelterLogic.Workshop).Level = 3; s.Room(ShelterLogic.Workshop).Workers = 2;
             s.Room(ShelterLogic.Infirmary).Level = 0; s.Room(ShelterLogic.Infirmary).Workers = 0;
-            s.Supplies = 31; s.Materials = 19; s.Starving = false;
-            s.LastSuppliesChange = 0.4; s.LastMaterialsChange = 0;
+            s.Supplies = 22; s.Materials = 19; s.Starving = false;
+            s.LastSuppliesChange = -1.4; s.LastMaterialsChange = 0;
             sim.S.Fon = 62;
             // Alarm 4/10: K6'nın başarısız baskını (+3) ve vardiyası (+1) eşiğe varmaz
             sim.S.Alarm = 4;

@@ -483,6 +483,8 @@ MonoBehaviour:
     color: {r: 0.72156864, g: 0.14117648, b: 0.101960786, a: 1}
   - key: materialsExtra.mastRed.emissive
     color: {r: 0.72156864, g: 0.14117648, b: 0.101960786, a: 1}
+  - key: materialsExtra.beaconOff
+    color: {r: 0.3529412, g: 0.101960786, b: 0.07058824, a: 1}
   - key: materialsExtra.roomBulbOff
     color: {r: 0.22745098, g: 0.22745098, b: 0.20392157, a: 1}
   - key: materialsExtra.radioDial
@@ -1354,6 +1356,10 @@ MonoBehaviour:
     value: 0
   - key: materialsExtra.mastRed.emissiveIntensity
     value: 2
+  - key: materialsExtra.beaconOff.roughness
+    value: 0.4
+  - key: materialsExtra.beaconOff.metal
+    value: 0
   - key: materialsExtra.roomBulbOff.roughness
     value: 0.5
   - key: materialsExtra.roomBulbOff.metal

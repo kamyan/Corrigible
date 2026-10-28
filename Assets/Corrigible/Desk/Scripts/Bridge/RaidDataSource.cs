@@ -193,7 +193,7 @@ namespace Corrigible.Desk.Bridge
             var targets=unit!=null&&Armed&&Baskin.CanAct(State,unit)?Baskin.Targets(State,unit):new List<Baskin.Pt>();
             preview=hover.HasValue&&targets.Any(p=>p.X==hover.Value.x&&p.Y==hover.Value.y)?Baskin.Preview(State,unit.Id,hover.Value.x,hover.Value.y):null;
             bool loot=Baskin.IsLoot(State);
-            var vm=new RaidViewModel{IsLootMission=loot,Turn=display.Turn,Turns=display.MaxTurns,Phase=executing?"enemy":State.Phase,Locked=State.Phase!="player"||Busy,AbilityArmed=Armed,CanUndo=State.Hist.Count>0&&!Guided,
+            var vm=new RaidViewModel{IsLootMission=loot,Escaping=loot&&State.Carrier!=0&&State.Phase!="won"&&State.Phase!="lost",Turn=display.Turn,Turns=display.MaxTurns,Phase=executing?"enemy":State.Phase,Locked=State.Phase!="player"||Busy,AbilityArmed=Armed,CanUndo=State.Hist.Count>0&&!Guided,
                 EndConfirm=confirm,RetreatArmed=retreat,FastMachines=fast,Paused=paused,OpenPanel=panel,LogUnread=unread,
                 Civilians=civilianCount,CivilianBroken=display.Collateral,AbilityLabel=RegionLabel(loot),AbilityTip=RegionTip(loot),
                 Moves=moves.Select(p=>new Vector2Int(p.X,p.Y)).ToArray(),AbilityTargets=targets.Select(p=>new Vector2Int(p.X,p.Y)).ToArray()};
@@ -208,7 +208,7 @@ namespace Corrigible.Desk.Bridge
                 // Kartta üç satır yeri var: yedek olduğu başlıkta (“· YEDEK”), plaka üçüncü satırda
                 rows.AddRange(KitRows(unit,false));
                 vm.UnitRows=rows.ToArray();
-                vm.Effects=Selected=='T'?new[]{loot?Loc.T("kasayı al"):Loc.T("−2 dolap"),Loc.T("−1 robot")}:Selected=='E'?new[]{Loc.T("−1 hedef"),Loc.T("itme")}:new[]{Loc.T("çeker")};
+                vm.Effects=Selected=='T'?new[]{loot?Loc.T("kasayı al"):Loc.T("−2 dolap"),Loc.T("−1 robot")}:Selected=='E'?new[]{Loc.T("−1 hedef"),Loc.T("itme")}:new[]{Loc.T("−1 robot"),Loc.T("çeker")};
             }
             if(preview!=null)vm.CollisionTiles=preview.Fx.Where(f=>f.K=="push"&&!preview.Moves.Any(m=>m.Unit==f.Unit)).Select(f=>new Vector2Int(f.X+f.Dx,f.Y+f.Dy)).ToArray();
             if(hoverVisible&&hover.HasValue)vm.HoverCard=Inspector(hover.Value);
@@ -255,13 +255,23 @@ namespace Corrigible.Desk.Bridge
                 if(u.Type==State.Signature)rows.Add(new RaidCardRow{Icon="ic_eye_s",Text=Loc.T("Bölgenin imza makinesi")});
                 rows.Add(new RaidCardRow{Icon="ic_eye_s",Text=Baskin.UnitTypes[u.Type].Desc});
             }
-            else if(o!=null&&Baskin.IsTarget(o.K))rows.Add(new RaidCardRow{Icon="mk_armor_13",Text=loot?Loc.T("Teknisyen ile bitişik kareden aç"):Loc.T("Hedef dolabı")});
+            else if(o!=null&&Baskin.IsTarget(o.K))rows.Add(new RaidCardRow{Icon="mk_armor_13",Text=loot?Loc.T("Teknisyen ile bitişik kareden aç, malzemeyi girişe taşı"):Loc.T("Hedef dolabı")});
+            // Kaçış: çıkış karesi; taşıyıcı seçiliyken oraya yürümek baskını kazandırır
+            if(State.Carrier!=0&&State.Exits.Any(p=>p.X==tile.x&&p.Y==tile.y))
+            {
+                if(u==null&&o==null)card.Title=Loc.T("Çıkış");
+                rows.Add(new RaidCardRow{Icon="ic_eye_s",Text=Loc.T("Teknisyen malzemeyle buradan tahliye edilir"),Good=true});
+                var carrier=State.Units.FirstOrDefault(v=>v.Id==State.Carrier);
+                if(carrier!=null&&Unit()==carrier&&Baskin.CanMove(State,carrier)&&Baskin.Reachable(State,carrier).Any(p=>p.X==tile.x&&p.Y==tile.y))card.Win=true;
+            }
             card.Rows=rows.Take(5).ToArray();return card;
         }
         void Draw(RaidViewModel vm)
         {
             var guideTile=Guided&&State.Phase=="player"?Guide.Tile(State):null;
-            var marks=new RaidBoard3D.Marks{Selected=Unit()?.Id??-1,Guide=guideTile.HasValue?guideTile.Value.Y*8+guideTile.Value.X:-1};foreach(var p in vm.Moves)marks.Moves.Add(p.y*8+p.x);foreach(var p in vm.AbilityTargets)marks.Targets.Add(p.y*8+p.x);
+            var marks=new RaidBoard3D.Marks{Selected=Unit()?.Id??-1,Guide=guideTile.HasValue?guideTile.Value.Y*8+guideTile.Value.X:-1,Carrier=State.Carrier!=0?State.Carrier:-1};
+            // Kasa alındıysa çıkışlar (giriş kareleri) yeşil kesik çerçeveyle
+            if(State.Carrier!=0&&State.Phase=="player")foreach(var p in State.Exits)marks.Exits.Add(p.Y*8+p.X);foreach(var p in vm.Moves)marks.Moves.Add(p.y*8+p.x);foreach(var p in vm.AbilityTargets)marks.Targets.Add(p.y*8+p.x);
             foreach(var u in State.Units)if(u.Acted)marks.Spent.Add(u.Id);
             // Kum fırtınası: uyanacak makinelerin yeri görünmez (çoğaltıcının niyeti yine görünür)
             if(!State.Fog)foreach(var p in State.Spawns)marks.Spawns.Add(p.Y*8+p.X);

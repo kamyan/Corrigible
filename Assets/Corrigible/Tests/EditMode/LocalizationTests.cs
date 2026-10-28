@@ -104,10 +104,31 @@ namespace Corrigible.Tests
                         Res(sim.ResolveRaid(PlayRaid(s.Raid, rng, texts)));
                     }
                 }
+                AnswerDoor(sim, rng, texts);
                 sim.Step();
                 s.Events.Clear();
             }
+            texts.AddRange(s.Door.Log.Where(v => v.Result != null).Select(v => Loc.T(v.Result)));
             return sim;
+        }
+
+        /// <summary>Kapıdaki ziyaretçi: metinleri toplanır; rastgele açılır ya da açılmaz (ölümcül kart hiç açılmaz), açık kapıda rastgele bir seçim.</summary>
+        static void AnswerDoor(Simulation sim, Rng rng, List<string> texts)
+        {
+            var card = sim.DoorVisitorCard;
+            if (card == null) return;
+            texts.AddRange(new[] { Loc.T(card.Who), Loc.T(card.Knock), Loc.T(card.Peek), Loc.T(card.Ask) });
+            void Options()
+            {
+                foreach (var o in sim.DoorOptions()) { texts.Add(Loc.T(o.Label)); texts.Add(sim.DoorAnswerCheck(o.Id)); }
+            }
+            Options();
+            if (card.Deadly || rng.Next() < 0.25) { sim.AnswerDoor(Simulation.DoorRefuse); return; }
+            if (!sim.AnswerDoor(Simulation.DoorOpen).Ok || sim.DoorVisitor == null) return;
+            texts.Add(Loc.T(card.Opened));
+            Options();
+            var open = sim.DoorOptions().Where(o => sim.DoorAnswerCheck(o.Id) == null).ToList();
+            if (open.Count > 0) sim.AnswerDoor(rng.Pick(open).Id);
         }
         static RaidResult PlayRaid(RaidState raid, Rng rng, List<string> texts)
         {

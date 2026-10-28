@@ -115,6 +115,22 @@ namespace Corrigible.Core
             s.LastMaterialsChange = s.Materials - oldMaterials;
         }
 
+        /// <summary>
+        /// Sığınaktan <paramref name="n"/> kişi ayrılır (en az bir kişi kalır); görevli sayısı nüfusu aşarsa önce revir, atölye,
+        /// telsiz, en son yaşam alanından görevli eksilir.
+        /// </summary>
+        public static void Leave(ShelterState s, int n)
+        {
+            s.Population = Math.Max(1, s.Population - Math.Max(0, n));
+            foreach (var id in new[] { Infirmary, Workshop, Radio, Living })
+            {
+                var room = s.Room(id);
+                int over = s.Rooms.Sum(r => r.Workers) - s.Population;
+                if (over <= 0) break;
+                if (room != null) room.Workers -= Math.Min(over, room.Workers);
+            }
+        }
+
         public static void RewardLoot(WorldState world, Balance b)
         {
             var s = world.Liberation?.Shelter;

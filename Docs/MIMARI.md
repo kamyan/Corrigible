@@ -68,17 +68,35 @@ Corrigible/                          (Unity proje kökü, git deposu)
 ```
 
 - **`Simulation`** (`Core/Simulation.cs` + partial'lar): bütün kurallar. `NewGame(seed, balance)`, `Step()` (bir vardiya),
-  komutlar (`StartLiberationRaid`, `ResolveRaid`, `SelectLiberationRegion`, `ShelterUpgrade`, `ShelterAssign`), denetimler
-  (`LiberationRaidCheck`, `SelectLiberationRegionCheck`, `ShelterUpgradeCheck`, `ShelterAssignCheck`: komut yapılamıyorsa
-  gerekçe metni) ve türetilmiş değerler (`Occupation`, `LiberationFrontier`, `NextLiberationSector`, `IncomeBreakdown`).
+  komutlar (`StartLiberationRaid`, `ResolveRaid`, `SelectLiberationRegion`, `ShelterUpgrade`, `ShelterAssign`, `AnswerDoor`),
+  denetimler (`LiberationRaidCheck`, `SelectLiberationRegionCheck`, `ShelterUpgradeCheck`, `ShelterAssignCheck`,
+  `DoorAnswerCheck`: komut yapılamıyorsa gerekçe metni) ve türetilmiş değerler (`Occupation`, `LiberationFrontier`,
+  `NextLiberationSector`, `IncomeBreakdown`, `DoorVisitor`, `DoorOptions`, `DoorOptionEffect`).
   Komutlar `RunCommand` üstünden geçer: `ActResult { Ok, Msg }` döner, fon değişimini `TransactionLedger`'a, komutu kayda
   yazar. Dosyalar: `CampaignLiberation.cs` (bölge/sektör durumu ve baskın), `Simulation.Shelter.cs` + `ShelterLogic.cs`
-  (sığınak), `Teams.cs` (ekip), `Economy.cs` (gelir ve işlem defteri).
+  (sığınak), `Teams.cs` (ekip), `Economy.cs` (gelir ve işlem defteri), `Door.cs` (sığınağın kapısı: durum, vuruş, kart seçimi,
+  `door_answer`) ve `DoorCards.cs` (ziyaretçi tablosu: metinler `Loc.N`, koşullar, seçenekler ve etkileri).
 - **`WorldState`** (`Core/WorldState.cs`): oyunun tüm durumu (gün, fon, ekipler, süren baskın, baskın günlüğü, harekât ve
-  sığınak, işgal geçmişi, kırılma anları, son). Görünümler doğrudan yazmaz. `S.Raid` varken `Step` çalışmaz (`Blocked`).
+  sığınak, kapı (`DoorState`: bekleyen ziyaretçi, sıradaki vuruş, bayraklar, zincirler, ziyaretler), işgal geçmişi, kırılma
+  anları, son). Görünümler doğrudan yazmaz. `S.Raid` varken `Step` çalışmaz (`Blocked`).
 - **`Baskin`** (`Core/Baskin.cs`): 8×8 taktik savaş motoru, kendi RNG'si (`BState.Rs`), Unity yok. `Create(RaidParams)` →
   `BState`; `DoMove`, `DoAct`, `Undo`, `Preview`, `EndTurn`, `Retreat`, `Result`, `Intents`. Stratejiye yalnız
   `RaidResult` döner (kayda `raidres` olarak yazılır; taktik hamleler kaydedilmez).
+- **`RaidMaps`** (`Core/RaidMaps.cs`): harekâtın harita havuzu. `Pool(MapSeed)` yeni oyunun tohumundan 30 harita üretir (`PoolSize`): altı türün (`Kinds`: koridor, kasa odası, iki hat,
+  açık salon, şebeke, rehine) her birinden beşer, türün kendi oda adlarıyla (`KindOf`). `Generate(kind, rng)` türün yapısını
+  kurar (`BuildVault`, `BuildLanes`…), sonra dolapları ve makineleri yerleştirir; `Valid(rows)` ortak kurallar, `Valid(rows,
+  kind)` türün adım aralığı (`PathRange`, bot ölçümüyle ayarlı) ve imzası
+  (`Generate` + `Valid`: bağlantı, hedefe uzaklık, sayılar, dronların girişe açık atış hattı yok); karıştırma kendi
+  üreteciyle, `S.Rng`'den tüketmez. `StartLiberationRaid` `RaidParams.MapSeed = S.Seed`, `MapSlot = S.Raids` (harekâttaki
+  baskın sırası) ve `Tactics = 1` (gelişmiş makine aklı) yazar; `Baskin.Create` havuzdan `RaidMaps.Slot` ile (karıştırılmış
+  torbalar) seçer. `MapSeed` 0 ise (eğitim baskını, örnek baskın, eski testler) elle çizilmiş `Baskin.Layouts`. Kayıt
+  etkilenmez: tahta stratejiye yalnız sonuç verir.
+- **İkmal kaçışı ve makine aklı** (`Baskin`): `BState.Carrier` (kasayı açan Teknisyen) ve `Exits` (giriş kareleri);
+  `CheckEscape` yürüyüş, yetenek ve makine evresinden sonra bakar. `BState.Smart` (`RaidParams.Tactics > 0`) iken
+  `PlanEnemies` `KeyTiles` (hedefin önü ya da kaçış yolu), `Zone` (niyetin tuttuğu kilit kareler) ve `Covers` (eşgüdüm)
+  ile puanlar; RNG tüketimi temel akılla aynı. `RaidParams.TargetHpBonus/ExtraMachines` sunucu görevinin sertliği
+  (kampanya dengeden yazar; düğüm dolabına ek can, çekirdek hariç; baştaki ek makine). Sunum: `RaidBoard3D.Marks.Exits/Carrier` (yeşil kesik çıkış çerçevesi,
+  "YÜKLÜ" etiketi), `RaidViewModel.Escaping` (HUD "girişe dön"); tur şeridi 8 kutuya kadar, plaka tur sayısıyla kayar.
 - **`GameController`** (`Game/GameController.cs`): komut kapısı. `NewGame`, komut metotları, `AdvanceShift` (vardiya),
   `Flush` (olayları `EventsRaised` ile dağıtır; harekât bitince başarımı açar, kaydı siler), `Save`/`ContinueSaved`.
   `StoryHold` açılış ve emir belgesi açıkken vardiyayı engeller. Olaylar: `Changed`, `EventsRaised`, `NewGameStarted`,
@@ -89,10 +107,14 @@ Corrigible/                          (Unity proje kökü, git deposu)
 
 ## Determinizm ve kayıt
 
-- RNG: `Rng` (mulberry32, `Core/Rng.cs`). Durumu `S.Rng.State`. `Js.Round` = JS `Math.round` (`Math.Floor(v + 0.5)`);
+- RNG: `Rng` (mulberry32, `Core/Rng.cs`). Durumu `S.Rng.State`. Kapı kendi üretecini her kullanımda harekât tohumu, gün ve
+  amaçtan kurar (`Simulation.DoorRng`); ana sıraya dokunmaz (`DoorTests`). `Js.Round` = JS `Math.round` (`Math.Floor(v + 0.5)`);
   tüm sayılar `double`. Aynı tohum + aynı komutlar = aynı oyun (`LiberationCampaignTests`).
-- `GameRecord` (`Core/GameRecord.cs`): `version` (4), `seed`, `balance`, `commands[]`, `day`. `SavedCommand { day, kind, a, b }`;
-  türler `liberation_region`, `liberation_raid`, `raidres` (`RaidResult.Encode`), `shelter_upgrade`, `shelter_assign`.
+- `GameRecord` (`Core/GameRecord.cs`): `version` (11), `seed`, `balance`, `commands[]`, `day`. `SavedCommand { day, kind, a, b }`;
+  türler `liberation_region`, `liberation_raid`, `raidres` (`RaidResult.Encode`: başarı, geri çekilme, kırılan sivil, düşen,
+  tur, kadro canı, zırh, ayakta kalan sivil), `shelter_upgrade`, `shelter_assign`, `door_answer` (a: seçenek, b: kart).
+  Ziyaretçi bir vardiyanın sonunda (`Step`) gelir; cevabı o günün komutudur. Cevapsız ziyaretçi bir sonraki `Step`'te
+  açılmadı sayılır (komut değildir, yeniden oynatmada da aynı olur).
 - `Replay.Restore(rec)` yeni oyunu kurar, her komutun gününe kadar `Step` eder ve komutu uygular, sonra kayıt gününe
   kadar ilerler. Bu sürümden eski kayıtlar (kriz oyunu dönemi) yüklenmez.
 - `GameController.Save()` → `persistentDataPath/liberation_savegame.json` (JsonUtility); her başarılı komutta, vardiya
@@ -112,8 +134,10 @@ Audio                    AudioDirector (SoundBank)
 CommandPost3D            CommandPostDesk (kamera girdisi kapısı); Main Camera + SiginakCameraRig
 SiginakRaidLink          baskın sahnesi yüklüyken odayı gizler, CRT geçişini RaidLauncher'a verir
 SiginakRoom              oda: masa (sayaçlar, anahtar rayı, şalter, teleks, evrak tepsisi, Desk/MapMount altında kâğıt
-                         harita SadeMapCanvas), raf (sığınak maketi, oda kartları), CRT, duvar; SiginakHud (Overlay 45:
-                         kenar satırı, ayarlar plakası, vardiya raporu, emir belgesi, teleks şeridi, üzerine gelme etiketi)
+                         harita SadeMapCanvas), raf (sığınak maketi, oda kartları), CRT, duvar; sağ duvarda Bunker door
+                         (DoorProp, DeskTarget; duvarın mesh'i kapı boşluklu, wall_doorway) ve ardında Corridor (siluet,
+                         koridor ışığı); Poses/K8 (kapı pozu); SiginakHud (Overlay 45: kenar satırı, ayarlar plakası,
+                         vardiya raporu, emir belgesi, kapı kâğıdı, teleks şeridi, üzerine gelme etiketi)
 SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
 ```
 
@@ -122,6 +146,9 @@ SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
 - **Bağlayıcılar** (Bridge/Siginak): `SiginakDesk` (sayaçlar, anahtarlar, şalter), `SiginakMap` (kâğıt harita, görev ve
   cephe fişleri, ekip figürü), `SiginakShelter` (maket ve oda kartları), `SiginakCrt` (saha yayını, `IRaidTransition`),
   `SiginakShift` (vardiya dizisi, vardiya raporu, evrak tepsisi), `SiginakBriefing` (açılış ve emir belgesi),
+  `SiginakDoor` (kapı: vuruş, kamera, kâğıdın evreleri, `LiberationDeskView.AnswerDoor`; kâğıdı saf C# `DoorViewBuilder`
+  kurar, `DoorCardView` çizer, kapıyı `DoorProp` canlandırır; ölümcül kararda son raporu `DeskBridgeState.HoldEnding` ile
+  kâğıt kapanana kadar bekletir),
   `SiginakTutorial` (eğitim: sahne kökünde kendi tuvali `SiginakTutorial`, sıralama 70, baskın HUD'unun üstünde; odanın
   dışında olduğu için baskında da çalışır; adımlar saf C# `TutorialFlow`, not `TutorialNoteView`; senaryolu ilk baskın
   `TutorialRaid` ve rehberi `RaidGuide`: `LiveRaidDataSource` eğitim baskın adımındaysa tahtayı senaryonun tohumuyla kurar,
@@ -204,7 +231,8 @@ Unity Localization paketi kullanılmadı: metinlerin bir kısmı motordan bağı
 - **`AudioDirector`** (DeskGame'de `Audio` nesnesi): simülasyonu yalnızca okur; rastgelelik `UnityEngine.Random`.
   Müzik katmanları: drone her zaman, warm işgal oranıyla, grit dünyanın uğultusu; hepsi alçak geçiren filtreyle
   "duvarın ardından". Bölge özgürleşince alarm, harekât bitince kapanış; baskında müzik kısılır, bina uğultusu girer.
-- **Tek seferlik sesler:** `Sfx.Play(Cue.X, volume, pan, pitch)`; klipler `Settings/SoundBank.asset` → `cues`
+- **Tek seferlik sesler:** `Sfx.Play(Cue.X, volume, pan, pitch)` (kapı: `DoorKnock` 50, `DoorOpen` 51, `DoorShot` 52;
+  yer tutucular `Audio/Placeholder/CueDoor*.wav` kodla sentezlendi); klipler `Settings/SoundBank.asset` → `cues`
   (`Cue` enum'ı asset'te sayı olarak saklandığı için her üyenin sayısı sabittir). Baskın tahtası efektleri ekran
   konumuna göre sağ-sol çalar. Klipler yer tutucudur (`Audio/Placeholder`).
 - **Ayarlar** (`SettingsCard`, `AudioPrefs`, PlayerPrefs `corrigible.audio.*`): genel, müzik, ortam, efekt, sessiz mod, dil.

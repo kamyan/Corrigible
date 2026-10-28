@@ -170,6 +170,34 @@ namespace Corrigible.Desk.Tests
         }
 
         [Test]
+        public void AlarmPanel_LightsNearThresholdAndBlinksOnLastStep()
+        {
+            Assert.AreEqual(0, AlarmPanel.LevelFor(0, 10, 3));
+            Assert.AreEqual(0, AlarmPanel.LevelFor(6.9, 10, 3));
+            Assert.AreEqual(1, AlarmPanel.LevelFor(7, 10, 3));
+            Assert.AreEqual(1, AlarmPanel.LevelFor(8.95, 10, 3), "gösterilen değer aşağı yuvarlanır");
+            Assert.AreEqual(2, AlarmPanel.LevelFor(9, 10, 3));
+        }
+
+        [Test]
+        public void DeskGameScene_AlarmPanelIsWired()
+        {
+            var scene = EditorSceneManager.OpenScene(DeskSpriteManifest.Root + "/Scenes/DeskGame.unity", OpenSceneMode.Additive);
+            try
+            {
+                var desk = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<SiginakDesk>(true)).Single();
+                var panel = new SerializedObject(desk).FindProperty("alarm").objectReferenceValue as AlarmPanel;
+                Assert.IsNotNull(panel, "masa alarm panosuna bağlı");
+                var so = new SerializedObject(panel);
+                foreach (var field in new[] { "counter", "beacon", "lampOn", "lampOff", "target" })
+                    Assert.IsNotNull(so.FindProperty(field).objectReferenceValue, field);
+                Assert.AreEqual("YZ ALARMI", panel.Counter.transform.Find("Label").GetComponent<DeskLocText>().Source);
+                Assert.Greater(panel.GetComponent<BoxCollider>().size.sqrMagnitude, 0, "üzerine gelince açıklama için çarpıştırıcı");
+            }
+            finally { EditorSceneManager.CloseScene(scene, true); }
+        }
+
+        [Test]
         public void DeskGameScene_DeskControlsAreWired()
         {
             var scene = EditorSceneManager.OpenScene(DeskSpriteManifest.Root + "/Scenes/DeskGame.unity", OpenSceneMode.Additive);
@@ -198,6 +226,11 @@ namespace Corrigible.Desk.Tests
 
                 var physics = roots.SelectMany(g => g.GetComponentsInChildren<PhysicsRaycaster>(true)).Single();
                 Assert.IsTrue(physics.enabled, "odadaki hedefler için fizik ışını açık");
+                // Baskında oda kamerası kapalıyken ışını açık kalırsa tahtanın parçaları "arayüz" sayılır, karelere tıklanamaz
+                var launcher = roots.SelectMany(g => g.GetComponentsInChildren<Corrigible.Game.Raid.RaidLauncher>(true)).Single();
+                var hidden = new SerializedObject(launcher).FindProperty("hideDuringRaid");
+                Assert.IsTrue(Enumerable.Range(0, hidden.arraySize).Any(i => hidden.GetArrayElementAtIndex(i).objectReferenceValue == physics),
+                    "odanın fizik ışını baskın sürerken kapanır");
                 Assert.IsFalse(roots.SelectMany(g => g.GetComponentsInChildren<Transform>(true)).Any(t => t.name == "LiberationHudCanvas"),
                     "eski HUD ve alt çubuk kaldırıldı (Aşama 10)");
                 Assert.IsFalse(room.transform.Find("Hope marks/Second mug").gameObject.activeSelf, "umut işaretleri açılışta gizli");

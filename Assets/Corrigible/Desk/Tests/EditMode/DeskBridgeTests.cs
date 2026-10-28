@@ -80,18 +80,23 @@ namespace Corrigible.Desk.Tests
         public void RaidReport_ShowsTrustLoss_AndWarnsWhenLow()
         {
             var sim = New();
-            int max = sim.B.liberationTrustStart;
+            int max = sim.TrustMax, start = sim.S.Trust, per = sim.B.liberationCiviliansPerTrust;
+            Assert.Greater(max, start, "Güven tavanı başlangıçtan yüksek.");
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true, Collateral = 2, Turns = 4 }).Ok);
+            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true, Collateral = 3, Turns = 4, CiviliansLeft = per }).Ok);
             var doc = Build(sim).Event.Doc;
+            var left = doc.Lines.Single(l => l.Label == Loc.T("Ayakta kalan sivil sunucu"));
+            Assert.AreEqual("good", left.Status);
+            Assert.AreEqual(per.ToString(), left.Value);
             var line = doc.Lines.Single(l => l.Label == Loc.T("Sivil güven"));
             Assert.AreEqual("threat", line.Status);
-            StringAssert.EndsWith($"{max - 2}/{max}", line.Value);
+            StringAssert.EndsWith($"{start - 2}/{max}", line.Value, "Kırılan 3 sunucu −3, ayakta kalanlar +1.");
             StringAssert.DoesNotContain(Loc.T("Sivil güven"), doc.Risk, "güven yüksekken uyarı yok");
 
             while (!sim.S.Teams.Any(Simulation.TeamReady)) sim.Step();
             Assert.IsTrue(sim.StartLiberationRaid("weu_2").Ok);
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = false, Collateral = max - 3, Turns = 6 }).Ok);
+            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = false, Collateral = sim.S.Trust - 1, Turns = 6 }).Ok);
+            Assert.IsFalse(Build(sim).Event.Doc.Lines.Any(l => l.Label == Loc.T("Ayakta kalan sivil sunucu")), "kaybedilen baskında satır yok");
             doc = Build(sim).Event.Doc;
             StringAssert.StartsWith($"Sivil güven 1/{max}.", doc.Risk, "güven azalınca rapor uyarır");
         }

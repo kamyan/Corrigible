@@ -22,7 +22,7 @@ namespace Corrigible.Game.Raid
         public string RaidSceneName => raidSceneName;
         static readonly HashSet<string> activeScenes = new HashSet<string>();
         readonly Dictionary<Behaviour, bool> visibility = new Dictionary<Behaviour, bool>();
-        [Tooltip("Baskın sürerken kapatılan bileşenler (ana kamera ve dinleyicisi, odanın canvas'ları ve girdileri). " +
+        [Tooltip("Baskın sürerken kapatılan bileşenler (ana kamera, dinleyicisi ve fizik ışını, odanın canvas'ları ve girdileri). " +
                  "Nesneler değil bileşenler kapatılır ki görünümlerin olay abonelikleri sürsün.")]
         [SerializeField] Behaviour[] hideDuringRaid = new Behaviour[0];
 

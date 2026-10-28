@@ -38,6 +38,7 @@ namespace Corrigible.Desk.Bridge
                 starving = s.Starving,
                 alarm = sim.S.Alarm, alarmThreshold = b.liberationAlarmThreshold,
                 counterattacks = sim.S.Counterattacks, lastCounterattack = sim.S.LastCounterattack,
+                doorVisits = sim.S.Door?.Log.Count ?? 0,
             };
             foreach (var r in s.Rooms) snap.rooms.Add(new ShiftRoomSnapshot { id = r.Id, level = r.Level, workers = r.Workers });
             foreach (var t in sim.S.Teams)
@@ -100,6 +101,11 @@ namespace Corrigible.Desk.Bridge
                 incomeCentral = income.Central, incomeRegional = income.RegionalBase,
                 failures = failures?.ToList() ?? new List<TelexLine>(),
                 rates = Rates(sim.B),
+                door = (sim.S.Door?.Log ?? new List<DoorVisit>()).Skip(before.doorVisits).Where(v => v.Auto).Select(v => new ShiftDoorEntry
+                {
+                    card = v.Card, result = v.Result, supplies = v.Supplies, materials = v.Materials, alarm = v.Alarm, trust = v.Trust,
+                    counterattack = v.Counterattack,
+                }).ToList(),
             };
         }
 
@@ -136,6 +142,7 @@ namespace Corrigible.Desk.Bridge
             d.Analyst = Analyst(input);
             Teams(input, d);
             Alarm(input, d);
+            Door(input, d);
             foreach (var f in input.failures.Take(MaxFailures)) d.Failures.Add((f.code, f.message));
             if (input.failures.Count > MaxFailures) d.MoreFailures = Loc.F("… ve {0} satır daha", input.failures.Count - MaxFailures);
 
@@ -174,7 +181,10 @@ namespace Corrigible.Desk.Bridge
             d.Production.Add(Row(Loc.T("Erzak toplama"), Loc.F("yaşam alanı · {0} kişi", gatherers), Delta(gather, 1), Tone(gather, 1)));
             d.Production.Add(Row(Loc.T("Erzak tüketimi"), Loc.F("{0} kişi × {1}", b.population, Compact(r.suppliesPerResident)), Delta(-eat, 1), Tone(-eat, 1)));
             d.SuppliesNet = a.supplies - b.supplies;
-            double rest = d.SuppliesNet - (gather - eat);
+            // Vardiya biterken kapıda kalan ziyaretçinin erzağı (açılmadı sayıldı)
+            double door = input.door.Sum(x => x.supplies);
+            if (Math.Abs(door) >= 0.05) d.Production.Add(Row(Loc.T("Kapı · açılmadı"), DoorWho(input.door.First(x => Math.Abs(x.supplies) >= 0.05).card), Delta(door, 1), Tone(door, 1)));
+            double rest = d.SuppliesNet - (gather - eat) - door;
             if (Math.Abs(rest) >= 0.05)
             {
                 string why = b.supplies + gather - eat > b.suppliesCapacity
@@ -222,6 +232,23 @@ namespace Corrigible.Desk.Bridge
             }
             d.Teams.Add(row);
         }
+
+        /// <summary>Kapı satırı (ekiplerin altında): vardiya biterken kapıda kalan ziyaretçi açılmadı sayıldı.</summary>
+        static void Door(ShiftReportInput input, ShiftReportData d)
+        {
+            foreach (var e in input.door)
+            {
+                var visit = new DoorVisit { Card = e.card, Supplies = e.supplies, Materials = e.materials, Alarm = e.alarm, Trust = e.trust, Counterattack = e.counterattack };
+                string effects = DoorViewBuilder.Effects(visit);
+                d.Teams.Add(new ReportTeamRow
+                {
+                    Label = Loc.F("Kapı · {0}", DoorWho(e.card)), Value = Loc.T("AÇILMADI"), HideIcon = true,
+                    Detail = string.Join(" ", new[] { e.result == null ? null : Loc.T(e.result), effects == null ? null : effects + "." }.Where(x => x != null)),
+                });
+            }
+        }
+
+        static string DoorWho(string card) => DoorCards.Exists(card) ? Loc.T(DoorCards.Get(card).Who) : "—";
 
         /// <summary>“Bölge · Sektör” (sektör kimliği “weu_3”); geri alınacak sektör yoksa “—”.</summary>
         static string SectorLabel(string id)
@@ -291,16 +318,19 @@ namespace Corrigible.Desk.Bridge
             return null;
         }
 
+        /// <summary>Toplayıcılar yetmezken erzak bu kadar vardiyada biterse analist ikmal baskını önerir.</summary>
+        const int SuppliesWarnShifts = 6;
+
         /// <summary>
         /// Analist notu (Kalam, tek satır, yalnız öneri): yeni vardiyanın hâlinden en önemli tek iş. Erzak eksiye gidiyor →
-        /// yaşam alanı, yaralı uzman → revir, telsizde kimse yok → telsiz, boşta kişi → iş. Öneri yoksa null.
+        /// yaşam alanı (yer yoksa ve erzak yakında bitiyorsa ikmal baskını), yaralı uzman → revir, telsizde kimse yok → telsiz,
+        /// boşta kişi → iş. Öneri yoksa null.
         /// </summary>
         static string Analyst(ShiftReportInput input)
         {
             var a = input.after;
             var r = input.rates;
             bool hurt = a.teams.Any(t => t.members.Any(m => m.wounds > 0 || m.down > 0));
-            if (a.idle <= 0 && !hurt) return null;
             var living = a.Room(ShelterLogic.Living);
             double gather = (living?.workers ?? 0) * r.suppliesPerWorker, eat = a.population * r.suppliesPerResident;
             if (gather < eat && living != null && r.suppliesPerWorker > 0)
@@ -308,7 +338,12 @@ namespace Corrigible.Desk.Bridge
                 int need = (int)Math.Ceiling((eat - gather) / r.suppliesPerWorker - 1e-9);
                 if (need <= a.idle && need <= living.level * r.workersPerLevel - living.workers)
                     return Loc.F("→ yaşam alanına {0} kişi, erzak artıya geçer", need);
+                // Toplayıcılar yetmiyor: erzak birkaç vardiyada biterse ikmal baskını
+                int runway = (int)Math.Floor(a.supplies / (eat - gather) + 1e-9);
+                if (runway <= SuppliesWarnShifts)
+                    return runway <= 0 ? Loc.T("→ erzak bitti, ikmale çık") : Loc.F("→ erzak {0} vardiyaya yeter, ikmale çık", runway);
             }
+            if (a.idle <= 0 && !hurt) return null;
             if (hurt)
             {
                 var infirmary = a.Room(ShelterLogic.Infirmary);
@@ -327,6 +362,7 @@ namespace Corrigible.Desk.Bridge
             {
                 case "liberation_raid": return Loc.F("Baskın emri · OP-{0:00}", e.number);
                 case "raidres": return Loc.F("Baskın ödülü · OP-{0:00}", e.number);
+                case "door_answer": return Loc.F("Kapı · {0}", DoorWho(e.id));
                 case "shelter_upgrade":
                     return e.number <= 1
                         ? Loc.F("Onarım · {0}", ShelterLogic.RoomName(e.id))
