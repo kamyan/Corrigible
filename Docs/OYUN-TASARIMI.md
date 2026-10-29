@@ -9,8 +9,18 @@ taktik tahta için `Core/Baskin.cs` içindedir.
 
 - Bir yapay zekâ dünyanın bütün ağlarını ele geçirmiş, 12 bölgenin hepsi işgal altında. Oyuncu KYGA'nın Batı
   Avrupa'daki son sığınağında, analog bir komuta odasındadır ("Ağa bağlanma, analog kal").
-- Oda bir masa oyunu gibi çalışır: kâğıt harita, mekanik sayaçlar, teleks, sığınağın kesit maketi, saha yayını için
-  tüplü monitör ve vardiyayı bitiren şalter. Zaman kendiliğinden akmaz; oyuncu hazırlığını yapar, şalteri indirir.
+- Oda bir masa oyunu gibi çalışır: kâğıt harita, mekanik sayaçlar, teleks, sığınağın kesit maketi, telsizin tüplü
+  göstergesi ve vardiyayı bitiren şalter. Zaman kendiliğinden akmaz; oyuncu hazırlığını yapar, şalteri indirir.
+- **Sahayla tek bağ telsizdir.** Sığınak ağa bağlanmadığı için baskın bir görüntü yayını değil: hat açılır, gözcü
+  makinelerin hamlesini telsizden bildirir (kırmızı oklar), durum saha masasındaki paftada figürlerle tutulur. Oyuncunun
+  hamleleri tek tek, anında iletilir; EMRİ İLET (Enter) turu bitirir ve komuta dinlemeye geçer (DİNLEMEDE). Baskında saha
+  sesleri telsizin dar bandından duyulur. Paftanın kenarında kare adları var (A–H, 1–8); gözcü kareyi adıyla bildirir
+  ("saldırı → TEKNİSYEN · A6"). Okları yağlı kalemle çizilmiş gibidir; makine evresinin sonunda görevli, makine figürlerini
+  çubukla yeni karelerine iter. Komuta masasında CRT'nin önünde bas-konuş mikrofonu ve telsiz kayıt defteri durur.
+- **Gözcü raporu ve telsiz şeridi:** her turun başında komuta dinler (DİNLEMEDE); gözcü makineleri sırayla bildirir
+  ("GÖZCÜ › №1 · Dron E4 · ateş → TEKNİSYEN · A6") ve her bildirimle ok paftaya çizilir, bayrak ve hedef kareler belirir.
+  Bir tuş ya da tıklama raporun kalanını bir anda çizer. Sol üstteki telsiz şeridi baskın boyunca açıktır: son dört
+  konuşma, en yenisi daktilo gibi; gözcünün her satırında telsizden boğuk bir konuşma duyulur.
 - Görsel dil: sıcak lamba ışığı, kâğıt ve mürekkep; renk anlam taşır (kırmızı işgal/tehdit, mavi geri alınmış, yeşil iyi).
 
 ## Harekât
@@ -319,8 +329,8 @@ kaçmış bir teknisyen… Kapı erzağa, güvene ve alarma bir yüz verir; bask
   Ekip figürü haritada sürüklenebilir.
 - **Sığınak maketi (K4):** odaların durumu (çalışıyor, DURDU, HASARLI), personeli ve geliştirme kararları; pano özetinde
   TOPLULUK (yedek dahil), UZMANLAR ("T 3/3 · E 2/3 · A yaralı (2)"), ERZAK, PLAKA.
-- **CRT (K5):** saha yayını; yalnız baskın emri kamerayı monitöre yaklaştırır. Teknisyen yatıp yedek de yoksa yayın devre
-  dışı ("ALFA · TEKNİSYEN YARALI · 2 GÜN").
+- **CRT (K5):** telsizin göstergesi (TELSİZ · KANAL 07): dinlemede, hat açılıyor, hat açık, hat kapandı. Yalnız baskın
+  emri kamerayı ekrana yaklaştırır. Teknisyen yatıp yedek de yoksa hat kapalı ("ALFA · TEKNİSYEN YARALI · 2 GÜN").
 - **Görev fişi** kadroyu baskına çıkacağı gibi, rol harfleriyle yazar: "T 3/3 · E 2/3 · A (yedek) 1/2 · 2 plaka".
 - **Vardiya geçişi (K6):** şalter → sayaçlar döner → vardiya raporu; rapor evrak tepsisine kayar.
 - **Açılış (K7):** açılış dizisi ve emir belgesi; BAŞLA ile oda açılır. Kayıt varsa son rapor kısaca görünür.

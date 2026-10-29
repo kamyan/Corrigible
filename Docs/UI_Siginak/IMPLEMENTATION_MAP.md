@@ -379,6 +379,23 @@ Açık farklar (sahibi olan aşama):
 
 ## CHANGELOG
 
+- **2026-10-30 · Telsiz şeridi ve gözcü raporu:** `RaidPanels.prefab › EventSlip` telsiz şeridi oldu: `Robot` simgesi
+  kapalı, `Event` metni (15, −38), 364 px ve çok satırlı; `Red` kenarı şeridin boyuna uzar (dikey germe). Şeridin boyu
+  satır sayısıyla kodda büyür. Sıra kutuları ve "Boşluk · hızlandır" yalnız makine evresinde.
+
+- **2026-10-29 · Telsiz kurgusu (2. aşama, saha masası):** `SiginakRoom/CRT desk/Keyboard` kaldırıldı; yerine `Microphone`
+  (bakalit taban, krom boyun ve kafa, bas-konuş tuşu, telsize giden kablo; operatöre 15° döner) ve `Radio log` (beyaz
+  kâğıt, mavi satırlar, kalem, DeskLocText başlık "TELSİZ KAYDI"). CRT'nin `DeskTarget`'ı: "TELSİZ HATTI" / "Yalnız baskın
+  emriyle hat açılır. Emri görev fişinden ver (3).". `SiginakTextScan` istisnası "Keyboard" → "Radio log/". Baskın tahtası:
+  pafta koordinatları, yağlı kalem okları, görevli çubuğu (`RaidPieceLibrary.plotterShaft/plotterHead` = PlywoodTop/Copper).
+
+- **2026-10-29 · Telsiz kurgusu (1. aşama, yalnız sunum):** CRT telsizin göstergesi (`CrtViewBuilder`: TELSİZ · KANAL 07;
+  DİNLEMEDE, HAT AÇILIYOR, HAT AÇIK, HAT KAPANDI, HAT KAPALI; geçişte SİNYAL ve "SAHA MASASI · PAFTA 8×8 · GÖREV"). Sahnede
+  `SiginakRoom/CRT desk/CRT/Plate/Text 0` (DeskLocText) "TELSİZ · K-07". Baskın HUD'u: EMRİ İLET, DİNLEMEDE, TELSİZ; panel
+  başlıkları TELSİZ KAYDI ve TELSİZ (olay fişi); `RaidPanelsView` sıra kutularını başlığın genişliğine göre dizer
+  (önceden x = 54 sabit, "TELSİZ" çakışıyordu). Sesler `Cue.RadioTune/RadioSend/RadioReport` (53–55) ve
+  `LoopCue.RadioHiss` (3); baskında saha sesleri telsiz bandından. Prefab değişmedi.
+
 - **2026-10-28 · Kıt sığınak ekonomisi:** vardiya raporunun analist notuna erzak uyarısı (`ShiftReportBuilder.Analyst`:
   toplayıcılar yetmezken erzak 6 vardiya içinde bitecekse "→ erzak N vardiyaya yeter, ikmale çık"). ERZAK sayacı depo
   sınırını (`/30`) simülasyondan okur; sahne ve prefab değişmedi. V.014 fikstürü erzak 22/30.

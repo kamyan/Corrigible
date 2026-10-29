@@ -144,7 +144,7 @@ SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
 - Oda, yerleşim ve bileşen bağlantıları sahnede serileştirilir; kalıcı kurucu yoktur (son kurucu `eed2824`'te). Tasarım
   eşlemesi, poz/kamera ayrıntısı ve değişiklik günlüğü: `Docs/UI_Siginak/IMPLEMENTATION_MAP.md`.
 - **Bağlayıcılar** (Bridge/Siginak): `SiginakDesk` (sayaçlar, anahtarlar, şalter), `SiginakMap` (kâğıt harita, görev ve
-  cephe fişleri, ekip figürü), `SiginakShelter` (maket ve oda kartları), `SiginakCrt` (saha yayını, `IRaidTransition`),
+  cephe fişleri, ekip figürü), `SiginakShelter` (maket ve oda kartları), `SiginakCrt` (telsiz hattı, `IRaidTransition`),
   `SiginakShift` (vardiya dizisi, vardiya raporu, evrak tepsisi), `SiginakBriefing` (açılış ve emir belgesi),
   `SiginakDoor` (kapı: vuruş, kamera, kâğıdın evreleri, `LiberationDeskView.AnswerDoor`; kâğıdı saf C# `DoorViewBuilder`
   kurar, `DoorCardView` çizer, kapıyı `DoorProp` canlandırır; ölümcül kararda son raporu `DeskBridgeState.HoldEnding` ile
@@ -191,6 +191,17 @@ RaidPanelCanvas   RaidPanels (olay, onay, günlük, kurallar, geri çekilme, son
 - `RaidBoard3D`: kare (x, y) → dünya `(x − 3,5, 0, 3,5 − y)`. Bir eylem ya da tur bitince motor durumu anında değişir;
   tahta efektleri (`FxList`) sırayla oynatır, sonra `Sync` ile eşitlenir. Oynatma sırasında girdi kapalıdır (`Busy`).
   Can/sıra etiketleri `RaidScreenLabel` prefab'ıyla ayrı Overlay canvas'ta çizilir.
+- **Saha masası** (yalnız sunum): `Build` paftanın kameraya bakan kenarlarına kare adlarını yazar (güneyde A–H, batıda 1–8;
+  1 kameraya en yakın); `RaidBoard3D.CellName(x, y)` telsiz satırlarında kullanılır ("TEKNİSYEN · A6"). Niyet okları
+  `RaidArrow.Set(..., hand)` ile yağlı kalem çizgisi (dalga uçların konumundan, eşitlemede titremez; uç açık V). Makine
+  evresinin sonunda `PlotMoves` uygulanmış niyetlerin izlerini kaldırır ve görevli çubuğuyla (`RaidPieceLibrary.plotterShaft`,
+  `plotterHead`; yoksa çubuksuz kayar) makine figürlerini yeni karelerine iter; yeni niyetleri `Sync` çizer.
+- **Gözcü raporu** (yalnız sunum): `RaidDataSource` baskının başında (`OpenState`) ve her makine evresinden sonra
+  `board.HoldIntents()` der; eşitleme niyetleri gizli tutar. `Report` → `RaidBoard3D.ReportIntents` niyetleri sırayla açar
+  (ok `RaidArrow.Reveal` ile çizilir; bayrak ve yalnız o niyete ait hedef kareler `ApplyReport` ile belirir) ve her biri
+  için telsiz satırı yazdırır. Rapor sürerken `Busy` (girdi kapalı, HUD DİNLEMEDE); tuş ya da tıklama kalanı bir anda
+  çizer. Telsiz şeridi `RaidViewModel.Radio` (`RaidRadioLine`: konuşan, metin); `RaidPanelsView` olay fişinde son dört
+  satırı çizer, en yenisini `maxVisibleCharacters` ile daktilo gibi yazar. Konuşma sesi `Cue.RadioVoice` (56).
 
 ## UI yaklaşımı ve tema
 
@@ -230,9 +241,15 @@ Unity Localization paketi kullanılmadı: metinlerin bir kısmı motordan bağı
 
 - **`AudioDirector`** (DeskGame'de `Audio` nesnesi): simülasyonu yalnızca okur; rastgelelik `UnityEngine.Random`.
   Müzik katmanları: drone her zaman, warm işgal oranıyla, grit dünyanın uğultusu; hepsi alçak geçiren filtreyle
-  "duvarın ardından". Bölge özgürleşince alarm, harekât bitince kapanış; baskında müzik kısılır, bina uğultusu girer.
+  "duvarın ardından". Bölge özgürleşince alarm, harekât bitince kapanış; baskında müzik kısılır, telsiz hışırtısı
+  (`LoopCue.RadioHiss`) ve bina uğultusu girer.
+- **Telsiz:** saha görülmez, telsizden duyulur. Baskın sahnesi açıkken saha sesleri (`Cue.RaidStep` … `RaidSpawn`) ve bina
+  uğultusu ses kaynağındaki yüksek ve alçak geçiren filtreyle telsiz bandından çalar (`SoundBank.fieldThroughRadio`,
+  `radioLowCut` 450 Hz, `radioHighCut` 3000 Hz); arayüz sesleri düz kalır. `RadioTune` 53 (hat açılırken, `SiginakCrt`),
+  `RadioSend` 54 (EMRİ İLET, `RaidDataSource.Machines`), `RadioReport` 55 (hızlandırılmış makine evresinde gözcünün kısa
+  bipi, hat kapanırken), `RadioVoice` 56 (gözcünün raporu ve makine hamleleri: telsizden boğuk konuşma).
 - **Tek seferlik sesler:** `Sfx.Play(Cue.X, volume, pan, pitch)` (kapı: `DoorKnock` 50, `DoorOpen` 51, `DoorShot` 52;
-  yer tutucular `Audio/Placeholder/CueDoor*.wav` kodla sentezlendi); klipler `Settings/SoundBank.asset` → `cues`
+  yer tutucular `Audio/Placeholder/CueDoor*.wav` ve `CueRadio*.wav`, `LoopRadioHiss.wav` kodla sentezlendi); klipler `Settings/SoundBank.asset` → `cues`
   (`Cue` enum'ı asset'te sayı olarak saklandığı için her üyenin sayısı sabittir). Baskın tahtası efektleri ekran
   konumuna göre sağ-sol çalar. Klipler yer tutucudur (`Audio/Placeholder`).
 - **Ayarlar** (`SettingsCard`, `AudioPrefs`, PlayerPrefs `corrigible.audio.*`): genel, müzik, ortam, efekt, sessiz mod, dil.

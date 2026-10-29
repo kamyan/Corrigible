@@ -105,12 +105,34 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 5f3db454f6c884490ac8ee0601c6931f, type: 3}
     volume: 1
     pitchJitter: 0.03
+  - cue: 53
+    clip: {fileID: 8300000, guid: d95c6741e2f3b46bebf4db936c15a95d, type: 3}
+    volume: 0.5
+    pitchJitter: 0
+  - cue: 54
+    clip: {fileID: 8300000, guid: 2da63faba1b5842b197555a977e848a1, type: 3}
+    volume: 0.55
+    pitchJitter: 0.02
+  - cue: 55
+    clip: {fileID: 8300000, guid: 8dbff5e9b2b544eaab2dc6b5362a2b73, type: 3}
+    volume: 0.4
+    pitchJitter: 0.06
+  - cue: 56
+    clip: {fileID: 8300000, guid: ce260ef3941ac4040887b29c145bb614, type: 3}
+    volume: 0.38
+    pitchJitter: 0.12
   loops:
   - loop: 2
     clip: {fileID: 8300000, guid: 3870b0f55fe814b79b02988d3ab12896, type: 3}
     volume: 0.45
+  - loop: 3
+    clip: {fileID: 8300000, guid: d633c81aeef3b4fdf8f574476c50792d, type: 3}
+    volume: 0.12
   musicVolume: 0.55
   sfxVolume: 0.8
   gritVolume: 0.35
   raidDuck: 0.3
   pausedCutoff: 900
+  fieldThroughRadio: 1
+  radioLowCut: 450
+  radioHighCut: 3000

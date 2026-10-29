@@ -54,7 +54,7 @@ namespace Corrigible.Desk.Bridge
                 Paragraphs = new[]
                 {
                     Loc.T("Dünya çoktan düştü. Yapay zekâ on iki bölgenin tamamını, bütün ağları ve sunucuları ele geçirdi. Yukarıda konuşan her makine artık onun sesiyle konuşuyor."),
-                    Loc.T("Batı Avrupa'nın altındaki SIĞINAK 07 hâlâ bizim. Burada ekran yok, ağ yok: emirler kâğıtla verilir, sayılar sayaçta döner."),
+                    Loc.T("Batı Avrupa'nın altındaki SIĞINAK 07 hâlâ bizim. Burada ağ yok: emirler kâğıtla verilir, sahayla yalnız telsiz konuşur."),
                     Loc.T("Görevin: Alfa ekibini sahaya sür, bölgeleri sektör sektör geri al, sığınağı ayakta tut. Sivilleri koru: kırılan her sunucu GÜVEN'i düşürür, sıfırda direniş dağılır. Zaman yalnızca sen VARDİYAYI BİTİR dediğinde ilerler."),
                 },
                 Closing = Loc.T("AĞA BAĞLANMA. ANALOG KAL."),

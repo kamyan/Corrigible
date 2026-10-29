@@ -13,7 +13,8 @@ namespace Corrigible.Game.Audio
     /// <item>Müzik: drone hep çalar; warm katmanı işgal oranıyla girer (dünya ne kadar işgal altındaysa o kadar sahte huzur);
     /// grit dünyanın uğultusu. Hepsi sığınağın duvarlarının ardından (alçak geçiren filtre) duyulur.</item>
     /// <item>Bölge tamamen geri alınınca alarm; harekât bitince kapanış ezgisi.</item>
-    /// <item>Baskında müzik kısılır, bina uğultusu döngüsü girer.</item>
+    /// <item>Baskında müzik kısılır, telsiz hışırtısı ve bina uğultusu döngüsü girer. Saha sahayı görmez, telsizden duyar:
+    /// baskın sesleri (Raid*) ve bina uğultusu telsizin dar bandından geçer (<see cref="SoundBank.fieldThroughRadio"/>).</item>
     /// </list>
     /// </summary>
     public sealed class AudioDirector : MonoBehaviour
@@ -31,6 +32,7 @@ namespace Corrigible.Game.Audio
         AudioSource[] layers;
         AudioLowPassFilter[] filters;
         readonly List<AudioSource> voices = new List<AudioSource>();
+        readonly Dictionary<AudioSource, (AudioHighPassFilter Low, AudioLowPassFilter High)> radioBand = new Dictionary<AudioSource, (AudioHighPassFilter, AudioLowPassFilter)>();
         readonly Dictionary<LoopCue, AudioSource> loopSources = new Dictionary<LoopCue, AudioSource>();
         bool ended;
 
@@ -50,15 +52,37 @@ namespace Corrigible.Game.Audio
                 if (s.clip != null) s.PlayScheduled(start);   // aynı anda başlar: katmanlar ritimde kalır
                 layers[i] = s;
             }
-            for (int i = 0; i < 10; i++) voices.Add(NewSource("Sfx " + i));
+            for (int i = 0; i < 10; i++) voices.Add(RadioBand(NewSource("Sfx " + i)));
             foreach (LoopCue l in System.Enum.GetValues(typeof(LoopCue)))
             {
                 var s = NewSource("Loop " + l);
                 s.clip = bank.Loop(l).clip; s.loop = true; s.volume = 0;
+                if (l == LoopCue.RaidAmbience) SetRadioBand(RadioBand(s), bank.fieldThroughRadio);
                 if (s.clip != null) s.Play();
                 loopSources[l] = s;
             }
         }
+
+        /// <summary>Kaynağa telsiz bandını (alçak ve yüksek kesim) ekler; kapalı başlar.</summary>
+        AudioSource RadioBand(AudioSource s)
+        {
+            var low = s.gameObject.AddComponent<AudioHighPassFilter>();
+            var high = s.gameObject.AddComponent<AudioLowPassFilter>();
+            low.cutoffFrequency = bank.radioLowCut;
+            high.cutoffFrequency = bank.radioHighCut;
+            radioBand[s] = (low, high);
+            SetRadioBand(s, false);
+            return s;
+        }
+
+        void SetRadioBand(AudioSource s, bool on)
+        {
+            if (!radioBand.TryGetValue(s, out var f)) return;
+            f.Low.enabled = f.High.enabled = on;
+        }
+
+        /// <summary>Sahadan gelen ses: baskın tahtasının olayları (adım, atış, hasar, patlama, uyanma).</summary>
+        static bool FromField(Cue cue) => cue >= Cue.RaidStep && cue <= Cue.RaidSpawn;
 
         AudioSource NewSource(string name)
         {
@@ -94,6 +118,7 @@ namespace Corrigible.Game.Audio
             if (c.clip == null) return;
             var s = voices.FirstOrDefault(v => !v.isPlaying) ?? voices.OrderBy(v => v.time / Mathf.Max(0.01f, v.clip != null ? v.clip.length : 1)).Last();
             s.clip = c.clip;
+            SetRadioBand(s, bank.fieldThroughRadio && RaidLauncher.IsRaidLoaded && FromField(cue));
             s.volume = c.volume * volume * bank.sfxVolume * Fx;
             s.panStereo = pan;
             s.pitch = pitch * (1 + Random.Range(-c.pitchJitter, c.pitchJitter));
@@ -105,6 +130,7 @@ namespace Corrigible.Game.Audio
             if (clip == null) return;
             var s = voices.FirstOrDefault(v => !v.isPlaying) ?? voices[0];
             s.clip = clip; s.volume = volume * bank.sfxVolume * Fx; s.panStereo = 0; s.pitch = 1;
+            SetRadioBand(s, false);
             s.Play();
         }
 
@@ -133,6 +159,7 @@ namespace Corrigible.Game.Audio
                 layers[i].volume = Mathf.MoveTowards(layers[i].volume, v, fadeSpeed * Time.unscaledDeltaTime);
             }
             Loop(LoopCue.RaidAmbience, raid ? 1 : 0);
+            Loop(LoopCue.RadioHiss, raid ? 1 : 0);
         }
 
         void Loop(LoopCue l, float level)

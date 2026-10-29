@@ -1,12 +1,12 @@
 # Durum, kararlar ve açık işler
 
-_Son güncelleme: 2026-10-28_
+_Son güncelleme: 2026-10-30_
 
 ## Nerede kaldık
 
 Oyun tek bir harekât: **DeskGame**'deki Sığınak komuta odasından YZ işgalindeki 12 bölgeyi sektör sektör geri alma,
-baskınlar **Baskin** sahnesinin 8×8 taktik tahtasında. Açılış ve emir belgesi → harita planlaması → baskın emri → CRT'ye
-dalış → taktik savaş → operasyon raporu → vardiya şalteri ve vardiya raporu → … → son rapor ve yeniden başlama baştan
+baskınlar **Baskin** sahnesinin 8×8 taktik tahtasında. Açılış ve emir belgesi → harita planlaması → baskın emri → telsiz
+hattı (CRT'ye dalış) → taktik savaş → operasyon raporu → vardiya şalteri ve vardiya raporu → … → son rapor ve yeniden başlama baştan
 sona oynanabilir. Harekât sivil güven tükenirse kaybedilir (Dağılma); YZ alarmı eşikte karşı saldırır. Vardiyada bir
 baskın. Sığınak baskının hazırlık yeri: uzmanların yarası kalır, revir sarar, atölye zırh plakası döker, yaşam alanı
 yedek uzman tutar, telsiz alarmı yavaşlatır; oda seviyeleri özgür bölgeyle açılır. Zorluk özgür bölge sayısıyla dört
@@ -17,13 +17,76 @@ ilk baskın adım adım oynanan bir senaryodur. Her harekâtın kendi 30 harital
 ikmal görevinde malzeme girişe geri taşınır; kampanyada makineler gelişmiş akılla oynar ve ekibe ulaşamayınca sivillere
 nişan alır; ayakta kalan siviller güveni geri kazandırır (tavan 20); YZ alarmı arka duvardaki panoda.
 Sığınağın ekonomisi kıt: erzak çoğunlukla ikmal baskınlarından gelir, açlık kapıya aç heyet getirir.
-Son tam EditMode koşusu **332/332** (2026-10-28).
+Baskın telsizle anlatılır: sığınak ağa bağlanmaz, gözcü bildirir, emir telsizle gider.
+Son tam EditMode koşusu **332/332** (2026-10-29).
 
 **Git:** Depo `git@github.com:kamyan/Corrigible.git`, varsayılan dal `main`. Sığınak işi `siginak-ui` dalında
 (Aşama 1–10: `eed2824`, eski görünümün kaldırılması: `553517e`, sarı çerçeve: `b7b4d82`, sadeleştirme: `413fbf5`; sivil
 güven, YZ alarmı, hazırlık sığınağı, bölge kimliği ve eğitim: `6e658a5`). Sonrası (baskında tıklama düzeltmeleri, alarm
 panosu, harita havuzu ve torbası, ikmal kaçışı, makine aklı, sivillere saldıran makineler ve güven ödülü, sığınağın kapısı)
 henüz commit edilmedi.
+
+## Telsiz kurgusu, 1. aşama (2026-10-29)
+
+Kullanıcı "baskına geçerken bağlanıyor diyor; oyun ağa bağlanmama üzerine, saha telsizden gelsin, figürlerle masada
+yansıtılsın, emirlerimizi telsizle yollayalım" dedi. Açılış emri "AĞA BAĞLANMA. ANALOG KAL." derken geçiş "BAĞLANTI
+KURULUYOR · SAHA YAYINI · KAMERA 2" diyordu; emir belgesi de masada CRT varken "ekran yok" diyordu.
+
+- **Karar: emirler tek tek, anında gider.** Toplu iletme (turun sonunda hepsi birden, sonuçlar sonra) başka bir oyun olur:
+  hamlenin sonucunu görmeden sonrakini planlamak motoru ve kayıtları değiştirir. Bu aşama yalnız sunum; Core, kayıt
+  biçimi ve RNG değişmedi.
+- **Metinler:** CRT telsizin göstergesi (TELSİZ · KANAL 07; DİNLEMEDE, HAT AÇILIYOR, HAT AÇIK, HAT KAPANDI, HAT KAPALI;
+  CRT plakası TELSİZ · K-07). Geçiş: SİNYAL, "SAHA MASASI · PAFTA 8×8 · GÖREV". Baskın HUD'u: TURU BİTİR → EMRİ İLET
+  (İngilizce TRANSMIT; "EMİRLERİ İLET" 104 px'lik etikete sığmıyordu), makine evresi MAKİNELER → DİNLEMEDE, GÜNLÜK → TELSİZ,
+  operasyon günlüğü → TELSİZ KAYDI, olay fişi SIRA → TELSİZ ("emir iletildi · gözcü bildiriyor"). Kurallar kartı, eğitim
+  notları ve emir belgesi ("Burada ağ yok: emirler kâğıtla verilir, sahayla yalnız telsiz konuşur.") buna göre.
+- **Ses:** hat açılırken frekans arama, EMRİ İLET'te bas-konuş ve onay bipi, gözcünün her makine hamlesinden önce kısa
+  bildirimi, baskın boyunca telsiz hışırtısı; saha sesleri telsiz bandından (ayrıntı `Docs/MIMARI.md` → Ses).
+- **Play'de denendi:** açılış emri sığıyor; masada CRT DİNLEMEDE; geçiş HAT AÇILIYOR; HUD'da TELSİZ, EMRİ İLET, makine
+  evresinde DİNLEMEDE ve TELSİZ fişi (başlık uzayınca sıra kutuları başlığın ardından dizilir); telsiz kaydı; İngilizcede
+  LISTENING, RADIO, TRANSMIT; ses kaynaklarında saha sesleri bantlı, arayüz düz. EditMode 332/332.
+- **Sonraki aşama (açık):** 3) isteğe bağlı mekanik: YZ telsizi dinler (iletim alarmı artırır); motoru değiştirir, kayıt
+  sürümü artar.
+
+## Telsiz kurgusu: gözcü raporu, telsiz şeridi, konuşma (2026-10-30)
+
+Kullanıcı oynadıktan sonra "telsiz iletişimi ile olduğu tam vurgulanmamış" dedi; gözcü raporunu, hep açık telsiz şeridini
+ve konuşma sesini seçti (emirleri tek tek konuşturmayı seçmedi). Yalnız sunum; Core, kayıt ve RNG aynı.
+
+- **Gözcü raporu:** oklar artık bir anda belirmiyor. Baskının başında ("07 › Hat açık. Gözcü, rapor ver.") ve her makine
+  evresinden sonra komuta DİNLEMEDE'dir; gözcü niyetleri sırayla bildirir, her bildirimde bayrak ve hedef kareler belirir,
+  ok paftaya kalemle çizilir (~0,55 sn; hızlandırılmışken üç kat hızlı). Bir tuş ya da tıklama kalanı bir anda çizer.
+  Boşa gidecek atış da bildirilir ("→ hedef yok"); raporun sonunda uyanacak kareler ("Uyanacak: F5."), kum fırtınasında
+  söylenmez.
+- **Telsiz şeridi:** sol üstteki fiş baskın boyunca açık; son dört konuşma, eskiler soluk, en yenisi daktilo gibi
+  (90 harf/sn). Makine evresinde gözcünün satırları ("№1 · saldırı → A1 · −1"), sıra kutuları ve hız düğmesi.
+- **Konuşma sesi:** `CueRadioVoice` (sentez: gırtlak darbeleri, iki formant, hece zarfı, telsiz bandı) gözcünün her
+  bildiriminde; hızlandırılmış makine evresinde yerine kısa bip.
+- **Düzeltilenler (Play'de görüldü):** TMP'de `</alpha>` kapanışı yok, satırlarda açıkça yazıyordu (her satır kendi
+  alfasıyla açılır); hedefsiz niyet rapordan düşüyordu; dünya etiketi yeniden açılınca ekran etiketi kapalı kalıyordu
+  (`RaidWorldLabel.SetVisible`).
+- **Play'de denendi:** baskın başı ve ikinci turun raporu yavaşlatılmış zamanla (bayraklar sırayla, ok çiziliyor, son satır
+  yazılıyor), makine evresinde şerit ve sıra kutuları. EditMode 332/332.
+- **Tuzak:** editör Play'deyken `run_tests` sahneyi kaydedemeyip takıldı ve Unity'nin komut sunucusu kilitlendi (yalnız
+  Unity'yi yeniden açmak çözdü). Testten önce `EditorApplication.isPlaying` denetlenmeli.
+
+## Telsiz kurgusu, 2. aşama: saha masası (2026-10-29)
+
+Tahta zaten kontrplak taban, ozalit kâğıt ve kaideli harf figürlerle bir masa maketi gibi duruyordu; keçe ve figürler
+değişmedi. Eklenenler yalnız sunum (Core, kayıt, RNG aynı):
+
+- **Pafta koordinatları:** kameraya bakan kenarlarda mavi el yazısıyla A–H ve 1–8. Gözcünün satırları kareyi adıyla verir
+  ("№3 · saldırı → TEKNİSYEN · A6 · −1", boş kareye "→ C3", "Yeni bir robot uyandı: C3.").
+- **Yağlı kalem okları:** niyet okları hafif dalgalı, uçlarda incelen, açık V uçlu çizgiler; okunurluk için kalınlık aynı.
+- **Görevli çubuğu:** makineler önceden turun sonunda yeni karelerine ışınlanıyordu. Şimdi makine evresinin sonunda
+  uygulanmış niyetlerin izleri kalkar, bakır başlıklı ahşap çubuk her figürün arkasına gelip onu yeni karesine iter,
+  sonra yeni niyetler çizilir. Kamera yönüne doğru itilen figürde başlık figürün arkasında kalır; sap yatık olduğu için
+  çubuk yine okunur.
+- **Komuta masası:** CRT'nin önündeki klavye kalktı (bilgisayar gibi duruyordu); yerine bas-konuş masa mikrofonu (kablosu
+  telsize gider) ve kalemli telsiz kayıt defteri. CRT'nin üzerine gelme etiketi "TELSİZ HATTI · Yalnız baskın emriyle hat
+  açılır…". Punto taramasında klavye istisnası defter başlığına geçti (dekor, 6,5 px).
+- **Play'de denendi:** koordinatlar, kalem okları, çubuk (yavaşlatılmış zamanla iki kare), telsiz satırında A6/A3 kareleri
+  figürlerin gerçek yerine uyuyor; CRT yakın planında mikrofon ve defter. EditMode 332/332.
 
 ## Harita türleri (2026-10-28)
 
@@ -505,7 +568,11 @@ bugünkü odanın tasarım brifidir.)
   (şimdi dron ve bakım robotunun resmi) ileride yapılabilir. Havan ve kilitleyicinin niyet oku düz/eğri ok; havanın
   engel üstünden attığı ayrıca çizilmiyor.
 - **Operasyon raporu:** başarısız baskında aynı cümle hem başlık altında hem uyarı bandında görünüyor (eski davranış).
-- **Ses:** yer tutucu sesler gerçekleriyle değiştirilmeli; AudioMixer yok. Kapının üç sesi kodla sentezlendi.
+- **Ses:** yer tutucu sesler gerçekleriyle değiştirilmeli; AudioMixer yok. Kapının üç sesi ve telsiz sesleri kodla sentezlendi.
+- **Telsiz kurgusu 3. aşama:** isteğe bağlı "YZ telsizi dinler" mekaniği (yukarıda). Baskın günlüğündeki tur satırı
+  Core'dan gelir ("— Tur n: makineler hareket ediyor —"), telsiz diliyle yazılmadı. Görevli çubuğu figürü düz çizgide iter,
+  duvar bloklarının içinden geçebilir; hamlenin yolu Core'da tutulmuyor. Odadaki üzerine gelme satırları (`DeskTarget`)
+  çeviri tablosunda değil (CRT'ninki de).
 - **Kapı:** siluet tek tip (ilkel şekillerden); ziyaretçiye göre değişmiyor. Kapı K1'den görünmüyor, vuruşta kamera kendiliğinden
   döner; oyuncu bunu kesintici bulursa masaya küçük bir kapı lambası eklenebilir. Eğitim notu kapı kâğıdı açıkken gizlenmez
   (eğitim ilk vardiyada bittiği için çakışmıyor). Odadaki tıklanır nesnelerin üzerine gelme satırları (`DeskTarget.line`)

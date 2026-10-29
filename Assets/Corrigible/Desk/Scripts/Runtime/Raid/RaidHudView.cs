@@ -54,7 +54,8 @@ namespace Corrigible.Desk
         public void Render(RaidViewModel vm)
         {
             turnLabel.text=Loc.T("TUR");turnNumber.text=Loc.F("{0}/{1}",vm.Turn,vm.Turns);
-            phase.text=vm.Phase=="enemy"?Loc.T("MAKİNELER"):Loc.T("SIRA SENDE");
+            // Makine evresinde komuta telsizi dinler: gözcü makinelerin hamlesini bildirir
+            phase.text=vm.Phase=="enemy"?Loc.T("DİNLEMEDE"):Loc.T("SIRA SENDE");
             // Plaka 6 kutuya göre çizildi; uzun (ikmal) ya da kısa baskında kutu başına 26 px kayar
             float extra=(Mathf.Clamp(vm.Turns,1,turnBoxes.Length)-6)*26f;
             if(turnPlaque!=null)turnPlaque.sizeDelta=new Vector2((vm.LastTurn?476.8f:vm.Phase=="enemy"?388:397.4f)+extra,62);
@@ -79,9 +80,9 @@ namespace Corrigible.Desk
             }
             int civShown=Mathf.Min(vm.Civilians,civilians.Length),civBroken=Mathf.Min(vm.CivilianBroken,civShown);for(int i=0;i<civilians.Length;i++){civilians[i].gameObject.SetActive(i<civShown);DeskSprites.Apply(civilians[i],i>=civShown-civBroken?"civ_broken_20":"civ_ok_20");}
             for(int i=0;i<team.Length;i++)team[i].Render(vm.Team[i],vm.Locked||vm.Paused);
-            logLabel.text=Loc.T("GÜNLÜK");rulesLabel.text=Loc.T("KURALLAR");retreatLabel.text=Loc.T("GERİ ÇEKİL");retreat.gameObject.SetActive(!vm.RetreatArmed);
+            logLabel.text=Loc.T("TELSİZ");rulesLabel.text=Loc.T("KURALLAR");retreatLabel.text=Loc.T("GERİ ÇEKİL");retreat.gameObject.SetActive(!vm.RetreatArmed);
             ((RectTransform)rules.transform).anchoredPosition=new Vector2(vm.RetreatArmed?-262.3f:-155.1f,-14);((RectTransform)log.transform).anchoredPosition=new Vector2(vm.RetreatArmed?-424.1f:-316.9f,-14);
-            undoLabel.text=Loc.T("Geri al");endLabel.text=vm.EndConfirm?Loc.T("EMİN MİSİN?"):Loc.T("TURU BİTİR");
+            undoLabel.text=Loc.T("Geri al");endLabel.text=vm.EndConfirm?Loc.T("EMİN MİSİN?"):Loc.T("EMRİ İLET");
             undo.interactable=vm.CanUndo&&!vm.Locked&&!vm.Paused;end.interactable=!vm.Locked&&!vm.Paused;
             ((RectTransform)end.transform).sizeDelta=new Vector2(vm.Locked?245:vm.EndConfirm?231.7f:218,56);
             endLabel.fontSize=vm.EndConfirm?(Loc.IsSource?16:14):17;endLabel.rectTransform.sizeDelta=new Vector2(vm.EndConfirm?118:104,56);

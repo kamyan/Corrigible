@@ -8,8 +8,8 @@ using UnityEngine.UI;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Baskın geçişi (K5b notu): tam ekran Overlay — tüp camı (köşe 74/64), BAĞLANTI KURULUYOR (CP 700 76, 7 px hayalet),
-    /// SENKRON 10 kutu + yüzde, hedef ve kamera satırı, arkada baskın kamerasıyla birebir 8 × 8 izometrik ızgara (α .2),
+    /// Baskın geçişi (K5b notu): tam ekran Overlay — tüp camı (köşe 74/64), HAT AÇILIYOR (CP 700 76, 7 px hayalet),
+    /// SİNYAL 10 kutu + yüzde, hedef ve saha masası satırı, arkada baskın kamerasıyla birebir 8 × 8 izometrik ızgara (α .2),
     /// statik (α .55, her kare rastgele ofset), 1,2 s'de yuvarlanan bant, tarama çizgisi, köşe kararması.
     /// Zaman çizelgesi (emirden itibaren): 0,30 kamera dönüşü (son 0,25 s'de bu katman devralır) · 0,80 tüp 4 px çizgiden
     /// 0,15 s'de açılır · 0,95 statik + başlık, kutular 0,1 s arayla · 2,00 ızgara parlar, statik %20 · 2,30 sahne açılır,

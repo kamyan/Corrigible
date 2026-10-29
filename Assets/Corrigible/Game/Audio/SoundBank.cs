@@ -32,6 +32,12 @@ namespace Corrigible.Game.Audio
         [Tooltip("Müziğe uygulanan alçak geçiren filtre (Hz): sığınağın duvarlarının ardından duyulur.")]
         public float pausedCutoff = 900f;
 
+        [Header("Telsiz")]
+        [Tooltip("Baskında saha sesleri (adım, atış, patlama, bina uğultusu) telsizin dar bandından duyulur.")]
+        public bool fieldThroughRadio = true;
+        [Tooltip("Telsiz bandının alt sınırı (Hz).")] public float radioLowCut = 450f;
+        [Tooltip("Telsiz bandının üst sınırı (Hz).")] public float radioHighCut = 3000f;
+
         public CueClip Cue(Cue cue)
         {
             foreach (var c in cues) if (c.cue == cue) return c;

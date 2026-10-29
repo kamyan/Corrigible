@@ -18,10 +18,12 @@ namespace Corrigible.Game.Audio
         RaidCoreBreak = 47, RaidBreak = 48, RaidSpawn = 49,
         // Sığınağın kapısı
         DoorKnock = 50, DoorOpen = 51, DoorShot = 52,
+        // Telsiz: sahayla tek bağ (hat açılır, emir iletilir, gözcü bildirir)
+        RadioTune = 53, RadioSend = 54, RadioReport = 55, RadioVoice = 56,
     }
 
     /// <summary>Sürekli çalan döngüler (sesi duruma göre açılıp kısılır).</summary>
-    public enum LoopCue { RaidAmbience = 2 }
+    public enum LoopCue { RaidAmbience = 2, RadioHiss = 3 }
 
     /// <summary>
     /// Ses çalmanın tek giriş noktası (görünümler buradan çağırır). Sesi ana sahnedeki <see cref="AudioDirector"/> çalar;

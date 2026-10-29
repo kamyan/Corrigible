@@ -32,7 +32,7 @@ namespace Corrigible.Desk.Tests
                 // Kasa açıldı: malzeme girişe taşınır
                 Assert.IsFalse(source.Current.Finished);
                 Assert.IsTrue(source.Current.Escaping);
-                // Düzenleme modunda TURU BİTİR makineleri oynatmaz: tur motorda biter (makineler devre dışı)
+                // Düzenleme modunda EMRİ İLET makineleri oynatmaz: tur motorda biter (makineler devre dışı)
                 foreach (var e in state.Units.Where(u => u.Side == 'e')) e.Dead = true;
                 Assert.IsTrue(Baskin.EndTurn(state));
                 var exit = state.Exits.OrderBy(p => System.Math.Abs(p.X - technician.X) + System.Math.Abs(p.Y - technician.Y)).First();

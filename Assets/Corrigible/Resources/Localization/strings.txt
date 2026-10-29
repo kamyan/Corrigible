@@ -452,8 +452,16 @@ Baskın emri: {0} · {1} · {2} fon	Raid order: {0} · {1} · {2} funds
 YAPILAMADI	FAILED
 EMİR UYGULANDI	ORDER EXECUTED
 # Assets/Corrigible/Desk/Scripts/Bridge/RaidDataSource.cs
-niyetler sırayla uygulanıyor	intents are resolving in order
-hedef kare	target tile
+Hat açık. Gözcü, rapor ver.	Line open. Spotter, report.
+GÖZCÜ	SPOTTER
+Uyanacak: {0}.	Waking: {0}.
+Makine	Machine
+№{0} · {1} {2} · yanındakilere patlayacak	No. {0} · {1} {2} · will blast its neighbours
+№{0} · {1} {2} · {3} → hedef yok	No. {0} · {1} {2} · {3} → no target
+{0} · {1}	{0} · {1}
+№{0} · {1} {2} · {3} → {4}	No. {0} · {1} {2} · {3} → {4}
+emir iletildi · gözcü bildiriyor	order sent · spotter reporting
+Emir iletildi. Gözcü, dinliyoruz.	Order sent. Spotter, we're listening.
 №{0} · hedef dolabı onarılıyor	No. {0} · repairing target cabinet
 №{0} · makine zırhlanıyor	№{0} · machine gets armor
 №{0} · yeni dron uyanıyor	№{0} · new drone waking
@@ -462,7 +470,7 @@ hedef kare	target tile
 №{0} · saldırı → {1}	No. {0} · attack → {1}
 {0} · −{1}	{0} · −{1}
 №{0} · onarım +1	No. {0} · repair +1
-Yeni bir robot uyandı.	A new robot woke up.
+Yeni bir robot uyandı: {0}.	A new robot woke up: {0}.
 İkmal kasası	Supply crate
 Düğüm	Node
 Çekirdek	Core
@@ -478,11 +486,11 @@ kasayı al	collect crate
 −1 hedef	−1 target
 itme	push
 çeker	pulls
-Kullanılmamış haklar var. Enter ile turu bitir; Esc ile vazgeç.	Unused actions remain. Enter ends the turn; Esc cancels.
+Kullanılmamış haklar var. Enter ile emri ilet; Esc ile vazgeç.	Unused actions remain. Enter transmits the order; Esc cancels.
 Geri çekilmek için tekrar bas. Esc ile vazgeç.	Press again to retreat. Esc cancels.
 DURAKLATILDI · Esc ile devam	PAUSED · Esc to resume
-OPERASYON GÜNLÜĞÜ · Ekip harekete hazır.	OPERATION LOG · Team ready to act.
-1 / 2 / 3: seç · Q: yetenek · Z: geri al · Enter: turu bitir · Esc: vazgeç	1 / 2 / 3: select · Q: ability · Z: undo · Enter: end turn · Esc: cancel
+TELSİZ KAYDI · Ekip harekete hazır.	RADIO LOG · Team ready to act.
+1 / 2 / 3: seç · Q: yetenek · Z: geri al · Enter: emri ilet · Esc: vazgeç	1 / 2 / 3: select · Q: ability · Z: undo · Enter: transmit · Esc: cancel
 Zırh plakası	Armor plate
 ilk hasarı karşılar	takes the first hit
 Yedek uzman	Reserve specialist
@@ -545,7 +553,7 @@ KARŞI HAREKÂT	COUNTEROFFENSIVE
 GİZLİ	CLASSIFIED
 ALINDI · V.{0:000}	RECEIVED · S.{0:000}
 Dünya çoktan düştü. Yapay zekâ on iki bölgenin tamamını, bütün ağları ve sunucuları ele geçirdi. Yukarıda konuşan her makine artık onun sesiyle konuşuyor.	The world has already fallen. The AI has taken all twelve regions, every network and every server. Every machine that speaks up there now speaks in its voice.
-Batı Avrupa'nın altındaki SIĞINAK 07 hâlâ bizim. Burada ekran yok, ağ yok: emirler kâğıtla verilir, sayılar sayaçta döner.	SHELTER 07, beneath Western Europe, is still ours. No screens here, no network: orders go on paper, numbers turn on counters.
+Batı Avrupa'nın altındaki SIĞINAK 07 hâlâ bizim. Burada ağ yok: emirler kâğıtla verilir, sahayla yalnız telsiz konuşur.	SHELTER 07, beneath Western Europe, is still ours. No network here: orders go on paper, and only the radio talks to the field.
 Görevin: Alfa ekibini sahaya sür, bölgeleri sektör sektör geri al, sığınağı ayakta tut. Sivilleri koru: kırılan her sunucu GÜVEN'i düşürür, sıfırda direniş dağılır. Zaman yalnızca sen VARDİYAYI BİTİR dediğinde ilerler.	Your task: send Team Alpha into the field, take the regions back sector by sector, keep the shelter alive. Protect civilians: every broken server lowers TRUST, and at zero the resistance falls apart. Time moves only when you END SHIFT.
 AĞA BAĞLANMA. ANALOG KAL.	STAY OFF THE NET. STAY ANALOG.
 KYGA MERKEZ KOMUTANLIĞI	KYGA CENTRAL COMMAND
@@ -561,22 +569,22 @@ KAYIT VAR	SAVE EXISTS
 V.{0:000} kaydının üstüne yazılır · onay: Enter	save S.{0:000} will be overwritten · confirm: Enter
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/CrtViewBuilder.cs
 YZ ALARMI {0}/{1}	AI ALARM {0}/{1}
-SAHA YAYINI · KANAL 07	FIELD FEED · CHANNEL 07
-BAĞLANTI BEKLENİYOR	AWAITING LINK
+TELSİZ · KANAL 07	RADIO · CHANNEL 07
+DİNLEMEDE	LISTENING
 {0} · SAHADA	{0} · IN THE FIELD
 {0} · DÖNDÜ · SONRAKİ VARDİYA	{0} · BACK · NEXT SHIFT
 {0} · TEKNİSYEN YARALI · {1} GÜN	{0} · TECHNICIAN INJURED · {1} DAYS
 {0} · HAZIR	{0} · READY
 CEPHE: {0} / {1:00}	FRONT: {0} / {1:00}
 CEPHE: {0} · ÖZGÜR	FRONT: {0} · FREE
-BAĞLANTI KURULUYOR	ESTABLISHING LINK
-YAYIN AÇIK	FEED LIVE
-BAĞLANTI KESİLDİ	LINK LOST
+HAT AÇILIYOR	OPENING LINE
+HAT AÇIK	LINE OPEN
+HAT KAPANDI	LINE CLOSED
 SONUÇ TELEKSTE	RESULT ON THE TELEX
-YAYIN DEVRE DIŞI	FEED DISABLED
-Teknisyen kalkınca ya da bir yedek uzman hazır olunca yayın açılabilir.	The feed can open once the Technician is up or a reserve specialist is ready.
-Görev fişinden baskın emri verildiğinde yayın açılır.	The feed opens when a raid is ordered from the mission slip.
-SENKRON	SYNC
+HAT KAPALI	LINE DOWN
+Teknisyen kalkınca ya da bir yedek uzman hazır olunca hat açılabilir.	The line can open once the Technician is up or a reserve specialist is ready.
+Görev fişinden baskın emri verildiğinde hat açılır.	The line opens when a raid is ordered from the mission slip.
+SİNYAL	SIGNAL
 Boşluk	Space
 atla	skip
 KYGA-07 · ANALOG HAT	KYGA-07 · ANALOG LINE
@@ -585,7 +593,7 @@ YAĞMA	LOOT
 SUNUCU YIKIMI	SERVER DEMOLITION
 V.{0:000} · OP-{1:00}	S.{0:000} · OP-{1:00}
 {0} · {1} / {2:00} {3}	{0} · {1} / {2:00} {3}
-KAMERA 2 · TAKTİK TAHTA 8×8 · GÖREV: {0}	CAMERA 2 · TACTICAL BOARD 8×8 · MISSION: {0}
+SAHA MASASI · PAFTA 8×8 · GÖREV: {0}	FIELD TABLE · SHEET 8×8 · MISSION: {0}
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/DoorViewBuilder.cs
 KAPI · SIĞINAK 07	DOOR · SHELTER 07
 VARDİYA {0:000}	SHIFT {0:000}
@@ -676,7 +684,6 @@ SEÇİLİ	SELECTED
 ONAR	REPAIR
 EN ÜST SEVİYE	TOP LEVEL
 GELİŞTİR	UPGRADE
-{0} · {1}	{0} · {1}
 {0} fon + {1} malzeme	{0} funds + {1} materials
 Onarıma hazır.	Ready to repair.
 Geliştirmeye hazır.	Ready to upgrade.
@@ -824,7 +831,7 @@ GÖREV FİŞİ	MISSION SLIP
 BASKIN EMRİ	RAID ORDER
 Fiş sıradaki sektörü, bedelini, ödülünü, bölgenin özelliğini ve kadroyu yazar. BASKIN EMRİ VER'e bas ya da Enter.	The slip lists the next sector, its cost, reward, the region's trait and your squad. Press ORDER RAID or Enter.
 TAKTİK TAHTA	TACTICAL BOARD
-Kırmızı oklar makinelerin bu turdaki hamlesi, bayraktaki sayı sırası. Uzmanı seç (1–3), mavi kareye yürü, Q ile yeteneği seç ve hedefe tıkla; Enter turu bitirir. Kasayı altıncı turdan önce al.	Red arrows show what each machine will do this turn; the flag number is its order. Select a specialist (1–3), move to a blue tile, press Q for the ability and click the target; Enter ends the turn. Take the crate before turn six.
+Kırmızı oklar gözcünün telsizden bildirdiği makine hamleleri, bayraktaki sayı sırası. Uzmanı seç (1–3), mavi kareye yürü, Q ile yeteneği seç ve hedefe tıkla; Enter emri iletir. Kasayı altıncı turdan önce al.	Red arrows are the machine moves the spotter reports by radio; the flag number is their order. Select a specialist (1–3), move to a blue tile, press Q for the ability and click the target; Enter transmits the order. Take the crate before turn six.
 SONUÇ	OUTCOME
 Baskın bitti. Alınan hasar sığınağa yara olarak döner; düşen uzman günlerce yatar. Enter ile operasyon raporuna geç: masaya dönülür, rapor açılır.	The raid is over. Damage taken comes home as wounds; a fallen specialist is laid up for days. Press Enter to go to the operation report: you return to the desk and it opens.
 OPERASYON RAPORU	OPERATION REPORT
@@ -866,7 +873,7 @@ Q ile ikmal almayı seç.	Press Q to pick supply pickup.
 Q ile EMP atışını seç.	Press Q to pick the EMP shot.
 Q ile kancayı seç.	Press Q to pick the hook.
 Sarı çerçeveli kareye tıkla.	Click the tile with the yellow frame.
-Enter ile turu bitir ya da TURU BİTİR'e bas.	Press Enter or END TURN to end the turn.
+Enter ile emri ilet ya da EMRİ İLET'e bas.	Press Enter or TRANSMIT to send the order.
 # Assets/Corrigible/Desk/Scripts/Bridge/SimDeskBuilder.GameOver.cs
 KYGA · SON RAPOR	AISA · FINAL REPORT
 Dosya KYGA-07 · Karşı harekât	File KYGA-07 · Counteroffensive
@@ -942,7 +949,6 @@ HEDEF KIRILIR	TARGET DESTROYED
 operasyon kazanılır	operation won
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidHudView.cs
 TUR	TURN
-MAKİNELER	MACHINES
 SIRA SENDE	YOUR TURN
 SON TUR	LAST TURN
 İKMAL	SUPPLIES
@@ -953,26 +959,25 @@ GÜVEN {0}	TRUST {0}
 SİVİL	CIVILIAN
 ALINDI	COLLECTED
 KIRILDI	BROKEN
-GÜNLÜK	LOG
+TELSİZ	RADIO
 KURALLAR	RULES
 GERİ ÇEKİL	RETREAT
 Geri al	Undo
 EMİN MİSİN?	ARE YOU SURE?
-TURU BİTİR	END TURN
+EMRİ İLET	TRANSMIT
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidLogRowView.cs
 YZ · ELE GEÇİRİLEN SATIR	AI · INTERCEPTED LINE
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidPanelsView.cs
-SIRA	QUEUE
 Boşluk · normal hız	Space · normal speed
 Boşluk · hızlandır	Space · speed up
 HAKKI DURAN BİRİM	UNIT WITH UNUSED ACTIONS
-Enter yine de bitir · Esc vazgeç	Enter finish anyway · Esc cancel
+Enter yine de ilet · Esc vazgeç	Enter transmit anyway · Esc cancel
 hareket + yetenek	move + ability
 hareket	move
 yetenek	ability
 {0} · {1} kullanılmadı\n#{2} dron onu vuracak · −1	{0} · {1} unused\nDrone #{2} will hit them · −1
 {0} · {1} kullanılmadı	{0} · {1} unused
-OPERASYON GÜNLÜĞÜ	OPERATION LOG
+TELSİZ KAYDI	RADIO LOG
 KURALLAR KARTI	RULES CARD
 Teknisyen kasayı açar ve malzemeyi taşır. İtme ve patlamalar kasaya hasar verebilir; EMP kasayı açmaz.	The Technician opens the crate and carries the supplies. Pushes and explosions can damage the crate; EMP doesn't open it.
 İkmal görevi: Teknisyen ile kasayı aç, sonra malzemeyi giriş karelerinden birine geri taşı. Kasa imha olursa, Teknisyen düşerse ya da süre biterse görev kaybedilir.	Supply mission: open the crate with the Technician, then carry the supplies back to one of the entry tiles. The mission fails if the crate is destroyed, the Technician goes down or time runs out.
@@ -987,6 +992,7 @@ kırıldı	broken
 Kırılan sivil sunucu · {0}	Civilian servers broken · {0}
 Ekip · {0}/{1} ayakta	Team · {0}/{1} standing
 Operasyon raporu bölgeye etkisini ve ekibin durumunu gösterecek.	The operation report will show regional effects and team condition.
+<b>{0} ›</b> {1}	<b>{0} ›</b> {1}
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidTeamCardView.cs
 YARALI	INJURED
 DÜŞTÜ	DOWN
@@ -1007,8 +1013,8 @@ operasyon emrinden	from the operation order
 oklar · seçim · zırh · siviller	arrows · selection · armor · civilians
 Aç	Open
 Katla	Fold
-Kırmızı ok robotun bu turdaki hamlesi; bayraktaki sayı sırası.	The red arrow is the robot's move this turn; the number on the flag is its order.
-Seç, taşı, kullan: 1–3 ya da tıkla, mavi kareye taşı, Q ile yetenek. Z turdaki hamleyi geri alır.	Select, move, act: 1–3 or click, move to a blue tile, Q for the ability. Z undoes a move this turn.
+Kırmızı ok, gözcünün telsizden bildirdiği robot hamlesi; bayraktaki sayı sırası.	The red arrow is the robot's move as the spotter reports it by radio; the number on the flag is its order.
+Seç, taşı, kullan: 1–3 ya da tıkla, mavi kareye taşı, Q ile yetenek. Z turdaki hamleyi geri alır; Enter emri telsizle iletir.	Select, move, act: 1–3 or click, move to a blue tile, Q for the ability. Z undoes a move this turn; Enter transmits the order by radio.
 Zırh: hedef dolaplara yalnız sabotaj, itilen robot ve patlayan soğutma ünitesi işler.	Armor: only sabotage, a pushed robot or an exploding cooling unit damages target cabinets.
 İtme: çarpan da çarpılan da 1 hasar alır; kanala düşen de 1 hasar alır.	Push: both the pushed and what it hits take 1 damage; falling into a channel deals 1.
 Sivilleri koru: ekibe ulaşamayan makine sivil sunucuya nişan alır. Kırılan her sunucu GÜVEN'i düşürür; kazanınca ayakta kalan her 2 sunucu +1 GÜVEN.	Protect civilians: a machine that can't reach the team aims at a civilian server. Every broken server lowers TRUST; win the raid and every 2 servers left standing give +1 TRUST.
@@ -1096,4 +1102,4 @@ EVRAK	PAPERS
 TELEKS · KYGA-07	TELEX · KYGA-07
 SIĞINAK 07 · KESİT	SHELTER 07 · SECTION
 K-07	K-07
-SAHA YAYINI · K-07	FIELD FEED · K-07
+TELSİZ · K-07	RADIO · K-07

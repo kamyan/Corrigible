@@ -41,7 +41,7 @@ namespace Corrigible.Desk.EditorTools
             ("Teleprinter/Paper text", "masadaki teleks kâğıdı; okunur boyda değilse satırlar ekranın altındaki şeritte basılır"),
             ("Cork board/", "mantar pano notları anlatı süsü; liste K1'de dekor (KURTARILAN BÖLGELER)"),
             ("Shell/", "duvar yazıları ve afiş küçük satırları anlatı süsü"),
-            ("Keyboard", "klavye tuş dokusu"),
+            ("Radio log/", "CRT önündeki telsiz kayıt defterinin başlığı (dekor; telsiz kaydı baskında TELSİZ panelinde okunur)"),
             ("Test pattern", "CRT test deseni K-07 (tasarım: %28 desen)"),
             ("/Stamp/Word", "haritadaki ÖZGÜR damgasının bandı (tasarım ~9 ekran px, Aşama 5; durum tarama ve lejantta da var)"),
             ("/Stamp/Day", "haritadaki ÖZGÜR damgasının vardiya kodu (tasarım ~9 ekran px, Aşama 5)"),

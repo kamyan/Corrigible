@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Corrigible.Core;
+using Corrigible.Game.Audio;
 using Corrigible.Game.Raid;
 using UnityEngine;
 
@@ -26,7 +27,9 @@ namespace Corrigible.Desk.Bridge
         public RaidGuide Guide { get; protected set; }
         bool Guided=>Guide!=null&&!Guide.Done;
         protected bool confirm,retreat,fast,paused,unread=true;protected string panel;
-        protected bool resolving,executing;
+        protected bool resolving,executing,reporting;
+        /// <summary>Telsiz şeridi: gözcünün raporları ve bizim konuşmalarımız (yalnız sunum).</summary>
+        readonly List<RaidRadioLine> radio=new List<RaidRadioLine>();int liveLine=-1;
         protected readonly List<(int x,int y,string kind,int max)> targetForms=new List<(int,int,string,int)>();
         protected int civilianCount;
         Baskin.BState machineBefore;
@@ -44,14 +47,47 @@ namespace Corrigible.Desk.Bridge
         }
         protected void OpenState(Baskin.BState value,RaidGuide guide=null)
         {
-            StopAllCoroutines();State=value;Guide=guide;Selected='\0';Armed=confirm=retreat=fast=paused=resolving=executing=false;panel=null;hover=null;hoverVisible=false;preview=null;unread=true;visibleLogs=int.MaxValue;eventLine=null;
+            StopAllCoroutines();State=value;Guide=guide;Selected='\0';Armed=confirm=retreat=fast=paused=resolving=executing=reporting=false;radio.Clear();liveLine=-1;panel=null;hover=null;hoverVisible=false;preview=null;unread=true;visibleLogs=int.MaxValue;eventLine=null;
             targetForms.Clear();civilianCount=0;
             foreach(var t in Baskin.TargetsLeft(State))targetForms.Add((t.X,t.Y,t.O.K,t.O.Max));
             for(int y=0;y<8;y++)for(int x=0;x<8;x++)if(State.Cells[y,x].O?.K=="civ")civilianCount++;
-            CaptureRoster();if(board!=null){board.FastMachines=false;board.MachineDelay=.25f;board.Build(State);}Publish();
+            CaptureRoster();if(board!=null){board.FastMachines=false;board.MachineDelay=.25f;board.Build(State);}
+            // Hat açılınca gözcü ilk raporu verir; o zamana kadar niyetler paftada yok
+            bool live=Application.isPlaying&&board!=null&&State.Phase=="player";
+            if(live){board.HoldIntents();Radio("07",Loc.T("Hat açık. Gözcü, rapor ver."),false);}
+            Publish();
+            if(live){reporting=true;StartCoroutine(Report(.6f));}
+        }
+        /// <summary>
+        /// Gözcü raporu: tur başında makinelerin niyetleri sırayla telsizden gelir, tahta her birini paftaya çizer. Rapor bitene
+        /// kadar ekip emir bekler (makine evresi gibi DİNLEMEDE).
+        /// </summary>
+        IEnumerator Report(float delay)
+        {
+            reporting=true;Publish(false);
+            if(delay>0)yield return new WaitForSecondsRealtime(delay);
+            if(board!=null)yield return board.ReportIntents((intent,quiet)=>{Radio(Loc.T("GÖZCÜ"),IntentLine(intent),!quiet);Publish(false);});
+            if(!State.Fog&&State.Spawns.Count>0)Radio(Loc.T("GÖZCÜ"),Loc.F("Uyanacak: {0}.",string.Join(", ",State.Spawns.Select(p=>RaidBoard3D.CellName(p.X,p.Y)))),false);
+            reporting=false;Publish();
+        }
+        void Radio(string who,string text,bool voice)
+        {
+            radio.Add(new RaidRadioLine{Who=who,Text=text});if(radio.Count>32)radio.RemoveAt(0);liveLine=-1;
+            if(voice&&Application.isPlaying)Sfx.Play(Cue.RadioVoice);
+        }
+        /// <summary>Gözcünün bir niyeti bildirişi: "№1 · Dron E4 · ateş → TEKNİSYEN · A6".</summary>
+        string IntentLine(Baskin.IntentView i)
+        {
+            var u=State.Units.FirstOrDefault(x=>x.Id==i.Unit);
+            string who=u!=null?Loc.T(Baskin.UnitTypes[u.Type].Name):Loc.T("Makine"),from=RaidBoard3D.CellName(i.FromX,i.FromY);
+            if(i.Kind=="blast")return Loc.F("№{0} · {1} {2} · yanındakilere patlayacak",i.Order,who,from);
+            if(i.TargetNone)return Loc.F("№{0} · {1} {2} · {3} → hedef yok",i.Order,who,from,IntentName(i.Kind));
+            var victim=Baskin.UnitAt(State,i.TargetX,i.TargetY);string cell=RaidBoard3D.CellName(i.TargetX,i.TargetY);
+            string to=victim!=null&&victim.Side=='p'?Loc.F("{0} · {1}",Name(Baskin.UnitTypes[victim.Type].Short[0]),cell):cell;
+            return Loc.F("№{0} · {1} {2} · {3} → {4}",i.Order,who,from,IntentName(i.Kind),to);
         }
         void CaptureRoster(){roster=Baskin.Intents(State);queue.Clear();foreach(var i in roster)queue[i.Unit]="pending";}
-        public bool Busy=>resolving||(board!=null&&board.Busy);
+        public bool Busy=>resolving||reporting||(board!=null&&board.Busy);
         /// <summary>Makineler oynuyor (tur bitirildi, düşman hamleleri canlandırılıyor).</summary>
         public bool Executing=>executing;
         public void Select(char letter)
@@ -126,25 +162,36 @@ namespace Corrigible.Desk.Bridge
         {
             confirm=retreat=false;Selected='\0';Armed=false;ClearHover(false);Publish();
             machineBefore=State.Clone();executing=resolving=true;currentOrder=0;visibleLogs=State.Log.Count+1;
-            eventLine=Loc.T("niyetler sırayla uygulanıyor");board.InputEnabled=false;unread=true;
+            // Emir telsizle sahaya gider; makinelerin hamlesini gözcü tek tek bildirir (OnEffect)
+            eventLine=Loc.T("emir iletildi · gözcü bildiriyor");board.InputEnabled=false;unread=true;Sfx.Play(Cue.RadioSend);
+            Radio("07",Loc.T("Emir iletildi. Gözcü, dinliyoruz."),false);
             if(!Baskin.EndTurn(State)){executing=resolving=false;yield break;}Publish(false);
             yield return board.Animate(State,new List<Baskin.Fx>(State.FxList),true);
             foreach(var key in queue.Keys.ToArray())if(queue[key]!="cancel")queue[key]="done";
             executing=resolving=false;machineBefore=null;visibleLogs=int.MaxValue;eventUntil=Time.unscaledTime+.3f;
             if(Guided&&Guide.Expects(RaidGuideStep.End))Guide.Advance();
+            // Yeni niyetler gözcünün raporuyla gelir: eşitleme onları gizli tutar, rapor sırayla çizer
+            bool next=State.Phase=="player";
+            if(next)board.HoldIntents();
             Publish();
-            yield return new WaitForSecondsRealtime(.3f);eventLine=null;if(State.Phase=="player")CaptureRoster();Publish(false);
+            if(next)reporting=true;
+            yield return new WaitForSecondsRealtime(.3f);eventLine=null;if(next)CaptureRoster();Publish(false);
+            if(next)yield return Report(0);
         }
         void OnEffect(Baskin.Fx fx,int index,int count)
         {
             if(!executing)return;
+            // Gözcü her hamleyi telsizden bildirir: hızlandırılmışken yalnız kısa bip
+            if(fx.K=="attack"||fx.K=="spawn")Sfx.Play(fast?Cue.RadioReport:Cue.RadioVoice,fast?.7f:.8f);
             if(fx.K=="attack")
             {
                 foreach(var id in queue.Keys.ToArray())if(queue[id]=="now")queue[id]="done";
                 var i=roster.FirstOrDefault(x=>x.Unit==fx.Unit);if(i!=null){currentOrder=i.Order;queue[i.Unit]="now";}
                 // Gerçek hedef yalnız yürütülen efekt başladıktan sonra açıklanır.
                 var victim=Baskin.UnitAt(machineBefore,fx.X,fx.Y);
-                string to=victim?.Side=='p'?Name(Baskin.UnitTypes[victim.Type].Short[0]):Loc.T("hedef kare");
+                // Gözcü kareyi paftadaki adıyla bildirir ("C3")
+                string cell=RaidBoard3D.CellName(fx.X,fx.Y);
+                string to=victim?.Side=='p'?Loc.F("{0} · {1}",Name(Baskin.UnitTypes[victim.Type].Short[0]),cell):cell;
                 eventLine=i?.Kind switch{"repair"=>Loc.F("№{0} · hedef dolabı onarılıyor",currentOrder),"shield"=>Loc.F("№{0} · makine zırhlanıyor",currentOrder),
                     "clone"=>Loc.F("№{0} · yeni dron uyanıyor",currentOrder),"blast"=>Loc.F("№{0} · patlama",currentOrder),"lock"=>Loc.F("№{0} · kilit → {1}",currentOrder,to),
                     _=>Loc.F("№{0} · saldırı → {1}",currentOrder,to)};
@@ -158,9 +205,10 @@ namespace Corrigible.Desk.Bridge
             if(fx.K=="die"){var u=machineBefore.Units.FirstOrDefault(x=>x.Id==fx.Unit);if(u!=null)u.Dead=true;if(queue.ContainsKey(fx.Unit))queue[fx.Unit]="cancel";}
             if(fx.K=="break"){if(machineBefore.Cells[fx.Y,fx.X].O?.K=="civ")machineBefore.Collateral++;machineBefore.Cells[fx.Y,fx.X].O=null;}
             if(fx.K=="heal"&&machineBefore.Cells[fx.Y,fx.X].O is Baskin.Obj healed)healed.Hp=Math.Min(healed.Max,healed.Hp+1);
-            if(fx.K=="dmg")eventLine=Loc.F("{0} · −{1}",eventLine,fx.N);
-            if(fx.K=="heal")eventLine=Loc.F("№{0} · onarım +1",currentOrder);
-            if(fx.K=="spawn")eventLine=Loc.T("Yeni bir robot uyandı.");
+            if(fx.K=="attack"){radio.Add(new RaidRadioLine{Who=Loc.T("GÖZCÜ"),Text=eventLine});liveLine=radio.Count-1;}
+            if(fx.K=="dmg"){eventLine=Loc.F("{0} · −{1}",eventLine,fx.N);if(liveLine>=0&&liveLine<radio.Count)radio[liveLine].Text=eventLine;}
+            if(fx.K=="heal"){eventLine=Loc.F("№{0} · onarım +1",currentOrder);Radio(Loc.T("GÖZCÜ"),eventLine,false);}
+            if(fx.K=="spawn"){eventLine=Loc.F("Yeni bir robot uyandı: {0}.",RaidBoard3D.CellName(fx.X,fx.Y));Radio(Loc.T("GÖZCÜ"),eventLine,false);}
             if(fx.K=="die"||fx.K=="break"||fx.K=="heal"||fx.K=="spawn")visibleLogs=Math.Min(State.Log.Count,visibleLogs+1);
             Publish(false);
         }
@@ -193,7 +241,7 @@ namespace Corrigible.Desk.Bridge
             var targets=unit!=null&&Armed&&Baskin.CanAct(State,unit)?Baskin.Targets(State,unit):new List<Baskin.Pt>();
             preview=hover.HasValue&&targets.Any(p=>p.X==hover.Value.x&&p.Y==hover.Value.y)?Baskin.Preview(State,unit.Id,hover.Value.x,hover.Value.y):null;
             bool loot=Baskin.IsLoot(State);
-            var vm=new RaidViewModel{IsLootMission=loot,Escaping=loot&&State.Carrier!=0&&State.Phase!="won"&&State.Phase!="lost",Turn=display.Turn,Turns=display.MaxTurns,Phase=executing?"enemy":State.Phase,Locked=State.Phase!="player"||Busy,AbilityArmed=Armed,CanUndo=State.Hist.Count>0&&!Guided,
+            var vm=new RaidViewModel{IsLootMission=loot,Escaping=loot&&State.Carrier!=0&&State.Phase!="won"&&State.Phase!="lost",Turn=display.Turn,Turns=display.MaxTurns,Phase=executing||reporting?"enemy":State.Phase,Locked=State.Phase!="player"||Busy,AbilityArmed=Armed,CanUndo=State.Hist.Count>0&&!Guided,
                 EndConfirm=confirm,RetreatArmed=retreat,FastMachines=fast,Paused=paused,OpenPanel=panel,LogUnread=unread,
                 Civilians=civilianCount,CivilianBroken=display.Collateral,AbilityLabel=RegionLabel(loot),AbilityTip=RegionTip(loot),
                 Moves=moves.Select(p=>new Vector2Int(p.X,p.Y)).ToArray(),AbilityTargets=targets.Select(p=>new Vector2Int(p.X,p.Y)).ToArray()};
@@ -212,7 +260,7 @@ namespace Corrigible.Desk.Bridge
             }
             if(preview!=null)vm.CollisionTiles=preview.Fx.Where(f=>f.K=="push"&&!preview.Moves.Any(m=>m.Unit==f.Unit)).Select(f=>new Vector2Int(f.X+f.Dx,f.Y+f.Dy)).ToArray();
             if(hoverVisible&&hover.HasValue)vm.HoverCard=Inspector(hover.Value);
-            vm.Status=confirm?Loc.T("Kullanılmamış haklar var. Enter ile turu bitir; Esc ile vazgeç."):retreat?Loc.T("Geri çekilmek için tekrar bas. Esc ile vazgeç."):paused?Loc.T("DURAKLATILDI · Esc ile devam"):panel=="log"?Loc.T("OPERASYON GÜNLÜĞÜ · Ekip harekete hazır."):panel=="rules"?Loc.T("1 / 2 / 3: seç · Q: yetenek · Z: geri al · Enter: turu bitir · Esc: vazgeç"):null;
+            vm.Status=confirm?Loc.T("Kullanılmamış haklar var. Enter ile emri ilet; Esc ile vazgeç."):retreat?Loc.T("Geri çekilmek için tekrar bas. Esc ile vazgeç."):paused?Loc.T("DURAKLATILDI · Esc ile devam"):panel=="log"?Loc.T("TELSİZ KAYDI · Ekip harekete hazır."):panel=="rules"?Loc.T("1 / 2 / 3: seç · Q: yetenek · Z: geri al · Enter: emri ilet · Esc: vazgeç"):null;
             Enrich(vm,display);ApplyFixture(vm);Current=vm;if(redraw&&board!=null&&!Busy)Draw(vm);Changed?.Invoke(vm);
         }
         protected virtual void ApplyFixture(RaidViewModel vm){}
@@ -303,6 +351,7 @@ namespace Corrigible.Desk.Bridge
             vm.LastTurn=display.Turn>=display.MaxTurns;vm.Finished=!Busy&&(State.Phase=="won"||State.Phase=="lost");
             vm.Queue=roster.Select(i=>new RaidQueueItem{Order=i.Order,State=queue.TryGetValue(i.Unit,out var q)?q:"pending"}).ToArray();
             vm.EventLine=eventLine;vm.EventVisible=executing||eventLine!=null&&Time.unscaledTime<eventUntil;
+            vm.Radio=radio.Skip(Math.Max(0,radio.Count-6)).Select(l=>new RaidRadioLine{Who=l.Who,Text=l.Text}).ToArray();
             vm.Log=State.Log.Take(Math.Min(visibleLogs,State.Log.Count)).Select(l=>new RaidLogModel{Text=l.Text,Kind=l.Kind}).ToArray();
             if(confirm)
             {

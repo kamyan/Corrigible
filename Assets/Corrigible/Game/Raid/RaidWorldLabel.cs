@@ -198,5 +198,14 @@ namespace Corrigible.Game.Raid
             overlayMaterials.Clear();
         }
         void OnDisable() { if (screenLabel != null) screenLabel.gameObject.SetActive(false); }
+
+        /// <summary>İçeriği değiştirmeden gizler ya da yeniden gösterir (ekran etiketi de birlikte).</summary>
+        public void SetVisible(bool on)
+        {
+            gameObject.SetActive(on);
+            if (!on || screenLabel == null) return;
+            screenLabel.gameObject.SetActive(true);
+            screenLabel.Refresh(transform.position);
+        }
     }
 }

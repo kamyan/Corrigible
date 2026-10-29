@@ -107,7 +107,7 @@ namespace Corrigible.Desk.Bridge
             RaidGuideStep.Move => Loc.T("Sarı çerçeveli kareye tıkla: oraya yürür."),
             RaidGuideStep.Arm => s.Letter == 'T' ? Loc.T("Q ile ikmal almayı seç.") : s.Letter == 'E' ? Loc.T("Q ile EMP atışını seç.") : Loc.T("Q ile kancayı seç."),
             RaidGuideStep.Use => Loc.T("Sarı çerçeveli kareye tıkla."),
-            _ => Loc.T("Enter ile turu bitir ya da TURU BİTİR'e bas."),
+            _ => Loc.T("Enter ile emri ilet ya da EMRİ İLET'e bas."),
         };
     }
 

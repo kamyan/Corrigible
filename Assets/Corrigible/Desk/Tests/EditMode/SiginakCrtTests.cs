@@ -40,10 +40,10 @@ namespace Corrigible.Desk.Tests
         {
             var sim = NewLiberation();
             var d = CrtViewBuilder.Screen(sim, false);
-            Assert.AreEqual(Loc.T("BAĞLANTI BEKLENİYOR"), d.Title);
+            Assert.AreEqual(Loc.T("DİNLEMEDE"), d.Title);
             Assert.AreEqual(Loc.F("CEPHE: {0} / {1:00}", DeskText.Upper(Loc.T(GameData.Region(Simulation.HQ).Name)), 1), d.FrontLine);
             Assert.IsFalse(d.TeamInverse);
-            Assert.AreEqual(Loc.T("Görev fişinden baskın emri verildiğinde yayın açılır."), d.Hint);
+            Assert.AreEqual(Loc.T("Görev fişinden baskın emri verildiğinde hat açılır."), d.Hint);
         }
 
         [Test]
@@ -54,7 +54,8 @@ namespace Corrigible.Desk.Tests
             var d = CrtViewBuilder.Transition(sim);
             Assert.AreEqual(Loc.F("V.{0:000} · OP-{1:00}", 1, 1), d.Code);
             StringAssert.Contains(DeskText.Upper(Loc.T("Tedarik deposu")), d.Target);
-            Assert.AreEqual(Loc.F("KAMERA 2 · TAKTİK TAHTA 8×8 · GÖREV: {0}", Loc.T("YAĞMA")), d.Camera);
+            Assert.AreEqual(Loc.F("SAHA MASASI · PAFTA 8×8 · GÖREV: {0}", Loc.T("YAĞMA")), d.Camera);
+            Assert.AreEqual(Loc.T("HAT AÇILIYOR"), d.Title, "sığınak ağa bağlanmaz: saha telsizle konuşur");
         }
 
         [Test]

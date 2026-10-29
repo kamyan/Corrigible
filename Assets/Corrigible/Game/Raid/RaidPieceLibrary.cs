@@ -35,6 +35,11 @@ namespace Corrigible.Game.Raid
         public RaidPiece shieldDrone;
         public RaidPiece replicator;
 
+        [Header("Saha masası")]
+        [Tooltip("Görevlinin çubuğu: makine figürlerini gözcünün bildirdiği yeni karelerine iter. Boşsa figür çubuksuz kayar.")]
+        public Material plotterShaft;
+        public Material plotterHead;
+
         [Header("İşaretler")]
         [Tooltip("Robotun uyanacağı kare.")]
         public GameObject spawnMarker;

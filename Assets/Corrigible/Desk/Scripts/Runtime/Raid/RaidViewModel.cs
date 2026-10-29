@@ -28,6 +28,8 @@ namespace Corrigible.Desk
     { public string Thumb, Title; public int Hp, Max; public bool Win, IsLootMission; public RaidCardRow[] Rows = Array.Empty<RaidCardRow>(); }
     [Serializable] public sealed class RaidQueueItem { public int Order; public string State; }
     [Serializable] public sealed class RaidLogModel { public string Text,Kind; }
+    /// <summary>Telsiz şeridinin bir satırı: konuşan (GÖZCÜ, 07) ve söylediği.</summary>
+    [Serializable] public sealed class RaidRadioLine { public string Who,Text; }
     [Serializable] public sealed class RaidUnusedModel { public char Letter; public string Name; public bool Move,Ability; public int ThreatOrder; }
     [Serializable] public sealed class RaidViewModel
     {
@@ -38,6 +40,8 @@ namespace Corrigible.Desk
         public int Standing,TeamCount;public Vector3 Spot;
         public RaidQueueItem[] Queue=Array.Empty<RaidQueueItem>();
         public RaidLogModel[] Log=Array.Empty<RaidLogModel>();
+        /// <summary>Son telsiz konuşmaları, en yenisi sonda.</summary>
+        public RaidRadioLine[] Radio=Array.Empty<RaidRadioLine>();
         public RaidUnusedModel[] Unused=Array.Empty<RaidUnusedModel>();
         public int Turn, Turns, Civilians, CivilianBroken;
         /// <summary>Sivil güven: bu baskında kırılanlar düşülmüş hâli ve tavanı (tavan 0: harekâtsız önizleme, etiket SİVİL kalır).</summary>

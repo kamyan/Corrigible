@@ -126,10 +126,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8836132709581830198}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 4, y: 90}
+  m_SizeDelta: {x: 4, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &997624965932335905
 CanvasRenderer:
@@ -10991,7 +10991,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1474908660386806351
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13464,8 +13464,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 42, y: -40}
-  m_SizeDelta: {x: 338, y: 43}
+  m_AnchoredPosition: {x: 15, y: -38}
+  m_SizeDelta: {x: 364, y: 43}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &2046051608227145681
 CanvasRenderer:
@@ -13535,7 +13535,7 @@ MonoBehaviour:
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
   m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_lineSpacing: -8
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0

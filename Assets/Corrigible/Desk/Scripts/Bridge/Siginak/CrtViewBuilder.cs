@@ -4,8 +4,9 @@ using Corrigible.Core;
 namespace Corrigible.Desk.Bridge
 {
     /// <summary>
-    /// CRT (K5) metinleri simülasyondan. Durum: kuruluyor (baskın emri verildi, sahne henüz açılmadı) · yayın açık (sahne
-    /// yüklü) · kesildi (bu vardiyada baskın oldu, sonuç teleksde) · devre dışı (Teknisyen yaralı, yedek yok) · bekleniyor.
+    /// CRT (K5) metinleri simülasyondan. Ekran telsizin göstergesidir: sığınak ağa bağlanmaz, sahayla yalnız telsiz hattı
+    /// konuşur. Durum: hat açılıyor (baskın emri verildi, sahne henüz açılmadı) · hat açık (sahne yüklü) · hat kapandı (bu
+    /// vardiyada baskın oldu, sonuç teleksde) · hat kapalı (Teknisyen yaralı, yedek yok) · dinlemede.
     /// </summary>
     public static class CrtViewBuilder
     {
@@ -38,8 +39,8 @@ namespace Corrigible.Desk.Bridge
 
         public static CrtScreenData Screen(Simulation sim, bool raidLoaded)
         {
-            var d = new CrtScreenData { Channel = Loc.T("SAHA YAYINI · KANAL 07") };
-            if (sim == null) { d.Title = Loc.T("BAĞLANTI BEKLENİYOR"); return d; }
+            var d = new CrtScreenData { Channel = Loc.T("TELSİZ · KANAL 07") };
+            if (sim == null) { d.Title = Loc.T("DİNLEMEDE"); return d; }
             d.State = State(sim, raidLoaded);
             var team = sim.S.Teams.FirstOrDefault();
             string name = DeskText.Upper(LiberationMapBuilder.TeamName(team));
@@ -60,18 +61,18 @@ namespace Corrigible.Desk.Bridge
                 : Loc.F("CEPHE: {0} · ÖZGÜR", Region(lib.CurrentRegion));
             switch (d.State)
             {
-                case CrtState.Establishing: d.Title = Loc.T("BAĞLANTI KURULUYOR"); break;
-                case CrtState.Live: d.Title = Loc.T("YAYIN AÇIK"); break;
-                case CrtState.Cut: d.Title = Loc.T("BAĞLANTI KESİLDİ"); d.Sub = Loc.T("SONUÇ TELEKSTE"); break;
+                case CrtState.Establishing: d.Title = Loc.T("HAT AÇILIYOR"); break;
+                case CrtState.Live: d.Title = Loc.T("HAT AÇIK"); break;
+                case CrtState.Cut: d.Title = Loc.T("HAT KAPANDI"); d.Sub = Loc.T("SONUÇ TELEKSTE"); break;
                 case CrtState.Disabled:
-                    d.Title = Loc.T("YAYIN DEVRE DIŞI");
+                    d.Title = Loc.T("HAT KAPALI");
                     d.Sub = Alarm(sim);
-                    d.Hint = Loc.T("Teknisyen kalkınca ya da bir yedek uzman hazır olunca yayın açılabilir.");
+                    d.Hint = Loc.T("Teknisyen kalkınca ya da bir yedek uzman hazır olunca hat açılabilir.");
                     break;
                 default:
-                    d.Title = Loc.T("BAĞLANTI BEKLENİYOR");
+                    d.Title = Loc.T("DİNLEMEDE");
                     d.Sub = Alarm(sim);
-                    d.Hint = Loc.T("Görev fişinden baskın emri verildiğinde yayın açılır.");
+                    d.Hint = Loc.T("Görev fişinden baskın emri verildiğinde hat açılır.");
                     break;
             }
             return d;
@@ -81,9 +82,9 @@ namespace Corrigible.Desk.Bridge
         {
             var d = new CrtTransitionData
             {
-                Channel = Loc.T("SAHA YAYINI · KANAL 07"), Title = Loc.T("BAĞLANTI KURULUYOR"), Sync = Loc.T("SENKRON"),
+                Channel = Loc.T("TELSİZ · KANAL 07"), Title = Loc.T("HAT AÇILIYOR"), Sync = Loc.T("SİNYAL"),
                 SkipKey = Loc.T("Boşluk"), SkipWord = Loc.T("atla"), Footer = Loc.T("KYGA-07 · ANALOG HAT"),
-                CutTitle = Loc.T("BAĞLANTI KESİLDİ"), CutSub = Loc.T("SONUÇ TELEKSTE"),
+                CutTitle = Loc.T("HAT KAPANDI"), CutSub = Loc.T("SONUÇ TELEKSTE"),
             };
             if (sim == null) return d;
             var sector = Sector(sim);
@@ -94,7 +95,8 @@ namespace Corrigible.Desk.Bridge
             d.Code = Loc.F("V.{0:000} · OP-{1:00}", shift, sector.Index + 1);
             d.Target = Loc.F("{0} · {1} / {2:00} {3}", DeskText.Upper(LiberationMapBuilder.TeamName(team)), Region(sector.Region), sector.Index + 1,
                 DeskText.Upper(sector.Name));
-            d.Camera = Loc.F("KAMERA 2 · TAKTİK TAHTA 8×8 · GÖREV: {0}", kind);
+            // Saha görüntü vermez: gözcü telsizden bildirir, durum masadaki paftada figürlerle tutulur
+            d.Camera = Loc.F("SAHA MASASI · PAFTA 8×8 · GÖREV: {0}", kind);
             return d;
         }
     }

@@ -38,7 +38,7 @@ namespace Corrigible.Desk.Bridge
                 (c, f) => c.RaidOrdered),
             // Senaryolu ilk baskında not, rehberin adımlarını yazar (SiginakTutorial); bu metin rehbersiz baskın içindir
             Wait("raid", Loc.N("TAKTİK TAHTA"),
-                Loc.N("Kırmızı oklar makinelerin bu turdaki hamlesi, bayraktaki sayı sırası. Uzmanı seç (1–3), mavi kareye yürü, Q ile yeteneği seç ve hedefe tıkla; Enter turu bitirir. Kasayı altıncı turdan önce al."),
+                Loc.N("Kırmızı oklar gözcünün telsizden bildirdiği makine hamleleri, bayraktaki sayı sırası. Uzmanı seç (1–3), mavi kareye yürü, Q ile yeteneği seç ve hedefe tıkla; Enter emri iletir. Kasayı altıncı turdan önce al."),
                 (c, f) => c.RaidOver || !c.RaidLoaded && !c.RaidOrdered && c.Raids > 0),
             Wait("result", Loc.N("SONUÇ"),
                 Loc.N("Baskın bitti. Alınan hasar sığınağa yara olarak döner; düşen uzman günlerce yatar. Enter ile operasyon raporuna geç: masaya dönülür, rapor açılır."),

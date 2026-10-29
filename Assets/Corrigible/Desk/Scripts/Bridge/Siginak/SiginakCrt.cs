@@ -1,6 +1,7 @@
 using System.Collections;
 using Corrigible.Core;
 using Corrigible.Game;
+using Corrigible.Game.Audio;
 using Corrigible.Game.Raid;
 using UnityEngine;
 
@@ -58,8 +59,9 @@ namespace Corrigible.Desk.Bridge
 
         public float ApproachSeconds => SiginakTheme.Active.NumberOf("motion.crtTurnS", 0.5f);
         public void BeginApproach() => overlay.BeginApproach(ApproachSeconds);
-        public IEnumerator Run() => overlay.Run(CrtViewBuilder.Transition(Sim));
+        // Hat açılırken telsiz frekansı arar; dönüşte hat kapanır
+        public IEnumerator Run() { Sfx.Play(Cue.RadioTune); return overlay.Run(CrtViewBuilder.Transition(Sim)); }
         public void SceneLoaded() => overlay.SceneLoaded();
-        public IEnumerator Return() => overlay.Return(CrtViewBuilder.Transition(Sim));
+        public IEnumerator Return() { Sfx.Play(Cue.RadioReport, 0.6f); return overlay.Return(CrtViewBuilder.Transition(Sim)); }
     }
 }

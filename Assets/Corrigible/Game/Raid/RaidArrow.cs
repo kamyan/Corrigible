@@ -2,15 +2,32 @@ using UnityEngine;
 
 namespace Corrigible.Game.Raid
 {
-    /// <summary>Tahtanın üstünde düz bir ok (gövde + uç), istenirse kesik. Renk köşe renginden gelir (UI/Default tabanlı malzeme).</summary>
+    /// <summary>
+    /// Tahtanın üstünde düz bir ok (gövde + uç), istenirse kesik. Renk köşe renginden gelir (UI/Default tabanlı malzeme).
+    /// Elle çizilmiş ok (yağlı kalem): gövde hafifçe dalgalanır, uçlarda incelir, uç açık bir V'dir; dalga uçların
+    /// konumundan türetilir, eşitlemede titremez.
+    /// </summary>
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public sealed class RaidArrow : MonoBehaviour
     {
         Mesh mesh;
+        // Son elle çizilen okun ölçüleri: kademeli çizim (Reveal) aynı çizgiyi baştan kurar
+        bool handDrawn;
+        Vector3 handFrom, handTo;
+        Color handColor;
+        float handWidth, handArc, handAmplitude;
 
-        public void Set(Vector3 from, Vector3 to, Color color, bool dashed, float width = 0.04f, float arcHeight = 0)
+        /// <param name="hand">Elle çizim: gövdenin yana dalgalanma genliği (dünya birimi); 0 düz ok.</param>
+        public void Set(Vector3 from, Vector3 to, Color color, bool dashed, float width = 0.04f, float arcHeight = 0, float hand = 0)
         {
             width = Mathf.Max(0.001f, width);
+            handDrawn = hand > 0;
+            if (handDrawn)
+            {
+                handFrom = from; handTo = to; handColor = color; handWidth = width; handArc = arcHeight; handAmplitude = hand;
+                SetHand(from, to, color, width, arcHeight, hand, 1);
+                return;
+            }
             var verts = new System.Collections.Generic.List<Vector3>();
             var cols = new System.Collections.Generic.List<Color>();
             var tris = new System.Collections.Generic.List<int>();
@@ -47,6 +64,78 @@ namespace Corrigible.Game.Raid
             verts.Add(transform.InverseTransformPoint(Point(shaft) - hs)); verts.Add(transform.InverseTransformPoint(Point(shaft) + hs)); verts.Add(transform.InverseTransformPoint(to));
             cols.Add(color); cols.Add(color); cols.Add(color);
             tris.AddRange(new[] { h, h + 1, h + 2 });
+            mesh.Clear();
+            mesh.SetVertices(verts); mesh.SetColors(cols); mesh.SetTriangles(tris, 0);
+            mesh.RecalculateBounds();
+        }
+
+        /// <summary>Elle çizilen oku baştan bu orana kadar çizer (0 boş, 1 uçla birlikte tam); kalem çizgiyi çekiyormuş gibi.</summary>
+        public void Reveal(float amount)
+        {
+            if (handDrawn) SetHand(handFrom, handTo, handColor, handWidth, handArc, handAmplitude, amount);
+        }
+
+        void SetHand(Vector3 from, Vector3 to, Color color, float width, float arcHeight, float hand, float reveal)
+        {
+            EnsureMesh();
+            var dir = to - from;
+            float len = dir.magnitude;
+            if (len < 0.01f) { mesh.Clear(); return; }
+            dir /= len;
+            var across = Vector3.Cross(Vector3.up, dir).normalized;
+            // Aynı ok her eşitlemede aynı çizilir: dalganın evresi uçların konumundan
+            float seed = Mathf.Abs(Mathf.Sin(from.x * 12.9898f + from.z * 78.233f + to.x * 37.719f + to.z * 4.581f) * 43758.55f) % 6.283f;
+            float head = Mathf.Min(width * 5.5f, len * 0.4f);
+            int n = Mathf.Max(8, Mathf.CeilToInt(len / 0.08f));
+            var points = new Vector3[n + 1];
+            for (int i = 0; i <= n; i++)
+            {
+                float t = (float)i / n, d = t * len;
+                float wave = Mathf.Sin(t * 7.1f + seed) * 0.6f + Mathf.Sin(t * 15.3f + seed * 1.7f) * 0.4f;
+                // Uçlarda dalga söner: ok kareden kareye tam gider
+                points[i] = from + dir * d + Vector3.up * (Mathf.Sin(t * Mathf.PI) * arcHeight) + across * (wave * hand * Mathf.Sin(t * Mathf.PI));
+            }
+            float exact = Mathf.Clamp01(reveal) * n;
+            int last = Mathf.CeilToInt(exact);
+            if (last < 1) { mesh.Clear(); return; }
+            // Çizilmekte olan uç iki nokta arasında durur
+            points[last] = Vector3.Lerp(points[last - 1], points[last], exact - (last - 1));
+            var verts = new System.Collections.Generic.List<Vector3>();
+            var cols = new System.Collections.Generic.List<Color>();
+            var tris = new System.Collections.Generic.List<int>();
+            for (int i = 0; i <= last; i++)
+            {
+                var along = points[Mathf.Min(last, i + 1)] - points[Mathf.Max(0, i - 1)]; along.y = 0;
+                var side = Vector3.Cross(Vector3.up, along.normalized);
+                float t = (float)i / n;
+                // Kalem baskısı: başta ince, ortada dolgun, uca doğru yine ince
+                float w = width * (0.55f + 0.55f * Mathf.Sin(Mathf.Lerp(0.15f, 0.85f, t) * Mathf.PI)) * 0.5f;
+                verts.Add(transform.InverseTransformPoint(points[i] - side * w));
+                verts.Add(transform.InverseTransformPoint(points[i] + side * w));
+                cols.Add(color); cols.Add(color);
+                if (i > 0) { int s = (i - 1) * 2; tris.AddRange(new[] { s, s + 1, s + 3, s, s + 3, s + 2 }); }
+            }
+            if (reveal < 0.999f)
+            {
+                mesh.Clear();
+                mesh.SetVertices(verts); mesh.SetColors(cols); mesh.SetTriangles(tris, 0);
+                mesh.RecalculateBounds();
+                return;
+            }
+            // Uç: iki kalem çizgisi (açık V)
+            var tip = points[n];
+            var back = (points[n] - points[Mathf.Max(0, n - 2)]); back.y = 0; back = -back.normalized;
+            foreach (float angle in new[] { 28f, -28f })
+            {
+                var wing = Quaternion.AngleAxis(angle, Vector3.up) * back;
+                var end = tip + wing * head;
+                var side = Vector3.Cross(Vector3.up, wing) * (width * 0.45f);
+                int s = verts.Count;
+                verts.Add(transform.InverseTransformPoint(tip - side)); verts.Add(transform.InverseTransformPoint(tip + side));
+                verts.Add(transform.InverseTransformPoint(end + side * 0.6f)); verts.Add(transform.InverseTransformPoint(end - side * 0.6f));
+                for (int i = 0; i < 4; i++) cols.Add(color);
+                tris.AddRange(new[] { s, s + 1, s + 2, s, s + 2, s + 3 });
+            }
             mesh.Clear();
             mesh.SetVertices(verts); mesh.SetColors(cols); mesh.SetTriangles(tris, 0);
             mesh.RecalculateBounds();
