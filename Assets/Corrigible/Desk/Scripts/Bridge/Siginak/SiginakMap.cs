@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Corrigible.Core;
 using Corrigible.Game;
+using Corrigible.Game.Audio;
 using Corrigible.Game.Raid;
 using UnityEngine;
 
@@ -13,6 +14,8 @@ namespace Corrigible.Desk.Bridge
     /// Simülasyonu yalnız okur; komutlar <see cref="LiberationDeskView"/>'den geçer (baskın emri, cephe açma), sonuç ve
     /// gerekçe teleksten basılır. Figür sürükleme bu komutlara giden ikinci yoldur: adaya bırakmak adaya tıklamakla aynı.
     /// Enter: açık fişin asıl eylemi. Esc: taşımayı bırak → onay fişinden vazgeç → görev fişini kapat.
+    /// Görev fişi (Revizyon 2 · S2) ekran katmanında, sol masa kenarında (Kuzey/Güney Amerika seçiliyse sağda); açılırken
+    /// bölgeye iğne düşer, iplik bölgeden fişin iğnesine çekilir, fiş kenardan kayar; ip her karede kameradan yeniden izdüşer.
     /// </summary>
     public sealed class SiginakMap : MonoBehaviour
     {
@@ -27,6 +30,13 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] TeamFigure figure;
         [SerializeField] TeamFigureDrag drag;
         [SerializeField] DeskTarget figureTarget;
+        [Tooltip("Yetersiz fonda BASKIN EMRİ VER'e basınca FON sayacı iki kez titrer (Karar 7).")]
+        [SerializeField] CounterBank counters;
+
+        // Görev fişinin dizisi (S2 › hareket): iğne 0,12 s → iplik 0,25 s → fiş 0,22 s; kapanış iplik 0,15 s → fiş 0,18 s
+        const float StringCloseS = 0.15f;
+        float slipAt = -1, slipCloseAt = -1;
+        bool pinSounded, paperSounded;
 
         string pending, revealQueued;
         float unlockedSince = -1;
@@ -43,6 +53,11 @@ namespace Corrigible.Desk.Bridge
         public string Pending => pending;
         /// <summary>Vardiya dizisi (K6): adımdan sonra figür yerinde bekler; rapor düşerken <see cref="ReleaseFigure"/>.</summary>
         public bool HoldFigure { get; set; }
+        /// <summary>Ekip figürünün dünya noktası (operasyon raporunun ipliği ve halkası); figür gizliyse null.</summary>
+        public Vector3? FigureWorld => figure != null && figure.gameObject.activeInHierarchy ? figure.Destination : (Vector3?)null;
+
+        Vector2? reportPin;
+        float reportDrawn;
 
         public void Configure(GameController controller, LiberationDeskView desk, SiginakCameraRig cameraRig, TelexFeed feed, SadeMapView map,
             LiberationMapLayer mapLayer, OperationSlip operationSlip, FrontSlip confirmSlip, TeamFigure teamFigure, TeamFigureDrag figureDrag,
@@ -123,11 +138,12 @@ namespace Corrigible.Desk.Bridge
                 state = LiberationMapBuilder.Build(sim, null, null);
             }
             layer.Bind(state);
-            if (sim.S.Raid == null) slip.ClearOrder();
             PlaceFigure(!figure.Placed);
-            if (slip.IsOpen) slip.Show(LiberationMapBuilder.Slip(sim, slip.RegionId));
+            if (slip.IsOpen) slip.Show(LiberationMapBuilder.Slip(sim, slip.RegionId), slip.OnRight);
             if (frontSlip.IsOpen && pending != null) frontSlip.Show(LiberationMapBuilder.Front(sim, pending));
-            UpdateString();
+            // Görev fişinin ipi diziyle birlikte çizilir (açılırken yarım)
+            if (frontSlip.IsOpen || !slip.gameObject.activeSelf) UpdateString();
+            else AnimateSlip();
         }
 
         void Update()
@@ -145,6 +161,24 @@ namespace Corrigible.Desk.Bridge
                 if (slip.IsOpen) CloseSlip();
             }
             figure.SetHighlighted(figureHovered || pending != null || drag.Carrying);
+            AnimateSlip();
+        }
+
+        /// <summary>Açılış ve kapanış dizisinin iğne sesi, kâğıt sesi ve ipi (ip kamerayla birlikte her karede).</summary>
+        void AnimateSlip()
+        {
+            if (frontSlip.IsOpen || !slip.gameObject.activeSelf)
+            {
+                if (!frontSlip.IsOpen && slipAt >= 0) { slipAt = -1; layer.SetString(false); }
+                return;
+            }
+            var t = SiginakTheme.Active;
+            float now = Time.unscaledTime, pinS = t.NumberOf("motion.pinDropS", 0.12f), stringS = t.NumberOf("motion.stringS", 0.25f);
+            float e = now - slipAt;
+            if (!pinSounded && e >= 0) { pinSounded = true; Sfx.Play(Cue.PinDrop, 0.8f); }
+            if (!paperSounded && e >= pinS + stringS) { paperSounded = true; Sfx.Play(Cue.PaperSlide, 0.7f, slip.OnRight ? 0.4f : -0.4f); }
+            float drawn = slipCloseAt >= 0 ? 1 - Mathf.Clamp01((now - slipCloseAt) / StringCloseS) : Mathf.Clamp01((e - pinS) / stringS);
+            UpdateString(drawn);
         }
 
         // ---------- Bölge tıklaması, fişler ----------
@@ -170,16 +204,32 @@ namespace Corrigible.Desk.Bridge
         void OpenSlip(string id)
         {
             if (frontSlip.IsOpen) CancelFront();
-            slip.Show(LiberationMapBuilder.Slip(Sim, id));
+            var t = SiginakTheme.Active;
+            bool open = slip.IsOpen, sameRegion = open && slip.RegionId == id;
+            // Kamera haritaya varınca dizi başlar: iğne düşer, iplik çekilir, sonra fiş kayar
+            float start = rig.TransitionRemaining, pinS = t.NumberOf("motion.pinDropS", 0.12f), stringS = t.NumberOf("motion.stringS", 0.25f);
+            // Karar 1 B: fiş sol masa kenarında; Kuzey ya da Güney Amerika seçiliyse sağda
+            bool right = id == "na" || id == "sa";
+            slip.Show(LiberationMapBuilder.Slip(Sim, id), right, start + pinS + stringS);
+            if (!sameRegion)
+            {
+                slipAt = Time.unscaledTime + start;
+                slipCloseAt = -1;
+                pinSounded = paperSounded = open;
+                layer.PlayPinDrop(id, start);
+            }
             Refresh();
-            PlaceSlip(slip.transform, slip.PaperSize, id, false);
-            UpdateString();
+            AnimateSlip();
         }
 
-        void CloseSlip()
+        void CloseSlip() => CloseSlip(0);
+
+        /// <summary>Kapanış (S2): iplik 0,15 s'de sarılır, fiş 0,18 s'de kenara çekilir.</summary>
+        void CloseSlip(float delay)
         {
             if (!slip.IsOpen) return;
-            slip.Hide();
+            slipCloseAt = Time.unscaledTime + delay;
+            slip.Close(delay + StringCloseS);
             Refresh();
         }
 
@@ -211,8 +261,7 @@ namespace Corrigible.Desk.Bridge
             figureDisplaced = false;
             frontSlip.Hide();
             Refresh();
-            // K3 adım 7: yağlı kalem halkası çizilir, raptiye iner; fiş görev fişine döner, figür yeni cepheye kayar
-            layer.PlayFrontOpened(id);
+            // K3 adım 7: fiş görev fişine döner (iğne düşer, iplik çekilir), figür yeni cepheye kayar
             OpenSlip(id);
         }
 
@@ -225,8 +274,17 @@ namespace Corrigible.Desk.Bridge
             {
                 var next = sim.NextLiberationSector(id);
                 if (next == null) return;
+                slip.Press();
+                // Karar 7: eksik yalnız fonsa komut çağrılmaz; gerekçe teleksten, FON sayacı iki kez titrer
+                if (slip.ActionState == SlipActionState.Shortfall && TelexReasons.RaidFundsOnly(sim, next.Id))
+                {
+                    telex.Post(Shift, Loc.T("YAPILAMADI"), TelexReasons.Raid(sim, next.Id), TelexKind.Failed);
+                    if (counters != null) counters[CounterBank.Slot.Funds].Shake(2);
+                    return;
+                }
                 var result = surface.LaunchSector(next.Id);
-                if (result?.Ok == true) slip.StampOrder();
+                // Emir: düğme 0,06 s iner → fiş kapanır → CRT'ye dalış (bugünkü gibi)
+                if (result?.Ok == true) CloseSlip(0.06f);
             }
             // Cephe açıkken komşu bölgeyi cephe yapmak: komut denenir, gerekçe teleksten basılır (“cephe zaten açık”)
             else if (state != null && state.FrontOpen && id != state.Front && sim.LiberationFrontier.Contains(id))
@@ -296,13 +354,42 @@ namespace Corrigible.Desk.Bridge
             root.SetPositionAndRotation(layer.MapToWorld(best) + layer.MapPlane.normal * 0.002f, layer.MapRotation);
         }
 
-        void UpdateString()
+        /// <summary>
+        /// Operasyon raporu (S7): iplik raporun iğnesinden (<paramref name="pinScreen"/>, ekran) ekip figürüne gerilir
+        /// (<paramref name="drawn"/> 0 → 1, iğneden); null ipliği kaldırır.
+        /// </summary>
+        public void SetReportString(Vector2? pinScreen, float drawn = 1)
         {
-            if (frontSlip.IsOpen && pending != null)
+            reportPin = pinScreen;
+            reportDrawn = drawn;
+            UpdateString();
+        }
+
+        /// <summary>Operasyon raporu: geri alınan sektörün işareti 0,2 s'de mavi onaya döner.</summary>
+        public void PlayRetaken(string region, int sector, float delay) => layer.PlayRetaken(region, sector, delay);
+
+        void UpdateString(float drawn = 1)
+        {
+            if (reportPin.HasValue && FigureWorld is Vector3 team && ScreenToMap(reportPin.Value, out var reportPinMap))
+                layer.SetString(true, layer.WorldToMap(team), reportPinMap, reportDrawn);
+            else if (reportPin.HasValue) layer.SetString(false);
+            else if (frontSlip.IsOpen && pending != null)
                 layer.SetString(true, layer.WorldToMap(frontSlip.PinWorld), layer.Marks(pending).RingPoint);
-            else if (slip.IsOpen && layer.Marks(slip.RegionId) is LiberationRegionMarks m)
-                layer.SetString(true, layer.WorldToMap(slip.PinWorld), m.State?.Kind == MapRegionKind.Front ? m.PinPoint : m.LabelPoint);
+            else if (slip.gameObject.activeSelf && layer.Marks(slip.RegionId) is LiberationRegionMarks m && ScreenToMap(slip.PinScreenAtRest, out var pin))
+                layer.SetString(true, pin, m.State?.Kind == MapRegionKind.Front ? m.PinPoint : m.LabelPoint, drawn);
             else layer.SetString(false);
+        }
+
+        /// <summary>Ekran noktasının (görev fişi ekran katmanında) harita düzlemindeki karşılığı.</summary>
+        bool ScreenToMap(Vector2 screen, out Vector2 map)
+        {
+            map = default;
+            var cam = rig.View;
+            if (cam == null) return false;
+            var ray = cam.ScreenPointToRay(screen);
+            if (!layer.MapPlane.Raycast(ray, out float d)) return false;
+            map = layer.WorldToMap(ray.GetPoint(d));
+            return true;
         }
 
         // ---------- K3 dizisi ----------
@@ -323,6 +410,30 @@ namespace Corrigible.Desk.Bridge
             if (candidates.Count == 0) return;
             telex.Post(Shift, Loc.T("BEKLENİYOR"), Loc.T("Sıradaki cepheyi seç"), TelexKind.Info);
             layer.PlayCandidates(candidates, 0.7f);
+        }
+
+        // ---------- Karşı saldırı (Revizyon 2 · S5b) ----------
+
+        /// <summary>Son karşı saldırının bölgesi (sektör kimliği “eeu_1” → “eeu”); yoksa null.</summary>
+        string CounterattackRegion()
+        {
+            string id = Sim?.S.LastCounterattack;
+            int cut = id?.LastIndexOf('_') ?? -1;
+            return cut > 0 ? id.Substring(0, cut) : null;
+        }
+
+        /// <summary>Vardiya raporu düşerken: yeniden işgal edilen sektöre ✕ çizilir, YENİDEN İŞGAL damgası iner.</summary>
+        public void PlayCounterattack(float delay)
+        {
+            string region = CounterattackRegion();
+            if (region != null) layer.PlayCounterattack(region, delay);
+        }
+
+        /// <summary>Raporun karşı saldırı kutusunun üzerine gelince ✕ iki kez yanıp söner.</summary>
+        public void BlinkCounterattack()
+        {
+            string region = CounterattackRegion();
+            if (region != null) layer.BlinkCounterattack(region);
         }
 
         // ---------- Ekip figürü ----------

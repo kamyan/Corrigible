@@ -22,6 +22,8 @@ namespace Corrigible.Game.Raid
         public sealed class Marks
         {
             public HashSet<int> Moves = new HashSet<int>(), Targets = new HashSet<int>(), Heal = new HashSet<int>(), Spawns = new HashSet<int>();
+            /// <summary>Kopyalama niyetinin hedef kareleri: kesikli kahverengi hayalet halka (raid.js ghostWake), iğnesiz.</summary>
+            public HashSet<int> Clones = new HashSet<int>();
             /// <summary>Düşman niyetinin ya da önizlenen hamlenin vuracağı kareler.</summary>
             public HashSet<int> Danger = new HashSet<int>();
             public HashSet<int> Spent = new HashSet<int>();
@@ -50,6 +52,12 @@ namespace Corrigible.Game.Raid
         [Tooltip("Sade tahta: ekran etiket prefab'ı atanırsa can sayıları yerine noktalar çizilir.")]
         [SerializeField] RaidScreenLabel screenLabelPrefab;
         [SerializeField] Canvas screenLabelCanvas;
+        /// <summary>Sonuç kartında (S7) tahtanın etiketleri ve bayrakları gizli: karartılmış tahtada yalnız spot.</summary>
+        public bool LabelsHidden
+        {
+            get => screenLabelCanvas != null && !screenLabelCanvas.enabled;
+            set { if (screenLabelCanvas != null && screenLabelCanvas.enabled == value) screenLabelCanvas.enabled = !value; }
+        }
         [SerializeField] Color spentPaperColor = new Color(.914f, .867f, .776f);
         [SerializeField, Min(.1f)] float markScale = 1;
         [SerializeField] Color paperColor = new Color(0.984f, 0.969f, 0.925f);
@@ -90,7 +98,7 @@ namespace Corrigible.Game.Raid
         readonly RaycastHit[] hits = new RaycastHit[16];
         static readonly Comparer<RaycastHit> ByDistance = Comparer<RaycastHit>.Create((a, b) => a.distance.CompareTo(b.distance));
         readonly RaidArrow[] moveFrames = new RaidArrow[64], dangerFrames = new RaidArrow[64], repairFrames = new RaidArrow[64];
-        readonly RaidArrow[] moveHatches = new RaidArrow[64], dangerHatches = new RaidArrow[64], wakeRings = new RaidArrow[64], exitFrames = new RaidArrow[64];
+        readonly RaidArrow[] moveHatches = new RaidArrow[64], dangerHatches = new RaidArrow[64], wakeRings = new RaidArrow[64], ghostRings = new RaidArrow[64], exitFrames = new RaidArrow[64];
         readonly Dictionary<int, RaidWorldLabel> hpLabels = new Dictionary<int, RaidWorldLabel>();
         readonly Dictionary<int, RaidWorldLabel> orderLabels = new Dictionary<int, RaidWorldLabel>(), stateLabels = new Dictionary<int, RaidWorldLabel>();
         readonly Dictionary<int, GameObject> flagPins = new Dictionary<int, GameObject>();
@@ -102,6 +110,7 @@ namespace Corrigible.Game.Raid
         readonly Dictionary<int, Baskin.IntentView> shownIntents = new Dictionary<int, Baskin.IntentView>();
         readonly Dictionary<int, RaidArrow> intentArrowByUnit = new Dictionary<int, RaidArrow>();
         RaidArrow selectionFrame, guideFrame;
+        Renderer selectionFill;
         RaidArrow activeIntentHighlight;
         GameObject hoverFrame;
         readonly List<RaidArrow> arrows = new List<RaidArrow>();
@@ -134,6 +143,7 @@ namespace Corrigible.Game.Raid
             Clear(tilesRoot); Clear(piecesRoot); Clear(marksRoot);
             units.Clear(); objects.Clear(); rubble.Clear(); arrows.Clear(); previewArrows.Clear(); ghosts.Clear(); labelGroups.Clear();
             hpLabels.Clear(); orderLabels.Clear(); stateLabels.Clear(); paperLabels.Clear(); shownIntents.Clear(); intentArrowByUnit.Clear(); flagPins.Clear(); downMarks.Clear();
+            arrowShadows.Clear(); extraArrows.Clear(); woke.Clear(); wokeStamped.Clear(); foreach (var b in badgeLabels) if (b != null) Destroy(b.gameObject); badgeLabels.Clear();
             for (int y = 0; y < Baskin.N; y++)
             for (int x = 0; x < Baskin.N; x++)
             {
@@ -147,18 +157,22 @@ namespace Corrigible.Game.Raid
                 walls[k] = c.T == "wall";
                 tint[k] = Flat($"Tint {x},{y}", W(x, y) + Vector3.up * 0.02f, 0.94f, lib.highlight).GetComponent<Renderer>();
                 tint[k].enabled = false;
-                frames[k] = Frame($"Frame {x},{y}", W(x, y), lib.target, 0.86f, PixelWorld * 2.4f);
-                frames[k].SetActive(false);
+                // raid.js mark(): yetenek hedefi yeşil çift çerçeve (8/3 px), hareket taraması kenarı 4 px; 1 doku pikseli = 0,98/256
+                var targetFrame = Mark($"Frame {x},{y}", W(x, y), 0.03f);
+                targetFrame.SetDoubleFrame(0.873f, 0.0306f, 0.72f, 0.0115f, Alpha(lib.target, 0.95f));
+                frames[k] = targetFrame.gameObject;
                 moveFrames[k] = Mark("Move edge", W(x, y), 0.027f);
-                moveFrames[k].SetFrame(0.86f, PixelWorld * 2, Alpha(lib.move, 0.85f));
+                moveFrames[k].SetFrame(0.90f, 0.0153f, Alpha(lib.move, 0.9f));
                 moveHatches[k] = Mark("Move hatch", W(x, y), 0.024f);
-                moveHatches[k].SetHatch(0.86f, Alpha(lib.move, 0.34f), PixelWorld * 1.6f, true);
+                moveHatches[k].SetHatch(0.98f, Alpha(lib.move, 0.34f), 0.019f, true);
                 dangerFrames[k] = Mark("Danger edge", W(x, y), 0.031f);
                 dangerHatches[k] = Mark("Danger hatch", W(x, y), 0.028f);
                 repairFrames[k] = Mark("Repair edge", W(x, y), 0.034f);
                 repairFrames[k].SetFrame(0.88f, PixelWorld * 2, Alpha(lib.threat, 0.85f), true);
                 wakeRings[k] = Mark("Wake pin ring", W(x, y), 0.04f);
-                wakeRings[k].SetCircle(0.33f, lib.threat, PixelWorld * 2.4f, false, true);
+                wakeRings[k].SetCircle(0.3275f, Alpha(lib.threat, 0.95f), 0.035f, false, true);
+                ghostRings[k] = Mark("Clone ring", W(x, y), 0.04f);
+                ghostRings[k].SetCircle(0.3275f, Alpha(lib.intentQuiet, 0.95f), 0.035f, true, true);
                 exitFrames[k] = Mark("Exit edge", W(x, y), 0.036f);
                 exitFrames[k].SetFrame(0.80f, PixelWorld * 3.5f, lib.good, true);
                 if (lib.spawnMarker != null)
@@ -169,16 +183,17 @@ namespace Corrigible.Game.Raid
             }
             hoverFrame = Frame("Hover", Vector3.zero, lib.hover, 0.94f, PixelWorld * 1.8f);
             hoverFrame.SetActive(false);
+            // raid.js frameTex('#1A4789', 10, 4): dış 0,873 kalın, iç 0,72 ince, α .10 dolgu
             selectionFrame = Mark("Selected double frame", Vector3.zero, 0.04f);
-            selectionFrame.SetFrame(0.90f, PixelWorld * 2, verifiedColor, false, true);
-            guideFrame = Mark("Tutorial guide frame", Vector3.zero, 0.05f);
+            selectionFrame.SetDoubleFrame(0.873f, 0.0383f, 0.72f, 0.0153f, Alpha(verifiedColor, 0.95f));
+            selectionFill = Flat("Selected fill", Vector3.zero, 0.873f, lib.highlight).GetComponent<Renderer>();
+            SetColor(selectionFill, Alpha(verifiedColor, 0.10f));
+            selectionFill.enabled = false;
+            guideFrame = Mark("Tutorial guide frame", Vector3.zero, 0.05f, true);
             guideFrame.SetFrame(0.97f, PixelWorld * 5, highlighterColor, false, true);
             guideFrame.gameObject.SetActive(false);
             activeIntentHighlight = NewArrow("Current intent highlighter");
             activeIntentHighlight.gameObject.SetActive(false);
-            plotter = null;
-            reportShown = int.MaxValue;
-            lastMarks = null;
             BuildCoordinates();
         }
 
@@ -258,9 +273,10 @@ namespace Corrigible.Game.Raid
             return mark.gameObject;
         }
 
-        RaidArrow Mark(string name, Vector3 position, float height)
+        /// <summary>Karo işareti: parçalar örter (<c>lib.tileMarks</c>); <paramref name="onTop"/> eğitim çerçevesi gibi her zaman üstte.</summary>
+        RaidArrow Mark(string name, Vector3 position, float height, bool onTop = false)
         {
-            var mark = NewArrow(name);
+            var mark = NewArrow(name, onTop ? null : lib.tileMarks);
             mark.transform.position = position + Vector3.up * height;
             mark.gameObject.SetActive(false);
             return mark;
@@ -292,6 +308,9 @@ namespace Corrigible.Game.Raid
         /// <summary>Görseli duruma anında eşitler (canlandırma yok).</summary>
         public void Sync(Baskin.BState B, Marks m)
         {
+            // Sahne kapanırken (Play durur, oyun kapanır) arayüz son bir “üzerinden çıkıldı” gönderebilir; kamera ya da tahta gitmiştir
+            if (cam == null || this == null) return;
+            lastState = B;
             labelGroups.Clear();
             foreach (var label in hpLabels.Values) label.gameObject.SetActive(false);
             foreach (var label in orderLabels.Values) label.gameObject.SetActive(false);
@@ -324,9 +343,10 @@ namespace Corrigible.Game.Raid
                     if (screenLabelPrefab == null || (o.K != "civ" && o.K != "cool"))
                     {
                         var tag = PieceLabel(hpLabels, -k - 1, "Object HP");
-                        tag.SetAnchor(W(x, y) + Vector3.up * (piece.VisualHeight + 0.12f));
+                        // Revizyon 2 · S6: nesnenin etiketi tepe noktasının 28 px üstünde
+                        tag.SetAnchor(W(x, y) + Vector3.up * piece.VisualHeight + cam.transform.up * (PixelWorld * 28));
                         var ink = Baskin.IsTarget(o.K) || o.K == "spawner" ? lib.threat : graphiteColor;
-                        if (screenLabelPrefab != null) tag.ShowHealth(o.Hp, o.Max, ink, Baskin.IsTarget(o.K), o.K == "node" || o.K == "core");
+                        if (screenLabelPrefab != null) tag.ShowHealth(o.Hp, o.Max, ink, Baskin.IsTarget(o.K), o.K == "node" || o.K == "core", null, lib.threat);
                         else tag.Show(Loc.F("{0}/{1}", o.Hp, o.Max), ink, ink);
                         labelGroups.Add(new[] { tag });
                     }
@@ -360,20 +380,33 @@ namespace Corrigible.Game.Raid
                 p.SetSelected(false);
                 p.SetSpent(m.Spent.Contains(u.Id));
                 p.SetDown(u.Dead);
+                p.SetPlate(!u.Dead && u.Armor > 0);
                 p.SetWorldLabelsVisible(false);
                 string letter = u.Type switch { "tek" => "T", "emp" => "E", "ana" => "A", "dron" => "D", _ => "B" };
                 var hpTag = PieceLabel(hpLabels, u.Id, "Unit HP");
-                hpTag.SetAnchor(u.Side == 'p' && !u.Dead ? W(u.X, u.Y) + Vector3.up * (p.VisualHeight + 0.12f) : W(u.X, u.Y) + Vector3.up * 0.18f - cam.transform.up * 0.26f);
+                // Revizyon 2 · S6: uzmanın ve robotun etiketi altlığın önünde (u − 0,24, v + 0,24); robotta tür işareti + zırh
+                hpTag.SetAnchor(W(u.X, u.Y) + new Vector3(-0.24f, 0.02f, -0.24f));
                 var hpInk = u.Side == 'e' || u.Dead ? lib.threat : graphiteColor;
                 if (screenLabelPrefab != null)
                 {
                     hpTag.SetPaperColor(m.Spent.Contains(u.Id) ? spentPaperColor : paperColor);
-                    hpTag.ShowHealth(u.Dead ? 0 : u.Hp, u.Max, hpInk);
+                    hpTag.ShowHealth(u.Dead ? 0 : u.Hp, u.Max, hpInk, false, !u.Dead && u.Armor > 0, u.Side == 'e' ? lib.Glyph(u.Type) : null, lib.threat);
                 }
                 else hpTag.Show(Loc.F("{0} {1}/{2}", letter, u.Dead ? 0 : u.Hp, u.Max), hpInk, hpInk);
-                if (u.Dead || m.Spent.Contains(u.Id) || u.Locked || u.Id == m.Carrier)
+                bool justWoke = u.Side == 'e' && !u.Dead && woke.TryGetValue(u.Id, out int wokeTurn) && B.Turn == wokeTurn;
+                RaidWorldLabel wokeLabel = null;
+                if (justWoke)
                 {
-                    var state = PieceLabel(stateLabels, u.Id, "Unit state");
+                    // UYANDI: robotun tepesinde, sıra bayrağının hemen altında kırmızı kenarlı kâğıt; bayrakla birlikte yerleşir
+                    wokeLabel = PieceLabel(stateLabels, u.Id, "Unit state", 14);
+                    wokeLabel.SetAnchor(W(u.X, u.Y) + Vector3.up * p.VisualHeight + cam.transform.up * (PixelWorld * 22));
+                    wokeLabel.Show(Loc.T("UYANDI"), lib.threat, lib.threat);
+                    if (wokeStamped.Add(u.Id)) wokeLabel.Stamp(wakeStampSeconds);
+                    labelGroups.Add(new[] { hpTag });
+                }
+                else if (u.Dead || m.Spent.Contains(u.Id) || u.Locked || u.Id == m.Carrier)
+                {
+                    var state = PieceLabel(stateLabels, u.Id, "Unit state", 14);
                     state.SetAnchor(hpTag.transform.position - cam.transform.up * 0.30f);
                     state.Show(u.Dead ? Loc.T("DÜŞTÜ") : u.Locked ? Loc.T("KİLİTLİ") : u.Id == m.Carrier ? Loc.T("YÜKLÜ") : Loc.T("TUR BİTTİ"), hpInk, hpInk);
                     labelGroups.Add(new[] { hpTag, state });
@@ -388,16 +421,19 @@ namespace Corrigible.Game.Raid
                 }
                 if (shownIntents.TryGetValue(u.Id, out var intent))
                 {
-                    var order = PieceLabel(orderLabels, u.Id, "Order flag", 14);
-                    order.SetAnchor(W(u.X, u.Y) + Vector3.up * (p.VisualHeight + 0.35f) + cam.transform.right * 0.26f);
+                    var order = PieceLabel(orderLabels, u.Id, "Order flag", 20);
+                    // Bayrak robotun tepe noktasından 34 px iğneyle, sağa açılır (kâğıt 30 × 28)
+                    order.SetAnchor(W(u.X, u.Y) + Vector3.up * p.VisualHeight + cam.transform.up * (PixelWorld * (34 + 14)) + cam.transform.right * (PixelWorld * 15));
                     string kind = intent.Kind == "repair" ? Loc.T("ONARIM") : intent.Kind == "shoot" ? Loc.T("ATEŞ") : Loc.T("VURUŞ");
                     Color border = lib.threat;
                     border.a = 1;
                     order.SetOpacity(1);
                     order.SetPaperColor(paperColor);
-                    order.Show(screenLabelPrefab != null ? intent.Order.ToString() : Loc.F("{0} {1}", intent.Order, kind), lib.threat, border, false);
-                    labelGroups.Add(new[] { order });
+                    if (screenLabelPrefab != null) order.ShowFlag(intent.Order.ToString(), lib.threat, border);
+                    else order.Show(Loc.F("{0} {1}", intent.Order, kind), lib.threat, border, false);
+                    labelGroups.Add(wokeLabel != null ? new[] { order, wokeLabel } : new[] { order });
                 }
+                else if (wokeLabel != null) labelGroups.Add(new[] { wokeLabel });
             }
             foreach (var id in units.Keys.Where(id => !alive.Contains(id)).ToList()) { if (units[id] != null) Destroy(units[id].gameObject); units.Remove(id); }
 
@@ -408,7 +444,7 @@ namespace Corrigible.Game.Raid
                 if (m.Moves.Contains(k)) { c = lib.move; on = true; }
                 if (m.Danger.Contains(k)) { c = Alpha(lib.threat, 0.12f); on = true; }
                 else if (m.Heal.Contains(k)) { c = lib.heal; on = true; }
-                else if (m.Targets.Contains(k) && !on) { c = Alpha(lib.target, 0.08f); on = true; }
+                else if (m.Targets.Contains(k) && !on) { c = Alpha(lib.target, 0.10f); on = true; }
                 tint[k].enabled = on;
                 if (on) SetColor(tint[k], c);
                 frames[k].SetActive(m.Targets.Contains(k));
@@ -419,23 +455,31 @@ namespace Corrigible.Game.Raid
                 dangerHatches[k].gameObject.SetActive(hit);
                 if (hit)
                 {
-                    dangerFrames[k].SetFrame(0.88f, PixelWorld * 2.4f, Alpha(lib.threat, 0.92f), false);
-                    dangerHatches[k].SetHatch(0.86f, Alpha(lib.threat, 0.46f), PixelWorld * 1.8f, false);
+                    dangerFrames[k].SetFrame(0.90f, 0.023f, Alpha(lib.threat, 0.9f), false);
+                    dangerHatches[k].SetHatch(0.98f, Alpha(lib.threat, 0.5f), 0.019f, false);
                 }
                 repairFrames[k].gameObject.SetActive(m.Heal.Contains(k));
                 wakeRings[k].gameObject.SetActive(m.Spawns.Contains(k));
+                ghostRings[k].gameObject.SetActive(m.Clones.Contains(k) && !m.Spawns.Contains(k));
                 exitFrames[k].gameObject.SetActive(m.Exits.Contains(k));
                 if (spawnMarks[k] != null) spawnMarks[k].SetActive(m.Spawns.Contains(k));
             }
             var selected = B.Units.FirstOrDefault(u => u.Id == m.Selected && !u.Dead);
             selectionFrame.gameObject.SetActive(selected != null);
-            if (selected != null) selectionFrame.transform.position = W(selected.X, selected.Y) + Vector3.up * 0.045f;
+            selectionFill.enabled = selected != null;
+            if (selected != null)
+            {
+                selectionFrame.transform.position = W(selected.X, selected.Y) + Vector3.up * 0.045f;
+                selectionFill.transform.position = W(selected.X, selected.Y) + Vector3.up * 0.021f;
+            }
             pickable.Clear(); pickable.UnionWith(m.Moves); pickable.UnionWith(m.Targets);
             if (m.Guide >= 0) pickable.Add(m.Guide);
             guideKey = m.Guide;
             guideFrame.gameObject.SetActive(m.Guide >= 0);
             if (m.Guide >= 0) guideFrame.transform.position = W(m.Guide % Baskin.N, m.Guide / Baskin.N) + Vector3.up * 0.06f;
-            // Niyet okları
+            // Niyet okları (Revizyon 2 · S9-C/C2): türe göre kalınlık, yay ve rozet; gölge (1,5; 2) α .28; her zaman üstte
+            int shadowsUsed = 0, extrasUsed = 0, badgesUsed = 0;
+            foreach (var badge in badgeLabels) badge.gameObject.SetActive(false);
             for (int i = 0; i < m.Arrows.Count; i++)
             {
                 if (i == arrows.Count) arrows.Add(NewArrow("Intent"));
@@ -443,106 +487,132 @@ namespace Corrigible.Game.Raid
                 arrows[i].gameObject.SetActive(true);
                 var intent = shownIntents.Values.FirstOrDefault(j => j.FromX == a.fx && j.FromY == a.fy && j.TargetX == a.tx && j.TargetY == a.ty);
                 if (intent != null) intentArrowByUnit[intent.Unit] = arrows[i];
-                var start = W(a.fx, a.fy) + Vector3.up * 0.30f;
-                var end = W(a.tx, a.ty) + Vector3.up * 0.16f;
-                var direction = (end - start).normalized;
-                start += direction * 0.24f; end -= direction * 0.30f;
-                bool curved = intent != null && intent.Kind != "shoot";
-                // Gözcünün bildirdiği hamle paftaya yağlı kalemle çizilir
-                arrows[i].Set(start, end, lib.threat, false, PixelWorld * (curved ? 4.2f : 3), curved ? 0.30f : 0, PixelWorld * 2.2f);
+                DrawIntent(arrows[i], intent?.Kind ?? "shoot", a.fx, a.fy, a.tx, a.ty, ref shadowsUsed, ref extrasUsed, ref badgesUsed);
+            }
+            // Patlama: ok yok; dört komşuya kısa çıkış okları (0,30 → 0,66 birim, uç 12 px)
+            foreach (var blast in shownIntents.Values.Where(j => j.Kind == "blast"))
+            {
+                var center = W(blast.FromX, blast.FromY) + Vector3.up * 0.16f;
+                foreach (var d in new[] { Vector3.right, Vector3.left, Vector3.forward, Vector3.back })
+                {
+                    var arrow = Extra(extrasUsed++);
+                    arrow.Set(center + d * 0.30f, center + d * 0.66f, lib.intent, false, PixelWorld * 2.4f, 0, 0, true, PixelWorld * 12);
+                    Shadow(shadowsUsed++, center + d * 0.30f, center + d * 0.66f, false, PixelWorld * 2.4f, 0, true, PixelWorld * 12);
+                }
             }
             for (int i = m.Arrows.Count; i < arrows.Count; i++) arrows[i].gameObject.SetActive(false);
-            lastMarks = m;
-            if (reportShown != int.MaxValue) ApplyReport();
+            for (int i = shadowsUsed; i < arrowShadows.Count; i++) arrowShadows[i].gameObject.SetActive(false);
+            for (int i = extrasUsed; i < extraArrows.Count; i++) extraArrows[i].gameObject.SetActive(false);
             LayoutLabels();
         }
 
-        // ------------------------------------------------------------------ gözcü raporu
-        Marks lastMarks;
-        /// <summary>Gözcünün bildirdiği son niyetin sırası; rapor yokken hepsi görünür.</summary>
-        int reportShown = int.MaxValue;
+        readonly List<RaidArrow> arrowShadows = new List<RaidArrow>(), extraArrows = new List<RaidArrow>();
+        /// <summary>Son eşitlenen tahta (havan ve kalkan oku hedefin tepe noktasını bulur).</summary>
+        Baskin.BState lastState;
+        /// <summary>Uyanan robotun kimliği → uyanmasından sonraki tur (o tur boyunca UYANDI etiketi taşır).</summary>
+        readonly Dictionary<int, int> woke = new Dictionary<int, int>();
+        /// <summary>UYANDI damgası inmiş robotlar (damga bir kez iner).</summary>
+        readonly HashSet<int> wokeStamped = new HashSet<int>();
+        [Tooltip("UYANDI etiketinin damga gibi inme süresi (S6: 0,12 s).")]
+        [SerializeField, Min(0)] float wakeStampSeconds = 0.12f;
+        readonly List<RaidWorldLabel> badgeLabels = new List<RaidWorldLabel>();
 
-        /// <summary>Gözcü raporuna kadar niyetler gizli: sonraki eşitleme okları, sıra bayraklarını ve hedef kareleri çizmez.</summary>
-        public void HoldIntents() => reportShown = 0;
+        /// <summary>Dikey dünya birimi ekranda yatay pikselin ~1/1,22'si (35° eğik kamera): yay yüksekliği pikselden.</summary>
+        float RisePx(float px) => PixelWorld * px * 1.22f;
+
+        RaidArrow Extra(int i)
+        {
+            if (i == extraArrows.Count) extraArrows.Add(NewArrow("Intent extra"));
+            extraArrows[i].gameObject.SetActive(true);
+            return extraArrows[i];
+        }
+
+        void Shadow(int i, Vector3 from, Vector3 to, bool dashed, float width, float arc, bool tip, float head)
+        {
+            if (i == arrowShadows.Count)
+            {
+                var s = NewArrow("Intent shadow");
+                s.GetComponent<MeshRenderer>().sortingOrder = -1;
+                arrowShadows.Add(s);
+            }
+            var shadow = arrowShadows[i];
+            shadow.gameObject.SetActive(true);
+            var offset = cam.transform.right * (PixelWorld * 1.5f) - cam.transform.up * (PixelWorld * 2);
+            shadow.Set(from + offset, to + offset, new Color(0, 0, 0, 0.28f), dashed, width, arc, 0, tip, head);
+        }
+
+        void Badge(ref int used, Sprite icon, Vector3 world, float size)
+        {
+            if (icon == null) return;
+            if (used == badgeLabels.Count) badgeLabels.Add(NewPaperLabel("Intent badge", 12, false));
+            var badge = badgeLabels[used++];
+            badge.SetAnchor(world);
+            badge.ShowIcon(icon, size, Color.white);
+        }
 
         /// <summary>
-        /// Gözcü raporu: niyetler sırayla bildirilir. Her bildirimde sıra bayrağı ve hedef kareler belirir, ok paftaya kalemle
-        /// çizilir. Bir tuşa ya da tıklamaya basılırsa raporun kalanı bir anda çizilir (bildirimler sessiz geçer).
+        /// Bir niyetin oku (S9-C/C2): ateş düz 3,4 px; yakın dövüş ve kilit yay 4,6 px (kilitte kıskaç rozeti); onarım kesik
+        /// 2,6 px + anahtar; havan yüksek yay (kirişin 0,4'ü, en az 90 px) namludan; kalkan çift şerit, ucu yok, kalkan rozeti;
+        /// kopyalama kesik + uç 11 px, dron rozeti. Zarar vermeyenler #854005.
         /// </summary>
-        public IEnumerator ReportIntents(Action<Baskin.IntentView, bool> reported)
+        void DrawIntent(RaidArrow arrow, string kind, int fx, int fy, int tx, int ty, ref int shadows, ref int extras, ref int badges)
         {
-            int version = buildVersion;
-            // Boşa gidecek hamle de bildirilir (oku yok, bayrağı var)
-            var order = shownIntents.Values.Where(i => i.HasTarget).OrderBy(i => i.Order).ToList();
-            Busy = true;
-            bool skip = false;
-            float pace = FastMachines ? 3.125f : 1f;
-            foreach (var intent in order)
+            var start = W(fx, fy) + Vector3.up * 0.30f;
+            var end = W(tx, ty) + Vector3.up * 0.16f;
+            var direction = (end - start).normalized;
+            float px = PixelWorld;
+            bool quiet = kind == "shield" || kind == "clone";
+            var color = quiet ? lib.intentQuiet : lib.intent;
+            float width = 3.4f, arc = 0, head = 16;
+            bool dashed = false, tip = true;
+            switch (kind)
             {
-                if (version != buildVersion) yield break;
-                reportShown = intent.Order;
-                reported?.Invoke(intent, skip);
-                ApplyReport();
-                LayoutLabels();
-                intentArrowByUnit.TryGetValue(intent.Unit, out var arrow);
-                if (skip) continue;
-                if (arrow != null) arrow.Reveal(0);
-                for (float t = 0; t < 1; t += Time.deltaTime * pace / 0.26f)
+                case "shoot":
+                    start += direction * 0.24f; end -= direction * 0.40f;
+                    break;
+                case "lob":
                 {
-                    if (version != buildVersion) yield break;
-                    if (SkipPressed()) { skip = true; break; }
-                    if (arrow != null) arrow.Reveal(Ease(t));
-                    yield return null;
+                    start = W(fx, fy) + Vector3.up * 0.8f;
+                    var target = Baskin.UnitAt(lastState, tx, ty);
+                    end = W(tx, ty) + Vector3.up * (target != null && units.TryGetValue(target.Id, out var tp) && tp != null ? tp.VisualHeight : 0.16f) + cam.transform.up * (px * 10);
+                    float chord = Vector3.Distance(start, end) / px;
+                    arc = RisePx(Mathf.Max(0.4f * chord, 90));
+                    break;
                 }
-                if (arrow != null) arrow.Reveal(1);
-                for (float w = 0; w < 0.3f / pace && !skip; w += Time.deltaTime)
+                case "repair":
+                    width = 2.6f; arc = RisePx(26); dashed = true; head = 11; start += direction * 0.24f; end -= direction * 0.30f;
+                    break;
+                case "shield":
+                    width = 1.6f; arc = RisePx(20); tip = false; start += direction * 0.24f; end -= direction * 0.30f;
+                    break;
+                case "clone":
+                    width = 2.6f; dashed = true; head = 11; start += direction * 0.24f; end -= direction * 0.30f;
+                    break;
+                default:
+                    // Yakın dövüş ve kilit: yay 4,6 px (yükselme 14–26 px), uç 15 px
+                    width = 4.6f; arc = RisePx(20); head = 15; start += direction * 0.24f; end -= direction * 0.30f;
+                    break;
+            }
+            Shadow(shadows++, start, end, dashed, px * width, arc, tip, px * head);
+            arrow.Set(start, end, color, dashed, px * width, arc, 0, tip, px * head);
+            Vector3 mid = (start + end) * 0.5f + Vector3.up * arc;
+            switch (kind)
+            {
+                case "shield":
                 {
-                    if (version != buildVersion) yield break;
-                    if (SkipPressed()) skip = true;
-                    yield return null;
+                    // Çift şerit: ikinci çizgi 3,2 px yanda
+                    var across = Vector3.Cross(Vector3.up, (end - start).normalized) * (px * 3.2f);
+                    var twin = Extra(extras++);
+                    twin.Set(start + across, end + across, color, false, px * width, arc, 0, false);
+                    var shielded = Baskin.UnitAt(lastState, tx, ty);
+                    float top = shielded != null && units.TryGetValue(shielded.Id, out var sp) && sp != null ? sp.VisualHeight : 0.5f;
+                    Badge(ref badges, lib.badgeShield, W(tx, ty) + Vector3.up * top + cam.transform.up * (px * 22), 28);
+                    break;
                 }
+                case "lock": Badge(ref badges, lib.badgeClamp, mid, 26); break;
+                case "repair": Badge(ref badges, lib.badgeWrench, mid, 22); break;
+                case "clone": Badge(ref badges, lib.badgeClone, W(tx, ty) + Vector3.up * 0.2f, 24); break;
             }
-            if (version != buildVersion) yield break;
-            reportShown = int.MaxValue;
-            ApplyReport();
-            foreach (var arrow in arrows) if (arrow.gameObject.activeSelf) arrow.Reveal(1);
-            LayoutLabels();
-            Busy = false;
-        }
-
-        static bool SkipPressed() => Keyboard.current?.anyKey.wasPressedThisFrame == true || Mouse.current?.leftButton.wasPressedThisFrame == true;
-
-        /// <summary>Henüz bildirilmemiş niyetlerin okunu, bayrağını ve yalnız onlara ait hedef karelerini gizler.</summary>
-        void ApplyReport()
-        {
-            if (lastMarks == null) return;
-            var hidden = new HashSet<int>();
-            var shown = new HashSet<int>();
-            foreach (var pair in shownIntents)
-            {
-                bool on = pair.Value.Order <= reportShown;
-                if (intentArrowByUnit.TryGetValue(pair.Key, out var arrow)) arrow.gameObject.SetActive(on);
-                if (orderLabels.TryGetValue(pair.Key, out var flag) && flag.gameObject.activeSelf != on) flag.SetVisible(on);
-                (on ? shown : hidden).UnionWith(IntentKeys(pair.Value));
-            }
-            for (int k = 0; k < 64; k++)
-            {
-                bool hide = hidden.Contains(k) && !shown.Contains(k);
-                bool danger = lastMarks.Danger.Contains(k) && !hide, heal = lastMarks.Heal.Contains(k) && !hide;
-                dangerFrames[k].gameObject.SetActive(danger);
-                dangerHatches[k].gameObject.SetActive(danger);
-                repairFrames[k].gameObject.SetActive(heal);
-                wakeRings[k].gameObject.SetActive(lastMarks.Spawns.Contains(k) && !hide);
-                if (spawnMarks[k] != null) spawnMarks[k].SetActive(lastMarks.Spawns.Contains(k) && !hide);
-                tint[k].enabled = !hide && (lastMarks.Moves.Contains(k) || lastMarks.Danger.Contains(k) || lastMarks.Heal.Contains(k) || lastMarks.Targets.Contains(k));
-            }
-        }
-
-        static IEnumerable<int> IntentKeys(Baskin.IntentView i)
-        {
-            if (!i.HasTarget || i.TargetNone) yield break;
-            if (i.Kind == "blast") { foreach (var a in i.Area) yield return Key(a.X, a.Y); yield break; }
-            yield return Key(i.TargetX, i.TargetY);
         }
 
         void FlagPin(int id, Vector3 from, Vector3 to)
@@ -610,7 +680,9 @@ namespace Corrigible.Game.Raid
             {
                 if (!pair.Value.gameObject.activeSelf || !units.TryGetValue(pair.Key, out var actor)) continue;
                 if (!actor.gameObject.activeSelf) { if (flagPins.TryGetValue(pair.Key, out var pin)) pin.SetActive(false); continue; }
-                FlagPin(pair.Key, actor.transform.position + Vector3.up * actor.VisualHeight, pair.Value.transform.position);
+                // İğne tepe noktasından kâğıdın sol alt köşesine
+                FlagPin(pair.Key, actor.transform.position + Vector3.up * actor.VisualHeight,
+                    pair.Value.transform.position - cam.transform.right * (PixelWorld * 15) - cam.transform.up * (PixelWorld * 14));
             }
             layoutWidth = Screen.width; layoutHeight = Screen.height;
             layoutCameraPosition = cam.transform.position; layoutCameraRotation = cam.transform.rotation; layoutCameraSize = cam.orthographicSize;
@@ -628,11 +700,11 @@ namespace Corrigible.Game.Raid
             r.SetPropertyBlock(mpb);
         }
 
-        RaidArrow NewArrow(string name)
+        RaidArrow NewArrow(string name, Material material = null)
         {
             var go = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer), typeof(RaidArrow));
             go.transform.SetParent(marksRoot, false);
-            go.GetComponent<MeshRenderer>().sharedMaterial = lib.overlay;
+            go.GetComponent<MeshRenderer>().sharedMaterial = material != null ? material : lib.overlay;
             return go.GetComponent<RaidArrow>();
         }
 
@@ -890,6 +962,10 @@ namespace Corrigible.Game.Raid
                         if (objects.TryGetValue(Key(f.X, f.Y), out var bp)) yield return Collapse(bp);
                         break;
                     case "spawn":
+                        // Yeni robot: uyandığı makine evresinden sonraki tur boyunca üstünde UYANDI (S6b). Uyanan robot
+                        // aynı adımda planlanıp yürüyebildiği için kareyle değil kimlikle bulunur: uyanmalar kimlik sırasıyla gelir.
+                        var born = after.Units.Where(n => n.Side == 'e' && !units.ContainsKey(n.Id) && !woke.ContainsKey(n.Id)).OrderBy(n => n.Id).FirstOrDefault();
+                        if (born != null) woke[born.Id] = after.Turn;
                         Sfx.Play(Cue.RaidSpawn, 1, Pan(W(f.X, f.Y)));
                         StartCoroutine(Burst(W(f.X, f.Y), lib.threat, 1.0f, 0.3f));
                         yield return Wait(0.2f);
@@ -897,111 +973,10 @@ namespace Corrigible.Game.Raid
                 }
                 if (version != buildVersion) yield break;
             }
-            if (enemyTurn) { yield return PlotMoves(after); if (version != buildVersion) yield break; }
             yield return Wait(0.15f);
             if (version != buildVersion) yield break;
             activeIntentHighlight.gameObject.SetActive(false);
             Busy = false;
-        }
-
-        /// <summary>
-        /// Gözcü makinelerin yeni yerini bildirir; görevli çubukla figürleri paftada yeni karelerine iter. Uygulanmış niyetlerin
-        /// kalem izleri ve sıra bayrakları önce kalkar; yenilerini eşitleme (<see cref="Sync"/>) çizer.
-        /// </summary>
-        IEnumerator PlotMoves(Baskin.BState after)
-        {
-            int version = buildVersion;
-            var moves = new List<(RaidPiece piece, Vector3 to, int id)>();
-            foreach (var u in after.Units)
-            {
-                if (u.Side != 'e' || u.Dead || !units.TryGetValue(u.Id, out var p) || p == null || !p.gameObject.activeSelf) continue;
-                var to = W(u.X, u.Y);
-                var at = p.transform.position;
-                if (new Vector2(at.x - to.x, at.z - to.z).sqrMagnitude > 0.01f) moves.Add((p, to, u.Id));
-            }
-            if (moves.Count == 0) yield break;
-            foreach (var a in arrows) a.gameObject.SetActive(false);
-            foreach (var flag in orderLabels.Values) flag.gameObject.SetActive(false);
-            foreach (var pin in flagPins.Values) pin.SetActive(false);
-            foreach (var (piece, to, id) in moves)
-            {
-                if (hpLabels.TryGetValue(id, out var tag)) tag.gameObject.SetActive(false);
-                if (stateLabels.TryGetValue(id, out var state)) state.gameObject.SetActive(false);
-                yield return Push(piece, to);
-                if (version != buildVersion) yield break;
-            }
-        }
-
-        GameObject plotter;
-
-        /// <summary>Görevlinin çubuğu: pirinç başlık ve arkaya, yukarı uzanan ahşap sap (paftanın dışından tutulur).</summary>
-        GameObject Plotter()
-        {
-            if (plotter != null) return plotter;
-            if (lib.plotterShaft == null || lib.plotterHead == null) return null;
-            plotter = new GameObject("Plotter stick");
-            plotter.transform.SetParent(marksRoot, false);
-            var head = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            Destroy(head.GetComponent<Collider>());
-            head.name = "Head";
-            head.transform.SetParent(plotter.transform, false);
-            head.transform.localScale = new Vector3(0.62f, 0.09f, 0.06f);
-            head.GetComponent<Renderer>().sharedMaterial = lib.plotterHead;
-            var shaft = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            Destroy(shaft.GetComponent<Collider>());
-            shaft.name = "Shaft";
-            shaft.transform.SetParent(plotter.transform, false);
-            // Silindir 2 birim boyunda: 1,3 ölçekle 2,6 birimlik sap, başlıktan geriye ve %20 eğimle yukarı (paftaya yatık)
-            var back = new Vector3(0, 0.2f, -1).normalized;
-            shaft.transform.localRotation = Quaternion.FromToRotation(Vector3.up, back);
-            shaft.transform.localPosition = back * 1.3f;
-            shaft.transform.localScale = new Vector3(0.05f, 1.3f, 0.05f);
-            shaft.GetComponent<Renderer>().sharedMaterial = lib.plotterShaft;
-            plotter.SetActive(false);
-            return plotter;
-        }
-
-        /// <summary>Çubuk figürün arkasına gelir, figürü yeni karesine iter ve geri çekilir. Çubuk yoksa figür kendisi kayar.</summary>
-        IEnumerator Push(RaidPiece p, Vector3 to)
-        {
-            int version = buildVersion;
-            var from = p.transform.position;
-            var dir = to - from; dir.y = 0;
-            float distance = dir.magnitude;
-            dir /= Mathf.Max(0.001f, distance);
-            float pace = FastMachines ? 3.125f : 1f;
-            var stick = Plotter();
-            Vector3 Head(Vector3 piece) => piece - dir * 0.42f + Vector3.up * 0.06f;
-            if (stick != null)
-            {
-                stick.transform.rotation = Quaternion.LookRotation(dir, Vector3.up);
-                stick.SetActive(true);
-                for (float t = 0; t < 1; t += Time.deltaTime * pace / 0.14f)
-                {
-                    if (version != buildVersion || stick == null) yield break;
-                    stick.transform.position = Vector3.Lerp(Head(from) - dir * 0.7f, Head(from), Ease(t));
-                    yield return null;
-                }
-            }
-            float time = Mathf.Max(0.22f, distance * 0.12f) / pace;
-            for (float t = 0; t < 1; t += Time.deltaTime / time)
-            {
-                if (version != buildVersion || p == null) { if (stick != null) stick.SetActive(false); yield break; }
-                var at = Vector3.Lerp(from, to, Ease(t));
-                p.transform.position = at;
-                if (stick != null) stick.transform.position = Head(at);
-                yield return null;
-            }
-            if (version != buildVersion || p == null) yield break;
-            p.transform.position = to;
-            if (stick == null) yield break;
-            for (float t = 0; t < 1; t += Time.deltaTime * pace / 0.12f)
-            {
-                if (version != buildVersion || stick == null) yield break;
-                stick.transform.position = Vector3.Lerp(Head(to), Head(to) - dir * 0.7f, t);
-                yield return null;
-            }
-            stick.SetActive(false);
         }
 
         void ShowExecuting(int id, int x, int y)
@@ -1016,7 +991,8 @@ namespace Corrigible.Game.Raid
             if (orderLabels.TryGetValue(id, out var flag) && shownIntents.TryGetValue(id, out var intent))
             {
                 flag.SetPaperColor(lib.threat);
-                flag.Show(screenLabelPrefab != null ? intent.Order.ToString() : Loc.F("{0} ŞİMDİ", intent.Order), paperColor, lib.threat);
+                if (screenLabelPrefab != null) flag.ShowFlag(intent.Order.ToString(), paperColor, lib.threat);
+                else flag.Show(Loc.F("{0} ŞİMDİ", intent.Order), paperColor, lib.threat);
                 LayoutLabels();
             }
         }
@@ -1028,7 +1004,9 @@ namespace Corrigible.Game.Raid
             if (orderLabels.TryGetValue(id, out var flag) && shownIntents.TryGetValue(id, out var intent))
             {
                 flag.SetPaperColor(paperColor); flag.SetOpacity(0.55f);
-                flag.Show(screenLabelPrefab != null ? intent.Order.ToString() : Loc.F("<s>{0}</s> UYGULANDI", intent.Order), lib.threat, lib.threat);
+                // Biten niyet: bayrak soluk, rakam çizik
+                if (screenLabelPrefab != null) flag.ShowFlag(Loc.F("<s>{0}</s>", intent.Order), lib.threat, lib.threat);
+                else flag.Show(Loc.F("<s>{0}</s> UYGULANDI", intent.Order), lib.threat, lib.threat);
                 LayoutLabels();
             }
         }
@@ -1042,7 +1020,8 @@ namespace Corrigible.Game.Raid
             else if (state == "cancel" && orderLabels.TryGetValue(id, out var cancelled))
             {
                 cancelled.SetOpacity(0.55f);
-                cancelled.Show(screenLabelPrefab != null ? Loc.F("<s>{0}</s>", intent.Order) : Loc.F("<s>{0}</s> İPTAL", intent.Order), lib.threat, graphiteColor);
+                if (screenLabelPrefab != null) cancelled.ShowFlag(Loc.F("<s>{0}</s>", intent.Order), lib.threat, graphiteColor);
+                else cancelled.Show(Loc.F("<s>{0}</s> İPTAL", intent.Order), lib.threat, graphiteColor);
             }
         }
 
@@ -1108,7 +1087,7 @@ namespace Corrigible.Game.Raid
             int version = buildVersion;
             var rotation = p.Body.localRotation;
             var fallen = p.DownRotation;
-            // Tur sonu dönüşü düşme canlandırmasıyla yarışmasın; krem/harf yüzü yukarı kalır.
+            // Tur sonu dönüşü düşme canlandırmasıyla yarışmasın; harf yüzü yukarı kalır.
             p.SetDown(true); p.Body.localRotation = rotation;
             for (float t = 0; t < 1; t += Time.deltaTime / 0.30f)
             {

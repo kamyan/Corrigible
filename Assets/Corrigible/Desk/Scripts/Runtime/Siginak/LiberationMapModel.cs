@@ -9,6 +9,12 @@ namespace Corrigible.Desk
     /// <summary>Sektör damgası (K2 notu): GERİ ALINDI mavi ✓ · BASKINA HAZIR kırmızı ▸ · KİLİTLİ gri kesik kilit.</summary>
     public enum SectorMark { Retaken, Ready, Locked }
 
+    /// <summary>
+    /// BASKIN EMRİ VER (Revizyon 2 · S2): açık · devre dışı (gerekçe düğmenin sağında) · yetersiz kaynak (düğme açık kalır,
+    /// bedel çizik, altında eksik; basınca komut çağrılmaz, FON sayacı titrer).
+    /// </summary>
+    public enum SlipActionState { Ready, Disabled, Shortfall }
+
     /// <summary>Bir bölgenin haritadaki görünümü; simülasyondan bağlayıcı kurar, görünüm yalnız okur.</summary>
     [Serializable]
     public sealed class MapRegionState
@@ -25,6 +31,10 @@ namespace Corrigible.Desk
         public int FreeShift = -1;
         /// <summary>Bu vardiyada özgürleşti: taze mürekkep damga ve silgi lekesi (K3 notu).</summary>
         public bool FreshStamp;
+        /// <summary>Bölge özelliği ve imza makinesi (<c>Baskin.RegionTraits</c>, <c>Baskin.UnitTypes</c>): cephe bloğunun saha işaretleri.</summary>
+        public string Trait, Signature;
+        /// <summary>Son karşı saldırıda yeniden işgal edilen ve henüz geri alınmamış sektörün sırası; yoksa −1.</summary>
+        public int Reoccupied = -1;
     }
 
     /// <summary>Ekip figürünün yeri ve hâli (Ekip-figuru.md › yeri oyun durumundan gelir). Kayda yazılmaz.</summary>
@@ -50,6 +60,8 @@ namespace Corrigible.Desk
         public string Front, Shelter;
         /// <summary>Cephe bölgesi henüz özgür değil: aday çizilmez, aynı anda tek cephe.</summary>
         public bool FrontOpen;
+        /// <summary>Zorluk kademesi (1–4), işaretler kutusunun başlığında “TEHDİT n/4”.</summary>
+        public int Tier = 1;
         public TeamFigureState Team = new TeamFigureState();
 
         public MapRegionState Find(string id)
@@ -67,18 +79,57 @@ namespace Corrigible.Desk
         public string No, Name, Kind;
         public SectorMark Mark;
         public bool Highlight;
+        /// <summary>Karşı saldırıda yeniden işgal edildi (kırmızı ✕ işareti; damga yine sırasına göre).</summary>
+        public bool Reoccupied;
+        /// <summary>Üzerine gelince etiket satırı (kilitli satır: neden seçilmediği).</summary>
+        public string Hover;
+    }
+
+    /// <summary>
+    /// Fişin SAHA satırı (S2): işaret (kare çerçeveli sprite adı ya da tehdit kademesi) + etiket + değer. Üzerine gelince kâğıt
+    /// etiket: başlık “İMZA · KİLİTLEYİCİ” ve oyundaki açıklama.
+    /// </summary>
+    public sealed class SlipField
+    {
+        public string Glyph, Label, Value, HoverTitle, HoverLine;
+        /// <summary>Tehdit satırı: işaret <c>threat_tier_n</c>, değer kırmızı CP.</summary>
+        public int Tier;
+    }
+
+    /// <summary>Ödül ızgarasının bir hücresi: yeşil miktar (“+10”) ve birim (“fon”).</summary>
+    public sealed class SlipReward
+    {
+        public string Amount, Unit;
+    }
+
+    /// <summary>Ekip diski: rol harfi (baskın piyonuyla aynı), can (“3/3”); yedek ya da eksik rol ayrıca.</summary>
+    public sealed class SlipMember
+    {
+        public string Letter, Hp;
+        public bool Rookie, Missing;
     }
 
     /// <summary>Görev fişi (K2): cephe için tam form, öteki bölgeler için bilgi fişi (eylem yok).</summary>
     public sealed class OperationSlipData
     {
         public string RegionId, Code, Region, Progress;
+        public readonly List<SlipField> Fields = new List<SlipField>();
         public readonly List<SlipSector> Sectors = new List<SlipSector>();
-        public string TaskHead, Task, Cost, Reward;
-        public string TeamName, TeamMembers, TeamStamp;
+        public string TaskHead, Task, Cost;
+        public readonly List<SlipReward> Rewards = new List<SlipReward>();
+        public string TeamName, TeamStamp;
+        public readonly List<SlipMember> Members = new List<SlipMember>();
+        /// <summary>Disklerden sonra (ör. “2 plaka”); yoksa boş.</summary>
+        public string TeamExtra;
         public bool TeamReady;
-        public bool HasAction, ActionEnabled;
-        public string Action, ActionCost, Reason;
+        public bool HasAction;
+        public SlipActionState ActionState;
+        public bool ActionEnabled => ActionState == SlipActionState.Ready;
+        public string Action, ActionCost;
+        /// <summary>Devre dışı düğmenin sağındaki kısa neden (“EKİP HAZIR DEĞİL”).</summary>
+        public string ActionNote;
+        /// <summary>Teleks gerekçesi (sayılarla); yetersiz kaynakta düğmenin altındaki satır <see cref="Shortfall"/>.</summary>
+        public string Reason, Shortfall;
         /// <summary>Bilgi fişi metni (görev, bedel, ekip ve eylem yerine).</summary>
         public string Info;
     }

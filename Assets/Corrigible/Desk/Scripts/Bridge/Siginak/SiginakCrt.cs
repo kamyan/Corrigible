@@ -11,13 +11,15 @@ namespace Corrigible.Desk.Bridge
     /// CRT'nin oyun bağlantısı (Docs/UI_Siginak Aşama 7): masadaki ekranı (<see cref="CrtScreen"/>) durumla günceller ve
     /// <see cref="RaidLauncher"/>'ın geçiş kancası olarak tam ekran CRT dizisini (<see cref="CrtTransition"/>) oynatır.
     /// Sunum anahtarı yeni görünümde kancayı başlatıcıya yazar; eski görünümde kanca yoktur. Kanca çağrıları başlatıcının
-    /// coroutine'inde koşar (bu nesne baskın sırasında gizli oda kökünde olsa da).
+    /// coroutine'inde koşar (bu nesne baskın sırasında gizli oda kökünde olsa da). Önündeki telsiz kayıt defterini de yazar
+    /// (son dört kayıt, <see cref="RadioLogBuilder"/>).
     /// </summary>
     public sealed class SiginakCrt : MonoBehaviour, IRaidTransition
     {
         [SerializeField] GameController game;
         [SerializeField] CrtScreen screen;
         [SerializeField] CrtTransition overlay;
+        [SerializeField] RadioLogBook logBook;
 
         CrtState shown = (CrtState)(-1);
         Simulation Sim => game != null ? game.Sim : null;
@@ -53,6 +55,7 @@ namespace Corrigible.Desk.Bridge
             var d = CrtViewBuilder.Screen(sim, RaidLauncher.IsRaidLoaded);
             shown = d.State;
             screen.Bind(d);
+            if (logBook != null) logBook.Show(RadioLogBuilder.Entries(sim, RaidLauncher.IsRaidLoaded));
         }
 
         // ---------- IRaidTransition (K5b) ----------

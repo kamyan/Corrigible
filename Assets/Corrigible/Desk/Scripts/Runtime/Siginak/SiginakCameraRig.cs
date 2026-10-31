@@ -66,7 +66,11 @@ namespace Corrigible.Desk
         struct State { public Vector3 position; public Quaternion rotation; public float fieldOfView, shift; }
 
         public SiginakPose Current => current;
+        /// <summary>Odanın kamerası (ekran noktası → harita düzlemi).</summary>
+        public Camera View => view;
         public bool InTransition => elapsed < duration;
+        /// <summary>Geçişin kalan süresi (s); geçiş yoksa 0.</summary>
+        public float TransitionRemaining => Mathf.Max(0, duration - elapsed);
         /// <summary>Ekip figürü taşınırken bakış ve tekerlek kapalı (Ekip-figuru.md).</summary>
         public bool InputSuspended { get; set; }
         /// <summary>Vardiya dizisi ve rapor (K6): kısayollar, bakış ve tekerlek kapalı; pozları dizi sürer.</summary>

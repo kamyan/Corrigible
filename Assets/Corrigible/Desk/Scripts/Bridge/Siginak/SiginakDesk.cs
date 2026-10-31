@@ -32,7 +32,12 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] ShiftSwitch shiftSwitch;
         [SerializeField] TelexFeed telex;
         [SerializeField] HopeMarks hope;
-        [SerializeField] TMP_Text[] freedEntries = System.Array.Empty<TMP_Text>();
+        [Tooltip("Mantar panodaki KURTARILAN BÖLGELER (Revizyon 2): özgür bölge kartları ve sıradaki hedef.")]
+        [SerializeField] FreedRegionsBoard freedBoard;
+        [Tooltip("Arka duvardaki tebeşir vardiya çentiği (Revizyon 2).")]
+        [SerializeField] ChalkTally tally;
+        [Tooltip("Vardiyaya bağlı harekât izleri (Revizyon 2).")]
+        [SerializeField] CampaignWear wear;
         [SerializeField] DeskTarget shelfTarget, crtTarget, trayTarget, telexTarget;
         [Header("Ekran")]
         [SerializeField] EdgeLine edge;
@@ -41,8 +46,20 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] SiginakMap map;
         [Tooltip("Vardiya dizisi, rapor ve EVRAK tepsisi (Aşama 8).")]
         [SerializeField] SiginakShift shift;
+        [Tooltip("Operasyon raporu: sayaçlar rapor inene kadar baskından önceki değerde bekler.")]
+        [SerializeField] SiginakOperation operation;
         [Tooltip("Açılış ve emir belgesi (Aşama 9).")]
         [SerializeField] SiginakBriefing briefing;
+        [Tooltip("Sığınağın kapısı: 4 · KAPI tuşu bekleyen ziyaretçinin kâğıdını açar (Revizyon 2).")]
+        [SerializeField] SiginakDoor door;
+        [Tooltip("Eğitim notu: başka kâğıt açık değilken Esc notları kapatır (Revizyon 2).")]
+        [SerializeField] SiginakTutorial tutorial;
+
+        /// <summary>4 · KAPI tuşunun etiketi (kaynak metinler; gösterirken çevrilir).</summary>
+        static readonly string DoorWaitingTitle = Loc.N("KAPI · ZİYARETÇİ VAR"),
+            DoorWaitingLine = Loc.N("Kapıya dön. Ziyaretçi vardiya bitene kadar bekler."),
+            DoorRaidLine = Loc.N("Baskın sürüyor: kapıya gidilemez."),
+            DoorIdleLine = Loc.N("Kapıda kimse yok. Biri çalınca lamba yanıp söner.");
 
         int lastMapStation = StationKeyRail.Command;
         bool countersShown;
@@ -53,13 +70,13 @@ namespace Corrigible.Desk.Bridge
         public bool ShiftBusy => shift != null && shift.Busy;
 
         public void Configure(GameController controller, LiberationDeskView desk, SiginakCameraRig cameraRig, SiginakSettings settingsAsset, Camera camera,
-            CounterBank bank, StationKeyRail keys, ShiftSwitch lever, TelexFeed feed, HopeMarks marks, TMP_Text[] freed,
+            CounterBank bank, StationKeyRail keys, ShiftSwitch lever, TelexFeed feed, HopeMarks marks, FreedRegionsBoard freed,
             DeskTarget shelf, DeskTarget crt, DeskTarget tray, DeskTarget telexPaper, EdgeLine edgeLine, SettingsPlaque settingsPlaque,
             SiginakMap liberationMap, SiginakShift shiftSequence, SiginakBriefing orderPaper)
         {
             map = liberationMap; shift = shiftSequence; briefing = orderPaper;
             game = controller; surface = desk; rig = cameraRig; settings = settingsAsset; view = camera;
-            counters = bank; rail = keys; shiftSwitch = lever; telex = feed; hope = marks; freedEntries = freed;
+            counters = bank; rail = keys; shiftSwitch = lever; telex = feed; hope = marks; freedBoard = freed;
             shelfTarget = shelf; crtTarget = crt; trayTarget = tray; telexTarget = telexPaper; edge = edgeLine; plaque = settingsPlaque;
         }
 
@@ -119,8 +136,9 @@ namespace Corrigible.Desk.Bridge
             if (shift == null || !shift.OpenTray()) surface.OpenGuide();
         }
 
-        /// <summary>Esc: harita fişi / figür taşıma, sonra açık şalter kapağı. Bir şey yaptıysa true (ayarlar açılmaz).</summary>
-        public bool HandleEscape() => map != null && map.isActiveAndEnabled && map.HandleEscape() || shiftSwitch != null && shiftSwitch.Cancel();
+        /// <summary>Esc: harita fişi / figür taşıma, açık şalter kapağı, sonra eğitim notu. Bir şey yaptıysa true (ayarlar açılmaz).</summary>
+        public bool HandleEscape() => map != null && map.isActiveAndEnabled && map.HandleEscape() || shiftSwitch != null && shiftSwitch.Cancel() ||
+            tutorial != null && tutorial.isActiveAndEnabled && tutorial.HandleEscape();
 
         void Station(int index)
         {
@@ -130,6 +148,7 @@ namespace Corrigible.Desk.Bridge
                 case StationKeyRail.Command: lastMapStation = index; rig.FocusMap(); break;
                 case StationKeyRail.Shelter: surface.ShowShelter(); break;
                 case StationKeyRail.Missions: lastMapStation = index; surface.ShowPlanning(); break;
+                case StationKeyRail.Door: door?.Visit(); break;
                 case StationKeyRail.Guide: surface.OpenGuide(); break;
                 case StationKeyRail.Desk: rig.ResetView(); break;
             }
@@ -145,10 +164,13 @@ namespace Corrigible.Desk.Bridge
                 SiginakPose.Map => lastMapStation,
                 SiginakPose.Shelf => StationKeyRail.Shelter,
                 SiginakPose.Desk => StationKeyRail.Desk,
+                SiginakPose.Door => StationKeyRail.Door,
                 _ => -1,
             };
             rail.SetActive(active, locked);
+            DoorKey();
             edge.SetActiveStation(active);
+            edge.SetEnded(Sim != null && Sim.S.Ending != null);
             edge.SetVisible(CounterBankInView(), locked);
             // Dizi boyunca sağ üstte ATLA (kenar satırı açık olsa da)
             bool playing = shift != null && shift.Playing || briefing != null && briefing.OpeningPlaying;
@@ -230,7 +252,25 @@ namespace Corrigible.Desk.Bridge
         /// <summary>KAYITTAN DEVAM'ın döneceği poz: istasyonlar; dizi ve CRT bakışı masaya sayılır.</summary>
         static SiginakPose SavedPose(SiginakPose pose) => pose == SiginakPose.Map || pose == SiginakPose.Shelf ? pose : SiginakPose.Desk;
 
-        void PoseChanged(SiginakPose _) => SaveNotes();
+        void PoseChanged(SiginakPose pose)
+        {
+            SaveNotes();
+            // Kapıdan masaya dönülünce ziyaretçi hâlâ bekliyorsa fiş bir kez sallanır
+            if (pose == SiginakPose.Desk && rail.Count > StationKeyRail.Door && rail[StationKeyRail.Door].Attention) rail[StationKeyRail.Door].Nudge();
+        }
+
+        /// <summary>4 · KAPI: ziyaretçi beklerken lamba yanıp söner, etiket bekleyeni söyler; baskında nedenini yazar.</summary>
+        void DoorKey()
+        {
+            if (rail.Count <= StationKeyRail.Door) return;
+            var key = rail[StationKeyRail.Door];
+            var sim = Sim;
+            bool raid = sim != null && (sim.S.Raid != null || RaidLauncher.IsRaidLoaded);
+            bool waiting = sim != null && sim.DoorVisitor != null && sim.S.Ending == null;
+            key.SetAttention(waiting && !raid);
+            key.Target.TitleOverride = waiting ? DoorWaitingTitle : null;
+            key.Target.LineOverride = Loc.T(raid ? DoorRaidLine : waiting ? DoorWaitingLine : DoorIdleLine);
+        }
 
         void Relabel() => Refresh();
 
@@ -243,14 +283,21 @@ namespace Corrigible.Desk.Bridge
             int free = lib.Regions.Count(r => r.Completed), regions = lib.Regions.Count;
             double capacity = ShelterLogic.SuppliesCapacity(shelter, sim.B);
             // Vardiya dizisinde sayaçlar 0,40'a kadar eski değerde bekler (SiginakShift sırayla döndürür)
-            if (shift == null || !shift.HoldCounters) ShowCounters(countersShown);
-            edge.SetValues(Loc.F("VARDİYA {0:000}  ·  FON {1}  ·  ERZAK {2}/{3}  ·  MALZEME {4}  ·  ÖZGÜR {5}/{6}  ·  GÜVEN {7}/{8}  ·  ALARM {9}/{10}", surface.Shift,
+            // Baskından dönüşte de rapor inene kadar (SiginakOperation)
+            if ((shift == null || !shift.HoldCounters) && (operation == null || !operation.HoldCounters)) ShowCounters(countersShown);
+            // Revizyon 2: GÜVEN, ALARM ve 4 KAPI fişiyle tek satıra sığsın diye ayırıcılar tek boşluklu
+            edge.SetValues(Loc.F("VARDİYA {0:000} · FON {1} · ERZAK {2}/{3} · MALZEME {4} · ÖZGÜR {5}/{6} · GÜVEN {7}/{8} · ALARM {9}/{10}", surface.Shift,
                 DeskFormat.Number(sim.S.Fon, 1), DeskFormat.Number(System.Math.Floor(shelter.Supplies), 0), DeskFormat.Number(capacity, 0),
                 DeskFormat.Number(System.Math.Floor(shelter.Materials), 0), free, regions, sim.S.Trust, sim.TrustMax,
                 DeskFormat.Number(sim.S.Alarm, 0), DeskFormat.Number(sim.B.liberationAlarmThreshold, 0)));
             hope.Show(free, settings == null || settings.hopeMarks);
             FreedList(sim);
+            if (tally != null) tally.Show(surface.Shift);
+            if (wear != null) wear.Show(surface.Shift, settings == null || settings.campaignWear);
         }
+
+        /// <summary>Karşı saldırı: duvardaki alarm lambası üç kez yanar (vardiya dizisinde, rapordan önce).</summary>
+        public void FlashAlarm() { if (alarm != null) alarm.Flash(3); }
 
         /// <summary>
         /// Sayaç rafı ve alarm panosu simülasyonun değerleriyle; vardiya dizisi sırayla döndürür, rafın fişlerini kendisi
@@ -268,28 +315,26 @@ namespace Corrigible.Desk.Bridge
                 alarm.Show(sim.S.Alarm, sim.B.liberationAlarmThreshold, animate, stagger * 6,
                     Loc.F("Eşiğe ({0}) varınca YZ karşı saldırır, bir sektör yeniden işgal edilir. Her vardiya +{1}; telsiz odası düşürür.",
                         DeskFormat.Number(sim.B.liberationAlarmThreshold, 0), ShelterViewBuilder.Rate(sim.AlarmPerShift)));
+            if (alarm != null) alarm.SetRadioActive(ShelterLogic.RadioWorkers(shelter) > 0);
             countersShown = true;
         }
 
-        /// <summary>Mantar panodaki KURTARILAN BÖLGELER listesi: özgürleşme sırasıyla, son sunucu sektörünün vardiyası.</summary>
+        /// <summary>
+        /// Mantar panodaki KURTARILAN BÖLGELER: özgürleşme sırasıyla kartlar (ad, son sunucu sektörünün vardiyası), sonraki yuvada
+        /// sıradaki hedef (cephe bölgesi, özgür değilse) kurşun kalemle. Yeni kart vardiya dizisi dışında da düşer.
+        /// </summary>
         void FreedList(Simulation sim)
         {
-            var freed = sim.S.Liberation.Regions.Where(r => r.Completed)
+            if (freedBoard == null) return;
+            var lib = sim.S.Liberation;
+            var freed = lib.Regions.Where(r => r.Completed)
                 .Select(r => (id: r.Id, day: r.Sectors.Max(s => s.CapturedDay)))
-                .OrderBy(r => r.day).ToList();
-            int first = Mathf.Max(0, freed.Count - freedEntries.Length);
-            for (int i = 0; i < freedEntries.Length; i++)
-            {
-                int n = first + i;
-                var entry = freedEntries[i];
-                if (entry == null) continue;
-                entry.text = n < freed.Count
-                    ? Loc.F("{0}. {1}   V.{2:000} ✓", n + 1, Loc.T(GameData.Region(freed[n].id).Name), freed[n].day + 1)
-                    : (n + 1) + ".";
-                var c = entry.color;
-                c.a = n < freed.Count ? 1 : 0.35f;
-                entry.color = c;
-            }
+                .OrderBy(r => r.day)
+                // Kartta ad iki satır (“BATI / AVRUPA”): raptiye ilk satırın ortasına düşmesin
+                .Select(r => (DeskText.Upper(Loc.T(GameData.Region(r.id).Name)).Replace(' ', '\n'), r.day + 1)).ToList();
+            var front = lib.Regions.FirstOrDefault(r => r.Id == lib.CurrentRegion);
+            string next = front != null && !front.Completed ? Loc.T(GameData.Region(front.Id).Name) : null;
+            freedBoard.Show(freed, next, countersShown);
         }
     }
 }

@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Kurtuluş haritasının çizim katmanı (K2/K3): bölge işaretleri, S-07 fişi, lejant, kırmızı ip ve masa lambası
-    /// dairesi. Sade haritanın dünya canvas'ı içinde, tasarım dikdörtgeninde (1920 × 1080, sol üst) durur; tıklama ve
+    /// Kurtuluş haritasının çizim katmanı (K2/K3; Revizyon 2 · S2): bölge işaretleri, S-07 fişi, işaretler kutusu (sağ altta,
+    /// başlıkta TEHDİT n/4), kırmızı ip ve masa lambası dairesi. Sade haritanın dünya canvas'ı içinde, tasarım dikdörtgeninde (1920 × 1080, sol üst) durur; tıklama ve
     /// üzerine gelme Sade bölge dolgularından gelir. Harita ↔ dünya dönüşümü ve bölge isabeti (figür bırakma) buradadır.
     /// Yalnız yeni görünümde etkindir.
     /// </summary>
@@ -24,6 +25,8 @@ namespace Corrigible.Desk
         [SerializeField] UILineGraphic stringLine, stringShadow;
         [Tooltip("Basılı lejant (fiş yerleşimi onu da örtmemeye çalışır).")]
         [SerializeField] RectTransform legend;
+        [Tooltip("İşaretler kutusunun sağ üstündeki “TEHDİT n/4”.")]
+        [SerializeField] TMP_Text legendTier;
 
         readonly List<Vector2> curve = new List<Vector2>(3);
         string hovered;
@@ -99,6 +102,7 @@ namespace Corrigible.Desk
         {
             state = s;
             foreach (var r in regions) if (r != null) r.Bind(s?.Find(r.RegionId));
+            if (legendTier != null && s != null) legendTier.text = Corrigible.Core.Loc.F("TEHDİT {0}/4", s.Tier);
         }
 
         public LiberationRegionMarks Marks(string id)
@@ -154,18 +158,30 @@ namespace Corrigible.Desk
         /// </summary>
         public Vector2 TeamPoint(TeamFigureState team) => TeamAnchor(team.Region);
 
-        // ---------- Kırmızı ip (K2: fişin raptiyesinden cephe raptiyesine, 3 noktalı eğri) ----------
+        // ---------- Kırmızı ip (S2: fişin iğnesinden bölgenin iğnesine yay, 3 noktalı eğri) ----------
 
-        public void SetString(bool on, Vector2 from = default, Vector2 to = default)
+        /// <summary>
+        /// İpi çizer. <paramref name="drawn"/> &lt; 1 ise yalnız bölge ucundan o kadarı (iplik bölgeden çekilir / sarılır).
+        /// </summary>
+        public void SetString(bool on, Vector2 from = default, Vector2 to = default, float drawn = 1)
         {
+            on &= drawn > 0;
             stringLine.gameObject.SetActive(on);
             stringShadow.gameObject.SetActive(on);
             if (!on) return;
             var mid = (from + to) * 0.5f;
-            // İp kâğıt üstünde hafifçe sarkar: orta nokta aşağı (haritada y artar)
-            float sag = Mathf.Min(60, Vector2.Distance(from, to) * 0.12f);
+            // İp adların ve damgaların altından sarkar: kontrol noktası kiriş ortasının 30–40 px altında (haritada y artar)
+            float sag = Mathf.Clamp(Vector2.Distance(from, to) * 0.05f, 30, 40);
+            Vector2 p0 = to, p1 = mid + new Vector2(0, sag), p2 = from;
+            if (drawn < 1)
+            {
+                // de Casteljau: bölge ucundan başlayan alt eğri
+                var q1 = Vector2.Lerp(p0, p1, drawn);
+                var q2 = Vector2.Lerp(q1, Vector2.Lerp(p1, p2, drawn), drawn);
+                p1 = q1; p2 = q2;
+            }
             curve.Clear();
-            curve.Add(from); curve.Add(mid + new Vector2(0, sag)); curve.Add(to);
+            curve.Add(p2); curve.Add(p1); curve.Add(p0);
             stringLine.Curve = LineCurve.Quadratic;
             stringLine.SetPointsTopLeft(curve, Vector2.zero);
             var offset = SiginakTheme.Active.Vector2Of("space.stringShadowPx");
@@ -180,16 +196,25 @@ namespace Corrigible.Desk
         /// <summary>Özgürleşen bölge: damga ve silinme.</summary>
         public void PlayFreed(string id, float delay) => Marks(id)?.AnimateFreed(delay);
 
-        /// <summary>Adaylar 0,12 s arayla kesik kalem halkasıyla çizilir (0,3 s).</summary>
+        /// <summary>Adaylar 0,12 s arayla ADAY damgasıyla işaretlenir (0,3 s).</summary>
         public float PlayCandidates(IList<string> ids, float delay)
         {
             var t = SiginakTheme.Active;
             float step = t.NumberOf("motion.candidateStepS", 0.12f), draw = t.NumberOf("motion.candidateDrawS", 0.3f);
-            for (int i = 0; i < ids.Count; i++) Marks(ids[i])?.AnimateRing(delay + i * step, draw);
+            for (int i = 0; i < ids.Count; i++) Marks(ids[i])?.AnimateArrival(delay + i * step, draw);
             return delay + Mathf.Max(0, ids.Count - 1) * step + draw;
         }
 
-        /// <summary>Yeni cephe: yağlı kalem halkası 0,4 s'de çizilir.</summary>
-        public void PlayFrontOpened(string id) => Marks(id)?.AnimateRing(0, SiginakTheme.Active.NumberOf("motion.greaseRingS", 0.4f));
+        /// <summary>Yeni cephe ya da açılan fiş: bölgeye iğne düşer (motion.pinDropS, 0,12 s).</summary>
+        /// <summary>Karşı saldırı: bölgenin yeniden işgal edilen sektörüne ✕ çizilir, YENİDEN İŞGAL damgası iner.</summary>
+        public void PlayCounterattack(string id, float delay) => Marks(id)?.AnimateCounterattack(delay);
+
+        /// <summary>Operasyon raporu (S7): geri alınan sektörün işareti maviye döner.</summary>
+        public void PlayRetaken(string id, int sector, float delay) => Marks(id)?.AnimateRetaken(sector, delay);
+
+        /// <summary>Raporun karşı saldırı kutusu: ✕ iki kez yanıp söner.</summary>
+        public void BlinkCounterattack(string id) => Marks(id)?.BlinkReoccupied();
+
+        public void PlayPinDrop(string id, float delay = 0) => Marks(id)?.AnimateArrival(delay, SiginakTheme.Active.NumberOf("motion.pinDropS", 0.12f));
     }
 }

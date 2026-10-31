@@ -10,7 +10,7 @@ namespace Corrigible.Desk
     /// nesnede modele oturan çarpıştırıcı gerekir. Metinler Türkçe kaynaktır, gösterirken çevrilir.
     /// </summary>
     [RequireComponent(typeof(Collider))]
-    public sealed class DeskTarget : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+    public sealed class DeskTarget : MonoBehaviour, IHoverSource, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
     {
         /// <summary>Girdi kilidi (modal, hikâye, baskın); bağlayıcı kurar.</summary>
         public static Func<bool> Blocked;
@@ -30,7 +30,10 @@ namespace Corrigible.Desk
         public bool IsHovered => hovered;
         /// <summary>Etiketin satırını değiştirir (ör. devre dışı gerekçesi); kaynak metin değil, gösterilecek metin.</summary>
         public string LineOverride { get; set; }
-        public string Title => title;
+        /// <summary>Etiketin başlığını değiştirir (ör. “KAPI · ZİYARETÇİ VAR”); kaynak metin, gösterirken çevrilir.</summary>
+        public string TitleOverride { get; set; }
+        public string Title => TitleOverride ?? title;
+        public string HoverTitle => Corrigible.Core.Loc.T(Title);
         public string KeyHint => keyHint;
         public string Line => LineOverride ?? (string.IsNullOrEmpty(line) ? null : Corrigible.Core.Loc.T(line));
 

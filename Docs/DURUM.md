@@ -1,6 +1,6 @@
 # Durum, kararlar ve açık işler
 
-_Son güncelleme: 2026-10-30_
+_Son güncelleme: 2026-10-31_
 
 ## Nerede kaldık
 
@@ -18,13 +18,96 @@ ikmal görevinde malzeme girişe geri taşınır; kampanyada makineler gelişmi�
 nişan alır; ayakta kalan siviller güveni geri kazandırır (tavan 20); YZ alarmı arka duvardaki panoda.
 Sığınağın ekonomisi kıt: erzak çoğunlukla ikmal baskınlarından gelir, açlık kapıya aç heyet getirir.
 Baskın telsizle anlatılır: sığınak ağa bağlanmaz, gözcü bildirir, emir telsizle gider.
-Son tam EditMode koşusu **332/332** (2026-10-29).
+Son tam EditMode koşusu **361/361** (2026-10-31).
 
 **Git:** Depo `git@github.com:kamyan/Corrigible.git`, varsayılan dal `main`. Sığınak işi `siginak-ui` dalında
 (Aşama 1–10: `eed2824`, eski görünümün kaldırılması: `553517e`, sarı çerçeve: `b7b4d82`, sadeleştirme: `413fbf5`; sivil
 güven, YZ alarmı, hazırlık sığınağı, bölge kimliği ve eğitim: `6e658a5`). Sonrası (baskında tıklama düzeltmeleri, alarm
-panosu, harita havuzu ve torbası, ikmal kaçışı, makine aklı, sivillere saldıran makineler ve güven ödülü, sığınağın kapısı)
-henüz commit edilmedi.
+panosu, harita havuzu ve torbası, ikmal kaçışı, makine aklı, sivillere saldıran makineler ve güven ödülü, sığınağın kapısı):
+`c6f61e9`; build: `05ffdcb`; telsiz: `9d16037`. Tasarım revizyonu 2 (Aşama 1–10) henüz commit edilmedi.
+
+## Tasarım revizyonu 2 (2026-10-30, sürüyor)
+
+Claude Design'ın ikinci turu (`Docs/UI_Siginak_Rev2/`: PROMPT, tokenlar 1.1, 46 sprite, S1–S9 panoları) uygulanıyor; ilk
+turun dilini sonradan eklenen parçalara (kapı, alarm, baskın paneli, raporlar) taşır, kuralları ve kayıt biçimini
+değiştirmez. Plan, eşleme ve açık sorular `Docs/UI_Siginak_Rev2/IMPLEMENTATION_MAP.md`'de.
+
+- **Karar: Rev1/Rev2 anahtarı yok.** PROMPT ikisi arasında anahtar istiyordu; ilk turun anahtarı ve kurucusu silindiği,
+  oda sahnede durduğu için anahtar her nesneyi ikiye katlardı. Güvenli geçiş git'le: her aşama ayrı değişiklik,
+  `Docs/UI_Siginak/screens_v2/` bugünkü hâl.
+- **Aşama 1 bitti:** sığınak tokenları 1.1 projedeki dosyaya birleştirildi (ilk turun uygulama değerleri korundu), baskın
+  tokenları 1.1 kondu, Rev2 sprite'ları `Art/Siginak/Sprites/Rev2/`'de, açık renk onda bir çarkının malzemesi hazır,
+  `✕ ▶ ◆ ● ■` glifleri font zincirinde. Oyunda görünen tek fark görev fişinin 432 px olması.
+- **Aşama 2 bitti (başlangıç pozu, S1):** FON “060,0” (pirinç virgül, açık onda bir çarkı; EN nokta), 6 tuşlu ray ve
+  4 · KAPI (ziyaretçi beklerken lamba yanıp söner, el yazısı fiş; 4 ya da K kapıyı açar), YZ ALARMI ölçeği, KURTARILAN
+  BÖLGELER panosu (KAYIP ilanları kalktı), tebeşir vardiya çentiği, teleks ön kâğıdı, CRT'de dört satır, iki satırlı oda
+  kartları, vardiyaya bağlı harekât izleri (`SiginakSettings.campaignWear`), yeni eğitim notu (Boşluk sonraki, Esc notları
+  kapatır). Eksi farklar artık kırmızı değil mürekkep. Ayrıntı ve görsel farklar `Docs/UI_Siginak_Rev2/IMPLEMENTATION_MAP.md`.
+- **1.2 eki temele alındı (`EK_1_2.md`):** paket oyundaki 12 bölge özelliğinin ve 8 makinenin yalnız bir kısmını
+  çiziyordu; tasarımcı eksik 13 işareti (düz + çerçeveli), kalkan/kopyalama rozetlerini, üç makinenin 3D biçimini ve dört
+  niyeti ekledi. Sprite'lar içe aktarıldı (bütün işaretler mipmap'li), baskın tokenları 1.2 oldu, `SiginakGlyphs`
+  oyundaki kimliği işarete bağlıyor. İngilizce adlarda oyundakiler kaldı. 3D biçim, niyet çizimi ve fikstürler Aşama 7'de.
+- **Aşama 3 bitti (harita ve görev fişi, S2):** etiketler tasarımın yerlerinde (dar yerde iki satır), cephe bloğu (sektör
+  şeridi, yüzde, saha işaretleri), sabit yerde ÖZGÜR damgası, karşı saldırının aldığı sektörde ✕ ve YENİDEN İŞGAL,
+  işaretler kutusu sağ altta TEHDİT'le. Görev fişi ekran katmanında sol kenarda (Amerika seçiliyse sağda): SAHA satırları,
+  138 px damga sütunu, ödül 2 × 2, ekip diskleri; eksik yalnız fonsa düğme açık kalır, basınca FON titrer ve teleks
+  gerekçeyi basar (komut çağrılmaz). Tasarımdan sapmalar (ekip noktaları karada, Hindistan şeridi sağda) haritanın §10'unda.
+- **Aşama 4 bitti (sığınak, S3):** pano rafın soluna, ahşap ayağın üstüne taşındı; özet başta “ERZAK YETER · n VARDİYA”
+  (3 ve altı kırmızı), uzmanlar diskle; seçili odada personel adımlayıcısı [−] a/b [+], en üst seviyede yeşil damga,
+  yetersiz kaynakta düğme açık ve eksik kalem çizik. Maketin üstünde DEPO bandı (sandık, kova, plaka rafı, tebeşir), odalarda
+  çıktılar (ranzada yedek, telsizde kadran, atölyede döküm kalıbı, revirde hasta), alarm panosunun altında TELSİZ ODASI
+  ETKİN fişi. DEPO ölçeği Soru 6'nın (a) önerisiyle: 10 sandık = erzak sınırı, 5 kova = malzeme deposu.
+  Tam EditMode 347/347.
+- **Aşama 5 bitti (kapı, S4):** kapı kâğıdı 470 px (sol 40 · üst 64): gözetleme ve interkom ayrı bloklarda (interkom
+  daktiloyla), kullanılan seçenek gri + BAKILDI/SORULDU, devre dışı seçeneğin nedeni ve bedel/etki (“−8 erzak”, “güven −1”)
+  sağda; yetersiz kaynakta satır açık, basınca teleks + kâğıt titrer; sonuçta seçim satırı ve tek Enter düğmesi. Kapıda
+  tehlike bandı, kafesli amber vuruş lambası (üç vuruşta parlar), pirinç gözetleme kapağı, interkomun amber noktası,
+  tebeşir ziyaretçi çentiği; kanat koridora açılır, arkasında fayanslı merdiven boşluğu ve iki lamba. Altı siluet + genel
+  biçim (S4d), kart → tür tablosu Soru 5'in ara cevabıyla. Ölümcül kapıda (VURULDU, SIZMA) oda ve lamba kırmızı (Soru 10 ara
+  cevabı), çift çizgili damga, yalnız Enter / SON RAPORA GEÇ, kenar satırının tuşları kesik ve soluk. Tam EditMode 349/349.
+- **Aşama 6 bitti (vardiya raporu ve karşı saldırı, S5):** rapor 540 px (sol 24 · üst 274), teleks kâğıdı ve delik
+  şeridi; başta üç göz (ERZAK n vardiya yeter · YZ ALARMI on adımlık ölçekle · FON) ve alarm notu; erzak ve alarm dökümde
+  tekrar edilmez, ekip bölümü yalnız EKİP. Renk kuralı (+ yeşil, − mürekkep, ±0 gri, kırmızı yalnız eşik ve işgal)
+  `ReportTones`'ta, EditMode testli; ± fişleri aynı kuralla. Yukarıdan iner, başlık daktiloyla, gözler sırayla. Karşı
+  saldırıda alarm lambası üç kez yanar, raporun başında çift çizgili kutu (teleks kodu + sektör), alarm gözü “10/10 · EŞİK”,
+  haritada ✕ ve YENİDEN İŞGAL (kutunun üzerine gelince ✕ yanıp söner), özgürlüğünü yitiren bölgenin kartı panodan düşer.
+  Tam EditMode 350/350.
+- **Aşama 7 bitti (baskın, S6):** köşe panelleri tahtanın malzemesinden (kontrplak + ozalit + bant), tahtaya değmez. Tur
+  şeridi 34 px hücreli (son iki tur kesik kırmızı; son turda SON TUR damgası ve EMRİ İLET'te “SON TUR”), evre çipi, üç
+  satırlı görev çipi (bölge özelliği işaretli, hedefin karesi, amaç). Ekip kartları 237 × 84 alt sırada (kilit niyetinin
+  hedefindeki uzmanda KİLİT TEHDİDİ · #n), yetenek kartı S6'nın adlarıyla (Soru 7 ara cevabı), makine evresinde kilitli
+  kâğıt, telsiz fişi teleks kâğıdı. Etiketler 11 px pip ve tür işaretiyle, bayrak 30 × 28; yeni robotta bir tur UYANDI.
+  Niyetler türüne göre (havan yay, kalkan çift şerit, kopyalama kesik, rozetler), hep üstte. Sekiz makine S9-A biçiminde;
+  gri tonlamada ayırt ediliyor. EMRİ İLET İngilizcede SEND ORDERS. Tam EditMode 354/354.
+- **Aşama 8 bitti (sonuç kartı ve operasyon raporu, S7):** baskın bitince tahta kararır, spot nedenin üstünde açılır, sağdan
+  sonuç kartı kayar: başlık yerinde tek damga, yer satırı, üç satır, tek düğme. Dönüşte kamera harita pozuna geçer, rapor
+  solda iner, iplik ekip figürüne ve figürün çevresine halka; başlık sonucu söyler, altında tek cümle; başarılıda KAZANÇ ve
+  ± fişleri, sektör işareti maviye döner; başarısızda ödül alanı yok, alarm ölçekle. Eski olay modalı ve `SimDeskBuilder`'ın
+  rapor kısmı kaldırıldı (`SiginakOperation`, `OperationReportBuilder`, `OperationReportView`). Tam EditMode 356/356.
+- **Aşama 9 bitti (son rapor, S8):** harekât bitince kamera harita pozuna geçer, harita karartılır, rapor aşağıdan gelir:
+  sonuç damgası ve kayıpta neden damgası (DAĞILMA, VURULDU, SIZMA), cümle, dört gösterge, işgal şeridi (x = vardiya 1…N her
+  zaman tam genişlik) ve üstünde numaralı kırılma anları (en çok altı; sunumda türetilir), YENİDEN BAŞLA. Eski son rapor
+  (`GameOverView` ve kartları, `DeskChart`, `GameOverVM`) kaldırıldı. GÜVEN şeridi Soru 8'e bağlı. Tam EditMode 360/360.
+- **Aşama 10 bitti (dil, erişilebilirlik, temizlik):** tam görüntü seti S1a…S8b TR, EN ve gri (`SiginakCaptureSet` →
+  `Docs/UI_Siginak_Rev2/screens_unity_rev2/`). Punto taraması oda, ekran katmanları, son rapor, ayarlar ve baskın HUD'unu
+  kapsıyor: 781 metin, 0 ihlal (baskının eski panelleri, üzerine gelme kartı ve ayarlar kartı 14 px'e ölçeklendi, kart
+  satırları sarıyor). EN taşmaları (teleks durumu, SON TUR, EMRİ İLET, neden damgası, rapor numarası) ve odadaki üzerine
+  gelme etiketlerinin çevirisi düzeldi; kapı pozu kapıya bakıyor. Kare süresi Revizyon 2 öncesinden masa ve sığınakta
+  %2–3 yavaş, harita ve CRT eşit (küçük parçaların gölgesi ve statik işaretlerle daraldı; gölgeler yumuşak kaldı, fark kabul).
+  Rev2'nin bıraktığı ölü kod silindi. Tam EditMode 361/361.
+- **Uzman piyonları (S9-B):** baskında T, E, A artık harfli ahşap piyon (referansın yazı tipi ve ölçüsü): siyah altlık ve
+  krem halka üstünde kalın harf. Tur bitince harf koyulaşıp arkasını döner, altlıkta ✓; yaralıda bant, plakalıda çelik
+  levha; düşen harf geriye yatar. Aşama 7 yalnız makineleri değiştirmişti.
+- **İpucu kartı resimleri:** üç piyon ve sekiz makinenin her biri kendi Rev2 modelinden çizildi (`RaidDataSource.EnemyThumb`
+  her türe kendi resmini verir; önceden yalnız dron ve bakım robotunun Sade çizimi vardı). Hepsi kartın 40 × 46 çerçevesinde
+  (piyon resmi 40 × 56'dan küçüldü, artık ezilmiyor). Dolap ve soğutma ünitesinin resimleri hâlâ Sade çizimi.
+- **Model denetimi (DeskGame + Baskin):** bütün modeller referans sahneyle karşılaştırıldı; değişmemiş olanlar referansa geldi:
+  alarm panosu ve küre lambası, telsiz yüzü (Soru 11 cevabı), mikrofon, telsiz kaydı, umut bitkisinin geç hâli, kapının yeri
+  (z 0,32–1,18) ve ayrıntıları, kapı pozundaki boşluk, maketin tavanı ve telsiz odası, baskının duvar, kanal, sunucu, soğutucu,
+  kopya ve hedef dolapları, uyanma işareti; baskın işaretleri parçaların altında, tarama referanstaki yönde. Ayrıntı ve bilinçli
+  bırakılanlar `Docs/UI_Siginak_Rev2/IMPLEMENTATION_MAP.md` değişiklik günlüğünde.
+- **Telsiz defteri:** CRT önündeki defter hattın son dört kaydını gösterir (baskın dönüşleri, düşen uzman, kırılan sivil
+  sunucu, karşı saldırı, bugünkü ekip ve hat durumu; `RadioLogBuilder`). Tam EditMode 362/362.
 
 ## Telsiz kurgusu, 1. aşama (2026-10-29)
 
@@ -48,27 +131,11 @@ KURULUYOR · SAHA YAYINI · KAMERA 2" diyordu; emir belgesi de masada CRT varken
 - **Sonraki aşama (açık):** 3) isteğe bağlı mekanik: YZ telsizi dinler (iletim alarmı artırır); motoru değiştirir, kayıt
   sürümü artar.
 
-## Telsiz kurgusu: gözcü raporu, telsiz şeridi, konuşma (2026-10-30)
+## Telsiz vurgusu denendi, geri alındı (2026-10-30)
 
-Kullanıcı oynadıktan sonra "telsiz iletişimi ile olduğu tam vurgulanmamış" dedi; gözcü raporunu, hep açık telsiz şeridini
-ve konuşma sesini seçti (emirleri tek tek konuşturmayı seçmedi). Yalnız sunum; Core, kayıt ve RNG aynı.
-
-- **Gözcü raporu:** oklar artık bir anda belirmiyor. Baskının başında ("07 › Hat açık. Gözcü, rapor ver.") ve her makine
-  evresinden sonra komuta DİNLEMEDE'dir; gözcü niyetleri sırayla bildirir, her bildirimde bayrak ve hedef kareler belirir,
-  ok paftaya kalemle çizilir (~0,55 sn; hızlandırılmışken üç kat hızlı). Bir tuş ya da tıklama kalanı bir anda çizer.
-  Boşa gidecek atış da bildirilir ("→ hedef yok"); raporun sonunda uyanacak kareler ("Uyanacak: F5."), kum fırtınasında
-  söylenmez.
-- **Telsiz şeridi:** sol üstteki fiş baskın boyunca açık; son dört konuşma, eskiler soluk, en yenisi daktilo gibi
-  (90 harf/sn). Makine evresinde gözcünün satırları ("№1 · saldırı → A1 · −1"), sıra kutuları ve hız düğmesi.
-- **Konuşma sesi:** `CueRadioVoice` (sentez: gırtlak darbeleri, iki formant, hece zarfı, telsiz bandı) gözcünün her
-  bildiriminde; hızlandırılmış makine evresinde yerine kısa bip.
-- **Düzeltilenler (Play'de görüldü):** TMP'de `</alpha>` kapanışı yok, satırlarda açıkça yazıyordu (her satır kendi
-  alfasıyla açılır); hedefsiz niyet rapordan düşüyordu; dünya etiketi yeniden açılınca ekran etiketi kapalı kalıyordu
-  (`RaidWorldLabel.SetVisible`).
-- **Play'de denendi:** baskın başı ve ikinci turun raporu yavaşlatılmış zamanla (bayraklar sırayla, ok çiziliyor, son satır
-  yazılıyor), makine evresinde şerit ve sıra kutuları. EditMode 332/332.
-- **Tuzak:** editör Play'deyken `run_tests` sahneyi kaydedemeyip takıldı ve Unity'nin komut sunucusu kilitlendi (yalnız
-  Unity'yi yeniden açmak çözdü). Testten önce `EditorApplication.isPlaying` denetlenmeli.
+Kullanıcı telsizin yeterince hissedilmediğini söyleyince üçü denendi: tur başında gözcünün niyetleri sırayla bildirip
+okları tek tek çizmesi, baskın boyunca açık telsiz şeridi (son dört konuşma, daktilo gibi), gözcünün satırlarında
+sentezlenmiş konuşma sesi. Kullanıcı hepsini geri aldırdı; kod, prefab, ses ve çeviriler 2. aşamadaki hâline döndü.
 
 ## Telsiz kurgusu, 2. aşama: saha masası (2026-10-29)
 
@@ -78,14 +145,12 @@ değişmedi. Eklenenler yalnız sunum (Core, kayıt, RNG aynı):
 - **Pafta koordinatları:** kameraya bakan kenarlarda mavi el yazısıyla A–H ve 1–8. Gözcünün satırları kareyi adıyla verir
   ("№3 · saldırı → TEKNİSYEN · A6 · −1", boş kareye "→ C3", "Yeni bir robot uyandı: C3.").
 - **Yağlı kalem okları:** niyet okları hafif dalgalı, uçlarda incelen, açık V uçlu çizgiler; okunurluk için kalınlık aynı.
-- **Görevli çubuğu:** makineler önceden turun sonunda yeni karelerine ışınlanıyordu. Şimdi makine evresinin sonunda
-  uygulanmış niyetlerin izleri kalkar, bakır başlıklı ahşap çubuk her figürün arkasına gelip onu yeni karesine iter,
-  sonra yeni niyetler çizilir. Kamera yönüne doğru itilen figürde başlık figürün arkasında kalır; sap yatık olduğu için
-  çubuk yine okunur.
+- **Görevli çubuğu (kaldırıldı, 2026-10-30):** makine evresinin sonunda bakır başlıklı ahşap bir çubuk figürleri yeni
+  karelerine itiyordu. Kullanıcı kaldırttı; makineler yine turun sonunda yeni karelerinde belirir.
 - **Komuta masası:** CRT'nin önündeki klavye kalktı (bilgisayar gibi duruyordu); yerine bas-konuş masa mikrofonu (kablosu
   telsize gider) ve kalemli telsiz kayıt defteri. CRT'nin üzerine gelme etiketi "TELSİZ HATTI · Yalnız baskın emriyle hat
   açılır…". Punto taramasında klavye istisnası defter başlığına geçti (dekor, 6,5 px).
-- **Play'de denendi:** koordinatlar, kalem okları, çubuk (yavaşlatılmış zamanla iki kare), telsiz satırında A6/A3 kareleri
+- **Play'de denendi:** koordinatlar, kalem okları, telsiz satırında A6/A3 kareleri
   figürlerin gerçek yerine uyuyor; CRT yakın planında mikrofon ve defter. EditMode 332/332.
 
 ## Harita türleri (2026-10-28)
@@ -382,7 +447,7 @@ bir farklı düşmanı olsun"; seçenekler arasından "6 yeni tür, ikişer böl
   sivil güvenden. Eşikler 6 ve 10'a, bölge güveni +1 → +2'ye çekildi. Son hâl (10'ar harekât; saldırgan / dengeli /
   koruyucu): tam sığınak 1/10, 5/10, 8/10; yaralıyken dinlenen 1/10, 9/10, 8/10; sığınaksız 0/10, 1/10, 1/10. Kademe
   başına baskın başarısı ikmalde %98 → %59, sunucuda %95 → %50.
-- **Sunum:** altı yeni makine prefab'ı (dron ve bakım robotundan türetildi, `Art/Raid/Enemies` malzemeleri;
+- **Sunum:** altı yeni makine prefab'ı (dron ve bakım robotundan türetildi; ilk `Art/Raid/Enemies` malzemeleri sonra `Analyst/Materials/Robot*` ile değişti;
   `RaidPieceLibrary`'de yeni yuvalar), tahtada ZIRHLANDI, KİLİTLENDİ, patlama efekti ve KİLİTLİ etiketi; patlama alanı
   tehlike karesi, kalkan onarım işareti, çoğaltma uyanma halkası; kum fırtınasında uyanma halkaları gizli. Görev çipinde
   bölge özelliği, açıklamasında imza makinesi ve kademe; düşman ipucu kartında makinenin açıklaması, zırhı, imza işareti.
@@ -556,27 +621,20 @@ bugünkü odanın tasarım brifidir.)
 
 ## Açık işler
 
-- **Karar bekleyen:** ampul ve lamba gölgelerini sert yapmak ~0,5 ms kazandırır, görünüşü değiştirir.
+- **Gölgeler (karar, 2026-10-31):** ampul ve lamba gölgeleri yumuşak kalır. Sert gölge ~0,25 ms kazandırırdı (Revizyon 2'yi
+  öncesinden %3–6 hızlı yapardı); Revizyon 2'nin masa ve sığınak pozundaki %2–3'lük farkı kabul edildi (`Docs/UI_Siginak_Rev2/IMPLEMENTATION_MAP.md` Soru 13).
 - **Denge:** harekâtın zorluğu ve uzunluğu gerçek oyunla ayarlanmadı; sivil güven, alarm ve hazırlık sığınağı botla
   ölçüldü, ama bot projede değil (oturumun geçici klasöründe); projeye denge testi olarak alınmadı. Botla görülen: zorluk
   5. bölgeden sonra artmıyor. Harita türleri hep soldan girişli ve tek hedefli; birden çok hedefli ya da başka kenardan
   girişli türler motorda ikmal kaçışını ve makine yerleşimini genişletmeyi ister. Karşı saldırıyla
   yeniden özgürleşen bölge bölge fonunu ve güveni yeniden veriyor (ölçüm de böyleydi).
-  Son rapor grafiği en az 125 vardiyalık eksen kullanıyor; kısa harekâtta (Dağılma 16. vardiyada olabilir) çizgi sola sıkışır.
 - **Ses:** Dağılma da Silme'nin bitiş sesini (`EndErase`) çalıyor; yenilgiye ayrı ses yok.
-- **Yeni makineler** dron ve bakım robotunun renk ve parça varyantları; ayrı modeller ve ipucu kartı için ayrı küçük resimler
-  (şimdi dron ve bakım robotunun resmi) ileride yapılabilir. Havan ve kilitleyicinin niyet oku düz/eğri ok; havanın
-  engel üstünden attığı ayrıca çizilmiyor.
-- **Operasyon raporu:** başarısız baskında aynı cümle hem başlık altında hem uyarı bandında görünüyor (eski davranış).
 - **Ses:** yer tutucu sesler gerçekleriyle değiştirilmeli; AudioMixer yok. Kapının üç sesi ve telsiz sesleri kodla sentezlendi.
 - **Telsiz kurgusu 3. aşama:** isteğe bağlı "YZ telsizi dinler" mekaniği (yukarıda). Baskın günlüğündeki tur satırı
-  Core'dan gelir ("— Tur n: makineler hareket ediyor —"), telsiz diliyle yazılmadı. Görevli çubuğu figürü düz çizgide iter,
-  duvar bloklarının içinden geçebilir; hamlenin yolu Core'da tutulmuyor. Odadaki üzerine gelme satırları (`DeskTarget`)
-  çeviri tablosunda değil (CRT'ninki de).
-- **Kapı:** siluet tek tip (ilkel şekillerden); ziyaretçiye göre değişmiyor. Kapı K1'den görünmüyor, vuruşta kamera kendiliğinden
-  döner; oyuncu bunu kesintici bulursa masaya küçük bir kapı lambası eklenebilir. Eğitim notu kapı kâğıdı açıkken gizlenmez
-  (eğitim ilk vardiyada bittiği için çakışmıyor). Odadaki tıklanır nesnelerin üzerine gelme satırları (`DeskTarget.line`)
-  çeviri tablosunda yok, İngilizcede Türkçe görünür (önceden de böyleydi); kapınınki çevriliyor.
+  Core'dan gelir ("— Tur n: makineler hareket ediyor —"), telsiz diliyle yazılmadı.
+- **Kapı:** Kapı K1'den görünmüyor; vuruşta kamera kendiliğinden döner (masada 4 · KAPI tuşunun lambası ve el yazısı fişi de
+  uyarır). Eğitim notu kapı kâğıdı açıkken gizlenmez
+  (eğitim ilk vardiyada bittiği için çakışmıyor).
 - **İngilizce metinlerin ana dili İngilizce olan biri tarafından gözden geçirilmesi** (çeviriler ajan tarafından yapıldı).
 - **Steam:** Steamworks.NET paketi kurulmadı, App ID ve `steam_appid.txt` yok. `Corrigible.Steam` paket kurulunca
   derlenir; denenmedi. Steamworks'te başarım ve Auto-Cloud (`persistentDataPath`) tanımlanmalı.

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Karar 1 · Görev fişinin yeri</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&display=swap">
+<style>
+body{margin:0;background:#1C372C}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../board_assets/grain.png);background-size:256px 256px}
+.opt{display:flex;flex-direction:column;gap:12px;min-width:0}
+.oh{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.oh b{font:700 22px 'Courier Prime',monospace;letter-spacing:0.05em}
+.li{display:grid;grid-template-columns:22px minmax(0,1fr);column-gap:8px;font:400 19px/1.4 'Libre Franklin',Arial,sans-serif}
+.li b{font:700 19px 'Courier Prime',monospace}
+.mock{position:absolute;background:#FBF7EC;border:1px solid #D2C7AF;box-shadow:3px 4px 0 rgba(0,0,0,0.45);box-sizing:border-box;padding:8px 9px;display:flex;flex-direction:column;gap:6px}
+.mock i{display:block;height:6px;background:#8E8166}
+</style>
+</helmet>
+<div class="grain" style="width: 1920px; height: 1080px; box-sizing: border-box; background-color: #F1E9D6; color: #1E1B16; font-family: 'Libre Franklin', Arial, sans-serif; padding: 36px 48px; display: flex; flex-direction: column; gap: 22px">
+  <div style="display: flex; align-items: baseline; justify-content: space-between; border-bottom: 3px double #1E1B16; padding-bottom: 10px">
+    <span style="font: 700 32px 'Courier Prime', monospace; letter-spacing: 0.05em">KARAR 1 · GÖREV FİŞİNİN YERİ</span>
+    <span style="font: 400 19px 'Libre Franklin', Arial, sans-serif; color: #463F34">Fiş açıkken haritanın hangi kısmı kapansın?</span>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 56px; flex: 1; min-height: 0">
+    <div class="opt">
+      <div class="oh"><b>A · SAĞ KENAR (BUGÜNKÜ)</b></div>
+      <div style="position: relative; width: 880px; height: 495px; overflow: hidden; border: 1px solid #463F34">
+        <img src="../board_assets/s2tr.jpg" alt="Harita pozu; fiş sağ kenarda açık" style="width: 880px; height: 495px; display: block">
+        <svg width="880" height="495" viewBox="0 0 880 495" style="position: absolute; left: 0; top: 0" aria-hidden="true"><path d="M518 122 Q470 150 411 195" fill="none" stroke="#A3241A" stroke-width="2"></path><circle cx="411" cy="195" r="5" fill="#B8241A"></circle></svg>
+        <div class="mock" style="left: 512px; top: 117px; width: 200px; height: 296px"><i style="width: 70%; background: #1E1B16; height: 9px"></i><i style="width: 50%"></i><i style="background: #D2483F; height: 2px"></i><i style="width: 90%"></i><i style="width: 85%; background: #E8D58C"></i><i style="width: 80%"></i><i style="width: 95%"></i><i style="width: 70%"></i><i style="width: 88%"></i><i style="margin-top: auto; height: 24px; background: #1E1B16"></i></div>
+      </div>
+      <div class="li"><b>+</b><span>Fiş cephe bölgesine yakın; oyuncu alışık.</span></div>
+      <div class="li"><b>−</b><span>Rusya, Çin, Hindistan ve Güneydoğu Asya kapanır; harekâtın ikinci yarısındaki cepheler fişin altında kalır.</span></div>
+      <div class="li"><b>−</b><span>Fiş ekip figürüne ve sağdaki işaretler kutusuna yaslanır.</span></div>
+    </div>
+    <div class="opt">
+      <div class="oh"><b>B · SOL KENAR</b><span style="font: 700 16px 'Courier Prime', monospace; letter-spacing: 0.06em; color: #24592E; border: 2px solid #24592E; padding: 2px 8px; transform: rotate(-2deg)">ÖNERİLEN</span></div>
+      <div style="position: relative; width: 880px; height: 495px; overflow: hidden; border: 1px solid #463F34">
+        <img src="../board_assets/s2tr.jpg" alt="Harita pozu; fiş sol kenarda, teleksin üstünde açık" style="width: 880px; height: 495px; display: block">
+        <svg width="880" height="495" viewBox="0 0 880 495" style="position: absolute; left: 0; top: 0" aria-hidden="true"><path d="M202 136 Q306 178 411 195" fill="none" stroke="#A3241A" stroke-width="2"></path><circle cx="411" cy="195" r="5" fill="#B8241A"></circle></svg>
+        <div class="mock" style="left: 10px; top: 108px; width: 198px; height: 332px"><i style="width: 70%; background: #1E1B16; height: 9px"></i><i style="width: 50%"></i><i style="background: #D2483F; height: 2px"></i><i style="width: 60%"></i><i style="width: 55%"></i><i style="width: 58%"></i><i style="width: 90%"></i><i style="width: 85%; background: #E8D58C"></i><i style="width: 80%"></i><i style="width: 95%"></i><i style="width: 88%"></i><i style="margin-top: auto; height: 24px; background: #1E1B16"></i></div>
+      </div>
+      <div class="li"><b>+</b><span>Haritadan yalnız Kuzey Amerika'nın batı kıyısı kapanır; cephe, ekip figürü ve doğu açık kalır.</span></div>
+      <div class="li"><b>+</b><span>Fiş teleksin üstüne, masanın boş kenarına oturur.</span></div>
+      <div class="li"><b>−</b><span>Kuzey ya da Güney Amerika seçilince fiş sağda açılmalı (kural); iplik uzar.</span></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

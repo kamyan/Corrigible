@@ -35,18 +35,27 @@ namespace Corrigible.Game.Raid
         public RaidPiece shieldDrone;
         public RaidPiece replicator;
 
-        [Header("Saha masası")]
-        [Tooltip("Görevlinin çubuğu: makine figürlerini gözcünün bildirdiği yeni karelerine iter. Boşsa figür çubuksuz kayar.")]
-        public Material plotterShaft;
-        public Material plotterHead;
+        [Header("Etiket işaretleri (Revizyon 2 · S6/S9)")]
+        [Tooltip("Makine türünün işareti: can etiketinde 18 px, haritadaki imza işaretiyle aynı çizim.")]
+        public Sprite glyphDrone;
+        public Sprite glyphArmoredDrone, glyphShieldDrone, glyphMaintenance, glyphLocker, glyphMortar, glyphReplicator, glyphBomber;
+        [Tooltip("Etiketteki zırh / plaka kalkanı.")]
+        public Sprite armorIcon;
+        [Tooltip("Niyet rozetleri (S9-C/C2): kilit kıskacı Ø26, onarım anahtarı, kalkan Ø28, kopyalama (dron) Ø24.")]
+        public Sprite badgeClamp, badgeWrench, badgeShield, badgeClone;
+        [Tooltip("Niyet okları: zarar veren #B8241A; zarar vermeyen (kalkan, kopyalama) #854005.")]
+        public Color intent = new Color32(0xB8, 0x24, 0x1A, 0xFF);
+        public Color intentQuiet = new Color32(0x85, 0x40, 0x05, 0xFF);
 
         [Header("İşaretler")]
         [Tooltip("Robotun uyanacağı kare.")]
         public GameObject spawnMarker;
         [Tooltip("Karo vurgusu (derinlik testli, saydam).")]
         public Material highlight;
-        [Tooltip("Oklar ve çerçeveler (her zaman üstte).")]
+        [Tooltip("Niyet okları ve rozetler (her zaman üstte).")]
         public Material overlay;
+        [Tooltip("Karo işaretleri (tarama, seçim, hedef, uyanma halkası): raid.js'teki gibi parçalar örter. Boşsa overlay.")]
+        public Material tileMarks;
         public TMP_FontAsset font;
         [Tooltip("Dünya içindeki yazılar (koyu konturlu).")]
         public Material labelMaterial;
@@ -68,6 +77,14 @@ namespace Corrigible.Game.Raid
 
         // Unity nesnesinde ?? sahte null'u görmez
         static RaidPiece Or(RaidPiece piece, RaidPiece fallback) => piece != null ? piece : fallback;
+
+        /// <summary>Makine türünün etiket işareti; uzmanlarda ve bilinmeyen türde null.</summary>
+        public Sprite Glyph(string type) => type switch
+        {
+            "dron" => glyphDrone, "zdron" => glyphArmoredDrone, "kalkan" => glyphShieldDrone, "bakim" => glyphMaintenance,
+            "kilit" => glyphLocker, "havan" => glyphMortar, "cogalt" => glyphReplicator, "bomba" => glyphBomber,
+            _ => null,
+        };
 
         public RaidPiece Unit(string type) => type switch
         {

@@ -379,11 +379,11 @@ Güneydoğu Asya	Southeast Asia
 Okyanusya	Oceania
 Silme	Erasure
 Çekirdek yok edildi, kopyalar temizlendi. Ama bir kez yapıldıysa, biri yine yapacak.	The core is destroyed and the copies are gone. But if it was done once, someone will do it again.
-Dağılma	Collapse
+Dağılma	Disbanded
 Hastaneler ve bankalar bizim baskınlarımızda karardı. Halk direnişe sırtını döndü; sığınağın kapısını artık kimse çalmıyor.	Hospitals and banks went dark in our raids. The people turned their backs on the resistance; no one knocks on the shelter door anymore.
 Vuruldu	Shot
 Kapıyı açtın ve silah patladı. Sığınak bir gecede komutansız kaldı; sabah telsizden yalnız parazit geliyordu.	You opened the door and a shot rang out. The shelter lost its commander in a single night; by morning the radio gave nothing but static.
-Sızma	Infiltration
+Sızma	Infiltrated
 Kapıyı bir kopyaya açtın. Sığınak 07'nin yeri artık YZ'nin haritasında; kopyalar bir sonraki kapıyı çalıyor.	You opened the door to a copy. Shelter 07 is on the AI's map now; the copies are knocking on the next door.
 # Assets/Corrigible/Core/RaidMaps.cs
 Kablo galerisi	Cable gallery
@@ -451,17 +451,11 @@ Yeni cephe: {0}	New front: {0}
 Baskın emri: {0} · {1} · {2} fon	Raid order: {0} · {1} · {2} funds
 YAPILAMADI	FAILED
 EMİR UYGULANDI	ORDER EXECUTED
+# Assets/Corrigible/Desk/Scripts/Bridge/LiveRaidDataSource.cs
+{0} · {1:00} {2}	{0} · {1:00} {2}
 # Assets/Corrigible/Desk/Scripts/Bridge/RaidDataSource.cs
-Hat açık. Gözcü, rapor ver.	Line open. Spotter, report.
-GÖZCÜ	SPOTTER
-Uyanacak: {0}.	Waking: {0}.
-Makine	Machine
-№{0} · {1} {2} · yanındakilere patlayacak	No. {0} · {1} {2} · will blast its neighbours
-№{0} · {1} {2} · {3} → hedef yok	No. {0} · {1} {2} · {3} → no target
-{0} · {1}	{0} · {1}
-№{0} · {1} {2} · {3} → {4}	No. {0} · {1} {2} · {3} → {4}
 emir iletildi · gözcü bildiriyor	order sent · spotter reporting
-Emir iletildi. Gözcü, dinliyoruz.	Order sent. Spotter, we're listening.
+{0} · {1}	{0} · {1}
 №{0} · hedef dolabı onarılıyor	No. {0} · repairing target cabinet
 №{0} · makine zırhlanıyor	№{0} · machine gets armor
 №{0} · yeni dron uyanıyor	№{0} · new drone waking
@@ -471,18 +465,24 @@ Emir iletildi. Gözcü, dinliyoruz.	Order sent. Spotter, we're listening.
 {0} · −{1}	{0} · −{1}
 №{0} · onarım +1	No. {0} · repair +1
 Yeni bir robot uyandı: {0}.	A new robot woke up: {0}.
+Saha	Field
+KİLİT TEHDİDİ · #{0}	LOCK THREAT · #{0}
 İkmal kasası	Supply crate
 Düğüm	Node
 Çekirdek	Core
+Amaç: malzemeyi girişe taşı	Goal: carry the supplies to the entry
+Amaç: kasadan ikmal al	Goal: take supplies from the crate
+Amaç: ikisini de kır	Goal: break both
+Amaç: kır	Goal: break it
 Hareket	Move
 {0} kare	{0} tiles
 İkmal alma	Collect supplies
 bitişik kare	adjacent tile
 düz hat, 2–5 kare	straight line, 2–5
 düz hat, 5 kare	straight line, 5
-kasayı al	collect crate
-−2 dolap	−2 cabinet
-−1 robot	−1 robot
+Kasadan ikmal al	Take from crate
+Dolaba vur · −2 can	Hit cabinet · −2 HP
+Robota vur · −1 can	Hit robot · −1 HP
 −1 hedef	−1 target
 itme	push
 çeker	pulls
@@ -515,14 +515,18 @@ Hedef dolabı	Target cabinet
 Teknisyen malzemeyle buradan tahliye edilir	The Technician extracts here with the supplies
 ZIRH	ARMOR
 PATLAR	EXPLODES
-İKMAL ALINDI	SUPPLIES RETRIEVED
-HEDEF KIRILDI	TARGET BROKEN
-GERİ ÇEKİLDİ	RETREATED
+SEKTÖR GERİ ALINDI	SECTOR RETAKEN
+GERİ ÇEKİLDİ	WITHDRAWN
 EKİP DÜŞTÜ	TEAM DOWN
 İKMAL KAYBEDİLDİ	SUPPLIES LOST
 SÜRE DOLDU	TIME IS UP
-{0} · {1} · Tur {2}/{3}	{0} · {1} · Turn {2}/{3}
-Saha	Field
+TUR {0}/{1}	TURN {0}/{1}
+alındı	taken
+kırıldı	broken
+{0}/{1}	{0}/{1}
+Kırılan sivil sunucu	Civilian servers broken
+Ekip	Team
+{0}/{1} ayakta	{0}/{1} standing
 TEKNİSYEN	TECHNICIAN
 EMP UZMANI	EMP SPECIALIST
 ANALİST	ANALYST
@@ -575,15 +579,14 @@ DİNLEMEDE	LISTENING
 {0} · DÖNDÜ · SONRAKİ VARDİYA	{0} · BACK · NEXT SHIFT
 {0} · TEKNİSYEN YARALI · {1} GÜN	{0} · TECHNICIAN INJURED · {1} DAYS
 {0} · HAZIR	{0} · READY
-CEPHE: {0} / {1:00}	FRONT: {0} / {1:00}
-CEPHE: {0} · ÖZGÜR	FRONT: {0} · FREE
+{0} / {1:00}	{0} / {1:00}
+{0} · ÖZGÜR	{0} · FREE
 HAT AÇILIYOR	OPENING LINE
 HAT AÇIK	LINE OPEN
 HAT KAPANDI	LINE CLOSED
 SONUÇ TELEKSTE	RESULT ON THE TELEX
 HAT KAPALI	LINE DOWN
 Teknisyen kalkınca ya da bir yedek uzman hazır olunca hat açılabilir.	The line can open once the Technician is up or a reserve specialist is ready.
-Görev fişinden baskın emri verildiğinde hat açılır.	The line opens when a raid is ordered from the mission slip.
 SİNYAL	SIGNAL
 Boşluk	Space
 atla	skip
@@ -595,18 +598,26 @@ V.{0:000} · OP-{1:00}	S.{0:000} · OP-{1:00}
 {0} · {1} / {2:00} {3}	{0} · {1} / {2:00} {3}
 SAHA MASASI · PAFTA 8×8 · GÖREV: {0}	FIELD TABLE · SHEET 8×8 · MISSION: {0}
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/DoorViewBuilder.cs
+Sığınak 07'nin komutanı düştü. Harekât burada biter.	Shelter 07's commander is down. The operation ends here.
+Kopya sığınağın içinde. Harekât burada biter.	A copy is inside the shelter. The operation ends here.
+Harekât burada biter.	The operation ends here.
 KAPI · SIĞINAK 07	DOOR · SHELTER 07
 VARDİYA {0:000}	SHIFT {0:000}
+GÖZETLEME DELİĞİ	PEEPHOLE
+İNTERKOM	INTERCOM
 Gözetleme deliğinden bak	Look through the peephole
+BAKILDI	LOOKED
 İnterkomdan parolayı sor	Ask for the password over the intercom
-Esc · masaya dön; ziyaretçi vardiya bitene kadar bekler	Esc · back to the desk; they wait until the shift ends
-Esc · masaya dön; kapı açık bekler	Esc · back to the desk; the door stays open
-Son rapor	Final report
-Enter · son rapor	Enter · final report
-Kapıyı kapat	Close the door
-Enter · kapıyı kapat	Enter · close the door
-Gözetleme deliği.	Peephole.
-İnterkom.	Intercom.
+SORULDU	ASKED
+masaya dön · ziyaretçi vardiya bitene kadar bekler	back to the desk · the visitor waits until the shift ends
+masaya dön · kapı açık bekler	back to the desk · the door stays open
+SON RAPORA GEÇ	GO TO FINAL REPORT
+KAPIYI KAPAT	CLOSE THE DOOR
+SEÇİM · {0} {1}	CHOICE · {0} {1}
+erzak yetersiz	not enough rations
+malzeme yetersiz	not enough materials
+fon yetersiz	not enough funds
+güven {0}	trust {0}
 {0} erzak	{0} supplies
 {0} malzeme	{0} materials
 {0} fon	{0} funds
@@ -620,18 +631,62 @@ Uzmanlara {0} yara	Specialists wounded {0}
 Güven {0}	Trust {0}
 YZ alarmı {0}	AI alarm {0}
 YZ karşı saldırdı	AI counterattacked
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/FinalReportBuilder.cs
+KYGA · HAREKÂT SONU RAPORU	KYGA · FINAL CAMPAIGN REPORT
+SIĞINAK 07 · V.{0:000} · tek nüsha	SHELTER 07 · S.{0:000} · single copy
+KAZANILDI	WON
+KAYBEDİLDİ	LOST
+İŞGAL ORANI	OCCUPATION
+VARDİYA 1–{0}	SHIFT 1–{0}
+İŞGAL · {0}	OCCUPIED · {0}
+İŞGAL	OCCUPIED
+GERİ ALINAN	RETAKEN
+KIRILMA ANLARI	TURNING POINTS
+YENİDEN BAŞLA	RESTART
+Bütün bölgeler özgür. YZ'nin son sunucusu {0}. vardiyada düştü.	All regions are free. The AI's last server fell on shift {0}.
+AĞA BAĞLANMA · ANALOG KAL	STAY OFF THE NET · STAY ANALOG
+Sivil güven sıfıra indi; Sığınak 07 dağıldı.	Civilian trust hit zero; Shelter 07 disbanded.
+Komutan kapıda vuruldu; Sığınak 07 {0}. vardiyada düştü.	The commander was shot at the door; Shelter 07 fell on shift {0}.
+Sığınak 07'nin yeri {0}. vardiyada YZ'ye sızdı.	Shelter 07's location leaked to the AI on shift {0}.
+SÜRE	DURATION
+vardiya	shifts
+BASKIN	RAIDS
+{0} başarılı · {1} başarısız	{0} successful · {1} failed
+ÖZGÜR BÖLGE	FREE REGIONS
+{0}/{1} sektör geri alındı	{0}/{1} sectors retaken
+SIĞINAK NÜFUSU	SHELTER POPULATION
+kişi	people
+kişi kaldı	people left
+{0} özgür, son sunucu düştü	{0} free, the last server fell
+Güven 0 · sığınak dağıldı	Trust 0 · shelter disbanded
+Kapı açıldı · {0}	Door opened · {0}
+{0} özgür, ilk bölge	{0} free, the first region
+{0} özgür	{0} free
+YZ karşı saldırısı: {0} {1:00} yeniden işgal	AI counterattack: {0} {1:00} reoccupied
+YZ karşı saldırısı: {0}	AI counterattack: {0}
+Baskında {0} sivil sunucu kırıldı · güven {1}	{0} civilian servers broken in a raid · trust {1}
+Kapı · güven {0}	Door · trust {0}
+Kapı: {0} · güven {1}	Door: {0} · trust {1}
+Kapı: {0} · “{1}” · güven {2}	Door: {0} · “{1}” · trust {2}
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/LiberationMapBuilder.cs
 EKİP {0}	TEAM {0}
 {0}: {1} İmza makinesi {2}: {3}	{0}: {1} Signature machine {2}: {3}
 Bölge: {0} · İmza: {1}	Region: {0} · Signature: {1}
-{0} yok	{0} out
-{0} (yedek) {1}/{2}	{0} (reserve) {1}/{2}
-{0} {1}/{2}	{0} {1}/{2}
 {0} plaka	{0} plates
+BÖLGE	REGION
+BÖLGE · {0}	REGION · {0}
+İMZA	SIGNATURE
+İMZA · {0}	SIGNATURE · {0}
+TEHDİT	THREAT
+{0}/4	{0}/4
+TEHDİT · {0}/4	THREAT · {0}/4
+Özgür bölge sayısıyla yükselir. 3. kademede makineler kopyalanır, 4. kademede güçlenir.	Rises with the number of free regions. At level 3 the machines are copied, at level 4 they grow stronger.
 HAREKÂT FORMU · OP-{0:00}	OPERATION FORM · OP-{0:00}
 HAREKÂT FORMU	OPERATION FORM
 SEKTÖRLER {0}/{1} · ÖZGÜR	SECTORS {0}/{1} · FREE
 SEKTÖRLER {0}/{1} · İŞGAL {2}	SECTORS {0}/{1} · OCCUPIED {2}
+Önceki sektör alınınca açılır.	Opens once the previous sector is taken.
+Bölge cephe olunca sırayla açılır.	Opens in order once the region becomes the front.
 Bölge özgür. Haritadan sınırdaki bir bölgeyi seç ve yeni cepheyi aç.	The region is liberated. Select a region on the frontier to open a new front.
 Bölge özgür.	Region free.
 Cephe açık: {0} {1}/{2}. Aynı anda tek cephe açık olabilir.	Front open: {0} {1}/{2}. Only one front can be open at a time.
@@ -639,25 +694,88 @@ Cephe açmak için komşusunu özgürleştir.	Free a neighbouring region to open
 GÖREV · {0:00} {1}	MISSION · {0:00} {1}
 Teknisyeni ikmal kasasının yanına götür. Q ile yeteneği seç ve kasaya tıklayarak malzemeleri al.	Move the Technician next to the supply crate. Press Q to select the ability, then click the crate to collect the supplies.
 Sunucu çekirdeğini yık. Son sektör alınınca bu bölge özgürleşir.	Destroy the server core. Capturing the final sector liberates this region.
-{0} · Tehdit {1}/4	{0} · Threat {1}/4
-{0} fon · {1} malzeme · {2} erzak · {3} kurtulan	{0} funds · {1} materials · {2} rations · {3} rescued
-{0} fon · {1} malzeme · bölge özgür: {2} fon	{0} funds · {1} materials · region free: {2} funds
-{0} fon · {1} malzeme	{0} funds · {1} materials
+fon	funds
+malzeme	materials
+erzak	rations
+kurtulan	survivor
+fon · bölge özgür	funds · region free
 SAHADA	IN THE FIELD
 HAZIR	READY
 SONRAKİ VARDİYA	NEXT SHIFT
 TEKNİSYEN YARALI · {0} GÜN	TECHNICIAN INJURED · {0} DAYS
 BASKIN EMRİ VER	ORDER THE RAID
+Fon yetersiz · {0} gerekli	Not enough funds · {0} needed
+TEKNİSYEN YARALI	TECHNICIAN INJURED
+EKİP HAZIR DEĞİL	TEAM NOT READY
 YENİ CEPHE · ONAY	NEW FRONT · CONFIRM
 Komşu: {0}	Neighbour: {0}
 İŞGAL {0}	OCCUPIED {0}
 {0} Tehdit {1}/4. Cephe açılınca 01 {2} baskına hazır olur.	{0} Threat {1}/4. Once the front opens, 01 {2} is ready to raid.
 SEÇİLİ BÖLGEDE CEPHE AÇ	OPEN FRONT IN SELECTED REGION
 Vazgeç	Cancel
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/OperationReportBuilder.cs
+{0} (yedek)	{0} (reserve)
+Sektör	Sector
+KYGA · OPERASYON RAPORU	KYGA · OPERATION REPORT
+No. {0} · tek nüsha	No. {0} · single copy
+SO-{0}/{1}	FO-{0}/{1}
+TARİH	DATE
+SONUÇ	RESULT
+BAŞARILI	SUCCESS
+BAŞARISIZ	FAILED
+HEDEF	TARGET
+{0} tur	{0} turns
+SEKTÖR İŞGAL ALTINDA	SECTOR STILL OCCUPIED
+KAZANÇ	GAINS
+SONUÇLAR	RESULTS
+MASAYA DÖN	BACK TO DESK
+FON	FUNDS
+MALZEME	MATERIALS
+ERZAK	RATIONS
+KURTULAN	SURVIVOR
+GERİ ALINDI	RETAKEN
+İŞGAL ALTINDA	OCCUPIED
+YZ karşı saldırısı	AI counterattack
+Teknisyen düştü ve yerine çıkacak yedek yok: {0} gün baskın yapılamaz. Revir kalkışı hızlandırır.	The Technician fell and no reserve can step in: no raids for {0} days. The infirmary speeds recovery.
+Sivil güven {0}/{1}. Sıfıra inerse halk direnişten çekilir; atıştan kaçan ekip arkasındaki sunucuyu açıkta bırakır.	Civilian trust {0}/{1}. At zero the people abandon the resistance; a team that dodges a shot leaves the server behind it exposed.
+Ekip geri döndü. Toparlandıktan sonra yeniden deneyebilirsin.	The team returned. Regroup and try again.
+Sonraki sektör operasyona açıldı.	The next sector is available for operations.
+{0} özgür; haritadan sınırdaki bir bölgeyi seç ve yeni cepheyi aç.	{0} is free; pick a bordering region on the map and open a new front.
+{0}: {1}/{2} sektör KYGA'da; bölgenin özgürlüğüne bir sektör kaldı.	{0}: KYGA holds {1}/{2} sectors; one more frees the region.
+{0}: {1}/{2} sektör KYGA'da; bölgenin özgürlüğüne {3} sektör kaldı.	{0}: KYGA holds {1}/{2} sectors; {3} more free the region.
+Düştü: {0}	Fell: {0}
+{0} gün	{0} days
+Yeni yara	New wounds
+{0} −{1}	{0} −{1}
+Zırh plakası kırıldı	Armor plates broken
+Sivil güven	Civilian trust
+{0} · {1}/{2}	{0} · {1}/{2}
+YZ alarmı	AI alarm
+EŞİK AŞILDI	THRESHOLD CROSSED
+değişmedi · {0}	unchanged · {0}
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/RadioLogBuilder.cs
+{0} döndü · {1} alındı	{0} back · {1} taken
+{0} geri çekildi · {1}	{0} withdrew · {1}
+{0} uzman düştü	{0} specialists down
+{0} sivil sunucu kırıldı	{0} civilian servers broken
+YZ karşı saldırısı · {0} yeniden işgal	AI counter-attack · {0} retaken
+{0} sahada · {1}	{0} in the field · {1}
+Teknisyen yaralı · {0} gün, yedek yok	Technician injured · {0} days, no reserve
+{0} hazır · cephe {1}	{0} ready · front {1}
+Telsiz odası YZ trafiğini dinliyor	Radio room listening to AI traffic
+Hat açılıyor	Line opening
+Hat açık — ekip sahada	Line open — squad in the field
+Hat kapandı — sonuç tekste	Line closed — result on the telex
+Hat kapalı — ekip çıkamaz	Line down — squad cannot deploy
+Dinlemede — emir bekleniyor	Listening — awaiting orders
+{0} {1:00}	{0} {1:00}
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/ShelterViewBuilder.cs
 {0} yaralı ({1})	{0} injured ({1})
-SEVİYE {0}/{1} · PERSONEL {2}/{3}	LEVEL {0}/{1} · STAFF {2}/{3}
-SEVİYE {0} · PERSONEL {1}/{2}	LEVEL {0} · STAFF {1}/{2}
+{0} {1}/{2}	{0} {1}/{2}
+SV {0}/{1} · {2}/{3}	LV {0}/{1} · {2}/{3}
+SV {0} · {1}/{2}	LV {0} · {1}/{2}
+ERZAK ARTIYOR	RATIONS RISING
+ERZAK · {0} VARDİYA	RATIONS · {0} SHIFTS
 {0} kişilik yer ve {1} yedek uzman; görevli başına günde {2} erzak toplanır.	Room for {0} people and {1} reserve specialists; {2} supplies foraged per assignee each day.
 Görevli başına vardiya alarmı {0} yavaşlar; şimdi vardiyada +{1}.	Each assignee slows the shift alarm by {0}; currently +{1} per shift.
 Görevli başına günde {0} zırh plakası döker (plaka {1} malzeme); depo {2} plaka.	Casts {0} armor plates per assignee each day (a plate costs {1} materials); storage {2} plates.
@@ -669,30 +787,25 @@ Açlık: revir durdu. Yaşam alanına personel ata.	Starvation: the infirmary st
 Yaralı uzman var: revire personel ata.	A specialist is hurt: assign staff to the infirmary.
 Görevli yok: alarm her vardiya +{0} yükselir.	No one assigned: the alarm rises +{0} every shift.
 Açlık: atölye yarı hızda, revir durdu. Yaşam alanına personel ata.	Starvation: the workshop runs at half speed, the infirmary stopped. Assign staff to the living quarters.
-Boşta {0} kişi var: + PERS. ile bu odaya görevlendir.	{0} people idle: use + STAFF to assign them here.
+Boşta {0} kişi var: + ile bu odaya görevlendir.	{0} people are idle: press + to assign them here.
 SIĞINAK ÖZETİ	SHELTER SUMMARY
-TOPLULUK	COMMUNITY
-{0}/{1} · boşta {2} · yedek {3}	{0}/{1} · idle {2} · reserve {3}
-UZMANLAR	SPECIALISTS
-ERZAK	RATIONS
-{0} · son vardiya {1}	{0} · last shift {1}
-{0}/{1}	{0}/{1}
-PLAKA	PLATES
-{0} hazır · döküm %{1}	{0} ready · casting {1}%
+ERZAK YETER	RATIONS LAST
+ARTIYOR	RISING
+{0} VARDİYA	{0} SHIFTS
 AÇLIK	STARVING
+AZ KALDI	RUNNING LOW
+{0} · son vardiya {1}	{0} · last shift {1}
+{0}/{1} · boşta {2} · yedek {3}	{0}/{1} · idle {2} · reserve {3}
+{0} hazır · döküm %{1}	{0} ready · casting {1}%
 SEÇİLİ	SELECTED
+SEVİYE {0}/{1} · PERSONEL {2}/{3}	LEVEL {0}/{1} · STAFF {2}/{3}
+Görevli yok	No staff
+Oda dolu	Room full
+Boşta kimse yok	No one idle
 ONAR	REPAIR
-EN ÜST SEVİYE	TOP LEVEL
 GELİŞTİR	UPGRADE
-{0} fon + {1} malzeme	{0} funds + {1} materials
-Onarıma hazır.	Ready to repair.
-Geliştirmeye hazır.	Ready to upgrade.
-Eksik: {0}	Missing: {0}
-KİLİTLİ	LOCKED
-EKSİK	SHORT
-− PERS.	− STAFF
-+ PERS.	+ STAFF
-DOLU	FULL
+{0} · {1} + {2} · yetersiz	{0} · {1} + {2} · not enough
+{0} · {1} + {2}	{0} · {1} + {2}
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/ShiftReportBuilder.cs
 TELEKS · KYGA-07 → KOMUTA	TELEX · KYGA-07 → COMMAND
 VARDİYA RAPORU · {0:000}	SHIFT REPORT · {0:000}
@@ -700,9 +813,9 @@ VARDİYA RAPORU · {0:000}	SHIFT REPORT · {0:000}
 KAPANDI	CLOSED
 FON · GELİR / GİDER	FUNDS · IN / OUT
 ÜRETİM VE TÜKETİM	PRODUCTION AND CONSUMPTION
-EKİP VE YZ ALARMI	TEAM AND AI ALARM
+EKİP	TEAM
 VARDİYA {0} BAŞLAT	START SHIFT {0}
-Esc · rapor EVRAK tepsisine dosyalanır	Esc · the report is filed in the PAPERS tray
+rapor EVRAK tepsisine dosyalanır	the report is filed in the PAPERS tray
 … ve {0} satır daha	… and {0} more lines
 Açılış	Opening
 Vardiya geliri	Shift income
@@ -722,13 +835,18 @@ MALZEME YOK	NO MATERIALS
 {0} kişi × {1} · açlık × {2} · plaka {3} malzeme	{0} people × {1} · starvation × {2} · plate {3} materials
 {0} kişi × {1} · plaka {2} malzeme	{0} people × {1} · plate {2} materials
 Zırh plakası · {0}/{1}	Armor plates · {0}/{1}
-Erzak {0} → {1} / {2}	Rations {0} → {1} / {2}
-YZ alarmı	AI alarm
+erzak bitti	rations gone
+erzak artıyor	rations rising
+{0} vardiya yeter	{0} shifts left
+YZ ALARMI	AI ALARM
+duvarda: YZ ALARMI	on the wall: AI ALARM
+{0} → {1} · EŞİK	{0} → {1} · THRESHOLD
+{0} → {1} · {2} karşı saldırı	{0} → {1} · counter-attack at {2}
+Alarmı her vardiya ve her başarısız baskın yükseltir, kırılan YZ sunucusu düşürür. Eşikte YZ son geri alınan sektörü yeniden işgal eder.	Every shift and every failed raid raises the alarm; a broken AI server lowers it. At the threshold the AI re-occupies the last reclaimed sector.
+{0} → {1}	{0} → {1}
 {0} yeniden işgal altında · sivil güven −{1}	{0} occupied again · civilian trust −{1}
-KARŞI SALDIRI	COUNTERATTACK
-Alarm eşiği aştı; YZ karşı saldırdı: {0}. Alarm sıfırlandı.	The alarm crossed the threshold and the AI struck back: {0}. Alarm reset.
-{0} → {1} / {2}	{0} → {1} / {2}
-Her vardiya ve her başarısız baskın yükseltir, kırılan YZ sunucusu düşürür. Eşikte YZ son geri alınan sektörü yeniden işgal eder.	Every shift and every failed raid raises it; each destroyed AI server lowers it. At the threshold the AI retakes the last sector you took back.
+YZ KARŞI SALDIRISI	AI COUNTERATTACK
+{0} yeniden işgal altında.	{0} is occupied again.
 Kapı · {0}	Door · {0}
 AÇILMADI	NOT OPENED
 {0} · hazır	{0} · ready
@@ -760,6 +878,10 @@ Geliştirme · {0} SV{1}	Upgrade · {0} LV{1}
 KYGA-07 HAT AÇIK	KYGA-07 LINE OPEN
 Kayıt açılamadı.	The save could not be opened.
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakDesk.cs
+KAPI · ZİYARETÇİ VAR	DOOR · VISITOR WAITING
+Kapıya dön. Ziyaretçi vardiya bitene kadar bekler.	Back to the door. The visitor waits until the shift ends.
+Baskın sürüyor: kapıya gidilemez.	A raid is under way: the door has to wait.
+Kapıda kimse yok. Biri çalınca lamba yanıp söner.	No one at the door. The lamp blinks when someone knocks.
 Baskın sürüyor: vardiya bitirilemez.	Raid in progress: the shift cannot end.
 Harekât bitti.	The campaign is over.
 Rapor açık: önce EVRAK tepsisine dosyala.	Report open: file it in the PAPERS tray first.
@@ -769,14 +891,13 @@ kapıda biri bekliyor: açılmadı sayılır	someone is at the door: counts as n
 baskın emri verilmedi: {0}	no raid ordered: {0}
 ÖN KONTROL	PRE-CHECK
 eksik yok · kolu indirmek için yeniden bas	all clear · press again to pull the lever
-VARDİYA {0:000}  ·  FON {1}  ·  ERZAK {2}/{3}  ·  MALZEME {4}  ·  ÖZGÜR {5}/{6}  ·  GÜVEN {7}/{8}  ·  ALARM {9}/{10}	SHIFT {0:000}  ·  FUNDS {1}  ·  RATIONS {2}/{3}  ·  MATERIALS {4}  ·  FREE {5}/{6}  ·  TRUST {7}/{8}  ·  ALARM {9}/{10}
+VARDİYA {0:000} · FON {1} · ERZAK {2}/{3} · MALZEME {4} · ÖZGÜR {5}/{6} · GÜVEN {7}/{8} · ALARM {9}/{10}	SHIFT {0:000} · FUNDS {1} · RATIONS {2}/{3} · MATERIALS {4} · FREE {5}/{6} · TRUST {7}/{8} · ALARM {9}/{10}
 Eşiğe ({0}) varınca YZ karşı saldırır, bir sektör yeniden işgal edilir. Her vardiya +{1}; telsiz odası düşürür.	At the threshold ({0}) the AI counterattacks and retakes a sector. +{1} each shift; the radio room lowers it.
-{0}. {1}   V.{2:000} ✓	{0}. {1}   S.{2:000} ✓
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakDoor.cs
 SIĞINAK KAPISI	SHELTER DOOR
 Biri çalınca: gözetleme deliği, interkom, kapıyı aç ya da açma.	When someone knocks: peephole, intercom, open the door or don't.
 KAPI ÇALIYOR	KNOCK AT THE DOOR
-Sığınağın kapısında biri var · K ile kapıya bak	Someone is at the shelter door · K to look
+Sığınağın kapısında biri var · 4 ile kapıya bak	Someone is at the shelter door · 4 to look
 KAPI	DOOR
 KAPI AÇILDI	DOOR OPENED
 KAPI AÇILMADI	DOOR NOT OPENED
@@ -793,19 +914,19 @@ Sürükle: adaya taşı	Drag onto a candidate
 Vardiya şu anda bitirilemez.	The shift cannot end right now.
 VARDİYA {0:000} KAPANDI	SHIFT {0:000} CLOSED
 Rapor basılıyor…	Printing the report…
-YZ KARŞI SALDIRISI	AI COUNTERATTACK
 {0} CEPHEDE	{0} AT THE FRONT
 {0} HAZIR	{0} READY
 Ekip toparlandı · {0}	Team recovered · {0}
 Ekip toparlandı · sıradaki cepheyi seç	Team recovered · choose the next front
 TEPSİYE KOY	PUT BACK
-← → rapor {0}/{1} · Esc tepsiye koy	← → report {0}/{1} · Esc puts it back
+rapor {0}/{1} · tepsiye koy	report {0}/{1} · put back in the tray
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakTutorial.cs
+ADIM {0}/{1}	STEP {0}/{1}
 BASKIN · ADIM {0}/{1}	RAID · STEP {0}/{1}
 Makineler sırayla oynuyor: bayraktaki sırayı ve okları izle.	The machines act in order: watch the flag numbers and the arrows.
-ANALİST NOTU · {0}/{1}	ANALYST NOTE · {0}/{1}
-TAMAM	DONE
-Eğitimi atla	Skip tutorial
+ANALİST · NOT	ANALYST · NOTE
+sonraki	next
+notları kapat	hide notes
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/TelexReasons.cs
 {0} onarımı	{0} repair
 {0} geliştirme	{0} upgrade
@@ -832,7 +953,6 @@ BASKIN EMRİ	RAID ORDER
 Fiş sıradaki sektörü, bedelini, ödülünü, bölgenin özelliğini ve kadroyu yazar. BASKIN EMRİ VER'e bas ya da Enter.	The slip lists the next sector, its cost, reward, the region's trait and your squad. Press ORDER RAID or Enter.
 TAKTİK TAHTA	TACTICAL BOARD
 Kırmızı oklar gözcünün telsizden bildirdiği makine hamleleri, bayraktaki sayı sırası. Uzmanı seç (1–3), mavi kareye yürü, Q ile yeteneği seç ve hedefe tıkla; Enter emri iletir. Kasayı altıncı turdan önce al.	Red arrows are the machine moves the spotter reports by radio; the flag number is their order. Select a specialist (1–3), move to a blue tile, press Q for the ability and click the target; Enter transmits the order. Take the crate before turn six.
-SONUÇ	OUTCOME
 Baskın bitti. Alınan hasar sığınağa yara olarak döner; düşen uzman günlerce yatar. Enter ile operasyon raporuna geç: masaya dönülür, rapor açılır.	The raid is over. Damage taken comes home as wounds; a fallen specialist is laid up for days. Press Enter to go to the operation report: you return to the desk and it opens.
 OPERASYON RAPORU	OPERATION REPORT
 Rapor ödülü, yaraları, sivil güveni ve YZ alarmını yazar. Masaya dön (Enter) ile kapat.	The report lists the reward, wounds, civilian trust and the AI alarm. Close it with Back to desk (Enter).
@@ -873,105 +993,43 @@ Q ile ikmal almayı seç.	Press Q to pick supply pickup.
 Q ile EMP atışını seç.	Press Q to pick the EMP shot.
 Q ile kancayı seç.	Press Q to pick the hook.
 Sarı çerçeveli kareye tıkla.	Click the tile with the yellow frame.
-Enter ile emri ilet ya da EMRİ İLET'e bas.	Press Enter or TRANSMIT to send the order.
-# Assets/Corrigible/Desk/Scripts/Bridge/SimDeskBuilder.GameOver.cs
-KYGA · SON RAPOR	AISA · FINAL REPORT
-Dosya KYGA-07 · Karşı harekât	File KYGA-07 · Counteroffensive
-tek nüsha	single copy
-KYGA kazandı.	AISA won.
-YZ kazandı.	The AI won.
-KAZANILDI	WON
-KAYBEDİLDİ	LOST
-Kayıt KYGA-07 · tohum {0} · {1} vardiya · {2} karar	Record KYGA-07 · seed {0} · {1} shifts · {2} decisions
-Yeniden başla	Restart
-HAREKÂT SÜRESİ	CAMPAIGN LENGTH
-vardiya	shifts
-Sonuç: {0}	Outcome: {0}
-BASKIN	RAIDS
-{0} başarılı · {1} geri dönüş	{0} successful · {1} returned
-ÖZGÜR BÖLGE	FREE REGIONS
-Geri alınan sektör: {0}/{1}	Sectors reclaimed: {0}/{1}
-kişi	people
-Erzak {0} · malzeme {1}	Rations {0} · materials {1}
-İŞGAL ORANI	OCCUPATION RATE
-bölgelerin ortalaması · şerit kaydedici	mean of all regions · strip recorder
-İşgal: geri alınmamış sektörlerin payı; her vardiya sonunda kaydedilir.	Occupation: share of sectors not yet reclaimed; recorded at the end of each shift.
-işgal	occupied
-kırılma anı	breaking point
-İŞGAL	OCCUPATION
-KIRILMA ANLARI	BREAKING POINTS
-GERİ ALMA	RECLAIM
-YZ ALDI	AI TOOK IT
-GERİ ALINDI	RETAKEN
-· {0} an · iplik sırası = zaman	· {0} moments · thread order = time
-# Assets/Corrigible/Desk/Scripts/Bridge/SimDeskBuilder.Report.cs
-{0} (yedek)	{0} (reserve)
-Düştü: {0}	Fell: {0}
-{0} gün	{0} days
-Yeni yara	New wounds
-{0} −{1}	{0} −{1}
-Zırh plakası kırıldı	Armor plates broken
-Sektör	Sector
-Operasyon başarısız	Operation failed
-SUNUCU YIKILDI	SERVER DESTROYED
-Malzemeler alındı ve ekip tahliye edildi.	Supplies secured and the team evacuated.
-Sunucu imha edildi; sektör geri alındı.	Server destroyed; sector reclaimed.
-KYGA · OPERASYON RAPORU	AISA · OPERATION REPORT
-No. {0} · tek nüsha	No. {0} · single copy
-SO-{0}/{1}	FO-{0}/{1}
-TARİH	DATE
-BAŞARILI	SUCCESS
-BAŞARISIZ	FAILED
-HEDEF	TARGET
-SÜRE	DURATION
-{0} tur	{0} turns
-SONUÇLAR	RESULTS
-Masaya dön	Back to the desk
-İŞGAL ALTINDA	OCCUPIED
-Fon	Funds
-+{0}	+{0}
-Erzak	Supplies
-Malzeme	Materials
-Kurtulan	Survivors
-Sivil sunucu hasarı	Civilian server damage
-Ayakta kalan sivil sunucu	Civilian servers left standing
-Sivil güven	Civilian trust
-{0} · {1}/{2}	{0} · {1}/{2}
-EŞİK AŞILDI	THRESHOLD CROSSED
-YZ karşı saldırısı	AI counterattack
-YZ karşı saldırdı: {0} yeniden işgal altında. Alarm sıfırlandı.	The AI struck back: {0} is occupied again. Alarm reset.
-Teknisyen düştü ve yerine çıkacak yedek yok: {0} gün baskın yapılamaz. Revir kalkışı hızlandırır.	The Technician fell and no reserve can step in: no raids for {0} days. The infirmary speeds recovery.
-Sivil güven {0}/{1}. Sıfıra inerse halk direnişten çekilir; atıştan kaçan ekip arkasındaki sunucuyu açıkta bırakır.	Civilian trust {0}/{1}. At zero the people abandon the resistance; a team that dodges a shot leaves the server behind it exposed.
-Sonraki sektör operasyona açıldı.	The next sector is available for operations.
+Enter ile emri ilet ya da EMRİ İLET'e bas.	Press Enter or SEND ORDERS to send the order.
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/HoverInspectorView.cs
 İKMAL ALINIR	SUPPLIES COLLECTED
 HEDEF KIRILIR	TARGET DESTROYED
 operasyon kazanılır	operation won
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidHudView.cs
 TUR	TURN
-SIRA SENDE	YOUR TURN
+SON 2 TUR	LAST 2 TURNS
 SON TUR	LAST TURN
-İKMAL	SUPPLIES
-girişe dön	back to entry
-ikisini de kır	break both
-kır	break
-GÜVEN {0}	TRUST {0}
-SİVİL	CIVILIAN
+OPERASYON BİTTİ	OPERATION OVER
+MAKİNELER	MACHINES
+SIRA SENDE	YOUR TURN
+GÖREV · İKMAL	MISSION · SUPPLY
+GÖREV · SUNUCU	MISSION · SERVER
+CAN	HP
 ALINDI	COLLECTED
 KIRILDI	BROKEN
+GÜVEN	TRUST
+SİVİL	CIVILIAN
+SİVİL SUNUCU	CIVILIAN SERVERS
 TELSİZ	RADIO
 KURALLAR	RULES
+EMİN MİSİN?	ARE YOU SURE?
 GERİ ÇEKİL	RETREAT
 Geri al	Undo
-EMİN MİSİN?	ARE YOU SURE?
-EMRİ İLET	TRANSMIT
+MAKİNELER HAREKET EDİYOR	MACHINES ARE MOVING
+girdi kilitli · {0}/{1} hamle	input locked · move {0}/{1}
+girdi kilitli	input locked
+EMRİ İLET	SEND ORDERS
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidLogRowView.cs
 YZ · ELE GEÇİRİLEN SATIR	AI · INTERCEPTED LINE
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidPanelsView.cs
+TELSİZ · K-07	RADIO · K-07
 Boşluk · normal hız	Space · normal speed
 Boşluk · hızlandır	Space · speed up
 HAKKI DURAN BİRİM	UNIT WITH UNUSED ACTIONS
-Enter yine de ilet · Esc vazgeç	Enter transmit anyway · Esc cancel
+Enter yine de ilet · Esc vazgeç	Enter send anyway · Esc cancel
 hareket + yetenek	move + ability
 hareket	move
 yetenek	ability
@@ -982,21 +1040,21 @@ KURALLAR KARTI	RULES CARD
 Teknisyen kasayı açar ve malzemeyi taşır. İtme ve patlamalar kasaya hasar verebilir; EMP kasayı açmaz.	The Technician opens the crate and carries the supplies. Pushes and explosions can damage the crate; EMP doesn't open it.
 İkmal görevi: Teknisyen ile kasayı aç, sonra malzemeyi giriş karelerinden birine geri taşı. Kasa imha olursa, Teknisyen düşerse ya da süre biterse görev kaybedilir.	Supply mission: open the crate with the Technician, then carry the supplies back to one of the entry tiles. The mission fails if the crate is destroyed, the Technician goes down or time runs out.
 EMİN MİSİN? TEKRAR BAS	ARE YOU SURE? PRESS AGAIN
-Operasyon raporuna geç	Go to operation report
+OPERASYON RAPORUNA GEÇ	GO TO OPERATION REPORT
 Devam et [Esc]	Resume [Esc]
 DURAKLATILDI	PAUSED
-OPERASYON SONUCU · BAŞARILI	OPERATION RESULT · SUCCESS
-OPERASYON SONUCU · BAŞARISIZ	OPERATION RESULT · FAILURE
-alındı	collected
-kırıldı	broken
-Kırılan sivil sunucu · {0}	Civilian servers broken · {0}
-Ekip · {0}/{1} ayakta	Team · {0}/{1} standing
-Operasyon raporu bölgeye etkisini ve ekibin durumunu gösterecek.	The operation report will show regional effects and team condition.
-<b>{0} ›</b> {1}	<b>{0} ›</b> {1}
+OPERASYON SONUCU	OPERATION RESULT
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidTeamCardView.cs
-YARALI	INJURED
-DÜŞTÜ	DOWN
+{0} · YEDEK	{0} · RESERVE
 EMP UZM.	EMP SPEC.
+YARALI	INJURED
+PLAKA	PLATES
+SIĞINAKTA YARALI	INJURED AT SHELTER
+DÜŞTÜ	DOWN
+✓ TUR BİTTİ	✓ TURN DONE
+HAREKET + YETENEK	MOVE + ABILITY
+HAREKET	MOVE
+YETENEK	ABILITY
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidText.cs
 LEJANT	LEGEND
 Yetenek hedefi	Ability target
@@ -1009,6 +1067,7 @@ Sıra bayrağı	Order flag
 GERİ ÇEKİLME · 2. ONAY	RETREAT · SECOND CONFIRMATION
 Ekip binadan çıkar; operasyon başarısız sayılır. Hedef dolaplar ayakta kalır.	The team leaves the building; the operation counts as failed. Target cabinets remain standing.
 İkinci basış geri çeker.	A second press retreats.
+HEDEF KIRILDI	TARGET BROKEN
 operasyon emrinden	from the operation order
 oklar · seçim · zırh · siviller	arrows · selection · armor · civilians
 Aç	Open
@@ -1019,25 +1078,32 @@ Zırh: hedef dolaplara yalnız sabotaj, itilen robot ve patlayan soğutma ünite
 İtme: çarpan da çarpılan da 1 hasar alır; kanala düşen de 1 hasar alır.	Push: both the pushed and what it hits take 1 damage; falling into a channel deals 1.
 Sivilleri koru: ekibe ulaşamayan makine sivil sunucuya nişan alır. Kırılan her sunucu GÜVEN'i düşürür; kazanınca ayakta kalan her 2 sunucu +1 GÜVEN.	Protect civilians: a machine that can't reach the team aims at a civilian server. Every broken server lowers TRUST; win the raid and every 2 servers left standing give +1 TRUST.
 Kazan: tur bitmeden bütün hedef dolapları kır. Alınan hasar sığınağa yara olarak döner; zırh plakası ilk darbeyi karşılar.	Win: break every target cabinet before the turns run out. Damage taken comes home as wounds; an armor plate takes the first hit.
-# Assets/Corrigible/Desk/Scripts/Runtime/Raid/UnitCardView.cs
-{0} · YEDEK	{0} · RESERVE
 # Assets/Corrigible/Desk/Scripts/Runtime/Screens/Settings/SettingsView.cs
 Ses açık	Sound on
 Kapatınca bütün kanallar susar; ayarlar korunur.	Turning it off mutes every channel; levels are kept.
+# Assets/Corrigible/Desk/Scripts/Runtime/Siginak/FreedRegionsBoard.cs
+Her özgür bölgeye bir kart; kurşun kalemle yazılan sıradaki hedef.	One card for every free region; the next target is pencilled in.
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/FrontSlip.cs
 {0}  {1}  ·  {2}	{0}  {1}  ·  {2}
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/IdleTray.cs
 BOŞTA {0}	IDLE {0}
+# Assets/Corrigible/Desk/Scripts/Runtime/Siginak/LiberationMapLayer.cs
+TEHDİT {0}/4	THREAT {0}/4
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/LiberationRegionMarks.cs
-{0} · ADAY	{0} · CANDIDATE
+ADAY	CANDIDATE
+YENİDEN İŞGAL	RE-OCCUPIED
 ÖZGÜR	FREE
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/OperationSlip.cs
 BASKINA HAZIR	READY TO RAID
+KİLİTLİ	LOCKED
+{0} yedek	{0} reserve
+FON YETERSİZ	NOT ENOUGH FUNDS
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/RoomView.cs
 DURDU	STOPPED
 # Assets/Corrigible/Game/Platform.cs
 Yerel	Local
 # Assets/Corrigible/Game/Raid/RaidBoard3D.cs
+UYANDI	WOKE UP
 YÜKLÜ	CARRYING
 TUR BİTTİ	TURN DONE
 ONARIM	REPAIR
@@ -1048,6 +1114,7 @@ ZIRHLANDI	ARMORED
 KİLİTLENDİ	LOCKED
 PLAKA KIRILDI	PLATE BROKEN
 +1	+1
+İKMAL ALINDI	SUPPLIES RETRIEVED
 <s>{0}</s> İPTAL	<s>{0}</s> CANCELLED
 {0} ŞİMDİ	{0} NOW
 <s>{0}</s> UYGULANDI	<s>{0}</s> DONE
@@ -1065,6 +1132,7 @@ Zaman ayarlar açıkken durur.	Time stops while settings are open.
 # Assets/Corrigible/Prefabs/Raid/Core.prefab
 Ç	C
 # Assets/Corrigible/Desk/Scenes/DeskGame.unity
+Kapat	Close
 KYGA / SIĞINAK 07	KYGA / SHELTER 07
 AĞA	DON'T
 BAĞLANMA	CONNECT
@@ -1072,15 +1140,12 @@ ANALOG KAL	STAY ANALOG
 KYGA · DOKTRİN 1	KYGA · DOCTRINE 1
 YUKARI ÇIKIYORUZ	WE'RE GOING UP
 KURTARILAN BÖLGELER	FREED REGIONS
-KAYIP	MISSING
-Lyon · 2 yaş	Lyon · age 2
-BULUNDU	FOUND
-YZ ALARMI	AI ALARM
-BEDEL	COST
-ÖDÜL	REWARD
-EMİR VERİLDİ	ORDER GIVEN
+10'DA KARŞI SALDIRI	COUNTER-ATTACK AT 10
+TELSİZ ODASI ETKİN	RADIO ROOM ACTIVE
+EKİP ALFA	TEAM ALPHA
 S-07	S-07
-İŞARETLER	MARKS
+İŞARETLER	KEY
+işgal	occupied
 cephe	front
 aday	candidate
 özgür	free
@@ -1088,18 +1153,38 @@ geri alındı	retaken
 hazır	ready
 kilitli	locked
 VARDİYA	SHIFT
-FON	FUNDS
-MALZEME	MATERIALS
-GÜVEN	TRUST
 KOMUTA	COMMAND
+Dünya haritası · cepheyi planla	World map · plan the front
+Kesit maketi · odaları yönet	Cross-section model · manage the rooms
 GÖREVLER	MISSIONS
+Görev fişi · baskın emri	Mission slip · raid order
+kapıda biri bekliyor	someone is at the door
 KILAVUZ	GUIDE
+Harekât emrini yeniden oku	Read the operation order again
 MASA	DESK
+Masaya dön	Back to the desk
 VARDİYAYI BİTİR	END SHIFT
+Kapağı kaldır, kolu indir: bir gün geçer	Lift the cover, pull the lever: a day passes
 Enter · kapağı kaldır	Enter · lift the cover
 TELEKS	TELEX
+Son emirler ve sonuçlar	Latest orders and results
 EVRAK	PAPERS
+Brifing ve vardiya raporları	Briefing and shift reports
 TELEKS · KYGA-07	TELEX · KYGA-07
 SIĞINAK 07 · KESİT	SHELTER 07 · SECTION
+Tıkla: oda kartı panoda açılır	Click: the room card opens on the board
+Jeneratör	Generator
+DEPO	STORE
+TOPLULUK	COMMUNITY
+UZMANLAR	SPECIALISTS
+GELİŞTİRME	UPGRADE
+EN ÜST SEVİYE	MAX LEVEL
+TELSİZ HATTI	RADIO LINE
+Yalnız baskın emriyle hat açılır. Emri görev fişinden ver (3).	The line opens only with a raid order. Give it from the mission slip (3).
 K-07	K-07
-TELSİZ · K-07	RADIO · K-07
+KANAL	CHANNEL
+AYAR	TUNE
+TELSİZ KAYDI · K-07	RADIO LOG · K-07
+BEDEL	COST
+ÖDÜL	REWARD
+ziyaretçi	visitors

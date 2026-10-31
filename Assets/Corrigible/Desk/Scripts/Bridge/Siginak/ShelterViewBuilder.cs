@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Corrigible.Core;
-using UnityEngine;
 
 namespace Corrigible.Desk.Bridge
 {
@@ -20,9 +19,6 @@ namespace Corrigible.Desk.Bridge
         /// <summary>Oran: tam sayı ondalıksız (“1”), değilse gereken kadar ondalık (“0,9”, “0,25”).</summary>
         public static string Rate(double v) => N(v, Math.Abs(v - Math.Round(v)) < 1e-9 ? 0 : Math.Abs(v * 10 - Math.Round(v * 10)) < 1e-9 ? 1 : 2);
         static string Bold(string s) => "<b>" + s + "</b>";
-        static string Hex(string key) => ColorUtility.ToHtmlStringRGB(SiginakTheme.Active.ColorOf(key));
-        static string Tint(string s, string key) => "<color=#" + Hex(key) + ">" + s + "</color>";
-        static string Delta(double v, int d) => Tint(DeskFormat.Signed(v, d), v < 0 ? "status.threat" : "status.good");
 
         /// <summary>Atölye plaka dökemiyor: depo dolu ya da bir plakalık malzeme yok.</summary>
         static bool WorkshopStopped(Simulation sim) =>
@@ -64,13 +60,90 @@ namespace Corrigible.Desk.Bridge
                 {
                     Id = id, Name = DeskText.Upper(ShelterLogic.RoomName(id)), Level = r.Level, MaxLevel = max, Workers = r.Workers, Capacity = cap,
                     Condition = Condition(sim, r), Selected = id == selected, Fresh = Fresh(sim, id),
-                    // K8: en üst seviyede kartta “3/3”
+                    // Revizyon 2 · S1: rafta da okunan iki satır, “SV 1 · 2/2” (en üst seviyede “SV 3/3 · 4/6”)
                     Line = r.Level >= max
-                        ? Loc.F("SEVİYE {0}/{1} · PERSONEL {2}/{3}", r.Level, max, r.Workers, cap)
-                        : Loc.F("SEVİYE {0} · PERSONEL {1}/{2}", r.Level, r.Workers, cap),
+                        ? Loc.F("SV {0}/{1} · {2}/{3}", r.Level, max, r.Workers, cap)
+                        : Loc.F("SV {0} · {1}/{2}", r.Level, r.Workers, cap),
+                    Active = Active(sim, r),
+                    Occupants = id == ShelterLogic.Living ? s.Reserves.Count(x => x.Down <= 0)
+                        : id == ShelterLogic.Infirmary && r.Level > 0 && Wounded(sim) ? 1 : 0,
                 });
             }
             return list;
+        }
+
+        /// <summary>
+        /// Odanın çıktısı görünür mü (S3 › odaların çıktısı): yaşam alanında görevli varsa erzak kasası, telsiz odasında görevli
+        /// varsa kadran ve amber lamba, atölyede plaka dökülürken kalıp.
+        /// </summary>
+        static bool Active(Simulation sim, ShelterRoomState r) => r.Level > 0 && (r.Id switch
+        {
+            ShelterLogic.Living => r.Workers > 0,
+            ShelterLogic.Radio => ShelterLogic.RadioWorkers(sim.Shelter) > 0,
+            ShelterLogic.Workshop => r.Workers > 0 && sim.Shelter.PlateProgress > 0 && !WorkshopStopped(sim),
+            _ => false,
+        });
+
+        /// <summary>Yatan uzman var (ekipte ya da yedeklerde): revirin yatağında sargılı hasta.</summary>
+        static bool Wounded(Simulation sim) =>
+            sim.S.Teams.SelectMany(t => t.Members).Any(m => m.Down > 0) || sim.Shelter.Reserves.Any(r => r.Down > 0);
+
+        /// <summary>
+        /// Erzak kaç vardiya yeter (S3 › özet): ⌊erzak ÷ |vardiya farkı|⌋. Fark ≥ 0 ise null (ERZAK ARTIYOR). Saf hesap.
+        /// </summary>
+        public static int? ShiftsLeft(double supplies, double perShift)
+        {
+            if (perShift >= 0) return null;
+            return (int)Math.Floor(Math.Max(0, supplies) / -perShift + 1e-9);
+        }
+
+        /// <summary>
+        /// Vardiyadaki erzak farkı: son vardiyanınki; ilk vardiyada (henüz vardiya geçmedi) bugünkü görevli ve nüfusla beklenen.
+        /// </summary>
+        public static double SuppliesPerShift(Simulation sim)
+        {
+            var s = sim.Shelter;
+            if (sim.S.Day > 0) return s.LastSuppliesChange;
+            return (s.Room(ShelterLogic.Living)?.Workers ?? 0) * sim.B.shelterSuppliesPerWorker - s.Population * sim.B.shelterSuppliesPerResident;
+        }
+
+        /// <summary>
+        /// DEPO bandının sayıları (S3; Soru 6 ara kararı a): 10 sandık = erzak sınırı (sandık 3 / 6 / 9 erzak), 5 kova = malzeme
+        /// deposu (kova 12), son sandık yarım, son kova kısmi; plaka rafı 3 yuva, atölye seviyesi kadar açık. Saf hesap.
+        /// </summary>
+        public static ShelterStoreData Store(double supplies, double capacity, double materials, double storage, int plates, int plateCapacity)
+        {
+            var d = new ShelterStoreData
+            {
+                CrateValue = capacity / ShelterStoreData.CrateSlots,
+                BinValue = storage / ShelterStoreData.BinSlots,
+                PlateCapacity = Math.Max(0, Math.Min(plateCapacity, ShelterStoreData.PlateSlots)),
+            };
+            d.Plates = Math.Max(0, Math.Min(plates, d.PlateCapacity));
+            if (d.CrateValue > 0)
+            {
+                double crates = Math.Max(0, supplies) / d.CrateValue;
+                d.Crates = Math.Min(ShelterStoreData.CrateSlots, (int)Math.Floor(crates + 1e-9));
+                d.CratePartial = d.Crates < ShelterStoreData.CrateSlots && crates - d.Crates > 1e-6;
+            }
+            if (d.BinValue > 0)
+            {
+                double bins = Math.Max(0, materials) / d.BinValue;
+                d.Bins = Math.Min(ShelterStoreData.BinSlots, (int)Math.Ceiling(bins - 1e-9));
+                d.LastBinFill = d.Bins > 0 ? Math.Min(1, bins - (d.Bins - 1)) : 1;
+            }
+            return d;
+        }
+
+        /// <summary>Simülasyondan DEPO: sayılar ve tebeşir (“ERZAK · 15 VARDİYA” / “ERZAK ARTIYOR”).</summary>
+        public static ShelterStoreData Store(Simulation sim)
+        {
+            var s = sim.Shelter;
+            var b = sim.B;
+            var d = Store(s.Supplies, ShelterLogic.SuppliesCapacity(s, b), s.Materials, b.shelterMaterialsStorage, s.Plates, ShelterLogic.PlateCapacity(s, b));
+            int? left = ShiftsLeft(s.Supplies, SuppliesPerShift(sim));
+            d.Slate = left == null ? Loc.T("ERZAK ARTIYOR") : Loc.F("ERZAK · {0} VARDİYA", left.Value);
+            return d;
         }
 
         /// <summary>Oda açıklaması, Balance değerleriyle (kural tekrar yazılmaz; yalnız sayılar okunur).</summary>
@@ -111,8 +184,27 @@ namespace Corrigible.Desk.Bridge
             if (s.Starving && id == ShelterLogic.Living) return Loc.T("Açlık: atölye yarı hızda, revir durdu. Yaşam alanına personel ata.");
             int idle = ShelterLogic.AvailableWorkers(s);
             if (idle > 0 && room.Workers < ShelterLogic.WorkerCapacity(room, b))
-                return Loc.F("Boşta {0} kişi var: + PERS. ile bu odaya görevlendir.", idle);
+                return Loc.F("Boşta {0} kişi var: + ile bu odaya görevlendir.", idle);
             return null;
+        }
+
+        /// <summary>Uzmanların diskleri (S3): rol harfi + can; yatan uzmanın diski soluk, yanında kalkmasına kalan gün.</summary>
+        public static List<SlipMember> SquadDiscs(Simulation sim)
+        {
+            var list = new List<SlipMember>();
+            var team = sim.S.Teams.FirstOrDefault();
+            if (team == null) return list;
+            foreach (var m in team.Members)
+            {
+                int max = Simulation.MaxHp(m.Role);
+                list.Add(new SlipMember
+                {
+                    Letter = Baskin.UnitTypes[m.Role].Short,
+                    Hp = m.Down > 0 ? Loc.F("{0} gün", m.Down) : Loc.F("{0}/{1}", max - m.Wounds, max),
+                    Missing = m.Down > 0,
+                });
+            }
+            return list;
         }
 
         public static ShelterBoardData Board(Simulation sim, string id)
@@ -123,19 +215,25 @@ namespace Corrigible.Desk.Bridge
             var b = sim.B;
             d.Title = Loc.T("SIĞINAK ÖZETİ");
             d.Shift = Loc.F("V.{0:000}", sim.S.Day + 1);
+
+            // Asıl soru: erzak kaç vardiya yeter (3 ve altı kırmızı + AZ KALDI; açlıkta AÇLIK); artıyorsa ERZAK ARTIYOR
+            int? left = ShiftsLeft(s.Supplies, SuppliesPerShift(sim));
+            d.SuppliesLabel = left == null ? Loc.T("ERZAK") : Loc.T("ERZAK YETER");
+            d.SuppliesBig = left == null ? Loc.T("ARTIYOR") : Loc.F("{0} VARDİYA", left.Value);
+            d.SuppliesLow = s.Starving || left != null && left.Value <= 3;
+            d.SuppliesStamp = s.Starving ? Loc.T("AÇLIK") : d.SuppliesLow ? Loc.T("AZ KALDI") : null;
+            d.SuppliesLine = Loc.F("{0} · son vardiya {1}", Bold(Loc.F("{0}/{1}", N(Math.Floor(s.Supplies)), N(ShelterLogic.SuppliesCapacity(s, b)))),
+                Bold(DeskFormat.Signed(s.LastSuppliesChange, 1)));
             int reserves = s.Reserves.Count(r => r.Down <= 0);
-            d.Summary.Add((Loc.T("TOPLULUK"), Loc.F("{0}/{1} · boşta {2} · yedek {3}", Bold(s.Population.ToString()), Bold(ShelterLogic.Capacity(s, b).ToString()),
-                Bold(ShelterLogic.AvailableWorkers(s).ToString()), Bold(reserves.ToString()))));
-            d.Summary.Add((Loc.T("UZMANLAR"), Bold(Squad(sim))));
-            d.Summary.Add((Loc.T("ERZAK"), Loc.F("{0} · son vardiya {1}", Bold(Loc.F("{0}/{1}", N(Math.Floor(s.Supplies)), N(ShelterLogic.SuppliesCapacity(s, b)))),
-                Bold(Delta(s.LastSuppliesChange, 1)))));
-            d.Summary.Add((Loc.T("PLAKA"), Loc.F("{0} hazır · döküm %{1}", Bold(Loc.F("{0}/{1}", s.Plates, ShelterLogic.PlateCapacity(s, b))),
-                N(Math.Floor(s.PlateProgress * 100)))));
-            d.SummaryStamp = s.Starving ? Loc.T("AÇLIK") : null;
+            d.Community = Loc.F("{0}/{1} · boşta {2} · yedek {3}", Bold(s.Population.ToString()), Bold(ShelterLogic.Capacity(s, b).ToString()),
+                Bold(ShelterLogic.AvailableWorkers(s).ToString()), Bold(reserves.ToString()));
+            d.Squad.AddRange(SquadDiscs(sim));
+            d.Plates = Loc.F("{0} hazır · döküm %{1}", Bold(Loc.F("{0}/{1}", s.Plates, ShelterLogic.PlateCapacity(s, b))),
+                Bold(N(Math.Floor(s.PlateProgress * 100))));
 
             var room = s.Room(id);
             if (room == null) return d;
-            int max = b.shelterMaxRoomLevel, cap = ShelterLogic.WorkerCapacity(room, b);
+            int max = b.shelterMaxRoomLevel, cap = ShelterLogic.WorkerCapacity(room, b), idle = ShelterLogic.AvailableWorkers(s);
             d.RoomId = id;
             d.RoomName = DeskText.Upper(ShelterLogic.RoomName(id));
             d.SelectedChip = Loc.T("SEÇİLİ");
@@ -143,41 +241,44 @@ namespace Corrigible.Desk.Bridge
             d.Description = Description(sim, id);
             d.Note = Note(sim, id);
 
-            // Eylem: HASARLI → ONAR · 1–2 → GELİŞTİR · 3 → EN ÜST SEVİYE (devre dışı). Kaynak yetmezse EKSİK + “Eksik: …”
-            bool top = room.Level >= max;
-            string verb = room.Level <= 0 ? Loc.T("ONAR") : top ? Loc.T("EN ÜST SEVİYE") : Loc.T("GELİŞTİR");
-            var cost = ShelterLogic.UpgradeCost(s, id, b);
-            string why = sim.ShelterUpgradeCheck(id);
-            // Seviye 2 ve 3 özgür bölgeyle açılır: kilitliyken eksik kaynak yazılmaz
-            string locked = top ? null : sim.ShelterLevelLock(id);
-            var missing = new List<string>();
-            if (!top && sim.S.Fon < cost.Fon) missing.Add(Loc.F("{0} fon", N(Math.Ceiling(cost.Fon - sim.S.Fon))));
-            if (!top && s.Materials < cost.Materials) missing.Add(Loc.F("{0} malzeme", N(Math.Ceiling(cost.Materials - s.Materials))));
-            d.Cost = top ? Loc.T("EN ÜST SEVİYE")
-                : Loc.F("{0} · {1}", verb, Tint(Loc.F("{0} fon + {1} malzeme", N(cost.Fon), N(cost.Materials)), "status.threat"));
-            d.ReadinessOk = why == null;
-            d.Readiness = top ? Loc.T("Oda en yüksek seviyede.")
-                : locked != null ? locked
-                : why == null ? (room.Level <= 0 ? Loc.T("Onarıma hazır.") : Loc.T("Geliştirmeye hazır."))
-                : missing.Count > 0 ? Loc.F("Eksik: {0}", string.Join(" + ", missing)) : why;
-            d.Action = new ShelterButtonData
-            {
-                Label = verb,
-                State = why == null ? SlipButtonState.Normal : locked == null && !top && missing.Count > 0 ? SlipButtonState.Short : SlipButtonState.Disabled,
-                Stamp = locked != null ? Loc.T("KİLİTLİ") : Loc.T("EKSİK"),
-            };
+            // Personel adımlayıcısı [−] a/b [+]: devre dışında üzerine gelince neden; boşta kimse yokken altında not
+            bool full = cap > 0 && room.Workers >= cap;
+            string minusWhy = sim.ShelterAssignCheck(id, room.Workers - 1), plusWhy = sim.ShelterAssignCheck(id, room.Workers + 1);
+            d.Staff = Loc.F("{0}/{1}", room.Workers, cap);
             d.Minus = new ShelterButtonData
             {
-                Label = Loc.T("− PERS."),
-                State = sim.ShelterAssignCheck(id, room.Workers - 1) == null ? SlipButtonState.Normal : SlipButtonState.Disabled,
+                Label = "−",
+                State = minusWhy == null ? SlipButtonState.Normal : SlipButtonState.Disabled,
+                Hover = minusWhy == null ? null : room.Workers <= 0 ? Loc.T("Görevli yok") : minusWhy,
             };
-            bool full = cap > 0 && room.Workers >= cap;
             d.Plus = new ShelterButtonData
             {
-                Label = Loc.T("+ PERS."),
-                State = sim.ShelterAssignCheck(id, room.Workers + 1) == null ? SlipButtonState.Normal : full ? SlipButtonState.Short : SlipButtonState.Disabled,
-                Stamp = Loc.T("DOLU"),
+                Label = "+",
+                State = plusWhy == null ? SlipButtonState.Normal : SlipButtonState.Disabled,
+                Hover = plusWhy == null ? null : full ? Loc.T("Oda dolu") : idle <= 0 ? Loc.T("Boşta kimse yok") : plusWhy,
             };
+            d.StaffNote = plusWhy != null && !full && room.Level > 0 && idle <= 0 ? Loc.T("Boşta kimse yok") : null;
+
+            // GELİŞTİRME: HASARLI → ONAR · 1–2 → GELİŞTİR · 3 → EN ÜST SEVİYE damgası. Yetersiz kaynakta düğme açık kalır,
+            // eksik kalem çizik + “yetersiz” (basınca teleks YAPILAMADI); kilitli seviyede devre dışı, altında gerekçe
+            d.Top = room.Level >= max;
+            if (d.Top) return d;
+            string verb = room.Level <= 0 ? Loc.T("ONAR") : Loc.T("GELİŞTİR");
+            var cost = ShelterLogic.UpgradeCost(s, id, b);
+            string why = sim.ShelterUpgradeCheck(id);
+            string locked = sim.ShelterLevelLock(id);
+            bool fonShort = sim.S.Fon < cost.Fon, materialsShort = s.Materials < cost.Materials;
+            string fon = Loc.F("{0} fon", N(cost.Fon)), materials = Loc.F("{0} malzeme", N(cost.Materials));
+            bool shortOnly = why != null && locked == null && (fonShort || materialsShort);
+            d.Action = new ShelterButtonData
+            {
+                Label = shortOnly
+                    ? Loc.F("{0} · {1} + {2} · yetersiz", verb, fonShort ? "<s>" + fon + "</s>" : fon, materialsShort ? "<s>" + materials + "</s>" : materials)
+                    : Loc.F("{0} · {1} + {2}", verb, fon, materials),
+                State = why == null ? SlipButtonState.Normal : shortOnly ? SlipButtonState.Short : SlipButtonState.Disabled,
+                Hover = why == null ? null : shortOnly ? TelexReasons.Upgrade(sim, id) : locked ?? why,
+            };
+            d.ActionNote = why == null || shortOnly ? null : locked ?? why;
             return d;
         }
     }

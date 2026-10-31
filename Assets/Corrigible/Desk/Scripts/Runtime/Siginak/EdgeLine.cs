@@ -20,6 +20,14 @@ namespace Corrigible.Desk
         [SerializeField] Button[] chips = Array.Empty<Button>();
         [SerializeField] Image[] chipBacks = Array.Empty<Image>();
         [SerializeField] TMP_Text[] chipLabels = Array.Empty<TMP_Text>();
+        [Tooltip("Çiplerin tuş kutuları ve çiplerin grubu: harekât bitince kutular kesik, çipler soluk (Revizyon 2 · S4c).")]
+        [SerializeField] Image[] chipKeys = Array.Empty<Image>();
+        [SerializeField] CanvasGroup chipGroup;
+        [SerializeField] Sprite keyDashed;
+        [SerializeField, Range(0, 1)] float endedAlpha = 0.45f;
+
+        Sprite[] keySolid = Array.Empty<Sprite>();
+        bool ended, locked;
 
         public event Action<int> StationClicked;
         public event Action SettingsClicked;
@@ -51,7 +59,29 @@ namespace Corrigible.Desk
             var mode = Preference;
             bool show = mode == Mode.Always || mode == Mode.Auto && !counterBankInView;
             if (bar.activeSelf != show) bar.SetActive(show);
-            foreach (var c in chips) c.interactable = !locked;
+            this.locked = locked;
+            foreach (var c in chips) c.interactable = !locked && !ended;
+        }
+
+        /// <summary>Harekât bitti (ölümcül kapı, son rapor): tuşlar kesikli ve soluk, tıklanmaz; yalnız Enter etkin.</summary>
+        public void SetEnded(bool on)
+        {
+            if (ended == on) return;
+            ended = on;
+            if (keySolid.Length != chipKeys.Length)
+            {
+                keySolid = new Sprite[chipKeys.Length];
+                for (int i = 0; i < chipKeys.Length; i++) keySolid[i] = chipKeys[i] != null ? chipKeys[i].sprite : null;
+            }
+            for (int i = 0; i < chipKeys.Length; i++)
+            {
+                var key = chipKeys[i];
+                if (key == null) continue;
+                key.sprite = on && keyDashed != null ? keyDashed : keySolid[i];
+                key.type = on && keyDashed != null ? Image.Type.Tiled : Image.Type.Sliced;
+            }
+            if (chipGroup != null) chipGroup.alpha = on ? endedAlpha : 1;
+            foreach (var c in chips) c.interactable = !locked && !on;
         }
 
         public void SetValues(string text) { if (values.text != text) values.text = text; }

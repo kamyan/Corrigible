@@ -4,8 +4,8 @@ using UnityEngine;
 namespace Corrigible.Desk.Bridge
 {
     /// <summary>
-    /// Masanın kâğıt niyetlerini oyuna iletir: baskın raporu kapanır (“Doc:Close”), harekât bitince yeniden başlanır
-    /// (“Restart”). Oda komutları (baskın emri, cephe, sığınak, vardiya) <see cref="LiberationDeskView"/>'dan geçer.
+    /// Masanın kâğıt niyetlerini oyuna iletir: harekât bitince yeniden başlanır (“Restart”). Oda komutları (baskın emri,
+    /// cephe, sığınak, vardiya) ve operasyon raporunun kapanışı <see cref="LiberationDeskView"/>'dan geçer.
     /// </summary>
     public sealed class SimDeskCommands : MonoBehaviour, IDeskCommands
     {
@@ -17,11 +17,6 @@ namespace Corrigible.Desk.Bridge
         {
             switch (command)
             {
-                case "Doc:Close":
-                    // Baskın raporu okundu: oda ve kamera kilidi açılır
-                    source.State.RaidLogSeen = Game.Sim.S.RaidLog.Count;
-                    source.MarkDirty();
-                    break;
                 case "Restart": Game.NewGame(); break;
                 default: Debug.LogWarning("[Desk] Bilinmeyen komut: " + command); break;
             }

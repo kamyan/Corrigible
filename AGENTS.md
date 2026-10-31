@@ -26,7 +26,8 @@ Ayrıntılar `Docs/` altında; burada bağlam, değişmez kurallar ve en sık ku
 | `Docs/MIMARI.md` | Assembly'ler, simülasyon/sunum ayrımı, kayıt/replay, sahneler, prefab'lar, UI, ses, lokalizasyon |
 | `Docs/GELISTIRME.md` | Unity CLI ile çalışma, testler, oyunu ajan olarak denemek, sık yapılan işler, bilinen tuzaklar |
 | `Docs/DURUM.md` | Ne yapıldı, hangi kararlar neden alındı, açık işler |
-| `Docs/UI_Siginak/IMPLEMENTATION_MAP.md` | Sığınak komuta odasının tasarım eşlemesi ve değişiklik günlüğü |
+| `Docs/UI_Siginak_Rev2/IMPLEMENTATION_MAP.md` | Sığınak komuta odası Revizyon 2 (S1–S8): güncel eşleme, açık sorular, görsel farklar, değişiklik günlüğü |
+| `Docs/UI_Siginak/IMPLEMENTATION_MAP.md` | İlk tur (K1–K7) eşlemesi, poz/kamera ayrıntısı ve günlüğü |
 
 ## Değişmez kurallar
 
@@ -54,7 +55,7 @@ Ayrıntılar `Docs/` altında; burada bağlam, değişmez kurallar ve en sık ku
    bileşen "Missing Script" olur (bu projede yaşandı).
 7. **Denge değerleri koda gömülmez.** `Balance` (C#) içinde durur; oyunda `Settings/BalanceConfig.asset` üzerinden
    düzenlenir. Renk ve ölçüler tema asset'lerinde (`Desk/Resources/SiginakTheme`, `SadeTheme`, `RaidTheme`,
-   `DeskTheme`; kaynakları `Desk/Data/*/tokens_*.json`), sesler `Settings/SoundBank.asset`'te.
+   `DeskTheme`; kaynakları `Desk/Data/*/tokens_*.json`, `Desk/Data/Sade/raid_tokens.json` ve `Docs/UI_C/spec/tokens.json`), sesler `Settings/SoundBank.asset`'te.
 8. **Değişiklikten sonra doğrula:** derle (yeni hata yok), EditMode testleri **boş sahne açıkken** geç, oyunda gerçekten
    dene (bkz. `Docs/GELISTIRME.md` → "Oyunu ajan olarak test etmek").
 9. **Oyuncuya görünen her metin çevrilir (Türkçe + İngilizce).** Kodda metin Türkçe yazılır ve `Loc` ile sarılır:

@@ -8,6 +8,8 @@ namespace Corrigible.Core
         public string Id;
         string name;
         public string Name { get => Loc.T(name); set => name = value; }
+        /// <summary>Çevrilmemiş ad (Türkçe kaynak); geçmişte başka dilde yazılmış metni tanımak için (sunum).</summary>
+        public string SourceName => name;
         public double Lon, Lat;
         /// <summary>Hesaplama gücü: taktik haritanın yerleşim seçimine katılır.</summary>
         public int Compute;

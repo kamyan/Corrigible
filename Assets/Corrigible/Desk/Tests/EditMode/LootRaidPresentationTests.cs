@@ -40,7 +40,7 @@ namespace Corrigible.Desk.Tests
                 source.Move(new Vector2Int(exit.X, exit.Y));
                 Assert.IsTrue(source.Current.Finished);
                 Assert.IsTrue(source.Current.Success);
-                Assert.AreEqual(Loc.T("İKMAL ALINDI"), source.Current.ResultTitle);
+                Assert.AreEqual(Loc.T("SEKTÖR GERİ ALINDI"), source.Current.ResultTitle);
                 Assert.IsTrue(source.Current.Targets.Single().Broken);
             }
             finally { Object.DestroyImmediate(root); }

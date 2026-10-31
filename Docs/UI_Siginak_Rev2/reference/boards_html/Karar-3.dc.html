@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Karar 3 · Maketin üst bandı</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&display=swap">
+<style>
+body{margin:0;background:#1C372C}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../board_assets/grain.png);background-size:256px 256px}
+.opt{display:flex;flex-direction:column;gap:12px;min-width:0}
+.oh{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.oh b{font:700 22px 'Courier Prime',monospace;letter-spacing:0.05em}
+.li{display:grid;grid-template-columns:22px minmax(0,1fr);column-gap:8px;font:400 19px/1.4 'Libre Franklin',Arial,sans-serif}
+.li b{font:700 19px 'Courier Prime',monospace}
+</style>
+</helmet>
+<div class="grain" style="width: 1920px; height: 1080px; box-sizing: border-box; background-color: #F1E9D6; color: #1E1B16; font-family: 'Libre Franklin', Arial, sans-serif; padding: 36px 48px; display: flex; flex-direction: column; gap: 22px">
+  <div style="display: flex; align-items: baseline; justify-content: space-between; border-bottom: 3px double #1E1B16; padding-bottom: 10px">
+    <span style="font: 700 32px 'Courier Prime', monospace; letter-spacing: 0.05em">KARAR 3 · MAKETİN ÜST BANDI</span>
+    <span style="font: 400 19px 'Libre Franklin', Arial, sans-serif; color: #463F34">Boş ve karanlık üst bant ne göstersin?</span>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 56px">
+    <div class="opt">
+      <div class="oh"><b>A · DEPO</b><span style="font: 700 16px 'Courier Prime', monospace; letter-spacing: 0.06em; color: #24592E; border: 2px solid #24592E; padding: 2px 8px; transform: rotate(-2deg)">ÖNERİLEN</span></div>
+      <img src="../board_assets/k3a.jpg" alt="Maketin üst bandı depo olarak: erzak sandıkları ve boş yer gölgeleri, malzeme kovaları, plaka rafı" style="width: 880px; height: 519px; display: block; border: 1px solid #463F34">
+      <div class="li"><b>+</b><span>Asıl soru makette sayılır: sandık = 3 erzak, kova = 5 malzeme, raf = 3 plaka; tebeşir tahtasında “ERZAK · 15 VARDİYA”.</span></div>
+      <div class="li"><b>+</b><span>Atölyenin döktüğü plaka rafa geçer: oda ile depo arasındaki bağ görünür.</span></div>
+      <div class="li"><b>−</b><span>Banda on dört küçük nesne; K1'den ayrıntı kaybolur, yalnız tebeşir yazısı okunur.</span></div>
+    </div>
+    <div class="opt">
+      <div class="oh"><b>B · YÜZEY ŞERİDİ</b></div>
+      <img src="../board_assets/k3b.jpg" alt="Maketin üst bandı yüzey olarak: toprak katmanı, yıkık bina siluetleri ve kırmızı ışıklı YZ direği" style="width: 880px; height: 519px; display: block; border: 1px solid #463F34">
+      <div class="li"><b>+</b><span>Hikâye: sığınağın üstünde yıkık yüzey ve YZ direği; tehdit hep görünür.</span></div>
+      <div class="li"><b>+</b><span>Az nesne, ucuz; K1'de de okunur bir siluet.</span></div>
+      <div class="li"><b>−</b><span>Bilgi taşımaz; özet panosundaki soruya cevap vermez, karar verdirmez.</span></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

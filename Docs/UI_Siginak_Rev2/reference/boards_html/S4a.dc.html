@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>S4a · Kapı · kapalı (çalınıyor)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&display=swap">
+<style>
+body{margin:0;background:#0E0906}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../board_assets/grain.png);background-size:256px 256px}
+</style>
+</helmet>
+<div style="position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #0E0906; font-family: 'Libre Franklin', Arial, sans-serif; color: #1E1B16">
+  <img src="../board_assets/s4a.jpg" alt="Kapı pozu, kapı kapalı: kapının üstünde yanan amber vuruş lambası ve sarı-siyah tehlike bandı, kapıda 07 şablon yazısı, el çarkı ve gözetleme deliği; sağda interkom kutusu, solda duvarda tebeşirle ziyaretçi çentikleri, sol altta CRT ve telsiz masası" style="position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: block">
+
+  <div class="grain" style="position: absolute; left: 40px; top: 64px; width: 470px; box-sizing: border-box; background-color: #F2E9CC; border: 1px solid #CDBF97; border-radius: 2px; box-shadow: 4px 5px 0 rgba(0,0,0,0.45); transform: rotate(-0.8deg); transform-origin: 50% 0; padding: 14px 18px 12px 20px; display: flex; flex-direction: column">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em; color: #675F50">
+      <span>KAPI · SIĞINAK 07</span><span>VARDİYA 014</span>
+    </div>
+    <div style="font: 700 28px/1.15 'Courier Prime', monospace; letter-spacing: 0.04em; padding-bottom: 6px; border-bottom: 2px solid #D2483F; margin-top: 2px">ALT KATTAN BİR ANNE</div>
+    <p style="margin: 10px 0 0 0; font: 400 19px/1.36 'Libre Franklin', Arial, sans-serif">Aceleci, düzensiz vuruşlar. “Lütfen! Oğlum ateşler içinde, yardım edin!”</p>
+    <div style="margin-top: 10px; display: grid; grid-template-columns: 26px minmax(0, 1fr); column-gap: 8px; padding: 8px 10px; background: #EAE0C2; border: 1px dashed #A8997A">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true" style="margin-top: 1px"><path d="M2 13 Q13 3.5 24 13 Q13 22.5 2 13 Z" fill="none" stroke="#463F34" stroke-width="2" stroke-linejoin="round"></path><circle cx="13" cy="13" r="3.8" fill="#463F34"></circle></svg>
+      <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+        <span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em; color: #675F50">GÖZETLEME DELİĞİ</span>
+        <span style="font: 400 19px/1.34 'Libre Franklin', Arial, sans-serif">Genç bir kadın; omzunda battaniyeye sarılı bir çocuk. Nefesi camı buğuluyor.</span>
+      </div>
+    </div>
+    <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px">
+      <button type="button" disabled style="display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; align-items: center; column-gap: 10px; height: 50px; padding: 0 12px 0 10px; background: #E4DCC6; border: 1px dashed #A8997A; border-radius: 2px; text-align: left; font: 600 19px 'Libre Franklin', Arial, sans-serif; color: #7A7262; cursor: default">
+        <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border: 1.5px solid #8A8374; border-radius: 2px; font: 700 14px 'Courier Prime', monospace; color: #7A7262; box-sizing: border-box">1</span>
+        <span>Gözetleme deliğinden bak</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.06em; color: #6B6455; border: 1.5px solid #8A8374; padding: 1px 6px; transform: rotate(-2deg)">BAKILDI</span>
+      </button>
+      <button type="button" style="display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; align-items: center; column-gap: 10px; height: 50px; padding: 0 12px 0 10px; background: #FBF7EC; border: 1px solid #B9AC8E; border-radius: 2px; box-shadow: 0 2px 0 #CDBF97; text-align: left; font: 600 19px 'Libre Franklin', Arial, sans-serif; color: #1E1B16; cursor: pointer">
+        <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border: 1.5px solid #463F34; border-radius: 2px; font: 700 14px 'Courier Prime', monospace; box-sizing: border-box">2</span>
+        <span>İnterkomdan parolayı sor</span>
+        <span></span>
+      </button>
+      <button type="button" style="display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; align-items: center; column-gap: 10px; height: 50px; padding: 0 12px 0 10px; background: #1E1B16; border: 1px solid #1E1B16; border-radius: 2px; box-shadow: 0 3px 0 #463F34; text-align: left; font: 600 19px 'Libre Franklin', Arial, sans-serif; color: #F4ECD8; cursor: pointer; transform: translateY(-2px)">
+        <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; background: #E6CF9C; border-radius: 2px; font: 700 14px 'Courier Prime', monospace; color: #1E1B16; box-sizing: border-box">3</span>
+        <span>Kapıyı aç</span>
+        <span></span>
+      </button>
+      <button type="button" style="display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; align-items: center; column-gap: 10px; height: 50px; padding: 0 12px 0 10px; background: #FBF7EC; border: 1px solid #B9AC8E; border-radius: 2px; box-shadow: 0 2px 0 #CDBF97; text-align: left; font: 600 19px 'Libre Franklin', Arial, sans-serif; color: #1E1B16; cursor: pointer">
+        <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border: 1.5px solid #463F34; border-radius: 2px; font: 700 14px 'Courier Prime', monospace; box-sizing: border-box">4</span>
+        <span>Açma</span>
+        <span></span>
+      </button>
+    </div>
+    <div style="margin-top: 10px; display: flex; align-items: center; gap: 8px; font: 400 15px/1.3 'Libre Franklin', Arial, sans-serif; color: #463F34">
+      <span style="display: inline-flex; align-items: center; height: 22px; padding: 0 5px; border: 1px solid #463F34; border-radius: 2px; font: 700 14px 'Courier Prime', monospace; color: #1E1B16">Esc</span>
+      <span>masaya dön · ziyaretçi vardiya bitene kadar bekler</span>
+    </div>
+  </div>
+
+  <div style="position: absolute; left: 0; top: 0; width: 1920px; height: 40px; box-sizing: border-box; padding: 0 16px; background: rgba(14,9,6,0.94); border-bottom: 1px solid #6E5A33; display: flex; align-items: center; justify-content: space-between; gap: 20px; font: 700 16px 'Courier Prime', monospace; letter-spacing: 0.06em; color: #C9A86A">
+    <div style="display: flex; align-items: center; gap: 14px; white-space: nowrap">
+      <span>VARDİYA <b style="color: #E6CF9C">014</b></span><span style="color: #6E5A33">·</span>
+      <span>FON <b style="color: #E6CF9C">62,0</b></span><span style="color: #6E5A33">·</span>
+      <span>ERZAK <b style="color: #E6CF9C">22/30</b></span><span style="color: #6E5A33">·</span>
+      <span>MALZEME <b style="color: #E6CF9C">19</b></span><span style="color: #6E5A33">·</span>
+      <span>ÖZGÜR <b style="color: #E6CF9C">1/12</b></span><span style="color: #6E5A33">·</span>
+      <span>GÜVEN <b style="color: #E6CF9C">11/20</b></span><span style="color: #6E5A33">·</span>
+      <span>ALARM <b style="color: #E6CF9C">4/10</b></span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px; white-space: nowrap">
+      <span style="display: flex; align-items: center; gap: 6px"><span style="display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 4px; border: 1px solid #6E5A33; border-radius: 2px; color: #E6CF9C; font-size: 14px; letter-spacing: 0">1</span>KOMUTA</span>
+      <span style="display: flex; align-items: center; gap: 6px"><span style="display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 4px; border: 1px solid #6E5A33; border-radius: 2px; color: #E6CF9C; font-size: 14px; letter-spacing: 0">2</span>SIĞINAK</span>
+      <span style="display: flex; align-items: center; gap: 6px"><span style="display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 4px; border: 1px solid #6E5A33; border-radius: 2px; color: #E6CF9C; font-size: 14px; letter-spacing: 0">3</span>GÖREVLER</span>
+      <span style="display: flex; align-items: center; gap: 6px; color: #0E0906; background: #C9A86A; padding: 2px 8px 2px 3px; border-radius: 2px"><span style="display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 4px; background: #0E0906; border-radius: 2px; color: #E6CF9C; font-size: 14px; letter-spacing: 0">4</span>KAPI</span>
+      <span style="display: flex; align-items: center; gap: 6px"><span style="display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 4px; border: 1px solid #6E5A33; border-radius: 2px; color: #E6CF9C; font-size: 14px; letter-spacing: 0">H</span>KILAVUZ</span>
+      <span style="display: flex; align-items: center; gap: 6px"><span style="display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 4px; border: 1px solid #6E5A33; border-radius: 2px; color: #E6CF9C; font-size: 14px; letter-spacing: 0">Home</span>MASA</span>
+      <span style="width: 1px; height: 22px; background: #6E5A33"></span>
+      <button type="button" style="display: flex; align-items: center; gap: 6px; background: transparent; border: 0; padding: 0; color: #C9A86A; font: 700 16px 'Courier Prime', monospace; letter-spacing: 0.06em; cursor: pointer"><span style="display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 4px; border: 1px solid #6E5A33; border-radius: 2px; color: #E6CF9C; font-size: 14px; letter-spacing: 0">Esc</span>AYARLAR</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

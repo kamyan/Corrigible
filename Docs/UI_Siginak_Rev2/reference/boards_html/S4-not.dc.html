@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>S4 · Uygulama notu</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&display=swap">
+<style>
+body{margin:0;background:#1C372C}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../board_assets/grain.png);background-size:256px 256px}
+</style>
+</helmet>
+<div class="grain" style="width: 1280px; height: 1080px; box-sizing: border-box; background-color: #F1E9D6; color: #1E1B16; font-family: 'Libre Franklin', Arial, sans-serif; display: flex; flex-direction: column">
+  <div style="padding: 24px 32px 12px 32px; border-bottom: 2px solid #D2483F; display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+    <div style="font: 700 28px 'Courier Prime', monospace; letter-spacing: 0.04em">S4 · KAPI</div>
+    <div style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em; color: #675F50">KAMERA AYNI · KAPI POZU</div>
+  </div>
+  <div style="flex: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; padding: 14px 32px 16px 32px; min-height: 0; font-size: 14px; line-height: 1.36">
+    <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0">
+      <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">ESKİ → YENİ</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <div style="display: grid; grid-template-columns: 96px minmax(0, 1fr); row-gap: 6px; column-gap: 10px">
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">kapı</span><span>Çıplak çelik → sarı-siyah tehlike bandı, üstünde vuruş lambası (amber; ölümcülde kırmızı), gözetleme deliği kapağı, el çarkı, şablon 07, sağda interkom, solda tebeşirle ziyaretçi çentikleri (her ziyaretçi bir çentik).</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">koridor</span><span>Karanlık → aydınlık merdiven boşluğu; siluet arkadan ışık alır, biçimi okunur.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">siluet</span><span>Herkes için aynı → altı tür (S4d), tür içinde küçük çeşitleme.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">kâğıt</span><span>Yeri ve dili aynı. Gözetleme sonucu ayrı blokta (göz işareti + GÖZETLEME DELİĞİ). Kullanılan seçenek gri + BAKILDI damgası. Devre dışı seçeneğin nedeni sağda. Bedel ve etki sağda Courier (−8 erzak, güven −1).</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">ölümcül</span><span>Tasarımı yoktu → oda kırmızı, lamba kırmızı, kâğıtta seçim satırı (SEÇİM · 3 KAPIYI AÇ), çift çizgili kırmızı VURULDU damgası, tek düğme SON RAPORA GEÇ; kenar satırındaki tuşlar kesikli ve soluk (devre dışı). SIZMA aynı kalıp, damgada SIZMA. Metinler örnek.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">kenar satırı</span><span>4 KAPI fişi etkin; GÜVEN ve ALARM eklendi.</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">NESNELER</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <div style="display: grid; grid-template-columns: 112px minmax(0, 1fr); row-gap: 5px; column-gap: 10px">
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">kanat</span><span>0,86 × 2,0 m çelik #3A3F33; el çarkı Ø 0,36 #A3241A; şablon 07 #D8D2BE.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">tehlike bandı</span><span>0,96 × 0,11 m, #E3B23C / #1E1B16, 45° şerit, düz doku.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">vuruş lambası</span><span>Ø 0,09 m kafesli cam; emissive amber #FFB347 2,4; ölümcülde #F0443A 3,0.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">gözetleme</span><span>Ø 0,04 pirinç halka, kapak 0,07 × 0,05 kayar.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">interkom</span><span>0,16 × 0,22 × 0,05 bakalit, ızgara + düğme; konuşurken amber nokta.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">çentik</span><span>Tebeşir decal 0,12 × 0,10, #E6E2D4 α .8, üstünde “ziyaretçi”.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">merdiven</span><span>İki nokta ışık #F4F1E6 1,2; fayans #DDE3DD; basamak kenarı #5A5A52.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">kâğıt</span><span>Overlay, 470 px, #F2E9CC, kenar #CDBF97, −0,8° (ölümcülde −1,4°). Seçenek satırı 50 px, 9 dilim; damga CP 700 66, 6 px çift kenar, −8°.</span>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0">
+      <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">ETKİLEŞİM VE DURUMLAR</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <div style="display: grid; grid-template-columns: 112px minmax(0, 1fr); row-gap: 5px; column-gap: 10px">
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">seçenek</span><span>Normal: kâğıt beyazı #FBF7EC, gölge 2 px. Üzerinde: mürekkep zemin, 2 px yükselir, tuş fişi pirince döner. Basılı: gölge 0, 1 px iner. Devre dışı: kesikli kenar, gri yazı, sağda neden (“revirde görevli yok”). Yetersiz kaynak: satır açık, “−8 erzak” üstü çizik + “erzak yetersiz”; basınca kâğıt 0,1 s titrer.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">kullanılmış</span><span>Gri + BAKILDI damgası; seçilmez, sonucu gözlem bloğunda kalır.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">dünyada</span><span>Gözetleme deliği ve interkom tıklanır (seçenek 1 ve 2 ile aynı); üzerinde sarı kontur 2 px.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">Esc</span><span>Masaya dön; ziyaretçi vardiya bitene kadar bekler, 4 · KAPI tuşunun lambası yanıp söner.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">ölümcülde</span><span>Yalnız Enter / SON RAPORA GEÇ etkin; öteki tuşlar devre dışı.</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">HAREKET VE SES</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <div style="display: grid; grid-template-columns: 112px minmax(0, 1fr); row-gap: 5px; column-gap: 10px">
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">vuruş</span><span>Üç vuruş 0,9 s; lamba her vuruşta 0,08 s parlar → kamera kapıya 0,6 s (bugünkü) → kâğıt soldan 0,22 s.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">gözetleme</span><span>Kapak 0,15 s kayar (metal “şık”); gözlem bloğu 0,25 s'de yazılır; BAKILDI damgası 0,1 s.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">interkom</span><span>Cızırtı 0,2 s, amber nokta yanar; cevap satırı kâğıda daktiloyla 0,03 s/harf.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">kapıyı aç</span><span>El çarkı 0,5 s döner, kanat 0,8 s'de açılır, merdiven ışığı 0,3 s'de yanar, siluet belirir.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">ölümcül</span><span>Atış → oda ışığı 0,05 s'de kırmızı, lamba kırmızı, kâğıt 0,1 s sarsılır, VURULDU damgası 0,12 s (ağır “tak”); 0,6 s sonra düğme belirir.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">kapanış</span><span>Kanat 0,6 s kapanır (çarkın “klak” sesi), kâğıt 0,18 s'de sola çekilir.</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">İNGİLİZCE</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <div style="color: #463F34">DOOR · SHELTER 07 · SHIFT 014 · PEEPHOLE · LOOKED · “no one on duty in the infirmary” · SHOT · INFILTRATED · CHOICE · 3 OPEN THE DOOR · GO TO FINAL REPORT. Satırlar kâğıt genişliğinde sarar; seçenek satırı 50 px'ten uzayabilir.</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

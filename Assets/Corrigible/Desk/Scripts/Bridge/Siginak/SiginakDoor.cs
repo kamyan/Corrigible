@@ -7,12 +7,15 @@ using UnityEngine.InputSystem;
 namespace Corrigible.Desk.Bridge
 {
     /// <summary>
-    /// Sığınak kapısının oyun bağlantısı. Biri kapıyı çalınca (vardiya raporu dosyalanıp masa boşalınca) vuruş sesi gelir,
-    /// kapının lambası yanıp söner, tavan ampulü titrer, teleks “KAPI ÇALIYOR” basar ve kamera kapıya döner; kâğıt açılır. Kapalı kapıda gözetleme
-    /// deliğinden bakmak ve interkomdan parolayı sormak sunumdur; kapıyı açmak, açmamak ve açık kapıdaki seçimler
-    /// <see cref="LiberationDeskView.AnswerDoor"/> komutudur. Esc kâğıdı kapatır, ziyaretçi vardiya bitene kadar bekler
-    /// (K ya da kapıya tıklamak geri getirir; vardiya biterse açılmadı sayılır ve teleksten basılır). Kapıyı açmak harekâtı
-    /// bitirdiyse son rapor, kâğıttaki “Son rapor” düğmesine kadar bekletilir.
+    /// Sığınak kapısının oyun bağlantısı (Revizyon 2 · S4). Biri kapıyı çalınca (vardiya raporu dosyalanıp masa boşalınca)
+    /// üç vuruş gelir, vuruş lambası amber yanar ve her vuruşta parlar, tavan ampulü titrer, teleks “KAPI ÇALIYOR” basar ve
+    /// kamera kapıya döner; kâğıt açılır. Kapalı kapıda gözetleme deliğinden bakmak (kapak kayar) ve interkomdan parolayı
+    /// sormak (amber nokta, cevap daktiloyla) sunumdur; kapıyı açmak, açmamak ve açık kapıdaki seçimler
+    /// <see cref="LiberationDeskView.AnswerDoor"/> komutudur (yetersiz kaynakta komut denenir, teleks gerekçeyi basar, kâğıt
+    /// titrer). Kapı açılınca merdivende kartın silueti görünür. Esc kâğıdı kapatır, ziyaretçi vardiya bitene kadar bekler
+    /// (4 · KAPI, K ya da kapıya tıklamak geri getirir; vardiya biterse açılmadı sayılır ve teleksten basılır). Kapıyı açmak
+    /// harekâtı bitirdiyse (VURULDU, SIZMA) atış anında oda ve lamba kırmızıya döner, kâğıda damga iner; yalnız Enter / SON
+    /// RAPORA GEÇ etkindir ve son rapor ona basılana kadar bekletilir. Kapının yanındaki tebeşir çentiği ziyaretçileri sayar.
     /// </summary>
     public sealed class SiginakDoor : MonoBehaviour
     {
@@ -31,15 +34,22 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] BulbFlicker bulb;
         [Tooltip("Vuruştan sonra kameranın kapıya dönmesine kadar geçen süre.")]
         [SerializeField, Min(0)] float knockSeconds = 1.1f;
+        [Tooltip("Kapının yanındaki tebeşir ziyaretçi çentiği (her ziyaretçi bir çizgi).")]
+        [SerializeField] ChalkTally tally;
+        [Tooltip("Ölümcül kapıda kırmızıya dönen oda ışıkları (tavan ampulü, banker lambası; Soru 10'un ara cevabı).")]
+        [SerializeField] Light[] roomLights = System.Array.Empty<Light>();
+        [Tooltip("Kapı açıldıktan sonra atışın (ölümcül anın) gecikmesi.")]
+        [SerializeField, Min(0)] float fatalSeconds = 0.9f;
 
         /// <summary>Kapının üzerine gelme etiketi (sahnedeki başlık bu kaynağı taşır; satır dile göre buradan yazılır).</summary>
         static readonly string TargetTitle = Loc.N("SIĞINAK KAPISI"), TargetLine = Loc.N("Biri çalınca: gözetleme deliği, interkom, kapıyı aç ya da açma.");
 
         DoorPhase phase;
         DoorVisit shown, announced;
-        bool peeked, asked;
+        bool peeked, asked, red;
         int logSeen, quietUntil = -1;
-        float turnAt = -1, shotAt = -1;
+        float turnAt = -1, fatalAt = -1;
+        Color[] roomColors = System.Array.Empty<Color>();
 
         Simulation Sim => game != null ? game.Sim : null;
         /// <summary>Kâğıt açık, kapı kımıldıyor ya da vuruş kameranın dönmesini bekliyor: masa kilitli.</summary>
@@ -85,10 +95,11 @@ namespace Corrigible.Desk.Bridge
         {
             card.Hide();
             prop.ResetClosed();
+            RoomRed(false);
             if (phase != DoorPhase.None && rig != null) rig.Locked = false;
             phase = DoorPhase.None;
             shown = announced = null;
-            turnAt = shotAt = -1;
+            turnAt = fatalAt = -1;
             logSeen = Sim?.S.Door?.Log.Count ?? 0;
             if (source != null) source.State.HoldEnding = false;
         }
@@ -98,11 +109,9 @@ namespace Corrigible.Desk.Bridge
             var sim = Sim;
             if (sim?.S.Door == null) return;
             ReportUnanswered(sim);
-            if (shotAt >= 0 && Time.unscaledTime >= shotAt)
-            {
-                shotAt = -1;
-                Sfx.Play(Cue.DoorShot, 1f, Pan());
-            }
+            if (tally != null) tally.Show(sim.S.Door.Log.Count);
+            prop.SetIntercom(card.IsOpen && card.IntercomTyping);
+            if (fatalAt >= 0 && Time.unscaledTime >= fatalAt) Fatal();
             if (turnAt >= 0)
             {
                 if (Time.unscaledTime < turnAt) return;
@@ -114,9 +123,10 @@ namespace Corrigible.Desk.Bridge
             {
                 var v = sim.DoorVisitor;
                 prop.SetKnocking(v != null && !v.Open);
-                if (v == null || surface.BlockedExceptDoor || rig.InTransition) return;
-                if (v != announced) Knock(v);
-                else if (KeyPressed(Keyboard.current?.kKey)) Open(v);
+                if (surface.BlockedExceptDoor || rig.InTransition) return;
+                if (v != null && v != announced) { Knock(v); return; }
+                var kb = Keyboard.current;
+                if (KeyPressed(kb?.digit4Key) || KeyPressed(kb?.numpad4Key) || KeyPressed(kb?.kKey)) Visit();
                 return;
             }
             ReadKeys();
@@ -126,17 +136,20 @@ namespace Corrigible.Desk.Bridge
         {
             var kb = Keyboard.current;
             if (kb == null || card.Animating) return;
+            bool fatal = shown?.Ending != null;
+            // Sonuçta Enter geniş düğmeye basar; ölümcülde öteki tuşlar devre dışı (Esc de)
+            if (phase == DoorPhase.Result && (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame))
+            {
+                card.PressAction();
+                return;
+            }
             if (kb.escapeKey.wasPressedThisFrame)
             {
-                if (phase == DoorPhase.Result) Choose(shown?.Ending != null ? DoorViewBuilder.Ending : DoorViewBuilder.Close);
+                if (phase == DoorPhase.Result) { if (!fatal) Choose(DoorViewBuilder.Close); }
                 else Close();
                 return;
             }
-            if (phase == DoorPhase.Result && (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame))
-            {
-                Choose(shown?.Ending != null ? DoorViewBuilder.Ending : DoorViewBuilder.Close);
-                return;
-            }
+            if (phase == DoorPhase.Result) return;
             for (int i = 0; i < card.Slots && i < 9; i++)
                 if (KeyPressed(kb[Key.Digit1 + i]) || KeyPressed(kb[Key.Numpad1 + i])) { card.PressKey(i); return; }
         }
@@ -148,14 +161,26 @@ namespace Corrigible.Desk.Bridge
         {
             announced = v;
             peeked = asked = false;
-            prop.SetKnocking(true);
+            prop.Knock();
             if (bulb != null) bulb.Burst();
             Sfx.Play(Cue.DoorKnock, 0.9f, Pan());
-            telex.Post(surface.Shift, Loc.T("KAPI ÇALIYOR"), Loc.T("Sığınağın kapısında biri var · K ile kapıya bak"), TelexKind.Alarm);
+            telex.Post(surface.Shift, Loc.T("KAPI ÇALIYOR"), Loc.T("Sığınağın kapısında biri var · 4 ile kapıya bak"), TelexKind.Alarm);
             turnAt = Time.unscaledTime + knockSeconds;
         }
 
-        /// <summary>K ya da kapıya tıklamak: bekleyen ziyaretçinin kâğıdı yeniden açılır.</summary>
+        /// <summary>
+        /// 4 · KAPI (anahtar rayı, kenar satırı ya da 4/K tuşu): bekleyen ziyaretçinin kâğıdı açılır; kapıda kimse yoksa kamera
+        /// kapıya bakar (Home masaya döndürür).
+        /// </summary>
+        public void Visit()
+        {
+            var v = Sim?.DoorVisitor;
+            if (phase != DoorPhase.None || surface.BlockedExceptDoor || rig.InTransition || turnAt >= 0) return;
+            if (v == null) rig.Focus(SiginakPose.Door);
+            else if (v == announced) Open(v);
+        }
+
+        /// <summary>Kapıya tıklamak: bekleyen ziyaretçinin kâğıdı yeniden açılır.</summary>
         void Reopen()
         {
             var v = Sim?.DoorVisitor;
@@ -170,8 +195,15 @@ namespace Corrigible.Desk.Bridge
             phase = v.Open ? DoorPhase.Open : DoorPhase.Closed;
             rig.Focus(SiginakPose.Door);
             rig.Locked = true;
-            if (v.Open) prop.SetOpen(true, !DoorCards.Get(v.Card).Nobody);
+            if (v.Open) OpenDoor(v);
             card.Show(Build(), true);
+        }
+
+        /// <summary>Kapı açılır; merdivende kartın silueti (kimse durmuyorsa boş), ziyarete bağlı boy ve taraf.</summary>
+        void OpenDoor(DoorVisit v)
+        {
+            var (height, mirror) = DoorViewBuilder.Variation(v);
+            prop.SetOpen(true, DoorCards.Get(v.Card).Nobody ? null : DoorViewBuilder.Silhouette(v.Card), height, mirror);
         }
 
         DoorCardData Build() => DoorViewBuilder.Build(Sim, phase, shown, peeked, asked);
@@ -185,9 +217,11 @@ namespace Corrigible.Desk.Bridge
                 case DoorViewBuilder.Peek:
                     peeked = true;
                     prop.SetPeek(true);
+                    Sfx.Play(Cue.DoorPeep, 0.7f, Pan());
                     card.Bind(Build());
                     return;
                 case DoorViewBuilder.Ask:
+                    // Cızırtı 0,2 s, amber nokta yanar; cevap kâğıda daktiloyla yazılır
                     asked = true;
                     Sfx.Play(Cue.TeamRadio, 0.6f, Pan());
                     card.Bind(Build());
@@ -196,9 +230,11 @@ namespace Corrigible.Desk.Bridge
                     Close();
                     return;
                 case DoorViewBuilder.Ending:
-                    // Son rapor ancak şimdi açılır
+                    // Son rapor ancak şimdi açılır; oda ışığı geri döner
                     if (source != null) { source.State.HoldEnding = false; source.MarkDirty(); }
                     card.Hide();
+                    RoomRed(false);
+                    prop.SetFatal(false);
                     phase = DoorPhase.None;
                     rig.Locked = false;
                     Quiet();
@@ -211,19 +247,25 @@ namespace Corrigible.Desk.Bridge
         void Answer(Simulation sim, string id)
         {
             var visit = shown;
-            var cardDef = DoorCards.Get(visit.Card);
             if (source != null) source.State.HoldEnding = true;
             var result = surface.AnswerDoor(id);
             if (source != null && sim.S.Ending == null) source.State.HoldEnding = false;
-            if (result == null || !result.Ok) { card.Bind(Build()); return; }
+            if (result == null || !result.Ok)
+            {
+                // Yapılamadı (ör. yetersiz erzak): teleks gerekçeyi bastı, kâğıt titrer
+                card.Bind(Build());
+                if (result != null) card.Shake();
+                return;
+            }
             prop.SetKnocking(false);
             if (id == Simulation.DoorOpen)
             {
                 prop.SetPeek(false);
-                prop.SetOpen(true, !cardDef.Nobody);
+                OpenDoor(visit);
                 Sfx.Play(Cue.DoorOpen, 0.9f, Pan());
-                if (visit.Ending == "vuruldu") shotAt = Time.unscaledTime + 0.9f;
             }
+            // Harekâtı bitiren kapı: kapı aralanınca atış (ya da sızma) anı
+            if (visit.Ending != null) fatalAt = Time.unscaledTime + (id == Simulation.DoorOpen ? fatalSeconds : 0.1f);
             // Ziyaret sürüyorsa açık kapı, bittiyse sonuç
             phase = sim.DoorVisitor == visit ? DoorPhase.Open : DoorPhase.Result;
             if (phase == DoorPhase.Result)
@@ -238,15 +280,49 @@ namespace Corrigible.Desk.Bridge
         /// <summary>Kâğıt kapanır, kamera masaya döner; ziyaret bittiyse kapı da kapanır.</summary>
         void Close()
         {
-            card.Hide();
+            card.Hide(true);
             prop.SetPeek(false);
             var v = Sim?.DoorVisitor;
-            if (v == null || !v.Open) prop.SetOpen(false);
+            if (v == null || !v.Open)
+            {
+                if (prop.IsOpen) Sfx.Play(Cue.DoorClose, 0.8f, Pan());
+                prop.SetOpen(false);
+            }
             phase = DoorPhase.None;
             shown = null;
             rig.Locked = false;
             rig.ResetView();
             Quiet();
+        }
+
+        /// <summary>
+        /// Ölümcül an (S4 › hareket): atış sesi (VURULDU), oda ışığı 0,05 s'de kırmızı, lamba kırmızı, kâğıt sarsılır ve
+        /// damga iner (ağır “tak”); düğme 0,6 s sonra.
+        /// </summary>
+        void Fatal()
+        {
+            fatalAt = -1;
+            if (shown?.Ending == null) return;
+            if (shown.Ending == "vuruldu") Sfx.Play(Cue.DoorShot, 1f, Pan());
+            Sfx.Play(Cue.StampHeavy, 0.9f);
+            prop.SetFatal(true);
+            RoomRed(true);
+            card.PlayFatal();
+        }
+
+        /// <summary>Oda ışıklarının rengi: ölümcülde door.fatalRoomLight, değilse sahnedeki renk.</summary>
+        void RoomRed(bool on)
+        {
+            if (red == on) return;
+            red = on;
+            if (roomColors.Length != roomLights.Length)
+            {
+                roomColors = new Color[roomLights.Length];
+                for (int i = 0; i < roomLights.Length; i++) roomColors[i] = roomLights[i] != null ? roomLights[i].color : Color.white;
+            }
+            var fatalColor = SiginakTheme.Active.ColorOf("door.fatalRoomLight");
+            for (int i = 0; i < roomLights.Length; i++)
+                if (roomLights[i] != null) roomLights[i].color = on ? fatalColor : roomColors[i];
         }
 
         /// <summary>Kâğıdı kapatan Esc ya da Enter aynı karede masaya (ayarlar, şalter) geçmesin.</summary>
@@ -263,7 +339,7 @@ namespace Corrigible.Desk.Bridge
                 if (!v.Auto) continue;
                 telex.Post(surface.Shift, Loc.T("KAPI AÇILMADI"), DoorViewBuilder.Telex(v), TelexKind.Info);
                 if (v == announced) { announced = null; prop.SetKnocking(false); }
-                if (v.Open) prop.SetOpen(false);
+                if (v.Open) { prop.SetOpen(false); Sfx.Play(Cue.DoorClose, 0.8f, Pan()); }
             }
         }
 

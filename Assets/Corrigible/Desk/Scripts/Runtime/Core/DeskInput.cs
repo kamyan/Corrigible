@@ -4,9 +4,9 @@ using UnityEngine.InputSystem;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Masa klavye haritası: üstteki kâğıt tuşları alır (ayarlar: Esc; oyun sonu: Enter; baskın raporu: Enter/Esc, Boşluk
-    /// basılıyken haritaya bak), yoksa oda kısayolları (1 ve 3 görev fişi, H emir belgesi, Esc). Kamera pozlarını
-    /// <see cref="SiginakCameraRig"/> kendisi okur. <c>Keyboard.current</c> okunur; her karede bellek ayırmaz.
+    /// Masa klavye haritası: üstteki kâğıt tuşları alır (ayarlar: Esc; oyun sonu: Enter), yoksa oda kısayolları (1 ve 3 görev
+    /// fişi, H emir belgesi, Esc). Operasyon raporu ve vardiya raporu kendi tuşlarını okur (masa o sırada kilitli). Kamera
+    /// pozlarını <see cref="SiginakCameraRig"/> kendisi okur. <c>Keyboard.current</c> okunur; her karede bellek ayırmaz.
     /// </summary>
     public sealed class DeskInput : MonoBehaviour
     {
@@ -20,17 +20,8 @@ namespace Corrigible.Desk
 
             var st = SettingsView.Instance;
             if (st != null && st.IsOpen) { if (kb.escapeKey.wasPressedThisFrame) st.Close(); return; }
-            var go = GameOverView.Instance;
-            if (go != null && go.IsOpen) { if (enter) go.InvokeKey("Enter"); return; }
-            var ev = EventModalView.Instance;
-            if (ev != null && ev.IsOpen)
-            {
-                // Belge: Enter birincil (masaya dön), Esc ikincil
-                if (enter) ev.PressDoc(true);
-                else if (kb.escapeKey.wasPressedThisFrame) ev.PressDoc(false);
-                ev.SetPeek(kb.spaceKey.isPressed);
-                return;
-            }
+            var final = FinalReportView.Instance;
+            if (final != null && final.IsOpen) { if (enter) final.PressRestart(); return; }
 
             var surface = presenter.Surface;
             if (surface == null || surface.InputBlocked) return;

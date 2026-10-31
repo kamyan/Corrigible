@@ -1,1 +1,0 @@
-return Corrigible.Ayna.EditorTools.AynaLearningBench.Start(new Corrigible.Ayna.EditorTools.LearningBenchOptions { Bot="Habit", Series=10, Tactical=true, Directory="Docs/AYNA/denge/F3/unity_verification" });

@@ -4,34 +4,27 @@ using UnityEngine;
 namespace Corrigible.Desk.EditorTools
 {
     /// <summary>
-    /// Sığınak odasının 3B görüntüsü (PROMPT §7; reference/renders ile karşılaştırma için Overlay arayüz olmadan): ana kamera
-    /// rig pozundan render edilir, sonra eski pozuna döner. Overlay dahil durumlu set için <see cref="SiginakCaptureSet"/>.
+    /// Sığınak odasının 3B görüntüsü (Overlay arayüz olmadan; ayrıntı denetimi için): ana kamera rig pozundan render edilir, sonra
+    /// eski pozuna döner. Overlay dahil durumlu set için <see cref="SiginakCaptureSet"/>.
     /// </summary>
     public static class SiginakCapture
     {
-        public const string OutDir = "Docs/UI_Siginak/screens_unity";
-
-        /// <summary>Tasarım panolarının poz adları → rig pozu.</summary>
-        static readonly System.Collections.Generic.Dictionary<string, SiginakPose> PoseNames = new System.Collections.Generic.Dictionary<string, SiginakPose>
-        {
-            ["K1"] = SiginakPose.Desk, ["Map"] = SiginakPose.Map, ["K2"] = SiginakPose.Map, ["K3"] = SiginakPose.Map,
-            ["K4"] = SiginakPose.Shelf, ["K5a"] = SiginakPose.Crt, ["K6a"] = SiginakPose.Shift, ["K6b"] = SiginakPose.Map, ["K7"] = SiginakPose.Map,
-        };
+        public const string OutDir = SiginakCaptureSet.OutDir;
 
         static SiginakCameraRig Rig() => Object.FindFirstObjectByType<SiginakCameraRig>(FindObjectsInactive.Include);
 
-        /// <summary>Pozu (K1, Map/K2/K3/K6b/K7, K4, K5a, K6a) sığınak rig'iyle render eder; <paramref name="gray"/> renk körlüğü denetimi için gri kopya da yazar.</summary>
-        public static string Render(string pose = "K1", string file = null, bool gray = false, int width = 1920, int height = 1080)
+        /// <summary>Pozu (<see cref="SiginakPose"/> adı: Desk, Map, Shelf, Crt, Shift, Door) sığınak rig'iyle render eder; <paramref name="gray"/> renk körlüğü denetimi için gri kopya da yazar.</summary>
+        public static string Render(string pose = "Desk", string file = null, bool gray = false, int width = 1920, int height = 1080)
         {
             var rig = Rig();
             if (rig == null) return "Sahnede SiginakCameraRig yok (DeskGame açık mı?)";
-            if (!PoseNames.TryGetValue(pose, out var rigPose)) return "Poz yok: " + pose + " (K1, Map, K4, K5a, K6a)";
+            if (!System.Enum.TryParse(pose, out SiginakPose rigPose)) return "Poz yok: " + pose + " (" + string.Join(", ", System.Enum.GetNames(typeof(SiginakPose))) + ")";
             var cam = rig.GetComponent<Camera>();
             var before = rig.Current;
             try
             {
                 rig.Snap(rigPose);
-                string path = Path.Combine(OutDir, file ?? pose + ".png");
+                string path = Path.Combine(OutDir, file ?? "3d_" + pose + ".png");
                 Write(cam, width, height, path, false);
                 if (gray) Write(cam, width, height, Path.ChangeExtension(path, null) + "_gray.png", true);
                 return path;

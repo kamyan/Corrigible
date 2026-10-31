@@ -173,7 +173,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -502,9 +502,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 6895b2c00bd134ed1ae1554fe41f83eb, type: 3}
+  m_Sprite: {fileID: 21300000, guid: bb60ba060e7dc4abca85e4a150df3bbf, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -674,6 +674,7 @@ GameObject:
   - component: {fileID: 6745069828443228199}
   - component: {fileID: 2076837456063918281}
   - component: {fileID: 3430883046564975952}
+  - component: {fileID: 5289424611995483486}
   m_Layer: 5
   m_Name: Paper
   m_TagString: Untagged
@@ -753,6 +754,21 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 0
+--- !u!114 &5289424611995483486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6671328029661895980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Shadow
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.35}
+  m_EffectDistance: {x: 1, y: -2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &6756731158255964707
 GameObject:
   m_ObjectHideFlags: 0
@@ -903,12 +919,17 @@ MonoBehaviour:
   - {fileID: 3068341957337017068}
   - {fileID: 8566068746187500929}
   - {fileID: 4106735141994527220}
-  fullPip: {fileID: 21300000, guid: ee734c550fb374854a61cf2ef44f4054, type: 3}
-  emptyPip: {fileID: 21300000, guid: b267f0b98784a41acbaece8a5895dcaf, type: 3}
-  pipSize: 8
-  gap: 2
-  healthHeight: 15
-  padding: 3
+  fullPip: {fileID: 21300000, guid: 099ee69063bf948f7be0e2b582975284, type: 3}
+  emptyPip: {fileID: 21300000, guid: 1cc99db6e5ed34a039eca597dda601bc, type: 3}
+  pipSize: 11
+  gap: 3
+  healthHeight: 24
+  padding: 5
+  glyphSize: 18
+  glyphGap: 4
+  flagSize: {x: 30, y: 28}
+  flagFontPixels: 20
+  edgeArmor: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
 --- !u!1 &8624570118664560426
 GameObject:
   m_ObjectHideFlags: 0

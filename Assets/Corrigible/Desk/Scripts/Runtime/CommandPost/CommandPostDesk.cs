@@ -23,8 +23,7 @@ namespace Corrigible.Desk
         public bool InteractionBlocked => ExternalBlocked || !isActiveAndEnabled || view == null || !view.enabled ||
             presenter == null || presenter.Commands == null ||
             (SettingsView.Instance != null && SettingsView.Instance.IsOpen) ||
-            (GameOverView.Instance != null && GameOverView.Instance.IsOpen) ||
-            (EventModalView.Instance != null && EventModalView.Instance.IsOpen);
+            (FinalReportView.Instance != null && FinalReportView.Instance.IsOpen);
 
         /// <summary>İmleç ekranda en üstteki tıklanabilir yüzey olarak bir Overlay canvas'ın üstünde mi.</summary>
         public bool PointerOverOverlay

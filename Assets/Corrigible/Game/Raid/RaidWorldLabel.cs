@@ -66,11 +66,26 @@ namespace Corrigible.Game.Raid
             screenLabel.Configure(camera, layer, font, minimumFontPixels); screenLabel.SetPaperColor(paperInk);
         }
 
-        public void ShowHealth(int hp, int max, Color ink, bool target = false, bool armor = false)
+        public void ShowHealth(int hp, int max, Color ink, bool target = false, bool armor = false, Sprite glyph = null, Color? loss = null)
         {
             if (screenLabel == null) { Show(Corrigible.Core.Loc.F("{0}/{1}", hp, max), ink, ink); return; }
             gameObject.SetActive(true); screenLabel.SetPaperColor(paperColor);
-            screenLabel.ShowHealth(hp, max, ink, target, armor); screenLabel.Refresh(transform.position);
+            screenLabel.ShowHealth(hp, max, ink, target, armor, glyph, loss); screenLabel.Refresh(transform.position);
+        }
+
+        /// <summary>Niyet rozeti (yalnız simge, kâğıtsız); ekran etiketi yoksa gizli.</summary>
+        public void ShowIcon(Sprite icon, float size, Color tint)
+        {
+            if (screenLabel == null || icon == null) { gameObject.SetActive(false); return; }
+            gameObject.SetActive(true); screenLabel.ShowIcon(icon, size, tint); screenLabel.Refresh(transform.position);
+        }
+
+        /// <summary>Sıra bayrağı (30 × 28, rakam 20 px); ekran etiketi yoksa düz yazı.</summary>
+        public void ShowFlag(string value, Color ink, Color edge)
+        {
+            if (screenLabel == null) { Show(value, ink, edge); return; }
+            gameObject.SetActive(true); screenLabel.SetPaperColor(paperColor);
+            screenLabel.ShowFlag(value, ink, edge); screenLabel.Refresh(transform.position);
         }
 
         public void OffsetPixels(Vector2 offset)
@@ -124,6 +139,8 @@ namespace Corrigible.Game.Raid
                 gameObject.SetActive(true); screenLabel.SetPaperColor(paperColor);
                 screenLabel.ShowText(value, ink, edge, pixels); screenLabel.Refresh(transform.position); return;
             }
+            // Play'den çıkarken ekran etiketi önce yok edilir; dünya yazısı hiç kurulmadıysa çizecek bir şey yok
+            if (text == null) return;
             if (text.text == value && textColor == ink && edgeColor == edge && dashed == dashedEdge && preferred.y > 0)
             {
                 gameObject.SetActive(true); Refresh(); return;
@@ -143,6 +160,8 @@ namespace Corrigible.Game.Raid
             Refresh();
         }
 
+        /// <summary>Ekran etiketini damga gibi indirir (yalnız ekran etiketinde).</summary>
+        public void Stamp(float seconds) { if (screenLabel != null) screenLabel.Stamp(seconds); }
         public void SetOpacity(float value) { if (Mathf.Approximately(opacity, value)) return; opacity = value; screenLabel?.SetOpacity(value); dirty = true; Refresh(); }
         public void SetPaperColor(Color value) { if (paperColor == value) return; paperColor = value; screenLabel?.SetPaperColor(value); dirty = true; Refresh(); }
 
@@ -198,14 +217,5 @@ namespace Corrigible.Game.Raid
             overlayMaterials.Clear();
         }
         void OnDisable() { if (screenLabel != null) screenLabel.gameObject.SetActive(false); }
-
-        /// <summary>İçeriği değiştirmeden gizler ya da yeniden gösterir (ekran etiketi de birlikte).</summary>
-        public void SetVisible(bool on)
-        {
-            gameObject.SetActive(on);
-            if (!on || screenLabel == null) return;
-            screenLabel.gameObject.SetActive(true);
-            screenLabel.Refresh(transform.position);
-        }
     }
 }

@@ -79,7 +79,7 @@ namespace Corrigible.Desk.Bridge
             Changed?.Invoke(current);
         }
 
-        DeskViewModel Build() => game?.Sim == null ? new DeskViewModel() : builder.Build(game.Sim, state, RaidLauncher.IsRaidLoaded);
+        DeskViewModel Build() => game?.Sim == null ? new DeskViewModel() : builder.Build(game.Sim, state);
 
         /// <summary>Yeni oyun ya da kayıttan devam: eski baskın raporları okunmuş sayılır.</summary>
         void ResetState()

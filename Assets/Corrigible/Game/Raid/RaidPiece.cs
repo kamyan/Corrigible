@@ -17,18 +17,28 @@ namespace Corrigible.Game.Raid
         [SerializeField] TMP_Text order;
         [SerializeField] TMP_Text flag;
         [SerializeField] GameObject selectRing;
-        [Tooltip("Karton figür: tur sonunda arka yüzüne döner, düşünce geriye devrilir.")]
+        [Tooltip("Uzman piyonu: tur sonunda harf Y'de 180° arkasını döner.")]
         [SerializeField] bool standee;
         [SerializeField] TMP_Text stateLabel;
         [SerializeField] GameObject damageMark;
+        [Tooltip("Tur bitince açılan işaret (piyonun altlığındaki ✓ etiketi); düşünce kapanır.")]
+        [SerializeField] GameObject spentMark;
+        [Tooltip("Zırh plakası (piyonun altlığında); RaidBoard3D birimin zırhına göre açar.")]
+        [SerializeField] GameObject plateMark;
         [SerializeField] Color spentTint = new Color(0.46f, 0.42f, 0.35f);
+        [Tooltip("Tur bitince boyanan renderer'ların spentTint'e karışma oranı (1 = tam renk).")]
+        [Range(0, 1)] [SerializeField] float spentBlend = 0.35f;
+        [Tooltip("Düşünce gövdenin yerel dönüşü (derece).")]
+        [SerializeField] Vector3 downEuler = new Vector3(85, 0, 0);
+        [Tooltip("Düşünce gövdenin yükselmesi (devrilen harf altlığın kenarına yaslanır).")]
+        [SerializeField] float downLift;
         [Tooltip("Havada süzülme genliği (dron).")]
         [SerializeField] float hover;
 
         public int X, Y;
         public string Kind;
         public Transform Body => body != null ? body : transform;
-        public Quaternion DownRotation => bodyRotation * Quaternion.Euler(85, 0, 0);
+        public Quaternion DownRotation => bodyRotation * Quaternion.Euler(downEuler);
 
         static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
         static readonly int EmissionColor = Shader.PropertyToID("_EmissionColor");
@@ -77,6 +87,8 @@ namespace Corrigible.Game.Raid
 
         public void SetSelected(bool on) { if (selectRing != null && selectRing.activeSelf != on) selectRing.SetActive(on); }
 
+        public void SetPlate(bool on) { if (plateMark != null && plateMark.activeSelf != on) plateMark.SetActive(on); }
+
         public void SetSpent(bool on)
         {
             if (spent == on) return;
@@ -107,7 +119,8 @@ namespace Corrigible.Game.Raid
         void ApplyPose(bool animate = false)
         {
             Body.localScale = bodyScale;
-            Body.localPosition = bodyRest;
+            Body.localPosition = bodyRest + (down ? Vector3.up * downLift : Vector3.zero);
+            if (spentMark != null) spentMark.SetActive(spent && !down);
             var rotation = down ? DownRotation : bodyRotation * (standee && spent ? Quaternion.Euler(0, 180, 0) : Quaternion.identity);
             flipping = animate;
             if (animate) { poseFrom = Body.localRotation; poseTo = rotation; poseStarted = Time.time; }
@@ -142,11 +155,11 @@ namespace Corrigible.Game.Raid
             for (int i = 0; i < tinted.Length; i++)
             {
                 if (tinted[i] == null || baseColors[i] == null) continue;
-                // Çok malzemeli kartın ön/arka yüzü ile dolabın üç yüzünün boyaları ayrı kalır.
+                // Çok malzemeli parçalarda (dolabın üç yüzü) her malzemenin boyası ayrı kalır.
                 for (int j = 0; j < baseColors[i].Length; j++)
                 {
                     tinted[i].GetPropertyBlock(mpb, j);
-                    var rest = spent && !standee ? Color.Lerp(baseColors[i][j], spentTint, 0.35f) : baseColors[i][j];
+                    var rest = spent && !down ? Color.Lerp(baseColors[i][j], spentTint, spentBlend) : baseColors[i][j];
                     mpb.SetColor(BaseColor, Color.Lerp(rest, flashColor, f * 0.65f));
                     mpb.SetColor(EmissionColor, Color.black);
                     tinted[i].SetPropertyBlock(mpb, j);

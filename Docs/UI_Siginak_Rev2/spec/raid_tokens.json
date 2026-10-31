@@ -1,0 +1,1751 @@
+{
+ "meta": {
+  "name": "Son Şalter · Baskın (taktik harita) tokenları",
+  "version": "1.2",
+  "date": "2026-10-30",
+  "extends": "UI_C/spec/tokens.json (renk, yazı, boşluk, gölge, bileşen ölçüleri aynen geçerli)",
+  "units": "UI: 1920×1080 referans px. 3D: dünya birimi (1 birim = 1 kare). Renkler sRGB hex; alfa 0–1.",
+  "fonts": {
+   "title_numbers_keys_labels": "Courier Prime 400/700",
+   "body_buttons": "Libre Franklin 400–800 (damga 800)",
+   "hand_only": "Kalam 400/700, en küçük 15 px",
+   "minimumPx": 11,
+   "fallbackGlyphs": "DejaVu Sans (← → ↗ ↘ ✓ ✗ ·)"
+  },
+  "changes": "1.1 (Revizyon 2): kenar panelleri ozalit + kontrplak; tur şeridi 34 px + son iki tur işareti + SON TUR damgası; evre çipi; makine türü işaretleri; can etiketi 11 px pip + tür işareti; sıra bayrağı 30 × 28 / 20 px; kilit niyeti; uzman canı altlıkta; TELSİZ fişi; sonuç kartı; EN metinleri. 1.2: üç makine türü (zırhlı dron, patlayan robot, çoğaltıcı: işaret + 3D ölçü), on bölge özelliği işareti (regionTraits), dört niyet (havan atışı, patlama, kalkan, kopyalama), kopyalama hedef halkası, zarar vermeyen niyet kuralı, etikette zırh simgesi. Yalnız ekleme: 1.1 değerlerinden hiçbiri değişmedi.",
+  "newMarker": "1.1: YENİ “_new_1_1”, DEĞİŞEN “_changed_1_1” (eski değer “_was_1_1”); yeni grupların “_” açıklamasında ★2. 1.2: YENİ “_new_1_2”; yeni grupların “_” açıklamasında ★3."
+ },
+ "_new_1_2": [
+  "machineTypes.armorDrone",
+  "machineTypes.bomber",
+  "machineTypes.replicator",
+  "machineTypes.glyph",
+  "regionTraits",
+  "materials3d.armorDrone",
+  "materials3d.bomber",
+  "materials3d.replicator",
+  "marks.ghostWake",
+  "intents.lob",
+  "intents.blast",
+  "intents.shield",
+  "intents.clone",
+  "intents.nonHarmful",
+  "labels.hpTag.armorIcon",
+  "strings.tr2.machines",
+  "strings.tr2.regionTraits",
+  "strings.tr2.intents",
+  "strings.en.machines",
+  "strings.en.regionTraits",
+  "strings.en.intents"
+ ],
+ "_new_1_1": [
+  "panel",
+  "turnStrip",
+  "phaseChip",
+  "machineTypes",
+  "intents.lock",
+  "labels.pawnTag",
+  "labels.wake",
+  "radioSlip",
+  "abilityCard",
+  "resultCard",
+  "trainingNote",
+  "strings.en",
+  "strings.tr2"
+ ],
+ "_changed_1_1": [
+  "labels.hpTag",
+  "labels.orderFlag",
+  "intents.fire",
+  "intents.melee",
+  "layout1080.teamCards",
+  "layout1080.teamCardSelectedLiftPx",
+  "layout1080.targetForm",
+  "layout1080.endTurnButton",
+  "layout1080.undoButton",
+  "layout1080.retreatButton",
+  "layout1080.rulesCard"
+ ],
+ "_was_1_1": {
+  "labels.hpTag": {
+   "heightPx": 18,
+   "paddingPx": [
+    0,
+    4
+   ],
+   "gapPx": 3,
+   "paper": "#FBF7EC",
+   "borderPx": 1,
+   "shadow": "(1,1) #000 α .35",
+   "pip": {
+    "sizePx": 7,
+    "gapPx": 2
+   },
+   "font": "Courier Prime Bold 11 (harf 12)",
+   "colors": {
+    "aiOwned": "#9A1E14",
+    "neutral": "#463F34",
+    "team": "#1E1B16",
+    "teamDone": "kâğıt #E9DDC6",
+    "teamDown": "#9A1E14 + kâğıt #F3E3DC"
+   },
+   "placement": {
+    "object": "tepe noktasının 8 px üstü, ortalı",
+    "unit": "kart tepesinin 5 px üstü",
+    "robot": "altlığın önü (zemin, v+0.34), ortalı",
+    "unitDown": "altlığın önü"
+   }
+  },
+  "labels.orderFlag": {
+   "needlePx": [
+    2,
+    34
+   ],
+   "needle": "#5E5A54",
+   "paper": "#FBF7EC",
+   "borderPx": 1.5,
+   "heightPx": 21,
+   "font": "Courier Prime Bold 14",
+   "anchor": "robotun tepe noktası, bayrak sağa açılır"
+  },
+  "intents.fire": {
+   "strokePx": 3.0,
+   "arrowheadPx": 14,
+   "startZ": 0.3,
+   "endZ": 0.16,
+   "endInsetUnits": 0.4,
+   "startOffsetUnits": 0.24
+  },
+  "intents.melee": {
+   "strokePx": 4.6,
+   "arcRisePx": 26,
+   "arrowheadPx": 15,
+   "impactTicks": 3,
+   "endInsetUnits": 0.3
+  },
+  "layout1080.teamCards": [
+   [
+    16,
+    64,
+    376,
+    140
+   ],
+   [
+    16,
+    214,
+    376,
+    140
+   ],
+   [
+    16,
+    364,
+    376,
+    140
+   ]
+  ],
+  "layout1080.teamCardSelectedLiftPx": 5,
+  "layout1080.targetForm": [
+   1528,
+   64,
+   376,
+   262
+  ],
+  "layout1080.endTurnButton": [
+   1528,
+   1016,
+   376,
+   48
+  ],
+  "layout1080.undoButton": [
+   1274,
+   1018,
+   112,
+   44
+  ],
+  "layout1080.retreatButton": [
+   16,
+   1018,
+   150,
+   44
+  ],
+  "layout1080.rulesCard": {
+   "folded": [
+    16,
+    516,
+    376,
+    40
+   ],
+   "open": [
+    16,
+    516,
+    376,
+    300
+   ]
+  }
+ },
+ "camera": {
+  "projection": "orthographic",
+  "eulerDeg": [
+   35,
+   45,
+   0
+  ],
+  "pixelsPerUnitAt1080": 88.388,
+  "orthographicSizeAt1080": 6.1094,
+  "orthographicSizeFormula": "orthoSize = (Screen.height / canvasScale) / 176.777",
+  "tileDiamondPx": [
+   125.0,
+   71.7
+  ],
+  "diamondWidthOverHeight": 1.743,
+  "heightPxPerUnit": 72.4,
+  "visibleFaces": [
+   "top",
+   "west (ekranda sol alt)",
+   "south (ekranda sağ alt)"
+  ],
+  "gridToWorld": "x = c (doğu +), z = −r (kuzey +); kamera +x +z yönüne bakar → (0,0) ekranda sol köşe, (7,0) üst, (7,7) sağ, (0,7) alt",
+  "screenFromGrid1080": "x = 460 + (u + v) · 62.5 ; y = 528 + (v − u) · 35.85 − z · 72.41  (u = sütun, v = satır, z = yükseklik; kare merkezi u+0.5, v+0.5)",
+  "framing": {
+   "viewportUI": "x 408 … W/s − 408 ; y 50 … H/s − 78",
+   "rule": "ızgaranın ortası (4,4) görüş alanının ortasına; kamera sağ/yukarı ekseninde (dx, −dy) / 88.39 birim kaydırılır",
+   "boardCenterAt1080": [
+    960,
+    528
+   ]
+  }
+ },
+ "light": {
+  "key": {
+   "type": "directional (masa lambası)",
+   "from": "kuzeybatı, 50° yükseklik",
+   "color": "#FFE3B0",
+   "intensity": 1.15,
+   "shadows": "soft, kısa (distance 20, cascade 1)",
+   "shadowStrength": 0.55
+  },
+  "fill": {
+   "type": "directional ya da ambient",
+   "color": "#9FB4C8",
+   "intensity": 0.35,
+   "shadows": "none"
+  },
+  "shadowLook": {
+   "hex": "#1C1006",
+   "alpha": 0.3
+  },
+  "shadowDirectionPerUnitHeight": {
+   "u": 0.21,
+   "v": 0.36,
+   "screenPx": [
+    35.6,
+    5.4
+   ]
+  },
+  "lampPoolOnFelt": {
+   "hex": "#FFE0AA",
+   "alpha": 0.12
+  },
+  "vignette": {
+   "hex": "#000000",
+   "alpha": 0.26
+  },
+  "bloom": false,
+  "emissive": "yok (kırmızı mercek ve göz düz renk)"
+ },
+ "colors": {
+  "felt": "#1C372C",
+  "woodDesk": "#2A1C13",
+  "rail": "#160F0A",
+  "ozalitPaper": "#D3DBD6",
+  "ozalitLine": "#2C4C8E",
+  "ozalitLineGridAlpha": 0.42,
+  "ozalitLineFrameAlpha": 0.85,
+  "plywoodTop": "#C9A36B",
+  "plywoodWest": "#B38B57",
+  "plywoodSouth": "#93703F",
+  "plywoodPly": "#6E522C",
+  "chipboard": {
+   "top": "#A79E8D",
+   "west": "#8C8475",
+   "south": "#6E675B",
+   "edge": "#4A443B"
+  },
+  "paintNode": {
+   "top": "#3B3734",
+   "west": "#2C2826",
+   "south": "#201D1B"
+  },
+  "paintCore": {
+   "top": "#3E2B28",
+   "west": "#30211F",
+   "south": "#241817"
+  },
+  "paintBackup": {
+   "top": "#4C3733",
+   "west": "#3D2C29",
+   "south": "#2F211F"
+  },
+  "paintCivil": {
+   "top": "#ECE6D6",
+   "west": "#D5CDBB",
+   "south": "#BAB19E"
+  },
+  "paintCooling": {
+   "top": "#9DB2B1",
+   "west": "#839897",
+   "south": "#687D7C"
+  },
+  "paintCopy": {
+   "top": "#6E2D25",
+   "west": "#58241E",
+   "south": "#451B17"
+  },
+  "steelArmor": {
+   "light": "#9A9C98",
+   "mid": "#7F817E",
+   "dark": "#636562"
+  },
+  "robotGunmetal": {
+   "top": "#5B5E62",
+   "west": "#46494D",
+   "south": "#34373A",
+   "dark": "#26282B",
+   "maintTop": "#686B70",
+   "maintWest": "#4F5257",
+   "maintSouth": "#383B3F"
+  },
+  "robotAccent": "#9A1E14",
+  "robotLens": "#B8241A",
+  "acrylicRod": {
+   "hex": "#DCE6EA",
+   "alpha": 0.55
+  },
+  "standeeCard": "#FBF7EC",
+  "standeeInk": "#1E1B16",
+  "standeeRule": "#D2483F",
+  "standeeBack": "#B89D74",
+  "standeeBackInk": "#6E5536",
+  "standeeBase": "#1E1B16",
+  "tape": {
+   "hex": "#ECE2BE",
+   "alpha": 0.78
+  },
+  "trench": "#2A2622",
+  "trenchWall": "#4A433B",
+  "copper": "#B8682C",
+  "copperHighlight": "#E09A5C",
+  "hazardStripe": "#A9520A",
+  "mirror": "#C8CED0",
+  "mirrorHighlight": "#EEF2F3",
+  "sticker": "#F1E9D6",
+  "paintChip": "#9C7A50",
+  "warningSticker": "#F1C24B",
+  "fanGrille": "#3E4A4A",
+  "soot": {
+   "hex": "#2B241D",
+   "alpha": 0.45
+  },
+  "status": {
+   "threat": "#9A1E14",
+   "warning": "#854005",
+   "info": "#1A4789",
+   "good": "#24592E"
+  },
+  "intentRed": "#B8241A",
+  "highlighter": "#F5DC63",
+  "pin": {
+   "head": "#B8241A",
+   "needle": "#7E7C78"
+  }
+ },
+ "materials3d": {
+  "_rule": "URP Lit/Simple Lit, düz renk; doku yalnız belirtilen yerlerde. Pivot karenin merkezinde, zeminde (y=0). Ölçüler birim.",
+  "boardBase": {
+   "size": [
+    8.6,
+    0.25,
+    8.6
+   ],
+   "marginUnits": 0.3,
+   "texture": "tx_plywood (kenar katları) + tx_ozalit (üst)",
+   "paperInset": 0.05,
+   "smoothness": 0.1
+  },
+  "floorTile": {
+   "size": [
+    1,
+    0,
+    1
+   ],
+   "texture": "tx_ozalit (2048², 8×8 ızgara, çift çerçeve, ölçü çentikleri, giriş kapıları)"
+  },
+  "wall": {
+   "size": [
+    0.94,
+    0.55,
+    0.94
+   ],
+   "texture": "tx_chipboard (yan yüzlerde 2 katman çizgisi)",
+   "smoothness": 0.1
+  },
+  "channel": {
+   "grooveWidth": 0.6,
+   "grooveDepth": 0.14,
+   "endInset": 0.1,
+   "copperCableWidthPx": 4.2,
+   "note": "komşu kanal kareleriyle birleşir; kenarlarda turuncu çizgiler basılı"
+  },
+  "nodeCabinet": {
+   "size": [
+    0.74,
+    0.92,
+    0.74
+   ],
+   "hp": 4,
+   "armored": true,
+   "armorStripWidth": 0.07,
+   "details": "üstte kırmızı düğüm simgesi, güneyde krem etiket, batıda sunucu yuvaları"
+  },
+  "coreCabinet": {
+   "size": [
+    0.8,
+    1.0,
+    0.8
+   ],
+   "hp": "5 (yedek çekirdek varsa 4)",
+   "armored": true,
+   "details": "güneyde kırmızı “Ç” rozeti"
+  },
+  "backupCore": {
+   "size": [
+    0.6,
+    0.58,
+    0.6
+   ],
+   "hp": 2,
+   "armored": false,
+   "details": "kesik çizgili “Ç” + YEDEK etiketi"
+  },
+  "civilServer": {
+   "size": [
+    0.64,
+    0.66,
+    0.64
+   ],
+   "hp": 1,
+   "details": "mavi şerit, havalandırma yarıkları, tepede mavi artı"
+  },
+  "coolingUnit": {
+   "shape": "silindir 16 kenar",
+   "radius": 0.33,
+   "height": 0.42,
+   "hp": 1,
+   "explodes": "4 komşu kareye 1 hasar"
+  },
+  "copyCabinet": {
+   "size": [
+    0.72,
+    0.8,
+    0.72
+   ],
+   "hp": 2,
+   "details": "güneyde ayna paneli, tepede kopya simgesi"
+  },
+  "debris": {
+   "maxHeight": 0.36,
+   "pieces": "5–7 kutu + eğik kapak",
+   "soot": "zeminde α .45 elips r 0.44"
+  },
+  "damage": {
+   "cornerChip": 0.12,
+   "cracks": "2 yüzde boya çatlağı (ahşap rengi)",
+   "perHpLost": "1 çatlak decal'ı"
+  },
+  "standee": {
+   "base": {
+    "radius": 0.27,
+    "height": 0.07,
+    "ring": {
+     "hex": "#F1E9D6",
+     "alpha": 0.75
+    }
+   },
+   "card": {
+    "width": 0.46,
+    "height": 0.66,
+    "thicknessPx": 2.2,
+    "cornerRadiusPx": 7
+   },
+   "letter": "Courier Prime Bold 28 px @1080",
+   "states": {
+    "ready": "krem ön yüz",
+    "damaged": "sağ üst köşe yırtık + bant",
+    "done": "Y'de 180° → kraft arka yüz, kontur harf, tik",
+    "down": "geriye yatmış kart + kırmızı kalem çarpı",
+    "selected": "karede mavi çift çerçeve"
+   }
+  },
+  "drone": {
+   "base": {
+    "radius": 0.24,
+    "height": 0.05
+   },
+   "rod": [
+    0.05,
+    0.4
+   ],
+   "body": {
+    "radius": 0.2,
+    "z": [
+     0.4,
+     0.49
+    ]
+   },
+   "rotors": {
+    "radius": 0.1,
+    "offset": 0.24,
+    "z": 0.5
+   },
+   "hp": 2,
+   "move": 3
+  },
+  "maintenanceRobot": {
+   "base": {
+    "radius": 0.31,
+    "height": 0.05
+   },
+   "tracks": [
+    0.54,
+    0.12,
+    0.46
+   ],
+   "body": [
+    0.44,
+    0.33,
+    0.38
+   ],
+   "head": [
+    0.22,
+    0.13,
+    0.19
+   ],
+   "antennaTop": 0.76,
+   "hp": 2,
+   "move": 2
+  },
+  "ghost": {
+   "alpha": 0.42,
+   "shadow": false,
+   "ring": {
+    "stroke": "#1E1B16",
+    "dashPx": [
+     4,
+     3
+    ],
+    "fill": {
+     "hex": "#F1E9D6",
+     "alpha": 0.35
+    },
+    "radius": 0.34
+   }
+  },
+  "armorDrone": {
+   "_": "★3 zırhlı dron: dron ailesi, ağırlaştırılmış. raid.js → armorDrone().",
+   "hp": 2,
+   "armor": 1,
+   "move": 3,
+   "base": {
+    "radius": 0.26,
+    "height": 0.05
+   },
+   "rod": [
+    0.068,
+    0.37
+   ],
+   "hull": {
+    "shape": "sekizgen",
+    "radius": 0.205,
+    "z": [
+     0.38,
+     0.49
+    ]
+   },
+   "armourBand": {
+    "radius": 0.222,
+    "z": [
+     0.38,
+     0.43
+    ],
+    "color": "#9A9C98"
+   },
+   "frontPlate": {
+    "size": [
+     0.045,
+     0.13,
+     0.24
+    ],
+    "tiltDeg": 18,
+    "color": "#9A9C98"
+   },
+   "rotors": {
+    "radius": 0.098,
+    "offset": 0.31,
+    "z": 0.49,
+    "duct": {
+     "radius": 0.118,
+     "height": 0.065,
+     "lip": 0.012
+    }
+   },
+   "lens": {
+    "radius": 0.042,
+    "z": 0.355,
+    "side": "ön"
+   },
+   "topZ": 0.53,
+   "footprint": [
+    0.7,
+    0.7
+   ]
+  },
+  "bomber": {
+   "_": "★3 patlayan robot: deniz mayını gövde. raid.js → bomber().",
+   "hp": 1,
+   "armor": 0,
+   "move": 3,
+   "base": {
+    "radius": 0.26,
+    "height": 0.05
+   },
+   "stem": {
+    "radius": 0.085,
+    "z": [
+     0.05,
+     0.18
+    ]
+   },
+   "body": {
+    "shape": "küre",
+    "radius": 0.2,
+    "centerZ": 0.38
+   },
+   "belt": {
+    "tube": 0.016,
+    "color": "#34373A"
+   },
+   "horns": {
+    "count": 7,
+    "layout": "1 tepede + 6 tanesi 24° yükseklikte",
+    "radius": [
+     0.02,
+     0.026
+    ],
+    "length": 0.07,
+    "cap": 0.024,
+    "color": "#7F817E"
+   },
+   "lens": {
+    "radius": 0.04,
+    "z": 0.32,
+    "side": "ön"
+   },
+   "topZ": 0.66,
+   "footprint": [
+    0.52,
+    0.52
+   ]
+  },
+  "replicator": {
+   "_": "★3 çoğaltıcı: paletli hangar + üst pistte küçük dron. raid.js → replicator().",
+   "hp": 2,
+   "armor": 0,
+   "move": 2,
+   "base": {
+    "radius": 0.31,
+    "height": 0.05
+   },
+   "tracks": [
+    0.54,
+    0.12,
+    0.46
+   ],
+   "body": [
+    0.46,
+    0.28,
+    0.42
+   ],
+   "bodyZ": [
+    0.17,
+    0.45
+   ],
+   "bay": {
+    "size": [
+     0.17,
+     0.25
+    ],
+    "side": "ön",
+    "color": "#26282B"
+   },
+   "ramp": {
+    "size": [
+     0.13,
+     0.016,
+     0.23
+    ],
+    "tiltDeg": 32
+   },
+   "pad": {
+    "radius": 0.16,
+    "z": 0.461
+   },
+   "miniDrone": {
+    "scale": 0.45,
+    "rotorRadius": 0.045,
+    "rotorOffset": 0.135,
+    "topZ": 0.55,
+    "lens": "yok (göz makinenin)"
+   },
+   "lens": {
+    "radius": 0.032,
+    "z": 0.405,
+    "side": "ön, sol üst köşe"
+   },
+   "topZ": 0.55,
+   "footprint": [
+    0.64,
+    0.62
+   ]
+  }
+ },
+ "marks": {
+  "_rule": "Asetat: zemine yapışık quad + 4 şerit çerçeve; ışıksız, ZWrite kapalı. Tarama tek döşenen doku (yön karo uzayında). İçe pay birim cinsinden.",
+  "move": {
+   "color": "#1A4789",
+   "fillAlpha": 0.16,
+   "hatchAlpha": 0.34,
+   "hatch": {
+    "widthPx": 1.6,
+    "spacingUnits": 0.11,
+    "direction": "v-sabit (ekranda ↗)"
+   },
+   "edgeAlpha": 0.85,
+   "edgePx": 2.0,
+   "insetUnits": 0.07
+  },
+  "abilityTarget": {
+   "color": "#24592E",
+   "fillAlpha": 0.08,
+   "edgeAlpha": 0.92,
+   "edgePx": 2.4,
+   "insetUnits": 0.07,
+   "cornerUnits": 0.2,
+   "cornerPx": 4.2
+  },
+  "abilityTargetStrong": {
+   "color": "#24592E",
+   "fillAlpha": 0.18,
+   "edgePx": 3.4,
+   "brackets": {
+    "screenSpace": true,
+    "padPx": 8,
+    "armPx": 16,
+    "strokePx": 3.4,
+    "underlay": {
+     "hex": "#FBF7EC",
+     "alpha": 0.9
+    },
+    "underlayPx": 7
+   }
+  },
+  "selected": {
+   "color": "#1A4789",
+   "fillAlpha": 0.1,
+   "outerPx": 3.0,
+   "outerInset": 0.05,
+   "innerPx": 1.2,
+   "innerInset": 0.13,
+   "alpha": 0.95
+  },
+  "hitCertain": {
+   "color": "#9A1E14",
+   "fillAlpha": 0.12,
+   "hatchAlpha": 0.46,
+   "hatch": {
+    "widthPx": 1.8,
+    "spacingUnits": 0.085,
+    "direction": "u-sabit (ekranda ↘)"
+   },
+   "edgeAlpha": 0.9,
+   "edgePx": 2.4
+  },
+  "hitMaybeLie": {
+   "color": "#9A1E14",
+   "fillAlpha": 0.08,
+   "hatchAlpha": 0.3,
+   "edgeColor": "#A9520A",
+   "edgeDashPx": [
+    7,
+    4.5
+   ],
+   "edgeAlpha": 0.92,
+   "edgePx": 2.4
+  },
+  "repair": {
+   "color": "#9A1E14",
+   "fillAlpha": 0.06,
+   "edgeDashPx": [
+    2,
+    4
+   ],
+   "edgeAlpha": 0.85,
+   "edgePx": 2.0,
+   "cap": "round"
+  },
+  "hover": {
+   "color": "#1E1B16",
+   "fillAlpha": 0.06,
+   "edgeAlpha": 0.88,
+   "edgePx": 1.8,
+   "insetUnits": 0.03,
+   "cornerPx": 3.2,
+   "cornerUnits": 0.16
+  },
+  "wake": {
+   "color": "#9A1E14",
+   "ringRadiusUnits": 0.33,
+   "ringPx": 2.4,
+   "fillAlpha": 0.12,
+   "innerDashedRadius": 0.17,
+   "rays": {
+    "count": 8,
+    "fromUnits": 0.38,
+    "toUnits": 0.47,
+    "px": 2.2
+   },
+   "pin": {
+    "head": "#B8241A",
+    "needle": "#7E7C78",
+    "heightPx": 17
+   }
+  },
+  "scanArea": {
+   "color": "#1A4789",
+   "dotPx": [
+    2,
+    4
+   ],
+   "strokePx": 2.2,
+   "alpha": 0.9,
+   "metricInDrawing": "Manhattan ≤ 3 (oyunun kendi hesabı geçerli)"
+  },
+  "ghostWake": {
+   "_": "★3 kopyalama niyetinin hedef karesi: uyanma halkasının biçimi, kesik, #854005; iğne yok. Kopyalama uygulanınca marks.wake (kırmızı, iğneli) yerine geçer. raid.js → ghostWake().",
+   "color": "#854005",
+   "ringRadiusUnits": 0.33,
+   "ringPx": 2.4,
+   "dashes": 12,
+   "dashInk": 0.6,
+   "fillAlpha": 0.1,
+   "rays": {
+    "count": 8,
+    "fromUnits": 0.38,
+    "toUnits": 0.47,
+    "px": 2.2
+   }
+  }
+ },
+ "intents": {
+  "color": "#B8241A",
+  "shadow": {
+   "color": "#000000",
+   "alpha": 0.28,
+   "offsetPx": [
+    1.5,
+    2
+   ]
+  },
+  "fire": {
+   "strokePx": 3.4,
+   "arrowheadPx": 16,
+   "startZ": 0.3,
+   "endZ": 0.16,
+   "endInsetUnits": 0.4,
+   "startOffsetUnits": 0.24
+  },
+  "melee": {
+   "strokePx": 4.6,
+   "arcRisePx": [
+    14,
+    26
+   ],
+   "arrowheadPx": 15,
+   "impactTicks": 3,
+   "endInsetUnits": 0.3
+  },
+  "repair": {
+   "strokePx": 2.6,
+   "arcRisePx": 26,
+   "arrowheadPx": 11,
+   "icon": "anahtar, krem daire r 9.5 px",
+   "popup": "+1"
+  },
+  "certainty": {
+   "sure": "düz çizgi, bayrak kırmızı kenar",
+   "maybe": "kesik 10/6 px, bayrak turuncu kesik kenar + halkalı Kalam “?”",
+   "scanned": "düz çizgi, bayrak mavi kenar + ONAYLANDI mührü (✓)"
+  },
+  "execution": {
+   "now": {
+    "highlighter": {
+     "hex": "#F5DC63",
+     "alpha": 0.95
+    },
+    "extraPx": 9,
+    "flag": "kırmızı dolgu, krem rakam 16 px"
+   },
+   "done": {
+    "alpha": 0.35,
+    "flagAlpha": 0.55,
+    "strikeNumber": true
+   },
+   "cancel": "bayrak gri, rakam kırmızı çizili"
+  },
+  "depth": "ZTest Always (parçaların üstünde)",
+  "lock": {
+   "strokePx": 4.6,
+   "arcRisePx": 26,
+   "arrowheadPx": 15,
+   "badge": "Ø26 krem daire + kıskaç, yayın ortasında",
+   "endInsetUnits": 0.3
+  },
+  "lob": {
+   "_": "★3 havan atışı: engellerin üstünden yüksek yay; hasar verir → kırmızı.",
+   "color": "#B8241A",
+   "strokePx": 3.4,
+   "arrowheadPx": 16,
+   "arcRise": {
+    "ratioOfChord": 0.4,
+    "minPx": 90,
+    "direction": "ekranda dikey yukarı (kontrol noktası kiriş ortasının 2 × tepe üstünde)"
+   },
+   "start": "namlu ağzı (havan robotu, z 0.8)",
+   "end": "hedef parçanın tepe noktasının 10 px üstü; boş karede zemin + 0.16",
+   "targetMark": "marks.hitCertain (belki → marks.hitMaybeLie)"
+  },
+  "blast": {
+   "_": "★3 patlama: ok yok; dört komşu kare alan olarak; hasar verir → kırmızı.",
+   "color": "#B8241A",
+   "areaMark": "marks.hitCertain dört komşu karede (belki → marks.hitMaybeLie)",
+   "outline": {
+    "strokePx": 2.4,
+    "shape": "artı: merkez + 4 komşu kare, dış kontur",
+    "insetUnits": 0.04
+   },
+   "stubs": {
+    "count": 4,
+    "fromUnits": 0.3,
+    "toUnits": 0.66,
+    "z": 0.05,
+    "strokePx": 3.4,
+    "arrowheadPx": 12
+   },
+   "now": "fosforlu kalem dış konturun altında (+9 px)"
+  },
+  "shield": {
+   "_": "★3 kalkan: zarar vermez → #854005; çift çizgi + rozet, ok ucu yok.",
+   "color": "#854005",
+   "lines": 2,
+   "strokePx": 1.6,
+   "gapPx": 3.2,
+   "arcRisePx": 20,
+   "startZ": 0.5,
+   "startOffsetUnits": 0.2,
+   "arrowhead": "yok",
+   "badge": {
+    "sprite": "badge_shield",
+    "sizePx": 28,
+    "anchor": "kalkanı alacak makinenin tepe noktasının 22 px üstü; çizgi rozetin kenarında biter"
+   },
+   "now": "fosforlu kalem çift çizginin altında (+9 px)"
+  },
+  "clone": {
+   "_": "★3 kopyalama: zarar vermez → #854005; noktalı kısa çizgi + hedef karede marks.ghostWake + rozet.",
+   "color": "#854005",
+   "strokePx": 2.6,
+   "dashPx": [
+    2,
+    4
+   ],
+   "cap": "round",
+   "arrowheadPx": 11,
+   "startOffsetUnits": 0.3,
+   "startZ": 0.12,
+   "endInsetUnits": 0.34,
+   "targetMark": "marks.ghostWake",
+   "badge": {
+    "sprite": "badge_clone",
+    "sizePx": 24,
+    "anchor": "hedef karenin merkezi, z 0.3"
+   },
+   "onResolve": "marks.ghostWake kalkar, marks.wake gelir"
+  },
+  "nonHarmful": {
+   "_": "★3 kural: kırmızı yalnız uzmana ya da sivile zarar veren niyette (ateş, yakın dövüş, kilit, havan atışı, patlama). Zarar vermeyenler (kalkan, kopyalama) #854005; renk tek başına taşımaz, çizgi türü (çift, noktalı) ve rozet ayırır. Sıra bayrağı herkeste aynı: sıra ve kesinlik bayrağın işi.",
+   "color": "#854005",
+   "maybe": "çizgi kesik 10/6 (çift çizgide ikisi birlikte); kare ve alan işaretleri marks.hitMaybeLie",
+   "repairNote": "intents.repair 1.1’deki gibi kırmızı noktalı kaldı; bu kurala çekilecekse tek değer eklenir: intents.repair.color = #854005"
+  }
+ },
+ "labels": {
+  "_rule": "Kameraya dönük TMP; her zaman üstte; ekranda en az 11 px.",
+  "hpTag": {
+   "heightPx": 24,
+   "paddingPx": [
+    0,
+    5
+   ],
+   "gapPx": 4,
+   "paper": "#FBF7EC",
+   "borderPx": 1,
+   "shadow": "(1,2) #000 α .35",
+   "typeGlyphPx": 18,
+   "pip": {
+    "sizePx": 11,
+    "gapPx": 3
+   },
+   "font": "Courier Prime Bold 15",
+   "colors": {
+    "aiOwned": "#9A1E14",
+    "neutral": "#463F34",
+    "team": "#1E1B16",
+    "teamDone": "kâğıt #E9DDC6",
+    "teamDown": "#9A1E14 + kâğıt #F3E3DC"
+   },
+   "placement": {
+    "object": "tepe noktasının 28 px üstü, ortalı",
+    "unit": "altlığın önü (u−0.24, v+0.24)",
+    "robot": "altlığın önü (u−0.24, v+0.24), ortalı",
+    "unitDown": "altlığın önü"
+   },
+   "armorIcon": {
+    "_": "★3 zırhı olan makinenin etiketinde, tür işaretinden sonra (hedefteki “zırh kalkanı (koyu)” ile aynı). Kalkan alan makinede de görünür.",
+    "sprite": "icon_armor",
+    "color": "#463F34",
+    "sizePx": [
+     11,
+     12.5
+    ],
+    "order": "tür işareti → zırh → pipler"
+   }
+  },
+  "orderFlag": {
+   "needlePx": [
+    2,
+    34
+   ],
+   "needle": "#5E5A54",
+   "paper": "#FBF7EC",
+   "borderPx": 1.5,
+   "heightPx": 28,
+   "widthPx": 30,
+   "font": "Courier Prime Bold 20",
+   "anchor": "robotun tepe noktası, bayrak sağa açılır"
+  },
+  "popup": {
+   "damage": {
+    "text": "−N (U+2212)",
+    "font": "Courier Prime Bold 16",
+    "color": "#9A1E14",
+    "heightPx": 22
+   },
+   "repair": {
+    "text": "+1",
+    "color": "#854005",
+    "icon": "anahtar"
+   },
+   "armorStamp": {
+    "text": "ZIRH",
+    "color": "#463F34",
+    "font": "Libre Franklin 800 13"
+   },
+   "winStamp": {
+    "text": "HEDEF KIRILIR",
+    "color": "#9A1E14",
+    "font": "Libre Franklin 800 15",
+    "borderPx": 2.5
+   },
+   "brokenStamp": {
+    "text": "KIRILDI",
+    "color": "#24592E"
+   }
+  },
+  "compass": {
+   "letters": {
+    "K": "kuzey (ekranda sol üst kenar)",
+    "D": "doğu (sağ üst)",
+    "G": "güney (sağ alt)",
+    "B": "batı (sol alt)"
+   },
+   "sizePx": 22,
+   "ring": "#2C4C8E",
+   "fill": "#DCE1D8"
+  },
+  "pawnTag": {
+   "_": "★2 uzman canı altlığın önünde.",
+   "placement": "altlığın önü (u−0.24, v+0.24), ortalı",
+   "pipPx": 11,
+   "pipGapPx": 3,
+   "plateIcon": "#9A9C98 kalkan, mürekkep kenar",
+   "injuredPaper": "#F3E3DC",
+   "lostPip": [
+    "#9A1E14",
+    "kenar 1,5 px"
+   ],
+   "donePaper": "#E9DDC6"
+  },
+  "wake": {
+   "text": "UYANDI",
+   "color": "#9A1E14",
+   "font": [
+    "Courier Prime",
+    700,
+    16,
+    0.06
+   ],
+   "rotDeg": -4
+  }
+ },
+ "layout1080": {
+  "rail": [
+   0,
+   0,
+   1920,
+   48
+  ],
+  "feltBand": [
+   0,
+   48,
+   1920,
+   956
+  ],
+  "bottomWoodRow": [
+   0,
+   1004,
+   1920,
+   76
+  ],
+  "teamCards": [
+   [
+    26,
+    976,
+    237,
+    84
+   ],
+   [
+    269,
+    976,
+    237,
+    84
+   ],
+   [
+    512,
+    976,
+    237,
+    84
+   ]
+  ],
+  "teamCardSelectedLiftPx": 6,
+  "rulesCard": {
+   "_": "1.1: KURALLAR düğmesi üst şeritte (button). Açık kart bugünkü yerinde ve ölçüsünde (open, değişmedi). folded yalnız Rev1 görünümü içindir; alanlar geriye uyumlu kalsın diye silinmedi.",
+   "folded": [
+    16,
+    516,
+    376,
+    40
+   ],
+   "open": [
+    16,
+    516,
+    376,
+    300
+   ],
+   "button": [
+    1540,
+    22,
+    184,
+    52
+   ]
+  },
+  "legend": [
+   16,
+   838,
+   376,
+   166
+  ],
+  "retreatButton": [
+   1724,
+   22,
+   174,
+   52
+  ],
+  "retreatButtonArmed": [
+   16,
+   1018,
+   236,
+   44
+  ],
+  "retreatConfirmSlip": [
+   16,
+   884,
+   376,
+   120
+  ],
+  "targetForm": [
+   20,
+   102,
+   592,
+   147
+  ],
+  "opLog": [
+   1528,
+   344,
+   376,
+   648
+  ],
+  "infoLine": [
+   408,
+   1018,
+   854,
+   44
+  ],
+  "undoButton": [
+   1436,
+   994,
+   136,
+   56
+  ],
+  "abilityButton": [
+   1392,
+   1018,
+   120,
+   44
+  ],
+  "endTurnButton": [
+   1580,
+   994,
+   318,
+   56
+  ],
+  "boardViewport": [
+   408,
+   50,
+   1104,
+   952
+  ],
+  "boardBaseDiamondPx": [
+   1075,
+   616.6
+  ],
+  "gridDiamondPx": [
+   1000,
+   573.6
+  ],
+  "resultMemo": [
+   520,
+   520,
+   440,
+   380
+  ],
+  "spotRadiusPx": [
+   96,
+   104
+  ]
+ },
+ "motion": {
+  "slidePerTileS": 0.16,
+  "dashS": 0.22,
+  "fireDrawS": 0.12,
+  "fireHitShakeS": 0.08,
+  "meleeLungeS": [
+   0.1,
+   0.14
+  ],
+  "repairS": 0.25,
+  "pushS": 0.14,
+  "pushBounceS": 0.06,
+  "collisionStarS": 0.2,
+  "fallIntoChannelS": 0.18,
+  "cabinetCollapseS": 0.35,
+  "debrisScatterS": 0.25,
+  "coolingExplodeS": 0.3,
+  "wakeS": [
+   0.12,
+   0.25
+  ],
+  "wakeBlockedBlinkS": [
+   0.1,
+   0.1
+  ],
+  "popup": {
+   "inS": 0.08,
+   "holdS": 0.6,
+   "outS": 0.25,
+   "risePx": 12
+  },
+  "flagPinS": 0.15,
+  "flagStrikeS": 0.12,
+  "standeeFlipS": 0.2,
+  "standeeFallS": 0.3,
+  "paperDropS": 0.28,
+  "paperDropFromPx": 40,
+  "paperDropRotDeg": 1.5,
+  "machineIntentGapS": 0.25,
+  "logTypeCharsPerS": 26,
+  "easing": {
+   "move": "ease-in-out",
+   "impact": "ease-out",
+   "collapse": "ease-in"
+  }
+ },
+ "strings": {
+  "title": "SAHA OPERASYONU · BATI AVRUPA · ANA SUNUCU SALONU",
+  "phase": {
+   "you": "SIRA SENDE",
+   "ai": "MAKİNELER HAREKET EDİYOR",
+   "aiSub": "girdi kilitli",
+   "end": "OPERASYON BİTTİ"
+  },
+  "turn": {
+   "label": "TUR",
+   "format": "{n}/{max}",
+   "lastStamp": "SON TUR",
+   "left": "kalan {k} tur",
+   "timeout": "süre doldu"
+  },
+  "teamStatus": {
+   "go": "HAREKET + YETENEK",
+   "ab": "YETENEK",
+   "done": "TUR BİTTİ",
+   "down": "DÜŞTÜ"
+  },
+  "buttons": {
+   "endTurn": "Turu bitir",
+   "undo": "Geri al",
+   "ability": "Yetenek",
+   "retreat": "Geri çekil",
+   "retreatArmed": "Emin misin? Tekrar bas",
+   "toReport": "Operasyon raporuna geç"
+  },
+  "keys": {
+   "select": [
+    "1",
+    "2",
+    "3"
+   ],
+   "ability": "Q",
+   "undo": "Z",
+   "endTurn": "Enter",
+   "menu": "Esc"
+  },
+  "en": {
+   "_": "★2 İngilizce karşılıklar.",
+   "title": "FIELD OPERATION · {region} · {site}",
+   "phase": {
+    "you": "YOUR TURN",
+    "ai": "MACHINES",
+    "aiLong": "MACHINES ARE MOVING",
+    "aiSub": "input locked",
+    "end": "OPERATION OVER"
+   },
+   "turn": {
+    "label": "TURN",
+    "lastStamp": "LAST TURN",
+    "lastTwo": "LAST 2 TURNS",
+    "left": "{k} turns left"
+   },
+   "teamStatus": {
+    "go": "MOVE + ABILITY",
+    "ab": "ABILITY",
+    "done": "TURN DONE",
+    "down": "DOWN",
+    "injured": "INJURED",
+    "lockThreat": "LOCK THREAT · #{n}"
+   },
+   "buttons": {
+    "endTurn": "SEND ORDERS",
+    "undo": "Undo",
+    "retreat": "RETREAT",
+    "retreatArmed": "Sure? Press again",
+    "toReport": "GO TO OPERATION REPORT",
+    "radio": "RADIO",
+    "rules": "RULES"
+   },
+   "mission": {
+    "head": "MISSION · {type}",
+    "goal": "Goal: {goal}",
+    "hp": "HP",
+    "trust": "TRUST",
+    "civilian": "CIVILIAN SERVERS"
+   },
+   "ability": {
+    "move": "Move",
+    "squares": "{n} squares",
+    "takeSupplies": "Take supplies",
+    "adjacent": "adjacent square",
+    "fromCrate": "Take from crate",
+    "hitRobot": "Hit robot · −1 HP"
+   },
+   "result": {
+    "head": "OPERATION RESULT",
+    "retaken": "SECTOR RETAKEN",
+    "withdrawn": "WITHDRAWN",
+    "crate": "Supply crate",
+    "civBroken": "Civilian servers broken",
+    "team": "Team",
+    "standing": "{a}/{b} standing"
+   },
+   "woke": "WOKE UP",
+   "plate": "PLATE",
+   "machines": {
+    "_": "★3 öneri; oyunda İngilizce ad varsa o geçerli.",
+    "armorDrone": "Armored drone",
+    "bomber": "Exploder",
+    "replicator": "Replicator"
+   },
+   "regionTraits": {
+    "_": "★3 öneri; oyunda İngilizce ad varsa o geçerli.",
+    "safeEntry": "Safe entry",
+    "shortWatch": "Short watch",
+    "reinforcement": "Reinforcements",
+    "openGround": "Open ground",
+    "coolingNet": "Cooling network",
+    "crowdedCity": "Crowded city",
+    "armoredCabinet": "Armored cabinets",
+    "powerGrid": "Power grid",
+    "copyFactory": "Copy factory",
+    "fastPatrol": "Fast patrol"
+   },
+   "intents": {
+    "_": "★3 öneri.",
+    "lob": "Lob",
+    "blast": "Blast",
+    "shield": "Shield",
+    "clone": "Clone"
+   }
+  },
+  "tr2": {
+   "_": "★2 yeni Türkçe metinler.",
+   "phase": {
+    "aiShort": "MAKİNELER",
+    "aiLong": "MAKİNELER HAREKET EDİYOR"
+   },
+   "turn": {
+    "lastTwo": "SON 2 TUR"
+   },
+   "teamStatus": {
+    "injured": "YARALI",
+    "lockThreat": "KİLİT TEHDİDİ · #{n}"
+   },
+   "buttons": {
+    "endTurn": "EMRİ İLET",
+    "radio": "TELSİZ",
+    "rules": "KURALLAR"
+   },
+   "mission": {
+    "head": "GÖREV · {tür}",
+    "goal": "Amaç: {amaç}",
+    "hp": "CAN",
+    "trust": "GÜVEN",
+    "civilian": "SİVİL SUNUCU"
+   },
+   "ability": {
+    "fromCrate": "Kasadan ikmal al",
+    "hitRobot": "Robota vur · −1 can"
+   },
+   "result": {
+    "head": "OPERASYON SONUCU",
+    "retaken": "SEKTÖR GERİ ALINDI",
+    "withdrawn": "GERİ ÇEKİLDİ"
+   },
+   "woke": "UYANDI",
+   "plate": "PLAKA",
+   "machines": {
+    "_": "★3 oyundaki adlar.",
+    "armorDrone": "Zırhlı dron",
+    "bomber": "Patlayan robot",
+    "replicator": "Çoğaltıcı"
+   },
+   "regionTraits": {
+    "_": "★3 oyundaki adlar.",
+    "safeEntry": "Güvenli giriş",
+    "shortWatch": "Kısa nöbet",
+    "reinforcement": "Takviye",
+    "openGround": "Açık arazi",
+    "coolingNet": "Soğutma ağı",
+    "crowdedCity": "Kalabalık şehir",
+    "armoredCabinet": "Zırhlı dolap",
+    "powerGrid": "Elektrik şebekesi",
+    "copyFactory": "Kopya fabrikası",
+    "fastPatrol": "Hızlı devriye"
+   },
+   "intents": {
+    "_": "★3",
+    "lob": "Havan atışı",
+    "blast": "Patlama",
+    "shield": "Kalkan",
+    "clone": "Kopyalama"
+   }
+  }
+ },
+ "panel": {
+  "_": "★2 kenar panelleri: kontrplak şerit + ozalit pafta + bant (tahtanın malzemesi). 9 dilim.",
+  "plywood": {
+   "top": "#C9A36B",
+   "edge": "#93703F",
+   "highlight": "#DDBF8A",
+   "edgePx": 4,
+   "padPx": 6,
+   "shadow": [
+    3,
+    4,
+    "#000000",
+    0.45
+   ]
+  },
+  "ozalit": {
+   "paper": "#D3DBD6",
+   "line": "#2C4C8E",
+   "gridPx": 24,
+   "gridAlpha": 0.1,
+   "borderAlpha": 0.55,
+   "labelFont": [
+    "Courier Prime",
+    700,
+    14,
+    0.08
+   ]
+  },
+  "tape": {
+   "hex": "#ECE2BE",
+   "alpha": 0.8,
+   "size": [
+    44,
+    15
+   ],
+   "rotDeg": [
+    -24,
+    24
+   ]
+  },
+  "sliceCornerPx": 12
+ },
+ "turnStrip": {
+  "_": "★2 tur şeridi.",
+  "cellPx": 34,
+  "gapPx": 6,
+  "turnFont": [
+   "Courier Prime",
+   700,
+   30,
+   0
+  ],
+  "cellFont": [
+   "Courier Prime",
+   700,
+   17,
+   0
+  ],
+  "current": "#1E1B16",
+  "past": "#B9C3BE",
+  "future": "#2C4C8E",
+  "lastTwo": [
+   "#9A1E14",
+   "dashed",
+   2
+  ],
+  "lastCurrent": "#9A1E14",
+  "lastStamp": [
+   "SON TUR",
+   "#9A1E14",
+   3,
+   -6
+  ],
+  "lastLabel": "SON 2 TUR"
+ },
+ "phaseChip": {
+  "_": "★2 evre çipi: biçim + kelime.",
+  "you": [
+   "SIRA SENDE",
+   "#24592E",
+   "daire"
+  ],
+  "ai": [
+   "MAKİNELER",
+   "#9A1E14",
+   "baklava"
+  ],
+  "end": [
+   "OPERASYON BİTTİ",
+   "#1E1B16",
+   "kare"
+  ],
+  "lockedPaper": {
+   "fill": "#5E584E",
+   "line": "#2A2620",
+   "text": "#EFE7D6"
+  }
+ },
+ "machineTypes": {
+  "_": "★2 tür işaretleri (36 birimlik çizim, etiket 18 px, harita 34 px). Gövde ortak; tür biçimden ve işaretten okunur.",
+  "drone": "X + 4 rotor halkası",
+  "maintenanceRobot": "anahtar",
+  "locker": "iki kıskaç + merkez nokta",
+  "mortar": "çapraz namlu + kesik yay",
+  "shieldDrone": "altıgen kalkan",
+  "glyphColorBoard": "#9A1E14",
+  "glyphColorMap": "#1E1B16",
+  "armorDrone": "dron X’i + kalın rotor halkaları + ortada dolu zırh kalkanı",
+  "bomber": "sekiz köşeli patlama yıldızı",
+  "replicator": "dolu daire + yanında kesik daire (uyandıracağı dron)",
+  "glyph": {
+   "_": "★3 tür → sprite (sprites/). Fişte ve işaretler kutusunda “_frame” sürümü.",
+   "drone": "glyph_drone",
+   "armorDrone": "glyph_armordrone",
+   "maintenanceRobot": "glyph_maint",
+   "locker": "glyph_locker",
+   "mortar": "glyph_mortar",
+   "shieldDrone": "glyph_shield",
+   "bomber": "glyph_bomber",
+   "replicator": "glyph_replicator"
+  }
+ },
+ "radioSlip": {
+  "_": "★2 TELSİZ fişi (bugünkü sarı kutunun yerine).",
+  "paper": "#EFE4BC",
+  "line": "#C9B98A",
+  "label": [
+   "TELSİZ · K-07",
+   [
+    "Courier Prime",
+    700,
+    14,
+    0.08
+   ]
+  ],
+  "text": [
+   "Courier Prime",
+   700,
+   18,
+   0
+  ],
+  "rect": [
+   26,
+   262,
+   440,
+   64
+  ],
+  "holdS": 3
+ },
+ "abilityCard": {
+  "_": "★2 yetenek kartı.",
+  "rect": [
+   20,
+   732,
+   432,
+   231
+  ],
+  "row": 44,
+  "subButton": 40,
+  "subNoTarget": "kesikli kenar",
+  "subTarget": "düz kenar 2 px"
+ },
+ "resultCard": {
+  "_": "★2 sonuç kartı.",
+  "rect": [
+   1290,
+   318,
+   500,
+   0
+  ],
+  "paper": "#FBF7EC",
+  "stampFont": [
+   "Courier Prime",
+   700,
+   34,
+   0.06
+  ],
+  "stampBorder": "6 px çift",
+  "rotDeg": 0.8
+ },
+ "trainingNote": {
+  "_": "★2 analist notu baskında.",
+  "rect": [
+   1560,
+   796,
+   336,
+   0
+  ],
+  "header": "BASKIN · ADIM {n}/30",
+  "font": [
+   "Kalam",
+   700,
+   22,
+   0
+  ]
+ },
+ "regionTraits": {
+  "_": "★3 bölge özelliği işaretleri: 36 birimlik çizim, beyaz sprite boyanır. Harita dokusunda 34 px (ekranda ~22 px), fişin SAHA satırında “_frame” 30 px; renk #1E1B16. Ad ve kural oyundan gelir; anahtar adları öneri, Aşama 0 eşleme tablosunda oyundaki kimliklere bağla.",
+  "color": "#1E1B16",
+  "texturePx": 34,
+  "slipPx": 30,
+  "narrowCorridor": {
+   "glyph": "glyph_corridor",
+   "draws": "iki duvar arasında ok"
+  },
+  "sandstorm": {
+   "glyph": "glyph_sand",
+   "draws": "üç dalga"
+  },
+  "safeEntry": {
+   "glyph": "glyph_safe",
+   "draws": "kapalı göz: makineler uyuyor"
+  },
+  "shortWatch": {
+   "glyph": "glyph_short",
+   "draws": "kumu bitmek üzere kum saati"
+  },
+  "reinforcement": {
+   "glyph": "glyph_reinforce",
+   "draws": "biri öbürünün arkasında iki robot başı"
+  },
+  "openGround": {
+   "glyph": "glyph_open",
+   "draws": "alçak yıkık duvarların üstünden uzun ok"
+  },
+  "coolingNet": {
+   "glyph": "glyph_cooling",
+   "draws": "soğutma ünitesinin üç kanatlı pervanesi"
+  },
+  "crowdedCity": {
+   "glyph": "glyph_crowd",
+   "draws": "üç kişilik kalabalık"
+  },
+  "armoredCabinet": {
+   "glyph": "glyph_armored",
+   "draws": "sunucu yuvalı dolu zırh kalkanı"
+  },
+  "powerGrid": {
+   "glyph": "glyph_grid",
+   "draws": "yüksek gerilim üçgeni + şimşek"
+  },
+  "copyFactory": {
+   "glyph": "glyph_factory",
+   "draws": "testere çatılı fabrika"
+  },
+  "fastPatrol": {
+   "glyph": "glyph_patrol",
+   "draws": "çift köşeli ok (»)"
+  }
+ }
+}

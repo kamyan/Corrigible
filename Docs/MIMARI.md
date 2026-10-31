@@ -5,20 +5,22 @@
 ```
 Corrigible/                          (Unity proje kökü, git deposu)
 ├─ AGENTS.md, CLAUDE.md              yapay zeka ajanları için giriş
-├─ Docs/                             bu belgeler; UI_Siginak (oda tasarımı), UI_Sade ve UI_C (masa/baskın arayüzü
+├─ Docs/                             bu belgeler; UI_Siginak (oda tasarımı, ilk tur), UI_Siginak_Rev2 (Revizyon 2: güncel eşleme,
+│                                    S1–S9 panoları, görüntü seti), UI_Sade ve UI_C (masa/baskın arayüzü
 │                                    kökenleri), SonSalter_Baskin_Paketi (baskın görsel referansı)
 ├─ Tools/unity-helpers.sh            Unity CLI kısayolları
 └─ Assets/Corrigible/
    ├─ Core/                          saf C# simülasyon (asmdef Corrigible.Core, motor referansı yok)
    ├─ Game/                          GameController, BalanceConfig, platform; Audio/, Localization/, Raid/ (3B baskın tahtası)
    ├─ Desk/                          komuta odası ve ekran kâğıtları
-   │  ├─ Scripts/Runtime/            asmdef Corrigible.Desk: Siginak/ (oda bileşenleri), Screens/ (rapor, son rapor,
-   │  │                              ayarlar), Raid/ (baskın HUD'u), Sade/Map/ (kâğıt harita), Components/, Theme/, Core/
+   │  ├─ Scripts/Runtime/            asmdef Corrigible.Desk: Siginak/ (oda bileşenleri, vardiya ve operasyon raporu),
+   │  │                              Screens/ (ayarlar), Raid/ (baskın HUD'u), Sade/Map/ (kâğıt harita), Components/,
+   │  │                              Theme/, Core/
    │  ├─ Scripts/Bridge/             asmdef Corrigible.Desk.Bridge: oyunu sunuma bağlar (Siginak/ bağlayıcılar, SimDesk*,
    │  │                              baskın veri kaynağı)
    │  ├─ Scripts/Editor/             varlık hattı (Import/) ve oda araçları (Siginak/)
    │  ├─ Scenes/DeskGame.unity       oyunun sahnesi (build listesinde ilk)
-   │  ├─ Prefabs/                    Components/ (kâğıt bileşenleri), Screens/ (EventModal, GameOver, SettingsCard),
+   │  ├─ Prefabs/                    Components/ (kâğıt bileşenleri), Screens/ (SettingsCard),
    │  │                              Sade/Raid/ (baskın HUD, kart, panel, etiket prefab'ları)
    │  ├─ Resources/                  temalar (DeskTheme, SadeTheme, RaidTheme, SiginakTheme), DeskSprites, fontlar
    │  ├─ Data/                       tema kaynakları (tokens_*.json), harita ekip noktaları, stil sayfası
@@ -62,7 +64,7 @@ Corrigible/                          (Unity proje kökü, git deposu)
    (komut kapısı,       (kayıt, olaylar,                    │ olaylar (SimEvent: Raid, RegionLiberated, End)
     teleks gerekçesi)    vardiya)  ◄── Flush ───────────────┘
                                    │
-                                   ├─► SimDeskDataSource → SimDeskBuilder → DeskPresenter (baskın raporu, son rapor)
+                                   ├─► SimDeskDataSource → SimDeskBuilder → DeskPresenter (son rapor)
                                    ├─► RaidLauncher (Baskin sahnesini yükler/kaldırır)
                                    └─► AudioDirector (yalnız okur)
 ```
@@ -127,7 +129,7 @@ Corrigible/                          (Unity proje kökü, git deposu)
 
 ```
 EventSystem              [InputSystemUIInputModule]
-DeskUI                   Overlay; Modal (sıra 100): EventModal (baskın raporu), GameOver (son rapor), SettingsCard
+DeskUI                   Overlay; Modal (sıra 100): SettingsCard, FinalReport (harekât sonu raporu)
 DeskPresenter (oyun)     DeskPresenter, DeskInput, SimDeskDataSource, SimDeskCommands, BridgeSettings, LiberationDeskView
 Game                     GameController (BalanceConfig), RaidLauncher
 Audio                    AudioDirector (SoundBank)
@@ -135,20 +137,24 @@ CommandPost3D            CommandPostDesk (kamera girdisi kapısı); Main Camera 
 SiginakRaidLink          baskın sahnesi yüklüyken odayı gizler, CRT geçişini RaidLauncher'a verir
 SiginakRoom              oda: masa (sayaçlar, anahtar rayı, şalter, teleks, evrak tepsisi, Desk/MapMount altında kâğıt
                          harita SadeMapCanvas), raf (sığınak maketi, oda kartları), CRT, duvar; sağ duvarda Bunker door
-                         (DoorProp, DeskTarget; duvarın mesh'i kapı boşluklu, wall_doorway) ve ardında Corridor (siluet,
-                         koridor ışığı); Poses/K8 (kapı pozu); SiginakHud (Overlay 45: kenar satırı, ayarlar plakası,
-                         vardiya raporu, emir belgesi, kapı kâğıdı, teleks şeridi, üzerine gelme etiketi)
+                         (DoorProp, DeskTarget; duvarın mesh'i kapı boşluklu, wall_doorway; ziyaretçi çentiği) ve ardında
+                         Corridor (merdiven boşluğu, iki lamba, Visitors: VisitorSilhouette); Poses/K8 (kapı pozu);
+                         SiginakHud (Overlay 45: karartma, kenar satırı, görev fişi, ayarlar plakası, vardiya raporu,
+                         operasyon raporu, emir belgesi, kapı kâğıdı, teleks şeridi, üzerine gelme etiketi)
 SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
 ```
 
 - Oda, yerleşim ve bileşen bağlantıları sahnede serileştirilir; kalıcı kurucu yoktur (son kurucu `eed2824`'te). Tasarım
-  eşlemesi, poz/kamera ayrıntısı ve değişiklik günlüğü: `Docs/UI_Siginak/IMPLEMENTATION_MAP.md`.
+  eşlemesi ve değişiklik günlüğü: `Docs/UI_Siginak_Rev2/IMPLEMENTATION_MAP.md` (Revizyon 2, güncel); ilk tur ve poz/kamera
+  ayrıntısı `Docs/UI_Siginak/IMPLEMENTATION_MAP.md`.
 - **Bağlayıcılar** (Bridge/Siginak): `SiginakDesk` (sayaçlar, anahtarlar, şalter), `SiginakMap` (kâğıt harita, görev ve
   cephe fişleri, ekip figürü), `SiginakShelter` (maket ve oda kartları), `SiginakCrt` (telsiz hattı, `IRaidTransition`),
-  `SiginakShift` (vardiya dizisi, vardiya raporu, evrak tepsisi), `SiginakBriefing` (açılış ve emir belgesi),
+  `SiginakShift` (vardiya dizisi, vardiya raporu, evrak tepsisi, karşı saldırının alarm lambası ve harita ✕'i; raporu saf C#
+  `ShiftReportBuilder` kurar, renk kuralı `ReportTones`), `SiginakBriefing` (açılış ve emir belgesi),
   `SiginakDoor` (kapı: vuruş, kamera, kâğıdın evreleri, `LiberationDeskView.AnswerDoor`; kâğıdı saf C# `DoorViewBuilder`
-  kurar, `DoorCardView` çizer, kapıyı `DoorProp` canlandırır; ölümcül kararda son raporu `DeskBridgeState.HoldEnding` ile
-  kâğıt kapanana kadar bekletir),
+  kurar (kart → siluet tablosu da orada), `DoorCardView` çizer, kapıyı `DoorProp`, ziyaretçiyi `VisitorSilhouette`
+  canlandırır; ölümcül kararda oda ışığını kırmızıya çevirir ve son raporu `DeskBridgeState.HoldEnding` ile kâğıt
+  kapanana kadar bekletir),
   `SiginakTutorial` (eğitim: sahne kökünde kendi tuvali `SiginakTutorial`, sıralama 70, baskın HUD'unun üstünde; odanın
   dışında olduğu için baskında da çalışır; adımlar saf C# `TutorialFlow`, not `TutorialNoteView`; senaryolu ilk baskın
   `TutorialRaid` ve rehberi `RaidGuide`: `LiveRaidDataSource` eğitim baskın adımındaysa tahtayı senaryonun tohumuyla kurar,
@@ -158,13 +164,20 @@ SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
 - `CommandPostDesk` masa kamerasının girdi kapısıdır: açık bir ekran kâğıdı ya da sunumun kilidi (`ExternalBlocked`)
   varken kamera girdisi kapalıdır. Kamerayı `SiginakCameraRig` sürer (K1 masa, K2/K3 harita, K4 raf, K5 CRT).
 - **Ekran kâğıtları:** `SimDeskDataSource` GameController olaylarıyla kirlenir ve karede en çok bir kez
-  `SimDeskBuilder.Build(sim, state, raidScene)` çağırır: okunmamış baskın günlüğü varsa operasyon raporu (`EventVM`),
-  harekât bittiyse son rapor (`GameOverVM`). `DeskPresenter` modeli `EventModalView` ve `GameOverView`'a dağıtır, kâğıt
-  düğmelerinin komut dizilerini (`"Doc:Close"`, `"Restart"`) `SimDeskCommands`'a iletir. Ayarlar kartı `IDeskSettings`
+  `SimDeskBuilder.Build(sim, state)` çağırır: harekât bittiyse (kapının kâğıdı kapandıysa) son rapor
+  (`FinalReportBuilder` → `FinalReportData`). `DeskPresenter` modeli `FinalReportView`'a dağıtır, YENİDEN BAŞLA'yı
+  (`"Restart"`) `SimDeskCommands`'a iletir; `SiginakFinal` rapor açılınca kamerayı harita pozuna alır ve damganın sesini
+  çalar. Rapor (Revizyon 2 · S8): işgal şeridi `OccupationChart` (`Graphic.OnPopulateMesh`, x = vardiya 1…N tam genişlik),
+  kırılma anları sunumda türetilir (baskın kaydı, `S.Moments`, kapı kaydı). Ayarlar kartı `IDeskSettings`
   (`BridgeSettings`: `AudioPrefs`, dil) ile çalışır.
-- `DeskInput` klavyenin tek sahibidir: ayarlar kartı açıkken Esc; son raporda Enter; rapor açıkken Enter/Esc kâğıt
-  düğmeleri, Boşluk haritaya bakma; aksi hâlde 1/3 planlama, H kılavuz, Esc ayarlar/geri. Odanın anahtarları
-  (`StationKeyRail`) ve vardiya raporu kendi tuşlarını dinler.
+- **Operasyon raporu** (Revizyon 2 · S7, `SiginakOperation` + `OperationReportBuilder` + `OperationReportView`,
+  `SiginakHud › Operation report`): okunmamış baskın günlüğü (`LiberationDeskView.RaidReportPending`) baskın sahnesi
+  kapanınca açılır: kamera harita pozuna, kâğıt iner, iplik iğneden ekip figürüne (`SiginakMap.SetReportString`), halka
+  figürün çevresine. Sayaçlar o ana kadar bekler (`SiginakOperation.HoldCounters`), sonra döner; başarılıda ± fişleri ve
+  sektör işaretinin mavi onayı (`LiberationRegionMarks.AnimateRetaken`). Enter/Esc/düğme tepsiye dosyalar ve
+  `LiberationDeskView.MarkRaidReportSeen` raporu okundu sayar. Açıkken masa kilitli (`InputBlocked`).
+- `DeskInput` klavyenin tek sahibidir: ayarlar kartı açıkken Esc; son raporda Enter; aksi hâlde 1/3 planlama, H kılavuz,
+  Esc ayarlar/geri. Odanın anahtarları (`StationKeyRail`), vardiya raporu ve operasyon raporu kendi tuşlarını dinler.
 
 ## Baskın sahnesi (`Scenes/Baskin.unity`)
 
@@ -190,30 +203,28 @@ RaidPanelCanvas   RaidPanels (olay, onay, günlük, kurallar, geri çekilme, son
   (1–3 birim, Q yetenek, Z geri al, Enter tur bitir, Esc).
 - `RaidBoard3D`: kare (x, y) → dünya `(x − 3,5, 0, 3,5 − y)`. Bir eylem ya da tur bitince motor durumu anında değişir;
   tahta efektleri (`FxList`) sırayla oynatır, sonra `Sync` ile eşitlenir. Oynatma sırasında girdi kapalıdır (`Busy`).
-  Can/sıra etiketleri `RaidScreenLabel` prefab'ıyla ayrı Overlay canvas'ta çizilir.
+  Can/sıra etiketleri `RaidScreenLabel` prefab'ıyla ayrı Overlay canvas'ta çizilir: robotta tür işareti
+  (`RaidPieceLibrary.Glyph`) → zırh → pipler, uzmanda altlığın önünde; sıra bayrağı 30 × 28; uyanmadan sonraki tur UYANDI
+  (bayrakla bir grup). Etiketler `LayoutLabels`'ta gruplar hâlinde çakışmadan yerleşir. Niyetler `DrawIntent`'te türüne
+  göre (kalınlık, yay, kesik, çift şerit, rozet); oklar `Pencil.mat`'ta ZTest Always; karo işaretleri (tarama, seçim, hedef, uyanma halkası) `Pencil marks.mat`'ta derinlik testli, parçalar örter (`RaidPieceLibrary.tileMarks`).
+- **Baskın HUD'u** (`RaidHud.prefab`, `RaidHudView`): köşe panelleri (Status, Buttons, Command, Ability card, Team)
+  prefab'da; ekip kartları (`RaidTeamCardView`) ve yetenek kartı (`UnitCardView`) aynı prefab'ın içinde, ayrı prefab yok.
+  Renkler `RaidHudView.C(key)` ile Baskın → Masa → Sığınak temasından. Telsiz fişi `RaidPanels › EventSlip`.
 - **Saha masası** (yalnız sunum): `Build` paftanın kameraya bakan kenarlarına kare adlarını yazar (güneyde A–H, batıda 1–8;
   1 kameraya en yakın); `RaidBoard3D.CellName(x, y)` telsiz satırlarında kullanılır ("TEKNİSYEN · A6"). Niyet okları
-  `RaidArrow.Set(..., hand)` ile yağlı kalem çizgisi (dalga uçların konumundan, eşitlemede titremez; uç açık V). Makine
-  evresinin sonunda `PlotMoves` uygulanmış niyetlerin izlerini kaldırır ve görevli çubuğuyla (`RaidPieceLibrary.plotterShaft`,
-  `plotterHead`; yoksa çubuksuz kayar) makine figürlerini yeni karelerine iter; yeni niyetleri `Sync` çizer.
-- **Gözcü raporu** (yalnız sunum): `RaidDataSource` baskının başında (`OpenState`) ve her makine evresinden sonra
-  `board.HoldIntents()` der; eşitleme niyetleri gizli tutar. `Report` → `RaidBoard3D.ReportIntents` niyetleri sırayla açar
-  (ok `RaidArrow.Reveal` ile çizilir; bayrak ve yalnız o niyete ait hedef kareler `ApplyReport` ile belirir) ve her biri
-  için telsiz satırı yazdırır. Rapor sürerken `Busy` (girdi kapalı, HUD DİNLEMEDE); tuş ya da tıklama kalanı bir anda
-  çizer. Telsiz şeridi `RaidViewModel.Radio` (`RaidRadioLine`: konuşan, metin); `RaidPanelsView` olay fişinde son dört
-  satırı çizer, en yenisini `maxVisibleCharacters` ile daktilo gibi yazar. Konuşma sesi `Cue.RadioVoice` (56).
+  `RaidArrow.Set(..., hand)` ile yağlı kalem çizgisi (dalga uçların konumundan, eşitlemede titremez; uç açık V).
 
 ## UI yaklaşımı ve tema
 
 - **uGUI + TextMeshPro**; oda 3B, yazılar dünya ya da Overlay canvas'larda. Prefab ve sahne asıl kaynaktır.
 - **Temalar** (ScriptableObject, `Desk/Resources`): `SiginakTheme` (oda), `SadeTheme` (harita, kâğıt), `RaidTheme`
-  (baskın), `DeskTheme` (fontlar, ortak kâğıt renkleri). Token kaynakları `Desk/Data/*/tokens_*.json` ve
-  `Docs/UI_C/spec/tokens.json`; içe aktarıcılar Corrigible menüsünde. Bileşenler renkleri anahtarla alır (`ThemeTint`).
-- **Kâğıt bileşenleri** (`Desk/Prefabs/Components`): PaperPanel, Stamp, DeskButton (+ varyantlar), KeyChip,
-  RadioCheck, Paperclip, Pin. Özel Graphic'ler: `UILineGraphic`, `UIPolygonGraphic`, `SpotlightGraphic`,
+  (baskın), `DeskTheme` (fontlar, ortak kâğıt renkleri). Token kaynakları `Desk/Data/*/tokens_*.json`,
+  `Desk/Data/Sade/raid_tokens.json` ve `Docs/UI_C/spec/tokens.json`; içe aktarıcılar Corrigible menüsünde. Bileşenler renkleri anahtarla alır (`ThemeTint`).
+- **Kâğıt bileşenleri** (`Desk/Prefabs/Components`): PaperPanel, DeskButton (+ kapatma varyantı), KeyChip,
+  RadioCheck. Özel Graphic'ler: `UILineGraphic`, `UIPolygonGraphic`, `SpotlightGraphic`,
   `RegionMeshGraphic` (harita bölgeleri: sahnede serileştirilmiş çokgenler ve tıklama testi).
 - **Biçim:** `DeskFormat` (sayı, yüzde, vardiya kodu), `DeskText` (tr-TR büyük harf), `TrNumber` (Türkçe ekler),
-  `DeskMath`, `DeskChart` (son raporun şerit grafiği).
+  `DeskMath`.
 - **Sprite'lar ve fontlar:** `Desk/Art` (Sprite Atlas V2, `DeskSpriteImporter` ayarları `sprites.json`'dan), fontlar
   `Desk/Resources/Fonts & Materials` (statik SDF + dinamik kardeş + DejaVu sembol yedeği).
 
@@ -231,7 +242,7 @@ Unity Localization paketi kullanılmadı: metinlerin bir kısmı motordan bağı
 - **Dil seçimi:** `Game/Localization/Localization.cs`: sahne yüklenmeden önce PlayerPrefs `corrigible.language`'dan,
   yoksa sistem diline göre. Masa (`DeskLoc`) ayarlar kartından dili sahneyi yeniden yüklemeden değiştirebilir.
 - **Araç:** `Editor/LocalizationTool.cs` (menü **Corrigible > Lokalizasyon**): kaynakları koddan (`Loc.T/F/N("...")`) ve
-  prefab/sahnelerdeki `DeskLocText`'lerden toplar, tabloyu günceller (yeni satırlar boş çeviriyle; kullanılmayanlar önce
+  prefab/sahnelerdeki `DeskLocText`'lerden ve odadaki `DeskTarget`'ların üzerine gelme başlığı ve satırından toplar, tabloyu günceller (yeni satırlar boş çeviriyle; kullanılmayanlar önce
   dosya sonunda yorum olarak durur, sonraki güncellemede düşer),
   doğrular (eksik çeviri, `{n}` yer tutucu ve `<b>` gibi etiket uyumu).
 - **Testler** (`LocalizationTests`): tablo tam mı; rastgele oynanan harekâtlar ve baskınlar İngilizce oynanınca hiç
@@ -246,8 +257,8 @@ Unity Localization paketi kullanılmadı: metinlerin bir kısmı motordan bağı
 - **Telsiz:** saha görülmez, telsizden duyulur. Baskın sahnesi açıkken saha sesleri (`Cue.RaidStep` … `RaidSpawn`) ve bina
   uğultusu ses kaynağındaki yüksek ve alçak geçiren filtreyle telsiz bandından çalar (`SoundBank.fieldThroughRadio`,
   `radioLowCut` 450 Hz, `radioHighCut` 3000 Hz); arayüz sesleri düz kalır. `RadioTune` 53 (hat açılırken, `SiginakCrt`),
-  `RadioSend` 54 (EMRİ İLET, `RaidDataSource.Machines`), `RadioReport` 55 (hızlandırılmış makine evresinde gözcünün kısa
-  bipi, hat kapanırken), `RadioVoice` 56 (gözcünün raporu ve makine hamleleri: telsizden boğuk konuşma).
+  `RadioSend` 54 (EMRİ İLET, `RaidDataSource.Machines`), `RadioReport` 55 (gözcü her makine hamlesini ve uyanmayı
+  bildirirken, hat kapanırken).
 - **Tek seferlik sesler:** `Sfx.Play(Cue.X, volume, pan, pitch)` (kapı: `DoorKnock` 50, `DoorOpen` 51, `DoorShot` 52;
   yer tutucular `Audio/Placeholder/CueDoor*.wav` ve `CueRadio*.wav`, `LoopRadioHiss.wav` kodla sentezlendi); klipler `Settings/SoundBank.asset` → `cues`
   (`Cue` enum'ı asset'te sayı olarak saklandığı için her üyenin sayısı sabittir). Baskın tahtası efektleri ekran
@@ -267,8 +278,10 @@ Unity Localization paketi kullanılmadı: metinlerin bir kısmı motordan bağı
 
 - `CorrigibleDebug` (`Editor/CorrigibleDebug.cs`): `Capture(path)` (Overlay canvas'ları geçici olarak kameraya bağlayıp
   PNG alır; edit ve Play modda), `Status()` (harekât özeti).
-- Oda araçları (`Desk/Scripts/Editor/Siginak`): `SiginakCapture`/`SiginakCaptureSet` (K1–K7 yakalamaları),
-  `SiginakFixtures` (belirli oyun durumları), `SiginakTextScan` (punto taraması), `SiginakFontPreview`,
-  `SiginakTextureBaker`, token içe aktarıcı.
-- Varlık hattı (`Desk/Scripts/Editor/Import`): sprite içe aktarıcı ve kaydı, atlas, font asset'leri, Linear telafili
-  dokular, tema içe aktarıcıları.
+- Oda araçları (`Desk/Scripts/Editor/Siginak`): `SiginakCaptureSet` (Revizyon 2 tam görüntü seti: DeskGame'de S1a…S8b,
+  Baskin tek başına S6a–c; TR, `_EN`, `_gray` → `Docs/UI_Siginak_Rev2/screens_unity_rev2/`), `SiginakCapture`
+  (`Render(poz)`: Overlay'siz 3B görüntü, `SiginakPose` adıyla), `SiginakFixtures` (V014, V031, K6, V019, injured, V015ca),
+  `SiginakTextScan` (punto taraması: oda, CRT, eğitim notu, DeskUI ve Baskin sahnesi; rapor
+  `Docs/UI_Siginak_Rev2/punto_taramasi.txt`), `SiginakFontPreview`, `SiginakTextureBaker`, token içe aktarıcı.
+- Varlık hattı (`Desk/Scripts/Editor/Import`): sprite içe aktarıcı ve kaydı, atlas, font asset'leri, tema içe
+  aktarıcıları.

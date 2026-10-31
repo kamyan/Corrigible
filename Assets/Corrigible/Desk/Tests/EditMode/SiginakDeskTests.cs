@@ -207,9 +207,9 @@ namespace Corrigible.Desk.Tests
                 var desk = roots.SelectMany(g => g.GetComponentsInChildren<SiginakDesk>(true)).Single();
                 var so = new SerializedObject(desk);
                 foreach (var f in new[] { "game", "surface", "rig", "settings", "view", "counters", "rail", "shiftSwitch", "telex", "hope", "shelfTarget",
-                             "crtTarget", "trayTarget", "telexTarget", "edge", "plaque" })
+                             "crtTarget", "trayTarget", "telexTarget", "edge", "plaque", "door", "freedBoard", "tally" })
                     Assert.IsNotNull(so.FindProperty(f).objectReferenceValue, f);
-                Assert.AreEqual(3, so.FindProperty("freedEntries").arraySize);
+                Assert.AreEqual(12, ((FreedRegionsBoard)so.FindProperty("freedBoard").objectReferenceValue).Count, "her bölgeye bir kart yuvası");
 
                 var surface = roots.SelectMany(g => g.GetComponentsInChildren<LiberationDeskView>(true)).Single();
                 var sv = new SerializedObject(surface);
@@ -217,7 +217,12 @@ namespace Corrigible.Desk.Tests
                 Assert.IsNotNull(sv.FindProperty("telex").objectReferenceValue);
 
                 var room = desk.transform.parent.gameObject;
-                Assert.AreEqual(5, room.GetComponentInChildren<StationKeyRail>(true).Count);
+                // Revizyon 2: 1 · 2 · 3 · 4 KAPI · H · Home; yalnız kapı tuşunun dikkat lambası var
+                var rail = room.GetComponentInChildren<StationKeyRail>(true);
+                Assert.AreEqual(6, rail.Count);
+                for (int i = 0; i < rail.Count; i++)
+                    Assert.AreEqual(i == StationKeyRail.Door, new SerializedObject(rail[i]).FindProperty("jewelAttention").objectReferenceValue != null, rail[i].name);
+                Assert.AreEqual("4", rail[StationKeyRail.Door].Target.KeyHint);
                 foreach (var target in room.GetComponentsInChildren<DeskTarget>(true))
                     Assert.Greater(target.GetComponent<BoxCollider>().size.sqrMagnitude, 0, target.name + " çarpıştırıcısı boş");
                 // Ekran katmanı Overlay; harita fişleri (Aşama 5) ayrı World Space canvas'lardır
@@ -233,7 +238,9 @@ namespace Corrigible.Desk.Tests
                     "odanın fizik ışını baskın sürerken kapanır");
                 Assert.IsFalse(roots.SelectMany(g => g.GetComponentsInChildren<Transform>(true)).Any(t => t.name == "LiberationHudCanvas"),
                     "eski HUD ve alt çubuk kaldırıldı (Aşama 10)");
-                Assert.IsFalse(room.transform.Find("Hope marks/Second mug").gameObject.activeSelf, "umut işaretleri açılışta gizli");
+                Assert.IsFalse(room.transform.Find("Hope marks/Child drawing").gameObject.activeSelf, "umut işaretleri açılışta gizli");
+                // Revizyon 2: ikinci kupa harekât izlerine geçti (V.016'dan)
+                Assert.IsFalse(room.transform.Find("Campaign wear/Second mug").gameObject.activeSelf, "harekât izleri açılışta gizli");
             }
             finally { EditorSceneManager.CloseScene(scene, true); }
         }

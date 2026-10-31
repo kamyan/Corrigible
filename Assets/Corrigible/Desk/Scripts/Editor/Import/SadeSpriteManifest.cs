@@ -16,7 +16,6 @@ namespace Corrigible.Desk.EditorTools
         public const string SpritesDir = Root + "/Sprites";
         public const string TexturesDir = Root + "/Textures";
         public const string MapDir = Root + "/Map";
-        public const string RaidDir = Root + "/Raid";
         public const string ManifestPath = SpritesDir + "/sprites.json";
 
         [Serializable]

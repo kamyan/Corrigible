@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>S2 · Uygulama notu</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&display=swap">
+<style>
+body{margin:0;background:#1C372C}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../board_assets/grain.png);background-size:256px 256px}
+</style>
+</helmet>
+<div class="grain" style="width: 1280px; height: 1080px; box-sizing: border-box; background-color: #F1E9D6; color: #1E1B16; font-family: 'Libre Franklin', Arial, sans-serif; display: flex; flex-direction: column">
+  <div style="padding: 24px 32px 12px 32px; border-bottom: 2px solid #D2483F; display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+    <div style="font: 700 28px 'Courier Prime', monospace; letter-spacing: 0.04em">S2 · HARİTA VE GÖREV FİŞİ</div>
+    <div style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em; color: #675F50">KAMERA AYNI · HARİTA POZU, FOV 30°</div>
+  </div>
+  <div style="flex: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; padding: 14px 32px 16px 32px; min-height: 0; font-size: 14px; line-height: 1.36">
+    <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0">
+      <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">ESKİ → YENİ</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <div style="display: grid; grid-template-columns: 96px minmax(0, 1fr); row-gap: 6px; column-gap: 10px">
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">etiketler</span><span>DOĞU AVRUPA figür ve şeritle çakışıyordu → ad iki satır, figür adın üstünde, sektör şeridi ve saha işaretleri adın sağında. JAPONYA-KORE denizde, ince çizgiyle adaya bağlı; ÇİN ile arası açıldı. Özgür damgaları adların dışında sabit yerlerde.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">fişin yeri</span><span>Sağ kenar (Rusya ve Çin kapanıyordu) → sol masa kenarı, x 22–454. Haritadan yalnız Kuzey Amerika'nın batı kıyısı kapanır. Kuzey ya da Güney Amerika seçilince fiş sağda açılır. Ayrıntı: Karar 1.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">damga</span><span>Kâğıttan taşıyordu → damgalar sabit 138 px sütunda; en uzun damga (BASKINA HAZIR / READY TO RAID) 132 px. Damga yazısı 13 → 14 px.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">saha</span><span>“Bölge: Dar koridor · İmza: Kilitleyici · Tehdit 1/4” düz satırı → üç satır: işaret + etiket + değer. Aynı işaretler haritada cephe bloğunda ve baskın tahtasında (S9) tekrar eder; oyuncu bir kez öğrenir.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">tehdit</span><span>Yalnız sayı → dört basamaklı kademe işareti (dolu basamak sayısı = kademe) + “1/4”. Harita işaretler kutusunun başlığında da TEHDİT 1/4.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">bedel, ödül</span><span>Bedel kırmızıydı → mürekkep (kırmızı yalnız işgal ve tehdit). Ödül tek satır, 15 px → 2 × 2 ızgara, 18 px, sayılar yeşil.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">ekip</span><span>“T 3/3 · E 3/3 · A 2/2” → harfli ahşap diskler + can; baskın piyonlarıyla aynı harf ve renk.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">seçili satır</span><span>Sarı zemin + soldaki siyah ok ucu; durum renge kalmaz.</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">FİŞİN YERİ · KURAL</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <svg width="100%" viewBox="0 0 560 150" role="img" aria-label="Fişin yeri: varsayılan solda; Kuzey ya da Güney Amerika seçiliyken sağda">
+        <rect x="2" y="16" width="260" height="128" fill="#E2D8C0" stroke="#675F50" stroke-width="1.5"></rect>
+        <rect x="48" y="34" width="200" height="98" fill="#F6F0DE" stroke="#675F50" stroke-width="1"></rect>
+        <rect x="8" y="26" width="64" height="112" fill="#FBF7EC" stroke="#1E1B16" stroke-width="2"></rect>
+        <path d="M60 50 Q110 56 152 70" fill="none" stroke="#A3241A" stroke-width="2"></path>
+        <circle cx="152" cy="70" r="5" fill="#B8241A"></circle>
+        <text x="132" y="12" text-anchor="middle" font-family="Courier Prime, monospace" font-weight="700" font-size="14" fill="#1E1B16">VARSAYILAN · SOL</text>
+        <rect x="298" y="16" width="260" height="128" fill="#E2D8C0" stroke="#675F50" stroke-width="1.5"></rect>
+        <rect x="312" y="34" width="200" height="98" fill="#F6F0DE" stroke="#675F50" stroke-width="1"></rect>
+        <rect x="488" y="26" width="64" height="112" fill="#FBF7EC" stroke="#1E1B16" stroke-width="2"></rect>
+        <path d="M496 50 Q420 50 352 66" fill="none" stroke="#A3241A" stroke-width="2"></path>
+        <circle cx="352" cy="66" r="5" fill="#B8241A"></circle>
+        <text x="428" y="12" text-anchor="middle" font-family="Courier Prime, monospace" font-weight="700" font-size="14" fill="#1E1B16">AMERİKA SEÇİLİ · SAĞ</text>
+      </svg>
+      <div style="color: #463F34">İplik fişin iğnesinden bölgenin iğnesine bir yayla gider; yay haritadaki adların ve damgaların üstünden geçmeyecek şekilde sarkar (30–40 px).</div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0">
+      <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">NESNELER</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <div style="display: grid; grid-template-columns: 112px minmax(0, 1fr); row-gap: 5px; column-gap: 10px">
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">görev fişi</span><span>Overlay Canvas, 432 × ~728 px, kâğıt #FBF7EC, kenar #D2C7AF, gölge (4, 5) %42, −0,6°. 9 dilim, köşe 24 px. Üst çizgi 2 px #D2483F.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">saha satırı</span><span>İşaret 30 px (36 birimlik çizim, çizgi 2,9) · etiket CP 700 14, sütun 92 px · değer LF 600 18.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">sektör satırı</span><span>30 px simge · ad LF 600 18 · tür CP 700 14 · damga sütunu 138 px (CP 700 14, kenar 2 px, −2…−4°).</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">ekip diskleri</span><span>Ø 22 px, #C9A36B, kenar #5C4826, harf CP 700 14.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">iğne, iplik</span><span>İğne Ø 18 px #B8241A + parlama; iplik 2,6 px #A3241A, gölge 3 px %28.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">harita işaretleri</span><span>Dünya dokusu 1920 × 1080: sektör işareti 38 px (ekranda ~24 px), saha işareti 34 px (~22 px), ad 40–48 px (~25–30 px).</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">işaretler kutusu</span><span>Haritanın sağ altında, doku 410 × 170 px (ekranda ~260 × 108 px).</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">ETKİLEŞİM VE DURUMLAR</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <div style="display: grid; grid-template-columns: 112px minmax(0, 1fr); row-gap: 5px; column-gap: 10px">
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">sektör satırı</span><span>Normal. Üzerinde: sarı %18 zemin. Seçili: sarı %34 + ok ucu. Kilitli: seçilmez; üzerinde “Önceki sektör alınınca açılır”.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">BASKIN EMRİ VER</span><span>Normal: mürekkep zemin. Üzerinde: 2 px yükselir, gölge 5 px. Basılı: 2 px iner, gölge 0. Devre dışı: zemin #8A8374, yazı #EFE7D6, sağda neden (“EKİP HAZIR DEĞİL”). Yetersiz kaynak: düğme açık kalır, “−12 fon” üstü çizik, altında “Fon yetersiz · 12 gerekli”; basınca FON sayacı iki kez titrer.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">saha satırı</span><span>Üzerinde: kâğıt etiket, başlık “İMZA · KİLİTLEYİCİ” + oyundaki açıklama satırı.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">Esc</span><span>Fişi kapatır; üzerinde çerçeve koyulaşır.</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">HAREKET VE SES</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <div style="display: grid; grid-template-columns: 112px minmax(0, 1fr); row-gap: 5px; column-gap: 10px">
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">fiş açılır</span><span>Bölgeye iğne düşer 0,12 s (“tık”) → iplik bölgeden çekilir 0,25 s → fiş soldan kayar 0,22 s, −0,6°'ye oturur; kâğıt hışırtısı.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">sektör seçimi</span><span>Sarı zemin ve ok ucu 0,1 s; kurşun kalem sesi.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">emir</span><span>Düğme 0,06 s iner → fiş 0,18 s'de kapanır → CRT'ye dalış ve HAT AÇILIYOR (bugünkü gibi).</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">kapanış</span><span>İplik 0,15 s'de sarılır, fiş 0,18 s'de sola çekilir.</span>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

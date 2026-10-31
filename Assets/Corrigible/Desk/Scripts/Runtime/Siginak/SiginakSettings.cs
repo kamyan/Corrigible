@@ -11,6 +11,8 @@ namespace Corrigible.Desk
     {
         [Tooltip("Özgür bölge sayısına bağlı umut işaretleri (K1 notu; ayrı ve kapatılabilir).")]
         public bool hopeMarks = true;
+        [Tooltip("Vardiyaya bağlı harekât izleri (Revizyon 2 · S1: umut tenekesi, yırtık teleks, EVRAK kalınlığı, ikinci kupa; ayrı ve kapatılabilir).")]
+        public bool campaignWear = true;
 
         static SiginakSettings active;
         public static SiginakSettings Active

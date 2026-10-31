@@ -4,23 +4,35 @@ using System.Linq;
 using System.Text;
 using TMPro;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Corrigible.Desk.EditorTools
 {
     /// <summary>
-    /// Punto taraması (PROMPT §7.4, Aşama 10): sığınak odasındaki ve ekran katmanlarındaki bütün TMP metinlerinin 1920×1080'de
-    /// ekrandaki em boyunu ölçer. Overlay metin: punto × canvas'a göre ölçek (1080p referans). Dünya metni: her rig pozunun
-    /// kamerasıyla izdüşürülür, metnin kadrajda olduğu pozların en büyüğü alınır (okunduğu poz). 14 px altı ihlaldir
-    /// (tokens › type._notes.minimums: ikincil ≥ 14). Tasarımın kendi küçük puntoları ve anlatı süsleri gerekçeli istisnadır.
-    /// Sahnenin kaydedilmiş hâlini okur (editörde ya da Play'de); sahneyi değiştirmez.
+    /// Punto taraması (Aşama 10; Revizyon 2'de genişletildi): sığınak odasındaki ve ekran katmanlarındaki (oda, CRT, eğitim notu,
+    /// DeskUI: son rapor ve ayarlar) bütün TMP metinlerinin ve baskın HUD'unun (Baskin sahnesinin Overlay canvas'ları ve çalışırken
+    /// kurulan etiket, telsiz satırı, üzerine gelme prefab'ları) 1920×1080'de ekrandaki em boyunu ölçer. Overlay metin: punto ×
+    /// canvas'a göre ölçek (1080p referans). Dünya metni: her rig pozunun kamerasıyla izdüşürülür, metnin kadrajda olduğu pozların
+    /// en büyüğü alınır (okunduğu poz). 14 px altı ihlaldir (tokens › type._notes.minimums: ikincil ≥ 14). Tasarımın kendi küçük
+    /// puntoları ve anlatı süsleri gerekçeli istisnadır. Sahnelerin kaydedilmiş hâlini okur; değiştirmez.
     /// </summary>
     public static class SiginakTextScan
     {
         public const float Minimum = 14;
-        public const string ReportPath = "Docs/UI_Siginak/punto_taramasi.txt";
-        static readonly string[] Roots = { "SiginakRoom", "SiginakCrtOverlay" };
+        public const string ReportPath = "Docs/UI_Siginak_Rev2/punto_taramasi.txt";
+        public const string DeskScene = "Assets/Corrigible/Desk/Scenes/DeskGame.unity", RaidScene = "Assets/Corrigible/Scenes/Baskin.unity";
+        static readonly string[] Roots = { "SiginakRoom", "SiginakCrtOverlay", "SiginakTutorial", "DeskUI" };
+        /// <summary>
+        /// Baskında çalışırken kurulan Overlay metinleri ve kuruldukları yer (sahnedeki yol; ölçeği çarpılır): dünya etiketi,
+        /// telsiz kaydının satırı. Üzerine gelme kartı sahnede (RaidHud içinde) tarandığı için listede yok.
+        /// </summary>
+        static readonly (string prefab, string host)[] RaidPrefabs =
+        {
+            ("Assets/Corrigible/Desk/Prefabs/Sade/Raid/RaidScreenLabel.prefab", null),
+            ("Assets/Corrigible/Desk/Prefabs/Sade/Raid/RaidLogRow.prefab", "RaidPanelCanvas/RaidPanels/RaidLogDrawer"),
+        };
 
         public struct Entry
         {
@@ -36,27 +48,71 @@ namespace Corrigible.Desk.EditorTools
         static readonly (string part, string why)[] Exceptions =
         {
             ("/Key/Text", "tuş fişi CP 700 13 (tasarım: keyChip 13)"),
-            ("Operation slip/Paper/Close/Text", "“× Esc” tuş fişi CP 700 13 (tasarım: keyChip 13)"),
             ("Paper tray/Plate", "pirinç plaka; adı üzerine gelme etiketinde okunur"),
             ("Teleprinter/Paper text", "masadaki teleks kâğıdı; okunur boyda değilse satırlar ekranın altındaki şeritte basılır"),
-            ("Cork board/", "mantar pano notları anlatı süsü; liste K1'de dekor (KURTARILAN BÖLGELER)"),
             ("Shell/", "duvar yazıları ve afiş küçük satırları anlatı süsü"),
-            ("Radio log/", "CRT önündeki telsiz kayıt defterinin başlığı (dekor; telsiz kaydı baskında TELSİZ panelinde okunur)"),
+            ("Radio log/", "CRT önündeki telsiz kayıt defteri (tex2.js logBook ölçüsünde; son dört kayıt teleks, CRT ve raporlarda da okunur)"),
+            ("CRT desk/Radio/", "telsizin yüz baskısı (tex2.js radioFace ölçüsünde: kanal rakamları, KANAL, SİNYAL, SES/AYAR, isim plakası; dekor, bilgi taşımaz)"),
             ("Test pattern", "CRT test deseni K-07 (tasarım: %28 desen)"),
             ("/Stamp/Word", "haritadaki ÖZGÜR damgasının bandı (tasarım ~9 ekran px, Aşama 5; durum tarama ve lejantta da var)"),
             ("/Stamp/Day", "haritadaki ÖZGÜR damgasının vardiya kodu (tasarım ~9 ekran px, Aşama 5)"),
             ("Team figure/Body/Letter", "figür plakasındaki “A” harfi (simge)"),
             ("Report sheet/", "EVRAK tepsisindeki A5 kâğıt başlığı (okuma görünümü ayrıca açılır)"),
             ("/Stencil", "boyalı şablon yazı (dekor)"),
+            ("/KeyChip/Label", "eğitim notundaki tuş fişi CP 700 13 (tasarım: keyChip 13)"),
+            ("RaidScreenLabel/", "baskın dünya etiketi: puntoyu çağıran verir (bayrak 20, durum ≥ 14); prefab'daki değer yer tutucu"),
         };
 
         [MenuItem("Corrigible/Sığınak/Punto taraması")]
         public static string Run()
         {
-            var entries = Scan(SceneManager.GetActiveScene());
+            var entries = new List<Entry>();
+            foreach (var path in new[] { DeskScene, RaidScene })
+            {
+                var scene = SceneManager.GetSceneByPath(path);
+                bool opened = !scene.isLoaded;
+                if (opened) scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+                try { entries.AddRange(path == DeskScene ? Scan(scene) : ScanRaid(scene)); }
+                finally { if (opened) EditorSceneManager.CloseScene(scene, true); }
+            }
             File.WriteAllText(ReportPath, Report(entries));
             int bad = entries.Count(e => e.Violation);
             return $"{entries.Count} metin, {bad} ihlal, {entries.Count(e => e.Exception != null && e.Pixels < Minimum)} istisna · {ReportPath}";
+        }
+
+        /// <summary>Baskın: sahnenin Overlay canvas'ları ve çalışırken kurulan prefab'lar (hepsi 1080p referanslı Overlay).</summary>
+        public static List<Entry> ScanRaid(Scene scene)
+        {
+            var list = new List<Entry>();
+            foreach (var canvas in scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<Canvas>(true))
+                         .Where(c => c.isRootCanvas && c.renderMode == RenderMode.ScreenSpaceOverlay))
+                foreach (var t in canvas.GetComponentsInChildren<TMP_Text>(true))
+                    list.Add(Overlay(t, canvas.transform, PathOf(t.transform)));
+            foreach (var (path, host) in RaidPrefabs)
+            {
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                if (prefab == null) continue;
+                float hostScale = 1;
+                var at = host == null ? null : Find(scene, host);
+                for (var p = at; p != null && !(p.TryGetComponent<Canvas>(out var c) && c.isRootCanvas); p = p.parent) hostScale *= Mathf.Abs(p.localScale.y);
+                foreach (var t in prefab.GetComponentsInChildren<TMP_Text>(true))
+                    list.Add(Overlay(t, prefab.transform.parent, System.IO.Path.GetFileNameWithoutExtension(path) + "/" + PathOf(t.transform), hostScale));
+            }
+            return list;
+        }
+
+        static Transform Find(Scene scene, string path)
+        {
+            int slash = path.IndexOf('/');
+            var root = scene.GetRootGameObjects().FirstOrDefault(g => g.name == (slash < 0 ? path : path.Substring(0, slash)));
+            return root == null ? null : slash < 0 ? root.transform : root.transform.Find(path.Substring(slash + 1));
+        }
+
+        static Entry Overlay(TMP_Text t, Transform canvas, string path, float scale = 1)
+        {
+            for (var p = t.transform; p != null && p != canvas; p = p.parent) scale *= Mathf.Abs(p.localScale.y);
+            float px = t.fontSize * scale;
+            return new Entry { Path = path, Text = Short(t.text), Pixels = px, Pose = "Overlay", Exception = ExceptionOf(path, px) };
         }
 
         public static List<Entry> Scan(Scene scene)

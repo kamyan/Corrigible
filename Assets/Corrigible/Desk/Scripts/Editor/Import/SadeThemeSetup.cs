@@ -114,12 +114,19 @@ namespace Corrigible.Desk.EditorTools
         static void ImportRaid()
         {
             var theme = LoadOrCreate<RaidTheme>(RaidThemePath);
-            var root = JObject.Parse(File.ReadAllText(RaidTokensPath));
+            FillRaid(theme, File.ReadAllText(RaidTokensPath));
+            EditorUtility.SetDirty(theme);
+        }
+
+        /// <summary>Baskın token metnini verilen temaya yazar (asset kaydetmez); test aynı yolu kullanır.</summary>
+        public static void FillRaid(RaidTheme theme, string json)
+        {
+            var root = JObject.Parse(json);
             var sink = new Sink();
-            foreach (var p in root.Properties()) if (p.Name != "meta") Flatten(p.Value, p.Name, sink);
+            // 1.1'in sürüm listeleri (_new_1_1, _changed_1_1, _was_1_1) açıklamadır; eski değerler temaya girmez
+            foreach (var p in root.Properties()) if (p.Name != "meta" && !p.Name.StartsWith("_")) Flatten(p.Value, p.Name, sink);
             Fill(theme, sink);
             theme.Invalidate();
-            EditorUtility.SetDirty(theme);
         }
 
         static void Fill(TokenTheme theme, Sink sink)

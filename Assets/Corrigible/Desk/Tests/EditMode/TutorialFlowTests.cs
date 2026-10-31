@@ -103,7 +103,7 @@ namespace Corrigible.Desk.Tests
                 Assert.AreEqual(RenderMode.ScreenSpaceOverlay, canvas.renderMode);
                 Assert.Greater(canvas.sortingOrder, 50, "baskın HUD'u ve paneller (20, 50) üstünde");
                 var note = new SerializedObject(tutorial.GetComponentInChildren<TutorialNoteView>(true));
-                foreach (var name in new[] { "card", "anchor", "group", "head", "title", "body", "okLabel", "skipLabel", "ok", "skip" })
+                foreach (var name in new[] { "card", "anchor", "group", "head", "step", "body", "okLabel", "skipLabel", "ok", "skip" })
                     Assert.IsNotNull(note.FindProperty(name).objectReferenceValue, name);
             }
             finally { EditorSceneManager.CloseScene(scene, true); }

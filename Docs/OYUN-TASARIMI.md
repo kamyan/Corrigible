@@ -15,12 +15,7 @@ taktik tahta için `Core/Baskin.cs` içindedir.
   makinelerin hamlesini telsizden bildirir (kırmızı oklar), durum saha masasındaki paftada figürlerle tutulur. Oyuncunun
   hamleleri tek tek, anında iletilir; EMRİ İLET (Enter) turu bitirir ve komuta dinlemeye geçer (DİNLEMEDE). Baskında saha
   sesleri telsizin dar bandından duyulur. Paftanın kenarında kare adları var (A–H, 1–8); gözcü kareyi adıyla bildirir
-  ("saldırı → TEKNİSYEN · A6"). Okları yağlı kalemle çizilmiş gibidir; makine evresinin sonunda görevli, makine figürlerini
-  çubukla yeni karelerine iter. Komuta masasında CRT'nin önünde bas-konuş mikrofonu ve telsiz kayıt defteri durur.
-- **Gözcü raporu ve telsiz şeridi:** her turun başında komuta dinler (DİNLEMEDE); gözcü makineleri sırayla bildirir
-  ("GÖZCÜ › №1 · Dron E4 · ateş → TEKNİSYEN · A6") ve her bildirimle ok paftaya çizilir, bayrak ve hedef kareler belirir.
-  Bir tuş ya da tıklama raporun kalanını bir anda çizer. Sol üstteki telsiz şeridi baskın boyunca açıktır: son dört
-  konuşma, en yenisi daktilo gibi; gözcünün her satırında telsizden boğuk bir konuşma duyulur.
+  ("saldırı → TEKNİSYEN · A6"). Okları yağlı kalemle çizilmiş gibidir. Komuta masasında CRT'nin önünde bas-konuş mikrofonu ve telsiz kayıt defteri durur.
 - Görsel dil: sıcak lamba ışığı, kâğıt ve mürekkep; renk anlam taşır (kırmızı işgal/tehdit, mavi geri alınmış, yeşil iyi).
 
 ## Harekât
@@ -86,9 +81,9 @@ parça eklenmez.
   (1) düşürür; başarılı ya da başarısız her baskında. **Kazanılan** baskında tahtada ayakta kalan her
   `liberationCiviliansPerTrust` (2) sivil sunucu +1 geri verir (`RaidResult.CiviliansLeft`; kaybedilen baskının sivilleri
   işgal altında kalır). Özgürleşen her bölge `liberationTrustPerRegion` (3) geri verir. Değişim `LiberationRaidReward.Trust`'a
-  yazılır; operasyon raporu "Ayakta kalan sivil sunucu 4" ve "Sivil güven +1 · 11/20" satırlarını, güven 3 ve altına inince
-  uyarı bandını gösterir. Kampanyada sivil sunucu `liberationCivilianHp` (2) canlıdır.
-- Güven 0 olunca harekât **Dağılma** ile biter; son rapor KAYBEDİLDİ damgası ve "YZ kazandı." ile açılır.
+  yazılır; operasyon raporu "Kırılan sivil sunucu" ve "Sivil güven +1 · 11/20" satırlarını gösterir, güven 3 ve altına
+  inince başlığın altındaki cümle uyarır. Kampanyada sivil sunucu `liberationCivilianHp` (2) canlıdır.
+- Güven 0 olunca harekât **Dağılma** ile biter; son rapor KAYBEDİLDİ ve DAĞILMA damgalarıyla açılır.
 - **Ekibe ulaşamayan makine sivile nişan alır** (gelişmiş akıl; `Baskin.CanReachTeam`, `ScoreTarget(..., hostage)`; turda en
   çok bir makine, niyeti önceden görünür). Ulaşabilen makine sivili hedeflemez (sivil hattı −2). Sivil sunucu başka yoldan da
   kırılır: hedefi atıştan kaçan ekip arkasındaki sunucuyu açıkta bırakır, EMP, itme ve patlayan soğutma ünitesi de kırar.
@@ -114,9 +109,12 @@ parça eklenmez.
   Dağılma'ya varır. Yeniden özgürleşen bölge güveni ve bölge fonunu yeniden verir (ölçümde de böyleydi).
 - **Gösterim:** arka duvarda **YZ ALARMI panosu** (`AlarmPanel`: mekanik sayaç n/10 ve kırmızı ışık; eşiğe 3 basamak
   kala yanar, son basamakta yanıp söner; üzerine gelince eşik ve bu vardiyanın artışı), CRT'de "YZ ALARMI n/10" (bekleme
-  ve devre dışı ekranı), kenar satırında ALARM, vardiya raporunun
-  EKİP VE YZ ALARMI bölümünde alarm satırı, operasyon raporunda "YZ alarmı" ve karşı saldırı satırları, karşı saldırıda
-  teleks (YZ KARŞI SALDIRISI) ve ses, son raporda kırmızı damgalı "KARŞI SALDIRI" kartı.
+  ve devre dışı ekranı), kenar satırında ALARM, vardiya raporunun özetinde YZ ALARMI gözü (n/10, on adımlık ölçek, "4 → 5 ·
+  10'da karşı saldırı"), operasyon raporunda "YZ alarmı" ve karşı saldırı satırları. Karşı saldırıda (Revizyon 2 · S5b)
+  rapordan önce duvardaki alarm lambası üç kez yanar, raporun başında çift çizgili "YZ KARŞI SALDIRISI" kutusu (teleks kodu +
+  sektör), alarm gözü kırmızı "10/10 · EŞİK", haritada sektöre ✕ ve YENİDEN İŞGAL damgası, teleks (YZ KARŞI SALDIRISI);
+  bölge özgürlüğünü yitirdiyse kartı panodan düşer ve ÖZGÜR BÖLGE bir geri döner. Son raporun kırılma anlarında “YZ karşı
+  saldırısı: Doğu Avrupa 01 yeniden işgal”, şeritte yukarı çıkıntı.
 - **Denge ölçümü** (2026-10-27, açgözlü bot, 10'ar harekât): eşik 14'ken (sığınak baskına bağlanmadan önce) saldırgan
   0/10, dengeli 6/10, koruyucu 9/10. Sığınak hazırlık yeri olunca telsiz alarmı neredeyse siliyordu; eşik 10'a, telsiz
   görevli başına −0,05'e indi (son ölçüm aşağıda, Sığınak). Sessiz vardiyanın alarmı düşürdüğü kural denendi ve
@@ -185,7 +183,9 @@ Baskın sürerken (`S.Raid`), harekât bitmişken ya da açılış/emir belgesi 
   | Kilitleyici | 2 · 2 | Kilit: düz hatta 4 kareye kadar; vurulan uzman gelecek tur yürüyemez (yeteneği serbest) |
   | Kalkan dronu | 2 · 3 | Kalkan: yanındaki makineye zırh 1; verecek yoksa ateş |
   | Çoğaltıcı | 2 · 2 | Çoğaltma: yanındaki boş kareye bir dron uyandırır (karede biri varsa o 1 hasar alır) |
- Makinelerin bu turdaki hamlesi kırmızı okla, sırası bayrakla görünür. Hamleler geri
+ Makinelerin bu turdaki hamlesi okla, sırası bayrakla görünür: zarar verenler kırmızı (havan yüksek yay, kilitte kıskaç,
+  onarımda anahtar rozeti), kalkan ve kopyalama kahverengi. Kilit niyetinin hedefindeki uzmanın kartında KİLİT TEHDİDİ ·
+  #n; yeni uyanan robotun üstünde bir tur UYANDI. Son iki tur tur şeridinde işaretli, son turda SON TUR. Hamleler geri
   alınabilir (`Undo`), önizleme durumu değiştirmez. Kırılan sivil sunucular sivil güveni düşürür (aşağıda).
   - **İkmal:** Teknisyen ikmal kasasına bitişik kareden yeteneğiyle malzemeyi alır ve **taşır** (`BState.Carrier`); baskın
     ancak taşıyıcı giriş karelerinden birine (`BState.Exits`, yeşil kesik çerçeve) varınca kazanılır (yürüyüş, kanca ya da
@@ -213,7 +213,15 @@ Baskın sürerken (`S.Raid`), harekât bitmişken ya da açılış/emir belgesi 
     canı yara olarak kalır; düşen uzman ya da yedek `liberationInjuryDays` (3) gün yatar ve sağlam kalkar; kırılan plaka
     sığınaktan düşer. Kalıcı kayıp yok. Teknisyen yatıp yedek de yoksa ekip kalkana kadar baskına çıkamaz.
   - Depo sınırına takılan ödül yalnız gerçekten alınan miktarla raporlanır (`LiberationRaidReward`).
-- **Operasyon raporu:** masaya dönünce hedef, sonuç, ödüller ve bölge durumu bir kâğıtta açılır (`SimDeskBuilder.Report`).
+- **Sonuç kartı** (baskın tahtasında, Revizyon 2 · S7a/b): tahta kararır, spot nedenin üstünde açılır, sağdan kart kayar:
+  başlık yerinde tek damga (SEKTÖR GERİ ALINDI mavi; GERİ ÇEKİLDİ, EKİP DÜŞTÜ, İKMAL KAYBEDİLDİ, SÜRE DOLDU kırmızı), yer
+  satırı (“Doğu Avrupa · 02 Tahliye geçidi”), hedef / kırılan sivil sunucu / ekip, tek düğme (0,6 s girdi kilitli).
+- **Operasyon raporu** (S7c/d): baskından dönünce kamera harita pozuna geçer, rapor solda iner, iplik ekip figürüne gider.
+  Başlık sonucu söyler (SEKTÖR GERİ ALINDI / SEKTÖR İŞGAL ALTINDA), altında tek cümle (bölgenin kalan sektörü ya da
+  “Ekip geri döndü…”; Teknisyen yedeksiz düştüyse ya da güven azaldıysa onun uyarısı). Başarılıda KAZANÇ (FON, MALZEME,
+  ERZAK, KURTULAN) ve sayaçlarda ± fişleri, sektör işareti maviye döner; başarısızda ödül alanı yok, YZ alarmı ölçekle.
+  SONUÇLAR: sektör, kırılan sivil sunucu, ekip (düşen, yeni yara, kırılan plaka), sivil güven, YZ alarmı, karşı saldırı
+  (`OperationReportBuilder`).
 
 ## Sığınak (`ShelterState`, `ShelterLogic`, `Simulation.Shelter.cs`)
 
@@ -270,9 +278,10 @@ kaçmış bir teknisyen… Kapı erzağa, güvene ve alarma bir yüz verir; bask
 - **Kapalı kapı:** kâğıt kapıdan duyulanı yazar (vuruşun ritmi, ses). **Gözetleme deliği** görüneni, **interkom** parolaya
   ("Yedi") verilen cevabı ekler; ikisi de sunumdur, durum değiştirmez. Sonra **Kapıyı aç** ya da **Açma**; silahlı
   ziyaretçiyle kapı kapalıyken interkomdan konuşulur.
-- **Açık kapı:** ziyaretçi söyler, seçenekler çıkar. Bedeller (erzak, malzeme, fon) düğmede yazar; yetmiyorsa ya da oda
-  çalışmıyorsa (revir, telsiz) seçilemez, gerekçesi yazar. Sonuç kâğıtta metin ve etki satırı olarak görünür ("Erzak +6 ·
-  Güven +1"). Her karar `door_answer` komutudur (kayda girer).
+- **Açık kapı:** ziyaretçi söyler, seçenekler çıkar. Bedeller (erzak, malzeme, fon) ve güvene etkisi satırın sağında
+  yazar ("−8 erzak", "güven −1"). Oda çalışmıyorsa (revir, telsiz) seçenek kapalıdır, nedeni sağda; bedel yetmiyorsa satır
+  açık kalır, eksik kalem çizilir ve basınca komut denenir (teleks YAPILAMADI basar). Sonuç kâğıtta seçim satırı, metin ve
+  etki satırı olarak görünür ("Erzak +6 · Güven +1"). Her karar `door_answer` komutudur (kayda girer).
 - **Açılmayan kapı:** ziyaretçi kapıdayken vardiyayı bitirmek **Açma** sayılır (ön kontrol uyarır; teleks ve vardiya raporu
   "KAPI AÇILMADI" yazar). Muhtaç ziyaretçiyi geri çevirmek güvene dokunur (anne, aile −1; dışarıda kalan −2; aç heyet −2).
 - **Kart seçimi** (`PickDoorCard`): ilk vuruş; sonra zamanı gelen zincir kartı; yoksa koşulu tutan kartlardan ağırlıkla
@@ -323,16 +332,28 @@ kaçmış bir teknisyen… Kapı erzağa, güvene ve alarma bir yüz verir; bask
 ## Komuta odası (sunum)
 
 - **Masa (K1):** sayaç bankası (VARDİYA, FON, ERZAK, MALZEME, ÖZGÜR BÖLGE, GÜVEN), anahtar rayı (1 KOMUTA, 2 SIĞINAK,
-  3 GÖREVLER, H KILAVUZ, Home MASA), vardiya şalteri, teleks, evrak tepsisi. Arka duvarda, mantar pano ile posterin
+  3 GÖREVLER, 4 KAPI, H KILAVUZ, Home MASA), vardiya şalteri, teleks, evrak tepsisi. Arka duvarda, mantar pano ile posterin
   arasında YZ ALARMI panosu (rafta yedinci sayaca yer yok: masa ve lamba sınırı).
-- **Harita (K2, K3):** bölge seçilince görev fişi (sektörler, bedel/ödül, baskın emri); bölge tamamlanınca cephe onay fişi.
-  Ekip figürü haritada sürüklenebilir.
-- **Sığınak maketi (K4):** odaların durumu (çalışıyor, DURDU, HASARLI), personeli ve geliştirme kararları; pano özetinde
-  TOPLULUK (yedek dahil), UZMANLAR ("T 3/3 · E 2/3 · A yaralı (2)"), ERZAK, PLAKA.
+- **Harita (K2, K3; Revizyon 2 · S2):** bölge seçilince görev fişi açılır: ekran katmanında sol masa kenarında (Kuzey ya
+  da Güney Amerika seçiliyse sağda), kırmızı iple bölgeye bağlı. SAHA satırları (bölge özelliği, imza makinesi, tehdit
+  kademesi; işaretleri haritadaki ve baskın tahtasındakilerle aynı), sektörler, bedel/ödül, ekip diskleri, baskın emri.
+  Bölge tamamlanınca cephe onay fişi. Haritada cephe bloğu (sektör şeridi + yüzde + saha işaretleri), işaretler kutusunda
+  TEHDİT n/4; karşı saldırının aldığı sektör geri alınana kadar ✕ ve YENİDEN İŞGAL damgasıyla işaretli. Ekip figürü
+  haritada sürüklenebilir.
+- **Sığınak maketi (K4; Revizyon 2 · S3):** odaların durumu (çalışıyor, DURDU, HASARLI), personeli ve geliştirme kararları;
+  pano özetinde başta erzakın kaç vardiya yeteceği (⌊erzak ÷ son vardiyadaki düşüş⌋; 3 ve altı kırmızı), sonra TOPLULUK
+  (yedek dahil), UZMANLAR (diskler), PLAKA. Maketin üstündeki DEPO bandı erzakı sandık, malzemeyi kova, plakaları rafta
+  gösterir; odalar çıktılarını gösterir (ranzada yedek, telsizde yanan kadran, atölyede döküm kalıbı, revirde hasta).
 - **CRT (K5):** telsizin göstergesi (TELSİZ · KANAL 07): dinlemede, hat açılıyor, hat açık, hat kapandı. Yalnız baskın
   emri kamerayı ekrana yaklaştırır. Teknisyen yatıp yedek de yoksa hat kapalı ("ALFA · TEKNİSYEN YARALI · 2 GÜN").
-- **Görev fişi** kadroyu baskına çıkacağı gibi, rol harfleriyle yazar: "T 3/3 · E 2/3 · A (yedek) 1/2 · 2 plaka".
-- **Vardiya geçişi (K6):** şalter → sayaçlar döner → vardiya raporu; rapor evrak tepsisine kayar.
+- **Görev fişi** kadroyu baskına çıkacağı gibi, baskın piyonlarının harfli ahşap diskleriyle yazar: T 3/3 · E 2/3 ·
+  A 1/2 yedek · 2 plaka. Eksik yalnız fonsa BASKIN EMRİ VER açık kalır; basınca komut çağrılmaz, FON sayacı titrer ve
+  teleks gerekçeyi basar. Başka gerekçede düğme devre dışıdır, kısa nedeni sağında yazar (“EKİP HAZIR DEĞİL”).
+- **Vardiya geçişi (K6, Revizyon 2 · S5):** şalter → sayaçlar döner → vardiya raporu (harita pozunda, solda 540 px):
+  başta üç göz (ERZAK "n vardiya yeter" · YZ ALARMI ölçekle · FON önce → sonra), altında alarm notu; FON, ÜRETİM VE TÜKETİM
+  (+ analist notu), EKİP, YAPILAMADI. Erzak ve alarm dökümde tekrar edilmez. Renk kuralı: artı yeşil, eksi mürekkep (eksi
+  işaretiyle), ±0 gri; kırmızı yalnız alarm eşiği ve işgal. Sayaçların altındaki ± fişleri aynı kuralla. Rapor evrak
+  tepsisine kayar; tepsiden son 5 rapor okunur.
 - **Açılış (K7):** açılış dizisi ve emir belgesi; BAŞLA ile oda açılır. Kayıt varsa son rapor kısaca görünür.
 - **Eğitim (rehberli ilk vardiyalar):** yeni harekâtta, eğitim daha önce bitirilmediyse ya da atlanmadıysa sağ altta
   analistin notu çıkar (`SiginakTutorial`, adımlar `TutorialFlow.Steps`). 12 adım: komuta odası (TAMAM) → görev fişi →
@@ -352,19 +373,28 @@ kaçmış bir teknisyen… Kapı erzağa, güvene ve alarma bir yüz verir; bask
   çekilir, baskın serbest oynanır. Simülasyon yalnız baskının sonucunu gördüğü için kayıt bozulmaz.
   "Eğitimi atla" ya da kapanış eğitimi bitirir (PlayerPrefs `Corrigible.TutorialDone`; editörde Corrigible › Eğitim ›
   Eğitimi sıfırla). Kayıttan devam eden oyunda eğitim yoktur. Simülasyona dokunmaz.
-- **Kapı (K8):** sağ duvarda çarklı çelik kapı (üstünde kırmızı lamba, yanında interkom), arkasında kısa bir koridor.
-  Biri çalınca (vardiya raporu dosyalanıp masa boşalınca) vuruş sesi gelir, lamba yanıp söner, tavan ampulü titrer, teleks "KAPI ÇALIYOR" basar
-  ve kamera kapıya döner; kâğıt ekranın solunda açılır. 1–6 seçenek, Esc masaya döner (ziyaretçi vardiya bitene kadar
-  bekler; K ya da kapıya tıklamak kâğıdı geri getirir), Enter sonucu kapatır. Kapı açılınca çark döner, kanat odaya açılır
-  ve koridorun ışığında ziyaretçinin silueti görünür. Harekâtı bitiren kararda kâğıtta kırmızı damga (VURULDU, SIZMA) ve
-  "Son rapor" düğmesi çıkar; son rapor ona basılınca açılır. Vardiya raporu açılmayan kapıyı EKİP VE YZ ALARMI bölümünde
-  yazar; ön kontrol kapıda bekleyeni uyarır.
-- Komutların gerekçesi ve sonucu teleksten basılır (`TelexReasons`). Ayrıntı: `Docs/UI_Siginak/IMPLEMENTATION_MAP.md`.
+- **Kapı (K8, Revizyon 2 · S4):** sağ duvarda çarklı çelik kapı: üstünde tehlike bandı ve kafesli vuruş lambası, yanında
+  interkom, solunda tebeşirle ziyaretçi çentiği; arkasında fayanslı merdiven boşluğu. Biri çalınca (vardiya raporu
+  dosyalanıp masa boşalınca) üç vuruş gelir, lamba amber yanar ve her vuruşta parlar, tavan ampulü titrer, teleks "KAPI
+  ÇALIYOR" basar ve kamera kapıya döner; kâğıt ekranın solunda açılır. Gözetleme ve interkomun cevabı kâğıtta ayrı
+  bloklarda; kullanılan seçenek BAKILDI / SORULDU damgasıyla kapanır. 1–6 seçenek, Esc masaya döner (ziyaretçi vardiya
+  bitene kadar bekler; 4, K ya da kapıya tıklamak kâğıdı geri getirir), Enter sonucu kapatır. Kapı açılınca çark döner,
+  kanat koridora açılır, merdivenin ışıkları yanar ve ziyaretçinin silueti görünür (altı tür: anne, yaşlı, silahlı, asker,
+  yaralı, kopya; ötekiler genel biçim, kalabalıklar birden çok siluet). Harekâtı bitiren kararda (VURULDU, SIZMA) oda ve
+  lamba kırmızıya döner, kâğıda çift çizgili damga iner; yalnız Enter / SON RAPORA GEÇ etkindir, son rapor ona basılınca
+  açılır. Vardiya raporu açılmayan kapıyı EKİP bölümünde yazar; ön kontrol kapıda bekleyeni uyarır.
+- Komutların gerekçesi ve sonucu teleksten basılır (`TelexReasons`). Ayrıntı: `Docs/UI_Siginak_Rev2/IMPLEMENTATION_MAP.md` (Revizyon 2; ilk tur `Docs/UI_Siginak/IMPLEMENTATION_MAP.md`).
 
 ## Son rapor
 
-Harekât bitince tam ekran son rapor açılır: sonuç damgası (Silme: KAZANILDI; Dağılma, Vuruldu, Sızma: KAYBEDİLDİ, "YZ kazandı."), dört gösterge (harekât süresi, baskın sayısı, özgür bölge,
-sığınak nüfusu), işgal oranı şerit grafiği, kırılma anları (geri alınan sektörler ve sonuç) ve **Yeniden başla**.
+Harekât bitince (Revizyon 2 · S8) kamera harita pozuna geçer, harita karartılır ve 1620 × 952 rapor aşağıdan gelir:
+sonuç damgası (Silme: KAZANILDI yeşil; Dağılma, Vuruldu, Sızma: KAYBEDİLDİ kırmızı + küçük neden damgası), sonucu söyleyen
+cümle (kazanınca altında “AĞA BAĞLANMA · ANALOG KAL”, kayıpta sonun metni), dört gösterge (SÜRE vardiya; BASKIN başarılı ·
+başarısız; ÖZGÜR BÖLGE x/12 + sektör; SIĞINAK NÜFUSU, kayıpta kırmızı “kişi kaldı”), işgal şeridi (x = vardiya 1…N her
+zaman tam genişlik; kırmızı işgal, mavi geri alınan; karşı saldırılar yukarı çıkıntı) ve üstünde numaralı kırılma anları,
+altta aynı numarayla satırlar (en çok altı: ilk özgür bölge, karşı saldırılar, öteki özgür bölgeler, Dağılma'da son güven
+düşüşü, son olay: son sunucu / güvenin sıfırlanması / kapının açılması), **YENİDEN BAŞLA** (Enter). İşaretin ya da satırın
+üzerine gelince ikisi birlikte seçilir (`FinalReportBuilder`, `FinalReportView`).
 
 ## Kayıt ve kalıcılık
 

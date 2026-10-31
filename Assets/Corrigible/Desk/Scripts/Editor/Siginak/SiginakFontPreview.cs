@@ -22,8 +22,8 @@ namespace Corrigible.Desk.EditorTools
         public const string ScenePath = DeskSpriteManifest.Root + "/Scenes/Siginak_FontTest.unity";
         public const string CapturePath = "Docs/UI_Siginak/screens_unity/A1_fonts.png";
 
-        /// <summary>PROMPT §2: her font asset'i bu glifleri içermeli (eksik glif = hata).</summary>
-        public const string RequiredGlyphs = "ĞÜŞİÖÇ ğüşıöç ✓ ▸ · → − ± × … “ ” ‘ ’ — % ▮";
+        /// <summary>PROMPT §2 (ilk tur ve Revizyon 2): her font asset'i bu glifleri içermeli (eksik glif = hata).</summary>
+        public const string RequiredGlyphs = "ĞÜŞİÖÇ ğüşıöç ✓ ▸ · → − ± × … “ ” ‘ ’ — % ▮ ✕ ▶ ◆ ● ■";
 
         /// <summary>Sığınak yazı tablosundaki yüzler: rol, yüz, TR örneği, EN örneği.</summary>
         static readonly (string role, string face, string tr, string en)[] Rows =

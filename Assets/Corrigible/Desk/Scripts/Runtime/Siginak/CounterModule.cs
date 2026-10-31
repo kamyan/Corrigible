@@ -5,8 +5,9 @@ using UnityEngine;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Sayaç rafının tek modülü (K1 notu): pirinç plaka, pencerede çarklar, isteğe bağlı kırmızı onda bir çarkı (FON) ve
-    /// sabit ek (“/40”). Değer değişince çarklar sağdan sola 0,12 s arayla yuvarlanır, altına ± fişi asılır.
+    /// Sayaç rafının tek modülü (K1 notu): pirinç plaka, pencerede çarklar, isteğe bağlı onda bir çarkı (FON; Revizyon 2:
+    /// açık renk çark, önünde pirinç virgül) ve sabit ek (“/40”). Değer değişince çarklar sağdan sola 0,12 s arayla
+    /// yuvarlanır, altına ± fişi asılır.
     /// </summary>
     public sealed class CounterModule : MonoBehaviour
     {
@@ -14,24 +15,35 @@ namespace Corrigible.Desk
         [SerializeField] CounterWheel[] wheels = Array.Empty<CounterWheel>();
         [Tooltip("Onda bir çarkı (yalnız FON).")]
         [SerializeField] CounterWheel tenths;
+        [Tooltip("Ondalık işareti (yalnız onda bir çarkı olan modülde): Türkçede pirinç virgül, İngilizcede kuyruksuz nokta.")]
+        [SerializeField] GameObject decimalComma, decimalPoint;
         [SerializeField] TMP_Text suffix;
         [SerializeField] DeltaSlip slip;
 
+        [Tooltip("Yetersiz kaynakta titreme (Revizyon 2 · S2: “basınca FON sayacı iki kez titrer”): genlik ve bir gidiş-dönüş süresi.")]
+        [SerializeField, Min(0)] float shakeMeters = 0.0025f;
+        [SerializeField, Min(0.01f)] float shakeSeconds = 0.09f;
+
         double value;
         long shown = -1;
+        Vector3 rest;
+        float shakeAt = -1, raised;
+        int shakes;
 
         public event Action Ticked;
         public double Value => value;
         int Scale => tenths != null ? 10 : 1;
         public double Max => Math.Pow(10, wheels.Length) - 1.0 / Scale;
 
-        public void Configure(CounterWheel[] integerWheels, CounterWheel tenthsWheel, TMP_Text suffixText, DeltaSlip deltaSlip)
+        public void Configure(CounterWheel[] integerWheels, CounterWheel tenthsWheel, TMP_Text suffixText, DeltaSlip deltaSlip,
+            GameObject comma = null, GameObject point = null)
         {
-            wheels = integerWheels; tenths = tenthsWheel; suffix = suffixText; slip = deltaSlip;
+            wheels = integerWheels; tenths = tenthsWheel; suffix = suffixText; slip = deltaSlip; decimalComma = comma; decimalPoint = point;
         }
 
         void Awake()
         {
+            rest = transform.localPosition;
             foreach (var w in wheels) if (w != null) w.Ticked += Tick;
             if (tenths != null) tenths.Ticked += Tick;
         }
@@ -40,6 +52,16 @@ namespace Corrigible.Desk
         {
             foreach (var w in wheels) if (w != null) w.Ticked -= Tick;
             if (tenths != null) tenths.Ticked -= Tick;
+        }
+
+        void OnEnable() { DeskLoc.Instance.Changed += ApplyDecimal; ApplyDecimal(); }
+        void OnDisable() => DeskLoc.Instance.Changed -= ApplyDecimal;
+
+        void ApplyDecimal()
+        {
+            bool en = DeskFormat.Lang == DeskLang.En;
+            if (decimalComma != null) decimalComma.SetActive(!en);
+            if (decimalPoint != null) decimalPoint.SetActive(en);
         }
 
         void Tick() => Ticked?.Invoke();
@@ -76,8 +98,9 @@ namespace Corrigible.Desk
             }
             if (withSlip && slip != null)
             {
+                // Artı yeşil, eksi mürekkep: kırmızı yalnız işgal ve tehdit içindir (Revizyon 2 · renk kuralı)
                 double delta = (scaled - shown) / (double)Scale;
-                slip.Show(DeskFormat.Signed(delta, tenths != null ? 1 : 0), t.ColorOf(delta > 0 ? "status.good" : "status.threat"));
+                slip.Show(DeskFormat.Signed(delta, tenths != null ? 1 : 0), t.ColorOf(delta > 0 ? "status.good" : "ink"));
             }
             shown = scaled;
         }
@@ -91,6 +114,35 @@ namespace Corrigible.Desk
         public void Unpin()
         {
             if (slip != null && slip.Visible) slip.Release();
+        }
+
+        /// <summary>Modül yerinde <paramref name="times"/> kez yana titrer (eksik kaynağı gösterir; değer değişmez).</summary>
+        public void Shake(int times = 2)
+        {
+            shakes = Mathf.Max(1, times);
+            shakeAt = Time.unscaledTime;
+        }
+
+        /// <summary>Vardiya raporunun özet gözünün üzerine gelince modül (ve fişi) biraz kalkar (Revizyon 2 · S5).</summary>
+        public void Raise(bool on)
+        {
+            float target = on ? shakeMeters * 0.8f : 0;
+            if (Mathf.Approximately(raised, target)) return;
+            raised = target;
+            if (shakeAt < 0) transform.localPosition = rest + Vector3.up * raised;
+        }
+
+        void Update()
+        {
+            if (shakeAt < 0) return;
+            float p = (Time.unscaledTime - shakeAt) / shakeSeconds;
+            if (p >= shakes)
+            {
+                shakeAt = -1;
+                transform.localPosition = rest + Vector3.up * raised;
+                return;
+            }
+            transform.localPosition = rest + Vector3.up * raised + Vector3.right * (Mathf.Sin(p * Mathf.PI * 2) * shakeMeters);
         }
 
         /// <summary>i. tam sayı çarkının ölçekli değerdeki basamağı (onda bir varsa bir kayık).</summary>

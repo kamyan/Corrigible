@@ -11,7 +11,6 @@ namespace Corrigible.Desk
     public static class DeskFormat
     {
         public const char Minus = '−';
-        public const char Approx = '≈';
 
         static readonly NumberFormatInfo TrNum = new NumberFormatInfo { NumberDecimalSeparator = ",", NumberGroupSeparator = ".", NegativeSign = "-" };
         static readonly NumberFormatInfo EnNum = new NumberFormatInfo { NumberDecimalSeparator = ".", NumberGroupSeparator = ",", NegativeSign = "-" };
@@ -50,9 +49,6 @@ namespace Corrigible.Desk
             return s[0] == Minus ? Minus + "%" + s.Substring(1) : "%" + s;
         }
         public static string Percent(double v, int decimals = 0) => Percent(v, decimals, Lang);
-
-        /// <summary>Yaklaşık (RAPOR) değer: “≈41,8”.</summary>
-        public static string Approximate(string formatted) => Approx + formatted;
 
         /// <summary>Gün kodu: TR “G-074”, EN “D-074”.</summary>
         public static string DayCode(int day, DeskLang lang) => (lang == DeskLang.En ? "D-" : "G-") + day.ToString("000", CultureInfo.InvariantCulture);

@@ -27,6 +27,8 @@ namespace Corrigible.Desk.Bridge
             else OpenState(Baskin.Create(p));
         }
         public void OpenForValidation(Baskin.BState state)=>OpenState(state);
+        // Sonuç kartının yer satırı: bölge · sıra sektör (vardiya raporuyla aynı biçim)
+        protected override string ResultPlace{get{var sector=game?.Sim?.LiberationSector(State.Params.SectorId);return sector==null?base.ResultPlace:Loc.F("{0} · {1:00} {2}",Loc.T(GameData.Region(sector.Region).Name),sector.Index+1,sector.Name);}}
         protected override (int Trust,int Max,int PerCivilian) TrustStake=>game?.Sim==null?(0,0,0):(game.Sim.S.Trust,game.Sim.TrustMax,game.Sim.B.liberationTrustPerCivilian);
         protected override void Finish()
         {

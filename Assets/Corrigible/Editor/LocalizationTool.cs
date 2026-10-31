@@ -13,7 +13,7 @@ namespace Corrigible.EditorTools
 {
     /// <summary>
     /// Çeviri tablosunun bakımı. Kaynak metinleri iki yerden toplar: koddaki <c>Loc.T/F/N("...")</c> sabitleri ve prefab'lardaki
-    /// ve sahnelerdeki sabit yazıların <c>DeskLocText</c> bileşenleri (kaynak alanı).
+    /// ve sahnelerdeki sabit yazıların <c>DeskLocText</c> bileşenleri (kaynak alanı) ile odadaki <c>DeskTarget</c> etiketleri.
     /// Tabloyu (<c>Resources/Localization/strings.txt</c>) bunlara göre günceller: yeni metinler boş çeviriyle eklenir,
     /// artık kullanılmayanlar dosyanın sonunda saklanır (çeviri kaybolmasın).
     /// </summary>
@@ -61,14 +61,23 @@ namespace Corrigible.EditorTools
             return found;
         }
 
-        /// <summary>Sabit yazıların kaynakları: <c>DeskLocText</c> bileşenlerinin kaynak alanı (bu assembly Desk'e başvurmaz).</summary>
+        /// <summary>
+        /// Sabit yazıların kaynakları: <c>DeskLocText</c> bileşenlerinin kaynak alanı ve odadaki tıklanır nesnelerin üzerine gelme
+        /// etiketi (<c>DeskTarget</c>: başlık ve satır; çalışırken <c>Loc.T</c> ile çevrilir). Bu assembly Desk'e başvurmaz.
+        /// </summary>
         static IEnumerable<string> SceneTextSources(GameObject root)
         {
             foreach (var mb in root.GetComponentsInChildren<MonoBehaviour>(true))
             {
-                if (mb == null || mb.GetType().Name != "DeskLocText") continue;
-                var p = new SerializedObject(mb).FindProperty("source");
-                if (p != null && !string.IsNullOrEmpty(p.stringValue)) yield return p.stringValue;
+                if (mb == null) continue;
+                string type = mb.GetType().Name;
+                if (type != "DeskLocText" && type != "DeskTarget") continue;
+                var so = new SerializedObject(mb);
+                foreach (var field in type == "DeskLocText" ? new[] { "source" } : new[] { "title", "line" })
+                {
+                    var p = so.FindProperty(field);
+                    if (p != null && !string.IsNullOrEmpty(p.stringValue)) yield return p.stringValue;
+                }
             }
         }
 

@@ -32,6 +32,14 @@ namespace Corrigible.Desk
         [SerializeField] Image stampFrame;
         [SerializeField] TMP_Text stampText;
         [SerializeField] GameObject openingFrame;
+        [Header("Çıktı (Revizyon 2 · S3)")]
+        [Tooltip("Oda çıktı verirken görünen nesneler (yaşam alanında erzak kasası).")]
+        [SerializeField] GameObject[] activeObjects = Array.Empty<GameObject>();
+        [Tooltip("Çıktıda yanan parçalar (telsiz kadranı ve amber lamba, döküm kalıbı): yanıkken on, sönükken off malzemesi.")]
+        [SerializeField] Renderer[] activeLights = Array.Empty<Renderer>();
+        [SerializeField] Material activeOn, activeOff;
+        [Tooltip("Ranzada yatan yedek uzmanlar (yaşam alanı) ya da yatakta sargılı hasta (revir); ilk n tanesi görünür.")]
+        [SerializeField] GameObject[] occupants = Array.Empty<GameObject>();
 
         ShelterRoomData data;
         bool selectionShown;
@@ -68,6 +76,9 @@ namespace Corrigible.Desk
             if (bulb != null) bulb.sharedMaterial = lit ? bulbOn : bulbOff;
             if (lamp != null) lamp.enabled = lit;
             if (damage != null && damage.activeSelf != (d.Condition == RoomCondition.Damaged)) damage.SetActive(d.Condition == RoomCondition.Damaged);
+            foreach (var o in activeObjects) if (o != null && o.activeSelf != d.Active) o.SetActive(d.Active);
+            foreach (var r in activeLights) if (r != null) r.sharedMaterial = d.Active ? activeOn : activeOff;
+            for (int i = 0; i < occupants.Length; i++) if (occupants[i] != null && occupants[i].activeSelf != i < d.Occupants) occupants[i].SetActive(i < d.Occupants);
 
             // Yuvalar kapasite kadar, aralık 0,26 m'ye yayılır (room.js › slot/peg)
             int cap = Mathf.Min(d.Capacity, slots.Length);

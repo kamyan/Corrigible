@@ -6,7 +6,7 @@ namespace Corrigible.Desk
     /// <summary>
     /// Olay karartması + spot (PROMPT §7.3; CSS: 148 px delik, <c>0 0 0 12px rgba(14,9,5,.38)</c> üstüne
     /// <c>0 0 0 3000px rgba(14,9,5,.78)</c>). Tek mesh: dikdörtgenin tamamı karartma rengi, ortada kenarı yumuşatılmış delik ve
-    /// delik çevresinde koyu halka. Sprite (<c>modal_spot_148</c>) + 4 düz Image yerine bu yol seçildi: Linear telafili karartma
+    /// delik çevresinde koyu halka. Delikli sprite + 4 düz Image yerine bu yol seçildi: Linear telafili karartma
     /// alfası (.949) sprite'a gömülü .78 ile dikiş verirdi. Atlas beyazıyla çizilir (aynı batch).
     /// Raycast tüm dikdörtgeni kapsar: delikten de tıklanmaz (arka plan etkileşimsiz).
     /// </summary>

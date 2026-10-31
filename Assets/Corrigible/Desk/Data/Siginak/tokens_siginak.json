@@ -1,15 +1,15 @@
 {
  "meta": {
-  "name": "Son Şalter · Sığınak komuta odası tokenları (K1–K8)",
-  "version": "1.0",
-  "date": "2026-10-26",
+  "name": "Son Şalter · Sığınak komuta odası tokenları (K1–K8 + Revizyon 2)",
+  "version": "1.1",
+  "date": "2026-10-30",
   "extends": [
    "tokens_sade.json 1.1 (renk, yazı, gölge, hareket — aynen geçerli)"
   ],
   "units": "UI: 1920×1080 referans px, sol-üst orijin. Gölge = (x, y) düz ofset, bulanıklık 0. Renk sRGB hex, alfa 0–1. 3D: metre, Unity koordinatı. “tex” = dünya dokusu px.",
-  "truthOrder": "görünüş: Design artifact K1–K8 · sayı: bu dosya · davranış: K1–K7 uygulama notları",
-  "newMarker": "YENİ token’lar: “_new” listesi (nokta yolu) + her yeni grubun “_” açıklamasında ★. Sade’den aynen gelenler “reuse” altında adıyla.",
-  "changes": "1.0: üst HUD → sayaç rafı + kenar satırı; alt çubuk → anahtar rayı; VARDİYAYI BİTİR → kapaklı şalter; geri bildirim → teleks satırı/bandı; vardiya raporu, emir belgesi, oda kartları, kurtuluş haritası durumları; haritada sürüklenen 3D ekip figürü; oda malzemeleri, ışık, kamera."
+  "truthOrder": "görünüş: Design artifact Revizyon 2 (S1–S9) ve K1–K8 · sayı: bu dosya · davranış: S1–S8 ve K1–K7 uygulama notları",
+  "newMarker": "YENİ token’lar: “_new” listesi (nokta yolu) + her yeni grubun “_” açıklamasında ★. Sade’den aynen gelenler “reuse” altında adıyla. 1.1: YENİ “_new_1_1”, DEĞİŞEN “_changed_1_1” (eski değer “_was_1_1” içinde); yeni grupların “_” açıklamasında ★2.",
+  "changes": "1.0: üst HUD → sayaç rafı + kenar satırı; alt çubuk → anahtar rayı; VARDİYAYI BİTİR → kapaklı şalter; geri bildirim → teleks satırı/bandı; vardiya raporu, emir belgesi, oda kartları, kurtuluş haritası durumları; haritada sürüklenen 3D ekip figürü; oda malzemeleri, ışık, kamera. · 1.1 (Revizyon 2): FON onda bir çarkı açık renk + pirinç virgül; GÜVEN sayacı; YZ alarm panosu, KURTARILAN BÖLGELER panosu, kapı (lamba, interkom, tebeşir çentiği, merdiven), DEPO bandı; görev fişinde saha satırları ve sabit damga sütunu; vardiya raporunda özet gözleri; operasyon raporu harita pozunda; son rapor; damgalar 14 px; oda kartı iki satır; özet panosu yeri."
  },
  "_new": [
   "colors.brass.metal",
@@ -303,6 +303,138 @@
   "materials.teamRim",
   "materials.teamPlate"
  ],
+ "_new_1_1": [
+  "colors.counter.tenthsDigit",
+  "colors.counter.decimalShape",
+  "colors.alarm",
+  "colors.freedBoard",
+  "colors.door",
+  "colors.depot",
+  "colors.slip",
+  "colors.report",
+  "colors.stamp.sectorRetaken",
+  "colors.stamp.withdrawn",
+  "colors.stamp.won",
+  "colors.stamp.lost",
+  "colors.stamp.cause",
+  "colors.stamp.success",
+  "colors.stamp.reoccupied",
+  "colors.stamp.counterAttack",
+  "colors.stamp.shot",
+  "colors.stamp.maxLevel",
+  "colors.stamp.looked",
+  "colors.stamp.woke",
+  "colors.light.doorJewel",
+  "type.sahaLabel",
+  "type.sahaValue",
+  "type.doorHead",
+  "type.doorTitle",
+  "type.doorBody",
+  "type.doorOption",
+  "type.doorEffect",
+  "type.summaryLabel",
+  "type.summaryValue",
+  "type.summaryNote",
+  "type.reportFormula",
+  "type.handNote",
+  "type.trainingNote",
+  "type.resultStamp",
+  "type.fatalStamp",
+  "type.finalStamp",
+  "type.finalCause",
+  "type.finalIndicator",
+  "type.clipHeadline",
+  "type.chalkSlateTex",
+  "space.slipStampCol",
+  "space.slipRow",
+  "space.sahaGlyph",
+  "space.doorPaperW",
+  "space.doorOptionH",
+  "space.stepperButton",
+  "space.resultCardW",
+  "space.opReportW",
+  "space.finalReport",
+  "space.edgeLineH",
+  "space.trainingNoteW",
+  "motion.slipSlideS",
+  "motion.pinDropS",
+  "motion.keyJewelBlinkHz",
+  "motion.cardPinS",
+  "motion.doorKnockS",
+  "motion.doorLampFlashS",
+  "motion.peepCoverS",
+  "motion.doorWheelS",
+  "motion.doorLeafS",
+  "motion.stairLightS",
+  "motion.fatalRedS",
+  "motion.fatalStampS",
+  "motion.fatalButtonDelayS",
+  "motion.roomSelectS",
+  "motion.sheetSwapS",
+  "motion.pawnToRoomS",
+  "motion.upgradeDimS",
+  "motion.summaryStaggerS",
+  "motion.counterAttackLampFlashes",
+  "motion.finalChartDrawS",
+  "motion.finalMarkS",
+  "motion.finalRowStaggerS",
+  "cameras.door",
+  "cameras.opReport",
+  "materials.doorLeaf",
+  "materials.hazardTape",
+  "materials.knockLamp",
+  "materials.intercom",
+  "materials.chalkDecal",
+  "materials.stairTile",
+  "materials.visitor",
+  "materials.visitorCopy",
+  "materials.depotSlate",
+  "materials.galvBin",
+  "layout3d"
+ ],
+ "_changed_1_1": [
+  "colors.counter.tenths",
+  "colors.counter.decimalDot",
+  "type.stamp",
+  "type.roomCardNameTex",
+  "type.roomCardLineTex",
+  "space.slipW",
+  "space.deltaTag",
+  "space.reportW",
+  "motion.stringS"
+ ],
+ "_was_1_1": {
+  "colors.counter.tenths": "#801810",
+  "colors.counter.decimalDot": "#C9A86A",
+  "type.stamp": [
+   "Courier Prime",
+   700,
+   13,
+   0.08
+  ],
+  "type.roomCardNameTex": [
+   "Courier Prime",
+   700,
+   29,
+   0.05
+  ],
+  "type.roomCardLineTex": [
+   "Courier Prime",
+   700,
+   21,
+   0
+  ],
+  "space.slipW": {
+   "tr": 436,
+   "en": 452
+  },
+  "space.deltaTag": [
+   84,
+   36
+  ],
+  "space.reportW": 600,
+  "motion.stringS": 0.12
+ },
  "reuse": {
   "_": "tokens_sade.json’dan değer değişmeden kullanılanlar (burada tekrar edilmedi).",
   "colors": [
@@ -372,10 +504,12 @@
    "_": "★ mekanik sayaç: çark, rakam, onda bir çarkı.",
    "wheel": "#1C150E",
    "digit": "#EFDCAE",
-   "tenths": "#801810",
+   "tenths": "#E9DDBE",
    "window": "#0E0906",
    "bezel": "#8C6F3E",
-   "decimalDot": "#C9A86A"
+   "decimalDot": "#D4B06E",
+   "tenthsDigit": "#1C150E",
+   "decimalShape": "virgül: Ø11 mm nokta + kuyruk, çarklar arası 15 mm; EN yerelinde kuyruksuz nokta"
   },
   "bunker": {
    "_": "★ oda ve donanım (3D malzeme taban rengi).",
@@ -458,7 +592,8 @@
    "keyJewelOff": "#4A2F12",
    "radioDial": "#E9A948",
    "mastRed": "#B8241A",
-   "roomBulb": "#FFD8A0"
+   "roomBulb": "#FFD8A0",
+   "doorJewel": "#FFB347"
   },
   "pen": {
    "_": "★ kalem, mürekkep, anlatı izleri.",
@@ -535,6 +670,54 @@
    "noSave": [
     "#675F50",
     "dashed"
+   ],
+   "sectorRetaken": [
+    "#1A4789",
+    "double"
+   ],
+   "withdrawn": [
+    "#9A1E14",
+    "double"
+   ],
+   "won": [
+    "#24592E",
+    "double"
+   ],
+   "lost": [
+    "#9A1E14",
+    "double"
+   ],
+   "cause": [
+    "#9A1E14",
+    "solid"
+   ],
+   "success": [
+    "#24592E",
+    "solid"
+   ],
+   "reoccupied": [
+    "#9A1E14",
+    "solid"
+   ],
+   "counterAttack": [
+    "#9A1E14",
+    "double"
+   ],
+   "shot": [
+    "#9A1E14",
+    "double"
+   ],
+   "maxLevel": [
+    "#24592E",
+    "solid"
+   ],
+   "looked": [
+    "#8A8374",
+    "solid"
+   ],
+   "woke": [
+    "#9A1E14",
+    "solid"
    ]
   },
   "ui": {
@@ -658,6 +841,144 @@
    },
    "_extra": "UYGULAMA EKİ (Unity, Aşama 5): land (bölge kâğıdı, harita tabanının üstünde), string ve stringShadow (kırmızı ip #A3241A 2,6 px + gölge), hatchGain (K2'de doku pikseli ≈ 0,63 ekran pikseli: 1,5 px'lik tarama çizgisi süzülürken soluyor; referans görüntüyle ölçülerek ×1,8); paket dosyasında yok, K2/K3/Ekip notlarından. Bkz. IMPLEMENTATION_MAP › CHANGELOG Aşama 5.",
    "hatchGain": 1.8
+  },
+  "alarm": {
+   "_": "★2 YZ alarmı panosu (arka duvar, 0,48 × 0,29 m) ve kâğıttaki küçük ölçek.",
+   "body": "#24180F",
+   "frame": "#B8955A",
+   "step": "#E9DDBE",
+   "stepFilled": "#1E1B16",
+   "danger": "#C0281C",
+   "dangerFrom": 8,
+   "max": 10,
+   "lampOff": "#5A1A14",
+   "lampOn": "#F0443A",
+   "lampEmissive": 1.8,
+   "paperScaleDanger": [
+    "#9A1E14",
+    "dashed→solid"
+   ]
+  },
+  "freedBoard": {
+   "_": "★2 KURTARILAN BÖLGELER panosu (mantar, 0,78 × 0,54 m).",
+   "cork": "#A27B52",
+   "frame": "#6B4A2E",
+   "headerCard": "#F3ECDA",
+   "regionCard": "#F6F0DE",
+   "regionStamp": "#1A4789",
+   "nextTargetPencil": "#4A4A52",
+   "pinWood": "#B8955A"
+  },
+  "door": {
+   "_": "★2 kapı, koridor, ziyaretçi.",
+   "leaf": "#3A3F33",
+   "handwheel": "#A3241A",
+   "stencil": "#D8D2BE",
+   "hazardYellow": "#E3B23C",
+   "hazardBlack": "#1E1B16",
+   "knockLamp": "#FFB347",
+   "knockLampFatal": "#F0443A",
+   "intercom": "#2A2622",
+   "intercomLed": "#FFB347",
+   "chalk": {
+    "hex": "#E6E2D4",
+    "alpha": 0.8
+   },
+   "stairTile": "#DDE3DD",
+   "stairLight": "#F4F1E6",
+   "stairEdge": "#5A5A52",
+   "visitorCloth": "#121212",
+   "visitorCopy": "#1A1C20",
+   "fatalRoomLight": "#C0281C"
+  },
+  "doorPaper": {
+   "_": "UYGULAMA EKİ (Unity, Revizyon 2 Aşama 5): kapı kâğıdının renkleri S4a–c panolarından: kâğıt, kenar, gölge (4 5 0 α .45), başlığın kırmızı çizgisi, başlık ve seçim satırı, gözlem bloğu ve kesik kenarı, seçenek satırının kenarı ve devre dışı / kullanılmış hâli, çift çizgili damga, son cümle. Normal satır ui.frameButton, üzerinde ui.inkButton, kısayol fişi slip.buttonKey.",
+   "paper": "#F2E9CC",
+   "edge": "#CDBF97",
+   "shadow": {
+    "hex": "#000000",
+    "alpha": 0.45
+   },
+   "rule": "#D2483F",
+   "head": "#675F50",
+   "block": "#EAE0C2",
+   "blockEdge": "#A8997A",
+   "optionEdge": "#B9AC8E",
+   "optionDisabled": "#E4DCC6",
+   "optionDisabledText": "#7A7262",
+   "optionDisabledDetail": "#6B6455",
+   "stamp": "#9A1E14",
+   "epilogue": "#463F34"
+  },
+  "depot": {
+   "_": "★2 maketin DEPO bandı.",
+   "crate": "#6B4A2E",
+   "crateSlat": "#8A6A44",
+   "ghost": {
+    "hex": "#D9D2BF",
+    "alpha": 0.22
+   },
+   "bin": "#9A9C98",
+   "binFill": "#5A5B54",
+   "plate": "#9A9C98",
+   "plateGhost": {
+    "hex": "#E6E2D4",
+    "alpha": 0.35
+   },
+   "slate": "#2A2C28",
+   "chalk": "#E6E2D4",
+   "idlePlate": "#C2A066"
+  },
+  "slip": {
+   "_": "★2 görev fişi ayrıntıları.",
+   "rowSelected": {
+    "hex": "#F5D646",
+    "alpha": 0.34
+   },
+   "rowHover": {
+    "hex": "#F5D646",
+    "alpha": 0.18
+   },
+   "selectedPointer": "#1E1B16",
+   "pin": "#B8241A",
+   "string": "#A3241A",
+   "stringShadow": {
+    "hex": "#000000",
+    "alpha": 0.28
+   },
+   "cost": "#1E1B16",
+   "reward": "#24592E",
+   "teamDisc": "#C9A36B",
+   "teamDiscRim": "#5C4826",
+   "buttonDisabled": "#8A8374",
+   "buttonDisabledText": "#EFE7D6",
+   "buttonKey": "#E6CF9C",
+   "rule": "#B9AC8E",
+   "edge": "#D2C7AF",
+   "_extra": "UYGULAMA EKİ (Unity, Revizyon 2 Aşama 3): buttonDisabled / buttonDisabledText (BASKIN EMRİ VER devre dışı: zemin #8A8374, yazı #EFE7D6; S2 notu › etkileşim), buttonKey (Enter fişi ve düğmedeki bedel #E6CF9C), rule (bölümler arası 1 px noktalı ayraç #B9AC8E) ve edge (kâğıt kenarı #D2C7AF); paket dosyasında yok, S2-TR panosundan."
+  },
+  "report": {
+   "_": "★2 vardiya raporu, operasyon raporu, son rapor.",
+   "summaryFill": "#F7F1E1",
+   "summaryLine": "#463F34",
+   "negative": "#1E1B16",
+   "positive": "#24592E",
+   "neutral": "#675F50",
+   "counterAttackLine": "#9A1E14",
+   "counterAttackFill": "#F4EBCB",
+   "chartOccupied": {
+    "hex": "#9A1E14",
+    "alpha": 0.22
+   },
+   "chartRetaken": {
+    "hex": "#1A4789",
+    "alpha": 0.1
+   },
+   "chartLine": "#9A1E14",
+   "dim": {
+    "hex": "#0E0906",
+    "alpha": 0.62
+   }
   }
  },
  "type": {
@@ -774,7 +1095,7 @@
    "Courier Prime",
    700,
    14,
-   0.08
+   0.04
   ],
   "taskHead": [
    "Courier Prime",
@@ -815,13 +1136,13 @@
   "roomCardNameTex": [
    "Courier Prime",
    700,
-   29,
-   0.05
+   84,
+   0.04
   ],
   "roomCardLineTex": [
    "Courier Prime",
    700,
-   21,
+   68,
    0
   ],
   "panelTitleTex": [
@@ -1034,7 +1355,127 @@
    "screenEquivalents": "counterDigitTex 176 → K1’de ~34 px · mapLabelTex 28 → 17,6 · mapSubTex 23 → 14,5 · roomCardNameTex 29 → 20 · roomCardLineTex 21 → 14,7 · cardBodyTex 28 → ~18",
    "wallStencil": "ÖNERİ: yalnız boyalı tabela/duvar decal’i; boyut nesneye göre. uGUI/TMP’de kullanılmaz. Yedek: Courier Prime 700 + köprü maskesi.",
    "minimums": "gövde ≥ 18 px, ikincil ≥ 14 px (1920×1080). EN %30 uzunluk payı: punto küçülmez, satır sarar."
-  }
+  },
+  "sahaLabel": [
+   "Courier Prime",
+   700,
+   14,
+   0.06
+  ],
+  "sahaValue": [
+   "Libre Franklin",
+   600,
+   18,
+   0
+  ],
+  "doorHead": [
+   "Courier Prime",
+   700,
+   14,
+   0.08
+  ],
+  "doorTitle": [
+   "Courier Prime",
+   700,
+   28,
+   0.04
+  ],
+  "doorBody": [
+   "Libre Franklin",
+   400,
+   19,
+   0
+  ],
+  "doorOption": [
+   "Libre Franklin",
+   600,
+   19,
+   0
+  ],
+  "doorEffect": [
+   "Courier Prime",
+   700,
+   16,
+   0
+  ],
+  "summaryLabel": [
+   "Courier Prime",
+   700,
+   14,
+   0.08
+  ],
+  "summaryValue": [
+   "Courier Prime",
+   700,
+   32,
+   0
+  ],
+  "summaryNote": [
+   "Libre Franklin",
+   600,
+   17,
+   0
+  ],
+  "reportFormula": [
+   "Libre Franklin",
+   400,
+   15,
+   0
+  ],
+  "handNote": [
+   "Kalam",
+   700,
+   20,
+   0
+  ],
+  "trainingNote": [
+   "Kalam",
+   700,
+   22,
+   0
+  ],
+  "resultStamp": [
+   "Courier Prime",
+   700,
+   34,
+   0.06
+  ],
+  "fatalStamp": [
+   "Courier Prime",
+   700,
+   66,
+   0.08
+  ],
+  "finalStamp": [
+   "Courier Prime",
+   700,
+   88,
+   0.06
+  ],
+  "finalCause": [
+   "Courier Prime",
+   700,
+   28,
+   0.08
+  ],
+  "finalIndicator": [
+   "Courier Prime",
+   700,
+   46,
+   0
+  ],
+  "clipHeadline": [
+   "Courier Prime",
+   700,
+   40,
+   0.02
+  ],
+  "chalkSlateTex": [
+   "Courier Prime",
+   700,
+   54,
+   0.04
+  ]
  },
  "shadows": {
   "_": "★ (x, y, renk, alfa) düz ofset, bulanıklık 0. Sade card/hoverCard/topButton/action aynen geçerli.",
@@ -1174,8 +1615,8 @@
    "holePitch": 13
   },
   "deltaTag": [
-   84,
-   36
+   72,
+   28
   ],
   "hoverTagW": [
    270,
@@ -1207,10 +1648,10 @@
    ]
   },
   "slipW": {
-   "tr": 436,
-   "en": 452
+   "tr": 432,
+   "en": 432
   },
-  "reportW": 600,
+  "reportW": 540,
   "orderW": 760,
   "folderTab": [
    236,
@@ -1224,6 +1665,23 @@
    600,
    800
   ],
+  "slipStampCol": 138,
+  "slipRow": 52,
+  "sahaGlyph": 30,
+  "doorPaperW": 470,
+  "doorOptionH": 50,
+  "stepperButton": [
+   52,
+   46
+  ],
+  "resultCardW": 500,
+  "opReportW": 560,
+  "finalReport": [
+   1620,
+   952
+  ],
+  "edgeLineH": 40,
+  "trainingNoteW": 336,
   "stringPx": 2.6,
   "stringShadowPx": [
    2,
@@ -1243,7 +1701,7 @@
   "keyPressMm": 6,
   "slipOpenS": 0.14,
   "slipCloseS": 0.09,
-  "stringS": 0.12,
+  "stringS": 0.25,
   "stampS": 0.1,
   "inkDarkenS": 0.2,
   "counterRollS": 0.35,
@@ -1299,6 +1757,28 @@
    "autoMoveS": 0.6,
    "autoArcMm": 10
   },
+  "slipSlideS": 0.22,
+  "pinDropS": 0.12,
+  "keyJewelBlinkHz": 1,
+  "cardPinS": 0.35,
+  "doorKnockS": 0.9,
+  "doorLampFlashS": 0.08,
+  "peepCoverS": 0.15,
+  "doorWheelS": 0.5,
+  "doorLeafS": 0.8,
+  "stairLightS": 0.3,
+  "fatalRedS": 0.05,
+  "fatalStampS": 0.12,
+  "fatalButtonDelayS": 0.6,
+  "roomSelectS": 0.1,
+  "sheetSwapS": 0.15,
+  "pawnToRoomS": 0.35,
+  "upgradeDimS": 0.2,
+  "summaryStaggerS": 0.12,
+  "counterAttackLampFlashes": 3,
+  "finalChartDrawS": 1.2,
+  "finalMarkS": 0.1,
+  "finalRowStaggerS": 0.08,
   "candidateStepS": 0.12,
   "candidateDrawS": 0.3,
   "greaseRingS": 0.4,
@@ -1407,7 +1887,22 @@
    ],
    "fovV": 60,
    "_fix": "UYGULAMA DÜZELTMESİ (2026-10-26): paket değeri z −0,36; referans render (render.html cz = 0,36) ve K6a görüntüsü kamerayı şaltere 0,5 m yakın gösteriyor. IMPLEMENTATION_MAP › Aşama 3."
-  }
+  },
+  "door": {
+   "_": "★2 kapı pozu (bugünkü kapı pozuyla eşdeğer, referans render).",
+   "pos": [
+    0.15,
+    1.75,
+    0.55
+   ],
+   "target": [
+    2.2,
+    1.28,
+    1.0
+   ],
+   "fovV": 62
+  },
+  "opReport": "★2 operasyon raporu ve son rapor için yeni poz yok: cameras.map kullanılır"
  },
  "lights": {
   "_": "★ “preview” = referans render’daki three.js değerleri (fiziksel, decay 2, range 0 = sonsuz). “urpStart” = URP için başlangıç önerisi; referans render ile ekran görüntüsü karşılaştırarak ayarla. Bloom ve post-processing yok.",
@@ -1693,6 +2188,206 @@
    "hex": "#24180F",
    "roughness": 0.38,
    "metal": 0
+  },
+  "doorLeaf": {
+   "hex": "#3A3F33",
+   "roughness": 0.55,
+   "metal": 0.6
+  },
+  "hazardTape": {
+   "hex": "#E3B23C",
+   "roughness": 0.6,
+   "metal": 0,
+   "tex": "45° şerit, #1E1B16"
+  },
+  "knockLamp": {
+   "hex": "#FFB347",
+   "roughness": 0.2,
+   "metal": 0,
+   "emissive": 2.4,
+   "emissiveFatal": [
+    "#F0443A",
+    3.0
+   ]
+  },
+  "intercom": {
+   "hex": "#2A2622",
+   "roughness": 0.4,
+   "metal": 0
+  },
+  "chalkDecal": {
+   "hex": "#E6E2D4",
+   "alpha": 0.8,
+   "roughness": 1,
+   "metal": 0
+  },
+  "stairTile": {
+   "hex": "#DDE3DD",
+   "roughness": 0.7,
+   "metal": 0
+  },
+  "visitor": {
+   "hex": "#121212",
+   "roughness": 0.95,
+   "metal": 0
+  },
+  "visitorCopy": {
+   "hex": "#1A1C20",
+   "roughness": 0.25,
+   "metal": 0.6
+  },
+  "depotSlate": {
+   "hex": "#2A2C28",
+   "roughness": 0.95,
+   "metal": 0
+  },
+  "galvBin": {
+   "hex": "#9A9C98",
+   "roughness": 0.45,
+   "metal": 0.7
+  }
+ },
+ "layout3d": {
+  "_": "★2 yeni ya da yeri değişen nesneler (metre, Unity; raf nesneleri raf yereli).",
+  "clipboard": {
+   "shelfLocal": [
+    -0.46,
+    0.86,
+    -0.02
+   ],
+   "tiltXDeg": -8,
+   "paper": [
+    0.37,
+    0.54
+   ],
+   "canvasUnits": [
+    400,
+    594
+   ],
+   "was": [
+    -0.4,
+    0.78,
+    -0.02
+   ]
+  },
+  "clipboardStand": {
+   "shelfLocal": [
+    -0.46,
+    0.82,
+    0.07
+   ],
+   "size": [
+    0.36,
+    0.08,
+    0.06
+   ]
+  },
+  "idleTray": {
+   "shelfLocal": [
+    -0.46,
+    0.78,
+    0.155
+   ],
+   "was": [
+    -0.4,
+    0.78,
+    0.155
+   ]
+  },
+  "alarmBoard": {
+   "pos": [
+    0.15,
+    1.33,
+    2.25
+   ],
+   "size": [
+    0.48,
+    0.29
+   ],
+   "lampDia": 0.09
+  },
+  "freedBoard": {
+   "pos": [
+    -0.6,
+    1.34,
+    2.27
+   ],
+   "size": [
+    0.78,
+    0.54
+   ],
+   "headerCard": [
+    0.36,
+    0.104
+   ],
+   "regionCard": [
+    0.15,
+    0.095
+   ],
+   "slots": 12
+  },
+  "tally": {
+   "pos": [
+    0.15,
+    1.6,
+    2.27
+   ],
+   "notch": [
+    0.5,
+    0.125
+   ]
+  },
+  "telexFrontSheet": {
+   "size": [
+    0.26,
+    0.19
+   ],
+   "tiltDeg": 3
+  },
+  "keyRail": {
+   "keys": 6,
+   "pitch": 0.226,
+   "plate": [
+    0.128,
+    0.1
+   ],
+   "doorKeyIndex": 3
+  },
+  "door": {
+   "x": 2.2,
+   "z": [
+    0.32,
+    1.18
+   ],
+   "h": 2.0,
+   "leafOpenDeg": 95,
+   "knockLampY": 2.31,
+   "peepY": 1.56,
+   "intercom": [
+    2.17,
+    1.42,
+    0.0
+   ]
+  },
+  "depotSlate": {
+   "diorama": [
+    0.11,
+    0.566
+   ],
+   "size": [
+    0.2,
+    0.072
+   ]
+  },
+  "roomCard": {
+   "size": [
+    0.23,
+    0.057
+   ],
+   "tex": [
+    600,
+    148
+   ]
   }
  },
  "materialsExtra": {

@@ -5,7 +5,7 @@ namespace Corrigible.Desk.EditorTools
 {
     /// <summary>
     /// Masa varlıklarının içe aktarma ayarları (PROMPT §6.1, §6.3, §6.4):
-    /// sprite'lar @2x PPU 200, 9-dilim kenarı ve pivot <c>sprites.json</c>'dan; dokular atlas dışı Wrap Repeat; harita PPU 200.
+    /// sprite'lar @2x PPU 200, 9-dilim kenarı ve pivot <c>sprites.json</c>'dan; dokular atlas dışı Wrap Repeat.
     /// </summary>
     public sealed class DeskSpriteImporter : AssetPostprocessor
     {
@@ -19,11 +19,10 @@ namespace Corrigible.Desk.EditorTools
 
             if (path.StartsWith(DeskSpriteManifest.SpritesDir + "/")) Sprite(ti, path);
             else if (path.StartsWith(DeskSpriteManifest.TexturesDir + "/")) Texture(ti);
-            else if (path.StartsWith(DeskSpriteManifest.MapDir + "/")) Map(ti);
             // Sade kiti (Docs/UI_Sade PROMPT §4.6–4.7)
             else if (path.StartsWith(SadeSpriteManifest.SpritesDir + "/")) SadeSprite(ti, path);
             else if (path.StartsWith(SadeSpriteManifest.TexturesDir + "/")) SadeTexture(ti, path);
-            else if (path.StartsWith(SadeSpriteManifest.MapDir + "/") || path.StartsWith(SadeSpriteManifest.RaidDir + "/")) SadeLayer(ti, path);
+            else if (path.StartsWith(SadeSpriteManifest.MapDir + "/")) SadeLayer(ti, path);
             // Sığınak kiti (Docs/UI_Siginak/sprites/README.md)
             else if (SiginakSpriteManifest.Owns(path)) SiginakSpriteManifest.Apply(ti, path);
         }
@@ -60,7 +59,7 @@ namespace Corrigible.Desk.EditorTools
         }
 
         /// <summary>
-        /// Harita katmanları (3840×2160) ve ozalit dokuları (2048): Default, Clamp, mipmap yok, en çok 4096. Bellek için BC7
+        /// Harita katmanları (3840×2160): Default, Clamp, mipmap yok, en çok 4096. Bellek için BC7
         /// (yüksek kalite); taban dokusunun alfası yok.
         /// </summary>
         static void SadeLayer(TextureImporter ti, string path)
@@ -118,21 +117,6 @@ namespace Corrigible.Desk.EditorTools
             ti.textureType = TextureImporterType.Default;
             ti.npotScale = TextureImporterNPOTScale.None;
             ti.wrapMode = TextureWrapMode.Repeat;
-        }
-
-        static void Map(TextureImporter ti)
-        {
-            Common(ti);
-            ti.textureType = TextureImporterType.Sprite;
-            ti.spriteImportMode = SpriteImportMode.Single;
-            ti.wrapMode = TextureWrapMode.Clamp;
-            ti.maxTextureSize = 4096;
-            var s = new TextureImporterSettings();
-            ti.ReadTextureSettings(s);
-            s.spritePixelsPerUnit = PixelsPerUnit;
-            s.spriteMeshType = SpriteMeshType.FullRect;
-            s.spriteGenerateFallbackPhysicsShape = false;
-            ti.SetTextureSettings(s);
         }
     }
 }

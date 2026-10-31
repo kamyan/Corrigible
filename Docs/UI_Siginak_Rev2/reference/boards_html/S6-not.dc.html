@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>S6 · Uygulama notu</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&display=swap">
+<style>
+body{margin:0;background:#1C372C}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../board_assets/grain.png);background-size:256px 256px}
+.h{display:flex;align-items:center;gap:8px}
+.h span:first-child{font:700 14px 'Courier Prime',monospace;letter-spacing:0.08em}
+.h span:last-child{flex:1;height:1px;background:#675F50}
+.g{display:grid;grid-template-columns:104px minmax(0,1fr);row-gap:5px;column-gap:10px}
+.k{font:700 14px 'Courier Prime',monospace;color:#675F50}
+</style>
+</helmet>
+<div class="grain" style="width: 1280px; height: 1080px; box-sizing: border-box; background-color: #F1E9D6; color: #1E1B16; font-family: 'Libre Franklin', Arial, sans-serif; display: flex; flex-direction: column">
+  <div style="padding: 24px 32px 12px 32px; border-bottom: 2px solid #D2483F; display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+    <div style="font: 700 28px 'Courier Prime', monospace; letter-spacing: 0.04em">S6 · BASKIN</div>
+    <div style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em; color: #675F50">KAMERA AYNI · İZOMETRİK TAHTA, ORTO 35° / 45°</div>
+  </div>
+  <div style="flex: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; padding: 14px 32px 16px 32px; min-height: 0; font-size: 14px; line-height: 1.34">
+    <div style="display: flex; flex-direction: column; gap: 9px; min-width: 0">
+      <div class="h"><span>ESKİ → YENİ</span><span></span></div>
+      <div class="g">
+        <span class="k">kenar panelleri</span><span>Beyaz web kartları → ozalit pafta kâğıdı (#D3DBD6, mavi ızgara) kontrplak şerit üstünde, köşede bant. Tahtayla aynı malzeme.</span>
+        <span class="k">tur şeridi</span><span>Küçük 1/8 kutuları → “TUR 1/8” 30 px + 34 px hücreler; 7–8 kesikli kırmızı ve “SON 2 TUR”. Son turda hücre 8 kırmızı dolu, şeritte SON TUR damgası, EMRİ İLET'te “SON TUR”.</span>
+        <span class="k">görev çipi</span><span>Sıkışık tek kart → üç satır: görev + bölge özelliği (işaret + DAR KORİDOR); hedef çizimi + ad + kare (F4) + amaç, sağda CAN; GÜVEN + sivil sunucu sayısı. İkon metne binmez.</span>
+        <span class="k">makine etiketi</span><span>7 px, hepsi aynı → tür işareti (S9) + 11 px kırmızı pip, robotun önünde zeminde. 3D gövde rengi türe göre (S9).</span>
+        <span class="k">niyet sırası</span><span>14 px bayrak → 30 × 28 bayrak, 20 px rakam. Uygulanan niyet sarı vurgulu, bayrağı kırmızı dolu; biten niyet %35, rakamı çizik.</span>
+        <span class="k">uzman canı</span><span>Piyon üstündeki küçük kutular → altlık önünde etiket (11 px pip, plaka kalkanı); kartta pip + PLAKA, yaralıda boş pipler kırmızı kenarlı + YARALI.</span>
+        <span class="k">yetenek</span><span>“kasayı al”, “−1 robot” → “Kasadan ikmal al”, “Robota vur · −1 can”. Hedef yokken kesikli, varken düz kenar. Davranış aynı, yalnız ad değişti.</span>
+        <span class="k">telsiz</span><span>Sarı kutu → teleks kâğıdı fişi (anten + TELSİZ · K-07), bugünkü ölçüde; TELSİZ düğmesinde okunmamış sayısı.</span>
+        <span class="k">makine evresi</span><span>Çip “MAKİNELER” (kırmızı baklava); EMRİ İLET yerinde kilitli kâğıt “MAKİNELER HAREKET EDİYOR · girdi kilitli · 2/3 hamle”; Geri al ve GERİ ÇEKİL soluk.</span>
+        <span class="k">uyanma</span><span>Yeni robotun üstünde UYANDI etiketi; sıradaki uyanma halkası tahtada (bugünkü).</span>
+        <span class="k">eğitim notu</span><span>Sağ altta, EMRİ İLET'in üstünde: BASKIN · ADIM n/30.</span>
+      </div>
+      <div class="h"><span>NESNELER</span><span></span></div>
+      <div class="g">
+        <span class="k">kontrplak şerit</span><span>#C9A36B, alt kenar 4 px #93703F, üst 1 px #DDBF8A, gölge (3, 4); 9 dilim, iç pay 6 px.</span>
+        <span class="k">ozalit sayfa</span><span>9 dilim + 24 px ızgara (#2C4C8E %10), kenar 1 px %55; etiket CP 700 14 #2C4C8E.</span>
+        <span class="k">birim kartı</span><span>237 × 84; seçili #EFE3A2 + 3 px #F5D646, 6 px yukarı; disk Ø44 #C9A36B, bitmiş #8C734E.</span>
+        <span class="k">tur hücresi</span><span>34 × 34; şimdiki mürekkep dolu, geçmiş #B9C3BE, son iki 2 px kesikli #9A1E14.</span>
+        <span class="k">etiket, bayrak</span><span>Etiket 24 px, #FBF7EC, kenar 1 px; işaret 18 px, pip 11 px. Bayrak iğnesi 2 × 34 #5E5A54, bayrak 30 × 28.</span>
+        <span class="k">oklar</span><span>Ateş 3,4 px düz; yakın dövüş 4,6 px yay (yükselme 14–26 px); kilit: yay + Ø26 kıskaç rozeti; uç 15–16 px; hepsi #B8241A, ZTest Always.</span>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 9px; min-width: 0">
+      <div class="h"><span>ETKİLEŞİM VE DURUMLAR</span><span></span></div>
+      <div class="g">
+        <span class="k">birim kartı</span><span>Normal. Üzerinde: 2 px yükselir, piyonun karesinde siyah köşeler. Seçili: sarı. Devre dışı: TUR BİTTİ, gri zemin + ✓. Düştü: DÜŞTÜ, kırmızı kesikli kenar.</span>
+        <span class="k">yetenek alt düğmesi</span><span>Hedef yok: kesikli, tıklanmaz. Hedef var: düz kenar. Üzerinde: zemin açılır, tahtada hedef kare yeşil köşeli. Basılı: gölge 0.</span>
+        <span class="k">EMRİ İLET</span><span>Normal: mürekkep. Üzerinde: 2 px yükselir. Basılı: 2 px iner. Devre dışı: makine evresinde kilitli kâğıt. Yetersiz kaynak durumu yok.</span>
+        <span class="k">GERİ ÇEKİL</span><span>İlk basış “Emin misin? Tekrar bas” (bugünkü); makine evresinde soluk.</span>
+        <span class="k">TELSİZ (L)</span><span>Okunmamış sayısı kırmızı yuvarlak içinde; açınca kayıt (bugünkü).</span>
+        <span class="k">etiketler</span><span>Makine etiketi üzerinde: tür adı + can + niyeti (kâğıt etiket).</span>
+      </div>
+      <div class="h"><span>HAREKET VE SES</span><span></span></div>
+      <div class="g">
+        <span class="k">niyet sırası</span><span>Hamle arası 0,35 s. Uygulanan okun sarı vurgusu 0,1 s'de gelir, bayrak kırmızıya döner; bitince ok 0,2 s'de %35'e iner.</span>
+        <span class="k">uyanma</span><span>Halka 0,4 s parlar, robot 0,5 s'de yükselir, UYANDI 0,12 s damga; telsiz fişi 0,25 s'de kayar, 3 s kalır, 0,3 s'de çekilir.</span>
+        <span class="k">son tur</span><span>Tur değişince hücre 8 kırmızıya 0,2 s; SON TUR damgası 0,12 s (ağır “tak”) + tek zil.</span>
+        <span class="k">seçim</span><span>Kart 0,1 s'de 6 px yükselir; mavi kareler 0,15 s'de belirir; ahşap “tık”.</span>
+      </div>
+      <div class="h"><span>İNGİLİZCE</span><span></span></div>
+      <div style="color: #463F34">TURN · LAST 2 TURNS · LAST TURN · YOUR TURN · MACHINES · MACHINES ARE MOVING · input locked · MISSION · SUPPLY · NARROW CORRIDOR · Supply crate · Goal: take supplies from the crate · HP · TRUST · CIVILIAN SERVERS · RADIO · RULES · RETREAT · TECHNICIAN · EMP SPECIALIST · ANALYST · PLATE · INJURED · MOVE + ABILITY · TURN DONE · DOWN · Take from crate · Hit robot · −1 HP · Undo · SEND ORDERS · WOKE UP · LOCK THREAT. Sol üst grup EN'de 620 px; tahtanın kenarına değmez.</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

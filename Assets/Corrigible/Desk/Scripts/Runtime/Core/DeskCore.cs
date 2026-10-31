@@ -6,47 +6,9 @@ using UnityEngine.UI;
 
 namespace Corrigible.Desk
 {
-    /// <summary>Bir değerin ne kadar güvenilir olduğu; çizim tarzıyla gösterilir (damga / karbon / kalem halkası / boş alan).</summary>
-    public enum TrustLevel { Verified, Report, Suspicious, Unknown }
-
-    /// <summary>Durum kanalı: mürekkep rengi + ikon + kelime. Güvenle karışmaz.</summary>
-    public enum StatusKind { Neutral, Threat, Warning, Info, Good }
-
-    public enum StampInk { Blue, Red, Green }
-
-    public enum StampSize { Small, Normal, Large }
-
     /// <summary>Ortak küçük yardımcılar: yalnızca değişeni yaz, sabit konum, tema rengi.</summary>
     public static class DeskUi
     {
-        /// <summary>
-        /// Edit modda masa önizlemesi bağlanıyor (editördeki DeskEditPreview ayarlar): dinamik listeler (harita, araştırma,
-        /// teleks, pencere içerikleri) edit modda da kurulur; kopyalar sahneye kaydedilmez (<see cref="MarkPreview"/>).
-        /// </summary>
-        public static bool EditPreview;
-
-        /// <summary>Çalışırken eklenen bileşen; edit mod önizlemesinde eklenirse sahneye kaydedilmez.</summary>
-        public static T AddTransient<T>(GameObject go) where T : Component
-        {
-            var c = go.AddComponent<T>();
-            if (!Application.isPlaying) c.hideFlags |= HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
-            return c;
-        }
-
-        /// <summary>
-        /// Edit modda yaratılan kopya (önizleme içeriği; çalışırken etkisiz): sahneye kaydedilmez ve düzenlenemez. Play'de ve her
-        /// önizlemede veriden yeniden kurulur; elle taşınsa kaybolurdu (kalıcı düzenleme şablonda ve prefab'da).
-        /// </summary>
-        public static void MarkPreview(GameObject go)
-        {
-            if (Application.isPlaying || go == null) return;
-            foreach (var t in go.GetComponentsInChildren<Transform>(true))
-            {
-                t.gameObject.hideFlags |= HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild | HideFlags.NotEditable;
-                t.hideFlags |= HideFlags.NotEditable;
-            }
-        }
-
         /// <summary>OnValidate içinden çağrılır: SetActive/sprite değişimi doğrulama sırasında yapılamadığı için bir sonraki editör karesine ertelenir.</summary>
         public static void Deferred(Object owner, System.Action action)
         {
@@ -60,19 +22,6 @@ namespace Corrigible.Desk
         public static void SetText(TMP_Text t, string s)
         {
             if (t != null && t.text != s) t.text = s;
-        }
-
-        /// <summary>
-        /// Yerleşimi sahnede duran kâğıt (olay günlüğü, analist notu): konum, genişlik ve dönüş sahneden, yükseklik içerikten.
-        /// Dönüşümsüz kutunun üst kenarı yerinde kalır (CSS: left/top sabit, dönüş merkez etrafında); dikey çapalar tek nokta olmalı.
-        /// </summary>
-        public static void SetHeightKeepTop(RectTransform r, float height)
-        {
-            if (r == null) return;
-            float top = r.anchoredPosition.y + (1 - r.pivot.y) * r.sizeDelta.y;
-            if (!Mathf.Approximately(r.sizeDelta.y, height)) r.sizeDelta = new Vector2(r.sizeDelta.x, height);
-            var pos = new Vector2(r.anchoredPosition.x, top - (1 - r.pivot.y) * height);
-            if (r.anchoredPosition != pos) r.anchoredPosition = pos;
         }
 
         public static void SetActive(Component c, bool on)
@@ -109,11 +58,6 @@ namespace Corrigible.Desk
             rt.pivot = new Vector2(0, 1);
             rt.anchoredPosition = new Vector2(x, -y);
             rt.sizeDelta = new Vector2(w, h);
-        }
-
-        public static void SetWidth(RectTransform rt, float w)
-        {
-            if (rt != null && !Mathf.Approximately(rt.sizeDelta.x, w)) rt.sizeDelta = new Vector2(w, rt.sizeDelta.y);
         }
 
         /// <summary>uGUI otomatik gezinmesini kapatır (PROMPT §8: kısayollar komutlara bağlanır).</summary>
@@ -153,47 +97,6 @@ namespace Corrigible.Desk
             rule.anchoredPosition = new Vector2(x, rule.anchoredPosition.y);
             rule.sizeDelta = new Vector2(Mathf.Max(0, x0 + width - (rightW > 0 ? rightW + 8 : 0) - x), rule.sizeDelta.y);
         }
-
-        public static string TrustKey(TrustLevel t) => t switch
-        {
-            TrustLevel.Verified => "trust.verified.ink",
-            TrustLevel.Report => "trust.report.ink",
-            TrustLevel.Suspicious => "trust.suspicious.ink",
-            _ => "trust.unknown.ink",
-        };
-
-        public static string StatusKey(StatusKind s) => s switch
-        {
-            StatusKind.Threat => "status.threat.ink",
-            StatusKind.Warning => "status.warning.ink",
-            StatusKind.Info => "status.info.ink",
-            StatusKind.Good => "status.good.ink",
-            _ => "ink.ink",
-        };
-
-        public static string StampKey(StampInk ink) => ink switch
-        {
-            StampInk.Red => "ink.red",
-            StampInk.Green => "ink.green",
-            _ => "ink.blue",
-        };
-
-        public static TrustLevel ParseTrust(string s) => s switch
-        {
-            "verified" => TrustLevel.Verified,
-            "report" => TrustLevel.Report,
-            "suspicious" => TrustLevel.Suspicious,
-            _ => TrustLevel.Unknown,
-        };
-
-        public static StatusKind ParseStatus(string s) => s switch
-        {
-            "threat" => StatusKind.Threat,
-            "warning" => StatusKind.Warning,
-            "info" => StatusKind.Info,
-            "good" => StatusKind.Good,
-            _ => StatusKind.Neutral,
-        };
     }
 
     /// <summary>

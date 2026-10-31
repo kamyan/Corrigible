@@ -7,11 +7,13 @@ using Corrigible.Core;
 namespace Corrigible.Desk.Bridge
 {
     /// <summary>
-    /// Vardiya raporu (Docs/UI_Siginak Aşama 8, K6b): kol inmeden önceki ve sonraki anlık görüntüden, vardiyanın fon
-    /// hareketlerinden ve teleksin YAPILAMADI satırlarından rapor satırlarını kurar. Sayılar simülasyondan gelir; formüller
-    /// yalnız açıklama satırıdır (Soru 6): ayrı satırlar <see cref="Balance"/> değerlerinden, toplam simülasyonun net
-    /// değişiminden. İkisi tutmazsa (depo sınırı, erzakın bitmesi) araya düzeltme satırı girer; rapor hep simülasyonla
-    /// aynı sonuca çıkar. Saf C#: girdiden metin üretir, sahneye dokunmaz.
+    /// Vardiya raporu (Revizyon 2 · S5): kol inmeden önceki ve sonraki anlık görüntüden, vardiyanın fon hareketlerinden ve
+    /// teleksin YAPILAMADI satırlarından raporu kurar. Başta üç göz (ERZAK n vardiya yeter · YZ ALARMI ölçekle · FON); erzak ve
+    /// alarm dökümde bir daha yazılmaz. Karşı saldırıda raporun başına kutu girer, alarm gözü eşikte kırmızıdır. Sayılar
+    /// simülasyondan gelir; formüller yalnız açıklama satırıdır (Soru 6): ayrı satırlar <see cref="Balance"/> değerlerinden,
+    /// toplam simülasyonun net değişiminden. İkisi tutmazsa (depo sınırı, erzakın bitmesi) araya düzeltme satırı girer.
+    /// İşaret ve renk kuralı (+ yeşil, − mürekkep, ±0 gri, kırmızı yalnız eşik ve işgal) <see cref="ToneColor"/>'da.
+    /// Saf C#: girdiden metin üretir, sahneye dokunmaz.
     /// </summary>
     public static class ShiftReportBuilder
     {
@@ -131,17 +133,18 @@ namespace Corrigible.Desk.Bridge
                 Stamp = Loc.T("KAPANDI"),
                 FundsTitle = Loc.T("FON · GELİR / GİDER"),
                 ProductionTitle = Loc.T("ÜRETİM VE TÜKETİM"),
-                TeamTitle = Loc.T("EKİP VE YZ ALARMI"),
+                TeamTitle = Loc.T("EKİP"),
                 FailedTitle = Loc.T("YAPILAMADI"),
                 Action = Loc.F("VARDİYA {0} BAŞLAT", TrNumber.WithAccusative(a.shift, "000", true)),
-                Hint = Loc.T("Esc · rapor EVRAK tepsisine dosyalanır"),
+                Hint = Loc.T("rapor EVRAK tepsisine dosyalanır"),
             };
 
             Funds(input, d);
             Production(input, d);
+            Summary(input, d);
+            Counterattack(input, d);
             d.Analyst = Analyst(input);
             Teams(input, d);
-            Alarm(input, d);
             Door(input, d);
             foreach (var f in input.failures.Take(MaxFailures)) d.Failures.Add((f.code, f.message));
             if (input.failures.Count > MaxFailures) d.MoreFailures = Loc.F("… ve {0} satır daha", input.failures.Count - MaxFailures);
@@ -209,28 +212,84 @@ namespace Corrigible.Desk.Bridge
                 Label = Loc.F("Zırh plakası · {0}/{1}", a.plates, a.plateCapacity), Note = note, Badge = badge,
                 Value = Delta(cast, 0), Tone = Tone(cast, 0),
             });
-            d.Production.Add(Total(Loc.F("Erzak {0} → {1} / {2}", DeskFormat.Number(b.supplies, 1), DeskFormat.Number(a.supplies, 1),
-                Compact(a.suppliesCapacity)), Delta(d.SuppliesNet, 1), Tone(d.SuppliesNet, 1)));
+            // Erzakın toplamı özetin ERZAK gözünde (dökümde tekrar edilmez)
         }
 
-        /// <summary>YZ alarmı satırı (ekiplerin altında): vardiya yükseltir; eşikte YZ son geri alınan sektörü yeniden işgal eder.</summary>
-        static void Alarm(ShiftReportInput input, ShiftReportData d)
+        /// <summary>
+        /// Üç göz (S5): ERZAK (yeni değer / sınır, “n vardiya yeter” S3'ün hesabıyla), YZ ALARMI (değer / eşik, on adımlık
+        /// ölçek, “4 → 5 · 10'da karşı saldırı”; karşı saldırıda eşik kırmızı “9 → 10 · EŞİK”), FON (önce → sonra). Alarm notu
+        /// özetin altında (karşı saldırıda yok).
+        /// </summary>
+        static void Summary(ShiftReportInput input, ShiftReportData d)
         {
             var b = input.before;
             var a = input.after;
-            var row = new ReportTeamRow { Label = Loc.T("YZ alarmı"), HideIcon = true };
+            double net = a.supplies - b.supplies;
+            int? left = ShelterViewBuilder.ShiftsLeft(a.supplies, net);
+            d.Supplies = new ReportEye
+            {
+                Label = Loc.T("ERZAK"), Delta = Delta(net, 1), DeltaTone = Tone(net, 1),
+                Value = Over(DeskFormat.Number(a.supplies, 1), Compact(a.suppliesCapacity)),
+                Line = a.supplies <= 0.05 ? Loc.T("erzak bitti") : left == null ? Loc.T("erzak artıyor") : Loc.F("{0} vardiya yeter", left.Value),
+            };
+
+            int steps = (int)Math.Round(a.alarmThreshold);
+            d.AlarmSteps = steps;
+            d.AlarmHighFrom = Math.Max(1, steps - 2);
             if (a.counterattacks > b.counterattacks)
             {
-                d.Counterattack = Loc.F("{0} yeniden işgal altında · sivil güven −{1}", SectorLabel(a.lastCounterattack), input.rates.counterattackTrust);
-                row.Value = Loc.T("KARŞI SALDIRI");
-                row.Detail = Loc.F("Alarm eşiği aştı; YZ karşı saldırdı: {0}. Alarm sıfırlandı.", d.Counterattack);
+                // Alarm eşiğe vardı ve sıfırlandı: göz eşiği gösterir
+                double rise = a.alarmThreshold - b.alarm;
+                d.Alarm = new ReportEye
+                {
+                    Label = Loc.T("YZ ALARMI"), Delta = Delta(rise, Places(rise)), DeltaTone = ReportTone.Alert, Alert = true, Hover = Loc.T("duvarda: YZ ALARMI"),
+                    Value = Over(Compact(a.alarmThreshold), Compact(a.alarmThreshold)),
+                    Line = Loc.F("{0} → {1} · EŞİK", Compact(b.alarm), Compact(a.alarmThreshold)),
+                };
+                d.AlarmCells = steps;
             }
             else
             {
-                row.Value = Loc.F("{0} → {1} / {2}", Compact(b.alarm), Compact(a.alarm), Compact(a.alarmThreshold));
-                row.Detail = Loc.T("Her vardiya ve her başarısız baskın yükseltir, kırılan YZ sunucusu düşürür. Eşikte YZ son geri alınan sektörü yeniden işgal eder.");
+                d.Alarm = new ReportEye
+                {
+                    Label = Loc.T("YZ ALARMI"), Delta = Delta(a.alarm - b.alarm, Places(a.alarm - b.alarm)), DeltaTone = Math.Abs(a.alarm - b.alarm) < 0.05 ? ReportTone.Neutral : ReportTone.Plain,
+                    Hover = Loc.T("duvarda: YZ ALARMI"),
+                    Value = Over(Compact(a.alarm), Compact(a.alarmThreshold)),
+                    Line = Loc.F("{0} → {1} · {2} karşı saldırı", Compact(b.alarm), Compact(a.alarm), TrNumber.WithLocative(steps, "0")),
+                };
+                d.AlarmCells = Math.Max(0, Math.Min(steps, (int)Math.Floor(a.alarm + 1e-9)));
+                d.AlarmNote = Loc.T("Alarmı her vardiya ve her başarısız baskın yükseltir, kırılan YZ sunucusu düşürür. Eşikte YZ son geri alınan sektörü yeniden işgal eder.");
             }
-            d.Teams.Add(row);
+
+            // FON gözü vardiyanın bütününü gösterir (açılış → kapanış; baskın emri ve onarım dahil)
+            double fon = a.fon - d.Opening;
+            d.FundsEye = new ReportEye
+            {
+                Label = Loc.T("FON"), Delta = Delta(fon, 1), DeltaTone = Tone(fon, 1), Value = DeskFormat.Number(a.fon, 1),
+                Line = Loc.F("{0} → {1}", DeskFormat.Number(d.Opening, 1), DeskFormat.Number(a.fon, 1)),
+            };
+        }
+
+        /// <summary>Alarm adımı tam sayıysa ondalıksız (“+1”), değilse bir ondalık (“+0,5”; telsiz odası yavaşlatır).</summary>
+        static int Places(double v) => Math.Abs(v - Math.Round(v)) < 1e-9 ? 0 : 1;
+
+        /// <summary>Büyük sayı ve küçük sınır: “20,6<size=20>/30</size>”.</summary>
+        static string Over(string value, string limit) => value + "<size=20>/" + limit + "</size>";
+
+        /// <summary>
+        /// Karşı saldırı (S5b): raporun başında çift çizgili kutu “YZ KARŞI SALDIRISI” + teleks kodu + sektör; teleks iletisi
+        /// (güven kaybıyla) ayrıca <see cref="ShiftReportData.Counterattack"/>.
+        /// </summary>
+        static void Counterattack(ShiftReportInput input, ShiftReportData d)
+        {
+            var b = input.before;
+            var a = input.after;
+            if (a.counterattacks <= b.counterattacks) return;
+            string sector = SectorLabel(a.lastCounterattack);
+            d.Counterattack = Loc.F("{0} yeniden işgal altında · sivil güven −{1}", sector, input.rates.counterattackTrust);
+            d.CounterTitle = Loc.T("YZ KARŞI SALDIRISI");
+            d.CounterCode = input.counterCode ?? "";
+            d.CounterText = Loc.F("{0} yeniden işgal altında.", sector);
         }
 
         /// <summary>Kapı satırı (ekiplerin altında): vardiya biterken kapıda kalan ziyaretçi açılmadı sayıldı.</summary>
@@ -250,12 +309,12 @@ namespace Corrigible.Desk.Bridge
 
         static string DoorWho(string card) => DoorCards.Exists(card) ? Loc.T(DoorCards.Get(card).Who) : "—";
 
-        /// <summary>“Bölge · Sektör” (sektör kimliği “weu_3”); geri alınacak sektör yoksa “—”.</summary>
+        /// <summary>“Bölge · 01 Sektör” (sektör kimliği “weu_1”); geri alınacak sektör yoksa “—”.</summary>
         static string SectorLabel(string id)
         {
             int cut = id?.LastIndexOf('_') ?? -1;
             if (cut <= 0 || !int.TryParse(id.Substring(cut + 1), NumberStyles.Integer, CultureInfo.InvariantCulture, out int n)) return "—";
-            return Loc.F("{0} · {1}", Loc.T(GameData.Region(id.Substring(0, cut)).Name), new LiberationSectorState { Index = n - 1 }.Name);
+            return Loc.F("{0} · {1:00} {2}", Loc.T(GameData.Region(id.Substring(0, cut)).Name), n, new LiberationSectorState { Index = n - 1 }.Name);
         }
 
         /// <summary>
@@ -276,7 +335,7 @@ namespace Corrigible.Desk.Bridge
                 var back = t.members.Where(m => m.down <= 0 && (bt.Member(m.role)?.down ?? 0) > 0).ToList();
                 if (from == 0 && to == 0 && lying.Count == 0 && back.Count == 0)
                 {
-                    d.Teams.Add(new ReportTeamRow { Label = Loc.F("{0} · hazır", name), Value = Loc.T("HAZIR") });
+                    d.Teams.Add(new ReportTeamRow { Label = Loc.F("{0} · hazır", name), Value = Loc.T("HAZIR"), Tone = ReportTone.Good });
                     continue;
                 }
                 // Dinlenme önce sarar (ekip baskına çıkmadıysa her ayaktaki uzman), kalan iyileşme revirindir
@@ -301,6 +360,7 @@ namespace Corrigible.Desk.Bridge
                     Label = lying.Count > 0 ? Loc.F("{0} · {1} yaralı", name, lying.Count) : Loc.F("{0} · uzmanlar", name),
                     Value = from > 0 || to > 0 ? Loc.F("yara {0} → {1}", from, to)
                         : lying.Count > 0 ? (t.canRaid ? Loc.T("YEDEKLE HAZIR") : Loc.T("BEKLİYOR")) : Loc.T("HAZIR"),
+                    Tone = from == 0 && to == 0 && t.canRaid ? ReportTone.Good : ReportTone.Plain,
                     Detail = string.Join(" ", lines),
                 });
             }
@@ -382,6 +442,12 @@ namespace Corrigible.Desk.Bridge
             double rounded = Math.Round(v, decimals, MidpointRounding.AwayFromZero);
             return rounded > 0 ? ReportTone.Good : rounded < 0 ? ReportTone.Bad : ReportTone.Neutral;
         }
+
+        /// <summary>
+        /// Renk kuralı (Revizyon 2 · S5; rapor ve ± fişleri): artı yeşil, eksi mürekkep (işaret “−” taşır), ±0 gri, düz değer
+        /// mürekkep; kırmızı yalnız alarm eşiği ve işgal. Tema renk anahtarı döner.
+        /// </summary>
+        public static string ToneColor(ReportTone tone) => ReportTones.ColorKey(tone);
 
         /// <summary>Formül sayısı: tam sayı ondalıksız (“2”, “40”), değilse gereken kadar ondalık (“0,5”, “0,25”).</summary>
         static string Compact(double v) =>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Karar 2 · Kapı işareti</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&display=swap">
+<style>
+body{margin:0;background:#1C372C}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../board_assets/grain.png);background-size:256px 256px}
+.opt{display:flex;flex-direction:column;gap:12px;min-width:0}
+.oh{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.oh b{font:700 22px 'Courier Prime',monospace;letter-spacing:0.05em}
+.li{display:grid;grid-template-columns:22px minmax(0,1fr);column-gap:8px;font:400 19px/1.4 'Libre Franklin',Arial,sans-serif}
+.li b{font:700 19px 'Courier Prime',monospace}
+</style>
+</helmet>
+<div class="grain" style="width: 1920px; height: 1080px; box-sizing: border-box; background-color: #F1E9D6; color: #1E1B16; font-family: 'Libre Franklin', Arial, sans-serif; padding: 36px 48px; display: flex; flex-direction: column; gap: 22px">
+  <div style="display: flex; align-items: baseline; justify-content: space-between; border-bottom: 3px double #1E1B16; padding-bottom: 10px">
+    <span style="font: 700 32px 'Courier Prime', monospace; letter-spacing: 0.05em">KARAR 2 · KAPI İŞARETİ</span>
+    <span style="font: 400 19px 'Libre Franklin', Arial, sans-serif; color: #463F34">Ziyaretçi beklerken masada ne görünsün?</span>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 56px">
+    <div class="opt">
+      <div class="oh"><b>A · ANAHTAR RAYINDA 4 · KAPI</b><span style="font: 700 16px 'Courier Prime', monospace; letter-spacing: 0.06em; color: #24592E; border: 2px solid #24592E; padding: 2px 8px; transform: rotate(-2deg)">ÖNERİLEN</span></div>
+      <img src="../board_assets/k2a.jpg" alt="Anahtar rayında 4 · KAPI tuşu, yanan amber lamba ve tuşa bağlı el yazısı fiş: kapıda biri bekliyor" style="width: 880px; height: 276px; display: block; border: 1px solid #463F34">
+      <div class="li"><b>+</b><span>Kısayol dili zaten tuş rayı: kapıya gitmek = 4. Amber lamba 1 Hz yanıp söner, tuşa el yazısı fiş bağlanır.</span></div>
+      <div class="li"><b>+</b><span>Kenar satırında da 4 KAPI fişi olur; her pozdan aynı yol.</span></div>
+      <div class="li"><b>−</b><span>Ray beş tuştan altıya çıkar; plakalar 0,128 m'ye daralır.</span></div>
+    </div>
+    <div class="opt">
+      <div class="oh"><b>B · MASADA UYARI KUTUSU</b></div>
+      <img src="../board_assets/k2b.jpg" alt="Şalterin yanında KAPI yazılı bakalit uyarı kutusu ve amber lamba; rayda beş tuş" style="width: 880px; height: 276px; display: block; border: 1px solid #463F34">
+      <div class="li"><b>+</b><span>Ray değişmez; kutu şalterin yanında, vardiyayı bitirirken gözün geçtiği yerde.</span></div>
+      <div class="li"><b>−</b><span>Kısayolu olmayan yeni bir nesne; kapıya gitmenin yolu yine tıklamak.</span></div>
+      <div class="li"><b>−</b><span>Kenar satırında karşılığı yok; sığınak ve harita pozlarında görünmez.</span></div>
+    </div>
+  </div>
+  <div style="margin-top: 6px; padding-top: 14px; border-top: 1px solid #8E8166; display: grid; grid-template-columns: 220px minmax(0, 1fr); column-gap: 18px; font: 400 19px/1.4 'Libre Franklin', Arial, sans-serif">
+    <span style="font: 700 16px 'Courier Prime', monospace; letter-spacing: 0.06em; color: #675F50">İKİSİNDE DE AYNI</span>
+    <span>Biri çalınca kamera bugünkü gibi kendiliğinden kapıya döner. İşaret yalnız Esc ile masaya dönüldükten sonra iş görür: ziyaretçi vardiya bitene kadar bekler. Lamba ışığı emissive (#FFB347, 3,4); renk tek başına taşımaz, fiş ya da kutu yazısı “KAPI” der.</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

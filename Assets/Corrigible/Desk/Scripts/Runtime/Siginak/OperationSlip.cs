@@ -6,117 +6,139 @@ using UnityEngine.UI;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Görev fişi (K2 notu): haritanın 2 mm üstünde World Space dizin kâğıdı, −1° dönük. Başlık (OP kodu · bölge ·
-    /// ilerleme), üç sektör satırı (işaret + no + ad + tür + damga; hazır satır sarı), görev, BEDEL / ÖDÜL, ekip satırı,
-    /// mürekkep düğme “Enter · BASKIN EMRİ VER · −12 fon”. Cephe dışındaki bölgede bilgi fişi (eylem yok). Esc kapatır.
-    /// İçerik <see cref="OperationSlipData"/> olarak gelir; fiş kararı vermez, düğme olayını bağlayıcı işler.
+    /// Görev fişi (Revizyon 2 · S2): ekran katmanında 432 px kâğıt, sol masa kenarında (Kuzey ya da Güney Amerika seçiliyse
+    /// sağda), −0,6° dönük. Başlık (OP kodu · bölge · ilerleme), SAHA satırları (bölge özelliği, imza makinesi, tehdit:
+    /// işaret + etiket + değer), üç sektör satırı (işaret + no + ad + tür, damga 138 px sütunda; seçili satır sarı + ok
+    /// ucu), görev, BEDEL / ÖDÜL 2 × 2, ekip diskleri, BASKIN EMRİ VER (açık · üzerinde · basılı · devre dışı · yetersiz
+    /// kaynak). Cephe dışındaki bölgede bilgi fişi (eylem yok). İçerik <see cref="OperationSlipData"/> olarak gelir; fiş
+    /// kararı vermez, düğme olayını bağlayıcı işler. Açılış ve kapanış dizisini (iğne, iplik) bağlayıcı yürütür; fiş yalnız
+    /// kendi kayışını canlandırır.
     /// </summary>
     public sealed class OperationSlip : MonoBehaviour
     {
+        [Serializable] public sealed class Field
+        {
+            public GameObject root;
+            public Image glyph;
+            public TMP_Text label, value;
+            public UiHoverTarget hover;
+        }
+
         [Serializable] public sealed class Row
         {
             public RectTransform root;
-            public Image highlight, mark, stampFrame;
-            public TMP_Text no, name, kind, stamp;
+            public Image highlight, pointer, mark, stampFrame;
+            public RectTransform stamp;
+            public TMP_Text no, name, kind, stampText;
+            public UiHoverTarget hover;
         }
 
+        [Serializable] public sealed class Reward
+        {
+            public GameObject root;
+            public TMP_Text amount, unit;
+        }
+
+        [Serializable] public sealed class Member
+        {
+            public GameObject root;
+            public Image disc;
+            public TMP_Text letter, hp;
+        }
+
+        [Tooltip("Kâğıt: −0,6° dönük, kayar; çocukları dikey dizilir.")]
         [SerializeField] RectTransform paper;
         [SerializeField] CanvasGroup group;
         [SerializeField] TMP_Text code, region, progress;
         [SerializeField] Button close;
+        [SerializeField] Image closeEdge;
+        [SerializeField] UiHoverTarget closeHover;
+        [SerializeField] GameObject fieldBlock;
+        [SerializeField] Field[] fields = Array.Empty<Field>();
         [SerializeField] Row[] rows = Array.Empty<Row>();
         [SerializeField] GameObject taskBlock, costBlock, teamBlock, actionBlock, infoBlock;
-        [SerializeField] TMP_Text taskHead, task, cost, reward, teamName, teamMembers, teamStamp, info, reason;
+        [SerializeField] TMP_Text taskHead, task, cost, info;
+        [SerializeField] Reward[] rewards = Array.Empty<Reward>();
+        [SerializeField] TMP_Text teamName, teamExtra, teamStamp;
+        [SerializeField] RectTransform teamStampRoot;
+        [Tooltip("Damganın sütunu: uzun damgada (SONRAKİ VARDİYA, TEKNİSYEN YARALI) genişler, en çok 160 px; sığmazsa iki satır.")]
+        [SerializeField] LayoutElement teamStampHolder;
         [SerializeField] Image teamStampFrame;
+        [SerializeField] Member[] members = Array.Empty<Member>();
         [SerializeField] Button action;
-        [SerializeField] Image actionFill;
-        [SerializeField] TMP_Text actionLabel, actionCost;
-        [SerializeField] RectTransform orderStamp;
+        [SerializeField] UiHoverTarget actionHover;
+        [Tooltip("Düğmenin yüzü (dolgu + yazılar): üzerinde 2 px kalkar, basılıyken 2 px iner; gölge altında kalır.")]
+        [SerializeField] RectTransform actionFace;
+        [SerializeField] Image actionFill, actionShadow, actionKey;
+        [SerializeField] TMP_Text actionLabel, actionCost, actionNote, shortfall;
+        [Tooltip("İğne (ipin fiş ucu): solda sağ üst köşede, sağda sol üst köşede.")]
         [SerializeField] RectTransform pin;
-        [SerializeField] Sprite markDone, markReady, markLocked, frameSolid, frameDashed;
+        [SerializeField] Sprite markDone, markReady, markLocked, markReoccupied, frameSolid, frameDashed;
+        [Tooltip("Tehdit kademesi işaretleri (threat_tier_1…4).")]
+        [SerializeField] Sprite[] tierGlyphs = Array.Empty<Sprite>();
+        [Tooltip("Ekran kenarından ve üstten uzaklık (1080p referans px).")]
+        [SerializeField] Vector2 margin = new Vector2(22, 236);
+        [Tooltip("İğnenin kâğıdın üst köşesinden uzaklığı (px).")]
+        [SerializeField] Vector2 pinInset = new Vector2(13, 60);
 
-        float openAt = -1, stampAt = -1;
-        Vector2 rest;
+        enum Phase { Hidden, Opening, Shown, Closing }
+
+        Phase phase = Phase.Hidden;
+        float phaseAt, slideDelay, pressAt = -1;
+        bool right;
+        SlipActionState actionState;
+        readonly bool[] rowLocked = new bool[3], rowSelected = new bool[3];
 
         public event Action ActionClicked, CloseClicked;
-        public bool IsOpen => gameObject.activeSelf;
+        /// <summary>Fiş açık (kapanırken değil).</summary>
+        public bool IsOpen => gameObject.activeSelf && phase != Phase.Closing;
         public string RegionId { get; private set; }
         public bool HasAction { get; private set; }
-        public bool ActionEnabled => action != null && action.interactable;
-        /// <summary>Raptiye (fişin sol üstü); kırmızı ip buraya bağlanır.</summary>
-        public Vector3 PinWorld => pin.position;
-        /// <summary>Kâğıdın boyu (fiş pikseli).</summary>
-        public Vector2 PaperSize => paper.rect.size;
+        public bool ActionEnabled => actionState == SlipActionState.Ready;
+        public SlipActionState ActionState => actionState;
+        /// <summary>Kâğıt sağda (Kuzey ya da Güney Amerika).</summary>
+        public bool OnRight => right;
 
-        public void Configure(RectTransform paperRoot, CanvasGroup fade, TMP_Text codeText, TMP_Text regionText, TMP_Text progressText, Button closeButton,
-            Row[] sectorRows, GameObject task, GameObject cost, GameObject team, GameObject actionRoot, GameObject infoRoot,
-            TMP_Text taskHeadText, TMP_Text taskText, TMP_Text costText, TMP_Text rewardText, TMP_Text teamNameText, TMP_Text teamMembersText,
-            TMP_Text teamStampText, TMP_Text infoText, TMP_Text reasonText, Image teamFrame, Button actionButton, Image actionBack,
-            TMP_Text actionText, TMP_Text actionCostText, RectTransform order, RectTransform pinPoint, Sprite done, Sprite ready, Sprite locked,
-            Sprite solid, Sprite dashed)
+        /// <summary>İğnenin ekran noktası, kâğıt yerine oturmuşken (açılırken ip önce oraya çekilir).</summary>
+        public Vector2 PinScreenAtRest
         {
-            paper = paperRoot; group = fade; code = codeText; region = regionText; progress = progressText; close = closeButton; rows = sectorRows;
-            taskBlock = task; costBlock = cost; teamBlock = team; actionBlock = actionRoot; infoBlock = infoRoot;
-            taskHead = taskHeadText; this.task = taskText; this.cost = costText; reward = rewardText; teamName = teamNameText;
-            teamMembers = teamMembersText; teamStamp = teamStampText; info = infoText; reason = reasonText; teamStampFrame = teamFrame;
-            action = actionButton; actionFill = actionBack; actionLabel = actionText; actionCost = actionCostText; orderStamp = order;
-            pin = pinPoint; markDone = done; markReady = ready; markLocked = locked; frameSolid = solid; frameDashed = dashed;
+            get
+            {
+                var parent = (RectTransform)paper.parent;
+                var offset = parent.TransformVector(paper.anchoredPosition - RestPosition);
+                return (Vector2)(pin.position - offset);
+            }
         }
 
-        float membersSize = -1;
-        readonly Vector3[] stampCorners = new Vector3[4];
+        static float SlideSeconds => SiginakTheme.Active.NumberOf("motion.slipSlideS", 0.22f);
+        static float CloseSeconds => 0.18f;
 
-        /// <summary>Kadro satırı damganın soluna sığar: uzun kadroda (yedek, eksik rol, plaka) yazı küçülür.</summary>
-        void FitMembers()
-        {
-            if (membersSize < 0) membersSize = teamMembers.fontSize;
-            teamMembers.fontSize = membersSize;
-            teamStampFrame.rectTransform.GetWorldCorners(stampCorners);
-            var r = teamMembers.rectTransform;
-            float room = r.InverseTransformPoint(stampCorners[0]).x - r.rect.xMin - 6;
-            float need = teamMembers.GetPreferredValues(teamMembers.text).x;
-            if (room > 0 && need > room) teamMembers.fontSize = Mathf.Max(10, membersSize * room / need);
-        }
+        Vector2 RestPosition => new Vector2(right ? -(margin.x + paper.rect.width * 0.5f) : margin.x + paper.rect.width * 0.5f, -margin.y);
 
         void Awake()
         {
-            rest = paper.anchoredPosition;
             action.onClick.AddListener(() => ActionClicked?.Invoke());
             close.onClick.AddListener(() => CloseClicked?.Invoke());
         }
 
-        public void Show(OperationSlipData d)
+        /// <summary>
+        /// İçeriği yazar. Kapalıysa açılır: kâğıt <paramref name="slideDelay"/> sonra kenardan kayar (iğne ve iplik önce,
+        /// bağlayıcıda). <paramref name="onRight"/> kâğıdın tarafı.
+        /// </summary>
+        public void Show(OperationSlipData d, bool onRight, float slideAfter = 0)
         {
-            bool reopen = !IsOpen || RegionId != d.RegionId;
+            bool opening = !IsOpen;
             RegionId = d.RegionId;
             HasAction = d.HasAction;
             var t = SiginakTheme.Active;
             gameObject.SetActive(true);
-            // EN metin %20–30 uzar: fiş 436 → 452 px açılır, satır yükseklikleri sabit
-            float width = DeskFormat.Lang == DeskLang.En ? t.Number("space.slipW.en", 452) : t.Number("space.slipW.tr", 436);
-            paper.sizeDelta = new Vector2(width, paper.sizeDelta.y);
+            if (opening || right != onRight) Place(onRight);
 
             code.text = d.Code;
             region.text = d.Region;
             progress.text = d.Progress;
-            for (int i = 0; i < rows.Length; i++)
-            {
-                var row = rows[i];
-                var s = i < d.Sectors.Count ? d.Sectors[i] : null;
-                row.root.gameObject.SetActive(s != null);
-                if (s == null) continue;
-                row.no.text = s.No;
-                row.name.text = s.Name;
-                row.kind.text = s.Kind;
-                row.highlight.enabled = s.Highlight;
-                row.mark.sprite = s.Mark == SectorMark.Retaken ? markDone : s.Mark == SectorMark.Ready ? markReady : markLocked;
-                Stamp(row.stampFrame, row.stamp, s.Mark switch
-                {
-                    SectorMark.Retaken => ("stamp.retaken", Corrigible.Core.Loc.T("GERİ ALINDI")),
-                    SectorMark.Ready => ("stamp.ready", Corrigible.Core.Loc.T("BASKINA HAZIR")),
-                    _ => ("stamp.locked", Corrigible.Core.Loc.T("KİLİTLİ")),
-                });
-            }
+            Fields(d, t);
+            Sectors(d, t);
 
             bool infoOnly = !string.IsNullOrEmpty(d.Info);
             infoBlock.SetActive(infoOnly);
@@ -126,84 +148,238 @@ namespace Corrigible.Desk
             task.text = d.Task ?? "";
             costBlock.SetActive(!infoOnly && !string.IsNullOrEmpty(d.Cost));
             cost.text = d.Cost ?? "";
-            reward.text = d.Reward ?? "";
-            teamBlock.SetActive(!infoOnly && !string.IsNullOrEmpty(d.TeamName));
-            teamName.text = d.TeamName ?? "";
-            teamMembers.text = d.TeamMembers ?? "";
-            Stamp(teamStampFrame, teamStamp, (d.TeamReady ? "stamp.teamReady" : "stamp.injured", d.TeamStamp ?? ""));
-            FitMembers();
-
-            actionBlock.SetActive(d.HasAction);
-            action.interactable = d.ActionEnabled;
-            actionLabel.text = d.Action ?? "";
-            actionCost.text = d.ActionCost ?? "";
-            // Devre dışı düğme: soluk dolgu + kesik çizgi rengi, gerekçe altında (renk tek başına taşımaz)
-            actionFill.color = t.ColorOf(d.ActionEnabled ? "ui.inkButton" : "ui.disabledFill");
-            actionLabel.color = actionCost.color = t.ColorOf(d.ActionEnabled ? "ui.inkButtonText" : "ui.disabledText");
-            reason.gameObject.SetActive(d.HasAction && !d.ActionEnabled && !string.IsNullOrEmpty(d.Reason));
-            reason.text = d.Reason ?? "";
-            if (reopen)
+            for (int i = 0; i < rewards.Length; i++)
             {
-                orderStamp.gameObject.SetActive(false);
-                openAt = Time.unscaledTime;
+                var r = i < d.Rewards.Count ? d.Rewards[i] : null;
+                rewards[i].root.SetActive(r != null);
+                if (r == null) continue;
+                rewards[i].amount.text = r.Amount;
+                rewards[i].unit.text = r.Unit;
+            }
+            Team(d, t);
+            Action(d, t);
+
+            if (opening)
+            {
+                phase = Phase.Opening;
+                phaseAt = Time.unscaledTime;
+                slideDelay = slideAfter;
             }
             LayoutRebuilder.ForceRebuildLayoutImmediate(paper);
             Update();
         }
 
+        /// <summary>Kapanış: kâğıt kenara çekilir (0,18 s), sonra gizlenir. İpi bağlayıcı önce sarar (<paramref name="delay"/>).</summary>
+        public void Close(float delay = 0)
+        {
+            if (!gameObject.activeSelf || phase == Phase.Closing) return;
+            phase = Phase.Closing;
+            phaseAt = Time.unscaledTime + delay;
+        }
+
+        /// <summary>Hemen gizler (yeni oyun, kayıttan devam).</summary>
         public void Hide()
         {
             RegionId = null;
+            phase = Phase.Hidden;
             gameObject.SetActive(false);
         }
 
-        /// <summary>Baskın emri verildi: kırmızı “EMİR VERİLDİ” damgası 0,1 s'de iner (−6°).</summary>
-        public void StampOrder()
+        /// <summary>Enter ile basış: yüz 0,06 s iner (fareyle basmakla aynı).</summary>
+        public void Press() => pressAt = Time.unscaledTime;
+
+        void Place(bool onRight)
         {
-            orderStamp.gameObject.SetActive(true);
-            stampAt = Time.unscaledTime;
-            Update();
+            right = onRight;
+            paper.anchorMin = paper.anchorMax = new Vector2(right ? 1 : 0, 1);
+            paper.pivot = new Vector2(0.5f, 1);
+            paper.anchoredPosition = RestPosition;
+            float w = paper.rect.width;
+            pin.anchorMin = pin.anchorMax = new Vector2(0, 1);
+            pin.anchoredPosition = new Vector2(right ? pinInset.x : w - pinInset.x, -pinInset.y);
         }
 
-        /// <summary>Baskın bitti: emir damgası kalkar (fiş açık kalabilir).</summary>
-        public void ClearOrder()
+        void Fields(OperationSlipData d, SiginakTheme t)
         {
-            if (orderStamp.gameObject.activeSelf) orderStamp.gameObject.SetActive(false);
-            stampAt = -1;
+            fieldBlock.SetActive(d.Fields.Count > 0);
+            for (int i = 0; i < fields.Length; i++)
+            {
+                var f = fields[i];
+                var data = i < d.Fields.Count ? d.Fields[i] : null;
+                f.root.SetActive(data != null);
+                if (data == null) continue;
+                if (data.Tier > 0 && tierGlyphs.Length > 0)
+                {
+                    f.glyph.sprite = tierGlyphs[Mathf.Clamp(data.Tier, 1, tierGlyphs.Length) - 1];
+                    f.glyph.color = Color.white;
+                }
+                else
+                {
+                    DeskSprites.Apply(f.glyph, data.Glyph);
+                    f.glyph.color = t.ColorOf("ink");
+                }
+                f.label.text = data.Label;
+                f.value.text = data.Value;
+                // Tehdit değeri kırmızı CP 700 20; öteki değerler LF 600 18 mürekkep
+                bool tier = data.Tier > 0;
+                t.ApplyType(f.value, tier ? "costValue" : "sahaValue");
+                f.value.color = tier ? t.ColorOf("status.threat") : t.ColorOf("ink");
+                f.hover.Title = data.HoverTitle;
+                f.hover.Line = data.HoverLine;
+            }
         }
 
-        void Stamp(Image frame, TMP_Text text, (string key, string word) s)
+        void Sectors(OperationSlipData d, SiginakTheme t)
+        {
+            for (int i = 0; i < rows.Length; i++)
+            {
+                var row = rows[i];
+                var s = i < d.Sectors.Count ? d.Sectors[i] : null;
+                row.root.gameObject.SetActive(s != null);
+                if (s == null) continue;
+                // No CP 700 15 ink3, ad LF 600 18 (kilitli satırda ink2)
+                row.no.text = s.No;
+                row.name.text = s.Name;
+                row.name.color = s.Mark == SectorMark.Locked ? t.ColorOf("ink2") : t.ColorOf("ink");
+                row.kind.text = s.Kind;
+                rowLocked[i] = s.Mark == SectorMark.Locked;
+                rowSelected[i] = s.Highlight;
+                row.pointer.gameObject.SetActive(s.Highlight);
+                row.mark.sprite = s.Reoccupied ? markReoccupied : s.Mark == SectorMark.Retaken ? markDone : s.Mark == SectorMark.Ready ? markReady : markLocked;
+                var (key, word, angle) = s.Mark switch
+                {
+                    SectorMark.Retaken => ("stamp.retaken", Corrigible.Core.Loc.T("GERİ ALINDI"), 4f),
+                    SectorMark.Ready => ("stamp.ready", Corrigible.Core.Loc.T("BASKINA HAZIR"), 3f),
+                    _ => ("stamp.locked", Corrigible.Core.Loc.T("KİLİTLİ"), 2f),
+                };
+                Stamp(row.stamp, row.stampFrame, row.stampText, key, word, angle);
+                row.hover.Title = s.Hover != null ? word : null;
+                row.hover.Line = s.Hover;
+            }
+        }
+
+        void Team(OperationSlipData d, SiginakTheme t)
+        {
+            bool show = !string.IsNullOrEmpty(d.TeamName) && string.IsNullOrEmpty(d.Info);
+            teamBlock.SetActive(show);
+            if (!show) return;
+            teamName.text = d.TeamName;
+            for (int i = 0; i < members.Length; i++)
+            {
+                var m = members[i];
+                var data = i < d.Members.Count ? d.Members[i] : null;
+                m.root.SetActive(data != null);
+                if (data == null) continue;
+                m.letter.text = data.Letter;
+                m.hp.text = data.Rookie ? Corrigible.Core.Loc.F("{0} yedek", data.Hp) : data.Hp;
+                // Eksik rol soluk disk; yedek uzmanın diski aynı, canın yanında “yedek”
+                m.disc.color = data.Missing ? t.ColorOf("ui.disabledFill") : t.ColorOf("slip.teamDisc");
+                m.hp.color = data.Missing ? t.ColorOf("ink3") : t.ColorOf("ink");
+            }
+            teamExtra.gameObject.SetActive(!string.IsNullOrEmpty(d.TeamExtra));
+            teamExtra.text = d.TeamExtra ?? "";
+            Stamp(teamStampRoot, teamStampFrame, teamStamp, d.TeamReady ? "stamp.teamReady" : "stamp.injured",
+                d.TeamStamp ?? "", 3, 160);
+            teamStampHolder.preferredWidth = teamStampHolder.minWidth = Mathf.Max(80, teamStampRoot.sizeDelta.x + 6);
+        }
+
+        void Action(OperationSlipData d, SiginakTheme t)
+        {
+            actionBlock.SetActive(d.HasAction);
+            actionState = d.ActionState;
+            // Yetersiz kaynakta düğme açık kalır (basınca komut çağrılmaz); devre dışında Button kapalı
+            action.interactable = d.HasAction && d.ActionState != SlipActionState.Disabled;
+            actionLabel.text = d.Action ?? "";
+            bool disabled = d.ActionState == SlipActionState.Disabled;
+            // Bedel: yetersizse üstü çizik; devre dışında yerine kısa gerekçe
+            actionCost.gameObject.SetActive(!disabled);
+            actionCost.text = d.ActionState == SlipActionState.Shortfall ? "<s>" + d.ActionCost + "</s>" : d.ActionCost ?? "";
+            actionNote.gameObject.SetActive(disabled && !string.IsNullOrEmpty(d.ActionNote));
+            // Devre dışında Enter bir şey yapmaz: tuş fişi kalkar, gerekçe sağa sığar
+            actionKey.gameObject.SetActive(!disabled);
+            actionNote.text = d.ActionNote ?? "";
+            shortfall.gameObject.SetActive(d.ActionState == SlipActionState.Shortfall);
+            shortfall.text = d.Shortfall ?? "";
+            actionFill.color = t.ColorOf(disabled ? "slip.buttonDisabled" : "ui.inkButton");
+            actionLabel.color = actionNote.color = t.ColorOf(disabled ? "slip.buttonDisabledText" : "ui.inkButtonText");
+            actionCost.color = t.ColorOf("slip.buttonKey");
+            actionShadow.gameObject.SetActive(!disabled);
+            actionHover.Title = d.ActionState == SlipActionState.Ready ? null : disabled ? d.ActionNote : Corrigible.Core.Loc.T("FON YETERSİZ");
+            actionHover.Line = d.Reason;
+        }
+
+        void Stamp(RectTransform root, Image frame, TMP_Text text, string key, string word, float angle, float maxWidth = 0)
         {
             var t = SiginakTheme.Active;
-            var c = t.ColorOf(s.key);
-            bool dashed = t.Text(s.key + ".edge") == "dashed";
+            var c = t.ColorOf(key);
+            bool dashed = t.Text(key + ".edge") == "dashed";
             frame.sprite = dashed ? frameDashed : frameSolid;
             frame.type = dashed ? Image.Type.Tiled : Image.Type.Sliced;
             frame.fillCenter = !dashed;
             frame.color = c;
             text.color = c;
-            text.text = s.word;
+            text.text = word;
+            // Damga yazıya göre (CP 700 14, kenar 2 px, iç pay 2/6 px); −2…−4° dönük. Sütuna sığmayan iki satıra kırılır.
+            var pad = new Vector2(16, 8);
+            var size = text.GetPreferredValues(word);
+            bool wrap = maxWidth > 0 && size.x + pad.x > maxWidth;
+            text.textWrappingMode = wrap ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
+            if (wrap) size = new Vector2(maxWidth - pad.x, text.GetPreferredValues(word, maxWidth - pad.x, 0).y);
+            root.sizeDelta = size + pad;
+            root.localRotation = Quaternion.Euler(0, 0, angle);
         }
 
         void Update()
         {
             var t = SiginakTheme.Active;
             float now = Time.unscaledTime;
-            if (openAt >= 0)
+            // Kayış: açılırken kenardan oturur, kapanırken kenara çekilir
+            float away = (paper.rect.width + margin.x + 24) * (right ? 1 : -1);
+            switch (phase)
             {
-                // Açılış: 12 px yukarıdan kayar (0,14 s)
-                float p = Mathf.Clamp01((now - openAt) / Mathf.Max(0.01f, t.NumberOf("motion.slipOpenS", 0.14f)));
-                float e = 1 - (1 - p) * (1 - p);
-                paper.anchoredPosition = rest + new Vector2(0, 12 * (1 - e));
-                group.alpha = e;
-                if (p >= 1) openAt = -1;
+                case Phase.Opening:
+                {
+                    float p = Mathf.Clamp01((now - phaseAt - slideDelay) / SlideSeconds);
+                    float e = 1 - (1 - p) * (1 - p);
+                    paper.anchoredPosition = RestPosition + new Vector2(away * (1 - e), 0);
+                    group.alpha = now - phaseAt < slideDelay ? 0 : 1;
+                    if (p >= 1) phase = Phase.Shown;
+                    break;
+                }
+                case Phase.Closing:
+                {
+                    float p = Mathf.Clamp01((now - phaseAt) / CloseSeconds);
+                    paper.anchoredPosition = RestPosition + new Vector2(away * p * p, 0);
+                    if (p >= 1) Hide();
+                    return;
+                }
+                case Phase.Shown:
+                    paper.anchoredPosition = RestPosition;
+                    group.alpha = 1;
+                    break;
             }
-            if (stampAt >= 0)
+
+            // Sektör satırı: seçili sarı %34 + ok ucu; üzerinde sarı %18 (kilitli satır seçilmez)
+            for (int i = 0; i < rows.Length && i < rowLocked.Length; i++)
             {
-                float p = Mathf.Clamp01((now - stampAt) / Mathf.Max(0.01f, t.NumberOf("motion.stampS", 0.1f)));
-                orderStamp.localScale = Vector3.one * Mathf.Lerp(1.4f, 1, p);
-                if (p >= 1) stampAt = -1;
+                var row = rows[i];
+                if (!row.root.gameObject.activeSelf) continue;
+                bool rowOver = row.hover.Over && !rowLocked[i];
+                var c = rowSelected[i] ? t.ColorOf("slip.rowSelected") : rowOver ? t.ColorOf("slip.rowHover") : Color.clear;
+                row.highlight.enabled = c.a > 0;
+                row.highlight.color = c;
             }
+
+            // Esc: üzerinde çerçeve koyulaşır
+            closeEdge.color = closeHover.Over ? t.ColorOf("ink") : t.ColorOf("ink2");
+
+            // BASKIN EMRİ VER: üzerinde 2 px kalkar (gölge 5), basılı 2 px iner (gölge 0), Enter'da 0,06 s basılı
+            bool disabled = actionState == SlipActionState.Disabled;
+            bool pressed = !disabled && (actionHover.Pressed || pressAt >= 0 && now - pressAt < 0.06f);
+            bool over = !disabled && actionHover.Over && !pressed;
+            float lift = pressed ? -2 : over ? 2 : 0, shadow = pressed ? 0 : over ? 5 : 3;
+            actionFace.anchoredPosition = new Vector2(0, lift);
+            actionShadow.rectTransform.anchoredPosition = new Vector2(0, lift - shadow);
         }
     }
 }

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>S7 · Uygulama notu</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&display=swap">
+<style>
+body{margin:0;background:#1C372C}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../board_assets/grain.png);background-size:256px 256px}
+.h{display:flex;align-items:center;gap:8px}
+.h span:first-child{font:700 14px 'Courier Prime',monospace;letter-spacing:0.08em}
+.h span:last-child{flex:1;height:1px;background:#675F50}
+.g{display:grid;grid-template-columns:104px minmax(0,1fr);row-gap:6px;column-gap:10px}
+.k{font:700 14px 'Courier Prime',monospace;color:#675F50}
+</style>
+</helmet>
+<div class="grain" style="width: 1280px; height: 1080px; box-sizing: border-box; background-color: #F1E9D6; color: #1E1B16; font-family: 'Libre Franklin', Arial, sans-serif; display: flex; flex-direction: column">
+  <div style="padding: 24px 32px 12px 32px; border-bottom: 2px solid #D2483F; display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+    <div style="font: 700 28px 'Courier Prime', monospace; letter-spacing: 0.04em">S7 · SONUÇ KARTI VE OPERASYON RAPORU</div>
+    <div style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em; color: #675F50">TAHTA KAMERASI · HARİTA POZU</div>
+  </div>
+  <div style="flex: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; padding: 14px 32px 16px 32px; min-height: 0; font-size: 14px; line-height: 1.36">
+    <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0">
+      <div class="h"><span>ESKİ → YENİ</span><span></span></div>
+      <div class="g">
+        <span class="k">sonuç kartı</span><span>Damga, başlık ve alt not aynı sözü üç kez söylüyordu (GERİ ÇEKİLDİ ×2 + “Ekip geri çekildi.”) → damga tek ve başlık yerinde: SEKTÖR GERİ ALINDI (mavi) ya da GERİ ÇEKİLDİ (kırmızı), 6 px çift kenar. Altında yer satırı, üç sayı, tek düğme.</span>
+        <span class="k">kartın yeri</span><span>Tahtanın ortasından sağa (x 1290–1790); spot ışığı sonucun nedenini (kasa ya da Teknisyen) açıkta bırakır.</span>
+        <span class="k">rapor yeri</span><span>K1'de sol üst + kararmış boş ekran → harita pozunda solda (x 24–584). Harita aydınlık: sonuç sektör işaretinde ve yüzdede görünür. İplik rapordan ekip figürüne gider, figürün çevresinde kırmızı halka; figür karanlıkta kaybolmaz.</span>
+        <span class="k">tekrar</span><span>Başlık altındaki cümle uyarı bandında yineleniyordu → bant kalktı. Başlık sonucu söyler (SEKTÖR GERİ ALINDI / SEKTÖR İŞGAL ALTINDA), altında tek cümle.</span>
+        <span class="k">zafer anı</span><span>Başarılıda mavi başlık, yeşil BAŞARILI damgası, KAZANÇ ızgarası (32 px yeşil sayılar), sayaçların altında ± fişleri. Başarısızda yalnız sonuçlar ve alarm ölçeği; ödül alanı hiç çıkmaz.</span>
+        <span class="k">kamera</span><span>Rapor için yeni poz yok: var olan harita pozu kullanılır.</span>
+      </div>
+      <div class="h"><span>NESNELER</span><span></span></div>
+      <div class="g">
+        <span class="k">sonuç kartı</span><span>Overlay, 500 px, #FBF7EC, kenar #D2C7AF, gölge (5, 6) %50, +0,8°; damga CP 700 34–38, çift kenar 6 px, −3°.</span>
+        <span class="k">rapor kâğıdı</span><span>560 px, #F1E9D6, üstte 3 px çift çizgi; meta ızgarası 62 px etiket sütunu; KAZANÇ kutusu 1,5 px #463F34, dört göz.</span>
+        <span class="k">iğne, iplik</span><span>İğne Ø17 #2A2622; iplik 2,6 px #A3241A (gölge 3 px %28), adların ve damgaların altından sarkan yay; halka 76 × 54, 2,6 px #B8241A.</span>
+        <span class="k">± fişleri</span><span>S5 ile aynı; yalnız başarılı raporda.</span>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0">
+      <div class="h"><span>ETKİLEŞİM VE DURUMLAR</span><span></span></div>
+      <div class="g">
+        <span class="k">RAPORA GEÇ</span><span>Enter. Normal: mürekkep. Üzerinde: 2 px yükselir. Basılı: 2 px iner. Devre dışı ve yetersiz kaynak durumu yok. Kart gelene kadar girdi kilitli (0,6 s).</span>
+        <span class="k">MASAYA DÖN</span><span>Enter; aynı durumlar. Rapor EVRAK tepsisine dosyalanır.</span>
+        <span class="k">satırlar</span><span>Bilgi; tıklanmaz.</span>
+      </div>
+      <div class="h"><span>HAREKET VE SES</span><span></span></div>
+      <div class="g">
+        <span class="k">sonuç</span><span>Son hamle → tahta 0,4 s'de kararır, spot 0,3 s'de nedenin üstünde açılır → kart sağdan 0,25 s'de kayar → damga 0,12 s (başarılıda kısa zil, başarısızda boğuk “tak”).</span>
+        <span class="k">rapora geçiş</span><span>Kamera CRT'den çıkıp harita pozuna 0,6 s → rapor 0,4 s'de yukarıdan iner → iplik 0,25 s'de figüre gerilir, halka 0,2 s'de çizilir.</span>
+        <span class="k">başarılıda</span><span>KAZANÇ gözleri sırayla 0,12 s; sayaçlar 0,35 s döner, ± fişleri düşer; haritada sektör işareti 0,2 s'de mavi onaya döner.</span>
+        <span class="k">masaya dön</span><span>Rapor tepsiye 0,25 s, kamera başlangıç pozuna 0,6 s.</span>
+      </div>
+      <div class="h"><span>İNGİLİZCE</span><span></span></div>
+      <div class="g">
+        <span class="k">kart</span><span>OPERATION RESULT · TURN 6/8 · SECTOR RETAKEN · WITHDRAWN · Supply crate · taken · Civilian servers broken · Team · 3/3 standing · GO TO OPERATION REPORT</span>
+        <span class="k">rapor</span><span>KYGA · OPERATION REPORT · No. SO-014/5 · single copy · DATE · RESULT · SUCCESS · FAILED · TARGET · DURATION · 6 turns · SECTOR STILL OCCUPIED · “KYGA holds 2/3 sectors of Eastern Europe; one more frees the region.” · GAINS · FUNDS · MATERIALS · RATIONS · SURVIVOR · RESULTS · RETAKEN · OCCUPIED · AI alarm · unchanged · “The team returned. Regroup and try again.” · BACK TO DESK</span>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

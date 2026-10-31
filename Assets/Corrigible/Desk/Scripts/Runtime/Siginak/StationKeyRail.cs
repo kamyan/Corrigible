@@ -5,11 +5,12 @@ namespace Corrigible.Desk
 {
     /// <summary>
     /// Masanın ön kenarındaki pirinç anahtar rayı (eski alt düğme çubuğunun yeri): 1 KOMUTA · 2 SIĞINAK · 3 GÖREVLER ·
-    /// H KILAVUZ · Home MASA. Etkin istasyonu bağlayıcı kamera pozundan yazar; tıklama dizini olay olarak çıkar.
+    /// 4 KAPI (Revizyon 2) · H KILAVUZ · Home MASA. Etkin istasyonu bağlayıcı kamera pozundan yazar; tıklama dizini olay
+    /// olarak çıkar.
     /// </summary>
     public sealed class StationKeyRail : MonoBehaviour
     {
-        public const int Command = 0, Shelter = 1, Missions = 2, Guide = 3, Desk = 4;
+        public const int Command = 0, Shelter = 1, Missions = 2, Door = 3, Guide = 4, Desk = 5;
 
         [SerializeField] StationKey[] keys = Array.Empty<StationKey>();
 

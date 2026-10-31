@@ -91,9 +91,74 @@ namespace Corrigible.Desk.Tests
             StringAssert.Contains(DeskFormat.Number(sim.B.liberationRaidCost, 0), d.Reason, "gerekçe sayı içerir");
             Assert.AreEqual(Loc.F("HAREKÂT FORMU · OP-{0:00}", 1), d.Code);
             Assert.AreEqual(Loc.F("{0} fon", DeskFormat.Signed(-sim.B.liberationRaidCost, 0)), d.ActionCost);
+            // Karar 7 · S2: eksik yalnız fon → düğme açık kalır (yetersiz kaynak), altında eksik
+            Assert.AreEqual(SlipActionState.Shortfall, d.ActionState);
+            Assert.IsTrue(TelexReasons.RaidFundsOnly(sim, "weu_1"));
+            StringAssert.Contains(DeskFormat.Number(sim.B.liberationRaidCost, 0), d.Shortfall);
 
             var rich = NewLiberation();
-            Assert.IsTrue(LiberationMapBuilder.Slip(rich, Simulation.HQ).ActionEnabled);
+            var ready = LiberationMapBuilder.Slip(rich, Simulation.HQ);
+            Assert.IsTrue(ready.ActionEnabled);
+            Assert.IsNull(ready.Shortfall);
+        }
+
+        /// <summary>S2: SAHA satırları (bölge özelliği, imza, tehdit), ödül 2 × 2, ekip diskleri.</summary>
+        [Test]
+        public void Slip_Front_FieldsRewardsAndDiscs()
+        {
+            var sim = NewLiberation();
+            var d = LiberationMapBuilder.Slip(sim, Simulation.HQ);
+            var def = GameData.Region(Simulation.HQ);
+            Assert.AreEqual(3, d.Fields.Count);
+            Assert.AreEqual(SiginakGlyphs.Trait(def.Trait, framed: true), d.Fields[0].Glyph);
+            Assert.AreEqual(Loc.T(Baskin.RegionTraits[def.Trait].Name), d.Fields[0].Value);
+            Assert.AreEqual(Loc.T(Baskin.RegionTraits[def.Trait].Desc), d.Fields[0].HoverLine, "üzerine gelince oyundaki açıklama");
+            Assert.AreEqual(SiginakGlyphs.Machine(def.Enemy, framed: true), d.Fields[1].Glyph);
+            Assert.AreEqual(Loc.T(Baskin.UnitTypes[def.Enemy].Name), d.Fields[1].Value);
+            Assert.AreEqual(sim.Tier, d.Fields[2].Tier);
+            Assert.AreEqual(Loc.F("{0}/4", sim.Tier), d.Fields[2].Value);
+            Assert.IsFalse(d.Task.Contains("\n"), "kimlik satırı görevden SAHA'ya taşındı");
+
+            Assert.AreEqual(sim.NextLiberationSector(Simulation.HQ).MissionKind == "loot" ? 4 : 2, d.Rewards.Count);
+            Assert.AreEqual(DeskFormat.Signed(sim.B.liberationLootFunds, 0), d.Rewards[0].Amount);
+            Assert.AreEqual(Loc.T("fon"), d.Rewards[0].Unit);
+
+            CollectionAssert.AreEqual(new[] { "T", "E", "A" }, d.Members.Select(m => m.Letter).ToArray(), "baskın piyonlarıyla aynı harf");
+            Assert.AreEqual(Loc.F("{0}/{1}", Simulation.MaxHp("tek"), Simulation.MaxHp("tek")), d.Members[0].Hp);
+            Assert.IsTrue(d.Members.All(m => !m.Missing && !m.Rookie));
+        }
+
+        /// <summary>S2: baskından dönen ekip aynı vardiyada çıkamaz → düğme devre dışı, sağda kısa neden.</summary>
+        [Test]
+        public void Slip_Front_DisabledWhenTeamIsBack()
+        {
+            var sim = NewLiberation();
+            Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
+            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true }).Ok);
+            var d = LiberationMapBuilder.Slip(sim, Simulation.HQ);
+            Assert.AreEqual(SlipActionState.Disabled, d.ActionState);
+            Assert.AreEqual(Loc.T("EKİP HAZIR DEĞİL"), d.ActionNote);
+            Assert.IsNotNull(d.Reason, "uzun gerekçe telekse ve düğmenin etiketine");
+            Assert.IsFalse(TelexReasons.RaidFundsOnly(sim, "weu_2"));
+        }
+
+        /// <summary>Karşı saldırının aldığı sektör geri alınana kadar haritada ve fişte işaretli (mark_sector_reocc).</summary>
+        [Test]
+        public void MapState_Counterattack_MarksReoccupiedSector()
+        {
+            var sim = NewLiberation(60);
+            SiginakFixtures.ApplyV014(sim);
+            SiginakFixtures.ApplyCounterattack(sim);
+            Assert.AreEqual("eeu_1", sim.S.LastCounterattack);
+            var s = LiberationMapBuilder.Build(sim);
+            Assert.AreEqual(0, s.Find("eeu").Reoccupied);
+            Assert.AreEqual(0, s.Find("eeu").Captured);
+            var d = LiberationMapBuilder.Slip(sim, "eeu");
+            Assert.IsTrue(d.Sectors[0].Reoccupied);
+            Assert.AreEqual(SectorMark.Ready, d.Sectors[0].Mark, "yeniden işgal edilen sektör yine sıradaki hedef");
+            Assert.IsTrue(sim.StartLiberationRaid("eeu_1").Ok);
+            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true }).Ok);
+            Assert.AreEqual(-1, LiberationMapBuilder.Build(sim).Find("eeu").Reoccupied, "geri alınınca işaret kalkar");
         }
 
         [Test]
@@ -102,8 +167,9 @@ namespace Corrigible.Desk.Tests
             var sim = NewLiberation();
             var info = LiberationMapBuilder.Slip(sim, "cn");
             Assert.IsFalse(info.HasAction);
-            Assert.AreEqual(Loc.T("Cephe açmak için komşusunu özgürleştir.") + "\n" + LiberationMapBuilder.Identity("cn", true), info.Info,
-                "henüz özgür olmayan bölgenin özelliği ve imza makinesi");
+            Assert.AreEqual(Loc.T("Cephe açmak için komşusunu özgürleştir."), info.Info);
+            Assert.AreEqual(3, info.Fields.Count, "henüz özgür olmayan bölgenin özelliği ve imza makinesi SAHA satırlarında");
+            Assert.AreEqual(SiginakGlyphs.Machine(GameData.Region("cn").Enemy, framed: true), info.Fields[1].Glyph);
             Assert.IsTrue(info.Sectors.All(x => x.Mark == SectorMark.Locked));
 
             var freed = WeuFreed();
@@ -160,6 +226,25 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(MapRegionKind.Free, s.Find("weu").Kind);
             Assert.AreEqual(1, s.Regions.Count(r => r.Kind == MapRegionKind.Free));
             Assert.IsTrue(s.Team.Ready);
+            // Cephe bloğunun saha işaretleri ve işaretler kutusundaki tehdit
+            Assert.AreEqual(GameData.Region("eeu").Trait, s.Find("eeu").Trait);
+            Assert.AreEqual(GameData.Region("eeu").Enemy, s.Find("eeu").Signature);
+            Assert.AreEqual(sim.Tier, s.Tier);
+            Assert.AreEqual(-1, s.Find("eeu").Reoccupied);
+        }
+
+        [Test]
+        public void Fixture_V031_FiveRegionsFreeFrontIndia()
+        {
+            var sim = NewLiberation(60);
+            SiginakFixtures.ApplyV031(sim);
+            var s = LiberationMapBuilder.Build(sim);
+            Assert.AreEqual(30, sim.S.Day, "vardiya 031");
+            Assert.AreEqual("in", s.Front);
+            Assert.AreEqual(1, s.Find("in").Captured);
+            CollectionAssert.AreEquivalent(new[] { "weu", "eeu", "me", "af", "ru" }, s.Regions.Where(r => r.Kind == MapRegionKind.Free).Select(r => r.Id));
+            Assert.IsNull(sim.S.Ending);
+            Assert.IsTrue(s.Team.Ready, "referanstaki gibi ALFA · HAZIR");
         }
 
         [Test]
@@ -171,7 +256,7 @@ namespace Corrigible.Desk.Tests
                 var roots = scene.GetRootGameObjects();
                 var map = roots.SelectMany(g => g.GetComponentsInChildren<SiginakMap>(true)).Single();
                 var so = new SerializedObject(map);
-                foreach (var f in new[] { "game", "surface", "rig", "telex", "sadeMap", "layer", "slip", "frontSlip", "figure", "drag", "figureTarget" })
+                foreach (var f in new[] { "game", "surface", "rig", "telex", "sadeMap", "layer", "slip", "frontSlip", "figure", "drag", "figureTarget", "counters" })
                     Assert.IsNotNull(so.FindProperty(f).objectReferenceValue, f);
                 var desk = roots.SelectMany(g => g.GetComponentsInChildren<SiginakDesk>(true)).Single();
                 Assert.AreSame(map, new SerializedObject(desk).FindProperty("map").objectReferenceValue, "Enter/Esc önce harita fişine");
@@ -180,9 +265,16 @@ namespace Corrigible.Desk.Tests
 
                 var layer = roots.SelectMany(g => g.GetComponentsInChildren<LiberationMapLayer>(true)).Single();
                 Assert.AreEqual(GameData.Regions.Length, layer.Regions.Count);
+                Assert.IsNotNull(new SerializedObject(layer).FindProperty("legendTier").objectReferenceValue, "işaretler kutusunda TEHDİT");
                 foreach (var m in layer.Regions)
                 {
                     Assert.IsNotNull(m.Hit, m.RegionId);
+                    // Revizyon 2 · S2: cephe bloğu, ADAY ve YENİDEN İŞGAL damgaları; ÖZGÜR damgası sabit yerde
+                    var ms = new SerializedObject(m);
+                    foreach (var f in new[] { "fieldBox", "traitGlyph", "signatureGlyph", "candidateStamp", "candidateWord", "reoccStamp", "reoccWord", "markReoccupied", "pin", "stamp" })
+                        Assert.IsNotNull(ms.FindProperty(f).objectReferenceValue, m.RegionId + "." + f);
+                    Assert.AreNotEqual(Vector2.zero, ms.FindProperty("stampPoint").vector2Value, m.RegionId + " damga yeri");
+                    Assert.AreEqual(3, ms.FindProperty("marks").arraySize, m.RegionId);
                     Assert.IsTrue(m.Hit.ContainsMapPoint(layer.TeamAnchor(m.RegionId)), m.RegionId + " ekip noktası kendi bölgesinde olmalı");
                 }
 

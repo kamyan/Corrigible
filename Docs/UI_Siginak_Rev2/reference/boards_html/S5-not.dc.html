@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>S5 · Uygulama notu</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&display=swap">
+<style>
+body{margin:0;background:#1C372C}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../board_assets/grain.png);background-size:256px 256px}
+</style>
+</helmet>
+<div class="grain" style="width: 1280px; height: 1080px; box-sizing: border-box; background-color: #F1E9D6; color: #1E1B16; font-family: 'Libre Franklin', Arial, sans-serif; display: flex; flex-direction: column">
+  <div style="padding: 24px 32px 12px 32px; border-bottom: 2px solid #D2483F; display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+    <div style="font: 700 28px 'Courier Prime', monospace; letter-spacing: 0.04em">S5 · VARDİYA RAPORU</div>
+    <div style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em; color: #675F50">KAMERA AYNI · HARİTA POZU</div>
+  </div>
+  <div style="flex: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; padding: 14px 32px 16px 32px; min-height: 0; font-size: 14px; line-height: 1.36">
+    <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0">
+      <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">ESKİ → YENİ</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <div style="display: grid; grid-template-columns: 96px minmax(0, 1fr); row-gap: 6px; column-gap: 10px">
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">hiyerarşi</span><span>On eşit satır → üstte üç göz: ERZAK (20,6/30 · 14 vardiya yeter), YZ ALARMI (5/10 + on adımlık ölçek, duvardaki panonun küçüğü), FON (64,5). Sayılar 32 px.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">tekrar</span><span>“Erzak 22,0 → 20,6 / 30” ve “YZ alarmı 4 → 5 / 10” satırları özetin içine girdi; alttaki dökümde bir kez daha yazılmaz.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">açıklamalar</span><span>“2 kişi × 0,35” ~12 px → 15 px, gri, satırın içinde. Kalem adı 18 px.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">renk</span><span>Eksi değerler kırmızıydı → mürekkep, eksi işaretiyle. Kırmızı yalnız alarm eşiği ve işgal için; artılar yeşil.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">alarm notu</span><span>Ekip satırının altından özetin hemen altına; alarmla yan yana okunur.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">± fişleri</span><span>Aynı yer; artı yeşil, eksi mürekkep, ±0 gri.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">karşı saldırı</span><span>Yeni varyant (S5b): raporun başında çift çizgili kırmızı kutu “YZ KARŞI SALDIRISI” + sektör adı; alarm gözü kırmızı “10/10 · EŞİK”; haritada sektöre kırmızı ✕ ve YENİDEN İŞGAL damgası; masadaki teleks ön kâğıdında “015/03 YZ KARŞI SALDIRISI”. Sektör özgür bir bölgedeyse o bölgenin kartı panodan düşer, ÖZGÜR BÖLGE bir geri döner. S5b'de alarm dışındaki sayılar S5a'dan alındı; örnektir.</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">NESNELER</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <div style="display: grid; grid-template-columns: 112px minmax(0, 1fr); row-gap: 5px; column-gap: 10px">
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">rapor kâğıdı</span><span>Overlay, 540 px, teleks kâğıdı #EFE4BC, sol kenarda delik şeridi (10 px, 14 px ara), −0,5°; 9 dilim.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">özet kutusu</span><span>Çerçeve 1,5 px #463F34, zemin #F7F1E1; gözler 1,15 : 1 : 0,85.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">alarm ölçeği</span><span>10 × 11 px kare, 3 px ara; dolu #1E1B16. 8–10 boşken kesikli kırmızı kenar, doluyken kırmızı.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">karşı saldırı</span><span>5 px çift çizgi #9A1E14, zemin #F4EBCB, ✕ işareti 34 px.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">± fişi</span><span>62–72 × 28 px, #F3ECDA, kenar #B9AC8E, gölge (2, 3); sayacın alt kenarından 7 px aşağıda.</span>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0">
+      <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">ETKİLEŞİM VE DURUMLAR</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <div style="display: grid; grid-template-columns: 112px minmax(0, 1fr); row-gap: 5px; column-gap: 10px">
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">BAŞLAT</span><span>Enter. Normal: mürekkep. Üzerinde: 2 px yükselir, gölge 5 px. Basılı: 2 px iner. Devre dışı ve yetersiz kaynak durumu yok; rapor her zaman kapanır.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">Esc</span><span>Rapor EVRAK tepsisine dosyalanır; tepsi kalınlaşır (S1b).</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">özet gözü</span><span>Üzerinde: ilgili ± fişi ve sayaç 2 px yükselir; alarm gözünde duvardaki pano anılır (“duvarda: YZ ALARMI”).</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">karşı saldırı</span><span>Kutunun üzerine gelince haritadaki ✕ iki kez yanıp söner.</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">HAREKET VE SES</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <div style="display: grid; grid-template-columns: 112px minmax(0, 1fr); row-gap: 5px; column-gap: 10px">
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">rapor</span><span>Şalter → kâğıt 0,4 s'de yukarıdan iner, başlık 0,03 s/harf daktilo → özet gözleri sırayla 0,12 s → ± fişleri 0,2 s düşer, çarklar 0,35 s döner; fişler 2,5 s kalır, 0,4 s'de solar.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">karşı saldırı</span><span>Rapordan önce duvardaki alarm lambası üç kez yanar (alçak uğultu). Kutu damga gibi 0,12 s'de basılır (ağır “tak”); haritada ✕ 0,2 s'de çizilir, YENİDEN İŞGAL damgası 0,12 s.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">kapanış</span><span>Enter → kâğıt 0,25 s'de EVRAK tepsisine kayar, yeni vardiya başlar.</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">İNGİLİZCE</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <div style="display: grid; grid-template-columns: 112px minmax(0, 1fr); row-gap: 5px; column-gap: 10px">
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">başlık</span><span>TELEX · KYGA-07 → COMMAND · SHIFT REPORT · 014 · 014 → 015 · one day passed · CLOSED</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">özet</span><span>RATIONS · 14 shifts left · AI ALARM · counter-attack at 10 · FUNDS</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">döküm</span><span>FUNDS · INCOME / EXPENSES · Opening · Shift income · Closing · PRODUCTION AND CONSUMPTION · Ration gathering · Ration use · Armor plates · TEAM · Alpha · ready · READY</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">son</span><span>START SHIFT 015 · report filed in the PAPERS tray · AI COUNTER-ATTACK · Eastern Europe · 01 Supply depot is occupied again · THRESHOLD</span>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

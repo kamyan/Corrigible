@@ -26,17 +26,27 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] SiginakBriefing siginakBriefing;
         [Tooltip("Sığınağın kapısı: kâğıdı açıkken masa kilitli.")]
         [SerializeField] SiginakDoor siginakDoor;
+        [Tooltip("Operasyon raporu: okunana kadar masa kilitli.")]
+        [SerializeField] SiginakOperation siginakOperation;
 
         bool storyOpen;
         Simulation Sim => game != null ? game.Sim : null;
-        /// <summary>Baskın sonucu henüz okunmadı: operasyon raporu modalı açılacak ya da açık (K3 dizisi onu bekler).</summary>
+        /// <summary>Baskın sonucu henüz okunmadı: operasyon raporu açılacak ya da açık (K3 dizisi onu bekler).</summary>
         public bool RaidReportPending => Sim != null && source != null && Sim.S.Raid == null && Sim.S.RaidLog.Count > source.State.RaidLogSeen;
         public bool InputBlocked => BlockedExceptDoor || siginakDoor != null && siginakDoor.isActiveAndEnabled && siginakDoor.Busy;
         /// <summary>Kapının kendisi dışındaki kilitler (kapı ancak bunlar yokken çalar ve açılır).</summary>
         public bool BlockedExceptDoor => storyOpen || launcher != null && launcher.IsTransitioning || RaidLauncher.IsRaidLoaded ||
-            SettingsView.Instance != null && SettingsView.Instance.IsOpen || GameOverView.Instance != null && GameOverView.Instance.IsOpen ||
-            EventModalView.Instance != null && EventModalView.Instance.IsOpen ||
+            SettingsView.Instance != null && SettingsView.Instance.IsOpen || FinalReportView.Instance != null && FinalReportView.Instance.IsOpen ||
+            siginakOperation != null && siginakOperation.Busy ||
             siginak != null && siginak.isActiveAndEnabled && siginak.ShiftBusy || siginakBriefing != null && siginakBriefing.Busy;
+
+        /// <summary>Operasyon raporu dosyalandı: rapor yeniden açılmaz, oda ve kamera kilidi açılır.</summary>
+        public void MarkRaidReportSeen()
+        {
+            if (Sim == null || source == null) return;
+            source.State.RaidLogSeen = Sim.S.RaidLog.Count;
+            source.MarkDirty();
+        }
 
         void Start()
         {

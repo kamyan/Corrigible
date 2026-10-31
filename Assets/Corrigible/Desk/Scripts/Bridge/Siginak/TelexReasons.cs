@@ -84,7 +84,7 @@ namespace Corrigible.Desk.Bridge
         {
             string why = sim.LiberationRaidCheck(sectorId);
             if (why == null) return null;
-            if (sim.S.Raid == null && sim.S.Fon < sim.B.liberationRaidCost && FundsAreTheOnlyBlock(sim, sectorId))
+            if (RaidFundsOnly(sim, sectorId))
                 return Loc.F("Baskın: fon yetersiz ({0} gerekli / {1} var)", N(sim.B.liberationRaidCost), N(sim.S.Fon, 1));
             var ready = System.Linq.Enumerable.FirstOrDefault(sim.S.Teams, Simulation.TeamReady);
             if (sim.S.Raid == null && ready != null && !sim.SquadCanRaid(ready))
@@ -92,12 +92,17 @@ namespace Corrigible.Desk.Bridge
             return Loc.F("Baskın: {0}", why);
         }
 
-        /// <summary>Fon dışındaki koşullar sağlanıyor mu (sıra, hazır ekip): öyleyse eksik yalnız fondur.</summary>
-        static bool FundsAreTheOnlyBlock(Simulation sim, string sectorId)
+        /// <summary>
+        /// Baskını tutan tek şey fon mu (sıra, hazır ekip, Teknisyen ya da yedeği tamam; fon bedelden az). Görev fişi bunu
+        /// “yetersiz kaynak” olarak gösterir (Karar 7): düğme açık kalır, basınca komut çağrılmaz.
+        /// </summary>
+        public static bool RaidFundsOnly(Simulation sim, string sectorId)
         {
+            if (sim.S.Ending != null || sim.S.Raid != null || sim.S.Fon >= sim.B.liberationRaidCost) return false;
             var sector = sim.LiberationSector(sectorId);
+            var ready = System.Linq.Enumerable.FirstOrDefault(sim.S.Teams, Simulation.TeamReady);
             return sector != null && !sector.Captured && sector.Region == sim.S.Liberation.CurrentRegion &&
-                   sim.NextLiberationSector(sector.Region)?.Id == sectorId && System.Linq.Enumerable.Any(sim.S.Teams, Simulation.TeamReady);
+                   sim.NextLiberationSector(sector.Region)?.Id == sectorId && ready != null && sim.SquadCanRaid(ready);
         }
     }
 }

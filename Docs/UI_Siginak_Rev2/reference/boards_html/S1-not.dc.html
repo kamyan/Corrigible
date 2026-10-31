@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>S1 · Uygulama notu</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&display=swap">
+<style>
+body{margin:0;background:#1C372C}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../board_assets/grain.png);background-size:256px 256px}
+</style>
+</helmet>
+<div class="grain" style="width: 1280px; height: 1080px; box-sizing: border-box; background-color: #F1E9D6; color: #1E1B16; font-family: 'Libre Franklin', Arial, sans-serif; display: flex; flex-direction: column">
+  <div style="padding: 24px 32px 12px 32px; border-bottom: 2px solid #D2483F; display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+    <div style="font: 700 28px 'Courier Prime', monospace; letter-spacing: 0.04em">S1 · BAŞLANGIÇ POZU</div>
+    <div style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em; color: #675F50">KAMERA AYNI · K1 (0 · 1,52 · −0,15), FOV 56,7°, LENS SHIFT −0,324</div>
+  </div>
+  <div style="flex: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; padding: 14px 32px 16px 32px; min-height: 0; font-size: 14px; line-height: 1.36">
+    <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0">
+      <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">ESKİ → YENİ</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <div style="display: grid; grid-template-columns: 92px minmax(0, 1fr); row-gap: 6px; column-gap: 10px">
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">harita</span><span>Ad 28 px, her bölgede %100, işaret 26 px, çakışan yerler → ad 40–48 px doku (K1 ortasında ~17 px), %100 ikinci satırda 28 px, sektör işareti 38 px, sabit etiket yerleri. Cephe bloğu: ad + sektör şeridi + yüzde + alan ve imza glifi.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">FON</span><span>“0620”, kırmızı onda bir çarkı → <b>062,0</b>: pirinç virgül ve açık renk onda bir çarkı. Kırmızı yalnız tehdit ve işgalde kalır.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">teleks</span><span>Masadaki kâğıt K1'de okunmuyordu → son mesaj makinenin önüne asılan ön kâğıtta: kod 50, durum 66, mesaj 50 px doku (K1'de ~14 / 18 / 14 px).</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">CRT</span><span>Yedi küçük satır → boşta dört satır: DİNLEMEDE (ters video), ALFA · HAZIR, cephe / sektör, YZ ALARMI. İlk üçü K1'de okunur; ayrıntı CRT pozunda.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">oda kartı</span><span>Üç bilgi tek satırda ~10 px → iki satır: ad 84 px, “SV 1 · 2/2” 68 px doku (K1'de ~16 / 14 px).</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">pano</span><span>İçeriksiz mantar pano → <b>KURTARILAN BÖLGELER</b>: başlık kartında sayaç (00/12), her özgür bölgeye mavi damgalı kart, sıradaki hedef kurşun kalemle.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">kapı</span><span>Bu pozdan görünmüyordu → anahtar rayına <b>4 · KAPI</b> tuşu (ray beş tuştan altıya). Ziyaretçi bekleyince tuşun lambası yanıp söner, tuşa elle yazılmış fiş bağlanır.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">harekât izi</span><span>İlk vardiya ile 14. vardiya aynıydı → yedi iz: pano kartları, umut tenekesi (3 aşama), teleks rulosu ve yırtık kâğıt yığını, EVRAK tepsisinin kalınlığı, tebeşir vardiya çentiği, kupalar, maket odaları ve depo bandı.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">eğitim notu</span><span>Analistin el notu sağ altta, şalter plakasının hemen altında; başlıkta ADIM n/12.</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">CRT POZU · AYNI EKRAN</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <img src="../board_assets/crt.jpg" alt="CRT pozu: DİNLEMEDE ekranı, mikrofon, yüzü tasarlanmış ahşap telsiz ve yazılı kayıt defteri" style="width: 100%; height: auto; display: block; border: 1px solid #675F50">
+      <div style="color: #463F34">Telsizin yüzü: kanal skalası K-07, SİNYAL göstergesi (HAT AÇILIYOR anındaki sinyalle aynı değer), SES / AYAR düğmeleri, pirinç plaka. Kayıt defteri: son dört kayıt, Kalam 40 px doku.</div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0">
+      <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">NESNELER</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <div style="display: grid; grid-template-columns: 112px minmax(0, 1fr); row-gap: 5px; column-gap: 10px">
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">sayaç rafı</span><span>Ön yüz 1,56 × 0,212 m, 6 modül × 0,247 m · bakalit #24180F, pirinç çerçeve #B8955A · rakam #EFDCAE; onda bir çarkı #E9DDBE üstüne #1C150E.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">FON virgülü</span><span>Ø 11 mm nokta + kuyruk, pirinç #D4B06E, çarklar arasında 15 mm boşluk.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">pano</span><span>0,78 × 0,54 mantar #A27B52, çerçeve #6B4A2E · başlık kartı 0,36 × 0,104 · bölge kartı 0,15 × 0,095 #F6F0DE, damga #1A4789 · boş yer: ahşap raptiye.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">alarm panosu</span><span>0,48 × 0,29 bakalit + pirinç · 10 adım ölçek (1–7 #E9DDBE, 8–10 #C0281C) · lamba Ø 9 cm, ≥ 8'de emissive #F0443A 1,8.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">teleks kâğıdı</span><span>0,26 × 0,19 #EFE4BC, krom klips 6 cm, 3° öne eğik.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">anahtar rayı</span><span>1,40 × 0,15 · 6 tuş, aralık 0,226 m · plaka 0,128 (Home 0,10) · kapı lambası Ø 18 mm #FFB347 emissive 3,4 + sarı halka.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">çentik, teneke</span><span>Vardiya çentiği 0,5 × 0,125 decal, tebeşir #E6E2D4 α .82 · umut tenekesi Ø 7 cm galvaniz, yaprak 3 → 7 → 11.</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">ETKİLEŞİM VE DURUMLAR</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <div style="display: grid; grid-template-columns: 112px minmax(0, 1fr); row-gap: 5px; column-gap: 10px">
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">4 · KAPI</span><span>Normal: lamba sönük. Ziyaretçi var: amber, 1 Hz. Üzerinde: sarı kontur + etiket “KAPI · ZİYARETÇİ VAR”. Basılı: tuş 6 mm iner, kamera kapı pozuna 0,45 s. Devre dışı: baskın sürerken; etiket nedenini yazar. Yetersiz kaynak durumu yok.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">sayaçlar</span><span>Değer değişince çarklar döner; üzerinde “FON · 62,0” etiketi (sade hoverCard). Tıklanmaz.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">pano, alarm</span><span>Bilgi; üzerinde: kartın / alarmın etiketi (“YZ ALARMI · 4/10 · 10'da karşı saldırı”).</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">eğitim notu</span><span>Boşluk sonraki adım, Esc kapatır; adımın hedefi yapılınca kendiliğinden ilerler.</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px"><span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em">HAREKET VE SES</span><span style="flex: 1; height: 1px; background: #675F50"></span></div>
+      <div style="display: grid; grid-template-columns: 112px minmax(0, 1fr); row-gap: 5px; column-gap: 10px">
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">bölge özgür</span><span>Vardiya raporu kapanınca kart üstten düşer (0,35 s), raptiye “tık”, mavi damga 0,1 s “tok”; başlık sayacı 0,35 s döner.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">ziyaretçi</span><span>Üç vuruş (0,9 s) → kamera kapıya (bugünkü gibi). Esc ile dönünce lamba 1 Hz yanıp söner, fiş 0,2 s sallanır.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">FON</span><span>Çarklar 0,35 s, çark arası 0,12 s; onda bir çarkı en son, her çarkta hafif “tık”.</span>
+        <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">alarm, teleks</span><span>Alarm ≥ 8: lamba 0,08 s'de yanar, alçak uğultu. Yeni teleks: kâğıt 0,4 s'de yazılır, eski ön kâğıt koparılır ve yığına düşer.</span>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

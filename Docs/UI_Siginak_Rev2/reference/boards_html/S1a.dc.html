@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>S1a · Başlangıç pozu · ilk vardiya</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&family=Kalam:wght@700&display=swap">
+<style>
+body{margin:0;background:#0E0906}
+a{color:#C9A86A}a:hover{color:#E6CF9C}
+.grain{background-image:url(../board_assets/grain.png);background-size:256px 256px}
+</style>
+</helmet>
+<div style="position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #0E0906; font-family: 'Libre Franklin', Arial, sans-serif">
+  <img src="../board_assets/s1a.jpg" alt="Sığınak komuta odası, başlangıç pozu, vardiya 001: altı sayaçlı raf, kurtarılan bölgeler panosu 00/12, YZ alarmı 00/10, okunur harita etiketleri, teleks ön kâğıdı, CRT DİNLEMEDE, altı tuşlu anahtar rayı" style="position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: block">
+
+  <button type="button" style="position: absolute; right: 16px; top: 14px; height: 36px; padding: 0 12px 0 8px; display: flex; align-items: center; gap: 8px; background: #0E0906; border: 1px solid #6E5A33; border-radius: 3px; color: #C9A86A; font: 700 15px 'Courier Prime', monospace; letter-spacing: 0.08em; box-shadow: 3px 3px 0 rgba(0,0,0,0.5); cursor: pointer">
+    <span style="display: inline-flex; align-items: center; justify-content: center; height: 22px; padding: 0 6px; border: 1px solid #6E5A33; border-radius: 2px; color: #E6CF9C; font: 700 13px 'Courier Prime', monospace; letter-spacing: 0">Esc</span>
+    AYARLAR
+  </button>
+
+  <div class="grain" style="position: absolute; left: 1566px; top: 904px; width: 338px; box-sizing: border-box; padding: 12px 16px 12px 18px; background-color: #F2E9CC; border: 1px solid #CDBF97; border-radius: 2px; box-shadow: 4px 5px 0 rgba(0,0,0,0.45); transform: rotate(-1.5deg); display: flex; flex-direction: column; gap: 6px">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px">
+      <span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em; color: #463F34">ANALİST · NOT</span>
+      <span style="font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.04em; color: #1A4789">ADIM 1/12</span>
+    </div>
+    <div style="font: 700 22px/1.25 'Kalam', cursive; color: #1A2F5A">Önce cepheye bak: haritada Batı Avrupa'ya tıkla, görev fişi açılır.</div>
+    <div style="display: flex; gap: 14px; align-items: center; font: 700 14px 'Courier Prime', monospace; color: #463F34">
+      <span style="display: inline-flex; align-items: center; gap: 6px"><span style="display: inline-flex; align-items: center; height: 20px; padding: 0 5px; border: 1px solid #463F34; border-radius: 2px; font-size: 13px">Boşluk</span>sonraki</span>
+      <span style="display: inline-flex; align-items: center; gap: 6px"><span style="display: inline-flex; align-items: center; height: 20px; padding: 0 5px; border: 1px solid #463F34; border-radius: 2px; font-size: 13px">Esc</span>notları kapat</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

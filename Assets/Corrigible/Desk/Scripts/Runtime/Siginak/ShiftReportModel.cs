@@ -117,12 +117,30 @@ namespace Corrigible.Desk
         public ShiftRates rates = new ShiftRates();
         /// <summary>Vardiya biterken açılmadı sayılan kapı ziyaretleri.</summary>
         public List<ShiftDoorEntry> door = new List<ShiftDoorEntry>();
+        /// <summary>Bu vardiyada YZ karşı saldırdıysa teleksteki “YZ KARŞI SALDIRISI” satırının kodu (raporun kutusunda).</summary>
+        public string counterCode;
     }
 
     // ---------- Görünüm verisi ----------
 
-    /// <summary>Değerin anlamı: “+” yeşil, “−” kırmızı, “±0” gri; düz değer mürekkep. İşaret rengi tek başına taşımaz.</summary>
-    public enum ReportTone { Plain, Good, Bad, Neutral }
+    /// <summary>
+    /// Değerin anlamı (Revizyon 2 · S5): “+” yeşil, “−” mürekkep (eksi işaretiyle), “±0” gri; düz değer mürekkep; uyarı
+    /// kırmızı (yalnız alarm eşiği ve işgal). İşaret rengi tek başına taşımaz; renk anahtarı <see cref="ReportTones"/>'ta.
+    /// </summary>
+    public enum ReportTone { Plain, Good, Bad, Neutral, Alert }
+
+    /// <summary>Renk kuralı (rapor, özet gözleri ve ± fişleri aynı kuralı kullanır): tonun tema renk anahtarı.</summary>
+    public static class ReportTones
+    {
+        public static string ColorKey(ReportTone tone) => tone switch
+        {
+            ReportTone.Good => "report.positive",
+            ReportTone.Bad => "report.negative",
+            ReportTone.Neutral => "report.neutral",
+            ReportTone.Alert => "report.counterAttackLine",
+            _ => "ink",
+        };
+    }
 
     public sealed class ReportRow
     {
@@ -136,18 +154,44 @@ namespace Corrigible.Desk
         public bool Total;
     }
 
-    /// <summary>Ekip satırı: ad · durum, “yara 3 → 1”, altında dinlenme, revir ve yatan uzmanlar.</summary>
+    /// <summary>Ekip satırı: ad · durum, sağda damga (“HAZIR”, “yara 3 → 1”), altında dinlenme, revir ve yatan uzmanlar.</summary>
     public sealed class ReportTeamRow
     {
         public string Label, Value, Detail;
-        /// <summary>Ekip simgesi gösterilmez (ekip olmayan satır: YZ alarmı).</summary>
+        /// <summary>Damganın rengi: hazır yeşil, öteki mürekkep.</summary>
+        public ReportTone Tone;
+        /// <summary>Ekip simgesi gösterilmez (ekip olmayan satır: kapı).</summary>
         public bool HideIcon;
     }
 
-    /// <summary>Vardiya raporunun gösterime hazır hâli (K6b): <see cref="ShiftReportView"/> yalnız bunu çizer.</summary>
+    /// <summary>
+    /// Özet kutusunun bir gözü (Revizyon 2 · S5): başlık + işaretli değişim, büyük sayı (CP 32, sınır 20 px), altında satır.
+    /// </summary>
+    public sealed class ReportEye
+    {
+        public string Label, Delta, Value, Line;
+        /// <summary>Üzerine gelince etiket (alarm gözünde “duvarda: YZ ALARMI”); yoksa null.</summary>
+        public string Hover;
+        public ReportTone DeltaTone;
+        /// <summary>Büyük sayı ve satır kırmızı (alarm eşikte).</summary>
+        public bool Alert;
+    }
+
+    /// <summary>
+    /// Vardiya raporunun gösterime hazır hâli (Revizyon 2 · S5): <see cref="ShiftReportView"/> yalnız bunu çizer. Başta
+    /// (karşı saldırıda) çift çizgili kutu, sonra üç göz (ERZAK · YZ ALARMI · FON) ve alarm notu; dökümde erzak ve alarm bir
+    /// daha yazılmaz.
+    /// </summary>
     public sealed class ShiftReportData
     {
         public string Head, Code, Title, Sub, Stamp;
+        /// <summary>Karşı saldırı kutusu: başlık, teleks kodu, sektör satırı; karşı saldırı yoksa başlık null.</summary>
+        public string CounterTitle, CounterCode, CounterText;
+        public ReportEye Supplies = new ReportEye(), Alarm = new ReportEye(), FundsEye = new ReportEye();
+        /// <summary>Alarm ölçeği: dolu hücre, hücre sayısı (eşik) ve kırmızı bölgenin ilk hücresi (1'den).</summary>
+        public int AlarmCells, AlarmSteps, AlarmHighFrom;
+        /// <summary>Özetin altındaki alarm notu (karşı saldırıda yok).</summary>
+        public string AlarmNote;
         public string FundsTitle, ProductionTitle, TeamTitle, FailedTitle;
         public readonly List<ReportRow> Funds = new List<ReportRow>();
         public readonly List<ReportRow> Production = new List<ReportRow>();

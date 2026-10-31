@@ -40,15 +40,5 @@ namespace Corrigible.Desk
 
         public static Vector2 LocalPoint(Component source, Vector3 world, RectTransform target) =>
             target.InverseTransformPoint(WorldPoint(source, world, target));
-
-        /// <summary>Perspektif ve masa eğimini, noktadaki iki harita eksenini örnekleyerek hedef piksel ölçeğine çevirir.</summary>
-        public static float ScaleAt(Component source, Vector3 world, float worldUnitsPerPixel, RectTransform target)
-        {
-            if (source == null || target == null) return 1;
-            var origin = LocalPoint(source, world, target);
-            var right = LocalPoint(source, world + source.transform.right * worldUnitsPerPixel, target);
-            var up = LocalPoint(source, world + source.transform.up * worldUnitsPerPixel, target);
-            return ((right - origin).magnitude + (up - origin).magnitude) * .5f;
-        }
     }
 }

@@ -8,7 +8,7 @@ namespace Corrigible.Desk
 
     /// <summary>
     /// Dolu poligon Graphic'i (PROMPT §4.5). İki biçim:
-    /// <b>Şerit</b> (<see cref="SetBand"/>): aynı sayıda örneği olan üst ve alt eğri arası dörtgen şerit (C4 bantları);
+    /// <b>Şerit</b> (serileştirilmiş <c>band</c>): aynı sayıda örneği olan üst ve alt eğri arası dörtgen şerit;
     /// <b>Dışbükey poligon</b> (<see cref="SetConvex"/>): merkezden yelpaze.
     /// Düz renkte atlas beyazı (<c>sh_fill_r0</c> merkez UV), dokuda tekrar eden doku (UV = konum / döşeme; Wrap = Repeat; ayrı draw call).
     /// </summary>
@@ -18,7 +18,7 @@ namespace Corrigible.Desk
         [SerializeField] PolygonFill fill;
         [SerializeField] Sprite sprite;
         [SerializeField] Texture2D texture;
-        [Tooltip("Doku döşeme boyu (px), ör. tx_hatch_red için 10.")]
+        [Tooltip("Doku döşeme boyu (px).")]
         [SerializeField] Vector2 tile = new Vector2(10, 10);
         [SerializeField] List<Vector2> upper = new List<Vector2>();
         [SerializeField] List<Vector2> lower = new List<Vector2>();
@@ -26,20 +26,6 @@ namespace Corrigible.Desk
 
         public override Texture mainTexture =>
             fill == PolygonFill.Texture && texture != null ? texture : sprite != null ? sprite.texture : s_WhiteTexture;
-
-        public void SetFill(PolygonFill f, Texture2D tex = null)
-        {
-            fill = f; if (tex != null) texture = tex;
-            SetMaterialDirty(); SetVerticesDirty();
-        }
-
-        /// <summary>Üst ve alt eğri arası şerit (yerel uzay, y yukarı). İki liste aynı uzunlukta olmalı.</summary>
-        public void SetBand(IList<Vector2> top, IList<Vector2> bottom)
-        {
-            band = true;
-            Copy(top, upper); Copy(bottom, lower);
-            SetVerticesDirty();
-        }
 
         /// <summary>Dışbükey poligon (yerel uzay).</summary>
         public void SetConvex(IList<Vector2> pts)

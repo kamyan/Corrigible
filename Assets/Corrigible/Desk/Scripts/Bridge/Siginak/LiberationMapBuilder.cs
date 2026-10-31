@@ -22,6 +22,7 @@ namespace Corrigible.Desk.Bridge
             var s = new LiberationMapState { Shelter = Simulation.HQ };
             if (sim == null) return s;
             var lib = sim.S.Liberation;
+            s.Tier = sim.Tier;
             s.Front = lib.CurrentRegion;
             var current = sim.LiberationRegion(lib.CurrentRegion);
             s.FrontOpen = current != null && !current.Completed;
@@ -44,6 +45,9 @@ namespace Corrigible.Desk.Bridge
                     // Vardiya numarası gün + 1 (ilk vardiya 001)
                     FreeShift = area.Completed ? freedDay + 1 : -1,
                     FreshStamp = area.Completed && freedDay >= sim.S.Day,
+                    Trait = def.Trait,
+                    Signature = def.Enemy,
+                    Reoccupied = Reoccupied(sim, area),
                 });
             }
             s.Team = Team(sim, s.Front);
@@ -52,6 +56,15 @@ namespace Corrigible.Desk.Bridge
 
         static double Occupation(LiberationRegionState area) =>
             100.0 * (area.Sectors.Count - area.CapturedCount) / Math.Max(1, area.Sectors.Count);
+
+        /// <summary>Son karşı saldırının yeniden işgal ettiği sektör hâlâ alınmamışsa sırası; yoksa −1.</summary>
+        static int Reoccupied(Simulation sim, LiberationRegionState area)
+        {
+            string id = sim.S.LastCounterattack;
+            if (string.IsNullOrEmpty(id)) return -1;
+            var sector = area.Sectors.FirstOrDefault(x => x.Id == id);
+            return sector != null && !sector.Captured ? sector.Index : -1;
+        }
 
         /// <summary>Ekip adı gösterilen dilde (kayıttaki ad oluşturulduğu dilde kalır).</summary>
         public static string TeamName(TeamState team) => team == null ? "—" : TeamName(team.Id, team.Name);
@@ -98,27 +111,66 @@ namespace Corrigible.Desk.Bridge
         /// <summary>Teknisyenin kalkmasına kalan gün (ayaktaysa 0).</summary>
         public static int TechnicianDown(TeamState team) => team?.Members.FirstOrDefault(m => m.Role == "tek")?.Down ?? 0;
 
-        /// <summary>Baskına çıkacak kadro, rol harfleriyle (baskındaki 1–3 kısayolları): “T 3/3 · E 2/3 · A (yedek) 1/2 · 2 plaka”.</summary>
-        public static string SquadLine(Simulation sim, TeamState team)
+        /// <summary>
+        /// Baskına çıkacak kadro, ekip diskleri olarak (S2): rol harfi (baskındaki 1–3 kısayolları, piyonla aynı) ve can;
+        /// yedek uzman ve eksik rol işaretli. Plakalar disklerden sonra ayrı (“2 plaka”).
+        /// </summary>
+        public static List<SlipMember> SquadDiscs(Simulation sim, TeamState team, out string extra)
         {
             var squad = sim.Squad(team);
-            var parts = new List<string>();
-            for (int i = 0; i < Simulation.Roles.Length; i++)
+            var list = new List<SlipMember>();
+            foreach (var role in Simulation.Roles)
             {
-                string role = Simulation.Roles[i], name = Baskin.UnitTypes[role].Short;
                 var slot = squad.FirstOrDefault(x => x.Type == role);
-                parts.Add(slot == null ? Loc.F("{0} yok", name)
-                    : slot.Rookie ? Loc.F("{0} (yedek) {1}/{2}", name, slot.Hp, Simulation.MaxHp(role))
-                    : Loc.F("{0} {1}/{2}", name, slot.Hp, Simulation.MaxHp(role)));
+                list.Add(new SlipMember
+                {
+                    Letter = Baskin.UnitTypes[role].Short,
+                    Hp = slot == null ? "—" : Loc.F("{0}/{1}", slot.Hp, Simulation.MaxHp(role)),
+                    Rookie = slot != null && slot.Rookie,
+                    Missing = slot == null,
+                });
             }
             int plates = Math.Min(sim.Shelter?.Plates ?? 0, squad.Count);
-            if (plates > 0) parts.Add(Loc.F("{0} plaka", plates));
-            return string.Join(" · ", parts);
+            extra = plates > 0 ? Loc.F("{0} plaka", plates) : null;
+            return list;
         }
 
         static string N(double v) => DeskFormat.Number(v, 0);
-        static string Good(double v) => "<b>" + DeskFormat.Signed(v, 0) + "</b>";
         static string Kind(LiberationSectorState s) => s.MissionKind == "loot" ? Loc.T("YAĞMA") : Loc.T("SUNUCU YIKIMI");
+        static SlipReward Reward(double amount, string unit) => new SlipReward { Amount = DeskFormat.Signed(amount, 0), Unit = unit };
+
+        /// <summary>
+        /// SAHA satırları (S2): bölge özelliği, imza makinesi (kare çerçeveli işaretleriyle) ve tehdit kademesi. Üzerine gelince
+        /// oyundaki açıklama.
+        /// </summary>
+        public static void Fields(Simulation sim, string regionId, List<SlipField> into)
+        {
+            var def = GameData.Region(regionId);
+            if (def.Trait != null && Baskin.RegionTraits.TryGetValue(def.Trait, out var trait))
+            {
+                string name = Loc.T(trait.Name);
+                into.Add(new SlipField
+                {
+                    Glyph = SiginakGlyphs.Trait(def.Trait, framed: true), Label = Loc.T("BÖLGE"), Value = name,
+                    HoverTitle = Loc.F("BÖLGE · {0}", DeskText.Upper(name)), HoverLine = Loc.T(trait.Desc),
+                });
+            }
+            if (def.Enemy != null && Baskin.UnitTypes.TryGetValue(def.Enemy, out var enemy))
+            {
+                string name = Loc.T(enemy.Name);
+                into.Add(new SlipField
+                {
+                    Glyph = SiginakGlyphs.Machine(def.Enemy, framed: true), Label = Loc.T("İMZA"), Value = name,
+                    HoverTitle = Loc.F("İMZA · {0}", DeskText.Upper(name)), HoverLine = Loc.T(enemy.Desc),
+                });
+            }
+            into.Add(new SlipField
+            {
+                Tier = sim.Tier, Label = Loc.T("TEHDİT"), Value = Loc.F("{0}/4", sim.Tier),
+                HoverTitle = Loc.F("TEHDİT · {0}/4", sim.Tier),
+                HoverLine = Loc.T("Özgür bölge sayısıyla yükselir. 3. kademede makineler kopyalanır, 4. kademede güçlenir."),
+            });
+        }
 
         /// <summary>Görev fişi: cephede tam form, öteki bölgelerde bilgi fişi.</summary>
         public static OperationSlipData Slip(Simulation sim, string regionId)
@@ -132,11 +184,13 @@ namespace Corrigible.Desk.Bridge
             var next = sim.NextLiberationSector(regionId);
             int captured = area.CapturedCount, count = area.Sectors.Count;
             double occupation = Occupation(area);
+            int reoccupied = Reoccupied(sim, area);
             d.Code = front && next != null ? Loc.F("HAREKÂT FORMU · OP-{0:00}", next.Index + 1) : Loc.T("HAREKÂT FORMU");
             d.Region = DeskText.Upper(Loc.T(GameData.Region(regionId).Name));
             d.Progress = area.Completed
                 ? Loc.F("SEKTÖRLER {0}/{1} · ÖZGÜR", captured, count)
                 : Loc.F("SEKTÖRLER {0}/{1} · İŞGAL {2}", captured, count, DeskFormat.Percent(occupation, captured > 0 ? 1 : 0));
+            Fields(sim, regionId, d.Fields);
             foreach (var s in area.Sectors)
             {
                 // Karar 3: cephedeki ilk alınmamış sektör fon ya da ekip eksik olsa da BASKINA HAZIR; düğme gerekçeyle kapalı
@@ -144,6 +198,8 @@ namespace Corrigible.Desk.Bridge
                 d.Sectors.Add(new SlipSector
                 {
                     No = (s.Index + 1).ToString("00"), Name = s.Name, Kind = Kind(s), Mark = mark, Highlight = mark == SectorMark.Ready,
+                    Reoccupied = s.Index == reoccupied,
+                    Hover = mark != SectorMark.Locked ? null : front ? Loc.T("Önceki sektör alınınca açılır.") : Loc.T("Bölge cephe olunca sırayla açılır."),
                 });
             }
             if (!front || next == null)
@@ -158,8 +214,6 @@ namespace Corrigible.Desk.Bridge
                         ? Loc.F("Cephe açık: {0} {1}/{2}. Aynı anda tek cephe açık olabilir.", Loc.T(GameData.Region(lib.CurrentRegion).Name),
                             frontArea.CapturedCount, frontArea.Sectors.Count)
                         : Loc.T("Cephe açmak için komşusunu özgürleştir.");
-                // Henüz özgür olmayan bölgenin kimliği: sıradaki cepheyi seçerken okunur
-                if (!area.Completed) d.Info += "\n" + Identity(regionId, true);
                 return d;
             }
 
@@ -167,20 +221,30 @@ namespace Corrigible.Desk.Bridge
             d.Task = next.MissionKind == "loot"
                 ? Loc.T("Teknisyeni ikmal kasasının yanına götür. Q ile yeteneği seç ve kasaya tıklayarak malzemeleri al.")
                 : Loc.T("Sunucu çekirdeğini yık. Son sektör alınınca bu bölge özgürleşir.");
-            d.Task += "\n" + Loc.F("{0} · Tehdit {1}/4", Identity(regionId, false), sim.Tier);
             d.Cost = Loc.F("{0} fon", N(b.liberationRaidCost));
             bool last = captured == count - 1;
-            d.Reward = next.MissionKind == "loot"
-                ? Loc.F("{0} fon · {1} malzeme · {2} erzak · {3} kurtulan", Good(b.liberationLootFunds), Good(b.shelterLootMaterials),
-                    Good(b.shelterLootSupplies), Good(b.shelterLootResidents))
-                : last
-                    ? Loc.F("{0} fon · {1} malzeme · bölge özgür: {2} fon", Good(b.liberationServerFunds), Good(b.shelterServerMaterials),
-                        Good(b.liberationCaptureFunds))
-                    : Loc.F("{0} fon · {1} malzeme", Good(b.liberationServerFunds), Good(b.shelterServerMaterials));
+            // Ödül 2 × 2 (S2): yeşil miktar + birim
+            if (next.MissionKind == "loot")
+            {
+                d.Rewards.Add(Reward(b.liberationLootFunds, Loc.T("fon")));
+                d.Rewards.Add(Reward(b.shelterLootMaterials, Loc.T("malzeme")));
+                d.Rewards.Add(Reward(b.shelterLootSupplies, Loc.T("erzak")));
+                d.Rewards.Add(Reward(b.shelterLootResidents, Loc.T("kurtulan")));
+            }
+            else
+            {
+                d.Rewards.Add(Reward(b.liberationServerFunds, Loc.T("fon")));
+                d.Rewards.Add(Reward(b.shelterServerMaterials, Loc.T("malzeme")));
+                if (last) d.Rewards.Add(Reward(b.liberationCaptureFunds, Loc.T("fon · bölge özgür")));
+            }
 
             var team = sim.S.Teams.FirstOrDefault();
             d.TeamName = Loc.F("EKİP {0}", DeskText.Upper(TeamName(team)));
-            d.TeamMembers = team != null ? SquadLine(sim, team) : string.Join(" · ", Members.Select(Loc.T));
+            if (team != null)
+            {
+                d.Members.AddRange(SquadDiscs(sim, team, out var extra));
+                d.TeamExtra = extra;
+            }
             bool field = sim.S.Raid != null;
             bool back = team != null && !Simulation.TeamReady(team);
             d.TeamReady = team != null && !back && sim.SquadCanRaid(team);
@@ -191,9 +255,17 @@ namespace Corrigible.Desk.Bridge
             d.HasAction = true;
             d.Action = Loc.T("BASKIN EMRİ VER");
             d.ActionCost = Loc.F("{0} fon", DeskFormat.Signed(-b.liberationRaidCost, 0));
-            d.ActionEnabled = sim.LiberationRaidCheck(next.Id) == null;
+            string why = sim.LiberationRaidCheck(next.Id);
+            // Karar 7: eksik yalnız fonsa düğme açık kalır (basınca komut çağrılmaz, FON titrer); başka gerekçede devre dışı
+            d.ActionState = why == null ? SlipActionState.Ready
+                : TelexReasons.RaidFundsOnly(sim, next.Id) ? SlipActionState.Shortfall : SlipActionState.Disabled;
+            if (d.ActionState == SlipActionState.Shortfall)
+                d.Shortfall = Loc.F("Fon yetersiz · {0} gerekli", N(b.liberationRaidCost));
+            if (d.ActionState == SlipActionState.Disabled)
+                d.ActionNote = field ? Loc.T("SAHADA") : team != null && !back && !sim.SquadCanRaid(team) ? Loc.T("TEKNİSYEN YARALI")
+                    : Loc.T("EKİP HAZIR DEĞİL");
             // Emir verildikten sonra gerekçe yazılmaz (damga konuşur)
-            d.Reason = d.ActionEnabled || field ? null : TelexReasons.Raid(sim, next.Id);
+            d.Reason = why == null || field ? null : TelexReasons.Raid(sim, next.Id);
             return d;
         }
 

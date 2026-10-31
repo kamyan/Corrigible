@@ -27,9 +27,9 @@ namespace Corrigible.Desk.Bridge
         public RaidGuide Guide { get; protected set; }
         bool Guided=>Guide!=null&&!Guide.Done;
         protected bool confirm,retreat,fast,paused,unread=true;protected string panel;
-        protected bool resolving,executing,reporting;
-        /// <summary>Telsiz şeridi: gözcünün raporları ve bizim konuşmalarımız (yalnız sunum).</summary>
-        readonly List<RaidRadioLine> radio=new List<RaidRadioLine>();int liveLine=-1;
+        /// <summary>Telsiz kaydı en son açıldığında kayıtta kaç satır vardı (okunmamış sayısı).</summary>
+        int seenLogs;
+        protected bool resolving,executing;
         protected readonly List<(int x,int y,string kind,int max)> targetForms=new List<(int,int,string,int)>();
         protected int civilianCount;
         Baskin.BState machineBefore;
@@ -38,8 +38,10 @@ namespace Corrigible.Desk.Bridge
         int currentOrder,visibleLogs=int.MaxValue;string eventLine;float eventUntil;
         protected Vector2Int? hover;protected float hoverAt;protected bool hoverVisible;
         protected Baskin.PreviewResult preview;
-        protected virtual void OnEnable(){DeskLoc.Instance.Changed+=Publish;if(board!=null){board.TileClicked+=Click;board.HoverChanged+=BoardHover;}if(hud!=null)hud.TeamHovered+=TeamHover;if(board!=null)board.EffectPlaying+=OnEffect;}
-        protected virtual void OnDisable(){DeskLoc.Instance.Changed-=Publish;if(board!=null){board.TileClicked-=Click;board.HoverChanged-=BoardHover;}if(hud!=null)hud.TeamHovered-=TeamHover;if(board!=null)board.EffectPlaying-=OnEffect;}
+        protected virtual void OnEnable(){DeskLoc.Instance.Changed+=Publish;if(board!=null){board.TileClicked+=Click;board.HoverChanged+=BoardHover;}if(hud!=null)hud.TeamHovered+=TeamHover;if(board!=null)board.EffectPlaying+=OnEffect;if(hud!=null&&hud.Panels!=null)hud.Panels.ResultStamped+=ResultStamped;}
+        protected virtual void OnDisable(){DeskLoc.Instance.Changed-=Publish;if(board!=null){board.TileClicked-=Click;board.HoverChanged-=BoardHover;}if(hud!=null)hud.TeamHovered-=TeamHover;if(board!=null)board.EffectPlaying-=OnEffect;if(hud!=null&&hud.Panels!=null)hud.Panels.ResultStamped-=ResultStamped;}
+        // Sonuç damgası (S7): başarıda kısa zil, değilse boğuk “tak”
+        static void ResultStamped(bool success)=>Sfx.Play(success?Cue.ResultBell:Cue.StampHeavy,.9f);
         protected abstract void Start();
         protected virtual void Update()
         {
@@ -47,47 +49,14 @@ namespace Corrigible.Desk.Bridge
         }
         protected void OpenState(Baskin.BState value,RaidGuide guide=null)
         {
-            StopAllCoroutines();State=value;Guide=guide;Selected='\0';Armed=confirm=retreat=fast=paused=resolving=executing=reporting=false;radio.Clear();liveLine=-1;panel=null;hover=null;hoverVisible=false;preview=null;unread=true;visibleLogs=int.MaxValue;eventLine=null;
+            StopAllCoroutines();State=value;Guide=guide;finishedAt=-1;Selected='\0';Armed=confirm=retreat=fast=paused=resolving=executing=false;panel=null;hover=null;hoverVisible=false;preview=null;unread=true;seenLogs=0;visibleLogs=int.MaxValue;eventLine=null;
             targetForms.Clear();civilianCount=0;
             foreach(var t in Baskin.TargetsLeft(State))targetForms.Add((t.X,t.Y,t.O.K,t.O.Max));
             for(int y=0;y<8;y++)for(int x=0;x<8;x++)if(State.Cells[y,x].O?.K=="civ")civilianCount++;
-            CaptureRoster();if(board!=null){board.FastMachines=false;board.MachineDelay=.25f;board.Build(State);}
-            // Hat açılınca gözcü ilk raporu verir; o zamana kadar niyetler paftada yok
-            bool live=Application.isPlaying&&board!=null&&State.Phase=="player";
-            if(live){board.HoldIntents();Radio("07",Loc.T("Hat açık. Gözcü, rapor ver."),false);}
-            Publish();
-            if(live){reporting=true;StartCoroutine(Report(.6f));}
-        }
-        /// <summary>
-        /// Gözcü raporu: tur başında makinelerin niyetleri sırayla telsizden gelir, tahta her birini paftaya çizer. Rapor bitene
-        /// kadar ekip emir bekler (makine evresi gibi DİNLEMEDE).
-        /// </summary>
-        IEnumerator Report(float delay)
-        {
-            reporting=true;Publish(false);
-            if(delay>0)yield return new WaitForSecondsRealtime(delay);
-            if(board!=null)yield return board.ReportIntents((intent,quiet)=>{Radio(Loc.T("GÖZCÜ"),IntentLine(intent),!quiet);Publish(false);});
-            if(!State.Fog&&State.Spawns.Count>0)Radio(Loc.T("GÖZCÜ"),Loc.F("Uyanacak: {0}.",string.Join(", ",State.Spawns.Select(p=>RaidBoard3D.CellName(p.X,p.Y)))),false);
-            reporting=false;Publish();
-        }
-        void Radio(string who,string text,bool voice)
-        {
-            radio.Add(new RaidRadioLine{Who=who,Text=text});if(radio.Count>32)radio.RemoveAt(0);liveLine=-1;
-            if(voice&&Application.isPlaying)Sfx.Play(Cue.RadioVoice);
-        }
-        /// <summary>Gözcünün bir niyeti bildirişi: "№1 · Dron E4 · ateş → TEKNİSYEN · A6".</summary>
-        string IntentLine(Baskin.IntentView i)
-        {
-            var u=State.Units.FirstOrDefault(x=>x.Id==i.Unit);
-            string who=u!=null?Loc.T(Baskin.UnitTypes[u.Type].Name):Loc.T("Makine"),from=RaidBoard3D.CellName(i.FromX,i.FromY);
-            if(i.Kind=="blast")return Loc.F("№{0} · {1} {2} · yanındakilere patlayacak",i.Order,who,from);
-            if(i.TargetNone)return Loc.F("№{0} · {1} {2} · {3} → hedef yok",i.Order,who,from,IntentName(i.Kind));
-            var victim=Baskin.UnitAt(State,i.TargetX,i.TargetY);string cell=RaidBoard3D.CellName(i.TargetX,i.TargetY);
-            string to=victim!=null&&victim.Side=='p'?Loc.F("{0} · {1}",Name(Baskin.UnitTypes[victim.Type].Short[0]),cell):cell;
-            return Loc.F("№{0} · {1} {2} · {3} → {4}",i.Order,who,from,IntentName(i.Kind),to);
+            CaptureRoster();if(board!=null){board.FastMachines=false;board.MachineDelay=.25f;board.Build(State);}Publish();
         }
         void CaptureRoster(){roster=Baskin.Intents(State);queue.Clear();foreach(var i in roster)queue[i.Unit]="pending";}
-        public bool Busy=>resolving||reporting||(board!=null&&board.Busy);
+        public bool Busy=>resolving||(board!=null&&board.Busy);
         /// <summary>Makineler oynuyor (tur bitirildi, düşman hamleleri canlandırılıyor).</summary>
         public bool Executing=>executing;
         public void Select(char letter)
@@ -164,25 +133,18 @@ namespace Corrigible.Desk.Bridge
             machineBefore=State.Clone();executing=resolving=true;currentOrder=0;visibleLogs=State.Log.Count+1;
             // Emir telsizle sahaya gider; makinelerin hamlesini gözcü tek tek bildirir (OnEffect)
             eventLine=Loc.T("emir iletildi · gözcü bildiriyor");board.InputEnabled=false;unread=true;Sfx.Play(Cue.RadioSend);
-            Radio("07",Loc.T("Emir iletildi. Gözcü, dinliyoruz."),false);
             if(!Baskin.EndTurn(State)){executing=resolving=false;yield break;}Publish(false);
             yield return board.Animate(State,new List<Baskin.Fx>(State.FxList),true);
             foreach(var key in queue.Keys.ToArray())if(queue[key]!="cancel")queue[key]="done";
             executing=resolving=false;machineBefore=null;visibleLogs=int.MaxValue;eventUntil=Time.unscaledTime+.3f;
             if(Guided&&Guide.Expects(RaidGuideStep.End))Guide.Advance();
-            // Yeni niyetler gözcünün raporuyla gelir: eşitleme onları gizli tutar, rapor sırayla çizer
-            bool next=State.Phase=="player";
-            if(next)board.HoldIntents();
             Publish();
-            if(next)reporting=true;
-            yield return new WaitForSecondsRealtime(.3f);eventLine=null;if(next)CaptureRoster();Publish(false);
-            if(next)yield return Report(0);
+            yield return new WaitForSecondsRealtime(.3f);eventLine=null;if(State.Phase=="player")CaptureRoster();Publish(false);
         }
         void OnEffect(Baskin.Fx fx,int index,int count)
         {
             if(!executing)return;
-            // Gözcü her hamleyi telsizden bildirir: hızlandırılmışken yalnız kısa bip
-            if(fx.K=="attack"||fx.K=="spawn")Sfx.Play(fast?Cue.RadioReport:Cue.RadioVoice,fast?.7f:.8f);
+            if(fx.K=="attack"||fx.K=="spawn")Sfx.Play(Cue.RadioReport,.7f);
             if(fx.K=="attack")
             {
                 foreach(var id in queue.Keys.ToArray())if(queue[id]=="now")queue[id]="done";
@@ -205,10 +167,9 @@ namespace Corrigible.Desk.Bridge
             if(fx.K=="die"){var u=machineBefore.Units.FirstOrDefault(x=>x.Id==fx.Unit);if(u!=null)u.Dead=true;if(queue.ContainsKey(fx.Unit))queue[fx.Unit]="cancel";}
             if(fx.K=="break"){if(machineBefore.Cells[fx.Y,fx.X].O?.K=="civ")machineBefore.Collateral++;machineBefore.Cells[fx.Y,fx.X].O=null;}
             if(fx.K=="heal"&&machineBefore.Cells[fx.Y,fx.X].O is Baskin.Obj healed)healed.Hp=Math.Min(healed.Max,healed.Hp+1);
-            if(fx.K=="attack"){radio.Add(new RaidRadioLine{Who=Loc.T("GÖZCÜ"),Text=eventLine});liveLine=radio.Count-1;}
-            if(fx.K=="dmg"){eventLine=Loc.F("{0} · −{1}",eventLine,fx.N);if(liveLine>=0&&liveLine<radio.Count)radio[liveLine].Text=eventLine;}
-            if(fx.K=="heal"){eventLine=Loc.F("№{0} · onarım +1",currentOrder);Radio(Loc.T("GÖZCÜ"),eventLine,false);}
-            if(fx.K=="spawn"){eventLine=Loc.F("Yeni bir robot uyandı: {0}.",RaidBoard3D.CellName(fx.X,fx.Y));Radio(Loc.T("GÖZCÜ"),eventLine,false);}
+            if(fx.K=="dmg")eventLine=Loc.F("{0} · −{1}",eventLine,fx.N);
+            if(fx.K=="heal")eventLine=Loc.F("№{0} · onarım +1",currentOrder);
+            if(fx.K=="spawn")eventLine=Loc.F("Yeni bir robot uyandı: {0}.",RaidBoard3D.CellName(fx.X,fx.Y));
             if(fx.K=="die"||fx.K=="break"||fx.K=="heal"||fx.K=="spawn")visibleLogs=Math.Min(State.Log.Count,visibleLogs+1);
             Publish(false);
         }
@@ -225,8 +186,13 @@ namespace Corrigible.Desk.Bridge
         public void Speed(bool on){if(!executing&&State?.Phase!="enemy")return;fast=on;if(board!=null){board.FastMachines=on;board.MachineDelay=on ? .08f : .25f;}Publish(false);}
         public void Retreat()
         {if(!CanInput||Guided)return;panel=null;if(!retreat){retreat=true;Publish(false);return;}Baskin.Retreat(State);retreat=false;Publish();}
-        public void Panel(string id){if(retreat||State==null||State.Phase=="won"||State.Phase=="lost")return;panel=panel==id?null:id;if(id=="log")unread=false;Publish(false);}
-        public void Continue(){if(Busy||State==null||State.Phase=="player"||State.Phase=="enemy")return;Finish();}
+        public void Panel(string id){if(retreat||State==null||State.Phase=="won"||State.Phase=="lost")return;panel=panel==id?null:id;if(id=="log"){unread=false;seenLogs=State.Log.Count;}Publish(false);}
+        // Sonuç kartı gelene kadar (S7: kararma 0,4 s + kayma 0,25 s) girdi kilitli
+        public void Continue(){if(Busy||State==null||State.Phase=="player"||State.Phase=="enemy"||finishedAt<0||Time.unscaledTime-finishedAt<ResultLockSeconds)return;Finish();}
+        const float ResultLockSeconds=.6f;
+        float finishedAt=-1;
+        /// <summary>Sonuç kartının yer satırı; harekâtta bölge ve sektör (“Doğu Avrupa · 02 Tahliye geçidi”).</summary>
+        protected virtual string ResultPlace=>Loc.F("{0} · {1}",GameData.Regions.FirstOrDefault(d=>d.Id==State.Params.Region)?.Name??State.Params.RegionName??Loc.T("Saha"),Loc.T(State.Layout));
         protected abstract void Finish();
         /// <summary>Harekâtın sivil güveni (baskından önceki değer, tavan, sunucu başına bedel); harekât yoksa tavan 0.</summary>
         protected virtual (int Trust,int Max,int PerCivilian) TrustStake=>(0,0,0);
@@ -241,27 +207,38 @@ namespace Corrigible.Desk.Bridge
             var targets=unit!=null&&Armed&&Baskin.CanAct(State,unit)?Baskin.Targets(State,unit):new List<Baskin.Pt>();
             preview=hover.HasValue&&targets.Any(p=>p.X==hover.Value.x&&p.Y==hover.Value.y)?Baskin.Preview(State,unit.Id,hover.Value.x,hover.Value.y):null;
             bool loot=Baskin.IsLoot(State);
-            var vm=new RaidViewModel{IsLootMission=loot,Escaping=loot&&State.Carrier!=0&&State.Phase!="won"&&State.Phase!="lost",Turn=display.Turn,Turns=display.MaxTurns,Phase=executing||reporting?"enemy":State.Phase,Locked=State.Phase!="player"||Busy,AbilityArmed=Armed,CanUndo=State.Hist.Count>0&&!Guided,
+            var vm=new RaidViewModel{IsLootMission=loot,Escaping=loot&&State.Carrier!=0&&State.Phase!="won"&&State.Phase!="lost",Turn=display.Turn,Turns=display.MaxTurns,Phase=executing?"enemy":State.Phase,Locked=State.Phase!="player"||Busy,AbilityArmed=Armed,CanUndo=State.Hist.Count>0&&!Guided,
                 EndConfirm=confirm,RetreatArmed=retreat,FastMachines=fast,Paused=paused,OpenPanel=panel,LogUnread=unread,
                 Civilians=civilianCount,CivilianBroken=display.Collateral,AbilityLabel=RegionLabel(loot),AbilityTip=RegionTip(loot),
                 Moves=moves.Select(p=>new Vector2Int(p.X,p.Y)).ToArray(),AbilityTargets=targets.Select(p=>new Vector2Int(p.X,p.Y)).ToArray()};
             var stake=TrustStake;vm.TrustMax=stake.Max;vm.Trust=Math.Max(0,stake.Trust-display.Collateral*stake.PerCivilian);
+            // Kilit niyetinin hedef karesindeki uzman: kartında “KİLİT TEHDİDİ · #n” (S6c)
+            var locks=State.Phase=="player"?Baskin.Intents(State).Where(i=>i.Kind=="lock"&&i.HasTarget&&!i.TargetNone).ToList():new List<Baskin.IntentView>();
+            string Threat(Baskin.Unit u){var i=u.Dead?null:locks.FirstOrDefault(x=>x.TargetX==u.X&&x.TargetY==u.Y);return i==null?null:Loc.F("KİLİT TEHDİDİ · #{0}",i.Order);}
             vm.Team=new[]{'T','E','A'}.Select(letter=>
             // Kadroda olmayan uzman sığınakta yaralı (yedek de yok): kart kapalı, YARALI damgalı
-            {var u=display.Units.FirstOrDefault(x=>x.Side=='p'&&Baskin.UnitTypes[x.Type].Short==letter.ToString());if(u==null)return new RaidTeamModel{Letter=letter,Name=Name(letter),Thumb="thumb_standee_"+letter+"_done",Down=true,Absent=true};return new RaidTeamModel{Letter=letter,Name=Name(letter),Thumb="thumb_standee_"+letter+(u.Dead||u.Acted?"_done":letter=='E'&&u.Hp<u.Max?"_damaged":""),Hp=u.Hp,Max=u.Max,MoveRange=Baskin.UnitTypes[u.Type].Move,Selected=Selected==letter,Move=!Busy&&Baskin.CanMove(State,u),Ability=!Busy&&Baskin.CanAct(State,u),Armed=Selected==letter&&Armed,Down=u.Dead,Armor=u.Armor,Rookie=Rookie(u)};}).ToArray();
-            vm.Targets=targetForms.Select(t=>{var o=display.Cells[t.y,t.x].O;return new RaidTargetModel{Name=loot?Loc.T("İkmal kasası"):t.kind=="node"?Loc.T("Düğüm"):Loc.T("Çekirdek"),Thumb="thumb_cabinet_"+t.kind,Hp=o?.Hp??0,Max=t.max,Armor=true,Broken=o==null};}).ToArray();
+            {var u=display.Units.FirstOrDefault(x=>x.Side=='p'&&Baskin.UnitTypes[x.Type].Short==letter.ToString());if(u==null)return new RaidTeamModel{Letter=letter,Name=Name(letter),Thumb="thumb_standee_"+letter+"_done",Down=true,Absent=true};return new RaidTeamModel{Letter=letter,Name=Name(letter),Thumb="thumb_standee_"+letter+(u.Dead||u.Acted?"_done":letter=='E'&&u.Hp<u.Max?"_damaged":""),Hp=u.Hp,Max=u.Max,MoveRange=Baskin.UnitTypes[u.Type].Move,Selected=Selected==letter,Move=!Busy&&Baskin.CanMove(State,u),Ability=!Busy&&Baskin.CanAct(State,u),Armed=Selected==letter&&Armed,Down=u.Dead,Armor=u.Armor,Rookie=Rookie(u),Threat=Threat(u)};}).ToArray();
+            vm.Targets=targetForms.Select(t=>{var o=display.Cells[t.y,t.x].O;return new RaidTargetModel{Name=loot?Loc.T("İkmal kasası"):t.kind=="node"?Loc.T("Düğüm"):Loc.T("Çekirdek"),Thumb="thumb_cabinet_"+t.kind,Hp=o?.Hp??0,Max=t.max,Armor=true,Broken=o==null,Cell=RaidBoard3D.CellName(t.x,t.y)};}).ToArray();
+            // Görev çipi (Revizyon 2 · S6): bölge özelliğinin işareti, amaç satırı; telsizin okunmamış satırları; makine hamlesi
+            var trait=State.Params?.Traits?.FirstOrDefault(t=>Baskin.RegionTraits.ContainsKey(t));
+            vm.TraitGlyph=trait!=null?SiginakGlyphs.Trait(trait,true):null;
+            vm.Goal=loot?(vm.Escaping?Loc.T("Amaç: malzemeyi girişe taşı"):Loc.T("Amaç: kasadan ikmal al")):vm.Targets.Length>1?Loc.T("Amaç: ikisini de kır"):Loc.T("Amaç: kır");
+            vm.LogUnreadCount=unread?Math.Max(1,State.Log.Count-seenLogs):0;
+            vm.MachineMoves=roster.Count;vm.MachineMove=Math.Min(roster.Count,queue.Values.Count(q=>q=="done"||q=="cancel")+(queue.Values.Any(q=>q=="now")?1:0));
             if(unit!=null)
             {
                 vm.UnitCard=vm.Team.First(u=>u.Selected);var rows=new List<RaidCardRow>{new RaidCardRow{Icon="ic_boots_s",Text=Loc.T("Hareket"),Detail=Loc.F("{0} kare",vm.UnitCard.MoveRange),Used=!vm.UnitCard.Move},new RaidCardRow{Icon="ic_bolt_s",Text=Selected=='T'?(loot?Loc.T("İkmal alma"):Loc.T("Sabotaj")):Selected=='E'?Loc.T("EMP atışı"):Loc.T("Kanca"),Detail=Selected=='T'?Loc.T("bitişik kare"):Selected=='E'?Loc.T("düz hat, 2–5 kare"):Loc.T("düz hat, 5 kare"),Armed=Armed,Used=!vm.UnitCard.Ability}};
                 // Kartta üç satır yeri var: yedek olduğu başlıkta (“· YEDEK”), plaka üçüncü satırda
                 rows.AddRange(KitRows(unit,false));
                 vm.UnitRows=rows.ToArray();
-                vm.Effects=Selected=='T'?new[]{loot?Loc.T("kasayı al"):Loc.T("−2 dolap"),Loc.T("−1 robot")}:Selected=='E'?new[]{Loc.T("−1 hedef"),Loc.T("itme")}:new[]{Loc.T("−1 robot"),Loc.T("çeker")};
+                // Revizyon 2 · S6 (Soru 7'nin ara cevabı): yalnız adlar; görev eylemi yeşil, robota vuran kırmızı
+                vm.Effects=Selected=='T'?new[]{loot?Loc.T("Kasadan ikmal al"):Loc.T("Dolaba vur · −2 can"),Loc.T("Robota vur · −1 can")}:Selected=='E'?new[]{Loc.T("−1 hedef"),Loc.T("itme")}:new[]{Loc.T("Robota vur · −1 can"),Loc.T("çeker")};
+                vm.EffectTones=Selected=='T'?new[]{"good","bad"}:new[]{"bad","plain"};
             }
             if(preview!=null)vm.CollisionTiles=preview.Fx.Where(f=>f.K=="push"&&!preview.Moves.Any(m=>m.Unit==f.Unit)).Select(f=>new Vector2Int(f.X+f.Dx,f.Y+f.Dy)).ToArray();
             if(hoverVisible&&hover.HasValue)vm.HoverCard=Inspector(hover.Value);
             vm.Status=confirm?Loc.T("Kullanılmamış haklar var. Enter ile emri ilet; Esc ile vazgeç."):retreat?Loc.T("Geri çekilmek için tekrar bas. Esc ile vazgeç."):paused?Loc.T("DURAKLATILDI · Esc ile devam"):panel=="log"?Loc.T("TELSİZ KAYDI · Ekip harekete hazır."):panel=="rules"?Loc.T("1 / 2 / 3: seç · Q: yetenek · Z: geri al · Enter: emri ilet · Esc: vazgeç"):null;
-            Enrich(vm,display);ApplyFixture(vm);Current=vm;if(redraw&&board!=null&&!Busy)Draw(vm);Changed?.Invoke(vm);
+            Enrich(vm,display);ApplyFixture(vm);Current=vm;if(board!=null)board.LabelsHidden=vm.Finished;if(redraw&&board!=null&&!Busy)Draw(vm);Changed?.Invoke(vm);
         }
         protected virtual void ApplyFixture(RaidViewModel vm){}
         /// <summary>Kadro sığınaktan gelir: yedek uzman (acemi) ve takılı zırh plakası.</summary>
@@ -327,7 +304,7 @@ namespace Corrigible.Desk.Bridge
             {
                 int key=i.TargetY*8+i.TargetX;
                 if(i.Kind=="blast"){foreach(var a in i.Area)marks.Danger.Add(a.Y*8+a.X);continue;}
-                if(i.Kind=="repair"||i.Kind=="shield")marks.Heal.Add(key);else if(i.Kind=="clone")marks.Spawns.Add(key);else marks.Danger.Add(key);
+                if(i.Kind=="repair"||i.Kind=="shield")marks.Heal.Add(key);else if(i.Kind=="clone")marks.Clones.Add(key);else marks.Danger.Add(key);
                 marks.Arrows.Add((i.FromX,i.FromY,i.TargetX,i.TargetY));
             }
             if(preview!=null)foreach(var fx in preview.Fx.Where(f=>f.K=="dmg"))marks.Danger.Add(fx.Y*8+fx.X);
@@ -351,7 +328,6 @@ namespace Corrigible.Desk.Bridge
             vm.LastTurn=display.Turn>=display.MaxTurns;vm.Finished=!Busy&&(State.Phase=="won"||State.Phase=="lost");
             vm.Queue=roster.Select(i=>new RaidQueueItem{Order=i.Order,State=queue.TryGetValue(i.Unit,out var q)?q:"pending"}).ToArray();
             vm.EventLine=eventLine;vm.EventVisible=executing||eventLine!=null&&Time.unscaledTime<eventUntil;
-            vm.Radio=radio.Skip(Math.Max(0,radio.Count-6)).Select(l=>new RaidRadioLine{Who=l.Who,Text=l.Text}).ToArray();
             vm.Log=State.Log.Take(Math.Min(visibleLogs,State.Log.Count)).Select(l=>new RaidLogModel{Text=l.Text,Kind=l.Kind}).ToArray();
             if(confirm)
             {
@@ -361,10 +337,18 @@ namespace Corrigible.Desk.Bridge
             }
             if(vm.Finished)
             {
-                var r=Baskin.Result(State);vm.Success=r.Success;vm.ResultTitle=r.Success?(Baskin.IsLoot(State)?Loc.T("İKMAL ALINDI"):Loc.T("HEDEF KIRILDI")):r.Retreat?Loc.T("GERİ ÇEKİLDİ"):State.Units.Where(u=>u.Side=='p').All(u=>u.Dead)?Loc.T("EKİP DÜŞTÜ"):Baskin.IsLoot(State)&&Baskin.TargetsLeft(State).Count==0?Loc.T("İKMAL KAYBEDİLDİ"):Loc.T("SÜRE DOLDU");
-                vm.ResultSubtitle=Loc.F("{0} · {1} · Tur {2}/{3}",GameData.Regions.FirstOrDefault(d=>d.Id==State.Params.Region)?.Name??State.Params.RegionName??Loc.T("Saha"),Loc.T(State.Layout),r.Turns,State.MaxTurns);
-                vm.ResultReason=r.Reason;vm.Standing=State.Units.Count(u=>u.Side=='p'&&!u.Dead);vm.TeamCount=State.Units.Count(u=>u.Side=='p');
-                if(targetForms.Count>0){var t=targetForms[0];vm.Spot=new Vector3(t.x,t.y,r.Success?.15f:.45f);}
+                if(finishedAt<0)finishedAt=Time.unscaledTime;
+                // Revizyon 2 · S7: damga tek ve başlık yerinde (başarıda SEKTÖR GERİ ALINDI); altında yer satırı ve üç satır
+                var r=Baskin.Result(State);bool loot=Baskin.IsLoot(State);vm.Success=r.Success;
+                vm.ResultTitle=r.Success?Loc.T("SEKTÖR GERİ ALINDI"):r.Retreat?Loc.T("GERİ ÇEKİLDİ"):State.Units.Where(u=>u.Side=='p').All(u=>u.Dead)?Loc.T("EKİP DÜŞTÜ"):loot&&Baskin.TargetsLeft(State).Count==0?Loc.T("İKMAL KAYBEDİLDİ"):Loc.T("SÜRE DOLDU");
+                vm.ResultTurn=Loc.F("TUR {0}/{1}",r.Turns,State.MaxTurns);vm.ResultPlace=ResultPlace;
+                int standing=State.Units.Count(u=>u.Side=='p'&&!u.Dead),team=State.Units.Count(u=>u.Side=='p');
+                vm.ResultRows=vm.Targets.Select(t=>new RaidResultRow{Label=t.Name,Value=t.Broken?(loot&&r.Success?Loc.T("alındı"):Loc.T("kırıldı")):Loc.F("{0}/{1}",t.Hp,t.Max),Good=t.Broken&&r.Success})
+                    .Append(new RaidResultRow{Label=Loc.T("Kırılan sivil sunucu"),Value=display.Collateral.ToString()}).Append(new RaidResultRow{Label=Loc.T("Ekip"),Value=Loc.F("{0}/{1} ayakta",standing,team)}).ToArray();
+                // Spot sonucun nedenini açıkta bırakır: alınan kasada Teknisyen, öteki hâllerde hedef
+                var carrier=loot&&r.Success?State.Units.FirstOrDefault(u=>u.Side=='p'&&!u.Dead&&u.Type=="tek"):null;
+                if(carrier!=null)vm.Spot=new Vector3(carrier.X,carrier.Y,.3f);
+                else if(targetForms.Count>0){var t=targetForms[0];vm.Spot=new Vector3(t.x,t.y,r.Success?.15f:.45f);}
             }
         }
         static string Name(char letter)=>letter=='T'?Loc.T("TEKNİSYEN"):letter=='E'?Loc.T("EMP UZMANI"):Loc.T("ANALİST");
@@ -374,7 +358,7 @@ namespace Corrigible.Desk.Bridge
         static string IntentName(string kind)=>kind switch{"repair"=>Loc.T("onarım"),"melee"=>Loc.T("vuruş"),"lob"=>Loc.T("havan"),"blast"=>Loc.T("patlama"),
             "lock"=>Loc.T("kilit"),"shield"=>Loc.T("kalkan"),"clone"=>Loc.T("çoğaltma"),_=>Loc.T("ateş")};
         /// <summary>Havada olan makineler dron resmiyle, yerdekiler bakım robotu resmiyle.</summary>
-        static string EnemyThumb(string type)=>type=="dron"||type=="zdron"||type=="kalkan"?"thumb_drone":"thumb_maint";
+        static string EnemyThumb(string type)=>type switch{"bakim"=>"thumb_maint","zdron"=>"thumb_armordrone","kalkan"=>"thumb_shielddrone","havan"=>"thumb_mortar","bomba"=>"thumb_bomber","kilit"=>"thumb_locker","cogalt"=>"thumb_replicator",_=>"thumb_drone"};
         /// <summary>Görev çipi: bölgenin özelliği (yoksa görev türü).</summary>
         string RegionLabel(bool loot)
         {

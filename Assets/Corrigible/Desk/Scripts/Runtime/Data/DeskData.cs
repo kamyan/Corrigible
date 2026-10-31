@@ -12,7 +12,7 @@ namespace Corrigible.Desk
     /// <summary>Görünüm yalnızca niyet yayınlar; kuralları oyun uygular.</summary>
     public interface IDeskCommands
     {
-        /// <summary>Kâğıt ve oyun sonu düğmelerinin niyeti: VM'deki <see cref="CommandVM.Command"/> (ör. “Doc:Close”, “Restart”).</summary>
+        /// <summary>Kâğıt düğmelerinin niyeti (ör. son raporun “Restart”ı).</summary>
         void Run(string command);
     }
 

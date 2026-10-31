@@ -1,6 +1,7 @@
 using System.Linq;
 using Corrigible.Core;
 using Corrigible.Game;
+using Corrigible.Game.Audio;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,7 +14,9 @@ namespace Corrigible.Desk.Bridge
     /// teleks 0,60'ta “VARDİYA 014 KAPANDI” basar, kamera 1,60'ta harita pozuna geçer, rapor 2,20'de düşer, fişler asılır,
     /// iyileşen ekibin figürü S-07'den cepheye kayar (“ALFA CEPHEDE”). Boşluk / ATLA diziyi keser. Rapor açıkken masa
     /// kilitlidir (şalter devre dışı); Enter, düğme ya da Esc raporu EVRAK tepsisine dosyalar, kamera masa pozuna döner.
-    /// Tepsiye tıklayınca son 5 rapor okunur (← →). Raporlar kayda girmez, yan dosyada saklanır.
+    /// Tepsiye tıklayınca son 5 rapor okunur (← →). Raporlar kayda girmez, yan dosyada saklanır. Karşı saldırıda (Revizyon
+    /// 2 · S5b) rapordan önce duvardaki alarm lambası üç kez yanar, teleks “YZ KARŞI SALDIRISI” basar (kodu raporun kutusunda),
+    /// kutu basılınca haritada sektöre ✕ çizilir ve YENİDEN İŞGAL damgası iner. Özet gözünün üzerine gelince sayacı kalkar.
     /// </summary>
     public sealed class SiginakShift : MonoBehaviour
     {
@@ -63,6 +66,9 @@ namespace Corrigible.Desk.Bridge
             report.ActionClicked += File;
             report.PreviousClicked += Previous;
             report.NextClicked += Next;
+            report.EyeHovered += EyeHovered;
+            report.CounterHovered += map.BlinkCounterattack;
+            report.CounterStamped += CounterStamped;
             Restore();
         }
 
@@ -74,6 +80,9 @@ namespace Corrigible.Desk.Bridge
             report.ActionClicked -= File;
             report.PreviousClicked -= Previous;
             report.NextClicked -= Next;
+            report.EyeHovered -= EyeHovered;
+            report.CounterHovered -= map.BlinkCounterattack;
+            report.CounterStamped -= CounterStamped;
             Abort();
         }
 
@@ -116,6 +125,12 @@ namespace Corrigible.Desk.Bridge
                 case ShiftSequence.Cue.Telex:
                     if (pending != null)
                         pending.code = telex.Post(closing, Loc.F("VARDİYA {0:000} KAPANDI", closing), Loc.T("Rapor basılıyor…"), TelexKind.Info).code;
+                    // Karşı saldırı: rapordan önce duvardaki alarm lambası üç kez yanar (alçak uğultu)
+                    if (pending != null && pending.after.counterattacks > pending.before.counterattacks && !skipped)
+                    {
+                        desk.FlashAlarm();
+                        Sfx.Play(Corrigible.Game.Audio.Cue.AlarmHum, 0.7f);
+                    }
                     break;
                 case ShiftSequence.Cue.Camera:
                     if (skipped) rig.Focus(SiginakPose.Map, true);
@@ -137,6 +152,12 @@ namespace Corrigible.Desk.Bridge
         {
             if (pending == null) return;
             var data = ShiftReportBuilder.Build(pending);
+            // Karşı saldırı: teleks satırı önce basılır, kodu raporun kutusuna yazılır (dosyalanan raporda da)
+            if (data.Counterattack != null)
+            {
+                pending.counterCode = telex.Post(surface.Shift, Loc.T("YZ KARŞI SALDIRISI"), data.Counterattack, TelexKind.Alarm).code;
+                data = ShiftReportBuilder.Build(pending);
+            }
             tray.Add(pending);
             desk.SaveNotes();
             shown = pending;
@@ -147,7 +168,7 @@ namespace Corrigible.Desk.Bridge
             report.Show(data, false, !skipped);
             PinSlips(data);
             map.ReleaseFigure(skipped);
-            if (data.Counterattack != null) telex.Post(surface.Shift, Loc.T("YZ KARŞI SALDIRISI"), data.Counterattack, TelexKind.Alarm);
+            if (data.Counterattack != null && skipped) map.PlayCounterattack(0);
             if (data.TeamReturned && Sim?.S.Teams.FirstOrDefault() is TeamState team)
             {
                 string name = DeskText.Upper(LiberationMapBuilder.TeamName(team));
@@ -166,9 +187,24 @@ namespace Corrigible.Desk.Bridge
             for (int i = 0; i < texts.Length; i++)
             {
                 texts[i] = data.Slips[i].text;
-                inks[i] = t.ColorOf(data.Slips[i].tone == ReportTone.Good ? "status.good" : data.Slips[i].tone == ReportTone.Bad ? "status.threat" : "ink3");
+                // ± fişleri raporla aynı kural: artı yeşil, eksi mürekkep, ±0 gri (Revizyon 2 · S5)
+                inks[i] = t.ColorOf(ShiftReportBuilder.ToneColor(data.Slips[i].tone));
             }
             counters.Pin(texts, inks);
+        }
+
+        /// <summary>Karşı saldırı kutusu basıldı: ağır “tak”, haritada ✕ ve YENİDEN İŞGAL damgası.</summary>
+        void CounterStamped()
+        {
+            Sfx.Play(Corrigible.Game.Audio.Cue.StampHeavy, 0.9f);
+            if (fresh) map.PlayCounterattack(0.12f);
+        }
+
+        /// <summary>Özet gözünün üzerine gelince ilgili sayaç (ve fişi) kalkar: ERZAK, FON; alarm gözü duvardaki panoyu anar.</summary>
+        void EyeHovered(int eye, bool on)
+        {
+            if (eye == 0) counters[CounterBank.Slot.Supplies].Raise(on);
+            else if (eye == 2) counters[CounterBank.Slot.Funds].Raise(on);
         }
 
         // ---------- Rapor ve tepsi ----------
@@ -242,7 +278,8 @@ namespace Corrigible.Desk.Bridge
         {
             var data = ShiftReportBuilder.Build(input);
             data.Action = Loc.T("TEPSİYE KOY");
-            data.Hint = Loc.F("← → rapor {0}/{1} · Esc tepsiye koy", browseIndex + 1, tray.Reports.Count);
+            // ← → ve Esc satırda fiş olarak durur
+            data.Hint = Loc.F("rapor {0}/{1} · tepsiye koy", browseIndex + 1, tray.Reports.Count);
             return data;
         }
 

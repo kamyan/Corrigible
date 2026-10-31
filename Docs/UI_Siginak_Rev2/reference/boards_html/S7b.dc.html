@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>S7b · Sonuç kartı · geri çekildi</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&display=swap">
+<style>
+body{margin:0;background:#0E0906}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../board_assets/grain.png);background-size:256px 256px}
+</style>
+</helmet>
+<div style="position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #0E0906; font-family: 'Libre Franklin', Arial, sans-serif; color: #1E1B16">
+  <img src="../board_assets/r_fail.jpg" alt="Baskın bitti: tahta karartılmış, tek ışık sağlam kalan ikmal kasasında; piyonlar başlangıç kenarında" style="position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: block">
+
+  <div class="grain" style="position: absolute; left: 1290px; top: 318px; width: 500px; box-sizing: border-box; background-color: #FBF7EC; border: 1px solid #D2C7AF; box-shadow: 5px 6px 0 rgba(0,0,0,0.5); transform: rotate(0.8deg); padding: 16px 22px 18px 22px; display: flex; flex-direction: column">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; font: 700 14px 'Courier Prime', monospace; letter-spacing: 0.08em; color: #675F50; padding-bottom: 8px; border-bottom: 2px solid #463F34"><span>OPERASYON SONUCU</span><span>TUR 2/8</span></div>
+    <div style="height: 104px; display: flex; align-items: center; justify-content: flex-start; padding-left: 6px">
+      <span style="font: 700 38px/1 'Courier Prime', monospace; letter-spacing: 0.06em; color: #9A1E14; border: 6px double #9A1E14; padding: 8px 16px 6px 16px; transform: rotate(-3deg); mix-blend-mode: multiply">GERİ ÇEKİLDİ</span>
+    </div>
+    <span style="font: 600 20px 'Libre Franklin', Arial, sans-serif">Doğu Avrupa · Laboratuvar katı</span>
+    <div style="margin-top: 12px; display: grid; grid-template-columns: minmax(0, 1fr) auto; row-gap: 6px; column-gap: 14px; align-items: baseline; font: 400 19px 'Libre Franklin', Arial, sans-serif; padding-top: 10px; border-top: 1px dotted #B9AC8E">
+      <span>İkmal kasası</span><b style="font: 700 19px 'Courier Prime', monospace">4/4</b>
+      <span>Kırılan sivil sunucu</span><b style="font: 700 19px 'Courier Prime', monospace">0</b>
+      <span>Ekip</span><b style="font: 700 19px 'Courier Prime', monospace">3/3 ayakta</b>
+    </div>
+    <button type="button" style="margin-top: 18px; width: 100%; height: 54px; padding: 0 14px 0 10px; display: flex; align-items: center; gap: 12px; background: #1E1B16; color: #F4ECD8; border: 0; border-radius: 3px; box-shadow: 0 3px 0 #463F34; font: 700 19px 'Libre Franklin', Arial, sans-serif; letter-spacing: 0.04em; cursor: pointer; box-sizing: border-box">
+      <span style="display: inline-flex; align-items: center; justify-content: center; height: 26px; padding: 0 7px; background: #E6CF9C; color: #1E1B16; border-radius: 2px; font: 700 14px 'Courier Prime', monospace; letter-spacing: 0">Enter</span>
+      <span style="flex: 1; text-align: left">OPERASYON RAPORUNA GEÇ</span>
+    </button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

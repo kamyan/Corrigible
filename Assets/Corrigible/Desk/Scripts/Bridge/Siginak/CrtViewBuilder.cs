@@ -33,6 +33,17 @@ namespace Corrigible.Desk.Bridge
 
         static string Region(string id) => DeskText.Upper(Loc.T(GameData.Region(id).Name));
 
+        /// <summary>
+        /// Ekrandaki kısa bölge adı (Revizyon 2 · S1: “BATI AVR. / 01”): iki sözcüklü adda ikinci sözcük dört harften uzunsa
+        /// ilk üç harfi ve nokta. K1'den okunsun diye satır kısa tutulur.
+        /// </summary>
+        public static string ShortRegion(string id)
+        {
+            var words = Region(id).Split(' ');
+            if (words.Length != 2 || words[1].Length <= 4) return string.Join(" ", words);
+            return words[0] + " " + words[1].Substring(0, 3) + ".";
+        }
+
         /// <summary>Kanal YZ trafiğini dinler: alarm eşiğe ulaşınca YZ karşı saldırır.</summary>
         static string Alarm(Simulation sim) =>
             Loc.F("YZ ALARMI {0}/{1}", DeskFormat.Number(sim.S.Alarm, 0), DeskFormat.Number(sim.B.liberationAlarmThreshold, 0));
@@ -56,9 +67,10 @@ namespace Corrigible.Desk.Bridge
             d.TeamInverse = injured && !back && sim.S.Raid == null;
             var sector = Sector(sim);
             var lib = sim.S.Liberation;
+            // Boşta dört satır (Revizyon 2 · S1): durum, ekip, cephe / sektör, YZ alarmı; ipucu yalnız hat kapalıyken
             d.FrontLine = sector != null
-                ? Loc.F("CEPHE: {0} / {1:00}", Region(sector.Region), sector.Index + 1)
-                : Loc.F("CEPHE: {0} · ÖZGÜR", Region(lib.CurrentRegion));
+                ? Loc.F("{0} / {1:00}", ShortRegion(sector.Region), sector.Index + 1)
+                : Loc.F("{0} · ÖZGÜR", ShortRegion(lib.CurrentRegion));
             switch (d.State)
             {
                 case CrtState.Establishing: d.Title = Loc.T("HAT AÇILIYOR"); break;
@@ -72,7 +84,6 @@ namespace Corrigible.Desk.Bridge
                 default:
                     d.Title = Loc.T("DİNLEMEDE");
                     d.Sub = Alarm(sim);
-                    d.Hint = Loc.T("Görev fişinden baskın emri verildiğinde hat açılır.");
                     break;
             }
             return d;

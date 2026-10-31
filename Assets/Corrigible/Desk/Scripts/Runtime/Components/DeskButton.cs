@@ -54,59 +54,6 @@ namespace Corrigible.Desk
         DeskVisualState current = DeskVisualState.Normal;
         DeskTween lift;
 
-        public DeskButtonVariant Variant => variant;
-
-        /// <summary>Varyantı çalışırken değiştirir (VM'deki “link”, “ink-small” gibi türlerden).</summary>
-        public void SetKind(DeskButtonVariant v, bool small)
-        {
-            if (variant == v && smallSize == small) return;
-            variant = v; smallSize = small;
-            Refresh();
-        }
-
-        /// <summary>VM düğme türü: link · ink · ink-small · paper · paper-small.</summary>
-        public void SetKind(string kind)
-        {
-            switch (kind)
-            {
-                case "ink": SetKind(DeskButtonVariant.Ink, false); break;
-                case "ink-small": SetKind(DeskButtonVariant.Ink, true); break;
-                case "paper": SetKind(DeskButtonVariant.Paper, false); break;
-                case "paper-small": SetKind(DeskButtonVariant.PaperSmall, false); break;
-                case "link": SetKind(DeskButtonVariant.Link, false); break;
-            }
-        }
-
-        public void SetLabel(string s)
-        {
-            if (label == s) return;
-            label = s; Refresh();
-        }
-
-        public void SetShortcut(string key)
-        {
-            if (shortcut == key) return;
-            shortcut = key; Refresh();
-        }
-
-        /// <summary>Devre dışı bırakır ve nedeni yazar; null neden = etkin.</summary>
-        public void SetDisabled(string reason)
-        {
-            disabledReason = reason;
-            interactable = string.IsNullOrEmpty(reason);
-            Refresh();
-        }
-
-        public void SetPreview(DeskVisualState s) { preview = s; Refresh(); }
-
-        /// <summary>İkonlu düğmenin ikon sprite'ı (ör. ⏸ / ▶).</summary>
-        public void SetIcon(string spriteName)
-        {
-            if (icon != null) DeskSprites.Apply(icon, spriteName);
-        }
-
-        public void ShowFocus(bool on) => DeskUi.SetActive(focusRing, on);
-
         protected override void OnEnable()
         {
             base.OnEnable();
@@ -151,7 +98,7 @@ namespace Corrigible.Desk
 
         /// <summary>
         /// Sabit genişlikli düğme dışarıdan boyutlanınca (seçenek kartı, belge düğmesi) etiket yeni genişliğe göre yeniden
-        /// ortalanır; etiket ve tür değişmediğinde SetLabel/SetKind yeniden çizmediği için gerekli.
+        /// ortalanır; etiket ve tür değişmediğinde düğme kendiliğinden yeniden çizilmediği için gerekli.
         /// </summary>
         protected override void OnRectTransformDimensionsChange()
         {

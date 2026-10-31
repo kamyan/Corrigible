@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Corrigible.Core;
@@ -8,13 +7,21 @@ using UnityEngine.UI;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// F6 durum kartları. İçerik, tehdit ve sonuç veri kaynağından gelir. Olay fişi telsiz şerididir: baskın boyunca açık,
-    /// son konuşmaları gösterir (en yenisi altta, daktilo gibi yazılır); sıra kutuları ve hız yalnız makine evresinde.
+    /// F6 durum kartları. İçerik, tehdit ve sonuç veri kaynağından gelir. Sonuç kartı (Revizyon 2 · S7; 500 px, x 1290 ·
+    /// y 318, +0,8°): üstte “OPERASYON SONUCU · TUR 6/8”, başlık yerinde tek damga (çift kenar; başarıda mavi, değilse
+    /// kırmızı), yer satırı, satırlar ve tek düğme. Son hamleden sonra tahta 0,4 s'de kararır, kart sağdan kayar (0,35–0,6 s),
+    /// damga 0,12 s'de basılır (başarıda zil, değilse ağır “tak”); kart gelene kadar girdi kilitli (veri kaynağı).
     /// </summary>
     public sealed class RaidPanelsView : MonoBehaviour
     {
         [SerializeField] GameObject eventSlip,confirmNote,logDrawer,rulesCard,retreatConfirm,resultMemo,pauseCard;
-        [SerializeField] TMP_Text eventTitle,eventText,speedLabel,confirmTitle,confirmFoot,logTitle,rulesTitle,retreatTitle,retreatBody,retreatFoot,resultEyebrow,resultTitle,resultSubtitle,resultRows,resultFoot,bigStamp,pauseLabel;
+        [SerializeField] TMP_Text eventTitle,eventText,speedLabel,confirmTitle,confirmFoot,logTitle,rulesTitle,retreatTitle,retreatBody,retreatFoot,pauseLabel;
+        [Header("Sonuç kartı (S7)")]
+        [SerializeField] RectTransform resultCard,resultStamp,continueFace;
+        [SerializeField] TMP_Text resultHead,resultTurn,resultTitle,resultPlace;
+        [SerializeField] Image resultStampFrame,continueShadow;
+        [SerializeField] TMP_Text[] resultLabels,resultValues;
+        [SerializeField] UiHoverTarget continueHover;
         [SerializeField] RectTransform legendRoot;
         [SerializeField] TMP_Text[] queueLabels,unusedRows,ruleRows,legendRows;
         [SerializeField] Image[] queueFills,queueCancel;
@@ -24,10 +31,12 @@ namespace Corrigible.Desk
         [SerializeField] RectTransform logContent;
         [SerializeField] RaidLogRowView logRowPrefab;
         [SerializeField] SpotlightGraphic dim;
-        [SerializeField] RectTransform stampRect;
         IRaidCommands commands;RaidViewModel current;readonly List<RaidLogRowView> logRows=new List<RaidLogRowView>();string logKey;
-        const int RadioLines=4;const float TypeSpeed=90;
-        string radioKey,radioOlder;float typed;int typedTo;
+        // Sonuç dizisi: kararma 0–0,4 s, kart 0,35–0,6 s, damga 0,6–0,72 s
+        const float DimSeconds=.4f,CardAt=.35f,CardSeconds=.25f,StampSeconds=.12f,DimAlpha=.74f;
+        float finishedAt=-1;Vector2 cardRest;bool cardRested,stamped;
+        /// <summary>Sonuç damgası basıldı (başarılı mı): bağlayıcı sesi çalar.</summary>
+        public event System.Action<bool> ResultStamped;
         static readonly string[] Legend={"legend.move","legend.target","legend.hit","legend.channel","legend.wake","legend.types","legend.flag","legend.armor"};
         public void Bind(IRaidCommands value)
         {
@@ -36,14 +45,15 @@ namespace Corrigible.Desk
         static void Button(Button b,UnityEngine.Events.UnityAction action){b.onClick.RemoveAllListeners();b.onClick.AddListener(action);}
         public void Render(RaidViewModel vm)
         {
-            current=vm;eventSlip.SetActive(vm.Radio.Length>0&&!vm.Finished);confirmNote.SetActive(vm.EndConfirm&&!vm.Finished);logDrawer.SetActive(vm.OpenPanel=="log"&&!vm.Finished);rulesCard.SetActive(vm.OpenPanel=="rules"&&!vm.Finished);retreatConfirm.SetActive(vm.RetreatArmed&&!vm.Finished);retreatAgain.gameObject.SetActive(vm.RetreatArmed&&!vm.Finished);resultMemo.SetActive(vm.Finished);stampRect.gameObject.SetActive(vm.Finished);pauseCard.SetActive(vm.Paused&&!vm.Finished);
-            eventTitle.text=Loc.T("TELSİZ");RenderRadio(vm.Radio);speedLabel.text=vm.FastMachines?Loc.T("Boşluk · normal hız"):Loc.T("Boşluk · hızlandır");speedLabel.gameObject.SetActive(vm.EventVisible);
+            current=vm;eventSlip.SetActive(vm.EventVisible&&!vm.Finished);confirmNote.SetActive(vm.EndConfirm&&!vm.Finished);logDrawer.SetActive(vm.OpenPanel=="log"&&!vm.Finished);rulesCard.SetActive(vm.OpenPanel=="rules"&&!vm.Finished);retreatConfirm.SetActive(vm.RetreatArmed&&!vm.Finished);retreatAgain.gameObject.SetActive(vm.RetreatArmed&&!vm.Finished);resultMemo.SetActive(vm.Finished);pauseCard.SetActive(vm.Paused&&!vm.Finished);
+            // Revizyon 2 · S6: teleks kâğıdı fişi (anten + TELSİZ · K-07); makinelerin sırası tahtadaki bayraklarda, hamle sayısı kilitli kâğıtta
+            eventTitle.text=Loc.T("TELSİZ · K-07");eventText.text=vm.EventLine;if(speedLabel!=null)speedLabel.text=vm.FastMachines?Loc.T("Boşluk · normal hız"):Loc.T("Boşluk · hızlandır");
             // Sıra kutuları başlığın ardından dizilir: başlığın genişliği dile göre değişir
             float qx=Mathf.Max(54,eventTitle.rectTransform.anchoredPosition.x+eventTitle.GetPreferredValues(eventTitle.text).x+6);
             for(int i=0;i<queueFills.Length;i++){var qr=queueFills[i].rectTransform;qr.anchoredPosition=new Vector2(qx+i*25,qr.anchoredPosition.y);}
             for(int i=0;i<queueLabels.Length;i++)
             {
-                bool on=vm.EventVisible&&i<vm.Queue.Length;queueFills[i].gameObject.SetActive(on);if(!on)continue;var q=vm.Queue[i];
+                bool on=i<vm.Queue.Length;queueFills[i].gameObject.SetActive(on);if(!on)continue;var q=vm.Queue[i];
                 queueLabels[i].text=q.State=="done"?Loc.F("<s>{0}</s>",q.Order):q.Order.ToString();queueFills[i].color=DeskTheme.Active.Get(q.State=="now"?"ink.red":q.State=="cancel"?"sade.onion":"sade.index");queueLabels[i].color=DeskTheme.Active.Get(q.State=="now"?"sade.index":q.State=="done"?"ink.ink3":"ink.red");queueCancel[i].enabled=q.State=="cancel";
             }
             confirmTitle.text=Loc.T("HAKKI DURAN BİRİM");confirmFoot.text=Loc.T("Enter yine de ilet · Esc vazgeç");
@@ -60,40 +70,48 @@ namespace Corrigible.Desk
             float ry=52;foreach(var t in ruleRows){float h=Mathf.Max(30,t.GetPreferredValues(t.text,366,float.PositiveInfinity).y+8);var r=(RectTransform)t.transform.parent;r.anchoredPosition=new Vector2(14,-ry);r.sizeDelta=new Vector2(392,h);t.rectTransform.sizeDelta=new Vector2(366,h);ry+=h;}
             if(legendRoot!=null){legendRoot.anchoredPosition=new Vector2(14,-ry-8);((RectTransform)rulesCard.transform).sizeDelta=new Vector2(420,Mathf.Max(431.5f,ry+136));}
             retreatTitle.text=RaidText.Get("raid.retreat.title");retreatBody.text=RaidText.Get("raid.retreat.body");retreatFoot.text=RaidText.Get("raid.retreat.foot");retreatAgainLabel.text=Loc.T("EMİN MİSİN? TEKRAR BAS");
-            continueLabel.text=Loc.T("Operasyon raporuna geç");resumeLabel.text=Loc.T("Devam et [Esc]");pauseLabel.text=Loc.T("DURAKLATILDI");
-            dim.gameObject.SetActive(vm.Finished||vm.RetreatArmed||vm.Paused);dim.color=DeskTheme.Active.Get("sade.plaque.bg");var col=dim.color;col.a=vm.Finished ? .74f : .32f;dim.color=col;
+            continueLabel.text=Loc.T("OPERASYON RAPORUNA GEÇ");resumeLabel.text=Loc.T("Devam et [Esc]");pauseLabel.text=Loc.T("DURAKLATILDI");
+            dim.gameObject.SetActive(vm.Finished||vm.RetreatArmed||vm.Paused);dim.color=DeskTheme.Active.Get("sade.plaque.bg");var col=dim.color;col.a=vm.Finished ? DimAlpha*Dim() : .32f;dim.color=col;
             if(!vm.Finished)dim.SetSpot(Vector2.zero,150,14,Color.clear,false);
-            if(vm.Finished)
+            if(!vm.Finished)finishedAt=-1;
+            else
             {
-                resultEyebrow.text=vm.Success?Loc.T("OPERASYON SONUCU · BAŞARILI"):Loc.T("OPERASYON SONUCU · BAŞARISIZ");resultTitle.text=bigStamp.text=vm.ResultTitle;resultSubtitle.text=vm.ResultSubtitle;
-                resultTitle.color=bigStamp.color=DeskTheme.Active.Get(vm.Success?"ink.green":"ink.red");
-                var targetRows=vm.Targets.Select(t=>Loc.F("{0} · {1}",t.Name,t.Broken?(vm.IsLootMission&&vm.Success?Loc.T("alındı"):Loc.T("kırıldı")):Loc.F("{0}/{1}",t.Hp,t.Max))).ToList();targetRows.Add(Loc.F("Kırılan sivil sunucu · {0}",vm.CivilianBroken));targetRows.Add(Loc.F("Ekip · {0}/{1} ayakta",vm.Standing,vm.TeamCount));resultRows.text=string.Join("\n",targetRows);resultFoot.text=vm.ResultReason??Loc.T("Operasyon raporu bölgeye etkisini ve ekibin durumunu gösterecek.");
+                if(finishedAt<0){finishedAt=Time.unscaledTime;stamped=false;Card();}
+                RenderResult(vm);
             }
             if(logDrawer.activeSelf)RenderLog(vm.Log);
         }
-        static string RadioLine(RaidRadioLine l)=>Loc.F("<b>{0} ›</b> {1}",l.Who,l.Text);
-        /// <summary>Telsiz şeridi: son satırlar; eskiler soluk. Yeni satır geldiyse daktilo baştan o satırdan yazar.</summary>
-        void RenderRadio(RaidRadioLine[] lines)
+        /// <summary>Kartın içeriği: başlık yerinde tek damga (başarıda mavi, değilse kırmızı), yer satırı, satırlar.</summary>
+        void RenderResult(RaidViewModel vm)
         {
-            var shown=lines.Skip(Math.Max(0,lines.Length-RadioLines)).ToArray();
-            // TMP'de alfa etiketinin kapanışı yok: eski satırlar soluk açılır, en yeni satır tam alfayla
-            string older=string.Join("\n",shown.Take(Math.Max(0,shown.Length-1)).Select(l=>"<alpha=#8C>"+RadioLine(l)));
-            string text=shown.Length==0?"":(older.Length>0?older+"\n":"")+"<alpha=#FF>"+RadioLine(shown[shown.Length-1]);
-            string key=Loc.Lang+"|"+text;if(key==radioKey)return;
-            bool newLine=older!=radioOlder;radioKey=key;radioOlder=older;
-            eventText.text=older;eventText.ForceMeshUpdate();int from=older.Length>0?eventText.textInfo.characterCount:0;
-            eventText.text=text;eventText.ForceMeshUpdate();typedTo=eventText.textInfo.characterCount;
-            // Aynı satır uzadıysa (hasar eklendi) daktilo kaldığı yerden sürer
-            typed=newLine?from:Mathf.Min(typed,typedTo);
-            eventText.maxVisibleCharacters=Mathf.FloorToInt(typed);
-            float h=Mathf.Max(43,eventText.GetPreferredValues(text,eventText.rectTransform.rect.width,float.PositiveInfinity).y);
-            eventText.rectTransform.sizeDelta=new Vector2(eventText.rectTransform.sizeDelta.x,h);
-            ((RectTransform)eventSlip.transform).sizeDelta=new Vector2(((RectTransform)eventSlip.transform).sizeDelta.x,-eventText.rectTransform.anchoredPosition.y+h+10);
+            resultHead.text=Loc.T("OPERASYON SONUCU");resultTurn.text=vm.ResultTurn;resultTitle.text=vm.ResultTitle;resultPlace.text=vm.ResultPlace;
+            var ink=RaidHudView.C(vm.Success?"ink.blue":"ink.red");resultTitle.color=ink;resultStampFrame.color=ink;
+            for(int i=0;i<resultLabels.Length;i++)
+            {
+                bool on=i<vm.ResultRows.Length;resultLabels[i].gameObject.SetActive(on);resultValues[i].gameObject.SetActive(on);if(!on)continue;
+                var row=vm.ResultRows[i];resultLabels[i].text=row.Label;resultValues[i].text=row.Value;resultValues[i].color=RaidHudView.C(row.Good?"ink.green":"ink.ink");
+            }
+            LayoutRebuilder.ForceRebuildLayoutImmediate(resultCard);
         }
+        float Dim()=>finishedAt<0?1:Mathf.Clamp01((Time.unscaledTime-finishedAt)/DimSeconds);
         void Update()
         {
-            if(eventText==null||typed>=typedTo)return;
-            typed=Mathf.Min(typedTo,typed+TypeSpeed*Time.unscaledDeltaTime);eventText.maxVisibleCharacters=Mathf.FloorToInt(typed);
+            if(current==null||!current.Finished||finishedAt<0)return;
+            var col=dim.color;col.a=DimAlpha*Dim();dim.color=col;
+            Card();
+            // RAPORA GEÇ: üzerinde 2 px kalkar (gölge 5), basılı 2 px iner (gölge 1)
+            if(continueHover!=null){bool pressed=continueHover.Pressed,over=continueHover.Over&&!pressed;float lift=pressed?-2:over?2:0,drop=pressed?1:over?5:3;
+                continueFace.anchoredPosition=new Vector2(0,lift);continueShadow.rectTransform.anchoredPosition=new Vector2(0,lift-drop);}
+        }
+        /// <summary>Kart sağdan kayar, sonra damga basılır (1,25 → 1).</summary>
+        void Card()
+        {
+            if(!cardRested){cardRested=true;cardRest=resultCard.anchoredPosition;}
+            float t=Time.unscaledTime-finishedAt,p=Application.isPlaying?Mathf.Clamp01((t-CardAt)/CardSeconds):1,e=1-(1-p)*(1-p);
+            resultCard.anchoredPosition=cardRest+new Vector2(760*(1-e),0);
+            float s=Application.isPlaying?Mathf.Clamp01((t-CardAt-CardSeconds)/StampSeconds):1;
+            if(s>0&&!stamped&&Application.isPlaying){stamped=true;ResultStamped?.Invoke(current!=null&&current.Success);}
+            resultStamp.localScale=Vector3.one*(s<=0?0:Mathf.Lerp(1.25f,1,s));
         }
         void RenderLog(RaidLogModel[] lines)
         {

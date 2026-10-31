@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Tokenlar · yeni ve değişen</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&family=Kalam:wght@700&display=swap">
+<style>
+body{margin:0;background:#1C372C}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../board_assets/grain.png);background-size:256px 256px}
+.st{display:flex;align-items:baseline;gap:10px;border-bottom:2px solid #1E1B16;padding-bottom:4px;margin-top:18px}
+.st b{font:700 18px 'Courier Prime',monospace;letter-spacing:0.06em}
+.st span{font:400 15px 'Libre Franklin',Arial,sans-serif;color:#463F34}
+.t{display:grid;grid-template-columns:270px minmax(0,1fr) minmax(0,1fr);column-gap:14px;row-gap:3px;font:400 14px/1.35 'Courier Prime',monospace;margin-top:6px}
+.t .h{font-weight:700;color:#675F50;letter-spacing:0.06em}
+.t .p{font-weight:700}
+.t .o{color:#8A5A50;text-decoration:line-through}
+.sw{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px 14px;margin-top:8px}
+.sw span{display:flex;align-items:center;gap:7px;font:700 14px 'Courier Prime',monospace;color:#1E1B16;min-width:0}
+.sw i{flex:0 0 22px;height:22px;border:1px solid #463F34;box-sizing:border-box}
+.kv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px 14px;margin-top:6px;font:400 14px/1.35 'Courier Prime',monospace}
+.kv b{font-weight:700}
+.spec{display:grid;grid-template-columns:230px minmax(0,1fr);column-gap:14px;row-gap:6px;align-items:baseline;margin-top:8px}
+.spec .n{font:700 14px 'Courier Prime',monospace;color:#675F50}
+</style>
+</helmet>
+<div class="grain" style="width: 1280px; height: 2160px; box-sizing: border-box; background-color: #F1E9D6; color: #1E1B16; font-family: 'Libre Franklin', Arial, sans-serif; padding: 28px 40px 30px 40px; display: flex; flex-direction: column">
+  <div style="display: flex; align-items: baseline; justify-content: space-between; border-bottom: 3px double #1E1B16; padding-bottom: 8px">
+    <span style="font: 700 28px 'Courier Prime', monospace; letter-spacing: 0.05em">TOKENLAR · YENİ VE DEĞİŞEN</span>
+    <span style="font: 700 14px 'Courier Prime', monospace; color: #675F50">tokens_siginak.json 1.1 · raid_tokens.json 1.1</span>
+  </div>
+  <span style="font: 400 16px/1.4 'Libre Franklin', Arial, sans-serif; color: #463F34; margin-top: 8px">Biçim aynı. Her dosyada “_new_1_1” (yeni yollar), “_changed_1_1” (değişen yollar) ve “_was_1_1” (eski değerler) listeleri; yeni grupların “_” açıklamasında ★2. Sığınak: 87 yeni, 9 değişen. Baskın: 13 yeni, 10 değişen.</span>
+
+  <div class="st"><b>DEĞİŞEN · SIĞINAK</b><span>eski → yeni</span></div>
+  <div class="t">
+    <span class="h">YOL</span><span class="h">ESKİ</span><span class="h">YENİ</span>
+    <span class="p">colors.counter.tenths</span><span class="o">#801810 (kırmızı çark)</span><span>#E9DDBE açık çark, rakam #1C150E</span>
+    <span class="p">colors.counter.decimalDot</span><span class="o">#C9A86A nokta</span><span>#D4B06E pirinç virgül</span>
+    <span class="p">type.stamp</span><span class="o">CP 700 13 · 0,08</span><span>CP 700 14 · 0,04</span>
+    <span class="p">type.roomCardNameTex</span><span class="o">CP 700 29 tex</span><span>CP 700 84 tex (iki satır)</span>
+    <span class="p">type.roomCardLineTex</span><span class="o">CP 700 21 tex</span><span>CP 700 68 tex</span>
+    <span class="p">space.slipW</span><span class="o">tr 436 · en 452</span><span>432 (EN satır sarar)</span>
+    <span class="p">space.deltaTag</span><span class="o">84 × 36</span><span>72 × 28</span>
+    <span class="p">space.reportW</span><span class="o">600</span><span>540</span>
+    <span class="p">motion.stringS</span><span class="o">0,12</span><span>0,25</span>
+  </div>
+
+  <div class="st"><b>DEĞİŞEN · BASKIN</b><span>eski → yeni</span></div>
+  <div class="t">
+    <span class="h">YOL</span><span class="h">ESKİ</span><span class="h">YENİ</span>
+    <span class="p">labels.hpTag</span><span class="o">18 px, pip 7, CP 11, robot v+0,34</span><span>24 px, pip 11, CP 15, tür işareti 18, altlık önü</span>
+    <span class="p">labels.orderFlag</span><span class="o">yük. 21, CP 14</span><span>30 × 28, CP 20</span>
+    <span class="p">intents.fire</span><span class="o">3,0 px, uç 14</span><span>3,4 px, uç 16</span>
+    <span class="p">intents.melee</span><span class="o">yay 26 px</span><span>yay 14–26 px</span>
+    <span class="p">layout1080.teamCards</span><span class="o">sol sütun, 376 × 140</span><span>sol alt sıra, 3 × 237 × 84</span>
+    <span class="p">layout1080.targetForm</span><span class="o">sağ üst 376 × 262</span><span>sol üst görev çipi 592 × 147</span>
+    <span class="p">layout1080.endTurnButton</span><span class="o">1528, 1016 · 376 × 48</span><span>1580, 994 · 318 × 56</span>
+    <span class="p">layout1080.undoButton</span><span class="o">1274, 1018 · 112 × 44</span><span>1436, 994 · 136 × 56</span>
+    <span class="p">layout1080.retreatButton</span><span class="o">16, 1018 · 150 × 44</span><span>1724, 22 · 174 × 52</span>
+    <span class="p">layout1080.rulesCard</span><span class="o">sol, katlanır</span><span>üst şerit düğmesi 184 × 52</span>
+  </div>
+
+  <div class="st"><b>YENİ RENKLER ★2</b><span>alarm, pano, kapı, depo, fiş, rapor</span></div>
+  <div class="sw">
+    <span><i style="background: #24180F"></i>alarm.body</span><span><i style="background: #E9DDBE"></i>alarm.step</span><span><i style="background: #C0281C"></i>alarm.danger ≥8</span><span><i style="background: #F0443A"></i>alarm.lampOn 1,8</span>
+    <span><i style="background: #A27B52"></i>freedBoard.cork</span><span><i style="background: #F6F0DE"></i>freedBoard.card</span><span><i style="background: #1A4789"></i>freedBoard.stamp</span><span><i style="background: #4A4A52"></i>nextTargetPencil</span>
+    <span><i style="background: #3A3F33"></i>door.leaf</span><span><i style="background: #A3241A"></i>door.handwheel</span><span><i style="background: #E3B23C"></i>door.hazardYellow</span><span><i style="background: #FFB347"></i>door.knockLamp</span>
+    <span><i style="background: #2A2622"></i>door.intercom</span><span><i style="background: #E6E2D4"></i>door.chalk α .8</span><span><i style="background: #DDE3DD"></i>door.stairTile</span><span><i style="background: #121212"></i>door.visitorCloth</span>
+    <span><i style="background: #6B4A2E"></i>depot.crate</span><span><i style="background: #D9D2BF; opacity: 0.5"></i>depot.ghost α .22</span><span><i style="background: #9A9C98"></i>depot.bin / plate</span><span><i style="background: #2A2C28"></i>depot.slate</span>
+    <span><i style="background: #F5D646; opacity: 0.6"></i>slip.rowSelected .34</span><span><i style="background: #B8241A"></i>slip.pin</span><span><i style="background: #24592E"></i>slip.reward</span><span><i style="background: #C9A36B"></i>slip.teamDisc</span>
+    <span><i style="background: #F7F1E1"></i>report.summaryFill</span><span><i style="background: #F4EBCB"></i>counterAttackFill</span><span><i style="background: #9A1E14; opacity: 0.4"></i>chartOccupied .22</span><span><i style="background: #1A4789; opacity: 0.3"></i>chartRetaken .10</span>
+  </div>
+
+  <div class="st"><b>YENİ DAMGALAR ★2</b><span>[renk, kenar] · colors.stamp</span></div>
+  <div class="kv">
+    <span><b>sectorRetaken</b> #1A4789 çift</span><span><b>withdrawn</b> #9A1E14 çift</span><span><b>won</b> #24592E çift</span>
+    <span><b>lost</b> #9A1E14 çift</span><span><b>cause</b> #9A1E14 düz</span><span><b>success</b> #24592E düz</span>
+    <span><b>reoccupied</b> #9A1E14 düz</span><span><b>counterAttack</b> #9A1E14 çift</span><span><b>shot</b> #9A1E14 çift</span>
+    <span><b>maxLevel</b> #24592E düz</span><span><b>looked</b> #8A8374 düz</span><span><b>woke</b> #9A1E14 düz</span>
+  </div>
+
+  <div class="st"><b>YENİ YAZI ★2</b><span>aile · ağırlık · px · harf aralığı; Türkçe karakter sınaması</span></div>
+  <div class="spec">
+    <span class="n">Courier Prime 700</span><span style="font: 700 22px 'Courier Prime', monospace">ĞÜŞİÖÇ ğüşıöç · KAPI · DAĞILMA · 062,0</span>
+    <span class="n">Courier Prime 400</span><span style="font: 400 20px 'Courier Prime', monospace">Teleks: 014/08 YAPILAMADI · ğüşıöç</span>
+    <span class="n">Libre Franklin 400/600</span><span style="font: 400 20px 'Libre Franklin', Arial, sans-serif">Görevli başına günde 0,25 zırh plakası · <b style="font-weight: 600">Kapıyı aç</b></span>
+    <span class="n">Kalam 700 · el notu</span><span style="font: 700 24px 'Kalam', cursive; color: #1A2F5A">→ telsize 1 kişi, alarm yavaşlar · ĞÜŞİÖÇ ğüşıöç</span>
+  </div>
+  <div class="kv" style="margin-top: 8px">
+    <span><b>sahaLabel</b> CP 700 14 · .06</span><span><b>sahaValue</b> LF 600 18</span><span><b>doorTitle</b> CP 700 28 · .04</span>
+    <span><b>doorBody</b> LF 400 19</span><span><b>doorOption</b> LF 600 19</span><span><b>doorEffect</b> CP 700 16</span>
+    <span><b>summaryValue</b> CP 700 32</span><span><b>summaryNote</b> LF 600 17</span><span><b>reportFormula</b> LF 400 15</span>
+    <span><b>handNote</b> Kalam 700 20</span><span><b>trainingNote</b> Kalam 700 22</span><span><b>clipHeadline</b> CP 700 40</span>
+    <span><b>resultStamp</b> CP 700 34</span><span><b>fatalStamp</b> CP 700 66</span><span><b>finalStamp</b> CP 700 88</span>
+    <span><b>finalCause</b> CP 700 28</span><span><b>finalIndicator</b> CP 700 46</span><span><b>chalkSlateTex</b> CP 700 54 tex</span>
+  </div>
+
+  <div class="st"><b>ÖLÇÜ VE HAREKET ★2</b><span>px · saniye</span></div>
+  <div class="kv">
+    <span><b>slipStampCol</b> 138</span><span><b>slipRow</b> 52</span><span><b>sahaGlyph</b> 30</span>
+    <span><b>doorPaperW</b> 470</span><span><b>doorOptionH</b> 50</span><span><b>stepperButton</b> 52 × 46</span>
+    <span><b>resultCardW</b> 500</span><span><b>opReportW</b> 560</span><span><b>finalReport</b> 1620 × 952</span>
+    <span><b>edgeLineH</b> 40</span><span><b>trainingNoteW</b> 336</span><span><b>keyJewelBlinkHz</b> 1</span>
+    <span><b>slipSlideS</b> 0,22</span><span><b>pinDropS</b> 0,12</span><span><b>cardPinS</b> 0,35</span>
+    <span><b>doorKnockS</b> 0,9</span><span><b>peepCoverS</b> 0,15</span><span><b>doorLeafS</b> 0,8</span>
+    <span><b>fatalRedS</b> 0,05</span><span><b>fatalStampS</b> 0,12</span><span><b>fatalButtonDelayS</b> 0,6</span>
+    <span><b>pawnToRoomS</b> 0,35</span><span><b>summaryStaggerS</b> 0,12</span><span><b>finalChartDrawS</b> 1,2</span>
+  </div>
+
+  <div class="st"><b>KAMERA VE 3D YERLEŞİM ★2</b><span>Unity metre</span></div>
+  <div class="kv" style="grid-template-columns: repeat(2, minmax(0, 1fr))">
+    <span><b>cameras.door</b> pos 0,15 · 1,75 · 0,55 → hedef 2,2 · 1,28 · 1,0 · fov 62</span><span><b>cameras.opReport</b> yeni poz yok → cameras.map</span>
+    <span><b>layout3d.clipboard</b> raf yerel −0,46 · 0,86 · −0,02 (eski −0,40 · 0,78)</span><span><b>layout3d.idleTray</b> −0,46 · 0,78 · 0,155</span>
+    <span><b>layout3d.alarmBoard</b> 0,15 · 1,33 · 2,25 · 0,48 × 0,29</span><span><b>layout3d.freedBoard</b> −0,60 · 1,34 · 2,27 · 0,78 × 0,54</span>
+    <span><b>layout3d.keyRail</b> 6 tuş, aralık 0,226, kapı tuşu 4.</span><span><b>layout3d.door</b> x 2,2 · z 0,32–1,18 · kanat 95°</span>
+  </div>
+
+  <div class="st"><b>BASKIN · YENİ GRUPLAR ★2</b><span>raid_tokens.json</span></div>
+  <div class="kv" style="grid-template-columns: repeat(2, minmax(0, 1fr))">
+    <span><b>panel</b> kontrplak #C9A36B / #93703F · ozalit #D3DBD6 + #2C4C8E ızgara 24 px · bant #ECE2BE</span>
+    <span><b>turnStrip</b> hücre 34 · şimdiki #1E1B16 · geçmiş #B9C3BE · son iki kesikli #9A1E14 · SON TUR damgası</span>
+    <span><b>phaseChip</b> SIRA SENDE daire #24592E · MAKİNELER baklava #9A1E14 · OPERASYON BİTTİ kare</span>
+    <span><b>machineTypes</b> dron · bakım · kilitleyici · havan · kalkan dronu (S9-A)</span>
+    <span><b>intents.lock</b> yay 4,6 px + Ø26 kıskaç rozeti</span>
+    <span><b>labels.pawnTag · labels.wake</b> altlık önü, pip 11 · UYANDI CP 700 16</span>
+    <span><b>radioSlip</b> #EFE4BC, TELSİZ · K-07, CP 700 18, 3 s</span>
+    <span><b>abilityCard · resultCard · trainingNote</b> yer ve ölçü (S6, S7)</span>
+    <span><b>strings.en · strings.tr2</b> yeni metinler TR ve EN</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":2160}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

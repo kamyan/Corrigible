@@ -47,7 +47,11 @@ namespace Corrigible.Desk.Tests
         {
             var reg = DeskSprites.Instance;
             Assert.IsNotNull(reg);
-            Assert.AreEqual(DeskSpriteManifest.All.Count() + SadeSpriteManifest.All.Count(), reg.sprites.Count);
+            int glyphs = SiginakSpriteManifest.All.Count(e => e.Name.StartsWith("glyph_"));
+            Assert.AreEqual(40, glyphs);
+            Assert.AreEqual(DeskSpriteManifest.All.Count() + SadeSpriteManifest.All.Count() + glyphs, reg.sprites.Count);
+            Assert.AreEqual(reg.sprites.Count, reg.sprites.Select(s => s.name).Distinct().Count(), "kayıtta aynı ad iki kez");
+            Assert.IsTrue(reg.TryGet("glyph_armordrone_frame", out var glyph) && glyph.type == Image.Type.Simple && glyph.tint);
             Assert.IsTrue(reg.TryGet("sh_dash_r3_1", out var dash) && dash.type == Image.Type.Tiled);
             Assert.IsTrue(reg.TryGet("stamp_frame", out var stamp) && stamp.type == Image.Type.Sliced);
             Assert.IsNotNull(reg.Texture("tx_felt"));
@@ -57,7 +61,7 @@ namespace Corrigible.Desk.Tests
             Assert.IsNotNull(reg.Texture("tx_carbon_hatch"));
         }
 
-        /// <summary>Paketteki tx_carbon_hatch ve tx_quar_hatch tamamen saydamdı; yeniden üretildi (KARARLAR UI_Sade › F1).</summary>
+        /// <summary>Paketteki tx_carbon_hatch tamamen saydamdı; yeniden üretildi (KARARLAR UI_Sade › F1).</summary>
         [Test]
         public void SadeTextures_AreNotBlank()
         {

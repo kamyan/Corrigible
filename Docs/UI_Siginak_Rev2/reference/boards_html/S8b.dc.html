@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>S8b · Son rapor · KAYBEDİLDİ (Dağılma)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600;700&display=swap">
+<style>
+body{margin:0;background:#0E0906}
+a{color:#1A4789}a:hover{color:#1E1B16}
+.grain{background-image:url(../board_assets/grain.png);background-size:256px 256px}
+.ind{border:1.5px solid #463F34;background:#F7F1E1;padding:10px 16px 12px 16px;display:flex;flex-direction:column;gap:2px}
+.ind .l{font:700 15px 'Courier Prime',monospace;letter-spacing:0.08em;color:#675F50}
+.ind .v{font:700 46px/1.05 'Courier Prime',monospace}
+.ind .s{font:400 17px 'Libre Franklin',Arial,sans-serif;color:#463F34}
+.tp{display:grid;grid-template-columns:30px 70px minmax(0,1fr);align-items:baseline;column-gap:8px;font:400 19px 'Libre Franklin',Arial,sans-serif}
+.tp b{font:700 16px 'Courier Prime',monospace}
+.num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;border:1.5px solid #1E1B16;font:700 14px 'Courier Prime',monospace;background:#FBF7EC;box-sizing:border-box}
+</style>
+</helmet>
+<div style="position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #0E0906; font-family: 'Libre Franklin', Arial, sans-serif; color: #1E1B16">
+  <img src="../board_assets/s8b.jpg" alt="Harekât sonu, harita pozu: yalnız Batı ve Doğu Avrupa özgür, cephe Orta Doğu'da; sayaçlar 029, 018,5, 06/30, 011, 02/12, 00/20" style="position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: block">
+  <div style="position: absolute; inset: 0; background: rgba(14,9,6,0.62)"></div>
+
+  <div class="grain" style="position: absolute; left: 150px; top: 64px; width: 1620px; height: 952px; box-sizing: border-box; background-color: #F1E9D6; border: 1px solid #CDBF97; box-shadow: 6px 8px 0 rgba(0,0,0,0.5); padding: 28px 40px 30px 40px; display: flex; flex-direction: column">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 8px; border-bottom: 3px double #463F34">
+      <span style="font: 700 16px 'Courier Prime', monospace; letter-spacing: 0.1em">KYGA · HAREKÂT SONU RAPORU</span>
+      <span style="font: 400 16px 'Courier Prime', monospace; color: #463F34">SIĞINAK 07 · V.029 · tek nüsha</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 640px minmax(0, 1fr); column-gap: 32px; align-items: center; margin-top: 10px; height: 160px">
+      <div style="position: relative; display: flex; align-items: center; padding-left: 10px">
+        <span style="font: 700 80px/1 'Courier Prime', monospace; letter-spacing: 0.06em; color: #9A1E14; border: 8px double #9A1E14; padding: 10px 22px 6px 22px; transform: rotate(-4deg); mix-blend-mode: multiply">KAYBEDİLDİ</span>
+        <span style="position: absolute; right: 6px; bottom: -12px; font: 700 28px 'Courier Prime', monospace; letter-spacing: 0.08em; color: #9A1E14; border: 3px solid #9A1E14; padding: 2px 12px; background: rgba(241,233,214,0.85); transform: rotate(3deg)">DAĞILMA</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <span style="font: 600 28px/1.25 'Libre Franklin', Arial, sans-serif">Sivil güven sıfıra indi; Sığınak 07 dağıldı.</span>
+        <span style="font: 400 19px 'Libre Franklin', Arial, sans-serif; color: #463F34">Son vardiyada güven 1'den 0'a düştü. Dağılma, harekâtı bitiren üç sonuçtan biri.</span>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 16px">
+      <div class="ind"><span class="l">SÜRE</span><span class="v">29</span><span class="s">vardiya</span></div>
+      <div class="ind"><span class="l">BASKIN</span><span class="v">13</span><span class="s">9 başarılı · 4 başarısız</span></div>
+      <div class="ind"><span class="l">ÖZGÜR BÖLGE</span><span class="v">2/12</span><span class="s">7/36 sektör geri alındı</span></div>
+      <div class="ind"><span class="l">SIĞINAK NÜFUSU</span><span class="v" style="color: #9A1E14">3</span><span class="s">kişi kaldı</span></div>
+    </div>
+
+    <div style="margin-top: 18px; display: flex; align-items: baseline; justify-content: space-between">
+      <span style="font: 700 15px 'Courier Prime', monospace; letter-spacing: 0.08em; color: #675F50">İŞGAL ORANI</span>
+      <span style="font: 700 15px 'Courier Prime', monospace; letter-spacing: 0.06em; color: #675F50">VARDİYA 1–29</span>
+    </div>
+    <svg width="100%" viewBox="0 0 1560 200" role="img" aria-label="İşgal oranı 29 vardiyada yüzde yüzden yüzde seksen bire iniyor; 15. ve 22. vardiyada karşı saldırı çıkışları" style="display: block; margin-top: 4px">
+      <rect x="44" y="16" width="1500" height="150" fill="#1A4789" fill-opacity="0.10"></rect>
+      <path d="M44.0 16.0 L97.6 16.0 L151.1 16.0 L204.7 20.2 L258.3 20.2 L311.9 20.2 L365.4 24.3 L419.0 24.3 L472.6 24.3 L526.1 28.5 L579.7 28.5 L633.3 32.7 L686.9 32.7 L740.4 32.7 L794.0 28.5 L847.6 32.7 L901.1 36.8 L954.7 41.0 L1008.3 41.0 L1061.9 45.2 L1115.4 45.2 L1169.0 41.0 L1222.6 41.0 L1276.1 45.2 L1329.7 45.2 L1383.3 45.2 L1436.9 45.2 L1490.4 45.2 L1544.0 45.2 L1544.0 166.0 L44.0 166.0 Z" fill="#9A1E14" fill-opacity="0.22"></path>
+      <path d="M44.0 16.0 L97.6 16.0 L151.1 16.0 L204.7 20.2 L258.3 20.2 L311.9 20.2 L365.4 24.3 L419.0 24.3 L472.6 24.3 L526.1 28.5 L579.7 28.5 L633.3 32.7 L686.9 32.7 L740.4 32.7 L794.0 28.5 L847.6 32.7 L901.1 36.8 L954.7 41.0 L1008.3 41.0 L1061.9 45.2 L1115.4 45.2 L1169.0 41.0 L1222.6 41.0 L1276.1 45.2 L1329.7 45.2 L1383.3 45.2 L1436.9 45.2 L1490.4 45.2 L1544.0 45.2" fill="none" stroke="#9A1E14" stroke-width="3" stroke-linejoin="round"></path>
+      <rect x="44" y="16" width="1500" height="150" fill="none" stroke="#463F34" stroke-width="1.5"></rect>
+      <g font-family="Courier Prime, monospace" font-weight="700" font-size="14" fill="#463F34">
+        <text x="36" y="21" text-anchor="end">%100</text><text x="36" y="96" text-anchor="end">%50</text><text x="36" y="171" text-anchor="end">%0</text>
+        <text x="44" y="190" text-anchor="middle">1</text><text x="258.3" y="190" text-anchor="middle">5</text><text x="526.1" y="190" text-anchor="middle">10</text><text x="794" y="190" text-anchor="middle">15</text><text x="1061.9" y="190" text-anchor="middle">20</text><text x="1329.7" y="190" text-anchor="middle">25</text><text x="1544" y="190" text-anchor="middle">29</text>
+      </g>
+      <g font-family="Courier Prime, monospace" font-weight="700" font-size="15" letter-spacing="1.5">
+        <text x="70" y="148" fill="#7A1810">İŞGAL · %81</text>
+        <text x="1250" y="36" fill="#1A4789" font-size="14">GERİ ALINAN</text>
+      </g>
+      <g font-family="Courier Prime, monospace" font-weight="700" font-size="14" text-anchor="middle">
+        <circle cx="579.7" cy="28.5" r="12" fill="#FBF7EC" stroke="#1E1B16" stroke-width="1.5"></circle><text x="579.7" y="33.5">1</text>
+        <circle cx="954.7" cy="41" r="12" fill="#FBF7EC" stroke="#1E1B16" stroke-width="1.5"></circle><text x="954.7" y="46">2</text>
+        <circle cx="1169" cy="41" r="12" fill="#FBF7EC" stroke="#1E1B16" stroke-width="1.5"></circle><text x="1169" y="46">3</text>
+        <circle cx="1383.3" cy="45.2" r="12" fill="#FBF7EC" stroke="#1E1B16" stroke-width="1.5"></circle><text x="1383.3" y="50.2">4</text>
+        <circle cx="1530" cy="45.2" r="12" fill="#9A1E14" stroke="#9A1E14" stroke-width="1.5"></circle><text x="1530" y="50.2" fill="#FBF7EC">5</text>
+      </g>
+    </svg>
+
+    <div style="margin-top: 12px; display: grid; grid-template-columns: minmax(0, 1fr) 440px; column-gap: 40px; align-items: end">
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span style="font: 700 15px 'Courier Prime', monospace; letter-spacing: 0.08em; color: #675F50">KIRILMA ANLARI</span>
+        <div class="tp"><span class="num">1</span><b>V.011</b><span>Batı Avrupa özgür, ilk bölge</span></div>
+        <div class="tp"><span class="num">2</span><b>V.018</b><span>Doğu Avrupa özgür</span></div>
+        <div class="tp"><span class="num">3</span><b>V.022</b><span>YZ karşı saldırısı: Orta Doğu 01 yeniden işgal</span></div>
+        <div class="tp"><span class="num">4</span><b>V.026</b><span>Kapıda “İlaç yok” dendi · güven −1</span></div>
+        <div class="tp"><span class="num" style="background: #9A1E14; border-color: #9A1E14; color: #FBF7EC">5</span><b>V.029</b><span>Güven 0 · sığınak dağıldı</span></div>
+      </div>
+      <button type="button" style="height: 62px; display: flex; align-items: center; gap: 14px; padding: 0 18px 0 12px; background: #1E1B16; color: #F4ECD8; border: 0; border-radius: 3px; box-shadow: 0 3px 0 #463F34; font: 700 22px 'Libre Franklin', Arial, sans-serif; letter-spacing: 0.06em; cursor: pointer">
+        <span style="display: inline-flex; align-items: center; justify-content: center; height: 28px; padding: 0 8px; background: #E6CF9C; color: #1E1B16; border-radius: 2px; font: 700 15px 'Courier Prime', monospace; letter-spacing: 0">Enter</span>
+        <span style="flex: 1; text-align: left">YENİDEN BAŞLA</span>
+      </button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

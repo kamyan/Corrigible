@@ -43,7 +43,8 @@ namespace Corrigible.Desk
         /// <summary>Vardiya raporu fişleri: VARDİYA, FON, ERZAK, MALZEME sırasıyla; rapor dosyalanınca <see cref="Unpin"/>.</summary>
         public void Pin(string[] texts, Color[] inks)
         {
-            for (int i = 0; i < texts.Length && i < modules.Length; i++) modules[i].Pin(texts[i], inks[i]);
+            // Boş metin: o sayaca fiş asılmaz (operasyon raporu yalnız FON, ERZAK, MALZEME)
+            for (int i = 0; i < texts.Length && i < modules.Length; i++) if (!string.IsNullOrEmpty(texts[i])) modules[i].Pin(texts[i], inks[i]);
         }
 
         public void Unpin() { foreach (var m in modules) if (m != null) m.Unpin(); }

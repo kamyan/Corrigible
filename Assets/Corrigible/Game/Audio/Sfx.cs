@@ -19,7 +19,19 @@ namespace Corrigible.Game.Audio
         // Sığınağın kapısı
         DoorKnock = 50, DoorOpen = 51, DoorShot = 52,
         // Telsiz: sahayla tek bağ (hat açılır, emir iletilir, gözcü bildirir)
-        RadioTune = 53, RadioSend = 54, RadioReport = 55, RadioVoice = 56,
+        RadioTune = 53, RadioSend = 54, RadioReport = 55,
+        // Görev fişi (Revizyon 2 · S2): iğne bölgeye düşer, kâğıt hışırdar, kurşun kalem satırı işaretler
+        PinDrop = 56, PaperSlide = 57, Pencil = 58,
+        // Sığınak (Revizyon 2 · S3): piyon odaya oturur (“tok”), oda geliştirilir (çekiç)
+        PawnPlace = 59, Hammer = 60,
+        // Kapı (Revizyon 2 · S4): gözetleme kapağı (metal “şık”), kanat kapanırken çarkın “klak”ı, ağır damga (“tak”)
+        DoorPeep = 61, DoorClose = 62, StampHeavy = 63,
+        // Vardiya raporu (Revizyon 2 · S5b): karşı saldırıdan önce alarm lambasıyla alçak uğultu
+        AlarmHum = 64,
+        // Sonuç kartı (Revizyon 2 · S7): başarılı damgada kısa zil (başarısızda StampHeavy)
+        ResultBell = 65,
+        // Harekât sonu raporu (Revizyon 2 · S8): kazanınca uzun zil (kaybedince StampHeavy)
+        FinalBell = 66,
     }
 
     /// <summary>Sürekli çalan döngüler (sesi duruma göre açılıp kısılır).</summary>

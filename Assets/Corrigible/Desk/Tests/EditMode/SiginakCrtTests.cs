@@ -36,14 +36,53 @@ namespace Corrigible.Desk.Tests
         }
 
         [Test]
-        public void Screen_Waiting_ShowsTeamFrontAndHint()
+        public void Screen_Waiting_ShowsFourLines()
         {
             var sim = NewLiberation();
             var d = CrtViewBuilder.Screen(sim, false);
             Assert.AreEqual(Loc.T("DİNLEMEDE"), d.Title);
-            Assert.AreEqual(Loc.F("CEPHE: {0} / {1:00}", DeskText.Upper(Loc.T(GameData.Region(Simulation.HQ).Name)), 1), d.FrontLine);
+            // Revizyon 2 · S1: kısa cephe satırı (“BATI AVR. / 01”), ipucu yok
+            Assert.AreEqual(Loc.F("{0} / {1:00}", CrtViewBuilder.ShortRegion(Simulation.HQ), 1), d.FrontLine);
             Assert.IsFalse(d.TeamInverse);
-            Assert.AreEqual(Loc.T("Görev fişinden baskın emri verildiğinde hat açılır."), d.Hint);
+            Assert.IsNull(d.Hint);
+            Assert.IsNotNull(d.Sub, "YZ ALARMI satırı");
+        }
+
+        /// <summary>Revizyon 2 · S1: defterde son dört kayıt; hattın geçmişi baskın kaydından, en altta bugünkü hat durumu.</summary>
+        [Test]
+        public void RadioLog_LastFourEntriesFromRaidHistory()
+        {
+            var sim = NewLiberation();
+            var first = RadioLogBuilder.Entries(sim, false);
+            Assert.AreEqual(Loc.T("Dinlemede — emir bekleniyor"), first[first.Count - 1].text);
+            Assert.AreEqual(string.Format("{0:000}/02", sim.S.Day + 1), first[first.Count - 1].code, "sayaçtaki vardiya; bugünün ikinci satırı (ekip hazır, sonra hat)");
+            string name = LiberationMapBuilder.TeamName(sim.S.Teams[0]);
+            Assert.AreEqual(Loc.F("{0} hazır · cephe {1}", name, RadioLogBuilder.Short(Simulation.HQ)), first[0].text);
+
+            Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
+            Assert.AreEqual(Loc.T("Hat açık — ekip sahada"), RadioLogBuilder.Entries(sim, true).Last().text);
+            int day = sim.S.Day;
+            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true, Collateral = 1 }).Ok);
+            var after = RadioLogBuilder.Entries(sim, false);
+            Assert.LessOrEqual(after.Count, RadioLogBuilder.Shown);
+            Assert.AreEqual(Loc.F("{0} döndü · {1} alındı", name, Loc.F("{0} {1:00}", RadioLogBuilder.Short("weu"), 1)), after[0].text);
+            Assert.AreEqual(Loc.F("{0} sivil sunucu kırıldı", 1), after[1].text);
+            Assert.AreEqual(Loc.T("Hat kapandı — sonuç tekste"), after.Last().text);
+            Assert.IsTrue(after.All(e => e.code.StartsWith((day + 1).ToString("000") + "/")), "hepsi bu vardiyanın kaydı");
+            // Sonraki vardiyalarda eski kayıtlar yukarı kayar, en fazla dört satır kalır
+            for (int i = 0; i < 3; i++) sim.Step();
+            var later = RadioLogBuilder.Entries(sim, false);
+            Assert.AreEqual(RadioLogBuilder.Shown, later.Count);
+            Assert.AreEqual(Loc.T("Dinlemede — emir bekleniyor"), later.Last().text);
+        }
+
+        [Test]
+        public void ShortRegion_AbbreviatesLongSecondWord()
+        {
+            var weu = DeskText.Upper(Loc.T(GameData.Region("weu").Name)).Split(' ');
+            Assert.AreEqual(weu[0] + " " + weu[1].Substring(0, 3) + ".", CrtViewBuilder.ShortRegion("weu"), "BATI AVR.");
+            Assert.AreEqual(DeskText.Upper(Loc.T(GameData.Region("me").Name)), CrtViewBuilder.ShortRegion("me"), "ORTA DOĞU kısalmaz");
+            Assert.AreEqual(DeskText.Upper(Loc.T(GameData.Region("af").Name)), CrtViewBuilder.ShortRegion("af"), "tek sözcük");
         }
 
         [Test]

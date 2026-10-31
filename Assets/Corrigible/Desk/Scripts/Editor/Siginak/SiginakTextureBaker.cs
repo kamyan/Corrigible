@@ -7,14 +7,14 @@ namespace Corrigible.Desk.EditorTools
 {
     /// <summary>
     /// Odanın yazısız dokularını üretir (Docs/UI_Siginak/reference/scene_threejs/textures.js'in C# karşılığı): kalıp izli
-    /// beton (arka duvar, yan duvar, zemin), linolyum, klavye, telsiz kadranı ve afiş piktogramı. Taban renkleri
+    /// beton (arka duvar, yan duvar, zemin), linolyum, telsiz kadranı, afiş piktogramı ve merdiven fayansı. Taban renkleri
     /// tokenlardan; leke, iz ve gürültü oranları JS'teki sabitlerdir. Rastgelelik sabit tohumlu, çıktı her çalıştırmada aynı.
     /// Yazılar dokuya basılmaz (TMP + çeviri). Menü: Corrigible › Sığınak › Dokuları üret.
     /// </summary>
     public static class SiginakTextureBaker
     {
         public static readonly string[] Outputs =
-            { "tx_concrete_back", "tx_concrete_side", "tx_concrete_floor", "tx_lino", "tx_keyboard", "tx_radio_dial", "tx_poster_pictogram" };
+            { "tx_concrete_back", "tx_concrete_side", "tx_concrete_floor", "tx_lino", "tx_radio_dial", "tx_poster_pictogram", "tx_stair_tiles" };
 
         [MenuItem("Corrigible/Sığınak/Dokuları üret")]
         public static string Bake()
@@ -29,9 +29,9 @@ namespace Corrigible.Desk.EditorTools
             Save("tx_concrete_floor", Concrete(4.4f, 3.0f, 200, t.ColorOf("bunker.floor"), false, 0,
                 new[] { new Vector4(0.5f, 0.5f, 0.4f, 0.3f) }, false));
             Save("tx_lino", Lino(t.ColorOf("materials.lino")));
-            Save("tx_keyboard", Keyboard(t.ColorOf("materialsExtra.keyboard"), t.ColorOf("materialsExtra.keyboardKey")));
             Save("tx_radio_dial", RadioDial(t.ColorOf("light.radioDial")));
             Save("tx_poster_pictogram", Pictogram(t.ColorOf("materialsExtra.posterInk")));
+            Save("tx_stair_tiles", StairTiles(t.ColorOf("door.stairTile")));
             AssetDatabase.Refresh();
             foreach (var name in Outputs)
                 AssetDatabase.ImportAsset(SiginakSpriteManifest.TexturesDir + "/" + name + ".png", ImportAssetOptions.ForceUpdate);
@@ -196,28 +196,46 @@ namespace Corrigible.Desk.EditorTools
             return x;
         }
 
-        // textures.js › keyboardTex
-        static Canvas Keyboard(Color body, Color key)
+        /// <summary>Yalnız merdiven fayansını üretir (öteki dokulara dokunmaz).</summary>
+        public static string BakeStairTiles()
         {
-            var x = new Canvas(840, 300, body);
-            for (int r = 0; r < 5; r++)
-            for (int k = 0; k < 14; k++)
+            Save("tx_stair_tiles", StairTiles(SiginakTheme.Active.ColorOf("door.stairTile")));
+            AssetDatabase.Refresh();
+            AssetDatabase.ImportAsset(SiginakSpriteManifest.TexturesDir + "/tx_stair_tiles.png", ImportAssetOptions.ForceUpdate);
+            return SiginakSpriteManifest.TexturesDir + "/tx_stair_tiles.png";
+        }
+
+        /// <summary>
+        /// Merdiven boşluğunun fayansı (Revizyon 2 · S4d): 4 × 4 kare fayans (#DDE3DD), 3 px koyu derz, fayans başına hafif
+        /// ton farkı ve kir. Malzeme metre başına 4 fayans olacak şekilde döşer.
+        /// </summary>
+        static Canvas StairTiles(Color tile)
+        {
+            const int size = 256, n = 4, grout = 3;
+            // Kendi tohumuyla: tek başına üretilince de Bake'tekiyle aynı
+            seed = 7654321;
+            var x = new Canvas(size, size, new Color(tile.r * 0.62f, tile.g * 0.62f, tile.b * 0.62f, 1));
+            for (int r = 0; r < n; r++)
+            for (int c = 0; c < n; c++)
             {
-                float kx = 24 + k * 57 + (r % 2) * 14, ky = 22 + r * 54;
-                if (kx > 800) continue;
-                x.Rect(kx, ky, 48, 44, key, 1);
-                x.Rect(kx, ky + 38, 48, 6, Color.black, 0.25f);
+                float k = 0.94f + Rnd() * 0.08f;
+                var shade = new Color(tile.r * k, tile.g * k, tile.b * k, 1);
+                x.Rect(c * 64 + grout, r * 64 + grout, 64 - grout, 64 - grout, shade, 1);
+                // Fayansın üst kenarı ışığı yakalar
+                x.Rect(c * 64 + grout, r * 64 + grout, 64 - grout, 2, Color.white, 0.18f);
             }
+            for (int i = 0; i < 24; i++) x.Ellipse(Rnd() * size, Rnd() * size, 6 + Rnd() * 20, 4 + Rnd() * 10, Rnd() * 3, Color.black, 0.012f + Rnd() * 0.015f);
+            x.Noise(6);
             return x;
         }
 
-        // textures.js › radioDialTex (yazısız; rakamlar TMP)
+        // tex2.js › radioFace kadran penceresi (560 × 170; yazısız: kanal rakamları ve KANAL TMP)
         static Canvas RadioDial(Color dial)
         {
-            var x = new Canvas(512, 96, dial);
-            x.VerticalFade(0, 512, 0, 96, Rgb(184, 116, 42), 0, 1);
-            for (int i = 0; i < 40; i++) x.Rect(20 + i * 12, 60, 2, i % 5 == 0 ? 28 : 14, Rgb(58, 36, 12), 1);
-            x.Rect(300, 8, 4, 84, Rgb(154, 30, 20), 1);
+            var x = new Canvas(560, 170, Rgb(240, 189, 98));
+            x.VerticalFade(0, 560, 0, 170, Rgb(196, 128, 47), 0, 1);
+            for (int i = 0; i < 46; i++) x.Rect(24 + i * 11.6f, 106, 3, i % 5 == 0 ? 46 : 22, Rgb(58, 36, 12), 1);
+            x.Rect(254, 10, 6, 150, Rgb(154, 30, 20), 1);
             return x;
         }
 
@@ -257,6 +275,21 @@ namespace Corrigible.Desk.EditorTools
                 }
             Save("ui_crt_glass_cover", c, SiginakSpriteManifest.SpritesDir);
             return SiginakSpriteManifest.SpritesDir + "/ui_crt_glass_cover.png";
+        }
+
+        /// <summary>
+        /// Görev fişindeki ekip diski (Revizyon 2 · S2 › ekip diskleri): Ø 22 px, #C9A36B, 1,5 px kenar #5C4826; 2× çizilir
+        /// (44 px), yarı boy gösterilir. Renkli sprite (boyanmaz); harfi TMP.
+        /// </summary>
+        public static string TeamDisc()
+        {
+            const int size = 44;
+            var t = SiginakTheme.Active;
+            var c = new Canvas(size, size, Color.clear);
+            c.Circle(size / 2f, size / 2f, size / 2f - 0.5f, t.ColorOf("slip.teamDiscRim"), 1);
+            c.Circle(size / 2f, size / 2f, size / 2f - 3.5f, t.ColorOf("slip.teamDisc"), 1);
+            Save("ui_team_disc", c, SiginakSpriteManifest.SpritesDir);
+            return SiginakSpriteManifest.SpritesDir + "/ui_team_disc.png";
         }
 
         static void Save(string name, Canvas c) => Save(name, c, SiginakSpriteManifest.TexturesDir);

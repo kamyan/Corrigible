@@ -4,7 +4,6 @@ using UnityEngine;
 namespace Corrigible.Desk
 {
     public interface IRaidDataSource { RaidViewModel Current { get; } event Action<RaidViewModel> Changed; }
-    public interface IRaidPreviewSource { void LoadPreset(int screen); void LoadBoardPreset(string id); }
     public interface IRaidCommands
     {
         void SelectUnit(char letter); void ClearSelection();
@@ -19,40 +18,54 @@ namespace Corrigible.Desk
         public bool Selected, Move, Ability, Armed, Down, Warn;
         /// <summary>Zırh plakası (ilk hasarı karşılar); yedek uzman (acemi); baskına çıkmadı (sığınakta yaralı).</summary>
         public int Armor; public bool Rookie, Absent;
+        /// <summary>Kilit niyetinin hedefindeyse “KİLİT TEHDİDİ · #n”; kartın hak satırı yerine kırmızı (Revizyon 2 · S6c).</summary>
+        public string Threat;
     }
     [Serializable] public sealed class RaidTargetModel
-    { public string Name, Thumb; public int Hp, Max; public bool Armor, Broken; }
+    {
+        public string Name, Thumb; public int Hp, Max; public bool Armor, Broken;
+        /// <summary>Paftadaki kare adı (“F4”); görev çipinde adın yanında (Revizyon 2 · S6).</summary>
+        public string Cell;
+    }
     [Serializable] public sealed class RaidCardRow
     { public string Icon, Text, Detail; public bool Good, Used, Armed; }
     [Serializable] public sealed class RaidInspectorModel
     { public string Thumb, Title; public int Hp, Max; public bool Win, IsLootMission; public RaidCardRow[] Rows = Array.Empty<RaidCardRow>(); }
     [Serializable] public sealed class RaidQueueItem { public int Order; public string State; }
     [Serializable] public sealed class RaidLogModel { public string Text,Kind; }
-    /// <summary>Telsiz şeridinin bir satırı: konuşan (GÖZCÜ, 07) ve söylediği.</summary>
-    [Serializable] public sealed class RaidRadioLine { public string Who,Text; }
+    /// <summary>Sonuç kartının satırı (Revizyon 2 · S7): ad solda, değer sağda; iyi sonuç yeşil.</summary>
+    [Serializable] public sealed class RaidResultRow { public string Label,Value; public bool Good; }
     [Serializable] public sealed class RaidUnusedModel { public char Letter; public string Name; public bool Move,Ability; public int ThreatOrder; }
     [Serializable] public sealed class RaidViewModel
     {
         public bool LastTurn,Finished,Success,EventVisible,IsLootMission;
         /// <summary>İkmal görevinde kasa alındı: Teknisyen malzemeyi girişe geri taşıyor.</summary>
         public bool Escaping;
-        public string EventLine,ResultTitle,ResultSubtitle,ResultReason;
-        public int Standing,TeamCount;public Vector3 Spot;
+        /// <summary>Sonuç kartı (S7): başlık yerindeki tek damga, “TUR 6/8”, yer satırı (“Doğu Avrupa · 02 Tahliye geçidi”), üç satır.</summary>
+        public string EventLine,ResultTitle,ResultTurn,ResultPlace;
+        public RaidResultRow[] ResultRows=Array.Empty<RaidResultRow>();
+        public Vector3 Spot;
         public RaidQueueItem[] Queue=Array.Empty<RaidQueueItem>();
         public RaidLogModel[] Log=Array.Empty<RaidLogModel>();
-        /// <summary>Son telsiz konuşmaları, en yenisi sonda.</summary>
-        public RaidRadioLine[] Radio=Array.Empty<RaidRadioLine>();
         public RaidUnusedModel[] Unused=Array.Empty<RaidUnusedModel>();
         public int Turn, Turns, Civilians, CivilianBroken;
         /// <summary>Sivil güven: bu baskında kırılanlar düşülmüş hâli ve tavanı (tavan 0: harekâtsız önizleme, etiket SİVİL kalır).</summary>
         public int Trust, TrustMax;
         public bool Locked, AbilityArmed, CanUndo, EndConfirm, RetreatArmed, FastMachines, Paused, LogUnread;
         public string Phase, OpenPanel, AbilityTip, AbilityLabel, Status;
+        /// <summary>Görev çipi (Revizyon 2 · S6): bölge özelliğinin işareti (sprite adı; yoksa null) ve amaç satırı.</summary>
+        public string TraitGlyph, Goal;
+        /// <summary>Okunmamış telsiz satırı sayısı (TELSİZ düğmesindeki kırmızı yuvarlak).</summary>
+        public int LogUnreadCount;
+        /// <summary>Makine evresi: oynanan hamle ve toplam (kilitli kâğıtta “2/3 hamle”).</summary>
+        public int MachineMove, MachineMoves;
         public RaidTeamModel[] Team = Array.Empty<RaidTeamModel>();
         public RaidTargetModel[] Targets = Array.Empty<RaidTargetModel>();
         public RaidTeamModel UnitCard; public RaidInspectorModel HoverCard;
         public RaidCardRow[] UnitRows = Array.Empty<RaidCardRow>();
         public string[] Effects = Array.Empty<string>();
+        /// <summary>Yetenek alt düğmelerinin anlamı (Effects ile aynı sıra): “good” görev (yeşil), “bad” robota vurur (kırmızı), “plain”.</summary>
+        public string[] EffectTones = Array.Empty<string>();
         public Vector2Int[] CollisionTiles = Array.Empty<Vector2Int>();
         public Vector2Int[] Moves = Array.Empty<Vector2Int>(), AbilityTargets = Array.Empty<Vector2Int>();
     }

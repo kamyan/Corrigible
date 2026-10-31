@@ -44,16 +44,9 @@ namespace Corrigible.Desk
         public ShadowSpec s3 = new ShadowSpec { offset = new Vector2(3, 4), color = new Color(0, 0, 0, 0.40f) };
         public ShadowSpec s5 = new ShadowSpec { offset = new Vector2(5, 6), color = new Color(0, 0, 0, 0.50f) };
 
-        [Header("Damga")]
-        public Vector2 stampRotationRange = new Vector2(-5, 5);
-        [Range(0, 1)] public float stampOpacity = 0.92f;
-
         [Header("Hareket (sn)")]
         public float hoverLift = 0.08f;
         public float press = 0.06f;
-        public float telexSpeed = 26f;
-        public float modalScrim = 0.15f;
-        public float modalDrop = 0.18f;
 
         // ------------------------------------------------------------------ etkin tema
         const string ResourcePath = "DeskTheme";
@@ -120,27 +113,5 @@ namespace Corrigible.Desk
             ShadowPreset.S1 => s1, ShadowPreset.S2 => s2, ShadowPreset.S3 => s3, ShadowPreset.S5 => s5,
             _ => default,
         };
-
-        // ------------------------------------------------------------------ tipografi
-        /// <summary>Ailenin doğal satır yüksekliği (em): Courier 1,123 · Franklin 1,212 · Kalam 1,594.</summary>
-        public static float NaturalLineHeight(DeskFont f) => f switch
-        {
-            DeskFont.CpRegular or DeskFont.CpBold => 1.123f,
-            DeskFont.KalamRegular or DeskFont.KalamBold => 1.594f,
-            _ => 1.212f,
-        };
-
-        /// <summary>CSS satır yüksekliği (em) → TMP <c>lineSpacing</c>: (LH − doğal) × 100.</summary>
-        public static float LineSpacing(DeskFont f, float cssLineHeightEm) => (cssLineHeightEm - NaturalLineHeight(f)) * 100f;
-
-        /// <summary>Damga açısı: kimlikten kararlı −5°…+5° (VM açı vermezse).</summary>
-        public float StampAngle(string id, float? vmAngle = null)
-        {
-            if (vmAngle.HasValue) return vmAngle.Value;
-            uint h = 2166136261;
-            foreach (var ch in id ?? "") h = (h ^ ch) * 16777619;
-            float t = (h % 10001) / 10000f;
-            return Mathf.Lerp(stampRotationRange.x, stampRotationRange.y, t);
-        }
     }
 }

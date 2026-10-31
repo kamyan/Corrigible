@@ -54,11 +54,23 @@ namespace Corrigible.Desk.Tests
             sim.S.Alarm = sim.B.liberationAlarmThreshold - sim.B.liberationAlarmPerShift;
             var before = ShiftReportBuilder.Capture(sim);
             sim.Step();
-            var d = ShiftReportBuilder.Build(ShiftReportBuilder.Input(sim, before, ShiftReportBuilder.Ledger(sim), null));
-            string lost = Loc.F("{0} · {1}", Loc.T("Batı Avrupa"), Loc.T("Tedarik deposu"));
+            var input = ShiftReportBuilder.Input(sim, before, ShiftReportBuilder.Ledger(sim), null);
+            input.counterCode = "015/03";
+            var d = ShiftReportBuilder.Build(input);
+            string lost = Loc.F("{0} · {1:00} {2}", Loc.T("Batı Avrupa"), 1, Loc.T("Tedarik deposu"));
             Assert.AreEqual(Loc.F("{0} yeniden işgal altında · sivil güven −{1}", lost, sim.B.liberationCounterattackTrust), d.Counterattack);
-            Assert.AreEqual(Loc.T("KARŞI SALDIRI"), d.Teams[1].Value);
-            Assert.IsTrue(d.Teams[1].HideIcon, "YZ alarmı satırında ekip simgesi yok");
+            // S5b: raporun başında kutu; alarm gözü eşikte kırmızı, ölçek dolu; alarm notu yok, ekip bölümünde alarm satırı yok
+            Assert.AreEqual(Loc.T("YZ KARŞI SALDIRISI"), d.CounterTitle);
+            Assert.AreEqual("015/03", d.CounterCode);
+            Assert.AreEqual(Loc.F("{0} yeniden işgal altında.", lost), d.CounterText);
+            int steps = (int)sim.B.liberationAlarmThreshold;
+            Assert.IsTrue(d.Alarm.Alert);
+            Assert.AreEqual(ReportTone.Alert, d.Alarm.DeltaTone);
+            StringAssert.StartsWith(steps + "<size=20>/" + steps, d.Alarm.Value);
+            Assert.AreEqual(Loc.F("{0} → {1} · EŞİK", DeskFormat.Number(before.alarm, 0), steps), d.Alarm.Line);
+            Assert.AreEqual(steps, d.AlarmCells);
+            Assert.IsNull(d.AlarmNote);
+            Assert.IsTrue(d.Teams.All(t => t.Label != Loc.T("YZ alarmı")), "alarm dökümde tekrar edilmez");
         }
 
         [Test]
@@ -82,8 +94,29 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(52.5, d.Closing, 1e-9);
             Assert.AreEqual(d.Opening + input.ledger.Sum(e => e.fon) + d.Income, d.Closing, 1e-9, "satırlar kapanışa çıkar");
 
-            // ÜRETİM: toplama +1,4 · tüketim −2,8 · zırh plakası 0/3 ±0 (döküm yarıda) · Erzak 22,0 → 20,6 / 30 −1,4 (erzak kıt)
-            Assert.AreEqual(4, d.Production.Count);
+            // ÖZET (S5a): ERZAK 20,6/30 · 14 vardiya yeter · −1,4; YZ ALARMI +1 ölçekle; FON 62,0 → 52,5
+            Assert.AreEqual(Loc.T("ERZAK"), d.Supplies.Label);
+            Assert.AreEqual(N(20.6) + "<size=20>/30</size>", d.Supplies.Value);
+            Assert.AreEqual((S(-1.4), ReportTone.Bad), (d.Supplies.Delta, d.Supplies.DeltaTone));
+            Assert.AreEqual(Loc.F("{0} vardiya yeter", 14), d.Supplies.Line, "S3'ün hesabı: ⌊20,6 ÷ 1,4⌋");
+            Assert.AreEqual(ShelterViewBuilder.ShiftsLeft(20.6, -1.4), 14);
+            Assert.AreEqual(Loc.T("YZ ALARMI"), d.Alarm.Label);
+            Assert.AreEqual("+1", d.Alarm.Delta);
+            Assert.AreEqual(ReportTone.Plain, d.Alarm.DeltaTone, "alarmın artısı yeşil değil");
+            Assert.IsFalse(d.Alarm.Alert);
+            Assert.AreEqual((int)input.after.alarm, d.AlarmCells);
+            Assert.AreEqual(10, d.AlarmSteps);
+            Assert.AreEqual(8, d.AlarmHighFrom);
+            Assert.AreEqual(Loc.F("{0} → {1} · {2} karşı saldırı", DeskFormat.Number(input.before.alarm, 0), DeskFormat.Number(input.after.alarm, 0),
+                TrNumber.WithLocative(10, "0")), d.Alarm.Line);
+            Assert.IsNotNull(d.AlarmNote);
+            Assert.AreEqual(N(52.5), d.FundsEye.Value);
+            Assert.AreEqual((S(-9.5), ReportTone.Bad), (d.FundsEye.Delta, d.FundsEye.DeltaTone), "FON gözü vardiyanın bütünü");
+            Assert.AreEqual(Loc.F("{0} → {1}", N(62), N(52.5)), d.FundsEye.Line);
+            Assert.IsNull(d.CounterTitle);
+
+            // ÜRETİM: toplama +1,4 · tüketim −2,8 · zırh plakası 0/3 ±0 (döküm yarıda); erzakın toplamı özette, dökümde yok
+            Assert.AreEqual(3, d.Production.Count);
             Row(d.Production[0], Loc.T("Erzak toplama"), S(1.4), ReportTone.Good);
             Assert.AreEqual(Loc.F("yaşam alanı · {0} kişi", 2), d.Production[0].Note);
             Row(d.Production[1], Loc.T("Erzak tüketimi"), S(-2.8), ReportTone.Bad);
@@ -92,20 +125,19 @@ namespace Corrigible.Desk.Tests
             Assert.IsNull(d.Production[2].Badge);
             Assert.AreEqual(Loc.F("{0} kişi × {1} · plaka {2} malzeme", 2, DeskFormat.Number(0.25, 2), 4), d.Production[2].Note);
             Assert.AreEqual(0.5, input.after.plateProgress, 1e-9);
-            Row(d.Production[3], Loc.F("Erzak {0} → {1} / {2}", N(22), N(20.6), 30), S(-1.4), ReportTone.Bad, true);
+            Assert.IsFalse(d.Production.Any(r => r.Total), "erzak satırı tekrar edilmez");
 
             Assert.AreEqual(Loc.T("→ revir onarılırsa yaralar sarılır"), d.Analyst);
 
-            // EKİP: Teknisyen düştü (3 → 2 gün), yerine yedek çıkar; revir hasarlı
-            // Ekiplerin altında YZ alarmı: vardiya +1, karşı saldırı yok; fikstür vardiyayı kapıdaki ziyaretçiyi açmadan kapatır
-            Assert.AreEqual(3, d.Teams.Count);
-            StringAssert.StartsWith(Loc.F("Kapı · {0}", ""), d.Teams[2].Label);
-            Assert.AreEqual(Loc.T("AÇILMADI"), d.Teams[2].Value);
-            Assert.IsTrue(d.Teams[2].HideIcon, "kapı satırında ekip simgesi yok");
+            // EKİP: Teknisyen düştü (3 → 2 gün), yerine yedek çıkar; revir hasarlı. Fikstür vardiyayı kapıdaki ziyaretçiyi
+            // açmadan kapatır: kapı satırı ekibin altında; alarm özette (dökümde satırı yok)
+            Assert.AreEqual(Loc.T("EKİP"), d.TeamTitle);
+            Assert.AreEqual(2, d.Teams.Count);
+            StringAssert.StartsWith(Loc.F("Kapı · {0}", ""), d.Teams[1].Label);
+            Assert.AreEqual(Loc.T("AÇILMADI"), d.Teams[1].Value);
+            Assert.IsTrue(d.Teams[1].HideIcon, "kapı satırında ekip simgesi yok");
             Assert.AreEqual(1, input.door.Count);
-            Assert.AreEqual(Loc.T("YZ alarmı"), d.Teams[1].Label);
             Assert.AreEqual(input.before.alarm + 1, input.after.alarm, 1e-9);
-            StringAssert.EndsWith("/ " + DeskFormat.Number(input.after.alarmThreshold, 0), d.Teams[1].Value);
             Assert.IsNull(d.Counterattack);
             Assert.AreEqual(Loc.F("{0} · {1} yaralı", Loc.T("Alfa"), 1), d.Teams[0].Label);
             Assert.AreEqual(Loc.T("YEDEKLE HAZIR"), d.Teams[0].Value);
@@ -119,6 +151,37 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual((S(-1.4), ReportTone.Bad), d.Slips[2]);
             Assert.AreEqual(("±0", ReportTone.Neutral), d.Slips[3]);
             Assert.AreEqual(Loc.F("VARDİYA {0} BAŞLAT", TrNumber.WithAccusative(15, "000", true)), d.Action);
+        }
+
+        [Test]
+        public void ToneRule_PlusGreen_MinusInk_ZeroGrey_RedOnlyForThreshold()
+        {
+            // İşaret metinde: artı “+”, eksi U+2212, sıfır “±0”
+            Assert.AreEqual(S(2.5), ShiftReportBuilder.Delta(2.5, 1));
+            StringAssert.StartsWith("+", ShiftReportBuilder.Delta(2.5, 1));
+            StringAssert.StartsWith("\u2212", ShiftReportBuilder.Delta(-1.4, 1));
+            Assert.AreEqual("±0", ShiftReportBuilder.Delta(0.04, 1));
+            Assert.AreEqual(ReportTone.Good, ShiftReportBuilder.Tone(2.5, 1));
+            Assert.AreEqual(ReportTone.Bad, ShiftReportBuilder.Tone(-1.4, 1));
+            Assert.AreEqual(ReportTone.Neutral, ShiftReportBuilder.Tone(0.04, 1));
+            // Renk: + yeşil, − mürekkep, ±0 gri; kırmızı yalnız uyarı (alarm eşiği, işgal)
+            var t = SiginakTheme.Active;
+            Assert.AreEqual(t.ColorOf("report.positive"), t.ColorOf(ShiftReportBuilder.ToneColor(ReportTone.Good)));
+            Assert.AreEqual(t.ColorOf("ink"), t.ColorOf(ShiftReportBuilder.ToneColor(ReportTone.Bad)), "eksi mürekkep");
+            Assert.AreEqual(t.ColorOf("report.neutral"), t.ColorOf(ShiftReportBuilder.ToneColor(ReportTone.Neutral)));
+            Assert.AreEqual(t.ColorOf("report.counterAttackLine"), t.ColorOf(ShiftReportBuilder.ToneColor(ReportTone.Alert)));
+            foreach (ReportTone tone in System.Enum.GetValues(typeof(ReportTone)))
+                if (tone != ReportTone.Alert) Assert.AreNotEqual(t.ColorOf("report.counterAttackLine"), t.ColorOf(ShiftReportBuilder.ToneColor(tone)), tone.ToString());
+            // Raporun bütün satırları ve fişleri kurala uyar
+            var (_, d) = K6();
+            foreach (var row in d.Funds.Concat(d.Production).Where(r => !r.Total && r.Tone != ReportTone.Plain))
+            {
+                if (row.Value.StartsWith("+")) Assert.AreEqual(ReportTone.Good, row.Tone, row.Label);
+                else if (row.Value.StartsWith("\u2212")) Assert.AreEqual(ReportTone.Bad, row.Tone, row.Label);
+                else Assert.AreEqual(("±0", ReportTone.Neutral), (row.Value, row.Tone), row.Label);
+            }
+            foreach (var (text, tone) in d.Slips)
+                Assert.AreEqual(text.StartsWith("+") ? ReportTone.Good : text == "±0" ? ReportTone.Neutral : ReportTone.Bad, tone, text);
         }
 
         [Test]
@@ -197,7 +260,10 @@ namespace Corrigible.Desk.Tests
             Assert.IsNull(d.Production[3].Badge);
             Assert.AreEqual(Loc.F("{0} kişi × {1} · plaka {2} malzeme", 2, DeskFormat.Number(0.25, 2), 4), d.Production[3].Note);
             Assert.AreEqual(Loc.T("DEPO DOLU"), ShiftReportBuilder.Build(Synthetic(after, Snap(22, 36, 40))).Production.Single(r => r.Badge != null).Badge, "depo doluyken döküm bekler");
-            Row(d.Production[4], Loc.F("Erzak {0} → {1} / {2}", N(38), N(40), 40), S(2), ReportTone.Good, true);
+            Assert.AreEqual(4, d.Production.Count, "erzakın toplamı özette (ERZAK gözü)");
+            Assert.AreEqual(N(40) + "<size=20>/40</size>", d.Supplies.Value);
+            Assert.AreEqual((S(2), ReportTone.Good), (d.Supplies.Delta, d.Supplies.DeltaTone));
+            Assert.AreEqual(Loc.T("erzak artıyor"), d.Supplies.Line);
             Assert.AreEqual(("±0", ReportTone.Neutral), (ShiftReportBuilder.Delta(0.04, 1), ShiftReportBuilder.Tone(0.04, 1)), "yuvarlanınca sıfır");
             Assert.AreEqual(ReportTone.Bad, ShiftReportBuilder.Tone(-0.05, 1));
             Assert.IsNull(d.Analyst, "boşta kişi ve yaralı yok: öneri yok");
@@ -348,15 +414,32 @@ namespace Corrigible.Desk.Tests
                 Assert.AreEqual(8, view.FindProperty("fundsRows").arraySize);
                 Assert.AreEqual(6, view.FindProperty("productionRows").arraySize);
                 Assert.AreEqual(4, view.FindProperty("failures").arraySize);
-                // Ekip bölümü: Alfa + YZ alarmı; alarm satırı ekip simgesini gizleyebilsin
+                // Ekip bölümü: Alfa + kapı; kapı satırı ekip simgesini gizleyebilsin
                 var teamRows = view.FindProperty("teamRows");
-                Assert.AreEqual(3, teamRows.arraySize, "ekip, YZ alarmı ve kapı");
+                Assert.AreEqual(3, teamRows.arraySize, "ekip ve kapı (yedek yuva)");
                 for (int i = 0; i < teamRows.arraySize; i++)
                 {
                     var icon = (UnityEngine.UI.Image)teamRows.GetArrayElementAtIndex(i).FindPropertyRelative("icon").objectReferenceValue;
                     Assert.IsNotNull(icon, "ekip satırı simgesi " + i);
                     Assert.IsTrue(icon.transform.IsChildOf(((GameObject)teamRows.GetArrayElementAtIndex(i).FindPropertyRelative("root").objectReferenceValue).transform));
                 }
+
+                // Revizyon 2 · S5: Overlay sol 24 · üst 274, 540 px; karşı saldırı kutusu, üç göz, on hücreli alarm ölçeği
+                foreach (var f in new[] { "sheet", "paper", "shadow", "group", "counterBox", "counterStamp", "counterHover", "counterTitle", "counterCode",
+                             "counterText", "cellFill", "cellFrame", "alarmNote", "action", "actionHover", "actionFace", "actionShadow" })
+                    Assert.IsNotNull(view.FindProperty(f).objectReferenceValue, f);
+                var eyes = view.FindProperty("eyes");
+                Assert.AreEqual(3, eyes.arraySize);
+                for (int i = 0; i < 3; i++)
+                    foreach (var f in new[] { "root", "group", "hover", "label", "delta", "value", "line" })
+                        Assert.IsNotNull(eyes.GetArrayElementAtIndex(i).FindPropertyRelative(f).objectReferenceValue, "göz " + i + " · " + f);
+                Assert.AreEqual(10, view.FindProperty("alarmCells").arraySize);
+                var sheet = (RectTransform)view.FindProperty("sheet").objectReferenceValue;
+                Assert.AreEqual(new Vector2(0, 1), sheet.anchorMin);
+                Assert.AreEqual(new Vector2(0.5f, 1), sheet.pivot);
+                Assert.AreEqual(540, sheet.sizeDelta.x, 0.5f);
+                Assert.AreEqual(new Vector2(24 + 270, -274), sheet.anchoredPosition);
+                Assert.IsFalse(((GameObject)view.FindProperty("counterBox").objectReferenceValue).activeSelf, "karşı saldırı kutusu kapalı başlar");
 
                 var sequence = (ShiftSequence)so.FindProperty("sequence").objectReferenceValue;
                 var amber = (Light)new SerializedObject(sequence).FindProperty("amber").objectReferenceValue;

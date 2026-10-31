@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Corrigible.Core;
 using Corrigible.Game;
+using Corrigible.Game.Audio;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -21,6 +22,8 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] DeskTarget[] roomTargets = System.Array.Empty<DeskTarget>();
         [SerializeField] IdleTray tray;
         [SerializeField] ShelterClipboard board;
+        [Tooltip("Maketin üst bandındaki DEPO (Revizyon 2 · S3).")]
+        [SerializeField] ShelterStore store;
         [Tooltip("K1'de maketin bütünü (2 SIĞINAK); raf pozunda kapanır, odalar tek tek tıklanır.")]
         [SerializeField] DeskTarget shelfTarget;
 
@@ -75,6 +78,7 @@ namespace Corrigible.Desk.Bridge
         public void Select(string roomId)
         {
             if (surface != null && surface.InputBlocked) return;
+            if (selected != roomId) Sfx.Play(Cue.PaperSlide, 0.5f);
             selected = roomId;
             Refresh(false);
         }
@@ -108,9 +112,10 @@ namespace Corrigible.Desk.Bridge
                 workers[d.Id] = d.Workers;
             }
             tray.Bind(ShelterLogic.AvailableWorkers(sim.Shelter));
-            if (arrived != null) View(arrived)?.HopIn(arrivedIndex, fromTray);
-            if (left != null) tray.HopIn(leftFrom);
+            if (arrived != null) { View(arrived)?.HopIn(arrivedIndex, fromTray); Sfx.Play(Cue.PawnPlace, 0.7f); }
+            if (left != null) { tray.HopIn(leftFrom); Sfx.Play(Cue.PawnPlace, 0.6f); }
             board.Bind(ShelterViewBuilder.Board(sim, selected));
+            if (store != null) store.Show(ShelterViewBuilder.Store(sim), animate);
         }
 
         RoomView SelectedView => View(selected);
@@ -123,6 +128,7 @@ namespace Corrigible.Desk.Bridge
             {
                 board.StampDone();
                 SelectedView?.LightUp();
+                Sfx.Play(Cue.Hammer, 0.8f);
             }
             else board.Shake(0);
         }

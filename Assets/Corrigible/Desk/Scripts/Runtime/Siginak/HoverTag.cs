@@ -16,7 +16,7 @@ namespace Corrigible.Desk
         [SerializeField] TMP_Text keyText;
         [SerializeField] Canvas canvas;
 
-        DeskTarget owner;
+        IHoverSource owner;
         float since;
 
         public void Configure(RectTransform paperRoot, TMP_Text titleText, TMP_Text lineText, GameObject chip, TMP_Text chipText, Canvas rootCanvas)
@@ -24,13 +24,13 @@ namespace Corrigible.Desk
             paper = paperRoot; title = titleText; line = lineText; keyChip = chip; keyText = chipText; canvas = rootCanvas;
         }
 
-        public void Show(DeskTarget target)
+        public void Show(IHoverSource target)
         {
             owner = target;
             since = Time.unscaledTime;
         }
 
-        public void Hide(DeskTarget target)
+        public void Hide(IHoverSource target)
         {
             if (owner != target) return;
             owner = null;
@@ -46,7 +46,7 @@ namespace Corrigible.Desk
                 bool hasKey = !string.IsNullOrEmpty(owner.KeyHint);
                 keyChip.SetActive(hasKey);
                 if (hasKey) keyText.text = owner.KeyHint;
-                title.text = Corrigible.Core.Loc.T(owner.Title);
+                title.text = owner.HoverTitle;
                 string text = owner.Line;
                 line.gameObject.SetActive(!string.IsNullOrEmpty(text));
                 line.text = text ?? "";

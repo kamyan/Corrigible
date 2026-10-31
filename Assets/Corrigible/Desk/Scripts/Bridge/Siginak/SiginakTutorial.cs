@@ -2,6 +2,7 @@ using Corrigible.Core;
 using Corrigible.Game;
 using Corrigible.Game.Raid;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Corrigible.Desk.Bridge
 {
@@ -19,6 +20,7 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] SiginakBriefing briefing;
         [SerializeField] SiginakMap map;
         [SerializeField] SiginakShift shift;
+        [SerializeField] SiginakOperation operation;
         [SerializeField] SiginakCameraRig rig;
         [SerializeField] RaidLauncher launcher;
         [SerializeField] TutorialNoteView note;
@@ -28,13 +30,34 @@ namespace Corrigible.Desk.Bridge
         readonly TutorialContext context = new TutorialContext();
 
         public bool Active => flow != null && !flow.Finished;
+
         /// <summary>Eğitim baskın adımında: açılan baskın senaryolu oynanır (<see cref="TutorialRaid"/>).</summary>
         public bool AtRaid => Active && flow.Current.Id == "raid";
 
         public static bool Done
         {
-            get { try { return PlayerPrefs.GetInt(DoneKey, 0) == 1; } catch { return false; } }
-            set { try { PlayerPrefs.SetInt(DoneKey, value ? 1 : 0); PlayerPrefs.Save(); } catch { } }
+            get
+            {
+                try
+                {
+                    return PlayerPrefs.GetInt(DoneKey, 0) == 1;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            set
+            {
+                try
+                {
+                    PlayerPrefs.SetInt(DoneKey, value ? 1 : 0);
+                    PlayerPrefs.Save();
+                }
+                catch
+                {
+                }
+            }
         }
 
         void OnEnable()
@@ -82,6 +105,14 @@ namespace Corrigible.Desk.Bridge
             else Show();
         }
 
+        /// <summary>Esc: not açıkken notlar kapanır (eğitim biter); masada başka kâğıt açık değilse çağrılır.</summary>
+        public bool HandleEscape()
+        {
+            if (!Active || context.Blocked) return false;
+            Skip();
+            return true;
+        }
+
         void Skip()
         {
             if (!Active) return;
@@ -99,32 +130,41 @@ namespace Corrigible.Desk.Bridge
         {
             if (!Active) return;
             Read();
-            if (flow.Update(context) && flow.Finished) { Finish(); return; }
+            if (flow.Update(context) && flow.Finished)
+            {
+                Finish();
+                return;
+            }
+
             if (context.Blocked) note.Hide();
             else Show();
-            // Masa pozunda vardiya şalteri, baskın bitince sonuç kartı sağ altta: not sağ üste çıkar
-            note.SetTop(context.RaidOver || !context.RaidLoaded && rig != null && rig.Current == SiginakPose.Desk);
+            // Revizyon 2: masada sağ altta (şalter plakasının altı), baskında EMRİ İLET'in üstünde
+            //note.SetRaid(context.RaidLoaded);
+            // Boşluk: bilgi adımında sonraki (baskında Boşluk makineleri hızlandırır)
+            var kb = Keyboard.current;
+            if (kb != null && kb.spaceKey.wasPressedThisFrame && !context.Blocked && !context.RaidLoaded && flow.Current.Info) Ok();
         }
 
         void Show()
         {
             if (!Active) return;
             var step = flow.Current;
-            string title = Loc.T(step.Title), body = Loc.T(step.Body);
+            string title = Loc.T(step.Title), body = Loc.T(step.Body), counter = Loc.F("ADIM {0}/{1}", flow.Index + 1, TutorialFlow.Count);
             // Senaryolu ilk baskın: not rehberin sıradaki adımını yazar (talimat, altında dersi)
             var guide = step.Id == "raid" && context.RaidLoaded ? raid.Guide : null;
             if (guide != null && !guide.Done)
             {
-                title = Loc.F("BASKIN · ADIM {0}/{1}", guide.Index + 1, guide.Steps.Count);
+                counter = Loc.F("BASKIN · ADIM {0}/{1}", guide.Index + 1, guide.Steps.Count);
                 var s = guide.Current;
                 body = raid.Executing ? Loc.T("Makineler sırayla oynuyor: bayraktaki sırayı ve okları izle.")
                     : s.Lesson == null ? TutorialRaid.Instruction(s) : TutorialRaid.Instruction(s) + "\n\n" + Loc.T(s.Lesson);
             }
+
             note.Show(new TutorialNoteData
             {
-                Head = Loc.F("ANALİST NOTU · {0}/{1}", flow.Index + 1, TutorialFlow.Count),
+                Head = Loc.T("ANALİST · NOT"), Step = counter,
                 Title = title, Body = body,
-                ShowOk = step.Info, Ok = Loc.T("TAMAM"), Skip = Loc.T("Eğitimi atla"),
+                ShowOk = step.Info, Ok = Loc.T("sonraki"), Skip = Loc.T("notları kapat"),
             });
         }
 
@@ -137,8 +177,7 @@ namespace Corrigible.Desk.Bridge
             if (!loaded) raid = null;
             else if (raid == null) raid = FindFirstObjectByType<RaidDataSource>();
             var settings = SettingsView.Instance;
-            var over = GameOverView.Instance;
-            var modal = EventModalView.Instance;
+            var over = FinalReportView.Instance;
             c.Blocked = briefing.Busy || shift.Playing || launcher != null && launcher.IsTransitioning || settings != null && settings.IsOpen ||
                         over != null && over.IsOpen || sim == null || sim.S.Ending != null;
             c.SlipOpen = map != null && map.SlipOpen;
@@ -146,7 +185,7 @@ namespace Corrigible.Desk.Bridge
             c.RaidLoaded = loaded && raid != null && raid.State != null;
             var state = c.RaidLoaded ? raid.State : null;
             c.RaidOver = state != null && (state.Phase == "won" || state.Phase == "lost");
-            c.ReportOpen = modal != null && modal.IsOpen;
+            c.ReportOpen = operation != null && operation.ReportOpen;
             c.ShelterPose = rig != null && rig.Current == SiginakPose.Shelf;
             c.ShiftReportOpen = shift.ReportOpen;
             var workshop = sim?.Shelter?.Room(ShelterLogic.Workshop);

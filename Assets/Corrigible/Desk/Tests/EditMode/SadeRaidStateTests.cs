@@ -51,7 +51,9 @@ namespace Corrigible.Desk.Tests
                 };
                 hud.Render(vm);
                 var so = new SerializedObject(hud);
-                Assert.AreEqual("GÜVEN 9", ((TMPro.TMP_Text)so.FindProperty("civilianLabel").objectReferenceValue).text);
+                // Revizyon 2 · S6: GÜVEN etiketi ve değeri ayrı (CP 700 20)
+                Assert.AreEqual("GÜVEN", ((TMPro.TMP_Text)so.FindProperty("civilianLabel").objectReferenceValue).text);
+                Assert.AreEqual("9", ((TMPro.TMP_Text)so.FindProperty("trustValue").objectReferenceValue).text);
                 var icons = so.FindProperty("civilians");
                 var shown = Enumerable.Range(0, icons.arraySize).Select(i => (UnityEngine.UI.Image)icons.GetArrayElementAtIndex(i).objectReferenceValue)
                     .Where(image => image.gameObject.activeSelf).Select(image => image.sprite.name).ToArray();

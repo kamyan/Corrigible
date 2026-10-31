@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Corrigible.Core;
 using Corrigible.Desk.Bridge;
@@ -6,12 +7,12 @@ using UnityEngine;
 
 namespace Corrigible.Desk.Tests
 {
-    /// <summary>Baskın raporu gerçek görev/ödül kaydını kullanır; kayıttan devamda aynı raporu kurar.</summary>
+    /// <summary>Operasyon raporu (Revizyon 2 · S7) gerçek görev/ödül kaydını kullanır; kayıttan devamda aynı raporu kurar.</summary>
     public class LiberationReportTests
     {
         static Simulation New() => Simulation.NewGame(731, new Balance { startFon = 100 });
 
-        static EventVM Build(Simulation sim) => new SimDeskBuilder().Build(sim, new DeskBridgeState(), false).Event;
+        static OperationReportData Build(Simulation sim) => OperationReportBuilder.Build(sim);
 
         static void Finish(Simulation sim, string sector, RaidResult result = null)
         {
@@ -20,39 +21,49 @@ namespace Corrigible.Desk.Tests
             Assert.IsTrue(sim.ResolveRaid(result ?? new RaidResult { Success = true, Turns = 4 }).Ok);
         }
 
-        static EventLineVM Row(EventVM report, string label) => report.Doc.Lines.Single(r => r.Label == Loc.T(label));
-        static string Gain(double amount) => Loc.F("+{0}", DeskFormat.Number(amount));
+        static OperationRow Row(OperationReportData report, string label) => report.Results.Single(r => r.Label == Loc.T(label));
+        static OperationGain GainOf(OperationReportData report, string label) => report.Gains.Single(g => g.Label == Loc.T(label));
+        static string Gain(double amount) => DeskFormat.Signed(amount, Math.Abs(amount - Math.Round(amount)) < 1e-9 ? 0 : 1);
 
         [Test]
-        public void LootReport_ShowsLootRewards_WithoutLegacyCoreOrPatchClaims()
+        public void LootReport_ShowsGainsAndSlips_TitleSaysTheResult()
         {
             var sim = New();
             Finish(sim, "weu_1");
             var report = Build(sim);
-            Assert.AreEqual(DeskText.Upper(Loc.T("İKMAL ALINDI")), report.Memo.Title);
-            Assert.AreEqual(Gain(sim.B.liberationLootFunds), Row(report, "Fon").Value);
-            Assert.AreEqual(Gain(sim.B.shelterLootSupplies), Row(report, "Erzak").Value);
-            Assert.AreEqual(Gain(sim.B.shelterLootMaterials), Row(report, "Malzeme").Value);
-            Assert.AreEqual(Loc.F("+{0}", sim.B.shelterLootResidents), Row(report, "Kurtulan").Value);
-            Assert.IsFalse(report.Doc.Lines.Any(r => r.Label == Loc.T("Yama (büyüme yarıya iner)")));
-            Assert.AreNotEqual(Loc.T("<b>Çekirdek yok edildi.</b> Kalan kopyaları temizle."), report.Doc.Risk);
-            Assert.AreEqual("Doc:Close", report.Doc.Buttons.Single().Command);
+            Assert.IsTrue(report.Success);
+            Assert.AreEqual(Loc.T("SEKTÖR GERİ ALINDI"), report.Title);
+            Assert.AreEqual(Loc.T("BAŞARILI"), report.ResultStamp);
+            CollectionAssert.AreEqual(new[] { Loc.T("FON"), Loc.T("MALZEME"), Loc.T("ERZAK"), Loc.T("KURTULAN") }, report.Gains.Select(g => g.Label));
+            Assert.AreEqual(Gain(sim.B.liberationLootFunds), GainOf(report, "FON").Value);
+            Assert.AreEqual(Gain(sim.B.shelterLootSupplies), GainOf(report, "ERZAK").Value);
+            Assert.AreEqual(Gain(sim.B.shelterLootMaterials), GainOf(report, "MALZEME").Value);
+            Assert.AreEqual(Gain(sim.B.shelterLootResidents), GainOf(report, "KURTULAN").Value);
+            Assert.AreEqual(GainOf(report, "FON").Value, report.Slips[1], "FON sayacına aynı fiş");
+            Assert.IsNull(report.Slips[0], "VARDİYA sayacına fiş asılmaz");
+            Assert.AreEqual(Loc.T("GERİ ALINDI"), report.Results[0].Value);
+            Assert.AreEqual(OperationTone.Retaken, report.Results[0].Tone);
+            Assert.AreEqual(Loc.F("{0}: {1}/{2} sektör KYGA'da; bölgenin özgürlüğüne {3} sektör kaldı.", Loc.T("Batı Avrupa"), 1, 3, 2), report.Sentence);
         }
 
         [Test]
-        public void FailedReport_ShowsRecovery_InsteadOfPermanentLossOrWorldPenalties()
+        public void FailedReport_HasNoRewardArea_ShowsRecoveryAndAlarmScale()
         {
             var sim = New();
             Finish(sim, "weu_1", new RaidResult { Down = 3, Retreat = true, Turns = 6 });
             var report = Build(sim);
+            Assert.IsFalse(report.Success);
+            Assert.AreEqual(Loc.T("SEKTÖR İŞGAL ALTINDA"), report.Title);
+            Assert.IsEmpty(report.Gains, "başarısız raporda ödül alanı hiç yok");
+            Assert.IsTrue(report.Slips.All(s => s == null), "fiş asılmaz");
             var fallen = string.Join(", ", Simulation.Roles.Select(t => Baskin.UnitTypes[t].Name));
-            var injury = report.Doc.Lines.Single(r => r.Label == Loc.F("Düştü: {0}", fallen));
+            var injury = report.Results.Single(r => r.Label == Loc.F("Düştü: {0}", fallen));
             Assert.AreEqual(Loc.F("{0} gün", sim.B.liberationInjuryDays), injury.Value, "düşen uzman yatar, kalıcı kayıp yok");
             var alarm = Row(report, "YZ alarmı");
-            Assert.AreEqual("threat", alarm.Status, "başarısız baskın YZ alarmını yükseltir");
-            Assert.AreEqual(3, report.Doc.Lines.Count, "Sektör durumu, düşenler ve YZ alarmı; eski dünya cezaları yok.");
-            Assert.IsFalse(report.Doc.Lines.Any(r => r.Label == Loc.T("Fon")));
-            Assert.AreEqual(Loc.T("İŞGAL ALTINDA"), report.Doc.Lines[0].Value);
+            Assert.Greater(alarm.AlarmSteps, 0, "başarısızda alarm ölçekle");
+            StringAssert.StartsWith("+", alarm.Value, "başarısız baskın YZ alarmını yükseltir");
+            CollectionAssert.AreEqual(new[] { Loc.T("İŞGAL ALTINDA"), alarm.Value, Loc.F("{0}/{1} ayakta", 0, 3), injury.Value }, report.Results.Select(r => r.Value),
+                "sektör, alarm, ekip ve düşenler; eski dünya cezaları yok");
             Assert.AreEqual(1, sim.S.Teams.Count);
         }
 
@@ -67,11 +78,11 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual("weu_3", log.SectorId);
             Assert.AreEqual("server", log.MissionKind);
             Assert.IsTrue(log.LiberationReward.RegionCompleted);
-            Assert.AreEqual(DeskText.Upper(Loc.T("SUNUCU YIKILDI")), report.Memo.Title);
-            Assert.AreEqual(Gain(sim.B.liberationServerFunds + sim.B.liberationCaptureFunds), Row(report, "Fon").Value);
-            Assert.AreEqual(Gain(sim.B.shelterServerMaterials), Row(report, "Malzeme").Value);
-            Assert.IsFalse(report.Doc.Lines.Any(r => r.Label == Loc.T("Kurtulan") || r.Label == Loc.T("Erzak")));
-            Assert.AreEqual(Loc.T("Bölge özgür. Haritadan sınırdaki bir bölgeyi seç ve yeni cepheyi aç."), report.Doc.Risk);
+            Assert.AreEqual(Loc.T("SEKTÖR GERİ ALINDI"), report.Title);
+            Assert.AreEqual(Gain(sim.B.liberationServerFunds + sim.B.liberationCaptureFunds), GainOf(report, "FON").Value);
+            Assert.AreEqual(Gain(sim.B.shelterServerMaterials), GainOf(report, "MALZEME").Value);
+            Assert.IsTrue(GainOf(report, "ERZAK").Zero && GainOf(report, "KURTULAN").Zero, "sunucudan erzak ve kurtulan gelmez");
+            Assert.AreEqual(Loc.F("{0} özgür; haritadan sınırdaki bir bölgeyi seç ve yeni cepheyi aç.", Loc.T("Batı Avrupa")), report.Sentence);
         }
 
         [Test]
@@ -87,7 +98,8 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(Loc.T("EŞİK AŞILDI"), Row(report, "YZ alarmı").Value);
             var lost = Row(report, "YZ karşı saldırısı");
             Assert.AreEqual(Loc.F("{0} · {1}", Loc.T("Batı Avrupa"), Loc.T("Tedarik deposu")), lost.Value);
-            Assert.AreEqual(Loc.F("YZ karşı saldırdı: {0} yeniden işgal altında. Alarm sıfırlandı.", lost.Value), report.Doc.Risk);
+            Assert.AreEqual(OperationTone.Alert, lost.Tone);
+            StringAssert.DoesNotContain(lost.Value, report.Sentence, "karşı saldırı satırda; cümlede tekrar edilmez");
             Assert.IsFalse(sim.LiberationSector("weu_1").Captured);
         }
 
@@ -100,11 +112,25 @@ namespace Corrigible.Desk.Tests
             sim.Shelter.Population = ShelterLogic.Capacity(sim.Shelter, sim.B);
             Finish(sim, "weu_1");
             var report = Build(sim);
-            Assert.AreEqual(Gain(1), Row(report, "Erzak").Value);
-            Assert.AreEqual(Gain(1), Row(report, "Malzeme").Value);
-            Assert.IsFalse(report.Doc.Lines.Any(r => r.Label == Loc.T("Kurtulan")));
+            Assert.AreEqual(Gain(1), GainOf(report, "ERZAK").Value);
+            Assert.AreEqual(Gain(1), GainOf(report, "MALZEME").Value);
+            Assert.IsTrue(GainOf(report, "KURTULAN").Zero);
             Assert.AreEqual(1, sim.S.RaidLog.Last().LiberationReward.Supplies);
             Assert.AreEqual(0, sim.S.RaidLog.Last().LiberationReward.Residents);
+        }
+
+        [Test]
+        public void NoSentenceAppearsTwice()
+        {
+            var sim = New();
+            Finish(sim, "weu_1");
+            Finish(sim, "weu_2", new RaidResult { Success = false, Collateral = 2, Down = 1, Turns = 6 });
+            foreach (var report in new[] { Build(sim), OperationReportBuilder.Build(sim, sim.S.RaidLog[0]) })
+            {
+                var texts = new[] { report.Title, report.Sentence, report.ResultStamp }
+                    .Concat(report.Results.SelectMany(r => new[] { r.Label, r.Value })).Concat(report.Gains.Select(g => g.Label)).ToList();
+                Assert.AreEqual(texts.Count, texts.Distinct().Count(), string.Join(" | ", texts));
+            }
         }
 
         [Test]
@@ -117,9 +143,10 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(JsonUtility.ToJson(sim.S.RaidLog.Last()), JsonUtility.ToJson(restored.S.RaidLog.Last()));
             var original = Build(sim);
             var replayed = Build(restored);
-            Assert.AreEqual(original.Memo.Title, replayed.Memo.Title);
-            CollectionAssert.AreEqual(original.Doc.Lines.Select(r => r.Value), replayed.Doc.Lines.Select(r => r.Value));
-            Assert.AreEqual(original.Doc.Risk, replayed.Doc.Risk);
+            Assert.AreEqual(original.Title, replayed.Title);
+            Assert.AreEqual(original.Sentence, replayed.Sentence);
+            CollectionAssert.AreEqual(original.Results.Select(r => r.Value), replayed.Results.Select(r => r.Value));
+            CollectionAssert.AreEqual(original.Gains.Select(g => g.Value), replayed.Gains.Select(g => g.Value));
         }
     }
 }

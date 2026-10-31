@@ -69,8 +69,6 @@ namespace Corrigible.Desk.EditorTools
             // Gölgeler
             var sh = json["shadows"]["presets"];
             theme.s1 = Shadow(sh["S1"]); theme.s2 = Shadow(sh["S2"]); theme.s3 = Shadow(sh["S3"]); theme.s5 = Shadow(sh["S5"]);
-            theme.stampOpacity = (float)json["components"]["stamp"]["normal"]["opacity"];
-            theme.telexSpeed = (float)json["motion"]["telexSpeedPxPerSec"];
 
             // Fontlar
             TMP_FontAsset F(string n) => AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(DeskFontSetup.AssetPath(n));

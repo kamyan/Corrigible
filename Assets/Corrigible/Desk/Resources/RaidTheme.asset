@@ -171,6 +171,16 @@ MonoBehaviour:
     color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
   - key: materials3d.ghost.ring.fill
     color: {r: 0.94509804, g: 0.9137255, b: 0.8392157, a: 0.35}
+  - key: materials3d.armorDrone.armourBand.color
+    color: {r: 0.6039216, g: 0.6117647, b: 0.59607846, a: 1}
+  - key: materials3d.armorDrone.frontPlate.color
+    color: {r: 0.6039216, g: 0.6117647, b: 0.59607846, a: 1}
+  - key: materials3d.bomber.belt.color
+    color: {r: 0.20392157, g: 0.21568628, b: 0.22745098, a: 1}
+  - key: materials3d.bomber.horns.color
+    color: {r: 0.49803922, g: 0.5058824, b: 0.49411765, a: 1}
+  - key: materials3d.replicator.bay.color
+    color: {r: 0.14901961, g: 0.15686275, b: 0.16862746, a: 1}
   - key: marks.move.color
     color: {r: 0.101960786, g: 0.2784314, b: 0.5372549, a: 1}
   - key: marks.abilityTarget.color
@@ -199,12 +209,24 @@ MonoBehaviour:
     color: {r: 0.49411765, g: 0.4862745, b: 0.47058824, a: 1}
   - key: marks.scanArea.color
     color: {r: 0.101960786, g: 0.2784314, b: 0.5372549, a: 1}
+  - key: marks.ghostWake.color
+    color: {r: 0.52156866, g: 0.2509804, b: 0.019607844, a: 1}
   - key: intents.color
     color: {r: 0.72156864, g: 0.14117648, b: 0.101960786, a: 1}
   - key: intents.shadow.color
     color: {r: 0, g: 0, b: 0, a: 1}
   - key: intents.execution.now.highlighter
     color: {r: 0.9607843, g: 0.8627451, b: 0.3882353, a: 0.95}
+  - key: intents.lob.color
+    color: {r: 0.72156864, g: 0.14117648, b: 0.101960786, a: 1}
+  - key: intents.blast.color
+    color: {r: 0.72156864, g: 0.14117648, b: 0.101960786, a: 1}
+  - key: intents.shield.color
+    color: {r: 0.52156866, g: 0.2509804, b: 0.019607844, a: 1}
+  - key: intents.clone.color
+    color: {r: 0.52156866, g: 0.2509804, b: 0.019607844, a: 1}
+  - key: intents.nonHarmful.color
+    color: {r: 0.52156866, g: 0.2509804, b: 0.019607844, a: 1}
   - key: labels.hpTag.paper
     color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
   - key: labels.hpTag.colors.aiOwned
@@ -215,6 +237,8 @@ MonoBehaviour:
     color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
   - key: labels.hpTag.colors.teamDown
     color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: labels.hpTag.armorIcon.color
+    color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
   - key: labels.orderFlag.needle
     color: {r: 0.36862746, g: 0.3529412, b: 0.32941177, a: 1}
   - key: labels.orderFlag.paper
@@ -233,6 +257,76 @@ MonoBehaviour:
     color: {r: 0.17254902, g: 0.29803923, b: 0.5568628, a: 1}
   - key: labels.compass.fill
     color: {r: 0.8627451, g: 0.88235295, b: 0.84705883, a: 1}
+  - key: labels.pawnTag.plateIcon
+    color: {r: 0.6039216, g: 0.6117647, b: 0.59607846, a: 1}
+  - key: labels.pawnTag.injuredPaper
+    color: {r: 0.9529412, g: 0.8901961, b: 0.8627451, a: 1}
+  - key: 'labels.pawnTag.lostPip[0]'
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: labels.pawnTag.donePaper
+    color: {r: 0.9137255, g: 0.8666667, b: 0.7764706, a: 1}
+  - key: labels.wake.color
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: panel.plywood.top
+    color: {r: 0.7882353, g: 0.6392157, b: 0.41960785, a: 1}
+  - key: panel.plywood.edge
+    color: {r: 0.5764706, g: 0.4392157, b: 0.24705882, a: 1}
+  - key: panel.plywood.highlight
+    color: {r: 0.8666667, g: 0.7490196, b: 0.5411765, a: 1}
+  - key: panel.plywood.shadow
+    color: {r: 0, g: 0, b: 0, a: 0.45}
+  - key: panel.ozalit.paper
+    color: {r: 0.827451, g: 0.85882354, b: 0.8392157, a: 1}
+  - key: panel.ozalit.line
+    color: {r: 0.17254902, g: 0.29803923, b: 0.5568628, a: 1}
+  - key: panel.tape
+    color: {r: 0.9254902, g: 0.8862745, b: 0.74509805, a: 0.8}
+  - key: panel.teamCard.selected
+    color: {r: 0.9372549, g: 0.8901961, b: 0.63529414, a: 1}
+  - key: panel.teamCard.selectFrame
+    color: {r: 0.9607843, g: 0.8392157, b: 0.27450982, a: 1}
+  - key: panel.teamCard.disc
+    color: {r: 0.7882353, g: 0.6392157, b: 0.41960785, a: 1}
+  - key: panel.teamCard.discRim
+    color: {r: 0.36078432, g: 0.28235295, b: 0.14901961, a: 1}
+  - key: panel.teamCard.discDone
+    color: {r: 0.54901963, g: 0.4509804, b: 0.30588236, a: 1}
+  - key: turnStrip.current
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: turnStrip.past
+    color: {r: 0.7254902, g: 0.7647059, b: 0.74509805, a: 1}
+  - key: turnStrip.future
+    color: {r: 0.17254902, g: 0.29803923, b: 0.5568628, a: 1}
+  - key: 'turnStrip.lastTwo[0]'
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: turnStrip.lastCurrent
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: 'turnStrip.lastStamp[1]'
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: 'phaseChip.you[1]'
+    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
+  - key: 'phaseChip.ai[1]'
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: 'phaseChip.end[1]'
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: phaseChip.lockedPaper.fill
+    color: {r: 0.36862746, g: 0.34509805, b: 0.30588236, a: 1}
+  - key: phaseChip.lockedPaper.line
+    color: {r: 0.16470589, g: 0.14901961, b: 0.1254902, a: 1}
+  - key: phaseChip.lockedPaper.text
+    color: {r: 0.9372549, g: 0.90588236, b: 0.8392157, a: 1}
+  - key: machineTypes.glyphColorBoard
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: machineTypes.glyphColorMap
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: radioSlip.paper
+    color: {r: 0.9372549, g: 0.89411765, b: 0.7372549, a: 1}
+  - key: radioSlip.line
+    color: {r: 0.7882353, g: 0.7254902, b: 0.5411765, a: 1}
+  - key: resultCard.paper
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: regionTraits.color
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
   numbers:
   - key: 'camera.eulerDeg[0]'
     value: 35
@@ -440,6 +534,164 @@ MonoBehaviour:
     value: 3
   - key: materials3d.ghost.ring.radius
     value: 0.34
+  - key: materials3d.armorDrone.hp
+    value: 2
+  - key: materials3d.armorDrone.armor
+    value: 1
+  - key: materials3d.armorDrone.move
+    value: 3
+  - key: materials3d.armorDrone.base.radius
+    value: 0.26
+  - key: materials3d.armorDrone.base.height
+    value: 0.05
+  - key: 'materials3d.armorDrone.rod[0]'
+    value: 0.068
+  - key: 'materials3d.armorDrone.rod[1]'
+    value: 0.37
+  - key: materials3d.armorDrone.hull.radius
+    value: 0.205
+  - key: 'materials3d.armorDrone.hull.z[0]'
+    value: 0.38
+  - key: 'materials3d.armorDrone.hull.z[1]'
+    value: 0.49
+  - key: materials3d.armorDrone.armourBand.radius
+    value: 0.222
+  - key: 'materials3d.armorDrone.armourBand.z[0]'
+    value: 0.38
+  - key: 'materials3d.armorDrone.armourBand.z[1]'
+    value: 0.43
+  - key: 'materials3d.armorDrone.frontPlate.size[0]'
+    value: 0.045
+  - key: 'materials3d.armorDrone.frontPlate.size[1]'
+    value: 0.13
+  - key: 'materials3d.armorDrone.frontPlate.size[2]'
+    value: 0.24
+  - key: materials3d.armorDrone.frontPlate.tiltDeg
+    value: 18
+  - key: materials3d.armorDrone.rotors.radius
+    value: 0.098
+  - key: materials3d.armorDrone.rotors.offset
+    value: 0.31
+  - key: materials3d.armorDrone.rotors.z
+    value: 0.49
+  - key: materials3d.armorDrone.rotors.duct.radius
+    value: 0.118
+  - key: materials3d.armorDrone.rotors.duct.height
+    value: 0.065
+  - key: materials3d.armorDrone.rotors.duct.lip
+    value: 0.012
+  - key: materials3d.armorDrone.lens.radius
+    value: 0.042
+  - key: materials3d.armorDrone.lens.z
+    value: 0.355
+  - key: materials3d.armorDrone.topZ
+    value: 0.53
+  - key: 'materials3d.armorDrone.footprint[0]'
+    value: 0.7
+  - key: 'materials3d.armorDrone.footprint[1]'
+    value: 0.7
+  - key: materials3d.bomber.hp
+    value: 1
+  - key: materials3d.bomber.armor
+    value: 0
+  - key: materials3d.bomber.move
+    value: 3
+  - key: materials3d.bomber.base.radius
+    value: 0.26
+  - key: materials3d.bomber.base.height
+    value: 0.05
+  - key: materials3d.bomber.stem.radius
+    value: 0.085
+  - key: 'materials3d.bomber.stem.z[0]'
+    value: 0.05
+  - key: 'materials3d.bomber.stem.z[1]'
+    value: 0.18
+  - key: materials3d.bomber.body.radius
+    value: 0.2
+  - key: materials3d.bomber.body.centerZ
+    value: 0.38
+  - key: materials3d.bomber.belt.tube
+    value: 0.016
+  - key: materials3d.bomber.horns.count
+    value: 7
+  - key: 'materials3d.bomber.horns.radius[0]'
+    value: 0.02
+  - key: 'materials3d.bomber.horns.radius[1]'
+    value: 0.026
+  - key: materials3d.bomber.horns.length
+    value: 0.07
+  - key: materials3d.bomber.horns.cap
+    value: 0.024
+  - key: materials3d.bomber.lens.radius
+    value: 0.04
+  - key: materials3d.bomber.lens.z
+    value: 0.32
+  - key: materials3d.bomber.topZ
+    value: 0.66
+  - key: 'materials3d.bomber.footprint[0]'
+    value: 0.52
+  - key: 'materials3d.bomber.footprint[1]'
+    value: 0.52
+  - key: materials3d.replicator.hp
+    value: 2
+  - key: materials3d.replicator.armor
+    value: 0
+  - key: materials3d.replicator.move
+    value: 2
+  - key: materials3d.replicator.base.radius
+    value: 0.31
+  - key: materials3d.replicator.base.height
+    value: 0.05
+  - key: 'materials3d.replicator.tracks[0]'
+    value: 0.54
+  - key: 'materials3d.replicator.tracks[1]'
+    value: 0.12
+  - key: 'materials3d.replicator.tracks[2]'
+    value: 0.46
+  - key: 'materials3d.replicator.body[0]'
+    value: 0.46
+  - key: 'materials3d.replicator.body[1]'
+    value: 0.28
+  - key: 'materials3d.replicator.body[2]'
+    value: 0.42
+  - key: 'materials3d.replicator.bodyZ[0]'
+    value: 0.17
+  - key: 'materials3d.replicator.bodyZ[1]'
+    value: 0.45
+  - key: 'materials3d.replicator.bay.size[0]'
+    value: 0.17
+  - key: 'materials3d.replicator.bay.size[1]'
+    value: 0.25
+  - key: 'materials3d.replicator.ramp.size[0]'
+    value: 0.13
+  - key: 'materials3d.replicator.ramp.size[1]'
+    value: 0.016
+  - key: 'materials3d.replicator.ramp.size[2]'
+    value: 0.23
+  - key: materials3d.replicator.ramp.tiltDeg
+    value: 32
+  - key: materials3d.replicator.pad.radius
+    value: 0.16
+  - key: materials3d.replicator.pad.z
+    value: 0.461
+  - key: materials3d.replicator.miniDrone.scale
+    value: 0.45
+  - key: materials3d.replicator.miniDrone.rotorRadius
+    value: 0.045
+  - key: materials3d.replicator.miniDrone.rotorOffset
+    value: 0.135
+  - key: materials3d.replicator.miniDrone.topZ
+    value: 0.55
+  - key: materials3d.replicator.lens.radius
+    value: 0.032
+  - key: materials3d.replicator.lens.z
+    value: 0.405
+  - key: materials3d.replicator.topZ
+    value: 0.55
+  - key: 'materials3d.replicator.footprint[0]'
+    value: 0.64
+  - key: 'materials3d.replicator.footprint[1]'
+    value: 0.62
   - key: marks.move.fillAlpha
     value: 0.16
   - key: marks.move.hatchAlpha
@@ -564,6 +816,24 @@ MonoBehaviour:
     value: 2.2
   - key: marks.scanArea.alpha
     value: 0.9
+  - key: marks.ghostWake.ringRadiusUnits
+    value: 0.33
+  - key: marks.ghostWake.ringPx
+    value: 2.4
+  - key: marks.ghostWake.dashes
+    value: 12
+  - key: marks.ghostWake.dashInk
+    value: 0.6
+  - key: marks.ghostWake.fillAlpha
+    value: 0.1
+  - key: marks.ghostWake.rays.count
+    value: 8
+  - key: marks.ghostWake.rays.fromUnits
+    value: 0.38
+  - key: marks.ghostWake.rays.toUnits
+    value: 0.47
+  - key: marks.ghostWake.rays.px
+    value: 2.2
   - key: intents.shadow.alpha
     value: 0.28
   - key: 'intents.shadow.offsetPx[0]'
@@ -571,9 +841,9 @@ MonoBehaviour:
   - key: 'intents.shadow.offsetPx[1]'
     value: 2
   - key: intents.fire.strokePx
-    value: 3
+    value: 3.4
   - key: intents.fire.arrowheadPx
-    value: 14
+    value: 16
   - key: intents.fire.startZ
     value: 0.3
   - key: intents.fire.endZ
@@ -584,7 +854,9 @@ MonoBehaviour:
     value: 0.24
   - key: intents.melee.strokePx
     value: 4.6
-  - key: intents.melee.arcRisePx
+  - key: 'intents.melee.arcRisePx[0]'
+    value: 14
+  - key: 'intents.melee.arcRisePx[1]'
     value: 26
   - key: intents.melee.arrowheadPx
     value: 15
@@ -606,20 +878,88 @@ MonoBehaviour:
     value: 0.55
   - key: intents.execution.done.strikeNumber
     value: 1
+  - key: intents.lock.strokePx
+    value: 4.6
+  - key: intents.lock.arcRisePx
+    value: 26
+  - key: intents.lock.arrowheadPx
+    value: 15
+  - key: intents.lock.endInsetUnits
+    value: 0.3
+  - key: intents.lob.strokePx
+    value: 3.4
+  - key: intents.lob.arrowheadPx
+    value: 16
+  - key: intents.lob.arcRise.ratioOfChord
+    value: 0.4
+  - key: intents.lob.arcRise.minPx
+    value: 90
+  - key: intents.blast.outline.strokePx
+    value: 2.4
+  - key: intents.blast.outline.insetUnits
+    value: 0.04
+  - key: intents.blast.stubs.count
+    value: 4
+  - key: intents.blast.stubs.fromUnits
+    value: 0.3
+  - key: intents.blast.stubs.toUnits
+    value: 0.66
+  - key: intents.blast.stubs.z
+    value: 0.05
+  - key: intents.blast.stubs.strokePx
+    value: 3.4
+  - key: intents.blast.stubs.arrowheadPx
+    value: 12
+  - key: intents.shield.lines
+    value: 2
+  - key: intents.shield.strokePx
+    value: 1.6
+  - key: intents.shield.gapPx
+    value: 3.2
+  - key: intents.shield.arcRisePx
+    value: 20
+  - key: intents.shield.startZ
+    value: 0.5
+  - key: intents.shield.startOffsetUnits
+    value: 0.2
+  - key: intents.shield.badge.sizePx
+    value: 28
+  - key: intents.clone.strokePx
+    value: 2.6
+  - key: 'intents.clone.dashPx[0]'
+    value: 2
+  - key: 'intents.clone.dashPx[1]'
+    value: 4
+  - key: intents.clone.arrowheadPx
+    value: 11
+  - key: intents.clone.startOffsetUnits
+    value: 0.3
+  - key: intents.clone.startZ
+    value: 0.12
+  - key: intents.clone.endInsetUnits
+    value: 0.34
+  - key: intents.clone.badge.sizePx
+    value: 24
   - key: labels.hpTag.heightPx
-    value: 18
+    value: 24
   - key: 'labels.hpTag.paddingPx[0]'
     value: 0
   - key: 'labels.hpTag.paddingPx[1]'
-    value: 4
+    value: 5
   - key: labels.hpTag.gapPx
-    value: 3
+    value: 4
   - key: labels.hpTag.borderPx
     value: 1
+  - key: labels.hpTag.typeGlyphPx
+    value: 18
   - key: labels.hpTag.pip.sizePx
-    value: 7
+    value: 11
   - key: labels.hpTag.pip.gapPx
-    value: 2
+    value: 3
+  - key: 'labels.hpTag.armorIcon.sizePx[0]'
+    value: 11
+  - key: 'labels.hpTag.armorIcon.sizePx[1]'
+    value: 12.5
   - key: 'labels.orderFlag.needlePx[0]'
     value: 2
   - key: 'labels.orderFlag.needlePx[1]'
@@ -627,13 +967,27 @@ MonoBehaviour:
   - key: labels.orderFlag.borderPx
     value: 1.5
   - key: labels.orderFlag.heightPx
-    value: 21
+    value: 28
+  - key: labels.orderFlag.widthPx
+    value: 30
   - key: labels.popup.damage.heightPx
     value: 22
   - key: labels.popup.winStamp.borderPx
     value: 2.5
   - key: labels.compass.sizePx
     value: 22
+  - key: labels.pawnTag.pipPx
+    value: 11
+  - key: labels.pawnTag.pipGapPx
+    value: 3
+  - key: 'labels.wake.font[1]'
+    value: 700
+  - key: 'labels.wake.font[2]'
+    value: 16
+  - key: 'labels.wake.font[3]'
+    value: 0.06
+  - key: labels.wake.rotDeg
+    value: -4
   - key: 'layout1080.rail[0]'
     value: 0
   - key: 'layout1080.rail[1]'
@@ -659,31 +1013,31 @@ MonoBehaviour:
   - key: 'layout1080.bottomWoodRow[3]'
     value: 76
   - key: 'layout1080.teamCards[0][0]'
-    value: 16
+    value: 26
   - key: 'layout1080.teamCards[0][1]'
-    value: 64
+    value: 976
   - key: 'layout1080.teamCards[0][2]'
-    value: 376
+    value: 237
   - key: 'layout1080.teamCards[0][3]'
-    value: 140
+    value: 84
   - key: 'layout1080.teamCards[1][0]'
-    value: 16
+    value: 269
   - key: 'layout1080.teamCards[1][1]'
-    value: 214
+    value: 976
   - key: 'layout1080.teamCards[1][2]'
-    value: 376
+    value: 237
   - key: 'layout1080.teamCards[1][3]'
-    value: 140
+    value: 84
   - key: 'layout1080.teamCards[2][0]'
-    value: 16
+    value: 512
   - key: 'layout1080.teamCards[2][1]'
-    value: 364
+    value: 976
   - key: 'layout1080.teamCards[2][2]'
-    value: 376
+    value: 237
   - key: 'layout1080.teamCards[2][3]'
-    value: 140
+    value: 84
   - key: layout1080.teamCardSelectedLiftPx
-    value: 5
+    value: 6
   - key: 'layout1080.rulesCard.folded[0]'
     value: 16
   - key: 'layout1080.rulesCard.folded[1]'
@@ -700,6 +1054,14 @@ MonoBehaviour:
     value: 376
   - key: 'layout1080.rulesCard.open[3]'
     value: 300
+  - key: 'layout1080.rulesCard.button[0]'
+    value: 1540
+  - key: 'layout1080.rulesCard.button[1]'
+    value: 22
+  - key: 'layout1080.rulesCard.button[2]'
+    value: 184
+  - key: 'layout1080.rulesCard.button[3]'
+    value: 52
   - key: 'layout1080.legend[0]'
     value: 16
   - key: 'layout1080.legend[1]'
@@ -709,13 +1071,13 @@ MonoBehaviour:
   - key: 'layout1080.legend[3]'
     value: 166
   - key: 'layout1080.retreatButton[0]'
-    value: 16
+    value: 1724
   - key: 'layout1080.retreatButton[1]'
-    value: 1018
+    value: 22
   - key: 'layout1080.retreatButton[2]'
-    value: 150
+    value: 174
   - key: 'layout1080.retreatButton[3]'
-    value: 44
+    value: 52
   - key: 'layout1080.retreatButtonArmed[0]'
     value: 16
   - key: 'layout1080.retreatButtonArmed[1]'
@@ -733,13 +1095,13 @@ MonoBehaviour:
   - key: 'layout1080.retreatConfirmSlip[3]'
     value: 120
   - key: 'layout1080.targetForm[0]'
-    value: 1528
+    value: 20
   - key: 'layout1080.targetForm[1]'
-    value: 64
+    value: 102
   - key: 'layout1080.targetForm[2]'
-    value: 376
+    value: 592
   - key: 'layout1080.targetForm[3]'
-    value: 262
+    value: 147
   - key: 'layout1080.opLog[0]'
     value: 1528
   - key: 'layout1080.opLog[1]'
@@ -757,13 +1119,13 @@ MonoBehaviour:
   - key: 'layout1080.infoLine[3]'
     value: 44
   - key: 'layout1080.undoButton[0]'
-    value: 1274
+    value: 1436
   - key: 'layout1080.undoButton[1]'
-    value: 1018
+    value: 994
   - key: 'layout1080.undoButton[2]'
-    value: 112
+    value: 136
   - key: 'layout1080.undoButton[3]'
-    value: 44
+    value: 56
   - key: 'layout1080.abilityButton[0]'
     value: 1392
   - key: 'layout1080.abilityButton[1]'
@@ -773,13 +1135,13 @@ MonoBehaviour:
   - key: 'layout1080.abilityButton[3]'
     value: 44
   - key: 'layout1080.endTurnButton[0]'
-    value: 1528
+    value: 1580
   - key: 'layout1080.endTurnButton[1]'
-    value: 1016
+    value: 994
   - key: 'layout1080.endTurnButton[2]'
-    value: 376
+    value: 318
   - key: 'layout1080.endTurnButton[3]'
-    value: 48
+    value: 56
   - key: 'layout1080.boardViewport[0]'
     value: 408
   - key: 'layout1080.boardViewport[1]'
@@ -870,3 +1232,111 @@ MonoBehaviour:
     value: 0.25
   - key: motion.logTypeCharsPerS
     value: 26
+  - key: panel.plywood.edgePx
+    value: 4
+  - key: panel.plywood.padPx
+    value: 6
+  - key: panel.ozalit.gridPx
+    value: 24
+  - key: panel.ozalit.gridAlpha
+    value: 0.1
+  - key: panel.ozalit.borderAlpha
+    value: 0.55
+  - key: 'panel.ozalit.labelFont[1]'
+    value: 700
+  - key: 'panel.ozalit.labelFont[2]'
+    value: 14
+  - key: 'panel.ozalit.labelFont[3]'
+    value: 0.08
+  - key: panel.sliceCornerPx
+    value: 12
+  - key: turnStrip.cellPx
+    value: 34
+  - key: turnStrip.gapPx
+    value: 6
+  - key: 'turnStrip.turnFont[1]'
+    value: 700
+  - key: 'turnStrip.turnFont[2]'
+    value: 30
+  - key: 'turnStrip.turnFont[3]'
+    value: 0
+  - key: 'turnStrip.cellFont[1]'
+    value: 700
+  - key: 'turnStrip.cellFont[2]'
+    value: 17
+  - key: 'turnStrip.cellFont[3]'
+    value: 0
+  - key: 'turnStrip.lastTwo[2]'
+    value: 2
+  - key: 'turnStrip.lastStamp[2]'
+    value: 3
+  - key: 'turnStrip.lastStamp[3]'
+    value: -6
+  - key: 'radioSlip.label[1][1]'
+    value: 700
+  - key: 'radioSlip.label[1][2]'
+    value: 14
+  - key: 'radioSlip.label[1][3]'
+    value: 0.08
+  - key: 'radioSlip.text[1]'
+    value: 700
+  - key: 'radioSlip.text[2]'
+    value: 18
+  - key: 'radioSlip.text[3]'
+    value: 0
+  - key: 'radioSlip.rect[0]'
+    value: 26
+  - key: 'radioSlip.rect[1]'
+    value: 262
+  - key: 'radioSlip.rect[2]'
+    value: 440
+  - key: 'radioSlip.rect[3]'
+    value: 64
+  - key: radioSlip.holdS
+    value: 3
+  - key: 'abilityCard.rect[0]'
+    value: 20
+  - key: 'abilityCard.rect[1]'
+    value: 732
+  - key: 'abilityCard.rect[2]'
+    value: 432
+  - key: 'abilityCard.rect[3]'
+    value: 231
+  - key: abilityCard.row
+    value: 44
+  - key: abilityCard.subButton
+    value: 40
+  - key: 'resultCard.rect[0]'
+    value: 1290
+  - key: 'resultCard.rect[1]'
+    value: 318
+  - key: 'resultCard.rect[2]'
+    value: 500
+  - key: 'resultCard.rect[3]'
+    value: 0
+  - key: 'resultCard.stampFont[1]'
+    value: 700
+  - key: 'resultCard.stampFont[2]'
+    value: 34
+  - key: 'resultCard.stampFont[3]'
+    value: 0.06
+  - key: resultCard.rotDeg
+    value: 0.8
+  - key: 'trainingNote.rect[0]'
+    value: 1560
+  - key: 'trainingNote.rect[1]'
+    value: 796
+  - key: 'trainingNote.rect[2]'
+    value: 336
+  - key: 'trainingNote.rect[3]'
+    value: 0
+  - key: 'trainingNote.font[1]'
+    value: 700
+  - key: 'trainingNote.font[2]'
+    value: 22
+  - key: 'trainingNote.font[3]'
+    value: 0
+  - key: regionTraits.texturePx
+    value: 34
+  - key: regionTraits.slipPx
+    value: 30

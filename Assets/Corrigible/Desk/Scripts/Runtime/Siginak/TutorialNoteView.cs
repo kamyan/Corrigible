@@ -5,28 +5,32 @@ using UnityEngine.UI;
 
 namespace Corrigible.Desk
 {
-    /// <summary>Eğitim notunun gösterime hazır hâli: başlık, metin, adım sayacı; bilgi adımında TAMAM.</summary>
+    /// <summary>Eğitim notunun gösterime hazır hâli: başlık, adım sayacı, metin; bilgi adımında “Boşluk sonraki”.</summary>
     public sealed class TutorialNoteData
     {
-        public string Head, Title, Body, Ok, Skip;
-        /// <summary>TAMAM düğmesi (bilgi adımı); yoksa adım oyuncunun eylemini bekler.</summary>
+        public string Head, Step, Title, Body, Ok, Skip;
+        /// <summary>“Boşluk sonraki” (bilgi adımı); yoksa adım oyuncunun eylemini bekler.</summary>
         public bool ShowOk;
     }
 
     /// <summary>
-    /// Analistin eğitim notu: ekranın sağında kâğıt bir kart (başlık, metin, adım sayacı, TAMAM ve “Eğitimi atla”). Sağ altta
-    /// durur; masa pozunda (K1) vardiya şalteri, baskın bitince sonuç kartı sağ altta olduğundan sağ üste çıkar. Kâğıt tıklamayı yutmaz, yalnız düğmeler
-    /// tıklanır. Yalnız gösterir, adımı <c>SiginakTutorial</c> yürütür. Yeni adımda kısa bir kayma.
+    /// Analistin eğitim notu (Revizyon 2 · S1/S6): sağ altta el notu kâğıdı, başlıkta “ANALİST · NOT” ve “ADIM n/12”, metin
+    /// Kalam; altta “Boşluk sonraki · Esc notları kapat”. Baskında EMRİ İLET'in üstünde (“BASKIN · ADIM n/30”). Kâğıdın boyu
+    /// metne göre uzar. Kâğıt tıklamayı yutmaz, yalnız düğmeler tıklanır. Yalnız gösterir, adımı <c>SiginakTutorial</c>
+    /// yürütür. Yeni adımda kısa bir kayma.
     /// </summary>
     public sealed class TutorialNoteView : MonoBehaviour
     {
         [SerializeField] RectTransform card;
         [Tooltip("Kartın köşe yeri (sağ alt / sağ üst) bu nesneyle taşınır.")]
         [SerializeField] RectTransform anchor;
-        [SerializeField] Vector2 bottomOffset = new Vector2(-16, 96), topOffset = new Vector2(-16, -64);
+        [Tooltip("Masada sağ alt köşeden; baskında sağ üst köşeden (raid_tokens.json → trainingNote: 1560 × 796, 336 px).")]
+        [SerializeField] Vector2 bottomOffset = new Vector2(-16, 16), raidOffset = new Vector2(-24, -796);
         [SerializeField] CanvasGroup group;
-        [SerializeField] TMP_Text head, title, body, okLabel, skipLabel;
+        [SerializeField] TMP_Text head, step, title, body, okLabel, skipLabel;
         [SerializeField] Button ok, skip;
+        [Tooltip("Metnin üstünde ve altında kalan boy (başlık, alt satır, kenar boşlukları); kâğıdın boyu metinle uzar.")]
+        [SerializeField, Min(0)] float chromeHeight = 92;
 
         public event Action OkClicked, SkipClicked;
 
@@ -48,8 +52,13 @@ namespace Corrigible.Desk
         {
             if (d.Title != shownTitle) { shownTitle = d.Title; shownAt = Time.unscaledTime; }
             head.text = d.Head;
-            title.text = d.Title;
+            if (step != null) step.text = d.Step ?? "";
+            if (title != null) title.text = d.Title ?? "";
             body.text = d.Body;
+            // Kâğıt metne göre uzar
+            float h = body.GetPreferredValues(d.Body, body.rectTransform.rect.width, 0).y;
+            var rt = (RectTransform)transform;
+            rt.sizeDelta = new Vector2(rt.sizeDelta.x, Mathf.Ceil(h + chromeHeight));
             okLabel.text = d.Ok;
             skipLabel.text = d.Skip;
             ok.gameObject.SetActive(d.ShowOk);
@@ -58,14 +67,14 @@ namespace Corrigible.Desk
 
         public void Hide() => visible = false;
 
-        /// <summary>Sağ üst (masa pozu: şalter sağ altta) ya da sağ alt.</summary>
-        public void SetTop(bool top)
+        /// <summary>Baskında sağ üst köşeden (EMRİ İLET'in üstü), öteki her yerde sağ alt.</summary>
+        public void SetRaid(bool raid)
         {
             if (anchor == null) return;
-            var a = new Vector2(1, top ? 1 : 0);
+            var a = new Vector2(1, raid ? 1 : 0);
             if (anchor.anchorMin == a && anchor.pivot == a) return;
             anchor.anchorMin = anchor.anchorMax = anchor.pivot = a;
-            anchor.anchoredPosition = top ? topOffset : bottomOffset;
+            anchor.anchoredPosition = raid ? raidOffset : bottomOffset;
             shownAt = Time.unscaledTime;
         }
 

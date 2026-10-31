@@ -14,7 +14,8 @@ namespace Corrigible.Desk.EditorTools
     /// V.014 — Batı Avrupa özgür, Doğu Avrupa cephe 1/3, ekip hazır; sığınak PROMPT §7'deki gibi (bellekte). V.019 — V.014'ten devam, Doğu Avrupa özgürleşir
     /// (K3 dizisi oynar). V.015-yaralı — V.014'ten devam, baskın başarısız, Teknisyen düştü (yerine yedek çıkar, piyon yatık).
     /// K6 — V.014'te baskın başarısız (fon 62 → 50, Teknisyen düştü) ve bir YAPILAMADI satırı; şalter indirilince
-    /// V.014 → 015 raporu çıkar.
+    /// V.014 → 015 raporu çıkar. V.031 (Revizyon 2) — beş bölge özgür (Batı Avrupa, Doğu Avrupa, Orta Doğu, Afrika, Rusya),
+    /// cephe Hindistan 1/3. V.015-karşı saldırı — V.014'ten devam, alarm eşiğe varır, Doğu Avrupa'nın 01'i yeniden işgal.
     /// </summary>
     public static class SiginakFixtures
     {
@@ -70,6 +71,57 @@ namespace Corrigible.Desk.EditorTools
             sim.S.Alarm = 4;
         }
 
+        /// <summary>
+        /// Yeni oyundan V.031 (Revizyon 2 · states.js v031): Batı Avrupa → Doğu Avrupa → Orta Doğu → Afrika → Rusya özgür,
+        /// cephe Hindistan, 01 geri alındı; gün 30. Otuz vardiya boyunca kaynak ve alarm kurallarla tutmayacağından her
+        /// baskından önce fon, erzak ve alarm bellekte düzeltilir (karşı saldırı ve açlık fikstürü bozmasın); sonunda alarm 7.
+        /// </summary>
+        public static void ApplyV031(Simulation sim)
+        {
+            if (sim.S.Day != 0) throw new InvalidOperationException("Fikstür yeni bir harekât ister (gün 0).");
+            string[] order = { "weu", "eeu", "me", "af", "ru" };
+            int day = 0;
+            void Keep()
+            {
+                sim.S.Fon = Math.Max(sim.S.Fon, 60);
+                sim.S.Alarm = 0;
+                sim.Shelter.Supplies = Math.Max(sim.Shelter.Supplies, 20);
+            }
+            foreach (var region in order)
+            {
+                if (region != "weu")
+                {
+                    var r = sim.SelectLiberationRegion(region);
+                    if (!r.Ok) throw new InvalidOperationException(region + ": " + r.Msg);
+                }
+                for (int i = 1; i <= 3; i++)
+                {
+                    Keep();
+                    Raid(sim, region + "_" + i);
+                    // Son bölgenin son baskını bir gün arayla: Hindistan'ın 01'i vardiya 030'da, ekip 031'de hazır
+                    day += region == "ru" && i == 3 ? 1 : 2;
+                    Keep();
+                    StepTo(sim, day);
+                }
+            }
+            var front = sim.SelectLiberationRegion("in");
+            if (!front.Ok) throw new InvalidOperationException("in: " + front.Msg);
+            Keep();
+            Raid(sim, "in_1");
+            Keep();
+            StepTo(sim, 30);
+            sim.S.Alarm = 7;
+            sim.S.Fon = 88.5;
+        }
+
+        /// <summary>V.014'ten V.015: alarm eşiğe varır, YZ karşı saldırır; Doğu Avrupa'nın 01'i yeniden işgal altında.</summary>
+        public static void ApplyCounterattack(Simulation sim)
+        {
+            sim.S.Alarm = sim.B.liberationAlarmThreshold - sim.B.liberationAlarmPerShift;
+            StepTo(sim, 14);
+            if (sim.S.LastCounterattack == null) throw new InvalidOperationException("Karşı saldırı olmadı.");
+        }
+
         /// <summary>V.014'ten V.019: Doğu Avrupa'nın iki sektörü daha; bölge vardiya 019'da özgürleşir.</summary>
         public static void ApplyV019(Simulation sim)
         {
@@ -89,7 +141,7 @@ namespace Corrigible.Desk.EditorTools
         public static void ApplyFailedRaid(Simulation sim) => Raid(sim, "eeu_2", false, 1);
 
         /// <summary>
-        /// Play içinde: <paramref name="name"/> = “V014”, “K6”, “V019” (V.014 yüklüyken) ya da “injured” (V.014 yüklüyken).
+        /// Play içinde: <paramref name="name"/> = “V014”, “V031”, “K6”, “V019”, “injured” ya da “V015ca” (son üçü V.014 yüklüyken).
         /// K6 bir yükleme gibi bildirilir; ardından en üst seviyedeki atölyeyi geliştirme denenir (teleks YAPILAMADI satırı).
         /// V014 bir “yükleme” gibi bildirilir (dizi oynamaz); V019 ve injured bir komut sonrası gibi (K3 dizisi oynar).
         /// </summary>
@@ -103,6 +155,8 @@ namespace Corrigible.Desk.EditorTools
             switch (name)
             {
                 case "V014": ApplyV014(sim); ApplyShelterV014(sim); loaded = true; break;
+                case "V031": ApplyV031(sim); loaded = true; break;
+                case "V015ca": ApplyCounterattack(sim); break;
                 case "K6": ApplyV014(sim); ApplyShelterV014(sim); ApplyFailedRaid(sim); loaded = true; break;
                 case "V019": ApplyV019(sim); break;
                 case "injured": ApplyInjured(sim); break;

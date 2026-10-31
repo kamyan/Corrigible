@@ -3,9 +3,9 @@ using UnityEngine;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Masanın ekran kâğıtlarını bağlar: veri kaynağının görünüm modelini baskın raporuna (<see cref="EventModalView"/>) ve
-    /// oyun sonu raporuna dağıtır, kâğıtların düğmelerini niyet (<see cref="IDeskCommands"/>) olarak yayınlar. Odanın kendisi
-    /// (<see cref="IDeskSurface"/>) simülasyonu doğrudan okur.
+    /// Masanın ekran kâğıtlarını bağlar: veri kaynağının görünüm modelini oyun sonu raporuna dağıtır, kâğıdın düğmelerini
+    /// niyet (<see cref="IDeskCommands"/>) olarak yayınlar. Odanın kendisi (<see cref="IDeskSurface"/>) ve operasyon raporu
+    /// simülasyonu doğrudan okur.
     /// </summary>
     public sealed class DeskPresenter : MonoBehaviour
     {
@@ -13,8 +13,7 @@ namespace Corrigible.Desk
         [SerializeField] MonoBehaviour dataSource;
         [Tooltip("IDeskCommands uygulayan bileşen.")]
         [SerializeField] MonoBehaviour commands;
-        [SerializeField] EventModalView eventModal;
-        [SerializeField] GameOverView gameOver;
+        [SerializeField] FinalReportView finalReport;
         [SerializeField] SettingsView settingsView;
         [Tooltip("IDeskSettings uygulayan bileşen (oyunda ses tercihleri ve dil).")]
         [SerializeField] MonoBehaviour settingsSource;
@@ -32,8 +31,7 @@ namespace Corrigible.Desk
             source = dataSource as IDeskDataSource;
             if (source == null) { Debug.LogError("[Desk] Veri kaynağı IDeskDataSource değil", this); return; }
             source.Changed += Bind;
-            if (eventModal != null) eventModal.DocInvoked += Run;
-            if (gameOver != null) gameOver.ActionInvoked += Run;
+            if (finalReport != null) finalReport.RestartClicked += Restart;
             if (settingsView != null) settingsView.Init(settingsSource as IDeskSettings);
             Bind(source.Current);
         }
@@ -43,6 +41,8 @@ namespace Corrigible.Desk
             if (source != null) source.Changed -= Bind;
         }
 
+        void Restart() => Run("Restart");
+
         void Run(string c)
         {
             if (!string.IsNullOrEmpty(c)) Commands?.Run(c);
@@ -51,8 +51,7 @@ namespace Corrigible.Desk
         void Bind(DeskViewModel model)
         {
             if (model == null) return;
-            if (eventModal != null) eventModal.Bind(model.Event);
-            if (gameOver != null) gameOver.Bind(model.GameOver);
+            if (finalReport != null) finalReport.Bind(model.FinalReport);
         }
     }
 }

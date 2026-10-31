@@ -38,9 +38,9 @@ ueval 'UnityEditor.SceneManagement.EditorSceneManager.NewScene(UnityEditor.Scene
 | `Desk/Tests/EditMode/TutorialRaidTests` | senaryolu ilk baskın: her harekât tohumunda aynı tahta, rehberin adımları hasarsız zafere varır |
 | `Tests/EditMode/RegionIdentityTests` | bölge özellikleri ve imza makineleri, zorluk kademesi, yeni makinelerin niyetleri, oda seviyesi kilidi |
 | `Tests/EditMode/LocalizationTests` | çeviri tablosu tam; İngilizce oynanan harekâtta Türkçe metin yok; dil sonucu değiştirmez |
-| `Desk/Tests/EditMode/DeskBridgeTests` | DeskGame bağlantıları, ekran katmanlarının sırası, baskın raporu ve son raporun kurulması |
-| `Desk/Tests/EditMode/LiberationReportTests` | operasyon raporunun satırları, depo sınırı, kayıttan aynı rapor |
-| `Desk/Tests/EditMode/Siginak*Tests` | oda, kamera, harita, sığınak, CRT, vardiya, emir belgesi, punto taraması |
+| `Desk/Tests/EditMode/DeskBridgeTests` | DeskGame bağlantıları, ekran katmanlarının sırası, operasyon raporunun yeri ve güven satırı, harekât sonu raporu (damga, gösterge, 29 ve 48 vardiyada tam genişlik şerit, kırılma anları; dil değişince de) |
+| `Desk/Tests/EditMode/LiberationReportTests` | operasyon raporu (S7): KAZANÇ ve fişler, başarısızda ödül alanı yok, aynı söz iki kez geçmez, depo sınırı, kayıttan aynı rapor |
+| `Desk/Tests/EditMode/Siginak*Tests` | oda, kamera, harita, sığınak, CRT, vardiya, emir belgesi, punto taraması (oda + baskın) |
 | `Desk/Tests/EditMode/SadeRaid*Tests`, `LootRaidPresentationTests` | baskın HUD komutları, kamera izdüşümü, Baskin sahnesi bağlantıları |
 | `Desk/Tests/EditMode/DeskAssetTests`, `CommandPostProjectionTests` | sprite/font/tema varlıkları, dünya-ekran izdüşümü |
 
@@ -59,7 +59,8 @@ var surface = Object.FindFirstObjectByType<Corrigible.Desk.Bridge.LiberationDesk
 // Vardiya: ShiftSwitch.Press() iki kez (kapak + kol); SiginakShift.Skip() diziyi atlar; rapor özel File() ile tepsiye.
 surface.LaunchSector(game.Sim.NextLiberationSector(game.Sim.S.Liberation.CurrentRegion).Id);   // baskın emri
 // Baskın: RaidLauncher.IsRaidLoaded; FindFirstObjectByType<RaidDataSource>() → Select, Move, Arm, Use, EndTurn,
-// Retreat() iki kez, Continue() rapora geçer. EventModalView.Instance / GameOverView.Instance → IsOpen.
+// Retreat() iki kez, Continue() rapora geçer (sonuç kartı 0,6 s girdi kilitli). Dönüşte SiginakOperation.ReportOpen;
+// rapor özel File() ile tepsiye. FinalReportView.Instance → IsOpen, PressRestart().
 ```
 
 - Belirli bir oda durumuna hızlı gitmek için `Corrigible.Desk.EditorTools.SiginakFixtures.Load("V014")` gibi hazır
@@ -83,6 +84,26 @@ surface.LaunchSector(game.Sim.NextLiberationSector(game.Sim.S.Liberation.Current
   ```bash
   unity command eval 'return Corrigible.EditorTools.CorrigibleDebug.Capture("Temp/shot.png");' 60000 --timeout 90 --caller plugin --skill unity-cli
   ```
+
+## Sığınak görünümünü doğrulamak (görüntü seti, punto, kare süresi)
+
+- **Tam görüntü seti** (Revizyon 2 referanslarının karşılıkları): DeskGame Play'de
+  `ueval 'return Corrigible.Desk.EditorTools.SiginakCaptureSet.Start("tr");'` (ya da `"en"`); Baskin tek başına Play'de
+  `SiginakCaptureSet.StartRaid("tr")`. İlerleme `Temp/capture_set.txt` (son satır `bitti`); çıktı
+  `Docs/UI_Siginak_Rev2/screens_unity_rev2/S*.png`, `_EN`, TR koşusunun sonunda `_gray`. Fikstürler oyunun kaydını değiştirir:
+  önce kayıtları ve dinamik font asset'lerini yedekle, sonra geri yükle.
+- **Punto taraması:** Edit modda `ueval 'return Corrigible.Desk.EditorTools.SiginakTextScan.Run();'` (DeskGame ve Baskin'i ek
+  olarak açar; rapor `Docs/UI_Siginak_Rev2/punto_taramasi.txt`). 14 px altı her yeni metin ya düzeltilir ya da
+  `SiginakTextScan.Exceptions`'a gerekçesiyle girer; `SiginakTextScanTests` ikisini de denetler.
+- **Kare süresi:** Play'de aynı oyun durumunda (`SiginakFixtures.Load("V014")`) kamerayı 1920×1080 MSAA 4× bir hedefe 30 kez
+  çiz, `ReadPixels` ile GPU'yu bekle, tur başına ms/kare al. Eski bir commit'le karşılaştırmak için kullanıcının editörüne
+  dokunma: `git archive <commit>` ile geçici klasöre çıkar, `Library`'yi `cp -cR` ile kopyala (APFS klonu, yer tutmaz),
+  kopyanın `ProjectSettings.asset`'inde `productName`'i değiştir (Play kayıtları gerçek kayıtların üstüne yazılmasın), ölçüm
+  script'ini yalnız kopyaya koy ve `Unity -batchmode -projectPath <kopya> -executeMethod …` ile koştur (Play'e girmek için
+  `EditorApplication.update` üstünde adım adım ilerleyen, `SessionState`'te adımı tutan bir `[InitializeOnLoad]` sınıf). Turlar
+  arası kayma ±0,1 ms olduğu için iki kopyayı art arda, birkaç kez sırayla koştur ve çiftlerin farkına bak.
+- Sahnede bir nesneyi statik işaretlemeden önce: çalışırken taşınmıyor, ölçeklenmiyor ve TMP değil mi bak (statik birleştirme
+  dönüşü ve TMP'nin yeniden kurulan mesh'ini dondurur; renk ve malzeme değişimi sorun değil).
 
 ## Baskın sunumunu düzenlemek
 
@@ -125,7 +146,8 @@ bağla, prefab örneğinde değiştirdiğin bileşenler için `PrefabUtility.Rec
 1. Kodda oyuncuya görünen metni Türkçe yaz ve sar: `Loc.T("Metin.")`, `Loc.F("{0} bölgesinde {1} gün.", ad, gün)`.
    Sayı biçimini yer tutucuda ver (`{0:0.0}`); `ToString` + birleştirme yapma. Türkçe ek uyumu gerekiyorsa `TrNumber` ya
    da `Loc.IsSource` ile Türkçeye özel dal yaz. Küçük harfe çevirirken kültürü dile göre seç (Türkçe `I → ı`).
-2. Sahneye/prefab'a yeni sabit yazı eklediysen TMP nesnesine `DeskLocText` bileşeni ekle.
+2. Sahneye/prefab'a yeni sabit yazı eklediysen TMP nesnesine `DeskLocText` bileşeni ekle. Odadaki tıklanır nesnenin
+   üzerine gelme etiketi (`DeskTarget` başlık ve satır) tabloya kendiliğinden girer.
 3. **Corrigible > Lokalizasyon > Çeviri tablosunu güncelle**, sonra `Assets/Corrigible/Resources/Localization/strings.txt`'te
    boş kalan `en` hücrelerini doldur (satırın sonundaki sekmeden sonra). `{0}` ve `<b>` gibi işaretler aynen kalmalı.
 4. **Çevirileri doğrula** menüsü ya da `LocalizationTests` → eksik/uyumsuz çeviri listesi.
@@ -135,6 +157,9 @@ Ajan olarak: `ueval 'return Corrigible.EditorTools.LocalizationTool.UpdateTable(
 `ueval 'return string.Join("\n", Corrigible.EditorTools.LocalizationTool.Validate());'`.
 
 ## Bilinen tuzaklar (bu projede yaşandı)
+
+- **Layout grubunun çocuğu:** `HorizontalLayoutGroup` altındaki nesnenin konumunu `anchoredPosition` ile değiştirmek çalışırken
+  ezilir; boşluğu grubun `padding`'iyle ver. `KeyChipView` kendi `fontSize`/`height` alanını etikete uygular; puntoyu orada değiştir.
 
 - **Testler açık sahneyi kirletir:** sahne testleri (`DeskGameScene_*`, `Siginak*Tests`) sahneyi `Additive` açar; sahne
   editörde zaten açıksa aynı bellekteki sahneyi kullanıp nesnelerini değiştirir ve Test Runner kirli sahneyi kaydedebilir.
@@ -177,4 +202,4 @@ Ajan olarak: `ueval 'return Corrigible.EditorTools.LocalizationTool.UpdateTable(
   kareyi bırakır, eğitim çerçevesi ışın üstündeyse kazanır). Tıklamayı doğrularken karo merkezine değil oyuncunun
   tıklayacağı yere (gövde, blok tepesi) tıkla.
 - **Vardiya kaydı vardiya sonunda alınır:** işgal geçmişi (`S.Hist`) yalnız `Step`'te yazılır; vardiya içinde değişen
-  değeri gösteren sunum (son rapor grafiği) güncel değeri ayrıca ekler.
+  değeri gösteren sunum (harekât sonu raporunun şeridi) güncel değeri ayrıca ekler.

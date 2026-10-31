@@ -379,15 +379,11 @@ Açık farklar (sahibi olan aşama):
 
 ## CHANGELOG
 
-- **2026-10-30 · Telsiz şeridi ve gözcü raporu:** `RaidPanels.prefab › EventSlip` telsiz şeridi oldu: `Robot` simgesi
-  kapalı, `Event` metni (15, −38), 364 px ve çok satırlı; `Red` kenarı şeridin boyuna uzar (dikey germe). Şeridin boyu
-  satır sayısıyla kodda büyür. Sıra kutuları ve "Boşluk · hızlandır" yalnız makine evresinde.
-
 - **2026-10-29 · Telsiz kurgusu (2. aşama, saha masası):** `SiginakRoom/CRT desk/Keyboard` kaldırıldı; yerine `Microphone`
   (bakalit taban, krom boyun ve kafa, bas-konuş tuşu, telsize giden kablo; operatöre 15° döner) ve `Radio log` (beyaz
   kâğıt, mavi satırlar, kalem, DeskLocText başlık "TELSİZ KAYDI"). CRT'nin `DeskTarget`'ı: "TELSİZ HATTI" / "Yalnız baskın
   emriyle hat açılır. Emri görev fişinden ver (3).". `SiginakTextScan` istisnası "Keyboard" → "Radio log/". Baskın tahtası:
-  pafta koordinatları, yağlı kalem okları, görevli çubuğu (`RaidPieceLibrary.plotterShaft/plotterHead` = PlywoodTop/Copper).
+  pafta koordinatları, yağlı kalem okları. (Görevli çubuğu da eklenmişti; 2026-10-30'da kaldırıldı.)
 
 - **2026-10-29 · Telsiz kurgusu (1. aşama, yalnız sunum):** CRT telsizin göstergesi (`CrtViewBuilder`: TELSİZ · KANAL 07;
   DİNLEMEDE, HAT AÇILIYOR, HAT AÇIK, HAT KAPANDI, HAT KAPALI; geçişte SİNYAL ve "SAHA MASASI · PAFTA 8×8 · GÖREV"). Sahnede
