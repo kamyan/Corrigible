@@ -115,7 +115,8 @@ namespace Corrigible.Core
             return ActResult.Success();
         }, "liberation_region", regionId);
 
-        public string LiberationRaidCheck(string sectorId)
+        /// <param name="pick">Teknisyen'in yanına seçilen roller ("emp,maden"); boşsa varsayılan seçim.</param>
+        public string LiberationRaidCheck(string sectorId, string pick = null)
         {
             if (S.Ending != null) return Loc.T("Oyun bitti.");
             if (S.Raid != null) return Loc.T("Zaten bir baskın sürüyor.");
@@ -129,17 +130,24 @@ namespace Corrigible.Core
             if (!SquadCanRaid(team))
                 return Loc.F("Teknisyen yaralı ({0} gün); yerine çıkacak yedek uzman yok.", team.Members.First(m => m.Role == "tek").Down);
             if (S.Fon < B.liberationRaidCost) return Loc.F("Bu baskın {0} fon ister.", B.liberationRaidCost);
+            if (!string.IsNullOrEmpty(pick) && !ValidPick(ParsePick(pick))) return Loc.T("Teknisyen'in yanına iki uzman seç.");
             return null;
         }
 
-        public ActResult StartLiberationRaid(string sectorId) => RunCommand(() => StartLiberationRaidCore(sectorId), "liberation_raid", sectorId);
-
-        ActResult StartLiberationRaidCore(string sectorId)
+        /// <summary>Baskın emri: kayda çözülmüş seçim yazılır (boş seçim o anki varsayılana döner); defterin kimliği sektördür.</summary>
+        public ActResult StartLiberationRaid(string sectorId, string pick = null)
         {
-            var why = LiberationRaidCheck(sectorId);
+            if (string.IsNullOrEmpty(pick) || ValidPick(ParsePick(pick))) pick = PickKey(ResolvePick(S.Teams.FirstOrDefault(TeamReady), pick));
+            return RunCommand(() => StartLiberationRaidCore(sectorId, pick), "liberation_raid", sectorId, pick, sectorId);
+        }
+
+        ActResult StartLiberationRaidCore(string sectorId, string pick)
+        {
+            var why = LiberationRaidCheck(sectorId, pick);
             if (why != null) return ActResult.Fail(why);
             var sector = LiberationSector(sectorId);
             var team = S.Teams.First(TeamReady);
+            var roles = ResolvePick(team, pick);
             int clearedRegions = S.Liberation.Regions.Count(r => r.Completed);
             int tier = RaidTier(clearedRegions);
             var def = Def(sector.Region);
@@ -160,18 +168,19 @@ namespace Corrigible.Core
                     SectorId = sector.Id, MissionKind = sector.MissionKind,
                     RaidNumber = tier, Tier = tier, IsCore = sector.MissionKind == "server" && clearedRegions == GameData.Regions.Length - 1,
                     Traits = traits, Signature = def.Enemy,
-                    Squad = Squad(team), MapSeed = S.Seed, MapSlot = S.Raids, Tactics = 1,
+                    Squad = Squad(team, roles), Roles = new List<string> { "tek" }.Concat(roles).ToList(), MapSeed = S.Seed, MapSlot = S.Raids, Tactics = 1,
                     TargetHpBonus = sector.MissionKind == "server" ? B.liberationServerTargetHp : 0,
                     ExtraMachines = sector.MissionKind == "server" ? B.liberationServerMachines : 0,
                     ExtraTurns = sector.MissionKind == "loot" ? B.liberationLootExtraTurns : 0,
                     CivilianHp = B.liberationCivilianHp,
+                    DynamiteCharges = B.liberationDynamiteCharges, SmokeCharges = B.liberationSmokeCharges,
                 },
             };
             // Zırh plakaları en düşük canlı uzmandan başlayarak birer tane takılır (eşitlikte rol sırası); kırılan baskın dönüşünde düşer
             int plates = Shelter.Plates;
             foreach (var slot in S.Raid.Params.Squad.OrderBy(x => x.Hp))
                 if (plates > 0) { slot.Armor = 1; plates--; }
-            team.At = sector.Region; team.Busy = 1; team.Task = "baskin";
+            team.At = sector.Region; team.Busy = 1; team.Task = "baskin"; team.LastPick = roles;
             S.Events.Add(new SimEvent { Type = SimEventType.Raid });
             return ActResult.Success();
         }

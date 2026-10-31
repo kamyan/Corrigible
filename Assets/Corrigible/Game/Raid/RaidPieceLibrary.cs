@@ -25,6 +25,8 @@ namespace Corrigible.Game.Raid
         public RaidPiece technician;
         public RaidPiece emp;
         public RaidPiece analyst;
+        public RaidPiece miner;
+        public RaidPiece smokeSpecialist;
         public RaidPiece drone;
         public RaidPiece maintenance;
         [Header("Bölge imza düşmanları")]
@@ -69,6 +71,8 @@ namespace Corrigible.Game.Raid
         public Color threat = new Color(1f, 0.36f, 0.3f, 1f);
         public Color good = new Color(0.45f, 0.85f, 0.5f, 1f);
         public Color ink = new Color(0.9f, 0.95f, 0.96f, 1f);
+        [Tooltip("Sis bulutu ve sise kesilen niyetin oku.")]
+        public Color smoke = new Color(0.56f, 0.55f, 0.52f, 0.55f);
 
         public RaidPiece Object(string kind) => kind switch
         {
@@ -89,6 +93,7 @@ namespace Corrigible.Game.Raid
         public RaidPiece Unit(string type) => type switch
         {
             "tek" => technician, "emp" => emp, "ana" => analyst, "dron" => drone, "bakim" => maintenance,
+            "maden" => Or(miner, technician), "duman" => Or(smokeSpecialist, technician),
             // Yeni parça henüz atanmadıysa ailesinin parçası (havada olanlar dron, yerdekiler bakım robotu)
             "zdron" => Or(armoredDrone, drone), "kalkan" => Or(shieldDrone, drone), "havan" => Or(mortar, maintenance),
             "bomba" => Or(bomber, maintenance), "kilit" => Or(locker, maintenance), "cogalt" => Or(replicator, maintenance),

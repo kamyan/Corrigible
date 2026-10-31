@@ -8,7 +8,8 @@ namespace Corrigible.Core
     public sealed class SavedCommand
     {
         public int day;
-        /// <summary>liberation_region, liberation_raid, raidres, shelter_upgrade, shelter_assign, door_answer (a: seçenek, b: kart).</summary>
+        /// <summary>liberation_region, liberation_raid (a: sektör, b: Teknisyen'in yanına seçilen roller), raidres, shelter_upgrade,
+        /// shelter_assign, door_answer (a: seçenek, b: kart).</summary>
         public string kind;
         public string a, b;
     }
@@ -20,8 +21,8 @@ namespace Corrigible.Core
     [System.Serializable]
     public sealed class GameRecord
     {
-        /// <summary>Dosya biçimi. Bu sürümden eski kayıtlar yüklenmez (11: 30 haritalık havuz, kıt sığınak ekonomisi; 10: sığınağın kapısı ve ziyaretçiler; 9: ayakta kalan sivil güveni geri kazandırır, güven tavanı; 8: bölge kimliği ve zorluk kademesi; 7: hazırlık sığınağı, uzman yarası ve kadro; 6: YZ alarmı ve bir baskın bir vardiya; 5: sivil güven; öncekiler başka kurallarla oynandı).</summary>
-        public const int CurrentVersion = 11;
+        /// <summary>Dosya biçimi. Bu sürümden eski kayıtlar yüklenmez (12: beş uzmanlı kadro ve baskın öncesi seçim; 11: 30 haritalık havuz, kıt sığınak ekonomisi; 10: sığınağın kapısı ve ziyaretçiler; 9: ayakta kalan sivil güveni geri kazandırır, güven tavanı; 8: bölge kimliği ve zorluk kademesi; 7: hazırlık sığınağı, uzman yarası ve kadro; 6: YZ alarmı ve bir baskın bir vardiya; 5: sivil güven; öncekiler başka kurallarla oynandı).</summary>
+        public const int CurrentVersion = 12;
         public int version = CurrentVersion;
         public uint seed;
         public Balance balance;
@@ -52,7 +53,7 @@ namespace Corrigible.Core
             switch (c.kind)
             {
                 case "liberation_region": sim.SelectLiberationRegion(c.a); break;
-                case "liberation_raid": sim.StartLiberationRaid(c.a); break;
+                case "liberation_raid": sim.StartLiberationRaid(c.a, c.b); break;
                 case "raidres": sim.ResolveRaid(RaidResult.Decode(c.a)); break;
                 case "shelter_upgrade": sim.ShelterUpgrade(c.a); break;
                 case "shelter_assign": sim.ShelterAssign(c.a, int.Parse(c.b, CultureInfo.InvariantCulture)); break;

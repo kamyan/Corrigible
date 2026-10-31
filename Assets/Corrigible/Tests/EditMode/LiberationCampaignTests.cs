@@ -91,12 +91,15 @@ namespace Corrigible.Tests
             Assert.IsFalse(sim.LiberationSector("weu_1").Captured);
             Assert.AreEqual(1, sim.S.Teams.Count, "Son ekip kaybedilip harekât kilitlenmemeli.");
             var team = sim.S.Teams[0];
-            Assert.IsTrue(team.Members.All(m => m.Down == sim.B.liberationInjuryDays), "düşen üç uzman yatar");
+            Assert.IsTrue(team.Members.Take(3).All(m => m.Down == sim.B.liberationInjuryDays), "düşen üç uzman yatar");
+            Assert.IsTrue(team.Members.Skip(3).All(m => m.Down == 0), "baskına çıkmayanlar ayakta");
             Assert.IsNotNull(sim.LiberationRaidCheck("weu_1"));
             Ready(sim);
             var squad = sim.Squad(team);
-            Assert.AreEqual(1, squad.Count, "tek yedek Teknisyenin yerine çıkar; öteki roller boş");
+            CollectionAssert.AreEqual(new[] { "tek", "maden", "duman" }, squad.Select(x => x.Type).ToArray(), "varsayılan seçim ayaktakileri alır");
             Assert.IsTrue(squad[0].Rookie);
+            squad = sim.Squad(team, new[] { "emp", "ana" });
+            Assert.AreEqual(1, squad.Count, "tek yedek Teknisyenin yerine çıkar; seçilen yatan roller boş");
             Assert.IsNull(sim.LiberationRaidCheck("weu_1"));
             while (team.Members.Any(m => m.Down > 0)) sim.Step();
             Assert.AreEqual(3, sim.Squad(team).Count(x => !x.Rookie), "uzmanlar sağlam kalkar");
@@ -113,14 +116,14 @@ namespace Corrigible.Tests
             CollectionAssert.AreEqual(new[] { 3, 3, 2 }, sim.S.Raid.Params.Squad.Select(x => x.Hp).ToArray(), "ilk baskın sağlam kadro");
             var result = new RaidResult { Success = true, Hp = { 1, 3, 1 }, Armor = { 0, 0, 0 } };
             Assert.IsTrue(sim.ResolveRaid(result).Ok);
-            CollectionAssert.AreEqual(new[] { 2, 0, 1 }, team.Members.Select(m => m.Wounds).ToArray(), "eksik can yara olarak kalır");
+            CollectionAssert.AreEqual(new[] { 2, 0, 1, 0, 0 }, team.Members.Select(m => m.Wounds).ToArray(), "eksik can yara olarak kalır");
             var outcome = sim.S.RaidLog.Last().LiberationReward.Squad;
             Assert.AreEqual(3, outcome[0].HpBefore);
             Assert.AreEqual(1, outcome[0].HpAfter);
             sim.Step();
             CollectionAssert.AreEqual(new[] { 1, 3, 1 }, sim.Squad(team).Select(x => x.Hp).ToArray(), "baskın vardiyası dinlendirmez");
             sim.Step();
-            CollectionAssert.AreEqual(new[] { 1, 0, 0 }, team.Members.Select(m => m.Wounds).ToArray(), "baskınsız vardiya her uzmanı bir toparlar");
+            CollectionAssert.AreEqual(new[] { 1, 0, 0, 0, 0 }, team.Members.Select(m => m.Wounds).ToArray(), "baskınsız vardiya her uzmanı bir toparlar");
             Assert.IsTrue(sim.StartLiberationRaid("weu_2").Ok);
             CollectionAssert.AreEqual(new[] { 2, 3, 2 }, sim.S.Raid.Params.Squad.Select(x => x.Hp).ToArray());
         }
@@ -157,12 +160,79 @@ namespace Corrigible.Tests
             var team = sim.S.Teams[0];
             sim.Shelter.Plates = 2;
             team.Members[1].Wounds = 2;
-            Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
+            Assert.IsTrue(sim.StartLiberationRaid("weu_1", "emp,ana").Ok);
             var squad = sim.S.Raid.Params.Squad;
             CollectionAssert.AreEqual(new[] { 0, 1, 1 }, squad.Select(x => x.Armor).ToArray(), "en düşük canlı iki uzmana (EMP 1, Analist 2)");
             Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true, Hp = { 3, 1, 2 }, Armor = { 0, 0, 1 } }).Ok);
             Assert.AreEqual(1, sim.Shelter.Plates, "yalnız kırılan plaka düşer");
             Assert.AreEqual(1, sim.S.RaidLog.Last().LiberationReward.Squad.Count(o => o.PlateBroken));
+        }
+
+        [Test]
+        public void SquadPick_TechnicianAlwaysGoes_PickedTwoFollowInRosterOrder()
+        {
+            var sim = New();
+            Assert.AreEqual(Simulation.Roles, sim.S.Teams[0].Members.Select(m => m.Role).ToArray(), "beş uzmanlı kadro");
+            Assert.IsTrue(sim.StartLiberationRaid("weu_1", "duman,maden").Ok);
+            CollectionAssert.AreEqual(new[] { "tek", "maden", "duman" }, sim.S.Raid.Params.Squad.Select(x => x.Type).ToArray());
+            CollectionAssert.AreEqual(new[] { 3, 3, 2 }, sim.S.Raid.Params.Squad.Select(x => x.Hp).ToArray());
+            Assert.AreEqual(sim.B.liberationDynamiteCharges, sim.S.Raid.Params.DynamiteCharges);
+            Assert.AreEqual(sim.B.liberationSmokeCharges, sim.S.Raid.Params.SmokeCharges);
+            var cmd = sim.Record.commands.Last();
+            Assert.AreEqual(("liberation_raid", "weu_1", "maden,duman"), (cmd.kind, cmd.a, cmd.b), "kayda kadro sırasıyla yazılır");
+            Assert.AreEqual("weu_1", sim.S.TransactionLedger.Last().Id, "defterin kimliği sektördür");
+        }
+
+        [Test]
+        public void SquadPick_MustBeTwoOtherSpecialists()
+        {
+            var sim = New();
+            foreach (var bad in new[] { "emp", "tek,emp", "emp,emp", "emp,ana,maden", "emp,xyz" })
+            {
+                Assert.AreEqual(Loc.T("Teknisyen'in yanına iki uzman seç."), sim.LiberationRaidCheck("weu_1", bad), bad);
+                Assert.IsFalse(sim.StartLiberationRaid("weu_1", bad).Ok, bad);
+            }
+            Assert.AreEqual(0, sim.Record.commands.Count, "reddedilen emir kayda girmez");
+            Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok, "boş seçim varsayılana döner");
+            Assert.AreEqual("emp,ana", sim.Record.commands.Last().b, "ilk baskında EMP uzmanı ve Analist");
+        }
+
+        [Test]
+        public void DefaultPick_StandingFirst_LastSquadThenRested()
+        {
+            var team = Simulation.NewGame(1).S.Teams[0];
+            team.LastPick = new System.Collections.Generic.List<string> { "ana", "duman" };
+            CollectionAssert.AreEqual(new[] { "ana", "duman" }, Simulation.DefaultPick(team));
+            team.Members.First(m => m.Role == "duman").Down = 2;
+            team.Members.First(m => m.Role == "emp").Wounds = 1;
+            CollectionAssert.AreEqual(new[] { "ana", "maden" }, Simulation.DefaultPick(team), "yatan yerine yarası az dinlenmiş uzman");
+            CollectionAssert.AreEqual(new[] { "emp", "ana" }, Simulation.ResolvePick(team, "ana,emp"), "geçerli seçim kadro sırasıyla");
+            CollectionAssert.AreEqual(new[] { "ana", "maden" }, Simulation.ResolvePick(team, ""), "boş seçim varsayılan");
+        }
+
+        [Test]
+        public void BenchedSpecialists_RestWhileTheSquadIsOut()
+        {
+            var sim = New();
+            var team = sim.S.Teams[0];
+            team.Members.First(m => m.Role == "maden").Wounds = 2;
+            Assert.IsTrue(sim.StartLiberationRaid("weu_1", "emp,ana").Ok);
+            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true, Hp = { 2, 3, 2 }, Armor = { 0, 0, 0 } }).Ok);
+            sim.Step();
+            Assert.AreEqual(1, team.Members.First(m => m.Role == "tek").Wounds, "baskına çıkan dinlenmez");
+            Assert.AreEqual(1, team.Members.First(m => m.Role == "maden").Wounds, "baskına çıkmayan o vardiya dinlenir");
+        }
+
+        [Test]
+        public void Replay_RestoresThePickedSquad()
+        {
+            var sim = New();
+            Assert.IsTrue(sim.StartLiberationRaid("weu_1", "ana,duman").Ok);
+            sim.Record.day = sim.S.Day;
+            var restored = Replay.Restore(UnityEngine.JsonUtility.FromJson<GameRecord>(UnityEngine.JsonUtility.ToJson(sim.Record)));
+            CollectionAssert.AreEqual(new[] { "tek", "ana", "duman" }, restored.S.Raid.Params.Squad.Select(x => x.Type).ToArray());
+            Assert.AreEqual(UnityEngine.JsonUtility.ToJson(sim.S.Raid), UnityEngine.JsonUtility.ToJson(restored.S.Raid));
+            Assert.AreEqual(12, GameRecord.CurrentVersion, "beş uzmanlı kadro kayıt biçimini değiştirdi");
         }
 
         [Test]

@@ -33,12 +33,12 @@ namespace Corrigible.Core
             RegionalBase = S.Liberation.Regions.Count(r => r.Completed) * B.liberationRegionIncome,
         };
 
-        /// <summary>Komutu uygular; başarılıysa fon değişimini deftere, komutu kayda yazar.</summary>
-        ActResult RunCommand(Func<ActResult> apply, string kind, string a = null, string b = null)
+        /// <summary>Komutu uygular; başarılıysa fon değişimini deftere (kimlik <paramref name="ledger"/>, yoksa b ya da a), komutu kayda yazar.</summary>
+        ActResult RunCommand(Func<ActResult> apply, string kind, string a = null, string b = null, string ledger = null)
         {
             double fon = S.Fon;
             var result = apply();
-            if (result.Ok) AddTransaction(kind, b ?? a, S.Fon - fon);
+            if (result.Ok) AddTransaction(kind, ledger ?? b ?? a, S.Fon - fon);
             return Rec(result, kind, a, b);
         }
 

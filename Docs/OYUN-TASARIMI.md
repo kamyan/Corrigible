@@ -126,8 +126,9 @@ Oyuncu vardiya şalterini indirince (`GameController.AdvanceShift`) bir gün ge�
 
 1. **Gelir:** `liberationDailyFunds` (2) + özgür bölge başına `liberationRegionIncome` (0,5) fon (`IncomeBreakdown`).
    Her fon değişimi `TransactionLedger`'a yazılır.
-2. **Ekip:** bu vardiya baskına çıkmadıysa ayaktaki her uzman `liberationRestHeal` (1) yara toparlar (dinlenme); yatan
-   uzmanlar ve yedekler bir gün iyileşir; baskın meşguliyeti düşer (`StepTeams`).
+2. **Ekip:** bu vardiya baskına çıkmayan ayaktaki her uzman `liberationRestHeal` (1) yara toparlar (dinlenme, uzman
+   başına: ekip baskına çıksa da son kadroda olmayanlar dinlenir, `Simulation.Rested`); yatan uzmanlar ve yedekler bir gün
+   iyileşir; baskın meşguliyeti düşer (`StepTeams`).
 3. **Sığınak:** erzak toplama ve tüketim, atölyede plaka dökümü, revirde yara sarma (`ShelterLogic.Advance`, aşağıda).
 4. **YZ alarmı:** +1 eksi telsiz; eşikte karşı saldırı (yukarıda).
 5. **Kayıt:** son rapordaki şerit grafik için işgal oranı (`S.Hist`).
@@ -140,10 +141,16 @@ Baskın sürerken (`S.Raid`), harekât bitmişken ya da açılış/emir belgesi 
 - **Emir** (`StartLiberationRaid`): vardiyada bir kez, yalnız mevcut bölgenin sıradaki sektörüne, hazır bir ekip ve `liberationRaidCost`
   (12) fonla; kadroda Teknisyen (asıl ya da yedek) olmalı. Baskın bölgenin özelliğini, imza makinesini ve zorluk
   kademesini taşır (yukarıda). Kamera CRT'ye dalar ve `Baskin` sahnesi odanın üstüne yüklenir.
-- **Kadro** (`Simulation.Squad`, `RaidParams.Squad`): her rol (Teknisyen, EMP uzmanı, Analist) için ayaktaki uzman
-  yarasıyla (eksik canla) çıkar; yatan uzmanın yerine boştaki ilk yedek uzman, rolün canından `liberationRookieHpPenalty`
-  (1) eksik; yedek de yoksa rol boş kalır, tahtada o birim olmaz. Zırh plakaları en düşük canlı uzmandan başlayarak birer
-  tane takılır; plaka ilk hasarı karşılar ve kırılır (`Baskin.Hurt`, efekt `plate`).
+- **Kadro seçimi** (`Simulation.Roles`, `PickCount`, `DefaultPick`, `ResolvePick`): sığınağın kadrosu beş uzman
+  (Teknisyen, EMP uzmanı, Analist, Madenci, Sis uzmanı; hepsi baştan kadroda). Her baskına Teknisyen ve seçilen iki uzman
+  çıkar; seçim emir komutuyla kayda girer (`liberation_raid`, b = "maden,duman", kadro sırasıyla). Seçim verilmezse
+  varsayılan: ayaktakiler yatanlardan önce, önce son baskının uzmanları (`TeamState.LastPick`), sonra dinlenmiş olanlar
+  (yarası az önce); ilk baskında EMP uzmanı ve Analist. Seçim görev fişinin KADRO satırında yapılır (aşağıda, Komuta odası).
+  Eğitim sürerken ilk baskının kadrosu sabittir (Teknisyen, EMP uzmanı, Analist), eğitim senaryosu bu üçe göre yazıldı.
+- **Kadro** (`Simulation.Squad`, `RaidParams.Squad`, `RaidParams.Roles`): seçilen her rol için ayaktaki uzman yarasıyla
+  (eksik canla) çıkar; yatan uzmanın yerine boştaki ilk yedek uzman, rolün canından `liberationRookieHpPenalty` (1) eksik;
+  yedek de yoksa rol boş kalır, tahtada o birim olmaz (kadro eksik çıkar; kartı SIĞINAKTA YARALI). Zırh plakaları en düşük
+  canlı uzmandan başlayarak birer tane takılır; plaka ilk hasarı karşılar ve kırılır (`Baskin.Hurt`, efekt `plate`).
 - **Harita havuzu** (`Core/RaidMaps.cs`): her harekâtın kendi 30 haritası olur, yeni oyunun tohumundan üretilir (adlar
   30 oda adından: Kablo galerisi, Arşiv katı, Kazan dairesi…). Harekât ~57 baskın sürdüğü için her harita ~2 kez gelir
   (havuz 10 iken ~6 kez). Baskınlar havuzu karıştırılmış torbalardan sırayla çeker (`RaidMaps.Slot`,
@@ -169,9 +176,25 @@ Baskın sürerken (`S.Raid`), harekât bitmişken ya da açılış/emir belgesi 
   (ilk denemede tek kapı ve 8–11 adımla %55), iki hat %74, açık salon %69 (ilk denemede %83), şebeke %75, rehine %72.
   4. kademede koridor en zor tür (%38; ötekiler %47–61). Harekât ölçümünde (30 harekât) yalnız koridorlu havuz 19/30,
   türlü havuz 24/30 kazandı; baskın başarısı %66 → %68 (fark gürültü sınırında, ama 4. kademedeki farkla uyumlu).
-- **Taktik tahta** (`Core/Baskin.cs`, 8×8, 6 tur; kampanyada ikmal görevinde 8, `liberationLootExtraTurns`; Kısa nöbette bir tur az): oyuncu birimleri **Teknisyen** (sabotaj), **EMP uzmanı**
-  (EMP atışı, iter), **Analist** (kanca: robota 1 hasar ve çekme; dost uzmanı hasarsız çeker). Kopya dolapları her tur makine uyandırır. Makineler (`Baskin.UnitTypes`; niyet
-  türü `Kinds`):
+- **Taktik tahta** (`Core/Baskin.cs`, 8×8, 6 tur; kampanyada ikmal görevinde 8, `liberationLootExtraTurns`; Kısa nöbette bir tur az): oyuncu birimleri
+
+  | Uzman | Can · yürüyüş | Yetenek |
+  |---|---|---|
+  | Teknisyen (T) | 3 · 3 | Sabotaj: bitişik kare; dolaba 2, robota 1 hasar ve itme; ikmal kasasını açar |
+  | EMP uzmanı (E) | 3 · 3 | EMP atışı: düz hatta 2–5 kare, engellerin üstünden; 1 hasar, çevresini dışarı iter |
+  | Analist (A) | 2 · 4 | Kanca: düz hatta 5 kare; robota 1 hasar ve çekme, dost uzmanı hasarsız çeker; duvara atılır |
+  | Madenci (M) | 3 · 3 | Dinamit: bitişik duvarı kalıcı olarak yıkar (baskın başına `liberationDynamiteCharges` = 2); moloz aynı yönde bir kare öteye 1 hasar (duvarda ve kenarda durur; hedef dolaba ve ikmal kasasına işlemez; soğutma ünitesini patlatır). Robota ya da sıradan nesneye 1 hasar (hak harcamaz). Hedef dolaba, kasaya ve dosta atılmaz |
+  | Sis uzmanı (S) | 2 · 3 | Sis bombası: düz hatta 1–4 kare, engellerin üstünden (duvara değil; baskın başına `liberationSmokeCharges` = 3). Sis yalnız bu turun makine evresinde durur, makineler saldırdıktan hemen sonra dağılır (plan onu hiç görmez) |
+
+  **Sis kuralı** (`Baskin.IntentTarget`): atış ve kilit sise girince kaybolur (sisli kare ve arkası vurulmaz); yakın vuruş
+  ve havan sisli kareye vuramaz (havanda yalnız düştüğü kare sayılır). Sisin içindeki makine yine ateş eder. Patlamalar
+  (patlayan robot, soğutma ünitesi, moloz), uyanma ve çoğaltma hasarı, onarım ve kalkan, hareket ve itme etkilenmez; bu
+  yüzden oyunda "korur" değil "nişanlı ateşi keser" yazar. Yıkılan duvarın bedeli: açılan delik makinelerin atış hattını
+  da açar, kopya dolabının yanındaki yıkık duvar uyanma karesi olur. Önizleme hamleden sonraki niyetleri gösterir
+  (`PreviewResult.Intents`): sise kesilen atış gri kesik çizgiyle sisli karede biter, dinamitin açtığı hat görünür. Hak
+  sayıları ölçülmedi (aşağıda, Zorluk ölçümü).
+
+  Kopya dolapları her tur makine uyandırır. Makineler (`Baskin.UnitTypes`; niyet türü `Kinds`):
 
   | Makine | Can · yürüyüş | Niyet |
   |---|---|---|
@@ -197,8 +220,11 @@ Baskın sürerken (`S.Raid`), harekât bitmişken ya da açılış/emir belgesi 
     tutar; herkes taşıyıcıyı (yoksa Teknisyen'i) kovalar; taşıyıcı ve hedefin yanındaki Teknisyen öncelikli hedef. Ekibe
     hiçbir kareden ulaşamayan makine sivil sunucuya nişan alır (turda en çok bir; yukarıda "Sivil güven").
     Makineler sırayla plan yaparken öncekilerin tuttuğu kareleri saymaz (eşgüdüm). Rastgele tüketimi temel akılla aynı.
-  - **Zorluk ölçümü** (açgözlü bot, havuz haritaları, 1440 baskın): önceki oyun her kademede ~%92. Şimdi (kaçış, gelişmiş
-    akıl, 7 turluk ikmal, düğüm +2 can): **toplam %72, ikmal %67, sunucu %76; kademe 1/2/3 %79/%75/%61**. 6 turluk ikmal
+  - **Zorluk ölçümü** (açgözlü bot, havuz haritaları, 1440 baskın; T + E + A kadrosuyla, Madenci ve Sis uzmanı yokken):
+    önceki oyun her kademede ~%92. Şimdi (kaçış, gelişmiş
+    akıl, 7 turluk ikmal, düğüm +2 can): **toplam %72, ikmal %67, sunucu %76; kademe 1/2/3 %79/%75/%61**. Kadro seçimi
+    zorluğu kendiliğinden düşürür (oyuncu her bölgeye en uygun ikiliyi seçer); altı ikilinin ölçümü ve hak sayılarının
+    ayarı açık iş (bot depoda yok, yeniden yazılmalı; DURUM). 6 turluk ikmal
     %45'te kalıyordu, 8 tur %80. Sunucuda gelişmiş akıl tek başına etkisizdi (%89: niyetler önceden göründüğü için
     Teknisyen tutulmayan kareden sabotaj yapar); düğümün canı +1 %83, +2 %76; ek makine %89 (etkisiz).
   - **Sunucu:** tur bitmeden bütün hedef dolaplar kırılır. Kampanyada düğüm dolabı `liberationServerTargetHp` (+2) canla
@@ -342,12 +368,15 @@ kaçmış bir teknisyen… Kapı erzağa, güvene ve alarma bir yüz verir; bask
   haritada sürüklenebilir.
 - **Sığınak maketi (K4; Revizyon 2 · S3):** odaların durumu (çalışıyor, DURDU, HASARLI), personeli ve geliştirme kararları;
   pano özetinde başta erzakın kaç vardiya yeteceği (⌊erzak ÷ son vardiyadaki düşüş⌋; 3 ve altı kırmızı), sonra TOPLULUK
-  (yedek dahil), UZMANLAR (diskler), PLAKA. Maketin üstündeki DEPO bandı erzakı sandık, malzemeyi kova, plakaları rafta
+  (yedek dahil), UZMANLAR (beş uzmanın diski, iki satırda), PLAKA. Maketin üstündeki DEPO bandı erzakı sandık, malzemeyi kova, plakaları rafta
   gösterir; odalar çıktılarını gösterir (ranzada yedek, telsizde yanan kadran, atölyede döküm kalıbı, revirde hasta).
 - **CRT (K5):** telsizin göstergesi (TELSİZ · KANAL 07): dinlemede, hat açılıyor, hat açık, hat kapandı. Yalnız baskın
   emri kamerayı ekrana yaklaştırır. Teknisyen yatıp yedek de yoksa hat kapalı ("ALFA · TEKNİSYEN YARALI · 2 GÜN").
 - **Görev fişi** kadroyu baskına çıkacağı gibi, baskın piyonlarının harfli ahşap diskleriyle yazar: T 3/3 · E 2/3 ·
-  A 1/2 yedek · 2 plaka. Eksik yalnız fonsa BASKIN EMRİ VER açık kalır; basınca komut çağrılmaz, FON sayacı titrer ve
+  A 1/2 yedek · 2 plaka. Altındaki **KADRO** satırı seçicidir: beş uzman kadro sırasıyla (disk + can; T SABİT, yatanda
+  "n GÜN" ya da "YEDEK ÇIKAR"); seçili olan sarı, seçilmeyenin diski soluk. Tıklanan uzman seçilir, iki seçili varken en
+  eski seçimin yerine geçer; seçili olana tıklamak onu bırakır (ikiden az seçiliyken düğme kapalı, KADRO EKSİK). Üstüne
+  gelince ad, can ve yeteneğin tam açıklaması. Seçim vardiya boyunca kalır (`SiginakMap.pick`); eğitimde kilitli. Eksik yalnız fonsa BASKIN EMRİ VER açık kalır; basınca komut çağrılmaz, FON sayacı titrer ve
   teleks gerekçeyi basar. Başka gerekçede düğme devre dışıdır, kısa nedeni sağında yazar (“EKİP HAZIR DEĞİL”).
 - **Vardiya geçişi (K6, Revizyon 2 · S5):** şalter → sayaçlar döner → vardiya raporu (harita pozunda, solda 540 px):
   başta üç göz (ERZAK "n vardiya yeter" · YZ ALARMI ölçekle · FON önce → sonra), altında alarm notu; FON, ÜRETİM VE TÜKETİM
@@ -398,10 +427,10 @@ düşüşü, son olay: son sunucu / güvenin sıfırlanması / kapının açılm
 
 ## Kayıt ve kalıcılık
 
-- Kayıt = tohum + denge değerleri + **komut geçmişi** (`GameRecord`, biçim 11: 30 haritalık havuz ve kıt sığınak ekonomisi); devam, komutları
+- Kayıt = tohum + denge değerleri + **komut geçmişi** (`GameRecord`, biçim 12: beş uzmanlı kadro ve baskın öncesi seçim); devam, komutları
   yeniden oynatır (`Replay.Restore`). Baskın sonucu kadronun kalan canını, plakasını ve ayakta kalan sivilleri de taşır
   (`RaidResult.Encode`); kapı kararları `door_answer` komutudur. Her başarılı komutta ve uygulama kapanırken kaydedilir;
-  harekât bitince silinir. Biçim 10 ve öncesi kayıtlar yüklenmez.
+  harekât bitince silinir. Biçim 11 ve öncesi kayıtlar yüklenmez.
 - Dosyalar `Application.persistentDataPath` altında: `liberation_savegame.json` (oyun) ve kayda girmeyen sunum durumu
   için `liberation_desk.json` (teleks satırları, evrak tepsisindeki son 5 vardiya raporu, kamera pozu; tohum
   eşleşmezse yok sayılır).

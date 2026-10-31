@@ -46,6 +46,16 @@ namespace Corrigible.Desk
             public TMP_Text letter, hp;
         }
 
+        /// <summary>Kadro seçicinin bir uzmanı: tıklanır (Teknisyen ve eğitim baskını kilitli); seçili sarı, üzerinde açık sarı.</summary>
+        [Serializable] public sealed class PickChip
+        {
+            public GameObject root;
+            public Button button;
+            public UiHoverTarget hover;
+            public Image fill, disc;
+            public TMP_Text letter, hp;
+        }
+
         [Tooltip("Kâğıt: −0,6° dönük, kayar; çocukları dikey dizilir.")]
         [SerializeField] RectTransform paper;
         [SerializeField] CanvasGroup group;
@@ -65,6 +75,12 @@ namespace Corrigible.Desk
         [SerializeField] LayoutElement teamStampHolder;
         [SerializeField] Image teamStampFrame;
         [SerializeField] Member[] members = Array.Empty<Member>();
+        [Tooltip("KADRO satırı: Teknisyen sabit, öteki dört uzmandan ikisi seçilir.")]
+        [SerializeField] GameObject pickBlock;
+        [SerializeField] TMP_Text pickHead;
+        [Tooltip("Başlığın üstüne gelince seçimin notu (Teknisyen sabit, eksik seçim, eğitim baskını).")]
+        [SerializeField] UiHoverTarget pickHover;
+        [SerializeField] PickChip[] pickChips = Array.Empty<PickChip>();
         [SerializeField] Button action;
         [SerializeField] UiHoverTarget actionHover;
         [Tooltip("Düğmenin yüzü (dolgu + yazılar): üzerinde 2 px kalkar, basılıyken 2 px iner; gölge altında kalır.")]
@@ -88,8 +104,12 @@ namespace Corrigible.Desk
         bool right;
         SlipActionState actionState;
         readonly bool[] rowLocked = new bool[3], rowSelected = new bool[3];
+        bool[] chipPicked = Array.Empty<bool>(), chipLocked = Array.Empty<bool>();
 
         public event Action ActionClicked, CloseClicked;
+        /// <summary>Kadro seçicide bir uzmana tıklandı (rol kimliği).</summary>
+        public event Action<string> PickClicked;
+        string[] chipRoles = Array.Empty<string>();
         /// <summary>Fiş açık (kapanırken değil).</summary>
         public bool IsOpen => gameObject.activeSelf && phase != Phase.Closing;
         public string RegionId { get; private set; }
@@ -119,6 +139,14 @@ namespace Corrigible.Desk
         {
             action.onClick.AddListener(() => ActionClicked?.Invoke());
             close.onClick.AddListener(() => CloseClicked?.Invoke());
+            chipRoles = new string[pickChips.Length];
+            chipPicked = new bool[pickChips.Length];
+            chipLocked = new bool[pickChips.Length];
+            for (int i = 0; i < pickChips.Length; i++)
+            {
+                int k = i;
+                pickChips[i].button.onClick.AddListener(() => { if (!chipLocked[k] && chipRoles[k] != null) PickClicked?.Invoke(chipRoles[k]); });
+            }
         }
 
         /// <summary>
@@ -157,6 +185,7 @@ namespace Corrigible.Desk
                 rewards[i].unit.text = r.Unit;
             }
             Team(d, t);
+            Pick(d, t);
             Action(d, t);
 
             if (opening)
@@ -283,6 +312,34 @@ namespace Corrigible.Desk
             teamStampHolder.preferredWidth = teamStampHolder.minWidth = Mathf.Max(80, teamStampRoot.sizeDelta.x + 6);
         }
 
+        /// <summary>KADRO: disk + can (altında durum); seçili sarı dolgu, seçilmemişin diski soluk, kilitli olan tıklanmaz.</summary>
+        void Pick(OperationSlipData d, SiginakTheme t)
+        {
+            bool show = pickBlock != null && d.Pick.Count > 0 && string.IsNullOrEmpty(d.Info);
+            if (pickBlock != null) pickBlock.SetActive(show);
+            if (!show) return;
+            pickHead.text = d.PickHead ?? "";
+            for (int i = 0; i < pickChips.Length; i++)
+            {
+                var c = pickChips[i];
+                var p = i < d.Pick.Count ? d.Pick[i] : null;
+                c.root.SetActive(p != null);
+                chipRoles[i] = p?.Role;
+                if (p == null) continue;
+                chipPicked[i] = p.Picked;
+                chipLocked[i] = p.Locked;
+                c.button.interactable = !p.Locked;
+                c.letter.text = p.Letter;
+                c.hp.text = string.IsNullOrEmpty(p.Status) ? p.Hp : Corrigible.Core.Loc.F("{0}\n<size=75%>{1}</size>", p.Hp, p.Status);
+                c.disc.color = p.Picked ? t.ColorOf("slip.teamDisc") : t.ColorOf("ui.disabledFill");
+                c.letter.color = p.Picked ? t.ColorOf("ink") : t.ColorOf("ink3");
+                c.hp.color = p.Picked ? (p.Down ? t.ColorOf("status.threat") : t.ColorOf("ink")) : t.ColorOf("ink3");
+                c.hover.Title = p.HoverTitle;
+                c.hover.Line = p.HoverLine;
+            }
+            if (pickHover != null) { pickHover.Title = d.PickHead; pickHover.Line = d.PickNote; }
+        }
+
         void Action(OperationSlipData d, SiginakTheme t)
         {
             actionBlock.SetActive(d.HasAction);
@@ -368,6 +425,16 @@ namespace Corrigible.Desk
                 var c = rowSelected[i] ? t.ColorOf("slip.rowSelected") : rowOver ? t.ColorOf("slip.rowHover") : Color.clear;
                 row.highlight.enabled = c.a > 0;
                 row.highlight.color = c;
+            }
+
+            // Kadro: seçili sarı %34, üzerinde sarı %18 (kilitli uzman seçilmez)
+            for (int i = 0; i < pickChips.Length && i < chipPicked.Length; i++)
+            {
+                var c = pickChips[i];
+                if (!c.root.activeSelf) continue;
+                bool chipOver = c.hover.Over && !chipLocked[i];
+                var fill = chipPicked[i] ? t.ColorOf("slip.rowSelected") : chipOver ? t.ColorOf("slip.rowHover") : Color.clear;
+                c.fill.color = fill;
             }
 
             // Esc: üzerinde çerçeve koyulaşır

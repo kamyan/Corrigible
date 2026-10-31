@@ -564,6 +564,23 @@ S6a–c, S7a–d, S8a–b; TR ve EN (S4d siluet kataloğu oyunda bir durum deği
 
 ## CHANGELOG
 
+- **2026-11-01 · Haritanın kenarı (S2):** bölge çokgenleri kâğıdın dışına 12 px'e kadar taşıyordu (Grönland, Rusya'nın kuzeyi,
+  Çukotka, Yeni Zelanda, Alaska). `SadeMapCanvas`'a `RectMask2D` (tek seferlik eval, sahnede); referanstaki gibi harita
+  kâğıdın kenarında kesilir. Test `DeskGameScene_MapIsClippedToPaper`.
+
+- **2026-11-01 · DEPO plaka rafı (S3):** plaka belirince maketin önünde 1 m'lik levha oluyordu: `ShelterStore` ölçeği
+  `Vector3.one`'a yazıyordu, plakalar doğrudan ölçekli küp. Artık sahnedeki ölçek saklanır; kalkarken gelen "göster" de
+  nesneyi geri getirir. Sahne değişmedi. Ayrıntı: `Docs/DURUM.md` → "Maketteki plaka rafı".
+
+- **2026-10-31 · Kadro seçimi ve iki yeni uzman (referansta yok):** `DeskGame.unity` iki tek seferlik eval'le değişti
+  (depoya girmedi). Görev fişinde `Team`'in altında **KADRO** satırı (`Paper/Pick`: başlık + beş `Chip`; çip = dolgu
+  Image, Button, `UiHoverTarget`, `Member 1`'in `Disc` ve `Hp` kopyaları; 64 × 44, sayfa iç payı 18/16); `OperationSlip`
+  `pickBlock/pickHead/pickHover/pickChips`, `SiginakMap.tutorial`. Seçili çip `slip.rowSelected`, üzerinde `slip.rowHover`,
+  seçilmeyenin diski `ui.disabledFill`; T kilitli (SABİT). Pano: `Row UZMANLAR`'da beş üye `Discs` ızgarasında (3 sütun,
+  72 × 22, iki satır; tek satıra 438 px gerekiyordu, 364 px var). Baskın: `Miner`, `SmokeSpecialist` piyonları ve
+  `thumb_standee_M/S` (S9-B yöntemiyle), duvar karoları durumdan, sis bulutu ve kesik ok (`RaidBoard3D`). Ayrıntı:
+  `Docs/DURUM.md` → "Madenci, Sis uzmanı ve kadro seçimi".
+
 - **2026-10-31 · Telsiz defteri (Soru 11, S1 notu “son dört kayıt”):** `RadioLogBuilder` (Bridge) hattın geçmişini
   simülasyondan türetir: her baskının dönüşü (“Alfa döndü · D. Avrupa 02 alındı” / “geri çekildi”), düşen uzman, kırılan
   sivil sunucu, son karşı saldırı (“YZ karşı saldırısı · … yeniden işgal”) ve bugünün satırları (ekip hazır / sahada / Teknisyen

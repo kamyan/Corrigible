@@ -46,7 +46,7 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(SlipButtonState.Disabled, d.Action.State);
             Assert.AreEqual(sim.ShelterLevelLock(ShelterLogic.Radio), d.ActionNote, "kilit gerekçesi düğmenin altında");
             Assert.AreEqual(Loc.F("V.{0:000}", sim.S.Day + 1), d.Shift);
-            CollectionAssert.AreEqual(new[] { "T", "E", "A" }, d.Squad.Select(m => m.Letter).ToArray(), "uzmanlar diskle");
+            CollectionAssert.AreEqual(new[] { "T", "E", "A", "M", "S" }, d.Squad.Select(m => m.Letter).ToArray(), "beş uzman diskle");
             Assert.AreEqual(Loc.F("{0}/{1}", 3, 3), d.Squad[0].Hp);
             StringAssert.Contains("0/3", d.Plates);
             // S3: asıl soru erzak kaç vardiya yeter (22 ÷ 1,4 = 15)
@@ -249,7 +249,7 @@ namespace Corrigible.Desk.Tests
                 for (var it = bo.GetIterator(); it.NextVisible(true);)
                     if (it.propertyType == SerializedPropertyType.ObjectReference && it.name != "m_Script")
                         Assert.IsNotNull(it.objectReferenceValue, "pano alanı: " + it.propertyPath);
-                Assert.AreEqual(3, bo.FindProperty("squad").arraySize);
+                Assert.AreEqual(Simulation.Roles.Length, bo.FindProperty("squad").arraySize, "beş uzmanın diski");
                 var store = (ShelterStore)so.FindProperty("store").objectReferenceValue;
                 Assert.IsNotNull(store, "DEPO");
                 var st = new SerializedObject(store);
@@ -264,6 +264,36 @@ namespace Corrigible.Desk.Tests
                 Assert.AreEqual(1, new SerializedObject(views.Single(v => v.RoomId == ShelterLogic.Infirmary)).FindProperty("occupants").arraySize);
                 Assert.Greater(new SerializedObject(views.Single(v => v.RoomId == ShelterLogic.Radio)).FindProperty("activeLights").arraySize, 0);
                 Assert.Greater(new SerializedObject(views.Single(v => v.RoomId == ShelterLogic.Workshop)).FindProperty("activeLights").arraySize, 0);
+            }
+            finally { EditorSceneManager.CloseScene(scene, true); }
+        }
+
+        [Test]
+        public void DeskGameScene_StoreKeepsAuthoredScale()
+        {
+            // Plakalar doğrudan ölçekli küp: belirip kalkarken sahnedeki ölçeğe döner (1'e dönseydi maketin önünde 1 m'lik levha olurdu)
+            var scene = EditorSceneManager.OpenScene(DeskSpriteManifest.Root + "/Scenes/DeskGame.unity", OpenSceneMode.Additive);
+            try
+            {
+                var store = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<ShelterStore>(true)).Single();
+                var items = new System.Collections.Generic.List<Transform>();
+                for (var it = new SerializedObject(store).GetIterator(); it.NextVisible(true);)
+                    if (it.propertyType == SerializedPropertyType.ObjectReference && new[] { "full", "partial", "body", "plate" }.Contains(it.name))
+                        items.Add(((GameObject)it.objectReferenceValue).transform);
+                var authored = items.Select(t => t.localScale).ToArray();
+                Assert.IsTrue(authored.Any(s => s != Vector3.one), "plakalar ölçekli");
+                var full = new ShelterStoreData
+                {
+                    Crates = ShelterStoreData.CrateSlots, Bins = ShelterStoreData.BinSlots, LastBinFill = 0.5,
+                    Plates = ShelterStoreData.PlateSlots, PlateCapacity = ShelterStoreData.PlateSlots, Slate = "dolu",
+                };
+                var empty = new ShelterStoreData { PlateCapacity = ShelterStoreData.PlateSlots, Slate = "boş" };
+                foreach (var d in new[] { empty, full, empty, full })
+                {
+                    store.Show(d, false);
+                    for (int i = 0; i < items.Count; i++) Assert.AreEqual(authored[i], items[i].localScale, items[i].name);
+                }
+                Assert.IsTrue(items.Where(t => t.name.StartsWith("Plate")).All(t => t.gameObject.activeSelf));
             }
             finally { EditorSceneManager.CloseScene(scene, true); }
         }

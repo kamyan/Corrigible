@@ -1,6 +1,6 @@
 # Durum, kararlar ve açık işler
 
-_Son güncelleme: 2026-10-31_
+_Son güncelleme: 2026-11-01 (plaka rafı, haritanın kenarı)_
 
 ## Nerede kaldık
 
@@ -12,19 +12,78 @@ baskın. Sığınak baskının hazırlık yeri: uzmanların yarası kalır, revi
 yedek uzman tutar, telsiz alarmı yavaşlatır; oda seviyeleri özgür bölgeyle açılır. Zorluk özgür bölge sayısıyla dört
 kademede artar; her bölgenin kendi tahta özelliği ve imza makinesi var (6 yeni makine). Birkaç vardiyada bir sığınağın
 kapısı çalar: 23 ziyaretçi, zincirler ve kapıda ölüm (Vuruldu, Sızma). Türkçe ve İngilizce. Kayıt ve devam
-(`liberation_savegame.json`, biçim 11) çalışır. Yeni harekâtta rehberli eğitim (analistin notları) ilk vardiyayı yönlendirir;
+(`liberation_savegame.json`, biçim 12) çalışır. Kadro beş uzman (Teknisyen, EMP uzmanı, Analist, Madenci, Sis uzmanı);
+her baskına Teknisyen ve görev fişinde seçilen iki uzman çıkar, çıkmayanlar dinlenir. Yeni harekâtta rehberli eğitim (analistin notları) ilk vardiyayı yönlendirir;
 ilk baskın adım adım oynanan bir senaryodur. Her harekâtın kendi 30 haritalık taktik harita havuzu var (altı tür, torba: tekrar etmez);
 ikmal görevinde malzeme girişe geri taşınır; kampanyada makineler gelişmiş akılla oynar ve ekibe ulaşamayınca sivillere
 nişan alır; ayakta kalan siviller güveni geri kazandırır (tavan 20); YZ alarmı arka duvardaki panoda.
 Sığınağın ekonomisi kıt: erzak çoğunlukla ikmal baskınlarından gelir, açlık kapıya aç heyet getirir.
 Baskın telsizle anlatılır: sığınak ağa bağlanmaz, gözcü bildirir, emir telsizle gider.
-Son tam EditMode koşusu **361/361** (2026-10-31).
+Son tam EditMode koşusu **378/378** (2026-11-01).
 
 **Git:** Depo `git@github.com:kamyan/Corrigible.git`, varsayılan dal `main`. Sığınak işi `siginak-ui` dalında
 (Aşama 1–10: `eed2824`, eski görünümün kaldırılması: `553517e`, sarı çerçeve: `b7b4d82`, sadeleştirme: `413fbf5`; sivil
 güven, YZ alarmı, hazırlık sığınağı, bölge kimliği ve eğitim: `6e658a5`). Sonrası (baskında tıklama düzeltmeleri, alarm
 panosu, harita havuzu ve torbası, ikmal kaçışı, makine aklı, sivillere saldıran makineler ve güven ödülü, sığınağın kapısı):
 `c6f61e9`; build: `05ffdcb`; telsiz: `9d16037`. Tasarım revizyonu 2 (Aşama 1–10) henüz commit edilmedi.
+
+## Harita kâğıdın kenarından taşıyordu (2026-11-01)
+
+- **Hata (kullanıcı):** bölgeler haritanın kenarından taşıyordu: Grönland, Svalbard, Rusya'nın kuzey adaları üst kenarın,
+  Çukotka ve Yeni Zelanda sağ kenarın, Alaska sol kenarın dışına çıkıyordu (kara dolgusu ve işgal taraması). Kâğıt
+  (`MapBase`, `MapLines`) tam tasarım dikdörtgeninde biter; `RegionMeshGraphic` çokgenleri (na, weu, ru, oc ve konturları)
+  12 px'e kadar dışarı uzanır ve haritada hiç maske yoktu.
+- **Düzeltme:** `SadeMapCanvas`'a (`MapCoverFitter.viewport`) iç payı sıfır bir `RectMask2D` (tek seferlik betikle; sahnede).
+  İşaretlerin (243 grafik: damgalar, etiketler, işaretler kutusu, ip) hiçbiri kâğıdın dışına çıkmıyor, kesilen yalnız taşan
+  coğrafya. Test `SiginakMapTests.DeskGameScene_MapIsClippedToPaper`. Play'de V031 ile harita pozunda kenarlar düz.
+- Aynı kayıtta panonun `Discs` ızgarasının (önceki iş) layout'un yönettiği çapa/boy değerleri de dosyaya yazıldı.
+
+## Maketteki plaka rafı: 1 m'lik levha (2026-11-01)
+
+- **Hata (kullanıcı, Play):** atölye ilk zırh plakasını döktükten sonra masa pozunda maketin önünde büyük, boş bir levha
+  duruyordu. `ShelterStore` (DEPO bandı) belirip kalkan nesnelerin ölçeğini `Vector3.one`'a yazıyordu; sandık ve kovalar
+  ölçeği 1 olan sarmalayıcı, ama `Plate rack/Plate 1–3` doğrudan ölçekli küp (0,006 × 0,07 × 0,05): plaka belirince 1 m'lik
+  küp oluyordu. Plaka yokken (`Plates = 0`) görünmediği için önceki denemelerde çıkmadı.
+- **Düzeltme:** `ShelterStore.Awake` her nesnenin sahnedeki ölçeğini saklar (`rest`); belirme ve kalkma o ölçeğe göre.
+  Awake bir kez çalışır (Show onu elle çağırmış olabilir; ikinci çağrı son kovanın dolgusunu yeniden ölçüp kaydırıyordu).
+  Aynı yerde eski bir kusur: kalkma sürerken gelen "göster" yok sayılıyor, nesne kayboluyordu; artık geri belirir.
+  Test `SiginakShelterTests.DeskGameScene_StoreKeepsAuthoredScale`. Kullanıcının kaydıyla Play'de denendi (kayıttan devam,
+  vardiya sonu, yarıda kesilen kalkma). Ölçeği koddan yazan öteki bütün nesneler (oda, Baskin, prefab'lar) tarandı:
+  sahnedeki ölçekleri 1 ya da kod kendi kurduğu nesneye yazıyor; başka örnek yok.
+
+## Madenci, Sis uzmanı ve kadro seçimi (2026-10-31)
+
+- **İstek:** duvar kıran ve sis atan iki yeni uzman; baskın öncesi üç uzman seçilsin, Teknisyen hep seçili. Öneri koda
+  karşı üç incelemeden geçti (kurallar ve denge, motor ve determinizm, akış ve okunurluk); kararlar önerilen varsayılanlarla:
+  sisin içindeki makine yine ateş eder (körleşme yok), haklar baskın başına (dinamit 2, sis 3), yeni uzmanlar baştan
+  kadroda, yeterli uzman yoksa baskın bugünkü gibi eksik kadroyla çıkar, oyunda "sis" (kimlik `duman`; `sis` Kum
+  fırtınasının kimliği).
+- **Core:** `Baskin`: `maden` (dinamit) ve `duman` (sis bombası) türleri, `Unit.Charges`, `Cell.Smoke`, `BState.Rubble`,
+  `ITarget/IntentView.Smoked`, `PreviewResult.Intents`, efektler `dynamite`, `breach`, `debris`, `smoke`, `smoked`. Sis yalnız
+  `IntentTarget`'te (atış ve kilitte her adımda önce sis; havanda düştüğü kare; yalnız yakın vuruş, onarım/kalkan/çoğaltma
+  değil) ve makine evresinden hemen sonra temizlenir, plan (`ScoreTarget`, `Zone`, `Covers`, `CanReachTeam`) onu görmez.
+  Moloz hedef dolaba ve ikmal kasasına işlemez (her haritada hedefin yanında duvar var: Teknisyen'in bir sabotajı bedava
+  olurdu, kasa kazayla kırılırdı). `Signature`'a yıkık duvar, sis ve hak yalnız varsa eklenir: kilitli imzalar değişmedi.
+  Yeni RNG tüketimi yok. Kadro: `Simulation.Roles` beş, `PickCount`, `DefaultPick`, `ResolvePick`, `Squad(team, pick)`,
+  `TeamState.LastPick`, dinlenme uzman başına (`Rested`). Emir `StartLiberationRaid(sektör, seçim)`; kayıt biçimi 11 → 12
+  (beş kişilik kadro revire, kapının yara/iyileşme kartlarına ve dinlenmeye girer): **eski kayıtlar açılmaz**.
+- **Sunum:** fişte KADRO satırı (sahnede tek seferlik betikle, `OperationSlip.pickChips`, `SiginakMap.pick/tutorial`),
+  panoda beş disk (iki satır), haritadaki figür varsayılan kadroyu gösterir. Baskında kartlar, 1–3 ve yetenek satırı
+  kadrodan; duvar karoları durumdan; sis bulutu, SİS etiketi, sise kesilen gri kesik çizgi; önizleme hamle sonrası
+  niyetleri gösterir; ipucu kartında duvar, sisli kare, "Duvar yıkılır", "Sise kesilir". Kurallar kartına iki uzman
+  kadrodaysa birer satır. Eğitim baskını yalnız T + E + A kadrosuyla kurulur (`TutorialRaid.For` türleri denetler).
+- **Görsel ve ses:** piyonlar `Prefabs/Raid/Miner.prefab`, `SmokeSpecialist.prefab` (Technician'ın kopyası; harf
+  `PawnLetterM/S.asset`: PT Serif Bold ana hatları (OFL, sistem yazı tipi), eski harflerin ölçüsüyle: büyük harf 0,496,
+  kalınlık 0,13, pah 0,012 × 0,01, eğri başına 6 parça; M yatayda %84). İpucu resimleri `thumb_standee_M/S.png` (tahtanın
+  kamerasıyla, 80 × 92). Sesler `RaidDynamite`, `RaidSmoke`, `RaidSmoked` (kodla sentezlenmiş yer tutucu). Tek seferlik
+  betikler depoya girmedi.
+- **Oyunda denendi** (Play, V014 fikstürü): fişte seçim (M ve S en eski seçimlerin yerine geçti, T değişmedi), emir
+  `liberation_raid eeu_2 maden,duman`, baskında T/M/S kartları, dinamitle duvar yıkıldı ve geri almada geri geldi, sis
+  atıldı ve makine evresinden sonra dağıldı; İngilizce fiş.
+- **Açık:** ölçüm botu yok (önceki bot oturumun geçici klasöründeydi). Seçim zorluğu düşürür; altı ikili × iki görev ×
+  harita türü ölçülmeli, dinamit ve sis hakları buna göre ayarlanmalı (öneri: tek evre bakan açgözlü bot dinamitin yol
+  kısaltmasını görmez, skoruna Teknisyen'den hedefe / taşıyıcıdan çıkışa en kısa yol eklenmeli). Fiş haritanın türünü
+  göstermiyor (Madenci'nin değeri haritaya bağlı). Sesler yer tutucu. Kurallar kartının lejantında sis satırı yok.
 
 ## Tasarım revizyonu 2 (2026-10-30, sürüyor)
 
@@ -623,6 +682,8 @@ bugünkü odanın tasarım brifidir.)
 
 - **Gölgeler (karar, 2026-10-31):** ampul ve lamba gölgeleri yumuşak kalır. Sert gölge ~0,25 ms kazandırırdı (Revizyon 2'yi
   öncesinden %3–6 hızlı yapardı); Revizyon 2'nin masa ve sığınak pozundaki %2–3'lük farkı kabul edildi (`Docs/UI_Siginak_Rev2/IMPLEMENTATION_MAP.md` Soru 13).
+- **Denge (kadro seçimi):** Madenci ve Sis uzmanının hakları (dinamit 2, sis 3) ölçülmedi; seçimli kadroyla zorluk yeniden
+  ölçülmeli (yukarıda, "Madenci, Sis uzmanı ve kadro seçimi").
 - **Denge:** harekâtın zorluğu ve uzunluğu gerçek oyunla ayarlanmadı; sivil güven, alarm ve hazırlık sığınağı botla
   ölçüldü, ama bot projede değil (oturumun geçici klasöründe); projeye denge testi olarak alınmadı. Botla görülen: zorluk
   5. bölgeden sonra artmıyor. Harita türleri hep soldan girişli ve tek hedefli; birden çok hedefli ya da başka kenardan

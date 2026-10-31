@@ -16,6 +16,8 @@ namespace Corrigible.Game.Audio
         RaidStep = 31, RaidEmpBlast = 34, RaidDroneShot = 36, RaidMelee = 37, RaidHit = 38, RaidHitObject = 39,
         RaidArmor = 40, RaidRepair = 41, RaidPush = 42, RaidUnitDown = 43, RaidRobotDown = 44, RaidCivilianBreak = 45, RaidExplosion = 46,
         RaidCoreBreak = 47, RaidBreak = 48, RaidSpawn = 49,
+        // Madenci ve Sis uzmanı: dinamitin patlaması, sis bombası, sise kesilen atış
+        RaidDynamite = 32, RaidSmoke = 33, RaidSmoked = 35,
         // Sığınağın kapısı
         DoorKnock = 50, DoorOpen = 51, DoorShot = 52,
         // Telsiz: sahayla tek bağ (hat açılır, emir iletilir, gözcü bildirir)

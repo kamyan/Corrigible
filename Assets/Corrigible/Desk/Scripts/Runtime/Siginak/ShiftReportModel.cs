@@ -15,9 +15,11 @@ namespace Corrigible.Desk
     [Serializable]
     public sealed class ShiftMemberSnapshot
     {
-        /// <summary>Rol (tek, emp, ana); yara (eksik can) ve yatacağı gün.</summary>
+        /// <summary>Rol (tek, emp, ana, maden, duman); yara (eksik can) ve yatacağı gün.</summary>
         public string role;
         public int wounds, down;
+        /// <summary>Uzman son baskının kadrosunda değildi: ekip baskına çıksa da dinlenir.</summary>
+        public bool benched;
     }
 
     [Serializable]

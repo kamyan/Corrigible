@@ -33,7 +33,7 @@ namespace Corrigible.Core
     [Serializable]
     public sealed class SpecialistState
     {
-        /// <summary>Rol (Baskin birim türü: tek, emp, ana); yedek uzmanda boş, çıktığı baskında eksik rolü doldurur.</summary>
+        /// <summary>Rol (Baskin birim türü: tek, emp, ana, maden, duman); yedek uzmanda boş, çıktığı baskında eksik rolü doldurur.</summary>
         public string Role;
         /// <summary>Wounds: eksik can; Down: yaralı, kalkana kadar kalan vardiya.</summary>
         public int Wounds, Down;
@@ -45,8 +45,10 @@ namespace Corrigible.Core
         public string Id, Name, At, Task;
         /// <summary>Görevde (baskın) kalan vardiya: baskın vardiyayı doldurur.</summary>
         public int Busy;
-        /// <summary>Teknisyen, EMP uzmanı, Analist (rol sırasıyla).</summary>
+        /// <summary>Teknisyen, EMP uzmanı, Analist, Madenci, Sis uzmanı (rol sırasıyla, <see cref="Simulation.Roles"/>).</summary>
         public List<SpecialistState> Members = new List<SpecialistState>();
+        /// <summary>Son baskına Teknisyen'in yanında seçilen roller: varsayılan seçim ve dinlenme (çıkmayanlar dinlenir).</summary>
+        public List<string> LastPick = new List<string>();
     }
 
     /// <summary>Baskına çıkan bir uzman: tahtadaki birimin türü, canı ve zırh plakası.</summary>
@@ -74,8 +76,11 @@ namespace Corrigible.Core
         public List<string> Traits = new List<string>();
         /// <summary>Bölgenin imza düşmanı (Baskin birim türü); boşsa yalnız dron ve bakım robotu.</summary>
         public string Signature;
-        /// <summary>Kadro (sırasıyla giriş kareleri); boşsa tam ve sağlam üç uzman.</summary>
+        /// <summary>Kadro (sırasıyla giriş kareleri); boşsa tam ve sağlam üç uzman (Teknisyen, EMP uzmanı, Analist).</summary>
         public List<SquadSlot> Squad;
+        /// <summary>Baskına seçilen roller (Teknisyen ve iki uzman, kadro sırasıyla): yedeği olmadığı için çıkamayan da dahil; sunum
+        /// boş kalan kartı adlandırır. Boşsa kadronun türleri.</summary>
+        public List<string> Roles;
         /// <summary>Harekâtın harita havuzunun tohumu (yeni oyunun tohumu, <see cref="RaidMaps"/>); 0 ise elle çizilmiş üç harita.</summary>
         public uint MapSeed;
         /// <summary>Harekâttaki baskın sırası (1'den): havuzun torbasından hangi haritanın geleceği (<see cref="RaidMaps.Slot"/>); 0 ise eski seçim.</summary>
@@ -90,6 +95,9 @@ namespace Corrigible.Core
         public int ExtraTurns;
         /// <summary>Sivil sunucunun canı (dengeden <c>liberationCivilianHp</c>); 0 ise 1.</summary>
         public int CivilianHp;
+        /// <summary>Baskın başına hak (dengeden <c>liberationDynamiteCharges/SmokeCharges</c>): Madenci'nin duvar yıkan dinamiti ve
+        /// Sis uzmanının sis bombası.</summary>
+        public int DynamiteCharges = 2, SmokeCharges = 3;
     }
 
     [Serializable]

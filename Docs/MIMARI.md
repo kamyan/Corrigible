@@ -112,8 +112,10 @@ Corrigible/                          (Unity proje kökü, git deposu)
 - RNG: `Rng` (mulberry32, `Core/Rng.cs`). Durumu `S.Rng.State`. Kapı kendi üretecini her kullanımda harekât tohumu, gün ve
   amaçtan kurar (`Simulation.DoorRng`); ana sıraya dokunmaz (`DoorTests`). `Js.Round` = JS `Math.round` (`Math.Floor(v + 0.5)`);
   tüm sayılar `double`. Aynı tohum + aynı komutlar = aynı oyun (`LiberationCampaignTests`).
-- `GameRecord` (`Core/GameRecord.cs`): `version` (11), `seed`, `balance`, `commands[]`, `day`. `SavedCommand { day, kind, a, b }`;
-  türler `liberation_region`, `liberation_raid`, `raidres` (`RaidResult.Encode`: başarı, geri çekilme, kırılan sivil, düşen,
+- `GameRecord` (`Core/GameRecord.cs`): `version` (12), `seed`, `balance`, `commands[]`, `day`. `SavedCommand { day, kind, a, b }`;
+  türler `liberation_region`, `liberation_raid` (a: sektör, b: Teknisyen'in yanına seçilen roller kadro sırasıyla, çözülmüş
+  hâliyle; boş b yeniden oynatmada o anki varsayılan seçime döner; defter kimliği yine sektördür: `RunCommand`'ın `ledger`
+  argümanı), `raidres` (`RaidResult.Encode`: başarı, geri çekilme, kırılan sivil, düşen,
   tur, kadro canı, zırh, ayakta kalan sivil), `shelter_upgrade`, `shelter_assign`, `door_answer` (a: seçenek, b: kart).
   Ziyaretçi bir vardiyanın sonunda (`Step`) gelir; cevabı o günün komutudur. Cevapsız ziyaretçi bir sonraki `Step`'te
   açılmadı sayılır (komut değildir, yeniden oynatmada da aynı olur).
@@ -200,12 +202,18 @@ RaidPanelCanvas   RaidPanels (olay, onay, günlük, kurallar, geri çekilme, son
   askıya alınır. Sahne tek başına açılırsa örnek bir sunucu baskını kurulur.
 - `RaidDataSource` taktik komut/sunum sınırıdır: kurallar, hedefler ve önizleme Core'dan; görünür niyetler
   `Baskin.Intents` üzerinden gelir. UI kural, hasar ya da RNG hesaplamaz. `RaidHudView` klavyenin tek giriş noktasıdır
-  (1–3 birim, Q yetenek, Z geri al, Enter tur bitir, Esc).
+  (1–3 birim, Q yetenek, Z geri al, Enter tur bitir, Esc). Ekip kartları ve 1–3 sırası baskının kadrosundan
+  (`RaidParams.Roles`, yoksa `Squad`): Teknisyen ve seçilen iki uzman; yetenek satırı yeteneğin kimliğinden (`AbilityName`,
+  `AbilityRange`; Madenci ve Sis uzmanında kalan hak).
 - `RaidBoard3D`: kare (x, y) → dünya `(x − 3,5, 0, 3,5 − y)`. Bir eylem ya da tur bitince motor durumu anında değişir;
   tahta efektleri (`FxList`) sırayla oynatır, sonra `Sync` ile eşitlenir. Oynatma sırasında girdi kapalıdır (`Busy`).
   Can/sıra etiketleri `RaidScreenLabel` prefab'ıyla ayrı Overlay canvas'ta çizilir: robotta tür işareti
   (`RaidPieceLibrary.Glyph`) → zırh → pipler, uzmanda altlığın önünde; sıra bayrağı 30 × 28; uyanmadan sonraki tur UYANDI
-  (bayrakla bir grup). Etiketler `LayoutLabels`'ta gruplar hâlinde çakışmadan yerleşir. Niyetler `DrawIntent`'te türüne
+  (bayrakla bir grup). Etiketler `LayoutLabels`'ta gruplar hâlinde çakışmadan yerleşir. Karolar durumdan kurulur:
+  `Sync` her karonun türünü (`Cell.T`) karşılaştırır, Madenci'nin yıktığı duvar zemine döner, geri almada duvar geri gelir
+  (`BuildTile`); yıkık duvarın yerinde alçak moloz (`BState.Rubble`). Duvar karesindeki hedef çerçevesi bloğun üstünde
+  (`WallTop`). Sis (`Cell.Smoke`, yalnız bu turun makine evresinde) kare başına dört soluk küre ve SİS etiketiyle
+  (`Marks.Smoke`, önizlemede `SmokePreview`); sise kesilen niyet gri kesik çizgi (`Marks.SmokedArrows`). Niyetler `DrawIntent`'te türüne
   göre (kalınlık, yay, kesik, çift şerit, rozet); oklar `Pencil.mat`'ta ZTest Always; karo işaretleri (tarama, seçim, hedef, uyanma halkası) `Pencil marks.mat`'ta derinlik testli, parçalar örter (`RaidPieceLibrary.tileMarks`).
 - **Baskın HUD'u** (`RaidHud.prefab`, `RaidHudView`): köşe panelleri (Status, Buttons, Command, Ability card, Team)
   prefab'da; ekip kartları (`RaidTeamCardView`) ve yetenek kartı (`UnitCardView`) aynı prefab'ın içinde, ayrı prefab yok.
@@ -222,7 +230,8 @@ RaidPanelCanvas   RaidPanels (olay, onay, günlük, kurallar, geri çekilme, son
   `Desk/Data/Sade/raid_tokens.json` ve `Docs/UI_C/spec/tokens.json`; içe aktarıcılar Corrigible menüsünde. Bileşenler renkleri anahtarla alır (`ThemeTint`).
 - **Kâğıt bileşenleri** (`Desk/Prefabs/Components`): PaperPanel, DeskButton (+ kapatma varyantı), KeyChip,
   RadioCheck. Özel Graphic'ler: `UILineGraphic`, `UIPolygonGraphic`, `SpotlightGraphic`,
-  `RegionMeshGraphic` (harita bölgeleri: sahnede serileştirilmiş çokgenler ve tıklama testi).
+  `RegionMeshGraphic` (harita bölgeleri: sahnede serileştirilmiş çokgenler ve tıklama testi). Çokgenler tasarım
+  dikdörtgeninden (1920 × 1080) taşar; `SadeMapCanvas`'taki `RectMask2D` haritayı kâğıdın kenarında keser (testli).
 - **Biçim:** `DeskFormat` (sayı, yüzde, vardiya kodu), `DeskText` (tr-TR büyük harf), `TrNumber` (Türkçe ekler),
   `DeskMath`.
 - **Sprite'lar ve fontlar:** `Desk/Art` (Sprite Atlas V2, `DeskSpriteImporter` ayarları `sprites.json`'dan), fontlar

@@ -5,8 +5,9 @@ using System.Linq;
 namespace Corrigible.Core
 {
     /// <summary>
-    /// Saha ekibi: üç uzman (Teknisyen, EMP uzmanı, Analist). Baskında alınan hasar yara olarak kalır; düşen uzman yatar ve
-    /// yerine sığınaktaki yedek uzman (acemi) çıkar. Baskına çıkmayan vardiya uzmanlar dinlenir.
+    /// Saha ekibi: beş uzman (Teknisyen, EMP uzmanı, Analist, Madenci, Sis uzmanı); her baskına Teknisyen ve seçilen iki uzman
+    /// çıkar. Baskında alınan hasar yara olarak kalır; düşen uzman yatar ve yerine sığınaktaki yedek uzman (acemi) çıkar.
+    /// Baskına çıkmayan uzmanlar o vardiya dinlenir.
     /// </summary>
     public sealed partial class Simulation
     {
@@ -14,7 +15,9 @@ namespace Corrigible.Core
         public const string HQ = "weu";
         public static readonly string[] TeamNames = { Loc.N("Alfa"), Loc.N("Bravo"), Loc.N("Charlie"), Loc.N("Delta") };
         /// <summary>Uzman rolleri (Baskin birim türleri), kadro ve giriş sırası.</summary>
-        public static readonly string[] Roles = { "tek", "emp", "ana" };
+        public static readonly string[] Roles = { "tek", "emp", "ana", "maden", "duman" };
+        /// <summary>Baskına Teknisyen'in yanında çıkan uzman sayısı.</summary>
+        public const int PickCount = 2;
 
         static TeamState NewTeam(int i)
         {
@@ -29,18 +32,54 @@ namespace Corrigible.Core
 
         public static int MaxHp(string role) => Baskin.UnitTypes[role].Hp;
 
+        /// <summary>Seçim dizgisi ("emp,maden"): virgülle ayrılmış roller; boşsa boş liste.</summary>
+        public static List<string> ParsePick(string pick) =>
+            string.IsNullOrEmpty(pick) ? new List<string>() : pick.Split(',').Select(x => x.Trim()).Where(x => x.Length > 0).ToList();
+
+        /// <summary>Seçim kayda kadro sırasıyla yazılır.</summary>
+        public static string PickKey(IEnumerable<string> pick) => string.Join(",", Roles.Where(pick.Contains));
+
+        /// <summary>Geçerli seçim: Teknisyen dışındaki rollerden tam <see cref="PickCount"/> farklı rol.</summary>
+        public static bool ValidPick(IList<string> pick) =>
+            pick != null && pick.Count == PickCount && pick.Distinct().Count() == PickCount && pick.All(r => r != "tek" && Roles.Contains(r));
+
         /// <summary>
-        /// Baskına çıkacak kadro, rol sırasıyla: ayaktaki uzman yarasıyla; yatan uzmanın yerine boştaki ilk yedek, rol canından
-        /// eksik; yedek de yoksa rol boş kalır. Zırh plakaları baskın emrinde takılır.
+        /// Varsayılan seçim: ayaktakiler yatanlardan önce; önce son baskının uzmanları, sonra dinlenmiş olanlar (yarası az olan
+        /// önce); eşitlikte kadro sırası. İlk baskında EMP uzmanı ve Analist.
         /// </summary>
-        public List<SquadSlot> Squad(TeamState team)
+        public static List<string> DefaultPick(TeamState team)
+        {
+            if (team == null) return Roles.Where(r => r != "tek").Take(PickCount).ToList();
+            var last = team.LastPick ?? new List<string>();
+            var chosen = team.Members.Where(m => m.Role != "tek")
+                .OrderBy(m => m.Down > 0 ? 1 : 0).ThenBy(m => last.Contains(m.Role) ? 0 : 1).ThenBy(m => m.Wounds)
+                .Take(PickCount).Select(m => m.Role).ToList();
+            return Roles.Where(chosen.Contains).ToList();
+        }
+
+        /// <summary>Geçerli seçim kadro sırasıyla; boş ya da geçersizse <see cref="DefaultPick"/>.</summary>
+        public static List<string> ResolvePick(TeamState team, string pick)
+        {
+            var list = ParsePick(pick);
+            return ValidPick(list) ? Roles.Where(list.Contains).ToList() : DefaultPick(team);
+        }
+
+        /// <summary>
+        /// Baskına çıkacak kadro, rol sırasıyla: Teknisyen ve seçilen uzmanlar (verilmezse <see cref="DefaultPick"/>; fişte seçim
+        /// sürerken ikiden az olabilir). Ayaktaki uzman yarasıyla; yatan uzmanın yerine boştaki ilk yedek, rol canından eksik;
+        /// yedek de yoksa rol boş kalır. Zırh plakaları baskın emrinde takılır.
+        /// </summary>
+        public List<SquadSlot> Squad(TeamState team, IList<string> pick = null)
         {
             var list = new List<SquadSlot>();
             if (team == null) return list;
+            bool partial = pick != null && pick.Count <= PickCount && pick.Distinct().Count() == pick.Count && pick.All(r => r != "tek" && Roles.Contains(r));
+            var roles = new HashSet<string>(partial ? pick : DefaultPick(team)) { "tek" };
             var used = new HashSet<int>();
             var reserves = Shelter?.Reserves ?? new List<SpecialistState>();
             foreach (var m in team.Members)
             {
+                if (!roles.Contains(m.Role)) continue;
                 int max = MaxHp(m.Role);
                 if (m.Down <= 0) { list.Add(new SquadSlot { Type = m.Role, Hp = Math.Max(1, max - m.Wounds) }); continue; }
                 int k = -1;
@@ -52,6 +91,10 @@ namespace Corrigible.Core
             return list;
         }
 
+        /// <summary>Uzman bu vardiya dinleniyor: ekip baskına çıkmadı ya da uzman son baskının kadrosunda değildi.</summary>
+        public static bool Rested(TeamState t, SpecialistState m) =>
+            t.Busy <= 0 || m.Role != "tek" && !(t.LastPick ?? new List<string>()).Contains(m.Role);
+
         /// <summary>Kadroda Teknisyen var mı (sabotaj ve ikmal onsuz yapılamaz).</summary>
         public bool SquadCanRaid(TeamState team) => Squad(team).Any(x => x.Type == "tek");
 
@@ -60,12 +103,11 @@ namespace Corrigible.Core
             var reserves = Shelter?.Reserves ?? new List<SpecialistState>();
             foreach (var t in S.Teams)
             {
-                // Baskına çıkmayan vardiya uzmanlar dinlenir; yatan uzman bir vardiya daha iyileşir
-                bool rested = t.Busy <= 0;
+                // Bu vardiya baskına çıkmayan uzmanlar dinlenir; yatan uzman bir vardiya daha iyileşir
                 foreach (var m in t.Members)
                 {
                     if (m.Down > 0) m.Down--;
-                    else if (rested) m.Wounds = Math.Max(0, m.Wounds - B.liberationRestHeal);
+                    else if (Rested(t, m)) m.Wounds = Math.Max(0, m.Wounds - B.liberationRestHeal);
                 }
                 if (t.Busy > 0) { t.Busy--; if (t.Busy == 0) t.Task = null; }
             }

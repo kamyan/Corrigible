@@ -56,7 +56,7 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(Loc.T("SEKTÖR İŞGAL ALTINDA"), report.Title);
             Assert.IsEmpty(report.Gains, "başarısız raporda ödül alanı hiç yok");
             Assert.IsTrue(report.Slips.All(s => s == null), "fiş asılmaz");
-            var fallen = string.Join(", ", Simulation.Roles.Select(t => Baskin.UnitTypes[t].Name));
+            var fallen = string.Join(", ", Simulation.Roles.Take(3).Select(t => Baskin.UnitTypes[t].Name));
             var injury = report.Results.Single(r => r.Label == Loc.F("Düştü: {0}", fallen));
             Assert.AreEqual(Loc.F("{0} gün", sim.B.liberationInjuryDays), injury.Value, "düşen uzman yatar, kalıcı kayıp yok");
             var alarm = Row(report, "YZ alarmı");

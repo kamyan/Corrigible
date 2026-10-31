@@ -46,7 +46,7 @@ namespace Corrigible.Desk.Bridge
             foreach (var t in sim.S.Teams)
             {
                 var team = new ShiftTeamSnapshot { id = t.Id, name = t.Name, busy = !Simulation.TeamReady(t), canRaid = sim.SquadCanRaid(t) };
-                foreach (var m in t.Members) team.members.Add(new ShiftMemberSnapshot { role = m.Role, wounds = m.Wounds, down = m.Down });
+                foreach (var m in t.Members) team.members.Add(new ShiftMemberSnapshot { role = m.Role, wounds = m.Wounds, down = m.Down, benched = m.Role != "tek" && !(t.LastPick?.Contains(m.Role) ?? false) });
                 snap.teams.Add(team);
             }
             return snap;
@@ -338,8 +338,8 @@ namespace Corrigible.Desk.Bridge
                     d.Teams.Add(new ReportTeamRow { Label = Loc.F("{0} · hazır", name), Value = Loc.T("HAZIR"), Tone = ReportTone.Good });
                     continue;
                 }
-                // Dinlenme önce sarar (ekip baskına çıkmadıysa her ayaktaki uzman), kalan iyileşme revirindir
-                int rested = bt.busy ? 0 : bt.members.Where(m => m.down <= 0).Sum(m => Math.Min(m.wounds, r.restHeal));
+                // Dinlenme önce sarar (baskına çıkmayan her ayaktaki uzman), kalan iyileşme revirindir
+                int rested = bt.members.Where(m => m.down <= 0 && (!bt.busy || m.benched)).Sum(m => Math.Min(m.wounds, r.restHeal));
                 int healed = Math.Max(0, from - to - rested);
                 var lines = new List<string>();
                 if (rested > 0) lines.Add(Loc.F("Dinlenme {0} yara toparladı.", rested));

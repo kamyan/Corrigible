@@ -14,9 +14,6 @@ namespace Corrigible.Desk.Bridge
     /// </summary>
     public static class LiberationMapBuilder
     {
-        /// <summary>Ekip üyeleri (Ekip-figuru.md › piyonlar): mavi teknisyen, kehribar EMP uzmanı, yeşil analist.</summary>
-        public static readonly string[] Members = { Loc.N("Teknisyen"), Loc.N("EMP uzmanı"), Loc.N("Analist") };
-
         public static LiberationMapState Build(Simulation sim, string selected = null, string pendingCandidate = null)
         {
             var s = new LiberationMapState { Shelter = Simulation.HQ };
@@ -80,16 +77,17 @@ namespace Corrigible.Desk.Bridge
         {
             var team = sim.S.Teams.FirstOrDefault();
             if (team == null) return new TeamFigureState { Hidden = true };
-            // Teknisyensiz kadro baskına çıkamaz: ekip sığınakta bekler
+            // Teknisyensiz kadro baskına çıkamaz: ekip sığınakta bekler. Figürün üç piyonu varsayılan kadro (Teknisyen ve seçilecek ikisi)
             bool blocked = !sim.SquadCanRaid(team);
+            var roles = new[] { "tek" }.Concat(Simulation.DefaultPick(team)).ToList();
             return new TeamFigureState
             {
                 Name = Loc.F("EKİP {0}", DeskText.Upper(TeamName(team))),
-                Members = string.Join(" · ", Members.Select(Loc.T)),
+                Members = string.Join(" · ", roles.Select(r => Baskin.UnitTypes[r].Name)),
                 Region = blocked ? Simulation.HQ : front,
                 Hidden = sim.S.Raid != null,
                 AtShelter = blocked,
-                Down = team.Members.Count(m => m.Down > 0),
+                Down = team.Members.Count(m => roles.Contains(m.Role) && m.Down > 0),
                 Days = blocked ? TechnicianDown(team) : 0,
             };
         }
@@ -112,14 +110,16 @@ namespace Corrigible.Desk.Bridge
         public static int TechnicianDown(TeamState team) => team?.Members.FirstOrDefault(m => m.Role == "tek")?.Down ?? 0;
 
         /// <summary>
-        /// Baskına çıkacak kadro, ekip diskleri olarak (S2): rol harfi (baskındaki 1–3 kısayolları, piyonla aynı) ve can;
-        /// yedek uzman ve eksik rol işaretli. Plakalar disklerden sonra ayrı (“2 plaka”).
+        /// Baskına çıkacak kadro, ekip diskleri olarak (S2): Teknisyen ve seçilen iki uzman (verilmezse varsayılan seçim), rol
+        /// harfi (baskındaki 1–3 kısayolları, piyonla aynı) ve can; yedek uzman ve eksik rol işaretli. Plakalar disklerden sonra
+        /// ayrı (“2 plaka”).
         /// </summary>
-        public static List<SlipMember> SquadDiscs(Simulation sim, TeamState team, out string extra)
+        public static List<SlipMember> SquadDiscs(Simulation sim, TeamState team, out string extra, IList<string> pick = null)
         {
-            var squad = sim.Squad(team);
+            var roles = pick ?? Simulation.DefaultPick(team);
+            var squad = sim.Squad(team, roles);
             var list = new List<SlipMember>();
-            foreach (var role in Simulation.Roles)
+            foreach (var role in Simulation.Roles.Where(r => r == "tek" || roles.Contains(r)))
             {
                 var slot = squad.FirstOrDefault(x => x.Type == role);
                 list.Add(new SlipMember
@@ -172,8 +172,43 @@ namespace Corrigible.Desk.Bridge
             });
         }
 
-        /// <summary>Görev fişi: cephede tam form, öteki bölgelerde bilgi fişi.</summary>
-        public static OperationSlipData Slip(Simulation sim, string regionId)
+        /// <summary>
+        /// Kadro seçici: beş uzman kadro sırasıyla. Teknisyen sabit; yatan uzmanın yerine yedek çıkar (yedek yoksa rol boş kalır).
+        /// <paramref name="fixedSquad"/> eğitim baskınında seçimi kilitler.
+        /// </summary>
+        static void Pick(Simulation sim, TeamState team, IList<string> pick, bool fixedSquad, OperationSlipData d)
+        {
+            int freeReserves = sim.Shelter?.Reserves.Count(r => r.Down <= 0) ?? 0;
+            foreach (var role in Simulation.Roles)
+            {
+                var m = team.Members.FirstOrDefault(x => x.Role == role);
+                if (m == null) continue;
+                var type = Baskin.UnitTypes[role];
+                var ability = Baskin.Abilities[type.Ability];
+                int max = Simulation.MaxHp(role), hp = Math.Max(1, max - m.Wounds);
+                bool down = m.Down > 0;
+                string status = role == "tek" ? Loc.T("SABİT") : down ? (freeReserves > 0 ? Loc.T("YEDEK ÇIKAR") : Loc.F("{0} GÜN", m.Down)) : null;
+                d.Pick.Add(new SlipPick
+                {
+                    Role = role, Letter = type.Short, Hp = down ? "—" : Loc.F("{0}/{1}", hp, max), Status = status, Down = down,
+                    Picked = role == "tek" || pick.Contains(role), Locked = role == "tek" || fixedSquad,
+                    HoverTitle = Loc.F("{0} · {1}", DeskText.Upper(type.Name), down ? Loc.F("yatıyor · {0} gün", m.Down) : Loc.F("can {0}/{1}", hp, max)),
+                    HoverLine = Loc.F("{0}: {1}", Loc.T(ability.Name), Loc.T(ability.Desc)) + (down
+                        ? " " + (freeReserves > 0 ? Loc.T("Seçilirse yerine bir eksik canla yedek uzman çıkar.") : Loc.T("Yedek yok: seçilirse kadro eksik çıkar."))
+                        : ""),
+                });
+            }
+            int picked = pick.Count;
+            d.PickHead = Loc.T("KADRO");
+            d.PickNote = fixedSquad ? Loc.T("İlk baskın: kadro sabit.") : picked < Simulation.PickCount ? Loc.F("Teknisyen'in yanına {0} uzman daha seç.", Simulation.PickCount - picked)
+                : Loc.T("Teknisyen sabit · ikisini seç; baskına çıkmayanlar dinlenir.");
+        }
+
+        /// <summary>
+        /// Görev fişi: cephede tam form, öteki bölgelerde bilgi fişi. <paramref name="pick"/> oyuncunun seçtiği uzmanlar (seçim
+        /// sırasıyla; boşsa varsayılan seçim); <paramref name="fixedSquad"/> eğitim baskınında kadroyu kilitler.
+        /// </summary>
+        public static OperationSlipData Slip(Simulation sim, string regionId, IList<string> pick = null, bool fixedSquad = false)
         {
             var d = new OperationSlipData { RegionId = regionId };
             var area = sim?.LiberationRegion(regionId);
@@ -240,10 +275,13 @@ namespace Corrigible.Desk.Bridge
 
             var team = sim.S.Teams.FirstOrDefault();
             d.TeamName = Loc.F("EKİP {0}", DeskText.Upper(TeamName(team)));
+            var chosen = team == null ? new List<string>() : fixedSquad ? new List<string> { "emp", "ana" }
+                : pick != null ? pick.Where(r => r != "tek").Distinct().ToList() : Simulation.DefaultPick(team);
             if (team != null)
             {
-                d.Members.AddRange(SquadDiscs(sim, team, out var extra));
+                d.Members.AddRange(SquadDiscs(sim, team, out var extra, chosen));
                 d.TeamExtra = extra;
+                Pick(sim, team, chosen, fixedSquad, d);
             }
             bool field = sim.S.Raid != null;
             bool back = team != null && !Simulation.TeamReady(team);
@@ -255,17 +293,18 @@ namespace Corrigible.Desk.Bridge
             d.HasAction = true;
             d.Action = Loc.T("BASKIN EMRİ VER");
             d.ActionCost = Loc.F("{0} fon", DeskFormat.Signed(-b.liberationRaidCost, 0));
-            string why = sim.LiberationRaidCheck(next.Id);
+            bool short_ = chosen.Count < Simulation.PickCount;
+            string why = short_ ? Loc.T("Teknisyen'in yanına iki uzman seç.") : sim.LiberationRaidCheck(next.Id, Simulation.PickKey(chosen));
             // Karar 7: eksik yalnız fonsa düğme açık kalır (basınca komut çağrılmaz, FON titrer); başka gerekçede devre dışı
             d.ActionState = why == null ? SlipActionState.Ready
-                : TelexReasons.RaidFundsOnly(sim, next.Id) ? SlipActionState.Shortfall : SlipActionState.Disabled;
+                : !short_ && TelexReasons.RaidFundsOnly(sim, next.Id) ? SlipActionState.Shortfall : SlipActionState.Disabled;
             if (d.ActionState == SlipActionState.Shortfall)
                 d.Shortfall = Loc.F("Fon yetersiz · {0} gerekli", N(b.liberationRaidCost));
             if (d.ActionState == SlipActionState.Disabled)
                 d.ActionNote = field ? Loc.T("SAHADA") : team != null && !back && !sim.SquadCanRaid(team) ? Loc.T("TEKNİSYEN YARALI")
-                    : Loc.T("EKİP HAZIR DEĞİL");
+                    : short_ && !back ? Loc.T("KADRO EKSİK") : Loc.T("EKİP HAZIR DEĞİL");
             // Emir verildikten sonra gerekçe yazılmaz (damga konuşur)
-            d.Reason = why == null || field ? null : TelexReasons.Raid(sim, next.Id);
+            d.Reason = why == null || field ? null : short_ && !back ? why : TelexReasons.Raid(sim, next.Id);
             return d;
         }
 

@@ -39,6 +39,11 @@ namespace Corrigible.Desk.Bridge
         bool pinSounded, paperSounded;
 
         string pending, revealQueued;
+        /// <summary>Fişteki kadro seçimi (seçim sırasıyla; en eski önce); null ise varsayılan seçim. Vardiya değişince sıfırlanır.</summary>
+        List<string> pick;
+        int pickDay = -1;
+        [Tooltip("Eğitim sürerken ilk baskının kadrosu sabit (Teknisyen, EMP uzmanı, Analist).")]
+        [SerializeField] SiginakTutorial tutorial;
         float unlockedSince = -1;
         bool primed, figureDisplaced, figureHovered;
         readonly HashSet<string> knownFree = new HashSet<string>();
@@ -75,6 +80,7 @@ namespace Corrigible.Desk.Bridge
             layer.RegionClicked += RegionClicked;
             slip.ActionClicked += SlipAction;
             slip.CloseClicked += CloseSlip;
+            slip.PickClicked += TogglePick;
             frontSlip.ActionClicked += ConfirmFront;
             frontSlip.CancelClicked += CancelFront;
             drag.CanPick = CanPick;
@@ -95,6 +101,7 @@ namespace Corrigible.Desk.Bridge
             layer.RegionClicked -= RegionClicked;
             slip.ActionClicked -= SlipAction;
             slip.CloseClicked -= CloseSlip;
+            slip.PickClicked -= TogglePick;
             frontSlip.ActionClicked -= ConfirmFront;
             frontSlip.CancelClicked -= CancelFront;
             drag.CanPick = null;
@@ -110,6 +117,7 @@ namespace Corrigible.Desk.Bridge
         {
             primed = false;
             pending = null;
+            pick = null;
             revealQueued = null;
             figureDisplaced = false;
             slip.Hide();
@@ -139,7 +147,7 @@ namespace Corrigible.Desk.Bridge
             }
             layer.Bind(state);
             PlaceFigure(!figure.Placed);
-            if (slip.IsOpen) slip.Show(LiberationMapBuilder.Slip(sim, slip.RegionId), slip.OnRight);
+            if (slip.IsOpen) slip.Show(LiberationMapBuilder.Slip(sim, slip.RegionId, Pick, FixedSquad), slip.OnRight);
             if (frontSlip.IsOpen && pending != null) frontSlip.Show(LiberationMapBuilder.Front(sim, pending));
             // Görev fişinin ipi diziyle birlikte çizilir (açılırken yarım)
             if (frontSlip.IsOpen || !slip.gameObject.activeSelf) UpdateString();
@@ -210,7 +218,7 @@ namespace Corrigible.Desk.Bridge
             float start = rig.TransitionRemaining, pinS = t.NumberOf("motion.pinDropS", 0.12f), stringS = t.NumberOf("motion.stringS", 0.25f);
             // Karar 1 B: fiş sol masa kenarında; Kuzey ya da Güney Amerika seçiliyse sağda
             bool right = id == "na" || id == "sa";
-            slip.Show(LiberationMapBuilder.Slip(Sim, id), right, start + pinS + stringS);
+            slip.Show(LiberationMapBuilder.Slip(Sim, id, Pick, FixedSquad), right, start + pinS + stringS);
             if (!sameRegion)
             {
                 slipAt = Time.unscaledTime + start;
@@ -230,6 +238,40 @@ namespace Corrigible.Desk.Bridge
             if (!slip.IsOpen) return;
             slipCloseAt = Time.unscaledTime + delay;
             slip.Close(delay + StringCloseS);
+            Refresh();
+        }
+
+        /// <summary>Eğitim sürerken ilk baskının kadrosu değişmez (senaryo üç uzmana göre yazıldı).</summary>
+        bool FixedSquad => tutorial != null && tutorial.Active && Sim != null && Sim.S.Raids == 0;
+
+        /// <summary>Seçim bu vardiyanın; vardiya değişince varsayılana döner.</summary>
+        List<string> Pick
+        {
+            get
+            {
+                if (pick != null && Sim != null && pickDay != Sim.S.Day) pick = null;
+                return pick;
+            }
+        }
+
+        /// <summary>
+        /// Kadro diskine tıklama: seçili uzman bırakılır; seçilmemiş uzman eklenir, iki seçili varken en eski seçimin yerine geçer.
+        /// </summary>
+        void TogglePick(string role)
+        {
+            var sim = Sim;
+            if (sim == null || Locked || FixedSquad || role == "tek") return;
+            var team = sim.S.Teams.FirstOrDefault();
+            var list = Pick != null ? new List<string>(Pick) : Simulation.DefaultPick(team);
+            if (list.Contains(role)) list.Remove(role);
+            else
+            {
+                if (list.Count >= Simulation.PickCount) list.RemoveAt(0);
+                list.Add(role);
+            }
+            pick = list;
+            pickDay = sim.S.Day;
+            Sfx.Play(Cue.Pencil, .6f);
             Refresh();
         }
 
@@ -282,7 +324,8 @@ namespace Corrigible.Desk.Bridge
                     if (counters != null) counters[CounterBank.Slot.Funds].Shake(2);
                     return;
                 }
-                var result = surface.LaunchSector(next.Id);
+                var result = surface.LaunchSector(next.Id, FixedSquad ? null : Pick == null ? null : Simulation.PickKey(Pick));
+                if (result?.Ok == true) pick = null;
                 // Emir: düğme 0,06 s iner → fiş kapanır → CRT'ye dalış (bugünkü gibi)
                 if (result?.Ok == true) CloseSlip(0.06f);
             }

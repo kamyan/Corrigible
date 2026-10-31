@@ -45,5 +45,31 @@ namespace Corrigible.Desk.Tests
             }
             finally { Object.DestroyImmediate(root); }
         }
+
+        /// <summary>Kartlar ve 1–3 sırası gerçek kadrodan; Madenci'nin ve Sis uzmanının yetenek satırı kalan hakla.</summary>
+        [Test]
+        public void PickedSquad_DrivesTeamCardsAndAbilityRows()
+        {
+            var root = new GameObject("Seçilen kadro sunumu");
+            root.SetActive(false);
+            try
+            {
+                var source = root.AddComponent<LiveRaidDataSource>();
+                var state = Baskin.Create(new RaidParams
+                {
+                    Seed = 11, Roles = new System.Collections.Generic.List<string> { "tek", "maden", "duman" },
+                    Squad = new System.Collections.Generic.List<SquadSlot> { new SquadSlot { Type = "tek", Hp = 3 }, new SquadSlot { Type = "maden", Hp = 3 }, new SquadSlot { Type = "duman", Hp = 2 } },
+                });
+                source.OpenForValidation(state);
+                CollectionAssert.AreEqual(new[] { 'T', 'M', 'S' }, source.Current.Team.Select(t => t.Letter).ToArray());
+                Assert.AreEqual(Loc.T("MADENCİ"), source.Current.Team[1].Name);
+                source.Select('M');
+                Assert.AreEqual(Loc.T("Dinamit"), source.Current.UnitRows[1].Text);
+                Assert.AreEqual(Loc.F("bitişik · {0} dinamit", 2), source.Current.UnitRows[1].Detail);
+                source.Select('S');
+                Assert.AreEqual(Loc.F("düz hat, 1–4 · {0} bomba", 3), source.Current.UnitRows[1].Detail);
+            }
+            finally { Object.DestroyImmediate(root); }
+        }
     }
 }

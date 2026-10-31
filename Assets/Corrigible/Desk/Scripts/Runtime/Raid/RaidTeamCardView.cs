@@ -40,6 +40,7 @@ namespace Corrigible.Desk
             nameLabel.text = value.Rookie ? Loc.F("{0} · YEDEK", value.Name) : value.Name;
             // Dar kartta İngilizce uzun adın brifteki kısa karşılığı
             if (value.Letter == 'E' && DeskLoc.Instance.Lang == DeskLang.En) nameLabel.text = Loc.T("EMP UZM.");
+            if (value.Letter == 'S' && DeskLoc.Instance.Lang == DeskLang.En) nameLabel.text = Loc.T("SİS UZM.");
             discLetter.text = value.Letter.ToString();
             bool done = !value.Down && !value.Move && !value.Ability;
             disc.color = C(value.Down || done ? "panel.teamCard.discDone" : "panel.teamCard.disc");

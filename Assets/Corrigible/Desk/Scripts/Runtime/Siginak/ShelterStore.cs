@@ -37,6 +37,8 @@ namespace Corrigible.Desk
 
         float[] binHeight;
         float[] popAt;
+        /// <summary>Belirip kalkan nesnelerin sahnedeki ölçeği (plakalar doğrudan ölçekli küp): belirme 0 → bu ölçek.</summary>
+        Vector3[] rest;
         bool shown;
         string slateText;
         float slateAt = -1;
@@ -45,11 +47,20 @@ namespace Corrigible.Desk
 
         void Awake()
         {
+            // Show ilk çağrıda elle çağırmış olabilir: ölçüler o anki (sahnedeki) hâlden bir kez alınır
+            if (popAt != null) return;
             binHeight = new float[bins.Length];
             for (int i = 0; i < bins.Length; i++) binHeight[i] = bins[i].fill != null ? bins[i].fill.localScale.y : 0;
             popAt = new float[crates.Length * 2 + bins.Length + plates.Length];
             for (int i = 0; i < popAt.Length; i++) popAt[i] = -1;
+            rest = new Vector3[popAt.Length];
+            int k = 0;
+            foreach (var c in crates) { rest[k++] = Scale(c.full); rest[k++] = Scale(c.partial); }
+            foreach (var b in bins) rest[k++] = Scale(b.body);
+            foreach (var p in plates) rest[k++] = Scale(p.plate);
         }
+
+        static Vector3 Scale(GameObject go) => go != null ? go.transform.localScale : Vector3.one;
 
         /// <param name="animate">Değişen sandık, kova ve plaka belirir; tebeşir silinip yeniden yazılır (vardiya sonu).</param>
         public void Show(ShelterStoreData d, bool animate)
@@ -99,16 +110,20 @@ namespace Corrigible.Desk
 
         void Toggle(GameObject go, bool on, bool animate, int index)
         {
-            if (go == null || go.activeSelf == on && popAt[index] < 0) return;
+            if (go == null) return;
+            // popAt: -1 durgun, ≥ 0 belirme, < -1 kalkma sürüyor. Kalkmakta olan nesne “görünmez” sayılır: yarıda gelen
+            // “göster” onu geri getirir. Animasyonsuz çağrı süren animasyonu son hâline oturtur.
+            float at = popAt[index];
+            bool visible = go.activeSelf && at >= -1;
+            if (visible == on && (animate || at == -1)) return;
             if (!animate)
             {
                 go.SetActive(on);
-                go.transform.localScale = Vector3.one;
+                go.transform.localScale = rest[index];
                 popAt[index] = -1;
                 return;
             }
-            // Belirme: 0 → 1; kalkma: 1 → 0, sonra gizlenir (işaret: negatif başlangıç)
-            if (go.activeSelf == on) return;
+            // Belirme: 0 → sahnedeki ölçek; kalkma: tersi, sonra gizlenir (işaret: negatif başlangıç)
             if (on) go.SetActive(true);
             popAt[index] = on ? Time.unscaledTime : -(Time.unscaledTime + 1);
         }
@@ -139,10 +154,10 @@ namespace Corrigible.Desk
             float start = hiding ? -at - 1 : at;
             float p = Mathf.Clamp01((Time.unscaledTime - start) / popSeconds);
             float e = 1 - (1 - p) * (1 - p);
-            go.transform.localScale = Vector3.one * (hiding ? 1 - e : e);
+            go.transform.localScale = rest[index] * (hiding ? 1 - e : e);
             if (p < 1) return;
             popAt[index] = -1;
-            go.transform.localScale = Vector3.one;
+            go.transform.localScale = rest[index];
             if (hiding) go.SetActive(false);
         }
     }

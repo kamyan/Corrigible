@@ -36,6 +36,10 @@ namespace Corrigible.Game.Raid
             /// <summary>Eğitim baskınında sıradaki hedef kare (sarı, nabız gibi atan çift çerçeve); yoksa −1.</summary>
             public int Guide = -1;
             public List<(int fx, int fy, int tx, int ty)> Arrows = new List<(int, int, int, int)>();
+            /// <summary>Sisli kareler (bu turun makine evresinde nişanlı ateş kesilir) ve önizlemede atılacak sis.</summary>
+            public HashSet<int> Smoke = new HashSet<int>(), SmokePreview = new HashSet<int>();
+            /// <summary>Sise kesilen niyetler: gri kesik ok sisli karede biter.</summary>
+            public List<(int fx, int fy, int tx, int ty, string kind)> SmokedArrows = new List<(int, int, int, int, string)>();
         }
 
         [SerializeField] RaidPieceLibrary lib;
@@ -93,6 +97,12 @@ namespace Corrigible.Game.Raid
         readonly GameObject[] spawnMarks = new GameObject[64];
         /// <summary>Duvar kareleri ve vurgulu kareler (yürüme, hedef, eğitim çerçevesi): tıklamanın hangi kareye düşeceği.</summary>
         readonly bool[] walls = new bool[64];
+        /// <summary>Karo nesneleri ve türleri: Madenci duvarı yıkınca (ya da geri alınınca) karo durumdan yeniden kurulur.</summary>
+        readonly GameObject[] tileObjects = new GameObject[64];
+        readonly string[] tileKinds = new string[64];
+        readonly GameObject[] smokeClouds = new GameObject[64];
+        readonly Dictionary<int, GameObject> breaches = new Dictionary<int, GameObject>();
+        readonly List<RaidWorldLabel> smokeLabels = new List<RaidWorldLabel>();
         readonly HashSet<int> pickable = new HashSet<int>();
         int guideKey = -1;
         readonly RaycastHit[] hits = new RaycastHit[16];
@@ -144,17 +154,13 @@ namespace Corrigible.Game.Raid
             units.Clear(); objects.Clear(); rubble.Clear(); arrows.Clear(); previewArrows.Clear(); ghosts.Clear(); labelGroups.Clear();
             hpLabels.Clear(); orderLabels.Clear(); stateLabels.Clear(); paperLabels.Clear(); shownIntents.Clear(); intentArrowByUnit.Clear(); flagPins.Clear(); downMarks.Clear();
             arrowShadows.Clear(); extraArrows.Clear(); woke.Clear(); wokeStamped.Clear(); foreach (var b in badgeLabels) if (b != null) Destroy(b.gameObject); badgeLabels.Clear();
+            breaches.Clear(); foreach (var l in smokeLabels) if (l != null) Destroy(l.gameObject); smokeLabels.Clear(); Array.Clear(smokeClouds, 0, 64);
             for (int y = 0; y < Baskin.N; y++)
             for (int x = 0; x < Baskin.N; x++)
             {
                 var c = Baskin.CellAt(B, x, y);
-                var prefab = c.T == "wall" ? lib.wall : c.T == "cable" ? lib.cable : lib.floor;
-                var go = Instantiate(prefab, W(x, y), Quaternion.identity, tilesRoot);
-                go.name = $"Tile {x},{y}";
-                var cell = go.GetComponent<RaidCell>() ?? go.AddComponent<RaidCell>();
-                cell.X = x; cell.Y = y;
                 int k = Key(x, y);
-                walls[k] = c.T == "wall";
+                BuildTile(x, y, c.T);
                 tint[k] = Flat($"Tint {x},{y}", W(x, y) + Vector3.up * 0.02f, 0.94f, lib.highlight).GetComponent<Renderer>();
                 tint[k].enabled = false;
                 // raid.js mark(): yetenek hedefi yeşil çift çerçeve (8/3 px), hareket taraması kenarı 4 px; 1 doku pikseli = 0,98/256
@@ -322,6 +328,37 @@ namespace Corrigible.Game.Raid
             activeIntentHighlight.gameObject.SetActive(false);
             // Niyetler Core'un görünüm API'sinden (Baskin.Intents) okunur.
             foreach (var intent in Baskin.Intents(B)) shownIntents[intent.Unit] = intent;
+            // Karolar: yıkılan duvar zemine döner, geri alınan duvar yeniden kurulur; yıkık duvarın yerinde alçak moloz
+            for (int k = 0; k < 64; k++)
+            {
+                string kind = Baskin.CellAt(B, k % Baskin.N, k / Baskin.N).T;
+                if (tileKinds[k] != kind) BuildTile(k % Baskin.N, k / Baskin.N, kind);
+            }
+            var broken = new HashSet<int>(B.Rubble.Select(p => Key(p.X, p.Y)));
+            foreach (var k in breaches.Keys.Where(k => !broken.Contains(k) || walls[k]).ToList()) { if (breaches[k] != null) Destroy(breaches[k]); breaches.Remove(k); }
+            foreach (var k in broken)
+                if (!walls[k] && !breaches.ContainsKey(k) && lib.rubble != null)
+                {
+                    var debris = Instantiate(lib.rubble, W(k % Baskin.N, k / Baskin.N), Quaternion.Euler(0, (k * 41) % 360, 0), piecesRoot);
+                    debris.name = "Breach rubble"; debris.transform.localScale = new Vector3(0.9f, 0.3f, 0.9f);
+                    foreach (var col in debris.GetComponentsInChildren<Collider>()) Destroy(col);
+                    breaches[k] = debris;
+                }
+            // Sis bulutları: canlı sis koyu, önizlemedeki sis soluk
+            int smokeLabelsUsed = 0;
+            for (int k = 0; k < 64; k++)
+            {
+                bool live = m.Smoke.Contains(k), ghost = !live && m.SmokePreview.Contains(k);
+                if (!live && !ghost) { if (smokeClouds[k] != null) smokeClouds[k].SetActive(false); continue; }
+                SmokeCloud(k, live ? 1f : 0.5f);
+                if (!live) continue;
+                if (smokeLabelsUsed == smokeLabels.Count) smokeLabels.Add(NewPaperLabel("Smoke tag", 14));
+                var tag = smokeLabels[smokeLabelsUsed++];
+                tag.SetAnchor(W(k % Baskin.N, k / Baskin.N) + Vector3.up * 0.75f);
+                tag.Show(Loc.T("SİS"), graphiteColor, graphiteColor);
+                labelGroups.Add(new[] { tag });
+            }
+            for (int i = smokeLabelsUsed; i < smokeLabels.Count; i++) smokeLabels[i].gameObject.SetActive(false);
             // Dolaplar ve enkaz
             for (int y = 0; y < Baskin.N; y++)
             for (int x = 0; x < Baskin.N; x++)
@@ -448,6 +485,10 @@ namespace Corrigible.Game.Raid
                 tint[k].enabled = on;
                 if (on) SetColor(tint[k], c);
                 frames[k].SetActive(m.Targets.Contains(k));
+                // Duvar karesindeki hedef (Madenci'nin dinamiti) bloğun üstünde çizilir
+                var tile = W(k % Baskin.N, k / Baskin.N);
+                frames[k].transform.position = tile + Vector3.up * (walls[k] ? WallTop + 0.01f : 0.03f);
+                tint[k].transform.position = tile + Vector3.up * (walls[k] ? WallTop : 0.02f);
                 moveFrames[k].gameObject.SetActive(m.Moves.Contains(k));
                 moveHatches[k].gameObject.SetActive(m.Moves.Contains(k) && !m.Danger.Contains(k));
                 bool hit = m.Danger.Contains(k);
@@ -499,6 +540,16 @@ namespace Corrigible.Game.Raid
                     arrow.Set(center + d * 0.30f, center + d * 0.66f, lib.intent, false, PixelWorld * 2.4f, 0, 0, true, PixelWorld * 12);
                     Shadow(shadowsUsed++, center + d * 0.30f, center + d * 0.66f, false, PixelWorld * 2.4f, 0, true, PixelWorld * 12);
                 }
+            }
+            // Sise kesilen niyet: gri kesik çizgi sisli kareye kadar, ucu yok
+            foreach (var cut in m.SmokedArrows)
+            {
+                var arrow = Extra(extrasUsed++);
+                var from = W(cut.fx, cut.fy) + Vector3.up * (cut.kind == "lob" ? 0.8f : 0.30f);
+                var to = W(cut.tx, cut.ty) + Vector3.up * 0.30f;
+                var dir = (to - from).normalized;
+                float rise = cut.kind == "lob" ? RisePx(Mathf.Max(0.4f * Vector3.Distance(from, to) / PixelWorld, 90)) : cut.kind == "shoot" ? 0 : RisePx(20);
+                arrow.Set(from + dir * 0.24f, to - dir * 0.18f, Alpha(graphiteColor, 0.7f), true, PixelWorld * 3.4f, rise, 0, false);
             }
             for (int i = m.Arrows.Count; i < arrows.Count; i++) arrows[i].gameObject.SetActive(false);
             for (int i = shadowsUsed; i < arrowShadows.Count; i++) arrowShadows[i].gameObject.SetActive(false);
@@ -961,6 +1012,33 @@ namespace Corrigible.Game.Raid
                         Sfx.Play(f.Obj == "civ" ? Cue.RaidCivilianBreak : f.Obj == "cool" ? Cue.RaidExplosion : Baskin.IsTarget(f.Obj) ? Cue.RaidCoreBreak : Cue.RaidBreak, 1, Pan(W(f.X, f.Y)));
                         if (objects.TryGetValue(Key(f.X, f.Y), out var bp)) yield return Collapse(bp);
                         break;
+                    case "dynamite":
+                        Sfx.Play(Cue.RaidDynamite, 1, Pan(W(f.X, f.Y)));
+                        StartCoroutine(Burst(W(f.X, f.Y) + Vector3.up * 0.3f, lib.threat, 1.1f, 0.25f));
+                        yield return Wait(0.15f);
+                        break;
+                    case "breach":
+                    {
+                        int bk = Key(f.X, f.Y);
+                        if (tileObjects[bk] != null) yield return SinkWall(tileObjects[bk]);
+                        StartCoroutine(Popup(W(f.X, f.Y), Loc.T("YIKILDI"), graphiteColor, 0));
+                        break;
+                    }
+                    case "debris":
+                        StartCoroutine(Burst(W(f.X, f.Y), graphiteColor, 0.7f, 0.2f));
+                        yield return Wait(0.1f);
+                        break;
+                    case "smoke":
+                        Sfx.Play(Cue.RaidSmoke, 1, Pan(W(f.X, f.Y)));
+                        SmokeCloud(Key(f.X, f.Y), 1f);
+                        StartCoroutine(Burst(W(f.X, f.Y), lib.smoke, 1.3f, 0.4f));
+                        yield return Wait(0.3f);
+                        break;
+                    case "smoked":
+                        Sfx.Play(Cue.RaidSmoked, 1, Pan(W(f.X, f.Y)));
+                        StartCoroutine(Popup(W(f.X, f.Y), Loc.T("SİSE KESİLDİ"), graphiteColor, popups++ * 0.04f));
+                        yield return Wait(0.35f);
+                        break;
                     case "spawn":
                         // Yeni robot: uyandığı makine evresinden sonraki tur boyunca üstünde UYANDI (S6b). Uyanan robot
                         // aynı adımda planlanıp yürüyebildiği için kareyle değil kimlikle bulunur: uyanmalar kimlik sırasıyla gelir.
@@ -1096,6 +1174,63 @@ namespace Corrigible.Game.Raid
                 yield return null;
             }
             if (version == buildVersion && p != null) p.Body.localRotation = fallen;
+        }
+
+        /// <summary>Duvar bloğunun üst yüzü (hedef çerçevesi ve vurgu duvar karesinde onun üstünde).</summary>
+        const float WallTop = 0.56f;
+
+        /// <summary>Karoyu türüne göre kurar (zemin, duvar, kablo); eski karo varsa yerine geçer.</summary>
+        void BuildTile(int x, int y, string kind)
+        {
+            int k = Key(x, y);
+            if (tileObjects[k] != null) Destroy(tileObjects[k]);
+            var prefab = kind == "wall" ? lib.wall : kind == "cable" ? lib.cable : lib.floor;
+            var go = Instantiate(prefab, W(x, y), Quaternion.identity, tilesRoot);
+            go.name = $"Tile {x},{y}";
+            var cell = go.GetComponent<RaidCell>() ?? go.AddComponent<RaidCell>();
+            cell.X = x; cell.Y = y;
+            tileObjects[k] = go; tileKinds[k] = kind;
+            walls[k] = kind == "wall";
+        }
+
+        /// <summary>Sis bulutu: kareyi örten dört soluk küre (parçaları yarı gizler); <paramref name="strength"/> önizlemede yarım.</summary>
+        void SmokeCloud(int k, float strength)
+        {
+            if (smokeClouds[k] == null)
+            {
+                var root = new GameObject($"Smoke {k % Baskin.N},{k / Baskin.N}");
+                root.transform.SetParent(marksRoot, false);
+                root.transform.position = W(k % Baskin.N, k / Baskin.N);
+                // Bulut parçaları ve dolapları örtecek yükseklikte (0,3–0,6)
+                var offsets = new[] { new Vector3(-0.16f, 0.32f, -0.1f), new Vector3(0.15f, 0.38f, 0.08f), new Vector3(0.02f, 0.6f, -0.02f), new Vector3(-0.05f, 0.3f, 0.18f) };
+                for (int i = 0; i < offsets.Length; i++)
+                {
+                    var puff = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    Destroy(puff.GetComponent<Collider>());
+                    puff.name = "Puff";
+                    puff.transform.SetParent(root.transform, false);
+                    puff.transform.localPosition = offsets[i];
+                    puff.transform.localScale = new Vector3(0.6f, 0.44f, 0.6f) * (i == 2 ? 0.8f : 1f);
+                    puff.GetComponent<Renderer>().sharedMaterial = lib.highlight;
+                }
+                smokeClouds[k] = root;
+            }
+            var cloud = smokeClouds[k];
+            cloud.SetActive(true);
+            foreach (var r in cloud.GetComponentsInChildren<Renderer>()) SetColor(r, Alpha(lib.smoke, lib.smoke.a * strength));
+        }
+
+        /// <summary>Yıkılan duvar: blok çöker (Sync ardından karoyu zemine çevirir).</summary>
+        IEnumerator SinkWall(GameObject wall)
+        {
+            int version = buildVersion;
+            var s = wall.transform.localScale;
+            for (float t = 0; t < 1; t += Time.deltaTime / (stepTime * 1.1f))
+            {
+                if (version != buildVersion || wall == null) yield break;
+                wall.transform.localScale = new Vector3(s.x * (1 + t * 0.1f), s.y * (1 - Ease(t) * 0.92f), s.z * (1 + t * 0.1f));
+                yield return null;
+            }
         }
 
         IEnumerator Collapse(RaidPiece p)

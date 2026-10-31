@@ -128,6 +128,32 @@ namespace Corrigible.Desk.Tests
             Assert.IsTrue(d.Members.All(m => !m.Missing && !m.Rookie));
         }
 
+        /// <summary>KADRO: beş uzman, Teknisyen sabit; seçim ekip disklerine ve düğmeye yansır; eğitim baskınında kilitli.</summary>
+        [Test]
+        public void Slip_SquadPicker_TechnicianFixed_PickDrivesDiscsAndAction()
+        {
+            var sim = NewLiberation();
+            var d = LiberationMapBuilder.Slip(sim, Simulation.HQ);
+            CollectionAssert.AreEqual(new[] { "T", "E", "A", "M", "S" }, d.Pick.Select(p => p.Letter).ToArray());
+            CollectionAssert.AreEqual(new[] { true, true, true, false, false }, d.Pick.Select(p => p.Picked).ToArray(), "varsayılan: EMP uzmanı ve Analist");
+            Assert.IsTrue(d.Pick[0].Locked && !d.Pick[3].Locked);
+            Assert.AreEqual(Loc.T("SABİT"), d.Pick[0].Status);
+            StringAssert.Contains(Loc.T(Baskin.Abilities["dinamit"].Name), d.Pick[3].HoverLine, "üstüne gelince yetenek");
+
+            var chosen = LiberationMapBuilder.Slip(sim, Simulation.HQ, new[] { "maden", "duman" });
+            CollectionAssert.AreEqual(new[] { "T", "M", "S" }, chosen.Members.Select(m => m.Letter).ToArray(), "ekip diskleri seçimi gösterir");
+            Assert.IsTrue(chosen.ActionEnabled);
+
+            var partial = LiberationMapBuilder.Slip(sim, Simulation.HQ, new[] { "maden" });
+            Assert.AreEqual(SlipActionState.Disabled, partial.ActionState, "iki uzman seçilmeden emir verilmez");
+            Assert.AreEqual(Loc.T("KADRO EKSİK"), partial.ActionNote);
+            CollectionAssert.AreEqual(new[] { "T", "M" }, partial.Members.Select(m => m.Letter).ToArray());
+
+            var tutorial = LiberationMapBuilder.Slip(sim, Simulation.HQ, new[] { "maden", "duman" }, fixedSquad: true);
+            Assert.IsTrue(tutorial.Pick.All(p => p.Locked), "eğitim baskınında kadro sabit");
+            CollectionAssert.AreEqual(new[] { "T", "E", "A" }, tutorial.Members.Select(m => m.Letter).ToArray());
+        }
+
         /// <summary>S2: baskından dönen ekip aynı vardiyada çıkamaz → düğme devre dışı, sağda kısa neden.</summary>
         [Test]
         public void Slip_Front_DisabledWhenTeamIsBack()
@@ -303,6 +329,27 @@ namespace Corrigible.Desk.Tests
                 // Baskından yaralı dönen figür S-07 fişinin altında okyanusta duruyordu
                 Assert.IsTrue(shelter.Hit.ContainsMapPoint(layer.TeamPoint(team)), "yaralı ekip sığınak bölgesinde, karada");
                 Assert.AreEqual(layer.TeamAnchor(Simulation.HQ), layer.TeamPoint(team), "ilk cephede S-07 ile cephe aynı yer");
+            }
+            finally { EditorSceneManager.CloseScene(scene, true); }
+        }
+
+        [Test]
+        public void DeskGameScene_MapIsClippedToPaper()
+        {
+            // Bölge çokgenleri tasarım dikdörtgeninden 12 px'e kadar taşar (Grönland, Rusya'nın kuzeyi, Çukotka, Yeni Zelanda);
+            // kâğıt (MapBase) dikdörtgende biter. Görünür alanın RectMask2D'si taşanı keser.
+            var scene = EditorSceneManager.OpenScene(DeskSpriteManifest.Root + "/Scenes/DeskGame.unity", OpenSceneMode.Additive);
+            try
+            {
+                var fitter = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<MapCoverFitter>(true)).Single();
+                var viewport = (RectTransform)new SerializedObject(fitter).FindProperty("viewport").objectReferenceValue;
+                var mask = viewport.GetComponent<UnityEngine.UI.RectMask2D>();
+                Assert.IsNotNull(mask, "haritanın görünür alanında RectMask2D");
+                Assert.IsTrue(mask.enabled);
+                Assert.AreEqual(Vector4.zero, mask.padding, "kesim kâğıdın kenarında");
+                Assert.AreEqual(1, viewport.GetComponentsInChildren<Canvas>(true).Length, "iç tuval kesimi atlatır");
+                foreach (var g in viewport.GetComponentsInChildren<UnityEngine.UI.MaskableGraphic>(true))
+                    Assert.IsTrue(g.maskable, g.name + " kesilmeli");
             }
             finally { EditorSceneManager.CloseScene(scene, true); }
         }

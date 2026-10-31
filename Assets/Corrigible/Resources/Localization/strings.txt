@@ -9,6 +9,8 @@ Yedekli veri kasası	Redundant data vault
 Teknisyen	Technician
 EMP uzmanı	EMP specialist
 Analist	Analyst
+Madenci	Miner
+Sis uzmanı	Smoke specialist
 Güvenlik dronu	Security drone
 Düz hatta ilk engele ateş eder: 1 hasar.	Fires in a straight line at the first obstacle: 1 damage.
 Bakım robotu	Maintenance robot
@@ -55,6 +57,10 @@ EMP atışı	EMP shot
 Düz hatta 2–5 kare uzağa, engellerin üstünden. Hedefteki robota ya da sıradan dolaba 1 hasar (zırhlı hedef dolaplara işlemez); çevresindeki 4 karedeki robotları dışarı iter.	2–5 tiles away in a straight line, over obstacles. 1 damage to the robot or ordinary cabinet on the target (no effect on armored target cabinets); pushes robots on the 4 surrounding tiles outward.
 Kanca	Hook
 Düz hatta 5 kare. Çarptığı robota 1 hasar verir ve onu 1 kare kendine çeker (dost uzmanı hasarsız çeker); duvara ya da dolaba çarparsa Analist onun yanına atılır. Analistin 3 kare çevresindeki robotların niyeti kesin görünür.	5 tiles in a straight line. Deals 1 damage to the robot it hits and pulls it 1 tile closer (friendly specialists are pulled unharmed); if it hits a wall or cabinet, the Analyst is yanked next to it. Robot intents within 3 tiles of the Analyst are shown for certain.
+Dinamit	Dynamite
+Bitişik kare. Duvarı kalıcı olarak yıkar ve bir dinamit harcar: moloz aynı yönde bir kare öteye sıçrar, oradaki robota ya da sıradan nesneye 1 hasar verir. Robota ya da sıradan nesneye atılırsa 1 hasar (dinamit harcamaz). Hedef dolaba, ikmal kasasına ve dost uzmana atılmaz.	Adjacent tile. Permanently breaks a wall and uses one charge of dynamite: debris flies one tile further in the same direction and deals 1 damage to the robot or ordinary object there. Thrown at a robot or ordinary object, it deals 1 damage (no charge used). Cannot target cabinets, the supply crate or a friendly specialist.
+Sis bombası	Smoke bomb
+Düz hatta 1–4 kare, engellerin üstünden; bir sis bombası harcar. Sis bu turun makine evresi boyunca nişanlı ateşi keser: atış ve kilit sise girince kaybolur (sisli kare ve arkası vurulmaz), bakım robotu ve havan sisli kareye vuramaz. Patlamayı, uyanmayı ve hareketi kesmez.	1–4 tiles in a straight line, over obstacles; uses one smoke bomb. During this turn's machine phase the smoke cuts aimed fire: shots and locks that enter it are lost (the smoked tile and everything behind it are safe), and maintenance robots and mortars cannot hit the smoked tile. It does not stop explosions, wake-ups or movement.
 Çekirdek dolabı	Core cabinet
 YZ düğüm dolabı	AI node cabinet
 Sivil sunucu	Civilian server
@@ -86,6 +92,9 @@ sabotaj	sabotage
 Teknisyen malzemeleri aldı: girişe geri dön, ekip oradan tahliye edilir.	The Technician has the supplies: get back to the entry, the team extracts from there.
 EMP	EMP
 kanca	hook
+dinamit	dynamite
+Madenci duvarı yıktı.	The Miner blew through the wall.
+moloz	debris
 Ekibin tamamı yere düştü.	The whole team is down.
 Bakım robotu {0} onardı.	A maintenance robot repaired the {0}.
 bakım robotu	maintenance robot
@@ -97,6 +106,7 @@ uyanmayı engelledi	blocked the wake-up
 Patlayan robot infilak etti.	The bomber bot detonated.
 dron ateşi	drone fire
 — Tur {0}: makineler hareket ediyor —	— Turn {0}: the machines move —
+{0} sisli kareye saldırdı: isabet yok.	{0} attacked into the smoke: no hit.
 Uyanan kopya engellendi.	Waking replica blocked.
 Yeni bir {0} uyandı.	A new {0} woke up.
 Süre doldu: ekip malzemelerle çıkamadı.	Time's up: the team couldn't get out with the supplies.
@@ -122,6 +132,7 @@ Yalnızca mevcut harekât bölgesine baskın yapılabilir.	Raids can only target
 Ekip bu vardiya baskına çıktı; vardiyayı bitir, sonraki vardiyada hazır.	The team already raided this shift; end the shift and it will be ready in the next one.
 Teknisyen yaralı ({0} gün); yerine çıkacak yedek uzman yok.	Technician injured ({0} days); no reserve specialist to step in.
 Bu baskın {0} fon ister.	This raid requires {0} funds.
+Teknisyen'in yanına iki uzman seç.	Pick two specialists to go with the Technician.
 Süren baskın yok.	No raid is in progress.
 Baskın hedefi geçersiz.	Invalid raid target.
 Sivil güven tükendi. Halk direnişe sırtını döndü.	Civilian trust is gone. The people have turned their backs on the resistance.
@@ -463,6 +474,7 @@ emir iletildi · gözcü bildiriyor	order sent · spotter reporting
 №{0} · kilit → {1}	№{0} · lock → {1}
 №{0} · saldırı → {1}	No. {0} · attack → {1}
 {0} · −{1}	{0} · −{1}
+№{0} · sise kesildi	№{0} · cut by smoke
 №{0} · onarım +1	No. {0} · repair +1
 Yeni bir robot uyandı: {0}.	A new robot woke up: {0}.
 Saha	Field
@@ -476,15 +488,14 @@ Amaç: ikisini de kır	Goal: break both
 Amaç: kır	Goal: break it
 Hareket	Move
 {0} kare	{0} tiles
-İkmal alma	Collect supplies
-bitişik kare	adjacent tile
-düz hat, 2–5 kare	straight line, 2–5
-düz hat, 5 kare	straight line, 5
 Kasadan ikmal al	Take from crate
 Dolaba vur · −2 can	Hit cabinet · −2 HP
 Robota vur · −1 can	Hit robot · −1 HP
 −1 hedef	−1 target
 itme	push
+Duvarı yık	Break a wall
+Nişanlı ateşi keser	Cuts aimed fire
+bu tur	this turn
 çeker	pulls
 Kullanılmamış haklar var. Enter ile emri ilet; Esc ile vazgeç.	Unused actions remain. Enter transmits the order; Esc cancels.
 Geri çekilmek için tekrar bas. Esc ile vazgeç.	Press again to retreat. Esc cancels.
@@ -496,21 +507,30 @@ ilk hasarı karşılar	takes the first hit
 Yedek uzman	Reserve specialist
 bir eksik canla	one less health
 Boş kare	Empty tile
+Duvar	Wall
+Sisli kare: nişanlı ateş kesilir	Smoked tile: aimed fire is cut
 Zırh: hasar işlemez	Armour: no damage
 İtilir, üniteye çarpar	Pushed into the unit
 −1	−1
 Ünite patlar	Unit explodes
-Ateşi iptal	Shot cancelled
+Duvar yıkılır	Wall breaks
+kalan {0}	{0} left
+Moloz	Debris
+Sise kesilir	Cut by smoke
 <s>{0}</s>	<s>{0}</s>
+Ateşi iptal	Shot cancelled
 Öngörülen hasar	Predicted damage
 −{0}	−{0}
 Malzemeler alınır	Supplies will be collected
 Kasa imha olur; görev kaybedilir	Crate destroyed; mission failed
+Niyet {0} sise kesildi	Intent {0} cut by smoke
 Niyet · sıra {0}	Intent · order {0}
 Zırh	Armor
 Bölgenin imza makinesi	This region's signature machine
 Teknisyen ile bitişik kareden aç, malzemeyi girişe taşı	Open with the Technician from an adjacent tile, carry the supplies to the entry
 Hedef dolabı	Target cabinet
+Madenci dinamitle yıkabilir	The Miner can blow it open
+Geçilmez; atışı durdurur	Impassable; stops shots
 Çıkış	Exit
 Teknisyen malzemeyle buradan tahliye edilir	The Technician extracts here with the supplies
 ZIRH	ARMOR
@@ -529,7 +549,15 @@ Ekip	Team
 {0}/{1} ayakta	{0}/{1} standing
 TEKNİSYEN	TECHNICIAN
 EMP UZMANI	EMP SPECIALIST
+MADENCİ	MINER
+SİS UZMANI	SMOKE SPECIALIST
 ANALİST	ANALYST
+İkmal alma	Collect supplies
+bitişik kare	adjacent tile
+düz hat, 2–5 kare	straight line, 2–5
+bitişik · {0} dinamit	adjacent · {0} dynamite
+düz hat, 1–4 · {0} bomba	straight line, 1–4 · {0} bombs
+düz hat, 5 kare	straight line, 5
 onarım	repair
 vuruş	strike
 kilit	lock
@@ -681,6 +709,17 @@ TEHDİT	THREAT
 {0}/4	{0}/4
 TEHDİT · {0}/4	THREAT · {0}/4
 Özgür bölge sayısıyla yükselir. 3. kademede makineler kopyalanır, 4. kademede güçlenir.	Rises with the number of free regions. At level 3 the machines are copied, at level 4 they grow stronger.
+SABİT	FIXED
+YEDEK ÇIKAR	RESERVE GOES
+{0} GÜN	DAYS: {0}
+yatıyor · {0} gün	laid up · {0} days
+can {0}/{1}	health {0}/{1}
+Seçilirse yerine bir eksik canla yedek uzman çıkar.	If picked, a reserve specialist goes in their place with one less health.
+Yedek yok: seçilirse kadro eksik çıkar.	No reserve: if picked, the squad goes one short.
+KADRO	SQUAD
+İlk baskın: kadro sabit.	First raid: the squad is fixed.
+Teknisyen'in yanına {0} uzman daha seç.	Pick {0} more specialist(s) to go with the Technician.
+Teknisyen sabit · ikisini seç; baskına çıkmayanlar dinlenir.	Technician is fixed · pick two; those who stay behind rest.
 HAREKÂT FORMU · OP-{0:00}	OPERATION FORM · OP-{0:00}
 HAREKÂT FORMU	OPERATION FORM
 SEKTÖRLER {0}/{1} · ÖZGÜR	SECTORS {0}/{1} · FREE
@@ -706,6 +745,7 @@ TEKNİSYEN YARALI · {0} GÜN	TECHNICIAN INJURED · {0} DAYS
 BASKIN EMRİ VER	ORDER THE RAID
 Fon yetersiz · {0} gerekli	Not enough funds · {0} needed
 TEKNİSYEN YARALI	TECHNICIAN INJURED
+KADRO EKSİK	SQUAD INCOMPLETE
 EKİP HAZIR DEĞİL	TEAM NOT READY
 YENİ CEPHE · ONAY	NEW FRONT · CONFIRM
 Komşu: {0}	Neighbour: {0}
@@ -906,7 +946,6 @@ BÖLGE ÖZGÜR	REGION FREE
 {0} · {1} fon	{0} · {1} funds
 BEKLENİYOR	AWAITING
 Sıradaki cepheyi seç	Choose the next front
-{0} GÜN	DAYS: {0}
 {0} · {1}\n{2}	{0} · {1}\n{2}
 Sürükle: adaya taşı	Drag onto a candidate
 {0}\n{1}	{0}\n{1}
@@ -1038,6 +1077,8 @@ yetenek	ability
 TELSİZ KAYDI	RADIO LOG
 KURALLAR KARTI	RULES CARD
 Teknisyen kasayı açar ve malzemeyi taşır. İtme ve patlamalar kasaya hasar verebilir; EMP kasayı açmaz.	The Technician opens the crate and carries the supplies. Pushes and explosions can damage the crate; EMP doesn't open it.
+Madenci: dinamit bitişik duvarı yıkar (baskında sınırlı); moloz bir kare öteye 1 hasar. Açılan delik makinelerin atış hattını da açar.	Miner: dynamite breaks an adjacent wall (limited per raid); debris deals 1 damage one tile further. The hole also opens a firing line for the machines.
+Sis: bu turun makine evresinde atış ve kilit sise girince kaybolur; bakım robotu ve havan sisli kareye vuramaz. Patlamayı kesmez.	Smoke: during this turn's machine phase, shots and locks that enter the smoke are lost; maintenance robots and mortars cannot hit the smoked tile. It does not stop explosions.
 İkmal görevi: Teknisyen ile kasayı aç, sonra malzemeyi giriş karelerinden birine geri taşı. Kasa imha olursa, Teknisyen düşerse ya da süre biterse görev kaybedilir.	Supply mission: open the crate with the Technician, then carry the supplies back to one of the entry tiles. The mission fails if the crate is destroyed, the Technician goes down or time runs out.
 EMİN MİSİN? TEKRAR BAS	ARE YOU SURE? PRESS AGAIN
 OPERASYON RAPORUNA GEÇ	GO TO OPERATION REPORT
@@ -1047,6 +1088,7 @@ OPERASYON SONUCU	OPERATION RESULT
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidTeamCardView.cs
 {0} · YEDEK	{0} · RESERVE
 EMP UZM.	EMP SPEC.
+SİS UZM.	SMOKE SPEC.
 YARALI	INJURED
 PLAKA	PLATES
 SIĞINAKTA YARALI	INJURED AT SHELTER
@@ -1097,12 +1139,14 @@ YENİDEN İŞGAL	RE-OCCUPIED
 BASKINA HAZIR	READY TO RAID
 KİLİTLİ	LOCKED
 {0} yedek	{0} reserve
+{0}\n<size=75%>{1}</size>	{0}\n<size=75%>{1}</size>
 FON YETERSİZ	NOT ENOUGH FUNDS
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/RoomView.cs
 DURDU	STOPPED
 # Assets/Corrigible/Game/Platform.cs
 Yerel	Local
 # Assets/Corrigible/Game/Raid/RaidBoard3D.cs
+SİS	SMOKE
 UYANDI	WOKE UP
 YÜKLÜ	CARRYING
 TUR BİTTİ	TURN DONE
@@ -1116,6 +1160,8 @@ PLAKA KIRILDI	PLATE BROKEN
 +1	+1
 İKMAL ALINDI	SUPPLIES RETRIEVED
 <s>{0}</s> İPTAL	<s>{0}</s> CANCELLED
+YIKILDI	BREACHED
+SİSE KESİLDİ	CUT BY SMOKE
 {0} ŞİMDİ	{0} NOW
 <s>{0}</s> UYGULANDI	<s>{0}</s> DONE
 # Assets/Corrigible/Desk/Prefabs/Screens/SettingsCard.prefab

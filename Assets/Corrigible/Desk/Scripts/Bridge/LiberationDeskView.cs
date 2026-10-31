@@ -104,14 +104,15 @@ namespace Corrigible.Desk.Bridge
             return Report(game.SelectLiberationRegion(regionId), why, done);
         }
 
-        public ActResult LaunchSector(string sectorId)
+        /// <param name="pick">Teknisyen'in yanına seçilen roller ("emp,maden"); boşsa varsayılan seçim.</param>
+        public ActResult LaunchSector(string sectorId, string pick = null)
         {
             if (InputBlocked) return null;
             string why = TelexReasons.Raid(Sim, sectorId);
             var sector = Sim.LiberationSector(sectorId);
             string done = sector == null ? null : Loc.F("Baskın emri: {0} · {1} · {2} fon", RegionName(sector.Region), sector.Name,
                 DeskFormat.Signed(-Sim.B.liberationRaidCost, 0));
-            return Report(game.StartLiberationRaid(sectorId), why, done);
+            return Report(game.StartLiberationRaid(sectorId, pick), why, done);
         }
 
         /// <summary>

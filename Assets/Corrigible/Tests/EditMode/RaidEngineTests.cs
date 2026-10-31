@@ -293,6 +293,200 @@ namespace Corrigible.Tests
             Assert.AreEqual(1, Baskin.TargetsLeft(state).Count);
         }
 
+        // ---------- Madenci ve Sis uzmanı ----------
+
+        [Test]
+        public void Dynamite_BreaksTheWall_DebrisHitsTheNextTile_AndUndoRestoresIt()
+        {
+            var state = SpecialistFixture(out _, out var miner, out _);
+            miner.X = 2; miner.Y = 5;
+            state.Cells[5, 3].T = "wall";
+            var drone = Machine(state, "dron", 4, 5);
+            string before = Baskin.Signature(state);
+            Assert.IsTrue(Baskin.Targets(state, miner).Any(p => p.X == 3 && p.Y == 5));
+            Assert.IsTrue(Baskin.DoAct(state, miner.Id, 3, 5));
+            Assert.AreEqual("floor", state.Cells[5, 3].T, "duvar kalıcı olarak zemine döner");
+            Assert.AreEqual(1, drone.Hp, "moloz bir kare öteye sıçrar");
+            Assert.AreEqual(1, miner.Charges, "duvar yıkmak bir dinamit harcar");
+            Assert.IsTrue(state.FxList.Any(f => f.K == "breach" && f.X == 3 && f.Y == 5));
+            Assert.IsTrue(state.FxList.Any(f => f.K == "debris" && f.X == 4 && f.Y == 5));
+            StringAssert.Contains("|r35", Baskin.Signature(state));
+            Assert.IsTrue(Baskin.Undo(state));
+            Assert.AreEqual("wall", state.Cells[5, 3].T, "geri alma duvarı geri getirir");
+            Assert.AreEqual(2, state.Units.First(u => u.Type == "maden").Charges);
+            Assert.AreEqual(before, Baskin.Signature(state));
+        }
+
+        [Test]
+        public void Debris_SparesTheCrate_StopsAtWalls_AndSetsOffCoolingUnits()
+        {
+            // Kasanın önündeki duvar: moloz kasaya işlemez
+            var state = SpecialistFixture(out _, out var miner, out _);
+            miner.X = 3; miner.Y = 5;
+            state.Cells[4, 3].T = "wall";
+            Assert.IsTrue(Baskin.DoAct(state, miner.Id, 3, 4));
+            Assert.AreEqual(4, state.Cells[3, 3].O.Hp, "ikmal kasası molozdan hasar almaz");
+            Assert.AreEqual("player", state.Phase);
+
+            // Arkadaki duvar: moloz durur, ikinci duvar yerinde
+            state = SpecialistFixture(out _, out miner, out _);
+            miner.X = 2; miner.Y = 5;
+            state.Cells[5, 3].T = "wall"; state.Cells[5, 4].T = "wall";
+            Assert.IsTrue(Baskin.DoAct(state, miner.Id, 3, 5));
+            Assert.AreEqual("wall", state.Cells[5, 4].T);
+            Assert.IsFalse(state.FxList.Any(f => f.K == "debris"));
+
+            // Soğutma ünitesi: moloz onu patlatır, patlama yanındaki robotu vurur; önizleme zinciri gösterir
+            state = SpecialistFixture(out _, out miner, out _);
+            miner.X = 2; miner.Y = 5;
+            state.Cells[5, 3].T = "wall";
+            state.Cells[5, 4].O = new Baskin.Obj { K = "cool", Hp = 1, Max = 1 };
+            var drone = Machine(state, "dron", 5, 5);
+            var preview = Baskin.Preview(state, miner.Id, 3, 5);
+            Assert.IsTrue(preview.Fx.Any(f => f.K == "break" && f.Obj == "cool"));
+            Assert.IsTrue(preview.Fx.Any(f => f.K == "dmg" && f.Unit == drone.Id));
+            Assert.IsTrue(Baskin.DoAct(state, miner.Id, 3, 5));
+            Assert.IsNull(state.Cells[5, 4].O);
+            Assert.AreEqual(1, drone.Hp);
+        }
+
+        [Test]
+        public void Dynamite_TargetsWallsRobotsAndPlainObjects_NotCabinetsOrAllies()
+        {
+            var state = SpecialistFixture(out var tek, out var miner, out _);
+            miner.X = 3; miner.Y = 2;
+            tek.X = 4; tek.Y = 2;
+            state.Cells[1, 3].T = "wall";
+            state.Cells[2, 2].O = new Baskin.Obj { K = "civ", Hp = 1, Max = 1 };
+            var targets = Baskin.Targets(state, miner).Select(p => (p.X, p.Y)).ToList();
+            CollectionAssert.AreEquivalent(new[] { (3, 1), (2, 2) }, targets, "kasa (3,3) ve dost uzman (4,2) hedef değil");
+            miner.Charges = 0;
+            CollectionAssert.AreEquivalent(new[] { (2, 2) }, Baskin.Targets(state, miner).Select(p => (p.X, p.Y)).ToList(), "dinamit bitince duvar yıkılmaz");
+
+            // Robota atılan dinamit 1 hasar verir, itmez ve hak harcamaz
+            state = SpecialistFixture(out _, out miner, out _);
+            miner.X = 2; miner.Y = 5;
+            var drone = Machine(state, "dron", 3, 5);
+            Assert.IsTrue(Baskin.DoAct(state, miner.Id, 3, 5));
+            Assert.AreEqual(1, drone.Hp);
+            Assert.AreEqual(3, drone.X);
+            Assert.AreEqual(2, miner.Charges);
+        }
+
+        [Test]
+        public void Smoke_CutsShotsAtTheSmokeAndBeyond_ButNotTheShooterInIt()
+        {
+            int ShotAt(int sx, int sy)
+            {
+                var state = SpecialistFixture(out var tek, out _, out var smoke);
+                tek.X = 2; tek.Y = 3;
+                smoke.X = sx; smoke.Y = 6;
+                Machine(state, "dron", 0, 3, "shoot", 1);
+                if (sy >= 0) Assert.IsTrue(Baskin.DoAct(state, smoke.Id, sx, sy));
+                Assert.IsTrue(Baskin.EndTurn(state));
+                Assert.IsFalse(Enumerable.Range(0, Baskin.N * Baskin.N).Any(k => state.Cells[k / Baskin.N, k % Baskin.N].Smoke), "sis evrenin sonunda dağılır");
+                return tek.Hp;
+            }
+            Assert.AreEqual(2, ShotAt(5, -1), "sis yoksa atış Teknisyen'i vurur");
+            Assert.AreEqual(3, ShotAt(1, 3), "aradaki sis atışı keser");
+            Assert.AreEqual(3, ShotAt(2, 3), "uzmanın karesindeki sis de keser");
+            Assert.AreEqual(2, ShotAt(0, 3), "sisin içindeki makine yine ateş eder");
+        }
+
+        [Test]
+        public void Smoke_CutsLockMeleeAndMortarOnTheSmokedTile_NotBlasts()
+        {
+            Baskin.BState Run(string type, int mx, int my, string kind, int dir, int tx, int ty, int sx, int sy, out Baskin.Unit tek)
+            {
+                var state = SpecialistFixture(out tek, out _, out var smoke);
+                tek.X = tx; tek.Y = ty;
+                // Sis uzmanı aynı sütunda dört kare öteden atar
+                smoke.X = sx; smoke.Y = sy + (sy >= 4 ? -4 : 4);
+                Machine(state, type, mx, my, kind, dir);
+                Assert.IsTrue(Baskin.DoAct(state, smoke.Id, sx, sy), type);
+                Assert.IsTrue(Baskin.EndTurn(state));
+                return state;
+            }
+            Run("kilit", 0, 1, "lock", 1, 3, 1, 2, 1, out var locked);
+            Assert.IsFalse(locked.Locked, "kilit sise girince kaybolur");
+            var melee = Run("bakim", 4, 4, "melee", 3, 3, 4, 3, 4, out var hit);
+            Assert.AreEqual(3, hit.Hp, "bakım robotu sisli kareye vuramaz");
+            Assert.IsTrue(melee.FxList.Any(f => f.K == "smoked" && f.X == 3 && f.Y == 4));
+            Run("havan", 0, 6, "lob", 1, 3, 6, 1, 6, out var lobbed);
+            Assert.AreEqual(2, lobbed.Hp, "havan engellerin üstünden atar: yoldaki sis onu durdurmaz");
+            Run("havan", 0, 6, "lob", 1, 3, 6, 3, 6, out lobbed);
+            Assert.AreEqual(3, lobbed.Hp, "havan sisli kareye düşerse boşa gider");
+            Run("bomba", 5, 1, "blast", 0, 5, 2, 5, 2, out var blasted);
+            Assert.AreEqual(2, blasted.Hp, "patlama nişan değildir: sis onu kesmez");
+        }
+
+        [Test]
+        public void SmokePreview_ShowsTheCutIntent_WithoutChangingTheLiveState()
+        {
+            var state = SpecialistFixture(out var tek, out _, out var smoke);
+            tek.X = 2; tek.Y = 3;
+            smoke.X = 2; smoke.Y = 6;
+            Machine(state, "dron", 0, 3, "shoot", 1);
+            var live = Baskin.Intents(state).Single();
+            Assert.IsFalse(live.Smoked);
+            Assert.AreEqual(2, live.TargetX);
+            var preview = Baskin.Preview(state, smoke.Id, 2, 3);
+            var cut = preview.Intents.Single();
+            Assert.IsTrue(cut.Smoked && cut.TargetNone);
+            Assert.AreEqual((2, 3), (cut.TargetX, cut.TargetY));
+            Assert.IsFalse(state.Cells[3, 2].Smoke, "önizleme canlı durumu değiştirmez");
+            Assert.IsTrue(Baskin.DoAct(state, smoke.Id, 2, 3));
+            Assert.AreEqual(2, smoke.Charges);
+            Assert.IsTrue(Baskin.Intents(state).Single().Smoked);
+            StringAssert.Contains("|s23", Baskin.Signature(state));
+            smoke.Charges = 0; smoke.Acted = false;
+            Assert.AreEqual(0, Baskin.Targets(state, smoke).Count, "bomba bitince sis atılmaz");
+        }
+
+        [Test]
+        public void DefaultSquad_HasNoCharges_AndCampaignChargesComeFromParams()
+        {
+            var plain = Baskin.Create(new RaidParams { Seed = 11 });
+            Assert.IsTrue(plain.Units.Where(u => u.Side == 'p').All(u => u.Charges == -1));
+            var picked = Baskin.Create(new RaidParams { Seed = 11, DynamiteCharges = 1, SmokeCharges = 4, Squad = new List<SquadSlot>
+            {
+                new SquadSlot { Type = "tek", Hp = 3 }, new SquadSlot { Type = "maden", Hp = 3 }, new SquadSlot { Type = "duman", Hp = 2 },
+            } });
+            Assert.AreEqual(1, picked.Units.First(u => u.Type == "maden").Charges);
+            Assert.AreEqual(4, picked.Units.First(u => u.Type == "duman").Charges);
+            Assert.AreEqual(-1, picked.Units.First(u => u.Type == "tek").Charges);
+        }
+
+        /// <summary>Boş tahta (yalnız ikmal kasası), Teknisyen, Madenci ve Sis uzmanı köşelerde; makineler devre dışı.</summary>
+        static Baskin.BState SpecialistFixture(out Baskin.Unit tek, out Baskin.Unit miner, out Baskin.Unit smoke)
+        {
+            var state = Baskin.Create(new RaidParams { Seed = 11, MissionKind = "loot", Squad = new List<SquadSlot>
+            {
+                new SquadSlot { Type = "tek", Hp = 3 }, new SquadSlot { Type = "maden", Hp = 3 }, new SquadSlot { Type = "duman", Hp = 2 },
+            } });
+            for (int y = 0; y < Baskin.N; y++) for (int x = 0; x < Baskin.N; x++) state.Cells[y, x] = new Baskin.Cell { T = "floor" };
+            state.Cells[3, 3].O = new Baskin.Obj { K = "node", Hp = 4, Max = 4 };
+            foreach (var unit in state.Units.Where(u => u.Side == 'e')) unit.Dead = true;
+            state.Spawns.Clear();
+            tek = state.Units.First(u => u.Type == "tek"); tek.X = 7; tek.Y = 0;
+            miner = state.Units.First(u => u.Type == "maden"); miner.X = 7; miner.Y = 7;
+            smoke = state.Units.First(u => u.Type == "duman"); smoke.X = 6; smoke.Y = 7;
+            return state;
+        }
+
+        /// <summary>Tahtaya niyetiyle bir makine koyar (sırası en sonda).</summary>
+        static Baskin.Unit Machine(Baskin.BState state, string type, int x, int y, string kind = null, int dir = 0)
+        {
+            var t = Baskin.UnitTypes[type];
+            var u = new Baskin.Unit
+            {
+                Id = state.NextId++, Type = type, Side = 'e', X = x, Y = y, Hp = t.Hp, Max = t.Hp, Armor = t.Armor,
+                Order = 1 + state.Units.Count(v => v.Side == 'e' && !v.Dead), Intent = kind != null ? new Baskin.Intent { Kind = kind, Dir = dir } : null,
+            };
+            state.Units.Add(u);
+            return u;
+        }
+
         static Baskin.BState OpenCargoFixture(int seed = 11)
         {
             var state = Baskin.Create(new RaidParams { Seed = seed, MissionKind = "loot" });

@@ -219,7 +219,7 @@ namespace Corrigible.Desk.Tests
             s.rooms.Add(new ShiftRoomSnapshot { id = ShelterLogic.Infirmary, level = infirmaryLevel, workers = infirmaryWorkers });
             var team = new ShiftTeamSnapshot { id = "alfa", name = "Alfa", busy = busy, canRaid = canRaid };
             for (int i = 0; i < Simulation.Roles.Length; i++)
-                team.members.Add(new ShiftMemberSnapshot { role = Simulation.Roles[i], wounds = wounds?[i] ?? 0, down = i == 0 ? techDown : 0 });
+                team.members.Add(new ShiftMemberSnapshot { role = Simulation.Roles[i], wounds = wounds != null && i < wounds.Length ? wounds[i] : 0, down = i == 0 ? techDown : 0 });
             s.teams.Add(team);
             return s;
         }

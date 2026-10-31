@@ -117,7 +117,11 @@ namespace Corrigible.Desk
             Turns(vm);
             Phase(vm);
             Mission(vm);
-            for (int i = 0; i < team.Length; i++) team[i].Render(vm.Team[i], vm.Locked || vm.Paused);
+            for (int i = 0; i < team.Length; i++)
+            {
+                team[i].gameObject.SetActive(i < vm.Team.Length);
+                if (i < vm.Team.Length) team[i].Render(vm.Team[i], vm.Locked || vm.Paused);
+            }
             Buttons(vm);
             unitCard.Render(vm); hoverCard.Render(vm.HoverCard);
             if (cornerGroup != null) { cornerGroup.blocksRaycasts = !vm.Finished; cornerGroup.interactable = !vm.Finished; }
@@ -277,7 +281,10 @@ namespace Corrigible.Desk
             }
             EndButton();
             var k = Keyboard.current; if (k == null || commands == null) return;
-            if (k.digit1Key.wasPressedThisFrame) commands.SelectUnit('T'); if (k.digit2Key.wasPressedThisFrame) commands.SelectUnit('E'); if (k.digit3Key.wasPressedThisFrame) commands.SelectUnit('A');
+            // 1–3 kartların sırası: Teknisyen ve seçilen iki uzman
+            var roster = Current?.Team;
+            if (roster != null) for (int i = 0; i < roster.Length && i < 3; i++)
+                if ((i == 0 ? k.digit1Key : i == 1 ? k.digit2Key : k.digit3Key).wasPressedThisFrame) commands.SelectUnit(roster[i].Letter);
             if (k.qKey.wasPressedThisFrame) commands.ArmAbility(); if (k.zKey.wasPressedThisFrame) commands.Undo(); if (k.enterKey.wasPressedThisFrame) commands.EndTurn();
             if (k.escapeKey.wasPressedThisFrame || Mouse.current?.rightButton.wasPressedThisFrame == true) commands.CancelPending();
             if (k.lKey.wasPressedThisFrame) commands.ToggleLog();

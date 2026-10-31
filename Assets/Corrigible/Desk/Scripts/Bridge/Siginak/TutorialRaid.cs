@@ -88,7 +88,9 @@ namespace Corrigible.Desk.Bridge
             if (campaign == null || campaign.SectorId != "weu_1" || campaign.MissionKind != "loot" || campaign.Tier != 1) return null;
             if (!campaign.Traits.SequenceEqual(new[] { "guvenli" }) || campaign.Signature != "zdron") return null;
             var squad = campaign.Squad;
-            bool fresh = squad != null && squad.Count == 3 && squad.All(s => !s.Rookie && s.Armor == 0 && s.Hp == Baskin.UnitTypes[s.Type].Hp);
+            // Senaryo Teknisyen, EMP uzmanı ve Analist'e göre yazıldı (giriş sırası dahil)
+            bool fresh = squad != null && squad.Select(s => s.Type).SequenceEqual(new[] { "tek", "emp", "ana" })
+                && squad.All(s => !s.Rookie && s.Armor == 0 && s.Hp == Baskin.UnitTypes[s.Type].Hp);
             if (!fresh) return null;
             return new RaidParams
             {

@@ -109,6 +109,16 @@ namespace Corrigible.Desk
         public bool Rookie, Missing;
     }
 
+    /// <summary>
+    /// Kadro seçicinin bir uzmanı (fişin KADRO satırı): rol, harf, can, durum (SABİT, yedek, yatıyor); seçili mi, değiştirilemez
+    /// mi (Teknisyen ve eğitim baskını). Üstüne gelince ad, can ve yeteneğin tam açıklaması.
+    /// </summary>
+    public sealed class SlipPick
+    {
+        public string Role, Letter, Hp, Status, HoverTitle, HoverLine;
+        public bool Picked, Locked, Down;
+    }
+
     /// <summary>Görev fişi (K2): cephe için tam form, öteki bölgeler için bilgi fişi (eylem yok).</summary>
     public sealed class OperationSlipData
     {
@@ -119,6 +129,9 @@ namespace Corrigible.Desk
         public readonly List<SlipReward> Rewards = new List<SlipReward>();
         public string TeamName, TeamStamp;
         public readonly List<SlipMember> Members = new List<SlipMember>();
+        /// <summary>Kadro seçici: beş uzman kadro sırasıyla (Teknisyen sabit, ikisi seçilir); başlığı ve notu.</summary>
+        public readonly List<SlipPick> Pick = new List<SlipPick>();
+        public string PickHead, PickNote;
         /// <summary>Disklerden sonra (ör. “2 plaka”); yoksa boş.</summary>
         public string TeamExtra;
         public bool TeamReady;

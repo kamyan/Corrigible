@@ -2,7 +2,10 @@ using UnityEngine;
 
 namespace Corrigible.Desk
 {
-    /// <summary>Haritanın tasarım dikdörtgenini kâğıdı kaplayacak kadar büyütür.</summary>
+    /// <summary>
+    /// Haritanın tasarım dikdörtgenini kâğıdı kaplayacak kadar büyütür. Taşan kısmı (ve dikdörtgenden taşan bölge
+    /// çokgenlerini) <see cref="viewport"/>'taki RectMask2D keser.
+    /// </summary>
     [ExecuteAlways]
     public sealed class MapCoverFitter : MonoBehaviour
     {

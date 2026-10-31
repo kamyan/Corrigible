@@ -53,7 +53,7 @@ namespace Corrigible.Game
         }
 
         // ---------- Komutlar ----------
-        public ActResult StartLiberationRaid(string sectorId) => Run(() => Sim.StartLiberationRaid(sectorId));
+        public ActResult StartLiberationRaid(string sectorId, string pick = null) => Run(() => Sim.StartLiberationRaid(sectorId, pick));
         public ActResult ResolveRaid(RaidResult result) => Run(() => Sim.ResolveRaid(result));
         public ActResult SelectLiberationRegion(string regionId) => Run(() => Sim.SelectLiberationRegion(regionId));
         public ActResult ShelterUpgrade(string roomId) => Run(() => Sim.ShelterUpgrade(roomId));

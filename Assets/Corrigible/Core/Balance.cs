@@ -68,6 +68,12 @@ namespace Corrigible.Core
         /// <summary>Sivil sunucunun canı (kampanyada): gelişmiş akılda ekibe ulaşamayan makine sivillere saldırır, ikinci can
         /// oyuncuya bir tur kurtarma fırsatı verir.</summary>
         public int liberationCivilianHp = 2;
+        /// <summary>
+        /// Baskın başına hak: Madenci'nin duvar yıkan dinamiti (robota ve nesneye atılan dinamit hak harcamaz) ve Sis uzmanının sis
+        /// bombası. Sınırsız dinamit kasa odası ve şerit haritalarının bulmacasını, sınırsız sis taşıyıcı kovalamacasını çökertir.
+        /// </summary>
+        public int liberationDynamiteCharges = 2;
+        public int liberationSmokeCharges = 3;
 
         // Kapı: birkaç vardiyada bir biri sığınağın kapısını çalar (ziyaretçiler ve etkileri Core/DoorCards.cs)
         /// <summary>İlk vuruşun günü (eğitimden sonra; senaryolu ve dostça).</summary>

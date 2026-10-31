@@ -143,7 +143,7 @@ namespace Corrigible.Desk.Tests
         public void EveryMachineType_HasALabelGlyph()
         {
             var lib = AssetDatabase.LoadAssetAtPath<RaidPieceLibrary>("Assets/Corrigible/Settings/RaidPieceLibrary.asset");
-            foreach (var pair in Baskin.UnitTypes.Where(p => p.Key != "tek" && p.Key != "emp" && p.Key != "ana"))
+            foreach (var pair in Baskin.UnitTypes.Where(p => p.Value.Side == 'e'))
                 Assert.IsNotNull(lib.Glyph(pair.Key), pair.Key + " için etiket işareti yok");
             Assert.IsNull(lib.Glyph("tek"), "uzman etiketinde tür işareti yok");
             foreach (var badge in new[] { lib.badgeClamp, lib.badgeWrench, lib.badgeShield, lib.badgeClone, lib.armorIcon }) Assert.IsNotNull(badge);
