@@ -93,12 +93,17 @@ Corrigible/                          (Unity proje kökü, git deposu)
   baskın sırası) ve `Tactics = 1` (gelişmiş makine aklı) yazar; `Baskin.Create` havuzdan `RaidMaps.Slot` ile (karıştırılmış
   torbalar) seçer. `MapSeed` 0 ise (eğitim baskını, örnek baskın, eski testler) elle çizilmiş `Baskin.Layouts`. Kayıt
   etkilenmez: tahta stratejiye yalnız sonuç verir.
-- **İkmal kaçışı ve makine aklı** (`Baskin`): `BState.Carrier` (kasayı açan Teknisyen) ve `Exits` (giriş kareleri);
-  `CheckEscape` yürüyüş, yetenek ve makine evresinden sonra bakar. `BState.Smart` (`RaidParams.Tactics > 0`) iken
+- **Kaçış ve makine aklı** (`Baskin`): `BState.Carrier` (kasayı açan Teknisyen), `Exits` (giriş kareleri, her görevde) ve
+  `Escape` (görev hedefi tamam: kasa açıldı ya da hedef dolaplar kırıldı). `CheckEscape` yürüyüş, yetenek ve makine
+  evresinden sonra kaçışta çıkıştaki uzmanı tahliye eder (`Unit.Out`), tahtada uzman kalmadıysa `FinishEscape` sonucu yazar;
+  süre dolarken kalanlar `Unit.Left` (düşmüş, `RaidResult.Left`). Tahtadaki birim `Baskin.OnBoard` (düşmemiş, çıkmamış):
+  `UnitAt`, `Alive`, `CanMove/CanAct` onu kullanır; tahliye edilen kadro sırası (`Result.Hp`) için `Units`'te kalır. `BState.Smart` (`RaidParams.Tactics > 0`) iken
   `PlanEnemies` `KeyTiles` (hedefin önü ya da kaçış yolu), `Zone` (niyetin tuttuğu kilit kareler) ve `Covers` (eşgüdüm)
   ile puanlar; RNG tüketimi temel akılla aynı. `RaidParams.TargetHpBonus/ExtraMachines` sunucu görevinin sertliği
   (kampanya dengeden yazar; düğüm dolabına ek can, çekirdek hariç; baştaki ek makine). Sunum: `RaidBoard3D.Marks.Exits/Carrier` (yeşil kesik çıkış çerçevesi,
-  "YÜKLÜ" etiketi), `RaidViewModel.Escaping` (HUD "girişe dön"); tur şeridi 8 kutuya kadar, plaka tur sayısıyla kayar.
+  "YÜKLÜ" etiketi), `RaidBoard3D.AnimateLeave` ve "evac" efekti (tahliye), `RaidViewModel.Escaping/CargoLost/CanRetreat`
+  (amaç satırı, ALINDI/KAYBOLDU damgası, soluk GERİ ÇEKİL), `RaidTeamModel.Out/Left`, `PreviewResult.Escape`; tur şeridi 8
+  kutuya kadar, plaka tur sayısıyla kayar.
 - **`GameController`** (`Game/GameController.cs`): komut kapısı. `NewGame`, komut metotları, `AdvanceShift` (vardiya),
   `Flush` (olayları `EventsRaised` ile dağıtır; harekât bitince başarımı açar, kaydı siler), `Save`/`ContinueSaved`.
   `StoryHold` açılış ve emir belgesi açıkken vardiyayı engeller. Olaylar: `Changed`, `EventsRaised`, `NewGameStarted`,
@@ -178,8 +183,13 @@ SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
   figürün çevresine. Sayaçlar o ana kadar bekler (`SiginakOperation.HoldCounters`), sonra döner; başarılıda ± fişleri ve
   sektör işaretinin mavi onayı (`LiberationRegionMarks.AnimateRetaken`). Enter/Esc/düğme tepsiye dosyalar ve
   `LiberationDeskView.MarkRaidReportSeen` raporu okundu sayar. Açıkken masa kilitli (`InputBlocked`).
-- `DeskInput` klavyenin tek sahibidir: ayarlar kartı açıkken Esc; son raporda Enter; aksi hâlde 1/3 planlama, H kılavuz,
-  Esc ayarlar/geri. Odanın anahtarları (`StationKeyRail`), vardiya raporu ve operasyon raporu kendi tuşlarını dinler.
+- `DeskInput` klavyenin tek sahibidir: ayarlar kartı açıkken Esc; son raporda Enter; aksi hâlde 3 planlama, Esc
+  ayarlar/geri. Odanın anahtarları (`StationKeyRail`: SIĞINAK, GÖREVLER, KAPI, MASA; üst kenar şeridi `EdgeLine` aynı sıra
+  ve en sonda AYARLAR), vardiya raporu ve operasyon raporu kendi tuşlarını dinler. DeskGame klavye tuşu **yazmaz**: tuş
+  fişi, “Enter/Esc/Home” ipucu ve üzerine gelme etiketinde kısayol yok (`IHoverSource` yalnız başlık ve satır); her
+  kısayolun tıklanan bir karşılığı vardır (kapı kâğıdının alt satırı `DoorCardView.Dismissed`). Tuş başlıklarında ve
+  şeridin tuş kutularında istasyon simgeleri (`tx_key_*`, `SiginakTextureBaker.KeyIcons`; başlıkta aydınlatılan saydam
+  dörtgen `Key icon *.mat`, şeritte RawImage). Baskın tahtası (Baskin) kendi kısayol ipuçlarını gösterir.
 
 ## Baskın sahnesi (`Scenes/Baskin.unity`)
 
@@ -191,12 +201,18 @@ WorldLabels       dünya etiketleri
 BoardBackground   [BoardBackgroundView] keçe, lamba ve tahta gölgesi (kamera Canvas'ı)
 RaidHUDCanvas     LiveRaidDataSource, RaidCommands, RaidPreviewOverlay; RaidHud, ekip/birim/inceleme kartları
 RaidEventSystem   [RaidEventSystemGate] ana EventSystem varken yereli kapatır
-RaidPanelCanvas   RaidPanels (olay, onay, günlük, kurallar, geri çekilme, sonuç), RaidOutcomeSpot
+RaidPanelCanvas   RaidPanels (olay, onay, kadro raporu, günlük, kurallar, geri çekilme, sonuç), RaidOutcomeSpot
 ```
 
-- `RaidLauncher` (DeskGame'de, Game nesnesi): `S.Raid` oluşunca önce kamerayı CRT'ye daldırır (`SiginakCrt`), sonra
-  sahneyi `LoadSceneMode.Additive` ile yükler; odanın kamera, dinleyici, canvas ve girdilerini kapatır (`hideDuringRaid`:
-  nesneler değil bileşenler). Sahne kapanınca önceki `enabled` durumlarını geri yükler.
+- `RaidLauncher` (DeskGame'de, Game nesnesi): `S.Raid` oluşunca önce kamerayı CRT'ye daldırır, sonra sahneyi
+  `LoadSceneMode.Additive` ile yükler; odanın kamera, dinleyici, canvas ve girdilerini kapatır (`hideDuringRaid`: nesneler
+  değil bileşenler). Sahne kapanınca önceki `enabled` durumlarını geri yükler. Yolu `IRaidTransition` kancası sürer
+  (`SiginakCrt.Approach` → `SiginakCameraRig.BeginDive`): kamera geri çekilme pozuna (`Poses/CrtBack`) doğru çıkar, CRT'ye
+  döner ve `CrtDive`'a yaklaşır; tek kesintisiz hareket (`motion.crtDiveS`), vuruşlar yolun kesirleri olarak üst üste biner
+  (`diveBackSpan/diveTurnSpan/divePushSpan`, smootherstep ağırlıklar; yol ortasında durma yok). Dönüşte
+  kamera monitörde kalmıştır: `Depart` → `BeginReturn` aynı yolu tersinden yürür (`crtReturnDelayS` bekleyip), bitene kadar
+  `IsTransitioning` doğrudur (masa kilitli, operasyon raporu kamera varınca iner). Boşluk ya da tık dalışı ve CRT dizisini,
+  dönüşte de kamera yolunu atlar. Kanca yoksa eski düz yaklaşma ve anında dönüş.
 - `LiveRaidDataSource`, DeskGame'deki `GameController` ve `S.Raid.Params` ile `Baskin.Create`'i bir kez çağırır. Oyuncu
   sonuçtan rapora geçtiğinde `GameController.ResolveRaid` çalışır ve sahne kapanır. Baskın boyunca odanın `DeskInput`'u
   askıya alınır. Sahne tek başına açılırsa örnek bir sunucu baskını kurulur.
@@ -207,6 +223,10 @@ RaidPanelCanvas   RaidPanels (olay, onay, günlük, kurallar, geri çekilme, son
   `AbilityRange`; Madenci ve Sis uzmanında kalan hak).
 - `RaidBoard3D`: kare (x, y) → dünya `(x − 3,5, 0, 3,5 − y)`. Bir eylem ya da tur bitince motor durumu anında değişir;
   tahta efektleri (`FxList`) sırayla oynatır, sonra `Sync` ile eşitlenir. Oynatma sırasında girdi kapalıdır (`Busy`).
+  Makine evresinden sonra Core robotları yeni plana doğrudan taşır (efekt yok); tahta onları `AnimateMachineMoves` ile
+  yeni sıralarıyla tek tek, kare kare yürütür (`MachinePath`: Core.Reachable'ın kuralıyla en kısa yol), uygulanan
+  niyetlerin ok ve bayraklarını önce kaldırır, can etiketini robotla taşır. Süreler `RaidBoard3D`'nin alanlarında
+  (`machineStepSeconds` 0,16 · `machinePauseSeconds` 0,08 · üst sınır `machineMovesMaxSeconds` 3); hızlı kipte ÷3,125.
   Can/sıra etiketleri `RaidScreenLabel` prefab'ıyla ayrı Overlay canvas'ta çizilir: robotta tür işareti
   (`RaidPieceLibrary.Glyph`) → zırh → pipler, uzmanda altlığın önünde; sıra bayrağı 30 × 28; uyanmadan sonraki tur UYANDI
   (bayrakla bir grup). Etiketler `LayoutLabels`'ta gruplar hâlinde çakışmadan yerleşir. Karolar durumdan kurulur:
@@ -217,7 +237,7 @@ RaidPanelCanvas   RaidPanels (olay, onay, günlük, kurallar, geri çekilme, son
   göre (kalınlık, yay, kesik, çift şerit, rozet); oklar `Pencil.mat`'ta ZTest Always; karo işaretleri (tarama, seçim, hedef, uyanma halkası) `Pencil marks.mat`'ta derinlik testli, parçalar örter (`RaidPieceLibrary.tileMarks`).
 - **Baskın HUD'u** (`RaidHud.prefab`, `RaidHudView`): köşe panelleri (Status, Buttons, Command, Ability card, Team)
   prefab'da; ekip kartları (`RaidTeamCardView`) ve yetenek kartı (`UnitCardView`) aynı prefab'ın içinde, ayrı prefab yok.
-  Renkler `RaidHudView.C(key)` ile Baskın → Masa → Sığınak temasından. Telsiz fişi `RaidPanels › EventSlip`.
+  Renkler `RaidHudView.C(key)` ile Baskın → Masa → Sığınak temasından. Telsiz fişi `RaidPanels › EventSlip`; kadro raporu `RaidPanels › SquadReport` (`Baskin.SquadReport` → `RaidViewModel.SquadReport`).
 - **Saha masası** (yalnız sunum): `Build` paftanın kameraya bakan kenarlarına kare adlarını yazar (güneyde A–H, batıda 1–8;
   1 kameraya en yakın); `RaidBoard3D.CellName(x, y)` telsiz satırlarında kullanılır ("TEKNİSYEN · A6"). Niyet okları
   `RaidArrow.Set(..., hand)` ile yağlı kalem çizgisi (dalga uçların konumundan, eşitlemede titremez; uç açık V).

@@ -47,7 +47,13 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(sim.ShelterLevelLock(ShelterLogic.Radio), d.ActionNote, "kilit gerekçesi düğmenin altında");
             Assert.AreEqual(Loc.F("V.{0:000}", sim.S.Day + 1), d.Shift);
             CollectionAssert.AreEqual(new[] { "T", "E", "A", "M", "S" }, d.Squad.Select(m => m.Letter).ToArray(), "beş uzman diskle");
+            Assert.IsTrue(d.Squad.All(m => !m.Missing), "atölye SV3: hepsi kadroda");
             Assert.AreEqual(Loc.F("{0}/{1}", 3, 3), d.Squad[0].Hp);
+            // Yeni harekâtta Madenci ve Sis uzmanı atölyeyi bekler: soluk disk, yanında seviye
+            var fresh = ShelterViewBuilder.Board(NewLiberation(), ShelterLogic.Workshop);
+            CollectionAssert.AreEqual(new[] { false, false, false, true, true }, fresh.Squad.Select(m => m.Missing).ToArray());
+            Assert.AreEqual(Loc.F("sv {0}", 2), fresh.Squad[3].Hp);
+            StringAssert.Contains(Loc.F("Seviye {0}: {1} kadroya katılır.", 2, Baskin.UnitTypes["maden"].Name), fresh.Description);
             StringAssert.Contains("0/3", d.Plates);
             // S3: asıl soru erzak kaç vardiya yeter (22 ÷ 1,4 = 15)
             Assert.AreEqual(Loc.T("ERZAK YETER"), d.SuppliesLabel);

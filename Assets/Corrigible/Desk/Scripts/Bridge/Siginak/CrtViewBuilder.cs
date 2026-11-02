@@ -94,7 +94,7 @@ namespace Corrigible.Desk.Bridge
             var d = new CrtTransitionData
             {
                 Channel = Loc.T("TELSİZ · KANAL 07"), Title = Loc.T("HAT AÇILIYOR"), Sync = Loc.T("SİNYAL"),
-                SkipKey = Loc.T("Boşluk"), SkipWord = Loc.T("atla"), Footer = Loc.T("KYGA-07 · ANALOG HAT"),
+                Footer = Loc.T("KYGA-07 · ANALOG HAT"),
                 CutTitle = Loc.T("HAT KAPANDI"), CutSub = Loc.T("SONUÇ TELEKSTE"),
             };
             if (sim == null) return d;

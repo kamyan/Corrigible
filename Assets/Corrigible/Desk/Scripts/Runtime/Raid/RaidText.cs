@@ -33,7 +33,7 @@ namespace Corrigible.Desk
             ["rules.3"]=Loc.N("Zırh: hedef dolaplara yalnız sabotaj, itilen robot ve patlayan soğutma ünitesi işler."),
             ["rules.4"]=Loc.N("İtme: çarpan da çarpılan da 1 hasar alır; kanala düşen de 1 hasar alır."),
             ["rules.5"]=Loc.N("Sivilleri koru: ekibe ulaşamayan makine sivil sunucuya nişan alır. Kırılan her sunucu GÜVEN'i düşürür; kazanınca ayakta kalan her 2 sunucu +1 GÜVEN."),
-            ["rules.6"]=Loc.N("Kazan: tur bitmeden bütün hedef dolapları kır. Alınan hasar sığınağa yara olarak döner; zırh plakası ilk darbeyi karşılar."),
+            ["rules.6"]=Loc.N("Kazan: bütün hedef dolapları kır, sonra bütün ekip giriş karelerinden çıksın. Süre dolarken tahtada kalan uzman baskında düşmüş sayılır; kaçışta geri çekilme yok. Alınan hasar sığınağa yara olarak döner; zırh plakası ilk darbeyi karşılar."),
         };
         public static string Get(string key)=>key!=null&&Sources.TryGetValue(key,out var value)?Loc.T(value):key;
     }

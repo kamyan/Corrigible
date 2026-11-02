@@ -5,25 +5,50 @@ using System.Linq;
 namespace Corrigible.Core
 {
     /// <summary>
-    /// Saha ekibi: beş uzman (Teknisyen, EMP uzmanı, Analist, Madenci, Sis uzmanı); her baskına Teknisyen ve seçilen iki uzman
-    /// çıkar. Baskında alınan hasar yara olarak kalır; düşen uzman yatar ve yerine sığınaktaki yedek uzman (acemi) çıkar.
-    /// Baskına çıkmayan uzmanlar o vardiya dinlenir.
+    /// Saha ekibi: Teknisyen, EMP uzmanı ve Analist baştan; Madenci ve Sis uzmanı atölye seviyesiyle katılır
+    /// (<see cref="UnlockLevel(string, Balance)"/>). Her baskına Teknisyen ve seçilen iki uzman çıkar. Baskında alınan hasar
+    /// yara olarak kalır; düşen uzman yatar ve yerine sığınaktaki yedek uzman (acemi) çıkar. Baskına çıkmayan uzmanlar o
+    /// vardiya dinlenir.
     /// </summary>
     public sealed partial class Simulation
     {
         /// <summary>Son sığınağın bölgesi: harekât buradan başlar.</summary>
         public const string HQ = "weu";
         public static readonly string[] TeamNames = { Loc.N("Alfa"), Loc.N("Bravo"), Loc.N("Charlie"), Loc.N("Delta") };
-        /// <summary>Uzman rolleri (Baskin birim türleri), kadro ve giriş sırası.</summary>
+        /// <summary>Uzman rolleri (Baskin birim türleri), kadro ve giriş sırası. Ekipte yalnız katılmış olanlar bulunur.</summary>
         public static readonly string[] Roles = { "tek", "emp", "ana", "maden", "duman" };
         /// <summary>Baskına Teknisyen'in yanında çıkan uzman sayısı.</summary>
         public const int PickCount = 2;
 
-        static TeamState NewTeam(int i)
+        /// <summary>Boş ekip; uzmanları <see cref="SyncSpecialists"/> katar.</summary>
+        static TeamState NewTeam(int i) =>
+            new TeamState { Id = TeamNames[i].ToLowerInvariant(), Name = Loc.T(TeamNames[i]), At = HQ };
+
+        /// <summary>Uzmanın kadroya katıldığı atölye seviyesi (0: baştan).</summary>
+        public static int UnlockLevel(string role, Balance b) =>
+            role == "maden" ? b.liberationMinerWorkshopLevel : role == "duman" ? b.liberationSmokeWorkshopLevel : 0;
+
+        /// <summary>Uzman ekipte (atölyenin seviyesiyle katıldı).</summary>
+        public static bool HasRole(TeamState team, string role) => team != null && team.Members.Any(m => m.Role == role);
+
+        /// <summary>
+        /// Atölyenin seviyesi yeten uzmanlar ekiplere katılır, kadro sırasındaki yerine (kadro, yedek ve baskın dönüşü bu sırayı
+        /// izler). Seviye düşmediği için katılan ayrılmaz. Yeni katılan rolleri döndürür; RNG kullanmaz. Komutlar (yeni harekât,
+        /// oda geliştirme) çağırır; oda seviyesini elle kuran fikstürler de.
+        /// </summary>
+        public List<string> SyncSpecialists()
         {
-            var team = new TeamState { Id = TeamNames[i].ToLowerInvariant(), Name = Loc.T(TeamNames[i]), At = HQ };
-            foreach (var role in Roles) team.Members.Add(new SpecialistState { Role = role });
-            return team;
+            var joined = new List<string>();
+            int level = Shelter?.Room(ShelterLogic.Workshop)?.Level ?? 0;
+            foreach (var t in S.Teams)
+                for (int i = 0; i < Roles.Length; i++)
+                {
+                    if (UnlockLevel(Roles[i], B) > level || HasRole(t, Roles[i])) continue;
+                    int at = t.Members.Count(m => Array.IndexOf(Roles, m.Role) < i);
+                    t.Members.Insert(at, new SpecialistState { Role = Roles[i] });
+                    if (!joined.Contains(Roles[i])) joined.Add(Roles[i]);
+                }
+            return joined;
         }
 
         public TeamState Team(string id) => S.Teams.FirstOrDefault(t => t.Id == id);

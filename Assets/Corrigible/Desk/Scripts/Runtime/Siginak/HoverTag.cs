@@ -5,23 +5,21 @@ using UnityEngine.InputSystem;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Üzerine gelme etiketi (K1 notu › ekran katmanı): 9 dilim kâğıt, 1,5 px mürekkep, sert gölge; başlık CP 700 18 (tuş
-    /// fişiyle), satır LF 400 15. 400 ms gecikmeyle imlecin sol üstünde açılır, ekrandan taşarsa yansır.
+    /// Üzerine gelme etiketi (K1 notu › ekran katmanı): 9 dilim kâğıt, 1,5 px mürekkep, sert gölge; başlık CP 700 18, satır
+    /// LF 400 15 (klavye kısayolu yazılmaz). 400 ms gecikmeyle imlecin sol üstünde açılır, ekrandan taşarsa yansır.
     /// </summary>
     public sealed class HoverTag : MonoBehaviour
     {
         [SerializeField] RectTransform paper;
         [SerializeField] TMP_Text title, line;
-        [SerializeField] GameObject keyChip;
-        [SerializeField] TMP_Text keyText;
         [SerializeField] Canvas canvas;
 
         IHoverSource owner;
         float since;
 
-        public void Configure(RectTransform paperRoot, TMP_Text titleText, TMP_Text lineText, GameObject chip, TMP_Text chipText, Canvas rootCanvas)
+        public void Configure(RectTransform paperRoot, TMP_Text titleText, TMP_Text lineText, Canvas rootCanvas)
         {
-            paper = paperRoot; title = titleText; line = lineText; keyChip = chip; keyText = chipText; canvas = rootCanvas;
+            paper = paperRoot; title = titleText; line = lineText; canvas = rootCanvas;
         }
 
         public void Show(IHoverSource target)
@@ -43,9 +41,6 @@ namespace Corrigible.Desk
             if (Time.unscaledTime - since < SiginakTheme.Active.NumberOf("motion.tooltipDelayS", 0.4f)) return;
             if (!paper.gameObject.activeSelf)
             {
-                bool hasKey = !string.IsNullOrEmpty(owner.KeyHint);
-                keyChip.SetActive(hasKey);
-                if (hasKey) keyText.text = owner.KeyHint;
                 title.text = owner.HoverTitle;
                 string text = owner.Line;
                 line.gameObject.SetActive(!string.IsNullOrEmpty(text));

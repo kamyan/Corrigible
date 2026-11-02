@@ -4,13 +4,13 @@ using UnityEngine;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Masanın ön kenarındaki pirinç anahtar rayı (eski alt düğme çubuğunun yeri): 1 KOMUTA · 2 SIĞINAK · 3 GÖREVLER ·
-    /// 4 KAPI (Revizyon 2) · H KILAVUZ · Home MASA. Etkin istasyonu bağlayıcı kamera pozundan yazar; tıklama dizini olay
-    /// olarak çıkar.
+    /// Masanın ön kenarındaki pirinç anahtar rayı (eski alt düğme çubuğunun yeri): SIĞINAK · GÖREVLER · KAPI (Revizyon 2) ·
+    /// MASA; tuşların başlığında tuş adı yerine istasyonun simgesi. Etkin istasyonu bağlayıcı kamera pozundan yazar; tıklama
+    /// dizini olay olarak çıkar. Üst kenar şeridinin çipleri aynı sırada.
     /// </summary>
     public sealed class StationKeyRail : MonoBehaviour
     {
-        public const int Command = 0, Shelter = 1, Missions = 2, Door = 3, Guide = 4, Desk = 5;
+        public const int Shelter = 0, Missions = 1, Door = 2, Desk = 3;
 
         [SerializeField] StationKey[] keys = Array.Empty<StationKey>();
 

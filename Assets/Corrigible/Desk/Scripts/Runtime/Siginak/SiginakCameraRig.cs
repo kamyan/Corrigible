@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -26,8 +27,11 @@ namespace Corrigible.Desk
 
     /// <summary>
     /// Sığınak kamerası: pozlar arasında 0,45 s ease-in-out geçiş (K1 → harita önce 0,15 s yükselir, sonra eğilir),
-    /// sağ tuşla sınırlı bakış, tekerlekle yaklaşma, 1/2/3/F/Home kısayolları. Kamera her pozda fiziksel kalır: dikey FOV
+    /// sağ tuşla sınırlı bakış, tekerlekle yaklaşma, 2/3/F/Home kısayolları. Kamera her pozda fiziksel kalır: dikey FOV
     /// odak uzaklığıyla, K1'in ufuk kaydırması lens kaydırmasıyla verilir; geçişte ikisi birlikte değişir (sıçrama olmaz).
+    /// Baskına geçişte kamerayı üst üste binen üç vuruşla (geri çekil, dön, yaklaş) kesintisiz CRT'ye götürür, dönüşte aynı
+    /// yoldan geri getirir (<see cref="BeginDive"/>, <see cref="BeginReturn"/>); o sırada rig başlatıcıda kapalıdır, yolu
+    /// <see cref="RunDive"/> sürer.
     /// </summary>
     [RequireComponent(typeof(Camera))]
     public sealed class SiginakCameraRig : MonoBehaviour
@@ -56,6 +60,17 @@ namespace Corrigible.Desk
         [Tooltip("Görüş açısı çarpanının sınırları (tekerlek).")]
         [SerializeField] Vector2 zoomLimit = new Vector2(0.6f, 1.1f);
         [SerializeField, Min(0.1f)] float lookSmoothing = 18;
+        [Header("Baskına geçiş (motion.crtDiveS; vuruşlar yolun kesirleri, üst üste biner)")]
+        [Tooltip("Geri çekilme pozu (CrtBack): kamera önce buraya doğru çıkar (oda, masa ve CRT birlikte görünür), sonra CRT'ye döner.")]
+        [SerializeField] Transform diveBack;
+        [Tooltip("Geri çekilme pozunda dikey görüş açısı (derece).")]
+        [SerializeField] float diveBackFieldOfView = 56;
+        [Tooltip("Geri çekilme: konum, bakış, görüş açısı ve lens kaydırması başlangıçtan CrtBack'e (yolun 0–1 kesri).")]
+        [SerializeField] Vector2 diveBackSpan = new Vector2(0, 0.6f);
+        [Tooltip("Dönüş: bakış masadan CRT'ye (yolun kesri; geri çekilme bitmeden başlar).")]
+        [SerializeField] Vector2 diveTurnSpan = new Vector2(0.3f, 0.85f);
+        [Tooltip("Yaklaşma: konum, bakış ve görüş açısı ekrana (yolun kesri; dönüş bitmeden başlar).")]
+        [SerializeField] Vector2 divePushSpan = new Vector2(0.45f, 1);
 
         SiginakPose current = SiginakPose.Desk, previous = SiginakPose.Desk;
         float elapsed = float.MaxValue, duration = 0.45f;
@@ -89,6 +104,12 @@ namespace Corrigible.Desk
         {
             view = camera; desk = commandDesk; poses = slots; sensorSizeMm = sensorMm;
             transitionSeconds = poseSeconds; riseSeconds = poseRiseSeconds;
+        }
+
+        /// <summary>Baskın geçişinin geri çekilme pozu (editör kurucusu ve testler).</summary>
+        public void ConfigureDive(Transform back, float backFieldOfView)
+        {
+            diveBack = back; diveBackFieldOfView = backFieldOfView;
         }
 
         public bool TryGetPose(SiginakPose pose, out PoseSlot slot)
@@ -165,8 +186,7 @@ namespace Corrigible.Desk
             var keyboard = Keyboard.current;
             if (keyboard != null && !TextFieldSelected())
             {
-                if (keyboard.digit1Key.wasPressedThisFrame || keyboard.numpad1Key.wasPressedThisFrame) FocusMap();
-                else if (keyboard.digit2Key.wasPressedThisFrame || keyboard.numpad2Key.wasPressedThisFrame) FocusShelter();
+                if (keyboard.digit2Key.wasPressedThisFrame || keyboard.numpad2Key.wasPressedThisFrame) FocusShelter();
                 else if (keyboard.digit3Key.wasPressedThisFrame || keyboard.numpad3Key.wasPressedThisFrame) FocusMap();
                 else if (keyboard.homeKey.wasPressedThisFrame) ResetView();
                 else if (keyboard.fKey.wasPressedThisFrame) { if (current == SiginakPose.Map) ResetView(); else FocusMap(); }
@@ -201,6 +221,133 @@ namespace Corrigible.Desk
         }
 
         static float Ease(float t) => t < 0.5f ? 4 * t * t * t : 1 - Mathf.Pow(-2 * t + 2, 3) / 2;
+
+        // ---------- Baskına geçiş (CRT'ye dalış ve dönüş) ----------
+
+        // Yolun dört durağı (başlangıç → geri çekilme → CRT'ye dönük → hedef); dönüşte aynı yol tersinden okunur
+        State diveFrom, diveBackState, diveTurned, diveTo;
+        bool diveReverse;
+        float diveElapsed, diveSeconds, diveDelay;
+
+        static float DivePathSeconds => SiginakTheme.Active != null ? SiginakTheme.Active.NumberOf("motion.crtDiveS", 2.4f) : 2.4f;
+
+        /// <summary>CRT'ye dalışın süresi (dönüşte de aynı; bekleme hariç).</summary>
+        public float DiveSeconds => DivePathSeconds;
+        /// <summary>Dalış ya da dönüş sürüyor (kamera denetimi başlatıcıda kilitli; <see cref="StepDive"/> ilerletir).</summary>
+        public bool Diving => diveElapsed < diveSeconds;
+
+        /// <summary>
+        /// Baskına dalış, tek ve kesintisiz hareket: kamera bulunduğu yerden geri çekilme pozuna doğru çıkar (görüş açısı genişler,
+        /// lens kaydırması sıfırlanır), daha varmadan CRT'ye dönmeye, dönüş bitmeden ekrana yaklaşmaya başlar ve
+        /// <paramref name="target"/> (CrtDive) pozunda <paramref name="fieldOfView"/> açısıyla durur. Vuruşlar yolun kesirleri
+        /// olarak üst üste biner (<c>diveBackSpan</c>, <c>diveTurnSpan</c>, <c>divePushSpan</c>), her biri yumuşak başlar ve
+        /// biter: yol ortasında durma ya da ani dönüş yok.
+        /// </summary>
+        public void BeginDive(Transform target, float fieldOfView)
+        {
+            var end = new State { position = target.position, rotation = target.rotation, fieldOfView = fieldOfView, shift = 0 };
+            Plan(Capture(), target, end, false, 0);
+        }
+
+        /// <summary>
+        /// Baskından dönüş, dalışın aynası: kamera <paramref name="delay"/> boyunca monitörde (<paramref name="from"/>) bekler,
+        /// sonra aynı yolu tersinden yürüyüp kameranın geçerli pozuna (genelde harita) oturur.
+        /// </summary>
+        public void BeginReturn(Transform from, float fieldOfView, float delay)
+        {
+            var monitor = new State { position = from.position, rotation = from.rotation, fieldOfView = fieldOfView, shift = 0 };
+            var pose = TryGetPose(current, out var slot)
+                ? new State { position = slot.anchor.position, rotation = slot.anchor.rotation, fieldOfView = slot.fieldOfView, shift = slot.lensShiftY }
+                : Capture();
+            Plan(pose, from, monitor, true, delay);
+        }
+
+        /// <summary>Dalışı ya da dönüşü <paramref name="dt"/> kadar ilerletip kameraya uygular.</summary>
+        public void StepDive(float dt)
+        {
+            if (!Diving) return;
+            diveElapsed += dt;
+            Apply(EvaluateDive(), 0, 0, 1);
+        }
+
+        /// <summary>Atlandı: kamera hemen yolun sonuna oturur.</summary>
+        public void FinishDive()
+        {
+            diveElapsed = diveSeconds;
+            Apply(SampleDive(diveReverse ? 0 : 1), 0, 0, 1);
+        }
+
+        /// <summary>Coroutine sarmalayıcısı: her kare ilerler, <paramref name="skip"/> doğru dönerse sona atlar.</summary>
+        public IEnumerator RunDive(Func<bool> skip)
+        {
+            while (Diving)
+            {
+                if (skip != null && skip()) { FinishDive(); yield break; }
+                StepDive(Time.unscaledDeltaTime);
+                yield return null;
+            }
+        }
+
+        /// <param name="from">Yolun başı (dalışta kameranın o anki hâli, dönüşte varılacak poz).</param>
+        /// <param name="target">CRT hedefi (CrtDive); geri çekilme yerinden ona bakılır.</param>
+        void Plan(State from, Transform target, State to, bool reverse, float delay)
+        {
+            diveFrom = from;
+            diveTo = to;
+            diveBackState = diveBack != null
+                ? new State { position = diveBack.position, rotation = diveBack.rotation, fieldOfView = diveBackFieldOfView, shift = 0 }
+                : from;
+            // Geri çekilme yerinden CRT'ye bakış: yaklaşma bu bakış doğrusuna yakın gider
+            diveTurned = diveBackState;
+            var look = target.position - diveBackState.position;
+            if (look.sqrMagnitude > 1e-6f) diveTurned.rotation = Quaternion.LookRotation(look, Vector3.up);
+            diveReverse = reverse;
+            diveDelay = Mathf.Max(0, delay);
+            diveSeconds = diveDelay + Mathf.Max(0.01f, DivePathSeconds);
+            diveElapsed = 0;
+            Apply(EvaluateDive(), 0, 0, 1);
+        }
+
+        State EvaluateDive()
+        {
+            float u = Mathf.Clamp01((diveElapsed - diveDelay) / Mathf.Max(0.01f, diveSeconds - diveDelay));
+            return SampleDive(diveReverse ? 1 - u : u);
+        }
+
+        /// <summary>
+        /// Yolun <paramref name="u"/> (0–1) noktası. Konum, bakış (eğim ve sapma), görüş açısı ve lens kaydırması üç ağırlığın
+        /// toplamıdır; ağırlıklar kendi kesirlerinde 0'dan 1'e smootherstep ile çıkar (hız ve ivme sürekli). u = 0 başlangıç,
+        /// u = 1 hedef, ikisi de birebir.
+        /// </summary>
+        State SampleDive(float u)
+        {
+            float back = Smoother(diveBackSpan, u), turn = Smoother(diveTurnSpan, u), push = Smoother(divePushSpan, u);
+            Vector2 a = Angles(diveFrom.rotation), b = Angles(diveBackState.rotation), t = Angles(diveTurned.rotation), e = Angles(diveTo.rotation);
+            float pitch = a.x + back * Mathf.DeltaAngle(a.x, b.x) + turn * Mathf.DeltaAngle(b.x, t.x) + push * Mathf.DeltaAngle(t.x, e.x);
+            float yaw = a.y + back * Mathf.DeltaAngle(a.y, b.y) + turn * Mathf.DeltaAngle(b.y, t.y) + push * Mathf.DeltaAngle(t.y, e.y);
+            return new State
+            {
+                position = diveFrom.position + back * (diveBackState.position - diveFrom.position) + push * (diveTo.position - diveBackState.position),
+                rotation = Quaternion.Euler(pitch, yaw, 0),
+                fieldOfView = diveFrom.fieldOfView + back * (diveBackState.fieldOfView - diveFrom.fieldOfView) + push * (diveTo.fieldOfView - diveBackState.fieldOfView),
+                shift = diveFrom.shift + back * (diveBackState.shift - diveFrom.shift) + push * (diveTo.shift - diveBackState.shift),
+            };
+        }
+
+        /// <summary>Eğim (−180…180) ve sapma; kamera pozlarında yuvarlanma yok.</summary>
+        static Vector2 Angles(Quaternion q)
+        {
+            var e = q.eulerAngles;
+            return new Vector2(Mathf.DeltaAngle(0, e.x), e.y);
+        }
+
+        /// <summary>Kesir içinde 0 → 1 smootherstep (6t⁵ − 15t⁴ + 10t³): uçlarda hız ve ivme sıfır.</summary>
+        static float Smoother(Vector2 span, float u)
+        {
+            if (span.y <= span.x) return u >= span.x ? 1 : 0;
+            float t = Mathf.Clamp01((u - span.x) / (span.y - span.x));
+            return t * t * t * (t * (6 * t - 15) + 10);
+        }
 
         static State Lerp(State a, State b, float t) => new State
         {

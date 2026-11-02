@@ -49,9 +49,13 @@ namespace Corrigible.Core
             Shelter.Materials -= cost.Materials;
             var room = Shelter.Room(roomId);
             room.Level++;
-            // Yaşam alanının yeni seviyesi bir yedek uzman getirir
+            // Yaşam alanının yeni seviyesi bir yedek uzman getirir; atölyenin seviyesi uzman katar
             ShelterLogic.SyncReserves(Shelter, B);
-            return ActResult.Success(Loc.F("{0} hazır: seviye {1}.", ShelterLogic.RoomName(roomId), room.Level));
+            var joined = SyncSpecialists();
+            return joined.Count == 0
+                ? ActResult.Success(Loc.F("{0} hazır: seviye {1}.", ShelterLogic.RoomName(roomId), room.Level))
+                : ActResult.Success(Loc.F("{0} hazır: seviye {1}. {2} kadroya katıldı.", ShelterLogic.RoomName(roomId), room.Level,
+                    string.Join(", ", joined.Select(r => Baskin.UnitTypes[r].Name))));
         }, "shelter_upgrade", roomId);
 
         public string ShelterAssignCheck(string roomId, int workers)

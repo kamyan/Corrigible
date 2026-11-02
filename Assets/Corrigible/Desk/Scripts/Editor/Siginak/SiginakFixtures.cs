@@ -64,6 +64,8 @@ namespace Corrigible.Desk.EditorTools
             s.Room(ShelterLogic.Radio).Level = 1; s.Room(ShelterLogic.Radio).Workers = 0;
             s.Room(ShelterLogic.Workshop).Level = 3; s.Room(ShelterLogic.Workshop).Workers = 2;
             s.Room(ShelterLogic.Infirmary).Level = 0; s.Room(ShelterLogic.Infirmary).Workers = 0;
+            // Atölye SV3: Madenci ve Sis uzmanı kadroda
+            sim.SyncSpecialists();
             s.Supplies = 22; s.Materials = 19; s.Starving = false;
             s.LastSuppliesChange = -1.4; s.LastMaterialsChange = 0;
             sim.S.Fon = 62;

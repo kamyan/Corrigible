@@ -15,7 +15,8 @@ namespace Corrigible.Desk
     [Serializable] public sealed class RaidTeamModel
     {
         public char Letter; public string Name, Thumb; public int Hp, Max, MoveRange;
-        public bool Selected, Move, Ability, Armed, Down, Warn;
+        /// <summary>Out: kaçışta çıkıştan tahliye edildi; Left: süre dolarken tahtada kaldı (Down da işaretli).</summary>
+        public bool Selected, Move, Ability, Armed, Down, Warn, Out, Left;
         /// <summary>Zırh plakası (ilk hasarı karşılar); yedek uzman (acemi); baskına çıkmadı (sığınakta yaralı).</summary>
         public int Armor; public bool Rookie, Absent;
         /// <summary>Kilit niyetinin hedefindeyse “KİLİT TEHDİDİ · #n”; kartın hak satırı yerine kırmızı (Revizyon 2 · S6c).</summary>
@@ -30,17 +31,24 @@ namespace Corrigible.Desk
     [Serializable] public sealed class RaidCardRow
     { public string Icon, Text, Detail; public bool Good, Used, Armed; }
     [Serializable] public sealed class RaidInspectorModel
-    { public string Thumb, Title; public int Hp, Max; public bool Win, IsLootMission; public RaidCardRow[] Rows = Array.Empty<RaidCardRow>(); }
+    {
+        public string Thumb, Title; public int Hp, Max;
+        /// <summary>Win: hamle baskını kazandırır (son uzman çıkar); Escape: hamle kaçışı başlatır (kasa açılır, son hedef kırılır).</summary>
+        public bool Win, Escape, IsLootMission; public RaidCardRow[] Rows = Array.Empty<RaidCardRow>();
+    }
     [Serializable] public sealed class RaidQueueItem { public int Order; public string State; }
     [Serializable] public sealed class RaidLogModel { public string Text,Kind; }
     /// <summary>Sonuç kartının satırı (Revizyon 2 · S7): ad solda, değer sağda; iyi sonuç yeşil.</summary>
     [Serializable] public sealed class RaidResultRow { public string Label,Value; public bool Good; }
     [Serializable] public sealed class RaidUnusedModel { public char Letter; public string Name; public bool Move,Ability; public int ThreatOrder; }
+    /// <summary>Kadro raporunun satırı (baskına girerken): uzmanın adı ve durumu; sağlamsa yeşil, değilse kırmızı.</summary>
+    [Serializable] public sealed class RaidSquadRow { public char Letter; public string Name,Status; public bool Good; }
     [Serializable] public sealed class RaidViewModel
     {
         public bool LastTurn,Finished,Success,EventVisible,IsLootMission;
-        /// <summary>İkmal görevinde kasa alındı: Teknisyen malzemeyi girişe geri taşıyor.</summary>
-        public bool Escaping;
+        /// <summary>Kaçış sürüyor (kasa alındı ya da hedef kırıldı): bütün ekip girişten çıkmalı, geri çekilme yok. CargoLost:
+        /// malzemeyi taşıyan Teknisyen düştü.</summary>
+        public bool Escaping, CargoLost, CanRetreat;
         /// <summary>Sonuç kartı (S7): başlık yerindeki tek damga, “TUR 6/8”, yer satırı (“Doğu Avrupa · 02 Tahliye geçidi”), üç satır.</summary>
         public string EventLine,ResultTitle,ResultTurn,ResultPlace;
         public RaidResultRow[] ResultRows=Array.Empty<RaidResultRow>();
@@ -48,6 +56,9 @@ namespace Corrigible.Desk
         public RaidQueueItem[] Queue=Array.Empty<RaidQueueItem>();
         public RaidLogModel[] Log=Array.Empty<RaidLogModel>();
         public RaidUnusedModel[] Unused=Array.Empty<RaidUnusedModel>();
+        /// <summary>Kadro raporu: ilk oyuncu turunda, birim seçili değilken sol altta (birim kartının yeri); rehberli baskında yok.</summary>
+        public RaidSquadRow[] SquadReport=Array.Empty<RaidSquadRow>();
+        public bool SquadReportVisible;
         public int Turn, Turns, Civilians, CivilianBroken;
         /// <summary>Sivil güven: bu baskında kırılanlar düşülmüş hâli ve tavanı (tavan 0: harekâtsız önizleme, etiket SİVİL kalır).</summary>
         public int Trust, TrustMax;

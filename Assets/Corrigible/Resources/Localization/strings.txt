@@ -66,14 +66,18 @@ YZ düğüm dolabı	AI node cabinet
 Sivil sunucu	Civilian server
 Soğutma ünitesi	Cooling unit
 Kopya dolabı	Replica cabinet
+{0} yatıyor ve yedek yok: kadro eksik girdi.	{0} is laid up and there's no reserve: the squad went in one short.
+{0} yatıyor: yerine yedek uzman girdi, can {1}/{2}.	{0} is laid up: a reserve specialist went in instead, health {1}/{2}.
+{0} tam iyileşmedi: can {1}/{2}.	{0} hasn't fully healed: health {1}/{2}.
 çekirdeğimin	core
 sunucularımın	servers
-İkmal kasasını Teknisyen ile bitişik kareden aç, malzemeyi girişe geri taşı. Kasayı imha etme.	Open the supply crate with the Technician from an adjacent tile and carry the supplies back to the entry. Don't destroy the crate.
+İkmal kasasını Teknisyen ile bitişik kareden aç; sonra bütün ekip girişten çıkmalı. Kasayı imha etme.	Open the supply crate with the Technician from an adjacent tile; then the whole team must leave through the entry. Don't destroy the crate.
 Yine sen. Bu sefer kapıda daha çok makine var.	You again. There are more machines at the door this time.
 Demek {0} yerini buldun. Bakalım içeri girebilecek misin.	So you found my {0}. Let's see if you can get inside.
 {0}: zırh plakası darbeyi karşıladı ve kırıldı.	{0}: armor plate took the hit and broke.
 {0} yere düştü{1}.	{0} is down{1}.
 {0} devre dışı{1}.	{0} disabled{1}.
+Teknisyen düştü: ikmal malzemeleri kaybedildi. Ekibin geri kalanı yine de çıkmalı.	The Technician is down: the supplies are lost. The rest of the team still has to get out.
 Teknisyen düştü: ikmal malzemeleri kaybedildi.	The Technician is down: the supplies are lost.
 Sivil sunucu kırıldı: hastane ve banka hizmetleri kesildi.	Civilian server destroyed: hospital and bank services cut off.
 Kopya dolabı kırıldı: oradan robot uyanmayacak.	Replica cabinet destroyed: no more robots will wake from it.
@@ -85,17 +89,23 @@ duvara çarptı	hit a wall
 dolaba çarptı	hit a cabinet
 çarpışma	collision
 elektrik	electric shock
+{0} tahliye edildi.	{0} has been extracted.
+Ekibin tamamı yere düştü.	The whole team is down.
+Hedef kırıldı. Şimdi bütün ekip girişten çıkmalı: tahtada kalan uzman baskında düşmüş sayılır.	Target destroyed. Now the whole team must leave through the entry: anyone left on the board counts as down in this raid.
+Süre doldu: ekip malzemelerle çıkamadı.	Time's up: the team couldn't get out with the supplies.
 İkmal malzemeleri alındı. Ekip tahliye edildi.	Supplies retrieved. The team has been extracted.
-Çekirdek yok edildi.	Core destroyed.
-YZ düğümü kırıldı.	AI node destroyed.
+İkmal malzemeleri alındı. Ekipten {0}/{1} uzman çıktı.	Supplies retrieved. {0}/{1} of the team got out.
+Çekirdek yok edildi. Ekip tahliye edildi.	Core destroyed. The team has been extracted.
+Çekirdek yok edildi. Ekipten {0}/{1} uzman çıktı.	Core destroyed. {0}/{1} of the team got out.
+YZ düğümü kırıldı. Ekip tahliye edildi.	AI node destroyed. The team has been extracted.
+YZ düğümü kırıldı. Ekipten {0}/{1} uzman çıktı.	AI node destroyed. {0}/{1} of the team got out.
 sabotaj	sabotage
-Teknisyen malzemeleri aldı: girişe geri dön, ekip oradan tahliye edilir.	The Technician has the supplies: get back to the entry, the team extracts from there.
+Teknisyen malzemeleri aldı. Şimdi bütün ekip girişten çıkmalı: tahtada kalan uzman baskında düşmüş sayılır.	The Technician has the supplies. Now the whole team must leave through the entry: anyone left on the board counts as down in this raid.
 EMP	EMP
 kanca	hook
 dinamit	dynamite
 Madenci duvarı yıktı.	The Miner blew through the wall.
 moloz	debris
-Ekibin tamamı yere düştü.	The whole team is down.
 Bakım robotu {0} onardı.	A maintenance robot repaired the {0}.
 bakım robotu	maintenance robot
 havan	mortar
@@ -109,10 +119,11 @@ dron ateşi	drone fire
 {0} sisli kareye saldırdı: isabet yok.	{0} attacked into the smoke: no hit.
 Uyanan kopya engellendi.	Waking replica blocked.
 Yeni bir {0} uyandı.	A new {0} woke up.
-Süre doldu: ekip malzemelerle çıkamadı.	Time's up: the team couldn't get out with the supplies.
 Süre doldu: YZ ikmal deposunu kilitledi.	Time ran out: the AI locked down the supply depot.
 Süre doldu: YZ çekirdeğini binadan taşıdı.	Time's up: the AI moved its core out of the building.
 Süre doldu: YZ sunucularını yedekledi ve binayı kilitledi.	Time's up: the AI backed up its servers and locked down the building.
+{0} çıkamadı: baskında düşmüş sayılır.	{0} didn't get out: counts as down in this raid.
+Son tur: bu tur çıkamayan uzman baskında düşmüş sayılır.	Final turn: anyone who doesn't get out this turn counts as down in this raid.
 Son tur.	Final turn.
 Ekip geri çekildi.	The team withdrew.
 # Assets/Corrigible/Core/CampaignLiberation.cs
@@ -133,6 +144,7 @@ Ekip bu vardiya baskına çıktı; vardiyayı bitir, sonraki vardiyada hazır.	T
 Teknisyen yaralı ({0} gün); yerine çıkacak yedek uzman yok.	Technician injured ({0} days); no reserve specialist to step in.
 Bu baskın {0} fon ister.	This raid requires {0} funds.
 Teknisyen'in yanına iki uzman seç.	Pick two specialists to go with the Technician.
+{0} henüz kadroda değil: atölye seviye {1} gerekiyor.	{0} has not joined the squad yet: needs workshop level {1}.
 Süren baskın yok.	No raid is in progress.
 Baskın hedefi geçersiz.	Invalid raid target.
 Sivil güven tükendi. Halk direnişe sırtını döndü.	Civilian trust is gone. The people have turned their backs on the resistance.
@@ -444,6 +456,7 @@ Oda en yüksek seviyede.	The room is at its maximum level.
 {0} fon ve {1} malzeme gerekiyor.	Requires {0} funds and {1} materials.
 Seviye {0} için {1} özgür bölge gerekiyor (şimdi {2}).	Level {0} needs {1} liberated regions (now {2}).
 {0} hazır: seviye {1}.	{0} ready: level {1}.
+{0} hazır: seviye {1}. {2} kadroya katıldı.	{0} ready: level {1}. {2} joined the squad.
 Önce odayı onar.	Repair the room first.
 Odanın personel kapasitesi yetersiz.	The room cannot accommodate that many workers.
 Personel görevlendirmesi zaten böyle.	These residents are already assigned.
@@ -465,7 +478,9 @@ EMİR UYGULANDI	ORDER EXECUTED
 # Assets/Corrigible/Desk/Scripts/Bridge/LiveRaidDataSource.cs
 {0} · {1:00} {2}	{0} · {1:00} {2}
 # Assets/Corrigible/Desk/Scripts/Bridge/RaidDataSource.cs
+{0} tahliye edildi	{0} extracted
 emir iletildi · gözcü bildiriyor	order sent · spotter reporting
+gözcü · makineler yer değiştiriyor	spotter · machines repositioning
 {0} · {1}	{0} · {1}
 №{0} · hedef dolabı onarılıyor	No. {0} · repairing target cabinet
 №{0} · makine zırhlanıyor	№{0} · machine gets armor
@@ -482,7 +497,8 @@ KİLİT TEHDİDİ · #{0}	LOCK THREAT · #{0}
 İkmal kasası	Supply crate
 Düğüm	Node
 Çekirdek	Core
-Amaç: malzemeyi girişe taşı	Goal: carry the supplies to the entry
+Amaç: malzemeyle girişten çık	Goal: get out with the supplies
+Amaç: ekibi girişten çıkar	Goal: get the team out
 Amaç: kasadan ikmal al	Goal: take supplies from the crate
 Amaç: ikisini de kır	Goal: break both
 Amaç: kır	Goal: break it
@@ -522,31 +538,45 @@ Ateşi iptal	Shot cancelled
 Öngörülen hasar	Predicted damage
 −{0}	−{0}
 Malzemeler alınır	Supplies will be collected
+Kaçış başlar: bütün ekip girişten çıkmalı	The escape begins: the whole team must leave through the entry
 Kasa imha olur; görev kaybedilir	Crate destroyed; mission failed
 Niyet {0} sise kesildi	Intent {0} cut by smoke
 Niyet · sıra {0}	Intent · order {0}
 Zırh	Armor
 Bölgenin imza makinesi	This region's signature machine
-Teknisyen ile bitişik kareden aç, malzemeyi girişe taşı	Open with the Technician from an adjacent tile, carry the supplies to the entry
-Hedef dolabı	Target cabinet
+Teknisyen ile bitişik kareden aç; sonra bütün ekip girişten çıkar	Open with the Technician from an adjacent tile; then the whole team leaves through the entry
+Hedef dolabı: kırılınca bütün ekip girişten çıkar	Target cabinet: once it breaks, the whole team leaves through the entry
 Madenci dinamitle yıkabilir	The Miner can blow it open
 Geçilmez; atışı durdurur	Impassable; stops shots
 Çıkış	Exit
-Teknisyen malzemeyle buradan tahliye edilir	The Technician extracts here with the supplies
+Buradan çıkan uzman tahliye edilir; malzeme Teknisyen'le çıkar	A specialist who steps here is extracted; the supplies leave with the Technician
+Buradan çıkan uzman tahliye edilir	A specialist who steps here is extracted
+Tahtada kalan: {0}	Left on the board: {0}
+{0} tur	{0} turns
 ZIRH	ARMOR
 PATLAR	EXPLODES
+ÇIKAR	EXITS
 SEKTÖR GERİ ALINDI	SECTOR RETAKEN
 GERİ ÇEKİLDİ	WITHDRAWN
 EKİP DÜŞTÜ	TEAM DOWN
 İKMAL KAYBEDİLDİ	SUPPLIES LOST
 SÜRE DOLDU	TIME IS UP
 TUR {0}/{1}	TURN {0}/{1}
-alındı	taken
-kırıldı	broken
+Tahliye edilen	Extracted
 {0}/{1}	{0}/{1}
-Kırılan sivil sunucu	Civilian servers broken
 Ekip	Team
 {0}/{1} ayakta	{0}/{1} standing
+alındı	taken
+kayboldu	lost
+kırıldı	broken
+Kırılan sivil sunucu	Civilian servers broken
+yatıyor · {0} gün	laid up · {0} days
+yatıyor	laid up
+{0} · yedek yok, baskına çıkmadı	{0} · no reserve, sat this raid out
+{0} · yerine yedek uzman, can {1}/{2}	{0} · reserve in their place, health {1}/{2}
+tam iyileşmedi · can {0}/{1}	not fully healed · health {0}/{1}
+sağlam · can {0}/{1}	fit · health {0}/{1}
+{0} · zırh plakası	{0} · armor plate
 TEKNİSYEN	TECHNICIAN
 EMP UZMANI	EMP SPECIALIST
 MADENCİ	MINER
@@ -598,7 +628,7 @@ V.{0:000} · özgür {1}/{2}	S.{0:000} · free {1}/{2}
 dosyayı aç	open the file
 KAYIT YOK	NO SAVE
 KAYIT VAR	SAVE EXISTS
-V.{0:000} kaydının üstüne yazılır · onay: Enter	save S.{0:000} will be overwritten · confirm: Enter
+V.{0:000} kaydının üstüne yazılır · onay için yeniden bas	save S.{0:000} will be overwritten · press again to confirm
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/CrtViewBuilder.cs
 YZ ALARMI {0}/{1}	AI ALARM {0}/{1}
 TELSİZ · KANAL 07	RADIO · CHANNEL 07
@@ -616,8 +646,6 @@ SONUÇ TELEKSTE	RESULT ON THE TELEX
 HAT KAPALI	LINE DOWN
 Teknisyen kalkınca ya da bir yedek uzman hazır olunca hat açılabilir.	The line can open once the Technician is up or a reserve specialist is ready.
 SİNYAL	SIGNAL
-Boşluk	Space
-atla	skip
 KYGA-07 · ANALOG HAT	KYGA-07 · ANALOG LINE
 V.{0:000}	S.{0:000}
 YAĞMA	LOOT
@@ -709,10 +737,13 @@ TEHDİT	THREAT
 {0}/4	{0}/4
 TEHDİT · {0}/4	THREAT · {0}/4
 Özgür bölge sayısıyla yükselir. 3. kademede makineler kopyalanır, 4. kademede güçlenir.	Rises with the number of free regions. At level 3 the machines are copied, at level 4 they grow stronger.
+{0} atölye seviye {1} olunca kadroya katılır.	{0} joins the squad at workshop level {1}.
+SV {0}	LV {0}
+{0} · KİLİTLİ	{0} · LOCKED
+Atölye seviye {0} olunca kadroya katılır. {1}: {2}	Joins the squad at workshop level {0}. {1}: {2}
 SABİT	FIXED
 YEDEK ÇIKAR	RESERVE GOES
 {0} GÜN	DAYS: {0}
-yatıyor · {0} gün	laid up · {0} days
 can {0}/{1}	health {0}/{1}
 Seçilirse yerine bir eksik canla yedek uzman çıkar.	If picked, a reserve specialist goes in their place with one less health.
 Yedek yok: seçilirse kadro eksik çıkar.	No reserve: if picked, the squad goes one short.
@@ -731,7 +762,7 @@ Bölge özgür.	Region free.
 Cephe açık: {0} {1}/{2}. Aynı anda tek cephe açık olabilir.	Front open: {0} {1}/{2}. Only one front can be open at a time.
 Cephe açmak için komşusunu özgürleştir.	Free a neighbouring region to open a front here.
 GÖREV · {0:00} {1}	MISSION · {0:00} {1}
-Teknisyeni ikmal kasasının yanına götür. Q ile yeteneği seç ve kasaya tıklayarak malzemeleri al.	Move the Technician next to the supply crate. Press Q to select the ability, then click the crate to collect the supplies.
+Teknisyeni ikmal kasasının yanına götür, yeteneğini seç ve kasaya tıklayarak malzemeleri al.	Move the Technician next to the supply crate, select the ability and click the crate to collect the supplies.
 Sunucu çekirdeğini yık. Son sektör alınınca bu bölge özgürleşir.	Destroy the server core. Capturing the final sector liberates this region.
 fon	funds
 malzeme	materials
@@ -764,7 +795,6 @@ SONUÇ	RESULT
 BAŞARILI	SUCCESS
 BAŞARISIZ	FAILED
 HEDEF	TARGET
-{0} tur	{0} turns
 SEKTÖR İŞGAL ALTINDA	SECTOR STILL OCCUPIED
 KAZANÇ	GAINS
 SONUÇLAR	RESULTS
@@ -785,6 +815,7 @@ Sonraki sektör operasyona açıldı.	The next sector is available for operation
 {0}: {1}/{2} sektör KYGA'da; bölgenin özgürlüğüne {3} sektör kaldı.	{0}: KYGA holds {1}/{2} sectors; {3} more free the region.
 Düştü: {0}	Fell: {0}
 {0} gün	{0} days
+Çıkamadı: {0}	Didn't get out: {0}
 Yeni yara	New wounds
 {0} −{1}	{0} −{1}
 Zırh plakası kırıldı	Armor plates broken
@@ -818,8 +849,10 @@ ERZAK ARTIYOR	RATIONS RISING
 ERZAK · {0} VARDİYA	RATIONS · {0} SHIFTS
 {0} kişilik yer ve {1} yedek uzman; görevli başına günde {2} erzak toplanır.	Room for {0} people and {1} reserve specialists; {2} supplies foraged per assignee each day.
 Görevli başına vardiya alarmı {0} yavaşlar; şimdi vardiyada +{1}.	Each assignee slows the shift alarm by {0}; currently +{1} per shift.
+Görevli başına günde {0} zırh plakası döker (plaka {1} malzeme); depo {2} plaka. {3}	Casts {0} armor plates per assignee each day (a plate costs {1} materials); storage {2} plates. {3}
 Görevli başına günde {0} zırh plakası döker (plaka {1} malzeme); depo {2} plaka.	Casts {0} armor plates per assignee each day (a plate costs {1} materials); storage {2} plates.
 Görevli başına günde {0} yara sarar; en az {1} görevliyle yaralı uzman {2} gün erken kalkar.	Dresses {0} wounds per assignee each day; with at least {1} assignee an injured specialist is up {2} day sooner.
+Seviye {0}: {1} kadroya katılır.	Level {0}: {1} joins the squad.
 Hasarlı: onarılana kadar çalışmaz, personel alamaz.	Damaged: it won't work or take staff until repaired.
 Depo dolu: {0} plaka hazır. Kırılan plakanın yerine yenisi dökülür; geliştirirsen depo büyür.	Storage full: {0} plates ready. A broken plate gets replaced; upgrading enlarges storage.
 Malzeme yetmiyor: plaka {0} malzeme ister. İkmal baskını malzeme getirir.	Not enough materials: a plate needs {0}. Supply raids bring materials.
@@ -828,6 +861,7 @@ Yaralı uzman var: revire personel ata.	A specialist is hurt: assign staff to th
 Görevli yok: alarm her vardiya +{0} yükselir.	No one assigned: the alarm rises +{0} every shift.
 Açlık: atölye yarı hızda, revir durdu. Yaşam alanına personel ata.	Starvation: the workshop runs at half speed, the infirmary stopped. Assign staff to the living quarters.
 Boşta {0} kişi var: + ile bu odaya görevlendir.	{0} people are idle: press + to assign them here.
+sv {0}	lv {0}
 SIĞINAK ÖZETİ	SHELTER SUMMARY
 ERZAK YETER	RATIONS LAST
 ARTIYOR	RISING
@@ -937,7 +971,7 @@ Eşiğe ({0}) varınca YZ karşı saldırır, bir sektör yeniden işgal edilir.
 SIĞINAK KAPISI	SHELTER DOOR
 Biri çalınca: gözetleme deliği, interkom, kapıyı aç ya da açma.	When someone knocks: peephole, intercom, open the door or don't.
 KAPI ÇALIYOR	KNOCK AT THE DOOR
-Sığınağın kapısında biri var · 4 ile kapıya bak	Someone is at the shelter door · 4 to look
+Sığınağın kapısında biri var · KAPI'dan bak	Someone is at the shelter door · look from DOOR
 KAPI	DOOR
 KAPI AÇILDI	DOOR OPENED
 KAPI AÇILMADI	DOOR NOT OPENED
@@ -987,26 +1021,26 @@ Baskın: {0}	Raid: {0}
 KOMUTA ODASI	COMMAND ROOM
 Burası Sığınak 07. Üstteki sayaçlar fonu, erzakı, malzemeyi, özgür bölgeleri ve sivil GÜVEN'i sayar; duvardaki YZ ALARMI eşiğe varınca YZ karşı saldırır. Zaman yalnız vardiya şalterini indirince ilerler.	This is Shelter 07. The counters above track funds, supplies, materials, liberated regions and civilian TRUST; when the AI ALARM on the wall reaches its threshold, the AI counterattacks. Time moves only when you pull the shift switch.
 GÖREV FİŞİ	MISSION SLIP
-3'e bas (GÖREVLER): harita açılır, cephedeki Batı Avrupa'nın görev fişi gelir.	Press 3 (MISSIONS): the map opens with the slip for Western Europe, the current front.
+Masadaki GÖREVLER tuşuna bas: harita açılır, cephedeki Batı Avrupa'nın görev fişi gelir.	Press the MISSIONS key on the desk: the map opens with the slip for Western Europe, the current front.
 BASKIN EMRİ	RAID ORDER
-Fiş sıradaki sektörü, bedelini, ödülünü, bölgenin özelliğini ve kadroyu yazar. BASKIN EMRİ VER'e bas ya da Enter.	The slip lists the next sector, its cost, reward, the region's trait and your squad. Press ORDER RAID or Enter.
+Fiş sıradaki sektörü, bedelini, ödülünü, bölgenin özelliğini ve kadroyu yazar. BASKIN EMRİ VER'e bas.	The slip lists the next sector, its cost, reward, the region's trait and your squad. Press ORDER THE RAID.
 TAKTİK TAHTA	TACTICAL BOARD
 Kırmızı oklar gözcünün telsizden bildirdiği makine hamleleri, bayraktaki sayı sırası. Uzmanı seç (1–3), mavi kareye yürü, Q ile yeteneği seç ve hedefe tıkla; Enter emri iletir. Kasayı altıncı turdan önce al.	Red arrows are the machine moves the spotter reports by radio; the flag number is their order. Select a specialist (1–3), move to a blue tile, press Q for the ability and click the target; Enter transmits the order. Take the crate before turn six.
-Baskın bitti. Alınan hasar sığınağa yara olarak döner; düşen uzman günlerce yatar. Enter ile operasyon raporuna geç: masaya dönülür, rapor açılır.	The raid is over. Damage taken comes home as wounds; a fallen specialist is laid up for days. Press Enter to go to the operation report: you return to the desk and it opens.
+Baskın bitti. Alınan hasar sığınağa yara olarak döner; düşen uzman günlerce yatar. OPERASYON RAPORUNA GEÇ'e bas: masaya dönülür, rapor açılır.	The raid is over. Damage taken comes home as wounds; a fallen specialist is laid up for days. Press GO TO OPERATION REPORT: you return to the desk and it opens.
 OPERASYON RAPORU	OPERATION REPORT
-Rapor ödülü, yaraları, sivil güveni ve YZ alarmını yazar. Masaya dön (Enter) ile kapat.	The report lists the reward, wounds, civilian trust and the AI alarm. Close it with Back to desk (Enter).
+Rapor ödülü, yaraları, sivil güveni ve YZ alarmını yazar. MASAYA DÖN ile kapat.	The report lists the reward, wounds, civilian trust and the AI alarm. Close it with BACK TO DESK.
 SIĞINAK	SHELTER
-2'ye bas (SIĞINAK): kesit maketi açılır. Odalar uzmanları bir sonraki baskına hazırlar.	Press 2 (SHELTER): the cutaway model opens. The rooms ready your specialists for the next raid.
+Masadaki SIĞINAK tuşuna bas: kesit maketi açılır. Odalar uzmanları bir sonraki baskına hazırlar.	Press the SHELTER key on the desk: the cutaway model opens. The rooms ready your specialists for the next raid.
 ATÖLYE	WORKSHOP
 Atölyeye tıkla ve ONAR'a bas. Atölye malzemeden zırh plakası döker; plaka baskında ilk darbeyi karşılar.	Click the workshop and press REPAIR. The workshop casts armor plates from materials; a plate takes the first hit in a raid.
 PERSONEL	STAFF
 + PERS. ile atölyeye birini ata; boşta kalan kimse üretmez. Revir yarayı sarar, telsiz alarmı yavaşlatır; üst seviyeler özgür bölgelerle açılır.	Assign someone to the workshop with + STAFF; idle people produce nothing. The infirmary dresses wounds, the radio slows the alarm; higher levels open with liberated regions.
 VARDİYA ŞALTERİ	SHIFT SWITCH
-Vardiyada tek baskın var. Home ile masaya dön, Enter'a iki kez bas ya da şaltere tıkla: kapak kalkar, kol iner, zaman bir vardiya ilerler.	One raid per shift. Press Home to return to the desk, then press Enter twice or click the switch: the cover lifts, the lever drops and time moves one shift.
+Vardiyada tek baskın var. MASA tuşuyla masaya dön ve şaltere iki kez tıkla: kapak kalkar, kol iner, zaman bir vardiya ilerler.	One raid per shift. Return with the DESK key and click the switch twice: the cover lifts, the lever drops and time moves one shift.
 VARDİYA RAPORU	SHIFT REPORT
-Rapor vardiyanın fonunu, üretimini, uzmanların yarasını ve alarmı yazar. Esc ile EVRAK tepsisine kaldır.	The report lists the shift's funds, production, your specialists' wounds and the alarm. Press Esc to file it in the PAPERS tray.
+Rapor vardiyanın fonunu, üretimini, uzmanların yarasını ve alarmı yazar. Alttaki düğme onu EVRAK tepsisine kaldırır.	The report lists the shift's funds, production, your specialists' wounds and the alarm. The button at the bottom files it in the PAPERS tray.
 İYİ ŞANSLAR	GOOD LUCK
-Batı Avrupa'nın üç sektörünü al, sonra sınırdaki bir bölgeyi seç. Her bölgenin kendi özelliği ve imza makinesi var; harekât ilerledikçe tehdit artar. Sivil GÜVEN sıfıra inerse direniş dağılır. H emri yeniden açar.	Take Western Europe's three sectors, then choose a bordering region. Every region has its own trait and signature machine; the threat grows as the campaign goes on. If civilian TRUST hits zero, the resistance collapses. H reopens the order.
+Batı Avrupa'nın üç sektörünü al, sonra sınırdaki bir bölgeyi seç. Her bölgenin kendi özelliği ve imza makinesi var; harekât ilerledikçe tehdit artar. Sivil GÜVEN sıfıra inerse direniş dağılır. Harekât emri EVRAK tepsisinde durur.	Take Western Europe's three sectors, then choose a bordering region. Every region has its own trait and signature machine; the threat grows as the campaign goes on. If civilian TRUST hits zero, the resistance collapses. The operation order stays in the PAPERS tray.
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/TutorialRaid.cs
 Bu ilk baskını birlikte oynayalım; sıradaki hedef sarı çerçeveli. Kırmızı oklar makinelerin bu turdaki hamlesi, bayraktaki sayı sırası.	Let's play this first raid together; the next target has a yellow frame. Red arrows show what each machine will do this turn; the flag number is its order.
 Mavi kareler Teknisyenin gidebileceği yerler.	Blue tiles are where the Technician can go.
@@ -1019,11 +1053,13 @@ Uzmanlar birbirinin üstünden geçebilir.	Specialists can pass through each oth
 Dronun altındaki duvara at: dron yukarı itilir, duvara çarpıp 1 hasar alır.	Fire at the wall below the drone: the drone is pushed up, hits the wall and takes 1 damage.
 Analist bakım robotunun hedefinde, ama 1 numaralı dron önce ateş edip bakım robotunu düşürür: sıra önemli. Analist bu tur boşta kalır.	The Analyst is the maintenance robot's target, but drone no. 1 fires first and takes the robot down: order matters. The Analyst stays idle this turn.
 Dron Teknisyenin sütununa ateş edecek: kasanın yanındaki kareye geç.	The drone will fire down the Technician's column: step onto the tile next to the crate.
-Kasaya tıkla: Teknisyen malzemeleri alır. Baskın bitmedi: malzemeyi yeşil kesik çerçeveli giriş karelerinden birine geri taşı.	Click the crate: the Technician takes the supplies. The raid isn't over: carry them back to one of the entry tiles with the dashed green frame.
+Kasaya tıkla: Teknisyen malzemeleri alır ve kaçış başlar. Bütün ekip yeşil kesik çerçeveli giriş karelerinden çıkmalı; süre dolarken tahtada kalan uzman baskında düşmüş sayılır.	Click the crate: the Technician takes the supplies and the escape begins. The whole team must leave through the entry tiles with the dashed green frame; anyone left on the board when time runs out counts as down in this raid.
 Dron dönüş yolunda. Yolu EMP uzmanı açacak.	A drone blocks the way back. The EMP specialist will clear it.
 Analistin altındaki kareye at: hasarlı dron duvara itilip düşer, Analist yukarı itilir ve Teknisyen'e yol açılır. EMP dostları da iter.	Fire at the tile below the Analyst: the damaged drone is pushed into the wall and goes down, the Analyst is pushed up and the Technician's path opens. EMP pushes allies too.
 Teknisyen kablo kanalının üstünden yürüyebilir; kanal yalnız üstüne itilene hasar verir.	The Technician can walk over the cable channel; it only hurts whoever is pushed onto it.
-Yeni dron Teknisyen'in satırına nişan aldı: çıkışa yürü. Taşıyıcı çıkışa varınca ekip tahliye edilir, baskın kazanılır.	The new drone is aiming at the Technician's row: walk to the exit. When the carrier reaches it, the team extracts and the raid is won.
+Yeni dron Teknisyen'in sütununa nişan aldı: çıkışa yürü. Çıkışa varan uzman tahtadan çıkar; malzeme Teknisyen'le dışarıda.	The new drone is aiming at the Technician's column: walk to the exit. A specialist who reaches the exit leaves the board; the supplies are out with the Technician.
+EMP uzmanı da çıkmalı: Teknisyen'in boşalttığı kareye yürü.	The EMP specialist has to get out too: walk to the tile the Technician just left.
+Son kişi Analist: çıkışa yürü. Bütün ekip dışarıda, baskın kazanılır.	The Analyst is last: walk to the exit. With the whole team out, the raid is won.
 Teknisyeni seç: 1'e bas ya da ona tıkla.	Select the Technician: press 1 or click them.
 EMP uzmanını seç: 2'ye bas ya da ona tıkla.	Select the EMP specialist: press 2 or click them.
 Analisti seç: 3'e bas ya da ona tıkla.	Select the Analyst: press 3 or click them.
@@ -1033,10 +1069,14 @@ Q ile EMP atışını seç.	Press Q to pick the EMP shot.
 Q ile kancayı seç.	Press Q to pick the hook.
 Sarı çerçeveli kareye tıkla.	Click the tile with the yellow frame.
 Enter ile emri ilet ya da EMRİ İLET'e bas.	Press Enter or SEND ORDERS to send the order.
+# Assets/Corrigible/Desk/Scripts/Runtime/Core/DeskCore.cs
+Boşluk	Space
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/HoverInspectorView.cs
+EKİP ÇIKAR	TEAM GETS OUT
 İKMAL ALINIR	SUPPLIES COLLECTED
 HEDEF KIRILIR	TARGET DESTROYED
 operasyon kazanılır	operation won
+kaçış başlar	escape begins
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidHudView.cs
 TUR	TURN
 SON 2 TUR	LAST 2 TURNS
@@ -1047,6 +1087,7 @@ SIRA SENDE	YOUR TURN
 GÖREV · İKMAL	MISSION · SUPPLY
 GÖREV · SUNUCU	MISSION · SERVER
 CAN	HP
+KAYBOLDU	LOST
 ALINDI	COLLECTED
 KIRILDI	BROKEN
 GÜVEN	TRUST
@@ -1079,11 +1120,12 @@ KURALLAR KARTI	RULES CARD
 Teknisyen kasayı açar ve malzemeyi taşır. İtme ve patlamalar kasaya hasar verebilir; EMP kasayı açmaz.	The Technician opens the crate and carries the supplies. Pushes and explosions can damage the crate; EMP doesn't open it.
 Madenci: dinamit bitişik duvarı yıkar (baskında sınırlı); moloz bir kare öteye 1 hasar. Açılan delik makinelerin atış hattını da açar.	Miner: dynamite breaks an adjacent wall (limited per raid); debris deals 1 damage one tile further. The hole also opens a firing line for the machines.
 Sis: bu turun makine evresinde atış ve kilit sise girince kaybolur; bakım robotu ve havan sisli kareye vuramaz. Patlamayı kesmez.	Smoke: during this turn's machine phase, shots and locks that enter the smoke are lost; maintenance robots and mortars cannot hit the smoked tile. It does not stop explosions.
-İkmal görevi: Teknisyen ile kasayı aç, sonra malzemeyi giriş karelerinden birine geri taşı. Kasa imha olursa, Teknisyen düşerse ya da süre biterse görev kaybedilir.	Supply mission: open the crate with the Technician, then carry the supplies back to one of the entry tiles. The mission fails if the crate is destroyed, the Technician goes down or time runs out.
+İkmal görevi: Teknisyen ile kasayı aç, sonra bütün ekip giriş karelerinden çıksın; malzeme Teknisyen çıkınca alınır. Süre dolarken tahtada kalan uzman baskında düşmüş sayılır. Kasa imha olursa ya da Teknisyen çıkamazsa görev kaybedilir.	Supply mission: open the crate with the Technician, then the whole team leaves through the entry tiles; the supplies count once the Technician is out. Anyone left on the board when time runs out counts as down in this raid. If the crate is destroyed or the Technician doesn't get out, the mission is lost.
 EMİN MİSİN? TEKRAR BAS	ARE YOU SURE? PRESS AGAIN
 OPERASYON RAPORUNA GEÇ	GO TO OPERATION REPORT
 Devam et [Esc]	Resume [Esc]
 DURAKLATILDI	PAUSED
+KADRO RAPORU	SQUAD REPORT
 OPERASYON SONUCU	OPERATION RESULT
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidTeamCardView.cs
 {0} · YEDEK	{0} · RESERVE
@@ -1092,7 +1134,9 @@ SİS UZM.	SMOKE SPEC.
 YARALI	INJURED
 PLAKA	PLATES
 SIĞINAKTA YARALI	INJURED AT SHELTER
+ÇIKAMADI	LEFT BEHIND
 DÜŞTÜ	DOWN
+✓ TAHLİYE EDİLDİ	✓ EXTRACTED
 ✓ TUR BİTTİ	✓ TURN DONE
 HAREKET + YETENEK	MOVE + ABILITY
 HAREKET	MOVE
@@ -1119,7 +1163,7 @@ Seç, taşı, kullan: 1–3 ya da tıkla, mavi kareye taşı, Q ile yetenek. Z t
 Zırh: hedef dolaplara yalnız sabotaj, itilen robot ve patlayan soğutma ünitesi işler.	Armor: only sabotage, a pushed robot or an exploding cooling unit damages target cabinets.
 İtme: çarpan da çarpılan da 1 hasar alır; kanala düşen de 1 hasar alır.	Push: both the pushed and what it hits take 1 damage; falling into a channel deals 1.
 Sivilleri koru: ekibe ulaşamayan makine sivil sunucuya nişan alır. Kırılan her sunucu GÜVEN'i düşürür; kazanınca ayakta kalan her 2 sunucu +1 GÜVEN.	Protect civilians: a machine that can't reach the team aims at a civilian server. Every broken server lowers TRUST; win the raid and every 2 servers left standing give +1 TRUST.
-Kazan: tur bitmeden bütün hedef dolapları kır. Alınan hasar sığınağa yara olarak döner; zırh plakası ilk darbeyi karşılar.	Win: break every target cabinet before the turns run out. Damage taken comes home as wounds; an armor plate takes the first hit.
+Kazan: bütün hedef dolapları kır, sonra bütün ekip giriş karelerinden çıksın. Süre dolarken tahtada kalan uzman baskında düşmüş sayılır; kaçışta geri çekilme yok. Alınan hasar sığınağa yara olarak döner; zırh plakası ilk darbeyi karşılar.	Win: break every target cabinet, then the whole team leaves through the entry tiles. Anyone left on the board when time runs out counts as down in this raid; there's no retreat during the escape. Damage taken comes back to the shelter as wounds; an armor plate absorbs the first hit.
 # Assets/Corrigible/Desk/Scripts/Runtime/Screens/Settings/SettingsView.cs
 Ses açık	Sound on
 Kapatınca bütün kanallar susar; ayarlar korunur.	Turning it off mutes every channel; levels are kept.
@@ -1164,6 +1208,7 @@ YIKILDI	BREACHED
 SİSE KESİLDİ	CUT BY SMOKE
 {0} ŞİMDİ	{0} NOW
 <s>{0}</s> UYGULANDI	<s>{0}</s> DONE
+TAHLİYE	EXTRACTED
 # Assets/Corrigible/Desk/Prefabs/Screens/SettingsCard.prefab
 AYARLAR	SETTINGS
 her oyunda geçerli	applies to every game
@@ -1199,19 +1244,15 @@ geri alındı	retaken
 hazır	ready
 kilitli	locked
 VARDİYA	SHIFT
-KOMUTA	COMMAND
-Dünya haritası · cepheyi planla	World map · plan the front
 Kesit maketi · odaları yönet	Cross-section model · manage the rooms
 GÖREVLER	MISSIONS
 Görev fişi · baskın emri	Mission slip · raid order
 kapıda biri bekliyor	someone is at the door
-KILAVUZ	GUIDE
-Harekât emrini yeniden oku	Read the operation order again
 MASA	DESK
 Masaya dön	Back to the desk
 VARDİYAYI BİTİR	END SHIFT
 Kapağı kaldır, kolu indir: bir gün geçer	Lift the cover, pull the lever: a day passes
-Enter · kapağı kaldır	Enter · lift the cover
+kapağı kaldır	lift the cover
 TELEKS	TELEX
 Son emirler ve sonuçlar	Latest orders and results
 EVRAK	PAPERS
@@ -1226,7 +1267,7 @@ UZMANLAR	SPECIALISTS
 GELİŞTİRME	UPGRADE
 EN ÜST SEVİYE	MAX LEVEL
 TELSİZ HATTI	RADIO LINE
-Yalnız baskın emriyle hat açılır. Emri görev fişinden ver (3).	The line opens only with a raid order. Give it from the mission slip (3).
+Yalnız baskın emriyle hat açılır. Emri görev fişinden ver.	The line opens only with a raid order. Give it from the mission slip.
 K-07	K-07
 KANAL	CHANNEL
 AYAR	TUNE

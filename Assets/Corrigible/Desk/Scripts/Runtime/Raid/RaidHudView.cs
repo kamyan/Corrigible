@@ -205,7 +205,7 @@ namespace Corrigible.Desk
                 if (i < brokenStamps.Length)
                 {
                     brokenStamps[i].gameObject.SetActive(t.Broken);
-                    brokenStamps[i].text = vm.IsLootMission && (vm.Success || vm.Escaping) ? Loc.T("ALINDI") : Loc.T("KIRILDI");
+                    brokenStamps[i].text = vm.IsLootMission && vm.CargoLost ? Loc.T("KAYBOLDU") : vm.IsLootMission && (vm.Success || vm.Escaping) ? Loc.T("ALINDI") : Loc.T("KIRILDI");
                 }
                 for (int j = 0; j < per; j++)
                 {
@@ -232,10 +232,10 @@ namespace Corrigible.Desk
             logLabel.text = Loc.T("TELSİZ"); rulesLabel.text = Loc.T("KURALLAR"); retreatLabel.text = vm.RetreatArmed ? Loc.T("EMİN MİSİN?") : Loc.T("GERİ ÇEKİL");
             unread.gameObject.SetActive(vm.LogUnread && vm.LogUnreadCount > 0);
             unreadCount.text = vm.LogUnreadCount > 9 ? "9+" : vm.LogUnreadCount.ToString();
-            // Makine evresinde GERİ ÇEKİL ve Geri al soluk; EMRİ İLET'in yerinde kilitli kâğıt
+            // Makine evresinde GERİ ÇEKİL ve Geri al soluk; EMRİ İLET'in yerinde kilitli kâğıt. Kaçışta geri çekilme yok.
             bool machines = vm.Phase == "enemy" && !vm.Finished;
-            if (retreatGroup != null) retreatGroup.alpha = machines ? 0.4f : 1;
-            retreat.interactable = !machines;
+            if (retreatGroup != null) retreatGroup.alpha = machines || !vm.CanRetreat ? 0.4f : 1;
+            retreat.interactable = !machines && vm.CanRetreat;
             undoLabel.text = Loc.T("Geri al");
             undo.interactable = vm.CanUndo && !vm.Locked && !vm.Paused;
             if (undoGroup != null) undoGroup.alpha = undo.interactable ? 1 : 0.45f;

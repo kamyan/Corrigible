@@ -89,6 +89,10 @@ namespace Corrigible.Desk.EditorTools
             new Entry("ui_crt_glass_cover", Kind.Sliced, 96, generated: true),
             // Görev fişinin ekip diski (Revizyon 2 · S2): dolgu ve kenar renkli, 44 px çizilip 22 px gösterilir
             new Entry("ui_team_disc", Kind.Simple, generated: true),
+            // İstasyon simgeleri (SiginakTextureBaker.KeyIcons): masadaki tuş başlıkları ve üst şeridin tuş kutuları; beyaz, boyanır
+            new Entry("tx_key_shelter", Kind.Texture, generated: true), new Entry("tx_key_missions", Kind.Texture, generated: true),
+            new Entry("tx_key_door", Kind.Texture, generated: true), new Entry("tx_key_desk", Kind.Texture, generated: true),
+            new Entry("tx_key_settings", Kind.Texture, generated: true),
 
             // Revizyon 2 · işaretler: bölge özelliği, imza ve makine türü (düz ve kare çerçeveli), tehdit kademesi, yeniden işgal
             R2("glyph_corridor", Kind.Simple), R2("glyph_sand", Kind.Simple), R2("glyph_locker", Kind.Simple), R2("glyph_mortar", Kind.Simple),

@@ -42,9 +42,9 @@ namespace Corrigible.Desk
         /// <summary>Kırmızı çift çizgili damga ve altındaki son cümle (yalnız ölümcülde); yoksa null.</summary>
         public string Stamp, Epilogue;
         public readonly List<DoorButtonData> Buttons = new List<DoorButtonData>();
-        /// <summary>Sonuçtaki tek geniş düğme (Enter): kimlik ve yazı; yoksa null.</summary>
+        /// <summary>Sonuçtaki tek geniş düğme: kimlik ve yazı; yoksa null.</summary>
         public string ActionId, Action;
-        /// <summary>Kısayol satırı: tuş (“Esc”) ve açıklama; yoksa null.</summary>
-        public string HintKey, Hint;
+        /// <summary>Alt satır (“masaya dön · …”, tıklanınca kâğıt kapanır); yoksa null.</summary>
+        public string Hint;
     }
 }

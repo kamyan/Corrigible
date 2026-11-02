@@ -17,7 +17,6 @@ namespace Corrigible.Desk
         public string Title { get; set; }
         public string Line { get; set; }
         public string HoverTitle => Title;
-        public string KeyHint => null;
 
         public void OnPointerEnter(PointerEventData eventData)
         {

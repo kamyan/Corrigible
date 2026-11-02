@@ -8,7 +8,8 @@ namespace Corrigible.Desk
     /// <summary>
     /// Kapının kâğıdı (Revizyon 2 · S4; Overlay, sol 40 · üst 64, 470 px, CSS −0,8°): başlık, kim olduğu, kapıdan duyulan;
     /// gözetleme deliğinden görülen ve interkomun cevabı ayrı bloklarda (göz işareti + GÖZETLEME DELİĞİ); seçenek satırları
-    /// (50 px, sağda Courier bedel/etki ya da neden) ve Esc satırı. Sonuçta seçim satırı, metin ve tek geniş Enter düğmesi;
+    /// (50 px, sağda Courier bedel/etki ya da neden) ve tıklanınca kâğıdı kapatan alt satır (klavye kısayolları yazılmaz).
+    /// Sonuçta seçim satırı, metin ve tek geniş düğme;
     /// ölümcülde kâğıt −1,4°, kırmızı çift çizgili damga ve son cümle, düğme damgadan 0,6 s sonra. Satırlar ve bloklar
     /// sahnede hazır durur (çalışırken hiyerarşi yaratılmaz); fazla yuvalar gizlenir.
     /// </summary>
@@ -25,9 +26,7 @@ namespace Corrigible.Desk
             [Tooltip("Yüz (zemin, kenar, yazılar): üzerinde 2 px kalkar, basılıyken 1 px iner; gölge altında kalır.")]
             public RectTransform face;
             public Image fill, edge, shadow;
-            [Tooltip("Kısayol fişi: çerçeve (normal) ve pirinç zemin (üzerinde).")]
-            public Image keyBox, keyFill;
-            public TMP_Text key, label, detail;
+            public TMP_Text label, detail;
             [Tooltip("Kullanılmış seçeneğin damgası (BAKILDI).")]
             public RectTransform used;
             public Image usedFrame;
@@ -56,15 +55,17 @@ namespace Corrigible.Desk
         [SerializeField] TMP_Text stampText;
         [SerializeField] GameObject optionBlock;
         [SerializeField] OptionSlot[] buttons = Array.Empty<OptionSlot>();
-        [Tooltip("Sonuçtaki geniş düğme (Enter).")]
+        [Tooltip("Sonuçtaki geniş düğme.")]
         [SerializeField] GameObject actionBlock;
         [SerializeField] Button action;
         [SerializeField] UiHoverTarget actionHover;
         [SerializeField] RectTransform actionFace;
         [SerializeField] Image actionShadow;
         [SerializeField] TMP_Text actionLabel;
+        [Tooltip("Alt satır (“masaya dön · …”): tıklanınca kâğıt kapanır (kâğıdın kapatma düğmesi).")]
         [SerializeField] GameObject hintRow;
-        [SerializeField] TMP_Text hintKey, hint;
+        [SerializeField] Button hintButton;
+        [SerializeField] TMP_Text hint;
         [SerializeField] Sprite frameSolid, frameDashed;
 
         const float ShowS = 0.22f, HideS = 0.18f, ShakeS = 0.1f, UsedS = 0.1f, StampS = 0.12f, ActionDelayS = 0.6f;
@@ -89,6 +90,8 @@ namespace Corrigible.Desk
         public bool IntercomTyping { get; private set; }
         /// <summary>Düğmeye basıldı (seçeneğin ya da geniş düğmenin kimliği).</summary>
         public event Action<string> Clicked;
+        /// <summary>Alt satıra tıklandı: masaya dön (Esc ile aynı).</summary>
+        public event Action Dismissed;
 
         static SiginakTheme T => SiginakTheme.Active;
         static Color C(string key) => T.ColorOf(key);
@@ -102,6 +105,7 @@ namespace Corrigible.Desk
                 buttons[i].button.onClick.AddListener(() => Press(k));
             }
             action.onClick.AddListener(() => PressAction());
+            if (hintButton != null) hintButton.onClick.AddListener(() => { if (!Animating) Dismissed?.Invoke(); });
         }
 
         void Rest()
@@ -185,7 +189,6 @@ namespace Corrigible.Desk
                 else if (newlyUsed) usedAt[i] = live ? now : -1;
                 data[i] = b;
                 if (b == null) continue;
-                slot.key.text = (i + 1).ToString();
                 slot.label.text = b.Label;
                 slot.used.gameObject.SetActive(b.Used != null);
                 slot.usedText.text = b.Used ?? "";
@@ -201,7 +204,6 @@ namespace Corrigible.Desk
             actionLabel.text = d.Action ?? "";
             actionBlock.SetActive(d.Action != null && (!fatal || fatalAt >= 0 && now - fatalAt >= ActionDelayS));
             hintRow.SetActive(!string.IsNullOrEmpty(d.Hint));
-            hintKey.text = d.HintKey ?? "";
             hint.text = d.Hint ?? "";
             Layout();
         }
@@ -228,8 +230,8 @@ namespace Corrigible.Desk
                 else if (slot.used.gameObject.activeSelf) detailW = slot.usedText.GetPreferredValues(slot.usedText.text).x + 14;
                 var detailLayout = slot.detail.GetComponent<LayoutElement>();
                 if (detailLayout != null) detailLayout.preferredWidth = slot.detail.gameObject.activeSelf ? detailW : -1;
-                // Satır: sol 10 + fiş 24 + 10 + yazı + (10 + sağ sütun) + sağ 12
-                float labelW = paper.rect.width - 38 - 22 - 34 - (detailW > 0 ? detailW + 10 : 0);
+                // Satır: sol 10 + yazı + (10 + sağ sütun) + sağ 12
+                float labelW = paper.rect.width - 38 - 22 - (detailW > 0 ? detailW + 10 : 0);
                 float labelH = slot.label.GetPreferredValues(slot.label.text, Mathf.Max(40, labelW), 0).y;
                 slot.layout.preferredHeight = slot.layout.minHeight = Mathf.Max(50, Mathf.Max(labelH, detailH) + 10);
             }
@@ -252,11 +254,6 @@ namespace Corrigible.Desk
             s.shadow.enabled = !off && !pressed;
             s.shadow.color = C(over ? "ink2" : "doorPaper.edge");
             s.label.color = C(off ? "doorPaper.optionDisabledText" : over ? "ui.inkButtonText" : "ink");
-            s.keyFill.enabled = over;
-            s.keyFill.color = C("slip.buttonKey");
-            s.keyBox.enabled = !over;
-            s.keyBox.color = C(off ? "slip.buttonDisabled" : "ink2");
-            s.key.color = C(off ? "doorPaper.optionDisabledText" : "ink");
             s.detail.color = C(off ? "doorPaper.optionDisabledDetail" : over ? "slip.buttonKey" : "ink2");
             s.usedFrame.color = C("slip.buttonDisabled");
             s.usedText.color = C("doorPaper.optionDisabledDetail");

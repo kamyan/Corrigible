@@ -10,8 +10,9 @@ namespace Corrigible.Tests
     /// Her turda uzmanların hamle + yetenek seçeneklerini durumun kopyalarında dener ve kaba bir puanla sıralar (makinelerin
     /// görünen niyetleri ve uyanma kareleri, <see cref="Baskin.Intents"/>); ilk adımın en iyi birkaç seçeneğini açgözlü
     /// tamamlar, bu tur planlarını kopyada gerçek makine evresiyle (<see cref="Baskin.EndTurn"/>) doğrular ve en iyisini oynar.
-    /// Puan bir makine evresi sonrasına bakar ve görevin kalan yolunu ekler: sunucu görevinde Teknisyen'den hedefin yanına,
-    /// ikmal görevinde Teknisyen'den kasanın yanına ve oradan çıkışa (kasa alındıysa taşıyıcıdan çıkışa) en kısa yol; makinenin
+    /// Puan bir makine evresi sonrasına bakar ve görevin kalan yolunu ekler: Teknisyen'den hedefin (kasanın) yanına ve oradan
+    /// çıkışa en kısa yol; kaçışta (kasa alındı ya da hedef kırıldı) tahtadaki her uzmanın çıkışa yolu, süreye sığmayan uzman
+    /// düşmüş sayılır (taşıyıcıysa görev kaybedilir); makinenin
     /// durduğu kare bedelli (gelişmiş akıl hedefin önünü bedeniyle tutar, yolu açmak da ilerlemedir). Tek evre
     /// bakan puan Madenci'nin dinamitini (birkaç tur sonra kısalan yol) görmez ve sisi fazla değerli bulur; yol terimi ve
     /// "yıkılacak duvar" çekimi (<see cref="Weights.Breach"/>) bunu dengeler.
@@ -33,6 +34,10 @@ namespace Corrigible.Tests
             /// <summary>Teknisyen'in canı, son canı ve düşmesi (Teknisyen'siz görev bitmez); öteki uzmanlar.</summary>
             public double TekHp = 8, TekLow = 10, TekDown = 300;
             public double Hp = 4, Low = 4, Down = 45, Plate = 3;
+            /// <summary>Öteki uzmanların çıkışa yolunun Teknisyen'in yoluna göre ağırlığı (kaçışta bütün ekip çıkmalı). Ölçümde
+            /// (2026-11-01, 4 tohum) 1 → 0,5 → 0,25 → 0,1 → 0 T+E+A'yı %72 → %79 → %87 → %92 → %94'e çıkardı; düşen uzman 0,50 →
+            /// 0,33 → 0,38: uzmanlar Teknisyen'i desteklemeyi bırakıp çıkışa erken yürürse görev zorlaşır, hiç bakmazsa geride kalır.</summary>
+            public double Others = 0.1;
             /// <summary>Ayaktaki makine, canı, zırhı; evrede uyanacak makine; ayaktaki kopya dolabı.</summary>
             public double Enemy = 7, EnemyHp = 3, EnemyArmor = 2, NewEnemy = 9, Spawner = 6;
             /// <summary>Kırılan sivil sunucu; kilitlenen Teknisyen (yolu varsa) ve öteki uzman.</summary>
@@ -241,7 +246,8 @@ namespace Corrigible.Tests
             bool loot = Baskin.IsLoot(C);
             double s = 0;
             Baskin.Unit tek = null, miner = null;
-            bool anyAlive = false, carrierDown = false, tekLocked = false;
+            bool anyAlive = false, carrierDown = false, tekLocked = false, tekOut = false;
+            var inside = new List<(Baskin.Unit u, bool locked)>();
             for (int i = 0; i < C.Units.Count; i++)
             {
                 var u = C.Units[i];
@@ -261,7 +267,10 @@ namespace Corrigible.Tests
                 anyAlive = true;
                 int plate = u.Armor - (f?.Plate[i] ?? 0);
                 s += (isTek ? W.TekHp : W.Hp) * hp + W.Plate * plate - (hp == 1 ? isTek ? W.TekLow : W.Low : 0);
+                // Tahliye edilen uzman güvende: canı sayılır, yolu ve kilidi yok
+                if (u.Out) { if (isTek) tekOut = true; continue; }
                 bool locked = f != null ? f.Locked[i] : u.Locked;
+                inside.Add((u, locked));
                 if (isTek) { tek = u; tekLocked = locked; }
                 else if (locked) s -= W.Locked;
                 if (u.Type == "maden" && u.Charges != 0) miner = u;
@@ -278,8 +287,29 @@ namespace Corrigible.Tests
                     else if (Baskin.IsTarget(o.K)) targetHp += o.Hp;
                 }
             if (C.Phase == "won") return W.Win + s;
-            if (C.Phase == "lost" || !anyAlive || carrierDown || f != null && f.CrateLost || tek == null) return W.Loss + s;
+            bool doomed = carrierDown || tek == null && !tekOut;
+            if (C.Phase == "lost" || !anyAlive || f != null && f.CrateLost || doomed && !C.Escape) return W.Loss + s;
+            // Kaçışta Teknisyen düştüyse baskın sürer: ikmalde görev gitti, sunucuda zaten kazanıldı; öteki uzmanlar yine çıkmalı
+            if (doomed && loot) s += W.Loss;
             int turnsLeft = before ? C.MaxTurns - C.Turn : C.MaxTurns - C.Turn + 1;
+            // Öteki uzmanlar baskın bitmeden çıkışa dönmeli (kaçış): yolları her evrede aynı ağırlıkla sayılır, kasayı açmak ya da
+            // hedefi kırmak puanı sıçratmaz; süreye sığmayan düşmüş sayılır
+            var exits = Field(C, C.Exits, -1, -1);
+            foreach (var (u, _) in inside)
+            {
+                if (u.Type == "tek") continue;
+                int d = exits[u.Y, u.X] < 0 ? Far : exits[u.Y, u.X], mv = Baskin.UnitTypes[u.Type].Move;
+                s -= W.Progress * W.Others * d / mv + (Ceil(d, mv) > turnsLeft ? W.Down : 0);
+            }
+            if (C.Escape)
+            {
+                // Kaçışta Teknisyen'in yolu çıkışa (taşıyıcı ya da kırılan hedefin yanından); çıktıysa yolu yok
+                if (tek == null) return s;
+                int d = exits[tek.Y, tek.X] < 0 ? Far : exits[tek.Y, tek.X];
+                s -= W.Progress * d / 3.0 + W.Late * Math.Max(0, Ceil(d, 3) - turnsLeft);
+                if (tekLocked && d > 0) s -= W.TekLocked;
+                return s;
+            }
             if (turnsLeft <= 0) return W.Loss + s;
 
             var route = RouteOf(C, tek, -1, -1);
@@ -288,9 +318,10 @@ namespace Corrigible.Tests
             int needTurns;
             if (!loot)
             {
+                // Hedef kırılınca Teknisyen o tur yürüyemez; ardından çıkışa döner (kaçış)
                 int h = targetHp + (f?.Repairs ?? 0);
-                need = route.D1 / 3.0 + h / 2.0;
-                needTurns = route.D1 == 0 ? Ceil(h, 2) : Ceil(route.D1, 3) + Ceil(h, 2) - 1;
+                need = route.D1 / 3.0 + h / 2.0 + route.D2 / 3.0;
+                needTurns = (route.D1 == 0 ? Ceil(h, 2) : Ceil(route.D1, 3) + Ceil(h, 2) - 1) + Ceil(route.D2, 3);
             }
             else if (!carrying)
             {
@@ -400,7 +431,7 @@ namespace Corrigible.Tests
             for (int i = 0; i < C.Units.Count; i++)
             {
                 var u = C.Units[i];
-                if (!u.Dead && u.X == x && u.Y == y) return u.Hp - f.Dmg[i] > 0 ? i : -1;
+                if (Baskin.OnBoard(u) && u.X == x && u.Y == y) return u.Hp - f.Dmg[i] > 0 ? i : -1;
             }
             return -1;
         }
@@ -450,26 +481,26 @@ namespace Corrigible.Tests
             return field;
         }
 
-        /// <summary>Görevin kalan yolu: D1 Teknisyen → hedefin (kasanın) yanı, D2 kasanın yanı → çıkış; kasa alındıysa D1 0 ve D2
-        /// taşıyıcı → çıkış. (ex, ey): yıkılmış sayılan duvar.</summary>
+        /// <summary>Görevin kalan yolu: D1 Teknisyen → hedefin (kasanın) yanı, D2 oradan çıkışa (kaçış, her görevde); kasa
+        /// alındıysa D1 0 ve D2 taşıyıcı → çıkış. (ex, ey): yıkılmış sayılan duvar.</summary>
         Route RouteOf(Baskin.BState S, Baskin.Unit tek, int ex, int ey)
         {
             bool loot = Baskin.IsLoot(S);
             var carrier = loot && S.Carrier != 0 ? UnitById(S, S.Carrier) : null;
-            var exits = loot ? Field(S, S.Exits, ex, ey) : null;
+            var exits = Field(S, S.Exits, ex, ey);
             if (carrier != null)
             {
-                int d = carrier.Dead ? -1 : exits[carrier.Y, carrier.X];
+                int d = !Baskin.OnBoard(carrier) ? -1 : exits[carrier.Y, carrier.X];
                 return new Route { D1 = 0, D2 = d < 0 ? Far : d };
             }
             var fromTek = Field(S, new[] { new Baskin.Pt(tek.X, tek.Y) }, ex, ey);
-            var best = new Route { D1 = Far, D2 = loot ? Far : 0 };
+            var best = new Route { D1 = Far, D2 = Far };
             foreach (var t in Baskin.TargetsLeft(S))
                 foreach (var dd in Baskin.Dirs)
                 {
                     int ax = t.X + dd[0], ay = t.Y + dd[1];
                     if (!Inb(ax, ay) || fromTek[ay, ax] < 0) continue;
-                    int d2 = loot ? exits[ay, ax] : 0;
+                    int d2 = exits[ay, ax];
                     if (d2 < 0) continue;
                     if (fromTek[ay, ax] + d2 < best.Total) best = new Route { D1 = fromTek[ay, ax], D2 = d2 };
                 }

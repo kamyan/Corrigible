@@ -137,14 +137,20 @@ namespace Corrigible.Game.Raid
                 IsTransitioning = true;
                 float seconds = Transition != null && Transition.ApproachSeconds > 0 ? Transition.ApproachSeconds : transitionSeconds;
                 Transition?.BeginApproach();
-                float elapsed = 0;
-                while (elapsed < seconds)
+                // Kanca yolu kendisi sürebilir (sığınak: geri çekil → CRT'ye dön → yaklaş); yoksa düz yaklaşma
+                var approach = Transition?.Approach(monitorFocusPose, monitorFieldOfView);
+                if (approach != null) yield return approach;
+                else
                 {
-                    elapsed += Time.unscaledDeltaTime;
-                    float t = Mathf.SmoothStep(0, 1, Mathf.Clamp01(elapsed / seconds));
-                    mainCamera.transform.SetPositionAndRotation(Vector3.Lerp(cameraPosition, monitorFocusPose.position, t), Quaternion.Slerp(cameraRotation, monitorFocusPose.rotation, t));
-                    mainCamera.fieldOfView = Mathf.Lerp(cameraFieldOfView, monitorFieldOfView, t);
-                    yield return null;
+                    float elapsed = 0;
+                    while (elapsed < seconds)
+                    {
+                        elapsed += Time.unscaledDeltaTime;
+                        float t = Mathf.SmoothStep(0, 1, Mathf.Clamp01(elapsed / seconds));
+                        mainCamera.transform.SetPositionAndRotation(Vector3.Lerp(cameraPosition, monitorFocusPose.position, t), Quaternion.Slerp(cameraRotation, monitorFocusPose.rotation, t));
+                        mainCamera.fieldOfView = Mathf.Lerp(cameraFieldOfView, monitorFieldOfView, t);
+                        yield return null;
+                    }
                 }
                 mainCamera.transform.SetPositionAndRotation(monitorFocusPose.position, monitorFocusPose.rotation);
                 mainCamera.fieldOfView = monitorFieldOfView;
@@ -185,9 +191,19 @@ namespace Corrigible.Game.Raid
             unloading=false;
             if (mainScene.isLoaded) SceneManager.SetActiveScene(mainScene);
             SetMainVisible(true);
-            RestoreCameraAndLocks();
+            // Kamera monitörde kaldı: kanca onu yaklaşmanın tersi yoldan geri götürür, sonra kamera ve kilitler geri verilir
+            var depart = cameraPoseSaved && Transition != null ? Transition.Depart(monitorFocusPose, monitorFieldOfView) : null;
+            if (depart != null) StartCoroutine(DepartRoutine(depart));
+            else RestoreCameraAndLocks();
             if (Transition != null) StartCoroutine(Transition.Return());
             Sync();
+        }
+
+        IEnumerator DepartRoutine(IEnumerator depart)
+        {
+            IsTransitioning = true;
+            yield return depart;
+            RestoreCameraAndLocks();
         }
 
         void RestoreCameraAndLocks()

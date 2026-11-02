@@ -67,6 +67,7 @@ namespace Corrigible.Desk.Bridge
         {
             if (game != null) { game.NewGameStarted += ResetDoor; game.GameLoaded += ResetDoor; }
             card.Clicked += Choose;
+            card.Dismissed += Dismiss;
             target.Clicked += Reopen;
             DeskLoc.Instance.Changed += Relabel;
             // Sahnedeki başlık çeviri tablosundaki kaynakla aynı olmalı (etiket onu çevirir)
@@ -79,6 +80,7 @@ namespace Corrigible.Desk.Bridge
         {
             if (game != null) { game.NewGameStarted -= ResetDoor; game.GameLoaded -= ResetDoor; }
             card.Clicked -= Choose;
+            card.Dismissed -= Dismiss;
             target.Clicked -= Reopen;
             DeskLoc.Instance.Changed -= Relabel;
         }
@@ -156,6 +158,12 @@ namespace Corrigible.Desk.Bridge
 
         static bool KeyPressed(UnityEngine.InputSystem.Controls.KeyControl key) => key != null && key.wasPressedThisFrame;
 
+        /// <summary>Kâğıdın alt satırı (“masaya dön”): Esc gibi, sonuçta değil (orada geniş düğme kapatır).</summary>
+        void Dismiss()
+        {
+            if (phase == DoorPhase.Closed || phase == DoorPhase.Open) Close();
+        }
+
         /// <summary>Biri kapıyı çaldı: ses, lamba, teleks; biraz sonra kamera kapıya döner.</summary>
         void Knock(DoorVisit v)
         {
@@ -164,13 +172,13 @@ namespace Corrigible.Desk.Bridge
             prop.Knock();
             if (bulb != null) bulb.Burst();
             Sfx.Play(Cue.DoorKnock, 0.9f, Pan());
-            telex.Post(surface.Shift, Loc.T("KAPI ÇALIYOR"), Loc.T("Sığınağın kapısında biri var · 4 ile kapıya bak"), TelexKind.Alarm);
+            telex.Post(surface.Shift, Loc.T("KAPI ÇALIYOR"), Loc.T("Sığınağın kapısında biri var · KAPI'dan bak"), TelexKind.Alarm);
             turnAt = Time.unscaledTime + knockSeconds;
         }
 
         /// <summary>
-        /// 4 · KAPI (anahtar rayı, kenar satırı ya da 4/K tuşu): bekleyen ziyaretçinin kâğıdı açılır; kapıda kimse yoksa kamera
-        /// kapıya bakar (Home masaya döndürür).
+        /// KAPI (anahtar rayı, kenar satırı ya da 4/K tuşu): bekleyen ziyaretçinin kâğıdı açılır; kapıda kimse yoksa kamera
+        /// kapıya bakar (MASA masaya döndürür).
         /// </summary>
         public void Visit()
         {

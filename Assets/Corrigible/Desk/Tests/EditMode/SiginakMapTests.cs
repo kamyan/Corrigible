@@ -13,6 +13,9 @@ namespace Corrigible.Desk.Tests
     public class SiginakMapTests
     {
         static Simulation NewLiberation(double fon = 100) => Simulation.NewGame(731, new Balance { startFon = fon });
+        /// <summary>Beş uzman baştan (atölye kilidi açık).</summary>
+        static Simulation NewOpen() =>
+            Simulation.NewGame(731, new Balance { startFon = 100, liberationMinerWorkshopLevel = 0, liberationSmokeWorkshopLevel = 0 });
 
         /// <summary>V.014'ün ilk yarısı: Batı Avrupa'nın üç sektörü alınır, yeni cephe henüz seçilmez.</summary>
         static Simulation WeuFreed()
@@ -132,7 +135,7 @@ namespace Corrigible.Desk.Tests
         [Test]
         public void Slip_SquadPicker_TechnicianFixed_PickDrivesDiscsAndAction()
         {
-            var sim = NewLiberation();
+            var sim = NewOpen();
             var d = LiberationMapBuilder.Slip(sim, Simulation.HQ);
             CollectionAssert.AreEqual(new[] { "T", "E", "A", "M", "S" }, d.Pick.Select(p => p.Letter).ToArray());
             CollectionAssert.AreEqual(new[] { true, true, true, false, false }, d.Pick.Select(p => p.Picked).ToArray(), "varsayılan: EMP uzmanı ve Analist");
@@ -152,6 +155,22 @@ namespace Corrigible.Desk.Tests
             var tutorial = LiberationMapBuilder.Slip(sim, Simulation.HQ, new[] { "maden", "duman" }, fixedSquad: true);
             Assert.IsTrue(tutorial.Pick.All(p => p.Locked), "eğitim baskınında kadro sabit");
             CollectionAssert.AreEqual(new[] { "T", "E", "A" }, tutorial.Members.Select(m => m.Letter).ToArray());
+        }
+
+        /// <summary>KADRO: katılmamış uzman kilitli çip (“ATÖLYE 2”), seçilemez; seçenek yokken not sıradakini söyler.</summary>
+        [Test]
+        public void Slip_SquadPicker_LockedSpecialistsWaitForTheWorkshop()
+        {
+            var sim = NewLiberation();
+            var d = LiberationMapBuilder.Slip(sim, Simulation.HQ);
+            CollectionAssert.AreEqual(new[] { "T", "E", "A", "M", "S" }, d.Pick.Select(p => p.Letter).ToArray(), "kilitli uzmanlar da görünür");
+            CollectionAssert.AreEqual(new[] { true, false, false, true, true }, d.Pick.Select(p => p.Locked).ToArray(), "T sabit, M ve S kilitli");
+            Assert.AreEqual(Loc.F("SV {0}", 2), d.Pick[3].Hp);
+            Assert.AreEqual(Loc.F("SV {0}", 3), d.Pick[4].Hp);
+            Assert.AreEqual(Loc.F("{0} · KİLİTLİ", DeskText.Upper(Baskin.UnitTypes["maden"].Name)), d.Pick[3].HoverTitle);
+            StringAssert.Contains(Loc.T(Baskin.Abilities["duman"].Name), d.Pick[4].HoverLine, "kilitliyken de yetenek");
+            Assert.AreEqual(Loc.F("{0} atölye seviye {1} olunca kadroya katılır.", Baskin.UnitTypes["maden"].Name, 2), d.PickNote);
+            Assert.IsTrue(d.ActionEnabled, "varsayılan kadro (T + E + A) emre hazır");
         }
 
         /// <summary>S2: baskından dönen ekip aynı vardiyada çıkamaz → düğme devre dışı, sağda kısa neden.</summary>

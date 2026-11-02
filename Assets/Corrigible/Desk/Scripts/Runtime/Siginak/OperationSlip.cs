@@ -85,7 +85,7 @@ namespace Corrigible.Desk
         [SerializeField] UiHoverTarget actionHover;
         [Tooltip("Düğmenin yüzü (dolgu + yazılar): üzerinde 2 px kalkar, basılıyken 2 px iner; gölge altında kalır.")]
         [SerializeField] RectTransform actionFace;
-        [SerializeField] Image actionFill, actionShadow, actionKey;
+        [SerializeField] Image actionFill, actionShadow;
         [SerializeField] TMP_Text actionLabel, actionCost, actionNote, shortfall;
         [Tooltip("İğne (ipin fiş ucu): solda sağ üst köşede, sağda sol üst köşede.")]
         [SerializeField] RectTransform pin;
@@ -352,8 +352,6 @@ namespace Corrigible.Desk
             actionCost.gameObject.SetActive(!disabled);
             actionCost.text = d.ActionState == SlipActionState.Shortfall ? "<s>" + d.ActionCost + "</s>" : d.ActionCost ?? "";
             actionNote.gameObject.SetActive(disabled && !string.IsNullOrEmpty(d.ActionNote));
-            // Devre dışında Enter bir şey yapmaz: tuş fişi kalkar, gerekçe sağa sığar
-            actionKey.gameObject.SetActive(!disabled);
             actionNote.text = d.ActionNote ?? "";
             shortfall.gameObject.SetActive(d.ActionState == SlipActionState.Shortfall);
             shortfall.text = d.Shortfall ?? "";

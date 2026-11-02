@@ -15,7 +15,7 @@ namespace Corrigible.Desk
         /// <summary>Girdi kilidi (modal, hikâye, baskın); bağlayıcı kurar.</summary>
         public static Func<bool> Blocked;
 
-        [SerializeField] string title, keyHint, line;
+        [SerializeField] string title, line;
         [Tooltip("Üzerindeyken kalkan parça (yoksa kalkmaz).")]
         [SerializeField] Transform lift;
         [SerializeField] HoverTag hoverTag;
@@ -34,12 +34,11 @@ namespace Corrigible.Desk
         public string TitleOverride { get; set; }
         public string Title => TitleOverride ?? title;
         public string HoverTitle => Corrigible.Core.Loc.T(Title);
-        public string KeyHint => keyHint;
         public string Line => LineOverride ?? (string.IsNullOrEmpty(line) ? null : Corrigible.Core.Loc.T(line));
 
-        public void Configure(string titleSource, string key, string lineSource, Transform liftPart, HoverTag hoverTag)
+        public void Configure(string titleSource, string lineSource, Transform liftPart, HoverTag hoverTag)
         {
-            title = titleSource; keyHint = key; line = lineSource; lift = liftPart; this.hoverTag = hoverTag;
+            title = titleSource; line = lineSource; lift = liftPart; this.hoverTag = hoverTag;
         }
 
         void Awake() { if (lift != null) rest = lift.localPosition; }

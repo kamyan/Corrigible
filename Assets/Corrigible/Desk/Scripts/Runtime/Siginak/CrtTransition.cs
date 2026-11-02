@@ -11,16 +11,17 @@ namespace Corrigible.Desk
     /// Baskın geçişi (K5b notu): tam ekran Overlay — tüp camı (köşe 74/64), HAT AÇILIYOR (CP 700 76, 7 px hayalet),
     /// SİNYAL 10 kutu + yüzde, hedef ve saha masası satırı, arkada baskın kamerasıyla birebir 8 × 8 izometrik ızgara (α .2),
     /// statik (α .55, her kare rastgele ofset), 1,2 s'de yuvarlanan bant, tarama çizgisi, köşe kararması.
-    /// Zaman çizelgesi (emirden itibaren): 0,30 kamera dönüşü (son 0,25 s'de bu katman devralır) · 0,80 tüp 4 px çizgiden
-    /// 0,15 s'de açılır · 0,95 statik + başlık, kutular 0,1 s arayla · 2,00 ızgara parlar, statik %20 · 2,30 sahne açılır,
-    /// katman 0,2 s'de söner. Dönüş tersi (0,6 s). Boşluk diziyi atlar. Shader yok: hepsi UI katmanı.
+    /// Zaman çizelgesi (emirden itibaren): 0,30 kamera yola çıkar — geri çekilir, CRT'ye döner, ekrana yaklaşır
+    /// (SiginakCameraRig.BeginDive, 2,4 s, tek kesintisiz hareket; son 0,25 s'de bu katman devralır) · tüp 4 px çizgiden 0,15 s'de açılır · statik +
+    /// başlık, kutular 0,1 s arayla · ızgara parlar, statik %20 · sahne açılır, katman 0,2 s'de söner. Dönüş tersi (0,6 s;
+    /// kamera aynı yoldan geri çıkar). Boşluk ya da tık dalışı ve diziyi atlar (ekranda yazmaz). Shader yok: hepsi UI katmanı.
     /// </summary>
     public sealed class CrtTransition : MonoBehaviour
     {
         [SerializeField] CanvasGroup group;
         [SerializeField] RectTransform tube;
         [SerializeField] CanvasGroup content;
-        [SerializeField] TMP_Text channel, code, title, ghost, sync, percent, target, cameraLine, skipKey, skipWord, footer;
+        [SerializeField] TMP_Text channel, code, title, ghost, sync, percent, target, cameraLine, footer;
         [SerializeField] Image[] boxes = Array.Empty<Image>();
         [SerializeField] Graphic[] gridLines = Array.Empty<Graphic>();
         [SerializeField] RawImage noise;
@@ -32,11 +33,10 @@ namespace Corrigible.Desk
         public bool Playing { get; private set; }
 
         public void Configure(CanvasGroup root, RectTransform tubeRoot, CanvasGroup contentGroup, TMP_Text channelText, TMP_Text codeText, TMP_Text titleText,
-            TMP_Text ghostText, TMP_Text syncText, TMP_Text percentText, TMP_Text targetText, TMP_Text cameraText, TMP_Text skipKeyText, TMP_Text skipText,
-            TMP_Text footerText, Image[] syncBoxes, Graphic[] grid, RawImage staticLayer, RectTransform roll)
+            TMP_Text ghostText, TMP_Text syncText, TMP_Text percentText, TMP_Text targetText, TMP_Text cameraText, TMP_Text footerText, Image[] syncBoxes, Graphic[] grid, RawImage staticLayer, RectTransform roll)
         {
             group = root; tube = tubeRoot; content = contentGroup; channel = channelText; code = codeText; title = titleText; ghost = ghostText;
-            sync = syncText; percent = percentText; target = targetText; cameraLine = cameraText; skipKey = skipKeyText; skipWord = skipText;
+            sync = syncText; percent = percentText; target = targetText; cameraLine = cameraText;
             footer = footerText; boxes = syncBoxes; gridLines = grid; noise = staticLayer; rollBar = roll;
         }
 
@@ -51,8 +51,6 @@ namespace Corrigible.Desk
             sync.text = d.Sync;
             target.text = d.Target;
             cameraLine.text = d.Camera;
-            skipKey.text = d.SkipKey;
-            skipWord.text = d.SkipWord;
             footer.text = d.Footer;
         }
 
@@ -79,6 +77,17 @@ namespace Corrigible.Desk
         }
 
         void SetTube(float open) => tube.localScale = new Vector3(1, Mathf.Lerp(4f / Mathf.Max(1, tube.rect.height), 1, open), 1);
+
+        /// <summary>Boşluk ya da sol tık bu karede basıldı mı (girişte dalış ve dizi, dönüşte kamera yolu atlanır)?</summary>
+        public static bool SkipPressed() =>
+            Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame || Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+
+        /// <summary>Giriş atlandı mı: basıldıysa işaretlenir; işaretliyken kamera dalışı ve dizi sona atlar (BeginApproach sıfırlar).</summary>
+        public bool PollSkip()
+        {
+            if (SkipPressed()) skip = true;
+            return skip;
+        }
 
         /// <summary>Kamera yaklaşması başlıyor: katman yaklaşmanın son 0,25 s'inde belirir (cam geçilir).</summary>
         public void BeginApproach(float approachSeconds)
@@ -108,7 +117,7 @@ namespace Corrigible.Desk
             float start = Time.unscaledTime;
             while (true)
             {
-                if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame) skip = true;
+                PollSkip();
                 float e = skip ? total : Time.unscaledTime - start;
                 // 0,80: tüp açılır · 0,95: statik + başlık · kutular · 2,00: ızgara parlar, statik %20
                 SetTube(Mathf.Clamp01(e / open));

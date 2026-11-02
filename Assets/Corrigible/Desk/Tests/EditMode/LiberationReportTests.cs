@@ -68,6 +68,21 @@ namespace Corrigible.Desk.Tests
         }
 
         [Test]
+        public void LeftBehind_HasItsOwnRow_ApartFromTheFallen()
+        {
+            var sim = New();
+            Finish(sim, "weu_1", new RaidResult { Success = true, Down = 2, Turns = 8, Hp = { 0, 0, 3 }, Left = { 1 } });
+            var report = Build(sim);
+            var types = sim.S.RaidLog.Last().LiberationReward.Squad.Select(o => Baskin.UnitTypes[o.Type].Name).ToList();
+            var fallen = report.Results.Single(r => r.Label == Loc.F("Düştü: {0}", types[0]));
+            var left = report.Results.Single(r => r.Label == Loc.F("Çıkamadı: {0}", types[1]));
+            Assert.AreEqual(Loc.F("{0} gün", sim.B.liberationInjuryDays), left.Value);
+            Assert.AreEqual(OperationTone.Alert, left.Tone);
+            Assert.AreEqual(fallen.Value, left.Value);
+            Assert.IsTrue(report.Results.Any(r => r.Value == Loc.F("{0}/{1} ayakta", 1, 3)));
+        }
+
+        [Test]
         public void ServerCompletion_UsesRecordedSectorAndCompletionReward()
         {
             var sim = New();

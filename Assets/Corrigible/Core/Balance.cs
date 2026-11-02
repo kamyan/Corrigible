@@ -60,11 +60,17 @@ namespace Corrigible.Core
         public int liberationServerTargetHp = 2;
         public int liberationServerMachines = 0;
         /// <summary>
-        /// İkmal görevinin ek turu: kasa alındıktan sonra malzeme girişe taşınır (dönüş yolu). Harekât ölçümü (2026-10-28, bot,
+        /// İkmal görevinin ek turu: kasa alındıktan sonra bütün ekip malzemeyle girişe döner (kaçış, dönüş yolu). Harekât ölçümü (2026-10-28, bot,
         /// 10'ar harekât): ek tur 2, başarısızlık alarmı 1, bölge güveni 3 ile orta oyuncu 5/10, dikkatli 7/10 kazanır; eski
         /// değerlerle (1, 3, 2) 0/10 ve 2/10 (başarısız baskınların alarmı ve uzayan harekâtın sivil kayıpları güveni bitiriyordu).
         /// </summary>
         public int liberationLootExtraTurns = 2;
+        /// <summary>
+        /// Sunucu görevinin ek turu: hedef kırılınca bütün ekip girişten çıkmalı (kaçış), çıkamayan baskında düşmüş sayılır. Bot
+        /// ölçümünde (2026-11-01, 12 tohum) 1 ek turla sunucu başarısı kaçıştan önceki kadar (T+E+A %91, eskiden %90; zayıf
+        /// ikililer ±3 puan), 2 ek turla 3–13 puan kolay; ek tursuz T+E+A %78.
+        /// </summary>
+        public int liberationServerExtraTurns = 1;
         /// <summary>Sivil sunucunun canı (kampanyada): gelişmiş akılda ekibe ulaşamayan makine sivillere saldırır, ikinci can
         /// oyuncuya bir tur kurtarma fırsatı verir.</summary>
         public int liberationCivilianHp = 2;
@@ -74,6 +80,12 @@ namespace Corrigible.Core
         /// </summary>
         public int liberationDynamiteCharges = 2;
         public int liberationSmokeCharges = 3;
+        /// <summary>
+        /// Madenci ve Sis uzmanı kadroya atölyenin bu seviyesinde katılır (0: baştan). Atölye seviyesi düşmez; katılan ayrılmaz.
+        /// Erken baskınlar T + E + A ile ölçüldü; dinamit ve sis haritanın yeni çözümlerini kademeyle açar.
+        /// </summary>
+        public int liberationMinerWorkshopLevel = 2;
+        public int liberationSmokeWorkshopLevel = 3;
 
         // Kapı: birkaç vardiyada bir biri sığınağın kapısını çalar (ziyaretçiler ve etkileri Core/DoorCards.cs)
         /// <summary>İlk vuruşun günü (eğitimden sonra; senaryolu ve dostça).</summary>

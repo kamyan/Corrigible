@@ -173,18 +173,33 @@ namespace Corrigible.Desk.Bridge
         }
 
         /// <summary>
-        /// Kadro seçici: beş uzman kadro sırasıyla. Teknisyen sabit; yatan uzmanın yerine yedek çıkar (yedek yoksa rol boş kalır).
-        /// <paramref name="fixedSquad"/> eğitim baskınında seçimi kilitler.
+        /// Kadro seçici: beş uzman kadro sırasıyla. Teknisyen sabit; yatan uzmanın yerine yedek çıkar (yedek yoksa rol boş kalır);
+        /// henüz katılmamış uzman kilitli, yanında açılacağı atölye seviyesi (“SV 2”). <paramref name="fixedSquad"/> eğitim baskınında seçimi kilitler.
         /// </summary>
         static void Pick(Simulation sim, TeamState team, IList<string> pick, bool fixedSquad, OperationSlipData d)
         {
             int freeReserves = sim.Shelter?.Reserves.Count(r => r.Down <= 0) ?? 0;
+            string next = null;
+            int nextLevel = int.MaxValue;
             foreach (var role in Simulation.Roles)
             {
                 var m = team.Members.FirstOrDefault(x => x.Role == role);
-                if (m == null) continue;
                 var type = Baskin.UnitTypes[role];
                 var ability = Baskin.Abilities[type.Ability];
+                if (m == null)
+                {
+                    // Atölyenin seviyesiyle katılır: soluk disk, yanında seviye (“SV 2”), tıklanmaz; üzerine gelince ne zaman katılacağı
+                    int need = Simulation.UnlockLevel(role, sim.B);
+                    // Not en önce katılacak uzmanı söyler (seviyeler dengeden; kadro sırasına bakmaz)
+                    if (need < nextLevel) { nextLevel = need; next = Loc.F("{0} atölye seviye {1} olunca kadroya katılır.", type.Name, need); }
+                    d.Pick.Add(new SlipPick
+                    {
+                        Role = role, Letter = type.Short, Hp = Loc.F("SV {0}", need), Locked = true,
+                        HoverTitle = Loc.F("{0} · KİLİTLİ", DeskText.Upper(type.Name)),
+                        HoverLine = Loc.F("Atölye seviye {0} olunca kadroya katılır. {1}: {2}", need, Loc.T(ability.Name), Loc.T(ability.Desc)),
+                    });
+                    continue;
+                }
                 int max = Simulation.MaxHp(role), hp = Math.Max(1, max - m.Wounds);
                 bool down = m.Down > 0;
                 string status = role == "tek" ? Loc.T("SABİT") : down ? (freeReserves > 0 ? Loc.T("YEDEK ÇIKAR") : Loc.F("{0} GÜN", m.Down)) : null;
@@ -200,7 +215,9 @@ namespace Corrigible.Desk.Bridge
             }
             int picked = pick.Count;
             d.PickHead = Loc.T("KADRO");
+            bool choice = team.Members.Count(m => m.Role != "tek") > Simulation.PickCount;
             d.PickNote = fixedSquad ? Loc.T("İlk baskın: kadro sabit.") : picked < Simulation.PickCount ? Loc.F("Teknisyen'in yanına {0} uzman daha seç.", Simulation.PickCount - picked)
+                : !choice && next != null ? next
                 : Loc.T("Teknisyen sabit · ikisini seç; baskına çıkmayanlar dinlenir.");
         }
 
@@ -254,7 +271,7 @@ namespace Corrigible.Desk.Bridge
 
             d.TaskHead = Loc.F("GÖREV · {0:00} {1}", next.Index + 1, DeskText.Upper(next.Name));
             d.Task = next.MissionKind == "loot"
-                ? Loc.T("Teknisyeni ikmal kasasının yanına götür. Q ile yeteneği seç ve kasaya tıklayarak malzemeleri al.")
+                ? Loc.T("Teknisyeni ikmal kasasının yanına götür, yeteneğini seç ve kasaya tıklayarak malzemeleri al.")
                 : Loc.T("Sunucu çekirdeğini yık. Son sektör alınınca bu bölge özgürleşir.");
             d.Cost = Loc.F("{0} fon", N(b.liberationRaidCost));
             bool last = captured == count - 1;

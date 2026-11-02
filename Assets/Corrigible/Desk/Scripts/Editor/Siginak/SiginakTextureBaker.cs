@@ -292,6 +292,83 @@ namespace Corrigible.Desk.EditorTools
             return SiginakSpriteManifest.SpritesDir + "/ui_team_disc.png";
         }
 
+        /// <summary>İstasyon simgeleri: masadaki tuşların başlığı ve üst şeridin tuş kutuları (rayın sırası, en sonda AYARLAR).</summary>
+        public static readonly string[] KeyIconNames = { "tx_key_shelter", "tx_key_missions", "tx_key_door", "tx_key_desk", "tx_key_settings" };
+
+        /// <summary>
+        /// İstasyon tuşlarının simgeleri (tuş adının yerine): 128 px, beyaz çizgi saydam zeminde (renk malzemeden ya da
+        /// RawImage'dan), Revizyon 2 işaretlerinin çizgisi (resmin ~%72'si, kalınlık ~%8, yuvarlak uç). Zemin beyaz ve saydam:
+        /// mip seviyelerinde kenar kararmaz. SIĞINAK yer altındaki odalar, GÖREVLER görev fişi, KAPI çarklı çelik kapı, MASA
+        /// lambalı masa, AYARLAR dişli. Menü: Corrigible › Sığınak › Tuş simgelerini üret.
+        /// </summary>
+        [MenuItem("Corrigible/Sığınak/Tuş simgelerini üret")]
+        public static string KeyIcons()
+        {
+            const float w = 10;
+            var ink = Color.white;
+            var blank = new Color(1, 1, 1, 0);
+
+            var shelter = new Canvas(128, 128, blank);
+            shelter.Stroke(new[] { new Vector2(14, 30), new Vector2(114, 30) }, w, ink);
+            shelter.Stroke(new[] { new Vector2(42, 30), new Vector2(42, 48) }, w, ink);
+            // Toprak katmanı: zeminle odalar arasında taramalı
+            foreach (float x in new[] { 58f, 76f, 94f })
+                shelter.Stroke(new[] { new Vector2(x, 42), new Vector2(x + 8, 36) }, w * 0.5f, ink);
+            Outline(shelter, 26, 48, 102, 108, w, ink);
+            shelter.Stroke(new[] { new Vector2(26, 78), new Vector2(102, 78) }, w, ink);
+            shelter.Stroke(new[] { new Vector2(64, 48), new Vector2(64, 108) }, w, ink);
+
+            var missions = new Canvas(128, 128, blank);
+            Outline(missions, 30, 26, 98, 112, w, ink);
+            missions.Rect(48, 16, 32, 20, ink, 1);
+            foreach (float y in new[] { 56f, 74f, 92f }) missions.Stroke(new[] { new Vector2(46, y), new Vector2(82, y) }, w * 0.8f, ink);
+
+            var door = new Canvas(128, 128, blank);
+            Outline(door, 30, 14, 98, 114, w, ink);
+            Ring(door, 64, 62, 17, w * 0.8f, ink);
+            door.Stroke(new[] { new Vector2(52, 50), new Vector2(76, 74) }, w * 0.7f, ink);
+            door.Stroke(new[] { new Vector2(76, 50), new Vector2(52, 74) }, w * 0.7f, ink);
+
+            var desk = new Canvas(128, 128, blank);
+            desk.Stroke(new[] { new Vector2(14, 72), new Vector2(114, 72) }, w, ink);
+            desk.Stroke(new[] { new Vector2(26, 72), new Vector2(26, 112) }, w, ink);
+            desk.Stroke(new[] { new Vector2(102, 72), new Vector2(102, 112) }, w, ink);
+            desk.Stroke(new[] { new Vector2(40, 72), new Vector2(46, 36), new Vector2(70, 26) }, w * 0.8f, ink);
+            desk.Stroke(new[] { new Vector2(64, 22), new Vector2(84, 46) }, w * 1.3f, ink);
+            desk.Rect(30, 64, 22, 8, ink, 1);
+
+            var settings = new Canvas(128, 128, blank);
+            Ring(settings, 64, 64, 30, w, ink);
+            for (int i = 0; i < 8; i++)
+            {
+                float a = i * Mathf.PI / 4;
+                var dir = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
+                settings.Stroke(new[] { new Vector2(64, 64) + dir * 36, new Vector2(64, 64) + dir * 46 }, w * 1.2f, ink);
+            }
+            Ring(settings, 64, 64, 10, w * 0.8f, ink);
+
+            var all = new[] { shelter, missions, door, desk, settings };
+            for (int i = 0; i < all.Length; i++) Save(KeyIconNames[i], all[i]);
+            AssetDatabase.Refresh();
+            foreach (var name in KeyIconNames)
+                AssetDatabase.ImportAsset(SiginakSpriteManifest.TexturesDir + "/" + name + ".png", ImportAssetOptions.ForceUpdate);
+            return KeyIconNames.Length + " simge üretildi";
+        }
+
+        static void Outline(Canvas c, float x0, float y0, float x1, float y1, float width, Color ink) =>
+            c.Stroke(new[] { new Vector2(x0, y0), new Vector2(x1, y0), new Vector2(x1, y1), new Vector2(x0, y1), new Vector2(x0, y0) }, width, ink);
+
+        static void Ring(Canvas c, float cx, float cy, float r, float width, Color ink)
+        {
+            var points = new Vector2[49];
+            for (int i = 0; i < points.Length; i++)
+            {
+                float a = i * 2 * Mathf.PI / (points.Length - 1);
+                points[i] = new Vector2(cx + Mathf.Cos(a) * r, cy + Mathf.Sin(a) * r);
+            }
+            c.Stroke(points, width, ink);
+        }
+
         static void Save(string name, Canvas c) => Save(name, c, SiginakSpriteManifest.TexturesDir);
 
         static void Save(string name, Canvas c, string dir)

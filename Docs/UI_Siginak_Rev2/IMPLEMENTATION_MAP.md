@@ -564,6 +564,16 @@ S6a–c, S7a–d, S8a–b; TR ve EN (S4d siluet kataloğu oyunda bir durum deği
 
 ## CHANGELOG
 
+- **2026-11-01 · Anahtar rayı ve tuş ipuçları (S1, S2, S4, S5):** KOMUTA ve KILAVUZ tuşları kalktı (rayda ve kenar
+  satırında); ray 4 tuş (SIĞINAK, GÖREVLER, KAPI, MASA; `StationKeyRail` 0–3), taban 0,94 m, MASA bir aralık (0,226) sola.
+  Tuş başlığında rakam/“Home” yerine simge (`tx_key_*`, `SiginakTextureBaker.KeyIcons`; URP Lit saydam dörtgen, 30 mm,
+  `counter.digit`), kenar satırının tuş kutularında aynı simgeler (AYARLAR dişli). DeskGame'de klavye ipucu yok: üzerine
+  gelme etiketinin tuş fişi, ayarlar plakasının Esc/Boşluk'u, kâğıtlardaki Enter/Esc/Tab fişleri, kapı seçeneklerinin
+  numaraları, CRT'nin “Boşluk atla”sı, eğitim notunun tuş fişleri kalktı (sahnede tek seferlik eval'le; `SettingsCard.prefab`
+  iki EscKey). Düğme yazıları fişin yerine göre: emir belgesi ve raporlarda ortada, geniş düğmelerde sol iç pay 18. Kapı
+  kâğıdının alt satırı tıklanır (kapatma). Referanstaki tuş başlıkları (tex2.js `keyCaps`) bilinçli olarak simgeye döndü.
+  Ayrıntı: `Docs/DURUM.md` → "Uzmanlar atölyeyle açılır".
+
 - **2026-11-01 · Haritanın kenarı (S2):** bölge çokgenleri kâğıdın dışına 12 px'e kadar taşıyordu (Grönland, Rusya'nın kuzeyi,
   Çukotka, Yeni Zelanda, Alaska). `SadeMapCanvas`'a `RectMask2D` (tek seferlik eval, sahnede); referanstaki gibi harita
   kâğıdın kenarında kesilir. Test `DeskGameScene_MapIsClippedToPaper`.
@@ -985,6 +995,7 @@ S6a–c, S7a–d, S8a–b; TR ve EN (S4d siluet kataloğu oyunda bir durum deği
     raporunun iğnelediği fişler). Yazının puntosu korundu (küçültülünce punto taraması 11 px ölçtü; sınır 14). Modül aralığı
     0,26 m kaldı (Rev2'nin 0,257'si; fark ~3 mm).
   - **Anahtar rayı:** 1,40 m, 6 tuş (aralık 0,226, plaka 0,128 / Home 0,10, plaka yazısı sığmazsa %70'e kadar küçülür).
+    (2026-11-01: 4 tuş, 0,94 m, simgeli; KOMUTA ve KILAVUZ kalktı, bkz. CHANGELOG.)
     `Key 4` · KAPI (`StationKeyRail.Door = 3`; Guide 4, Desk 5). `StationKey` dikkat durumu: `jewelDoor.mat` (emissive
     ×3,4/2,4) 1 Hz yanıp söner, amber halka ve masada sarı el yazısı fiş “kapıda biri bekliyor” (Kalam), dikkat başlarken
     ve kapıdan masaya dönünce fiş 0,2 s sallanır. `SiginakDesk.DoorKey`: ziyaretçi beklerken dikkat + etiket “KAPI ·

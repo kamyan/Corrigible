@@ -36,10 +36,10 @@ namespace Corrigible.Desk.Tests
             Assert.IsTrue(d.HasSave);
             Assert.AreEqual(Loc.F("V.{0:000} · özgür {1}/{2}", 14, 1, 12), d.TabSummary);
             d = BriefingBuilder.Build(false, save, true);
-            Assert.AreEqual(Loc.T("BAŞLA · ONAY"), d.Action, "kayıt varken ikinci Enter onaydır");
+            Assert.AreEqual(Loc.T("BAŞLA · ONAY"), d.Action, "kayıt varken ikinci basış onaydır");
             var (status, message) = BriefingBuilder.Warning(save);
             Assert.AreEqual(Loc.T("KAYIT VAR"), status);
-            Assert.AreEqual(Loc.F("V.{0:000} kaydının üstüne yazılır · onay: Enter", 14), message);
+            Assert.AreEqual(Loc.F("V.{0:000} kaydının üstüne yazılır · onay için yeniden bas", 14), message);
 
             d = BriefingBuilder.Build(true, save, false);
             Assert.IsTrue(d.Reading);

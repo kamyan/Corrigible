@@ -23,7 +23,8 @@ namespace Corrigible.Tests
         [Test, Explicit]
         public void Scenario_MatchesCampaignRaidOrder_AndBotIsDeterministic()
         {
-            var balance = new Balance { startFon = 100 };
+            // Beş uzman baştan: ölçüm kadroları karşılaştırır, atölye kilidini değil
+            var balance = new Balance { startFon = 100, liberationMinerWorkshopLevel = 0, liberationSmokeWorkshopLevel = 0 };
             var sim = Simulation.NewGame(4242, balance);
             foreach (var (sector, pick) in new[] { ("weu_1", "maden,duman"), ("weu_2", "emp,ana"), ("weu_3", "ana,maden") })
             {

@@ -4,9 +4,10 @@ using UnityEngine.InputSystem;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Masa klavye haritası: üstteki kâğıt tuşları alır (ayarlar: Esc; oyun sonu: Enter), yoksa oda kısayolları (1 ve 3 görev
-    /// fişi, H emir belgesi, Esc). Operasyon raporu ve vardiya raporu kendi tuşlarını okur (masa o sırada kilitli). Kamera
-    /// pozlarını <see cref="SiginakCameraRig"/> kendisi okur. <c>Keyboard.current</c> okunur; her karede bellek ayırmaz.
+    /// Masa klavye haritası: üstteki kâğıt tuşları alır (ayarlar: Esc; oyun sonu: Enter), yoksa oda kısayolları (3 görev fişi,
+    /// Esc). Kısayollar ekranda yazmaz; her biri bir tıklamanın karşılığıdır. Operasyon raporu ve vardiya raporu kendi tuşlarını
+    /// okur (masa o sırada kilitli). Kamera pozlarını <see cref="SiginakCameraRig"/> kendisi okur. <c>Keyboard.current</c>
+    /// okunur; her karede bellek ayırmaz.
     /// </summary>
     public sealed class DeskInput : MonoBehaviour
     {
@@ -25,9 +26,7 @@ namespace Corrigible.Desk
 
             var surface = presenter.Surface;
             if (surface == null || surface.InputBlocked) return;
-            if (kb.digit1Key.wasPressedThisFrame || kb.numpad1Key.wasPressedThisFrame || kb.digit3Key.wasPressedThisFrame || kb.numpad3Key.wasPressedThisFrame)
-                surface.ShowPlanning();
-            if (kb.hKey.wasPressedThisFrame) surface.OpenGuide();
+            if (kb.digit3Key.wasPressedThisFrame || kb.numpad3Key.wasPressedThisFrame) surface.ShowPlanning();
             if (kb.escapeKey.wasPressedThisFrame) surface.Escape();
         }
     }

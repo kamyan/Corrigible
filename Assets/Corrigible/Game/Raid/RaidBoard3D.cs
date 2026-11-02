@@ -70,6 +70,16 @@ namespace Corrigible.Game.Raid
         [SerializeField] Color highlighterColor = new Color(0.961f, 0.863f, 0.388f, 0.95f);
         [Tooltip("Düşman turunda bir adımın süresi (saniye).")]
         [SerializeField, Min(0.05f)] float stepTime = 0.32f;
+        [Header("Makinelerin yer değiştirmesi (tur sonu)")]
+        [Tooltip("Robot yeni yerine yürürken kare başına süre (saniye).")]
+        [SerializeField, Min(0.05f)] float machineStepSeconds = 0.16f;
+        [Tooltip("İki robotun yürüyüşü arasındaki duraklama (saniye).")]
+        [SerializeField, Min(0)] float machinePauseSeconds = 0.08f;
+        [Tooltip("Bütün yürüyüşlerin üst sınırı (saniye); aşılırsa adımlar kısalır, en az machineMinStepSeconds.")]
+        [SerializeField, Min(0.5f)] float machineMovesMaxSeconds = 3f;
+        [SerializeField, Min(0.03f)] float machineMinStepSeconds = 0.1f;
+        [Tooltip("Her karede robotun küçük sıçraması (dünya birimi).")]
+        [SerializeField, Min(0)] float machineStepHop = 0.1f;
         [Tooltip("Pafta kenarındaki kare harf ve sayılarının boyu.")]
         [SerializeField, Min(0.1f)] float coordinateSize = 2.2f;
 
@@ -401,8 +411,9 @@ namespace Corrigible.Game.Raid
             var alive = new HashSet<int>();
             foreach (var u in B.Units)
             {
-                // Düşen ekip kartları yerinde kalır; Core.UnitAt onları yürüyüş ve atıştan zaten çıkarır.
-                if (u.Dead && u.Side != 'p') continue;
+                // Düşen ekip kartları yerinde kalır; Core.UnitAt onları yürüyüş ve atıştan zaten çıkarır. Kaçışta tahliye
+                // edilen uzman tahtadan kalkar.
+                if (u.Out || (u.Dead && u.Side != 'p')) continue;
                 alive.Add(u.Id);
                 if (!units.TryGetValue(u.Id, out var p) || p == null)
                 {
@@ -445,7 +456,7 @@ namespace Corrigible.Game.Raid
                 {
                     var state = PieceLabel(stateLabels, u.Id, "Unit state", 14);
                     state.SetAnchor(hpTag.transform.position - cam.transform.up * 0.30f);
-                    state.Show(u.Dead ? Loc.T("DÜŞTÜ") : u.Locked ? Loc.T("KİLİTLİ") : u.Id == m.Carrier ? Loc.T("YÜKLÜ") : Loc.T("TUR BİTTİ"), hpInk, hpInk);
+                    state.Show(u.Left ? Loc.T("ÇIKAMADI") : u.Dead ? Loc.T("DÜŞTÜ") : u.Locked ? Loc.T("KİLİTLİ") : u.Id == m.Carrier ? Loc.T("YÜKLÜ") : Loc.T("TUR BİTTİ"), hpInk, hpInk);
                     labelGroups.Add(new[] { hpTag, state });
                 }
                 else labelGroups.Add(new[] { hpTag });
@@ -505,7 +516,7 @@ namespace Corrigible.Game.Raid
                 exitFrames[k].gameObject.SetActive(m.Exits.Contains(k));
                 if (spawnMarks[k] != null) spawnMarks[k].SetActive(m.Spawns.Contains(k));
             }
-            var selected = B.Units.FirstOrDefault(u => u.Id == m.Selected && !u.Dead);
+            var selected = B.Units.FirstOrDefault(u => u.Id == m.Selected && Baskin.OnBoard(u));
             selectionFrame.gameObject.SetActive(selected != null);
             selectionFill.enabled = selected != null;
             if (selected != null)
@@ -893,6 +904,15 @@ namespace Corrigible.Game.Raid
             Busy = false;
         }
 
+        /// <summary>Kaçışta çıkışa yürüyen uzman tahtayı terk eder (yürüyüşten sonra; Sync onu kaldırır).</summary>
+        public IEnumerator AnimateLeave(int unitId)
+        {
+            if (!units.TryGetValue(unitId, out var p) || p == null) yield break;
+            Busy = true;
+            yield return Leave(p, p.X, p.Y);
+            Busy = false;
+        }
+
         /// <summary>Bir eylemin ya da düşman turunun efektlerini sırayla oynatır. Görsel, çağrıdan önceki durumdadır; sonra Sync gerekir.</summary>
         public IEnumerator Animate(Baskin.BState after, List<Baskin.Fx> fx, bool enemyTurn)
         {
@@ -969,6 +989,10 @@ namespace Corrigible.Game.Raid
                         Sfx.Play(Cue.RaidRepair, 1, Pan(W(f.X, f.Y)));
                         StartCoroutine(Popup(W(f.X, f.Y), Loc.T("+1"), lib.good, 0));
                         yield return Wait(0.6f);
+                        break;
+                    case "evac":
+                        // Kaçış: uzman çıkıştan tahtayı terk eder (itilen ya da kaçış başlarken çıkışta duran)
+                        if (units.TryGetValue(f.Unit, out var leaving)) yield return Leave(leaving, f.X, f.Y);
                         break;
                     case "loot":
                         if (objects.TryGetValue(Key(f.X, f.Y), out var cargo)) cargo.Flash(lib.good);
@@ -1055,6 +1079,122 @@ namespace Corrigible.Game.Raid
             if (version != buildVersion) yield break;
             activeIntentHighlight.gameObject.SetActive(false);
             Busy = false;
+        }
+
+        /// <summary>
+        /// Makine evresinden sonra robotlar yeni yerlerine kare kare yürür. Core yeni planı kurarken robotu doğrudan taşır
+        /// (yol yok); yol burada Core.Reachable'ın kuralıyla bulunur: duvar ve nesne kapalı, ekip üyesi geçilmez, robot geçilir.
+        /// Robotlar yeni sıra numaralarıyla tek tek, aralarında kısa duraklamayla yürür. Uygulanan niyetlerin okları ve
+        /// bayrakları yürüyüşten önce kalkar; can etiketi robotla gider. Sonra Sync her şeyi yerine oturtur. Hızlı kipte
+        /// süreler makine evresi gibi kısalır. Yalnız sunum: durum okunur, yazılmaz.
+        /// </summary>
+        public IEnumerator AnimateMachineMoves(Baskin.BState after)
+        {
+            var walkers = MachineWalks(after);
+            if (walkers.Count == 0) yield break;
+            int version = buildVersion;
+            Busy = true;
+            HideExecutedIntents();
+            // Süre üst sınırı: çok robot uzun yürüyorsa adımlar kısalır (en az machineMinStepSeconds)
+            float speed = FastMachines ? 3.125f : 1;
+            float step = machineStepSeconds / speed, pause = machinePauseSeconds / speed;
+            int steps = walkers.Sum(w => w.path.Count);
+            float total = steps * step + (walkers.Count - 1) * pause, limit = machineMovesMaxSeconds / speed;
+            if (total > limit)
+            {
+                float k = limit / total;
+                step = Mathf.Max(machineMinStepSeconds / speed, step * k);
+                pause *= k;
+            }
+            for (int i = 0; i < walkers.Count; i++)
+            {
+                if (i > 0 && pause > 0) yield return new WaitForSeconds(pause);
+                if (version != buildVersion) yield break;
+                var (piece, id, path) = walkers[i];
+                if (piece == null) continue;
+                // Can ve UYANDI etiketi robotla kayar (yerleşim ofsetleri korunur)
+                var tags = new List<(Transform tag, Vector3 offset)>();
+                foreach (var pool in new[] { hpLabels, stateLabels })
+                    if (pool.TryGetValue(id, out var tag) && tag != null && tag.gameObject.activeSelf)
+                        tags.Add((tag.transform, tag.transform.position - piece.transform.position));
+                foreach (var tile in path)
+                {
+                    var a = piece.transform.position; var b = W(tile.x, tile.y);
+                    Sfx.Play(Cue.RaidStep, 0.6f, Pan(b));
+                    for (float t = 0; t < 1; t += Time.deltaTime / step)
+                    {
+                        if (version != buildVersion || piece == null) yield break;
+                        var ground = Vector3.Lerp(a, b, Mathf.SmoothStep(0, 1, t));
+                        piece.transform.position = ground + Vector3.up * Mathf.Sin(t * Mathf.PI) * machineStepHop;
+                        foreach (var (tag, offset) in tags) tag.position = ground + offset;
+                        yield return null;
+                    }
+                    if (version != buildVersion || piece == null) yield break;
+                    piece.transform.position = b;
+                    foreach (var (tag, offset) in tags) tag.position = b + offset;
+                }
+                piece.X = path[path.Count - 1].x; piece.Y = path[path.Count - 1].y;
+            }
+            Busy = false;
+        }
+
+        /// <summary>Tahtada gösterildiği kareden yeni karesine yürüyecek robot var mı (yeni oluşanlar Sync'te yerinde belirir)?</summary>
+        public bool MachinesWillMove(Baskin.BState after) => MachineWalks(after).Count > 0;
+
+        List<(RaidPiece piece, int id, List<(int x, int y)> path)> MachineWalks(Baskin.BState after)
+        {
+            var walkers = new List<(RaidPiece piece, int id, List<(int x, int y)> path)>();
+            foreach (var u in after.Units.Where(u => u.Side == 'e' && !u.Dead).OrderBy(u => u.Order))
+            {
+                if (!units.TryGetValue(u.Id, out var p) || p == null || !p.gameObject.activeSelf) continue;
+                var from = TileOf(p.transform.position);
+                if (from.x == u.X && from.y == u.Y) continue;
+                walkers.Add((p, u.Id, MachinePath(after, from, (u.X, u.Y))));
+            }
+            return walkers;
+        }
+
+        static (int x, int y) TileOf(Vector3 world) => (Mathf.RoundToInt(world.x + 3.5f), Mathf.RoundToInt(3.5f - world.z));
+
+        /// <summary>Robotun en kısa yürüyüş yolu (başlangıç hariç, hedef dahil); yol bulunamazsa doğrudan hedef.</summary>
+        public static List<(int x, int y)> MachinePath(Baskin.BState B, (int x, int y) from, (int x, int y) to)
+        {
+            int start = Key(from.x, from.y), goal = Key(to.x, to.y);
+            var previous = new Dictionary<int, int> { [start] = -1 };
+            var queue = new Queue<int>();
+            queue.Enqueue(start);
+            while (queue.Count > 0 && !previous.ContainsKey(goal))
+            {
+                int k = queue.Dequeue();
+                foreach (var d in Baskin.Dirs)
+                {
+                    int nx = k % Baskin.N + d[0], ny = k / Baskin.N + d[1];
+                    if (nx < 0 || ny < 0 || nx >= Baskin.N || ny >= Baskin.N || previous.ContainsKey(Key(nx, ny))) continue;
+                    var cell = Baskin.CellAt(B, nx, ny);
+                    if (cell.T == "wall" || cell.O != null) continue;
+                    var other = Baskin.UnitAt(B, nx, ny);
+                    if (other != null && other.Side == 'p') continue;
+                    previous[Key(nx, ny)] = k;
+                    queue.Enqueue(Key(nx, ny));
+                }
+            }
+            if (!previous.ContainsKey(goal)) return new List<(int x, int y)> { to };
+            var path = new List<(int x, int y)>();
+            for (int k = goal; k != start; k = previous[k]) path.Add((k % Baskin.N, k / Baskin.N));
+            path.Reverse();
+            return path;
+        }
+
+        /// <summary>Uygulanan (ya da iptal edilen) niyetlerin okları, gölgeleri, rozetleri, bayrakları ve iğneleri.</summary>
+        void HideExecutedIntents()
+        {
+            activeIntentHighlight.gameObject.SetActive(false);
+            foreach (var arrow in arrows) arrow.gameObject.SetActive(false);
+            foreach (var arrow in arrowShadows) arrow.gameObject.SetActive(false);
+            foreach (var arrow in extraArrows) arrow.gameObject.SetActive(false);
+            foreach (var badge in badgeLabels) badge.gameObject.SetActive(false);
+            foreach (var label in orderLabels.Values) label.gameObject.SetActive(false);
+            foreach (var pin in flagPins.Values) pin.SetActive(false);
         }
 
         void ShowExecuting(int id, int x, int y)
@@ -1158,6 +1298,27 @@ namespace Corrigible.Game.Raid
                 yield return null;
             }
             if (version == buildVersion && p != null) p.gameObject.SetActive(false);
+        }
+
+        /// <summary>Tahliye: uzman en yakın tahta kenarına doğru kayarak küçülür ve kaybolur; üstünde yeşil TAHLİYE.</summary>
+        IEnumerator Leave(RaidPiece p, int x, int y)
+        {
+            int version = buildVersion;
+            int edge = Mathf.Min(Mathf.Min(x, Baskin.N - 1 - x), Mathf.Min(y, Baskin.N - 1 - y));
+            var away = x == edge ? new Vector3(-1, 0, 0) : Baskin.N - 1 - x == edge ? new Vector3(1, 0, 0) : y == edge ? new Vector3(0, 0, 1) : new Vector3(0, 0, -1);
+            Sfx.Play(Cue.RaidStep, 1, Pan(p.transform.position));
+            StartCoroutine(Popup(W(x, y), Loc.T("TAHLİYE"), lib.good, 0));
+            var a = p.transform.position; var s = p.Body.localScale;
+            for (float t = 0; t < 1; t += Time.deltaTime / (stepTime * 1.4f))
+            {
+                if (version != buildVersion || p == null) yield break;
+                p.transform.position = a + away * (Ease(t) * 0.7f) + Vector3.up * Mathf.Sin(t * Mathf.PI) * 0.2f;
+                p.Body.localScale = s * (1 - t * 0.6f);
+                yield return null;
+            }
+            if (version != buildVersion || p == null) yield break;
+            p.Body.localScale = s;
+            p.gameObject.SetActive(false);
         }
 
         IEnumerator Fall(RaidPiece p)

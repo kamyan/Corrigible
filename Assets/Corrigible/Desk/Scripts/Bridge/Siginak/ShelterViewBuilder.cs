@@ -157,12 +157,23 @@ namespace Corrigible.Desk.Bridge
                     ShelterLogic.Capacity(s, b), ShelterLogic.ReserveCapacity(s, b), N(b.shelterSuppliesPerWorker, 1)),
                 ShelterLogic.Radio => Loc.F("Görevli başına vardiya alarmı {0} yavaşlar; şimdi vardiyada +{1}.",
                     Rate(b.shelterRadioAlarmPerWorker), Rate(sim.AlarmPerShift)),
-                ShelterLogic.Workshop => Loc.F("Görevli başına günde {0} zırh plakası döker (plaka {1} malzeme); depo {2} plaka.",
-                    Rate(b.shelterPlatesPerWorker), N(b.shelterPlateMaterials), ShelterLogic.PlateCapacity(s, b)),
+                ShelterLogic.Workshop => NextSpecialist(sim) is string next
+                    ? Loc.F("Görevli başına günde {0} zırh plakası döker (plaka {1} malzeme); depo {2} plaka. {3}",
+                        Rate(b.shelterPlatesPerWorker), N(b.shelterPlateMaterials), ShelterLogic.PlateCapacity(s, b), next)
+                    : Loc.F("Görevli başına günde {0} zırh plakası döker (plaka {1} malzeme); depo {2} plaka.",
+                        Rate(b.shelterPlatesPerWorker), N(b.shelterPlateMaterials), ShelterLogic.PlateCapacity(s, b)),
                 ShelterLogic.Infirmary => Loc.F("Görevli başına günde {0} yara sarar; en az {1} görevliyle yaralı uzman {2} gün erken kalkar.",
                     Rate(b.shelterHealPerWorker), b.shelterHealingWorkers, b.shelterHealingDays),
                 _ => ShelterLogic.RoomDescription(id),
             };
+        }
+
+        /// <summary>Atölyenin açacağı sıradaki uzman: “Seviye 2: Madenci kadroya katılır.”; hepsi katıldıysa null.</summary>
+        public static string NextSpecialist(Simulation sim)
+        {
+            var team = sim.S.Teams.FirstOrDefault();
+            string role = Simulation.Roles.Where(r => !Simulation.HasRole(team, r)).OrderBy(r => Simulation.UnlockLevel(r, sim.B)).FirstOrDefault();
+            return role == null ? null : Loc.F("Seviye {0}: {1} kadroya katılır.", Simulation.UnlockLevel(role, sim.B), Baskin.UnitTypes[role].Name);
         }
 
         /// <summary>Sonuç notu (sarı yapışkan): odalar arası etki ve öneri; sorun yoksa null.</summary>
@@ -188,14 +199,26 @@ namespace Corrigible.Desk.Bridge
             return null;
         }
 
-        /// <summary>Uzmanların diskleri (S3): rol harfi + can; yatan uzmanın diski soluk, yanında kalkmasına kalan gün.</summary>
+        /// <summary>
+        /// Uzmanların diskleri (S3), kadro sırasıyla: rol harfi + can; yatan uzmanın diski soluk, yanında kalkmasına kalan gün;
+        /// henüz katılmamış uzmanın diski soluk, yanında açılacağı atölye seviyesi (“sv 2”; ayrıntısı atölyenin açıklamasında).
+        /// </summary>
         public static List<SlipMember> SquadDiscs(Simulation sim)
         {
             var list = new List<SlipMember>();
             var team = sim.S.Teams.FirstOrDefault();
             if (team == null) return list;
-            foreach (var m in team.Members)
+            foreach (var role in Simulation.Roles)
             {
+                var m = team.Members.FirstOrDefault(x => x.Role == role);
+                if (m == null)
+                {
+                    list.Add(new SlipMember
+                    {
+                        Letter = Baskin.UnitTypes[role].Short, Hp = Loc.F("sv {0}", Simulation.UnlockLevel(role, sim.B)), Missing = true,
+                    });
+                    continue;
+                }
                 int max = Simulation.MaxHp(m.Role);
                 list.Add(new SlipMember
                 {

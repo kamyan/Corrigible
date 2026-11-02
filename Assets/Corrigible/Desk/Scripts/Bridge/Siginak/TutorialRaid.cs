@@ -18,7 +18,8 @@ namespace Corrigible.Desk.Bridge
     /// <summary>
     /// İlk baskının eğitim senaryosu: Batı Avrupa'nın ilk sektörü sabit bir tohumla kurulur ve oyuncu bilinen bir çözümü adım
     /// adım oynar (beş tur: EMP itişiyle zırh kırmak, kancayla çekmek, makinelerin sırasını okumak, atıştan kaçmak, kasayı
-    /// almak, EMP ile dönüş yolunu açıp malzemeyi girişe taşımak). Makineler temel akılla oynar (<c>RaidParams.Tactics</c> 0).
+    /// almak, EMP ile dönüş yolunu açmak ve kaçış: bütün ekip aynı çıkıştan tek tek çıkar). Makineler temel akılla oynar
+    /// (<c>RaidParams.Tactics</c> 0).
     /// Taktik motor aynı parametre ve hamlelerle aynı savaşı verir; simülasyon yalnız sonucu görür, kayıt bozulmaz.
     /// </summary>
     public static class TutorialRaid
@@ -32,7 +33,8 @@ namespace Corrigible.Desk.Bridge
             "mT.4.3", "mE.0.5", "aE.5.5", "e",
             "mT.6.4", "aT.6.3", "aE.3.5", "e",
             "mT.3.4", "e",
-            "mT.0.4",
+            // Kaçış: Teknisyen çıkınca (0,4) boşalır; EMP uzmanı ve Analist de oradan çıkar
+            "mT.0.4", "mE.0.4", "mA.0.4",
         };
 
         /// <summary>Arayüz adımlarının dersleri (adım sırası: <see cref="Steps"/>).</summary>
@@ -49,11 +51,13 @@ namespace Corrigible.Desk.Bridge
             [15] = Loc.N("Dronun altındaki duvara at: dron yukarı itilir, duvara çarpıp 1 hasar alır."),
             [16] = Loc.N("Analist bakım robotunun hedefinde, ama 1 numaralı dron önce ateş edip bakım robotunu düşürür: sıra önemli. Analist bu tur boşta kalır."),
             [18] = Loc.N("Dron Teknisyenin sütununa ateş edecek: kasanın yanındaki kareye geç."),
-            [20] = Loc.N("Kasaya tıkla: Teknisyen malzemeleri alır. Baskın bitmedi: malzemeyi yeşil kesik çerçeveli giriş karelerinden birine geri taşı."),
+            [20] = Loc.N("Kasaya tıkla: Teknisyen malzemeleri alır ve kaçış başlar. Bütün ekip yeşil kesik çerçeveli giriş karelerinden çıkmalı; süre dolarken tahtada kalan uzman baskında düşmüş sayılır."),
             [21] = Loc.N("Dron dönüş yolunda. Yolu EMP uzmanı açacak."),
             [23] = Loc.N("Analistin altındaki kareye at: hasarlı dron duvara itilip düşer, Analist yukarı itilir ve Teknisyen'e yol açılır. EMP dostları da iter."),
             [26] = Loc.N("Teknisyen kablo kanalının üstünden yürüyebilir; kanal yalnız üstüne itilene hasar verir."),
-            [29] = Loc.N("Yeni dron Teknisyen'in satırına nişan aldı: çıkışa yürü. Taşıyıcı çıkışa varınca ekip tahliye edilir, baskın kazanılır."),
+            [29] = Loc.N("Yeni dron Teknisyen'in sütununa nişan aldı: çıkışa yürü. Çıkışa varan uzman tahtadan çıkar; malzeme Teknisyen'le dışarıda."),
+            [31] = Loc.N("EMP uzmanı da çıkmalı: Teknisyen'in boşalttığı kareye yürü."),
+            [33] = Loc.N("Son kişi Analist: çıkışa yürü. Bütün ekip dışarıda, baskın kazanılır."),
         };
 
         /// <summary>Çözümün arayüz adımları: her hamle gerekirse uzmanı seçer; yetenek önce Q ile seçilir; tur bitince seçim kalkar.</summary>
@@ -140,7 +144,7 @@ namespace Corrigible.Desk.Bridge
             var s = Current;
             if (s == null || s.Kind == RaidGuideStep.End) return null;
             if (s.Kind == RaidGuideStep.Move || s.Kind == RaidGuideStep.Use) return (s.X, s.Y);
-            var u = state.Units.FirstOrDefault(v => v.Side == 'p' && !v.Dead && Baskin.UnitTypes[v.Type].Short[0] == s.Letter);
+            var u = state.Units.FirstOrDefault(v => v.Side == 'p' && Baskin.OnBoard(v) && Baskin.UnitTypes[v.Type].Short[0] == s.Letter);
             return u == null ? ((int, int)?)null : (u.X, u.Y);
         }
 
@@ -149,7 +153,7 @@ namespace Corrigible.Desk.Bridge
         {
             var s = Current;
             if (s == null || s.Kind == RaidGuideStep.End) return true;
-            var u = state.Units.FirstOrDefault(v => v.Side == 'p' && !v.Dead && Baskin.UnitTypes[v.Type].Short[0] == s.Letter);
+            var u = state.Units.FirstOrDefault(v => v.Side == 'p' && Baskin.OnBoard(v) && Baskin.UnitTypes[v.Type].Short[0] == s.Letter);
             if (u == null) return false;
             if (s.Kind == RaidGuideStep.Move) return Baskin.CanMove(state, u) && Baskin.Reachable(state, u).Any(p => p.X == s.X && p.Y == s.Y);
             if (s.Kind == RaidGuideStep.Use || s.Kind == RaidGuideStep.Arm)

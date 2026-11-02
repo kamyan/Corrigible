@@ -1,6 +1,6 @@
 # Durum, kararlar ve açık işler
 
-_Son güncelleme: 2026-11-01 (plaka rafı, haritanın kenarı)_
+_Son güncelleme: 2026-11-01 (baskına girerken kadro raporu)_
 
 ## Nerede kaldık
 
@@ -12,20 +12,172 @@ baskın. Sığınak baskının hazırlık yeri: uzmanların yarası kalır, revi
 yedek uzman tutar, telsiz alarmı yavaşlatır; oda seviyeleri özgür bölgeyle açılır. Zorluk özgür bölge sayısıyla dört
 kademede artar; her bölgenin kendi tahta özelliği ve imza makinesi var (6 yeni makine). Birkaç vardiyada bir sığınağın
 kapısı çalar: 23 ziyaretçi, zincirler ve kapıda ölüm (Vuruldu, Sızma). Türkçe ve İngilizce. Kayıt ve devam
-(`liberation_savegame.json`, biçim 12) çalışır. Kadro beş uzman (Teknisyen, EMP uzmanı, Analist, Madenci, Sis uzmanı);
-her baskına Teknisyen ve görev fişinde seçilen iki uzman çıkar, çıkmayanlar dinlenir. Yeni harekâtta rehberli eğitim (analistin notları) ilk vardiyayı yönlendirir;
+(`liberation_savegame.json`, biçim 13) çalışır. Kadro beş uzman (Teknisyen, EMP uzmanı, Analist baştan; Madenci atölye
+seviye 2'de, Sis uzmanı 3'te katılır); her baskına Teknisyen ve görev fişinde seçilen iki uzman çıkar, çıkmayanlar dinlenir.
+Masa fareyle oynanır: anahtar rayında dört istasyon simgeyle (SIĞINAK, GÖREVLER, KAPI, MASA), odada klavye ipucu yok. Yeni harekâtta rehberli eğitim (analistin notları) ilk vardiyayı yönlendirir;
 ilk baskın adım adım oynanan bir senaryodur. Her harekâtın kendi 30 haritalık taktik harita havuzu var (altı tür, torba: tekrar etmez);
-ikmal görevinde malzeme girişe geri taşınır; kampanyada makineler gelişmiş akılla oynar ve ekibe ulaşamayınca sivillere
+görev tamamlanınca (kasa açıldı, hedef kırıldı) kaçış başlar: bütün ekip giriş karelerinden çıkmalı, süre dolarken tahtada
+kalan uzman baskında düşmüş sayılır; kampanyada makineler gelişmiş akılla oynar ve ekibe ulaşamayınca sivillere
 nişan alır; ayakta kalan siviller güveni geri kazandırır (tavan 20); YZ alarmı arka duvardaki panoda.
 Sığınağın ekonomisi kıt: erzak çoğunlukla ikmal baskınlarından gelir, açlık kapıya aç heyet getirir.
 Baskın telsizle anlatılır: sığınak ağa bağlanmaz, gözcü bildirir, emir telsizle gider.
-Son tam EditMode koşusu **378/378** (2026-11-01).
+Son tam EditMode koşusu **391/391** (2026-11-01).
 
 **Git:** Depo `git@github.com:kamyan/Corrigible.git`, varsayılan dal `main`. Sığınak işi `siginak-ui` dalında
 (Aşama 1–10: `eed2824`, eski görünümün kaldırılması: `553517e`, sarı çerçeve: `b7b4d82`, sadeleştirme: `413fbf5`; sivil
 güven, YZ alarmı, hazırlık sığınağı, bölge kimliği ve eğitim: `6e658a5`). Sonrası (baskında tıklama düzeltmeleri, alarm
 panosu, harita havuzu ve torbası, ikmal kaçışı, makine aklı, sivillere saldıran makineler ve güven ödülü, sığınağın kapısı):
-`c6f61e9`; build: `05ffdcb`; telsiz: `9d16037`. Tasarım revizyonu 2 (Aşama 1–10) henüz commit edilmedi.
+`c6f61e9`; build: `05ffdcb`; telsiz: `9d16037`; tasarım revizyonu 2: `927296b`; Madenci, Sis uzmanı, kadro seçimi, plaka rafı ve haritanın kenarı: `8097337`. Sonrası commit edilmedi.
+
+## Baskına girerken kadro raporu (2026-11-01)
+
+- **İstek:** Kadrodaki uzmanların durumu baskına girerken bilgi olarak verilsin (biri yatıyor, biri tam iyileşmedi gibi).
+- **Motor** (`Core/Baskin.cs`): `Baskin.SquadReport(RaidParams)` kadroyu sırasıyla `SquadEntry` olarak verir: asıl uzman
+  (`Wounded`: canı tam değil), yatanın yerine giren yedek (`Rookie`; yedeğin eksik canı yara sayılmaz) ya da yedek olmadığı
+  için boş kalan rol (`Missing`, `RaidParams.Roles`'ta var, `Squad`'da yok). `Create` bunları açılış satırından önce telsize
+  yazar ("Analist tam iyileşmedi: can 1/2.", "… yatıyor: yerine yedek uzman girdi …", boş rol kırmızı); sağlam kadro sessiz
+  girer. RNG kullanmaz; savaşın sonucu ve kilitli imzalar değişmez, kayıt etkilenmez.
+- **Sunum:** sol altta, birim kartının yerinde sarı not "KADRO RAPORU" (`RaidPanels.prefab` → `SquadReport`, uç notu
+  `EndTurnConfirm`'ün kopyası): uzman başına ad ve durum ("sağlam · can 3/3" yeşil; "tam iyileşmedi · can 1/2", "yatıyor · 2
+  gün · yerine yedek uzman, can 2/3", "yatıyor · 2 gün · yedek yok, baskına çıkmadı" kırmızı; takılıysa "· zırh plakası").
+  Gün sayısı harekâttan (`RaidDataSource.DownDays`, `LiveRaidDataSource` ekibin üyesinden okur). İlk oyuncu turunda birim
+  seçili değilken görünür; birim seçilince birim kartı yerini alır, ikinci turdan sonra, duraklatma ve geri çekilme onayında
+  ve rehberli eğitim baskınında yok. Telsiz düğmesindeki okunmamış sayısı rapor satırlarıyla artar.
+- **Testler:** `SquadReport_TellsTheRadioWhoIsHurtStandingInOrMissing`, `SquadReport_ShowsOnTheFirstTurnUntilAUnitIsPicked`.
+  Play'de V014'te denendi (yedekli EMP uzmanı ve yaralı plakalı Analist; yedeksiz boş rol, İngilizce).
+
+## Baskında kaçış: bütün ekip çıkar, çıkamayan düşmüş sayılır (2026-11-01)
+
+- **İstek:** Baskının kaçma aşamasında bütün kadro kaçmalı, kaçamayan o baskında ölmüş sayılsın; ikmal görevinde Teknisyen
+  kaçtıysa ikmal kazanılsın, sunucu görevinde sunucu yıkıldıysa başarılı sayılsın.
+- **Kural** (`Core/Baskin.cs`): `BState.Escape` görev hedefi tamamlanınca açılır (ikmal kasası açıldı ya da son hedef dolap
+  kırıldı; eskiden ikinci an baskını bitiriyordu). Çıkışlar her görevde giriş kareleri. Kaçışta bir çıkışa basan uzman
+  (yürüyerek, kancayla, itilerek ya da kaçış başlarken orada durarak) tahliye edilir: `Unit.Out`, tahtadan kalkar, karesini
+  tutmaz, seçilemez (`Baskin.OnBoard`, `UnitAt`, `Alive`). Baskın tahtada uzman kalmayınca ya da süre dolunca biter
+  (`FinishEscape`); süre dolarken tahtada kalan `Unit.Left` (düşmüş sayılır, "die" efekti). Sunucu görevi hedef kırıldığı
+  için kazanılır; ikmal görevi taşıyıcı çıktıysa. Kaçışta düşen taşıyıcı malzemeyi götürür ama baskın bitmez: kalanlar yine de
+  çıkmalı. Kaçışta geri çekilme yok. Kaçıştan önce her şey eskisi gibi (süre dolarsa ekip sağ döner); RNG ve kilitli
+  imzalar kaçıştan önce değişmez (imzaya tahliye "o", geride kalma "l", sunucu kaçışı "e|" yalnız varsa eklenir).
+- **Kampanya:** Kampanyada kalıcı ölüm yok: "ölmüş sayılsın" düşen uzmanla aynı (`liberationInjuryDays` yatar, yerine yedek).
+  `RaidResult.Left` (geride kalanların kadro sırası) kayda sonda eklenir, eski kayıt boş çözülür; biçim değişmedi (13).
+  `SquadOutcome.Left` → operasyon raporunda ayrı satır "Çıkamadı: …". Sunucu görevine de dönüş turu:
+  `liberationServerExtraTurns` = 1 (kampanyada sunucu 7, ikmal 8 tur).
+- **Sunum:** çıkışlar kaçışta yeşil kesik çerçeveli; çıkışa yürüyüşün önizlemesi kâğıtta ÇIKAR; çıkış kartı son uzmanda
+  "EKİP ÇIKAR · operasyon kazanılır", kaçışı başlatan hamlede "HEDEF KIRILIR / İKMAL ALINIR · kaçış başlar"
+  (`PreviewResult.Escape`, `RaidInspectorModel.Escape`). Tahliye edilen uzman tahta kenarına kayıp kaybolur (`RaidBoard3D.Leave`,
+  "TAHLİYE"), kartı "✓ TAHLİYE EDİLDİ"; geride kalanın "ÇIKAMADI". Amaç satırı "malzemeyle girişten çık" / "ekibi girişten
+  çıkar"; GERİ ÇEKİL soluk; sonuç kartında "Tahliye edilen n/3". Kurallar kartı ve eğitim baskını yeni kuralı anlatır
+  (senaryo EMP uzmanını ve Analist'i de aynı çıkıştan çıkarır: 18 hamle, 34 adım).
+- **Ölçüm** (bot, 12 tohum, kadro başına 2880 baskın; eski kural → yeni, sunucu +1 tur): T+E+A ikmal %94,8 → %89,9, sunucu
+  %90,4 → %91,3; düşen uzman baskın başına 0,03 → 0,39. Öteki kadrolarda ikmal 5–11 puan düşer (ikmal başarısızlığının
+  çoğu yeni "kaçış" sonu: taşıyıcı süre dolarken tahtada), sunucu ±3 puan aynı; düşen 0,39–0,51. Sunucuya +2 tur sunucuyu
+  3–13 puan kolaylaştırıyor (düşen 0,31), ek tursuz T+E+A %78 (4 tohum); ikmale +3 tur ikmali ~%94'e çıkarıyor (4 tohum). Bot
+  kaçışı öğrendi (`RaidBot`: her uzmanın çıkış yolu, süreye sığmayan düşmüş; öteki uzmanların yolu `Weights.Others` = 0,1
+  ağırlıkla her evrede, yoksa kasayı açmak puanı sıçratıp botu durduruyordu; kaçışta Teknisyen düşerse kalanları çıkarmayı
+  sürdürür). Ölçüm raporunda yeni bitiş nedeni "kaçış".
+- **Testler:** `Escape_EveryoneMustLeave_LastOneOutWins`, `Escape_TimeOutLeavesTheRestBehind_CargoCountsIfTheCarrierGotOut`,
+  `ServerRaid_BrokenTargetStartsTheEscape_AndWinsEvenIfSomeoneIsLeft`, `ServerRaid_TimeOutBeforeTheTarget_LosesWithoutLeavingAnyoneBehind`,
+  `RaidResult_LeftBehind_DecodesAndReturnsAsFallen`, `LeftBehind_HasItsOwnRow_ApartFromTheFallen`; ikmal savaşının kilitli
+  imzaları yeniden kilitlendi (aynı ilk üç tur, bütün ekip çıkar), eğitim ve ikmal sunumu testleri bütün ekibi çıkarır.
+  Play'de denendi (örnek sunucu baskını: kaçış, önizleme, tahliye, geride kalan, İngilizce; V014'te ikmal baskını ve
+  operasyon raporunun "Çıkamadı" satırı).
+- **Açık:** ikmal başarısı 5–11 puan düştü ve aşağı yukarı her üç baskından birinde bir uzman yatıyor; harekât ölçümüyle (bot
+  harekâtı) güven ve alarm dengesine etkisi bakılmadı. İkmal ek turu 3 seçenek.
+
+## Baskına geçiş okunur; makineler kare kare yürür (2026-11-01)
+
+Kullanıcı: geçişte kameranın monitöre gittiği belli olmuyordu, baskında robotların hareketi çok hızlıydı. Yalnız sunum
+(Core, kayıt, RNG aynı; örnek baskında aynı tohumla makineler önce ve sonra aynı karelere gidiyor).
+
+- **Masadan baskına:** eskiden kamera haritadan 0,5 s'de doğrudan `CrtDive`'a kayıyordu ve katman son 0,25 s'de
+  devralıyordu. Şimdi üç vuruş (`SiginakCameraRig.BeginDive`): geri çekilir (yeni `Poses/CrtBack` (0,05; 1,55; −0,55),
+  14° aşağı, FOV 56) → CRT'ye döner → ekrana yaklaşır (FOV 40). İlk sürümde vuruşlar ayrı ayrı ease-in-out'tu ve aralarında
+  0,1 s duruyordu; kullanıcı durma ve sivri dönüş istemedi. Şimdi tek kesintisiz hareket (`motion.crtDiveS` 2,4 s):
+  vuruşlar yolun kesirleri olarak üst üste biner (geri çekilme 0–0,60, dönüş 0,30–0,85, yaklaşma 0,45–1; rig'in
+  `diveBackSpan/diveTurnSpan/divePushSpan` alanları), her biri smootherstep'le başlar ve biter; konum, eğim/sapma, FOV ve lens
+  kaydırması bu üç ağırlığın toplamı. Haritadan başlayınca yol ortasında kamera en az 0,6 m/s ilerler (geri çekilmeden
+  yaklaşmaya kıvrılırken aynı anda döner), en hızlı dönüş ~97°/s (önceki sürümde ~185°/s). Emirden sonra 0,3 s + yol
+  2,4 s + CRT dizisi 1,5 s: baskın ~4,4 s'de açılır (önce ~2,3 s). Süreler `SiginakTheme` (`motion.crtDiveS`, kaynak
+  `tokens_siginak.json`); `crtTurnS` yalnız rig yoksa kullanılır.
+- **Dönüş aynası:** sahne kapanınca kamera monitörde bekler (`crtReturnDelayS` 0,3 s, tüp kapanır), aynı yolu birebir
+  tersinden yürür (ekrandan çıkar, masaya döner, haritaya yükselir); operasyon raporu kamera varınca iner (~2,5 s; önce 0,6 s). `RaidLauncher` bu
+  sürede geçişte sayılır (masa kilitli). `SiginakOperation` artık sabit 0,6 s değil, kamera varınca raporu indirir.
+- **Atlama:** boşluk ya da sol tık dalışı ve CRT dizisini birlikte atlar (kamera hemen `CrtDive`'a, baskın hemen açılır);
+  dönüşte kamera yolunu atlar. Ekranda yazmaz (tuş ipuçları kaldırılmıştı).
+- **Kanca:** `IRaidTransition`'a `Approach` ve `Depart` eklendi; null dönerse başlatıcının eski düz yaklaşması/anında
+  dönüşü. `SiginakCrt.rig` ve `SiginakCameraRig.diveBack` sahnede `[SerializeField]` ile bağlı (tek seferlik eval'le).
+- **Makinelerin yürüyüşü:** Core robotları yeni plana doğrudan taşır; tahta önce onları anında yerine koyuyordu (görevli
+  çubuğu kaldırıldıktan sonra). Şimdi saldırılardan sonra uygulanan niyetlerin ok ve bayrakları kalkar, robotlar yeni sıra
+  numaralarıyla tek tek, kare kare yürür (kare 0,16 s, küçük sıçrama, adım sesi; robotlar arası 0,08 s; hepsi en fazla
+  3 s, aşarsa adım en az 0,1 s'ye kısalır; hızlı kipte ÷3,125), can etiketi robotla gider, telsiz satırı "gözcü · makineler
+  yer değiştiriyor". Yol `RaidBoard3D.MachinePath` (Core.Reachable'ın kuralı: duvar/nesne/ekip kapalı, robot geçilir);
+  `SadeRaidBoardTests.MachineWalk_FollowsCoreMoveRules` gerçek planlayıcıyla yolları denetler. Ekibin hamlesi değişmedi.
+- **Ölçüm (örnek baskın, tohum 731, 4 makine evresi, ekip yerinde):** önce 3,47 / 3,20 / 5,46 / 3,84 s (ort. 4,0),
+  sonra 5,16 / 5,82 / 6,87 / 5,56 s (ort. 5,9); yürüyüş 1,4–2,6 s (4–7 robot, 7–13 kare). Kampanya baskınında (V014)
+  1,65 / 5,54 / 4,06 / 3,95 s, yürüyüş 0,2–2,1 s.
+- **Play'de denendi:** dalışın kareleri (harita → geri çekilme → dönüş → yaklaşma → CRT katmanı), dönüşün kareleri, boşlukla
+  atlama (0,8 s'de basıldı, baskın 1,0 s'de açıldı), dönüşte tıkla atlama (rapor 0,64 s'de), yürüyüş kareleri. Kesintisiz
+  sürümde kare kare ölçüldü: dalışta ve dönüşte yol ortasında duran kare yok, en hızlı dönüş 97°/s. Testler
+  `SiginakCameraTests.RaidDive_*` (vuruşlar, ayna dönüş, atlama), `DeskGameScene_RigIsWired` (CrtBack, rig bağı).
+
+## TAA açıkken ince nesneler titriyordu (2026-11-01)
+
+- **Şikâyet:** Post-processing ve TAA açılınca lambanın ipi gibi ince yerlerde titreme.
+- **Nerede açılıyor:** Oyunda grafik ayarı yok; ikisi de DeskGame'deki `Main Camera`'nın `UniversalAdditionalCameraData`'sında
+  (Rendering → Post Processing, Anti-aliasing). Sahnede ikisi de kapalı; TAA ayarları açılınca kullanılmak üzere orada durur.
+  URP asset'inde MSAA kapalı (`PC_RPAsset`), sahnede Volume yok; post-processing `PC_RPAsset`'in profiliyle
+  (`SampleSceneProfile`: bloom 0,25, vignette 0,2, nötr tonemapping) çalışır.
+- **Neden:** (1) Masa lambasının çekme zinciri (`Desk/Desk lamp/Pull chain`) 3 mm'lik bir silindirdi, masa pozunda ekranda
+  ~1,5 px. TAA her karede kamerayı alt-piksel kaydırır (Halton jitter); bu kalınlıkta nesne bir karede bir, ötekinde iki
+  piksel örter ve parlak pirinç koyu duvarın önünde yanıp söner. (2) Kameranın TAA ayarı URP varsayılanıydı (High, kare
+  etkisi 0,1, kıskaç 0,9). High kalite mevcut kareyi süzmez (merkez süzme yalnız Very High'da); %10 yeni kare etkisiyle
+  bütün yüksek karşıtlıklı kenarlar (harita yazıları, maketin kenarları, sayaçlar) hafifçe titriyordu. Hareket vektörü
+  eksikliği değil: kamera ve nesneler dururken de titriyordu. Saydam tuş simgeleri neredeyse hiç titremiyor.
+- **Değişiklik:** `Main Camera` TAA: Very High, temel karışım 0,95 (kare etkisi 0,05), varyans kıskacı 1,25; jitter 1 ve mip
+  bias 0 aynı. Zincir 3 → 6 mm (`localScale` x/z 0,006; ekranda ~3 px). Post-processing ve TAA'yı açıp kapamak kullanıcıda
+  (sahnede kapalı kaldı).
+- **Ölçüm:** Play'de masa pozu, PP + TAA açık, kamera 1920×1080 bir hedefe çizilir; 40 ardışık karede piksel başına ortalama
+  kareden kareye parlaklık farkı (0–255, ampul kırpışması kapalı). TAA kapalıyken her yerde 0.
+
+  | | Eski ayar | Yeni ayar + 6 mm zincir |
+  |---|---|---|
+  | bütün kare: ortalama · >8 · >16 piksel | 0,294 · 1 292 · 241 | 0,131 · 175 · 0 |
+  | lamba zinciri: ortalama · en çok · >8 piksel | 2,54 · 15,8 · 63 | 0,53 · 5,1 · 0 |
+  | maketin pirinç şeridi (yaşam alanı): en çok · >8 piksel | 38 · 310 | 12,5 · 88 |
+
+- **Kalan ve denenenler:** Maketteki 4 mm'lik pirinç kenar şeritleri ve kat döşemeleri hâlâ hafifçe parıldıyor (en çok ~12
+  birim). Şeritleri 6 mm yapmak yalnız 88 → 53 piksel kazandırdığı için dokunulmadı. Daha çok geçmiş (kare etkisi 0,03,
+  kıskaç 1,5) durağan titremeyi neredeyse sıfırlıyor (>8: 4 piksel) ama basılan tuşun simgesi hareket ederken bulanıyor;
+  seçilmedi. Kıskacı High kalitede büyütmek işe yaramıyor (min-max kutusu yine sınırlıyor), Very High'da etkili. Jitter'ı
+  0,75'e indirmek titremeyi azaltır ama kenar yumuşatmayı da azaltır. SMAA/FXAA titremez ama ince çizgileri yumuşatmaz.
+
+## Uzmanlar atölyeyle açılır; masada KOMUTA, KILAVUZ ve tuş yazısı yok (2026-11-01)
+
+- **İstek:** Madenci atölye seviye 2'de, Sis uzmanı 3'te açılsın; masadan KOMUTA ve KILAVUZ tuşları kalksın, öteki tuşlarda
+  tuş adı yerine simge olsun; DeskGame'de hangi tuşa basılacağını gösteren yönergeler (Home gibi) kalksın.
+- **Core:** `Balance.liberationMinerWorkshopLevel = 2`, `liberationSmokeWorkshopLevel = 3`. Yeni harekâtta ekip üç uzmanla
+  başlar; `Simulation.SyncSpecialists` atölyenin seviyesi yeten rolleri kadro sırasındaki yerine katar (yeni harekât ve
+  `ShelterUpgrade`; ileti "Atölye hazır: seviye 2. Madenci kadroya katıldı."). Ekipte yalnız katılanlar olduğu için kapı
+  kartları, revir, dinlenme ve varsayılan seçim değişmeden doğru; katılmamış rolün seçimi `LiberationRaidCheck`'te reddedilir.
+  RNG'ye dokunmaz. Kayıt biçimi 12 → 13 (**eski kayıtlar açılmaz**). Seçenek: harekâtın tamamı tek seçim yerine önce
+  T + E + A, sonra dört, sonra beş uzman. Oda seviyesini bellekte kuran fikstür (`ApplyShelterV014`) eşitlemeyi çağırır.
+- **Sunum:** fişin KADRO satırında katılmamış uzman kilitli çip ("SV 2", üzerine gelince ne zaman katılacağı ve yeteneği),
+  seçenek yokken not sıradakini söyler; panoda soluk disk ("sv 2"); atölyenin açıklaması sıradaki uzmanı yazar.
+- **Masa:** anahtar rayında SIĞINAK · GÖREVLER · KAPI · MASA (`StationKeyRail` Shelter 0 … Desk 3); harita pozu GÖREVLER'i
+  yakar. Ray kısaldı (taban 1,40 → 0,94 m, MASA bir adım sola), sağındaki kalem talaşı açıkta. Tuş başlığında simge:
+  `SiginakTextureBaker.KeyIcons` (128 px beyaz çizgi; yer altındaki odalar, görev fişi, çarklı kapı, lambalı masa, ayarlar
+  dişlisi), başlıkta aydınlatılan saydam dörtgen (`Key icon *.mat`, renk `counter.digit`), üst kenar şeridinde tuş kutusunda
+  RawImage. Klavyenin 1 ve H kısayolları kalktı (harita GÖREVLER'den ve haritaya tıklayarak, emir EVRAK tepsisinden açılır).
+- **Tuş ipuçları kalktı (DeskGame):** üzerine gelme etiketinin tuş fişi (`IHoverSource.KeyHint`), ayarlar plakası ("Esc",
+  "Boşluk"), emir belgesi (Enter, Tab), kapı kâğıdı (seçenek numaraları, Enter, Esc), vardiya raporu (Enter, Esc), operasyon
+  ve son rapor (Enter; yazı ortada), görev fişi (Enter; kapatma yalnız ✕), cephe fişi (Enter, Esc), CRT geçişi ("Boşluk
+  atla"), eğitim notu (Boşluk, Esc), ayarlar kartı (Esc), şalter plakası ("Enter · "), CRT etiketinin "(3)"'ü, görev metninin
+  "Q ile"si; eğitim notları ve teleks fareyle anlatır. Kısayollar çalışır. Kapı kâğıdının kapatma düğmesi yoktu: alt satır
+  ("masaya dön · …") tıklanır (`DoorCardView.Dismissed`). Baskın tahtası kendi ipuçlarını korur (kapsam dışı).
+- **Testler:** `Specialists_JoinWithWorkshopLevels_AndLockedPicksAreRefused`, `Slip_SquadPicker_LockedSpecialistsWaitForTheWorkshop`,
+  `DeskGameScene_ShowsNoKeyboardHints`; ray 4 tuş ve simgeler, kapı kâğıdı alanları güncellendi. Kadro seçimini sınayan
+  testler atölye kilidi açık bir dengeyle kurulur. Punto taraması 0 ihlal. Play'de denendi (V031: kilitli çipler, kapı
+  kâğıdını alt satırla kapatma, vardiya raporu, İngilizce).
 
 ## Harita kâğıdın kenarından taşıyordu (2026-11-01)
 
@@ -205,7 +357,8 @@ değişmedi. Eklenenler yalnız sunum (Core, kayıt, RNG aynı):
   ("№3 · saldırı → TEKNİSYEN · A6 · −1", boş kareye "→ C3", "Yeni bir robot uyandı: C3.").
 - **Yağlı kalem okları:** niyet okları hafif dalgalı, uçlarda incelen, açık V uçlu çizgiler; okunurluk için kalınlık aynı.
 - **Görevli çubuğu (kaldırıldı, 2026-10-30):** makine evresinin sonunda bakır başlıklı ahşap bir çubuk figürleri yeni
-  karelerine itiyordu. Kullanıcı kaldırttı; makineler yine turun sonunda yeni karelerinde belirir.
+  karelerine itiyordu. Kullanıcı kaldırttı; makineler yine turun sonunda yeni karelerinde belirir. (2026-11-01: artık
+  yeni karelerine kare kare yürürler; bkz. "Baskına geçiş okunur".)
 - **Komuta masası:** CRT'nin önündeki klavye kalktı (bilgisayar gibi duruyordu); yerine bas-konuş masa mikrofonu (kablosu
   telsize gider) ve kalemli telsiz kayıt defteri. CRT'nin üzerine gelme etiketi "TELSİZ HATTI · Yalnız baskın emriyle hat
   açılır…". Punto taramasında klavye istisnası defter başlığına geçti (dekor, 6,5 px).
@@ -680,6 +833,11 @@ bugünkü odanın tasarım brifidir.)
 
 ## Açık işler
 
+- **Bölge olayları (fikir, 2026-11-02):** her bölge için tahtada tur tur işleyen, önceden işaretlenen bina içi bir olay
+  önerildi; kurallar tarafa bakmaz, iki tarafı aynı biçimde etkiler (söndürme bulutu, kayar arşiv rafı, yanıcı gaz kaçağı,
+  çatlak tavan, yük asansörü, kriyo soğutma hattı, vardiya turnikeleri, kaynak robotu kolu, şebeke faz değişimi, süzgeç
+  emmesi, basınçlı tüp rafı, hidrolik yağ sızıntısı). Kurallar, işaretler, ortak altyapı ve uygulama sırası
+  `Docs/BOLGE-OLAYLARI.md`'de; kodda yok. 2026-11-01'deki açık hava sürümünün yerini aldı.
 - **Gölgeler (karar, 2026-10-31):** ampul ve lamba gölgeleri yumuşak kalır. Sert gölge ~0,25 ms kazandırırdı (Revizyon 2'yi
   öncesinden %3–6 hızlı yapardı); Revizyon 2'nin masa ve sığınak pozundaki %2–3'lük farkı kabul edildi (`Docs/UI_Siginak_Rev2/IMPLEMENTATION_MAP.md` Soru 13).
 - **Denge (kadro seçimi):** Madenci ve Sis uzmanının hakları (dinamit 2, sis 3) ölçülmedi; seçimli kadroyla zorluk yeniden

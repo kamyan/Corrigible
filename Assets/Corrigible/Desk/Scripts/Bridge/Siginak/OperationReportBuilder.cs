@@ -127,16 +127,23 @@ namespace Corrigible.Desk.Bridge
 
         static string Slip(double v) => Math.Abs(v) < 0.05 ? null : DeskFormat.Signed(v, Places(v));
 
-        /// <summary>Ekip: ayakta kalanlar; düşenler (yatacakları gün), yeni yaralar ve kırılan zırh plakaları.</summary>
+        /// <summary>Ekip: ayakta kalanlar; düşenler ve kaçışta geride kalanlar (yatacakları gün), yeni yaralar ve kırılan zırh
+        /// plakaları.</summary>
         static void TeamRows(OperationReportData d, Simulation sim, LiberationRaidReward reward)
         {
             if (reward == null || reward.Squad.Count == 0) return;
             int standing = reward.Squad.Count(o => !o.Down);
             d.Results.Add(new OperationRow { Label = Loc.T("Ekip"), Value = Loc.F("{0}/{1} ayakta", standing, reward.Squad.Count), Tone = OperationTone.Plain });
-            var down = reward.Squad.Where(o => o.Down).ToList();
+            var down = reward.Squad.Where(o => o.Down && !o.Left).ToList();
             if (down.Count > 0) d.Results.Add(new OperationRow
             {
                 Label = Loc.F("Düştü: {0}", string.Join(", ", down.Select(RoleName))),
+                Value = Loc.F("{0} gün", sim.B.liberationInjuryDays), Tone = OperationTone.Alert,
+            });
+            var left = reward.Squad.Where(o => o.Left).ToList();
+            if (left.Count > 0) d.Results.Add(new OperationRow
+            {
+                Label = Loc.F("Çıkamadı: {0}", string.Join(", ", left.Select(RoleName))),
                 Value = Loc.F("{0} gün", sim.B.liberationInjuryDays), Tone = OperationTone.Alert,
             });
             var hurt = reward.Squad.Where(o => !o.Down && !o.Rookie && o.HpAfter < o.HpBefore).ToList();

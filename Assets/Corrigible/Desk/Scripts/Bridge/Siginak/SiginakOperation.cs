@@ -8,7 +8,8 @@ namespace Corrigible.Desk.Bridge
 {
     /// <summary>
     /// Baskından dönüşün oyun bağlantısı: operasyon raporu (Revizyon 2 · S7c/S7d). Baskın sahnesi kapanınca kamera CRT'den
-    /// harita pozuna geçer (0,6 s; karartma yok), rapor yukarıdan iner (0,4 s), iplik raporun iğnesinden ekip figürüne
+    /// girişteki yolun tersiyle başlangıç pozuna döner (RaidLauncher → SiginakCrt.Depart; o sırada başlatıcı geçişte sayılır);
+    /// harita pozunda değilse oraya geçer (0,6 s; karartma yok), kamera varınca rapor yukarıdan iner (0,4 s), iplik raporun iğnesinden ekip figürüne
     /// gerilir (0,25 s) ve figürün çevresine kırmızı halka çizilir (0,2 s). Sayaçlar o ana kadar eski değerde bekler, sonra
     /// döner; başarılı raporda ± fişleri asılır ve haritada geri alınan sektörün işareti mavi onaya döner. Enter, düğme ya
     /// da Esc: rapor EVRAK tepsisine kayar, fişler kalkar, kamera başlangıç pozuna döner, rapor okundu sayılır. Rapor
@@ -26,7 +27,7 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] EvrakTray tray;
         [SerializeField] RaidLauncher launcher;
         [Header("Hareket (S7)")]
-        [Tooltip("Kamera CRT'den harita pozuna; rapor varınca iner.")]
+        [Tooltip("Kamera harita pozunda değilse oraya geçiş; rapor kamera varınca iner (en geç bu sürede).")]
         [SerializeField, Min(0.01f)] float cameraSeconds = 0.6f;
         [SerializeField, Min(0.01f)] float stringSeconds = 0.25f;
         [SerializeField, Min(0.01f)] float ringSeconds = 0.2f;
@@ -34,7 +35,7 @@ namespace Corrigible.Desk.Bridge
         [SerializeField, Min(0.01f)] float deskSeconds = 0.6f;
 
         OperationReportData data;
-        float startedAt = -1;
+        float startedAt = -1, shownAt;
         int countersFor = -1;
         bool shown;
 
@@ -73,11 +74,12 @@ namespace Corrigible.Desk.Bridge
             float t = Time.unscaledTime - startedAt;
             if (!shown)
             {
-                if (t < cameraSeconds) return;
+                if (t < cameraSeconds && rig.InTransition) return;
                 shown = true;
+                shownAt = Time.unscaledTime;
                 report.Show(data, true);
             }
-            float settled = t - cameraSeconds - report.DropSeconds;
+            float settled = Time.unscaledTime - shownAt - report.DropSeconds;
             if (settled >= 0 && countersFor != sim.S.RaidLog.Count) ReleaseCounters(sim);
             if (!report.IsOpen) return;
             Thread(settled);

@@ -72,6 +72,6 @@ namespace Corrigible.Desk.Bridge
 
         /// <summary>Kayıt varken ilk BAŞLA'nın teleks uyarısı (K7 notu › durumlar; teleks şeridine sığacak kadar kısa).</summary>
         public static (string status, string message) Warning(SavedSummary save) =>
-            (Loc.T("KAYIT VAR"), Loc.F("V.{0:000} kaydının üstüne yazılır · onay: Enter", save.Shift));
+            (Loc.T("KAYIT VAR"), Loc.F("V.{0:000} kaydının üstüne yazılır · onay için yeniden bas", save.Shift));
     }
 }

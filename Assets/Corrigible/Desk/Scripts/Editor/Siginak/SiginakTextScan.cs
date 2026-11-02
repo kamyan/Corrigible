@@ -59,7 +59,6 @@ namespace Corrigible.Desk.EditorTools
             ("Team figure/Body/Letter", "figür plakasındaki “A” harfi (simge)"),
             ("Report sheet/", "EVRAK tepsisindeki A5 kâğıt başlığı (okuma görünümü ayrıca açılır)"),
             ("/Stencil", "boyalı şablon yazı (dekor)"),
-            ("/KeyChip/Label", "eğitim notundaki tuş fişi CP 700 13 (tasarım: keyChip 13)"),
             ("RaidScreenLabel/", "baskın dünya etiketi: puntoyu çağıran verir (bayrak 20, durum ≥ 14); prefab'daki değer yer tutucu"),
         };
 

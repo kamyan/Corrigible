@@ -38,7 +38,7 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(Loc.T(card.Knock), d.Body, "bakmadan ve sormadan yalnız duyulan");
             Assert.IsEmpty(d.Observations);
             Assert.AreEqual(Loc.F("VARDİYA {0:000}", sim.S.Day + 1), d.Code);
-            Assert.AreEqual("Esc", d.HintKey);
+            Assert.AreEqual(Loc.T("masaya dön · ziyaretçi vardiya bitene kadar bekler"), d.Hint, "alt satır kâğıdı kapatır");
             Assert.IsNull(d.Action, "seçim yapılmadan geniş düğme yok");
 
             d = DoorViewBuilder.Build(sim, DoorPhase.Closed, sim.DoorVisitor, true, true);
@@ -226,11 +226,11 @@ namespace Corrigible.Desk.Tests
                 Assert.GreaterOrEqual(slots.arraySize, DoorCards.All.Max(c => c.Closed.Length) + 4, "bak, sor, kapalı seçenekler, aç, açma");
                 foreach (var f in new[] { "sheet", "paper", "shadow", "group", "head", "code", "title", "choice", "body", "epilogue", "eyeIcon",
                              "intercomIcon", "stampBlock", "stamp", "stampText", "optionBlock", "actionBlock", "action", "actionHover", "actionFace",
-                             "actionShadow", "actionLabel", "hintRow", "hintKey", "hint", "frameSolid", "frameDashed" })
+                             "actionShadow", "actionLabel", "hintRow", "hintButton", "hint", "frameSolid", "frameDashed" })
                     Assert.IsNotNull(cs.FindProperty(f).objectReferenceValue, f);
                 Assert.AreEqual(2, cs.FindProperty("observations").arraySize, "gözetleme ve interkom blokları");
                 for (int i = 0; i < slots.arraySize; i++)
-                    foreach (var f in new[] { "root", "layout", "button", "hover", "face", "fill", "edge", "shadow", "keyBox", "keyFill", "key", "label", "detail", "used", "usedFrame", "usedText" })
+                    foreach (var f in new[] { "root", "layout", "button", "hover", "face", "fill", "edge", "shadow", "label", "detail", "used", "usedFrame", "usedText" })
                         Assert.IsNotNull(slots.GetArrayElementAtIndex(i).FindPropertyRelative(f).objectReferenceValue, "seçenek " + (i + 1) + " · " + f);
                 // S4: Overlay, sol 40 · üst 64, 470 px, dönüş üst ortadan
                 var sheet = (RectTransform)cs.FindProperty("sheet").objectReferenceValue;
@@ -267,7 +267,6 @@ namespace Corrigible.Desk.Tests
                 Assert.IsNotNull(edge.FindProperty("keyDashed").objectReferenceValue);
                 var target = (DeskTarget)so.FindProperty("target").objectReferenceValue;
                 Assert.AreEqual("SIĞINAK KAPISI", target.Title);
-                Assert.AreEqual("K", target.KeyHint);
 
                 var rig = (SiginakCameraRig)so.FindProperty("rig").objectReferenceValue;
                 Assert.IsTrue(rig.TryGetPose(SiginakPose.Door, out var pose), "kapı pozu");

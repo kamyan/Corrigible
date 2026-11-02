@@ -20,6 +20,8 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] CrtScreen screen;
         [SerializeField] CrtTransition overlay;
         [SerializeField] RadioLogBook logBook;
+        [Tooltip("Baskına geçişte kamerayı CRT'ye götüren ve dönüşte geri getiren rig (geri çekil → dön → yaklaş).")]
+        [SerializeField] SiginakCameraRig rig;
 
         CrtState shown = (CrtState)(-1);
         Simulation Sim => game != null ? game.Sim : null;
@@ -60,8 +62,24 @@ namespace Corrigible.Desk.Bridge
 
         // ---------- IRaidTransition (K5b) ----------
 
-        public float ApproachSeconds => SiginakTheme.Active.NumberOf("motion.crtTurnS", 0.5f);
+        public float ApproachSeconds => rig != null ? rig.DiveSeconds : SiginakTheme.Active.NumberOf("motion.crtTurnS", 0.5f);
         public void BeginApproach() => overlay.BeginApproach(ApproachSeconds);
+
+        // Kamera önce geri çekilir, CRT'ye döner, ekrana yaklaşır; boşluk ya da tık dalışı ve diziyi birlikte atlar
+        public IEnumerator Approach(Transform target, float fieldOfView)
+        {
+            if (rig == null) return null;
+            rig.BeginDive(target, fieldOfView);
+            return rig.RunDive(overlay.PollSkip);
+        }
+
+        // Dönüşte kamera tüp kapanırken monitörde bekler, sonra aynı yoldan geri çıkar; boşluk ya da tık yolu atlar
+        public IEnumerator Depart(Transform from, float fieldOfView)
+        {
+            if (rig == null) return null;
+            rig.BeginReturn(from, fieldOfView, SiginakTheme.Active.NumberOf("motion.crtReturnDelayS", 0.3f));
+            return rig.RunDive(CrtTransition.SkipPressed);
+        }
         // Hat açılırken telsiz frekansı arar; dönüşte hat kapanır
         public IEnumerator Run() { Sfx.Play(Cue.RadioTune); return overlay.Run(CrtViewBuilder.Transition(Sim)); }
         public void SceneLoaded() => overlay.SceneLoaded();

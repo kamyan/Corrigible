@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Corrigible.Core;
 using Corrigible.Desk.Bridge;
@@ -43,6 +44,42 @@ namespace Corrigible.Desk.Tests
                 }
             }
             finally { Object.DestroyImmediate(go); Object.DestroyImmediate(target); }
+        }
+
+        [Test]
+        public void MachineWalk_FollowsCoreMoveRules()
+        {
+            // Core robotu yeni plana doğrudan taşır; tahta yürüyüşü aynı kuralla kurar: komşu kareler, duvar/nesne/ekip yok, menzil içinde
+            int walks = 0;
+            foreach (int seed in new[] { 11, 731, 2024 })
+            {
+                var b = Baskin.Create(new RaidParams { Seed = seed, Compute = 5 });
+                for (int turn = 0; turn < 4 && b.Phase == "player"; turn++)
+                {
+                    var before = b.Units.Where(u => u.Side == 'e' && !u.Dead).ToDictionary(u => u.Id, u => (u.X, u.Y));
+                    Baskin.EndTurn(b);
+                    var pushed = new HashSet<int>(b.FxList.Where(f => f.K == "push" || f.K == "pull").Select(f => f.Unit));
+                    foreach (var u in b.Units.Where(u => u.Side == 'e' && !u.Dead && before.ContainsKey(u.Id) && !pushed.Contains(u.Id)))
+                    {
+                        var at = before[u.Id];
+                        if (at == (u.X, u.Y)) continue;
+                        var path = RaidBoard3D.MachinePath(b, at, (u.X, u.Y));
+                        Assert.AreEqual((u.X, u.Y), path.Last(), "yeni karesinde biter");
+                        Assert.LessOrEqual(path.Count, Baskin.UnitTypes[u.Type].Move + b.EnemyMove, "menzil içinde");
+                        foreach (var step in path)
+                        {
+                            Assert.AreEqual(1, Mathf.Abs(step.x - at.Item1) + Mathf.Abs(step.y - at.Item2), "komşu kare");
+                            var cell = Baskin.CellAt(b, step.x, step.y);
+                            Assert.AreNotEqual("wall", cell.T);
+                            Assert.IsNull(cell.O);
+                            Assert.AreNotEqual('p', Baskin.UnitAt(b, step.x, step.y)?.Side ?? 'e', "ekip üyesinin içinden geçmez");
+                            at = step;
+                        }
+                        walks++;
+                    }
+                }
+            }
+            Assert.Greater(walks, 5);
         }
 
         [Test]

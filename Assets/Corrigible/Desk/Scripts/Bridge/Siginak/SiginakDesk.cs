@@ -55,13 +55,12 @@ namespace Corrigible.Desk.Bridge
         [Tooltip("Eğitim notu: başka kâğıt açık değilken Esc notları kapatır (Revizyon 2).")]
         [SerializeField] SiginakTutorial tutorial;
 
-        /// <summary>4 · KAPI tuşunun etiketi (kaynak metinler; gösterirken çevrilir).</summary>
+        /// <summary>KAPI tuşunun etiketi (kaynak metinler; gösterirken çevrilir).</summary>
         static readonly string DoorWaitingTitle = Loc.N("KAPI · ZİYARETÇİ VAR"),
             DoorWaitingLine = Loc.N("Kapıya dön. Ziyaretçi vardiya bitene kadar bekler."),
             DoorRaidLine = Loc.N("Baskın sürüyor: kapıya gidilemez."),
             DoorIdleLine = Loc.N("Kapıda kimse yok. Biri çalınca lamba yanıp söner.");
 
-        int lastMapStation = StationKeyRail.Command;
         bool countersShown;
 
         Simulation Sim => game != null ? game.Sim : null;
@@ -145,11 +144,9 @@ namespace Corrigible.Desk.Bridge
             if (Locked) return;
             switch (index)
             {
-                case StationKeyRail.Command: lastMapStation = index; rig.FocusMap(); break;
                 case StationKeyRail.Shelter: surface.ShowShelter(); break;
-                case StationKeyRail.Missions: lastMapStation = index; surface.ShowPlanning(); break;
+                case StationKeyRail.Missions: surface.ShowPlanning(); break;
                 case StationKeyRail.Door: door?.Visit(); break;
-                case StationKeyRail.Guide: surface.OpenGuide(); break;
                 case StationKeyRail.Desk: rig.ResetView(); break;
             }
         }
@@ -161,7 +158,7 @@ namespace Corrigible.Desk.Bridge
             bool locked = Locked;
             int active = rig.Current switch
             {
-                SiginakPose.Map => lastMapStation,
+                SiginakPose.Map => StationKeyRail.Missions,
                 SiginakPose.Shelf => StationKeyRail.Shelter,
                 SiginakPose.Desk => StationKeyRail.Desk,
                 SiginakPose.Door => StationKeyRail.Door,
@@ -189,8 +186,6 @@ namespace Corrigible.Desk.Bridge
         {
             var kb = Keyboard.current;
             if (kb == null || Locked || TextFieldSelected()) return;
-            if (kb.digit1Key.wasPressedThisFrame || kb.numpad1Key.wasPressedThisFrame) lastMapStation = StationKeyRail.Command;
-            if (kb.digit3Key.wasPressedThisFrame || kb.numpad3Key.wasPressedThisFrame) lastMapStation = StationKeyRail.Missions;
             // Enter: açık kâğıttaki asıl eylem; kâğıt yoksa şalter (iki adım)
             if (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame)
                 if (map == null || !map.isActiveAndEnabled || !map.HandleEnter()) shiftSwitch.Press();
@@ -259,7 +254,7 @@ namespace Corrigible.Desk.Bridge
             if (pose == SiginakPose.Desk && rail.Count > StationKeyRail.Door && rail[StationKeyRail.Door].Attention) rail[StationKeyRail.Door].Nudge();
         }
 
-        /// <summary>4 · KAPI: ziyaretçi beklerken lamba yanıp söner, etiket bekleyeni söyler; baskında nedenini yazar.</summary>
+        /// <summary>KAPI: ziyaretçi beklerken lamba yanıp söner, etiket bekleyeni söyler; baskında nedenini yazar.</summary>
         void DoorKey()
         {
             if (rail.Count <= StationKeyRail.Door) return;

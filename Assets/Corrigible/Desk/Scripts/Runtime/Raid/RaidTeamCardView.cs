@@ -42,8 +42,8 @@ namespace Corrigible.Desk
             if (value.Letter == 'E' && DeskLoc.Instance.Lang == DeskLang.En) nameLabel.text = Loc.T("EMP UZM.");
             if (value.Letter == 'S' && DeskLoc.Instance.Lang == DeskLang.En) nameLabel.text = Loc.T("SİS UZM.");
             discLetter.text = value.Letter.ToString();
-            bool done = !value.Down && !value.Move && !value.Ability;
-            disc.color = C(value.Down || done ? "panel.teamCard.discDone" : "panel.teamCard.disc");
+            bool done = !value.Down && !value.Out && !value.Move && !value.Ability;
+            disc.color = C(value.Down || value.Out || done ? "panel.teamCard.discDone" : "panel.teamCard.disc");
             RaidHudView.Pips(pips, value.Down ? 0 : value.Hp, value.Max, C("labels.hpTag.colors.team"));
             bool hurt = !value.Down && value.Hp < value.Max;
             wound.gameObject.SetActive(hurt);
@@ -56,8 +56,14 @@ namespace Corrigible.Desk
             // Hak satırı: biçim + kelime + renk
             if (value.Down)
             {
-                status.text = value.Absent ? Loc.T("SIĞINAKTA YARALI") : Loc.T("DÜŞTÜ");
+                status.text = value.Absent ? Loc.T("SIĞINAKTA YARALI") : value.Left ? Loc.T("ÇIKAMADI") : Loc.T("DÜŞTÜ");
                 status.color = C("ink.red");
+            }
+            else if (value.Out)
+            {
+                // Kaçışta çıkıştan tahliye edildi: tahtada değil, kart kapalı
+                status.text = Loc.T("✓ TAHLİYE EDİLDİ");
+                status.color = C("ink.green");
             }
             else if (!string.IsNullOrEmpty(value.Threat))
             {
@@ -78,11 +84,11 @@ namespace Corrigible.Desk
             paper.color = C(value.Selected ? "panel.teamCard.selected" : "panel.ozalit.paper");
             selectFrame.enabled = value.Selected;
             downFrame.enabled = value.Down;
-            if (group != null) group.alpha = value.Down ? 0.75f : 1;
-            button.interactable = !locked && !value.Down;
+            if (group != null) group.alpha = value.Down || value.Out ? 0.75f : 1;
+            button.interactable = !locked && !value.Down && !value.Out;
         }
 
-        public void OnPointerEnter(PointerEventData e) { hover = true; if (model != null && !model.Down) Hovered?.Invoke(model.Letter); }
+        public void OnPointerEnter(PointerEventData e) { hover = true; if (model != null && !model.Down && !model.Out) Hovered?.Invoke(model.Letter); }
         public void OnPointerExit(PointerEventData e) { hover = false; commands?.ClearHover(); }
 
         void Update()

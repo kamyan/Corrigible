@@ -1785,7 +1785,9 @@
   "raidOrderDelayS": 0.3,
   "freeStampDelayS": 0.2,
   "hatchEraseS": 0.5,
-  "_extra": "UYGULAMA EKİ (Unity, Aşama 5): candidateStepS, candidateDrawS, greaseRingS, raidOrderDelayS, freeStampDelayS, hatchEraseS (K2/K3 akış süreleri); paket dosyasında yok, K2/K3/Ekip notlarından. Bkz. IMPLEMENTATION_MAP › CHANGELOG Aşama 5. Aşama 8: shift.* (K6 notu › ışık ve ses sırası: adımların zamanı ve süreleri). Aşama 10: telexStripMinHoldS (sırada satır varken gösterilen satırın en kısa süresi; şerit her pozda çalıştığı için kuyruk birikmesin).",
+  "crtDiveS": 2.4,
+  "crtReturnDelayS": 0.3,
+  "_extra": "UYGULAMA EKİ (Unity, Aşama 5): candidateStepS, candidateDrawS, greaseRingS, raidOrderDelayS, freeStampDelayS, hatchEraseS (K2/K3 akış süreleri); paket dosyasında yok, K2/K3/Ekip notlarından. Bkz. IMPLEMENTATION_MAP › CHANGELOG Aşama 5. Aşama 8: shift.* (K6 notu › ışık ve ses sırası: adımların zamanı ve süreleri). Aşama 10: telexStripMinHoldS (sırada satır varken gösterilen satırın en kısa süresi; şerit her pozda çalıştığı için kuyruk birikmesin). Baskın geçişi (2026-11-01): crtDiveS, crtReturnDelayS — kamera crtDiveS boyunca tek ve kesintisiz hareketle geri çekilir, CRT’ye döner ve ekrana yaklaşır (vuruşlar üst üste biner; kesirleri SiginakCameraRig’de); crtTurnS artık kullanılmıyor (yalnız rig yoksa yaklaşma süresi). Dönüş aynı yolun tersi; tüp kapanırken kamera crtReturnDelayS monitörde bekler.",
   "shift": {
    "_": "UYGULAMA EKİ (Unity, Aşama 8): K6 çizelgesi. approachS masa → K6a, bulbDimAtS ampul kararır, amberAtS/amberS amber ışık, countersAtS sayaçlar (VARDİYA shiftWheelS, modüller moduleStaggerS arayla), telexAtS teleks, generatorAtS/generatorS jeneratör, cameraAtS/cameraS harita pozu, reportAtS rapor düşer.",
    "approachS": 0.4,

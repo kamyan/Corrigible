@@ -122,8 +122,9 @@ namespace Corrigible.Core
             /// <summary>Armor: zırh plakası, ilk hasarı karşılar ve kırılır (yalnız ekip).</summary>
             public int Id, X, Y, Hp, Max, Order, Armor;
             public string Type; public char Side;
-            /// <summary>Locked: kilitleyici vurdu, bu oyuncu turu yürüyemez (yeteneğini kullanabilir).</summary>
-            public bool Moved, Acted, Dead, Locked;
+            /// <summary>Locked: kilitleyici vurdu, bu oyuncu turu yürüyemez (yeteneğini kullanabilir). Out: kaçışta bir çıkıştan
+            /// tahliye edildi, tahtada değil. Left: süre dolarken tahtada kaldı; baskında düşmüş sayılır (Dead da işaretli).</summary>
+            public bool Moved, Acted, Dead, Locked, Out, Left;
             /// <summary>Sınırlı yeteneğin kalan hakkı (Madenci: duvar yıkan dinamit, Sis uzmanı: sis bombası); −1 sınırsız.</summary>
             public int Charges = -1;
             public Intent Intent;
@@ -147,15 +148,19 @@ namespace Corrigible.Core
             public int Rs, Turn = 1, MaxTurns, SpawnPerTurn, Collateral, NextId = 1;
             public string Phase = "player", Layout, OutcomeReason;
             public bool IsCore, OutcomeSuccess, Retreated;
+            /// <summary>Kaçış: görevin hedefi tamam (ikmal kasası açıldı ya da hedef dolapların hepsi kırıldı). Tahtadaki her uzman
+            /// bir çıkıştan çıkmalı; baskın tahtada uzman kalmayınca ya da süre dolunca biter, geri çekilme yoktur.</summary>
+            public bool Escape;
             /// <summary>Bölge ve kademe: imza düşmanı, makinelerin ek canı ve yürüyüşü, uyanma yerlerinin gizli olması (kum fırtınası).</summary>
             public string Signature;
             public int EnemyHp, EnemyMove;
             public bool Fog;
             /// <summary>Gelişmiş makine aklı (<see cref="RaidParams.Tactics"/>).</summary>
             public bool Smart;
-            /// <summary>İkmal görevi: kasayı açan Teknisyen malzemeyi taşır (birim kimliği; 0 ise kasa açılmadı). Çıkışlardan
-            /// birine (giriş kareleri) varınca ekip tahliye edilir; taşıyıcı düşerse ya da süre biterse görev kaybedilir.</summary>
+            /// <summary>İkmal görevi: kasayı açan Teknisyen malzemeyi taşır (birim kimliği; 0 ise kasa açılmadı). Malzeme ancak
+            /// taşıyıcı bir çıkıştan çıkarsa alınır; taşıyıcı düşerse ya da süre dolarken tahtadaysa görev kaybedilir.</summary>
             public int Carrier;
+            /// <summary>Çıkışlar: ekibin giriş kareleri (her görevde); kaçışta üstüne basan uzman tahliye edilir.</summary>
             public List<Pt> Exits = new List<Pt>();
             public Cell[,] Cells = new Cell[N, N]; // [y, x]
             public List<Unit> Units = new List<Unit>();
@@ -197,9 +202,12 @@ namespace Corrigible.Core
 
         static bool Inb(int x, int y) => x >= 0 && y >= 0 && x < N && y < N;
         public static Cell CellAt(BState B, int x, int y) => B.Cells[y, x];
-        public static Unit UnitAt(BState B, int x, int y) => B.Units.FirstOrDefault(u => !u.Dead && u.X == x && u.Y == y);
+        /// <summary>Tahtadaki birim (düşen ve tahliye edilen sayılmaz).</summary>
+        public static Unit UnitAt(BState B, int x, int y) => B.Units.FirstOrDefault(u => OnBoard(u) && u.X == x && u.Y == y);
         static int Man(int ax, int ay, int bx, int by) => Math.Abs(ax - bx) + Math.Abs(ay - by);
-        public static List<Unit> Alive(BState B, char side) => B.Units.Where(u => !u.Dead && u.Side == side).ToList();
+        /// <summary>Tahtadaki birimler (düşen ve tahliye edilen sayılmaz).</summary>
+        public static List<Unit> Alive(BState B, char side) => B.Units.Where(u => OnBoard(u) && u.Side == side).ToList();
+        public static bool OnBoard(Unit u) => !u.Dead && !u.Out;
         static void AddFx(BState B, Fx f) => B.FxList.Add(f);
         static void Say(BState B, string text, string kind = "sys") => B.Log.Add(new LogLine { Turn = B.Turn, Text = text, Kind = kind });
         static Obj NewObj(string k, int hp) => new Obj { K = k, Hp = hp, Max = hp };
@@ -317,7 +325,7 @@ namespace Corrigible.Core
                     if (ch == 'm') B.Units.Add(NewUnit(B, "bakim", x, y));
                 }
             ApplyRegionTraits(B, p, entries);
-            if (IsLoot(B)) B.Exits = new List<Pt>(entries);
+            B.Exits = new List<Pt>(entries);
             // Kadro sığınaktan gelir (yaralı uzman eksik canla, yedek acemi, takılı plaka); verilmezse tam ve sağlam üç uzman
             var squad = p.Squad != null && p.Squad.Count > 0 ? p.Squad
                 : new[] { "tek", "emp", "ana" }.Select(t => new SquadSlot { Type = t, Hp = UnitTypes[t].Hp }).ToList();
@@ -353,8 +361,16 @@ namespace Corrigible.Core
                     u.Type = B.Signature; u.Hp = u.Max = T.Hp + B.EnemyHp; u.Armor = T.Armor;
                 }
             }
+            // Kadro raporu: yatan ya da tam iyileşmemiş uzman telsizde bildirilir (sağlam kadro sessiz girer)
+            foreach (var s in SquadReport(p))
+            {
+                string name = UnitTypes[s.Type].Name;
+                if (s.Missing) Say(B, Loc.F("{0} yatıyor ve yedek yok: kadro eksik girdi.", name), "bad");
+                else if (s.Rookie) Say(B, Loc.F("{0} yatıyor: yerine yedek uzman girdi, can {1}/{2}.", name, s.Hp, s.Max));
+                else if (s.Wounded) Say(B, Loc.F("{0} tam iyileşmedi: can {1}/{2}.", name, s.Hp, s.Max));
+            }
             string tgt = B.IsCore ? Loc.T("çekirdeğimin") : Loc.T("sunucularımın");
-            Say(B, IsLoot(B) ? Loc.T("İkmal kasasını Teknisyen ile bitişik kareden aç, malzemeyi girişe geri taşı. Kasayı imha etme.") : p.Tier > 1 ? Loc.T("Yine sen. Bu sefer kapıda daha çok makine var.") : Loc.F("Demek {0} yerini buldun. Bakalım içeri girebilecek misin.", tgt), IsLoot(B) ? "sys" : "ai");
+            Say(B, IsLoot(B) ? Loc.T("İkmal kasasını Teknisyen ile bitişik kareden aç; sonra bütün ekip girişten çıkmalı. Kasayı imha etme.") : p.Tier > 1 ? Loc.T("Yine sen. Bu sefer kapıda daha çok makine var.") : Loc.F("Demek {0} yerini buldun. Bakalım içeri girebilecek misin.", tgt), IsLoot(B) ? "sys" : "ai");
             PlanEnemies(B);
             // Güvenli giriş: ilk tur uyanma yok
             if (!p.Traits.Contains("guvenli")) PlaceSpawns(B);
@@ -365,6 +381,41 @@ namespace Corrigible.Core
         /// <summary>Sınırlı yeteneğin baskın başına hakkı (kampanya dengeden verir); öteki uzmanlarda sınırsız.</summary>
         static int StartCharges(RaidParams p, string type) =>
             type == "maden" ? Math.Max(0, p.DynamiteCharges) : type == "duman" ? Math.Max(0, p.SmokeCharges) : -1;
+
+        /// <summary>
+        /// Kadro raporunun satırı: baskına giren uzman (canı tahtadaki gibi kırpılmış), yatan uzmanın yerine giren yedek
+        /// (<see cref="Rookie"/>) ya da yedeği olmadığı için boş kalan rol (<see cref="Missing"/>).
+        /// </summary>
+        public sealed class SquadEntry
+        {
+            public string Type; public int Hp, Max, Armor; public bool Rookie, Missing;
+            /// <summary>Asıl uzman tam iyileşmeden girdi (yedeğin eksik canı yara değildir).</summary>
+            public bool Wounded => !Missing && !Rookie && Hp < Max;
+        }
+
+        /// <summary>
+        /// Baskına giren kadronun durumu, kadro sırasıyla: seçilen roller (<see cref="RaidParams.Roles"/>; yoksa kadronun
+        /// türleri, üçten azsa ekip kartları gibi Teknisyen, EMP uzmanı ve Analist'le tamamlanır; kadro da yoksa tam ve sağlam
+        /// üç uzman). RNG kullanmaz; telsiz ve kadro raporu okur.
+        /// </summary>
+        public static List<SquadEntry> SquadReport(RaidParams p)
+        {
+            var squad = p.Squad != null && p.Squad.Count > 0 ? p.Squad
+                : new[] { "tek", "emp", "ana" }.Select(t => new SquadSlot { Type = t, Hp = UnitTypes[t].Hp }).ToList();
+            var roles = p.Roles != null && p.Roles.Count > 0 ? p.Roles : squad.Select(s => s.Type).ToList();
+            if (p.Roles == null || p.Roles.Count == 0)
+                foreach (var r in new[] { "tek", "emp", "ana" }) if (roles.Count < 3 && !roles.Contains(r)) roles.Add(r);
+            var list = new List<SquadEntry>();
+            foreach (var role in Simulation.Roles.Where(roles.Contains))
+            {
+                var slot = squad.FirstOrDefault(s => s.Type == role);
+                int max = UnitTypes[role].Hp;
+                list.Add(slot == null
+                    ? new SquadEntry { Type = role, Max = max, Missing = true }
+                    : new SquadEntry { Type = role, Hp = Math.Max(1, Math.Min(max, slot.Hp)), Max = max, Armor = Math.Max(0, slot.Armor), Rookie = slot.Rookie });
+            }
+            return list;
+        }
 
         // ---------- Hasar, itme ----------
         static void Hurt(BState B, Unit u, int n, string why)
@@ -387,7 +438,9 @@ namespace Corrigible.Core
             string w = why != null ? " (" + why + ")" : "";
             if (u.Side == 'p') Say(B, Loc.F("{0} yere düştü{1}.", UnitTypes[u.Type].Name, w), "bad");
             else Say(B, Loc.F("{0} devre dışı{1}.", UnitTypes[u.Type].Name, w), "good");
-            if (u.Id == B.Carrier && B.Phase == "player") Lose(B, Loc.T("Teknisyen düştü: ikmal malzemeleri kaybedildi."));
+            // Kaçışta taşıyıcı düştü: malzeme gitti, tahtada kalanlar yine de çıkmalı (baskın tahtada uzman kalmayınca biter)
+            if (u.Id == B.Carrier && B.Phase == "player")
+                Say(B, Alive(B, 'p').Count > 0 ? Loc.T("Teknisyen düştü: ikmal malzemeleri kaybedildi. Ekibin geri kalanı yine de çıkmalı.") : Loc.T("Teknisyen düştü: ikmal malzemeleri kaybedildi."), "bad");
         }
 
         static void HurtObj(BState B, int x, int y, int n)
@@ -431,23 +484,51 @@ namespace Corrigible.Core
             if (CellAt(B, nx, ny).T == "cable") Hurt(B, u, 1, Loc.T("elektrik"));
         }
 
-        /// <summary>İkmal görevinde kaçış: malzemeyi taşıyan Teknisyen bir çıkışa (giriş karesi) varınca ekip tahliye edilir.</summary>
+        /// <summary>
+        /// Her hamleden sonra: kaçışta bir çıkışta duran uzman tahliye edilir (yürüyerek, itilerek ya da kaçış başlarken orada
+        /// durarak). Tahtada uzman kalmadıysa kaçışta baskın biter (<see cref="FinishEscape"/>), kaçıştan önce kaybedilir.
+        /// </summary>
         static void CheckEscape(BState B)
         {
-            if (B.Carrier == 0 || B.Phase != "player") return;
-            var c = ById(B, B.Carrier);
-            if (c == null || c.Dead || !B.Exits.Any(p => p.X == c.X && p.Y == c.Y)) return;
-            B.Phase = "won";
-            B.OutcomeSuccess = true;
-            B.OutcomeReason = Loc.T("İkmal malzemeleri alındı. Ekip tahliye edildi.");
+            if (B.Phase != "player") return;
+            if (B.Escape)
+                foreach (var u in Alive(B, 'p'))
+                {
+                    if (!B.Exits.Any(p => p.X == u.X && p.Y == u.Y)) continue;
+                    u.Out = true;
+                    AddFx(B, new Fx { K = "evac", X = u.X, Y = u.Y, Unit = u.Id });
+                    Say(B, Loc.F("{0} tahliye edildi.", UnitTypes[u.Type].Name), "good");
+                }
+            if (Alive(B, 'p').Count > 0) return;
+            if (B.Escape) FinishEscape(B);
+            else Lose(B, Loc.T("Ekibin tamamı yere düştü."));
         }
 
+        /// <summary>Hedef dolapların hepsi kırıldı: sunucu görevinde kaçış başlar (ikmal görevinde kasa açılınca başlar).</summary>
         static void CheckWin(BState B)
         {
-            if (TargetsLeft(B).Count > 0) return;
-            B.Phase = "won";
-            B.OutcomeSuccess = true;
-            B.OutcomeReason = IsLoot(B) ? Loc.T("İkmal malzemeleri alındı. Ekip tahliye edildi.") : B.IsCore ? Loc.T("Çekirdek yok edildi.") : Loc.T("YZ düğümü kırıldı.");
+            if (TargetsLeft(B).Count > 0 || IsLoot(B) || B.Escape) return;
+            B.Escape = true;
+            Say(B, Loc.T("Hedef kırıldı. Şimdi bütün ekip girişten çıkmalı: tahtada kalan uzman baskında düşmüş sayılır."), "good");
+        }
+
+        /// <summary>
+        /// Kaçışın sonu (tahtada uzman kalmadı ya da süre doldu): sunucu görevi hedef kırıldığı için kazanılır, ikmal görevi
+        /// malzemeyi taşıyan Teknisyen çıktıysa. Çıkamayan uzmanlar <see cref="EndTurn"/>'de düşmüş sayılır.
+        /// </summary>
+        static void FinishEscape(BState B)
+        {
+            var carrier = B.Carrier != 0 ? ById(B, B.Carrier) : null;
+            bool won = !IsLoot(B) || carrier != null && carrier.Out;
+            int all = B.Units.Count(u => u.Side == 'p'), gone = B.Units.Count(u => u.Side == 'p' && u.Out);
+            bool full = gone == all;
+            B.Phase = won ? "won" : "lost";
+            B.OutcomeSuccess = won;
+            B.OutcomeReason = !won
+                ? carrier != null && carrier.Left ? Loc.T("Süre doldu: ekip malzemelerle çıkamadı.") : Loc.T("Teknisyen düştü: ikmal malzemeleri kaybedildi.")
+                : IsLoot(B) ? full ? Loc.T("İkmal malzemeleri alındı. Ekip tahliye edildi.") : Loc.F("İkmal malzemeleri alındı. Ekipten {0}/{1} uzman çıktı.", gone, all)
+                : B.IsCore ? full ? Loc.T("Çekirdek yok edildi. Ekip tahliye edildi.") : Loc.F("Çekirdek yok edildi. Ekipten {0}/{1} uzman çıktı.", gone, all)
+                : full ? Loc.T("YZ düğümü kırıldı. Ekip tahliye edildi.") : Loc.F("YZ düğümü kırıldı. Ekipten {0}/{1} uzman çıktı.", gone, all);
         }
 
         public static List<(int X, int Y, Obj O)> TargetsLeft(BState B)
@@ -564,8 +645,9 @@ namespace Corrigible.Core
                     // Aynı yetenek komutu ve önizleme yolu kullanılır; ikmal görevi dolabı kırmak yerine açar.
                     CellAt(B, x, y).O = null;
                     B.Carrier = u.Id;
+                    B.Escape = true;
                     AddFx(B, new Fx { K = "loot", X = x, Y = y, Obj = cargo.K });
-                    Say(B, Loc.T("Teknisyen malzemeleri aldı: girişe geri dön, ekip oradan tahliye edilir."), "good");
+                    Say(B, Loc.T("Teknisyen malzemeleri aldı. Şimdi bütün ekip girişten çıkmalı: tahtada kalan uzman baskında düşmüş sayılır."), "good");
                 }
                 else if (CellAt(B, x, y).O != null) HurtObj(B, x, y, 2);
             }
@@ -629,8 +711,8 @@ namespace Corrigible.Core
 
         static void Snapshot(BState B) => B.Hist.Add(B.Clone());
 
-        public static bool CanMove(BState B, Unit u) => B.Phase == "player" && !u.Dead && u.Side == 'p' && !u.Moved && !u.Acted;
-        public static bool CanAct(BState B, Unit u) => B.Phase == "player" && !u.Dead && u.Side == 'p' && !u.Acted;
+        public static bool CanMove(BState B, Unit u) => B.Phase == "player" && OnBoard(u) && u.Side == 'p' && !u.Moved && !u.Acted;
+        public static bool CanAct(BState B, Unit u) => B.Phase == "player" && OnBoard(u) && u.Side == 'p' && !u.Acted;
         static Unit ById(BState B, int id) => B.Units.FirstOrDefault(v => v.Id == id);
 
         public static bool DoMove(BState B, int uid, int x, int y)
@@ -653,7 +735,6 @@ namespace Corrigible.Core
             B.FxList.Clear();
             ApplyAbility(B, u, x, y);
             u.Acted = true; u.Moved = true;
-            if (Alive(B, 'p').Count == 0 && B.Phase == "player") Lose(B, Loc.T("Ekibin tamamı yere düştü."));
             CheckEscape(B);
             return true;
         }
@@ -675,7 +756,7 @@ namespace Corrigible.Core
             var c = src.Clone();
             dst.Params = c.Params; dst.Rs = c.Rs; dst.Turn = c.Turn; dst.MaxTurns = c.MaxTurns; dst.SpawnPerTurn = c.SpawnPerTurn;
             dst.Collateral = c.Collateral; dst.NextId = c.NextId; dst.Phase = c.Phase; dst.Layout = c.Layout; dst.OutcomeReason = c.OutcomeReason;
-            dst.IsCore = c.IsCore; dst.OutcomeSuccess = c.OutcomeSuccess; dst.Retreated = c.Retreated;
+            dst.IsCore = c.IsCore; dst.OutcomeSuccess = c.OutcomeSuccess; dst.Retreated = c.Retreated; dst.Escape = c.Escape;
             dst.Signature = c.Signature; dst.EnemyHp = c.EnemyHp; dst.EnemyMove = c.EnemyMove; dst.Fog = c.Fog;
             dst.Carrier = c.Carrier; dst.Exits = c.Exits; dst.Smart = c.Smart; dst.Rubble = c.Rubble;
             dst.Cells = c.Cells; dst.Units = c.Units; dst.Spawns = c.Spawns; dst.Log = c.Log; dst.FxList = c.FxList;
@@ -686,7 +767,8 @@ namespace Corrigible.Core
             public List<Fx> Fx;
             public List<(int Unit, Pt From, Pt To)> Moves;
             public int Collateral;
-            public bool Won;
+            /// <summary>Won: hamle baskını bitirir (son uzman çıkar); Escape: hamle kaçışı başlatır (kasa açılır, son hedef kırılır).</summary>
+            public bool Won, Escape;
             /// <summary>Hamleden sonra makinelerin niyetleri (sise kesilen atış, dinamitin açtığı hat).</summary>
             public List<IntentView> Intents;
         }
@@ -705,7 +787,7 @@ namespace Corrigible.Core
                 var ou = ById(B, cu.Id);
                 if (ou != null && (ou.X != cu.X || ou.Y != cu.Y)) moves.Add((cu.Id, new Pt(ou.X, ou.Y), new Pt(cu.X, cu.Y)));
             }
-            return new PreviewResult { Fx = C.FxList, Moves = moves, Collateral = C.Collateral - B.Collateral, Won = C.Phase == "won", Intents = Baskin.Intents(C) };
+            return new PreviewResult { Fx = C.FxList, Moves = moves, Collateral = C.Collateral - B.Collateral, Won = C.Phase == "won", Escape = C.Escape && !B.Escape, Intents = Baskin.Intents(C) };
         }
 
         // ---------- Düşman ----------
@@ -816,7 +898,7 @@ namespace Corrigible.Core
             bool Open(int x, int y) => Inb(x, y) && CellAt(B, x, y).T != "wall" && CellAt(B, x, y).O == null;
             void Add(int x, int y, double w) { if (Open(x, y)) keys[y * N + x] = Math.Max(keys.TryGetValue(y * N + x, out var v) ? v : 0, w); }
             var carrier = B.Carrier != 0 ? ById(B, B.Carrier) : null;
-            if (carrier == null || carrier.Dead)
+            if (carrier == null || !OnBoard(carrier))
             {
                 // Sunucu görevinde Teknisyen hedefin yanında birkaç tur çalışır: önü daha değerli
                 foreach (var t in TargetsLeft(B)) foreach (var d in Dirs) Add(t.X + d[0], t.Y + d[1], IsLoot(B) ? 3 : 4);
@@ -934,7 +1016,7 @@ namespace Corrigible.Core
             var keys = B.Smart ? KeyTiles(B) : null;
             var covered = new HashSet<int>();
             var carrier = B.Smart && B.Carrier != 0 ? ById(B, B.Carrier) : null;
-            if (carrier != null && carrier.Dead) carrier = null;
+            if (carrier != null && !OnBoard(carrier)) carrier = null;
             var tek = B.Smart ? Alive(B, 'p').FirstOrDefault(u => u.Type == "tek") : null;
             // Turda en çok bir makine sivillere yönelir (niyeti görünür: uzman araya girer ya da onu düşürür)
             bool civTaken = false;
@@ -1117,8 +1199,9 @@ namespace Corrigible.Core
             }
             // Sis makine evresinin sonunda dağılır: yeni plan onu görmez
             for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) B.Cells[y, x].Smoke = false;
-            // Makinelerin itmesi taşıyıcıyı çıkışa atabilir
-            CheckEscape(B);
+            // Kaçışta makinelerin itmesi uzmanı çıkışa atabilir (tahliye edilir); tahtada uzman kalmadıysa baskın biter. Kaçıştan
+            // önce ekibin düşmesi uyanmadan sonra sayılır (eski baskınlar aynı kalır).
+            if (B.Escape) CheckEscape(B);
             if (B.Phase != "player") return true;
             // 2) Uyanma: işaretli karede biri duruyorsa uyanma engellenir ama duran hasar alır
             foreach (var s in B.Spawns)
@@ -1132,11 +1215,24 @@ namespace Corrigible.Core
                 Say(B, Loc.F("Yeni bir {0} uyandı.", LowerName(UnitTypes[tp].Name)), "bad");
             }
             B.Spawns = new List<Pt>();
-            if (Alive(B, 'p').Count == 0) { Lose(B, Loc.T("Ekibin tamamı yere düştü.")); return true; }
+            CheckEscape(B);
+            if (B.Phase != "player") return true;
             B.Turn++;
             if (B.Turn > B.MaxTurns)
             {
-                Lose(B, B.Carrier != 0 ? Loc.T("Süre doldu: ekip malzemelerle çıkamadı.") : IsLoot(B) ? Loc.T("Süre doldu: YZ ikmal deposunu kilitledi.") : B.IsCore ? Loc.T("Süre doldu: YZ çekirdeğini binadan taşıdı.") : Loc.T("Süre doldu: YZ sunucularını yedekledi ve binayı kilitledi."));
+                if (!B.Escape)
+                {
+                    Lose(B, IsLoot(B) ? Loc.T("Süre doldu: YZ ikmal deposunu kilitledi.") : B.IsCore ? Loc.T("Süre doldu: YZ çekirdeğini binadan taşıdı.") : Loc.T("Süre doldu: YZ sunucularını yedekledi ve binayı kilitledi."));
+                    return true;
+                }
+                // Kaçışta süre doldu: tahtada kalan uzman çıkamadı, baskında düşmüş sayılır
+                foreach (var u in Alive(B, 'p'))
+                {
+                    u.Left = true; u.Dead = true; u.Hp = 0;
+                    AddFx(B, new Fx { K = "die", X = u.X, Y = u.Y, Unit = u.Id });
+                    Say(B, Loc.F("{0} çıkamadı: baskında düşmüş sayılır.", UnitTypes[u.Type].Name), "bad");
+                }
+                FinishEscape(B);
                 return true;
             }
             // 3) Yeni plan
@@ -1144,7 +1240,7 @@ namespace Corrigible.Core
             foreach (var u in B.Units) if (u.Side == 'p') { u.Moved = u.Locked; u.Acted = false; }
             PlanEnemies(B);
             PlaceSpawns(B);
-            if (B.Turn == B.MaxTurns) Say(B, Loc.T("Son tur."), "turn");
+            if (B.Turn == B.MaxTurns) Say(B, B.Escape ? Loc.T("Son tur: bu tur çıkamayan uzman baskında düşmüş sayılır.") : Loc.T("Son tur."), "turn");
             return true;
         }
 
@@ -1157,9 +1253,10 @@ namespace Corrigible.Core
             return string.Join(" ", name.Split(' ').Select(w => w.Length > 1 && w.ToUpper(culture) == w ? w : w.ToLower(culture)));
         }
 
+        /// <summary>Geri çekilme: kaçıştan önce ekip olduğu gibi döner, baskın kaybedilir. Kaçışta yoktur: ekip çıkışa yürür.</summary>
         public static bool Retreat(BState B)
         {
-            if (B.Phase != "player") return false;
+            if (B.Phase != "player" || B.Escape) return false;
             Lose(B, Loc.T("Ekip geri çekildi."));
             B.Retreated = true;
             return true;
@@ -1175,6 +1272,7 @@ namespace Corrigible.Core
                 CiviliansLeft = Enumerable.Range(0, N * N).Count(i => CellAt(B, i % N, i / N).O?.K == "civ"),
                 Hp = B.Units.Where(u => u.Side == 'p').Select(u => u.Dead ? 0 : u.Hp).ToList(),
                 Armor = B.Units.Where(u => u.Side == 'p').Select(u => u.Armor).ToList(),
+                Left = B.Units.Where(u => u.Side == 'p').Select((u, i) => (u, i)).Where(x => x.u.Left).Select(x => x.i).ToList(),
             };
         }
 
@@ -1183,11 +1281,11 @@ namespace Corrigible.Core
         {
             var objs = new List<string>();
             for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) { var o = CellAt(B, x, y).O; if (o != null) objs.Add($"{o.K}{x}{y}:{o.Hp}"); }
-            // Yıkılan duvar, sis ve sınırlı yetenek hakkı yalnız varsa eklenir (eski imzalar değişmez)
+            // Yıkılan duvar, sis, sınırlı yetenek hakkı, tahliye ("o") ve geride kalma ("l") yalnız varsa eklenir (eski imzalar değişmez)
             var smoke = new List<string>();
             for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) if (CellAt(B, x, y).Smoke) smoke.Add($"{x}{y}");
-            return $"{B.Phase}|t{B.Turn}|c{B.Collateral}|rs{B.Rs}|" + (B.Carrier != 0 ? $"k{B.Carrier}|" : "")
-                + string.Join(",", B.Units.Select(u => $"{u.Type}{u.X}{u.Y}:{u.Hp}{(u.Dead ? "x" : "")}{(u.Charges >= 0 ? "c" + u.Charges : "")}")) + "|" + string.Join(",", objs)
+            return $"{B.Phase}|t{B.Turn}|c{B.Collateral}|rs{B.Rs}|" + (B.Carrier != 0 ? $"k{B.Carrier}|" : "") + (B.Escape && B.Carrier == 0 ? "e|" : "")
+                + string.Join(",", B.Units.Select(u => $"{u.Type}{u.X}{u.Y}:{u.Hp}{(u.Dead ? "x" : "")}{(u.Out ? "o" : "")}{(u.Left ? "l" : "")}{(u.Charges >= 0 ? "c" + u.Charges : "")}")) + "|" + string.Join(",", objs)
                 + (B.Rubble.Count > 0 ? "|r" + string.Join(",", B.Rubble.Select(p => $"{p.X}{p.Y}")) : "") + (smoke.Count > 0 ? "|s" + string.Join(",", smoke) : "");
         }
     }

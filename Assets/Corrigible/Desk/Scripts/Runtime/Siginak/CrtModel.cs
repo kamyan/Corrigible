@@ -15,6 +15,6 @@ namespace Corrigible.Desk
     /// <summary>Baskın geçiş karesi (K5b) metinleri.</summary>
     public sealed class CrtTransitionData
     {
-        public string Channel, Code, Title, Sync, Target, Camera, SkipKey, SkipWord, Footer, CutTitle, CutSub;
+        public string Channel, Code, Title, Sync, Target, Camera, Footer, CutTitle, CutSub;
     }
 }

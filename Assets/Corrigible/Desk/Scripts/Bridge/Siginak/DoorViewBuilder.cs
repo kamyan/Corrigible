@@ -98,13 +98,11 @@ namespace Corrigible.Desk.Bridge
                     d.Buttons.Add(new DoorButtonData { Id = Peek, Label = Loc.T("Gözetleme deliğinden bak"), Used = peeked ? Loc.T("BAKILDI") : null });
                     d.Buttons.Add(new DoorButtonData { Id = Ask, Label = Loc.T("İnterkomdan parolayı sor"), Used = asked ? Loc.T("SORULDU") : null });
                     foreach (var o in sim.DoorOptions()) d.Buttons.Add(Option(sim, o, false));
-                    d.HintKey = "Esc";
                     d.Hint = Loc.T("masaya dön · ziyaretçi vardiya bitene kadar bekler");
                     break;
                 case DoorPhase.Open:
                     d.Body = Paragraphs(Loc.T(card.Opened), visit.Result == null ? null : Loc.T(visit.Result));
                     foreach (var o in sim.DoorOptions()) d.Buttons.Add(Option(sim, o, true));
-                    d.HintKey = "Esc";
                     d.Hint = Loc.T("masaya dön · kapı açık bekler");
                     break;
                 default:

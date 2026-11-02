@@ -197,6 +197,35 @@ namespace Corrigible.Desk.Tests
             finally { EditorSceneManager.CloseScene(scene, true); }
         }
 
+        /// <summary>DeskGame klavye tuşu yazmaz: kısayollar çalışır ama ekranda “Enter”, “Esc”, “Home”… gibi ipucu yok.</summary>
+        [Test]
+        public void DeskGameScene_ShowsNoKeyboardHints()
+        {
+            var scene = EditorSceneManager.OpenScene(DeskSpriteManifest.Root + "/Scenes/DeskGame.unity", OpenSceneMode.Additive);
+            try
+            {
+                var keys = new[] { "Enter", "Esc", "Tab", "Home", "Boşluk", "Space", "←", "→" };
+                var roots = scene.GetRootGameObjects();
+                // Tuş fişi yalnız kısayolu boş DeskButton'larda kalır (orada hiç görünmez)
+                foreach (var chip in roots.SelectMany(g => g.GetComponentsInChildren<KeyChipView>(true)))
+                {
+                    var button = chip.GetComponentInParent<DeskButton>(true);
+                    Assert.IsNotNull(button, chip.name + " tuş fişi");
+                    Assert.IsEmpty(new SerializedObject(button).FindProperty("shortcut").stringValue, button.name + " kısayol yazıyor");
+                }
+                foreach (var text in roots.SelectMany(g => g.GetComponentsInChildren<TMPro.TMP_Text>(true)))
+                {
+                    string t = text.text.Trim();
+                    if (text.transform.parent != null && text.transform.parent.GetComponent<UnityEngine.UI.Button>() != null && (t == "←" || t == "→")) continue;
+                    Assert.IsFalse(keys.Contains(t), text.name + " tuş yazıyor: " + t);
+                    StringAssert.DoesNotContain("Enter ·", t, text.name);
+                }
+                foreach (var plaque in roots.SelectMany(g => g.GetComponentsInChildren<SettingsPlaque>(true)))
+                    Assert.IsNull(new SerializedObject(plaque).FindProperty("key"), "plakada tuş alanı yok");
+            }
+            finally { EditorSceneManager.CloseScene(scene, true); }
+        }
+
         [Test]
         public void DeskGameScene_DeskControlsAreWired()
         {
@@ -217,12 +246,24 @@ namespace Corrigible.Desk.Tests
                 Assert.IsNotNull(sv.FindProperty("telex").objectReferenceValue);
 
                 var room = desk.transform.parent.gameObject;
-                // Revizyon 2: 1 · 2 · 3 · 4 KAPI · H · Home; yalnız kapı tuşunun dikkat lambası var
+                // SIĞINAK · GÖREVLER · KAPI · MASA (KOMUTA ve KILAVUZ kalktı); yalnız kapı tuşunun dikkat lambası var. Tuş başlığında
+                // tuş adı yerine istasyonun simgesi (aydınlatılan saydam dörtgen, çarpıştırıcısız)
                 var rail = room.GetComponentInChildren<StationKeyRail>(true);
-                Assert.AreEqual(6, rail.Count);
+                Assert.AreEqual(4, rail.Count);
+                var icons = new[] { "tx_key_shelter", "tx_key_missions", "tx_key_door", "tx_key_desk" };
                 for (int i = 0; i < rail.Count; i++)
-                    Assert.AreEqual(i == StationKeyRail.Door, new SerializedObject(rail[i]).FindProperty("jewelAttention").objectReferenceValue != null, rail[i].name);
-                Assert.AreEqual("4", rail[StationKeyRail.Door].Target.KeyHint);
+                {
+                    var ks = new SerializedObject(rail[i]);
+                    Assert.AreEqual(i == StationKeyRail.Door, ks.FindProperty("jewelAttention").objectReferenceValue != null, rail[i].name);
+                    var cap = (Transform)ks.FindProperty("cap").objectReferenceValue;
+                    Assert.IsEmpty(cap.GetComponentsInChildren<TMPro.TMP_Text>(true), rail[i].name + " başlığında yazı yok");
+                    var icon = cap.Find("Icon").GetComponent<MeshRenderer>();
+                    Assert.AreEqual(icons[i], icon.sharedMaterial.GetTexture("_BaseMap").name, rail[i].name);
+                    Assert.IsNull(icon.GetComponent<Collider>());
+                }
+                // Üst kenar şeridi aynı istasyonlar ve en sonda AYARLAR; tuş kutularında simge
+                var edgeLine = new SerializedObject(room.transform.root.GetComponentsInChildren<EdgeLine>(true).Single());
+                Assert.AreEqual(rail.Count + 1, edgeLine.FindProperty("chips").arraySize);
                 foreach (var target in room.GetComponentsInChildren<DeskTarget>(true))
                     Assert.Greater(target.GetComponent<BoxCollider>().size.sqrMagnitude, 0, target.name + " çarpıştırıcısı boş");
                 // Ekran katmanı Overlay; harita fişleri (Aşama 5) ayrı World Space canvas'lardır

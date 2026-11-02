@@ -21,13 +21,14 @@ namespace Corrigible.Tests
             Assert.AreEqual(0.669734041439369, r.Next(), 1e-15);
         }
 
-        // Kasa 3. turda açılır, Teknisyen malzemeyi 5. turda girişe taşır (kaçış)
+        // Kasa 3. turda açılır ve kaçış başlar: girişte duran Analist hemen tahliye edilir; EMP uzmanı 4. turda, Teknisyen
+        // malzemeyle 5. (99) ya da 6. turda (11) çıkar. Son uzman çıkınca baskın kazanılır.
         [TestCase(11,
-            "m4.2.1 m5.1.3 a5.1.1 e m4.4.3 a4.3.3 m5.0.5 a5.5.5 e m4.5.4 a4.6.4 a5.0.3 e m4.4.2 a4.5.2 m5.0.2 a5.5.2 m6.1.2 a6.3.2 e m4.0.1",
-            "won|t5|c2|rs376070893|k4|dron33:0x,bakim54:0x,dron56:0x,tek01:3,emp02:3,ana12:2,dron62:2,bakim52:1,dron76:2,dron50:2|civ30:1,spawner70:2,civ15:1,civ07:1,spawner77:1")]
+            "m4.2.1 m5.1.3 a5.1.1 e m4.4.3 a4.3.3 m5.0.5 a5.5.5 e m4.5.4 a4.6.4 a5.0.3 e m4.4.2 a4.5.2 m5.0.2 e m4.1.2 e m4.0.2",
+            "won|t6|c2|rs312129696|k4|dron33:0x,bakim54:0x,dron56:0x,tek02:3o,emp02:3o,ana02:2o,dron32:2,bakim42:1,dron76:2,dron60:2,bakim65:2|civ30:1,spawner70:2,civ15:1,civ07:1,spawner77:1")]
         [TestCase(99,
-            "m4.2.1 m5.1.3 a5.1.1 e m4.4.3 a4.3.3 m5.1.4 a5.6.4 e m4.5.4 a4.6.4 a5.6.4 e m4.3.2 m5.1.2 a5.4.2 m6.4.2 a6.4.4 e m4.0.2",
-            "won|t5|c1|rs-1455494832|k4|dron33:0x,bakim44:0x,dron74:0x,tek02:2,emp12:3,ana42:1,bakim44:0x,dron52:2,dron71:1,dron62:2|civ30:1,spawner70:2,civ15:1,civ07:1,civ57:1,spawner77:2")]
+            "m4.2.1 m5.1.3 a5.1.1 e m4.4.3 a4.3.3 m5.1.4 a5.6.4 e m4.5.4 a4.6.4 a5.6.4 e m4.3.2 m5.0.2 e m4.0.2",
+            "won|t5|c1|rs376070981|k4|dron33:0x,bakim44:0x,dron74:0x,tek02:2o,emp02:3o,ana02:2o,bakim33:2,dron62:2,dron52:2,dron72:2|civ30:1,spawner70:2,civ15:1,civ07:1,civ57:1,spawner77:2")]
         public void LootRaid_SameMovesGiveSameBattle(int seed, string moves, string expected)
         {
             var state = Baskin.Create(new RaidParams { Seed = seed, MissionKind = "loot" });
@@ -39,6 +40,8 @@ namespace Corrigible.Tests
             }
             Assert.AreEqual(expected, Baskin.Signature(state));
             Assert.IsTrue(Baskin.Result(state).Success);
+            Assert.IsTrue(state.Units.Where(u => u.Side == 'p').All(u => u.Out), "bütün ekip çıktı");
+            Assert.AreEqual(Loc.T("İkmal malzemeleri alındı. Ekip tahliye edildi."), Baskin.Result(state).Reason);
         }
 
         [Test]
@@ -65,6 +68,36 @@ namespace Corrigible.Tests
             Assert.AreEqual(1, Civ(Baskin.Create(new RaidParams { Seed = 4242, Compute = 4 })), "parametre yoksa 1 can");
             Assert.AreEqual(2, Civ(Baskin.Create(new RaidParams { Seed = 4242, Compute = 4, CivilianHp = 2 })));
             Assert.AreEqual(2, Civ(Baskin.Create(new RaidParams { Seed = 4242, Compute = 4, CivilianHp = 2, Traits = new List<string> { "kalabalik" } })), "kalabalık şehrin fazladan sivilleri de");
+        }
+
+        /// <summary>Kadro raporu: yaralı asıl uzman, yatanın yerine yedek ve yedeksiz boş rol telsize düşer; sağlam kadro sessiz girer.</summary>
+        [Test]
+        public void SquadReport_TellsTheRadioWhoIsHurtStandingInOrMissing()
+        {
+            var healthy = Baskin.Create(new RaidParams { Seed = 7 });
+            Assert.AreEqual(1, healthy.Log.Count, "sağlam kadro: yalnız açılış satırı");
+            Assert.IsTrue(Baskin.SquadReport(healthy.Params).All(e => !e.Wounded && !e.Rookie && !e.Missing));
+
+            var p = new RaidParams
+            {
+                Seed = 7, Roles = new List<string> { "tek", "emp", "ana" },
+                Squad = new List<SquadSlot> { new SquadSlot { Type = "tek", Hp = 3, Armor = 1 }, new SquadSlot { Type = "ana", Hp = 1 } },
+            };
+            var report = Baskin.SquadReport(p);
+            CollectionAssert.AreEqual(new[] { "tek", "emp", "ana" }, report.Select(e => e.Type).ToArray());
+            Assert.IsFalse(report[0].Wounded); Assert.AreEqual(1, report[0].Armor);
+            Assert.IsTrue(report[1].Missing);
+            Assert.IsTrue(report[2].Wounded); Assert.AreEqual(1, report[2].Hp); Assert.AreEqual(2, report[2].Max);
+            var B = Baskin.Create(p);
+            Assert.AreEqual(Loc.F("{0} yatıyor ve yedek yok: kadro eksik girdi.", Baskin.UnitTypes["emp"].Name), B.Log[0].Text);
+            Assert.AreEqual("bad", B.Log[0].Kind);
+            Assert.AreEqual(Loc.F("{0} tam iyileşmedi: can {1}/{2}.", Baskin.UnitTypes["ana"].Name, 1, 2), B.Log[1].Text);
+
+            // Yedek uzmanın eksik canı yara değildir
+            p.Squad[1] = new SquadSlot { Type = "ana", Hp = 1, Reserve = 0 };
+            var rookie = Baskin.SquadReport(p)[2];
+            Assert.IsTrue(rookie.Rookie); Assert.IsFalse(rookie.Wounded);
+            Assert.AreEqual(Loc.F("{0} yatıyor: yerine yedek uzman girdi, can {1}/{2}.", Baskin.UnitTypes["ana"].Name, 1, 2), Baskin.Create(p).Log[1].Text);
         }
 
         [Test]
@@ -103,57 +136,173 @@ namespace Corrigible.Tests
             string before = Baskin.Signature(state);
             int rng = state.Rs;
             var preview = Baskin.Preview(state, technician.Id, 3, 3);
-            Assert.IsFalse(preview.Won, "kasayı açmak kazandırmaz: malzeme girişe taşınır");
+            Assert.IsFalse(preview.Won, "kasayı açmak kazandırmaz: bütün ekip girişten çıkmalı");
+            Assert.IsTrue(preview.Escape, "kasayı açmak kaçışı başlatır");
             Assert.IsTrue(preview.Fx.Any(f => f.K == "loot"));
             Assert.AreEqual(before, Baskin.Signature(state));
             Assert.IsTrue(Baskin.DoAct(state, technician.Id, 3, 3));
             Assert.AreEqual("player", state.Phase);
+            Assert.IsTrue(state.Escape);
             Assert.AreEqual(technician.Id, state.Carrier);
+            // Kaçış başlarken giriş karelerinde duran EMP uzmanı ve Analist hemen tahliye edilir
+            Assert.IsTrue(state.Units.Where(u => u.Side == 'p' && u.Type != "tek").All(u => u.Out));
+            Assert.IsTrue(state.FxList.Count(f => f.K == "evac") == 2);
             Assert.AreEqual(rng, state.Rs);
             Assert.AreEqual(0, state.Collateral);
             Assert.IsNull(state.Cells[3, 3].O);
         }
 
         [Test]
-        public void Escape_CarrierReachingAnExitWins()
+        public void Escape_EveryoneMustLeave_LastOneOutWins()
         {
             var state = OpenCargoFixture();
+            state.Spawns.Clear();
             var technician = state.Units.First(u => u.Type == "tek");
+            var emp = state.Units.First(u => u.Type == "emp");
+            var analyst = state.Units.First(u => u.Type == "ana");
             technician.X = 2; technician.Y = 3;
-            // Öteki uzmanlar giriş karelerinden çekilir (dostun karesinde durulmaz)
-            state.Units.First(u => u.Type == "emp").X = 6; state.Units.First(u => u.Type == "ana").X = 7;
+            // Öteki uzmanlar giriş karelerinin yakınında, üstünde değil
+            emp.X = 2; emp.Y = 1; analyst.X = 3; analyst.Y = 0;
+            Assert.IsTrue(Baskin.Retreat(Baskin.Create(new RaidParams { Seed = 11, MissionKind = "loot" })), "kaçıştan önce geri çekilinir");
+            Assert.IsTrue(Baskin.DoAct(state, technician.Id, 3, 3));
+            Assert.IsFalse(Baskin.Retreat(state), "kaçışta geri çekilme yok");
+            Assert.IsTrue(Baskin.EndTurn(state));
+            Assert.IsTrue(Baskin.DoMove(state, technician.Id, 0, 2));
+            Assert.IsTrue(technician.Out, "çıkışa varan Teknisyen tahliye edilir");
+            Assert.AreEqual("player", state.Phase, "tahtada uzman kaldıkça baskın sürer");
+            Assert.IsNull(Baskin.UnitAt(state, 0, 2), "tahliye edilen kareyi tutmaz");
+            Assert.IsFalse(Baskin.CanMove(state, technician) || Baskin.CanAct(state, technician));
+            // Geri alınan çıkış uzmanı tahtaya döndürür (geri alma birimleri kopyasıyla değiştirir)
+            Assert.IsTrue(Baskin.Undo(state));
+            technician = state.Units.First(u => u.Type == "tek");
+            Assert.IsFalse(technician.Out);
+            Assert.IsTrue(Baskin.DoMove(state, technician.Id, 0, 2));
+            emp = state.Units.First(u => u.Type == "emp"); analyst = state.Units.First(u => u.Type == "ana");
+            Assert.IsTrue(Baskin.DoMove(state, emp.Id, 0, 1));
+            Assert.AreEqual("player", state.Phase);
+            Assert.IsTrue(Baskin.DoMove(state, analyst.Id, 0, 0));
+            Assert.AreEqual("won", state.Phase);
+            var result = Baskin.Result(state);
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(0, result.Down);
+            Assert.AreEqual(0, result.Left.Count);
+            Assert.AreEqual(Loc.T("İkmal malzemeleri alındı. Ekip tahliye edildi."), result.Reason);
+        }
+
+        [Test]
+        public void Escape_TimeOutLeavesTheRestBehind_CargoCountsIfTheCarrierGotOut()
+        {
+            var state = OpenCargoFixture();
+            state.Spawns.Clear();
+            var technician = state.Units.First(u => u.Type == "tek");
+            var emp = state.Units.First(u => u.Type == "emp");
+            technician.X = 2; technician.Y = 3;
+            emp.X = 6; emp.Y = 6;
             Assert.IsTrue(Baskin.DoAct(state, technician.Id, 3, 3));
             Assert.IsTrue(Baskin.EndTurn(state));
-            var exit = state.Exits.OrderBy(p => System.Math.Abs(p.X - 2) + System.Math.Abs(p.Y - 3)).First();
-            Assert.IsTrue(Baskin.Reachable(state, technician).Any(p => p.X == exit.X && p.Y == exit.Y));
-            Assert.IsTrue(Baskin.DoMove(state, technician.Id, exit.X, exit.Y));
-            Assert.AreEqual("won", state.Phase);
-            Assert.IsTrue(Baskin.Result(state).Success);
+            Assert.IsTrue(Baskin.DoMove(state, technician.Id, 0, 2));
+            state.Turn = state.MaxTurns;
+            Assert.IsTrue(Baskin.EndTurn(state));
+            Assert.AreEqual("won", state.Phase, "malzeme Teknisyen'le dışarıda");
+            Assert.IsTrue(emp.Left && emp.Dead && emp.Hp == 0, "tahtada kalan EMP uzmanı düşmüş sayılır");
+            Assert.IsTrue(state.FxList.Any(f => f.K == "die" && f.Unit == emp.Id));
+            var result = Baskin.Result(state);
+            Assert.IsTrue(result.Success);
+            CollectionAssert.AreEqual(new[] { 1 }, result.Left);
+            Assert.AreEqual(1, result.Down);
+            Assert.AreEqual(0, result.Hp[1]);
+            Assert.AreEqual(Loc.F("İkmal malzemeleri alındı. Ekipten {0}/{1} uzman çıktı.", 2, 3), result.Reason);
+            var decoded = RaidResult.Decode(result.Encode());
+            CollectionAssert.AreEqual(result.Left, decoded.Left);
+        }
+
+        [Test]
+        public void ServerRaid_BrokenTargetStartsTheEscape_AndWinsEvenIfSomeoneIsLeft()
+        {
+            var state = Baskin.Create(new RaidParams { Seed = 11 });
+            for (int y = 0; y < Baskin.N; y++) for (int x = 0; x < Baskin.N; x++) state.Cells[y, x] = new Baskin.Cell { T = "floor" };
+            state.Cells[3, 3].O = new Baskin.Obj { K = "node", Hp = 2, Max = 4 };
+            foreach (var unit in state.Units.Where(u => u.Side == 'e')) unit.Dead = true;
+            state.Spawns.Clear();
+            Assert.AreEqual(3, state.Exits.Count, "sunucu görevinde de çıkışlar giriş kareleri");
+            var technician = state.Units.First(u => u.Type == "tek");
+            var analyst = state.Units.First(u => u.Type == "ana");
+            technician.X = 2; technician.Y = 3; analyst.X = 4; analyst.Y = 4;
+            var preview = Baskin.Preview(state, technician.Id, 3, 3);
+            Assert.IsFalse(preview.Won, "son hedefi kırmak kazandırmaz: ekip çıkmalı");
+            Assert.IsTrue(preview.Escape);
+            Assert.IsTrue(Baskin.DoAct(state, technician.Id, 3, 3));
+            Assert.AreEqual(0, Baskin.TargetsLeft(state).Count);
+            Assert.AreEqual("player", state.Phase);
+            Assert.IsTrue(state.Escape);
+            Assert.IsTrue(state.Units.First(u => u.Type == "emp").Out, "girişte duran EMP uzmanı hemen çıkar");
+            Assert.IsFalse(Baskin.Retreat(state));
+            Assert.IsTrue(Baskin.EndTurn(state));
+            Assert.IsTrue(Baskin.DoMove(state, technician.Id, 0, 2));
+            // Analist son turda tahtada kalır
+            state.Turn = state.MaxTurns;
+            Assert.IsTrue(Baskin.EndTurn(state));
+            Assert.AreEqual("won", state.Phase, "hedef kırıldı: sunucu görevi başarılı");
+            Assert.IsTrue(analyst.Left);
+            var result = Baskin.Result(state);
+            Assert.IsTrue(result.Success);
+            CollectionAssert.AreEqual(new[] { 2 }, result.Left);
+            Assert.AreEqual(Loc.F("YZ düğümü kırıldı. Ekipten {0}/{1} uzman çıktı.", 2, 3), result.Reason);
+        }
+
+        [Test]
+        public void ServerRaid_TimeOutBeforeTheTarget_LosesWithoutLeavingAnyoneBehind()
+        {
+            var state = Baskin.Create(new RaidParams { Seed = 11 });
+            state.Spawns.Clear();
+            foreach (var unit in state.Units.Where(u => u.Side == 'e')) unit.Dead = true;
+            state.Turn = state.MaxTurns;
+            Assert.IsTrue(Baskin.EndTurn(state));
+            Assert.AreEqual("lost", state.Phase);
+            var result = Baskin.Result(state);
+            Assert.AreEqual(0, result.Down);
+            Assert.AreEqual(0, result.Left.Count);
+            Assert.AreEqual(Loc.T("Süre doldu: YZ sunucularını yedekledi ve binayı kilitledi."), result.Reason);
         }
 
         [Test]
         public void Escape_FallenCarrierOrTimeOut_LosesTheCargo()
         {
-            // Taşıyıcı düşerse: EMP onu tahtanın kenarından dışarı iter (duvara çarpar)
+            // Taşıyıcı düşerse: EMP onu tahtanın kenarından dışarı iter (duvara çarpar). Malzeme gider; tahtada kalan EMP uzmanı
+            // yine de çıkmalı, son turda kalırsa düşmüş sayılır.
             var state = OpenCargoFixture();
+            state.Spawns.Clear();
             var technician = state.Units.First(u => u.Type == "tek");
             var emp = state.Units.First(u => u.Type == "emp");
-            state.Carrier = technician.Id; state.Cells[3, 3].O = null;
+            state.Carrier = technician.Id; state.Escape = true; state.Cells[3, 3].O = null;
             technician.X = 0; technician.Y = 5; technician.Hp = 1;
             emp.X = 5; emp.Y = 5;
+            state.Turn = state.MaxTurns;
             Assert.IsTrue(Baskin.DoAct(state, emp.Id, 1, 5));
+            Assert.IsTrue(technician.Dead);
+            Assert.AreEqual("player", state.Phase, "EMP uzmanı tahtada: baskın sürer");
+            Assert.IsTrue(state.Log.Any(l => l.Text.StartsWith(Loc.T("Teknisyen düştü: ikmal malzemeleri kaybedildi."))));
+            Assert.IsTrue(Baskin.EndTurn(state));
             Assert.AreEqual("lost", state.Phase);
-            StringAssert.Contains(Loc.T("ikmal malzemeleri kaybedildi"), Baskin.Result(state).Reason);
+            Assert.IsTrue(emp.Left);
+            var result = Baskin.Result(state);
+            Assert.AreEqual(Loc.T("Teknisyen düştü: ikmal malzemeleri kaybedildi."), result.Reason);
+            Assert.AreEqual(2, result.Down, "düşen Teknisyen ve çıkamayan EMP uzmanı");
+            CollectionAssert.AreEqual(new[] { 1 }, result.Left);
 
-            // Süre biterse
+            // Süre biterse: girişteki uzmanlar çıkar, taşıyıcı tahtada kalır
             state = OpenCargoFixture();
+            state.Spawns.Clear();
             technician = state.Units.First(u => u.Type == "tek");
-            state.Carrier = technician.Id; state.Cells[3, 3].O = null;
+            state.Carrier = technician.Id; state.Escape = true; state.Cells[3, 3].O = null;
             technician.X = 6; technician.Y = 6;
             state.Turn = state.MaxTurns;
             Assert.IsTrue(Baskin.EndTurn(state));
             Assert.AreEqual("lost", state.Phase);
-            Assert.AreEqual(Loc.T("Süre doldu: ekip malzemelerle çıkamadı."), Baskin.Result(state).Reason);
+            result = Baskin.Result(state);
+            Assert.AreEqual(Loc.T("Süre doldu: ekip malzemelerle çıkamadı."), result.Reason);
+            CollectionAssert.AreEqual(new[] { 0 }, result.Left);
+            Assert.AreEqual(0, result.Hp[0]);
         }
 
         [Test]

@@ -21,8 +21,8 @@ namespace Corrigible.Core
     [System.Serializable]
     public sealed class GameRecord
     {
-        /// <summary>Dosya biçimi. Bu sürümden eski kayıtlar yüklenmez (12: beş uzmanlı kadro ve baskın öncesi seçim; 11: 30 haritalık havuz, kıt sığınak ekonomisi; 10: sığınağın kapısı ve ziyaretçiler; 9: ayakta kalan sivil güveni geri kazandırır, güven tavanı; 8: bölge kimliği ve zorluk kademesi; 7: hazırlık sığınağı, uzman yarası ve kadro; 6: YZ alarmı ve bir baskın bir vardiya; 5: sivil güven; öncekiler başka kurallarla oynandı).</summary>
-        public const int CurrentVersion = 12;
+        /// <summary>Dosya biçimi. Bu sürümden eski kayıtlar yüklenmez (13: Madenci ve Sis uzmanı atölyenin seviyesiyle katılır; 12: beş uzmanlı kadro ve baskın öncesi seçim; 11: 30 haritalık havuz, kıt sığınak ekonomisi; 10: sığınağın kapısı ve ziyaretçiler; 9: ayakta kalan sivil güveni geri kazandırır, güven tavanı; 8: bölge kimliği ve zorluk kademesi; 7: hazırlık sığınağı, uzman yarası ve kadro; 6: YZ alarmı ve bir baskın bir vardiya; 5: sivil güven; öncekiler başka kurallarla oynandı).</summary>
+        public const int CurrentVersion = 13;
         public int version = CurrentVersion;
         public uint seed;
         public Balance balance;

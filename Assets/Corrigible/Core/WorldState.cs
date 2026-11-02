@@ -45,7 +45,7 @@ namespace Corrigible.Core
         public string Id, Name, At, Task;
         /// <summary>Görevde (baskın) kalan vardiya: baskın vardiyayı doldurur.</summary>
         public int Busy;
-        /// <summary>Teknisyen, EMP uzmanı, Analist, Madenci, Sis uzmanı (rol sırasıyla, <see cref="Simulation.Roles"/>).</summary>
+        /// <summary>Katılmış uzmanlar, rol sırasıyla (<see cref="Simulation.Roles"/>): Teknisyen, EMP uzmanı, Analist; atölyeyle Madenci ve Sis uzmanı.</summary>
         public List<SpecialistState> Members = new List<SpecialistState>();
         /// <summary>Son baskına Teknisyen'in yanında seçilen roller: varsayılan seçim ve dinlenme (çıkmayanlar dinlenir).</summary>
         public List<string> LastPick = new List<string>();
@@ -91,7 +91,8 @@ namespace Corrigible.Core
         /// <summary>Sunucu görevinin sertliği (dengeden, <c>liberationServerTargetHp/Machines</c>): düğüm dolabının ek canı (çekirdek
         /// hariç) ve baştaki ek makine; ikmal görevinde ve havuzsuz baskında 0.</summary>
         public int TargetHpBonus, ExtraMachines;
-        /// <summary>Baskının ek turu (dengeden: ikmal görevinde dönüş yolu için <c>liberationLootExtraTurns</c>).</summary>
+        /// <summary>Baskının ek turu (dengeden: kaçışta girişe dönüş yolu için <c>liberationLootExtraTurns</c> ve
+        /// <c>liberationServerExtraTurns</c>).</summary>
         public int ExtraTurns;
         /// <summary>Sivil sunucunun canı (dengeden <c>liberationCivilianHp</c>); 0 ise 1.</summary>
         public int CivilianHp;
@@ -117,10 +118,13 @@ namespace Corrigible.Core
         /// <summary>Baskın bitince tahtada ayakta kalan sivil sunucu sayısı (kazanılan baskında güven geri kazandırır).</summary>
         public int CiviliansLeft;
         public string Reason;
-        /// <summary>Kadronun sırasıyla kalan canı (düşen 0) ve kalan zırh plakası.</summary>
-        public List<int> Hp = new List<int>(), Armor = new List<int>();
+        /// <summary>Kadronun sırasıyla kalan canı (düşen 0) ve kalan zırh plakası. Left: kaçışta süre dolarken tahtada kalan
+        /// uzmanların kadro sırası (canı 0, düşmüş sayılır; <c>Down</c>'a dahil).</summary>
+        public List<int> Hp = new List<int>(), Armor = new List<int>(), Left = new List<int>();
 
-        public string Encode() => $"{(Success ? 1 : 0)}|{(Retreat ? 1 : 0)}|{Collateral}|{Down}|{Turns}|{string.Join(",", Hp)}|{string.Join(",", Armor)}|{CiviliansLeft}";
+        /// <summary>Eski kayıtlar sonda <c>Left</c> olmadan çözülür (kimse geride kalmamış).</summary>
+        public string Encode() => $"{(Success ? 1 : 0)}|{(Retreat ? 1 : 0)}|{Collateral}|{Down}|{Turns}|{string.Join(",", Hp)}|{string.Join(",", Armor)}|{CiviliansLeft}"
+            + (Left != null && Left.Count > 0 ? "|" + string.Join(",", Left) : "");
 
         public static RaidResult Decode(string s)
         {
@@ -131,6 +135,7 @@ namespace Corrigible.Core
                 Collateral = int.Parse(p[2]), Down = int.Parse(p[3]), Turns = int.Parse(p[4]),
                 Hp = p.Length > 5 ? Ints(p[5]) : new List<int>(), Armor = p.Length > 6 ? Ints(p[6]) : new List<int>(),
                 CiviliansLeft = p.Length > 7 ? int.Parse(p[7]) : 0,
+                Left = p.Length > 8 ? Ints(p[8]) : new List<int>(),
             };
         }
 

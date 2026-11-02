@@ -21,27 +21,81 @@ namespace Corrigible.Desk.Tests
                 state.Cells[3, 3].O = new Baskin.Obj { K = "node", Hp = 4, Max = 4 };
                 var technician = state.Units.First(u => u.Type == "tek");
                 technician.X = 2; technician.Y = 3;
-                state.Units.First(u => u.Type == "emp").X = 6; state.Units.First(u => u.Type == "ana").X = 7;
+                // Öteki uzmanlar giriş karelerinin yakınında (üstünde duran kaçış başlarken hemen çıkar)
+                var emp = state.Units.First(u => u.Type == "emp"); emp.X = 2; emp.Y = 1;
+                var analyst = state.Units.First(u => u.Type == "ana"); analyst.X = 3; analyst.Y = 0;
+                state.Spawns.Clear();
                 source.OpenForValidation(state);
+                Assert.IsTrue(source.Current.CanRetreat);
                 Assert.IsTrue(source.Current.IsLootMission);
                 Assert.AreEqual(Loc.T("İkmal kasası"), source.Current.Targets.Single().Name);
                 source.Select('T');
                 Assert.AreEqual(Loc.T("İkmal alma"), source.Current.UnitRows[1].Text);
                 source.Arm();
                 source.Use(new Vector2Int(3, 3));
-                // Kasa açıldı: malzeme girişe taşınır
+                // Kasa açıldı: kaçış başlar, bütün ekip girişten çıkmalı; geri çekilme yok
                 Assert.IsFalse(source.Current.Finished);
                 Assert.IsTrue(source.Current.Escaping);
+                Assert.IsFalse(source.Current.CanRetreat);
+                Assert.AreEqual(Loc.T("Amaç: malzemeyle girişten çık"), source.Current.Goal);
                 // Düzenleme modunda EMRİ İLET makineleri oynatmaz: tur motorda biter (makineler devre dışı)
                 foreach (var e in state.Units.Where(u => u.Side == 'e')) e.Dead = true;
                 Assert.IsTrue(Baskin.EndTurn(state));
-                var exit = state.Exits.OrderBy(p => System.Math.Abs(p.X - technician.X) + System.Math.Abs(p.Y - technician.Y)).First();
                 source.Select('T');
-                source.Move(new Vector2Int(exit.X, exit.Y));
+                source.Move(new Vector2Int(0, 2));
+                // Teknisyen malzemeyle çıktı: kartı tahliye edildi, seçilemez; baskın öteki uzmanlar çıkana kadar sürer
+                Assert.IsFalse(source.Current.Finished);
+                Assert.IsTrue(source.Current.Team.First(t => t.Letter == 'T').Out);
+                Assert.AreEqual(Loc.T("Amaç: ekibi girişten çıkar"), source.Current.Goal);
+                source.Select('T');
+                Assert.AreNotEqual('T', source.Selected);
+                source.Select('E');
+                source.Move(new Vector2Int(0, 1));
+                Assert.IsFalse(source.Current.Finished);
+                source.Select('A');
+                source.Move(new Vector2Int(0, 0));
                 Assert.IsTrue(source.Current.Finished);
                 Assert.IsTrue(source.Current.Success);
                 Assert.AreEqual(Loc.T("SEKTÖR GERİ ALINDI"), source.Current.ResultTitle);
                 Assert.IsTrue(source.Current.Targets.Single().Broken);
+                Assert.IsTrue(source.Current.ResultRows.Any(r => r.Label == Loc.T("Tahliye edilen") && r.Value == "3/3" && r.Good));
+            }
+            finally { Object.DestroyImmediate(root); }
+        }
+
+        /// <summary>Kadro raporu ilk turda birim seçili değilken görünür: sağlam yeşil, yaralı ve boş rol kırmızı; seçince kalkar.</summary>
+        [Test]
+        public void SquadReport_ShowsOnTheFirstTurnUntilAUnitIsPicked()
+        {
+            var root = new GameObject("Kadro raporu sunumu");
+            root.SetActive(false);
+            try
+            {
+                var source = root.AddComponent<LiveRaidDataSource>();
+                var state = Baskin.Create(new RaidParams
+                {
+                    Seed = 11, Roles = new System.Collections.Generic.List<string> { "tek", "emp", "ana" },
+                    Squad = new System.Collections.Generic.List<SquadSlot> { new SquadSlot { Type = "tek", Hp = 3, Armor = 1 }, new SquadSlot { Type = "ana", Hp = 1 } },
+                });
+                source.OpenForValidation(state);
+                var rows = source.Current.SquadReport;
+                Assert.IsTrue(source.Current.SquadReportVisible);
+                CollectionAssert.AreEqual(new[] { 'T', 'E', 'A' }, rows.Select(r => r.Letter).ToArray());
+                Assert.AreEqual(Loc.F("{0} · zırh plakası", Loc.F("sağlam · can {0}/{1}", 3, 3)), rows[0].Status);
+                Assert.IsTrue(rows[0].Good);
+                Assert.AreEqual(Loc.F("{0} · yedek yok, baskına çıkmadı", Loc.T("yatıyor")), rows[1].Status);
+                Assert.IsFalse(rows[1].Good);
+                Assert.AreEqual(Loc.F("tam iyileşmedi · can {0}/{1}", 1, 2), rows[2].Status);
+                Assert.IsFalse(rows[2].Good);
+                source.Select('A');
+                Assert.IsFalse(source.Current.SquadReportVisible);
+                source.ClearSelection();
+                Assert.IsTrue(source.Current.SquadReportVisible);
+                // İkinci turda rapor yok
+                foreach (var e in state.Units.Where(u => u.Side == 'e')) e.Dead = true;
+                Assert.IsTrue(Baskin.EndTurn(state));
+                source.ClearSelection();
+                Assert.IsFalse(source.Current.SquadReportVisible);
             }
             finally { Object.DestroyImmediate(root); }
         }

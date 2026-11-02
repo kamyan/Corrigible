@@ -49,12 +49,13 @@ namespace Corrigible.Core
         public List<SquadOutcome> Squad = new List<SquadOutcome>();
     }
 
-    /// <summary>Bir uzmanın baskın sonucu: çıktığı ve döndüğü can, düştü mü, zırh plakası kırıldı mı.</summary>
+    /// <summary>Bir uzmanın baskın sonucu: çıktığı ve döndüğü can, düştü mü (Left: kaçışta çıkamadı, düşmüş sayıldı), zırh
+    /// plakası kırıldı mı.</summary>
     [Serializable]
     public sealed class SquadOutcome
     {
         public string Type;
-        public bool Rookie, Down, PlateBroken;
+        public bool Rookie, Down, Left, PlateBroken;
         public int HpBefore, HpAfter;
     }
 
@@ -91,8 +92,9 @@ namespace Corrigible.Core
                 });
                 S.Liberation.Regions.Add(area);
             }
-            // Tek başlangıç ekibi sığınakta
+            // Tek başlangıç ekibi sığınakta; atölyeyle açılan uzmanlar sonra katılır
             S.Teams.Add(NewTeam(0));
+            SyncSpecialists();
             SetupDoor();
         }
 
@@ -131,6 +133,9 @@ namespace Corrigible.Core
                 return Loc.F("Teknisyen yaralı ({0} gün); yerine çıkacak yedek uzman yok.", team.Members.First(m => m.Role == "tek").Down);
             if (S.Fon < B.liberationRaidCost) return Loc.F("Bu baskın {0} fon ister.", B.liberationRaidCost);
             if (!string.IsNullOrEmpty(pick) && !ValidPick(ParsePick(pick))) return Loc.T("Teknisyen'in yanına iki uzman seç.");
+            foreach (var role in ParsePick(pick))
+                if (!HasRole(team, role))
+                    return Loc.F("{0} henüz kadroda değil: atölye seviye {1} gerekiyor.", Baskin.UnitTypes[role].Name, UnlockLevel(role, B));
             return null;
         }
 
@@ -171,7 +176,7 @@ namespace Corrigible.Core
                     Squad = Squad(team, roles), Roles = new List<string> { "tek" }.Concat(roles).ToList(), MapSeed = S.Seed, MapSlot = S.Raids, Tactics = 1,
                     TargetHpBonus = sector.MissionKind == "server" ? B.liberationServerTargetHp : 0,
                     ExtraMachines = sector.MissionKind == "server" ? B.liberationServerMachines : 0,
-                    ExtraTurns = sector.MissionKind == "loot" ? B.liberationLootExtraTurns : 0,
+                    ExtraTurns = sector.MissionKind == "loot" ? B.liberationLootExtraTurns : B.liberationServerExtraTurns,
                     CivilianHp = B.liberationCivilianHp,
                     DynamiteCharges = B.liberationDynamiteCharges, SmokeCharges = B.liberationSmokeCharges,
                 },
@@ -254,7 +259,8 @@ namespace Corrigible.Core
         }
 
         /// <summary>
-        /// Kadro döner: ayaktaki uzmanın eksik canı yara olarak kalır, düşen uzman (ya da yedek) yatar ve sağlam kalkar; kırılan
+        /// Kadro döner: ayaktaki uzmanın eksik canı yara olarak kalır, düşen uzman (ya da yedek; kaçışta çıkamayan da düşmüş
+        /// sayılır) yatar ve sağlam kalkar; kırılan
         /// zırh plakası sığınaktan düşer. Sonuçta can bilgisi yoksa (test, fikstür) kadronun ilk <c>Down</c> üyesi düşer, ötekiler
         /// çıktıkları canla ve plakalarıyla döner.
         /// </summary>
@@ -272,7 +278,8 @@ namespace Corrigible.Core
                 var member = slot.Rookie ? Shelter.Reserves[slot.Reserve] : team.Members.First(m => m.Role == slot.Type);
                 if (hp <= 0) { member.Down = B.liberationInjuryDays; member.Wounds = 0; }
                 else if (!slot.Rookie) member.Wounds = Math.Max(0, MaxHp(slot.Type) - hp);
-                reward.Squad.Add(new SquadOutcome { Type = slot.Type, Rookie = slot.Rookie, HpBefore = slot.Hp, HpAfter = hp, Down = hp <= 0, PlateBroken = broken });
+                bool left = result.Left != null && result.Left.Contains(i);
+                reward.Squad.Add(new SquadOutcome { Type = slot.Type, Rookie = slot.Rookie, HpBefore = slot.Hp, HpAfter = hp, Down = hp <= 0, Left = left && hp <= 0, PlateBroken = broken });
             }
         }
 

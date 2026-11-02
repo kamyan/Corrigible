@@ -93,7 +93,7 @@ namespace Corrigible.Tests
                 MapSeed = sc.MapSeed, MapSlot = sc.MapSlot, Tactics = 1,
                 TargetHpBonus = server ? b.liberationServerTargetHp : 0,
                 ExtraMachines = server ? b.liberationServerMachines : 0,
-                ExtraTurns = server ? 0 : b.liberationLootExtraTurns,
+                ExtraTurns = server ? b.liberationServerExtraTurns : b.liberationLootExtraTurns,
                 CivilianHp = b.liberationCivilianHp,
                 DynamiteCharges = dynamite, SmokeCharges = smoke,
             };
@@ -196,8 +196,9 @@ namespace Corrigible.Tests
         {
             if (B.Phase == "won") return "zafer";
             var team = B.Units.Where(u => u.Side == 'p').ToList();
-            if (team.All(u => u.Dead)) return "ekip";
-            if (team.Any(u => u.Type == "tek" && u.Dead)) return "teknisyen";
+            if (team.All(u => u.Dead) && !team.Any(u => u.Left)) return "ekip";
+            if (team.Any(u => u.Type == "tek" && u.Dead && !u.Left)) return "teknisyen";
+            if (B.Escape) return "kaçış";
             if (Baskin.IsLoot(B) && B.Carrier == 0 && Baskin.TargetsLeft(B).Count == 0) return "kasa";
             return "süre";
         }
@@ -251,7 +252,7 @@ namespace Corrigible.Tests
             sb.AppendLine($"- {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm", Inv)} UTC, {runs.Count} baskın ({main.Count} ana + {runs.Count - main.Count} tarama), {Num(elapsed.TotalMinutes, "0.0")} dk.");
             sb.AppendLine($"- Harekât tohumları {cfg.FirstMapSeed}–{cfg.FirstMapSeed + (uint)cfg.MapSeeds - 1} (her biri 30 harita, türü başına 5); kademeler {string.Join(", ", cfg.Tiers)}; görevler ikmal ve sunucu; bölge senaryoyla döner.");
             sb.AppendLine($"- Senaryo başına her kadro aynı tahtada (eşli). Hücre (kadro × görev × tür × kademe) başına {main.Count / Math.Max(1, Squads.Length * 2 * RaidMaps.Kinds.Length * cfg.Tiers.Length)} baskın.");
-            sb.AppendLine($"- Denge: dinamit {b.liberationDynamiteCharges}, sis {b.liberationSmokeCharges}, sunucu ek canı {b.liberationServerTargetHp}, sunucu ek makinesi {b.liberationServerMachines}, ikmal ek turu {b.liberationLootExtraTurns}, sivil canı {b.liberationCivilianHp}. Bot: ilk adımda {cfg.Alternatives} seçenek, gerçek evreyle doğrulama.");
+            sb.AppendLine($"- Denge: dinamit {b.liberationDynamiteCharges}, sis {b.liberationSmokeCharges}, sunucu ek canı {b.liberationServerTargetHp}, sunucu ek makinesi {b.liberationServerMachines}, ikmal ek turu {b.liberationLootExtraTurns}, sunucu ek turu {b.liberationServerExtraTurns}, sivil canı {b.liberationCivilianHp}. Bot: ilk adımda {cfg.Alternatives} seçenek, gerçek evreyle doğrulama.");
             sb.AppendLine("- Fark sütunları T+E+A'ya göre eşli farktır (puan, ±%95 güven yarı genişliği).");
             sb.AppendLine();
 
@@ -321,7 +322,7 @@ namespace Corrigible.Tests
 
             sb.AppendLine("## Bitiş nedenleri (ana koşu, baskınların yüzdesi)");
             sb.AppendLine();
-            var ends = new[] { "zafer", "süre", "teknisyen", "ekip", "kasa" };
+            var ends = new[] { "zafer", "süre", "teknisyen", "ekip", "kasa", "kaçış" };
             sb.AppendLine("| Kadro | Görev | " + string.Join(" | ", ends) + " |");
             sb.AppendLine("|---|---|" + string.Concat(ends.Select(_ => "---|")));
             for (int q = 0; q < Squads.Length; q++)
