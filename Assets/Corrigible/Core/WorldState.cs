@@ -76,6 +76,9 @@ namespace Corrigible.Core
         public List<string> Traits = new List<string>();
         /// <summary>Bölgenin imza düşmanı (Baskin birim türü); boşsa yalnız dron ve bakım robotu.</summary>
         public string Signature;
+        /// <summary>Bölge olayı (<c>Baskin.RegionEvents</c>, <see cref="RegionDef.Event"/>); boşsa olaysız. Eğitim baskını ve örnek
+        /// baskınlar vermez.</summary>
+        public string Event;
         /// <summary>Kadro (sırasıyla giriş kareleri); boşsa tam ve sağlam üç uzman (Teknisyen, EMP uzmanı, Analist).</summary>
         public List<SquadSlot> Squad;
         /// <summary>Baskına seçilen roller (Teknisyen ve iki uzman, kadro sırasıyla): yedeği olmadığı için çıkamayan da dahil; sunum

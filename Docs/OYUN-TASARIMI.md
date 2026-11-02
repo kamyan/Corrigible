@@ -49,27 +49,34 @@ Harekât ilerledikçe baskınlar sertleşir. Kademe özgür bölge sayısına ba
 Ek makineler tahtanın uzak yarısına konur; dron, bakım robotu ya da (üçte bir) bölgenin imza makinesi olur. Uyanan
 makineler de aynı dağılımla seçilir (`Baskin.WakeType`). Görev çipi ve görev fişi kademeyi yazar ("Tehdit 2/4").
 
-## Bölge kimliği (`RegionDef.Trait`, `RegionDef.Enemy`)
+## Bölge kimliği (`RegionDef.Trait`, `RegionDef.Enemy`, `RegionDef.Event`)
 
-Her bölgenin kendine özgü bir tahta özelliği (`Baskin.RegionTraits`) ve bir **imza makinesi** vardır; altı yeni makinenin
-her biri iki bölgede. Özellik bölgenin her baskınında `RaidParams.Traits`'e girer; imza makinesi tahtadaki makinelerden
-birinin (3. kademeden ikisinin) yerini alır. Görev fişi ve bölge bilgi fişi ikisini de yazar; baskında görev çipinde
-özellik, üstüne gelince açıklaması, imza makinesi ve kademe görünür.
+Her bölgenin kendine özgü bir tahta özelliği (`Baskin.RegionTraits`), bir **imza makinesi** ve bir **bölge olayı**
+vardır; altı yeni makinenin her biri iki bölgede. Özellik bölgenin her baskınında `RaidParams.Traits`'e girer; imza makinesi tahtadaki makinelerden
+birinin (3. kademeden ikisinin) yerini alır. Görev fişi ve bölge bilgi fişi üçünü de yazar (BÖLGE, OLAY, İMZA); baskında
+görev çipinde özellik, üstüne gelince açıklaması, olay, imza makinesi ve kademe görünür.
 
-| Bölge | Özellik | Etkisi | İmza makinesi |
-|---|---|---|---|
-| Batı Avrupa (başlangıç) | Güvenli giriş | İlk tur uyanma yok | Zırhlı dron |
-| Doğu Avrupa | Dar koridor | +3 duvar | Kilitleyici |
-| Kuzey Amerika | Kısa nöbet | Baskın bir tur kısa | Havan robotu |
-| Güney Amerika | Takviye | Başta +1 makine | Patlayan robot |
-| Afrika | Açık arazi | −3 duvar | Havan robotu |
-| Orta Doğu | Kum fırtınası | Uyanma yerleri gizli | Patlayan robot |
-| Rusya | Soğutma ağı | +2 soğutma ünitesi | Kalkan dronu |
-| Hindistan | Kalabalık şehir | +2 sivil sunucu | Kalkan dronu |
-| Çin | Zırhlı dolap | Hedef dolaplar +1 can | Çoğaltıcı |
-| Japonya-Kore | Elektrik şebekesi | +3 elektrikli kanal | Kilitleyici |
-| Güneydoğu Asya | Kopya fabrikası | +1 kopya dolabı | Çoğaltıcı |
-| Okyanusya | Hızlı devriye | Makineler +1 yürür | Zırhlı dron |
+| Bölge | Özellik | Etkisi | İmza makinesi | Olay |
+|---|---|---|---|---|
+| Batı Avrupa (başlangıç) | Güvenli giriş | İlk tur uyanma yok | Zırhlı dron | Söndürme bulutu |
+| Doğu Avrupa | Dar koridor | +3 duvar | Kilitleyici | Kayar arşiv rafı |
+| Kuzey Amerika | Kısa nöbet | Baskın bir tur kısa | Havan robotu | Yük asansörü |
+| Güney Amerika | Takviye | Başta +1 makine | Patlayan robot | Basınçlı tüp rafı |
+| Afrika | Açık arazi | −3 duvar | Havan robotu | Çatlak tavan |
+| Orta Doğu | Kum fırtınası | Uyanma yerleri gizli | Patlayan robot | Yanıcı gaz kaçağı |
+| Rusya | Soğutma ağı | +2 soğutma ünitesi | Kalkan dronu | Kriyo soğutma hattı |
+| Hindistan | Kalabalık şehir | +2 sivil sunucu | Kalkan dronu | Vardiya turnikeleri |
+| Çin | Zırhlı dolap | Hedef dolaplar +1 can | Çoğaltıcı | Kaynak robotu kolu |
+| Japonya-Kore | Elektrik şebekesi | +3 elektrikli kanal | Kilitleyici | Şebeke faz değişimi |
+| Güneydoğu Asya | Kopya fabrikası | +1 kopya dolabı | Çoğaltıcı | Süzgeç emmesi |
+| Okyanusya | Hızlı devriye | Makineler +1 yürür | Zırhlı dron | Hidrolik yağ sızıntısı |
+
+**Bölge olayı** (`RegionDef.Event`, `Core/Baskin.Events.cs`; kurallar ve gerekçeleri `Docs/BOLGE-OLAYLARI.md`): baskın
+boyunca tur tur işleyen bina içi bir sistem. Kural tarafa bakmaz; aynı karedeki uzman ile makine aynı sonucu alır. Takvimli
+adımlar ve fitiller makine evresinin sonunda, uyanmadan sonra ve plandan önce işler; N. turda tetiklenen olay N+1. turun evre
+sonunda (fitil), son turda olay adımı yok. Bir birim bir olay adımından öbürüne olaylardan en çok 1 hasar alır, olaylar
+nesnelere hasar vermez, hiçbir olay kaçış yolunu kesmez. Olay bir tur önce tahtada işaretlenir; takım kartı ve yürüyüş
+önizlemesi uzmanın evre sonunda alacağını yazar. Eğitim baskını olaysız; `Balance.liberationRegionEvents` hepsini kapatır.
 
 Duvar ve nesne ekleyen özellikler ekip girişinin yanını boş bırakır ve yolu kapatmaz (`Baskin.Connected`); kapatacak
 parça eklenmez.
@@ -156,10 +163,11 @@ Baskın sürerken (`S.Raid`), harekât bitmişken ya da açılış/emir belgesi 
   (eksik canla) çıkar; yatan uzmanın yerine boştaki ilk yedek uzman, rolün canından `liberationRookieHpPenalty` (1) eksik;
   yedek de yoksa rol boş kalır, tahtada o birim olmaz (kadro eksik çıkar; kartı SIĞINAKTA YARALI). Zırh plakaları en düşük
   canlı uzmandan başlayarak birer tane takılır; plaka ilk hasarı karşılar ve kırılır (`Baskin.Hurt`, efekt `plate`).
-- **Kadro raporu** (`Baskin.SquadReport`): baskına girerken kadronun durumu bildirilir. Telsize açılış satırından önce
-  yaralı asıl uzman ("tam iyileşmedi: can 1/2"), yatanın yerine giren yedek ve yedeksiz boş rol yazılır (sağlam kadro sessiz
-  girer); ilk oyuncu turunda birim seçili değilken sol altta "KADRO RAPORU" notu her uzmanı durumuyla gösterir (sağlam yeşil,
-  öteki kırmızı; yatanın kalan günü ve takılı plaka dahil). Birim seçilince birim kartı yerini alır.
+- **Kadro raporu** (`Baskin.SquadReport`, `Simulation.LiberationSquadPreview`): baskın emri verilmeden önce kadronun
+  durumu gösterilir. Görev fişinde BASKIN EMRİ VER fişin yanında "KADRO RAPORU" kartını açar: her uzman durumuyla (sağlam
+  yeşil; tam iyileşmemiş, yatanın yerine yedek ve yedeksiz boş rol kırmızı; yatanın kalan günü ve takılacak plaka dahil).
+  Emir kartın BASKINA ÇIK düğmesiyle verilir, Vazgeç fişe döner; kart açıkken kadro değişirse kart yenilenir. Baskın
+  kadroyu ayrıca bildirmez.
 - **Harita havuzu** (`Core/RaidMaps.cs`): her harekâtın kendi 30 haritası olur, yeni oyunun tohumundan üretilir (adlar
   30 oda adından: Kablo galerisi, Arşiv katı, Kazan dairesi…). Harekât ~57 baskın sürdüğü için her harita ~2 kez gelir
   (havuz 10 iken ~6 kez). Baskınlar havuzu karıştırılmış torbalardan sırayla çeker (`RaidMaps.Slot`,
@@ -396,11 +404,13 @@ kaçmış bir teknisyen… Kapı erzağa, güvene ve alarma bir yüz verir; bask
   emri kamerayı ekrana yaklaştırır. Teknisyen yatıp yedek de yoksa hat kapalı ("ALFA · TEKNİSYEN YARALI · 2 GÜN").
 - **Görev fişi** kadroyu baskına çıkacağı gibi, baskın piyonlarının harfli ahşap diskleriyle yazar: T 3/3 · E 2/3 ·
   A 1/2 yedek · 2 plaka. Altındaki **KADRO** satırı seçicidir: beş uzman kadro sırasıyla (disk + can; T SABİT, yatanda
-  "n GÜN" ya da "YEDEK ÇIKAR"; katılmamış uzman kilitli, "SV 2", üzerine gelince ne zaman katılacağı); seçili olan sarı,
+  "n GÜN" ya da yerine yedek çıkacaksa "YEDEK", durum çipin altında kendi satırında; katılmamış uzman kilitli, "SV 2",
+  üzerine gelince ne zaman katılacağı); seçili olan sarı,
   seçilmeyenin diski soluk. Seçenek yokken not sıradaki uzmanı söyler. Tıklanan uzman seçilir, iki seçili varken en
   eski seçimin yerine geçer; seçili olana tıklamak onu bırakır (ikiden az seçiliyken düğme kapalı, KADRO EKSİK). Üstüne
   gelince ad, can ve yeteneğin tam açıklaması. Seçim vardiya boyunca kalır (`SiginakMap.pick`); eğitimde kilitli. Eksik yalnız fonsa BASKIN EMRİ VER açık kalır; basınca komut çağrılmaz, FON sayacı titrer ve
-  teleks gerekçeyi basar. Başka gerekçede düğme devre dışıdır, kısa nedeni sağında yazar (“EKİP HAZIR DEĞİL”).
+  teleks gerekçeyi basar. Başka gerekçede düğme devre dışıdır, kısa nedeni sağında yazar (“EKİP HAZIR DEĞİL”). Emir hazırken
+  düğme önce **kadro raporunu** açar (fişin iç yanında; yukarıda); emir rapordaki BASKINA ÇIK'la verilir.
 - **Vardiya geçişi (K6, Revizyon 2 · S5):** şalter → sayaçlar döner → vardiya raporu (harita pozunda, solda 540 px):
   başta üç göz (ERZAK "n vardiya yeter" · YZ ALARMI ölçekle · FON önce → sonra), altında alarm notu; FON, ÜRETİM VE TÜKETİM
   (+ analist notu), EKİP, YAPILAMADI. Erzak ve alarm dökümde tekrar edilmez. Renk kuralı: artı yeşil, eksi mürekkep (eksi

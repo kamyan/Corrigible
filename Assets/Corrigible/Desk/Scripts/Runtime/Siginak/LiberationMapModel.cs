@@ -147,6 +147,23 @@ namespace Corrigible.Desk
         public string Info;
     }
 
+    /// <summary>Kadro raporunun bir satırı: rol harfi (disk), uzmanın adı ve durumu; sağlamsa yeşil, değilse kırmızı.</summary>
+    public sealed class SquadReportRow
+    {
+        public string Letter, Name, Status;
+        public bool Good, Missing;
+    }
+
+    /// <summary>
+    /// Kadro raporu (baskın emrinden önce, görev fişinin yanında): bölge, sektör, baskına çıkacak her uzmanın durumu; düğme
+    /// baskına çıkar (bedeliyle), altındaki satır vazgeçer.
+    /// </summary>
+    public sealed class SquadReportData
+    {
+        public string RegionId, Head, Region, Sector, Action, ActionCost, Cancel;
+        public readonly List<SquadReportRow> Rows = new List<SquadReportRow>();
+    }
+
     /// <summary>Yeni cephe onay fişi (K3).</summary>
     public sealed class FrontSlipData
     {

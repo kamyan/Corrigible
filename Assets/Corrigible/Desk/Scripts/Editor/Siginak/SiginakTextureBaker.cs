@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -367,6 +368,69 @@ namespace Corrigible.Desk.EditorTools
                 points[i] = new Vector2(cx + Mathf.Cos(a) * r, cy + Mathf.Sin(a) * r);
             }
             c.Stroke(points, width, ink);
+        }
+
+        /// <summary>Yumuşak kenarlı türevi üretilen 9 dilim zeminler ve çerçeveler (<see cref="SoftEdges"/>).</summary>
+        public static readonly string[] SoftSources =
+            { "ui_fill_r0", "ui_fill_r2", "ui_fill_r3", "ui_frame_1px_r2", "ui_frame_1_5px_r2", "ui_frame_2px_r3", "ui_frame_3px_r0", "ui_frame_double_6px",
+              "ui_frame_dashed_2px" };
+        /// <summary>İnce çizgilerin yumuşak kenarlı sprite'ları: yatay ve dikey düz çizgi, kesik çizgi (<see cref="SoftEdges"/>).</summary>
+        public static readonly string[] SoftLines = { "ui_line_h_aa", "ui_line_v_aa", "ui_dash_h_aa" };
+
+        /// <summary>
+        /// Yumuşak kenarlı 9 dilim türevleri (<c>*_aa</c>): paketteki düz zemin ve çerçevenin çevresine 1 px saydam pay (dilim kenarı
+        /// tabloda +1). Eğik kâğıtlarda (görev fişi −0,6°, emir belgesi +0,8°, eğitim notu −1,5°…) dokunun kenarına kadar opak
+        /// sprite'ın kenarını üçgenin kendisi çizer ve ekran katmanı kenar yumuşatmadığı için her ~70 px'de bir piksellik basamak
+        /// kalır (koyu düğmede "kırık kenar"); payla kenarı doku süzgeci çizer, eğik kenar düz görünür. Görsel 1 px içeride biter.
+        /// Paket yeniden içe aktarılınca yeniden çalıştır. Menü: Corrigible › Sığınak › Yumuşak kenarlı sprite'ları üret.
+        /// </summary>
+        [MenuItem("Corrigible/Sığınak/Yumuşak kenarlı sprite'ları üret")]
+        public static string SoftEdges()
+        {
+            foreach (var name in SoftSources)
+            {
+                var src = SiginakSpriteManifest.Get(name);
+                var tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                try
+                {
+                    if (!tex.LoadImage(File.ReadAllBytes(src.AssetPath))) throw new IOException("okunamadı: " + src.AssetPath);
+                    int w = tex.width, h = tex.height;
+                    // GetPixels alttan üste; tuval üstten alta (Save çevirir)
+                    var px = tex.GetPixels();
+                    var c = new Canvas(w + 2, h + 2, Color.clear);
+                    for (int y = 0; y < h; y++)
+                        for (int x = 0; x < w; x++)
+                            c.Px[(h - y) * c.W + x + 1] = px[y * w + x];
+                    Save(name + "_aa", c, SiginakSpriteManifest.SpritesDir);
+                }
+                finally { UnityEngine.Object.DestroyImmediate(tex); }
+            }
+            // İnce çizgiler (1–2 px kurallar, ayırıcılar, kesik ayraçlar): çizgi kalınlığına 1 px pay sığmaz (dilim kenarı çizgiden
+            // kalın olur); çizgi ortada, iki yanında 1 px saydam satır, çizginin görseli kurala 2 px kalın bir çocukta çizilir
+            var lineH = new Canvas(4, 3, Color.clear);
+            for (int x = 0; x < 4; x++) lineH.Px[1 * 4 + x] = Color.white;
+            Save("ui_line_h_aa", lineH, SiginakSpriteManifest.SpritesDir);
+            var lineV = new Canvas(3, 4, Color.clear);
+            for (int y = 0; y < 4; y++) lineV.Px[y * 3 + 1] = Color.white;
+            Save("ui_line_v_aa", lineV, SiginakSpriteManifest.SpritesDir);
+            var dash = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            try
+            {
+                var src = SiginakSpriteManifest.Get("ui_dash_h");
+                if (!dash.LoadImage(File.ReadAllBytes(src.AssetPath))) throw new IOException("okunamadı: " + src.AssetPath);
+                int w = dash.width, dh = dash.height;
+                var px = dash.GetPixels();
+                var c = new Canvas(w, dh + 2, Color.clear);
+                for (int y = 0; y < dh; y++)
+                    for (int x = 0; x < w; x++)
+                        c.Px[(dh - y) * w + x] = px[y * w + x];
+                Save("ui_dash_h_aa", c, SiginakSpriteManifest.SpritesDir);
+            }
+            finally { UnityEngine.Object.DestroyImmediate(dash); }
+            AssetDatabase.Refresh();
+            foreach (var name in SoftSources.Select(n => n + "_aa").Concat(SoftLines))
+                AssetDatabase.ImportAsset(SiginakSpriteManifest.SpritesDir + "/" + name + ".png", ImportAssetOptions.ForceUpdate);
+            return SoftSources.Length + SoftLines.Length + " yumuşak kenarlı sprite üretildi";
         }
 
         static void Save(string name, Canvas c) => Save(name, c, SiginakSpriteManifest.TexturesDir);

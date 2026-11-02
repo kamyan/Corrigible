@@ -13,7 +13,8 @@ namespace Corrigible.Desk.Bridge
     /// yeni cephe onay fişi, kırmızı ip, ekip figürü ve K3 dizisi (damga → silinme → adaylar) buradan sürülür.
     /// Simülasyonu yalnız okur; komutlar <see cref="LiberationDeskView"/>'den geçer (baskın emri, cephe açma), sonuç ve
     /// gerekçe teleksten basılır. Figür sürükleme bu komutlara giden ikinci yoldur: adaya bırakmak adaya tıklamakla aynı.
-    /// Enter: açık fişin asıl eylemi. Esc: taşımayı bırak → onay fişinden vazgeç → görev fişini kapat.
+    /// Enter: açık fişin asıl eylemi. Esc: taşımayı bırak → kadro raporundan ya da onay fişinden vazgeç → görev fişini kapat.
+    /// BASKIN EMRİ VER emri hemen vermez: görev fişinin yanında kadro raporu açılır, emir rapordaki BASKINA ÇIK'la (Enter) gider.
     /// Görev fişi (Revizyon 2 · S2) ekran katmanında, sol masa kenarında (Kuzey/Güney Amerika seçiliyse sağda); açılırken
     /// bölgeye iğne düşer, iplik bölgeden fişin iğnesine çekilir, fiş kenardan kayar; ip her karede kameradan yeniden izdüşer.
     /// </summary>
@@ -27,6 +28,8 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] LiberationMapLayer layer;
         [SerializeField] OperationSlip slip;
         [SerializeField] FrontSlip frontSlip;
+        [Tooltip("BASKIN EMRİ VER'den sonra görev fişinin yanında açılan kadro raporu; emir onunla verilir.")]
+        [SerializeField] SquadReportSlip squadReport;
         [SerializeField] TeamFigure figure;
         [SerializeField] TeamFigureDrag drag;
         [SerializeField] DeskTarget figureTarget;
@@ -39,6 +42,8 @@ namespace Corrigible.Desk.Bridge
         bool pinSounded, paperSounded;
 
         string pending, revealQueued;
+        /// <summary>Kadro raporunun açıldığı kare: aynı karedeki ikinci Enter onay sayılmaz (rapor görülmeden emir verilmez).</summary>
+        int reportFrame = -1;
         /// <summary>Fişteki kadro seçimi (seçim sırasıyla; en eski önce); null ise varsayılan seçim. Vardiya değişince sıfırlanır.</summary>
         List<string> pick;
         int pickDay = -1;
@@ -55,6 +60,7 @@ namespace Corrigible.Desk.Bridge
         public LiberationMapState State => state;
         public bool SlipOpen => slip.IsOpen;
         public bool FrontSlipOpen => frontSlip.IsOpen;
+        public bool SquadReportOpen => squadReport.IsOpen;
         public string Pending => pending;
         /// <summary>Vardiya dizisi (K6): adımdan sonra figür yerinde bekler; rapor düşerken <see cref="ReleaseFigure"/>.</summary>
         public bool HoldFigure { get; set; }
@@ -83,6 +89,8 @@ namespace Corrigible.Desk.Bridge
             slip.PickClicked += TogglePick;
             frontSlip.ActionClicked += ConfirmFront;
             frontSlip.CancelClicked += CancelFront;
+            squadReport.ActionClicked += ConfirmSquad;
+            squadReport.CancelClicked += CancelSquad;
             drag.CanPick = CanPick;
             drag.Refused += Refused;
             drag.Dropped += Dropped;
@@ -104,6 +112,8 @@ namespace Corrigible.Desk.Bridge
             slip.PickClicked -= TogglePick;
             frontSlip.ActionClicked -= ConfirmFront;
             frontSlip.CancelClicked -= CancelFront;
+            squadReport.ActionClicked -= ConfirmSquad;
+            squadReport.CancelClicked -= CancelSquad;
             drag.CanPick = null;
             drag.Refused -= Refused;
             drag.Dropped -= Dropped;
@@ -120,6 +130,7 @@ namespace Corrigible.Desk.Bridge
             pick = null;
             revealQueued = null;
             figureDisplaced = false;
+            squadReport.Hide();
             slip.Hide();
             frontSlip.Hide();
             Refresh();
@@ -147,7 +158,19 @@ namespace Corrigible.Desk.Bridge
             }
             layer.Bind(state);
             PlaceFigure(!figure.Placed);
-            if (slip.IsOpen) slip.Show(LiberationMapBuilder.Slip(sim, slip.RegionId, Pick, FixedSquad), slip.OnRight);
+            if (slip.IsOpen)
+            {
+                var data = LiberationMapBuilder.Slip(sim, slip.RegionId, Pick, FixedSquad);
+                slip.Show(data, slip.OnRight);
+                // Rapor açıkken kadro değişirse yeniden yazılır; emir artık verilemiyorsa (vardiya, ekip, fon) kapanır
+                if (squadReport.IsOpen)
+                {
+                    if (data.ActionState == SlipActionState.Ready && squadReport.RegionId == slip.RegionId)
+                        squadReport.Show(LiberationMapBuilder.SquadReport(sim, slip.RegionId, Pick, FixedSquad));
+                    else squadReport.Hide();
+                }
+            }
+            else if (squadReport.IsOpen) squadReport.Hide();
             if (frontSlip.IsOpen && pending != null) frontSlip.Show(LiberationMapBuilder.Front(sim, pending));
             // Görev fişinin ipi diziyle birlikte çizilir (açılırken yarım)
             if (frontSlip.IsOpen || !slip.gameObject.activeSelf) UpdateString();
@@ -165,6 +188,7 @@ namespace Corrigible.Desk.Bridge
             // Fişler harita pozunda okunur; kamera başka istasyona dönünce kapanır (K1'de katlı etiket yok, Aşama 6+)
             if ((slip.IsOpen || frontSlip.IsOpen) && rig.Current != SiginakPose.Map && !rig.InputSuspended)
             {
+                if (squadReport.IsOpen) squadReport.Hide();
                 if (frontSlip.IsOpen) CancelFront();
                 if (slip.IsOpen) CloseSlip();
             }
@@ -212,6 +236,7 @@ namespace Corrigible.Desk.Bridge
         void OpenSlip(string id)
         {
             if (frontSlip.IsOpen) CancelFront();
+            if (squadReport.IsOpen && squadReport.RegionId != id) squadReport.Hide();
             var t = SiginakTheme.Active;
             bool open = slip.IsOpen, sameRegion = open && slip.RegionId == id;
             // Kamera haritaya varınca dizi başlar: iğne düşer, iplik çekilir, sonra fiş kayar
@@ -236,6 +261,7 @@ namespace Corrigible.Desk.Bridge
         void CloseSlip(float delay)
         {
             if (!slip.IsOpen) return;
+            if (squadReport.IsOpen) squadReport.Close(delay);
             slipCloseAt = Time.unscaledTime + delay;
             slip.Close(delay + StringCloseS);
             Refresh();
@@ -277,6 +303,7 @@ namespace Corrigible.Desk.Bridge
 
         void SelectCandidate(string id)
         {
+            squadReport.Hide();
             if (slip.IsOpen) slip.Hide();
             pending = id;
             frontSlip.Show(LiberationMapBuilder.Front(Sim, id));
@@ -324,29 +351,75 @@ namespace Corrigible.Desk.Bridge
                     if (counters != null) counters[CounterBank.Slot.Funds].Shake(2);
                     return;
                 }
-                var result = surface.LaunchSector(next.Id, FixedSquad ? null : Pick == null ? null : Simulation.PickKey(Pick));
-                if (result?.Ok == true) pick = null;
-                // Emir: düğme 0,06 s iner → fiş kapanır → CRT'ye dalış (bugünkü gibi)
-                if (result?.Ok == true) CloseSlip(0.06f);
+                // Emir hazırsa önce kadro raporu (emir onunla verilir); devre dışıysa komut denenir, gerekçe teleksten basılır
+                if (slip.ActionState == SlipActionState.Ready)
+                {
+                    if (!squadReport.IsOpen)
+                    {
+                        Sfx.Play(Cue.PaperSlide, 0.6f, slip.OnRight ? 0.3f : -0.3f);
+                        reportFrame = Time.frameCount;
+                    }
+                    squadReport.Show(LiberationMapBuilder.SquadReport(sim, id, Pick, FixedSquad));
+                    return;
+                }
+                Launch(next.Id);
             }
             // Cephe açıkken komşu bölgeyi cephe yapmak: komut denenir, gerekçe teleksten basılır (“cephe zaten açık”)
             else if (state != null && state.FrontOpen && id != state.Front && sim.LiberationFrontier.Contains(id))
                 surface.OpenFront(id);
         }
 
-        /// <summary>Enter: açık fişin asıl eylemi. Fiş yoksa false (şalter).</summary>
+        /// <summary>Kadro raporunda BASKINA ÇIK: emir verilir; tutmazsa (gerekçe teleksten) rapor kapanır, fiş açık kalır.</summary>
+        void ConfirmSquad()
+        {
+            var sim = Sim;
+            if (!squadReport.IsOpen || Locked || sim == null || Time.frameCount == reportFrame) return;
+            var next = sim.NextLiberationSector(squadReport.RegionId);
+            if (next == null || !slip.IsOpen || slip.RegionId != squadReport.RegionId) { squadReport.Hide(); return; }
+            // Düğme 0,06 s iner, sonra kart fişle birlikte solar (emir Refresh'i tetiklese de kapanış sürer)
+            squadReport.Press();
+            squadReport.Close(0.06f);
+            if (!Launch(next.Id)) squadReport.Hide();
+        }
+
+        void CancelSquad()
+        {
+            if (!squadReport.IsOpen) return;
+            squadReport.Hide();
+            Sfx.Play(Cue.Pencil, .5f);
+        }
+
+        /// <summary>Baskın emri. Emir: düğme 0,06 s iner → rapor ve fiş kapanır → CRT'ye dalış.</summary>
+        bool Launch(string sectorId)
+        {
+            // Seçim ikiden azsa emir verilmez (boş seçim komutta varsayılan kadroya döner, fişin dediği olmaz)
+            if (!FixedSquad && Pick != null && Pick.Count < Simulation.PickCount)
+            {
+                telex.Post(Shift, Loc.T("YAPILAMADI"), Loc.T("Teknisyen'in yanına iki uzman seç."), TelexKind.Failed);
+                return false;
+            }
+            var result = surface.LaunchSector(sectorId, FixedSquad ? null : Pick == null ? null : Simulation.PickKey(Pick));
+            if (result?.Ok != true) return false;
+            pick = null;
+            CloseSlip(0.06f);
+            return true;
+        }
+
+        /// <summary>Enter: açık fişin asıl eylemi (kadro raporu açıksa baskına çıkış). Fiş yoksa false (şalter).</summary>
         public bool HandleEnter()
         {
             if (drag.Carrying) return true;
+            if (squadReport.IsOpen) { ConfirmSquad(); return true; }
             if (frontSlip.IsOpen) { ConfirmFront(); return true; }
             if (slip.IsOpen) { SlipAction(); return true; }
             return false;
         }
 
-        /// <summary>Esc: taşımayı bırak → onaydan vazgeç → fişi kapat. Bir şey yaptıysa true.</summary>
+        /// <summary>Esc: taşımayı bırak → kadro raporundan ya da onaydan vazgeç → fişi kapat. Bir şey yaptıysa true.</summary>
         public bool HandleEscape()
         {
             if (drag.Cancel()) return true;
+            if (squadReport.IsOpen) { CancelSquad(); return true; }
             if (frontSlip.IsOpen) { CancelFront(); return true; }
             if (slip.IsOpen) { CloseSlip(); return true; }
             return false;

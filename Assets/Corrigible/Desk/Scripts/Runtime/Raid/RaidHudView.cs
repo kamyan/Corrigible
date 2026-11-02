@@ -148,7 +148,10 @@ namespace Corrigible.Desk
                 if (!on) continue;
                 int n = i + 1;
                 bool current = n == vm.Turn, past = n < vm.Turn, lastTwo = n > vm.Turns - 2;
-                turnBoxes[i].text = n.ToString();
+                // Bölge olayının işlediği turların numarası altı çizili (ne olduğu görev çipinin ipucunda ve tahtada); şebekede turun
+                // canlı fazı numaranın yanında küçük harfle
+                string ev = vm.TurnEvents != null && n < vm.TurnEvents.Length ? vm.TurnEvents[n] : null;
+                turnBoxes[i].text = ev == null ? n.ToString() : ev.Length == 1 ? Loc.F("{0}<size=55%>{1}</size>", n, ev) : Loc.F("<u>{0}</u>", n);
                 turnFills[i].enabled = current || past;
                 turnFills[i].color = C(current ? (vm.LastTurn ? "turnStrip.lastCurrent" : "turnStrip.current") : "turnStrip.past");
                 // Son iki tur kesik kırmızı kenar (geçmişe ya da şimdiye dönünce kenar kalkar)

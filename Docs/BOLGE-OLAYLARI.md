@@ -1,14 +1,15 @@
-# Bölge olayları (fikir, uygulanmadı)
+# Bölge olayları
 
 _2026-11-02. İstek: her bölge için tahtada tur tur işleyen bir olay. Tahta bina içi olduğu için olaylar da bina içi;
-hiçbir kural tek bir tarafa işlemez, iki tarafı da etkiler. Bu belge öneri; kodda yok. 2026-11-01'deki açık hava sürümünün
-(sel, deprem, hortum…) yerini aldı._
+hiçbir kural tek bir tarafa işlemez, iki tarafı da etkiler. 2026-11-01'deki açık hava sürümünün (sel, deprem, hortum…)
+yerini aldı. **Uygulandı (2026-11-02):** `Core/Baskin.Events.cs`; uygulamanın öneriden ayrıldığı yerler aşağıda
+"Uygulama" başlığında._
 
 Bugünkü bölge özellikleri (`Baskin.RegionTraits`) kurulumda bir kez işler. Olay ise baskın boyunca yaşar: binanın bir
 sistemi (söndürme, asansör, turnike, kaynak kolu…) bir tur önce tahtada işaretlenir ve kimin durduğuna bakmadan işler.
 Her olay bölgenin özelliğine ve imza makinesine bağlandı. Üç açıdan (bina sistemleri, bölgenin binası, simetrik mekanik)
 72 aday üretildi, bir yargıç her bölgeye birini seçti, bir eleştirmen `Baskin.cs`'e bakarak açıkları buldu. Aşağıdaki
-kurallar eleştirinin düzeltmeleri işlenmiş hâli. Sayılar ilk öneri; ölçülmedi.
+kurallar eleştirinin düzeltmeleri işlenmiş hâli. Sayılar ilk öneri; ölçüm "Uygulama" başlığında.
 
 ## Ortak kurallar
 
@@ -52,7 +53,7 @@ evresinin sonu demektir.
 | Afrika | Açık arazi · havan | Çatlak tavan | Cevher işleme hangarı | Darbeyle tetiklenir · fitil | M |
 | Kuzey Amerika | Kısa nöbet · havan | Yük asansörü | Dağıtım merkezi asansör holü | 2.→3. ve 4.→5. tur | S–M |
 | Rusya | Soğutma ağı · kalkan dronu | Kriyo soğutma hattı | Soğuk depolu veri merkezi | 2., 4. (ikmalde 6.) tur sonu | S |
-| Hindistan | Kalabalık şehir · kalkan dronu | Vardiya turnikeleri | Çağrı merkezi kasa holü | 2. ve 4. tur sonu döner, son iki tur tahliye | M |
+| Hindistan | Kalabalık şehir · kalkan dronu | Vardiya turnikeleri | Çağrı merkezi kasa holü | 2. ve 4. tur sonu döner; kaçışta ve son iki tur tahliye | M |
 | Çin | Zırhlı dolap · çoğaltıcı | Kaynak robotu kolu | Montaj fabrikası | Her evre sonu | M |
 | Japonya-Kore | Elektrik şebekesi · kilitleyici | Şebeke faz değişimi | Çip fabrikası trafo merkezi | 3. ve 6. tur sonu faz değişir | S |
 | Güneydoğu Asya | Kopya fabrikası · çoğaltıcı | Süzgeç emmesi | Su basmış elektronik fabrikası | 3. ve 6. tur sonu | S |
@@ -217,16 +218,17 @@ Bengaluru'da bir banka ve sigorta çağrı merkezinin kasa holü. YZ kart okuyuc
 yön kilidiyle döner.
 - **Kural:** hedefin çevresindeki holün sınırındaki geçişler turnikedir. Turnike kareyi değil, iki kare arasındaki kenarı
   kilitler. "İçeri" vardiyasında kenar yalnız dışarıdan içeri, "dışarı" vardiyasında yalnız içeriden dışarı geçilir.
-  Vardiya 1.–2. turda içeri; 2. ve 4. tur sonunda döner. Son iki turdan önceki evrenin sonunda tahliye moduna geçer ve
-  baskın bitene kadar dışarı kalır. Holün çıkışlardan en uzak kenarı sıradan geçittir, iki yöne de açık. Ters yönde
-  itilen ya da çekilen birim kenara çarpar: 1 hasar, yerinde kalır. Atış, kilit, kanca hattı, EMP ve havan kenardan geçer.
+  Vardiya 1.–2. turda içeri; 2. ve 4. tur sonunda döner. Son iki turdan önceki evrenin (ya da kaçışın başladığı evrenin)
+  sonunda tahliye moduna geçer ve baskın bitene kadar dışarı kalır. Holün üç ya da daha çok turnike kenarı varsa
+  çıkışlardan en uzak kenarı sıradan geçittir, iki yöne de açık. Ters yönde itilen ya da çekilen birim kenara çarpar:
+  1 hasar, yerinde kalır. Atış, kilit, kanca hattı, EMP ve havan kenardan geçer.
 - **Yer:** hol = hedef ve sekiz komşusu (3×3); sınırda iki yanı zemin olan her kenar turnike. RNG yok.
 - **İşaret:** kenarlar yön okuyla çizili; tur şeridinde vardiya ve tahliye. Dönüş turunda oklar yanıp söner, "VARDİYA 1".
   Yürüyüş erişimi ve itme önizlemesi yönü hesaba katar; ters itmede okun ucu kırmızı, "1 hasar".
 - **İki taraf:** yön kilidi kimin yürüdüğüne bakmaz. İçeri turunda Teknisyen de bakım robotu da hole girer; dışarı
   turunda içeridekiler çıkabilir ama kimse giremez. Holde onaran robot dışarı turunda dışarıdan yardım alamaz, holde
-  söken Teknisyen de. Makineler `Reachable` kullandığı için kuralı kendiliğinden uygular. Gelişmiş akıl dönüşten önceki
-  turda holün doğru yakasında beklemeyi +1 puanlar.
+  söken Teknisyen de. Makineler `Reachable` kullandığı için kuralı kendiliğinden uygular; plan olay adımından sonra
+  yapıldığı için dönmüş yönü görür.
 - **Neden burada:** kalabalık şehirde gelişmiş akıl, ekibe ulaşamayan makineyi sivil sunucuya nişan aldırır; hol
   kapandıkça rehine atışları artar. Ekip yolu kesmekle sivilleri korumak arasında seçer.
 - **Eleştiriden:** ilk sürümde turnike sırası tahtayı ikiye bölüyordu; girişler batıda, makineler doğuda olduğu için
@@ -351,47 +353,81 @@ Pilbara'da uzaktan yönetilen bir maden-liman tesisinin makine dairesi. Hidrolik
 - **Yedek:** zırh kaynak peronları. Sırayla çalışan iki peronda evre sonunda duran birim, kim olursa olsun, baskın boyunca
   1 geçici zırh plakası alır.
 
-## Uygulama önerisi
+## Uygulama
 
-- **Veri:** `RegionDef.Event` (`GameData`'daki `R(...)` çağrısına bir argüman), `Baskin.RegionEvents` (ad ve ipucu,
-  `Loc.N`), `RaidParams.Event` (`CampaignLiberation.StartLiberationRaidCore` bölgeden verir). Dengede bir aç/kapa anahtarı
-  (`liberationRegionEvents`). Eğitim baskını, örnek baskın ve motor testleri olay vermez.
-- **Durum:** `BState`'e `Ev`, `EvTiles`, `EvState` ve fitil listesi (kare, işleyeceği tur). Hücreye yalnız gereken
-  bayraklar (bulut, yakıt, çatlak, faz, yağ), turnike için kenar listesi, birime donma ve buz kabuğu, kabindeki birim için
-  tahta dışı durumu. `Cell.Clone`, `BState.Clone` ve `CopyInto` her yeni alanı kopyalamalı; yoksa geri alma olayı geri
-  sarmaz. Klonlanmayan geçici bir `InEvent` bayrağı: olay adımı ve zinciri sürerken `HurtObj` nesnelere işlemez. Hasar
-  tavanı için birim başına evre içi olay hasarı sayacı.
-- **Evredeki yer:** `EventSetup(B)` `Create`'te bütün RNG çekimlerinden ve kadro raporundan sonra, `PlanEnemies`'ten önce
-  çalışır; RNG çekmez ve birimli kareye bir şey koymaz. `EventEnd(B)` `EndTurn`'de uyanmadan sonra, `CheckEscape`'ten önce
-  çalışır (son turda çalışmaz): takvimli adımlar ve olgunlaşan fitiller burada işler. Uyanma döngüsü duvar denetlemediği
-  için duvar değiştiren olaylar uyanmadan sonra gelir. Tepkili kurallar (tutuşma, darbe, tüp vuruşu, kol darbesi, yağda
-  kayma, turnike kenarı) kendi çağrı noktalarında yalnız `B.Ev` eşleşince çalışır.
-- **Ortak yardımcılar:** `ExitSafe(B)` (çıkışlardan BFS; her zemin karesi ve hedef bağlı kalmalı). Kareye girme ve kenar
-  geçme kuralı tek yerde (kablo, faz, turnike, yağ); yürüyüş, itme, kanca çekişi ve atılma onu kullanır. `InEvent`'li
-  olay itmesi. `HookTrace` benzeri hat izleme (tüp, atış).
-- **Kayıt ve RNG:** olaylar `Rnd` çağırmaz; olaysız baskında tahta, RNG akışı ve kilitli imzalar aynı kalır. `Reachable`,
-  `IntentTarget`, `Push` ve `HurtObj`'e eklenen denetimler olay yokken hiçbir dalı değiştirmez. `RaidParams.Event` bölge
-  tanımından türediği için `GameRecord.CurrentVersion` artmaz, `LiberationCampaignTests`'in kayıt testleri etkilenmez.
-  `Signature`'a olay eki yalnız olay varken yazılır.
-- **Makine aklı:** plan `EventEnd`'den sonra çalıştığı için olayın bu evredeki sonucunu görür; bilmesi gereken yalnız
-  sonraki evredir. İki yardımcı: `EventPos(B, e, pos)` `posScore`'a, `EventAim(B, e, …)` `ScoreTarget`'e eklenir; ikisi de
-  yalnız `B.Smart` ve `B.Ev` varken çalışır. `Zone`, `Covers`, `KeyTiles` ve `CanReachTeam` yeni hücre ve kenar kurallarına
-  uyar. Temel akıl yalnız kurallardan etkilenir; RNG tüketimi aynı kalır.
-- **Önizleme ve sunum:** `Forecast(B)` kopyada niyetleri sırayla oynatıp `EventEnd`'i uygular (RNG yok, işaretli uyanma
-  kareleri dolu sayılır). `Baskin.Hazards(B)` (`Intents` gibi) olay karelerini, okları, varış hayaletlerini, birim
-  uyarılarını ve tur şeridi çiplerini verir. Yeni `PreviewMove(B, uid, x, y)` yürüyüş karesinde olayın sonucunu gösterir.
-  `RaidDataSource` yeni katmanı `RaidBoard3D`'ye verir. Görev fişinde ve bölge fişinde özelliğin altında bir OLAY satırı;
-  telsizde kadro raporundan sonra bir "saha raporu" satırı. Olaylı baskında görünen oda adı olayın binasından gelir
-  (yalnız sunum; harita seçimi ve RNG aynı kalır), böylece "arşiv rafı" otopark katına düşmez.
-- **Yer bulma:** olayların çoğu özel geometri istiyor (düz ray, hedefle aynı satır…). Koşullar iki kademede gevşer; son
-  kademe her harita türünde yer bulmalı. Olay sessizce kaybolmaz; harita türü başına kurulum başarısı testle kilitlenir.
-- **Lokalizasyon:** adlar, ipuçları ve "BULUT 1", "RAF 1", "KALKIŞ 1" gibi etiketler `Loc.N`/`Loc.F` ile; sonra çeviri
-  tablosu güncellenir, `strings.txt`'e İngilizceleri yazılır, `LocalizationTests` geçmeli.
-- **Test ve denge:** `RaidEngineTests`'te olaysız imzalar değişmemeli; her olay için bir tohumun imzası kilitlenir. Simetri
-  testi: aynı karede makine ve uzman aynı sonucu almalı. `ExitSafe`, hasar tavanı ve nesne muafiyeti testleri. `RaidBot`
-  olayları `Forecast` üzerinden bilir; `RaidBotMeasurement`'a bölge başına olaylı ve olaysız başarı ile "olay hasarı:
-  ekibe / makinelere" oranı eklenir. Oran 1:1'den çok saparsa olay yeniden ayarlanır. Sayılar önce `Baskin`'de sabit,
-  ölçümden sonra `Balance`'a ve `BalanceConfig.asset`'e taşınır.
+Kod `Core/Baskin.Events.cs`'te (`Baskin` artık `partial`); `Baskin.cs`'e yalnız kancalar girdi. Olaysız baskında hiçbir dal
+değişmez: `RaidEngineTests`'in kilitli imzaları aynı, `GameRecord.CurrentVersion` 13'te kaldı.
+
+- **Veri:** `RegionDef.Event` (`GameData`), `Baskin.RegionEvents` (ad, kural, bina, uyarı etiketi; `Loc.N`), `RaidParams.Event`
+  (`StartLiberationRaidCore` bölgeden verir; `Balance.liberationRegionEvents` kapatır). `TutorialRaid.For` yeni alanı
+  kopyalamadığı için eğitim baskını olaysız; örnek baskınlar ve motor testleri de olay vermez. Olay kimlikleri: `bulut`,
+  `raf`, `gaz`, `tavan`, `asansor`, `kriyo`, `turnike`, `kaynak`, `faz`, `suzgec`, `tup`, `yag`.
+- **Durum:** `BState.Ev` (`EvState`: kareler, tek kareler, `Mode`/`Count`/`Due`/`Stop`, fitiller ve tüpler, turnike
+  kenarları, hasar tavanının listesi), `BState.InEvent`, `EvDamageTeam`/`EvDamageMachines` (bot ölçümü). Kare bayrakları
+  `Cell.Cloud, Gas, Crack, Oil, Shelf, Phase`; birim `Frozen`, `Ice`, `Cab`. `Clone`, `CopyInto` (geri alma) ve imza
+  (`|v…`, yalnız olay varken) hepsini taşır. Yeni nesneler: `enkaz` (2 can), `tup`, `kol` (hasar almaz).
+- **Evredeki yer:** `EventSetup` `Create`'te bütün RNG çekimlerinden ve imza makinesinden sonra, açılış satırından önce
+  (RNG çekmez; telsize "Saha raporu" satırı). `EventEnd`
+  `EndTurn`'de uyanmadan sonra, `CheckEscape`'ten önce, yalnız `Turn < MaxTurns` iken; adım boyunca `InEvent` açık. Tepkili
+  kurallar çağrı noktalarında: `Fire` (gaz: atışın hattı, havan, patlama, EMP), `CrackHit` (tavan: itme çarpışması, patlama,
+  havan, dinamit), `EventObjectHit` (tüp ıslık çalar, kol darbe sayar), `CanStep` (turnike; `Reachable`, itme, kanca çekişi,
+  atılma), `Slide` (yağ), `CableHurt` (faz), `InCloud` (`Targets`, `HookTrace`, `IntentTarget`).
+- **Öneriden ayrılanlar:**
+  - *Hasar tavanı* bir evre değil, bir olay adımından öbürüne sayılır (oyuncu turu, makine evresi ve olay adımı). Böylece
+    itmeyle canlı kanala giren makine aynı turun evre sonunda ayrıca yanmaz.
+  - *Kriyo:* buz kabuğu ve donma bir sonraki olay adımına kadar sürer. Uzman kendi turunda yürüyemez ve kabuk onu makine
+    evresinde korur; makine planda yürüyemez ve kabuk onu oyuncu turunda korur.
+  - *Asansör:* iniş durağı son olay adımında da doluysa kabin yolcuyu durağın yanındaki ilk boş kareye bırakır; yolcu son
+    turu tahtada oynar. Kabindeki uzman baskında sayılır: ekibin kalanı düşse de baskın bitmez.
+  - *Tavan:* son turdan önceki evrede çöken çatlak enkaz bırakmaz (toz), çünkü çıkış yolu değişmemeli.
+  - *Raf:* dar koridorlu haritalarda yer bulma 3 ve 2 karelik raya iner (tek raf, tek geçit).
+  - *Turnike:* çıkışa ya da komşusuna değen kenar turnike olmaz. İki yöne açık geçit yalnız üç ve daha çok kenarlı holde
+    var; bir ya da iki kenarlı holde geçit kalsa tek turnike kalmaz ya da hiç kalmaz. Kaçış başlayınca (kasa açıldı,
+    hedefler kırıldı) o evrenin sonunda tahliye moduna geçer: ilk ölçümde kasa içeri vardiyasında açılınca Teknisyen holde
+    kapalı kalıyor, ikmal başarısı 40 puan düşüyordu. Önerideki "dönüşten önce holün doğru yakasında bekle" puanı
+    (gelişmiş akıl, +1) uygulanmadı: makine planı dönüşten sonra yapılır ve `Reachable` yeni yönü görür.
+  - *Söndürme:* sabotaj birime değil, bitişik nesneye serbest (hedef, ikmal kasası, sivil sunucu); dinamit ve EMP buluttan
+    atılmaz.
+- **Yer bulma:** her olayın kurulumu kademe kademe gevşer; 12 bölge × 3 harekât tohumu × 30 harita × 2 görevde hepsi yer
+  buluyor (`RaidEventTests.EveryEvent_FindsAPlace_OnEveryMap_WithoutTouchingExitsOrUnits`). Çıkışlar ve komşuları olay karesi
+  olmaz, birimli kareye nesne ya da raf konmaz, Teknisyen hedefe yürüyebilir.
+- **Makine aklı:** `EventPos` konum puanına, `EventAim` niyet puanına eklenir; ikisi de yalnız gelişmiş akılda. Planın gördüğü
+  sonraki olay adımı `EventEnd(B.Turn)`. Kaynak karesinde (−3), canlı kanalda (−3), uçacak tüpün hattında (−3), çökecek
+  tavanın altında (−2), parlayacak gazda (−2), iniş durağında (−2) durmaz; kapanacak raf geçidinde (−1,5), emecek süzgecin
+  yanında (−1,5, yakın dövüşçü −0,5) durmayı sevmez. Kayma ya da canlı faz öncesi uzmanı kilitlemeyi (+2, +3), tüpü uzmana
+  uçurmayı (+4), gazı uzmanın üstünde tutuşturmayı (uzman başına +2), kolu uzmana çevirmeyi (+4,5) ve yağdaki uzmanı çarpışmaya
+  kaydırmayı (+2) seçer; kendi makinesine gelecekse eksi puanlar. Bakım robotu bulutta hasarlı hedefin yanını sever (+2).
+- **Önizleme:** `Baskin.Hazards(B)` kopyada gösterilen niyetleri oynatır, uyanma karelerini dolu sayar (kum fırtınasında
+  saymaz), olay adımını uygular ve farktan birim uyarılarını çıkarır ("KAYNAK: 1 hasar", "KABİN: biner…", "DONACAK…");
+  kare işaretleri (`HazardMark.Kind`), turnike kenarları, tüp ve süzgeç hatları ve tur şeridi (`Turns`) de oradan.
+  `Baskin.PreviewMove` yürüyüş karesi için, `Preview` yetenek için aynı görünümü verir. `Baskin.RoomName` olaylı baskında
+  binanın adını verir (örnek baskının sonuç kartı; kampanyada kart "Bölge · NN Sektör" yazar). Bot (`RaidBot.Predict`) uyarıları hasar ve donmayı kilit sayar.
+- **Sunum:** tahtada olay katmanı (`RaidBoard3D.Marks.Hazards`): renkler `RaidPieceLibrary`'de (bulut beyaz, gaz sarı, kriyo
+  camgöbeği, kaynak turuncu, yağ siyah). Kabindeki birim gizlenir, donmuş birimde "DONDU". Görev çipinin ipucunda olay satırı,
+  tur şeridinde olayın işlediği turların numarası altı çizili (şebekede turun canlı fazı numaranın yanında). Takım kartında
+  olay uyarısı (kilit tehdidinden sonra), yürüyüş karesinin üstünde "−1", üstüne gelinen olay karesinde açıklama satırı.
+  Telsiz şeridi olay adımlarını bildirir. Görev fişinde ve bölge bilgi fişinde BÖLGE satırının altında OLAY satırı (eğitim
+  baskınında yok); yeni cephe fişinin cümlesi olayı da yazar.
+
+- **Ölçüm** (`RaidBotMeasurementTests.Measure_Quick`, "Bölge olayları" tablosu; turnike tahliye düzeltmesinden sonra):
+
+  | Bölge | Olay | Olaylı − olaysız (T+E+A) | Hasar: ekibe | Hasar: makinelere |
+  |---|---|---|---|---|
+  | na | asansor | −5,0 ±9,8 | 0,19 | 0,43 |
+  | sa | tup | +0,0 | 0,13 | 0,23 |
+  | weu | bulut | +0,0 ±14,2 | 0 | 0 |
+  | eeu | raf | +0,0 ±14,2 | 0,07 | 0,06 |
+  | ru | kriyo | −5,0 ±17,3 | 0 | 0 |
+  | me | gaz | −5,0 ±9,8 | 0,18 | 0,36 |
+  | af | tavan | +0,0 | 0,09 | 0,12 |
+  | in | turnike | −10,0 ±13,5 | 0 | 0,22 |
+  | cn | kaynak | −5,0 ±17,3 | 0,13 | 0,46 |
+  | jk | faz | +0,0 ±20,1 | 0,26 | 1,56 |
+  | sea | suzgec | −5,0 ±9,8 | 0,18 | 1,08 |
+  | oc | yag | +5,0 ±17,3 | 0,41 | 0,88 |
+
+  Bölge başına 20 eşli baskın; hasar baskın başına, bütün kadrolar. Toplam: ekibe 0,14, makinelere 0,45. Düzeltmeden
+  önce turnike −25,0 ±19,5 (ikmal −40) idi; öteki bölgeler iki koşuda aynı.
 
 ## Sıra
 
@@ -422,7 +458,8 @@ botla ölç, oyunda dene.
 
 - **Hamle sırası.** Fitil ve hedef komşuları açığın çoğunu kapatıyor, ama makinelerin itme ya da çekme eylemi hâlâ yok
   (yalnız kilit). Olayın içine birini sokmak çoğu bölgede oyuncunun işi; Doğu Avrupa ve Japonya-Kore'de kilitleyici,
-  Okyanusya'da isabetle kayma makinelere araç veriyor. Hasar oranı ölçümü bunu izlemeli.
+  Okyanusya'da isabetle kayma makinelere araç veriyor. İlk ölçüm bunu doğruladı: olay hasarı makinelere ekibin üç katı,
+  şebeke fazı ve süzgeçte altı katı (başarı oranı değişmiyor).
 - **Ateşkes alanı (Batı Avrupa).** Bulutlu turlarda hedefte söküm ile onarım yarışı, hangi tarafa yattığı ölçülmeden
   bilinmez.
 - **Rehine atışları (Hindistan).** Hol kapandıkça ekibe ulaşamayan makineler sivile döner; GÜVEN kaybı ölçülmeli (turda

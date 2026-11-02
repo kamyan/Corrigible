@@ -31,10 +31,6 @@ namespace Corrigible.Desk
         [SerializeField] RectTransform logContent;
         [SerializeField] RaidLogRowView logRowPrefab;
         [SerializeField] SpotlightGraphic dim;
-        [Header("Kadro raporu (baskına girerken)")]
-        [SerializeField] GameObject squadReport;
-        [SerializeField] TMP_Text squadTitle;
-        [SerializeField] TMP_Text[] squadNames,squadStatus;
         IRaidCommands commands;RaidViewModel current;readonly List<RaidLogRowView> logRows=new List<RaidLogRowView>();string logKey;
         // Sonuç dizisi: kararma 0–0,4 s, kart 0,35–0,6 s, damga 0,6–0,72 s
         const float DimSeconds=.4f,CardAt=.35f,CardSeconds=.25f,StampSeconds=.12f,DimAlpha=.74f;
@@ -90,26 +86,6 @@ namespace Corrigible.Desk
                 RenderResult(vm);
             }
             if(logDrawer.activeSelf)RenderLog(vm.Log);
-            if(squadReport!=null){squadReport.SetActive(vm.SquadReportVisible&&!vm.Finished&&!vm.Paused&&!vm.RetreatArmed);if(squadReport.activeSelf)RenderSquad(vm.SquadReport);}
-        }
-        /// <summary>
-        /// Kadro raporu (432 px, öteki notlar gibi 1,27 ölçekli; sol altta birim kartının yerinde): başlık, uzman başına ad ve durum (sağlam yeşil, yaralı, yedek
-        /// ya da boş rol kırmızı). Satırlar durumun satır sayısına göre dizilir; kâğıt yukarı doğru uzar.
-        /// </summary>
-        void RenderSquad(RaidSquadRow[] rows)
-        {
-            squadTitle.text=Loc.T("KADRO RAPORU");
-            float y=40;
-            for(int i=0;i<squadNames.Length&&i<squadStatus.Length;i++)
-            {
-                bool on=i<rows.Length;squadNames[i].gameObject.SetActive(on);squadStatus[i].gameObject.SetActive(on);if(!on)continue;
-                var row=rows[i];squadNames[i].text=row.Name;squadStatus[i].text=row.Status;squadStatus[i].color=RaidHudView.C(row.Good?"ink.green":"ink.red");
-                float w=squadStatus[i].rectTransform.sizeDelta.x,h=Mathf.Max(22,squadStatus[i].GetPreferredValues(row.Status,w,float.PositiveInfinity).y+6);
-                squadNames[i].rectTransform.anchoredPosition=new Vector2(squadNames[i].rectTransform.anchoredPosition.x,-y);
-                squadStatus[i].rectTransform.anchoredPosition=new Vector2(squadStatus[i].rectTransform.anchoredPosition.x,-y);
-                squadStatus[i].rectTransform.sizeDelta=new Vector2(w,h);y+=h+2;
-            }
-            var card=(RectTransform)squadReport.transform;card.sizeDelta=new Vector2(card.sizeDelta.x,y+10);
         }
         /// <summary>Kartın içeriği: başlık yerinde tek damga (başarıda mavi, değilse kırmızı), yer satırı, satırlar.</summary>
         void RenderResult(RaidViewModel vm)

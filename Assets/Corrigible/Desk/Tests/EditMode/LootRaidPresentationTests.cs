@@ -63,43 +63,6 @@ namespace Corrigible.Desk.Tests
             finally { Object.DestroyImmediate(root); }
         }
 
-        /// <summary>Kadro raporu ilk turda birim seçili değilken görünür: sağlam yeşil, yaralı ve boş rol kırmızı; seçince kalkar.</summary>
-        [Test]
-        public void SquadReport_ShowsOnTheFirstTurnUntilAUnitIsPicked()
-        {
-            var root = new GameObject("Kadro raporu sunumu");
-            root.SetActive(false);
-            try
-            {
-                var source = root.AddComponent<LiveRaidDataSource>();
-                var state = Baskin.Create(new RaidParams
-                {
-                    Seed = 11, Roles = new System.Collections.Generic.List<string> { "tek", "emp", "ana" },
-                    Squad = new System.Collections.Generic.List<SquadSlot> { new SquadSlot { Type = "tek", Hp = 3, Armor = 1 }, new SquadSlot { Type = "ana", Hp = 1 } },
-                });
-                source.OpenForValidation(state);
-                var rows = source.Current.SquadReport;
-                Assert.IsTrue(source.Current.SquadReportVisible);
-                CollectionAssert.AreEqual(new[] { 'T', 'E', 'A' }, rows.Select(r => r.Letter).ToArray());
-                Assert.AreEqual(Loc.F("{0} · zırh plakası", Loc.F("sağlam · can {0}/{1}", 3, 3)), rows[0].Status);
-                Assert.IsTrue(rows[0].Good);
-                Assert.AreEqual(Loc.F("{0} · yedek yok, baskına çıkmadı", Loc.T("yatıyor")), rows[1].Status);
-                Assert.IsFalse(rows[1].Good);
-                Assert.AreEqual(Loc.F("tam iyileşmedi · can {0}/{1}", 1, 2), rows[2].Status);
-                Assert.IsFalse(rows[2].Good);
-                source.Select('A');
-                Assert.IsFalse(source.Current.SquadReportVisible);
-                source.ClearSelection();
-                Assert.IsTrue(source.Current.SquadReportVisible);
-                // İkinci turda rapor yok
-                foreach (var e in state.Units.Where(u => u.Side == 'e')) e.Dead = true;
-                Assert.IsTrue(Baskin.EndTurn(state));
-                source.ClearSelection();
-                Assert.IsFalse(source.Current.SquadReportVisible);
-            }
-            finally { Object.DestroyImmediate(root); }
-        }
-
         /// <summary>Kartlar ve 1–3 sırası gerçek kadrodan; Madenci'nin ve Sis uzmanının yetenek satırı kalan hakla.</summary>
         [Test]
         public void PickedSquad_DrivesTeamCardsAndAbilityRows()

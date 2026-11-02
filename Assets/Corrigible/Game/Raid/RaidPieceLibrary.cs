@@ -74,9 +74,72 @@ namespace Corrigible.Game.Raid
         [Tooltip("Sis bulutu ve sise kesilen niyetin oku.")]
         public Color smoke = new Color(0.56f, 0.55f, 0.52f, 0.55f);
 
+        [Header("Bölge olaylarının nesneleri (Docs/BOLGE-OLAYLARI.md)")]
+        [Tooltip("Basınçlı tüp (tup). Boşsa soğutma ünitesi tubeFallbackScale ölçeğiyle (ince uzun silindir).")]
+        public RaidPiece tube;
+        [Tooltip("Çöken tavanın enkaz yığını (enkaz, 2 can). Boşsa kırık dolap enkazı debrisFallbackScale ölçeğiyle parçaya çevrilir.")]
+        public RaidPiece debris;
+        [Tooltip("Kaynak robotu kolunun kaidesi (kol). Boşsa soğutma ünitesi weldArmFallbackScale ölçeğiyle (basık kaide).")]
+        public RaidPiece weldArm;
+        [Tooltip("Tüp atanmamışken yedek parçanın ölçeği.")]
+        public Vector3 tubeFallbackScale = new Vector3(0.5f, 1.45f, 0.5f);
+        [Tooltip("Enkaz yığını atanmamışken kırık dolap enkazının ölçeği.")]
+        public Vector3 debrisFallbackScale = new Vector3(1.15f, 1.7f, 1.15f);
+        [Tooltip("Kaynak kolu kaidesi atanmamışken yedek parçanın ölçeği.")]
+        public Vector3 weldArmFallbackScale = new Vector3(1.2f, 0.35f, 1.2f);
+
+        [Header("Bölge olaylarının renkleri (okunurluk: bulut beyaz, sis gri, gaz sarı)")]
+        [Tooltip("Söndürme bulutu (Batı Avrupa): dolu bulut beyaz.")]
+        public Color hazardCloud = new Color(0.99f, 0.99f, 1f, 1f);
+        [Tooltip("Bulutun, memenin ve buluta kesilen okun çizgisi: beyaz bulut krem tahtada okunsun diye soğuk gri.")]
+        public Color hazardCloudEdge = new Color(0.45f, 0.54f, 0.62f, 1f);
+        [Tooltip("Yanıcı gaz (Orta Doğu): sarı tarama ve sızıntı halkası.")]
+        public Color hazardGas = new Color(0.85f, 0.66f, 0.05f, 1f);
+        [Tooltip("Alev almış gaz bulutu: kırmızı-turuncu, titrer.")]
+        public Color hazardFlame = new Color(0.88f, 0.3f, 0.08f, 1f);
+        [Tooltip("Kriyo bölgesi, donan birim ve buz kabuğu (Rusya): camgöbeği.")]
+        public Color hazardFreeze = new Color(0.16f, 0.66f, 0.82f, 1f);
+        [Tooltip("Kaynak karesi ve kaynak kolu (Çin): turuncu.")]
+        public Color hazardWeld = new Color(0.93f, 0.47f, 0.1f, 1f);
+        [Tooltip("Canlı kablo kanalı (Japonya-Kore): parlak kehribar.")]
+        public Color hazardLive = new Color(1f, 0.7f, 0.08f, 1f);
+        [Tooltip("Sönük kablo kanalı: gri.")]
+        public Color hazardDead = new Color(0.55f, 0.55f, 0.53f, 1f);
+        [Tooltip("Hidrolik yağ (Okyanusya): parlak siyah.")]
+        public Color hazardOil = new Color(0.07f, 0.07f, 0.08f, 1f);
+        [Tooltip("Tavan çatlağı (Afrika): grafit-kahverengi.")]
+        public Color hazardCrack = new Color(0.36f, 0.26f, 0.18f, 1f);
+        [Tooltip("Arşiv rafının rayı (Doğu Avrupa): grafit şerit.")]
+        public Color hazardRail = new Color(0.25f, 0.24f, 0.22f, 1f);
+        [Tooltip("Yük asansörünün durakları, kabin ve inecek birimin hayaleti (Kuzey Amerika): sarı.")]
+        public Color hazardLift = new Color(0.9f, 0.7f, 0.04f, 1f);
+        [Tooltip("Turnike holü (Hindistan): soluk mavi zemin.")]
+        public Color hazardHall = new Color(0.3f, 0.5f, 0.85f, 1f);
+        [Tooltip("Turnikenin yön okları.")]
+        public Color hazardGate = new Color(0.1f, 0.28f, 0.54f, 1f);
+        [Tooltip("Süzgeç (Güneydoğu Asya): koyu halka ve çekiş okları.")]
+        public Color hazardDrain = new Color(0.12f, 0.16f, 0.2f, 1f);
+        [Tooltip("Basınçlı tüpün uçuş hattı (Güney Amerika): soluk turuncu şerit, ıslık çalanda parlak.")]
+        public Color hazardTube = new Color(0.93f, 0.5f, 0.15f, 1f);
+
         public RaidPiece Object(string kind) => kind switch
         {
-            "core" => core, "node" => node, "civ" => civilian, "cool" => cooling, "spawner" => spawner, _ => civilian,
+            "core" => core, "node" => node, "civ" => civilian, "cool" => cooling, "spawner" => spawner,
+            // Bölge olaylarının nesneleri: atanmamışsa yedek parça (tahta ölçekler; enkazı kırık dolap enkazından kurar)
+            "tup" => Or(tube, cooling), "kol" => Or(weldArm, cooling), "enkaz" => Or(debris, civilian),
+            _ => civilian,
+        };
+
+        /// <summary>Nesnenin kendi parçası atanmış mı (olay nesnelerinde yedek parça kullanılırken false).</summary>
+        public bool HasOwnPiece(string kind) => kind switch
+        {
+            "tup" => tube != null, "kol" => weldArm != null, "enkaz" => debris != null, _ => true,
+        };
+
+        /// <summary>Yedek parçanın ölçeği (kendi parçası olan nesnede 1).</summary>
+        public Vector3 FallbackScale(string kind) => HasOwnPiece(kind) ? Vector3.one : kind switch
+        {
+            "tup" => tubeFallbackScale, "kol" => weldArmFallbackScale, "enkaz" => debrisFallbackScale, _ => Vector3.one,
         };
 
         // Unity nesnesinde ?? sahte null'u görmez

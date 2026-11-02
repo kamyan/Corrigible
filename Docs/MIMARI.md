@@ -84,6 +84,16 @@ Corrigible/                          (Unity proje kökü, git deposu)
 - **`Baskin`** (`Core/Baskin.cs`): 8×8 taktik savaş motoru, kendi RNG'si (`BState.Rs`), Unity yok. `Create(RaidParams)` →
   `BState`; `DoMove`, `DoAct`, `Undo`, `Preview`, `EndTurn`, `Retreat`, `Result`, `Intents`. Stratejiye yalnız
   `RaidResult` döner (kayda `raidres` olarak yazılır; taktik hamleler kaydedilmez).
+- **Bölge olayları** (`Core/Baskin.Events.cs`, `Baskin` `partial`; kurallar `Docs/BOLGE-OLAYLARI.md`): `RegionDef.Event` →
+  `RaidParams.Event` (`Balance.liberationRegionEvents`) → `BState.Ev` (`EvState`), kare bayrakları (`Cell.Cloud/Gas/Crack/Oil/
+  Shelf/Phase`), birim `Frozen/Ice/Cab`. `EventSetup` `Create`'te bütün RNG çekimlerinden sonra (RNG çekmez), `EventEnd`
+  `EndTurn`'de uyanmadan sonra ve `CheckEscape`'ten önce (son turda yok); tepkili kurallar çağrı noktalarında yalnız olay
+  varken. `BState.InEvent` hasar tavanını ve nesne muafiyetini açar. Kabindeki birim `OnBoard` değildir ama baskındadır
+  (`CheckEscape`, makine sınırı `Machines`). Sunuma `Baskin.Hazards(B)` (kare işaretleri, turnike kenarları, hatlar, birim
+  uyarıları, tur şeridi; kopyada niyetler ve olay adımı oynatılarak), `PreviewMove`, `PreviewResult.Hazards`, `CanStep`
+  (turnike yönü; `Reachable`, `MachinePath`, bot) ve `RoomName`. Sunum: `RaidBoard3D.Marks.Hazards` → olay katmanı (renkler
+  `RaidPieceLibrary.hazard*`, yeni nesneler `tup`/`kol`/`enkaz`), `RaidViewModel.TurnEvents` → tur şeridi, takım kartının
+  `Threat` satırı, hover satırları (`RaidDataSource.HazardRow`), görev fişinin OLAY satırı (`OperationSlip` dördüncü alan).
 - **`RaidMaps`** (`Core/RaidMaps.cs`): harekâtın harita havuzu. `Pool(MapSeed)` yeni oyunun tohumundan 30 harita üretir (`PoolSize`): altı türün (`Kinds`: koridor, kasa odası, iki hat,
   açık salon, şebeke, rehine) her birinden beşer, türün kendi oda adlarıyla (`KindOf`). `Generate(kind, rng)` türün yapısını
   kurar (`BuildVault`, `BuildLanes`…), sonra dolapları ve makineleri yerleştirir; `Valid(rows)` ortak kurallar, `Valid(rows,
@@ -201,7 +211,7 @@ WorldLabels       dünya etiketleri
 BoardBackground   [BoardBackgroundView] keçe, lamba ve tahta gölgesi (kamera Canvas'ı)
 RaidHUDCanvas     LiveRaidDataSource, RaidCommands, RaidPreviewOverlay; RaidHud, ekip/birim/inceleme kartları
 RaidEventSystem   [RaidEventSystemGate] ana EventSystem varken yereli kapatır
-RaidPanelCanvas   RaidPanels (olay, onay, kadro raporu, günlük, kurallar, geri çekilme, sonuç), RaidOutcomeSpot
+RaidPanelCanvas   RaidPanels (olay, onay, günlük, kurallar, geri çekilme, sonuç), RaidOutcomeSpot
 ```
 
 - `RaidLauncher` (DeskGame'de, Game nesnesi): `S.Raid` oluşunca önce kamerayı CRT'ye daldırır, sonra sahneyi
@@ -237,7 +247,7 @@ RaidPanelCanvas   RaidPanels (olay, onay, kadro raporu, günlük, kurallar, geri
   göre (kalınlık, yay, kesik, çift şerit, rozet); oklar `Pencil.mat`'ta ZTest Always; karo işaretleri (tarama, seçim, hedef, uyanma halkası) `Pencil marks.mat`'ta derinlik testli, parçalar örter (`RaidPieceLibrary.tileMarks`).
 - **Baskın HUD'u** (`RaidHud.prefab`, `RaidHudView`): köşe panelleri (Status, Buttons, Command, Ability card, Team)
   prefab'da; ekip kartları (`RaidTeamCardView`) ve yetenek kartı (`UnitCardView`) aynı prefab'ın içinde, ayrı prefab yok.
-  Renkler `RaidHudView.C(key)` ile Baskın → Masa → Sığınak temasından. Telsiz fişi `RaidPanels › EventSlip`; kadro raporu `RaidPanels › SquadReport` (`Baskin.SquadReport` → `RaidViewModel.SquadReport`).
+  Renkler `RaidHudView.C(key)` ile Baskın → Masa → Sığınak temasından. Telsiz fişi `RaidPanels › EventSlip`. Kadro raporu baskında değil, baskın emrinden önce masada (`SiginakHud › Squad report`, `SquadReportSlip`; `Simulation.LiberationSquadPreview` → `Baskin.SquadReport` → `LiberationMapBuilder.SquadReport`).
 - **Saha masası** (yalnız sunum): `Build` paftanın kameraya bakan kenarlarına kare adlarını yazar (güneyde A–H, batıda 1–8;
   1 kameraya en yakın); `RaidBoard3D.CellName(x, y)` telsiz satırlarında kullanılır ("TEKNİSYEN · A6"). Niyet okları
   `RaidArrow.Set(..., hand)` ile yağlı kalem çizgisi (dalga uçların konumundan, eşitlemede titremez; uç açık V).

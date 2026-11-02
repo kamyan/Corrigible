@@ -37,6 +37,8 @@ ueval 'UnityEditor.SceneManagement.EditorSceneManager.NewScene(UnityEditor.Scene
 | `Desk/Tests/EditMode/TutorialFlowTests` | eğitim adımlarının sırası, geçilen adımlar, raporlar, atlama, sahne bağlantıları |
 | `Desk/Tests/EditMode/TutorialRaidTests` | senaryolu ilk baskın: her harekât tohumunda aynı tahta, rehberin adımları hasarsız zafere varır |
 | `Tests/EditMode/RegionIdentityTests` | bölge özellikleri ve imza makineleri, zorluk kademesi, yeni makinelerin niyetleri, oda seviyesi kilidi |
+| `Desk/Tests/EditMode/SiginakSoftEdgeTests` | eğik kâğıtlarda kenar: yumuşak türevler (`*_aa`) kaynağın 1 px saydam halkalı kopyası, çizgi sprite'ları, DeskGame ve baskın panellerinde eğik sert kenarlı görsel yok |
+| `Tests/EditMode/RaidEventTests` | bölge olayları: her bölgenin kendi olayı, her haritada yer bulma ve çıkış güvencesi, RNG'nin aynı kalması, imza eki, geri alma, her olayın kuralı iki tarafa da, hasar tavanı, nesne muafiyeti, önizleme (`Hazards`, tur şeridi) |
 | `Tests/EditMode/LocalizationTests` | çeviri tablosu tam; İngilizce oynanan harekâtta Türkçe metin yok; dil sonucu değiştirmez |
 | `Desk/Tests/EditMode/DeskBridgeTests` | DeskGame bağlantıları, ekran katmanlarının sırası, operasyon raporunun yeri ve güven satırı, harekât sonu raporu (damga, gösterge, 29 ve 48 vardiyada tam genişlik şerit, kırılma anları; dil değişince de) |
 | `Desk/Tests/EditMode/LiberationReportTests` | operasyon raporu (S7): KAZANÇ ve fişler, başarısızda ödül alanı yok, aynı söz iki kez geçmez, depo sınırı, kayıttan aynı rapor |
@@ -58,7 +60,9 @@ var surface = Object.FindFirstObjectByType<Corrigible.Desk.Bridge.LiberationDesk
 // Emir belgesi: BAŞLA iki basış ister (kayıt uyarısı + onay). Düğme BriefingView'ın özel "action" alanında.
 // Vardiya: ShiftSwitch.Press() iki kez (kapak + kol); SiginakShift.Skip() diziyi atlar; rapor özel File() ile tepsiye.
 // Kapı kâğıdı açıkken masa kilitli (V031'de ziyaretçi var): DoorCardView'ın özel hintButton'ı (alt satır) kâğıdı kapatır.
-surface.LaunchSector(game.Sim.NextLiberationSector(game.Sim.S.Liberation.CurrentRegion).Id);   // baskın emri
+surface.LaunchSector(game.Sim.NextLiberationSector(game.Sim.S.Liberation.CurrentRegion).Id);   // baskın emri (fişi ve raporu atlar)
+// Fişten emir: SiginakMap.ShowMissions(), HandleEnter() iki kez (BASKIN EMRİ VER → kadro raporu → BASKINA ÇIK); HandleEscape()
+// raporu kapatır. SquadReportOpen raporun açık olduğunu söyler.
 // Baskın: RaidLauncher.IsRaidLoaded; FindFirstObjectByType<RaidDataSource>() → Select, Move, Arm, Use, EndTurn,
 // Retreat() iki kez, Continue() rapora geçer (sonuç kartı 0,6 s girdi kilitli). Dönüşte SiginakOperation.ReportOpen;
 // rapor özel File() ile tepsiye. FinalReportView.Instance → IsOpen, PressRestart().
@@ -183,6 +187,15 @@ Ajan olarak: `ueval 'return Corrigible.EditorTools.LocalizationTool.UpdateTable(
   açılamaz (`NewScene` Play'de çalışmaz), Test Runner sahneyi kaydedemeyip takılır; ardından `eval`, `editor_stop`,
   `recompile` hepsi 30 sn'de zaman aşımına uğrar ve yalnız Unity'yi yeniden açmak çözer. Testten önce
   `EditorApplication.isPlaying`'i denetle; Play'deyse kullanıcıya sor.
+- **Eğik kâğıtta sert kenarlı sprite kullanma.** Ekran katmanı kenar yumuşatmaz; dokunun kenarına kadar opak 9 dilim
+  sprite eğik çizilince basamaklanır ("kırık kenar", en çok koyu düğmede ve kırmızı çizgide). Eğik kâğıda eklenen zemin,
+  düğme, gölge ve çerçeve `*_aa` türevini (`ui_fill_r2_aa`, `ui_frame_1px_r2_aa`…), 1–2 px çizgi ise görselini 2 px kalın
+  bir "Soft line" çocuğunda (`ui_line_h_aa`, `ui_line_v_aa`, `ui_dash_h_aa`) kullanmalı; `SiginakSoftEdgeTests` yakalar.
+- **Uzun bot ölçümü yanıtsız kalır.** `RaidBotMeasurementTests.Measure_Quick` (`--include_explicit true`) ~25 dk tek
+  eşzamanlı test olarak koşar; Pipeline kendi süresi dolunca koşuyu iptal edilmiş sayar ("Ignoring RunFinished from
+  cancelled run"), test yine biter ve `Temp/raid_bot_quick.md`'yi yazar ama CLI yanıt almaz ve editor bir süre (20 dakikayı
+  bulabilir) hiçbir komutu almaz. Arka planda başlat, bitişi raporun değişme zamanından izle, sonra `ueval` yanıt verene
+  kadar bekle; bu arada C# değiştirme (yeniden derleme koşuyu bozar).
 - **Büyük sahne düzenlemesi Editor'ü çökertebilir.** Çöküşten sonra Editor açılışta bir iletişim kutusunda bekler (CPU
   %0, `Editor.log` lisanstan sonra ilerlemez): çoğunlukla `Temp/__Backupscenes`'teki yarım sahneyi geri yükleme sorusu.
   Geri yükleme; Editor'ü kapat, `Temp/__Backupscenes` ve eski `Temp/UnityLockfile`'ı kenara taşı, yeniden aç.

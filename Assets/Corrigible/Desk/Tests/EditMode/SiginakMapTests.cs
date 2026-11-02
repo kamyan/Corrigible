@@ -105,21 +105,23 @@ namespace Corrigible.Desk.Tests
             Assert.IsNull(ready.Shortfall);
         }
 
-        /// <summary>S2: SAHA satırları (bölge özelliği, imza, tehdit), ödül 2 × 2, ekip diskleri.</summary>
+        /// <summary>S2: SAHA satırları (bölge özelliği, olay, imza, tehdit), ödül 2 × 2, ekip diskleri.</summary>
         [Test]
         public void Slip_Front_FieldsRewardsAndDiscs()
         {
             var sim = NewLiberation();
             var d = LiberationMapBuilder.Slip(sim, Simulation.HQ);
             var def = GameData.Region(Simulation.HQ);
-            Assert.AreEqual(3, d.Fields.Count);
+            Assert.AreEqual(4, d.Fields.Count);
             Assert.AreEqual(SiginakGlyphs.Trait(def.Trait, framed: true), d.Fields[0].Glyph);
             Assert.AreEqual(Loc.T(Baskin.RegionTraits[def.Trait].Name), d.Fields[0].Value);
             Assert.AreEqual(Loc.T(Baskin.RegionTraits[def.Trait].Desc), d.Fields[0].HoverLine, "üzerine gelince oyundaki açıklama");
-            Assert.AreEqual(SiginakGlyphs.Machine(def.Enemy, framed: true), d.Fields[1].Glyph);
-            Assert.AreEqual(Loc.T(Baskin.UnitTypes[def.Enemy].Name), d.Fields[1].Value);
-            Assert.AreEqual(sim.Tier, d.Fields[2].Tier);
-            Assert.AreEqual(Loc.F("{0}/4", sim.Tier), d.Fields[2].Value);
+            Assert.AreEqual(Loc.T(Baskin.RegionEvents[def.Event].Name), d.Fields[1].Value, "özelliğin altında bölge olayı");
+            Assert.AreEqual(Loc.T(Baskin.RegionEvents[def.Event].Desc), d.Fields[1].HoverLine);
+            Assert.AreEqual(SiginakGlyphs.Machine(def.Enemy, framed: true), d.Fields[2].Glyph);
+            Assert.AreEqual(Loc.T(Baskin.UnitTypes[def.Enemy].Name), d.Fields[2].Value);
+            Assert.AreEqual(sim.Tier, d.Fields[3].Tier);
+            Assert.AreEqual(Loc.F("{0}/4", sim.Tier), d.Fields[3].Value);
             Assert.IsFalse(d.Task.Contains("\n"), "kimlik satırı görevden SAHA'ya taşındı");
 
             Assert.AreEqual(sim.NextLiberationSector(Simulation.HQ).MissionKind == "loot" ? 4 : 2, d.Rewards.Count);
@@ -154,7 +156,56 @@ namespace Corrigible.Desk.Tests
 
             var tutorial = LiberationMapBuilder.Slip(sim, Simulation.HQ, new[] { "maden", "duman" }, fixedSquad: true);
             Assert.IsTrue(tutorial.Pick.All(p => p.Locked), "eğitim baskınında kadro sabit");
+            Assert.IsFalse(tutorial.Fields.Any(f => f.Label == Loc.T("OLAY")), "eğitim baskını olaysız: fişte OLAY satırı yok");
             CollectionAssert.AreEqual(new[] { "T", "E", "A" }, tutorial.Members.Select(m => m.Letter).ToArray());
+        }
+
+        /// <summary>
+        /// Kadro raporu (BASKIN EMRİ VER'den sonra, emirden önce): emrin çıkaracağı kadro, takılacak plakasıyla; sağlam yeşil,
+        /// yaralı, yedek ve boş rol kırmızı. Rapor durumu değiştirmez; emirden sonra baskının kadrosu raporla aynı.
+        /// </summary>
+        [Test]
+        public void SquadReport_ShowsTheSquadTheOrderSends_WithoutIssuingIt()
+        {
+            var sim = NewOpen();
+            var team = sim.S.Teams[0];
+            team.Members.First(m => m.Role == "ana").Wounds = 1;
+            team.Members.First(m => m.Role == "emp").Down = 2;
+            sim.Shelter.Reserves.Clear();
+            sim.Shelter.Plates = 1;
+            int commands = sim.Record.commands.Count;
+            double fon = sim.S.Fon;
+
+            var d = LiberationMapBuilder.SquadReport(sim, Simulation.HQ, new[] { "emp", "ana" });
+            Assert.AreEqual(Loc.T("KADRO RAPORU"), d.Head);
+            Assert.AreEqual(Loc.F("{0:00} {1} · {2}", 1, DeskText.Upper(sim.LiberationSector("weu_1").Name), Loc.T("YAĞMA")), d.Sector);
+            CollectionAssert.AreEqual(new[] { "T", "E", "A" }, d.Rows.Select(r => r.Letter).ToArray());
+            Assert.AreEqual(Loc.F("sağlam · can {0}/{1}", 3, 3), d.Rows[0].Status);
+            Assert.IsTrue(d.Rows[0].Good);
+            Assert.AreEqual(Loc.F("{0} · yedek yok, rol boş kalır", Loc.F("yatıyor · {0} gün", 2)), d.Rows[1].Status);
+            Assert.IsTrue(d.Rows[1].Missing && !d.Rows[1].Good);
+            Assert.AreEqual(Loc.F("{0} · zırh plakası", Loc.F("tam iyileşmedi · can {0}/{1}", 1, 2)), d.Rows[2].Status, "plaka en düşük canlıya");
+            Assert.IsFalse(d.Rows[2].Good);
+
+            // Boşta yedek varsa yatanın yerine çıkar (eksik canla)
+            sim.Shelter.Reserves.Add(new SpecialistState());
+            var reserve = LiberationMapBuilder.SquadReport(sim, Simulation.HQ, new[] { "emp", "ana" });
+            Assert.AreEqual(Loc.F("{0} · yerine yedek uzman, can {1}/{2}", Loc.F("yatıyor · {0} gün", 2), 3 - sim.B.liberationRookieHpPenalty, 3), reserve.Rows[1].Status);
+            Assert.IsFalse(reserve.Rows[1].Missing || reserve.Rows[1].Good);
+            Assert.AreEqual(commands, sim.Record.commands.Count, "rapor emir vermez");
+            Assert.AreEqual(fon, sim.S.Fon);
+            Assert.IsNull(sim.S.Raid);
+
+            var preview = Baskin.SquadReport(sim.LiberationSquadPreview("emp,ana"));
+            Assert.IsTrue(sim.StartLiberationRaid("weu_1", "emp,ana").Ok);
+            var raid = Baskin.SquadReport(sim.S.Raid.Params);
+            CollectionAssert.AreEqual(raid.Select(e => (e.Type, e.Hp, e.Armor, e.Rookie, e.Missing)).ToArray(),
+                preview.Select(e => (e.Type, e.Hp, e.Armor, e.Rookie, e.Missing)).ToArray(), "baskının kadrosu raporla aynı");
+
+            // Eğitim baskını: kadro sabit, emir varsayılan seçimi gönderir
+            var tutorial = LiberationMapBuilder.SquadReport(NewOpen(), Simulation.HQ, new[] { "maden", "duman" }, fixedSquad: true);
+            CollectionAssert.AreEqual(new[] { "T", "E", "A" }, tutorial.Rows.Select(r => r.Letter).ToArray());
+            Assert.IsTrue(tutorial.Rows.All(r => r.Good));
         }
 
         /// <summary>KADRO: katılmamış uzman kilitli çip (“ATÖLYE 2”), seçilemez; seçenek yokken not sıradakini söyler.</summary>
@@ -213,8 +264,8 @@ namespace Corrigible.Desk.Tests
             var info = LiberationMapBuilder.Slip(sim, "cn");
             Assert.IsFalse(info.HasAction);
             Assert.AreEqual(Loc.T("Cephe açmak için komşusunu özgürleştir."), info.Info);
-            Assert.AreEqual(3, info.Fields.Count, "henüz özgür olmayan bölgenin özelliği ve imza makinesi SAHA satırlarında");
-            Assert.AreEqual(SiginakGlyphs.Machine(GameData.Region("cn").Enemy, framed: true), info.Fields[1].Glyph);
+            Assert.AreEqual(4, info.Fields.Count, "henüz özgür olmayan bölgenin özelliği, olayı ve imza makinesi SAHA satırlarında");
+            Assert.AreEqual(SiginakGlyphs.Machine(GameData.Region("cn").Enemy, framed: true), info.Fields[2].Glyph);
             Assert.IsTrue(info.Sectors.All(x => x.Mark == SectorMark.Locked));
 
             var freed = WeuFreed();
@@ -301,7 +352,7 @@ namespace Corrigible.Desk.Tests
                 var roots = scene.GetRootGameObjects();
                 var map = roots.SelectMany(g => g.GetComponentsInChildren<SiginakMap>(true)).Single();
                 var so = new SerializedObject(map);
-                foreach (var f in new[] { "game", "surface", "rig", "telex", "sadeMap", "layer", "slip", "frontSlip", "figure", "drag", "figureTarget", "counters" })
+                foreach (var f in new[] { "game", "surface", "rig", "telex", "sadeMap", "layer", "slip", "frontSlip", "squadReport", "figure", "drag", "figureTarget", "counters" })
                     Assert.IsNotNull(so.FindProperty(f).objectReferenceValue, f);
                 var desk = roots.SelectMany(g => g.GetComponentsInChildren<SiginakDesk>(true)).Single();
                 Assert.AreSame(map, new SerializedObject(desk).FindProperty("map").objectReferenceValue, "Enter/Esc önce harita fişine");
@@ -327,6 +378,86 @@ namespace Corrigible.Desk.Tests
                 Assert.IsTrue(map.transform.root.GetComponentsInChildren<Transform>(true).Any(t => t.name == "Liberation fills" && t.gameObject.activeSelf));
                 var figure = map.transform.root.GetComponentsInChildren<TeamFigure>(true).Single();
                 Assert.Greater(figure.GetComponent<BoxCollider>().size.x, 0.1f, "tık hedefi K1'de de ≥ 44 px");
+            }
+            finally { EditorSceneManager.CloseScene(scene, true); }
+        }
+
+        /// <summary>
+        /// KADRO çipi: durum (SABİT, YEDEK, n GÜN) çipin bütün genişliğinde kendi satırında, ≥ 14 px; her durum iki dilde de çipin
+        /// iç genişliğine sığar (önceden canın altındaki dar sütundan yandaki çipe taşıyordu).
+        /// </summary>
+        [Test]
+        public void DeskGameScene_PickChipStatusFitsTheChip()
+        {
+            var scene = EditorSceneManager.OpenScene(DeskSpriteManifest.Root + "/Scenes/DeskGame.unity", OpenSceneMode.Additive);
+            var probe = new GameObject("Ölçü", typeof(RectTransform));
+            try
+            {
+                var slip = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<OperationSlip>(true)).Single();
+                var chips = new SerializedObject(slip).FindProperty("pickChips");
+                Assert.AreEqual(5, chips.arraySize);
+                TMPro.TMP_Text status = null;
+                float inner = float.MaxValue;
+                for (int i = 0; i < chips.arraySize; i++)
+                {
+                    var e = chips.GetArrayElementAtIndex(i);
+                    status = (TMPro.TMP_Text)e.FindPropertyRelative("status").objectReferenceValue;
+                    Assert.IsNotNull(status, "çip " + i);
+                    Assert.GreaterOrEqual(status.fontSize, 14f, "çip " + i);
+                    var root = (GameObject)e.FindPropertyRelative("root").objectReferenceValue;
+                    Assert.AreSame(root.transform, status.transform.parent, "durum çipin kendi satırında, can sütununda değil");
+                    var pad = root.GetComponent<UnityEngine.UI.VerticalLayoutGroup>().padding;
+                    inner = Mathf.Min(inner, root.GetComponent<UnityEngine.UI.LayoutElement>().preferredWidth - pad.left - pad.right);
+                }
+                var text = probe.AddComponent<TMPro.TextMeshProUGUI>();
+                text.font = status.font;
+                text.fontSize = status.fontSize;
+                text.characterSpacing = status.characterSpacing;
+                text.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
+                var table = Loc.ParseTable(System.IO.File.ReadAllText("Assets/Corrigible/Resources/Localization/strings.txt"));
+                foreach (var lang in Loc.Languages)
+                {
+                    Loc.SetLanguage(lang, lang == Loc.Turkish ? null : table[lang]);
+                    var words = new[] { Loc.T("SABİT"), Loc.T("YEDEK") }.Concat(Enumerable.Range(1, 12).Select(n => Loc.F("{0} GÜN", n)));
+                    foreach (var w in words)
+                        Assert.LessOrEqual(text.GetPreferredValues(w).x, inner + 0.5f, lang + ": " + w);
+                }
+            }
+            finally
+            {
+                Loc.SetLanguage(Loc.Turkish);
+                Object.DestroyImmediate(probe);
+                EditorSceneManager.CloseScene(scene, true);
+            }
+        }
+
+        /// <summary>Kadro raporu ekran katmanında görev fişinin hemen üstünde (üzerine gelme etiketinin altında), kapalı; alanları bağlı.</summary>
+        [Test]
+        public void DeskGameScene_SquadReportSitsOnTheSlip()
+        {
+            var scene = EditorSceneManager.OpenScene(DeskSpriteManifest.Root + "/Scenes/DeskGame.unity", OpenSceneMode.Additive);
+            try
+            {
+                var map = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<SiginakMap>(true)).Single();
+                var ms = new SerializedObject(map);
+                var report = (SquadReportSlip)ms.FindProperty("squadReport").objectReferenceValue;
+                var slip = (OperationSlip)ms.FindProperty("slip").objectReferenceValue;
+                var so = new SerializedObject(report);
+                Assert.AreSame(slip, so.FindProperty("slip").objectReferenceValue, "raporun yanına oturduğu fiş");
+                var it = so.GetIterator();
+                it.NextVisible(true);
+                while (it.NextVisible(false))
+                    if (it.propertyType == SerializedPropertyType.ObjectReference) Assert.IsNotNull(it.objectReferenceValue, it.name);
+                var rows = so.FindProperty("rows");
+                Assert.AreEqual(3, rows.arraySize, "Teknisyen ve iki uzman");
+                for (int i = 0; i < rows.arraySize; i++)
+                    foreach (var f in new[] { "root", "disc", "letter", "name", "status" })
+                        Assert.IsNotNull(rows.GetArrayElementAtIndex(i).FindPropertyRelative(f).objectReferenceValue, i + "." + f);
+                Assert.IsFalse(report.gameObject.activeSelf, "BASKIN EMRİ VER'e kadar kapalı");
+                var hud = slip.transform.parent;
+                Assert.AreSame(hud, report.transform.parent);
+                Assert.AreEqual(slip.transform.GetSiblingIndex() + 1, report.transform.GetSiblingIndex(), "fişin üstünde çizilir");
+                Assert.Less(report.transform.GetSiblingIndex(), hud.Find("Hover tag").GetSiblingIndex(), "üzerine gelme etiketi raporun üstünde");
             }
             finally { EditorSceneManager.CloseScene(scene, true); }
         }

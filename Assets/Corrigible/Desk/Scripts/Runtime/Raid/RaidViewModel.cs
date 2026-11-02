@@ -41,8 +41,6 @@ namespace Corrigible.Desk
     /// <summary>Sonuç kartının satırı (Revizyon 2 · S7): ad solda, değer sağda; iyi sonuç yeşil.</summary>
     [Serializable] public sealed class RaidResultRow { public string Label,Value; public bool Good; }
     [Serializable] public sealed class RaidUnusedModel { public char Letter; public string Name; public bool Move,Ability; public int ThreatOrder; }
-    /// <summary>Kadro raporunun satırı (baskına girerken): uzmanın adı ve durumu; sağlamsa yeşil, değilse kırmızı.</summary>
-    [Serializable] public sealed class RaidSquadRow { public char Letter; public string Name,Status; public bool Good; }
     [Serializable] public sealed class RaidViewModel
     {
         public bool LastTurn,Finished,Success,EventVisible,IsLootMission;
@@ -56,10 +54,9 @@ namespace Corrigible.Desk
         public RaidQueueItem[] Queue=Array.Empty<RaidQueueItem>();
         public RaidLogModel[] Log=Array.Empty<RaidLogModel>();
         public RaidUnusedModel[] Unused=Array.Empty<RaidUnusedModel>();
-        /// <summary>Kadro raporu: ilk oyuncu turunda, birim seçili değilken sol altta (birim kartının yeri); rehberli baskında yok.</summary>
-        public RaidSquadRow[] SquadReport=Array.Empty<RaidSquadRow>();
-        public bool SquadReportVisible;
         public int Turn, Turns, Civilians, CivilianBroken;
+        /// <summary>Bölge olayının tur şeridi: [tur] o turun sonunda işleyen olay (yoksa null; olaysız baskında null dizi).</summary>
+        public string[] TurnEvents;
         /// <summary>Sivil güven: bu baskında kırılanlar düşülmüş hâli ve tavanı (tavan 0: harekâtsız önizleme, etiket SİVİL kalır).</summary>
         public int Trust, TrustMax;
         public bool Locked, AbilityArmed, CanUndo, EndConfirm, RetreatArmed, FastMachines, Paused, LogUnread;

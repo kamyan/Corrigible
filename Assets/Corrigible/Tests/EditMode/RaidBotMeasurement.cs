@@ -18,6 +18,8 @@ namespace Corrigible.Tests
     /// alanlar): harekât tohumunun harita havuzu, bölgenin özelliği ve imza makinesi, kademenin kopya/güçlü özellikleri,
     /// gelişmiş akıl, sunucu sertliği ve ikmalin ek turu dengeden. Kadro tam canlı ve plakasız; son bölgenin çekirdeği yok.
     /// Raporu Markdown, hücre tablosunu CSV olarak yazar. Baskınlar iş parçacıklarına dağılır; sonuç sıradan bağımsızdır.
+    /// Bölge olayları (Docs/BOLGE-OLAYLARI.md): her senaryo T+E+A ile bir kez de olaysız oynanır (eşli); rapor bölge başına olaylı
+    /// ve olaysız başarıyı ve olayların ekibe ve makinelere verdiği hasarı yazar.
     /// </summary>
     public static class RaidBotMeasurement
     {
@@ -40,6 +42,8 @@ namespace Corrigible.Tests
             /// <summary>Hak taraması: ilk bu kadar tohumun senaryolarında, varsayılandan farklı her değer.</summary>
             public bool Sweeps = true;
             public int SweepMapSeeds = 20;
+            /// <summary>Olaysız eşli koşu: her senaryo T+E+A ile bölge olayı kapalı bir kez daha (olayın başarıya etkisi).</summary>
+            public bool EventPairs = true;
             public int[] DynamiteValues = { 1, 2, 3 }, SmokeValues = { 2, 3, 4 };
             public Balance Balance = new Balance();
             public int Alternatives = 8;
@@ -66,6 +70,9 @@ namespace Corrigible.Tests
             public string Group;
             public bool Won;
             public int Down, Collateral, Turns, Walls, DynamiteHits, Smokes, Smoked;
+            /// <summary>Bölge olayının verdiği hasar: ekibe ve makinelere. NoEvent: olaysız eşli koşu.</summary>
+            public int EvTeam, EvMachines;
+            public bool NoEvent;
             /// <summary>zafer, süre, teknisyen (düştü), ekip (hepsi düştü), kasa (imha edildi).</summary>
             public string End;
         }
@@ -75,7 +82,7 @@ namespace Corrigible.Tests
         public static string SquadName(int q) => "T+" + string.Join("+", Squads[q].Select(r => Baskin.UnitTypes[r].Short));
 
         /// <summary>Kampanyanın baskın emriyle aynı parametreler (<c>StartLiberationRaidCore</c>); kadro tam canlı, plakasız.</summary>
-        public static RaidParams Params(Balance b, Scenario sc, string[] pick, int dynamite, int smoke)
+        public static RaidParams Params(Balance b, Scenario sc, string[] pick, int dynamite, int smoke, bool events = true)
         {
             var def = GameData.Region(sc.Region);
             var traits = new List<string> { def.Trait };
@@ -88,7 +95,7 @@ namespace Corrigible.Tests
                 Seed = sc.Seed, Region = def.Id, RegionName = def.Name, Compute = def.Compute,
                 SectorId = def.Id + "_" + (server ? 3 : 1), MissionKind = sc.Mission,
                 RaidNumber = sc.Tier, Tier = sc.Tier, IsCore = false,
-                Traits = traits, Signature = def.Enemy,
+                Traits = traits, Signature = def.Enemy, Event = events && b.liberationRegionEvents ? def.Event : null,
                 Squad = roles.Select(r => new SquadSlot { Type = r, Hp = Simulation.MaxHp(r) }).ToList(), Roles = roles,
                 MapSeed = sc.MapSeed, MapSlot = sc.MapSlot, Tactics = 1,
                 TargetHpBonus = server ? b.liberationServerTargetHp : 0,
@@ -157,6 +164,9 @@ namespace Corrigible.Tests
                             foreach (int v in cfg.SmokeValues.Where(v => v != b.liberationSmokeCharges))
                                 runs.Add(new RaidRun { Sc = sc, Squad = q, Dynamite = b.liberationDynamiteCharges, Smoke = v, Group = "sis" });
                     }
+            if (cfg.EventPairs && b.liberationRegionEvents)
+                foreach (var sc in scenarios)
+                    runs.Add(new RaidRun { Sc = sc, Squad = 0, Dynamite = b.liberationDynamiteCharges, Smoke = b.liberationSmokeCharges, Group = "olaysiz", NoEvent = true });
             Execute(runs, cfg);
             clock.Stop();
             var report = Report(cfg, runs, clock.Elapsed);
@@ -184,12 +194,13 @@ namespace Corrigible.Tests
 
         public static void PlayOne(RaidRun run, Config cfg)
         {
-            var B = Baskin.Create(Params(cfg.Balance, run.Sc, Squads[run.Squad], run.Dynamite, run.Smoke));
+            var B = Baskin.Create(Params(cfg.Balance, run.Sc, Squads[run.Squad], run.Dynamite, run.Smoke, !run.NoEvent));
             var tally = new RaidBot { Alternatives = cfg.Alternatives, W = cfg.Weights ?? new RaidBot.Weights() }.Play(B);
             var result = Baskin.Result(B);
             run.Won = result.Success; run.Down = result.Down; run.Collateral = result.Collateral; run.Turns = result.Turns;
             run.Walls = tally.Walls; run.DynamiteHits = tally.DynamiteHits; run.Smokes = tally.Smokes; run.Smoked = tally.SmokedShots;
             run.End = EndOf(B);
+            run.EvTeam = B.EvDamageTeam; run.EvMachines = B.EvDamageMachines;
         }
 
         static string EndOf(Baskin.BState B)
@@ -206,13 +217,14 @@ namespace Corrigible.Tests
         // ---------- Rapor ----------
         sealed class Agg
         {
-            public int N, Won, Down, Collateral, Turns, Walls, DynamiteHits, Smokes, Smoked, AllWalls, AllSmokes;
+            public int N, Won, Down, Collateral, Turns, Walls, DynamiteHits, Smokes, Smoked, AllWalls, AllSmokes, EvTeam, EvMachines;
             public double Rate => N == 0 ? double.NaN : 100.0 * Won / N;
             public double Per(int v) => N == 0 ? double.NaN : (double)v / N;
             public void Add(RaidRun r)
             {
                 N++; Won += r.Won ? 1 : 0; Down += r.Down; Collateral += r.Collateral; Turns += r.Turns;
                 Walls += r.Walls; DynamiteHits += r.DynamiteHits; Smokes += r.Smokes; Smoked += r.Smoked;
+                EvTeam += r.EvTeam; EvMachines += r.EvMachines;
                 if (r.Dynamite > 0 && r.Walls >= r.Dynamite) AllWalls++;
                 if (r.Smoke > 0 && r.Smokes >= r.Smoke) AllSmokes++;
             }
@@ -303,6 +315,32 @@ namespace Corrigible.Tests
             Breakdown("Sunucu görevi, harita türüne göre", main.Where(r => r.Sc.Mission == "server"), kinds, r => r.Sc.Kind);
             Breakdown("İkmal görevi, kademeye göre", main.Where(r => r.Sc.Mission == "loot"), tiers, r => "K" + r.Sc.Tier);
             Breakdown("Sunucu görevi, kademeye göre", main.Where(r => r.Sc.Mission == "server"), tiers, r => "K" + r.Sc.Tier);
+            Breakdown("Bölgeye göre (iki görev)", main, GameData.Regions.Select(r => r.Id).ToList(), r => r.Sc.Region);
+
+            // Bölge olayları: T+E+A'nın olaylı ve olaysız eşli başarısı, olay hasarının ekibe ve makinelere dağılımı (tüm kadrolar)
+            var plain = runs.Where(r => r.Group == "olaysiz").ToDictionary(r => r.Sc.Id);
+            if (plain.Count > 0)
+            {
+                sb.AppendLine("## Bölge olayları");
+                sb.AppendLine();
+                sb.AppendLine("T+E+A olaylı ve olaysız (aynı senaryo); fark olaylının olaysıza göre eşli farkı (puan). Olay hasarı baskın başına, bütün kadrolar; oran ekibe / makinelere.");
+                sb.AppendLine();
+                sb.AppendLine("| Bölge | Olay | Olaylı | Olaysız | Fark | İkmal farkı | Sunucu farkı | Hasar: ekibe | Hasar: makinelere | Oran | n |");
+                sb.AppendLine("|---|---|---|---|---|---|---|---|---|---|---|");
+                foreach (var reg in GameData.Regions)
+                {
+                    var with = main.Where(r => r.Squad == 0 && r.Sc.Region == reg.Id).ToList();
+                    var without = with.Select(r => plain[r.Sc.Id]).ToList();
+                    var dmg = Sum(main.Where(r => r.Sc.Region == reg.Id));
+                    (double, double, int) Vs(IEnumerable<RaidRun> set) => Paired(set, r => plain[r.Sc.Id]);
+                    string ratio = dmg.EvMachines == 0 ? (dmg.EvTeam == 0 ? "–" : "∞") : Num((double)dmg.EvTeam / dmg.EvMachines);
+                    sb.AppendLine($"| {reg.Id} | {reg.Event} | {Pct(Sum(with).Rate)} | {Pct(Sum(without).Rate)} | {Diff(Vs(with))} | {Diff(Vs(with.Where(r => r.Sc.Mission == "loot")))} | {Diff(Vs(with.Where(r => r.Sc.Mission == "server")))} | {Num(dmg.Per(dmg.EvTeam))} | {Num(dmg.Per(dmg.EvMachines))} | {ratio} | {with.Count} |");
+                }
+                var all = Sum(main);
+                sb.AppendLine();
+                sb.AppendLine($"Toplam olay hasarı baskın başına: ekibe {Num(all.Per(all.EvTeam))}, makinelere {Num(all.Per(all.EvMachines))}.");
+                sb.AppendLine();
+            }
 
             sb.AppendLine("## En büyük hücre farkları (kadro × görev × tür × kademe)");
             sb.AppendLine();

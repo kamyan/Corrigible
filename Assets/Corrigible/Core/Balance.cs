@@ -81,6 +81,11 @@ namespace Corrigible.Core
         public int liberationDynamiteCharges = 2;
         public int liberationSmokeCharges = 3;
         /// <summary>
+        /// Bölge olayları (Docs/BOLGE-OLAYLARI.md): her bölgenin tahtasında tur tur işleyen bina içi bir sistem (söndürme bulutu,
+        /// kayar raf, yük asansörü…). Kapalıyken baskın yalnız bölge özelliği ve imza makinesiyle oynanır.
+        /// </summary>
+        public bool liberationRegionEvents = true;
+        /// <summary>
         /// Madenci ve Sis uzmanı kadroya atölyenin bu seviyesinde katılır (0: baştan). Atölye seviyesi düşmez; katılan ayrılmaz.
         /// Erken baskınlar T + E + A ile ölçüldü; dinamit ve sis haritanın yeni çözümlerini kademeyle açar.
         /// </summary>

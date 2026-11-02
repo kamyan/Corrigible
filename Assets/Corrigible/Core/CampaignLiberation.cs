@@ -146,6 +146,27 @@ namespace Corrigible.Core
             return RunCommand(() => StartLiberationRaidCore(sectorId, pick), "liberation_raid", sectorId, pick, sectorId);
         }
 
+        /// <summary>
+        /// Baskın emrinin çıkaracağı kadro ve roller, emirden önce (görev fişinin kadro raporu): <see cref="StartLiberationRaid"/> ile
+        /// aynı seçim çözümü ve plaka dağılımı. Durumu değiştirmez, RNG çekmez; hazır ekip yoksa boş kadro.
+        /// </summary>
+        public RaidParams LiberationSquadPreview(string pick = null)
+        {
+            var team = S.Teams.FirstOrDefault(TeamReady);
+            if (team == null) return new RaidParams();
+            var roles = ResolvePick(team, pick);
+            var squad = Squad(team, roles);
+            FitPlates(squad, Shelter?.Plates ?? 0);
+            return new RaidParams { Squad = squad, Roles = new List<string> { "tek" }.Concat(roles).ToList() };
+        }
+
+        /// <summary>Zırh plakaları en düşük canlı uzmandan başlayarak birer tane takılır (eşitlikte rol sırası).</summary>
+        static void FitPlates(List<SquadSlot> squad, int plates)
+        {
+            foreach (var slot in squad.OrderBy(x => x.Hp))
+                if (plates > 0) { slot.Armor = 1; plates--; }
+        }
+
         ActResult StartLiberationRaidCore(string sectorId, string pick)
         {
             var why = LiberationRaidCheck(sectorId, pick);
@@ -172,7 +193,7 @@ namespace Corrigible.Core
                     Seed = seed, Region = sector.Region, RegionName = def.Name, Compute = def.Compute,
                     SectorId = sector.Id, MissionKind = sector.MissionKind,
                     RaidNumber = tier, Tier = tier, IsCore = sector.MissionKind == "server" && clearedRegions == GameData.Regions.Length - 1,
-                    Traits = traits, Signature = def.Enemy,
+                    Traits = traits, Signature = def.Enemy, Event = B.liberationRegionEvents ? def.Event : null,
                     Squad = Squad(team, roles), Roles = new List<string> { "tek" }.Concat(roles).ToList(), MapSeed = S.Seed, MapSlot = S.Raids, Tactics = 1,
                     TargetHpBonus = sector.MissionKind == "server" ? B.liberationServerTargetHp : 0,
                     ExtraMachines = sector.MissionKind == "server" ? B.liberationServerMachines : 0,
@@ -181,10 +202,8 @@ namespace Corrigible.Core
                     DynamiteCharges = B.liberationDynamiteCharges, SmokeCharges = B.liberationSmokeCharges,
                 },
             };
-            // Zırh plakaları en düşük canlı uzmandan başlayarak birer tane takılır (eşitlikte rol sırası); kırılan baskın dönüşünde düşer
-            int plates = Shelter.Plates;
-            foreach (var slot in S.Raid.Params.Squad.OrderBy(x => x.Hp))
-                if (plates > 0) { slot.Armor = 1; plates--; }
+            // Zırh plakaları baskın emrinde takılır; kırılan baskın dönüşünde düşer
+            FitPlates(S.Raid.Params.Squad, Shelter.Plates);
             team.At = sector.Region; team.Busy = 1; team.Task = "baskin"; team.LastPick = roles;
             S.Events.Add(new SimEvent { Type = SimEventType.Raid });
             return ActResult.Success();

@@ -1,6 +1,6 @@
 # Durum, kararlar ve açık işler
 
-_Son güncelleme: 2026-11-01 (baskına girerken kadro raporu)_
+_Son güncelleme: 2026-11-02 (bölge olayları; kadro raporu baskın emrine taşındı)_
 
 ## Nerede kaldık
 
@@ -10,7 +10,7 @@ hattı (CRT'ye dalış) → taktik savaş → operasyon raporu → vardiya şalt
 sona oynanabilir. Harekât sivil güven tükenirse kaybedilir (Dağılma); YZ alarmı eşikte karşı saldırır. Vardiyada bir
 baskın. Sığınak baskının hazırlık yeri: uzmanların yarası kalır, revir sarar, atölye zırh plakası döker, yaşam alanı
 yedek uzman tutar, telsiz alarmı yavaşlatır; oda seviyeleri özgür bölgeyle açılır. Zorluk özgür bölge sayısıyla dört
-kademede artar; her bölgenin kendi tahta özelliği ve imza makinesi var (6 yeni makine). Birkaç vardiyada bir sığınağın
+kademede artar; her bölgenin kendi tahta özelliği, imza makinesi (6 yeni makine) ve tur tur işleyen bina içi bir olayı var. Birkaç vardiyada bir sığınağın
 kapısı çalar: 23 ziyaretçi, zincirler ve kapıda ölüm (Vuruldu, Sızma). Türkçe ve İngilizce. Kayıt ve devam
 (`liberation_savegame.json`, biçim 13) çalışır. Kadro beş uzman (Teknisyen, EMP uzmanı, Analist baştan; Madenci atölye
 seviye 2'de, Sis uzmanı 3'te katılır); her baskına Teknisyen ve görev fişinde seçilen iki uzman çıkar, çıkmayanlar dinlenir.
@@ -21,7 +21,7 @@ kalan uzman baskında düşmüş sayılır; kampanyada makineler gelişmiş akı
 nişan alır; ayakta kalan siviller güveni geri kazandırır (tavan 20); YZ alarmı arka duvardaki panoda.
 Sığınağın ekonomisi kıt: erzak çoğunlukla ikmal baskınlarından gelir, açlık kapıya aç heyet getirir.
 Baskın telsizle anlatılır: sığınak ağa bağlanmaz, gözcü bildirir, emir telsizle gider.
-Son tam EditMode koşusu **391/391** (2026-11-01).
+Son tam EditMode koşusu **426/426** (2026-11-02).
 
 **Git:** Depo `git@github.com:kamyan/Corrigible.git`, varsayılan dal `main`. Sığınak işi `siginak-ui` dalında
 (Aşama 1–10: `eed2824`, eski görünümün kaldırılması: `553517e`, sarı çerçeve: `b7b4d82`, sadeleştirme: `413fbf5`; sivil
@@ -29,7 +29,115 @@ güven, YZ alarmı, hazırlık sığınağı, bölge kimliği ve eğitim: `6e658
 panosu, harita havuzu ve torbası, ikmal kaçışı, makine aklı, sivillere saldıran makineler ve güven ödülü, sığınağın kapısı):
 `c6f61e9`; build: `05ffdcb`; telsiz: `9d16037`; tasarım revizyonu 2: `927296b`; Madenci, Sis uzmanı, kadro seçimi, plaka rafı ve haritanın kenarı: `8097337`. Sonrası commit edilmedi.
 
-## Baskına girerken kadro raporu (2026-11-01)
+## Eğik kâğıtlarda kırık kenar (2026-11-02)
+
+- **İstek:** BAŞLA, BASKIN EMRİ VER gibi düğmelerin kenarları kırık görünüyor.
+- **Neden:** kâğıtlar eğik (görev fişi −0,6°, emir belgesi ve kapı kartı +0,8°, raporlar ~0,5°, eğitim notu −1,5°, kadro
+  raporu ±1,2°); 9 dilim sprite'lar (`ui_fill_r2`, `ui_frame_*`…) dokunun kenarına kadar opak. Ekran katmanı (Overlay)
+  kenar yumuşatmadığı için eğik kenarı üçgenin kendisi çizer: her ~70 px'de bir piksellik basamak; koyu düğmede, damga
+  çerçevesinde ve kırmızı başlık çizgisinde "kırık kenar".
+- **Çözüm:** `SiginakTextureBaker.SoftEdges` (menü: Corrigible › Sığınak › Yumuşak kenarlı sprite'ları üret) paketteki
+  zemin ve çerçevelerin yumuşak türevlerini üretir (`*_aa`: çevresinde 1 px saydam pay, dilim kenarı +1; sprite tablosunda
+  "üretilen", paket yeniden aktarılınca yeniden çalıştır). Kenarı artık doku süzgeci çizer, eğik kenar düz; görsel 1 px
+  içeride biter. İnce çizgilere (1–2 px kurallar, ayırıcılar, kesik ayraçlar) pay sığmadığı için görsel 2 px kalın bir
+  "Soft line" çocuğunda (`ui_line_h_aa`, `ui_line_v_aa`, `ui_dash_h_aa`: çizginin iki yanı saydam), ana görsel kapalı;
+  yerleşim değişmedi, kod çizgiyi yalnız açıp kapar. DeskGame'de 211 görsel ve 42 çizgi, `RaidPanels`/`RaidHud`'da eğik
+  notlar; kodun atadığı damga çerçevesi ve alarm hücresi alanları (`OperationSlip`, `DoorCardView`, `ShiftReportView`,
+  `OperationReportView`) yumuşak türevde. Çoğunlukla düz kullanılan alanlara (sığınak panosu, baskın HUD'u, birim kartı)
+  ve baskının küçük aşama işaretine dokunulmadı. Düz (eğik olmayan) görseller değişmedi.
+- **Testler:** `SiginakSoftEdgeTests` (türevler kaynağın 1 px saydam halkalı kopyası, çizgi sprite'larının yanları saydam,
+  DeskGame ve baskın panellerinde açık ve eğik sert kenarlı görsel yok, alanlar yumuşak). Play'de BAŞLA, BASKIN EMRİ VER,
+  BASKINA ÇIK, BASKINA HAZIR damgası, kapı kartı seçenekleri, başlık çizgileri ve kesik ayraçlar öncesi ve sonrası
+  büyütülerek karşılaştırıldı.
+
+## Kadro raporu baskın emrinde (2026-11-02)
+
+- **İstek:** Kadro raporu baskından kalksın; baskına tıklayınca gitmeden önce görünsün, onaylanınca baskına geçilsin.
+- **Akış** (`SiginakMap`): görev fişinde BASKIN EMRİ VER (ya da Enter) emri hemen vermez; fişin iç yanında (fiş solda ise
+  sağında, Kuzey/Güney Amerika'da solunda) **KADRO RAPORU** kartı açılır. Emir kartın **BASKINA ÇIK** düğmesiyle ya da
+  Enter'la verilir (`ConfirmSquad` → `LaunchSector`, kayda yine tek `liberation_raid`); Esc, kartın ✕'i ya da "Vazgeç"
+  kartı kapatır, fiş açık kalır. Odada klavye ipucu olmadığı için kartta Enter/Esc yazmaz; düğmenin sağında fişteki gibi
+  bedel ("−12 fon"). Kart açıkken KADRO seçimi değişirse kart yeniden yazılır; emir verilemez olursa
+  (fon, ekip, vardiya) ya da fiş kapanır, başka bölge seçilir, kamera haritadan ayrılırsa kart kapanır. Yalnız fonu eksik
+  emir (FON titrer) ve devre dışı düğme (teleks gerekçesi) eskisi gibi; rapor yalnız emir hazırken açılır.
+- **Veri:** `Simulation.LiberationSquadPreview(pick)` emrin çıkaracağı kadroyu ve rolleri emirden önce verir (aynı seçim
+  çözümü, plaka dağılımı `FitPlates` artık emirle ortak; durumu değiştirmez, RNG çekmez). `LiberationMapBuilder.SquadReport`
+  satırları `Baskin.SquadReport`'tan kurar: "sağlam · can 3/3" yeşil; "tam iyileşmedi · can 1/2", "yatıyor · 2 gün · yerine
+  yedek uzman, can 2/3", "yatıyor · 2 gün · yedek yok, rol boş kalır" kırmızı; takılacaksa "· zırh plakası".
+- **Kart** (`SquadReportSlip`, `SiginakHud › Squad report`, görev fişinin hemen üstünde): görev fişinin kâğıt dili (kâğıt,
+  doku, kenar, kırmızı başlık çizgisi, kesik ayraç, mürekkep düğme), 392 px, ±1,2° eğik, alt kenarı fişin alt kenarının
+  10 px üstünde; fiş kayarken onunla gider, fiş görünmezken (açılış gecikmesi) kart da görünmez. Başlıkta bölge ve sektör
+  ("02 TAHLİYE GEÇİDİ · YAĞMA"), her uzman için disk + ad + durum. Açılışta 12 px yukarıdan oturup belirir
+  (`motion.slipOpenS`); emirde düğme 0,06 s iner, kart fişle birlikte solar. Sahne kopyası tek seferlik betikle görev
+  fişinden kuruldu.
+- **Enter güvencesi:** fişin BASKIN EMRİ VER'i ve kartın düğmeleri gezinmesiz (`DeskUi.NoNavigation`): tıklanan düğme
+  EventSystem'de seçili kalıp Enter'ı Submit olarak da almaz (yoksa tek Enter raporu aynı karede açıp onaylardı). Ayrıca
+  raporun açıldığı karedeki onay yok sayılır. Seçim ikiden azken emir verilmez (önceden boş seçim Enter'la varsayılan
+  kadroyla baskına çıkıyordu); teleks "Teknisyen'in yanına iki uzman seç." basar.
+- **Baskından kaldırılanlar:** sol alttaki sarı not (`RaidPanels › SquadReport`, `RaidPanelsView`, `RaidViewModel.SquadReport`,
+  `RaidDataSource.DownDays`) ve `Baskin.Create`'in kadro telsiz satırları (baskın artık kadroyu telsize yazmaz; telsiz
+  okunmamış sayısı yalnız açılış ve saha raporu). `Baskin.SquadReport` kaldı, raporu o besliyor.
+- **Eğitim:** "BASKIN EMRİ" notu raporu da anlatır ("… kadro raporu açılır; uzmanların durumunu oku, BASKINA ÇIK ile
+  onayla"); adım yine emir verilince biter.
+- **Testler:** `SiginakMapTests.SquadReport_ShowsTheSquadTheOrderSends_WithoutIssuingIt` (yaralı, yedekli, yedeksiz, plaka;
+  rapor emir vermez, emirden sonra baskının kadrosu raporla aynı; eğitim baskını), `DeskGameScene_SquadReportSitsOnTheSlip`,
+  harita bağlantı testine `squadReport`; `RaidEngineTests.SquadReport_NamesWhoIsHurtStandingInOrMissing_AndTheRaidStaysQuiet`.
+  Baskın içi not testi kaldırıldı. Play'de V014'te denendi: yaralı Analist ve yatan EMP uzmanıyla rapor, Esc, açıkken seçim
+  değişikliği, onay ve baskının yüklenmesi (sol altta not yok); fiş sağdayken kart solda.
+- **KADRO çipinin taşması (düzeltildi):** yatan uzmanın çipindeki durum ("YEDEK ÇIKAR") canın altındaki ~30 px'lik sütuna
+  `<size=75%>` (12 px) ile yazılıyor, yandaki çipe taşıyordu. Durum artık çipin bütün genişliğinde kendi satırında
+  (`OperationSlip.PickChip.status`, CP 700 14; çip üstte disk + can, altta durum; iç pay 3/2): "SABİT", "YEDEK" (önce
+  "YEDEK ÇIKAR"), "n GÜN"; İngilizce "FIXED", "RESERVE", "n DAYS" (önce "DAYS: n"). Sahnede beş çip tek seferlik betikle
+  yeniden kuruldu. `SiginakMapTests.DeskGameScene_PickChipStatusFitsTheChip` her durumun iki dilde çipe sığdığını (1–12
+  gün) ve ≥ 14 px olduğunu ölçer. Play'de Türkçe ve İngilizce, yedekli ve yedeksiz denendi.
+
+## Bölge olayları (2026-11-02)
+
+- **İstek:** Her bölge için tahtada Into the Breach'teki sel ve deprem gibi bir olay; tahta bina içi, olaylar da bina içi
+  olsun ve tek tarafa değil iki tarafa da işlesin. Fikirler ve kurallar `Docs/BOLGE-OLAYLARI.md`'de; bu tur uygulandı.
+- **Olaylar:** Batı Avrupa söndürme bulutu, Doğu Avrupa kayar arşiv rafı, Orta Doğu yanıcı gaz, Afrika çatlak tavan, Kuzey
+  Amerika yük asansörü, Rusya kriyo hattı, Hindistan vardiya turnikeleri, Çin kaynak kolu, Japonya-Kore şebeke fazı,
+  Güneydoğu Asya süzgeç, Güney Amerika basınçlı tüp, Okyanusya hidrolik yağ.
+- **Motor** (`Core/Baskin.Events.cs`, kancalar `Core/Baskin.cs`): `RegionDef.Event` → `RaidParams.Event` →
+  `BState.Ev`. Kurulum RNG çekmez, olay adımı makine evresinin sonunda (uyanmadan sonra, plandan önce; son turda yok), fitil
+  bir sonraki turun evre sonunda; hasar tavanı ve nesne muafiyeti `InEvent` ile. Olaysız baskın aynı kaldı (kilitli imzalar,
+  RNG), kayıt sürümü 13'te kaldı: tahta kaydedilmez. `Balance.liberationRegionEvents` hepsini kapatır; eğitim baskını olaysız.
+- **Makine aklı:** gelişmiş akıl olayı bilir (`EventPos`, `EventAim`): kaynak karesinde, canlı kanalda, uçacak tüpün
+  hattında durmaz; tüpü, gazı, kolu uzmana karşı kullanır; aynı tetiği iki makine saymaz.
+- **Sunum:** tahtada olay katmanı (bulut, gaz, buz, kaynak, kablo fazı, yağ, çatlak, raf rayı, asansör durakları, hol ve
+  turnike okları, tüp hatları, süzgeç), bir tur önce "BULUT 1", "RAF 1", "KALKIŞ 1"… etiketleri; kabindeki birim gizli, donmuş
+  birimde "DONDU"; yeni nesneler tüp, kaynak kolu, enkaz. Takım kartında "KAYNAK: 1 hasar" gibi uyarı, yürüyüş karesinde
+  "−1", olay karesinin üstünde açıklama satırı, tur şeridinde olay turları altı çizili (şebekede canlı faz harfi), görev
+  çipinin ipucunda olay satırı, telsizde saha raporu ve olay adımları. Görev fişinde ve bölge bilgi fişinde BÖLGE'nin altında
+  OLAY satırı (sahnede dördüncü alan); yeni cephe fişinin cümlesi olayı da söyler. `Baskin.RoomName` olayın binasını verir ama kampanyada sonuç kartı
+  "Bölge · NN Sektör" yazar (`LiveRaidDataSource.ResultPlace`); bina adı yalnız örnek baskında görünür (bkz.
+  `Docs/BASKIN-MEKANLARI.md`).
+- **Denetim:** Core'u beş açıdan (olaysız baskın, kurallar, çökme, makine aklı, kaçış güvencesi) bağımsız bir inceleme
+  taradı; doğrulanan 15 bulgu düzeltildi. Önemlileri: holün arkasındaki çıkmaz cebe turnike konmuyor, asansör durakları çıkışa
+  bağlı olmak zorunda, raf kaymadan önce kaçış yolunu yeniden denetliyor, kaynak kolu hiçbir yöne bakamayan kaideye konmuyor,
+  kabindeki makine makine sınırına sayılıyor, önizleme uyanma hasarını ve kaçışı EndTurn gibi oynatıyor. Ölçümden sonraki
+  ikinci inceleme altı bulgu daha doğruladı: tahliye dışarı vardiyasında başlarsa oklar "dönecek" çizilmiyor, buluta kesilen
+  niyet beyaz kesik okla ve düşman kartında "buluta kesildi" satırıyla görünüyor (renk niyetin kendisinden), sis önizlemesi
+  buluta kesik niyeti "sise kesilir" saymıyor, telsiz kesilen saldırıda uzmanı adlandırmıyor; iki belge farkı düzeltildi.
+- **Testler:** `RaidEventTests` (29): her bölgenin olayı, 12 bölge × 3 harekât × 30 harita × 2 görevde yer bulma ve çıkış
+  güvencesi, RNG'nin değişmemesi, imza eki, geri alma, her olayın kuralı (iki tarafa da), hasar tavanı, nesne muafiyeti,
+  önizleme. `SiginakMapTests` ve `DeskBridgeTests` fişin dört satırına, `LocalizationTests` olay metinlerine, bot ölçümü
+  olayların eşli olaysız koşusuna uyarlandı.
+- **Bot ölçümü** (`Measure_Quick`, 1680 baskın): T+E+A'da olaylı ve olaysız baskın (aynı senaryo, bölge başına 20) on bir
+  bölgede ±5 puan içinde, güven aralığının içinde. İlk koşuda tek sapma Hindistan turnikesiydi: −25 ±19,5 (ikmal −40). Kasa
+  içeri vardiyasında (5.–6. tur) açılınca Teknisyen 7. tura kadar holde kapalı kalıyor, kaçışa iki tur kalıyordu. Düzeltme:
+  kaçış başlayınca turnikeler o evrenin sonunda tahliye moduna geçer (`EndGates`; şerit ve önizleme de). İkinci koşuda
+  turnike −10 ±13,5 (ikmal −10), T+E+A toplamı %90,0'dan %91,3'e. Olay hasarı baskın
+  başına ekibe 0,14, makinelere 0,45 (oran 0,31): kurallar iki tarafa işliyor ama olayı kullanan çoğunlukla ekip. En çok
+  ekibe yarayanlar şebeke fazı (0,26 / 1,56), süzgeç (0,18 / 1,08), kaynak kolu (0,13 / 0,46); raf (0,07 / 0,06) ve tavan
+  (0,09 / 0,12) dengede; bulut ve kriyo hasar vermez (niyet keser, dondurur).
+- **Oyunda:** 12 bölgenin olaylı baskını Play'de baştan sona oynatıldı (konsolda hata yok); Batı Avrupa'nın bulut turları,
+  Doğu Avrupa rafı, Hindistan holü, Kuzey Amerika durakları, Güney Amerika tüpleri ve V014'ün görev fişi görüntüyle denetlendi.
+- **Bilinen:** raf blokları duvardan yalnız üstlerindeki ince ray çizgileriyle ayrılıyor; tüp, kol ve enkazın kendi modeli yok
+  (soğutma ünitesi ve moloz ölçeklenmiş). Kalabalık haritada holün üçten az turnike kenarı kalabiliyor (o zaman iki yöne
+  açık geçit yok; kaçışta tahliye çıkışı yine açar).
+
+## Baskına girerken kadro raporu (2026-11-01; 2026-11-02'de baskın emrine taşındı, yukarıda)
 
 - **İstek:** Kadrodaki uzmanların durumu baskına girerken bilgi olarak verilsin (biri yatıyor, biri tam iyileşmedi gibi).
 - **Motor** (`Core/Baskin.cs`): `Baskin.SquadReport(RaidParams)` kadroyu sırasıyla `SquadEntry` olarak verir: asıl uzman
@@ -833,11 +941,14 @@ bugünkü odanın tasarım brifidir.)
 
 ## Açık işler
 
-- **Bölge olayları (fikir, 2026-11-02):** her bölge için tahtada tur tur işleyen, önceden işaretlenen bina içi bir olay
-  önerildi; kurallar tarafa bakmaz, iki tarafı aynı biçimde etkiler (söndürme bulutu, kayar arşiv rafı, yanıcı gaz kaçağı,
-  çatlak tavan, yük asansörü, kriyo soğutma hattı, vardiya turnikeleri, kaynak robotu kolu, şebeke faz değişimi, süzgeç
-  emmesi, basınçlı tüp rafı, hidrolik yağ sızıntısı). Kurallar, işaretler, ortak altyapı ve uygulama sırası
-  `Docs/BOLGE-OLAYLARI.md`'de; kodda yok. 2026-11-01'deki açık hava sürümünün yerini aldı.
+- **Baskın mekânları (öneri, 2026-11-02):** baskınlar yer olarak ayrışmıyor; tahta her bölgede aynı parçalarla çiziliyor,
+  harita adı ile olayın binası çelişiyor ve kampanyada ikisi de görünmüyor. Öneri ve karar bekleyen sorular
+  `Docs/BASKIN-MEKANLARI.md`'de (tek yer adı, yağma sandığı, bina kiti, kanal yönü, olay modelleri, bina sesi). Henüz
+  uygulanmadı.
+- **Bölge olayları (2026-11-02):** sayılar ilk öneri. İlk ölçümde başarı farkı yalnız turnikede anlamlıydı (düzeltildi;
+  ikinci ölçümde −10 ±13,5). Olay hasarı makinelere ekibin üç katı (0,45 / 0,14); şebeke fazı ve süzgeçte altı kat. Başarıyı
+  değiştirmiyor ama "iki tarafa da" hedefi için makinelere olayı kullanacak bir araç (itme, çekme) ya da bu iki olayda daha
+  sert makine aklı düşünülmeli. Raf bloklarına ve tüp, kol, enkaz nesnelerine kendi modelleri gerek.
 - **Gölgeler (karar, 2026-10-31):** ampul ve lamba gölgeleri yumuşak kalır. Sert gölge ~0,25 ms kazandırırdı (Revizyon 2'yi
   öncesinden %3–6 hızlı yapardı); Revizyon 2'nin masa ve sığınak pozundaki %2–3'lük farkı kabul edildi (`Docs/UI_Siginak_Rev2/IMPLEMENTATION_MAP.md` Soru 13).
 - **Denge (kadro seçimi):** Madenci ve Sis uzmanının hakları (dinamit 2, sis 3) ölçülmedi; seçimli kadroyla zorluk yeniden

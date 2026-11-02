@@ -34,7 +34,7 @@ namespace Corrigible.Desk.Bridge
                 Loc.N("Masadaki GÖREVLER tuşuna bas: harita açılır, cephedeki Batı Avrupa'nın görev fişi gelir."),
                 (c, f) => c.SlipOpen || c.RaidOrdered),
             Wait("order", Loc.N("BASKIN EMRİ"),
-                Loc.N("Fiş sıradaki sektörü, bedelini, ödülünü, bölgenin özelliğini ve kadroyu yazar. BASKIN EMRİ VER'e bas."),
+                Loc.N("Fiş sıradaki sektörü, bedelini, ödülünü, bölgenin özelliğini ve kadroyu yazar. BASKIN EMRİ VER'e bas: yanında kadro raporu açılır; uzmanların durumunu oku, BASKINA ÇIK ile onayla."),
                 (c, f) => c.RaidOrdered),
             // Senaryolu ilk baskında not, rehberin adımlarını yazar (SiginakTutorial); bu metin rehbersiz baskın içindir
             Wait("raid", Loc.N("TAKTİK TAHTA"),

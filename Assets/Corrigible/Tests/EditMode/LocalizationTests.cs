@@ -44,6 +44,7 @@ namespace Corrigible.Tests
                 var sim = PlayRandom(seed, texts);
                 texts.AddRange(sim.S.Moments.Select(m => m.Text));
                 foreach (var r in GameData.Regions) texts.Add(r.Name);
+                foreach (var e in Baskin.RegionEvents.Values) texts.AddRange(new[] { Loc.T(e.Name), Loc.T(e.Desc), Loc.T(e.Room), Loc.T(e.Tag) });
                 foreach (var e in GameData.Endings) texts.AddRange(new[] { e.Title, e.Text });
                 foreach (var r in sim.S.Liberation.Regions) texts.AddRange(r.Sectors.Select(x => x.Name));
                 foreach (var room in sim.Shelter.Rooms) texts.AddRange(new[] { ShelterLogic.RoomName(room.Id), ShelterLogic.RoomDescription(room.Id) });
@@ -142,11 +143,18 @@ namespace Corrigible.Tests
                     var targets = Baskin.Targets(B, u);
                     if (targets.Count > 0) { var t = rng.Pick(targets.ToArray()); Baskin.DoAct(B, u.Id, t.X, t.Y); }
                 }
+                // Bölge olayının tahtadaki etiketleri, birim uyarıları ve tur şeridi
+                var hz = Baskin.Hazards(B);
+                texts.Add(hz.Name);
+                texts.AddRange(hz.Marks.Select(m => m.Label));
+                texts.AddRange(hz.Warnings.Select(w => w.Text));
+                texts.AddRange(hz.Turns);
                 Baskin.EndTurn(B);
             }
             if (B.Phase == "player") Baskin.Retreat(B);
             texts.AddRange(B.Log.Select(l => l.Text));
             texts.Add(B.Layout == null ? null : Loc.T(B.Layout));
+            texts.Add(Baskin.RoomName(B));
             foreach (var t in Baskin.UnitTypes.Values) texts.Add(t.Name);
             var res = Baskin.Result(B);
             texts.Add(res.Reason);

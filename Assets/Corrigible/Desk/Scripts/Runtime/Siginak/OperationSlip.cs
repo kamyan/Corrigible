@@ -46,14 +46,17 @@ namespace Corrigible.Desk
             public TMP_Text letter, hp;
         }
 
-        /// <summary>Kadro seçicinin bir uzmanı: tıklanır (Teknisyen ve eğitim baskını kilitli); seçili sarı, üzerinde açık sarı.</summary>
+        /// <summary>
+        /// Kadro seçicinin bir uzmanı: tıklanır (Teknisyen ve eğitim baskını kilitli); seçili sarı, üzerinde açık sarı. Üst satırda
+        /// disk + can, altında çipin bütün genişliğinde durum (SABİT, YEDEK, n GÜN; CP 700 14).
+        /// </summary>
         [Serializable] public sealed class PickChip
         {
             public GameObject root;
             public Button button;
             public UiHoverTarget hover;
             public Image fill, disc;
-            public TMP_Text letter, hp;
+            public TMP_Text letter, hp, status;
         }
 
         [Tooltip("Kâğıt: −0,6° dönük, kayar; çocukları dikey dizilir.")]
@@ -118,6 +121,10 @@ namespace Corrigible.Desk
         public SlipActionState ActionState => actionState;
         /// <summary>Kâğıt sağda (Kuzey ya da Güney Amerika).</summary>
         public bool OnRight => right;
+        /// <summary>Kâğıdın kendisi (kadro raporu yanına oturur, kayarken onunla gider).</summary>
+        public RectTransform Paper => paper;
+        /// <summary>Kâğıdın görünürlüğü (açılış gecikmesinde 0); kadro raporu bununla birlikte belirir.</summary>
+        public float Alpha => group.alpha;
 
         /// <summary>İğnenin ekran noktası, kâğıt yerine oturmuşken (açılırken ip önce oraya çekilir).</summary>
         public Vector2 PinScreenAtRest
@@ -137,6 +144,8 @@ namespace Corrigible.Desk
 
         void Awake()
         {
+            // Tıklanan düğme EventSystem'de seçili kalmasın: Enter'ı yalnız masa okur (yoksa Submit de basar, rapor aynı karede onaylanır)
+            DeskUi.NoNavigation(action);
             action.onClick.AddListener(() => ActionClicked?.Invoke());
             close.onClick.AddListener(() => CloseClicked?.Invoke());
             chipRoles = new string[pickChips.Length];
@@ -330,10 +339,13 @@ namespace Corrigible.Desk
                 chipLocked[i] = p.Locked;
                 c.button.interactable = !p.Locked;
                 c.letter.text = p.Letter;
-                c.hp.text = string.IsNullOrEmpty(p.Status) ? p.Hp : Corrigible.Core.Loc.F("{0}\n<size=75%>{1}</size>", p.Hp, p.Status);
+                c.hp.text = p.Hp;
+                // Durum canın altında değil çipin bütün genişliğinde (dar can sütununa sığmıyordu, yandaki çipe taşıyordu)
+                c.status.gameObject.SetActive(!string.IsNullOrEmpty(p.Status));
+                c.status.text = p.Status ?? "";
                 c.disc.color = p.Picked ? t.ColorOf("slip.teamDisc") : t.ColorOf("ui.disabledFill");
                 c.letter.color = p.Picked ? t.ColorOf("ink") : t.ColorOf("ink3");
-                c.hp.color = p.Picked ? (p.Down ? t.ColorOf("status.threat") : t.ColorOf("ink")) : t.ColorOf("ink3");
+                c.hp.color = c.status.color = p.Picked ? (p.Down ? t.ColorOf("status.threat") : t.ColorOf("ink")) : t.ColorOf("ink3");
                 c.hover.Title = p.HoverTitle;
                 c.hover.Line = p.HoverLine;
             }

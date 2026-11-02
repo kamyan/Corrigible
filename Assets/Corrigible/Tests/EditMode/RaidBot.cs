@@ -396,6 +396,20 @@ namespace Corrigible.Tests
                     if (ui >= 0) HitUnit(C, f, ui, 1);
                     else if (C.Cells[p.Y, p.X].O == null) f.NewEnemies++;
                 }
+            // Bölge olayının bu evre sonu: Core'un önizlemesi (niyetlerden sonra, uyanma kareleri dolu sayılarak) birime hasar ve
+            // donmayı bildirir; bot olayı oyuncu gibi tahtadaki uyarıdan bilir
+            if (C.Ev != null)
+            {
+                var hz = Baskin.Hazards(C);
+                foreach (var w in hz.Warnings)
+                {
+                    int ui = IndexOf(C, w.Unit);
+                    if (ui < 0) continue;
+                    if (w.Damage > 0) HitUnit(C, f, ui, w.Damage);
+                    // Kriyo: donacak uzman sonraki tur kilitli gibi yürüyemez
+                    if (C.Units[ui].Side == 'p' && hz.Marks.Any(m => m.Kind == "freeze_next" && m.X == C.Units[ui].X && m.Y == C.Units[ui].Y)) f.Locked[ui] = true;
+                }
+            }
             return f;
         }
 

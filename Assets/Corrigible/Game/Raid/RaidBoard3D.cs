@@ -38,8 +38,11 @@ namespace Corrigible.Game.Raid
             public List<(int fx, int fy, int tx, int ty)> Arrows = new List<(int, int, int, int)>();
             /// <summary>Sisli kareler (bu turun makine evresinde nişanlı ateş kesilir) ve önizlemede atılacak sis.</summary>
             public HashSet<int> Smoke = new HashSet<int>(), SmokePreview = new HashSet<int>();
-            /// <summary>Sise kesilen niyetler: gri kesik ok sisli karede biter.</summary>
-            public List<(int fx, int fy, int tx, int ty, string kind)> SmokedArrows = new List<(int, int, int, int, string)>();
+            /// <summary>Sise ya da söndürme bulutuna kesilen niyetler: kesik ok kesildiği karede biter (cloud: buluta kesildi).</summary>
+            public List<(int fx, int fy, int tx, int ty, string kind, bool cloud)> SmokedArrows = new List<(int, int, int, int, string, bool)>();
+            /// <summary>Bölge olayının katmanı (<see cref="Baskin.Hazards"/>; yetenek önizlemesinde hamleden sonraki hâli); olay yoksa
+            /// null ya da boş.</summary>
+            public Baskin.HazardView Hazards;
         }
 
         [SerializeField] RaidPieceLibrary lib;
@@ -113,6 +116,15 @@ namespace Corrigible.Game.Raid
         readonly GameObject[] smokeClouds = new GameObject[64];
         readonly Dictionary<int, GameObject> breaches = new Dictionary<int, GameObject>();
         readonly List<RaidWorldLabel> smokeLabels = new List<RaidWorldLabel>();
+        /// <summary>Bölge olayının katmanı (<see cref="SyncHazards"/>): tembel havuzlar; her Sync baştan dağıtır, artanı gizler.</summary>
+        readonly List<Renderer> hazardFills = new List<Renderer>();
+        readonly List<RaidArrow> hazardMarks = new List<RaidArrow>(), hazardStrokes = new List<RaidArrow>();
+        readonly List<RaidWorldLabel> hazardLabels = new List<RaidWorldLabel>();
+        /// <summary>Titreyen işaretler (alev almış gaz, çökecek tavan, kapanacak geçit…): Update ölçeklerini oynatır.</summary>
+        readonly List<Transform> hazardPulse = new List<Transform>();
+        /// <summary>Çizilen olay katmanı (tür, kare, nesne): canlandırma dağılan bulutu, boşalan gazı Sync'i beklemeden söndürür.</summary>
+        readonly List<(string kind, int key, GameObject go)> hazardShown = new List<(string, int, GameObject)>();
+        int hazardFillsUsed, hazardMarksUsed, hazardStrokesUsed, hazardLabelsUsed;
         readonly HashSet<int> pickable = new HashSet<int>();
         int guideKey = -1;
         readonly RaycastHit[] hits = new RaycastHit[16];
@@ -165,6 +177,8 @@ namespace Corrigible.Game.Raid
             hpLabels.Clear(); orderLabels.Clear(); stateLabels.Clear(); paperLabels.Clear(); shownIntents.Clear(); intentArrowByUnit.Clear(); flagPins.Clear(); downMarks.Clear();
             arrowShadows.Clear(); extraArrows.Clear(); woke.Clear(); wokeStamped.Clear(); foreach (var b in badgeLabels) if (b != null) Destroy(b.gameObject); badgeLabels.Clear();
             breaches.Clear(); foreach (var l in smokeLabels) if (l != null) Destroy(l.gameObject); smokeLabels.Clear(); Array.Clear(smokeClouds, 0, 64);
+            hazardFills.Clear(); hazardMarks.Clear(); hazardStrokes.Clear(); hazardPulse.Clear(); hazardShown.Clear();
+            foreach (var l in hazardLabels) if (l != null) Destroy(l.gameObject); hazardLabels.Clear();
             for (int y = 0; y < Baskin.N; y++)
             for (int x = 0; x < Baskin.N; x++)
             {
@@ -381,13 +395,16 @@ namespace Corrigible.Game.Raid
                     if (piece == null || piece.Kind != o.K)
                     {
                         if (piece != null) Destroy(piece.gameObject);
-                        piece = Instantiate(lib.Object(o.K), W(x, y), Quaternion.identity, piecesRoot);
+                        piece = NewObjectPiece(o.K, x, y);
                         piece.Kind = o.K; piece.X = x; piece.Y = y; piece.name = $"{o.K} {x},{y}";
                         objects[k] = piece;
                     }
+                    // Uçuş canlandırması tüpü gizler; durum tüpü hâlâ tutuyorsa yerine döner
+                    if (!piece.gameObject.activeSelf) { piece.transform.SetPositionAndRotation(W(x, y), Quaternion.identity); piece.gameObject.SetActive(true); }
                     piece.SetHp(o.Hp, o.Max);
                     piece.SetWorldLabelsVisible(false);
-                    if (screenLabelPrefab == null || (o.K != "civ" && o.K != "cool"))
+                    // Basınçlı tüp ve kaynak kolu hasar almaz: can etiketi yok
+                    if (o.K != "tup" && o.K != "kol" && (screenLabelPrefab == null || (o.K != "civ" && o.K != "cool")))
                     {
                         var tag = PieceLabel(hpLabels, -k - 1, "Object HP");
                         // Revizyon 2 · S6: nesnenin etiketi tepe noktasının 28 px üstünde
@@ -402,7 +419,8 @@ namespace Corrigible.Game.Raid
                 else if (piece != null)
                 {
                     Destroy(piece.gameObject); objects.Remove(k);
-                    if (lib.rubble != null && !rubble.ContainsKey(k)) rubble[k] = Instantiate(lib.rubble, W(x, y), Quaternion.Euler(0, (x * 37 + y * 53) % 360, 0), piecesRoot);
+                    // Uçan (ya da çarpılıp kırılan) basınçlı tüp yerinde enkaz bırakmaz
+                    if (piece.Kind != "tup" && lib.rubble != null && !rubble.ContainsKey(k)) rubble[k] = Instantiate(lib.rubble, W(x, y), Quaternion.Euler(0, (x * 37 + y * 53) % 360, 0), piecesRoot);
                 }
                 else if (m.Rubble.Contains(k) && lib.rubble != null && !rubble.ContainsKey(k))
                     rubble[k] = Instantiate(lib.rubble, W(x, y), Quaternion.identity, piecesRoot);
@@ -421,6 +439,9 @@ namespace Corrigible.Game.Raid
                     p.Kind = u.Type; p.name = $"{u.Type} #{u.Id}";
                     units[u.Id] = p;
                 }
+                // Yük asansörünün kabinindeki birim tahtada değil: parçası havuzda gizli bekler (kabin inince yeniden görünür),
+                // etiketleri yukarıda zaten gizlendi
+                if (u.Cab) { p.gameObject.SetActive(false); continue; }
                 p.X = u.X; p.Y = u.Y;
                 p.gameObject.SetActive(true);
                 p.transform.position = W(u.X, u.Y);
@@ -452,11 +473,13 @@ namespace Corrigible.Game.Raid
                     if (wokeStamped.Add(u.Id)) wokeLabel.Stamp(wakeStampSeconds);
                     labelGroups.Add(new[] { hpTag });
                 }
-                else if (u.Dead || m.Spent.Contains(u.Id) || u.Locked || u.Id == m.Carrier)
+                else if (u.Dead || m.Spent.Contains(u.Id) || u.Locked || u.Frozen || u.Id == m.Carrier)
                 {
                     var state = PieceLabel(stateLabels, u.Id, "Unit state", 14);
                     state.SetAnchor(hpTag.transform.position - cam.transform.up * 0.30f);
-                    state.Show(u.Left ? Loc.T("ÇIKAMADI") : u.Dead ? Loc.T("DÜŞTÜ") : u.Locked ? Loc.T("KİLİTLİ") : u.Id == m.Carrier ? Loc.T("YÜKLÜ") : Loc.T("TUR BİTTİ"), hpInk, hpInk);
+                    // Kriyo hattında donan birim yürüyemez (kilit gibi); kenarı buz renginde
+                    bool frozen = !u.Dead && !u.Locked && u.Frozen;
+                    state.Show(u.Left ? Loc.T("ÇIKAMADI") : u.Dead ? Loc.T("DÜŞTÜ") : u.Locked ? Loc.T("KİLİTLİ") : frozen ? Loc.T("DONDU") : u.Id == m.Carrier ? Loc.T("YÜKLÜ") : Loc.T("TUR BİTTİ"), hpInk, frozen ? lib.hazardFreeze : hpInk);
                     labelGroups.Add(new[] { hpTag, state });
                 }
                 else labelGroups.Add(new[] { hpTag });
@@ -552,7 +575,8 @@ namespace Corrigible.Game.Raid
                     Shadow(shadowsUsed++, center + d * 0.30f, center + d * 0.66f, false, PixelWorld * 2.4f, 0, true, PixelWorld * 12);
                 }
             }
-            // Sise kesilen niyet: gri kesik çizgi sisli kareye kadar, ucu yok
+            // Sise kesilen niyet: gri kesik çizgi sisli kareye kadar, ucu yok. Söndürme bulutuna kesilen (niyetin kendi işareti; aynı
+            // karede sis ve bulut varsa motorun seçtiği) aynı çizgi bulutun renginde (sis gri, bulut beyaz)
             foreach (var cut in m.SmokedArrows)
             {
                 var arrow = Extra(extrasUsed++);
@@ -560,12 +584,344 @@ namespace Corrigible.Game.Raid
                 var to = W(cut.tx, cut.ty) + Vector3.up * 0.30f;
                 var dir = (to - from).normalized;
                 float rise = cut.kind == "lob" ? RisePx(Mathf.Max(0.4f * Vector3.Distance(from, to) / PixelWorld, 90)) : cut.kind == "shoot" ? 0 : RisePx(20);
-                arrow.Set(from + dir * 0.24f, to - dir * 0.18f, Alpha(graphiteColor, 0.7f), true, PixelWorld * 3.4f, rise, 0, false);
+                arrow.Set(from + dir * 0.24f, to - dir * 0.18f, Alpha(cut.cloud ? lib.hazardCloudEdge : graphiteColor, cut.cloud ? 0.85f : 0.7f), true, PixelWorld * 3.4f, rise, 0, false);
             }
             for (int i = m.Arrows.Count; i < arrows.Count; i++) arrows[i].gameObject.SetActive(false);
             for (int i = shadowsUsed; i < arrowShadows.Count; i++) arrowShadows[i].gameObject.SetActive(false);
             for (int i = extrasUsed; i < extraArrows.Count; i++) extraArrows[i].gameObject.SetActive(false);
+            // Olay katmanı en son: etiketleri birimlerin ve dolapların etiketlerine yol verir
+            SyncHazards(B, m.Hazards);
             LayoutLabels();
+        }
+
+        // ------------------------------------------------------------------ bölge olayları
+        /// <summary>
+        /// Bölge olayının katmanı (<see cref="Baskin.Hazards"/>; Docs/BOLGE-OLAYLARI.md): kare işaretleri, turnike kenarları, tüp
+        /// ve süzgeç hatları, kısa etiketler (Core çevirmiş gelir). Görsel dil (Okunurluk): bulut beyaz, sis gri, gaz sarı, kriyo
+        /// camgöbeği, kaynak turuncu, yağ parlak siyah, asansör sarı çerçeve; kesik çizgi "bu tur sonunda olacak", titreyen
+        /// çerçeve "bu tur sonunda vurur". Yalnız okur; olay yoksa (null ya da boş) her şey gizlenir.
+        /// </summary>
+        void SyncHazards(Baskin.BState B, Baskin.HazardView hv)
+        {
+            hazardFillsUsed = hazardMarksUsed = hazardStrokesUsed = hazardLabelsUsed = 0;
+            hazardPulse.Clear(); hazardShown.Clear();
+            if (hv != null)
+            {
+                float px = PixelWorld;
+                var rails = new HashSet<int>(hv.Marks.Where(h => h.Kind != null && h.Kind.StartsWith("rail", StringComparison.Ordinal)).Select(h => Key(h.X, h.Y)));
+                bool lit = hv.Marks.Any(h => h.Kind == "gas_lit");
+                foreach (var h in hv.Marks)
+                {
+                    if (h.Kind == null || h.X < 0 || h.Y < 0 || h.X >= Baskin.N || h.Y >= Baskin.N) continue;
+                    int k = Key(h.X, h.Y);
+                    DrawHazard(B, h.Kind, k, px, rails);
+                    if (!string.IsNullOrEmpty(h.Label)) HzLabel(k, h.Kind, h.Label, lit);
+                }
+                foreach (var e in hv.Edges) DrawGate(e, px);
+                foreach (var l in hv.Lines) DrawHazardLine(l, px);
+            }
+            for (int i = hazardFillsUsed; i < hazardFills.Count; i++) hazardFills[i].gameObject.SetActive(false);
+            for (int i = hazardMarksUsed; i < hazardMarks.Count; i++) hazardMarks[i].gameObject.SetActive(false);
+            for (int i = hazardStrokesUsed; i < hazardStrokes.Count; i++) hazardStrokes[i].gameObject.SetActive(false);
+            for (int i = hazardLabelsUsed; i < hazardLabels.Count; i++) hazardLabels[i].gameObject.SetActive(false);
+        }
+
+        /// <summary>Tek kare işareti: dolgu, çerçeve, tarama, halka ya da çizgiler (birden çok işaret aynı karede üst üste).</summary>
+        void DrawHazard(Baskin.BState B, string kind, int k, float px, HashSet<int> rails)
+        {
+            switch (kind)
+            {
+                case "cloud":
+                    HzFill(k, kind, Alpha(lib.hazardCloud, 0.78f));
+                    HzMark(k, kind).SetFrame(0.9f, px * 2, lib.hazardCloudEdge);
+                    break;
+                case "cloud_next":
+                    HzFill(k, kind, Alpha(lib.hazardCloud, 0.35f));
+                    HzMark(k, kind).SetFrame(0.9f, px * 2.6f, lib.hazardCloudEdge, true);
+                    break;
+                case "nozzle":
+                    HzMark(k, kind, 0.034f).SetCircle(0.15f, lib.hazardCloudEdge, px * 2.4f, false, true);
+                    break;
+                case "rail":
+                case "rail_gap":
+                case "rail_close":
+                case "rail_open":
+                    HzRail(k, kind, px, rails);
+                    // Geçit yeşil; kayma turunda kapanacak geçit kırmızı titrer, açılacak uç kesik yeşil
+                    if (kind == "rail_gap") HzMark(k, kind).SetFrame(0.84f, px * 2.4f, lib.good);
+                    else if (kind == "rail_open") HzMark(k, kind).SetFrame(0.84f, px * 2.6f, lib.good, true);
+                    else if (kind == "rail_close") Pulse(HzMark(k, kind)).SetFrame(0.84f, px * 3, lib.threat);
+                    break;
+                case "gas":
+                    HzFill(k, kind, Alpha(lib.hazardGas, 0.22f));
+                    HzMark(k, kind, 0.024f).SetHatch(0.94f, Alpha(lib.hazardGas, 0.6f), px * 2, false, 0.1f);
+                    break;
+                case "gas_next":
+                    HzFill(k, kind, Alpha(lib.hazardGas, 0.1f));
+                    HzMark(k, kind).SetFrame(0.9f, px * 2.4f, lib.hazardGas, true);
+                    break;
+                case "gas_lit":
+                    HzFill(k, kind, Alpha(lib.hazardFlame, 0.3f));
+                    HzMark(k, kind, 0.024f).SetHatch(0.94f, Alpha(lib.hazardFlame, 0.6f), px * 2, false, 0.1f);
+                    Pulse(HzMark(k, kind)).SetFrame(0.9f, px * 2.6f, lib.hazardFlame);
+                    break;
+                case "leak":
+                    HzMark(k, kind, 0.034f).SetCircle(0.15f, lib.hazardGas, px * 2.4f, false, true);
+                    break;
+                case "crack":
+                case "crack_due":
+                    HzMark(k, kind, 0.026f).SetLines(CrackStrokes, Alpha(lib.hazardCrack, 0.9f), px * 2.6f);
+                    if (kind == "crack_due") Pulse(HzMark(k, kind)).SetFrame(0.9f, px * 2.8f, lib.threat, true);
+                    break;
+                case "stop":
+                case "stop_cab":
+                    // Durak sarı çift çerçeve; kabinin bulunduğu durak dolu ve taralı
+                    if (kind == "stop_cab")
+                    {
+                        HzFill(k, kind, Alpha(lib.hazardLift, 0.28f));
+                        HzMark(k, kind, 0.024f).SetHatch(0.86f, Alpha(lib.hazardLift, 0.55f), px * 2, true, 0.12f);
+                    }
+                    HzMark(k, kind).SetFrame(0.88f, px * 2.6f, lib.hazardLift, false, true);
+                    break;
+                case "ghost":
+                    // Kabinle inecek birimin yeri: kopyalama hayaletinin kesik halkası, asansör renginde
+                    HzMark(k, kind, 0.04f).SetCircle(0.3275f, Alpha(lib.hazardLift, 0.95f), 0.035f, true, true);
+                    break;
+                case "freeze":
+                case "freeze_next":
+                    // Buz dokusu: iki yönlü ince tarama; boşalma turunda kesik çerçeve titrer
+                    HzFill(k, kind, Alpha(lib.hazardFreeze, kind == "freeze_next" ? 0.22f : 0.14f));
+                    HzMark(k, kind, 0.024f).SetHatch(0.94f, Alpha(lib.hazardFreeze, 0.45f), px * 1.6f, true, 0.12f);
+                    HzMark(k, kind, 0.025f).SetHatch(0.94f, Alpha(lib.hazardFreeze, 0.45f), px * 1.6f, false, 0.12f);
+                    if (kind == "freeze_next") Pulse(HzMark(k, kind)).SetFrame(0.9f, px * 2.6f, lib.hazardFreeze, true);
+                    break;
+                case "hol":
+                    HzFill(k, kind, Alpha(lib.hazardHall, 0.1f));
+                    break;
+                case "weld":
+                    // Kaynak karesi: dolu turuncu, kıvılcım halkası titrer; kaideden kareye kol
+                    HzFill(k, kind, Alpha(lib.hazardWeld, 0.32f));
+                    HzMark(k, kind).SetFrame(0.88f, px * 2.6f, lib.hazardWeld);
+                    Pulse(HzMark(k, kind, 0.034f)).SetCircle(0.2f, lib.hazardWeld, px * 2.2f, false, true);
+                    WeldArm(B, k, kind, px);
+                    break;
+                case "weld_next":
+                    HzMark(k, kind).SetFrame(0.88f, px * 2, Alpha(lib.hazardWeld, 0.55f), true);
+                    break;
+                case "live":
+                    HzFill(k, kind, Alpha(lib.hazardLive, 0.38f));
+                    HzMark(k, kind).SetFrame(0.9f, px * 2, lib.hazardLive);
+                    break;
+                case "dead":
+                    HzFill(k, kind, Alpha(lib.hazardDead, 0.22f));
+                    break;
+                case "drain":
+                case "drain_next":
+                {
+                    HzFill(k, kind, Alpha(lib.hazardDrain, 0.18f));
+                    var ring = HzMark(k, kind, 0.032f);
+                    ring.SetCircle(0.3f, lib.hazardDrain, px * 3);
+                    if (kind == "drain_next") Pulse(ring);
+                    HzMark(k, kind, 0.032f).SetCircle(0.15f, lib.hazardDrain, px * 2);
+                    break;
+                }
+                case "tube_hot":
+                    Pulse(HzMark(k, kind, 0.034f)).SetCircle(0.36f, lib.threat, px * 3);
+                    break;
+                case "oil":
+                    // Parlak siyah: koyu dolgu ve iki kâğıt rengi parıltı çizgisi
+                    HzFill(k, kind, Alpha(lib.hazardOil, 0.62f));
+                    HzMark(k, kind, 0.026f).SetLines(OilGloss, Alpha(paperColor, 0.5f), px * 3);
+                    break;
+                case "oil_next":
+                    HzFill(k, kind, Alpha(lib.hazardOil, 0.1f));
+                    HzMark(k, kind).SetFrame(0.9f, px * 2.4f, Alpha(lib.hazardOil, 0.85f), true);
+                    break;
+                case "hose":
+                    HzMark(k, kind, 0.032f).SetCircle(0.2f, lib.hazardOil, px * 3);
+                    HzMark(k, kind, 0.032f).SetCircle(0.1f, lib.hazardOil, px * 2);
+                    break;
+                default:
+                    // Bilinmeyen tür: kesik grafit çerçeve (yeni işaret türü eklenince kare boş kalmasın)
+                    HzMark(k, kind).SetFrame(0.9f, px * 2, graphiteColor, true);
+                    break;
+            }
+        }
+
+        /// <summary>Tavan çatlağı: karenin köşegeninde kırık çizgi ve bir dal (yerel, kare merkezine göre).</summary>
+        static readonly List<(Vector3, Vector3)> CrackStrokes = new List<(Vector3, Vector3)>
+        {
+            (new Vector3(-0.32f, 0, -0.22f), new Vector3(-0.12f, 0, -0.04f)), (new Vector3(-0.12f, 0, -0.04f), new Vector3(-0.02f, 0, -0.16f)),
+            (new Vector3(-0.02f, 0, -0.16f), new Vector3(0.14f, 0, 0.06f)), (new Vector3(0.14f, 0, 0.06f), new Vector3(0.3f, 0, 0.02f)),
+            (new Vector3(0.14f, 0, 0.06f), new Vector3(0.08f, 0, 0.27f)),
+        };
+        /// <summary>Yağın parıltısı: iki kısa çapraz çizgi.</summary>
+        static readonly List<(Vector3, Vector3)> OilGloss = new List<(Vector3, Vector3)>
+        {
+            (new Vector3(-0.27f, 0, 0.1f), new Vector3(-0.08f, 0, 0.27f)), (new Vector3(0.06f, 0, -0.22f), new Vector3(0.2f, 0, -0.09f)),
+        };
+
+        /// <summary>Olay işaretinin konumu: duvar karesinde (arşiv rafının bloğu) bloğun üstünde.</summary>
+        Vector3 HazardAt(int k, float height) => W(k % Baskin.N, k / Baskin.N) + Vector3.up * ((walls[k] ? WallTop - 0.012f : 0) + height);
+
+        void HzFill(int k, string kind, Color color)
+        {
+            if (hazardFillsUsed == hazardFills.Count) hazardFills.Add(Flat("Hazard fill", Vector3.zero, 0.94f, lib.highlight).GetComponent<Renderer>());
+            var fill = hazardFills[hazardFillsUsed++];
+            // Karo vurgusunun (0,02) altında: yürüme ve isabet taraması olayın üstünde okunur
+            fill.transform.position = HazardAt(k, 0.017f);
+            fill.gameObject.SetActive(true);
+            SetColor(fill, color);
+            hazardShown.Add((kind, k, fill.gameObject));
+        }
+
+        RaidArrow HzMark(int k, string kind, float height = 0.03f)
+        {
+            if (hazardMarksUsed == hazardMarks.Count) hazardMarks.Add(Mark("Hazard mark", Vector3.zero, 0));
+            var mark = hazardMarks[hazardMarksUsed++];
+            mark.transform.position = HazardAt(k, height);
+            mark.transform.localScale = Vector3.one;
+            mark.gameObject.SetActive(true);
+            hazardShown.Add((kind, k, mark.gameObject));
+            return mark;
+        }
+
+        /// <summary>Dünya uçlarıyla çizilen ok ya da şerit (turnike, tüp hattı, süzgeç çekişi, kaynak kolu).</summary>
+        RaidArrow HzStroke(string kind, int k)
+        {
+            if (hazardStrokesUsed == hazardStrokes.Count) hazardStrokes.Add(NewArrow("Hazard stroke", lib.tileMarks));
+            var stroke = hazardStrokes[hazardStrokesUsed++];
+            stroke.gameObject.SetActive(true);
+            hazardShown.Add((kind, k, stroke.gameObject));
+            return stroke;
+        }
+
+        RaidArrow Pulse(RaidArrow mark) { hazardPulse.Add(mark.transform); return mark; }
+
+        /// <summary>Arşiv rafının rayı: rayın yönünde iki grafit şerit (komşu ray karesinden yön bulunur).</summary>
+        void HzRail(int k, string kind, float px, HashSet<int> rails)
+        {
+            int x = k % Baskin.N;
+            bool across = (x > 0 && rails.Contains(k - 1)) || (x < Baskin.N - 1 && rails.Contains(k + 1));
+            var along = (across ? Vector3.right : Vector3.forward) * 0.47f;
+            var side = (across ? Vector3.forward : Vector3.right) * 0.16f;
+            HzMark(k, kind, 0.026f).SetLines(new List<(Vector3, Vector3)> { (-along + side, along + side), (-along - side, along - side) }, Alpha(lib.hazardRail, 0.85f), px * 2.4f);
+        }
+
+        /// <summary>Kaynak kolu: kaideden (kaynak karesinin komşusundaki "kol") kareye kalın turuncu kol.</summary>
+        void WeldArm(Baskin.BState B, int k, string kind, float px)
+        {
+            int x = k % Baskin.N, y = k / Baskin.N;
+            foreach (var d in Baskin.Dirs)
+            {
+                int bx = x + d[0], by = y + d[1];
+                if (bx < 0 || by < 0 || bx >= Baskin.N || by >= Baskin.N || Baskin.CellAt(B, bx, by).O?.K != "kol") continue;
+                HzStroke(kind, k).Set(W(bx, by) + Vector3.up * 0.3f, W(x, y) + Vector3.up * 0.1f, lib.hazardWeld, false, px * 6, 0, 0, false);
+                return;
+            }
+        }
+
+        /// <summary>Turnike kenarı: kenar boyunca soluk kol ve izinli yönde kısa ok (iki yöne açık geçitte çift uçlu); bu tur
+        /// sonunda dönecekse kesik.</summary>
+        void DrawGate(Baskin.HazardEdge e, float px)
+        {
+            int k = Key(e.X, e.Y);
+            var inside = W(e.X, e.Y); var outside = W(e.X2, e.Y2);
+            var mid = (inside + outside) * 0.5f + Vector3.up * 0.05f;
+            var outward = (outside - inside).normalized;
+            var along = Vector3.Cross(Vector3.up, outward);
+            const float reach = 0.24f;
+            HzStroke("edge", k).Set(mid - along * 0.3f, mid + along * 0.3f, Alpha(lib.hazardGate, 0.45f), false, px * 2, 0, 0, false);
+            if (e.Kind == "both")
+            {
+                HzStroke("edge", k).Set(mid, mid + outward * reach, lib.hazardGate, e.Soon, px * 3, 0, 0, true, px * 10);
+                HzStroke("edge", k).Set(mid, mid - outward * reach, lib.hazardGate, e.Soon, px * 3, 0, 0, true, px * 10);
+                return;
+            }
+            // in: dışarıdan içeri (X2, Y2 → X, Y); out: içeriden dışarı
+            var sign = e.Kind == "in" ? -1f : 1f;
+            HzStroke("edge", k).Set(mid - outward * (reach * sign), mid + outward * (reach * sign), lib.hazardGate, e.Soon, px * 3.2f, 0, 0, true, px * 12);
+        }
+
+        /// <summary>Hat: tüpün uçuş hattı (tube soluk, tube_hot parlak) ya da süzgecin çekişi (pull); Hit: ucu kırmızı.</summary>
+        void DrawHazardLine(Baskin.HazardLine l, float px)
+        {
+            int k = Key(l.X, l.Y);
+            if (l.X == l.X2 && l.Y == l.Y2) return;
+            var a = W(l.X, l.Y); var b = W(l.X2, l.Y2);
+            var dir = (b - a).normalized;
+            if (l.Kind == "pull")
+            {
+                var from = a + Vector3.up * 0.08f + dir * 0.22f; var to = b + Vector3.up * 0.08f - dir * 0.18f;
+                if (!l.Hit) { HzStroke(l.Kind, k).Set(from, to, lib.hazardDrain, false, px * 3.4f, 0, 0, true, px * 13); return; }
+                HzStroke(l.Kind, k).Set(from, to - dir * 0.12f, lib.hazardDrain, false, px * 3.4f, 0, 0, false);
+                HzStroke(l.Kind, k).Set(to - dir * 0.18f, to, lib.threat, false, px * 3.4f, 0, 0, true, px * 13);
+                return;
+            }
+            bool hot = l.Kind == "tube_hot";
+            var start = a + Vector3.up * 0.035f + dir * 0.3f;
+            var end = b + Vector3.up * 0.035f + dir * (l.Hit ? -0.2f : 0.4f);
+            HzStroke(l.Kind, k).Set(start, end, Alpha(lib.hazardTube, hot ? 1 : 0.42f), false, px * (hot ? 6 : 5), 0, 0, false);
+            // Hattaki ilk birim: ucu kırmızı (soğuk tüpte soluk)
+            if (l.Hit) HzStroke(l.Kind, k).Set(end - dir * 0.08f, end + dir * 0.14f, Alpha(lib.threat, hot ? 1 : 0.5f), false, px * (hot ? 4 : 3.4f), 0, 0, true, px * 13);
+        }
+
+        /// <summary>İşaretin kısa etiketi (Core çevirmiş gelir): "SİS" kâğıdı gibi karenin üstünde; tehlikede kırmızı, gelecekte kesik kenar.</summary>
+        void HzLabel(int k, string kind, string text, bool lit)
+        {
+            if (hazardLabelsUsed == hazardLabels.Count) hazardLabels.Add(NewPaperLabel("Hazard tag", 14));
+            var tag = hazardLabels[hazardLabelsUsed++];
+            bool danger = kind == "rail_close" || kind == "gas_lit" || kind == "crack_due" || kind == "tube_hot" || kind == "weld" || kind == "drain_next" || (kind == "leak" && lit);
+            tag.SetAnchor(HazardAt(k, 0.75f));
+            tag.Show(text, danger ? lib.threat : graphiteColor, danger ? lib.threat : HazardInk(kind), kind.EndsWith("_next", StringComparison.Ordinal));
+            labelGroups.Add(new[] { tag });
+            hazardShown.Add((kind, k, tag.gameObject));
+        }
+
+        /// <summary>Olay türünün mürekkebi (etiket kenarı, patlama halkası).</summary>
+        Color HazardInk(string kind) => kind switch
+        {
+            "cloud" or "cloud_next" or "nozzle" => lib.hazardCloudEdge,
+            "rail" or "rail_gap" or "rail_close" or "rail_open" => lib.hazardRail,
+            "gas" or "gas_next" or "leak" => lib.hazardGas,
+            "gas_lit" => lib.hazardFlame,
+            "crack" or "crack_due" => lib.hazardCrack,
+            "stop" or "stop_cab" or "ghost" => lib.hazardLift,
+            "freeze" or "freeze_next" => lib.hazardFreeze,
+            "hol" => lib.hazardHall,
+            "weld" or "weld_next" => lib.hazardWeld,
+            "live" => lib.hazardLive,
+            "dead" => lib.hazardDead,
+            "drain" or "drain_next" => lib.hazardDrain,
+            "tube_hot" => lib.hazardTube,
+            "oil" or "oil_next" or "hose" => lib.hazardOil,
+            _ => graphiteColor,
+        };
+
+        /// <summary>Çizilen olay katmanından bu türleri gizler (key &lt; 0: bütün kareler); sonraki Sync yeniden çizer.</summary>
+        void HideHazards(int key, params string[] kinds)
+        {
+            foreach (var (kind, k, go) in hazardShown)
+                if (go != null && (key < 0 || k == key) && Array.IndexOf(kinds, kind) >= 0) go.SetActive(false);
+        }
+
+        /// <summary>Bu türlerin görünen işaretlerinin kareleri (canlandırmada her kareye kısa patlama).</summary>
+        List<int> HazardKeys(params string[] kinds) =>
+            hazardShown.Where(s => s.go != null && s.go.activeSelf && Array.IndexOf(kinds, s.kind) >= 0).Select(s => s.key).Distinct().ToList();
+
+        /// <summary>Yedek parçayla olay nesnesi: tüp ve kol kaidesi ölçeklenir; enkaz yığını kırık dolap enkazından kurulur.</summary>
+        RaidPiece NewObjectPiece(string kind, int x, int y)
+        {
+            if (kind == "enkaz" && !lib.HasOwnPiece(kind) && lib.rubble != null)
+            {
+                var go = Instantiate(lib.rubble, W(x, y), Quaternion.Euler(0, (x * 37 + y * 53) % 360, 0), piecesRoot);
+                go.transform.localScale = lib.FallbackScale(kind);
+                // Tıklama (çarpıştırıcı → parça) ve kırılma canlandırması için parça bileşeni; gövdesi kökün kendisi
+                return go.AddComponent<RaidPiece>();
+            }
+            var piece = Instantiate(lib.Object(kind), W(x, y), Quaternion.identity, piecesRoot);
+            if (!lib.HasOwnPiece(kind)) piece.transform.localScale = lib.FallbackScale(kind);
+            return piece;
         }
 
         readonly List<RaidArrow> arrowShadows = new List<RaidArrow>(), extraArrows = new List<RaidArrow>();
@@ -839,6 +1195,12 @@ namespace Corrigible.Game.Raid
         {
             // Eğitim çerçevesi nabız gibi atar
             if (guideFrame != null && guideFrame.gameObject.activeSelf) guideFrame.transform.localScale = Vector3.one * (1 + 0.06f * Mathf.Sin(Time.unscaledTime * 6));
+            // Bu tur sonunda vuracak olay işaretleri titrer (alev almış gaz, çökecek tavan, kapanacak geçit, kaynak, emme, tüp)
+            if (hazardPulse.Count > 0)
+            {
+                var beat = Vector3.one * (1 + 0.05f * Mathf.Sin(Time.unscaledTime * 7));
+                foreach (var t in hazardPulse) if (t != null && t.gameObject.activeSelf) t.localScale = beat;
+            }
             if (cam == null || hoverFrame == null || Mouse.current == null) return;
             (int x, int y)? h = InputEnabled && !Busy ? externalHover : null;
             bool overUi = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
@@ -1004,9 +1366,34 @@ namespace Corrigible.Game.Raid
                     case "pull":
                         if (units.TryGetValue(f.Unit, out var pu))
                         {
+                            // Zincirli itme (yağda kayma, süzgeç, tüp): birimin sonraki itmesinin başladığı kare bu adımın sonu;
+                            // sonraki itme yoksa son durumdaki yeri. Adım adım kayar.
+                            var chained = fx.Skip(fxIndex).FirstOrDefault(n => n.K == "push" && n.Unit == f.Unit);
                             var u = after.Units.FirstOrDefault(z => z.Id == f.Unit);
-                            if (u != null) { Sfx.Play(Cue.RaidPush, 1, Pan(W(u.X, u.Y))); yield return Slide(pu, W(u.X, u.Y), 0.18f); }
+                            if (chained != null || u != null)
+                            {
+                                var to = chained != null ? W(chained.X, chained.Y) : W(u.X, u.Y);
+                                Sfx.Play(Cue.RaidPush, chained != null ? 0.7f : 1, Pan(to));
+                                yield return Slide(pu, to, 0.18f);
+                            }
                         }
+                        break;
+                    case "ev":
+                        // Bölge olayı (Obj: alt tür)
+                        yield return EventFx(after, f, popups++ * 0.04f);
+                        break;
+                    case "clouded":
+                        // Söndürme bulutuna kesilen niyet ("smoked"un beyaz eşi)
+                        Sfx.Play(Cue.RaidSmoked, 1, Pan(W(f.X, f.Y)));
+                        StartCoroutine(Popup(W(f.X, f.Y), Loc.T("BULUTA KESİLDİ"), graphiteColor, popups++ * 0.04f, lib.hazardCloudEdge));
+                        yield return Wait(0.35f);
+                        break;
+                    case "ice":
+                        // Buz kabuğu darbeyi karşıladı ("plate"in kriyo eşi)
+                        if (units.TryGetValue(f.Unit, out var iced)) iced.Flash(lib.hazardFreeze);
+                        StartCoroutine(Popup(W(f.X, f.Y), Loc.T("BUZ KIRILDI"), graphiteColor, popups++ * 0.04f, lib.hazardFreeze));
+                        Sfx.Play(Cue.RaidArmor, 1, Pan(W(f.X, f.Y)));
+                        yield return Wait(enemyTurn ? 0.35f : 0.25f);
                         break;
                     case "hook":
                         yield return Burst(W(f.X, f.Y), lib.ink, 0.4f, 0.2f);
@@ -1082,6 +1469,254 @@ namespace Corrigible.Game.Raid
         }
 
         /// <summary>
+        /// Bölge olayının efekti (Fx "ev", alt tür Obj; Baskin.Events.cs). Kısa yazı, patlama halkası ve bir ses; kabin birimi
+        /// gizler ya da indirir, tüp hattında uçar, raf duvarı kaldırır. Olayın kalıcı sonucu (bulut, gaz, enkaz, karo) Sync'te
+        /// çizilir. Tüp uçuşunda ve rafta Dx, Dy yön değil, son karedir.
+        /// </summary>
+        IEnumerator EventFx(Baskin.BState after, Baskin.Fx f, float delay)
+        {
+            int version = buildVersion;
+            var at = W(f.X, f.Y);
+            float pan = Pan(at);
+            switch (f.Obj)
+            {
+                case "bulut":
+                    Sfx.Play(Cue.RaidSmoke, 1, pan);
+                    StartCoroutine(Burst(at, lib.hazardCloudEdge, 1.8f, 0.4f));
+                    StartCoroutine(Popup(at, Loc.T("BULUT"), graphiteColor, delay, lib.hazardCloudEdge));
+                    yield return Wait(0.3f);
+                    break;
+                case "bulut_dagil":
+                    // Karesi yok: çizili bulut hemen söner
+                    HideHazards(-1, "cloud");
+                    Sfx.Play(Cue.RaidSmoke, 0.4f);
+                    yield return Wait(0.15f);
+                    break;
+                case "raf":
+                {
+                    // (X, Y) geçit duvara döner, (Dx, Dy) duvar geçide: blok yükselir, öbür uç çöker (Sync karoları oturtur)
+                    int close = Key(f.X, f.Y), open = Key(f.Dx, f.Dy);
+                    Sfx.Play(Cue.RaidPush, 1, pan);
+                    StartCoroutine(Popup(at, Loc.T("RAF"), graphiteColor, delay, lib.hazardRail));
+                    if (InBoard(f.Dx, f.Dy) && walls[open] && tileObjects[open] != null) StartCoroutine(SinkWall(tileObjects[open]));
+                    if (InBoard(f.X, f.Y) && !walls[close])
+                    {
+                        BuildTile(f.X, f.Y, "wall");
+                        yield return RaiseWall(tileObjects[close]);
+                    }
+                    else yield return Wait(0.3f);
+                    break;
+                }
+                case "raf_sikisti":
+                    Sfx.Play(Cue.RaidHitObject, 1, pan);
+                    StartCoroutine(Popup(at, Loc.T("RAF SIKIŞTI"), graphiteColor, delay, lib.hazardRail));
+                    yield return Wait(0.3f);
+                    break;
+                case "gaz_dol":
+                    Sfx.Play(Cue.RaidSmoke, 1, pan);
+                    StartCoroutine(Burst(at, lib.hazardGas, 2f, 0.4f));
+                    StartCoroutine(Popup(at, Loc.T("DOLUM"), graphiteColor, delay, lib.hazardGas));
+                    yield return Wait(0.3f);
+                    break;
+                case "gaz_bosal":
+                    HideHazards(-1, "gas", "gas_lit");
+                    Sfx.Play(Cue.RaidSmoke, 0.6f, pan);
+                    StartCoroutine(Popup(at, Loc.T("BOŞALDI"), graphiteColor, delay, lib.hazardGas));
+                    yield return Wait(0.25f);
+                    break;
+                case "gaz_alev":
+                    // Ateş buluta değdi: bir tur sonra parlar
+                    Sfx.Play(Cue.RaidDynamite, 0.6f, pan);
+                    StartCoroutine(Burst(at, lib.hazardFlame, 1.2f, 0.3f));
+                    StartCoroutine(Popup(at, Loc.T("ALEV ALDI"), lib.threat, delay));
+                    yield return Wait(0.3f);
+                    break;
+                case "gaz_parla":
+                    Sfx.Play(Cue.RaidExplosion, 1, pan);
+                    foreach (var key in HazardKeys("gas", "gas_lit")) StartCoroutine(Burst(W(key % Baskin.N, key / Baskin.N), lib.hazardFlame, 1.3f, 0.35f));
+                    StartCoroutine(Burst(at, lib.hazardFlame, 2.4f, 0.4f));
+                    StartCoroutine(Popup(at, Loc.T("PARLAMA"), lib.threat, delay));
+                    HideHazards(-1, "gas", "gas_lit");
+                    yield return Wait(0.45f);
+                    break;
+                case "catlak":
+                    // Darbe çatlağı tetikledi: bir tur sonra çöker
+                    Sfx.Play(Cue.RaidHitObject, 0.8f, pan);
+                    StartCoroutine(Burst(at, lib.hazardCrack, 0.9f, 0.25f));
+                    StartCoroutine(Popup(at, Loc.F("ÇÖKECEK {0}", 1), lib.threat, delay));
+                    yield return Wait(0.25f);
+                    break;
+                case "tavan":
+                    HideHazards(Key(f.X, f.Y), "crack", "crack_due");
+                    Sfx.Play(Cue.RaidBreak, 1, pan);
+                    StartCoroutine(Burst(at, lib.hazardCrack, 1.5f, 0.35f));
+                    StartCoroutine(Burst(at + Vector3.up * 0.4f, graphiteColor, 0.8f, 0.25f));
+                    StartCoroutine(Popup(at, Loc.T("ÇÖKME"), lib.threat, delay));
+                    yield return Wait(0.35f);
+                    break;
+                case "toz":
+                    HideHazards(Key(f.X, f.Y), "crack", "crack_due");
+                    Sfx.Play(Cue.RaidBreak, 0.5f, pan);
+                    StartCoroutine(Burst(at, graphiteColor, 1.1f, 0.3f));
+                    StartCoroutine(Popup(at, Loc.T("TOZ"), graphiteColor, delay, lib.hazardCrack));
+                    yield return Wait(0.25f);
+                    break;
+                case "kabin_kalk":
+                    Sfx.Play(Cue.RaidPush, 1, pan);
+                    StartCoroutine(Burst(at, lib.hazardLift, 1f, 0.3f));
+                    StartCoroutine(Popup(at, Loc.T("KALKIŞ"), graphiteColor, delay, lib.hazardLift));
+                    // Duraktaki birim kabine bindi: parçası yükselip gizlenir (havuzda kalır), etiketleri kalkar
+                    if (f.Unit != 0 && units.TryGetValue(f.Unit, out var rider) && rider != null && rider.gameObject.activeSelf)
+                    {
+                        HideUnitLabels(f.Unit);
+                        yield return Ride(rider, at, true);
+                    }
+                    else yield return Wait(0.3f);
+                    break;
+                case "kabin_in":
+                    Sfx.Play(Cue.RaidPush, 1, pan);
+                    StartCoroutine(Burst(at, lib.hazardLift, 1f, 0.3f));
+                    StartCoroutine(Popup(at, Loc.T("İNİŞ"), graphiteColor, delay, lib.hazardLift));
+                    // Yolcu (X, Y)'de iner (dolu durakta yanına)
+                    if (f.Unit != 0 && units.TryGetValue(f.Unit, out var landed) && landed != null)
+                    {
+                        landed.X = f.X; landed.Y = f.Y;
+                        yield return Ride(landed, at, false);
+                    }
+                    else yield return Wait(0.3f);
+                    break;
+                case "kabin_bekle":
+                    Sfx.Play(Cue.RaidHitObject, 1, pan);
+                    StartCoroutine(Popup(at, Loc.T("KABİN BEKLİYOR"), graphiteColor, delay, lib.hazardLift));
+                    yield return Wait(0.3f);
+                    break;
+                case "donma":
+                    Sfx.Play(Cue.RaidSmoke, 1, pan);
+                    foreach (var key in HazardKeys("freeze", "freeze_next")) StartCoroutine(Burst(W(key % Baskin.N, key / Baskin.N), lib.hazardFreeze, 1f, 0.3f));
+                    StartCoroutine(Popup(at, Loc.T("DONDURMA"), graphiteColor, delay, lib.hazardFreeze));
+                    yield return Wait(0.3f);
+                    break;
+                case "buz":
+                    if (f.Unit != 0 && units.TryGetValue(f.Unit, out var frozen) && frozen != null) frozen.Flash(lib.hazardFreeze, 0.6f);
+                    Sfx.Play(Cue.RaidArmor, 0.7f, pan);
+                    StartCoroutine(Popup(at, Loc.T("DONDU"), graphiteColor, delay, lib.hazardFreeze));
+                    yield return Wait(0.2f);
+                    break;
+                case "turnike":
+                    // Vardiya ya da tahliye (son iki tur hep dışarı): oklar sonraki Sync'te döner
+                    Sfx.Play(Cue.RaidPush, 0.8f, pan);
+                    StartCoroutine(Popup(at, after.Ev != null && after.Ev.Stop ? Loc.T("TAHLİYE MODU") : Loc.T("VARDİYA"), graphiteColor, delay, lib.hazardGate));
+                    yield return Wait(0.3f);
+                    break;
+                case "kaynak":
+                    Sfx.Play(Cue.RaidEmpBlast, 0.8f, pan);
+                    StartCoroutine(Burst(at, lib.hazardWeld, 0.9f, 0.2f));
+                    StartCoroutine(Burst(at, lib.hazardWeld, 1.4f, 0.35f));
+                    StartCoroutine(Popup(at, Loc.T("KAYNAK"), lib.threat, delay, lib.hazardWeld));
+                    yield return Wait(0.3f);
+                    break;
+                case "kol":
+                    // Kola gelen darbe dönüşe bir adım ekler (kol hasar almaz)
+                    if (objects.TryGetValue(Key(f.X, f.Y), out var arm) && arm != null) arm.Flash(lib.hazardWeld);
+                    Sfx.Play(Cue.RaidHitObject, 1, pan);
+                    StartCoroutine(Popup(at, Loc.T("KOL SARSILDI"), graphiteColor, delay, lib.hazardWeld));
+                    yield return Wait(0.25f);
+                    break;
+                case "faz":
+                    // Karesi yok: kanallar kısa bir kıvılcımla el değiştirir
+                    Sfx.Play(Cue.RaidEmpBlast, 0.7f);
+                    foreach (var key in HazardKeys("live", "dead")) StartCoroutine(Burst(W(key % Baskin.N, key / Baskin.N), lib.hazardLive, 0.7f, 0.25f));
+                    yield return Wait(0.3f);
+                    break;
+                case "emme":
+                    Sfx.Play(Cue.RaidPush, 1, pan);
+                    StartCoroutine(Burst(at, lib.hazardDrain, 1.6f, 0.35f));
+                    StartCoroutine(Popup(at, Loc.T("EMME"), graphiteColor, delay, lib.hazardDrain));
+                    yield return Wait(0.3f);
+                    break;
+                case "islik":
+                    // Vurulan tüp ıslık çalıyor: bir tur sonra uçar
+                    if (objects.TryGetValue(Key(f.X, f.Y), out var hissing) && hissing != null) hissing.Flash(lib.threat, 0.6f);
+                    Sfx.Play(Cue.RaidSmoke, 0.8f, pan);
+                    StartCoroutine(Popup(at, Loc.T("ISLIK"), lib.threat, delay));
+                    yield return Wait(0.3f);
+                    break;
+                case "tup_uc":
+                {
+                    // Tüp (X, Y)'den (Dx, Dy)'ye uçar ve tahtadan kalkar (Sync yerinde enkaz bırakmaz)
+                    var end = W(f.Dx, f.Dy);
+                    HideHazards(Key(f.X, f.Y), "tube", "tube_hot");
+                    Sfx.Play(Cue.RaidDroneShot, 1, pan);
+                    if (objects.TryGetValue(Key(f.X, f.Y), out var tube) && tube != null && tube.gameObject.activeSelf)
+                        yield return Fly(tube, end + Vector3.up * 0.2f, Mathf.Max(0.18f, Vector3.Distance(at, end) * 0.07f));
+                    if (version != buildVersion) yield break;
+                    Sfx.Play(Cue.RaidHitObject, 1, Pan(end));
+                    StartCoroutine(Burst(end, lib.hazardTube, 1f, 0.25f));
+                    yield return Wait(0.1f);
+                    break;
+                }
+                case "yag":
+                    Sfx.Play(Cue.RaidBreak, 0.7f, pan);
+                    StartCoroutine(Burst(at, lib.hazardOil, 1.6f, 0.4f));
+                    StartCoroutine(Popup(at, Loc.T("YAĞ"), graphiteColor, delay, lib.hazardOil));
+                    yield return Wait(0.35f);
+                    break;
+            }
+        }
+
+        static bool InBoard(int x, int y) => x >= 0 && y >= 0 && x < Baskin.N && y < Baskin.N;
+
+        /// <summary>Birimin can, durum ve sıra etiketleri ile bayrak iğnesi (kabine binen birim tahtadan kalkar).</summary>
+        void HideUnitLabels(int id)
+        {
+            foreach (var pool in new[] { hpLabels, stateLabels, orderLabels })
+                if (pool.TryGetValue(id, out var label) && label != null) label.gameObject.SetActive(false);
+            if (flagPins.TryGetValue(id, out var pin) && pin != null) pin.SetActive(false);
+        }
+
+        /// <summary>Yük asansörü: binen birim yükselip küçülerek kaybolur; inen birim yukarıdan durağa iner.</summary>
+        IEnumerator Ride(RaidPiece p, Vector3 at, bool leaving)
+        {
+            int version = buildVersion;
+            var high = at + Vector3.up * 0.9f;
+            if (!leaving) { p.transform.position = high; p.gameObject.SetActive(true); }
+            var s = p.Body.localScale;
+            float time = stepTime * 1.1f / (FastMachines ? 3.125f : 1);
+            for (float t = 0; t < 1; t += Time.deltaTime / time)
+            {
+                if (version != buildVersion || p == null) yield break;
+                float e = Ease(t);
+                p.transform.position = leaving ? Vector3.Lerp(at, high, e) : Vector3.Lerp(high, at, e);
+                p.Body.localScale = s * (leaving ? 1 - e * 0.5f : 0.5f + e * 0.5f);
+                yield return null;
+            }
+            if (version != buildVersion || p == null) yield break;
+            p.Body.localScale = s;
+            p.transform.position = at;
+            if (leaving) p.gameObject.SetActive(false);
+        }
+
+        /// <summary>Uçan basınçlı tüp: uçuş yönüne yatar, hattında süzülür ve gizlenir.</summary>
+        IEnumerator Fly(RaidPiece p, Vector3 to, float time)
+        {
+            int version = buildVersion;
+            var a = p.transform.position; var r = p.transform.rotation;
+            var flat = to - a; flat.y = 0;
+            // Silindirin boyu (yerel yukarı) uçuş yönüne
+            var lie = flat.sqrMagnitude > 1e-4f ? Quaternion.LookRotation(flat.normalized) * Quaternion.Euler(90, 0, 0) : r;
+            time /= FastMachines ? 3.125f : 1;
+            for (float t = 0; t < 1; t += Time.deltaTime / time)
+            {
+                if (version != buildVersion || p == null) yield break;
+                p.transform.position = Vector3.Lerp(a, to, t) + Vector3.up * (Mathf.Sin(t * Mathf.PI) * 0.15f);
+                p.transform.rotation = Quaternion.Slerp(r, lie, Ease(Mathf.Min(1, t * 3)));
+                yield return null;
+            }
+            if (version != buildVersion || p == null) yield break;
+            p.gameObject.SetActive(false);
+        }
+
+        /// <summary>
         /// Makine evresinden sonra robotlar yeni yerlerine kare kare yürür. Core yeni planı kurarken robotu doğrudan taşır
         /// (yol yok); yol burada Core.Reachable'ın kuralıyla bulunur: duvar ve nesne kapalı, ekip üyesi geçilmez, robot geçilir.
         /// Robotlar yeni sıra numaralarıyla tek tek, aralarında kısa duraklamayla yürür. Uygulanan niyetlerin okları ve
@@ -1144,7 +1779,8 @@ namespace Corrigible.Game.Raid
         List<(RaidPiece piece, int id, List<(int x, int y)> path)> MachineWalks(Baskin.BState after)
         {
             var walkers = new List<(RaidPiece piece, int id, List<(int x, int y)> path)>();
-            foreach (var u in after.Units.Where(u => u.Side == 'e' && !u.Dead).OrderBy(u => u.Order))
+            // Asansör kabinindeki makine tahtada değil (parçası gizli): yürümez
+            foreach (var u in after.Units.Where(u => u.Side == 'e' && !u.Dead && !u.Cab).OrderBy(u => u.Order))
             {
                 if (!units.TryGetValue(u.Id, out var p) || p == null || !p.gameObject.activeSelf) continue;
                 var from = TileOf(p.transform.position);
@@ -1156,7 +1792,8 @@ namespace Corrigible.Game.Raid
 
         static (int x, int y) TileOf(Vector3 world) => (Mathf.RoundToInt(world.x + 3.5f), Mathf.RoundToInt(3.5f - world.z));
 
-        /// <summary>Robotun en kısa yürüyüş yolu (başlangıç hariç, hedef dahil); yol bulunamazsa doğrudan hedef.</summary>
+        /// <summary>Robotun en kısa yürüyüş yolu (başlangıç hariç, hedef dahil); yol bulunamazsa doğrudan hedef. Turnikenin
+        /// kapalı yönü Core'daki gibi geçilmez (<see cref="Baskin.CanStep"/>).</summary>
         public static List<(int x, int y)> MachinePath(Baskin.BState B, (int x, int y) from, (int x, int y) to)
         {
             int start = Key(from.x, from.y), goal = Key(to.x, to.y);
@@ -1171,7 +1808,7 @@ namespace Corrigible.Game.Raid
                     int nx = k % Baskin.N + d[0], ny = k / Baskin.N + d[1];
                     if (nx < 0 || ny < 0 || nx >= Baskin.N || ny >= Baskin.N || previous.ContainsKey(Key(nx, ny))) continue;
                     var cell = Baskin.CellAt(B, nx, ny);
-                    if (cell.T == "wall" || cell.O != null) continue;
+                    if (cell.T == "wall" || cell.O != null || !Baskin.CanStep(B, k % Baskin.N, k / Baskin.N, nx, ny)) continue;
                     var other = Baskin.UnitAt(B, nx, ny);
                     if (other != null && other.Side == 'p') continue;
                     previous[Key(nx, ny)] = k;
@@ -1394,6 +2031,21 @@ namespace Corrigible.Game.Raid
             }
         }
 
+        /// <summary>Kayan arşiv rafı: geçide gelen blok zeminden yükselir (karo zaten duvar olarak kuruldu).</summary>
+        IEnumerator RaiseWall(GameObject wall)
+        {
+            int version = buildVersion;
+            if (wall == null) yield break;
+            var s = wall.transform.localScale;
+            for (float t = 0; t < 1; t += Time.deltaTime / (stepTime * 1.1f))
+            {
+                if (version != buildVersion || wall == null) yield break;
+                wall.transform.localScale = new Vector3(s.x, s.y * Mathf.Max(0.05f, Ease(t)), s.z);
+                yield return null;
+            }
+            if (version == buildVersion && wall != null) wall.transform.localScale = s;
+        }
+
         IEnumerator Collapse(RaidPiece p)
         {
             int version = buildVersion;
@@ -1415,13 +2067,14 @@ namespace Corrigible.Game.Raid
             Destroy(ring);
         }
 
-        IEnumerator Popup(Vector3 at, string text, Color color, float delay)
+        /// <param name="edge">Kâğıdın kenarı (verilmezse yazı rengi): olay yazıları grafit mürekkep, olayın renginde kenar.</param>
+        IEnumerator Popup(Vector3 at, string text, Color color, float delay, Color? edge = null)
         {
             int version = buildVersion;
             if (delay > 0) yield return new WaitForSeconds(delay);
             if (version != buildVersion) yield break;
             var label = NewPaperLabel("Effect popup", 16);
-            label.Show(text, color, color);
+            label.Show(text, color, edge ?? color);
             var a = at + Vector3.up * 1.3f;
             for (float k = 0; k < 1; k += Time.deltaTime / 0.93f)
             {

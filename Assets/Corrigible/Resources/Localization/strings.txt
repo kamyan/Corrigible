@@ -66,14 +66,15 @@ YZ düğüm dolabı	AI node cabinet
 Sivil sunucu	Civilian server
 Soğutma ünitesi	Cooling unit
 Kopya dolabı	Replica cabinet
-{0} yatıyor ve yedek yok: kadro eksik girdi.	{0} is laid up and there's no reserve: the squad went in one short.
-{0} yatıyor: yerine yedek uzman girdi, can {1}/{2}.	{0} is laid up: a reserve specialist went in instead, health {1}/{2}.
-{0} tam iyileşmedi: can {1}/{2}.	{0} hasn't fully healed: health {1}/{2}.
+Enkaz yığını	Rubble pile
+Basınçlı tüp	Pressurised cylinder
+Kaynak kolu	Welding arm
 çekirdeğimin	core
 sunucularımın	servers
 İkmal kasasını Teknisyen ile bitişik kareden aç; sonra bütün ekip girişten çıkmalı. Kasayı imha etme.	Open the supply crate with the Technician from an adjacent tile; then the whole team must leave through the entry. Don't destroy the crate.
 Yine sen. Bu sefer kapıda daha çok makine var.	You again. There are more machines at the door this time.
 Demek {0} yerini buldun. Bakalım içeri girebilecek misin.	So you found my {0}. Let's see if you can get inside.
+{0}: buz kabuğu darbeyi karşıladı.	{0}: the ice shell soaked the hit.
 {0}: zırh plakası darbeyi karşıladı ve kırıldı.	{0}: armor plate took the hit and broke.
 {0} yere düştü{1}.	{0} is down{1}.
 {0} devre dışı{1}.	{0} disabled{1}.
@@ -85,10 +86,10 @@ Soğutma ünitesi patladı.	Cooling unit exploded.
 patlama	explosion
 İkmal kasası imha edildi. Malzemeler kurtarılamadı.	The supply crate was destroyed. The supplies could not be recovered.
 {0} kırıldı.	{0} destroyed.
+turnike	turnstile
 duvara çarptı	hit a wall
 dolaba çarptı	hit a cabinet
 çarpışma	collision
-elektrik	electric shock
 {0} tahliye edildi.	{0} has been extracted.
 Ekibin tamamı yere düştü.	The whole team is down.
 Hedef kırıldı. Şimdi bütün ekip girişten çıkmalı: tahtada kalan uzman baskında düşmüş sayılır.	Target destroyed. Now the whole team must leave through the entry: anyone left on the board counts as down in this raid.
@@ -117,6 +118,7 @@ Patlayan robot infilak etti.	The bomber bot detonated.
 dron ateşi	drone fire
 — Tur {0}: makineler hareket ediyor —	— Turn {0}: the machines move —
 {0} sisli kareye saldırdı: isabet yok.	{0} attacked into the smoke: no hit.
+{0} bulutta nişan alamadı.	{0} could not aim in the cloud.
 Uyanan kopya engellendi.	Waking replica blocked.
 Yeni bir {0} uyandı.	A new {0} woke up.
 Süre doldu: YZ ikmal deposunu kilitledi.	Time ran out: the AI locked down the supply depot.
@@ -126,6 +128,130 @@ Süre doldu: YZ sunucularını yedekledi ve binayı kilitledi.	Time's up: the AI
 Son tur: bu tur çıkamayan uzman baskında düşmüş sayılır.	Final turn: anyone who doesn't get out this turn counts as down in this raid.
 Son tur.	Final turn.
 Ekip geri çekildi.	The team withdrew.
+# Assets/Corrigible/Core/Baskin.Events.cs
+Söndürme bulutu	Suppression cloud
+Tek turların sonunda tavandaki memeler bir alanı bulutla doldurur: bir tur boyunca buluta ve buluttan nişan alınmaz; bitişik nesneye iş (sabotaj, onarım) serbest.	At the end of odd turns the ceiling nozzles fill an area with a cloud: for one turn nobody can aim into or out of it; work on an adjacent object (sabotage, repair) still goes on.
+Banka sunucu salonu	Bank server hall
+BULUT	CLOUD
+Kayar arşiv rafı	Sliding archive shelf
+3. ve 5. tur sonunda raf bloğu kayar ve geçit rayın öbür ucuna atlar; kapanan geçitteki birim 1 hasar alır ve yana itilir.	At the end of turns 3 and 5 the shelf block slides and the gap jumps to the other end of the rail; a unit in the closing gap takes 1 damage and is pushed aside.
+Arşiv dosya katı	Archive file floor
+RAF	SHELF
+Yanıcı gaz kaçağı	Flammable gas leak
+Kompresör bulutu takvimle doldurup boşaltır. Buluta ateş değerse bulut bir tur sonra parlar: içindeki herkes 1 hasar alır.	The compressor fills and vents the cloud on a schedule. If fire touches the cloud it flares a turn later: everyone inside takes 1 damage.
+Rafineri kompresör dairesi	Refinery compressor room
+PARLAMA	FLARE
+Çatlak tavan	Cracked ceiling
+Çatlağa ya da yanına darbe gelirse tavan bir tur sonra çöker: altındaki birim 1 hasar alır, kare boşsa enkaz yığını kalır.	If an impact lands on or next to a crack, the ceiling collapses a turn later: the unit below takes 1 damage, an empty tile is left with a rubble pile.
+Cevher işleme hangarı	Ore processing hangar
+TAVAN	CEILING
+Yük asansörü	Freight elevator
+Kabin 2. ve 4. tur sonunda kalkar, bir tur sonra öbür durağa iner: duraktaki birim yolculuk eder, iniş durağındaki birim 1 hasar alır.	The car leaves at the end of turns 2 and 4 and lands at the other stop a turn later: the unit on the stop rides along, a unit on the landing stop takes 1 damage.
+Asansör holü	Elevator hall
+KABİN	CAR
+Kriyo soğutma hattı	Cryo cooling line
+Çift turların sonunda hat bölgeye boşalır: içindeki birim bir sıra yürüyemez ama eylemini yapar; buz kabuğu ilk hasarı karşılar.	At the end of even turns the line discharges into its zone: a unit inside cannot move for a turn but still acts; an ice shell soaks the first hit.
+Soğuk depo	Cold storage
+DONMA	FREEZE
+Vardiya turnikeleri	Shift turnstiles
+Hedefin çevresindeki holün turnikeleri tek yöne döner: içeri ya da dışarı. 2. ve 4. tur sonunda döner; kaçış başlayınca ya da son iki turda tahliye, hep dışarı.	The turnstiles of the hall around the target turn one way only: in or out. They flip at the end of turns 2 and 4; once the escape starts, or in the last two turns, they switch to evacuation, always out.
+Kasa holü	Vault hall
+TURNİKE	TURNSTILE
+Kaynak robotu kolu	Welding robot arm
+Kol her evre sonunda işaretli kareye kaynak yapar (1 hasar) ve saat yönünde döner; kola gelen her darbe dönüşe bir adım ekler.	At the end of every phase the arm welds the marked tile (1 damage) and turns clockwise; every hit on the arm adds a step to the turn.
+Montaj hattı	Assembly line
+KAYNAK	SOURCE
+Şebeke faz değişimi	Grid phase switch
+Kablo kanalları iki faza ayrılır ve üç turda bir el değiştirir: evreyi canlı kanalda bitiren 1 hasar alır, sönük kanal güvenli.	The cable channels are split into two phases that swap every three turns: ending a phase on a live channel deals 1 damage, a dead channel is safe.
+Trafo merkezi	Transformer station
+ŞEBEKE	GRID
+Süzgeç emmesi	Drain suction
+3. ve 6. tur sonunda süzgeç dört yanındakileri içeri çeker; süzgeçte biri varsa çarpışırlar ve ikisi de 1 hasar alır.	At the end of turns 3 and 6 the drain pulls in whoever stands beside it; if someone is already on the drain they collide and both take 1 damage.
+Su basmış bodrum	Flooded basement
+EMME	SUCTION
+Basınçlı tüp rafı	Pressurised cylinder rack
+Vurulan tüp ıslık çalar ve bir tur sonra çizili hattında uçar: hattaki ilk birime 1 hasar verir ve onu iter.	A cylinder that is hit starts whistling and flies along its marked line a turn later: the first unit on the line takes 1 damage and is pushed.
+Türbin bakım atölyesi	Turbine maintenance workshop
+TÜP	CYLINDER
+Hidrolik yağ sızıntısı	Hydraulic oil leak
+2. tur sonunda hortum patlar: yağdaki birim itilince, çekilince ya da vurulunca yağ bitene kadar kayar; çarpışma 1 hasar.	At the end of turn 2 the hose bursts: a unit on the oil slides until the oil ends when it is pushed, pulled or hit; a crash deals 1 damage.
+Makine dairesi	Engine room
+YAĞ	OIL
+elektrik	electric shock
+yağda kaydı, duvara çarptı	slid on oil into a wall
+yağda kaydı, dolaba çarptı	slid on oil into a cabinet
+yağda kaydı, çarpıştı	slid on oil into a collision
+Gaz bulutu alev aldı: bir tur sonra parlayacak.	The gas cloud caught fire: it flares in one turn.
+Tavan çatlağı çökecek: bir tur sonra.	A ceiling crack will collapse: in one turn.
+Arşiv rafı yıkıldı: blok artık kaymaz.	The archive shelf was destroyed: the block no longer slides.
+Tüpün vanası çatladı, ıslık çalıyor: bir tur sonra çizili hattında uçacak.	The cylinder's valve cracked and it is whistling: in one turn it flies along its marked line.
+Kaynak kolu sarsıldı: evre sonunda bir adım fazla dönecek.	The welding arm was jolted: it turns one extra step at the end of the phase.
+Saha raporu · {0}: {1}	Field report · {0}: {1}
+Söndürme memeleri açıldı: bulut bir tur boyunca nişanı kesecek.	The suppression nozzles opened: the cloud blocks aiming for one turn.
+Arşiv rafı sıkıştı: blok bu evre kaymadı.	The archive shelf jammed: the block did not slide this phase.
+arşiv rafı	archive shelf
+Arşiv rafı sıkıştı: geçitte biri var, blok bu evre kaymadı.	The archive shelf jammed: someone is in the gap, the block did not slide this phase.
+Arşiv rafı kaydı: geçit rayın öbür ucuna atladı.	The archive shelf slid: the gap is now at the other end of the rail.
+Gaz bulutu parladı.	The gas cloud flared.
+parlama	flare
+Kompresör gazı boşalttı.	The compressor vented the gas.
+Kompresör çalıştı: yanıcı gaz hedefin önüne yayıldı.	The compressor kicked in: flammable gas spread in front of the target.
+Tavan çöktü: {0} altında kaldı.	The ceiling collapsed: the {0} was caught underneath.
+tavan	ceiling
+Tavan çöktü: enkaz yığını hattı kesti.	The ceiling collapsed: a rubble pile cut the line.
+Tavan çöktü, toz dağıldı.	The ceiling collapsed; the dust settled.
+kabin	elevator car
+Kabin inemedi: durakta biri var, bir evre daha bekleyecek.	The car could not land: someone is on the stop, it waits one more phase.
+Kabin indi: {0} öbür durakta.	The car landed: the {0} is at the other stop.
+Kabin kalktı: {0} bir evre yolculukta.	The car left: the {0} rides for one phase.
+Kriyo hattı boşaldı: bölgedekiler dondu.	The cryo line discharged: everyone in the zone froze.
+Kriyo hattı boşaldı.	The cryo line discharged.
+Tahliye: turnikeler baskın bitene kadar dışarı döner.	Evacuation: the turnstiles turn outward until the raid ends.
+Vardiya değişti: turnikeler içeri döner.	Shift change: the turnstiles now turn inward.
+Vardiya değişti: turnikeler dışarı döner.	Shift change: the turnstiles now turn outward.
+Kaynak kolu {0} yaktı.	The welding arm burned the {0}.
+kaynak	weld
+şebeke	grid
+Faz değişti: A kanalları canlı, B sönük.	Phase switched: A channels live, B dead.
+Faz değişti: B kanalları canlı, A sönük.	Phase switched: B channels live, A dead.
+Süzgeç çekti: çevresindekiler içeri sürüklendi.	The drain pulled: those around it were dragged in.
+Süzgeç çekti.	The drain pulled.
+Tüp uçtu, duvara çarpıp düştü.	The cylinder flew, hit a wall and dropped.
+Uçan tüp {0} vurdu.	The flying cylinder hit the {0}.
+tüp	cylinder
+Uçan tüp öbür tüpü kırdı.	The flying cylinder broke the other cylinder.
+Tüp uçtu, nesneye çarpıp düştü.	The cylinder flew, hit an object and dropped.
+Hidrolik hortum patladı: yağ yere yayıldı.	The hydraulic hose burst: oil spread across the floor.
+BULUT {0}	CLOUD {0}
+DAĞILIR	CLEARS
+RAF {0}	SHELF {0}
+PARLAMA {0}	FLARE {0}
+BOŞALIR	VENTS
+DOLUM {0}	FILL {0}
+ÇÖKECEK {0}	COLLAPSE {0}
+KALKIŞ {0}	DEPART {0}
+İNİŞ {0}	LAND {0}
+DONDURMA {0}	FREEZE {0}
+TAHLİYE MODU	EVACUATION
+TAHLİYE {0}	EVACUATION {0}
+VARDİYA {0}	SHIFT {0}
+EMME {0}	SUCTION {0}
+TÜP {0}	CYLINDER {0}
+HORTUM {0}	HOSE {0}
+DOLUM	FILL
+ÇÖKME	COLLAPSE
+İNİŞ	LAND
+KALKIŞ	DEPART
+DONDURMA	FREEZE
+VARDİYA	SHIFT
+HORTUM	HOSE
+KABİN: biner, bir evre tahtada yok	CAR: boards, off the board for one phase
+{0}: düşer	{0}: goes down
+{0}: {1} hasar ve itilir	{0}: {1} damage and pushed
+{0}: {1} hasar	{0}: {1} damage
+{0}: buz ya da zırh karşılar	{0}: ice or armour soaks it
+{0}: yer değiştirir	{0}: is moved
+DONACAK: yürüyemez, buz 1 hasar emer	FREEZING: cannot move, ice soaks 1 damage
 # Assets/Corrigible/Core/CampaignLiberation.cs
 Tedarik deposu	Supply depot
 Tahliye geçidi	Evacuation passage
@@ -420,7 +546,6 @@ Yedekleme merkezi	Backup centre
 Batarya odası	Battery room
 Sinyal odası	Signal room
 Depolama dizisi	Storage array
-Montaj hattı	Assembly line
 Yükleme rampası	Loading dock
 Metro peronu	Metro platform
 Atık su kanalı	Sewer channel
@@ -428,9 +553,7 @@ Sunucu salonu	Server hall
 Ağ geçidi	Network gateway
 Veri ambarı	Data warehouse
 Otopark katı	Parking level
-Soğuk depo	Cold storage
 Fiber santrali	Fiber exchange
-Trafo merkezi	Transformer station
 Yedek güç odası	Backup power room
 Röle istasyonu	Relay station
 Telefon santrali	Telephone exchange
@@ -492,8 +615,11 @@ gözcü · makineler yer değiştiriyor	spotter · machines repositioning
 №{0} · sise kesildi	№{0} · cut by smoke
 №{0} · onarım +1	No. {0} · repair +1
 Yeni bir robot uyandı: {0}.	A new robot woke up: {0}.
+№{0} · buluta kesildi	№{0} · cut by the cloud
 Saha	Field
+KABİNDE · bir evre tahtada yok	IN THE CAR · off the board for one phase
 KİLİT TEHDİDİ · #{0}	LOCK THREAT · #{0}
+DONMUŞ · bu tur yürüyemez	FROZEN · cannot move this turn
 İkmal kasası	Supply crate
 Düğüm	Node
 Çekirdek	Core
@@ -525,6 +651,8 @@ bir eksik canla	one less health
 Boş kare	Empty tile
 Duvar	Wall
 Sisli kare: nişanlı ateş kesilir	Smoked tile: aimed fire is cut
+Kaide hasar almaz; her darbe kolu bir adım fazla döndürür	The base takes no damage; every hit turns the arm one extra step
+Vurulursa bir tur sonra çizili hattında uçar	If hit, it flies along its marked line a turn later
 Zırh: hasar işlemez	Armour: no damage
 İtilir, üniteye çarpar	Pushed into the unit
 −1	−1
@@ -541,6 +669,7 @@ Malzemeler alınır	Supplies will be collected
 Kaçış başlar: bütün ekip girişten çıkmalı	The escape begins: the whole team must leave through the entry
 Kasa imha olur; görev kaybedilir	Crate destroyed; mission failed
 Niyet {0} sise kesildi	Intent {0} cut by smoke
+Niyet {0} buluta kesildi	Intent {0} cut by the cloud
 Niyet · sıra {0}	Intent · order {0}
 Zırh	Armor
 Bölgenin imza makinesi	This region's signature machine
@@ -556,6 +685,7 @@ Tahtada kalan: {0}	Left on the board: {0}
 ZIRH	ARMOR
 PATLAR	EXPLODES
 ÇIKAR	EXITS
+OLAY	EVENT
 SEKTÖR GERİ ALINDI	SECTOR RETAKEN
 GERİ ÇEKİLDİ	WITHDRAWN
 EKİP DÜŞTÜ	TEAM DOWN
@@ -570,13 +700,6 @@ alındı	taken
 kayboldu	lost
 kırıldı	broken
 Kırılan sivil sunucu	Civilian servers broken
-yatıyor · {0} gün	laid up · {0} days
-yatıyor	laid up
-{0} · yedek yok, baskına çıkmadı	{0} · no reserve, sat this raid out
-{0} · yerine yedek uzman, can {1}/{2}	{0} · reserve in their place, health {1}/{2}
-tam iyileşmedi · can {0}/{1}	not fully healed · health {0}/{1}
-sağlam · can {0}/{1}	fit · health {0}/{1}
-{0} · zırh plakası	{0} · armor plate
 TEKNİSYEN	TECHNICIAN
 EMP UZMANI	EMP SPECIALIST
 MADENCİ	MINER
@@ -594,11 +717,40 @@ kilit	lock
 kalkan	shield
 çoğaltma	replicate
 ateş	fire
+Söndürme bulutu: buraya ve buradan nişan alınmaz	Suppression cloud: no aiming into or out of here
+Bu tur sonunda bulut dolar	The cloud fills at the end of this turn
+Söndürme memesi	Suppression nozzle
+Arşiv rafı: kayar duvar	Archive shelf: a sliding wall
+Rafın geçidi	The shelf's gap
+Bu tur sonunda raf kapanır: 1 hasar ve itme	The shelf closes at the end of this turn: 1 damage and a push
+Bu tur sonunda geçit açılır	The gap opens at the end of this turn
+Yanıcı gaz: ateş değerse bir tur sonra parlar	Flammable gas: flares a turn after fire touches it
+Bu tur sonunda gaz dolar	Gas fills at the end of this turn
+Alev aldı: parlayınca 1 hasar	Ignited: 1 damage when it flares
+Gaz sızıntısı	Gas leak
+Çatlak tavan: yanındaki darbe çökertir	Cracked ceiling: an impact next to it brings it down
+Tavan çökecek: altındakine 1 hasar, boşsa enkaz	The ceiling will collapse: 1 damage to whoever is below, rubble if empty
+Asansör durağı: kabin kalkınca üstündeki yolculuk eder	Elevator stop: whoever stands here rides when the car leaves
+Kabin bu durakta	The car is at this stop
+Kriyo bölgesi	Cryo zone
+Bu tur sonunda donar: yürüyemez, buz 1 hasar emer	Freezes at the end of this turn: cannot move, ice soaks 1 damage
+Turnike holü: kenarlar tek yöne döner	Turnstile hall: the edges turn one way
+Bu evre kaynak: 1 hasar	Welded this phase: 1 damage
+Sıradaki kaynak karesi	Next weld tile
+Canlı kanal: evre sonunda 1 hasar	Live channel: 1 damage at the end of the phase
+Sönük kanal: güvenli	Dead channel: safe
+Süzgeç: 3. ve 6. tur sonunda çevresini çeker	Drain: pulls its neighbours at the end of turns 3 and 6
+Bu tur sonunda süzgeç çeker	The drain pulls at the end of this turn
+Tüp ıslık çalıyor: çizili hattında uçacak	The cylinder is whistling: it will fly along its marked line
+Yağ: itilen, çekilen ya da vurulan kayar	Oil: whoever is pushed, pulled or hit slides
+2. tur sonunda yağ dökülür	Oil spills at the end of turn 2
+Hidrolik hortum	Hydraulic hose
 İKMAL GÖREVİ	SUPPLY MISSION
 KOPYALAMA	REPLICATION
 Teknisyen ile ikmal kasasına yaklaş. Q ile yeteneği seç, kasaya tıkla ve malzemeleri al. Kasayı imha etme.	Move the Technician next to the supply crate. Press Q to select the ability, then click the crate to collect the supplies. Do not destroy the crate.
 Her tur yeni robotlar uyanabilir.	New robots may wake each turn.
 {0}: {1}	{0}: {1}
+Olay · {0}: {1}	Event · {0}: {1}
 İmza makinesi: {0}	Signature machine: {0}
 Tehdit {0}/4: makineler alışılmış düzende.	Threat {0}/4: machines in their usual numbers.
 Tehdit {0}/4: başta bir makine fazla.	Threat {0}/4: one extra machine at the start.
@@ -726,11 +878,13 @@ Kapı: {0} · güven {1}	Door: {0} · trust {1}
 Kapı: {0} · “{1}” · güven {2}	Door: {0} · “{1}” · trust {2}
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/LiberationMapBuilder.cs
 EKİP {0}	TEAM {0}
+{0}: {1} Olay · {2}: {3} İmza makinesi {4}: {5}	{0}: {1} Event · {2}: {3} Signature machine {4}: {5}
 {0}: {1} İmza makinesi {2}: {3}	{0}: {1} Signature machine {2}: {3}
 Bölge: {0} · İmza: {1}	Region: {0} · Signature: {1}
 {0} plaka	{0} plates
 BÖLGE	REGION
 BÖLGE · {0}	REGION · {0}
+OLAY · {0}	EVENT · {0}
 İMZA	SIGNATURE
 İMZA · {0}	SIGNATURE · {0}
 TEHDİT	THREAT
@@ -742,8 +896,9 @@ SV {0}	LV {0}
 {0} · KİLİTLİ	{0} · LOCKED
 Atölye seviye {0} olunca kadroya katılır. {1}: {2}	Joins the squad at workshop level {0}. {1}: {2}
 SABİT	FIXED
-YEDEK ÇIKAR	RESERVE GOES
-{0} GÜN	DAYS: {0}
+YEDEK	RESERVE
+{0} GÜN	{0} DAYS
+yatıyor · {0} gün	laid up · {0} days
 can {0}/{1}	health {0}/{1}
 Seçilirse yerine bir eksik canla yedek uzman çıkar.	If picked, a reserve specialist goes in their place with one less health.
 Yedek yok: seçilirse kadro eksik çıkar.	No reserve: if picked, the squad goes one short.
@@ -778,12 +933,21 @@ Fon yetersiz · {0} gerekli	Not enough funds · {0} needed
 TEKNİSYEN YARALI	TECHNICIAN INJURED
 KADRO EKSİK	SQUAD INCOMPLETE
 EKİP HAZIR DEĞİL	TEAM NOT READY
+KADRO RAPORU	SQUAD REPORT
+{0:00} {1} · {2}	{0:00} {1} · {2}
+yatıyor	laid up
+{0} · yedek yok, rol boş kalır	{0} · no reserve, the role stays empty
+{0} · yerine yedek uzman, can {1}/{2}	{0} · reserve in their place, health {1}/{2}
+tam iyileşmedi · can {0}/{1}	not fully healed · health {0}/{1}
+sağlam · can {0}/{1}	fit · health {0}/{1}
+{0} · zırh plakası	{0} · armor plate
+BASKINA ÇIK	DEPLOY
+Vazgeç	Cancel
 YENİ CEPHE · ONAY	NEW FRONT · CONFIRM
 Komşu: {0}	Neighbour: {0}
 İŞGAL {0}	OCCUPIED {0}
 {0} Tehdit {1}/4. Cephe açılınca 01 {2} baskına hazır olur.	{0} Threat {1}/4. Once the front opens, 01 {2} is ready to raid.
 SEÇİLİ BÖLGEDE CEPHE AÇ	OPEN FRONT IN SELECTED REGION
-Vazgeç	Cancel
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/OperationReportBuilder.cs
 {0} (yedek)	{0} (reserve)
 Sektör	Sector
@@ -1023,7 +1187,7 @@ Burası Sığınak 07. Üstteki sayaçlar fonu, erzakı, malzemeyi, özgür böl
 GÖREV FİŞİ	MISSION SLIP
 Masadaki GÖREVLER tuşuna bas: harita açılır, cephedeki Batı Avrupa'nın görev fişi gelir.	Press the MISSIONS key on the desk: the map opens with the slip for Western Europe, the current front.
 BASKIN EMRİ	RAID ORDER
-Fiş sıradaki sektörü, bedelini, ödülünü, bölgenin özelliğini ve kadroyu yazar. BASKIN EMRİ VER'e bas.	The slip lists the next sector, its cost, reward, the region's trait and your squad. Press ORDER THE RAID.
+Fiş sıradaki sektörü, bedelini, ödülünü, bölgenin özelliğini ve kadroyu yazar. BASKIN EMRİ VER'e bas: yanında kadro raporu açılır; uzmanların durumunu oku, BASKINA ÇIK ile onayla.	The slip lists the next sector, its cost, reward, the region's trait and your squad. Press ORDER THE RAID: a squad report opens beside it; read your specialists' condition and confirm with DEPLOY.
 TAKTİK TAHTA	TACTICAL BOARD
 Kırmızı oklar gözcünün telsizden bildirdiği makine hamleleri, bayraktaki sayı sırası. Uzmanı seç (1–3), mavi kareye yürü, Q ile yeteneği seç ve hedefe tıkla; Enter emri iletir. Kasayı altıncı turdan önce al.	Red arrows are the machine moves the spotter reports by radio; the flag number is their order. Select a specialist (1–3), move to a blue tile, press Q for the ability and click the target; Enter transmits the order. Take the crate before turn six.
 Baskın bitti. Alınan hasar sığınağa yara olarak döner; düşen uzman günlerce yatar. OPERASYON RAPORUNA GEÇ'e bas: masaya dönülür, rapor açılır.	The raid is over. Damage taken comes home as wounds; a fallen specialist is laid up for days. Press GO TO OPERATION REPORT: you return to the desk and it opens.
@@ -1080,6 +1244,8 @@ kaçış başlar	escape begins
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidHudView.cs
 TUR	TURN
 SON 2 TUR	LAST 2 TURNS
+{0}<size=55%>{1}</size>	{0}<size=55%>{1}</size>
+<u>{0}</u>	<u>{0}</u>
 SON TUR	LAST TURN
 OPERASYON BİTTİ	OPERATION OVER
 MAKİNELER	MACHINES
@@ -1125,7 +1291,6 @@ EMİN MİSİN? TEKRAR BAS	ARE YOU SURE? PRESS AGAIN
 OPERASYON RAPORUNA GEÇ	GO TO OPERATION REPORT
 Devam et [Esc]	Resume [Esc]
 DURAKLATILDI	PAUSED
-KADRO RAPORU	SQUAD REPORT
 OPERASYON SONUCU	OPERATION RESULT
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidTeamCardView.cs
 {0} · YEDEK	{0} · RESERVE
@@ -1183,7 +1348,6 @@ YENİDEN İŞGAL	RE-OCCUPIED
 BASKINA HAZIR	READY TO RAID
 KİLİTLİ	LOCKED
 {0} yedek	{0} reserve
-{0}\n<size=75%>{1}</size>	{0}\n<size=75%>{1}</size>
 FON YETERSİZ	NOT ENOUGH FUNDS
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/RoomView.cs
 DURDU	STOPPED
@@ -1192,6 +1356,7 @@ Yerel	Local
 # Assets/Corrigible/Game/Raid/RaidBoard3D.cs
 SİS	SMOKE
 UYANDI	WOKE UP
+DONDU	FROZEN
 YÜKLÜ	CARRYING
 TUR BİTTİ	TURN DONE
 ONARIM	REPAIR
@@ -1203,9 +1368,18 @@ KİLİTLENDİ	LOCKED
 PLAKA KIRILDI	PLATE BROKEN
 +1	+1
 İKMAL ALINDI	SUPPLIES RETRIEVED
+BULUTA KESİLDİ	CUT BY CLOUD
+BUZ KIRILDI	ICE BROKE
 <s>{0}</s> İPTAL	<s>{0}</s> CANCELLED
 YIKILDI	BREACHED
 SİSE KESİLDİ	CUT BY SMOKE
+RAF SIKIŞTI	SHELF JAMMED
+BOŞALDI	VENTED
+ALEV ALDI	IGNITED
+TOZ	DUST
+KABİN BEKLİYOR	CAR WAITING
+KOL SARSILDI	ARM JOLTED
+ISLIK	WHISTLE
 {0} ŞİMDİ	{0} NOW
 <s>{0}</s> UYGULANDI	<s>{0}</s> DONE
 TAHLİYE	EXTRACTED
@@ -1243,7 +1417,6 @@ aday	candidate
 geri alındı	retaken
 hazır	ready
 kilitli	locked
-VARDİYA	SHIFT
 Kesit maketi · odaları yönet	Cross-section model · manage the rooms
 GÖREVLER	MISSIONS
 Görev fişi · baskın emri	Mission slip · raid order
@@ -1275,3 +1448,5 @@ TELSİZ KAYDI · K-07	RADIO LOG · K-07
 BEDEL	COST
 ÖDÜL	REWARD
 ziyaretçi	visitors
+# --- Kullanılmayan çeviriler (koddan silinmiş metinler; gerekirse geri alınır) ---
+#{0}\n<size=75%>{1}</size>	{0}\n<size=75%>{1}</size>

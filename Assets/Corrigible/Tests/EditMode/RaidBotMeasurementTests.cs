@@ -36,6 +36,7 @@ namespace Corrigible.Tests
                 // Plakalar sığınaktan gelir; ölçümde kadro plakasız (imza zırhı içermez)
                 Assert.AreEqual(Baskin.Signature(Baskin.Create(p)), Baskin.Signature(Baskin.Create(mine)), sector);
                 CollectionAssert.AreEqual(p.Traits, mine.Traits, sector);
+                Assert.AreEqual(p.Event, mine.Event, "bölge olayı " + sector);
                 CollectionAssert.AreEqual(p.Squad.Select(x => x.Type + x.Hp), mine.Squad.Select(x => x.Type + x.Hp), sector);
                 Assert.AreEqual((p.TargetHpBonus, p.ExtraMachines, p.ExtraTurns, p.CivilianHp, p.Tactics, p.Signature),
                     (mine.TargetHpBonus, mine.ExtraMachines, mine.ExtraTurns, mine.CivilianHp, mine.Tactics, mine.Signature), sector);

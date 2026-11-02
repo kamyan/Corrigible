@@ -101,6 +101,8 @@ namespace Corrigible.Desk.Bridge
             var def = GameData.Region(regionId);
             if (def.Trait == null || !Baskin.RegionTraits.TryGetValue(def.Trait, out var trait) || def.Enemy == null) return "";
             var enemy = Baskin.UnitTypes[def.Enemy];
+            if (full && def.Event != null && Baskin.RegionEvents.TryGetValue(def.Event, out var ev))
+                return Loc.F("{0}: {1} Olay · {2}: {3} İmza makinesi {4}: {5}", Loc.T(trait.Name), Loc.T(trait.Desc), Loc.T(ev.Name), Loc.T(ev.Desc), enemy.Name, enemy.Desc);
             return full
                 ? Loc.F("{0}: {1} İmza makinesi {2}: {3}", Loc.T(trait.Name), Loc.T(trait.Desc), enemy.Name, enemy.Desc)
                 : Loc.F("Bölge: {0} · İmza: {1}", Loc.T(trait.Name), enemy.Name);
@@ -140,10 +142,10 @@ namespace Corrigible.Desk.Bridge
         static SlipReward Reward(double amount, string unit) => new SlipReward { Amount = DeskFormat.Signed(amount, 0), Unit = unit };
 
         /// <summary>
-        /// SAHA satırları (S2): bölge özelliği, imza makinesi (kare çerçeveli işaretleriyle) ve tehdit kademesi. Üzerine gelince
-        /// oyundaki açıklama.
+        /// SAHA satırları (S2): bölge özelliği, bölge olayı, imza makinesi (kare çerçeveli işaretleriyle) ve tehdit kademesi.
+        /// Üzerine gelince oyundaki açıklama. <paramref name="noEvent"/>: eğitim baskını olaysızdır (fişte de OLAY satırı yok).
         /// </summary>
-        public static void Fields(Simulation sim, string regionId, List<SlipField> into)
+        public static void Fields(Simulation sim, string regionId, List<SlipField> into, bool noEvent = false)
         {
             var def = GameData.Region(regionId);
             if (def.Trait != null && Baskin.RegionTraits.TryGetValue(def.Trait, out var trait))
@@ -153,6 +155,15 @@ namespace Corrigible.Desk.Bridge
                 {
                     Glyph = SiginakGlyphs.Trait(def.Trait, framed: true), Label = Loc.T("BÖLGE"), Value = name,
                     HoverTitle = Loc.F("BÖLGE · {0}", DeskText.Upper(name)), HoverLine = Loc.T(trait.Desc),
+                });
+            }
+            if (!noEvent && sim.B.liberationRegionEvents && def.Event != null && Baskin.RegionEvents.TryGetValue(def.Event, out var ev))
+            {
+                string name = Loc.T(ev.Name);
+                into.Add(new SlipField
+                {
+                    Glyph = "ic_bolt_s", Label = Loc.T("OLAY"), Value = name,
+                    HoverTitle = Loc.F("OLAY · {0}", DeskText.Upper(name)), HoverLine = Loc.T(ev.Desc),
                 });
             }
             if (def.Enemy != null && Baskin.UnitTypes.TryGetValue(def.Enemy, out var enemy))
@@ -202,7 +213,8 @@ namespace Corrigible.Desk.Bridge
                 }
                 int max = Simulation.MaxHp(role), hp = Math.Max(1, max - m.Wounds);
                 bool down = m.Down > 0;
-                string status = role == "tek" ? Loc.T("SABİT") : down ? (freeReserves > 0 ? Loc.T("YEDEK ÇIKAR") : Loc.F("{0} GÜN", m.Down)) : null;
+                // Durum çipin genişliğine sığar (≤ 7 harf; ayrıntısı üzerine gelince): yerine yedek çıkacaksa YEDEK, yoksa kalan gün
+                string status = role == "tek" ? Loc.T("SABİT") : down ? (freeReserves > 0 ? Loc.T("YEDEK") : Loc.F("{0} GÜN", m.Down)) : null;
                 d.Pick.Add(new SlipPick
                 {
                     Role = role, Letter = type.Short, Hp = down ? "—" : Loc.F("{0}/{1}", hp, max), Status = status, Down = down,
@@ -242,7 +254,7 @@ namespace Corrigible.Desk.Bridge
             d.Progress = area.Completed
                 ? Loc.F("SEKTÖRLER {0}/{1} · ÖZGÜR", captured, count)
                 : Loc.F("SEKTÖRLER {0}/{1} · İŞGAL {2}", captured, count, DeskFormat.Percent(occupation, captured > 0 ? 1 : 0));
-            Fields(sim, regionId, d.Fields);
+            Fields(sim, regionId, d.Fields, fixedSquad);
             foreach (var s in area.Sectors)
             {
                 // Karar 3: cephedeki ilk alınmamış sektör fon ya da ekip eksik olsa da BASKINA HAZIR; düğme gerekçeyle kapalı
@@ -322,6 +334,42 @@ namespace Corrigible.Desk.Bridge
                     : short_ && !back ? Loc.T("KADRO EKSİK") : Loc.T("EKİP HAZIR DEĞİL");
             // Emir verildikten sonra gerekçe yazılmaz (damga konuşur)
             d.Reason = why == null || field ? null : short_ && !back ? why : TelexReasons.Raid(sim, next.Id);
+            return d;
+        }
+
+        /// <summary>
+        /// Kadro raporu (BASKIN EMRİ VER'den sonra, emir verilmeden): baskına çıkacak her uzman rol sırasıyla, emrin kendi
+        /// kadrosundan (<see cref="Simulation.LiberationSquadPreview"/>; plakalar takılı). Durum: sağlam, tam iyileşmedi, yatıyor
+        /// ve yerine yedek, yatıyor ve yedek yok; plaka takılacaksa eki. <paramref name="pick"/> ve <paramref name="fixedSquad"/>
+        /// görev fişindeki gibi.
+        /// </summary>
+        public static SquadReportData SquadReport(Simulation sim, string regionId, IList<string> pick = null, bool fixedSquad = false)
+        {
+            var d = new SquadReportData { RegionId = regionId };
+            var next = sim?.NextLiberationSector(regionId);
+            if (next == null) return d;
+            d.Head = Loc.T("KADRO RAPORU");
+            d.Region = DeskText.Upper(Loc.T(GameData.Region(regionId).Name));
+            d.Sector = Loc.F("{0:00} {1} · {2}", next.Index + 1, DeskText.Upper(next.Name), Kind(next));
+            // Emrin göndereceği seçim (SiginakMap.ConfirmSquad): eğitim baskınında ve seçim yokken varsayılan
+            var preview = sim.LiberationSquadPreview(fixedSquad || pick == null ? null : Simulation.PickKey(pick));
+            var team = sim.S.Teams.FirstOrDefault(Simulation.TeamReady);
+            foreach (var s in Baskin.SquadReport(preview))
+            {
+                int days = team?.Members.FirstOrDefault(m => m.Role == s.Type)?.Down ?? 0;
+                string down = days > 0 ? Loc.F("yatıyor · {0} gün", days) : Loc.T("yatıyor");
+                string status = s.Missing ? Loc.F("{0} · yedek yok, rol boş kalır", down)
+                    : s.Rookie ? Loc.F("{0} · yerine yedek uzman, can {1}/{2}", down, s.Hp, s.Max)
+                    : s.Wounded ? Loc.F("tam iyileşmedi · can {0}/{1}", s.Hp, s.Max)
+                    : Loc.F("sağlam · can {0}/{1}", s.Hp, s.Max);
+                if (s.Armor > 0) status = Loc.F("{0} · zırh plakası", status);
+                var type = Baskin.UnitTypes[s.Type];
+                d.Rows.Add(new SquadReportRow { Letter = type.Short, Name = type.Name, Status = status, Good = !s.Missing && !s.Rookie && !s.Wounded, Missing = s.Missing });
+            }
+            // Odada klavye ipucu yok (Enter onaylar, Esc vazgeçer ama yazılmaz); düğmede fişteki gibi bedel
+            d.Action = Loc.T("BASKINA ÇIK");
+            d.ActionCost = Loc.F("{0} fon", DeskFormat.Signed(-sim.B.liberationRaidCost, 0));
+            d.Cancel = Loc.T("Vazgeç");
             return d;
         }
 

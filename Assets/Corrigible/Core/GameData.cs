@@ -13,8 +13,9 @@ namespace Corrigible.Core
         public double Lon, Lat;
         /// <summary>Hesaplama gücü: taktik haritanın yerleşim seçimine katılır.</summary>
         public int Compute;
-        /// <summary>Bölgenin kimliği: tahta özelliği (<c>Baskin.RegionTraits</c>) ve imza düşmanı (<c>Baskin.UnitTypes</c>).</summary>
-        public string Trait, Enemy;
+        /// <summary>Bölgenin kimliği: tahta özelliği (<c>Baskin.RegionTraits</c>), imza düşmanı (<c>Baskin.UnitTypes</c>) ve
+        /// baskın boyunca tur tur işleyen bina içi olay (<c>Baskin.RegionEvents</c>).</summary>
+        public string Trait, Enemy, Event;
     }
 
     public sealed class LinkDef
@@ -35,19 +36,19 @@ namespace Corrigible.Core
     {
         public static readonly RegionDef[] Regions =
         {
-            // Her bölgenin kendine özgü özelliği ve imza düşmanı (her düşman iki bölgede)
-            R("na", Loc.N("Kuzey Amerika"), -100, 40, 5, "kisa", "havan"),
-            R("sa", Loc.N("Güney Amerika"), -60, -15, 2, "takviye", "bomba"),
-            R("weu", Loc.N("Batı Avrupa"), 5, 48, 4, "guvenli", "zdron"),
-            R("eeu", Loc.N("Doğu Avrupa"), 27, 51, 2, "dar", "kilit"),
-            R("ru", Loc.N("Rusya"), 90, 60, 3, "sogutma", "kalkan"),
-            R("me", Loc.N("Orta Doğu"), 45, 28, 3, "sis", "bomba"),
-            R("af", Loc.N("Afrika"), 20, 5, 1, "acik", "havan"),
-            R("in", Loc.N("Hindistan"), 78, 22, 3, "kalabalik", "kalkan"),
-            R("cn", Loc.N("Çin"), 105, 35, 5, "zirhli", "cogalt"),
-            R("jk", Loc.N("Japonya-Kore"), 135, 37, 4, "sebeke", "kilit"),
-            R("sea", Loc.N("Güneydoğu Asya"), 110, 5, 2, "fabrika", "cogalt"),
-            R("oc", Loc.N("Okyanusya"), 135, -25, 2, "devriye", "zdron"),
+            // Her bölgenin kendine özgü özelliği, imza düşmanı (her düşman iki bölgede) ve bina içi olayı
+            R("na", Loc.N("Kuzey Amerika"), -100, 40, 5, "kisa", "havan", "asansor"),
+            R("sa", Loc.N("Güney Amerika"), -60, -15, 2, "takviye", "bomba", "tup"),
+            R("weu", Loc.N("Batı Avrupa"), 5, 48, 4, "guvenli", "zdron", "bulut"),
+            R("eeu", Loc.N("Doğu Avrupa"), 27, 51, 2, "dar", "kilit", "raf"),
+            R("ru", Loc.N("Rusya"), 90, 60, 3, "sogutma", "kalkan", "kriyo"),
+            R("me", Loc.N("Orta Doğu"), 45, 28, 3, "sis", "bomba", "gaz"),
+            R("af", Loc.N("Afrika"), 20, 5, 1, "acik", "havan", "tavan"),
+            R("in", Loc.N("Hindistan"), 78, 22, 3, "kalabalik", "kalkan", "turnike"),
+            R("cn", Loc.N("Çin"), 105, 35, 5, "zirhli", "cogalt", "kaynak"),
+            R("jk", Loc.N("Japonya-Kore"), 135, 37, 4, "sebeke", "kilit", "faz"),
+            R("sea", Loc.N("Güneydoğu Asya"), 110, 5, 2, "fabrika", "cogalt", "suzgec"),
+            R("oc", Loc.N("Okyanusya"), 135, -25, 2, "devriye", "zdron", "yag"),
         };
 
         /// <summary>Kara ve kablo bağlantıları: yeni cephe, özgür bir bölgeye komşu olmalı.</summary>
@@ -74,8 +75,8 @@ namespace Corrigible.Core
         public static RegionDef Region(string id) => regionById[id];
         public static EndingDef Ending(string id) => endingById[id];
 
-        static RegionDef R(string id, string name, double lon, double lat, int compute, string trait, string enemy) =>
-            new RegionDef { Id = id, Name = name, Lon = lon, Lat = lat, Compute = compute, Trait = trait, Enemy = enemy };
+        static RegionDef R(string id, string name, double lon, double lat, int compute, string trait, string enemy, string ev) =>
+            new RegionDef { Id = id, Name = name, Lon = lon, Lat = lat, Compute = compute, Trait = trait, Enemy = enemy, Event = ev };
         static LinkDef L(string a, string b) => new LinkDef { A = a, B = b };
     }
 }

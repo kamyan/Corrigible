@@ -70,9 +70,12 @@ namespace Corrigible.Tests
             Assert.AreEqual(2, Civ(Baskin.Create(new RaidParams { Seed = 4242, Compute = 4, CivilianHp = 2, Traits = new List<string> { "kalabalik" } })), "kalabalık şehrin fazladan sivilleri de");
         }
 
-        /// <summary>Kadro raporu: yaralı asıl uzman, yatanın yerine yedek ve yedeksiz boş rol telsize düşer; sağlam kadro sessiz girer.</summary>
+        /// <summary>
+        /// Kadro raporu (görev fişinde, emirden önce): yaralı asıl uzman, yatanın yerine yedek ve yedeksiz boş rol. Baskın
+        /// kadroyu telsize yazmaz; rapor baskından önce onaylandı.
+        /// </summary>
         [Test]
-        public void SquadReport_TellsTheRadioWhoIsHurtStandingInOrMissing()
+        public void SquadReport_NamesWhoIsHurtStandingInOrMissing_AndTheRaidStaysQuiet()
         {
             var healthy = Baskin.Create(new RaidParams { Seed = 7 });
             Assert.AreEqual(1, healthy.Log.Count, "sağlam kadro: yalnız açılış satırı");
@@ -88,16 +91,12 @@ namespace Corrigible.Tests
             Assert.IsFalse(report[0].Wounded); Assert.AreEqual(1, report[0].Armor);
             Assert.IsTrue(report[1].Missing);
             Assert.IsTrue(report[2].Wounded); Assert.AreEqual(1, report[2].Hp); Assert.AreEqual(2, report[2].Max);
-            var B = Baskin.Create(p);
-            Assert.AreEqual(Loc.F("{0} yatıyor ve yedek yok: kadro eksik girdi.", Baskin.UnitTypes["emp"].Name), B.Log[0].Text);
-            Assert.AreEqual("bad", B.Log[0].Kind);
-            Assert.AreEqual(Loc.F("{0} tam iyileşmedi: can {1}/{2}.", Baskin.UnitTypes["ana"].Name, 1, 2), B.Log[1].Text);
+            Assert.AreEqual(1, Baskin.Create(p).Log.Count, "yaralı ve eksik kadro da telsize yazılmaz");
 
             // Yedek uzmanın eksik canı yara değildir
             p.Squad[1] = new SquadSlot { Type = "ana", Hp = 1, Reserve = 0 };
             var rookie = Baskin.SquadReport(p)[2];
             Assert.IsTrue(rookie.Rookie); Assert.IsFalse(rookie.Wounded);
-            Assert.AreEqual(Loc.F("{0} yatıyor: yerine yedek uzman girdi, can {1}/{2}.", Baskin.UnitTypes["ana"].Name, 1, 2), Baskin.Create(p).Log[1].Text);
         }
 
         [Test]

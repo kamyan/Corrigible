@@ -52,6 +52,10 @@ namespace Corrigible.Desk.EditorTools
         static Entry R2(string name, Kind kind, int border = 0, bool repeat = false, Vector4? edges = null) =>
             new Entry(name, kind, border, repeat, rev2: true, edges: edges);
 
+        /// <summary>Yumuşak kenarlı türev (SiginakTextureBaker.SoftEdges): kaynağın çevresinde 1 px saydam pay, dilim kenarı +1.</summary>
+        static Entry Soft(string source, int border, Kind kind = Kind.Sliced) => new Entry(source + SoftSuffix, kind, border + 1, generated: true);
+        public const string SoftSuffix = "_aa";
+
         static readonly Entry[] Entries =
         {
             // Düz zemin ve kenar (Sliced; README: dilim kenarı L = T = R = B)
@@ -62,6 +66,13 @@ namespace Corrigible.Desk.EditorTools
             new Entry("ui_frame_4px_r0", Kind.Sliced, 8), new Entry("ui_frame_8px_r0", Kind.Sliced, 13),
             // 4 ve 8 px çerçevelerde çizgi kenardan 2/4 px içeride başlar: README kenarı (6/10) çizgiyi böler ve orta dilim
             // gerilince yarı saydam dolgu verir; kenar çizgi + yumuşatma dışına alındı.
+            // Yumuşak kenarlı türevler: eğik kâğıtlardaki zemin, düğme, gölge ve çerçeveler (dokunun kenarı saydam, eğik kenar basamaksız)
+            Soft("ui_fill_r0", 3), Soft("ui_fill_r2", 4), Soft("ui_fill_r3", 5), Soft("ui_frame_1px_r2", 4), Soft("ui_frame_1_5px_r2", 4),
+            Soft("ui_frame_2px_r3", 5), Soft("ui_frame_3px_r0", 5), Soft("ui_frame_double_6px", 8), Soft("ui_frame_dashed_2px", 2, Kind.Tiled),
+            // İnce çizgiler: ortada 1 px (yatay ya da dikey) dolu, iki yanında 1 px saydam; kesik ayraç deseninin üstü ve altı saydam
+            new Entry("ui_line_h_aa", Kind.Sliced, generated: true, edges: new Vector4(0, 1, 0, 1)),
+            new Entry("ui_line_v_aa", Kind.Sliced, generated: true, edges: new Vector4(1, 0, 1, 0)),
+            new Entry("ui_dash_h_aa", Kind.Tiled, generated: true, edges: new Vector4(0, 1, 0, 1)),
             // Kesik kenar: kenarlar döşenir
             new Entry("ui_frame_dashed_2px", Kind.Tiled, 2), new Entry("ui_frame_dashed_3px", Kind.Tiled, 3),
             // Döşemeler

@@ -293,7 +293,7 @@ namespace Corrigible.Desk.Tests
                 for (bool enter = true; it.NextVisible(enter); enter = false)
                     if (it.propertyType == SerializedPropertyType.ObjectReference && it.name != "m_Script")
                         Assert.IsNotNull(it.objectReferenceValue, "fiş alanı bağlı değil: " + it.propertyPath);
-                Assert.AreEqual(3, so.FindProperty("fields").arraySize);
+                Assert.AreEqual(4, so.FindProperty("fields").arraySize, "SAHA: bölge, olay, imza, tehdit");
                 Assert.AreEqual(4, so.FindProperty("rewards").arraySize);
                 Assert.AreEqual(4, so.FindProperty("tierGlyphs").arraySize);
                 foreach (var h in slip.GetComponentsInChildren<UiHoverTarget>(true))

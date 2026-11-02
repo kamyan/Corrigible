@@ -564,6 +564,26 @@ S6a–c, S7a–d, S8a–b; TR ve EN (S4d siluet kataloğu oyunda bir durum deği
 
 ## CHANGELOG
 
+- **2026-11-02 · Eğik kâğıtlarda kenar (S1–S8):** eğik kâğıtlardaki 9 dilim zemin, düğme, gölge ve çerçeveler yumuşak
+  kenarlı türevde (`*_aa`, `SiginakTextureBaker.SoftEdges`: 1 px saydam pay, dilim kenarı +1); 1–2 px çizgiler 2 px kalın
+  "Soft line" çocuğunda (`ui_line_h_aa`, `ui_line_v_aa`, `ui_dash_h_aa`). Overlay katmanı kenar yumuşatmadığı için eğik
+  kenar basamaklanıyordu (BAŞLA, BASKIN EMRİ VER, damgalar, kırmızı başlık çizgisi). Görsel 1 px içeride biter; yerleşim aynı.
+  Sahne ve iki baskın prefab'ı tek seferlik eval'le güncellendi.
+
+- **2026-11-02 · KADRO çipinin durumu (S2):** durum (SABİT, YEDEK, n GÜN) canın altındaki dar sütundan (`<size=75%>`, 12 px)
+  çipin bütün genişliğindeki kendi satırına (`PickChip.status`, CP 700 14) taşındı; "YEDEK ÇIKAR" → "YEDEK", İngilizcede
+  "DAYS: n" → "n DAYS". Çip: dikey dizi (iç pay 3/2/2/2), üstte disk + can, altta durum; 64 × 44 aynı. Beş çip tek seferlik
+  eval'le yeniden kuruldu.
+
+- **2026-11-02 · Kadro raporu baskın emrinde (S2, S6):** baskının sol altındaki sarı KADRO RAPORU notu kalktı
+  (`RaidPanels.prefab › SquadReport` tek seferlik betikle silindi). Görev fişinde BASKIN EMRİ VER artık fişin iç yanında
+  **KADRO RAPORU** kartını açar (`SiginakHud › Squad report`, `SquadReportSlip`; görev fişinden tek seferlik eval'le
+  kopyalandı): fişin kâğıt dili, 392 px, ±1,2°, alt kenar fişinkinin 10 px üstünde, fiş kayarken onunla gider. Başlık (KADRO RAPORU · ✕,
+  bölge CP 700 24, sektör), kırmızı çizgi, uzman başına disk 22 px + ad LF 600 18 + durum LF 400 16 (sağlam
+  `stamp.teamReady`, öteki `status.threat`; eksik rol soluk disk), kesik ayraç, mürekkep düğme "BASKINA ÇIK" + bedel,
+  altında "Vazgeç". Klavye ipucu yok (Enter/Esc bağlayıcıda; düğmeler gezinmesiz). Açılış `motion.slipOpenS` (12 px
+  yukarıdan oturma + belirme); emirde düğme 0,06 s iner, kart fişle solar. Emir onayla verilir (`SiginakMap.ConfirmSquad`).
+
 - **2026-11-01 · Anahtar rayı ve tuş ipuçları (S1, S2, S4, S5):** KOMUTA ve KILAVUZ tuşları kalktı (rayda ve kenar
   satırında); ray 4 tuş (SIĞINAK, GÖREVLER, KAPI, MASA; `StationKeyRail` 0–3), taban 0,94 m, MASA bir aralık (0,226) sola.
   Tuş başlığında rakam/“Home” yerine simge (`tx_key_*`, `SiginakTextureBaker.KeyIcons`; URP Lit saydam dörtgen, 30 mm,
