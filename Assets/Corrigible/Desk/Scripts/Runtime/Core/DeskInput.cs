@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Masa klavye haritası: üstteki kâğıt tuşları alır (ayarlar: Esc; oyun sonu: Enter), yoksa oda kısayolları (3 görev fişi,
+    /// Masa klavye haritası: üstteki kâğıt ya da dolap tuşları alır (ayarlar dolabı: Esc; oyun sonu: Enter), yoksa oda kısayolları (3 görev fişi,
     /// Esc). Kısayollar ekranda yazmaz; her biri bir tıklamanın karşılığıdır. Operasyon raporu ve vardiya raporu kendi tuşlarını
     /// okur (masa o sırada kilitli). Kamera pozlarını <see cref="SiginakCameraRig"/> kendisi okur. <c>Keyboard.current</c>
     /// okunur; her karede bellek ayırmaz.
@@ -19,8 +19,8 @@ namespace Corrigible.Desk
             if (kb == null || presenter.Commands == null) return;
             bool enter = kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame;
 
-            var st = SettingsView.Instance;
-            if (st != null && st.IsOpen) { if (kb.escapeKey.wasPressedThisFrame) st.Close(); return; }
+            var cabinet = SettingsCabinet.Instance;
+            if (cabinet != null && cabinet.IsOpen) { if (kb.escapeKey.wasPressedThisFrame) cabinet.Close(); return; }
             var final = FinalReportView.Instance;
             if (final != null && final.IsOpen) { if (enter) final.PressRestart(); return; }
 

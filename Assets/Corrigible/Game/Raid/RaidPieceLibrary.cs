@@ -12,12 +12,22 @@ namespace Corrigible.Game.Raid
         public GameObject wall;
         public GameObject cable;
 
+        [Header("Bina kitleri (BASKIN-MEKANLARI Katman 3–5)")]
+        [Tooltip("Bugünkü görünüm: eğitim, örnek baskın, testler (MapSeed 0) ve kiti olmayan bölge.")]
+        public RaidRoomKit defaultKit;
+        [Tooltip("Bölgelerin kitleri (kimlik = bölge kimliği). Boş bölge varsayılan kite düşer.")]
+        public RaidRoomKit[] kits = new RaidRoomKit[0];
+
         [Header("Dolaplar")]
         public RaidPiece core;
         public RaidPiece node;
         public RaidPiece civilian;
         public RaidPiece cooling;
         public RaidPiece spawner;
+        [Tooltip("Yağma görevinin hedefi: KYGA ikmal sandığı (zeytin yeşili boyalı ahşap, çelik köşe, halat tutamak, kapakta krem şablon; kırmızı yok). Boşsa düğüm dolabı.")]
+        public RaidPiece lootCrate;
+        [Tooltip("Boşaltılmış ikmal sandığı: alçak boş tepsi (≤ 0,25, karenin içinde; kare artık yürünür); Teknisyen malzemeleri alınca yerinde kalır (kırık dolap enkazı değil).")]
+        public GameObject lootCrateOpen;
         [Tooltip("Kırılan dolabın enkazı.")]
         public GameObject rubble;
 
@@ -144,6 +154,47 @@ namespace Corrigible.Game.Raid
 
         // Unity nesnesinde ?? sahte null'u görmez
         static RaidPiece Or(RaidPiece piece, RaidPiece fallback) => piece != null ? piece : fallback;
+
+        /// <summary>
+        /// Baskının bina kiti: harekât baskını (MapSeed ≠ 0) bölgesinin kitini alır; MapSeed 0 (eğitim, örnek baskın, yakalama seti,
+        /// testler), boş ya da kiti olmayan bölge varsayılan kiti.
+        /// </summary>
+        public RaidRoomKit KitFor(string region, uint mapSeed)
+        {
+            if (mapSeed == 0 || string.IsNullOrEmpty(region)) return defaultKit;
+            var kit = Find(k => k.Serves(region));
+            return kit != null ? kit : defaultKit;
+        }
+
+        /// <summary>Kimliğiyle kit (editördeki kitOverride ve önizleme); "default" ya da bilinmeyen kimlik varsayılan kit.</summary>
+        public RaidRoomKit KitById(string id)
+        {
+            if (string.IsNullOrEmpty(id) || id == "default") return defaultKit;
+            var kit = Find(k => k.id == id);
+            return kit != null ? kit : defaultKit;
+        }
+
+        /// <summary>Kırık dolap enkazının gedikteki ölçeği (kitin kendi molozu yoksa): yarı yüksekliğin altında basık yığın.</summary>
+        public static readonly Vector3 BreachRubbleFallbackScale = new Vector3(0.9f, 0.3f, 0.9f);
+
+        /// <summary>
+        /// Madenci'nin yıktığı duvarın yerinde kalan moloz (BASKIN-MEKANLARI Katman 5): kitin molozu (<see cref="RaidRoomKit.wallRubble"/>,
+        /// ölçek 1) ya da yoksa (varsayılan kit) kırık dolap enkazı basık ölçekle (<see cref="BreachRubbleFallbackScale"/>). Tahta ve
+        /// önizleme aynı seçimi kullanır. İkisi de yoksa null.
+        /// </summary>
+        public GameObject BreachRubble(RaidRoomKit kit, out Vector3 scale)
+        {
+            if (kit != null && kit.wallRubble != null) { scale = Vector3.one; return kit.wallRubble; }
+            scale = BreachRubbleFallbackScale;
+            return rubble;
+        }
+
+        RaidRoomKit Find(System.Func<RaidRoomKit, bool> match)
+        {
+            if (kits == null) return null;
+            foreach (var k in kits) if (k != null && match(k)) return k;
+            return null;
+        }
 
         /// <summary>Makine türünün etiket işareti; uzmanlarda ve bilinmeyen türde null.</summary>
         public Sprite Glyph(string type) => type switch

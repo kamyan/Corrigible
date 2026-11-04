@@ -35,6 +35,13 @@ namespace Corrigible.Desk
         public string Title => TitleOverride ?? title;
         public string HoverTitle => Corrigible.Core.Loc.T(Title);
         public string Line => LineOverride ?? (string.IsNullOrEmpty(line) ? null : Corrigible.Core.Loc.T(line));
+        /// <summary>
+        /// Bu nesnenin kendi girdi kilidi (ör. ayarlar dolabının kontrolleri: oda kilitliyken dolap açıksa çalışır); boşsa
+        /// odanın kilidi (<see cref="Blocked"/>) geçerlidir.
+        /// </summary>
+        public Func<bool> BlockedOverride { get; set; }
+        /// <summary>Üzerine gelme etiketi (prefab'daki nesneye sahne bağlar).</summary>
+        public HoverTag Tag { get => hoverTag; set => hoverTag = value; }
 
         public void Configure(string titleSource, string lineSource, Transform liftPart, HoverTag hoverTag)
         {
@@ -43,7 +50,7 @@ namespace Corrigible.Desk
 
         void Awake() { if (lift != null) rest = lift.localPosition; }
 
-        static bool IsBlocked => Blocked != null && Blocked();
+        bool IsBlocked => BlockedOverride != null ? BlockedOverride() : Blocked != null && Blocked();
 
         public void OnPointerEnter(PointerEventData eventData)
         {

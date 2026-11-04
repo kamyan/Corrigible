@@ -92,8 +92,8 @@ namespace Corrigible.Desk.Tests
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
             var d = CrtViewBuilder.Transition(sim);
             Assert.AreEqual(Loc.F("V.{0:000} · OP-{1:00}", 1, 1), d.Code);
-            StringAssert.Contains(DeskText.Upper(Loc.T("Tedarik deposu")), d.Target);
-            Assert.AreEqual(Loc.F("SAHA MASASI · PAFTA 8×8 · GÖREV: {0}", Loc.T("YAĞMA")), d.Camera);
+            StringAssert.Contains(DeskText.Upper(Loc.T("Teknik depo")), d.Target);
+            Assert.AreEqual(Loc.F("SAHA MASASI · {0} · GÖREV: {1}", DeskText.Upper(Loc.T("Banka veri merkezi")), Loc.T("YAĞMA")), d.Camera, "masadaki pafta binanın maketi");
             Assert.AreEqual(Loc.T("HAT AÇILIYOR"), d.Title, "sığınak ağa bağlanmaz: saha telsizle konuşur");
         }
 

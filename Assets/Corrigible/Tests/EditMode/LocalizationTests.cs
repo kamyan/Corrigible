@@ -44,7 +44,8 @@ namespace Corrigible.Tests
                 var sim = PlayRandom(seed, texts);
                 texts.AddRange(sim.S.Moments.Select(m => m.Text));
                 foreach (var r in GameData.Regions) texts.Add(r.Name);
-                foreach (var e in Baskin.RegionEvents.Values) texts.AddRange(new[] { Loc.T(e.Name), Loc.T(e.Desc), Loc.T(e.Room), Loc.T(e.Tag) });
+                foreach (var e in Baskin.RegionEvents.Values) texts.AddRange(new[] { Loc.T(e.Name), Loc.T(e.Desc), Loc.T(e.Tag) });
+                foreach (var r in GameData.Regions) texts.AddRange(new[] { r.Building, r.BuildingNote, r.Sector(0), r.Sector(1), r.Sector(2) });
                 foreach (var e in GameData.Endings) texts.AddRange(new[] { e.Title, e.Text });
                 foreach (var r in sim.S.Liberation.Regions) texts.AddRange(r.Sectors.Select(x => x.Name));
                 foreach (var room in sim.Shelter.Rooms) texts.AddRange(new[] { ShelterLogic.RoomName(room.Id), ShelterLogic.RoomDescription(room.Id) });

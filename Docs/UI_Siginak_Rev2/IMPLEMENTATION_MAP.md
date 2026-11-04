@@ -759,7 +759,7 @@ S6a–c, S7a–d, S8a–b; TR ve EN (S4d siluet kataloğu oyunda bir durum deği
   - **Sonuç kartı** (`RaidPanels › ResultMemo › Card`, `RaidPanelsView`): 500 px, x 1290 · y 318, CSS +0,8°; #FBF7EC, kenar
     #D2C7AF, gölge (5, 6) %50. Üstte “OPERASYON SONUCU · TUR 6/8” ve 2 px çizgi; başlık yerinde tek damga (CP 700 34, çift kenar
     2 + 2 + 2 px, −3°): başarıda SEKTÖR GERİ ALINDI mavi, değilse GERİ ÇEKİLDİ / EKİP DÜŞTÜ / İKMAL KAYBEDİLDİ / SÜRE DOLDU
-    kırmızı. Yer satırı “Doğu Avrupa · 02 Tahliye geçidi” (`LiveRaidDataSource.ResultPlace`), noktalı çizginin altında
+    kırmızı. Yer satırı “Doğu Avrupa · 02 Dosya katı” (`LiveRaidDataSource.ResultPlace`), noktalı çizginin altında
     hedef, kırılan sivil sunucu, ekip (`RaidResultRow`), tek düğme OPERASYON RAPORUNA GEÇ (Enter fişi; üzerinde kalkar).
     Eski göz satırı, alt not ve büyük damga kalktı.
   - **Dizi:** tahta 0,4 s'de kararır, spot 0,1–0,4 s'de nedenin üstünde açılır (alınan kasada Teknisyen, öteki hâllerde

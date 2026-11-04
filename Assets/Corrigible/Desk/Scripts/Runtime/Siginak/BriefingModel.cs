@@ -11,6 +11,8 @@ namespace Corrigible.Desk
         public string Action;
         /// <summary>Okuma kipi (H / EVRAK tepsisi): manila dosya ve KAYITTAN DEVAM sekmesi yok, düğme “Kapat”.</summary>
         public bool Reading;
+        /// <summary>Menüden yeni harekât: manila dosya ve sekme yok (kayıt kararı kapıda verildi), düğme BAŞLA.</summary>
+        public bool NoDossier;
         /// <summary>Kayıt var: sekme etkin, etikette vardiya ve özgür bölge; yoksa soluk sekme + “KAYIT YOK”.</summary>
         public bool HasSave;
         public string TabTitle, TabSummary, TabHint, NoSave;

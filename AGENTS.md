@@ -8,9 +8,10 @@ Ayrıntılar `Docs/` altında; burada bağlam, değişmez kurallar ve en sık ku
 - **Oyun:** Tek oyunculu strateji. Bir yapay zekâ (YZ) dünyayı işgal etmiştir; oyuncu KYGA'nın son sığınağındaki komuta
   odasından direnişi yönetir: bölgeleri sektör sektör baskınlarla geri alır, sığınağı ayakta tutar. Türkçe adı
   **Son Şalter**, İngilizce/ürün adı **Corrigible**. İlk hedef platform **Steam (PC)**.
-- **İki sahne:** `Desk/Scenes/DeskGame.unity` (Sığınak komuta odası: harita, sayaçlar, vardiya şalteri, sığınak maketi,
-  CRT) ve `Scenes/Baskin.unity` (8×8 taktik baskın tahtası; DeskGame'in üstüne eklemeli yüklenir). Başka oyun ya da
-  deneme sahnesi yok.
+- **Üç sahne:** `Desk/Scenes/Giris.unity` (menü: sığınağın kapısının dışı; vardiya kartı, ayarlar dolabı, son şalter;
+  build'de ilk), `Desk/Scenes/DeskGame.unity` (Sığınak komuta odası: harita, sayaçlar, vardiya şalteri, sığınak maketi,
+  CRT, ayarlar dolabı) ve `Scenes/Baskin.unity` (8×8 taktik baskın tahtası; DeskGame'in üstüne eklemeli yüklenir).
+  DeskGame doğrudan açılınca menüsüz eski açılış çalışır. Başka oyun ya da deneme sahnesi yok.
 - **Motor:** Unity **6000.3.12f1**, URP, **uGUI + TextMeshPro** (UI Toolkit DEĞİL), Input System.
 - **Dil:** Oyun içi metinler, kod yorumları ve belgeler **Türkçe**. Kod tanımlayıcıları (sınıf, alan, metot) **İngilizce**.
   Simülasyondaki kimlikler (`"silme"`, `"kopya"`, `"loot"`, `"tek"`) Türkçe ya da kısa ASCII dizgilerdir; kayıt dosyaları

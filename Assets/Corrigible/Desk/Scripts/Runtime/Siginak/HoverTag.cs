@@ -16,6 +16,7 @@ namespace Corrigible.Desk
 
         IHoverSource owner;
         float since;
+        string shownLine;
 
         public void Configure(RectTransform paperRoot, TMP_Text titleText, TMP_Text lineText, Canvas rootCanvas)
         {
@@ -42,12 +43,18 @@ namespace Corrigible.Desk
             if (!paper.gameObject.activeSelf)
             {
                 title.text = owner.HoverTitle;
-                string text = owner.Line;
-                line.gameObject.SetActive(!string.IsNullOrEmpty(text));
-                line.text = text ?? "";
+                SetLine(owner.Line);
                 paper.gameObject.SetActive(true);
             }
+            else if (owner.Line != shownLine) SetLine(owner.Line);   // değeri değişen satır (dolabın sürgüsü)
             Place();
+        }
+
+        void SetLine(string text)
+        {
+            shownLine = text;
+            line.gameObject.SetActive(!string.IsNullOrEmpty(text));
+            line.text = text ?? "";
         }
 
         void Place()

@@ -15,6 +15,20 @@
   "changes": "1.1 (Revizyon 2): kenar panelleri ozalit + kontrplak; tur şeridi 34 px + son iki tur işareti + SON TUR damgası; evre çipi; makine türü işaretleri; can etiketi 11 px pip + tür işareti; sıra bayrağı 30 × 28 / 20 px; kilit niyeti; uzman canı altlıkta; TELSİZ fişi; sonuç kartı; EN metinleri. 1.2: üç makine türü (zırhlı dron, patlayan robot, çoğaltıcı: işaret + 3D ölçü), on bölge özelliği işareti (regionTraits), dört niyet (havan atışı, patlama, kalkan, kopyalama), kopyalama hedef halkası, zarar vermeyen niyet kuralı, etikette zırh simgesi. Yalnız ekleme: 1.1 değerlerinden hiçbiri değişmedi.",
   "newMarker": "1.1: YENİ “_new_1_1”, DEĞİŞEN “_changed_1_1” (eski değer “_was_1_1”); yeni grupların “_” açıklamasında ★2. 1.2: YENİ “_new_1_2”; yeni grupların “_” açıklamasında ★3."
  },
+ "_new_1_3": [
+  "kits.weu",
+  "kits.eeu",
+  "kits.me",
+  "kits.af",
+  "kits.na",
+  "kits.ru",
+  "kits.in",
+  "kits.cn",
+  "kits.jk",
+  "kits.sea",
+  "kits.sa",
+  "kits.oc"
+ ],
  "_new_1_2": [
   "machineTypes.armorDrone",
   "machineTypes.bomber",
@@ -1754,6 +1768,153 @@
   "fastPatrol": {
    "glyph": "glyph_patrol",
    "draws": "çift köşeli ok (»)"
+  }
+ },
+ "kits": {
+  "_rule": "Bina kitleri (BASKIN-MEKANLARI Katman 3–4, Aşama A): duvar bloğunun yüzlerinin ve kanal içinin ortalama rengi (sRGB). RaidKitTextureBaker dokuyu motifle çizer ve doğrusal ortalamasını bu renge eşitler; güney yüzü batı dokusunun parlaklık tonudur. Kapı (RaidRoomKitTests): üst L* 58–74, yan L* ≥40, C* ≤22; ahşaba ΔE ≥15, ayrılmış renklere ΔE ≥20 (CIE76); desen ΔL* ≤15; kanal ve kuyu L* ≤30. detailA/detailB, channelDetail, wellDetail motifin vurgu renkleri.",
+  "weu": {
+   "_draws": "sökülmüş rack kabinleri: kapı çizgisi, delikli havalandırma bandı, üstte kablo tavası (varsayılana en yakın)",
+   "wallTop": "#A8A194",
+   "wallWest": "#8D877A",
+   "wallSouth": "#6F6A5F",
+   "detailA": "#5F5B53",
+   "detailB": "#A9AAA4",
+   "channel": "#2A2A28",
+   "channelDetail": "#4D4E4A",
+   "well": "#262523",
+   "wellDetail": "#77746C"
+  },
+  "eeu": {
+   "_draws": "çelik arşiv rafı, kurşuni ve krem dosya kutuları",
+   "wallTop": "#8F9892",
+   "wallWest": "#77817C",
+   "wallSouth": "#606763",
+   "detailA": "#6E7375",
+   "detailB": "#B3AD98",
+   "channel": "#2B2925",
+   "channelDetail": "#403C36",
+   "well": "#2C2A26",
+   "wellDetail": "#4F4B44"
+  },
+  "me": {
+   "_draws": "kutu sehpa üstünde alüminyum kaplı boru istifi: yanlarda boru ağızları ve flanşlar, üstte borular ve kelepçeler",
+   "wallTop": "#A8A9A3",
+   "wallWest": "#8E8F89",
+   "wallSouth": "#70716C",
+   "detailA": "#6C7174",
+   "detailB": "#646B70",
+   "channel": "#2A2826",
+   "channelDetail": "#4E4B45",
+   "well": "#262422",
+   "wellDetail": "#5B5850"
+  },
+  "af": {
+   "_draws": "oluklu galvaniz sac bunker, üstte basık cevher yığını",
+   "wallTop": "#9F9184",
+   "wallWest": "#959FA6",
+   "wallSouth": "#768087",
+   "detailA": "#8A7A6D",
+   "detailB": "#B8BEBE",
+   "channel": "#2B2824",
+   "channelDetail": "#4C4037",
+   "well": "#2A2622",
+   "wellDetail": "#6A6F70"
+  },
+  "na": {
+   "_draws": "ahşap palet üstünde streç filmli koli yükü",
+   "wallTop": "#B2A492",
+   "wallWest": "#998A78",
+   "wallSouth": "#7A6E5E",
+   "detailA": "#857B6E",
+   "detailB": "#A8957B",
+   "channel": "#2A2826",
+   "channelDetail": "#3D3B37",
+   "well": "#262422",
+   "wellDetail": "#5F5F5A"
+  },
+  "ru": {
+   "_draws": "sandviç panel kabin, iki dikey derz, kırağı",
+   "wallTop": "#A8B2B9",
+   "wallWest": "#909AA1",
+   "wallSouth": "#737C83",
+   "detailA": "#6A7379",
+   "detailB": "#D8DFE3",
+   "channel": "#26282A",
+   "channelDetail": "#383C40",
+   "well": "#222426",
+   "wellDetail": "#8A9399"
+  },
+  "in": {
+   "_draws": "ofis bölme panelleri (kumaş yüz, alüminyum çerçeve) ve çekmeceli dosya dolabı istifi; kanalda yassı şerit kablolar ve pirinç kenar profili",
+   "wallTop": "#A19CA5",
+   "wallWest": "#8E8A92",
+   "wallSouth": "#726E76",
+   "detailA": "#74717F",
+   "detailB": "#B6B3AB",
+   "channel": "#29282B",
+   "channelDetail": "#5E5C62",
+   "well": "#272527",
+   "wellDetail": "#857652"
+  },
+  "cn": {
+   "_draws": "istiflenmiş plastik parça kasaları (kaburgalı yan, tutamak yuvası, etiket cebi), üstte kasalardaki parçalar; kanalda kablo zinciri",
+   "wallTop": "#8F9192",
+   "wallWest": "#87898A",
+   "wallSouth": "#6C6E70",
+   "detailA": "#5B5955",
+   "detailB": "#C2BFB5",
+   "channel": "#28282A",
+   "channelDetail": "#4C4D50",
+   "well": "#262628",
+   "wellDetail": "#707377"
+  },
+  "jk": {
+   "_draws": "sökülmüş pano gövdeleri: kapı çizgileri, panjur yarıkları, kilitler; kanalda krem izolatörler üstünde baralar",
+   "wallTop": "#B2B6B0",
+   "wallWest": "#A0A49F",
+   "wallSouth": "#818580",
+   "detailA": "#6C726E",
+   "detailB": "#D5D8D1",
+   "channel": "#29292A",
+   "channelDetail": "#CFC6AD",
+   "well": "#262627",
+   "wellDetail": "#8F948F"
+  },
+  "sea": {
+   "_draws": "dört sıra kum torbası, altta ıslak koyu bant; kanal koyu reçine su, içinde düşmüş bakır kablo",
+   "wallTop": "#A6A799",
+   "wallWest": "#939489",
+   "wallSouth": "#74756C",
+   "detailA": "#5D5C52",
+   "detailB": "#BDBBAE",
+   "channel": "#343A33",
+   "channelDetail": "#6E5A42",
+   "well": "#30362F",
+   "wellDetail": "#6C716A"
+  },
+  "sa": {
+   "_draws": "ahşap takoz üstünde çelik levha ve kalıp istifi; kanalda jeneratör kablo demeti, göbekte çelik ızgara",
+   "wallTop": "#959CA2",
+   "wallWest": "#7E8790",
+   "wallSouth": "#656E76",
+   "detailA": "#5B5148",
+   "detailB": "#8B7464",
+   "channel": "#262729",
+   "channelDetail": "#45484C",
+   "well": "#252628",
+   "wellDetail": "#7E8387"
+  },
+  "oc": {
+   "_draws": "baklava sac kızak üstünde yedek parça kasaları, kızıl toz; kanal kenarlarında baklava sac kapaklar",
+   "wallTop": "#ADA29E",
+   "wallWest": "#9E918B",
+   "wallSouth": "#7F736F",
+   "detailA": "#686160",
+   "detailB": "#9A7D6E",
+   "channel": "#2A2827",
+   "channelDetail": "#55504D",
+   "well": "#272524",
+   "wellDetail": "#7A7470"
   }
  }
 }

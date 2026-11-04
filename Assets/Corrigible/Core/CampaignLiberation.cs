@@ -4,14 +4,15 @@ using System.Linq;
 
 namespace Corrigible.Core
 {
-    /// <summary>Bir sektör: iki ikmal deposu (yağma) ve bir sunucu merkezi (yıkım); sırayla geri alınır.</summary>
+    /// <summary>Bir sektör: bölgenin binasında bir oda; iki ikmal (yağma) ve bir sunucu (yıkım) odası, sırayla geri alınır.</summary>
     [Serializable]
     public sealed class LiberationSectorState
     {
         public string Id, Region, MissionKind;
         public int Index, Attempts, CapturedDay = -1;
         public bool Captured;
-        public string Name => Index == 0 ? Loc.T("Tedarik deposu") : Index == 1 ? Loc.T("Tahliye geçidi") : Loc.T("Sunucu merkezi");
+        /// <summary>Binadaki oda (<see cref="RegionDef.Sector"/>); kayda yazılmaz, bölgeden okunur.</summary>
+        public string Name => GameData.Region(Region).Sector(Index);
     }
 
     [Serializable]

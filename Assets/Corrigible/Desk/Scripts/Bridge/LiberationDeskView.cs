@@ -28,6 +28,8 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] SiginakDoor siginakDoor;
         [Tooltip("Operasyon raporu: okunana kadar masa kilitli.")]
         [SerializeField] SiginakOperation siginakOperation;
+        [Tooltip("Ayarlar dolabı: açıkken ve menüye dönerken masa kilitli.")]
+        [SerializeField] SiginakCabinet siginakCabinet;
 
         bool storyOpen;
         Simulation Sim => game != null ? game.Sim : null;
@@ -36,7 +38,8 @@ namespace Corrigible.Desk.Bridge
         public bool InputBlocked => BlockedExceptDoor || siginakDoor != null && siginakDoor.isActiveAndEnabled && siginakDoor.Busy;
         /// <summary>Kapının kendisi dışındaki kilitler (kapı ancak bunlar yokken çalar ve açılır).</summary>
         public bool BlockedExceptDoor => storyOpen || launcher != null && launcher.IsTransitioning || RaidLauncher.IsRaidLoaded ||
-            SettingsView.Instance != null && SettingsView.Instance.IsOpen || FinalReportView.Instance != null && FinalReportView.Instance.IsOpen ||
+            SettingsCabinet.Instance != null && SettingsCabinet.Instance.IsOpen || FinalReportView.Instance != null && FinalReportView.Instance.IsOpen ||
+            siginakCabinet != null && siginakCabinet.Leaving ||
             siginakOperation != null && siginakOperation.Busy ||
             siginak != null && siginak.isActiveAndEnabled && siginak.ShiftBusy || siginakBriefing != null && siginakBriefing.Busy;
 
@@ -52,7 +55,14 @@ namespace Corrigible.Desk.Bridge
         {
             game.NewGameStarted += NewGame;
             game.GameLoaded += Loaded;
-            NewGame();
+            // Menüden gelindiyse (kapının dışı) karar orada verildi: devamda emir belgesi yok, yenide belgede sekme yok
+            var launch = GameLaunch.Take();
+            if (launch == GameLaunch.Mode.Continue)
+            {
+                if (game.ContinueSaved()) { siginakBriefing.OpenReturn(); return; }
+                telex.Post(Shift, Loc.T("YAPILAMADI"), Loc.T("Kayıt açılamadı."), TelexKind.Failed);
+            }
+            OpenStory(launch != GameLaunch.Mode.None);
         }
 
         void OnDestroy()
@@ -139,13 +149,15 @@ namespace Corrigible.Desk.Bridge
 
         // ---------- Açılış ve hikâye ----------
 
-        void NewGame()
+        void NewGame() => OpenStory(false);
+
+        void OpenStory(bool fromEntrance)
         {
             storyOpen = true;
             game.StoryHold = true;
             if (desk != null) desk.ExternalBlocked = true;
             // Açılış dizisi ve emir belgesi (K7); BAŞLA / KAYITTAN DEVAM buraya döner (BeginCampaign, Loaded)
-            siginakBriefing.OpenOpening();
+            siginakBriefing.OpenOpening(fromEntrance);
         }
 
         /// <summary>Emir belgesinde BAŞLA: hikâye kapanır, harekât başlar.</summary>
@@ -180,7 +192,7 @@ namespace Corrigible.Desk.Bridge
         public void Escape()
         {
             if (siginak != null && siginak.isActiveAndEnabled && siginak.HandleEscape()) return;
-            if (!InputBlocked) SettingsView.Instance?.Open();
+            if (!InputBlocked) SettingsCabinet.Instance?.RequestOpen();
         }
     }
 }

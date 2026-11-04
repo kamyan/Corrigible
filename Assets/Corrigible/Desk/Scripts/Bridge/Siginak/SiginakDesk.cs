@@ -12,7 +12,7 @@ namespace Corrigible.Desk.Bridge
 {
     /// <summary>
     /// Sığınak masasının oyun bağlantısı (Docs/UI_Siginak Aşama 4): sayaç rafı, anahtar rayı, vardiya şalteri, teleks,
-    /// kenar satırı, AYARLAR plakası, odadaki tıklanır nesneler ve umut işaretleri. Simülasyonu yalnız okur; komutlar
+    /// kenar satırı, ATLA plakası, odadaki tıklanır nesneler ve umut işaretleri. Simülasyonu yalnız okur; komutlar
     /// <see cref="LiberationDeskView"/>'in yöntemlerinden geçer. Yalnız yeni görünümde etkindir (sığınak kökünün altında).
     /// Enter: açık harita fişinin eylemi, fiş yoksa şalter (iki adım). Esc: fiş / figür taşıma, açık kapak, yoksa ayarlar.
     /// Kol inince vardiya dizisi ve rapor <see cref="SiginakShift"/>'tedir (Aşama 8); o sürerken masa kilitlidir.
@@ -86,8 +86,6 @@ namespace Corrigible.Desk.Bridge
             DeskLoc.Instance.Changed += Relabel;
             rail.Pressed += Station;
             edge.StationClicked += Station;
-            edge.SettingsClicked += OpenSettings;
-            plaque.SettingsClicked += OpenSettings;
             plaque.SkipClicked += Skip;
             rig.PoseChanged += PoseChanged;
             shiftSwitch.Armed += PreCheck;
@@ -105,8 +103,6 @@ namespace Corrigible.Desk.Bridge
             DeskLoc.Instance.Changed -= Relabel;
             rail.Pressed -= Station;
             edge.StationClicked -= Station;
-            edge.SettingsClicked -= OpenSettings;
-            plaque.SettingsClicked -= OpenSettings;
             plaque.SkipClicked -= Skip;
             rig.PoseChanged -= PoseChanged;
             shiftSwitch.Armed -= PreCheck;
@@ -119,8 +115,6 @@ namespace Corrigible.Desk.Bridge
 
         void ShowShelter() => surface.ShowShelter();
         void FocusCrt() { if (!Locked) rig.FocusOperations(); }
-        // Emir belgesi açıkken de AYARLAR (K7 notu › Esc)
-        void OpenSettings() { if (!Locked || briefing != null && briefing.AllowsSettings) SettingsView.Instance?.Open(); }
 
         void Skip()
         {
@@ -169,9 +163,9 @@ namespace Corrigible.Desk.Bridge
             edge.SetActiveStation(active);
             edge.SetEnded(Sim != null && Sim.S.Ending != null);
             edge.SetVisible(CounterBankInView(), locked);
-            // Dizi boyunca sağ üstte ATLA (kenar satırı açık olsa da)
+            // Dizi boyunca sağ üstte ATLA (kenar satırı açık olsa da); başka zaman plaka yok (ayarlar odadaki dolapta)
             bool playing = shift != null && shift.Playing || briefing != null && briefing.OpeningPlaying;
-            plaque.SetMode(playing, !playing && edge.Visible);
+            plaque.SetSkip(playing);
             var sim = Sim;
             if (sim != null)
             {

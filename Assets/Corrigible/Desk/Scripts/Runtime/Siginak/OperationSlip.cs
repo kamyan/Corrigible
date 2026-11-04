@@ -63,6 +63,10 @@ namespace Corrigible.Desk
         [SerializeField] RectTransform paper;
         [SerializeField] CanvasGroup group;
         [SerializeField] TMP_Text code, region, progress;
+        [Tooltip("Bölgenin binası: bölge adının altında (LF 600 18), baskınlar bu binanın odalarında geçer.")]
+        [SerializeField] TMP_Text building;
+        [Tooltip("Bina satırının üzerine gelme etiketi: binanın notu (bina ne, olay neden orada).")]
+        [SerializeField] UiHoverTarget buildingHover;
         [SerializeField] Button close;
         [SerializeField] Image closeEdge;
         [SerializeField] UiHoverTarget closeHover;
@@ -173,6 +177,10 @@ namespace Corrigible.Desk
 
             code.text = d.Code;
             region.text = d.Region;
+            building.gameObject.SetActive(!string.IsNullOrEmpty(d.Building));
+            building.text = d.Building ?? "";
+            buildingHover.Title = d.BuildingHoverTitle;
+            buildingHover.Line = d.BuildingHoverLine;
             progress.text = d.Progress;
             Fields(d, t);
             Sectors(d, t);

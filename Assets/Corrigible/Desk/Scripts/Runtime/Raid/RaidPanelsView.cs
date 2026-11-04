@@ -23,6 +23,8 @@ namespace Corrigible.Desk
         [SerializeField] TMP_Text[] resultLabels,resultValues;
         [SerializeField] UiHoverTarget continueHover;
         [SerializeField] RectTransform legendRoot;
+        [Tooltip("Lejantın işaretleri (Mark0..7, legendRows sırasıyla): kanal satırı iki satıra inince alttaki satırlarla birlikte kayar.")]
+        [SerializeField] RectTransform[] legendMarks;
         [SerializeField] TMP_Text[] queueLabels,unusedRows,ruleRows,legendRows;
         [SerializeField] Image[] queueFills,queueCancel;
         [SerializeField] Button closeLog,closeRules,cancelRetreat,retreatAgain,continueButton,resumeButton;
@@ -38,6 +40,9 @@ namespace Corrigible.Desk
         /// <summary>Sonuç damgası basıldı (başarılı mı): bağlayıcı sesi çalar.</summary>
         public event System.Action<bool> ResultStamped;
         static readonly string[] Legend={"legend.move","legend.target","legend.hit","legend.channel","legend.wake","legend.types","legend.flag","legend.armor"};
+        /// <summary>Lejantta kanalın yeri (iki sütunlu ızgara: satır = sıra / 2).</summary>
+        const int ChannelRow=3;
+        Vector2[] legendRowRest,legendMarkRest;float legendRestHeight;
         public void Bind(IRaidCommands value)
         {
             commands=value;Button(closeLog,commands.ToggleLog);Button(closeRules,commands.ToggleRules);Button(cancelRetreat,commands.CancelPending);Button(retreatAgain,commands.RequestRetreat);Button(continueButton,commands.ContinueToReport);Button(resumeButton,commands.CancelPending);
@@ -65,6 +70,10 @@ namespace Corrigible.Desk
             }
             ((RectTransform)confirmNote.transform).sizeDelta=new Vector2(330,Mathf.Max(143,72+vm.Unused.Length*52));
             logTitle.text=Loc.T("TELSİZ KAYDI");rulesTitle.text=Loc.T("KURALLAR KARTI");for(int i=0;i<ruleRows.Length;i++)ruleRows[i].text=RaidText.Get("rules."+(i+1));for(int i=0;i<legendRows.Length&&i<Legend.Length;i++)legendRows[i].text=RaidText.Get(Legend[i]);
+            // Kanalın binadaki adı (bina kiti, BASKIN-MEKANLARI Katman 6): “Elektrikli kanal · bara kanalı”; ad bölünmez, sığmazsa satır iki
+            // satıra iner ve alttaki satırlar aşağı kayar (varsayılan kitte lejant bugünkü gibi)
+            if(legendRows.Length>ChannelRow&&!string.IsNullOrEmpty(vm.CableName))legendRows[ChannelRow].text=Loc.F("{0} · <nobr>{1}</nobr>",RaidText.Get("legend.channel"),DeskText.Lower(vm.CableName,DeskFormat.Lang));
+            float legendExtra=LayoutLegend();
             if(vm.IsLootMission&&ruleRows.Length>2)ruleRows[2].text=Loc.T("Teknisyen kasayı açar ve malzemeyi taşır. İtme ve patlamalar kasaya hasar verebilir; EMP kasayı açmaz.");
             // Madenci ve Sis uzmanı kadrodaysa yetenekleri seçim satırının altında
             if(ruleRows.Length>1&&vm.Team!=null)
@@ -74,7 +83,7 @@ namespace Corrigible.Desk
             }
             if(vm.IsLootMission&&ruleRows.Length>5)ruleRows[5].text=Loc.T("İkmal görevi: Teknisyen ile kasayı aç, sonra bütün ekip giriş karelerinden çıksın; malzeme Teknisyen çıkınca alınır. Süre dolarken tahtada kalan uzman baskında düşmüş sayılır. Kasa imha olursa ya da Teknisyen çıkamazsa görev kaybedilir.");
             float ry=52;foreach(var t in ruleRows){float h=Mathf.Max(30,t.GetPreferredValues(t.text,366,float.PositiveInfinity).y+8);var r=(RectTransform)t.transform.parent;r.anchoredPosition=new Vector2(14,-ry);r.sizeDelta=new Vector2(392,h);t.rectTransform.sizeDelta=new Vector2(366,h);ry+=h;}
-            if(legendRoot!=null){legendRoot.anchoredPosition=new Vector2(14,-ry-8);((RectTransform)rulesCard.transform).sizeDelta=new Vector2(420,Mathf.Max(431.5f,ry+136));}
+            if(legendRoot!=null){legendRoot.anchoredPosition=new Vector2(14,-ry-8);((RectTransform)rulesCard.transform).sizeDelta=new Vector2(420,Mathf.Max(431.5f,ry+136+legendExtra));}
             retreatTitle.text=RaidText.Get("raid.retreat.title");retreatBody.text=RaidText.Get("raid.retreat.body");retreatFoot.text=RaidText.Get("raid.retreat.foot");retreatAgainLabel.text=Loc.T("EMİN MİSİN? TEKRAR BAS");
             continueLabel.text=Loc.T("OPERASYON RAPORUNA GEÇ");resumeLabel.text=Loc.T("Devam et [Esc]");pauseLabel.text=Loc.T("DURAKLATILDI");
             dim.gameObject.SetActive(vm.Finished||vm.RetreatArmed||vm.Paused);dim.color=DeskTheme.Active.Get("sade.plaque.bg");var col=dim.color;col.a=vm.Finished ? DimAlpha*Dim() : .32f;dim.color=col;
@@ -86,6 +95,28 @@ namespace Corrigible.Desk
                 RenderResult(vm);
             }
             if(logDrawer.activeSelf)RenderLog(vm.Log);
+        }
+        /// <summary>
+        /// Lejantın ızgarası: kanal satırı (tek satırlık yükseklikten) uzadıysa onun altındaki satırlar (işaretleriyle) o kadar aşağı
+        /// kayar ve lejant uzar. Prefab'daki yerler ilk çizimde saklanır. Uzama miktarını döndürür.
+        /// </summary>
+        float LayoutLegend()
+        {
+            if(legendRoot==null||legendRows.Length<=ChannelRow||legendRows[ChannelRow]==null)return 0;
+            if(legendRowRest==null)
+            {
+                legendRowRest=legendRows.Select(t=>t!=null?t.rectTransform.anchoredPosition:Vector2.zero).ToArray();
+                legendMarkRest=(legendMarks??new RectTransform[0]).Select(m=>m!=null?m.anchoredPosition:Vector2.zero).ToArray();
+                legendRestHeight=legendRoot.sizeDelta.y;
+            }
+            var channel=legendRows[ChannelRow];float width=channel.rectTransform.rect.width;
+            float one=channel.GetPreferredValues(RaidText.Get(Legend[ChannelRow]),width,float.PositiveInfinity).y;
+            float extra=Mathf.Max(0,channel.GetPreferredValues(channel.text,width,float.PositiveInfinity).y-one);
+            if(extra<1)extra=0;
+            for(int i=0;i<legendRows.Length;i++)if(legendRows[i]!=null)legendRows[i].rectTransform.anchoredPosition=legendRowRest[i]-new Vector2(0,i/2>ChannelRow/2?extra:0);
+            for(int i=0;legendMarks!=null&&i<legendMarks.Length;i++)if(legendMarks[i]!=null)legendMarks[i].anchoredPosition=legendMarkRest[i]-new Vector2(0,i/2>ChannelRow/2?extra:0);
+            legendRoot.sizeDelta=new Vector2(legendRoot.sizeDelta.x,legendRestHeight+extra);
+            return extra;
         }
         /// <summary>Kartın içeriği: başlık yerinde tek damga (başarıda mavi, değilse kırmızı), yer satırı, satırlar.</summary>
         void RenderResult(RaidViewModel vm)

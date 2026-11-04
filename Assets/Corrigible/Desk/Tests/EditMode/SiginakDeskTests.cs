@@ -261,9 +261,9 @@ namespace Corrigible.Desk.Tests
                     Assert.AreEqual(icons[i], icon.sharedMaterial.GetTexture("_BaseMap").name, rail[i].name);
                     Assert.IsNull(icon.GetComponent<Collider>());
                 }
-                // Üst kenar şeridi aynı istasyonlar ve en sonda AYARLAR; tuş kutularında simge
+                // Üst kenar şeridi aynı istasyonlar (AYARLAR çipi yok: ayarlar odadaki dolapta); tuş kutularında simge
                 var edgeLine = new SerializedObject(room.transform.root.GetComponentsInChildren<EdgeLine>(true).Single());
-                Assert.AreEqual(rail.Count + 1, edgeLine.FindProperty("chips").arraySize);
+                Assert.AreEqual(rail.Count, edgeLine.FindProperty("chips").arraySize);
                 foreach (var target in room.GetComponentsInChildren<DeskTarget>(true))
                     Assert.Greater(target.GetComponent<BoxCollider>().size.sqrMagnitude, 0, target.name + " çarpıştırıcısı boş");
                 // Ekran katmanı Overlay; harita fişleri (Aşama 5) ayrı World Space canvas'lardır

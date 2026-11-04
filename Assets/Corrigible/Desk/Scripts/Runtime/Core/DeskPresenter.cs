@@ -14,7 +14,8 @@ namespace Corrigible.Desk
         [Tooltip("IDeskCommands uygulayan bileşen.")]
         [SerializeField] MonoBehaviour commands;
         [SerializeField] FinalReportView finalReport;
-        [SerializeField] SettingsView settingsView;
+        [Tooltip("Ayarlar dolabı (sol duvar).")]
+        [SerializeField] SettingsCabinet settingsCabinet;
         [Tooltip("IDeskSettings uygulayan bileşen (oyunda ses tercihleri ve dil).")]
         [SerializeField] MonoBehaviour settingsSource;
         [Tooltip("IDeskSurface uygulayan oda bileşeni.")]
@@ -32,7 +33,7 @@ namespace Corrigible.Desk
             if (source == null) { Debug.LogError("[Desk] Veri kaynağı IDeskDataSource değil", this); return; }
             source.Changed += Bind;
             if (finalReport != null) finalReport.RestartClicked += Restart;
-            if (settingsView != null) settingsView.Init(settingsSource as IDeskSettings);
+            if (settingsCabinet != null) settingsCabinet.Init(settingsSource as IDeskSettings);
             Bind(source.Current);
         }
 

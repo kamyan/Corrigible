@@ -65,7 +65,7 @@ namespace Corrigible.Tests
             Assert.AreEqual(GameData.Regions.Length, Baskin.RegionEvents.Count);
             foreach (var e in Baskin.RegionEvents.Values)
             {
-                Assert.IsNotEmpty(e.Name); Assert.IsNotEmpty(e.Desc); Assert.IsNotEmpty(e.Room); Assert.IsNotEmpty(e.Tag);
+                Assert.IsNotEmpty(e.Name); Assert.IsNotEmpty(e.Desc); Assert.IsNotEmpty(e.Tag);
             }
         }
 

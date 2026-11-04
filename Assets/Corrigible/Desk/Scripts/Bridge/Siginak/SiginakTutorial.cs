@@ -176,7 +176,7 @@ namespace Corrigible.Desk.Bridge
             bool loaded = RaidLauncher.IsRaidLoaded;
             if (!loaded) raid = null;
             else if (raid == null) raid = FindFirstObjectByType<RaidDataSource>();
-            var settings = SettingsView.Instance;
+            var settings = SettingsCabinet.Instance;
             var over = FinalReportView.Instance;
             c.Blocked = briefing.Busy || shift.Playing || launcher != null && launcher.IsTransitioning || settings != null && settings.IsOpen ||
                         over != null && over.IsOpen || sim == null || sim.S.Ending != null;

@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Corrigible.Game.Raid;
 using UnityEditor;
 using UnityEngine;
 
@@ -433,9 +435,192 @@ namespace Corrigible.Desk.EditorTools
             return SoftSources.Length + SoftLines.Length + " yumuşak kenarlı sprite üretildi";
         }
 
+        const string LibraryPath = "Assets/Corrigible/Settings/RaidPieceLibrary.asset";
+
+        /// <summary>
+        /// Baskın parçalarının küçük resimleri: ad, kütüphanedeki parça, boyut (px), çerçeve (ortografik yarı yükseklik; 0 = parçaya
+        /// oturur) ve bakış noktasının yüksekliği.
+        /// </summary>
+        static readonly (string name, Func<RaidPieceLibrary, RaidPiece> piece, int w, int h, float size, float lookY)[] PieceThumbSpecs =
+        {
+            // İkmal sandığı (hedef listesi ve inceleme kartı): düğüm dolabının küçük resmiyle aynı ölçek ve çerçeve
+            ("thumb_crate", l => l.lootCrate, 92, 116, 0.76f, 0.32f),
+            // İnceleme kartının resim kutusu 40 × 46 px, 2× çizilir; parça çerçeveyi doldurur
+            ("thumb_tube", l => l.tube, 80, 92, 0, 0),
+            ("thumb_weld", l => l.weldArm, 80, 92, 0, 0),
+            ("thumb_debris", l => l.debris, 80, 92, 0, 0),
+            ("thumb_civ", l => l.civilian, 80, 92, 0, 0),
+            ("thumb_spawner", l => l.spawner, 80, 92, 0, 0),
+        };
+
+        /// <summary>Parça küçük resimlerinin adları (sprite tablosunda üretilenler; baskın kartları kayıtta adla arar).</summary>
+        public static string[] PieceThumbNames => PieceThumbSpecs.Select(s => s.name).ToArray();
+
+        /// <summary>
+        /// Baskın parçalarının küçük resimleri: ikmal sandığı (<c>thumb_crate</c>, 92 × 116), basınçlı tüp, kaynak kolu kaidesi, tavan
+        /// enkazı, sivil sunucu ve kopya dolabı (<c>thumb_tube</c>, <c>thumb_weld</c>, <c>thumb_debris</c>, <c>thumb_civ</c>,
+        /// <c>thumb_spawner</c>; 80 × 92). Prefab'lar <see cref="Isolated"/> ile baskının açısından ve ışığıyla çizilir. Parça
+        /// değişince yeniden çalıştır; kütüphanede atanmamış parça atlanır.
+        /// </summary>
+        [MenuItem("Corrigible/Sığınak/Baskın parçalarının küçük resimlerini üret")]
+        public static string PieceThumbs()
+        {
+            var lib = AssetDatabase.LoadAssetAtPath<RaidPieceLibrary>(LibraryPath);
+            if (lib == null) return "parça kütüphanesi yok";
+            var made = new List<string>();
+            var missing = new List<string>();
+            foreach (var s in PieceThumbSpecs)
+            {
+                var piece = s.piece(lib);
+                if (piece == null) { missing.Add(s.name); continue; }
+                Save(s.name, Isolated(s.w, s.h, s.size, Vector3.up * s.lookY, new[] { (piece.gameObject, Vector3.zero) }), SiginakSpriteManifest.SpritesDir);
+                made.Add(s.name);
+            }
+            AssetDatabase.Refresh();
+            foreach (var name in made)
+                AssetDatabase.ImportAsset(SiginakSpriteManifest.SpritesDir + "/" + name + ".png", ImportAssetOptions.ForceUpdate);
+            return made.Count + " küçük resim üretildi" + (missing.Count > 0 ? "; parçası yok: " + string.Join(", ", missing) : "");
+        }
+
+        /// <summary>
+        /// Denetim çizimi (ör. <c>Temp/…png</c>): prefab'lar verilen konumlarda (kare merkezi, y = 0 zemin) aynı açı ve ışıkla, düz
+        /// zemin rengi üstünde. size ≤ 0 ise çerçeve parçalara oturur. Yazdığı dosyanın tam yolunu döndürür.
+        /// </summary>
+        public static string RenderPieces(string path, int w, int h, float size, Vector3 look, Color background, params (GameObject prefab, Vector3 at)[] pieces)
+        {
+            var c = Isolated(w, h, size, look, pieces);
+            for (int i = 0; i < c.Px.Length; i++) { var p = c.Px[i]; c.Px[i] = Color.Lerp(background, new Color(p.r, p.g, p.b, 1), p.a); }
+            Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path)));
+            WritePng(path, c);
+            return Path.GetFullPath(path);
+        }
+
+        /// <summary>
+        /// Parçaları baskın kamerasının açısından (35° / 45° ortografik) ve baskının ışığıyla (masa lambası + soğuk dolgu, üç renkli
+        /// ortam) yalıtılmış katmanda çizer; etiketleri (Labels) çizmez. Saydamlık siyah ve beyaz zeminde iki çizimin farkından çıkar
+        /// (boru hattından bağımsız); ss × ss kutu süzgeciyle küçültülür. size ≤ 0: çerçeve görünen mesh köşelerine oturur (%10 pay),
+        /// bakış noktası onların ortası; değilse bakış noktası kökten <paramref name="look"/>. Sahnedeki ışıklar çizim boyunca
+        /// kapatılır, ortam ışığı geri yüklenir.
+        /// </summary>
+        static Canvas Isolated(int w, int h, float size, Vector3 look, IEnumerable<(GameObject prefab, Vector3 at)> pieces)
+        {
+            const int ss = 4, layer = 31;
+            var root = new GameObject("Piece thumb") { hideFlags = HideFlags.HideAndDontSave };
+            root.transform.position = new Vector3(0, -500, 0);
+            foreach (var (prefab, at) in pieces)
+            {
+                var piece = UnityEngine.Object.Instantiate(prefab, root.transform.position + at, Quaternion.identity, root.transform);
+                var labels = piece.transform.Find("Labels");
+                if (labels != null) labels.gameObject.SetActive(false);
+            }
+            foreach (var t in root.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = layer;
+            var cam = new GameObject("Camera").AddComponent<Camera>();
+            cam.transform.SetParent(root.transform, false);
+            cam.orthographic = true;
+            cam.transform.rotation = Quaternion.Euler(35, 45, 0);
+            if (size <= 0) (size, look) = Fit(root.transform, cam.transform, (float)w / h);
+            cam.orthographicSize = size;
+            cam.transform.position = root.transform.position + look - cam.transform.forward * 10;
+            cam.nearClipPlane = 0.1f; cam.farClipPlane = 50;
+            cam.cullingMask = 1 << layer;
+            cam.clearFlags = CameraClearFlags.SolidColor;
+            Light Lamp(Color c, float intensity, Vector3 euler)
+            {
+                var l = new GameObject("Light").AddComponent<Light>();
+                l.transform.SetParent(root.transform, false);
+                l.type = LightType.Directional; l.color = c; l.intensity = intensity; l.transform.rotation = Quaternion.Euler(euler);
+                l.cullingMask = 1 << layer; l.shadows = LightShadows.None;
+                return l;
+            }
+            // Baskin sahnesinin ışığı: Desk Lamp ve Cool Fill, üç renkli ortam
+            Lamp(new Color(1f, 0.89f, 0.69f), 1.15f, new Vector3(50, 45, 0));
+            Lamp(new Color(0.62f, 0.71f, 0.78f), 0.35f, new Vector3(40, -135, 0));
+            var others = UnityEngine.Object.FindObjectsByType<Light>(FindObjectsSortMode.None).Where(l => l.transform.root != root.transform && l.enabled).ToList();
+            foreach (var l in others) l.enabled = false;
+            var ambient = (RenderSettings.ambientMode, RenderSettings.ambientSkyColor, RenderSettings.ambientEquatorColor, RenderSettings.ambientGroundColor);
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
+            RenderSettings.ambientSkyColor = new Color(0.218f, 0.247f, 0.275f);
+            RenderSettings.ambientEquatorColor = new Color(0.114f, 0.125f, 0.133f);
+            RenderSettings.ambientGroundColor = new Color(0.047f, 0.043f, 0.035f);
+            var rt = RenderTexture.GetTemporary(w * ss, h * ss, 24, RenderTextureFormat.ARGB32);
+            var read = new Texture2D(w * ss, h * ss, TextureFormat.RGBA32, false);
+            try
+            {
+                Color[] Render(Color bg)
+                {
+                    cam.backgroundColor = bg;
+                    cam.targetTexture = rt;
+                    cam.Render();
+                    var prev = RenderTexture.active;
+                    RenderTexture.active = rt;
+                    read.ReadPixels(new Rect(0, 0, w * ss, h * ss), 0, 0);
+                    read.Apply();
+                    RenderTexture.active = prev;
+                    return read.GetPixels();
+                }
+                var black = Render(Color.black);
+                var white = Render(Color.white);
+                // Siyah ve beyaz zemin farkından alfa; renk siyah zemindekinin alfaya bölümü; ss × ss kutu süzgeciyle küçültülür
+                var c = new Canvas(w, h, Color.clear);
+                for (int y = 0; y < h; y++)
+                    for (int x = 0; x < w; x++)
+                    {
+                        float a = 0; var col = Color.black;
+                        for (int j = 0; j < ss; j++)
+                            for (int i = 0; i < ss; i++)
+                            {
+                                int k = (y * ss + j) * w * ss + x * ss + i;
+                                var b = black[k]; var wh = white[k];
+                                float pa = Mathf.Clamp01(1 - ((wh.r - b.r) + (wh.g - b.g) + (wh.b - b.b)) / 3f);
+                                a += pa; col += new Color(b.r, b.g, b.b, 0);
+                            }
+                        a /= ss * ss;
+                        col /= ss * ss;
+                        // GetPixels alttan üste; tuval üstten alta
+                        c.Px[(h - 1 - y) * w + x] = a > 0.001f ? new Color(Mathf.Clamp01(col.r / a), Mathf.Clamp01(col.g / a), Mathf.Clamp01(col.b / a), a) : Color.clear;
+                    }
+                return c;
+            }
+            finally
+            {
+                cam.targetTexture = null;
+                RenderTexture.ReleaseTemporary(rt);
+                UnityEngine.Object.DestroyImmediate(read);
+                UnityEngine.Object.DestroyImmediate(root);
+                foreach (var l in others) if (l != null) l.enabled = true;
+                (RenderSettings.ambientMode, RenderSettings.ambientSkyColor, RenderSettings.ambientEquatorColor, RenderSettings.ambientGroundColor) = ambient;
+            }
+        }
+
+        /// <summary>Çerçeve: etkin mesh köşelerinin kamera düzlemindeki kutusu, %10 payla; bakış noktası kutunun ortası (kökten).</summary>
+        static (float size, Vector3 look) Fit(Transform root, Transform cam, float aspect)
+        {
+            float x0 = float.MaxValue, x1 = float.MinValue, y0 = float.MaxValue, y1 = float.MinValue;
+            foreach (var f in root.GetComponentsInChildren<MeshFilter>())
+            {
+                var r = f.GetComponent<MeshRenderer>();
+                if (f.sharedMesh == null || r == null || !r.enabled || f.GetComponent<TMPro.TMP_Text>() != null) continue;
+                foreach (var v in f.sharedMesh.vertices)
+                {
+                    var d = f.transform.TransformPoint(v) - root.position;
+                    float x = Vector3.Dot(d, cam.right), y = Vector3.Dot(d, cam.up);
+                    x0 = Mathf.Min(x0, x); x1 = Mathf.Max(x1, x); y0 = Mathf.Min(y0, y); y1 = Mathf.Max(y1, y);
+                }
+            }
+            if (x0 > x1) return (0.76f, Vector3.up * 0.32f);
+            float half = Mathf.Max((y1 - y0) / 2, (x1 - x0) / 2 / aspect) * 1.1f;
+            return (half, cam.right * ((x0 + x1) / 2) + cam.up * ((y0 + y1) / 2));
+        }
+
         static void Save(string name, Canvas c) => Save(name, c, SiginakSpriteManifest.TexturesDir);
 
         static void Save(string name, Canvas c, string dir)
+        {
+            Directory.CreateDirectory(dir);
+            WritePng(dir + "/" + name + ".png", c);
+        }
+
+        static void WritePng(string path, Canvas c)
         {
             var tex = new Texture2D(c.W, c.H, TextureFormat.RGBA32, false);
             try
@@ -444,8 +629,7 @@ namespace Corrigible.Desk.EditorTools
                 for (int y = 0; y < c.H; y++) Array.Copy(c.Px, y * c.W, flipped, (c.H - 1 - y) * c.W, c.W);
                 tex.SetPixels(flipped);
                 tex.Apply();
-                Directory.CreateDirectory(dir);
-                File.WriteAllBytes(dir + "/" + name + ".png", tex.EncodeToPNG());
+                File.WriteAllBytes(path, tex.EncodeToPNG());
             }
             finally { UnityEngine.Object.DestroyImmediate(tex); }
         }

@@ -629,8 +629,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 222, y: -30}
-  m_SizeDelta: {x: 160, y: 22}
+  m_AnchoredPosition: {x: 222, y: -34.33}
+  m_SizeDelta: {x: 160, y: 28}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &2303966049858260794
 CanvasRenderer:
@@ -695,7 +695,7 @@ MonoBehaviour:
   m_fontSizeMax: 0
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -704,7 +704,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 0
+  m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 1
   m_linkedTextComponent: {fileID: 0}
@@ -10373,6 +10373,15 @@ MonoBehaviour:
   - {fileID: 6915018105672897247}
   continueHover: {fileID: 8915310174999490984}
   legendRoot: {fileID: 7618479383074238686}
+  legendMarks:
+  - {fileID: 5172673669030225602}
+  - {fileID: 180564806009396195}
+  - {fileID: 6461766597856710781}
+  - {fileID: 40565118466311941}
+  - {fileID: 6629654855650575507}
+  - {fileID: 8870966588098874249}
+  - {fileID: 2531280307659731128}
+  - {fileID: 7929261757521327523}
   queueLabels: []
   unusedRows:
   - {fileID: 1811764229359286073}

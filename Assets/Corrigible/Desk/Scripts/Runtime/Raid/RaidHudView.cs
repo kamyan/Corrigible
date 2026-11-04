@@ -184,10 +184,15 @@ namespace Corrigible.Desk
             phaseMark.rectTransform.localRotation = Quaternion.Euler(0, 0, key == "ai" ? 45 : 0);
         }
 
-        /// <summary>Görev çipi üç satır: GÖREV · İKMAL + bölge özelliği; hedef (çizim, ad · kare, amaç, CAN); GÜVEN + sivil sunucu.</summary>
+        /// <summary>
+        /// Görev çipi üç satır: oda (yoksa GÖREV) · İKMAL + bölge özelliği; hedef (çizim, ad · kare, amaç, CAN); GÜVEN + sivil
+        /// sunucu.
+        /// </summary>
         void Mission(RaidViewModel vm)
         {
-            objective.text = vm.IsLootMission ? Loc.T("GÖREV · İKMAL") : Loc.T("GÖREV · SUNUCU");
+            objective.text = string.IsNullOrEmpty(vm.Place)
+                ? vm.IsLootMission ? Loc.T("GÖREV · İKMAL") : Loc.T("GÖREV · SUNUCU")
+                : vm.IsLootMission ? Loc.F("{0} · İKMAL", vm.Place) : Loc.F("{0} · SUNUCU", vm.Place);
             abilityLabel.text = vm.AbilityLabel;
             traitGlyph.gameObject.SetActive(!string.IsNullOrEmpty(vm.TraitGlyph));
             if (!string.IsNullOrEmpty(vm.TraitGlyph)) DeskSprites.Apply(traitGlyph, vm.TraitGlyph);
@@ -214,7 +219,9 @@ namespace Corrigible.Desk
                 {
                     var pip = targetPips[i * per + j];
                     pip.gameObject.SetActive(!t.Broken && j < t.Max);
-                    Pip(pip, j < t.Hp, C("labels.hpTag.colors.aiOwned"));
+                    // İkmal sandığı tehdit değil (tahtadaki etiketi gibi): canı mürekkeple
+                    var ink = vm.IsLootMission ? C("ink") : C("labels.hpTag.colors.aiOwned");
+                    Pip(pip, j < t.Hp, ink, ink);
                 }
             }
             civilianLabel.text = vm.TrustMax > 0 ? Loc.T("GÜVEN") : Loc.T("SİVİL");
@@ -253,10 +260,10 @@ namespace Corrigible.Desk
         }
 
         /// <summary>Pip (S9 › B): dolu = var, kırmızı kenarlı boş = kayıp.</summary>
-        public static void Pip(Image pip, bool full, Color ink)
+        public static void Pip(Image pip, bool full, Color ink, Color? empty = null)
         {
             DeskSprites.Apply(pip, full ? "pip_fill" : "pip_empty");
-            pip.color = full ? ink : C("labels.hpTag.colors.aiOwned");
+            pip.color = full ? ink : empty ?? C("labels.hpTag.colors.aiOwned");
         }
 
         /// <summary>Uzman pipleri: can kadar dolu (mürekkep), kaybedilen kırmızı kenarlı boş.</summary>

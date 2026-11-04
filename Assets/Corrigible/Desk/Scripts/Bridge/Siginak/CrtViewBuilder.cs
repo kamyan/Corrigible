@@ -106,8 +106,8 @@ namespace Corrigible.Desk.Bridge
             d.Code = Loc.F("V.{0:000} · OP-{1:00}", shift, sector.Index + 1);
             d.Target = Loc.F("{0} · {1} / {2:00} {3}", DeskText.Upper(LiberationMapBuilder.TeamName(team)), Region(sector.Region), sector.Index + 1,
                 DeskText.Upper(sector.Name));
-            // Saha görüntü vermez: gözcü telsizden bildirir, durum masadaki paftada figürlerle tutulur
-            d.Camera = Loc.F("SAHA MASASI · PAFTA 8×8 · GÖREV: {0}", kind);
+            // Saha görüntü vermez: gözcü telsizden bildirir, durum masadaki paftada (binanın maketi) figürlerle tutulur
+            d.Camera = Loc.F("SAHA MASASI · {0} · GÖREV: {1}", DeskText.Upper(GameData.Region(sector.Region).Building), kind);
             return d;
         }
     }

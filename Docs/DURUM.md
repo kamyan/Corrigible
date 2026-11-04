@@ -1,6 +1,6 @@
 # Durum, kararlar ve açık işler
 
-_Son güncelleme: 2026-11-02 (bölge olayları; kadro raporu baskın emrine taşındı)_
+_Son güncelleme: 2026-11-03 (ayarlar dolabı ve menü sahnesi; baskın mekânları: bina kiti, kanal, olay nesneleri, bina sesi; önceki: bölge olayları, kadro raporu baskın emrinde, eğik kâğıtlarda kenar, baskın yeri ve ikmal sandığı)_
 
 ## Nerede kaldık
 
@@ -14,20 +14,99 @@ kademede artar; her bölgenin kendi tahta özelliği, imza makinesi (6 yeni maki
 kapısı çalar: 23 ziyaretçi, zincirler ve kapıda ölüm (Vuruldu, Sızma). Türkçe ve İngilizce. Kayıt ve devam
 (`liberation_savegame.json`, biçim 13) çalışır. Kadro beş uzman (Teknisyen, EMP uzmanı, Analist baştan; Madenci atölye
 seviye 2'de, Sis uzmanı 3'te katılır); her baskına Teknisyen ve görev fişinde seçilen iki uzman çıkar, çıkmayanlar dinlenir.
-Masa fareyle oynanır: anahtar rayında dört istasyon simgeyle (SIĞINAK, GÖREVLER, KAPI, MASA), odada klavye ipucu yok. Yeni harekâtta rehberli eğitim (analistin notları) ilk vardiyayı yönlendirir;
+Masa fareyle oynanır: anahtar rayında dört istasyon simgeyle (SIĞINAK, GÖREVLER, KAPI, MASA), odada klavye ipucu yok.
+Oyun sığınağın kapısının dışında (menü sahnesi `Giris`) açılır: vardiya kartı saate basılır, kapı açılır, içeri girilir; son
+şalter oyundan çıkarır. Ayarlar odada arka duvarın sağındaki (CRT'nin üstü) ve menüdeki aynı dolapta (kollu sürgüler, şalter, dil kademe
+anahtarı; odada MENÜYE DÖN kolu). Yeni harekâtta rehberli eğitim (analistin notları) ilk vardiyayı yönlendirir;
 ilk baskın adım adım oynanan bir senaryodur. Her harekâtın kendi 30 haritalık taktik harita havuzu var (altı tür, torba: tekrar etmez);
 görev tamamlanınca (kasa açıldı, hedef kırıldı) kaçış başlar: bütün ekip giriş karelerinden çıkmalı, süre dolarken tahtada
 kalan uzman baskında düşmüş sayılır; kampanyada makineler gelişmiş akılla oynar ve ekibe ulaşamayınca sivillere
 nişan alır; ayakta kalan siviller güveni geri kazandırır (tavan 20); YZ alarmı arka duvardaki panoda.
 Sığınağın ekonomisi kıt: erzak çoğunlukla ikmal baskınlarından gelir, açlık kapıya aç heyet getirir.
-Baskın telsizle anlatılır: sığınak ağa bağlanmaz, gözcü bildirir, emir telsizle gider.
-Son tam EditMode koşusu **426/426** (2026-11-02).
+Baskın telsizle anlatılır: sığınak ağa bağlanmaz, gözcü bildirir, emir telsizle gider. Her bölgenin baskını kendi binasında
+geçer: bina adı ve odası, bina kiti (duvar, kanal, gedik molozu), olay nesnelerinin modeli ve telsizden duyulan bina sesi.
+Son tam EditMode koşusu **489/489** (2026-11-03).
 
 **Git:** Depo `git@github.com:kamyan/Corrigible.git`, varsayılan dal `main`. Sığınak işi `siginak-ui` dalında
 (Aşama 1–10: `eed2824`, eski görünümün kaldırılması: `553517e`, sarı çerçeve: `b7b4d82`, sadeleştirme: `413fbf5`; sivil
 güven, YZ alarmı, hazırlık sığınağı, bölge kimliği ve eğitim: `6e658a5`). Sonrası (baskında tıklama düzeltmeleri, alarm
 panosu, harita havuzu ve torbası, ikmal kaçışı, makine aklı, sivillere saldıran makineler ve güven ödülü, sığınağın kapısı):
 `c6f61e9`; build: `05ffdcb`; telsiz: `9d16037`; tasarım revizyonu 2: `927296b`; Madenci, Sis uzmanı, kadro seçimi, plaka rafı ve haritanın kenarı: `8097337`. Sonrası commit edilmedi.
+
+## Ayarlar dolabı ve menü sahnesi (2026-11-03)
+
+İstek: "ayarlar bir dolap olsun … birde menü sahnesi ekleyelim, onda da kapı dışı olabilir kapıyı açıp girer … çıkış için
+birşey olur". Önce öneri yazıldı (`Docs/AYARLAR-DOLABI-VE-MENU.md`), kullanıcı "ayarlar dolabı ve menü sahnesini uygula"
+dedi; 14 kararın hepsinde önerilen seçenek. Ayrıntı ve sapmalar önerinin "Uygulama" bölümünde.
+
+- **Ayarlar dolabı** (Katman 1–4): `Desk/Prefabs/Siginak/SettingsCabinet.prefab`, ilkel parçalar ve odanın malzemeleri. Arka duvarın
+  sağında, CRT masasının üstünde (x 1,68, y 1,52; K1'den görünür; kullanıcının seçtiği yer), K9 pozu (`SiginakPose.Cabinet`, dikey 45°; 1080p'de 1 px ≈ 0,64 mm). İçeride dört kollu dikey sürgü
+  (genel, müzik, ortam, efekt; %5 adım, %10'da çentik sesi, ölçek, üç haneli sayaç tekerleri, yaylı ibre, lamba; tekerlek
+  ve ↑/↓ ±%5, çift tık varsayılan), yarasa kollu SES anahtarı, dil kademe anahtarı (TÜRKÇE · ENGLISH; plaka “DİL · LANGUAGE”
+  çevrilmez), kapaklı MENÜYE DÖN kolu. Açılış: dolaba tıklama ya da Esc (ekrandaki AYARLAR plakası ve kenar satırının
+  AYARLAR çipi 2026-11-03'te kaldırıldı; plaka yalnız dizilerde ATLA); kapanış: Esc, açık
+  kanat ya da panelin dışı. Eski ayarlar kartı (`SettingsCard`, `SettingsView`, `FaderView`, `RuleRowView`) silindi.
+- **Menü sahnesi** (Katman 6–9): `Desk/Scenes/Giris.unity`, build'de ilk. Sahanlık, kapının dış yüzü, dolap, puantaj saati ve
+  vardiya kartı (kayıtlı harekâtın özeti ve vardiya başına bir zımba deliği), son şalter. Devam: kart saate, zil, kapı,
+  içeri yürüyüş, DeskGame'de kısa dönüş (siyahtan ampul, K1, teleks). Yeni: kayıt varsa destenin kıskacı iki adım; DeskGame'de
+  açılış ve dosyasız emir belgesi. DeskGame doğrudan açılınca eski akış.
+- **Kod:** Game: `SaveStore` (kayıt dosyası `GameController`'dan taşındı), `GameLaunch` (menü niyeti), `Cue` 89–96,
+  `AudioDirector` oyunsuz kip. Desk: `SettingsCabinet`, `CabinetFader`, `CabinetToggle`, `CabinetSelector`, `EntranceCamera`,
+  `TimeClock`; `DeskTarget.BlockedOverride` ve `Tag`, `HoverTag` değişen satırı yeniler, `OpeningSequence` kısa dönüş ve
+  `FadeOut`, `BriefingData.NoDossier`, `BriefingView.SetVeiled`, `SiginakPose.Cabinet`. Bridge: `SiginakCabinet`,
+  `EntranceController`, `BridgeSettings.RebuildIfPending`; `LiberationDeskView` niyeti okur. Core ve kayıt biçimi
+  değişmedi. Tema: `motion.cabinet*S`, `motion.entrance.*`, `motion.opening.returnS`, `cabinet.bulbIntensity`.
+- **Ses:** sekiz yer tutucu (`Tools/Audio/cabinet_audio.py`, standart kitaplık), `SoundBank.asset`'e eklendi.
+- **Sonradan (kullanıcı):** dolap arka duvarın sağına, CRT'nin üstüne taşındı (K1'den görünür); ekrandaki AYARLAR plakası ve
+  kenar satırının AYARLAR çipi kaldırıldı (plaka yalnız dizilerde ATLA; “ATLA” artık çeviri tablosunda, SKIP). Claude Design
+  için bütün projeyi kapsayan üçüncü tasarım turu brifi: `Docs/UI_Rev3/BRIEF_rev3.md` (ekleri `Docs/UI_Rev3/screens_now/`).
+- **Testler:** yeni `SettingsCabinetTests` (sürgü hesabı, prefab parçaları, DeskGame bağlantıları, menü sahnesi ve build
+  sırası); `DeskBridgeTests` dolaba göre güncellendi.
+- **Doğrulama:** derleme temiz, EditMode boş sahnede 489/489; Play'de DeskGame doğrudan (emir belgesi sırasında dolap, sürgü
+  işaretçi olaylarıyla, tekerlek, sessiz mod, İngilizceye geçiş ve yeniden kurulum, MENÜYE DÖN) ve menü (kart özeti, kayıttan
+  devam ve kısa dönüş, kayıt varken iki adımlı yeni harekât ve dosyasız belge, menüdeki dolap, son şalterle çıkış); konsolda
+  hata yok. Kayıtlar ve tercihler geri yüklendi.
+
+## Baskın mekânları: bina kiti, kanal, olay nesneleri, ses (2026-11-03)
+
+- **İstek:** `Docs/BASKIN-MEKANLARI.md`'de ad ve sandıktan sonraki katmanlar; önerilen kararlarla (1a, 2a, 3a, 4a, 5a, 6a).
+  Ayrıntı ve sapmalar belgenin "Uygulama" bölümünde.
+- **Bina kiti (Aşama A):** 12 bölgenin her birinin kendi duvarı (dokulu blok, komşu duvara köprü, yalıtılmış sütun), kanal
+  içi ve kuyusu; ör. Doğu Avrupa gri-yeşil arşiv rafları ve döküm ızgara, Güneydoğu Asya kum torbaları ve koyu su, Afrika
+  oluklu galvaniz bunker. Okunabilirlik kapısı (`RaidKitGate`) renk, kontrast ve ayrılmış renklerden uzaklığı denetler;
+  geçmeyen kit bağlanmaz. MapSeed 0 baskınları (eğitim, örnek baskın, görüntü seti) bugünkü görünümle (varsayılan kit).
+  Kayar raf bloğunda el çarkı ve teker var; duvardan böyle ayrılır.
+- **Kanal:** göbek ve kollardan kurulur; yatay koşuların yanlış çizilmesi (eğitimde de) düzeldi. Kanal karesinin kartı
+  "Elektrikli kanal" ve kural satırı ("Boş kare" değil).
+- **Olay nesneleri:** basınçlı tüp, kaynak kolu kaidesi ve tavan enkazının kendi modelleri ve küçük resimleri; sivil ve
+  üretecin küçük resmi de var (kartta eski resim kalmıyor). Dinamitle açılan gedikte kitin molozu. Kırılan tavan enkazı
+  dolap enkazı bırakmaz.
+- **Ad:** kartta gri alt satırda kitin adı ("Arşiv rafı", "Kum torbası barikatı"…), KURALLAR lejantında kanalın adı; fişte
+  bina satırının üstüne gelince binanın iki cümlelik notu.
+- **Ses:** 9 bina yatağı (bölge başına bir; telsiz bandından, bugünkü uğultunun düzeyinde; yatağı olan bölgede uğultu
+  susar) ve her bölge olayının kendi sesi (22). Yer tutucular sentezlendi (`Tools/Audio/raid_site_audio.py`), kayıt
+  indirilmedi; seslere yalnız sayılarla bakıldı, kimse dinlemedi. Yatakların seyrek ayrıntıları sahibin dinlemesinden sonra.
+- **Doğrulama:** derleme temiz, tam EditMode koşusu 481/481, `LocalizationTool.Validate` boş. Play'de V014'ten Doğu Avrupa baskını
+  gerçek akışla; aynı sahnede Güneydoğu Asya ve Afrika (kit ve yatak geçişi, enkaz); raf kayması, dinamit ve geri alma tek
+  başına Baskin'de. Bölge kiti kare süresine en çok ~0,15 ms ekliyor.
+
+## Baskın yeri ve ikmal sandığı (2026-11-02)
+
+- **İstek:** Baskınlar hep aynı sunucu odasında geçiyor gibi; öneri belgesinden (`Docs/BASKIN-MEKANLARI.md`) "ad ve
+  sandıkla başla".
+- **Yer:** her bölge bir bina, üç sektörü binanın üç odası (`RegionDef.Building`, `RegionDef.Sector`; ör. Doğu Avrupa ·
+  Devlet arşivi: Mikrofilm deposu, Dosya katı, Tarama odası). Sektör adı bölgeden okunur, kayıt biçimi aynı. Fişte bölge
+  adının altında bina; teleks "Baskın emri: Doğu Avrupa · Dosya katı"; CRT "SAHA MASASI · DEVLET ARŞİVİ · GÖREV: YAĞMA";
+  baskında görev çipi "DOSYA KATI · İKMAL", ipucunun ilk satırı yer, telsiz kaydı "Ekip Dosya katı girişinde.". Harita
+  türü ve 30 harita adı gösterilmez; olay tablosunun bina alanı kalktı. Kayıt yalnız komutları tuttuğu için eski kayıtlar da
+  yeni oda adlarıyla açılır (anlar yeniden oynatılırken yazılır).
+- **İkmal sandığı:** yağma hedefi artık sunucu dolabı değil, zeytin yeşili KYGA ikmal sandığı (çıta, halat tutamak, çelik
+  köşe, kapakta krem şablon; kırmızı yok, can etiketi koyu mürekkep). Teknisyen alınca boşalmış alçak sandık kalır (≤ 0,25,
+  karenin içinde; kare yürünür; önceden kırık dolap enkazı konuyordu). Zırh işareti kalır (EMP sandığa da işlemez); görev
+  çipindeki canı da mürekkeple. Küçük resmi 3D sandıktan çizildi (`thumb_crate`).
+- **Testler ve deneme:** yer adı testi (iki dil, tek, ≤18 harf), sandık testi, yağma sunumu, fiş, CRT, vardiya ve rapor
+  testleri. Play'de V014'te fiş, teleks, dalış ve baskın (çip, küçük resim, sandık) görüntülendi; sandık kapalı ve açık
+  hâlde yakından denetlendi.
 
 ## Eğik kâğıtlarda kırık kenar (2026-11-02)
 
@@ -109,9 +188,8 @@ panosu, harita havuzu ve torbası, ikmal kaçışı, makine aklı, sivillere sal
   birimde "DONDU"; yeni nesneler tüp, kaynak kolu, enkaz. Takım kartında "KAYNAK: 1 hasar" gibi uyarı, yürüyüş karesinde
   "−1", olay karesinin üstünde açıklama satırı, tur şeridinde olay turları altı çizili (şebekede canlı faz harfi), görev
   çipinin ipucunda olay satırı, telsizde saha raporu ve olay adımları. Görev fişinde ve bölge bilgi fişinde BÖLGE'nin altında
-  OLAY satırı (sahnede dördüncü alan); yeni cephe fişinin cümlesi olayı da söyler. `Baskin.RoomName` olayın binasını verir ama kampanyada sonuç kartı
-  "Bölge · NN Sektör" yazar (`LiveRaidDataSource.ResultPlace`); bina adı yalnız örnek baskında görünür (bkz.
-  `Docs/BASKIN-MEKANLARI.md`).
+  OLAY satırı (sahnede dördüncü alan); yeni cephe fişinin cümlesi olayı da söyler. (Bina 2026-11-02'den beri bölgenin: `Baskin.RoomName` "bina · oda",
+  kampanyada sonuç kartı "Bölge · NN oda"; bkz. "Baskın yeri ve ikmal sandığı".)
 - **Denetim:** Core'u beş açıdan (olaysız baskın, kurallar, çökme, makine aklı, kaçış güvencesi) bağımsız bir inceleme
   taradı; doğrulanan 15 bulgu düzeltildi. Önemlileri: holün arkasındaki çıkmaz cebe turnike konmuyor, asansör durakları çıkışa
   bağlı olmak zorunda, raf kaymadan önce kaçış yolunu yeniden denetliyor, kaynak kolu hiçbir yöne bakamayan kaideye konmuyor,
@@ -133,8 +211,8 @@ panosu, harita havuzu ve torbası, ikmal kaçışı, makine aklı, sivillere sal
   (0,09 / 0,12) dengede; bulut ve kriyo hasar vermez (niyet keser, dondurur).
 - **Oyunda:** 12 bölgenin olaylı baskını Play'de baştan sona oynatıldı (konsolda hata yok); Batı Avrupa'nın bulut turları,
   Doğu Avrupa rafı, Hindistan holü, Kuzey Amerika durakları, Güney Amerika tüpleri ve V014'ün görev fişi görüntüyle denetlendi.
-- **Bilinen:** raf blokları duvardan yalnız üstlerindeki ince ray çizgileriyle ayrılıyor; tüp, kol ve enkazın kendi modeli yok
-  (soğutma ünitesi ve moloz ölçeklenmiş). Kalabalık haritada holün üçten az turnike kenarı kalabiliyor (o zaman iki yöne
+- **Bilinen:** raf blokları duvardan yalnız üstlerindeki ince ray çizgileriyle ayrılıyordu ve tüp, kol, enkazın kendi modeli
+  yoktu (2026-11-03'te giderildi: rafta el çarkı ve teker, üç nesnenin modeli). Kalabalık haritada holün üçten az turnike kenarı kalabiliyor (o zaman iki yöne
   açık geçit yok; kaçışta tahliye çıkışı yine açar).
 
 ## Baskına girerken kadro raporu (2026-11-01; 2026-11-02'de baskın emrine taşındı, yukarıda)
@@ -941,14 +1019,26 @@ bugünkü odanın tasarım brifidir.)
 
 ## Açık işler
 
-- **Baskın mekânları (öneri, 2026-11-02):** baskınlar yer olarak ayrışmıyor; tahta her bölgede aynı parçalarla çiziliyor,
-  harita adı ile olayın binası çelişiyor ve kampanyada ikisi de görünmüyor. Öneri ve karar bekleyen sorular
-  `Docs/BASKIN-MEKANLARI.md`'de (tek yer adı, yağma sandığı, bina kiti, kanal yönü, olay modelleri, bina sesi). Henüz
-  uygulanmadı.
+- **Ayarlar dolabı ve menü (2026-11-03):** sesler yer tutucu (sahibin dinlemesi); menünün ışığı DeskGame'den aydınlık ve düz
+  (sahibin gözüyle); gerçek fareyle sürükleme ve çift tık sahibin elinde denenmeli. Denerken görülen, bu işten bağımsız: gün 0'da dil değişince bölge adları ikinci kez çevrilmeye
+  çalışılıyor (konsol uyarısı). Üçüncü tasarım turu brifi hazır (`Docs/UI_Rev3/BRIEF_rev3.md`); Claude Design'a verilmedi. Önerinin önerisiz soruları (görüntü ayarları, merdivenin tepesinde kırmızı ışık, okunamayan kayıt kartı,
+  jenerik) yapılmadı.
+
+- **Baskın mekânları (2026-11-03):** `Docs/BASKIN-MEKANLARI.md`'nin 1–8. katmanları uygulandı (yukarıda). Kalanlar:
+  - **Sahibin dinlemesi:** 9 yatak ve 22 olay sesi yalnız sayılarla değerlendirildi. Yataklar bugünkü uğultunun düzeyinde,
+    gözcünün bildiriminden RMS'te 3–6 dB yüksek ("yatak sinyalin ≥ 10 dB altında" kuralı bugünkü gibi karşılanmıyor);
+    Rafineri, Fabrika ve Arşiv yataklarının vuruşları gözcünün tepesini aşıyor. Dinledikten sonra: düzey, yatakların seyrek
+    ayrıntıları (yağmur, gemi düdüğü, telefon…) ve kalabalık için CC0 kayıt. Döngü noktasında Vorbis tık yaparsa o yatak PCM'e.
+  - **Kararlar:** varsayılan kite (eğitim, MapSeed 0) köprü verilsin mi; soğutma ünitesi ve ikmal sandığı rengi kit kapısına
+    eklensin mi (eeu üstü soğutma ünitesine ΔE ≈ 10, ru ≈ 6; şekil ayırıyor); raf duvarı kartında alt satır "Kayar arşiv
+    rafı" ile kural satırı "Arşiv rafı: kayar duvar" birbirini tekrarlıyor.
+  - **Aşama B** kabartma (desenler 1080p'de okunuyor ama ince; cn, sea, jk en çok sıkıştırılanlar), antet (9B), sivil
+    ekipman, kapılar: karar gereği yapılmadı. Kaynak kolu kaidesi kolun yönünü göstermez (simetrik).
+  - Boşalmış sandık, tahta durumdan sıfırdan kurulunca (örnek baskın) çizilmez; oyunda kasa alındığı anda konur.
 - **Bölge olayları (2026-11-02):** sayılar ilk öneri. İlk ölçümde başarı farkı yalnız turnikede anlamlıydı (düzeltildi;
   ikinci ölçümde −10 ±13,5). Olay hasarı makinelere ekibin üç katı (0,45 / 0,14); şebeke fazı ve süzgeçte altı kat. Başarıyı
   değiştirmiyor ama "iki tarafa da" hedefi için makinelere olayı kullanacak bir araç (itme, çekme) ya da bu iki olayda daha
-  sert makine aklı düşünülmeli. Raf bloklarına ve tüp, kol, enkaz nesnelerine kendi modelleri gerek.
+  sert makine aklı düşünülmeli.
 - **Gölgeler (karar, 2026-10-31):** ampul ve lamba gölgeleri yumuşak kalır. Sert gölge ~0,25 ms kazandırırdı (Revizyon 2'yi
   öncesinden %3–6 hızlı yapardı); Revizyon 2'nin masa ve sığınak pozundaki %2–3'lük farkı kabul edildi (`Docs/UI_Siginak_Rev2/IMPLEMENTATION_MAP.md` Soru 13).
 - **Denge (kadro seçimi):** Madenci ve Sis uzmanının hakları (dinamit 2, sis 3) ölçülmedi; seçimli kadroyla zorluk yeniden
@@ -959,7 +1049,8 @@ bugünkü odanın tasarım brifidir.)
   girişli türler motorda ikmal kaçışını ve makine yerleşimini genişletmeyi ister. Karşı saldırıyla
   yeniden özgürleşen bölge bölge fonunu ve güveni yeniden veriyor (ölçüm de böyleydi).
 - **Ses:** Dağılma da Silme'nin bitiş sesini (`EndErase`) çalıyor; yenilgiye ayrı ses yok.
-- **Ses:** yer tutucu sesler gerçekleriyle değiştirilmeli; AudioMixer yok. Kapının üç sesi ve telsiz sesleri kodla sentezlendi.
+- **Ses:** yer tutucu sesler gerçekleriyle değiştirilmeli; AudioMixer yok. Kapının üç sesi ve telsiz sesleri kodla, bina
+  yatakları ve olay sesleri `Tools/Audio/raid_site_audio.py` ile sentezlendi.
 - **Telsiz kurgusu 3. aşama:** isteğe bağlı "YZ telsizi dinler" mekaniği (yukarıda). Baskın günlüğündeki tur satırı
   Core'dan gelir ("— Tur n: makineler hareket ediyor —"), telsiz diliyle yazılmadı.
 - **Kapı:** Kapı K1'den görünmüyor; vuruşta kamera kendiliğinden döner (masada 4 · KAPI tuşunun lambası ve el yazısı fişi de

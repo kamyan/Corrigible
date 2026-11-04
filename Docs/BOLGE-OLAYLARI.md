@@ -45,20 +45,20 @@ evresinin sonu demektir.
 
 ## Bölgeler
 
-| Bölge | Özellik · imza | Olay | Bina | Ritim | Boy |
+| Bölge | Özellik · imza | Olay | Bina (`RegionDef.Building`) | Ritim | Boy |
 |---|---|---|---|---|---|
-| Batı Avrupa | Güvenli giriş · zırhlı dron | Söndürme bulutu | Banka veri merkezi, sunucu salonu | 2., 4., 6. (ikmalde 8.) tur bulutlu | S |
-| Doğu Avrupa | Dar koridor · kilitleyici | Kayar arşiv rafı | Devlet arşivi, dosya katı | 3. ve 5. tur sonu kayar | M |
-| Orta Doğu | Kum fırtınası · patlayan robot | Yanıcı gaz kaçağı | Rafineri kompresör dairesi | 2 tur dolu, 1 tur boş · fitil | M |
-| Afrika | Açık arazi · havan | Çatlak tavan | Cevher işleme hangarı | Darbeyle tetiklenir · fitil | M |
-| Kuzey Amerika | Kısa nöbet · havan | Yük asansörü | Dağıtım merkezi asansör holü | 2.→3. ve 4.→5. tur | S–M |
-| Rusya | Soğutma ağı · kalkan dronu | Kriyo soğutma hattı | Soğuk depolu veri merkezi | 2., 4. (ikmalde 6.) tur sonu | S |
-| Hindistan | Kalabalık şehir · kalkan dronu | Vardiya turnikeleri | Çağrı merkezi kasa holü | 2. ve 4. tur sonu döner; kaçışta ve son iki tur tahliye | M |
+| Batı Avrupa | Güvenli giriş · zırhlı dron | Söndürme bulutu | Banka veri merkezi | 2., 4., 6. (ikmalde 8.) tur bulutlu | S |
+| Doğu Avrupa | Dar koridor · kilitleyici | Kayar arşiv rafı | Devlet arşivi | 3. ve 5. tur sonu kayar | M |
+| Orta Doğu | Kum fırtınası · patlayan robot | Yanıcı gaz kaçağı | Körfez rafinerisi | 2 tur dolu, 1 tur boş · fitil | M |
+| Afrika | Açık arazi · havan | Çatlak tavan | Cevher hangarı | Darbeyle tetiklenir · fitil | M |
+| Kuzey Amerika | Kısa nöbet · havan | Yük asansörü | Dağıtım merkezi | 2.→3. ve 4.→5. tur | S–M |
+| Rusya | Soğutma ağı · kalkan dronu | Kriyo soğutma hattı | Sibirya veri merkezi | 2., 4. (ikmalde 6.) tur sonu | S |
+| Hindistan | Kalabalık şehir · kalkan dronu | Vardiya turnikeleri | Çağrı merkezi | 2. ve 4. tur sonu döner; kaçışta ve son iki tur tahliye | M |
 | Çin | Zırhlı dolap · çoğaltıcı | Kaynak robotu kolu | Montaj fabrikası | Her evre sonu | M |
-| Japonya-Kore | Elektrik şebekesi · kilitleyici | Şebeke faz değişimi | Çip fabrikası trafo merkezi | 3. ve 6. tur sonu faz değişir | S |
-| Güneydoğu Asya | Kopya fabrikası · çoğaltıcı | Süzgeç emmesi | Su basmış elektronik fabrikası | 3. ve 6. tur sonu | S |
-| Güney Amerika | Takviye · patlayan robot | Basınçlı tüp rafı | Hidroelektrik santrali bakım atölyesi | Vurulunca · fitil | M |
-| Okyanusya | Hızlı devriye · zırhlı dron | Hidrolik yağ sızıntısı | Maden-liman makine dairesi | 2. tur sonu, bir kez | S–M |
+| Japonya-Kore | Elektrik şebekesi · kilitleyici | Şebeke faz değişimi | Çip fabrikası | 3. ve 6. tur sonu faz değişir | S |
+| Güneydoğu Asya | Kopya fabrikası · çoğaltıcı | Süzgeç emmesi | Elektronik fabrikası | 3. ve 6. tur sonu | S |
+| Güney Amerika | Takviye · patlayan robot | Basınçlı tüp rafı | Hidroelektrik santrali | Vurulunca · fitil | M |
+| Okyanusya | Hızlı devriye · zırhlı dron | Hidrolik yağ sızıntısı | Maden limanı | 2. tur sonu, bir kez | S–M |
 
 ### Batı Avrupa · Söndürme bulutu
 
@@ -358,7 +358,8 @@ Pilbara'da uzaktan yönetilen bir maden-liman tesisinin makine dairesi. Hidrolik
 Kod `Core/Baskin.Events.cs`'te (`Baskin` artık `partial`); `Baskin.cs`'e yalnız kancalar girdi. Olaysız baskında hiçbir dal
 değişmez: `RaidEngineTests`'in kilitli imzaları aynı, `GameRecord.CurrentVersion` 13'te kaldı.
 
-- **Veri:** `RegionDef.Event` (`GameData`), `Baskin.RegionEvents` (ad, kural, bina, uyarı etiketi; `Loc.N`), `RaidParams.Event`
+- **Veri:** `RegionDef.Event` (`GameData`), `Baskin.RegionEvents` (ad, kural, uyarı etiketi; `Loc.N`;
+  bina 2026-11-02'den beri bölgenin: `RegionDef.Building`, Docs/BASKIN-MEKANLARI.md), `RaidParams.Event`
   (`StartLiberationRaidCore` bölgeden verir; `Balance.liberationRegionEvents` kapatır). `TutorialRaid.For` yeni alanı
   kopyalamadığı için eğitim baskını olaysız; örnek baskınlar ve motor testleri de olay vermez. Olay kimlikleri: `bulut`,
   `raf`, `gaz`, `tavan`, `asansor`, `kriyo`, `turnike`, `kaynak`, `faz`, `suzgec`, `tup`, `yag`.
@@ -400,8 +401,8 @@ değişmez: `RaidEngineTests`'in kilitli imzaları aynı, `GameRecord.CurrentVer
 - **Önizleme:** `Baskin.Hazards(B)` kopyada gösterilen niyetleri oynatır, uyanma karelerini dolu sayar (kum fırtınasında
   saymaz), olay adımını uygular ve farktan birim uyarılarını çıkarır ("KAYNAK: 1 hasar", "KABİN: biner…", "DONACAK…");
   kare işaretleri (`HazardMark.Kind`), turnike kenarları, tüp ve süzgeç hatları ve tur şeridi (`Turns`) de oradan.
-  `Baskin.PreviewMove` yürüyüş karesi için, `Preview` yetenek için aynı görünümü verir. `Baskin.RoomName` olaylı baskında
-  binanın adını verir (örnek baskının sonuç kartı; kampanyada kart "Bölge · NN Sektör" yazar). Bot (`RaidBot.Predict`) uyarıları hasar ve donmayı kilit sayar.
+  `Baskin.PreviewMove` yürüyüş karesi için, `Preview` yetenek için aynı görünümü verir. `Baskin.RoomName` bölgenin binasını ve
+  sektörün odasını verir (`RegionDef.Building`, `RegionDef.Sector`; Docs/BASKIN-MEKANLARI.md). Bot (`RaidBot.Predict`) uyarıları hasar ve donmayı kilit sayar.
 - **Sunum:** tahtada olay katmanı (`RaidBoard3D.Marks.Hazards`): renkler `RaidPieceLibrary`'de (bulut beyaz, gaz sarı, kriyo
   camgöbeği, kaynak turuncu, yağ siyah). Kabindeki birim gizlenir, donmuş birimde "DONDU". Görev çipinin ipucunda olay satırı,
   tur şeridinde olayın işlediği turların numarası altı çizili (şebekede turun canlı fazı numaranın yanında). Takım kartında

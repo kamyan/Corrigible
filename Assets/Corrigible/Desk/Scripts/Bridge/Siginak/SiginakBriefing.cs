@@ -1,3 +1,4 @@
+using System.Linq;
 using Corrigible.Core;
 using Corrigible.Game;
 using UnityEngine;
@@ -11,7 +12,7 @@ namespace Corrigible.Desk.Bridge
     /// “001/00 KYGA-07 HAT AÇIK” basar, belge düşer. BAŞLA (Enter): kayıt varsa ilk basış teleks uyarısıdır, ikinci basış
     /// onaydır (kayıt hiçbir zaman sorulmadan üstüne yazılmaz); ALINDI damgası, belge EVRAK tepsisine, kamera K1'e.
     /// KAYITTAN DEVAM (tık ya da Tab → Enter): kayıt açılır, belge tepsiye, son rapor 0,3 s görünür, kamera kayıttaki poza.
-    /// H ve tepsi belgeyi okuma kipinde açar (Enter / Esc kapatır). Esc belge açıkken AYARLAR'ı açar. Boşluk açılışı atlar.
+    /// H ve tepsi belgeyi okuma kipinde açar (Enter / Esc kapatır). Esc belge açıkken ayarlar dolabını açar. Boşluk açılışı atlar.
     /// </summary>
     public sealed class SiginakBriefing : MonoBehaviour
     {
@@ -36,8 +37,6 @@ namespace Corrigible.Desk.Bridge
         /// <summary>Açılış ya da belge: masa kilitli (LiberationDeskView.InputBlocked).</summary>
         public bool Busy => state != State.Idle;
         public bool OpeningPlaying => opening != null && opening.Playing;
-        /// <summary>Belge okunurken AYARLAR plakası da çalışır.</summary>
-        public bool AllowsSettings => state == State.Ready || state == State.Reading;
 
         public void Configure(GameController controller, LiberationDeskView desk, SiginakCameraRig cameraRig, TelexFeed feed, EvrakTray paperTray,
             SiginakShift shiftControls, BriefingView briefingView, OpeningSequence openingSequence, Camera camera)
@@ -65,17 +64,26 @@ namespace Corrigible.Desk.Bridge
 
         static SiginakTheme T => SiginakTheme.Active;
 
-        BriefingData Data() => BriefingBuilder.Build(state == State.Reading, save, armed);
+        BriefingData Data() => BriefingBuilder.Build(state == State.Reading, save, armed, !fromEntrance);
+
+        /// <summary>Menüden yeni harekât: kayıt kararı kapıda verildi, belgede dosya ve sekme yok.</summary>
+        bool fromEntrance;
+
+        static bool CabinetOpen => SettingsCabinet.Instance != null && SettingsCabinet.Instance.IsOpen;
 
         // ---------- Açılış ----------
 
-        /// <summary>Yeni oyun: harita pozunda karanlıktan açılış, sonra emir belgesi (BAŞLA / KAYITTAN DEVAM).</summary>
-        public void OpenOpening()
+        /// <summary>
+        /// Yeni oyun: harita pozunda karanlıktan açılış, sonra emir belgesi (BAŞLA / KAYITTAN DEVAM).
+        /// <paramref name="entrance"/>: menüden yeni harekât; belgede yalnız BAŞLA (kayıt kapıda onaylandı).
+        /// </summary>
+        public void OpenOpening(bool entrance = false)
         {
             opening.Stop();
             view.Hide();
             armed = keyboardFocus = false;
-            save = BriefingBuilder.Summarize(game.SavedRecord());
+            fromEntrance = entrance;
+            save = entrance ? null : BriefingBuilder.Summarize(game.SavedRecord());
             state = State.Opening;
             tray.SetBriefing(false);
             rig.Locked = true;
@@ -98,6 +106,36 @@ namespace Corrigible.Desk.Bridge
                     break;
             }
         }
+
+        /// <summary>
+        /// Menüden kayıttan devam (oyun kayda dönmüş): belge yok; siyahtan ampul kısa sürede yanar, kamera masada (K1), teleks
+        /// kaydın vardiyasını ve özgür bölgesini basar.
+        /// </summary>
+        public void OpenReturn()
+        {
+            opening.Stop();
+            view.Hide();
+            fromEntrance = false;
+            state = State.Opening;
+            tray.SetBriefing(true);
+            rig.Locked = true;
+            rig.Focus(SiginakPose.Desk, true);
+            opening.Play((cue, _) =>
+            {
+                if (cue == OpeningSequence.Cue.Lights && Sim != null)
+                {
+                    var lib = Sim.S.Liberation;
+                    telex.Post(surface.Shift, Loc.T("KAYITTAN DEVAM"),
+                        Loc.F("V.{0:000} · özgür {1}/{2}", Sim.S.Day + 1, lib.Regions.Count(r => r.Completed), lib.Regions.Count), TelexKind.Info);
+                }
+                if (cue != OpeningSequence.Cue.End) return;
+                state = State.Idle;
+                rig.Locked = false;
+            }, true);
+        }
+
+        /// <summary>Ayarlar dolabı açıkken belge gizlenir (dolabın önünü örtmesin).</summary>
+        public void SetVeiled(bool on) => view.SetVeiled(on);
 
         /// <summary>Boşluk ya da ATLA: açılış doğrudan belgeye geçer.</summary>
         public void Skip()
@@ -134,7 +172,7 @@ namespace Corrigible.Desk.Bridge
 
         void Update()
         {
-            if (SettingsView.Instance != null && SettingsView.Instance.IsOpen) settingsSeen = Time.frameCount;
+            if (CabinetOpen) settingsSeen = Time.frameCount;
             var kb = Keyboard.current;
             if (kb == null || state == State.Idle || settingsSeen >= Time.frameCount - 1) return;
             if (state == State.Opening)
@@ -162,14 +200,14 @@ namespace Corrigible.Desk.Bridge
             }
         }
 
-        // Esc belge açıkken AYARLAR'ı açar. LateUpdate'te: DeskInput aynı karede ayarları açık görüp kapatmasın; ayarlar bu ya
-        // da önceki karede açıksa (Esc onları kapattı) yeniden açılmaz.
+        // Esc belge açıkken ayarlar dolabını açar. LateUpdate'te: DeskInput aynı karede dolabı açık görüp kapatmasın; dolap bu ya
+        // da önceki karede açıksa (Esc onu kapattı) yeniden açılmaz.
         void LateUpdate()
         {
             var kb = Keyboard.current;
             if (kb == null || state != State.Ready || !kb.escapeKey.wasPressedThisFrame) return;
-            if (SettingsView.Instance == null || SettingsView.Instance.IsOpen || settingsSeen >= Time.frameCount - 1) return;
-            SettingsView.Instance.Open();
+            if (SettingsCabinet.Instance == null || CabinetOpen || settingsSeen >= Time.frameCount - 1) return;
+            SettingsCabinet.Instance.RequestOpen();
         }
 
         void Disarm()

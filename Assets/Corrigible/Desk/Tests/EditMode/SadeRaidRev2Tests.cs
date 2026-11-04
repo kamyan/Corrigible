@@ -118,7 +118,7 @@ namespace Corrigible.Desk.Tests
                 Assert.AreEqual(500, card.sizeDelta.x, 0.5f);
                 var vm = Vm(6, 8, "won");
                 vm.Finished = true; vm.Success = true; vm.Locked = true;
-                vm.ResultTitle = Loc.T("SEKTÖR GERİ ALINDI"); vm.ResultTurn = Loc.F("TUR {0}/{1}", 6, 8); vm.ResultPlace = "Doğu Avrupa · 02 Tahliye geçidi";
+                vm.ResultTitle = Loc.T("SEKTÖR GERİ ALINDI"); vm.ResultTurn = Loc.F("TUR {0}/{1}", 6, 8); vm.ResultPlace = "Doğu Avrupa · 02 Dosya katı";
                 vm.ResultRows = new[]
                 {
                     new RaidResultRow { Label = "İkmal kasası", Value = Loc.T("alındı"), Good = true },

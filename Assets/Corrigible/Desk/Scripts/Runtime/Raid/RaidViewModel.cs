@@ -33,6 +33,9 @@ namespace Corrigible.Desk
     [Serializable] public sealed class RaidInspectorModel
     {
         public string Thumb, Title; public int Hp, Max;
+        /// <summary>Başlığın altındaki gri ikinci satır (mekânın adı: duvarın, kanalın, molozun bu binadaki hâli); boşsa yok ve
+        /// başlık yerinde kalır.</summary>
+        public string Subtitle;
         /// <summary>Win: hamle baskını kazandırır (son uzman çıkar); Escape: hamle kaçışı başlatır (kasa açılır, son hedef kırılır).</summary>
         public bool Win, Escape, IsLootMission; public RaidCardRow[] Rows = Array.Empty<RaidCardRow>();
     }
@@ -44,10 +47,12 @@ namespace Corrigible.Desk
     [Serializable] public sealed class RaidViewModel
     {
         public bool LastTurn,Finished,Success,EventVisible,IsLootMission;
+        /// <summary>Baskının odası, büyük harfle (görev çipinin başında: “UPS ODASI · İKMAL”); harekât dışında boş.</summary>
+        public string Place;
         /// <summary>Kaçış sürüyor (kasa alındı ya da hedef kırıldı): bütün ekip girişten çıkmalı, geri çekilme yok. CargoLost:
         /// malzemeyi taşıyan Teknisyen düştü.</summary>
         public bool Escaping, CargoLost, CanRetreat;
-        /// <summary>Sonuç kartı (S7): başlık yerindeki tek damga, “TUR 6/8”, yer satırı (“Doğu Avrupa · 02 Tahliye geçidi”), üç satır.</summary>
+        /// <summary>Sonuç kartı (S7): başlık yerindeki tek damga, “TUR 6/8”, yer satırı (“Doğu Avrupa · 02 Dosya katı”), üç satır.</summary>
         public string EventLine,ResultTitle,ResultTurn,ResultPlace;
         public RaidResultRow[] ResultRows=Array.Empty<RaidResultRow>();
         public Vector3 Spot;
@@ -63,6 +68,9 @@ namespace Corrigible.Desk
         public string Phase, OpenPanel, AbilityTip, AbilityLabel, Status;
         /// <summary>Görev çipi (Revizyon 2 · S6): bölge özelliğinin işareti (sprite adı; yoksa null) ve amaç satırı.</summary>
         public string TraitGlyph, Goal;
+        /// <summary>Kablo kanalının bu binadaki adı (bina kiti, BASKIN-MEKANLARI Katman 6; çevrilmiş): kurallar kartının lejantında
+        /// "Elektrikli kanal · bara kanalı". Varsayılan kitte (eğitim, örnek baskın) null, lejant bugünkü gibi.</summary>
+        public string CableName;
         /// <summary>Okunmamış telsiz satırı sayısı (TELSİZ düğmesindeki kırmızı yuvarlak).</summary>
         public int LogUnreadCount;
         /// <summary>Makine evresi: oynanan hamle ve toplam (kilitli kâğıtta “2/3 hamle”).</summary>

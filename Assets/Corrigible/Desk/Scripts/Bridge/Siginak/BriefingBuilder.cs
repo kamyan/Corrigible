@@ -37,7 +37,8 @@ namespace Corrigible.Desk.Bridge
 
         /// <param name="reading">H / EVRAK tepsisi: dosya ve sekme yok, düğme “Kapat”.</param>
         /// <param name="armed">Kayıt varken ilk Enter basıldı: düğme onay ister.</param>
-        public static BriefingData Build(bool reading, SavedSummary? save, bool armed)
+        /// <param name="dossier">Manila dosya ve KAYITTAN DEVAM sekmesi (menüden yeni harekâtta yok).</param>
+        public static BriefingData Build(bool reading, SavedSummary? save, bool armed, bool dossier = true)
         {
             return new BriefingData
             {
@@ -62,6 +63,7 @@ namespace Corrigible.Desk.Bridge
                 SignLine = Loc.F("Vardiya {0:000} · analog hat", 1),
                 Action = reading ? Loc.T("KAPAT") : armed ? Loc.T("BAŞLA · ONAY") : Loc.T("BAŞLA"),
                 Reading = reading,
+                NoDossier = !dossier,
                 HasSave = save != null,
                 TabTitle = Loc.T("KAYITTAN DEVAM"),
                 TabSummary = save is SavedSummary s ? Loc.F("V.{0:000} · özgür {1}/{2}", s.Shift, s.Free, s.Regions) : "",

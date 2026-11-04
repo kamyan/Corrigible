@@ -9,6 +9,10 @@ namespace Corrigible.Desk
         [SerializeField] GameObject winBox;
         [SerializeField] TMP_Text winStamp,winText;
         [SerializeField] TMP_Text title;
+        [Tooltip("Başlığın altındaki gri ikinci satır (LF 400 11, ink3): mekânın adı. Boşsa gizli.")]
+        [SerializeField] TMP_Text subtitle;
+        [Tooltip("Başlığın üst kenarı (y) ve yüksekliği: alt satır yokken dikey ortada / alt satır varken yukarıda.")]
+        [SerializeField] Vector2 titleAlone=new Vector2(-8,32),titleWithSubtitle=new Vector2(-6,22);
         [SerializeField] Image[] pips, icons;
         [SerializeField] TMP_Text[] text, detail;
         [SerializeField] RectTransform[] rows;
@@ -20,7 +24,13 @@ namespace Corrigible.Desk
             // Kaçışı başlatan hamle (kasa, son hedef) ve baskını bitiren çıkış ayrı damgalanır
             bool stamp=model.Win||model.Escape;
             if(winBox!=null){winBox.SetActive(stamp);winStamp.text=model.Win?Corrigible.Core.Loc.T("EKİP ÇIKAR"):model.IsLootMission?Corrigible.Core.Loc.T("İKMAL ALINIR"):Corrigible.Core.Loc.T("HEDEF KIRILIR");winText.text=model.Win?Corrigible.Core.Loc.T("operasyon kazanılır"):Corrigible.Core.Loc.T("kaçış başlar");}
-            title.text=model.Title;DeskSprites.Apply(thumbnail,model.Thumb);thumbnail.enabled=!string.IsNullOrEmpty(model.Thumb);
+            // Sprite tablosunda olmayan küçük resim önceki kartın resmini bırakmasın: resim gizlenir
+            title.text=model.Title;DeskSprites.Apply(thumbnail,model.Thumb);thumbnail.enabled=!string.IsNullOrEmpty(model.Thumb)&&DeskSprites.Instance!=null&&DeskSprites.Instance.TryGet(model.Thumb,out _);
+            // Alt satır (mekânın adı) varsa başlık yukarı kayar ve altına gri satır girer; yoksa başlık eskisi gibi dikey ortada
+            bool sub=subtitle!=null&&!string.IsNullOrEmpty(model.Subtitle);
+            if(subtitle!=null){subtitle.gameObject.SetActive(sub);subtitle.text=sub?model.Subtitle:"";if(sub)subtitle.color=RaidHudView.C("ink.ink3");}
+            var place=sub?titleWithSubtitle:titleAlone;float top=place.x,height=place.y;var tr=title.rectTransform;
+            tr.anchoredPosition=new Vector2(tr.anchoredPosition.x,top);tr.sizeDelta=new Vector2(tr.sizeDelta.x,height);
             RaidHudView.Pips(pips,model.Hp,model.Max,RaidHudView.C("labels.hpTag.colors.aiOwned"));
             float y=rows.Length>0?-rows[0].anchoredPosition.y:50;
             for(int i=0;i<rows.Length;i++)

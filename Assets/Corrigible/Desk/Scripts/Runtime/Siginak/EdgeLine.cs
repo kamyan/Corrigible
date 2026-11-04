@@ -7,7 +7,8 @@ namespace Corrigible.Desk
 {
     /// <summary>
     /// Ekranın üst kenarındaki 40 px bakalit şerit (K4 notu): sayaç rafı kadraj dışındayken aynı değerleri ve istasyon
-    /// tuşlarını gösterir. Ayar: Otomatik (varsayılan) / Her zaman / Kapalı (oyuncu tercihi). Tuşlara tıklanabilir.
+    /// tuşlarını gösterir. Ayar: Otomatik (varsayılan) / Her zaman / Kapalı (oyuncu tercihi). Tuşlara tıklanabilir. AYARLAR çipi
+    /// yok: ayarlar odadaki dolapta (Docs/AYARLAR-DOLABI-VE-MENU.md).
     /// </summary>
     public sealed class EdgeLine : MonoBehaviour
     {
@@ -16,7 +17,7 @@ namespace Corrigible.Desk
 
         [SerializeField] GameObject bar;
         [SerializeField] TMP_Text values;
-        [Tooltip("İstasyon tuşları (anahtar rayı sırası) ve en sonda AYARLAR.")]
+        [Tooltip("İstasyon tuşları (anahtar rayı sırası). Ayarlar şeritte değil, odadaki dolapta.")]
         [SerializeField] Button[] chips = Array.Empty<Button>();
         [SerializeField] Image[] chipBacks = Array.Empty<Image>();
         [SerializeField] TMP_Text[] chipLabels = Array.Empty<TMP_Text>();
@@ -30,7 +31,6 @@ namespace Corrigible.Desk
         bool ended, locked;
 
         public event Action<int> StationClicked;
-        public event Action SettingsClicked;
         public bool Visible => bar != null && bar.activeSelf;
 
         public static Mode Preference
@@ -49,7 +49,7 @@ namespace Corrigible.Desk
             for (int i = 0; i < chips.Length; i++)
             {
                 int index = i;
-                chips[i].onClick.AddListener(() => { if (index == chips.Length - 1) SettingsClicked?.Invoke(); else StationClicked?.Invoke(index); });
+                chips[i].onClick.AddListener(() => StationClicked?.Invoke(index));
             }
         }
 

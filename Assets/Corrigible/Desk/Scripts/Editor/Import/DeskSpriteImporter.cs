@@ -25,6 +25,8 @@ namespace Corrigible.Desk.EditorTools
             else if (path.StartsWith(SadeSpriteManifest.MapDir + "/")) SadeLayer(ti, path);
             // Sığınak kiti (Docs/UI_Siginak/sprites/README.md)
             else if (SiginakSpriteManifest.Owns(path)) SiginakSpriteManifest.Apply(ti, path);
+            // Baskın bina kitlerinin dokuları (RaidKitTextureBaker): döşenir, mipmap'li
+            else if (path.StartsWith(RaidKitTextureBaker.OutRoot + "/")) RaidKitTextureBaker.ApplyImport(ti);
         }
 
         static void SadeSprite(TextureImporter ti, string path)

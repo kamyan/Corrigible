@@ -131,51 +131,39 @@ Ekip geri çekildi.	The team withdrew.
 # Assets/Corrigible/Core/Baskin.Events.cs
 Söndürme bulutu	Suppression cloud
 Tek turların sonunda tavandaki memeler bir alanı bulutla doldurur: bir tur boyunca buluta ve buluttan nişan alınmaz; bitişik nesneye iş (sabotaj, onarım) serbest.	At the end of odd turns the ceiling nozzles fill an area with a cloud: for one turn nobody can aim into or out of it; work on an adjacent object (sabotage, repair) still goes on.
-Banka sunucu salonu	Bank server hall
 BULUT	CLOUD
 Kayar arşiv rafı	Sliding archive shelf
 3. ve 5. tur sonunda raf bloğu kayar ve geçit rayın öbür ucuna atlar; kapanan geçitteki birim 1 hasar alır ve yana itilir.	At the end of turns 3 and 5 the shelf block slides and the gap jumps to the other end of the rail; a unit in the closing gap takes 1 damage and is pushed aside.
-Arşiv dosya katı	Archive file floor
 RAF	SHELF
 Yanıcı gaz kaçağı	Flammable gas leak
 Kompresör bulutu takvimle doldurup boşaltır. Buluta ateş değerse bulut bir tur sonra parlar: içindeki herkes 1 hasar alır.	The compressor fills and vents the cloud on a schedule. If fire touches the cloud it flares a turn later: everyone inside takes 1 damage.
-Rafineri kompresör dairesi	Refinery compressor room
 PARLAMA	FLARE
 Çatlak tavan	Cracked ceiling
 Çatlağa ya da yanına darbe gelirse tavan bir tur sonra çöker: altındaki birim 1 hasar alır, kare boşsa enkaz yığını kalır.	If an impact lands on or next to a crack, the ceiling collapses a turn later: the unit below takes 1 damage, an empty tile is left with a rubble pile.
-Cevher işleme hangarı	Ore processing hangar
 TAVAN	CEILING
 Yük asansörü	Freight elevator
 Kabin 2. ve 4. tur sonunda kalkar, bir tur sonra öbür durağa iner: duraktaki birim yolculuk eder, iniş durağındaki birim 1 hasar alır.	The car leaves at the end of turns 2 and 4 and lands at the other stop a turn later: the unit on the stop rides along, a unit on the landing stop takes 1 damage.
-Asansör holü	Elevator hall
 KABİN	CAR
 Kriyo soğutma hattı	Cryo cooling line
 Çift turların sonunda hat bölgeye boşalır: içindeki birim bir sıra yürüyemez ama eylemini yapar; buz kabuğu ilk hasarı karşılar.	At the end of even turns the line discharges into its zone: a unit inside cannot move for a turn but still acts; an ice shell soaks the first hit.
-Soğuk depo	Cold storage
 DONMA	FREEZE
 Vardiya turnikeleri	Shift turnstiles
 Hedefin çevresindeki holün turnikeleri tek yöne döner: içeri ya da dışarı. 2. ve 4. tur sonunda döner; kaçış başlayınca ya da son iki turda tahliye, hep dışarı.	The turnstiles of the hall around the target turn one way only: in or out. They flip at the end of turns 2 and 4; once the escape starts, or in the last two turns, they switch to evacuation, always out.
-Kasa holü	Vault hall
 TURNİKE	TURNSTILE
 Kaynak robotu kolu	Welding robot arm
 Kol her evre sonunda işaretli kareye kaynak yapar (1 hasar) ve saat yönünde döner; kola gelen her darbe dönüşe bir adım ekler.	At the end of every phase the arm welds the marked tile (1 damage) and turns clockwise; every hit on the arm adds a step to the turn.
-Montaj hattı	Assembly line
 KAYNAK	SOURCE
 Şebeke faz değişimi	Grid phase switch
 Kablo kanalları iki faza ayrılır ve üç turda bir el değiştirir: evreyi canlı kanalda bitiren 1 hasar alır, sönük kanal güvenli.	The cable channels are split into two phases that swap every three turns: ending a phase on a live channel deals 1 damage, a dead channel is safe.
-Trafo merkezi	Transformer station
 ŞEBEKE	GRID
 Süzgeç emmesi	Drain suction
 3. ve 6. tur sonunda süzgeç dört yanındakileri içeri çeker; süzgeçte biri varsa çarpışırlar ve ikisi de 1 hasar alır.	At the end of turns 3 and 6 the drain pulls in whoever stands beside it; if someone is already on the drain they collide and both take 1 damage.
-Su basmış bodrum	Flooded basement
 EMME	SUCTION
 Basınçlı tüp rafı	Pressurised cylinder rack
 Vurulan tüp ıslık çalar ve bir tur sonra çizili hattında uçar: hattaki ilk birime 1 hasar verir ve onu iter.	A cylinder that is hit starts whistling and flies along its marked line a turn later: the first unit on the line takes 1 damage and is pushed.
-Türbin bakım atölyesi	Turbine maintenance workshop
 TÜP	CYLINDER
 Hidrolik yağ sızıntısı	Hydraulic oil leak
 2. tur sonunda hortum patlar: yağdaki birim itilince, çekilince ya da vurulunca yağ bitene kadar kayar; çarpışma 1 hasar.	At the end of turn 2 the hose bursts: a unit on the oil slides until the oil ends when it is pushed, pulled or hit; a crash deals 1 damage.
-Makine dairesi	Engine room
 YAĞ	OIL
 elektrik	electric shock
 yağda kaydı, duvara çarptı	slid on oil into a wall
@@ -222,6 +210,7 @@ tüp	cylinder
 Uçan tüp öbür tüpü kırdı.	The flying cylinder broke the other cylinder.
 Tüp uçtu, nesneye çarpıp düştü.	The cylinder flew, hit an object and dropped.
 Hidrolik hortum patladı: yağ yere yayıldı.	The hydraulic hose burst: oil spread across the floor.
+{0} · {1}	{0} · {1}
 BULUT {0}	CLOUD {0}
 DAĞILIR	CLEARS
 RAF {0}	SHELF {0}
@@ -253,9 +242,6 @@ KABİN: biner, bir evre tahtada yok	CAR: boards, off the board for one phase
 {0}: yer değiştirir	{0}: is moved
 DONACAK: yürüyemez, buz 1 hasar emer	FREEZING: cannot move, ice soaks 1 damage
 # Assets/Corrigible/Core/CampaignLiberation.cs
-Tedarik deposu	Supply depot
-Tahliye geçidi	Evacuation passage
-Sunucu merkezi	Server center
 Oyun bitti.	The game is over.
 Önce süren baskını bitir.	Finish the current raid first.
 Geçersiz bölge.	Invalid region.
@@ -515,17 +501,77 @@ Revirde görevli yok.	Infirmary unstaffed.
 Telsiz odasında görevli yok.	Radio room unstaffed.
 # Assets/Corrigible/Core/GameData.cs
 Kuzey Amerika	North America
+Dağıtım merkezi	Distribution hub
+Sevkiyat rampası	Shipping dock
+Ayıklama katı	Sorting floor
+Sunucu asma katı	Server mezzanine
+Kıtanın en büyük dağıtım merkezlerinden biri. İki duraklı yük asansörü YZ'den önce kurulmuş bir zaman rölesiyle çalışır.	One of the continent's largest distribution centres. The two-stop freight lift runs on a timer relay set up before the AI.
 Güney Amerika	South America
+Hidroelektrik santrali	Hydro power plant
+Tüp deposu	Cylinder store
+Türbin galerisi	Turbine gallery
+Kumanda odası	Control room
+Bir hidroelektrik santrali. Oksijen ve asetilen tüpleri zincirlenmeden duvar diplerine dizilmiş; vanası kopan tüp füze gibi uçar.	A hydroelectric plant. Oxygen and acetylene cylinders stand unchained along the walls; a cylinder that loses its valve flies like a missile.
 Batı Avrupa	Western Europe
+Banka veri merkezi	Bank data centre
+Teknik depo	Tech store
+UPS odası	UPS room
+Sunucu salonu	Server hall
+YZ'nin ele geçirdiği bir banka veri merkezi. Tavandaki CO₂ memeleri yangın sanıp salonları beyaz bir bulutla doldurur.	A bank data centre seized by the AI. The ceiling CO₂ nozzles mistake it for a fire and fill the halls with a white cloud.
 Doğu Avrupa	Eastern Europe
+Devlet arşivi	State archive
+Mikrofilm deposu	Microfilm store
+Dosya katı	File floor
+Tarama odası	Scanning room
+Sovyet döneminden kalma bir devlet arşivi. Raylı kompakt raflar; YZ arşivi tararken raf bloğunu kaydırır.	A Soviet-era state archive. Compact shelving on rails; the AI shifts the shelf block while it scans the files.
 Rusya	Russia
+Sibirya veri merkezi	Siberian data centre
+Soğuk depo	Cold storage
+Azot galerisi	Nitrogen gallery
+Sunucu bloğu	Server block
+Sibirya'da soğuk depolu bir veri merkezi. Sıvı azotlu soğutma hattı YZ'nin çevrimine bağlı ve takvimle boşalır.	A cold-storage data centre in Siberia. The liquid-nitrogen cooling line is tied to the AI's cycle and vents on a schedule.
 Orta Doğu	Middle East
+Körfez rafinerisi	Gulf refinery
+Malzeme ambarı	Supply shed
+Pompa holü	Pump hall
+Kompresör dairesi	Compressor house
+Körfez'de bir rafineri. YZ gaz dedektörlerini susturdu; sızdıran bir flanştan yanıcı gaz geliyor.	A refinery on the Gulf. The AI silenced the gas detectors; flammable gas seeps from a leaking flange.
 Afrika	Africa
+Cevher hangarı	Ore hangar
+Konveyör hattı	Conveyor line
+Kırıcı bölümü	Crusher bay
+Kumanda kabini	Control cabin
+YZ'nin yarım kalmış bir cevher hangarı. Yıkılan duvarlar taşıyıcıydı; üstlerindeki tavan çatlak.	A half-built ore hangar of the AI. The demolished walls were load-bearing; the roof above them is cracked.
 Hindistan	India
+Çağrı merkezi	Call centre
+Personel kantini	Staff canteen
+Kasa holü	Vault hall
+Santral odası	Switchboard room
+Bengaluru'da bir banka ve sigorta çağrı merkezi. YZ kart okuyucuları kapattı; turnikeler yalnız mekanik yön kilidiyle döner.	A banking and insurance call centre in Bengaluru. The AI shut the card readers; the turnstiles turn only by their mechanical direction lock.
 Çin	China
+Montaj fabrikası	Assembly plant
+Parça ambarı	Parts store
+Kaynak hattı	Welding line
+Hat kontrol odası	Line control room
+YZ'nin kendi robotlarını kaynakladığı bir montaj fabrikası. Zemine cıvatalı bir kaynak kolu ağdan kopmuş, döngüsünü kimseye sormadan sürdürüyor.	An assembly plant where the AI welds its own robots. A welding arm bolted to the floor has dropped off the network and keeps cycling without asking anyone.
 Japonya-Kore	Japan-Korea
+Çip fabrikası	Chip fab
+Malzeme kilidi	Material airlock
+Temiz oda koridoru	Cleanroom corridor
+Trafo merkezi	Substation
+Akıllı enerji yönetimli bir çip fabrikası. Kat panoları yükü iki faz arasında aktarır; döşeme altındaki kanallar sırayla canlanır.	A chip plant with smart power management. Floor panels shift the load between two phases; the channels under the floor go live one after another.
 Güneydoğu Asya	Southeast Asia
+Elektronik fabrikası	Electronics plant
+Bodrum ambarı	Basement store
+Sintine kanalı	Bilge channel
+Kopya atölyesi	Copy workshop
+Penang ya da Ho Chi Minh'te bodrumu su basmış bir elektronik fabrikası. Sintine pompası üç turda bir geri çalışır ve yer süzgeci suyu çeker.	An electronics plant in Penang or Ho Chi Minh City with a flooded basement. Every third round the bilge pump runs backwards and the floor drain pulls the water.
 Okyanusya	Oceania
+Maden limanı	Mining port
+Kumanya deposu	Provision store
+Bant galerisi	Belt gallery
+Makine dairesi	Engine room
+Pilbara'da uzaktan yönetilen bir maden limanı. Hidrolik kaldırıcının hortumu patlamak üzere.	A remotely run mining port in the Pilbara. The hydraulic lift's hose is about to burst.
 Silme	Erasure
 Çekirdek yok edildi, kopyalar temizlendi. Ama bir kez yapıldıysa, biri yine yapacak.	The core is destroyed and the copies are gone. But if it was done once, someone will do it again.
 Dağılma	Disbanded
@@ -546,10 +592,10 @@ Yedekleme merkezi	Backup centre
 Batarya odası	Battery room
 Sinyal odası	Signal room
 Depolama dizisi	Storage array
+Montaj hattı	Assembly line
 Yükleme rampası	Loading dock
 Metro peronu	Metro platform
 Atık su kanalı	Sewer channel
-Sunucu salonu	Server hall
 Ağ geçidi	Network gateway
 Veri ambarı	Data warehouse
 Otopark katı	Parking level
@@ -593,10 +639,13 @@ Delta	Delta
 Baskın sonucu eksik.	The raid result is missing.
 # Assets/Corrigible/Core/WorldState.cs
 Bölge	Region
+# Assets/Corrigible/Desk/Scripts/Bridge/Entrance/EntranceController.cs
+V.{0:000} · özgür {1}/{2}	S.{0:000} · free {1}/{2}
 # Assets/Corrigible/Desk/Scripts/Bridge/LiberationDeskView.cs
+YAPILAMADI	FAILED
+Kayıt açılamadı.	The save could not be opened.
 Yeni cephe: {0}	New front: {0}
 Baskın emri: {0} · {1} · {2} fon	Raid order: {0} · {1} · {2} funds
-YAPILAMADI	FAILED
 EMİR UYGULANDI	ORDER EXECUTED
 # Assets/Corrigible/Desk/Scripts/Bridge/LiveRaidDataSource.cs
 {0} · {1:00} {2}	{0} · {1:00} {2}
@@ -604,7 +653,6 @@ EMİR UYGULANDI	ORDER EXECUTED
 {0} tahliye edildi	{0} extracted
 emir iletildi · gözcü bildiriyor	order sent · spotter reporting
 gözcü · makineler yer değiştiriyor	spotter · machines repositioning
-{0} · {1}	{0} · {1}
 №{0} · hedef dolabı onarılıyor	No. {0} · repairing target cabinet
 №{0} · makine zırhlanıyor	№{0} · machine gets armor
 №{0} · yeni dron uyanıyor	№{0} · new drone waking
@@ -642,6 +690,7 @@ bu tur	this turn
 Kullanılmamış haklar var. Enter ile emri ilet; Esc ile vazgeç.	Unused actions remain. Enter transmits the order; Esc cancels.
 Geri çekilmek için tekrar bas. Esc ile vazgeç.	Press again to retreat. Esc cancels.
 DURAKLATILDI · Esc ile devam	PAUSED · Esc to resume
+TELSİZ KAYDI · Ekip {0} girişinde.	RADIO LOG · Squad at the {0} entrance.
 TELSİZ KAYDI · Ekip harekete hazır.	RADIO LOG · Team ready to act.
 1 / 2 / 3: seç · Q: yetenek · Z: geri al · Enter: emri ilet · Esc: vazgeç	1 / 2 / 3: select · Q: ability · Z: undo · Enter: transmit · Esc: cancel
 Zırh plakası	Armor plate
@@ -650,6 +699,7 @@ Yedek uzman	Reserve specialist
 bir eksik canla	one less health
 Boş kare	Empty tile
 Duvar	Wall
+Elektrikli kanal	Electrified channel
 Sisli kare: nişanlı ateş kesilir	Smoked tile: aimed fire is cut
 Kaide hasar almaz; her darbe kolu bir adım fazla döndürür	The base takes no damage; every hit turns the arm one extra step
 Vurulursa bir tur sonra çizili hattında uçar	If hit, it flies along its marked line a turn later
@@ -677,6 +727,8 @@ Teknisyen ile bitişik kareden aç; sonra bütün ekip girişten çıkar	Open wi
 Hedef dolabı: kırılınca bütün ekip girişten çıkar	Target cabinet: once it breaks, the whole team leaves through the entry
 Madenci dinamitle yıkabilir	The Miner can blow it open
 Geçilmez; atışı durdurur	Impassable; stops shots
+Yalnız canlı fazda üstüne itilen ya da çekilen birim 1 hasar alır.	Only in the live phase: a unit pushed or pulled onto it takes 1 damage.
+Üstünden yürünür; üstüne itilen ya da çekilen birim 1 hasar alır.	Can be walked over; a unit pushed or pulled onto it takes 1 damage.
 Çıkış	Exit
 Buradan çıkan uzman tahliye edilir; malzeme Teknisyen'le çıkar	A specialist who steps here is extracted; the supplies leave with the Technician
 Buradan çıkan uzman tahliye edilir	A specialist who steps here is extracted
@@ -747,6 +799,7 @@ Yağ: itilen, çekilen ya da vurulan kayar	Oil: whoever is pushed, pulled or hit
 Hidrolik hortum	Hydraulic hose
 İKMAL GÖREVİ	SUPPLY MISSION
 KOPYALAMA	REPLICATION
+Yer · {0} · {1:00} {2}	Site · {0} · {1:00} {2}
 Teknisyen ile ikmal kasasına yaklaş. Q ile yeteneği seç, kasaya tıkla ve malzemeleri al. Kasayı imha etme.	Move the Technician next to the supply crate. Press Q to select the ability, then click the crate to collect the supplies. Do not destroy the crate.
 Her tur yeni robotlar uyanabilir.	New robots may wake each turn.
 {0}: {1}	{0}: {1}
@@ -756,6 +809,43 @@ Tehdit {0}/4: makineler alışılmış düzende.	Threat {0}/4: machines in their
 Tehdit {0}/4: başta bir makine fazla.	Threat {0}/4: one extra machine at the start.
 Tehdit {0}/4: iki makine fazla, turda iki uyanma.	Threat {0}/4: two extra machines, two wake-ups per turn.
 Tehdit {0}/4: üç makine fazla, turda iki uyanma, canları +1.	Threat {0}/4: three extra machines, two wake-ups per turn, +1 health.
+# Assets/Corrigible/Desk/Scripts/Bridge/RaidKitText.cs
+Rack kabini istifi	Stacked rack cabinets
+Kablo tavası	Cable tray
+Kırık rack kapağı	Broken rack door
+Arşiv rafı	Archive shelving
+Döküm ızgaralı kanal	Cast-grate channel
+Dağılmış dosyalar	Scattered files
+Boru demeti	Pipe bundle
+Boru kanalı	Pipe channel
+Kesik borular	Cut pipes
+Cevher bunkeri	Ore bunker
+Besleme kablosu	Feed cable
+Cevher ve sac	Ore and sheet metal
+Paletli koli yükü	Palletised cartons
+Enerji rayı	Power rail
+Dağılmış koliler	Scattered cartons
+Sandviç panel kabin	Sandwich-panel cabin
+Isıtıcı hat	Heater line
+Panel ve köpük	Panel and foam
+Bölme paneli ve dolap	Partitions and cabinets
+Şerit kablo kanalı	Ribbon-cable channel
+Dağılmış kâğıtlar	Scattered papers
+Parça kasası istifi	Stacked parts crates
+Kablo zinciri	Cable chain
+Saçılmış parçalar	Scattered parts
+Sökülmüş pano	Stripped switchboards
+Bara kanalı	Busbar channel
+Pano kapağı ve kablo	Panel door and cable
+Kum torbası barikatı	Sandbag barricade
+Su dolu kanal	Flooded channel
+Patlamış torbalar	Burst sandbags
+Çelik levha istifi	Stacked steel plates
+Jeneratör kablo demeti	Generator cable bundle
+Eğri levhalar	Bent plates
+Yedek parça kasası	Spare-parts crates
+Sac kapaklı kanal	Plate-covered channel
+Sac ve cıvata	Sheet and bolts
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/BriefingBuilder.cs
 KYGA · KÜRESEL YAPAY ZEKÂ GÜVENLİK AJANSI	KYGA · GLOBAL AI SECURITY AGENCY
 EMİR NO. {0:000}	ORDER NO. {0:000}
@@ -776,7 +866,6 @@ KAPAT	CLOSE
 BAŞLA · ONAY	BEGIN · CONFIRM
 BAŞLA	BEGIN
 KAYITTAN DEVAM	CONTINUE
-V.{0:000} · özgür {1}/{2}	S.{0:000} · free {1}/{2}
 dosyayı aç	open the file
 KAYIT YOK	NO SAVE
 KAYIT VAR	SAVE EXISTS
@@ -804,7 +893,7 @@ YAĞMA	LOOT
 SUNUCU YIKIMI	SERVER DEMOLITION
 V.{0:000} · OP-{1:00}	S.{0:000} · OP-{1:00}
 {0} · {1} / {2:00} {3}	{0} · {1} / {2:00} {3}
-SAHA MASASI · PAFTA 8×8 · GÖREV: {0}	FIELD TABLE · SHEET 8×8 · MISSION: {0}
+SAHA MASASI · {0} · GÖREV: {1}	FIELD TABLE · {0} · MISSION: {1}
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/DoorViewBuilder.cs
 Sığınak 07'nin komutanı düştü. Harekât burada biter.	Shelter 07's commander is down. The operation ends here.
 Kopya sığınağın içinde. Harekât burada biter.	A copy is inside the shelter. The operation ends here.
@@ -908,6 +997,7 @@ Teknisyen'in yanına {0} uzman daha seç.	Pick {0} more specialist(s) to go with
 Teknisyen sabit · ikisini seç; baskına çıkmayanlar dinlenir.	Technician is fixed · pick two; those who stay behind rest.
 HAREKÂT FORMU · OP-{0:00}	OPERATION FORM · OP-{0:00}
 HAREKÂT FORMU	OPERATION FORM
+BİNA · {0}	BUILDING · {0}
 SEKTÖRLER {0}/{1} · ÖZGÜR	SECTORS {0}/{1} · FREE
 SEKTÖRLER {0}/{1} · İŞGAL {2}	SECTORS {0}/{1} · OCCUPIED {2}
 Önceki sektör alınınca açılır.	Opens once the previous sector is taken.
@@ -1114,7 +1204,8 @@ Onarım · {0}	Repair · {0}
 Geliştirme · {0} SV{1}	Upgrade · {0} LV{1}
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakBriefing.cs
 KYGA-07 HAT AÇIK	KYGA-07 LINE OPEN
-Kayıt açılamadı.	The save could not be opened.
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakCabinet.cs
+DİL	LANGUAGE
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakDesk.cs
 KAPI · ZİYARETÇİ VAR	DOOR · VISITOR WAITING
 Kapıya dön. Ziyaretçi vardiya bitene kadar bekler.	Back to the door. The visitor waits until the shift ends.
@@ -1235,6 +1326,10 @@ Sarı çerçeveli kareye tıkla.	Click the tile with the yellow frame.
 Enter ile emri ilet ya da EMRİ İLET'e bas.	Press Enter or SEND ORDERS to send the order.
 # Assets/Corrigible/Desk/Scripts/Runtime/Core/DeskCore.cs
 Boşluk	Space
+# Assets/Corrigible/Desk/Scripts/Runtime/Entrance/TimeClock.cs
+İPTAL EDİLİR · V.{0:000}	VOIDED · S.{0:000}
+Kıskacı kaldır, yeniden bas: eski kart iptal edilir.	Lift the clip and press again: the old card is voided.
+Onaylamak için yeniden bas.	Press again to confirm.
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/HoverInspectorView.cs
 EKİP ÇIKAR	TEAM GETS OUT
 İKMAL ALINIR	SUPPLIES COLLECTED
@@ -1252,6 +1347,8 @@ MAKİNELER	MACHINES
 SIRA SENDE	YOUR TURN
 GÖREV · İKMAL	MISSION · SUPPLY
 GÖREV · SUNUCU	MISSION · SERVER
+{0} · İKMAL	{0} · SUPPLY
+{0} · SUNUCU	{0} · SERVER
 CAN	HP
 KAYBOLDU	LOST
 ALINDI	COLLECTED
@@ -1283,6 +1380,7 @@ yetenek	ability
 {0} · {1} kullanılmadı	{0} · {1} unused
 TELSİZ KAYDI	RADIO LOG
 KURALLAR KARTI	RULES CARD
+{0} · <nobr>{1}</nobr>	{0} · <nobr>{1}</nobr>
 Teknisyen kasayı açar ve malzemeyi taşır. İtme ve patlamalar kasaya hasar verebilir; EMP kasayı açmaz.	The Technician opens the crate and carries the supplies. Pushes and explosions can damage the crate; EMP doesn't open it.
 Madenci: dinamit bitişik duvarı yıkar (baskında sınırlı); moloz bir kare öteye 1 hasar. Açılan delik makinelerin atış hattını da açar.	Miner: dynamite breaks an adjacent wall (limited per raid); debris deals 1 damage one tile further. The hole also opens a firing line for the machines.
 Sis: bu turun makine evresinde atış ve kilit sise girince kaybolur; bakım robotu ve havan sisli kareye vuramaz. Patlamayı kesmez.	Smoke: during this turn's machine phase, shots and locks that enter the smoke are lost; maintenance robots and mortars cannot hit the smoked tile. It does not stop explosions.
@@ -1310,7 +1408,6 @@ YETENEK	ABILITY
 LEJANT	LEGEND
 Yetenek hedefi	Ability target
 Robot bu kareyi vuracak	Robot will hit this tile
-Elektrikli kanal	Electrified channel
 Robot uyanacak	Robot will wake
 Ateş · yakın · onarım	Fire · melee · repair
 Sıra bayrağı	Order flag
@@ -1329,9 +1426,10 @@ Zırh: hedef dolaplara yalnız sabotaj, itilen robot ve patlayan soğutma ünite
 İtme: çarpan da çarpılan da 1 hasar alır; kanala düşen de 1 hasar alır.	Push: both the pushed and what it hits take 1 damage; falling into a channel deals 1.
 Sivilleri koru: ekibe ulaşamayan makine sivil sunucuya nişan alır. Kırılan her sunucu GÜVEN'i düşürür; kazanınca ayakta kalan her 2 sunucu +1 GÜVEN.	Protect civilians: a machine that can't reach the team aims at a civilian server. Every broken server lowers TRUST; win the raid and every 2 servers left standing give +1 TRUST.
 Kazan: bütün hedef dolapları kır, sonra bütün ekip giriş karelerinden çıksın. Süre dolarken tahtada kalan uzman baskında düşmüş sayılır; kaçışta geri çekilme yok. Alınan hasar sığınağa yara olarak döner; zırh plakası ilk darbeyi karşılar.	Win: break every target cabinet, then the whole team leaves through the entry tiles. Anyone left on the board when time runs out counts as down in this raid; there's no retreat during the escape. Damage taken comes back to the shelter as wounds; an armor plate absorbs the first hit.
-# Assets/Corrigible/Desk/Scripts/Runtime/Screens/Settings/SettingsView.cs
-Ses açık	Sound on
-Kapatınca bütün kanallar susar; ayarlar korunur.	Turning it off mutes every channel; levels are kept.
+# Assets/Corrigible/Desk/Scripts/Runtime/Settings/SettingsCabinet.cs
+Açık · kapatınca bütün kanallar susar; ayarlar korunur.	On · turning it off mutes every channel; levels are kept.
+Kapalı · sürgüler yerinde kalır.	Off · the faders stay where they are.
+Türkçe · English	Türkçe · English
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/FreedRegionsBoard.cs
 Her özgür bölgeye bir kart; kurşun kalemle yazılan sıradaki hedef.	One card for every free region; the next target is pencilled in.
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/FrontSlip.cs
@@ -1351,6 +1449,8 @@ KİLİTLİ	LOCKED
 FON YETERSİZ	NOT ENOUGH FUNDS
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/RoomView.cs
 DURDU	STOPPED
+# Assets/Corrigible/Desk/Scripts/Runtime/Siginak/SettingsPlaque.cs
+ATLA	SKIP
 # Assets/Corrigible/Game/Platform.cs
 Yerel	Local
 # Assets/Corrigible/Game/Raid/RaidBoard3D.cs
@@ -1383,21 +1483,23 @@ ISLIK	WHISTLE
 {0} ŞİMDİ	{0} NOW
 <s>{0}</s> UYGULANDI	<s>{0}</s> DONE
 TAHLİYE	EXTRACTED
-# Assets/Corrigible/Desk/Prefabs/Screens/SettingsCard.prefab
+# Assets/Corrigible/Desk/Prefabs/Siginak/SettingsCabinet.prefab
 AYARLAR	SETTINGS
-her oyunda geçerli	applies to every game
+Ses, müzik ve dil	Sound, music and language
+Kapağı kapat	Close the door
+GENEL	MASTER
+MÜZİK	MUSIC
+ORTAM	AMBIENCE
+EFEKT	EFFECTS
 SES	SOUND
-Ana ses	Master
-Müzik	Music
-Ortam	Ambience
-Efektler	Effects
-DİL	LANGUAGE
-Dil değişince masa yeniden çizilir; oyunda üretilmiş haberler üretildikleri dilde kalır.	The desk redraws when the language changes; news already generated stays in its language.
-Zaman ayarlar açıkken durur.	Time stops while settings are open.
+AÇIK	ON
+KAPALI	OFF
+DİL · LANGUAGE	DİL · LANGUAGE
+MENÜYE DÖN	BACK TO MENU
+Kapağı kaldır, kolu indir: oyun kaydedilir, kapının önüne çıkılır.	Lift the cover, pull the lever: the game is saved and you step outside the door.
 # Assets/Corrigible/Prefabs/Raid/Core.prefab
 Ç	C
 # Assets/Corrigible/Desk/Scenes/DeskGame.unity
-Kapat	Close
 KYGA / SIĞINAK 07	KYGA / SHELTER 07
 AĞA	DON'T
 BAĞLANMA	CONNECT
@@ -1448,5 +1550,15 @@ TELSİZ KAYDI · K-07	RADIO LOG · K-07
 BEDEL	COST
 ÖDÜL	REWARD
 ziyaretçi	visitors
-# --- Kullanılmayan çeviriler (koddan silinmiş metinler; gerekirse geri alınır) ---
-#{0}\n<size=75%>{1}</size>	{0}\n<size=75%>{1}</size>
+# Assets/Corrigible/Desk/Scenes/Giris.unity
+SIĞINAK 07	SHELTER 07
+Kapı kilitli. Vardiya kartını saate bas.	The door is locked. Punch your shift card at the clock.
+SON ŞALTER	CORRIGIBLE
+PUANTAJ SAATİ	TIME CLOCK
+Vardiya kartını bas, kapı açılsın.	Punch your shift card and the door opens.
+PUANTAJ	TIME CLOCK
+KOMUTAN · SIĞINAK 07	COMMANDER · SHELTER 07
+YENİ HAREKÂT	NEW CAMPAIGN
+Boş vardiya kartı.	A blank shift card.
+ANA ŞALTER	MAIN SWITCH
+Kapağı kaldır, kolu indir: ışıklar söner, oyun kapanır.	Lift the cover, pull the lever: the lights go out and the game closes.

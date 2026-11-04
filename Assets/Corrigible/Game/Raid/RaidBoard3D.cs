@@ -98,7 +98,23 @@ namespace Corrigible.Game.Raid
         public void SetExternalHover((int x, int y)? tile) => externalHover = tile;
         public Camera Camera => cam;
 
+        RaidRoomKit kit;
+        /// <summary>Tahtanın bina kiti (köprü <see cref="SetDress"/> ile verir); verilmediyse varsayılan kit, kütüphane yoksa null.</summary>
+        public RaidRoomKit Kit => kit != null ? kit : lib != null ? lib.defaultKit : null;
+
+        /// <summary>
+        /// Bina kitini seçer; tek giriş noktası köprüdür (<c>RaidDataSource.OpenState</c>, <see cref="Build"/>'den önce). Harekât baskını
+        /// (MapSeed ≠ 0) bölgesinin kitini, MapSeed 0 (eğitim, örnek baskın) varsayılan kiti alır; <paramref name="force"/>
+        /// <paramref name="region"/>'ı kit kimliği sayar (editördeki kitOverride: MapSeed 0'da da o kit). Tahta Params okumaz.
+        /// </summary>
+        public void SetDress(string region, uint mapSeed, bool force = false)
+        {
+            kit = lib == null ? null : force ? lib.KitById(region) : lib.KitFor(region, mapSeed);
+        }
+
         public const float TileTop = 0f;
+        /// <summary>Kaynak kolunun çizildiği yükseklik: kaidenin döner tablasının tepesi (WeldArmBase.prefab bu yükseklikte biter).</summary>
+        public const float WeldArmHeight = 0.3f;
         public static Vector3 W(float x, float y) => new Vector3(x - 3.5f, TileTop, 3.5f - y);
         static int Key(int x, int y) => y * Baskin.N + x;
 
@@ -113,6 +129,8 @@ namespace Corrigible.Game.Raid
         /// <summary>Karo nesneleri ve türleri: Madenci duvarı yıkınca (ya da geri alınınca) karo durumdan yeniden kurulur.</summary>
         readonly GameObject[] tileObjects = new GameObject[64];
         readonly string[] tileKinds = new string[64];
+        /// <summary>Karoların giydirmesi (duvar ve kanal prefab'larında; zeminde null): komşu maskesi <see cref="RaidTileMask"/>'tan.</summary>
+        readonly RaidTileSkin[] tileSkins = new RaidTileSkin[64];
         readonly GameObject[] smokeClouds = new GameObject[64];
         readonly Dictionary<int, GameObject> breaches = new Dictionary<int, GameObject>();
         readonly List<RaidWorldLabel> smokeLabels = new List<RaidWorldLabel>();
@@ -211,6 +229,8 @@ namespace Corrigible.Game.Raid
                     spawnMarks[k].SetActive(false);
                 }
             }
+            // Karo giydirme bütün karolar kurulduktan sonra: maske komşulara bakar (durumdan; lastState ilk kurulumda yok)
+            for (int k = 0; k < 64; k++) SkinTile(B, k);
             hoverFrame = Frame("Hover", Vector3.zero, lib.hover, 0.94f, PixelWorld * 1.8f);
             hoverFrame.SetActive(false);
             // raid.js frameTex('#1A4789', 10, 4): dış 0,873 kalın, iç 0,72 ince, α .10 dolgu
@@ -352,19 +372,24 @@ namespace Corrigible.Game.Raid
             activeIntentHighlight.gameObject.SetActive(false);
             // Niyetler Core'un görünüm API'sinden (Baskin.Intents) okunur.
             foreach (var intent in Baskin.Intents(B)) shownIntents[intent.Unit] = intent;
-            // Karolar: yıkılan duvar zemine döner, geri alınan duvar yeniden kurulur; yıkık duvarın yerinde alçak moloz
+            // Karolar: yıkılan duvar zemine döner, geri alınan duvar yeniden kurulur; yıkık duvarın yerinde alçak moloz. Değişen
+            // karonun 3 × 3 komşuluğu yeniden giydirilir (köprü 4 komşuya, ayrık blok 8 komşuya bakar)
+            List<int> rebuilt = null;
             for (int k = 0; k < 64; k++)
             {
                 string kind = Baskin.CellAt(B, k % Baskin.N, k / Baskin.N).T;
-                if (tileKinds[k] != kind) BuildTile(k % Baskin.N, k / Baskin.N, kind);
+                if (tileKinds[k] != kind) { BuildTile(k % Baskin.N, k / Baskin.N, kind); (rebuilt ??= new List<int>()).Add(k); }
             }
+            if (rebuilt != null) foreach (var k in rebuilt) SkinAround(B, k);
             var broken = new HashSet<int>(B.Rubble.Select(p => Key(p.X, p.Y)));
             foreach (var k in breaches.Keys.Where(k => !broken.Contains(k) || walls[k]).ToList()) { if (breaches[k] != null) Destroy(breaches[k]); breaches.Remove(k); }
+            // Gedik molozu kitin malzemesinden (alçak, karenin içinde, süs); kitin molozu yoksa kırık dolap enkazı basık
+            var breachRubble = lib.BreachRubble(Kit, out var breachScale);
             foreach (var k in broken)
-                if (!walls[k] && !breaches.ContainsKey(k) && lib.rubble != null)
+                if (!walls[k] && !breaches.ContainsKey(k) && breachRubble != null)
                 {
-                    var debris = Instantiate(lib.rubble, W(k % Baskin.N, k / Baskin.N), Quaternion.Euler(0, (k * 41) % 360, 0), piecesRoot);
-                    debris.name = "Breach rubble"; debris.transform.localScale = new Vector3(0.9f, 0.3f, 0.9f);
+                    var debris = Instantiate(breachRubble, W(k % Baskin.N, k / Baskin.N), Quaternion.Euler(0, (k * 41) % 360, 0), piecesRoot);
+                    debris.name = "Breach rubble"; debris.transform.localScale = breachScale;
                     foreach (var col in debris.GetComponentsInChildren<Collider>()) Destroy(col);
                     breaches[k] = debris;
                 }
@@ -383,7 +408,8 @@ namespace Corrigible.Game.Raid
                 labelGroups.Add(new[] { tag });
             }
             for (int i = smokeLabelsUsed; i < smokeLabels.Count; i++) smokeLabels[i].gameObject.SetActive(false);
-            // Dolaplar ve enkaz
+            // Dolaplar ve enkaz; yağma görevinin hedefi ikmal sandığı (açılınca açık sandık kalır, kırılırsa enkaz)
+            bool loot = Baskin.IsLoot(B);
             for (int y = 0; y < Baskin.N; y++)
             for (int x = 0; x < Baskin.N; x++)
             {
@@ -395,7 +421,7 @@ namespace Corrigible.Game.Raid
                     if (piece == null || piece.Kind != o.K)
                     {
                         if (piece != null) Destroy(piece.gameObject);
-                        piece = NewObjectPiece(o.K, x, y);
+                        piece = NewObjectPiece(o.K, x, y, loot);
                         piece.Kind = o.K; piece.X = x; piece.Y = y; piece.name = $"{o.K} {x},{y}";
                         objects[k] = piece;
                     }
@@ -409,8 +435,10 @@ namespace Corrigible.Game.Raid
                         var tag = PieceLabel(hpLabels, -k - 1, "Object HP");
                         // Revizyon 2 · S6: nesnenin etiketi tepe noktasının 28 px üstünde
                         tag.SetAnchor(W(x, y) + Vector3.up * piece.VisualHeight + cam.transform.up * (PixelWorld * 28));
-                        var ink = Baskin.IsTarget(o.K) || o.K == "spawner" ? lib.threat : graphiteColor;
-                        if (screenLabelPrefab != null) tag.ShowHealth(o.Hp, o.Max, ink, Baskin.IsTarget(o.K), o.K == "node" || o.K == "core", null, lib.threat);
+                        // İkmal sandığı tehdit değil, açılacak şey: etiketi koyu mürekkep; EMP ona da işlemez (zırh işareti kalır)
+                        bool crate = loot && Baskin.IsTarget(o.K) && lib.lootCrate != null;
+                        var ink = crate ? graphiteColor : Baskin.IsTarget(o.K) || o.K == "spawner" ? lib.threat : graphiteColor;
+                        if (screenLabelPrefab != null) tag.ShowHealth(o.Hp, o.Max, ink, Baskin.IsTarget(o.K), o.K == "node" || o.K == "core", null, crate ? graphiteColor : lib.threat);
                         else tag.Show(Loc.F("{0}/{1}", o.Hp, o.Max), ink, ink);
                         labelGroups.Add(new[] { tag });
                     }
@@ -419,8 +447,12 @@ namespace Corrigible.Game.Raid
                 else if (piece != null)
                 {
                     Destroy(piece.gameObject); objects.Remove(k);
-                    // Uçan (ya da çarpılıp kırılan) basınçlı tüp yerinde enkaz bırakmaz
-                    if (piece.Kind != "tup" && lib.rubble != null && !rubble.ContainsKey(k)) rubble[k] = Instantiate(lib.rubble, W(x, y), Quaternion.Euler(0, (x * 37 + y * 53) % 360, 0), piecesRoot);
+                    // Açılan ikmal sandığı (Teknisyen aldı) açık sandık olarak kalır; uçan (ya da çarpılıp kırılan) basınçlı tüp yerinde
+                    // enkaz bırakmaz; kırılan tavan enkazı zaten molozdu, dağılır (yerine dolap enkazı konmaz)
+                    if (loot && B.Carrier != 0 && Baskin.IsTarget(piece.Kind) && lib.lootCrateOpen != null && !rubble.ContainsKey(k))
+                        rubble[k] = Instantiate(lib.lootCrateOpen, W(x, y), Quaternion.identity, piecesRoot);
+                    else if (piece.Kind != "tup" && piece.Kind != "enkaz" && lib.rubble != null && !rubble.ContainsKey(k))
+                        rubble[k] = Instantiate(lib.rubble, W(x, y), Quaternion.Euler(0, (x * 37 + y * 53) % 360, 0), piecesRoot);
                 }
                 else if (m.Rubble.Contains(k) && lib.rubble != null && !rubble.ContainsKey(k))
                     rubble[k] = Instantiate(lib.rubble, W(x, y), Quaternion.identity, piecesRoot);
@@ -816,7 +848,7 @@ namespace Corrigible.Game.Raid
             {
                 int bx = x + d[0], by = y + d[1];
                 if (bx < 0 || by < 0 || bx >= Baskin.N || by >= Baskin.N || Baskin.CellAt(B, bx, by).O?.K != "kol") continue;
-                HzStroke(kind, k).Set(W(bx, by) + Vector3.up * 0.3f, W(x, y) + Vector3.up * 0.1f, lib.hazardWeld, false, px * 6, 0, 0, false);
+                HzStroke(kind, k).Set(W(bx, by) + Vector3.up * WeldArmHeight, W(x, y) + Vector3.up * 0.1f, lib.hazardWeld, false, px * 6, 0, 0, false);
                 return;
             }
         }
@@ -909,9 +941,13 @@ namespace Corrigible.Game.Raid
         List<int> HazardKeys(params string[] kinds) =>
             hazardShown.Where(s => s.go != null && s.go.activeSelf && Array.IndexOf(kinds, s.kind) >= 0).Select(s => s.key).Distinct().ToList();
 
-        /// <summary>Yedek parçayla olay nesnesi: tüp ve kol kaidesi ölçeklenir; enkaz yığını kırık dolap enkazından kurulur.</summary>
-        RaidPiece NewObjectPiece(string kind, int x, int y)
+        /// <summary>
+        /// Nesnenin parçası: yağma görevinde hedef ikmal sandığı; yedek parçayla olay nesnesi (tüp ve kol kaidesi ölçeklenir; enkaz
+        /// yığını kırık dolap enkazından kurulur).
+        /// </summary>
+        RaidPiece NewObjectPiece(string kind, int x, int y, bool loot)
         {
+            if (loot && Baskin.IsTarget(kind) && lib.lootCrate != null) return Instantiate(lib.lootCrate, W(x, y), Quaternion.identity, piecesRoot);
             if (kind == "enkaz" && !lib.HasOwnPiece(kind) && lib.rubble != null)
             {
                 var go = Instantiate(lib.rubble, W(x, y), Quaternion.Euler(0, (x * 37 + y * 53) % 360, 0), piecesRoot);
@@ -1431,7 +1467,13 @@ namespace Corrigible.Game.Raid
                     case "breach":
                     {
                         int bk = Key(f.X, f.Y);
-                        if (tileObjects[bk] != null) yield return SinkWall(tileObjects[bk]);
+                        if (tileObjects[bk] != null)
+                        {
+                            // Çöken blok köprüsüz; komşuların ona uzanan köprüsü kalkar (karo durumda zaten zemin)
+                            if (tileSkins[bk] != null) tileSkins[bk].HideBridges();
+                            SkinAround(after, bk, false);
+                            yield return SinkWall(tileObjects[bk]);
+                        }
                         StartCoroutine(Popup(W(f.X, f.Y), Loc.T("YIKILDI"), graphiteColor, 0));
                         break;
                     }
@@ -1481,7 +1523,7 @@ namespace Corrigible.Game.Raid
             switch (f.Obj)
             {
                 case "bulut":
-                    Sfx.Play(Cue.RaidSmoke, 1, pan);
+                    Sfx.Play(Cue.EvCo2Burst, 1, pan);
                     StartCoroutine(Burst(at, lib.hazardCloudEdge, 1.8f, 0.4f));
                     StartCoroutine(Popup(at, Loc.T("BULUT"), graphiteColor, delay, lib.hazardCloudEdge));
                     yield return Wait(0.3f);
@@ -1489,50 +1531,55 @@ namespace Corrigible.Game.Raid
                 case "bulut_dagil":
                     // Karesi yok: çizili bulut hemen söner
                     HideHazards(-1, "cloud");
-                    Sfx.Play(Cue.RaidSmoke, 0.4f);
+                    Sfx.Play(Cue.EvCloudFade, 0.4f);
                     yield return Wait(0.15f);
                     break;
                 case "raf":
                 {
                     // (X, Y) geçit duvara döner, (Dx, Dy) duvar geçide: blok yükselir, öbür uç çöker (Sync karoları oturtur)
                     int close = Key(f.X, f.Y), open = Key(f.Dx, f.Dy);
-                    Sfx.Play(Cue.RaidPush, 1, pan);
+                    Sfx.Play(Cue.EvShelfRoll, 1, pan);
                     StartCoroutine(Popup(at, Loc.T("RAF"), graphiteColor, delay, lib.hazardRail));
-                    if (InBoard(f.Dx, f.Dy) && walls[open] && tileObjects[open] != null) StartCoroutine(SinkWall(tileObjects[open]));
-                    if (InBoard(f.X, f.Y) && !walls[close])
-                    {
-                        BuildTile(f.X, f.Y, "wall");
-                        yield return RaiseWall(tileObjects[close]);
-                    }
+                    bool sinking = InBoard(f.Dx, f.Dy) && walls[open] && tileObjects[open] != null, rising = InBoard(f.X, f.Y) && !walls[close];
+                    // Kayan bloklar köprüsüz canlanır (kök ölçeği köprüleri komşuya taşırırdı); yükselen blok el çarkıyla gelir
+                    if (rising) { BuildTile(f.X, f.Y, "wall"); SkinTile(after, close); }
+                    if (sinking && tileSkins[open] != null) tileSkins[open].HideBridges();
+                    if (rising && tileSkins[close] != null) tileSkins[close].HideBridges();
+                    if (sinking) StartCoroutine(SinkWall(tileObjects[open]));
+                    if (rising) yield return RaiseWall(tileObjects[close]);
                     else yield return Wait(0.3f);
+                    if (version != buildVersion) yield break;
+                    // Canlandırmadan sonra iki ucun komşulukları son durumdan (Sync açılan geçidi zemine çevirir)
+                    if (InBoard(f.X, f.Y)) SkinAround(after, close);
+                    if (InBoard(f.Dx, f.Dy)) SkinAround(after, open);
                     break;
                 }
                 case "raf_sikisti":
-                    Sfx.Play(Cue.RaidHitObject, 1, pan);
+                    Sfx.Play(Cue.EvShelfJam, 1, pan);
                     StartCoroutine(Popup(at, Loc.T("RAF SIKIŞTI"), graphiteColor, delay, lib.hazardRail));
                     yield return Wait(0.3f);
                     break;
                 case "gaz_dol":
-                    Sfx.Play(Cue.RaidSmoke, 1, pan);
+                    Sfx.Play(Cue.EvGasFill, 1, pan);
                     StartCoroutine(Burst(at, lib.hazardGas, 2f, 0.4f));
                     StartCoroutine(Popup(at, Loc.T("DOLUM"), graphiteColor, delay, lib.hazardGas));
                     yield return Wait(0.3f);
                     break;
                 case "gaz_bosal":
                     HideHazards(-1, "gas", "gas_lit");
-                    Sfx.Play(Cue.RaidSmoke, 0.6f, pan);
+                    Sfx.Play(Cue.EvGasVent, 0.6f, pan);
                     StartCoroutine(Popup(at, Loc.T("BOŞALDI"), graphiteColor, delay, lib.hazardGas));
                     yield return Wait(0.25f);
                     break;
                 case "gaz_alev":
                     // Ateş buluta değdi: bir tur sonra parlar
-                    Sfx.Play(Cue.RaidDynamite, 0.6f, pan);
+                    Sfx.Play(Cue.EvGasFlash, 0.6f, pan);
                     StartCoroutine(Burst(at, lib.hazardFlame, 1.2f, 0.3f));
                     StartCoroutine(Popup(at, Loc.T("ALEV ALDI"), lib.threat, delay));
                     yield return Wait(0.3f);
                     break;
                 case "gaz_parla":
-                    Sfx.Play(Cue.RaidExplosion, 1, pan);
+                    Sfx.Play(Cue.EvGasFlash, 1, pan);
                     foreach (var key in HazardKeys("gas", "gas_lit")) StartCoroutine(Burst(W(key % Baskin.N, key / Baskin.N), lib.hazardFlame, 1.3f, 0.35f));
                     StartCoroutine(Burst(at, lib.hazardFlame, 2.4f, 0.4f));
                     StartCoroutine(Popup(at, Loc.T("PARLAMA"), lib.threat, delay));
@@ -1541,14 +1588,14 @@ namespace Corrigible.Game.Raid
                     break;
                 case "catlak":
                     // Darbe çatlağı tetikledi: bir tur sonra çöker
-                    Sfx.Play(Cue.RaidHitObject, 0.8f, pan);
+                    Sfx.Play(Cue.EvCeilingCrack, 0.8f, pan);
                     StartCoroutine(Burst(at, lib.hazardCrack, 0.9f, 0.25f));
                     StartCoroutine(Popup(at, Loc.F("ÇÖKECEK {0}", 1), lib.threat, delay));
                     yield return Wait(0.25f);
                     break;
                 case "tavan":
                     HideHazards(Key(f.X, f.Y), "crack", "crack_due");
-                    Sfx.Play(Cue.RaidBreak, 1, pan);
+                    Sfx.Play(Cue.EvCeilingFall, 1, pan);
                     StartCoroutine(Burst(at, lib.hazardCrack, 1.5f, 0.35f));
                     StartCoroutine(Burst(at + Vector3.up * 0.4f, graphiteColor, 0.8f, 0.25f));
                     StartCoroutine(Popup(at, Loc.T("ÇÖKME"), lib.threat, delay));
@@ -1556,13 +1603,13 @@ namespace Corrigible.Game.Raid
                     break;
                 case "toz":
                     HideHazards(Key(f.X, f.Y), "crack", "crack_due");
-                    Sfx.Play(Cue.RaidBreak, 0.5f, pan);
+                    Sfx.Play(Cue.EvCeilingFall, 0.5f, pan);
                     StartCoroutine(Burst(at, graphiteColor, 1.1f, 0.3f));
                     StartCoroutine(Popup(at, Loc.T("TOZ"), graphiteColor, delay, lib.hazardCrack));
                     yield return Wait(0.25f);
                     break;
                 case "kabin_kalk":
-                    Sfx.Play(Cue.RaidPush, 1, pan);
+                    Sfx.Play(Cue.EvLiftMotor, 1, pan);
                     StartCoroutine(Burst(at, lib.hazardLift, 1f, 0.3f));
                     StartCoroutine(Popup(at, Loc.T("KALKIŞ"), graphiteColor, delay, lib.hazardLift));
                     // Duraktaki birim kabine bindi: parçası yükselip gizlenir (havuzda kalır), etiketleri kalkar
@@ -1574,7 +1621,7 @@ namespace Corrigible.Game.Raid
                     else yield return Wait(0.3f);
                     break;
                 case "kabin_in":
-                    Sfx.Play(Cue.RaidPush, 1, pan);
+                    Sfx.Play(Cue.EvLiftDing, 1, pan);
                     StartCoroutine(Burst(at, lib.hazardLift, 1f, 0.3f));
                     StartCoroutine(Popup(at, Loc.T("İNİŞ"), graphiteColor, delay, lib.hazardLift));
                     // Yolcu (X, Y)'de iner (dolu durakta yanına)
@@ -1586,30 +1633,30 @@ namespace Corrigible.Game.Raid
                     else yield return Wait(0.3f);
                     break;
                 case "kabin_bekle":
-                    Sfx.Play(Cue.RaidHitObject, 1, pan);
+                    Sfx.Play(Cue.EvPhase, 0.7f, pan);
                     StartCoroutine(Popup(at, Loc.T("KABİN BEKLİYOR"), graphiteColor, delay, lib.hazardLift));
                     yield return Wait(0.3f);
                     break;
                 case "donma":
-                    Sfx.Play(Cue.RaidSmoke, 1, pan);
+                    Sfx.Play(Cue.EvFreeze, 1, pan);
                     foreach (var key in HazardKeys("freeze", "freeze_next")) StartCoroutine(Burst(W(key % Baskin.N, key / Baskin.N), lib.hazardFreeze, 1f, 0.3f));
                     StartCoroutine(Popup(at, Loc.T("DONDURMA"), graphiteColor, delay, lib.hazardFreeze));
                     yield return Wait(0.3f);
                     break;
                 case "buz":
                     if (f.Unit != 0 && units.TryGetValue(f.Unit, out var frozen) && frozen != null) frozen.Flash(lib.hazardFreeze, 0.6f);
-                    Sfx.Play(Cue.RaidArmor, 0.7f, pan);
+                    Sfx.Play(Cue.EvIce, 0.7f, pan);
                     StartCoroutine(Popup(at, Loc.T("DONDU"), graphiteColor, delay, lib.hazardFreeze));
                     yield return Wait(0.2f);
                     break;
                 case "turnike":
                     // Vardiya ya da tahliye (son iki tur hep dışarı): oklar sonraki Sync'te döner
-                    Sfx.Play(Cue.RaidPush, 0.8f, pan);
+                    Sfx.Play(Cue.EvTurnstile, 0.8f, pan);
                     StartCoroutine(Popup(at, after.Ev != null && after.Ev.Stop ? Loc.T("TAHLİYE MODU") : Loc.T("VARDİYA"), graphiteColor, delay, lib.hazardGate));
                     yield return Wait(0.3f);
                     break;
                 case "kaynak":
-                    Sfx.Play(Cue.RaidEmpBlast, 0.8f, pan);
+                    Sfx.Play(Cue.EvWeldArc, 0.8f, pan);
                     StartCoroutine(Burst(at, lib.hazardWeld, 0.9f, 0.2f));
                     StartCoroutine(Burst(at, lib.hazardWeld, 1.4f, 0.35f));
                     StartCoroutine(Popup(at, Loc.T("KAYNAK"), lib.threat, delay, lib.hazardWeld));
@@ -1618,18 +1665,18 @@ namespace Corrigible.Game.Raid
                 case "kol":
                     // Kola gelen darbe dönüşe bir adım ekler (kol hasar almaz)
                     if (objects.TryGetValue(Key(f.X, f.Y), out var arm) && arm != null) arm.Flash(lib.hazardWeld);
-                    Sfx.Play(Cue.RaidHitObject, 1, pan);
+                    Sfx.Play(Cue.EvArmClank, 1, pan);
                     StartCoroutine(Popup(at, Loc.T("KOL SARSILDI"), graphiteColor, delay, lib.hazardWeld));
                     yield return Wait(0.25f);
                     break;
                 case "faz":
                     // Karesi yok: kanallar kısa bir kıvılcımla el değiştirir
-                    Sfx.Play(Cue.RaidEmpBlast, 0.7f);
+                    Sfx.Play(Cue.EvPhase, 0.7f);
                     foreach (var key in HazardKeys("live", "dead")) StartCoroutine(Burst(W(key % Baskin.N, key / Baskin.N), lib.hazardLive, 0.7f, 0.25f));
                     yield return Wait(0.3f);
                     break;
                 case "emme":
-                    Sfx.Play(Cue.RaidPush, 1, pan);
+                    Sfx.Play(Cue.EvDrain, 1, pan);
                     StartCoroutine(Burst(at, lib.hazardDrain, 1.6f, 0.35f));
                     StartCoroutine(Popup(at, Loc.T("EMME"), graphiteColor, delay, lib.hazardDrain));
                     yield return Wait(0.3f);
@@ -1637,7 +1684,7 @@ namespace Corrigible.Game.Raid
                 case "islik":
                     // Vurulan tüp ıslık çalıyor: bir tur sonra uçar
                     if (objects.TryGetValue(Key(f.X, f.Y), out var hissing) && hissing != null) hissing.Flash(lib.threat, 0.6f);
-                    Sfx.Play(Cue.RaidSmoke, 0.8f, pan);
+                    Sfx.Play(Cue.EvValveWhistle, 0.8f, pan);
                     StartCoroutine(Popup(at, Loc.T("ISLIK"), lib.threat, delay));
                     yield return Wait(0.3f);
                     break;
@@ -1646,17 +1693,17 @@ namespace Corrigible.Game.Raid
                     // Tüp (X, Y)'den (Dx, Dy)'ye uçar ve tahtadan kalkar (Sync yerinde enkaz bırakmaz)
                     var end = W(f.Dx, f.Dy);
                     HideHazards(Key(f.X, f.Y), "tube", "tube_hot");
-                    Sfx.Play(Cue.RaidDroneShot, 1, pan);
+                    Sfx.Play(Cue.EvTubeLaunch, 1, pan);
                     if (objects.TryGetValue(Key(f.X, f.Y), out var tube) && tube != null && tube.gameObject.activeSelf)
                         yield return Fly(tube, end + Vector3.up * 0.2f, Mathf.Max(0.18f, Vector3.Distance(at, end) * 0.07f));
                     if (version != buildVersion) yield break;
-                    Sfx.Play(Cue.RaidHitObject, 1, Pan(end));
+                    Sfx.Play(Cue.EvTubeLand, 1, Pan(end));
                     StartCoroutine(Burst(end, lib.hazardTube, 1f, 0.25f));
                     yield return Wait(0.1f);
                     break;
                 }
                 case "yag":
-                    Sfx.Play(Cue.RaidBreak, 0.7f, pan);
+                    Sfx.Play(Cue.EvOilSlide, 0.7f, pan);
                     StartCoroutine(Burst(at, lib.hazardOil, 1.6f, 0.4f));
                     StartCoroutine(Popup(at, Loc.T("YAĞ"), graphiteColor, delay, lib.hazardOil));
                     yield return Wait(0.35f);
@@ -1988,7 +2035,24 @@ namespace Corrigible.Game.Raid
             var cell = go.GetComponent<RaidCell>() ?? go.AddComponent<RaidCell>();
             cell.X = x; cell.Y = y;
             tileObjects[k] = go; tileKinds[k] = kind;
+            tileSkins[k] = go.GetComponent<RaidTileSkin>();
             walls[k] = kind == "wall";
+        }
+
+        /// <summary>Karoyu durumdan giydirir: komşu maskesi, ayrık blok, raf yönü (<see cref="RaidTileMask.For(Baskin.BState,int,int)"/>)
+        /// ve tahtanın kiti. Zemin karosunda giydirme yok.</summary>
+        void SkinTile(Baskin.BState B, int k)
+        {
+            if (B != null && tileSkins[k] != null) tileSkins[k].Apply(RaidTileMask.For(B, k % Baskin.N, k / Baskin.N), Kit);
+        }
+
+        /// <summary>Karonun 3 × 3 komşuluğunu giydirir; <paramref name="centre"/> false ise yalnız 8 komşu (canlanan karo kendi hâlinde kalır).</summary>
+        void SkinAround(Baskin.BState B, int k, bool centre = true)
+        {
+            int x = k % Baskin.N, y = k / Baskin.N;
+            for (int dy = -1; dy <= 1; dy++)
+                for (int dx = -1; dx <= 1; dx++)
+                    if ((centre || dx != 0 || dy != 0) && InBoard(x + dx, y + dy)) SkinTile(B, Key(x + dx, y + dy));
         }
 
         /// <summary>Sis bulutu: kareyi örten dört soluk küre (parçaları yarı gizler); <paramref name="strength"/> önizlemede yarım.</summary>

@@ -37,13 +37,13 @@ namespace Corrigible.Desk.EditorTools
                 var type = e.imageType switch { "sliced" => Image.Type.Sliced, "tiled" => Image.Type.Tiled, _ => Image.Type.Simple };
                 list.Add(new DeskSprites.Entry { name = e.name, sprite = sp, type = type, tint = e.tint });
             }
-            // Sığınak işaretleri (Revizyon 2): bölge ve makineye göre adla seçilir (SiginakGlyphs); öteki Sığınak sprite'ları
-            // sahnede referansla bağlı, kayda girmez
-            foreach (var e in SiginakSpriteManifest.All.Where(e => e.Name.StartsWith("glyph_")).OrderBy(e => e.Name))
+            // Sığınak işaretleri (Revizyon 2): bölge ve makineye göre adla seçilir (SiginakGlyphs); üretilen küçük resimler (ikmal
+            // sandığı) baskın kartlarında adla aranır; öteki Sığınak sprite'ları sahnede referansla bağlı, kayda girmez
+            foreach (var e in SiginakSpriteManifest.All.Where(e => e.Name.StartsWith("glyph_") || e.Generated && e.Name.StartsWith("thumb_")).OrderBy(e => e.Name))
             {
                 var sp = AssetDatabase.LoadAssetAtPath<Sprite>(e.AssetPath);
                 if (sp == null) { Debug.LogWarning("[Sığınak] Sprite yok: " + e.AssetPath); continue; }
-                list.Add(new DeskSprites.Entry { name = e.Name, sprite = sp, type = Image.Type.Simple, tint = true });
+                list.Add(new DeskSprites.Entry { name = e.Name, sprite = sp, type = Image.Type.Simple, tint = e.Name.StartsWith("glyph_") });
             }
             reg.sprites = list;
 

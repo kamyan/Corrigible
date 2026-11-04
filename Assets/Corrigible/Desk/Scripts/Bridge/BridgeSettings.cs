@@ -6,8 +6,8 @@ using UnityEngine;
 namespace Corrigible.Desk.Bridge
 {
     /// <summary>
-    /// Ayarlar kartının oyun tarafı (F8.3): ses kanalları ve sessiz mod <see cref="AudioPrefs"/>'te (eski SettingsModal'la
-    /// aynı tercih anahtarları), dil <see cref="DeskLoc"/> ile sahneyi yeniden yüklemeden. Kart açıkken zaman durur.
+    /// Ayarlar dolabının oyun tarafı (<see cref="SettingsCabinet"/>): ses kanalları ve sessiz mod <see cref="AudioPrefs"/>'te,
+    /// dil <see cref="DeskLoc"/> ile sahneyi yeniden yüklemeden. Menü sahnesinde de aynı bileşen çalışır (veri kaynağı yok).
     /// </summary>
     public sealed class BridgeSettings : MonoBehaviour, IDeskSettings
     {
@@ -25,7 +25,31 @@ namespace Corrigible.Desk.Bridge
         public bool Muted { get => AudioPrefs.Muted; set => AudioPrefs.Muted = value; }
 
         public DeskLang Language => DeskLoc.Instance.Lang;
-        public void SetLanguage(DeskLang lang) => ApplyLanguage(lang, source != null ? source.Game : null);
+
+        /// <summary>
+        /// Dolap açıkken oyun yeniden kurulmaz (açılış dizisi dolabın önünü karartırdı); dolap kapanınca
+        /// <see cref="RebuildIfPending"/> kurar.
+        /// </summary>
+        public void SetLanguage(DeskLang lang)
+        {
+            var game = source != null ? source.Game : null;
+            bool open = SettingsCabinet.Instance != null && SettingsCabinet.Instance.IsOpen;
+            if (open && lang != DeskLoc.Instance.Lang && Fresh(game)) rebuildPending = true;
+            ApplyLanguage(lang, open ? null : game);
+        }
+
+        bool rebuildPending;
+
+        /// <summary>Dolapta dil değiştiyse ve oyun hâlâ oynanmamışsa yeni dilde yeniden kurar.</summary>
+        public void RebuildIfPending()
+        {
+            if (!rebuildPending) return;
+            rebuildPending = false;
+            var game = source != null ? source.Game : null;
+            if (Fresh(game)) game.NewGame();
+        }
+
+        static bool Fresh(GameController game) => game?.Sim != null && game.Sim.S.Day == 0 && game.Sim.Record != null && game.Sim.Record.commands.Count == 0;
 
         /// <summary>Kaydırırken nasıl duyulduğunu dinlet (müzik hariç; sık tetiklenmesin).</summary>
         public void Preview(int channel)
@@ -48,8 +72,7 @@ namespace Corrigible.Desk.Bridge
             DeskLoc.Instance.SetLanguage(lang);
             PlayerPrefs.SetString(LanguageKey, lang == DeskLang.En ? Loc.English : Loc.Turkish);
             PlayerPrefs.Save();
-            if (game?.Sim != null && game.Sim.S.Day == 0 && game.Sim.Record != null && game.Sim.Record.commands.Count == 0)
-                game.NewGame();
+            if (Fresh(game)) game.NewGame();
         }
     }
 }

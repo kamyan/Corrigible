@@ -85,12 +85,14 @@ namespace Corrigible.Desk.Tests
         [Test]
         public void TilePrefabs_CollidersReachWhatTheyShow()
         {
-            // Kare görünen gövdesinin her yerinden tıklanır: duvar bloğunun tepesine tıklayan arkadaki kareyi seçmemeli
+            // Kare görünen gövdesinin her yerinden tıklanır: duvar bloğunun tepesine tıklayan arkadaki kareyi seçmemeli. Giydirmenin
+            // (RaidTileSkin) bütün çocukları açıkken de: köprüler, el çarkı, kanalın kolları, kenarları, bağlantısı ve kuyusu
             foreach (var name in new[] { "Floor", "Cable", "Wall" })
             {
                 var go = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Corrigible/Prefabs/Raid/" + name + ".prefab"));
                 try
                 {
+                    foreach (var t in go.GetComponentsInChildren<Transform>(true)) t.gameObject.SetActive(true);
                     var box = go.GetComponent<BoxCollider>();
                     float top = go.GetComponentsInChildren<Renderer>().Select(r => r.bounds.max.y).DefaultIfEmpty(0).Max();
                     Assert.GreaterOrEqual(box.center.y + box.size.y / 2, top - 0.05f, name + " çarpıştırıcısı görünen tepesine uzanır");
@@ -139,6 +141,59 @@ namespace Corrigible.Desk.Tests
                 Assert.DoesNotThrow(() => card.Render(new RaidInspectorModel { Title = "Boş kare" }));
                 Assert.IsTrue(card.gameObject.activeSelf);
                 Assert.IsFalse(thumbnail.enabled);
+                // Sprite tablosunda olmayan ad önceki kartın resmini göstermez
+                card.Render(new RaidInspectorModel { Title = "Robot", Thumb = "thumb_maint", Hp = 2, Max = 2 });
+                card.Render(new RaidInspectorModel { Title = "Bilinmeyen", Thumb = "thumb_yok_boyle_resim" });
+                Assert.IsFalse(thumbnail.enabled);
+            }
+            finally { Object.DestroyImmediate(canvasObject); }
+        }
+
+        /// <summary>
+        /// Gri alt satır (mekânın adı, BASKIN-MEKANLARI Katman 6): yalnız verildiğinde başlığın altında görünür ve başlık yukarı
+        /// kayar; verilmezse gizli ve başlık prefab'daki yerinde (dikey ortada). Alt satır kurala ve can piplerine değmez.
+        /// </summary>
+        [Test]
+        public void HoverInspector_SubtitleShowsUnderTheTitleOnlyWhenSet()
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<HoverInspectorView>(Root + "/Prefabs/Sade/Raid/HoverInspector.prefab");
+            var canvasObject = new GameObject("Kart testi", typeof(RectTransform), typeof(Canvas));
+            try
+            {
+                var card = Object.Instantiate(prefab, canvasObject.transform);
+                var title = Ref<TMPro.TMP_Text>(card, "title");
+                var subtitle = Ref<TMPro.TMP_Text>(card, "subtitle");
+                Assert.IsNotNull(subtitle, "alt satır bağlı");
+                Assert.AreNotSame(title, subtitle);
+                Assert.GreaterOrEqual(subtitle.fontSize, 11f, "HUD ölçeğinde (1,27) en az 14 px");
+                var tr = title.rectTransform;
+                var sr = subtitle.rectTransform;
+                var rest = (tr.anchoredPosition.y, tr.sizeDelta.y);
+
+                var row = (RectTransform)new SerializedObject(card).FindProperty("rows").GetArrayElementAtIndex(0).objectReferenceValue;
+                var rule = new[] { new RaidCardRow { Icon = "ic_eye_s", Text = "Geçilmez; atışı durdurur" } };
+                card.Render(new RaidInspectorModel { Title = "Duvar", Rows = rule });
+                float rowY = row.anchoredPosition.y;
+                Assert.IsFalse(subtitle.gameObject.activeSelf, "alt satırsız kartta gizli");
+                Assert.AreEqual(rest, (tr.anchoredPosition.y, tr.sizeDelta.y), "başlık prefab'daki yerinde");
+
+                card.Render(new RaidInspectorModel { Title = "Duvar", Subtitle = "Arşiv rafı", Rows = rule });
+                Assert.IsTrue(subtitle.gameObject.activeSelf);
+                Assert.AreEqual("Arşiv rafı", subtitle.text);
+                Assert.AreEqual(RaidHudView.C("ink.ink3"), subtitle.color, "gri (ink3)");
+                Assert.Greater(tr.anchoredPosition.y, rest.Item1, "başlık yukarı kayar");
+                Assert.Less(tr.sizeDelta.y, rest.Item2, "başlık tek satıra iner");
+                Assert.LessOrEqual(sr.anchoredPosition.y, tr.anchoredPosition.y - tr.sizeDelta.y + 0.01f, "alt satır başlığın altında");
+                Assert.GreaterOrEqual(sr.anchoredPosition.y - sr.sizeDelta.y, -49f, "kuralın (y −49) üstünde");
+                Assert.LessOrEqual(sr.anchoredPosition.x + sr.sizeDelta.x, 276f, "can piplerine (x 276) değmez");
+                Assert.AreEqual(rowY, row.anchoredPosition.y, "satırlar yerinde: alt satır başlık bloğuna sığar");
+                Assert.AreEqual(new Vector2(0, 1), sr.anchorMin, "başlık gibi sol üst çapa");
+                Assert.AreEqual(new Vector2(0, 1), sr.pivot);
+
+                // Kart yeniden alt satırsız çizilince başlık geri döner (kart nesnesi kareler arasında yeniden kullanılır)
+                card.Render(new RaidInspectorModel { Title = "Boş kare" });
+                Assert.IsFalse(subtitle.gameObject.activeSelf);
+                Assert.AreEqual(rest, (tr.anchoredPosition.y, tr.sizeDelta.y));
             }
             finally { Object.DestroyImmediate(canvasObject); }
         }

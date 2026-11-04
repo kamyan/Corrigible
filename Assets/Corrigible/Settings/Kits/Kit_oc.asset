@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 224ad763b4e5549f484f01e928ee39e0, type: 3}
+  m_Name: Kit_oc
+  m_EditorClassIdentifier: Corrigible.Game::Corrigible.Game.Raid.RaidRoomKit
+  id: oc
+  regions: []
+  wallTop: {fileID: 2100000, guid: 7c0bf3cbfc4c14b818c9dfe81a6a632d, type: 2}
+  wallWest: {fileID: 2100000, guid: 7b5bc6d73898045fca7820ebe2808704, type: 2}
+  wallSouth: {fileID: 2100000, guid: 898b2e5775a5243589de945432381acd, type: 2}
+  columnWest: {fileID: 2100000, guid: 0b1ee1508a5e649b892a804dec1e6c09, type: 2}
+  columnSouth: {fileID: 2100000, guid: ce8ccbc4c651f4ff09cebfe38a025b7d, type: 2}
+  bridges: 1
+  channelFloor: {fileID: 2100000, guid: ed09365b5eafb4368a801bf7e00e195e, type: 2}
+  wellFloor: {fileID: 2100000, guid: 9c15740a6471d4527904251229d3a9e9, type: 2}
+  wallRubble: {fileID: 978003305702621903, guid: 33fa067cef8064942a828280b9c57ad0, type: 3}

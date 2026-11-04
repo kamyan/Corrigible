@@ -15,23 +15,23 @@ namespace Corrigible.Core
     /// </summary>
     public static partial class Baskin
     {
-        /// <summary>Olay tablosu (<see cref="RegionDef.Event"/>): ad, kısa kural, olayın geçtiği bina (görünen oda adı) ve birim
-        /// uyarılarının etiketi.</summary>
-        public static readonly Dictionary<string, (string Name, string Desc, string Room, string Tag)> RegionEvents =
-            new Dictionary<string, (string, string, string, string)>
+        /// <summary>Olay tablosu (<see cref="RegionDef.Event"/>): ad, kısa kural ve birim uyarılarının etiketi. Olayın geçtiği
+        /// bina bölgenindir (<see cref="RegionDef.Building"/>).</summary>
+        public static readonly Dictionary<string, (string Name, string Desc, string Tag)> RegionEvents =
+            new Dictionary<string, (string, string, string)>
             {
-                ["bulut"] = (Loc.N("Söndürme bulutu"), Loc.N("Tek turların sonunda tavandaki memeler bir alanı bulutla doldurur: bir tur boyunca buluta ve buluttan nişan alınmaz; bitişik nesneye iş (sabotaj, onarım) serbest."), Loc.N("Banka sunucu salonu"), Loc.N("BULUT")),
-                ["raf"] = (Loc.N("Kayar arşiv rafı"), Loc.N("3. ve 5. tur sonunda raf bloğu kayar ve geçit rayın öbür ucuna atlar; kapanan geçitteki birim 1 hasar alır ve yana itilir."), Loc.N("Arşiv dosya katı"), Loc.N("RAF")),
-                ["gaz"] = (Loc.N("Yanıcı gaz kaçağı"), Loc.N("Kompresör bulutu takvimle doldurup boşaltır. Buluta ateş değerse bulut bir tur sonra parlar: içindeki herkes 1 hasar alır."), Loc.N("Rafineri kompresör dairesi"), Loc.N("PARLAMA")),
-                ["tavan"] = (Loc.N("Çatlak tavan"), Loc.N("Çatlağa ya da yanına darbe gelirse tavan bir tur sonra çöker: altındaki birim 1 hasar alır, kare boşsa enkaz yığını kalır."), Loc.N("Cevher işleme hangarı"), Loc.N("TAVAN")),
-                ["asansor"] = (Loc.N("Yük asansörü"), Loc.N("Kabin 2. ve 4. tur sonunda kalkar, bir tur sonra öbür durağa iner: duraktaki birim yolculuk eder, iniş durağındaki birim 1 hasar alır."), Loc.N("Asansör holü"), Loc.N("KABİN")),
-                ["kriyo"] = (Loc.N("Kriyo soğutma hattı"), Loc.N("Çift turların sonunda hat bölgeye boşalır: içindeki birim bir sıra yürüyemez ama eylemini yapar; buz kabuğu ilk hasarı karşılar."), Loc.N("Soğuk depo"), Loc.N("DONMA")),
-                ["turnike"] = (Loc.N("Vardiya turnikeleri"), Loc.N("Hedefin çevresindeki holün turnikeleri tek yöne döner: içeri ya da dışarı. 2. ve 4. tur sonunda döner; kaçış başlayınca ya da son iki turda tahliye, hep dışarı."), Loc.N("Kasa holü"), Loc.N("TURNİKE")),
-                ["kaynak"] = (Loc.N("Kaynak robotu kolu"), Loc.N("Kol her evre sonunda işaretli kareye kaynak yapar (1 hasar) ve saat yönünde döner; kola gelen her darbe dönüşe bir adım ekler."), Loc.N("Montaj hattı"), Loc.N("KAYNAK")),
-                ["faz"] = (Loc.N("Şebeke faz değişimi"), Loc.N("Kablo kanalları iki faza ayrılır ve üç turda bir el değiştirir: evreyi canlı kanalda bitiren 1 hasar alır, sönük kanal güvenli."), Loc.N("Trafo merkezi"), Loc.N("ŞEBEKE")),
-                ["suzgec"] = (Loc.N("Süzgeç emmesi"), Loc.N("3. ve 6. tur sonunda süzgeç dört yanındakileri içeri çeker; süzgeçte biri varsa çarpışırlar ve ikisi de 1 hasar alır."), Loc.N("Su basmış bodrum"), Loc.N("EMME")),
-                ["tup"] = (Loc.N("Basınçlı tüp rafı"), Loc.N("Vurulan tüp ıslık çalar ve bir tur sonra çizili hattında uçar: hattaki ilk birime 1 hasar verir ve onu iter."), Loc.N("Türbin bakım atölyesi"), Loc.N("TÜP")),
-                ["yag"] = (Loc.N("Hidrolik yağ sızıntısı"), Loc.N("2. tur sonunda hortum patlar: yağdaki birim itilince, çekilince ya da vurulunca yağ bitene kadar kayar; çarpışma 1 hasar."), Loc.N("Makine dairesi"), Loc.N("YAĞ")),
+                ["bulut"] = (Loc.N("Söndürme bulutu"), Loc.N("Tek turların sonunda tavandaki memeler bir alanı bulutla doldurur: bir tur boyunca buluta ve buluttan nişan alınmaz; bitişik nesneye iş (sabotaj, onarım) serbest."), Loc.N("BULUT")),
+                ["raf"] = (Loc.N("Kayar arşiv rafı"), Loc.N("3. ve 5. tur sonunda raf bloğu kayar ve geçit rayın öbür ucuna atlar; kapanan geçitteki birim 1 hasar alır ve yana itilir."), Loc.N("RAF")),
+                ["gaz"] = (Loc.N("Yanıcı gaz kaçağı"), Loc.N("Kompresör bulutu takvimle doldurup boşaltır. Buluta ateş değerse bulut bir tur sonra parlar: içindeki herkes 1 hasar alır."), Loc.N("PARLAMA")),
+                ["tavan"] = (Loc.N("Çatlak tavan"), Loc.N("Çatlağa ya da yanına darbe gelirse tavan bir tur sonra çöker: altındaki birim 1 hasar alır, kare boşsa enkaz yığını kalır."), Loc.N("TAVAN")),
+                ["asansor"] = (Loc.N("Yük asansörü"), Loc.N("Kabin 2. ve 4. tur sonunda kalkar, bir tur sonra öbür durağa iner: duraktaki birim yolculuk eder, iniş durağındaki birim 1 hasar alır."), Loc.N("KABİN")),
+                ["kriyo"] = (Loc.N("Kriyo soğutma hattı"), Loc.N("Çift turların sonunda hat bölgeye boşalır: içindeki birim bir sıra yürüyemez ama eylemini yapar; buz kabuğu ilk hasarı karşılar."), Loc.N("DONMA")),
+                ["turnike"] = (Loc.N("Vardiya turnikeleri"), Loc.N("Hedefin çevresindeki holün turnikeleri tek yöne döner: içeri ya da dışarı. 2. ve 4. tur sonunda döner; kaçış başlayınca ya da son iki turda tahliye, hep dışarı."), Loc.N("TURNİKE")),
+                ["kaynak"] = (Loc.N("Kaynak robotu kolu"), Loc.N("Kol her evre sonunda işaretli kareye kaynak yapar (1 hasar) ve saat yönünde döner; kola gelen her darbe dönüşe bir adım ekler."), Loc.N("KAYNAK")),
+                ["faz"] = (Loc.N("Şebeke faz değişimi"), Loc.N("Kablo kanalları iki faza ayrılır ve üç turda bir el değiştirir: evreyi canlı kanalda bitiren 1 hasar alır, sönük kanal güvenli."), Loc.N("ŞEBEKE")),
+                ["suzgec"] = (Loc.N("Süzgeç emmesi"), Loc.N("3. ve 6. tur sonunda süzgeç dört yanındakileri içeri çeker; süzgeçte biri varsa çarpışırlar ve ikisi de 1 hasar alır."), Loc.N("EMME")),
+                ["tup"] = (Loc.N("Basınçlı tüp rafı"), Loc.N("Vurulan tüp ıslık çalar ve bir tur sonra çizili hattında uçar: hattaki ilk birime 1 hasar verir ve onu iter."), Loc.N("TÜP")),
+                ["yag"] = (Loc.N("Hidrolik yağ sızıntısı"), Loc.N("2. tur sonunda hortum patlar: yağdaki birim itilince, çekilince ya da vurulunca yağ bitene kadar kayar; çarpışma 1 hasar."), Loc.N("YAĞ")),
             };
 
         /// <summary>Fitil ya da tüp: kare, tüpün uçuş yönü (<see cref="Dirs"/>) ve işleyeceği tur (0: tetiklenmedi).</summary>
@@ -1358,8 +1358,17 @@ namespace Corrigible.Core
         /// <summary>Birim uyarısı: bu turun evre sonunda olayın birime yapacağı (Damage: hasar; birim düşecekse Down).</summary>
         public sealed class HazardWarn { public int Unit, Damage; public bool Down; public string Text; }
 
-        /// <summary>Görünen oda adı: olaylı baskında olayın binası (yalnız sunum; harita seçimi aynı).</summary>
-        public static string RoomName(BState B) => B.Ev != null ? Loc.T(RegionEvents[B.Ev.Id].Room) : Loc.T(B.Layout);
+        /// <summary>
+        /// Baskının yeri: bölgenin binası ve sektörün odası ("Banka veri merkezi · UPS odası"); sektör yoksa yalnız bina, bölge de
+        /// yoksa haritanın adı (yalnız sunum; harita seçimi ve kurallar aynı).
+        /// </summary>
+        public static string RoomName(BState B)
+        {
+            var def = GameData.Regions.FirstOrDefault(r => r.Id == B.Params?.Region);
+            if (def == null) return Loc.T(B.Layout);
+            int i = GameData.SectorIndex(B.Params.SectorId);
+            return i >= 0 ? Loc.F("{0} · {1}", def.Building, def.Sector(i)) : def.Building;
+        }
 
         /// <summary>
         /// Bu turun evre sonunda olacakların önizlemesi: kopyada gösterilen niyetler sırayla uygulanır, işaretli uyanma kareleri dolu

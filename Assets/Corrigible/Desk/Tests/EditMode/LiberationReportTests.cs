@@ -112,7 +112,7 @@ namespace Corrigible.Desk.Tests
             var report = Build(sim);
             Assert.AreEqual(Loc.T("EŞİK AŞILDI"), Row(report, "YZ alarmı").Value);
             var lost = Row(report, "YZ karşı saldırısı");
-            Assert.AreEqual(Loc.F("{0} · {1}", Loc.T("Batı Avrupa"), Loc.T("Tedarik deposu")), lost.Value);
+            Assert.AreEqual(Loc.F("{0} · {1}", Loc.T("Batı Avrupa"), Loc.T("Teknik depo")), lost.Value);
             Assert.AreEqual(OperationTone.Alert, lost.Tone);
             StringAssert.DoesNotContain(lost.Value, report.Sentence, "karşı saldırı satırda; cümlede tekrar edilmez");
             Assert.IsFalse(sim.LiberationSector("weu_1").Captured);

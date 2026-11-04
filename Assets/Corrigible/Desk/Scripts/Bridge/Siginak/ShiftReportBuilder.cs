@@ -314,7 +314,8 @@ namespace Corrigible.Desk.Bridge
         {
             int cut = id?.LastIndexOf('_') ?? -1;
             if (cut <= 0 || !int.TryParse(id.Substring(cut + 1), NumberStyles.Integer, CultureInfo.InvariantCulture, out int n)) return "—";
-            return Loc.F("{0} · {1:00} {2}", Loc.T(GameData.Region(id.Substring(0, cut)).Name), n, new LiberationSectorState { Index = n - 1 }.Name);
+            var region = GameData.Region(id.Substring(0, cut));
+            return Loc.F("{0} · {1:00} {2}", region.Name, n, region.Sector(n - 1));
         }
 
         /// <summary>

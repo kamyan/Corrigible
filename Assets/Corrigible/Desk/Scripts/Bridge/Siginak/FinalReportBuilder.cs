@@ -20,8 +20,7 @@ namespace Corrigible.Desk.Bridge
 
         static string Name(string region) => Loc.T(GameData.Region(region).Name);
 
-        /// <summary>Sektör adlarının kaynakları (<c>LiberationSectorState.Name</c> ile aynı sıra): anın metnini her dilde tanımak için.</summary>
-        static readonly string[] SectorSources = { Loc.N("Tedarik deposu"), Loc.N("Tahliye geçidi"), Loc.N("Sunucu merkezi") };
+
         static string Code(int day) => Loc.F("V.{0:000}", day + 1);
 
         public static FinalReportData Build(Simulation sim)
@@ -163,9 +162,10 @@ namespace Corrigible.Desk.Bridge
             foreach (var s in sim.S.Liberation.Regions.SelectMany(r => r.Sectors))
                 foreach (var lang in Loc.Languages)
                 {
+                    // Anlar kayıttan yeniden oynatılınca bugünkü oda adıyla yazılır (sektör adı bölgeden)
                     var loc = DeskLoc.Instance;
                     string text = string.Format(loc.In(Loc.N("{0}: {1} yeniden işgal altında."), lang), loc.In(GameData.Region(s.Region).SourceName, lang),
-                        loc.In(SectorSources[Math.Min(s.Index, SectorSources.Length - 1)], lang));
+                        loc.In(GameData.Region(s.Region).SourceSector(s.Index), lang));
                     if (text == m.Text) return Loc.F("YZ karşı saldırısı: {0} {1:00} yeniden işgal", Name(s.Region), s.Index + 1);
                 }
             return Loc.F("YZ karşı saldırısı: {0}", m.Text.TrimEnd('.'));

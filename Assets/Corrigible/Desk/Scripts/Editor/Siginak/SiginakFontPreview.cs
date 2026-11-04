@@ -31,7 +31,7 @@ namespace Corrigible.Desk.EditorTools
             ("orderBody", "Courier Prime 400", "Dünya çoktan düştü. Emirler kâğıtla gider.", "The world has already fallen. Orders go on paper."),
             ("plateLabel", "Courier Prime 700", "VARDİYAYI BİTİR · ÖZGÜR BÖLGE 01/12 · İŞGAL %66,7", "END SHIFT · FREE REGIONS 01/12 · OCCUPIED 66.7%"),
             ("taskBody", "Libre Franklin 400", "Teknisyeni ikmal kasasının yanına götür; kasayı kırma.", "Move the technician next to the supply crate; do not break it."),
-            ("sectorName", "Libre Franklin 600", "02 Tahliye geçidi · YAĞMA · BASKINA HAZIR", "02 Evacuation passage · LOOT · READY TO RAID"),
+            ("sectorName", "Libre Franklin 600", "02 Temiz oda koridoru · YAĞMA · BASKINA HAZIR", "02 Cleanroom corridor · LOOT · READY TO RAID"),
             ("inkButton", "Libre Franklin 700", "Enter · BASKIN EMRİ VER · −12 fon", "Enter · ORDER THE RAID · −12 funds"),
             ("analystNote", "Kalam 700", "→ jeneratöre 2 kişi, atölye döner", "→ 2 staff to the generator, workshop runs"),
             ("wallStencil", "yedek: Courier Prime 700", "KYGA / SIĞINAK 07 · AĞA BAĞLANMA", "KYGA / SHELTER 07 · STAY OFF THE NET"),

@@ -82,6 +82,9 @@ namespace Corrigible.Desk
         }
 
         /// <summary>Belgeyi açar; <paramref name="animate"/> ise teleks yönünden düşer ve okuma görünümüne kalkar.</summary>
+        /// <summary>Ayarlar dolabı açıkken belge görünmez ve tıklanmaz (ölçek 0); durumu ve canlandırması değişmez.</summary>
+        public void SetVeiled(bool on) => transform.localScale = on ? Vector3.zero : Vector3.one;
+
         public void Show(BriefingData data, bool animate)
         {
             Rest();
@@ -120,7 +123,7 @@ namespace Corrigible.Desk
             receivedText.text = d.Received;
             actionLabel.text = d.Action;
 
-            dossier.gameObject.SetActive(!d.Reading);
+            dossier.gameObject.SetActive(!d.Reading && !d.NoDossier);
             hasSave = d.HasSave;
             tabFill.color = t.ColorOf(d.HasSave ? "ui.folder[0]" : "ui.folderOff");
             tabLabel.SetActive(d.HasSave);

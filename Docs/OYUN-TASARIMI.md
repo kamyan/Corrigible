@@ -22,8 +22,14 @@ taktik tahta için `Core/Baskin.cs` içindedir.
 
 - **Başlangıç:** Bütün bölgeler (`GameData.Regions`: na, sa, weu, eeu, ru, me, af, in, cn, jk, sea, oc) işgal altında;
   işgal oranı %100. Direniş Batı Avrupa'dan (`Simulation.HQ = "weu"`) tek **Alfa** ekibiyle başlar. Başlangıç fonu 60.
-- **Sektörler:** Her bölge sırayla üç sektördür: **Tedarik deposu → Tahliye geçidi → Sunucu merkezi**. İlk ikisi
-  ikmal (`MissionKind = "loot"`), sonuncusu sunucu imhası (`"server"`). Başarı sektörü kalıcı geri alır ve sıradakini
+- **Sektörler:** Her bölge bir **bina**dır (`RegionDef.Building`), üç sektörü binanın içine doğru üç **oda**
+  (`RegionDef.Sector`; örneğin Batı Avrupa · Banka veri merkezi: Teknik depo → UPS odası → Sunucu salonu). İlk ikisi
+  ikmal (`MissionKind = "loot"`), sonuncusu sunucu imhası (`"server"`). Yer fişte (bölge adının altında bina), telekste,
+  CRT'de, baskının görev çipinde ("UPS ODASI · İKMAL") ve raporlarda görünür; harita türü ve adı gösterilmez
+  (Docs/BASKIN-MEKANLARI.md). İkmal baskınının hedefi zeytin yeşili KYGA ikmal sandığıdır (sunucu dolabı değil; alınınca
+  boşalmış alçak sandık kalır). Baskın tahtası binayı gösterir (yalnız sunum, kural değişmez): bölgenin bina kiti (duvar,
+  kanal, gedik molozu; ör. Doğu Avrupa arşiv rafları, Güneydoğu Asya kum torbaları), olay nesnelerinin modelleri ve telsizden
+  duyulan bina sesi; eğitim ve MapSeed 0 baskınları varsayılan görünümle. Başarı sektörü kalıcı geri alır ve sıradakini
   açar; geri alınmış sektöre yeniden baskın yapılmaz, sıradaki sektör atlanamaz.
 - **İşgal oranı** (`Simulation.Occupation`): geri alınmamış sektörlerin payı. Bölge başına %100 → %66,7 → %33,3 → %0.
 - **Yeni cephe:** Bölgenin üç sektörü alınınca, geri alınmış bölgelerden **herhangi birine** `GameData.Links` üzerinden
@@ -267,7 +273,7 @@ Baskın sürerken (`S.Raid`), harekât bitmişken ya da açılış/emir belgesi 
   - Depo sınırına takılan ödül yalnız gerçekten alınan miktarla raporlanır (`LiberationRaidReward`).
 - **Sonuç kartı** (baskın tahtasında, Revizyon 2 · S7a/b): tahta kararır, spot nedenin üstünde açılır, sağdan kart kayar:
   başlık yerinde tek damga (SEKTÖR GERİ ALINDI mavi; GERİ ÇEKİLDİ, EKİP DÜŞTÜ, İKMAL KAYBEDİLDİ, SÜRE DOLDU kırmızı), yer
-  satırı (“Doğu Avrupa · 02 Tahliye geçidi”), hedef / kırılan sivil sunucu / ekip (kaçış olduysa "Tahliye edilen n/3"), tek
+  satırı (“Doğu Avrupa · 02 Dosya katı”), hedef / kırılan sivil sunucu / ekip (kaçış olduysa "Tahliye edilen n/3"), tek
   düğme (0,6 s girdi kilitli).
 - **Operasyon raporu** (S7c/d): baskından dönünce kamera harita pozuna geçer, rapor solda iner, iplik ekip figürüne gider.
   Başlık sonucu söyler (SEKTÖR GERİ ALINDI / SEKTÖR İŞGAL ALTINDA), altında tek cümle (bölgenin kalan sektörü ya da

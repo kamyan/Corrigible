@@ -123,6 +123,10 @@ namespace Corrigible.Desk
     public sealed class OperationSlipData
     {
         public string RegionId, Code, Region, Progress;
+        /// <summary>Bölgenin binası (bölge adının altında; baskınlar bu binanın odalarında geçer).</summary>
+        public string Building;
+        /// <summary>Bina satırının üzerine gelme etiketi: başlık (“BİNA · DEVLET ARŞİVİ”) ve binanın notu; başlık boşsa etiket yok.</summary>
+        public string BuildingHoverTitle, BuildingHoverLine;
         public readonly List<SlipField> Fields = new List<SlipField>();
         public readonly List<SlipSector> Sectors = new List<SlipSector>();
         public string TaskHead, Task, Cost;

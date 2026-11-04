@@ -170,7 +170,7 @@ namespace Corrigible.Desk.Tests
                 Assert.IsInstanceOf<SimDeskDataSource>(Ref(presenter, "dataSource"));
                 Assert.IsInstanceOf<SimDeskCommands>(Ref(presenter, "commands"));
                 Assert.IsInstanceOf<BridgeSettings>(Ref(presenter, "settingsSource"));
-                foreach (string field in new[] { "finalReport", "settingsView" })
+                foreach (string field in new[] { "finalReport", "settingsCabinet" })
                     Assert.IsNotNull(Ref(presenter, field), field);
                 var surface = Ref(presenter, "surface");
                 Assert.IsInstanceOf<LiberationDeskView>(surface, "masa sığınak odasına bağlı");
@@ -202,12 +202,13 @@ namespace Corrigible.Desk.Tests
                 var contextCanvas = (Canvas)Ref(All<HoverTag>(scene).Single(), "canvas");
                 Assert.AreEqual(RenderMode.ScreenSpaceOverlay, contextCanvas.rootCanvas.renderMode);
                 var presenter = All<DeskPresenter>(scene).Single();
-                foreach (string field in new[] { "finalReport", "settingsView" })
+                // Ayarlar artık odadaki dolap (3B); ekran kâğıdı yalnız son rapor
+                foreach (string field in new[] { "finalReport" })
                 {
                     var canvas = ((Component)Ref(presenter, field)).GetComponentInParent<Canvas>(true);
                     Assert.IsNotNull(canvas, field);
                     Assert.AreEqual(RenderMode.ScreenSpaceOverlay, canvas.rootCanvas.renderMode, field + ": kamera Canvas'ı oda katmanının arkasında kalır.");
-                    Assert.Greater(canvas.sortingOrder, contextCanvas.sortingOrder, field + ": rapor ve ayarlar oda katmanının önünde olmalı.");
+                    Assert.Greater(canvas.sortingOrder, contextCanvas.sortingOrder, field + ": rapor oda katmanının önünde olmalı.");
                 }
             });
         }

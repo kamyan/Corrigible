@@ -1805,11 +1805,23 @@
    "reportAtS": 2.2
   },
   "opening": {
-   "_": "UYGULAMA EKİ (Unity, Aşama 9): K7 açılış akışı. generatorS siyah ekran + jeneratör marşı (ampul generatorBackS'te tam yanar), documentAtS emir belgesi düşer, toDeskS BAŞLA'dan sonra kamera K1'e, reportFlashS KAYITTAN DEVAM'da son raporun görünme süresi.",
+   "_": "UYGULAMA EKİ (Unity, Aşama 9): K7 açılış akışı. generatorS siyah ekran + jeneratör marşı (ampul generatorBackS'te tam yanar), documentAtS emir belgesi düşer, toDeskS BAŞLA'dan sonra kamera K1'e, reportFlashS KAYITTAN DEVAM'da son raporun görünme süresi. returnS menüden kayıttan devamda siyahtan ampulün yanma süresi (jeneratörsüz).",
    "generatorS": 0.8,
    "documentAtS": 1.5,
    "toDeskS": 0.8,
-   "reportFlashS": 0.3
+   "reportFlashS": 0.3,
+   "returnS": 0.6
+  },
+  "cabinetLatchS": 0.15,
+  "cabinetLeafS": 0.45,
+  "cabinetCloseS": 0.35,
+  "cardCarryS": 0.4,
+  "cardPushS": 0.14,
+  "entrance": {
+   "_": "UYGULAMA EKİ (menü sahnesi, Docs/AYARLAR-DOLABI-VE-MENU.md): introS karanlıktan merdiven lambalarının yanışı, walkS kapıdan içeri yürüyüş (son %40'ında kararır), powerDownS son şalterle lambaların sönüşü.",
+   "introS": 0.9,
+   "walkS": 1.6,
+   "powerDownS": 0.6
   }
  },
  "cameras": {
@@ -2696,5 +2708,9 @@
    "roughness": 0.6,
    "metal": 0
   }
+ },
+ "cabinet": {
+  "_": "UYGULAMA EKİ (ayarlar dolabı, Docs/AYARLAR-DOLABI-VE-MENU.md): iç ampulün şiddeti (kapak açıkken). Süreler motion.cabinet*S.",
+  "bulbIntensity": 0.3
  }
 }

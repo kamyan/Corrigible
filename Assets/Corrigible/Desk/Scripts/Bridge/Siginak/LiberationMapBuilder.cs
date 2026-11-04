@@ -251,6 +251,10 @@ namespace Corrigible.Desk.Bridge
             int reoccupied = Reoccupied(sim, area);
             d.Code = front && next != null ? Loc.F("HAREKÂT FORMU · OP-{0:00}", next.Index + 1) : Loc.T("HAREKÂT FORMU");
             d.Region = DeskText.Upper(Loc.T(GameData.Region(regionId).Name));
+            d.Building = GameData.Region(regionId).Building;
+            // Bina satırının üzerine gelince binanın notu (bilgi fişinde de)
+            d.BuildingHoverTitle = Loc.F("BİNA · {0}", DeskText.Upper(d.Building));
+            d.BuildingHoverLine = GameData.Region(regionId).BuildingNote;
             d.Progress = area.Completed
                 ? Loc.F("SEKTÖRLER {0}/{1} · ÖZGÜR", captured, count)
                 : Loc.F("SEKTÖRLER {0}/{1} · İŞGAL {2}", captured, count, DeskFormat.Percent(occupation, captured > 0 ? 1 : 0));

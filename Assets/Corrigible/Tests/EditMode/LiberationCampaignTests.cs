@@ -15,6 +15,38 @@ namespace Corrigible.Tests
         /// <summary>Baskın vardiyayı doldurur: ekip hazır olana kadar vardiya biter.</summary>
         static void Ready(Simulation sim) { while (!sim.S.Teams.Any(Simulation.TeamReady)) sim.Step(); }
 
+        /// <summary>
+        /// Yer kimliği (Docs/BASKIN-MEKANLARI.md): her bölge bir bina, üç sektörü binanın üç odası; 36 oda adı iki dilde de bütün
+        /// bölgeler arasında tek ve ≤ 18 harf (fiş satırı, görev çipi). Sektörün adı bölgeden; baskının yeri bina · oda.
+        /// </summary>
+        [Test]
+        public void Regions_HaveABuildingAndThreeDistinctRooms()
+        {
+            var table = Loc.ParseTable(System.IO.File.ReadAllText(Corrigible.EditorTools.LocalizationTool.TableFile));
+            try
+            {
+                foreach (var lang in Loc.Languages)
+                {
+                    Loc.SetLanguage(lang, lang == Loc.Turkish ? null : table[lang]);
+                    var rooms = GameData.Regions.SelectMany(r => Enumerable.Range(0, 3).Select(r.Sector)).ToList();
+                    Assert.AreEqual(36, rooms.Distinct().Count(), lang + ": oda adları tek");
+                    Assert.IsTrue(rooms.All(n => !string.IsNullOrEmpty(n) && n.Length <= 18), lang + ": " + string.Join(", ", rooms.Where(n => n.Length > 18)));
+                    Assert.AreEqual(12, GameData.Regions.Select(r => r.Building).Distinct().Count(), lang + ": binalar tek");
+                }
+            }
+            finally { Loc.SetLanguage(Loc.Turkish); }
+
+            var sim = New();
+            var weu = sim.S.Liberation.Regions.Single(r => r.Id == "weu");
+            CollectionAssert.AreEqual(new[] { Loc.T("Teknik depo"), Loc.T("UPS odası"), Loc.T("Sunucu salonu") }, weu.Sectors.Select(x => x.Name).ToArray());
+            Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
+            var B = Baskin.Create(sim.S.Raid.Params);
+            Assert.AreEqual(Loc.F("{0} · {1}", Loc.T("Banka veri merkezi"), Loc.T("Teknik depo")), Baskin.RoomName(B));
+            Assert.AreEqual(Loc.T("Banka veri merkezi"), Baskin.RoomName(Baskin.Create(new RaidParams { Seed = 3, Region = "weu" })), "sektörsüz: yalnız bina");
+            Assert.AreEqual(1, GameData.SectorIndex("weu_2"));
+            Assert.AreEqual(-1, GameData.SectorIndex("weu"));
+        }
+
         static void CaptureNext(Simulation sim)
         {
             string id = sim.NextLiberationSector(sim.S.Liberation.CurrentRegion).Id;

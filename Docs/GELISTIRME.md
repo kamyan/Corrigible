@@ -68,6 +68,16 @@ surface.LaunchSector(game.Sim.NextLiberationSector(game.Sim.S.Liberation.Current
 // rapor özel File() ile tepsiye. FinalReportView.Instance → IsOpen, PressRestart().
 ```
 
+- **Menü sahnesi ve dolap:** oyun build'de `Giris`'ten (kapının dışı) açılır; editörde DeskGame'i doğrudan açıp Play'e
+  basmak menüyü atlar ve bugünkü açılışı (emir belgesi, BAŞLA, KAYITTAN DEVAM) oynatır. Menüyü denemek için `Giris`'i aç.
+  Tutamaklar: `SettingsCabinet.Instance` → `RequestOpen()` (odada kamera K9'a döner, kapak kamera varınca açılır; menüde
+  dolabın çapasına), `Close()`; kontroller özel `channels`, `sound`, `language` alanlarında (`CabinetFader.Nudge(±1)`,
+  `CabinetToggle.Flip()`, `CabinetSelector.Nudge(1)`). Sürgüyü işaretçiyle denemek için `PointerEventData` kur,
+  `pointerPressRaycast.module`'üne kameranın `PhysicsRaycaster`'ını ver, `OnPointerDown`/`OnDrag`/`OnPointerUp`'ı doğrudan
+  çağır. Dolabın kontrolleri kapak tamamen açılmadan (`Current == Open`) çalışmaz. MENÜYE DÖN ve son şalter
+  `ShiftSwitch.Press()` iki kez. Menüde: `EntranceController`'ın özel `Continue()`/`NewCampaign()` metotları kartın ve
+  destenin tıklamasıdır (kayıt varken deste iki adım: `TimeClock`'ın özel `Stack()`'i iki kez); DeskGame'e geçişte niyet
+  `GameLaunch.Pending`. Son şalter editörde Play'i durdurur.
 - Belirli bir oda durumuna hızlı gitmek için `Corrigible.Desk.EditorTools.SiginakFixtures.Load("V014")` gibi hazır
   durumlar var (bkz. `SiginakFixtures.cs`). Durumu elle değiştirmek (`S.Fon = 200`) testi hızlandırır ama kayda girmez;
   kayıt/devam testinde kullanma.
@@ -146,6 +156,38 @@ bağla, prefab örneğinde değiştirdiğin bileşenler için `PrefabUtility.Rec
 `git diff`'te yalnız beklediğin satırlar olmalı. Prefab'ı `PrefabUtility.LoadPrefabContents` ile aç,
 `SaveAsPrefabAsset` ile kaydet, `UnloadPrefabContents` ile bırak (bıraktıktan sonra içindeki nesnelere dokunma).
 
+**Bina kitini değiştirmek ya da yenisini eklemek** (`Docs/BASKIN-MEKANLARI.md` Katman 3): renkler
+`Desk/Data/Sade/raid_tokens.json` → `kits.<bölge>.*` (yeni anahtarı `_new_1_3` listesine de ekle, sonra **Corrigible › Sade UI
+› Tokenları içe aktar**); desen `RaidKitTextureBaker.Motifs*.cs`'teki motif satırında (yalnız kitin sabit tohumuyla, metin ve
+`UnityEngine.Random` yok). **Corrigible › Baskın › Kit dokularını üret** (ya da `RaidKitTextureBaker.Bake(ids)`) dokuları,
+malzemeleri ve `Settings/Kits/Kit_<bölge>.asset`'i yazar; `wallRubble` ve `bridges` el ile ayarlandıysa korunur. Kapıdan
+(`RaidKitGate`) geçmeyen kit kütüphaneden çıkarılır ve rapor nedenini yazar. Sonucu **Corrigible › Baskın › Kit önizleme
+sayfası** ile (gri tonlu kopyasıyla) bak, `RaidRoomKitTests`'i boş sahnede çalıştır. Oyunda denemek için baskın sahnesindeki
+`LiveRaidDataSource`'un `kitOverride` alanına kit kimliğini yaz (yalnız editörde geçerli; MapSeed 0'da da çalışır).
+
+**Ayarlar dolabına kontrol eklemek** (`Docs/AYARLAR-DOLABI-VE-MENU.md`): parça `Desk/Prefabs/Siginak/SettingsCabinet.prefab`'ın
+`Interior`'ına (prefab'ı `LoadPrefabContents` ile aç); tıklanan kökte `BoxCollider` + `DeskTarget` (başlık çeviri aracına
+girer) ve kontrol bileşeni. Dolap kontrolün `DeskTarget`'ına kendi kilidini (`BlockedOverride`) ve sahnenin etiketini
+`Awake`'te verir: yeni kontrolü `SettingsCabinet.Targets()`'a ve gerekiyorsa klavye sırasına (`ControlTarget`) ekle. Değeri
+`IDeskSettings`'e yazar; yeni bir tercih gerekiyorsa arayüzü ve `BridgeSettings`'i genişlet. Yazılar ≥ 14 px (K9'da 1 px ≈
+0,64 mm: punto ≥ 0,09), ince parçalar ≥ 2 mm; punto taraması K9'u kendiliğinden ölçer. Ses `SettingsCabinet.Noise` → iki
+bağlayıcıda (`SiginakCabinet`, `EntranceController`) `Cue`. Menü ve oda aynı prefab'ı kullanır; menüdeki örnekte
+MENÜYE DÖN kolu kapalı.
+
+**Baskın parçasının küçük resmi:** **Corrigible › Sığınak › Baskın parçalarının küçük resimlerini üret**
+(`SiginakTextureBaker.PieceThumbs`) sandık, tüp, kaynak kolu, enkaz, sivil ve üreteç resimlerini 3B prefab'dan çizer;
+sprite tablosuna `SiginakSpriteManifest`'teki üretilen kayıtla girer. Yeni nesne türü eklersen `RaidDataSource.ObjectThumb`'a
+da ekle (yoksa kartta resim gizlenir).
+
+**Baskın yerinin sesleri:** 9 ortam yatağı ve 22 olay sesi `Tools/Audio/raid_site_audio.py` ile sentezlendi (numpy; sabit
+tohum, her koşu aynı dosyaları verir): proje kökünden `python3 -I Tools/Audio/raid_site_audio.py`. Çıktı ve ölçüm raporu
+(bant kaybı, telsiz bandından sonraki RMS, döngü dikişi, bugünkü seslerle karşılaştırma) git dışı
+`Temp/raid_site_audio/`'ya yazılır; tuttuğun klibi aynı adla `Audio/Placeholder`'a kopyala (`SoundBank.asset` ve `.meta`
+içe aktarma ayarları değişmez). Yataklar telsiz bandından sonra bugünkü uğultunun düzeyinde (RMS 0,078) tutulur; döngü
+noktasında Vorbis tık yaparsa o yatağı PCM'e çevir. `SoundBankTests` her bölgenin yatağını, olay seslerinin adlarını ve
+uzunluğunu, `EventFx` eşlemesini denetler. Dolabın ve menünün sekiz kısa sesi (`Cue` 89–96) `Tools/Audio/cabinet_audio.py`
+ile (yalnız standart kitaplık, numpy gerekmez) doğrudan `Audio/Placeholder`'a yazılır.
+
 ## Lokalizasyon iş akışı
 
 1. Kodda oyuncuya görünen metni Türkçe yaz ve sar: `Loc.T("Metin.")`, `Loc.F("{0} bölgesinde {1} gün.", ad, gün)`.
@@ -162,6 +204,20 @@ Ajan olarak: `ueval 'return Corrigible.EditorTools.LocalizationTool.UpdateTable(
 `ueval 'return string.Join("\n", Corrigible.EditorTools.LocalizationTool.Validate());'`.
 
 ## Bilinen tuzaklar (bu projede yaşandı)
+
+- **Bileşende `??` çalışmaz:** `go.GetComponent<T>() ?? go.AddComponent<T>()` Unity'nin “sahte null”ı yüzünden eksik
+  bileşeni eklemez (`GetComponent` C# null değil, yok edilmiş gibi davranan bir nesne döner); açık `!= null` denetimi yaz.
+- **`SaveAsPrefabAssetAndConnect` prefab varlığını döndürür,** sahnedeki örneği değil. Sahne nesnelerinin bağlarını (kamera
+  çapası, bağlayıcı alanları) örneğe kur (kaydettiğin nesnenin kendisi örnek olur); varlığa bağlanan alan Play'de prefab
+  varlığını gösterir ve testte `AreSame` kırılır. Örnekte bir alanı değiştirdikten sonra
+  `PrefabUtility.RecordPrefabInstancePropertyModifications` çağır, yoksa geçersiz kılma kaydedilmeyebilir.
+- **3B TMP'li prefab'ın sahnedeki örneği** `m_AddedComponents` altına `addedObject: {fileID: 0}` girdileri yazar (TMP her
+  yazıya kaydedilmeyen gizli bir `MeshFilter` ekler). Zararsızdır; ayarlar dolabının örnekleri bu yüzden ~24 boş girdi taşır.
+- **`run_tests` CLI'da 30 sn'de zaman aşımına uğrar:** bütün takım için global `--timeout` ver
+  (`unity command --timeout 1500 run_tests --mode EditMode`); tek sınıf için `--filter Corrigible.Desk.Tests.SettingsCabinetTests`.
+- **`DeskTarget.Blocked` statik:** her sahne kendi kilidini kurar (DeskGame'de `SiginakDesk`, menüde `EntranceController`)
+  ve sahne kapanırken boşaltır. Odanın kilidi açıkken çalışması gereken parça (ayarlar dolabının kontrolleri)
+  `BlockedOverride` kullanır.
 
 - **TAA ve ince geometri:** URP TAA her karede alt-piksel jitter uygular; ekranda ~2 px'ten ince nesne TAA açıkken titrer
   (masa pozunda 2 m uzakta 1 px ≈ 2 mm). Odaya ince nesne (ip, kablo, çubuk) eklerken ekranda en az ~3 px yap (masa pozunda

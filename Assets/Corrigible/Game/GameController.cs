@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Corrigible.Core;
 using UnityEngine;
 
@@ -25,8 +24,6 @@ namespace Corrigible.Game
         public event Action NewGameStarted;
         public event Action GameLoaded;
 
-        string SavePath => Path.Combine(Application.persistentDataPath, "liberation_savegame.json");
-
         void Awake() => NewGame();
 
         /// <summary>Yeni harekât; <paramref name="seed"/> verilirse aynı tohumla.</summary>
@@ -47,7 +44,7 @@ namespace Corrigible.Game
             {
                 if (e.Type != SimEventType.End) continue;
                 Platform.Current.UnlockAchievement(Achievements.ForEnding(Sim.S.Ending));
-                DeleteSave();
+                SaveStore.Delete();
             }
             EventsRaised?.Invoke(events);
         }
@@ -83,38 +80,15 @@ namespace Corrigible.Game
             if (Sim?.Record == null || Sim.S.Ending != null) return;
             if (Sim.S.Day == 0 && Sim.Record.commands.Count == 0) return; // Henüz oynanmamış oyun eski kaydın üstüne yazılmasın
             Sim.Record.day = Sim.S.Day;
-            try { File.WriteAllText(SavePath, JsonUtility.ToJson(Sim.Record)); }
-            catch (Exception e) { Debug.LogWarning($"Oyun kaydedilemedi: {e.Message}"); }
-        }
-
-        GameRecord LoadRecord()
-        {
-            try
-            {
-                if (!File.Exists(SavePath)) return null;
-                var rec = JsonUtility.FromJson<GameRecord>(File.ReadAllText(SavePath));
-                // Eski biçimdeki (kriz oyunu dönemi) kayıtlar yeniden oynatılamaz
-                return rec != null && rec.version == GameRecord.CurrentVersion && (rec.day > 0 || rec.commands.Count > 0) ? rec : null;
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning($"Kayıt okunamadı: {e.Message}");
-                return null;
-            }
-        }
-
-        void DeleteSave()
-        {
-            try { if (File.Exists(SavePath)) File.Delete(SavePath); }
-            catch (Exception e) { Debug.LogWarning($"Kayıt silinemedi: {e.Message}"); }
+            SaveStore.Write(Sim.Record);
         }
 
         /// <summary>Kayıttaki oyunun kaydı (geri yüklemeden; özet ve sunum dosyası eşlemesi için), yoksa null.</summary>
-        public GameRecord SavedRecord() => LoadRecord();
+        public GameRecord SavedRecord() => SaveStore.Load();
 
         public bool ContinueSaved()
         {
-            var rec = LoadRecord();
+            var rec = SaveStore.Load();
             if (rec == null) return false;
             try { Sim = Replay.Restore(rec); }
             catch (Exception e)

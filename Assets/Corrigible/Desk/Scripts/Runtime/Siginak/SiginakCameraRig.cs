@@ -23,6 +23,8 @@ namespace Corrigible.Desk
         Shift,
         /// <summary>Sığınağın kapısı (sağ duvar; yalnız biri kapıyı çalınca).</summary>
         Door,
+        /// <summary>K9 ayarlar dolabı (arka duvarın sağı, CRT'nin üstü; dolaba tıklama ya da Esc).</summary>
+        Cabinet,
     }
 
     /// <summary>

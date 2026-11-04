@@ -49,7 +49,10 @@ namespace Corrigible.Desk.Tests
             Assert.IsNotNull(reg);
             int glyphs = SiginakSpriteManifest.All.Count(e => e.Name.StartsWith("glyph_"));
             Assert.AreEqual(40, glyphs);
-            Assert.AreEqual(DeskSpriteManifest.All.Count() + SadeSpriteManifest.All.Count() + glyphs, reg.sprites.Count);
+            // Üretilen küçük resimler (ikmal sandığı) de adla aranır
+            int thumbs = SiginakSpriteManifest.All.Count(e => e.Generated && e.Name.StartsWith("thumb_"));
+            Assert.AreEqual(DeskSpriteManifest.All.Count() + SadeSpriteManifest.All.Count() + glyphs + thumbs, reg.sprites.Count);
+            Assert.IsTrue(reg.TryGet("thumb_crate", out var crate) && crate.type == Image.Type.Simple && !crate.tint);
             Assert.AreEqual(reg.sprites.Count, reg.sprites.Select(s => s.name).Distinct().Count(), "kayıtta aynı ad iki kez");
             Assert.IsTrue(reg.TryGet("glyph_armordrone_frame", out var glyph) && glyph.type == Image.Type.Simple && glyph.tint);
             Assert.IsTrue(reg.TryGet("sh_dash_r3_1", out var dash) && dash.type == Image.Type.Tiled);

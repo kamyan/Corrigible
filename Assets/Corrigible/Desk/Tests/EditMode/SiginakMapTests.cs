@@ -139,6 +139,8 @@ namespace Corrigible.Desk.Tests
         {
             var sim = NewOpen();
             var d = LiberationMapBuilder.Slip(sim, Simulation.HQ);
+            Assert.AreEqual(Loc.T("Banka veri merkezi"), d.Building, "bölge adının altında bina");
+            CollectionAssert.AreEqual(new[] { Loc.T("Teknik depo"), Loc.T("UPS odası"), Loc.T("Sunucu salonu") }, d.Sectors.Select(s => s.Name).ToArray(), "sektörler binanın odaları");
             CollectionAssert.AreEqual(new[] { "T", "E", "A", "M", "S" }, d.Pick.Select(p => p.Letter).ToArray());
             CollectionAssert.AreEqual(new[] { true, true, true, false, false }, d.Pick.Select(p => p.Picked).ToArray(), "varsayılan: EMP uzmanı ve Analist");
             Assert.IsTrue(d.Pick[0].Locked && !d.Pick[3].Locked);
@@ -158,6 +160,41 @@ namespace Corrigible.Desk.Tests
             Assert.IsTrue(tutorial.Pick.All(p => p.Locked), "eğitim baskınında kadro sabit");
             Assert.IsFalse(tutorial.Fields.Any(f => f.Label == Loc.T("OLAY")), "eğitim baskını olaysız: fişte OLAY satırı yok");
             CollectionAssert.AreEqual(new[] { "T", "E", "A" }, tutorial.Members.Select(m => m.Letter).ToArray());
+        }
+
+        /// <summary>
+        /// Bina satırının üzerine gelme etiketi (BASKIN-MEKANLARI Katman 1): başlık “BİNA · …”, satır binanın notu; cephede de bilgi
+        /// fişinde de. İki dilde de dolu; İngilizcede Türkçe harf kalmaz.
+        /// </summary>
+        [Test]
+        public void Slip_BuildingLineHover_ShowsTheBuildingNoteForEveryRegion()
+        {
+            var sim = NewLiberation();
+            var front = LiberationMapBuilder.Slip(sim, Simulation.HQ);
+            Assert.AreEqual(Loc.F("BİNA · {0}", DeskText.Upper(Loc.T("Banka veri merkezi"))), front.BuildingHoverTitle);
+            Assert.AreEqual(GameData.Region(Simulation.HQ).BuildingNote, front.BuildingHoverLine);
+            StringAssert.StartsWith(Loc.T("YZ'nin ele geçirdiği bir banka veri merkezi."), front.BuildingHoverLine);
+            var table = Loc.ParseTable(System.IO.File.ReadAllText("Assets/Corrigible/Resources/Localization/strings.txt"));
+            try
+            {
+                foreach (var lang in Loc.Languages)
+                {
+                    Loc.SetLanguage(lang, lang == Loc.Turkish ? null : table[lang]);
+                    foreach (var r in GameData.Regions)
+                    {
+                        var d = LiberationMapBuilder.Slip(sim, r.Id);
+                        Assert.AreEqual(Loc.F("BİNA · {0}", DeskText.Upper(r.Building)), d.BuildingHoverTitle, lang + " " + r.Id);
+                        Assert.AreEqual(r.BuildingNote, d.BuildingHoverLine, lang + " " + r.Id);
+                        Assert.IsFalse(string.IsNullOrEmpty(d.BuildingHoverLine), lang + " " + r.Id + ": bina notu yok");
+                        if (lang != Loc.Turkish)
+                            Assert.IsFalse(System.Text.RegularExpressions.Regex.IsMatch(d.BuildingHoverTitle + d.BuildingHoverLine, "[ğüşıöçĞÜŞİÖÇ]"),
+                                r.Id + ": " + d.BuildingHoverTitle + " / " + d.BuildingHoverLine);
+                    }
+                }
+            }
+            finally { Loc.SetLanguage(Loc.Turkish); }
+            Assert.AreNotEqual("eeu", sim.S.Liberation.CurrentRegion);
+            Assert.IsNotNull(LiberationMapBuilder.Slip(sim, "eeu").Info, "cephe olmayan bölge bilgi fişi; etiket orada da");
         }
 
         /// <summary>
@@ -458,6 +495,30 @@ namespace Corrigible.Desk.Tests
                 Assert.AreSame(hud, report.transform.parent);
                 Assert.AreEqual(slip.transform.GetSiblingIndex() + 1, report.transform.GetSiblingIndex(), "fişin üstünde çizilir");
                 Assert.Less(report.transform.GetSiblingIndex(), hud.Find("Hover tag").GetSiblingIndex(), "üzerine gelme etiketi raporun üstünde");
+            }
+            finally { EditorSceneManager.CloseScene(scene, true); }
+        }
+
+        /// <summary>Fişin bina satırı üzerine gelme hedefi: yazının kendisi ışın hedefi, ortak etikete (SiginakHud › HoverTag) bağlı.</summary>
+        [Test]
+        public void DeskGameScene_SlipBuildingLineOpensTheSharedHoverTag()
+        {
+            var scene = EditorSceneManager.OpenScene(DeskSpriteManifest.Root + "/Scenes/DeskGame.unity", OpenSceneMode.Additive);
+            try
+            {
+                var slip = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<OperationSlip>(true)).Single();
+                var so = new SerializedObject(slip);
+                var building = (TMPro.TMP_Text)so.FindProperty("building").objectReferenceValue;
+                var hover = (UiHoverTarget)so.FindProperty("buildingHover").objectReferenceValue;
+                Assert.IsNotNull(building);
+                Assert.IsNotNull(hover, "buildingHover bağlı");
+                Assert.AreSame(building.gameObject, hover.gameObject, "etiket bina yazısının üstünde açılır");
+                Assert.IsTrue(building.raycastTarget, "bina yazısı ışın hedefi");
+                var tag = (HoverTag)new SerializedObject(hover).FindProperty("hoverTag").objectReferenceValue;
+                Assert.IsNotNull(tag);
+                Assert.AreSame(slip.transform.parent.GetComponent<HoverTag>(), tag, "SiginakHud'un ortak etiketi");
+                var close = (UiHoverTarget)so.FindProperty("closeHover").objectReferenceValue;
+                Assert.AreSame(tag, new SerializedObject(close).FindProperty("hoverTag").objectReferenceValue, "fişin öteki hedefleriyle aynı etiket");
             }
             finally { EditorSceneManager.CloseScene(scene, true); }
         }

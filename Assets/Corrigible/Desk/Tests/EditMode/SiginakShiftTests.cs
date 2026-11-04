@@ -57,7 +57,7 @@ namespace Corrigible.Desk.Tests
             var input = ShiftReportBuilder.Input(sim, before, ShiftReportBuilder.Ledger(sim), null);
             input.counterCode = "015/03";
             var d = ShiftReportBuilder.Build(input);
-            string lost = Loc.F("{0} · {1:00} {2}", Loc.T("Batı Avrupa"), 1, Loc.T("Tedarik deposu"));
+            string lost = Loc.F("{0} · {1:00} {2}", Loc.T("Batı Avrupa"), 1, Loc.T("Teknik depo"));
             Assert.AreEqual(Loc.F("{0} yeniden işgal altında · sivil güven −{1}", lost, sim.B.liberationCounterattackTrust), d.Counterattack);
             // S5b: raporun başında kutu; alarm gözü eşikte kırmızı, ölçek dolu; alarm notu yok, ekip bölümünde alarm satırı yok
             Assert.AreEqual(Loc.T("YZ KARŞI SALDIRISI"), d.CounterTitle);

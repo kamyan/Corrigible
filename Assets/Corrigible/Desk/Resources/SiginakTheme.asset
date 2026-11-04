@@ -1132,6 +1132,24 @@ MonoBehaviour:
     value: 0.8
   - key: motion.opening.reportFlashS
     value: 0.3
+  - key: motion.opening.returnS
+    value: 0.6
+  - key: motion.cabinetLatchS
+    value: 0.15
+  - key: motion.cabinetLeafS
+    value: 0.45
+  - key: motion.cabinetCloseS
+    value: 0.35
+  - key: motion.cardCarryS
+    value: 0.4
+  - key: motion.cardPushS
+    value: 0.14
+  - key: motion.entrance.introS
+    value: 0.9
+  - key: motion.entrance.walkS
+    value: 1.6
+  - key: motion.entrance.powerDownS
+    value: 0.6
   - key: 'cameras.K1.pos[0]'
     value: 0
   - key: 'cameras.K1.pos[1]'
@@ -1882,6 +1900,8 @@ MonoBehaviour:
     value: 0.6
   - key: materialsExtra.pawnOchre.metal
     value: 0
+  - key: cabinet.bulbIntensity
+    value: 0.3
   type:
   - role: plateLabel
     font: 1

@@ -16,7 +16,7 @@ namespace Corrigible.Desk.Tests
             try
             {
                 var source = root.AddComponent<LiveRaidDataSource>();
-                var state = Baskin.Create(new RaidParams { Seed = 11, MissionKind = "loot" });
+                var state = Baskin.Create(new RaidParams { Seed = 11, MissionKind = "loot", Region = "weu", SectorId = "weu_2" });
                 for (int y = 0; y < 8; y++) for (int x = 0; x < 8; x++) state.Cells[y, x] = new Baskin.Cell { T = "floor" };
                 state.Cells[3, 3].O = new Baskin.Obj { K = "node", Hp = 4, Max = 4 };
                 var technician = state.Units.First(u => u.Type == "tek");
@@ -29,6 +29,10 @@ namespace Corrigible.Desk.Tests
                 Assert.IsTrue(source.Current.CanRetreat);
                 Assert.IsTrue(source.Current.IsLootMission);
                 Assert.AreEqual(Loc.T("İkmal kasası"), source.Current.Targets.Single().Name);
+                // Yağma hedefi ikmal sandığı (sunucu dolabı değil); görev çipinin başında oda, ipucunda bina ve oda
+                Assert.AreEqual("thumb_crate", source.Current.Targets.Single().Thumb);
+                Assert.AreEqual(DeskText.Upper(Loc.T("UPS odası")), source.Current.Place);
+                StringAssert.StartsWith(Loc.F("Yer · {0} · {1:00} {2}", Loc.T("Banka veri merkezi"), 2, Loc.T("UPS odası")), source.Current.AbilityTip);
                 source.Select('T');
                 Assert.AreEqual(Loc.T("İkmal alma"), source.Current.UnitRows[1].Text);
                 source.Arm();
@@ -61,6 +65,39 @@ namespace Corrigible.Desk.Tests
                 Assert.IsTrue(source.Current.ResultRows.Any(r => r.Label == Loc.T("Tahliye edilen") && r.Value == "3/3" && r.Good));
             }
             finally { Object.DestroyImmediate(root); }
+        }
+
+        /// <summary>
+        /// İkmal sandığı parçası: düğüm dolabından ayrı, kırmızısız (kırmızı yalnız YZ), dolaptan alçak; açık hâli ve küçük resmi
+        /// var. Küçük resim sprite kaydında adla bulunur.
+        /// </summary>
+        [Test]
+        public void LootCrate_IsItsOwnRedlessPiece()
+        {
+            var lib = UnityEditor.AssetDatabase.LoadAssetAtPath<Corrigible.Game.Raid.RaidPieceLibrary>("Assets/Corrigible/Settings/RaidPieceLibrary.asset");
+            Assert.IsNotNull(lib.lootCrate);
+            Assert.IsNotNull(lib.lootCrateOpen);
+            Assert.AreNotSame(lib.node, lib.lootCrate);
+            foreach (var go in new[] { lib.lootCrate.gameObject, lib.lootCrateOpen })
+                foreach (var r in go.GetComponentsInChildren<Renderer>(true))
+                    foreach (var m in r.sharedMaterials.Where(m => m != null && m.HasProperty("_BaseColor")))
+                    {
+                        Color.RGBToHSV(m.GetColor("_BaseColor"), out float h, out float sat, out _);
+                        Assert.IsFalse((h < 0.04f || h > 0.96f) && sat > 0.5f, go.name + "/" + r.name + " kırmızı: " + m.name);
+                    }
+            // Gövde boyu (etiket ve TMP hariç; RaidPiece.VisualHeight) sahneye kurulmuş kopyalarda
+            var crate = Object.Instantiate(lib.lootCrate);
+            var node = Object.Instantiate(lib.node);
+            var open = Object.Instantiate(lib.lootCrateOpen);
+            try
+            {
+                Assert.Less(crate.VisualHeight, node.VisualHeight - 0.15f, "sandık dolaptan alçak");
+                var b = open.GetComponentsInChildren<Renderer>().Select(r => r.bounds).Aggregate((x, y) => { x.Encapsulate(y); return x; });
+                Assert.LessOrEqual(b.max.y, 0.3f, "boşalan sandık alçak (kare yürünür)");
+                Assert.LessOrEqual(Mathf.Max(b.max.x, -b.min.x, b.max.z, -b.min.z), 0.45f, "boşalan sandık karenin içinde");
+            }
+            finally { Object.DestroyImmediate(crate.gameObject); Object.DestroyImmediate(node.gameObject); Object.DestroyImmediate(open); }
+            Assert.IsTrue(DeskSprites.Instance.TryGet("thumb_crate", out var e) && e.sprite != null, "küçük resim kayıtta");
         }
 
         /// <summary>Kartlar ve 1–3 sırası gerçek kadrodan; Madenci'nin ve Sis uzmanının yetenek satırı kalan hakla.</summary>
