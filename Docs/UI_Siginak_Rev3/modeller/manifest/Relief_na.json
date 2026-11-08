@@ -1,0 +1,89 @@
+{
+ "name": "Relief_na",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Altta ahşap palet: üst tahtalar, yüz başına üç takoz, aralarında koyu forklift ağızları (rk_void); üstte üç kat koli (2×2, 3×3 şaşırtmalı derzler) ve filmle kapanmış yumuşak kenarlı üst kat; ortayı saran açık renk, yarı parlak streç film bandı (rk_film). Gri tonda: çıtalı koyu taban + açık yatay bant + sade yumuşak üst. İki kat: palet + yük. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided.",
+ "listName": "Duvar barikatı · Dağıtım merkezi (palet üstünde streç filmli koli yükü)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 210,
+ "trisPerPart": {
+  "Body": 210
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.47,
+   0,
+   -0.47
+  ],
+  "max": [
+   0.47,
+   0.55,
+   0.47
+  ],
+  "size": [
+   0.94,
+   0.55,
+   0.94
+  ]
+ },
+ "materials": [
+  {
+   "key": "rk_void",
+   "hex": "#34312C",
+   "rough": 1,
+   "metal": 0,
+   "note": "oyuk içi: palet ağzı, tutamak deliği, kızak arası (ışık almayan derinlik); bütün kitlerde ortak",
+   "tris": 8,
+   "isNew": true
+  },
+  {
+   "key": "k_na_detailA",
+   "hex": "#857B6E",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 84,
+   "isNew": false
+  },
+  {
+   "key": "k_na_wallWest",
+   "hex": "#998A78",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 37,
+   "isNew": false
+  },
+  {
+   "key": "k_na_wallSouth",
+   "hex": "#7A6E5E",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 23,
+   "isNew": false
+  },
+  {
+   "key": "k_na_wallTop",
+   "hex": "#B2A492",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 47,
+   "isNew": false
+  },
+  {
+   "key": "rk_film",
+   "hex": "#C9C6BC",
+   "rough": 0.32,
+   "metal": 0,
+   "note": "streç film (yarı parlak, açık gri; koli istifinin ortasını saran ince kabuk)",
+   "tris": 11,
+   "isNew": true
+  }
+ ]
+}

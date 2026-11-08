@@ -3,16 +3,14 @@ using Corrigible.Core;
 using Corrigible.Desk.Bridge;
 using Corrigible.Desk.EditorTools;
 using NUnit.Framework;
-using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Corrigible.Desk.Tests
 {
-    /// <summary>Sığınak Aşama 6: oda hâlleri, pano içeriği (not, maliyet, düğme hâlleri) ve sahne bağlantıları.</summary>
+    /// <summary>Sığınak Aşama 6: oda hâlleri ve pano içeriği (not, maliyet, düğme hâlleri). Sahne bağlantısı sınamaları Aşama 10'da (T1a) maketle birlikte kalktı.</summary>
     public class SiginakShelterTests
     {
-        static Simulation NewLiberation(double fon = 100) => Simulation.NewGame(731, new Balance { startFon = fon });
+        static Simulation NewLiberation(double fon = 100) => LegacySimulation.NewGame(731, new Balance { startFon = fon });
 
         static ShelterRoomData Room(Simulation sim, string id) => ShelterViewBuilder.Rooms(sim, id).Single(r => r.Id == id);
 
@@ -221,87 +219,6 @@ namespace Corrigible.Desk.Tests
             Assert.IsFalse(Room(sim, ShelterLogic.Living).Fresh);
             sim.Step();
             Assert.IsFalse(Room(sim, ShelterLogic.Workshop).Fresh, "bir vardiya sonra kalkar");
-        }
-
-        [Test]
-        public void DeskGameScene_ShelterIsWired()
-        {
-            var scene = EditorSceneManager.OpenScene(DeskSpriteManifest.Root + "/Scenes/DeskGame.unity", OpenSceneMode.Additive);
-            try
-            {
-                var roots = scene.GetRootGameObjects();
-                var shelter = roots.SelectMany(g => g.GetComponentsInChildren<SiginakShelter>(true)).Single();
-                var so = new SerializedObject(shelter);
-                foreach (var f in new[] { "game", "surface", "rig", "tray", "board", "shelfTarget" })
-                    Assert.IsNotNull(so.FindProperty(f).objectReferenceValue, f);
-                Assert.AreEqual(4, so.FindProperty("rooms").arraySize);
-                Assert.AreEqual(4, so.FindProperty("roomTargets").arraySize);
-                var views = shelter.transform.root.GetComponentsInChildren<RoomView>(true);
-                CollectionAssert.AreEquivalent(ShelterViewBuilder.Order, views.Select(v => v.RoomId).ToArray());
-                foreach (var v in views)
-                {
-                    var vo = new SerializedObject(v);
-                    Assert.AreEqual(6, vo.FindProperty("pawns").arraySize, v.RoomId);
-                    Assert.IsNotNull(vo.FindProperty("lamp").objectReferenceValue, v.RoomId);
-                    Assert.IsNotNull(vo.FindProperty("damage").objectReferenceValue, v.RoomId + " hasar grubu");
-                }
-                foreach (var t in shelter.transform.root.GetComponentsInChildren<DeskTarget>(true).Where(t => t.name == "Target"))
-                    Assert.IsFalse(t.GetComponent<Collider>().enabled, "oda hedefleri yalnız raf pozunda açılır");
-                Assert.AreEqual(6, new SerializedObject(shelter.transform.root.GetComponentInChildren<IdleTray>(true)).FindProperty("pawns").arraySize);
-                var board = shelter.transform.root.GetComponentInChildren<ShelterClipboard>(true);
-                Assert.AreEqual(RenderMode.WorldSpace, board.GetComponent<Canvas>().renderMode);
-                // Revizyon 2 · S3: panonun bütün alanları, DEPO ve oda çıktıları bağlı
-                var bo = new SerializedObject(board);
-                for (var it = bo.GetIterator(); it.NextVisible(true);)
-                    if (it.propertyType == SerializedPropertyType.ObjectReference && it.name != "m_Script")
-                        Assert.IsNotNull(it.objectReferenceValue, "pano alanı: " + it.propertyPath);
-                Assert.AreEqual(Simulation.Roles.Length, bo.FindProperty("squad").arraySize, "beş uzmanın diski");
-                var store = (ShelterStore)so.FindProperty("store").objectReferenceValue;
-                Assert.IsNotNull(store, "DEPO");
-                var st = new SerializedObject(store);
-                Assert.AreEqual(ShelterStoreData.CrateSlots, st.FindProperty("crates").arraySize);
-                Assert.AreEqual(ShelterStoreData.BinSlots, st.FindProperty("bins").arraySize);
-                Assert.AreEqual(ShelterStoreData.PlateSlots, st.FindProperty("plates").arraySize);
-                for (var it = st.GetIterator(); it.NextVisible(true);)
-                    if (it.propertyType == SerializedPropertyType.ObjectReference && it.name != "m_Script")
-                        Assert.IsNotNull(it.objectReferenceValue, "DEPO alanı: " + it.propertyPath);
-                var living = views.Single(v => v.RoomId == ShelterLogic.Living);
-                Assert.AreEqual(2, new SerializedObject(living).FindProperty("occupants").arraySize, "iki ranzada yedek");
-                Assert.AreEqual(1, new SerializedObject(views.Single(v => v.RoomId == ShelterLogic.Infirmary)).FindProperty("occupants").arraySize);
-                Assert.Greater(new SerializedObject(views.Single(v => v.RoomId == ShelterLogic.Radio)).FindProperty("activeLights").arraySize, 0);
-                Assert.Greater(new SerializedObject(views.Single(v => v.RoomId == ShelterLogic.Workshop)).FindProperty("activeLights").arraySize, 0);
-            }
-            finally { EditorSceneManager.CloseScene(scene, true); }
-        }
-
-        [Test]
-        public void DeskGameScene_StoreKeepsAuthoredScale()
-        {
-            // Plakalar doğrudan ölçekli küp: belirip kalkarken sahnedeki ölçeğe döner (1'e dönseydi maketin önünde 1 m'lik levha olurdu)
-            var scene = EditorSceneManager.OpenScene(DeskSpriteManifest.Root + "/Scenes/DeskGame.unity", OpenSceneMode.Additive);
-            try
-            {
-                var store = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<ShelterStore>(true)).Single();
-                var items = new System.Collections.Generic.List<Transform>();
-                for (var it = new SerializedObject(store).GetIterator(); it.NextVisible(true);)
-                    if (it.propertyType == SerializedPropertyType.ObjectReference && new[] { "full", "partial", "body", "plate" }.Contains(it.name))
-                        items.Add(((GameObject)it.objectReferenceValue).transform);
-                var authored = items.Select(t => t.localScale).ToArray();
-                Assert.IsTrue(authored.Any(s => s != Vector3.one), "plakalar ölçekli");
-                var full = new ShelterStoreData
-                {
-                    Crates = ShelterStoreData.CrateSlots, Bins = ShelterStoreData.BinSlots, LastBinFill = 0.5,
-                    Plates = ShelterStoreData.PlateSlots, PlateCapacity = ShelterStoreData.PlateSlots, Slate = "dolu",
-                };
-                var empty = new ShelterStoreData { PlateCapacity = ShelterStoreData.PlateSlots, Slate = "boş" };
-                foreach (var d in new[] { empty, full, empty, full })
-                {
-                    store.Show(d, false);
-                    for (int i = 0; i < items.Count; i++) Assert.AreEqual(authored[i], items[i].localScale, items[i].name);
-                }
-                Assert.IsTrue(items.Where(t => t.name.StartsWith("Plate")).All(t => t.gameObject.activeSelf));
-            }
-            finally { EditorSceneManager.CloseScene(scene, true); }
         }
     }
 }

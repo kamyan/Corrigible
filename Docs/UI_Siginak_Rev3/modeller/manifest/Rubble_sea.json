@@ -1,0 +1,82 @@
+{
+ "name": "Rubble_sea",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Yassılmış patlak torbalar, dökülmüş kum yığını (üst rengi), ıslak koyu bir torba (detailA) ve yonga; toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi.",
+ "listName": "Gedik molozu · Elektronik fabrikası (patlamış torbalar)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 169,
+ "trisPerPart": {
+  "Body": 169
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.46,
+   0,
+   -0.46
+  ],
+  "max": [
+   0.46,
+   0.11,
+   0.46
+  ],
+  "size": [
+   0.92,
+   0.11,
+   0.92
+  ]
+ },
+ "materials": [
+  {
+   "key": "rk_dust",
+   "hex": "#6B6257",
+   "rough": 1,
+   "metal": 0,
+   "alpha": 0.55,
+   "tex": "tx_dust (yumuşak kenarlı toz lekesi, kenara doğru saydam, 256²)",
+   "note": "gedik molozunun toz lekesi (zemine yapışık dörtgen, gölgesiz)",
+   "tris": 2,
+   "isNew": true
+  },
+  {
+   "key": "k_sea_wallTop",
+   "hex": "#A6A799",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 121,
+   "isNew": false
+  },
+  {
+   "key": "k_sea_wallWest",
+   "hex": "#939489",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "k_sea_wallSouth",
+   "hex": "#74756C",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "k_sea_detailA",
+   "hex": "#5D5C52",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 22,
+   "isNew": false
+  }
+ ]
+}

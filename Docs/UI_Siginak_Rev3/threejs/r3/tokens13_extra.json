@@ -1,0 +1,518 @@
+{
+ "siginak": {
+  "menu": {
+   "_": "★1.3 menü sahnesi (Giris): kapının dışındaki sahanlık. Unity metre. Sahanlık bugünkünden 0,30 m geniş (z1 1,55 → 1,85) ki son şalter kapının sağında nefes alsın. Kapı duvarı x = 2,2, +x’e bakar (nesneler yaw −90).",
+   "landing": {
+    "x": [
+     2.2,
+     4.6
+    ],
+    "z": [
+     -1.35,
+     1.85
+    ],
+    "h": 2.6,
+    "door": {
+     "z": [
+      0.32,
+      1.18
+     ],
+     "h": 2.0,
+     "portalJamb": 0.16,
+     "portalDepth": 0.06
+    },
+    "tileH": 1.45,
+    "tile": 0.15
+   },
+   "wall": {
+    "SettingsCabinetMenu": {
+     "pos": [
+      2.2,
+      1.02,
+      -0.99
+     ],
+     "yaw": -90
+    },
+    "CardRack": {
+     "pos": [
+      2.2,
+      1.14,
+      -0.55
+     ],
+     "yaw": -90
+    },
+    "BlankDeck": {
+     "pos": [
+      2.2,
+      0.95,
+      -0.55
+     ],
+     "yaw": -90
+    },
+    "PunchClock": {
+     "pos": [
+      2.2,
+      1.18,
+      -0.26
+     ],
+     "yaw": -90
+    },
+    "OuterIntercom": {
+     "pos": [
+      2.2,
+      1.26,
+      0.04
+     ],
+     "yaw": -90
+    },
+    "DoorBell": {
+     "pos": [
+      2.2,
+      1.66,
+      0.04
+     ],
+     "yaw": -90
+    },
+    "LandingLamp": [
+     {
+      "pos": [
+       2.2,
+       2.45,
+       0.75
+      ],
+      "yaw": -90,
+      "over": "kapı"
+     },
+     {
+      "pos": [
+       2.2,
+       2.3,
+       -0.5
+      ],
+      "yaw": -90,
+      "over": "saat ve raf"
+     }
+    ],
+    "TitleStencil": {
+     "pos": [
+      2.2,
+      2.17,
+      0.75
+     ],
+     "yaw": -90
+    },
+    "LastSwitch": {
+     "pos": [
+      2.2,
+      1.06,
+      1.62
+     ],
+     "yaw": -90,
+     "rest": {
+      "Lever": 55,
+      "Cover": 0
+     }
+    },
+    "Stairs": {
+     "pos": [
+      2.98,
+      0,
+      1.37
+     ],
+     "yaw": 90,
+     "steps": 10,
+     "rise": 0.18,
+     "run": 0.27,
+     "width": 0.9
+    },
+    "OuterWheel": {
+     "onLeaf": [
+      0.075,
+      1.05,
+      0.12
+     ]
+    },
+    "PeepRing": {
+     "onLeaf": [
+      0.075,
+      1.56,
+      0.12
+     ]
+    }
+   },
+   "card": {
+    "size": [
+     0.09,
+     0.184
+    ],
+    "visibleInRack": 0.138,
+    "lines": [
+     "KOMUTAN · SIĞINAK 07 (CP 700, 6,5 mm)",
+     "V.nnn (CP 700, 10 mm)",
+     "özgür x/12 (CP 400, 8 mm)"
+    ],
+    "punchGrid": {
+     "cols": 10,
+     "rows": 8,
+     "pitchMm": [
+      7.6,
+      10.5
+     ],
+     "holeMm": 4.2,
+     "order": "satır satır soldan sağa; 1 delik = 1 biten vardiya; 80’i aşarsa son satır + toplam"
+    },
+    "slotDepth": 0.07
+   },
+   "stencilTitle": {
+    "font": "Big Shoulders Stencil Display 800",
+    "capMm": 165,
+    "color": "#CFC8B2",
+    "tr": "SON ŞALTER",
+    "en": "CORRIGIBLE"
+   }
+  },
+  "cameras.M0": {
+   "pos": [
+    4.5,
+    1.52,
+    0.3
+   ],
+   "target": [
+    2.2,
+    1.34,
+    0.3
+   ],
+   "fovV": 56,
+   "_": "★1.3 öneri (bugün dikey 52°): kapı ortada, dolap solda, son şalter sağda tam kadrajda"
+  },
+  "cameras.M1": {
+   "pos": [
+    3.22,
+    1.42,
+    -0.86
+   ],
+   "target": [
+    2.2,
+    1.37,
+    -1.0
+   ],
+   "fovV": 45,
+   "_": "★1.3 menü dolap pozu (açık kanat −120° kadraja girer)"
+  },
+  "cameras.M2": {
+   "pos": [
+    3.12,
+    1.35,
+    -0.4
+   ],
+   "target": [
+    2.2,
+    1.3,
+    -0.4
+   ],
+   "fovV": 42,
+   "pressState": {
+    "pos": [
+     3.12,
+     1.53,
+     -0.4
+    ],
+    "target": [
+     2.2,
+     1.49,
+     -0.4
+    ]
+   },
+   "_": "★1.3 saat pozu (bugün 40°): saat, kart rafı ve boş deste birlikte; kart saatteyken kamera 0,19 m yükselir"
+  },
+  "cameras.MS": {
+   "pos": [
+    3.02,
+    1.4,
+    1.36
+   ],
+   "target": [
+    2.2,
+    1.2,
+    1.62
+   ],
+   "fovV": 40,
+   "_": "★1.3 son şalter yakın pozu (isteğe bağlı; M0’dan da tıklanır)"
+  },
+  "cameras.M3": {
+   "pos": [
+    2.55,
+    1.55,
+    0.75
+   ],
+   "target": [
+    1.2,
+    1.4,
+    0.75
+   ],
+   "fovV": 56,
+   "_": "★1.3 eşik: kamera kapıdan geçerken (walkS 1,6) 0,3 s’de kararır"
+  },
+  "cameras.K9": {
+   "cabinetLocalPos": [
+    0,
+    0.35,
+    -0.86
+   ],
+   "cabinetLocalTarget": [
+    0,
+    0.35,
+    -0.1
+   ],
+   "fovV": 45,
+   "_": "★1.3 uygulanan K9 (dolap çapası)"
+  },
+  "cabinet": {
+   "_": "UYGULAMA EKİ + ★1.3 model: ayarlar dolabı. Süreler motion.cabinet*S.",
+   "bulbIntensity": 0.3,
+   "outer": [
+    0.68,
+    0.7,
+    0.22
+   ],
+   "room": {
+    "pos": [
+     1.68,
+     1.17,
+     2.3
+    ],
+    "yaw": 0,
+    "leafOpenDeg": -95
+   },
+   "menu": {
+    "leafOpenDeg": -120,
+    "noMenuLever": true
+   },
+   "panel": {
+    "z": -0.145,
+    "colX": [
+     -0.235,
+     -0.12,
+     -0.025,
+     0.07
+    ],
+    "rows": {
+     "gauge": 0.585,
+     "lamp": 0.535,
+     "slider": 0.37,
+     "counter": 0.165,
+     "plate": 0.115
+    },
+    "toggleSES": [
+     0.205,
+     0.555
+    ],
+    "plateSES": 0.47,
+    "rotaryDIL": 0.33,
+    "plateDIL": 0.255,
+    "menuLever": 0.14,
+    "plateMENU": 0.075
+   },
+   "controls": {
+    "slider": {
+     "travel": 0.16,
+     "notchEvery": 10,
+     "step": 5
+    },
+    "gauge": {
+     "needleDeg": [
+      50,
+      -50
+     ]
+    },
+    "toggle": {
+     "leverDeg": [
+      -28,
+      28
+     ],
+     "onIsUp": true
+    },
+    "rotary": {
+     "knobDeg": {
+      "tr": 40,
+      "en": -40
+     }
+    },
+    "menuLever": {
+     "coverDeg": [
+      0,
+      112
+     ],
+     "leverDeg": [
+      35,
+      -35
+     ],
+     "autoCloseS": 4
+    }
+   },
+   "bulb": {
+    "type": "Spot",
+    "color": "#FFD8A0",
+    "angle": 70,
+    "range": 1.4,
+    "shadows": false,
+    "preview": {
+     "intensity": 3.2,
+     "decay": 2
+    }
+   },
+   "plates": {
+    "capMm": 6.2,
+    "minPxAtK9": 14,
+    "widthMm": 80,
+    "text": {
+     "tr": [
+      "GENEL",
+      "MÜZİK",
+      "ORTAM",
+      "EFEKT",
+      "SES",
+      "DİL · LANGUAGE",
+      "MENÜYE DÖN"
+     ],
+     "en": [
+      "MASTER",
+      "MUSIC",
+      "AMBIENCE",
+      "EFFECTS",
+      "SOUND",
+      "DİL · LANGUAGE",
+      "TO MENU"
+     ]
+    }
+   }
+  },
+  "motion.menu": {
+   "_": "★1.3 menü ve giriş anı süreleri (saniye).",
+   "lightsOnS": 0.6,
+   "cardLiftS": 0.12,
+   "cardCarryS": 0.4,
+   "cardPushS": 0.14,
+   "plungerS": 0.1,
+   "punchHoleS": 0.3,
+   "clockLampS": 0.08,
+   "bellS": 0.35,
+   "camBackToM0S": 0.45,
+   "outerWheelS": 0.5,
+   "doorLeafS": 0.8,
+   "warmSpillS": 0.3,
+   "thresholdWalkS": 1.6,
+   "fadeBlackS": 0.3,
+   "deskBulbFromBlackS": 0.6,
+   "deskFirstFrameDelayS": 0.15,
+   "clipLiftS": 0.15,
+   "clipAutoCloseS": 4,
+   "oldCardTiltS": 0.2,
+   "cancelSlipDropS": 0.15,
+   "lastSwitchCoverS": 0.25,
+   "lastSwitchLeverS": 0.3,
+   "powerDownS": 0.6,
+   "generatorSpinDownS": 1.2
+  },
+  "lightsRecipe": {
+   "_": "★1.3 poz başına ışık tarifi. En çok 4 gölgeli ışık; gölgeyi spot taşır (nokta ışığı küp gölge = 6 dilim), nokta ışığı yalnız dolgu. Küçük ışıklar (dolap içi, kapı arkası, kadranlar, EVRAK hedefi) gölgesiz. preview = referans render (three.js, decay 2).",
+   "M0": [
+    {
+     "id": "L1",
+     "what": "sahanlık lambası (kapı üstü)",
+     "type": "Spot",
+     "color": "#D8E6E2",
+     "pos": [
+      2.42,
+      2.41,
+      0.75
+     ],
+     "shadows": true,
+     "preview": 5.5,
+     "angle": 110,
+     "target": [
+      2.42,
+      0.0,
+      0.75
+     ],
+     "note": "aşağı bakan başlıklı lamba: Unity’de 110° gölgeli spot (önizlemede nokta)"
+    },
+    {
+     "id": "L2",
+     "what": "saat lambası",
+     "type": "Spot",
+     "color": "#E2E6DC",
+     "pos": [
+      2.42,
+      2.26,
+      -0.5
+     ],
+     "shadows": true,
+     "preview": 4.5,
+     "angle": 110,
+     "target": [
+      2.42,
+      0.0,
+      -0.5
+     ],
+     "note": "aşağı bakan başlıklı lamba: Unity’de 110° gölgeli spot (önizlemede nokta)"
+    },
+    {
+     "id": "L4",
+     "what": "merdiven tepesinden soğuk ışık",
+     "type": "Spot",
+     "color": "#9FB2C4",
+     "pos": [
+      5.2,
+      3.6,
+      1.35
+     ],
+     "target": [
+      3.1,
+      0.6,
+      1.3
+     ],
+     "angle": 60,
+     "shadows": true,
+     "preview": 40
+    },
+    {
+     "id": "L3",
+     "what": "kapı altından sıcak sızıntı",
+     "type": "Point",
+     "color": "#FFB866",
+     "pos": [
+      2.3,
+      0.02,
+      0.75
+     ],
+     "shadows": false,
+     "preview": 0.25
+    },
+    {
+     "id": "amb",
+     "type": "Hemisphere",
+     "sky": "#3A4448",
+     "ground": "#0E0F0D",
+     "preview": 0.6
+    }
+   ],
+   "M0open": "M0 + L3 → içeriden sıcak spot (#FFCF86, 14, gölgeli; L2 gölgesi kapanır → 3 gölgeli) + içerideki ampul (#FFC27A, 2,5, gölgesiz)",
+   "M1": "L1 + L2 (gölgeli) + dolap içi ampul (spot #FFD8A0, gölgesiz) · 2 gölgeli",
+   "M2": "L2 + L1 (gölgeli) · saatin lambası emissive · 2 gölgeli",
+   "MS": "L1 + L4 (gölgeli) · son şalterin ŞEBEKE lambası emissive · 2 gölgeli; kapanışta hepsi 0,6 s kırpışıp söner",
+   "K1": "tavan ampulü (gölgeli) + masa lambası (spot, gölgeli) + pano lambası (spot #FFE2B8 58°, gölgeli, 2,4; ★ek) + CRT sızıntısı + telsiz kadranı + dolap içi (kapalıyken kapalı) · 3 gölgeli",
+   "MAP": "K1 ile aynı; pano kadraj dışında · 2 gölgeli",
+   "K4": "pano lambası (spot #FFE2B8, 58°, gölgeli) + tavan ampulü (gölgesiz dolgu) + ortam 0,5 · 1 gölgeli. K1’de pano lambası 2,4 şiddetle yanık. (★ek 11-05: maket ışığı ve oda ampulleri kalktı)",
+   "K5a": "tavan ampulü + masa lambası (gölgeli) + CRT sızıntısı (gölgesiz) · dalışta CRT emissive 0,6 s’de 1,4×",
+   "K8": "tavan ampulü + masa lambası + koridor lambası (kapı açıkken, gölgeli) + vuruş lambası (emission; amber = kapıda aday) · 3 gölgeli. (★ek 11-05: ziyaretçi ve ölümcül kırmızı ışık yok)",
+   "K9": "tavan ampulü + masa lambası (gölgeli) + dolap içi ampul (gölgesiz) · 2 gölgeli",
+   "RAID": "anahtar yönlü ışık (gölgeli, 4096) + dolgu yönlü ışık (gölgesiz) + ortam · 1 gölgeli; son tur/sonuç: hedef spotu (gölgeli) · 2",
+   "K6": "★ek: masa lambası (spot, gölgeli) + tavan ampulü (gölgeli) + ortam · fiş ağzı lambası emission (amber) · EVRAK hedef ışığı (nokta #FFB44A 0,55, menzil 0,35 m, gölgesiz; fiş üstündeyken) · 2 gölgeli",
+   "K8A": "★ek: tavan ampulü + masa lambası + tezgâh lambası (spot #FFD9A0, 34°, gölgeli) · 3 gölgeli; buğu camı ve vuruş lambası emission; kâğıt albedosu 0,8",
+   "K8G": "★ek: K8A ile aynı ışıklar; buğu katmanı Transparent (fogFrost α 0,78)",
+   "K8R": "★ek: K8A ile aynı; okuma pozunda tezgâh lambası kâğıdı aydınlatır, gölge eli göstermez"
+  }
+ },
+ "raid": {}
+}

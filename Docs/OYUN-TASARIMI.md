@@ -2,15 +2,19 @@
 
 Bu belge oyunun **kodda gerçekten nasıl çalıştığını** anlatır. Sayılar `Balance` varsayılanlarıdır
 (`Assets/Corrigible/Core/Balance.cs`); oyunda `Settings/BalanceConfig.asset` ile değiştirilebilir. Kurallar
-`Core/CampaignLiberation.cs`, `Core/Simulation.cs`, `Core/ShelterLogic.cs`, kapı için `Core/Door.cs` ve `Core/DoorCards.cs`,
-taktik tahta için `Core/Baskin.cs` içindedir.
+`Core/CampaignLiberation.cs`, `Core/Simulation.cs`, `Core/Simulation.PlanningBoard.cs`,
+`Core/Simulation.PlanningRaid.cs`, kabul için `Core/Simulation.CommunityAdmissions.cs`, taktik tahta için
+`Core/Baskin.cs` içindedir. **Yeni harekâtın varsayılanı kartlı pano modelidir** (`Balance.planningBoardEnabled = true`).
+Oda geliştirmeli sığınak ve 23 ziyaretçili eski kapı modeli yalnız `planningBoardEnabled = false` ile çalışan
+eski kural yoludur; bu belgedeki eski ölçümler yeni panonun denge ölçümü değildir.
 
 ## Fikir ve ton
 
 - Bir yapay zekâ dünyanın bütün ağlarını ele geçirmiş, 12 bölgenin hepsi işgal altında. Oyuncu KYGA'nın Batı
   Avrupa'daki son sığınağında, analog bir komuta odasındadır ("Ağa bağlanma, analog kal").
-- Oda bir masa oyunu gibi çalışır: kâğıt harita, mekanik sayaçlar, teleks, sığınağın kesit maketi, telsizin tüplü
-  göstergesi ve vardiyayı bitiren şalter. Zaman kendiliğinden akmaz; oyuncu hazırlığını yapar, şalteri indirir.
+- Oda bir masa oyunu gibi çalışır: kâğıt harita, mekanik sayaçlar, teleks, isimli kişi kartlarının ayaklı planlama panosu,
+  telsizin tüplü göstergesi ve devir fişi çıkaran makine. Zaman kendiliğinden akmaz; fiş devir kutusuna bırakılınca bir
+  vardiya ilerler.
 - **Sahayla tek bağ telsizdir.** Sığınak ağa bağlanmadığı için baskın bir görüntü yayını değil: hat açılır, gözcü
   makinelerin hamlesini telsizden bildirir (kırmızı oklar), durum saha masasındaki paftada figürlerle tutulur. Oyuncunun
   hamleleri tek tek, anında iletilir; EMRİ İLET (Enter) turu bitirir ve komuta dinlemeye geçer (DİNLEMEDE). Baskında saha
@@ -37,8 +41,9 @@ taktik tahta için `Core/Baskin.cs` içindedir.
   bir yolun çıkmaza dönmesini engeller. Seçilen bölge tamamlanmadan başka bölgeye geçilmez.
 - **Son:** Bütün 36 sektör geri alınınca **Silme** (`"silme"`, zafer): "Çekirdek yok edildi, kopyalar temizlendi." Sivil
   güven sıfıra inerse **Dağılma** (`"dagilma"`, yenilgi; aşağıda). Çekirdeği düşüren baskın aynı anda güveni bitirse de
-  zaferdir. Kapıyı yanlış kişiye açmak da harekâtı bitirir: **Vuruldu** (`"vuruldu"`, silahlı bir ziyaretçi) ve **Sızma**
-  (`"sizma"`, YZ'nin kopyası); ikisi de yenilgidir (aşağıda, Sığınağın kapısı).
+  zaferdir. Son canlı sakinin de kaybı **Son kişi** (`"topluluk"`) yenilgisidir. Yeni kabul modelinde robot
+  sabotajı kaynak kaybettirir; kapıda tek yanlış kararla anlık oyun sonu yoktur. **Vuruldu** (`"vuruldu"`) ve **Sızma**
+  (`"sizma"`) yalnız eski ziyaretçi modelinin sonlarıdır.
 - Son bölgenin sunucu merkezinde YZ çekirdeği vardır (`IsCore`).
 
 ## Zorluk kademesi (`Simulation.RaidTier`, `RaidParams.Tier`)
@@ -114,8 +119,8 @@ parça eklenmez.
   Eskiden ekip dönüşte hazırdı; bütün harekât 1–3 vardiyada bitebiliyordu, vardiya şalterinin anlamı yoktu.
 - **Alarm** her vardiya `liberationAlarmPerShift` (+1), her başarısız baskın `liberationAlarmPerFailure` (+1) yükselir;
   kırılan her YZ sunucusu (sunucu merkezi sektörü) `liberationAlarmPerServer` (−4) düşürür.
-- **Telsiz odası** (sığınak) vardiya alarmını yavaşlatır: görevli başına `shelterRadioAlarmPerWorker` (−0,05; eksiye inmez,
-  `Simulation.AlarmPerShift`).
+- **Eski modelde telsiz odası** vardiya alarmını yavaşlatır: görevli başına `shelterRadioAlarmPerWorker` (−0,05; eksiye inmez,
+  `Simulation.AlarmPerShift`). Yeni panoda anonim oda işçileri sıfırlandığı için bu indirim yoktur.
 - **Eşik** `liberationAlarmThreshold` (10): alarm sıfırlanır, YZ **karşı saldırır**: en son geri alınan sektör yeniden
   işgal altına girer (özgür bölgeyse bölge yeniden cephe olur, sınırdan seçilir) ve sivil güven
   `liberationCounterattackTrust` (1) düşer. Geri alınacak sektör yoksa yalnız güven düşer; boşta beklemek de sonunda
@@ -133,47 +138,67 @@ parça eklenmez.
   görevli başına −0,05'e indi (son ölçüm aşağıda, Sığınak). Sessiz vardiyanın alarmı düşürdüğü kural denendi ve
   bırakıldı: dikkatli oyuncu bedelsiz bekleyip hiç saldırı yemiyordu.
 
+## Güncel pano üretimi ve eğitim
+
+Üretim alanına bırakılan hammaddeler `ProductionInputs` içinde adetle ayrılır; stok kapanışa kadar harcanmaz.
+Her bırakış bir adet, üretimden depoya geri sürükleme bir adet geri almadır. Üretici ve depo yeri varsa uygun tarif
+sonraki vardiyada tek ürün verir. Malzemesi eksik kombinasyon işlem yapmaz; ayrılan malzemeler korunur.
+Birden fazla eşleşmede eksik temel saha kiti önceliklidir, sonra defter sırası uygulanır. Defterin bu moddaki tarifleri
+bir sonraki kapanışta tamamlanır; aşağıdaki eski çok vardiyalı emir kuralları yalnız eski komut geçmişi/başlamış işler içindir.
+
+Üretim kartları alana bırakılan serbest konumda kalır; sabit konuma yapışmaz ve yerleri kayıtla korunur.
+Depo altta iki yüzeydir: Hammadde ve Kullanılabilir Kitler. Eğitim alanı yalnız 100 birim genişler; seçimler küçük ve alt alta, kalem halkasıyla
+belirtilir; ayrı seçim paneli yoktur. Boşta destesinin görünen üst kartı doğrudan sürüklenir; alttaki kişi destede kalır.
+Yalnız tıklama kartları görünen üst karttan başlayarak sola tek tek açar. Açılan kartların arkasında ek panel, başlık
+veya Topla düğmesi yoktur. Açık elden kişi alınırken diğerleri desteye döner. Açık kartlara veya boş pano/görev
+alanına tekrar tıklamak eli kapatır. Görevlerden desteye bırakılan kişi, eski göreve uğramadan bırakıldığı noktadan
+desteye yerleşir. Açılış üst karttan, toplanma en alttaki karttan başlar; 320 ms hareket ve 70 ms
+kart aralığıyla hareketler üst üste biner. Yarım harekette yön değişimi mevcut konumdan devam eder.
+
 ## Vardiya (`Simulation.Step`)
 
-Oyuncu vardiya şalterini indirince (`GameController.AdvanceShift`) bir gün geçer:
+Vardiya işlemi panoda değildir. Masadaki kapaklı **vardiya şalterinin** kapağı kaldırılır, kol indirilince şalterin
+yanından devir kâğıdı çıkar (`PrintShift`); fiş EVRAK'a girene kadar şalter inik ve kilitli kalır, plakasının ikinci
+satırı "fişi EVRAK'a koy" der. Baskın emri verilmişse plan zaten kilitlidir;
+fiş basılması da planı kilitler. Kâğıdı okumak veya eline almak zamanı ilerletmez. Etkin kâğıt masadaki mevcut
+**EVRAK kutusuna** bırakılınca (`GameController.FileBoardShift` → `Simulation.FileShift`) ekran kararır, `Step` bir
+kez çalışır ve yeni vardiya açılır.
+Aynı fiş yeniden kullanılamaz. Planın düzeltilmesi gereken bir girdisi varsa fiş basılmaz.
 
 1. **Gelir:** `liberationDailyFunds` (2) + özgür bölge başına `liberationRegionIncome` (0,5) fon (`IncomeBreakdown`).
-   Her fon değişimi `TransactionLedger`'a yazılır.
-2. **Ekip:** bu vardiya baskına çıkmayan ayaktaki her uzman `liberationRestHeal` (1) yara toparlar (dinlenme, uzman
-   başına: ekip baskına çıksa da son kadroda olmayanlar dinlenir, `Simulation.Rested`); yatan uzmanlar ve yedekler bir gün
-   iyileşir; baskın meşguliyeti düşer (`StepTeams`).
-3. **Sığınak:** erzak toplama ve tüketim, atölyede plaka dökümü, revirde yara sarma (`ShelterLogic.Advance`, aşağıda).
-4. **YZ alarmı:** +1 eksi telsiz; eşikte karşı saldırı (yukarıda).
-5. **Kayıt:** son rapordaki şerit grafik için işgal oranı (`S.Hist`).
-6. **Kapı:** kapıda bekleyen ziyaretçi açılmadı sayılır; sırası geldiyse biri kapıyı çalar (`StepDoor`, aşağıda).
+2. **Ekip:** baskın meşguliyeti bir azalır. Yeni panoda anonim uzman/yedek iyileşmesi yapılmaz.
+3. **Kabul ve dosyalar:** önce o vardiyaya ayrılan gözetim (dış kayıt ya da dosya incelemesi) sonuçlanır; sızmacının erişim
+   izleri ve varsa sabotajı, talimat yenilemesi, bekleyen başvurunun süresi ve yeni gelişler işlenir (`AdvanceAdmissions`).
+   Gözetmen kapanan vardiyanın kilitli planından okunur: o anda Boşta'nın ilk uygun kişisi (aşağıda, K4-A); Boşta'da uygun
+   kimse yoksa gözetim sonuçlanmaz.
+4. **Pano işleri:** erzak tüketimi ve mutfak/ikmal katkısı; dinlenme, yatış süresi ve tek vardiyalık eğitim; üretim ve
+   en yaralı kişiye bakım; kısıt süresinin dolması (`AdvancePlanningBoard`). Tamamlanan eşya depoya eklenir, plan açılır.
+5. **YZ alarmı ve geçmiş:** alarm artar, eşikte karşı saldırı işler; işgal geçmişi kayda alınır.
 
-Baskın sürerken (`S.Raid`), harekât bitmişken ya da açılış/emir belgesi açıkken vardiya bitirilemez.
+Baskın sürerken, harekât bitmişken ya da açılış/emir belgesi açıkken kapanış yapılamaz. Kartlı oyunda doğrudan
+`AdvanceShift`/`Step` çağrısı fiş olmadan gün ilerletmez. Eski modelde şalter, `AdvanceShift` ve vardiya raporu akışı sürer.
 
 ## Baskın
 
 - **Emir** (`StartLiberationRaid`): vardiyada bir kez, yalnız mevcut bölgenin sıradaki sektörüne, hazır bir ekip ve `liberationRaidCost`
-  (12) fonla; kadroda Teknisyen (asıl ya da yedek) olmalı. Baskın bölgenin özelliğini, imza makinesini ve zorluk
+  (12) fonla; yeni panoda üç saha görevi ve uygun kitleri tamamlanmış olmalı. Baskın bölgenin özelliğini, imza makinesini ve zorluk
   kademesini taşır (yukarıda). Kamera önce masadan geri çekilir, CRT'ye döner ve ekrana yaklaşır; telsiz hattı açılır
   ve `Baskin` sahnesi odanın üstüne yüklenir (boşluk ya da tık atlar). Dönüşte kamera aynı yoldan haritaya geri gelir.
   Baskında makineler saldırılarından sonra yeni yerlerine tek tek, kare kare yürür.
-- **Kadro seçimi** (`Simulation.Roles`, `PickCount`, `DefaultPick`, `ResolvePick`): sığınağın kadrosu beş uzman
-  (Teknisyen, EMP uzmanı, Analist baştan; **Madenci atölye seviye 2'de, Sis uzmanı seviye 3'te** katılır:
-  `liberationMinerWorkshopLevel`, `liberationSmokeWorkshopLevel`, `Simulation.SyncSpecialists` yeni harekâtta ve oda
-  geliştirmede; atölye seviyesi düşmez, katılan ayrılmaz). Katılmamış uzman seçilemez (`LiberationRaidCheck`: "Madenci henüz
-  kadroda değil: atölye seviye 2 gerekiyor."); atölye 2'ye kadar kadro T + E + A sabittir. Her baskına Teknisyen ve seçilen iki uzman
-  çıkar; seçim emir komutuyla kayda girer (`liberation_raid`, b = "maden,duman", kadro sırasıyla). Seçim verilmezse
-  varsayılan: ayaktakiler yatanlardan önce, önce son baskının uzmanları (`TeamState.LastPick`), sonra dinlenmiş olanlar
-  (yarası az önce); ilk baskında EMP uzmanı ve Analist. Seçim görev fişinin KADRO satırında yapılır (aşağıda, Komuta odası).
-  Eğitim sürerken ilk baskının kadrosu sabittir (Teknisyen, EMP uzmanı, Analist), eğitim senaryosu bu üçe göre yazıldı.
-- **Kadro** (`Simulation.Squad`, `RaidParams.Squad`, `RaidParams.Roles`): seçilen her rol için ayaktaki uzman yarasıyla
-  (eksik canla) çıkar; yatan uzmanın yerine boştaki ilk yedek uzman, rolün canından `liberationRookieHpPenalty` (1) eksik;
-  yedek de yoksa rol boş kalır, tahtada o birim olmaz (kadro eksik çıkar; kartı SIĞINAKTA YARALI). Zırh plakaları en düşük
-  canlı uzmandan başlayarak birer tane takılır; plaka ilk hasarı karşılar ve kırılır (`Baskin.Hurt`, efekt `plate`).
-- **Kadro raporu** (`Baskin.SquadReport`, `Simulation.LiberationSquadPreview`): baskın emri verilmeden önce kadronun
-  durumu gösterilir. Görev fişinde BASKIN EMRİ VER fişin yanında "KADRO RAPORU" kartını açar: her uzman durumuyla (sağlam
-  yeşil; tam iyileşmemiş, yatanın yerine yedek ve yedeksiz boş rol kırmızı; yatanın kalan günü ve takılacak plaka dahil).
-  Emir kartın BASKINA ÇIK düğmesiyle verilir, Vazgeç fişe döner; kart açıkken kadro değişirse kart yenilenir. Baskın
-  kadroyu ayrıca bildirmez.
+- **Kişi ve rol seçimi** (`PlanningSquad`, `PlanningRaidCheck`): Teknisyen, EMP uzmanı ve Analist görev
+  alanlarına panodaki üç ayrı sağlıklı kişinin kartı bırakılır; her kişinin uygun rol kiti olmalıdır. Kısıtlı kabuldeki kişi sahaya çıkamaz. Eksik bir
+  rol varsa baskın emri verilmez. Kit ve eğitim kişiye aittir; görev değişince kendiliğinden aktarılmaz. Baskın emri
+  planı kilitler; dönüşte görülen yaraya göre aynı vardiya yeniden iş dağıtılamaz.
+- **Gerçek kadro** (`SquadSlot`, `RaidParams.Squad`): kişinin kimliği/adı, mevcut ve azami canı, hareketi ve fiziksel
+  gücü tahtaya taşınır. Rol ustalığı 2. kademede +1 hareket (tavan 5), 3. kademede +1 fiziksel güç (tavan 2) verir;
+  1. kademe yatan yaralının toparlanmasını bir vardiya kısaltır. Güç Teknisyenin fiziksel robot vuruşunu etkiler;
+  aygıtların bütün hasarlarına genel bonus değildir. Takılan zırh ilk hasarı karşılar ve kırılır. EMP hücresi baskına
+  girişte sarf edilir ve EMP'nin ilk kullanımına +1 hasar verir; hedef/hamle önizlemesi hücreyi tüketmez.
+- **Eski kadro yolu:** `planningBoardEnabled = false` iken anonim beş uzman, atölye seviyesiyle Madenci/Sis açılması,
+  yedekler ve görev fişindeki iki uzman seçimi çalışır. Bu oda gelişimi yeni panoda kullanılmaz.
+- **Kadro raporu** (`Baskin.SquadReport`, `Simulation.LiberationSquadPreview`): emirden önce kişi adı, rol, can,
+  hareket, fiziksel güç ve teçhizat etkisini gösterir. Rapor ile gerçek baskın aynı `SquadSlot` değerlerini kullanır.
+  Eski modelin yatan uzman/yedek raporu o modelde kalır. Emir rapordaki BASKINA ÇIK düğmesiyle verilir; Vazgeç fişe döner.
 - **Harita havuzu** (`Core/RaidMaps.cs`): her harekâtın kendi 30 haritası olur, yeni oyunun tohumundan üretilir (adlar
   30 oda adından: Kablo galerisi, Arşiv katı, Kazan dairesi…). Harekât ~57 baskın sürdüğü için her harita ~2 kez gelir
   (havuz 10 iken ~6 kez). Baskınlar havuzu karıştırılmış torbalardan sırayla çeker (`RaidMaps.Slot`,
@@ -262,14 +287,16 @@ Baskın sürerken (`S.Raid`), harekât bitmişken ya da açılış/emir belgesi 
     sertleşir (4 → 6; zırhlı dolapta 7); son bölgenin çekirdeği hariç (5 can, 6 turda yetişilsin). Ek makine ayarı
     `liberationServerMachines` 0 (ölçümde etkisiz).
 - **Sonuç** (`ResolveRaid`, taktik sonuçtan masaya dönülürken bir kez):
-  - İkmal başarısı: +10 fon, +7 malzeme, +6 erzak, yer varsa +1 kurtulan.
-  - Sunucu başarısı: +8 fon, +5 malzeme.
-  - Bölge tamamlanınca ayrıca +15 fon.
-  - Başarısızlık ya da geri çekilme sektörü değiştirmez.
-  - **Kadro döner** (`ReturnSquad`, sonuçta kadronun kalan canı ve plakası `RaidResult.Hp/Armor`): ayaktaki uzmanın eksik
-    canı yara olarak kalır; düşen uzman ya da yedek `liberationInjuryDays` (3) gün yatar ve sağlam kalkar; kırılan plaka
-    sığınaktan düşer. Kaçışta çıkamayan uzman da düşmüş sayılır (`RaidResult.Left`; raporda "Çıkamadı: …" satırı). Kalıcı
-    kayıp yok. Teknisyen yatıp yedek de yoksa ekip kalkana kadar baskına çıkamaz.
+  - İkmal başarısı: +10 fon, +3 metal, +2 devre, +2 kumaş, +1 kimyasal, +6 erzak. Otomatik anonim kurtulan eklenmez.
+  - Sunucu başarısı: +8 fon, +2 metal, +2 devre, +1 kumaş, +1 kimyasal.
+  - Bölge tamamlanınca ayrıca +15 fon. Başarısızlık ya da geri çekilme sektörü değiştirmez.
+  - **Kişi döner** (`ReturnPlanningSquad`): can ve kırılan plaka kalıcı duruma yazılır. Çıkamayan (`RaidResult.Left`)
+    kişi ölür; ekipte sağ kalan yoksa sıfır canlı kişi de ölür. Ölenin kişisel ustalığı ve üzerindeki eşya kaybolur.
+    Sıfır canlı ama geride bırakılmamış kişi, ekipte sağ kalan varsa otomatik kurtarılır; `boardInjuryTurns` (3,
+    rol ustalığıyla 2 olabilir) vardiya yatışa ve dinlenmeye geçer. Tahtada ayrıca taşıma/kurtarma eylemi yoktur.
+    Canlı dönen kişi rolünde +1 deneyim alır. Herkesin kaybı `topluluk` sonuna yol açar.
+  - Eski modelde ikmal +7, sunucu +5 genel malzeme verir ve yer varsa anonim kurtulan ekler; düşen uzman/yedek
+    iyileşmek üzere yatar, kalıcı kişi kaybı yoktur. Bu kurallar yeni kadroya ek katkı sağlamaz.
   - Depo sınırına takılan ödül yalnız gerçekten alınan miktarla raporlanır (`LiberationRaidReward`).
 - **Sonuç kartı** (baskın tahtasında, Revizyon 2 · S7a/b): tahta kararır, spot nedenin üstünde açılır, sağdan kart kayar:
   başlık yerinde tek damga (SEKTÖR GERİ ALINDI mavi; GERİ ÇEKİLDİ, EKİP DÜŞTÜ, İKMAL KAYBEDİLDİ, SÜRE DOLDU kırmızı), yer
@@ -277,12 +304,98 @@ Baskın sürerken (`S.Raid`), harekât bitmişken ya da açılış/emir belgesi 
   düğme (0,6 s girdi kilitli).
 - **Operasyon raporu** (S7c/d): baskından dönünce kamera harita pozuna geçer, rapor solda iner, iplik ekip figürüne gider.
   Başlık sonucu söyler (SEKTÖR GERİ ALINDI / SEKTÖR İŞGAL ALTINDA), altında tek cümle (bölgenin kalan sektörü ya da
-  “Ekip geri döndü…”; Teknisyen yedeksiz düştüyse ya da güven azaldıysa onun uyarısı). Başarılıda KAZANÇ (FON, MALZEME,
-  ERZAK, KURTULAN) ve sayaçlarda ± fişleri, sektör işareti maviye döner; başarısızda ödül alanı yok, YZ alarmı ölçekle.
+  “Ekip geri döndü…”; Teknisyen yedeksiz düştüyse ya da güven azaldıysa onun uyarısı). Başarılıda KAZANÇ (fon, türlerine ayrılmış hammadde ve erzak; yeni panoda anonim kurtulan yok) ve sayaçlarda ± fişleri, sektör işareti maviye döner; başarısızda ödül alanı yok, YZ alarmı ölçekle.
   SONUÇLAR: sektör, kırılan sivil sunucu, ekip (düşen, yeni yara, kırılan plaka), sivil güven, YZ alarmı, karşı saldırı
   (`OperationReportBuilder`).
 
-## Sığınak (`ShelterState`, `ShelterLogic`, `Simulation.Shelter.cs`)
+## Kartlı sığınak ve topluluk (`PlanningBoardState`)
+
+Sığınak oda seviyesiyle büyümez. Başlangıçta **8 isimli insan**, en fazla 10 canlı sakin vardır. İsimler ve dört beden
+profilinden biri `S.Rng` ile belirlenir: dayanıklı/yavaş, çevik/narin, güçlü/temkinli veya dengeli. Temel değerler
+3 can, 3 hareket, 1 güçtür; profil bunları bir basamak değiştirir. Meslek bir alanda başlangıç ustalığı verir.
+Her kişi tek bir görev taşır. Kişi kartı adı yazılı görev alanına bırakılarak atanır; dolu bir görevin geçerli
+ataması iki kişinin görevini takas eder. **Boşta** alanı dinlenme/yedek görevidir ve birden çok kişiyi alır. Kart
+konumu Core görevinden yeniden çizilir; pano boşluğuna veya yanlış alana bırakmak görevi değiştirmez.
+
+| Görev | Kapanışta katkı |
+|---|---|
+| Teknisyen, EMP uzmanı, Analist | Aynı topluluktan üç kişilik baskın kadrosu; görev kiti gerekir |
+| Üretim | Girdi ve yer varsa tek iş emrini ilerletir; deneyimli üretici kapanışta +1 ek çalışma ilerlemesi |
+| Mutfak | Tüketimden 0,6 + kademe başına 0,1 erzak düşer; toplam tüketimin en fazla yarısı |
+| İkmal | 1,25 + kademe başına 0,15 erzak; her 3 sağlıklı çalışma vardiyasında 1 metal + 1 devre |
+| Bakım ve dönüş triyajı | Kendisi dışındaki en yaralı canlı kişiye 1 + kademe başına 1 can; varsa bir bakım kitiyle +1 |
+| Eğitim | Seçilen yedi alandan birine +2 deneyim; kapanışta dinlenmeye döner |
+| Dinlenme / yedek (Boşta) | +1 can; yatış süresi de bir azalır. Boşta'nın ilk uygun kişisi dış kayıt ve dosya incelemesinin gözetmenidir |
+| Gözetim (eski görev; panoda cebi yok) | Katkısı yok; biçim 15'ten (K4-A) beri gözetmen sayılmaz. Kilitsiz planda `RetireJobs` kişiyi Boşta'ya alır |
+| Dış temas | Kapıda aday yoksa sıradaki gelişi bir vardiya öne çeker; zamanı ilerletmez, kimliği yeniden belirlemez |
+
+Saha dönüşü ve uygun iş +1 deneyim verir. Alan kademeleri 2/6/12 deneyimde açılır; 12 tavanıdır. Eğitim kişiye aittir,
+rol veya kit değişince silinmez. Üretim ustalığı 2. kademede her kapanışa +1 çalışma ilerlemesi ekler; iki vardiyalık
+EMP hücresi deneyimli üreticiyle tek kapanışta tamamlanabilir. Girdi maliyeti değişmez ve bir kez ödenir.
+
+**Stok ve üretim:** başlangıçta 3 metal, 2 devre, 2 kumaş, 1 kimyasal, 24/60 erzak, üç rol kiti, iki zırh ve bir bakım
+kiti vardır. Dört hammadde türünün her birinde tavan 60; eşya tavanı 32'dir. Eşyanın tek kimliği ve tek sahibi vardır;
+kişi üzerinde aynı anda bir kit, bir zırh ve bir yardımcı eşya tutulur. Tarif açılıp gerekli hammadde kartları girdi
+ceplerine bırakılır. Rezervasyon malzemeyi hemen tüketmez. Üreticinin ilk çalıştığı kapanışta girdiler bir kez ödenir;
+üretici değişse de ilerleme iş emrinde kalır. İşçi yoksa, açlık varsa veya eşya deposu doluysa üretim durur. Fazla eşya hurda hedefine
+bırakılarak kalıcı biçimde 1 metale çevrilebilir; böylece dolu eşya deposunda yer açılır.
+
+| Tarif | Girdi | Çalışma süresi |
+|---|---|---|
+| Zırh plakası | 2 metal + 1 kumaş | 1 vardiya |
+| Bakım kiti | 1 kumaş + 1 kimyasal | 1 vardiya |
+| EMP hücresi | 1 metal + 1 devre | 2 vardiya |
+| Teknisyen / EMP / Analist kiti (üç ayrı tarif) | 1 metal + 1 devre | 1 vardiya |
+
+Tek üretim emri ve tek eğitim yeri vardır. Başlamadan iptal rezervasyonu serbest bırakır; başladıktan sonra iptal
+harcanan girdiyi geri vermez. Bitmiş eşya depoda kart olur ve kişiye ayrıca takılır. Tarifler şu an baştan açıktır;
+sefer içinde tarif bulma ve rol kiti kilidi uygulanmış değildir.
+
+Her canlı kişi vardiyada 0,35 erzak tüketir. Mutfak ve ikmal açığı küçültür; ikmal baskını +6 erzakla destekler.
+İkmal görevlisinin üç sağlıklı çalışma vardiyasında topladığı metal/devre, bütün saha kitleri kaybedilse bile yeni
+kit üretme yolunu açık tutar. Açlıkta veya görevli yokken bu hammadde ilerlemesi durur; birikimi görevliye değil
+`Board.GatheringProgress`'e aittir ve kayıttan aynı kurulur.
+Erzak sıfırın altına düşecekse stok sıfırlanır, o kapanışta üretim ve bakım durur. Bütün değerler `Balance.board*`
+alanlarından gelir. Eski sığınak botlarının kazanma oranları bu ekonomi için geçerli değildir; uzun harekât dengesi
+ayrıca ölçülmelidir.
+
+## Belgeyle kabul ve gecikmeli sızma (`CommunityAdmissionState`)
+
+Her 2–4 vardiyada bir aday gelir. İlk aday güvenli, insan ve kusursuz belgeli öğretici vakadır. Sonrakilerde robot
+olasılığı %35, belge kusuru olasılığı bundan bağımsız %35'tir. Gizli kimlik gelişte belirlenir, karara göre yeniden
+zar atılmaz. Belge, görüşme ve soğukta nefes kontrolü yapılabilir; dış kayıt teyidi ayrı bir gözetmenin vardiyasını
+kullanır ve sonraki kapanışta sonuçlanır. Bu işlem için aday bir ek karar vardiyası bekler.
+
+**Gözetmen (K4-A, biçim 15; `AdmissionWatcher(targetId)`):** Boşta'daki (`rest`) ilk canlı, yatmayan, kısıtsız ve
+incelenen kişiden farklı sakin, panonun kişi sırasıyla; adı talep formunda ve karbonda yazar. Kural her an yeniden okunur: talepten
+sonra gözetmen başka göreve alınırsa sıradaki uygun kişi gözetmen olur; kapanışta Boşta'da uygun kimse yoksa sonuç gelmez
+ve bekleyen aday süresi dolunca reddedilir. Boşta boşken dış kayıt talebi ve dosya incelemesi (İNCELE) kilitlidir. Tek
+gözetim yuvası (`ObservationTarget`) vardır: kapıdaki dış kayıt, bir dosyanın incelemesi ve kısıtlı sakinin gözetimli
+çalışması aynı yuvayı kullanır, son istek öncekini iptal eder (sunum önceden uyarır).
+
+- **Kabul:** aynı kişi topluluğa gelir. **Kısıtlı kabul:** üç vardiya; saha, üretim, dış temas ve gözetim erişimi kapalı,
+  uygun diğer işlerde ayrı gözetmen (Boşta'nın ilk uygun kişisi) ve kişinin dosyasında İNCELE gerekir (gözetim yuvası onda olmalı).
+  Süresi dolunca görev durur; kısıt yenilenir, kaldırılır veya kişi ayrılır.
+- **Ret:** aday dış tahliye hattına yönlendirilir. **Dış yardım:** 2 erzak verilir, aday içeri alınmaz. Cevapsız başvuru
+  kapanışta ret sayılır. Kapasite doluysa yeni kabul yapılamaz; mevcut kişinin güvenli ayrılma kararı mümkündür.
+- **Talimat:** başlangıçta tarih ve numara eşleşmesi; 4. vardiyada N-17 serisi ve S-6 nefes işareti; 8. vardiyada
+  R-4'ün buğuyu taklit edebildiği bilgisi gelir. Yenilik yalnız ilgili eski dosyalara inceleme fişi açar. Geçerli belge
+  veya nefes buğusu insanlık garantisi, belge kusuru tek başına robot kanıtı değildir.
+- **Robot içeride:** ilk tam görev vardiyasında normal katkı sağlar. Sonra erişim ve parça kaydı olmak üzere iki
+  bağımsız, kalıcı iz bırakır. İkinci izden sonraki kapanıştan önce hassas görevini kaldırmak, erişimini kısıtlamak,
+  dış kaydı incelemek veya güvenle ayırmak mümkündür. Gözetmenli dosya incelemesiyle (İNCELE, sonucu kapanışta) doğrulanan iki iz
+  kritik erişimi kapatır; kişi kısıtlanır.
+- **Müdahale edilmezse:** saha/üretim erişiminde en çok 2 serbest metal; diğer uygun işlerde 3 erzak sabote edilir.
+  Kısıtlı erişimde zarar ölçeklenir. Robot açığa çıkar, görevi dinlenmeye döner, erişimi kısıtlanır. İlk kapsamda bu
+  olay kimseyi öldürmez; rastgele tek hamleyle harekâtı bitiren ihanet yoktur.
+
+Kişi dosyaları, belgeler, inceleme sonucu ve izler kişi öldüğünde veya ayrıldığında geçmişte kalır. Bu sistem önceki
+23 ziyaretçili kapıyla aynı anda çalışmaz.
+
+## Eski oda geliştirmeli sığınak (yalnız `planningBoardEnabled = false`)
+
+Aşağıdaki kurallar ve tarihli ölçümler eski yolu belgelemek için korunur. Varsayılan kartlı oyunda çalışmaz. Bu yolun odadaki sunumu (raf, maket) Aşama 10'dan beri sahnede yok; kurallar Core'da ve testlerde durur.
+`ShelterState`, `ShelterLogic`, `Simulation.Shelter.cs`:
 
 Sığınak baskının hazırlık yeridir: ürettiği her şey bir sonraki baskına girer. Beklemenin karşılığı hazırlık (dinlenme,
 plaka, revir), bedeli alarm; vardiya şalteri böylece karara döner. 6 kişi, 24 erzak ve 14 malzemeyle başlar. Yaşam alanı
@@ -326,7 +439,9 @@ başarısı (açgözlü bot) ikmalde %98 → %95 → %77 → %59, sunucuda %95 �
 güveni +2'ye çekildi. Önceki sığınakta (enerji, malzeme üreten atölye)
 dört plan da aynı harekâtı oynuyordu: üç oda sonuca hiç dokunmuyordu, fon 450–770 artıkla bitiyordu.
 
-## Sığınağın kapısı (`Core/Door.cs`, `Core/DoorCards.cs`)
+## Eski ziyaretçi kapısı (yalnız `planningBoardEnabled = false`)
+
+`Core/Door.cs`, `Core/DoorCards.cs`; aşağıdaki ziyaretçi kuralları yeni kabul sisteminde çalışmaz.
 
 Birkaç vardiyada bir biri sığınağın kapısını çalar: erzak isteyen bir anne, kurtarılan bölgeden bir kurye, bir kaçakçı, YZ'den
 kaçmış bir teknisyen… Kapı erzağa, güvene ve alarma bir yüz verir; baskının sonucu da kapıya döner (hastanesi kararan baba).
@@ -401,35 +516,34 @@ kaçmış bir teknisyen… Kapı erzağa, güvene ve alarma bir yüz verir; bask
   Bölge tamamlanınca cephe onay fişi. Haritada cephe bloğu (sektör şeridi + yüzde + saha işaretleri), işaretler kutusunda
   TEHDİT n/4; karşı saldırının aldığı sektör geri alınana kadar ✕ ve YENİDEN İŞGAL damgasıyla işaretli. Ekip figürü
   haritada sürüklenebilir.
-- **Sığınak maketi (K4; Revizyon 2 · S3):** odaların durumu (çalışıyor, DURDU, HASARLI), personeli ve geliştirme kararları;
-  pano özetinde başta erzakın kaç vardiya yeteceği (⌊erzak ÷ son vardiyadaki düşüş⌋; 3 ve altı kırmızı), sonra TOPLULUK
-  (yedek dahil), UZMANLAR (beş uzmanın diski, iki satırda; katılmamış uzman soluk, yanında “sv 2”), PLAKA. Atölyenin
-  açıklaması sıradaki uzmanı yazar (“Seviye 2: Madenci kadroya katılır.”). Maketin üstündeki DEPO bandı erzakı sandık, malzemeyi kova, plakaları rafta
-  gösterir; odalar çıktılarını gösterir (ranzada yedek, telsizde yanan kadran, atölyede döküm kalıbı, revirde hasta).
+- **Tarif defteri / Boşta:** tarif şeridi yoktur. Deftere tıklanınca öne açılır; önceki/sonrakiyle üç açılımda altı tarif gezilir, tarif üretime sürüklenir. Boşta tıklanınca tüm kartlar alt sıraya yayılır; bir kişi sürüklenirken diğerleri geri toplanır.
+- **Güncel tahta:** kişi kartları 210×294 dikeydir; aktif yuvalar Teknisyen, EMP, Analist, Üretim, Mutfak, Eğitim ve Boşta. Bakım/İkmal/Gözetim/Dış temas kaldırıldı; eski kayıttaki bu görevler yeni kilitsiz planda kayıtlı atama komutlarıyla Boşta olur. Aşağıdaki eski alanlı yerleşim açıklaması tasarım geçmişidir.
+- **Kartlı planlama panosu (K4):** eski sığınak rafının yerinde (raf ve maket Revizyon 3 Aşama 10'da sahneden kaldırıldı) daha küçük, ayaklı ve sahnede
+  kaydedilmiş pano. Topluluk sicil listesi yoktur. Boşta ve her görev için başlığı ve sınırı belli bırakma alanı vardır;
+  kişi kartını alana bırakmak atamayı yapar ve kart görev alanında görünür. Gezici görev etiketleri yoktur. Teçhizat
+  kartı kişinin üzerine konur; bağlı eşya kişi taşınırken onunla gider, **Depo** alanına bırakılınca kişiden çıkar.
+  Depoda boştaki ve üretilen eşya kartları vardır. Tarif ve hammaddeler ayrı **Üretim** alanındaki uygun yerlere
+  bırakılır. Ayrıntıda ad, meslek, beden değerleri, ustalık ve dosya durumu okunur. Teçhizatın kişi üstündeki
+  görsel ofseti sahnedeki sabit yığın ölçülerinden hesaplanır; eski serbest yerleşim dosyası kullanılmaz. Görev ve sahiplik
+  komut geçmişinden kurulur. Panoda vardiya düğmesi, fiş veya devir kutusu yoktur. Ayarlar dolabı korunur.
 - **CRT (K5):** telsizin göstergesi (TELSİZ · KANAL 07): dinlemede, hat açılıyor, hat açık, hat kapandı. Yalnız baskın
-  emri kamerayı ekrana yaklaştırır. Teknisyen yatıp yedek de yoksa hat kapalı ("ALFA · TEKNİSYEN YARALI · 2 GÜN").
-- **Görev fişi** kadroyu baskına çıkacağı gibi, baskın piyonlarının harfli ahşap diskleriyle yazar: T 3/3 · E 2/3 ·
-  A 1/2 yedek · 2 plaka. Altındaki **KADRO** satırı seçicidir: beş uzman kadro sırasıyla (disk + can; T SABİT, yatanda
-  "n GÜN" ya da yerine yedek çıkacaksa "YEDEK", durum çipin altında kendi satırında; katılmamış uzman kilitli, "SV 2",
-  üzerine gelince ne zaman katılacağı); seçili olan sarı,
-  seçilmeyenin diski soluk. Seçenek yokken not sıradaki uzmanı söyler. Tıklanan uzman seçilir, iki seçili varken en
-  eski seçimin yerine geçer; seçili olana tıklamak onu bırakır (ikiden az seçiliyken düğme kapalı, KADRO EKSİK). Üstüne
-  gelince ad, can ve yeteneğin tam açıklaması. Seçim vardiya boyunca kalır (`SiginakMap.pick`); eğitimde kilitli. Eksik yalnız fonsa BASKIN EMRİ VER açık kalır; basınca komut çağrılmaz, FON sayacı titrer ve
-  teleks gerekçeyi basar. Başka gerekçede düğme devre dışıdır, kısa nedeni sağında yazar (“EKİP HAZIR DEĞİL”). Emir hazırken
-  düğme önce **kadro raporunu** açar (fişin iç yanında; yukarıda); emir rapordaki BASKINA ÇIK'la verilir.
-- **Vardiya geçişi (K6, Revizyon 2 · S5):** şalter → sayaçlar döner → vardiya raporu (harita pozunda, solda 540 px):
-  başta üç göz (ERZAK "n vardiya yeter" · YZ ALARMI ölçekle · FON önce → sonra), altında alarm notu; FON, ÜRETİM VE TÜKETİM
-  (+ analist notu), EKİP, YAPILAMADI. Erzak ve alarm dökümde tekrar edilmez. Renk kuralı: artı yeşil, eksi mürekkep (eksi
-  işaretiyle), ±0 gri; kırmızı yalnız alarm eşiği ve işgal. Sayaçların altındaki ± fişleri aynı kuralla. Rapor evrak
-  tepsisine kayar; tepsiden son 5 rapor okunur.
+  emri kamerayı ekrana yaklaştırır. Eksik/yaralı saha kadrosu veya kit için emir gerekçesi gösterilir;
+  eski modelde teknisyen ve yedek kontrolü korunur.
+- **Görev fişi** yeni panoda üç saha kişisini adları, gerçek can/hareket/güç değerleri ve teçhizatıyla gösterir.
+  Kadro panoda belirlenir; eski beş uzman seçimi oda geliştirmeli yola aittir. BASKIN EMRİ VER önce kadro raporunu açar;
+  emir rapordaki BASKINA ÇIK ile verilir. Eksik kit, yaralı kişi ve yetersiz fon gerekçeleri komuttan okunur.
+- **Vardiya geçişi (K6):** masadaki kapaklı vardiya şalteri: kapak → kol → şalterin yanından kâğıt → mevcut EVRAK
+  kutusu → kararıp açılma. Fiş beklenirken kol inik, kapak açık, hazır lambası sönük kalır. Kâğıdın fiziksel bırakılması tamamlanmadan gün ilerlemez; panoya gidilmez. Kâğıt o anda bilinen
+  görevleri, eğitim/üretim durumunu, beklenen erzak değişimini ve açık dosya uyarılarını yazar; gelecek gizli olayı
+  açıklamaz. EVRAK kutusunun eski rapor arşivi korunur; eski vardiya raporu dizisi oda geliştirmeli oyuna aittir.
 - **Açılış (K7):** açılış dizisi ve emir belgesi; BAŞLA ile oda açılır. Kayıt varsa son rapor kısaca görünür.
-- **Eğitim (rehberli ilk vardiyalar):** yeni harekâtta, eğitim daha önce bitirilmediyse ya da atlanmadıysa sağ altta
+- **Eski rehberli eğitim (kartlı oyunda kapalı):** oda geliştirmeli yeni harekâtta, eğitim daha önce bitirilmediyse ya da atlanmadıysa sağ altta
   analistin notu çıkar (`SiginakTutorial`, adımlar `TutorialFlow.Steps`). 12 adım: komuta odası (TAMAM) → görev fişi →
   baskın emri → taktik tahta → sonuç → operasyon raporu → sığınak → atölyeyi onar → personel ata → vardiya şalteri →
   vardiya raporu → kapanış (TAMAM). Her adım oyuncunun eylemini bekler; zaten yapılmış adımlar geçilir. Not açılış, emir
   belgesi, vardiya dizisi, ayarlar, CRT geçişi ve son rapor sırasında gizlenir. Masa pozunda (şalter sağ altta) ve baskın
   bitince (sonuç kartı sağ altta) not sağ üste çıkar.
-- **Senaryolu ilk baskın (`TutorialRaid`):** eğitimin taktik tahta adımında açılan baskın harekâtın ilk baskınıysa (Batı
+- **Eski senaryolu ilk baskın (`TutorialRaid`; kartlı oyunda kullanılmaz):** eğitimin taktik tahta adımında açılan baskın harekâtın ilk baskınıysa (Batı
   Avrupa'nın ilk sektörü, kademe 1, tam ve sağlam kadro) sabit tohumla (129) kurulur ve oyuncu bilinen çözümü adım adım
   oynar: 18 hamle, 34 arayüz adımı (uzmanı seç, yürü, Q, hedefe tıkla, turu bitir), beş tur, temel makine aklı ve elle
   çizilmiş harita. Ders sırası: yürümek, EMP itişiyle zırhlı dronu duvara çarptırıp zırhını kırmak, kancayla dost uzmanı
@@ -441,7 +555,16 @@ kaçmış bir teknisyen… Kapı erzağa, güvene ve alarma bir yüz verir; bask
   çekilir, baskın serbest oynanır. Simülasyon yalnız baskının sonucunu gördüğü için kayıt bozulmaz.
   "Eğitimi atla" ya da kapanış eğitimi bitirir (PlayerPrefs `Corrigible.TutorialDone`; editörde Corrigible › Eğitim ›
   Eğitimi sıfırla). Kayıttan devam eden oyunda eğitim yoktur. Simülasyona dokunmaz.
-- **Kapı (K8, Revizyon 2 · S4):** sağ duvarda çarklı çelik kapı: üstünde tehlike bandı ve kafesli vuruş lambası, yanında
+- **Kapı ve kabul tezgâhı (K8, K8A, K8G, K8R; Revizyon 3 · Aşama 6):** yeni aday gelince kapı bir kez üç vuruşla çalar (yüklemede
+  çalmaz, kamera dönmez), lamba amber kalır, kapının yanındaki kabul tezgâhı iner. KAPI tuşu K8'e, tezgâha tık K8A'ya götürür. Tezgâhta
+  çekmecedeki belge, talimat şeridi (sürüm değişince eskisi ESKİ cebine), kıskaçta bulgu fişleri; dört araç birer inceleme komutudur:
+  büyüteç (KARŞILAŞTIR), interkom (GÖRÜŞME), kapı kanadındaki buğu camı (SOĞUK GÖZLEM, K8G), talep defteri (DIŞ KAYIT; GİDEN yaprağı,
+  karbonda gözetmenin adı; sonuç sonraki kapanışta). Dört damga (KABUL · TAM ERİŞİM, KISITLI KABUL, REDDET, DIŞARIDAN YARDIM) sürüklenip
+  ya da tıklanıp belgeye basılır; kilitliyken pirinç dil ve gerekçe. KABUL ve KISITLI'da tezgâh katlanır, kapı açılır (koridor boş),
+  kişinin kartı Boşta'ya düşer. Kâğıtlara tık K8R'de okutur; Esc / sağ tık bir seviye geri, MASA tuşu masaya. Kabul edilen kişinin izleri
+  ve bulguları panodaki kişi dosyasında ("robot" yazmaz), dosyada İNCELEME / KISITLI etiketi. Aşağıdaki kapı kâğıdı/siluet dizisi eski
+  ziyaretçi yoludur.
+  **Eski kapı görünümü (Revizyon 2 · S4):** sağ duvarda çarklı çelik kapı: üstünde tehlike bandı ve kafesli vuruş lambası, yanında
   interkom, solunda tebeşirle ziyaretçi çentiği; arkasında fayanslı merdiven boşluğu. Biri çalınca (vardiya raporu
   dosyalanıp masa boşalınca) üç vuruş gelir, lamba amber yanar ve her vuruşta parlar, tavan ampulü titrer, teleks "KAPI
   ÇALIYOR" basar ve kamera kapıya döner; kâğıt ekranın solunda açılır. Gözetleme ve interkomun cevabı kâğıtta ayrı
@@ -456,7 +579,7 @@ kaçmış bir teknisyen… Kapı erzağa, güvene ve alarma bir yüz verir; bask
 ## Son rapor
 
 Harekât bitince (Revizyon 2 · S8) kamera harita pozuna geçer, harita karartılır ve 1620 × 952 rapor aşağıdan gelir:
-sonuç damgası (Silme: KAZANILDI yeşil; Dağılma, Vuruldu, Sızma: KAYBEDİLDİ kırmızı + küçük neden damgası), sonucu söyleyen
+sonuç damgası (Silme: KAZANILDI yeşil; Dağılma, Son kişi ve eski Vuruldu/Sızma sonları: KAYBEDİLDİ kırmızı + küçük neden damgası), sonucu söyleyen
 cümle (kazanınca altında “AĞA BAĞLANMA · ANALOG KAL”, kayıpta sonun metni), dört gösterge (SÜRE vardiya; BASKIN başarılı ·
 başarısız; ÖZGÜR BÖLGE x/12 + sektör; SIĞINAK NÜFUSU, kayıpta kırmızı “kişi kaldı”), işgal şeridi (x = vardiya 1…N her
 zaman tam genişlik; kırmızı işgal, mavi geri alınan; karşı saldırılar yukarı çıkıntı) ve üstünde numaralı kırılma anları,
@@ -466,13 +589,17 @@ düşüşü, son olay: son sunucu / güvenin sıfırlanması / kapının açılm
 
 ## Kayıt ve kalıcılık
 
-- Kayıt = tohum + denge değerleri + **komut geçmişi** (`GameRecord`, biçim 13: Madenci ve Sis uzmanı atölyeyle katılır); devam, komutları
-  yeniden oynatır (`Replay.Restore`). Baskın sonucu kadronun kalan canını, plakasını ve ayakta kalan sivilleri de taşır
-  (`RaidResult.Encode`); kapı kararları `door_answer` komutudur. Her başarılı komutta ve uygulama kapanırken kaydedilir;
-  harekât bitince silinir. Biçim 11 ve öncesi kayıtlar yüklenmez.
+- Kayıt = tohum + denge değerleri + **komut geçmişi** (`GameRecord`, **biçim 15**; 15 = K4-A gözetmen kuralı). İsimli kişiler, sabit gizli kimlik,
+  görev/eşya, ayrılmış üretim girdisi, eğitim, basılı devir fişi ve kabul kararları `Replay.Restore` ile yeniden kurulur.
+  `board_*` komutları (eşya hurdalama `board_scrap` dahil) ve `inspectApplicant`, `decideApplicant`, `reviewResident`, `restrictResident`, `dismissResident`
+  kayda girer. `board_file` kapanan güne yazılır ve günü kendisi ilerletir; eksik devir komutu sonsuz döngü yerine hata verir.
+- Baskın sonucu kişilerin kalan canını, plakasını, geride kalanları ve ayakta kalan sivilleri taşır (`RaidResult.Encode`).
+  Her başarılı komutta ve uygulama kapanırken kaydedilir; harekât bitince etkin kayıt silinir.
+- Biçim 14 ve öncesi bu kurallarla yeniden oynatılmaz. Yeni oyun eski sürüm dosyasının üzerine ilk kez kaydedilirken
+  `SaveStore` sürüm numaralı `.backup` kopyasını korur; bu bir kayıt göçü değildir, eski harekât yeni sürümde devam etmez.
 - Dosyalar `Application.persistentDataPath` altında: `liberation_savegame.json` (oyun) ve kayda girmeyen sunum durumu
-  için `liberation_desk.json` (teleks satırları, evrak tepsisindeki son 5 vardiya raporu, kamera pozu; tohum
-  eşleşmezse yok sayılır).
+  için `liberation_desk.json` (teleks, evrak geçmişi, kamera pozu; tohum eşleşmezse yok sayılır). Editör testleri
+  `Corrigible.TestStorage` oturum anahtarıyla ayrı klasöre yönlendirilebilir.
 
 ## Başarımlar (Steam)
 

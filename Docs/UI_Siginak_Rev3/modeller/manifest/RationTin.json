@@ -1,0 +1,88 @@
+{
+ "name": "RationTin",
+ "family": "admission",
+ "budget": "small",
+ "origin": "taban ortası (y = 0)",
+ "note": "Boyalı konserve Ø 75 × 110, kıvrık kenarlar, ERZAK şablonu (TMP). DIŞARIDAN YARDIM’da iki teneke evrak gözünün çekmecesiyle dışarı çıkar.",
+ "listName": "Erzak tenekesi (DIŞARIDAN YARDIM)",
+ "parts": [],
+ "texts": [
+  {
+   "name": "TXT_Stencil",
+   "part": "Body",
+   "center": [
+    0,
+    0.055,
+    -0.0368
+   ],
+   "size": [
+    0.05,
+    0.022
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "wallStencil",
+   "font": "Courier Prime 700",
+   "capMm": 14,
+   "align": "center",
+   "sample": "ERZAK",
+   "sampleEn": "RATIONS",
+   "note": "silindir yüzü (TMP eğri değil: dar yuva)"
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 448,
+ "trisPerPart": {
+  "Body": 448
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.0386,
+   0,
+   -0.0386
+  ],
+  "max": [
+   0.0386,
+   0.11,
+   0.0386
+  ],
+  "size": [
+   0.0772,
+   0.11,
+   0.0772
+  ]
+ },
+ "materials": [
+  {
+   "key": "tinOlive",
+   "hex": "#56603F",
+   "rough": 0.5,
+   "metal": 0.35,
+   "note": "erzak tenekesi boyası",
+   "tris": 192,
+   "isNew": true
+  },
+  {
+   "key": "tinRim",
+   "hex": "#A3A79E",
+   "rough": 0.35,
+   "metal": 0.85,
+   "note": "teneke kenarı (çıplak metal)",
+   "tris": 256,
+   "isNew": true
+  }
+ ]
+}

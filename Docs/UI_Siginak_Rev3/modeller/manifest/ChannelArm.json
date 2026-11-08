@@ -1,0 +1,73 @@
+{
+ "name": "ChannelArm",
+ "family": "raidcivil",
+ "budget": "raid",
+ "origin": "karenin merkezi, pafta yüzeyi (y = 0)",
+ "note": "Göbekten kare kenarına oluk zemini, iki yan ray ve iki turuncu-siyah şerit (iç uçları 45° gönye), merkezden kenara üç bakır kablo. Oyun K/G/B için 90° döndürür. Kanal işareti değişmez: zemine gömülü koyu oluk, kenarda turuncu-siyah şerit, görünür bakır. Hepsi ≤ 0,048 yüksek, gölgesiz, çarpıştırıcısız; kit yalnız oluk ve kuyu malzemesini değiştirir.",
+ "listName": "Kanal kolu (merkezden kenara, +x)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 74,
+ "trisPerPart": {
+  "Body": 74
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   0,
+   0,
+   -0.3725
+  ],
+  "max": [
+   0.5,
+   0.046,
+   0.3725
+  ],
+  "size": [
+   0.5,
+   0.046,
+   0.745
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_trench",
+   "hex": "#2A2622",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 2,
+   "isNew": false
+  },
+  {
+   "key": "r_trenchWall",
+   "hex": "#4A433B",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 20,
+   "isNew": false
+  },
+  {
+   "key": "rc_channelHazard",
+   "hex": "#A9520A",
+   "rough": 0.7,
+   "metal": 0,
+   "tex": "tx_channel_hazard (turuncu #A9520A zemin, siyah #1E1B16 45° şerit, adım 0,10 birim; 256×32)",
+   "note": "kanal kenar şeridi: turuncu-siyah, hiçbir kitte değişmez",
+   "tris": 4,
+   "isNew": true
+  },
+  {
+   "key": "r_copper",
+   "hex": "#B8682C",
+   "rough": 0.45,
+   "metal": 0.6,
+   "tris": 48,
+   "isNew": false
+  }
+ ]
+}

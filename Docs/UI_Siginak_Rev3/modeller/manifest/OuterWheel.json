@@ -1,0 +1,90 @@
+{
+ "name": "OuterWheel",
+ "family": "menu",
+ "budget": "small",
+ "origin": "göbek arkası (kapı dış yüzü)",
+ "note": "Kapının dış yüzündeki dökme demir el çarkı (Ø 360). İçerideki kırmızı çarkla aynı mil; dışarıda boyasız dökme demir, el değen jant parlak. Kapı açılırken 1,25 tur döner.",
+ "listName": "Dış çark",
+ "parts": [
+  {
+   "name": "Wheel",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0,
+    0
+   ],
+   "pivotLocal": [
+    0,
+    0,
+    0
+   ],
+   "kind": "rotate",
+   "axis": "z",
+   "range": [
+    0,
+    -450
+   ],
+   "rest": 0,
+   "note": "1,25 tur; içerideki çarkın tersi yönde görünür"
+  }
+ ],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 752,
+ "trisPerPart": {
+  "Body": 96,
+  "Wheel": 656
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.181,
+   -0.181,
+   -0.084
+  ],
+  "max": [
+   0.181,
+   0.181,
+   0
+  ],
+  "size": [
+   0.362,
+   0.362,
+   0.084
+  ]
+ },
+ "materials": [
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 96,
+   "isNew": true
+  },
+  {
+   "key": "castIron",
+   "hex": "#3A3B37",
+   "rough": 0.72,
+   "metal": 0.6,
+   "note": "dış çark, döküm kaide",
+   "tris": 560,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 96,
+   "isNew": true
+  }
+ ]
+}

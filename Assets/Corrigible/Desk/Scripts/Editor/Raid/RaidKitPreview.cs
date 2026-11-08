@@ -27,7 +27,7 @@ namespace Corrigible.Desk.EditorTools
         public const string LibraryPath = "Assets/Corrigible/Settings/RaidPieceLibrary.asset";
         const string Mats = "Assets/Corrigible/Art/Raid/Analyst/Materials/";
         const string Meshes = "Assets/Corrigible/Art/Raid/Analyst/Meshes/";
-        /// <summary>Baskın kamerasının 1080p ölçeği (raid_tokens.json › camera.pixelsPerUnitAt1080).</summary>
+        /// <summary>Baskın kamerasının 1080p ölçeği (tokens_sade.json › raid.camera.pixelsPerUnitAt1080; raid_tokens.json › camera'daki 88,388 oyunda okunmaz, Soru 7).</summary>
         public const float GamePixelsPerUnit = 132.58f;
         const int Layer = 31;
 
@@ -182,7 +182,7 @@ namespace Corrigible.Desk.EditorTools
                         var skin = tile.GetComponent<RaidTileSkin>();
                         if (skin != null) skin.Apply(RaidTileMask.For(B, x, y), kit);
                     }
-                if (o.Objects) { Objects(B, lib, root.transform, origin); Breaches(B, lib, kit, root.transform, origin); }
+                if (o.Objects) { Objects(B, lib, kit, root.transform, origin); Breaches(B, lib, kit, root.transform, origin); }
                 if (o.Units) Units(B, lib, root.transform, origin);
 
                 var cam = new GameObject("Camera").AddComponent<Camera>();
@@ -286,7 +286,7 @@ namespace Corrigible.Desk.EditorTools
         }
 
         /// <summary>Nesneler tahtanın NewObjectPiece'i gibi: yağma görevinde hedef ikmal sandığı, olay nesnesinin yedeği ölçekli.</summary>
-        static void Objects(Baskin.BState B, RaidPieceLibrary lib, Transform root, Vector3 origin)
+        static void Objects(Baskin.BState B, RaidPieceLibrary lib, RaidRoomKit kit, Transform root, Vector3 origin)
         {
             bool loot = Baskin.IsLoot(B);
             for (int y = 0; y < Baskin.N; y++)
@@ -303,7 +303,7 @@ namespace Corrigible.Desk.EditorTools
                     }
                     else
                     {
-                        var piece = lib.Object(o.K);
+                        var piece = o.K=="civ"&&kit?.civilianModel!=null?kit.civilianModel:lib.Object(o.K);
                         if (piece == null) continue;
                         go = UnityEngine.Object.Instantiate(piece.gameObject, origin + RaidBoard3D.W(x, y), Quaternion.identity, root);
                         if (!lib.HasOwnPiece(o.K)) go.transform.localScale = lib.FallbackScale(o.K);
@@ -323,7 +323,7 @@ namespace Corrigible.Desk.EditorTools
             {
                 if (Baskin.CellAt(B, p.X, p.Y).T == "wall") continue;
                 int k = p.Y * Baskin.N + p.X;
-                var go = UnityEngine.Object.Instantiate(prefab, origin + RaidBoard3D.W(p.X, p.Y), Quaternion.Euler(0, (k * 41) % 360, 0), root);
+                var go = UnityEngine.Object.Instantiate(prefab, origin + RaidBoard3D.W(p.X, p.Y), Quaternion.Euler(0, lib.BreachRubbleYaw(kit,k), 0), root);
                 go.name = $"Breach rubble {p.X},{p.Y}";
                 go.transform.localScale = scale;
                 foreach (var c in go.GetComponentsInChildren<Collider>()) UnityEngine.Object.DestroyImmediate(c);

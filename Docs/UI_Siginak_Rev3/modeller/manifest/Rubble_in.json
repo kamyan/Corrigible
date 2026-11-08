@@ -1,0 +1,90 @@
+{
+ "name": "Rubble_in",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Yere saçılmış kâğıtlar (düz, detailB), düşmüş bir çekmece, kırık bölme paneli parçası (koyu kumaş) ve yonga; toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi.",
+ "listName": "Gedik molozu · Çağrı merkezi (dağılmış kâğıt)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 170,
+ "trisPerPart": {
+  "Body": 170
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.45,
+   0,
+   -0.45
+  ],
+  "max": [
+   0.45,
+   0.13,
+   0.45
+  ],
+  "size": [
+   0.9,
+   0.13,
+   0.9
+  ]
+ },
+ "materials": [
+  {
+   "key": "rk_dust",
+   "hex": "#6B6257",
+   "rough": 1,
+   "metal": 0,
+   "alpha": 0.55,
+   "tex": "tx_dust (yumuşak kenarlı toz lekesi, kenara doğru saydam, 256²)",
+   "note": "gedik molozunun toz lekesi (zemine yapışık dörtgen, gölgesiz)",
+   "tris": 2,
+   "isNew": true
+  },
+  {
+   "key": "k_in_detailB",
+   "hex": "#B6B3AB",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 35,
+   "isNew": false
+  },
+  {
+   "key": "k_in_wallWest",
+   "hex": "#8E8A92",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 25,
+   "isNew": false
+  },
+  {
+   "key": "k_in_wallTop",
+   "hex": "#A19CA5",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 40,
+   "isNew": false
+  },
+  {
+   "key": "k_in_wallSouth",
+   "hex": "#726E76",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 24,
+   "isNew": false
+  },
+  {
+   "key": "k_in_detailA",
+   "hex": "#74717F",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 44,
+   "isNew": false
+  }
+ ]
+}

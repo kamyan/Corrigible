@@ -28,17 +28,25 @@ namespace Corrigible.Desk
         /// <summary>
         /// Bütün değerler; <paramref name="stagger"/> modüller arası gecikme, <paramref name="shiftRoll"/> VARDİYA çarkının
         /// dönüş süresi (vardiya dizisinde VARDİYA 0,6 s → FON → ERZAK → MALZEME sırayla döner, fişleri dizi iğneler).
+        /// <paramref name="roll"/> &gt; 0 ise bütün modüllerin çark süresi (Revizyon 3 · R19b2: devirden sonra 0,4 s); VARDİYA için
+        /// <paramref name="shiftRoll"/> önceliklidir. İkisi de negatifse token (<c>motion.counterRollS</c>).
         /// </summary>
         public void Show(int shift, double funds, double supplies, double suppliesCapacity, double materials, int freeRegions, int regions,
-            int trust, int trustMax, bool animate, float stagger = 0, float shiftRoll = -1, bool slips = true)
+            int trust, int trustMax, bool animate, float stagger = 0, float shiftRoll = -1, bool slips = true, float roll = -1)
         {
-            modules[0].Show(shift, null, animate, 0, shiftRoll, slips);
-            modules[1].Show(funds, null, animate, stagger, -1, slips);
-            modules[2].Show(Math.Floor(supplies), "/" + Math.Round(suppliesCapacity), animate, stagger * 2, -1, slips);
-            modules[3].Show(Math.Floor(materials), null, animate, stagger * 3, -1, slips);
-            modules[4].Show(freeRegions, "/" + regions, animate, stagger * 4, -1, slips);
-            modules[5].Show(trust, "/" + trustMax, animate, stagger * 5, -1, slips);
+            modules[0].Show(shift, null, animate, 0, RollOf(Slot.Shift, roll, shiftRoll), slips);
+            modules[1].Show(funds, null, animate, stagger, RollOf(Slot.Funds, roll, shiftRoll), slips);
+            modules[2].Show(Math.Floor(supplies), "/" + Math.Round(suppliesCapacity), animate, stagger * 2, RollOf(Slot.Supplies, roll, shiftRoll), slips);
+            modules[3].Show(Math.Floor(materials), null, animate, stagger * 3, RollOf(Slot.Materials, roll, shiftRoll), slips);
+            modules[4].Show(freeRegions, "/" + regions, animate, stagger * 4, RollOf(Slot.FreeRegions, roll, shiftRoll), slips);
+            modules[5].Show(trust, "/" + trustMax, animate, stagger * 5, RollOf(Slot.Trust, roll, shiftRoll), slips);
         }
+
+        /// <summary>
+        /// Modülün çark süresi: VARDİYA'da <paramref name="shiftRoll"/> &gt; 0 ise o, değilse <paramref name="roll"/> (negatif: modül
+        /// token'ı kullanır). Çok haneli değişimde çark başına <c>motion.counterWheelDelayS</c> eklenir (CounterModule).
+        /// </summary>
+        public static float RollOf(Slot slot, float roll, float shiftRoll) => slot == Slot.Shift && shiftRoll > 0 ? shiftRoll : roll;
 
         /// <summary>Vardiya raporu fişleri: VARDİYA, FON, ERZAK, MALZEME sırasıyla; rapor dosyalanınca <see cref="Unpin"/>.</summary>
         public void Pin(string[] texts, Color[] inks)

@@ -1,0 +1,157 @@
+{
+ "name": "MaintRobot",
+ "family": "raidpieces",
+ "budget": "unit",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Paletli kutu gövde, önde küçük kafa ve göz, kafada anten (Ø0,025, tepe 0,76), arkada alet rafı (çekiç, tornavida, boru anahtarı), sağ yanda (−x) mafsallı anahtar kolu. Biçim: basamaklı kutu + yana sarkan büyük anahtar. Gövde renkleri ortak (r_gun / r_maintTop / r_gunW / r_gunS / r_gunD); kırmızı yalnız gözde (r_lens) ve taban halkasında (r_accent). Tür biçimden okunur, etiketteki işaret ikincil.",
+ "listName": "Bakım robotu (2 can, 2 hareket)",
+ "parts": [
+  {
+   "name": "Arm",
+   "parent": "Body",
+   "pivotModel": [
+    -0.205,
+    0.425,
+    -0.03
+   ],
+   "pivotLocal": [
+    -0.205,
+    0.425,
+    -0.03
+   ],
+   "kind": "rotate",
+   "axis": "z",
+   "range": [
+    -20,
+    30
+   ],
+   "rest": 0,
+   "note": "anahtar kolu; omuz gövdenin −x yanında; +30 kol aşağı-içe, −20 yukarı-dışa"
+  }
+ ],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0.098,
+    0.762,
+    -0.02
+   ],
+   "note": "tepe noktası (anten)"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    6.5,
+    0,
+    -4.5
+   ],
+   "yaw": 90,
+   "note": "örnek: Rev2 raid.html plan durumu (u 6, v 4)"
+  }
+ ],
+ "tris": 1210,
+ "trisPerPart": {
+  "Body": 958,
+  "Arm": 252
+ },
+ "budgetTris": 1500,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.4431,
+   0,
+   -0.31
+  ],
+  "max": [
+   0.31,
+   0.762,
+   0.31
+  ],
+  "size": [
+   0.7531,
+   0.762,
+   0.62
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_gunD",
+   "hex": "#26282B",
+   "rough": 0.6,
+   "metal": 0.3,
+   "tris": 326,
+   "isNew": false
+  },
+  {
+   "key": "r_accent",
+   "hex": "#9A1E14",
+   "rough": 0.5,
+   "metal": 0,
+   "tris": 96,
+   "isNew": false
+  },
+  {
+   "key": "r_gunW",
+   "hex": "#46494D",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 268,
+   "isNew": false
+  },
+  {
+   "key": "r_gun",
+   "hex": "#5B5E62",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 100,
+   "isNew": false
+  },
+  {
+   "key": "r_maintTop",
+   "hex": "#686B70",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 28,
+   "isNew": false
+  },
+  {
+   "key": "r_gunS",
+   "hex": "#34373A",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 24,
+   "isNew": false
+  },
+  {
+   "key": "r_lens",
+   "hex": "#B8241A",
+   "rough": 0.3,
+   "metal": 0,
+   "tris": 50,
+   "isNew": false
+  },
+  {
+   "key": "r_steelPin",
+   "hex": "#7F817E",
+   "rough": 0.4,
+   "metal": 0.6,
+   "tris": 306,
+   "isNew": false
+  },
+  {
+   "key": "r_kraft",
+   "hex": "#B89D74",
+   "rough": 0.85,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  }
+ ]
+}

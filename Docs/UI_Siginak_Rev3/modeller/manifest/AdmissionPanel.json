@@ -1,0 +1,430 @@
+{
+ "name": "AdmissionPanel",
+ "family": "admission",
+ "budget": "big",
+ "origin": "alt kenarın ortası, duvar düzlemi (z = 0), tezgâh üstü yüksekliği (dünya y 0,98)",
+ "note": "Tezgâhın arkasında duvara vidalı koyu zeytin sac panel 0,84 × 0,30. Solda duvarı geçen EVRAK GÖZÜ (çekmece 0,22 m odaya çıkar; dış kapağı sahanlıkta, dış interkomun altında), üstünde GİDEN · TELSİZ ağzı (dış kayıt talebi). Ortada BULGU ağzı (inceleme fişleri kayar), sağda pirinç çerçeveli dik TALİMAT yuvası (80 × 210, cam kapaklı) ve solunda kayan satır işaretçisi (Marker + yakut), en sağda ESKİ talimat cebi. İç interkom panelin hemen üstünde.",
+ "listName": "Kabul paneli (duvar: evrak gözü, giden ağzı, talimat, bulgu ağzı)",
+ "parts": [
+  {
+   "name": "Drawer",
+   "parent": "Body",
+   "pivotModel": [
+    -0.26,
+    0.057,
+    -0.034
+   ],
+   "pivotLocal": [
+    -0.26,
+    0.057,
+    -0.034
+   ],
+   "kind": "slide",
+   "axis": "z",
+   "range": [
+    0,
+    -0.22
+   ],
+   "rest": 0,
+   "note": "evrak gözü çekmecesi: 0 = kapalı, −0,22 m = odaya çıkmış (belge / teneke içinde)"
+  },
+  {
+   "name": "Marker",
+   "parent": "Body",
+   "pivotModel": [
+    0.11699999999999999,
+    0.24200000000000002,
+    -0.021
+   ],
+   "pivotLocal": [
+    0.11699999999999999,
+    0.24200000000000002,
+    -0.021
+   ],
+   "kind": "slide",
+   "axis": "y",
+   "range": [
+    0,
+    -0.17
+   ],
+   "rest": 0,
+   "note": "satır işaretçisi: büyüteç bir alanın üstündeyken talimatta eşleşen maddenin hizasına kayar (0,2 s); üstündeki yakut yanar"
+  },
+  {
+   "name": "Jewel",
+   "parent": "Marker",
+   "pivotModel": [
+    0.11499999999999999,
+    0.24200000000000002,
+    -0.028
+   ],
+   "pivotLocal": [
+    -0.0020000000000000018,
+    0,
+    -0.006999999999999999
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "işaretçi yakutu: jewelAmberOff ↔ jewelAmberOn (eşleşme var)"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Drawer",
+   "part": "Drawer",
+   "center": [
+    -0.26,
+    0.078,
+    -0.0487
+   ],
+   "size": [
+    0.095,
+    0.016
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 10,
+   "align": "center",
+   "sample": "EVRAK",
+   "sampleEn": "PAPERS",
+   "note": ""
+  },
+  {
+   "name": "TXT_Out",
+   "part": "Body",
+   "center": [
+    -0.26,
+    0.212,
+    -0.0142
+   ],
+   "size": [
+    0.16,
+    0.017
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 9,
+   "align": "center",
+   "sample": "GİDEN · TELSİZ",
+   "sampleEn": "OUT · RADIO",
+   "note": ""
+  },
+  {
+   "name": "TXT_Strip",
+   "part": "Body",
+   "center": [
+    0.185,
+    0.155,
+    -0.0185
+   ],
+   "size": [
+    0.08,
+    0.21
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "paper (R10: kabul_talimati_vN, 80 × 210 mm)",
+   "font": "Courier Prime 700",
+   "capMm": null,
+   "align": "center",
+   "sample": "",
+   "sampleEn": "",
+   "note": "talimat şeridi; okuma için tık: kâğıt öne gelir"
+  },
+  {
+   "name": "TXT_Holder",
+   "part": "Body",
+   "center": [
+    0.185,
+    0.28600000000000003,
+    -0.0142
+   ],
+   "size": [
+    0.066,
+    0.012
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 7,
+   "align": "center",
+   "sample": "TALİMAT",
+   "sampleEn": "ORDERS",
+   "note": ""
+  },
+  {
+   "name": "TXT_Archive",
+   "part": "Body",
+   "center": [
+    0.325,
+    0.06,
+    -0.0382
+   ],
+   "size": [
+    0.056,
+    0.014
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 8,
+   "align": "center",
+   "sample": "ESKİ",
+   "sampleEn": "OLD",
+   "note": ""
+  },
+  {
+   "name": "TXT_Slip",
+   "part": "Body",
+   "center": [
+    0.02,
+    0.073,
+    -0.0142
+   ],
+   "size": [
+    0.072,
+    0.014
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 8,
+   "align": "center",
+   "sample": "BULGU",
+   "sampleEn": "FINDING",
+   "note": ""
+  }
+ ],
+ "anchors": [
+  {
+   "name": "DrawerTray",
+   "part": "Drawer",
+   "pos": [
+    -0.26,
+    0.025,
+    0.075
+   ],
+   "note": "çekmece tablası (dışarı çıkınca belge / iki teneke burada)"
+  },
+  {
+   "name": "OutSlot",
+   "part": "Body",
+   "pos": [
+    -0.26,
+    0.17,
+    -0.036
+   ],
+   "note": "dış kayıt talebi buraya atılır; gözetmen telsiz odasında sorar (R10 bulgu fişi: “telsizle soruldu”)"
+  },
+  {
+   "name": "StripCenter",
+   "part": "Body",
+   "pos": [
+    0.185,
+    0.155,
+    -0.019
+   ],
+   "note": "talimat şeridinin merkezi"
+  },
+  {
+   "name": "Archive",
+   "part": "Body",
+   "pos": [
+    0.325,
+    0.175,
+    -0.021
+   ],
+   "note": "eski şeritler cebe dik girer; başlıkları (SÜRÜM 1, 2) üstten görünür"
+  },
+  {
+   "name": "SlipMouth",
+   "part": "Body",
+   "pos": [
+    0.02,
+    0.042,
+    -0.036
+   ],
+   "note": "inceleme fişi çıkış noktası (fiş 0,35 s’de 12 cm kayar, BULGULAR kıskacına düşer)"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    2.2,
+    0.98,
+    -0.27
+   ],
+   "yaw": 90,
+   "note": "dünya; kapı duvarı (x 2,20), kapının sağı (odadan), z −0,69…0,15: panel tezgâhın arkasında; iç interkom (z 0,0, y 1,295) panelin hemen üstünde"
+  }
+ ],
+ "tris": 1588,
+ "trisPerPart": {
+  "Body": 1006,
+  "Drawer": 408,
+  "Marker": 64,
+  "Jewel": 110
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.42,
+   0,
+   -0.0715
+  ],
+  "max": [
+   0.42,
+   0.3,
+   0.185
+  ],
+  "size": [
+   0.84,
+   0.3,
+   0.2565
+  ]
+ },
+ "materials": [
+  {
+   "key": "paintOliveDark",
+   "hex": "#353B30",
+   "rough": 0.62,
+   "metal": 0.05,
+   "note": "kapı kanadı, kasa, çerçeve",
+   "tris": 42,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 292,
+   "isNew": true
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 220,
+   "isNew": true
+  },
+  {
+   "key": "paintBlack",
+   "hex": "#20211E",
+   "rough": 0.5,
+   "metal": 0.05,
+   "note": "lamba başlığı, ızgara",
+   "tris": 176,
+   "isNew": true
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 472,
+   "isNew": true
+  },
+  {
+   "key": "plate",
+   "hex": "#B8955A",
+   "rough": 0.45,
+   "metal": 0.35,
+   "tris": 220,
+   "isNew": false
+  },
+  {
+   "key": "paintCream",
+   "hex": "#D6CDB4",
+   "rough": 0.55,
+   "metal": 0,
+   "note": "emaye panel, ölçek zemini",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "glassClear",
+   "hex": "#DCE6E3",
+   "rough": 0.05,
+   "metal": 0,
+   "alpha": 0.18,
+   "note": "saat camı, gösterge camı (Transparent)",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "jewelAmberOff",
+   "hex": "#4A2F12",
+   "rough": 0.25,
+   "metal": 0,
+   "note": "amber mücevher lamba sönük",
+   "tris": 110,
+   "isNew": true
+  }
+ ]
+}

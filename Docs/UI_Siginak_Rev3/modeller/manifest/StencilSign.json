@@ -1,0 +1,92 @@
+{
+ "name": "StencilSign",
+ "family": "walls",
+ "budget": "small",
+ "origin": "çıkartmanın alt kenar ortası (duvar düzlemi z = 0)",
+ "note": "Duvara şablonla boyanmış yazı: boya akıntısı ve sprey sisi dokulu çıkartma + TMP (Big Shoulders Stencil Display 800).",
+ "listName": "KYGA / SIĞINAK 07 duvar yazısı",
+ "parts": [],
+ "texts": [
+  {
+   "name": "TXT_Stencil",
+   "part": "Body",
+   "center": [
+    0,
+    0.08,
+    -0.0009
+   ],
+   "size": [
+    0.8,
+    0.09
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "wallStencil",
+   "font": "Big Shoulders Stencil Display 800",
+   "capMm": 55,
+   "align": "center",
+   "sample": "KYGA / SIĞINAK 07",
+   "sampleEn": "KYGA / SHELTER 07",
+   "note": "K1’de ~22 px; harf aralığı 0,08 em"
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -0.05,
+    1.695,
+    2.3
+   ],
+   "yaw": 0,
+   "note": "arka duvar, pano ve alarm panosunun üstü (rev2 1,77 merkez)"
+  }
+ ],
+ "tris": 2,
+ "trisPerPart": {
+  "Body": 2
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.42,
+   0,
+   -0.0006
+  ],
+  "max": [
+   0.42,
+   0.15,
+   -0.0006
+  ],
+  "size": [
+   0.84,
+   0.15,
+   0
+  ]
+ },
+ "materials": [
+  {
+   "key": "stencilDrips",
+   "hex": "#D9D2BF",
+   "rough": 0.85,
+   "metal": 0,
+   "alpha": 0.9,
+   "tex": "tx_stencilDrips: boya akıntıları ve sprey sisi (kelime yok)",
+   "note": "duvar şablon boyası zemini",
+   "tris": 2,
+   "isNew": true
+  }
+ ]
+}

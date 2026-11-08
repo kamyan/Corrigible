@@ -1,0 +1,79 @@
+{
+ "name": "CabToggle",
+ "family": "cabinet",
+ "budget": "small",
+ "origin": "pano yüzünde merkez",
+ "note": "Krom altıgen somun ve AÇIK/KAPALI plakası; yarasa kol panodan 40 mm dışarı uzanır. Lever yerel x ±28° (yukarı = AÇIK). Tıklama ya da sürükleme çevirir (0,08 s, “klak”).",
+ "listName": "Yarasa kollu anahtar",
+ "parts": [
+  {
+   "name": "Lever",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0,
+    -0.01
+   ],
+   "pivotLocal": [
+    0,
+    0,
+    -0.01
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    -28,
+    28
+   ],
+   "rest": -28,
+   "note": "−28 = yukarı (AÇIK) · +28 = aşağı (KAPALI)"
+  }
+ ],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 172,
+ "trisPerPart": {
+  "Body": 92,
+  "Lever": 80
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.025,
+   -0.035,
+   -0.052
+  ],
+  "max": [
+   0.025,
+   0.035,
+   0
+  ],
+  "size": [
+   0.05,
+   0.07,
+   0.052
+  ]
+ },
+ "materials": [
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "chrome",
+   "hex": "#C8CCCC",
+   "rough": 0.22,
+   "metal": 1,
+   "tris": 128,
+   "isNew": false
+  }
+ ]
+}

@@ -1,0 +1,87 @@
+{
+ "name": "CabPlate",
+ "family": "cabinet",
+ "budget": "small",
+ "origin": "pano yüzünde merkez",
+ "note": "Kazınmış pirinç plaka, iki vida. Yazı TMP (Courier Prime 700, kazıma rengi #2A1E10); EN için plaka ~80 mm.",
+ "listName": "Pirinç plaka",
+ "parts": [],
+ "texts": [
+  {
+   "name": "TXT",
+   "part": "Body",
+   "center": [
+    0,
+    0,
+    -0.0032
+   ],
+   "size": [
+    0.059,
+    0.013
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 8,
+   "align": "center",
+   "sample": "MÜZİK",
+   "sampleEn": "MUSIC",
+   "note": ""
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 172,
+ "trisPerPart": {
+  "Body": 172
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.0375,
+   -0.01,
+   -0.0045
+  ],
+  "max": [
+   0.0375,
+   0.01,
+   0
+  ],
+  "size": [
+   0.075,
+   0.02,
+   0.0045
+  ]
+ },
+ "materials": [
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 128,
+   "isNew": true
+  }
+ ]
+}

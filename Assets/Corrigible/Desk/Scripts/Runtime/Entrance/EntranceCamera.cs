@@ -19,6 +19,7 @@ namespace Corrigible.Desk
         Transform[] path;
         float[] pathFov;
         float elapsed = float.MaxValue, duration = 1;
+        bool linearWalk;
 
         public Camera View => view;
         public bool Moving => elapsed < duration;
@@ -31,6 +32,7 @@ namespace Corrigible.Desk
         {
             if (anchor == null) return;
             path = null;
+            linearWalk = false;
             from = Capture();
             to = new State { position = anchor.position, rotation = anchor.rotation, fieldOfView = fieldOfView };
             duration = seconds < 0 ? transitionSeconds : Mathf.Max(0.0001f, seconds);
@@ -39,9 +41,10 @@ namespace Corrigible.Desk
         }
 
         /// <summary>Bulunduğu yerden <paramref name="points"/> boyunca yürür (uzunluğa göre zamanlanır, baş ve son yumuşak).</summary>
-        public void Walk(Transform[] points, float fieldOfView, float seconds)
+        public void Walk(Transform[] points, float fieldOfView, float seconds, bool linear = false)
         {
             path = points;
+            linearWalk = linear;
             pathFov = new float[points.Length];
             for (int i = 0; i < pathFov.Length; i++) pathFov[i] = fieldOfView;
             from = Capture();
@@ -55,7 +58,8 @@ namespace Corrigible.Desk
         {
             if (elapsed >= duration) return;
             elapsed += Time.unscaledDeltaTime;
-            float t = Ease(Mathf.Clamp01(elapsed / duration));
+            float progress = Mathf.Clamp01(elapsed / duration);
+            float t = linearWalk ? progress : Ease(progress);
             Apply(path != null ? AlongPath(t) : Lerp(from, to, t));
         }
 

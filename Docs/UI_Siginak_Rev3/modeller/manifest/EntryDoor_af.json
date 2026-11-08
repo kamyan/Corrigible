@@ -1,0 +1,76 @@
+{
+ "name": "EntryDoor_af",
+ "family": "raidcivil",
+ "budget": "raid",
+ "origin": "kapı izdüşümünün ortası, kontrplak kenar payının yüzeyi (y = 0)",
+ "note": "Galvaniz oluklu kepenk perdesi (yatay nervürler), iki yan kılavuz ray, üstte yuvarlatılmış sarma kutusu, alt çıta ve tutamak. Paftanın dışında, batı kenar payında (u = −0,15) giriş satırının ortasında durur; dış yüz −x (kameranın gördüğü yüz), kapı +x yönünde tahtanın içine açılır. El çarkı yok, kırmızı/mavi/turuncu bant yok.",
+ "listName": "Giriş kapısı · hangar: sarmal kepenk",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -0.15,
+    0,
+    -3.5
+   ],
+   "yaw": 0,
+   "note": "örnek: giriş satırı 4 (r = 3) · x = u = −0,15, z = −(r + 0,5)"
+  }
+ ],
+ "tris": 272,
+ "trisPerPart": {
+  "Body": 272
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.0525,
+   0,
+   -0.45
+  ],
+  "max": [
+   0.06,
+   0.6,
+   0.45
+  ],
+  "size": [
+   0.1125,
+   0.6,
+   0.9
+  ]
+ },
+ "materials": [
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 126,
+   "isNew": true
+  },
+  {
+   "key": "galv",
+   "hex": "#70756E",
+   "rough": 0.5,
+   "metal": 0.45,
+   "tris": 134,
+   "isNew": false
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 12,
+   "isNew": true
+  }
+ ]
+}

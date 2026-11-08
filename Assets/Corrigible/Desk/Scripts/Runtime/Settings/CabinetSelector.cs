@@ -15,11 +15,12 @@ namespace Corrigible.Desk
         [SerializeField] DeskTarget target;
         [Tooltip("Düğme (yerel z ekseninde döner).")]
         [SerializeField] Transform knob;
+        [SerializeField] PartDriver knobPart;
         [Tooltip("Konumların açıları (yerel z, derece); sıra konum sırasıdır.")]
         [SerializeField] float[] angles = { 40, -40 };
 
         int index;
-        float angle;
+        float angle, hoverLift;
         bool dragged;
 
         public int Index => index;
@@ -83,14 +84,15 @@ namespace Corrigible.Desk
         {
             if (angles.Length == 0) return;
             float goal = angles[index];
-            if (Mathf.Approximately(angle, goal)) return;
             angle = Mathf.MoveTowardsAngle(angle, goal, 80 / 0.12f * Time.unscaledDeltaTime);
+            hoverLift=Mathf.MoveTowards(hoverLift,target!=null&&target.IsHovered?SiginakTheme.Active.NumberOf("motion.hoverLiftMm",4f)*.001f:0,Time.unscaledDeltaTime*.05f);
             Apply();
         }
 
         void Apply()
         {
-            if (knob != null) knob.localRotation = Quaternion.Euler(0, 0, angle);
+            if(knobPart!=null){knobPart.Set(angle);knobPart.transform.localPosition+=Vector3.back*hoverLift;}
+            else if (knob != null) knob.localRotation = Quaternion.Euler(0, 0, angle);
         }
     }
 }

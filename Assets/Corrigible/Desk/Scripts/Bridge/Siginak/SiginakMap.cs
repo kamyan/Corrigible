@@ -35,6 +35,7 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] DeskTarget figureTarget;
         [Tooltip("Yetersiz fonda BASKIN EMRİ VER'e basınca FON sayacı iki kez titrer (Karar 7).")]
         [SerializeField] CounterBank counters;
+        [SerializeField] PlanningBoardPresenter planningBoard;
 
         // Görev fişinin dizisi (S2 › hareket): iğne 0,12 s → iplik 0,25 s → fiş 0,22 s; kapanış iplik 0,15 s → fiş 0,18 s
         const float StringCloseS = 0.15f;
@@ -87,6 +88,7 @@ namespace Corrigible.Desk.Bridge
             slip.ActionClicked += SlipAction;
             slip.CloseClicked += CloseSlip;
             slip.PickClicked += TogglePick;
+            slip.PersonClicked += ShowPerson; squadReport.PersonClicked += ShowPerson;
             frontSlip.ActionClicked += ConfirmFront;
             frontSlip.CancelClicked += CancelFront;
             squadReport.ActionClicked += ConfirmSquad;
@@ -110,6 +112,7 @@ namespace Corrigible.Desk.Bridge
             slip.ActionClicked -= SlipAction;
             slip.CloseClicked -= CloseSlip;
             slip.PickClicked -= TogglePick;
+            slip.PersonClicked -= ShowPerson; squadReport.PersonClicked -= ShowPerson;
             frontSlip.ActionClicked -= ConfirmFront;
             frontSlip.CancelClicked -= CancelFront;
             squadReport.ActionClicked -= ConfirmSquad;
@@ -123,6 +126,12 @@ namespace Corrigible.Desk.Bridge
         }
 
         /// <summary>Yeni oyun / kayıttan devam: fişler kapanır, figür yerine konur, özgürleşme dizisi yeniden hazırlanır.</summary>
+        void ShowPerson(string id)
+        {
+            if (Locked || planningBoard == null) return;
+            squadReport.Hide(); CloseSlip(); planningBoard.ShowPerson(id);
+        }
+
         void ResetState()
         {
             primed = false;
@@ -520,7 +529,7 @@ namespace Corrigible.Desk.Bridge
             rig.FocusMap();
             // 0,2 s: mavi ÖZGÜR damgası iner, tarama 0,5 s'de silinir; teleks iki satır; adaylar 0,12 s arayla çizilir
             layer.PlayFreed(id, 0.2f);
-            telex.Post(Shift, Loc.T("BÖLGE ÖZGÜR"), Loc.F("{0} · {1} fon", Loc.T(GameData.Region(id).Name),
+            telex.Post(Shift, Loc.T("BÖLGE ÖZGÜR"), Loc.F("{0} · {1} fon", GameData.Region(id).Name,
                 DeskFormat.Signed(sim.B.liberationCaptureFunds, 0)), TelexKind.Done);
             var candidates = state.Regions.Where(r => r.Kind == MapRegionKind.Candidate).Select(r => r.Id).ToList();
             if (candidates.Count == 0) return;

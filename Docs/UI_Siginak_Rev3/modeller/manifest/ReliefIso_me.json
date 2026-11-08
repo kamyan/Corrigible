@@ -1,0 +1,71 @@
+{
+ "name": "ReliefIso_me",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Kare çelik çerçevede (0,80) dik duran 3 × 3 ince boru: üstten boru ağızları (koyu iç), yüzlerde dikey borular; çerçevenin ortasında kuşak. Tek iri silindir ya da fan yok (soğutma ünitesiyle karışmaz). Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi.",
+ "listName": "Ayrık blok · Körfez rafinerisi (çerçevede dik boru istifi)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 365,
+ "trisPerPart": {
+  "Body": 365
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.4,
+   0,
+   -0.4
+  ],
+  "max": [
+   0.4,
+   0.555,
+   0.4
+  ],
+  "size": [
+   0.8,
+   0.555,
+   0.8
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_me_detailA",
+   "hex": "#6C7174",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 221,
+   "isNew": false
+  },
+  {
+   "key": "k_me_wallTop",
+   "hex": "#A8A9A3",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 54,
+   "isNew": false
+  },
+  {
+   "key": "k_me_wallSouth",
+   "hex": "#70716C",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 34,
+   "isNew": false
+  },
+  {
+   "key": "k_me_wallWest",
+   "hex": "#8E8F89",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 56,
+   "isNew": false
+  }
+ ]
+}

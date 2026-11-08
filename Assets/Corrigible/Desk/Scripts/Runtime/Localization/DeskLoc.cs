@@ -35,6 +35,19 @@ namespace Corrigible.Desk
             return tables.TryGetValue(lang, out var table) && table.TryGetValue(source, out var value) && !string.IsNullOrEmpty(value) ? value : source;
         }
 
+        /// <summary>
+        /// Bağlama göre çeviri: aynı Türkçe sözcüğün İngilizcede iki karşılığı olduğunda (damga sapında KABUL → ADMIT, tezgâh
+        /// şablonunda KABUL → ADMISSION). Türkçede kaynağın kendisidir. Tablo anahtarı <c>kaynak@@bağlam</c>; o satır yoksa düz
+        /// <see cref="Loc.T"/> gibi davranır. İki argüman da dizgi sabiti olmalı ki <c>LocalizationTool</c> anahtarı toplayabilsin.
+        /// </summary>
+        public string Ctx(string context, string source)
+        {
+            if (Loc.IsSource || string.IsNullOrEmpty(source)) return source;
+            string key = source + "@@" + context;
+            string hit = In(key, Loc.Lang);   // In, Loc.Missing tetiklemeden okur
+            return hit != key ? hit : Loc.T(source);
+        }
+
         void Load()
         {
             if (tables != null) return;

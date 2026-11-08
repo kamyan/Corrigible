@@ -1,0 +1,61 @@
+{
+ "name": "CoffeeRing",
+ "family": "desk",
+ "budget": "small",
+ "origin": "leke ortası, masa üstü (y = 0)",
+ "note": "Geç harekât çıkartması: kahve halkası (alfa doku), gölge yok.",
+ "listName": "Kupa izi",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    0.7,
+    0.76,
+    1.1
+   ],
+   "yaw": 25,
+   "note": "stage late · kupanın solu"
+  }
+ ],
+ "tris": 2,
+ "trisPerPart": {
+  "Body": 2
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.05,
+   0.0004,
+   -0.05
+  ],
+  "max": [
+   0.05,
+   0.0004,
+   0.05
+  ],
+  "size": [
+   0.1,
+   0,
+   0.1
+  ]
+ },
+ "materials": [
+  {
+   "key": "coffeeRingDecal",
+   "hex": "#4A2E1A",
+   "rough": 0.6,
+   "metal": 0,
+   "alpha": 0.38,
+   "tex": "tx_coffeeRing 256² (halka lekesi, alfa)",
+   "note": "kupa izi çıkartması (geç harekât)",
+   "tris": 2,
+   "isNew": true
+  }
+ ]
+}

@@ -56,6 +56,8 @@ namespace Corrigible.Core
     public sealed class SquadOutcome
     {
         public string Type;
+        public string PersonId, PersonName;
+        public bool Dead;
         public bool Rookie, Down, Left, PlateBroken;
         public int HpBefore, HpAfter;
     }
@@ -130,6 +132,11 @@ namespace Corrigible.Core
             if (NextLiberationSector(sector.Region)?.Id != sectorId) return Loc.T("Önce önceki sektörü geri al.");
             var team = S.Teams.FirstOrDefault(TeamReady);
             if (team == null) return Loc.T("Ekip bu vardiya baskına çıktı; vardiyayı bitir, sonraki vardiyada hazır.");
+            if (Board != null)
+            {
+                if (S.Fon < B.liberationRaidCost) return Loc.F("Bu baskın {0} fon ister.", B.liberationRaidCost);
+                return PlanningRaidCheck();
+            }
             if (!SquadCanRaid(team))
                 return Loc.F("Teknisyen yaralı ({0} gün); yerine çıkacak yedek uzman yok.", team.Members.First(m => m.Role == "tek").Down);
             if (S.Fon < B.liberationRaidCost) return Loc.F("Bu baskın {0} fon ister.", B.liberationRaidCost);
@@ -157,8 +164,8 @@ namespace Corrigible.Core
             if (team == null) return new RaidParams();
             var roles = ResolvePick(team, pick);
             var squad = Squad(team, roles);
-            FitPlates(squad, Shelter?.Plates ?? 0);
-            return new RaidParams { Squad = squad, Roles = new List<string> { "tek" }.Concat(roles).ToList() };
+            if (Board == null) FitPlates(squad, Shelter?.Plates ?? 0);
+            return new RaidParams { Squad = squad, Roles = Board != null ? PlanningBoardData.FieldJobs.ToList() : new List<string> { "tek" }.Concat(roles).ToList() };
         }
 
         /// <summary>Zırh plakaları en düşük canlı uzmandan başlayarak birer tane takılır (eşitlikte rol sırası).</summary>
@@ -195,7 +202,7 @@ namespace Corrigible.Core
                     SectorId = sector.Id, MissionKind = sector.MissionKind,
                     RaidNumber = tier, Tier = tier, IsCore = sector.MissionKind == "server" && clearedRegions == GameData.Regions.Length - 1,
                     Traits = traits, Signature = def.Enemy, Event = B.liberationRegionEvents ? def.Event : null,
-                    Squad = Squad(team, roles), Roles = new List<string> { "tek" }.Concat(roles).ToList(), MapSeed = S.Seed, MapSlot = S.Raids, Tactics = 1,
+                    Squad = Squad(team, roles), Roles = Board != null ? PlanningBoardData.FieldJobs.ToList() : new List<string> { "tek" }.Concat(roles).ToList(), MapSeed = S.Seed, MapSlot = S.Raids, Tactics = 1,
                     TargetHpBonus = sector.MissionKind == "server" ? B.liberationServerTargetHp : 0,
                     ExtraMachines = sector.MissionKind == "server" ? B.liberationServerMachines : 0,
                     ExtraTurns = sector.MissionKind == "loot" ? B.liberationLootExtraTurns : B.liberationServerExtraTurns,
@@ -204,7 +211,16 @@ namespace Corrigible.Core
                 },
             };
             // Zırh plakaları baskın emrinde takılır; kırılan baskın dönüşünde düşer
-            FitPlates(S.Raid.Params.Squad, Shelter.Plates);
+            if (Board == null) FitPlates(S.Raid.Params.Squad, Shelter.Plates);
+            else
+            {
+                Board.Locked = true;
+                foreach (var slot in S.Raid.Params.Squad.Where(p => p.EmpBoosts > 0))
+                {
+                    var cell = Board.Equipment.FirstOrDefault(e => e.OwnerId == slot.PersonId && e.Kind == "emp_cell");
+                    if (cell != null) Board.Equipment.Remove(cell);
+                }
+            }
             team.At = sector.Region; team.Busy = 1; team.Task = "baskin"; team.LastPick = roles;
             S.Events.Add(new SimEvent { Type = SimEventType.Raid });
             return ActResult.Success();
@@ -224,7 +240,8 @@ namespace Corrigible.Core
             {
                 // Baskın vardiyayı doldurur: ekip sonraki vardiyada hazır (Busy adımda düşer)
                 team.Task = null; team.Busy = 1;
-                ReturnSquad(team, raid.Params.Squad, result, reward);
+                if (Board == null) ReturnSquad(team, raid.Params.Squad, result, reward);
+                else ReturnPlanningSquad(raid.Params.Squad, result, reward);
             }
             S.RaidLog.Add(new RaidLogEntry
             {
@@ -246,12 +263,14 @@ namespace Corrigible.Core
             if (sector.MissionKind == "loot")
             {
                 S.Fon += B.liberationLootFunds;
-                ShelterLogic.RewardLoot(S, B);
+                if (Board == null) ShelterLogic.RewardLoot(S, B);
+                else PlanningRaidReward(true);
             }
             else
             {
                 S.Fon += B.liberationServerFunds;
-                ShelterLogic.RewardServer(S, B);
+                if (Board == null) ShelterLogic.RewardServer(S, B);
+                else PlanningRaidReward(false);
                 ChangeAlarm(-B.liberationAlarmPerServer, reward);
             }
             var area = LiberationRegion(sector.Region);

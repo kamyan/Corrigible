@@ -1,0 +1,181 @@
+{
+ "name": "Locker",
+ "family": "raidpieces",
+ "budget": "unit",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Paletli dik kule gövde (tepe 0,69, şapkalı), ortada sarı-siyah tehlike şeridi bandı (geometrik şeritler), önde iki büyük C kıskaç (JawL, JawR; düşey eksen). Biçim: uzun dar kule + öne uzanan kıskaçlar. Gövde renkleri ortak (r_gun / r_maintTop / r_gunW / r_gunS / r_gunD); kırmızı yalnız gözde (r_lens) ve taban halkasında (r_accent). Tür biçimden okunur, etiketteki işaret ikincil.",
+ "listName": "Kilitleyici",
+ "parts": [
+  {
+   "name": "JawL",
+   "parent": "Body",
+   "pivotModel": [
+    -0.105,
+    0.43,
+    -0.19
+   ],
+   "pivotLocal": [
+    -0.105,
+    0.43,
+    -0.19
+   ],
+   "kind": "rotate",
+   "axis": "y",
+   "range": [
+    0,
+    25
+   ],
+   "rest": 0,
+   "note": "sol kıskaç; +25° dışa açılır"
+  },
+  {
+   "name": "JawR",
+   "parent": "Body",
+   "pivotModel": [
+    0.105,
+    0.43,
+    -0.19
+   ],
+   "pivotLocal": [
+    0.105,
+    0.43,
+    -0.19
+   ],
+   "kind": "rotate",
+   "axis": "y",
+   "range": [
+    0,
+    -25
+   ],
+   "rest": 0,
+   "note": "sağ kıskaç (ayna); −25° dışa açılır"
+  }
+ ],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0,
+    0.69,
+    0.03
+   ],
+   "note": "tepe noktası"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    6.5,
+    0,
+    -5.5
+   ],
+   "yaw": 90,
+   "note": "örnek: Rev2 raid.html plan durumu (u 6, v 5)"
+  }
+ ],
+ "tris": 1116,
+ "trisPerPart": {
+  "Body": 916,
+  "JawL": 100,
+  "JawR": 100
+ },
+ "budgetTris": 1500,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.31,
+   0,
+   -0.458
+  ],
+  "max": [
+   0.31,
+   0.69,
+   0.31
+  ],
+  "size": [
+   0.62,
+   0.69,
+   0.768
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_gunD",
+   "hex": "#26282B",
+   "rough": 0.6,
+   "metal": 0.3,
+   "tris": 356,
+   "isNew": false
+  },
+  {
+   "key": "r_accent",
+   "hex": "#9A1E14",
+   "rough": 0.5,
+   "metal": 0,
+   "tris": 96,
+   "isNew": false
+  },
+  {
+   "key": "r_gunW",
+   "hex": "#46494D",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 188,
+   "isNew": false
+  },
+  {
+   "key": "r_gun",
+   "hex": "#5B5E62",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 58,
+   "isNew": false
+  },
+  {
+   "key": "r_maintTop",
+   "hex": "#686B70",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 28,
+   "isNew": false
+  },
+  {
+   "key": "r_base",
+   "hex": "#1E1B16",
+   "rough": 0.5,
+   "metal": 0,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "rp_hazardYellow",
+   "hex": "#D9A73A",
+   "rough": 0.7,
+   "metal": 0,
+   "note": "kilitleyici tehlike şeridi sarısı (geometrik şerit; doku yok)",
+   "tris": 144,
+   "isNew": true
+  },
+  {
+   "key": "r_lens",
+   "hex": "#B8241A",
+   "rough": 0.3,
+   "metal": 0,
+   "tris": 50,
+   "isNew": false
+  },
+  {
+   "key": "r_steelPin",
+   "hex": "#7F817E",
+   "rough": 0.4,
+   "metal": 0.6,
+   "tris": 152,
+   "isNew": false
+  }
+ ]
+}

@@ -7,7 +7,7 @@ namespace Corrigible.Tests
     /// <summary>Sığınak harcamaları, personel sınırları, plaka dökümü, revir, yedekler, telsiz ve kayıt/devam için regresyonlar.</summary>
     public class ShelterTests
     {
-        static Simulation Ready(Balance b = null) => Simulation.NewGame(79, b);
+        static Simulation Ready(Balance b = null) => LegacySimulation.NewGame(79, b);
 
         [Test]
         public void Repair_PaysOnceAndFailureDoesNotSpendOrRecord()

@@ -1,0 +1,150 @@
+{
+ "name": "CabRotary",
+ "family": "cabinet",
+ "budget": "small",
+ "origin": "pano yüzünde merkez",
+ "note": "Etekli bakalit düğme ve işaretçi; iki konum ±40° (TÜRKÇE / ENGLISH, her dil kendi dilinde). Tıklama sonraki konuma çevirir (45°, “klonk”).",
+ "listName": "Dil kademe anahtarı",
+ "parts": [
+  {
+   "name": "Knob",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0,
+    -0.003
+   ],
+   "pivotLocal": [
+    0,
+    0,
+    -0.003
+   ],
+   "kind": "rotate",
+   "axis": "z",
+   "range": [
+    40,
+    -40
+   ],
+   "rest": 40,
+   "note": "+40 = TÜRKÇE · −40 = ENGLISH"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_PosTR",
+   "part": "Body",
+   "center": [
+    -0.032,
+    0.036,
+    -0.0032
+   ],
+   "size": [
+    0.05,
+    0.01
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel (gravür)",
+   "font": "Courier Prime 700",
+   "capMm": 6,
+   "align": "center",
+   "sample": "TÜRKÇE",
+   "sampleEn": "",
+   "note": ""
+  },
+  {
+   "name": "TXT_PosEN",
+   "part": "Body",
+   "center": [
+    0.032,
+    0.036,
+    -0.0032
+   ],
+   "size": [
+    0.05,
+    0.01
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel (gravür)",
+   "font": "Courier Prime 700",
+   "capMm": 6,
+   "align": "center",
+   "sample": "ENGLISH",
+   "sampleEn": "",
+   "note": ""
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 476,
+ "trisPerPart": {
+  "Body": 192,
+  "Knob": 284
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.03,
+   -0.03,
+   -0.033
+  ],
+  "max": [
+   0.03,
+   0.03,
+   0
+  ],
+  "size": [
+   0.06,
+   0.06,
+   0.033
+  ]
+ },
+ "materials": [
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 192,
+   "isNew": false
+  },
+  {
+   "key": "bakeliteBlack",
+   "hex": "#181412",
+   "rough": 0.34,
+   "metal": 0,
+   "note": "düğme, kol başı",
+   "tris": 240,
+   "isNew": true
+  },
+  {
+   "key": "paintCream",
+   "hex": "#D6CDB4",
+   "rough": 0.55,
+   "metal": 0,
+   "note": "emaye panel, ölçek zemini",
+   "tris": 44,
+   "isNew": true
+  }
+ ]
+}

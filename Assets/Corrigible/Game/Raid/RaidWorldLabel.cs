@@ -66,11 +66,11 @@ namespace Corrigible.Game.Raid
             screenLabel.Configure(camera, layer, font, minimumFontPixels); screenLabel.SetPaperColor(paperInk);
         }
 
-        public void ShowHealth(int hp, int max, Color ink, bool target = false, bool armor = false, Sprite glyph = null, Color? loss = null)
+        public void ShowHealth(int hp, int max, Color ink, bool target = false, bool armor = false, Sprite glyph = null, Color? loss = null, string personName = null)
         {
             if (screenLabel == null) { Show(Corrigible.Core.Loc.F("{0}/{1}", hp, max), ink, ink); return; }
             gameObject.SetActive(true); screenLabel.SetPaperColor(paperColor);
-            screenLabel.ShowHealth(hp, max, ink, target, armor, glyph, loss); screenLabel.Refresh(transform.position);
+            screenLabel.ShowHealth(hp, max, ink, target, armor, glyph, loss, personName); screenLabel.Refresh(transform.position);
         }
 
         /// <summary>Niyet rozeti (yalnız simge, kâğıtsız); ekran etiketi yoksa gizli.</summary>

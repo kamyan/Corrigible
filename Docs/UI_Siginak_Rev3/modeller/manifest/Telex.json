@@ -1,0 +1,194 @@
+{
+ "name": "Telex",
+ "family": "desk",
+ "budget": "big",
+ "origin": "taban ortası (masa üstü, y = 0)",
+ "note": "Gri-yeşil döküm teleprinter (1950’ler sayfa yazıcısı). Önde 20° eğik klavye tablası: 3 sıra yuvarlak tuş (Ø15 mm) + ara çubuğu; arkada yuvarlak kapak (davlumbaz), ön eğik yüzde koyu cam gözetleme penceresi. Üst arkada döküm çatallarda kâğıt rulosu; kapak önünde krom kâğıt tutucu çubuk (ön mesaj kâğıdı buna kıskaçla asılır). Solda kâğıt şeridi çıkış yarığı ve tuşsuz şerit yolu. Sağ yanda bakalit merdane topuzu; ön dudakta pirinç TELEKS plakası.",
+ "listName": "Teleks",
+ "parts": [],
+ "texts": [
+  {
+   "name": "TXT_Plate",
+   "part": "Body",
+   "center": [
+    0.035,
+    0.021,
+    -0.1922
+   ],
+   "size": [
+    0.09,
+    0.022
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 13,
+   "align": "center",
+   "sample": "TELEKS",
+   "sampleEn": "TELEX",
+   "note": ""
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -0.765,
+    0.76,
+    1.21
+   ],
+   "yaw": -12,
+   "note": "masanın sol önü, operatöre dönük (rev2)"
+  }
+ ],
+ "tris": 2004,
+ "trisPerPart": {
+  "Body": 2004
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.15,
+   0,
+   -0.1936
+  ],
+  "max": [
+   0.168,
+   0.314,
+   0.19
+  ],
+  "size": [
+   0.318,
+   0.314,
+   0.3836
+  ]
+ },
+ "materials": [
+  {
+   "key": "paintGreyGreen",
+   "hex": "#5D665C",
+   "rough": 0.58,
+   "metal": 0.05,
+   "note": "puantaj saati, kart rafı",
+   "tris": 160,
+   "isNew": true
+  },
+  {
+   "key": "paintBlack",
+   "hex": "#20211E",
+   "rough": 0.5,
+   "metal": 0.05,
+   "note": "lamba başlığı, ızgara",
+   "tris": 172,
+   "isNew": true
+  },
+  {
+   "key": "telexWindow",
+   "hex": "#20281F",
+   "rough": 0.25,
+   "metal": 0.3,
+   "tris": 2,
+   "isNew": false
+  },
+  {
+   "key": "chrome",
+   "hex": "#C8CCCC",
+   "rough": 0.22,
+   "metal": 1,
+   "tris": 144,
+   "isNew": false
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 88,
+   "isNew": true
+  },
+  {
+   "key": "telexPaper",
+   "hex": "#EFE4BC",
+   "rough": 0.92,
+   "metal": 0,
+   "tex": "tx_telexPaper: kenar delik sırası ve kesikli kenar çizgisi, kelime yok (mesajlar TMP)",
+   "note": "teleks kâğıdı; Render Face: Both",
+   "tris": 130,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 96,
+   "isNew": true
+  },
+  {
+   "key": "cardboard",
+   "hex": "#8B6B45",
+   "rough": 0.85,
+   "metal": 0,
+   "note": "rulo göbeği (karton)",
+   "tris": 96,
+   "isNew": true
+  },
+  {
+   "key": "keyboard",
+   "hex": "#3C3A30",
+   "rough": 0.6,
+   "metal": 0,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "keyboardKey",
+   "hex": "#B8B29A",
+   "rough": 0.6,
+   "metal": 0,
+   "tris": 884,
+   "isNew": false
+  },
+  {
+   "key": "bakeliteBlack",
+   "hex": "#181412",
+   "rough": 0.34,
+   "metal": 0,
+   "note": "düğme, kol başı",
+   "tris": 96,
+   "isNew": true
+  },
+  {
+   "key": "plate",
+   "hex": "#B8955A",
+   "rough": 0.45,
+   "metal": 0.35,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 48,
+   "isNew": true
+  }
+ ]
+}

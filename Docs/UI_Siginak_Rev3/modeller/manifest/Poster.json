@@ -1,0 +1,199 @@
+{
+ "name": "Poster",
+ "family": "walls",
+ "budget": "small",
+ "origin": "kâğıdın arka yüzü alt kenar ortası (duvar düzlemi z = 0)",
+ "note": "Kâğıt afiş 0,42 × 0,57, −1,5° eğik, hafif dalgalı; sağ alt köşe 30 mm kalkık (arka yüzü görünür), üç köşede bant. Piktogram (fişi çekilmiş kablo) doku; yazılar TMP.",
+ "listName": "Doktrin afişi",
+ "parts": [],
+ "texts": [
+  {
+   "name": "TXT_L1",
+   "part": "Body",
+   "center": [
+    -0.000671438724096946,
+    0.25935878961437697,
+    -0.001524537659598388
+   ],
+   "size": [
+    0.34,
+    0.066
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0.026176948307873153,
+    0.9996573249755573,
+    0
+   ],
+   "role": "posterHead (Courier Prime 700, krem #EFE2CF)",
+   "font": "Courier Prime 700",
+   "capMm": 40,
+   "align": "center",
+   "sample": "AĞA",
+   "sampleEn": "DON'T",
+   "note": "K1’de ~16 px"
+  },
+  {
+   "name": "TXT_L2",
+   "part": "Body",
+   "center": [
+    -0.0022381290803231545,
+    0.19952929871458983,
+    -0.002447213595499958
+   ],
+   "size": [
+    0.37,
+    0.066
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0.026176948307873153,
+    0.9996573249755573,
+    0
+   ],
+   "role": "posterHead (Courier Prime 700, krem #EFE2CF)",
+   "font": "Courier Prime 700",
+   "capMm": 40,
+   "align": "center",
+   "sample": "BAĞLANMA",
+   "sampleEn": "CONNECT",
+   "note": ""
+  },
+  {
+   "name": "TXT_L3",
+   "part": "Body",
+   "center": [
+    -0.0044016538579688715,
+    0.11690762080535999,
+    -0.0028754623404016115
+   ],
+   "size": [
+    0.35,
+    0.05
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0.026176948307873153,
+    0.9996573249755573,
+    0
+   ],
+   "role": "posterHead (Courier Prime 700, krem #EFE2CF)",
+   "font": "Courier Prime 700",
+   "capMm": 30,
+   "align": "center",
+   "sample": "ANALOG KAL",
+   "sampleEn": "STAY ANALOG",
+   "note": "üstünde ayırıcı çizgi (doku)"
+  },
+  {
+   "name": "TXT_L4",
+   "part": "Body",
+   "center": [
+    -0.018265609298177356,
+    0.06880405295897352,
+    -0.0021464400892976226
+   ],
+   "size": [
+    0.26,
+    0.019
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0.026176948307873153,
+    0.9996573249755573,
+    0
+   ],
+   "role": "posterHead (Courier Prime 700, krem #EFE2CF)",
+   "font": "Courier Prime 700",
+   "capMm": 11,
+   "align": "center",
+   "sample": "KYGA · DOKTRİN 1",
+   "sampleEn": "KYGA · DOCTRINE 1",
+   "note": "ikincil"
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    0.68,
+    1.095,
+    2.3
+   ],
+   "yaw": 0,
+   "note": "arka duvar, alarm panosunun sağı (rev2 0,68 · 1,38)"
+  }
+ ],
+ "tris": 228,
+ "trisPerPart": {
+  "Body": 228
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.2391,
+   -0.0054,
+   -0.0308
+  ],
+  "max": [
+   0.2391,
+   0.586,
+   -0.0008
+  ],
+  "size": [
+   0.4782,
+   0.5914,
+   0.03
+  ]
+ },
+ "materials": [
+  {
+   "key": "posterPrint",
+   "hex": "#9A1E14",
+   "rough": 0.7,
+   "metal": 0,
+   "tex": "tx_poster 880×1200: krem bordür, kırmızı zemin, fişi çekilmiş kablo piktogramı, ayırıcı çizgi, aşınma; kelime yok (TMP)",
+   "note": "doktrin afişi baskısı",
+   "tris": 96,
+   "isNew": true
+  },
+  {
+   "key": "posterBack",
+   "hex": "#E3D8BE",
+   "rough": 0.9,
+   "metal": 0,
+   "note": "afişin arka yüzü (kalkık köşede görünür)",
+   "tris": 96,
+   "isNew": true
+  },
+  {
+   "key": "r_tape",
+   "hex": "#ECE2BE",
+   "rough": 0.85,
+   "metal": 0,
+   "alpha": 0.78,
+   "tris": 36,
+   "isNew": false
+  }
+ ]
+}

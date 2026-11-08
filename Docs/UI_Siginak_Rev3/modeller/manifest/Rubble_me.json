@@ -1,0 +1,90 @@
+{
+ "name": "Rubble_me",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Yere düşmüş iki kesik boru parçası (ağızları koyu), yatık bir flanş, kaplama sacı parçaları ve yonga; toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi.",
+ "listName": "Gedik molozu · Körfez rafinerisi (kesik boru parçaları)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 160,
+ "trisPerPart": {
+  "Body": 160
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.45,
+   0,
+   -0.45
+  ],
+  "max": [
+   0.45,
+   0.1635,
+   0.45
+  ],
+  "size": [
+   0.9,
+   0.1635,
+   0.9
+  ]
+ },
+ "materials": [
+  {
+   "key": "rk_dust",
+   "hex": "#6B6257",
+   "rough": 1,
+   "metal": 0,
+   "alpha": 0.55,
+   "tex": "tx_dust (yumuşak kenarlı toz lekesi, kenara doğru saydam, 256²)",
+   "note": "gedik molozunun toz lekesi (zemine yapışık dörtgen, gölgesiz)",
+   "tris": 2,
+   "isNew": true
+  },
+  {
+   "key": "k_me_detailA",
+   "hex": "#6C7174",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "k_me_wallTop",
+   "hex": "#A8A9A3",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 58,
+   "isNew": false
+  },
+  {
+   "key": "k_me_wallSouth",
+   "hex": "#70716C",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 39,
+   "isNew": false
+  },
+  {
+   "key": "k_me_wallWest",
+   "hex": "#8E8F89",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 33,
+   "isNew": false
+  },
+  {
+   "key": "k_me_detailB",
+   "hex": "#646B70",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 16,
+   "isNew": false
+  }
+ ]
+}

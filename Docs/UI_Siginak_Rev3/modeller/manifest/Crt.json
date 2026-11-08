@@ -1,0 +1,262 @@
+{
+ "name": "Crt",
+ "family": "crt",
+ "budget": "big",
+ "origin": "taban ortası (masa yüzeyi, y = 0)",
+ "note": "1950’ler monitörü: yuvarlatılmış kasa, geriye daralan tüp kaputu (üstte ve yanlarda havalandırma panelleri, yarıklar dokuda), derin bezel, hafif bombeli ekran (UV 0–1, CRT dokusu buraya; crtScreen emissive). Altta iki bakalit düğme, yeşil hazır LED’i, pirinç TELSİZ · K-07 plakası. Yanlarda taşıma sapları, arkadan masanın arkasına inen kablo.",
+ "listName": "CRT monitör (TELSİZ · K-07)",
+ "parts": [
+  {
+   "name": "Screen",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.218,
+    -0.205
+   ],
+   "pivotLocal": [
+    0,
+    0.218,
+    -0.205
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "ekran: crtScreen (açık, emissive CRT dokusu) ↔ kapalı (emissive 0); UV 0–1 bombeli yama"
+  },
+  {
+   "name": "Led",
+   "parent": "Body",
+   "pivotModel": [
+    0.16,
+    0.038,
+    -0.205
+   ],
+   "pivotLocal": [
+    0.16,
+    0.038,
+    -0.205
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "hazır LED’i: crtLed (açık) ↔ jewelOff"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Plate",
+   "part": "Body",
+   "center": [
+    0.012,
+    0.038,
+    -0.2022
+   ],
+   "size": [
+    0.12,
+    0.017
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 10,
+   "align": "center",
+   "sample": "TELSİZ · K-07",
+   "sampleEn": "RADIO · K-07",
+   "note": "K5a’da büyük harf ≈ 20 px"
+  }
+ ],
+ "anchors": [
+  {
+   "name": "ScreenCenter",
+   "part": "Body",
+   "pos": [
+    0,
+    0.218,
+    -0.215
+   ],
+   "note": "K5a hedefi (screenLocalPos (0, −0,02, 0,62) bu noktaya göre)"
+  }
+ ],
+ "lights": [
+  {
+   "name": "ScreenLight",
+   "part": "Screen",
+   "pos": [
+    0,
+    0.16799999999999998,
+    -0.62
+   ],
+   "type": "point",
+   "color": "#7FD9A0",
+   "shadows": false,
+   "note": "Rev2 crtI 0,8, menzil 2,4; ekran kapalıyken 0"
+  }
+ ],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    1.3436,
+    0.76,
+    1.915
+   ],
+   "yaw": 35,
+   "note": "dünya; masa yereli (-0.240, 0.760, 0.070), yaw +0: masanın sol-orta kısmı, kaput masanın arka kenarına kadar"
+  }
+ ],
+ "tris": 2126,
+ "trisPerPart": {
+  "Body": 1800,
+  "Screen": 216,
+  "Led": 110
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.2435,
+   -0.0606,
+   -0.2338
+  ],
+  "max": [
+   0.2435,
+   0.38,
+   0.278
+  ],
+  "size": [
+   0.487,
+   0.4406,
+   0.5118
+  ]
+ },
+ "materials": [
+  {
+   "key": "rubber",
+   "hex": "#1C1C1A",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 428,
+   "isNew": false
+  },
+  {
+   "key": "crtCase",
+   "hex": "#4F5446",
+   "rough": 0.62,
+   "metal": 0.05,
+   "tris": 216,
+   "isNew": false
+  },
+  {
+   "key": "crtVent",
+   "hex": "#3A3F35",
+   "rough": 0.7,
+   "metal": 0.05,
+   "tex": "tx_vent (yatay yarık dizisi, alfa yok, 256 px)",
+   "note": "CRT havalandırma paneli (yarıklar dokuda)",
+   "tris": 132,
+   "isNew": true
+  },
+  {
+   "key": "crtBezel",
+   "hex": "#1C1F19",
+   "rough": 0.6,
+   "metal": 0,
+   "tris": 256,
+   "isNew": false
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 248,
+   "isNew": true
+  },
+  {
+   "key": "bakeliteBlack",
+   "hex": "#181412",
+   "rough": 0.34,
+   "metal": 0,
+   "note": "düğme, kol başı",
+   "tris": 240,
+   "isNew": true
+  },
+  {
+   "key": "paintCream",
+   "hex": "#D6CDB4",
+   "rough": 0.55,
+   "metal": 0,
+   "note": "emaye panel, ölçek zemini",
+   "tris": 24,
+   "isNew": true
+  },
+  {
+   "key": "chrome",
+   "hex": "#C8CCCC",
+   "rough": 0.22,
+   "metal": 1,
+   "tris": 96,
+   "isNew": false
+  },
+  {
+   "key": "plate",
+   "hex": "#B8955A",
+   "rough": 0.45,
+   "metal": 0.35,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 36,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 80,
+   "isNew": true
+  },
+  {
+   "key": "crtScreen",
+   "hex": "#07100B",
+   "rough": 0.9,
+   "metal": 0,
+   "emissive": "#A6E8B8",
+   "ei": 1,
+   "tris": 216,
+   "isNew": false
+  },
+  {
+   "key": "crtLed",
+   "hex": "#8FE3A8",
+   "rough": 0.3,
+   "metal": 0,
+   "emissive": "#3FBF5F",
+   "ei": 1.5,
+   "tris": 110,
+   "isNew": false
+  }
+ ]
+}

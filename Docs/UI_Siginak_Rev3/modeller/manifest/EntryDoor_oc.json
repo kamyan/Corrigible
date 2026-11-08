@@ -1,0 +1,87 @@
+{
+ "name": "EntryDoor_oc",
+ "family": "raidcivil",
+ "budget": "raid",
+ "origin": "kapı izdüşümünün ortası, kontrplak kenar payının yüzeyi (y = 0)",
+ "note": "İki kare dikme, iki kanatlı boru çerçeveli kapı, tel örgü dolgu (alfa), kanat başına çapraz gergi ve ortada sürgü. Paftanın dışında, batı kenar payında (u = −0,15) giriş satırının ortasında durur; dış yüz −x (kameranın gördüğü yüz), kapı +x yönünde tahtanın içine açılır. El çarkı yok, kırmızı/mavi/turuncu bant yok.",
+ "listName": "Giriş kapısı · maden limanı: tel örgülü liman kapısı",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -0.15,
+    0,
+    -3.5
+   ],
+   "yaw": 0,
+   "note": "örnek: giriş satırı 4 (r = 3) · x = u = −0,15, z = −(r + 0,5)"
+  }
+ ],
+ "tris": 328,
+ "trisPerPart": {
+  "Body": 328
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.04,
+   0,
+   -0.45
+  ],
+  "max": [
+   0.045,
+   0.585,
+   0.45
+  ],
+  "size": [
+   0.085,
+   0.585,
+   0.9
+  ]
+ },
+ "materials": [
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 172,
+   "isNew": true
+  },
+  {
+   "key": "galv",
+   "hex": "#70756E",
+   "rough": 0.5,
+   "metal": 0.45,
+   "tris": 120,
+   "isNew": false
+  },
+  {
+   "key": "rc_mesh",
+   "hex": "#4C4F4C",
+   "rough": 0.6,
+   "metal": 0.3,
+   "alpha": 0.55,
+   "tex": "tx_mesh (kare tel örgü 5 cm, alfa kesme; 256²)",
+   "note": "liman kapısı tel örgüsü",
+   "tris": 24,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 12,
+   "isNew": true
+  }
+ ]
+}

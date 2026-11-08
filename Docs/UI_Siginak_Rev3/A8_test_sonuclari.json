@@ -1,0 +1,154 @@
+{
+  "date": "2026-11-07",
+  "unity": "6000.3.12f1",
+  "editMode": {
+    "summary": {
+      "Total": 964,
+      "Passed": 964,
+      "Failed": 0,
+      "Skipped": 0,
+      "Inconclusive": 0
+    },
+    "duration": 60.22
+  },
+  "playMode": {
+    "summary": {
+      "total": 79,
+      "passed": 79,
+      "failed": 0,
+      "skipped": 0,
+      "inconclusive": 0
+    },
+    "duration": 304.89
+  },
+  "newPlayCases": [
+    {
+      "name": "Corrigible.Desk.Tests.CabinetRoomPlayTests.IdleDesk_AllowsTheExitCover_WhenCabinetIsOpen",
+      "status": "Passed"
+    },
+    {
+      "name": "Corrigible.Desk.Tests.CabinetRoomPlayTests.OpenDocument_LocksExit_AndDeniedClickDoesNotSaveOrChangeTheGame",
+      "status": "Passed"
+    },
+    {
+      "name": "Corrigible.Desk.Tests.EntrancePlayTests.BlankDeck_WithoutSave_StartsNewCampaign_WithFirstShiftCard",
+      "status": "Passed"
+    },
+    {
+      "name": "Corrigible.Desk.Tests.EntrancePlayTests.Card_Clamps80Holes_AndKeepsTheTrueShift_InBothLanguages",
+      "status": "Passed"
+    },
+    {
+      "name": "Corrigible.Desk.Tests.EntrancePlayTests.ClockFace_ContinuesTheSavedCampaign_AfterStampDoorAndBlackHold",
+      "status": "Passed"
+    },
+    {
+      "name": "Corrigible.Desk.Tests.EntrancePlayTests.Fader_RaycastAndPointerProjection_UpdatesTheChosenChannel",
+      "status": "Passed"
+    },
+    {
+      "name": "Corrigible.Desk.Tests.EntrancePlayTests.Mute_DropsNeedlesAndLamps_ButPreservesSlidersAndDigits",
+      "status": "Passed"
+    },
+    {
+      "name": "Corrigible.Desk.Tests.EntrancePlayTests.NewCampaign_RequiresTwoClicksWithSave_AndExpiresWithoutDeletingIt",
+      "status": "Passed"
+    }
+  ],
+  "audit": {
+    "scenes": [
+      {
+        "path": "Assets/Corrigible/Desk/Scenes/Giris.unity",
+        "missing": 0
+      },
+      {
+        "path": "Assets/Corrigible/Desk/Scenes/DeskGame.unity",
+        "missing": 0
+      },
+      {
+        "path": "Assets/Corrigible/Scenes/Baskin.unity",
+        "missing": 0
+      }
+    ],
+    "prefsChanged": [],
+    "storage": "",
+    "version": 15,
+    "compileFailed": false,
+    "localization": []
+  },
+  "entryTimeline": {
+    "stamp": 0.6950798,
+    "wheel": 1.368866,
+    "leaf": 2.05578232,
+    "load": 2.04750443,
+    "open": 2.65567017,
+    "black": 4.26042557,
+    "desk": 5.235283,
+    "blackHold": 0.97485733,
+    "maxShadows": 3,
+    "pending": "None"
+  },
+  "saves": [
+    {
+      "file": "player_profile.json",
+      "unchanged": true
+    },
+    {
+      "file": "liberation_savegame.json",
+      "unchanged": true
+    },
+    {
+      "file": "savegame.json",
+      "unchanged": true
+    },
+    {
+      "file": "planning_board_layout.json",
+      "unchanged": true
+    },
+    {
+      "file": "liberation_desk.json",
+      "unchanged": true
+    }
+  ],
+  "fontAssetsMatchTaskStart": true,
+  "newEditCases": [
+    {
+      "name": "Corrigible.Desk.Tests.Rev3Stage8EntranceTests.Cabinet_UsesTheModelPivotsAndReadablePlates(\"SettingsCabinet\",-95)",
+      "status": "Passed"
+    },
+    {
+      "name": "Corrigible.Desk.Tests.Rev3Stage8EntranceTests.Cabinet_UsesTheModelPivotsAndReadablePlates(\"SettingsCabinetMenu\",-120)",
+      "status": "Passed"
+    },
+    {
+      "name": "Corrigible.Desk.Tests.Rev3Stage8EntranceTests.CancellationSlip_FitsBothLanguages_WithoutShrinking(\"İPTAL EDİLİR\\nV.014\")",
+      "status": "Passed"
+    },
+    {
+      "name": "Corrigible.Desk.Tests.Rev3Stage8EntranceTests.CancellationSlip_FitsBothLanguages_WithoutShrinking(\"TO BE CANCELLED\\nS.014\")",
+      "status": "Passed"
+    },
+    {
+      "name": "Corrigible.Desk.Tests.Rev3Stage8EntranceTests.Clock_Uses80DistinctOrderedAnchors_AndSeparateFreshHole",
+      "status": "Passed"
+    },
+    {
+      "name": "Corrigible.Desk.Tests.Rev3Stage8EntranceTests.PrintedMeshes_HaveNormalizedUV_NotMetreProjection(\"CabCounter_Wheel0\")",
+      "status": "Passed"
+    },
+    {
+      "name": "Corrigible.Desk.Tests.Rev3Stage8EntranceTests.PrintedMeshes_HaveNormalizedUV_NotMetreProjection(\"PunchClock_Wheel0\")",
+      "status": "Passed"
+    },
+    {
+      "name": "Corrigible.Desk.Tests.Rev3Stage8EntranceTests.PrintedMeshes_HaveNormalizedUV_NotMetreProjection(\"CabGauge_Body\")",
+      "status": "Passed"
+    },
+    {
+      "name": "Corrigible.Desk.Tests.Rev3Stage8EntranceTests.PrintedMeshes_HaveNormalizedUV_NotMetreProjection(\"ShiftCard_Tilt\")",
+      "status": "Passed"
+    }
+  ],
+  "afterPlayLayoutChange": "İptal fişi 101,5 × 39 mm; iki yeni TR/EN taşma testi son EditMode turunda geçti. Runtime davranışı değişmedi.",
+  "menuScanNote": "Ham punto ölçümünden sonra iptal fişi ve oda menü plakası genişletildi; harflerin dünya ölçeği aynı kaldı."
+}

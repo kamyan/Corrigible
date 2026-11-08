@@ -1,0 +1,88 @@
+{
+ "name": "Relief_jk",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Sökülmüş şalt pano gövdeleri: her yüzde iki geniş kapı, kapı çizgileri, kapı başına beş yatay kabarık panjur çıtası ve yuvarlak kilit topuzu (detailB); üstte taşan çatı sacı, altta koyu taban profili. Gri tonda: yatay panjur taraması. İki kat: taban profili + pano. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided.",
+ "listName": "Duvar barikatı · Çip fabrikası (sökülmüş pano gövdeleri)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 328,
+ "trisPerPart": {
+  "Body": 328
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.47,
+   0,
+   -0.47
+  ],
+  "max": [
+   0.47,
+   0.5565,
+   0.47
+  ],
+  "size": [
+   0.94,
+   0.5565,
+   0.94
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_jk_detailA",
+   "hex": "#6C726E",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 17,
+   "isNew": false
+  },
+  {
+   "key": "k_jk_wallWest",
+   "hex": "#A0A49F",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 63,
+   "isNew": false
+  },
+  {
+   "key": "k_jk_wallSouth",
+   "hex": "#818580",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 61,
+   "isNew": false
+  },
+  {
+   "key": "k_jk_wallTop",
+   "hex": "#B2B6B0",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 75,
+   "isNew": false
+  },
+  {
+   "key": "k_jk_detailB",
+   "hex": "#D5D8D1",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 76,
+   "isNew": false
+  },
+  {
+   "key": "rk_void",
+   "hex": "#34312C",
+   "rough": 1,
+   "metal": 0,
+   "note": "oyuk içi: palet ağzı, tutamak deliği, kızak arası (ışık almayan derinlik); bütün kitlerde ortak",
+   "tris": 36,
+   "isNew": true
+  }
+ ]
+}

@@ -1,0 +1,80 @@
+{
+ "name": "Relief_sa",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Altta iki ahşap takoz (detailA) üstünde üç çelik levha (kenarları kaçık); üstte çelik kalıp panosu: sık nervür ızgarası (yüz başına 4 × 3 göz). Gri tonda: kare ızgara + ince yatay levha çizgileri. İki kat: levha istifi + kalıp. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided.",
+ "listName": "Duvar barikatı · Hidroelektrik santrali (takozlar üstünde çelik levha ve kalıp istifi)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 359,
+ "trisPerPart": {
+  "Body": 359
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.47,
+   0,
+   -0.47
+  ],
+  "max": [
+   0.47,
+   0.555,
+   0.47
+  ],
+  "size": [
+   0.94,
+   0.555,
+   0.94
+  ]
+ },
+ "materials": [
+  {
+   "key": "rk_void",
+   "hex": "#34312C",
+   "rough": 1,
+   "metal": 0,
+   "note": "oyuk içi: palet ağzı, tutamak deliği, kızak arası (ışık almayan derinlik); bütün kitlerde ortak",
+   "tris": 8,
+   "isNew": true
+  },
+  {
+   "key": "k_sa_detailA",
+   "hex": "#5B5148",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 52,
+   "isNew": false
+  },
+  {
+   "key": "k_sa_wallWest",
+   "hex": "#7E8790",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 114,
+   "isNew": false
+  },
+  {
+   "key": "k_sa_wallSouth",
+   "hex": "#656E76",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 59,
+   "isNew": false
+  },
+  {
+   "key": "k_sa_wallTop",
+   "hex": "#959CA2",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 126,
+   "isNew": false
+  }
+ ]
+}

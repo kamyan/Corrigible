@@ -1,0 +1,131 @@
+{
+ "name": "ArmorDrone",
+ "family": "raidpieces",
+ "budget": "unit",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Dron ailesi, ağırlaştırılmış: kalın akrilik çubuk (Ø0,068), sekizgen gövde, altında sekizgen zırh eteği, çelik zırh bandı ve eğik ön levha, dört rotor kanal (halka) içinde, göz eğik ön levhanın alt yarısında. Biçim: dört davul + etekli ağır gövde (dronun ince ayaklı hafif siluetinden ayrılır). Tepe 0,53. Gövde renkleri ortak (r_gun / r_maintTop / r_gunW / r_gunS / r_gunD); kırmızı yalnız gözde (r_lens) ve taban halkasında (r_accent). Tür biçimden okunur, etiketteki işaret ikincil.",
+ "listName": "Zırhlı dron (2 can, 1 zırh)",
+ "parts": [],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0,
+    0.53,
+    0
+   ],
+   "note": "tepe noktası"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 1162,
+ "trisPerPart": {
+  "Body": 1162
+ },
+ "budgetTris": 1500,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.3492,
+   0,
+   -0.3492
+  ],
+  "max": [
+   0.3492,
+   0.53,
+   0.3492
+  ],
+  "size": [
+   0.6984,
+   0.53,
+   0.6984
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_gunD",
+   "hex": "#26282B",
+   "rough": 0.6,
+   "metal": 0.3,
+   "tris": 248,
+   "isNew": false
+  },
+  {
+   "key": "r_accent",
+   "hex": "#9A1E14",
+   "rough": 0.5,
+   "metal": 0,
+   "tris": 80,
+   "isNew": false
+  },
+  {
+   "key": "r_acrylic",
+   "hex": "#DCE6EA",
+   "rough": 0.1,
+   "metal": 0,
+   "alpha": 0.55,
+   "tris": 20,
+   "isNew": false
+  },
+  {
+   "key": "r_gun",
+   "hex": "#5B5E62",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 88,
+   "isNew": false
+  },
+  {
+   "key": "r_maintTop",
+   "hex": "#686B70",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 40,
+   "isNew": false
+  },
+  {
+   "key": "r_armor_light",
+   "hex": "#9A9C98",
+   "rough": 0.35,
+   "metal": 0.7,
+   "tris": 92,
+   "isNew": false
+  },
+  {
+   "key": "r_armor_mid",
+   "hex": "#7F817E",
+   "rough": 0.35,
+   "metal": 0.7,
+   "tris": 48,
+   "isNew": false
+  },
+  {
+   "key": "r_lens",
+   "hex": "#B8241A",
+   "rough": 0.3,
+   "metal": 0,
+   "tris": 50,
+   "isNew": false
+  },
+  {
+   "key": "r_gunS",
+   "hex": "#34373A",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 208,
+   "isNew": false
+  },
+  {
+   "key": "r_gunW",
+   "hex": "#46494D",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 288,
+   "isNew": false
+  }
+ ]
+}

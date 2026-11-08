@@ -42,10 +42,10 @@ namespace Corrigible.Core
             _ => string.Empty,
         };
 
-        public static int Capacity(ShelterState s, Balance b) => Math.Max(0, s.Room(Living)?.Level ?? 0) * b.shelterResidentsPerLevel;
-        public static int AvailableWorkers(ShelterState s) => Math.Max(0, s.Population - s.Rooms.Sum(r => r.Workers));
+        public static int Capacity(ShelterState s, Balance b) => s.Plan != null ? b.boardResidentCapacity : Math.Max(0, s.Room(Living)?.Level ?? 0) * b.shelterResidentsPerLevel;
+        public static int AvailableWorkers(ShelterState s) => s.Plan != null ? s.Plan.People.Count(p => p.Alive && p.Down <= 0 && p.Job == "rest") : Math.Max(0, s.Population - s.Rooms.Sum(r => r.Workers));
         public static int WorkerCapacity(ShelterRoomState room, Balance b) => Math.Max(0, room.Level) * b.shelterWorkersPerLevel;
-        public static double SuppliesCapacity(ShelterState s, Balance b) => Math.Max(1, s.Room(Living)?.Level ?? 0) * b.shelterSuppliesStoragePerLevel;
+        public static double SuppliesCapacity(ShelterState s, Balance b) => s.Plan != null ? b.boardSuppliesCapacity : Math.Max(1, s.Room(Living)?.Level ?? 0) * b.shelterSuppliesStoragePerLevel;
         public static int PlateCapacity(ShelterState s, Balance b) => Math.Max(0, s.Room(Workshop)?.Level ?? 0) * b.shelterPlatesPerLevel;
         public static int ReserveCapacity(ShelterState s, Balance b) => Math.Max(0, s.Room(Living)?.Level ?? 0) * b.shelterReservesPerLevel;
         /// <summary>Telsizde görevli kişi (oda onarılmamışsa sıfır).</summary>

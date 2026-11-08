@@ -10,7 +10,10 @@ namespace Corrigible.Desk.EditorTools
     /// PROMPT §7 durum fikstürleri (yalnız editörde, Play içinde): açık yeni bir kurtuluş oyununa mevcut komutları
     /// sırayla uygular (baskın + sonuç, cephe seçimi, gün ilerletme). Simülasyon kodu değişmez; baskın sahnesi yüklenmez
     /// (komutlar doğrudan simülasyona gider, olaylar boşaltılır). Kayıt dosyası bir sonraki komutta güncellenir:
-    /// deneme öncesi yedek alınmalıdır.
+    /// deneme öncesi yedek alınmalıdır. Kartlı pano kipinde (Revizyon 3; yeni oyunun varsayılanı) gün oyunun komut yoluyla
+    /// ilerler: her vardiya <c>PrintShift</c> + <c>FileShift(ReceiptId)</c> (kayda <c>board_print</c> / <c>board_file</c> girer);
+    /// plan geçersizse ya da fiş reddedilirse fikstür nedeniyle durur. Devir fişinin (R19c) sunum fikstürleri
+    /// <see cref="HandoverSlipFixtures"/>'tedir.
     /// V.014 — Batı Avrupa özgür, Doğu Avrupa cephe 1/3, ekip hazır; sığınak PROMPT §7'deki gibi (bellekte). V.019 — V.014'ten devam, Doğu Avrupa özgürleşir
     /// (K3 dizisi oynar). V.015-yaralı — V.014'ten devam, baskın başarısız, Teknisyen düştü (yerine yedek çıkar, piyon yatık).
     /// K6 — V.014'te baskın başarısız (fon 62 → 50, Teknisyen düştü) ve bir YAPILAMADI satırı; şalter indirilince
@@ -33,7 +36,32 @@ namespace Corrigible.Desk.EditorTools
             if (!r.Ok) throw new InvalidOperationException(sector + " sonuç: " + r.Msg);
         }
 
-        static void StepTo(Simulation sim, int day) { while (sim.S.Day < day) sim.Step(); }
+        /// <summary>
+        /// Gün ilerletir. Kartlı pano kipinde vardiya yalnız devir fişiyle kapanır (<c>Step</c> fişsiz ilerlemez): basılı fiş yoksa
+        /// <c>PrintShift</c>, sonra <c>FileShift(ReceiptId)</c> (oyunun kendi komutları, kayda yazılır; RNG ve gün oyundaki gibi).
+        /// Eski yolda <c>Step</c>. Basım ya da dosyalama reddedilirse ya da gün ilerlemezse (plan geçersiz, harekât bitti, baskın
+        /// sürüyor) sonsuz döngü yerine nedeniyle hata verir.
+        /// </summary>
+        static void StepTo(Simulation sim, int day)
+        {
+            while (sim.S.Day < day)
+            {
+                int before = sim.S.Day;
+                if (sim.Board != null)
+                {
+                    if (!sim.Board.Printed)
+                    {
+                        var printed = sim.PrintShift();
+                        if (!printed.Ok) throw new InvalidOperationException($"Gün {before}: devir fişi basılamadı ({printed.Msg}).");
+                    }
+                    var filed = sim.FileShift(sim.Board.ReceiptId);
+                    if (!filed.Ok) throw new InvalidOperationException($"Gün {before}: devir fişi dosyalanamadı ({filed.Msg}).");
+                }
+                else sim.Step();
+                if (sim.S.Day == before)
+                    throw new InvalidOperationException($"Gün {before} ilerlemiyor (baskın sürüyor ya da harekât bitti).");
+            }
+        }
 
         /// <summary>Yeni oyundan V.014: üç baskınla Batı Avrupa, cephe Doğu Avrupa, 01 geri alındı; gün 13 (vardiya 014).</summary>
         public static void ApplyV014(Simulation sim)

@@ -1,0 +1,87 @@
+{
+ "name": "CeilingDebris",
+ "family": "raidpieces",
+ "budget": "raid",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Düşmüş tavan: kırık oluklu galvaniz sac (ortadan bükük), bükük I kiriş, filiz demirli beton topak ve küçük parça; altında is lekesi (decal, α .45, r 0,44). Tepe ≤ 0,36, kırmızısız. Kırılınca dağılır, moloz bırakmaz.",
+ "listName": "Tavan enkazı (Afrika olayı)",
+ "parts": [],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0,
+    0.3,
+    0
+   ],
+   "note": "tepe noktası (≈0,30)"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 320,
+ "trisPerPart": {
+  "Body": 320
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.44,
+   -0.001,
+   -0.3608
+  ],
+  "max": [
+   0.44,
+   0.2934,
+   0.3608
+  ],
+  "size": [
+   0.88,
+   0.2944,
+   0.7216
+  ]
+ },
+ "materials": [
+  {
+   "key": "rp_soot",
+   "hex": "#2B241D",
+   "rough": 1,
+   "metal": 0,
+   "alpha": 0.45,
+   "note": "enkaz altı is lekesi (decal; gölgesiz)",
+   "tris": 16,
+   "isNew": true
+  },
+  {
+   "key": "rp_corrugated",
+   "hex": "#7C817B",
+   "rough": 0.85,
+   "metal": 0.3,
+   "note": "oluklu galvaniz sac (mat)",
+   "tris": 128,
+   "isNew": true
+  },
+  {
+   "key": "rp_beam",
+   "hex": "#4D4943",
+   "rough": 0.88,
+   "metal": 0.25,
+   "note": "bükük çatı kirişi ve filiz demiri (koyu, kırmızısız)",
+   "tris": 136,
+   "isNew": true
+  },
+  {
+   "key": "rp_concrete",
+   "hex": "#8D8A82",
+   "rough": 0.95,
+   "metal": 0,
+   "note": "tavan enkazı beton topak",
+   "tris": 40,
+   "isNew": true
+  }
+ ]
+}

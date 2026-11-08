@@ -1,0 +1,63 @@
+{
+ "name": "WallBlock",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Bütün kitlerin ortak gövde sözleşmesi: ayak izi 0,94, düz üst 0,555, iki kat (alt 0,94 / üst 0,92, arada 6 mm derz). Tek mesh, 3 alt mesh: üst / batı / güney (varsayılan yonga levha anahtarları; kitler malzemeyi değiştirir). Yan yüz UV: u yüz boyunca 0–1, v = y / 0,555 (Aşama A dokuları için). Doğu ve kuzey yüzleri sayfa görünüşleri için kapalı; alt yüz yok.",
+ "listName": "Duvar bloğu (iki katlı gövde, varsayılan kit)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 38,
+ "trisPerPart": {
+  "Body": 38
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.47,
+   0,
+   -0.47
+  ],
+  "max": [
+   0.47,
+   0.555,
+   0.47
+  ],
+  "size": [
+   0.94,
+   0.555,
+   0.94
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_chip_top",
+   "hex": "#A79E8D",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 14,
+   "isNew": false
+  },
+  {
+   "key": "r_chip_west",
+   "hex": "#8C8475",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 14,
+   "isNew": false
+  },
+  {
+   "key": "r_chip_south",
+   "hex": "#6E675B",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 10,
+   "isNew": false
+  }
+ ]
+}

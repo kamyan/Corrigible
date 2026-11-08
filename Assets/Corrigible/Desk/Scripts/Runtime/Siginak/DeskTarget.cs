@@ -18,6 +18,8 @@ namespace Corrigible.Desk
         [SerializeField] string title, line;
         [Tooltip("Üzerindeyken kalkan parça (yoksa kalkmaz).")]
         [SerializeField] Transform lift;
+        [Tooltip("Kalkış yönü: masada yukarı, duvara asılı nesnede duvardan dışarı.")]
+        [SerializeField] Vector3 liftDirection = Vector3.up;
         [SerializeField] HoverTag hoverTag;
 
         Vector3 rest;
@@ -82,7 +84,7 @@ namespace Corrigible.Desk
             if (hovered && IsBlocked) SetHovered(false);
             if (lift == null || Mathf.Approximately(lifted, target)) return;
             lifted = Mathf.MoveTowards(lifted, target, Time.unscaledDeltaTime / 0.08f * 0.004f);
-            lift.localPosition = rest + Vector3.up * lifted;
+            lift.localPosition = rest + liftDirection * lifted;
         }
     }
 }

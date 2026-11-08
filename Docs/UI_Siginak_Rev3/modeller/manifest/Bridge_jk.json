@@ -1,0 +1,71 @@
+{
+ "name": "Bridge_jk",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi (y = 0); köprü doğu boşluğunda (x 0,47–0,53), +x boyunca; kuzey için y ekseninde −90°",
+ "note": "Komşu panolar arasında üstte bara kanalı (detailB, iki ucunda flanş); pano ve çatı derzi gövde renginde. Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti.",
+ "listName": "Köprü · Çip fabrikası (bara kanalı)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 34,
+ "trisPerPart": {
+  "Body": 34
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   0.44,
+   0.05,
+   -0.458
+  ],
+  "max": [
+   0.56,
+   0.552,
+   0.458
+  ],
+  "size": [
+   0.12,
+   0.502,
+   0.916
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_jk_wallTop",
+   "hex": "#B2B6B0",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 4,
+   "isNew": false
+  },
+  {
+   "key": "k_jk_wallSouth",
+   "hex": "#818580",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 4,
+   "isNew": false
+  },
+  {
+   "key": "k_jk_wallWest",
+   "hex": "#A0A49F",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 4,
+   "isNew": false
+  },
+  {
+   "key": "k_jk_detailB",
+   "hex": "#D5D8D1",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 22,
+   "isNew": false
+  }
+ ]
+}

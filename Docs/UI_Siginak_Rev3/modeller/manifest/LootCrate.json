@@ -1,0 +1,105 @@
+{
+ "name": "LootCrate",
+ "family": "raidpieces",
+ "budget": "raid",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "KYGA sivil savunma sandığı 0,70 × 0,48 × 0,56: zeytin yeşili boyalı ahşap, kapak, orta çıta bandı, sekiz çelik köşe başlığı, iki ucunda halat tutamak, önde çelik çerçeveli krem kargo etiketi (yazısız: kâğıtta harf/rakam kare adlarına ayrılmış), kapakta KYGA amblemi (doku). Kırmızı yok: açılacak şey, tehdit değil. Düğüm dolabından alçak.",
+ "listName": "İkmal sandığı (yağma hedefi)",
+ "parts": [],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0,
+    0.48,
+    0
+   ],
+   "note": "tepe noktası"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 376,
+ "trisPerPart": {
+  "Body": 376
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.3878,
+   0,
+   -0.3
+  ],
+  "max": [
+   0.3878,
+   0.4815,
+   0.295
+  ],
+  "size": [
+   0.7755,
+   0.4815,
+   0.595
+  ]
+ },
+ "materials": [
+  {
+   "key": "rp_crateOlive",
+   "hex": "#535C3D",
+   "rough": 0.88,
+   "metal": 0,
+   "note": "ikmal sandığı: zeytin yeşili boyalı ahşap (mat)",
+   "tris": 86,
+   "isNew": true
+  },
+  {
+   "key": "rp_crateBatten",
+   "hex": "#434B31",
+   "rough": 0.9,
+   "metal": 0,
+   "note": "sandık çıtası, koyu zeytin",
+   "tris": 72,
+   "isNew": true
+  },
+  {
+   "key": "rp_crateSteel",
+   "hex": "#6A6D69",
+   "rough": 0.7,
+   "metal": 0.5,
+   "note": "sandık çelik köşe başlığı, etiket çerçevesi (mat)",
+   "tris": 108,
+   "isNew": true
+  },
+  {
+   "key": "rp_rope",
+   "hex": "#A88E5E",
+   "rough": 0.95,
+   "metal": 0,
+   "note": "kenevir halat tutamak",
+   "tris": 96,
+   "isNew": true
+  },
+  {
+   "key": "r_sticker",
+   "hex": "#F1E9D6",
+   "rough": 0.7,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "rp_crateEmblem",
+   "hex": "#E3D9BE",
+   "rough": 0.9,
+   "metal": 0,
+   "alpha": 0.5,
+   "tex": "tx_kyga_emblem (KYGA amblemi, krem mürekkep, alfa kanalında; yazı yok)",
+   "note": "sandık kapağında amblem decal’i; doku alfası taşır (önizlemede yarı saydam kare)",
+   "tris": 2,
+   "isNew": true
+  }
+ ]
+}

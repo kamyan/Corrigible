@@ -57,6 +57,10 @@ namespace Corrigible.Core
     {
         public string Type;
         public int Hp, Armor;
+        /// <summary>Kişi kartının sabit kimliği ve baskına kilitlenen gerçek değerleri (eski kadroda boş/sıfır).</summary>
+        public string PersonId, PersonName;
+        public int MaxHp, Move, Power;
+        public int EmpBoosts, EmpBoostDamage;
         /// <summary>Rolün yerine çıkan yedek uzman (sığınaktaki yedek sırası); asıl uzmanda −1.</summary>
         public int Reserve = -1;
         public bool Rookie => Reserve >= 0;

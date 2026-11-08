@@ -72,8 +72,16 @@ namespace Corrigible.Desk.Bridge
             };
         }
 
+        /// <summary>Kartlı harekâtın emri aynı belge düzeninde; geçici raf/yedek dili kullanılmaz.</summary>
+        public static BriefingData Planning(Simulation sim, bool reading, SavedSummary? save, bool armed, bool dossier)
+        {
+            var data = Build(reading, save, armed, dossier);
+            data.Paragraphs[2] = Loc.F("Emrindeki {0} kişi bu sığınağın topluluğudur. Saha kadrosunu panoda kur, bölgeleri sektör sektör geri al. Kaybettiğin kişi geri gelmez. Sivilleri koru: GÜVEN sıfırda direniş dağılır. Vardiya, devir fişi EVRAK'a konunca biter.", sim.B.boardStartResidents);
+            return data;
+        }
+
         /// <summary>Kayıt varken ilk BAŞLA'nın teleks uyarısı (K7 notu › durumlar; teleks şeridine sığacak kadar kısa).</summary>
         public static (string status, string message) Warning(SavedSummary save) =>
-            (Loc.T("KAYIT VAR"), Loc.F("V.{0:000} kaydının üstüne yazılır · onay için yeniden bas", save.Shift));
+            (Loc.T("KAYIT VAR"), Loc.F("V.{0:000} kaydının üstüne yazılır · yeniden bas", save.Shift));
     }
 }

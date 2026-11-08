@@ -96,6 +96,7 @@ namespace Corrigible.Core
         /// </summary>
         public List<SquadSlot> Squad(TeamState team, IList<string> pick = null)
         {
+            if (Board != null) return PlanningSquad();
             var list = new List<SquadSlot>();
             if (team == null) return list;
             bool partial = pick != null && pick.Count <= PickCount && pick.Distinct().Count() == pick.Count && pick.All(r => r != "tek" && Roles.Contains(r));
@@ -125,6 +126,12 @@ namespace Corrigible.Core
 
         void StepTeams()
         {
+            if (Board != null)
+            {
+                foreach (var team in S.Teams)
+                    if (team.Busy > 0) { team.Busy--; if (team.Busy == 0) team.Task = null; }
+                return;
+            }
             var reserves = Shelter?.Reserves ?? new List<SpecialistState>();
             foreach (var t in S.Teams)
             {

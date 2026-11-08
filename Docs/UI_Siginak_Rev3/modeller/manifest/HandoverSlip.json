@@ -1,0 +1,80 @@
+{
+ "name": "HandoverSlip",
+ "family": "desk",
+ "budget": "small",
+ "origin": "fişin merkezi; ön yüz −z (dilde yatarken +y)",
+ "note": "Teleks kâğıdından devir fişi (0,2 mm), üst kenarı delikli koparma çizgisi. Dilde yatarken uzun kenarı x boyunca; elde kameraya dönük, hafif kıvrık. Yüz dokusu R10 devir fişi (TR/EN), alfa yalnız koparma kenarında.",
+ "listName": "Devir fişi (100 × 150 mm)",
+ "parts": [],
+ "texts": [
+  {
+   "name": "FACE",
+   "part": "Body",
+   "center": [
+    0,
+    0,
+    -0.0003
+   ],
+   "size": [
+    0.1,
+    0.15
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "paperFace",
+   "font": "Courier Prime 700",
+   "capMm": null,
+   "align": "center",
+   "sample": "",
+   "sampleEn": "",
+   "note": "devir fişi dokusu (R10: devir_fisi_v001_tr@2x.png …)"
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 64,
+ "trisPerPart": {
+  "Body": 15
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.05,
+   -0.075,
+   -0.004
+  ],
+  "max": [
+   0.05,
+   0.075,
+   0
+  ],
+  "size": [
+   0.1,
+   0.15,
+   0.004
+  ]
+ },
+ "materials": [
+  {
+   "key": "telexPaper",
+   "hex": "#EFE4BC",
+   "rough": 0.92,
+   "metal": 0,
+   "tex": "tx_telexPaper: kenar delik sırası ve kesikli kenar çizgisi, kelime yok (mesajlar TMP)",
+   "note": "teleks kâğıdı; Render Face: Both",
+   "tris": 64,
+   "isNew": true
+  }
+ ]
+}

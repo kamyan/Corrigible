@@ -1,0 +1,90 @@
+{
+ "name": "Rubble_eeu",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Devrilmiş ve dağılmış dosya kutuları (kurşuni ve krem), bükülmüş raf dudağı, yere saçılmış dosyalar (düz kâğıtlar); toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi.",
+ "listName": "Gedik molozu · Devlet arşivi (dağılmış dosyalar)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 164,
+ "trisPerPart": {
+  "Body": 164
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.4656,
+   0,
+   -0.45
+  ],
+  "max": [
+   0.45,
+   0.1474,
+   0.45
+  ],
+  "size": [
+   0.9156,
+   0.1474,
+   0.9
+  ]
+ },
+ "materials": [
+  {
+   "key": "rk_dust",
+   "hex": "#6B6257",
+   "rough": 1,
+   "metal": 0,
+   "alpha": 0.55,
+   "tex": "tx_dust (yumuşak kenarlı toz lekesi, kenara doğru saydam, 256²)",
+   "note": "gedik molozunun toz lekesi (zemine yapışık dörtgen, gölgesiz)",
+   "tris": 2,
+   "isNew": true
+  },
+  {
+   "key": "k_eeu_detailA",
+   "hex": "#6E7375",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 66,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_detailB",
+   "hex": "#B3AD98",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 52,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_wallWest",
+   "hex": "#77817C",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_wallTop",
+   "hex": "#8F9892",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 20,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_wallSouth",
+   "hex": "#606763",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  }
+ ]
+}

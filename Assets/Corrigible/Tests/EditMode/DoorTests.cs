@@ -7,7 +7,7 @@ namespace Corrigible.Tests
     /// <summary>Sığınağın kapısı: vuruş zamanı, açma/açmama, bedeller, zincirler, ölümcül ziyaretçilerin kuralları, kayıt.</summary>
     public class DoorTests
     {
-        static Simulation New(uint seed = 101, Balance b = null) => Simulation.NewGame(seed, b ?? new Balance { startFon = 100 });
+        static Simulation New(uint seed = 101, Balance b = null) => LegacySimulation.NewGame(seed, b ?? new Balance { startFon = 100 });
 
         static void Until(Simulation sim, int day) { while (sim.S.Day < day && sim.S.Ending == null) sim.Step(); }
 

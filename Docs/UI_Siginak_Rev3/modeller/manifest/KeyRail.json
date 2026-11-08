@@ -1,0 +1,262 @@
+{
+ "name": "KeyRail",
+ "family": "desk",
+ "budget": "big",
+ "origin": "taban ortası (masa üstü, y = 0); ön yüz masa kenarıyla aynı hizada",
+ "note": "Masanın ön kenarına vidalı bakalit ray; tabla operatöre doğru 20° eğik. Önde pirinç burun şeridi, uçlarda pirinç başlıklar. 4 istasyon (aralık 0,30 m): pirinç yuva bileziği (tuş KeyKey modeli, yuvaya x −20° ile oturur) ve sağında vidalı pirinç plaka (TMP, büyük harf 22 mm → K1’de ~14 px). Hareketli parça yok.",
+ "listName": "Anahtar rayı",
+ "parts": [],
+ "texts": [
+  {
+   "name": "TXT_Key_0",
+   "part": "Body",
+   "center": [
+    -0.40800000000000003,
+    0.03752822498605503,
+    -0.01991290721148764
+   ],
+   "size": [
+    0.17,
+    0.038
+   ],
+   "normal": [
+    0,
+    0.9396926207859084,
+    -0.3420201433256687
+   ],
+   "up": [
+    0,
+    0.3420201433256687,
+    0.9396926207859084
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 22,
+   "align": "center",
+   "sample": "SIĞINAK",
+   "sampleEn": "SHELTER",
+   "note": "EN “MISSIONS” 8 harf sığar"
+  },
+  {
+   "name": "TXT_Key_1",
+   "part": "Body",
+   "center": [
+    -0.10800000000000007,
+    0.03752822498605503,
+    -0.01991290721148764
+   ],
+   "size": [
+    0.17,
+    0.038
+   ],
+   "normal": [
+    0,
+    0.9396926207859084,
+    -0.3420201433256687
+   ],
+   "up": [
+    0,
+    0.3420201433256687,
+    0.9396926207859084
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 22,
+   "align": "center",
+   "sample": "GÖREVLER",
+   "sampleEn": "MISSIONS",
+   "note": "EN “MISSIONS” 8 harf sığar"
+  },
+  {
+   "name": "TXT_Key_2",
+   "part": "Body",
+   "center": [
+    0.19199999999999992,
+    0.03752822498605503,
+    -0.01991290721148764
+   ],
+   "size": [
+    0.17,
+    0.038
+   ],
+   "normal": [
+    0,
+    0.9396926207859084,
+    -0.3420201433256687
+   ],
+   "up": [
+    0,
+    0.3420201433256687,
+    0.9396926207859084
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 22,
+   "align": "center",
+   "sample": "KAPI",
+   "sampleEn": "DOOR",
+   "note": "EN “MISSIONS” 8 harf sığar"
+  },
+  {
+   "name": "TXT_Key_3",
+   "part": "Body",
+   "center": [
+    0.4919999999999999,
+    0.03752822498605503,
+    -0.01991290721148764
+   ],
+   "size": [
+    0.17,
+    0.038
+   ],
+   "normal": [
+    0,
+    0.9396926207859084,
+    -0.3420201433256687
+   ],
+   "up": [
+    0,
+    0.3420201433256687,
+    0.9396926207859084
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 22,
+   "align": "center",
+   "sample": "MASA",
+   "sampleEn": "DESK",
+   "note": "EN “MISSIONS” 8 harf sığar"
+  }
+ ],
+ "anchors": [
+  {
+   "name": "Socket_0",
+   "part": "Body",
+   "pos": [
+    -0.551,
+    0.03281110788291178,
+    -0.023516905856775037
+   ],
+   "note": "KeyKey (SIĞINAK); yerel x −20°"
+  },
+  {
+   "name": "Socket_1",
+   "part": "Body",
+   "pos": [
+    -0.25100000000000006,
+    0.03281110788291178,
+    -0.023516905856775037
+   ],
+   "note": "KeyKey (GÖREVLER); yerel x −20°"
+  },
+  {
+   "name": "Socket_2",
+   "part": "Body",
+   "pos": [
+    0.04899999999999993,
+    0.03281110788291178,
+    -0.023516905856775037
+   ],
+   "note": "KeyKey (KAPI); yerel x −20°"
+  },
+  {
+   "name": "Socket_3",
+   "part": "Body",
+   "pos": [
+    0.34899999999999987,
+    0.03281110788291178,
+    -0.023516905856775037
+   ],
+   "note": "KeyKey (MASA); yerel x −20°"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -0.04,
+    0.76,
+    0.845
+   ],
+   "yaw": 0,
+   "note": "ön yüz z 0,77 (masa kenar bandı hizası), istasyonlar soldan: SIĞINAK, GÖREVLER, KAPI, MASA"
+  }
+ ],
+ "tris": 1160,
+ "trisPerPart": {
+  "Body": 1160
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.636,
+   0,
+   -0.0804
+  ],
+  "max": [
+   0.636,
+   0.0701,
+   0.0772
+  ],
+  "size": [
+   1.272,
+   0.0701,
+   0.1576
+  ]
+ },
+ "materials": [
+  {
+   "key": "bakelite",
+   "hex": "#24180F",
+   "rough": 0.38,
+   "metal": 0,
+   "tris": 60,
+   "isNew": false
+  },
+  {
+   "key": "brassDark",
+   "hex": "#8C6F3E",
+   "rough": 0.45,
+   "metal": 0.8,
+   "tris": 164,
+   "isNew": false
+  },
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 512,
+   "isNew": false
+  },
+  {
+   "key": "bakeliteBlack",
+   "hex": "#181412",
+   "rough": 0.34,
+   "metal": 0,
+   "note": "düğme, kol başı",
+   "tris": 56,
+   "isNew": true
+  },
+  {
+   "key": "plate",
+   "hex": "#B8955A",
+   "rough": 0.45,
+   "metal": 0.35,
+   "tris": 176,
+   "isNew": false
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 192,
+   "isNew": true
+  }
+ ]
+}

@@ -1,0 +1,129 @@
+{
+ "name": "Microphone",
+ "family": "crt",
+ "budget": "small",
+ "origin": "taban ortası (masa yüzeyi, y = 0)",
+ "note": "Döküm kubbeli kaide, krom gövde ve çatal, yuvarlak krom kafa (ızgara dokuda), çatal vidaları bakalit. Kaidenin önünde bakalit bas-konuş kolu PTT (arka kenarından menteşeli, −8° basılır). Arkadan kısa kablo.",
+ "listName": "Masa mikrofonu (bas-konuş)",
+ "parts": [
+  {
+   "name": "PTT",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.03,
+    0.012
+   ],
+   "pivotLocal": [
+    0,
+    0.03,
+    0.012
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    -8
+   ],
+   "rest": 0,
+   "note": "bas-konuş kolu: 0 = bırakılmış, −8° = basılı (ön uç aşağı)"
+  }
+ ],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Hover",
+   "part": "Body",
+   "pos": [
+    0,
+    0.2,
+    -0.05
+   ],
+   "note": "üzerine gelince kalkış / kâğıt etiket"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    1.4271,
+    0.76,
+    1.5635
+   ],
+   "yaw": 15,
+   "note": "dünya; masa yereli (0.030, 0.760, -0.170), yaw +-20: CRT ile telsiz rafı arasında, operatöre dönük"
+  }
+ ],
+ "tris": 770,
+ "trisPerPart": {
+  "Body": 682,
+  "PTT": 88
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.0535,
+   0,
+   -0.053
+  ],
+  "max": [
+   0.0535,
+   0.1909,
+   0.1418
+  ],
+  "size": [
+   0.107,
+   0.1909,
+   0.1948
+  ]
+ },
+ "materials": [
+  {
+   "key": "castIron",
+   "hex": "#3A3B37",
+   "rough": 0.72,
+   "metal": 0.6,
+   "note": "dış çark, döküm kaide",
+   "tris": 164,
+   "isNew": true
+  },
+  {
+   "key": "chrome",
+   "hex": "#C8CCCC",
+   "rough": 0.22,
+   "metal": 1,
+   "tris": 212,
+   "isNew": false
+  },
+  {
+   "key": "micGrille",
+   "hex": "#7A7E7B",
+   "rough": 0.45,
+   "metal": 0.7,
+   "tex": "tx_micgrille (ince delikli ızgara, 128 px)",
+   "note": "mikrofon ızgarası",
+   "tris": 56,
+   "isNew": true
+  },
+  {
+   "key": "bakeliteBlack",
+   "hex": "#181412",
+   "rough": 0.34,
+   "metal": 0,
+   "note": "düğme, kol başı",
+   "tris": 248,
+   "isNew": true
+  },
+  {
+   "key": "rubber",
+   "hex": "#1C1C1A",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 90,
+   "isNew": false
+  }
+ ]
+}

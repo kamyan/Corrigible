@@ -9,8 +9,8 @@ Ayrıntılar `Docs/` altında; burada bağlam, değişmez kurallar ve en sık ku
   odasından direnişi yönetir: bölgeleri sektör sektör baskınlarla geri alır, sığınağı ayakta tutar. Türkçe adı
   **Son Şalter**, İngilizce/ürün adı **Corrigible**. İlk hedef platform **Steam (PC)**.
 - **Üç sahne:** `Desk/Scenes/Giris.unity` (menü: sığınağın kapısının dışı; vardiya kartı, ayarlar dolabı, son şalter;
-  build'de ilk), `Desk/Scenes/DeskGame.unity` (Sığınak komuta odası: harita, sayaçlar, vardiya şalteri, sığınak maketi,
-  CRT, ayarlar dolabı) ve `Scenes/Baskin.unity` (8×8 taktik baskın tahtası; DeskGame'in üstüne eklemeli yüklenir).
+  build'de ilk), `Desk/Scenes/DeskGame.unity` (Sığınak komuta odası: harita, sayaçlar, vardiya şalteri, kartlı vardiya panosu,
+  kabul tezgâhı, CRT, ayarlar dolabı) ve `Scenes/Baskin.unity` (8×8 taktik baskın tahtası; DeskGame'in üstüne eklemeli yüklenir).
   DeskGame doğrudan açılınca menüsüz eski açılış çalışır. Başka oyun ya da deneme sahnesi yok.
 - **Motor:** Unity **6000.3.12f1**, URP, **uGUI + TextMeshPro** (UI Toolkit DEĞİL), Input System.
 - **Dil:** Oyun içi metinler, kod yorumları ve belgeler **Türkçe**. Kod tanımlayıcıları (sınıf, alan, metot) **İngilizce**.
@@ -27,7 +27,10 @@ Ayrıntılar `Docs/` altında; burada bağlam, değişmez kurallar ve en sık ku
 | `Docs/MIMARI.md` | Assembly'ler, simülasyon/sunum ayrımı, kayıt/replay, sahneler, prefab'lar, UI, ses, lokalizasyon |
 | `Docs/GELISTIRME.md` | Unity CLI ile çalışma, testler, oyunu ajan olarak denemek, sık yapılan işler, bilinen tuzaklar |
 | `Docs/DURUM.md` | Ne yapıldı, hangi kararlar neden alındı, açık işler |
-| `Docs/UI_Siginak_Rev2/IMPLEMENTATION_MAP.md` | Sığınak komuta odası Revizyon 2 (S1–S8): güncel eşleme, açık sorular, görsel farklar, değişiklik günlüğü |
+| `Docs/UI_Siginak_Rev3/IMPLEMENTATION_MAP.md` | Revizyon 3 (model paketi, token 1.3): güncel eşleme, kararlar, açık sorular, aşama sonuçları ve günlük |
+| `Docs/UI_Siginak_Rev3/A10_DOGRULAMA.md` | Aşama 10 kanıtı: dil ve punto ölçümleri, gölge atlası ve kare süresi, T1 temizliği |
+| `Docs/UI_Siginak_Rev3/IMPLEMENTATION_MAP_A9.md` | Haritanın Aşama 9 sonundaki tam metni (son hâl sadeleşmeden önceki kopya) |
+| `Docs/UI_Siginak_Rev2/IMPLEMENTATION_MAP.md` | Revizyon 2 (S1–S8): önceki tur; eşleme, görsel farklar ve günlük (oda primitifleri Revizyon 3 Aşama 2'de modellere geçti) |
 | `Docs/UI_Siginak/IMPLEMENTATION_MAP.md` | İlk tur (K1–K7) eşlemesi, poz/kamera ayrıntısı ve günlüğü |
 
 ## Değişmez kurallar
@@ -45,7 +48,7 @@ Ayrıntılar `Docs/` altında; burada bağlam, değişmez kurallar ve en sık ku
    Simülasyon hiçbir kararı metne göre vermez.
 4. **Simülasyonu yalnızca komutlar değiştirir.** Oyuncu eylemleri `LiberationDeskView` → `GameController` →
    `Simulation` public metotları (`StartLiberationRaid`, `ResolveRaid`, `SelectLiberationRegion`, `ShelterUpgrade`,
-   `ShelterAssign`) üzerinden gider; vardiya `GameController.AdvanceShift` → `Simulation.Step` ile biter. Her başarılı
+   `ShelterAssign`) üzerinden gider; vardiya `GameController.AdvanceShift` → `Simulation.Step` ile biter (kartlı oyunda pano komutları `GameController.ExecuteBoardCommand`, vardiya `PrintBoardShift` → `FileBoardShift`). Her başarılı
    komut `Rec(...)` ile `GameRecord`'a yazılır. Yeni oyuncu eylemi eklersen `Rec(...)` ile kaydet ve `Replay.Restore`'a
    karşılığını ekle; yoksa kayıttan devam bozulur.
 5. **Sahne ve prefab'lar asıl kaynaktır.** Oda ve UI hiyerarşisi `DeskGame.unity`, `Baskin.unity` ve `Desk/Prefabs`
@@ -71,7 +74,7 @@ Ayrıntılar `Docs/` altında; burada bağlam, değişmez kurallar ve en sık ku
 
 Unity Editor açıkken `unity` CLI'si (Pipeline paketi `com.unity.pipeline`) ile sürülür. Her çağrıya
 `--caller plugin --skill unity-cli` ekle. Proje kökü: bu dosyanın bulunduğu klasör. Kısayollar için
-`source Tools/unity-helpers.sh` (`ueval`, `ucompile`, `utest`, `uplay`, `ustop`, `ushot`, `uerrors`).
+`source Tools/unity-helpers.sh` (`ueval`, `ucompile`, `utest`, `uptest`, `uplay`, `ustop`, `ushot`, `uerrors`).
 
 ```bash
 unity command recompile --caller plugin --skill unity-cli                 # derle

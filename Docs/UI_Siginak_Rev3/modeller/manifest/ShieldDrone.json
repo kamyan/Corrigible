@@ -1,0 +1,143 @@
+{
+ "name": "ShieldDrone",
+ "family": "raidpieces",
+ "budget": "unit",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Dron + önde 105° faset çelik kalkan (4 yüz, altı sivri, çelik çerçeve; kırmızı kenar yok). Kalkan üstü 0,52: göz kalkanın üstünden görünür. Biçim: dronun önünde kavisli büyük levha. Gövde renkleri ortak (r_gun / r_maintTop / r_gunW / r_gunS / r_gunD); kırmızı yalnız gözde (r_lens) ve taban halkasında (r_accent). Tür biçimden okunur, etiketteki işaret ikincil.",
+ "listName": "Kalkan dronu",
+ "parts": [],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0,
+    0.544,
+    0
+   ],
+   "note": "tepe noktası"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    1.5,
+    0,
+    -6.5
+   ],
+   "yaw": 90,
+   "note": "örnek: Rev2 raid.html intents durumu (u 1, v 6)"
+  }
+ ],
+ "tris": 1372,
+ "trisPerPart": {
+  "Body": 1372
+ },
+ "budgetTris": 1500,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.3307,
+   0,
+   -0.408
+  ],
+  "max": [
+   0.3307,
+   0.544,
+   0.2697
+  ],
+  "size": [
+   0.6615,
+   0.544,
+   0.6777
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_gunD",
+   "hex": "#26282B",
+   "rough": 0.6,
+   "metal": 0.3,
+   "tris": 440,
+   "isNew": false
+  },
+  {
+   "key": "r_accent",
+   "hex": "#9A1E14",
+   "rough": 0.5,
+   "metal": 0,
+   "tris": 80,
+   "isNew": false
+  },
+  {
+   "key": "r_acrylic",
+   "hex": "#DCE6EA",
+   "rough": 0.1,
+   "metal": 0,
+   "alpha": 0.55,
+   "tris": 20,
+   "isNew": false
+  },
+  {
+   "key": "r_gun",
+   "hex": "#5B5E62",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 160,
+   "isNew": false
+  },
+  {
+   "key": "rp_domeGlass",
+   "hex": "#2A3135",
+   "rough": 0.25,
+   "metal": 0.1,
+   "note": "dron sensör kubbesi (koyu cam; kırmızı değil, göz ayrı)",
+   "tris": 70,
+   "isNew": true
+  },
+  {
+   "key": "r_gunS",
+   "hex": "#34373A",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 176,
+   "isNew": false
+  },
+  {
+   "key": "r_gunW",
+   "hex": "#46494D",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 160,
+   "isNew": false
+  },
+  {
+   "key": "r_lens",
+   "hex": "#B8241A",
+   "rough": 0.3,
+   "metal": 0,
+   "tris": 50,
+   "isNew": false
+  },
+  {
+   "key": "r_armor_light",
+   "hex": "#9A9C98",
+   "rough": 0.35,
+   "metal": 0.7,
+   "tris": 56,
+   "isNew": false
+  },
+  {
+   "key": "r_armor_dark",
+   "hex": "#636562",
+   "rough": 0.35,
+   "metal": 0.7,
+   "tris": 160,
+   "isNew": false
+  }
+ ]
+}

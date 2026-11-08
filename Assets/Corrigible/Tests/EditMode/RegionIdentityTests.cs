@@ -71,14 +71,14 @@ namespace Corrigible.Tests
         [Test]
         public void Tier_RisesWithLiberatedRegions()
         {
-            var sim = Simulation.NewGame(3);
+            var sim = LegacySimulation.NewGame(3);
             CollectionAssert.AreEqual(new[] { 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4 }, Enumerable.Range(0, 12).Select(sim.RaidTier).ToArray());
         }
 
         [Test]
         public void RaidOrder_CarriesRegionTraitSignatureAndTier()
         {
-            var sim = Simulation.NewGame(3, new Balance { startFon = 100 });
+            var sim = LegacySimulation.NewGame(3, new Balance { startFon = 100 });
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
             var p = sim.S.Raid.Params;
             CollectionAssert.AreEqual(new[] { "guvenli" }, p.Traits, "kademe 1: yalnız bölge özelliği");
@@ -249,7 +249,7 @@ namespace Corrigible.Tests
         [Test]
         public void ShelterLevels_OpenWithLiberatedRegions()
         {
-            var sim = Simulation.NewGame(5, new Balance { startFon = 500, shelterStartMaterials = 100 });
+            var sim = LegacySimulation.NewGame(5, new Balance { startFon = 500, shelterStartMaterials = 100 });
             Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Workshop).Ok, "onarım (seviye 1) açık");
             Assert.AreEqual(Loc.F("Seviye {0} için {1} özgür bölge gerekiyor (şimdi {2}).", 2, sim.B.shelterLevel2Regions, 0),
                 sim.ShelterUpgradeCheck(ShelterLogic.Workshop));

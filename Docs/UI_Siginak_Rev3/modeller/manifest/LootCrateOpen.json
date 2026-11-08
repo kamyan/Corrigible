@@ -1,0 +1,95 @@
+{
+ "name": "LootCrateOpen",
+ "family": "raidpieces",
+ "budget": "raid",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Teknisyen sandığı alınca kalan alçak tepsi: 0,68 × 0,20 × 0,56 (≤ 0,25, ±0,37 içinde), içi koyu, içinde iki gevşek çıta (biri kenara yaslı), halat tutamaklar ve dört çelik köşe. Kare yürünür; üstündeki birimi örtmez.",
+ "listName": "Boşalmış ikmal sandığı",
+ "parts": [],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0,
+    0.2,
+    0
+   ],
+   "note": "tepe noktası"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 356,
+ "trisPerPart": {
+  "Body": 356
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.3659,
+   0,
+   -0.295
+  ],
+  "max": [
+   0.3659,
+   0.2201,
+   0.295
+  ],
+  "size": [
+   0.7319,
+   0.2201,
+   0.59
+  ]
+ },
+ "materials": [
+  {
+   "key": "rp_crateOlive",
+   "hex": "#535C3D",
+   "rough": 0.88,
+   "metal": 0,
+   "note": "ikmal sandığı: zeytin yeşili boyalı ahşap (mat)",
+   "tris": 48,
+   "isNew": true
+  },
+  {
+   "key": "rp_crateInside",
+   "hex": "#2B2720",
+   "rough": 0.95,
+   "metal": 0,
+   "note": "boşalmış sandığın içi (koyu ham ahşap)",
+   "tris": 28,
+   "isNew": true
+  },
+  {
+   "key": "rp_crateBatten",
+   "hex": "#434B31",
+   "rough": 0.9,
+   "metal": 0,
+   "note": "sandık çıtası, koyu zeytin",
+   "tris": 136,
+   "isNew": true
+  },
+  {
+   "key": "rp_crateSteel",
+   "hex": "#6A6D69",
+   "rough": 0.7,
+   "metal": 0.5,
+   "note": "sandık çelik köşe başlığı, etiket çerçevesi (mat)",
+   "tris": 48,
+   "isNew": true
+  },
+  {
+   "key": "rp_rope",
+   "hex": "#A88E5E",
+   "rough": 0.95,
+   "metal": 0,
+   "note": "kenevir halat tutamak",
+   "tris": 96,
+   "isNew": true
+  }
+ ]
+}

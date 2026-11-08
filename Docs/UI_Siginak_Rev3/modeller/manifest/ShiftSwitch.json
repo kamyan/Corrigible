@@ -1,0 +1,371 @@
+{
+ "name": "ShiftSwitch",
+ "family": "desk",
+ "budget": "big",
+ "origin": "taban ortası (masa üstü, y = 0)",
+ "note": "Zeytin boyalı döküm gövde, flanşı dört cıvatayla masaya bağlı; önde 43° eğik yüzde pirinç VARDİYAYI BİTİR plakası. Üstteki kaidede kırmızı kapak (arka alt menteşe, 0 → 112° yukarı-arkaya açılır) ve altında krom milli, bakalit topuzlu kol (+35° vardiya sürerken yukarı-arka, −35° operatöre çekili). Sol üstte pirinç bilezikli yeşil hazır lambası. KİLİTLİ bandı kapağın önüne ve üstüne sarılı (baskında görünür). Arkada kablo rakoru.",
+ "listName": "Kapaklı vardiya şalteri",
+ "parts": [
+  {
+   "name": "ReadyLamp",
+   "parent": "Body",
+   "pivotModel": [
+    -0.08,
+    0.097,
+    0.04
+   ],
+   "pivotLocal": [
+    -0.08,
+    0.097,
+    0.04
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "readyLamp (yeşil yanık: vardiya bitirilebilir) ↔ readyLampOff"
+  },
+  {
+   "name": "Lever",
+   "parent": "Body",
+   "pivotModel": [
+    0.03,
+    0.1,
+    0.02
+   ],
+   "pivotLocal": [
+    0.03,
+    0.1,
+    0.02
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    35,
+    -35
+   ],
+   "rest": 35,
+   "note": "+35 vardiya sürüyor (yukarı-arka) · −35 operatöre çekildi (2. tık)"
+  },
+  {
+   "name": "Cover",
+   "parent": "Body",
+   "pivotModel": [
+    0.03,
+    0.105,
+    0.095
+   ],
+   "pivotLocal": [
+    0.03,
+    0.105,
+    0.095
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    112
+   ],
+   "rest": 0,
+   "note": "1. tık 112° yukarı-arkaya açılır; 4 s içinde 2. tık kol, yoksa kapanır"
+  },
+  {
+   "name": "LockBand",
+   "parent": "Cover",
+   "pivotModel": [
+    0.03,
+    0.15,
+    -0.056
+   ],
+   "pivotLocal": [
+    0,
+    0.045,
+    -0.151
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "görünür = KİLİTLİ (baskın/rapor açıkken); paintHazard şerit"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Plate",
+   "part": "Body",
+   "center": [
+    0,
+    0.06219075217867497,
+    -0.07483386875697959
+   ],
+   "size": [
+    0.236,
+    0.03
+   ],
+   "normal": [
+    0,
+    0.7349145951499598,
+    -0.6781596698680706
+   ],
+   "up": [
+    0,
+    0.6781596698680706,
+    0.7349145951499598
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 16,
+   "align": "center",
+   "sample": "VARDİYAYI BİTİR",
+   "sampleEn": "END SHIFT",
+   "note": "tek satır; K1’de ~14 px (kadraj kenarında perspektif büyütmesiyle)"
+  },
+  {
+   "name": "TXT_Cover",
+   "part": "Cover",
+   "center": [
+    0.03,
+    0.1932,
+    0.02
+   ],
+   "size": [
+    0.08,
+    0.03
+   ],
+   "normal": [
+    0,
+    1,
+    0
+   ],
+   "up": [
+    0,
+    0,
+    1
+   ],
+   "role": "wallStencil",
+   "font": "Big Shoulders Stencil Display 800",
+   "capMm": 10,
+   "align": "center",
+   "sample": "VARDİYA",
+   "sampleEn": "SHIFT",
+   "note": "isteğe bağlı şablon boya (rev2’deki kapak yazısı)"
+  },
+  {
+   "name": "TXT_LockBand",
+   "part": "LockBand",
+   "center": [
+    0.03,
+    0.15,
+    -0.0582
+   ],
+   "size": [
+    0.09,
+    0.02
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "stamp",
+   "font": "Courier Prime 700",
+   "capMm": 12,
+   "align": "center",
+   "sample": "KİLİTLİ",
+   "sampleEn": "LOCKED",
+   "note": "şeridin üstünde siyah daktilo harfi, sarı-siyah şerit dokusunun önünde"
+  }
+ ],
+ "anchors": [
+  {
+   "name": "Hover",
+   "part": "Body",
+   "pos": [
+    0,
+    0.24,
+    -0.12
+   ],
+   "note": "üzerine gelince kalkış ve kâğıt etiket"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    0.765,
+    0.76,
+    0.885
+   ],
+   "yaw": 10,
+   "note": "masanın sağ önü (rev2)"
+  }
+ ],
+ "tris": 1542,
+ "trisPerPart": {
+  "Body": 670,
+  "ReadyLamp": 96,
+  "Lever": 344,
+  "Cover": 344,
+  "LockBand": 88
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.143,
+   0,
+   -0.113
+  ],
+  "max": [
+   0.143,
+   0.196,
+   0.1854
+  ],
+  "size": [
+   0.286,
+   0.196,
+   0.2984
+  ]
+ },
+ "materials": [
+  {
+   "key": "paintOliveDark",
+   "hex": "#353B30",
+   "rough": 0.62,
+   "metal": 0.05,
+   "note": "kapı kanadı, kasa, çerçeve",
+   "tris": 42,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 96,
+   "isNew": true
+  },
+  {
+   "key": "paintOlive",
+   "hex": "#4A5140",
+   "rough": 0.6,
+   "metal": 0.05,
+   "note": "boyalı sac (dolap, konsol, saat gövdesi)",
+   "tris": 104,
+   "isNew": true
+  },
+  {
+   "key": "plate",
+   "hex": "#B8955A",
+   "rough": 0.45,
+   "metal": 0.35,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 48,
+   "isNew": true
+  },
+  {
+   "key": "paintBlack",
+   "hex": "#20211E",
+   "rough": 0.5,
+   "metal": 0.05,
+   "note": "lamba başlığı, ızgara",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 220,
+   "isNew": true
+  },
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 96,
+   "isNew": false
+  },
+  {
+   "key": "castIron",
+   "hex": "#3A3B37",
+   "rough": 0.72,
+   "metal": 0.6,
+   "note": "dış çark, döküm kaide",
+   "tris": 80,
+   "isNew": true
+  },
+  {
+   "key": "rubber",
+   "hex": "#1C1C1A",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 72,
+   "isNew": false
+  },
+  {
+   "key": "readyLamp",
+   "hex": "#7FE08F",
+   "rough": 0.2,
+   "metal": 0,
+   "emissive": "#3FBF5F",
+   "ei": 1.6,
+   "tris": 96,
+   "isNew": false
+  },
+  {
+   "key": "chrome",
+   "hex": "#C8CCCC",
+   "rough": 0.22,
+   "metal": 1,
+   "tris": 80,
+   "isNew": false
+  },
+  {
+   "key": "bakeliteBlack",
+   "hex": "#181412",
+   "rough": 0.34,
+   "metal": 0,
+   "note": "düğme, kol başı",
+   "tris": 168,
+   "isNew": true
+  },
+  {
+   "key": "coverRed",
+   "hex": "#B8241A",
+   "rough": 0.42,
+   "metal": 0.05,
+   "tris": 264,
+   "isNew": false
+  },
+  {
+   "key": "paintHazard",
+   "hex": "#E3B23C",
+   "rough": 0.6,
+   "metal": 0,
+   "tex": "tx_hazard (45° şerit #1E1B16, 1024×128)",
+   "note": "tehlike bandı",
+   "tris": 88,
+   "isNew": true
+  }
+ ]
+}

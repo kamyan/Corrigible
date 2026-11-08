@@ -1,0 +1,88 @@
+{
+ "name": "CancelSlip",
+ "family": "menu",
+ "budget": "small",
+ "origin": "ataşın tepesi",
+ "note": "Eski kartın üstüne ataşla takılan dar fiş: kırmızı çift çizgili damga “İPTAL EDİLİR · V.014” (TMP, colors.stamp.failed). Kıskaç kalkınca 0,15 s’de düşer, kapanınca kalkar.",
+ "listName": "İPTAL EDİLİR fişi",
+ "parts": [],
+ "texts": [
+  {
+   "name": "TXT_Stamp",
+   "part": "Body",
+   "center": [
+    0,
+    -0.017,
+    -0.0018
+   ],
+   "size": [
+    0.064,
+    0.022
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "stamp (çift kenar #9A1E14)",
+   "font": "Courier Prime 700",
+   "capMm": 5,
+   "align": "center",
+   "sample": "İPTAL EDİLİR · V.014",
+   "sampleEn": "TO BE CANCELLED · S.014",
+   "note": ""
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 120,
+ "trisPerPart": {
+  "Body": 120
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.036,
+   -0.0344,
+   -0.0027
+  ],
+  "max": [
+   0.036,
+   0.0049,
+   -0.0009
+  ],
+  "size": [
+   0.0719,
+   0.0393,
+   0.0018
+  ]
+ },
+ "materials": [
+  {
+   "key": "cardBlank",
+   "hex": "#E6DCBE",
+   "rough": 0.9,
+   "metal": 0,
+   "note": "boş kart destesi",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 108,
+   "isNew": true
+  }
+ ]
+}

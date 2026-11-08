@@ -1,0 +1,42 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="/node_modules/@fontsource/courier-prime/400.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/courier-prime/700.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/libre-franklin/400.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/libre-franklin/600.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/libre-franklin/700.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/kalam/700.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/big-shoulders-stencil-display/800.css">
+<style>html,body{margin:0;background:#56604F;overflow:hidden}canvas{display:block}</style>
+</head><body>
+<script type="module">
+// Flat card renders for R16 boards. ?mode=anatomy|states|items|mats|stack|recipes|backs &lang=tr|en &ppm=
+import * as BT from './boardtex.js';
+const q = new URLSearchParams(location.search); const mode = q.get('mode') || 'states', lang = q.get('lang') || 'tr';
+await Promise.all([['Courier Prime', 700], ['Courier Prime', 400], ['Libre Franklin', 400], ['Libre Franklin', 600], ['Libre Franklin', 700], ['Kalam', 700], ['Big Shoulders Stencil Display', 800]].map(([f, w]) => document.fonts.load(`${w} 40px "${f}"`, 'AĞIİŞÇÖÜğışçöü09')));
+const C = await (await fetch('./community.json')).json();
+const person = (id) => { const p = [...C.people, ...C.candidates].find(x => x.id === id); const pr = C.profiles[p.profile]; return { ...p, can: pr.can, har: pr.har, guc: pr.guc }; };
+const PANEL = '#56604F';
+function sheet(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.fillStyle = PANEL; x.fillRect(0, 0, w, h); document.body.appendChild(c); return x; }
+function shadowDraw(x, cv, X, Y, w, h, rot = 0) { x.save(); x.translate(X + w / 2, Y + h / 2); x.rotate(rot); x.shadowColor = 'rgba(0,0,0,0.45)'; x.shadowBlur = 10; x.shadowOffsetX = 3; x.shadowOffsetY = 5; x.drawImage(cv, -w / 2, -h / 2, w, h); x.restore(); }
+const ppm = +(q.get('ppm') || 0);
+if (mode === 'anatomy') { const k = ppm || 6; const cv = await BT.personCard(person('selin'), { job: 'egit', topic: 'T' }, { lang, ppm: k }); const x = sheet(80 * k + 40, 120 * k + 40); shadowDraw(x, cv, 20, 20, 80 * k, 120 * k); }
+if (mode === 'states') { const k = ppm || 2.6; const L = [
+  ['selin', { job: 'tek' }], ['selin', { job: 'tek', hurt: 1 }], ['ipek', { job: 'bosta', bed: 2 }], ['aylin', { job: 'bosta', restricted: 2 }], ['rauf', { job: 'uret', review: true }], ['selin', { job: 'egit', topic: 'E' }], ['eren', { lost: { shift: 24 } }]];
+  const w = 80 * k, h = 120 * k, gap = 22; const x = sheet(L.length * (w + gap) + gap, h + 70);
+  for (let i = 0; i < L.length; i++) { const [id, st] = L[i]; const cv = await BT.personCard(person(id), st, { lang, ppm: 8 }); shadowDraw(x, cv, gap + i * (w + gap), 44, w, h);
+    if (st.review) { const f = BT.reviewFlag({ lang, ppm: 8 }); x.drawImage(f, gap + i * (w + gap) + w / 2 - 26 * k / 2.6 - 8 * k, 44 - 9 * k, 18 * k, 12 * k); } } }
+if (mode === 'items') { const k = ppm || 2.6; const ids = ['kit_tek', 'kit_emp', 'kit_ana', 'zirh', 'bakim', 'emp_hucre']; const w = 80 * k, h = 50 * k, gap = 22; const x = sheet(3 * (w + gap) + gap, 2 * (h + gap) + gap);
+  ids.forEach((id, i) => shadowDraw(x, BT.itemCard(id, C.items, { lang, ppm: 8 }), gap + (i % 3) * (w + gap), gap + Math.floor(i / 3) * (h + gap), w, h)); }
+if (mode === 'mats') { const k = ppm || 2.6; const rows = [['metal', 7, 2], ['devre', 4, 1], ['kumas', 3, 1], ['kimyasal', 2, 0]]; const w = 80 * k, h = 56 * k, gap = 22; const x = sheet(4 * (w + gap) + gap, h + 2 * gap + 40 * k + gap);
+  rows.forEach(([id, s, r], i) => shadowDraw(x, BT.materialCard(id, s, r, C.materials, { lang, ppm: 8 }), gap + i * (w + gap), gap, w, h));
+  ['metal', 'metal', 'kumas'].forEach((id, i) => shadowDraw(x, BT.materialChip(id, C.materials, { lang, ppm: 8 }), gap + i * (56 * k + 16), gap * 2 + h, 56 * k, 40 * k, (i - 1) * 0.06)); }
+if (mode === 'recipes') { const k = ppm || 2.2; const w = 112 * k, h = 80 * k, gap = 22; const x = sheet(3 * (w + gap) + gap, 2 * (h + gap) + gap);
+  C.recipes.forEach((r, i) => shadowDraw(x, BT.recipeCard(r, C.materials, { lang, ppm: 8, progress: r.shifts > 1 ? 1 : null }), gap + (i % 3) * (w + gap), gap + Math.floor(i / 3) * (h + gap), w, h)); }
+if (mode === 'stack') { const k = ppm || 2.4; const w = 80 * k, h = 120 * k, gap = 40; const sets = [[], ['kit_tek'], ['kit_tek', 'zirh'], ['kit_emp', 'zirh', 'emp_hucre']]; const x = sheet(4 * (w + gap) + gap, h + 42 * k + 2 * gap);
+  for (let i = 0; i < sets.length; i++) { const X = gap + i * (w + gap), Y = gap; const its = sets[i];
+    for (let n = its.length - 1; n >= 0; n--) { const ic = BT.itemCard(its[n], C.items, { lang, ppm: 8 }); shadowDraw(x, ic, X, Y + (60 + 14 * (n + 1) - 25 - 25) * k + 60 * k, w, 50 * k); }
+    shadowDraw(x, await BT.personCard(person(['deniz', 'deniz', 'cem', 'cem'][i]), { job: ['tek', 'tek', 'emp', 'emp'][i] }, { lang, ppm: 8 }), X, Y, w, h); } }
+if (mode === 'backs') { const k = ppm || 2.4; const kinds = ['person', 'item', 'material', 'recipe']; const x = sheet(1000, 360); let X = 20; for (const kd of kinds) { const [w, h] = BT.SIZE[kd]; shadowDraw(x, BT.cardBack(kd, { ppm: 6 }), X, 20, w * k, h * k); X += w * k + 24; } }
+window.__done = { mode, lang, w: document.querySelector('canvas').width, h: document.querySelector('canvas').height };
+</script></body></html>

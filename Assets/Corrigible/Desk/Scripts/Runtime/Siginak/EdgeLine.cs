@@ -54,10 +54,16 @@ namespace Corrigible.Desk
         }
 
         /// <summary>Görünürlük: otomatikte yalnız sayaç rafı kadraj dışındayken.</summary>
-        public void SetVisible(bool counterBankInView, bool locked)
+        public void SetVisible(bool counterBankInView, bool locked) => SetVisible(counterBankInView, locked, false);
+
+        /// <summary>
+        /// Revizyon 3: <paramref name="hiddenByPose"/> pozun kendi geri dönüşü olan pozlarda kenar satırını tercih ne olursa olsun
+        /// gizler: K4 (panonun MASAYA DÖN levhası), K6 ve kartlı oyunda K8 ailesi (bkz. <c>SiginakDesk.EdgeHidden</c>).
+        /// </summary>
+        public void SetVisible(bool counterBankInView, bool locked, bool hiddenByPose)
         {
             var mode = Preference;
-            bool show = mode == Mode.Always || mode == Mode.Auto && !counterBankInView;
+            bool show = !hiddenByPose && (mode == Mode.Always || mode == Mode.Auto && !counterBankInView);
             if (bar.activeSelf != show) bar.SetActive(show);
             this.locked = locked;
             foreach (var c in chips) c.interactable = !locked && !ended;

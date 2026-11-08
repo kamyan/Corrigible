@@ -1,0 +1,128 @@
+{
+ "name": "RequestPad",
+ "family": "admission",
+ "budget": "small",
+ "origin": "taban ortası (tezgâh yüzeyi, y = 0)",
+ "note": "Sert karton altlıklı kopyalı talep defteri 110 × 150, üstte çelik kıskaç. Üst yaprak (Sheet) koparılıp GİDEN · TELEKS ağzına atılır; karbon kopya dosyada BEKLENİYOR fişi olur. Gözetmen adı yaprağa kendiliğinden yazılır (BOŞTA destesinin üst kartı; öneri).",
+ "listName": "Dış kayıt talep defteri (kopyalı)",
+ "parts": [
+  {
+   "name": "Sheet",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.0112,
+    0.068
+   ],
+   "pivotLocal": [
+    0,
+    0.0112,
+    0.068
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    -35
+   ],
+   "rest": 0,
+   "note": "üst yaprak: kıskaçtan kalkar ve koparılır"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Sheet",
+   "part": "Sheet",
+   "center": [
+    0,
+    0.0116,
+    -0.004
+   ],
+   "size": [
+    0.1,
+    0.13
+   ],
+   "normal": [
+    0,
+    1,
+    0
+   ],
+   "up": [
+    0,
+    0,
+    1
+   ],
+   "role": "paper (R10: dış kayıt talebi)",
+   "font": "Courier Prime 700",
+   "capMm": null,
+   "align": "center",
+   "sample": "",
+   "sampleEn": "",
+   "note": ""
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 208,
+ "trisPerPart": {
+  "Body": 196,
+  "Sheet": 12
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.055,
+   0,
+   -0.075
+  ],
+  "max": [
+   0.055,
+   0.019,
+   0.075
+  ],
+  "size": [
+   0.11,
+   0.019,
+   0.15
+  ]
+ },
+ "materials": [
+  {
+   "key": "cardboard",
+   "hex": "#8B6B45",
+   "rough": 0.85,
+   "metal": 0,
+   "note": "rulo göbeği (karton)",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "paper",
+   "hex": "#EFE6D0",
+   "rough": 0.92,
+   "metal": 0,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 108,
+   "isNew": true
+  },
+  {
+   "key": "paperWhite",
+   "hex": "#F4EFE2",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  }
+ ]
+}

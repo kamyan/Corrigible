@@ -1,0 +1,79 @@
+{
+ "name": "ReliefIso_ru",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Sandviç panelden kabin (0,84): güneyde koyu çerçeveli kapı ve büyük kol (detailB), batıda iki panel ve derz çıtası, üstte kırağı dudağı ve nervürlü çatı. Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi.",
+ "listName": "Ayrık blok · Sibirya veri merkezi (kapılı panel kabin)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 252,
+ "trisPerPart": {
+  "Body": 252
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.445,
+   0,
+   -0.465
+  ],
+  "max": [
+   0.445,
+   0.555,
+   0.445
+  ],
+  "size": [
+   0.89,
+   0.555,
+   0.91
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_ru_detailA",
+   "hex": "#6A7379",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 23,
+   "isNew": false
+  },
+  {
+   "key": "k_ru_wallTop",
+   "hex": "#A8B2B9",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 72,
+   "isNew": false
+  },
+  {
+   "key": "k_ru_wallWest",
+   "hex": "#909AA1",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 40,
+   "isNew": false
+  },
+  {
+   "key": "k_ru_wallSouth",
+   "hex": "#737C83",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 28,
+   "isNew": false
+  },
+  {
+   "key": "k_ru_detailB",
+   "hex": "#D8DFE3",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 89,
+   "isNew": false
+  }
+ ]
+}

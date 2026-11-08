@@ -124,6 +124,8 @@ namespace Corrigible.Game.Raid
         readonly Renderer[] tint = new Renderer[64];
         readonly GameObject[] frames = new GameObject[64];
         readonly GameObject[] spawnMarks = new GameObject[64];
+        readonly GameObject[] modelMoves = new GameObject[64], modelHits = new GameObject[64], modelClones = new GameObject[64];
+        public GameObject EntryDoor { get; private set; }
         /// <summary>Duvar kareleri ve vurgulu kareler (yürüme, hedef, eğitim çerçevesi): tıklamanın hangi kareye düşeceği.</summary>
         readonly bool[] walls = new bool[64];
         /// <summary>Karo nesneleri ve türleri: Madenci duvarı yıkınca (ya da geri alınınca) karo durumdan yeniden kurulur.</summary>
@@ -155,7 +157,9 @@ namespace Corrigible.Game.Raid
         readonly Dictionary<int, RaidArrow> downMarks = new Dictionary<int, RaidArrow>();
         readonly List<RaidWorldLabel> paperLabels = new List<RaidWorldLabel>();
         readonly List<RaidWorldLabel[]> labelGroups = new List<RaidWorldLabel[]>();
-        readonly List<Rect> occupiedLabels = new List<Rect>();
+        readonly List<Rect> occupiedLabels = new List<Rect>(), labelKeepOuts = new List<Rect>(), keepOutsRead = new List<Rect>();
+        /// <summary>HUD panellerinin ekran dikdörtgenlerini (piksel, sol alt köken) listeye ekler; etiketler bu alanların dışına itilir. Boşsa yalnız birbirinden kaçarlar.</summary>
+        public Action<List<Rect>> LabelKeepOuts;
         readonly List<Mesh> effectMeshes = new List<Mesh>();
         readonly Dictionary<int, Baskin.IntentView> shownIntents = new Dictionary<int, Baskin.IntentView>();
         readonly Dictionary<int, RaidArrow> intentArrowByUnit = new Dictionary<int, RaidArrow>();
@@ -228,6 +232,15 @@ namespace Corrigible.Game.Raid
                     spawnMarks[k] = Instantiate(lib.spawnMarker, W(x, y), Quaternion.identity, marksRoot);
                     spawnMarks[k].SetActive(false);
                 }
+                modelMoves[k] = ModelMark(lib.moveMarker,x,y,.024f);
+                modelHits[k] = ModelMark(lib.hitMarker,x,y,.028f);
+                modelClones[k] = ModelMark(lib.cloneMarker,x,y,.04f);
+            }
+            EntryDoor = null;
+            if (Kit != null && Kit.entryDoor != null && B.Exits.Count > 0)
+            {
+                float row = (float)B.Exits.Average(p=>p.Y);
+                EntryDoor = Instantiate(Kit.entryDoor,W(B.Exits.Min(p=>p.X)-.65f,row),Quaternion.identity,piecesRoot);
             }
             // Karo giydirme bütün karolar kurulduktan sonra: maske komşulara bakar (durumdan; lastState ilk kurulumda yok)
             for (int k = 0; k < 64; k++) SkinTile(B, k);
@@ -245,6 +258,13 @@ namespace Corrigible.Game.Raid
             activeIntentHighlight = NewArrow("Current intent highlighter");
             activeIntentHighlight.gameObject.SetActive(false);
             BuildCoordinates();
+        }
+
+        GameObject ModelMark(GameObject prefab,int x,int y,float height)
+        {
+            if (prefab == null) return null;
+            var go = Instantiate(prefab,W(x,y)+Vector3.up*height,Quaternion.identity,marksRoot);
+            go.SetActive(false);return go;
         }
 
         /// <summary>Paftadaki kare adı: sütun harfi ve satır sayısı ("C3"). Telsizde kareler bu adla anılır.</summary>
@@ -388,7 +408,7 @@ namespace Corrigible.Game.Raid
             foreach (var k in broken)
                 if (!walls[k] && !breaches.ContainsKey(k) && breachRubble != null)
                 {
-                    var debris = Instantiate(breachRubble, W(k % Baskin.N, k / Baskin.N), Quaternion.Euler(0, (k * 41) % 360, 0), piecesRoot);
+                    var debris = Instantiate(breachRubble, W(k % Baskin.N, k / Baskin.N), Quaternion.Euler(0, lib.BreachRubbleYaw(Kit,k), 0), piecesRoot);
                     debris.name = "Breach rubble"; debris.transform.localScale = breachScale;
                     foreach (var col in debris.GetComponentsInChildren<Collider>()) Destroy(col);
                     breaches[k] = debris;
@@ -491,7 +511,8 @@ namespace Corrigible.Game.Raid
                 if (screenLabelPrefab != null)
                 {
                     hpTag.SetPaperColor(m.Spent.Contains(u.Id) ? spentPaperColor : paperColor);
-                    hpTag.ShowHealth(u.Dead ? 0 : u.Hp, u.Max, hpInk, false, !u.Dead && u.Armor > 0, u.Side == 'e' ? lib.Glyph(u.Type) : null, lib.threat);
+                    hpTag.ShowHealth(u.Dead ? 0 : u.Hp, u.Max, hpInk, false, !u.Dead && u.Armor > 0, u.Side == 'e' ? lib.Glyph(u.Type) : null, lib.threat,
+                        u.Side == 'p' ? u.PersonName : null);
                 }
                 else hpTag.Show(Loc.F("{0} {1}/{2}", letter, u.Dead ? 0 : u.Hp, u.Max), hpInk, hpInk);
                 bool justWoke = u.Side == 'e' && !u.Dead && woke.TryGetValue(u.Id, out int wokeTurn) && B.Turn == wokeTurn;
@@ -556,10 +577,12 @@ namespace Corrigible.Game.Raid
                 frames[k].transform.position = tile + Vector3.up * (walls[k] ? WallTop + 0.01f : 0.03f);
                 tint[k].transform.position = tile + Vector3.up * (walls[k] ? WallTop : 0.02f);
                 moveFrames[k].gameObject.SetActive(m.Moves.Contains(k));
-                moveHatches[k].gameObject.SetActive(m.Moves.Contains(k) && !m.Danger.Contains(k));
+                moveHatches[k].gameObject.SetActive(modelMoves[k] == null && m.Moves.Contains(k) && !m.Danger.Contains(k));
+                if (modelMoves[k] != null) modelMoves[k].SetActive(m.Moves.Contains(k) && !m.Danger.Contains(k));
                 bool hit = m.Danger.Contains(k);
                 dangerFrames[k].gameObject.SetActive(hit);
-                dangerHatches[k].gameObject.SetActive(hit);
+                dangerHatches[k].gameObject.SetActive(hit && modelHits[k] == null);
+                if (modelHits[k] != null) modelHits[k].SetActive(hit);
                 if (hit)
                 {
                     dangerFrames[k].SetFrame(0.90f, 0.023f, Alpha(lib.threat, 0.9f), false);
@@ -567,7 +590,8 @@ namespace Corrigible.Game.Raid
                 }
                 repairFrames[k].gameObject.SetActive(m.Heal.Contains(k));
                 wakeRings[k].gameObject.SetActive(m.Spawns.Contains(k));
-                ghostRings[k].gameObject.SetActive(m.Clones.Contains(k) && !m.Spawns.Contains(k));
+                ghostRings[k].gameObject.SetActive(modelClones[k] == null && m.Clones.Contains(k) && !m.Spawns.Contains(k));
+                if (modelClones[k] != null) modelClones[k].SetActive(m.Clones.Contains(k) && !m.Spawns.Contains(k));
                 exitFrames[k].gameObject.SetActive(m.Exits.Contains(k));
                 if (spawnMarks[k] != null) spawnMarks[k].SetActive(m.Spawns.Contains(k));
             }
@@ -848,6 +872,7 @@ namespace Corrigible.Game.Raid
             {
                 int bx = x + d[0], by = y + d[1];
                 if (bx < 0 || by < 0 || bx >= Baskin.N || by >= Baskin.N || Baskin.CellAt(B, bx, by).O?.K != "kol") continue;
+                if (objects.TryGetValue(Key(bx,by),out var model) && model.AimAt(W(x,y))) return;
                 HzStroke(kind, k).Set(W(bx, by) + Vector3.up * WeldArmHeight, W(x, y) + Vector3.up * 0.1f, lib.hazardWeld, false, px * 6, 0, 0, false);
                 return;
             }
@@ -955,7 +980,8 @@ namespace Corrigible.Game.Raid
                 // Tıklama (çarpıştırıcı → parça) ve kırılma canlandırması için parça bileşeni; gövdesi kökün kendisi
                 return go.AddComponent<RaidPiece>();
             }
-            var piece = Instantiate(lib.Object(kind), W(x, y), Quaternion.identity, piecesRoot);
+            var prefab = kind == "civ" && Kit != null && Kit.civilianModel != null ? Kit.civilianModel : lib.Object(kind);
+            var piece = Instantiate(prefab, W(x, y), Quaternion.identity, piecesRoot);
             if (!lib.HasOwnPiece(kind)) piece.transform.localScale = lib.FallbackScale(kind);
             return piece;
         }
@@ -1091,6 +1117,7 @@ namespace Corrigible.Game.Raid
         {
             if (cam == null) return;
             occupiedLabels.Clear();
+            ReadLabelKeepOuts();
             void Place(IEnumerable<RaidWorldLabel> group)
             {
                 bool hasLabel = false;
@@ -1109,8 +1136,8 @@ namespace Corrigible.Game.Raid
                 {
                     var candidate = new Rect(bounds.position + offset, bounds.size);
                     float area = 0;
-                    foreach (var rect in occupiedLabels)
-                        area += Mathf.Max(0, Mathf.Min(candidate.xMax, rect.xMax) - Mathf.Max(candidate.xMin, rect.xMin)) * Mathf.Max(0, Mathf.Min(candidate.yMax, rect.yMax) - Mathf.Max(candidate.yMin, rect.yMin));
+                    foreach (var rect in occupiedLabels) area += OverlapArea(candidate, rect);
+                    foreach (var rect in labelKeepOuts) area += OverlapArea(candidate, rect);
                     return area;
                 }
                 Vector2 best = Vector2.zero;
@@ -1142,9 +1169,24 @@ namespace Corrigible.Game.Raid
             layoutCameraPosition = cam.transform.position; layoutCameraRotation = cam.transform.rotation; layoutCameraSize = cam.orthographicSize;
         }
 
+        static float OverlapArea(Rect a, Rect b) =>
+            Mathf.Max(0, Mathf.Min(a.xMax, b.xMax) - Mathf.Max(a.xMin, b.xMin)) * Mathf.Max(0, Mathf.Min(a.yMax, b.yMax) - Mathf.Max(a.yMin, b.yMin));
+
+        /// <summary>HUD alanlarını okur; önceki okumadan farklıysa (kart açıldı, panel boy değiştirdi) true.</summary>
+        bool ReadLabelKeepOuts()
+        {
+            if (LabelKeepOuts == null) { bool had = labelKeepOuts.Count > 0; labelKeepOuts.Clear(); return had; }
+            keepOutsRead.Clear(); LabelKeepOuts(keepOutsRead);
+            bool changed = keepOutsRead.Count != labelKeepOuts.Count;
+            for (int i = 0; !changed && i < keepOutsRead.Count; i++) changed = keepOutsRead[i] != labelKeepOuts[i];
+            if (changed) { labelKeepOuts.Clear(); labelKeepOuts.AddRange(keepOutsRead); }
+            return changed;
+        }
+
         void LateUpdate()
         {
-            if (cam != null && (layoutWidth != Screen.width || layoutHeight != Screen.height || layoutCameraPosition != cam.transform.position || layoutCameraRotation != cam.transform.rotation || !Mathf.Approximately(layoutCameraSize, cam.orthographicSize))) LayoutLabels();
+            bool panelsMoved = ReadLabelKeepOuts();
+            if (cam != null && (panelsMoved || layoutWidth != Screen.width || layoutHeight != Screen.height || layoutCameraPosition != cam.transform.position || layoutCameraRotation != cam.transform.rotation || !Mathf.Approximately(layoutCameraSize, cam.orthographicSize))) LayoutLabels();
         }
 
         void SetColor(Renderer r, Color c)
@@ -1290,7 +1332,7 @@ namespace Corrigible.Game.Raid
             Busy = true;
             var a = p.transform.position; var b = W(x, y);
             Sfx.Play(Cue.RaidStep, 1, Pan(b));
-            float d = Mathf.Max(0.18f, Vector3.Distance(a, b) * 0.07f);
+            float d = Mathf.Max(machineStepSeconds, Vector3.Distance(a, b) * machineStepSeconds);
             for (float t = 0; t < 1; t += Time.deltaTime / d)
             {
                 if (version != buildVersion || p == null) yield break;
@@ -2008,17 +2050,17 @@ namespace Corrigible.Game.Raid
         IEnumerator Fall(RaidPiece p)
         {
             int version = buildVersion;
-            var rotation = p.Body.localRotation;
+            var rotation = p.FallBody.localRotation;
             var fallen = p.DownRotation;
             // Tur sonu dönüşü düşme canlandırmasıyla yarışmasın; harf yüzü yukarı kalır.
-            p.SetDown(true); p.Body.localRotation = rotation;
+            p.SetDown(true); p.FallBody.localRotation = rotation;
             for (float t = 0; t < 1; t += Time.deltaTime / 0.30f)
             {
                 if (version != buildVersion || p == null) yield break;
-                p.Body.localRotation = Quaternion.Slerp(rotation, fallen, Ease(t));
+                p.FallBody.localRotation = Quaternion.Slerp(rotation, fallen, Ease(t));
                 yield return null;
             }
-            if (version == buildVersion && p != null) p.Body.localRotation = fallen;
+            if (version == buildVersion && p != null) p.FallBody.localRotation = fallen;
         }
 
         /// <summary>Duvar bloğunun üst yüzü (hedef çerçevesi ve vurgu duvar karesinde onun üstünde).</summary>

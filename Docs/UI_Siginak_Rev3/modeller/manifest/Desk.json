@@ -1,0 +1,94 @@
+{
+ "name": "Desk",
+ "family": "desk",
+ "budget": "big",
+ "origin": "taban ortası (zemin, y = 0)",
+ "note": "Çelik “tanker” komuta masası (1955 dolayı). Linolyum üst; önde ve yanlarda yuvarlatılmış pirinç kenar bandı (12 mm); üstün altında çelik kuşak ve ince kalem çekmecesi; iki ayak dolabı (2 sığ + 1 dosya çekmecesi; ön yüzler çerçeveden 4 mm içeride, döküm pirinç köprü kulp, yazısız etiket kartlığı); 40 mm içeride süpürgelik; iki takviye çizgili diz paneli; ayak dolaplarının dış yanlarında pres panel. Hareketli parça yok.",
+ "listName": "Masa ve ayakları",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    0,
+    0,
+    1.33
+   ],
+   "yaw": 0,
+   "note": "oda: masa x ±0,93, z 0,77–1,89, üst y 0,76 (rev2 room.js desk)"
+  }
+ ],
+ "tris": 2642,
+ "trisPerPart": {
+  "Body": 2642
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.93,
+   0,
+   -0.56
+  ],
+  "max": [
+   0.93,
+   0.76,
+   0.55
+  ],
+  "size": [
+   1.86,
+   0.76,
+   1.11
+  ]
+ },
+ "materials": [
+  {
+   "key": "linoDesk",
+   "hex": "#2F4A3B",
+   "rough": 0.6,
+   "metal": 0,
+   "note": "masa üstü linolyum",
+   "tris": 42,
+   "isNew": true
+  },
+  {
+   "key": "paintOlive",
+   "hex": "#4A5140",
+   "rough": 0.6,
+   "metal": 0.05,
+   "note": "boyalı sac (dolap, konsol, saat gövdesi)",
+   "tris": 1188,
+   "isNew": true
+  },
+  {
+   "key": "brassDark",
+   "hex": "#8C6F3E",
+   "rough": 0.45,
+   "metal": 0.8,
+   "tris": 1272,
+   "isNew": false
+  },
+  {
+   "key": "paintOliveDark",
+   "hex": "#353B30",
+   "rough": 0.62,
+   "metal": 0.05,
+   "note": "kapı kanadı, kasa, çerçeve",
+   "tris": 128,
+   "isNew": true
+  },
+  {
+   "key": "cardBlank",
+   "hex": "#E6DCBE",
+   "rough": 0.9,
+   "metal": 0,
+   "note": "boş kart destesi",
+   "tris": 12,
+   "isNew": true
+  }
+ ]
+}

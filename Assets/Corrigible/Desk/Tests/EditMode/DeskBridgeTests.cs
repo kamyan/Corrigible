@@ -14,7 +14,7 @@ namespace Corrigible.Desk.Tests
     {
         const string ScenePath = "Assets/Corrigible/Desk/Scenes/DeskGame.unity";
 
-        static Simulation New() => Simulation.NewGame(731, new Balance { startFon = 100 });
+        static Simulation New() => LegacySimulation.NewGame(731, new Balance { startFon = 100 });
 
         static DeskViewModel Build(Simulation sim, DeskBridgeState st = null) =>
             new SimDeskBuilder().Build(sim, st ?? new DeskBridgeState());
@@ -295,7 +295,7 @@ namespace Corrigible.Desk.Tests
                     if (it.propertyType == SerializedPropertyType.ObjectReference && it.name != "m_Script")
                         Assert.IsNotNull(it.objectReferenceValue, "fiş alanı bağlı değil: " + it.propertyPath);
                 Assert.AreEqual(4, so.FindProperty("fields").arraySize, "SAHA: bölge, olay, imza, tehdit");
-                Assert.AreEqual(4, so.FindProperty("rewards").arraySize);
+                Assert.AreEqual(6, so.FindProperty("rewards").arraySize, "R6: fon, erzak ve dört hammadde");
                 Assert.AreEqual(4, so.FindProperty("tierGlyphs").arraySize);
                 foreach (var h in slip.GetComponentsInChildren<UiHoverTarget>(true))
                     Assert.IsNotNull(new SerializedObject(h).FindProperty("hoverTag").objectReferenceValue, h.name);

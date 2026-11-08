@@ -1,0 +1,49 @@
+{
+ "name": "Tile",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "1 × 1 dörtgen, yüzü yukarı, kâğıdın 2 mm üstünde; UV 0–1 (u doğuya, v kuzeye). Fare seçimi ve işaret yerleşimi için; görünmez (renderer kapalı).",
+ "listName": "Kare (seçim dörtgeni)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 2,
+ "trisPerPart": {
+  "Body": 2
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.5,
+   0.002,
+   -0.5
+  ],
+  "max": [
+   0.5,
+   0.002,
+   0.5
+  ],
+  "size": [
+   1,
+   0,
+   1
+  ]
+ },
+ "materials": [
+  {
+   "key": "rk_pick",
+   "hex": "#D3DBD6",
+   "rough": 0.9,
+   "metal": 0,
+   "alpha": 0.25,
+   "note": "kare seçim dörtgeni; Unity'de MeshRenderer kapalı, yalnız MeshCollider",
+   "tris": 2,
+   "isNew": true
+  }
+ ]
+}

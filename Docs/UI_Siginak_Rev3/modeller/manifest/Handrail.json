@@ -1,0 +1,58 @@
+{
+ "name": "Handrail",
+ "family": "door",
+ "budget": "small",
+ "origin": "kapı grubu orijini (Corridor ile aynı)",
+ "note": "Merdivenin açık yanında, basamak burnu çizgisinin 0,90 m üstünde Ø 42 galvaniz boru; alt uçta yatay uzatma ve aşağı dönüş; üç dikme (Ø 34) taban plakalı, üstte boru eyerli bağlantı.",
+ "listName": "Merdiven korkuluğu (galvaniz boru)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    2.2,
+    0,
+    0.75
+   ],
+   "yaw": 90,
+   "note": "dünya; kapı grubu orijini (açıklığın alt orta noktası, oda duvar düzlemi x 2,20): merdivenin açık yanı"
+  }
+ ],
+ "tris": 472,
+ "trisPerPart": {
+  "Body": 472
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.175,
+   0.34,
+   0.569
+  ],
+  "max": [
+   -0.105,
+   2.5914,
+   3.2615
+  ],
+  "size": [
+   0.07,
+   2.2514,
+   2.6925
+  ]
+ },
+ "materials": [
+  {
+   "key": "galv",
+   "hex": "#70756E",
+   "rough": 0.5,
+   "metal": 0.45,
+   "tris": 472,
+   "isNew": false
+  }
+ ]
+}

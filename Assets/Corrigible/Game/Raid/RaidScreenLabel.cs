@@ -17,6 +17,7 @@ namespace Corrigible.Game.Raid
         [SerializeField] Image[] pips;
         [SerializeField] Sprite fullPip, emptyPip;
         [SerializeField] float pipSize = 11, gap = 3, healthHeight = 24, padding = 5;
+        [SerializeField] float nameFontPixels = 14;
         [Tooltip("Tür işaretinin ve zırh simgesinin boyu (px); işaretle pipler arası.")]
         [SerializeField] float glyphSize = 18, glyphGap = 4;
         [Tooltip("Sıra bayrağının kâğıdı (px) ve rakamı.")]
@@ -35,6 +36,7 @@ namespace Corrigible.Game.Raid
         Color ink, paperColor, edge, loss;
         Sprite targetSprite;
         bool dirty = true, flag, iconMode;
+        string healthName;
         float stampAt = -1, stampSeconds;
 
         public bool IsHealth { get; private set; }
@@ -64,6 +66,8 @@ namespace Corrigible.Game.Raid
         {
             IsHealth = false; flag = false; iconMode = false; ink = textInk; edge = edgeInk;
             caption.gameObject.SetActive(true); target.gameObject.SetActive(false); armor.gameObject.SetActive(false);
+            caption.rectTransform.anchorMin = caption.rectTransform.anchorMax = caption.rectTransform.pivot = new Vector2(.5f,.5f);
+            caption.rectTransform.anchoredPosition = Vector2.zero;
             foreach (var pip in pips) pip.gameObject.SetActive(false);
             caption.text = value;
             requestedFontPixels = pixels;
@@ -100,19 +104,36 @@ namespace Corrigible.Game.Raid
 
         /// <param name="glyph">Makine türünün işareti (önce gelir); uzmanda null.</param>
         /// <param name="lossInk">Kaybedilen pipin kenarı (kırmızı); verilmezse <paramref name="color"/>.</param>
-        public void ShowHealth(int hp, int max, Color color, bool isTarget, bool isArmored, Sprite glyph = null, Color? lossInk = null)
+        public void ShowHealth(int hp, int max, Color color, bool isTarget, bool isArmored, Sprite glyph = null, Color? lossInk = null, string personName = null)
         {
             // Kenar her etikette nötr (#463F34); renk piplerde ve işarette
             iconMode = false;
             IsHealth = true; flag = false; Health = Mathf.Clamp(hp, 0, max); Maximum = max; ink = color; edge = edgeArmor; loss = lossInk ?? color;
             if (targetSprite == null) targetSprite = target.sprite;
-            caption.gameObject.SetActive(false);
+            healthName = personName;
+            caption.gameObject.SetActive(!string.IsNullOrEmpty(healthName));
             target.gameObject.SetActive(isTarget || glyph != null); armor.gameObject.SetActive(isArmored);
             target.sprite = glyph != null ? glyph : targetSprite;
             target.preserveAspect = true;
             target.rectTransform.sizeDelta = Vector2.one * glyphSize;
             armor.rectTransform.sizeDelta = new Vector2(pipSize, pipSize * 1.14f);
+            ArrangeHealth();
+            gameObject.SetActive(true); dirty = true; Refresh(position);
+        }
+
+        void ArrangeHealth()
+        {
             float x = padding;
+            if (!string.IsNullOrEmpty(healthName))
+            {
+                caption.fontSize = Mathf.Max(nameFontPixels,14/Mathf.Max(.01f,canvas.scaleFactor));
+                caption.text = healthName;
+                caption.rectTransform.anchorMin = caption.rectTransform.anchorMax = caption.rectTransform.pivot = new Vector2(0,.5f);
+                caption.rectTransform.anchoredPosition = new Vector2(x,0);
+                float width = caption.GetPreferredValues(healthName).x;
+                caption.rectTransform.sizeDelta = new Vector2(width,healthHeight);
+                x += width + glyphGap;
+            }
             void Icon(Image image, float after)
             {
                 if (!image.gameObject.activeSelf) return;
@@ -120,20 +141,19 @@ namespace Corrigible.Game.Raid
                 x += image.rectTransform.sizeDelta.x + after;
             }
             // Sıra: tür işareti → zırh → pipler; uzmanda (işaretsiz) plaka piplerden sonra
-            bool plateAfter = glyph == null && !isTarget;
+            bool plateAfter = !target.gameObject.activeSelf;
             Icon(target, glyphGap);
             if (!plateAfter) Icon(armor, glyphGap);
             for (int i = 0; i < pips.Length; i++)
             {
-                var pip = pips[i]; pip.gameObject.SetActive(i < max);
-                if (i >= max) continue;
+                var pip = pips[i]; pip.gameObject.SetActive(i < Maximum);
+                if (i >= Maximum) continue;
                 pip.sprite = i < Health ? fullPip : emptyPip;
                 pip.rectTransform.sizeDelta = Vector2.one * pipSize;
                 pip.rectTransform.anchoredPosition = new Vector2(x, 0); x += pipSize + gap;
             }
             if (plateAfter && armor.gameObject.activeSelf) { x += glyphGap - gap; Icon(armor, gap); }
             root.sizeDelta = new Vector2(x - gap + padding, healthHeight);
-            gameObject.SetActive(true); dirty = true; Refresh(position);
         }
 
         /// <summary>Damga gibi iner: verilen sürede 1,6 kattan bire (UYANDI, Revizyon 2 · S6).</summary>
@@ -159,7 +179,9 @@ namespace Corrigible.Game.Raid
             {
                 caption.fontSize = Mathf.Max(requestedFontPixels, minimumFontPixels / Mathf.Max(.01f, canvas.scaleFactor));
                 root.sizeDelta = flag ? flagSize : caption.GetPreferredValues(caption.text) + new Vector2(10, 6);
+                caption.rectTransform.sizeDelta=root.sizeDelta-new Vector2(8,4);
             }
+            else if (IsHealth && !string.IsNullOrEmpty(healthName)) ArrangeHealth();
             Vector3 screen = view.WorldToScreenPoint(position);
             var layer = (RectTransform)canvas.transform;
             Camera uiCamera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;

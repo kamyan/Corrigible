@@ -1,0 +1,68 @@
+{
+ "name": "EntryDoor_default",
+ "family": "raidcivil",
+ "budget": "raid",
+ "origin": "kapı izdüşümünün ortası, kontrplak kenar payının yüzeyi (y = 0)",
+ "note": "Sade boyalı çelik kasa, eşik sacı; kanat yok (açık geçit). Paftanın dışında, batı kenar payında (u = −0,15) giriş satırının ortasında durur; dış yüz −x (kameranın gördüğü yüz), kapı +x yönünde tahtanın içine açılır. El çarkı yok, kırmızı/mavi/turuncu bant yok.",
+ "listName": "Giriş kapısı (varsayılan): sade kasa",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -0.15,
+    0,
+    -3.5
+   ],
+   "yaw": 0,
+   "note": "örnek: giriş satırı 4 (r = 3) · x = u = −0,15, z = −(r + 0,5)"
+  }
+ ],
+ "tris": 166,
+ "trisPerPart": {
+  "Body": 166
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.04,
+   0,
+   -0.45
+  ],
+  "max": [
+   0.06,
+   0.58,
+   0.45
+  ],
+  "size": [
+   0.1,
+   0.58,
+   0.9
+  ]
+ },
+ "materials": [
+  {
+   "key": "rc_doorSteel",
+   "hex": "#6B6F6B",
+   "rough": 0.55,
+   "metal": 0.1,
+   "note": "boyalı çelik kasa (varsayılan giriş)",
+   "tris": 124,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 42,
+   "isNew": true
+  }
+ ]
+}

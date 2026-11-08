@@ -1,0 +1,145 @@
+{
+ "name": "TeamFigure",
+ "family": "desk",
+ "budget": "small",
+ "origin": "taban ortası (harita üstü, y = 0)",
+ "note": "Pirinç oval taban 70 × 48 × 6 (iki kademe: koyu kenar teamRim + pahlı üst teamBase), arkada üç tornalanmış ahşap piyon (h 26, r 6,6; baş ve bant ekip rengi: Teknisyen mavi, EMP amber, Analist yeşil; aralık 19 mm), önde pirinç bilezikli bakalit harf diski Ø21 (TMP harf).",
+ "listName": "Ekip figürü",
+ "parts": [],
+ "texts": [
+  {
+   "name": "TXT_Letter",
+   "part": "Body",
+   "center": [
+    0,
+    0.0089,
+    -0.0115
+   ],
+   "size": [
+    0.017,
+    0.017
+   ],
+   "normal": [
+    0,
+    1,
+    0
+   ],
+   "up": [
+    0,
+    0,
+    1
+   ],
+   "role": "teamLetter (Courier Prime 700, krem #EFDCAE)",
+   "font": "Courier Prime 700",
+   "capMm": 11,
+   "align": "center",
+   "sample": "A",
+   "sampleEn": "A",
+   "note": "ekip harfi: A = Alfa"
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -0.19,
+    0.7612,
+    1.46
+   ],
+   "yaw": 0,
+   "note": "örnek: haritada Batı Avrupa; konum oyunda harita pikselinden (rev2 buildTeamFigure)"
+  }
+ ],
+ "tris": 800,
+ "trisPerPart": {
+  "Body": 800
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.0352,
+   0,
+   -0.0241
+  ],
+  "max": [
+   0.0352,
+   0.032,
+   0.0241
+  ],
+  "size": [
+   0.0704,
+   0.032,
+   0.0483
+  ]
+ },
+ "materials": [
+  {
+   "key": "teamRim",
+   "hex": "#5C4826",
+   "rough": 0.5,
+   "metal": 0.6,
+   "tris": 48,
+   "isNew": false
+  },
+  {
+   "key": "teamBase",
+   "hex": "#A8844E",
+   "rough": 0.5,
+   "metal": 0.7,
+   "tris": 80,
+   "isNew": false
+  },
+  {
+   "key": "pawn",
+   "hex": "#C9A77A",
+   "rough": 0.75,
+   "metal": 0,
+   "tris": 240,
+   "isNew": false
+  },
+  {
+   "key": "teamTechnician",
+   "hex": "#3F5F8A",
+   "rough": 0.6,
+   "metal": 0,
+   "tris": 96,
+   "isNew": false
+  },
+  {
+   "key": "teamEmp",
+   "hex": "#B07A2A",
+   "rough": 0.6,
+   "metal": 0,
+   "tris": 96,
+   "isNew": false
+  },
+  {
+   "key": "teamAnalyst",
+   "hex": "#3E6B4A",
+   "rough": 0.6,
+   "metal": 0,
+   "tris": 96,
+   "isNew": false
+  },
+  {
+   "key": "teamPlate",
+   "hex": "#24180F",
+   "rough": 0.38,
+   "metal": 0,
+   "tris": 72,
+   "isNew": false
+  },
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 72,
+   "isNew": false
+  }
+ ]
+}

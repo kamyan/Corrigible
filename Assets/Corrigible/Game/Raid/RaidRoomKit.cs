@@ -42,6 +42,14 @@ namespace Corrigible.Game.Raid
         [Tooltip("Yıkılan duvarın yerinde kalan alçak moloz (süs: RaidPiece ve çarpıştırıcı yok). Boşsa kırık dolap enkazı basık ölçekle.")]
         public GameObject wallRubble;
 
+        [Header("Revizyon 3 model bağları")]
+        public RaidModelMesh wallModel;
+        public RaidModelMesh isolatedModel;
+        public RaidModelMesh bridgeModel;
+        public RaidPiece civilianModel;
+        [Tooltip("Giriş satırındaki süs kapısı; oyun karesi veya çarpıştırıcısı değildir.")]
+        public GameObject entryDoor;
+
         /// <summary>Kit bu bölgenin mi (kimliği ya da bölge listesi).</summary>
         public bool Serves(string region)
         {

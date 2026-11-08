@@ -1,0 +1,236 @@
+{
+ "name": "RecipeBook",
+ "family": "board",
+ "budget": "small",
+ "origin": "sırt alt kenarının ortası; kapalıyken kapak −z",
+ "note": "Bordo bez cilt, krem etiket; ip halkayla panonun sol alt kancasında asılı. Tık: defter 0,35 s’de panonun önüne (okuma konumu) gelir ve açılır; üç açılım, her açılımda iki tarif. Sayfa köşesine tık: önceki/sonraki (0,25 s çevirme). Kapak ya da pano boşluğuna tık: kapanır, yerine döner.",
+ "listName": "Tarif defteri (ciltli, A6)",
+ "parts": [
+  {
+   "name": "Cover",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0,
+    -0.009
+   ],
+   "pivotLocal": [
+    0,
+    0,
+    -0.009
+   ],
+   "kind": "rotate",
+   "axis": "y",
+   "range": [
+    0,
+    -178
+   ],
+   "rest": 0,
+   "note": "ön kapak sırttan açılır; okuma konumunda −178°"
+  },
+  {
+   "name": "Leaf",
+   "parent": "Body",
+   "pivotModel": [
+    0.0005,
+    0,
+    -0.0004
+   ],
+   "pivotLocal": [
+    0.0005,
+    0,
+    -0.0004
+   ],
+   "kind": "rotate",
+   "axis": "y",
+   "range": [
+    0,
+    -176
+   ],
+   "rest": 0,
+   "note": "çevrilen tek yaprak (önceki/sonraki), iki yüzü sayfa dokusu"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Cover",
+   "part": "Cover",
+   "center": [
+    0.0555,
+    0.098,
+    -0.0093
+   ],
+   "size": [
+    0.066,
+    0.034
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 8,
+   "align": "center",
+   "sample": "TARİF DEFTERİ",
+   "sampleEn": "RECIPE BOOK",
+   "note": ""
+  },
+  {
+   "name": "TXT_PageL",
+   "part": "Cover",
+   "center": [
+    0.0535,
+    0.074,
+    -0.001
+   ],
+   "size": [
+    0.095,
+    0.13599999999999998
+   ],
+   "normal": [
+    0,
+    0,
+    1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "recipePage",
+   "font": "Courier Prime 700",
+   "capMm": null,
+   "align": "center",
+   "sample": "",
+   "sampleEn": "",
+   "note": "açılımın sol sayfası (tarif sayfası, R10)"
+  },
+  {
+   "name": "TXT_PageR",
+   "part": "Body",
+   "center": [
+    0.0535,
+    0.074,
+    -0.0004
+   ],
+   "size": [
+    0.095,
+    0.13599999999999998
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "recipePage",
+   "font": "Courier Prime 700",
+   "capMm": null,
+   "align": "center",
+   "sample": "",
+   "sampleEn": "",
+   "note": "açılımın sağ sayfası"
+  }
+ ],
+ "anchors": [
+  {
+   "name": "Hang",
+   "part": "Body",
+   "pos": [
+    0.006,
+    0.16899999999999998,
+    0
+   ],
+   "note": "ip halkasının tepe noktası (Book_Hook’a oturur)"
+  },
+  {
+   "name": "Read",
+   "part": "Body",
+   "pos": [
+    0,
+    0.074,
+    0
+   ],
+   "note": "okuma konumunda sırt ortası: kameradan 0,45 m, pano merkezinin 0,30 m önünde"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 270,
+ "trisPerPart": {
+  "Body": 198,
+  "Cover": 60,
+  "Leaf": 12
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   0,
+   0,
+   -0.0132
+  ],
+  "max": [
+   0.105,
+   0.1712,
+   0.0132
+  ],
+  "size": [
+   0.105,
+   0.1712,
+   0.0264
+  ]
+ },
+ "materials": [
+  {
+   "key": "bookCloth",
+   "hex": "#5A2420",
+   "rough": 0.82,
+   "metal": 0,
+   "tex": "tx_book_cover (bez doku + krem etiket TARİF DEFTERİ)",
+   "note": "tarif defteri cildi (bordo bez)",
+   "tris": 134,
+   "isNew": true
+  },
+  {
+   "key": "pageEdge",
+   "hex": "#E8DFC6",
+   "rough": 0.95,
+   "metal": 0,
+   "note": "sayfa yığını kenarı",
+   "tris": 36,
+   "isNew": true
+  },
+  {
+   "key": "pageFace",
+   "hex": "#F0E8D2",
+   "rough": 0.9,
+   "metal": 0,
+   "tex": "tx_recipe_spread_1..3 (iki tarif bir açılım; TR/EN ayrı doku ya da TMP)",
+   "note": "tarif sayfası (UV 0–1)",
+   "tris": 4,
+   "isNew": true
+  },
+  {
+   "key": "rp_rope",
+   "hex": "#A88E5E",
+   "rough": 0.95,
+   "metal": 0,
+   "note": "kenevir halat tutamak",
+   "tris": 96,
+   "isNew": true
+  }
+ ]
+}

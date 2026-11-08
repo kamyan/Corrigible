@@ -1,12 +1,23 @@
 # Kartlı vardiya panosu — bütünleşik ayrıntılı tasarım
 
-_2026-11-04 · Tasarım önerisi; Unity sahnesine veya oyun simülasyonuna uygulanmadı._
+_2026-11-04 tasarımı · 2026-11-05: temel sistem Unity ve Core'a uygulandı. Güncel kurallar ve sayılar [OYUN-TASARIMI.md](OYUN-TASARIMI.md)'dedir._
 
 Bu belge [önceki taslağı](KARTLI-VARDIYA-PANOSU-TASARIMI.md) ayrıntılandırır. Kullanıcının istediği yön:
 sekiz isimli rastgele özellikli sakin, ayaklı planlama panosu, sürükle bırak görev ve teçhizat dağıtımı, seçilebilir
 eğitim, tarif ve hammaddeyle vardiya süren üretim, kalıcı ölüm, belgeyle yeni sakin kabulü, gecikmeli robot ihaneti
 ve kâğıt çıkaran vardiya devir makinesidir. Aşağıdaki kapasite, miktar, aralık ve ödüller deneme önerileridir.
-Uygulanmış sistemi anlatan OYUN-TASARIMI.md değiştirilmez; eski teknik testler bu modelin dengesini doğrulamaz.
+Aşağıdaki öneri geçmişi korunur; uygulanmış ayrıntılarda OYUN-TASARIMI.md geçerlidir. Eski teknik testler bu modelin dengesini doğrulamaz.
+
+
+## Uygulama notu (2026-11-05)
+
+Temel kart, görev/eşya, üretim, seçilebilir eğitim, kişi bazlı baskın ve belgeyle kabul sistemi uygulanmıştır.
+İlk kapsamda üç saha rolü Teknisyen/EMP/Analisttir; tarifler baştan açıktır. Tahtada geride kalan kalıcı ölür;
+canı sıfırlanan ama geride bırakılmayan kişi sağ kalan ekip varsa otomatik kurtarılır. Ayrı taşıma/kurtarma hamlesi
+yoktur. Robotun iki kalıcı izi ve müdahale aralığı vardır; ilk sabotaj kaynak kaybettirir, kişiyi aniden öldürmez.
+Portre/yaşam öyküsü varlıkları, tarif keşfi ve yeni çok aşamalı öğretici bu ilk uygulamaya dahil değildir.
+Sayılar `Balance.board*`/`admission*` alanlarındadır; eski bot ölçümleri yeni panonun dengesini kanıtlamaz.
+
 
 ## 1. Oyuncunun işi ve gelişim
 

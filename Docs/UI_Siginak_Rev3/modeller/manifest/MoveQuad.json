@@ -1,0 +1,50 @@
+{
+ "name": "MoveQuad",
+ "family": "raidpieces",
+ "budget": "raid",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Zemine yapışık asetat dörtgeni 0,98 × 0,98, UV 0–1 (u = +x doğu, v = +z kuzey); tarama ve kenar dokuda (tx_mark_move). Unlit, ZWrite kapalı, gölgesiz.",
+ "listName": "Asetat: hareket",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 2,
+ "trisPerPart": {
+  "Body": 2
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.49,
+   0.004,
+   -0.49
+  ],
+  "max": [
+   0.49,
+   0.004,
+   0.49
+  ],
+  "size": [
+   0.98,
+   0,
+   0.98
+  ]
+ },
+ "materials": [
+  {
+   "key": "rp_acetateMove",
+   "hex": "#1A4789",
+   "rough": 1,
+   "metal": 0,
+   "alpha": 0.35,
+   "tex": "tx_mark_move (dolgu α .16, tarama α .34 · 1,6 px · 0,11 birim aralık, v-sabit; kenar α .85 · 2 px · pay 0,07)",
+   "note": "hareket asetatı: Unlit Transparent, ZWrite kapalı; saydamlık dokuda (malzeme alfası 1; önizlemede 0,35)",
+   "tris": 2,
+   "isNew": true
+  }
+ ]
+}

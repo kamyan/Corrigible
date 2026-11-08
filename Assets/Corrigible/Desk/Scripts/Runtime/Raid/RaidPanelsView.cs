@@ -15,7 +15,7 @@ namespace Corrigible.Desk
     public sealed class RaidPanelsView : MonoBehaviour
     {
         [SerializeField] GameObject eventSlip,confirmNote,logDrawer,rulesCard,retreatConfirm,resultMemo,pauseCard;
-        [SerializeField] TMP_Text eventTitle,eventText,speedLabel,confirmTitle,confirmFoot,logTitle,rulesTitle,retreatTitle,retreatBody,retreatFoot,pauseLabel;
+        [SerializeField] TMP_Text eventTitle,eventText,speedLabel,confirmTitle,confirmFoot,fatalWarning,logTitle,rulesTitle,retreatTitle,retreatBody,retreatFoot,pauseLabel;
         [Header("Sonuç kartı (S7)")]
         [SerializeField] RectTransform resultCard,resultStamp,continueFace;
         [SerializeField] TMP_Text resultHead,resultTurn,resultTitle,resultPlace;
@@ -42,7 +42,7 @@ namespace Corrigible.Desk
         static readonly string[] Legend={"legend.move","legend.target","legend.hit","legend.channel","legend.wake","legend.types","legend.flag","legend.armor"};
         /// <summary>Lejantta kanalın yeri (iki sütunlu ızgara: satır = sıra / 2).</summary>
         const int ChannelRow=3;
-        Vector2[] legendRowRest,legendMarkRest;float legendRestHeight;
+        Vector2[] legendRowRest,legendMarkRest;float legendRestHeight,legendChannelHeight;
         public void Bind(IRaidCommands value)
         {
             commands=value;Button(closeLog,commands.ToggleLog);Button(closeRules,commands.ToggleRules);Button(cancelRetreat,commands.CancelPending);Button(retreatAgain,commands.RequestRetreat);Button(continueButton,commands.ContinueToReport);Button(resumeButton,commands.CancelPending);
@@ -61,14 +61,16 @@ namespace Corrigible.Desk
                 bool on=i<vm.Queue.Length;queueFills[i].gameObject.SetActive(on);if(!on)continue;var q=vm.Queue[i];
                 queueLabels[i].text=q.State=="done"?Loc.F("<s>{0}</s>",q.Order):q.Order.ToString();queueFills[i].color=DeskTheme.Active.Get(q.State=="now"?"ink.red":q.State=="cancel"?"sade.onion":"sade.index");queueLabels[i].color=DeskTheme.Active.Get(q.State=="now"?"sade.index":q.State=="done"?"ink.ink3":"ink.red");queueCancel[i].enabled=q.State=="cancel";
             }
-            confirmTitle.text=Loc.T("HAKKI DURAN BİRİM");confirmFoot.text=Loc.T("Enter yine de ilet · Esc vazgeç");
+            bool fatal=!string.IsNullOrEmpty(vm.FatalWarning);
+            if(fatalWarning){fatalWarning.gameObject.SetActive(fatal);fatalWarning.text=vm.FatalWarning;}
+            confirmTitle.text=fatal?Loc.T("KAÇIŞ · SON TUR"):Loc.T("HAKKI DURAN BİRİM");confirmFoot.text=Loc.T("Enter yine de ilet · Esc vazgeç");
             for(int i=0;i<unusedRows.Length;i++)
             {
-                unusedRows[i].gameObject.SetActive(i<vm.Unused.Length);if(i>=vm.Unused.Length)continue;var u=vm.Unused[i];
+                unusedRows[i].gameObject.SetActive(!fatal&&i<vm.Unused.Length);if(i>=vm.Unused.Length)continue;var u=vm.Unused[i];
                 string rights=u.Move&&u.Ability?Loc.T("hareket + yetenek"):u.Move?Loc.T("hareket"):Loc.T("yetenek");
                 unusedRows[i].text=u.ThreatOrder>0?Loc.F("{0} · {1} kullanılmadı\n#{2} dron onu vuracak · −1",u.Name,rights,u.ThreatOrder):Loc.F("{0} · {1} kullanılmadı",u.Name,rights);
             }
-            ((RectTransform)confirmNote.transform).sizeDelta=new Vector2(330,Mathf.Max(143,72+vm.Unused.Length*52));
+            ((RectTransform)confirmNote.transform).sizeDelta=new Vector2(fatal?480:330,Mathf.Max(143,fatal?300:72+vm.Unused.Length*52));
             logTitle.text=Loc.T("TELSİZ KAYDI");rulesTitle.text=Loc.T("KURALLAR KARTI");for(int i=0;i<ruleRows.Length;i++)ruleRows[i].text=RaidText.Get("rules."+(i+1));for(int i=0;i<legendRows.Length&&i<Legend.Length;i++)legendRows[i].text=RaidText.Get(Legend[i]);
             // Kanalın binadaki adı (bina kiti, BASKIN-MEKANLARI Katman 6): “Elektrikli kanal · bara kanalı”; ad bölünmez, sığmazsa satır iki
             // satıra iner ve alttaki satırlar aşağı kayar (varsayılan kitte lejant bugünkü gibi)
@@ -84,7 +86,7 @@ namespace Corrigible.Desk
             if(vm.IsLootMission&&ruleRows.Length>5)ruleRows[5].text=Loc.T("İkmal görevi: Teknisyen ile kasayı aç, sonra bütün ekip giriş karelerinden çıksın; malzeme Teknisyen çıkınca alınır. Süre dolarken tahtada kalan uzman baskında düşmüş sayılır. Kasa imha olursa ya da Teknisyen çıkamazsa görev kaybedilir.");
             float ry=52;foreach(var t in ruleRows){float h=Mathf.Max(30,t.GetPreferredValues(t.text,366,float.PositiveInfinity).y+8);var r=(RectTransform)t.transform.parent;r.anchoredPosition=new Vector2(14,-ry);r.sizeDelta=new Vector2(392,h);t.rectTransform.sizeDelta=new Vector2(366,h);ry+=h;}
             if(legendRoot!=null){legendRoot.anchoredPosition=new Vector2(14,-ry-8);((RectTransform)rulesCard.transform).sizeDelta=new Vector2(420,Mathf.Max(431.5f,ry+136+legendExtra));}
-            retreatTitle.text=RaidText.Get("raid.retreat.title");retreatBody.text=RaidText.Get("raid.retreat.body");retreatFoot.text=RaidText.Get("raid.retreat.foot");retreatAgainLabel.text=Loc.T("EMİN MİSİN? TEKRAR BAS");
+            retreatTitle.text=RaidText.Get("raid.retreat.title");retreatBody.text=RaidText.Get(vm.IsLootMission?"raid.retreat.bodyLoot":"raid.retreat.body");retreatFoot.text=RaidText.Get("raid.retreat.foot");retreatAgainLabel.text=Loc.T("EMİN MİSİN? TEKRAR BAS");
             continueLabel.text=Loc.T("OPERASYON RAPORUNA GEÇ");resumeLabel.text=Loc.T("Devam et [Esc]");pauseLabel.text=Loc.T("DURAKLATILDI");
             dim.gameObject.SetActive(vm.Finished||vm.RetreatArmed||vm.Paused);dim.color=DeskTheme.Active.Get("sade.plaque.bg");var col=dim.color;col.a=vm.Finished ? DimAlpha*Dim() : .32f;dim.color=col;
             if(!vm.Finished)dim.SetSpot(Vector2.zero,150,14,Color.clear,false);
@@ -107,11 +109,13 @@ namespace Corrigible.Desk
             {
                 legendRowRest=legendRows.Select(t=>t!=null?t.rectTransform.anchoredPosition:Vector2.zero).ToArray();
                 legendMarkRest=(legendMarks??new RectTransform[0]).Select(m=>m!=null?m.anchoredPosition:Vector2.zero).ToArray();
-                legendRestHeight=legendRoot.sizeDelta.y;
+                legendRestHeight=legendRoot.sizeDelta.y;legendChannelHeight=legendRows[ChannelRow].rectTransform.rect.height;
             }
             var channel=legendRows[ChannelRow];float width=channel.rectTransform.rect.width;
             float one=channel.GetPreferredValues(RaidText.Get(Legend[ChannelRow]),width,float.PositiveInfinity).y;
-            float extra=Mathf.Max(0,channel.GetPreferredValues(channel.text,width,float.PositiveInfinity).y-one);
+            float needed=channel.GetPreferredValues(channel.text,width,float.PositiveInfinity).y;
+            channel.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,Mathf.Max(legendChannelHeight,needed+2));
+            float extra=Mathf.Max(0,needed-one);
             if(extra<1)extra=0;
             for(int i=0;i<legendRows.Length;i++)if(legendRows[i]!=null)legendRows[i].rectTransform.anchoredPosition=legendRowRest[i]-new Vector2(0,i/2>ChannelRow/2?extra:0);
             for(int i=0;legendMarks!=null&&i<legendMarks.Length;i++)if(legendMarks[i]!=null)legendMarks[i].anchoredPosition=legendMarkRest[i]-new Vector2(0,i/2>ChannelRow/2?extra:0);

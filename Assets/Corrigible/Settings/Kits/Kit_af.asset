@@ -22,4 +22,27 @@ MonoBehaviour:
   bridges: 1
   channelFloor: {fileID: 2100000, guid: 7eae9440f458e45bab8be9ef0735370f, type: 2}
   wellFloor: {fileID: 2100000, guid: 11cc37fc5e42e463cae01c2942be5f81, type: 2}
-  wallRubble: {fileID: 6255915255401331508, guid: 1e55ef1a3391047dabc0029ddc95f70c, type: 3}
+  wallRubble: {fileID: 2126626462595301456, guid: 4b4c95f9053a04db79fb3d580010919b, type: 3}
+  wallModel:
+    mesh: {fileID: 2959467708922500008, guid: b5e6c4f4c96e247bb8ad7e9ce4486eff, type: 3}
+    materials:
+    - {fileID: 2100000, guid: a4e838405e0494bd197645ccd40e7606, type: 2}
+    - {fileID: 2100000, guid: c3c00539d28844639ae0f235053659a6, type: 2}
+    - {fileID: 2100000, guid: ae2872f66c5824942bb6c2d6822bf28c, type: 2}
+    - {fileID: 2100000, guid: abde7bc0d57074f04946e38765e8c6a8, type: 2}
+  isolatedModel:
+    mesh: {fileID: 2959467708922500008, guid: 74c7146309d274dc5a17914b85190e32, type: 3}
+    materials:
+    - {fileID: 2100000, guid: a4e838405e0494bd197645ccd40e7606, type: 2}
+    - {fileID: 2100000, guid: c3c00539d28844639ae0f235053659a6, type: 2}
+    - {fileID: 2100000, guid: ae2872f66c5824942bb6c2d6822bf28c, type: 2}
+    - {fileID: 2100000, guid: abde7bc0d57074f04946e38765e8c6a8, type: 2}
+    - {fileID: 2100000, guid: 93d8d9f40f9e24fa0996eb82725b5f0c, type: 2}
+  bridgeModel:
+    mesh: {fileID: 2959467708922500008, guid: fd64c23350ac74e41ac72fd684a4ac21, type: 3}
+    materials:
+    - {fileID: 2100000, guid: ae2872f66c5824942bb6c2d6822bf28c, type: 2}
+    - {fileID: 2100000, guid: a4e838405e0494bd197645ccd40e7606, type: 2}
+    - {fileID: 2100000, guid: abde7bc0d57074f04946e38765e8c6a8, type: 2}
+  civilianModel: {fileID: 5339534975190179550, guid: a445dd958d4e640f7b95266c30e3b535, type: 3}
+  entryDoor: {fileID: 3073146188044907375, guid: 5e61c78001ef943a98e0f6a0ba7f6464, type: 3}

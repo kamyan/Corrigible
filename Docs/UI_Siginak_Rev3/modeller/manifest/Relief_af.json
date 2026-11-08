@@ -1,0 +1,71 @@
+{
+ "name": "Relief_af",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Oluklu galvaniz sac bunker: her yüzde 12 ince dikey oluk, açık renk köşe köşebentleri (detailB), üst kenarda sac ağız; içinde ağzın altında basık cevher yığını (detailA, en çok 0,546). Gri tonda: ince sık dikey çizgiler + içi oyuk üst. İki kat: kızak + bunker. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided.",
+ "listName": "Duvar barikatı · Cevher hangarı (oluklu galvaniz sac bunker)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 323,
+ "trisPerPart": {
+  "Body": 323
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.47,
+   0,
+   -0.47
+  ],
+  "max": [
+   0.47,
+   0.555,
+   0.47
+  ],
+  "size": [
+   0.94,
+   0.555,
+   0.94
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_af_wallSouth",
+   "hex": "#768087",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 83,
+   "isNew": false
+  },
+  {
+   "key": "k_af_detailA",
+   "hex": "#8A7A6D",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 51,
+   "isNew": false
+  },
+  {
+   "key": "k_af_wallWest",
+   "hex": "#959FA6",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 150,
+   "isNew": false
+  },
+  {
+   "key": "k_af_detailB",
+   "hex": "#B8BEBE",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 39,
+   "isNew": false
+  }
+ ]
+}

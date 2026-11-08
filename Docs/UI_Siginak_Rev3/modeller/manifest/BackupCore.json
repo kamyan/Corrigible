@@ -1,0 +1,160 @@
+{
+ "name": "BackupCore",
+ "family": "raidpieces",
+ "budget": "raid",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Yedek çekirdek 0,6 × 0,58 × 0,6, zırhsız: r_backup_* yüz boyası, güneyde kesik çizgili kırmızı halka içinde “Ç” (TMP) ve krem YEDEK etiketi (TMP), tepede küçük kırmızı simge, batıda iki yuva.",
+ "listName": "Yedek çekirdek (2 can)",
+ "parts": [],
+ "texts": [
+  {
+   "name": "TXT_Badge",
+   "part": "Body",
+   "center": [
+    0,
+    0.37,
+    -0.309
+   ],
+   "size": [
+    0.15,
+    0.15
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "stamp (kırmızı #9A1E14)",
+   "font": "Courier Prime 700",
+   "capMm": null,
+   "align": "center",
+   "sample": "Ç",
+   "sampleEn": "C",
+   "note": "büyük harf ≈ 0,12 birim (~13 px)"
+  },
+  {
+   "name": "TXT_Label",
+   "part": "Body",
+   "center": [
+    0,
+    0.155,
+    -0.3085
+   ],
+   "size": [
+    0.36,
+    0.08
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "stamp (mürekkep #1E1B16)",
+   "font": "Courier Prime 700",
+   "capMm": null,
+   "align": "center",
+   "sample": "YEDEK",
+   "sampleEn": "BACKUP",
+   "note": "büyük harf ≈ 0,07 birim (~8 px): süs; bilgi can etiketinde ve kartta"
+  }
+ ],
+ "anchors": [
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0,
+    0.58,
+    0
+   ],
+   "note": "tepe noktası"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 186,
+ "trisPerPart": {
+  "Body": 186
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.308,
+   0,
+   -0.308
+  ],
+  "max": [
+   0.3,
+   0.588,
+   0.3
+  ],
+  "size": [
+   0.608,
+   0.588,
+   0.608
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_backup_west",
+   "hex": "#3D2C29",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 24,
+   "isNew": false
+  },
+  {
+   "key": "r_backup_south",
+   "hex": "#2F211F",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 4,
+   "isNew": false
+  },
+  {
+   "key": "r_backup_top",
+   "hex": "#4C3733",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 14,
+   "isNew": false
+  },
+  {
+   "key": "r_red",
+   "hex": "#B8241A",
+   "rough": 0.4,
+   "metal": 0,
+   "tris": 108,
+   "isNew": false
+  },
+  {
+   "key": "r_sticker",
+   "hex": "#F1E9D6",
+   "rough": 0.7,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "rp_slot",
+   "hex": "#151311",
+   "rough": 0.9,
+   "metal": 0,
+   "note": "dolap sunucu yuvası, koyu oyuk",
+   "tris": 24,
+   "isNew": true
+  }
+ ]
+}

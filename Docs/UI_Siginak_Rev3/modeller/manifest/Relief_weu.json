@@ -1,0 +1,79 @@
+{
+ "name": "Relief_weu",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Her yüzde üç dar rack kabini: çerçeve içinde kapı, dikey kol çubuğu (detailB), üstte koyu delikli havalandırma bandı (delikler doku), koyu süpürgelik; üst yüzde ortadan x boyunca merdiven kablo tavası (köprüyle komşuya devam eder). Gri tonda: uzun dikey paneller + dikey kollar. İki kat: süpürgelik + kabin gövdesi. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided.",
+ "listName": "Duvar barikatı · Banka veri merkezi (sökülmüş rack kabinleri)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 321,
+ "trisPerPart": {
+  "Body": 321
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.47,
+   0,
+   -0.47
+  ],
+  "max": [
+   0.47,
+   0.555,
+   0.47
+  ],
+  "size": [
+   0.94,
+   0.555,
+   0.94
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_weu_detailA",
+   "hex": "#5F5B53",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 59,
+   "isNew": false
+  },
+  {
+   "key": "k_weu_wallWest",
+   "hex": "#8D877A",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 40,
+   "isNew": false
+  },
+  {
+   "key": "k_weu_wallSouth",
+   "hex": "#6F6A5F",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 28,
+   "isNew": false
+  },
+  {
+   "key": "k_weu_wallTop",
+   "hex": "#A8A194",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 56,
+   "isNew": false
+  },
+  {
+   "key": "k_weu_detailB",
+   "hex": "#A9AAA4",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 138,
+   "isNew": false
+  }
+ ]
+}

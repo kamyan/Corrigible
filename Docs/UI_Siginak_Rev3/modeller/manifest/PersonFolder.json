@@ -1,0 +1,171 @@
+{
+ "name": "PersonFolder",
+ "family": "board",
+ "budget": "small",
+ "origin": "sol kenarın alt ucu (menteşe çizgisi); kapalıyken ön kapak −z",
+ "note": "Manila klasör 130 × 180 mm, panonun sağındaki tel sepette. Kapakta KİŞİ DOSYASI ve seçili kişinin adı. Tık ya da kişi kartına çift tık: klasör öne gelir (0,35 s) ve açılır; sol sayfa kimlik/beden/ustalık/eşya, sağ sayfa belgeler/geçmiş/izler ve İNCELE · ERİŞİM · TAHLİYE eylem şeridi.",
+ "listName": "Kişi dosyası klasörü (manila)",
+ "parts": [
+  {
+   "name": "Cover",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0,
+    0
+   ],
+   "pivotLocal": [
+    0,
+    0,
+    0
+   ],
+   "kind": "rotate",
+   "axis": "y",
+   "range": [
+    0,
+    -176
+   ],
+   "rest": 0,
+   "note": "ön kapak sol kenardan açılır"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Face",
+   "part": "Cover",
+   "center": [
+    0.065,
+    0.11159999999999999,
+    -0.0013
+   ],
+   "size": [
+    0.114,
+    0.06
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 9,
+   "align": "center",
+   "sample": "KİŞİ DOSYASI\nSELİN",
+   "sampleEn": "PERSONAL FILE\nSELİN",
+   "note": ""
+  },
+  {
+   "name": "TXT_PageL",
+   "part": "Cover",
+   "center": [
+    0.065,
+    0.09,
+    0.0002
+   ],
+   "size": [
+    0.12000000000000001,
+    0.16799999999999998
+   ],
+   "normal": [
+    0,
+    0,
+    1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "filePage",
+   "font": "Courier Prime 700",
+   "capMm": null,
+   "align": "center",
+   "sample": "",
+   "sampleEn": "",
+   "note": "açık klasörün sol sayfası (kişi dosyası, R10)"
+  },
+  {
+   "name": "TXT_PageR",
+   "part": "Body",
+   "center": [
+    0.065,
+    0.09,
+    0.0011
+   ],
+   "size": [
+    0.12000000000000001,
+    0.16799999999999998
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "filePage",
+   "font": "Courier Prime 700",
+   "capMm": null,
+   "align": "center",
+   "sample": "",
+   "sampleEn": "",
+   "note": "sağ sayfa"
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 26,
+ "trisPerPart": {
+  "Body": 14,
+  "Cover": 12
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   0,
+   0,
+   -0.0012
+  ],
+  "max": [
+   0.13,
+   0.18,
+   0.0026
+  ],
+  "size": [
+   0.13,
+   0.18,
+   0.0038
+  ]
+ },
+ "materials": [
+  {
+   "key": "manila",
+   "hex": "#C9A86A",
+   "rough": 0.85,
+   "metal": 0,
+   "note": "kişi dosyası klasörü (manila karton)",
+   "tris": 24,
+   "isNew": true
+  },
+  {
+   "key": "paper",
+   "hex": "#EFE6D0",
+   "rough": 0.92,
+   "metal": 0,
+   "tris": 2,
+   "isNew": false
+  }
+ ]
+}

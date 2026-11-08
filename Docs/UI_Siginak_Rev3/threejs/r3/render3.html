@@ -1,0 +1,102 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="/node_modules/@fontsource/courier-prime/400.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/courier-prime/700.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/libre-franklin/400.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/libre-franklin/600.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/libre-franklin/700.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/kalam/700.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/big-shoulders-stencil-display/800.css">
+<style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+</head><body>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { U, D2R } from './scene3.js';
+const q = new URLSearchParams(location.search);
+const pose = q.get('pose') || 'M0'; const lang = q.get('lang') || 'tr';
+const W = +(q.get('w') || 1920), H = +(q.get('h') || 1080); const num = (k, d) => q.get(k) != null ? +q.get(k) : d;
+await Promise.all([['Courier Prime', 700], ['Courier Prime', 400], ['Libre Franklin', 400], ['Libre Franklin', 600], ['Libre Franklin', 700], ['Kalam', 700], ['Big Shoulders Stencil Display', 800]].map(([f, w]) => document.fonts.load(`${w} 40px "${f}"`, 'AĞIİŞÇÖÜğışçöü09')));
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1); renderer.setSize(W, H); renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = num('exp', 1.15); renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x030303);
+const pm = new THREE.PMREMGenerator(renderer); const envTex = pm.fromScene(new RoomEnvironment(), 0.04).texture;
+let cam, S = null, out = { pose, lang };
+function lookCam(pos, target, fovV, near = 0.02) { const c = new THREE.PerspectiveCamera(fovV, W / H, near, 40); c.position.copy(U(...pos)); c.lookAt(U(...target)); c.updateMatrixWorld(); c.updateProjectionMatrix(); return c; }
+function envAll(k) { scene.traverse(o => { if (o.isMesh && o.material && 'envMapIntensity' in o.material) { o.material.envMap = envTex; o.material.envMapIntensity = k; } }); }
+function shadowLight(l, size = 1024, bias = -0.0005) { l.castShadow = true; l.shadow.mapSize.set(size, size); l.shadow.bias = bias; l.shadow.normalBias = 0.01; if (l.shadow.camera) { l.shadow.camera.near = 0.05; l.shadow.camera.far = 12; } }
+const lightsUsed = [];
+function addL(l, desc) { scene.add(l); if (l.target) scene.add(l.target); lightsUsed.push({ type: l.type, shadow: l.castShadow, desc }); return l; }
+
+if (pose.startsWith('M')) {
+  const M = await import('./menu3.js');
+  const st = q.get('s') || 'save';           // nosave | save | confirm | press | open | switch
+  S = M.buildLanding(scene, { lang, doorOpen: st === 'open' ? num('door', 95) : 0, wheelTurn: st === 'wheel' ? num('wt', -220) : 0 });
+  M.dressLanding(S, { lang, shift: num('shift', 14), lampOn: st === 'press' || st === 'wheel' || st === 'open' });
+  // states
+  const card = (await import('./scene3.js'));
+  if (st !== 'nosave') { // commander's card in the top pocket
+    const c = card.inst(S.root, 'ShiftCard', [0, 0, 0], 0); const a = card.anchorWorld(S.rack, 'CardTop'); out.cardTop = a;
+    const holder = c.holder; holder.position.copy(a); holder.rotation.y = 90 * D2R;
+    if (st === 'confirm') c.pose('Tilt', -14);
+    if (st === 'press' || st === 'wheel' || st === 'open') { const cs = card.anchorWorld(S.clock, 'CardSlot'); holder.position.copy(cs).add(new THREE.Vector3(0, -0.07, 0)); }
+    if (st === 'carry') { const cs = card.anchorWorld(S.clock, 'CardSlot'); const t = num('t', 0.55); holder.position.lerpVectors(a, cs.clone().add(new THREE.Vector3(0, 0.02, 0)), t).add(new THREE.Vector3(0.05 * Math.sin(Math.PI * t), 0.08 * Math.sin(Math.PI * t), 0)); holder.rotation.z = -6 * D2R * Math.sin(Math.PI * t); }
+    const P = await import('./prints.js');
+    card.printPlane(c, [0, 0.092, -0.0006], [0.09, 0.184], P.cardTex({ holes: num('holes', 13) }), { part: 'Tilt', rough: 0.9 });
+    const EN = lang === 'en'; const sh = String(num('shift', 14)).padStart(3, '0');
+    card.slotText(c, 'TXT_Role', [{ t: EN ? 'COMMANDER' : 'KOMUTAN', size: 76, c: '#1E1B16', ls: 0.06, align: 'left' }], { ppm: 9000, align: 'left' });
+    card.slotText(c, 'TXT_Shelter', [{ t: EN ? 'SHELTER 07' : 'SIĞINAK 07', size: 76, c: '#463F34', ls: 0.06, align: 'left' }], { ppm: 9000, align: 'left' });
+    card.slotText(c, 'TXT_Shift', [{ t: (EN ? 'S.' : 'V.') + sh, size: 124, c: '#1E1B16', ls: 0.04, align: 'left' }], { ppm: 9000, align: 'left' });
+    card.slotText(c, 'TXT_Free', [{ t: EN ? `free ${num('free', 3)}/12` : `özgür ${num('free', 3)}/12`, size: 108, w: 400, c: '#1E1B16', align: 'left' }], { ppm: 9000, align: 'left' });
+    card.slotText(c, 'TXT_Sign', [{ t: 'K. — 07', size: 60, f: 'ka', c: '#1A2F5A' }], { ppm: 7000 });
+    if (st === 'confirm') { const sl = card.inst(S.root, 'CancelSlip', [0, 0, 0], 0); const w = card.worldOf(c, [0.01, 0.17, -0.002], 'Tilt'); sl.holder.position.copy(w); sl.holder.rotation.y = 90 * D2R;
+      card.slotText(sl, 'TXT_Stamp', [{ t: lang === 'en' ? 'TO BE CANCELLED · S.014' : 'İPTAL EDİLİR · V.014', size: 40, c: '#9A1E14', ls: 0.04 }], { ppm: 9000 });
+      S.deck.pose('Clip', -70); }
+    out.card = true;
+  }
+  if (st === 'switch') S.sw.pose('Cover', 115);
+  if (st === 'press' || st === 'wheel') S.clock.pose('Plunger', -0.012);
+  // ---- lights (menu): L1 landing lamp (point, shadows) · L2 stair-top spill (spot, shadows) · L3 under-door warm leak (point, no shadow) · ambient
+  const lampPos = [2.2 + 0.22, 2.41, 0.75];
+  const L1 = new THREE.PointLight(0xd8e6e2, num('l1', 5.5), 7, 2); L1.position.copy(U(...lampPos)); shadowLight(L1, 1024, -0.001); addL(L1, 'L1 sahanlık lambası');
+  const L2 = new THREE.PointLight(0xe2e6dc, num('l2', 4.5), 5, 2); L2.position.copy(U(2.2 + 0.22, 2.26, -0.5)); shadowLight(L2, 1024, -0.001); addL(L2, 'L2 saat lambası');
+  const L4 = new THREE.SpotLight(0x9fb2c4, num('l4', 40), 10, 30 * D2R, 0.8, 2); L4.position.copy(U(5.2, 3.6, 1.35)); L4.target.position.copy(U(3.1, 0.6, 1.3)); shadowLight(L4, 1024); addL(L4, 'L4 merdiven tepesinden soğuk ışık');
+  if (st !== 'open') { const L3 = new THREE.PointLight(0xffb866, num('l3', 0.12), 1.0, 2); L3.position.copy(U(2.26, 0.015, 0.75)); addL(L3, 'L3 kapı altı sızıntı'); }
+  else { const L3 = new THREE.SpotLight(0xffcf86, num('l3o', 14), 8, 42 * D2R, 0.5, 2); L3.position.copy(U(1.0, 1.9, 0.75)); L3.target.position.copy(U(3.6, 0.0, 0.6)); shadowLight(L3, 1024); addL(L3, 'L3 içeriden sıcak ışık');
+    // interior seen through the doorway: warm back wall with a vertical falloff, floor strip, desk edge silhouette
+    const [gc, gx] = (await import('./scene3.js')).canvas(256, 512); const gr = gx.createRadialGradient(128, 190, 10, 128, 230, 300); gr.addColorStop(0, '#FFE2B0'); gr.addColorStop(0.35, '#E9B470'); gr.addColorStop(1, '#3A2412'); gx.fillStyle = gr; gx.fillRect(0, 0, 256, 512);
+    gx.fillStyle = 'rgba(20,12,6,0.85)'; gx.fillRect(0, 430, 256, 82); const vg = gx.createLinearGradient(0, 0, 256, 0); vg.addColorStop(0, 'rgba(30,18,8,0.55)'); vg.addColorStop(0.25, 'rgba(30,18,8,0)'); vg.addColorStop(0.75, 'rgba(30,18,8,0)'); vg.addColorStop(1, 'rgba(30,18,8,0.55)'); gx.fillStyle = vg; gx.fillRect(0, 0, 256, 512);
+    const gt = new THREE.CanvasTexture(gc); gt.colorSpace = THREE.SRGBColorSpace;
+    const glow = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 2.4), new THREE.MeshBasicMaterial({ map: gt })); glow.position.copy(U(0.9, 1.2, 0.75)); glow.rotation.y = Math.PI / 2; scene.add(glow);
+    const flo = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 0.9), new THREE.MeshStandardMaterial({ color: 0x5a5146, roughness: 0.8 })); flo.rotation.x = -Math.PI / 2; flo.position.copy(U(1.55, 0.001, 0.75)); flo.receiveShadow = true; scene.add(flo);
+    const bulbI = new THREE.PointLight(0xffc27a, num('l3b', 2.5), 3, 2); bulbI.position.copy(U(1.3, 2.1, 0.75)); addL(bulbI, 'L3b içerideki ampul (gölgesiz)'); }
+  if (st === 'cab') { S.cab.pose('Leaf', -120); M.assembleCabinet(S.cab); M.dressCabinetPanel(S.cab, { lang, mute: q.get('mute') === '1', values: q.get('vals') ? q.get('vals').split(',').map(Number) : undefined });
+    const sc = await import('./scene3.js'); sc.setMat(S.cab, 'lampGlassWarm', sc.matLike('lampGlassWarm', { emissive: new THREE.Color(0xffd28a), emissiveIntensity: 3 }));
+    const lp = sc.lightWorld(S.cab, 'InnerSpot'); const Li = new THREE.SpotLight(0xffd8a0, num('li', 3.2), 1.4, 70 * D2R, 0.6, 2); Li.position.copy(lp);
+    Li.target.position.copy(sc.worldOf(S.cab, [0, 0.30, -0.12])); addL(Li, 'L5 dolap içi ampul (spot, gölgesiz)'); }
+  const amb = new THREE.HemisphereLight(0x3a4448, 0x0e0f0d, num('amb', 0.6)); addL(amb, 'ortam');
+  envAll(num('env', 0.22));
+  const P = {
+    M0: () => lookCam([num('cx', 4.5), num('cy', 1.52), num('cz', 0.3)], [num('tx', 2.2), num('ty', 1.34), num('tz', 0.3)], num('fov', 56)),
+    M2: () => lookCam([num('cx', 3.12), num('cy', (st === 'press' || st === 'carry') ? 1.53 : 1.35), num('cz', -0.40)], [2.2, num('ty', (st === 'press' || st === 'carry') ? 1.49 : 1.30), num('tz', -0.40)], num('fov', 42)),
+    M1: () => lookCam([num('cx', 3.22), num('cy', 1.42), num('cz', -0.86)], [2.2, num('ty', 1.37), num('tz', -1.0)], num('fov', 45)),
+    MC: () => lookCam([num('cx', 2.62), num('cy', 1.306), num('cz', -0.55)], [2.2, num('ty', 1.306), num('tz', -0.55)], num('fov', 30)),
+    M3: () => lookCam([num('cx', 2.78), num('cy', 1.52), num('cz', 0.80)], [num('tx', 1.2), num('ty', 1.4), num('tz', 0.75)], num('fov', 56)),
+    MS: () => lookCam([num('cx', 3.02), num('cy', 1.40), num('cz', 1.36)], [2.2, num('ty', 1.20), num('tz', 1.62)], num('fov', 40)),
+  };
+  cam = (P[pose] || P.M0)();
+  out.S = Object.keys(S);
+}
+renderer.render(scene, cam);
+const proj = (v) => { const p = v.clone().project(cam); return [+((p.x + 1) / 2 * W).toFixed(1), +((1 - p.y) / 2 * H).toFixed(1)]; };
+if (pose.startsWith('M')) { const sc = await import('./scene3.js'); const pin = (m, p, part) => { try { return proj(sc.worldOf(m, p, part)); } catch (e) { return null; } };
+  out.pins = { cab: pin(S.cab, [0, 0.55, -0.22]), rack: pin(S.rack, [0, 0.30, -0.03]), deck: pin(S.deck, [0, 0.15, -0.03]), clock: pin(S.clock, [0, 0.315, -0.17]), clockCounter: pin(S.clock, [0, 0.168, -0.16]),
+    clockPlate: pin(S.clock, [0, 0.085, -0.17]), ic: pin(S.ic, [0, 0.1, -0.06]), bell: pin(S.bell, [0, 0.05, -0.06]), sw: pin(S.sw, [0, 0.3, -0.13]), swPlate: pin(S.sw, [0, -0.07, -0.13]), title: pin(S.title, [0, 0.1, -0.01]),
+    lamp: pin(S.lamp, [0, 0, -0.2]), lamp2: pin(S.lamp2, [0, 0, -0.2]), stairs: pin(S.stairs, [0, 1.2, 1.4]), door: S.door ? pin(S.door, [0, 1.3, -0.05]) : null, wheel: S.wheel ? pin(S.wheel, [0, 0, -0.03]) : null, puddle: proj(U(2.82, 0.0, 0.5)) };
+  if (S.cab.cab) { const C = S.cab.cab; out.pins.slider0 = pin(C.sliders[0], [0, 0, -0.02]); out.pins.gauge1 = pin(C.gauges[1], [0, 0, -0.02]); out.pins.counter2 = pin(C.counters[2], [0, 0, -0.02]); out.pins.toggle = pin(C.toggle, [0, 0, -0.03]); out.pins.rotary = pin(C.rotary, [0, 0, -0.03]); out.pins.lever = pin(C.lever, [0, 0, -0.03]); out.pins.bulb = proj(sc.lightWorld(S.cab, 'InnerSpot')); } }
+out.lights = lightsUsed; out.cam = { pos: cam.position.toArray().map(v => +v.toFixed(3)), fov: cam.fov };
+window.__proj = proj; window.__done = out;
+</script></body></html>

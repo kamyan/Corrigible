@@ -1,0 +1,111 @@
+{
+ "name": "CounterLamp",
+ "family": "admission",
+ "budget": "small",
+ "origin": "duvar plakasının arka yüz ortası",
+ "note": "Duvar plakası, 0,30 m boru kol ve emaye çan başlık (dışı koyu zeytin, içi krem), opal ampul. Tezgâhın sağ yarısının üstünde; ışığı belgelere aşağı düşer (spot 70°, gölgeli). Kameranın görüş açısının üstünde kalır.",
+ "listName": "Tezgâh lambası (duvar kollu, emaye)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [
+  {
+   "name": "CounterSpot",
+   "part": "Body",
+   "pos": [
+    0,
+    -0.04,
+    -0.29
+   ],
+   "type": "spot",
+   "color": "#FFD9A0",
+   "shadows": true,
+   "note": "tezgâh spotu 70°, gölgeli (K8A’da 3. gölgeli ışık); başvuru yokken kapalı"
+  }
+ ],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    2.2,
+    1.78,
+    -0.43
+   ],
+   "yaw": 90,
+   "note": "dünya; panelin sağ yarısının 0,80 m üstü (y 1,78)"
+  }
+ ],
+ "tris": 386,
+ "trisPerPart": {
+  "Body": 386
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.075,
+   -0.065,
+   -0.365
+  ],
+  "max": [
+   0.075,
+   0.05,
+   0
+  ],
+  "size": [
+   0.15,
+   0.115,
+   0.365
+  ]
+ },
+ "materials": [
+  {
+   "key": "castIron",
+   "hex": "#3A3B37",
+   "rough": 0.72,
+   "metal": 0.6,
+   "note": "dış çark, döküm kaide",
+   "tris": 42,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 32,
+   "isNew": true
+  },
+  {
+   "key": "enamelShade",
+   "hex": "#2F3A2E",
+   "rough": 0.4,
+   "metal": 0.1,
+   "note": "tezgâh lambası emaye başlık (dış)",
+   "tris": 96,
+   "isNew": true
+  },
+  {
+   "key": "enamelInner",
+   "hex": "#E9E2CC",
+   "rough": 0.45,
+   "metal": 0,
+   "note": "tezgâh lambası başlık içi (krem emaye)",
+   "tris": 96,
+   "isNew": true
+  },
+  {
+   "key": "lampGlassWarm",
+   "hex": "#FFF0C8",
+   "rough": 0.3,
+   "metal": 0,
+   "emissive": "#FFD27A",
+   "ei": 2.5,
+   "note": "oda ampulü",
+   "tris": 120,
+   "isNew": true
+  }
+ ]
+}

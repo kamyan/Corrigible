@@ -1,0 +1,84 @@
+{
+ "name": "JunctionBox",
+ "family": "walls",
+ "budget": "small",
+ "origin": "arka yüz alt kenar ortası (duvar düzlemi z = 0)",
+ "note": "Galvaniz buat 0,14 × 0,18 × 0,07, dört vidalı kapak, üstte ve altta döküm rakor, kısa boru (Ø24) uçları.",
+ "listName": "Bağlantı kutusu",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -1.12,
+    1.69,
+    2.3
+   ],
+   "yaw": 0,
+   "note": "arka duvar sol (rev2)"
+  }
+ ],
+ "tris": 382,
+ "trisPerPart": {
+  "Body": 382
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.073,
+   -0.18,
+   -0.0676
+  ],
+  "max": [
+   0.073,
+   0.36,
+   0
+  ],
+  "size": [
+   0.146,
+   0.54,
+   0.0676
+  ]
+ },
+ "materials": [
+  {
+   "key": "galv",
+   "hex": "#70756E",
+   "rough": 0.5,
+   "metal": 0.45,
+   "tris": 82,
+   "isNew": false
+  },
+  {
+   "key": "galvBin",
+   "hex": "#9A9C98",
+   "rough": 0.45,
+   "metal": 0.7,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 96,
+   "isNew": true
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 160,
+   "isNew": true
+  }
+ ]
+}

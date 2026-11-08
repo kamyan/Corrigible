@@ -1,0 +1,39 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+</head><body>
+<script type="module">
+// R14 wear demo: same painted steel box (a) no chamfer, (b) 6 mm chamfer, (c) chamfer + shared detail map (metric UV, 0,25 m tile)
+// + worn brass grip. One spot light like the desk lamp. ?w &h
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import './registry.js';
+import { material } from './mats.js';
+import { gBox, gCyl, prep } from './mlib.js';
+const q = new URLSearchParams(location.search); const W = +(q.get('w') || 1500), H = +(q.get('h') || 620);
+const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); r.setPixelRatio(1); r.setSize(W, H); r.toneMapping = THREE.ACESFilmicToneMapping; r.outputColorSpace = THREE.SRGBColorSpace; r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap; document.body.appendChild(r.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#141311'); const env = new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment(), 0.04).texture;
+// detail texture: paint micro variation + scratches + grime specks (tileable 512)
+const c = document.createElement('canvas'); c.width = c.height = 512; const x = c.getContext('2d'); x.fillStyle = '#808080'; x.fillRect(0, 0, 512, 512);
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+for (let i = 0; i < 9000; i++) { const v = 118 + rnd() * 20; x.fillStyle = `rgb(${v},${v},${v})`; x.fillRect(rnd() * 512, rnd() * 512, 2 + rnd() * 3, 2 + rnd() * 3); }
+for (let i = 0; i < 70; i++) { x.strokeStyle = `rgba(${rnd() < 0.5 ? '170,170,170' : '70,70,70'},${0.35 + rnd() * 0.4})`; x.lineWidth = 0.7 + rnd(); x.beginPath(); const a = rnd() * 512, b = rnd() * 512, l = 10 + rnd() * 50, t = rnd() * Math.PI; x.moveTo(a, b); x.lineTo(a + Math.cos(t) * l, b + Math.sin(t) * l); x.stroke(); }
+for (let i = 0; i < 26; i++) { const g = x.createRadialGradient(256, 256, 0, 256, 256, 1); x.fillStyle = `rgba(60,55,45,${0.08 + rnd() * 0.12})`; x.beginPath(); x.ellipse(rnd() * 512, rnd() * 512, 8 + rnd() * 30, 6 + rnd() * 20, rnd() * 3, 0, 7); x.fill(); }
+const dt = new THREE.CanvasTexture(c); dt.wrapS = dt.wrapT = THREE.RepeatWrapping; dt.repeat.set(4, 4); dt.colorSpace = THREE.NoColorSpace;
+const paint = (detail) => { const m = material('paintOlive').clone(); m.envMap = env; m.envMapIntensity = 0.25; if (detail) { m.map = dt; m.color.multiplyScalar(1.5); } return m; };
+const add = (g, m, px) => { const me = new THREE.Mesh(g, m); me.position.set(px, 0.09, 0); me.castShadow = me.receiveShadow = true; scene.add(me); return me; };
+add(gBox(0.32, 0.18, 0.22, 0), paint(false), -0.42);
+add(gBox(0.32, 0.18, 0.22, 0.006), paint(false), 0);
+const b3 = add(gBox(0.32, 0.18, 0.22, 0.006), paint(true), 0.42);
+const brass = material('brassWorn').clone(); brass.envMap = env; brass.envMapIntensity = 0.6;
+for (const px of [0, 0.42]) { const h = new THREE.Mesh(gCyl(0.009, 0.16, 12, 0.003), px ? brass : material('steelBare')); h.rotation.z = Math.PI / 2; h.position.set(px, 0.13, 0.135); h.castShadow = true; scene.add(h);
+  for (const s of [-1, 1]) { const p = new THREE.Mesh(gBox(0.014, 0.03, 0.03, 0.003), material('steelCast')); p.position.set(px + s * 0.07, 0.13, 0.122); scene.add(p); } }
+const fl = new THREE.Mesh(new THREE.PlaneGeometry(4, 4), new THREE.MeshStandardMaterial({ color: '#2F4A3B', roughness: 0.6 })); fl.rotation.x = -Math.PI / 2; fl.receiveShadow = true; scene.add(fl);
+scene.add(new THREE.HemisphereLight(0x7f90a6, 0x16140f, 0.5));
+const sp = new THREE.SpotLight(0xffd9a0, 9, 0, 0.7, 0.55, 2); sp.position.set(-0.55, 0.75, 0.55); sp.target.position.set(0, 0.05, 0); sp.castShadow = true; sp.shadow.mapSize.set(2048, 2048); sp.shadow.bias = -0.0006; scene.add(sp, sp.target);
+const cam = new THREE.PerspectiveCamera(24, W / H, 0.05, 20); cam.position.set(0.1, 0.62, 1.45); cam.lookAt(0, 0.08, 0); cam.updateProjectionMatrix();
+r.render(scene, cam);
+const pj = (v) => { const p = v.clone().project(cam); return [Math.round((p.x + 1) / 2 * W), Math.round((1 - p.y) / 2 * H)]; };
+window.__done = { a: pj(new THREE.Vector3(-0.42, 0, 0)), b: pj(new THREE.Vector3(0, 0, 0)), c: pj(new THREE.Vector3(0.42, 0, 0)) };
+</script></body></html>

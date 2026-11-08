@@ -1,0 +1,451 @@
+{
+ "name": "PunchClock",
+ "family": "menu",
+ "budget": "big",
+ "origin": "arka yüz, alt kenar ortası (duvar düzlemi z = 0)",
+ "note": "Duvara asılı vardiya saati. Kart üstteki pirinç ağızdan 70 mm girer; sağdaki mantar başlı itici 12 mm iner (“ka-çunk”), kart delinir. Kadranın altındaki üç teker vardiya numarasını gösterir (masadaki sayaçların eşi). Amber lamba kart kabul edilince 0,3 s yanar.",
+ "listName": "Puantaj saati",
+ "parts": [
+  {
+   "name": "HourHand",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.315,
+    -0.171
+   ],
+   "pivotLocal": [
+    0,
+    0.315,
+    -0.171
+   ],
+   "kind": "rotate",
+   "axis": "z",
+   "range": [
+    0,
+    -360
+   ],
+   "rest": 0,
+   "note": "akrep; 12 saatte bir tur (ya da sabit 05:50)"
+  },
+  {
+   "name": "MinuteHand",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.315,
+    -0.17400000000000002
+   ],
+   "pivotLocal": [
+    0,
+    0.315,
+    -0.17400000000000002
+   ],
+   "kind": "rotate",
+   "axis": "z",
+   "range": [
+    0,
+    -360
+   ],
+   "rest": 0,
+   "note": "yelkovan"
+  },
+  {
+   "name": "Wheel0",
+   "parent": "Body",
+   "pivotModel": [
+    -0.029,
+    0.168,
+    -0.157
+   ],
+   "pivotLocal": [
+    -0.029,
+    0.168,
+    -0.157
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    360
+   ],
+   "rest": 0,
+   "note": "36° / rakam; V.nnn"
+  },
+  {
+   "name": "Wheel1",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.168,
+    -0.157
+   ],
+   "pivotLocal": [
+    0,
+    0.168,
+    -0.157
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    360
+   ],
+   "rest": 0,
+   "note": "36° / rakam; V.nnn"
+  },
+  {
+   "name": "Wheel2",
+   "parent": "Body",
+   "pivotModel": [
+    0.029,
+    0.168,
+    -0.157
+   ],
+   "pivotLocal": [
+    0.029,
+    0.168,
+    -0.157
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    360
+   ],
+   "rest": 0,
+   "note": "36° / rakam; V.nnn"
+  },
+  {
+   "name": "Plunger",
+   "parent": "Body",
+   "pivotModel": [
+    0.105,
+    0.464,
+    -0.095
+   ],
+   "pivotLocal": [
+    0.105,
+    0.464,
+    -0.095
+   ],
+   "kind": "slide",
+   "axis": "y",
+   "range": [
+    0,
+    -0.012
+   ],
+   "rest": 0,
+   "note": "basınca 12 mm iner, yayla döner"
+  },
+  {
+   "name": "Lamp",
+   "parent": "Body",
+   "pivotModel": [
+    -0.105,
+    0.466,
+    -0.095
+   ],
+   "pivotLocal": [
+    -0.105,
+    0.466,
+    -0.095
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "jewelAmberOn kart kabul edilince 0,3 s; aksi hâlde jewelAmberOff"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_ShiftLabel",
+   "part": "Body",
+   "center": [
+    0,
+    0.134,
+    -0.1652
+   ],
+   "size": [
+    0.11,
+    0.014
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel (gravür)",
+   "font": "Courier Prime 700",
+   "capMm": 7,
+   "align": "center",
+   "sample": "VARDİYA",
+   "sampleEn": "SHIFT",
+   "note": ""
+  },
+  {
+   "name": "TXT_Plate",
+   "part": "Body",
+   "center": [
+    0,
+    0.085,
+    -0.17020000000000002
+   ],
+   "size": [
+    0.18,
+    0.03
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 16,
+   "align": "center",
+   "sample": "PUANTAJ",
+   "sampleEn": "TIME CLOCK",
+   "note": ""
+  },
+  {
+   "name": "TXT_Maker",
+   "part": "Body",
+   "center": [
+    0,
+    0.042,
+    -0.1652
+   ],
+   "size": [
+    0.2,
+    0.012
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel küçük (boya)",
+   "font": "Courier Prime 700",
+   "capMm": 6,
+   "align": "center",
+   "sample": "KYGA · SİVİL SAVUNMA",
+   "sampleEn": "KYGA · CIVIL DEFENCE",
+   "note": ""
+  }
+ ],
+ "anchors": [
+  {
+   "name": "CardSlot",
+   "part": "Body",
+   "pos": [
+    0,
+    0.456,
+    -0.10500000000000001
+   ],
+   "note": "kart buradan dik iner; 70 mm içeri (kart orijini alt kenarda)"
+  }
+ ],
+ "lights": [
+  {
+   "name": "LampGlow",
+   "part": "Lamp",
+   "pos": [
+    -0.105,
+    0.48000000000000004,
+    -0.095
+   ],
+   "type": "emissive",
+   "color": "",
+   "shadows": false,
+   "note": "ışık bileşeni yok"
+  }
+ ],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    2.2,
+    1.27,
+    -0.12
+   ],
+   "yaw": -90,
+   "note": "sahanlık kapı duvarı, kart rafının sağı (menü sahnesi)"
+  }
+ ],
+ "tris": 2476,
+ "trisPerPart": {
+  "Body": 1764,
+  "HourHand": 16,
+  "MinuteHand": 16,
+  "Wheel0": 128,
+  "Wheel1": 128,
+  "Wheel2": 128,
+  "Plunger": 224,
+  "Lamp": 72
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.156,
+   0,
+   -0.1825
+  ],
+  "max": [
+   0.156,
+   0.535,
+   0.002
+  ],
+  "size": [
+   0.312,
+   0.535,
+   0.1845
+  ]
+ },
+ "materials": [
+  {
+   "key": "paintGreyGreen",
+   "hex": "#5D665C",
+   "rough": 0.58,
+   "metal": 0.05,
+   "note": "puantaj saati, kart rafı",
+   "tris": 72,
+   "isNew": true
+  },
+  {
+   "key": "paintOliveDark",
+   "hex": "#353B30",
+   "rough": 0.62,
+   "metal": 0.05,
+   "note": "kapı kanadı, kasa, çerçeve",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "chrome",
+   "hex": "#C8CCCC",
+   "rough": 0.22,
+   "metal": 1,
+   "tris": 896,
+   "isNew": false
+  },
+  {
+   "key": "dialCream",
+   "hex": "#ECE3C8",
+   "rough": 0.6,
+   "metal": 0,
+   "tex": "tx_dials (ölçek ve rakam, kelime yok)",
+   "note": "kadran zemini",
+   "tris": 128,
+   "isNew": true
+  },
+  {
+   "key": "glassClear",
+   "hex": "#DCE6E3",
+   "rough": 0.05,
+   "metal": 0,
+   "alpha": 0.18,
+   "note": "saat camı, gösterge camı (Transparent)",
+   "tris": 128,
+   "isNew": true
+  },
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 264,
+   "isNew": false
+  },
+  {
+   "key": "counterFace",
+   "hex": "#1B130C",
+   "rough": 0.45,
+   "metal": 0.35,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "punchHole",
+   "hex": "#151310",
+   "rough": 1,
+   "metal": 0,
+   "note": "zımba deliği (kartın arkası karanlık)",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 128,
+   "isNew": true
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 128,
+   "isNew": true
+  },
+  {
+   "key": "clockHand",
+   "hex": "#1A1714",
+   "rough": 0.4,
+   "metal": 0.3,
+   "note": "saat ibresi (siyah boyalı çelik)",
+   "tris": 32,
+   "isNew": true
+  },
+  {
+   "key": "counterDrum",
+   "hex": "#1C150E",
+   "rough": 0.5,
+   "metal": 0,
+   "tex": "tx_counterDigits 128×1408: 11 hücreli şerit (0–9 + ikinci 0), krem rakam #EFDCAE koyu zeminde, hücre 0 üstte (v ekseni). Çark çevresi v = 1 → 1/11 (10 hücre, 36°/rakam); 11. hücre yalnız UV kaydırma içindir",
+   "note": "sayaç çarkı (bakalit tambur)",
+   "tris": 384,
+   "isNew": true
+  },
+  {
+   "key": "bakeliteBlack",
+   "hex": "#181412",
+   "rough": 0.34,
+   "metal": 0,
+   "note": "düğme, kol başı",
+   "tris": 144,
+   "isNew": true
+  },
+  {
+   "key": "jewelAmberOff",
+   "hex": "#4A2F12",
+   "rough": 0.25,
+   "metal": 0,
+   "note": "amber mücevher lamba sönük",
+   "tris": 72,
+   "isNew": true
+  }
+ ]
+}

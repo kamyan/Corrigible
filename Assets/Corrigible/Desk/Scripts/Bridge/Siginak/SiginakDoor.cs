@@ -16,6 +16,11 @@ namespace Corrigible.Desk.Bridge
     /// (4 · KAPI, K ya da kapıya tıklamak geri getirir; vardiya biterse açılmadı sayılır ve teleksten basılır). Kapıyı açmak
     /// harekâtı bitirdiyse (VURULDU, SIZMA) atış anında oda ve lamba kırmızıya döner, kâğıda damga iner; yalnız Enter / SON
     /// RAPORA GEÇ etkindir ve son rapor ona basılana kadar bekletilir. Kapının yanındaki tebeşir çentiği ziyaretçileri sayar.
+    /// <para>Kartlı oyunda (Revizyon 3 · Aşama 6, R9/R17) kapıyı <see cref="SiginakAdmission"/> yönetir: vuruş, tezgâh, kabul dizisi ve
+    /// kanadın açılışı onun işidir. Buradan yalnız giriş (KAPI tuşu 4/K, kapıya tık → <see cref="SiginakAdmission.Enter"/>), masa kilidi
+    /// (<see cref="Busy"/> = kabulün <see cref="SiginakAdmission.Busy"/>'si) ve kapı hedefinin satırı kalır; K8 ailesinde kapı hedefi
+    /// etkisizdir (etiket ve tık yok). Kabul bağı yoksa eski yedek çalışır: aday varken lamba sürekli amber, KAPI eski pencereyi açar.
+    /// Kartlı oyunda kırmızı lamba, kırmızı oda, siluet ve tebeşir çentiği hiç çağrılmaz; eski dal aynen kalır.</para>
     /// </summary>
     public sealed class SiginakDoor : MonoBehaviour
     {
@@ -40,9 +45,14 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] Light[] roomLights = System.Array.Empty<Light>();
         [Tooltip("Kapı açıldıktan sonra atışın (ölümcül anın) gecikmesi.")]
         [SerializeField, Min(0)] float fatalSeconds = 0.9f;
+        [SerializeField] PlanningBoardPresenter planningBoard;
+        [Tooltip("Kartlı oyunda kapının sahibi (Aşama 6 · kabul tezgâhı): vuruş, tezgâh, kabul dizisi. Boşsa eski yedek: aday varken lamba sürekli amber.")]
+        [SerializeField] SiginakAdmission admission;
 
         /// <summary>Kapının üzerine gelme etiketi (sahnedeki başlık bu kaynağı taşır; satır dile göre buradan yazılır).</summary>
         static readonly string TargetTitle = Loc.N("SIĞINAK KAPISI"), TargetLine = Loc.N("Biri çalınca: gözetleme deliği, interkom, kapıyı aç ya da açma.");
+        /// <summary>Kartlı oyunda kapı hedefinin satırı (PLAN §4): kapıda aday var / yok.</summary>
+        static readonly string BoardLineWaiting = Loc.N("Kapıda başvuru var: tezgâha bak."), BoardLineIdle = Loc.N("Kapıda kimse yok.");
 
         DoorPhase phase;
         DoorVisit shown, announced;
@@ -51,10 +61,21 @@ namespace Corrigible.Desk.Bridge
         float turnAt = -1, fatalAt = -1;
         Color[] roomColors = System.Array.Empty<Color>();
 
+        /// <summary>Kartlı oyunda yazılan satırın kaynağı (değişince yeniden yazılır; null = henüz yazılmadı).</summary>
+        string boardLine;
+
         Simulation Sim => game != null ? game.Sim : null;
-        /// <summary>Kâğıt açık, kapı kımıldıyor ya da vuruş kameranın dönmesini bekliyor: masa kilitli.</summary>
-        public bool Busy => phase != DoorPhase.None || turnAt >= 0 || prop != null && prop.Moving && prop.isActiveAndEnabled ||
-            Time.frameCount <= quietUntil;
+        /// <summary>Kartlı oyun ve kabul bağlı: kapının sahibi <see cref="SiginakAdmission"/> (bağ yoksa eski yedek).</summary>
+        bool Delegated => admission != null && Sim?.Board != null;
+        /// <summary>Kartlı oyunda kapıda bekleyen aday (harekât bitmediyse).</summary>
+        static bool CandidateWaiting(Simulation sim) => sim?.Admission?.Candidate != null && sim.S.Ending == null;
+
+        /// <summary>
+        /// Kâğıt açık, kapı kımıldıyor ya da vuruş kameranın dönmesini bekliyor: masa kilitli. Kartlı oyunda kabul bağlıysa kabulün
+        /// dizisi (<see cref="SiginakAdmission.Busy"/>; kanadın açılıp kapanması o dizinin parçası).
+        /// </summary>
+        public bool Busy => Delegated ? admission.Busy || Time.frameCount <= quietUntil :
+            phase != DoorPhase.None || turnAt >= 0 || prop != null && prop.Moving && prop.isActiveAndEnabled || Time.frameCount <= quietUntil;
 
         public void Configure(GameController controller, LiberationDeskView deskView, SimDeskDataSource data, SiginakCameraRig cameraRig, TelexFeed feed,
             DoorProp door, DoorCardView paper, DeskTarget doorTarget, Transform knock, Camera camera)
@@ -69,6 +90,7 @@ namespace Corrigible.Desk.Bridge
             card.Clicked += Choose;
             card.Dismissed += Dismiss;
             target.Clicked += Reopen;
+            target.BlockedOverride = TargetBlocked;
             DeskLoc.Instance.Changed += Relabel;
             // Sahnedeki başlık çeviri tablosundaki kaynakla aynı olmalı (etiket onu çevirir)
             if (target.Title != TargetTitle) Debug.LogWarning($"Kapının etiketi '{target.Title}', beklenen '{TargetTitle}'.");
@@ -82,21 +104,45 @@ namespace Corrigible.Desk.Bridge
             card.Clicked -= Choose;
             card.Dismissed -= Dismiss;
             target.Clicked -= Reopen;
+            if (target.BlockedOverride == (System.Func<bool>)TargetBlocked) target.BlockedOverride = null;
             DeskLoc.Instance.Changed -= Relabel;
         }
+
+        /// <summary>
+        /// Kapı hedefinin kilidi: odanın kilidi (<see cref="DeskTarget.Blocked"/>) ve kartlı oyunda K8 ailesi (kabul etkinken kanat,
+        /// çark ve gözetleme tıklanmaz; etiket de çıkmaz).
+        /// </summary>
+        bool TargetBlocked() => Delegated && admission.Active || DeskTarget.Blocked != null && DeskTarget.Blocked();
 
         /// <summary>Dil değişti: etiket satırı ve açık kâğıt yeniden yazılır.</summary>
         void Relabel()
         {
-            target.LineOverride = Loc.T(TargetLine);
-            if (card.IsOpen && shown != null) card.Bind(Build());
+            boardLine = null;
+            Label();
+            if (card != null && card.IsOpen && shown != null) card.Bind(Build());
+        }
+
+        /// <summary>
+        /// Kapı hedefinin satırı: kartlı oyunda kapıda aday var / yok (PLAN §4), eski oyunda Rev2 satırı. Kaynak değişmedikçe
+        /// yeniden yazılmaz (her karede çağrılır).
+        /// </summary>
+        void Label()
+        {
+            if (target == null) return;
+            var sim = Sim;
+            string line = sim?.Board == null ? TargetLine : CandidateWaiting(sim) ? BoardLineWaiting : BoardLineIdle;
+            if (line == boardLine) return;
+            boardLine = line;
+            target.LineOverride = Loc.T(line);
         }
 
         /// <summary>Yeni oyun ya da kayıttan devam: kâğıt kapanır, kapı kapalı; bekleyen ziyaretçi yeniden çalar.</summary>
         void ResetDoor()
         {
-            card.Hide();
+            if (card != null) card.Hide();
             prop.ResetClosed();
+            // Kartlı oyun (D12): yüklemede vuruş yok; bekleyen aday için lamba sürekli amber (kabulün kendi kurulumuyla aynı sonuç, sıra önemsiz)
+            if (Sim?.Board != null) prop.SetKnocking(CandidateWaiting(Sim));
             RoomRed(false);
             if (phase != DoorPhase.None && rig != null) rig.Locked = false;
             phase = DoorPhase.None;
@@ -104,11 +150,22 @@ namespace Corrigible.Desk.Bridge
             turnAt = fatalAt = -1;
             logSeen = Sim?.S.Door?.Log.Count ?? 0;
             if (source != null) source.State.HoldEnding = false;
+            boardLine = null;
+            Label();
         }
 
         void Update()
         {
             var sim = Sim;
+            if (sim?.Board != null)
+            {
+                Label();
+                // Lamba kabulün işi (vuruş, sonra amber); kabul bağı yoksa eski yedek: aday varken sürekli amber
+                if (!Delegated) prop.SetKnocking(CandidateWaiting(sim));
+                var keyboard = Keyboard.current;
+                if (!surface.BlockedExceptDoor && (KeyPressed(keyboard?.digit4Key) || KeyPressed(keyboard?.numpad4Key) || KeyPressed(keyboard?.kKey))) Visit();
+                return;
+            }
             if (sim?.S.Door == null) return;
             ReportUnanswered(sim);
             if (tally != null) tally.Show(sim.S.Door.Log.Count);
@@ -182,6 +239,7 @@ namespace Corrigible.Desk.Bridge
         /// </summary>
         public void Visit()
         {
+            if (Sim?.Board != null) { Admit(); return; }
             var v = Sim?.DoorVisitor;
             if (phase != DoorPhase.None || surface.BlockedExceptDoor || rig.InTransition || turnAt >= 0) return;
             if (v == null) rig.Focus(SiginakPose.Door);
@@ -191,9 +249,21 @@ namespace Corrigible.Desk.Bridge
         /// <summary>Kapıya tıklamak: bekleyen ziyaretçinin kâğıdı yeniden açılır.</summary>
         void Reopen()
         {
+            if (Sim?.Board != null) { if (!(Delegated && admission.Active)) Admit(); return; }
             var v = Sim?.DoorVisitor;
             if (v == null || phase != DoorPhase.None || surface.BlockedExceptDoor) return;
             Open(v);
+        }
+
+        /// <summary>
+        /// Kartlı oyunda KAPI istasyonu: kabul bağlıysa <see cref="SiginakAdmission.Enter"/> (dizi oynarken değil), yoksa eski yedek
+        /// (<see cref="PlanningBoardPresenter.ShowAdmissions"/>).
+        /// </summary>
+        void Admit()
+        {
+            if (surface.BlockedExceptDoor) return;
+            if (Delegated) { if (!admission.Busy) admission.Enter(); }
+            else if (planningBoard != null) planningBoard.ShowAdmissions();
         }
 
         void Open(DoorVisit v)

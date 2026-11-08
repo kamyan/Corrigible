@@ -1,0 +1,71 @@
+{
+ "name": "ReliefIso_sea",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Dört kat çapraz örülmüş kum torbası sütunu (0,62): her katta iki torba, kat kat yön değiştirir; en alt kat koyu ıslak (detailA). Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi.",
+ "listName": "Ayrık blok · Elektronik fabrikası (kum torbası sütunu)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 120,
+ "trisPerPart": {
+  "Body": 120
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.31,
+   0,
+   -0.31
+  ],
+  "max": [
+   0.31,
+   0.55,
+   0.31
+  ],
+  "size": [
+   0.62,
+   0.55,
+   0.62
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_sea_detailA",
+   "hex": "#5D5C52",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 32,
+   "isNew": false
+  },
+  {
+   "key": "k_sea_wallWest",
+   "hex": "#939489",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 29,
+   "isNew": false
+  },
+  {
+   "key": "k_sea_wallSouth",
+   "hex": "#74756C",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 25,
+   "isNew": false
+  },
+  {
+   "key": "k_sea_wallTop",
+   "hex": "#A6A799",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 34,
+   "isNew": false
+  }
+ ]
+}

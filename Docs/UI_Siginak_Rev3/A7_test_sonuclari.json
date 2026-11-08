@@ -1,0 +1,70 @@
+{
+  "stage": 7,
+  "unity": "6000.3.12f1",
+  "editMode": {
+    "summary": {
+      "Total": 955,
+      "Passed": 955,
+      "Failed": 0,
+      "Skipped": 0,
+      "Inconclusive": 0
+    },
+    "duration": 188,
+    "afterPaginationFix": {
+      "Total": 10,
+      "Passed": 10,
+      "Failed": 0,
+      "Skipped": 0,
+      "Inconclusive": 0
+    }
+  },
+  "playMode": {
+    "validatedDistinctScenarios": 71,
+    "lastFullRun": {
+      "total": 71,
+      "passed": 69,
+      "failed": 2,
+      "skipped": 0,
+      "inconclusive": 0
+    },
+    "afterFixesAdmission": {
+      "total": 26,
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0,
+      "inconclusive": 0
+    },
+    "newMapPaperCrtScenarios": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "inconclusive": 0
+    },
+    "unchangedScenariosPassedInFullRun": 45,
+    "note": "Son tam turdaki iki kabul bulgusu düzeltildikten sonra ilgili 26 kabul testi tekrar geçti. Kalan 45 test tam turda geçti; yeni 4 R6/dosya/CRT testi bu 45 içindedir. Son sayfa alt boşluğu düzeltmesinden sonra 10 kâğıt EditMode testi ve 4 harita/dosya/CRT PlayMode testi tekrar geçti.",
+    "afterPaginationFix": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "inconclusive": 0
+    }
+  },
+  "editorAudit": {
+    "audit": "boşalan 0, hedefi değişen 0, bileşeni silinen anahtar 0\n",
+    "scan": "2431 metin, 0 ihlal, 150 istisna · Docs/UI_Siginak_Rev3/punto_taramasi.txt",
+    "loc": "Çeviri tablosu: 2015 metin, 0 yeni, 0 kullanılmayan. Eksik çeviri: 0",
+    "problems": [],
+    "failed": false
+  },
+  "saveRecovery": {
+    "promotedToNormalContinue": true,
+    "changedFiles": [
+      "liberation_savegame.json",
+      "planning_board_layout.json",
+      "liberation_desk.json"
+    ],
+    "newSaveReplayValid": true
+  }
+}

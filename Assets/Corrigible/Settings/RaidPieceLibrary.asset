@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1faa0bc029d554dfb87ca7c8286f6616, type: 3}
   m_Name: RaidPieceLibrary
   m_EditorClassIdentifier: Corrigible.Game::Corrigible.Game.Raid.RaidPieceLibrary
-  floor: {fileID: 6894198806370172111, guid: 3f7153f610198434fa078090d94fd61d, type: 3}
-  wall: {fileID: 5610772328931942567, guid: b66be588b92de475fb5f0da9c37e63c6, type: 3}
-  cable: {fileID: 305440446409749069, guid: e1414e41adf014dae954c3d58f766ffe, type: 3}
+  floor: {fileID: 1426604559531589330, guid: 3074c927fb5314487acfb63cb8e29c95, type: 3}
+  wall: {fileID: 5760966518046835667, guid: 4c4e17de96dc44ee7b819b40199f8b56, type: 3}
+  cable: {fileID: 199703503447461245, guid: edd1e2b3abc394cc9b41b647a19fe6e3, type: 3}
   defaultKit: {fileID: 11400000, guid: f9df7486c3bb94edf85c6f74a4f26710, type: 2}
   kits:
   - {fileID: 11400000, guid: cc9fe9e682b5b49d89318a288fdaabab, type: 2}
@@ -29,27 +29,27 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e328cd5f972f741d4bc2564968ad6c51, type: 2}
   - {fileID: 11400000, guid: f63f04024137a473dbce3a425e48f020, type: 2}
   - {fileID: 11400000, guid: 5fa56f97d7c6f4055a1343e84d167bdf, type: 2}
-  core: {fileID: 5564251312379761101, guid: cb0cd308210e14b229efaf046625a4eb, type: 3}
-  node: {fileID: 8921853248403434431, guid: f8ddb591a5af84efda2f66df6fdbe719, type: 3}
-  civilian: {fileID: 3801026127767064416, guid: b6beafc53f5e5421599279a99bbd7259, type: 3}
-  cooling: {fileID: 7306417211392165986, guid: 4a08bf5cfe7624d9c8e995424d4f1c29, type: 3}
-  spawner: {fileID: 8814109916042950270, guid: e3dbc46529403412699cb44afc2cfd23, type: 3}
-  lootCrate: {fileID: 8921853248403434431, guid: 9e04c8d4236fc445890725b4d96af66c, type: 3}
-  lootCrateOpen: {fileID: 6398928456681271134, guid: 47438419779c346c68100fb54d6d2454, type: 3}
+  core: {fileID: 9063808536937292741, guid: e641c1cc06d2f4143a895daf4af6cd1e, type: 3}
+  node: {fileID: 3627286028650111094, guid: 40f0a4d112fef486397984cdc3a63570, type: 3}
+  civilian: {fileID: 6821395428204309933, guid: 92f15894b29c741a193d11fe24a646db, type: 3}
+  cooling: {fileID: 5135400993243193018, guid: f918a694af98c42e88eaa7fd83f08208, type: 3}
+  spawner: {fileID: 6982802039055343900, guid: faa33837cdbda489f959484decfe4c0f, type: 3}
+  lootCrate: {fileID: 2939736771233385535, guid: 6ed1c77c1a138400fa93c584da5af42a, type: 3}
+  lootCrateOpen: {fileID: 7495080222818968318, guid: 255b81bbf782945a9ae7e19bae58f9ba, type: 3}
   rubble: {fileID: 2884673381055367629, guid: 927aa90a23279484bb5fd433a566ce26, type: 3}
-  technician: {fileID: 4603348003139424556, guid: 5094c3276b9844efaaaa556781950b3e, type: 3}
-  emp: {fileID: 3955810935086088370, guid: b2e11479cb10c46a68fb74f62f97e1ee, type: 3}
-  analyst: {fileID: 285499433824670196, guid: bfb5892617cee4bf99b2ed0aaaa75de0, type: 3}
+  technician: {fileID: 5919176260454154254, guid: a7f958862ec0a4d8aac1cdd548da4c9f, type: 3}
+  emp: {fileID: 1198252631382383207, guid: 4c0c9258c0a0d4ded90e87f5fbd6ad9c, type: 3}
+  analyst: {fileID: 5578927519103705457, guid: e8d269b6943664e24b58e8678883862d, type: 3}
   miner: {fileID: 4603348003139424556, guid: 01c8644d1c10f46c4beab37c34d7ffca, type: 3}
   smokeSpecialist: {fileID: 4603348003139424556, guid: de486c22f81924a989fc67c3242749df, type: 3}
-  drone: {fileID: 6642452832963876291, guid: 398cd9db38ce74af7843a45fbc2d1c7d, type: 3}
-  maintenance: {fileID: 6709368790409979924, guid: 89a3e9677507f41669f2b8b92e07a55f, type: 3}
-  armoredDrone: {fileID: 6720208848701570212, guid: be281cb8471f3413995c7ca1290e847b, type: 3}
-  mortar: {fileID: 9179301860171393914, guid: 2319a65449fb1478983ad6ef021862a9, type: 3}
-  bomber: {fileID: 6857128260049653010, guid: 4e6541d4410af4d9999d49aafa888bba, type: 3}
-  locker: {fileID: 4236738668563674594, guid: dc57b47d9f4ad41428890d08c080451e, type: 3}
-  shieldDrone: {fileID: 4648080259098805145, guid: 7af1e00eba01c4fb1b529df09b445c25, type: 3}
-  replicator: {fileID: 111924922561604957, guid: fc4676f56665b48cabc7a386e8a9a540, type: 3}
+  drone: {fileID: 8822116030777509838, guid: 90faf714cad5a4c2ab4fabc69491d53d, type: 3}
+  maintenance: {fileID: 1406441315911667048, guid: bb9ca9e9e456f4fdf8e79713ccdc4440, type: 3}
+  armoredDrone: {fileID: 4276010070700244747, guid: ed886b0d91353441e837b51dafb862e3, type: 3}
+  mortar: {fileID: 2522110795450942078, guid: cfa04654da9f847af8266cf58f961b19, type: 3}
+  bomber: {fileID: 575131071014232341, guid: 13ffb684565cc42c08916fc2d92e145f, type: 3}
+  locker: {fileID: 5928732255777017362, guid: 21074d07e6ae94a2299816c2736a796c, type: 3}
+  shieldDrone: {fileID: 143638077709538218, guid: e7edfdec1baca4b1da7c86ba51611583, type: 3}
+  replicator: {fileID: 8651172726398756266, guid: 4e55dab93adf94f1290e4179e677f7cb, type: 3}
   glyphDrone: {fileID: 21300000, guid: 8ba3a5dcded1e4c7bbdf94249340f67f, type: 3}
   glyphArmoredDrone: {fileID: 21300000, guid: 07c41679aec164ea2863eca61608dd3b, type: 3}
   glyphShieldDrone: {fileID: 21300000, guid: 4ab52c267e042421c8826564579c3cdb, type: 3}
@@ -65,7 +65,10 @@ MonoBehaviour:
   badgeClone: {fileID: 21300000, guid: 28c36caf01b284b1d951950475e451fe, type: 3}
   intent: {r: 0.72156864, g: 0.14117648, b: 0.101960786, a: 1}
   intentQuiet: {r: 0.52156866, g: 0.2509804, b: 0.019607844, a: 1}
-  spawnMarker: {fileID: 3501207820214091994, guid: 763bb4dc072c24836996df755dee6e28, type: 3}
+  spawnMarker: {fileID: 8263987047261749972, guid: e0f92fe712bdd4a8c9341eb9db000963, type: 3}
+  moveMarker: {fileID: 8192259039239186250, guid: 511e6cc7bd2ef45ed85437fc3e045a63, type: 3}
+  hitMarker: {fileID: 3334675108140335105, guid: 48bfa3b0ce1af4719bc948b14812a167, type: 3}
+  cloneMarker: {fileID: 9220733675877026428, guid: 506351429715d45fb8498fbda57ce95f, type: 3}
   highlight: {fileID: 2100000, guid: face545e48fa24e4fa8ed3008a9ae282, type: 2}
   overlay: {fileID: 2100000, guid: 1b9543ca7b17f4c86aaacec26b92becd, type: 2}
   tileMarks: {fileID: 2100000, guid: 0d960437cbcb64654b3d554e80aa474c, type: 2}
@@ -80,9 +83,9 @@ MonoBehaviour:
   good: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
   ink: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
   smoke: {r: 0.56, g: 0.55, b: 0.52, a: 0.55}
-  tube: {fileID: 8921853248403434431, guid: d7c75143286c2407abb72a7d0701711f, type: 3}
-  debris: {fileID: 8921853248403434431, guid: 5c91d24fddb334689856ada4eddcafd7, type: 3}
-  weldArm: {fileID: 8921853248403434431, guid: f262d0c7006144f7db86a2a878ed02d7, type: 3}
+  tube: {fileID: 4176924133326858797, guid: c1ef360ee91364910977762bb35035ef, type: 3}
+  debris: {fileID: 4926731154066580209, guid: 5f98aeb637f6b441d8ad968136866a51, type: 3}
+  weldArm: {fileID: 8917868413419382389, guid: 04159b7b5d9b5490fa5cd4ce20238104, type: 3}
   tubeFallbackScale: {x: 0.5, y: 1.45, z: 0.5}
   debrisFallbackScale: {x: 1.15, y: 1.7, z: 1.15}
   weldArmFallbackScale: {x: 1.2, y: 0.35, z: 1.2}

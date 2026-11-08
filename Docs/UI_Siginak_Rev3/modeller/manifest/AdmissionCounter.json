@@ -1,0 +1,285 @@
+{
+ "name": "AdmissionCounter",
+ "family": "admission",
+ "budget": "big",
+ "origin": "sabit rafın arka üst kenarının ortası, duvar düzlemi (z = 0), tezgâh üstü yüksekliği (dünya y 0,98)",
+ "note": "Kapının sağında duvarda 85 mm sabit raf ve ona menteşeli çelik kanat (toplam 0,84 × 0,38): kenarı kıvrık sac, üstte yeşil keçe altlık, önde pirinç şerit; altında iki döner konsol. Başvuru yokken kanat kalkıp paneli örter (Top 88°, konsollar içe 90°), alt yüzündeki KABUL şablonu odaya bakar; aday gelince iner (0,4 s, metal sesi). Sabit rafta BULGULAR kıskacı.",
+ "listName": "Kabul tezgâhı (duvara katlanır çelik)",
+ "parts": [
+  {
+   "name": "Top",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0,
+    -0.085
+   ],
+   "pivotLocal": [
+    0,
+    0,
+    -0.085
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    88
+   ],
+   "rest": 0,
+   "note": "kanat: 0 = inik (çalışma), 88° = kalkık, paneli örter (başvuru yok)"
+  },
+  {
+   "name": "BracketL",
+   "parent": "Body",
+   "pivotModel": [
+    -0.32,
+    -0.04,
+    -0.012
+   ],
+   "pivotLocal": [
+    -0.32,
+    -0.04,
+    -0.012
+   ],
+   "kind": "rotate",
+   "axis": "y",
+   "range": [
+    0,
+    -90
+   ],
+   "rest": 0,
+   "note": "döner konsol: 0 = açık (kanadı taşır), içe 90° = duvara yatık"
+  },
+  {
+   "name": "BracketR",
+   "parent": "Body",
+   "pivotModel": [
+    0.32,
+    -0.04,
+    -0.012
+   ],
+   "pivotLocal": [
+    0.32,
+    -0.04,
+    -0.012
+   ],
+   "kind": "rotate",
+   "axis": "y",
+   "range": [
+    0,
+    90
+   ],
+   "rest": 0,
+   "note": "döner konsol: 0 = açık (kanadı taşır), içe 90° = duvara yatık"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Findings",
+   "part": "Body",
+   "center": [
+    0.02,
+    0.0055,
+    -0.0595
+   ],
+   "size": [
+    0.1,
+    0.012
+   ],
+   "normal": [
+    0,
+    1,
+    0
+   ],
+   "up": [
+    0,
+    0,
+    1
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 7,
+   "align": "center",
+   "sample": "BULGULAR",
+   "sampleEn": "FINDINGS",
+   "note": "kıskaç tabanının önünde, tezgâhtan okunur"
+  },
+  {
+   "name": "TXT_Under",
+   "part": "Top",
+   "center": [
+    0,
+    -0.0306,
+    -0.2
+   ],
+   "size": [
+    0.7,
+    0.12
+   ],
+   "normal": [
+    0,
+    -1,
+    0
+   ],
+   "up": [
+    0,
+    0,
+    -1
+   ],
+   "role": "wallStencil",
+   "font": "Courier Prime 700",
+   "capMm": 80,
+   "align": "center",
+   "sample": "KABUL",
+   "sampleEn": "ADMISSION",
+   "note": "kanadın alt yüzü: kanat kalkıkken odaya bakar (şablon boya)"
+  }
+ ],
+ "anchors": [
+  {
+   "name": "Doc",
+   "part": "Top",
+   "pos": [
+    0.02,
+    0.003,
+    -0.215
+   ],
+   "note": "başvuru belgesinin yeri (kimlik / sevk belgesi)"
+  },
+  {
+   "name": "Pad",
+   "part": "Top",
+   "pos": [
+    -0.29,
+    0.003,
+    -0.305
+   ],
+   "note": "dış kayıt talep defteri"
+  },
+  {
+   "name": "Rack",
+   "part": "Top",
+   "pos": [
+    0.29,
+    0.003,
+    -0.3
+   ],
+   "note": "karar damgası rafı (kanadın sağ önü, kullanıcıya dönük)"
+  },
+  {
+   "name": "Ruler",
+   "part": "Top",
+   "pos": [
+    0.03,
+    0.006,
+    -0.335
+   ],
+   "note": "büyüteç ve karşılaştırma cetveli"
+  },
+  {
+   "name": "Hover",
+   "part": "Top",
+   "pos": [
+    0,
+    0.05,
+    -0.2
+   ],
+   "note": "kalkıkken üzerine gelince etiket: KABUL TEZGÂHI · başvuru yok"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    2.2,
+    0.98,
+    -0.27
+   ],
+   "yaw": 90,
+   "note": "dünya; kapı duvarı (x 2,20), kapının sağı (odadan), z −0,69…0,15: tezgâh üstü y 0,98; kapı kasasının yüz laması z 0,19’da biter"
+  }
+ ],
+ "tris": 870,
+ "trisPerPart": {
+  "Body": 534,
+  "Top": 176,
+  "BracketL": 80,
+  "BracketR": 80
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.42,
+   -0.285,
+   -0.3835
+  ],
+  "max": [
+   0.42,
+   0.0165,
+   0
+  ],
+  "size": [
+   0.84,
+   0.3015,
+   0.3835
+  ]
+ },
+ "materials": [
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 242,
+   "isNew": true
+  },
+  {
+   "key": "paintOlive",
+   "hex": "#4A5140",
+   "rough": 0.6,
+   "metal": 0.05,
+   "note": "boyalı sac (dolap, konsol, saat gövdesi)",
+   "tris": 132,
+   "isNew": true
+  },
+  {
+   "key": "feltBlotter",
+   "hex": "#3E4A3A",
+   "rough": 0.95,
+   "metal": 0,
+   "note": "harita altlığı keçe",
+   "tris": 88,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 240,
+   "isNew": true
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 124,
+   "isNew": true
+  },
+  {
+   "key": "brassDark",
+   "hex": "#8C6F3E",
+   "rough": 0.45,
+   "metal": 0.8,
+   "tris": 44,
+   "isNew": false
+  }
+ ]
+}

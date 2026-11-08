@@ -22,6 +22,8 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] RadioLogBook logBook;
         [Tooltip("Baskına geçişte kamerayı CRT'ye götüren ve dönüşte geri getiren rig (geri çekil → dön → yaklaş).")]
         [SerializeField] SiginakCameraRig rig;
+        [SerializeField] CrtInstruments instruments;
+        [SerializeField] DeskTarget radioTarget, logTarget;
 
         CrtState shown = (CrtState)(-1);
         Simulation Sim => game != null ? game.Sim : null;
@@ -58,12 +60,15 @@ namespace Corrigible.Desk.Bridge
             shown = d.State;
             screen.Bind(d);
             if (logBook != null) logBook.Show(RadioLogBuilder.Entries(sim, RaidLauncher.IsRaidLoaded));
+            if (instruments) instruments.Bind(d);
+            if (radioTarget) radioTarget.LineOverride = d.Title;
+            if (logTarget) logTarget.LineOverride = logBook != null ? logBook.LastLine : null;
         }
 
         // ---------- IRaidTransition (K5b) ----------
 
         public float ApproachSeconds => rig != null ? rig.DiveSeconds : SiginakTheme.Active.NumberOf("motion.crtTurnS", 0.5f);
-        public void BeginApproach() => overlay.BeginApproach(ApproachSeconds);
+        public void BeginApproach() { overlay.BeginApproach(ApproachSeconds); if (instruments) instruments.BeginApproach(); }
 
         // Kamera önce geri çekilir, CRT'ye döner, ekrana yaklaşır; boşluk ya da tık dalışı ve diziyi birlikte atlar
         public IEnumerator Approach(Transform target, float fieldOfView)
@@ -76,12 +81,14 @@ namespace Corrigible.Desk.Bridge
         // Dönüşte kamera tüp kapanırken monitörde bekler, sonra aynı yoldan geri çıkar; boşluk ya da tık yolu atlar
         public IEnumerator Depart(Transform from, float fieldOfView)
         {
-            if (rig == null) return null;
+            if (rig == null) yield break;
+            if (instruments) instruments.Power(false);
             rig.BeginReturn(from, fieldOfView, SiginakTheme.Active.NumberOf("motion.crtReturnDelayS", 0.3f));
-            return rig.RunDive(CrtTransition.SkipPressed);
+            yield return rig.RunDive(CrtTransition.SkipPressed);
+            if (instruments) instruments.Power(true);
         }
         // Hat açılırken telsiz frekansı arar; dönüşte hat kapanır
-        public IEnumerator Run() { Sfx.Play(Cue.RadioTune); return overlay.Run(CrtViewBuilder.Transition(Sim)); }
+        public IEnumerator Run() { Sfx.Play(Cue.RadioTune); if (instruments) instruments.CompleteApproach(); return overlay.Run(CrtViewBuilder.Transition(Sim)); }
         public void SceneLoaded() => overlay.SceneLoaded();
         public IEnumerator Return() { Sfx.Play(Cue.RadioReport, 0.6f); return overlay.Return(CrtViewBuilder.Transition(Sim)); }
     }

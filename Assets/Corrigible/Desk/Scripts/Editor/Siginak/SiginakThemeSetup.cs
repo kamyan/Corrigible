@@ -63,6 +63,7 @@ namespace Corrigible.Desk.EditorTools
         public static Report Fill(SiginakTheme theme, string json)
         {
             var root = JObject.Parse(json);
+            RestoreRemoved(root);
             var sink = new Sink();
             var types = new List<SadeTheme.TypeStyle>();
             foreach (var p in root.Properties())
@@ -110,6 +111,27 @@ namespace Corrigible.Desk.EditorTools
             r.Colors = sink.colors.Count; r.Numbers = sink.numbers.Count; r.Strings = sink.strings.Count;
             r.Types = types.Count; r.Shadows = sink.shadows.Count;
             return r;
+        }
+
+        /// <summary>
+        /// Token 1.3 (Revizyon 3, ek 11-05) kartlı oyundan çıkan değerleri <c>{"removed": true}</c> düğümüne çevirir; eski
+        /// değerleri “_was_1_3”te durur. Eski yol (<c>planningBoardEnabled = false</c>) bunları hâlâ okuduğu için kaldırılmış
+        /// düğüm eski değeriyle yerine konur (Rev3 IMPLEMENTATION_MAP › Soru 5). Kaldırılmamış, yalnız değişmiş yollar
+        /// (ör. <c>cameras.K4</c>) yeni değeriyle kalır.
+        /// </summary>
+        static void RestoreRemoved(JObject root)
+        {
+            if (!(root["_was_1_3"] is JObject was)) return;
+            foreach (var p in was.Properties())
+            {
+                var keys = p.Name.Split('.');
+                JObject parent = root;
+                for (int i = 0; i < keys.Length - 1 && parent != null; i++) parent = parent[keys[i]] as JObject;
+                if (parent == null) continue;
+                string last = keys[keys.Length - 1];
+                if (parent[last] is JObject node && node["removed"] is JValue removed && removed.Type == JTokenType.Boolean && (bool)removed)
+                    parent[last] = p.Value.DeepClone();
+            }
         }
 
         static string Join(string path, string name) => string.IsNullOrEmpty(path) ? name : path + "." + name;
@@ -193,16 +215,18 @@ namespace Corrigible.Desk.EditorTools
             return c;
         }
 
-        static bool Mapped(string family) => family.StartsWith("Courier") || family.StartsWith("Kalam") || family.StartsWith("Libre Franklin");
+        static bool Mapped(string family) => family.StartsWith("Courier") || family.StartsWith("Kalam") || family.StartsWith("Libre Franklin")
+            || family.StartsWith("Big Shoulders Stencil");
 
         /// <summary>
-        /// Aile + ağırlık → masa fontu. Projede olmayan aile (Big Shoulders Stencil) Courier Prime 700'e düşer
-        /// (IMPLEMENTATION_MAP › Soru 8); asıl aile “type.&lt;rol&gt;.fallback” metninde saklanır.
+        /// Aile + ağırlık → masa fontu. Big Shoulders Stencil Revizyon 3'te eklendi (tek ağırlık, 800); projede olmayan başka
+        /// aile Courier Prime 700'e düşer ve asıl aile “type.&lt;rol&gt;.fallback” metninde saklanır.
         /// </summary>
         static DeskFont Font(string family, int weight)
         {
             if (family.StartsWith("Courier")) return weight >= 700 ? DeskFont.CpBold : DeskFont.CpRegular;
             if (family.StartsWith("Kalam")) return weight >= 700 ? DeskFont.KalamBold : DeskFont.KalamRegular;
+            if (family.StartsWith("Big Shoulders Stencil")) return DeskFont.StencilExtraBold;
             if (!family.StartsWith("Libre Franklin")) return DeskFont.CpBold;
             return weight >= 800 ? DeskFont.LfExtraBold : weight >= 700 ? DeskFont.LfBold : weight >= 600 ? DeskFont.LfSemiBold
                 : weight >= 500 ? DeskFont.LfMedium : DeskFont.LfRegular;

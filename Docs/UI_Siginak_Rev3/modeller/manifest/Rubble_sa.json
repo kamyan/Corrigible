@@ -1,0 +1,82 @@
+{
+ "name": "Rubble_sa",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Birbirine yaslanmış eğri çelik levhalar, kalıp nervürü parçası, ahşap takoz (detailA) ve yonga; toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi.",
+ "listName": "Gedik molozu · Hidroelektrik santrali (eğri levhalar)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 160,
+ "trisPerPart": {
+  "Body": 160
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.45,
+   0,
+   -0.45
+  ],
+  "max": [
+   0.45,
+   0.1326,
+   0.45
+  ],
+  "size": [
+   0.9,
+   0.1326,
+   0.9
+  ]
+ },
+ "materials": [
+  {
+   "key": "rk_dust",
+   "hex": "#6B6257",
+   "rough": 1,
+   "metal": 0,
+   "alpha": 0.55,
+   "tex": "tx_dust (yumuşak kenarlı toz lekesi, kenara doğru saydam, 256²)",
+   "note": "gedik molozunun toz lekesi (zemine yapışık dörtgen, gölgesiz)",
+   "tris": 2,
+   "isNew": true
+  },
+  {
+   "key": "k_sa_wallWest",
+   "hex": "#7E8790",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 87,
+   "isNew": false
+  },
+  {
+   "key": "k_sa_wallSouth",
+   "hex": "#656E76",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 37,
+   "isNew": false
+  },
+  {
+   "key": "k_sa_detailA",
+   "hex": "#5B5148",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 23,
+   "isNew": false
+  },
+  {
+   "key": "k_sa_wallTop",
+   "hex": "#959CA2",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 11,
+   "isNew": false
+  }
+ ]
+}

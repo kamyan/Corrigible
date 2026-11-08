@@ -1,0 +1,88 @@
+{
+ "name": "ReliefIso_cn",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Koyu altlık üstünde üç kat dar parça kasası (0,62): kaburgalı yanlar, koyu tutamak yuvaları, etiket cepleri; en üst kasa açık, içinde parçalar. Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi.",
+ "listName": "Ayrık blok · Montaj fabrikası (uzun kasa kulesi)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 209,
+ "trisPerPart": {
+  "Body": 209
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.35,
+   0,
+   -0.35
+  ],
+  "max": [
+   0.35,
+   0.555,
+   0.35
+  ],
+  "size": [
+   0.7,
+   0.555,
+   0.7
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_cn_detailA",
+   "hex": "#5B5955",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 21,
+   "isNew": false
+  },
+  {
+   "key": "k_cn_wallWest",
+   "hex": "#87898A",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 42,
+   "isNew": false
+  },
+  {
+   "key": "k_cn_wallSouth",
+   "hex": "#6C6E70",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 36,
+   "isNew": false
+  },
+  {
+   "key": "k_cn_wallTop",
+   "hex": "#8F9192",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 47,
+   "isNew": false
+  },
+  {
+   "key": "rk_void",
+   "hex": "#34312C",
+   "rough": 1,
+   "metal": 0,
+   "note": "oyuk içi: palet ağzı, tutamak deliği, kızak arası (ışık almayan derinlik); bütün kitlerde ortak",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "k_cn_detailB",
+   "hex": "#C2BFB5",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 51,
+   "isNew": false
+  }
+ ]
+}

@@ -22,4 +22,30 @@ MonoBehaviour:
   bridges: 1
   channelFloor: {fileID: 2100000, guid: 038634903490d451688f47bb88b7ccc6, type: 2}
   wellFloor: {fileID: 2100000, guid: e09602e9abb294ac19dbeb9f16571520, type: 2}
-  wallRubble: {fileID: 9147940530568228619, guid: b2b0c5fce49fc48699fe7f95cb475e8a, type: 3}
+  wallRubble: {fileID: 231532553286370686, guid: 5d5f65aa1855244c5ac344d156a7dcf0, type: 3}
+  wallModel:
+    mesh: {fileID: 2959467708922500008, guid: 95765520f8d494145b10d850f62186e2, type: 3}
+    materials:
+    - {fileID: 2100000, guid: 93d8d9f40f9e24fa0996eb82725b5f0c, type: 2}
+    - {fileID: 2100000, guid: 1229f4a031a544fe0905a338dfb5b939, type: 2}
+    - {fileID: 2100000, guid: b5f052352608b4aaeb5c4ffebc027e76, type: 2}
+    - {fileID: 2100000, guid: 3a3965b01218c44f182569b80d8bbbbe, type: 2}
+    - {fileID: 2100000, guid: 54780bf7bcf204d00a7e17b80b19cc78, type: 2}
+    - {fileID: 2100000, guid: b1f814097621c4651b3d92e5d7a92ed0, type: 2}
+  isolatedModel:
+    mesh: {fileID: 2959467708922500008, guid: e501451d3f65045a6ab88b143fea0bf2, type: 3}
+    materials:
+    - {fileID: 2100000, guid: 1229f4a031a544fe0905a338dfb5b939, type: 2}
+    - {fileID: 2100000, guid: b5f052352608b4aaeb5c4ffebc027e76, type: 2}
+    - {fileID: 2100000, guid: 54780bf7bcf204d00a7e17b80b19cc78, type: 2}
+    - {fileID: 2100000, guid: 3a3965b01218c44f182569b80d8bbbbe, type: 2}
+  bridgeModel:
+    mesh: {fileID: 2959467708922500008, guid: 8cd4629dbeb804fc48f2a643156d7775, type: 3}
+    materials:
+    - {fileID: 2100000, guid: b5f052352608b4aaeb5c4ffebc027e76, type: 2}
+    - {fileID: 2100000, guid: 54780bf7bcf204d00a7e17b80b19cc78, type: 2}
+    - {fileID: 2100000, guid: 3a3965b01218c44f182569b80d8bbbbe, type: 2}
+    - {fileID: 2100000, guid: 1229f4a031a544fe0905a338dfb5b939, type: 2}
+    - {fileID: 2100000, guid: b1f814097621c4651b3d92e5d7a92ed0, type: 2}
+  civilianModel: {fileID: 8654726162604711426, guid: e08764d46800a48af95c5bc51b13758a, type: 3}
+  entryDoor: {fileID: 3847719944702386889, guid: ab3d2bd220fba439c9389d6da7ffed20, type: 3}

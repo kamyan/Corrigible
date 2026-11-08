@@ -76,8 +76,8 @@ namespace Corrigible.Desk.Tests
                 At(Panel("Status"), new Vector2(0, 1), new Vector2(20, -16), 592);
                 At(Panel("Buttons"), new Vector2(1, 1), new Vector2(-16, -16), 548);
                 At(Panel("Command"), new Vector2(1, 0), new Vector2(-16, 20), 474);
-                At(Panel("Ability card"), Vector2.zero, new Vector2(20, 117), 432);
-                At(Panel("Team"), Vector2.zero, new Vector2(20, 10), 736);
+                At(Panel("Ability card"), Vector2.zero, new Vector2(20, 175), 432);
+                At(Panel("Team"), Vector2.zero, new Vector2(20, 12), 1060);
             }
             finally { PrefabUtility.UnloadPrefabContents(root); }
         }

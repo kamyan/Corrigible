@@ -62,6 +62,8 @@ namespace Corrigible.Game.Raid
         [Header("İşaretler")]
         [Tooltip("Robotun uyanacağı kare.")]
         public GameObject spawnMarker;
+        [Tooltip("Revizyon 3 hareket, tehdit ve kopyalama işaretleri; boşsa mevcut çizim kullanılır.")]
+        public GameObject moveMarker, hitMarker, cloneMarker;
         [Tooltip("Karo vurgusu (derinlik testli, saydam).")]
         public Material highlight;
         [Tooltip("Niyet okları ve rozetler (her zaman üstte).")]
@@ -188,6 +190,9 @@ namespace Corrigible.Game.Raid
             scale = BreachRubbleFallbackScale;
             return rubble;
         }
+
+        /// <summary>R12 molozu kare ayak izlidir; 90° adımları komşu kareye taşmasını engeller. Eski yuvarlak enkazın yönü korunur.</summary>
+        public float BreachRubbleYaw(RaidRoomKit kit,int tile)=>kit?.wallModel?.mesh!=null&&kit.wallRubble!=null?(tile*41%4)*90:(tile*41)%360;
 
         RaidRoomKit Find(System.Func<RaidRoomKit, bool> match)
         {

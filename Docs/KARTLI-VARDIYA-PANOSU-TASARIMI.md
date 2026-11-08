@@ -1,16 +1,28 @@
 # Kartlı vardiya panosu — tasarım taslağı
 
-**Durum:** Öneri; uygulanmadı. Kesin maliyetler, olasılıklar ve denge değerleri belirlenmedi.
+**Durum:** Tasarım geçmişi. Temel sistem 2026-11-05'te Unity ve Core'a uygulandı; geçerli maliyet ve kurallar
+[OYUN-TASARIMI.md](OYUN-TASARIMI.md)'dedir. Buradaki öneriler uygulanan değerlerin yerine geçmez.
 Bu belge mevcut oyunu tarif etmez; sekiz isimli sakin ve sürükle bırak kart panosu yönünü somutlaştırır.
 Bu modelde önceki “bir ana faaliyet + bir destek gündemi” sınırının yerini kişi-vardiya kapasitesi alır.
 
 **Ayrıntılı devam:** [Bütünleşik ayrıntılı tasarım](KARTLI-VARDIYA-PANOSU-DETAYLI-TASARIM.md), bu yönün pano
 etkileşimlerini, kişi/rol/kit ayrımını, üretim ve devir evrelerini, belge kontrolünü, somut vardiya örneğini ve ilk
-kapsamını birlikte açıklar. İki belge de tasarım önerisidir; uygulanmış oyun belgesi değildir.
+kapsamını birlikte açıklar. İki belge de tasarım geçmişini korur; uygulanmış oyun için OYUN-TASARIMI.md okunur.
 
 Son değerlendirme, kullanıcının ayaklı fiziksel pano, kişi savaş değerleri, hammadde kartları ve tarif defteri,
-vardiya devir makinesi ve değişen kabul talimatları önerisini de kapsar. Bunlar mevcut Unity sahnesinde henüz yoktur.
+vardiya devir makinesi ve değişen kabul talimatları önerisini de kapsar. Bunların temel işlevleri artık Unity sahnesinde vardır; kapsam sınırları aşağıdaki uygulama notundadır.
 Vardiya akışı ve üretim bölümleri aşağıda bu öneriye göre güncellenmiştir; değerler denge kararı değildir.
+
+
+## Uygulama notu (2026-11-05)
+
+Temel kart, görev/eşya, üretim, seçilebilir eğitim, kişi bazlı baskın ve belgeyle kabul sistemi uygulanmıştır.
+İlk kapsamda üç saha rolü Teknisyen/EMP/Analisttir; tarifler baştan açıktır. Tahtada geride kalan kalıcı ölür;
+canı sıfırlanan ama geride bırakılmayan kişi sağ kalan ekip varsa otomatik kurtarılır. Ayrı taşıma/kurtarma hamlesi
+yoktur. Robotun iki kalıcı izi ve müdahale aralığı vardır; ilk sabotaj kaynak kaybettirir, kişiyi aniden öldürmez.
+Portre/yaşam öyküsü varlıkları, tarif keşfi ve yeni çok aşamalı öğretici bu ilk uygulamaya dahil değildir.
+Sayılar `Balance.board*`/`admission*` alanlarındadır; eski bot ölçümleri yeni panonun dengesini kanıtlamaz.
+
 
 ## Ana karar
 
@@ -128,7 +140,7 @@ Vardiya akışı ve üretim bölümleri aşağıda bu öneriye göre güncellenm
 
 ## Yeni gelenler ve adil gecikmeli ihanet
 
-- Mevcut kapı ziyaretçileri ve anlık sızma olayları ile bu öneri ayrıdır. Uzun süre içeride kalan gizli robot sistemi henüz uygulanmadı.
+- Mevcut kapı ziyaretçileri ve anlık sızma olayları ile bu öneri ayrıdır. Bu taslağın ardından uzun süre içeride kalan gizli robot sistemi de uygulandı; güncel sınırlar uygulama notundadır.
 - Kabul edilen yeni sakin görev yapabilir ve güven kazanabilir; ihanet yalnız kabul ekranında verilen bir rastgele ceza değildir.
 - Büyük ihanet öncesinde iki bağımsız, gözlenebilir ipucu ve bunlara karşı müdahale fırsatı bulunur.
 - İlk ipucu plan kilitlenmeden önce vardiya brifinginde görünür. İkinci ipucundan sonra da bir müdahale penceresi korunur.
@@ -220,7 +232,7 @@ Bir şüphe fişi gelirse oyuncu gözetim için mevcut beş sığınak işinden 
 
 ## Belge kontrolü ve değişen talimatlar
 
-Bu bölüm öneridir; belge kontrolü ve aşağıdaki kararlar henüz uygulanmadı. Toplam üretim hesabını,
+Bu bölüm ilk önerinin ayrıntılarını korur; belge kontrolünün uygulanmış hâli OYUN-TASARIMI.md'dedir. Toplam üretim hesabını,
 pano kartlarını ve kişi-vardiya görev akışını değiştirmeden kapıdaki kabul kararını ayrıntılandırır.
 
 - Aynı anda 2–3 aktif kontrol kuralı bulunur; bütün kriterler her gün keyfî biçimde yenilenmez.

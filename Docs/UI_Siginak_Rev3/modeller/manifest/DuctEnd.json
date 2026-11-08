@@ -1,0 +1,76 @@
+{
+ "name": "DuctEnd",
+ "family": "walls",
+ "budget": "small",
+ "origin": "arka yüz alt kenar ortası (duvar düzlemi z = 0)",
+ "note": "Kanalın sol ucu: 0,30 parça, +x ucunda flanş, −x ucu kapalı; ön yüzde çerçeveli 5 kanatlı panjur ızgara (kanatlar 35° eğik, arkası koyu).",
+ "listName": "Kanal ucu ve panjur",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -1.95,
+    2.19,
+    2.3
+   ],
+   "yaw": 0,
+   "note": "kanal dizisinin sol ucu (x −2,10 … −1,80)"
+  }
+ ],
+ "tris": 662,
+ "trisPerPart": {
+  "Body": 662
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.158,
+   -0.015,
+   -0.2906
+  ],
+  "max": [
+   0.15,
+   0.235,
+   0.005
+  ],
+  "size": [
+   0.308,
+   0.25,
+   0.2956
+  ]
+ },
+ "materials": [
+  {
+   "key": "galv",
+   "hex": "#70756E",
+   "rough": 0.5,
+   "metal": 0.45,
+   "tris": 564,
+   "isNew": false
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 96,
+   "isNew": true
+  },
+  {
+   "key": "paintBlack",
+   "hex": "#20211E",
+   "rough": 0.5,
+   "metal": 0.05,
+   "note": "lamba başlığı, ızgara",
+   "tris": 2,
+   "isNew": true
+  }
+ ]
+}

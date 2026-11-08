@@ -1,0 +1,59 @@
+{
+ "name": "GhostRing",
+ "family": "raidpieces",
+ "budget": "raid",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Kopyalama niyetinin hedef karesi: uyanma halkasının biçimi, 12 kesik (%60 mürekkep) r 0,312–0,348, sekiz ışın 0,38–0,47, α .10 dolgu; #854005 (zarar vermez), iğne yok. Asetat: Unlit, ZWrite kapalı, gölgesiz. Kopyalama uygulanınca WakePin yerine geçer.",
+ "listName": "Kopyalama hedef halkası (kesik)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 124,
+ "trisPerPart": {
+  "Body": 124
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.4698,
+   0.005,
+   -0.4698
+  ],
+  "max": [
+   0.4698,
+   0.006,
+   0.4698
+  ],
+  "size": [
+   0.9397,
+   0.001,
+   0.9397
+  ]
+ },
+ "materials": [
+  {
+   "key": "rp_markGhost",
+   "hex": "#854005",
+   "rough": 1,
+   "metal": 0,
+   "alpha": 0.95,
+   "note": "kopyalama niyeti kesik halka (Unlit Transparent, ZWrite kapalı)",
+   "tris": 88,
+   "isNew": true
+  },
+  {
+   "key": "rp_markGhostFill",
+   "hex": "#854005",
+   "rough": 1,
+   "metal": 0,
+   "alpha": 0.1,
+   "note": "kopyalama halkasının dolgusu (Unlit Transparent, ZWrite kapalı)",
+   "tris": 36,
+   "isNew": true
+  }
+ ]
+}

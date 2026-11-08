@@ -1,0 +1,147 @@
+{
+ "name": "CardRack",
+ "family": "menu",
+ "budget": "small",
+ "origin": "arka yüz, alt kenar ortası",
+ "note": "Cilalı ahşap pano üstünde tek çelik cep: komutanın kartı (kayıt varsa) cebe 46 mm girer, başlığı ve ızgaranın üst sıraları görünür. Cebin üstünde pirinç etiket çerçevesi (KOMUTAN). Kayıt yokken cep boş. Altında boş kart destesi (ayrı model BlankDeck).",
+ "listName": "Kart rafı",
+ "parts": [],
+ "texts": [
+  {
+   "name": "TXT_Pocket",
+   "part": "Body",
+   "center": [
+    0,
+    0.3,
+    -0.0237
+   ],
+   "size": [
+    0.058,
+    0.012
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "slipCode (etiket)",
+   "font": "Courier Prime 700",
+   "capMm": 5,
+   "align": "center",
+   "sample": "KOMUTAN",
+   "sampleEn": "COMMANDER",
+   "note": ""
+  }
+ ],
+ "anchors": [
+  {
+   "name": "CardTop",
+   "part": "Body",
+   "pos": [
+    0,
+    0.07400000000000001,
+    -0.03
+   ],
+   "note": "komutanın kartının alt kenarı (kart cebe 46 mm girer, 138 mm görünür)"
+  },
+  {
+   "name": "DeckSeat",
+   "part": "Body",
+   "pos": [
+    0,
+    -0.19,
+    -0.02
+   ],
+   "note": "BlankDeck rafın 0,19 m altında"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    2.2,
+    1.14,
+    -0.55
+   ],
+   "yaw": -90,
+   "note": "menü: saatin solunda"
+  }
+ ],
+ "tris": 436,
+ "trisPerPart": {
+  "Body": 436
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.065,
+   0,
+   -0.0355
+  ],
+  "max": [
+   0.065,
+   0.34,
+   0
+  ],
+  "size": [
+   0.13,
+   0.34,
+   0.0355
+  ]
+ },
+ "materials": [
+  {
+   "key": "woodVarnish",
+   "hex": "#5E4128",
+   "rough": 0.45,
+   "metal": 0,
+   "tex": "tx_wood (lif)",
+   "note": "cilalı masa ahşabı",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "paintGreyGreen",
+   "hex": "#5D665C",
+   "rough": 0.58,
+   "metal": 0.05,
+   "note": "puantaj saati, kart rafı",
+   "tris": 208,
+   "isNew": true
+  },
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "cardBlank",
+   "hex": "#E6DCBE",
+   "rough": 0.9,
+   "metal": 0,
+   "note": "boş kart destesi",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 128,
+   "isNew": true
+  }
+ ]
+}

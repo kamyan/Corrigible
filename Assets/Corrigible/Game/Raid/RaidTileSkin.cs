@@ -48,6 +48,15 @@ namespace Corrigible.Game.Raid
         [SerializeField] GameObject single;
 
         public TileShape Shape => shape;
+
+        [Header("Revizyon 3: ağlar model paketinden, komşuluk aynı maskeden")]
+        [SerializeField] MeshFilter modelBody, modelBridgeE, modelBridgeN;
+        [SerializeField] RaidModelMesh shelfModel, shelfWheelModel;
+        [SerializeField] MeshFilter modelShelfWheel;
+        [Tooltip("N/E/S/W maskesiyle önceden birleştirilmiş 16 kanal; kare başına tek renderer.")]
+        [SerializeField] RaidModelMesh[] channelModels = new RaidModelMesh[0];
+        [SerializeField] Material channelFloorSource;
+        public bool UsesModels => modelBody != null;
         public RaidRoomKit FallbackKit => fallbackKit;
         public MeshRenderer Body => body;
         public MeshRenderer ShelfGear => shelfGear;
@@ -89,6 +98,24 @@ namespace Corrigible.Game.Raid
         void ApplyWall(int mask, bool isolated, int shelfAxis, RaidRoomKit kit)
         {
             bool shelf = shelfAxis != RaidTileMask.AxisNone;
+            var artKit = kit != null ? kit : fallbackKit;
+            if (modelBody != null && artKit != null && artKit.wallModel?.mesh != null)
+            {
+                var art = shelf && shelfModel?.mesh != null ? shelfModel : isolated && artKit.isolatedModel?.mesh != null ? artKit.isolatedModel : artKit.wallModel;
+                art.Apply(modelBody, body);
+                bool joins = artKit.bridges && artKit.bridgeModel?.mesh != null && !shelf;
+                ModelBridge(modelBridgeE, bridgeE, joins && (mask & RaidTileMask.E) != 0, artKit.bridgeModel);
+                ModelBridge(modelBridgeN, bridgeN, joins && (mask & RaidTileMask.N) != 0, artKit.bridgeModel);
+                if (shelfGear != null)
+                {
+                    shelfGear.gameObject.SetActive(shelf);
+                    if (shelf) shelfWheelModel?.Apply(modelShelfWheel, shelfGear);
+                }
+                // Raf gövdesi ve çark aynı yönde döner; bağlantı geometrisi sabit duvarlarda kalır.
+                modelBody.transform.localRotation = shelf && shelfAxis == RaidTileMask.AxisEW ? Quaternion.Euler(0,-90,0) : Quaternion.identity;
+                if (modelShelfWheel != null) modelShelfWheel.transform.parent.localRotation = modelBody.transform.localRotation;
+                return;
+            }
             // Unity nesnesinde ?. sahte null'u görmez: açık denetim
             RaidRoomKit k = kit != null ? kit : null, f = fallbackKit != null ? fallbackKit : null;
             var top = Pick(k != null ? k.wallTop : null, f != null ? f.wallTop : null);
@@ -109,6 +136,13 @@ namespace Corrigible.Game.Raid
             }
         }
 
+        static void ModelBridge(MeshFilter filter, MeshRenderer renderer, bool on, RaidModelMesh model)
+        {
+            if (renderer == null) return;
+            renderer.gameObject.SetActive(on);
+            if (on) model?.Apply(filter, renderer);
+        }
+
         static void SetBridge(MeshRenderer bridge, bool on, Material west, Material south, Material top)
         {
             if (bridge == null) return;
@@ -119,6 +153,19 @@ namespace Corrigible.Game.Raid
 
         void ApplyCable(int mask, RaidRoomKit kit)
         {
+            if (modelBody != null && channelModels.Length == 16 && channelModels[mask & 15]?.mesh != null)
+            {
+                channelModels[mask & 15].Apply(modelBody, body);
+                var modelKit = kit != null ? kit : fallbackKit;
+                var modelFloor = mask == 0 ? Pick(modelKit != null ? modelKit.wellFloor : null, modelKit != null ? modelKit.channelFloor : null) : modelKit != null ? modelKit.channelFloor : null;
+                if (modelFloor != null && channelFloorSource != null)
+                {
+                    var materials = body.sharedMaterials;
+                    for (int i=0;i<materials.Length;i++) if (materials[i] == channelFloorSource) materials[i] = modelFloor;
+                    body.sharedMaterials = materials;
+                }
+                return;
+            }
             int armCount = 0;
             for (int i = 0; i < 4; i++) if ((mask & RaidTileMask.Sides[i].bit) != 0) armCount++;
             bool straight = mask == (RaidTileMask.N | RaidTileMask.S) || mask == (RaidTileMask.E | RaidTileMask.W);

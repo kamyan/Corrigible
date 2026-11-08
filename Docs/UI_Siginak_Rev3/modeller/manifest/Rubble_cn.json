@@ -1,0 +1,99 @@
+{
+ "name": "Rubble_cn",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Yan yatmış bir parça kasası (koyu tutamak yuvası yukarıda), yere saçılmış küçük parçalar (somun, pul; detailB ve detailA); toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi.",
+ "listName": "Gedik molozu · Montaj fabrikası (saçılmış parçalar)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 229,
+ "trisPerPart": {
+  "Body": 229
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.45,
+   0,
+   -0.45
+  ],
+  "max": [
+   0.45,
+   0.184,
+   0.45
+  ],
+  "size": [
+   0.9,
+   0.184,
+   0.9
+  ]
+ },
+ "materials": [
+  {
+   "key": "rk_dust",
+   "hex": "#6B6257",
+   "rough": 1,
+   "metal": 0,
+   "alpha": 0.55,
+   "tex": "tx_dust (yumuşak kenarlı toz lekesi, kenara doğru saydam, 256²)",
+   "note": "gedik molozunun toz lekesi (zemine yapışık dörtgen, gölgesiz)",
+   "tris": 2,
+   "isNew": true
+  },
+  {
+   "key": "k_cn_wallWest",
+   "hex": "#87898A",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 5,
+   "isNew": false
+  },
+  {
+   "key": "k_cn_wallTop",
+   "hex": "#8F9192",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 11,
+   "isNew": false
+  },
+  {
+   "key": "k_cn_wallSouth",
+   "hex": "#6C6E70",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 6,
+   "isNew": false
+  },
+  {
+   "key": "rk_void",
+   "hex": "#34312C",
+   "rough": 1,
+   "metal": 0,
+   "note": "oyuk içi: palet ağzı, tutamak deliği, kızak arası (ışık almayan derinlik); bütün kitlerde ortak",
+   "tris": 6,
+   "isNew": true
+  },
+  {
+   "key": "k_cn_detailA",
+   "hex": "#5B5955",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 66,
+   "isNew": false
+  },
+  {
+   "key": "k_cn_detailB",
+   "hex": "#C2BFB5",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 133,
+   "isNew": false
+  }
+ ]
+}

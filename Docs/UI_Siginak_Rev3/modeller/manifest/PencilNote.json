@@ -1,0 +1,104 @@
+{
+ "name": "PencilNote",
+ "family": "walls",
+ "budget": "small",
+ "origin": "kâğıdın arka yüzü alt kenar ortası (mantar yüzeyi z = 0)",
+ "note": "Bloknottan koparılmış not 0,14 × 0,09 (üst kenar yırtık), kırmızı raptiye (sıradaki hedef = tehdit altındaki bölge). El yazısı TMP Kalam. İlk boş yuvaya asılır.",
+ "listName": "Sıradaki hedef notu",
+ "parts": [],
+ "texts": [
+  {
+   "name": "TXT_Note",
+   "part": "Body",
+   "center": [
+    -0.002,
+    0.04,
+    -0.0007
+   ],
+   "size": [
+    0.124,
+    0.062
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "handNote",
+   "font": "Kalam 700",
+   "capMm": 11,
+   "align": "left",
+   "sample": "sıradaki: Doğu Avrupa",
+   "sampleEn": "next: Eastern Europe",
+   "note": "kurşun kalem grisi #3A3A3A; iki satıra sarar"
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -0.688,
+    1.3425,
+    2.2834999999999996
+   ],
+   "yaw": 0,
+   "euler": [
+    0,
+    0,
+    -0.8
+   ],
+   "note": "Slot_01 · ilk boş yuva (D.freed.length)"
+  }
+ ],
+ "tris": 128,
+ "trisPerPart": {
+  "Body": 128
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.07,
+   0,
+   -0.0092
+  ],
+  "max": [
+   0.07,
+   0.09,
+   0
+  ],
+  "size": [
+   0.14,
+   0.09,
+   0.0092
+  ]
+ },
+ "materials": [
+  {
+   "key": "notePaper",
+   "hex": "#F2EBD6",
+   "rough": 0.9,
+   "metal": 0,
+   "tex": "tx_notepad: mavi satır çizgileri (kelime yok)",
+   "note": "kurşun kalem notu (bloknottan koparılmış)",
+   "tris": 64,
+   "isNew": true
+  },
+  {
+   "key": "pinRed",
+   "hex": "#9A1E14",
+   "rough": 0.4,
+   "metal": 0,
+   "tris": 64,
+   "isNew": false
+  }
+ ]
+}

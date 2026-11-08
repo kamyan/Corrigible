@@ -1,0 +1,191 @@
+{
+ "name": "CabMenuLever",
+ "family": "cabinet",
+ "budget": "small",
+ "origin": "pano yüzünde merkez",
+ "note": "Vardiya şalterinin küçük kardeşi: tehlike çizgili koruyucu kapak (Cover, yerel x 0→112°) ve krom kol (Lever, yerel x +35 → −35). 1. tık kapak, 4 s içinde 2. tık kol: kaydedilir, ekran kararır, menü açılır. Masa meşgulken kapak kilitli, KİLİTLİ bandı görünür.",
+ "listName": "Kapaklı MENÜYE DÖN kolu",
+ "parts": [
+  {
+   "name": "Lever",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    -0.012,
+    -0.02
+   ],
+   "pivotLocal": [
+    0,
+    -0.012,
+    -0.02
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    35,
+    -35
+   ],
+   "rest": 35,
+   "note": "+35 yukarı · −35 çekili"
+  },
+  {
+   "name": "Cover",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.035,
+    -0.018
+   ],
+   "pivotLocal": [
+    0,
+    0.035,
+    -0.018
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    112
+   ],
+   "rest": 0,
+   "note": "koruyucu; 4 s sonra kendiliğinden iner"
+  },
+  {
+   "name": "LockBand",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0,
+    -0.062
+   ],
+   "pivotLocal": [
+    0,
+    0,
+    -0.062
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "masa meşgulken görünür (KİLİTLİ)"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Lock",
+   "part": "LockBand",
+   "center": [
+    0,
+    -0.01,
+    -0.0632
+   ],
+   "size": [
+    0.07,
+    0.012
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "stamp (#675F50 kesik)",
+   "font": "Courier Prime 700",
+   "capMm": 6,
+   "align": "center",
+   "sample": "KİLİTLİ",
+   "sampleEn": "LOCKED",
+   "note": ""
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 448,
+ "trisPerPart": {
+  "Body": 124,
+  "Lever": 136,
+  "Cover": 176,
+  "LockBand": 12
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.04,
+   -0.039,
+   -0.063
+  ],
+  "max": [
+   0.04,
+   0.046,
+   0
+  ],
+  "size": [
+   0.08,
+   0.085,
+   0.063
+  ]
+ },
+ "materials": [
+  {
+   "key": "paintOliveDark",
+   "hex": "#353B30",
+   "rough": 0.62,
+   "metal": 0.05,
+   "note": "kapı kanadı, kasa, çerçeve",
+   "tris": 176,
+   "isNew": true
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 80,
+   "isNew": true
+  },
+  {
+   "key": "chrome",
+   "hex": "#C8CCCC",
+   "rough": 0.22,
+   "metal": 1,
+   "tris": 64,
+   "isNew": false
+  },
+  {
+   "key": "bakeliteBlack",
+   "hex": "#181412",
+   "rough": 0.34,
+   "metal": 0,
+   "note": "düğme, kol başı",
+   "tris": 72,
+   "isNew": true
+  },
+  {
+   "key": "paintHazard",
+   "hex": "#E3B23C",
+   "rough": 0.6,
+   "metal": 0,
+   "tex": "tx_hazard (45° şerit #1E1B16, 1024×128)",
+   "note": "tehlike bandı",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "paintCream",
+   "hex": "#D6CDB4",
+   "rough": 0.55,
+   "metal": 0,
+   "note": "emaye panel, ölçek zemini",
+   "tris": 12,
+   "isNew": true
+  }
+ ]
+}

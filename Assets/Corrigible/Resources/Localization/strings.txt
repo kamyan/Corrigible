@@ -15,8 +15,8 @@ Güvenlik dronu	Security drone
 Düz hatta ilk engele ateş eder: 1 hasar.	Fires in a straight line at the first obstacle: 1 damage.
 Bakım robotu	Maintenance robot
 Bitişik kareye vurur (2 hasar) ya da hasarlı hedef dolabı onarır.	Strikes an adjacent tile (2 damage) or repairs a damaged target cabinet.
-Zırhlı dron	Armored drone
-Dron gibi düz hatta ateş eder; zırhı ilk hasarı karşılar.	Fires in a straight line like a drone; its armor takes the first hit.
+Zırhlı dron	Armoured drone
+Dron gibi düz hatta ateş eder; zırhı ilk hasarı karşılar.	Fires in a straight line like a drone; its armour takes the first hit.
 Havan robotu	Mortar bot
 Üç kare öteye, engellerin üstünden atar: 1 hasar.	Lobs three tiles away, over obstacles: 1 damage.
 Patlayan robot	Bomber bot
@@ -24,7 +24,7 @@ Yanına sokulur ve patlar: çevresindeki dört kareye 1 hasar.	Closes in and exp
 Kilitleyici	Locker
 Düz hatta dört kareye kadar kilit atar: vurulan uzman bir tur yürüyemez.	Fires a lock up to four tiles in a straight line: the specialist hit cannot walk for a turn.
 Kalkan dronu	Shield drone
-Yanındaki makineye zırh verir; verecek kimse yoksa ateş eder.	Armors a machine next to it; fires when there is no one to shield.
+Yanındaki makineye zırh verir; verecek kimse yoksa ateş eder.	Armours a machine next to it; fires when there is no one to shield.
 Çoğaltıcı	Replicator
 Yanındaki boş kareye yeni bir dron uyandırır.	Wakes a new drone on an empty tile next to it.
 Güvenli giriş	Safe entry
@@ -43,7 +43,7 @@ Soğutma ağı	Cooling grid
 İki soğutma ünitesi fazla; kırılan ünite çevresine patlar.	Two extra cooling units; a broken unit explodes around it.
 Kalabalık şehir	Crowded city
 İki sivil sunucu fazla; GÜVEN kolay düşer.	Two extra civilian servers; TRUST drops easily.
-Zırhlı dolap	Armored cabinets
+Zırhlı dolap	Armoured cabinets
 Hedef dolapların bir canı fazla.	Target cabinets have one extra health.
 Elektrik şebekesi	Power grid
 Fazladan elektrikli kanal: üstüne düşen 1 hasar alır.	Extra live conduits: anything landing on one takes 1 damage.
@@ -54,7 +54,7 @@ Robotlar bir kare fazla yürür.	Robots walk one tile further.
 Sabotaj	Sabotage
 Bitişik kare. Dolaba 2 hasar; robota 1 hasar ve 1 kare itme.	Adjacent tile. 2 damage to a cabinet; 1 damage and a 1-tile push to a robot.
 EMP atışı	EMP shot
-Düz hatta 2–5 kare uzağa, engellerin üstünden. Hedefteki robota ya da sıradan dolaba 1 hasar (zırhlı hedef dolaplara işlemez); çevresindeki 4 karedeki robotları dışarı iter.	2–5 tiles away in a straight line, over obstacles. 1 damage to the robot or ordinary cabinet on the target (no effect on armored target cabinets); pushes robots on the 4 surrounding tiles outward.
+Düz hatta 2–5 kare uzağa, engellerin üstünden. Hedefteki robota ya da sıradan dolaba 1 hasar (zırhlı hedef dolaplara işlemez); çevresindeki 4 karedeki robotları dışarı iter.	2–5 tiles away in a straight line, over obstacles. 1 damage to the robot or ordinary cabinet on the target (no effect on armoured target cabinets); pushes robots on the 4 surrounding tiles outward.
 Kanca	Hook
 Düz hatta 5 kare. Çarptığı robota 1 hasar verir ve onu 1 kare kendine çeker (dost uzmanı hasarsız çeker); duvara ya da dolaba çarparsa Analist onun yanına atılır. Analistin 3 kare çevresindeki robotların niyeti kesin görünür.	5 tiles in a straight line. Deals 1 damage to the robot it hits and pulls it 1 tile closer (friendly specialists are pulled unharmed); if it hits a wall or cabinet, the Analyst is yanked next to it. Robot intents within 3 tiles of the Analyst are shown for certain.
 Dinamit	Dynamite
@@ -75,7 +75,7 @@ sunucularımın	servers
 Yine sen. Bu sefer kapıda daha çok makine var.	You again. There are more machines at the door this time.
 Demek {0} yerini buldun. Bakalım içeri girebilecek misin.	So you found my {0}. Let's see if you can get inside.
 {0}: buz kabuğu darbeyi karşıladı.	{0}: the ice shell soaked the hit.
-{0}: zırh plakası darbeyi karşıladı ve kırıldı.	{0}: armor plate took the hit and broke.
+{0}: zırh plakası darbeyi karşıladı ve kırıldı.	{0}: armour plate took the hit and broke.
 {0} yere düştü{1}.	{0} is down{1}.
 {0} devre dışı{1}.	{0} disabled{1}.
 Teknisyen düştü: ikmal malzemeleri kaybedildi. Ekibin geri kalanı yine de çıkmalı.	The Technician is down: the supplies are lost. The rest of the team still has to get out.
@@ -92,7 +92,7 @@ dolaba çarptı	hit a cabinet
 çarpışma	collision
 {0} tahliye edildi.	{0} has been extracted.
 Ekibin tamamı yere düştü.	The whole team is down.
-Hedef kırıldı. Şimdi bütün ekip girişten çıkmalı: tahtada kalan uzman baskında düşmüş sayılır.	Target destroyed. Now the whole team must leave through the entry: anyone left on the board counts as down in this raid.
+Hedef kırıldı. Şimdi bütün ekip girişten çıkmalı: tahtada kalan uzman baskında düşmüş sayılır.	Target destroyed. Now the whole team must leave through the entry: anyone left on the board is lost for good.
 Süre doldu: ekip malzemelerle çıkamadı.	Time's up: the team couldn't get out with the supplies.
 İkmal malzemeleri alındı. Ekip tahliye edildi.	Supplies retrieved. The team has been extracted.
 İkmal malzemeleri alındı. Ekipten {0}/{1} uzman çıktı.	Supplies retrieved. {0}/{1} of the team got out.
@@ -101,7 +101,7 @@ Süre doldu: ekip malzemelerle çıkamadı.	Time's up: the team couldn't get out
 YZ düğümü kırıldı. Ekip tahliye edildi.	AI node destroyed. The team has been extracted.
 YZ düğümü kırıldı. Ekipten {0}/{1} uzman çıktı.	AI node destroyed. {0}/{1} of the team got out.
 sabotaj	sabotage
-Teknisyen malzemeleri aldı. Şimdi bütün ekip girişten çıkmalı: tahtada kalan uzman baskında düşmüş sayılır.	The Technician has the supplies. Now the whole team must leave through the entry: anyone left on the board counts as down in this raid.
+Teknisyen malzemeleri aldı. Şimdi bütün ekip girişten çıkmalı: tahtada kalan uzman baskında düşmüş sayılır.	The Technician has the supplies. Now the whole team must leave through the entry: anyone left on the board is lost for good.
 EMP	EMP
 kanca	hook
 dinamit	dynamite
@@ -111,7 +111,7 @@ Bakım robotu {0} onardı.	A maintenance robot repaired the {0}.
 bakım robotu	maintenance robot
 havan	mortar
 {0} kilitlendi: bu tur yürüyemez.	{0} is locked: cannot walk this turn.
-Kalkan dronu {0} zırhladı.	The shield drone armored the {0}.
+Kalkan dronu {0} zırhladı.	The shield drone armoured the {0}.
 uyanmayı engelledi	blocked the wake-up
 Çoğaltıcı yeni bir dron uyandırdı.	The replicator woke a new drone.
 Patlayan robot infilak etti.	The bomber bot detonated.
@@ -124,8 +124,8 @@ Yeni bir {0} uyandı.	A new {0} woke up.
 Süre doldu: YZ ikmal deposunu kilitledi.	Time ran out: the AI locked down the supply depot.
 Süre doldu: YZ çekirdeğini binadan taşıdı.	Time's up: the AI moved its core out of the building.
 Süre doldu: YZ sunucularını yedekledi ve binayı kilitledi.	Time's up: the AI backed up its servers and locked down the building.
-{0} çıkamadı: baskında düşmüş sayılır.	{0} didn't get out: counts as down in this raid.
-Son tur: bu tur çıkamayan uzman baskında düşmüş sayılır.	Final turn: anyone who doesn't get out this turn counts as down in this raid.
+{0} çıkamadı: baskında düşmüş sayılır.	{0} didn't get out: lost for good.
+Son tur: bu tur çıkamayan uzman baskında düşmüş sayılır.	Final turn: anyone who doesn't get out this turn is lost for good.
 Son tur.	Final turn.
 Ekip geri çekildi.	The team withdrew.
 # Assets/Corrigible/Core/Baskin.Events.cs
@@ -241,6 +241,8 @@ KABİN: biner, bir evre tahtada yok	CAR: boards, off the board for one phase
 {0}: buz ya da zırh karşılar	{0}: ice or armour soaks it
 {0}: yer değiştirir	{0}: is moved
 DONACAK: yürüyemez, buz 1 hasar emer	FREEZING: cannot move, ice soaks 1 damage
+# Assets/Corrigible/Core/Baskin.Planning.cs
+EMP hücresi kullanıldı: bu atışa +{0} hasar.	EMP cell used: +{0} damage for this shot.
 # Assets/Corrigible/Core/CampaignLiberation.cs
 Oyun bitti.	The game is over.
 Önce süren baskını bitir.	Finish the current raid first.
@@ -253,8 +255,8 @@ Bu sektör zaten geri alındı.	This sector has already been reclaimed.
 Yalnızca mevcut harekât bölgesine baskın yapılabilir.	Raids can only target the current campaign region.
 Önce önceki sektörü geri al.	Reclaim the previous sector first.
 Ekip bu vardiya baskına çıktı; vardiyayı bitir, sonraki vardiyada hazır.	The team already raided this shift; end the shift and it will be ready in the next one.
-Teknisyen yaralı ({0} gün); yerine çıkacak yedek uzman yok.	Technician injured ({0} days); no reserve specialist to step in.
 Bu baskın {0} fon ister.	This raid requires {0} funds.
+Teknisyen yaralı ({0} gün); yerine çıkacak yedek uzman yok.	Technician injured ({0} days); no reserve specialist to step in.
 Teknisyen'in yanına iki uzman seç.	Pick two specialists to go with the Technician.
 {0} henüz kadroda değil: atölye seviye {1} gerekiyor.	{0} has not joined the squad yet: needs workshop level {1}.
 Süren baskın yok.	No raid is in progress.
@@ -572,6 +574,8 @@ Kumanya deposu	Provision store
 Bant galerisi	Belt gallery
 Makine dairesi	Engine room
 Pilbara'da uzaktan yönetilen bir maden limanı. Hidrolik kaldırıcının hortumu patlamak üzere.	A remotely run mining port in the Pilbara. The hydraulic lift's hose is about to burst.
+Son kişi	The last person
+Sığınağın son sakini de kaybedildi. Panoda yalnız boş görev cepleri ve geri dönmeyenlerin kartları kaldı.	The shelter's last resident was lost. Only empty duty pockets and the cards of those who never returned remain on the board.
 Silme	Erasure
 Çekirdek yok edildi, kopyalar temizlendi. Ama bir kez yapıldıysa, biri yine yapacak.	The core is destroyed and the copies are gone. But if it was done once, someone will do it again.
 Dağılma	Disbanded
@@ -580,6 +584,25 @@ Vuruldu	Shot
 Kapıyı açtın ve silah patladı. Sığınak bir gecede komutansız kaldı; sabah telsizden yalnız parazit geliyordu.	You opened the door and a shot rang out. The shelter lost its commander in a single night; by morning the radio gave nothing but static.
 Sızma	Infiltrated
 Kapıyı bir kopyaya açtın. Sığınak 07'nin yeri artık YZ'nin haritasında; kopyalar bir sonraki kapıyı çalıyor.	You opened the door to a copy. Shelter 07 is on the AI's map now; the copies are knocking on the next door.
+# Assets/Corrigible/Core/PlanningBoardState.cs
+Üretim	Production
+Mutfak	Kitchen
+Bakım ve dönüş triyajı	Care and return triage
+İkmal	Foraging
+Eğitim	Training
+Gözetim	Supervision
+Dış temas	Outside contact
+Dinlenme / yedek	Rest / reserve
+Metal	Metal
+Devre	Circuit
+Kumaş	Cloth
+Kimyasal	Chemical
+Teknisyen kiti	Technician kit
+EMP kiti	EMP kit
+Analist kiti	Analyst kit
+Zırh plakası	Armour plate
+Bakım kiti	Care kit
+EMP hücresi	EMP cell
 # Assets/Corrigible/Core/RaidMaps.cs
 Kablo galerisi	Cable gallery
 Bakım tüneli	Maintenance tunnel
@@ -616,10 +639,158 @@ Revir	Infirmary
 Bilinmeyen oda	Unknown room
 Kurtulanlara yer açar ve yedek uzman barındırır. Görevlendirilen kişiler çevreden erzak toplar.	Houses survivors and keeps reserve specialists. Assigned people forage supplies nearby.
 YZ trafiğini dinler ve izleri karıştırır. Görevlendirilen kişiler alarmın yükselişini yavaşlatır.	Listens to AI traffic and muddles the trail. Assigned people slow the rise of the alarm.
-Görevlendirilen kişiler malzemeden zırh plakası döker; plaka baskında ilk hasarı karşılar.	Assigned people cast armor plates from materials; a plate takes the first hit in a raid.
+Görevlendirilen kişiler malzemeden zırh plakası döker; plaka baskında ilk hasarı karşılar.	Assigned people cast armour plates from materials; a plate takes the first hit in a raid.
 Görevlendirilen kişiler uzmanların yarasını sarar, yaralıları erken ayağa kaldırır.	Assigned people dress the specialists' wounds and get the injured back up sooner.
+# Assets/Corrigible/Core/Simulation.CommunityAdmissions.cs
+Kuzey tahliye hattı	Northern evacuation route
+Doğu aktarma merkezi	Eastern transfer centre
+Güney sahra istasyonu	Southern field station
+Kurucu sığınak ekibi	Founding shelter crew
+Temel kabul talimatı: belge ve sevk kaydını karşılaştırın.	Basic admission protocol: compare the identity document and referral record.
+Düzenleme tarihi bugünden ileri olamaz; kimlik ve sevk numaraları aynı olmalıdır.	The issue date cannot be in the future; identity and referral numbers must match.
+Belge kusuru robot kanıtı değildir. Doğru belge ve iyi çalışma da insanlık garantisi değildir.	A document fault is not proof of a robot. Valid papers and good work do not guarantee humanity either.
+Yeni istihbarat: N-17 boş sevk belgeleri çalındı; yalnız bu serideki eski dosyalar işaretlendi.	New intelligence: blank N-17 referral papers were stolen; only earlier files with this series were flagged.
+N-17 serisi bağımsız dış kayıtla teyit edilmelidir; serinin kendisi robot kanıtı değildir.	The N-17 series requires independent outside-record confirmation; the series itself is not proof of a robot.
+Soğuk gözlemde S-6 gövdelerinde nefes buğusu yoktur. Bu işaret bütün robot serilerini kapsamaz.	S-6 bodies show no breath condensation in cold observation. This sign does not cover every robot series.
+Belge kusurunu, dış kaydı ve erişim izlerini birlikte değerlendirin.	Consider document faults, outside records and access traces together.
+Yeni üretim kaydı: R-4 serileri nefes buğusunu taklit edebilir; önceki S-6 bilgisi geçerlidir.	New production record: R-4 series can imitate breath condensation; the earlier S-6 information remains valid.
+Nefes buğusu insanlık garantisi değildir. R-4 serileri bu işareti taklit eder.	Breath condensation does not guarantee humanity. R-4 series imitate this sign.
+Birbirinden bağımsız erişim ve parça kayıtları kayıp tanık olsa da dosyada kalır.	Independent access and component records remain in the file even if a witness is lost.
+Bu kayıtta topluluk kabulü yok.	This record has no community admission system.
+Vardiya planı kilitli.	The shift plan is locked.
+Kapıda aday yok.	There is no applicant at the door.
+Böyle bir inceleme yok.	This inspection does not exist.
+Bu inceleme zaten yapıldı.	This inspection has already been completed.
+Gözetmen yok: dış kayıt için Boşta'da ayrı, sağlam ve kısıtsız bir sakin bırak.	No supervisor: leave a separate, healthy, unrestricted resident in IDLE for the outside record.
+Tahliye yolunu sordun. Aday Kuzey tahliye hattından geldiğini söyledi. Beyanı belgeyle karşılaştır; bu yanıt insanlık kanıtı değildir.	You asked about the evacuation route. The applicant said they came from the Northern evacuation route. Compare the account with the document; this answer is not proof of humanity.
+Tahliye yolunu sordun. Aday Doğu aktarma merkezinden geldiğini söyledi. Beyanı belgeyle karşılaştır; bu yanıt insanlık kanıtı değildir.	You asked about the evacuation route. The applicant said they came from the Eastern transfer centre. Compare the account with the document; this answer is not proof of humanity.
+Tahliye yolunu sordun. Aday Güney sahra istasyonundan geldiğini söyledi. Beyanı belgeyle karşılaştır; bu yanıt insanlık kanıtı değildir.	You asked about the evacuation route. The applicant said they came from the Southern field station. Compare the account with the document; this answer is not proof of humanity.
+Soğuk gözlemde nefes buğusu görüldü. Bu sonuç bütün robot serilerini dışlamaz.	Breath condensation was seen in cold observation. This result does not rule out every robot series.
+Soğuk gözlemde nefes buğusu görülmedi. S-6 talimatıyla karşılaştırın; tek başına kesin hüküm vermeyin.	No breath condensation was seen in cold observation. Compare with the S-6 protocol; do not decide on this alone.
+Dış kayıt teyidi bu vardiyanın gözetim işine yazıldı; sonuç sonraki brifingde.	Outside-record confirmation was assigned to this shift's observation work; the result arrives in the next briefing.
+İnceleme dosyaya işlendi.	The inspection was added to the file.
+Düzenleme tarihi dış kayıttan farklı. Belge kusuru robot kanıtı değildir.	The issue date differs from the outside record. A document fault is not proof of a robot.
+Kimlik ve sevk numaraları uyuşmuyor. Kopyalama hatası da olabilir; dış kayıtla teyit edin.	Identity and referral numbers do not match. A copying error is also possible; confirm with outside records.
+Düzenleyen mühür bu tahliye hattının örneğiyle uyuşmuyor. Bu bir belge kusurudur.	The issuing seal does not match this evacuation route's example. This is a document fault.
+Geldiği yer sevk kaydından farklı. Kişinin robot olduğu sonucu çıkarılamaz.	The place of origin differs from the referral record. This does not establish that the person is a robot.
+Kimlik ve sevk alanları birbiriyle uyumlu. Geçerli belge insanlık garantisi değildir.	Identity and referral fields agree. Valid papers do not guarantee humanity.
+Böyle bir kabul kararı yok.	This admission decision does not exist.
+Topluluk kapasitesi {0}; kabul için önce güvenli ayrılma kararı ver.	Community capacity is {0}; arrange a safe departure before admitting another person.
+Tek gözetim yeri dolu; önce mevcut kısıtlı kabulü çöz.	The single observation place is occupied; resolve the current restricted admission first.
+Dış yardım için {0} erzak gerekiyor.	Outside aid requires {0} supplies.
+Kritik saha, üretim ve temas erişimi kapalı. Çalışma için ayrı gözetmen gerekir; {0} vardiya sonra erişim kararını yenile.	Access to field, production and contact duties is blocked. Work requires a separate observer; renew the access decision after {0} shifts.
+Dışarıdan {0} erzak verilir; aday topluluğa katılmaz.	{0} supplies are given outside; the applicant does not join the community.
+Aday aynı kimlik ve gerçek yetenekleriyle topluluğa katılır; belge geçerliliği insanlık garantisi değildir.	The applicant joins with the same identity and real abilities; valid papers do not guarantee humanity.
+Aday dış tahliye hattına yönlendirilir; bu vardiya kapanınca bekleyen karar da ret sayılır.	The applicant is directed to the outside evacuation route; a pending decision also counts as refusal when this shift closes.
+Kapı kararı kaydedildi.	The door decision was recorded.
+Bekleyen kapı kararı vardiya kapanışında ret sayıldı; aday dış tahliye hattına yönlendirildi.	The pending door decision counted as refusal at shift closing; the applicant was directed to the outside evacuation route.
+Aday tam erişimle kabul edildi; belgeleri kalıcı kişi dosyasına taşındı.	The applicant was admitted with full access; their papers moved into a permanent personal file.
+Aday kısıtlı kabul edildi; kritik görevler kapalı, çalışma ayrı gözetmen gerektiriyor.	The applicant was admitted with restricted access; sensitive duties are blocked and work requires a separate observer.
+Adaya dışarıdan erzak verildi; topluluğa katılmadı.	The applicant received supplies outside and did not join the community.
+Aday dış tahliye hattına yönlendirildi.	The applicant was directed to the outside evacuation route.
+İncelenebilen canlı bir sakin seç.	Select a living resident whose file can be reviewed.
+Bu dosyanın incelemesi zaten bekliyor.	A review of this file is already pending.
+Bu dosyada yeni incelenecek bulgu yok.	This file has no new findings to review.
+Dosya incelemesi gözetmenin vardiyasına yazıldı; sonuç sonraki brifingde.	The file review was assigned to the observer's shift; the result arrives in the next briefing.
+Erişimi değiştirilebilen canlı bir sakin seç.	Select a living resident whose access can be changed.
+Bu erişim kararı zaten uygulanıyor.	This access decision is already in effect.
+Erişim kısıtlandı; kişi yedeğe alındı. Çalışması ayrı gözetmen gerektirir.	Access was restricted and the person moved to reserve. Their work requires a separate observer.
+Kişinin erişim kısıtı kaldırıldı; yeni görev açıkça seçilmelidir.	The person's access restriction was lifted; a new duty must be selected explicitly.
+Erişim kararı kaydedildi.	The access decision was recorded.
+Ayrılabilecek canlı bir sakin seç.	Select a living resident who can leave.
+Kişi güvenli dış tahliye hattına yönlendirildi; kişi ve ustalığı artık aktif kadroda değil.	The person was directed to a safe outside evacuation route; the person and their mastery are no longer on the active roster.
+Ayrılma kararı kaydedildi.	The departure decision was recorded.
+Kısıtlı kabul süresi doldu; erişimi yenile, serbest bırak veya ayrılma kararı ver. Bu sürede çalışamaz.	Restricted admission has expired; renew access, release the restriction or arrange departure. The person cannot work meanwhile.
+İki bağımsız bulgu var. Sonraki kapanıştan önce erişimi kısıtlayabilir, hassas görevini kaldırabilir veya kişiyi ayırabilirsin.	Two independent findings exist. Before the next closing, restrict access, remove the sensitive duty or arrange departure.
+Güncel talimat bu eski dosyayla eşleşti; yalnız bu kişiye inceleme fişi açıldı.	The current protocol matches this earlier file; a review notice was opened only for this person.
+Kısıtlı kabul süresi doldu; çalışma durdu. Erişim kararını yenile, serbest bırak veya ayrılma kararı ver.	Restricted admission has expired and work has stopped. Renew access, release the restriction or arrange departure.
+Yeni talimattaki N-17 serisi bu kişinin eski belgesiyle eşleşti. Bu eşleşme robot kanıtı değildir.	The new protocol's N-17 series matches this person's earlier document. This match is not proof of a robot.
+Yeni talimat eski nefes gözleminin sınırını açıkladı; ilgili kişinin dosyasına inceleme fişi eklendi.	The new protocol explains the limit of an earlier breath observation; a review notice was added to the relevant person's file.
+Dış kayıt karşılaştırması tamamlandı; belge bulgusu dosyada. Bu kontrol insanlık sertifikası değildir.	Outside-record comparison is complete; the document finding is in the file. This check is not a certificate of humanity.
+Dış kayıt ve kalıcı erişim izi birlikte doğrulandı; sabotaj hazırlığı kesildi, kritik erişim kapatıldı.	The outside record and permanent access trace were verified together; sabotage preparation was interrupted and sensitive access closed.
+Önceden iz bırakan parça müdahalesi gerçekleşti; yalnız metal deposu zarar gördü. Kimse ölmedi.	The previously foreshadowed component interference occurred; only the metal store was damaged. Nobody died.
+Önceden iz bırakan stok yönlendirmesi gerçekleşti; yalnız erzak kaybedildi. Kimse ölmedi.	The previously foreshadowed stock diversion occurred; only supplies were lost. Nobody died.
+Görev dışı erişim kaydı bulundu. Kayıt dosyaya kopyalandı; görev değişikliği veya dış kayıt incelemesi mümkün.	An access record outside the assigned duty was found. It was copied to the file; duty changes or outside-record review are possible.
+İkinci bağımsız bulgu: bakım defteriyle uyuşmayan köprü parçası bulundu. Erişim günlüğü ve parça kaydı tanıktan bağımsız saklandı. Sonraki kapanıştan önce müdahale edebilirsin.	Second independent finding: a bridge component conflicts with the maintenance register. The access log and component record are preserved independently of witnesses. You can intervene before the next closing.
+İlk aday kapıda; güvenli öğretici vakada kimlik ve sevk belgesini karşılaştırabilirsin.	The first applicant is at the door; this safe introductory case lets you compare identity and referral documents.
+Kapıda yeni bir aday var; belge dosyası ve güncel kabul talimatı hazır.	A new applicant is at the door; their document file and the current admission protocol are ready.
+# Assets/Corrigible/Core/Simulation.PlanningBoard.cs
+Dayanıklı, ağır adımlı	Resilient, slow-paced
+Çevik, narin	Agile, fragile
+Güçlü, temkinli	Strong, cautious
+Dengeli, saha deneyimi az	Balanced, little field experience
+Elektronikçi	Electronics
+Elektrikçi	Electrician
+Haberleşmeci	Radio operator
+Tamirci	Mechanic
+Aşçı	Cook
+Sağlık çalışanı	Medic
+Depo görevlisi	Storekeeper
+Bu kayıtta vardiya panosu yok.	This save has no shift planning board.
+Baskın sürerken plan değiştirilemez.	The plan cannot be changed during a raid.
+Plan kilitli. Fişi devir kutusuna bırak.	The plan is locked. Place the receipt in the handover box.
+Bu sakin görev alamıyor.	This resident cannot take an assignment.
+Böyle bir görev yok.	There is no such assignment.
+Yatan yaralı önce dinlenmeli.	A bedridden resident must rest first.
+Kısıtlı sakin bu göreve erişemez.	A restricted resident cannot access this assignment.
+Kısıtlı sakin için ayrı gözetmen gerekiyor.	A restricted resident needs a separate supervisor.
+Kişi zaten bu görevde.	This resident already has this assignment.
+Takas edilecek kişinin uygun eğitim alanını seç.	Choose a suitable training subject for the resident being swapped.
+Önce uygun eğitim alanını seç.	Choose a suitable training subject first.
+{0}: {1}.	{0}: {1}.
+Böyle bir eğitim alanı yok.	There is no such training subject.
+Kişi bu alanda zaten uzman.	This resident is already an expert in this subject.
+Bu eğitim zaten seçili.	This training is already selected.
+{0}, {1} eğitimine ayrıldı.	{0} has been assigned to {1} training.
+Bu eşya depoda veya kişide bulunmuyor.	This item is not in storage or on a resident.
+Bu sakin teçhizat kullanamıyor.	This resident cannot use equipment.
+Eşya zaten bu cepte.	The item is already in this pocket.
+Teçhizat yerleştirildi.	Equipment placed.
+Otomatik üretim zaten açık.	Automatic production is already enabled.
+Üretim alanı hammaddelerle çalışır.	The production area uses placed materials.
+Geçerli hammadde miktarı seç.	Choose a valid material quantity.
+Serbest hammadde yetersiz veya miktar aynı.	Not enough free material, or the quantity is unchanged.
+Hammadde üretim alanına kondu; uygun tarif varsa kapanışta işlenir.	Material placed in production; a matching recipe is processed at shift closing.
+Hurdaya ayrılabilen bir eşya seç.	Select an item to scrap.
+{0} hurdaya ayrıldı; {1} metal kazanıldı.	{0} was scrapped; recovered {1} metal.
+Önce mevcut üretim emrini tamamla veya iptal et.	Finish or cancel the current production order first.
+Böyle bir tarif yok.	There is no such recipe.
+{0} iş emri açıldı. Girdileri ayır.	Production order opened: {0}. Reserve the inputs.
+Girdisi ayrılabilen bir taslak iş yok.	There is no draft order that can reserve inputs.
+Bu tarif için uygun tür ve miktarı ayır.	Reserve the correct material type and quantity for this recipe.
+Bu miktar zaten ayrılmış.	This quantity is already reserved.
+Serbest hammadde yetersiz.	Not enough unreserved material.
+Hammadde iş emrine ayrıldı; kapanışta ödenecek.	Material reserved for this order; it will be spent at handover.
+Böyle bir iş emri yok.	There is no such production order.
+İş iptal edildi. Tüketilen girdiler geri dönmez.	Order canceled. Spent inputs are not returned.
+İş iptal edildi. Ayrılan girdiler serbest bırakıldı.	Order canceled. Reserved inputs have been released.
+{0}: {1}	{0}: {1}
+{0} için uygun eğitim alanını seç.	Choose a suitable training subject for {0}.
+İş emrinin tarifi bulunamadı.	The production order's recipe was not found.
+{0}: {1} adedi {2} olmalı.	{0}: the quantity of {1} must be {2}.
+Teçhizat deposu dolu. Üretimden önce yer aç.	Equipment storage is full. Make room before producing.
+Bu vardiyanın fişi zaten çıkış tepsisinde.	This shift's receipt is already in the output tray.
+Devir fişi basıldı. Günü bitirmek için devir kutusuna bırak.	Handover receipt printed. Place it in the handover box to end the day.
+Bu fiş bu vardiyanın etkin devir fişi değil.	This is not the active handover receipt for this shift.
+Vardiya devredildi.	Shift handed over.
+Vardiya {0} · Devir fişi	Shift {0} · Handover receipt
+Beklenen erzak değişimi: {0:0.##}	Expected supply change: {0:0.##}
+{0}: kalan {1} vardiya.	{0}: {1} shifts remaining.
+Üretim alanı: {0}	Production area: {0}
+Uygun tarif yok; malzemeler korunur.	No matching recipe; materials are kept.
+{0}: {1} alanında +{2} eğitim.	{0}: +{2} training in {1}.
+Açık kapı başvurusu kararsızsa bu kapanışta reddedilir.	An unresolved application at the door will be rejected at this handover.
+# Assets/Corrigible/Core/Simulation.PlanningRaid.cs
+Plan kilitli. Önce devir fişiyle vardiyayı kapat.	The plan is locked. Close the shift with the handover slip first.
+Panoda Teknisyen, EMP uzmanı ve Analist için üç sağlıklı kişi seç.	Select three healthy people on the board for Technician, EMP specialist and Analyst.
+{0} kısıtlı kabulde; saha erişimi kapalı.	{0} has restricted admission; field access is blocked.
+{0} için {1} gerekiyor.	{0} needs {1}.
+{0} kaybedildi. Kişisel ustalığı ve geride kalan teçhizatı geri gelmeyecek.	{0} was lost. Their personal mastery and equipment left behind will not return.
+{0} ekipçe kurtarıldı; {1} vardiya yatış gerekiyor.	{0} was rescued by the team; bed rest is needed for {1} shifts.
+{0} döndü: can {1}/{2}.	{0} returned: HP {1}/{2}.
 # Assets/Corrigible/Core/Simulation.Shelter.cs
 Bu kayıtta sığınak yönetimi yok.	Shelter management is unavailable in this save.
+Oda geliştirmeleri kaldırıldı. Kişi kartlarını planlama panosunda görevlendir.	Room upgrades have been removed. Assign resident cards on the planning board.
 Böyle bir sığınak odası yok.	There is no such shelter room.
 Oda en yüksek seviyede.	The room is at its maximum level.
 {0} fon ve {1} malzeme gerekiyor.	Requires {0} funds and {1} materials.
@@ -639,8 +810,166 @@ Delta	Delta
 Baskın sonucu eksik.	The raid result is missing.
 # Assets/Corrigible/Core/WorldState.cs
 Bölge	Region
-# Assets/Corrigible/Desk/Scripts/Bridge/Entrance/EntranceController.cs
-V.{0:000} · özgür {1}/{2}	S.{0:000} · free {1}/{2}
+# Assets/Corrigible/Desk/Scripts/Bridge/Board3D/BoardPreviewText.cs
+{0} ← {1}	{0} ← {1}
+İŞ EMRİ	WORK ORDER
+İŞİ İPTAL ET	CANCEL ORDER
+DEPO	STORE
+HURDA	SCRAP
+Boşta	Idle
+kapanışta +{0} can	+{0} HP at closing
+eğitim bırakılır	training is dropped
+kit gerekmez	no kit needed
+yaralı: can {0}/{1}, görevde iyileşmez	injured: HP {0}/{1}, does not heal on duty
+kapanışta {0} +{1}	{0} +{1} at closing
+depoya döner	returns to the store
+yuva dolu: {0} → {1}	slot taken: {0} → {1}
+saha kiti tamam	field kit ready
+hücre yalnız EMP uzmanında etkili	the cell only works for the EMP specialist
+kalıcı olarak sökülür: +{0} metal	dismantled for good: +{0} metal
+metal deposu dolu ({0}): kazanç yok	metal store full ({0}): no gain
+serbest {0} → {1}	free {0} → {1}
+üretim cebi boş: kapanışta üretim olmaz	production pocket empty: nothing is made at closing
+girdi: {0}	inputs: {0}
+üretici: {0}	maker: {0}
+üretici yok	no maker
+harcanan girdi geri gelmez	spent inputs are not returned
+başlamamış iş · ücretsiz iptal	unstarted order · free to cancel
+{0} {1}	{0} {1}
+{0} + {1}	{0} + {1}
+takas: {0} → {1}	swap: {0} → {1}
+takas: {0} → {1}, {2} onunla gider	swap: {0} → {1}, {2} goes with them
+{0} boş kalır: baskın emri verilemez	{0} stays empty: no raid order possible
+KİT YOK: baskın emri verilemez	NO KIT: no raid order possible
+# Assets/Corrigible/Desk/Scripts/Bridge/Board3D/PlanningBoardSnapshotBuilder.cs
+— kart seç —	— select a card —
+V.{0:000} · erzak {1} ({2}) · {3}/{4} kişi	S.{0:000} · rations {1} ({2}) · {3}/{4} people
+PLAN AÇIK · {0}/{1} kişi	PLAN OPEN · {0}/{1} people
+PLAN KİLİTLİ · {0}	PLAN LOCKED · {0}
+PLAN KİLİTLİ	PLAN LOCKED
+1 eşya → {0} metal	1 item → {0} metal
+KAYIPLAR · {0}	CASUALTIES · {0}
+devir fişi basıldı	handover printed
+baskın emri verildi	raid ordered
+Analiz	Analysis
+Bakım	Care
+usta	expert
+CAN	HP
+HAR	MOVE
+GÜÇ	POWER
+{0}/{1}	{0}/{1}
+Yatıyor · {0} v.	Laid up · {0} sh.
+Kısıtlı · {0} v.	Restr. · {0} sh.
+Kısıtlı · bitti	Restr. · ended
+{0} +{1}	{0} +{1}
+Boşta · +{0} can	Idle · +{0} HP
+Kayıp · V.{0:000}	Lost · S.{0:000}
+Kayıp	Lost
+T E A Ü M B İ	T E A P K C F
+saha rolü: {0}	field role: {0}
+ilk hasarı karşılar, kırılır	absorbs the first hit, then breaks
+EMP uzmanı: ilk atış +{0} hasar; baskında tükenir	EMP specialist: first shot +{0} damage; one raid
+EMP uzmanı: ilk {0} atış +{1} hasar; baskında tükenir	EMP specialist: first {0} shots +{1} damage; one raid
+bakım görevinde +{0} can; panoda bakım cebi yok	care duty: +{0} HP; the board has no care pocket
+stok {0}	stock {0}
+ayrı {0}	held {0}
+serbest {0} · stok {1} · ayrı {2}	free {0} · stock {1} · held {2}
+×{0}	×{0}
+YARALI	INJURED
+YATIYOR	LAID UP
+KISITLI	RESTRICTED
+İNCELE	REVIEW
+KAYIP	LOST
+serbest	free
+KİT	KIT
+ZIRH	ARMOUR
+YARDIMCI	AID
+KYGA · TARİF DEFTERİ	KYGA · RECIPE BOOK
+ÇIKTI	OUTPUT
+GİRDİ	INPUT
+SÜRE	DURATION
+sonraki ►	next ►
+◄ önceki	◄ previous
+TARİF {0:00}	RECIPE {0:00}
+1 ×	1 ×
+s. {0}	p. {0}
+AÇILIM {0}/{1}	SPREAD {0}/{1}
+TARİF DEFTERİ	RECIPE BOOK
+{0} tarif	{0} recipes
+kit yuvası	kit slot
+zırh yuvası	armour slot
+yardımcı yuvası	aid slot
+1 vardiya	1 shift
+{0} vardiya	{0} shifts
+→ deneyimli üretici: tek kapanış	→ experienced maker: 1 shift
+× {0}	× {0}
+→ 1 ürün	→ 1 item
+No {0:000}	No. {0:000}
+eksik: {0}	missing: {0}
+DURDU	STOPPED
+{0} · girdiler ödendi · {1}/{2} · üretici: {3}	{0} · inputs paid · {1}/{2} · maker: {3}
+{0} · girdiler ayrıldı · üretici: {1}	{0} · inputs held · maker: {1}
+GİRDİLER (hammaddeyi buraya bırak)	INPUTS (drop materials anywhere here)
+KYGA · KİŞİ DOSYASI · V.{0:000}	KYGA · PERSONNEL FILE · S.{0:000}
+KYGA · KABUL VE ERİŞİM	KYGA · ADMISSION AND ACCESS
+KÜNYE	IDENTITY
+MESLEK	PROFESSION
+PROFİL	PROFILE
+GÖREV	ASSIGNMENT
+DURUM	STATUS
+USTALIK	MASTERY
+{0}/{1} · {2}	{0}/{1} · {2}
+TEÇHİZAT	EQUIPMENT
+taşıdığı eşya yok	carries no items
+KALICI KİŞİ DOSYASI	PERMANENT PERSONAL FILE
+dosya bulunamadı	file not found
+AD	NAME
+GELDİĞİ YER	ORIGIN
+DÜZENLEME	ISSUED
+BELGE NO	DOCUMENT NO.
+SEVK NO	REFERRAL NO.
+MÜHÜR	SEAL
+PORTRE İZİ	PORTRAIT MARK
+KAYIT	RECORD
+KURUCU	FOUNDER
+evet	yes
+hayır	no
+GELİŞ	ARRIVED
+KABUL	ADMISSION
+KARAR V.{0:000} · {1}	DECISION S.{0:000} · {1}
+KABUL · TAM ERİŞİM	ADMIT · FULL ACCESS
+KISITLI KABUL	RESTRICTED ADMISSION
+KISITLAMA BİTİŞİ	RESTRICTION ENDS
+DIŞ KAYIT	OUTSIDE RECORD
+teyitli	verified
+teyitsiz	unverified
+İNCELEME	REVIEW
+bekliyor	pending
+gerekli	needed
+yok	none
+BAĞIMSIZ BULGU	INDEPENDENT FINDINGS
+BULGULAR	FINDINGS
+İZLER	TRACES
+İZ 1 · erişim kaydı	TRACE 1 · access log
+İZ 2 · parça kaydı	TRACE 2 · parts log
+GEÇMİŞ	HISTORY
+UYARI	WARNING
+ERİŞİM	ACCESS
+TAM ERİŞİM	FULL ACCESS
+Tahliye	Dismiss
+dış kayıt · 1 gözetmen vardiyası	outside record · 1 supervisor shift
+kısıtla · kaldır	restrict · lift
+güvenle ayır · iki adım	send away safely · two steps
+Önce açılış belgesini kapat.	Close the opening document first.
+İnceleme fişi açıldı · talimat {0}	Review slip opened · orders {0}
+KISITLI · {0} V	LIMIT · {0} S
+V.{0:000}	S.{0:000}
+deneyimli	experienced
+eğitimli	trained
+acemi	novice
+# Assets/Corrigible/Desk/Scripts/Bridge/Board3D/ProductionForecast.cs
+açlık	starvation
+eşya deposu dolu	item store full
 # Assets/Corrigible/Desk/Scripts/Bridge/LiberationDeskView.cs
 YAPILAMADI	FAILED
 Kayıt açılamadı.	The save could not be opened.
@@ -649,12 +978,17 @@ Baskın emri: {0} · {1} · {2} fon	Raid order: {0} · {1} · {2} funds
 EMİR UYGULANDI	ORDER EXECUTED
 # Assets/Corrigible/Desk/Scripts/Bridge/LiveRaidDataSource.cs
 {0} · {1:00} {2}	{0} · {1:00} {2}
+KASADA: {0} metal · {1} devre · {2} kumaş · {3} kimyasal · {4} erzak	CRATE: {0} metal · {1} circuit · {2} cloth · {3} chem. · {4} rations
+ · 	 · 
+<s>{0}</s>	<s>{0}</s>
+# Assets/Corrigible/Desk/Scripts/Bridge/PlanningBoardPresenter.cs
+Vardiya fişini masadaki vardiya şalterinden bas.	Print the shift slip with the shift switch on the desk.
 # Assets/Corrigible/Desk/Scripts/Bridge/RaidDataSource.cs
 {0} tahliye edildi	{0} extracted
 emir iletildi · gözcü bildiriyor	order sent · spotter reporting
 gözcü · makineler yer değiştiriyor	spotter · machines repositioning
 №{0} · hedef dolabı onarılıyor	No. {0} · repairing target cabinet
-№{0} · makine zırhlanıyor	№{0} · machine gets armor
+№{0} · makine zırhlanıyor	№{0} · machine gets armour
 №{0} · yeni dron uyanıyor	№{0} · new drone waking
 №{0} · patlama	№{0} · explosion
 №{0} · kilit → {1}	№{0} · lock → {1}
@@ -681,6 +1015,8 @@ Hareket	Move
 Kasadan ikmal al	Take from crate
 Dolaba vur · −2 can	Hit cabinet · −2 HP
 Robota vur · −1 can	Hit robot · −1 HP
+Robota vur · −{0} can	Hit robot · −{0} HP
+−{0} hedef	−{0} target
 −1 hedef	−1 target
 itme	push
 Duvarı yık	Break a wall
@@ -693,8 +1029,7 @@ DURAKLATILDI · Esc ile devam	PAUSED · Esc to resume
 TELSİZ KAYDI · Ekip {0} girişinde.	RADIO LOG · Squad at the {0} entrance.
 TELSİZ KAYDI · Ekip harekete hazır.	RADIO LOG · Team ready to act.
 1 / 2 / 3: seç · Q: yetenek · Z: geri al · Enter: emri ilet · Esc: vazgeç	1 / 2 / 3: select · Q: ability · Z: undo · Enter: transmit · Esc: cancel
-Zırh plakası	Armor plate
-ilk hasarı karşılar	takes the first hit
+ilk hasarı karşılar	blocks first hit
 Yedek uzman	Reserve specialist
 bir eksik canla	one less health
 Boş kare	Empty tile
@@ -711,7 +1046,6 @@ Duvar yıkılır	Wall breaks
 kalan {0}	{0} left
 Moloz	Debris
 Sise kesilir	Cut by smoke
-<s>{0}</s>	<s>{0}</s>
 Ateşi iptal	Shot cancelled
 Öngörülen hasar	Predicted damage
 −{0}	−{0}
@@ -721,7 +1055,7 @@ Kasa imha olur; görev kaybedilir	Crate destroyed; mission failed
 Niyet {0} sise kesildi	Intent {0} cut by smoke
 Niyet {0} buluta kesildi	Intent {0} cut by the cloud
 Niyet · sıra {0}	Intent · order {0}
-Zırh	Armor
+Zırh	Armour
 Bölgenin imza makinesi	This region's signature machine
 Teknisyen ile bitişik kareden aç; sonra bütün ekip girişten çıkar	Open with the Technician from an adjacent tile; then the whole team leaves through the entry
 Hedef dolabı: kırılınca bütün ekip girişten çıkar	Target cabinet: once it breaks, the whole team leaves through the entry
@@ -734,10 +1068,13 @@ Buradan çıkan uzman tahliye edilir; malzeme Teknisyen'le çıkar	A specialist 
 Buradan çıkan uzman tahliye edilir	A specialist who steps here is extracted
 Tahtada kalan: {0}	Left on the board: {0}
 {0} tur	{0} turns
-ZIRH	ARMOR
 PATLAR	EXPLODES
 ÇIKAR	EXITS
 OLAY	EVENT
+\n	\n
+{0} geride kalırsa kalıcı olarak ölür.	{0} dies for good if left behind.
+{0} geride kalırsa kalıcı olarak ölür.\n{1} kaybolur.	{0} dies for good if left behind.\n{1} will be lost.
+GERİDE KALIRSA ÖLÜR	DIES IF LEFT BEHIND
 SEKTÖR GERİ ALINDI	SECTOR RETAKEN
 GERİ ÇEKİLDİ	WITHDRAWN
 EKİP DÜŞTÜ	TEAM DOWN
@@ -745,13 +1082,16 @@ EKİP DÜŞTÜ	TEAM DOWN
 SÜRE DOLDU	TIME IS UP
 TUR {0}/{1}	TURN {0}/{1}
 Tahliye edilen	Extracted
-{0}/{1}	{0}/{1}
 Ekip	Team
 {0}/{1} ayakta	{0}/{1} standing
 alındı	taken
 kayboldu	lost
 kırıldı	broken
+geride kaldı	left behind
 Kırılan sivil sunucu	Civilian servers broken
+{0} · kasadan ikmal alır, robota {1} hasar	{0} · collects supplies from the crate, {1} damage to robot
+{0} · robota {1} hasar, dolaba 2	{0} · {1} damage to robot, 2 to cabinet
+{0} · hedefe {1} hasar · güçlendirme {2}	{0} · {1} damage to target · boost {2}
 TEKNİSYEN	TECHNICIAN
 EMP UZMANI	EMP SPECIALIST
 MADENCİ	MINER
@@ -802,7 +1142,6 @@ KOPYALAMA	REPLICATION
 Yer · {0} · {1:00} {2}	Site · {0} · {1:00} {2}
 Teknisyen ile ikmal kasasına yaklaş. Q ile yeteneği seç, kasaya tıkla ve malzemeleri al. Kasayı imha etme.	Move the Technician next to the supply crate. Press Q to select the ability, then click the crate to collect the supplies. Do not destroy the crate.
 Her tur yeni robotlar uyanabilir.	New robots may wake each turn.
-{0}: {1}	{0}: {1}
 Olay · {0}: {1}	Event · {0}: {1}
 İmza makinesi: {0}	Signature machine: {0}
 Tehdit {0}/4: makineler alışılmış düzende.	Threat {0}/4: machines in their usual numbers.
@@ -846,6 +1185,100 @@ Eğri levhalar	Bent plates
 Yedek parça kasası	Spare-parts crates
 Sac kapaklı kanal	Plate-covered channel
 Sac ve cıvata	Sheet and bolts
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/AdmissionSnapshotBuilder.cs
+KABUL TEZGÂHI	ADMISSION DESK
+başvuru · {0}	application · {0}
+başvuru yok	no application
+EVRAK	PAPERS
+GİDEN · TELSİZ	OUT · RADIO
+TALİMAT	ORDERS
+ESKİ	OLD
+BULGU	FINDING
+BUĞU CAMI	BREATH GLASS
+İNTERKOM	INTERCOM
+MASA	DESK
+ERZAK	RATIONS
+BÜYÜTEÇ	MAGNIFIER
+belgeyle karşılaştır	compare with the paper
+görüşme	interview
+soğuk gözlem	cold observation
+TALEP DEFTERİ	REQUEST PAD
+dış kayıt	outside record
+BELGELERİ KARŞILAŞTIR	COMPARE PAPERS
+GÖRÜŞME YAP	INTERVIEW
+SOĞUK GÖZLEM	COLD OBSERVATION
+DIŞ KAYIT TEYİDİ	CONFIRM OUTSIDE RECORDS
+gözetmen yok · BOŞTA boş	no supervisor · IDLE empty
+KABUL ·\nTAM ERİŞİM	ADMIT ·\nFULL ACCESS
+KISITLI\nKABUL	RESTRICTED\nADMISSION
+REDDET	REJECT
+DIŞARIDAN\nYARDIM	OUTSIDE\nAID
+RET	REJECT
+YARDIM	AID
+KAPASİTE {0}/{1}	CAPACITY {0}/{1}
+erzak yetersiz	not enough rations
+{0} VARDİYA	{0} SHIFTS
+DIŞARIDAN YARDIM	OUTSIDE AID
+{0} ERZAK	{0} RATIONS
+CAN {0}/{1} · HAR {2} · GÜÇ {3}	HP {0}/{1} · MOVE {2} · POWER {3}
+KYGA · KABUL TALİMATI	KYGA · ADMISSION RULES
+No. {0}	No. {0}
+SÜRÜM {0}	VERSION {0}
+V.{0} geçerli · {1} kural	valid from S.{0} · {1} rules
+KYGA · KAPI	KYGA · DOOR
+ARŞİV · SÜRÜM {0} · V.{1:000}	ARCHIVE · VERSION {0} · S.{1:000}
+sürüm {0} arşivde	version {0} archived
+sürüm {0}’den	from version {0}
+YENİ · V.{0:000}	NEW · S.{0:000}
+KYGA · İNCELEME BULGUSU	KYGA · CHECK FINDING
+Belge No. {0} · sevk No. {1}. Mühür {2}, düzenleme V.{3:000}.	Doc No. {0} · transfer No. {1}. Seal {2}, issued S.{3:000}.
+EŞLEŞİYOR	MATCHES
+UYUŞMUYOR	MISMATCH
+N-17: dış kayıt gerekir (madde {0})	N-17: outside record required (rule {0})
+GÖRÜŞÜLDÜ	INTERVIEWED
+Soğuk camda nefes buğusu görüldü.	Breath fogs the cold glass.
+Soğuk camda nefes buğusu görülmedi.	The cold glass stays clear.
+Buğu tek başına insanlık garantisi değildir.	Fog alone does not prove a human.
+BUĞU VAR	FOG SEEN
+BUĞU YOK	NO FOG
+{0} kaydı belgeyle eşleşiyor.	{0} record matches the paper.
+{0} kaydı belgeden farklı: {1}.	{0} record differs from the paper: {1}.
+KAYIT BULUNDU	RECORD FOUND
+KAYIT FARKLI	RECORD DIFFERS
+Gözetmen: {0} · {1} kaydı telsizle soruldu.	Supervisor: {0} · {1} record requested by radio.
+talep iptal edildi · sonuç gelmez	request cancelled · no result
+gözetmen yok · sonuç gelmez	no supervisor · no result
+sonuç V.{0:000} kapanışında	result at S.{0:000} closing
+KYGA · İNCELEME FİŞİ	KYGA · REVIEW SLIP
+TALİMAT {0} · MADDE {1}	ORDERS {0} · ITEM {1}
+Eşleşen eski dosya: {0}	Matching old file: {0}
+Dosyasına İNCELE sekmesi.	REVIEW tab on the file.
+KYGA · DIŞ KAYIT TALEBİ	KYGA · OUTSIDE RECORD REQUEST
+BELGE No.	DOC No.
+SEVK No.	TRANSFER No.
+SORULACAK	ASK
+GÖZETMEN	SUPERVISOR
+sonuç sonraki kapanışta	result at the next close
+KOPYA	CARBON COPY
+{0} kaydı	{0} record
+(BOŞTA üst kartı)	(top card of IDLE)
+Kapıdaki dış kayıt talebi iptal olur.	The outside record request at the door is cancelled.
+Gözetmen şu an {0} dosyasında; bu talep onu iptal eder.	The supervisor is on {0}'s file; this request cancels it.
+{0} gözetimle çalışıyor; bu talep onun planını bozar.	{0} works under supervision; this request breaks that plan.
+Belge alanları uyumlu	Paper fields agree
+Düzenleme tarihi kayıttan farklı	Issue date differs from the record
+Belge No. ≠ sevk No.	Doc No. ≠ transfer No.
+Mühür hattın örneğiyle uyuşmuyor	Seal does not match the line's sample
+Geldiği yer kayıttan farklı	Origin differs from the record
+Soğuk gözlem: buğu var	Cold observation: fog seen
+Soğuk gözlem: buğu yok	Cold observation: no fog
+düzenleme tarihi	issue date
+sevk numarası	transfer number
+mühür	seal
+geldiği yer	origin
+KABUL@@stamp	ADMIT
+KISITLI@@stamp	LIMIT
+BEKLENİYOR@@slip	PENDING
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/BriefingBuilder.cs
 KYGA · KÜRESEL YAPAY ZEKÂ GÜVENLİK AJANSI	KYGA · GLOBAL AI SECURITY AGENCY
 EMİR NO. {0:000}	ORDER NO. {0:000}
@@ -866,10 +1299,12 @@ KAPAT	CLOSE
 BAŞLA · ONAY	BEGIN · CONFIRM
 BAŞLA	BEGIN
 KAYITTAN DEVAM	CONTINUE
+V.{0:000} · özgür {1}/{2}	S.{0:000} · free {1}/{2}
 dosyayı aç	open the file
 KAYIT YOK	NO SAVE
+Emrindeki {0} kişi bu sığınağın topluluğudur. Saha kadrosunu panoda kur, bölgeleri sektör sektör geri al. Kaybettiğin kişi geri gelmez. Sivilleri koru: GÜVEN sıfırda direniş dağılır. Vardiya, devir fişi EVRAK'a konunca biter.	The {0} people under your command are this shelter’s community. Plan the field squad on the board and reclaim each sector. Anyone lost is gone for good. Protect civilians: at zero TRUST, the resistance falls apart. A shift ends when its handover slip is filed in PAPERS.
 KAYIT VAR	SAVE EXISTS
-V.{0:000} kaydının üstüne yazılır · onay için yeniden bas	save S.{0:000} will be overwritten · press again to confirm
+V.{0:000} kaydının üstüne yazılır · yeniden bas	save S.{0:000} will be overwritten · press again
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/CrtViewBuilder.cs
 YZ ALARMI {0}/{1}	AI ALARM {0}/{1}
 TELSİZ · KANAL 07	RADIO · CHANNEL 07
@@ -878,6 +1313,7 @@ DİNLEMEDE	LISTENING
 {0} · DÖNDÜ · SONRAKİ VARDİYA	{0} · BACK · NEXT SHIFT
 {0} · TEKNİSYEN YARALI · {1} GÜN	{0} · TECHNICIAN INJURED · {1} DAYS
 {0} · HAZIR	{0} · READY
+SAHA · KADRO HAZIR DEĞİL	FIELD · SQUAD NOT READY
 {0} / {1:00}	{0} / {1:00}
 {0} · ÖZGÜR	{0} · FREE
 HAT AÇILIYOR	OPENING LINE
@@ -888,7 +1324,6 @@ HAT KAPALI	LINE DOWN
 Teknisyen kalkınca ya da bir yedek uzman hazır olunca hat açılabilir.	The line can open once the Technician is up or a reserve specialist is ready.
 SİNYAL	SIGNAL
 KYGA-07 · ANALOG HAT	KYGA-07 · ANALOG LINE
-V.{0:000}	S.{0:000}
 YAĞMA	LOOT
 SUNUCU YIKIMI	SERVER DEMOLITION
 V.{0:000} · OP-{1:00}	S.{0:000} · OP-{1:00}
@@ -901,7 +1336,6 @@ Harekât burada biter.	The operation ends here.
 KAPI · SIĞINAK 07	DOOR · SHELTER 07
 VARDİYA {0:000}	SHIFT {0:000}
 GÖZETLEME DELİĞİ	PEEPHOLE
-İNTERKOM	INTERCOM
 Gözetleme deliğinden bak	Look through the peephole
 BAKILDI	LOOKED
 İnterkomdan parolayı sor	Ask for the password over the intercom
@@ -911,7 +1345,6 @@ masaya dön · kapı açık bekler	back to the desk · the door stays open
 SON RAPORA GEÇ	GO TO FINAL REPORT
 KAPIYI KAPAT	CLOSE THE DOOR
 SEÇİM · {0} {1}	CHOICE · {0} {1}
-erzak yetersiz	not enough rations
 malzeme yetersiz	not enough materials
 fon yetersiz	not enough funds
 güven {0}	trust {0}
@@ -940,12 +1373,12 @@ VARDİYA 1–{0}	SHIFT 1–{0}
 GERİ ALINAN	RETAKEN
 KIRILMA ANLARI	TURNING POINTS
 YENİDEN BAŞLA	RESTART
+Sığınakta görev yapabilecek kimse kalmadı.	Nobody remains who can work in the shelter.
 Bütün bölgeler özgür. YZ'nin son sunucusu {0}. vardiyada düştü.	All regions are free. The AI's last server fell on shift {0}.
 AĞA BAĞLANMA · ANALOG KAL	STAY OFF THE NET · STAY ANALOG
 Sivil güven sıfıra indi; Sığınak 07 dağıldı.	Civilian trust hit zero; Shelter 07 disbanded.
 Komutan kapıda vuruldu; Sığınak 07 {0}. vardiyada düştü.	The commander was shot at the door; Shelter 07 fell on shift {0}.
 Sığınak 07'nin yeri {0}. vardiyada YZ'ye sızdı.	Shelter 07's location leaked to the AI on shift {0}.
-SÜRE	DURATION
 vardiya	shifts
 BASKIN	RAIDS
 {0} başarılı · {1} başarısız	{0} successful · {1} failed
@@ -980,6 +1413,8 @@ TEHDİT	THREAT
 {0}/4	{0}/4
 TEHDİT · {0}/4	THREAT · {0}/4
 Özgür bölge sayısıyla yükselir. 3. kademede makineler kopyalanır, 4. kademede güçlenir.	Rises with the number of free regions. At level 3 the machines are copied, at level 4 they grow stronger.
+KADRO · VARDİYA PANOSU	ROSTER · SHIFT PLANNING BOARD
+Kişi, rol ve teçhizat dağılımını vardiya panosunda düzenle.	Arrange people, roles and equipment on the shift planning board.
 {0} atölye seviye {1} olunca kadroya katılır.	{0} joins the squad at workshop level {1}.
 SV {0}	LV {0}
 {0} · KİLİTLİ	{0} · LOCKED
@@ -997,6 +1432,7 @@ Teknisyen'in yanına {0} uzman daha seç.	Pick {0} more specialist(s) to go with
 Teknisyen sabit · ikisini seç; baskına çıkmayanlar dinlenir.	Technician is fixed · pick two; those who stay behind rest.
 HAREKÂT FORMU · OP-{0:00}	OPERATION FORM · OP-{0:00}
 HAREKÂT FORMU	OPERATION FORM
+KYGA · {0} · V.{1:000}	KYGA · {0} · S.{1:000}
 BİNA · {0}	BUILDING · {0}
 SEKTÖRLER {0}/{1} · ÖZGÜR	SECTORS {0}/{1} · FREE
 SEKTÖRLER {0}/{1} · İŞGAL {2}	SECTORS {0}/{1} · OCCUPIED {2}
@@ -1009,28 +1445,38 @@ Cephe açmak için komşusunu özgürleştir.	Free a neighbouring region to open
 GÖREV · {0:00} {1}	MISSION · {0:00} {1}
 Teknisyeni ikmal kasasının yanına götür, yeteneğini seç ve kasaya tıklayarak malzemeleri al.	Move the Technician next to the supply crate, select the ability and click the crate to collect the supplies.
 Sunucu çekirdeğini yık. Son sektör alınınca bu bölge özgürleşir.	Destroy the server core. Capturing the final sector liberates this region.
+İkmal kasasını yağmala; ekibi çıkışa ulaştır.	Loot the supply crate; bring the squad to the exit.
+Sunucu çekirdeğini yık; ekibi çıkışa ulaştır.	Destroy the server core; bring the squad to the exit.
 fon	funds
-malzeme	materials
 erzak	rations
+malzeme	materials
 kurtulan	survivor
 fon · bölge özgür	funds · region free
+SAHA KADROSU	FIELD SQUAD
 SAHADA	IN THE FIELD
 HAZIR	READY
 SONRAKİ VARDİYA	NEXT SHIFT
 TEKNİSYEN YARALI · {0} GÜN	TECHNICIAN INJURED · {0} DAYS
+KADRO EKSİK · PANOYU DÜZENLE	INCOMPLETE ROSTER · ADJUST BOARD
 BASKIN EMRİ VER	ORDER THE RAID
 Fon yetersiz · {0} gerekli	Not enough funds · {0} needed
 TEKNİSYEN YARALI	TECHNICIAN INJURED
 KADRO EKSİK	SQUAD INCOMPLETE
 EKİP HAZIR DEĞİL	TEAM NOT READY
 KADRO RAPORU	SQUAD REPORT
+KYGA · KADRO RAPORU	KYGA · SQUAD REPORT
 {0:00} {1} · {2}	{0:00} {1} · {2}
 yatıyor	laid up
 {0} · yedek yok, rol boş kalır	{0} · no reserve, the role stays empty
 {0} · yerine yedek uzman, can {1}/{2}	{0} · reserve in their place, health {1}/{2}
 tam iyileşmedi · can {0}/{1}	not fully healed · health {0}/{1}
 sağlam · can {0}/{1}	fit · health {0}/{1}
-{0} · zırh plakası	{0} · armor plate
+{0} · zırh plakası	{0} · armour plate
+Panoda uygun kişi ve rol kiti seçilmeli.	A suitable person and role kit must be selected on the board.
+{0} · hareket {1} · güç {2}	{0} · movement {1} · power {2}
+No. OP-{0:00} · V.{1:000}	No. OP-{0:00} · S.{1:000}
+Geride kalan kişi kalıcı ölür; ustalığı ve eşyası kaybolur.	Anyone left behind dies permanently; their experience and equipment are lost.
+SAĞLAM	FIT
 BASKINA ÇIK	DEPLOY
 Vazgeç	Cancel
 YENİ CEPHE · ONAY	NEW FRONT · CONFIRM
@@ -1055,11 +1501,11 @@ SONUÇLAR	RESULTS
 MASAYA DÖN	BACK TO DESK
 FON	FUNDS
 MALZEME	MATERIALS
-ERZAK	RATIONS
 KURTULAN	SURVIVOR
 GERİ ALINDI	RETAKEN
 İŞGAL ALTINDA	OCCUPIED
 YZ karşı saldırısı	AI counterattack
+Kaybedilen sakinlerin yerleri boş kaldı. Kadroyu vardiya panosunda yeniden düzenle.	The lost residents' places remain empty. Rearrange the roster on the shift planning board.
 Teknisyen düştü ve yerine çıkacak yedek yok: {0} gün baskın yapılamaz. Revir kalkışı hızlandırır.	The Technician fell and no reserve can step in: no raids for {0} days. The infirmary speeds recovery.
 Sivil güven {0}/{1}. Sıfıra inerse halk direnişten çekilir; atıştan kaçan ekip arkasındaki sunucuyu açıkta bırakır.	Civilian trust {0}/{1}. At zero the people abandon the resistance; a team that dodges a shot leaves the server behind it exposed.
 Ekip geri döndü. Toparlandıktan sonra yeniden deneyebilirsin.	The team returned. Regroup and try again.
@@ -1067,12 +1513,21 @@ Sonraki sektör operasyona açıldı.	The next sector is available for operation
 {0} özgür; haritadan sınırdaki bir bölgeyi seç ve yeni cepheyi aç.	{0} is free; pick a bordering region on the map and open a new front.
 {0}: {1}/{2} sektör KYGA'da; bölgenin özgürlüğüne bir sektör kaldı.	{0}: KYGA holds {1}/{2} sectors; one more frees the region.
 {0}: {1}/{2} sektör KYGA'da; bölgenin özgürlüğüne {3} sektör kaldı.	{0}: KYGA holds {1}/{2} sectors; {3} more free the region.
+KALICI KAYIP	PERMANENT LOSS
+kurtarıldı · {0} vardiya yatış	rescued · bedridden for {0} shifts
+döndü · CAN {0}/{1} · yeni yara	returned · HP {0}/{1} · new wound
+döndü	returned
+{0} · +{1} deneyim	{0} · +{1} experience
+{0} · zırh kırıldı	{0} · armour broken
+Kalıcı kayıp	Permanent loss
+Kurtarıldı: {0}	Rescued: {0}
+{0} vardiya yatış	{0} shifts of bed rest
 Düştü: {0}	Fell: {0}
 {0} gün	{0} days
 Çıkamadı: {0}	Didn't get out: {0}
 Yeni yara	New wounds
 {0} −{1}	{0} −{1}
-Zırh plakası kırıldı	Armor plates broken
+Zırh plakası kırıldı	Armour plates broken
 Sivil güven	Civilian trust
 {0} · {1}/{2}	{0} · {1}/{2}
 YZ alarmı	AI alarm
@@ -1085,6 +1540,7 @@ değişmedi · {0}	unchanged · {0}
 {0} sivil sunucu kırıldı	{0} civilian servers broken
 YZ karşı saldırısı · {0} yeniden işgal	AI counter-attack · {0} retaken
 {0} sahada · {1}	{0} in the field · {1}
+Kadro hazır değil	Squad not ready
 Teknisyen yaralı · {0} gün, yedek yok	Technician injured · {0} days, no reserve
 {0} hazır · cephe {1}	{0} ready · front {1}
 Telsiz odası YZ trafiğini dinliyor	Radio room listening to AI traffic
@@ -1094,6 +1550,11 @@ Hat kapandı — sonuç tekste	Line closed — result on the telex
 Hat kapalı — ekip çıkamaz	Line down — squad cannot deploy
 Dinlemede — emir bekleniyor	Listening — awaiting orders
 {0} {1:00}	{0} {1:00}
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/RaidPaperFacts.cs
+{0} · ustalık {1}	{0} · skill tier {1}
+YARALI KİŞİ	INJURED PERSON
+KİT EKSİK	KIT MISSING
+PANO PLANINI DENETLE	CHECK BOARD PLAN
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/ShelterViewBuilder.cs
 {0} yaralı ({1})	{0} injured ({1})
 {0} {1}/{2}	{0} {1}/{2}
@@ -1103,8 +1564,8 @@ ERZAK ARTIYOR	RATIONS RISING
 ERZAK · {0} VARDİYA	RATIONS · {0} SHIFTS
 {0} kişilik yer ve {1} yedek uzman; görevli başına günde {2} erzak toplanır.	Room for {0} people and {1} reserve specialists; {2} supplies foraged per assignee each day.
 Görevli başına vardiya alarmı {0} yavaşlar; şimdi vardiyada +{1}.	Each assignee slows the shift alarm by {0}; currently +{1} per shift.
-Görevli başına günde {0} zırh plakası döker (plaka {1} malzeme); depo {2} plaka. {3}	Casts {0} armor plates per assignee each day (a plate costs {1} materials); storage {2} plates. {3}
-Görevli başına günde {0} zırh plakası döker (plaka {1} malzeme); depo {2} plaka.	Casts {0} armor plates per assignee each day (a plate costs {1} materials); storage {2} plates.
+Görevli başına günde {0} zırh plakası döker (plaka {1} malzeme); depo {2} plaka. {3}	Casts {0} armour plates per assignee each day (a plate costs {1} materials); storage {2} plates. {3}
+Görevli başına günde {0} zırh plakası döker (plaka {1} malzeme); depo {2} plaka.	Casts {0} armour plates per assignee each day (a plate costs {1} materials); storage {2} plates.
 Görevli başına günde {0} yara sarar; en az {1} görevliyle yaralı uzman {2} gün erken kalkar.	Dresses {0} wounds per assignee each day; with at least {1} assignee an injured specialist is up {2} day sooner.
 Seviye {0}: {1} kadroya katılır.	Level {0}: {1} joins the squad.
 Hasarlı: onarılana kadar çalışmaz, personel alamaz.	Damaged: it won't work or take staff until repaired.
@@ -1119,7 +1580,6 @@ sv {0}	lv {0}
 SIĞINAK ÖZETİ	SHELTER SUMMARY
 ERZAK YETER	RATIONS LAST
 ARTIYOR	RISING
-{0} VARDİYA	{0} SHIFTS
 AÇLIK	STARVING
 AZ KALDI	RUNNING LOW
 {0} · son vardiya {1}	{0} · last shift {1}
@@ -1162,7 +1622,7 @@ DEPO DOLU	STORAGE FULL
 MALZEME YOK	NO MATERIALS
 {0} kişi × {1} · açlık × {2} · plaka {3} malzeme	{0} people × {1} · starvation × {2} · plate {3} materials
 {0} kişi × {1} · plaka {2} malzeme	{0} people × {1} · plate {2} materials
-Zırh plakası · {0}/{1}	Armor plates · {0}/{1}
+Zırh plakası · {0}/{1}	Armour plates · {0}/{1}
 erzak bitti	rations gone
 erzak artıyor	rations rising
 {0} vardiya yeter	{0} shifts left
@@ -1202,25 +1662,28 @@ Baskın emri · OP-{0:00}	Raid order · OP-{0:00}
 Baskın ödülü · OP-{0:00}	Raid reward · OP-{0:00}
 Onarım · {0}	Repair · {0}
 Geliştirme · {0} SV{1}	Upgrade · {0} LV{1}
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakAdmission.cs
+TALİMAT {0}	ORDERS {0}
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakBriefing.cs
 KYGA-07 HAT AÇIK	KYGA-07 LINE OPEN
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakCabinet.cs
+Önce açık kâğıdı kapat veya süren işlemi bitir.	Close the open paper or finish the ongoing action first.
 DİL	LANGUAGE
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakDesk.cs
 KAPI · ZİYARETÇİ VAR	DOOR · VISITOR WAITING
 Kapıya dön. Ziyaretçi vardiya bitene kadar bekler.	Back to the door. The visitor waits until the shift ends.
 Baskın sürüyor: kapıya gidilemez.	A raid is under way: the door has to wait.
 Kapıda kimse yok. Biri çalınca lamba yanıp söner.	No one at the door. The lamp blinks when someone knocks.
-Baskın sürüyor: vardiya bitirilemez.	Raid in progress: the shift cannot end.
-Harekât bitti.	The campaign is over.
-Rapor açık: önce EVRAK tepsisine dosyala.	Report open: file it in the PAPERS tray first.
+KAPI · ADAY VAR	DOOR · APPLICANT
+Kapıda başvuru var: tezgâha bak.	An application is at the door: see the desk.
+ÖN KONTROL	PRE-CHECK
+Plan hazır. Devir fişini çıkar.	Plan ready. Print the handover slip.
 boşta {0} kişi	{0} idle
 {0} durdu	{0} stopped
 kapıda biri bekliyor: açılmadı sayılır	someone is at the door: counts as not opened
 baskın emri verilmedi: {0}	no raid ordered: {0}
-ÖN KONTROL	PRE-CHECK
 eksik yok · kolu indirmek için yeniden bas	all clear · press again to pull the lever
-VARDİYA {0:000} · FON {1} · ERZAK {2}/{3} · MALZEME {4} · ÖZGÜR {5}/{6} · GÜVEN {7}/{8} · ALARM {9}/{10}	SHIFT {0:000} · FUNDS {1} · RATIONS {2}/{3} · MATERIALS {4} · FREE {5}/{6} · TRUST {7}/{8} · ALARM {9}/{10}
+VARDİYA {0:000} · FON {1} · ERZAK {2}/{3} · HAMMADDE {4} · ÖZGÜR {5}/{6} · GÜVEN {7}/{8} · ALARM {9}/{10}	SHIFT {0:000} · FUNDS {1} · RATIONS {2}/{3} · RAW MAT. {4} · FREE {5}/{6} · TRUST {7}/{8} · ALARM {9}/{10}
 Eşiğe ({0}) varınca YZ karşı saldırır, bir sektör yeniden işgal edilir. Her vardiya +{1}; telsiz odası düşürür.	At the threshold ({0}) the AI counterattacks and retakes a sector. +{1} each shift; the radio room lowers it.
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakDoor.cs
 SIĞINAK KAPISI	SHELTER DOOR
@@ -1248,6 +1711,17 @@ Ekip toparlandı · {0}	Team recovered · {0}
 Ekip toparlandı · sıradaki cepheyi seç	Team recovered · choose the next front
 TEPSİYE KOY	PUT BACK
 rapor {0}/{1} · tepsiye koy	report {0}/{1} · put back in the tray
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakShiftClose.cs
+baskın sürüyor	raid in progress
+Baskın sürüyor: vardiya bitirilemez.	Raid in progress: the shift cannot end.
+harekât bitti	campaign over
+Harekât bitti.	The campaign is over.
+belge açık	document open
+rapor açık	report open
+Rapor açık: önce EVRAK tepsisine dosyala.	Report open: file it in the PAPERS tray first.
+plan düzeltilmeli	plan needs fixing
+VARDİYA DEVREDİLDİ	SHIFT HANDED OVER
+Devir fişi EVRAK kutusuna kondu. Yeni vardiya başladı.	Handover slip filed in PAPERS. New shift started.
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakTutorial.cs
 ADIM {0}/{1}	STEP {0}/{1}
 BASKIN · ADIM {0}/{1}	RAID · STEP {0}/{1}
@@ -1270,8 +1744,8 @@ Ekip yok.	No team.
 {0} sahada	{0} in the field
 {0}: Teknisyen yaralı ({1} gün)	{0}: Technician injured ({1} days)
 Baskın: fon yetersiz ({0} gerekli / {1} var)	Raid: not enough funds ({0} needed / {1} held)
-{0}: Teknisyen yaralı ({1} gün), yedek uzman yok	{0}: Technician injured ({1} days), no reserve specialist
 Baskın: {0}	Raid: {0}
+{0}: Teknisyen yaralı ({1} gün), yedek uzman yok	{0}: Technician injured ({1} days), no reserve specialist
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/TutorialFlow.cs
 KOMUTA ODASI	COMMAND ROOM
 Burası Sığınak 07. Üstteki sayaçlar fonu, erzakı, malzemeyi, özgür bölgeleri ve sivil GÜVEN'i sayar; duvardaki YZ ALARMI eşiğe varınca YZ karşı saldırır. Zaman yalnız vardiya şalterini indirince ilerler.	This is Shelter 07. The counters above track funds, supplies, materials, liberated regions and civilian TRUST; when the AI ALARM on the wall reaches its threshold, the AI counterattacks. Time moves only when you pull the shift switch.
@@ -1287,7 +1761,7 @@ Rapor ödülü, yaraları, sivil güveni ve YZ alarmını yazar. MASAYA DÖN ile
 SIĞINAK	SHELTER
 Masadaki SIĞINAK tuşuna bas: kesit maketi açılır. Odalar uzmanları bir sonraki baskına hazırlar.	Press the SHELTER key on the desk: the cutaway model opens. The rooms ready your specialists for the next raid.
 ATÖLYE	WORKSHOP
-Atölyeye tıkla ve ONAR'a bas. Atölye malzemeden zırh plakası döker; plaka baskında ilk darbeyi karşılar.	Click the workshop and press REPAIR. The workshop casts armor plates from materials; a plate takes the first hit in a raid.
+Atölyeye tıkla ve ONAR'a bas. Atölye malzemeden zırh plakası döker; plaka baskında ilk darbeyi karşılar.	Click the workshop and press REPAIR. The workshop casts armour plates from materials; a plate takes the first hit in a raid.
 PERSONEL	STAFF
 + PERS. ile atölyeye birini ata; boşta kalan kimse üretmez. Revir yarayı sarar, telsiz alarmı yavaşlatır; üst seviyeler özgür bölgelerle açılır.	Assign someone to the workshop with + STAFF; idle people produce nothing. The infirmary dresses wounds, the radio slows the alarm; higher levels open with liberated regions.
 VARDİYA ŞALTERİ	SHIFT SWITCH
@@ -1300,15 +1774,15 @@ Batı Avrupa'nın üç sektörünü al, sonra sınırdaki bir bölgeyi seç. Her
 Bu ilk baskını birlikte oynayalım; sıradaki hedef sarı çerçeveli. Kırmızı oklar makinelerin bu turdaki hamlesi, bayraktaki sayı sırası.	Let's play this first raid together; the next target has a yellow frame. Red arrows show what each machine will do this turn; the flag number is its order.
 Mavi kareler Teknisyenin gidebileceği yerler.	Blue tiles are where the Technician can go.
 EMP atışı 2–5 kare öteye, engellerin üstünden gider; hedefin çevresindeki robotları iter.	The EMP shot lands 2–5 tiles away, over obstacles; it pushes the robots around the target.
-Zırhlı dronun üstündeki duvara at: dron aşağıdaki duvara itilir, çarpınca zırhı kırılır. Oklara bak: 2 numaralı bakım robotu ona vuracak.	Fire at the wall above the armored drone: the drone is pushed into the wall below and the impact breaks its armor. Watch the arrows: maintenance robot no. 2 will hit it.
+Zırhlı dronun üstündeki duvara at: dron aşağıdaki duvara itilir, çarpınca zırhı kırılır. Oklara bak: 2 numaralı bakım robotu ona vuracak.	Fire at the wall above the armoured drone: the drone is pushed into the wall below and the impact breaks its armour. Watch the arrows: maintenance robot no. 2 will hit it.
 Kanca düz hatta 5 kare gider: çarptığı robota 1 hasar verip onu bir kare çeker, dost uzmanı hasarsız çeker.	The hook flies 5 tiles in a straight line: it deals 1 damage to the robot it hits and pulls it one tile closer; friendly specialists are pulled unharmed.
 Teknisyene at: kasaya bir kare yaklaşır.	Throw it at the Technician: they move one tile closer to the crate.
-Makineler sırayla oynar: 1 numaralı dron bakım robotunu, 2 numaralı bakım robotu zırhı kırılan dronu vurur. Zırhlı dron ateş edemeden düşer.	Machines act in order: drone no. 1 hits the maintenance robot, maintenance robot no. 2 hits the drone whose armor broke. The armored drone goes down before it can fire.
+Makineler sırayla oynar: 1 numaralı dron bakım robotunu, 2 numaralı bakım robotu zırhı kırılan dronu vurur. Zırhlı dron ateş edemeden düşer.	Machines act in order: drone no. 1 hits the maintenance robot, maintenance robot no. 2 hits the drone whose armour broke. The armoured drone goes down before it can fire.
 Uzmanlar birbirinin üstünden geçebilir.	Specialists can pass through each other.
 Dronun altındaki duvara at: dron yukarı itilir, duvara çarpıp 1 hasar alır.	Fire at the wall below the drone: the drone is pushed up, hits the wall and takes 1 damage.
 Analist bakım robotunun hedefinde, ama 1 numaralı dron önce ateş edip bakım robotunu düşürür: sıra önemli. Analist bu tur boşta kalır.	The Analyst is the maintenance robot's target, but drone no. 1 fires first and takes the robot down: order matters. The Analyst stays idle this turn.
 Dron Teknisyenin sütununa ateş edecek: kasanın yanındaki kareye geç.	The drone will fire down the Technician's column: step onto the tile next to the crate.
-Kasaya tıkla: Teknisyen malzemeleri alır ve kaçış başlar. Bütün ekip yeşil kesik çerçeveli giriş karelerinden çıkmalı; süre dolarken tahtada kalan uzman baskında düşmüş sayılır.	Click the crate: the Technician takes the supplies and the escape begins. The whole team must leave through the entry tiles with the dashed green frame; anyone left on the board when time runs out counts as down in this raid.
+Kasaya tıkla: Teknisyen malzemeleri alır ve kaçış başlar. Bütün ekip yeşil kesik çerçeveli giriş karelerinden çıkmalı; süre dolarken tahtada kalan uzman baskında düşmüş sayılır.	Click the crate: the Technician takes the supplies and the escape begins. The whole team must leave through the entry tiles with the dashed green frame; anyone left on the board when time runs out is lost for good.
 Dron dönüş yolunda. Yolu EMP uzmanı açacak.	A drone blocks the way back. The EMP specialist will clear it.
 Analistin altındaki kareye at: hasarlı dron duvara itilip düşer, Analist yukarı itilir ve Teknisyen'e yol açılır. EMP dostları da iter.	Fire at the tile below the Analyst: the damaged drone is pushed into the wall and goes down, the Analyst is pushed up and the Technician's path opens. EMP pushes allies too.
 Teknisyen kablo kanalının üstünden yürüyebilir; kanal yalnız üstüne itilene hasar verir.	The Technician can walk over the cable channel; it only hurts whoever is pushed onto it.
@@ -1327,15 +1801,31 @@ Enter ile emri ilet ya da EMRİ İLET'e bas.	Press Enter or SEND ORDERS to send 
 # Assets/Corrigible/Desk/Scripts/Runtime/Core/DeskCore.cs
 Boşluk	Space
 # Assets/Corrigible/Desk/Scripts/Runtime/Entrance/TimeClock.cs
-İPTAL EDİLİR · V.{0:000}	VOIDED · S.{0:000}
+İPTAL EDİLİR\nV.{0:000}	TO BE CANCELLED\nS.{0:000}
 Kıskacı kaldır, yeniden bas: eski kart iptal edilir.	Lift the clip and press again: the old card is voided.
-Onaylamak için yeniden bas.	Press again to confirm.
+2. tık onaylar · 4 sn	Second click confirms · 4 s
+KOMUTAN	COMMANDER
+SIĞINAK 07	SHELTER 07
+özgür {0}/{1}	free {0}/{1}
+# Assets/Corrigible/Desk/Scripts/Runtime/PlanningBoard/PlanningBoardMotion.cs
+SAYFA {0} / {1}	PAGE {0} / {1}
+# Assets/Corrigible/Desk/Scripts/Runtime/PlanningBoard/Rev3/BoardView3D.cs
+YENİ	NEW
+# Assets/Corrigible/Desk/Scripts/Runtime/PlanningBoard/Rev3/PersonDossierFace.cs
+ÜZERİNDE	EQUIPPED
+{0} / {1}	{0} / {1}
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/HoverInspectorView.cs
 EKİP ÇIKAR	TEAM GETS OUT
 İKMAL ALINIR	SUPPLIES COLLECTED
 HEDEF KIRILIR	TARGET DESTROYED
 operasyon kazanılır	operation won
 kaçış başlar	escape begins
+# Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidBlueprintView.cs
+OZALİT KOPYA · PAFTA {0}/3	BLUEPRINT COPY · SHEET {0}/3
+{0:00} {1}	{0:00} {1}
+Ölçek 1:50 · V.{0:000}	Scale 1:50 · S.{0:000}
+Ölçek 1:50	Scale 1:50
+ASLI GİBİDİR	TRUE COPY
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidHudView.cs
 TUR	TURN
 SON 2 TUR	LAST 2 TURNS
@@ -1349,7 +1839,6 @@ GÖREV · İKMAL	MISSION · SUPPLY
 GÖREV · SUNUCU	MISSION · SERVER
 {0} · İKMAL	{0} · SUPPLY
 {0} · SUNUCU	{0} · SERVER
-CAN	HP
 KAYBOLDU	LOST
 ALINDI	COLLECTED
 KIRILDI	BROKEN
@@ -1358,19 +1847,21 @@ SİVİL	CIVILIAN
 SİVİL SUNUCU	CIVILIAN SERVERS
 TELSİZ	RADIO
 KURALLAR	RULES
-EMİN MİSİN?	ARE YOU SURE?
 GERİ ÇEKİL	RETREAT
 Geri al	Undo
 MAKİNELER HAREKET EDİYOR	MACHINES ARE MOVING
 girdi kilitli · {0}/{1} hamle	input locked · move {0}/{1}
 girdi kilitli	input locked
+EMİN MİSİN?	ARE YOU SURE?
 EMRİ İLET	SEND ORDERS
+EMİN MİSİN?@@retreat	SURE?
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidLogRowView.cs
 YZ · ELE GEÇİRİLEN SATIR	AI · INTERCEPTED LINE
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidPanelsView.cs
 TELSİZ · K-07	RADIO · K-07
 Boşluk · normal hız	Space · normal speed
 Boşluk · hızlandır	Space · speed up
+KAÇIŞ · SON TUR	ESCAPE · LAST TURN
 HAKKI DURAN BİRİM	UNIT WITH UNUSED ACTIONS
 Enter yine de ilet · Esc vazgeç	Enter send anyway · Esc cancel
 hareket + yetenek	move + ability
@@ -1384,7 +1875,7 @@ KURALLAR KARTI	RULES CARD
 Teknisyen kasayı açar ve malzemeyi taşır. İtme ve patlamalar kasaya hasar verebilir; EMP kasayı açmaz.	The Technician opens the crate and carries the supplies. Pushes and explosions can damage the crate; EMP doesn't open it.
 Madenci: dinamit bitişik duvarı yıkar (baskında sınırlı); moloz bir kare öteye 1 hasar. Açılan delik makinelerin atış hattını da açar.	Miner: dynamite breaks an adjacent wall (limited per raid); debris deals 1 damage one tile further. The hole also opens a firing line for the machines.
 Sis: bu turun makine evresinde atış ve kilit sise girince kaybolur; bakım robotu ve havan sisli kareye vuramaz. Patlamayı kesmez.	Smoke: during this turn's machine phase, shots and locks that enter the smoke are lost; maintenance robots and mortars cannot hit the smoked tile. It does not stop explosions.
-İkmal görevi: Teknisyen ile kasayı aç, sonra bütün ekip giriş karelerinden çıksın; malzeme Teknisyen çıkınca alınır. Süre dolarken tahtada kalan uzman baskında düşmüş sayılır. Kasa imha olursa ya da Teknisyen çıkamazsa görev kaybedilir.	Supply mission: open the crate with the Technician, then the whole team leaves through the entry tiles; the supplies count once the Technician is out. Anyone left on the board when time runs out counts as down in this raid. If the crate is destroyed or the Technician doesn't get out, the mission is lost.
+İkmal görevi: Teknisyen ile kasayı aç, sonra bütün ekip giriş karelerinden çıksın; malzeme Teknisyen çıkınca alınır. Süre dolarken tahtada kalan uzman baskında düşmüş sayılır. Kasa imha olursa ya da Teknisyen çıkamazsa görev kaybedilir.	Supply mission: open the crate with the Technician, then the whole team leaves through the entry tiles; the supplies count once the Technician is out. Anyone left on the board when time runs out is lost for good. If the crate is destroyed or the Technician doesn't get out, the mission is lost.
 EMİN MİSİN? TEKRAR BAS	ARE YOU SURE? PRESS AGAIN
 OPERASYON RAPORUNA GEÇ	GO TO OPERATION REPORT
 Devam et [Esc]	Resume [Esc]
@@ -1392,9 +1883,6 @@ DURAKLATILDI	PAUSED
 OPERASYON SONUCU	OPERATION RESULT
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidTeamCardView.cs
 {0} · YEDEK	{0} · RESERVE
-EMP UZM.	EMP SPEC.
-SİS UZM.	SMOKE SPEC.
-YARALI	INJURED
 PLAKA	PLATES
 SIĞINAKTA YARALI	INJURED AT SHELTER
 ÇIKAMADI	LEFT BEHIND
@@ -1414,18 +1902,19 @@ Sıra bayrağı	Order flag
 {robot} kuzeye ateş ediyor	{robot} fires north
 GERİ ÇEKİLME · 2. ONAY	RETREAT · SECOND CONFIRMATION
 Ekip binadan çıkar; operasyon başarısız sayılır. Hedef dolaplar ayakta kalır.	The team leaves the building; the operation counts as failed. Target cabinets remain standing.
+Ekip binadan çıkar; operasyon başarısız sayılır. İkmal kasası geride kalır.	The team leaves the building; the operation counts as failed. The supply crate stays behind.
 İkinci basış geri çeker.	A second press retreats.
 HEDEF KIRILDI	TARGET BROKEN
 operasyon emrinden	from the operation order
-oklar · seçim · zırh · siviller	arrows · selection · armor · civilians
+oklar · seçim · zırh · siviller	arrows · selection · armour · civilians
 Aç	Open
 Katla	Fold
 Kırmızı ok, gözcünün telsizden bildirdiği robot hamlesi; bayraktaki sayı sırası.	The red arrow is the robot's move as the spotter reports it by radio; the number on the flag is its order.
 Seç, taşı, kullan: 1–3 ya da tıkla, mavi kareye taşı, Q ile yetenek. Z turdaki hamleyi geri alır; Enter emri telsizle iletir.	Select, move, act: 1–3 or click, move to a blue tile, Q for the ability. Z undoes a move this turn; Enter transmits the order by radio.
-Zırh: hedef dolaplara yalnız sabotaj, itilen robot ve patlayan soğutma ünitesi işler.	Armor: only sabotage, a pushed robot or an exploding cooling unit damages target cabinets.
+Zırh: hedef dolaplara yalnız sabotaj, itilen robot ve patlayan soğutma ünitesi işler.	Armour: only sabotage, a pushed robot or an exploding cooling unit damages target cabinets.
 İtme: çarpan da çarpılan da 1 hasar alır; kanala düşen de 1 hasar alır.	Push: both the pushed and what it hits take 1 damage; falling into a channel deals 1.
 Sivilleri koru: ekibe ulaşamayan makine sivil sunucuya nişan alır. Kırılan her sunucu GÜVEN'i düşürür; kazanınca ayakta kalan her 2 sunucu +1 GÜVEN.	Protect civilians: a machine that can't reach the team aims at a civilian server. Every broken server lowers TRUST; win the raid and every 2 servers left standing give +1 TRUST.
-Kazan: bütün hedef dolapları kır, sonra bütün ekip giriş karelerinden çıksın. Süre dolarken tahtada kalan uzman baskında düşmüş sayılır; kaçışta geri çekilme yok. Alınan hasar sığınağa yara olarak döner; zırh plakası ilk darbeyi karşılar.	Win: break every target cabinet, then the whole team leaves through the entry tiles. Anyone left on the board when time runs out counts as down in this raid; there's no retreat during the escape. Damage taken comes back to the shelter as wounds; an armor plate absorbs the first hit.
+Kazan: bütün hedef dolapları kır, sonra bütün ekip giriş karelerinden çıksın. Süre dolarken tahtada kalan uzman baskında düşmüş sayılır; kaçışta geri çekilme yok. Alınan hasar sığınağa yara olarak döner; zırh plakası ilk darbeyi karşılar.	Win: break every target cabinet, then the whole team leaves through the entry tiles. Anyone left on the board when time runs out is lost for good; there's no retreat during the escape. Damage taken comes back to the shelter as wounds; an armour plate absorbs the first hit.
 # Assets/Corrigible/Desk/Scripts/Runtime/Settings/SettingsCabinet.cs
 Açık · kapatınca bütün kanallar susar; ayarlar korunur.	On · turning it off mutes every channel; levels are kept.
 Kapalı · sürgüler yerinde kalır.	Off · the faders stay where they are.
@@ -1434,6 +1923,41 @@ Türkçe · English	Türkçe · English
 Her özgür bölgeye bir kart; kurşun kalemle yazılan sıradaki hedef.	One card for every free region; the next target is pencilled in.
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/FrontSlip.cs
 {0}  {1}  ·  {2}	{0}  {1}  ·  {2}
+# Assets/Corrigible/Desk/Scripts/Runtime/Siginak/HandoverSlipFormat.cs
+KYGA · SIĞINAK 07	KYGA · SHELTER 07
+No. {0:000}/{1}	No. {0:000}/{1}
+VARDİYA {0:000} · DEVİR FİŞİ	SHIFT {0:000} · HANDOVER SLIP
+{0}/{1} kişi · erzak {2}/{3}	{0}/{1} people · rations {2}/{3}
+SAHA · BASKIN KADROSU	FIELD · RAID TEAM
+KAPANIŞTA BEKLENEN	EXPECTED AT CLOSING
+ÜRETİM	PRODUCTION
+{0} açık başvuru	{0} open application
+açık başvuru yok	no open application
+plan {0:000}/{1} · tek kullanımlık · yeniden basılmaz	plan {0:000}/{1} · single use · cannot be reprinted
+fişi EVRAK’a koy	file the slip in PAPERS
+KAPI ·	DOOR ·
+DOSYA ·	FILE ·
+{0} · kısıtlı süre doldu	{0} · restriction expired
+{0} · iki bağımsız bulgu	{0} · two independent findings
+{0} · inceleme fişi açık	{0} · review slip open
+{0} … +{1}	{0} … +{1}
+{0} → {1} / {2}	{0} → {1} / {2}
+EĞİTİM	TRAINING
+eğitim yok	no training
+{0} · {1} +{2} → {3}	{0} · {1} +{2} → {3}
+{0} · {1} +{2} ({3}→{4})	{0} · {1} +{2} ({3}→{4})
+iş emri yok · çıktı yok	no work order · no output
+{0} · çıktı yok	{0} · no output
+{0} {1}/{2} → {3}/{2} · {4}	{0} {1}/{2} → {3}/{2} · {4}
+kit	kit
+zırh	armour
+bakım kiti	care kit
+MUTFAK	KITCHEN
+EĞİTİM · {0}	TRAINING · {0}
+yaralı	injured
+yatıyor {0}	laid up {0}
+kısıtlı {0}	restricted {0}
+kısıtlı · bitti	restricted · ended
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/IdleTray.cs
 BOŞTA {0}	IDLE {0}
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/LiberationMapLayer.cs
@@ -1447,10 +1971,12 @@ BASKINA HAZIR	READY TO RAID
 KİLİTLİ	LOCKED
 {0} yedek	{0} reserve
 FON YETERSİZ	NOT ENOUGH FUNDS
-# Assets/Corrigible/Desk/Scripts/Runtime/Siginak/RoomView.cs
-DURDU	STOPPED
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/SettingsPlaque.cs
 ATLA	SKIP
+# Assets/Corrigible/Desk/Scripts/Runtime/Siginak/ShiftPlate.cs
+kolu indir	pull the lever
+fiş basılamadı	slip not printed
+kapağı kaldır	lift the cover
 # Assets/Corrigible/Game/Platform.cs
 Yerel	Local
 # Assets/Corrigible/Game/Raid/RaidBoard3D.cs
@@ -1462,8 +1988,7 @@ TUR BİTTİ	TURN DONE
 ONARIM	REPAIR
 ATEŞ	FIRE
 VURUŞ	STRIKE
-{0} {1}	{0} {1}
-ZIRHLANDI	ARMORED
+ZIRHLANDI	ARMOURED
 KİLİTLENDİ	LOCKED
 PLAKA KIRILDI	PLATE BROKEN
 +1	+1
@@ -1483,32 +2008,39 @@ ISLIK	WHISTLE
 {0} ŞİMDİ	{0} NOW
 <s>{0}</s> UYGULANDI	<s>{0}</s> DONE
 TAHLİYE	EXTRACTED
+# Assets/Corrigible/Desk/Prefabs/Rev3Admission/AdmissionDocument.prefab
+KYGA · KİMLİK / SEVK BELGESİ	KYGA · IDENTITY / TRANSFER
+düz.	iss.
+BEDEN	BUILD
+KYGA	KYGA
+SEVK	TRANSFER
+GÜZERGÂH	ROUTE
+→ Sığınak 07	→ Shelter 07
+kapıda koparılır	torn off at the door
 # Assets/Corrigible/Desk/Prefabs/Siginak/SettingsCabinet.prefab
 AYARLAR	SETTINGS
-Ses, müzik ve dil	Sound, music and language
-Kapağı kapat	Close the door
 GENEL	MASTER
 MÜZİK	MUSIC
 ORTAM	AMBIENCE
 EFEKT	EFFECTS
 SES	SOUND
-AÇIK	ON
-KAPALI	OFF
 DİL · LANGUAGE	DİL · LANGUAGE
 MENÜYE DÖN	BACK TO MENU
+SES · DİL	SOUND · LANGUAGE
+# Assets/Corrigible/Desk/Prefabs/Siginak/SettingsCabinetMenu.prefab
 Kapağı kaldır, kolu indir: oyun kaydedilir, kapının önüne çıkılır.	Lift the cover, pull the lever: the game is saved and you step outside the door.
 # Assets/Corrigible/Prefabs/Raid/Core.prefab
 Ç	C
 # Assets/Corrigible/Desk/Scenes/DeskGame.unity
-KYGA / SIĞINAK 07	KYGA / SHELTER 07
 AĞA	DON'T
 BAĞLANMA	CONNECT
 ANALOG KAL	STAY ANALOG
 KYGA · DOKTRİN 1	KYGA · DOCTRINE 1
 YUKARI ÇIKIYORUZ	WE'RE GOING UP
 KURTARILAN BÖLGELER	FREED REGIONS
-10'DA KARŞI SALDIRI	COUNTER-ATTACK AT 10
 TELSİZ ODASI ETKİN	RADIO ROOM ACTIVE
+10'DA KARŞI SALDIRI	COUNTER-ATTACK AT 10
+KYGA / SIĞINAK 07	KYGA / SHELTER 07
 EKİP ALFA	TEAM ALPHA
 S-07	S-07
 İŞARETLER	KEY
@@ -1519,46 +2051,65 @@ aday	candidate
 geri alındı	retaken
 hazır	ready
 kilitli	locked
+HAMMADDE	RAW MATERIALS
 Kesit maketi · odaları yönet	Cross-section model · manage the rooms
 GÖREVLER	MISSIONS
 Görev fişi · baskın emri	Mission slip · raid order
 kapıda biri bekliyor	someone is at the door
-MASA	DESK
 Masaya dön	Back to the desk
 VARDİYAYI BİTİR	END SHIFT
-Kapağı kaldır, kolu indir: bir gün geçer	Lift the cover, pull the lever: a day passes
-kapağı kaldır	lift the cover
+Kapağı kaldır, kolu indir; çıkan fişi EVRAK kutusuna koy.	Lift the cover, pull the lever, then file the printed slip in PAPERS.
+DEVİR FİŞİ	HAND-OVER
 TELEKS	TELEX
 Son emirler ve sonuçlar	Latest orders and results
-EVRAK	PAPERS
 Brifing ve vardiya raporları	Briefing and shift reports
 TELEKS · KYGA-07	TELEX · KYGA-07
 SIĞINAK 07 · KESİT	SHELTER 07 · SECTION
 Tıkla: oda kartı panoda açılır	Click: the room card opens on the board
 Jeneratör	Generator
-DEPO	STORE
 TOPLULUK	COMMUNITY
 UZMANLAR	SPECIALISTS
 GELİŞTİRME	UPGRADE
 EN ÜST SEVİYE	MAX LEVEL
 TELSİZ HATTI	RADIO LINE
-Yalnız baskın emriyle hat açılır. Emri görev fişinden ver.	The line opens only with a raid order. Give it from the mission slip.
+Yalnız baskın emriyle hat açılır. Emri görev fişinden ver.	The line opens only with a raid order. Issue it from the mission slip.
 K-07	K-07
+TELSİZ KAYDI · K-07	RADIO LOG · K-07
 KANAL	CHANNEL
 AYAR	TUNE
-TELSİZ KAYDI · K-07	RADIO LOG · K-07
 BEDEL	COST
 ÖDÜL	REWARD
 ziyaretçi	visitors
+SIĞINAK 07 · KYGA	SHELTER 07 · KYGA
+2 · VARDİYA PANOSU	2 · SHIFT PLANNING BOARD
+ÜRETİM EKİBİ	PRODUCTION
+ANALİZ	ANALYSIS
+BAKIM	CARE
+İKMAL	FORAGING
+BOŞTA / DİNLENME	IDLE / REST
+Kişiyi görev alanına sürükle · tekerlekle kaydır	Drag people to job areas · use the wheel to scroll
+ÜRETİM · İŞ EMRİ	PRODUCTION · WORK ORDER
+KULLANILABİLİR KİTLER	AVAILABLE KITS
+HURDA · GERİ DÖNÜŞÜM	SCRAP · RECYCLING
+KİŞİ DOSYASI	PERSONAL FILE
+TAHLİYE ET	DISMISS
+◄ MASAYA DÖN	◄ BACK TO DESK
+PLAN AÇIK	PLAN OPEN
+VARDİYA PLANI · SIĞINAK 07	SHIFT PLAN · SHELTER 07
+DEPO · HAMMADDE	STORE · RAW MATERIALS
+DEPO · KULLANILABİLİR KİTLER	STORE · AVAILABLE KITS
+KİT · GEREKLİ	KIT · NEEDED
+İŞ EMRİ · ÜRETİM	WORK ORDER · PROD.
+TARİF	RECIPE
+ÜRETİCİ: ÜRETİM EKİBİ cebindeki kişi	MAKER: the person in the PRODUCTION pocket
+KAPANIŞTA: 1 ürün → DEPO	AT CLOSE: 1 item → STORE
+KYGA · 07	KYGA · 07
 # Assets/Corrigible/Desk/Scenes/Giris.unity
-SIĞINAK 07	SHELTER 07
 Kapı kilitli. Vardiya kartını saate bas.	The door is locked. Punch your shift card at the clock.
 SON ŞALTER	CORRIGIBLE
-PUANTAJ SAATİ	TIME CLOCK
-Vardiya kartını bas, kapı açılsın.	Punch your shift card and the door opens.
 PUANTAJ	TIME CLOCK
-KOMUTAN · SIĞINAK 07	COMMANDER · SHELTER 07
+KYGA · SİVİL SAVUNMA	KYGA · CIVIL DEFENCE
 YENİ HAREKÂT	NEW CAMPAIGN
-Boş vardiya kartı.	A blank shift card.
 ANA ŞALTER	MAIN SWITCH
-Kapağı kaldır, kolu indir: ışıklar söner, oyun kapanır.	Lift the cover, pull the lever: the lights go out and the game closes.
+# --- Kullanılmayan çeviriler (koddan silinmiş metinler; gerekirse geri alınır) ---
+#V.{0:000} kaydının üstüne yazılır · onay için yeniden bas	save S.{0:000} will be overwritten · press again to confirm

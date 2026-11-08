@@ -1,0 +1,110 @@
+{
+  "_note": "Revizyon 3 eki (2026-11-05) için ortak örnek veri. Bütün pano, kart, kâğıt ve kapı tasarımları bu kişileri ve sayıları kullanır. İsimler Türkçe kalır, çevrilmez. Değerler oyunun kuralına uygundur (temel 3 can, 3 hareket, 1 güç; profil bir basamak değiştirir).",
+  "profiles": {
+    "dayanikli": { "tr": "dayanıklı / yavaş", "en": "tough / slow", "can": 4, "har": 2, "guc": 1 },
+    "cevik":     { "tr": "çevik / narin",     "en": "agile / fragile", "can": 2, "har": 4, "guc": 1 },
+    "guclu":     { "tr": "güçlü / temkinli",  "en": "strong / cautious", "can": 3, "har": 2, "guc": 2 },
+    "dengeli":   { "tr": "dengeli",           "en": "balanced", "can": 3, "har": 3, "guc": 1 }
+  },
+  "areas": {
+    "_note": "Pano görev alanları (7, Boşta dahil) ve eğitim/ustalık alanları (5). Kademe 2/6/12 deneyimde: Temel 0 · Eğitimli 2 · Deneyimli 6 · Uzman 12.",
+    "slots": [
+      { "id": "tek",   "tr": "TEKNİSYEN",    "en": "TECHNICIAN",     "field": true },
+      { "id": "emp",   "tr": "EMP UZMANI",   "en": "EMP SPECIALIST", "field": true },
+      { "id": "ana",   "tr": "ANALİST",      "en": "ANALYST",        "field": true },
+      { "id": "uret",  "tr": "ÜRETİM EKİBİ", "en": "PRODUCTION",     "field": false },
+      { "id": "mutf",  "tr": "MUTFAK",       "en": "KITCHEN",        "field": false },
+      { "id": "egit",  "tr": "EĞİTİM",       "en": "TRAINING",       "field": false },
+      { "id": "bosta", "tr": "BOŞTA / DİNLENME", "en": "IDLE / REST", "field": false, "many": true }
+    ],
+    "skills": [
+      { "id": "T", "tr": "Teknisyen", "en": "Technician" },
+      { "id": "E", "tr": "EMP",       "en": "EMP" },
+      { "id": "A", "tr": "Analiz",    "en": "Analysis" },
+      { "id": "U", "tr": "Üretim",    "en": "Production" },
+      { "id": "M", "tr": "Mutfak",    "en": "Kitchen" }
+    ],
+    "tiers": [ { "xp": 0, "tr": "Temel", "en": "Basic" }, { "xp": 2, "tr": "Eğitimli", "en": "Trained" }, { "xp": 6, "tr": "Deneyimli", "en": "Experienced" }, { "xp": 12, "tr": "Uzman", "en": "Expert" } ]
+  },
+  "people": [
+    { "id": "cem",    "name": "Cem",    "job_tr": "Eski güvenlik görevlisi", "job_en": "Former security guard", "profile": "cevik",    "xp": { "E": 2 }, "portrait": "p_cem",    "from_tr": "Sığınak 07 · ilk ekip", "from_en": "Shelter 07 · first crew" },
+    { "id": "ipek",   "name": "İpek",   "job_tr": "Haberleşmeci",            "job_en": "Radio operator",        "profile": "guclu",    "xp": { "A": 2 }, "portrait": "p_ipek" },
+    { "id": "zeynep", "name": "Zeynep", "job_tr": "Matematik öğretmeni",     "job_en": "Maths teacher",         "profile": "cevik",    "xp": { "A": 2 }, "portrait": "p_zeynep" },
+    { "id": "eren",   "name": "Eren",   "job_tr": "İnşaat ustası",           "job_en": "Builder",               "profile": "dayanikli","xp": { "U": 2 }, "portrait": "p_eren" },
+    { "id": "nermin", "name": "Nermin", "job_tr": "Aşçı",                    "job_en": "Cook",                  "profile": "guclu",    "xp": { "M": 2 }, "portrait": "p_nermin" },
+    { "id": "suna",   "name": "Suna",   "job_tr": "Kaynakçı",                "job_en": "Welder",                "profile": "dengeli",  "xp": { "U": 2 }, "portrait": "p_suna" },
+    { "id": "deniz",  "name": "Deniz",  "job_tr": "Tamirci çırağı",          "job_en": "Mechanic's apprentice", "profile": "cevik",    "xp": { "T": 2 }, "portrait": "p_deniz" },
+    { "id": "selin",  "name": "Selin",  "job_tr": "Elektrik teknisyeni",     "job_en": "Electrician",           "profile": "dengeli",  "xp": { "T": 2 }, "portrait": "p_selin" }
+  ],
+  "candidates": [
+    { "id": "aylin", "name": "Aylin", "job_tr": "Depo görevlisi", "job_en": "Warehouse clerk", "profile": "dengeli", "portrait": "p_aylin",
+      "doc": { "from_tr": "Kuzey tahliye hattı", "from_en": "Northern evacuation line", "issued": "V005", "doc_no": "T-04/009", "transfer_no": "T-04/009", "seal": "KYGA-K", "portrait_trace": "resident-9" },
+      "_note": "Ekran görüntüsündeki aday (vardiya 005, talimat sürüm 2). Belge kusursuz; insan." },
+    { "id": "rauf", "name": "Rauf", "job_tr": "Elektrikçi", "job_en": "Electrician", "profile": "guclu", "portrait": "p_rauf",
+      "doc": { "from_tr": "Güney ikmal yolu", "from_en": "Southern supply road", "issued": "V012", "doc_no": "N-17/204", "transfer_no": "N-17/240", "seal": "KYGA-G", "portrait_trace": "resident-14" },
+      "_note": "Tasarım belgesindeki örnek: geçerli mühür, şüpheli sevk no (belge no ile uyuşmaz). Gizli robot; kart, portre ve dosya bunu ele vermez." }
+  ],
+  "first_shift": {
+    "shift": 1, "rations": 24, "rations_max": 60, "ration_delta": -2.1, "alive": 8, "cap": 10,
+    "assign": { "tek": "cem", "emp": "ipek", "ana": "zeynep", "uret": "suna", "mutf": "deniz", "egit": "selin", "bosta": ["eren", "nermin"] },
+    "training_topic": "T",
+    "items_on": { "cem": ["kit_tek", "zirh"], "ipek": ["kit_emp", "zirh"], "zeynep": ["kit_ana"] },
+    "depot_items": ["bakim"],
+    "materials": { "metal": [3, 0], "devre": [2, 0], "kumas": [2, 0], "kimyasal": [1, 0] },
+    "_materials_note": "[stok, ayrılmış]; serbest = stok − ayrılmış"
+  },
+  "late_op": {
+    "shift": 31, "rations": 17, "ration_delta": -1.4, "alive": 9, "cap": 10,
+    "_note": "Geç harekât örneği: Eren kayıp (V.024, Doğu Avrupa); Aylin kısıtlı kabul (2 vardiya kaldı); Rauf kabul edilmiş, dosyasına yeni talimatla eşleşen inceleme fişi düştü (robot olduğu hiçbir yerde görünmez); Selin yaralı; İpek yatıyor.",
+    "assign": { "tek": "deniz", "emp": "cem", "ana": "zeynep", "uret": "rauf", "mutf": "nermin", "egit": "suna", "bosta": ["selin", "ipek", "aylin"] },
+    "training_topic": "E",
+    "states": { "selin": { "hurt": 1 }, "ipek": { "bed": 2 }, "aylin": { "restricted": 2 }, "rauf": { "review": true } },
+    "dead": [ { "id": "eren", "shift": 24, "where_tr": "Doğu Avrupa · Devlet arşivi", "where_en": "Eastern Europe · State archive" } ],
+    "items_on": { "deniz": ["kit_tek", "zirh"], "cem": ["kit_emp", "zirh", "emp_hucre"], "zeynep": ["kit_ana", "bakim"] },
+    "depot_items": ["zirh", "zirh", "bakim", "emp_hucre", "kit_tek"],
+    "materials": { "metal": [7, 2], "devre": [4, 1], "kumas": [3, 1], "kimyasal": [2, 0] },
+    "work_order": { "recipe": "zirh", "inputs": { "metal": 2, "kumas": 1 }, "progress": "0/1" }
+  },
+  "items": {
+    "kit_tek":   { "tr": "Teknisyen kiti", "en": "Technician kit", "slot": "kit",  "slot_tr": "kit", "slot_en": "kit" },
+    "kit_emp":   { "tr": "EMP kiti",       "en": "EMP kit",        "slot": "kit",  "slot_tr": "kit", "slot_en": "kit" },
+    "kit_ana":   { "tr": "Analiz kiti",    "en": "Analysis kit",   "slot": "kit",  "slot_tr": "kit", "slot_en": "kit" },
+    "zirh":      { "tr": "Zırh plakası",   "en": "Armour plate",   "slot": "armor","slot_tr": "zırh", "slot_en": "armour" },
+    "bakim":     { "tr": "Bakım kiti",     "en": "Care kit",       "slot": "aux",  "slot_tr": "yardımcı", "slot_en": "aid" },
+    "emp_hucre": { "tr": "EMP hücresi",    "en": "EMP cell",       "slot": "aux",  "slot_tr": "yardımcı", "slot_en": "aid" }
+  },
+  "materials": {
+    "metal":    { "tr": "Metal",    "en": "Metal" },
+    "devre":    { "tr": "Devre",    "en": "Circuit" },
+    "kumas":    { "tr": "Kumaş",    "en": "Cloth" },
+    "kimyasal": { "tr": "Kimyasal", "en": "Chemical" }
+  },
+  "recipes": [
+    { "id": "zirh",      "tr": "Zırh plakası",   "en": "Armour plate",   "in": { "metal": 2, "kumas": 1 },    "shifts": 1, "spread": 1 },
+    { "id": "bakim",     "tr": "Bakım kiti",     "en": "Care kit",       "in": { "kumas": 1, "kimyasal": 1 }, "shifts": 1, "spread": 1 },
+    { "id": "emp_hucre", "tr": "EMP hücresi",    "en": "EMP cell",       "in": { "metal": 1, "devre": 1 },    "shifts": 2, "spread": 2 },
+    { "id": "kit_tek",   "tr": "Teknisyen kiti", "en": "Technician kit", "in": { "metal": 1, "devre": 1 },    "shifts": 1, "spread": 2 },
+    { "id": "kit_emp",   "tr": "EMP kiti",       "en": "EMP kit",        "in": { "metal": 1, "devre": 1 },    "shifts": 1, "spread": 3 },
+    { "id": "kit_ana",   "tr": "Analist kiti",   "en": "Analyst kit",    "in": { "metal": 1, "devre": 1 },    "shifts": 1, "spread": 3 }
+  ],
+  "admission": {
+    "instruction": [
+      { "ver": 1, "shift": 1, "rules_tr": ["Belge tarihi ve numarası sevk kaydıyla eşleşmeli."], "rules_en": ["Document date and number must match the transfer record."] },
+      { "ver": 2, "shift": 4, "rules_tr": ["N-17 serisi boş sevk belgeleri çalındı. Bu seri bağımsız dış kayıtla teyit edilmeli; seri tek başına robot kanıtı değildir.", "Soğuk gözlemde S-6 gövdelerinde nefes buğusu oluşmaz. Bu işaret bütün robot serilerini kapsamaz.", "Belge kusurunu, dış kaydı ve erişim izlerini birlikte değerlendirin."],
+        "rules_en": ["Blank N-17 series transfer papers were stolen. This series must be confirmed by an outside record; the series alone is not proof of a robot.", "In cold observation, S-6 bodies form no breath fog. This sign does not cover every robot series.", "Weigh document faults, outside records and access traces together."] },
+      { "ver": 3, "shift": 8, "rules_tr": ["Yeni R-4 serisi nefes buğusunu taklit edebiliyor; kimlik ve sevk kayıtlarını da karşılaştırın."], "rules_en": ["The new R-4 series can fake breath fog; compare identity and transfer records too."] }
+    ],
+    "checks": [
+      { "id": "compare",  "tr": "BELGELERİ KARŞILAŞTIR", "en": "COMPARE DOCUMENTS" },
+      { "id": "interview","tr": "GÖRÜŞME YAP",           "en": "INTERVIEW" },
+      { "id": "cold",     "tr": "SOĞUK GÖZLEM",          "en": "COLD OBSERVATION" },
+      { "id": "record",   "tr": "DIŞ KAYIT TEYİDİ",      "en": "OUTSIDE RECORD CHECK", "needs_supervisor": true, "result_next_close": true }
+    ],
+    "decisions": [
+      { "id": "full",      "tr": "KABUL · TAM ERİŞİM", "en": "ADMIT · FULL ACCESS" },
+      { "id": "restricted","tr": "KISITLI KABUL",      "en": "RESTRICTED ADMISSION", "shifts": 3 },
+      { "id": "reject",    "tr": "REDDET",             "en": "REJECT" },
+      { "id": "aid",       "tr": "DIŞARIDAN YARDIM",   "en": "OUTSIDE AID", "rations": 2 }
+    ]
+  }
+}

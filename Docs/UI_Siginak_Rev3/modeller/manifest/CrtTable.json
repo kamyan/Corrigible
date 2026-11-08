@@ -1,0 +1,161 @@
+{
+ "name": "CrtTable",
+ "family": "crt",
+ "budget": "big",
+ "origin": "taban ortası (zemin, y = 0)",
+ "note": "Çelik konsol masa: linolyum kaplı üst tabla ve önde pirinç kenar şeridi, sağda iki çekmeceli ayak (kulp, etiket çerçevesi, girintili süpürgelik), solda yan panel, takviye kirişli arka panel. Sağ arkada telsiz için yükseltilmiş çelik raf; CRT ile raf arasında lastik kablo deliği.",
+ "listName": "CRT masası (çelik konsol)",
+ "parts": [],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "CrtSpot",
+   "part": "Body",
+   "pos": [
+    -0.24,
+    0.76,
+    0.07
+   ],
+   "note": "Crt orijini"
+  },
+  {
+   "name": "RadioSpot",
+   "part": "Body",
+   "pos": [
+    0.235,
+    0.87,
+    0.155
+   ],
+   "note": "Radio orijini (raf üstü y 0,87)"
+  },
+  {
+   "name": "MicSpot",
+   "part": "Body",
+   "pos": [
+    0.03,
+    0.76,
+    -0.17
+   ],
+   "note": "Microphone orijini (yaw −20)"
+  },
+  {
+   "name": "LogSpot",
+   "part": "Body",
+   "pos": [
+    0.27,
+    0.76,
+    -0.165
+   ],
+   "note": "LogBook orijini (yaw +8)"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    1.5,
+    0,
+    1.72
+   ],
+   "yaw": 35,
+   "note": "oda sağ arka köşesi (Rev2 room.js cd); dünya AABB x 0,94–2,06, z 1,21–2,23"
+  }
+ ],
+ "tris": 1482,
+ "trisPerPart": {
+  "Body": 1482
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.475,
+   0,
+   -0.303
+  ],
+  "max": [
+   0.475,
+   0.87,
+   0.29
+  ],
+  "size": [
+   0.95,
+   0.87,
+   0.593
+  ]
+ },
+ "materials": [
+  {
+   "key": "paintOlive",
+   "hex": "#4A5140",
+   "rough": 0.6,
+   "metal": 0.05,
+   "note": "boyalı sac (dolap, konsol, saat gövdesi)",
+   "tris": 572,
+   "isNew": true
+  },
+  {
+   "key": "linoDesk",
+   "hex": "#2F4A3B",
+   "rough": 0.6,
+   "metal": 0,
+   "note": "masa üstü linolyum",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "brassDark",
+   "hex": "#8C6F3E",
+   "rough": 0.45,
+   "metal": 0.8,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "paintBlack",
+   "hex": "#20211E",
+   "rough": 0.5,
+   "metal": 0.05,
+   "note": "lamba başlığı, ızgara",
+   "tris": 106,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 264,
+   "isNew": true
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 88,
+   "isNew": true
+  },
+  {
+   "key": "cardBlank",
+   "hex": "#E6DCBE",
+   "rough": 0.9,
+   "metal": 0,
+   "note": "boş kart destesi",
+   "tris": 24,
+   "isNew": true
+  },
+  {
+   "key": "rubber",
+   "hex": "#1C1C1A",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 340,
+   "isNew": false
+  }
+ ]
+}

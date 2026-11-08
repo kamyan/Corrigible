@@ -1,0 +1,68 @@
+{
+ "name": "PaperPile",
+ "family": "desk",
+ "budget": "small",
+ "origin": "taban ortası (masa üstü, y = 0)",
+ "note": "Geç harekât: koparılmış teleks yaprakları (0,21 × 0,15) üst üste, kayık; en üstteki yaprağın köşesi kalkık. Mesaj yazıları dokuda değil (eski kâğıt, okunmaz).",
+ "listName": "Yırtık kâğıt yığını",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -0.78,
+    0.76,
+    1.5
+   ],
+   "yaw": -15,
+   "note": "stage late · teleksin arkası"
+  }
+ ],
+ "tris": 100,
+ "trisPerPart": {
+  "Body": 100
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.1165,
+   0,
+   -0.0899
+  ],
+  "max": [
+   0.1188,
+   0.0469,
+   0.0856
+  ],
+  "size": [
+   0.2353,
+   0.0469,
+   0.1755
+  ]
+ },
+ "materials": [
+  {
+   "key": "paperWhite",
+   "hex": "#F4EFE2",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 36,
+   "isNew": false
+  },
+  {
+   "key": "telexPaper",
+   "hex": "#EFE4BC",
+   "rough": 0.92,
+   "metal": 0,
+   "tex": "tx_telexPaper: kenar delik sırası ve kesikli kenar çizgisi, kelime yok (mesajlar TMP)",
+   "note": "teleks kâğıdı; Render Face: Both",
+   "tris": 64,
+   "isNew": true
+  }
+ ]
+}

@@ -49,6 +49,13 @@ namespace Corrigible.Desk
             return upper ? Upper(s) : s;
         }
 
+        /// <summary>Ayrılma hâli: 1 → “den”, 5 → “ten”, 9 → “dan”, 40 → “tan”.</summary>
+        public static string Ablative(long n, bool upper = false)
+        {
+            string s = Locative(n) + "n";
+            return upper ? Upper(s) : s;
+        }
+
         /// <summary>
         /// Biçimli sayı + ek, gösterilen dilde: Türkçede “015'İ”, İngilizcede “015”. Çevirilerde yer tutucu aynı kalsın diye
         /// ek sayıyla tek argümandır (Loc.F("VARDİYA {0} BAŞLAT", …) → EN “START SHIFT {0}”).
@@ -58,10 +65,13 @@ namespace Corrigible.Desk
         /// <summary>Biçimli sayı + bulunma eki: Türkçede “016'da”, İngilizcede “016”.</summary>
         public static string WithLocative(long n, string format = "000", bool upper = false) => With(n, format, Locative(n, upper));
 
-        static string With(long n, string format, string suffix)
+        /// <summary>Biçimli sayı + ayrılma eki: Türkçede “009’dan”, İngilizcede “009”. Kesme, belgelerdeki öteki eklerle aynı tipografik işarettir.</summary>
+        public static string WithAblative(long n, string format = "000", bool upper = false) => With(n, format, Ablative(n, upper), "’");
+
+        static string With(long n, string format, string suffix, string apostrophe = "'")
         {
             string s = n.ToString(format, System.Globalization.CultureInfo.InvariantCulture);
-            return DeskLoc.Instance.Lang == DeskLang.Tr ? s + "'" + suffix : s;
+            return DeskLoc.Instance.Lang == DeskLang.Tr ? s + apostrophe + suffix : s;
         }
 
         static string Upper(string s) => s.Replace("i", "İ").Replace("ı", "I").ToUpperInvariant();

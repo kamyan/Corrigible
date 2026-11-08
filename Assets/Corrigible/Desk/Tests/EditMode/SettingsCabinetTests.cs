@@ -147,7 +147,7 @@ namespace Corrigible.Desk.Tests
                 var ctrl = All<EntranceController>(scene).Single();
                 foreach (var f in new[] { "cam", "overview", "clockPose", "threshold", "inside", "cabinet", "settings", "clock", "door", "doorTarget", "mainSwitch", "fade", "glassOn", "glassOff" })
                     Assert.IsNotNull(Ref(ctrl, f), f);
-                Assert.AreEqual(3, P(ctrl, "lamps").arraySize, "sahanlığın üç lambası");
+                Assert.AreEqual(4, P(ctrl, "lamps").arraySize, "üç sahanlık ışığı ve gölgesiz kart dolgusu");
                 var cabinet = (SettingsCabinet)Ref(ctrl, "cabinet");
                 Assert.IsInstanceOf<HoverTag>(Ref(cabinet, "hoverTag"));
                 Assert.IsNull(Ref(cabinet, "exit"), "menüde MENÜYE DÖN yok");
@@ -157,7 +157,7 @@ namespace Corrigible.Desk.Tests
                     Assert.IsNotNull(Ref(clock, f), f);
                 Assert.AreEqual(80, P(clock, "punches").arraySize);
                 var door = (DoorProp)Ref(ctrl, "door");
-                Assert.AreEqual("Wheel outside", ((Transform)Ref(door, "wheel")).name, "kapı dışarıdaki çarkla açılır");
+                Assert.AreEqual("OuterWheel", ((Transform)Ref(door, "wheel")).GetComponentInParent<Rev3Model>().ModelName, "kapı dışarıdaki çarkla açılır");
                 Assert.IsNull(Ref(door, "silhouette"));
                 Assert.AreEqual(1, P(door, "stairLights").arraySize);
                 Assert.IsNotNull(P(door, "stairLights").GetArrayElementAtIndex(0).objectReferenceValue, "içeriden sızan ışık");

@@ -102,6 +102,7 @@ namespace Corrigible.Core
 
         public static readonly EndingDef[] Endings =
         {
+            new EndingDef { Id = "topluluk", Title = Loc.N("Son kişi"), Text = Loc.N("Sığınağın son sakini de kaybedildi. Panoda yalnız boş görev cepleri ve geri dönmeyenlerin kartları kaldı.") },
             new EndingDef { Id = "silme", Title = Loc.N("Silme"), Text = Loc.N("Çekirdek yok edildi, kopyalar temizlendi. Ama bir kez yapıldıysa, biri yine yapacak.") },
             new EndingDef { Id = "dagilma", Title = Loc.N("Dağılma"), Text = Loc.N("Hastaneler ve bankalar bizim baskınlarımızda karardı. Halk direnişe sırtını döndü; sığınağın kapısını artık kimse çalmıyor.") },
             new EndingDef { Id = "vuruldu", Title = Loc.N("Vuruldu"), Text = Loc.N("Kapıyı açtın ve silah patladı. Sığınak bir gecede komutansız kaldı; sabah telsizden yalnız parazit geliyordu.") },

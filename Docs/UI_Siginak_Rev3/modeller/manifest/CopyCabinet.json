@@ -1,0 +1,118 @@
+{
+ "name": "CopyCabinet",
+ "family": "raidpieces",
+ "budget": "raid",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Kopya dolabı 0,72 × 0,8 × 0,72: r_copy_* yüz boyası, koyu kaide bandı, güneyde çerçeveli ayna paneli, tepede üst üste iki krem kart (kopya simgesi).",
+ "listName": "Kopya dolabı (2 can)",
+ "parts": [],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0,
+    0.816,
+    0
+   ],
+   "note": "tepe noktası"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    7.5,
+    0,
+    -0.5
+   ],
+   "yaw": 0,
+   "note": "örnek: Rev2 raid.html (u 7, v 0)"
+  },
+  {
+   "pos": [
+    7.5,
+    0,
+    -7.5
+   ],
+   "yaw": 0,
+   "note": "(u 7, v 7)"
+  }
+ ],
+ "tris": 166,
+ "trisPerPart": {
+  "Body": 166
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.36,
+   0,
+   -0.38
+  ],
+  "max": [
+   0.36,
+   0.816,
+   0.36
+  ],
+  "size": [
+   0.72,
+   0.816,
+   0.74
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_copy_west",
+   "hex": "#58241E",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 24,
+   "isNew": false
+  },
+  {
+   "key": "r_copy_south",
+   "hex": "#451B17",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 48,
+   "isNew": false
+  },
+  {
+   "key": "r_copy_top",
+   "hex": "#6E2D25",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 14,
+   "isNew": false
+  },
+  {
+   "key": "r_armor_dark",
+   "hex": "#636562",
+   "rough": 0.35,
+   "metal": 0.7,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "r_mirror",
+   "hex": "#C8CED0",
+   "rough": 0.15,
+   "metal": 0.6,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "r_sticker",
+   "hex": "#F1E9D6",
+   "rough": 0.7,
+   "metal": 0,
+   "tris": 24,
+   "isNew": false
+  }
+ ]
+}

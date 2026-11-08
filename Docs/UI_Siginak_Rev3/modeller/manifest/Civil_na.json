@@ -1,0 +1,106 @@
+{
+ "name": "Civil_na",
+ "family": "raidcivil",
+ "budget": "raid",
+ "origin": "karenin merkezi, pafta yüzeyi (y = 0)",
+ "note": "Dağıtım merkezi: depo kiosku (güney yüz): gövdenin önünde ayaklı direk, üstünde eğik barkod terminali, fiş ağzından sarkan fiş. Önce sivil okunur: krem gövde, mavi bant, tepede mavi halka + çarpı (Ø 0,32); ekipman batı/güney yüzde ikinci siluet. Gövde ekipmana yer açmak için +x +z yönüne 0,03 kaydırıldı (tamamı 0,66 kare içinde).",
+ "listName": "Sivil sunucu · Kuzey Amerika: depo kiosku",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 212,
+ "trisPerPart": {
+  "Body": 212
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.27,
+   0,
+   -0.33
+  ],
+  "max": [
+   0.33,
+   0.643,
+   0.33
+  ],
+  "size": [
+   0.6,
+   0.643,
+   0.66
+  ]
+ },
+ "materials": [
+  {
+   "key": "rc_plinth",
+   "hex": "#4A463F",
+   "rough": 0.85,
+   "metal": 0,
+   "note": "sivil gövdenin koyu kaidesi (kâğıttan ayırır)",
+   "tris": 8,
+   "isNew": true
+  },
+  {
+   "key": "r_civil_top",
+   "hex": "#ECE6D6",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 14,
+   "isNew": false
+  },
+  {
+   "key": "r_civil_west",
+   "hex": "#D5CDBB",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "r_civil_south",
+   "hex": "#BAB19E",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 4,
+   "isNew": false
+  },
+  {
+   "key": "r_blue",
+   "hex": "#1A4789",
+   "rough": 0.6,
+   "metal": 0,
+   "tris": 82,
+   "isNew": false
+  },
+  {
+   "key": "rc_device",
+   "hex": "#5F5C54",
+   "rough": 0.5,
+   "metal": 0.12,
+   "note": "sivil cihaz gövdesi: çekiç boya sıcak gri (ATM yüzü, konsol, pano)",
+   "tris": 68,
+   "isNew": true
+  },
+  {
+   "key": "rc_screen",
+   "hex": "#1C2623",
+   "rough": 0.12,
+   "metal": 0,
+   "note": "ekran ve pencere camı: koyu, ışımasız (baskında emisyon yok)",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "r_card",
+   "hex": "#FBF7EC",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  }
+ ]
+}

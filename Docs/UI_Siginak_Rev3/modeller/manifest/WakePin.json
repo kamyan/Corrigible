@@ -1,0 +1,86 @@
+{
+ "name": "WakePin",
+ "family": "raidpieces",
+ "budget": "raid",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Uyanacak makinenin karesi: iğne (Ø0,026, r_needle) + kırmızı top baş (YZ), boy ~0,235 (17 px); zeminde kırmızı halka r 0,31–0,345, sekiz ışın 0,38–0,47, iç kesik halka r 0,17 ve α .12 dolgu (asetat: Unlit, ZWrite kapalı, gölgesiz). Halka dokulu dörtgenle çiziliyorsa rp_markWake* parçaları atlanır.",
+ "listName": "Uyanma iğnesi ve halkası",
+ "parts": [],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0,
+    0.236,
+    0
+   ],
+   "note": "iğne başının tepesi"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 300,
+ "trisPerPart": {
+  "Body": 300
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.4698,
+   0.004,
+   -0.4698
+  ],
+  "max": [
+   0.4698,
+   0.236,
+   0.4698
+  ],
+  "size": [
+   0.9397,
+   0.232,
+   0.9397
+  ]
+ },
+ "materials": [
+  {
+   "key": "rp_markWake",
+   "hex": "#9A1E14",
+   "rough": 1,
+   "metal": 0,
+   "alpha": 0.95,
+   "note": "uyanma halkası ve ışınları (URP Unlit Transparent, ZWrite kapalı, gölgesiz)",
+   "tris": 112,
+   "isNew": true
+  },
+  {
+   "key": "rp_markWakeFill",
+   "hex": "#9A1E14",
+   "rough": 1,
+   "metal": 0,
+   "alpha": 0.12,
+   "note": "uyanma halkasının dolgusu (Unlit Transparent, ZWrite kapalı)",
+   "tris": 36,
+   "isNew": true
+  },
+  {
+   "key": "r_needle",
+   "hex": "#7E7C78",
+   "rough": 0.4,
+   "metal": 0.6,
+   "tris": 32,
+   "isNew": false
+  },
+  {
+   "key": "r_red",
+   "hex": "#B8241A",
+   "rough": 0.4,
+   "metal": 0,
+   "tris": 120,
+   "isNew": false
+  }
+ ]
+}

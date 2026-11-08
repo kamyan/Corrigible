@@ -1,0 +1,80 @@
+{
+ "name": "ReliefIso_oc",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Baklava sac kızak üstünde dar ve uzun yedek parça sandığı (0,72): çıta çerçeve, her yüzde çapraz çıta, üst köşelerde çelik köşe sacı, kapakta çıta. Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi.",
+ "listName": "Ayrık blok · Maden limanı (kızak üstünde uzun sandık)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 238,
+ "trisPerPart": {
+  "Body": 238
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.385,
+   0,
+   -0.385
+  ],
+  "max": [
+   0.385,
+   0.556,
+   0.385
+  ],
+  "size": [
+   0.77,
+   0.556,
+   0.77
+  ]
+ },
+ "materials": [
+  {
+   "key": "rk_void",
+   "hex": "#34312C",
+   "rough": 1,
+   "metal": 0,
+   "note": "oyuk içi: palet ağzı, tutamak deliği, kızak arası (ışık almayan derinlik); bütün kitlerde ortak",
+   "tris": 4,
+   "isNew": true
+  },
+  {
+   "key": "k_oc_detailA",
+   "hex": "#686160",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 129,
+   "isNew": false
+  },
+  {
+   "key": "k_oc_wallWest",
+   "hex": "#9E918B",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 35,
+   "isNew": false
+  },
+  {
+   "key": "k_oc_wallSouth",
+   "hex": "#7F736F",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 25,
+   "isNew": false
+  },
+  {
+   "key": "k_oc_wallTop",
+   "hex": "#ADA29E",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 45,
+   "isNew": false
+  }
+ ]
+}

@@ -1,0 +1,107 @@
+{
+ "name": "Civil_jk",
+ "family": "raidcivil",
+ "budget": "raid",
+ "origin": "karenin merkezi, pafta yüzeyi (y = 0)",
+ "note": "Çip fabrikası: temiz oda terminali: güney yüzde contalı eğik ekranlı paslanmaz kutu; batı yüzde iki büyük eldiven ağzı. Önce sivil okunur: krem gövde, mavi bant, tepede mavi halka + çarpı (Ø 0,32); ekipman batı/güney yüzde ikinci siluet. Gövde ekipmana yer açmak için +x +z yönüne 0,03 kaydırıldı (tamamı 0,66 kare içinde).",
+ "listName": "Sivil sunucu · Japonya-Kore: temiz oda terminali",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 280,
+ "trisPerPart": {
+  "Body": 280
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.288,
+   0,
+   -0.3288
+  ],
+  "max": [
+   0.33,
+   0.643,
+   0.33
+  ],
+  "size": [
+   0.618,
+   0.643,
+   0.6588
+  ]
+ },
+ "materials": [
+  {
+   "key": "rc_plinth",
+   "hex": "#4A463F",
+   "rough": 0.85,
+   "metal": 0,
+   "note": "sivil gövdenin koyu kaidesi (kâğıttan ayırır)",
+   "tris": 8,
+   "isNew": true
+  },
+  {
+   "key": "r_civil_top",
+   "hex": "#ECE6D6",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 14,
+   "isNew": false
+  },
+  {
+   "key": "r_civil_west",
+   "hex": "#D5CDBB",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "r_civil_south",
+   "hex": "#BAB19E",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 4,
+   "isNew": false
+  },
+  {
+   "key": "r_blue",
+   "hex": "#1A4789",
+   "rough": 0.6,
+   "metal": 0,
+   "tris": 82,
+   "isNew": false
+  },
+  {
+   "key": "rc_stainless",
+   "hex": "#9EA19C",
+   "rough": 0.32,
+   "metal": 0.6,
+   "note": "paslanmaz sac (temiz oda terminali, hava kilidi kapısı)",
+   "tris": 112,
+   "isNew": true
+  },
+  {
+   "key": "rubberGasket",
+   "hex": "#141413",
+   "rough": 0.85,
+   "metal": 0,
+   "note": "conta",
+   "tris": 36,
+   "isNew": true
+  },
+  {
+   "key": "rc_screen",
+   "hex": "#1C2623",
+   "rough": 0.12,
+   "metal": 0,
+   "note": "ekran ve pencere camı: koyu, ışımasız (baskında emisyon yok)",
+   "tris": 12,
+   "isNew": true
+  }
+ ]
+}

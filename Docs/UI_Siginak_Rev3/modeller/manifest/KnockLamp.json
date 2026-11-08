@@ -1,0 +1,111 @@
+{
+ "name": "KnockLamp",
+ "family": "door",
+ "budget": "small",
+ "origin": "arka yüz alt kenar ortası (duvar düzlemi z = 0)",
+ "note": "Kapının üstünde döküm gövdeli kafesli duvar lambası: kubbe cam (Lamp) sönük / amber (vuruş, her vuruşta parlar) / kırmızı (ölümcül karar). Kafes 3 yassı lama (8 mm). Tavana çıkan boru.",
+ "listName": "Vuruş lambası ve kafesi",
+ "parts": [
+  {
+   "name": "Lamp",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.07,
+    -0.042
+   ],
+   "pivotLocal": [
+    0,
+    0.07,
+    -0.042
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "cam: jewelAmberOff (sönük) ↔ jewelAmberOn (biri çalıyor) ↔ knockLampRed (VURULDU / SIZMA)"
+  }
+ ],
+ "texts": [],
+ "anchors": [],
+ "lights": [
+  {
+   "name": "KnockLight",
+   "part": "Lamp",
+   "pos": [
+    0,
+    0.04,
+    -0.25
+   ],
+   "type": "point",
+   "color": "#FFA53A",
+   "shadows": false,
+   "note": "amber 1,2 · ölümcülde #F0443A 2,2; menzil 3,5 m (Rev2); gölgesiz"
+  }
+ ],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    2.2,
+    2.24,
+    0.75
+   ],
+   "yaw": 90,
+   "note": "dünya; kapının üstü, tehlike bandının üstünde (lamba merkezi y 2,31)"
+  }
+ ],
+ "tris": 688,
+ "trisPerPart": {
+  "Body": 576,
+  "Lamp": 112
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.066,
+   0.004,
+   -0.1
+  ],
+  "max": [
+   0.066,
+   0.25,
+   0
+  ],
+  "size": [
+   0.132,
+   0.246,
+   0.1
+  ]
+ },
+ "materials": [
+  {
+   "key": "castIron",
+   "hex": "#3A3B37",
+   "rough": 0.72,
+   "metal": 0.6,
+   "note": "dış çark, döküm kaide",
+   "tris": 544,
+   "isNew": true
+  },
+  {
+   "key": "galv",
+   "hex": "#70756E",
+   "rough": 0.5,
+   "metal": 0.45,
+   "tris": 32,
+   "isNew": false
+  },
+  {
+   "key": "jewelAmberOff",
+   "hex": "#4A2F12",
+   "rough": 0.25,
+   "metal": 0,
+   "note": "amber mücevher lamba sönük",
+   "tris": 112,
+   "isNew": true
+  }
+ ]
+}

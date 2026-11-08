@@ -90,7 +90,7 @@ namespace Corrigible.Desk
                 if (filled)
                 {
                     if (s.name != null) s.name.text = freed[i].name;
-                    if (s.shift != null) s.shift.text = "V." + freed[i].shift.ToString("000");
+                    if (s.shift != null) s.shift.text = Corrigible.Core.Loc.F("V.{0:000}", freed[i].shift);
                 }
                 if (s.next != null) s.next.SetActive(isNext);
                 if (isNext && s.nextName != null) s.nextName.text = next + "?";

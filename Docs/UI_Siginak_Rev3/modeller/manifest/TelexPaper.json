@@ -1,0 +1,189 @@
+{
+ "name": "TelexPaper",
+ "family": "desk",
+ "budget": "small",
+ "origin": "Telex ile aynı orijin ve yerleşim",
+ "note": "Ön mesaj kâğıdı 0,26 × 0,19: kâğıt tutucu çubuğa kıskaçla asılı, alt kenarı 3° makineye yaslı, hafif kavisli (TMP: kod, durum, mesaj, önceki satır). Kâğıt şeridi soldaki yarıktan çıkar, klavye tablasının tuşsuz şeridinden ve ön dudaktan masaya iner, masada operatöre doğru düz gider ve masa kenarındaki pirinç bandın üstünden kıvrılıp sarkar. Kalınlık 0 (çift yüzlü).",
+ "listName": "Teleks kâğıdı",
+ "parts": [],
+ "texts": [
+  {
+   "name": "TXT_Code",
+   "part": "Body",
+   "center": [
+    0,
+    0.26105881087865423,
+    -0.09855245859599387
+   ],
+   "size": [
+    0.22,
+    0.016
+   ],
+   "normal": [
+    0,
+    0.052335956242943835,
+    -0.9986295347545738
+   ],
+   "up": [
+    0,
+    0.9986295347545738,
+    0.052335956242943835
+   ],
+   "role": "telexCode",
+   "font": "Courier Prime 700",
+   "capMm": 9,
+   "align": "left",
+   "sample": "001/01",
+   "sampleEn": "001/01",
+   "note": ""
+  },
+  {
+   "name": "TXT_Status",
+   "part": "Body",
+   "center": [
+    0,
+    0.23609307250978992,
+    -0.09724405968992028
+   ],
+   "size": [
+    0.22,
+    0.026
+   ],
+   "normal": [
+    0,
+    0.052335956242943835,
+    -0.9986295347545738
+   ],
+   "up": [
+    0,
+    0.9986295347545738,
+    0.052335956242943835
+   ],
+   "role": "telexStatus",
+   "font": "Courier Prime 700",
+   "capMm": 15,
+   "align": "left",
+   "sample": "KAYIT VAR",
+   "sampleEn": "SAVE FOUND",
+   "note": "olumsuz durumda kırmızı #9A1E14"
+  },
+  {
+   "name": "TXT_Message",
+   "part": "Body",
+   "center": [
+    0,
+    0.18116844809828836,
+    -0.09436558209655836
+   ],
+   "size": [
+    0.22,
+    0.075
+   ],
+   "normal": [
+    0,
+    0.052335956242943835,
+    -0.9986295347545738
+   ],
+   "up": [
+    0,
+    0.9986295347545738,
+    0.052335956242943835
+   ],
+   "role": "telexMessage",
+   "font": "Courier Prime 700",
+   "capMm": 10,
+   "align": "left",
+   "sample": "V.001 kaydının üstüne yazılır · onay için yeniden bas",
+   "sampleEn": "V.001 will be overwritten · press again to confirm",
+   "note": "3–4 satır, sarar"
+  },
+  {
+   "name": "TXT_Prev",
+   "part": "Body",
+   "center": [
+    0,
+    0.10926712159595905,
+    -0.09059739324706641
+   ],
+   "size": [
+    0.22,
+    0.014
+   ],
+   "normal": [
+    0,
+    0.052335956242943835,
+    -0.9986295347545738
+   ],
+   "up": [
+    0,
+    0.9986295347545738,
+    0.052335956242943835
+   ],
+   "role": "telexMessage",
+   "font": "Courier Prime 700",
+   "capMm": 7,
+   "align": "left",
+   "sample": "001/00  KYGA-07 HAT AÇIK",
+   "sampleEn": "001/00  KYGA-07 LINE OPEN",
+   "note": "kesikli ayraç altında önceki mesaj"
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -0.765,
+    0.76,
+    1.21
+   ],
+   "yaw": -12,
+   "note": "Telex ile aynı; şerit masada dünya −z yönünde gider ve z 0,77’deki kenar bandından sarkar"
+  }
+ ],
+ "tris": 124,
+ "trisPerPart": {
+  "Body": 124
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.179,
+   -0.0375,
+   -0.432
+  ],
+  "max": [
+   0.13,
+   0.287,
+   -0.0868
+  ],
+  "size": [
+   0.309,
+   0.3245,
+   0.3452
+  ]
+ },
+ "materials": [
+  {
+   "key": "telexPaper",
+   "hex": "#EFE4BC",
+   "rough": 0.92,
+   "metal": 0,
+   "tex": "tx_telexPaper: kenar delik sırası ve kesikli kenar çizgisi, kelime yok (mesajlar TMP)",
+   "note": "teleks kâğıdı; Render Face: Both",
+   "tris": 80,
+   "isNew": true
+  },
+  {
+   "key": "chrome",
+   "hex": "#C8CCCC",
+   "rough": 0.22,
+   "metal": 1,
+   "tris": 44,
+   "isNew": false
+  }
+ ]
+}

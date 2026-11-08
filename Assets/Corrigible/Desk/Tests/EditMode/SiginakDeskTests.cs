@@ -16,7 +16,7 @@ namespace Corrigible.Desk.Tests
     {
         static readonly int StId = Shader.PropertyToID("_BaseMap_ST");
 
-        static Simulation NewLiberation(double fon) => Simulation.NewGame(731, new Balance { startFon = fon });
+        static Simulation NewLiberation(double fon) => LegacySimulation.NewGame(731, new Balance { startFon = fon });
 
         static CounterWheel Wheel(GameObject parent)
         {
@@ -151,20 +151,25 @@ namespace Corrigible.Desk.Tests
                 var bank = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<CounterBank>(true)).Single();
                 var modules = new SerializedObject(bank).FindProperty("modules");
                 Assert.AreEqual(System.Enum.GetValues(typeof(CounterBank.Slot)).Length, modules.arraySize);
+                // Revizyon 3: tekerler sayaç rafı modelinin tamburları, etiketler modelin TXT_Label_0–5 yuvaları
+                var rack = bank.GetComponentsInChildren<Rev3Model>(true).Single(m => m.ModelName == "CounterRack");
                 float last = float.NegativeInfinity;
                 for (int i = 0; i < modules.arraySize; i++)
                 {
                     var module = (CounterModule)modules.GetArrayElementAtIndex(i).objectReferenceValue;
                     Assert.IsNotNull(module, "sayaç " + i);
-                    var label = module.transform.Find("Label");
-                    float x = module.transform.Find("Window bezel").localPosition.x;
-                    // Etiket kendi penceresinin üstünde; sayaçlar soldan sağa sırayla
-                    Assert.AreEqual(x, label.localPosition.x, 1e-3f, module.name + " etiketi");
+                    var wheels = new SerializedObject(module).FindProperty("wheels");
+                    Assert.Greater(wheels.arraySize, 0, module.name);
+                    var first = (CounterWheel)wheels.GetArrayElementAtIndex(0).objectReferenceValue;
+                    Assert.IsNotNull(new SerializedObject(first).FindProperty("drum").objectReferenceValue, module.name + " tamburu");
+                    var label = rack.Slot("TXT_Label_" + i).Text;
+                    float x = rack.transform.InverseTransformPoint(first.transform.position).x;
+                    // Etiket kendi tekerlerinin üstünde; sayaçlar soldan sağa sırayla
+                    Assert.Less(Mathf.Abs(rack.transform.InverseTransformPoint(label.transform.position).x - x), 0.12f, module.name + " etiketi");
                     Assert.Greater(x, last, module.name);
                     last = x;
                 }
-                var trust = (CounterModule)modules.GetArrayElementAtIndex((int)CounterBank.Slot.Trust).objectReferenceValue;
-                Assert.AreEqual("GÜVEN", trust.transform.Find("Label").GetComponent<DeskLocText>().Source);
+                Assert.AreEqual("GÜVEN", rack.Slot("TXT_Label_" + (int)CounterBank.Slot.Trust).Text.GetComponent<DeskLocText>().Source);
             }
             finally { EditorSceneManager.CloseScene(scene, true); }
         }
@@ -191,7 +196,8 @@ namespace Corrigible.Desk.Tests
                 var so = new SerializedObject(panel);
                 foreach (var field in new[] { "counter", "beacon", "lampOn", "lampOff", "target" })
                     Assert.IsNotNull(so.FindProperty(field).objectReferenceValue, field);
-                Assert.AreEqual("YZ ALARMI", panel.Counter.transform.Find("Label").GetComponent<DeskLocText>().Source);
+                var board = panel.GetComponentsInChildren<Rev3Model>(true).Single(m => m.ModelName == "AlarmBoard");
+                Assert.AreEqual("YZ ALARMI", board.Slot("TXT_Title").Text.GetComponent<DeskLocText>().Source);
                 Assert.Greater(panel.GetComponent<BoxCollider>().size.sqrMagnitude, 0, "üzerine gelince açıklama için çarpıştırıcı");
             }
             finally { EditorSceneManager.CloseScene(scene, true); }
@@ -250,16 +256,18 @@ namespace Corrigible.Desk.Tests
                 // tuş adı yerine istasyonun simgesi (aydınlatılan saydam dörtgen, çarpıştırıcısız)
                 var rail = room.GetComponentInChildren<StationKeyRail>(true);
                 Assert.AreEqual(4, rail.Count);
-                var icons = new[] { "tx_key_shelter", "tx_key_missions", "tx_key_door", "tx_key_desk" };
+                var icons = new[] { "tx_keyIcon_shelter", "tx_keyIcon_missions", "tx_keyIcon_door", "tx_keyIcon_desk" };   // Revizyon 3: krem karo, koyu çizgi
                 for (int i = 0; i < rail.Count; i++)
                 {
                     var ks = new SerializedObject(rail[i]);
                     Assert.AreEqual(i == StationKeyRail.Door, ks.FindProperty("jewelAttention").objectReferenceValue != null, rail[i].name);
                     var cap = (Transform)ks.FindProperty("cap").objectReferenceValue;
                     Assert.IsEmpty(cap.GetComponentsInChildren<TMPro.TMP_Text>(true), rail[i].name + " başlığında yazı yok");
-                    var icon = cap.Find("Icon").GetComponent<MeshRenderer>();
-                    Assert.AreEqual(icons[i], icon.sharedMaterial.GetTexture("_BaseMap").name, rail[i].name);
-                    Assert.IsNull(icon.GetComponent<Collider>());
+                    // Revizyon 3: simge kapak modelinin ikon yuvasındaki opak karo malzemesi
+                    var capRenderer = cap.GetComponent<MeshRenderer>();
+                    Assert.IsTrue(capRenderer.sharedMaterials.Any(m => m != null && m.HasProperty("_BaseMap") && m.GetTexture("_BaseMap") != null
+                        && m.GetTexture("_BaseMap").name == icons[i]), rail[i].name);
+                    Assert.IsNull(cap.GetComponent<Collider>());
                 }
                 // Üst kenar şeridi aynı istasyonlar (AYARLAR çipi yok: ayarlar odadaki dolapta); tuş kutularında simge
                 var edgeLine = new SerializedObject(room.transform.root.GetComponentsInChildren<EdgeLine>(true).Single());

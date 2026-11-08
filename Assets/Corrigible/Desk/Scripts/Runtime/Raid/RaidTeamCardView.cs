@@ -19,7 +19,7 @@ namespace Corrigible.Desk
         [SerializeField] CanvasGroup group;
         [SerializeField] Button button;
         [SerializeField] Image paper, selectFrame, downFrame;
-        [SerializeField] TMP_Text key, nameLabel, status, wound, plateLabel;
+        [SerializeField] TMP_Text key, nameLabel, status, wound, plateLabel, stats, equipment;
         [SerializeField] Image disc;
         [SerializeField] TMP_Text discLetter;
         [SerializeField] Image plateIcon;
@@ -38,9 +38,8 @@ namespace Corrigible.Desk
         {
             model = value;
             nameLabel.text = value.Rookie ? Loc.F("{0} · YEDEK", value.Name) : value.Name;
-            // Dar kartta İngilizce uzun adın brifteki kısa karşılığı
-            if (value.Letter == 'E' && DeskLoc.Instance.Lang == DeskLang.En) nameLabel.text = Loc.T("EMP UZM.");
-            if (value.Letter == 'S' && DeskLoc.Instance.Lang == DeskLang.En) nameLabel.text = Loc.T("SİS UZM.");
+            if(stats)stats.text=Loc.F("CAN {0}/{1} · HAR {2} · GÜÇ {3}",value.Hp,value.Max,value.MoveRange,value.Power);
+            if(equipment)equipment.text=value.Equipment??string.Empty;
             discLetter.text = value.Letter.ToString();
             bool done = !value.Down && !value.Out && !value.Move && !value.Ability;
             disc.color = C(value.Down || value.Out || done ? "panel.teamCard.discDone" : "panel.teamCard.disc");

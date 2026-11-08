@@ -1,0 +1,80 @@
+{
+ "name": "Relief_oc",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Baklava sac kızak (iki kızak ayağı, aralarında koyu boşluk; baklava deseni doku) üstünde yedek parça sandığı: derin çıta çerçeve (tahtalar 5 cm geride), her yüzde çapraz destek çıtası (köşede V oluşturur), alt ve üst köşelerde koyu çelik köşe sacı (detailA), kapakta iki çıta; kızıl toz dokuda. Gri tonda: çapraz çıtalar + kızak. İki kat: kızak + sandık. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided.",
+ "listName": "Duvar barikatı · Maden limanı (baklava sac kızak üstünde yedek parça sandığı)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 244,
+ "trisPerPart": {
+  "Body": 244
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.47,
+   0,
+   -0.47
+  ],
+  "max": [
+   0.47,
+   0.556,
+   0.47
+  ],
+  "size": [
+   0.94,
+   0.556,
+   0.94
+  ]
+ },
+ "materials": [
+  {
+   "key": "rk_void",
+   "hex": "#34312C",
+   "rough": 1,
+   "metal": 0,
+   "note": "oyuk içi: palet ağzı, tutamak deliği, kızak arası (ışık almayan derinlik); bütün kitlerde ortak",
+   "tris": 4,
+   "isNew": true
+  },
+  {
+   "key": "k_oc_detailA",
+   "hex": "#686160",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 129,
+   "isNew": false
+  },
+  {
+   "key": "k_oc_wallWest",
+   "hex": "#9E918B",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 37,
+   "isNew": false
+  },
+  {
+   "key": "k_oc_wallSouth",
+   "hex": "#7F736F",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 27,
+   "isNew": false
+  },
+  {
+   "key": "k_oc_wallTop",
+   "hex": "#ADA29E",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 47,
+   "isNew": false
+  }
+ ]
+}

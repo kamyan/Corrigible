@@ -37,9 +37,10 @@ namespace Corrigible.Desk
 
         /// <summary>
         /// Yeni satır; kodu vardiyaya göre sayar. <paramref name="header"/>: hat açılış satırı “VVV/00” (sayaç ilerlemez;
-        /// K7 açılışı “001/00 KYGA-07 HAT AÇIK”).
+        /// K7 açılışı “001/00 KYGA-07 HAT AÇIK”). <paramref name="typeSeconds"/> &gt; 0: satırın tamamı o sürede basılır
+        /// (Revizyon 3 · R19b2 “VARDİYA DEVREDİLDİ” 1,2 s); değilse harf başına <c>motion.telexCharS</c>.
         /// </summary>
-        public TelexLine Post(int shiftNumber, string status, string message, TelexKind kind, bool header = false)
+        public TelexLine Post(int shiftNumber, string status, string message, TelexKind kind, bool header = false, float typeSeconds = -1)
         {
             if (shiftNumber != shift || header) { shift = shiftNumber; counter = 0; }
             if (!header) counter++;
@@ -50,7 +51,7 @@ namespace Corrigible.Desk
             };
             lines.Add(line);
             if (lines.Count > keep) lines.RemoveRange(0, lines.Count - keep);
-            if (printer != null) printer.Show(lines, true);
+            if (printer != null) printer.Show(lines, true, typeSeconds);
             // Kâğıt okunur boyda değilse (ya da uyarı satırıysa, ör. KAYIT VAR) satır şeritte de görünür
             if (strip != null && (!PrinterReadable || kind == TelexKind.Alarm)) strip.Enqueue(line);
             Posted?.Invoke(line);

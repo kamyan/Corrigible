@@ -1,0 +1,89 @@
+{
+ "name": "FileTag",
+ "family": "admission",
+ "budget": "small",
+ "origin": "kıskacın alt kenar ortası",
+ "note": "Klasörün kenarına takılan çelik kıskaç ve krem karton sekme 50 × 24 (kesikli kenar, TMP: İNCELE · S3 ya da KISITLI · 3 V). Talimat değişince eşleşen eski dosyalara kendiliğinden takılır.",
+ "listName": "Dosya sekmesi ve kıskacı (İNCELE / KISITLI)",
+ "parts": [],
+ "texts": [
+  {
+   "name": "TXT_Tag",
+   "part": "Body",
+   "center": [
+    0,
+    0.025,
+    -0.0016
+   ],
+   "size": [
+    0.046,
+    0.02
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "stamp",
+   "font": "Courier Prime 700",
+   "capMm": 6,
+   "align": "center",
+   "sample": "İNCELE",
+   "sampleEn": "REVIEW",
+   "note": ""
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 56,
+ "trisPerPart": {
+  "Body": 56
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.025,
+   0,
+   -0.002
+  ],
+  "max": [
+   0.025,
+   0.036,
+   0.002
+  ],
+  "size": [
+   0.05,
+   0.036,
+   0.004
+  ]
+ },
+ "materials": [
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "cardStock",
+   "hex": "#EEE5CA",
+   "rough": 0.9,
+   "metal": 0,
+   "tex": "tx_card (80 hücre ızgarası, rakamlar)",
+   "note": "vardiya kartı",
+   "tris": 12,
+   "isNew": true
+  }
+ ]
+}

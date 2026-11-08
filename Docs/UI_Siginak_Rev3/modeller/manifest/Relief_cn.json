@@ -1,0 +1,88 @@
+{
+ "name": "Relief_cn",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "İki kat plastik parça kasası (yüz başına 3 × 2): her kasada koyu tutamak yuvası (rk_void) ve açık renk etiket cebi (detailB); üst kattaki kasalar açık, ağızlarının altında koyu taban ve küçük parçalar (somun, pul). Gri tonda: sık küçük kutular + koyu nokta dizisi. İki kat: iki kasa sırası. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided.",
+ "listName": "Duvar barikatı · Montaj fabrikası (istiflenmiş parça kasaları)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 261,
+ "trisPerPart": {
+  "Body": 261
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.469,
+   0,
+   -0.469
+  ],
+  "max": [
+   0.466,
+   0.555,
+   0.466
+  ],
+  "size": [
+   0.935,
+   0.555,
+   0.935
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_cn_detailA",
+   "hex": "#5B5955",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 2,
+   "isNew": false
+  },
+  {
+   "key": "k_cn_wallWest",
+   "hex": "#87898A",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 50,
+   "isNew": false
+  },
+  {
+   "key": "k_cn_wallSouth",
+   "hex": "#6C6E70",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 30,
+   "isNew": false
+  },
+  {
+   "key": "k_cn_wallTop",
+   "hex": "#8F9192",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 66,
+   "isNew": false
+  },
+  {
+   "key": "rk_void",
+   "hex": "#34312C",
+   "rough": 1,
+   "metal": 0,
+   "note": "oyuk içi: palet ağzı, tutamak deliği, kızak arası (ışık almayan derinlik); bütün kitlerde ortak",
+   "tris": 24,
+   "isNew": true
+  },
+  {
+   "key": "k_cn_detailB",
+   "hex": "#C2BFB5",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 89,
+   "isNew": false
+  }
+ ]
+}

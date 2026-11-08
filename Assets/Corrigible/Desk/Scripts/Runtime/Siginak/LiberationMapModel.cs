@@ -107,6 +107,9 @@ namespace Corrigible.Desk
     {
         public string Letter, Hp;
         public bool Rookie, Missing;
+        public string PersonId, Name, Profession, Stats, Equipment, Hover;
+        public string[] Slots = new string[3];
+        public int Health, MaxHealth;
     }
 
     /// <summary>
@@ -122,6 +125,7 @@ namespace Corrigible.Desk
     /// <summary>Görev fişi (K2): cephe için tam form, öteki bölgeler için bilgi fişi (eylem yok).</summary>
     public sealed class OperationSlipData
     {
+        public bool Planning;
         public string RegionId, Code, Region, Progress;
         /// <summary>Bölgenin binası (bölge adının altında; baskınlar bu binanın odalarında geçer).</summary>
         public string Building;
@@ -156,6 +160,9 @@ namespace Corrigible.Desk
     {
         public string Letter, Name, Status;
         public bool Good, Missing;
+        public string PersonId, Profession, Stats, Hover;
+        public string[] Slots = new string[3];
+        public int Health, MaxHealth;
     }
 
     /// <summary>
@@ -164,6 +171,8 @@ namespace Corrigible.Desk
     /// </summary>
     public sealed class SquadReportData
     {
+        public bool Planning;
+        public string Number, Warning;
         public string RegionId, Head, Region, Sector, Action, ActionCost, Cancel;
         public readonly List<SquadReportRow> Rows = new List<SquadReportRow>();
     }

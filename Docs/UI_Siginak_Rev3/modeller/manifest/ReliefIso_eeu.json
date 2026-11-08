@@ -1,0 +1,79 @@
+{
+ "name": "ReliefIso_eeu",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Arşiv rafının ucu (0,80): batıda üç krem etiket çerçeveli uç levhası, güneyde iki göz dosya kutusu, köşe dikmeleri üstte kapaklı. Kolon gibi okunur: dar, dikmeli. Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi.",
+ "listName": "Ayrık blok · Devlet arşivi (raf ucu, etiket çerçeveli)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 214,
+ "trisPerPart": {
+  "Body": 214
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.4,
+   0,
+   -0.4
+  ],
+  "max": [
+   0.4,
+   0.556,
+   0.4
+  ],
+  "size": [
+   0.8,
+   0.556,
+   0.8
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_eeu_wallWest",
+   "hex": "#77817C",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 45,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_wallSouth",
+   "hex": "#606763",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 29,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_wallTop",
+   "hex": "#8F9892",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 28,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_detailA",
+   "hex": "#6E7375",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 67,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_detailB",
+   "hex": "#B3AD98",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 45,
+   "isNew": false
+  }
+ ]
+}

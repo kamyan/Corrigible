@@ -1,0 +1,79 @@
+{
+ "name": "Relief_in",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Alt kat: çekmeceli dosya dolapları (yüz başına iki dolap × iki çekmece, açık renk kulp). Üst kat: ofis bölme panelleri — açık alüminyum çerçeve (detailB) içinde koyu kumaş (detailA). Gri tonda: çerçeve ızgarası + çekmece çizgileri. İki kat: dolaplar + paneller. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided.",
+ "listName": "Duvar barikatı · Çağrı merkezi (bölme paneli ve dosya dolabı istifi)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 328,
+ "trisPerPart": {
+  "Body": 328
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.47,
+   0,
+   -0.47
+  ],
+  "max": [
+   0.47,
+   0.556,
+   0.47
+  ],
+  "size": [
+   0.94,
+   0.556,
+   0.94
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_in_wallWest",
+   "hex": "#8E8A92",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 32,
+   "isNew": false
+  },
+  {
+   "key": "k_in_wallSouth",
+   "hex": "#726E76",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 24,
+   "isNew": false
+  },
+  {
+   "key": "k_in_wallTop",
+   "hex": "#A19CA5",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 62,
+   "isNew": false
+  },
+  {
+   "key": "k_in_detailB",
+   "hex": "#B6B3AB",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 202,
+   "isNew": false
+  },
+  {
+   "key": "k_in_detailA",
+   "hex": "#74717F",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 8,
+   "isNew": false
+  }
+ ]
+}

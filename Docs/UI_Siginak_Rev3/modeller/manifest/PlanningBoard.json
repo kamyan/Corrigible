@@ -1,0 +1,1594 @@
+{
+ "name": "PlanningBoard",
+ "family": "board",
+ "budget": "big",
+ "origin": "zemin, iki dikmenin ortası (y = 0); ön yüz −z",
+ "note": "Eski raf ve kesit maketinin yerinde, odanın sol arka köşesinde. İki kare boru dikme (30 mm) T ayak ve dört tekerlek üstünde; arada 1196 × 636 mm mıknatıs tutan çelik pano, zeytin çerçeve. Kartlar mıknatıs düğmesiyle tutunur: görev cepleri pirinç çerçeveli (2 mm kabarık), Boşta tepsisi, iş emri kâğıdı, kişi dosyası sepeti, altta depo ve hurda kutusu. Üstte pano lambası (spot, gölgeli). Bütün yazılar TMP.",
+ "listName": "Ayaklı planlama panosu (mıknatıslı çelik)",
+ "parts": [
+  {
+   "name": "BackSign",
+   "parent": "Body",
+   "pivotModel": [
+    -0.512,
+    1.573,
+    -0.016
+   ],
+   "pivotLocal": [
+    -0.512,
+    1.573,
+    -0.016
+   ],
+   "kind": "slide",
+   "axis": "z",
+   "range": [
+    0,
+    -0.004
+   ],
+   "rest": 0,
+   "note": "MASAYA DÖN levhası: üzerine gelince 4 mm öne; tık = masaya dönüş (Esc ve sağ tık da)"
+  },
+  {
+   "name": "Flap",
+   "parent": "Body",
+   "pivotModel": [
+    0.4980000000000001,
+    1.5879999999999999,
+    -0.02
+   ],
+   "pivotLocal": [
+    0.4980000000000001,
+    1.5879999999999999,
+    -0.02
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    180
+   ],
+   "rest": 0,
+   "note": "iki yüzlü plaka, üst kenarından menteşeli: 0 = PLAN AÇIK (krem), 180 = PLAN KİLİTLİ (kırmızı yüz öne gelir); 0,3 s döner"
+  },
+  {
+   "name": "HurdaLid",
+   "parent": "Body",
+   "pivotModel": [
+    0.497,
+    1.119,
+    -0.018999999999999996
+   ],
+   "pivotLocal": [
+    0.497,
+    1.119,
+    -0.018999999999999996
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    28
+   ],
+   "rest": 0,
+   "note": "eşya kartı bırakılınca kapak 28° kalkar (0,15 s) ve kapanır; tok “tunk”"
+  },
+  {
+   "name": "LockRod",
+   "parent": "Body",
+   "pivotModel": [
+    0.59,
+    1.3519999999999999,
+    -0.026000000000000002
+   ],
+   "pivotLocal": [
+    0.59,
+    1.3519999999999999,
+    -0.026000000000000002
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "görünür = PLAN KİLİTLİ (baskın emri verildi ya da devir fişi basıldı). Animasyon: çubuk sağ dikmeden 0,4 s’de kayar, asma kilit “klak”"
+  },
+  {
+   "name": "Lamp",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    1.7530000000000001,
+    -0.334
+   ],
+   "pivotLocal": [
+    0,
+    1.7530000000000001,
+    -0.334
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "lampGlassWarm ↔ roomBulbOff"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Back",
+   "part": "BackSign",
+   "center": [
+    -0.512,
+    1.573,
+    -0.0172
+   ],
+   "size": [
+    0.116,
+    0.0196
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 10,
+   "align": "center",
+   "sample": "◄ MASAYA DÖN",
+   "sampleEn": "◄ BACK TO DESK",
+   "note": ""
+  },
+  {
+   "name": "TXT_Title",
+   "part": "Body",
+   "center": [
+    -0.23799999999999993,
+    1.573,
+    -0.0144
+   ],
+   "size": [
+    0.404,
+    0.026
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "wallStencil",
+   "font": "Big Shoulders Stencil Display 800",
+   "capMm": 15,
+   "align": "left",
+   "sample": "VARDİYA PLANI · SIĞINAK 07",
+   "sampleEn": "SHIFT PLAN · SHELTER 07",
+   "note": ""
+  },
+  {
+   "name": "TXT_Header",
+   "part": "Body",
+   "center": [
+    0.19600000000000006,
+    1.573,
+    -0.0172
+   ],
+   "size": [
+    0.432,
+    0.0258
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "chalkNote",
+   "font": "Kalam 700",
+   "capMm": 11,
+   "align": "left",
+   "sample": "V.001 · erzak 24 (−2,1) · 8/10 kişi",
+   "sampleEn": "S.001 · rations 24 (−2.1) · 8/10 people",
+   "note": "tebeşir; plan değiştikçe beklenen değişim yeniden yazılır (silinme izi 0,2 s)"
+  },
+  {
+   "name": "TXT_FlapA",
+   "part": "Flap",
+   "center": [
+    0.4980000000000001,
+    1.573,
+    -0.0217
+   ],
+   "size": [
+    0.136,
+    0.020999999999999998
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 9.5,
+   "align": "center",
+   "sample": "PLAN AÇIK",
+   "sampleEn": "PLAN OPEN",
+   "note": ""
+  },
+  {
+   "name": "TXT_FlapB",
+   "part": "Flap",
+   "center": [
+    0.4980000000000001,
+    1.573,
+    -0.0181
+   ],
+   "size": [
+    0.136,
+    0.020999999999999998
+   ],
+   "normal": [
+    0,
+    0,
+    1
+   ],
+   "up": [
+    0,
+    -1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 9.5,
+   "align": "center",
+   "sample": "PLAN KİLİTLİ",
+   "sampleEn": "PLAN LOCKED",
+   "note": "arka yüz (kırmızı); plaka 180° dönünce öne gelir"
+  },
+  {
+   "name": "TXT_P_tek",
+   "part": "Body",
+   "center": [
+    -0.512,
+    1.538,
+    -0.016
+   ],
+   "size": [
+    0.09,
+    0.0144
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 9.5,
+   "align": "center",
+   "sample": "TEKNİSYEN",
+   "sampleEn": "TECHNICIAN",
+   "note": ""
+  },
+  {
+   "name": "TXT_S_tek",
+   "part": "Body",
+   "center": [
+    -0.512,
+    1.384,
+    -0.014
+   ],
+   "size": [
+    0.076,
+    0.04
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "printLabel",
+   "font": "Courier Prime 700",
+   "capMm": 6.6,
+   "align": "center",
+   "sample": "KİT · GEREKLİ / ZIRH / YARDIMCI",
+   "sampleEn": "KIT / ARMOUR / AID",
+   "note": "boş cebin baskısı: üç satır, 14 mm aralık; dolu cepte kartın altında kalır"
+  },
+  {
+   "name": "TXT_P_emp",
+   "part": "Body",
+   "center": [
+    -0.39399999999999996,
+    1.538,
+    -0.016
+   ],
+   "size": [
+    0.09,
+    0.0144
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 9.5,
+   "align": "center",
+   "sample": "EMP UZMANI",
+   "sampleEn": "EMP SPECIALIST",
+   "note": ""
+  },
+  {
+   "name": "TXT_S_emp",
+   "part": "Body",
+   "center": [
+    -0.39399999999999996,
+    1.384,
+    -0.014
+   ],
+   "size": [
+    0.076,
+    0.04
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "printLabel",
+   "font": "Courier Prime 700",
+   "capMm": 6.6,
+   "align": "center",
+   "sample": "KİT · GEREKLİ / ZIRH / YARDIMCI",
+   "sampleEn": "KIT / ARMOUR / AID",
+   "note": "boş cebin baskısı: üç satır, 14 mm aralık; dolu cepte kartın altında kalır"
+  },
+  {
+   "name": "TXT_P_ana",
+   "part": "Body",
+   "center": [
+    -0.27599999999999997,
+    1.538,
+    -0.016
+   ],
+   "size": [
+    0.09,
+    0.0144
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 9.5,
+   "align": "center",
+   "sample": "ANALİST",
+   "sampleEn": "ANALYST",
+   "note": ""
+  },
+  {
+   "name": "TXT_S_ana",
+   "part": "Body",
+   "center": [
+    -0.27599999999999997,
+    1.384,
+    -0.014
+   ],
+   "size": [
+    0.076,
+    0.04
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "printLabel",
+   "font": "Courier Prime 700",
+   "capMm": 6.6,
+   "align": "center",
+   "sample": "KİT · GEREKLİ / ZIRH / YARDIMCI",
+   "sampleEn": "KIT / ARMOUR / AID",
+   "note": "boş cebin baskısı: üç satır, 14 mm aralık; dolu cepte kartın altında kalır"
+  },
+  {
+   "name": "TXT_P_uret",
+   "part": "Body",
+   "center": [
+    -0.512,
+    1.338,
+    -0.016
+   ],
+   "size": [
+    0.09,
+    0.0144
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 9.5,
+   "align": "center",
+   "sample": "ÜRETİM EKİBİ",
+   "sampleEn": "PRODUCTION",
+   "note": ""
+  },
+  {
+   "name": "TXT_S_uret",
+   "part": "Body",
+   "center": [
+    -0.512,
+    1.184,
+    -0.014
+   ],
+   "size": [
+    0.076,
+    0.04
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "printLabel",
+   "font": "Courier Prime 700",
+   "capMm": 6.6,
+   "align": "center",
+   "sample": "KİT / ZIRH / YARDIMCI",
+   "sampleEn": "KIT / ARMOUR / AID",
+   "note": "boş cebin baskısı: üç satır, 14 mm aralık; dolu cepte kartın altında kalır"
+  },
+  {
+   "name": "TXT_P_mutf",
+   "part": "Body",
+   "center": [
+    -0.39399999999999996,
+    1.338,
+    -0.016
+   ],
+   "size": [
+    0.09,
+    0.0144
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 9.5,
+   "align": "center",
+   "sample": "MUTFAK",
+   "sampleEn": "KITCHEN",
+   "note": ""
+  },
+  {
+   "name": "TXT_S_mutf",
+   "part": "Body",
+   "center": [
+    -0.39399999999999996,
+    1.184,
+    -0.014
+   ],
+   "size": [
+    0.076,
+    0.04
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "printLabel",
+   "font": "Courier Prime 700",
+   "capMm": 6.6,
+   "align": "center",
+   "sample": "KİT / ZIRH / YARDIMCI",
+   "sampleEn": "KIT / ARMOUR / AID",
+   "note": "boş cebin baskısı: üç satır, 14 mm aralık; dolu cepte kartın altında kalır"
+  },
+  {
+   "name": "TXT_P_egit",
+   "part": "Body",
+   "center": [
+    -0.27599999999999997,
+    1.338,
+    -0.016
+   ],
+   "size": [
+    0.09,
+    0.0144
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 9.5,
+   "align": "center",
+   "sample": "EĞİTİM",
+   "sampleEn": "TRAINING",
+   "note": ""
+  },
+  {
+   "name": "TXT_S_egit",
+   "part": "Body",
+   "center": [
+    -0.27599999999999997,
+    1.184,
+    -0.014
+   ],
+   "size": [
+    0.076,
+    0.04
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "printLabel",
+   "font": "Courier Prime 700",
+   "capMm": 6.6,
+   "align": "center",
+   "sample": "KİT / ZIRH / YARDIMCI",
+   "sampleEn": "KIT / ARMOUR / AID",
+   "note": "boş cebin baskısı: üç satır, 14 mm aralık; dolu cepte kartın altında kalır"
+  },
+  {
+   "name": "TXT_FieldBand",
+   "part": "Body",
+   "center": [
+    -0.39399999999999996,
+    1.5554,
+    -0.014
+   ],
+   "size": [
+    0.3,
+    0.0062
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "printLabel",
+   "font": "Courier Prime 700",
+   "capMm": 4.4,
+   "align": "center",
+   "sample": "SAHA · BASKIN KADROSU",
+   "sampleEn": "FIELD · RAID TEAM",
+   "note": ""
+  },
+  {
+   "name": "TXT_Topics",
+   "part": "Body",
+   "center": [
+    -0.18999999999999995,
+    1.271,
+    -0.014
+   ],
+   "size": [
+    0.068,
+    0.11
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "printLabel",
+   "font": "Courier Prime 700",
+   "capMm": 6.8,
+   "align": "left",
+   "sample": "TEKNİSYEN / EMP / ANALİZ / ÜRETİM / MUTFAK",
+   "sampleEn": "TECHNICIAN / EMP / ANALYSIS / PRODUCTION / KITCHEN",
+   "note": "beş satır, 22 mm aralık; seçilen konu kırmızı yağlı kalem halkasıyla (decal) — tıklanan satıra yeniden çizilir"
+  },
+  {
+   "name": "TXT_P_bosta",
+   "part": "Body",
+   "center": [
+    -0.08699999999999997,
+    1.538,
+    -0.016
+   ],
+   "size": [
+    0.196,
+    0.0144
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 9.5,
+   "align": "center",
+   "sample": "BOŞTA / DİNLENME",
+   "sampleEn": "IDLE / REST",
+   "note": ""
+  },
+  {
+   "name": "TXT_P_order",
+   "part": "Body",
+   "center": [
+    -0.01100000000000001,
+    1.338,
+    -0.016
+   ],
+   "size": [
+    0.216,
+    0.0144
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 9.5,
+   "align": "center",
+   "sample": "ÜRETİM · İŞ EMRİ",
+   "sampleEn": "PRODUCTION · WORK ORDER",
+   "note": ""
+  },
+  {
+   "name": "TXT_P_dosya",
+   "part": "Body",
+   "center": [
+    0.44800000000000006,
+    1.338,
+    -0.016
+   ],
+   "size": [
+    0.214,
+    0.0144
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 9.5,
+   "align": "center",
+   "sample": "KİŞİ DOSYASI",
+   "sampleEn": "PERSONAL FILE",
+   "note": ""
+  },
+  {
+   "name": "TXT_P_ham",
+   "part": "Body",
+   "center": [
+    -0.26799999999999996,
+    1.137,
+    -0.016
+   ],
+   "size": [
+    0.34,
+    0.0128
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 8.6,
+   "align": "center",
+   "sample": "DEPO · HAMMADDE",
+   "sampleEn": "STORE · RAW MATERIALS",
+   "note": ""
+  },
+  {
+   "name": "TXT_P_kit",
+   "part": "Body",
+   "center": [
+    0.16600000000000004,
+    1.137,
+    -0.016
+   ],
+   "size": [
+    0.488,
+    0.0128
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 8.6,
+   "align": "center",
+   "sample": "DEPO · KULLANILABİLİR KİTLER",
+   "sampleEn": "STORE · AVAILABLE KITS",
+   "note": ""
+  },
+  {
+   "name": "TXT_Count_0",
+   "part": "Body",
+   "center": [
+    -0.013000000000000012,
+    1.057,
+    -0.0157
+   ],
+   "size": [
+    0.022,
+    0.01
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 7,
+   "align": "center",
+   "sample": "×2",
+   "sampleEn": "×2",
+   "note": "yığındaki adet"
+  },
+  {
+   "name": "TXT_Count_1",
+   "part": "Body",
+   "center": [
+    0.06900000000000006,
+    1.057,
+    -0.0157
+   ],
+   "size": [
+    0.022,
+    0.01
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 7,
+   "align": "center",
+   "sample": "×2",
+   "sampleEn": "×2",
+   "note": "yığındaki adet"
+  },
+  {
+   "name": "TXT_Count_2",
+   "part": "Body",
+   "center": [
+    0.15100000000000002,
+    1.057,
+    -0.0157
+   ],
+   "size": [
+    0.022,
+    0.01
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 7,
+   "align": "center",
+   "sample": "×2",
+   "sampleEn": "×2",
+   "note": "yığındaki adet"
+  },
+  {
+   "name": "TXT_Count_3",
+   "part": "Body",
+   "center": [
+    0.23299999999999998,
+    1.057,
+    -0.0157
+   ],
+   "size": [
+    0.022,
+    0.01
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 7,
+   "align": "center",
+   "sample": "×2",
+   "sampleEn": "×2",
+   "note": "yığındaki adet"
+  },
+  {
+   "name": "TXT_Count_4",
+   "part": "Body",
+   "center": [
+    0.31500000000000006,
+    1.057,
+    -0.0157
+   ],
+   "size": [
+    0.022,
+    0.01
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 7,
+   "align": "center",
+   "sample": "×2",
+   "sampleEn": "×2",
+   "note": "yığındaki adet"
+  },
+  {
+   "name": "TXT_Count_5",
+   "part": "Body",
+   "center": [
+    0.397,
+    1.057,
+    -0.0157
+   ],
+   "size": [
+    0.022,
+    0.01
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 7,
+   "align": "center",
+   "sample": "×2",
+   "sampleEn": "×2",
+   "note": "yığındaki adet"
+  },
+  {
+   "name": "TXT_P_hurda",
+   "part": "Body",
+   "center": [
+    0.497,
+    1.068,
+    -0.08929999999999999
+   ],
+   "size": [
+    0.13,
+    0.05
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "wallStencil",
+   "font": "Big Shoulders Stencil Display 800",
+   "capMm": 11,
+   "align": "center",
+   "sample": "HURDA",
+   "sampleEn": "SCRAP",
+   "note": "ikinci satır küçük: “1 eşya → 1 metal” / “1 item → 1 metal”"
+  },
+  {
+   "name": "TXT_LockTag",
+   "part": "LockRod",
+   "center": [
+    0.548,
+    1.3059999999999998,
+    -0.032600000000000004
+   ],
+   "size": [
+    0.048,
+    0.03
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "handNote",
+   "font": "Kalam 700",
+   "capMm": 5,
+   "align": "center",
+   "sample": "PLAN KİLİTLİ\nbaskın emri",
+   "sampleEn": "PLAN LOCKED\nraid order",
+   "note": "ikinci satır nedeni söyler: baskın emri / devir fişi basıldı"
+  }
+ ],
+ "anchors": [
+  {
+   "name": "Slot_tek",
+   "part": "Body",
+   "pos": [
+    -0.512,
+    1.4649999999999999,
+    -0.0165
+   ],
+   "note": "TEKNİSYEN cebi: kişi kartının merkezi (kart 80 × 120 mm, mıknatıs üst sağda). Teçhizat şeritleri kartın altında 14 mm arayla (kit, zırh, yardımcı)"
+  },
+  {
+   "name": "Slot_emp",
+   "part": "Body",
+   "pos": [
+    -0.39399999999999996,
+    1.4649999999999999,
+    -0.0165
+   ],
+   "note": "EMP UZMANI cebi: kişi kartının merkezi (kart 80 × 120 mm, mıknatıs üst sağda). Teçhizat şeritleri kartın altında 14 mm arayla (kit, zırh, yardımcı)"
+  },
+  {
+   "name": "Slot_ana",
+   "part": "Body",
+   "pos": [
+    -0.27599999999999997,
+    1.4649999999999999,
+    -0.0165
+   ],
+   "note": "ANALİST cebi: kişi kartının merkezi (kart 80 × 120 mm, mıknatıs üst sağda). Teçhizat şeritleri kartın altında 14 mm arayla (kit, zırh, yardımcı)"
+  },
+  {
+   "name": "Slot_uret",
+   "part": "Body",
+   "pos": [
+    -0.512,
+    1.265,
+    -0.0165
+   ],
+   "note": "ÜRETİM EKİBİ cebi: kişi kartının merkezi (kart 80 × 120 mm, mıknatıs üst sağda). Teçhizat şeritleri kartın altında 14 mm arayla (kit, zırh, yardımcı)"
+  },
+  {
+   "name": "Slot_mutf",
+   "part": "Body",
+   "pos": [
+    -0.39399999999999996,
+    1.265,
+    -0.0165
+   ],
+   "note": "MUTFAK cebi: kişi kartının merkezi (kart 80 × 120 mm, mıknatıs üst sağda). Teçhizat şeritleri kartın altında 14 mm arayla (kit, zırh, yardımcı)"
+  },
+  {
+   "name": "Slot_egit",
+   "part": "Body",
+   "pos": [
+    -0.27599999999999997,
+    1.265,
+    -0.0165
+   ],
+   "note": "EĞİTİM cebi: kişi kartının merkezi (kart 80 × 120 mm, mıknatıs üst sağda). Teçhizat şeritleri kartın altında 14 mm arayla (kit, zırh, yardımcı)"
+  },
+  {
+   "name": "Topics",
+   "part": "Body",
+   "pos": [
+    -0.22399999999999998,
+    1.311,
+    -0.014
+   ],
+   "note": "ilk konu satırının sol taban noktası; satır aralığı 22 mm"
+  },
+  {
+   "name": "Bosta_Deck",
+   "part": "Body",
+   "pos": [
+    0.5180000000000001,
+    1.4649999999999999,
+    -0.026000000000000002
+   ],
+   "note": "destenin üst kartı (kartlar 1 mm sağ-alt kaymalı yığın)"
+  },
+  {
+   "name": "Bosta_HandLeft",
+   "part": "Body",
+   "pos": [
+    -0.11799999999999994,
+    1.4649999999999999,
+    -0.017
+   ],
+   "note": "açık elin en sol kartı; aralık min(82, 636/(n−1)) mm; her kart 320 ms, 70 ms ara, üstten başlar"
+  },
+  {
+   "name": "Order_Recipe",
+   "part": "Body",
+   "pos": [
+    -0.06599999999999995,
+    1.265,
+    -0.0152
+   ],
+   "note": "tarif kartının yeri (112 × 80); serbest bırakılabilir, çoğu oyuncu basılı kutuya koyar"
+  },
+  {
+   "name": "Order_Inputs",
+   "part": "Body",
+   "pos": [
+    0.14900000000000002,
+    1.269,
+    -0.0152
+   ],
+   "note": "girdi alanı 294 × 56 mm: hammadde fişleri (56 × 40) bırakıldıkları serbest konumda kalır; kayıtla korunur"
+  },
+  {
+   "name": "Folder",
+   "part": "Body",
+   "pos": [
+    0.44800000000000006,
+    1.2349999999999999,
+    -0.02
+   ],
+   "note": "kapalı klasörün merkezi (130 × 180); seçilen kişinin adı kapakta (TMP). Tık: klasör öne gelir ve açılır"
+  },
+  {
+   "name": "Mat_metal",
+   "part": "Body",
+   "pos": [
+    -0.39999999999999997,
+    1.091,
+    -0.0165
+   ],
+   "note": "hammadde stok kartı (80 × 56): büyük serbest sayı + birim noktaları; buradan sürüklenen her kart 1 adet ayırır"
+  },
+  {
+   "name": "Mat_devre",
+   "part": "Body",
+   "pos": [
+    -0.31199999999999994,
+    1.091,
+    -0.0165
+   ],
+   "note": "hammadde stok kartı (80 × 56): büyük serbest sayı + birim noktaları; buradan sürüklenen her kart 1 adet ayırır"
+  },
+  {
+   "name": "Mat_kumas",
+   "part": "Body",
+   "pos": [
+    -0.22399999999999998,
+    1.091,
+    -0.0165
+   ],
+   "note": "hammadde stok kartı (80 × 56): büyük serbest sayı + birim noktaları; buradan sürüklenen her kart 1 adet ayırır"
+  },
+  {
+   "name": "Mat_kimyasal",
+   "part": "Body",
+   "pos": [
+    -0.13599999999999995,
+    1.091,
+    -0.0165
+   ],
+   "note": "hammadde stok kartı (80 × 56): büyük serbest sayı + birim noktaları; buradan sürüklenen her kart 1 adet ayırır"
+  },
+  {
+   "name": "Kit_0",
+   "part": "Body",
+   "pos": [
+    -0.038999999999999924,
+    1.091,
+    -0.0165
+   ],
+   "note": "aynı türden eşya kartı yığını (80 × 50); üst kart sürüklenir"
+  },
+  {
+   "name": "Kit_1",
+   "part": "Body",
+   "pos": [
+    0.04300000000000004,
+    1.091,
+    -0.0165
+   ],
+   "note": "aynı türden eşya kartı yığını (80 × 50); üst kart sürüklenir"
+  },
+  {
+   "name": "Kit_2",
+   "part": "Body",
+   "pos": [
+    0.125,
+    1.091,
+    -0.0165
+   ],
+   "note": "aynı türden eşya kartı yığını (80 × 50); üst kart sürüklenir"
+  },
+  {
+   "name": "Kit_3",
+   "part": "Body",
+   "pos": [
+    0.20700000000000007,
+    1.091,
+    -0.0165
+   ],
+   "note": "aynı türden eşya kartı yığını (80 × 50); üst kart sürüklenir"
+  },
+  {
+   "name": "Kit_4",
+   "part": "Body",
+   "pos": [
+    0.28900000000000003,
+    1.091,
+    -0.0165
+   ],
+   "note": "aynı türden eşya kartı yığını (80 × 50); üst kart sürüklenir"
+  },
+  {
+   "name": "Kit_5",
+   "part": "Body",
+   "pos": [
+    0.371,
+    1.091,
+    -0.0165
+   ],
+   "note": "aynı türden eşya kartı yığını (80 × 50); üst kart sürüklenir"
+  },
+  {
+   "name": "Book_Hook",
+   "part": "Body",
+   "pos": [
+    -0.51,
+    1.135,
+    -0.026000000000000002
+   ],
+   "note": "tarif defterinin ip halkası buraya asılır (defter 105 × 148 × 18)"
+  },
+  {
+   "name": "Hurda_Slot",
+   "part": "Body",
+   "pos": [
+    0.497,
+    1.129,
+    -0.074
+   ],
+   "note": "eşya kartının bırakıldığı yarık (hedef: kutunun bütün ön yüzü)"
+  },
+  {
+   "name": "Cam_K4",
+   "part": "Body",
+   "pos": [
+    0,
+    1.293,
+    -0.98
+   ],
+   "note": "K4 kamerası: pano merkezine 0,96 m, düşey FOV 41°, eğimsiz; 1920 × 1080’de 1,52 px/mm"
+  },
+  {
+   "name": "Look_K4",
+   "part": "Body",
+   "pos": [
+    0,
+    1.293,
+    -0.014
+   ],
+   "note": "K4 bakış noktası: iç alanın merkezi"
+  }
+ ],
+ "lights": [
+  {
+   "name": "BoardLamp",
+   "part": "Lamp",
+   "pos": [
+    0,
+    1.7429999999999999,
+    -0.34400000000000003
+   ],
+   "type": "spot",
+   "color": "#FFE2B8",
+   "shadows": true,
+   "note": "pano lambası: spot 48°, hedef pano merkezi (0, 1,29, −0,02); K4’te tek gölgeli ışık + tavan ampulü (gölgesiz dolgu)"
+  }
+ ],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -1.62,
+    0,
+    1.7
+   ],
+   "yaw": -48,
+   "note": "dünya; eski raf/maketin yeri (sol arka köşe), ön yüz masanın sol önüne dönük; K1’de yandan, küçük görünür. Arka ayaklar 0,12 m (duvara 4 cm)"
+  }
+ ],
+ "tris": 3708,
+ "trisPerPart": {
+  "Body": 3292,
+  "BackSign": 44,
+  "Flap": 56,
+  "HurdaLid": 56,
+  "LockRod": 160,
+  "Lamp": 100
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.66,
+   0,
+   -0.3491
+  ],
+  "max": [
+   0.66,
+   1.8224,
+   0.14
+  ],
+  "size": [
+   1.32,
+   1.8224,
+   0.4891
+  ]
+ },
+ "materials": [
+  {
+   "key": "paintOliveDark",
+   "hex": "#353B30",
+   "rough": 0.62,
+   "metal": 0.05,
+   "note": "kapı kanadı, kasa, çerçeve",
+   "tris": 780,
+   "isNew": true
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 92,
+   "isNew": true
+  },
+  {
+   "key": "rubberGasket",
+   "hex": "#141413",
+   "rough": 0.85,
+   "metal": 0,
+   "note": "conta",
+   "tris": 128,
+   "isNew": true
+  },
+  {
+   "key": "bakeliteBlack",
+   "hex": "#181412",
+   "rough": 0.34,
+   "metal": 0,
+   "note": "düğme, kol başı",
+   "tris": 120,
+   "isNew": true
+  },
+  {
+   "key": "boardPanel",
+   "hex": "#56604F",
+   "rough": 0.72,
+   "metal": 0.05,
+   "note": "mıknatıs tutan çelik pano yüzeyi, mat zeytin-gri boya (kartlardan iki ton koyu)",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "boardFace",
+   "hex": "#56604F",
+   "rough": 0.72,
+   "metal": 0,
+   "tex": "tx_board_face 4096×2048 (1160×600 mm): kelimesiz baskı — cep sınırları (kesikli kart dış hattı + kişi simgesi + üç teçhizat şeridi), Boşta yelpaze izi, iş emri ve depo alanı tonu; yazılar TMP",
+   "note": "pano baskı yüzü (UV 0–1)",
+   "tris": 2,
+   "isNew": true
+  },
+  {
+   "key": "greasePencil",
+   "hex": "#9A1E14",
+   "rough": 0.6,
+   "metal": 0,
+   "note": "kırmızı yağlı kalem (eğitim halkası)",
+   "tris": 24,
+   "isNew": true
+  },
+  {
+   "key": "chalkWhite",
+   "hex": "#ECEBE4",
+   "rough": 0.95,
+   "metal": 0,
+   "note": "tebeşir, yağlı kalem ucu",
+   "tris": 24,
+   "isNew": true
+  },
+  {
+   "key": "slate",
+   "hex": "#2F3431",
+   "rough": 0.68,
+   "metal": 0,
+   "note": "şalter tabanı (arduvaz)",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "woodRaw",
+   "hex": "#8A6A44",
+   "rough": 0.8,
+   "metal": 0,
+   "note": "ham çıta, sandık",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 728,
+   "isNew": true
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 688,
+   "isNew": true
+  },
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 492,
+   "isNew": false
+  },
+  {
+   "key": "coverRed",
+   "hex": "#B8241A",
+   "rough": 0.42,
+   "metal": 0.05,
+   "tris": 24,
+   "isNew": false
+  },
+  {
+   "key": "paper",
+   "hex": "#EFE6D0",
+   "rough": 0.92,
+   "metal": 0,
+   "tris": 2,
+   "isNew": false
+  },
+  {
+   "key": "wireBlack",
+   "hex": "#26262A",
+   "rough": 0.45,
+   "metal": 0.6,
+   "note": "tel sepet, kanca",
+   "tris": 84,
+   "isNew": true
+  },
+  {
+   "key": "galv",
+   "hex": "#70756E",
+   "rough": 0.5,
+   "metal": 0.45,
+   "tris": 88,
+   "isNew": false
+  },
+  {
+   "key": "paintOlive",
+   "hex": "#4A5140",
+   "rough": 0.6,
+   "metal": 0.05,
+   "note": "boyalı sac (dolap, konsol, saat gövdesi)",
+   "tris": 120,
+   "isNew": true
+  },
+  {
+   "key": "enamelBadge",
+   "hex": "#E8E2CF",
+   "rough": 0.3,
+   "metal": 0,
+   "tex": "tx_icon_gear (dişli simgesi, mürekkep #1E1B16)",
+   "note": "emaye rozet",
+   "tris": 88,
+   "isNew": true
+  },
+  {
+   "key": "punchHole",
+   "hex": "#151310",
+   "rough": 1,
+   "metal": 0,
+   "note": "zımba deliği (kartın arkası karanlık)",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "tagPaper",
+   "hex": "#F2E27A",
+   "rough": 0.9,
+   "metal": 0,
+   "note": "dikkat fişi (sarı not kâğıdı), yazı TMP Kalam",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "lampGlassWarm",
+   "hex": "#FFF0C8",
+   "rough": 0.3,
+   "metal": 0,
+   "emissive": "#FFD27A",
+   "ei": 2.5,
+   "note": "oda ampulü",
+   "tris": 100,
+   "isNew": true
+  }
+ ]
+}

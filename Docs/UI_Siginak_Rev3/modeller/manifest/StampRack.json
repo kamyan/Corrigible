@@ -1,0 +1,84 @@
+{
+ "name": "StampRack",
+ "family": "desk",
+ "budget": "small",
+ "origin": "taban ortası (masa üstü, y = 0)",
+ "note": "Cilalı ahşap raf, üç lastik damga (tornalanmış ahşap sap, ahşap gövde, kauçuk yüz), yanında kapaklı ıstampa kutusu. Damga yüzü desenleri dokuda.",
+ "listName": "Damga rafı",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -0.895,
+    0.76,
+    1.735
+   ],
+   "yaw": -90,
+   "note": "masanın sol arka köşesi (sayaç rafının solu); rev2’de (−0,76, 1,55) — teleks büyüdüğü için kaydı"
+  }
+ ],
+ "tris": 728,
+ "trisPerPart": {
+  "Body": 728
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.145,
+   0,
+   -0.03
+  ],
+  "max": [
+   0.146,
+   0.094,
+   0.03
+  ],
+  "size": [
+   0.291,
+   0.094,
+   0.06
+  ]
+ },
+ "materials": [
+  {
+   "key": "woodVarnish",
+   "hex": "#5E4128",
+   "rough": 0.45,
+   "metal": 0,
+   "tex": "tx_wood (lif)",
+   "note": "cilalı masa ahşabı",
+   "tris": 376,
+   "isNew": true
+  },
+  {
+   "key": "rubber",
+   "hex": "#1C1C1A",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 132,
+   "isNew": false
+  },
+  {
+   "key": "woodLight",
+   "hex": "#9A7448",
+   "rough": 0.7,
+   "metal": 0,
+   "tris": 132,
+   "isNew": false
+  },
+  {
+   "key": "galv",
+   "hex": "#70756E",
+   "rough": 0.5,
+   "metal": 0.45,
+   "tris": 88,
+   "isNew": false
+  }
+ ]
+}

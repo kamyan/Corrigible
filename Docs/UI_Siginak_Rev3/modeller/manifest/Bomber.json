@@ -1,0 +1,109 @@
+{
+ "name": "Bomber",
+ "family": "raidpieces",
+ "budget": "unit",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Deniz mayını gövde: küre (r 0,2), ekvator flanşı, yedi fünye boynuzu (1 tepede + 6 tanesi 24° yükseklikte), kısa ayak; göz önde ekvatorun altında. Biçim: dikenli top. Tepe 0,66. Gövde renkleri ortak (r_gun / r_maintTop / r_gunW / r_gunS / r_gunD); kırmızı yalnız gözde (r_lens) ve taban halkasında (r_accent). Tür biçimden okunur, etiketteki işaret ikincil.",
+ "listName": "Patlayan robot",
+ "parts": [],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0,
+    0.664,
+    0
+   ],
+   "note": "tepe noktası (≈0,66)"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    6.5,
+    0,
+    -1.5
+   ],
+   "yaw": 90,
+   "note": "örnek: Rev2 raid.html intents durumu (u 6, v 1)"
+  }
+ ],
+ "tris": 1100,
+ "trisPerPart": {
+  "Body": 1100
+ },
+ "budgetTris": 1500,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.2696,
+   0,
+   -0.26
+  ],
+  "max": [
+   0.2696,
+   0.664,
+   0.26
+  ],
+  "size": [
+   0.5392,
+   0.664,
+   0.52
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_gunD",
+   "hex": "#26282B",
+   "rough": 0.6,
+   "metal": 0.3,
+   "tris": 172,
+   "isNew": false
+  },
+  {
+   "key": "r_accent",
+   "hex": "#9A1E14",
+   "rough": 0.5,
+   "metal": 0,
+   "tris": 80,
+   "isNew": false
+  },
+  {
+   "key": "r_gun",
+   "hex": "#5B5E62",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 396,
+   "isNew": false
+  },
+  {
+   "key": "r_gunS",
+   "hex": "#34373A",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 108,
+   "isNew": false
+  },
+  {
+   "key": "r_steelPin",
+   "hex": "#7F817E",
+   "rough": 0.4,
+   "metal": 0.6,
+   "tris": 294,
+   "isNew": false
+  },
+  {
+   "key": "r_lens",
+   "hex": "#B8241A",
+   "rough": 0.3,
+   "metal": 0,
+   "tris": 50,
+   "isNew": false
+  }
+ ]
+}

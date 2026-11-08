@@ -1,0 +1,89 @@
+{
+ "name": "Civil_default",
+ "family": "raidcivil",
+ "budget": "raid",
+ "origin": "karenin merkezi, pafta yüzeyi (y = 0)",
+ "note": "Bugünkü krem sunucu, pahlı: krem gövde (üç yüz anahtarı), mavi bant, tepede mavi halka + çarpı (Ø 0,32), güney yüzde havalandırma panjuru. Eğitim, örnek baskın ve varsayılan kit.",
+ "listName": "Sivil sunucu (varsayılan kit)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 162,
+ "trisPerPart": {
+  "Body": 162
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.321,
+   0,
+   -0.3299
+  ],
+  "max": [
+   0.321,
+   0.663,
+   0.321
+  ],
+  "size": [
+   0.642,
+   0.663,
+   0.6509
+  ]
+ },
+ "materials": [
+  {
+   "key": "rc_plinth",
+   "hex": "#4A463F",
+   "rough": 0.85,
+   "metal": 0,
+   "note": "sivil gövdenin koyu kaidesi (kâğıttan ayırır)",
+   "tris": 8,
+   "isNew": true
+  },
+  {
+   "key": "r_civil_top",
+   "hex": "#ECE6D6",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 14,
+   "isNew": false
+  },
+  {
+   "key": "r_civil_west",
+   "hex": "#D5CDBB",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "r_civil_south",
+   "hex": "#BAB19E",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 36,
+   "isNew": false
+  },
+  {
+   "key": "r_blue",
+   "hex": "#1A4789",
+   "rough": 0.6,
+   "metal": 0,
+   "tris": 82,
+   "isNew": false
+  },
+  {
+   "key": "rc_vent",
+   "hex": "#3B3731",
+   "rough": 0.85,
+   "metal": 0,
+   "note": "havalandırma yarıklarının koyu zemini",
+   "tris": 10,
+   "isNew": true
+  }
+ ]
+}

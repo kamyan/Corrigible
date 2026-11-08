@@ -1,0 +1,123 @@
+{
+ "name": "WeldArm",
+ "family": "raidpieces",
+ "budget": "raid",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0); kök 0,30’da. WeldArmBase.Turn’ün çocuğu olunca yerel konum (0, −0,215, 0)",
+ "note": "İki parçalı kaynak kolu: sabit omuz çatalı (tabla üstünde), Arm1 (omuz, 35° yukarı-öne), Arm2 (dirsek, 40° aşağı-öne), uçta aşağı bakan kaynak torcu. −z’ye uzanır (kaidenin turuncu burnuyla aynı yön). Kırmızı yok.",
+ "listName": "Kaynak kolu (iki mafsal)",
+ "parts": [
+  {
+   "name": "Arm1",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.385,
+    0
+   ],
+   "pivotLocal": [
+    0,
+    0.385,
+    0
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    -30,
+    30
+   ],
+   "rest": 0,
+   "note": "omuz; + aşağı/öne, − yukarı"
+  },
+  {
+   "name": "Arm2",
+   "parent": "Arm1",
+   "pivotModel": [
+    0,
+    0.5685444596323348,
+    -0.2621286541724774
+   ],
+   "pivotLocal": [
+    0,
+    0.1835444596323348,
+    -0.2621286541724774
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    -40,
+    40
+   ],
+   "rest": 0,
+   "note": "dirsek"
+  }
+ ],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Torch",
+   "part": "Arm2",
+   "pos": [
+    0,
+    0.32656392892010383,
+    -0.47662109824579124
+   ],
+   "note": "torç ucu (kaynak çizgisinin başı)"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 348,
+ "trisPerPart": {
+  "Body": 132,
+  "Arm1": 84,
+  "Arm2": 132
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.07,
+   0.3,
+   -0.5006
+  ],
+  "max": [
+   0.07,
+   0.6018,
+   0.06
+  ],
+  "size": [
+   0.14,
+   0.3018,
+   0.5606
+  ]
+ },
+ "materials": [
+  {
+   "key": "rp_steelDark",
+   "hex": "#45484A",
+   "rough": 0.85,
+   "metal": 0.3,
+   "note": "döner tabla, ayak, mafsal (mat koyu çelik)",
+   "tris": 212,
+   "isNew": true
+  },
+  {
+   "key": "rp_steelPlate",
+   "hex": "#6E726E",
+   "rough": 0.85,
+   "metal": 0.3,
+   "note": "kaynak kolu ve kaidesi, açık çelik (mat)",
+   "tris": 88,
+   "isNew": true
+  },
+  {
+   "key": "r_steelPin",
+   "hex": "#7F817E",
+   "rough": 0.4,
+   "metal": 0.6,
+   "tris": 48,
+   "isNew": false
+  }
+ ]
+}

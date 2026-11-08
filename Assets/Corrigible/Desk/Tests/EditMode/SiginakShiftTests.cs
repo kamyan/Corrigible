@@ -16,7 +16,7 @@ namespace Corrigible.Desk.Tests
     /// </summary>
     public class SiginakShiftTests
     {
-        static Simulation NewLiberation(double fon = 100) => Simulation.NewGame(731, new Balance { startFon = fon });
+        static Simulation NewLiberation(double fon = 100) => LegacySimulation.NewGame(731, new Balance { startFon = fon });
 
         static string N(double v) => DeskFormat.Number(v, 1);
         static string S(double v) => DeskFormat.Signed(v, 1);
@@ -402,10 +402,21 @@ namespace Corrigible.Desk.Tests
                 var roots = scene.GetRootGameObjects();
                 var shift = roots.SelectMany(g => g.GetComponentsInChildren<SiginakShift>(true)).Single();
                 var so = new SerializedObject(shift);
-                foreach (var f in new[] { "game", "surface", "desk", "rig", "map", "shiftSwitch", "telex", "counters", "sequence", "report", "tray", "view" })
+                foreach (var f in new[] { "game", "surface", "desk", "rig", "map", "shiftSwitch", "telex", "counters", "sequence", "report", "tray", "view",
+                             "briefing", "close" })
                     Assert.IsNotNull(so.FindProperty(f).objectReferenceValue, f);
                 var desk = roots.SelectMany(g => g.GetComponentsInChildren<SiginakDesk>(true)).Single();
                 Assert.AreSame(shift, new SerializedObject(desk).FindProperty("shift").objectReferenceValue);
+                // Revizyon 3 · Aşama 4: kartlı oyunun fiş kodu SiginakShiftClose'a taşındı; eski alanlar kalktı (PLAN W5, §2.2 #7)
+                var close = roots.SelectMany(g => g.GetComponentsInChildren<SiginakShiftClose>(true)).Single();
+                Assert.AreSame(close, so.FindProperty("close").objectReferenceValue);
+                Assert.AreSame(close, new SerializedObject(desk).FindProperty("shiftClose").objectReferenceValue);
+                Assert.AreSame(shift.gameObject, close.gameObject, "kapanış Shift controller'da");
+                foreach (var gone in new[] { "receiptMachine", "receiptFade", "planningBoard" })
+                    Assert.IsNull(so.FindProperty(gone), "SiginakShift." + gone + " kalktı");
+                var cs = new SerializedObject(close);
+                foreach (var f in new[] { "shiftSwitch", "tray", "telex", "rig", "view", "briefing", "game", "surface", "desk" })
+                    Assert.AreSame(so.FindProperty(f).objectReferenceValue, cs.FindProperty(f).objectReferenceValue, "kapanış ve vardiya aynı " + f);
 
                 var report = (ShiftReportView)so.FindProperty("report").objectReferenceValue;
                 Assert.IsFalse(report.gameObject.activeSelf, "rapor kapalı başlar");

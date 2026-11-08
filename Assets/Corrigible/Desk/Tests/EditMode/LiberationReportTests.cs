@@ -10,7 +10,7 @@ namespace Corrigible.Desk.Tests
     /// <summary>Operasyon raporu (Revizyon 2 · S7) gerçek görev/ödül kaydını kullanır; kayıttan devamda aynı raporu kurar.</summary>
     public class LiberationReportTests
     {
-        static Simulation New() => Simulation.NewGame(731, new Balance { startFon = 100 });
+        static Simulation New() => LegacySimulation.NewGame(731, new Balance { startFon = 100 });
 
         static OperationReportData Build(Simulation sim) => OperationReportBuilder.Build(sim);
 

@@ -14,12 +14,13 @@ namespace Corrigible.Desk
         [SerializeField] DeskTarget target;
         [Tooltip("Kolun pivotu (yerel x ekseninde döner).")]
         [SerializeField] Transform handle;
+        [SerializeField] PartDriver handlePart, lampPart;
         [SerializeField] float onDeg = -28, offDeg = 28;
         [SerializeField] Renderer lamp;
         [SerializeField] Material lampOn, lampOff;
 
         bool on = true, dragged;
-        float angle;
+        float angle, hoverLift;
 
         public bool On => on;
         public DeskTarget Target => target;
@@ -80,15 +81,17 @@ namespace Corrigible.Desk
 
         void Update()
         {
-            if (Mathf.Approximately(angle, Goal)) return;
             angle = Mathf.MoveTowards(angle, Goal, Mathf.Abs(onDeg - offDeg) / 0.08f * Time.unscaledDeltaTime);
-            if (handle != null) handle.localRotation = Quaternion.Euler(angle, 0, 0);
+            hoverLift=Mathf.MoveTowards(hoverLift,target!=null&&target.IsHovered?SiginakTheme.Active.NumberOf("motion.hoverLiftMm",4f)*.001f:0,Time.unscaledDeltaTime*.05f);
+            Apply();
         }
 
         void Apply()
         {
-            if (handle != null) handle.localRotation = Quaternion.Euler(angle, 0, 0);
-            if (lamp != null && lampOn != null && lampOff != null) lamp.sharedMaterial = on ? lampOn : lampOff;
+            if(handlePart!=null){handlePart.Set(angle);handlePart.transform.localPosition+=Vector3.back*hoverLift;}
+            else if (handle != null) handle.localRotation = Quaternion.Euler(angle, 0, 0);
+            if(lampPart!=null)lampPart.SetSwap(on?1:0);
+            else if (lamp != null && lampOn != null && lampOff != null) lamp.sharedMaterial = on ? lampOn : lampOff;
         }
     }
 }

@@ -1,0 +1,82 @@
+{
+ "name": "Rubble_weu",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Yatık rack kapağı, kopmuş çerçeve rayı, bir kabin parçası, kıvrık kablo (detailA) ve yonga; toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi.",
+ "listName": "Gedik molozu · Banka veri merkezi (kırık rack kapağı ve kablo)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 218,
+ "trisPerPart": {
+  "Body": 218
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.45,
+   0,
+   -0.45
+  ],
+  "max": [
+   0.45,
+   0.1175,
+   0.45
+  ],
+  "size": [
+   0.9,
+   0.1175,
+   0.9
+  ]
+ },
+ "materials": [
+  {
+   "key": "rk_dust",
+   "hex": "#6B6257",
+   "rough": 1,
+   "metal": 0,
+   "alpha": 0.55,
+   "tex": "tx_dust (yumuşak kenarlı toz lekesi, kenara doğru saydam, 256²)",
+   "note": "gedik molozunun toz lekesi (zemine yapışık dörtgen, gölgesiz)",
+   "tris": 2,
+   "isNew": true
+  },
+  {
+   "key": "k_weu_wallWest",
+   "hex": "#8D877A",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 42,
+   "isNew": false
+  },
+  {
+   "key": "k_weu_wallTop",
+   "hex": "#A8A194",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 72,
+   "isNew": false
+  },
+  {
+   "key": "k_weu_wallSouth",
+   "hex": "#6F6A5F",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 46,
+   "isNew": false
+  },
+  {
+   "key": "k_weu_detailA",
+   "hex": "#5F5B53",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 56,
+   "isNew": false
+  }
+ ]
+}

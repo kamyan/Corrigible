@@ -122,6 +122,24 @@ namespace Corrigible.Tests
         }
 
         /// <summary>
+        /// D5 = c: enum'daki her sesin klibi ve duyulur düzeyi var, kısa sesler yüklemede açılır. <see cref="AudioDirector.PlayCue"/> eksik
+        /// klipte sessizce döndüğü için yeni bir <see cref="Cue"/> bankaya eklenmeden sessiz kalamaz.
+        /// </summary>
+        [Test]
+        public void EveryCue_HasAnAudibleClip()
+        {
+            var bank = Bank();
+            foreach (Cue cue in Enum.GetValues(typeof(Cue)))
+            {
+                var c = bank.Cue(cue);
+                Assert.IsNotNull(c.clip, $"{(int)cue} {cue}: klip yok (ses sessiz kalır)");
+                Assert.That(c.volume, Is.GreaterThan(0f).And.LessThanOrEqualTo(1f), cue.ToString());
+                var imp = (AudioImporter)AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(c.clip));
+                Assert.AreEqual(AudioClipLoadType.DecompressOnLoad, imp.defaultSampleSettings.loadType, cue.ToString());
+            }
+        }
+
+        /// <summary>
         /// Telsiz bandından yalnız saha sesleri geçer: baskın sesleri (31–49) ve bölge olaylarının sesleri (67–88). Kapı, telsiz
         /// (gözcünün bildirimi dahil) ve masa sesleri odada çalar. Olay sesi banda girmezse odada çalıyormuş gibi duyulurdu.
         /// </summary>

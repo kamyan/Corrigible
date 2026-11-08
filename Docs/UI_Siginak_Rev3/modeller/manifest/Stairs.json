@@ -1,0 +1,66 @@
+{
+ "name": "Stairs",
+ "family": "menu",
+ "budget": "big",
+ "origin": "ilk basamağın ön alt kenarı, merdiven ekseninde",
+ "note": "Yukarı kata çıkan beton merdiven (10 basamak, rıht 0,18, basamak 0,27, genişlik 0,90), çelik basamak burunları, duvar tarafında (−x) eğimli beton limon, açık tarafta (+x) Ø 42 galvaniz boru tırabzan ve 4 dikme. Merdiven +z yönünde yükselir; sahnede yaw ile çevrilir.",
+ "listName": "Merdiven ve tırabzan",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 1372,
+ "trisPerPart": {
+  "Body": 1372
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.53,
+   -0.0525,
+   -0.1248
+  ],
+  "max": [
+   0.45,
+   2.7375,
+   2.8248
+  ],
+  "size": [
+   0.98,
+   2.79,
+   2.9496
+  ]
+ },
+ "materials": [
+  {
+   "key": "concreteDark",
+   "hex": "#5C625D",
+   "rough": 0.95,
+   "metal": 0,
+   "tex": "tx_concrete (kalıp izi, nem)",
+   "note": "sahanlık üst duvarı, tavan",
+   "tris": 484,
+   "isNew": true
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 440,
+   "isNew": true
+  },
+  {
+   "key": "galv",
+   "hex": "#70756E",
+   "rough": 0.5,
+   "metal": 0.45,
+   "tris": 448,
+   "isNew": false
+  }
+ ]
+}

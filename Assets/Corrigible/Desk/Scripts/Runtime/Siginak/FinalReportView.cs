@@ -66,6 +66,8 @@ namespace Corrigible.Desk
         [SerializeField] OccupationChart chart;
         [Tooltip("x ekseni etiketleri (1, 5, 10, …, N); fazlası gizlenir.")]
         [SerializeField] TMP_Text[] xLabels = Array.Empty<TMP_Text>();
+        [Tooltip("y ekseni etiketleri, yukarıdan aşağıya (100, 50, 0): biçim dile göre, DeskFormat.Percent (TR %100, EN 100%).")]
+        [SerializeField] TMP_Text[] yLabels = Array.Empty<TMP_Text>();
         [SerializeField] MarkerSlot[] markers = Array.Empty<MarkerSlot>();
         [Header("Kırılma anları")]
         [SerializeField] TMP_Text momentsTitle;
@@ -183,6 +185,7 @@ namespace Corrigible.Desk
             chart.SetColors(T.ColorOf("report.chartLine"), T.ColorOf("report.chartOccupied"), T.ColorOf("report.chartRetaken"), T.ColorOf("report.summaryLine"));
             chart.SetSeries(d.Points, d.Shifts);
             Axis(d.Shifts);
+            for (int i = 0; i < yLabels.Length; i++) yLabels[i].text = DeskFormat.Percent(100 - 50 * i);
 
             momentsTitle.text = d.MomentsTitle;
             var ink = T.ColorOf("ink");

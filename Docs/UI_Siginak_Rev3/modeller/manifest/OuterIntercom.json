@@ -1,0 +1,99 @@
+{
+ "name": "OuterIntercom",
+ "family": "menu",
+ "budget": "small",
+ "origin": "arka yüz, alt kenar ortası",
+ "note": "Dökme alüminyum gövde, yağmur siperli hoparlör ızgarası (yarıklar dokuda), büyük siyah çağrı düğmesi. Menüde tıklanmaz; sesi kapı açılırken “cızırt” verir.",
+ "listName": "Dış interkom",
+ "parts": [
+  {
+   "name": "Button",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.05,
+    -0.06
+   ],
+   "pivotLocal": [
+    0,
+    0.05,
+    -0.06
+   ],
+   "kind": "slide",
+   "axis": "z",
+   "range": [
+    0,
+    0.004
+   ],
+   "rest": 0,
+   "note": "çağrı düğmesi"
+  }
+ ],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 344,
+ "trisPerPart": {
+  "Body": 260,
+  "Button": 84
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.06,
+   0,
+   -0.0779
+  ],
+  "max": [
+   0.06,
+   0.2,
+   0
+  ],
+  "size": [
+   0.12,
+   0.2,
+   0.0779
+  ]
+ },
+ "materials": [
+  {
+   "key": "aluCast",
+   "hex": "#8A8D86",
+   "rough": 0.55,
+   "metal": 0.6,
+   "note": "dökme alüminyum",
+   "tris": 88,
+   "isNew": true
+  },
+  {
+   "key": "paintBlack",
+   "hex": "#20211E",
+   "rough": 0.5,
+   "metal": 0.05,
+   "note": "lamba başlığı, ızgara",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 128,
+   "isNew": true
+  },
+  {
+   "key": "bakeliteBlack",
+   "hex": "#181412",
+   "rough": 0.34,
+   "metal": 0,
+   "note": "düğme, kol başı",
+   "tris": 84,
+   "isNew": true
+  }
+ ]
+}

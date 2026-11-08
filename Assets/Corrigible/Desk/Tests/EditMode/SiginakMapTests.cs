@@ -12,10 +12,10 @@ namespace Corrigible.Desk.Tests
     /// <summary>Sığınak Aşama 5: kurtuluş haritasının durumları, fiş içerikleri, figür kuralları ve sahne bağlantıları.</summary>
     public class SiginakMapTests
     {
-        static Simulation NewLiberation(double fon = 100) => Simulation.NewGame(731, new Balance { startFon = fon });
+        static Simulation NewLiberation(double fon = 100) => LegacySimulation.NewGame(731, new Balance { startFon = fon });
         /// <summary>Beş uzman baştan (atölye kilidi açık).</summary>
         static Simulation NewOpen() =>
-            Simulation.NewGame(731, new Balance { startFon = 100, liberationMinerWorkshopLevel = 0, liberationSmokeWorkshopLevel = 0 });
+            LegacySimulation.NewGame(731, new Balance { startFon = 100, liberationMinerWorkshopLevel = 0, liberationSmokeWorkshopLevel = 0 });
 
         /// <summary>V.014'ün ilk yarısı: Batı Avrupa'nın üç sektörü alınır, yeni cephe henüz seçilmez.</summary>
         static Simulation WeuFreed()
@@ -468,7 +468,7 @@ namespace Corrigible.Desk.Tests
             }
         }
 
-        /// <summary>Kadro raporu ekran katmanında görev fişinin hemen üstünde (üzerine gelme etiketinin altında), kapalı; alanları bağlı.</summary>
+        /// <summary>R6 kadro raporu görev fişinin altından kayar (üzerine gelme etiketinin altında), kapalı; alanları bağlı.</summary>
         [Test]
         public void DeskGameScene_SquadReportSitsOnTheSlip()
         {
@@ -493,7 +493,7 @@ namespace Corrigible.Desk.Tests
                 Assert.IsFalse(report.gameObject.activeSelf, "BASKIN EMRİ VER'e kadar kapalı");
                 var hud = slip.transform.parent;
                 Assert.AreSame(hud, report.transform.parent);
-                Assert.AreEqual(slip.transform.GetSiblingIndex() + 1, report.transform.GetSiblingIndex(), "fişin üstünde çizilir");
+                Assert.AreEqual(slip.transform.GetSiblingIndex() - 1, report.transform.GetSiblingIndex(), "R6: fişin altından kayar");
                 Assert.Less(report.transform.GetSiblingIndex(), hud.Find("Hover tag").GetSiblingIndex(), "üzerine gelme etiketi raporun üstünde");
             }
             finally { EditorSceneManager.CloseScene(scene, true); }

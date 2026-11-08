@@ -1,0 +1,236 @@
+{
+ "name": "DecisionStampRack",
+ "family": "admission",
+ "budget": "small",
+ "origin": "taban ortası (tezgâh yüzeyi, y = 0)",
+ "note": "Cilalı ahşap raf 0,25 × 0,07: dört yuvalı üst tabla, önde her yuvanın altında pirinç plaka (karar adı, iki satır). Damga yuvadan kalkınca boş yuvada plaka okunmaya devam eder.",
+ "listName": "Karar damgası rafı (dört yuva)",
+ "parts": [],
+ "texts": [
+  {
+   "name": "TXT_S1",
+   "part": "Body",
+   "center": [
+    -0.0885,
+    0.024,
+    -0.0373
+   ],
+   "size": [
+    0.05,
+    0.023
+   ],
+   "normal": [
+    0,
+    0.20791169081775934,
+    -0.9781476007338057
+   ],
+   "up": [
+    0,
+    0.9781476007338057,
+    0.20791169081775934
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 6,
+   "align": "center",
+   "sample": "KABUL ·\nTAM ERİŞİM",
+   "sampleEn": "ADMIT ·\nFULL ACCESS",
+   "note": ""
+  },
+  {
+   "name": "TXT_S2",
+   "part": "Body",
+   "center": [
+    -0.0295,
+    0.024,
+    -0.0373
+   ],
+   "size": [
+    0.05,
+    0.023
+   ],
+   "normal": [
+    0,
+    0.20791169081775934,
+    -0.9781476007338057
+   ],
+   "up": [
+    0,
+    0.9781476007338057,
+    0.20791169081775934
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 6,
+   "align": "center",
+   "sample": "KISITLI\nKABUL",
+   "sampleEn": "RESTRICTED\nADMISSION",
+   "note": ""
+  },
+  {
+   "name": "TXT_S3",
+   "part": "Body",
+   "center": [
+    0.0295,
+    0.024,
+    -0.0373
+   ],
+   "size": [
+    0.05,
+    0.023
+   ],
+   "normal": [
+    0,
+    0.20791169081775934,
+    -0.9781476007338057
+   ],
+   "up": [
+    0,
+    0.9781476007338057,
+    0.20791169081775934
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 6,
+   "align": "center",
+   "sample": "REDDET",
+   "sampleEn": "REJECT",
+   "note": ""
+  },
+  {
+   "name": "TXT_S4",
+   "part": "Body",
+   "center": [
+    0.0885,
+    0.024,
+    -0.0373
+   ],
+   "size": [
+    0.05,
+    0.023
+   ],
+   "normal": [
+    0,
+    0.20791169081775934,
+    -0.9781476007338057
+   ],
+   "up": [
+    0,
+    0.9781476007338057,
+    0.20791169081775934
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 6,
+   "align": "center",
+   "sample": "DIŞARIDAN\nYARDIM",
+   "sampleEn": "OUTSIDE\nAID",
+   "note": ""
+  }
+ ],
+ "anchors": [
+  {
+   "name": "Slot1",
+   "part": "Body",
+   "pos": [
+    -0.0885,
+    0.052,
+    0.004
+   ],
+   "note": "damga yuvası 1"
+  },
+  {
+   "name": "Slot2",
+   "part": "Body",
+   "pos": [
+    -0.0295,
+    0.052,
+    0.004
+   ],
+   "note": "damga yuvası 2"
+  },
+  {
+   "name": "Slot3",
+   "part": "Body",
+   "pos": [
+    0.0295,
+    0.052,
+    0.004
+   ],
+   "note": "damga yuvası 3"
+  },
+  {
+   "name": "Slot4",
+   "part": "Body",
+   "pos": [
+    0.0885,
+    0.052,
+    0.004
+   ],
+   "note": "damga yuvası 4"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 632,
+ "trisPerPart": {
+  "Body": 632
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.125,
+   0,
+   -0.0397
+  ],
+  "max": [
+   0.178,
+   0.054,
+   0.035
+  ],
+  "size": [
+   0.303,
+   0.054,
+   0.0747
+  ]
+ },
+ "materials": [
+  {
+   "key": "stampWood",
+   "hex": "#6E4A2C",
+   "rough": 0.55,
+   "metal": 0,
+   "note": "damga sapı (cilalı kayın)",
+   "tris": 220,
+   "isNew": true
+  },
+  {
+   "key": "paintBlack",
+   "hex": "#20211E",
+   "rough": 0.5,
+   "metal": 0.05,
+   "note": "lamba başlığı, ızgara",
+   "tris": 192,
+   "isNew": true
+  },
+  {
+   "key": "plate",
+   "hex": "#B8955A",
+   "rough": 0.45,
+   "metal": 0.35,
+   "tris": 176,
+   "isNew": false
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 44,
+   "isNew": true
+  }
+ ]
+}

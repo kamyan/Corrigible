@@ -16,6 +16,7 @@ namespace Corrigible.Desk.Bridge
             if (sim.S.Raid != null) return raidLoaded ? CrtState.Live : CrtState.Establishing;
             var log = sim.S.RaidLog.LastOrDefault();
             if (log != null && log.Day == sim.S.Day) return CrtState.Cut;
+            if (sim.Board != null) return sim.PlanningRaidCheck() == null ? CrtState.Waiting : CrtState.Disabled;
             var team = sim.S.Teams.FirstOrDefault();
             if (team != null && !sim.SquadCanRaid(team)) return CrtState.Disabled;
             return CrtState.Waiting;
@@ -31,16 +32,17 @@ namespace Corrigible.Desk.Bridge
             return sim.NextLiberationSector(lib.CurrentRegion);
         }
 
-        static string Region(string id) => DeskText.Upper(Loc.T(GameData.Region(id).Name));
+        static string Region(string id) => DeskText.Upper(GameData.Region(id).Name);
 
         /// <summary>
         /// Ekrandaki kısa bölge adı (Revizyon 2 · S1: “BATI AVR. / 01”): iki sözcüklü adda ikinci sözcük dört harften uzunsa
-        /// ilk üç harfi ve nokta. K1'den okunsun diye satır kısa tutulur.
+        /// ilk üç harfi ve nokta. K1'den okunsun diye satır kısa tutulur. İngilizcede tasarım ilk sözcüğü kısaltır (“E. EUROPE / 02”).
         /// </summary>
         public static string ShortRegion(string id)
         {
             var words = Region(id).Split(' ');
             if (words.Length != 2 || words[1].Length <= 4) return string.Join(" ", words);
+            if (Loc.Lang == Loc.English) return words[0].Substring(0, 1) + ". " + words[1];
             return words[0] + " " + words[1].Substring(0, 3) + ".";
         }
 
@@ -56,13 +58,14 @@ namespace Corrigible.Desk.Bridge
             var team = sim.S.Teams.FirstOrDefault();
             string name = DeskText.Upper(LiberationMapBuilder.TeamName(team));
             // Teknisyensiz kadro baskına çıkamaz: Teknisyen yatıyor ve yerine çıkacak yedek yok
-            bool injured = team != null && !sim.SquadCanRaid(team);
+            bool injured = sim.Board != null ? sim.PlanningRaidCheck() != null : team != null && !sim.SquadCanRaid(team);
             // Baskın vardiyayı doldurur: dönen ekip sonraki vardiyada hazır
             bool back = team != null && team.Busy > 0 && sim.S.Raid == null;
             int days = team?.Members.FirstOrDefault(m => m.Role == "tek")?.Down ?? 0;
             d.TeamLine = sim.S.Raid != null ? Loc.F("{0} · SAHADA", name)
                 : back ? Loc.F("{0} · DÖNDÜ · SONRAKİ VARDİYA", name)
                 : injured ? Loc.F("{0} · TEKNİSYEN YARALI · {1} GÜN", name, days) : Loc.F("{0} · HAZIR", name);
+            if (sim.Board != null && injured && !back && sim.S.Raid == null) d.TeamLine = Loc.T("SAHA · KADRO HAZIR DEĞİL");
             // K5a: yaralı ekip satırı ters video (renk değil biçim)
             d.TeamInverse = injured && !back && sim.S.Raid == null;
             var sector = Sector(sim);
@@ -79,7 +82,7 @@ namespace Corrigible.Desk.Bridge
                 case CrtState.Disabled:
                     d.Title = Loc.T("HAT KAPALI");
                     d.Sub = Alarm(sim);
-                    d.Hint = Loc.T("Teknisyen kalkınca ya da bir yedek uzman hazır olunca hat açılabilir.");
+                    d.Hint = sim.Board != null ? sim.PlanningRaidCheck() : Loc.T("Teknisyen kalkınca ya da bir yedek uzman hazır olunca hat açılabilir.");
                     break;
                 default:
                     d.Title = Loc.T("DİNLEMEDE");

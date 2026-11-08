@@ -1,0 +1,554 @@
+{
+ "name": "CorkBoard",
+ "family": "walls",
+ "budget": "big",
+ "origin": "arka yüz alt kenar ortası (duvar düzlemi z = 0)",
+ "note": "Gönyeli, pahlı ahşap çerçeve (0,82 × 0,58, 40 mm), 6 mm içeride mantar yüz. Sol üstte iki mavi raptiyeyle başlık kartı 0,36 × 0,104 (TMP: başlık, sayı, /12). 4 × 3 kart yuvası: her yuvada boş raptiye (SlotPin, kart asılınca gizlenir; kart kendi mavi raptiyesiyle gelir). Kart yerleri Slot_00…11 çapalarında.",
+ "listName": "KURTARILAN BÖLGELER mantar panosu",
+ "parts": [
+  {
+   "name": "SlotPin_00",
+   "parent": "Body",
+   "pivotModel": [
+    -0.26,
+    0.375,
+    -0.0165
+   ],
+   "pivotLocal": [
+    -0.26,
+    0.375,
+    -0.0165
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "boş yuva raptiyesi; kart asılınca gizle"
+  },
+  {
+   "name": "SlotPin_01",
+   "parent": "Body",
+   "pivotModel": [
+    -0.08800000000000002,
+    0.375,
+    -0.0165
+   ],
+   "pivotLocal": [
+    -0.08800000000000002,
+    0.375,
+    -0.0165
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "boş yuva raptiyesi; kart asılınca gizle"
+  },
+  {
+   "name": "SlotPin_02",
+   "parent": "Body",
+   "pivotModel": [
+    0.08399999999999996,
+    0.375,
+    -0.0165
+   ],
+   "pivotLocal": [
+    0.08399999999999996,
+    0.375,
+    -0.0165
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "boş yuva raptiyesi; kart asılınca gizle"
+  },
+  {
+   "name": "SlotPin_03",
+   "parent": "Body",
+   "pivotModel": [
+    0.256,
+    0.375,
+    -0.0165
+   ],
+   "pivotLocal": [
+    0.256,
+    0.375,
+    -0.0165
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "boş yuva raptiyesi; kart asılınca gizle"
+  },
+  {
+   "name": "SlotPin_04",
+   "parent": "Body",
+   "pivotModel": [
+    -0.26,
+    0.269,
+    -0.0165
+   ],
+   "pivotLocal": [
+    -0.26,
+    0.269,
+    -0.0165
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "boş yuva raptiyesi; kart asılınca gizle"
+  },
+  {
+   "name": "SlotPin_05",
+   "parent": "Body",
+   "pivotModel": [
+    -0.08800000000000002,
+    0.269,
+    -0.0165
+   ],
+   "pivotLocal": [
+    -0.08800000000000002,
+    0.269,
+    -0.0165
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "boş yuva raptiyesi; kart asılınca gizle"
+  },
+  {
+   "name": "SlotPin_06",
+   "parent": "Body",
+   "pivotModel": [
+    0.08399999999999996,
+    0.269,
+    -0.0165
+   ],
+   "pivotLocal": [
+    0.08399999999999996,
+    0.269,
+    -0.0165
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "boş yuva raptiyesi; kart asılınca gizle"
+  },
+  {
+   "name": "SlotPin_07",
+   "parent": "Body",
+   "pivotModel": [
+    0.256,
+    0.269,
+    -0.0165
+   ],
+   "pivotLocal": [
+    0.256,
+    0.269,
+    -0.0165
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "boş yuva raptiyesi; kart asılınca gizle"
+  },
+  {
+   "name": "SlotPin_08",
+   "parent": "Body",
+   "pivotModel": [
+    -0.26,
+    0.16300000000000003,
+    -0.0165
+   ],
+   "pivotLocal": [
+    -0.26,
+    0.16300000000000003,
+    -0.0165
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "boş yuva raptiyesi; kart asılınca gizle"
+  },
+  {
+   "name": "SlotPin_09",
+   "parent": "Body",
+   "pivotModel": [
+    -0.08800000000000002,
+    0.16300000000000003,
+    -0.0165
+   ],
+   "pivotLocal": [
+    -0.08800000000000002,
+    0.16300000000000003,
+    -0.0165
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "boş yuva raptiyesi; kart asılınca gizle"
+  },
+  {
+   "name": "SlotPin_10",
+   "parent": "Body",
+   "pivotModel": [
+    0.08399999999999996,
+    0.16300000000000003,
+    -0.0165
+   ],
+   "pivotLocal": [
+    0.08399999999999996,
+    0.16300000000000003,
+    -0.0165
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "boş yuva raptiyesi; kart asılınca gizle"
+  },
+  {
+   "name": "SlotPin_11",
+   "parent": "Body",
+   "pivotModel": [
+    0.256,
+    0.16300000000000003,
+    -0.0165
+   ],
+   "pivotLocal": [
+    0.256,
+    0.16300000000000003,
+    -0.0165
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "boş yuva raptiyesi; kart asılınca gizle"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Title",
+   "part": "Body",
+   "center": [
+    -0.1794764278068815,
+    0.5149954308546917,
+    -0.0177
+   ],
+   "size": [
+    0.33,
+    0.026
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0.01745240643728351,
+    0.9998476951563913,
+    0
+   ],
+   "role": "panelTitleTex",
+   "font": "Courier Prime 700",
+   "capMm": 15,
+   "align": "left",
+   "sample": "KURTARILAN BÖLGELER",
+   "sampleEn": "FREED REGIONS",
+   "note": "altında kırmızı çizgi (doku)"
+  },
+  {
+   "name": "TXT_Count",
+   "part": "Body",
+   "center": [
+    -0.28033381764438475,
+    0.4667482867406005,
+    -0.0177
+   ],
+   "size": [
+    0.12,
+    0.056
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0.01745240643728351,
+    0.9998476951563913,
+    0
+   ],
+   "role": "panelValueTex",
+   "font": "Courier Prime 700",
+   "capMm": 36,
+   "align": "left",
+   "sample": "00",
+   "sampleEn": "00",
+   "note": "kurtarılan bölge sayısı (iki hane)"
+  },
+  {
+   "name": "TXT_Of",
+   "part": "Body",
+   "center": [
+    -0.14545909323689568,
+    0.45839312570062885,
+    -0.0177
+   ],
+   "size": [
+    0.09,
+    0.03
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0.01745240643728351,
+    0.9998476951563913,
+    0
+   ],
+   "role": "panelValueTex",
+   "font": "Courier Prime 700",
+   "capMm": 18,
+   "align": "left",
+   "sample": "/12",
+   "sampleEn": "/12",
+   "note": ""
+  }
+ ],
+ "anchors": [
+  {
+   "name": "Slot_00",
+   "part": "Body",
+   "pos": [
+    -0.26,
+    0.29250000000000004,
+    -0.0165
+   ],
+   "note": "CorkCard / PencilNote orijini; z dönüşü -2.4°"
+  },
+  {
+   "name": "Slot_01",
+   "part": "Body",
+   "pos": [
+    -0.08800000000000002,
+    0.29250000000000004,
+    -0.0165
+   ],
+   "note": "CorkCard / PencilNote orijini; z dönüşü -0.8°"
+  },
+  {
+   "name": "Slot_02",
+   "part": "Body",
+   "pos": [
+    0.08399999999999996,
+    0.29250000000000004,
+    -0.0165
+   ],
+   "note": "CorkCard / PencilNote orijini; z dönüşü 0.8°"
+  },
+  {
+   "name": "Slot_03",
+   "part": "Body",
+   "pos": [
+    0.256,
+    0.29250000000000004,
+    -0.0165
+   ],
+   "note": "CorkCard / PencilNote orijini; z dönüşü 2.4°"
+  },
+  {
+   "name": "Slot_04",
+   "part": "Body",
+   "pos": [
+    -0.26,
+    0.18650000000000005,
+    -0.0165
+   ],
+   "note": "CorkCard / PencilNote orijini; z dönüşü -1.6°"
+  },
+  {
+   "name": "Slot_05",
+   "part": "Body",
+   "pos": [
+    -0.08800000000000002,
+    0.18650000000000005,
+    -0.0165
+   ],
+   "note": "CorkCard / PencilNote orijini; z dönüşü 0.0°"
+  },
+  {
+   "name": "Slot_06",
+   "part": "Body",
+   "pos": [
+    0.08399999999999996,
+    0.18650000000000005,
+    -0.0165
+   ],
+   "note": "CorkCard / PencilNote orijini; z dönüşü 1.6°"
+  },
+  {
+   "name": "Slot_07",
+   "part": "Body",
+   "pos": [
+    0.256,
+    0.18650000000000005,
+    -0.0165
+   ],
+   "note": "CorkCard / PencilNote orijini; z dönüşü -2.4°"
+  },
+  {
+   "name": "Slot_08",
+   "part": "Body",
+   "pos": [
+    -0.26,
+    0.08050000000000003,
+    -0.0165
+   ],
+   "note": "CorkCard / PencilNote orijini; z dönüşü -0.8°"
+  },
+  {
+   "name": "Slot_09",
+   "part": "Body",
+   "pos": [
+    -0.08800000000000002,
+    0.08050000000000003,
+    -0.0165
+   ],
+   "note": "CorkCard / PencilNote orijini; z dönüşü 0.8°"
+  },
+  {
+   "name": "Slot_10",
+   "part": "Body",
+   "pos": [
+    0.08399999999999996,
+    0.08050000000000003,
+    -0.0165
+   ],
+   "note": "CorkCard / PencilNote orijini; z dönüşü 2.4°"
+  },
+  {
+   "name": "Slot_11",
+   "part": "Body",
+   "pos": [
+    0.256,
+    0.08050000000000003,
+    -0.0165
+   ],
+   "note": "CorkCard / PencilNote orijini; z dönüşü -1.6°"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -0.6,
+    1.05,
+    2.3
+   ],
+   "yaw": 0,
+   "note": "arka duvar, sol (rev2 freedBoard)"
+  }
+ ],
+ "tris": 1128,
+ "trisPerPart": {
+  "Body": 360,
+  "SlotPin_00": 64,
+  "SlotPin_01": 64,
+  "SlotPin_02": 64,
+  "SlotPin_03": 64,
+  "SlotPin_04": 64,
+  "SlotPin_05": 64,
+  "SlotPin_06": 64,
+  "SlotPin_07": 64,
+  "SlotPin_08": 64,
+  "SlotPin_09": 64,
+  "SlotPin_10": 64,
+  "SlotPin_11": 64
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.41,
+   0,
+   -0.0259
+  ],
+  "max": [
+   0.41,
+   0.58,
+   0
+  ],
+  "size": [
+   0.82,
+   0.58,
+   0.0259
+  ]
+ },
+ "materials": [
+  {
+   "key": "wood",
+   "hex": "#6B4A2E",
+   "rough": 0.7,
+   "metal": 0,
+   "tris": 112,
+   "isNew": false
+  },
+  {
+   "key": "cork",
+   "hex": "#A27B52",
+   "rough": 0.97,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 96,
+   "isNew": true
+  },
+  {
+   "key": "corkCard",
+   "hex": "#F3ECD8",
+   "rough": 0.9,
+   "metal": 0,
+   "tex": "tx_corkCard: ince mavi satır çizgileri, kırmızı kenar çizgisi (kelime yok)",
+   "note": "pano kartı kâğıdı",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "pinBlue",
+   "hex": "#1A4789",
+   "rough": 0.4,
+   "metal": 0,
+   "tris": 128,
+   "isNew": false
+  },
+  {
+   "key": "woodLight",
+   "hex": "#9A7448",
+   "rough": 0.7,
+   "metal": 0,
+   "tris": 768,
+   "isNew": false
+  }
+ ]
+}

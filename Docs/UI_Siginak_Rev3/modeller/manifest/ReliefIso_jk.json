@@ -1,0 +1,88 @@
+{
+ "name": "ReliefIso_jk",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Tek şalt pano hücresi (0,72): güneyde kapı (iki grup yatay panjur, kilit topuzu), batı yan sacında üstte panjur grubu; çatıda kablo giriş plakası ve rakorlar. Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi.",
+ "listName": "Ayrık blok · Çip fabrikası (tek panjurlu pano)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 157,
+ "trisPerPart": {
+  "Body": 157
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.39,
+   0,
+   -0.39
+  ],
+  "max": [
+   0.39,
+   0.5565,
+   0.39
+  ],
+  "size": [
+   0.78,
+   0.5565,
+   0.78
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_jk_detailA",
+   "hex": "#6C726E",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 17,
+   "isNew": false
+  },
+  {
+   "key": "k_jk_wallWest",
+   "hex": "#A0A49F",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 35,
+   "isNew": false
+  },
+  {
+   "key": "k_jk_wallSouth",
+   "hex": "#818580",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 31,
+   "isNew": false
+  },
+  {
+   "key": "k_jk_wallTop",
+   "hex": "#B2B6B0",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 34,
+   "isNew": false
+  },
+  {
+   "key": "k_jk_detailB",
+   "hex": "#D5D8D1",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 22,
+   "isNew": false
+  },
+  {
+   "key": "rk_void",
+   "hex": "#34312C",
+   "rough": 1,
+   "metal": 0,
+   "note": "oyuk içi: palet ağzı, tutamak deliği, kızak arası (ışık almayan derinlik); bütün kitlerde ortak",
+   "tris": 18,
+   "isNew": true
+  }
+ ]
+}

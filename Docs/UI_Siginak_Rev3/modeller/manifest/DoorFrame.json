@@ -1,0 +1,95 @@
+{
+ "name": "DoorFrame",
+ "family": "door",
+ "budget": "big",
+ "origin": "açıklığın alt orta noktası, oda duvar düzlemi (z = 0)",
+ "note": "Duvara gömülü çelik kasa: oda tarafında cıvatalı yüz lamaları (kilit tarafı ve üstte kanadın 25 mm’sini örter = dayama), menteşe tarafında menteşe dilleri görünsün diye dar yüz; açıklık boyunca çelik astar, ardında beton söve (duvar kalınlığı 0,25 m), baklava sac eşik. Menteşelerin sabit yarıları ve kilit karşılıkları bu modelde. Oda duvarındaki boşluk: 1,12 × 2,09 m.",
+ "listName": "Kapı kasası (çelik, beton söveli)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    2.2,
+    0,
+    0.75
+   ],
+   "yaw": 90,
+   "note": "dünya; kapı grubu orijini (açıklığın alt orta noktası, oda duvar düzlemi x 2,20): kasa; DoorLeaf ile aynı konum"
+  }
+ ],
+ "tris": 1160,
+ "trisPerPart": {
+  "Body": 1160
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.606,
+   0,
+   -0.03
+  ],
+  "max": [
+   0.66,
+   2.1,
+   0.25
+  ],
+  "size": [
+   1.266,
+   2.1,
+   0.28
+  ]
+ },
+ "materials": [
+  {
+   "key": "paintOliveDark",
+   "hex": "#353B30",
+   "rough": 0.62,
+   "metal": 0.05,
+   "note": "kapı kanadı, kasa, çerçeve",
+   "tris": 264,
+   "isNew": true
+  },
+  {
+   "key": "concreteWall",
+   "hex": "#7C837F",
+   "rough": 0.96,
+   "metal": 0,
+   "tris": 132,
+   "isNew": false
+  },
+  {
+   "key": "treadPlate",
+   "hex": "#6B6E68",
+   "rough": 0.5,
+   "metal": 0.7,
+   "tex": "tx_tread (baklava desenli sac, 256 px)",
+   "note": "eşik plakası (baklava sac)",
+   "tris": 42,
+   "isNew": true
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 524,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 198,
+   "isNew": true
+  }
+ ]
+}

@@ -1,0 +1,79 @@
+{
+ "name": "ReliefIso_weu",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Tek uzun rack kabini (0,70 gövde, 0,78 süpürgelik, 0,74 başlık): her yüzde tek kapı, ortada uzun koyu delikli panel, dikey kol; üstte kısa kablo tavası. Kolon gibi okunur: taban + ince gövde + başlık. Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi.",
+ "listName": "Ayrık blok · Banka veri merkezi (tek rack kabini)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 183,
+ "trisPerPart": {
+  "Body": 183
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.39,
+   0,
+   -0.39
+  ],
+  "max": [
+   0.39,
+   0.555,
+   0.39
+  ],
+  "size": [
+   0.78,
+   0.555,
+   0.78
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_weu_detailA",
+   "hex": "#5F5B53",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 37,
+   "isNew": false
+  },
+  {
+   "key": "k_weu_wallWest",
+   "hex": "#8D877A",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 26,
+   "isNew": false
+  },
+  {
+   "key": "k_weu_wallSouth",
+   "hex": "#6F6A5F",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 18,
+   "isNew": false
+  },
+  {
+   "key": "k_weu_wallTop",
+   "hex": "#A8A194",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 28,
+   "isNew": false
+  },
+  {
+   "key": "k_weu_detailB",
+   "hex": "#A9AAA4",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 74,
+   "isNew": false
+  }
+ ]
+}

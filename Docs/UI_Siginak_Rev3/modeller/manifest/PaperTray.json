@@ -1,0 +1,144 @@
+{
+ "name": "PaperTray",
+ "family": "desk",
+ "budget": "small",
+ "origin": "taban ortası (masa üstü, y = 0)",
+ "note": "Boyalı pres sac evrak tepsisi (kıvrık kenarlı), yanları öne doğru alçalır; içinde kâğıt destesi ve üstte hafif dönük beyaz yaprak. Ön duvarda pirinç etiket kartlığı (TMP EVRAK / PAPERS). StackLate: geç harekâtta görünen yüksek deste.",
+ "listName": "EVRAK tepsisi",
+ "parts": [
+  {
+   "name": "StackLate",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.028,
+    0
+   ],
+   "pivotLocal": [
+    0,
+    0.028,
+    0
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "geç harekât: yüksek evrak destesi görünür"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Label",
+   "part": "Body",
+   "center": [
+    0,
+    0.02,
+    -0.1312
+   ],
+   "size": [
+    0.094,
+    0.021
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 12,
+   "align": "center",
+   "sample": "EVRAK",
+   "sampleEn": "PAPERS",
+   "note": ""
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    0.765,
+    0.76,
+    1.3
+   ],
+   "yaw": -4,
+   "note": "masanın sağı, CRT masası tarafı (rev2)"
+  }
+ ],
+ "tris": 664,
+ "trisPerPart": {
+  "Body": 580,
+  "StackLate": 84
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.162,
+   0,
+   -0.133
+  ],
+  "max": [
+   0.162,
+   0.074,
+   0.132
+  ],
+  "size": [
+   0.324,
+   0.074,
+   0.265
+  ]
+ },
+ "materials": [
+  {
+   "key": "paintOliveDark",
+   "hex": "#353B30",
+   "rough": 0.62,
+   "metal": 0.05,
+   "note": "kapı kanadı, kasa, çerçeve",
+   "tris": 394,
+   "isNew": true
+  },
+  {
+   "key": "paper",
+   "hex": "#EFE6D0",
+   "rough": 0.92,
+   "metal": 0,
+   "tris": 80,
+   "isNew": false
+  },
+  {
+   "key": "paperWhite",
+   "hex": "#F4EFE2",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 60,
+   "isNew": false
+  },
+  {
+   "key": "brassDark",
+   "hex": "#8C6F3E",
+   "rough": 0.45,
+   "metal": 0.8,
+   "tris": 128,
+   "isNew": false
+  },
+  {
+   "key": "cardBlank",
+   "hex": "#E6DCBE",
+   "rough": 0.9,
+   "metal": 0,
+   "note": "boş kart destesi",
+   "tris": 2,
+   "isNew": true
+  }
+ ]
+}

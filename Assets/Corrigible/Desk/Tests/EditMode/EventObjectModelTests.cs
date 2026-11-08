@@ -69,23 +69,20 @@ namespace Corrigible.Desk.Tests
                 var so = new SerializedObject(piece);
                 var body = so.FindProperty("body").objectReferenceValue as Transform;
                 Assert.IsNotNull(body, kind + " gövdesi");
-                Assert.IsNotNull(so.FindProperty("hp").objectReferenceValue, kind + " can yazısı");
-                var damage = so.FindProperty("damageMark").objectReferenceValue as GameObject;
-                Assert.IsNotNull(damage, kind + " hasar grubu");
-                Assert.IsFalse(damage.activeSelf, kind + " hasar grubu kapalı başlar");
+                Assert.IsNull(so.FindProperty("hp").objectReferenceValue, kind + " can yazısı ortak ekran havuzunda");
+                Assert.IsNotNull(piece.GetComponentInChildren<Rev3Model>(),kind+" kaynak modeli");
                 // Parlama (vuruş, ıslık, kol) ana kütleye işler: görünen her renderer boyanır
                 var tinted = Enumerable.Range(0, so.FindProperty("tinted").arraySize)
                     .Select(i => so.FindProperty("tinted").GetArrayElementAtIndex(i).objectReferenceValue as Renderer).ToList();
                 Assert.IsFalse(tinted.Contains(null), kind + " boyananlarda boş yok");
                 foreach (var r in body.GetComponentsInChildren<Renderer>().Where(r => r.GetComponent<TMP_Text>() == null))
                     CollectionAssert.Contains(tinted, r, kind + "/" + r.name + " parlamaya katılır");
-                // Kırmızı yalnız YZ; ışıma yok, mat (smoothness ≤ 0,15)
+                // Kırmızı yalnız YZ; ışıma yok. Yüzey değerleri kaynak modelin paletinden gelir (Rev3ModelTests).
                 var mats = Materials(piece.gameObject).ToList();
                 Assert.IsNotEmpty(mats, kind);
                 foreach (var m in mats)
                 {
                     Assert.IsFalse(IsRed(m.GetColor("_BaseColor")), kind + " kırmızı: " + m.name);
-                    Assert.LessOrEqual(m.GetFloat("_Smoothness"), 0.15f, kind + " mat: " + m.name);
                     var e = m.GetColor("_EmissionColor");
                     Assert.IsTrue(e.r + e.g + e.b < 1e-4f && !m.IsKeywordEnabled("_EMISSION"), kind + " ışıma: " + m.name);
                 }
@@ -105,8 +102,8 @@ namespace Corrigible.Desk.Tests
                 var b = BoundsOf(Visible(tube));
                 Assert.AreEqual(0.75f, tube.VisualHeight, 0.02f, "boy 0,75");
                 Assert.AreEqual(0f, b.min.y, 0.01f, "zeminde durur");
-                Assert.LessOrEqual(Mathf.Max(b.size.x, b.size.z), 0.22f + 1e-3f, "ayak izi Ø ≤ 0,22");
-                Assert.Greater(b.size.y, 3 * Mathf.Max(b.size.x, b.size.z), "uzun ekseni yukarı (uçuşta uçuş yönüne yatar)");
+                Assert.LessOrEqual(Mathf.Max(b.size.x, b.size.z), 0.35f, "vana dahil ayak izi ≤ 0,35");
+                Assert.Greater(b.size.y, 2 * Mathf.Max(b.size.x, b.size.z), "uzun ekseni yukarı (uçuşta uçuş yönüne yatar)");
                 // Sıcak çember (RaidBoard3D: tube_hot r 0,36) ve uçuş hattının başı (0,3) tüpün dışında
                 foreach (var x in new[] { b.min.x, b.max.x })
                     foreach (var z in new[] { b.min.z, b.max.z })
@@ -115,7 +112,7 @@ namespace Corrigible.Desk.Tests
                     foreach (var word in new[] { "Fan", "Grille", "Warning" })
                         StringAssert.DoesNotContain(word, r.name, "soğutma ünitesinin işareti: " + r.name);
                 var mats = Materials(tube.gameObject).ToList();
-                CollectionAssert.IsEmpty(mats.Intersect(Materials(lib.cooling.gameObject).Where(m => m.name != "PaintChip")), "soğutma ünitesiyle ortak malzeme yok");
+                Assert.AreEqual("Tube",tube.GetComponentInChildren<Rev3Model>().ModelName,"soğutma modelinden türetilmez; ortak çelik malzemesi olabilir");
                 Assert.IsFalse(mats.Any(m => IsYellow(m.GetColor("_BaseColor"))), "sarı (uyarı üçgeni) yok");
                 Assert.IsTrue(mats.Any(m => IsOrange(m.GetColor("_BaseColor"))), "turuncu omuz bandı");
             });
@@ -127,7 +124,9 @@ namespace Corrigible.Desk.Tests
         {
             With(Lib.weldArm, arm =>
             {
-                var b = BoundsOf(Visible(arm));
+                var models=arm.GetComponentsInChildren<Rev3Model>();
+                var b = BoundsOf(Visible(models.Single(m=>m.ModelName=="WeldArmBase")));
+                Assert.AreEqual(RaidBoard3D.WeldArmHeight,BoundsOf(Visible(models.Single(m=>m.ModelName=="WeldArm"))).min.y,.005f,"kol modelinin altı tablayla buluşur");
                 Assert.AreEqual(RaidBoard3D.WeldArmHeight, b.max.y, 0.005f, "kol tablanın tepesinden çıkar");
                 Assert.AreEqual(0.7f, b.size.x, 0.02f, "plaka 0,7"); Assert.AreEqual(0.7f, b.size.z, 0.02f, "plaka 0,7");
                 Assert.IsTrue(Materials(arm.gameObject).Any(m => IsOrange(m.GetColor("_BaseColor"))), "turuncu kaynak halkası");
@@ -145,13 +144,9 @@ namespace Corrigible.Desk.Tests
                 Assert.LessOrEqual(b.max.y, 0.45f, "enkaz alçak");
                 Assert.GreaterOrEqual(b.min.y, -0.005f, "zeminin altına girmez");
                 Assert.LessOrEqual(Mathf.Max(b.max.x, -b.min.x, b.max.z, -b.min.z), 0.45f, "karenin içinde");
-                var damage = (GameObject)new SerializedObject(debris).FindProperty("damageMark").objectReferenceValue;
-                Assert.IsTrue(damage.transform.IsChildOf(debris.Body), "hasar grubu gövdede (çöküşle ezilir)");
-                debris.SetHp(1, 2);
-                Assert.IsTrue(damage.activeSelf, "hasarlı enkaz çatlak gösterir");
-                Assert.Greater(damage.GetComponentsInChildren<Renderer>().Length, 0);
-                debris.SetHp(2, 2);
-                Assert.IsFalse(damage.activeSelf);
+                Assert.AreEqual("CeilingDebris",debris.GetComponentInChildren<Rev3Model>().ModelName);
+                Assert.DoesNotThrow(()=>debris.SetHp(1,2),"can ortak ekran etiketinde, kaynak geometri sabit kalır");
+                Assert.DoesNotThrow(()=>debris.SetHp(2,2));
             });
         }
 

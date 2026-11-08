@@ -1,0 +1,79 @@
+{
+ "name": "Bridge_in",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi (y = 0); köprü doğu boşluğunda (x 0,47–0,53), +x boyunca; kuzey için y ekseninde −90°",
+ "note": "Komşu istifler arasında alçak bölme paneli: dolap derzi, alt alüminyum ray ve üstü alüminyum kapaklı koyu kumaş panel (0,445 yüksekliğe kadar; üstü açık). Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti.",
+ "listName": "Köprü · Çağrı merkezi (alçak bölme)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 32,
+ "trisPerPart": {
+  "Body": 32
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   0.455,
+   0,
+   -0.47
+  ],
+  "max": [
+   0.545,
+   0.445,
+   0.47
+  ],
+  "size": [
+   0.09,
+   0.445,
+   0.94
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_in_wallTop",
+   "hex": "#A19CA5",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 2,
+   "isNew": false
+  },
+  {
+   "key": "k_in_wallSouth",
+   "hex": "#726E76",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 2,
+   "isNew": false
+  },
+  {
+   "key": "k_in_wallWest",
+   "hex": "#8E8A92",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 2,
+   "isNew": false
+  },
+  {
+   "key": "k_in_detailB",
+   "hex": "#B6B3AB",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 20,
+   "isNew": false
+  },
+  {
+   "key": "k_in_detailA",
+   "hex": "#74717F",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 6,
+   "isNew": false
+  }
+ ]
+}

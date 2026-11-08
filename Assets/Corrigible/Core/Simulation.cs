@@ -33,6 +33,8 @@ namespace Corrigible.Core
             var s = new WorldState { Seed = sd, Rng = new Rng(sd), Fon = b.startFon };
             var sim = new Simulation(s, b);
             sim.SetupLiberation();
+            sim.SetupPlanningBoard();
+            if (sim.Board != null) sim.SetupAdmissions();
             sim.Record = new GameRecord { seed = sd, balance = b.Clone() };
             s.Events.Clear();
             return sim;
@@ -64,17 +66,23 @@ namespace Corrigible.Core
         /// <summary>Vardiyayı bitirir: gelir, ekiplerin toparlanması, sığınağın üretimi ve tüketimi, YZ alarmı, kapı.</summary>
         public void Step()
         {
-            if (S.Ending != null || S.Blocked) return;
+            if (S.Ending != null || S.Blocked || !BoardMayAdvance) return;
             S.Day++;
             S.LastIncome = IncomeBreakdown;
             S.LastIncomeDay = S.Day;
             S.Fon += S.LastIncome.Total;
             AddTransaction("income", null, S.LastIncome.Total);
             StepTeams();
-            ShelterLogic.Advance(S, B);
+            if (Board != null)
+            {
+                AdvanceAdmissions();
+                AdvancePlanningBoard();
+                if (!Board.People.Any(p => p.Alive)) End("topluluk");
+            }
+            else ShelterLogic.Advance(S, B);
             StepAlarm();
             S.Hist.Add(new HistPoint { Day = S.Day, Real = Js.Round(Occupation * 10) / 10 });
-            StepDoor();
+            if (Board == null) StepDoor();
         }
 
         public List<SimEvent> DrainEvents()

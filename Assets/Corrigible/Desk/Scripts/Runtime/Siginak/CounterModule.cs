@@ -6,7 +6,7 @@ namespace Corrigible.Desk
 {
     /// <summary>
     /// Sayaç rafının tek modülü (K1 notu): pirinç plaka, pencerede çarklar, isteğe bağlı onda bir çarkı (FON; Revizyon 2:
-    /// açık renk çark, önünde pirinç virgül) ve sabit ek (“/40”). Değer değişince çarklar sağdan sola 0,12 s arayla
+    /// açık renk çark, önünde pirinç virgül) ve üst sınır eki (“/” + değer; değeri <see cref="CounterBank"/> verir). Değer değişince çarklar sağdan sola 0,12 s arayla
     /// yuvarlanır, altına ± fişi asılır.
     /// </summary>
     public sealed class CounterModule : MonoBehaviour
@@ -27,6 +27,9 @@ namespace Corrigible.Desk
         double value;
         long shown = -1;
         Vector3 rest;
+        // Modülün çocuğu olmayan çarklar (Revizyon 3: tamburlar sayaç rafı modelinin parçası); titreme onlara da uygulanır
+        Transform[] outside = Array.Empty<Transform>();
+        Vector3[] outsideRest = Array.Empty<Vector3>();
         float shakeAt = -1, raised;
         int shakes;
 
@@ -44,6 +47,12 @@ namespace Corrigible.Desk
         void Awake()
         {
             rest = transform.localPosition;
+            var list = new System.Collections.Generic.List<Transform>();
+            foreach (var w in wheels) if (w != null && !w.transform.IsChildOf(transform)) list.Add(w.transform);
+            if (tenths != null && !tenths.transform.IsChildOf(transform)) list.Add(tenths.transform);
+            outside = list.ToArray();
+            outsideRest = new Vector3[outside.Length];
+            for (int i = 0; i < outside.Length; i++) outsideRest[i] = outside[i].localPosition;
             foreach (var w in wheels) if (w != null) w.Ticked += Tick;
             if (tenths != null) tenths.Ticked += Tick;
         }
@@ -129,7 +138,17 @@ namespace Corrigible.Desk
             float target = on ? shakeMeters * 0.8f : 0;
             if (Mathf.Approximately(raised, target)) return;
             raised = target;
-            if (shakeAt < 0) transform.localPosition = rest + Vector3.up * raised;
+            if (shakeAt < 0) Offset(Vector3.up * raised);
+        }
+
+        /// <summary>Modülü (ve dışarıdaki çarkları aynı dünya kaymasıyla) dinlenme yerinden kaydırır.</summary>
+        void Offset(Vector3 local)
+        {
+            transform.localPosition = rest + local;
+            if (outside.Length == 0) return;
+            var world = transform.parent != null ? transform.parent.TransformVector(local) : local;
+            for (int i = 0; i < outside.Length; i++)
+                if (outside[i] != null) outside[i].localPosition = outsideRest[i] + (outside[i].parent != null ? outside[i].parent.InverseTransformVector(world) : world);
         }
 
         void Update()
@@ -139,10 +158,10 @@ namespace Corrigible.Desk
             if (p >= shakes)
             {
                 shakeAt = -1;
-                transform.localPosition = rest + Vector3.up * raised;
+                Offset(Vector3.up * raised);
                 return;
             }
-            transform.localPosition = rest + Vector3.up * raised + Vector3.right * (Mathf.Sin(p * Mathf.PI * 2) * shakeMeters);
+            Offset(Vector3.up * raised + Vector3.right * (Mathf.Sin(p * Mathf.PI * 2) * shakeMeters));
         }
 
         /// <summary>i. tam sayı çarkının ölçekli değerdeki basamağı (onda bir varsa bir kayık).</summary>

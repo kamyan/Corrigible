@@ -72,10 +72,10 @@ namespace Corrigible.Tests
         [Test]
         public void CampaignRaid_CarriesRegionEvent_UnlessSwitchedOff()
         {
-            var sim = Simulation.NewGame(3, new Balance { startFon = 100 });
+            var sim = LegacySimulation.NewGame(3, new Balance { startFon = 100 });
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
             Assert.AreEqual("bulut", sim.S.Raid.Params.Event);
-            var off = Simulation.NewGame(3, new Balance { startFon = 100, liberationRegionEvents = false });
+            var off = LegacySimulation.NewGame(3, new Balance { startFon = 100, liberationRegionEvents = false });
             Assert.IsTrue(off.StartLiberationRaid("weu_1").Ok);
             Assert.IsNull(off.S.Raid.Params.Event);
             Assert.IsNull(Baskin.Create(new RaidParams { Seed = 5 }).Ev, "olay verilmeyen baskın olaysız");

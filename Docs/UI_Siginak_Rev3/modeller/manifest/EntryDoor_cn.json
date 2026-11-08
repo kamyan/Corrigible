@@ -1,0 +1,94 @@
+{
+ "name": "EntryDoor_cn",
+ "family": "raidcivil",
+ "budget": "raid",
+ "origin": "kapı izdüşümünün ortası, kontrplak kenar payının yüzeyi (y = 0)",
+ "note": "Döküm kasa, dört geniş yatay panelli seksiyonel kapı, üçüncü panelde pencere sırası, alt kauçuk conta ve tutamak. Paftanın dışında, batı kenar payında (u = −0,15) giriş satırının ortasında durur; dış yüz −x (kameranın gördüğü yüz), kapı +x yönünde tahtanın içine açılır. El çarkı yok, kırmızı/mavi/turuncu bant yok.",
+ "listName": "Giriş kapısı · fabrika: seksiyonel kapı",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -0.15,
+    0,
+    -3.5
+   ],
+   "yaw": 0,
+   "note": "örnek: giriş satırı 4 (r = 3) · x = u = −0,15, z = −(r + 0,5)"
+  }
+ ],
+ "tris": 350,
+ "trisPerPart": {
+  "Body": 350
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.0425,
+   0,
+   -0.45
+  ],
+  "max": [
+   0.06,
+   0.58,
+   0.45
+  ],
+  "size": [
+   0.1025,
+   0.58,
+   0.9
+  ]
+ },
+ "materials": [
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 124,
+   "isNew": true
+  },
+  {
+   "key": "rc_factoryGrey",
+   "hex": "#7A776D",
+   "rough": 0.55,
+   "metal": 0.1,
+   "note": "seksiyonel fabrika kapısı paneli (sıcak gri)",
+   "tris": 168,
+   "isNew": true
+  },
+  {
+   "key": "rc_screen",
+   "hex": "#1C2623",
+   "rough": 0.12,
+   "metal": 0,
+   "note": "ekran ve pencere camı: koyu, ışımasız (baskında emisyon yok)",
+   "tris": 36,
+   "isNew": true
+  },
+  {
+   "key": "rubber",
+   "hex": "#1C1C1A",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 10,
+   "isNew": false
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 12,
+   "isNew": true
+  }
+ ]
+}

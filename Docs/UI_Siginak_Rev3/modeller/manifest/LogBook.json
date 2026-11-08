@@ -1,0 +1,206 @@
+{
+ "name": "LogBook",
+ "family": "crt",
+ "budget": "small",
+ "origin": "taban ortası (masa yüzeyi, y = 0)",
+ "note": "Açık bez sırtlı A5 ciltli defter: sayfa blokları cilde doğru kıvrılır, sağ sayfanın alt köşesi kalkık, üstünde kurşun kalem. Yazılar TMP: sol sayfa başlığı ve kayıt satırları (Kalam el yazısı, saat sütunu Courier Prime).",
+ "listName": "Telsiz kayıt defteri (açık, A5)",
+ "parts": [],
+ "texts": [
+  {
+   "name": "TXT_Head",
+   "part": "Body",
+   "center": [
+    -0.083,
+    0.0109,
+    0.083
+   ],
+   "size": [
+    0.118,
+    0.014
+   ],
+   "normal": [
+    0,
+    1,
+    0
+   ],
+   "up": [
+    0,
+    0,
+    1
+   ],
+   "role": "reportHead",
+   "font": "Courier Prime 700",
+   "capMm": 5.5,
+   "align": "left",
+   "sample": "TELSİZ KAYDI · K-07",
+   "sampleEn": "RADIO LOG · K-07",
+   "note": ""
+  },
+  {
+   "name": "TXT_EntriesL",
+   "part": "Body",
+   "center": [
+    -0.083,
+    0.0109,
+    -0.012
+   ],
+   "size": [
+    0.118,
+    0.16
+   ],
+   "normal": [
+    0,
+    1,
+    0
+   ],
+   "up": [
+    0,
+    0,
+    1
+   ],
+   "role": "handNote (Kalam 700) + saat sütunu Courier Prime 700",
+   "font": "Kalam 700",
+   "capMm": 5,
+   "align": "left",
+   "sample": "014/02  Alfa hazır · Doğu Avr. 02",
+   "sampleEn": "014/02  Alpha ready · E. Europe 02",
+   "note": "satır aralığı ≈ 9 mm (sayfa çizgileri dokuda), en çok 15 satır"
+  },
+  {
+   "name": "TXT_EntriesR",
+   "part": "Body",
+   "center": [
+    0.083,
+    0.0109,
+    0.004
+   ],
+   "size": [
+    0.118,
+    0.19
+   ],
+   "normal": [
+    0,
+    1,
+    0
+   ],
+   "up": [
+    0,
+    0,
+    1
+   ],
+   "role": "handNote (Kalam 700)",
+   "font": "Kalam 700",
+   "capMm": 5,
+   "align": "left",
+   "sample": "014/03  gözcü: yayın yok",
+   "sampleEn": "014/03  spotter: no broadcast",
+   "note": "sol sayfa dolunca"
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    1.6265,
+    0.76,
+    1.43
+   ],
+   "yaw": 43,
+   "note": "dünya; masa yereli (0.270, 0.760, -0.165), yaw +8: telsiz rafının önünde, masanın ön kenarı"
+  }
+ ],
+ "tris": 420,
+ "trisPerPart": {
+  "Body": 420
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.155,
+   -0.0003,
+   -0.106
+  ],
+  "max": [
+   0.155,
+   0.0306,
+   0.106
+  ],
+  "size": [
+   0.31,
+   0.0309,
+   0.212
+  ]
+ },
+ "materials": [
+  {
+   "key": "book1",
+   "hex": "#2E4A3A",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 88,
+   "isNew": false
+  },
+  {
+   "key": "book2",
+   "hex": "#463F34",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "paper",
+   "hex": "#EFE6D0",
+   "rough": 0.92,
+   "metal": 0,
+   "tris": 152,
+   "isNew": false
+  },
+  {
+   "key": "eraser",
+   "hex": "#C79B92",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 32,
+   "isNew": false
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 32,
+   "isNew": true
+  },
+  {
+   "key": "pencil",
+   "hex": "#D9A520",
+   "rough": 0.5,
+   "metal": 0,
+   "tris": 24,
+   "isNew": false
+  },
+  {
+   "key": "pawn",
+   "hex": "#C9A77A",
+   "rough": 0.75,
+   "metal": 0,
+   "tris": 24,
+   "isNew": false
+  },
+  {
+   "key": "inkBlack",
+   "hex": "#1E1B16",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 24,
+   "isNew": false
+  }
+ ]
+}

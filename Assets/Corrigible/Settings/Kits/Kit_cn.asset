@@ -22,4 +22,32 @@ MonoBehaviour:
   bridges: 1
   channelFloor: {fileID: 2100000, guid: 44675d1cf005f48fbb5c3a8a3339629e, type: 2}
   wellFloor: {fileID: 2100000, guid: a7ac7c84cb3f049179d97c42e43c1058, type: 2}
-  wallRubble: {fileID: 7246912572194212411, guid: 72d8d12b1f7054cb0aec4e1e0ef4ad5c, type: 3}
+  wallRubble: {fileID: 3282200318031470382, guid: 78b0c8e5bc58843829a2940edfccea0c, type: 3}
+  wallModel:
+    mesh: {fileID: 2959467708922500008, guid: c54fabdc19dc84f60a73bc417ea60da4, type: 3}
+    materials:
+    - {fileID: 2100000, guid: 84ba16009bc4e438380e0d3813c43928, type: 2}
+    - {fileID: 2100000, guid: 0520034cad85e43faa8435512eccc88c, type: 2}
+    - {fileID: 2100000, guid: db69cea2073404d089fbae06bd789391, type: 2}
+    - {fileID: 2100000, guid: 0d2c90daffa1b4d9db7148d824d7d0f5, type: 2}
+    - {fileID: 2100000, guid: 93d8d9f40f9e24fa0996eb82725b5f0c, type: 2}
+    - {fileID: 2100000, guid: 5c3e22d5a005f42b1800659077c70459, type: 2}
+  isolatedModel:
+    mesh: {fileID: 2959467708922500008, guid: 1c4ed2526c8134709973e4c8e64f96e9, type: 3}
+    materials:
+    - {fileID: 2100000, guid: 84ba16009bc4e438380e0d3813c43928, type: 2}
+    - {fileID: 2100000, guid: 0520034cad85e43faa8435512eccc88c, type: 2}
+    - {fileID: 2100000, guid: db69cea2073404d089fbae06bd789391, type: 2}
+    - {fileID: 2100000, guid: 0d2c90daffa1b4d9db7148d824d7d0f5, type: 2}
+    - {fileID: 2100000, guid: 93d8d9f40f9e24fa0996eb82725b5f0c, type: 2}
+    - {fileID: 2100000, guid: 5c3e22d5a005f42b1800659077c70459, type: 2}
+  bridgeModel:
+    mesh: {fileID: 2959467708922500008, guid: 232bb5566fb8840c2874c33d0c15ad16, type: 3}
+    materials:
+    - {fileID: 2100000, guid: 0d2c90daffa1b4d9db7148d824d7d0f5, type: 2}
+    - {fileID: 2100000, guid: db69cea2073404d089fbae06bd789391, type: 2}
+    - {fileID: 2100000, guid: 0520034cad85e43faa8435512eccc88c, type: 2}
+    - {fileID: 2100000, guid: 84ba16009bc4e438380e0d3813c43928, type: 2}
+    - {fileID: 2100000, guid: 5c3e22d5a005f42b1800659077c70459, type: 2}
+  civilianModel: {fileID: 6878609592510522591, guid: 761d360a4ec74424ca9cdfd8dc3b8f67, type: 3}
+  entryDoor: {fileID: 3694077490139087444, guid: 07e014c4af2cc481db668f0414086b44, type: 3}

@@ -7,6 +7,8 @@ namespace Corrigible.Core
     [Serializable]
     public sealed class ShelterState
     {
+        /// <summary>Kişi, görev ve eşya sahipliğiyle vardiya planı; eski oda modeli kapalıyken asıl kaynaktır.</summary>
+        public PlanningBoardState Plan;
         public double Supplies, Materials;
         public int Population;
         public bool Starving;

@@ -1,0 +1,88 @@
+{
+ "name": "EntryDoor_eeu",
+ "family": "raidcivil",
+ "budget": "raid",
+ "origin": "kapı izdüşümünün ortası, kontrplak kenar payının yüzeyi (y = 0)",
+ "note": "Koyu cilalı ahşap kasa ve kayıt, açık ahşap iki kanat, tablalar, üstte camlı vasistas, pirinç topuzlar. Paftanın dışında, batı kenar payında (u = −0,15) giriş satırının ortasında durur; dış yüz −x (kameranın gördüğü yüz), kapı +x yönünde tahtanın içine açılır. El çarkı yok, kırmızı/mavi/turuncu bant yok.",
+ "listName": "Giriş kapısı · arşiv: vasistaslı çift kanatlı ahşap kapı",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -0.15,
+    0,
+    -3.5
+   ],
+   "yaw": 0,
+   "note": "örnek: giriş satırı 4 (r = 3) · x = u = −0,15, z = −(r + 0,5)"
+  }
+ ],
+ "tris": 368,
+ "trisPerPart": {
+  "Body": 368
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.0415,
+   0,
+   -0.45
+  ],
+  "max": [
+   0.06,
+   0.59,
+   0.45
+  ],
+  "size": [
+   0.1015,
+   0.59,
+   0.9
+  ]
+ },
+ "materials": [
+  {
+   "key": "woodVarnish",
+   "hex": "#5E4128",
+   "rough": 0.45,
+   "metal": 0,
+   "tex": "tx_wood (lif)",
+   "note": "cilalı masa ahşabı",
+   "tris": 200,
+   "isNew": true
+  },
+  {
+   "key": "rc_glass",
+   "hex": "#C9D1CE",
+   "rough": 0.08,
+   "metal": 0,
+   "alpha": 0.45,
+   "note": "açık gri cam (Transparent): cam kapı, vasistas, büyüteç",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "woodRaw",
+   "hex": "#8A6A44",
+   "rough": 0.8,
+   "metal": 0,
+   "note": "ham çıta, sandık",
+   "tris": 84,
+   "isNew": true
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 72,
+   "isNew": true
+  }
+ ]
+}

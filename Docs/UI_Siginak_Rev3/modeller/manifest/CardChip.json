@@ -1,0 +1,99 @@
+{
+ "name": "CardChip",
+ "family": "board",
+ "budget": "small",
+ "origin": "kart merkezi, arka yüz z = 0 (panoya değen yüz); ön yüz −z",
+ "note": "İş emrine bırakılan tek birim; kırmızı üst şerit = ayrılmış. Kalınlık 0,6 mm (bütün kartlarda aynı). Yüz dokusu çalışma anında çizilir (cardFace, UV 0–1), arka yüz cardBack.",
+ "listName": "Hammadde fişi (1 adet, 56 × 40)",
+ "parts": [],
+ "texts": [
+  {
+   "name": "FACE",
+   "part": "Body",
+   "center": [
+    0,
+    0,
+    -0.0007999999999999999
+   ],
+   "size": [
+    0.056,
+    0.04
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "cardFace",
+   "font": "Courier Prime 700",
+   "capMm": null,
+   "align": "center",
+   "sample": "",
+   "sampleEn": "",
+   "note": "bütün yüz: kart dokusu (boardtex.js düzeni)"
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 16,
+ "trisPerPart": {
+  "Body": 16
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.028,
+   -0.02,
+   -0.0007
+  ],
+  "max": [
+   0.028,
+   0.02,
+   0.0001
+  ],
+  "size": [
+   0.056,
+   0.04,
+   0.0008
+  ]
+ },
+ "materials": [
+  {
+   "key": "cardEdge",
+   "hex": "#E3D8BA",
+   "rough": 0.9,
+   "metal": 0,
+   "note": "kart kenarı (0,6 mm karton)",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "cardFace",
+   "hex": "#EFE6D0",
+   "rough": 0.88,
+   "metal": 0,
+   "tex": "kart yüzü: çalışma anında çizilen kart dokusu (RenderTexture ya da UI Canvas → doku), 8 px/mm",
+   "note": "kart ön yüzü (UV 0–1)",
+   "tris": 2,
+   "isNew": true
+  },
+  {
+   "key": "cardBack",
+   "hex": "#E2D7B8",
+   "rough": 0.9,
+   "metal": 0,
+   "tex": "tx_card_back (KYGA · 07 soluk şablon)",
+   "note": "kart arkası (UV 0–1)",
+   "tris": 2,
+   "isNew": true
+  }
+ ]
+}

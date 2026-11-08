@@ -25,12 +25,25 @@ namespace Corrigible.Desk
         Door,
         /// <summary>K9 ayarlar dolabı (arka duvarın sağı, CRT'nin üstü; dolaba tıklama ya da Esc).</summary>
         Cabinet,
+        /// <summary>
+        /// K6 vardiya şalteri yakın pozu (R19): şalter, fiş ağzı, plaka ve EVRAK tepsisi birlikte. Kartlı oyunun kapanışı burada
+        /// geçer; eski yolun <see cref="Shift"/> (K6a) pozu ayrı kalır. Sayı asset'lerde saklandığı için en sonda.
+        /// </summary>
+        ShiftClose = 7,
+        /// <summary>K8A kabul tezgâhı (Revizyon 3 · Aşama 6, R17): inik tezgâha tıklayınca; çapa <c>Poses/K8A</c>, 47°.</summary>
+        Admission = 8,
+        /// <summary>K8G buğu camı (R17b): kanattaki soğuk cama yakın bakış; çapa <c>Poses/K8G</c>, 30°.</summary>
+        BreathGlass = 9,
+        /// <summary>K8R kâğıt okuma (R17): tıklanan kâğıda göre çapası kurulan okuma pozu; çapa <c>Poses/K8R</c>, 40°.</summary>
+        AdmissionRead = 10,
     }
 
     /// <summary>
-    /// Sığınak kamerası: pozlar arasında 0,45 s ease-in-out geçiş (K1 → harita önce 0,15 s yükselir, sonra eğilir),
-    /// sağ tuşla sınırlı bakış, tekerlekle yaklaşma, 2/3/F/Home kısayolları. Kamera her pozda fiziksel kalır: dikey FOV
-    /// odak uzaklığıyla, K1'in ufuk kaydırması lens kaydırmasıyla verilir; geçişte ikisi birlikte değişir (sıçrama olmaz).
+    /// Sığınak kamerası: pozlar arasında ease-in-out geçiş (varsayılan 0,45 s; panoya, K4'e gidiş 0,6 s, K4'ten her çıkış
+    /// 0,5 s: <see cref="PoseSeconds"/>; K1 → harita önce 0,15 s yükselir, sonra eğilir), sağ tuşla sınırlı bakış,
+    /// sürüklemesiz sağ tıkla geri (<see cref="BackClicked"/>, Karar K7), tekerlekle yaklaşma, 2/3/F/Home kısayolları. Kamera
+    /// her pozda fiziksel kalır: dikey FOV odak uzaklığıyla, K1'in ufuk kaydırması lens kaydırmasıyla verilir; geçişte ikisi
+    /// birlikte değişir (sıçrama olmaz). Geçiş bitince ya da poz anında oturunca <see cref="Arrived"/> yayınlanır.
     /// Baskına geçişte kamerayı üst üste binen üç vuruşla (geri çekil, dön, yaklaş) kesintisiz CRT'ye götürür, dönüşte aynı
     /// yoldan geri getirir (<see cref="BeginDive"/>, <see cref="BeginReturn"/>); o sırada rig başlatıcıda kapalıdır, yolu
     /// <see cref="RunDive"/> sürer.
@@ -78,7 +91,7 @@ namespace Corrigible.Desk
         float elapsed = float.MaxValue, duration = 0.45f;
         State from, to;
         float yaw, pitch, zoom = 1, shownYaw, shownPitch, shownZoom = 1;
-        bool dragging;
+        RightButtonGesture right;
 
         struct State { public Vector3 position; public Quaternion rotation; public float fieldOfView, shift; }
 
@@ -88,11 +101,38 @@ namespace Corrigible.Desk
         public bool InTransition => elapsed < duration;
         /// <summary>Geçişin kalan süresi (s); geçiş yoksa 0.</summary>
         public float TransitionRemaining => Mathf.Max(0, duration - elapsed);
-        /// <summary>Ekip figürü taşınırken bakış ve tekerlek kapalı (Ekip-figuru.md).</summary>
+        /// <summary>
+        /// Ekip figürü ya da pano kartı taşınırken kısayollar (2/3/F/Home), bakış, sağ tık ve tekerlek kapalı
+        /// (Ekip-figuru.md; Revizyon 3 PLAN §1.5: taşınan kart başka poza kaçmasın).
+        /// </summary>
         public bool InputSuspended { get; set; }
         /// <summary>Vardiya dizisi ve rapor (K6): kısayollar, bakış ve tekerlek kapalı; pozları dizi sürer.</summary>
         public bool Locked { get; set; }
+        /// <summary>Poz değişti (geçişin başında; süre <see cref="TransitionRemaining"/>'de hazır).</summary>
         public event Action<SiginakPose> PoseChanged;
+        /// <summary>
+        /// Kamera poza oturdu: geçiş bitti ya da poz anında oturtuldu (<see cref="Snap"/>, açılış). Yarıda kesilen geçiş
+        /// bildirilmez; yalnız son hedef. Pano kartlarının girdisi K4'e varınca açılır (PLAN §1.5).
+        /// </summary>
+        public event Action<SiginakPose> Arrived;
+        /// <summary>
+        /// Sürüklemesiz sağ tık (Karar K7): sağ tuş ölü bölgeyi (<see cref="RightClickSlop"/>) aşmadan basılıp bırakıldı.
+        /// Argüman bırakıldığı andaki poz; ne yapılacağına bağlayıcı karar verir (SiginakDesk: K4'te panonun geri adımı).
+        /// Ölü bölgeyi aşan basış bakıştır ve bildirilmez.
+        /// </summary>
+        public event Action<SiginakPose> BackClicked;
+
+        /// <summary>Sağ tık ile bakışı ayıran ölü bölge (px): sahnedeki EventSystem'in sürükleme eşiği (DeskGame: 10).</summary>
+        public static float RightClickSlop => EventSystem.current != null ? EventSystem.current.pixelDragThreshold : 10;
+        /// <summary>Bakışın piksel başına derecesi (sağ tuşla sürükleme).</summary>
+        public float LookSensitivity => sensitivity;
+        /// <summary>
+        /// Tekerleğin görüş açısı çarpanı sınırları bu pozda. K4'te uzaklaşma 1,0'da durur: 1,1'de kart düzlemi 14 px
+        /// sınırının altına düşer (Aşama 3 E §2.3); yaklaşma açık kalır.
+        /// </summary>
+        public Vector2 ZoomRange => current == SiginakPose.Shelf
+            ? new Vector2(zoomLimit.x, Mathf.Max(zoomLimit.x, Mathf.Min(zoomLimit.y, 1f)))
+            : zoomLimit;
 
         public bool IsFocused => current == SiginakPose.Map;
         public void FocusMap() => Focus(SiginakPose.Map);
@@ -121,11 +161,36 @@ namespace Corrigible.Desk
             return false;
         }
 
-        /// <summary>Poza geçer; <paramref name="instant"/> ise hemen oturur (editörde de çalışır).</summary>
-        public void Focus(SiginakPose pose, bool instant = false) => Focus(pose, instant, transitionSeconds);
+        /// <summary>
+        /// Poza geçer; <paramref name="instant"/> ise hemen oturur (editörde de çalışır). Süre <see cref="PoseSeconds"/>'ten
+        /// (panoya 0,6 s, panodan 0,5 s, öteki geçişler 0,45 s).
+        /// </summary>
+        public void Focus(SiginakPose pose, bool instant = false) => Focus(pose, instant, PoseSeconds(current, pose));
 
         /// <summary>Poza <paramref name="seconds"/> sürede geçer (vardiya dizisi: K6a'ya 0,4 s, harita pozuna 0,6 s).</summary>
         public void Focus(SiginakPose pose, float seconds) => Focus(pose, false, seconds);
+
+        /// <summary>
+        /// Varsayılan geçiş süresi (PROMPT §0.3: süreler motion.* tokenlarından): herhangi bir pozdan K4'e (pano)
+        /// <c>motion.board.toK4S</c> (0,6 s), K4'ten herhangi bir poza <c>motion.board.backToDeskS</c> (0,5 s); öteki geçişler
+        /// <c>motion.poseS</c> (<c>transitionSeconds</c>, 0,45 s). Kapının K8 ailesi (Aşama 6): K8G'ye ve K8G'den
+        /// <c>admission.motion.toK8GS</c> (0,45 s), K8R'ye ve K8R'den <c>admission.motion.readS</c> (0,25 s). Süresini kendisi veren
+        /// çağrılar (vardiya dizisi, açılış, operasyon) bundan etkilenmez.
+        /// </summary>
+        public float PoseSeconds(SiginakPose from, SiginakPose to)
+        {
+            if (from == to) return transitionSeconds;
+            var theme = SiginakTheme.Active;
+            if (to == SiginakPose.Shelf) return theme != null ? theme.NumberOf("motion.board.toK4S", 0.6f) : 0.6f;
+            if (from == SiginakPose.Shelf) return theme != null ? theme.NumberOf("motion.board.backToDeskS", 0.5f) : 0.5f;
+            // Aşama 6 K8 ailesi (PLAN §1.5): K8 ↔ K8A motion.poseS (varsayılan); K8/K8A ↔ K8G admission.motion.toK8GS (0,45);
+            // K8A ↔ K8R admission.motion.readS (0,25; R17-not "0,25 s'de kameraya döner")
+            if (to == SiginakPose.AdmissionRead || from == SiginakPose.AdmissionRead)
+                return theme != null ? theme.NumberOf("admission.motion.readS", 0.25f) : 0.25f;
+            if (to == SiginakPose.BreathGlass || from == SiginakPose.BreathGlass)
+                return theme != null ? theme.NumberOf("admission.motion.toK8GS", transitionSeconds) : transitionSeconds;
+            return transitionSeconds;
+        }
 
         void Focus(SiginakPose pose, bool instant, float seconds)
         {
@@ -135,7 +200,8 @@ namespace Corrigible.Desk
             previous = current;
             current = pose;
             yaw = pitch = 0; zoom = 1;
-            dragging = false;
+            // Önceki pozda başlamış sağ basış yeni pozda ne bakış ne geri tık sayılır
+            right.Reset();
             to = new State { position = slot.anchor.position, rotation = slot.anchor.rotation, fieldOfView = slot.fieldOfView, shift = slot.lensShiftY };
             if (instant)
             {
@@ -150,6 +216,7 @@ namespace Corrigible.Desk
                 elapsed = 0;
             }
             PoseChanged?.Invoke(pose);
+            if (instant) Arrived?.Invoke(pose);
         }
 
         public void Snap(SiginakPose pose) => Focus(pose, true);
@@ -162,29 +229,37 @@ namespace Corrigible.Desk
             Snap(current);
         }
 
-        void OnDisable() => dragging = false;
+        void OnDisable() => right.Reset();
 
         void LateUpdate()
         {
             if (!Application.isPlaying || !view || !view.enabled) return;
             bool blocked = Locked || desk != null && desk.InteractionBlocked;
-            if (!blocked) ReadInput(); else dragging = false;
+            if (!blocked) ReadInput(); else right.Reset();
             Step(Time.unscaledDeltaTime);
         }
 
-        /// <summary>Geçişi ve bakışı <paramref name="dt"/> kadar ilerletip kameraya uygular (testler editörde doğrudan çağırır).</summary>
+        /// <summary>
+        /// Geçişi ve bakışı <paramref name="dt"/> kadar ilerletip kameraya uygular (testler editörde doğrudan çağırır).
+        /// Geçiş bu adımda bittiyse kamera hedefe oturduktan sonra <see cref="Arrived"/> yayınlanır.
+        /// </summary>
         public void Step(float dt)
         {
-            if (elapsed < duration) elapsed += dt;
+            bool moving = elapsed < duration;
+            if (moving) elapsed += dt;
             float k = 1 - Mathf.Exp(-lookSmoothing * dt);
             shownYaw = Mathf.Lerp(shownYaw, yaw, k);
             shownPitch = Mathf.Lerp(shownPitch, pitch, k);
             shownZoom = Mathf.Lerp(shownZoom, zoom, k);
             Apply(Evaluate(), shownYaw, shownPitch, shownZoom);
+            if (moving && elapsed >= duration) Arrived?.Invoke(current);
         }
 
         void ReadInput()
         {
+            // Taşıma sürerken (kart, ekip figürü) kısayollar da kapalı: 2/3/Home/F kamerayı taşınan şeyin altından kaçırmasın
+            if (InputSuspended) { right.Reset(); return; }
+
             var keyboard = Keyboard.current;
             if (keyboard != null && !TextFieldSelected())
             {
@@ -195,18 +270,29 @@ namespace Corrigible.Desk
             }
 
             var mouse = Mouse.current;
-            if (mouse == null || InputSuspended) { dragging = false; return; }
+            if (mouse == null) { right.Reset(); return; }
             float scroll = mouse.scroll.ReadValue().y;
-            bool overOverlay = (mouse.rightButton.isPressed || scroll != 0) && desk != null && desk.PointerOverOverlay;
-            if (!mouse.rightButton.isPressed || overOverlay) dragging = false;
-            if (mouse.rightButton.wasPressedThisFrame && !overOverlay) dragging = true;
-            if (dragging)
+            var button = mouse.rightButton;
+            bool overOverlay = (button.isPressed || scroll != 0) && desk != null && desk.PointerOverOverlay;
+            var position = mouse.position.ReadValue();
+            if (button.wasPressedThisFrame && !overOverlay) right.Press(position);
+            if (right.Held)
             {
-                var delta = mouse.delta.ReadValue();
-                yaw = Mathf.Clamp(yaw + delta.x * sensitivity, yawLimit.x, yawLimit.y);
-                pitch = Mathf.Clamp(pitch - delta.y * sensitivity, pitchLimit.x, pitchLimit.y);
+                if (button.isPressed && !overOverlay)
+                {
+                    // Ölü bölge aşılana dek hareket bekletilir, aşılınca bekleyen kısım da uygulanır (bakış kaybı yok)
+                    var look = right.Move(position, mouse.delta.ReadValue(), RightClickSlop);
+                    yaw = Mathf.Clamp(yaw + look.x * sensitivity, yawLimit.x, yawLimit.y);
+                    pitch = Mathf.Clamp(pitch - look.y * sensitivity, pitchLimit.x, pitchLimit.y);
+                }
+                // Basılıyken Overlay yüzeyine girdi: bakış durur, bırakma tık sayılmaz (önceki davranış)
+                else if (button.isPressed) right.Reset();
+                else if (button.wasReleasedThisFrame) { if (right.Release()) BackClicked?.Invoke(current); }
+                // Bırakma görülmeden tuş kalktı (odak kaybı, aygıt sıfırlandı): tık sayılmaz
+                else right.Reset();
             }
-            if (!overOverlay && scroll != 0) zoom = Mathf.Clamp(zoom - scroll * 0.0006f, zoomLimit.x, zoomLimit.y);
+            var range = ZoomRange;
+            if (!overOverlay && scroll != 0) zoom = Mathf.Clamp(zoom - scroll * 0.0006f, range.x, range.y);
         }
 
         /// <summary>Geçişin o anki hâli. K1 → harita: önce yükselir (yalnız konum), sonra eğilir ve yaklaşır.</summary>
@@ -384,6 +470,64 @@ namespace Corrigible.Desk
             var events = EventSystem.current;
             var selected = events ? events.currentSelectedGameObject : null;
             return selected && (selected.GetComponentInParent<TMP_InputField>() || selected.GetComponentInParent<InputField>());
+        }
+    }
+
+    /// <summary>
+    /// Sağ tuşun sınıflaması (Karar K7; Aşama 3 E §2.3), aygıttan bağımsız saf durum: basıştan bu yana imleç ölü bölgeyi
+    /// (<see cref="SiginakCameraRig.RightClickSlop"/>, sahnede 10 px) aşmadan bırakılırsa tık (geri), aşarsa bakış.
+    /// Eşik aşılana dek gelen hareket bekletilir ve eşik aşıldığı karede bütünüyle verilir; bakış hareket kaybetmez.
+    /// </summary>
+    public struct RightButtonGesture
+    {
+        Vector2 pressAt, pending;
+
+        /// <summary>Sağ tuş bu hareket için basılı.</summary>
+        public bool Held { get; private set; }
+        /// <summary>Ölü bölge aşıldı: bu basış bakıştır, bırakınca tık sayılmaz.</summary>
+        public bool Looking { get; private set; }
+
+        /// <summary>Basış (ekran noktası, px).</summary>
+        public void Press(Vector2 position)
+        {
+            Held = true;
+            Looking = false;
+            pressAt = position;
+            pending = Vector2.zero;
+        }
+
+        /// <summary>
+        /// Basılıyken bir karenin hareketi. Döndürdüğü değer bu karede bakışa uygulanacak delta (px): eşik aşılmadıysa sıfır,
+        /// aşıldığı karede o ana dek bekletilen bütün hareket, sonra gelen delta olduğu gibi.
+        /// </summary>
+        /// <param name="position">İmlecin şimdiki yeri (px).</param>
+        /// <param name="delta">Bu karenin imleç hareketi (px).</param>
+        /// <param name="slop">Ölü bölge yarıçapı (px); bu uzaklık ve ötesi bakıştır.</param>
+        public Vector2 Move(Vector2 position, Vector2 delta, float slop)
+        {
+            if (!Held) return Vector2.zero;
+            if (Looking) return delta;
+            pending += delta;
+            if ((position - pressAt).sqrMagnitude < slop * slop) return Vector2.zero;
+            Looking = true;
+            var held = pending;
+            pending = Vector2.zero;
+            return held;
+        }
+
+        /// <summary>Bırakma: ölü bölge aşılmadıysa true (tık). Durum sıfırlanır.</summary>
+        public bool Release()
+        {
+            bool click = Held && !Looking;
+            Reset();
+            return click;
+        }
+
+        /// <summary>Hareketi tık saymadan bırakır (kilit, taşıma, poz değişimi, Overlay).</summary>
+        public void Reset()
+        {
+            Held = Looking = false;
+            pending = Vector2.zero;
         }
     }
 }

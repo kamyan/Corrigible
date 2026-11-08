@@ -121,8 +121,8 @@ namespace Corrigible.Desk.Tests
                 Assert.AreEqual(DeskFont.CpBold, plate.font); Assert.AreEqual(16, plate.size); Assert.AreEqual(0.06f, plate.letterSpacingEm, 1e-4);
                 Assert.IsTrue(t.TryType("analystNote", out var note)); Assert.AreEqual(DeskFont.KalamBold, note.font);
                 Assert.IsTrue(t.TryType("sectorName", out var sector)); Assert.AreEqual(DeskFont.LfSemiBold, sector.font);
-                Assert.IsTrue(t.TryType("wallStencil", out var stencil)); Assert.AreEqual(DeskFont.CpBold, stencil.font, "Big Shoulders yok: CP 700 yedeği");
-                Assert.AreEqual("Big Shoulders Stencil Display", t.Text("type.wallStencil.fallback"));
+                Assert.IsTrue(t.TryType("wallStencil", out var stencil)); Assert.AreEqual(DeskFont.StencilExtraBold, stencil.font, "Big Shoulders Stencil (Revizyon 3)");
+                Assert.IsFalse(t.strings.Any(x => x.key == "type.wallStencil.fallback"), "eşlenen ailede yedek notu yok");
                 Assert.IsTrue(t.TryType("hoverTitle", out _), "ortak rol Sade'den okunur");
                 var report = t.Shadow("report");
                 Assert.AreEqual(1, report.Length); Assert.AreEqual(new Vector2(5, 7), report[0].offset); Assert.AreEqual(0.45f, report[0].color.a, 1e-4);
@@ -159,7 +159,7 @@ namespace Corrigible.Desk.Tests
             {
                 Assert.IsEmpty(report.BadHex, "okunamayan renkler");
                 var root = JObject.Parse(Json);
-                Assert.AreEqual("1.1", (string)root["meta"]["version"]);
+                Assert.AreEqual("1.3", (string)root["meta"]["version"], "Revizyon 3 + ek 11-05");
                 var paths = ((JArray)root["_new_1_1"]).Select(p => (string)p).ToList();
                 Assert.AreEqual(87, paths.Count);
                 var missing = paths.Where(p =>
@@ -211,7 +211,7 @@ namespace Corrigible.Desk.Tests
             try
             {
                 var root = JObject.Parse(RaidJson);
-                Assert.AreEqual("1.2", (string)root["meta"]["version"]);
+                Assert.AreEqual("1.3", (string)root["meta"]["version"], "Revizyon 3 + ek 11-05");
                 bool Has(string key) => t.colors.Any(c => Matches(c.key, key)) || t.numbers.Any(n => Matches(n.key, key));
                 JToken At(string path) => path.Split('.').Aggregate((JToken)root, (n, k) => n?[k]);
                 var paths = ((JArray)root["_new_1_1"]).Select(p => (string)p).ToList();
@@ -275,6 +275,66 @@ namespace Corrigible.Desk.Tests
                 foreach (var key in new[] { "intents.shield.color", "intents.clone.color", "marks.ghostWake.color", "intents.nonHarmful.color" })
                     Assert.AreEqual("854005", ColorUtility.ToHtmlStringRGB(t.Get(key)), key);
                 Assert.AreEqual("B8241A", ColorUtility.ToHtmlStringRGB(t.Get("intents.lob.color")));
+            }
+            finally { Object.DestroyImmediate(t); }
+        }
+
+        /// <summary>
+        /// Revizyon 3 + ek 11-05 (token 1.3): “_new_1_3”teki her yol temada karşılık bulur. Kartlı oyundan kaldırılan 26 düğüm
+        /// eski değerleriyle (“_was_1_3”) temada kalır, çünkü eski yol onları okur (Rev3 IMPLEMENTATION_MAP › Soru 5);
+        /// kaldırılmamış değişiklikler (K4 kamerası) yeni değerini verir.
+        /// </summary>
+        [Test]
+        public void Tokens_Rev3()
+        {
+            var t = Fresh(out var report);
+            try
+            {
+                Assert.IsEmpty(report.BadHex, "okunamayan renkler");
+                var root = JObject.Parse(Json);
+                JToken At(string path) => path.Split('.').Aggregate((JToken)root, (n, k) => n?[k]);
+                var paths = ((JArray)root["_new_1_3"]).Select(p => (string)p).ToList();
+                Assert.AreEqual(117, paths.Count);
+                var missing = paths.Where(p => At(p) == null ||
+                    (p.StartsWith("colors.") ? !HasKey(t, p.Substring(7)) :
+                     p.StartsWith("type.") ? !t.type.Any(x => x.role == p.Substring(5)) :
+                     HasValue(At(p)) && !HasKey(t, p))).ToList();
+                Assert.IsEmpty(missing, "temada karşılığı olmayan 1.3 tokenları: " + string.Join(", ", missing));
+
+                Assert.AreEqual(0.55f, t.Number("lights.roomBulb.k4Scale"), 1e-4, "kaldırılan düğüm eski değeriyle");
+                Assert.AreEqual("C0281C", ColorUtility.ToHtmlStringRGB(t.ColorOf("door.fatalRoomLight")), "eski yolun ölümcül kapı ışığı");
+                Assert.AreEqual(0.12f, t.Number("motion.summaryStaggerS"), 1e-4);
+                Assert.IsFalse(t.numbers.Any(n => n.key.EndsWith(".removed")), "kaldırma işaretleri temaya girmemeli");
+
+                Assert.AreEqual(new Vector3(0, 1.293f, -0.98f), t.Vector("cameras.K4.localPos"), "K4 panoya bağlı (yeni değer)");
+                Assert.AreEqual(42.5f, t.Number("cameras.K4.fovV"), 1e-4);
+                Assert.AreEqual(10, t.Number("board.limits.people"));
+                Assert.AreEqual(60, t.Number("board.limits.rationCap"));
+                Assert.AreEqual(80, t.Number("cards.sizesMm.person[0]")); Assert.AreEqual(120, t.Number("cards.sizesMm.person[1]"));
+                Assert.AreEqual(0.35f, t.Number("shiftClose.slip.exitS"), 1e-4);
+                Assert.AreEqual("PLAN KİLİTLİ", t.Text("board.plates.tr.flapB"));
+                Assert.AreEqual("PLAN LOCKED", t.Text("board.plates.en.flapB"));
+            }
+            finally { Object.DestroyImmediate(t); }
+        }
+
+        /// <summary>Revizyon 3: baskın tokenları 1.3 yalnız ekleme (kit modelleri, kit ve parça malzemeleri).</summary>
+        [Test]
+        public void RaidTokens_Rev3()
+        {
+            var t = FreshRaid();
+            try
+            {
+                var root = JObject.Parse(RaidJson);
+                bool Has(string key) => t.colors.Any(c => Matches(c.key, key)) || t.numbers.Any(n => Matches(n.key, key));
+                JToken At(string path) => path.Split('.').Aggregate((JToken)root, (n, k) => n?[k]);
+                var paths = ((JArray)root["_new_1_3"]).Select(p => (string)p).ToList();
+                Assert.AreEqual(72, paths.Count);
+                Assert.IsEmpty(paths.Where(p => At(p) == null), "1.3 listesinde olup dosyada olmayan yollar");
+                var missing = paths.Where(p => HasValue(At(p)) && !Has(p)).ToList();
+                Assert.IsEmpty(missing, "temada karşılığı olmayan 1.3 tokenları: " + string.Join(", ", missing));
+                Assert.AreEqual(0, ((JArray)root["_changed_1_3"]).Count, "baskında değişen yol yok");
+                Assert.AreEqual("A8A194", ColorUtility.ToHtmlStringRGB(t.Get("kits.weu.wallTop")));
             }
             finally { Object.DestroyImmediate(t); }
         }

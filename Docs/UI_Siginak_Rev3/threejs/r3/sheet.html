@@ -1,0 +1,149 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="/node_modules/@fontsource/courier-prime/400.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/courier-prime/700.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/libre-franklin/400.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/libre-franklin/600.css">
+<style>
+html,body{margin:0;background:#F1E9D6;color:#1E1B16;font-family:'Libre Franklin',sans-serif}
+#wrap{position:relative;overflow:hidden}
+.grid{position:absolute;background-color:#F4EEDF;background-image:linear-gradient(rgba(44,76,142,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(44,76,142,.10) 1px,transparent 1px);background-size:20px 20px;border:1px solid rgba(44,76,142,.45)}
+.vl{position:absolute;font:700 13px 'Courier Prime',monospace;letter-spacing:.08em;color:#2C4C8E}
+canvas{position:absolute;left:0;top:0}
+svg{position:absolute;left:0;top:0}
+.hd{position:absolute;left:24px;top:10px;right:24px;border-bottom:2px solid #D2483F;padding-bottom:6px;height:46px}
+.hd b{display:block;font:700 22px 'Courier Prime',monospace;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hd span{display:block;font:700 12px 'Courier Prime',monospace;color:#675F50;letter-spacing:.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.side{position:absolute;font-size:13px;line-height:1.32}
+.side h4{margin:10px 0 4px;font:700 13px 'Courier Prime',monospace;letter-spacing:.08em;color:#675F50;border-bottom:1px dotted #8E8166}
+.row{display:flex;gap:6px;align-items:flex-start;margin:2px 0}
+.sw{width:14px;height:14px;border:1px solid #1E1B16;flex:none;margin-top:1px}
+.mono{font:700 12px 'Courier Prime',monospace}
+.dim{color:#675F50}
+</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+</head><body><div id="wrap"></div>
+<script type="module">
+import * as THREE from 'three';
+import { MODELS } from './registry.js';
+import { MATS, NEW_KEYS } from './mats.js';
+import { BUDGET } from './mlib.js';
+const q = new URLSearchParams(location.search);
+const name = q.get('m'); const W = +(q.get('w') || 1600), H = +(q.get('h') || 1000);
+await document.fonts.ready;
+const def = MODELS[name]; if (!def) { document.body.textContent = 'no model ' + name; window.__done = { err: 'no model' }; throw 0; }
+const m = def.build();
+if (q.get('pose')) { const P = JSON.parse(q.get('pose')); for (const [k, v] of Object.entries(P)) m.pose(k, v); }
+const wrap = document.getElementById('wrap'); wrap.style.width = W + 'px'; wrap.style.height = H + 'px';
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1); renderer.setSize(W, H); renderer.setClearColor(0x000000, 0);
+renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene(); scene.add(m.root);
+const hemi = new THREE.HemisphereLight(0xffffff, 0x8a8070, 1.1); scene.add(hemi);
+const key = new THREE.DirectionalLight(0xfff1dc, 2.2); scene.add(key); scene.add(key.target);
+const fill = new THREE.DirectionalLight(0xc8d6e6, 0.8); scene.add(fill);
+// soft environment for metals
+const { RoomEnvironment } = await import('three/addons/environments/RoomEnvironment.js');
+const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
+m.root.traverse(o => { if (o.isMesh) { o.material = o.material.clone(); o.material.envMapIntensity = 0.55; } });
+m.root.updateMatrixWorld(true);
+const bb = new THREE.Box3().setFromObject(m.root); const sz = bb.getSize(new THREE.Vector3()), ctr = bb.getCenter(new THREE.Vector3());
+key.position.copy(ctr).add(new THREE.Vector3(-1.2, 2.2, 1.6).multiplyScalar(Math.max(sz.x, sz.y, sz.z) * 2)); key.target.position.copy(ctr);
+fill.position.copy(ctr).add(new THREE.Vector3(1.5, 0.6, 1.0));
+// layout
+const HD = 64, side = 430, pad = 18; const gx = pad, gy = HD + 12, gw = W - side - pad * 3, gh = H - gy - pad;
+let vw = (gw - pad) / 2, vh = (gh - pad) / 2;
+if (q.get('view') === 'hero') { vw = W; vh = H; }
+const hero = q.get('view') === 'hero';
+const views = hero ? [{ id: 'PERSPEKTİF', x: 0, y: 0, persp: true }] : [
+  { id: 'ÖNDEN', x: gx, y: gy, dir: [0, 0, 1], up: [0, 1, 0], h: [1, 0, 0], v: [0, 1, 0] },           // camera at three +z (Unity −z)
+  { id: 'SAĞDAN', x: gx + vw + pad, y: gy, dir: [1, 0, 0], up: [0, 1, 0], h: [0, 0, -1], v: [0, 1, 0] }, // camera at +x
+  { id: 'ÜSTTEN', x: gx, y: gy + vh + pad, dir: [0, 1, 0], up: [0, 0, -1], h: [1, 0, 0], v: [0, 0, -1] },
+  { id: 'PERSPEKTİF', x: gx + vw + pad, y: gy + vh + pad, persp: true },
+];
+// common ortho scale (px per metre)
+const ext = { x: sz.x, y: sz.y, z: sz.z };
+const s = Math.min((vw - 120) / Math.max(ext.x, ext.z), (vh - 110) / Math.max(ext.y, ext.z), (vw - 120) / Math.max(ext.x, 1e-3));
+for (const v of views) { if (hero) break; const d = document.createElement('div'); d.className = 'grid'; Object.assign(d.style, { left: v.x + 'px', top: v.y + 'px', width: vw + 'px', height: vh + 'px' }); wrap.appendChild(d);
+  const l = document.createElement('div'); l.className = 'vl'; l.textContent = v.id; Object.assign(l.style, { left: v.x + 8 + 'px', top: v.y + 6 + 'px' }); wrap.appendChild(l); }
+wrap.appendChild(renderer.domElement);
+const svgNS = 'http://www.w3.org/2000/svg'; const svg = document.createElementNS(svgNS, 'svg'); svg.setAttribute('width', W); svg.setAttribute('height', H); wrap.appendChild(svg);
+const el = (tag, at, txt) => { const e = document.createElementNS(svgNS, tag); for (const [k, v] of Object.entries(at)) e.setAttribute(k, v); if (txt != null) e.textContent = txt; svg.appendChild(e); return e; };
+const BLUE = '#2C4C8E', AMB = '#B0631A', INK = '#1E1B16';
+const U3 = (p) => new THREE.Vector3(p[0], p[1], -p[2]);
+function camFor(v) {
+  if (v.persp) { const c = new THREE.PerspectiveCamera(28, vw / vh, 0.001, 100); const R = Math.max(sz.x, sz.y, sz.z) * 2.9 + 0.05;
+    const az = +(q.get('az') ?? 33) * Math.PI / 180, elv = +(q.get('el') ?? 24) * Math.PI / 180; const zoom = +(q.get('zoom') || 1);
+    const dirv = new THREE.Vector3(Math.sin(az) * Math.cos(elv), Math.sin(elv), Math.cos(az) * Math.cos(elv)); c.position.copy(ctr).add(dirv.multiplyScalar(R / zoom)); c.lookAt(ctr); c.updateMatrixWorld(); c.updateProjectionMatrix(); return c; }
+  const hw = vw / 2 / s, hh = vh / 2 / s; const c = new THREE.OrthographicCamera(-hw, hw, hh, -hh, 0.001, 100);
+  c.position.copy(ctr).add(new THREE.Vector3(...v.dir).multiplyScalar(20)); c.up.set(...v.up); c.lookAt(ctr); c.updateMatrixWorld(); c.updateProjectionMatrix(); return c;
+}
+const ghost = q.get('ghost') !== '0' && q.get('view') !== 'hero' && m.meta.parts.some(p => p.range);
+let gm = null;
+if (ghost) { gm = def.build(); for (const p of gm.meta.parts) if (p.range) gm.pose(p.name, p.range[1]);
+  gm.root.traverse(o => { if (o.isMesh) { const isPart = o.name.split(':')[0] !== 'Body'; o.material = new THREE.MeshBasicMaterial({ color: 0xB0631A, transparent: true, opacity: isPart ? 0.28 : 0, depthWrite: false }); o.castShadow = false; } }); }
+renderer.setScissorTest(true);
+const projOf = {};
+for (const v of views) {
+  const cam = camFor(v); v.cam = cam; const y0 = H - v.y - vh;
+  renderer.setViewport(v.x, y0, vw, vh); renderer.setScissor(v.x, y0, vw, vh);
+  if (v.persp && gm) scene.add(gm.root);
+  renderer.render(scene, cam);
+  if (v.persp && gm) scene.remove(gm.root);
+  v.P = (p) => { const r = U3(p).project(cam); return [v.x + (r.x + 1) / 2 * vw, v.y + (1 - r.y) / 2 * vh]; };
+}
+if (hero) { window.__done = { name, tris: m.stats().tris }; throw 'hero'; }
+// dimension helper
+const mm = (x) => Math.round(x * 1000);
+function dim(a, b, off, label, vert) { const [x1, y1] = a, [x2, y2] = b; const nx = vert ? off : 0, ny = vert ? 0 : off;
+  el('line', { x1: x1 + nx, y1: y1 + ny, x2: x2 + nx, y2: y2 + ny, stroke: BLUE, 'stroke-width': 1.4 });
+  for (const [x, y] of [[x1, y1], [x2, y2]]) { el('line', { x1: x, y1: y, x2: x + nx * 1.15, y2: y + ny * 1.15, stroke: BLUE, 'stroke-width': 0.8, 'stroke-dasharray': '3 2' });
+    el('line', { x1: x + nx - (vert ? 5 : 0), y1: y + ny - (vert ? 0 : 5), x2: x + nx + (vert ? 5 : 0), y2: y + ny + (vert ? 0 : 5), stroke: BLUE, 'stroke-width': 1.4 }); }
+  const tx = (x1 + x2) / 2 + nx * 1.5, ty = (y1 + y2) / 2 + ny * 1.5 + (vert ? 4 : 4);
+  const t = el('text', { x: tx, y: ty, fill: BLUE, 'font-family': 'Courier Prime', 'font-weight': 700, 'font-size': 14, 'text-anchor': 'middle' }, label);
+  if (vert) t.setAttribute('transform', `rotate(-90 ${tx} ${ty})`);
+}
+const Bu = { min: [bb.min.x, bb.min.y, -bb.max.z], max: [bb.max.x, bb.max.y, -bb.min.z] };
+{ const v = views[0]; dim(v.P([Bu.min[0], Bu.min[1], Bu.min[2]]), v.P([Bu.max[0], Bu.min[1], Bu.min[2]]), 26, `${mm(sz.x)}`, false); dim(v.P([Bu.min[0], Bu.min[1], Bu.min[2]]), v.P([Bu.min[0], Bu.max[1], Bu.min[2]]), -26, `${mm(sz.y)}`, true); }
+{ const v = views[1]; dim(v.P([Bu.max[0], Bu.min[1], Bu.min[2]]), v.P([Bu.max[0], Bu.min[1], Bu.max[2]]), 26, `${mm(sz.z)}`, false); }
+{ const v = views[2]; dim(v.P([Bu.min[0], Bu.min[1], Bu.min[2]]), v.P([Bu.min[0], Bu.min[1], Bu.max[2]]), -26, `${mm(sz.z)}`, true); }
+// origin
+for (const v of views.slice(0, 3)) { const [x, y] = v.P([0, 0, 0]); el('path', { d: `M${x - 7} ${y}H${x + 7}M${x} ${y - 7}V${y + 7}`, stroke: INK, 'stroke-width': 1.6 }); }
+// pivots
+const AXV = { x: [1, 0, 0], y: [0, 1, 0], z: [0, 0, 1] };
+for (const p of m.meta.parts) for (const v of views) {
+  const pv = p.pivotModel; const [x, y] = v.P(pv); el('circle', { cx: x, cy: y, r: 6, fill: 'none', stroke: AMB, 'stroke-width': 2 }); el('circle', { cx: x, cy: y, r: 1.8, fill: AMB });
+  if (p.axis) { const a = AXV[p.axis]; const L = Math.max(sz.x, sz.y, sz.z) * 0.18; const [x2, y2] = v.P([pv[0] + a[0] * L, pv[1] + a[1] * L, pv[2] + a[2] * L]);
+    if (Math.hypot(x2 - x, y2 - y) > 6) { el('line', { x1: x, y1: y, x2, y2, stroke: AMB, 'stroke-width': 2 }); el('circle', { cx: x2, cy: y2, r: 2.5, fill: AMB }); }
+    else el('circle', { cx: x, cy: y, r: 10, fill: 'none', stroke: AMB, 'stroke-width': 1, 'stroke-dasharray': '2 2' }); }
+  if (v.persp || v.id === 'ÖNDEN') el('text', { x: x + 9, y: y - 8, fill: AMB, 'font-family': 'Courier Prime', 'font-weight': 700, 'font-size': 12 }, p.name);
+}
+// text slots
+const TSL = {};
+for (const t of m.meta.texts) for (const v of views) {
+  const n = new THREE.Vector3(...t.normal), up = new THREE.Vector3(...t.up); const r = new THREE.Vector3().crossVectors(up, n).normalize(); // Unity: right = up × normal for −z normal → +x
+  const c = new THREE.Vector3(...t.center); const [w, h] = t.size;
+  const pts = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([a, b]) => { const p = c.clone().addScaledVector(r, a * w / 2).addScaledVector(up, b * h / 2); return v.P([p.x, p.y, p.z]); });
+  el('polygon', { points: pts.map(p => p.join(',')).join(' '), fill: 'rgba(210,72,63,0.08)', stroke: '#D2483F', 'stroke-width': 1.2, 'stroke-dasharray': '4 3' });
+}
+// header + side panel
+const st = m.stats();
+const hd = document.createElement('div'); hd.className = 'hd';
+hd.innerHTML = `<b>${m.meta.listName}</b><span>${name} · ${m.meta.family.toUpperCase()} · ${st.tris} / ${BUDGET[m.meta.budget]} ÜÇGEN · ${mm(sz.x)} × ${mm(sz.y)} × ${mm(sz.z)} MM · ORİJİN: ${m.meta.origin.toUpperCase()}</span>`;
+wrap.appendChild(hd);
+const sd = document.createElement('div'); sd.className = 'side'; Object.assign(sd.style, { left: (W - side - pad) + 'px', top: gy + 'px', width: side + 'px' });
+let html = '';
+if (m.meta.note) html += `<div style="font-size:13px;margin-bottom:6px">${m.meta.note}</div>`;
+html += `<h4>PARÇALAR VE PİVOTLAR</h4>`;
+html += `<div class="row"><span class="mono" style="width:120px">Body</span><span class="dim">${st.perPart.Body || 0} üçgen · sabit, model orijini</span></div>`;
+for (const p of m.meta.parts) { const rng = p.range ? `${p.range[0]} → ${p.range[1]}${p.kind === 'slide' ? ' m' : '°'}` : ''; html += `<div class="row"><span class="mono" style="width:120px;color:${AMB}">${p.name}</span><span>${p.kind === 'slide' ? 'kayar' : p.kind === 'swap' ? 'değişir' : 'döner'} · yerel ${p.axis || '–'} · ${rng} · pivot (${p.pivotLocal.map(x => mm(x)).join(', ')}) mm${p.parent !== 'Body' ? ' · üst: ' + p.parent : ''}<br><span class="dim">${st.perPart[p.name] || 0} üçgen${p.note ? ' · ' + p.note : ''}</span></span></div>`; }
+html += `<h4>MALZEME ANAHTARLARI</h4>`;
+for (const [k, n] of Object.entries(st.mats).sort((a, b) => b[1] - a[1])) { const v = MATS[k]; html += `<div class="row"><span class="sw" style="background:${v.hex};${v.emissive ? 'box-shadow:0 0 0 2px ' + v.emissive : ''}"></span><span class="mono" style="width:132px">${k}${NEW_KEYS.has(k) ? ' ★' : ''}</span><span class="dim">${v.hex} · M ${v.metal ?? 0} · S ${(1 - (v.rough ?? 0.8)).toFixed(2)}${v.alpha != null ? ' · α ' + v.alpha : ''}${v.emissive ? ' · E' : ''} · ${n}</span></div>`; }
+if (m.meta.texts.length) { html += `<h4>YAZI YERLERİ (TMP)</h4>`; for (const t of m.meta.texts) html += `<div class="row"><span class="mono" style="width:132px;color:#D2483F">${t.name}</span><span>${mm(t.size[0])} × ${mm(t.size[1])} mm · ${t.role}${t.capMm ? ' · büyük harf ' + t.capMm + ' mm' : ''}${t.sample ? ' · “' + t.sample + '”' : ''}</span></div>`; }
+if (m.meta.lights.length) { html += `<h4>IŞIK NOKTALARI</h4>`; for (const l of m.meta.lights) html += `<div class="row"><span class="mono" style="width:132px">${l.name}</span><span>${l.type}${l.shadows ? ' · gölgeli' : ' · gölgesiz'}${l.note ? ' · ' + l.note : ''}</span></div>`; }
+if (m.meta.anchors.length) { html += `<h4>ÇAPALAR</h4>`; for (const a of m.meta.anchors) html += `<div class="row"><span class="mono" style="width:132px">${a.name}</span><span class="dim">(${a.pos.map(x => mm(x)).join(', ')}) mm${a.note ? ' · ' + a.note : ''}</span></div>`; }
+html += `<div class="dim" style="margin-top:10px;font-size:12px">Turuncu: pivot ve dönme ekseni; perspektifte hareketli parçalar aralığın sonunda soluk. Kırmızı kesikli: yazı yeri. Mavi: ölçü (mm). Haç: model orijini.</div>`;
+sd.innerHTML = html; wrap.appendChild(sd);
+window.__done = { name, tris: st.tris, size: [sz.x, sz.y, sz.z] };
+</script></body></html>

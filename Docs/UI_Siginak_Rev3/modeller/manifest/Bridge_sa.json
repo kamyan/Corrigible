@@ -1,0 +1,71 @@
+{
+ "name": "Bridge_sa",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi (y = 0); köprü doğu boşluğunda (x 0,47–0,53), +x boyunca; kuzey için y ekseninde −90°",
+ "note": "Komşu kalıp istifleri arasında, iki yüze yakın orta nervür hizasında çelik U kiriş (detailA); levha istifi ve kalıp derzi devam eder. Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti.",
+ "listName": "Köprü · Hidroelektrik santrali (çelik U kiriş)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 36,
+ "trisPerPart": {
+  "Body": 36
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   0.43,
+   0.07,
+   -0.47
+  ],
+  "max": [
+   0.57,
+   0.53,
+   0.47
+  ],
+  "size": [
+   0.14,
+   0.46,
+   0.94
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_sa_wallTop",
+   "hex": "#959CA2",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 2,
+   "isNew": false
+  },
+  {
+   "key": "k_sa_wallSouth",
+   "hex": "#656E76",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 4,
+   "isNew": false
+  },
+  {
+   "key": "k_sa_wallWest",
+   "hex": "#7E8790",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 10,
+   "isNew": false
+  },
+  {
+   "key": "k_sa_detailA",
+   "hex": "#5B5148",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 20,
+   "isNew": false
+  }
+ ]
+}

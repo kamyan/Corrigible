@@ -1,0 +1,91 @@
+{
+ "name": "Pencil",
+ "family": "desk",
+ "budget": "small",
+ "origin": "kalemin ortası, masa üstünde (y = 0; altıgenin düz yüzü masada)",
+ "note": "Sarı boyalı altıgen kurşun kalem (7,5 mm), yontulmuş ahşap koni ve grafit uç, pirinç yüksük ve silgi. Kısalmış: 155 mm.",
+ "listName": "Kalem",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    0.42,
+    0.76,
+    0.955
+   ],
+   "yaw": 62,
+   "note": "anahtar rayının arkası, haritanın önü (rev2)"
+  }
+ ],
+ "tris": 196,
+ "trisPerPart": {
+  "Body": 196
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.076,
+   -0.0006,
+   -0.0044
+  ],
+  "max": [
+   0.0805,
+   0.0081,
+   0.0044
+  ],
+  "size": [
+   0.1565,
+   0.0088,
+   0.0088
+  ]
+ },
+ "materials": [
+  {
+   "key": "pencil",
+   "hex": "#D9A520",
+   "rough": 0.5,
+   "metal": 0,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "pawn",
+   "hex": "#C9A77A",
+   "rough": 0.75,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "inkBlack",
+   "hex": "#1E1B16",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 64,
+   "isNew": true
+  },
+  {
+   "key": "eraser",
+   "hex": "#C79B92",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 64,
+   "isNew": false
+  }
+ ]
+}

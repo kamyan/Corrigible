@@ -1,0 +1,71 @@
+{
+ "name": "Relief_sea",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Dört sıra kum torbası (yuvarlak kenarlı yastıklar, köşede sıra sıra şaşırtmalı bağ); en alt sıra koyu ıslak bant (detailA); üst sıra 2 × 3 torbayla üstü kaplar. Gri tonda: yuvarlak yatay sıralar + koyu alt bant. İki kat: alt iki sıra + üst iki sıra. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided.",
+ "listName": "Duvar barikatı · Elektronik fabrikası (kum torbası barikatı)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 308,
+ "trisPerPart": {
+  "Body": 308
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.47,
+   0,
+   -0.47
+  ],
+  "max": [
+   0.47,
+   0.55,
+   0.47
+  ],
+  "size": [
+   0.94,
+   0.55,
+   0.94
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_sea_detailA",
+   "hex": "#5D5C52",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 74,
+   "isNew": false
+  },
+  {
+   "key": "k_sea_wallWest",
+   "hex": "#939489",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 76,
+   "isNew": false
+  },
+  {
+   "key": "k_sea_wallSouth",
+   "hex": "#74756C",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 56,
+   "isNew": false
+  },
+  {
+   "key": "k_sea_wallTop",
+   "hex": "#A6A799",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 102,
+   "isNew": false
+  }
+ ]
+}

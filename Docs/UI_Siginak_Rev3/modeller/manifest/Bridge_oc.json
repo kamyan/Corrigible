@@ -1,0 +1,71 @@
+{
+ "name": "Bridge_oc",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi (y = 0); köprü doğu boşluğunda (x 0,47–0,53), +x boyunca; kuzey için y ekseninde −90°",
+ "note": "Komşu sandıkların kapakları üstünde baklava sac şerit (detailA, desen doku); kızak ayakları ve sandık derzi devam eder. Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti.",
+ "listName": "Köprü · Maden limanı (baklava sac şerit)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 42,
+ "trisPerPart": {
+  "Body": 42
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   0.4,
+   0,
+   -0.47
+  ],
+  "max": [
+   0.6,
+   0.556,
+   0.47
+  ],
+  "size": [
+   0.2,
+   0.556,
+   0.94
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_oc_wallTop",
+   "hex": "#ADA29E",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 2,
+   "isNew": false
+  },
+  {
+   "key": "k_oc_wallSouth",
+   "hex": "#7F736F",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 2,
+   "isNew": false
+  },
+  {
+   "key": "k_oc_wallWest",
+   "hex": "#9E918B",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 2,
+   "isNew": false
+  },
+  {
+   "key": "k_oc_detailA",
+   "hex": "#686160",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 36,
+   "isNew": false
+  }
+ ]
+}

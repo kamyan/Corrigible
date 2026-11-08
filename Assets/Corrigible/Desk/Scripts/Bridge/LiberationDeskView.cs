@@ -30,18 +30,36 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] SiginakOperation siginakOperation;
         [Tooltip("Ayarlar dolabı: açıkken ve menüye dönerken masa kilitli.")]
         [SerializeField] SiginakCabinet siginakCabinet;
+        [Tooltip("Kişi, teçhizat ve vardiya planlama panosu.")]
+        [SerializeField] PlanningBoardPresenter planningBoard;
+        [Tooltip("Kartlı oyunun kapısı ve kabul istasyonu (Revizyon 3 · Aşama 6): Esc önce ona gider; dizi sürerken masa kilitli.")]
+        [SerializeField] SiginakAdmission admission;
 
         bool storyOpen;
         Simulation Sim => game != null ? game.Sim : null;
         /// <summary>Baskın sonucu henüz okunmadı: operasyon raporu açılacak ya da açık (K3 dizisi onu bekler).</summary>
         public bool RaidReportPending => Sim != null && source != null && Sim.S.Raid == null && Sim.S.RaidLog.Count > source.State.RaidLogSeen;
-        public bool InputBlocked => BlockedExceptDoor || siginakDoor != null && siginakDoor.isActiveAndEnabled && siginakDoor.Busy;
+        public bool InputBlocked => BlockedExceptDoor || DoorBusy;
+        /// <summary>Dolabın kendi odağı hariç, menüye dönüşü engelleyen kâğıt ve işlem kilitleri.</summary>
+        public bool MenuExitBlocked => SceneBlocked || ShiftBusy || DoorBusy ||
+            siginakMap != null && (siginakMap.SlipOpen || siginakMap.FrontSlipOpen || siginakMap.SquadReportOpen);
         /// <summary>Kapının kendisi dışındaki kilitler (kapı ancak bunlar yokken çalar ve açılır).</summary>
-        public bool BlockedExceptDoor => storyOpen || launcher != null && launcher.IsTransitioning || RaidLauncher.IsRaidLoaded ||
-            SettingsCabinet.Instance != null && SettingsCabinet.Instance.IsOpen || FinalReportView.Instance != null && FinalReportView.Instance.IsOpen ||
-            siginakCabinet != null && siginakCabinet.Leaving ||
+        public bool BlockedExceptDoor => OtherBlocked || ShiftBusy;
+        /// <summary>
+        /// Vardiya kapanışının kendisi dışındaki kilitler (Revizyon 3 · R19): fiş eldeyken ya da sürüklenirken masa kilitlidir ama
+        /// fişin kendisi tıklanır ve EVRAK'a bırakılabilir kalır. <see cref="InputBlocked"/>'ın alt kümesidir.
+        /// </summary>
+        public bool BlockedExceptShift => OtherBlocked || DoorBusy;
+
+        bool DoorBusy => siginakDoor != null && siginakDoor.isActiveAndEnabled && siginakDoor.Busy ||
+            admission != null && admission.isActiveAndEnabled && admission.Busy;
+        bool ShiftBusy => siginak != null && siginak.isActiveAndEnabled && siginak.ShiftBusy;
+        bool OtherBlocked => SceneBlocked || SettingsCabinet.Instance != null && SettingsCabinet.Instance.IsOpen ||
+            siginakCabinet != null && siginakCabinet.Leaving;
+        bool SceneBlocked => storyOpen || launcher != null && launcher.IsTransitioning || RaidLauncher.IsRaidLoaded ||
+            FinalReportView.Instance != null && FinalReportView.Instance.IsOpen ||
             siginakOperation != null && siginakOperation.Busy ||
-            siginak != null && siginak.isActiveAndEnabled && siginak.ShiftBusy || siginakBriefing != null && siginakBriefing.Busy;
+            siginakBriefing != null && siginakBriefing.Busy;
 
         /// <summary>Operasyon raporu dosyalandı: rapor yeniden açılmaz, oda ve kamera kilidi açılır.</summary>
         public void MarkRaidReportSeen()
@@ -82,7 +100,12 @@ namespace Corrigible.Desk.Bridge
             if (!InputBlocked) siginakMap.ShowMissions();
         }
 
-        public void ShowShelter() { if (!InputBlocked) siginakRig.FocusShelter(); }
+        public void ShowShelter()
+        {
+            if (InputBlocked) return;
+            if (Sim?.Board != null && planningBoard != null) planningBoard.Show();
+            else siginakRig.FocusShelter();
+        }
 
         /// <summary>H: emir belgesi okuma kipinde.</summary>
         public void OpenGuide() { if (!InputBlocked) siginakBriefing.OpenReading(); }
@@ -143,6 +166,7 @@ namespace Corrigible.Desk.Bridge
         public bool AdvanceShift()
         {
             if (InputBlocked || Sim.S.Blocked || Sim.S.Ending != null) return false;
+            if (Sim.Board != null) return false;
             game.AdvanceShift();
             return true;
         }
@@ -174,7 +198,7 @@ namespace Corrigible.Desk.Bridge
             source.MarkDirty();
         }
 
-        static string RegionName(string id) => string.IsNullOrEmpty(id) ? "—" : Loc.T(GameData.Region(id).Name);
+        static string RegionName(string id) => string.IsNullOrEmpty(id) ? "—" : GameData.Region(id).Name;
 
         ActResult Report(ActResult result, string failDetail = null, string doneDetail = null)
         {
@@ -189,8 +213,14 @@ namespace Corrigible.Desk.Bridge
 
         // ---------- IDeskSurface ----------
 
+        /// <summary>
+        /// Esc'in tek girişi: kartlı oyunda önce kapı ve kabul (K8 ailesinde bir seviye geri; Revizyon 3 · Aşama 6), sonra pano, sonra
+        /// masanın açık kâğıtları; hiçbiri işlemezse ayarlar dolabı.
+        /// </summary>
         public void Escape()
         {
+            if (Sim?.Board != null && admission != null && admission.isActiveAndEnabled && admission.HandleEscape()) return;
+            if (Sim?.Board != null && planningBoard != null && planningBoard.HandleEscape()) return;
             if (siginak != null && siginak.isActiveAndEnabled && siginak.HandleEscape()) return;
             if (!InputBlocked) SettingsCabinet.Instance?.RequestOpen();
         }

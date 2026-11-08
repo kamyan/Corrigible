@@ -1,0 +1,160 @@
+{
+ "name": "Mortar",
+ "family": "raidpieces",
+ "budget": "unit",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Alçak paletli gövde (eğik ön levha), güverte tablasında muylu yanakları arasında 45° kalın kısa namlu (Tube; namlu ağzı ~0,8 = havan atışı yayının başlangıcı), arkada mermi rafı. Biçim: basık gövde + göğe bakan çapraz namlu. Gövde renkleri ortak (r_gun / r_maintTop / r_gunW / r_gunS / r_gunD); kırmızı yalnız gözde (r_lens) ve taban halkasında (r_accent). Tür biçimden okunur, etiketteki işaret ikincil.",
+ "listName": "Havan robotu",
+ "parts": [
+  {
+   "name": "Tube",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.41,
+    0.06
+   ],
+   "pivotLocal": [
+    0,
+    0.41,
+    0.06
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    -15
+   ],
+   "rest": 0,
+   "note": "namlu 45°; −15° öne iner (atış/nişan). Namlu ağzı merkezi ~(0, 0,74, −0,27)"
+  }
+ ],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Muzzle",
+   "part": "Tube",
+   "pos": [
+    0,
+    0.7352691193458119,
+    -0.2652691193458119
+   ],
+   "note": "namlu ağzı (havan atışı yayı buradan başlar)"
+  },
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0,
+    0.8,
+    -0.24
+   ],
+   "note": "tepe noktası"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    0.5,
+    0,
+    -0.5
+   ],
+   "yaw": 90,
+   "note": "örnek: Rev2 raid.html intents durumu (u 0, v 0)"
+  }
+ ],
+ "tris": 1246,
+ "trisPerPart": {
+  "Body": 946,
+  "Tube": 300
+ },
+ "budgetTris": 1500,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.31,
+   0,
+   -0.3289
+  ],
+  "max": [
+   0.31,
+   0.7989,
+   0.31
+  ],
+  "size": [
+   0.62,
+   0.7989,
+   0.6389
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_gunD",
+   "hex": "#26282B",
+   "rough": 0.6,
+   "metal": 0.3,
+   "tris": 308,
+   "isNew": false
+  },
+  {
+   "key": "r_accent",
+   "hex": "#9A1E14",
+   "rough": 0.5,
+   "metal": 0,
+   "tris": 96,
+   "isNew": false
+  },
+  {
+   "key": "r_gunW",
+   "hex": "#46494D",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 320,
+   "isNew": false
+  },
+  {
+   "key": "r_gun",
+   "hex": "#5B5E62",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 308,
+   "isNew": false
+  },
+  {
+   "key": "r_maintTop",
+   "hex": "#686B70",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "r_lens",
+   "hex": "#B8241A",
+   "rough": 0.3,
+   "metal": 0,
+   "tris": 50,
+   "isNew": false
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 120,
+   "isNew": true
+  },
+  {
+   "key": "r_gunS",
+   "hex": "#34373A",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 32,
+   "isNew": false
+  }
+ ]
+}

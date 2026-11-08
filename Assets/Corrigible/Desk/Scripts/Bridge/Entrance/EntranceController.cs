@@ -26,6 +26,9 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] EntranceCamera cam;
         [Tooltip("Sahanlık (M0), saat (M2) ve içeri yürüyüşün durakları (M3: eşik, içerisi).")]
         [SerializeField] Transform overview, clockPose, threshold, inside;
+        [SerializeField] Transform clockPressPose, switchPose;
+        [SerializeField] float switchFieldOfView = 40;
+        [SerializeField] EntranceInstruments instruments;
         [SerializeField] float overviewFieldOfView = 52, clockFieldOfView = 40;
         [SerializeField] SettingsCabinet cabinet;
         [SerializeField] BridgeSettings settings;
@@ -45,7 +48,10 @@ namespace Corrigible.Desk.Bridge
         float[] lampBase;
         Task<SavedSummary?> summary;
         bool summaryShown;
+        SavedSummary? saved;
         AsyncOperation loading;
+        public bool Ready => phase==Phase.Idle||phase==Phase.Clock;
+        public bool Entering => phase==Phase.Entering;
 
         static SiginakTheme T => SiginakTheme.Active;
 
@@ -63,7 +69,7 @@ namespace Corrigible.Desk.Bridge
             cabinet.OpenRequested += OpenCabinet;
             cabinet.Closing += CabinetClosing;
             cabinet.Sound += CabinetSound;
-            clock.ClockClicked += ShowClock;
+            clock.ClockClicked += Continue;
             clock.ContinueChosen += Continue;
             clock.NewChosen += NewCampaign;
             clock.ArmChanged += Armed;
@@ -71,15 +77,17 @@ namespace Corrigible.Desk.Bridge
             if (doorTarget != null) doorTarget.Clicked += ShowClock;
             mainSwitch.Armed += SwitchArmed;
             mainSwitch.Thrown += PowerDown;
+            DeskLoc.Instance.Changed += Relabel;
         }
 
         void OnDisable()
         {
+            Cursor.visible = true;
             if (DeskTarget.Blocked != null) DeskTarget.Blocked = null;
             cabinet.OpenRequested -= OpenCabinet;
             cabinet.Closing -= CabinetClosing;
             cabinet.Sound -= CabinetSound;
-            clock.ClockClicked -= ShowClock;
+            clock.ClockClicked -= Continue;
             clock.ContinueChosen -= Continue;
             clock.NewChosen -= NewCampaign;
             clock.ArmChanged -= Armed;
@@ -87,6 +95,7 @@ namespace Corrigible.Desk.Bridge
             if (doorTarget != null) doorTarget.Clicked -= ShowClock;
             mainSwitch.Armed -= SwitchArmed;
             mainSwitch.Thrown -= PowerDown;
+            DeskLoc.Instance.Changed -= Relabel;
         }
 
         void Start()
@@ -123,9 +132,11 @@ namespace Corrigible.Desk.Bridge
                 summaryShown = true;
                 var s = summary.Status == TaskStatus.RanToCompletion ? summary.Result : null;
                 // Delikler biten vardiyalar (kartın vardiyası sıradaki)
-                if (s is SavedSummary v) clock.ShowCard(Loc.F("V.{0:000} · özgür {1}/{2}", v.Shift, v.Free, v.Regions), v.Shift - 1);
+                saved=s;
+                if (s is SavedSummary v) clock.ShowCard(v.Shift-1,v.Free,v.Regions);
                 else clock.HideCard();
             }
+            if(phase==Phase.Entering||phase==Phase.Leaving||phase==Phase.Intro)return;
             var kb = Keyboard.current;
             if (kb == null || !kb.escapeKey.wasPressedThisFrame) return;
             if (cabinet.IsOpen) cabinet.Close();
@@ -133,6 +144,8 @@ namespace Corrigible.Desk.Bridge
             else if (mainSwitch.Cancel()) { }
             else if (phase == Phase.Clock) { phase = Phase.Idle; cam.Go(overview, overviewFieldOfView); }
         }
+
+        void Relabel(){if(saved is SavedSummary v)clock.ShowCard(v.Shift-1,v.Free,v.Regions);}
 
         // ---------- Dolap ----------
 
@@ -175,47 +188,60 @@ namespace Corrigible.Desk.Bridge
 
         void Armed(bool on) => Sfx.Play(Cue.SwitchClack, on ? 0.6f : 0.4f, Sfx.PanOf(cam.View, clock.transform.position), on ? 1.2f : 1.4f);
 
-        void Continue() => Enter(GameLaunch.Mode.Continue);
+        void Continue() { clock.Disarm(); Enter(GameLaunch.Mode.Continue); }
         void NewCampaign() => Enter(GameLaunch.Mode.NewCampaign);
 
         void Enter(GameLaunch.Mode mode)
         {
             if (phase != Phase.Idle && phase != Phase.Clock) return;
             phase = Phase.Entering;
+            Cursor.visible = false;
             GameLaunch.Pending = mode;
-            // Sahne kapı açılırken yüklenir, ekran kararınca etkinleşir
-            if (Application.CanStreamedLevelBeLoaded(GameLaunch.DeskScene))
-            {
-                loading = SceneManager.LoadSceneAsync(GameLaunch.DeskScene);
-                loading.allowSceneActivation = false;
-            }
-            if (phase == Phase.Entering && !cam.Moving && Vector3.Distance(cam.transform.position, clockPose.position) > 0.05f)
-                cam.Go(clockPose, clockFieldOfView, 0.35f);
-            clock.Punch(mode == GameLaunch.Mode.NewCampaign, () => StartCoroutine(OpenDoor()));
+            StartCoroutine(EnterRoutine(mode));
+        }
+
+        IEnumerator EnterRoutine(GameLaunch.Mode mode)
+        {
+            if(Vector3.Distance(cam.transform.position,clockPose.position)>.05f)cam.Go(clockPose,clockFieldOfView,.35f);
+            while(cam.Moving)yield return null;
+            if(clockPressPose)cam.Go(clockPressPose,clockFieldOfView,.18f);
+            clock.Punch(mode==GameLaunch.Mode.NewCampaign,()=>StartCoroutine(OpenDoor()));
         }
 
         void Stamped() => Sfx.Play(Cue.TimeClockPunch, 1, Sfx.PanOf(cam.View, clock.transform.position));
 
         IEnumerator OpenDoor()
         {
-            yield return new WaitForSecondsRealtime(0.25f);
             Sfx.Play(Cue.DoorBuzzer, 1, Sfx.PanOf(cam.View, door.transform.position));
-            yield return new WaitForSecondsRealtime(0.35f);
-            cam.Go(overview, overviewFieldOfView, 0.5f);
+            if(instruments)instruments.Ring();
+            float pose=T.NumberOf("motion.entrance.overviewS",.45f);
+            cam.Go(overview,overviewFieldOfView,pose);
+            yield return new WaitForSecondsRealtime(pose);
             Sfx.Play(Cue.DoorOpen, 1, Sfx.PanOf(cam.View, door.transform.position));
             door.SetOpen(true);
-            float open = T.NumberOf("motion.doorWheelS", 0.5f) + T.NumberOf("motion.doorLeafS", 0.8f);
-            yield return new WaitForSecondsRealtime(open * 0.7f);
+            yield return new WaitForSecondsRealtime(T.NumberOf("motion.doorWheelS",.5f));
+            if(Application.CanStreamedLevelBeLoaded(GameLaunch.DeskScene))
+            {
+                loading=SceneManager.LoadSceneAsync(GameLaunch.DeskScene);
+                loading.allowSceneActivation=false;
+            }
+            while(door.Moving)yield return null;
             float walk = T.NumberOf("motion.entrance.walkS", 1.6f);
-            cam.Walk(new[] { threshold, inside }, overviewFieldOfView, walk);
-            yield return new WaitForSecondsRealtime(walk * 0.6f);
-            yield return Fade(0, 1, walk * 0.4f);
+            cam.Walk(new[] { threshold, inside }, overviewFieldOfView, walk,true);
+            float dark=T.NumberOf("motion.entrance.thresholdFadeS",.3f);
+            yield return new WaitForSecondsRealtime(Mathf.Max(0,walk-dark));
+            yield return Fade(0,1,dark);
+            yield return new WaitForSecondsRealtime(T.NumberOf("motion.entrance.blackHoldS",.2f));
             if (loading != null) loading.allowSceneActivation = true;
         }
 
         // ---------- Son şalter ----------
 
-        void SwitchArmed() => Sfx.Play(Cue.SwitchClack, 0.6f, Sfx.PanOf(cam.View, mainSwitch.transform.position), 1.2f);
+        void SwitchArmed()
+        {
+            Sfx.Play(Cue.SwitchClack,.6f,Sfx.PanOf(cam.View,mainSwitch.transform.position),1.2f);
+            if(switchPose)cam.Go(switchPose,switchFieldOfView,.45f);
+        }
 
         void PowerDown()
         {
@@ -276,6 +302,7 @@ namespace Corrigible.Desk.Bridge
                 lamps[i].intensity = lampBase[i] * level;
                 lamps[i].enabled = level > 0.001f;
             }
+            if(instruments){instruments.SetPower(level);return;}
             var m = level > 0.5f ? glassOn : glassOff;
             if (m != null) foreach (var g in lampGlass) if (g != null) g.sharedMaterial = m;
         }

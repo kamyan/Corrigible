@@ -217,6 +217,8 @@ MonoBehaviour:
     color: {r: 0.5411765, g: 0.5137255, b: 0.45490196, a: 1}
   - key: stamp.woke
     color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: stamp.stopped
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
   - key: ui.edgeLine
     color: {r: 0.05490196, g: 0.03529412, b: 0.023529412, a: 0.92}
   - key: ui.edgeLineBorder
@@ -583,6 +585,202 @@ MonoBehaviour:
     color: {r: 0.16470589, g: 0.17254902, b: 0.15686275, a: 1}
   - key: materials.galvBin
     color: {r: 0.6039216, g: 0.6117647, b: 0.59607846, a: 1}
+  - key: materials.paintOlive
+    color: {r: 0.2901961, g: 0.31764707, b: 0.2509804, a: 1}
+  - key: materials.paintOliveDark
+    color: {r: 0.20784314, g: 0.23137255, b: 0.1882353, a: 1}
+  - key: materials.paintGreyGreen
+    color: {r: 0.3647059, g: 0.4, b: 0.36078432, a: 1}
+  - key: materials.paintCream
+    color: {r: 0.8392157, g: 0.8039216, b: 0.7058824, a: 1}
+  - key: materials.paintBlack
+    color: {r: 0.1254902, g: 0.12941177, b: 0.11764706, a: 1}
+  - key: materials.paintHazard
+    color: {r: 0.8901961, g: 0.69803923, b: 0.23529412, a: 1}
+  - key: materials.steelBare
+    color: {r: 0.5568628, g: 0.5686275, b: 0.54901963, a: 1}
+  - key: materials.steelCast
+    color: {r: 0.30588236, g: 0.32156864, b: 0.3019608, a: 1}
+  - key: materials.castIron
+    color: {r: 0.22745098, g: 0.23137255, b: 0.21568628, a: 1}
+  - key: materials.brassWorn
+    color: {r: 0.627451, g: 0.5058824, b: 0.29803923, a: 1}
+  - key: materials.copper
+    color: {r: 0.72156864, g: 0.40784314, b: 0.17254902, a: 1}
+  - key: materials.bakeliteBlack
+    color: {r: 0.09411765, g: 0.078431375, b: 0.07058824, a: 1}
+  - key: materials.slate
+    color: {r: 0.18431373, g: 0.20392157, b: 0.19215687, a: 1}
+  - key: materials.rubberGasket
+    color: {r: 0.078431375, g: 0.078431375, b: 0.07450981, a: 1}
+  - key: materials.glassClear
+    color: {r: 0.8627451, g: 0.9019608, b: 0.8901961, a: 0.18}
+  - key: materials.dialCream
+    color: {r: 0.9254902, g: 0.8901961, b: 0.78431374, a: 1}
+  - key: materials.cardStock
+    color: {r: 0.93333334, g: 0.8980392, b: 0.7921569, a: 1}
+  - key: materials.cardBlank
+    color: {r: 0.9019608, g: 0.8627451, b: 0.74509805, a: 1}
+  - key: materials.punchHole
+    color: {r: 0.08235294, g: 0.07450981, b: 0.0627451, a: 1}
+  - key: materials.tileGlazed
+    color: {r: 0.7176471, g: 0.73333335, b: 0.6392157, a: 1}
+  - key: materials.tileGlazedDirty
+    color: {r: 0.5568628, g: 0.57254905, b: 0.50980395, a: 1}
+  - key: materials.concreteDark
+    color: {r: 0.36078432, g: 0.38431373, b: 0.3647059, a: 1}
+  - key: materials.concreteFloorWet
+    color: {r: 0.23137255, g: 0.24705882, b: 0.23137255, a: 1}
+  - key: materials.puddle
+    color: {r: 0.11764706, g: 0.13333334, b: 0.1254902, a: 1}
+  - key: materials.stencilPaint
+    color: {r: 0.8509804, g: 0.8235294, b: 0.7490196, a: 0.92}
+  - key: materials.lampGlassCold
+    color: {r: 0.9098039, g: 0.9411765, b: 0.93333334, a: 1}
+  - key: materials.lampGlassCold.emissive
+    color: {r: 0.84705883, g: 0.9019608, b: 0.8862745, a: 1}
+  - key: materials.lampGlassWarm
+    color: {r: 1, g: 0.9411765, b: 0.78431374, a: 1}
+  - key: materials.lampGlassWarm.emissive
+    color: {r: 1, g: 0.8235294, b: 0.47843137, a: 1}
+  - key: materials.jewelAmberOn
+    color: {r: 1, g: 0.7019608, b: 0.2784314, a: 1}
+  - key: materials.jewelAmberOn.emissive
+    color: {r: 1, g: 0.6039216, b: 0.16470589, a: 1}
+  - key: materials.jewelAmberOff
+    color: {r: 0.2901961, g: 0.18431373, b: 0.07058824, a: 1}
+  - key: materials.woodVarnish
+    color: {r: 0.36862746, g: 0.25490198, b: 0.15686275, a: 1}
+  - key: materials.woodRaw
+    color: {r: 0.5411765, g: 0.41568628, b: 0.26666668, a: 1}
+  - key: materials.linoDesk
+    color: {r: 0.18431373, g: 0.2901961, b: 0.23137255, a: 1}
+  - key: materials.feltBlotter
+    color: {r: 0.24313726, g: 0.2901961, b: 0.22745098, a: 1}
+  - key: materials.fuseCeramic
+    color: {r: 0.89411765, g: 0.8666667, b: 0.79607844, a: 1}
+  - key: materials.clockHand
+    color: {r: 0.101960786, g: 0.09019608, b: 0.078431375, a: 1}
+  - key: materials.counterDrum
+    color: {r: 0.10980392, g: 0.08235294, b: 0.05490196, a: 1}
+  - key: materials.cabPanel
+    color: {r: 0.16470589, g: 0.11372549, b: 0.078431375, a: 1}
+  - key: materials.scaleCream
+    color: {r: 0.9019608, g: 0.8627451, b: 0.7529412, a: 1}
+  - key: materials.gaugeDial
+    color: {r: 0.9372549, g: 0.9019608, b: 0.8, a: 1}
+  - key: materials.needleBlack
+    color: {r: 0.078431375, g: 0.07058824, b: 0.0627451, a: 1}
+  - key: materials.enamelBadge
+    color: {r: 0.9098039, g: 0.8862745, b: 0.8117647, a: 1}
+  - key: materials.counterTenths
+    color: {r: 0.9137255, g: 0.8666667, b: 0.74509805, a: 1}
+  - key: materials.counterFraction
+    color: {r: 0.05490196, g: 0.03529412, b: 0.023529412, a: 1}
+  - key: materials.keyIcon
+    color: {r: 0.9137255, g: 0.8666667, b: 0.74509805, a: 1}
+  - key: materials.tagPaper
+    color: {r: 0.9490196, g: 0.8862745, b: 0.47843137, a: 1}
+  - key: materials.readyLampOff
+    color: {r: 0.12156863, g: 0.22745098, b: 0.14901961, a: 1}
+  - key: materials.telexPaper
+    color: {r: 0.9372549, g: 0.89411765, b: 0.7372549, a: 1}
+  - key: materials.coffeeRingDecal
+    color: {r: 0.2901961, g: 0.18039216, b: 0.101960786, a: 0.38}
+  - key: materials.cardboard
+    color: {r: 0.54509807, g: 0.41960785, b: 0.27058825, a: 1}
+  - key: materials.inkPad
+    color: {r: 0.101960786, g: 0.14117648, b: 0.2509804, a: 1}
+  - key: materials.alarmFraction
+    color: {r: 0.05490196, g: 0.03529412, b: 0.023529412, a: 1}
+  - key: materials.corkCard
+    color: {r: 0.9529412, g: 0.9254902, b: 0.84705883, a: 1}
+  - key: materials.stampBlue
+    color: {r: 0.101960786, g: 0.2784314, b: 0.5372549, a: 0.9}
+  - key: materials.notePaper
+    color: {r: 0.9490196, g: 0.92156863, b: 0.8392157, a: 1}
+  - key: materials.posterPrint
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: materials.posterBack
+    color: {r: 0.8901961, g: 0.84705883, b: 0.74509805, a: 1}
+  - key: materials.alarmLampOff
+    color: {r: 0.2901961, g: 0.078431375, b: 0.0627451, a: 1}
+  - key: materials.alarmLampOn
+    color: {r: 0.8156863, g: 0.1882353, b: 0.1254902, a: 1}
+  - key: materials.alarmLampOn.emissive
+    color: {r: 0.9411765, g: 0.26666668, b: 0.22745098, a: 1}
+  - key: materials.alarmStepOff
+    color: {r: 0.22745098, g: 0.16470589, b: 0.10980392, a: 1}
+  - key: materials.alarmStepOn
+    color: {r: 0.9137255, g: 0.8666667, b: 0.74509805, a: 1}
+  - key: materials.alarmStepRed
+    color: {r: 0.7529412, g: 0.15686275, b: 0.10980392, a: 1}
+  - key: materials.alarmStepRed.emissive
+    color: {r: 0.7529412, g: 0.15686275, b: 0.10980392, a: 1}
+  - key: materials.chalkTally
+    color: {r: 0.9019608, g: 0.8862745, b: 0.83137256, a: 0.82}
+  - key: materials.stencilDrips
+    color: {r: 0.8509804, g: 0.8235294, b: 0.7490196, a: 0.9}
+  - key: materials.dripStain
+    color: {r: 0.22745098, g: 0.2, b: 0.14901961, a: 0.45}
+  - key: materials.crtVent
+    color: {r: 0.22745098, g: 0.24705882, b: 0.20784314, a: 1}
+  - key: materials.micGrille
+    color: {r: 0.47843137, g: 0.49411765, b: 0.48235294, a: 1}
+  - key: materials.treadPlate
+    color: {r: 0.41960785, g: 0.43137255, b: 0.40784314, a: 1}
+  - key: materials.peepLens
+    color: {r: 0.078431375, g: 0.101960786, b: 0.09411765, a: 1}
+  - key: materials.knockLampRed
+    color: {r: 0.9411765, g: 0.26666668, b: 0.22745098, a: 1}
+  - key: materials.knockLampRed.emissive
+    color: {r: 0.9411765, g: 0.26666668, b: 0.22745098, a: 1}
+  - key: materials.intercomGrille
+    color: {r: 0.14901961, g: 0.15294118, b: 0.12156863, a: 1}
+  - key: materials.boardPanel
+    color: {r: 0.3372549, g: 0.3764706, b: 0.30980393, a: 1}
+  - key: materials.boardFace
+    color: {r: 0.3372549, g: 0.3764706, b: 0.30980393, a: 1}
+  - key: materials.cardEdge
+    color: {r: 0.8901961, g: 0.84705883, b: 0.7294118, a: 1}
+  - key: materials.cardFace
+    color: {r: 0.9372549, g: 0.9019608, b: 0.8156863, a: 1}
+  - key: materials.cardBack
+    color: {r: 0.8862745, g: 0.84313726, b: 0.72156864, a: 1}
+  - key: materials.magnetBlack
+    color: {r: 0.101960786, g: 0.09803922, b: 0.09019608, a: 1}
+  - key: materials.manila
+    color: {r: 0.7882353, g: 0.65882355, b: 0.41568628, a: 1}
+  - key: materials.bookCloth
+    color: {r: 0.3529412, g: 0.14117648, b: 0.1254902, a: 1}
+  - key: materials.pageEdge
+    color: {r: 0.9098039, g: 0.8745098, b: 0.7764706, a: 1}
+  - key: materials.pageFace
+    color: {r: 0.9411765, g: 0.9098039, b: 0.8235294, a: 1}
+  - key: materials.wireBlack
+    color: {r: 0.14901961, g: 0.14901961, b: 0.16470589, a: 1}
+  - key: materials.chalkWhite
+    color: {r: 0.9254902, g: 0.92156863, b: 0.89411765, a: 1}
+  - key: materials.greasePencil
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: materials.coldGlass
+    color: {r: 0.56078434, g: 0.6509804, b: 0.65882355, a: 0.42}
+  - key: materials.fogFrost
+    color: {r: 0.9137255, g: 0.9372549, b: 0.9254902, a: 0.78}
+  - key: materials.tinOlive
+    color: {r: 0.3372549, g: 0.3764706, b: 0.24705882, a: 1}
+  - key: materials.tinRim
+    color: {r: 0.6392157, g: 0.654902, b: 0.61960787, a: 1}
+  - key: materials.stampWood
+    color: {r: 0.43137255, g: 0.2901961, b: 0.17254902, a: 1}
+  - key: materials.enamelShade
+    color: {r: 0.18431373, g: 0.22745098, b: 0.18039216, a: 1}
+  - key: materials.enamelInner
+    color: {r: 0.9137255, g: 0.8862745, b: 0.8, a: 1}
+  - key: materials.rp_rope
+    color: {r: 0.65882355, g: 0.5568628, b: 0.36862746, a: 1}
+  - key: materials.aluCast
+    color: {r: 0.5411765, g: 0.5529412, b: 0.5254902, a: 1}
   - key: materialsExtra.rubber
     color: {r: 0.10980392, g: 0.10980392, b: 0.101960786, a: 1}
   - key: materialsExtra.paperWhite
@@ -713,6 +911,82 @@ MonoBehaviour:
     color: {r: 0.41960785, g: 0.3529412, b: 0.5411765, a: 1}
   - key: materialsExtra.pawnOchre
     color: {r: 0.5411765, g: 0.41568628, b: 0.24705882, a: 1}
+  - key: cabinet.bulb.color
+    color: {r: 1, g: 0.84705883, b: 0.627451, a: 1}
+  - key: menu.cardGrid
+    color: {r: 0.6117647, g: 0.5647059, b: 0.47058824, a: 1}
+  - key: menu.cardNumbers
+    color: {r: 0.54901963, g: 0.5019608, b: 0.41568628, a: 1}
+  - key: menu.tileGrout
+    color: {r: 0.30980393, g: 0.31764707, b: 0.28235295, a: 1}
+  - key: lightsRecipe.M0[0].color
+    color: {r: 0.84705883, g: 0.9019608, b: 0.8862745, a: 1}
+  - key: lightsRecipe.M0[1].color
+    color: {r: 0.8862745, g: 0.9019608, b: 0.8627451, a: 1}
+  - key: lightsRecipe.M0[2].color
+    color: {r: 0.62352943, g: 0.69803923, b: 0.76862746, a: 1}
+  - key: lightsRecipe.M0[3].color
+    color: {r: 1, g: 0.72156864, b: 0.4, a: 1}
+  - key: lightsRecipe.M0[4].sky
+    color: {r: 0.22745098, g: 0.26666668, b: 0.28235295, a: 1}
+  - key: lightsRecipe.M0[4].ground
+    color: {r: 0.05490196, g: 0.05882353, b: 0.050980393, a: 1}
+  - key: board.lamp.color
+    color: {r: 1, g: 0.8862745, b: 0.72156864, a: 1}
+  - key: board.newTag.color
+    color: {r: 0.7058824, g: 0.16078432, b: 0.10980392, a: 1}
+  - key: board.newTag.ink
+    color: {r: 0.96862745, g: 0.9372549, b: 0.84705883, a: 1}
+  - key: cards.person.selected
+    color: {r: 0.8901961, g: 0.69803923, b: 0.23529412, a: 1}
+  - key: cards.material.reservedRing
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: shiftClose.plate.line2Ink
+    color: {r: 0.2901961, g: 0.22745098, b: 0.13333334, a: 1}
+  - key: shiftClose.plate.line2InkWaiting
+    color: {r: 0.47843137, g: 0.09411765, b: 0.0627451, a: 1}
+  - key: shiftClose.evrakHighlight.color
+    color: {r: 1, g: 0.7058824, b: 0.2901961, a: 1}
+  - key: admission.stampMarks.admit.color
+    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
+  - key: admission.stampMarks.restricted.color
+    color: {r: 0.52156866, g: 0.2509804, b: 0.019607844, a: 1}
+  - key: admission.stampMarks.reject.color
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: admission.stampMarks.aid.color
+    color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
+  - key: admission.slipVerdict.match
+    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
+  - key: admission.slipVerdict.mismatch
+    color: {r: 0.52156866, g: 0.2509804, b: 0.019607844, a: 1}
+  - key: admission.slipVerdict.neutral
+    color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
+  - key: admission.slipVerdict.pending
+    color: {r: 0.40392157, g: 0.37254903, b: 0.3137255, a: 1}
+  - key: admission.paper.strip
+    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
+  - key: admission.paper.stripEdge
+    color: {r: 0.8235294, g: 0.78039217, b: 0.6862745, a: 1}
+  - key: admission.paper.rule
+    color: {r: 0.8235294, g: 0.28235295, b: 0.24705882, a: 1}
+  - key: admission.paper.ink
+    color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
+  - key: admission.paper.label
+    color: {r: 0.40392157, g: 0.37254903, b: 0.3137255, a: 1}
+  - key: admission.paper.carbon
+    color: {r: 0.9137255, g: 0.89411765, b: 0.8392157, a: 1}
+  - key: admission.paper.carbonInk
+    color: {r: 0.18039216, g: 0.23529412, b: 0.43137255, a: 1}
+  - key: admission.paper.carbonLabel
+    color: {r: 0.2901961, g: 0.3372549, b: 0.5019608, a: 1}
+  - key: admission.paper.plateBrass
+    color: {r: 0.72156864, g: 0.58431375, b: 0.3529412, a: 1}
+  - key: admission.paper.plateEdge
+    color: {r: 0.36078432, g: 0.28235295, b: 0.14901961, a: 1}
+  - key: admission.paper.alarm
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: admission.paper.seal
+    color: {r: 0.3529412, g: 0.24705882, b: 0.47058824, a: 1}
   numbers:
   - key: mapLiberation.occupiedHatch[0].angle
     value: 45
@@ -1134,6 +1408,8 @@ MonoBehaviour:
     value: 0.3
   - key: motion.opening.returnS
     value: 0.6
+  - key: motion.opening.deskLampDelayS
+    value: 0.15
   - key: motion.cabinetLatchS
     value: 0.15
   - key: motion.cabinetLeafS
@@ -1145,11 +1421,149 @@ MonoBehaviour:
   - key: motion.cardPushS
     value: 0.14
   - key: motion.entrance.introS
-    value: 0.9
+    value: 0.6
   - key: motion.entrance.walkS
     value: 1.6
   - key: motion.entrance.powerDownS
     value: 0.6
+  - key: motion.entrance.cardLiftS
+    value: 0.12
+  - key: motion.entrance.stampDownS
+    value: 0.1
+  - key: motion.entrance.stampReturnS
+    value: 0.2
+  - key: motion.entrance.clipS
+    value: 0.15
+  - key: motion.entrance.cardTiltS
+    value: 0.2
+  - key: motion.entrance.clockLampS
+    value: 0.08
+  - key: motion.entrance.punchHoleS
+    value: 0.3
+  - key: motion.entrance.overviewS
+    value: 0.45
+  - key: motion.entrance.thresholdFadeS
+    value: 0.3
+  - key: motion.entrance.blackHoldS
+    value: 0.2
+  - key: motion.menu.lightsOnS
+    value: 0.6
+  - key: motion.menu.cardLiftS
+    value: 0.12
+  - key: motion.menu.cardCarryS
+    value: 0.4
+  - key: motion.menu.cardPushS
+    value: 0.14
+  - key: motion.menu.plungerS
+    value: 0.1
+  - key: motion.menu.punchHoleS
+    value: 0.3
+  - key: motion.menu.clockLampS
+    value: 0.08
+  - key: motion.menu.bellS
+    value: 0.35
+  - key: motion.menu.camBackToM0S
+    value: 0.45
+  - key: motion.menu.outerWheelS
+    value: 0.5
+  - key: motion.menu.doorLeafS
+    value: 0.8
+  - key: motion.menu.warmSpillS
+    value: 0.3
+  - key: motion.menu.thresholdWalkS
+    value: 1.6
+  - key: motion.menu.fadeBlackS
+    value: 0.3
+  - key: motion.menu.deskBulbFromBlackS
+    value: 0.6
+  - key: motion.menu.deskFirstFrameDelayS
+    value: 0.15
+  - key: motion.menu.clipLiftS
+    value: 0.15
+  - key: motion.menu.clipAutoCloseS
+    value: 4
+  - key: motion.menu.oldCardTiltS
+    value: 0.2
+  - key: motion.menu.cancelSlipDropS
+    value: 0.15
+  - key: motion.menu.lastSwitchCoverS
+    value: 0.25
+  - key: motion.menu.lastSwitchLeverS
+    value: 0.3
+  - key: motion.menu.powerDownS
+    value: 0.6
+  - key: motion.menu.generatorSpinDownS
+    value: 1.2
+  - key: motion.board.toK4S
+    value: 0.6
+  - key: motion.board.backToDeskS
+    value: 0.5
+  - key: motion.board.cardLiftS
+    value: 0.08
+  - key: motion.board.swapS
+    value: 0.32
+  - key: motion.board.returnArcS
+    value: 0.25
+  - key: motion.board.settleS
+    value: 0.06
+  - key: motion.board.deckPerCardS
+    value: 0.32
+  - key: motion.board.deckGapS
+    value: 0.07
+  - key: motion.board.lockRodS
+    value: 0.4
+  - key: motion.board.flapS
+    value: 0.3
+  - key: motion.board.chalkRewriteS
+    value: 0.2
+  - key: motion.board.itemTuckS
+    value: 0.15
+  - key: motion.board.chipOutS
+    value: 0.1
+  - key: motion.board.hurdaLidS
+    value: 0.15
+  - key: motion.board.bookForwardS
+    value: 0.35
+  - key: motion.board.bookCoverS
+    value: 0.25
+  - key: motion.board.pageTurnS
+    value: 0.25
+  - key: motion.board.bookCloseS
+    value: 0.3
+  - key: motion.board.recipeLiftS
+    value: 0.1
+  - key: motion.board.productToStoreS
+    value: 0.3
+  - key: motion.board.denyShakeMm
+    value: 2
+  - key: motion.board.denyFlashS
+    value: 0.2
+  - key: motion.board.bookDropS
+    value: 0.25
+  - key: motion.shiftClose.coverS
+    value: 0.25
+  - key: motion.shiftClose.coverCloseS
+    value: 0.3
+  - key: motion.shiftClose.leverS
+    value: 0.3
+  - key: motion.shiftClose.slipExitS
+    value: 0.35
+  - key: motion.shiftClose.slipToHandS
+    value: 0.25
+  - key: motion.shiftClose.slipToTrayS
+    value: 0.2
+  - key: motion.shiftClose.darkS
+    value: 0.2
+  - key: motion.shiftClose.countersS
+    value: 0.4
+  - key: motion.shiftClose.telexPrintS
+    value: 1.2
+  - key: motion.shiftClose.rejectLeverS
+    value: 0.4
+  - key: motion.shiftClose.hoverLiftMm
+    value: 3
+  - key: motion.crtInstrumentS
+    value: 0.3
   - key: 'cameras.K1.pos[0]'
     value: 0
   - key: 'cameras.K1.pos[1]'
@@ -1180,30 +1594,28 @@ MonoBehaviour:
     value: 1.36
   - key: cameras.map.fovV
     value: 30
-  - key: 'cameras.K4.shelf.pos[0]'
-    value: -1.5
-  - key: 'cameras.K4.shelf.pos[1]'
-    value: 0
-  - key: 'cameras.K4.shelf.pos[2]'
-    value: 1.72
-  - key: cameras.K4.shelf.yawDeg
-    value: -35
   - key: 'cameras.K4.localPos[0]'
     value: 0
   - key: 'cameras.K4.localPos[1]'
-    value: 1.15
+    value: 1.293
   - key: 'cameras.K4.localPos[2]'
-    value: 1.04
+    value: -0.98
   - key: 'cameras.K4.localTarget[0]'
     value: 0
   - key: 'cameras.K4.localTarget[1]'
-    value: 1.1
+    value: 1.293
   - key: 'cameras.K4.localTarget[2]'
-    value: 0
+    value: -0.014
   - key: cameras.K4.fovV
-    value: 48
+    value: 42.5
+  - key: cameras.K4.pxPerMm
+    value: 1.52
+  - key: cameras.K4.fromK1S
+    value: 0.6
+  - key: cameras.K4.backS
+    value: 0.5
   - key: 'cameras.K5a.screenLocalPos[0]'
-    value: 0
+    value: 0.14
   - key: 'cameras.K5a.screenLocalPos[1]'
     value: -0.02
   - key: 'cameras.K5a.screenLocalPos[2]'
@@ -1215,7 +1627,7 @@ MonoBehaviour:
   - key: 'cameras.K5a.screenLocalTarget[2]'
     value: 0
   - key: cameras.K5a.fovV
-    value: 46
+    value: 52
   - key: 'cameras.K6a.pos[0]'
     value: 0.32
   - key: 'cameras.K6a.pos[1]'
@@ -1244,6 +1656,158 @@ MonoBehaviour:
     value: 1
   - key: cameras.door.fovV
     value: 62
+  - key: 'cameras.M0.pos[0]'
+    value: 4.5
+  - key: 'cameras.M0.pos[1]'
+    value: 1.52
+  - key: 'cameras.M0.pos[2]'
+    value: 0.3
+  - key: 'cameras.M0.target[0]'
+    value: 2.2
+  - key: 'cameras.M0.target[1]'
+    value: 1.25
+  - key: 'cameras.M0.target[2]'
+    value: 0.3
+  - key: cameras.M0.fovV
+    value: 60
+  - key: 'cameras.M1.pos[0]'
+    value: 3.32
+  - key: 'cameras.M1.pos[1]'
+    value: 1.42
+  - key: 'cameras.M1.pos[2]'
+    value: -0.86
+  - key: 'cameras.M1.target[0]'
+    value: 2.2
+  - key: 'cameras.M1.target[1]'
+    value: 1.37
+  - key: 'cameras.M1.target[2]'
+    value: -1
+  - key: cameras.M1.fovV
+    value: 48
+  - key: 'cameras.M2.pos[0]'
+    value: 3.12
+  - key: 'cameras.M2.pos[1]'
+    value: 1.35
+  - key: 'cameras.M2.pos[2]'
+    value: -0.4
+  - key: 'cameras.M2.target[0]'
+    value: 2.2
+  - key: 'cameras.M2.target[1]'
+    value: 1.3
+  - key: 'cameras.M2.target[2]'
+    value: -0.4
+  - key: cameras.M2.fovV
+    value: 42
+  - key: 'cameras.M2.pressState.pos[0]'
+    value: 3.12
+  - key: 'cameras.M2.pressState.pos[1]'
+    value: 1.53
+  - key: 'cameras.M2.pressState.pos[2]'
+    value: -0.4
+  - key: 'cameras.M2.pressState.target[0]'
+    value: 2.2
+  - key: 'cameras.M2.pressState.target[1]'
+    value: 1.49
+  - key: 'cameras.M2.pressState.target[2]'
+    value: -0.4
+  - key: 'cameras.MS.pos[0]'
+    value: 3.02
+  - key: 'cameras.MS.pos[1]'
+    value: 1.4
+  - key: 'cameras.MS.pos[2]'
+    value: 1.36
+  - key: 'cameras.MS.target[0]'
+    value: 2.2
+  - key: 'cameras.MS.target[1]'
+    value: 1.2
+  - key: 'cameras.MS.target[2]'
+    value: 1.62
+  - key: cameras.MS.fovV
+    value: 40
+  - key: 'cameras.M3.pos[0]'
+    value: 2.55
+  - key: 'cameras.M3.pos[1]'
+    value: 1.55
+  - key: 'cameras.M3.pos[2]'
+    value: 0.75
+  - key: 'cameras.M3.target[0]'
+    value: 1.2
+  - key: 'cameras.M3.target[1]'
+    value: 1.4
+  - key: 'cameras.M3.target[2]'
+    value: 0.75
+  - key: cameras.M3.fovV
+    value: 56
+  - key: 'cameras.K9.cabinetLocalPos[0]'
+    value: 0
+  - key: 'cameras.K9.cabinetLocalPos[1]'
+    value: 0.35
+  - key: 'cameras.K9.cabinetLocalPos[2]'
+    value: -1.1
+  - key: 'cameras.K9.cabinetLocalTarget[0]'
+    value: 0
+  - key: 'cameras.K9.cabinetLocalTarget[1]'
+    value: 0.35
+  - key: 'cameras.K9.cabinetLocalTarget[2]'
+    value: -0.1
+  - key: cameras.K9.fovV
+    value: 48
+  - key: 'cameras.K6.pos[0]'
+    value: 0.4
+  - key: 'cameras.K6.pos[1]'
+    value: 1.28
+  - key: 'cameras.K6.pos[2]'
+    value: 0.42
+  - key: 'cameras.K6.target[0]'
+    value: 0.665
+  - key: 'cameras.K6.target[1]'
+    value: 0.82
+  - key: 'cameras.K6.target[2]'
+    value: 1.08
+  - key: cameras.K6.fovV
+    value: 42
+  - key: 'cameras.K8A.pos[0]'
+    value: 1.44
+  - key: 'cameras.K8A.pos[1]'
+    value: 1.69
+  - key: 'cameras.K8A.pos[2]'
+    value: -0.27
+  - key: 'cameras.K8A.target[0]'
+    value: 2.08
+  - key: 'cameras.K8A.target[1]'
+    value: 1
+  - key: 'cameras.K8A.target[2]'
+    value: -0.27
+  - key: cameras.K8A.fovV
+    value: 47
+  - key: 'cameras.K8G.pos[0]'
+    value: 1.62
+  - key: 'cameras.K8G.pos[1]'
+    value: 1.52
+  - key: 'cameras.K8G.pos[2]'
+    value: 0.4
+  - key: 'cameras.K8G.target[0]'
+    value: 2.21
+  - key: 'cameras.K8G.target[1]'
+    value: 1.45
+  - key: 'cameras.K8G.target[2]'
+    value: 0.62
+  - key: cameras.K8G.fovV
+    value: 30
+  - key: 'cameras.K8R.counterLocalPos[0]'
+    value: 0
+  - key: 'cameras.K8R.counterLocalPos[1]'
+    value: 0.4
+  - key: 'cameras.K8R.counterLocalPos[2]'
+    value: -0.33
+  - key: 'cameras.K8R.counterLocalTarget[0]'
+    value: 0
+  - key: 'cameras.K8R.counterLocalTarget[1]'
+    value: 0
+  - key: 'cameras.K8R.counterLocalTarget[2]'
+    value: -0.23
+  - key: cameras.K8R.fovV
+    value: 40
   - key: lights.bulb.kelvin
     value: 2700
   - key: 'lights.bulb.pos[0]'
@@ -1516,6 +2080,386 @@ MonoBehaviour:
     value: 0.45
   - key: materials.galvBin.metal
     value: 0.7
+  - key: materials.paintOlive.roughness
+    value: 0.6
+  - key: materials.paintOlive.metal
+    value: 0.05
+  - key: materials.paintOliveDark.roughness
+    value: 0.62
+  - key: materials.paintOliveDark.metal
+    value: 0.05
+  - key: materials.paintGreyGreen.roughness
+    value: 0.58
+  - key: materials.paintGreyGreen.metal
+    value: 0.05
+  - key: materials.paintCream.roughness
+    value: 0.55
+  - key: materials.paintCream.metal
+    value: 0
+  - key: materials.paintBlack.roughness
+    value: 0.5
+  - key: materials.paintBlack.metal
+    value: 0.05
+  - key: materials.paintHazard.roughness
+    value: 0.6
+  - key: materials.paintHazard.metal
+    value: 0
+  - key: materials.steelBare.roughness
+    value: 0.38
+  - key: materials.steelBare.metal
+    value: 0.9
+  - key: materials.steelCast.roughness
+    value: 0.55
+  - key: materials.steelCast.metal
+    value: 0.8
+  - key: materials.castIron.roughness
+    value: 0.72
+  - key: materials.castIron.metal
+    value: 0.6
+  - key: materials.brassWorn.roughness
+    value: 0.48
+  - key: materials.brassWorn.metal
+    value: 0.8
+  - key: materials.copper.roughness
+    value: 0.42
+  - key: materials.copper.metal
+    value: 0.9
+  - key: materials.bakeliteBlack.roughness
+    value: 0.34
+  - key: materials.bakeliteBlack.metal
+    value: 0
+  - key: materials.slate.roughness
+    value: 0.68
+  - key: materials.slate.metal
+    value: 0
+  - key: materials.rubberGasket.roughness
+    value: 0.85
+  - key: materials.rubberGasket.metal
+    value: 0
+  - key: materials.glassClear.roughness
+    value: 0.05
+  - key: materials.glassClear.metal
+    value: 0
+  - key: materials.dialCream.roughness
+    value: 0.6
+  - key: materials.dialCream.metal
+    value: 0
+  - key: materials.cardStock.roughness
+    value: 0.9
+  - key: materials.cardStock.metal
+    value: 0
+  - key: materials.cardBlank.roughness
+    value: 0.9
+  - key: materials.cardBlank.metal
+    value: 0
+  - key: materials.punchHole.roughness
+    value: 1
+  - key: materials.punchHole.metal
+    value: 0
+  - key: materials.tileGlazed.roughness
+    value: 0.32
+  - key: materials.tileGlazed.metal
+    value: 0
+  - key: materials.tileGlazedDirty.roughness
+    value: 0.45
+  - key: materials.tileGlazedDirty.metal
+    value: 0
+  - key: materials.concreteDark.roughness
+    value: 0.95
+  - key: materials.concreteDark.metal
+    value: 0
+  - key: materials.concreteFloorWet.roughness
+    value: 0.55
+  - key: materials.concreteFloorWet.metal
+    value: 0
+  - key: materials.puddle.roughness
+    value: 0.08
+  - key: materials.puddle.metal
+    value: 0
+  - key: materials.stencilPaint.roughness
+    value: 0.8
+  - key: materials.stencilPaint.metal
+    value: 0
+  - key: materials.lampGlassCold.roughness
+    value: 0.25
+  - key: materials.lampGlassCold.metal
+    value: 0
+  - key: materials.lampGlassCold.emissiveIntensity
+    value: 2.2
+  - key: materials.lampGlassWarm.roughness
+    value: 0.3
+  - key: materials.lampGlassWarm.metal
+    value: 0
+  - key: materials.lampGlassWarm.emissiveIntensity
+    value: 2.5
+  - key: materials.jewelAmberOn.roughness
+    value: 0.2
+  - key: materials.jewelAmberOn.metal
+    value: 0
+  - key: materials.jewelAmberOn.emissiveIntensity
+    value: 2.4
+  - key: materials.jewelAmberOff.roughness
+    value: 0.25
+  - key: materials.jewelAmberOff.metal
+    value: 0
+  - key: materials.woodVarnish.roughness
+    value: 0.45
+  - key: materials.woodVarnish.metal
+    value: 0
+  - key: materials.woodRaw.roughness
+    value: 0.8
+  - key: materials.woodRaw.metal
+    value: 0
+  - key: materials.linoDesk.roughness
+    value: 0.6
+  - key: materials.linoDesk.metal
+    value: 0
+  - key: materials.feltBlotter.roughness
+    value: 0.95
+  - key: materials.feltBlotter.metal
+    value: 0
+  - key: materials.fuseCeramic.roughness
+    value: 0.4
+  - key: materials.fuseCeramic.metal
+    value: 0
+  - key: materials.clockHand.roughness
+    value: 0.4
+  - key: materials.clockHand.metal
+    value: 0.3
+  - key: materials.counterDrum.roughness
+    value: 0.5
+  - key: materials.counterDrum.metal
+    value: 0
+  - key: materials.cabPanel.roughness
+    value: 0.4
+  - key: materials.cabPanel.metal
+    value: 0
+  - key: materials.scaleCream.roughness
+    value: 0.55
+  - key: materials.scaleCream.metal
+    value: 0
+  - key: materials.gaugeDial.roughness
+    value: 0.6
+  - key: materials.gaugeDial.metal
+    value: 0
+  - key: materials.needleBlack.roughness
+    value: 0.4
+  - key: materials.needleBlack.metal
+    value: 0.2
+  - key: materials.enamelBadge.roughness
+    value: 0.3
+  - key: materials.enamelBadge.metal
+    value: 0
+  - key: materials.counterTenths.roughness
+    value: 0.5
+  - key: materials.counterTenths.metal
+    value: 0
+  - key: materials.counterFraction.roughness
+    value: 0.6
+  - key: materials.counterFraction.metal
+    value: 0
+  - key: materials.keyIcon.roughness
+    value: 0.55
+  - key: materials.keyIcon.metal
+    value: 0
+  - key: materials.tagPaper.roughness
+    value: 0.9
+  - key: materials.tagPaper.metal
+    value: 0
+  - key: materials.readyLampOff.roughness
+    value: 0.25
+  - key: materials.readyLampOff.metal
+    value: 0
+  - key: materials.telexPaper.roughness
+    value: 0.92
+  - key: materials.telexPaper.metal
+    value: 0
+  - key: materials.coffeeRingDecal.roughness
+    value: 0.6
+  - key: materials.coffeeRingDecal.metal
+    value: 0
+  - key: materials.cardboard.roughness
+    value: 0.85
+  - key: materials.cardboard.metal
+    value: 0
+  - key: materials.inkPad.roughness
+    value: 0.85
+  - key: materials.inkPad.metal
+    value: 0
+  - key: materials.alarmFraction.roughness
+    value: 0.6
+  - key: materials.alarmFraction.metal
+    value: 0
+  - key: materials.corkCard.roughness
+    value: 0.9
+  - key: materials.corkCard.metal
+    value: 0
+  - key: materials.stampBlue.roughness
+    value: 0.8
+  - key: materials.stampBlue.metal
+    value: 0
+  - key: materials.notePaper.roughness
+    value: 0.9
+  - key: materials.notePaper.metal
+    value: 0
+  - key: materials.posterPrint.roughness
+    value: 0.7
+  - key: materials.posterPrint.metal
+    value: 0
+  - key: materials.posterBack.roughness
+    value: 0.9
+  - key: materials.posterBack.metal
+    value: 0
+  - key: materials.alarmLampOff.roughness
+    value: 0.3
+  - key: materials.alarmLampOff.metal
+    value: 0
+  - key: materials.alarmLampOn.roughness
+    value: 0.3
+  - key: materials.alarmLampOn.metal
+    value: 0
+  - key: materials.alarmLampOn.emissiveIntensity
+    value: 8
+  - key: materials.alarmStepOff.roughness
+    value: 0.6
+  - key: materials.alarmStepOff.metal
+    value: 0
+  - key: materials.alarmStepOn.roughness
+    value: 0.6
+  - key: materials.alarmStepOn.metal
+    value: 0
+  - key: materials.alarmStepRed.roughness
+    value: 0.5
+  - key: materials.alarmStepRed.metal
+    value: 0
+  - key: materials.alarmStepRed.emissiveIntensity
+    value: 0.3
+  - key: materials.chalkTally.roughness
+    value: 1
+  - key: materials.chalkTally.metal
+    value: 0
+  - key: materials.stencilDrips.roughness
+    value: 0.85
+  - key: materials.stencilDrips.metal
+    value: 0
+  - key: materials.dripStain.roughness
+    value: 0.9
+  - key: materials.dripStain.metal
+    value: 0
+  - key: materials.crtVent.roughness
+    value: 0.7
+  - key: materials.crtVent.metal
+    value: 0.05
+  - key: materials.micGrille.roughness
+    value: 0.45
+  - key: materials.micGrille.metal
+    value: 0.7
+  - key: materials.treadPlate.roughness
+    value: 0.5
+  - key: materials.treadPlate.metal
+    value: 0.7
+  - key: materials.peepLens.roughness
+    value: 0.08
+  - key: materials.peepLens.metal
+    value: 0
+  - key: materials.knockLampRed.roughness
+    value: 0.25
+  - key: materials.knockLampRed.metal
+    value: 0
+  - key: materials.knockLampRed.emissiveIntensity
+    value: 3
+  - key: materials.intercomGrille.roughness
+    value: 0.7
+  - key: materials.intercomGrille.metal
+    value: 0.1
+  - key: materials.boardPanel.roughness
+    value: 0.72
+  - key: materials.boardPanel.metal
+    value: 0.05
+  - key: materials.boardFace.roughness
+    value: 0.72
+  - key: materials.boardFace.metal
+    value: 0
+  - key: materials.cardEdge.roughness
+    value: 0.9
+  - key: materials.cardEdge.metal
+    value: 0
+  - key: materials.cardFace.roughness
+    value: 0.88
+  - key: materials.cardFace.metal
+    value: 0
+  - key: materials.cardBack.roughness
+    value: 0.9
+  - key: materials.cardBack.metal
+    value: 0
+  - key: materials.magnetBlack.roughness
+    value: 0.35
+  - key: materials.magnetBlack.metal
+    value: 0.1
+  - key: materials.manila.roughness
+    value: 0.85
+  - key: materials.manila.metal
+    value: 0
+  - key: materials.bookCloth.roughness
+    value: 0.82
+  - key: materials.bookCloth.metal
+    value: 0
+  - key: materials.pageEdge.roughness
+    value: 0.95
+  - key: materials.pageEdge.metal
+    value: 0
+  - key: materials.pageFace.roughness
+    value: 0.9
+  - key: materials.pageFace.metal
+    value: 0
+  - key: materials.wireBlack.roughness
+    value: 0.45
+  - key: materials.wireBlack.metal
+    value: 0.6
+  - key: materials.chalkWhite.roughness
+    value: 0.95
+  - key: materials.chalkWhite.metal
+    value: 0
+  - key: materials.greasePencil.roughness
+    value: 0.6
+  - key: materials.greasePencil.metal
+    value: 0
+  - key: materials.coldGlass.roughness
+    value: 0.06
+  - key: materials.coldGlass.metal
+    value: 0
+  - key: materials.fogFrost.roughness
+    value: 0.95
+  - key: materials.fogFrost.metal
+    value: 0
+  - key: materials.tinOlive.roughness
+    value: 0.5
+  - key: materials.tinOlive.metal
+    value: 0.35
+  - key: materials.tinRim.roughness
+    value: 0.35
+  - key: materials.tinRim.metal
+    value: 0.85
+  - key: materials.stampWood.roughness
+    value: 0.55
+  - key: materials.stampWood.metal
+    value: 0
+  - key: materials.enamelShade.roughness
+    value: 0.4
+  - key: materials.enamelShade.metal
+    value: 0.1
+  - key: materials.enamelInner.roughness
+    value: 0.45
+  - key: materials.enamelInner.metal
+    value: 0
+  - key: materials.rp_rope.roughness
+    value: 0.95
+  - key: materials.rp_rope.metal
+    value: 0
+  - key: materials.aluCast.roughness
+    value: 0.55
+  - key: materials.aluCast.metal
+    value: 0.6
   - key: 'layout3d.clipboard.shelfLocal[0]'
     value: -0.46
   - key: 'layout3d.clipboard.shelfLocal[1]'
@@ -1901,7 +2845,739 @@ MonoBehaviour:
   - key: materialsExtra.pawnOchre.metal
     value: 0
   - key: cabinet.bulbIntensity
+    value: 0.15
+  - key: 'cabinet.outer[0]'
+    value: 0.68
+  - key: 'cabinet.outer[1]'
+    value: 0.7
+  - key: 'cabinet.outer[2]'
+    value: 0.22
+  - key: 'cabinet.room.pos[0]'
+    value: 1.68
+  - key: 'cabinet.room.pos[1]'
+    value: 1.17
+  - key: 'cabinet.room.pos[2]'
+    value: 2.3
+  - key: cabinet.room.yaw
+    value: 0
+  - key: cabinet.room.leafOpenDeg
+    value: -95
+  - key: cabinet.menu.leafOpenDeg
+    value: -120
+  - key: cabinet.menu.noMenuLever
+    value: 1
+  - key: cabinet.panel.z
+    value: -0.145
+  - key: 'cabinet.panel.colX[0]'
+    value: -0.235
+  - key: 'cabinet.panel.colX[1]'
+    value: -0.12
+  - key: 'cabinet.panel.colX[2]'
+    value: -0.025
+  - key: 'cabinet.panel.colX[3]'
+    value: 0.07
+  - key: cabinet.panel.rows.gauge
+    value: 0.585
+  - key: cabinet.panel.rows.lamp
+    value: 0.535
+  - key: cabinet.panel.rows.slider
+    value: 0.37
+  - key: cabinet.panel.rows.counter
+    value: 0.165
+  - key: cabinet.panel.rows.plate
+    value: 0.115
+  - key: 'cabinet.panel.toggleSES[0]'
+    value: 0.205
+  - key: 'cabinet.panel.toggleSES[1]'
+    value: 0.555
+  - key: cabinet.panel.plateSES
+    value: 0.47
+  - key: cabinet.panel.rotaryDIL
+    value: 0.33
+  - key: cabinet.panel.plateDIL
+    value: 0.255
+  - key: cabinet.panel.menuLever
+    value: 0.14
+  - key: cabinet.panel.plateMENU
+    value: 0.075
+  - key: cabinet.controls.slider.travel
+    value: 0.16
+  - key: cabinet.controls.slider.notchEvery
+    value: 10
+  - key: cabinet.controls.slider.step
+    value: 5
+  - key: 'cabinet.controls.gauge.needleDeg[0]'
+    value: 50
+  - key: 'cabinet.controls.gauge.needleDeg[1]'
+    value: -50
+  - key: 'cabinet.controls.toggle.leverDeg[0]'
+    value: -28
+  - key: 'cabinet.controls.toggle.leverDeg[1]'
+    value: 28
+  - key: cabinet.controls.toggle.onIsUp
+    value: 1
+  - key: cabinet.controls.rotary.knobDeg.tr
+    value: 40
+  - key: cabinet.controls.rotary.knobDeg.en
+    value: -40
+  - key: 'cabinet.controls.menuLever.coverDeg[0]'
+    value: 0
+  - key: 'cabinet.controls.menuLever.coverDeg[1]'
+    value: 112
+  - key: 'cabinet.controls.menuLever.leverDeg[0]'
+    value: 35
+  - key: 'cabinet.controls.menuLever.leverDeg[1]'
+    value: -35
+  - key: cabinet.controls.menuLever.autoCloseS
+    value: 4
+  - key: cabinet.bulb.angle
+    value: 70
+  - key: cabinet.bulb.range
+    value: 1.4
+  - key: cabinet.bulb.shadows
+    value: 0
+  - key: cabinet.bulb.preview.intensity
+    value: 3.2
+  - key: cabinet.bulb.preview.decay
+    value: 2
+  - key: cabinet.plates.capMm
+    value: 6.2
+  - key: cabinet.plates.minPxAtK9
+    value: 14
+  - key: cabinet.plates.widthMm
+    value: 80
+  - key: cabinet.panelFillIntensity
+    value: 0.04
+  - key: models3d.budgets.big
+    value: 4000
+  - key: models3d.budgets.small
+    value: 800
+  - key: models3d.budgets.raid
+    value: 400
+  - key: models3d.budgets.unit
+    value: 1500
+  - key: menu.clock.hourDeg
+    value: -240
+  - key: menu.clock.minuteDeg
+    value: -102
+  - key: menu.clock.carryArcM
+    value: 0.08
+  - key: menu.landing.tileHeightM
+    value: 1.45
+  - key: menu.landing.farWallZ
+    value: 1.85
+  - key: menu.cabinetReadability.plateCapMm
+    value: 7.2
+  - key: menu.cabinetReadability.languagePlateWidthMm
+    value: 112
+  - key: menu.cabinetReadability.rotaryLabelWidthMm
+    value: 58
+  - key: menu.cabinetReadability.rotaryLabelCapMm
+    value: 7.2
+  - key: 'lightsRecipe.M0[0].pos[0]'
+    value: 2.42
+  - key: 'lightsRecipe.M0[0].pos[1]'
+    value: 2.41
+  - key: 'lightsRecipe.M0[0].pos[2]'
+    value: 0.75
+  - key: lightsRecipe.M0[0].shadows
+    value: 1
+  - key: lightsRecipe.M0[0].preview
+    value: 5.5
+  - key: lightsRecipe.M0[0].angle
+    value: 110
+  - key: 'lightsRecipe.M0[0].target[0]'
+    value: 2.42
+  - key: 'lightsRecipe.M0[0].target[1]'
+    value: 0
+  - key: 'lightsRecipe.M0[0].target[2]'
+    value: 0.75
+  - key: 'lightsRecipe.M0[1].pos[0]'
+    value: 2.42
+  - key: 'lightsRecipe.M0[1].pos[1]'
+    value: 2.26
+  - key: 'lightsRecipe.M0[1].pos[2]'
+    value: -0.5
+  - key: lightsRecipe.M0[1].shadows
+    value: 1
+  - key: lightsRecipe.M0[1].preview
+    value: 4.5
+  - key: lightsRecipe.M0[1].angle
+    value: 110
+  - key: 'lightsRecipe.M0[1].target[0]'
+    value: 2.42
+  - key: 'lightsRecipe.M0[1].target[1]'
+    value: 0
+  - key: 'lightsRecipe.M0[1].target[2]'
+    value: -0.5
+  - key: 'lightsRecipe.M0[2].pos[0]'
+    value: 5.2
+  - key: 'lightsRecipe.M0[2].pos[1]'
+    value: 3.6
+  - key: 'lightsRecipe.M0[2].pos[2]'
+    value: 1.35
+  - key: 'lightsRecipe.M0[2].target[0]'
+    value: 3.1
+  - key: 'lightsRecipe.M0[2].target[1]'
+    value: 0.6
+  - key: 'lightsRecipe.M0[2].target[2]'
+    value: 1.3
+  - key: lightsRecipe.M0[2].angle
+    value: 60
+  - key: lightsRecipe.M0[2].shadows
+    value: 1
+  - key: lightsRecipe.M0[2].preview
+    value: 40
+  - key: 'lightsRecipe.M0[3].pos[0]'
+    value: 2.3
+  - key: 'lightsRecipe.M0[3].pos[1]'
+    value: 0.02
+  - key: 'lightsRecipe.M0[3].pos[2]'
+    value: 0.75
+  - key: lightsRecipe.M0[3].shadows
+    value: 0
+  - key: lightsRecipe.M0[3].preview
+    value: 0.25
+  - key: lightsRecipe.M0[4].preview
+    value: 0.6
+  - key: 'board.place.pos[0]'
+    value: -1.62
+  - key: 'board.place.pos[1]'
+    value: 0
+  - key: 'board.place.pos[2]'
+    value: 1.7
+  - key: board.place.yawDeg
+    value: -48
+  - key: 'board.frameMm[0]'
+    value: 1196
+  - key: 'board.frameMm[1]'
+    value: 636
+  - key: 'board.innerMm[0]'
+    value: 1160
+  - key: 'board.innerMm[1]'
+    value: 600
+  - key: 'board.bboxMm[0]'
+    value: 1320
+  - key: 'board.bboxMm[1]'
+    value: 1822
+  - key: 'board.bboxMm[2]'
+    value: 489
+  - key: board.panelBottomY
+    value: 0.975
+  - key: board.readability.k4PxPerMm
+    value: 1.52
+  - key: board.readability.cardNamePx
+    value: 21
+  - key: 'board.readability.valuePx[0]'
+    value: 14
+  - key: 'board.readability.valuePx[1]'
+    value: 17
+  - key: board.lamp.angleDeg
+    value: 58
+  - key: board.lamp.penumbra
+    value: 0.9
+  - key: board.lamp.shadows
+    value: 1
+  - key: board.lamp.preview.K1
+    value: 2.4
+  - key: board.lamp.preview.K4
+    value: 2.6
+  - key: board.deck.fanFromTop
+    value: 1
+  - key: board.deck.collectFromBottom
+    value: 1
+  - key: board.deck.perCardMs
+    value: 320
+  - key: board.deck.gapMs
+    value: 70
+  - key: board.limits.people
+    value: 10
+  - key: board.limits.areas
+    value: 7
+  - key: board.limits.rawMaterials
+    value: 4
+  - key: board.limits.itemCards
+    value: 32
+  - key: board.limits.rationCap
+    value: 60
+  - key: 'board.layoutMm.pockets.tek[0]'
+    value: 14
+  - key: 'board.layoutMm.pockets.tek[1]'
+    value: 44
+  - key: 'board.layoutMm.pockets.tek[2]'
+    value: 108
+  - key: 'board.layoutMm.pockets.tek[3]'
+    value: 194
+  - key: 'board.layoutMm.pockets.emp[0]'
+    value: 132
+  - key: 'board.layoutMm.pockets.emp[1]'
+    value: 44
+  - key: 'board.layoutMm.pockets.emp[2]'
+    value: 108
+  - key: 'board.layoutMm.pockets.emp[3]'
+    value: 194
+  - key: 'board.layoutMm.pockets.ana[0]'
+    value: 250
+  - key: 'board.layoutMm.pockets.ana[1]'
+    value: 44
+  - key: 'board.layoutMm.pockets.ana[2]'
+    value: 108
+  - key: 'board.layoutMm.pockets.ana[3]'
+    value: 194
+  - key: 'board.layoutMm.pockets.uret[0]'
+    value: 14
+  - key: 'board.layoutMm.pockets.uret[1]'
+    value: 244
+  - key: 'board.layoutMm.pockets.uret[2]'
+    value: 108
+  - key: 'board.layoutMm.pockets.uret[3]'
+    value: 194
+  - key: 'board.layoutMm.pockets.mutf[0]'
+    value: 132
+  - key: 'board.layoutMm.pockets.mutf[1]'
+    value: 244
+  - key: 'board.layoutMm.pockets.mutf[2]'
+    value: 108
+  - key: 'board.layoutMm.pockets.mutf[3]'
+    value: 194
+  - key: 'board.layoutMm.pockets.egit[0]'
+    value: 250
+  - key: 'board.layoutMm.pockets.egit[1]'
+    value: 244
+  - key: 'board.layoutMm.pockets.egit[2]'
+    value: 180
+  - key: 'board.layoutMm.pockets.egit[3]'
+    value: 194
+  - key: 'board.layoutMm.cardCentres.tek[0]'
+    value: 68
+  - key: 'board.layoutMm.cardCentres.tek[1]'
+    value: 128
+  - key: 'board.layoutMm.cardCentres.emp[0]'
+    value: 186
+  - key: 'board.layoutMm.cardCentres.emp[1]'
+    value: 128
+  - key: 'board.layoutMm.cardCentres.ana[0]'
+    value: 304
+  - key: 'board.layoutMm.cardCentres.ana[1]'
+    value: 128
+  - key: 'board.layoutMm.cardCentres.uret[0]'
+    value: 68
+  - key: 'board.layoutMm.cardCentres.uret[1]'
+    value: 328
+  - key: 'board.layoutMm.cardCentres.mutf[0]'
+    value: 186
+  - key: 'board.layoutMm.cardCentres.mutf[1]'
+    value: 328
+  - key: 'board.layoutMm.cardCentres.egit[0]'
+    value: 304
+  - key: 'board.layoutMm.cardCentres.egit[1]'
+    value: 328
+  - key: 'board.layoutMm.bosta[0]'
+    value: 380
+  - key: 'board.layoutMm.bosta[1]'
+    value: 44
+  - key: 'board.layoutMm.bosta[2]'
+    value: 770
+  - key: 'board.layoutMm.bosta[3]'
+    value: 194
+  - key: 'board.layoutMm.deck[0]'
+    value: 1098
+  - key: 'board.layoutMm.deck[1]'
+    value: 128
+  - key: board.layoutMm.handLeft
+    value: 462
+  - key: 'board.layoutMm.order[0]'
+    value: 446
+  - key: 'board.layoutMm.order[1]'
+    value: 244
+  - key: 'board.layoutMm.order[2]'
+    value: 450
+  - key: 'board.layoutMm.order[3]'
+    value: 194
+  - key: 'board.layoutMm.sheet[0]'
+    value: 450
+  - key: 'board.layoutMm.sheet[1]'
+    value: 266
+  - key: 'board.layoutMm.sheet[2]'
+    value: 440
+  - key: 'board.layoutMm.sheet[3]'
+    value: 170
+  - key: 'board.layoutMm.recipe[0]'
+    value: 514
+  - key: 'board.layoutMm.recipe[1]'
+    value: 328
+  - key: 'board.layoutMm.inputs[0]'
+    value: 582
+  - key: 'board.layoutMm.inputs[1]'
+    value: 296
+  - key: 'board.layoutMm.inputs[2]'
+    value: 294
+  - key: 'board.layoutMm.inputs[3]'
+    value: 56
+  - key: 'board.layoutMm.folder[0]'
+    value: 906
+  - key: 'board.layoutMm.folder[1]'
+    value: 244
+  - key: 'board.layoutMm.folder[2]'
+    value: 244
+  - key: 'board.layoutMm.folder[3]'
+    value: 194
+  - key: 'board.layoutMm.folderFace[0]'
+    value: 963
+  - key: 'board.layoutMm.folderFace[1]'
+    value: 268
+  - key: 'board.layoutMm.folderFace[2]'
+    value: 130
+  - key: 'board.layoutMm.folderFace[3]'
+    value: 180
+  - key: 'board.layoutMm.materialsX[0]'
+    value: 180
+  - key: 'board.layoutMm.materialsX[1]'
+    value: 268
+  - key: 'board.layoutMm.materialsX[2]'
+    value: 356
+  - key: 'board.layoutMm.materialsX[3]'
+    value: 444
+  - key: board.layoutMm.materialsY
+    value: 502
+  - key: 'board.layoutMm.kitsX[0]'
+    value: 541
+  - key: 'board.layoutMm.kitsX[1]'
+    value: 623
+  - key: 'board.layoutMm.kitsX[2]'
+    value: 705
+  - key: 'board.layoutMm.kitsX[3]'
+    value: 787
+  - key: 'board.layoutMm.kitsX[4]'
+    value: 869
+  - key: 'board.layoutMm.kitsX[5]'
+    value: 951
+  - key: board.layoutMm.kitsY
+    value: 502
+  - key: 'board.layoutMm.book[0]'
+    value: 70
+  - key: 'board.layoutMm.book[1]'
+    value: 452
+  - key: 'board.layoutMm.hurda[0]'
+    value: 1012
+  - key: 'board.layoutMm.hurda[1]'
+    value: 474
+  - key: 'board.layoutMm.hurda[2]'
+    value: 130
+  - key: 'board.layoutMm.hurda[3]'
+    value: 126
+  - key: 'board.layoutMm.header.back[0]'
+    value: 6
+  - key: 'board.layoutMm.header.back[1]'
+    value: 6
+  - key: 'board.layoutMm.header.back[2]'
+    value: 124
+  - key: 'board.layoutMm.header.back[3]'
+    value: 28
+  - key: 'board.layoutMm.header.title[0]'
+    value: 140
+  - key: 'board.layoutMm.header.title[1]'
+    value: 7
+  - key: 'board.layoutMm.header.title[2]'
+    value: 404
+  - key: 'board.layoutMm.header.title[3]'
+    value: 26
+  - key: 'board.layoutMm.header.slate[0]'
+    value: 556
+  - key: 'board.layoutMm.header.slate[1]'
+    value: 5
+  - key: 'board.layoutMm.header.slate[2]'
+    value: 440
+  - key: 'board.layoutMm.header.slate[3]'
+    value: 30
+  - key: 'board.layoutMm.header.flap[0]'
+    value: 1006
+  - key: 'board.layoutMm.header.flap[1]'
+    value: 5
+  - key: 'board.layoutMm.header.flap[2]'
+    value: 144
+  - key: 'board.layoutMm.header.flap[3]'
+    value: 30
+  - key: board.layoutMm.lockY
+    value: 241
+  - key: board.layoutMm.topics.x
+    value: 356
+  - key: board.layoutMm.topics.y0
+    value: 282
+  - key: board.layoutMm.topics.dy
+    value: 22
+  - key: 'board.newTag.sizeMm[0]'
+    value: 32
+  - key: 'board.newTag.sizeMm[1]'
+    value: 13
+  - key: board.newTag.capMm
+    value: 9.4
+  - key: cards.person.nameMm
+    value: 14
+  - key: cards.person.jobMm
+    value: 9.5
+  - key: cards.person.statLabelMm
+    value: 9.5
+  - key: cards.person.statValueMm
+    value: 11.5
+  - key: cards.person.stripMm
+    value: 9.2
+  - key: 'cards.person.portraitMm[0]'
+    value: 44
+  - key: 'cards.person.portraitMm[1]'
+    value: 48
+  - key: 'cards.person.portraitAtMm[0]'
+    value: 5
+  - key: 'cards.person.portraitAtMm[1]'
+    value: 29
+  - key: cards.person.statsRowYmm
+    value: 80
+  - key: cards.person.stripYmm
+    value: 104.5
+  - key: cards.person.masteryPipRmm
+    value: 1.9
+  - key: 'cards.person.fonts.name[1]'
+    value: 700
+  - key: 'cards.person.fonts.job[1]'
+    value: 600
+  - key: 'cards.person.fonts.values[1]'
+    value: 700
+  - key: 'cards.person.fonts.strip[1]'
+    value: 600
+  - key: cards.item.identityBandMm
+    value: 14
+  - key: cards.item.nameMm
+    value: 9.4
+  - key: cards.material.freeNumberMm
+    value: 22
+  - key: cards.material.pipDiaMm
+    value: 3.4
+  - key: cards.material.maxPips
+    value: 20
+  - key: cards.recipe.spreads
+    value: 3
+  - key: cards.recipe.perSpread
+    value: 2
+  - key: cards.itemStack.offsetMm
+    value: 14
+  - key: cards.hoverLiftMm
+    value: 4
+  - key: cards.heldLiftMm
+    value: 10
+  - key: cards.recipeHeldTiltDeg
+    value: 6
+  - key: 'cards.portraits.cropViewBox[0]'
+    value: 36
+  - key: 'cards.portraits.cropViewBox[1]'
+    value: 26
+  - key: 'cards.portraits.cropViewBox[2]'
+    value: 228
+  - key: 'cards.portraits.cropViewBox[3]'
+    value: 250
+  - key: 'cards.sizesMm.person[0]'
+    value: 80
+  - key: 'cards.sizesMm.person[1]'
+    value: 120
+  - key: 'cards.sizesMm.item[0]'
+    value: 80
+  - key: 'cards.sizesMm.item[1]'
+    value: 50
+  - key: 'cards.sizesMm.material[0]'
+    value: 80
+  - key: 'cards.sizesMm.material[1]'
+    value: 56
+  - key: 'cards.sizesMm.chip[0]'
+    value: 56
+  - key: 'cards.sizesMm.chip[1]'
+    value: 40
+  - key: 'cards.sizesMm.recipe[0]'
+    value: 112
+  - key: 'cards.sizesMm.recipe[1]'
+    value: 80
+  - key: cards.sizesMm.thicknessMm
+    value: 0.6
+  - key: cards.sizesMm.magnet.diaMm
+    value: 10
+  - key: cards.sizesMm.magnet.hMm
+    value: 3.5
+  - key: 'recipeBook.readPoseLocal.pos[0]'
+    value: 0
+  - key: 'recipeBook.readPoseLocal.pos[1]'
+    value: 1.227
+  - key: 'recipeBook.readPoseLocal.pos[2]'
+    value: -0.665
+  - key: recipeBook.readPoseLocal.tiltX
+    value: -9
+  - key: 'recipeBook.lowPoseLocal.pos[0]'
+    value: -0.02
+  - key: 'recipeBook.lowPoseLocal.pos[1]'
+    value: 1.062
+  - key: 'recipeBook.lowPoseLocal.pos[2]'
+    value: -0.62
+  - key: recipeBook.lowPoseLocal.tiltX
+    value: -14
+  - key: recipeBook.hoverMm
+    value: 4
+  - key: recipeBook.coverDelayS
+    value: 0.1
+  - key: shiftClose.states.ready.cover
+    value: 0
+  - key: shiftClose.states.ready.lever
+    value: 35
+  - key: shiftClose.states.cover.cover
+    value: 112
+  - key: shiftClose.states.cover.lever
+    value: 35
+  - key: shiftClose.states.cover.autoCloseS
+    value: 4
+  - key: shiftClose.states.waiting.cover
+    value: 112
+  - key: shiftClose.states.waiting.lever
+    value: -35
+  - key: shiftClose.states.waiting.clickable
+    value: 0
+  - key: shiftClose.states.locked.cover
+    value: 0
+  - key: shiftClose.states.locked.lever
+    value: 35
+  - key: shiftClose.plate.line1.capMm
+    value: 11.5
+  - key: shiftClose.plate.line2CapMm
+    value: 6.4
+  - key: 'shiftClose.slip.sizeMm[0]'
+    value: 100
+  - key: 'shiftClose.slip.sizeMm[1]'
+    value: 150
+  - key: 'shiftClose.slip.switchLocalStart[0]'
+    value: -0.18
+  - key: 'shiftClose.slip.switchLocalStart[1]'
+    value: 0.14
+  - key: 'shiftClose.slip.switchLocalStart[2]'
+    value: 0.015
+  - key: 'shiftClose.slip.switchLocalExit[0]'
+    value: -0.3
+  - key: 'shiftClose.slip.switchLocalExit[1]'
+    value: 0.14
+  - key: 'shiftClose.slip.switchLocalExit[2]'
+    value: 0.015
+  - key: shiftClose.slip.travelMm
+    value: 120
+  - key: shiftClose.slip.exitS
+    value: 0.35
+  - key: shiftClose.slip.toHandS
+    value: 0.25
+  - key: shiftClose.slip.toTrayS
+    value: 0.2
+  - key: shiftClose.afterDrop.darkS
+    value: 0.2
+  - key: shiftClose.afterDrop.countersS
+    value: 0.4
+  - key: shiftClose.afterDrop.telexPrintS
+    value: 1.2
+  - key: shiftClose.evrakHighlight.intensity
+    value: 0.55
+  - key: shiftClose.evrakHighlight.range
+    value: 0.35
+  - key: shiftClose.evrakHighlight.shadows
+    value: 0
+  - key: admission.motion.counterLeafS
+    value: 0.4
+  - key: admission.motion.lampS
+    value: 0.08
+  - key: admission.motion.drawerS
+    value: 0.35
+  - key: admission.motion.docDropS
+    value: 0.2
+  - key: admission.motion.markerS
+    value: 0.2
+  - key: admission.motion.slipS
+    value: 0.35
+  - key: admission.motion.intercomCrackleS
+    value: 0.2
+  - key: admission.motion.transcriptPerCharS
+    value: 0.03
+  - key: admission.motion.toK8GS
+    value: 0.45
+  - key: admission.motion.glassCoverS
+    value: 0.2
+  - key: admission.motion.fogInS
+    value: 0.6
+  - key: admission.motion.fogOutS
+    value: 2.5
+  - key: admission.motion.stampLiftS
+    value: 0.1
+  - key: admission.motion.stampPressS
+    value: 0.12
+  - key: admission.motion.admitWheelS
+    value: 0.5
+  - key: admission.motion.admitLeafS
+    value: 0.8
+  - key: admission.motion.aidDrawerS
+    value: 0.35
+  - key: admission.motion.readS
+    value: 0.25
+  - key: admission.motion.counterBracketS
+    value: 0.15
+  - key: admission.motion.counterFoldS
+    value: 0.35
+  - key: admission.motion.slipDropS
+    value: 0.15
+  - key: admission.motion.stripOutS
+    value: 0.25
+  - key: admission.motion.stripInS
     value: 0.3
+  - key: admission.motion.padTearS
+    value: 0.15
+  - key: admission.motion.magnifierMoveS
+    value: 0.25
+  - key: admission.motion.admitHoldS
+    value: 0.6
+  - key: admission.motion.hoverDelayS
+    value: 0.4
+  - key: admission.paperAlbedo
+    value: 0.8
+  - key: admission.readDistanceM
+    value: 0.318
+  - key: admission.slipPathMm
+    value: 160
+  - key: admission.stampMarks.opacity
+    value: 0.93
+  - key: 'admission.stampMarks.admit.sizeMm[0]'
+    value: 60
+  - key: 'admission.stampMarks.admit.sizeMm[1]'
+    value: 29.9
+  - key: 'admission.stampMarks.admit.sizeMmEn[0]'
+    value: 63.7
+  - key: 'admission.stampMarks.admit.sizeMmEn[1]'
+    value: 29.9
+  - key: 'admission.stampMarks.restricted.sizeMm[0]'
+    value: 114.9
+  - key: 'admission.stampMarks.restricted.sizeMm[1]'
+    value: 25.2
+  - key: 'admission.stampMarks.restricted.sizeMmEn[0]'
+    value: 149.3
+  - key: 'admission.stampMarks.restricted.sizeMmEn[1]'
+    value: 25.2
+  - key: 'admission.stampMarks.reject.sizeMm[0]'
+    value: 77.2
+  - key: 'admission.stampMarks.reject.sizeMm[1]'
+    value: 25
+  - key: 'admission.stampMarks.reject.sizeMmEn[0]'
+    value: 77.2
+  - key: 'admission.stampMarks.reject.sizeMmEn[1]'
+    value: 25
+  - key: 'admission.stampMarks.aid.sizeMm[0]'
+    value: 115.8
+  - key: 'admission.stampMarks.aid.sizeMm[1]'
+    value: 31.9
+  - key: 'admission.stampMarks.aid.sizeMmEn[0]'
+    value: 89.4
+  - key: 'admission.stampMarks.aid.sizeMmEn[1]'
+    value: 31.9
+  - key: admission.counterSpot.spotAngle
+    value: 68
+  - key: admission.counterSpot.intensity
+    value: 2
   type:
   - role: plateLabel
     font: 1
@@ -2144,7 +3820,7 @@ MonoBehaviour:
     size: 23
     letterSpacingEm: 0
   - role: wallStencil
-    font: 1
+    font: 9
     size: 0
     letterSpacingEm: 0.06
   - role: sahaLabel
@@ -2324,10 +4000,12 @@ MonoBehaviour:
     value: solid
   - key: stamp.woke.edge
     value: solid
+  - key: stamp.stopped.edge
+    value: solid
   - key: alarm.paperScaleDanger.edge
     value: "dashed\u2192solid"
-  - key: type.wallStencil.fallback
-    value: Big Shoulders Stencil Display
+  - key: cameras.K4.anchor
+    value: PlanningBoard.Cam_K4
   - key: cameras.opReport
     value: "\u26052 operasyon raporu ve son rapor i\xE7in yeni poz yok: cameras.map
       kullan\u0131l\u0131r"
@@ -2360,3 +4038,1516 @@ MonoBehaviour:
     value: "tx_concrete_2k (15 cm kal\u0131p izi + nem lekesi)"
   - key: materials.hazardTape.tex
     value: "45\xB0 \u015Ferit, #1E1B16"
+  - key: materials.paintOlive.note
+    value: "boyal\u0131 sac (dolap, konsol, saat g\xF6vdesi)"
+  - key: 'materials.paintOlive.usedBy[0]'
+    value: LastSwitch
+  - key: 'materials.paintOlive.usedBy[1]'
+    value: SlipMouth
+  - key: 'materials.paintOlive.usedBy[2]'
+    value: Desk
+  - key: 'materials.paintOlive.usedBy[3]'
+    value: ShiftSwitch
+  - key: 'materials.paintOlive.usedBy[4]'
+    value: CrtTable
+  - key: 'materials.paintOlive.usedBy[5]'
+    value: DoorLeaf
+  - key: 'materials.paintOlive.usedBy[6]'
+    value: IntercomBox
+  - key: 'materials.paintOlive.usedBy[7]'
+    value: PlanningBoard
+  - key: materials.paintOliveDark.note
+    value: "kap\u0131 kanad\u0131, kasa, \xE7er\xE7eve"
+  - key: 'materials.paintOliveDark.usedBy[0]'
+    value: LastSwitch
+  - key: 'materials.paintOliveDark.usedBy[1]'
+    value: PunchClock
+  - key: 'materials.paintOliveDark.usedBy[2]'
+    value: SettingsCabinet
+  - key: 'materials.paintOliveDark.usedBy[3]'
+    value: SettingsCabinetMenu
+  - key: 'materials.paintOliveDark.usedBy[4]'
+    value: CabMenuLever
+  - key: 'materials.paintOliveDark.usedBy[5]'
+    value: CabBlank
+  - key: 'materials.paintOliveDark.usedBy[6]'
+    value: SlipMouth
+  - key: 'materials.paintOliveDark.usedBy[7]'
+    value: Desk
+  - key: materials.paintGreyGreen.note
+    value: "puantaj saati, kart raf\u0131"
+  - key: 'materials.paintGreyGreen.usedBy[0]'
+    value: PunchClock
+  - key: 'materials.paintGreyGreen.usedBy[1]'
+    value: CardRack
+  - key: 'materials.paintGreyGreen.usedBy[2]'
+    value: BlankDeck
+  - key: 'materials.paintGreyGreen.usedBy[3]'
+    value: Telex
+  - key: materials.paintCream.note
+    value: "emaye panel, \xF6l\xE7ek zemini"
+  - key: 'materials.paintCream.usedBy[0]'
+    value: CabSlider
+  - key: 'materials.paintCream.usedBy[1]'
+    value: CabRotary
+  - key: 'materials.paintCream.usedBy[2]'
+    value: CabMenuLever
+  - key: 'materials.paintCream.usedBy[3]'
+    value: Crt
+  - key: 'materials.paintCream.usedBy[4]'
+    value: Radio
+  - key: 'materials.paintCream.usedBy[5]'
+    value: AdmissionPanel
+  - key: 'materials.paintCream.usedBy[6]'
+    value: DecisionStamp
+  - key: materials.paintBlack.note
+    value: "lamba ba\u015Fl\u0131\u011F\u0131, \u0131zgara"
+  - key: 'materials.paintBlack.usedBy[0]'
+    value: OuterIntercom
+  - key: 'materials.paintBlack.usedBy[1]'
+    value: LandingLamp
+  - key: 'materials.paintBlack.usedBy[2]'
+    value: CabGauge
+  - key: 'materials.paintBlack.usedBy[3]'
+    value: ShiftSwitch
+  - key: 'materials.paintBlack.usedBy[4]'
+    value: Telex
+  - key: 'materials.paintBlack.usedBy[5]'
+    value: AlarmBoard
+  - key: 'materials.paintBlack.usedBy[6]'
+    value: DuctEnd
+  - key: 'materials.paintBlack.usedBy[7]'
+    value: CrtTable
+  - key: materials.paintHazard.texture
+    value: "tx_hazard (45\xB0 \u015Ferit #1E1B16, 1024\xD7128)"
+  - key: materials.paintHazard.note
+    value: "tehlike band\u0131"
+  - key: 'materials.paintHazard.usedBy[0]'
+    value: LastSwitch
+  - key: 'materials.paintHazard.usedBy[1]'
+    value: TitleStencil
+  - key: 'materials.paintHazard.usedBy[2]'
+    value: CabMenuLever
+  - key: 'materials.paintHazard.usedBy[3]'
+    value: ShiftSwitch
+  - key: 'materials.paintHazard.usedBy[4]'
+    value: HazardHeader
+  - key: materials.steelBare.note
+    value: "mil, c\u0131vata, a\u015F\u0131nm\u0131\u015F kenar"
+  - key: 'materials.steelBare.usedBy[0]'
+    value: LastSwitch
+  - key: 'materials.steelBare.usedBy[1]'
+    value: CancelSlip
+  - key: 'materials.steelBare.usedBy[2]'
+    value: BlankDeck
+  - key: 'materials.steelBare.usedBy[3]'
+    value: OuterWheel
+  - key: 'materials.steelBare.usedBy[4]'
+    value: DoorBell
+  - key: 'materials.steelBare.usedBy[5]'
+    value: SettingsCabinet
+  - key: 'materials.steelBare.usedBy[6]'
+    value: SettingsCabinetMenu
+  - key: 'materials.steelBare.usedBy[7]'
+    value: CabSlider
+  - key: materials.steelCast.note
+    value: "d\xF6k\xFCm mente\u015Fe, mandal"
+  - key: 'materials.steelCast.usedBy[0]'
+    value: LastSwitch
+  - key: 'materials.steelCast.usedBy[1]'
+    value: PunchClock
+  - key: 'materials.steelCast.usedBy[2]'
+    value: OuterWheel
+  - key: 'materials.steelCast.usedBy[3]'
+    value: OuterIntercom
+  - key: 'materials.steelCast.usedBy[4]'
+    value: Stairs
+  - key: 'materials.steelCast.usedBy[5]'
+    value: SettingsCabinet
+  - key: 'materials.steelCast.usedBy[6]'
+    value: SettingsCabinetMenu
+  - key: 'materials.steelCast.usedBy[7]'
+    value: CabMenuLever
+  - key: materials.castIron.note
+    value: "d\u0131\u015F \xE7ark, d\xF6k\xFCm kaide"
+  - key: 'materials.castIron.usedBy[0]'
+    value: OuterWheel
+  - key: 'materials.castIron.usedBy[1]'
+    value: ShiftSwitch
+  - key: 'materials.castIron.usedBy[2]'
+    value: PipeRun
+  - key: 'materials.castIron.usedBy[3]'
+    value: Microphone
+  - key: 'materials.castIron.usedBy[4]'
+    value: KnockLamp
+  - key: 'materials.castIron.usedBy[5]'
+    value: IntercomBox
+  - key: 'materials.castIron.usedBy[6]'
+    value: CorridorLamp
+  - key: 'materials.castIron.usedBy[7]'
+    value: ColdGlass
+  - key: materials.brassWorn.note
+    value: "el de\u011Fen pirin\xE7"
+  - key: 'materials.brassWorn.usedBy[0]'
+    value: LastSwitch
+  - key: 'materials.brassWorn.usedBy[1]'
+    value: PunchClock
+  - key: 'materials.brassWorn.usedBy[2]'
+    value: CardRack
+  - key: 'materials.brassWorn.usedBy[3]'
+    value: SettingsCabinet
+  - key: 'materials.brassWorn.usedBy[4]'
+    value: SettingsCabinetMenu
+  - key: 'materials.brassWorn.usedBy[5]'
+    value: CabSlider
+  - key: 'materials.brassWorn.usedBy[6]'
+    value: CabSliderMaster
+  - key: 'materials.brassWorn.usedBy[7]'
+    value: CabPlate
+  - key: materials.copper.note
+    value: "b\u0131\xE7akl\u0131 \u015Falter b\u0131\xE7a\u011F\u0131"
+  - key: 'materials.copper.usedBy[0]'
+    value: LastSwitch
+  - key: materials.bakeliteBlack.note
+    value: "d\xFC\u011Fme, kol ba\u015F\u0131"
+  - key: 'materials.bakeliteBlack.usedBy[0]'
+    value: LastSwitch
+  - key: 'materials.bakeliteBlack.usedBy[1]'
+    value: PunchClock
+  - key: 'materials.bakeliteBlack.usedBy[2]'
+    value: BlankDeck
+  - key: 'materials.bakeliteBlack.usedBy[3]'
+    value: OuterIntercom
+  - key: 'materials.bakeliteBlack.usedBy[4]'
+    value: DoorBell
+  - key: 'materials.bakeliteBlack.usedBy[5]'
+    value: SettingsCabinet
+  - key: 'materials.bakeliteBlack.usedBy[6]'
+    value: SettingsCabinetMenu
+  - key: 'materials.bakeliteBlack.usedBy[7]'
+    value: CabSlider
+  - key: materials.slate.note
+    value: "\u015Falter taban\u0131 (arduvaz)"
+  - key: 'materials.slate.usedBy[0]'
+    value: LastSwitch
+  - key: 'materials.slate.usedBy[1]'
+    value: PlanningBoard
+  - key: materials.rubberGasket.note
+    value: conta
+  - key: 'materials.rubberGasket.usedBy[0]'
+    value: SettingsCabinet
+  - key: 'materials.rubberGasket.usedBy[1]'
+    value: SettingsCabinetMenu
+  - key: 'materials.rubberGasket.usedBy[2]'
+    value: PlanningBoard
+  - key: 'materials.rubberGasket.usedBy[3]'
+    value: Civil_in
+  - key: 'materials.rubberGasket.usedBy[4]'
+    value: Civil_jk
+  - key: 'materials.rubberGasket.usedBy[5]'
+    value: Civil_oc
+  - key: materials.glassClear.surface
+    value: Transparent
+  - key: materials.glassClear.note
+    value: "saat cam\u0131, g\xF6sterge cam\u0131 (Transparent)"
+  - key: 'materials.glassClear.usedBy[0]'
+    value: PunchClock
+  - key: 'materials.glassClear.usedBy[1]'
+    value: PeepRing
+  - key: 'materials.glassClear.usedBy[2]'
+    value: CabGauge
+  - key: 'materials.glassClear.usedBy[3]'
+    value: Radio
+  - key: 'materials.glassClear.usedBy[4]'
+    value: AdmissionPanel
+  - key: 'materials.glassClear.usedBy[5]'
+    value: Magnifier
+  - key: materials.dialCream.texture
+    value: "tx_dials (\xF6l\xE7ek ve rakam, kelime yok)"
+  - key: materials.dialCream.note
+    value: kadran zemini
+  - key: 'materials.dialCream.usedBy[0]'
+    value: PunchClock
+  - key: 'materials.dialCream.usedBy[1]'
+    value: Radio
+  - key: 'materials.dialCream.usedBy[2]'
+    value: Civil_me
+  - key: 'materials.dialCream.usedBy[3]'
+    value: Civil_af
+  - key: 'materials.dialCream.usedBy[4]'
+    value: Civil_sa
+  - key: materials.cardStock.texture
+    value: "tx_card (80 h\xFCcre \u0131zgaras\u0131, rakamlar)"
+  - key: materials.cardStock.note
+    value: "vardiya kart\u0131"
+  - key: 'materials.cardStock.usedBy[0]'
+    value: ShiftCard
+  - key: 'materials.cardStock.usedBy[1]'
+    value: FileTag
+  - key: materials.cardBlank.note
+    value: "bo\u015F kart destesi"
+  - key: 'materials.cardBlank.usedBy[0]'
+    value: CardRack
+  - key: 'materials.cardBlank.usedBy[1]'
+    value: CancelSlip
+  - key: 'materials.cardBlank.usedBy[2]'
+    value: BlankDeck
+  - key: 'materials.cardBlank.usedBy[3]'
+    value: Desk
+  - key: 'materials.cardBlank.usedBy[4]'
+    value: PaperTray
+  - key: 'materials.cardBlank.usedBy[5]'
+    value: CrtTable
+  - key: materials.punchHole.note
+    value: "z\u0131mba deli\u011Fi (kart\u0131n arkas\u0131 karanl\u0131k)"
+  - key: 'materials.punchHole.usedBy[0]'
+    value: PunchClock
+  - key: 'materials.punchHole.usedBy[1]'
+    value: PunchHole
+  - key: 'materials.punchHole.usedBy[2]'
+    value: PeepRing
+  - key: 'materials.punchHole.usedBy[3]'
+    value: CabSlider
+  - key: 'materials.punchHole.usedBy[4]'
+    value: CabSliderMaster
+  - key: 'materials.punchHole.usedBy[5]'
+    value: SlipMouth
+  - key: 'materials.punchHole.usedBy[6]'
+    value: PlanningBoard
+  - key: materials.tileGlazed.texture
+    value: "tx_tile150 (15 cm fayans, derz #4F5148, \xE7atlak)"
+  - key: materials.tileGlazed.note
+    value: "sahanl\u0131k fayans\u0131"
+  - key: 'materials.tileGlazed.usedBy[0]'
+    value: Corridor
+  - key: materials.tileGlazedDirty.texture
+    value: tx_tile150
+  - key: materials.tileGlazedDirty.note
+    value: "alt s\u0131ra, kirli"
+  - key: 'materials.tileGlazedDirty.usedBy[0]'
+    value: Corridor
+  - key: materials.concreteDark.texture
+    value: "tx_concrete (kal\u0131p izi, nem)"
+  - key: materials.concreteDark.note
+    value: "sahanl\u0131k \xFCst duvar\u0131, tavan"
+  - key: 'materials.concreteDark.usedBy[0]'
+    value: Stairs
+  - key: 'materials.concreteDark.usedBy[1]'
+    value: Corridor
+  - key: materials.concreteFloorWet.note
+    value: "\u0131slak beton zemin"
+  - key: 'materials.concreteFloorWet.usedBy[0]'
+    value: Corridor
+  - key: materials.puddle.note
+    value: "su birikintisi (ayr\u0131 d\xFCzlem)"
+  - key: 'materials.puddle.usedBy[0]'
+    value: Corridor
+  - key: materials.stencilPaint.surface
+    value: Transparent
+  - key: materials.stencilPaint.note
+    value: "\u015Fablon boya (TMP, Big Shoulders Stencil)"
+  - key: materials.lampGlassCold.note
+    value: "sahanl\u0131k ampul\xFC"
+  - key: 'materials.lampGlassCold.usedBy[0]'
+    value: LandingLamp
+  - key: 'materials.lampGlassCold.usedBy[1]'
+    value: CorridorLamp
+  - key: materials.lampGlassWarm.note
+    value: "oda ampul\xFC"
+  - key: 'materials.lampGlassWarm.usedBy[0]'
+    value: SettingsCabinet
+  - key: 'materials.lampGlassWarm.usedBy[1]'
+    value: SettingsCabinetMenu
+  - key: 'materials.lampGlassWarm.usedBy[2]'
+    value: CeilingBulb
+  - key: 'materials.lampGlassWarm.usedBy[3]'
+    value: PlanningBoard
+  - key: 'materials.lampGlassWarm.usedBy[4]'
+    value: CounterLamp
+  - key: materials.jewelAmberOn.note
+    value: "amber m\xFCcevher lamba yan\u0131k"
+  - key: 'materials.jewelAmberOn.usedBy[0]'
+    value: LastSwitch
+  - key: 'materials.jewelAmberOn.usedBy[1]'
+    value: CabLamp
+  - key: 'materials.jewelAmberOn.usedBy[2]'
+    value: IntercomBox
+  - key: materials.jewelAmberOff.note
+    value: "amber m\xFCcevher lamba s\xF6n\xFCk"
+  - key: 'materials.jewelAmberOff.usedBy[0]'
+    value: PunchClock
+  - key: 'materials.jewelAmberOff.usedBy[1]'
+    value: SlipMouth
+  - key: 'materials.jewelAmberOff.usedBy[2]'
+    value: KeyKey
+  - key: 'materials.jewelAmberOff.usedBy[3]'
+    value: KnockLamp
+  - key: 'materials.jewelAmberOff.usedBy[4]'
+    value: AdmissionPanel
+  - key: materials.woodVarnish.texture
+    value: tx_wood (lif)
+  - key: materials.woodVarnish.note
+    value: "cilal\u0131 masa ah\u015Fab\u0131"
+  - key: 'materials.woodVarnish.usedBy[0]'
+    value: CardRack
+  - key: 'materials.woodVarnish.usedBy[1]'
+    value: StampRack
+  - key: 'materials.woodVarnish.usedBy[2]'
+    value: EntryDoor_eeu
+  - key: materials.woodRaw.note
+    value: "ham \xE7\u0131ta, sand\u0131k"
+  - key: 'materials.woodRaw.usedBy[0]'
+    value: PlanningBoard
+  - key: 'materials.woodRaw.usedBy[1]'
+    value: EntryDoor_eeu
+  - key: 'materials.woodRaw.usedBy[2]'
+    value: Tube
+  - key: materials.linoDesk.note
+    value: "masa \xFCst\xFC linolyum"
+  - key: 'materials.linoDesk.usedBy[0]'
+    value: Desk
+  - key: 'materials.linoDesk.usedBy[1]'
+    value: CrtTable
+  - key: materials.feltBlotter.note
+    value: "harita altl\u0131\u011F\u0131 ke\xE7e"
+  - key: 'materials.feltBlotter.usedBy[0]'
+    value: AdmissionCounter
+  - key: materials.fuseCeramic.note
+    value: "sigorta g\xF6vdesi (porselen)"
+  - key: 'materials.fuseCeramic.usedBy[0]'
+    value: LastSwitch
+  - key: materials.clockHand.note
+    value: "saat ibresi (siyah boyal\u0131 \xE7elik)"
+  - key: 'materials.clockHand.usedBy[0]'
+    value: PunchClock
+  - key: materials.counterDrum.texture
+    value: "tx_counterDigits 128\xD71408: 11 h\xFCcreli \u015Ferit (0\u20139 + ikinci
+      0), krem rakam #EFDCAE koyu zeminde, h\xFCcre 0 \xFCstte (v ekseni). \xC7ark
+      \xE7evresi v = 1 \u2192 1/11 (10 h\xFCcre, 36\xB0/rakam); 11. h\xFCcre yaln\u0131z
+      UV kayd\u0131rma i\xE7indir"
+  - key: materials.counterDrum.note
+    value: "saya\xE7 \xE7ark\u0131 (bakalit tambur)"
+  - key: 'materials.counterDrum.usedBy[0]'
+    value: PunchClock
+  - key: 'materials.counterDrum.usedBy[1]'
+    value: CabCounter
+  - key: 'materials.counterDrum.usedBy[2]'
+    value: CounterRack
+  - key: 'materials.counterDrum.usedBy[3]'
+    value: AlarmBoard
+  - key: materials.cabPanel.note
+    value: "dolap i\xE7 panosu (kahverengi bakalit levha)"
+  - key: 'materials.cabPanel.usedBy[0]'
+    value: SettingsCabinet
+  - key: 'materials.cabPanel.usedBy[1]'
+    value: SettingsCabinetMenu
+  - key: materials.scaleCream.texture
+    value: "tx_cab_scale (0\u201310 \xF6l\xE7ek \xE7izgileri ve rakamlar, kelime
+      yok)"
+  - key: materials.scaleCream.note
+    value: "s\xFCrg\xFC \xF6l\xE7ek \u015Feridi"
+  - key: 'materials.scaleCream.usedBy[0]'
+    value: CabSlider
+  - key: 'materials.scaleCream.usedBy[1]'
+    value: CabSliderMaster
+  - key: materials.gaugeDial.texture
+    value: "tx_cab_gauge (yay \xF6l\xE7ek, 0\u201310, amber b\xF6lge; k\u0131rm\u0131z\u0131
+      yok)"
+  - key: materials.gaugeDial.note
+    value: "ibreli g\xF6sterge kadran\u0131"
+  - key: 'materials.gaugeDial.usedBy[0]'
+    value: CabGauge
+  - key: materials.needleBlack.note
+    value: ibre (2 mm)
+  - key: 'materials.needleBlack.usedBy[0]'
+    value: CabGauge
+  - key: materials.enamelBadge.texture
+    value: "tx_icon_gear (di\u015Fli simgesi, m\xFCrekkep #1E1B16)"
+  - key: materials.enamelBadge.note
+    value: emaye rozet
+  - key: 'materials.enamelBadge.usedBy[0]'
+    value: SettingsCabinet
+  - key: 'materials.enamelBadge.usedBy[1]'
+    value: SettingsCabinetMenu
+  - key: 'materials.enamelBadge.usedBy[2]'
+    value: PlanningBoard
+  - key: materials.counterTenths.texture
+    value: "tx_counterDigitsInv: ayn\u0131 11 h\xFCcre, koyu rakam #1C150E a\xE7\u0131k
+      zeminde"
+  - key: materials.counterTenths.note
+    value: "FON onda bir \xE7ark\u0131 (a\xE7\u0131k renk)"
+  - key: 'materials.counterTenths.usedBy[0]'
+    value: CounterRack
+  - key: materials.counterFraction.texture
+    value: "tx_counterFraction 3 h\xFCcre: \u201C/30\u201D, \u201C/12\u201D, \u201C/20\u201D
+      (yaln\u0131z rakam ve e\u011Fik \xE7izgi, krem #C9A86A); UV 0\u20131, h\xFCcre
+      se\xE7imi UV kayd\u0131rma"
+  - key: materials.counterFraction.note
+    value: "pencere i\xE7indeki sabit bask\u0131 ve virg\xFCl ara plakas\u0131"
+  - key: 'materials.counterFraction.usedBy[0]'
+    value: CounterRack
+  - key: materials.keyIcon.texture
+    value: "tx_keyIcons 4 h\xFCcre: odalar (kesit), g\xF6rev fi\u015Fi, \xE7arkl\u0131
+      kap\u0131, lambal\u0131 masa; koyu \xE7izgi #1E1B16; UV 0\u20131 + h\xFCcre
+      kayd\u0131rma"
+  - key: materials.keyIcon.note
+    value: "tu\u015F ba\u015Fl\u0131\u011F\u0131 ikon yuvas\u0131 (kelime yok)"
+  - key: 'materials.keyIcon.usedBy[0]'
+    value: KeyKey
+  - key: materials.tagPaper.note
+    value: "dikkat fi\u015Fi (sar\u0131 not k\xE2\u011F\u0131d\u0131), yaz\u0131
+      TMP Kalam"
+  - key: 'materials.tagPaper.usedBy[0]'
+    value: KeyKey
+  - key: 'materials.tagPaper.usedBy[1]'
+    value: PlanningBoard
+  - key: materials.readyLampOff.note
+    value: "haz\u0131r lambas\u0131 s\xF6n\xFCk (readyLamp \u2194 readyLampOff)"
+  - key: materials.telexPaper.texture
+    value: "tx_telexPaper: kenar delik s\u0131ras\u0131 ve kesikli kenar \xE7izgisi,
+      kelime yok (mesajlar TMP)"
+  - key: materials.telexPaper.note
+    value: "teleks k\xE2\u011F\u0131d\u0131; Render Face: Both"
+  - key: 'materials.telexPaper.usedBy[0]'
+    value: HandoverSlip
+  - key: 'materials.telexPaper.usedBy[1]'
+    value: Telex
+  - key: 'materials.telexPaper.usedBy[2]'
+    value: TelexPaper
+  - key: 'materials.telexPaper.usedBy[3]'
+    value: TelexRoll
+  - key: 'materials.telexPaper.usedBy[4]'
+    value: PaperPile
+  - key: materials.coffeeRingDecal.surface
+    value: Transparent
+  - key: materials.coffeeRingDecal.texture
+    value: "tx_coffeeRing 256\xB2 (halka lekesi, alfa)"
+  - key: materials.coffeeRingDecal.note
+    value: "kupa izi \xE7\u0131kartmas\u0131 (ge\xE7 harek\xE2t)"
+  - key: 'materials.coffeeRingDecal.usedBy[0]'
+    value: CoffeeRing
+  - key: materials.cardboard.note
+    value: "rulo g\xF6be\u011Fi (karton)"
+  - key: 'materials.cardboard.usedBy[0]'
+    value: Telex
+  - key: 'materials.cardboard.usedBy[1]'
+    value: TelexRoll
+  - key: 'materials.cardboard.usedBy[2]'
+    value: RequestPad
+  - key: materials.inkPad.note
+    value: "\u0131stampa ke\xE7esi (mavi-siyah m\xFCrekkep)"
+  - key: materials.alarmFraction.texture
+    value: "tx_alarmFraction: \u201C/10\u201D (rakam, krem #C9A86A), UV 0\u20131"
+  - key: materials.alarmFraction.note
+    value: "YZ sayac\u0131 sabit bask\u0131"
+  - key: 'materials.alarmFraction.usedBy[0]'
+    value: AlarmBoard
+  - key: materials.corkCard.texture
+    value: "tx_corkCard: ince mavi sat\u0131r \xE7izgileri, k\u0131rm\u0131z\u0131
+      kenar \xE7izgisi (kelime yok)"
+  - key: materials.corkCard.note
+    value: "pano kart\u0131 k\xE2\u011F\u0131d\u0131"
+  - key: 'materials.corkCard.usedBy[0]'
+    value: CorkBoard
+  - key: 'materials.corkCard.usedBy[1]'
+    value: CorkCard
+  - key: materials.stampBlue.surface
+    value: Transparent
+  - key: materials.stampBlue.texture
+    value: "tx_stampRing 256\xB2: \xE7ift halka + yaz\u0131 band\u0131 (kelimesiz,
+      alfa); kelime TMP"
+  - key: materials.stampBlue.note
+    value: "\xD6ZG\xDCR damgas\u0131 halkas\u0131"
+  - key: 'materials.stampBlue.usedBy[0]'
+    value: CorkCard
+  - key: materials.notePaper.texture
+    value: "tx_notepad: mavi sat\u0131r \xE7izgileri (kelime yok)"
+  - key: materials.notePaper.note
+    value: "kur\u015Fun kalem notu (bloknottan kopar\u0131lm\u0131\u015F)"
+  - key: 'materials.notePaper.usedBy[0]'
+    value: PencilNote
+  - key: materials.posterPrint.texture
+    value: "tx_poster 880\xD71200: krem bord\xFCr, k\u0131rm\u0131z\u0131 zemin,
+      fi\u015Fi \xE7ekilmi\u015F kablo piktogram\u0131, ay\u0131r\u0131c\u0131 \xE7izgi,
+      a\u015F\u0131nma; kelime yok (TMP)"
+  - key: materials.posterPrint.note
+    value: "doktrin afi\u015Fi bask\u0131s\u0131"
+  - key: 'materials.posterPrint.usedBy[0]'
+    value: Poster
+  - key: materials.posterBack.note
+    value: "afi\u015Fin arka y\xFCz\xFC (kalk\u0131k k\xF6\u015Fede g\xF6r\xFCn\xFCr)"
+  - key: 'materials.posterBack.usedBy[0]'
+    value: Poster
+  - key: materials.alarmLampOff.note
+    value: "YZ alarm lambas\u0131 s\xF6n\xFCk (alarm < 8)"
+  - key: 'materials.alarmLampOff.usedBy[0]'
+    value: AlarmBoard
+  - key: materials.alarmLampOn.note
+    value: "YZ alarm lambas\u0131 yan\u0131k (alarm \u2265 8), emissive 8"
+  - key: materials.alarmStepOff.texture
+    value: "tx_alarmFlag (bayrak kenar\u0131, kelime yok)"
+  - key: materials.alarmStepOff.note
+    value: "alarm kademe penceresi bo\u015F"
+  - key: 'materials.alarmStepOff.usedBy[0]'
+    value: AlarmBoard
+  - key: materials.alarmStepOn.texture
+    value: tx_alarmFlag
+  - key: materials.alarmStepOn.note
+    value: "alarm kademe penceresi dolu (1\u20137)"
+  - key: materials.alarmStepRed.texture
+    value: tx_alarmFlag
+  - key: materials.alarmStepRed.note
+    value: "alarm kademe penceresi dolu (8\u201310, tehdit)"
+  - key: materials.chalkTally.surface
+    value: Transparent
+  - key: materials.chalkTally.texture
+    value: "tx_chalkTally atlas 5 h\xFCcre: 1\u20135 \xE7entik (5. h\xFCcre \xE7aprazl\u0131
+      grup), tebe\u015Fir dokusu"
+  - key: materials.chalkTally.note
+    value: "tebe\u015Fir \xE7entik grubu (duvar \xE7\u0131kartmas\u0131)"
+  - key: 'materials.chalkTally.usedBy[0]'
+    value: ChalkTally
+  - key: materials.stencilDrips.surface
+    value: Transparent
+  - key: materials.stencilDrips.texture
+    value: "tx_stencilDrips: boya ak\u0131nt\u0131lar\u0131 ve sprey sisi (kelime
+      yok)"
+  - key: materials.stencilDrips.note
+    value: "duvar \u015Fablon boyas\u0131 zemini"
+  - key: 'materials.stencilDrips.usedBy[0]'
+    value: StencilSign
+  - key: materials.dripStain.surface
+    value: Transparent
+  - key: materials.dripStain.texture
+    value: "tx_drip: pas ve su ak\u0131nt\u0131s\u0131 (dikey, alfa)"
+  - key: materials.dripStain.note
+    value: "vana alt\u0131ndaki duvar lekesi"
+  - key: 'materials.dripStain.usedBy[0]'
+    value: PipeRun
+  - key: materials.crtVent.texture
+    value: "tx_vent (yatay yar\u0131k dizisi, alfa yok, 256 px)"
+  - key: materials.crtVent.note
+    value: "CRT havaland\u0131rma paneli (yar\u0131klar dokuda)"
+  - key: 'materials.crtVent.usedBy[0]'
+    value: Crt
+  - key: materials.micGrille.texture
+    value: "tx_micgrille (ince delikli \u0131zgara, 128 px)"
+  - key: materials.micGrille.note
+    value: "mikrofon \u0131zgaras\u0131"
+  - key: 'materials.micGrille.usedBy[0]'
+    value: Microphone
+  - key: materials.treadPlate.texture
+    value: tx_tread (baklava desenli sac, 256 px)
+  - key: materials.treadPlate.note
+    value: "e\u015Fik plakas\u0131 (baklava sac)"
+  - key: 'materials.treadPlate.usedBy[0]'
+    value: DoorFrame
+  - key: materials.peepLens.note
+    value: "g\xF6zetleme deli\u011Fi merce\u011Fi"
+  - key: 'materials.peepLens.usedBy[0]'
+    value: DoorLeaf
+  - key: materials.knockLampRed.note
+    value: "vuru\u015F lambas\u0131 \xF6l\xFCmc\xFCl (k\u0131rm\u0131z\u0131 = tehdit)"
+  - key: materials.intercomGrille.texture
+    value: "tx_grille (\xD8 4 mm delik \u0131zgaras\u0131, 256 px)"
+  - key: materials.intercomGrille.note
+    value: "interkom hoparl\xF6r \u0131zgaras\u0131"
+  - key: 'materials.intercomGrille.usedBy[0]'
+    value: IntercomBox
+  - key: materials.boardPanel.note
+    value: "m\u0131knat\u0131s tutan \xE7elik pano y\xFCzeyi, mat zeytin-gri boya
+      (kartlardan iki ton koyu)"
+  - key: 'materials.boardPanel.usedBy[0]'
+    value: PlanningBoard
+  - key: materials.boardFace.texture
+    value: "tx_board_face 4096\xD72048 (1160\xD7600 mm): kelimesiz bask\u0131 \u2014
+      cep s\u0131n\u0131rlar\u0131 (kesikli kart d\u0131\u015F hatt\u0131 + ki\u015Fi
+      simgesi + \xFC\xE7 te\xE7hizat \u015Feridi), Bo\u015Fta yelpaze izi, i\u015F
+      emri ve depo alan\u0131 tonu; yaz\u0131lar TMP"
+  - key: materials.boardFace.note
+    value: "pano bask\u0131 y\xFCz\xFC (UV 0\u20131)"
+  - key: 'materials.boardFace.usedBy[0]'
+    value: PlanningBoard
+  - key: materials.cardEdge.note
+    value: "kart kenar\u0131 (0,6 mm karton)"
+  - key: 'materials.cardEdge.usedBy[0]'
+    value: CardPerson
+  - key: 'materials.cardEdge.usedBy[1]'
+    value: CardItem
+  - key: 'materials.cardEdge.usedBy[2]'
+    value: CardMaterial
+  - key: 'materials.cardEdge.usedBy[3]'
+    value: CardChip
+  - key: 'materials.cardEdge.usedBy[4]'
+    value: CardRecipe
+  - key: materials.cardFace.texture
+    value: "kart y\xFCz\xFC: \xE7al\u0131\u015Fma an\u0131nda \xE7izilen kart dokusu
+      (RenderTexture ya da UI Canvas \u2192 doku), 8 px/mm"
+  - key: materials.cardFace.note
+    value: "kart \xF6n y\xFCz\xFC (UV 0\u20131)"
+  - key: 'materials.cardFace.usedBy[0]'
+    value: CardPerson
+  - key: 'materials.cardFace.usedBy[1]'
+    value: CardItem
+  - key: 'materials.cardFace.usedBy[2]'
+    value: CardMaterial
+  - key: 'materials.cardFace.usedBy[3]'
+    value: CardChip
+  - key: 'materials.cardFace.usedBy[4]'
+    value: CardRecipe
+  - key: materials.cardBack.texture
+    value: "tx_card_back (KYGA \xB7 07 soluk \u015Fablon)"
+  - key: materials.cardBack.note
+    value: "kart arkas\u0131 (UV 0\u20131)"
+  - key: 'materials.cardBack.usedBy[0]'
+    value: CardPerson
+  - key: 'materials.cardBack.usedBy[1]'
+    value: CardItem
+  - key: 'materials.cardBack.usedBy[2]'
+    value: CardMaterial
+  - key: 'materials.cardBack.usedBy[3]'
+    value: CardChip
+  - key: 'materials.cardBack.usedBy[4]'
+    value: CardRecipe
+  - key: materials.magnetBlack.note
+    value: "kart m\u0131knat\u0131s\u0131 (bakalit kapl\u0131 d\xFC\u011Fme \xD8
+      10 \xD7 3,5 mm)"
+  - key: 'materials.magnetBlack.usedBy[0]'
+    value: CardPerson
+  - key: 'materials.magnetBlack.usedBy[1]'
+    value: CardItem
+  - key: 'materials.magnetBlack.usedBy[2]'
+    value: CardMaterial
+  - key: 'materials.magnetBlack.usedBy[3]'
+    value: CardRecipe
+  - key: materials.manila.note
+    value: "ki\u015Fi dosyas\u0131 klas\xF6r\xFC (manila karton)"
+  - key: 'materials.manila.usedBy[0]'
+    value: PersonFolder
+  - key: materials.bookCloth.texture
+    value: "tx_book_cover (bez doku + krem etiket TAR\u0130F DEFTER\u0130)"
+  - key: materials.bookCloth.note
+    value: tarif defteri cildi (bordo bez)
+  - key: 'materials.bookCloth.usedBy[0]'
+    value: RecipeBook
+  - key: materials.pageEdge.note
+    value: "sayfa y\u0131\u011F\u0131n\u0131 kenar\u0131"
+  - key: 'materials.pageEdge.usedBy[0]'
+    value: RecipeBook
+  - key: materials.pageFace.texture
+    value: "tx_recipe_spread_1..3 (iki tarif bir a\xE7\u0131l\u0131m; TR/EN ayr\u0131
+      doku ya da TMP)"
+  - key: materials.pageFace.note
+    value: "tarif sayfas\u0131 (UV 0\u20131)"
+  - key: 'materials.pageFace.usedBy[0]'
+    value: RecipeBook
+  - key: materials.wireBlack.note
+    value: tel sepet, kanca
+  - key: 'materials.wireBlack.usedBy[0]'
+    value: PlanningBoard
+  - key: materials.chalkWhite.note
+    value: "tebe\u015Fir, ya\u011Fl\u0131 kalem ucu"
+  - key: 'materials.chalkWhite.usedBy[0]'
+    value: PlanningBoard
+  - key: materials.greasePencil.note
+    value: "k\u0131rm\u0131z\u0131 ya\u011Fl\u0131 kalem (e\u011Fitim halkas\u0131)"
+  - key: 'materials.greasePencil.usedBy[0]'
+    value: PlanningBoard
+  - key: materials.coldGlass.surface
+    value: Transparent
+  - key: materials.coldGlass.note
+    value: "bu\u011Fu cam\u0131: kal\u0131n so\u011Fuk cam (Transparent)"
+  - key: 'materials.coldGlass.usedBy[0]'
+    value: ColdGlass
+  - key: materials.fogFrost.surface
+    value: Transparent
+  - key: materials.fogFrost.note
+    value: "nefes bu\u011Fusu katman\u0131 (Fog swap; Transparent, kenar\u0131 yumu\u015Fak
+      doku tx_fog)"
+  - key: 'materials.fogFrost.usedBy[0]'
+    value: ColdGlass
+  - key: materials.tinOlive.note
+    value: "erzak tenekesi boyas\u0131"
+  - key: 'materials.tinOlive.usedBy[0]'
+    value: RationTin
+  - key: materials.tinRim.note
+    value: "teneke kenar\u0131 (\xE7\u0131plak metal)"
+  - key: 'materials.tinRim.usedBy[0]'
+    value: RationTin
+  - key: materials.stampWood.note
+    value: "damga sap\u0131 (cilal\u0131 kay\u0131n)"
+  - key: 'materials.stampWood.usedBy[0]'
+    value: DecisionStampRack
+  - key: 'materials.stampWood.usedBy[1]'
+    value: DecisionStamp
+  - key: materials.enamelShade.note
+    value: "tezg\xE2h lambas\u0131 emaye ba\u015Fl\u0131k (d\u0131\u015F)"
+  - key: 'materials.enamelShade.usedBy[0]'
+    value: CounterLamp
+  - key: materials.enamelInner.note
+    value: "tezg\xE2h lambas\u0131 ba\u015Fl\u0131k i\xE7i (krem emaye)"
+  - key: 'materials.enamelInner.usedBy[0]'
+    value: CounterLamp
+  - key: materials.rp_rope.note
+    value: kenevir halat tutamak
+  - key: 'materials.rp_rope.usedBy[0]'
+    value: RecipeBook
+  - key: 'materials.rp_rope.usedBy[1]'
+    value: LootCrate
+  - key: 'materials.rp_rope.usedBy[2]'
+    value: LootCrateOpen
+  - key: materials.aluCast.note
+    value: "d\xF6kme al\xFCminyum"
+  - key: 'materials.aluCast.usedBy[0]'
+    value: OuterIntercom
+  - key: cabinet.bulb.type
+    value: Spot
+  - key: 'cabinet.plates.text.tr[0]'
+    value: GENEL
+  - key: 'cabinet.plates.text.tr[1]'
+    value: "M\xDCZ\u0130K"
+  - key: 'cabinet.plates.text.tr[2]'
+    value: ORTAM
+  - key: 'cabinet.plates.text.tr[3]'
+    value: EFEKT
+  - key: 'cabinet.plates.text.tr[4]'
+    value: SES
+  - key: 'cabinet.plates.text.tr[5]'
+    value: "D\u0130L \xB7 LANGUAGE"
+  - key: 'cabinet.plates.text.tr[6]'
+    value: "MEN\xDCYE D\xD6N"
+  - key: 'cabinet.plates.text.en[0]'
+    value: MASTER
+  - key: 'cabinet.plates.text.en[1]'
+    value: MUSIC
+  - key: 'cabinet.plates.text.en[2]'
+    value: AMBIENCE
+  - key: 'cabinet.plates.text.en[3]'
+    value: EFFECTS
+  - key: 'cabinet.plates.text.en[4]'
+    value: SOUND
+  - key: 'cabinet.plates.text.en[5]'
+    value: "D\u0130L \xB7 LANGUAGE"
+  - key: 'cabinet.plates.text.en[6]'
+    value: TO MENU
+  - key: models3d.path
+    value: modeller/obj, modeller/manifest, modeller/models.json
+  - key: models3d.chamferRule
+    value: "pah \u2265 3 ekran px: K1 6 mm \xB7 K9 2 mm \xB7 M0 5\u20136 mm \xB7
+      M2 1,5\u20132 mm \xB7 bask\u0131n 0,02\u20130,03 birim"
+  - key: models3d.thinRule
+    value: "ince par\xE7a \u2265 3 px; daha incesi doku"
+  - key: 'models3d.families.menu[0]'
+    value: BlankDeck
+  - key: 'models3d.families.menu[1]'
+    value: CancelSlip
+  - key: 'models3d.families.menu[2]'
+    value: CardRack
+  - key: 'models3d.families.menu[3]'
+    value: DoorBell
+  - key: 'models3d.families.menu[4]'
+    value: LandingLamp
+  - key: 'models3d.families.menu[5]'
+    value: LastSwitch
+  - key: 'models3d.families.menu[6]'
+    value: OuterIntercom
+  - key: 'models3d.families.menu[7]'
+    value: OuterWheel
+  - key: 'models3d.families.menu[8]'
+    value: PeepRing
+  - key: 'models3d.families.menu[9]'
+    value: PunchClock
+  - key: 'models3d.families.menu[10]'
+    value: PunchHole
+  - key: 'models3d.families.menu[11]'
+    value: ShiftCard
+  - key: 'models3d.families.menu[12]'
+    value: Stairs
+  - key: 'models3d.families.menu[13]'
+    value: TitleStencil
+  - key: 'models3d.families.cabinet[0]'
+    value: CabBlank
+  - key: 'models3d.families.cabinet[1]'
+    value: CabCounter
+  - key: 'models3d.families.cabinet[2]'
+    value: CabGauge
+  - key: 'models3d.families.cabinet[3]'
+    value: CabLamp
+  - key: 'models3d.families.cabinet[4]'
+    value: CabMenuLever
+  - key: 'models3d.families.cabinet[5]'
+    value: CabPlate
+  - key: 'models3d.families.cabinet[6]'
+    value: CabRotary
+  - key: 'models3d.families.cabinet[7]'
+    value: CabSlider
+  - key: 'models3d.families.cabinet[8]'
+    value: CabSliderMaster
+  - key: 'models3d.families.cabinet[9]'
+    value: CabToggle
+  - key: 'models3d.families.cabinet[10]'
+    value: SettingsCabinet
+  - key: 'models3d.families.cabinet[11]'
+    value: SettingsCabinetMenu
+  - key: 'models3d.families.desk[0]'
+    value: CoffeeRing
+  - key: 'models3d.families.desk[1]'
+    value: CounterRack
+  - key: 'models3d.families.desk[2]'
+    value: Desk
+  - key: 'models3d.families.desk[3]'
+    value: DeskLamp
+  - key: 'models3d.families.desk[4]'
+    value: Eraser
+  - key: 'models3d.families.desk[5]'
+    value: HandoverSlip
+  - key: 'models3d.families.desk[6]'
+    value: KeyKey
+  - key: 'models3d.families.desk[7]'
+    value: KeyRail
+  - key: 'models3d.families.desk[8]'
+    value: Mug
+  - key: 'models3d.families.desk[9]'
+    value: PaperPile
+  - key: 'models3d.families.desk[10]'
+    value: PaperTray
+  - key: 'models3d.families.desk[11]'
+    value: Pencil
+  - key: 'models3d.families.desk[12]'
+    value: Shavings
+  - key: 'models3d.families.desk[13]'
+    value: ShiftSwitch
+  - key: 'models3d.families.desk[14]'
+    value: SlipMouth
+  - key: 'models3d.families.desk[15]'
+    value: StampRack
+  - key: 'models3d.families.desk[16]'
+    value: TeamFigure
+  - key: 'models3d.families.desk[17]'
+    value: Telex
+  - key: 'models3d.families.desk[18]'
+    value: TelexPaper
+  - key: 'models3d.families.desk[19]'
+    value: TelexRoll
+  - key: 'models3d.families.walls[0]'
+    value: AlarmBoard
+  - key: 'models3d.families.walls[1]'
+    value: CeilingBulb
+  - key: 'models3d.families.walls[2]'
+    value: ChalkTally
+  - key: 'models3d.families.walls[3]'
+    value: CorkBoard
+  - key: 'models3d.families.walls[4]'
+    value: CorkCard
+  - key: 'models3d.families.walls[5]'
+    value: Duct
+  - key: 'models3d.families.walls[6]'
+    value: DuctEnd
+  - key: 'models3d.families.walls[7]'
+    value: JunctionBox
+  - key: 'models3d.families.walls[8]'
+    value: PencilNote
+  - key: 'models3d.families.walls[9]'
+    value: PipeRun
+  - key: 'models3d.families.walls[10]'
+    value: Poster
+  - key: 'models3d.families.walls[11]'
+    value: StencilSign
+  - key: 'models3d.families.crt[0]'
+    value: Crt
+  - key: 'models3d.families.crt[1]'
+    value: CrtTable
+  - key: 'models3d.families.crt[2]'
+    value: LogBook
+  - key: 'models3d.families.crt[3]'
+    value: Microphone
+  - key: 'models3d.families.crt[4]'
+    value: Radio
+  - key: 'models3d.families.door[0]'
+    value: Corridor
+  - key: 'models3d.families.door[1]'
+    value: CorridorLamp
+  - key: 'models3d.families.door[2]'
+    value: DoorFrame
+  - key: 'models3d.families.door[3]'
+    value: DoorLeaf
+  - key: 'models3d.families.door[4]'
+    value: Handrail
+  - key: 'models3d.families.door[5]'
+    value: HazardHeader
+  - key: 'models3d.families.door[6]'
+    value: IntercomBox
+  - key: 'models3d.families.door[7]'
+    value: KnockLamp
+  - key: 'models3d.families.board[0]'
+    value: CardChip
+  - key: 'models3d.families.board[1]'
+    value: CardItem
+  - key: 'models3d.families.board[2]'
+    value: CardMaterial
+  - key: 'models3d.families.board[3]'
+    value: CardPerson
+  - key: 'models3d.families.board[4]'
+    value: CardRecipe
+  - key: 'models3d.families.board[5]'
+    value: PersonFolder
+  - key: 'models3d.families.board[6]'
+    value: PlanningBoard
+  - key: 'models3d.families.board[7]'
+    value: RecipeBook
+  - key: 'models3d.families.admission[0]'
+    value: AdmissionCounter
+  - key: 'models3d.families.admission[1]'
+    value: AdmissionPanel
+  - key: 'models3d.families.admission[2]'
+    value: ColdGlass
+  - key: 'models3d.families.admission[3]'
+    value: CounterLamp
+  - key: 'models3d.families.admission[4]'
+    value: DecisionStamp
+  - key: 'models3d.families.admission[5]'
+    value: DecisionStampRack
+  - key: 'models3d.families.admission[6]'
+    value: FileTag
+  - key: 'models3d.families.admission[7]'
+    value: Magnifier
+  - key: 'models3d.families.admission[8]'
+    value: RationTin
+  - key: 'models3d.families.admission[9]'
+    value: RequestPad
+  - key: 'models3d.removed_1_3.models[0]'
+    value: ClipboardStand
+  - key: 'models3d.removed_1_3.models[1]'
+    value: Crate
+  - key: 'models3d.removed_1_3.models[2]'
+    value: DepotBin
+  - key: 'models3d.removed_1_3.models[3]'
+    value: DepotCrate
+  - key: 'models3d.removed_1_3.models[4]'
+    value: DepotPlate
+  - key: 'models3d.removed_1_3.models[5]'
+    value: DepotSlate
+  - key: 'models3d.removed_1_3.models[6]'
+    value: Diorama
+  - key: 'models3d.removed_1_3.models[7]'
+    value: DioramaDamage
+  - key: 'models3d.removed_1_3.models[8]'
+    value: DioramaRoomProps_atolye
+  - key: 'models3d.removed_1_3.models[9]'
+    value: DioramaRoomProps_revir
+  - key: 'models3d.removed_1_3.models[10]'
+    value: DioramaRoomProps_telsiz
+  - key: 'models3d.removed_1_3.models[11]'
+    value: DioramaRoomProps_yasam
+  - key: 'models3d.removed_1_3.models[12]'
+    value: HopePlant1
+  - key: 'models3d.removed_1_3.models[13]'
+    value: HopePlant2
+  - key: 'models3d.removed_1_3.models[14]'
+    value: HopePlant3
+  - key: 'models3d.removed_1_3.models[15]'
+    value: IdleTray
+  - key: 'models3d.removed_1_3.models[16]'
+    value: Jerrycan
+  - key: 'models3d.removed_1_3.models[17]'
+    value: Pawn_M
+  - key: 'models3d.removed_1_3.models[18]'
+    value: Pawn_S
+  - key: 'models3d.removed_1_3.models[19]'
+    value: Peg
+  - key: 'models3d.removed_1_3.models[20]'
+    value: PegSlot
+  - key: 'models3d.removed_1_3.models[21]'
+    value: Peg_a
+  - key: 'models3d.removed_1_3.models[22]'
+    value: Peg_b
+  - key: 'models3d.removed_1_3.models[23]'
+    value: Peg_c
+  - key: 'models3d.removed_1_3.models[24]'
+    value: Peg_d
+  - key: 'models3d.removed_1_3.models[25]'
+    value: Peg_e
+  - key: 'models3d.removed_1_3.models[26]'
+    value: Peg_f
+  - key: 'models3d.removed_1_3.models[27]'
+    value: RoomCard
+  - key: 'models3d.removed_1_3.models[28]'
+    value: RoomCardHolder
+  - key: 'models3d.removed_1_3.models[29]'
+    value: Shelf
+  - key: 'models3d.removed_1_3.models[30]'
+    value: Visitor_anne
+  - key: 'models3d.removed_1_3.models[31]'
+    value: Visitor_asker
+  - key: 'models3d.removed_1_3.models[32]'
+    value: Visitor_genel1
+  - key: 'models3d.removed_1_3.models[33]'
+    value: Visitor_genel2
+  - key: 'models3d.removed_1_3.models[34]'
+    value: Visitor_genel3
+  - key: 'models3d.removed_1_3.models[35]'
+    value: Visitor_kopya
+  - key: 'models3d.removed_1_3.models[36]'
+    value: Visitor_silahli
+  - key: 'models3d.removed_1_3.models[37]'
+    value: Visitor_yarali
+  - key: 'models3d.removed_1_3.models[38]'
+    value: Visitor_yasli
+  - key: 'models3d.removed_1_3.materials[0]'
+    value: shelfPost
+  - key: 'models3d.removed_1_3.materials[1]'
+    value: rope
+  - key: 'models3d.removed_1_3.materials[2]'
+    value: roomCard
+  - key: 'models3d.removed_1_3.materials[3]'
+    value: selYellow
+  - key: 'models3d.removed_1_3.materials[4]'
+    value: moltenGlow
+  - key: 'models3d.removed_1_3.materials[5]'
+    value: firstAidSign
+  - key: 'models3d.removed_1_3.materials[6]'
+    value: scrapMetal
+  - key: lightsRecipe.M0[0].id
+    value: L1
+  - key: lightsRecipe.M0[0].what
+    value: "sahanl\u0131k lambas\u0131 (kap\u0131 \xFCst\xFC)"
+  - key: lightsRecipe.M0[0].type
+    value: Spot
+  - key: lightsRecipe.M0[0].note
+    value: "a\u015Fa\u011F\u0131 bakan ba\u015Fl\u0131kl\u0131 lamba: Unity\u2019de
+      110\xB0 g\xF6lgeli spot (\xF6nizlemede nokta)"
+  - key: lightsRecipe.M0[1].id
+    value: L2
+  - key: lightsRecipe.M0[1].what
+    value: "saat lambas\u0131"
+  - key: lightsRecipe.M0[1].type
+    value: Spot
+  - key: lightsRecipe.M0[1].note
+    value: "a\u015Fa\u011F\u0131 bakan ba\u015Fl\u0131kl\u0131 lamba: Unity\u2019de
+      110\xB0 g\xF6lgeli spot (\xF6nizlemede nokta)"
+  - key: lightsRecipe.M0[2].id
+    value: L4
+  - key: lightsRecipe.M0[2].what
+    value: "merdiven tepesinden so\u011Fuk \u0131\u015F\u0131k"
+  - key: lightsRecipe.M0[2].type
+    value: Spot
+  - key: lightsRecipe.M0[3].id
+    value: L3
+  - key: lightsRecipe.M0[3].what
+    value: "kap\u0131 alt\u0131ndan s\u0131cak s\u0131z\u0131nt\u0131"
+  - key: lightsRecipe.M0[3].type
+    value: Point
+  - key: lightsRecipe.M0[4].id
+    value: amb
+  - key: lightsRecipe.M0[4].type
+    value: Hemisphere
+  - key: lightsRecipe.M0open
+    value: "M0 + L3 \u2192 i\xE7eriden s\u0131cak spot (#FFCF86, 14, g\xF6lgeli;
+      L2 g\xF6lgesi kapan\u0131r \u2192 3 g\xF6lgeli) + i\xE7erideki ampul (#FFC27A,
+      2,5, g\xF6lgesiz)"
+  - key: lightsRecipe.M1
+    value: "L1 + L2 (g\xF6lgeli) + dolap i\xE7i ampul (spot #FFD8A0, g\xF6lgesiz)
+      \xB7 2 g\xF6lgeli"
+  - key: lightsRecipe.M2
+    value: "L2 + L1 (g\xF6lgeli) \xB7 saatin lambas\u0131 emissive \xB7 2 g\xF6lgeli"
+  - key: lightsRecipe.MS
+    value: "L1 + L4 (g\xF6lgeli) \xB7 son \u015Falterin \u015EEBEKE lambas\u0131
+      emissive \xB7 2 g\xF6lgeli; kapan\u0131\u015Fta hepsi 0,6 s k\u0131rp\u0131\u015F\u0131p
+      s\xF6ner"
+  - key: lightsRecipe.K1
+    value: "tavan ampul\xFC (g\xF6lgeli) + masa lambas\u0131 (spot, g\xF6lgeli) +
+      pano lambas\u0131 (spot #FFE2B8 58\xB0, g\xF6lgeli, 2,4; \u2605ek) + CRT s\u0131z\u0131nt\u0131s\u0131
+      + telsiz kadran\u0131 + dolap i\xE7i (kapal\u0131yken kapal\u0131) \xB7 3 g\xF6lgeli"
+  - key: lightsRecipe.MAP
+    value: "K1 ile ayn\u0131; pano kadraj d\u0131\u015F\u0131nda \xB7 2 g\xF6lgeli"
+  - key: lightsRecipe.K4
+    value: "pano lambas\u0131 (spot #FFE2B8, 58\xB0, g\xF6lgeli) + tavan ampul\xFC
+      (g\xF6lgesiz dolgu) + ortam 0,5 \xB7 1 g\xF6lgeli. K1\u2019de pano lambas\u0131
+      2,4 \u015Fiddetle yan\u0131k. (\u2605ek 11-05: maket \u0131\u015F\u0131\u011F\u0131
+      ve oda ampulleri kalkt\u0131)"
+  - key: lightsRecipe.K5a
+    value: "tavan ampul\xFC + masa lambas\u0131 (g\xF6lgeli) + CRT s\u0131z\u0131nt\u0131s\u0131
+      (g\xF6lgesiz) \xB7 dal\u0131\u015Fta CRT emissive 0,6 s\u2019de 1,4\xD7"
+  - key: lightsRecipe.K8
+    value: "tavan ampul\xFC + masa lambas\u0131 + koridor lambas\u0131 (kap\u0131
+      a\xE7\u0131kken, g\xF6lgeli) + vuru\u015F lambas\u0131 (emission; amber = kap\u0131da
+      aday) \xB7 3 g\xF6lgeli. (\u2605ek 11-05: ziyaret\xE7i ve \xF6l\xFCmc\xFCl
+      k\u0131rm\u0131z\u0131 \u0131\u015F\u0131k yok)"
+  - key: lightsRecipe.K9
+    value: "tavan ampul\xFC + masa lambas\u0131 (g\xF6lgeli) + dolap i\xE7i ampul
+      (g\xF6lgesiz) \xB7 2 g\xF6lgeli"
+  - key: lightsRecipe.RAID
+    value: "anahtar y\xF6nl\xFC \u0131\u015F\u0131k (g\xF6lgeli, 4096) + dolgu y\xF6nl\xFC
+      \u0131\u015F\u0131k (g\xF6lgesiz) + ortam \xB7 1 g\xF6lgeli; son tur/sonu\xE7:
+      hedef spotu (g\xF6lgeli) \xB7 2"
+  - key: lightsRecipe.K6
+    value: "\u2605ek: masa lambas\u0131 (spot, g\xF6lgeli) + tavan ampul\xFC (g\xF6lgeli)
+      + ortam \xB7 fi\u015F a\u011Fz\u0131 lambas\u0131 emission (amber) \xB7 EVRAK
+      hedef \u0131\u015F\u0131\u011F\u0131 (nokta #FFB44A 0,55, menzil 0,35 m, g\xF6lgesiz;
+      fi\u015F \xFCst\xFCndeyken) \xB7 2 g\xF6lgeli"
+  - key: lightsRecipe.K8A
+    value: "\u2605ek: tavan ampul\xFC + masa lambas\u0131 + tezg\xE2h lambas\u0131
+      (spot #FFD9A0, 34\xB0, g\xF6lgeli) \xB7 3 g\xF6lgeli; bu\u011Fu cam\u0131 ve
+      vuru\u015F lambas\u0131 emission; k\xE2\u011F\u0131t albedosu 0,8"
+  - key: lightsRecipe.K8G
+    value: "\u2605ek: K8A ile ayn\u0131 \u0131\u015F\u0131klar; bu\u011Fu katman\u0131
+      Transparent (fogFrost \u03B1 0,78)"
+  - key: lightsRecipe.K8R
+    value: "\u2605ek: K8A ile ayn\u0131; okuma pozunda tezg\xE2h lambas\u0131 k\xE2\u011F\u0131d\u0131
+      ayd\u0131nlat\u0131r, g\xF6lge eli g\xF6stermez"
+  - key: board.place.note
+    value: "\xF6n y\xFCz masan\u0131n sol \xF6n\xFCne d\xF6n\xFCk; K1\u2019de sa\u011F
+      yar\u0131s\u0131 (Bo\u015Fta, dosya, hurda) g\xF6r\xFCn\xFCr"
+  - key: board.readability.rule
+    value: "1920 \xD7 1080\u2019de kart ad\u0131 \u2265 18 px, de\u011Ferler \u2265
+      14 px"
+  - key: board.lamp.type
+    value: Spot
+  - key: board.lamp.note
+    value: "pano lambas\u0131; K4\u2019te tek g\xF6lgeli \u0131\u015F\u0131k"
+  - key: board.parts.BackSign
+    value: "MASAYA D\xD6N emaye levhas\u0131: \xFCzerine gelince 4 mm \xF6ne; t\u0131k
+      = masaya d\xF6n (Esc ve sa\u011F t\u0131k da)"
+  - key: board.parts.Flap
+    value: "iki y\xFCzl\xFC plaka, \xFCst kenardan mente\u015Feli: 0\xB0 PLAN A\xC7IK
+      (krem), 180\xB0 PLAN K\u0130L\u0130TL\u0130 (k\u0131rm\u0131z\u0131)"
+  - key: board.parts.LockRod
+    value: "g\xF6r\xFCn\xFCr = plan kilitli (bask\u0131n emri ya da devir fi\u015Fi
+      bas\u0131ld\u0131); etiketin 2. sat\u0131r\u0131 nedeni yazar"
+  - key: board.parts.HurdaLid
+    value: "e\u015Fya kart\u0131 b\u0131rak\u0131l\u0131nca 28\xB0 kalkar ve kapan\u0131r
+      (1 e\u015Fya \u2192 1 metal)"
+  - key: board.parts.Lamp
+    value: "lampGlassWarm \u2194 roomBulbOff"
+  - key: board.deck.handStepMm
+    value: "min(82, 636 / (n \u2212 1))"
+  - key: board.deck.takeOne
+    value: "bir kart al\u0131n\u0131nca di\u011Ferleri desteye d\xF6ner"
+  - key: board.plates.tr.tek
+    value: "TEKN\u0130SYEN"
+  - key: board.plates.tr.emp
+    value: EMP UZMANI
+  - key: board.plates.tr.ana
+    value: "ANAL\u0130ST"
+  - key: board.plates.tr.uret
+    value: "\xDCRET\u0130M EK\u0130B\u0130"
+  - key: board.plates.tr.mutf
+    value: MUTFAK
+  - key: board.plates.tr.egit
+    value: "E\u011E\u0130T\u0130M"
+  - key: board.plates.tr.bosta
+    value: "BO\u015ETA / D\u0130NLENME"
+  - key: board.plates.tr.order
+    value: "\xDCRET\u0130M \xB7 \u0130\u015E EMR\u0130"
+  - key: board.plates.tr.dosya
+    value: "K\u0130\u015E\u0130 DOSYASI"
+  - key: board.plates.tr.ham
+    value: "DEPO \xB7 HAMMADDE"
+  - key: board.plates.tr.kit
+    value: "DEPO \xB7 KULLANILAB\u0130L\u0130R K\u0130TLER"
+  - key: board.plates.tr.hurda
+    value: "HURDA \xB7 1 e\u015Fya \u2192 1 metal"
+  - key: board.plates.tr.back
+    value: "\u25C4 MASAYA D\xD6N"
+  - key: board.plates.tr.title
+    value: "VARD\u0130YA PLANI \xB7 SI\u011EINAK 07"
+  - key: board.plates.tr.field
+    value: "SAHA \xB7 BASKIN KADROSU"
+  - key: board.plates.tr.flapA
+    value: "PLAN A\xC7IK"
+  - key: board.plates.tr.flapB
+    value: "PLAN K\u0130L\u0130TL\u0130"
+  - key: 'board.plates.tr.lockTag[0]'
+    value: "PLAN K\u0130L\u0130TL\u0130"
+  - key: 'board.plates.tr.lockTag[1]'
+    value: "bask\u0131n emri / devir fi\u015Fi bas\u0131ld\u0131"
+  - key: board.plates.tr.header
+    value: "V.{n} \xB7 erzak {r} ({d}) \xB7 {a}/{c} ki\u015Fi"
+  - key: board.plates.en.tek
+    value: TECHNICIAN
+  - key: board.plates.en.emp
+    value: EMP SPECIALIST
+  - key: board.plates.en.ana
+    value: ANALYST
+  - key: board.plates.en.uret
+    value: PRODUCTION
+  - key: board.plates.en.mutf
+    value: KITCHEN
+  - key: board.plates.en.egit
+    value: TRAINING
+  - key: board.plates.en.bosta
+    value: IDLE / REST
+  - key: board.plates.en.order
+    value: "PRODUCTION \xB7 WORK ORDER"
+  - key: board.plates.en.dosya
+    value: PERSONAL FILE
+  - key: board.plates.en.ham
+    value: "STORE \xB7 RAW MATERIALS"
+  - key: board.plates.en.kit
+    value: "STORE \xB7 AVAILABLE KITS"
+  - key: board.plates.en.hurda
+    value: "SCRAP \xB7 1 item \u2192 1 metal"
+  - key: board.plates.en.back
+    value: "\u25C4 BACK TO DESK"
+  - key: board.plates.en.title
+    value: "SHIFT PLAN \xB7 SHELTER 07"
+  - key: board.plates.en.field
+    value: "FIELD \xB7 RAID TEAM"
+  - key: board.plates.en.flapA
+    value: PLAN OPEN
+  - key: board.plates.en.flapB
+    value: PLAN LOCKED
+  - key: 'board.plates.en.lockTag[0]'
+    value: PLAN LOCKED
+  - key: 'board.plates.en.lockTag[1]'
+    value: raid order / handover slip printed
+  - key: board.plates.en.header
+    value: "S.{n} \xB7 rations {r} ({d}) \xB7 {a}/{c} people"
+  - key: 'board.layoutMm.slots[0]'
+    value: tek
+  - key: 'board.layoutMm.slots[1]'
+    value: emp
+  - key: 'board.layoutMm.slots[2]'
+    value: ana
+  - key: 'board.layoutMm.slots[3]'
+    value: uret
+  - key: 'board.layoutMm.slots[4]'
+    value: mutf
+  - key: 'board.layoutMm.slots[5]'
+    value: egit
+  - key: 'cards.person.fonts.name[0]'
+    value: Courier Prime
+  - key: 'cards.person.fonts.job[0]'
+    value: Libre Franklin
+  - key: 'cards.person.fonts.values[0]'
+    value: Courier Prime
+  - key: 'cards.person.fonts.strip[0]'
+    value: Libre Franklin
+  - key: cards.item.bandAt
+    value: alt kenar
+  - key: cards.item.slotPattern.kit
+    value: "d\xFCz"
+  - key: cards.item.slotPattern.armor
+    value: "taral\u0131"
+  - key: cards.item.slotPattern.aid
+    value: "noktal\u0131"
+  - key: 'cards.material.states[0]'
+    value: STOK
+  - key: 'cards.material.states[1]'
+    value: "BO\u015E"
+  - key: 'cards.material.states[2]'
+    value: AYRI
+  - key: cards.recipe.progressBoxes
+    value: "\xE7ok vardiyal\u0131 tarifte vardiya yaz\u0131s\u0131ndan sonra"
+  - key: 'cards.itemStack.order[0]'
+    value: kit
+  - key: 'cards.itemStack.order[1]'
+    value: zirh
+  - key: 'cards.itemStack.order[2]'
+    value: yardim
+  - key: cards.itemStack.note
+    value: "te\xE7hizat kartlar\u0131 ki\u015Finin arkas\u0131na s\u0131k\u0131\u015F\u0131r,
+      14 mm alt \u015Feritleri okunur"
+  - key: cards.states.hurt.tr
+    value: YARALI
+  - key: cards.states.hurt.en
+    value: INJURED
+  - key: cards.states.hurt.look
+    value: "portrenin sol \xFCst\xFCnde yar\u0131 saydam bant (r_tape); CAN k\u0131rm\u0131z\u0131"
+  - key: cards.states.bed.tr
+    value: YATIYOR
+  - key: cards.states.bed.en
+    value: BEDRIDDEN
+  - key: cards.states.bed.look
+    value: "portrede mavi damga; \u015Feritte s\xFCre; yaln\u0131z Bo\u015Fta\u2019ya
+      b\u0131rak\u0131l\u0131r"
+  - key: cards.states.restricted.tr
+    value: KISITLI
+  - key: cards.states.restricted.en
+    value: RESTRICTED
+  - key: cards.states.restricted.look
+    value: "sa\u011F \xFCstte k\u0131rm\u0131z\u0131 k\xF6\u015Fe; saha, \xFCretim,
+      d\u0131\u015F temas cepleri s\xF6n\xFCk"
+  - key: cards.states.review.tr
+    value: "\u0130NCELE"
+  - key: cards.states.review.en
+    value: REVIEW
+  - key: cards.states.review.look
+    value: "\xFCst kenardan ta\u015Fan k\u0131rm\u0131z\u0131 bayrak (Flag par\xE7as\u0131);
+      robot bilgisi ta\u015F\u0131maz"
+  - key: cards.states.lost.tr
+    value: "KAYIP \xB7 V.{n}"
+  - key: cards.states.lost.en
+    value: "LOST \xB7 S.{n}"
+  - key: cards.states.lost.look
+    value: "portre karar\u0131r, sa\u011F \xFCstte siyah yas k\xF6\u015Fesi; kart
+      KAYIPLAR zarf\u0131na ge\xE7er"
+  - key: 'cards.labels.tr.stats[0]'
+    value: CAN
+  - key: 'cards.labels.tr.stats[1]'
+    value: HAR
+  - key: 'cards.labels.tr.stats[2]'
+    value: "G\xDC\xC7"
+  - key: 'cards.labels.tr.skills[0]'
+    value: T
+  - key: 'cards.labels.tr.skills[1]'
+    value: E
+  - key: 'cards.labels.tr.skills[2]'
+    value: A
+  - key: 'cards.labels.tr.skills[3]'
+    value: "\xDC"
+  - key: 'cards.labels.tr.skills[4]'
+    value: M
+  - key: 'cards.labels.tr.slot[0]'
+    value: "K\u0130T"
+  - key: 'cards.labels.tr.slot[1]'
+    value: ZIRH
+  - key: 'cards.labels.tr.slot[2]'
+    value: YARDIMCI
+  - key: 'cards.labels.en.stats[0]'
+    value: HP
+  - key: 'cards.labels.en.stats[1]'
+    value: MOVE
+  - key: 'cards.labels.en.stats[2]'
+    value: POWER
+  - key: 'cards.labels.en.skills[0]'
+    value: T
+  - key: 'cards.labels.en.skills[1]'
+    value: E
+  - key: 'cards.labels.en.skills[2]'
+    value: A
+  - key: 'cards.labels.en.skills[3]'
+    value: P
+  - key: 'cards.labels.en.skills[4]'
+    value: K
+  - key: 'cards.labels.en.slot[0]'
+    value: KIT
+  - key: 'cards.labels.en.slot[1]'
+    value: ARMOUR
+  - key: 'cards.labels.en.slot[2]'
+    value: AID
+  - key: cards.labels.names
+    value: "ki\u015Fi adlar\u0131 \xE7evrilmez"
+  - key: cards.portraits.style
+    value: "m\xFCrekkep kimlik \xE7izimi, tarama desenleri"
+  - key: cards.portraits.source
+    value: "threejs/r3/portraits.js (p_cem \u2026 p_rauf)"
+  - key: recipeBook.cover
+    value: "Cover y 0\u2026\u2212178\xB0"
+  - key: recipeBook.leaf
+    value: "Leaf y 0\u2026\u2212176\xB0"
+  - key: recipeBook.spreads
+    value: "tarif_acilim_1..3 (TR/EN, 280 \xD7 200 mm doku, sol/sa\u011F yar\u0131)"
+  - key: recipeBook.readPose
+    value: "\xF6ne gelir, kadraj\u0131n alt\u0131na kayar; ekranda d\xFC\u011Fme
+      yok (sekmeler ve kapak)"
+  - key: personFile.cover
+    value: "Cover y 0\u2026\u2212176\xB0"
+  - key: 'personFile.pages[0]'
+    value: "\u0130NCELE"
+  - key: 'personFile.pages[1]'
+    value: "ER\u0130\u015E\u0130M"
+  - key: 'personFile.pages[2]'
+    value: "TAHL\u0130YE"
+  - key: personFile.nameOnCover
+    value: "se\xE7ili ki\u015Finin ad\u0131 (TMP, \xE7evrilmez)"
+  - key: shiftClose.states.ready.lamp
+    value: readyLamp
+  - key: shiftClose.states.ready.plate2.tr
+    value: "kapa\u011F\u0131 kald\u0131r"
+  - key: shiftClose.states.ready.plate2.en
+    value: lift the cover
+  - key: shiftClose.states.cover.lamp
+    value: readyLamp
+  - key: shiftClose.states.cover.plate2.tr
+    value: kolu indir
+  - key: shiftClose.states.cover.plate2.en
+    value: pull the lever
+  - key: shiftClose.states.waiting.lamp
+    value: readyLampOff
+  - key: shiftClose.states.waiting.plate2.tr
+    value: "fi\u015Fi EVRAK\u2019a koy"
+  - key: shiftClose.states.waiting.plate2.en
+    value: file the slip in PAPERS
+  - key: shiftClose.states.waiting.plate2Color
+    value: "k\u0131rm\u0131z\u0131"
+  - key: shiftClose.states.locked.lamp
+    value: readyLampOff
+  - key: shiftClose.states.locked.band
+    value: LockBand
+  - key: shiftClose.states.locked.plate2.tr
+    value: "bask\u0131n s\xFCr\xFCyor"
+  - key: shiftClose.states.locked.plate2.en
+    value: raid in progress
+  - key: shiftClose.plate.line1.tr
+    value: "VARD\u0130YAYI B\u0130T\u0130R"
+  - key: shiftClose.plate.line1.en
+    value: END SHIFT
+  - key: shiftClose.slip.model
+    value: HandoverSlip
+  - key: shiftClose.slip.texture
+    value: devir_fisi_v001 / v031 (TR, EN), R10 ailesi
+  - key: shiftClose.slip.dropTarget
+    value: PaperTray (EVRAK)
+  - key: shiftClose.slip.wrongDrop
+    value: "EVRAK d\u0131\u015F\u0131na b\u0131rak\u0131lan fi\u015F dile d\xF6ner"
+  - key: shiftClose.slipMouth.model
+    value: SlipMouth
+  - key: shiftClose.slipMouth.lamp
+    value: "jewelAmberOff \u2194 jewelAmberOn (fi\u015F bekliyor)"
+  - key: shiftClose.slipMouth.plate.tr
+    value: "DEV\u0130R F\u0130\u015E\u0130"
+  - key: shiftClose.slipMouth.plate.en
+    value: HAND-OVER
+  - key: shiftClose.afterDrop.darkSplit
+    value: "0,1 s kapanma + 0,1 s a\xE7\u0131lma (arada Step)"
+  - key: shiftClose.afterDrop.telex.tr
+    value: "VARD\u0130YA DEVRED\u0130LD\u0130"
+  - key: shiftClose.afterDrop.telex.en
+    value: SHIFT HANDED OVER
+  - key: shiftClose.evrakHighlight.type
+    value: Point
+  - key: admission.instruction.versions.v1
+    value: "ba\u015Flang\u0131\xE7"
+  - key: admission.instruction.versions.v2
+    value: 4. vardiya
+  - key: admission.instruction.versions.v3
+    value: 8. vardiya
+  - key: admission.instruction.holder
+    value: "talimat \u015Feridi 80 \xD7 210 mm, kayan \xE7izgi i\u015Faret\xE7isi
+      + yakut"
+  - key: admission.checks.karsilastirma
+    value: "b\xFCy\xFCte\xE7 + talimat \u015Feridi"
+  - key: admission.checks.gorusme
+    value: interkom
+  - key: admission.checks.soguk
+    value: "bu\u011Fu cam\u0131 (kanatta, g\xF6zetleme deli\u011Finin yan\u0131nda)"
+  - key: admission.checks.disKayit
+    value: "G\u0130DEN \xB7 TELS\u0130Z yuvas\u0131 + talep defteri"
+  - key: 'admission.decisions.tr[0]'
+    value: "KABUL \xB7 TAM ER\u0130\u015E\u0130M"
+  - key: 'admission.decisions.tr[1]'
+    value: KISITLI KABUL
+  - key: 'admission.decisions.tr[2]'
+    value: RET
+  - key: 'admission.decisions.tr[3]'
+    value: "DI\u015EARIDAN YARDIM"
+  - key: 'admission.decisions.en[0]'
+    value: "ADMIT \xB7 FULL ACCESS"
+  - key: 'admission.decisions.en[1]'
+    value: RESTRICTED ADMISSION
+  - key: 'admission.decisions.en[2]'
+    value: REJECT
+  - key: 'admission.decisions.en[3]'
+    value: OUTSIDE AID
+  - key: admission.decisions.tool
+    value: "damga (geri d\xF6n\xFClmez)"
+  - key: admission.decisions.disabled.admitAndRestricted
+    value: kapasite 10/10
+  - key: admission.decisions.disabled.aid
+    value: erzak < 2
+  - key: admission.supervisor.proposal
+    value: "Bo\u015Fta destesinin \xFCst kart\u0131; Bo\u015Fta bo\u015Fsa defter
+      kilitlenir: \u201Cg\xF6zetmen yok\u201D"
+  - key: admission.supervisor.status
+    value: "a\xE7\u0131k karar"

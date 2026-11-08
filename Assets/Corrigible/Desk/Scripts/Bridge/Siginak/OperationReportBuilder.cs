@@ -21,13 +21,14 @@ namespace Corrigible.Desk.Bridge
 
         /// <summary>Uzmanın rapordaki adı (yedekse “(yedek)”).</summary>
         static string RoleName(SquadOutcome o) =>
-            o.Rookie ? Loc.F("{0} (yedek)", Baskin.UnitTypes[o.Type].Name) : Baskin.UnitTypes[o.Type].Name;
+            !string.IsNullOrEmpty(o.PersonName) ? Loc.F("{0} · {1}", o.PersonName, Baskin.UnitTypes[o.Type].Name)
+                : o.Rookie ? Loc.F("{0} (yedek)", Baskin.UnitTypes[o.Type].Name) : Baskin.UnitTypes[o.Type].Name;
 
         /// <summary>“Bölge · Sektör”; karşı saldırıda geri alınacak sektör kalmadıysa “—”.</summary>
         static string SectorLabel(Simulation sim, string id)
         {
             var sector = string.IsNullOrEmpty(id) ? null : sim.LiberationSector(id);
-            return sector == null ? "—" : Loc.F("{0} · {1}", Loc.T(GameData.Region(sector.Region).Name), sector.Name);
+            return sector == null ? "—" : Loc.F("{0} · {1}", GameData.Region(sector.Region).Name, sector.Name);
         }
 
         /// <summary>Son baskının raporu (rapor yalnız son baskın için kurulur: güven ve alarm bugünkü değer).</summary>
@@ -43,17 +44,16 @@ namespace Corrigible.Desk.Bridge
             var sector = sim.LiberationSector(log.SectorId);
             var region = sim.LiberationRegion(log.Region);
             var reward = log.LiberationReward;
-            string regionName = Loc.T(GameData.Region(log.Region).Name);
+            string regionName = GameData.Region(log.Region).Name;
             string sectorName = sector?.Name ?? Loc.T("Sektör");
-            var resCmd = sim.Record?.commands.LastOrDefault(x => x.kind == "raidres");
-            var result = resCmd != null ? RaidResult.Decode(resCmd.a) : null;
+            var result = RaidPaperFacts.Result(sim, log);
             bool counter = reward?.Counterattack != null;
 
             var d = new OperationReportData
             {
                 Head = Loc.T("KYGA · OPERASYON RAPORU"),
-                Number = Loc.F("No. {0} · tek nüsha", Loc.F("SO-{0}/{1}", log.Day.ToString("000"), Math.Max(1, S.Raids))),
-                DateLabel = Loc.T("TARİH"), Date = DeskFormat.DayCode(log.Day),
+                Number = Loc.F("No. {0} · tek nüsha", Loc.F("SO-{0}/{1}", (log.Day + (sim.Board != null ? 1 : 0)).ToString("000"), Math.Max(1, S.RaidLog.IndexOf(log) + 1))),
+                DateLabel = Loc.T("TARİH"), Date = sim.Board != null ? Loc.F("V.{0:000}", log.Day + 1) : DeskFormat.DayCode(log.Day),
                 ResultLabel = Loc.T("SONUÇ"), ResultStamp = log.Success ? Loc.T("BAŞARILI") : Loc.T("BAŞARISIZ"),
                 TargetLabel = Loc.T("HEDEF"), Target = Loc.F("{0} · {1}", regionName, sectorName),
                 DurationLabel = Loc.T("SÜRE"), Duration = result != null ? Loc.F("{0} tur", result.Turns) : "—",
@@ -68,9 +68,19 @@ namespace Corrigible.Desk.Bridge
             if (log.Success && reward != null)
             {
                 d.Gains.Add(Gain(reward.Fon, Loc.T("FON")));
-                d.Gains.Add(Gain(reward.Materials, Loc.T("MALZEME")));
-                d.Gains.Add(Gain(reward.Supplies, Loc.T("ERZAK")));
-                d.Gains.Add(Gain(reward.Residents, Loc.T("KURTULAN")));
+                if (sim.Board != null)
+                {
+                    d.Gains.Add(Gain(reward.Supplies, Loc.T("ERZAK")));
+                    var gains = RaidPaperFacts.MaterialGains(sim, log);
+                    for (int i = 0; i < gains.Length; i++)
+                        d.Gains.Add(Gain(gains[i], DeskText.Upper(PlanningBoardData.MaterialName(PlanningBoardData.MaterialKinds[i]))));
+                }
+                else
+                {
+                    d.Gains.Add(Gain(reward.Materials, Loc.T("MALZEME")));
+                    d.Gains.Add(Gain(reward.Supplies, Loc.T("ERZAK")));
+                    d.Gains.Add(Gain(reward.Residents, Loc.T("KURTULAN")));
+                }
                 d.Slips[1] = Slip(reward.Fon);
                 d.Slips[2] = Slip(reward.Supplies);
                 d.Slips[3] = Slip(reward.Materials);
@@ -88,14 +98,14 @@ namespace Corrigible.Desk.Bridge
             if (log.Success)
             {
                 d.Results.Add(civilians);
-                TeamRows(d, sim, reward);
+                TeamRows(d, sim, reward, log);
                 TrustRow(d, sim, reward);
                 if (alarm != null) d.Results.Add(alarm);
             }
             else
             {
                 if (alarm != null) d.Results.Add(alarm);
-                TeamRows(d, sim, reward);
+                TeamRows(d, sim, reward, log);
                 if (log.Collateral > 0) d.Results.Add(civilians);
                 TrustRow(d, sim, reward);
             }
@@ -109,7 +119,9 @@ namespace Corrigible.Desk.Bridge
         {
             var S = sim.S;
             var team = S.Teams.FirstOrDefault();
-            if (team != null && !sim.SquadCanRaid(team))
+            if (sim.Board != null && reward != null && reward.Squad.Any(o => o.Dead))
+                return Loc.T("Kaybedilen sakinlerin yerleri boş kaldı. Kadroyu vardiya panosunda yeniden düzenle.");
+            if (sim.Board == null && team != null && !sim.SquadCanRaid(team))
                 return Loc.F("Teknisyen düştü ve yerine çıkacak yedek yok: {0} gün baskın yapılamaz. Revir kalkışı hızlandırır.", LiberationMapBuilder.TechnicianDown(team));
             if (reward != null && reward.Trust < 0 && S.Trust <= TrustWarning)
                 return Loc.F("Sivil güven {0}/{1}. Sıfıra inerse halk direnişten çekilir; atıştan kaçan ekip arkasındaki sunucuyu açıkta bırakır.", S.Trust, sim.TrustMax);
@@ -129,28 +141,58 @@ namespace Corrigible.Desk.Bridge
 
         /// <summary>Ekip: ayakta kalanlar; düşenler ve kaçışta geride kalanlar (yatacakları gün), yeni yaralar ve kırılan zırh
         /// plakaları.</summary>
-        static void TeamRows(OperationReportData d, Simulation sim, LiberationRaidReward reward)
+        static void TeamRows(OperationReportData d, Simulation sim, LiberationRaidReward reward, RaidLogEntry log)
         {
             if (reward == null || reward.Squad.Count == 0) return;
-            int standing = reward.Squad.Count(o => !o.Down);
+            if (sim.Board != null)
+            {
+                var before = RaidPaperFacts.BeforeResult(sim, log);
+                foreach (var o in reward.Squad)
+                {
+                    var p = before?.Board?.Person(o.PersonId) ?? sim.Board.Person(o.PersonId);
+                    string state = o.Dead ? Loc.T("KALICI KAYIP") : o.Down
+                        ? Loc.F("kurtarıldı · {0} vardiya yatış", Math.Max(1, sim.B.boardInjuryTurns - (p != null && sim.BoardSkillTier(p, o.Type) >= sim.B.boardFieldSkillRecoveryTier ? sim.B.boardFieldSkillRecoveryBonus : 0)))
+                        : o.HpAfter < o.HpBefore ? Loc.F("döndü · CAN {0}/{1} · yeni yara", o.HpAfter, p?.MaxHp ?? o.HpBefore)
+                        : Loc.T("döndü");
+                    if (!o.Dead && !o.Down) state = Loc.F("{0} · +{1} deneyim", state, Math.Max(0, Math.Min(Math.Max(0, sim.B.boardExpertAt) - (p?.Skill(o.Type) ?? 0), Math.Max(0, sim.B.boardWorkGain))));
+                    if (o.PlateBroken) state = Loc.F("{0} · zırh kırıldı", state);
+                    d.Results.Add(new OperationRow { Label = Loc.F("{0} · {1}", o.PersonName, Baskin.UnitTypes[o.Type].Short), Value = state,
+                        Tone = o.Dead || o.Down ? OperationTone.Alert : OperationTone.Plain });
+                }
+                return;
+            }
+            int standing = reward.Squad.Count(o => !o.Down && !o.Dead);
             d.Results.Add(new OperationRow { Label = Loc.T("Ekip"), Value = Loc.F("{0}/{1} ayakta", standing, reward.Squad.Count), Tone = OperationTone.Plain });
-            var down = reward.Squad.Where(o => o.Down && !o.Left).ToList();
-            if (down.Count > 0) d.Results.Add(new OperationRow
+            var lost = reward.Squad.Where(o => o.Dead).ToList();
+            if (lost.Count > 0) d.Results.Add(new OperationRow
+            {
+                Label = Loc.T("Kalıcı kayıp"), Value = string.Join(", ", lost.Select(RoleName)), Tone = OperationTone.Alert,
+            });
+            var down = reward.Squad.Where(o => o.Down && !o.Left && !o.Dead).ToList();
+            if (sim.Board != null)
+            {
+                foreach (var person in down) d.Results.Add(new OperationRow
+                {
+                    Label = Loc.F("Kurtarıldı: {0}", RoleName(person)),
+                    Value = Loc.F("{0} vardiya yatış", sim.Board.Person(person.PersonId)?.Down ?? 0), Tone = OperationTone.Alert,
+                });
+            }
+            else if (down.Count > 0) d.Results.Add(new OperationRow
             {
                 Label = Loc.F("Düştü: {0}", string.Join(", ", down.Select(RoleName))),
                 Value = Loc.F("{0} gün", sim.B.liberationInjuryDays), Tone = OperationTone.Alert,
             });
-            var left = reward.Squad.Where(o => o.Left).ToList();
+            var left = reward.Squad.Where(o => o.Left && !o.Dead).ToList();
             if (left.Count > 0) d.Results.Add(new OperationRow
             {
                 Label = Loc.F("Çıkamadı: {0}", string.Join(", ", left.Select(RoleName))),
                 Value = Loc.F("{0} gün", sim.B.liberationInjuryDays), Tone = OperationTone.Alert,
             });
-            var hurt = reward.Squad.Where(o => !o.Down && !o.Rookie && o.HpAfter < o.HpBefore).ToList();
+            var hurt = reward.Squad.Where(o => !o.Down && !o.Dead && !o.Rookie && o.HpAfter < o.HpBefore).ToList();
             if (hurt.Count > 0) d.Results.Add(new OperationRow
             {
                 Label = Loc.T("Yeni yara"),
-                Value = string.Join(" · ", hurt.Select(o => Loc.F("{0} −{1}", Baskin.UnitTypes[o.Type].Short, o.HpBefore - o.HpAfter))),
+                Value = string.Join(" · ", hurt.Select(o => Loc.F("{0} −{1}", string.IsNullOrEmpty(o.PersonName) ? Baskin.UnitTypes[o.Type].Short : o.PersonName, o.HpBefore - o.HpAfter))),
                 Tone = OperationTone.Plain,
             });
             int plates = reward.Squad.Count(o => o.PlateBroken);

@@ -1,0 +1,272 @@
+{
+ "name": "DoorLeaf",
+ "family": "door",
+ "budget": "big",
+ "origin": "açıklığın alt orta noktası, oda duvar düzlemi (z = 0)",
+ "note": "Perçinli çelik kanat 0,86 × 1,98 × 0,07: kenar çerçevesi ve üç takviye bandı her iki yüzde 10 mm kabarık, aralarda çökük paneller. İç yüz: kırmızı el çarkı (Wheel), göbek, kilit tarafına ve yukarı giden dil çubukları (sabit), pirinç gözetleme halkası ve sürgülü kapağı (PeepCover), şablon 07. Dış yüz: SIĞINAK 07 · KYGA şablonu, dış çark göbeği (menüdeki OuterWheel buraya takılır), merceğin dış ucu. Kanat koridora açılır (Hinge 0 → 95°).",
+ "listName": "Kapı kanadı (perçinli çelik, iki yüz)",
+ "parts": [
+  {
+   "name": "Hinge",
+   "parent": "Body",
+   "pivotModel": [
+    0.44,
+    0,
+    0.038
+   ],
+   "pivotLocal": [
+    0.44,
+    0,
+    0.038
+   ],
+   "kind": "rotate",
+   "axis": "y",
+   "range": [
+    0,
+    95
+   ],
+   "rest": 0,
+   "note": "kanat; + yön koridora (dünya +x). Menteşe ekseni kanat kalınlığının ortasında, kenardan 10 mm dışarıda"
+  },
+  {
+   "name": "PeepCover",
+   "parent": "Hinge",
+   "pivotModel": [
+    0,
+    1.56,
+    -0.002999999999999999
+   ],
+   "pivotLocal": [
+    -0.44,
+    1.56,
+    -0.040999999999999995
+   ],
+   "kind": "slide",
+   "axis": "y",
+   "range": [
+    0,
+    0.05
+   ],
+   "rest": 0,
+   "note": "gözetleme kapağı: 0 = kapalı, +50 mm yukarı = açık. Dünyada tıklanır (üzerine gelince 4 mm kalkış)"
+  },
+  {
+   "name": "Wheel",
+   "parent": "Hinge",
+   "pivotModel": [
+    0,
+    1.05,
+    -0.09
+   ],
+   "pivotLocal": [
+    -0.44,
+    1.05,
+    -0.128
+   ],
+   "kind": "rotate",
+   "axis": "z",
+   "range": [
+    0,
+    450
+   ],
+   "rest": 0,
+   "note": "iç el çarkı: 1,25 tur (450°) = dilleri çeker; kapı açılırken döner"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Stencil07",
+   "part": "Hinge",
+   "center": [
+    0,
+    0.66,
+    0.0125
+   ],
+   "size": [
+    0.36,
+    0.2
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "wallStencil",
+   "font": "Big Shoulders Stencil Display 800",
+   "capMm": 150,
+   "align": "center",
+   "sample": "07",
+   "sampleEn": "07",
+   "note": "boya #C9C2AD, hafif silik; çökük panel üstünde"
+  },
+  {
+   "name": "TXT_StencilOuter",
+   "part": "Hinge",
+   "center": [
+    0,
+    1.83,
+    0.06350000000000001
+   ],
+   "size": [
+    0.68,
+    0.11
+   ],
+   "normal": [
+    0,
+    0,
+    1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "wallStencil",
+   "font": "Big Shoulders Stencil Display 800",
+   "capMm": 55,
+   "align": "center",
+   "sample": "SIĞINAK 07 · KYGA",
+   "sampleEn": "SHELTER 07 · KYGA",
+   "note": "dış yüz (sahanlıktan okunur)"
+  }
+ ],
+ "anchors": [
+  {
+   "name": "PeepHover",
+   "part": "Hinge",
+   "pos": [
+    0,
+    1.58,
+    -0.067
+   ],
+   "note": "gözetleme deliği tıklama/etiket noktası"
+  },
+  {
+   "name": "OuterWheel",
+   "part": "Hinge",
+   "pos": [
+    0,
+    1.05,
+    0.14300000000000002
+   ],
+   "note": "menü: OuterWheel modeli bu kare mile takılır (çark düzlemi +z’ye bakar)"
+  },
+  {
+   "name": "PeepRingOuter",
+   "part": "Hinge",
+   "pos": [
+    0,
+    1.56,
+    0.06300000000000001
+   ],
+   "note": "menü: PeepRing modeli (dış pirinç halka)"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    2.2,
+    0,
+    0.75
+   ],
+   "yaw": 90,
+   "note": "dünya; kapı grubu orijini (açıklığın alt orta noktası, oda duvar düzlemi x 2,20): kapalı Hinge 0; açık 95° (koridora)"
+  }
+ ],
+ "tris": 3100,
+ "trisPerPart": {
+  "Hinge": 2256,
+  "PeepCover": 124,
+  "Wheel": 720
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.43,
+   0.012,
+   -0.107
+  ],
+  "max": [
+   0.465,
+   1.992,
+   0.143
+  ],
+  "size": [
+   0.895,
+   1.98,
+   0.25
+  ]
+ },
+ "materials": [
+  {
+   "key": "paintOlive",
+   "hex": "#4A5140",
+   "rough": 0.6,
+   "metal": 0.05,
+   "note": "boyalı sac (dolap, konsol, saat gövdesi)",
+   "tris": 1040,
+   "isNew": true
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 772,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 132,
+   "isNew": true
+  },
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 216,
+   "isNew": false
+  },
+  {
+   "key": "peepLens",
+   "hex": "#141A18",
+   "rough": 0.08,
+   "metal": 0,
+   "note": "gözetleme deliği merceği",
+   "tris": 96,
+   "isNew": true
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 124,
+   "isNew": true
+  },
+  {
+   "key": "red",
+   "hex": "#9A1E14",
+   "rough": 0.45,
+   "metal": 0.05,
+   "tris": 720,
+   "isNew": false
+  }
+ ]
+}

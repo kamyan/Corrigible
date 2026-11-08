@@ -57,10 +57,23 @@ namespace Corrigible.Game
         public ActResult ShelterAssign(string roomId, int workers) => Run(() => Sim.ShelterAssign(roomId, workers));
         public ActResult AnswerDoor(string option) => Run(() => Sim.AnswerDoor(option));
 
+        /// <summary>Planlama panosunun bütün oyuncu komutları aynı kayıt/olay kapısından geçer.</summary>
+        public ActResult ExecuteBoardCommand(Func<Simulation, ActResult> command)
+        {
+            if (Sim == null || command == null || StoryHold) return ActResult.Fail(Loc.T("Önce açılış belgesini kapat."));
+            return Run(() => command(Sim));
+        }
+
+        public ActResult PrintBoardShift() => ExecuteBoardCommand(s => s.PrintShift());
+
+        /// <summary>Fişi kutuya koymak Core içinde tam bir vardiyayı bir kez ilerletir.</summary>
+        public ActResult FileBoardShift(string receiptId) => ExecuteBoardCommand(s => s.FileShift(receiptId));
+
         /// <summary>Vardiyayı bitirir (baskın sürerken, harekât bitmişken ya da hikâye açıkken olmaz).</summary>
         public void AdvanceShift()
         {
             if (Sim == null || Sim.S.Blocked || Sim.S.Ending != null || StoryHold) return;
+            if (Sim.Board != null) return; // Yeni düzende zaman yalnız kimliği doğrulanmış devir fişiyle ilerler.
             Sim.Step(); Flush(); Save(); Changed?.Invoke();
         }
 

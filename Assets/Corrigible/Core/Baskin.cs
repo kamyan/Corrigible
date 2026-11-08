@@ -127,6 +127,9 @@ namespace Corrigible.Core
         {
             /// <summary>Armor: zırh plakası, ilk hasarı karşılar ve kırılır (yalnız ekip).</summary>
             public int Id, X, Y, Hp, Max, Order, Armor;
+            public int MoveRange, Power;
+            public int EmpBoosts, EmpBoostDamage;
+            public string PersonId, PersonName;
             public string Type; public char Side;
             /// <summary>Locked: kilitleyici vurdu, bu oyuncu turu yürüyemez (yeteneğini kullanabilir). Out: kaçışta bir çıkıştan
             /// tahliye edildi, tahtada değil. Left: süre dolarken tahtada kaldı; baskında düşmüş sayılır (Dead da işaretli).</summary>
@@ -350,7 +353,14 @@ namespace Corrigible.Core
             for (int i = 0; i < squad.Count && i < entries.Count; i++)
             {
                 var u = NewUnit(B, squad[i].Type, entries[i].X, entries[i].Y);
+                if (squad[i].MaxHp > 0) u.Max = squad[i].MaxHp;
                 u.Hp = Math.Max(1, Math.Min(u.Max, squad[i].Hp));
+                u.MoveRange = squad[i].Move;
+                u.Power = squad[i].Power;
+                u.PersonId = squad[i].PersonId;
+                u.PersonName = squad[i].PersonName;
+                u.EmpBoosts = squad[i].EmpBoosts;
+                u.EmpBoostDamage = squad[i].EmpBoostDamage;
                 u.Armor = Math.Max(0, squad[i].Armor);
                 u.Charges = StartCharges(p, u.Type);
                 B.Units.Add(u);
@@ -421,7 +431,7 @@ namespace Corrigible.Core
             foreach (var role in Simulation.Roles.Where(roles.Contains))
             {
                 var slot = squad.FirstOrDefault(s => s.Type == role);
-                int max = UnitTypes[role].Hp;
+                int max = slot != null && slot.MaxHp > 0 ? slot.MaxHp : UnitTypes[role].Hp;
                 list.Add(slot == null
                     ? new SquadEntry { Type = role, Max = max, Missing = true }
                     : new SquadEntry { Type = role, Hp = Math.Max(1, Math.Min(max, slot.Hp)), Max = max, Armor = Math.Max(0, slot.Armor), Rookie = slot.Rookie });
@@ -582,7 +592,7 @@ namespace Corrigible.Core
         public static List<Pt> Reachable(BState B, Unit u)
         {
             var T = UnitTypes[u.Type];
-            int move = T.Move + (u.Side == 'e' ? B.EnemyMove : 0);
+            int move = (u.Side == 'p' && u.MoveRange > 0 ? u.MoveRange : T.Move) + (u.Side == 'e' ? B.EnemyMove : 0);
             var seen = new Dictionary<int, int> { [u.Y * N + u.X] = 0 };
             var q = new Queue<Pt>();
             q.Enqueue(new Pt(u.X, u.Y));
@@ -687,7 +697,7 @@ namespace Corrigible.Core
             if (ab == "sabotaj")
             {
                 var t = UnitAt(B, x, y);
-                if (t != null) { Hurt(B, t, 1, Loc.T("sabotaj")); Push(B, t, d); }
+                if (t != null) { Hurt(B, t, Math.Max(1, u.Power), Loc.T("sabotaj")); Push(B, t, d); }
                 else if (IsLoot(B) && CellAt(B, x, y).O is Obj cargo && IsTarget(cargo.K))
                 {
                     // Aynı yetenek komutu ve önizleme yolu kullanılır; ikmal görevi dolabı kırmak yerine açar.
@@ -701,11 +711,12 @@ namespace Corrigible.Core
             }
             else if (ab == "emp")
             {
+                int empDamage = 1 + ApplyPlanningEmpBoost(B, u);
                 AddFx(B, new Fx { K = "emp", X = x, Y = y });
                 Fire(B, x, y);
                 var o = CellAt(B, x, y).O;
                 if (o != null && IsTarget(o.K) && UnitAt(B, x, y) == null) AddFx(B, new Fx { K = "armor", X = x, Y = y });
-                else DamageAt(B, x, y, 1, Loc.T("EMP"));
+                else DamageAt(B, x, y, empDamage, Loc.T("EMP"));
                 foreach (var dd in Dirs) { var t = UnitAt(B, x + dd[0], y + dd[1]); if (t != null) Push(B, t, dd); }
             }
             else if (ab == "kanca")

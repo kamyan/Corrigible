@@ -21,6 +21,7 @@ namespace Corrigible.Desk
             ["raid.event.fireNorth"]=Loc.N("{robot} kuzeye ateş ediyor"),
             ["raid.retreat.title"]=Loc.N("GERİ ÇEKİLME · 2. ONAY"),
             ["raid.retreat.body"]=Loc.N("Ekip binadan çıkar; operasyon başarısız sayılır. Hedef dolaplar ayakta kalır."),
+            ["raid.retreat.bodyLoot"]=Loc.N("Ekip binadan çıkar; operasyon başarısız sayılır. İkmal kasası geride kalır."),
             ["raid.retreat.foot"]=Loc.N("İkinci basış geri çeker."),
             ["raid.result.targetBroken"]=Loc.N("HEDEF KIRILDI"),
             ["rules.title"]=Loc.N("KURALLAR KARTI"),

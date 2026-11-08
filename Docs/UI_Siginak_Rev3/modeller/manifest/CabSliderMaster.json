@@ -1,0 +1,108 @@
+{
+ "name": "CabSliderMaster",
+ "family": "cabinet",
+ "budget": "small",
+ "origin": "yarığın ortası, pano yüzünde",
+ "note": "180 mm yarık, solda 0–10 ölçek (doku), T başlı bakalit kol. Kol yerel y’de ±80 mm kayar (−80 = %0, +80 = %100); her %10’da çentik. Yarığın çarpıştırıcısı kolun iki yanına ±15 mm taşar.",
+ "listName": "Kollu dikey sürgü (GENEL, pirinç başlı)",
+ "parts": [
+  {
+   "name": "Handle",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0,
+    -0.004
+   ],
+   "pivotLocal": [
+    0,
+    0,
+    -0.004
+   ],
+   "kind": "slide",
+   "axis": "y",
+   "range": [
+    -0.08,
+    0.08
+   ],
+   "rest": 0,
+   "note": "−0,08 = %0 · +0,08 = %100 · %5 adım"
+  }
+ ],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 328,
+ "trisPerPart": {
+  "Body": 196,
+  "Handle": 132
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.038,
+   -0.105,
+   -0.0486
+  ],
+  "max": [
+   0.022,
+   0.105,
+   0
+  ],
+  "size": [
+   0.06,
+   0.21,
+   0.0486
+  ]
+ },
+ "materials": [
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 88,
+   "isNew": false
+  },
+  {
+   "key": "punchHole",
+   "hex": "#151310",
+   "rough": 1,
+   "metal": 0,
+   "note": "zımba deliği (kartın arkası karanlık)",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "scaleCream",
+   "hex": "#E6DCC0",
+   "rough": 0.55,
+   "metal": 0,
+   "tex": "tx_cab_scale (0–10 ölçek çizgileri ve rakamlar, kelime yok)",
+   "note": "sürgü ölçek şeridi",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 172,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 44,
+   "isNew": true
+  }
+ ]
+}

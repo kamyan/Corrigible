@@ -1,0 +1,82 @@
+{
+ "name": "Rubble_ru",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Kırılmış iki sandviç panel parçası, açık renk köpük parçaları (detailB), kırağı yongaları; toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi.",
+ "listName": "Gedik molozu · Sibirya veri merkezi (panel ve köpük kırığı)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 184,
+ "trisPerPart": {
+  "Body": 184
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.45,
+   0,
+   -0.45
+  ],
+  "max": [
+   0.45,
+   0.1382,
+   0.45
+  ],
+  "size": [
+   0.9,
+   0.1382,
+   0.9
+  ]
+ },
+ "materials": [
+  {
+   "key": "rk_dust",
+   "hex": "#6B6257",
+   "rough": 1,
+   "metal": 0,
+   "alpha": 0.55,
+   "tex": "tx_dust (yumuşak kenarlı toz lekesi, kenara doğru saydam, 256²)",
+   "note": "gedik molozunun toz lekesi (zemine yapışık dörtgen, gölgesiz)",
+   "tris": 2,
+   "isNew": true
+  },
+  {
+   "key": "k_ru_wallWest",
+   "hex": "#909AA1",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 14,
+   "isNew": false
+  },
+  {
+   "key": "k_ru_wallTop",
+   "hex": "#A8B2B9",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 20,
+   "isNew": false
+  },
+  {
+   "key": "k_ru_wallSouth",
+   "hex": "#737C83",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "k_ru_detailB",
+   "hex": "#D8DFE3",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 136,
+   "isNew": false
+  }
+ ]
+}

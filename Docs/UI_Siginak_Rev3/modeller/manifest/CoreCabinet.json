@@ -1,0 +1,130 @@
+{
+ "name": "CoreCabinet",
+ "family": "raidpieces",
+ "budget": "raid",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Çekirdek dolabı 0,80 × 1,0 × 0,80: r_core_* yüz boyası, köşe zırh şeritleri, tepede kırmızı düğüm simgesi, güneyde kırmızı “Ç” rozeti (harf TMP), batıda beş yuva.",
+ "listName": "Çekirdek dolabı (5 can, zırhlı)",
+ "parts": [],
+ "texts": [
+  {
+   "name": "TXT_Badge",
+   "part": "Body",
+   "center": [
+    0,
+    0.64,
+    -0.3925
+   ],
+   "size": [
+    0.17,
+    0.17
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "stamp (rozet harfi, krem #F1E9D6)",
+   "font": "Courier Prime 700",
+   "capMm": null,
+   "align": "center",
+   "sample": "Ç",
+   "sampleEn": "C",
+   "note": "büyük harf ≈ 0,13 birim (raid pozunda ~14 px)"
+  }
+ ],
+ "anchors": [
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0,
+    1,
+    0
+   ],
+   "note": "tepe noktası"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 354,
+ "trisPerPart": {
+  "Body": 354
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.4,
+   0,
+   -0.4
+  ],
+  "max": [
+   0.4,
+   1,
+   0.4
+  ],
+  "size": [
+   0.8,
+   1,
+   0.8
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_core_west",
+   "hex": "#30211F",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 24,
+   "isNew": false
+  },
+  {
+   "key": "r_core_south",
+   "hex": "#241817",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 4,
+   "isNew": false
+  },
+  {
+   "key": "r_core_top",
+   "hex": "#3E2B28",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 14,
+   "isNew": false
+  },
+  {
+   "key": "r_armor_mid",
+   "hex": "#7F817E",
+   "rough": 0.35,
+   "metal": 0.7,
+   "tris": 176,
+   "isNew": false
+  },
+  {
+   "key": "r_red",
+   "hex": "#B8241A",
+   "rough": 0.4,
+   "metal": 0,
+   "tris": 76,
+   "isNew": false
+  },
+  {
+   "key": "rp_slot",
+   "hex": "#151311",
+   "rough": 0.9,
+   "metal": 0,
+   "note": "dolap sunucu yuvası, koyu oyuk",
+   "tris": 60,
+   "isNew": true
+  }
+ ]
+}

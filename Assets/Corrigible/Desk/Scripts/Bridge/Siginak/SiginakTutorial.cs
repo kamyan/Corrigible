@@ -87,6 +87,7 @@ namespace Corrigible.Desk.Bridge
 
         void Begin()
         {
+            if (game.Sim?.Board != null) { flow = null; note.Hide(); return; }
             flow = Done ? null : new TutorialFlow();
             if (flow == null) note.Hide();
         }

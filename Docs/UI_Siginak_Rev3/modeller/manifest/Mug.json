@@ -1,0 +1,83 @@
+{
+ "name": "Mug",
+ "family": "desk",
+ "budget": "small",
+ "origin": "taban ortası (masa üstü, y = 0)",
+ "note": "Emaye çelik kupa Ø85 × 95: hafif koni gövde, kıvrık mavi kenar (mugRim), yuvarlak kesitli kulp (Ø9 mm), içte kahve yüzeyi. Kenar çentikleri dokuda (ortak kir haritası).",
+ "listName": "Kupa",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    0.88,
+    0.76,
+    1.08
+   ],
+   "yaw": 0,
+   "note": "sağ ön köşe, kulp +x"
+  },
+  {
+   "pos": [
+    -0.7,
+    0.76,
+    1.47
+   ],
+   "yaw": 140,
+   "note": "geç harekât: ikinci kupa (stage late)"
+  }
+ ],
+ "tris": 440,
+ "trisPerPart": {
+  "Body": 440
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.0437,
+   0,
+   -0.0437
+  ],
+  "max": [
+   0.069,
+   0.0955,
+   0.0437
+  ],
+  "size": [
+   0.1127,
+   0.0955,
+   0.0874
+  ]
+ },
+ "materials": [
+  {
+   "key": "enamel",
+   "hex": "#E9E6DA",
+   "rough": 0.35,
+   "metal": 0,
+   "tris": 264,
+   "isNew": false
+  },
+  {
+   "key": "mugRim",
+   "hex": "#2F4E7A",
+   "rough": 0.4,
+   "metal": 0,
+   "tris": 160,
+   "isNew": false
+  },
+  {
+   "key": "coffee",
+   "hex": "#2A1A10",
+   "rough": 0.3,
+   "metal": 0,
+   "tris": 16,
+   "isNew": false
+  }
+ ]
+}

@@ -1,0 +1,80 @@
+{
+ "name": "ReliefIso_af",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Dar oluklu bunker (0,76): her yüzde 9 dikey oluk, açık köşe köşebentleri, içinde cevher; güney yüzünün altında eğik boşaltma oluğu (koyu ağız). Kolon gibi okunur: dar, dikey çizgili. Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi.",
+ "listName": "Ayrık blok · Cevher hangarı (oluklu bunker ve boşaltma oluğu)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 295,
+ "trisPerPart": {
+  "Body": 295
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.4,
+   0,
+   -0.4705
+  ],
+  "max": [
+   0.4,
+   0.555,
+   0.4
+  ],
+  "size": [
+   0.8,
+   0.555,
+   0.8705
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_af_wallSouth",
+   "hex": "#768087",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 75,
+   "isNew": false
+  },
+  {
+   "key": "k_af_detailA",
+   "hex": "#8A7A6D",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 51,
+   "isNew": false
+  },
+  {
+   "key": "k_af_wallWest",
+   "hex": "#959FA6",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 128,
+   "isNew": false
+  },
+  {
+   "key": "k_af_detailB",
+   "hex": "#B8BEBE",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 39,
+   "isNew": false
+  },
+  {
+   "key": "rk_void",
+   "hex": "#34312C",
+   "rough": 1,
+   "metal": 0,
+   "note": "oyuk içi: palet ağzı, tutamak deliği, kızak arası (ışık almayan derinlik); bütün kitlerde ortak",
+   "tris": 2,
+   "isNew": true
+  }
+ ]
+}

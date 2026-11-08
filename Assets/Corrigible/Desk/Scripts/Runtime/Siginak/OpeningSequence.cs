@@ -17,6 +17,9 @@ namespace Corrigible.Desk
 
         [SerializeField] Image black;
         [SerializeField] BulbFlicker bulb;
+        [SerializeField] Light deskLamp;
+        float deskIntensity;
+        void Awake() { deskIntensity = deskLamp ? deskLamp.intensity : 0; }
 
         Action<Cue, bool> handler;
         float startedAt;
@@ -86,7 +89,7 @@ namespace Corrigible.Desk
             if (fading)
             {
                 float k = Mathf.Clamp01((Time.unscaledTime - fadeFrom) / fadeSeconds);
-                SetLevel(1 - k);
+                SetLevel(1 - k, 1 - k);
                 if (k >= 1) { fading = false; var d = fadeDone; fadeDone = null; d?.Invoke(); }
                 return;
             }
@@ -127,12 +130,14 @@ namespace Corrigible.Desk
                 float p = (t - GeneratorS) / Mathf.Max(0.01f, LightsAt - GeneratorS);
                 level = p >= 1 ? 1 : Mathf.Lerp(0.55f, 1, p) * ((int)(p * 6) % 2 == 1 ? 0.15f : 1);
             }
-            SetLevel(level);
+            float desk = brief ? level : Mathf.Clamp01((t - LightsAt - T.NumberOf("motion.opening.deskLampDelayS", .15f)) / .1f);
+            SetLevel(level, desk);
         }
 
-        void SetLevel(float level)
+        void SetLevel(float level, float desk = 1)
         {
             if (bulb != null) bulb.Scale = level;
+            if (deskLamp) deskLamp.intensity = deskIntensity * desk;
             if (black == null) return;
             var c = black.color;
             c.a = 1 - level;

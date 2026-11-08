@@ -1,0 +1,57 @@
+{
+ "name": "ChannelEdge",
+ "family": "raidcivil",
+ "budget": "raid",
+ "origin": "karenin merkezi, pafta yüzeyi (y = 0)",
+ "note": "Komşusu kanal olmayan yanı kapatan şerit çifti: iç ray (oluk duvarı) ve dışta turuncu-siyah tehlike şeridi; iki ucu 45° gönye. Oyun K/G/B için 90° döndürür. Kanal işareti değişmez: zemine gömülü koyu oluk, kenarda turuncu-siyah şerit, görünür bakır. Hepsi ≤ 0,048 yüksek, gölgesiz, çarpıştırıcısız; kit yalnız oluk ve kuyu malzemesini değiştirir.",
+ "listName": "Kanal kenarı (kapalı yan, +x)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 12,
+ "trisPerPart": {
+  "Body": 12
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   0.2975,
+   0,
+   -0.3725
+  ],
+  "max": [
+   0.3725,
+   0.02,
+   0.3725
+  ],
+  "size": [
+   0.075,
+   0.02,
+   0.745
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_trenchWall",
+   "hex": "#4A433B",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 10,
+   "isNew": false
+  },
+  {
+   "key": "rc_channelHazard",
+   "hex": "#A9520A",
+   "rough": 0.7,
+   "metal": 0,
+   "tex": "tx_channel_hazard (turuncu #A9520A zemin, siyah #1E1B16 45° şerit, adım 0,10 birim; 256×32)",
+   "note": "kanal kenar şeridi: turuncu-siyah, hiçbir kitte değişmez",
+   "tris": 2,
+   "isNew": true
+  }
+ ]
+}

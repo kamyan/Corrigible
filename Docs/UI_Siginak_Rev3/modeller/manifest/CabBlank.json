@@ -1,0 +1,57 @@
+{
+ "name": "CabBlank",
+ "family": "cabinet",
+ "budget": "small",
+ "origin": "pano yüzünde merkez",
+ "note": "Menüdeki dolapta MENÜYE DÖN kolunun yeri: dört vidalı çelik kör kapak.",
+ "listName": "Kör kapak (menü)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 300,
+ "trisPerPart": {
+  "Body": 300
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.04,
+   -0.035,
+   -0.0055
+  ],
+  "max": [
+   0.04,
+   0.035,
+   0
+  ],
+  "size": [
+   0.08,
+   0.07,
+   0.0055
+  ]
+ },
+ "materials": [
+  {
+   "key": "paintOliveDark",
+   "hex": "#353B30",
+   "rough": 0.62,
+   "metal": 0.05,
+   "note": "kapı kanadı, kasa, çerçeve",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 256,
+   "isNew": true
+  }
+ ]
+}

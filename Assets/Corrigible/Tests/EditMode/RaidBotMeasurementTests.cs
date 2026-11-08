@@ -25,7 +25,7 @@ namespace Corrigible.Tests
         {
             // Beş uzman baştan: ölçüm kadroları karşılaştırır, atölye kilidini değil
             var balance = new Balance { startFon = 100, liberationMinerWorkshopLevel = 0, liberationSmokeWorkshopLevel = 0 };
-            var sim = Simulation.NewGame(4242, balance);
+            var sim = LegacySimulation.NewGame(4242, balance);
             foreach (var (sector, pick) in new[] { ("weu_1", "maden,duman"), ("weu_2", "emp,ana"), ("weu_3", "ana,maden") })
             {
                 Ready(sim);

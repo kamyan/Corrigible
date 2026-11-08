@@ -1,0 +1,79 @@
+{
+ "name": "CabLamp",
+ "family": "cabinet",
+ "budget": "small",
+ "origin": "pano yüzünde merkez",
+ "note": "Ø 18 amber mücevher lamba, krom çerçeve. Kanal 0’dan büyük ve ses açıkken yanar.",
+ "listName": "Lamba ve çerçevesi",
+ "parts": [
+  {
+   "name": "Lens",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0,
+    -0.004
+   ],
+   "pivotLocal": [
+    0,
+    0,
+    -0.004
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "jewelAmberOn / jewelAmberOff"
+  }
+ ],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 328,
+ "trisPerPart": {
+  "Body": 256,
+  "Lens": 72
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.012,
+   -0.012,
+   -0.0145
+  ],
+  "max": [
+   0.012,
+   0.012,
+   0
+  ],
+  "size": [
+   0.024,
+   0.024,
+   0.0145
+  ]
+ },
+ "materials": [
+  {
+   "key": "chrome",
+   "hex": "#C8CCCC",
+   "rough": 0.22,
+   "metal": 1,
+   "tris": 256,
+   "isNew": false
+  },
+  {
+   "key": "jewelAmberOn",
+   "hex": "#FFB347",
+   "rough": 0.2,
+   "metal": 0,
+   "emissive": "#FF9A2A",
+   "ei": 2.4,
+   "note": "amber mücevher lamba yanık",
+   "tris": 72,
+   "isNew": true
+  }
+ ]
+}

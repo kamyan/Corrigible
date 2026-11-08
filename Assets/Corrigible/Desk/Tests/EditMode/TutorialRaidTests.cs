@@ -16,7 +16,7 @@ namespace Corrigible.Desk.Tests
             // Oyunun denge değerleriyle (GameController da bunları kullanır)
             var config = AssetDatabase.LoadAssetAtPath<BalanceConfig>("Assets/Corrigible/Settings/BalanceConfig.asset");
             Assert.IsNotNull(config);
-            var sim = Simulation.NewGame(seed, config.CreateRuntimeCopy());
+            var sim = LegacySimulation.NewGame(seed, config.CreateRuntimeCopy());
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
             return sim.S.Raid.Params;
         }

@@ -10,6 +10,11 @@ namespace Corrigible.Desk
     /// silueti görünür. Kapanırken kanat 0,6 s'de kapanır, sonra çark geri döner. Gözetleme deliğinin kapağı 0,15 s'de kayar;
     /// interkomdan cevap gelirken amber noktası yanar. Yalnız çizer: ne zaman ne olacağını kapının bağlayıcısı söyler.
     /// Çalışırken hiyerarşi yaratmaz.
+    /// <para>Revizyon 3 · Aşama 6 (R9): bütün zaman <see cref="Advance"/> üzerinden akar (<c>Update</c> yalnız onu çağırır; vuruşun
+    /// parlamaları da iç saatle, <c>Time.unscaledTime</c> okunmaz), böylece Edit modda süreler ölçülür. Evreler artan süreyi bir
+    /// sonrakine devreder (çark bitince kalan zaman kanadı sürer); uçlar tam değere oturur (±1e-6 s). Kabul dizisi kanadı
+    /// <c>admission.motion.admitWheelS/admitLeafS</c> süreleriyle açar (<see cref="SetOpen(bool, IReadOnlyList{string}, float, bool, float, float)"/>);
+    /// kartlı oyunda koridor boştur (siluet yok) ve kırmızı lamba hiç yanmaz.</para>
     /// </summary>
     public sealed class DoorProp : MonoBehaviour
     {
@@ -40,7 +45,11 @@ namespace Corrigible.Desk
         Quaternion leafRest, wheelRest;
         Vector3 peepRest;
         float[] stairBase = System.Array.Empty<float>();
-        float spin, swing, glow, peep, peepTarget, flashAt = -1;
+        float spin, swing, glow, peep, peepTarget;
+        /// <summary>Vuruşun başından beri geçen süre (iç saat, <see cref="Advance"/> sürer); −1 = vuruş yok.</summary>
+        float knockT = -1;
+        /// <summary>Süreli açılışın çark ve kanat süreleri (≤ 0 = token <c>motion.doorWheelS/doorLeafS</c>).</summary>
+        float wheelOverride = -1, leafOverride = -1;
         int openTarget;
         bool waiting, fatal, rested, led, ledSet;
         string[] kinds = System.Array.Empty<string>();
@@ -52,10 +61,27 @@ namespace Corrigible.Desk
         static float LeafS => Mathf.Max(0.05f, T.NumberOf("motion.doorLeafS", 0.8f));
         static float StairS => Mathf.Max(0.05f, T.NumberOf("motion.stairLightS", 0.3f));
         const float CloseS = 0.6f, PeepS = 0.15f;
+        /// <summary>Evrenin bitişini yakalama payı (s): ardışık küçük adımların float toplamı ucu kaçırmasın.</summary>
+        const float EndSlack = 1e-6f;
+
+        float WheelDur => wheelOverride > 0 ? Mathf.Max(0.05f, wheelOverride) : WheelS;
+        float LeafDur => leafOverride > 0 ? Mathf.Max(0.05f, leafOverride) : LeafS;
 
         /// <summary>Kanat açılıyor ya da kapanıyor.</summary>
         public bool Moving => spin != openTarget || swing != openTarget;
         public bool IsOpen => swing >= 1;
+        /// <summary>Kapıda biri bekliyor (vuruş lambası amber; <see cref="SetKnocking"/> ya da <see cref="Knock"/>).</summary>
+        public bool Knocking => waiting;
+        /// <summary>Lamba şu an bir vuruşun parlamasında (motion.doorLampFlashS; kırmızıda yok).</summary>
+        public bool LampFlashing => !fatal && knockT >= 0 && Flashing(knockT);
+        /// <summary>Üç vuruş sürüyor (<see cref="Knock"/>'tan sonra motion.doorKnockS boyunca).</summary>
+        public bool KnockPlaying => knockT >= 0;
+        /// <summary>Çarkın dönüşü (derece, kolaylaştırılmış; açıkken 360 × wheelTurns = 450).</summary>
+        public float WheelDegrees => Ease(spin) * 360 * wheelTurns;
+        /// <summary>Kanadın açısı (derece, kolaylaştırılmış; açıkken openAngle = 95).</summary>
+        public float LeafDegrees => openAngle * Ease(swing);
+        /// <summary>Merdiven ışıklarının oranı (0 sönük … 1 sahnedeki şiddet).</summary>
+        public float StairGlow => glow;
         public Transform Leaf => leaf;
         public VisitorSilhouette Silhouette => silhouette;
 
@@ -82,11 +108,14 @@ namespace Corrigible.Desk
             Lamp();
         }
 
-        /// <summary>Üç vuruş (motion.doorKnockS): lamba her vuruşta motion.doorLampFlashS kadar parlar.</summary>
+        /// <summary>
+        /// Üç vuruş (motion.doorKnockS 0,9 s): lamba amber yanar ve 0 / 0,3 / 0,6 s'de motion.doorLampFlashS (0,08 s) kadar parlar,
+        /// sonra amber kalır. Saat <see cref="Advance"/> ile ilerler.
+        /// </summary>
         public void Knock()
         {
             waiting = true;
-            flashAt = Time.unscaledTime;
+            knockT = 0;
             Lamp();
         }
 
@@ -103,6 +132,25 @@ namespace Corrigible.Desk
         /// <paramref name="scale"/> boy çarpanı, <paramref name="flip"/> aksesuarın tarafı.
         /// </summary>
         public void SetOpen(bool on, IReadOnlyList<string> visitors = null, float scale = 1, bool flip = false)
+        {
+            // Eski imza bugünkü süreleri kullanır (token); kapanış, açan çağrının sürelerini korur
+            if (on) wheelOverride = leafOverride = -1;
+            Open(on, visitors, scale, flip);
+        }
+
+        /// <summary>
+        /// Süreleri veren açılış (Aşama 6 kabul dizisi: <c>admission.motion.admitWheelS/admitLeafS</c>, bugün 0,5 / 0,8 s): önce çark
+        /// <paramref name="wheelS"/>, sonra kanat <paramref name="leafS"/>; merdiven ışığı kanat kımıldayınca motion.stairLightS'de yanar.
+        /// Kapanış kanatta 0,6 s, çarkta <paramref name="wheelS"/> × 0,6. <paramref name="visitors"/> boşsa koridor boş (siluet yok).
+        /// </summary>
+        public void SetOpen(bool on, IReadOnlyList<string> visitors, float scale, bool flip, float wheelS, float leafS)
+        {
+            wheelOverride = wheelS;
+            leafOverride = leafS;
+            Open(on, visitors, scale, flip);
+        }
+
+        void Open(bool on, IReadOnlyList<string> visitors, float scale, bool flip)
         {
             Rest();
             openTarget = on ? 1 : 0;
@@ -126,38 +174,67 @@ namespace Corrigible.Desk
             spin = swing = glow = peep = peepTarget = 0;
             openTarget = 0;
             waiting = fatal = false;
-            flashAt = -1;
+            knockT = -1;
+            wheelOverride = leafOverride = -1;
             Apply();
             Lamp();
             Led(false);
         }
 
-        void Update()
+        void Update() => Advance(Time.unscaledDeltaTime);
+
+        /// <summary>
+        /// Vuruş lambasını, kanadı, çarkı, merdiven ışığını ve gözetleme kapağını <paramref name="dt"/> kadar ilerletir (Edit modda
+        /// testler sürer). Uçlar tam değere oturur; karşılaştırmalar tam (yaklaşık eşitlik son adımı yutmasın).
+        /// </summary>
+        public void Advance(float dt)
         {
-            float dt = Time.unscaledDeltaTime;
-            if (flashAt >= 0)
+            if (dt < 0) dt = 0;
+            if (knockT >= 0)
             {
+                knockT += dt;
                 Lamp();
-                if (Time.unscaledTime - flashAt > T.NumberOf("motion.doorKnockS", 0.9f)) { flashAt = -1; Lamp(); }
+                if (knockT > T.NumberOf("motion.doorKnockS", 0.9f)) { knockT = -1; Lamp(); }
             }
-            bool still = spin == openTarget && swing == openTarget && Mathf.Approximately(peep, peepTarget) &&
-                         Mathf.Approximately(glow, GlowTarget());
+            bool still = spin == openTarget && swing == openTarget && peep == peepTarget && glow == GlowTarget();
             if (still) return;
             if (openTarget == 1)
             {
-                // Önce çark (sürgüler çekilir), sonra kanat
-                spin = Mathf.MoveTowards(spin, 1, dt / WheelS);
-                if (spin >= 1) swing = Mathf.MoveTowards(swing, 1, dt / LeafS);
+                // Önce çark (sürgüler çekilir), sonra kanat; çarktan artan süre kanadı ve merdiven ışığını sürer
+                float rest = Toward(ref spin, 1, dt, WheelDur);
+                if (spin >= 1)
+                {
+                    Toward(ref swing, 1, rest, LeafDur);
+                    // Merdiven ışığı kanat kımıldayınca yanar (motion.stairLightS)
+                    if (swing > 0) Toward(ref glow, 1, rest, StairS);
+                }
             }
             else
             {
-                // Kanat kapanır, sonra çark geri döner
-                swing = Mathf.MoveTowards(swing, 0, dt / CloseS);
-                if (swing <= 0) spin = Mathf.MoveTowards(spin, 0, dt / (WheelS * 0.6f));
+                // Kanat kapanır (ışık onunla söner), sonra çark geri döner
+                float rest = Toward(ref swing, 0, dt, CloseS);
+                glow = Mathf.MoveTowards(glow, Mathf.Min(glow, swing), dt / StairS);
+                if (swing <= 0) Toward(ref spin, 0, rest, WheelDur * 0.6f);
             }
-            glow = Mathf.MoveTowards(glow, GlowTarget(), dt / StairS);
-            peep = Mathf.MoveTowards(peep, peepTarget, dt / PeepS);
+            Toward(ref peep, peepTarget, dt, PeepS);
             Apply();
+        }
+
+        /// <summary>
+        /// <paramref name="value"/>'yu <paramref name="target"/>'a <paramref name="seconds"/>'lık tam yol hızıyla yaklaştırır; varırsa
+        /// tam değere oturur ve artan süreyi döndürür (bir sonraki evre için), varmazsa 0.
+        /// </summary>
+        static float Toward(ref float value, float target, float dt, float seconds)
+        {
+            if (value == target) return dt;
+            float need = Mathf.Abs(target - value) * seconds;
+            if (dt >= need - EndSlack)
+            {
+                value = target;
+                return Mathf.Max(0, dt - need);
+            }
+            value = Mathf.MoveTowards(value, target, dt / seconds);
+            return 0;
         }
 
         /// <summary>Merdiven ışığı kanat kımıldayınca yanar (0,3 s); kapanırken kanatla söner.</summary>
@@ -189,7 +266,7 @@ namespace Corrigible.Desk
         void Lamp()
         {
             bool on = waiting || fatal;
-            bool flash = !fatal && flashAt >= 0 && Flashing(Time.unscaledTime - flashAt);
+            bool flash = LampFlashing;
             var mat = fatal ? lampFatal : on || flash ? lampOn : lampOff;
             if (lamp != null && mat != null && lamp.sharedMaterial != mat) lamp.sharedMaterial = mat;
             if (lampLight == null) return;

@@ -19,6 +19,7 @@ namespace Corrigible.Desk
         [SerializeField] DeskTarget target;
         [Tooltip("Kol (yerel y ekseninde kayar).")]
         [SerializeField] Transform handle;
+        [SerializeField] PartDriver handlePart, needlePart, lampPart;
         [Tooltip("Kolun yerel y aralığı: %0 ve %100.")]
         [SerializeField] float travelMin = -0.08f, travelMax = 0.08f;
         [SerializeField, Range(0, 1)] float defaultValue = 1;
@@ -30,7 +31,7 @@ namespace Corrigible.Desk
         [SerializeField] Renderer lamp;
         [SerializeField] Material lampOn, lampOff;
 
-        float value = 1, shown = 1, needleAngle, needleVelocity;
+        float value = 1, shown = 1, needleAngle, needleVelocity, hoverLift;
         int digitsShown = -1;
         bool dragging, dimmed, ready;
 
@@ -157,27 +158,40 @@ namespace Corrigible.Desk
             shown = dragging ? value : Mathf.MoveTowards(shown, value, dt / 0.08f);
             // İbre: hafif aşmalı yay (sessizde sıfıra düşer)
             float goal = Angle(dimmed ? 0 : value);
-            needleVelocity += (goal - needleAngle) * 180 * dt;
-            needleVelocity *= Mathf.Exp(-14 * dt);
-            needleAngle += needleVelocity * dt;
+            for(float remaining=dt;remaining>0;)
+            {
+                float step=Mathf.Min(remaining,1f/120f); remaining-=step;
+                needleVelocity += (goal - needleAngle) * 180 * step;
+                needleVelocity *= Mathf.Exp(-14 * step);
+                needleAngle += needleVelocity * step;
+            }
+            float lift=(target!=null&&target.IsHovered?SiginakTheme.Active.NumberOf("motion.hoverLiftMm",4f):0)+(dragging?2:0);
+            hoverLift=Mathf.MoveTowards(hoverLift,lift*.001f,dt*.05f);
             Apply();
         }
 
         void Apply()
         {
-            if (handle != null)
+            if (handlePart != null)
+            {
+                handlePart.Set(Mathf.Lerp(travelMin,travelMax,shown));
+                handlePart.transform.localPosition+=Vector3.back*hoverLift;
+            }
+            else if (handle != null)
             {
                 var p = handle.localPosition;
                 p.y = Mathf.Lerp(travelMin, travelMax, shown);
                 handle.localPosition = p;
             }
-            if (needle != null) needle.localRotation = Quaternion.Euler(0, 0, needleAngle);
+            if (needlePart != null) needlePart.Set(needleAngle);
+            else if (needle != null) needle.localRotation = Quaternion.Euler(0, 0, needleAngle);
             Lamp();
             Label();
         }
 
         void Lamp()
         {
+            if(lampPart!=null){lampPart.SetSwap(value>0&&!dimmed?1:0);return;}
             if (lamp == null || lampOn == null || lampOff == null) return;
             var m = value > 0 && !dimmed ? lampOn : lampOff;
             if (lamp.sharedMaterial != m) lamp.sharedMaterial = m;

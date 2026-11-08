@@ -9,6 +9,8 @@ namespace Corrigible.Desk
     /// kuyruğu masadan sarkar, ikinci kupa ve teneke; V.025'te afişin yıpranan köşesine ek bant), masadaki yırtık teleks
     /// kâğıdı yığını ve EVRAK tepsisinin kalınlığı (⌊vardiya ÷ 3⌋ kat, en çok 10). Pano
     /// kartları, maket odaları ve DEPO iz değil, oyunun verisidir. Değeri bağlayıcı (SiginakDesk) yazar.
+    /// Revizyon 3: tepsi modelinin yığını gövdede, geç yığını (<see cref="trayLateStack"/>) bir aşama nesnesidir; o görünürken
+    /// tepsinin en üst kâğıdı (<see cref="traySheet"/>, EvrakTray'in A5'i) yığının üstüne çıkar.
     /// </summary>
     public sealed class CampaignWear : MonoBehaviour
     {
@@ -30,6 +32,11 @@ namespace Corrigible.Desk
         [SerializeField, Min(0)] float trayFloor = 0.006f, trayBase = 0.006f, trayPerLayer = 0.0028f;
         [SerializeField, Min(1)] int shiftsPerLayer = 3;
         [SerializeField, Min(0)] int maxLayers = 10;
+        [Tooltip("Revizyon 3: tepsi modelinin geç yığını (bir aşamanın nesnesi). Boşsa kâğıt yüksekliği değişmez.")]
+        [SerializeField] GameObject trayLateStack;
+        [Tooltip("Revizyon 3: tepsinin en üst kâğıdı; yerel y alçak yığında traySheetLow, geç yığın görünürken traySheetHigh.")]
+        [SerializeField] Transform traySheet;
+        [SerializeField] float traySheetLow = 0.0285f, traySheetHigh = 0.0582f;
 
         int shown = -1;
         bool shownEnabled;
@@ -60,6 +67,11 @@ namespace Corrigible.Desk
                     var t = trayTopSheet.localPosition;
                     trayTopSheet.localPosition = new Vector3(t.x, trayFloor + h + trayTopSheet.localScale.y / 2, t.z);
                 }
+            }
+            if (traySheet != null && trayLateStack != null)
+            {
+                var p = traySheet.localPosition;
+                traySheet.localPosition = new Vector3(p.x, trayLateStack.activeSelf ? traySheetHigh : traySheetLow, p.z);
             }
         }
     }

@@ -22,4 +22,30 @@ MonoBehaviour:
   bridges: 1
   channelFloor: {fileID: 2100000, guid: 2c880a94c469f4bd5a4e6c3ca239d8eb, type: 2}
   wellFloor: {fileID: 2100000, guid: 9af4246c9e0ec4761aac4fa472ffedbb, type: 2}
-  wallRubble: {fileID: 3286180006388833936, guid: 599f46895d7be4c84b9f5028d07b887f, type: 3}
+  wallRubble: {fileID: 5664862082833915359, guid: 4f90c7c56ad674a5b94daef07c0c4530, type: 3}
+  wallModel:
+    mesh: {fileID: 2959467708922500008, guid: 318bdae823465460b85016284a094467, type: 3}
+    materials:
+    - {fileID: 2100000, guid: 27257bb99213f4f999c838ccaf1d52a9, type: 2}
+    - {fileID: 2100000, guid: e3406fe6be7a342fe9169a16fd691b2b, type: 2}
+    - {fileID: 2100000, guid: 0bb55bd5e6e364cf199ed6ee8682d8ea, type: 2}
+    - {fileID: 2100000, guid: ec4541e710ca840669870ec6128b8b26, type: 2}
+    - {fileID: 2100000, guid: 3dee24b9b94094daba9386e0710621b4, type: 2}
+  isolatedModel:
+    mesh: {fileID: 2959467708922500008, guid: 227cd717067d94a09909854005dfc137, type: 3}
+    materials:
+    - {fileID: 2100000, guid: 27257bb99213f4f999c838ccaf1d52a9, type: 2}
+    - {fileID: 2100000, guid: e3406fe6be7a342fe9169a16fd691b2b, type: 2}
+    - {fileID: 2100000, guid: 0bb55bd5e6e364cf199ed6ee8682d8ea, type: 2}
+    - {fileID: 2100000, guid: 3dee24b9b94094daba9386e0710621b4, type: 2}
+    - {fileID: 2100000, guid: ec4541e710ca840669870ec6128b8b26, type: 2}
+  bridgeModel:
+    mesh: {fileID: 2959467708922500008, guid: a5a0210cf13034f7eb84d3f6f95ff82a, type: 3}
+    materials:
+    - {fileID: 2100000, guid: 0bb55bd5e6e364cf199ed6ee8682d8ea, type: 2}
+    - {fileID: 2100000, guid: e3406fe6be7a342fe9169a16fd691b2b, type: 2}
+    - {fileID: 2100000, guid: 27257bb99213f4f999c838ccaf1d52a9, type: 2}
+    - {fileID: 2100000, guid: ec4541e710ca840669870ec6128b8b26, type: 2}
+    - {fileID: 2100000, guid: 3dee24b9b94094daba9386e0710621b4, type: 2}
+  civilianModel: {fileID: 676148110452424064, guid: c64bb0b2059e845bca36768f284bd4b3, type: 3}
+  entryDoor: {fileID: 5917111396580763548, guid: bac05f05cc8b7401ca3e204146eeecf9, type: 3}

@@ -44,7 +44,10 @@ namespace Corrigible.Desk.Bridge
                 bool back = team.Busy > 0 && sim.S.Raid == null;
                 var active = sim.S.Liberation?.ActiveSector != null ? sim.LiberationSector(sim.S.Liberation.ActiveSector) : null;
                 if (sim.S.Raid != null) raw.Add((today, Loc.F("{0} sahada · {1}", name, active != null ? Place(active.Region, active) : "—")));
-                else if (!back && !sim.SquadCanRaid(team))
+                // Kartlı harekâtta kadro panodan gelir (CrtViewBuilder.Screen ile aynı denetim); ekip kaydının yaralısı yanıltır
+                else if (!back && sim.Board != null && sim.PlanningRaidCheck() != null)
+                    raw.Add((today, Loc.T("Kadro hazır değil")));
+                else if (!back && sim.Board == null && !sim.SquadCanRaid(team))
                     raw.Add((today, Loc.F("Teknisyen yaralı · {0} gün, yedek yok", LiberationMapBuilder.TechnicianDown(team))));
                 else if (!back)
                 {
@@ -76,7 +79,7 @@ namespace Corrigible.Desk.Bridge
         /// <summary>El yazısında kısa bölge adı: iki sözcükte ilki baş harfiyle (“D. Avrupa”, “W. Europe”).</summary>
         public static string Short(string regionId)
         {
-            var words = Loc.T(GameData.Region(regionId).Name).Split(' ');
+            var words = GameData.Region(regionId).Name.Split(' ');
             return words.Length == 2 ? DeskText.Upper(words[0].Substring(0, 1)) + ". " + words[1] : string.Join(" ", words);
         }
 

@@ -1,0 +1,66 @@
+{
+ "name": "Eraser",
+ "family": "desk",
+ "budget": "small",
+ "origin": "taban ortası (masa üstü, y = 0)",
+ "note": "Pahlı pembe silgi 50 × 12 × 20, bir ucu aşınmış, ortasında kâğıt kılıf.",
+ "listName": "Silgi",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    0.28,
+    0.76,
+    0.958
+   ],
+   "yaw": -20,
+   "note": "kalemin solu (rev2)"
+  }
+ ],
+ "tris": 132,
+ "trisPerPart": {
+  "Body": 132
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.025,
+   0,
+   -0.0104
+  ],
+  "max": [
+   0.03,
+   0.0128,
+   0.0104
+  ],
+  "size": [
+   0.055,
+   0.0128,
+   0.0208
+  ]
+ },
+ "materials": [
+  {
+   "key": "eraser",
+   "hex": "#C79B92",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 88,
+   "isNew": false
+  },
+  {
+   "key": "paperWhite",
+   "hex": "#F4EFE2",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 44,
+   "isNew": false
+  }
+ ]
+}

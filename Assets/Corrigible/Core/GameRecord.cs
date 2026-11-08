@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using System;
 
 namespace Corrigible.Core
 {
@@ -21,8 +22,8 @@ namespace Corrigible.Core
     [System.Serializable]
     public sealed class GameRecord
     {
-        /// <summary>Dosya biçimi. Bu sürümden eski kayıtlar yüklenmez (13: Madenci ve Sis uzmanı atölyenin seviyesiyle katılır; 12: beş uzmanlı kadro ve baskın öncesi seçim; 11: 30 haritalık havuz, kıt sığınak ekonomisi; 10: sığınağın kapısı ve ziyaretçiler; 9: ayakta kalan sivil güveni geri kazandırır, güven tavanı; 8: bölge kimliği ve zorluk kademesi; 7: hazırlık sığınağı, uzman yarası ve kadro; 6: YZ alarmı ve bir baskın bir vardiya; 5: sivil güven; öncekiler başka kurallarla oynandı).</summary>
-        public const int CurrentVersion = 13;
+        /// <summary>Dosya biçimi. Bu sürümden eski kayıtlar yüklenmez (15: dış kayıt ve dosya incelemesinin gözetmeni Boşta'nın ilk uygun kişisi (K4-A); İNCELE+DIŞ KAYIT takılması ve kurucu kimliği düzeltildi; 14: isimli sakinler, kartlı görev/teçhizat, ayrılmış üretim girdileri, kişisel eğitim, devir fişi ve topluluk kabulü; 13: Madenci ve Sis uzmanı atölyenin seviyesiyle katılır; 12: beş uzmanlı kadro ve baskın öncesi seçim; 11: 30 haritalık havuz, kıt sığınak ekonomisi; 10: sığınağın kapısı ve ziyaretçiler; öncekiler başka kurallarla oynandı).</summary>
+        public const int CurrentVersion = 15;
         public int version = CurrentVersion;
         public uint seed;
         public Balance balance;
@@ -39,13 +40,24 @@ namespace Corrigible.Core
             var s = sim.S;
             foreach (var c in rec.commands)
             {
-                while (s.Day < c.day && s.Ending == null && !s.Blocked) sim.Step();
+                AdvanceUntil(sim, c.day);
                 Apply(sim, c);
             }
-            while (s.Day < rec.day && s.Ending == null && !s.Blocked) sim.Step();
+            AdvanceUntil(sim, rec.day);
             s.Events.Clear();
             sim.Record = rec;
             return sim;
+        }
+
+        static void AdvanceUntil(Simulation sim, int day)
+        {
+            while (sim.S.Day < day && sim.S.Ending == null && !sim.S.Blocked)
+            {
+                int before = sim.S.Day;
+                sim.Step();
+                // Kartlı modelde her günün devir komutu zorunludur; eksik fiş sonsuz döngüye girmesin.
+                if (sim.S.Day == before) throw new InvalidOperationException("Kayıtta vardiya devir komutu eksik.");
+            }
         }
 
         static void Apply(Simulation sim, SavedCommand c)
@@ -58,6 +70,22 @@ namespace Corrigible.Core
                 case "shelter_upgrade": sim.ShelterUpgrade(c.a); break;
                 case "shelter_assign": sim.ShelterAssign(c.a, int.Parse(c.b, CultureInfo.InvariantCulture)); break;
                 case "door_answer": sim.AnswerDoor(c.a); break;
+                case "board_assign": sim.AssignResident(c.a, c.b); break;
+                case "board_train": sim.TrainResident(c.a, c.b); break;
+                case "board_equip": sim.EquipResident(c.a, c.b); break;
+                case "board_scrap": sim.ScrapEquipment(c.a); break;
+                case "board_auto": sim.EnableAutomaticProduction(); break;
+                case "board_stage": sim.StageProductionMaterial(c.a, int.Parse(c.b, CultureInfo.InvariantCulture)); break;
+                case "board_queue": sim.QueueProduction(c.a); break;
+                case "board_reserve": sim.ReserveProductionMaterial(c.a, int.Parse(c.b, CultureInfo.InvariantCulture)); break;
+                case "board_cancel": sim.CancelProduction(c.a); break;
+                case "board_print": sim.PrintShift(); break;
+                case "board_file": sim.FileShift(c.a); break;
+                case "inspectApplicant": sim.InspectApplicant(c.a); break;
+                case "decideApplicant": sim.DecideApplicant(c.a); break;
+                case "reviewResident": sim.ReviewResident(c.a); break;
+                case "restrictResident": sim.RestrictResident(c.a, c.b == "1"); break;
+                case "dismissResident": sim.DismissResident(c.a); break;
             }
         }
     }

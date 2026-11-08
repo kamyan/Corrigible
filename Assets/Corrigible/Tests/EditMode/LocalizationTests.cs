@@ -79,7 +79,7 @@ namespace Corrigible.Tests
         /// </summary>
         static Simulation PlayRandom(uint seed, List<string> texts)
         {
-            var sim = Simulation.NewGame(seed);
+            var sim = LegacySimulation.NewGame(seed);
             var s = sim.S;
             var rng = new Rng(seed * 7 + 3);
             string[] rooms = { ShelterLogic.Living, ShelterLogic.Radio, ShelterLogic.Workshop, ShelterLogic.Infirmary };

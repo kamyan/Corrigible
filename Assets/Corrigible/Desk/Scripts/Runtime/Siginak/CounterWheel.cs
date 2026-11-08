@@ -8,7 +8,8 @@ namespace Corrigible.Desk
     /// (0–9 + ikinci 0), Tiling (1, 1/11), rakam d için Offset.y = 1 − (d + 1)/11. Konum sürekli tutulur; 9 → 0 geçişi
     /// ikinci 0 hücresinden dolaşır, görüntü sıçramaz. Doku kaydırması paylaşılan malzemeye dokunmaz: Play'de çarkın kendi
     /// malzeme kopyasıyla (SRP Batcher uyumlu; property block her çarkı batcher dışına itiyordu, Aşama 10 performans), editörde
-    /// MaterialPropertyBlock ile.
+    /// MaterialPropertyBlock ile. Revizyon 3: <see cref="drum"/> doluysa modelin tamburu döner (rakam d için +36·d derece, yerel x;
+    /// 0° “0”'ı gösterir), doku kaydırılmaz.
     /// </summary>
     [RequireComponent(typeof(Renderer))]
     public sealed class CounterWheel : MonoBehaviour
@@ -17,6 +18,10 @@ namespace Corrigible.Desk
         const int Cells = 11;
 
         [SerializeField] Renderer face;
+        [Tooltip("Revizyon 3 sayaç rafının tamburu (Wheel_* parçası); doluysa doku yerine tambur döner.")]
+        [SerializeField] PartDriver drum;
+        [Tooltip("R2/R3 silindirinin yatay UV şeridi; oda tamburunun dikey UV düzeninden farklıdır.")]
+        [SerializeField] bool lateralDrum;
 
         float position, from, to, start, duration, delay;
         bool rolling;
@@ -78,10 +83,14 @@ namespace Corrigible.Desk
             Apply(position);
         }
 
+        /// <summary>Tambur kipi (Revizyon 3); görünüm bağlantısı ve testler için.</summary>
+        public void ConfigureDrum(PartDriver drumPart) => drum = drumPart;
+
         void Apply(float p)
         {
-            if (face == null) face = GetComponent<Renderer>();
             float c = Mathf.Repeat(p, 10f);
+            if (drum != null) { drum.Set(lateralDrum?Mathf.Repeat(162-c*36,360):c*36f); return; }
+            if (face == null) face = GetComponent<Renderer>();
             var st = new Vector4(1, 1f / Cells, 0, 1 - (c + 1) / Cells);
             if (Application.isPlaying)
             {

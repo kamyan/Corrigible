@@ -1,0 +1,1403 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6887fe2e2330c457e80f509ef42d0c8b, type: 3}
+  m_Name: Rev3MaterialLibrary
+  m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.Rev3MaterialLibrary
+  entries:
+  - key: alarmFraction
+    material: {fileID: 2100000, guid: e8023794a361946e9b6ff8999e0ac8a2, type: 2}
+    textureNote: "tx_alarmFraction: \u201C/10\u201D (rakam, krem #C9A86A), UV 0\u20131"
+    noShadow: 0
+  - key: alarmLampOff
+    material: {fileID: 2100000, guid: b918610a6931748b1b36faa689750c37, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: alarmLampOn
+    material: {fileID: 2100000, guid: 9eab8e2afeec14dc2a6c4185319a1315, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: alarmStepOff
+    material: {fileID: 2100000, guid: eababa587c6b746499fbb95fc8e0c6b9, type: 2}
+    textureNote: "tx_alarmFlag (bayrak kenar\u0131, kelime yok)"
+    noShadow: 0
+  - key: alarmStepOn
+    material: {fileID: 2100000, guid: 606ca0eb858314906a37d598f4321f61, type: 2}
+    textureNote: tx_alarmFlag
+    noShadow: 0
+  - key: alarmStepRed
+    material: {fileID: 2100000, guid: 98b6b7c07d2f443a8a6b4378b5160a12, type: 2}
+    textureNote: tx_alarmFlag
+    noShadow: 0
+  - key: aluCast
+    material: {fileID: 2100000, guid: 4706147217f724f4183ae08ac44d6b0a, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: bakelite
+    material: {fileID: 2100000, guid: a084aa7a598654f158efed466da712fb, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: teamPlate
+    material: {fileID: 2100000, guid: a084aa7a598654f158efed466da712fb, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: bakeliteBlack
+    material: {fileID: 2100000, guid: 3d6e9ac90436e413aac4e15079ad9ac6, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: bakeliteRed
+    material: {fileID: 2100000, guid: c5002143807aa494fb19d35384b7f2a9, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: beaconOff
+    material: {fileID: 2100000, guid: c5002143807aa494fb19d35384b7f2a9, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: blanket
+    material: {fileID: 2100000, guid: 044f1f7505380427d8519512118f4da0, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: boardFace
+    material: {fileID: 2100000, guid: 50d499e67a87e44a297e10e58baebc90, type: 2}
+    textureNote: "tx_board_face 4096\xD72048 (1160\xD7600 mm): kelimesiz bask\u0131
+      \u2014 cep s\u0131n\u0131rlar\u0131 (kesikli kart d\u0131\u015F hatt\u0131
+      + ki\u015Fi simgesi + \xFC\xE7 te\xE7hizat \u015Feridi), Bo\u015Fta yelpaze
+      izi, i\u015F emri ve depo alan\u0131 tonu; yaz\u0131lar TMP"
+    noShadow: 0
+  - key: boardPanel
+    material: {fileID: 2100000, guid: 3ddbdc655fd634dff835f8b525d96131, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: book1
+    material: {fileID: 2100000, guid: 1e4a3ebb50e904e31b8ff07fd20adc0a, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: book2
+    material: {fileID: 2100000, guid: 34dfb9663d514448a97ad2d1a0ea5caa, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: book3
+    material: {fileID: 2100000, guid: fd973a04e054b40228e0098952391aaf, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: book4
+    material: {fileID: 2100000, guid: f1024e4a61b89486595ac25c13d2bfda, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: bookCloth
+    material: {fileID: 2100000, guid: 979bba73f7fb44cf89a0acb999c511cd, type: 2}
+    textureNote: "tx_book_cover (bez doku + krem etiket TAR\u0130F DEFTER\u0130)"
+    noShadow: 0
+  - key: brass
+    material: {fileID: 2100000, guid: f08c5a653335c4bb09c87aec1d7b606b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: brassDark
+    material: {fileID: 2100000, guid: 7b8ea64bff3bd4ae8953d96a743968eb, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: brassWorn
+    material: {fileID: 2100000, guid: 8eb3aa77ad706439b8f870c2aaa5ee76, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: bulbGlass
+    material: {fileID: 2100000, guid: 543698dfde70244ec9b019fe8a460d3c, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: lampGlassWarm
+    material: {fileID: 2100000, guid: 543698dfde70244ec9b019fe8a460d3c, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: cabPanel
+    material: {fileID: 2100000, guid: 5003dafd1c6a94496a33c39bf9fe12e4, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: cardBack
+    material: {fileID: 2100000, guid: fde12b79fd80d4fff882932772f09e2f, type: 2}
+    textureNote: "tx_card_back (KYGA \xB7 07 soluk \u015Fablon)"
+    noShadow: 0
+  - key: cardBlank
+    material: {fileID: 2100000, guid: d465488d7ce62488c8cda67cd9ffc94b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: cardEdge
+    material: {fileID: 2100000, guid: c30a1d4a358fa4df7a16e0b6f5194373, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: cardFace
+    material: {fileID: 2100000, guid: 9d102d86ec4644ae48c7661775f5003f, type: 2}
+    textureNote: "kart y\xFCz\xFC: \xE7al\u0131\u015Fma an\u0131nda \xE7izilen kart
+      dokusu (RenderTexture ya da UI Canvas \u2192 doku), 8 px/mm"
+    noShadow: 0
+  - key: cardStock
+    material: {fileID: 2100000, guid: 36bb8ea9e06c24eea8633e351c36b5f7, type: 2}
+    textureNote: "tx_card (80 h\xFCcre \u0131zgaras\u0131, rakamlar)"
+    noShadow: 0
+  - key: cardboard
+    material: {fileID: 2100000, guid: ea8b0850b1a284882be0f041368f338d, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: castIron
+    material: {fileID: 2100000, guid: 34e864bb7c38c4a2bbeb3269aa25548e, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: ceiling
+    material: {fileID: 2100000, guid: 62a090195495242759b828fc1f395d96, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: chalkDecal
+    material: {fileID: 2100000, guid: 0995389efed234736affcd309febbfed, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: chalkTally
+    material: {fileID: 2100000, guid: 451df26d33d2f40d2941c91218dcba6a, type: 2}
+    textureNote: "tx_chalkTally atlas 5 h\xFCcre: 1\u20135 \xE7entik (5. h\xFCcre
+      \xE7aprazl\u0131 grup), tebe\u015Fir dokusu"
+    noShadow: 0
+  - key: chalkWhite
+    material: {fileID: 2100000, guid: a4db833ab515c40a1ba5002cdc703ab2, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: chrome
+    material: {fileID: 2100000, guid: 8023f2c6c1bee4206971f28308af075e, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: clipboard
+    material: {fileID: 2100000, guid: f0a174da26adc4e6893044114617dc7b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: clockHand
+    material: {fileID: 2100000, guid: 1b4168863bf4345518b470b29cf0eede, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: coffee
+    material: {fileID: 2100000, guid: 6303ba4a81b774dadb3038cb549bdfe2, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: coffeeRingDecal
+    material: {fileID: 2100000, guid: 461f3e19e5d514cac99a5efbf71d418a, type: 2}
+    textureNote: "tx_coffeeRing 256\xB2 (halka lekesi, alfa)"
+    noShadow: 0
+  - key: coldGlass
+    material: {fileID: 2100000, guid: ff41a5b64eb404bc29a633c14ffcb5f2, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: concreteDark
+    material: {fileID: 2100000, guid: ebe344e5442374636a70a0085baad222, type: 2}
+    textureNote: "tx_concrete (kal\u0131p izi, nem)"
+    noShadow: 0
+  - key: concreteFloorWet
+    material: {fileID: 2100000, guid: 7f4af8b7d6b6a4927bd3bcc9bebada54, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: concreteWall
+    material: {fileID: 2100000, guid: 3b87b184ec3b748a29783b7fc51595a7, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: copper
+    material: {fileID: 2100000, guid: 86beb9d32166344f081aa02be4b74b45, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: cork
+    material: {fileID: 2100000, guid: 1fb61c42fe3e8431693eea86daca5273, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: corkCard
+    material: {fileID: 2100000, guid: 624293a003b0946c79d5d31f2d934516, type: 2}
+    textureNote: "tx_corkCard: ince mavi sat\u0131r \xE7izgileri, k\u0131rm\u0131z\u0131
+      kenar \xE7izgisi (kelime yok)"
+    noShadow: 0
+  - key: counterDrum
+    material: {fileID: 2100000, guid: b51494aea252043ed96879632cc722e5, type: 2}
+    textureNote: "tx_counterDigits 128\xD71408: 11 h\xFCcreli \u015Ferit (0\u20139
+      + ikinci 0), krem rakam #EFDCAE koyu zeminde, h\xFCcre 0 \xFCstte (v ekseni).
+      \xC7ark \xE7evresi v = 1 \u2192 1/11 (10 h\xFCcre, 36\xB0/rakam); 11. h\xFCcre
+      yaln\u0131z UV kayd\u0131rma i\xE7indir"
+    noShadow: 0
+  - key: counterFace
+    material: {fileID: 2100000, guid: 1e63e324a752f43059fd89c9377efb62, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: counterFraction
+    material: {fileID: 2100000, guid: 1fcdde47eb0c54c76b229b9cdba2d309, type: 2}
+    textureNote: "tx_counterFraction 3 h\xFCcre: \u201C/30\u201D, \u201C/12\u201D,
+      \u201C/20\u201D (yaln\u0131z rakam ve e\u011Fik \xE7izgi, krem #C9A86A); UV
+      0\u20131, h\xFCcre se\xE7imi UV kayd\u0131rma"
+    noShadow: 0
+  - key: counterTenths
+    material: {fileID: 2100000, guid: 9e92d3921bfea4c52a5abc2b600a6cfb, type: 2}
+    textureNote: "tx_counterDigitsInv: ayn\u0131 11 h\xFCcre, koyu rakam #1C150E
+      a\xE7\u0131k zeminde"
+    noShadow: 0
+  - key: coverRed
+    material: {fileID: 2100000, guid: 97c8897af0fc3487e8009ad515b9eca7, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: crack
+    material: {fileID: 2100000, guid: d75f0447dfb4c48b69cb5aab15013e61, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: crtBezel
+    material: {fileID: 2100000, guid: ef7a52219990c4e64b84840147a54892, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: crtCase
+    material: {fileID: 2100000, guid: c33586352fe9c43c3b5f3cca7c1ac59f, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: crtLed
+    material: {fileID: 2100000, guid: 6af1331c900b4411da71a859c833533a, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: crtScreen
+    material: {fileID: 2100000, guid: f7978e637ffd94d3c9b25cc433815d2d, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: crtVent
+    material: {fileID: 2100000, guid: 1664af777afda4fc7bbc7c9db66315c1, type: 2}
+    textureNote: "tx_vent (yatay yar\u0131k dizisi, alfa yok, 256 px)"
+    noShadow: 0
+  - key: dialCream
+    material: {fileID: 2100000, guid: feead7b96c406450387ef1383aaff095, type: 2}
+    textureNote: "tx_dials (\xF6l\xE7ek ve rakam, kelime yok)"
+    noShadow: 0
+  - key: doorLeaf
+    material: {fileID: 2100000, guid: 39c44f9d50ce2480d8e2305476789e55, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: dripStain
+    material: {fileID: 2100000, guid: b24d3dee19598412e98210d6d65b1826, type: 2}
+    textureNote: "tx_drip: pas ve su ak\u0131nt\u0131s\u0131 (dikey, alfa)"
+    noShadow: 0
+  - key: enamel
+    material: {fileID: 2100000, guid: 74a46c458ac064c48a40f1b924c46916, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: enamelBadge
+    material: {fileID: 2100000, guid: 7a69cb2edf541411fb47533c4c1fe90f, type: 2}
+    textureNote: "tx_icon_gear (di\u015Fli simgesi, m\xFCrekkep #1E1B16)"
+    noShadow: 0
+  - key: enamelInner
+    material: {fileID: 2100000, guid: 351135326bdbf47fb94220a9f890d08b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: enamelShade
+    material: {fileID: 2100000, guid: 5bff52940f7794bc8b9681f330112f7a, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: eraser
+    material: {fileID: 2100000, guid: 571223f29e76a4d2c849b04bf103fd2b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: feltBlotter
+    material: {fileID: 2100000, guid: 8a340f631a6874adb9538ece318ae71a, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: floor
+    material: {fileID: 2100000, guid: 9cb66ee8631b148c39b95535e165d67c, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: fogFrost
+    material: {fileID: 2100000, guid: 22de9400b35fe430cb3485ad025a21cf, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: fuseCeramic
+    material: {fileID: 2100000, guid: da3e687d55ea94004bdff12b48b0b2d8, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: galv
+    material: {fileID: 2100000, guid: f2d96e7b04b8a46b89520564ca89aa2c, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: galvBin
+    material: {fileID: 2100000, guid: 842299f7f72624dd6b185bb48cac7630, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: gaugeDial
+    material: {fileID: 2100000, guid: 93a8699d6fd6648e8bb082815659e366, type: 2}
+    textureNote: "tx_cab_gauge (yay \xF6l\xE7ek, 0\u201310, amber b\xF6lge; k\u0131rm\u0131z\u0131
+      yok)"
+    noShadow: 0
+  - key: genGreen
+    material: {fileID: 2100000, guid: 0a642b25c84e8410ea4422d60674cb5d, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: glassClear
+    material: {fileID: 2100000, guid: 86e6960004c2540988863c3cd7e77c46, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: greasePencil
+    material: {fileID: 2100000, guid: 3de6063c46cc44da59ec2112233a46c4, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: posterRed
+    material: {fileID: 2100000, guid: 3de6063c46cc44da59ec2112233a46c4, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: hazardTape
+    material: {fileID: 2100000, guid: e08ef82624c474914acfe9c7fd2d83a7, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: inkBlack
+    material: {fileID: 2100000, guid: 358d76b7d5a4049f6a71419ad05d429c, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: inkBlue
+    material: {fileID: 2100000, guid: 24b5cf7b2285f4450aa2f7ea0bb6eb21, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: inkPad
+    material: {fileID: 2100000, guid: 3c4238cf098d34bda9d22ad8ef994bcd, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: intercom
+    material: {fileID: 2100000, guid: 012056d100d594328b659e2f65f35c3a, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: intercomGrille
+    material: {fileID: 2100000, guid: 82075020773b94bc3802bd0466b869ee, type: 2}
+    textureNote: "tx_grille (\xD8 4 mm delik \u0131zgaras\u0131, 256 px)"
+    noShadow: 0
+  - key: jewelAmberOff
+    material: {fileID: 2100000, guid: d7756a18c866140c6b62dddd3ed633c4, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: jewelAmberOn
+    material: {fileID: 2100000, guid: ae95923ba68ce40cfbb0c737cffbdaeb, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: jewelOff
+    material: {fileID: 2100000, guid: 4634666bcf92a4797a35a2790f919c97, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: jewelOn
+    material: {fileID: 2100000, guid: b97db176ba49f4b3a8a3efa5780f2cc8, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_af_detailA
+    material: {fileID: 2100000, guid: c3c00539d28844639ae0f235053659a6, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_af_detailB
+    material: {fileID: 2100000, guid: abde7bc0d57074f04946e38765e8c6a8, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_af_wallSouth
+    material: {fileID: 2100000, guid: a4e838405e0494bd197645ccd40e7606, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_af_wallWest
+    material: {fileID: 2100000, guid: ae2872f66c5824942bb6c2d6822bf28c, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_cn_detailA
+    material: {fileID: 2100000, guid: 84ba16009bc4e438380e0d3813c43928, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_cn_detailB
+    material: {fileID: 2100000, guid: 5c3e22d5a005f42b1800659077c70459, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_cn_wallSouth
+    material: {fileID: 2100000, guid: db69cea2073404d089fbae06bd789391, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_cn_wallTop
+    material: {fileID: 2100000, guid: 0d2c90daffa1b4d9db7148d824d7d0f5, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_cn_wallWest
+    material: {fileID: 2100000, guid: 0520034cad85e43faa8435512eccc88c, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_eeu_detailA
+    material: {fileID: 2100000, guid: 3dee24b9b94094daba9386e0710621b4, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_eeu_detailB
+    material: {fileID: 2100000, guid: ec4541e710ca840669870ec6128b8b26, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_eeu_wallSouth
+    material: {fileID: 2100000, guid: e3406fe6be7a342fe9169a16fd691b2b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_eeu_wallTop
+    material: {fileID: 2100000, guid: 0bb55bd5e6e364cf199ed6ee8682d8ea, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_eeu_wallWest
+    material: {fileID: 2100000, guid: 27257bb99213f4f999c838ccaf1d52a9, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_in_detailA
+    material: {fileID: 2100000, guid: ee12d5f4ec01f46d2b60428bba079f08, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_in_detailB
+    material: {fileID: 2100000, guid: 0e324c118369d482297aff5ca436b97b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_in_wallSouth
+    material: {fileID: 2100000, guid: c73a56c29014e45e9a445537ef0ca848, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_in_wallTop
+    material: {fileID: 2100000, guid: 3ce3ef0a90a464c9480d580054eb059f, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_in_wallWest
+    material: {fileID: 2100000, guid: 21dafbc01423440dc89e714cadd10fac, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_jk_detailA
+    material: {fileID: 2100000, guid: 4b61c1ea271e24b86a522f6911165672, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_jk_detailB
+    material: {fileID: 2100000, guid: 3b79365e83a1542a98e03bff20ee62ad, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_jk_wallSouth
+    material: {fileID: 2100000, guid: a798755ea30b3467f81ed55f9286190e, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_jk_wallTop
+    material: {fileID: 2100000, guid: ed8fe65dc1f30403986185ecd7e41ae8, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_jk_wallWest
+    material: {fileID: 2100000, guid: ef45ae47be6e8485088edf3dab23d565, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_me_detailA
+    material: {fileID: 2100000, guid: 1229f4a031a544fe0905a338dfb5b939, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_me_detailB
+    material: {fileID: 2100000, guid: b1f814097621c4651b3d92e5d7a92ed0, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_me_wallSouth
+    material: {fileID: 2100000, guid: 54780bf7bcf204d00a7e17b80b19cc78, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_me_wallTop
+    material: {fileID: 2100000, guid: b5f052352608b4aaeb5c4ffebc027e76, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_me_wallWest
+    material: {fileID: 2100000, guid: 3a3965b01218c44f182569b80d8bbbbe, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_na_detailA
+    material: {fileID: 2100000, guid: 526522f422134456a814fb532001069b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_na_wallSouth
+    material: {fileID: 2100000, guid: a0b9e3dac1a9d46dc8204d8acac545f8, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_na_wallTop
+    material: {fileID: 2100000, guid: bf2f0a677ee454cd3ad511d1e417d91c, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_na_wallWest
+    material: {fileID: 2100000, guid: 92c124c51aa8247b291eadce1d5ad3f5, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_oc_detailA
+    material: {fileID: 2100000, guid: 78dcefd522d76487e958b5e98d6394cd, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_oc_detailB
+    material: {fileID: 2100000, guid: d4dc3141b9a1a4d51a49457558f07bb3, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_oc_wallSouth
+    material: {fileID: 2100000, guid: f177c04ee03844a89ab20b7b3cba9751, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_oc_wallTop
+    material: {fileID: 2100000, guid: c77b0e6ac28394f1b8011c2028f6db74, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_oc_wallWest
+    material: {fileID: 2100000, guid: 438858054ccda4689beb525cdad33500, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_ru_detailA
+    material: {fileID: 2100000, guid: cbfc16b1cc5434323a5c003d528d037f, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_ru_detailB
+    material: {fileID: 2100000, guid: 3a4550e60141541d59aade7aaaca5844, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_ru_wallSouth
+    material: {fileID: 2100000, guid: 15b26ed076b024c468922e4a7d99fb09, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_ru_wallTop
+    material: {fileID: 2100000, guid: df34b243add80456ba006b281fa5e513, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_ru_wallWest
+    material: {fileID: 2100000, guid: 899e592c16dc949cd958d9427a761cbe, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_sa_detailA
+    material: {fileID: 2100000, guid: 19b31a424a2e0493b8d685427148bc34, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_sa_wallSouth
+    material: {fileID: 2100000, guid: 759d30b6dde8d4800ad5b91860920d7b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_sa_wallTop
+    material: {fileID: 2100000, guid: 79136cf4cc169433aa8820e6f0db79bd, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_sa_wallWest
+    material: {fileID: 2100000, guid: fc60c081521dd4414a921be0a8d19e72, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_sea_detailA
+    material: {fileID: 2100000, guid: 7e4aedb83512d4cd89f36dd98690ca0f, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_sea_detailB
+    material: {fileID: 2100000, guid: 16e7fac68f04a4da1954fb6e36f7fb71, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_sea_wallSouth
+    material: {fileID: 2100000, guid: f292c00411be94e3e88b73e4cbd1ecb2, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_sea_wallTop
+    material: {fileID: 2100000, guid: 2759657a2d38e40ffb54e096575fe220, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_sea_wallWest
+    material: {fileID: 2100000, guid: b5dfa6738c2b34e9d89a70711057563d, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_weu_detailA
+    material: {fileID: 2100000, guid: 7dc975f28b43c437aa8eb26766199086, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_weu_detailB
+    material: {fileID: 2100000, guid: 8723dce123c0842c48d2ce941fe72e32, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_weu_wallSouth
+    material: {fileID: 2100000, guid: db4f8d6e6c6944e79909ac9204016fd9, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_weu_wallTop
+    material: {fileID: 2100000, guid: 99027664a68a342169b59a01044b458d, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: k_weu_wallWest
+    material: {fileID: 2100000, guid: c1f9b944471264d608ad10f69041340b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: keyIcon
+    material: {fileID: 2100000, guid: eedd208720f384fad91f7a4f45d3f061, type: 2}
+    textureNote: "tx_keyIcons 4 h\xFCcre: odalar (kesit), g\xF6rev fi\u015Fi, \xE7arkl\u0131
+      kap\u0131, lambal\u0131 masa; koyu \xE7izgi #1E1B16; UV 0\u20131 + h\xFCcre
+      kayd\u0131rma"
+    noShadow: 0
+  - key: keyboard
+    material: {fileID: 2100000, guid: 7a1328a52c6a849058037cb07a38e3ee, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: keyboardKey
+    material: {fileID: 2100000, guid: fe00c21ffa7ea44a1b7fd00f74b9f240, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: knockLamp
+    material: {fileID: 2100000, guid: 81e1a6800421146518aa82f3678f75ab, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: knockLampRed
+    material: {fileID: 2100000, guid: c42f303e7c8c845b68415924d9c9eafe, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: lampBulb
+    material: {fileID: 2100000, guid: 08b25f39298ea4201aaf636fdea22d17, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: lampGlass
+    material: {fileID: 2100000, guid: 030493024e6b04f91b61a1567e6460e7, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: lampGlassCold
+    material: {fileID: 2100000, guid: 3bb7174125716426ea04c9aa1ad35246, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: lampInner
+    material: {fileID: 2100000, guid: 2e782f17460fe4b77be36807b65b2913, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: leaf
+    material: {fileID: 2100000, guid: 28d727a641e7e422293811d12dd46433, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: lino
+    material: {fileID: 2100000, guid: d2f40c524f3064503a470aafee57289f, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: linoDesk
+    material: {fileID: 2100000, guid: 48332f03c01f84ce6bf596b44d80b02b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: magnetBlack
+    material: {fileID: 2100000, guid: 908a5ac903a274e28a8ff0b648da29e8, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: manila
+    material: {fileID: 2100000, guid: e3cf15e4874f7443396f4b249fc556f0, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: mastRed
+    material: {fileID: 2100000, guid: 68a83fbe0e79549eab1e5e85a1e3ad81, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: micGrille
+    material: {fileID: 2100000, guid: 31e20756775e44e49a99357df2463d8c, type: 2}
+    textureNote: "tx_micgrille (ince delikli \u0131zgara, 128 px)"
+    noShadow: 0
+  - key: mugRim
+    material: {fileID: 2100000, guid: 9399aff4399084ef6903a74cd6ce040b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: needleBlack
+    material: {fileID: 2100000, guid: 962687f50a8d34e658f4e2f3ecb75adf, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: notePaper
+    material: {fileID: 2100000, guid: 69abb365403044aa6bee784a42a0d074, type: 2}
+    textureNote: "tx_notepad: mavi sat\u0131r \xE7izgileri (kelime yok)"
+    noShadow: 0
+  - key: olive
+    material: {fileID: 2100000, guid: 4e0f6fc3b53914ef6a647b553b5a1d20, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: oliveLight
+    material: {fileID: 2100000, guid: 47b2d26596a2b49a187a01b09488d15f, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: pageEdge
+    material: {fileID: 2100000, guid: 02a843401a8ea4e1e9735df31bd78af6, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: pageFace
+    material: {fileID: 2100000, guid: a34a7c862ff2d4da8af40c6f2d0384b2, type: 2}
+    textureNote: "tx_recipe_spread_1..3 (iki tarif bir a\xE7\u0131l\u0131m; TR/EN
+      ayr\u0131 doku ya da TMP)"
+    noShadow: 0
+  - key: paintBlack
+    material: {fileID: 2100000, guid: 0c63f60aaf0224781a1de0a1e99a77bf, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: paintCream
+    material: {fileID: 2100000, guid: 32183590e70bc4555b578ce44787e4c1, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: paintGreyGreen
+    material: {fileID: 2100000, guid: 1233f899b404a4572bbbbc8e0a3952dd, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: paintHazard
+    material: {fileID: 2100000, guid: 8beec035bda37422aad914549f2bdcc7, type: 2}
+    textureNote: "tx_hazard (45\xB0 \u015Ferit #1E1B16, 1024\xD7128)"
+    noShadow: 0
+  - key: paintOlive
+    material: {fileID: 2100000, guid: ee15711c9b6db4982bf0e9fefd52ee62, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: paintOliveDark
+    material: {fileID: 2100000, guid: 169966049d48c4a29b25a4cddd8fa263, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: paper
+    material: {fileID: 2100000, guid: fac43b8a8237c4658af0ae1a9bc77d96, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: paperWhite
+    material: {fileID: 2100000, guid: b8e5c6166e8a8478187dfc2ac3f4467c, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: pawn
+    material: {fileID: 2100000, guid: 993299187449740e8957011149a65c35, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_pawnWood
+    material: {fileID: 2100000, guid: 993299187449740e8957011149a65c35, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: pawnOchre
+    material: {fileID: 2100000, guid: 14bdfd74ec73d4b1c957ad3ee6e392c9, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: pawnViolet
+    material: {fileID: 2100000, guid: 51614f4df422f43c28347f1c08471344, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: peepLens
+    material: {fileID: 2100000, guid: b55b0fd24fea647cca4cf4999e96c5a6, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: pegboard
+    material: {fileID: 2100000, guid: ac275c874a4b74151b4b624b83ce6eb7, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: pencil
+    material: {fileID: 2100000, guid: 7b58f27ebcf1247469c6ec6424e6d0a4, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: pinBlue
+    material: {fileID: 2100000, guid: cc224f3117b08490fab4aa673af39095, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: pinRed
+    material: {fileID: 2100000, guid: a00fc0fa7ee9e471a9b076e2f95e4f47, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: pipe
+    material: {fileID: 2100000, guid: 4b995403213694e23b086198158a6f24, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: plate
+    material: {fileID: 2100000, guid: b7e2f139804bc48a6a612c927e13c792, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: posterBack
+    material: {fileID: 2100000, guid: 53e74a41d0caa444f8c87c0eb31e6069, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: posterInk
+    material: {fileID: 2100000, guid: 7d8a45ed0e4814d4e823c976d1e4a5bc, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: posterPrint
+    material: {fileID: 2100000, guid: 7ac3e159f328242109da21e1087033c6, type: 2}
+    textureNote: "tx_poster 880\xD71200: krem bord\xFCr, k\u0131rm\u0131z\u0131 zemin,
+      fi\u015Fi \xE7ekilmi\u015F kablo piktogram\u0131, ay\u0131r\u0131c\u0131 \xE7izgi,
+      a\u015F\u0131nma; kelime yok (TMP)"
+    noShadow: 0
+  - key: puddle
+    material: {fileID: 2100000, guid: 2a85de993f3524deb9db0b4d807fcf5b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: punchHole
+    material: {fileID: 2100000, guid: f24a99b60f6da4a6d83b5d1d01fe8038, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_accent
+    material: {fileID: 2100000, guid: 98b6b020daa994667860d1a799788ffb, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_acrylic
+    material: {fileID: 2100000, guid: a56b8601a93c343a59f5101e68d86065, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_armor_dark
+    material: {fileID: 2100000, guid: 59b30d7e1224a450fb03d13b1a162ad3, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_armor_light
+    material: {fileID: 2100000, guid: b4ad63a9f23e340999a5b34ea57b0929, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_armor_mid
+    material: {fileID: 2100000, guid: 453b663df5f7b4dd086aa0769bd415c6, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_backup_south
+    material: {fileID: 2100000, guid: 674e130032a8c400aac4626d3c6bf1dc, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_backup_top
+    material: {fileID: 2100000, guid: c1dc21193c24b4f7db92f19b4a24cf11, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_backup_west
+    material: {fileID: 2100000, guid: f00e1e1274c0f4b0c8476506b2a742b7, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_base
+    material: {fileID: 2100000, guid: cbbe15078f03b403787350b87300494c, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_blue
+    material: {fileID: 2100000, guid: 2bc44a67ec50a4909b8873edb1865bed, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_card
+    material: {fileID: 2100000, guid: ca1ec7d3ee76748bca2bb39c5a30d02c, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_chip_south
+    material: {fileID: 2100000, guid: 5d4e16bc2612c450495e31e009fd872a, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_chip_top
+    material: {fileID: 2100000, guid: b53eb24aa811948bdaf2adcf6740477a, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_chip_west
+    material: {fileID: 2100000, guid: c75d852b328e245ca83d1f4470e87001, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_civil_south
+    material: {fileID: 2100000, guid: 92b70a9cf34254f478025dc71a7200f8, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_civil_top
+    material: {fileID: 2100000, guid: f2241469c301849c6a7923079d93d318, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_civil_west
+    material: {fileID: 2100000, guid: 5bf442d3388b8409b9868704632274b6, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_cooling_south
+    material: {fileID: 2100000, guid: bbb1b68a15ef74b0bb2d680990818950, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_cooling_top
+    material: {fileID: 2100000, guid: b1f2b946d06fc445eb8a2a0b9b9115a9, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_cooling_west
+    material: {fileID: 2100000, guid: a4abc16dbebc44f91a382c0cbf8ea3a1, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_copper
+    material: {fileID: 2100000, guid: f26aec42401b14744a66128e934dbb75, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_copy_south
+    material: {fileID: 2100000, guid: 7af7ef808747f46fa86c702b178f8ffb, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_copy_top
+    material: {fileID: 2100000, guid: d75ca5718eac9485f9ba4388ea1ad1f0, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_copy_west
+    material: {fileID: 2100000, guid: 236c23ae16c0c49e18bbf705e0555c54, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_core_south
+    material: {fileID: 2100000, guid: 46f16d964125a46d2b8d27be5d9a3b03, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_core_top
+    material: {fileID: 2100000, guid: a577c374d05f141a7b2c3f3c22e158c9, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_core_west
+    material: {fileID: 2100000, guid: 3810f75f3d3ea43ca96dbd7bef2e6142, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_grille
+    material: {fileID: 2100000, guid: af5f07d726ff846c1a7c4073da094329, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_gun
+    material: {fileID: 2100000, guid: b036a56118cb94ab7977c8f582d1fcc7, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_gunD
+    material: {fileID: 2100000, guid: d57f18b7beffd4c22a59b8bad7929730, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_gunS
+    material: {fileID: 2100000, guid: bc0bd4c160f7645eea538162b0d100df, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_gunW
+    material: {fileID: 2100000, guid: 524baa24d708b447ea3e693950a28db4, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_hazard
+    material: {fileID: 2100000, guid: c8d42d9061de84553959e6df8a1286b6, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_kraft
+    material: {fileID: 2100000, guid: 48ba2ab2544eb414e870497b9a76a85f, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_lens
+    material: {fileID: 2100000, guid: f74bc5258a0bb4082bebca7e3314ea07, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_maintTop
+    material: {fileID: 2100000, guid: 848f44cfa3ebb42b19da47308810c71b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_mirror
+    material: {fileID: 2100000, guid: 017bab82563a4409fb9a4ea25ac7edea, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_needle
+    material: {fileID: 2100000, guid: 356c716470b724d6191f9341e5a3550f, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_node_south
+    material: {fileID: 2100000, guid: fd4be995e60204dda9f6298ad74699a5, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_node_top
+    material: {fileID: 2100000, guid: adf23a38deba047008ae169d0b2e38ab, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_node_west
+    material: {fileID: 2100000, guid: 244271fd489a44f35b335c0eec367d7b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_ozalit
+    material: {fileID: 2100000, guid: ffff50bcc5c3a49279265a5473fb380b, type: 2}
+    textureNote: "tx_ozalit 2048 (\u0131zgara, \xE7er\xE7eve, kare adlar\u0131)"
+    noShadow: 0
+  - key: r_pawnDone
+    material: {fileID: 2100000, guid: 7205ae5b0f83e4117a747f5a08f0a324, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_plyEdge
+    material: {fileID: 2100000, guid: 48bb14c8050524294a79a54899891e40, type: 2}
+    textureNote: "tx_plywood (kat \xE7izgileri)"
+    noShadow: 0
+  - key: r_plyTop
+    material: {fileID: 2100000, guid: fe79fb7b84b7f4a2ca89e06288de4279, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_red
+    material: {fileID: 2100000, guid: 156fae9d3238d4ade8797c46e6841bc1, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_ring
+    material: {fileID: 2100000, guid: 0802d5ac0db624684b229f96594da65e, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_steelPin
+    material: {fileID: 2100000, guid: 4a88f345ec7ed408c9b2dad2fceb6858, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_sticker
+    material: {fileID: 2100000, guid: 8e71d5531cef749e8b78febb8e1b70d8, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_tape
+    material: {fileID: 2100000, guid: f4750dd3bca4b45e69183e86b55a619d, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_trench
+    material: {fileID: 2100000, guid: 79606cc756bcd4f758141d8b82d38f7b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_trenchWall
+    material: {fileID: 2100000, guid: aa20a1cff28804573a6665905763248c, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: r_warn
+    material: {fileID: 2100000, guid: 03f59e09ab27d4e10833e399532a997a, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: radioBody
+    material: {fileID: 2100000, guid: 0583f92c8fc36453a9e93b37a40797b6, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: radioDial
+    material: {fileID: 2100000, guid: e5b54808345df4d8e9c3816982f413c5, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: radioGrille
+    material: {fileID: 2100000, guid: f63550a51b9b94a8494df3ae23827e18, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rc_alu
+    material: {fileID: 2100000, guid: 43307a33b8de34fbab6b2af3e9d2531f, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rc_channelHazard
+    material: {fileID: 2100000, guid: 9f8ce64df34cb4bb689a7b54d9fe4a26, type: 2}
+    textureNote: "tx_channel_hazard (turuncu #A9520A zemin, siyah #1E1B16 45\xB0
+      \u015Ferit, ad\u0131m 0,10 birim; 256\xD732)"
+    noShadow: 0
+  - key: rc_cleanGrey
+    material: {fileID: 2100000, guid: 83eccd09b0fe44590931ef80736df32f, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rc_coldWhite
+    material: {fileID: 2100000, guid: 3741ceab0811141a3b08c36511d6a1a0, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rc_device
+    material: {fileID: 2100000, guid: 9a0760aa1d0264284b639ac2bffaf1a2, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rc_deviceDark
+    material: {fileID: 2100000, guid: c8e7214eb25dd4e8f8bce87db474b51f, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rc_dockGrey
+    material: {fileID: 2100000, guid: 88ddc50ee737d40c089d663799c13995, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rc_doorSteel
+    material: {fileID: 2100000, guid: 1b622ae0f1a9c441a9eca553bf6c6a3a, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rc_factoryGrey
+    material: {fileID: 2100000, guid: 88dfe1823884443c7809e04946ea3729, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rc_glass
+    material: {fileID: 2100000, guid: 8c8fd36c005d64876bad02c5059de8f2, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rc_graphite
+    material: {fileID: 2100000, guid: 5cfbe909904174ede82d1b591f24e4a7, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rc_junction
+    material: {fileID: 2100000, guid: c3b23f875bc9e4f6e8962ed7da0ac29f, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rc_keys
+    material: {fileID: 2100000, guid: 3e24df1670c4349f0ae5c3d87454ddd9, type: 2}
+    textureNote: "tx_keys (tu\u015F \u0131zgaras\u0131: 3\xD74 tu\u015F tak\u0131m\u0131
+      ve klavye s\u0131ralar\u0131, 256\xD7128, yaz\u0131s\u0131z)"
+    noShadow: 0
+  - key: rc_mesh
+    material: {fileID: 2100000, guid: 18fe6a64953654c68a0eb0e86c0de0f9, type: 2}
+    textureNote: "tx_mesh (kare tel \xF6rg\xFC 5 cm, alfa kesme; 256\xB2)"
+    noShadow: 0
+  - key: rc_navalGrey
+    material: {fileID: 2100000, guid: da8e36e6e74eb4d0c99f5f02d93346a1, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rc_plinth
+    material: {fileID: 2100000, guid: 81e5e77ece3564e7facc948e934347c8, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rc_screen
+    material: {fileID: 2100000, guid: 32dc3c32e3bef4e0794f3b28eb327900, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rc_stainless
+    material: {fileID: 2100000, guid: 0a4de44b43c334e98878460de801ebae, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rc_vent
+    material: {fileID: 2100000, guid: 200d8746e98414c7eb71c556cf072f5a, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: readyLamp
+    material: {fileID: 2100000, guid: f6ee45c2613f247c1b6c3b7f9443fb25, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: readyLampOff
+    material: {fileID: 2100000, guid: 433f9d7d179da42cab8ef591935c2990, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: red
+    material: {fileID: 2100000, guid: 1ed17c53a8b4949e99ae601d88be756a, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rk_dust
+    material: {fileID: 2100000, guid: 0d4d6428a8b2d4a46a0919d1f7e2c337, type: 2}
+    textureNote: "tx_dust (yumu\u015Fak kenarl\u0131 toz lekesi, kenara do\u011Fru
+      saydam, 256\xB2)"
+    noShadow: 1
+  - key: rk_film
+    material: {fileID: 2100000, guid: 4d54d3f0707d544fe9299bbd4881c129, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rk_galv
+    material: {fileID: 2100000, guid: 419d8c55552d6467ca50a5bd69d8d14b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rk_pick
+    material: {fileID: 2100000, guid: ec1d7b608d9a24603898d1c68d0571cb, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rk_void
+    material: {fileID: 2100000, guid: 93d8d9f40f9e24fa0996eb82725b5f0c, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: roomBulbOff
+    material: {fileID: 2100000, guid: ef4688a536a51409ba15323d2a3b2d06, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: roomWall
+    material: {fileID: 2100000, guid: df83f883bbe2342d38015b7fce7a10aa, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rp_acetateHit
+    material: {fileID: 2100000, guid: d2cb2d016596e4dafadbd473eabd7477, type: 2}
+    textureNote: "tx_mark_hit (dolgu \u03B1 .12, tarama \u03B1 .46 \xB7 1,8 px \xB7
+      0,085 birim, u-sabit; kenar \u03B1 .9 \xB7 2,4 px)"
+    noShadow: 1
+  - key: rp_acetateMove
+    material: {fileID: 2100000, guid: cf367e43ebacd4e3eaf9035c6d0a0aa9, type: 2}
+    textureNote: "tx_mark_move (dolgu \u03B1 .16, tarama \u03B1 .34 \xB7 1,6 px \xB7
+      0,11 birim aral\u0131k, v-sabit; kenar \u03B1 .85 \xB7 2 px \xB7 pay 0,07)"
+    noShadow: 1
+  - key: rp_beam
+    material: {fileID: 2100000, guid: 0bfda65d81a664fb898e84ccba316eff, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rp_concrete
+    material: {fileID: 2100000, guid: dc8b7d1ca08874296839852be6948d34, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rp_corrugated
+    material: {fileID: 2100000, guid: 711d2893ccf7e44978ff1f793d02eeb3, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rp_crateBatten
+    material: {fileID: 2100000, guid: 3667a7744e04a44c487befbde03b8d4c, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rp_crateEmblem
+    material: {fileID: 2100000, guid: 1be00f5bdd3aa41df96aed47d4df73a2, type: 2}
+    textureNote: "tx_kyga_emblem (KYGA amblemi, krem m\xFCrekkep, alfa kanal\u0131nda;
+      yaz\u0131 yok)"
+    noShadow: 0
+  - key: rp_crateInside
+    material: {fileID: 2100000, guid: fd56fdd3a088a4c7785ab84bb2d6c30f, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rp_crateOlive
+    material: {fileID: 2100000, guid: d4179b2c2501e47c0b5e07606fca52fb, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rp_crateSteel
+    material: {fileID: 2100000, guid: 8509e5923c7f54839976feb1dbf29b60, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rp_domeGlass
+    material: {fileID: 2100000, guid: 0789f9edd5d5e40179b5b7cf779bc0cd, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rp_fanBlade
+    material: {fileID: 2100000, guid: c11e1b52404364230aee3a0bee8f6c3d, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rp_hazardYellow
+    material: {fileID: 2100000, guid: 0695c2124270042dbb466025faa987f4, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rp_markGhost
+    material: {fileID: 2100000, guid: 44423fa51b75c416b9366b8d4f19311a, type: 2}
+    textureNote: 
+    noShadow: 1
+  - key: rp_markGhostFill
+    material: {fileID: 2100000, guid: c13293613f95f46b6a4ab4106ae5cb0c, type: 2}
+    textureNote: 
+    noShadow: 1
+  - key: rp_markWake
+    material: {fileID: 2100000, guid: a1da7930f74304d80ac3f3124bf522d0, type: 2}
+    textureNote: 
+    noShadow: 1
+  - key: rp_markWakeFill
+    material: {fileID: 2100000, guid: 7d9ec305ab90e402cbe014b22638c484, type: 2}
+    textureNote: 
+    noShadow: 1
+  - key: rp_rope
+    material: {fileID: 2100000, guid: 9a8c0d93c3d3d4d6bbc9686213bd30bd, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rp_slot
+    material: {fileID: 2100000, guid: e7177fb3926d349b29686280ab12abfe, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rp_soot
+    material: {fileID: 2100000, guid: e935149b30c004a7eabb00e37d3968ce, type: 2}
+    textureNote: 
+    noShadow: 1
+  - key: rp_steelDark
+    material: {fileID: 2100000, guid: 684c1d5908f264c719320288fdc70964, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rp_steelPlate
+    material: {fileID: 2100000, guid: b8f8fc32af02040d4a239b7b93d26ce5, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rp_tick
+    material: {fileID: 2100000, guid: 4495d078686c945e1846ed3b218e1afe, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rp_tubeGrey
+    material: {fileID: 2100000, guid: a9da4a59ca6704e08913a47771625ab6, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rubber
+    material: {fileID: 2100000, guid: ec7bc19a51e8c4068a7fb7ef91df276b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rubberGasket
+    material: {fileID: 2100000, guid: 8fd2f5611fdd74274905b24ebd4534cc, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: rubble
+    material: {fileID: 2100000, guid: 00a29c7622ce54377ac37341cc10fd37, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: ruin
+    material: {fileID: 2100000, guid: 75fa48683b48c43b38063f461e7e22bc, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: scaleCream
+    material: {fileID: 2100000, guid: 3c796b3979bf44647bb2fe89f53d5778, type: 2}
+    textureNote: "tx_cab_scale (0\u201310 \xF6l\xE7ek \xE7izgileri ve rakamlar, kelime
+      yok)"
+    noShadow: 0
+  - key: slab
+    material: {fileID: 2100000, guid: b97b5dd5deadc41e6b6dc247d2b0657f, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: slate
+    material: {fileID: 2100000, guid: 5eb10c903a09845898687849ed7e55f0, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: soil1
+    material: {fileID: 2100000, guid: eed361450e5d349a4ae9bbafa67c2e13, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: soil2
+    material: {fileID: 2100000, guid: f8ea38a693b36433c85b4d0cea5795a5, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: soil3
+    material: {fileID: 2100000, guid: 64ca6e0a3e4ea41e5a3c4501078efd1f, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: stairTile
+    material: {fileID: 2100000, guid: c6da265ad6e1f44308108745c86a5162, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: stampBlue
+    material: {fileID: 2100000, guid: db5ca5dae857443778272b06c8d18787, type: 2}
+    textureNote: "tx_stampRing 256\xB2: \xE7ift halka + yaz\u0131 band\u0131 (kelimesiz,
+      alfa); kelime TMP"
+    noShadow: 0
+  - key: stampWood
+    material: {fileID: 2100000, guid: cac84f9548ce740299a98cf8503cf0fd, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: steel
+    material: {fileID: 2100000, guid: bc9765160a0ec45a092c2f07779a2f60, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: steelBare
+    material: {fileID: 2100000, guid: defa81491ff20402fb38e46366946fb6, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: steelCast
+    material: {fileID: 2100000, guid: 18c888cd0423c4dd2a471506bdd88dd8, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: steelDark
+    material: {fileID: 2100000, guid: 729f54a53576048c18b26aee76446558, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: stencilDrips
+    material: {fileID: 2100000, guid: 84b74a89ae99249cf8187c75e43022b9, type: 2}
+    textureNote: "tx_stencilDrips: boya ak\u0131nt\u0131lar\u0131 ve sprey sisi (kelime
+      yok)"
+    noShadow: 0
+  - key: stencilPaint
+    material: {fileID: 2100000, guid: 387e8370d3e04454d91a373a29c7a949, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: tagPaper
+    material: {fileID: 2100000, guid: bc279a60ee1c041729ad758df9ee441b, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: tape
+    material: {fileID: 2100000, guid: 8a140860d296247b6be4fe8720a1f502, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: teamAnalyst
+    material: {fileID: 2100000, guid: bc96d8c9e3a564ec0a07786b6c4c85c2, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: teamBase
+    material: {fileID: 2100000, guid: 17db9dcd7785046e59e2493592e0df37, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: teamEmp
+    material: {fileID: 2100000, guid: abaa5e11136ea4bb1b71cab70d77c8e8, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: teamRim
+    material: {fileID: 2100000, guid: 62b08766b79f043ac9c15b2ad57e6aaf, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: teamTechnician
+    material: {fileID: 2100000, guid: 5ad5e2d9e90bd4cf1b11bf6940e37b66, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: telexPaper
+    material: {fileID: 2100000, guid: 4e6b890f3e0ca4daaa0154077bf01aba, type: 2}
+    textureNote: "tx_telexPaper: kenar delik s\u0131ras\u0131 ve kesikli kenar \xE7izgisi,
+      kelime yok (mesajlar TMP)"
+    noShadow: 0
+  - key: telexWindow
+    material: {fileID: 2100000, guid: 157adb2700f7547119782cc9368cd805, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: tileGlazed
+    material: {fileID: 2100000, guid: 34e52aee499bb44c886c804558bd906d, type: 2}
+    textureNote: "tx_tile150 (15 cm fayans, derz #4F5148, \xE7atlak)"
+    noShadow: 0
+  - key: tileGlazedDirty
+    material: {fileID: 2100000, guid: 85ca572fc88e34a6fa4a4f2bb313dc34, type: 2}
+    textureNote: tx_tile150
+    noShadow: 0
+  - key: tinOlive
+    material: {fileID: 2100000, guid: 88ce9032f59394630a61d4fb61c0db98, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: tinRim
+    material: {fileID: 2100000, guid: 24dbdec5b03054eb1aa8f18095fd977e, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: treadPlate
+    material: {fileID: 2100000, guid: 0dbd34ccedbd74f2791c88ddb2da6981, type: 2}
+    textureNote: tx_tread (baklava desenli sac, 256 px)
+    noShadow: 0
+  - key: wireBlack
+    material: {fileID: 2100000, guid: 72554fdb58eaf405db187b973a2f80cd, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: wood
+    material: {fileID: 2100000, guid: e8d69e0df2bc24ab9be8b9d0273f5c4e, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: woodLight
+    material: {fileID: 2100000, guid: 6c6571685257e47a58e19470981c35b6, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: woodRaw
+    material: {fileID: 2100000, guid: 6930b8db2de8a4490866d9cc10f722e1, type: 2}
+    textureNote: 
+    noShadow: 0
+  - key: woodVarnish
+    material: {fileID: 2100000, guid: 0f6838e1c7861402088727c890f7f711, type: 2}
+    textureNote: tx_wood (lif)
+    noShadow: 0

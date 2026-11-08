@@ -1,0 +1,100 @@
+{
+ "name": "WeldArmBase",
+ "family": "raidpieces",
+ "budget": "raid",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Cıvatalı 0,7 çelik plaka, ayak ve Ø0,4 döner tabla (Turn, tepesi 0,30 = WeldArmHeight); tablanın üstünde turuncu kaynak halkası ve kolun yönünü gösteren turuncu burun (−z = kolun yönü). Kırmızı yok.",
+ "listName": "Kaynak kolu kaidesi (Çin olayı)",
+ "parts": [
+  {
+   "name": "Turn",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.215,
+    0
+   ],
+   "pivotLocal": [
+    0,
+    0.215,
+    0
+   ],
+   "kind": "rotate",
+   "axis": "y",
+   "range": [
+    0,
+    360
+   ],
+   "rest": 0,
+   "note": "döner tabla: kolun yönü (0° = −z); WeldArm buna takılır"
+  }
+ ],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "ArmRoot",
+   "part": "Turn",
+   "pos": [
+    0,
+    0.3,
+    0
+   ],
+   "note": "kolun kökü (WeldArmHeight 0,30)"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 294,
+ "trisPerPart": {
+  "Body": 162,
+  "Turn": 132
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.35,
+   0,
+   -0.35
+  ],
+  "max": [
+   0.35,
+   0.3,
+   0.35
+  ],
+  "size": [
+   0.7,
+   0.3,
+   0.7
+  ]
+ },
+ "materials": [
+  {
+   "key": "rp_steelPlate",
+   "hex": "#6E726E",
+   "rough": 0.85,
+   "metal": 0.3,
+   "note": "kaynak kolu ve kaidesi, açık çelik (mat)",
+   "tris": 58,
+   "isNew": true
+  },
+  {
+   "key": "rp_steelDark",
+   "hex": "#45484A",
+   "rough": 0.85,
+   "metal": 0.3,
+   "note": "döner tabla, ayak, mafsal (mat koyu çelik)",
+   "tris": 184,
+   "isNew": true
+  },
+  {
+   "key": "r_hazard",
+   "hex": "#A9520A",
+   "rough": 0.7,
+   "metal": 0,
+   "tris": 52,
+   "isNew": false
+  }
+ ]
+}

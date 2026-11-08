@@ -1,0 +1,217 @@
+{
+ "name": "IntercomBox",
+ "family": "door",
+ "budget": "small",
+ "origin": "arka yüz alt kenar ortası (duvar düzlemi z = 0)",
+ "note": "Zeytin yeşili sac kutu, vidalı kapak, yuvarlak hoparlör ızgarası (delikler dokuda), siyah bakalit çağrı düğmesi (Button) ve amber LED (Led), üstte pirinç İNTERKOM plakası, yukarı çıkan boru. Dünyada tıklanır (üzerine gelince 4 mm kalkış).",
+ "listName": "İnterkom kutusu",
+ "parts": [
+  {
+   "name": "Button",
+   "parent": "Body",
+   "pivotModel": [
+    -0.03,
+    0.05,
+    -0.06899999999999999
+   ],
+   "pivotLocal": [
+    -0.03,
+    0.05,
+    -0.06899999999999999
+   ],
+   "kind": "slide",
+   "axis": "z",
+   "range": [
+    0,
+    0.004
+   ],
+   "rest": 0,
+   "note": "çağrı düğmesi; +4 mm içeri = basılı"
+  },
+  {
+   "name": "Led",
+   "parent": "Body",
+   "pivotModel": [
+    0.035,
+    0.05,
+    -0.06899999999999999
+   ],
+   "pivotLocal": [
+    0.035,
+    0.05,
+    -0.06899999999999999
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "jewelAmberOn (hat açık / konuşuluyor) ↔ jewelAmberOff"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Plate",
+   "part": "Body",
+   "center": [
+    0,
+    0.215,
+    -0.0662
+   ],
+   "size": [
+    0.115,
+    0.018
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 11,
+   "align": "center",
+   "sample": "İNTERKOM",
+   "sampleEn": "INTERCOM",
+   "note": ""
+  }
+ ],
+ "anchors": [
+  {
+   "name": "Hover",
+   "part": "Body",
+   "pos": [
+    0,
+    0.13,
+    -0.16
+   ],
+   "note": "dünyada tıklama; üzerine gelince kutu 4 mm öne kalkar, kâğıt etiket bu noktaya göre"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    2.2,
+    1.295,
+    0
+   ],
+   "yaw": 90,
+   "note": "dünya; kapının sağı (odadan bakınca), merkez y 1,42 (layout3d.door.intercom)"
+  }
+ ],
+ "tris": 762,
+ "trisPerPart": {
+  "Body": 618,
+  "Button": 72,
+  "Led": 72
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.085,
+   0,
+   -0.0755
+  ],
+  "max": [
+   0.085,
+   0.85,
+   0
+  ],
+  "size": [
+   0.17,
+   0.85,
+   0.0755
+  ]
+ },
+ "materials": [
+  {
+   "key": "paintOlive",
+   "hex": "#4A5140",
+   "rough": 0.6,
+   "metal": 0.05,
+   "note": "boyalı sac (dolap, konsol, saat gövdesi)",
+   "tris": 86,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 168,
+   "isNew": true
+  },
+  {
+   "key": "intercomGrille",
+   "hex": "#26271F",
+   "rough": 0.7,
+   "metal": 0.1,
+   "tex": "tx_grille (Ø 4 mm delik ızgarası, 256 px)",
+   "note": "interkom hoparlör ızgarası",
+   "tris": 56,
+   "isNew": true
+  },
+  {
+   "key": "plate",
+   "hex": "#B8955A",
+   "rough": 0.45,
+   "metal": 0.35,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "chrome",
+   "hex": "#C8CCCC",
+   "rough": 0.22,
+   "metal": 1,
+   "tris": 168,
+   "isNew": false
+  },
+  {
+   "key": "castIron",
+   "hex": "#3A3B37",
+   "rough": 0.72,
+   "metal": 0.6,
+   "note": "dış çark, döküm kaide",
+   "tris": 64,
+   "isNew": true
+  },
+  {
+   "key": "galv",
+   "hex": "#70756E",
+   "rough": 0.5,
+   "metal": 0.45,
+   "tris": 32,
+   "isNew": false
+  },
+  {
+   "key": "bakeliteBlack",
+   "hex": "#181412",
+   "rough": 0.34,
+   "metal": 0,
+   "note": "düğme, kol başı",
+   "tris": 72,
+   "isNew": true
+  },
+  {
+   "key": "jewelAmberOn",
+   "hex": "#FFB347",
+   "rough": 0.2,
+   "metal": 0,
+   "emissive": "#FF9A2A",
+   "ei": 2.4,
+   "note": "amber mücevher lamba yanık",
+   "tris": 72,
+   "isNew": true
+  }
+ ]
+}

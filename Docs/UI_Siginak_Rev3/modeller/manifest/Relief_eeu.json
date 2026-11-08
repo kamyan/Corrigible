@@ -1,0 +1,79 @@
+{
+ "name": "Relief_eeu",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Açık çelik raf: dört köşe dikmesi, üç raf dudağı (alt, orta, üst), aralarda 2–3 genişlikte kurşuni (detailA) ve krem (detailB) dosya kutuları, raf dudağından geride. Gri tonda: yatay raflar + düzensiz kutu ızgarası. İki kat: alt ve üst raf gözü. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided.",
+ "listName": "Duvar barikatı · Devlet arşivi (çelik arşiv rafı)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 379,
+ "trisPerPart": {
+  "Body": 379
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.47,
+   0,
+   -0.47
+  ],
+  "max": [
+   0.47,
+   0.556,
+   0.47
+  ],
+  "size": [
+   0.94,
+   0.556,
+   0.94
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_eeu_wallWest",
+   "hex": "#77817C",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 63,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_wallSouth",
+   "hex": "#606763",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 41,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_wallTop",
+   "hex": "#8F9892",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 57,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_detailB",
+   "hex": "#B3AD98",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 86,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_detailA",
+   "hex": "#6E7375",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 132,
+   "isNew": false
+  }
+ ]
+}

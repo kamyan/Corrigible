@@ -82,6 +82,9 @@ namespace Corrigible.Desk
         [SerializeField] LayoutElement teamStampHolder;
         [SerializeField] Image teamStampFrame;
         [SerializeField] Member[] members = Array.Empty<Member>();
+        [SerializeField] GameObject planningTeam;
+        [SerializeField] FieldMemberFace[] planningMembers = Array.Empty<FieldMemberFace>();
+        [SerializeField] TMP_Text planningStamp;
         [Tooltip("KADRO satırı: Teknisyen sabit, öteki dört uzmandan ikisi seçilir.")]
         [SerializeField] GameObject pickBlock;
         [SerializeField] TMP_Text pickHead;
@@ -101,6 +104,8 @@ namespace Corrigible.Desk
         [SerializeField] Sprite[] tierGlyphs = Array.Empty<Sprite>();
         [Tooltip("Ekran kenarından ve üstten uzaklık (1080p referans px).")]
         [SerializeField] Vector2 margin = new Vector2(22, 236);
+        [SerializeField] Vector2 planningMargin = new Vector2(22, 128);
+        bool planning;
         [Tooltip("İğnenin kâğıdın üst köşesinden uzaklığı (px).")]
         [SerializeField] Vector2 pinInset = new Vector2(13, 60);
 
@@ -114,6 +119,7 @@ namespace Corrigible.Desk
         bool[] chipPicked = Array.Empty<bool>(), chipLocked = Array.Empty<bool>();
 
         public event Action ActionClicked, CloseClicked;
+        public event Action<string> PersonClicked;
         /// <summary>Kadro seçicide bir uzmana tıklandı (rol kimliği).</summary>
         public event Action<string> PickClicked;
         string[] chipRoles = Array.Empty<string>();
@@ -144,7 +150,8 @@ namespace Corrigible.Desk
         static float SlideSeconds => SiginakTheme.Active.NumberOf("motion.slipSlideS", 0.22f);
         static float CloseSeconds => 0.18f;
 
-        Vector2 RestPosition => new Vector2(right ? -(margin.x + paper.rect.width * 0.5f) : margin.x + paper.rect.width * 0.5f, -margin.y);
+        Vector2 Margin => planning ? planningMargin : margin;
+        Vector2 RestPosition => new Vector2(right ? -(Margin.x + paper.rect.width * 0.5f) : Margin.x + paper.rect.width * 0.5f, -Margin.y);
 
         void Awake()
         {
@@ -152,6 +159,7 @@ namespace Corrigible.Desk
             DeskUi.NoNavigation(action);
             action.onClick.AddListener(() => ActionClicked?.Invoke());
             close.onClick.AddListener(() => CloseClicked?.Invoke());
+            foreach (var member in planningMembers) if (member) member.Clicked += id => PersonClicked?.Invoke(id);
             chipRoles = new string[pickChips.Length];
             chipPicked = new bool[pickChips.Length];
             chipLocked = new bool[pickChips.Length];
@@ -170,6 +178,7 @@ namespace Corrigible.Desk
         {
             bool opening = !IsOpen;
             RegionId = d.RegionId;
+            planning = d.Planning;
             HasAction = d.HasAction;
             var t = SiginakTheme.Active;
             gameObject.SetActive(true);
@@ -307,8 +316,22 @@ namespace Corrigible.Desk
         void Team(OperationSlipData d, SiginakTheme t)
         {
             bool show = !string.IsNullOrEmpty(d.TeamName) && string.IsNullOrEmpty(d.Info);
-            teamBlock.SetActive(show);
+            teamBlock.SetActive(show && !d.Planning);
+            if (planningTeam) planningTeam.SetActive(show && d.Planning);
             if (!show) return;
+            if (d.Planning && planningTeam)
+            {
+                if (planningStamp) planningStamp.text = d.TeamStamp;
+                for (int i = 0; i < planningMembers.Length; i++)
+                {
+                    var member = i < d.Members.Count ? d.Members[i] : null;
+                    planningMembers[i].gameObject.SetActive(member != null);
+                    if (member == null) continue;
+                    planningMembers[i].Bind(member.PersonId, member.Name, member.Profession, member.Stats, member.Equipment,
+                        member.Slots, member.Health, member.MaxHealth, member.Hover, member.Letter);
+                }
+                return;
+            }
             teamName.text = d.TeamName;
             for (int i = 0; i < members.Length; i++)
             {

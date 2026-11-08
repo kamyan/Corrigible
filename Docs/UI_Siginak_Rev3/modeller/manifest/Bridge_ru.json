@@ -1,0 +1,71 @@
+{
+ "name": "Bridge_ru",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi (y = 0); köprü doğu boşluğunda (x 0,47–0,53), +x boyunca; kuzey için y ekseninde −90°",
+ "note": "Komşu kabinler arasında üstte iki yalıtımlı yuvarlak kanal (iki ceket bandı, detailB); kırağı dudağı ve çatı derzi devam eder. Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti.",
+ "listName": "Köprü · Sibirya veri merkezi (yalıtımlı yuvarlak kanal)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 140,
+ "trisPerPart": {
+  "Body": 140
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   0.4,
+   0.04,
+   -0.47
+  ],
+  "max": [
+   0.6,
+   0.555,
+   0.47
+  ],
+  "size": [
+   0.2,
+   0.515,
+   0.94
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_ru_wallTop",
+   "hex": "#A8B2B9",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 16,
+   "isNew": false
+  },
+  {
+   "key": "k_ru_wallSouth",
+   "hex": "#737C83",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "k_ru_wallWest",
+   "hex": "#909AA1",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "k_ru_detailB",
+   "hex": "#D8DFE3",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 100,
+   "isNew": false
+  }
+ ]
+}

@@ -1,0 +1,279 @@
+{
+ "name": "Pawn_T",
+ "family": "raidpieces",
+ "budget": "unit",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Kalın ahşap harf (Droid Serif Bold, ExtrudeGeometry, pah 1 segment; ön yüz ve yanlar r_pawnWood, arka yüz koyu kraft r_pawnDone) siyah Ø0,54 tabanda, krem halka. Harf −z’ye bakar. Durumlar: tur bitti = Letter 180° + Tick; yaralı = Tape; plakalı = Plate; düştü = Tilt −70° (öne yüzüstü). Tick/Tape/Plate görünürlük parçaları.",
+ "listName": "Uzman piyonu T · Teknisyen",
+ "parts": [
+  {
+   "name": "Tilt",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.07,
+    -0.065
+   ],
+   "pivotLocal": [
+    0,
+    0.07,
+    -0.065
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    -70
+   ],
+   "rest": 0,
+   "note": "düşme: menteşe harfin ön alt kenarında; −70° öne yüzüstü yatar (Unity’de −x dönüşü üstü −z’ye götürür). Kameraya dönük piyonda en açık “düştü” okuması bu."
+  },
+  {
+   "name": "Letter",
+   "parent": "Tilt",
+   "pivotModel": [
+    0,
+    0.07,
+    0
+   ],
+   "pivotLocal": [
+    0,
+    0,
+    0.065
+   ],
+   "kind": "rotate",
+   "axis": "y",
+   "range": [
+    0,
+    180
+   ],
+   "rest": 0,
+   "note": "tur bitti: 180° döner, kraft arka yüz öne gelir"
+  },
+  {
+   "name": "Tape",
+   "parent": "Letter",
+   "pivotModel": [
+    0,
+    0.32791999578475955,
+    -0.069
+   ],
+   "pivotLocal": [
+    0,
+    0.25791999578475955,
+    -0.069
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "yaralı: görünür/gizli (r_tape, yarı saydam)"
+  },
+  {
+   "name": "Tick",
+   "parent": "Body",
+   "pivotModel": [
+    -0.075,
+    0.0712,
+    -0.16
+   ],
+   "pivotLocal": [
+    -0.075,
+    0.0712,
+    -0.16
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "tur bitti: görünür/gizli"
+  },
+  {
+   "name": "Plate",
+   "parent": "Body",
+   "pivotModel": [
+    0.14,
+    0.16,
+    -0.185
+   ],
+   "pivotLocal": [
+    0.14,
+    0.16,
+    -0.185
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "plakalı: görünür/gizli (etiketteki kalkan simgesiyle aynı biçim)"
+  }
+ ],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Tag",
+   "part": "Body",
+   "pos": [
+    0,
+    0.035,
+    -0.27
+   ],
+   "note": "uzman can etiketi: altlığın önü (u−0,24, v+0,24 ekranda)"
+  },
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0,
+    0.5659999918937684,
+    0
+   ],
+   "note": "harfin tepesi"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": {
+  "normal": {
+   "pose": {
+    "Tilt": 0,
+    "Letter": 0
+   },
+   "show": [],
+   "note": "hazır: ahşap ön yüz kameraya"
+  },
+  "done": {
+   "pose": {
+    "Letter": 180
+   },
+   "show": [
+    "Tick"
+   ],
+   "note": "tur bitti: harf Y’de 180° döner, koyu kraft arka yüz (r_pawnDone) öne gelir; tabanda yeşil tik"
+  },
+  "wounded": {
+   "pose": {},
+   "show": [
+    "Tape"
+   ],
+   "note": "yaralı: harfin önünde çapraz bant (harfle döner)"
+  },
+  "plated": {
+   "pose": {},
+   "show": [
+    "Plate"
+   ],
+   "note": "plakalı: tabanın önünde çelik kalkan plakası"
+  },
+  "down": {
+   "pose": {
+    "Tilt": -70
+   },
+   "show": [],
+   "note": "düştü: harf ön alt kenarı üstünde 70° öne (kameraya doğru) yüzüstü yatar; bant harfle gider. Plaka bu durumda kalkmış olur (plaka hasarı önce yer)."
+  }
+ },
+ "tris": 848,
+ "trisPerPart": {
+  "Body": 168,
+  "Letter": 508,
+  "Tape": 12,
+  "Tick": 36,
+  "Plate": 124
+ },
+ "budgetTris": 1500,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.27,
+   0,
+   -0.27
+  ],
+  "max": [
+   0.27,
+   0.566,
+   0.27
+  ],
+  "size": [
+   0.54,
+   0.566,
+   0.54
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_base",
+   "hex": "#1E1B16",
+   "rough": 0.5,
+   "metal": 0,
+   "tris": 72,
+   "isNew": false
+  },
+  {
+   "key": "r_ring",
+   "hex": "#F1E9D6",
+   "rough": 0.6,
+   "metal": 0,
+   "tris": 96,
+   "isNew": false
+  },
+  {
+   "key": "r_pawnDone",
+   "hex": "#8C734E",
+   "rough": 0.75,
+   "metal": 0,
+   "tris": 62,
+   "isNew": false
+  },
+  {
+   "key": "r_pawnWood",
+   "hex": "#C9A77A",
+   "rough": 0.75,
+   "metal": 0,
+   "tris": 446,
+   "isNew": false
+  },
+  {
+   "key": "r_tape",
+   "hex": "#ECE2BE",
+   "rough": 0.85,
+   "metal": 0,
+   "alpha": 0.78,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "r_sticker",
+   "hex": "#F1E9D6",
+   "rough": 0.7,
+   "metal": 0,
+   "tris": 16,
+   "isNew": false
+  },
+  {
+   "key": "rp_tick",
+   "hex": "#24592E",
+   "rough": 0.7,
+   "metal": 0,
+   "note": "tur bitti tik işareti (yeşil = iyi)",
+   "tris": 20,
+   "isNew": true
+  },
+  {
+   "key": "r_armor_light",
+   "hex": "#9A9C98",
+   "rough": 0.35,
+   "metal": 0.7,
+   "tris": 52,
+   "isNew": false
+  },
+  {
+   "key": "r_armor_dark",
+   "hex": "#636562",
+   "rough": 0.35,
+   "metal": 0.7,
+   "tris": 72,
+   "isNew": false
+  }
+ ]
+}

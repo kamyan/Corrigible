@@ -5,7 +5,8 @@ using UnityEngine;
 
 namespace Corrigible.Desk
 {
-    public enum DeskFont { CpRegular, CpBold, LfRegular, LfMedium, LfSemiBold, LfBold, LfExtraBold, KalamRegular, KalamBold }
+    /// <summary>Sıra serileştirilir (tema rolleri int tutar): yeni font yalnız sona eklenir.</summary>
+    public enum DeskFont { CpRegular, CpBold, LfRegular, LfMedium, LfSemiBold, LfBold, LfExtraBold, KalamRegular, KalamBold, StencilExtraBold }
 
     public enum ShadowPreset { None, S1, S2, S3, S5 }
 
@@ -36,6 +37,8 @@ namespace Corrigible.Desk
 
         [Header("Fontlar")]
         public TMP_FontAsset cpRegular, cpBold, lfRegular, lfMedium, lfSemiBold, lfBold, lfExtraBold, kalamRegular, kalamBold;
+        [Tooltip("Big Shoulders Stencil Display 800 (Revizyon 3 şablon yazıları); yoksa CP Bold.")]
+        public TMP_FontAsset stencilExtraBold;
         public TMP_StyleSheet styleSheet;
 
         [Header("Gölgeler (x, y aşağı pozitif)")]
@@ -105,6 +108,7 @@ namespace Corrigible.Desk
             DeskFont.LfRegular => lfRegular, DeskFont.LfMedium => lfMedium, DeskFont.LfSemiBold => lfSemiBold,
             DeskFont.LfBold => lfBold, DeskFont.LfExtraBold => lfExtraBold,
             DeskFont.KalamRegular => kalamRegular, DeskFont.KalamBold => kalamBold,
+            DeskFont.StencilExtraBold => stencilExtraBold != null ? stencilExtraBold : cpBold,
             _ => lfRegular,
         };
 

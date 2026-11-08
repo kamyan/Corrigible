@@ -1,0 +1,79 @@
+{
+ "name": "Bridge_weu",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi (y = 0); köprü doğu boşluğunda (x 0,47–0,53), +x boyunca; kuzey için y ekseninde −90°",
+ "note": "Komşu iki rack sırası arasında üst tava devam eder (taban detailA, raylar ve basamak detailB); aradaki derz gövde renginde, yüzlerden 12 mm geride. Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti.",
+ "listName": "Köprü · Banka veri merkezi (kablo tavası)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 42,
+ "trisPerPart": {
+  "Body": 42
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   0.43,
+   0.045,
+   -0.458
+  ],
+  "max": [
+   0.57,
+   0.555,
+   0.458
+  ],
+  "size": [
+   0.14,
+   0.51,
+   0.916
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_weu_wallTop",
+   "hex": "#A8A194",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 6,
+   "isNew": false
+  },
+  {
+   "key": "k_weu_wallSouth",
+   "hex": "#6F6A5F",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 6,
+   "isNew": false
+  },
+  {
+   "key": "k_weu_wallWest",
+   "hex": "#8D877A",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 6,
+   "isNew": false
+  },
+  {
+   "key": "k_weu_detailA",
+   "hex": "#5F5B53",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 6,
+   "isNew": false
+  },
+  {
+   "key": "k_weu_detailB",
+   "hex": "#A9AAA4",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 18,
+   "isNew": false
+  }
+ ]
+}

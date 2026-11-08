@@ -34,16 +34,22 @@ namespace Corrigible.Game.Raid
         [SerializeField] float downLift;
         [Tooltip("Havada süzülme genliği (dron).")]
         [SerializeField] float hover;
+        [Header("Revizyon 3: harf ve düşme ayrı menteşelerde")]
+        [SerializeField] Transform letterPivot, fallPivot, aimingArm, aimingBase;
+        [SerializeField] float turnSeconds = .2f;
+        [SerializeField] bool preserveEmission;
 
         public int X, Y;
         public string Kind;
         public Transform Body => body != null ? body : transform;
-        public Quaternion DownRotation => bodyRotation * Quaternion.Euler(downEuler);
+        public Transform FallBody => fallPivot != null ? fallPivot : Body;
+        public Quaternion DownRotation => (fallPivot != null ? fallRotation : bodyRotation) * Quaternion.Euler(downEuler);
 
         static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
         static readonly int EmissionColor = Shader.PropertyToID("_EmissionColor");
         MaterialPropertyBlock mpb;
         Color[][] baseColors;
+        Color[][] baseEmission;
         float flashUntil, flashLength = 1;
         Color flashColor;
         bool spent, down;
@@ -54,22 +60,31 @@ namespace Corrigible.Game.Raid
         Quaternion poseFrom, poseTo;
         float poseStarted;
         bool flipping;
+        Quaternion letterRotation, fallRotation;
+        Transform flipBody;
 
         void Awake()
         {
             mpb = new MaterialPropertyBlock();
             baseColors = new Color[tinted.Length][];
+            baseEmission = new Color[tinted.Length][];
             for (int i = 0; i < tinted.Length; i++)
             {
                 if (tinted[i] == null || tinted[i].sharedMaterial == null) continue;
                 var materials = tinted[i].sharedMaterials;
                 baseColors[i] = new Color[materials.Length];
+                baseEmission[i] = new Color[materials.Length];
                 for (int j = 0; j < materials.Length; j++)
+                {
                     baseColors[i][j] = materials[j] != null && materials[j].HasProperty(BaseColor) ? materials[j].GetColor(BaseColor) : Color.white;
+                    baseEmission[i][j] = materials[j] != null && materials[j].HasProperty(EmissionColor) ? materials[j].GetColor(EmissionColor) : Color.black;
+                }
             }
             bodyRest = Body.localPosition;
             bodyRotation = Body.localRotation;
             bodyScale = Body.localScale;
+            if (letterPivot != null) letterRotation = letterPivot.localRotation;
+            if (fallPivot != null) fallRotation = fallPivot.localRotation;
             phase = Random.value * 10f;
         }
 
@@ -88,6 +103,19 @@ namespace Corrigible.Game.Raid
         public void SetSelected(bool on) { if (selectRing != null && selectRing.activeSelf != on) selectRing.SetActive(on); }
 
         public void SetPlate(bool on) { if (plateMark != null && plateMark.activeSelf != on) plateMark.SetActive(on); }
+
+        /// <summary>Kaynak kolunun modeldeki −Z burnunu hedefe yöneltir; yalnız görünümü değiştirir.</summary>
+        public bool AimAt(Vector3 target)
+        {
+            if (aimingArm == null) return false;
+            var direction = target - aimingArm.position; direction.y=0;
+            if (direction.sqrMagnitude > .0001f)
+            {
+                aimingArm.rotation = Quaternion.LookRotation(-direction,Vector3.up);
+                if(aimingBase)aimingBase.rotation=aimingArm.rotation;
+            }
+            return true;
+        }
 
         public void SetSpent(bool on)
         {
@@ -121,10 +149,13 @@ namespace Corrigible.Game.Raid
             Body.localScale = bodyScale;
             Body.localPosition = bodyRest + (down ? Vector3.up * downLift : Vector3.zero);
             if (spentMark != null) spentMark.SetActive(spent && !down);
-            var rotation = down ? DownRotation : bodyRotation * (standee && spent ? Quaternion.Euler(0, 180, 0) : Quaternion.identity);
+            flipBody = letterPivot != null ? letterPivot : Body;
+            if (fallPivot != null) fallPivot.localRotation = down ? DownRotation : fallRotation;
+            var rest = letterPivot != null ? letterRotation : bodyRotation;
+            var rotation = fallPivot == null && down ? DownRotation : rest * (standee && spent && !down ? Quaternion.Euler(0, 180, 0) : Quaternion.identity);
             flipping = animate;
-            if (animate) { poseFrom = Body.localRotation; poseTo = rotation; poseStarted = Time.time; }
-            else Body.localRotation = rotation;
+            if (animate) { poseFrom = flipBody.localRotation; poseTo = rotation; poseStarted = Time.time; }
+            else flipBody.localRotation = rotation;
             if (stateLabel != null)
             {
                 stateLabel.gameObject.SetActive(down || spent);
@@ -141,8 +172,8 @@ namespace Corrigible.Game.Raid
         {
             if (flipping)
             {
-                float t = Mathf.Clamp01((Time.time - poseStarted) / 0.20f);
-                Body.localRotation = Quaternion.Slerp(poseFrom, poseTo, t * t * (3 - 2 * t));
+                float t = Mathf.Clamp01((Time.time - poseStarted) / Mathf.Max(.01f,turnSeconds));
+                flipBody.localRotation = Quaternion.Slerp(poseFrom, poseTo, t * t * (3 - 2 * t));
                 if (t >= 1) flipping = false;
             }
             if (hover > 0 && !down) Body.localPosition = bodyRest + Vector3.up * (Mathf.Sin((Time.time + phase) * 2.2f) * hover);
@@ -161,7 +192,7 @@ namespace Corrigible.Game.Raid
                     tinted[i].GetPropertyBlock(mpb, j);
                     var rest = spent && !down ? Color.Lerp(baseColors[i][j], spentTint, spentBlend) : baseColors[i][j];
                     mpb.SetColor(BaseColor, Color.Lerp(rest, flashColor, f * 0.65f));
-                    mpb.SetColor(EmissionColor, Color.black);
+                    mpb.SetColor(EmissionColor, preserveEmission ? baseEmission[i][j] : Color.black);
                     tinted[i].SetPropertyBlock(mpb, j);
                 }
             }

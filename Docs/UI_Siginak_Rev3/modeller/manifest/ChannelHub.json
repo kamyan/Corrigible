@@ -1,0 +1,86 @@
+{
+ "name": "ChannelHub",
+ "family": "raidcivil",
+ "budget": "raid",
+ "origin": "karenin merkezi, pafta yüzeyi (y = 0)",
+ "note": "Karenin ortasındaki oluk zemini (0,62 kare) ve üstünde döküm bağlantı kutusu (Junction: uçta, köşede, T ve dörtlü kavşakta görünür; düz geçişte gizlenir). Kanal işareti değişmez: zemine gömülü koyu oluk, kenarda turuncu-siyah şerit, görünür bakır. Hepsi ≤ 0,048 yüksek, gölgesiz, çarpıştırıcısız; kit yalnız oluk ve kuyu malzemesini değiştirir.",
+ "listName": "Kanal göbeği ve bağlantı kutusu",
+ "parts": [
+  {
+   "name": "Junction",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0,
+    0
+   ],
+   "pivotLocal": [
+    0,
+    0,
+    0
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "görünürlük: düz geçişte ve tek karede gizli; uç, köşe, T, dörtlü kavşakta açık"
+  }
+ ],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 52,
+ "trisPerPart": {
+  "Body": 2,
+  "Junction": 50
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.31,
+   0.003,
+   -0.31
+  ],
+  "max": [
+   0.31,
+   0.0478,
+   0.31
+  ],
+  "size": [
+   0.62,
+   0.0448,
+   0.62
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_trench",
+   "hex": "#2A2622",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 2,
+   "isNew": false
+  },
+  {
+   "key": "rc_junction",
+   "hex": "#69665C",
+   "rough": 0.55,
+   "metal": 0.3,
+   "note": "kanal bağlantı kutusu (döküm, boyalı)",
+   "tris": 42,
+   "isNew": true
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 8,
+   "isNew": true
+  }
+ ]
+}

@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 namespace Corrigible.EditorTools
 {
     /// <summary>
-    /// Çeviri tablosunun bakımı. Kaynak metinleri iki yerden toplar: koddaki <c>Loc.T/F/N("...")</c> sabitleri ve prefab'lardaki
+    /// Çeviri tablosunun bakımı. Kaynak metinleri iki yerden toplar: koddaki <c>Loc.T/F/N("...")</c> ve <c>DeskLoc.Ctx</c> sabitleri ve prefab'lardaki
     /// ve sahnelerdeki sabit yazıların <c>DeskLocText</c> bileşenleri (kaynak alanı) ile odadaki <c>DeskTarget</c> etiketleri.
     /// Tabloyu (<c>Resources/Localization/strings.txt</c>) bunlara göre günceller: yeni metinler boş çeviriyle eklenir,
     /// artık kullanılmayanlar dosyanın sonunda saklanır (çeviri kaybolmasın).
@@ -24,6 +24,9 @@ namespace Corrigible.EditorTools
         const string UnusedMarker = "# --- Kullanılmayan çeviriler (koddan silinmiş metinler; gerekirse geri alınır) ---";
 
         static readonly Regex LocCall = new Regex(@"Loc\.[TFN]\(\s*""((?:[^""\\]|\\.)*)""", RegexOptions.Compiled);
+
+        /// <summary>Bağlamlı çeviri çağrısı (<c>DeskLoc.Ctx</c>): 1. grup bağlam, 2. grup kaynak; tablo anahtarı <c>kaynak@@bağlam</c>.</summary>
+        static readonly Regex CtxCall = new Regex(@"\.Ctx\(\s*""((?:[^""\\]|\\.)*)""\s*,\s*""((?:[^""\\]|\\.)*)""", RegexOptions.Compiled);
 
         /// <summary>Kaynak metin → nerede geçtiği (ilk görüldüğü sırayla).</summary>
         public static Dictionary<string, List<string>> CollectSources()
@@ -40,7 +43,9 @@ namespace Corrigible.EditorTools
             {
                 var path = file.Replace('\\', '/');
                 if (path.Contains("/Editor/") || path.Contains("/Tests/")) continue;
-                foreach (Match m in LocCall.Matches(File.ReadAllText(path))) Add(UnescapeCs(m.Groups[1].Value), path);
+                var code = File.ReadAllText(path);
+                foreach (Match m in LocCall.Matches(code)) Add(UnescapeCs(m.Groups[1].Value), path);
+                foreach (Match m in CtxCall.Matches(code)) Add(UnescapeCs(m.Groups[2].Value) + "@@" + UnescapeCs(m.Groups[1].Value), path);
             }
 
             foreach (var guid in AssetDatabase.FindAssets("t:Prefab", new[] { Root }))

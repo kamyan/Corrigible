@@ -1,0 +1,105 @@
+{
+ "name": "PipeRun",
+ "family": "walls",
+ "budget": "big",
+ "origin": "iki borunun ortası, zemin (y = 0), duvar düzlemi z = 0",
+ "note": "Yerden tavana iki boyalı çelik boru (Ø76 ve Ø60), manşonlar, zeminde rozetler, iki kat duvar kelepçesi (U profil + bilezik). Ø76 boruda flanşlı sürgülü vana: döküm gövde, kapak, mil ve dökme demir el çarkı (Ø150, kırmızı DEĞİL: kırmızı = YZ). Vana altındaki pas izi duvar çıkartması.",
+ "listName": "Borular ve vana",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    1.08,
+    0,
+    2.3
+   ],
+   "yaw": 0,
+   "note": "arka duvar, sağ (rev2 borular x 1,03 / 1,13)"
+  }
+ ],
+ "tris": 2534,
+ "trisPerPart": {
+  "Body": 2534
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.127,
+   0,
+   -0.271
+  ],
+  "max": [
+   0.12,
+   2.5,
+   0
+  ],
+  "size": [
+   0.247,
+   2.5,
+   0.271
+  ]
+ },
+ "materials": [
+  {
+   "key": "pipe",
+   "hex": "#3F4A3D",
+   "rough": 0.55,
+   "metal": 0.2,
+   "tris": 424,
+   "isNew": false
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 144,
+   "isNew": true
+  },
+  {
+   "key": "castIron",
+   "hex": "#3A3B37",
+   "rough": 0.72,
+   "metal": 0.6,
+   "note": "dış çark, döküm kaide",
+   "tris": 1040,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 376,
+   "isNew": true
+  },
+  {
+   "key": "paintOliveDark",
+   "hex": "#353B30",
+   "rough": 0.62,
+   "metal": 0.05,
+   "note": "kapı kanadı, kasa, çerçeve",
+   "tris": 548,
+   "isNew": true
+  },
+  {
+   "key": "dripStain",
+   "hex": "#3A3326",
+   "rough": 0.9,
+   "metal": 0,
+   "alpha": 0.45,
+   "tex": "tx_drip: pas ve su akıntısı (dikey, alfa)",
+   "note": "vana altındaki duvar lekesi",
+   "tris": 2,
+   "isNew": true
+  }
+ ]
+}

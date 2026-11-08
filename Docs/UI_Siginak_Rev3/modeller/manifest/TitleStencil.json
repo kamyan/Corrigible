@@ -1,0 +1,80 @@
+{
+ "name": "TitleStencil",
+ "family": "menu",
+ "budget": "small",
+ "origin": "yazı alanının alt kenar ortası (duvarda)",
+ "note": "Kapı lentosunun üstünde betona doğrudan boyanmış şablon yazı: TR “SON ŞALTER”, EN “CORRIGIBLE” (TMP, Big Shoulders Stencil 800). Tabela değil: altında boya taşması ve damlalar (doku), iki uçta yarım kalmış tehlike köşeli bandı.",
+ "listName": "Başlık şablonu",
+ "parts": [],
+ "texts": [
+  {
+   "name": "TXT_Title",
+   "part": "Body",
+   "center": [
+    0,
+    0.12,
+    -0.0025
+   ],
+   "size": [
+    1.16,
+    0.2
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "wallStencil (Big Shoulders Stencil 800)",
+   "font": "Courier Prime 700",
+   "capMm": 165,
+   "align": "center",
+   "sample": "SON ŞALTER",
+   "sampleEn": "CORRIGIBLE",
+   "note": ""
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 24,
+ "trisPerPart": {
+  "Body": 24
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.64,
+   -0.08,
+   -0.0025
+  ],
+  "max": [
+   0.64,
+   -0.02,
+   -0.0005
+  ],
+  "size": [
+   1.28,
+   0.06,
+   0.002
+  ]
+ },
+ "materials": [
+  {
+   "key": "paintHazard",
+   "hex": "#E3B23C",
+   "rough": 0.6,
+   "metal": 0,
+   "tex": "tx_hazard (45° şerit #1E1B16, 1024×128)",
+   "note": "tehlike bandı",
+   "tris": 24,
+   "isNew": true
+  }
+ ]
+}

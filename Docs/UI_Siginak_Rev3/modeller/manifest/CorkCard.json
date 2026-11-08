@@ -1,0 +1,329 @@
+{
+ "name": "CorkCard",
+ "family": "walls",
+ "budget": "small",
+ "origin": "kartın arka yüzü alt kenar ortası (mantar yüzeyi z = 0)",
+ "note": "Çizgili karton kart 0,15 × 0,095, üstte mavi raptiye. TMP: bölge adı (iki satır), damga içinde ÖZGÜR ve vardiya (V.011). Mavi halka damga = sprite (kelimesiz). K1’de adlar okunmaz (2,5 mm/px): bilgi kart sayısı ve damga rengiyle taşınır.",
+ "listName": "Bölge kartı",
+ "parts": [],
+ "texts": [
+  {
+   "name": "TXT_Region",
+   "part": "Body",
+   "center": [
+    -0.014,
+    0.056,
+    -0.0009
+   ],
+   "size": [
+    0.118,
+    0.05
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "mapLabelTex",
+   "font": "Courier Prime 700",
+   "capMm": 12,
+   "align": "left",
+   "sample": "BATI / AVRUPA",
+   "sampleEn": "WESTERN / EUROPE",
+   "note": "iki satır"
+  },
+  {
+   "name": "TXT_Stamp",
+   "part": "Body",
+   "center": [
+    0.044,
+    0.031,
+    -0.001
+   ],
+   "size": [
+    0.044,
+    0.011
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0.12186934340514748,
+    0.992546151641322,
+    0
+   ],
+   "role": "stamp",
+   "font": "Courier Prime 700",
+   "capMm": 6,
+   "align": "center",
+   "sample": "ÖZGÜR",
+   "sampleEn": "FREE",
+   "note": "mavi #1A4789, damga halkasının bandında"
+  },
+  {
+   "name": "TXT_Shift",
+   "part": "Body",
+   "center": [
+    0.045,
+    0.018,
+    -0.001
+   ],
+   "size": [
+    0.04,
+    0.009
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0.12186934340514748,
+    0.992546151641322,
+    0
+   ],
+   "role": "stamp",
+   "font": "Courier Prime 700",
+   "capMm": 5,
+   "align": "center",
+   "sample": "V.011",
+   "sampleEn": "V.011",
+   "note": ""
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -0.86,
+    1.3425,
+    2.2834999999999996
+   ],
+   "yaw": 0,
+   "euler": [
+    0,
+    0,
+    -2.4000000000000004
+   ],
+   "note": "Slot_00 · kurtarılan bölge sırasıyla; z dönüşü euler’de"
+  },
+  {
+   "pos": [
+    -0.688,
+    1.3425,
+    2.2834999999999996
+   ],
+   "yaw": 0,
+   "euler": [
+    0,
+    0,
+    -0.8
+   ],
+   "note": "Slot_01 · kurtarılan bölge sırasıyla; z dönüşü euler’de"
+  },
+  {
+   "pos": [
+    -0.516,
+    1.3425,
+    2.2834999999999996
+   ],
+   "yaw": 0,
+   "euler": [
+    0,
+    0,
+    0.8
+   ],
+   "note": "Slot_02 · kurtarılan bölge sırasıyla; z dönüşü euler’de"
+  },
+  {
+   "pos": [
+    -0.344,
+    1.3425,
+    2.2834999999999996
+   ],
+   "yaw": 0,
+   "euler": [
+    0,
+    0,
+    2.4000000000000004
+   ],
+   "note": "Slot_03 · kurtarılan bölge sırasıyla; z dönüşü euler’de"
+  },
+  {
+   "pos": [
+    -0.86,
+    1.2365,
+    2.2834999999999996
+   ],
+   "yaw": 0,
+   "euler": [
+    0,
+    0,
+    -1.6
+   ],
+   "note": "Slot_04 · kurtarılan bölge sırasıyla; z dönüşü euler’de"
+  },
+  {
+   "pos": [
+    -0.688,
+    1.2365,
+    2.2834999999999996
+   ],
+   "yaw": 0,
+   "euler": [
+    0,
+    0,
+    0
+   ],
+   "note": "Slot_05 · kurtarılan bölge sırasıyla; z dönüşü euler’de"
+  },
+  {
+   "pos": [
+    -0.516,
+    1.2365,
+    2.2834999999999996
+   ],
+   "yaw": 0,
+   "euler": [
+    0,
+    0,
+    1.6
+   ],
+   "note": "Slot_06 · kurtarılan bölge sırasıyla; z dönüşü euler’de"
+  },
+  {
+   "pos": [
+    -0.344,
+    1.2365,
+    2.2834999999999996
+   ],
+   "yaw": 0,
+   "euler": [
+    0,
+    0,
+    -2.4000000000000004
+   ],
+   "note": "Slot_07 · kurtarılan bölge sırasıyla; z dönüşü euler’de"
+  },
+  {
+   "pos": [
+    -0.86,
+    1.1305,
+    2.2834999999999996
+   ],
+   "yaw": 0,
+   "euler": [
+    0,
+    0,
+    -0.8
+   ],
+   "note": "Slot_08 · kurtarılan bölge sırasıyla; z dönüşü euler’de"
+  },
+  {
+   "pos": [
+    -0.688,
+    1.1305,
+    2.2834999999999996
+   ],
+   "yaw": 0,
+   "euler": [
+    0,
+    0,
+    0.8
+   ],
+   "note": "Slot_09 · kurtarılan bölge sırasıyla; z dönüşü euler’de"
+  },
+  {
+   "pos": [
+    -0.516,
+    1.1305,
+    2.2834999999999996
+   ],
+   "yaw": 0,
+   "euler": [
+    0,
+    0,
+    2.4000000000000004
+   ],
+   "note": "Slot_10 · kurtarılan bölge sırasıyla; z dönüşü euler’de"
+  },
+  {
+   "pos": [
+    -0.344,
+    1.1305,
+    2.2834999999999996
+   ],
+   "yaw": 0,
+   "euler": [
+    0,
+    0,
+    -1.6
+   ],
+   "note": "Slot_11 · kurtarılan bölge sırasıyla; z dönüşü euler’de"
+  }
+ ],
+ "tris": 78,
+ "trisPerPart": {
+  "Body": 78
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.075,
+   0,
+   -0.0094
+  ],
+  "max": [
+   0.075,
+   0.095,
+   0
+  ],
+  "size": [
+   0.15,
+   0.095,
+   0.0094
+  ]
+ },
+ "materials": [
+  {
+   "key": "corkCard",
+   "hex": "#F3ECD8",
+   "rough": 0.9,
+   "metal": 0,
+   "tex": "tx_corkCard: ince mavi satır çizgileri, kırmızı kenar çizgisi (kelime yok)",
+   "note": "pano kartı kâğıdı",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "pinBlue",
+   "hex": "#1A4789",
+   "rough": 0.4,
+   "metal": 0,
+   "tris": 64,
+   "isNew": false
+  },
+  {
+   "key": "stampBlue",
+   "hex": "#1A4789",
+   "rough": 0.8,
+   "metal": 0,
+   "alpha": 0.9,
+   "tex": "tx_stampRing 256²: çift halka + yazı bandı (kelimesiz, alfa); kelime TMP",
+   "note": "ÖZGÜR damgası halkası",
+   "tris": 2,
+   "isNew": true
+  }
+ ]
+}

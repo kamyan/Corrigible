@@ -18,7 +18,7 @@ namespace Corrigible.Desk.Tests
     /// </summary>
     public class SiginakBriefingTests
     {
-        static Simulation NewLiberation(double fon = 100) => Simulation.NewGame(731, new Balance { startFon = fon });
+        static Simulation NewLiberation(double fon = 100) => LegacySimulation.NewGame(731, new Balance { startFon = fon });
 
         [Test]
         public void Build_Modes_NoSave_Save_Armed_Reading()
@@ -39,7 +39,7 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(Loc.T("BAŞLA · ONAY"), d.Action, "kayıt varken ikinci basış onaydır");
             var (status, message) = BriefingBuilder.Warning(save);
             Assert.AreEqual(Loc.T("KAYIT VAR"), status);
-            Assert.AreEqual(Loc.F("V.{0:000} kaydının üstüne yazılır · onay için yeniden bas", 14), message);
+            Assert.AreEqual(Loc.F("V.{0:000} kaydının üstüne yazılır · yeniden bas", 14), message);
 
             d = BriefingBuilder.Build(true, save, false);
             Assert.IsTrue(d.Reading);
@@ -160,6 +160,9 @@ namespace Corrigible.Desk.Tests
                 Assert.AreSame(briefing, new SerializedObject(desk).FindProperty("briefing").objectReferenceValue);
                 var shift = roots.SelectMany(g => g.GetComponentsInChildren<SiginakShift>(true)).Single();
                 Assert.AreSame(briefing, new SerializedObject(shift).FindProperty("briefing").objectReferenceValue);
+                // R19: EVRAK'tan okunan emir belgesi açıkken vardiya şalteri kilitli (“belge açık”, PLAN §1.9)
+                var close = roots.SelectMany(g => g.GetComponentsInChildren<SiginakShiftClose>(true)).Single();
+                Assert.AreSame(briefing, new SerializedObject(close).FindProperty("briefing").objectReferenceValue);
 
                 var view = (BriefingView)so.FindProperty("view").objectReferenceValue;
                 Assert.IsFalse(view.gameObject.activeSelf, "belge kapalı başlar");

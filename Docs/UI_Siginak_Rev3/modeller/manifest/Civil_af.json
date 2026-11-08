@@ -1,0 +1,117 @@
+{
+ "name": "Civil_af",
+ "family": "raidcivil",
+ "budget": "raid",
+ "origin": "karenin merkezi, pafta yüzeyi (y = 0)",
+ "note": "Cevher hangarı: sevk telsizi konsolu (batı yüz): koyu ön panelde büyük beyaz ayar kadranı; yanında krem gövdeye asılı kara ahize. Önce sivil okunur: krem gövde, mavi bant, tepede mavi halka + çarpı (Ø 0,32); ekipman batı/güney yüzde ikinci siluet. Gövde ekipmana yer açmak için +x +z yönüne 0,03 kaydırıldı (tamamı 0,66 kare içinde).",
+ "listName": "Sivil sunucu · Afrika: sevk telsizi",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 322,
+ "trisPerPart": {
+  "Body": 322
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.324,
+   0,
+   -0.27
+  ],
+  "max": [
+   0.33,
+   0.643,
+   0.33
+  ],
+  "size": [
+   0.654,
+   0.643,
+   0.6
+  ]
+ },
+ "materials": [
+  {
+   "key": "rc_plinth",
+   "hex": "#4A463F",
+   "rough": 0.85,
+   "metal": 0,
+   "note": "sivil gövdenin koyu kaidesi (kâğıttan ayırır)",
+   "tris": 8,
+   "isNew": true
+  },
+  {
+   "key": "r_civil_top",
+   "hex": "#ECE6D6",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 14,
+   "isNew": false
+  },
+  {
+   "key": "r_civil_west",
+   "hex": "#D5CDBB",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "r_civil_south",
+   "hex": "#BAB19E",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 4,
+   "isNew": false
+  },
+  {
+   "key": "r_blue",
+   "hex": "#1A4789",
+   "rough": 0.6,
+   "metal": 0,
+   "tris": 82,
+   "isNew": false
+  },
+  {
+   "key": "rc_deviceDark",
+   "hex": "#35342F",
+   "rough": 0.5,
+   "metal": 0.1,
+   "note": "cihazın koyu ön paneli (telsiz, telefon, tezgâh)",
+   "tris": 42,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 66,
+   "isNew": true
+  },
+  {
+   "key": "dialCream",
+   "hex": "#ECE3C8",
+   "rough": 0.6,
+   "metal": 0,
+   "tex": "tx_dials (ölçek ve rakam, kelime yok)",
+   "note": "kadran zemini",
+   "tris": 14,
+   "isNew": true
+  },
+  {
+   "key": "bakeliteBlack",
+   "hex": "#181412",
+   "rough": 0.34,
+   "metal": 0,
+   "note": "düğme, kol başı",
+   "tris": 80,
+   "isNew": true
+  }
+ ]
+}

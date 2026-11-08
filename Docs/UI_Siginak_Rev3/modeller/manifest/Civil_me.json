@@ -1,0 +1,125 @@
+{
+ "name": "Civil_me",
+ "family": "raidcivil",
+ "budget": "raid",
+ "origin": "karenin merkezi, pafta yüzeyi (y = 0)",
+ "note": "Körfez rafinerisi: gaz analiz dolabı (batı yüz): dolap kapağında iki büyük yuvarlak gösterge ve örnek panjuru; tepenin kuzeybatı köşesinde şapkalı havalandırma bacası. Önce sivil okunur: krem gövde, mavi bant, tepede mavi halka + çarpı (Ø 0,32); ekipman batı/güney yüzde ikinci siluet. Gövde ekipmana yer açmak için +x +z yönüne 0,03 kaydırıldı (tamamı 0,66 kare içinde).",
+ "listName": "Sivil sunucu · Orta Doğu: gaz analiz dolabı",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 364,
+ "trisPerPart": {
+  "Body": 364
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.312,
+   0,
+   -0.27
+  ],
+  "max": [
+   0.33,
+   0.696,
+   0.33
+  ],
+  "size": [
+   0.642,
+   0.696,
+   0.6
+  ]
+ },
+ "materials": [
+  {
+   "key": "rc_plinth",
+   "hex": "#4A463F",
+   "rough": 0.85,
+   "metal": 0,
+   "note": "sivil gövdenin koyu kaidesi (kâğıttan ayırır)",
+   "tris": 8,
+   "isNew": true
+  },
+  {
+   "key": "r_civil_top",
+   "hex": "#ECE6D6",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 14,
+   "isNew": false
+  },
+  {
+   "key": "r_civil_west",
+   "hex": "#D5CDBB",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "r_civil_south",
+   "hex": "#BAB19E",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 4,
+   "isNew": false
+  },
+  {
+   "key": "r_blue",
+   "hex": "#1A4789",
+   "rough": 0.6,
+   "metal": 0,
+   "tris": 82,
+   "isNew": false
+  },
+  {
+   "key": "rc_device",
+   "hex": "#5F5C54",
+   "rough": 0.5,
+   "metal": 0.12,
+   "note": "sivil cihaz gövdesi: çekiç boya sıcak gri (ATM yüzü, konsol, pano)",
+   "tris": 66,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 96,
+   "isNew": true
+  },
+  {
+   "key": "dialCream",
+   "hex": "#ECE3C8",
+   "rough": 0.6,
+   "metal": 0,
+   "tex": "tx_dials (ölçek ve rakam, kelime yok)",
+   "note": "kadran zemini",
+   "tris": 24,
+   "isNew": true
+  },
+  {
+   "key": "rc_vent",
+   "hex": "#3B3731",
+   "rough": 0.85,
+   "metal": 0,
+   "note": "havalandırma yarıklarının koyu zemini",
+   "tris": 10,
+   "isNew": true
+  },
+  {
+   "key": "galv",
+   "hex": "#70756E",
+   "rough": 0.5,
+   "metal": 0.45,
+   "tris": 48,
+   "isNew": false
+  }
+ ]
+}

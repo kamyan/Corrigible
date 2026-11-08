@@ -1,0 +1,600 @@
+{
+ "_": "Ek 2026-11-05 için elle yazılan token bölümleri (tokens13.mjs okur). Pano yerleşimi (board.layoutMm) ve kart ölçüleri models/board.js’den otomatik gelir.",
+ "siginak": {
+  "board": {
+   "_": "★1.3 ek · ayaklı planlama panosu (PlanningBoard): eski raf ve maketin yerinde. Kelimesiz baskılı mıknatıslı çelik yüz; cepler 2 mm kabarık pirinç çerçeveli. Ölçüler mm, pano iç alanının sol üst köşesinden (x sağa, y aşağı); dünya konumu Unity metre.",
+   "place": {
+    "pos": [
+     -1.62,
+     0,
+     1.7
+    ],
+    "yawDeg": -48,
+    "note": "ön yüz masanın sol önüne dönük; K1’de sağ yarısı (Boşta, dosya, hurda) görünür"
+   },
+   "frameMm": [
+    1196,
+    636
+   ],
+   "innerMm": [
+    1160,
+    600
+   ],
+   "bboxMm": [
+    1320,
+    1822,
+    489
+   ],
+   "panelBottomY": 0.975,
+   "readability": {
+    "k4PxPerMm": 1.52,
+    "cardNamePx": 21,
+    "valuePx": [
+     14,
+     17
+    ],
+    "rule": "1920 × 1080’de kart adı ≥ 18 px, değerler ≥ 14 px"
+   },
+   "lamp": {
+    "type": "Spot",
+    "color": "#FFE2B8",
+    "angleDeg": 58,
+    "penumbra": 0.9,
+    "shadows": true,
+    "preview": {
+     "K1": 2.4,
+     "K4": 2.6
+    },
+    "note": "pano lambası; K4’te tek gölgeli ışık"
+   },
+   "parts": {
+    "BackSign": "MASAYA DÖN emaye levhası: üzerine gelince 4 mm öne; tık = masaya dön (Esc ve sağ tık da)",
+    "Flap": "iki yüzlü plaka, üst kenardan menteşeli: 0° PLAN AÇIK (krem), 180° PLAN KİLİTLİ (kırmızı)",
+    "LockRod": "görünür = plan kilitli (baskın emri ya da devir fişi basıldı); etiketin 2. satırı nedeni yazar",
+    "HurdaLid": "eşya kartı bırakılınca 28° kalkar ve kapanır (1 eşya → 1 metal)",
+    "Lamp": "lampGlassWarm ↔ roomBulbOff"
+   },
+   "deck": {
+    "fanFromTop": true,
+    "collectFromBottom": true,
+    "perCardMs": 320,
+    "gapMs": 70,
+    "handStepMm": "min(82, 636 / (n − 1))",
+    "takeOne": "bir kart alınınca diğerleri desteye döner"
+   },
+   "plates": {
+    "tr": {
+     "tek": "TEKNİSYEN",
+     "emp": "EMP UZMANI",
+     "ana": "ANALİST",
+     "uret": "ÜRETİM EKİBİ",
+     "mutf": "MUTFAK",
+     "egit": "EĞİTİM",
+     "bosta": "BOŞTA / DİNLENME",
+     "order": "ÜRETİM · İŞ EMRİ",
+     "dosya": "KİŞİ DOSYASI",
+     "ham": "DEPO · HAMMADDE",
+     "kit": "DEPO · KULLANILABİLİR KİTLER",
+     "hurda": "HURDA · 1 eşya → 1 metal",
+     "back": "◄ MASAYA DÖN",
+     "title": "VARDİYA PLANI · SIĞINAK 07",
+     "field": "SAHA · BASKIN KADROSU",
+     "flapA": "PLAN AÇIK",
+     "flapB": "PLAN KİLİTLİ",
+     "lockTag": [
+      "PLAN KİLİTLİ",
+      "baskın emri / devir fişi basıldı"
+     ],
+     "header": "V.{n} · erzak {r} ({d}) · {a}/{c} kişi"
+    },
+    "en": {
+     "tek": "TECHNICIAN",
+     "emp": "EMP SPECIALIST",
+     "ana": "ANALYST",
+     "uret": "PRODUCTION",
+     "mutf": "KITCHEN",
+     "egit": "TRAINING",
+     "bosta": "IDLE / REST",
+     "order": "PRODUCTION · WORK ORDER",
+     "dosya": "PERSONAL FILE",
+     "ham": "STORE · RAW MATERIALS",
+     "kit": "STORE · AVAILABLE KITS",
+     "hurda": "SCRAP · 1 item → 1 metal",
+     "back": "◄ BACK TO DESK",
+     "title": "SHIFT PLAN · SHELTER 07",
+     "field": "FIELD · RAID TEAM",
+     "flapA": "PLAN OPEN",
+     "flapB": "PLAN LOCKED",
+     "lockTag": [
+      "PLAN LOCKED",
+      "raid order / handover slip printed"
+     ],
+     "header": "S.{n} · rations {r} ({d}) · {a}/{c} people"
+    }
+   },
+   "limits": {
+    "people": 10,
+    "areas": 7,
+    "rawMaterials": 4,
+    "itemCards": 32,
+    "rationCap": 60
+   }
+  },
+  "cards": {
+   "_": "★1.3 ek · kart ailesi. Hepsi aynı ince kalınlık (0,6 mm karton) + panoda Ø 10 × 3,5 mm mıknatıs düğmesi (elde ve defterde gizli). Yüz dokusu çalışma anında çizilir (8 px/mm; kişi 640 × 960), arka yüz ortak tx_card_back (KYGA · 07).",
+   "person": {
+    "nameMm": 14,
+    "jobMm": 9.5,
+    "statLabelMm": 9.5,
+    "statValueMm": 11.5,
+    "stripMm": 9.2,
+    "portraitMm": [
+     44,
+     48
+    ],
+    "portraitAtMm": [
+     5,
+     29
+    ],
+    "statsRowYmm": 80,
+    "stripYmm": 104.5,
+    "masteryPipRmm": 1.9,
+    "fonts": {
+     "name": [
+      "Courier Prime",
+      700
+     ],
+     "job": [
+      "Libre Franklin",
+      600
+     ],
+     "values": [
+      "Courier Prime",
+      700
+     ],
+     "strip": [
+      "Libre Franklin",
+      600
+     ]
+    },
+    "selected": "#E3B23C"
+   },
+   "item": {
+    "identityBandMm": 14,
+    "bandAt": "alt kenar",
+    "slotPattern": {
+     "kit": "düz",
+     "armor": "taralı",
+     "aid": "noktalı"
+    },
+    "nameMm": 9.4
+   },
+   "material": {
+    "freeNumberMm": 22,
+    "pipDiaMm": 3.4,
+    "maxPips": 20,
+    "reservedRing": "#9A1E14",
+    "states": [
+     "STOK",
+     "BOŞ",
+     "AYRI"
+    ]
+   },
+   "recipe": {
+    "progressBoxes": "çok vardiyalı tarifte vardiya yazısından sonra",
+    "spreads": 3,
+    "perSpread": 2
+   },
+   "itemStack": {
+    "offsetMm": 14,
+    "order": [
+     "kit",
+     "zirh",
+     "yardim"
+    ],
+    "note": "teçhizat kartları kişinin arkasına sıkışır, 14 mm alt şeritleri okunur"
+   },
+   "states": {
+    "hurt": {
+     "tr": "YARALI",
+     "en": "INJURED",
+     "look": "portrenin sol üstünde yarı saydam bant (r_tape); CAN kırmızı"
+    },
+    "bed": {
+     "tr": "YATIYOR",
+     "en": "BEDRIDDEN",
+     "look": "portrede mavi damga; şeritte süre; yalnız Boşta’ya bırakılır"
+    },
+    "restricted": {
+     "tr": "KISITLI",
+     "en": "RESTRICTED",
+     "look": "sağ üstte kırmızı köşe; saha, üretim, dış temas cepleri sönük"
+    },
+    "review": {
+     "tr": "İNCELE",
+     "en": "REVIEW",
+     "look": "üst kenardan taşan kırmızı bayrak (Flag parçası); robot bilgisi taşımaz"
+    },
+    "lost": {
+     "tr": "KAYIP · V.{n}",
+     "en": "LOST · S.{n}",
+     "look": "portre kararır, sağ üstte siyah yas köşesi; kart KAYIPLAR zarfına geçer"
+    }
+   },
+   "hoverLiftMm": 4,
+   "heldLiftMm": 10,
+   "labels": {
+    "tr": {
+     "stats": [
+      "CAN",
+      "HAR",
+      "GÜÇ"
+     ],
+     "skills": [
+      "T",
+      "E",
+      "A",
+      "Ü",
+      "M"
+     ],
+     "slot": [
+      "KİT",
+      "ZIRH",
+      "YARDIMCI"
+     ]
+    },
+    "en": {
+     "stats": [
+      "HP",
+      "MOVE",
+      "POWER"
+     ],
+     "skills": [
+      "T",
+      "E",
+      "A",
+      "P",
+      "K"
+     ],
+     "slot": [
+      "KIT",
+      "ARMOUR",
+      "AID"
+     ]
+    },
+    "names": "kişi adları çevrilmez"
+   },
+   "portraits": {
+    "style": "mürekkep kimlik çizimi, tarama desenleri",
+    "cropViewBox": [
+     36,
+     26,
+     228,
+     250
+    ],
+    "source": "threejs/r3/portraits.js (p_cem … p_rauf)"
+   }
+  },
+  "recipeBook": {
+   "_": "★1.3 ek · tarif defteri (RecipeBook, A6 ciltli, 105 × 148 × 18 mm): panonun deposunda kancada asılı.",
+   "cover": "Cover y 0…−178°",
+   "leaf": "Leaf y 0…−176°",
+   "spreads": "tarif_acilim_1..3 (TR/EN, 280 × 200 mm doku, sol/sağ yarı)",
+   "readPose": "öne gelir, kadrajın altına kayar; ekranda düğme yok (sekmeler ve kapak)"
+  },
+  "personFile": {
+   "_": "★1.3 ek · kişi dosyası (PersonFolder, manila 130 × 180 mm): tel sepette; tık = öne gelir ve açılır.",
+   "cover": "Cover y 0…−176°",
+   "pages": [
+    "İNCELE",
+    "ERİŞİM",
+    "TAHLİYE"
+   ],
+   "nameOnCover": "seçili kişinin adı (TMP, çevrilmez)"
+  },
+  "shiftClose": {
+   "_": "★1.3 ek · vardiya kapanışı (R19, K6): brifteki kapaklı vardiya şalteri değişmeden döner; sol yanındaki fiş ağzından devir fişi çıkar, EVRAK’a sürüklenir.",
+   "states": {
+    "ready": {
+     "cover": 0,
+     "lever": 35,
+     "lamp": "readyLamp",
+     "plate2": {
+      "tr": "kapağı kaldır",
+      "en": "lift the cover"
+     }
+    },
+    "cover": {
+     "cover": 112,
+     "lever": 35,
+     "lamp": "readyLamp",
+     "plate2": {
+      "tr": "kolu indir",
+      "en": "pull the lever"
+     },
+     "autoCloseS": 4
+    },
+    "waiting": {
+     "cover": 112,
+     "lever": -35,
+     "lamp": "readyLampOff",
+     "clickable": false,
+     "plate2": {
+      "tr": "fişi EVRAK’a koy",
+      "en": "file the slip in EVRAK"
+     },
+     "plate2Color": "kırmızı"
+    },
+    "locked": {
+     "cover": 0,
+     "lever": 35,
+     "lamp": "readyLampOff",
+     "band": "LockBand",
+     "plate2": {
+      "tr": "baskın sürüyor",
+      "en": "raid in progress"
+     }
+    }
+   },
+   "plate": {
+    "line1": {
+     "tr": "VARDİYAYI BİTİR",
+     "en": "END SHIFT",
+     "capMm": 11.5
+    },
+    "line2CapMm": 6.4
+   },
+   "slip": {
+    "model": "HandoverSlip",
+    "sizeMm": [
+     100,
+     150
+    ],
+    "texture": "devir_fisi_v001 / v031 (TR, EN), R10 ailesi",
+    "switchLocalStart": [
+     -0.18,
+     0.14,
+     0.015
+    ],
+    "switchLocalExit": [
+     -0.3,
+     0.14,
+     0.015
+    ],
+    "travelMm": 120,
+    "exitS": 0.35,
+    "toHandS": 0.25,
+    "toTrayS": 0.2,
+    "dropTarget": "PaperTray (EVRAK)",
+    "wrongDrop": "EVRAK dışına bırakılan fiş dile döner"
+   },
+   "slipMouth": {
+    "model": "SlipMouth",
+    "lamp": "jewelAmberOff ↔ jewelAmberOn (fiş bekliyor)",
+    "plate": {
+     "tr": "DEVİR FİŞİ",
+     "en": "HANDOVER"
+    }
+   },
+   "afterDrop": {
+    "darkS": 0.2,
+    "darkSplit": "0,1 s kapanma + 0,1 s açılma (arada Step)",
+    "telex": {
+     "tr": "VARDİYA DEVREDİLDİ",
+     "en": "SHIFT HANDED OVER"
+    },
+    "countersS": 0.4,
+    "telexPrintS": 1.2
+   },
+   "evrakHighlight": {
+    "type": "Point",
+    "color": "#FFB44A",
+    "intensity": 0.55,
+    "range": 0.35,
+    "shadows": false
+   }
+  },
+  "admission": {
+   "_": "★1.3 ek · kapıda belgeli kabul (R17, K8A/K8G/K8R). Aday görünmez; belgeler evrak gözünden tezgâha düşer. Robot gizli kalır; yeni son: SON KİŞİ.",
+   "instruction": {
+    "versions": {
+     "v1": "başlangıç",
+     "v2": "4. vardiya",
+     "v3": "8. vardiya"
+    },
+    "holder": "talimat şeridi 80 × 210 mm, kayan çizgi işaretçisi + yakut"
+   },
+   "checks": {
+    "karsilastirma": "büyüteç + talimat şeridi",
+    "gorusme": "interkom",
+    "soguk": "buğu camı (kanatta, gözetleme deliğinin yanında)",
+    "disKayit": "GİDEN · TELSİZ yuvası + talep defteri"
+   },
+   "decisions": {
+    "tr": [
+     "KABUL · TAM ERİŞİM",
+     "KISITLI KABUL",
+     "RET",
+     "DIŞARIDAN YARDIM"
+    ],
+    "en": [
+     "ADMIT · FULL ACCESS",
+     "RESTRICTED ADMISSION",
+     "REJECT",
+     "OUTSIDE AID"
+    ],
+    "tool": "damga (geri dönülmez)",
+    "disabled": {
+     "admitAndRestricted": "kapasite 10/10",
+     "aid": "erzak < 2"
+    }
+   },
+   "supervisor": {
+    "proposal": "Boşta destesinin üst kartı; Boşta boşsa defter kilitlenir: “gözetmen yok”",
+    "status": "açık karar"
+   },
+   "motion": {
+    "counterLeafS": 0.4,
+    "lampS": 0.08,
+    "drawerS": 0.35,
+    "docDropS": 0.2,
+    "markerS": 0.2,
+    "slipS": 0.35,
+    "intercomCrackleS": 0.2,
+    "transcriptPerCharS": 0.03,
+    "toK8GS": 0.45,
+    "glassCoverS": 0.2,
+    "fogInS": 0.6,
+    "fogOutS": 2.5,
+    "stampLiftS": 0.1,
+    "stampPressS": 0.12,
+    "admitWheelS": 0.5,
+    "admitLeafS": 0.8,
+    "aidDrawerS": 0.35
+   },
+   "paperAlbedo": 0.8
+  },
+  "cameras.K4": {
+   "_": "★1.3 ek: K4 artık panoya bağlı (maket kalktı).",
+   "anchor": "PlanningBoard.Cam_K4",
+   "localPos": [
+    0,
+    1.293,
+    -0.98
+   ],
+   "localTarget": [
+    0,
+    1.293,
+    -0.014
+   ],
+   "fovV": 42.5,
+   "pxPerMm": 1.52,
+   "fromK1S": 0.6,
+   "backS": 0.5
+  },
+  "cameras.K6": {
+   "_": "★1.3 ek: vardiya şalteri yakın pozu (R19).",
+   "pos": [
+    0.4,
+    1.28,
+    0.42
+   ],
+   "target": [
+    0.665,
+    0.82,
+    1.08
+   ],
+   "fovV": 42
+  },
+  "cameras.K8A": {
+   "_": "★1.3 ek: kabul tezgâhı (R17).",
+   "pos": [
+    1.44,
+    1.69,
+    -0.27
+   ],
+   "target": [
+    2.08,
+    1.0,
+    -0.27
+   ],
+   "fovV": 47
+  },
+  "cameras.K8G": {
+   "_": "★1.3 ek: buğu camı.",
+   "pos": [
+    1.62,
+    1.52,
+    0.4
+   ],
+   "target": [
+    2.21,
+    1.45,
+    0.62
+   ],
+   "fovV": 30
+  },
+  "cameras.K8R": {
+   "_": "★1.3 ek: belge okuma (tepeden), tezgâh yerelinde.",
+   "counterLocalPos": [
+    0,
+    0.4,
+    -0.33
+   ],
+   "counterLocalTarget": [
+    0,
+    0,
+    -0.23
+   ],
+   "fovV": 40
+  },
+  "motion.board": {
+   "_": "★1.3 ek · pano süreleri (saniye).",
+   "toK4S": 0.6,
+   "backToDeskS": 0.5,
+   "cardLiftS": 0.08,
+   "swapS": 0.32,
+   "returnArcS": 0.25,
+   "settleS": 0.06,
+   "deckPerCardS": 0.32,
+   "deckGapS": 0.07,
+   "lockRodS": 0.4,
+   "flapS": 0.3,
+   "chalkRewriteS": 0.2,
+   "itemTuckS": 0.15,
+   "chipOutS": 0.1,
+   "hurdaLidS": 0.15,
+   "bookForwardS": 0.35,
+   "bookCoverS": 0.25,
+   "pageTurnS": 0.25,
+   "bookCloseS": 0.3,
+   "recipeLiftS": 0.1,
+   "productToStoreS": 0.3,
+   "denyShakeMm": 2,
+   "denyFlashS": 0.2
+  },
+  "motion.shiftClose": {
+   "_": "★1.3 ek · vardiya kapanışı süreleri (saniye).",
+   "coverS": 0.25,
+   "coverCloseS": 0.3,
+   "leverS": 0.3,
+   "slipExitS": 0.35,
+   "slipToHandS": 0.25,
+   "slipToTrayS": 0.2,
+   "darkS": 0.2,
+   "countersS": 0.4,
+   "telexPrintS": 1.2
+  }
+ },
+ "removed": {
+  "_": "Ek 11-05 ile kalkanlar: değer _was_1_3’te kalır, yeni değer “KALDIRILDI” işaretidir.",
+  "siginak": {
+   "layout3d.idleTray": "BOŞTA tepsisi ve askılar → panodaki Boşta destesi (board.deck)",
+   "layout3d.clipboard": "özet panosu → panonun başlık arduvazı ve iş emri",
+   "layout3d.clipboardStand": "özet panosu ayağı",
+   "layout3d.depotSlate": "maketin DEPO arduvazı → panonun deposu",
+   "layout3d.roomCard": "oda kartları → görev cepleri",
+   "type.roomCardNameTex": "oda kartı",
+   "type.roomCardLineTex": "oda kartı",
+   "type.summaryLabel": "özet panosu",
+   "type.summaryValue": "özet panosu",
+   "type.summaryNote": "özet panosu",
+   "space.roomCardTex": "oda kartı",
+   "motion.roomSelectS": "maket odası seçimi → motion.board",
+   "motion.pawnToRoomS": "maket piyonu → kart sürükleme",
+   "motion.upgradeDimS": "oda yükseltmeleri kalktı",
+   "motion.summaryStaggerS": "özet panosu",
+   "colors.depot": "maketin DEPO bandı",
+   "colors.door.visitorCloth": "ziyaretçi silüetleri kalktı (aday görünmez)",
+   "colors.door.visitorCopy": "ziyaretçi silüetleri kalktı",
+   "colors.door.fatalRoomLight": "ölümcül ziyaretçi kalktı; robot gizli",
+   "lights.roomBulb": "maketin oda ampulleri",
+   "materials.visitor": "ziyaretçi silüetleri",
+   "materials.visitorCopy": "ziyaretçi silüetleri",
+   "materials.depotSlate": "maketin DEPO arduvazı",
+   "materialsExtra.roomFloor": "maket odaları",
+   "materialsExtra.roomFloorOff": "maket odaları",
+   "materialsExtra.roomWallOff": "maket odaları"
+  }
+ }
+}

@@ -1,0 +1,79 @@
+{
+ "name": "ReliefIso_in",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Dört çekmeceli uzun dosya dolabı (0,68): güneyde çekmeceler (kulp + etiket yeri, detailB), batıda dolaba dayalı çerçeveli bölme paneli (detailB çerçeve, detailA kumaş). Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi.",
+ "listName": "Ayrık blok · Çağrı merkezi (uzun dosya dolabı)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 199,
+ "trisPerPart": {
+  "Body": 199
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.38,
+   0,
+   -0.366
+  ],
+  "max": [
+   0.355,
+   0.555,
+   0.355
+  ],
+  "size": [
+   0.735,
+   0.555,
+   0.721
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_in_detailA",
+   "hex": "#74717F",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 23,
+   "isNew": false
+  },
+  {
+   "key": "k_in_wallWest",
+   "hex": "#8E8A92",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 27,
+   "isNew": false
+  },
+  {
+   "key": "k_in_wallSouth",
+   "hex": "#726E76",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 17,
+   "isNew": false
+  },
+  {
+   "key": "k_in_wallTop",
+   "hex": "#A19CA5",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 35,
+   "isNew": false
+  },
+  {
+   "key": "k_in_detailB",
+   "hex": "#B6B3AB",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 97,
+   "isNew": false
+  }
+ ]
+}

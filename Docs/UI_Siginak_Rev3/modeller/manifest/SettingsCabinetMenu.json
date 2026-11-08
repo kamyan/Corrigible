@@ -1,0 +1,525 @@
+{
+ "name": "SettingsCabinetMenu",
+ "family": "cabinet",
+ "budget": "big",
+ "origin": "arka yüz, alt kenar ortası (duvar düzlemi z = 0)",
+ "note": "Menüdeki örnek: MENÜYE DÖN kolunun yerinde vidalı kör kapak; kanat −120° açılır. Preslenmiş çelik hat dolabı 0,68 × 0,70 × 0,22. Kanat sağdan menteşeli, solda çeyrek tur mandal. Kanatta büyük “AYARLAR” şablonu ve Ø 130 emaye dişli rozeti (K1’den okunur). İçeride bakalit pano; ampul üst ön kenardaki siperin arkasında, panoyu sıyırarak aydınlatır (eski sıcak leke yok).",
+ "listName": "Ayarlar dolabı (menü hâli)",
+ "parts": [
+  {
+   "name": "Bulb",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.6509999999999999,
+    -0.16999999999999998
+   ],
+   "pivotLocal": [
+    0,
+    0.6509999999999999,
+    -0.16999999999999998
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "lampGlassWarm (kanat açıkken) / sönük; ışık: spot, gölgesiz"
+  },
+  {
+   "name": "Leaf",
+   "parent": "Body",
+   "pivotModel": [
+    0.33,
+    0.35,
+    -0.218
+   ],
+   "pivotLocal": [
+    0.33,
+    0.35,
+    -0.218
+   ],
+   "kind": "rotate",
+   "axis": "y",
+   "range": [
+    0,
+    -120
+   ],
+   "rest": 0,
+   "note": "menüde −120°"
+  },
+  {
+   "name": "Latch",
+   "parent": "Leaf",
+   "pivotModel": [
+    -0.27,
+    0.35,
+    -0.23700000000000002
+   ],
+   "pivotLocal": [
+    -0.6000000000000001,
+    0,
+    -0.019000000000000017
+   ],
+   "kind": "rotate",
+   "axis": "z",
+   "range": [
+    0,
+    90
+   ],
+   "rest": 0,
+   "note": "çeyrek tur; açılırken 0,15 s"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Stencil",
+   "part": "Leaf",
+   "center": [
+    -0.04,
+    0.57,
+    -0.2305
+   ],
+   "size": [
+    0.5,
+    0.075
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "wallStencil (Big Shoulders Stencil, krem #D8D2BE)",
+   "font": "Courier Prime 700",
+   "capMm": 62,
+   "align": "center",
+   "sample": "AYARLAR",
+   "sampleEn": "SETTINGS",
+   "note": ""
+  },
+  {
+   "name": "TXT_LeafPlate",
+   "part": "Leaf",
+   "center": [
+    -0.06,
+    0.25,
+    -0.23420000000000002
+   ],
+   "size": [
+    0.2,
+    0.022
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 12,
+   "align": "center",
+   "sample": "SES · DİL",
+   "sampleEn": "SOUND · LANGUAGE",
+   "note": ""
+  }
+ ],
+ "anchors": [
+  {
+   "name": "Gauge0",
+   "part": "Body",
+   "pos": [
+    -0.235,
+    0.585,
+    -0.14500000000000002
+   ],
+   "note": "CabGauge"
+  },
+  {
+   "name": "Slider0",
+   "part": "Body",
+   "pos": [
+    -0.235,
+    0.37,
+    -0.14500000000000002
+   ],
+   "note": "CabSlider (ölçek solda)"
+  },
+  {
+   "name": "Counter0",
+   "part": "Body",
+   "pos": [
+    -0.235,
+    0.165,
+    -0.14500000000000002
+   ],
+   "note": "CabCounter"
+  },
+  {
+   "name": "Plate0",
+   "part": "Body",
+   "pos": [
+    -0.235,
+    0.115,
+    -0.14500000000000002
+   ],
+   "note": "CabPlate “GENEL”"
+  },
+  {
+   "name": "Gauge1",
+   "part": "Body",
+   "pos": [
+    -0.11999999999999998,
+    0.585,
+    -0.14500000000000002
+   ],
+   "note": "CabGauge"
+  },
+  {
+   "name": "Slider1",
+   "part": "Body",
+   "pos": [
+    -0.11999999999999998,
+    0.37,
+    -0.14500000000000002
+   ],
+   "note": "CabSlider (ölçek solda)"
+  },
+  {
+   "name": "Counter1",
+   "part": "Body",
+   "pos": [
+    -0.11999999999999998,
+    0.165,
+    -0.14500000000000002
+   ],
+   "note": "CabCounter"
+  },
+  {
+   "name": "Plate1",
+   "part": "Body",
+   "pos": [
+    -0.11999999999999998,
+    0.115,
+    -0.14500000000000002
+   ],
+   "note": "CabPlate “MÜZİK”"
+  },
+  {
+   "name": "Gauge2",
+   "part": "Body",
+   "pos": [
+    -0.024999999999999984,
+    0.585,
+    -0.14500000000000002
+   ],
+   "note": "CabGauge"
+  },
+  {
+   "name": "Slider2",
+   "part": "Body",
+   "pos": [
+    -0.024999999999999984,
+    0.37,
+    -0.14500000000000002
+   ],
+   "note": "CabSlider (ölçek solda)"
+  },
+  {
+   "name": "Counter2",
+   "part": "Body",
+   "pos": [
+    -0.024999999999999984,
+    0.165,
+    -0.14500000000000002
+   ],
+   "note": "CabCounter"
+  },
+  {
+   "name": "Plate2",
+   "part": "Body",
+   "pos": [
+    -0.024999999999999984,
+    0.115,
+    -0.14500000000000002
+   ],
+   "note": "CabPlate “ORTAM”"
+  },
+  {
+   "name": "Gauge3",
+   "part": "Body",
+   "pos": [
+    0.07000000000000005,
+    0.585,
+    -0.14500000000000002
+   ],
+   "note": "CabGauge"
+  },
+  {
+   "name": "Slider3",
+   "part": "Body",
+   "pos": [
+    0.07000000000000005,
+    0.37,
+    -0.14500000000000002
+   ],
+   "note": "CabSlider (ölçek solda)"
+  },
+  {
+   "name": "Counter3",
+   "part": "Body",
+   "pos": [
+    0.07000000000000005,
+    0.165,
+    -0.14500000000000002
+   ],
+   "note": "CabCounter"
+  },
+  {
+   "name": "Plate3",
+   "part": "Body",
+   "pos": [
+    0.07000000000000005,
+    0.115,
+    -0.14500000000000002
+   ],
+   "note": "CabPlate “EFEKT”"
+  },
+  {
+   "name": "ToggleSES",
+   "part": "Body",
+   "pos": [
+    0.205,
+    0.555,
+    -0.14500000000000002
+   ],
+   "note": "CabToggle + CabLamp üstte"
+  },
+  {
+   "name": "PlateSES",
+   "part": "Body",
+   "pos": [
+    0.205,
+    0.47,
+    -0.14500000000000002
+   ],
+   "note": "CabPlate “SES”"
+  },
+  {
+   "name": "RotaryDIL",
+   "part": "Body",
+   "pos": [
+    0.205,
+    0.33,
+    -0.14500000000000002
+   ],
+   "note": "CabRotary"
+  },
+  {
+   "name": "PlateDIL",
+   "part": "Body",
+   "pos": [
+    0.205,
+    0.255,
+    -0.14500000000000002
+   ],
+   "note": "CabPlate “DİL · LANGUAGE” (sabit, iki dilli)"
+  },
+  {
+   "name": "MenuLever",
+   "part": "Body",
+   "pos": [
+    0.205,
+    0.14,
+    -0.14500000000000002
+   ],
+   "note": "menüde CabBlank (kör kapak)"
+  },
+  {
+   "name": "PlateMENU",
+   "part": "Body",
+   "pos": [
+    0.205,
+    0.075,
+    -0.14500000000000002
+   ],
+   "note": "CabPlate “MENÜYE DÖN”"
+  },
+  {
+   "name": "K9",
+   "part": "Body",
+   "pos": [
+    0,
+    0.35,
+    -0.86
+   ],
+   "note": "K9 kamera çapası (dikey FOV 45°), panoya bakar"
+  },
+  {
+   "name": "Hover",
+   "part": "Body",
+   "pos": [
+    0,
+    0.35,
+    -0.3
+   ],
+   "note": "K1’den üzerine gelince etiket"
+  }
+ ],
+ "lights": [
+  {
+   "name": "InnerSpot",
+   "part": "Body",
+   "pos": [
+    0,
+    0.6399999999999999,
+    -0.16999999999999998
+   ],
+   "type": "spot",
+   "color": "#FFD8A0",
+   "shadows": false,
+   "note": "aşağı ve geriye 35°, açı 70°, menzil 0,8 m; şiddet cabinet.bulbIntensity 0,3"
+  }
+ ],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    2.2,
+    1.02,
+    -0.92
+   ],
+   "yaw": -90,
+   "note": "menü: kapı duvarında, en solda"
+  }
+ ],
+ "tris": 2504,
+ "trisPerPart": {
+  "Body": 1236,
+  "Bulb": 84,
+  "Leaf": 1060,
+  "Latch": 124
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.385,
+   -0.006,
+   -0.26
+  ],
+  "max": [
+   0.385,
+   0.727,
+   0
+  ],
+  "size": [
+   0.77,
+   0.733,
+   0.26
+  ]
+ },
+ "materials": [
+  {
+   "key": "paintOliveDark",
+   "hex": "#353B30",
+   "rough": 0.62,
+   "metal": 0.05,
+   "note": "kapı kanadı, kasa, çerçeve",
+   "tris": 836,
+   "isNew": true
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 640,
+   "isNew": true
+  },
+  {
+   "key": "cabPanel",
+   "hex": "#2A1D14",
+   "rough": 0.4,
+   "metal": 0,
+   "note": "dolap iç panosu (kahverengi bakalit levha)",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 256,
+   "isNew": true
+  },
+  {
+   "key": "bakeliteBlack",
+   "hex": "#181412",
+   "rough": 0.34,
+   "metal": 0,
+   "note": "düğme, kol başı",
+   "tris": 92,
+   "isNew": true
+  },
+  {
+   "key": "lampGlassWarm",
+   "hex": "#FFF0C8",
+   "rough": 0.3,
+   "metal": 0,
+   "emissive": "#FFD27A",
+   "ei": 2.5,
+   "note": "oda ampulü",
+   "tris": 84,
+   "isNew": true
+  },
+  {
+   "key": "rubberGasket",
+   "hex": "#141413",
+   "rough": 0.85,
+   "metal": 0,
+   "note": "conta",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 300,
+   "isNew": false
+  },
+  {
+   "key": "enamelBadge",
+   "hex": "#E8E2CF",
+   "rough": 0.3,
+   "metal": 0,
+   "tex": "tx_icon_gear (dişli simgesi, mürekkep #1E1B16)",
+   "note": "emaye rozet",
+   "tris": 128,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 80,
+   "isNew": true
+  }
+ ]
+}

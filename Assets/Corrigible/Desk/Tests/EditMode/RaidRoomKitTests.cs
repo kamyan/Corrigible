@@ -248,7 +248,7 @@ namespace Corrigible.Desk.Tests
         public void KitTokens_AreInTheRaidThemeAndListedAsNew13()
         {
             var root = JObject.Parse(File.ReadAllText(SadeThemeSetup.RaidTokensPath));
-            Assert.AreEqual("1.2", (string)root["meta"]["version"], "sürüm değişmedi; yeni gruplar _new_1_3'te");
+            Assert.AreEqual("1.3", (string)root["meta"]["version"], "Revizyon 3 paketi (1.3); kit grupları _new_1_3'te");
             var listed = ((JArray)root["_new_1_3"]).Select(t => (string)t).ToList();
             foreach (var id in RaidKitTextureBaker.KitIds)
             {
@@ -344,7 +344,7 @@ namespace Corrigible.Desk.Tests
                 Assert.IsNotNull(kit, id);
                 var prefab = kit.wallRubble;
                 Assert.IsNotNull(prefab, id + ": wallRubble atanmış");
-                Assert.AreEqual(RubbleDir + "/WallRubble_" + id + ".prefab", AssetDatabase.GetAssetPath(prefab), id);
+                Assert.AreEqual(Rev3ModelImporter.PrefabsDir + "/raidkit/Rubble_" + id + ".prefab", AssetDatabase.GetAssetPath(prefab), id);
                 Assert.AreSame(prefab, lib.BreachRubble(kit, out var scale), id + ": tahtanın gedik dalı kitin molozunu kullanır");
                 Assert.AreEqual(Vector3.one, scale, id + ": kendi ölçüsünde");
 
@@ -353,7 +353,7 @@ namespace Corrigible.Desk.Tests
                 CollectionAssert.IsEmpty(prefab.GetComponentsInChildren<Collider>(true), id + ": çarpıştırıcı yok (tıklama karoya düşer)");
                 Assert.IsNull(prefab.GetComponentInChildren<RaidPiece>(true), id + ": RaidPiece yok (süs)");
                 var r = renderers[0];
-                Assert.AreEqual(UnityEngine.Rendering.ShadowCastingMode.On, r.shadowCastingMode, id + ": gölge atar (zemine oturur)");
+                Assert.AreNotEqual(UnityEngine.Rendering.ShadowCastingMode.Off, r.shadowCastingMode, id + ": gölge atar (zemine oturur)");
                 var mesh = r.GetComponent<MeshFilter>().sharedMesh;
                 Assert.IsNotNull(mesh, id);
                 Assert.IsTrue(meshes.Add(mesh), id + ": kendi meshi");
@@ -364,11 +364,12 @@ namespace Corrigible.Desk.Tests
                 foreach (var v in mesh.vertices)
                 {
                     var p = m.MultiplyPoint3x4(v);
-                    maxY = Mathf.Max(maxY, p.y); minY = Mathf.Min(minY, p.y); maxR = Mathf.Max(maxR, new Vector2(p.x, p.z).magnitude);
+                    maxY = Mathf.Max(maxY, p.y); minY = Mathf.Min(minY, p.y); maxR = Mathf.Max(maxR, Mathf.Max(Mathf.Abs(p.x),Mathf.Abs(p.z)));
                 }
                 if (maxY > 0.25f) failures.Add($"{id}: yükseklik {maxY:F3} (≤ 0,25)");
                 if (minY < -0.005f) failures.Add($"{id}: zeminin altında {minY:F3}");
-                if (maxR > 0.45f) failures.Add($"{id}: yatay yarıçap {maxR:F3} (≤ 0,45: her yaw'da karenin içinde)");
+                if (maxR > 0.47f) failures.Add($"{id}: yatay uzanım {maxR:F3} (≤ 0,47; model 90° adımlarla döner)");
+                foreach(int tile in Enumerable.Range(0,64))Assert.AreEqual(0,lib.BreachRubbleYaw(kit,tile)%90,id+": dikdörtgen ayak izi karenin içinde kalır");
 
                 // Malzemeler: alt mesh başına bir; kitin duvar malzemeleri ve tek vurgu
                 var mats = r.sharedMaterials;
@@ -376,27 +377,16 @@ namespace Corrigible.Desk.Tests
                 for (int s = 0; s < mesh.subMeshCount; s++)
                     if (mesh.GetSubMesh(s).indexCount == 0) failures.Add($"{id}: alt mesh {s} boş");
                 CollectionAssert.AllItemsAreNotNull(mats, id);
-                CollectionAssert.IsSubsetOf(new[] { kit.wallWest, kit.wallSouth, kit.wallTop }, mats, id + ": kitin duvar malzemeleri");
-                var accents = mats.Except(new[] { kit.wallWest, kit.wallSouth, kit.wallTop, kit.columnWest, kit.columnSouth }).Distinct().ToList();
-                Assert.AreEqual(1, accents.Count, id + ": tek vurgu malzemesi: " + string.Join(", ", accents.Select(a => a.name)));
-                StringAssert.StartsWith(RaidKitTextureBaker.OutRoot + "/" + id + "/", AssetDatabase.GetAssetPath(accents[0]), id + ": vurgu kitin klasöründe");
-                foreach (var mat in mats.Distinct())
+                var model=prefab.GetComponent<Rev3Model>();Assert.IsNotNull(model,id);Assert.AreEqual("Rubble_"+id,model.ModelName);
+                // R12'nin kendi model paleti kullanılır; Rev2'nin üç yüz + tek vurgu şartı artık geçerli değil.
+                foreach(var mat in mats.Distinct())
                 {
-                    string at = id + " " + mat.name;
-                    Color.RGBToHSV(mat.GetColor("_BaseColor"), out float h, out float sat, out _);
-                    if ((h < 0.04f || h > 0.96f) && sat > 0.5f) failures.Add(at + ": kırmızı (yalnız YZ)");
-                    if (mat.shader.name != "Universal Render Pipeline/Lit") failures.Add(at + ": URP Lit değil");
-                    if (mat.GetFloat("_Smoothness") > 0.15f + 1e-4f) failures.Add(at + ": parlak");
-                    if (mat.GetFloat("_Metallic") > 1e-4f) failures.Add(at + ": metalik");
-                    if (mat.IsKeywordEnabled("_EMISSION") || mat.GetColor("_EmissionColor").maxColorComponent > 1e-3f) failures.Add(at + ": ışıma");
+                    Assert.AreEqual("Universal Render Pipeline/Lit",mat.shader.name,id);
+                    Assert.IsFalse(mat.IsKeywordEnabled("_EMISSION"),id+": moloz ışımaz");
+                    Color.RGBToHSV(mat.GetColor("_BaseColor"),out float h,out float sat,out _);
+                    Assert.IsFalse((h<.04f||h>.96f)&&sat>.5f,id+": YZ kırmızısı kullanılmaz");
                 }
-                var accent = accents[0];
-                Assert.IsNull(accent.GetTexture("_BaseMap"), id + ": vurgu düz renk");
-                var c = accent.GetColor("_BaseColor");
-                foreach (var (name, color) in RaidKitGate.Wood)
-                    if (RaidKitGate.DeltaE(c, color) < RaidKitGate.WoodDeltaEMin) failures.Add($"{id} vurgu: {name} ΔE {RaidKitGate.DeltaE(c, color):F1} (≥ 15)");
-                foreach (var (name, color) in RaidKitGate.Reserved)
-                    if (RaidKitGate.DeltaE(c, color) < RaidKitGate.ReservedDeltaEMin) failures.Add($"{id} vurgu: {name} ΔE {RaidKitGate.DeltaE(c, color):F1} (≥ 20)");
+
             }
             Assert.IsEmpty(failures, string.Join("\n", failures));
         }

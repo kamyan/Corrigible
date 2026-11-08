@@ -12,6 +12,7 @@ namespace Corrigible.Core
         {
             if (S.Ending != null) return Loc.T("Oyun bitti.");
             if (Shelter == null) return Loc.T("Bu kayıtta sığınak yönetimi yok.");
+            if (Board != null) return Loc.T("Oda geliştirmeleri kaldırıldı. Kişi kartlarını planlama panosunda görevlendir.");
             return null;
         }
 

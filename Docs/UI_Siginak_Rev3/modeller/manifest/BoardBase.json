@@ -1,0 +1,76 @@
+{
+ "name": "BoardBase",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "tahta ortası, kontrplak üst yüzü (y = 0); ızgaranın (0,0) köşesi (−4, 0, 4)",
+ "note": "Kontrplak 8,6 × 0,25 × 8,6, pahlı (kenar katları tx_plywood). Ozalit pafta 8,5 × 8,5 tek dörtgen, UV 0–1 (u doğuya, v kuzeye; tx_ozalit 2048², ızgara ortadaki 8 × 8), kontrplaktan 1 mm yukarıda. Alt yüz yok.",
+ "listName": "Tahta tabanı (kontrplak + ozalit pafta)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    4,
+    0,
+    -4
+   ],
+   "yaw": 0,
+   "note": "ızgara (0,0) köşesi dünya orijininde: x = sütun, z = −satır"
+  }
+ ],
+ "tris": 21,
+ "trisPerPart": {
+  "Body": 21
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -4.3,
+   -0.25,
+   -4.3
+  ],
+  "max": [
+   4.3,
+   0.001,
+   4.3
+  ],
+  "size": [
+   8.6,
+   0.251,
+   8.6
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_plyTop",
+   "hex": "#C9A36B",
+   "rough": 0.85,
+   "metal": 0,
+   "tris": 7,
+   "isNew": false
+  },
+  {
+   "key": "r_plyEdge",
+   "hex": "#93703F",
+   "rough": 0.85,
+   "metal": 0,
+   "tex": "tx_plywood (kat çizgileri)",
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "r_ozalit",
+   "hex": "#D3DBD6",
+   "rough": 0.9,
+   "metal": 0,
+   "tex": "tx_ozalit 2048 (ızgara, çerçeve, kare adları)",
+   "tris": 2,
+   "isNew": false
+  }
+ ]
+}

@@ -1,0 +1,77 @@
+{
+ "name": "EntryDoor_jk",
+ "family": "raidcivil",
+ "budget": "raid",
+ "origin": "kapı izdüşümünün ortası, kontrplak kenar payının yüzeyi (y = 0)",
+ "note": "Kalın paslanmaz kasa ve eşik rampası, açık gri emaye kanat, ortada paslanmaz çerçeveli yuvarlak koyu pencere, dikey çekme kolu. Paftanın dışında, batı kenar payında (u = −0,15) giriş satırının ortasında durur; dış yüz −x (kameranın gördüğü yüz), kapı +x yönünde tahtanın içine açılır. El çarkı yok, kırmızı/mavi/turuncu bant yok.",
+ "listName": "Giriş kapısı · çip fabrikası: yuvarlak pencereli hava kilidi kapısı",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -0.15,
+    0,
+    -3.5
+   ],
+   "yaw": 0,
+   "note": "örnek: giriş satırı 4 (r = 3) · x = u = −0,15, z = −(r + 0,5)"
+  }
+ ],
+ "tris": 290,
+ "trisPerPart": {
+  "Body": 290
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.075,
+   0,
+   -0.45
+  ],
+  "max": [
+   0.06,
+   0.58,
+   0.45
+  ],
+  "size": [
+   0.135,
+   0.58,
+   0.9
+  ]
+ },
+ "materials": [
+  {
+   "key": "rc_stainless",
+   "hex": "#9EA19C",
+   "rough": 0.32,
+   "metal": 0.6,
+   "note": "paslanmaz sac (temiz oda terminali, hava kilidi kapısı)",
+   "tris": 232,
+   "isNew": true
+  },
+  {
+   "key": "rc_cleanGrey",
+   "hex": "#B3B8B3",
+   "rough": 0.4,
+   "metal": 0.05,
+   "note": "hava kilidi kapı kanadı: açık gri emaye",
+   "tris": 42,
+   "isNew": true
+  },
+  {
+   "key": "rc_screen",
+   "hex": "#1C2623",
+   "rough": 0.12,
+   "metal": 0,
+   "note": "ekran ve pencere camı: koyu, ışımasız (baskında emisyon yok)",
+   "tris": 16,
+   "isNew": true
+  }
+ ]
+}

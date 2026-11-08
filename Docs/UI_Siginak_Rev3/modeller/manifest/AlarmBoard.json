@@ -1,0 +1,490 @@
+{
+ "name": "AlarmBoard",
+ "family": "walls",
+ "budget": "big",
+ "origin": "arka yüz alt kenar ortası (duvar düzlemi z = 0)",
+ "note": "Bakalit pano 0,50 × 0,34 × 0,045, pirinç çerçeve, vidalı pirinç başlık plakası. Öne 70 mm çıkan döküm sayaç kutusunda iki tambur (Ø120, 36°/rakam; rakam ~32 mm) ve “/10” baskısı; altında 10 kademe penceresi (Step_0…9: boş / dolu / 8+ kırmızı). Sağda krom bilezikli kırmızı kubbe lamba (alarm ≥ 8 yanar) ve üç yassı çelik kayıştan koruma kafesi (8 mm).",
+ "listName": "YZ ALARMI panosu ve lambası",
+ "parts": [
+  {
+   "name": "Wheel0",
+   "parent": "Body",
+   "pivotModel": [
+    -0.14600000000000002,
+    0.177,
+    -0.065
+   ],
+   "pivotLocal": [
+    -0.14600000000000002,
+    0.177,
+    -0.065
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    360
+   ],
+   "rest": 0,
+   "note": "onlar basamağı · 36°/rakam, 0° = “0”"
+  },
+  {
+   "name": "Wheel1",
+   "parent": "Body",
+   "pivotModel": [
+    -0.10200000000000002,
+    0.177,
+    -0.065
+   ],
+   "pivotLocal": [
+    -0.10200000000000002,
+    0.177,
+    -0.065
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    360
+   ],
+   "rest": 0,
+   "note": "birler basamağı · 36°/rakam, 0° = “0”"
+  },
+  {
+   "name": "Step_0",
+   "parent": "Body",
+   "pivotModel": [
+    -0.18,
+    0.075,
+    -0.0485
+   ],
+   "pivotLocal": [
+    -0.18,
+    0.075,
+    -0.0485
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "alarmStepOff / alarmStepOn (1–7) / alarmStepRed (8–10)"
+  },
+  {
+   "name": "Step_1",
+   "parent": "Body",
+   "pivotModel": [
+    -0.13999999999999999,
+    0.075,
+    -0.0485
+   ],
+   "pivotLocal": [
+    -0.13999999999999999,
+    0.075,
+    -0.0485
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "alarmStepOff / alarmStepOn (1–7) / alarmStepRed (8–10)"
+  },
+  {
+   "name": "Step_2",
+   "parent": "Body",
+   "pivotModel": [
+    -0.09999999999999999,
+    0.075,
+    -0.0485
+   ],
+   "pivotLocal": [
+    -0.09999999999999999,
+    0.075,
+    -0.0485
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "alarmStepOff / alarmStepOn (1–7) / alarmStepRed (8–10)"
+  },
+  {
+   "name": "Step_3",
+   "parent": "Body",
+   "pivotModel": [
+    -0.06,
+    0.075,
+    -0.0485
+   ],
+   "pivotLocal": [
+    -0.06,
+    0.075,
+    -0.0485
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "alarmStepOff / alarmStepOn (1–7) / alarmStepRed (8–10)"
+  },
+  {
+   "name": "Step_4",
+   "parent": "Body",
+   "pivotModel": [
+    -0.01999999999999999,
+    0.075,
+    -0.0485
+   ],
+   "pivotLocal": [
+    -0.01999999999999999,
+    0.075,
+    -0.0485
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "alarmStepOff / alarmStepOn (1–7) / alarmStepRed (8–10)"
+  },
+  {
+   "name": "Step_5",
+   "parent": "Body",
+   "pivotModel": [
+    0.020000000000000018,
+    0.075,
+    -0.0485
+   ],
+   "pivotLocal": [
+    0.020000000000000018,
+    0.075,
+    -0.0485
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "alarmStepOff / alarmStepOn (1–7) / alarmStepRed (8–10)"
+  },
+  {
+   "name": "Step_6",
+   "parent": "Body",
+   "pivotModel": [
+    0.06,
+    0.075,
+    -0.0485
+   ],
+   "pivotLocal": [
+    0.06,
+    0.075,
+    -0.0485
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "alarmStepOff / alarmStepOn (1–7) / alarmStepRed (8–10)"
+  },
+  {
+   "name": "Step_7",
+   "parent": "Body",
+   "pivotModel": [
+    0.10000000000000003,
+    0.075,
+    -0.0485
+   ],
+   "pivotLocal": [
+    0.10000000000000003,
+    0.075,
+    -0.0485
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "alarmStepOff / alarmStepOn (1–7) / alarmStepRed (8–10)"
+  },
+  {
+   "name": "Step_8",
+   "parent": "Body",
+   "pivotModel": [
+    0.14,
+    0.075,
+    -0.0485
+   ],
+   "pivotLocal": [
+    0.14,
+    0.075,
+    -0.0485
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "alarmStepOff / alarmStepOn (1–7) / alarmStepRed (8–10)"
+  },
+  {
+   "name": "Step_9",
+   "parent": "Body",
+   "pivotModel": [
+    0.18,
+    0.075,
+    -0.0485
+   ],
+   "pivotLocal": [
+    0.18,
+    0.075,
+    -0.0485
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "alarmStepOff / alarmStepOn (1–7) / alarmStepRed (8–10)"
+  },
+  {
+   "name": "Lamp",
+   "parent": "Body",
+   "pivotModel": [
+    0.165,
+    0.177,
+    -0.056999999999999995
+   ],
+   "pivotLocal": [
+    0.165,
+    0.177,
+    -0.056999999999999995
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "alarmLampOff ↔ alarmLampOn (alarm ≥ 8, emissive 8)"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Title",
+   "part": "Body",
+   "center": [
+    -0.07,
+    0.287,
+    -0.0482
+   ],
+   "size": [
+    0.27,
+    0.046
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "panelTitleTex",
+   "font": "Courier Prime 700",
+   "capMm": 28,
+   "align": "center",
+   "sample": "YZ ALARMI",
+   "sampleEn": "AI ALARM",
+   "note": "K1’de ~11 px; lamba ve kademe pencereleri seviyeyi uzaktan da taşır"
+  },
+  {
+   "name": "TXT_Note",
+   "part": "Body",
+   "center": [
+    -0.02,
+    0.031,
+    -0.0455
+   ],
+   "size": [
+    0.4,
+    0.02
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel (krem boya #C9A86A)",
+   "font": "Courier Prime 700",
+   "capMm": 12,
+   "align": "center",
+   "sample": "10'DA KARŞI SALDIRI",
+   "sampleEn": "COUNTER-ATTACK AT 10",
+   "note": "ikincil; K1’de ~5 px, üzerine gelince kâğıt etikette"
+  }
+ ],
+ "anchors": [],
+ "lights": [
+  {
+   "name": "AlarmGlow",
+   "part": "Lamp",
+   "pos": [
+    0.165,
+    0.177,
+    -0.155
+   ],
+   "type": "point",
+   "color": "#F0443A",
+   "shadows": false,
+   "note": "alarm ≥ 8: menzil 0,9, gölgesiz; aksi hâlde kapalı"
+  }
+ ],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    0.15,
+    1.16,
+    2.3
+   ],
+   "yaw": 0,
+   "note": "arka duvar, ortada (rev2 alarmBoard 0,15 · 1,33)"
+  }
+ ],
+ "tris": 1352,
+ "trisPerPart": {
+  "Body": 1084,
+  "Wheel0": 60,
+  "Wheel1": 60,
+  "Step_0": 2,
+  "Step_1": 2,
+  "Step_2": 2,
+  "Step_3": 2,
+  "Step_4": 2,
+  "Step_5": 2,
+  "Step_6": 2,
+  "Step_7": 2,
+  "Step_8": 2,
+  "Step_9": 2,
+  "Lamp": 128
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.25,
+   0,
+   -0.127
+  ],
+  "max": [
+   0.25,
+   0.34,
+   0
+  ],
+  "size": [
+   0.5,
+   0.34,
+   0.127
+  ]
+ },
+ "materials": [
+  {
+   "key": "bakelite",
+   "hex": "#24180F",
+   "rough": 0.38,
+   "metal": 0,
+   "tris": 86,
+   "isNew": false
+  },
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 384,
+   "isNew": false
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 144,
+   "isNew": true
+  },
+  {
+   "key": "plate",
+   "hex": "#B8955A",
+   "rough": 0.45,
+   "metal": 0.35,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "alarmFraction",
+   "hex": "#0E0906",
+   "rough": 0.6,
+   "metal": 0,
+   "tex": "tx_alarmFraction: “/10” (rakam, krem #C9A86A), UV 0–1",
+   "note": "YZ sayacı sabit baskı",
+   "tris": 2,
+   "isNew": true
+  },
+  {
+   "key": "paintBlack",
+   "hex": "#20211E",
+   "rough": 0.5,
+   "metal": 0.05,
+   "note": "lamba başlığı, ızgara",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "chrome",
+   "hex": "#C8CCCC",
+   "rough": 0.22,
+   "metal": 1,
+   "tris": 128,
+   "isNew": false
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 284,
+   "isNew": true
+  },
+  {
+   "key": "counterDrum",
+   "hex": "#1C150E",
+   "rough": 0.5,
+   "metal": 0,
+   "tex": "tx_counterDigits 128×1408: 11 hücreli şerit (0–9 + ikinci 0), krem rakam #EFDCAE koyu zeminde, hücre 0 üstte (v ekseni). Çark çevresi v = 1 → 1/11 (10 hücre, 36°/rakam); 11. hücre yalnız UV kaydırma içindir",
+   "note": "sayaç çarkı (bakalit tambur)",
+   "tris": 120,
+   "isNew": true
+  },
+  {
+   "key": "alarmStepOff",
+   "hex": "#3A2A1C",
+   "rough": 0.6,
+   "metal": 0,
+   "tex": "tx_alarmFlag (bayrak kenarı, kelime yok)",
+   "note": "alarm kademe penceresi boş",
+   "tris": 20,
+   "isNew": true
+  },
+  {
+   "key": "alarmLampOff",
+   "hex": "#4A1410",
+   "rough": 0.3,
+   "metal": 0,
+   "note": "YZ alarm lambası sönük (alarm < 8)",
+   "tris": 128,
+   "isNew": true
+  }
+ ]
+}

@@ -1,0 +1,109 @@
+{
+ "name": "CeilingBulb",
+ "family": "walls",
+ "budget": "small",
+ "origin": "tavan bağlantı noktası (y = 0 tavan düzlemi; nesne −y yönünde sarkar)",
+ "note": "Bakalit tavan rozeti, Ø7 mm lastik kablo, bakalit duy, pirinç ampul dibi, sıcak ampul (lampGlassWarm). Koruma kafesi: duy bileziğinden inen 4 yassı çelik kayış (8 mm) ve bir çember. Işık çapası ampul merkezinde (nokta, gölgeli).",
+ "listName": "Tavan ampulü",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [
+  {
+   "name": "BulbLight",
+   "part": "Body",
+   "pos": [
+    0,
+    -0.53,
+    0
+   ],
+   "type": "point",
+   "color": "#FFCF86",
+   "shadows": true,
+   "note": "tokens lights.bulb: 2700 K, URP yoğunluk 1,0, menzil 6, gölgeli"
+  }
+ ],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    0.12,
+    2.5,
+    1.7
+   ],
+   "yaw": 0,
+   "note": "tavan; ampul merkezi y ≈ 1,97 (rev2 2,02)"
+  }
+ ],
+ "tris": 780,
+ "trisPerPart": {
+  "Body": 780
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.044,
+   -0.5872,
+   -0.0442
+  ],
+  "max": [
+   0.044,
+   0,
+   0.0442
+  ],
+  "size": [
+   0.088,
+   0.5872,
+   0.0884
+  ]
+ },
+ "materials": [
+  {
+   "key": "bakelite",
+   "hex": "#24180F",
+   "rough": 0.38,
+   "metal": 0,
+   "tris": 156,
+   "isNew": false
+  },
+  {
+   "key": "rubber",
+   "hex": "#1C1C1A",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 60,
+   "isNew": true
+  },
+  {
+   "key": "lampGlassWarm",
+   "hex": "#FFF0C8",
+   "rough": 0.3,
+   "metal": 0,
+   "emissive": "#FFD27A",
+   "ei": 2.5,
+   "note": "oda ampulü",
+   "tris": 140,
+   "isNew": true
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 412,
+   "isNew": true
+  }
+ ]
+}

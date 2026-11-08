@@ -1,0 +1,63 @@
+{
+ "name": "Bridge_af",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi (y = 0); köprü doğu boşluğunda (x 0,47–0,53), +x boyunca; kuzey için y ekseninde −90°",
+ "note": "Komşu bunkerlerin üst ağızları arasında iki I kirişi (detailB); arada oluklu sac derz, yüze yakın birer oluk devam eder. Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti.",
+ "listName": "Köprü · Cevher hangarı (çelik I kirişi)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 62,
+ "trisPerPart": {
+  "Body": 62
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   0.448,
+   0.045,
+   -0.47
+  ],
+  "max": [
+   0.552,
+   0.555,
+   0.47
+  ],
+  "size": [
+   0.104,
+   0.51,
+   0.94
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_af_wallWest",
+   "hex": "#959FA6",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 20,
+   "isNew": false
+  },
+  {
+   "key": "k_af_wallSouth",
+   "hex": "#768087",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 10,
+   "isNew": false
+  },
+  {
+   "key": "k_af_detailB",
+   "hex": "#B8BEBE",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 32,
+   "isNew": false
+  }
+ ]
+}

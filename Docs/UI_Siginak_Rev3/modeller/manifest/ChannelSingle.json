@@ -1,0 +1,73 @@
+{
+ "name": "ChannelSingle",
+ "family": "raidcivil",
+ "budget": "raid",
+ "origin": "karenin merkezi, pafta yüzeyi (y = 0)",
+ "note": "Komşusuz kanal karesi: kare kuyu zemini (kitin kuyu malzemesi), dört yanda ray ve turuncu-siyah şerit çerçevesi, kuyuda sarılı bakır kablo. Bağlantı kutusu yok. Kanal işareti değişmez: zemine gömülü koyu oluk, kenarda turuncu-siyah şerit, görünür bakır. Hepsi ≤ 0,048 yüksek, gölgesiz, çarpıştırıcısız; kit yalnız oluk ve kuyu malzemesini değiştirir.",
+ "listName": "Tek kanal karesi (yalıtılmış kuyu)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 350,
+ "trisPerPart": {
+  "Body": 350
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.3725,
+   0,
+   -0.3725
+  ],
+  "max": [
+   0.3725,
+   0.046,
+   0.3725
+  ],
+  "size": [
+   0.745,
+   0.046,
+   0.745
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_trench",
+   "hex": "#2A2622",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 2,
+   "isNew": false
+  },
+  {
+   "key": "r_trenchWall",
+   "hex": "#4A433B",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 40,
+   "isNew": false
+  },
+  {
+   "key": "rc_channelHazard",
+   "hex": "#A9520A",
+   "rough": 0.7,
+   "metal": 0,
+   "tex": "tx_channel_hazard (turuncu #A9520A zemin, siyah #1E1B16 45° şerit, adım 0,10 birim; 256×32)",
+   "note": "kanal kenar şeridi: turuncu-siyah, hiçbir kitte değişmez",
+   "tris": 8,
+   "isNew": true
+  },
+  {
+   "key": "r_copper",
+   "hex": "#B8682C",
+   "rough": 0.45,
+   "metal": 0.6,
+   "tris": 300,
+   "isNew": false
+  }
+ ]
+}

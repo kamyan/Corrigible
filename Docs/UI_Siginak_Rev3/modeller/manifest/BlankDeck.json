@@ -1,0 +1,141 @@
+{
+ "name": "BlankDeck",
+ "family": "menu",
+ "budget": "small",
+ "origin": "tepsinin arka alt kenarı",
+ "note": "Açık çelik tepside 40 boş kart (kenar çizgileri dokuda) ve yaylı kıskaç. Kayıt varken 1. tık kıskacı −70° kaldırır, 4 s içinde 2. tık yeni harekâtı onaylar; süre dolarsa kapanır. Kayıt yoksa tek tık.",
+ "listName": "Boş kart destesi ve kıskacı",
+ "parts": [
+  {
+   "name": "Clip",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.178,
+    -0.006
+   ],
+   "pivotLocal": [
+    0,
+    0.178,
+    -0.006
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    -70
+   ],
+   "rest": 0,
+   "note": "1. tık: kalkar (−70°); 4 s sonra kapanır"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Deck",
+   "part": "Body",
+   "center": [
+    0,
+    0.15,
+    -0.0222
+   ],
+   "size": [
+    0.08,
+    0.012
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "slipCode → kart başlığı",
+   "font": "Courier Prime 700",
+   "capMm": 4.2,
+   "align": "center",
+   "sample": "YENİ HAREKÂT",
+   "sampleEn": "NEW CAMPAIGN",
+   "note": ""
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    2.2,
+    0.95,
+    -0.55
+   ],
+   "yaw": -90,
+   "note": "kart rafının altında (rafın DeckSeat çapası)"
+  }
+ ],
+ "tris": 348,
+ "trisPerPart": {
+  "Body": 220,
+  "Clip": 128
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.056,
+   0,
+   -0.04
+  ],
+  "max": [
+   0.056,
+   0.1818,
+   0
+  ],
+  "size": [
+   0.112,
+   0.1818,
+   0.04
+  ]
+ },
+ "materials": [
+  {
+   "key": "paintGreyGreen",
+   "hex": "#5D665C",
+   "rough": 0.58,
+   "metal": 0.05,
+   "note": "puantaj saati, kart rafı",
+   "tris": 176,
+   "isNew": true
+  },
+  {
+   "key": "cardBlank",
+   "hex": "#E6DCBE",
+   "rough": 0.9,
+   "metal": 0,
+   "note": "boş kart destesi",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 84,
+   "isNew": true
+  },
+  {
+   "key": "bakeliteBlack",
+   "hex": "#181412",
+   "rough": 0.34,
+   "metal": 0,
+   "note": "düğme, kol başı",
+   "tris": 44,
+   "isNew": true
+  }
+ ]
+}

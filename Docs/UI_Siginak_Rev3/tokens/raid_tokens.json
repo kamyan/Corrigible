@@ -1,0 +1,3002 @@
+{
+  "meta": {
+    "name": "Son Şalter · Baskın (taktik harita) tokenları",
+    "version": "1.3",
+    "date": "2026-11-05",
+    "extends": "UI_C/spec/tokens.json (renk, yazı, boşluk, gölge, bileşen ölçüleri aynen geçerli)",
+    "units": "UI: 1920×1080 referans px. 3D: dünya birimi (1 birim = 1 kare). Renkler sRGB hex; alfa 0–1.",
+    "fonts": {
+      "title_numbers_keys_labels": "Courier Prime 400/700",
+      "body_buttons": "Libre Franklin 400–800 (damga 800)",
+      "hand_only": "Kalam 400/700, en küçük 15 px",
+      "minimumPx": 11,
+      "fallbackGlyphs": "DejaVu Sans (← → ↗ ↘ ✓ ✗ ·)"
+    },
+    "changes": "1.1 (Revizyon 2): kenar panelleri ozalit + kontrplak; tur şeridi 34 px + son iki tur işareti + SON TUR damgası; evre çipi; makine türü işaretleri; can etiketi 11 px pip + tür işareti; sıra bayrağı 30 × 28 / 20 px; kilit niyeti; uzman canı altlıkta; TELSİZ fişi; sonuç kartı; EN metinleri. 1.2: üç makine türü (zırhlı dron, patlayan robot, çoğaltıcı: işaret + 3D ölçü), on bölge özelliği işareti (regionTraits), dört niyet (havan atışı, patlama, kalkan, kopyalama), kopyalama hedef halkası, zarar vermeyen niyet kuralı, etikette zırh simgesi. Yalnız ekleme: 1.1 değerlerinden hiçbiri değişmedi.",
+    "newMarker": "1.1: YENİ “_new_1_1”, DEĞİŞEN “_changed_1_1” (eski değer “_was_1_1”); yeni grupların “_” açıklamasında ★2. 1.2: YENİ “_new_1_2”; yeni grupların “_” açıklamasında ★3.",
+    "revision3": "Revizyon 3: kit rölyef modelleri, sivil ekipman, giriş kapıları, kanal parçaları, yeni 3B malzemeler. YENİ: “_new_1_3” (Claude Code’un kits.* girdileriyle birleşik); DEĞİŞEN: “_changed_1_3”."
+  },
+  "_new_1_3": [
+    "kits.weu",
+    "kits.eeu",
+    "kits.me",
+    "kits.af",
+    "kits.na",
+    "kits.ru",
+    "kits.in",
+    "kits.cn",
+    "kits.jk",
+    "kits.sea",
+    "kits.sa",
+    "kits.oc",
+    "materials3d.rk_void",
+    "materials3d.rk_dust",
+    "materials3d.rk_galv",
+    "materials3d.rk_film",
+    "materials3d.rk_pick",
+    "materials3d.rp_hazardYellow",
+    "materials3d.rp_slot",
+    "materials3d.rp_domeGlass",
+    "materials3d.rp_tick",
+    "materials3d.rp_crateOlive",
+    "materials3d.rp_crateBatten",
+    "materials3d.rp_crateInside",
+    "materials3d.rp_crateSteel",
+    "materials3d.rp_crateEmblem",
+    "materials3d.rp_tubeGrey",
+    "materials3d.rp_steelPlate",
+    "materials3d.rp_steelDark",
+    "materials3d.rp_concrete",
+    "materials3d.rp_corrugated",
+    "materials3d.rp_beam",
+    "materials3d.rp_soot",
+    "materials3d.rp_fanBlade",
+    "materials3d.rp_markWake",
+    "materials3d.rp_markWakeFill",
+    "materials3d.rp_markGhost",
+    "materials3d.rp_markGhostFill",
+    "materials3d.rp_acetateMove",
+    "materials3d.rp_acetateHit",
+    "materials3d.rc_device",
+    "materials3d.rc_deviceDark",
+    "materials3d.rc_screen",
+    "materials3d.rc_keys",
+    "materials3d.rc_plinth",
+    "materials3d.rc_vent",
+    "materials3d.rc_stainless",
+    "materials3d.rc_glass",
+    "materials3d.rc_channelHazard",
+    "materials3d.rc_junction",
+    "materials3d.rc_doorSteel",
+    "materials3d.rc_graphite",
+    "materials3d.rc_coldWhite",
+    "materials3d.rc_cleanGrey",
+    "materials3d.rc_alu",
+    "materials3d.rc_navalGrey",
+    "materials3d.rc_factoryGrey",
+    "materials3d.rc_dockGrey",
+    "materials3d.rc_mesh",
+    "models3d",
+    "kits.weu.models",
+    "kits.eeu.models",
+    "kits.me.models",
+    "kits.af.models",
+    "kits.na.models",
+    "kits.ru.models",
+    "kits.in.models",
+    "kits.cn.models",
+    "kits.jk.models",
+    "kits.sea.models",
+    "kits.sa.models",
+    "kits.oc.models"
+  ],
+  "_changed_1_3": [],
+  "_was_1_3": {},
+  "_new_1_2": [
+    "machineTypes.armorDrone",
+    "machineTypes.bomber",
+    "machineTypes.replicator",
+    "machineTypes.glyph",
+    "regionTraits",
+    "materials3d.armorDrone",
+    "materials3d.bomber",
+    "materials3d.replicator",
+    "marks.ghostWake",
+    "intents.lob",
+    "intents.blast",
+    "intents.shield",
+    "intents.clone",
+    "intents.nonHarmful",
+    "labels.hpTag.armorIcon",
+    "strings.tr2.machines",
+    "strings.tr2.regionTraits",
+    "strings.tr2.intents",
+    "strings.en.machines",
+    "strings.en.regionTraits",
+    "strings.en.intents"
+  ],
+  "_new_1_1": [
+    "panel",
+    "turnStrip",
+    "phaseChip",
+    "machineTypes",
+    "intents.lock",
+    "labels.pawnTag",
+    "labels.wake",
+    "radioSlip",
+    "abilityCard",
+    "resultCard",
+    "trainingNote",
+    "strings.en",
+    "strings.tr2"
+  ],
+  "_changed_1_1": [
+    "labels.hpTag",
+    "labels.orderFlag",
+    "intents.fire",
+    "intents.melee",
+    "layout1080.teamCards",
+    "layout1080.teamCardSelectedLiftPx",
+    "layout1080.targetForm",
+    "layout1080.endTurnButton",
+    "layout1080.undoButton",
+    "layout1080.retreatButton",
+    "layout1080.rulesCard"
+  ],
+  "_was_1_1": {
+    "labels.hpTag": {
+      "heightPx": 18,
+      "paddingPx": [
+        0,
+        4
+      ],
+      "gapPx": 3,
+      "paper": "#FBF7EC",
+      "borderPx": 1,
+      "shadow": "(1,1) #000 α .35",
+      "pip": {
+        "sizePx": 7,
+        "gapPx": 2
+      },
+      "font": "Courier Prime Bold 11 (harf 12)",
+      "colors": {
+        "aiOwned": "#9A1E14",
+        "neutral": "#463F34",
+        "team": "#1E1B16",
+        "teamDone": "kâğıt #E9DDC6",
+        "teamDown": "#9A1E14 + kâğıt #F3E3DC"
+      },
+      "placement": {
+        "object": "tepe noktasının 8 px üstü, ortalı",
+        "unit": "kart tepesinin 5 px üstü",
+        "robot": "altlığın önü (zemin, v+0.34), ortalı",
+        "unitDown": "altlığın önü"
+      }
+    },
+    "labels.orderFlag": {
+      "needlePx": [
+        2,
+        34
+      ],
+      "needle": "#5E5A54",
+      "paper": "#FBF7EC",
+      "borderPx": 1.5,
+      "heightPx": 21,
+      "font": "Courier Prime Bold 14",
+      "anchor": "robotun tepe noktası, bayrak sağa açılır"
+    },
+    "intents.fire": {
+      "strokePx": 3,
+      "arrowheadPx": 14,
+      "startZ": 0.3,
+      "endZ": 0.16,
+      "endInsetUnits": 0.4,
+      "startOffsetUnits": 0.24
+    },
+    "intents.melee": {
+      "strokePx": 4.6,
+      "arcRisePx": 26,
+      "arrowheadPx": 15,
+      "impactTicks": 3,
+      "endInsetUnits": 0.3
+    },
+    "layout1080.teamCards": [
+      [
+        16,
+        64,
+        376,
+        140
+      ],
+      [
+        16,
+        214,
+        376,
+        140
+      ],
+      [
+        16,
+        364,
+        376,
+        140
+      ]
+    ],
+    "layout1080.teamCardSelectedLiftPx": 5,
+    "layout1080.targetForm": [
+      1528,
+      64,
+      376,
+      262
+    ],
+    "layout1080.endTurnButton": [
+      1528,
+      1016,
+      376,
+      48
+    ],
+    "layout1080.undoButton": [
+      1274,
+      1018,
+      112,
+      44
+    ],
+    "layout1080.retreatButton": [
+      16,
+      1018,
+      150,
+      44
+    ],
+    "layout1080.rulesCard": {
+      "folded": [
+        16,
+        516,
+        376,
+        40
+      ],
+      "open": [
+        16,
+        516,
+        376,
+        300
+      ]
+    }
+  },
+  "camera": {
+    "projection": "orthographic",
+    "eulerDeg": [
+      35,
+      45,
+      0
+    ],
+    "pixelsPerUnitAt1080": 88.388,
+    "orthographicSizeAt1080": 6.1094,
+    "orthographicSizeFormula": "orthoSize = (Screen.height / canvasScale) / 176.777",
+    "tileDiamondPx": [
+      125,
+      71.7
+    ],
+    "diamondWidthOverHeight": 1.743,
+    "heightPxPerUnit": 72.4,
+    "visibleFaces": [
+      "top",
+      "west (ekranda sol alt)",
+      "south (ekranda sağ alt)"
+    ],
+    "gridToWorld": "x = c (doğu +), z = −r (kuzey +); kamera +x +z yönüne bakar → (0,0) ekranda sol köşe, (7,0) üst, (7,7) sağ, (0,7) alt",
+    "screenFromGrid1080": "x = 460 + (u + v) · 62.5 ; y = 528 + (v − u) · 35.85 − z · 72.41  (u = sütun, v = satır, z = yükseklik; kare merkezi u+0.5, v+0.5)",
+    "framing": {
+      "viewportUI": "x 408 … W/s − 408 ; y 50 … H/s − 78",
+      "rule": "ızgaranın ortası (4,4) görüş alanının ortasına; kamera sağ/yukarı ekseninde (dx, −dy) / 88.39 birim kaydırılır",
+      "boardCenterAt1080": [
+        960,
+        528
+      ]
+    }
+  },
+  "light": {
+    "key": {
+      "type": "directional (masa lambası)",
+      "from": "kuzeybatı, 50° yükseklik",
+      "color": "#FFE3B0",
+      "intensity": 1.15,
+      "shadows": "soft, kısa (distance 20, cascade 1)",
+      "shadowStrength": 0.55
+    },
+    "fill": {
+      "type": "directional ya da ambient",
+      "color": "#9FB4C8",
+      "intensity": 0.35,
+      "shadows": "none"
+    },
+    "shadowLook": {
+      "hex": "#1C1006",
+      "alpha": 0.3
+    },
+    "shadowDirectionPerUnitHeight": {
+      "u": 0.21,
+      "v": 0.36,
+      "screenPx": [
+        35.6,
+        5.4
+      ]
+    },
+    "lampPoolOnFelt": {
+      "hex": "#FFE0AA",
+      "alpha": 0.12
+    },
+    "vignette": {
+      "hex": "#000000",
+      "alpha": 0.26
+    },
+    "bloom": false,
+    "emissive": "yok (kırmızı mercek ve göz düz renk)"
+  },
+  "colors": {
+    "felt": "#1C372C",
+    "woodDesk": "#2A1C13",
+    "rail": "#160F0A",
+    "ozalitPaper": "#D3DBD6",
+    "ozalitLine": "#2C4C8E",
+    "ozalitLineGridAlpha": 0.42,
+    "ozalitLineFrameAlpha": 0.85,
+    "plywoodTop": "#C9A36B",
+    "plywoodWest": "#B38B57",
+    "plywoodSouth": "#93703F",
+    "plywoodPly": "#6E522C",
+    "chipboard": {
+      "top": "#A79E8D",
+      "west": "#8C8475",
+      "south": "#6E675B",
+      "edge": "#4A443B"
+    },
+    "paintNode": {
+      "top": "#3B3734",
+      "west": "#2C2826",
+      "south": "#201D1B"
+    },
+    "paintCore": {
+      "top": "#3E2B28",
+      "west": "#30211F",
+      "south": "#241817"
+    },
+    "paintBackup": {
+      "top": "#4C3733",
+      "west": "#3D2C29",
+      "south": "#2F211F"
+    },
+    "paintCivil": {
+      "top": "#ECE6D6",
+      "west": "#D5CDBB",
+      "south": "#BAB19E"
+    },
+    "paintCooling": {
+      "top": "#9DB2B1",
+      "west": "#839897",
+      "south": "#687D7C"
+    },
+    "paintCopy": {
+      "top": "#6E2D25",
+      "west": "#58241E",
+      "south": "#451B17"
+    },
+    "steelArmor": {
+      "light": "#9A9C98",
+      "mid": "#7F817E",
+      "dark": "#636562"
+    },
+    "robotGunmetal": {
+      "top": "#5B5E62",
+      "west": "#46494D",
+      "south": "#34373A",
+      "dark": "#26282B",
+      "maintTop": "#686B70",
+      "maintWest": "#4F5257",
+      "maintSouth": "#383B3F"
+    },
+    "robotAccent": "#9A1E14",
+    "robotLens": "#B8241A",
+    "acrylicRod": {
+      "hex": "#DCE6EA",
+      "alpha": 0.55
+    },
+    "standeeCard": "#FBF7EC",
+    "standeeInk": "#1E1B16",
+    "standeeRule": "#D2483F",
+    "standeeBack": "#B89D74",
+    "standeeBackInk": "#6E5536",
+    "standeeBase": "#1E1B16",
+    "tape": {
+      "hex": "#ECE2BE",
+      "alpha": 0.78
+    },
+    "trench": "#2A2622",
+    "trenchWall": "#4A433B",
+    "copper": "#B8682C",
+    "copperHighlight": "#E09A5C",
+    "hazardStripe": "#A9520A",
+    "mirror": "#C8CED0",
+    "mirrorHighlight": "#EEF2F3",
+    "sticker": "#F1E9D6",
+    "paintChip": "#9C7A50",
+    "warningSticker": "#F1C24B",
+    "fanGrille": "#3E4A4A",
+    "soot": {
+      "hex": "#2B241D",
+      "alpha": 0.45
+    },
+    "status": {
+      "threat": "#9A1E14",
+      "warning": "#854005",
+      "info": "#1A4789",
+      "good": "#24592E"
+    },
+    "intentRed": "#B8241A",
+    "highlighter": "#F5DC63",
+    "pin": {
+      "head": "#B8241A",
+      "needle": "#7E7C78"
+    }
+  },
+  "materials3d": {
+    "_rule": "URP Lit/Simple Lit, düz renk; doku yalnız belirtilen yerlerde. Pivot karenin merkezinde, zeminde (y=0). Ölçüler birim.",
+    "boardBase": {
+      "size": [
+        8.6,
+        0.25,
+        8.6
+      ],
+      "marginUnits": 0.3,
+      "texture": "tx_plywood (kenar katları) + tx_ozalit (üst)",
+      "paperInset": 0.05,
+      "smoothness": 0.1
+    },
+    "floorTile": {
+      "size": [
+        1,
+        0,
+        1
+      ],
+      "texture": "tx_ozalit (2048², 8×8 ızgara, çift çerçeve, ölçü çentikleri, giriş kapıları)"
+    },
+    "wall": {
+      "size": [
+        0.94,
+        0.55,
+        0.94
+      ],
+      "texture": "tx_chipboard (yan yüzlerde 2 katman çizgisi)",
+      "smoothness": 0.1
+    },
+    "channel": {
+      "grooveWidth": 0.6,
+      "grooveDepth": 0.14,
+      "endInset": 0.1,
+      "copperCableWidthPx": 4.2,
+      "note": "komşu kanal kareleriyle birleşir; kenarlarda turuncu çizgiler basılı"
+    },
+    "nodeCabinet": {
+      "size": [
+        0.74,
+        0.92,
+        0.74
+      ],
+      "hp": 4,
+      "armored": true,
+      "armorStripWidth": 0.07,
+      "details": "üstte kırmızı düğüm simgesi, güneyde krem etiket, batıda sunucu yuvaları"
+    },
+    "coreCabinet": {
+      "size": [
+        0.8,
+        1,
+        0.8
+      ],
+      "hp": "5 (yedek çekirdek varsa 4)",
+      "armored": true,
+      "details": "güneyde kırmızı “Ç” rozeti"
+    },
+    "backupCore": {
+      "size": [
+        0.6,
+        0.58,
+        0.6
+      ],
+      "hp": 2,
+      "armored": false,
+      "details": "kesik çizgili “Ç” + YEDEK etiketi"
+    },
+    "civilServer": {
+      "size": [
+        0.64,
+        0.66,
+        0.64
+      ],
+      "hp": 1,
+      "details": "mavi şerit, havalandırma yarıkları, tepede mavi artı"
+    },
+    "coolingUnit": {
+      "shape": "silindir 16 kenar",
+      "radius": 0.33,
+      "height": 0.42,
+      "hp": 1,
+      "explodes": "4 komşu kareye 1 hasar"
+    },
+    "copyCabinet": {
+      "size": [
+        0.72,
+        0.8,
+        0.72
+      ],
+      "hp": 2,
+      "details": "güneyde ayna paneli, tepede kopya simgesi"
+    },
+    "debris": {
+      "maxHeight": 0.36,
+      "pieces": "5–7 kutu + eğik kapak",
+      "soot": "zeminde α .45 elips r 0.44"
+    },
+    "damage": {
+      "cornerChip": 0.12,
+      "cracks": "2 yüzde boya çatlağı (ahşap rengi)",
+      "perHpLost": "1 çatlak decal'ı"
+    },
+    "standee": {
+      "base": {
+        "radius": 0.27,
+        "height": 0.07,
+        "ring": {
+          "hex": "#F1E9D6",
+          "alpha": 0.75
+        }
+      },
+      "card": {
+        "width": 0.46,
+        "height": 0.66,
+        "thicknessPx": 2.2,
+        "cornerRadiusPx": 7
+      },
+      "letter": "Courier Prime Bold 28 px @1080",
+      "states": {
+        "ready": "krem ön yüz",
+        "damaged": "sağ üst köşe yırtık + bant",
+        "done": "Y'de 180° → kraft arka yüz, kontur harf, tik",
+        "down": "geriye yatmış kart + kırmızı kalem çarpı",
+        "selected": "karede mavi çift çerçeve"
+      }
+    },
+    "drone": {
+      "base": {
+        "radius": 0.24,
+        "height": 0.05
+      },
+      "rod": [
+        0.05,
+        0.4
+      ],
+      "body": {
+        "radius": 0.2,
+        "z": [
+          0.4,
+          0.49
+        ]
+      },
+      "rotors": {
+        "radius": 0.1,
+        "offset": 0.24,
+        "z": 0.5
+      },
+      "hp": 2,
+      "move": 3
+    },
+    "maintenanceRobot": {
+      "base": {
+        "radius": 0.31,
+        "height": 0.05
+      },
+      "tracks": [
+        0.54,
+        0.12,
+        0.46
+      ],
+      "body": [
+        0.44,
+        0.33,
+        0.38
+      ],
+      "head": [
+        0.22,
+        0.13,
+        0.19
+      ],
+      "antennaTop": 0.76,
+      "hp": 2,
+      "move": 2
+    },
+    "ghost": {
+      "alpha": 0.42,
+      "shadow": false,
+      "ring": {
+        "stroke": "#1E1B16",
+        "dashPx": [
+          4,
+          3
+        ],
+        "fill": {
+          "hex": "#F1E9D6",
+          "alpha": 0.35
+        },
+        "radius": 0.34
+      }
+    },
+    "armorDrone": {
+      "_": "★3 zırhlı dron: dron ailesi, ağırlaştırılmış. raid.js → armorDrone().",
+      "hp": 2,
+      "armor": 1,
+      "move": 3,
+      "base": {
+        "radius": 0.26,
+        "height": 0.05
+      },
+      "rod": [
+        0.068,
+        0.37
+      ],
+      "hull": {
+        "shape": "sekizgen",
+        "radius": 0.205,
+        "z": [
+          0.38,
+          0.49
+        ]
+      },
+      "armourBand": {
+        "radius": 0.222,
+        "z": [
+          0.38,
+          0.43
+        ],
+        "color": "#9A9C98"
+      },
+      "frontPlate": {
+        "size": [
+          0.045,
+          0.13,
+          0.24
+        ],
+        "tiltDeg": 18,
+        "color": "#9A9C98"
+      },
+      "rotors": {
+        "radius": 0.098,
+        "offset": 0.31,
+        "z": 0.49,
+        "duct": {
+          "radius": 0.118,
+          "height": 0.065,
+          "lip": 0.012
+        }
+      },
+      "lens": {
+        "radius": 0.042,
+        "z": 0.355,
+        "side": "ön"
+      },
+      "topZ": 0.53,
+      "footprint": [
+        0.7,
+        0.7
+      ]
+    },
+    "bomber": {
+      "_": "★3 patlayan robot: deniz mayını gövde. raid.js → bomber().",
+      "hp": 1,
+      "armor": 0,
+      "move": 3,
+      "base": {
+        "radius": 0.26,
+        "height": 0.05
+      },
+      "stem": {
+        "radius": 0.085,
+        "z": [
+          0.05,
+          0.18
+        ]
+      },
+      "body": {
+        "shape": "küre",
+        "radius": 0.2,
+        "centerZ": 0.38
+      },
+      "belt": {
+        "tube": 0.016,
+        "color": "#34373A"
+      },
+      "horns": {
+        "count": 7,
+        "layout": "1 tepede + 6 tanesi 24° yükseklikte",
+        "radius": [
+          0.02,
+          0.026
+        ],
+        "length": 0.07,
+        "cap": 0.024,
+        "color": "#7F817E"
+      },
+      "lens": {
+        "radius": 0.04,
+        "z": 0.32,
+        "side": "ön"
+      },
+      "topZ": 0.66,
+      "footprint": [
+        0.52,
+        0.52
+      ]
+    },
+    "replicator": {
+      "_": "★3 çoğaltıcı: paletli hangar + üst pistte küçük dron. raid.js → replicator().",
+      "hp": 2,
+      "armor": 0,
+      "move": 2,
+      "base": {
+        "radius": 0.31,
+        "height": 0.05
+      },
+      "tracks": [
+        0.54,
+        0.12,
+        0.46
+      ],
+      "body": [
+        0.46,
+        0.28,
+        0.42
+      ],
+      "bodyZ": [
+        0.17,
+        0.45
+      ],
+      "bay": {
+        "size": [
+          0.17,
+          0.25
+        ],
+        "side": "ön",
+        "color": "#26282B"
+      },
+      "ramp": {
+        "size": [
+          0.13,
+          0.016,
+          0.23
+        ],
+        "tiltDeg": 32
+      },
+      "pad": {
+        "radius": 0.16,
+        "z": 0.461
+      },
+      "miniDrone": {
+        "scale": 0.45,
+        "rotorRadius": 0.045,
+        "rotorOffset": 0.135,
+        "topZ": 0.55,
+        "lens": "yok (göz makinenin)"
+      },
+      "lens": {
+        "radius": 0.032,
+        "z": 0.405,
+        "side": "ön, sol üst köşe"
+      },
+      "topZ": 0.55,
+      "footprint": [
+        0.64,
+        0.62
+      ]
+    },
+    "rk_void": {
+      "hex": "#34312C",
+      "roughness": 1,
+      "metal": 0,
+      "note": "oyuk içi: palet ağzı, tutamak deliği, kızak arası (ışık almayan derinlik); bütün kitlerde ortak",
+      "usedBy": [
+        "Relief_me",
+        "ReliefIso_af",
+        "Relief_na",
+        "ReliefIso_na",
+        "Relief_cn",
+        "ReliefIso_cn",
+        "Rubble_cn",
+        "Relief_jk"
+      ]
+    },
+    "rk_dust": {
+      "hex": "#6B6257",
+      "roughness": 1,
+      "metal": 0,
+      "alpha": 0.55,
+      "surface": "Transparent",
+      "texture": "tx_dust (yumuşak kenarlı toz lekesi, kenara doğru saydam, 256²)",
+      "note": "gedik molozunun toz lekesi (zemine yapışık dörtgen, gölgesiz)",
+      "usedBy": [
+        "Rubble_weu",
+        "Rubble_eeu",
+        "Rubble_me",
+        "Rubble_af",
+        "Rubble_na",
+        "Rubble_ru",
+        "Rubble_in",
+        "Rubble_cn"
+      ]
+    },
+    "rk_galv": {
+      "hex": "#A3A7A6",
+      "roughness": 0.6,
+      "metal": 0,
+      "note": "galvaniz çelik (palet kirişi): mat, metalsiz; turuncu değil",
+      "usedBy": [
+        "Bridge_na"
+      ]
+    },
+    "rk_film": {
+      "hex": "#C9C6BC",
+      "roughness": 0.32,
+      "metal": 0,
+      "note": "streç film (yarı parlak, açık gri; koli istifinin ortasını saran ince kabuk)",
+      "usedBy": [
+        "Relief_na",
+        "ReliefIso_na"
+      ]
+    },
+    "rk_pick": {
+      "hex": "#D3DBD6",
+      "roughness": 0.9,
+      "metal": 0,
+      "alpha": 0.25,
+      "surface": "Transparent",
+      "note": "kare seçim dörtgeni; Unity'de MeshRenderer kapalı, yalnız MeshCollider",
+      "usedBy": [
+        "Tile"
+      ]
+    },
+    "rp_hazardYellow": {
+      "hex": "#D9A73A",
+      "roughness": 0.7,
+      "metal": 0,
+      "note": "kilitleyici tehlike şeridi sarısı (geometrik şerit; doku yok)",
+      "usedBy": [
+        "Locker"
+      ]
+    },
+    "rp_slot": {
+      "hex": "#151311",
+      "roughness": 0.9,
+      "metal": 0,
+      "note": "dolap sunucu yuvası, koyu oyuk",
+      "usedBy": [
+        "NodeCabinet",
+        "CoreCabinet",
+        "BackupCore"
+      ]
+    },
+    "rp_domeGlass": {
+      "hex": "#2A3135",
+      "roughness": 0.25,
+      "metal": 0.1,
+      "note": "dron sensör kubbesi (koyu cam; kırmızı değil, göz ayrı)",
+      "usedBy": [
+        "Drone",
+        "ShieldDrone"
+      ]
+    },
+    "rp_tick": {
+      "hex": "#24592E",
+      "roughness": 0.7,
+      "metal": 0,
+      "note": "tur bitti tik işareti (yeşil = iyi)",
+      "usedBy": [
+        "Pawn_T",
+        "Pawn_E",
+        "Pawn_A"
+      ]
+    },
+    "rp_crateOlive": {
+      "hex": "#535C3D",
+      "roughness": 0.88,
+      "metal": 0,
+      "note": "ikmal sandığı: zeytin yeşili boyalı ahşap (mat)",
+      "usedBy": [
+        "LootCrate",
+        "LootCrateOpen"
+      ]
+    },
+    "rp_crateBatten": {
+      "hex": "#434B31",
+      "roughness": 0.9,
+      "metal": 0,
+      "note": "sandık çıtası, koyu zeytin",
+      "usedBy": [
+        "LootCrate",
+        "LootCrateOpen"
+      ]
+    },
+    "rp_crateInside": {
+      "hex": "#2B2720",
+      "roughness": 0.95,
+      "metal": 0,
+      "note": "boşalmış sandığın içi (koyu ham ahşap)",
+      "usedBy": [
+        "LootCrateOpen"
+      ]
+    },
+    "rp_crateSteel": {
+      "hex": "#6A6D69",
+      "roughness": 0.7,
+      "metal": 0.5,
+      "note": "sandık çelik köşe başlığı, etiket çerçevesi (mat)",
+      "usedBy": [
+        "LootCrate",
+        "LootCrateOpen"
+      ]
+    },
+    "rp_crateEmblem": {
+      "hex": "#E3D9BE",
+      "roughness": 0.9,
+      "metal": 0,
+      "alpha": 0.5,
+      "surface": "Transparent",
+      "texture": "tx_kyga_emblem (KYGA amblemi, krem mürekkep, alfa kanalında; yazı yok)",
+      "note": "sandık kapağında amblem decal’i; doku alfası taşır (önizlemede yarı saydam kare)",
+      "usedBy": [
+        "LootCrate"
+      ]
+    },
+    "rp_tubeGrey": {
+      "hex": "#3E4143",
+      "roughness": 0.85,
+      "metal": 0.15,
+      "note": "basınçlı tüp gövdesi, koyu gri boya (mat)",
+      "usedBy": [
+        "Tube"
+      ]
+    },
+    "rp_steelPlate": {
+      "hex": "#6E726E",
+      "roughness": 0.85,
+      "metal": 0.3,
+      "note": "kaynak kolu ve kaidesi, açık çelik (mat)",
+      "usedBy": [
+        "WeldArmBase",
+        "WeldArm"
+      ]
+    },
+    "rp_steelDark": {
+      "hex": "#45484A",
+      "roughness": 0.85,
+      "metal": 0.3,
+      "note": "döner tabla, ayak, mafsal (mat koyu çelik)",
+      "usedBy": [
+        "WeldArmBase",
+        "WeldArm"
+      ]
+    },
+    "rp_concrete": {
+      "hex": "#8D8A82",
+      "roughness": 0.95,
+      "metal": 0,
+      "note": "tavan enkazı beton topak",
+      "usedBy": [
+        "CeilingDebris"
+      ]
+    },
+    "rp_corrugated": {
+      "hex": "#7C817B",
+      "roughness": 0.85,
+      "metal": 0.3,
+      "note": "oluklu galvaniz sac (mat)",
+      "usedBy": [
+        "CeilingDebris"
+      ]
+    },
+    "rp_beam": {
+      "hex": "#4D4943",
+      "roughness": 0.88,
+      "metal": 0.25,
+      "note": "bükük çatı kirişi ve filiz demiri (koyu, kırmızısız)",
+      "usedBy": [
+        "CeilingDebris"
+      ]
+    },
+    "rp_soot": {
+      "hex": "#2B241D",
+      "roughness": 1,
+      "metal": 0,
+      "alpha": 0.45,
+      "surface": "Transparent",
+      "note": "enkaz altı is lekesi (decal; gölgesiz)",
+      "usedBy": [
+        "CeilingDebris"
+      ]
+    },
+    "rp_fanBlade": {
+      "hex": "#9AA5A5",
+      "roughness": 0.6,
+      "metal": 0.3,
+      "note": "soğutma fanı kanadı",
+      "usedBy": [
+        "CoolingUnit"
+      ]
+    },
+    "rp_markWake": {
+      "hex": "#9A1E14",
+      "roughness": 1,
+      "metal": 0,
+      "alpha": 0.95,
+      "surface": "Transparent",
+      "note": "uyanma halkası ve ışınları (URP Unlit Transparent, ZWrite kapalı, gölgesiz)",
+      "usedBy": [
+        "WakePin"
+      ]
+    },
+    "rp_markWakeFill": {
+      "hex": "#9A1E14",
+      "roughness": 1,
+      "metal": 0,
+      "alpha": 0.12,
+      "surface": "Transparent",
+      "note": "uyanma halkasının dolgusu (Unlit Transparent, ZWrite kapalı)",
+      "usedBy": [
+        "WakePin"
+      ]
+    },
+    "rp_markGhost": {
+      "hex": "#854005",
+      "roughness": 1,
+      "metal": 0,
+      "alpha": 0.95,
+      "surface": "Transparent",
+      "note": "kopyalama niyeti kesik halka (Unlit Transparent, ZWrite kapalı)",
+      "usedBy": [
+        "GhostRing"
+      ]
+    },
+    "rp_markGhostFill": {
+      "hex": "#854005",
+      "roughness": 1,
+      "metal": 0,
+      "alpha": 0.1,
+      "surface": "Transparent",
+      "note": "kopyalama halkasının dolgusu (Unlit Transparent, ZWrite kapalı)",
+      "usedBy": [
+        "GhostRing"
+      ]
+    },
+    "rp_acetateMove": {
+      "hex": "#1A4789",
+      "roughness": 1,
+      "metal": 0,
+      "alpha": 0.35,
+      "surface": "Transparent",
+      "texture": "tx_mark_move (dolgu α .16, tarama α .34 · 1,6 px · 0,11 birim aralık, v-sabit; kenar α .85 · 2 px · pay 0,07)",
+      "note": "hareket asetatı: Unlit Transparent, ZWrite kapalı; saydamlık dokuda (malzeme alfası 1; önizlemede 0,35)",
+      "usedBy": [
+        "MoveQuad"
+      ]
+    },
+    "rp_acetateHit": {
+      "hex": "#9A1E14",
+      "roughness": 1,
+      "metal": 0,
+      "alpha": 0.35,
+      "surface": "Transparent",
+      "texture": "tx_mark_hit (dolgu α .12, tarama α .46 · 1,8 px · 0,085 birim, u-sabit; kenar α .9 · 2,4 px)",
+      "note": "kesin isabet asetatı: Unlit Transparent, ZWrite kapalı; saydamlık dokuda (önizlemede 0,35)",
+      "usedBy": [
+        "HitQuad"
+      ]
+    },
+    "rc_device": {
+      "hex": "#5F5C54",
+      "roughness": 0.5,
+      "metal": 0.12,
+      "note": "sivil cihaz gövdesi: çekiç boya sıcak gri (ATM yüzü, konsol, pano)",
+      "usedBy": [
+        "Civil_weu",
+        "Civil_eeu",
+        "Civil_me",
+        "Civil_na",
+        "Civil_ru",
+        "Civil_in",
+        "Civil_cn",
+        "Civil_sea"
+      ]
+    },
+    "rc_deviceDark": {
+      "hex": "#35342F",
+      "roughness": 0.5,
+      "metal": 0.1,
+      "note": "cihazın koyu ön paneli (telsiz, telefon, tezgâh)",
+      "usedBy": [
+        "Civil_weu",
+        "Civil_af",
+        "Civil_cn",
+        "Civil_sea",
+        "EntryDoor_weu"
+      ]
+    },
+    "rc_screen": {
+      "hex": "#1C2623",
+      "roughness": 0.12,
+      "metal": 0,
+      "note": "ekran ve pencere camı: koyu, ışımasız (baskında emisyon yok)",
+      "usedBy": [
+        "Civil_weu",
+        "Civil_eeu",
+        "Civil_na",
+        "Civil_ru",
+        "Civil_cn",
+        "Civil_jk",
+        "Civil_sea",
+        "Civil_oc"
+      ]
+    },
+    "rc_keys": {
+      "hex": "#B9B29B",
+      "roughness": 0.6,
+      "metal": 0,
+      "texture": "tx_keys (tuş ızgarası: 3×4 tuş takımı ve klavye sıraları, 256×128, yazısız)",
+      "note": "tuş takımı, klavye, düğmeler",
+      "usedBy": [
+        "Civil_weu",
+        "Civil_ru",
+        "Civil_cn"
+      ]
+    },
+    "rc_plinth": {
+      "hex": "#4A463F",
+      "roughness": 0.85,
+      "metal": 0,
+      "note": "sivil gövdenin koyu kaidesi (kâğıttan ayırır)",
+      "usedBy": [
+        "Civil_weu",
+        "Civil_eeu",
+        "Civil_me",
+        "Civil_af",
+        "Civil_na",
+        "Civil_ru",
+        "Civil_in",
+        "Civil_cn"
+      ]
+    },
+    "rc_vent": {
+      "hex": "#3B3731",
+      "roughness": 0.85,
+      "metal": 0,
+      "note": "havalandırma yarıklarının koyu zemini",
+      "usedBy": [
+        "Civil_me",
+        "Civil_default"
+      ]
+    },
+    "rc_stainless": {
+      "hex": "#9EA19C",
+      "roughness": 0.32,
+      "metal": 0.6,
+      "note": "paslanmaz sac (temiz oda terminali, hava kilidi kapısı)",
+      "usedBy": [
+        "Civil_jk",
+        "EntryDoor_ru",
+        "EntryDoor_jk"
+      ]
+    },
+    "rc_glass": {
+      "hex": "#C9D1CE",
+      "roughness": 0.08,
+      "metal": 0,
+      "alpha": 0.45,
+      "surface": "Transparent",
+      "note": "açık gri cam (Transparent): cam kapı, vasistas, büyüteç",
+      "usedBy": [
+        "Civil_cn",
+        "EntryDoor_eeu",
+        "EntryDoor_in"
+      ]
+    },
+    "rc_channelHazard": {
+      "hex": "#A9520A",
+      "roughness": 0.7,
+      "metal": 0,
+      "texture": "tx_channel_hazard (turuncu #A9520A zemin, siyah #1E1B16 45° şerit, adım 0,10 birim; 256×32)",
+      "note": "kanal kenar şeridi: turuncu-siyah, hiçbir kitte değişmez",
+      "usedBy": [
+        "ChannelArm",
+        "ChannelEdge",
+        "ChannelSingle"
+      ]
+    },
+    "rc_junction": {
+      "hex": "#69665C",
+      "roughness": 0.55,
+      "metal": 0.3,
+      "note": "kanal bağlantı kutusu (döküm, boyalı)",
+      "usedBy": [
+        "ChannelHub"
+      ]
+    },
+    "rc_doorSteel": {
+      "hex": "#6B6F6B",
+      "roughness": 0.55,
+      "metal": 0.1,
+      "note": "boyalı çelik kasa (varsayılan giriş)",
+      "usedBy": [
+        "EntryDoor_weu",
+        "EntryDoor_me",
+        "EntryDoor_default"
+      ]
+    },
+    "rc_graphite": {
+      "hex": "#464A49",
+      "roughness": 0.5,
+      "metal": 0.15,
+      "note": "grafit boyalı güvenlik kapısı kasası (banka)",
+      "usedBy": [
+        "EntryDoor_weu"
+      ]
+    },
+    "rc_coldWhite": {
+      "hex": "#CDD2CF",
+      "roughness": 0.45,
+      "metal": 0.05,
+      "note": "soğuk oda kapısı: soğuk beyaz emaye (krem sivilden ayrı)",
+      "usedBy": [
+        "EntryDoor_ru"
+      ]
+    },
+    "rc_cleanGrey": {
+      "hex": "#B3B8B3",
+      "roughness": 0.4,
+      "metal": 0.05,
+      "note": "hava kilidi kapı kanadı: açık gri emaye",
+      "usedBy": [
+        "EntryDoor_jk"
+      ]
+    },
+    "rc_alu": {
+      "hex": "#A4A7A2",
+      "roughness": 0.35,
+      "metal": 0.6,
+      "note": "eloksal alüminyum doğrama, itme barı",
+      "usedBy": [
+        "EntryDoor_weu",
+        "EntryDoor_in"
+      ]
+    },
+    "rc_navalGrey": {
+      "hex": "#7C817C",
+      "roughness": 0.55,
+      "metal": 0.1,
+      "note": "gemi grisi boya (su geçirmez kapı)",
+      "usedBy": [
+        "EntryDoor_sea"
+      ]
+    },
+    "rc_factoryGrey": {
+      "hex": "#7A776D",
+      "roughness": 0.55,
+      "metal": 0.1,
+      "note": "seksiyonel fabrika kapısı paneli (sıcak gri)",
+      "usedBy": [
+        "EntryDoor_cn"
+      ]
+    },
+    "rc_dockGrey": {
+      "hex": "#9C9D97",
+      "roughness": 0.55,
+      "metal": 0.1,
+      "note": "rampa kapısı paneli (açık gri)",
+      "usedBy": [
+        "EntryDoor_na"
+      ]
+    },
+    "rc_mesh": {
+      "hex": "#4C4F4C",
+      "roughness": 0.6,
+      "metal": 0.3,
+      "alpha": 0.55,
+      "surface": "Transparent",
+      "texture": "tx_mesh (kare tel örgü 5 cm, alfa kesme; 256²)",
+      "note": "liman kapısı tel örgüsü",
+      "usedBy": [
+        "EntryDoor_oc"
+      ]
+    }
+  },
+  "marks": {
+    "_rule": "Asetat: zemine yapışık quad + 4 şerit çerçeve; ışıksız, ZWrite kapalı. Tarama tek döşenen doku (yön karo uzayında). İçe pay birim cinsinden.",
+    "move": {
+      "color": "#1A4789",
+      "fillAlpha": 0.16,
+      "hatchAlpha": 0.34,
+      "hatch": {
+        "widthPx": 1.6,
+        "spacingUnits": 0.11,
+        "direction": "v-sabit (ekranda ↗)"
+      },
+      "edgeAlpha": 0.85,
+      "edgePx": 2,
+      "insetUnits": 0.07
+    },
+    "abilityTarget": {
+      "color": "#24592E",
+      "fillAlpha": 0.08,
+      "edgeAlpha": 0.92,
+      "edgePx": 2.4,
+      "insetUnits": 0.07,
+      "cornerUnits": 0.2,
+      "cornerPx": 4.2
+    },
+    "abilityTargetStrong": {
+      "color": "#24592E",
+      "fillAlpha": 0.18,
+      "edgePx": 3.4,
+      "brackets": {
+        "screenSpace": true,
+        "padPx": 8,
+        "armPx": 16,
+        "strokePx": 3.4,
+        "underlay": {
+          "hex": "#FBF7EC",
+          "alpha": 0.9
+        },
+        "underlayPx": 7
+      }
+    },
+    "selected": {
+      "color": "#1A4789",
+      "fillAlpha": 0.1,
+      "outerPx": 3,
+      "outerInset": 0.05,
+      "innerPx": 1.2,
+      "innerInset": 0.13,
+      "alpha": 0.95
+    },
+    "hitCertain": {
+      "color": "#9A1E14",
+      "fillAlpha": 0.12,
+      "hatchAlpha": 0.46,
+      "hatch": {
+        "widthPx": 1.8,
+        "spacingUnits": 0.085,
+        "direction": "u-sabit (ekranda ↘)"
+      },
+      "edgeAlpha": 0.9,
+      "edgePx": 2.4
+    },
+    "hitMaybeLie": {
+      "color": "#9A1E14",
+      "fillAlpha": 0.08,
+      "hatchAlpha": 0.3,
+      "edgeColor": "#A9520A",
+      "edgeDashPx": [
+        7,
+        4.5
+      ],
+      "edgeAlpha": 0.92,
+      "edgePx": 2.4
+    },
+    "repair": {
+      "color": "#9A1E14",
+      "fillAlpha": 0.06,
+      "edgeDashPx": [
+        2,
+        4
+      ],
+      "edgeAlpha": 0.85,
+      "edgePx": 2,
+      "cap": "round"
+    },
+    "hover": {
+      "color": "#1E1B16",
+      "fillAlpha": 0.06,
+      "edgeAlpha": 0.88,
+      "edgePx": 1.8,
+      "insetUnits": 0.03,
+      "cornerPx": 3.2,
+      "cornerUnits": 0.16
+    },
+    "wake": {
+      "color": "#9A1E14",
+      "ringRadiusUnits": 0.33,
+      "ringPx": 2.4,
+      "fillAlpha": 0.12,
+      "innerDashedRadius": 0.17,
+      "rays": {
+        "count": 8,
+        "fromUnits": 0.38,
+        "toUnits": 0.47,
+        "px": 2.2
+      },
+      "pin": {
+        "head": "#B8241A",
+        "needle": "#7E7C78",
+        "heightPx": 17
+      }
+    },
+    "scanArea": {
+      "color": "#1A4789",
+      "dotPx": [
+        2,
+        4
+      ],
+      "strokePx": 2.2,
+      "alpha": 0.9,
+      "metricInDrawing": "Manhattan ≤ 3 (oyunun kendi hesabı geçerli)"
+    },
+    "ghostWake": {
+      "_": "★3 kopyalama niyetinin hedef karesi: uyanma halkasının biçimi, kesik, #854005; iğne yok. Kopyalama uygulanınca marks.wake (kırmızı, iğneli) yerine geçer. raid.js → ghostWake().",
+      "color": "#854005",
+      "ringRadiusUnits": 0.33,
+      "ringPx": 2.4,
+      "dashes": 12,
+      "dashInk": 0.6,
+      "fillAlpha": 0.1,
+      "rays": {
+        "count": 8,
+        "fromUnits": 0.38,
+        "toUnits": 0.47,
+        "px": 2.2
+      }
+    }
+  },
+  "intents": {
+    "color": "#B8241A",
+    "shadow": {
+      "color": "#000000",
+      "alpha": 0.28,
+      "offsetPx": [
+        1.5,
+        2
+      ]
+    },
+    "fire": {
+      "strokePx": 3.4,
+      "arrowheadPx": 16,
+      "startZ": 0.3,
+      "endZ": 0.16,
+      "endInsetUnits": 0.4,
+      "startOffsetUnits": 0.24
+    },
+    "melee": {
+      "strokePx": 4.6,
+      "arcRisePx": [
+        14,
+        26
+      ],
+      "arrowheadPx": 15,
+      "impactTicks": 3,
+      "endInsetUnits": 0.3
+    },
+    "repair": {
+      "strokePx": 2.6,
+      "arcRisePx": 26,
+      "arrowheadPx": 11,
+      "icon": "anahtar, krem daire r 9.5 px",
+      "popup": "+1"
+    },
+    "certainty": {
+      "sure": "düz çizgi, bayrak kırmızı kenar",
+      "maybe": "kesik 10/6 px, bayrak turuncu kesik kenar + halkalı Kalam “?”",
+      "scanned": "düz çizgi, bayrak mavi kenar + ONAYLANDI mührü (✓)"
+    },
+    "execution": {
+      "now": {
+        "highlighter": {
+          "hex": "#F5DC63",
+          "alpha": 0.95
+        },
+        "extraPx": 9,
+        "flag": "kırmızı dolgu, krem rakam 16 px"
+      },
+      "done": {
+        "alpha": 0.35,
+        "flagAlpha": 0.55,
+        "strikeNumber": true
+      },
+      "cancel": "bayrak gri, rakam kırmızı çizili"
+    },
+    "depth": "ZTest Always (parçaların üstünde)",
+    "lock": {
+      "strokePx": 4.6,
+      "arcRisePx": 26,
+      "arrowheadPx": 15,
+      "badge": "Ø26 krem daire + kıskaç, yayın ortasında",
+      "endInsetUnits": 0.3
+    },
+    "lob": {
+      "_": "★3 havan atışı: engellerin üstünden yüksek yay; hasar verir → kırmızı.",
+      "color": "#B8241A",
+      "strokePx": 3.4,
+      "arrowheadPx": 16,
+      "arcRise": {
+        "ratioOfChord": 0.4,
+        "minPx": 90,
+        "direction": "ekranda dikey yukarı (kontrol noktası kiriş ortasının 2 × tepe üstünde)"
+      },
+      "start": "namlu ağzı (havan robotu, z 0.8)",
+      "end": "hedef parçanın tepe noktasının 10 px üstü; boş karede zemin + 0.16",
+      "targetMark": "marks.hitCertain (belki → marks.hitMaybeLie)"
+    },
+    "blast": {
+      "_": "★3 patlama: ok yok; dört komşu kare alan olarak; hasar verir → kırmızı.",
+      "color": "#B8241A",
+      "areaMark": "marks.hitCertain dört komşu karede (belki → marks.hitMaybeLie)",
+      "outline": {
+        "strokePx": 2.4,
+        "shape": "artı: merkez + 4 komşu kare, dış kontur",
+        "insetUnits": 0.04
+      },
+      "stubs": {
+        "count": 4,
+        "fromUnits": 0.3,
+        "toUnits": 0.66,
+        "z": 0.05,
+        "strokePx": 3.4,
+        "arrowheadPx": 12
+      },
+      "now": "fosforlu kalem dış konturun altında (+9 px)"
+    },
+    "shield": {
+      "_": "★3 kalkan: zarar vermez → #854005; çift çizgi + rozet, ok ucu yok.",
+      "color": "#854005",
+      "lines": 2,
+      "strokePx": 1.6,
+      "gapPx": 3.2,
+      "arcRisePx": 20,
+      "startZ": 0.5,
+      "startOffsetUnits": 0.2,
+      "arrowhead": "yok",
+      "badge": {
+        "sprite": "badge_shield",
+        "sizePx": 28,
+        "anchor": "kalkanı alacak makinenin tepe noktasının 22 px üstü; çizgi rozetin kenarında biter"
+      },
+      "now": "fosforlu kalem çift çizginin altında (+9 px)"
+    },
+    "clone": {
+      "_": "★3 kopyalama: zarar vermez → #854005; noktalı kısa çizgi + hedef karede marks.ghostWake + rozet.",
+      "color": "#854005",
+      "strokePx": 2.6,
+      "dashPx": [
+        2,
+        4
+      ],
+      "cap": "round",
+      "arrowheadPx": 11,
+      "startOffsetUnits": 0.3,
+      "startZ": 0.12,
+      "endInsetUnits": 0.34,
+      "targetMark": "marks.ghostWake",
+      "badge": {
+        "sprite": "badge_clone",
+        "sizePx": 24,
+        "anchor": "hedef karenin merkezi, z 0.3"
+      },
+      "onResolve": "marks.ghostWake kalkar, marks.wake gelir"
+    },
+    "nonHarmful": {
+      "_": "★3 kural: kırmızı yalnız uzmana ya da sivile zarar veren niyette (ateş, yakın dövüş, kilit, havan atışı, patlama). Zarar vermeyenler (kalkan, kopyalama) #854005; renk tek başına taşımaz, çizgi türü (çift, noktalı) ve rozet ayırır. Sıra bayrağı herkeste aynı: sıra ve kesinlik bayrağın işi.",
+      "color": "#854005",
+      "maybe": "çizgi kesik 10/6 (çift çizgide ikisi birlikte); kare ve alan işaretleri marks.hitMaybeLie",
+      "repairNote": "intents.repair 1.1’deki gibi kırmızı noktalı kaldı; bu kurala çekilecekse tek değer eklenir: intents.repair.color = #854005"
+    }
+  },
+  "labels": {
+    "_rule": "Kameraya dönük TMP; her zaman üstte; ekranda en az 11 px.",
+    "hpTag": {
+      "heightPx": 24,
+      "paddingPx": [
+        0,
+        5
+      ],
+      "gapPx": 4,
+      "paper": "#FBF7EC",
+      "borderPx": 1,
+      "shadow": "(1,2) #000 α .35",
+      "typeGlyphPx": 18,
+      "pip": {
+        "sizePx": 11,
+        "gapPx": 3
+      },
+      "font": "Courier Prime Bold 15",
+      "colors": {
+        "aiOwned": "#9A1E14",
+        "neutral": "#463F34",
+        "team": "#1E1B16",
+        "teamDone": "kâğıt #E9DDC6",
+        "teamDown": "#9A1E14 + kâğıt #F3E3DC"
+      },
+      "placement": {
+        "object": "tepe noktasının 28 px üstü, ortalı",
+        "unit": "altlığın önü (u−0.24, v+0.24)",
+        "robot": "altlığın önü (u−0.24, v+0.24), ortalı",
+        "unitDown": "altlığın önü"
+      },
+      "armorIcon": {
+        "_": "★3 zırhı olan makinenin etiketinde, tür işaretinden sonra (hedefteki “zırh kalkanı (koyu)” ile aynı). Kalkan alan makinede de görünür.",
+        "sprite": "icon_armor",
+        "color": "#463F34",
+        "sizePx": [
+          11,
+          12.5
+        ],
+        "order": "tür işareti → zırh → pipler"
+      }
+    },
+    "orderFlag": {
+      "needlePx": [
+        2,
+        34
+      ],
+      "needle": "#5E5A54",
+      "paper": "#FBF7EC",
+      "borderPx": 1.5,
+      "heightPx": 28,
+      "widthPx": 30,
+      "font": "Courier Prime Bold 20",
+      "anchor": "robotun tepe noktası, bayrak sağa açılır"
+    },
+    "popup": {
+      "damage": {
+        "text": "−N (U+2212)",
+        "font": "Courier Prime Bold 16",
+        "color": "#9A1E14",
+        "heightPx": 22
+      },
+      "repair": {
+        "text": "+1",
+        "color": "#854005",
+        "icon": "anahtar"
+      },
+      "armorStamp": {
+        "text": "ZIRH",
+        "color": "#463F34",
+        "font": "Libre Franklin 800 13"
+      },
+      "winStamp": {
+        "text": "HEDEF KIRILIR",
+        "color": "#9A1E14",
+        "font": "Libre Franklin 800 15",
+        "borderPx": 2.5
+      },
+      "brokenStamp": {
+        "text": "KIRILDI",
+        "color": "#24592E"
+      }
+    },
+    "compass": {
+      "letters": {
+        "K": "kuzey (ekranda sol üst kenar)",
+        "D": "doğu (sağ üst)",
+        "G": "güney (sağ alt)",
+        "B": "batı (sol alt)"
+      },
+      "sizePx": 22,
+      "ring": "#2C4C8E",
+      "fill": "#DCE1D8"
+    },
+    "pawnTag": {
+      "_": "★2 uzman canı altlığın önünde.",
+      "placement": "altlığın önü (u−0.24, v+0.24), ortalı",
+      "pipPx": 11,
+      "pipGapPx": 3,
+      "plateIcon": "#9A9C98 kalkan, mürekkep kenar",
+      "injuredPaper": "#F3E3DC",
+      "lostPip": [
+        "#9A1E14",
+        "kenar 1,5 px"
+      ],
+      "donePaper": "#E9DDC6"
+    },
+    "wake": {
+      "text": "UYANDI",
+      "color": "#9A1E14",
+      "font": [
+        "Courier Prime",
+        700,
+        16,
+        0.06
+      ],
+      "rotDeg": -4
+    }
+  },
+  "layout1080": {
+    "rail": [
+      0,
+      0,
+      1920,
+      48
+    ],
+    "feltBand": [
+      0,
+      48,
+      1920,
+      956
+    ],
+    "bottomWoodRow": [
+      0,
+      1004,
+      1920,
+      76
+    ],
+    "teamCards": [
+      [
+        26,
+        976,
+        237,
+        84
+      ],
+      [
+        269,
+        976,
+        237,
+        84
+      ],
+      [
+        512,
+        976,
+        237,
+        84
+      ]
+    ],
+    "teamCardSelectedLiftPx": 6,
+    "rulesCard": {
+      "_": "1.1: KURALLAR düğmesi üst şeritte (button). Açık kart bugünkü yerinde ve ölçüsünde (open, değişmedi). folded yalnız Rev1 görünümü içindir; alanlar geriye uyumlu kalsın diye silinmedi.",
+      "folded": [
+        16,
+        516,
+        376,
+        40
+      ],
+      "open": [
+        16,
+        516,
+        376,
+        300
+      ],
+      "button": [
+        1540,
+        22,
+        184,
+        52
+      ]
+    },
+    "legend": [
+      16,
+      838,
+      376,
+      166
+    ],
+    "retreatButton": [
+      1724,
+      22,
+      174,
+      52
+    ],
+    "retreatButtonArmed": [
+      16,
+      1018,
+      236,
+      44
+    ],
+    "retreatConfirmSlip": [
+      16,
+      884,
+      376,
+      120
+    ],
+    "targetForm": [
+      20,
+      102,
+      592,
+      147
+    ],
+    "opLog": [
+      1528,
+      344,
+      376,
+      648
+    ],
+    "infoLine": [
+      408,
+      1018,
+      854,
+      44
+    ],
+    "undoButton": [
+      1436,
+      994,
+      136,
+      56
+    ],
+    "abilityButton": [
+      1392,
+      1018,
+      120,
+      44
+    ],
+    "endTurnButton": [
+      1580,
+      994,
+      318,
+      56
+    ],
+    "boardViewport": [
+      408,
+      50,
+      1104,
+      952
+    ],
+    "boardBaseDiamondPx": [
+      1075,
+      616.6
+    ],
+    "gridDiamondPx": [
+      1000,
+      573.6
+    ],
+    "resultMemo": [
+      520,
+      520,
+      440,
+      380
+    ],
+    "spotRadiusPx": [
+      96,
+      104
+    ]
+  },
+  "motion": {
+    "slidePerTileS": 0.16,
+    "dashS": 0.22,
+    "fireDrawS": 0.12,
+    "fireHitShakeS": 0.08,
+    "meleeLungeS": [
+      0.1,
+      0.14
+    ],
+    "repairS": 0.25,
+    "pushS": 0.14,
+    "pushBounceS": 0.06,
+    "collisionStarS": 0.2,
+    "fallIntoChannelS": 0.18,
+    "cabinetCollapseS": 0.35,
+    "debrisScatterS": 0.25,
+    "coolingExplodeS": 0.3,
+    "wakeS": [
+      0.12,
+      0.25
+    ],
+    "wakeBlockedBlinkS": [
+      0.1,
+      0.1
+    ],
+    "popup": {
+      "inS": 0.08,
+      "holdS": 0.6,
+      "outS": 0.25,
+      "risePx": 12
+    },
+    "flagPinS": 0.15,
+    "flagStrikeS": 0.12,
+    "standeeFlipS": 0.2,
+    "standeeFallS": 0.3,
+    "paperDropS": 0.28,
+    "paperDropFromPx": 40,
+    "paperDropRotDeg": 1.5,
+    "machineIntentGapS": 0.25,
+    "logTypeCharsPerS": 26,
+    "easing": {
+      "move": "ease-in-out",
+      "impact": "ease-out",
+      "collapse": "ease-in"
+    }
+  },
+  "strings": {
+    "title": "SAHA OPERASYONU · BATI AVRUPA · ANA SUNUCU SALONU",
+    "phase": {
+      "you": "SIRA SENDE",
+      "ai": "MAKİNELER HAREKET EDİYOR",
+      "aiSub": "girdi kilitli",
+      "end": "OPERASYON BİTTİ"
+    },
+    "turn": {
+      "label": "TUR",
+      "format": "{n}/{max}",
+      "lastStamp": "SON TUR",
+      "left": "kalan {k} tur",
+      "timeout": "süre doldu"
+    },
+    "teamStatus": {
+      "go": "HAREKET + YETENEK",
+      "ab": "YETENEK",
+      "done": "TUR BİTTİ",
+      "down": "DÜŞTÜ"
+    },
+    "buttons": {
+      "endTurn": "Turu bitir",
+      "undo": "Geri al",
+      "ability": "Yetenek",
+      "retreat": "Geri çekil",
+      "retreatArmed": "Emin misin? Tekrar bas",
+      "toReport": "Operasyon raporuna geç"
+    },
+    "keys": {
+      "select": [
+        "1",
+        "2",
+        "3"
+      ],
+      "ability": "Q",
+      "undo": "Z",
+      "endTurn": "Enter",
+      "menu": "Esc"
+    },
+    "en": {
+      "_": "★2 İngilizce karşılıklar.",
+      "title": "FIELD OPERATION · {region} · {site}",
+      "phase": {
+        "you": "YOUR TURN",
+        "ai": "MACHINES",
+        "aiLong": "MACHINES ARE MOVING",
+        "aiSub": "input locked",
+        "end": "OPERATION OVER"
+      },
+      "turn": {
+        "label": "TURN",
+        "lastStamp": "LAST TURN",
+        "lastTwo": "LAST 2 TURNS",
+        "left": "{k} turns left"
+      },
+      "teamStatus": {
+        "go": "MOVE + ABILITY",
+        "ab": "ABILITY",
+        "done": "TURN DONE",
+        "down": "DOWN",
+        "injured": "INJURED",
+        "lockThreat": "LOCK THREAT · #{n}"
+      },
+      "buttons": {
+        "endTurn": "SEND ORDERS",
+        "undo": "Undo",
+        "retreat": "RETREAT",
+        "retreatArmed": "Sure? Press again",
+        "toReport": "GO TO OPERATION REPORT",
+        "radio": "RADIO",
+        "rules": "RULES"
+      },
+      "mission": {
+        "head": "MISSION · {type}",
+        "goal": "Goal: {goal}",
+        "hp": "HP",
+        "trust": "TRUST",
+        "civilian": "CIVILIAN SERVERS"
+      },
+      "ability": {
+        "move": "Move",
+        "squares": "{n} squares",
+        "takeSupplies": "Take supplies",
+        "adjacent": "adjacent square",
+        "fromCrate": "Take from crate",
+        "hitRobot": "Hit robot · −1 HP"
+      },
+      "result": {
+        "head": "OPERATION RESULT",
+        "retaken": "SECTOR RETAKEN",
+        "withdrawn": "WITHDRAWN",
+        "crate": "Supply crate",
+        "civBroken": "Civilian servers broken",
+        "team": "Team",
+        "standing": "{a}/{b} standing"
+      },
+      "woke": "WOKE UP",
+      "plate": "PLATE",
+      "machines": {
+        "_": "★3 öneri; oyunda İngilizce ad varsa o geçerli.",
+        "armorDrone": "Armored drone",
+        "bomber": "Exploder",
+        "replicator": "Replicator"
+      },
+      "regionTraits": {
+        "_": "★3 öneri; oyunda İngilizce ad varsa o geçerli.",
+        "safeEntry": "Safe entry",
+        "shortWatch": "Short watch",
+        "reinforcement": "Reinforcements",
+        "openGround": "Open ground",
+        "coolingNet": "Cooling network",
+        "crowdedCity": "Crowded city",
+        "armoredCabinet": "Armored cabinets",
+        "powerGrid": "Power grid",
+        "copyFactory": "Copy factory",
+        "fastPatrol": "Fast patrol"
+      },
+      "intents": {
+        "_": "★3 öneri.",
+        "lob": "Lob",
+        "blast": "Blast",
+        "shield": "Shield",
+        "clone": "Clone"
+      }
+    },
+    "tr2": {
+      "_": "★2 yeni Türkçe metinler.",
+      "phase": {
+        "aiShort": "MAKİNELER",
+        "aiLong": "MAKİNELER HAREKET EDİYOR"
+      },
+      "turn": {
+        "lastTwo": "SON 2 TUR"
+      },
+      "teamStatus": {
+        "injured": "YARALI",
+        "lockThreat": "KİLİT TEHDİDİ · #{n}"
+      },
+      "buttons": {
+        "endTurn": "EMRİ İLET",
+        "radio": "TELSİZ",
+        "rules": "KURALLAR"
+      },
+      "mission": {
+        "head": "GÖREV · {tür}",
+        "goal": "Amaç: {amaç}",
+        "hp": "CAN",
+        "trust": "GÜVEN",
+        "civilian": "SİVİL SUNUCU"
+      },
+      "ability": {
+        "fromCrate": "Kasadan ikmal al",
+        "hitRobot": "Robota vur · −1 can"
+      },
+      "result": {
+        "head": "OPERASYON SONUCU",
+        "retaken": "SEKTÖR GERİ ALINDI",
+        "withdrawn": "GERİ ÇEKİLDİ"
+      },
+      "woke": "UYANDI",
+      "plate": "PLAKA",
+      "machines": {
+        "_": "★3 oyundaki adlar.",
+        "armorDrone": "Zırhlı dron",
+        "bomber": "Patlayan robot",
+        "replicator": "Çoğaltıcı"
+      },
+      "regionTraits": {
+        "_": "★3 oyundaki adlar.",
+        "safeEntry": "Güvenli giriş",
+        "shortWatch": "Kısa nöbet",
+        "reinforcement": "Takviye",
+        "openGround": "Açık arazi",
+        "coolingNet": "Soğutma ağı",
+        "crowdedCity": "Kalabalık şehir",
+        "armoredCabinet": "Zırhlı dolap",
+        "powerGrid": "Elektrik şebekesi",
+        "copyFactory": "Kopya fabrikası",
+        "fastPatrol": "Hızlı devriye"
+      },
+      "intents": {
+        "_": "★3",
+        "lob": "Havan atışı",
+        "blast": "Patlama",
+        "shield": "Kalkan",
+        "clone": "Kopyalama"
+      }
+    }
+  },
+  "panel": {
+    "_": "★2 kenar panelleri: kontrplak şerit + ozalit pafta + bant (tahtanın malzemesi). 9 dilim.",
+    "plywood": {
+      "top": "#C9A36B",
+      "edge": "#93703F",
+      "highlight": "#DDBF8A",
+      "edgePx": 4,
+      "padPx": 6,
+      "shadow": [
+        3,
+        4,
+        "#000000",
+        0.45
+      ]
+    },
+    "ozalit": {
+      "paper": "#D3DBD6",
+      "line": "#2C4C8E",
+      "gridPx": 24,
+      "gridAlpha": 0.1,
+      "borderAlpha": 0.55,
+      "labelFont": [
+        "Courier Prime",
+        700,
+        14,
+        0.08
+      ]
+    },
+    "tape": {
+      "hex": "#ECE2BE",
+      "alpha": 0.8,
+      "size": [
+        44,
+        15
+      ],
+      "rotDeg": [
+        -24,
+        24
+      ]
+    },
+    "sliceCornerPx": 12,
+    "teamCard": {
+      "_extra": "UYGULAMA EKİ (Unity, Revizyon 2 Aşama 7): birim kartı S6 notundan — seçili zemin #EFE3A2 + 3 px #F5D646, disk #C9A36B kenar #5C4826, hakkı bitmiş disk #8C734E.",
+      "selected": "#EFE3A2",
+      "selectFrame": "#F5D646",
+      "disc": "#C9A36B",
+      "discRim": "#5C4826",
+      "discDone": "#8C734E"
+    }
+  },
+  "turnStrip": {
+    "_": "★2 tur şeridi.",
+    "cellPx": 34,
+    "gapPx": 6,
+    "turnFont": [
+      "Courier Prime",
+      700,
+      30,
+      0
+    ],
+    "cellFont": [
+      "Courier Prime",
+      700,
+      17,
+      0
+    ],
+    "current": "#1E1B16",
+    "past": "#B9C3BE",
+    "future": "#2C4C8E",
+    "lastTwo": [
+      "#9A1E14",
+      "dashed",
+      2
+    ],
+    "lastCurrent": "#9A1E14",
+    "lastStamp": [
+      "SON TUR",
+      "#9A1E14",
+      3,
+      -6
+    ],
+    "lastLabel": "SON 2 TUR"
+  },
+  "phaseChip": {
+    "_": "★2 evre çipi: biçim + kelime.",
+    "you": [
+      "SIRA SENDE",
+      "#24592E",
+      "daire"
+    ],
+    "ai": [
+      "MAKİNELER",
+      "#9A1E14",
+      "baklava"
+    ],
+    "end": [
+      "OPERASYON BİTTİ",
+      "#1E1B16",
+      "kare"
+    ],
+    "lockedPaper": {
+      "fill": "#5E584E",
+      "line": "#2A2620",
+      "text": "#EFE7D6"
+    }
+  },
+  "machineTypes": {
+    "_": "★2 tür işaretleri (36 birimlik çizim, etiket 18 px, harita 34 px). Gövde ortak; tür biçimden ve işaretten okunur.",
+    "drone": "X + 4 rotor halkası",
+    "maintenanceRobot": "anahtar",
+    "locker": "iki kıskaç + merkez nokta",
+    "mortar": "çapraz namlu + kesik yay",
+    "shieldDrone": "altıgen kalkan",
+    "glyphColorBoard": "#9A1E14",
+    "glyphColorMap": "#1E1B16",
+    "armorDrone": "dron X’i + kalın rotor halkaları + ortada dolu zırh kalkanı",
+    "bomber": "sekiz köşeli patlama yıldızı",
+    "replicator": "dolu daire + yanında kesik daire (uyandıracağı dron)",
+    "glyph": {
+      "_": "★3 tür → sprite (sprites/). Fişte ve işaretler kutusunda “_frame” sürümü.",
+      "drone": "glyph_drone",
+      "armorDrone": "glyph_armordrone",
+      "maintenanceRobot": "glyph_maint",
+      "locker": "glyph_locker",
+      "mortar": "glyph_mortar",
+      "shieldDrone": "glyph_shield",
+      "bomber": "glyph_bomber",
+      "replicator": "glyph_replicator"
+    }
+  },
+  "radioSlip": {
+    "_": "★2 TELSİZ fişi (bugünkü sarı kutunun yerine).",
+    "paper": "#EFE4BC",
+    "line": "#C9B98A",
+    "label": [
+      "TELSİZ · K-07",
+      [
+        "Courier Prime",
+        700,
+        14,
+        0.08
+      ]
+    ],
+    "text": [
+      "Courier Prime",
+      700,
+      18,
+      0
+    ],
+    "rect": [
+      26,
+      262,
+      440,
+      64
+    ],
+    "holdS": 3
+  },
+  "abilityCard": {
+    "_": "★2 yetenek kartı.",
+    "rect": [
+      20,
+      732,
+      432,
+      231
+    ],
+    "row": 44,
+    "subButton": 40,
+    "subNoTarget": "kesikli kenar",
+    "subTarget": "düz kenar 2 px"
+  },
+  "resultCard": {
+    "_": "★2 sonuç kartı.",
+    "rect": [
+      1290,
+      318,
+      500,
+      0
+    ],
+    "paper": "#FBF7EC",
+    "stampFont": [
+      "Courier Prime",
+      700,
+      34,
+      0.06
+    ],
+    "stampBorder": "6 px çift",
+    "rotDeg": 0.8
+  },
+  "trainingNote": {
+    "_": "★2 analist notu baskında.",
+    "rect": [
+      1560,
+      796,
+      336,
+      0
+    ],
+    "header": "BASKIN · ADIM {n}/30",
+    "font": [
+      "Kalam",
+      700,
+      22,
+      0
+    ]
+  },
+  "regionTraits": {
+    "_": "★3 bölge özelliği işaretleri: 36 birimlik çizim, beyaz sprite boyanır. Harita dokusunda 34 px (ekranda ~22 px), fişin SAHA satırında “_frame” 30 px; renk #1E1B16. Ad ve kural oyundan gelir; anahtar adları öneri, Aşama 0 eşleme tablosunda oyundaki kimliklere bağla.",
+    "color": "#1E1B16",
+    "texturePx": 34,
+    "slipPx": 30,
+    "narrowCorridor": {
+      "glyph": "glyph_corridor",
+      "draws": "iki duvar arasında ok"
+    },
+    "sandstorm": {
+      "glyph": "glyph_sand",
+      "draws": "üç dalga"
+    },
+    "safeEntry": {
+      "glyph": "glyph_safe",
+      "draws": "kapalı göz: makineler uyuyor"
+    },
+    "shortWatch": {
+      "glyph": "glyph_short",
+      "draws": "kumu bitmek üzere kum saati"
+    },
+    "reinforcement": {
+      "glyph": "glyph_reinforce",
+      "draws": "biri öbürünün arkasında iki robot başı"
+    },
+    "openGround": {
+      "glyph": "glyph_open",
+      "draws": "alçak yıkık duvarların üstünden uzun ok"
+    },
+    "coolingNet": {
+      "glyph": "glyph_cooling",
+      "draws": "soğutma ünitesinin üç kanatlı pervanesi"
+    },
+    "crowdedCity": {
+      "glyph": "glyph_crowd",
+      "draws": "üç kişilik kalabalık"
+    },
+    "armoredCabinet": {
+      "glyph": "glyph_armored",
+      "draws": "sunucu yuvalı dolu zırh kalkanı"
+    },
+    "powerGrid": {
+      "glyph": "glyph_grid",
+      "draws": "yüksek gerilim üçgeni + şimşek"
+    },
+    "copyFactory": {
+      "glyph": "glyph_factory",
+      "draws": "testere çatılı fabrika"
+    },
+    "fastPatrol": {
+      "glyph": "glyph_patrol",
+      "draws": "çift köşeli ok (»)"
+    }
+  },
+  "kits": {
+    "_rule": "Bina kitleri (BASKIN-MEKANLARI Katman 3–4, Aşama A): duvar bloğunun yüzlerinin ve kanal içinin ortalama rengi (sRGB). RaidKitTextureBaker dokuyu motifle çizer ve doğrusal ortalamasını bu renge eşitler; güney yüzü batı dokusunun parlaklık tonudur. Kapı (RaidRoomKitTests): üst L* 58–74, yan L* ≥40, C* ≤22; ahşaba ΔE ≥15, ayrılmış renklere ΔE ≥20 (CIE76); desen ΔL* ≤15; kanal ve kuyu L* ≤30. detailA/detailB, channelDetail, wellDetail motifin vurgu renkleri.",
+    "weu": {
+      "_draws": "sökülmüş rack kabinleri: kapı çizgisi, delikli havalandırma bandı, üstte kablo tavası (varsayılana en yakın)",
+      "wallTop": "#A8A194",
+      "wallWest": "#8D877A",
+      "wallSouth": "#6F6A5F",
+      "detailA": "#5F5B53",
+      "detailB": "#A9AAA4",
+      "channel": "#2A2A28",
+      "channelDetail": "#4D4E4A",
+      "well": "#262523",
+      "wellDetail": "#77746C",
+      "models": {
+        "relief": {
+          "model": "Relief_weu",
+          "tris": 321,
+          "note": "Her yüzde üç dar rack kabini: çerçeve içinde kapı, dikey kol çubuğu (detailB), üstte koyu delikli havalandırma bandı (delikler doku), koyu süpürgelik; üst yüzde ortadan x boyunca merdiven kablo tavası (köprüyle komşuya devam eder). Gri tonda: uzun dikey paneller + dikey kollar. İki kat: süpürgelik + kabin gövdesi. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided."
+        },
+        "isolated": {
+          "model": "ReliefIso_weu",
+          "tris": 183,
+          "note": "Tek uzun rack kabini (0,70 gövde, 0,78 süpürgelik, 0,74 başlık): her yüzde tek kapı, ortada uzun koyu delikli panel, dikey kol; üstte kısa kablo tavası. Kolon gibi okunur: taban + ince gövde + başlık. Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi."
+        },
+        "bridge": {
+          "model": "Bridge_weu",
+          "tris": 42,
+          "note": "Komşu iki rack sırası arasında üst tava devam eder (taban detailA, raylar ve basamak detailB); aradaki derz gövde renginde, yüzlerden 12 mm geride. Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti."
+        },
+        "rubble": {
+          "model": "Rubble_weu",
+          "tris": 218,
+          "note": "Yatık rack kapağı, kopmuş çerçeve rayı, bir kabin parçası, kıvrık kablo (detailA) ve yonga; toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi."
+        },
+        "civil": {
+          "model": "Civil_weu",
+          "tris": 320,
+          "note": "Banka veri merkezi: duvara gömülü ATM (güney yüz): uzun koyu ön yüz, gri siperlik ve yanaklarla ekran oyuğu, eğik tuş takımı rafı, çelik kart ve para ağzı. Önce sivil okunur: krem gövde, mavi bant, tepede mavi halka + çarpı (Ø 0,32); ekipman batı/güney yüzde ikinci siluet. Gövde ekipmana yer açmak için +x +z yönüne 0,03 kaydırıldı (tamamı 0,66 kare içinde)."
+        },
+        "entryDoor": {
+          "model": "EntryDoor_weu",
+          "tris": 314,
+          "note": "Grafit kasa, düz çelik kanat, dar dikey gözetleme camı, kollu kol ve tekmelik; güney kasada kart okuyucu kutusu. Paftanın dışında, batı kenar payında (u = −0,15) giriş satırının ortasında durur; dış yüz −x (kameranın gördüğü yüz), kapı +x yönünde tahtanın içine açılır. El çarkı yok, kırmızı/mavi/turuncu bant yok."
+        }
+      }
+    },
+    "eeu": {
+      "_draws": "çelik arşiv rafı, kurşuni ve krem dosya kutuları",
+      "wallTop": "#8F9892",
+      "wallWest": "#77817C",
+      "wallSouth": "#606763",
+      "detailA": "#6E7375",
+      "detailB": "#B3AD98",
+      "channel": "#2B2925",
+      "channelDetail": "#403C36",
+      "well": "#2C2A26",
+      "wellDetail": "#4F4B44",
+      "models": {
+        "relief": {
+          "model": "Relief_eeu",
+          "tris": 379,
+          "note": "Açık çelik raf: dört köşe dikmesi, üç raf dudağı (alt, orta, üst), aralarda 2–3 genişlikte kurşuni (detailA) ve krem (detailB) dosya kutuları, raf dudağından geride. Gri tonda: yatay raflar + düzensiz kutu ızgarası. İki kat: alt ve üst raf gözü. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided."
+        },
+        "isolated": {
+          "model": "ReliefIso_eeu",
+          "tris": 214,
+          "note": "Arşiv rafının ucu (0,80): batıda üç krem etiket çerçeveli uç levhası, güneyde iki göz dosya kutusu, köşe dikmeleri üstte kapaklı. Kolon gibi okunur: dar, dikmeli. Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi."
+        },
+        "bridge": {
+          "model": "Bridge_eeu",
+          "tris": 76,
+          "note": "Raf dudakları (alt, orta, üst) ve gözlerin arkası komşu rafa devam eder; alt gözde derzi örten bir kutu (yüz başına bir; E ve K yönünde görünen yüzlerde). Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti."
+        },
+        "rubble": {
+          "model": "Rubble_eeu",
+          "tris": 164,
+          "note": "Devrilmiş ve dağılmış dosya kutuları (kurşuni ve krem), bükülmüş raf dudağı, yere saçılmış dosyalar (düz kâğıtlar); toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi."
+        },
+        "civil": {
+          "model": "Civil_eeu",
+          "tris": 386,
+          "note": "Devlet arşivi: mikrofilm okuyucu (batı yüz): derin siperlikli, geriye yatık büyük ekran, film tablasında iki makara, yan kol (krank). Önce sivil okunur: krem gövde, mavi bant, tepede mavi halka + çarpı (Ø 0,32); ekipman batı/güney yüzde ikinci siluet. Gövde ekipmana yer açmak için +x +z yönüne 0,03 kaydırıldı (tamamı 0,66 kare içinde)."
+        },
+        "entryDoor": {
+          "model": "EntryDoor_eeu",
+          "tris": 368,
+          "note": "Koyu cilalı ahşap kasa ve kayıt, açık ahşap iki kanat, tablalar, üstte camlı vasistas, pirinç topuzlar. Paftanın dışında, batı kenar payında (u = −0,15) giriş satırının ortasında durur; dış yüz −x (kameranın gördüğü yüz), kapı +x yönünde tahtanın içine açılır. El çarkı yok, kırmızı/mavi/turuncu bant yok."
+        }
+      }
+    },
+    "me": {
+      "_draws": "kutu sehpa üstünde alüminyum kaplı boru istifi: yanlarda boru ağızları ve flanşlar, üstte borular ve kelepçeler",
+      "wallTop": "#A8A9A3",
+      "wallWest": "#8E8F89",
+      "wallSouth": "#70716C",
+      "detailA": "#6C7174",
+      "detailB": "#646B70",
+      "channel": "#2A2826",
+      "channelDetail": "#4E4B45",
+      "well": "#262422",
+      "wellDetail": "#5B5850",
+      "models": {
+        "relief": {
+          "model": "Relief_me",
+          "tris": 361,
+          "note": "Alüminyum kaplı boru demeti kutu sehpa üstünde: batı ve güney yüzünde iki sıra × üç boru ağzı (sekizgen, yumuşak normal; ağız içi detailA), üstte iki kelepçe (detailB), altta koyu sehpa kirişi ve üç ayak. Gri tonda: iri yuvarlaklar. İki kat: sehpa + demet. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided."
+        },
+        "isolated": {
+          "model": "ReliefIso_me",
+          "tris": 365,
+          "note": "Kare çelik çerçevede (0,80) dik duran 3 × 3 ince boru: üstten boru ağızları (koyu iç), yüzlerde dikey borular; çerçevenin ortasında kuşak. Tek iri silindir ya da fan yok (soğutma ünitesiyle karışmaz). Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi."
+        },
+        "bridge": {
+          "model": "Bridge_me",
+          "tris": 124,
+          "note": "Komşu demetler arasında üstte, iki yüze yakın iki kısa boru makarası (her biri iki flanşlı); altta sehpa kirişi devam eder; derz gövde renginde. Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti."
+        },
+        "rubble": {
+          "model": "Rubble_me",
+          "tris": 160,
+          "note": "Yere düşmüş iki kesik boru parçası (ağızları koyu), yatık bir flanş, kaplama sacı parçaları ve yonga; toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi."
+        },
+        "civil": {
+          "model": "Civil_me",
+          "tris": 364,
+          "note": "Körfez rafinerisi: gaz analiz dolabı (batı yüz): dolap kapağında iki büyük yuvarlak gösterge ve örnek panjuru; tepenin kuzeybatı köşesinde şapkalı havalandırma bacası. Önce sivil okunur: krem gövde, mavi bant, tepede mavi halka + çarpı (Ø 0,32); ekipman batı/güney yüzde ikinci siluet. Gövde ekipmana yer açmak için +x +z yönüne 0,03 kaydırıldı (tamamı 0,66 kare içinde)."
+        },
+        "entryDoor": {
+          "model": "EntryDoor_me",
+          "tris": 380,
+          "note": "Kalın koyu döküm kasa ve eşik, boyalı ağır çelik kanat, kilit tarafında üç kollu mandal, menteşe tarafında iki ağır menteşe (çark yok). Paftanın dışında, batı kenar payında (u = −0,15) giriş satırının ortasında durur; dış yüz −x (kameranın gördüğü yüz), kapı +x yönünde tahtanın içine açılır. El çarkı yok, kırmızı/mavi/turuncu bant yok."
+        }
+      }
+    },
+    "af": {
+      "_draws": "oluklu galvaniz sac bunker, üstte basık cevher yığını",
+      "wallTop": "#9F9184",
+      "wallWest": "#959FA6",
+      "wallSouth": "#768087",
+      "detailA": "#8A7A6D",
+      "detailB": "#B8BEBE",
+      "channel": "#2B2824",
+      "channelDetail": "#4C4037",
+      "well": "#2A2622",
+      "wellDetail": "#6A6F70",
+      "models": {
+        "relief": {
+          "model": "Relief_af",
+          "tris": 323,
+          "note": "Oluklu galvaniz sac bunker: her yüzde 12 ince dikey oluk, açık renk köşe köşebentleri (detailB), üst kenarda sac ağız; içinde ağzın altında basık cevher yığını (detailA, en çok 0,546). Gri tonda: ince sık dikey çizgiler + içi oyuk üst. İki kat: kızak + bunker. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided."
+        },
+        "isolated": {
+          "model": "ReliefIso_af",
+          "tris": 295,
+          "note": "Dar oluklu bunker (0,76): her yüzde 9 dikey oluk, açık köşe köşebentleri, içinde cevher; güney yüzünün altında eğik boşaltma oluğu (koyu ağız). Kolon gibi okunur: dar, dikey çizgili. Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi."
+        },
+        "bridge": {
+          "model": "Bridge_af",
+          "tris": 62,
+          "note": "Komşu bunkerlerin üst ağızları arasında iki I kirişi (detailB); arada oluklu sac derz, yüze yakın birer oluk devam eder. Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti."
+        },
+        "rubble": {
+          "model": "Rubble_af",
+          "tris": 224,
+          "note": "Basık cevher yığını (detailA), bükülmüş oluklu sac parçası (üstünde üç oluk), köşebent parçası ve taşlar; toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi."
+        },
+        "civil": {
+          "model": "Civil_af",
+          "tris": 322,
+          "note": "Cevher hangarı: sevk telsizi konsolu (batı yüz): koyu ön panelde büyük beyaz ayar kadranı; yanında krem gövdeye asılı kara ahize. Önce sivil okunur: krem gövde, mavi bant, tepede mavi halka + çarpı (Ø 0,32); ekipman batı/güney yüzde ikinci siluet. Gövde ekipmana yer açmak için +x +z yönüne 0,03 kaydırıldı (tamamı 0,66 kare içinde)."
+        },
+        "entryDoor": {
+          "model": "EntryDoor_af",
+          "tris": 272,
+          "note": "Galvaniz oluklu kepenk perdesi (yatay nervürler), iki yan kılavuz ray, üstte yuvarlatılmış sarma kutusu, alt çıta ve tutamak. Paftanın dışında, batı kenar payında (u = −0,15) giriş satırının ortasında durur; dış yüz −x (kameranın gördüğü yüz), kapı +x yönünde tahtanın içine açılır. El çarkı yok, kırmızı/mavi/turuncu bant yok."
+        }
+      }
+    },
+    "na": {
+      "_draws": "ahşap palet üstünde streç filmli koli yükü",
+      "wallTop": "#B2A492",
+      "wallWest": "#998A78",
+      "wallSouth": "#7A6E5E",
+      "detailA": "#857B6E",
+      "detailB": "#A8957B",
+      "channel": "#2A2826",
+      "channelDetail": "#3D3B37",
+      "well": "#262422",
+      "wellDetail": "#5F5F5A",
+      "models": {
+        "relief": {
+          "model": "Relief_na",
+          "tris": 210,
+          "note": "Altta ahşap palet: üst tahtalar, yüz başına üç takoz, aralarında koyu forklift ağızları (rk_void); üstte üç kat koli (2×2, 3×3 şaşırtmalı derzler) ve filmle kapanmış yumuşak kenarlı üst kat; ortayı saran açık renk, yarı parlak streç film bandı (rk_film). Gri tonda: çıtalı koyu taban + açık yatay bant + sade yumuşak üst. İki kat: palet + yük. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided."
+        },
+        "isolated": {
+          "model": "ReliefIso_na",
+          "tris": 265,
+          "note": "Paletin (0,80) üstünde dar ve uzun dört kat koli istifi (0,72): şaşırtmalı derzler, filmle kapanmış yumuşak üst, ortada açık renk streç film bandı; paletin koyu ağızları görünür. Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi."
+        },
+        "bridge": {
+          "model": "Bridge_na",
+          "tris": 32,
+          "note": "Komşu paletler arasında, iki yüze yakın galvaniz kutu kiriş (rk_galv, turuncu değil); palet tahtası ve koli derzi devam eder. Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti."
+        },
+        "rubble": {
+          "model": "Rubble_na",
+          "tris": 184,
+          "note": "Yıkılmış üç koli (biri yan yatmış), kırık palet tahtası (detailA), koli yongaları; toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi."
+        },
+        "civil": {
+          "model": "Civil_na",
+          "tris": 212,
+          "note": "Dağıtım merkezi: depo kiosku (güney yüz): gövdenin önünde ayaklı direk, üstünde eğik barkod terminali, fiş ağzından sarkan fiş. Önce sivil okunur: krem gövde, mavi bant, tepede mavi halka + çarpı (Ø 0,32); ekipman batı/güney yüzde ikinci siluet. Gövde ekipmana yer açmak için +x +z yönüne 0,03 kaydırıldı (tamamı 0,66 kare içinde)."
+        },
+        "entryDoor": {
+          "model": "EntryDoor_na",
+          "tris": 326,
+          "note": "Açık gri seksiyonel rampa kapısı, çevresinde kara kauçuk körük yastıkları, altta iki kara tampon ve rampa sacı. Paftanın dışında, batı kenar payında (u = −0,15) giriş satırının ortasında durur; dış yüz −x (kameranın gördüğü yüz), kapı +x yönünde tahtanın içine açılır. El çarkı yok, kırmızı/mavi/turuncu bant yok."
+        }
+      }
+    },
+    "ru": {
+      "_draws": "sandviç panel kabin, iki dikey derz, kırağı",
+      "wallTop": "#A8B2B9",
+      "wallWest": "#909AA1",
+      "wallSouth": "#737C83",
+      "detailA": "#6A7379",
+      "detailB": "#D8DFE3",
+      "channel": "#26282A",
+      "channelDetail": "#383C40",
+      "well": "#222426",
+      "wellDetail": "#8A9399",
+      "models": {
+        "relief": {
+          "model": "Relief_ru",
+          "tris": 259,
+          "note": "Sandviç panel kabin: her yüzde üç geniş düz panel, iki dikey derz çıtası ve köşe çıtaları; üst kenarlarda açık renk kırağı dudağı (detailB), üstte nervürlü çatı şeridi (x boyunca 5 nervür). Gri tonda: geniş sade paneller + parlak üst kenar + çizgili üst. İki kat: taban profili + panel. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided."
+        },
+        "isolated": {
+          "model": "ReliefIso_ru",
+          "tris": 252,
+          "note": "Sandviç panelden kabin (0,84): güneyde koyu çerçeveli kapı ve büyük kol (detailB), batıda iki panel ve derz çıtası, üstte kırağı dudağı ve nervürlü çatı. Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi."
+        },
+        "bridge": {
+          "model": "Bridge_ru",
+          "tris": 140,
+          "note": "Komşu kabinler arasında üstte iki yalıtımlı yuvarlak kanal (iki ceket bandı, detailB); kırağı dudağı ve çatı derzi devam eder. Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti."
+        },
+        "rubble": {
+          "model": "Rubble_ru",
+          "tris": 184,
+          "note": "Kırılmış iki sandviç panel parçası, açık renk köpük parçaları (detailB), kırağı yongaları; toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi."
+        },
+        "civil": {
+          "model": "Civil_ru",
+          "tris": 266,
+          "note": "Sibirya veri merkezi: operatör konsolu (güney yüz): büyük koyu ekranlı CRT ve altında açık tuşlu eğik klavye rafı. Önce sivil okunur: krem gövde, mavi bant, tepede mavi halka + çarpı (Ø 0,32); ekipman batı/güney yüzde ikinci siluet. Gövde ekipmana yer açmak için +x +z yönüne 0,03 kaydırıldı (tamamı 0,66 kare içinde)."
+        },
+        "entryDoor": {
+          "model": "EntryDoor_ru",
+          "tris": 348,
+          "note": "Paslanmaz kasa, kalın yuvarlatılmış beyaz yalıtımlı kanat, kilit tarafında büyük kollu mandal, iki ağır blok menteşe. Paftanın dışında, batı kenar payında (u = −0,15) giriş satırının ortasında durur; dış yüz −x (kameranın gördüğü yüz), kapı +x yönünde tahtanın içine açılır. El çarkı yok, kırmızı/mavi/turuncu bant yok."
+        }
+      }
+    },
+    "in": {
+      "_draws": "ofis bölme panelleri (kumaş yüz, alüminyum çerçeve) ve çekmeceli dosya dolabı istifi; kanalda yassı şerit kablolar ve pirinç kenar profili",
+      "wallTop": "#A19CA5",
+      "wallWest": "#8E8A92",
+      "wallSouth": "#726E76",
+      "detailA": "#74717F",
+      "detailB": "#B6B3AB",
+      "channel": "#29282B",
+      "channelDetail": "#5E5C62",
+      "well": "#272527",
+      "wellDetail": "#857652",
+      "models": {
+        "relief": {
+          "model": "Relief_in",
+          "tris": 328,
+          "note": "Alt kat: çekmeceli dosya dolapları (yüz başına iki dolap × iki çekmece, açık renk kulp). Üst kat: ofis bölme panelleri — açık alüminyum çerçeve (detailB) içinde koyu kumaş (detailA). Gri tonda: çerçeve ızgarası + çekmece çizgileri. İki kat: dolaplar + paneller. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided."
+        },
+        "isolated": {
+          "model": "ReliefIso_in",
+          "tris": 199,
+          "note": "Dört çekmeceli uzun dosya dolabı (0,68): güneyde çekmeceler (kulp + etiket yeri, detailB), batıda dolaba dayalı çerçeveli bölme paneli (detailB çerçeve, detailA kumaş). Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi."
+        },
+        "bridge": {
+          "model": "Bridge_in",
+          "tris": 32,
+          "note": "Komşu istifler arasında alçak bölme paneli: dolap derzi, alt alüminyum ray ve üstü alüminyum kapaklı koyu kumaş panel (0,445 yüksekliğe kadar; üstü açık). Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti."
+        },
+        "rubble": {
+          "model": "Rubble_in",
+          "tris": 170,
+          "note": "Yere saçılmış kâğıtlar (düz, detailB), düşmüş bir çekmece, kırık bölme paneli parçası (koyu kumaş) ve yonga; toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi."
+        },
+        "civil": {
+          "model": "Civil_in",
+          "tris": 362,
+          "note": "Çağrı merkezi: masa ünitesi: güneybatı köşesini saran L tezgâh; güney kanatta kara masa telefonu, batı yüzde kancaya asılı kulaklık. Önce sivil okunur: krem gövde, mavi bant, tepede mavi halka + çarpı (Ø 0,32); ekipman batı/güney yüzde ikinci siluet. Gövde ekipmana yer açmak için +x +z yönüne 0,03 kaydırıldı (tamamı 0,66 kare içinde)."
+        },
+        "entryDoor": {
+          "model": "EntryDoor_in",
+          "tris": 230,
+          "note": "Eloksal alüminyum kasa ve kanat çerçevesi, açık gri cam (saydam), önde yatay itme barı. Paftanın dışında, batı kenar payında (u = −0,15) giriş satırının ortasında durur; dış yüz −x (kameranın gördüğü yüz), kapı +x yönünde tahtanın içine açılır. El çarkı yok, kırmızı/mavi/turuncu bant yok."
+        }
+      }
+    },
+    "cn": {
+      "_draws": "istiflenmiş plastik parça kasaları (kaburgalı yan, tutamak yuvası, etiket cebi), üstte kasalardaki parçalar; kanalda kablo zinciri",
+      "wallTop": "#8F9192",
+      "wallWest": "#87898A",
+      "wallSouth": "#6C6E70",
+      "detailA": "#5B5955",
+      "detailB": "#C2BFB5",
+      "channel": "#28282A",
+      "channelDetail": "#4C4D50",
+      "well": "#262628",
+      "wellDetail": "#707377",
+      "models": {
+        "relief": {
+          "model": "Relief_cn",
+          "tris": 261,
+          "note": "İki kat plastik parça kasası (yüz başına 3 × 2): her kasada koyu tutamak yuvası (rk_void) ve açık renk etiket cebi (detailB); üst kattaki kasalar açık, ağızlarının altında koyu taban ve küçük parçalar (somun, pul). Gri tonda: sık küçük kutular + koyu nokta dizisi. İki kat: iki kasa sırası. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided."
+        },
+        "isolated": {
+          "model": "ReliefIso_cn",
+          "tris": 209,
+          "note": "Koyu altlık üstünde üç kat dar parça kasası (0,62): kaburgalı yanlar, koyu tutamak yuvaları, etiket cepleri; en üst kasa açık, içinde parçalar. Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi."
+        },
+        "bridge": {
+          "model": "Bridge_cn",
+          "tris": 90,
+          "note": "Komşu kasa yığınları arasında, iki yüze yakın, orta yükseklikte mafsallı kablo zinciri (koyu baklalar detailA, pimler detailB); kasa derzi gövde renginde. Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti."
+        },
+        "rubble": {
+          "model": "Rubble_cn",
+          "tris": 229,
+          "note": "Yan yatmış bir parça kasası (koyu tutamak yuvası yukarıda), yere saçılmış küçük parçalar (somun, pul; detailB ve detailA); toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi."
+        },
+        "civil": {
+          "model": "Civil_cn",
+          "tris": 338,
+          "note": "Montaj fabrikası: kalite kontrol panosu (güney yüz): ekranlı pano, iş rafı ve rafın üstüne eğilen kollu büyük büyüteç lambası. Önce sivil okunur: krem gövde, mavi bant, tepede mavi halka + çarpı (Ø 0,32); ekipman batı/güney yüzde ikinci siluet. Gövde ekipmana yer açmak için +x +z yönüne 0,03 kaydırıldı (tamamı 0,66 kare içinde)."
+        },
+        "entryDoor": {
+          "model": "EntryDoor_cn",
+          "tris": 350,
+          "note": "Döküm kasa, dört geniş yatay panelli seksiyonel kapı, üçüncü panelde pencere sırası, alt kauçuk conta ve tutamak. Paftanın dışında, batı kenar payında (u = −0,15) giriş satırının ortasında durur; dış yüz −x (kameranın gördüğü yüz), kapı +x yönünde tahtanın içine açılır. El çarkı yok, kırmızı/mavi/turuncu bant yok."
+        }
+      }
+    },
+    "jk": {
+      "_draws": "sökülmüş pano gövdeleri: kapı çizgileri, panjur yarıkları, kilitler; kanalda krem izolatörler üstünde baralar",
+      "wallTop": "#B2B6B0",
+      "wallWest": "#A0A49F",
+      "wallSouth": "#818580",
+      "detailA": "#6C726E",
+      "detailB": "#D5D8D1",
+      "channel": "#29292A",
+      "channelDetail": "#CFC6AD",
+      "well": "#262627",
+      "wellDetail": "#8F948F",
+      "models": {
+        "relief": {
+          "model": "Relief_jk",
+          "tris": 328,
+          "note": "Sökülmüş şalt pano gövdeleri: her yüzde iki geniş kapı, kapı çizgileri, kapı başına beş yatay kabarık panjur çıtası ve yuvarlak kilit topuzu (detailB); üstte taşan çatı sacı, altta koyu taban profili. Gri tonda: yatay panjur taraması. İki kat: taban profili + pano. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided."
+        },
+        "isolated": {
+          "model": "ReliefIso_jk",
+          "tris": 157,
+          "note": "Tek şalt pano hücresi (0,72): güneyde kapı (iki grup yatay panjur, kilit topuzu), batı yan sacında üstte panjur grubu; çatıda kablo giriş plakası ve rakorlar. Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi."
+        },
+        "bridge": {
+          "model": "Bridge_jk",
+          "tris": 34,
+          "note": "Komşu panolar arasında üstte bara kanalı (detailB, iki ucunda flanş); pano ve çatı derzi gövde renginde. Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti."
+        },
+        "rubble": {
+          "model": "Rubble_jk",
+          "tris": 181,
+          "note": "Yere düşmüş pano kapağı (üstünde panjur çıtaları), kopuk kablo (detailA), sac parçaları; toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi."
+        },
+        "civil": {
+          "model": "Civil_jk",
+          "tris": 280,
+          "note": "Çip fabrikası: temiz oda terminali: güney yüzde contalı eğik ekranlı paslanmaz kutu; batı yüzde iki büyük eldiven ağzı. Önce sivil okunur: krem gövde, mavi bant, tepede mavi halka + çarpı (Ø 0,32); ekipman batı/güney yüzde ikinci siluet. Gövde ekipmana yer açmak için +x +z yönüne 0,03 kaydırıldı (tamamı 0,66 kare içinde)."
+        },
+        "entryDoor": {
+          "model": "EntryDoor_jk",
+          "tris": 290,
+          "note": "Kalın paslanmaz kasa ve eşik rampası, açık gri emaye kanat, ortada paslanmaz çerçeveli yuvarlak koyu pencere, dikey çekme kolu. Paftanın dışında, batı kenar payında (u = −0,15) giriş satırının ortasında durur; dış yüz −x (kameranın gördüğü yüz), kapı +x yönünde tahtanın içine açılır. El çarkı yok, kırmızı/mavi/turuncu bant yok."
+        }
+      }
+    },
+    "sea": {
+      "_draws": "dört sıra kum torbası, altta ıslak koyu bant; kanal koyu reçine su, içinde düşmüş bakır kablo",
+      "wallTop": "#A6A799",
+      "wallWest": "#939489",
+      "wallSouth": "#74756C",
+      "detailA": "#5D5C52",
+      "detailB": "#BDBBAE",
+      "channel": "#343A33",
+      "channelDetail": "#6E5A42",
+      "well": "#30362F",
+      "wellDetail": "#6C716A",
+      "models": {
+        "relief": {
+          "model": "Relief_sea",
+          "tris": 308,
+          "note": "Dört sıra kum torbası (yuvarlak kenarlı yastıklar, köşede sıra sıra şaşırtmalı bağ); en alt sıra koyu ıslak bant (detailA); üst sıra 2 × 3 torbayla üstü kaplar. Gri tonda: yuvarlak yatay sıralar + koyu alt bant. İki kat: alt iki sıra + üst iki sıra. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided."
+        },
+        "isolated": {
+          "model": "ReliefIso_sea",
+          "tris": 120,
+          "note": "Dört kat çapraz örülmüş kum torbası sütunu (0,62): her katta iki torba, kat kat yön değiştirir; en alt kat koyu ıslak (detailA). Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi."
+        },
+        "bridge": {
+          "model": "Bridge_sea",
+          "tris": 16,
+          "note": "Komşu torba yığınları arasında üstte, torbalara gömülü yatık tahta (detailB); arada torba rengi derz (yuvarlak torbalar nedeniyle 40 mm geride). Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti."
+        },
+        "rubble": {
+          "model": "Rubble_sea",
+          "tris": 169,
+          "note": "Yassılmış patlak torbalar, dökülmüş kum yığını (üst rengi), ıslak koyu bir torba (detailA) ve yonga; toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi."
+        },
+        "civil": {
+          "model": "Civil_sea",
+          "tris": 376,
+          "note": "Elektronik fabrikası: test tezgâhı (batı yüz): koyu rafta yuvarlak ekranlı büyük osiloskop, raf ucundan sarkan iki prob kablosu. Önce sivil okunur: krem gövde, mavi bant, tepede mavi halka + çarpı (Ø 0,32); ekipman batı/güney yüzde ikinci siluet. Gövde ekipmana yer açmak için +x +z yönüne 0,03 kaydırıldı (tamamı 0,66 kare içinde)."
+        },
+        "entryDoor": {
+          "model": "EntryDoor_sea",
+          "tris": 226,
+          "note": "Gemi grisi perde sacı, koyu oval kasa ağzı içinde gri oval kanat, çevrede altı küçük mandal kolu, iki menteşe (çark yok). Paftanın dışında, batı kenar payında (u = −0,15) giriş satırının ortasında durur; dış yüz −x (kameranın gördüğü yüz), kapı +x yönünde tahtanın içine açılır. El çarkı yok, kırmızı/mavi/turuncu bant yok."
+        }
+      }
+    },
+    "sa": {
+      "_draws": "ahşap takoz üstünde çelik levha ve kalıp istifi; kanalda jeneratör kablo demeti, göbekte çelik ızgara",
+      "wallTop": "#959CA2",
+      "wallWest": "#7E8790",
+      "wallSouth": "#656E76",
+      "detailA": "#5B5148",
+      "detailB": "#8B7464",
+      "channel": "#262729",
+      "channelDetail": "#45484C",
+      "well": "#252628",
+      "wellDetail": "#7E8387",
+      "models": {
+        "relief": {
+          "model": "Relief_sa",
+          "tris": 359,
+          "note": "Altta iki ahşap takoz (detailA) üstünde üç çelik levha (kenarları kaçık); üstte çelik kalıp panosu: sık nervür ızgarası (yüz başına 4 × 3 göz). Gri tonda: kare ızgara + ince yatay levha çizgileri. İki kat: levha istifi + kalıp. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided."
+        },
+        "isolated": {
+          "model": "ReliefIso_sa",
+          "tris": 228,
+          "note": "Kare kolon kalıbı (0,72): dört kalıp panosu, yüzlerde nervür ızgarası, iki kat koyu çelik kelepçe (köşelerden taşan kamalar), altta galvaniz levha; üstte düz kapak. Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi."
+        },
+        "bridge": {
+          "model": "Bridge_sa",
+          "tris": 36,
+          "note": "Komşu kalıp istifleri arasında, iki yüze yakın orta nervür hizasında çelik U kiriş (detailA); levha istifi ve kalıp derzi devam eder. Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti."
+        },
+        "rubble": {
+          "model": "Rubble_sa",
+          "tris": 160,
+          "note": "Birbirine yaslanmış eğri çelik levhalar, kalıp nervürü parçası, ahşap takoz (detailA) ve yonga; toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi."
+        },
+        "civil": {
+          "model": "Civil_sa",
+          "tris": 390,
+          "note": "Hidroelektrik santrali: röle panosu (güney yüz): menteşeli dolap kapağında 2×2 yuvarlak sayaç ve röle, dikey kol. Önce sivil okunur: krem gövde, mavi bant, tepede mavi halka + çarpı (Ø 0,32); ekipman batı/güney yüzde ikinci siluet. Gövde ekipmana yer açmak için +x +z yönüne 0,03 kaydırıldı (tamamı 0,66 kare içinde)."
+        },
+        "entryDoor": {
+          "model": "EntryDoor_sa",
+          "tris": 314,
+          "note": "Kalın galvaniz dört kenarlı kasa (eşikli), koyu döküm kapak ve çapraz takviyeleri, kasada somun sırası. Paftanın dışında, batı kenar payında (u = −0,15) giriş satırının ortasında durur; dış yüz −x (kameranın gördüğü yüz), kapı +x yönünde tahtanın içine açılır. El çarkı yok, kırmızı/mavi/turuncu bant yok."
+        }
+      }
+    },
+    "oc": {
+      "_draws": "baklava sac kızak üstünde yedek parça kasaları, kızıl toz; kanal kenarlarında baklava sac kapaklar",
+      "wallTop": "#ADA29E",
+      "wallWest": "#9E918B",
+      "wallSouth": "#7F736F",
+      "detailA": "#686160",
+      "detailB": "#9A7D6E",
+      "channel": "#2A2827",
+      "channelDetail": "#55504D",
+      "well": "#272524",
+      "wellDetail": "#7A7470",
+      "models": {
+        "relief": {
+          "model": "Relief_oc",
+          "tris": 244,
+          "note": "Baklava sac kızak (iki kızak ayağı, aralarında koyu boşluk; baklava deseni doku) üstünde yedek parça sandığı: derin çıta çerçeve (tahtalar 5 cm geride), her yüzde çapraz destek çıtası (köşede V oluşturur), alt ve üst köşelerde koyu çelik köşe sacı (detailA), kapakta iki çıta; kızıl toz dokuda. Gri tonda: çapraz çıtalar + kızak. İki kat: kızak + sandık. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided."
+        },
+        "isolated": {
+          "model": "ReliefIso_oc",
+          "tris": 238,
+          "note": "Baklava sac kızak üstünde dar ve uzun yedek parça sandığı (0,72): çıta çerçeve, her yüzde çapraz çıta, üst köşelerde çelik köşe sacı, kapakta çıta. Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi."
+        },
+        "bridge": {
+          "model": "Bridge_oc",
+          "tris": 42,
+          "note": "Komşu sandıkların kapakları üstünde baklava sac şerit (detailA, desen doku); kızak ayakları ve sandık derzi devam eder. Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti."
+        },
+        "rubble": {
+          "model": "Rubble_oc",
+          "tris": 184,
+          "note": "Baklava sac parçası (detailA), kırık sandık tahtası, dağılmış cıvatalar (detailB) ve yonga; toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi."
+        },
+        "civil": {
+          "model": "Civil_oc",
+          "tris": 376,
+          "note": "Maden limanı: vinç kumanda kioskı (batı yüz): kayıtlı koyu pencere, altında eğik kumanda masası ve iki kumanda kolu. Önce sivil okunur: krem gövde, mavi bant, tepede mavi halka + çarpı (Ø 0,32); ekipman batı/güney yüzde ikinci siluet. Gövde ekipmana yer açmak için +x +z yönüne 0,03 kaydırıldı (tamamı 0,66 kare içinde)."
+        },
+        "entryDoor": {
+          "model": "EntryDoor_oc",
+          "tris": 328,
+          "note": "İki kare dikme, iki kanatlı boru çerçeveli kapı, tel örgü dolgu (alfa), kanat başına çapraz gergi ve ortada sürgü. Paftanın dışında, batı kenar payında (u = −0,15) giriş satırının ortasında durur; dış yüz −x (kameranın gördüğü yüz), kapı +x yönünde tahtanın içine açılır. El çarkı yok, kırmızı/mavi/turuncu bant yok."
+        }
+      }
+    }
+  },
+  "models3d": {
+    "_": "★1.3 baskın modelleri (Revizyon 3). Taş merkezi orijin, y yukarı; dünya = (u + 0,5, 0, −(v + 0,5)). Kit parçaları: Relief_/ReliefIso_/Bridge_/Rubble_<kit>; sivil Civil_<kit>; giriş kapısı EntryDoor_<kit>; kanal ChannelHub/Arm/Edge/Single.",
+    "families": {
+      "raidkit": [
+        "BoardBase",
+        "Bridge_af",
+        "Bridge_cn",
+        "Bridge_eeu",
+        "Bridge_in",
+        "Bridge_jk",
+        "Bridge_me",
+        "Bridge_na",
+        "Bridge_oc",
+        "Bridge_ru",
+        "Bridge_sa",
+        "Bridge_sea",
+        "Bridge_weu",
+        "ReliefIso_af",
+        "ReliefIso_cn",
+        "ReliefIso_eeu",
+        "ReliefIso_in",
+        "ReliefIso_jk",
+        "ReliefIso_me",
+        "ReliefIso_na",
+        "ReliefIso_oc",
+        "ReliefIso_ru",
+        "ReliefIso_sa",
+        "ReliefIso_sea",
+        "ReliefIso_weu",
+        "Relief_af",
+        "Relief_cn",
+        "Relief_eeu",
+        "Relief_in",
+        "Relief_jk",
+        "Relief_me",
+        "Relief_na",
+        "Relief_oc",
+        "Relief_ru",
+        "Relief_sa",
+        "Relief_sea",
+        "Relief_weu",
+        "Rubble_af",
+        "Rubble_cn",
+        "Rubble_eeu",
+        "Rubble_in",
+        "Rubble_jk",
+        "Rubble_me",
+        "Rubble_na",
+        "Rubble_oc",
+        "Rubble_ru",
+        "Rubble_sa",
+        "Rubble_sea",
+        "Rubble_weu",
+        "SlidingShelf",
+        "Tile",
+        "WallBlock"
+      ],
+      "raidcivil": [
+        "ChannelArm",
+        "ChannelEdge",
+        "ChannelHub",
+        "ChannelSingle",
+        "Civil_af",
+        "Civil_cn",
+        "Civil_default",
+        "Civil_eeu",
+        "Civil_in",
+        "Civil_jk",
+        "Civil_me",
+        "Civil_na",
+        "Civil_oc",
+        "Civil_ru",
+        "Civil_sa",
+        "Civil_sea",
+        "Civil_weu",
+        "EntryDoor_af",
+        "EntryDoor_cn",
+        "EntryDoor_default",
+        "EntryDoor_eeu",
+        "EntryDoor_in",
+        "EntryDoor_jk",
+        "EntryDoor_me",
+        "EntryDoor_na",
+        "EntryDoor_oc",
+        "EntryDoor_ru",
+        "EntryDoor_sa",
+        "EntryDoor_sea",
+        "EntryDoor_weu"
+      ],
+      "raidpieces": [
+        "ArmorDrone",
+        "BackupCore",
+        "Bomber",
+        "CeilingDebris",
+        "CoolingUnit",
+        "CopyCabinet",
+        "CoreCabinet",
+        "Drone",
+        "GhostRing",
+        "HitQuad",
+        "Locker",
+        "LootCrate",
+        "LootCrateOpen",
+        "MaintRobot",
+        "Mortar",
+        "MoveQuad",
+        "NodeCabinet",
+        "Pawn_A",
+        "Pawn_E",
+        "Pawn_T",
+        "Replicator",
+        "ShieldDrone",
+        "Tube",
+        "WakePin",
+        "WeldArm",
+        "WeldArmBase"
+      ]
+    }
+  }
+}

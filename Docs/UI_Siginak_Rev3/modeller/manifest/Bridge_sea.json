@@ -1,0 +1,71 @@
+{
+ "name": "Bridge_sea",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi (y = 0); köprü doğu boşluğunda (x 0,47–0,53), +x boyunca; kuzey için y ekseninde −90°",
+ "note": "Komşu torba yığınları arasında üstte, torbalara gömülü yatık tahta (detailB); arada torba rengi derz (yuvarlak torbalar nedeniyle 40 mm geride). Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti.",
+ "listName": "Köprü · Elektronik fabrikası (üstte tahta)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 16,
+ "trisPerPart": {
+  "Body": 16
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   0.36,
+   0,
+   -0.43
+  ],
+  "max": [
+   0.64,
+   0.555,
+   0.43
+  ],
+  "size": [
+   0.28,
+   0.555,
+   0.86
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_sea_wallTop",
+   "hex": "#A6A799",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 2,
+   "isNew": false
+  },
+  {
+   "key": "k_sea_wallSouth",
+   "hex": "#74756C",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 2,
+   "isNew": false
+  },
+  {
+   "key": "k_sea_wallWest",
+   "hex": "#939489",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 2,
+   "isNew": false
+  },
+  {
+   "key": "k_sea_detailB",
+   "hex": "#BDBBAE",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 10,
+   "isNew": false
+  }
+ ]
+}

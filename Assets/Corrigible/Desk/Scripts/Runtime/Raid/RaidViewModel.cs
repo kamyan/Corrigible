@@ -14,7 +14,7 @@ namespace Corrigible.Desk
     }
     [Serializable] public sealed class RaidTeamModel
     {
-        public char Letter; public string Name, Thumb; public int Hp, Max, MoveRange;
+        public char Letter; public string Name, Thumb; public int Hp, Max, MoveRange, Power; public string Equipment;
         /// <summary>Out: kaçışta çıkıştan tahliye edildi; Left: süre dolarken tahtada kaldı (Down da işaretli).</summary>
         public bool Selected, Move, Ability, Armed, Down, Warn, Out, Left;
         /// <summary>Zırh plakası (ilk hasarı karşılar); yedek uzman (acemi); baskına çıkmadı (sığınakta yaralı).</summary>
@@ -49,6 +49,9 @@ namespace Corrigible.Desk
         public bool LastTurn,Finished,Success,EventVisible,IsLootMission;
         /// <summary>Baskının odası, büyük harfle (görev çipinin başında: “UPS ODASI · İKMAL”); harekât dışında boş.</summary>
         public string Place;
+        /// <summary>R11 anteti: sunum kimliği, gerçek bina/oda/bölge ve kampanyanın sektör/vardiya numarası.</summary>
+        public int BlueprintSeed, BlueprintSheet, BlueprintShift;
+        public string BlueprintBuilding, BlueprintRoom, BlueprintRegion, BlueprintNote, CrateContents, FatalWarning;
         /// <summary>Kaçış sürüyor (kasa alındı ya da hedef kırıldı): bütün ekip girişten çıkmalı, geri çekilme yok. CargoLost:
         /// malzemeyi taşıyan Teknisyen düştü.</summary>
         public bool Escaping, CargoLost, CanRetreat;

@@ -1,0 +1,151 @@
+{
+ "name": "CoolingUnit",
+ "family": "raidpieces",
+ "budget": "raid",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Dik silindir r 0,33 × 0,42, 16 kenar; üstte koyu oyuk, üç kanatlı fan (Fan) ve üç düz ızgara kayışı; altta koyu ayak bandı; güneybatıya bakan yüzde sarı uyarı üçgeni (siyah kenarlı). Ayrılmış işaret: dik silindir + fan + sarı üçgen. Dönmez.",
+ "listName": "Soğutma ünitesi (1 can, patlar)",
+ "parts": [
+  {
+   "name": "Fan",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.388,
+    0
+   ],
+   "pivotLocal": [
+    0,
+    0.388,
+    0
+   ],
+   "kind": "rotate",
+   "axis": "y",
+   "range": [
+    0,
+    360
+   ],
+   "rest": 0,
+   "note": "fan sürekli döner (soğutma çalışıyor); patlayınca durur"
+  }
+ ],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0,
+    0.42,
+    0
+   ],
+   "note": "tepe noktası"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    1.5,
+    0,
+    -5.5
+   ],
+   "yaw": 0,
+   "note": "örnek: Rev2 raid.html (u 1, v 5)"
+  },
+  {
+   "pos": [
+    6.5,
+    0,
+    -6.5
+   ],
+   "yaw": 0,
+   "note": "(u 6, v 6)"
+  }
+ ],
+ "tris": 344,
+ "trisPerPart": {
+  "Body": 284,
+  "Fan": 60
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.3295,
+   0,
+   -0.3295
+  ],
+  "max": [
+   0.3295,
+   0.423,
+   0.3295
+  ],
+  "size": [
+   0.6591,
+   0.423,
+   0.6591
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_cooling_south",
+   "hex": "#687D7C",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 64,
+   "isNew": false
+  },
+  {
+   "key": "r_cooling_west",
+   "hex": "#839897",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 32,
+   "isNew": false
+  },
+  {
+   "key": "r_cooling_top",
+   "hex": "#9DB2B1",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 96,
+   "isNew": false
+  },
+  {
+   "key": "r_grille",
+   "hex": "#3E4A4A",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 76,
+   "isNew": false
+  },
+  {
+   "key": "r_base",
+   "hex": "#1E1B16",
+   "rough": 0.5,
+   "metal": 0,
+   "tris": 8,
+   "isNew": false
+  },
+  {
+   "key": "r_warn",
+   "hex": "#F1C24B",
+   "rough": 0.7,
+   "metal": 0,
+   "tris": 8,
+   "isNew": false
+  },
+  {
+   "key": "rp_fanBlade",
+   "hex": "#9AA5A5",
+   "rough": 0.6,
+   "metal": 0.3,
+   "note": "soğutma fanı kanadı",
+   "tris": 60,
+   "isNew": true
+  }
+ ]
+}

@@ -17,6 +17,11 @@ namespace Corrigible.Desk.Bridge
     /// Tepsiye tıklayınca son 5 rapor okunur (← →). Raporlar kayda girmez, yan dosyada saklanır. Karşı saldırıda (Revizyon
     /// 2 · S5b) rapordan önce duvardaki alarm lambası üç kez yanar, teleks “YZ KARŞI SALDIRISI” basar (kodu raporun kutusunda),
     /// kutu basılınca haritada sektöre ✕ çizilir ve YENİDEN İŞGAL damgası iner. Özet gözünün üzerine gelince sayacı kalkar.
+    /// <para>
+    /// Kartlı oyunda (<c>Board != null</c>) yukarıdakilerin hiçbiri çalışmaz: kol <see cref="SiginakShiftClose.Throw"/>'a gider
+    /// (devir fişi, EVRAK, dosyalama; Revizyon 3 · R19), tepsi son devir fişini okutur, kayıttan devamın rapor parlaması atlanır
+    /// ve EVRAK'a Revizyon 2 raporu eklenmez (Karar D7-A). Kapanış meşgulken masa kilitlidir (<see cref="Busy"/>).
+    /// </para>
     /// </summary>
     public sealed class SiginakShift : MonoBehaviour
     {
@@ -34,6 +39,8 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] Camera view;
         [Tooltip("Tepside ilk rapordan önce (←) emir belgesi.")]
         [SerializeField] SiginakBriefing briefing;
+        [Tooltip("Kartlı oyunun vardiya kapanışı (Revizyon 3 · R19): şalterin kolu, devir fişi, EVRAK arşivi.")]
+        [SerializeField] SiginakShiftClose close;
 
         ShiftReportInput pending, shown;
         int closing, browseIndex = -1;
@@ -44,8 +51,8 @@ namespace Corrigible.Desk.Bridge
         Simulation Sim => game != null ? game.Sim : null;
         public bool Playing => sequence != null && sequence.Playing;
         public bool ReportOpen => report != null && report.IsOpen;
-        /// <summary>Dizi ya da rapor: masa kilitli (LiberationDeskView.InputBlocked).</summary>
-        public bool Busy => Playing || ReportOpen || report != null && report.Animating || flashDone != null;
+        /// <summary>Dizi, rapor ya da kartlı oyunun kapanışı (fiş elde, sürükleniyor, dosyalanıyor): masa kilitli (LiberationDeskView.InputBlocked).</summary>
+        public bool Busy => Playing || ReportOpen || report != null && report.Animating || flashDone != null || close != null && close.Busy;
         /// <summary>Sayaçlar dizinin 0,40'ına kadar eski değerde bekler (SiginakDesk.Refresh yazmaz).</summary>
         public bool HoldCounters => holdCounters;
         public EvrakTray Tray => tray;
@@ -92,6 +99,13 @@ namespace Corrigible.Desk.Bridge
         {
             var sim = Sim;
             if (sim == null) { shiftSwitch.Release(); return; }
+            // Kartlı oyun: basım, fiş ve dosyalama SiginakShiftClose'ta (Revizyon 3 · R19); eski dizi çalışmaz
+            if (sim.Board != null)
+            {
+                if (close != null) close.Throw();
+                else shiftSwitch.Release();
+                return;
+            }
             closing = surface.Shift;
             var before = ShiftReportBuilder.Capture(sim);
             var ledger = ShiftReportBuilder.Ledger(sim);
@@ -174,7 +188,7 @@ namespace Corrigible.Desk.Bridge
                 string name = DeskText.Upper(LiberationMapBuilder.TeamName(team));
                 bool front = map.State != null && map.State.FrontOpen;
                 telex.Post(surface.Shift, front ? Loc.F("{0} CEPHEDE", name) : Loc.F("{0} HAZIR", name),
-                    front ? Loc.F("Ekip toparlandı · {0}", Loc.T(GameData.Region(map.State.Front).Name)) : Loc.T("Ekip toparlandı · sıradaki cepheyi seç"),
+                    front ? Loc.F("Ekip toparlandı · {0}", GameData.Region(map.State.Front).Name) : Loc.T("Ekip toparlandı · sıradaki cepheyi seç"),
                     TelexKind.Done);
             }
         }
@@ -238,9 +252,13 @@ namespace Corrigible.Desk.Bridge
             if (Playing) sequence.Skip();
         }
 
-        /// <summary>EVRAK tepsisi: son raporu okuma görünümünde açar (rapor yoksa false).</summary>
+        /// <summary>
+        /// EVRAK tepsisi: son raporu okuma görünümünde açar (rapor yoksa false). Kartlı oyunda son dosyalanan devir fişi elde salt
+        /// okunur (<see cref="SiginakShiftClose.OpenTray"/>; Karar D7-A).
+        /// </summary>
         public bool OpenTray()
         {
+            if (Sim?.Board != null) return close != null && close.OpenTray();
             if (Busy || surface.InputBlocked || tray.Reports.Count == 0) return false;
             fresh = false;
             browseIndex = tray.Reports.Count - 1;
@@ -251,11 +269,11 @@ namespace Corrigible.Desk.Bridge
 
         /// <summary>
         /// KAYITTAN DEVAM (K7): dosyadaki son rapor <paramref name="seconds"/> görünür, sonra tepsiye döner ve
-        /// <paramref name="done"/>. Rapor yoksa false.
+        /// <paramref name="done"/>. Rapor yoksa false. Kartlı oyunda rapor yoktur, parlama atlanır (Karar D7-A).
         /// </summary>
         public bool FlashLatest(float seconds, System.Action done)
         {
-            if (tray.Reports.Count == 0 || Busy) return false;
+            if (Sim?.Board != null || tray.Reports.Count == 0 || Busy) return false;
             fresh = false;
             browseIndex = tray.Reports.Count - 1;
             shown = tray.Reports[browseIndex];
@@ -325,10 +343,14 @@ namespace Corrigible.Desk.Bridge
 
         void NewGame() { Abort(); tray.Clear(); }
 
+        /// <summary>
+        /// Kayıttan devam: dizi ve rapor kapanır, EVRAK raporları yan dosyadan. Kartlı oyunda EVRAK devir fişlerini tutar
+        /// (<see cref="SiginakShiftClose"/> kendi <c>GameLoaded</c>'ıyla geri koyar); Revizyon 2 raporu yüklenmez (Karar D7-A).
+        /// </summary>
         void Restore()
         {
             Abort();
-            tray.Restore(SiginakDeskStore.LoadReports(Sim?.Record));
+            tray.Restore(Sim?.Board != null ? null : SiginakDeskStore.LoadReports(Sim?.Record));
         }
 
         /// <summary>Dizi ve rapor bildirmeden kapanır; tutulan sayaç ve figür serbest kalır.</summary>
@@ -340,6 +362,7 @@ namespace Corrigible.Desk.Bridge
             if (counters != null) counters.Unpin();
             if (holdCounters) { holdCounters = false; if (desk != null) desk.ShowCounters(false); }
             if (map != null && map.HoldFigure) map.ReleaseFigure(true);
+            // Basılı fiş beklenirken şalter inik kalır (Release no-op; kayıttan yüklemede şalter kalkmaz)
             if (shiftSwitch != null) shiftSwitch.Release();
             pending = shown = null;
             fresh = false;

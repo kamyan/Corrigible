@@ -1,0 +1,40 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+</head><body>
+<script type="module">
+// Material swatch sheet for R14: each key on a chamfered tile + a turned knob, rows = categories. ?keys=a,b;c,d (rows) &w &h
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import './registry.js';
+import { material, MATS } from './mats.js';
+import { gBox, gLathe, prep } from './mlib.js';
+const q = new URLSearchParams(location.search); const W = +(q.get('w') || 1600), H = +(q.get('h') || 1000);
+const rows = (q.get('keys') || '').split(';').map(r => r.split(',').filter(Boolean));
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); renderer.setPixelRatio(1); renderer.setSize(W, H);
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = +(q.get('exp') || 1.0); renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(q.get('bg') || '#1b1a17');
+const env = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
+const cols = Math.max(...rows.map(r => r.length)); const pitch = 0.16;
+const tile = gBox(0.11, 0.11, 0.022, 0.006); const knob = gLathe([[0, 0], [0.026, 0], [0.028, 0.004], [0.028, 0.02], [0.022, 0.03], [0.012, 0.034], [0, 0.035]], 24);
+const out = { cells: [] };
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshStandardMaterial({ color: '#25231f', roughness: 0.95 })); floor.rotation.x = -Math.PI / 2; floor.position.y = -0.0115; floor.receiveShadow = true; scene.add(floor);
+rows.forEach((r, ri) => r.forEach((k, ci) => {
+  if (!MATS[k]) { console.warn('no mat', k); return; }
+  const m = material(k).clone(); if ('envMapIntensity' in m) { m.envMap = env; m.envMapIntensity = 0.35; }
+  const x = (ci - (cols - 1) / 2) * pitch, z = (ri - (rows.length - 1) / 2) * pitch * 0.92;
+  const t = new THREE.Mesh(tile, m); t.rotation.x = -Math.PI / 2; t.position.set(x - 0.018, 0, z); t.castShadow = t.receiveShadow = true; scene.add(t);
+  const kb = new THREE.Mesh(knob, m); kb.position.set(x + 0.03, 0.011, z + 0.028); kb.castShadow = true; scene.add(kb);
+  out.cells.push({ k, ri, ci, p: [x, 0, z + 0.07] });
+}));
+scene.add(new THREE.HemisphereLight(0xcfd6dc, 0x2a2620, 0.55));
+const key = new THREE.DirectionalLight(0xffe6c4, 2.6); key.position.set(-1.2, 2.2, 0.9); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); Object.assign(key.shadow.camera, { left: -1.5, right: 1.5, top: 1.5, bottom: -1.5 }); key.shadow.bias = -0.0005; scene.add(key);
+const rim = new THREE.DirectionalLight(0xbcd0e0, 0.9); rim.position.set(1.5, 1.0, -1.5); scene.add(rim);
+const span = Math.max((cols * pitch / 2 + 0.06) / (W / H), rows.length * pitch * 0.92 * 0.5 * 0.86 + 0.07);
+const cam = new THREE.OrthographicCamera(-span * W / H, span * W / H, span, -span, 0.1, 20); cam.position.set(0, 3.2, 2.2); cam.lookAt(0, 0, 0.02); cam.updateProjectionMatrix();
+renderer.render(scene, cam);
+for (const c of out.cells) { const v = new THREE.Vector3(...c.p).project(cam); c.px = [Math.round((v.x + 1) / 2 * W), Math.round((1 - v.y) / 2 * H)]; }
+window.__done = out;
+</script></body></html>

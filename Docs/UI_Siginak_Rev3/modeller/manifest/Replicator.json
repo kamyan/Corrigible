@@ -1,0 +1,149 @@
+{
+ "name": "Replicator",
+ "family": "raidpieces",
+ "budget": "unit",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Paletli yarım-tonoz hangar (kavisli çatı, iki nervür), önde kemerli karanlık bölme ve rampa, tepede iniş pisti ve göndereceği küçük dron (MiniDrone; göz makinenin). Göz ön yüzün sol üstünde. Biçim: ekmek somunu çatı + üstte küçük dron. Gövde renkleri ortak (r_gun / r_maintTop / r_gunW / r_gunS / r_gunD); kırmızı yalnız gözde (r_lens) ve taban halkasında (r_accent). Tür biçimden okunur, etiketteki işaret ikincil.",
+ "listName": "Çoğaltıcı",
+ "parts": [
+  {
+   "name": "MiniDrone",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.468,
+    0
+   ],
+   "pivotLocal": [
+    0,
+    0.468,
+    0
+   ],
+   "kind": "slide",
+   "axis": "y",
+   "range": [
+    0,
+    0.15
+   ],
+   "rest": 0,
+   "note": "pistten kalkar (uyandırma/kopyalama anı)"
+  }
+ ],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0,
+    0.521,
+    0
+   ],
+   "note": "tepe noktası"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    6.5,
+    0,
+    -6.5
+   ],
+   "yaw": 90,
+   "note": "örnek: Rev2 raid.html intents durumu (u 6, v 6)"
+  }
+ ],
+ "tris": 1302,
+ "trisPerPart": {
+  "Body": 1042,
+  "MiniDrone": 260
+ },
+ "budgetTris": 1500,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.31,
+   0,
+   -0.4029
+  ],
+  "max": [
+   0.31,
+   0.521,
+   0.31
+  ],
+  "size": [
+   0.62,
+   0.521,
+   0.7129
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_gunD",
+   "hex": "#26282B",
+   "rough": 0.6,
+   "metal": 0.3,
+   "tris": 592,
+   "isNew": false
+  },
+  {
+   "key": "r_accent",
+   "hex": "#9A1E14",
+   "rough": 0.5,
+   "metal": 0,
+   "tris": 96,
+   "isNew": false
+  },
+  {
+   "key": "r_gunW",
+   "hex": "#46494D",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 296,
+   "isNew": false
+  },
+  {
+   "key": "r_gun",
+   "hex": "#5B5E62",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 138,
+   "isNew": false
+  },
+  {
+   "key": "r_maintTop",
+   "hex": "#686B70",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 22,
+   "isNew": false
+  },
+  {
+   "key": "r_gunS",
+   "hex": "#34373A",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 68,
+   "isNew": false
+  },
+  {
+   "key": "r_lens",
+   "hex": "#B8241A",
+   "rough": 0.3,
+   "metal": 0,
+   "tris": 50,
+   "isNew": false
+  },
+  {
+   "key": "r_steelPin",
+   "hex": "#7F817E",
+   "rough": 0.4,
+   "metal": 0.6,
+   "tris": 40,
+   "isNew": false
+  }
+ ]
+}

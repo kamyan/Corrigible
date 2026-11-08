@@ -1,0 +1,127 @@
+{
+ "name": "Drone",
+ "family": "raidpieces",
+ "budget": "unit",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Akrilik çubuk (Ø0,052) üstünde dört rotorlu dron: yuvarlak gövde, üstte koyu sensör kubbesi, X kollar, dört ince rotor diski; göz gövdenin önünde. Biçim: ince ayak + yüksek, açık, dört diskli siluet. Tepe 0,52. Gövde renkleri ortak (r_gun / r_maintTop / r_gunW / r_gunS / r_gunD); kırmızı yalnız gözde (r_lens) ve taban halkasında (r_accent). Tür biçimden okunur, etiketteki işaret ikincil.",
+ "listName": "Dron (2 can, 3 hareket)",
+ "parts": [],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0,
+    0.513,
+    0
+   ],
+   "note": "tepe noktası (can etiketi / bayrak buraya göre)"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    5.5,
+    0,
+    -1.5
+   ],
+   "yaw": 90,
+   "note": "örnek: Rev2 raid.html plan durumu, F7 karesi (u 5, v 1); batıya bakar"
+  }
+ ],
+ "tris": 1108,
+ "trisPerPart": {
+  "Body": 1108
+ },
+ "budgetTris": 1500,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.2672,
+   0,
+   -0.2697
+  ],
+  "max": [
+   0.2672,
+   0.513,
+   0.2697
+  ],
+  "size": [
+   0.5344,
+   0.513,
+   0.5394
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_gunD",
+   "hex": "#26282B",
+   "rough": 0.6,
+   "metal": 0.3,
+   "tris": 480,
+   "isNew": false
+  },
+  {
+   "key": "r_accent",
+   "hex": "#9A1E14",
+   "rough": 0.5,
+   "metal": 0,
+   "tris": 80,
+   "isNew": false
+  },
+  {
+   "key": "r_acrylic",
+   "hex": "#DCE6EA",
+   "rough": 0.1,
+   "metal": 0,
+   "alpha": 0.55,
+   "tris": 20,
+   "isNew": false
+  },
+  {
+   "key": "r_gun",
+   "hex": "#5B5E62",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 160,
+   "isNew": false
+  },
+  {
+   "key": "rp_domeGlass",
+   "hex": "#2A3135",
+   "rough": 0.25,
+   "metal": 0.1,
+   "note": "dron sensör kubbesi (koyu cam; kırmızı değil, göz ayrı)",
+   "tris": 70,
+   "isNew": true
+  },
+  {
+   "key": "r_gunS",
+   "hex": "#34373A",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 88,
+   "isNew": false
+  },
+  {
+   "key": "r_gunW",
+   "hex": "#46494D",
+   "rough": 0.5,
+   "metal": 0.4,
+   "tris": 160,
+   "isNew": false
+  },
+  {
+   "key": "r_lens",
+   "hex": "#B8241A",
+   "rough": 0.3,
+   "metal": 0,
+   "tris": 50,
+   "isNew": false
+  }
+ ]
+}

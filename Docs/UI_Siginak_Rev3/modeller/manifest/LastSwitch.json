@@ -1,0 +1,340 @@
+{
+ "name": "LastSwitch",
+ "family": "menu",
+ "budget": "big",
+ "origin": "arka yüz, alt kenar ortası (duvar düzlemi z = 0)",
+ "note": "Sahanlık duvarında ANA ŞALTER. Kapak (koruyucu başlık) üst menteşeden 115° kalkar; altında arduvaz pano üstünde iki kutuplu bıçaklı şalter. Kol +55° = AÇIK (bıçaklar yukarıda, kontakta), −55° = KESİK (öne ve aşağı). Amber lamba ŞEBEKE: ışık varken yanar.",
+ "listName": "Son şalter (bıçaklı, kapaklı)",
+ "parts": [
+  {
+   "name": "Lamp",
+   "parent": "Body",
+   "pivotModel": [
+    0.09,
+    0.4575,
+    -0.14200000000000002
+   ],
+   "pivotLocal": [
+    0.09,
+    0.4575,
+    -0.14200000000000002
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "malzeme: jewelAmberOn (ışık var) / jewelAmberOff"
+  },
+  {
+   "name": "Lever",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.13499999999999998,
+    -0.051
+   ],
+   "pivotLocal": [
+    0,
+    0.13499999999999998,
+    -0.051
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    -55,
+    55
+   ],
+   "rest": 55,
+   "note": "+55 AÇIK (bıçak dik, kontakta) · −55 KESİK (öne, aşağı)"
+  },
+  {
+   "name": "Cover",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.415,
+    -0.13
+   ],
+   "pivotLocal": [
+    0,
+    0.415,
+    -0.13
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    115
+   ],
+   "rest": 0,
+   "note": "koruyucu başlık; 1. tık 115° kalkar, 4 s sonra kendiliğinden iner"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_PlateTR",
+   "part": "Body",
+   "center": [
+    0,
+    -0.055,
+    -0.0072
+   ],
+   "size": [
+    0.25,
+    0.034
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel (sabit, iki dilli)",
+   "font": "Courier Prime 700",
+   "capMm": 22,
+   "align": "center",
+   "sample": "ANA ŞALTER",
+   "sampleEn": "",
+   "note": ""
+  },
+  {
+   "name": "TXT_PlateEN",
+   "part": "Body",
+   "center": [
+    0,
+    -0.095,
+    -0.0072
+   ],
+   "size": [
+    0.22,
+    0.018
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel küçük",
+   "font": "Courier Prime 700",
+   "capMm": 12,
+   "align": "center",
+   "sample": "MAIN SWITCH",
+   "sampleEn": "",
+   "note": ""
+  },
+  {
+   "name": "TXT_Lamp",
+   "part": "Body",
+   "center": [
+    0.035,
+    0.4575,
+    -0.1305
+   ],
+   "size": [
+    0.07,
+    0.02
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 9,
+   "align": "center",
+   "sample": "ŞEBEKE",
+   "sampleEn": "MAINS",
+   "note": ""
+  }
+ ],
+ "anchors": [
+  {
+   "name": "Hover",
+   "part": "Body",
+   "pos": [
+    0,
+    0.25,
+    -0.25
+   ],
+   "note": "üzerine gelince kalkış ve kâğıt etiket bu noktaya göre"
+  }
+ ],
+ "lights": [
+  {
+   "name": "LampGlow",
+   "part": "Lamp",
+   "pos": [
+    0.09,
+    0.4575,
+    -0.16
+   ],
+   "type": "emissive",
+   "color": "",
+   "shadows": false,
+   "note": "jewelAmberOn ↔ jewelAmberOff; ışık bileşeni yok"
+  }
+ ],
+ "variants": null,
+ "states": null,
+ "tris": 2408,
+ "trisPerPart": {
+  "Body": 1628,
+  "Lamp": 72,
+  "Lever": 404,
+  "Cover": 304
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.15,
+   -0.1125,
+   -0.2571
+  ],
+  "max": [
+   0.15,
+   0.527,
+   0
+  ],
+  "size": [
+   0.3,
+   0.6395,
+   0.2571
+  ]
+ },
+ "materials": [
+  {
+   "key": "paintOliveDark",
+   "hex": "#353B30",
+   "rough": 0.62,
+   "metal": 0.05,
+   "note": "kapı kanadı, kasa, çerçeve",
+   "tris": 264,
+   "isNew": true
+  },
+  {
+   "key": "paintOlive",
+   "hex": "#4A5140",
+   "rough": 0.6,
+   "metal": 0.05,
+   "note": "boyalı sac (dolap, konsol, saat gövdesi)",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 716,
+   "isNew": true
+  },
+  {
+   "key": "chrome",
+   "hex": "#C8CCCC",
+   "rough": 0.22,
+   "metal": 1,
+   "tris": 128,
+   "isNew": false
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 136,
+   "isNew": true
+  },
+  {
+   "key": "slate",
+   "hex": "#2F3431",
+   "rough": 0.68,
+   "metal": 0,
+   "note": "şalter tabanı (arduvaz)",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "copper",
+   "hex": "#B8682C",
+   "rough": 0.42,
+   "metal": 0.9,
+   "note": "bıçaklı şalter bıçağı",
+   "tris": 440,
+   "isNew": true
+  },
+  {
+   "key": "fuseCeramic",
+   "hex": "#E4DDCB",
+   "rough": 0.4,
+   "metal": 0,
+   "note": "sigorta gövdesi (porselen)",
+   "tris": 192,
+   "isNew": true
+  },
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 128,
+   "isNew": true
+  },
+  {
+   "key": "jewelAmberOn",
+   "hex": "#FFB347",
+   "rough": 0.2,
+   "metal": 0,
+   "emissive": "#FF9A2A",
+   "ei": 2.4,
+   "note": "amber mücevher lamba yanık",
+   "tris": 72,
+   "isNew": true
+  },
+  {
+   "key": "bakeliteBlack",
+   "hex": "#181412",
+   "rough": 0.34,
+   "metal": 0,
+   "note": "düğme, kol başı",
+   "tris": 156,
+   "isNew": true
+  },
+  {
+   "key": "paintHazard",
+   "hex": "#E3B23C",
+   "rough": 0.6,
+   "metal": 0,
+   "tex": "tx_hazard (45° şerit #1E1B16, 1024×128)",
+   "note": "tehlike bandı",
+   "tris": 44,
+   "isNew": true
+  }
+ ]
+}

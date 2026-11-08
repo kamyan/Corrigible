@@ -5,11 +5,11 @@ namespace Corrigible.Desk.EditorTools
 {
     /// <summary>
     /// Sığınak odasının 3B görüntüsü (Overlay arayüz olmadan; ayrıntı denetimi için): ana kamera rig pozundan render edilir, sonra
-    /// eski pozuna döner. Overlay dahil durumlu set için <see cref="SiginakCaptureSet"/>.
+    /// eski pozuna döner. Overlay dahil durumlu set için <see cref="Rev3CaptureSet"/>.
     /// </summary>
     public static class SiginakCapture
     {
-        public const string OutDir = SiginakCaptureSet.OutDir;
+        public const string OutDir = Rev3CaptureSet.OutDir;
 
         static SiginakCameraRig Rig() => Object.FindFirstObjectByType<SiginakCameraRig>(FindObjectsInactive.Include);
 

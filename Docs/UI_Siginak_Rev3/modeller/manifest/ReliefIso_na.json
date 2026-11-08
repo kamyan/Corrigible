@@ -1,0 +1,89 @@
+{
+ "name": "ReliefIso_na",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Paletin (0,80) üstünde dar ve uzun dört kat koli istifi (0,72): şaşırtmalı derzler, filmle kapanmış yumuşak üst, ortada açık renk streç film bandı; paletin koyu ağızları görünür. Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi.",
+ "listName": "Ayrık blok · Dağıtım merkezi (tek uzun streç filmli istif)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 265,
+ "trisPerPart": {
+  "Body": 265
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.4,
+   0,
+   -0.4
+  ],
+  "max": [
+   0.4,
+   0.55,
+   0.4
+  ],
+  "size": [
+   0.8,
+   0.55,
+   0.8
+  ]
+ },
+ "materials": [
+  {
+   "key": "rk_void",
+   "hex": "#34312C",
+   "rough": 1,
+   "metal": 0,
+   "note": "oyuk içi: palet ağzı, tutamak deliği, kızak arası (ışık almayan derinlik); bütün kitlerde ortak",
+   "tris": 8,
+   "isNew": true
+  },
+  {
+   "key": "k_na_detailA",
+   "hex": "#857B6E",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 84,
+   "isNew": false
+  },
+  {
+   "key": "k_na_wallWest",
+   "hex": "#998A78",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 53,
+   "isNew": false
+  },
+  {
+   "key": "k_na_wallSouth",
+   "hex": "#7A6E5E",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 37,
+   "isNew": false
+  },
+  {
+   "key": "k_na_wallTop",
+   "hex": "#B2A492",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 72,
+   "isNew": false
+  },
+  {
+   "key": "rk_film",
+   "hex": "#C9C6BC",
+   "rough": 0.32,
+   "metal": 0,
+   "note": "streç film (yarı parlak, açık gri; koli istifinin ortasını saran ince kabuk)",
+   "tris": 11,
+   "isNew": true
+  }
+ ]
+}

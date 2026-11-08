@@ -1,0 +1,89 @@
+{
+ "name": "DoorBell",
+ "family": "menu",
+ "budget": "small",
+ "origin": "arka yüz ortası",
+ "note": "Siyah kaide üstünde pirinç çan ve tokmak; kart basılınca bir kez çalar (0,4 s, tokmak titrer).",
+ "listName": "Kapı zili",
+ "parts": [
+  {
+   "name": "Striker",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    -0.04,
+    -0.03
+   ],
+   "pivotLocal": [
+    0,
+    -0.04,
+    -0.03
+   ],
+   "kind": "rotate",
+   "axis": "z",
+   "range": [
+    -6,
+    6
+   ],
+   "rest": 0,
+   "note": "çalarken titrer"
+  }
+ ],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 288,
+ "trisPerPart": {
+  "Body": 204,
+  "Striker": 84
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.043,
+   -0.045,
+   -0.051
+  ],
+  "max": [
+   0.043,
+   0.048,
+   0
+  ],
+  "size": [
+   0.086,
+   0.093,
+   0.051
+  ]
+ },
+ "materials": [
+  {
+   "key": "bakeliteBlack",
+   "hex": "#181412",
+   "rough": 0.34,
+   "metal": 0,
+   "note": "düğme, kol başı",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 160,
+   "isNew": false
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 84,
+   "isNew": true
+  }
+ ]
+}

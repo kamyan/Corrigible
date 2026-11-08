@@ -1,0 +1,209 @@
+{
+ "name": "ColdGlass",
+ "family": "admission",
+ "budget": "small",
+ "origin": "arka yüz ortası, kanat panel yüzeyi (z = 0)",
+ "note": "Kanadın iç yüzünde, gözetleme deliğinin menteşe tarafında döküm halkalı kalın soğuk cam Ø 110. Dış yüzü sahanlıktaki soğuğa bakar: aday cama nefes verince buğu olur (Fog). Üstten menteşeli çelik kapak (Cover) incelemede kalkar. Kanatla birlikte döner (Hinge’e bağlı).",
+ "listName": "Buğu camı (kapı kanadında, gözetleme deliğinin yanında)",
+ "parts": [
+  {
+   "name": "Fog",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0,
+    -0.013
+   ],
+   "pivotLocal": [
+    0,
+    0,
+    -0.013
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "nefes buğusu: görünmez ↔ fogFrost (açılıp 0,6 s’de belirir, 2,5 s’de kenardan söner)"
+  },
+  {
+   "name": "Cover",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.084,
+    -0.022
+   ],
+   "pivotLocal": [
+    0,
+    0.084,
+    -0.022
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    105
+   ],
+   "rest": 0,
+   "note": "çelik kapak: 0 = kapalı, 105° = kalkık (üst menteşe, odaya doğru)"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Plate",
+   "part": "Body",
+   "center": [
+    0,
+    -0.098,
+    -0.0032
+   ],
+   "size": [
+    0.095,
+    0.016
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 9,
+   "align": "center",
+   "sample": "BUĞU CAMI",
+   "sampleEn": "BREATH GLASS",
+   "note": ""
+  }
+ ],
+ "anchors": [
+  {
+   "name": "Hover",
+   "part": "Body",
+   "pos": [
+    0,
+    0,
+    -0.08
+   ],
+   "note": "üzerine gelince etiket: SOĞUK GÖZLEM · kapağı kaldır"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    2.213,
+    1.46,
+    0.58
+   ],
+   "yaw": 90,
+   "note": "dünya (kapı kapalıyken); kanat yereli (0,17 · 1,46 · 0,013): gözetleme deliğinin menteşe tarafı. Dress modülü kanadın Hinge grubuna bağlar"
+  }
+ ],
+ "tris": 720,
+ "trisPerPart": {
+  "Body": 404,
+  "Fog": 64,
+  "Cover": 252
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.08,
+   -0.109,
+   -0.038
+  ],
+  "max": [
+   0.08,
+   0.084,
+   0
+  ],
+  "size": [
+   0.16,
+   0.193,
+   0.038
+  ]
+ },
+ "materials": [
+  {
+   "key": "castIron",
+   "hex": "#3A3B37",
+   "rough": 0.72,
+   "metal": 0.6,
+   "note": "dış çark, döküm kaide",
+   "tris": 160,
+   "isNew": true
+  },
+  {
+   "key": "coldGlass",
+   "hex": "#8FA6A8",
+   "rough": 0.06,
+   "metal": 0,
+   "alpha": 0.42,
+   "note": "buğu camı: kalın soğuk cam (Transparent)",
+   "tris": 128,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 72,
+   "isNew": true
+  },
+  {
+   "key": "plate",
+   "hex": "#B8955A",
+   "rough": 0.45,
+   "metal": 0.35,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "fogFrost",
+   "hex": "#E9EFEC",
+   "rough": 0.95,
+   "metal": 0,
+   "alpha": 0.78,
+   "note": "nefes buğusu katmanı (Fog swap; Transparent, kenarı yumuşak doku tx_fog)",
+   "tris": 64,
+   "isNew": true
+  },
+  {
+   "key": "paintOlive",
+   "hex": "#4A5140",
+   "rough": 0.6,
+   "metal": 0.05,
+   "note": "boyalı sac (dolap, konsol, saat gövdesi)",
+   "tris": 128,
+   "isNew": true
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "bakeliteBlack",
+   "hex": "#181412",
+   "rough": 0.34,
+   "metal": 0,
+   "note": "düğme, kol başı",
+   "tris": 80,
+   "isNew": true
+  }
+ ]
+}

@@ -1,0 +1,134 @@
+{
+ "name": "Corridor",
+ "family": "door",
+ "budget": "big",
+ "origin": "kapı grubu orijini (açıklığın alt ortası, oda duvar düzlemi)",
+ "note": "Kapının ardındaki sahanlık (dünya x 2,45–4,60, z −0,05…1,55, h 2,6): ıslak beton zemin ve su birikintisi, alt kısmı sırlı fayans (en alt sıra kirli) üstü beton duvarlar, tavan. Uzak (+z dünya) yanda 9 basamak yukarı (rıht 0,17, basamak 0,26, çelik burunlu) uç duvardaki boşluktan merdiven kuyusuna girer; kuyu üst sahanlığa çıkar. Zeminde moloz. Fayans ve beton dokuda.",
+ "listName": "Koridor ve merdiven",
+ "parts": [],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Visitor",
+   "part": "Body",
+   "pos": [
+    0,
+    0,
+    0.55
+   ],
+   "note": "ziyaretçi siluetinin ayak noktası (dünya ≈ 2,75 · 0 · 0,75), yüzü odaya (−z yerel)"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    2.2,
+    0,
+    0.75
+   ],
+   "yaw": 90,
+   "note": "dünya; kapı grubu orijini (açıklığın alt orta noktası, oda duvar düzlemi x 2,20): koridor; kanat açıkken görünür (ışıklar CorridorLamp)"
+  }
+ ],
+ "tris": 1678,
+ "trisPerPart": {
+  "Body": 1678
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.82,
+   -0.05,
+   0.25
+  ],
+  "max": [
+   0.82,
+   3.95,
+   3.62
+  ],
+  "size": [
+   1.64,
+   4,
+   3.37
+  ]
+ },
+ "materials": [
+  {
+   "key": "concreteFloorWet",
+   "hex": "#3B3F3B",
+   "rough": 0.55,
+   "metal": 0,
+   "note": "ıslak beton zemin",
+   "tris": 42,
+   "isNew": true
+  },
+  {
+   "key": "puddle",
+   "hex": "#1E2220",
+   "rough": 0.08,
+   "metal": 0,
+   "note": "su birikintisi (ayrı düzlem)",
+   "tris": 20,
+   "isNew": true
+  },
+  {
+   "key": "tileGlazedDirty",
+   "hex": "#8E9282",
+   "rough": 0.45,
+   "metal": 0,
+   "tex": "tx_tile150",
+   "note": "alt sıra, kirli",
+   "tris": 220,
+   "isNew": true
+  },
+  {
+   "key": "tileGlazed",
+   "hex": "#B7BBA3",
+   "rough": 0.32,
+   "metal": 0,
+   "tex": "tx_tile150 (15 cm fayans, derz #4F5148, çatlak)",
+   "note": "sahanlık fayansı",
+   "tris": 264,
+   "isNew": true
+  },
+  {
+   "key": "concreteDark",
+   "hex": "#5C625D",
+   "rough": 0.95,
+   "metal": 0,
+   "tex": "tx_concrete (kalıp izi, nem)",
+   "note": "sahanlık üst duvarı, tavan",
+   "tris": 396,
+   "isNew": true
+  },
+  {
+   "key": "concreteWall",
+   "hex": "#7C837F",
+   "rough": 0.96,
+   "metal": 0,
+   "tris": 120,
+   "isNew": false
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 396,
+   "isNew": true
+  },
+  {
+   "key": "rubble",
+   "hex": "#77746A",
+   "rough": 0.95,
+   "metal": 0,
+   "tris": 220,
+   "isNew": false
+  }
+ ]
+}

@@ -1,0 +1,71 @@
+{
+ "name": "ReliefIso_sa",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Kare kolon kalıbı (0,72): dört kalıp panosu, yüzlerde nervür ızgarası, iki kat koyu çelik kelepçe (köşelerden taşan kamalar), altta galvaniz levha; üstte düz kapak. Ayrık blok: 8 komşusunda duvar olmayan karede gövdenin yerine geçer (tek renderer). Düz üst 0,55–0,56; üst yüz daha dar olduğundan işaretler kenardan biraz taşabilir. Görünmeyen üçgenler silindi.",
+ "listName": "Ayrık blok · Hidroelektrik santrali (kolon kalıbı (kelepçeli pano çifti))",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 228,
+ "trisPerPart": {
+  "Body": 228
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.42,
+   0,
+   -0.42
+  ],
+  "max": [
+   0.455,
+   0.555,
+   0.455
+  ],
+  "size": [
+   0.875,
+   0.555,
+   0.875
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_sa_wallWest",
+   "hex": "#7E8790",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 55,
+   "isNew": false
+  },
+  {
+   "key": "k_sa_wallSouth",
+   "hex": "#656E76",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 32,
+   "isNew": false
+  },
+  {
+   "key": "k_sa_wallTop",
+   "hex": "#959CA2",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 63,
+   "isNew": false
+  },
+  {
+   "key": "k_sa_detailA",
+   "hex": "#5B5148",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 78,
+   "isNew": false
+  }
+ ]
+}

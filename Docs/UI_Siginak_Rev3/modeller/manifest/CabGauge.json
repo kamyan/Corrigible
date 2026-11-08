@@ -1,0 +1,101 @@
+{
+ "name": "CabGauge",
+ "family": "cabinet",
+ "budget": "small",
+ "origin": "pano yüzünde merkez",
+ "note": "VU tipi gösterge: krem kadran, yay ölçek ve amber bölge (doku; kırmızı yok), 2 mm siyah ibre. İbre değeri yaylı gecikmeyle izler (Needle yerel z ±50°).",
+ "listName": "İbreli gösterge",
+ "parts": [
+  {
+   "name": "Needle",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    -0.018,
+    -0.0135
+   ],
+   "pivotLocal": [
+    0,
+    -0.018,
+    -0.0135
+   ],
+   "kind": "rotate",
+   "axis": "z",
+   "range": [
+    50,
+    -50
+   ],
+   "rest": 0,
+   "note": "+50 = 0 · −50 = 10 (sağa)"
+  }
+ ],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 120,
+ "trisPerPart": {
+  "Body": 68,
+  "Needle": 52
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.039,
+   -0.03,
+   -0.0155
+  ],
+  "max": [
+   0.039,
+   0.03,
+   0
+  ],
+  "size": [
+   0.078,
+   0.06,
+   0.0155
+  ]
+ },
+ "materials": [
+  {
+   "key": "paintBlack",
+   "hex": "#20211E",
+   "rough": 0.5,
+   "metal": 0.05,
+   "note": "lamba başlığı, ızgara",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "gaugeDial",
+   "hex": "#EFE6CC",
+   "rough": 0.6,
+   "metal": 0,
+   "tex": "tx_cab_gauge (yay ölçek, 0–10, amber bölge; kırmızı yok)",
+   "note": "ibreli gösterge kadranı",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "glassClear",
+   "hex": "#DCE6E3",
+   "rough": 0.05,
+   "metal": 0,
+   "alpha": 0.18,
+   "note": "saat camı, gösterge camı (Transparent)",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "needleBlack",
+   "hex": "#141210",
+   "rough": 0.4,
+   "metal": 0.2,
+   "note": "ibre (2 mm)",
+   "tris": 52,
+   "isNew": true
+  }
+ ]
+}

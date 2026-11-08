@@ -26,8 +26,9 @@ namespace Corrigible.Desk.EditorTools
 
         sealed class Spec
         {
-            public string Ttf, Name; public int Weight, Atlas = 1024; public bool Symbol;
+            public string Ttf, Name, Ext = ".ttf"; public int Weight, Atlas = 1024; public bool Symbol;
             public Spec(string ttf, string name, int weight) { Ttf = ttf; Name = name; Weight = weight; }
+            public string File => FontsDir + "/" + Ttf + Ext;
         }
 
         static readonly Spec[] Specs =
@@ -37,6 +38,8 @@ namespace Corrigible.Desk.EditorTools
             new Spec("LibreFranklin-SemiBold", "LF-SemiBold", 600), new Spec("LibreFranklin-Bold", "LF-Bold", 700),
             new Spec("LibreFranklin-ExtraBold", "LF-ExtraBold", 800),
             new Spec("Kalam-Regular", "Kalam-Regular", 400), new Spec("Kalam-Bold", "Kalam-Bold", 700),
+            // Revizyon 3: şablon yazılar (pano başlığı, HURDA, duvar şablonu); OFL, statik ExtraBold (xotypeco/big_shoulders)
+            new Spec("BigShouldersStencilDisplay-ExtraBold", "BSS-ExtraBold", 800) { Ext = ".otf" },
             new Spec("DejaVuSans", "DejaVuSans", 400) { Atlas = 512, Symbol = true },
             new Spec("DejaVuSans-Bold", "DejaVuSans-Bold", 700) { Atlas = 512, Symbol = true },
         };
@@ -54,7 +57,7 @@ namespace Corrigible.Desk.EditorTools
         {
             refill = refillExisting;
             var charset = File.ReadAllText(FontsDir + "/charset.txt").Replace("\n", "").Replace("\r", "");
-            var fonts = Specs.ToDictionary(s => s.Name, s => AssetDatabase.LoadAssetAtPath<Font>(FontsDir + "/" + s.Ttf + ".ttf"));
+            var fonts = Specs.ToDictionary(s => s.Name, s => AssetDatabase.LoadAssetAtPath<Font>(s.File));
 
             var has = Specs.ToDictionary(s => s.Name, s => Glyphs(fonts[s.Name], charset + FallbackGlyphs));
 
@@ -97,6 +100,34 @@ namespace Corrigible.Desk.EditorTools
         }
 
         /// <summary>
+        /// Tek bir fontun statik ve dinamik asset'ini kurar; öteki fontlara dokunmaz (tam <see cref="Build(bool)"/> kerning'i
+        /// olmayan statik asset'leri her seferinde yeniden doldurur). Ana fontta glifi olmayan karakterler DejaVu yedeğine gider.
+        /// </summary>
+        public static string BuildOne(string name)
+        {
+            var s = Specs.First(x => x.Name == name);
+            var font = AssetDatabase.LoadAssetAtPath<Font>(s.File);
+            if (font == null) return "font dosyası yok: " + s.File;
+            var charset = File.ReadAllText(FontsDir + "/charset.txt").Replace("\n", "").Replace("\r", "");
+            var has = Glyphs(font, charset);
+            var chars = new string((" " + charset).Where(c => c >= ' ' && (c == ' ' || has.Contains(c))).Distinct().ToArray());
+            var log = new StringBuilder();
+            refill = false;
+            var main = StaticAsset(font, s, chars, log);
+            var dyn = DynamicAsset(font, s.Name);
+            var dejavu = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(AssetPath(s.Weight >= 600 ? "DejaVuSans-Bold" : "DejaVuSans"));
+            main.fallbackFontAssetTable = new List<TMP_FontAsset> { dyn, dejavu };
+            dyn.fallbackFontAssetTable = new List<TMP_FontAsset> { dejavu };
+            EditorUtility.SetDirty(main); EditorUtility.SetDirty(dyn);
+            AssetDatabase.SaveAssets();
+            var missing = new string(charset.Where(c => c > ' ' && !has.Contains(c)).Distinct().ToArray());
+            return log + $"glifi olmayan ({missing.Length}, DejaVu yedeği): {missing}";
+        }
+
+        [MenuItem("Corrigible/Desk UI/Şablon fontunu kur (Big Shoulders Stencil)")]
+        static void BuildStencil() => Debug.Log("[Desk] " + BuildOne("BSS-ExtraBold"));
+
+        /// <summary>
         /// F7 düzeltmesi: mevcut statik asset'lere eksik boşluk karakterini ekler (atlas yeniden çizilmez; boşluğun bitmap'i yok)
         /// ve dinamik yedeklerin önbelleğini temizler.
         /// </summary>
@@ -131,7 +162,7 @@ namespace Corrigible.Desk.EditorTools
         public static string AddMissingCharacters()
         {
             var charset = File.ReadAllText(FontsDir + "/charset.txt").Replace("\n", "").Replace("\r", "");
-            var fonts = Specs.ToDictionary(s => s.Name, s => AssetDatabase.LoadAssetAtPath<Font>(FontsDir + "/" + s.Ttf + ".ttf"));
+            var fonts = Specs.ToDictionary(s => s.Name, s => AssetDatabase.LoadAssetAtPath<Font>(s.File));
             var has = Specs.ToDictionary(s => s.Name, s => Glyphs(fonts[s.Name], charset + FallbackGlyphs));
             var missingInMain = new HashSet<char>(FallbackGlyphs);
             foreach (var s in Specs.Where(s => !s.Symbol))

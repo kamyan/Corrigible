@@ -1,0 +1,88 @@
+{
+ "name": "Relief_me",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Alüminyum kaplı boru demeti kutu sehpa üstünde: batı ve güney yüzünde iki sıra × üç boru ağzı (sekizgen, yumuşak normal; ağız içi detailA), üstte iki kelepçe (detailB), altta koyu sehpa kirişi ve üç ayak. Gri tonda: iri yuvarlaklar. İki kat: sehpa + demet. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided.",
+ "listName": "Duvar barikatı · Körfez rafinerisi (kutu sehpa üstünde boru demeti)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 361,
+ "trisPerPart": {
+  "Body": 361
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.47,
+   0,
+   -0.47
+  ],
+  "max": [
+   0.47,
+   0.557,
+   0.47
+  ],
+  "size": [
+   0.94,
+   0.557,
+   0.94
+  ]
+ },
+ "materials": [
+  {
+   "key": "rk_void",
+   "hex": "#34312C",
+   "rough": 1,
+   "metal": 0,
+   "note": "oyuk içi: palet ağzı, tutamak deliği, kızak arası (ışık almayan derinlik); bütün kitlerde ortak",
+   "tris": 8,
+   "isNew": true
+  },
+  {
+   "key": "k_me_detailA",
+   "hex": "#6C7174",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 130,
+   "isNew": false
+  },
+  {
+   "key": "k_me_wallTop",
+   "hex": "#A8A9A3",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 79,
+   "isNew": false
+  },
+  {
+   "key": "k_me_wallWest",
+   "hex": "#8E8F89",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 67,
+   "isNew": false
+  },
+  {
+   "key": "k_me_wallSouth",
+   "hex": "#70716C",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 65,
+   "isNew": false
+  },
+  {
+   "key": "k_me_detailB",
+   "hex": "#646B70",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  }
+ ]
+}

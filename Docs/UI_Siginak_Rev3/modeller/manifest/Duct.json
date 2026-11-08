@@ -1,0 +1,121 @@
+{
+ "name": "Duct",
+ "family": "walls",
+ "budget": "small",
+ "origin": "arka yüz alt kenar ortası (duvar düzlemi z = 0)",
+ "note": "Galvaniz dikdörtgen kanal parçası 0,60 × 0,22 × 0,26, iki uçta cıvatalı flanş, ortada tavandan inen galvaniz askı kayışı (25 mm). Çapraz kırma ve dikiş dokuda.",
+ "listName": "Havalandırma kanalı",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -1.5,
+    2.19,
+    2.3
+   ],
+   "yaw": 0,
+   "note": "arka duvar üstü, tavan altı (rev2 kanal y 2,30 merkez)"
+  },
+  {
+   "pos": [
+    -0.9,
+    2.19,
+    2.3
+   ],
+   "yaw": 0,
+   "note": "arka duvar üstü, tavan altı (rev2 kanal y 2,30 merkez)"
+  },
+  {
+   "pos": [
+    -0.3,
+    2.19,
+    2.3
+   ],
+   "yaw": 0,
+   "note": "arka duvar üstü, tavan altı (rev2 kanal y 2,30 merkez)"
+  },
+  {
+   "pos": [
+    0.3,
+    2.19,
+    2.3
+   ],
+   "yaw": 0,
+   "note": "arka duvar üstü, tavan altı (rev2 kanal y 2,30 merkez)"
+  },
+  {
+   "pos": [
+    0.9,
+    2.19,
+    2.3
+   ],
+   "yaw": 0,
+   "note": "arka duvar üstü, tavan altı (rev2 kanal y 2,30 merkez)"
+  },
+  {
+   "pos": [
+    1.5,
+    2.19,
+    2.3
+   ],
+   "yaw": 0,
+   "note": "arka duvar üstü, tavan altı (rev2 kanal y 2,30 merkez)"
+  },
+  {
+   "pos": [
+    2.1,
+    2.19,
+    2.3
+   ],
+   "yaw": 0,
+   "note": "arka duvar üstü, tavan altı (rev2 kanal y 2,30 merkez)"
+  }
+ ],
+ "tris": 624,
+ "trisPerPart": {
+  "Body": 624
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.3,
+   -0.015,
+   -0.285
+  ],
+  "max": [
+   0.3,
+   0.31,
+   0.005
+  ],
+  "size": [
+   0.6,
+   0.325,
+   0.29
+  ]
+ },
+ "materials": [
+  {
+   "key": "galv",
+   "hex": "#70756E",
+   "rough": 0.5,
+   "metal": 0.45,
+   "tris": 432,
+   "isNew": false
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 192,
+   "isNew": true
+  }
+ ]
+}

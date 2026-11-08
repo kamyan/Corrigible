@@ -1,0 +1,26 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+</head><body>
+<script type="module">
+// R9d: visitor silhouette family, backlit like the corridor (the K8 read), plus a lit row below for form. ?w &h &lit=1
+import * as THREE from 'three';
+import { MODELS } from './registry.js';
+import { setUnityEuler } from './mlib.js';
+const q = new URLSearchParams(location.search); const W = +(q.get('w') || 1920), H = +(q.get('h') || 900); const lit = q.get('lit') === '1';
+const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); r.setPixelRatio(1); r.setSize(W, H); r.toneMapping = THREE.ACESFilmicToneMapping; r.outputColorSpace = THREE.SRGBColorSpace; r.shadowMap.enabled = true; document.body.appendChild(r.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(lit ? '#2a2824' : '#0b0b0a');
+const names = ['Visitor_anne', 'Visitor_yasli', 'Visitor_silahli', 'Visitor_asker', 'Visitor_yarali', 'Visitor_kopya', 'Visitor_genel1', 'Visitor_genel2', 'Visitor_genel3'];
+const sp = 0.78, out = { cells: [] };
+names.forEach((n, i) => { const d = MODELS[n]; if (!d) return; const m = d.build(); const g = new THREE.Group(); g.add(m.root); const x = (i - (names.length - 1) / 2) * sp; g.position.set(x, 0, 0); setUnityEuler(g, [0, 0, 0]); scene.add(g); out.cells.push({ n, x }); });
+// backdrop: bright tiled stairwell wall behind (like the corridor seen through the door)
+const bd = new THREE.Mesh(new THREE.PlaneGeometry(9, 3.2), new THREE.MeshStandardMaterial({ color: lit ? '#3a3a36' : '#d9dccf', roughness: 0.9, emissive: lit ? '#000000' : '#c8ccbf', emissiveIntensity: lit ? 0 : 0.9 })); bd.position.set(0, 1.4, -1.2); scene.add(bd);
+const fl = new THREE.Mesh(new THREE.PlaneGeometry(9, 4), new THREE.MeshStandardMaterial({ color: lit ? '#3b3f3b' : '#8c8f86', roughness: 0.8 })); fl.rotation.x = -Math.PI / 2; fl.receiveShadow = true; scene.add(fl);
+if (lit) { scene.add(new THREE.HemisphereLight(0xcfd6dc, 0x2a2620, 0.8)); const k = new THREE.DirectionalLight(0xfff0dc, 2.4); k.position.set(-2, 3, 4); k.castShadow = true; scene.add(k); }
+else { scene.add(new THREE.HemisphereLight(0x8a8f86, 0x111111, 0.25)); const b = new THREE.DirectionalLight(0xe8ecdf, 1.2); b.position.set(0, 3, -3); scene.add(b); }
+const cam = new THREE.PerspectiveCamera(22, W / H, 0.1, 50); cam.position.set(0, 1.0, 9.6); cam.lookAt(0, 0.95, 0); cam.updateProjectionMatrix();
+r.render(scene, cam);
+for (const c of out.cells) { const v = new THREE.Vector3(c.x, 0, 0).project(cam); c.px = Math.round((v.x + 1) / 2 * W); }
+window.__done = out;
+</script></body></html>

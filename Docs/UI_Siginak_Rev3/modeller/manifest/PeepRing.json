@@ -1,0 +1,66 @@
+{
+ "name": "PeepRing",
+ "family": "menu",
+ "budget": "small",
+ "origin": "halka arkası (kapı dış yüzü)",
+ "note": "Pirinç halka ve koyu mercek; dışarıdan bakan için yalnız süs, tıklanmaz.",
+ "listName": "Gözetleme halkası (dış)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 352,
+ "trisPerPart": {
+  "Body": 352
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.0253,
+   -0.026,
+   -0.012
+  ],
+  "max": [
+   0.0253,
+   0.026,
+   0
+  ],
+  "size": [
+   0.0507,
+   0.052,
+   0.012
+  ]
+ },
+ "materials": [
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 224,
+   "isNew": false
+  },
+  {
+   "key": "glassClear",
+   "hex": "#DCE6E3",
+   "rough": 0.05,
+   "metal": 0,
+   "alpha": 0.18,
+   "note": "saat camı, gösterge camı (Transparent)",
+   "tris": 64,
+   "isNew": true
+  },
+  {
+   "key": "punchHole",
+   "hex": "#151310",
+   "rough": 1,
+   "metal": 0,
+   "note": "zımba deliği (kartın arkası karanlık)",
+   "tris": 64,
+   "isNew": true
+  }
+ ]
+}

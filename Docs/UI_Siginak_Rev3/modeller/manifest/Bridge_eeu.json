@@ -1,0 +1,79 @@
+{
+ "name": "Bridge_eeu",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi (y = 0); köprü doğu boşluğunda (x 0,47–0,53), +x boyunca; kuzey için y ekseninde −90°",
+ "note": "Raf dudakları (alt, orta, üst) ve gözlerin arkası komşu rafa devam eder; alt gözde derzi örten bir kutu (yüz başına bir; E ve K yönünde görünen yüzlerde). Kare başına en çok iki köprü (doğu: olduğu gibi, kuzey: y ekseninde −90°, +x → +z). İki yönde de görünen yüzler bırakıldı; −z yüzü güney, +z yüzü (kuzey yönünde batıya döner) batı malzemesi alır. Üst ≤ 0,556; boşlukta yalnız üst 6 cm ve yüze yakın 6 cm görünür, köprü parçaları oraya yerleşti.",
+ "listName": "Köprü · Devlet arşivi (raf tahtası)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 76,
+ "trisPerPart": {
+  "Body": 76
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   0.44,
+   0,
+   -0.462
+  ],
+  "max": [
+   0.56,
+   0.555,
+   0.462
+  ],
+  "size": [
+   0.12,
+   0.555,
+   0.924
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_eeu_wallTop",
+   "hex": "#8F9892",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 32,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_wallSouth",
+   "hex": "#606763",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_wallWest",
+   "hex": "#77817C",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_detailB",
+   "hex": "#B3AD98",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 10,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_detailA",
+   "hex": "#6E7375",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 10,
+   "isNew": false
+  }
+ ]
+}

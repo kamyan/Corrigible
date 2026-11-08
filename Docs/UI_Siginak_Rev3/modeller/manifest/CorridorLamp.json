@@ -1,0 +1,114 @@
+{
+ "name": "CorridorLamp",
+ "family": "door",
+ "budget": "small",
+ "origin": "arka yüz alt kenar ortası (duvar düzlemi z = 0)",
+ "note": "Vuruş lambasıyla aynı kafesli duvar lambası, soğuk ışıklı. Kapı açılınca merdiven ışıkları yanar (Lamp: lampGlassCold ↔ roomBulbOff).",
+ "listName": "Koridor lambası (kafesli)",
+ "parts": [
+  {
+   "name": "Lamp",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.07,
+    -0.042
+   ],
+   "pivotLocal": [
+    0,
+    0.07,
+    -0.042
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "cam: lampGlassCold (yanık) ↔ roomBulbOff (sönük)"
+  }
+ ],
+ "texts": [],
+ "anchors": [],
+ "lights": [
+  {
+   "name": "CorridorLight",
+   "part": "Lamp",
+   "pos": [
+    0,
+    0,
+    -0.3
+   ],
+   "type": "point",
+   "color": "#D8E6E2",
+   "shadows": false,
+   "note": "Rev2: 5,5 menzil 5 m (1.) ve 2,2 menzil 3,5 m (2.); ilk lamba gölgeli olabilir (pozda ≤ 4 gölgeli)"
+  }
+ ],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    3.3,
+    2.18,
+    -0.05
+   ],
+   "yaw": 180,
+   "note": "dünya; koridor yakın duvarı (z −0,05), koridora bakar"
+  },
+  {
+   "pos": [
+    4.9,
+    2.9,
+    1.55
+   ],
+   "yaw": 0,
+   "note": "dünya; merdiven boşluğu, uzak duvar (z 1,55), basamaklara bakar"
+  }
+ ],
+ "tris": 592,
+ "trisPerPart": {
+  "Body": 480,
+  "Lamp": 112
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.066,
+   0.004,
+   -0.1
+  ],
+  "max": [
+   0.066,
+   0.136,
+   0
+  ],
+  "size": [
+   0.132,
+   0.132,
+   0.1
+  ]
+ },
+ "materials": [
+  {
+   "key": "castIron",
+   "hex": "#3A3B37",
+   "rough": 0.72,
+   "metal": 0.6,
+   "note": "dış çark, döküm kaide",
+   "tris": 480,
+   "isNew": true
+  },
+  {
+   "key": "lampGlassCold",
+   "hex": "#E8F0EE",
+   "rough": 0.25,
+   "metal": 0,
+   "emissive": "#D8E6E2",
+   "ei": 2.2,
+   "note": "sahanlık ampulü",
+   "tris": 112,
+   "isNew": true
+  }
+ ]
+}

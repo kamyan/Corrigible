@@ -1,0 +1,118 @@
+{
+ "name": "NodeCabinet",
+ "family": "raidpieces",
+ "budget": "raid",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Sunucu düğüm dolabı 0,74 × 0,92 × 0,74: yüz başına boya (r_node_top/west/south), dört köşede L kesitli zırh şeridi (0,07), tepede kırmızı düğüm simgesi (YZ), güneyde krem etiket, batıda dört sunucu yuvası. Dönmez.",
+ "listName": "Düğüm dolabı (4 can, zırhlı)",
+ "parts": [],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0,
+    0.92,
+    0
+   ],
+   "note": "tepe noktası (hedef etiketi 28 px üstte)"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    5.5,
+    0,
+    -4.5
+   ],
+   "yaw": 0,
+   "note": "örnek: Rev2 raid.html hedef (u 5, v 4)"
+  }
+ ],
+ "tris": 290,
+ "trisPerPart": {
+  "Body": 290
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.37,
+   0,
+   -0.37
+  ],
+  "max": [
+   0.37,
+   0.92,
+   0.37
+  ],
+  "size": [
+   0.74,
+   0.92,
+   0.74
+  ]
+ },
+ "materials": [
+  {
+   "key": "r_node_west",
+   "hex": "#2C2826",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 24,
+   "isNew": false
+  },
+  {
+   "key": "r_node_south",
+   "hex": "#201D1B",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 4,
+   "isNew": false
+  },
+  {
+   "key": "r_node_top",
+   "hex": "#3B3734",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 14,
+   "isNew": false
+  },
+  {
+   "key": "r_armor_mid",
+   "hex": "#7F817E",
+   "rough": 0.35,
+   "metal": 0.7,
+   "tris": 176,
+   "isNew": false
+  },
+  {
+   "key": "r_red",
+   "hex": "#B8241A",
+   "rough": 0.4,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "r_sticker",
+   "hex": "#F1E9D6",
+   "rough": 0.7,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "rp_slot",
+   "hex": "#151311",
+   "rough": 0.9,
+   "metal": 0,
+   "note": "dolap sunucu yuvası, koyu oyuk",
+   "tris": 48,
+   "isNew": true
+  }
+ ]
+}

@@ -1,0 +1,92 @@
+{
+ "name": "Tube",
+ "family": "raidpieces",
+ "budget": "raid",
+ "origin": "karenin merkezi, tahta yüzeyi (y = 0)",
+ "note": "Dik gaz tüpü Ø0,2 × 0,75: koyu gri gövde, turuncu omuz bandı (ayrılmış işaret), vana gövdesi ve altıgen başlık (el çarkı yok: o kayar rafın işareti), çelik koruma yakası, çapraz iki çıtalı ahşap ayak. Fan ve sarı üçgen yok: soğutma ünitesinden incelik, bant ve fansızlıkla ayrılır. Fırlar (patlamaz).",
+ "listName": "Basınçlı tüp (Güney Amerika olayı)",
+ "parts": [],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Top",
+   "part": "Body",
+   "pos": [
+    0,
+    0.75,
+    0
+   ],
+   "note": "tepe noktası"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 386,
+ "trisPerPart": {
+  "Body": 386
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.17,
+   0,
+   -0.17
+  ],
+  "max": [
+   0.17,
+   0.75,
+   0.17
+  ],
+  "size": [
+   0.34,
+   0.75,
+   0.34
+  ]
+ },
+ "materials": [
+  {
+   "key": "woodRaw",
+   "hex": "#8A6A44",
+   "rough": 0.8,
+   "metal": 0,
+   "note": "ham çıta, sandık",
+   "tris": 84,
+   "isNew": true
+  },
+  {
+   "key": "rp_tubeGrey",
+   "hex": "#3E4143",
+   "rough": 0.85,
+   "metal": 0.15,
+   "note": "basınçlı tüp gövdesi, koyu gri boya (mat)",
+   "tris": 60,
+   "isNew": true
+  },
+  {
+   "key": "r_hazard",
+   "hex": "#A9520A",
+   "rough": 0.7,
+   "metal": 0,
+   "tris": 72,
+   "isNew": false
+  },
+  {
+   "key": "r_steelPin",
+   "hex": "#7F817E",
+   "rough": 0.4,
+   "metal": 0.6,
+   "tris": 68,
+   "isNew": false
+  },
+  {
+   "key": "r_armor_dark",
+   "hex": "#636562",
+   "rough": 0.35,
+   "metal": 0.7,
+   "tris": 102,
+   "isNew": false
+  }
+ ]
+}

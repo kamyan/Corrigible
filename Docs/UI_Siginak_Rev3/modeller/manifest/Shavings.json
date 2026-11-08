@@ -1,0 +1,66 @@
+{
+ "name": "Shavings",
+ "family": "desk",
+ "budget": "small",
+ "origin": "yığının ortası, masa üstü (y = 0)",
+ "note": "5 kıvrık talaş (Ø12–16 mm), dalgalı sarı boya kenarlı, iki yüzlü ince yüzey.",
+ "listName": "Kalem talaşı",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    0.5,
+    0.76,
+    0.965
+   ],
+   "yaw": 0,
+   "note": "kalemin yanı"
+  }
+ ],
+ "tris": 400,
+ "trisPerPart": {
+  "Body": 400
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.0225,
+   -0.0027,
+   -0.0213
+  ],
+  "max": [
+   0.023,
+   0.0065,
+   0.0184
+  ],
+  "size": [
+   0.0455,
+   0.0091,
+   0.0397
+  ]
+ },
+ "materials": [
+  {
+   "key": "pawn",
+   "hex": "#C9A77A",
+   "rough": 0.75,
+   "metal": 0,
+   "tris": 200,
+   "isNew": false
+  },
+  {
+   "key": "pencil",
+   "hex": "#D9A520",
+   "rough": 0.5,
+   "metal": 0,
+   "tris": 200,
+   "isNew": false
+  }
+ ]
+}

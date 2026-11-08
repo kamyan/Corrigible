@@ -35,7 +35,9 @@ namespace Corrigible.Desk
         [Tooltip("İç parçalar: dolap kapalıyken çizilmez.")]
         [SerializeField] GameObject interior;
         [SerializeField] Light bulb;
+        [SerializeField] Light panelFill;
         [SerializeField] Renderer bulbGlass;
+        [SerializeField] PartDriver bulbPart;
         [SerializeField] Material bulbOn, bulbOff;
         [Tooltip("Kamera pozunun çapası (sahnenin kamerası buraya bakar).")]
         [SerializeField] Transform cameraAnchor;
@@ -240,7 +242,9 @@ namespace Corrigible.Desk
                 if (bulb.enabled != lit) bulb.enabled = lit;
                 bulb.intensity = T.NumberOf("cabinet.bulbIntensity", 0.9f) * level;
             }
-            if (bulbGlass != null && bulbOn != null && bulbOff != null)
+            if(panelFill){panelFill.enabled=level>.001f;panelFill.intensity=T.NumberOf("cabinet.panelFillIntensity",.35f)*level;}
+            if(bulbPart!=null)bulbPart.SetSwap(level>0.5f?1:0);
+            else if (bulbGlass != null && bulbOn != null && bulbOff != null)
             {
                 var m = level > 0.5f ? bulbOn : bulbOff;
                 if (bulbGlass.sharedMaterial != m) bulbGlass.sharedMaterial = m;

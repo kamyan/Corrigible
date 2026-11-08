@@ -1,0 +1,202 @@
+{
+ "name": "SlipMouth",
+ "family": "desk",
+ "budget": "small",
+ "origin": "şalterin orijini (taban ortası, masa üstü); şalterle aynı yerleşim",
+ "note": "Şalterin sol yanına iki cıvatayla bağlanan zeytin döküm kutu (72 × 156 × 180 mm). Sol yüzde y 0,14’te 112 mm yatay ağız, pirinç dudaklar ve dişli koparma çubuğu; önünde pirinç fiş dili (165 mm). Kol inince fiş 0,35 s’de 12 cm kayarak dile yatar. Önde DEVİR FİŞİ plakası ve fiş bekliyor lambası.",
+ "listName": "Fiş ağzı (şaltere bağlı devir yazıcısı)",
+ "parts": [
+  {
+   "name": "Lamp",
+   "parent": "Body",
+   "pivotModel": [
+    -0.179,
+    0.135,
+    -0.084
+   ],
+   "pivotLocal": [
+    -0.179,
+    0.135,
+    -0.084
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "fiş bekliyor: jewelAmberOn (fiş dilde ya da elde, EVRAK’a girene kadar) ↔ jewelAmberOff"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Plate",
+   "part": "Body",
+   "center": [
+    -0.179,
+    0.105,
+    -0.082
+   ],
+   "size": [
+    0.052,
+    0.016
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 6.5,
+   "align": "center",
+   "sample": "DEVİR FİŞİ",
+   "sampleEn": "HANDOVER",
+   "note": ""
+  }
+ ],
+ "anchors": [
+  {
+   "name": "SlipStart",
+   "part": "Body",
+   "pos": [
+    -0.18,
+    0.14,
+    0.015
+   ],
+   "note": "fişin başlangıç noktası (merkez), ağzın içinde"
+  },
+  {
+   "name": "SlipExit",
+   "part": "Body",
+   "pos": [
+    -0.3,
+    0.14,
+    0.015
+   ],
+   "note": "fişin durduğu nokta (merkez) — uygulamadaki çıkış noktası; 12 cm, 0,35 s, ease-out"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    0.765,
+    0.76,
+    0.885
+   ],
+   "yaw": 10,
+   "note": "ShiftSwitch ile aynı (şaltere bağlı)"
+  }
+ ],
+ "tris": 660,
+ "trisPerPart": {
+  "Body": 560,
+  "Lamp": 100
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.365,
+   0.009,
+   -0.0892
+  ],
+  "max": [
+   -0.139,
+   0.165,
+   0.104
+  ],
+  "size": [
+   0.226,
+   0.156,
+   0.1932
+  ]
+ },
+ "materials": [
+  {
+   "key": "paintOlive",
+   "hex": "#4A5140",
+   "rough": 0.6,
+   "metal": 0.05,
+   "note": "boyalı sac (dolap, konsol, saat gövdesi)",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "paintOliveDark",
+   "hex": "#353B30",
+   "rough": 0.62,
+   "metal": 0.05,
+   "note": "kapı kanadı, kasa, çerçeve",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 92,
+   "isNew": true
+  },
+  {
+   "key": "punchHole",
+   "hex": "#151310",
+   "rough": 1,
+   "metal": 0,
+   "note": "zımba deliği (kartın arkası karanlık)",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 220,
+   "isNew": true
+  },
+  {
+   "key": "steelCast",
+   "hex": "#4E524D",
+   "rough": 0.55,
+   "metal": 0.8,
+   "note": "döküm menteşe, mandal",
+   "tris": 24,
+   "isNew": true
+  },
+  {
+   "key": "plate",
+   "hex": "#B8955A",
+   "rough": 0.45,
+   "metal": 0.35,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 80,
+   "isNew": false
+  },
+  {
+   "key": "jewelAmberOff",
+   "hex": "#4A2F12",
+   "rough": 0.25,
+   "metal": 0,
+   "note": "amber mücevher lamba sönük",
+   "tris": 100,
+   "isNew": true
+  }
+ ]
+}

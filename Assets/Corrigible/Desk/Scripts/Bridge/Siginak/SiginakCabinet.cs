@@ -26,6 +26,8 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] OpeningSequence opening;
         [Tooltip("Dolabın sesinin geldiği yer (sağ-sol dengesi).")]
         [SerializeField] Camera view;
+        [Tooltip("K9'da gizlenir: anten dolap kanadının yayına giriyor (D-E, IM:957).")]
+        [SerializeField] GameObject radio;
 
         SiginakPose back = SiginakPose.Desk;
         bool leaving;
@@ -40,7 +42,9 @@ namespace Corrigible.Desk.Bridge
             cabinet.Closing += Closing;
             cabinet.Sound += Play;
             cabinet.LanguageChanged += LanguageChanged;
-            if (cabinet.Exit != null) { cabinet.Exit.Thrown += Leave; cabinet.Exit.Armed += Armed; }
+            if (cabinet.Exit != null) { cabinet.Exit.Thrown += Leave; cabinet.Exit.Armed += Armed; cabinet.Exit.Denied += Denied; }
+            rig.Arrived += OnArrived;
+            rig.PoseChanged += OnPose;
         }
 
         void OnDisable()
@@ -49,8 +53,22 @@ namespace Corrigible.Desk.Bridge
             cabinet.Closing -= Closing;
             cabinet.Sound -= Play;
             cabinet.LanguageChanged -= LanguageChanged;
-            if (cabinet.Exit != null) { cabinet.Exit.Thrown -= Leave; cabinet.Exit.Armed -= Armed; }
+            if (cabinet.Exit != null) { cabinet.Exit.Thrown -= Leave; cabinet.Exit.Armed -= Armed; cabinet.Exit.Denied -= Denied; }
+            rig.Arrived -= OnArrived;
+            rig.PoseChanged -= OnPose;
         }
+
+        void OnArrived(SiginakPose pose) { if (radio != null && pose == SiginakPose.Cabinet) radio.SetActive(false); }
+        void OnPose(SiginakPose pose) { if (radio != null && pose != SiginakPose.Cabinet) radio.SetActive(true); }
+
+        void Update()
+        {
+            if (!leaving && cabinet.Exit != null)
+                cabinet.Exit.SetDisabled(surface != null && surface.MenuExitBlocked,
+                    Loc.T("Önce açık kâğıdı kapat veya süren işlemi bitir."));
+        }
+
+        void Denied() => Sfx.Play(Cue.SwitchClack, 0.4f, Sfx.PanOf(view, cabinet.transform.position));
 
         void Open()
         {

@@ -1,0 +1,103 @@
+{
+ "name": "SlidingShelf",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Doğu Avrupa olayı. Arşiv rafının aynısı (güneyde raf gözleri ve kutular) + batıdaki uç levhasında üç kollu el çarkı (Wheel, ayrılmış \"kayar raf\" işareti) ve uç levhasının altında iki teker. Modelde ray K–G (çark batıda); ray D–B için x ↔ z aynası: localScale (−1, 1, 1) + y 90°. Kare başına 2 renderer (Body + Wheel) + raya göre 1 köprü. Kaymada çark döner.",
+ "listName": "Kayar arşiv rafı (el çarkı, iki teker)",
+ "parts": [
+  {
+   "name": "Wheel",
+   "parent": "Body",
+   "pivotModel": [
+    -0.47,
+    0.3,
+    0
+   ],
+   "pivotLocal": [
+    -0.47,
+    0.3,
+    0
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    360
+   ],
+   "rest": 0,
+   "note": "üç kollu el çarkı; raf kayarken döner (yerel x = yüz normali)"
+  }
+ ],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 399,
+ "trisPerPart": {
+  "Body": 299,
+  "Wheel": 100
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.502,
+   0,
+   -0.47
+  ],
+  "max": [
+   0.47,
+   0.556,
+   0.47
+  ],
+  "size": [
+   0.972,
+   0.556,
+   0.94
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_eeu_wallWest",
+   "hex": "#77817C",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 45,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_wallSouth",
+   "hex": "#606763",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 29,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_wallTop",
+   "hex": "#8F9892",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 36,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_detailB",
+   "hex": "#B3AD98",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 175,
+   "isNew": false
+  },
+  {
+   "key": "k_eeu_detailA",
+   "hex": "#6E7375",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 114,
+   "isNew": false
+  }
+ ]
+}

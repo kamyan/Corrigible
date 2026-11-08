@@ -1,0 +1,112 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="/node_modules/@fontsource/courier-prime/400.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/courier-prime/700.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/courier-prime/700-italic.css">
+<style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+</head><body>
+<script type="module">
+// Rev3 raid board: Rev2 layout (raid.html) rebuilt from the r3 model library. Unity world = (u + 0.5, 0, −(v + 0.5));
+// three = (u + 0.5, 0, v + 0.5). Camera: orthographic, pitch 35°, yaw 45°, 132.58 px/unit, board centre (4,4) at (960,528).
+// ?kit=weu|…|default &s=plan|machine|event|last &w &h &ppu &cu &cv &cy &exp
+import * as THREE from 'three';
+import { MODELS } from './registry.js';
+import { setUnityEuler } from './mlib.js';
+import { material } from './mats.js';
+import * as B from '../rev2/raid.js';
+const q = new URLSearchParams(location.search);
+const kit = q.get('kit') || 'weu', st = q.get('s') || 'plan';
+const W = +(q.get('w') || 1920), H = +(q.get('h') || 1080); const num = (k, d) => q.get(k) != null ? +q.get(k) : d;
+await document.fonts.load('italic 700 40px "Courier Prime"', 'AH18');
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1); renderer.setSize(W, H); renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = num('exp', 1.0); renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#1C372C');
+const used = {}; const P = [];
+function put(name, u, v, yaw = 0, o = {}) {
+  const def = MODELS[name]; if (!def) { console.warn('missing', name); return null; }
+  const m = def.build(); const g = new THREE.Group(); g.add(m.root); g.position.set(u + 0.5 + (o.dx || 0), 0, v + 0.5 + (o.dz || 0)); setUnityEuler(g, [0, yaw, 0]); scene.add(g);
+  m.root.traverse(ob => { if (ob.isMesh) { ob.receiveShadow = true; if (ob.material) ob.material.shadowSide = THREE.DoubleSide; } });
+  if (o.pose) for (const [k, val] of Object.entries(o.pose)) m.pose(k, val);
+  if (o.hide) for (const k of o.hide) if (m.parts[k]) m.parts[k].group.visible = false;
+  used[name] = (used[name] || 0) + 1; P.push({ name, u, v, m }); m.holder = g; return m;
+}
+// ---- board: Rev2 felt + paper texture, r3 plywood (BoardBase)
+const R2 = B.buildBoard(scene); // felt, plywood box, paper plane
+R2.root.traverse(o => { if (o.isMesh && o.geometry && o.geometry.parameters && o.geometry.parameters.width === 8.6) o.visible = false; });
+{ const bb = put('BoardBase', 3.5, 3.5, 0); let paperMat = null;
+  R2.root.traverse(o => { if (o.isMesh && o.geometry && o.geometry.parameters && o.geometry.parameters.width === 8.5) { paperMat = o.material; o.visible = false; } });
+  bb.root.traverse(o => { if (o.isMesh && o.userData.mat === 'r_ozalit' && paperMat) o.material = paperMat; }); }
+// ---- layout (Rev2 raid.html), kit-specific pieces
+const K = kit === 'default' ? null : kit;
+const walls = [[3, 0], [4, 0], [4, 2], [6, 2], [3, 6], [1, 7], [2, 7]];
+const isWall = (u, v) => walls.some(([a, b]) => a === u && b === v);
+const nb = (u, v) => [[1, 0], [-1, 0], [0, 1], [0, -1]].filter(([du, dv]) => isWall(u + du, v + dv)).length;
+for (const [u, v] of walls) {
+  const iso = nb(u, v) === 0;
+  put(K ? (iso && MODELS[`ReliefIso_${K}`] ? `ReliefIso_${K}` : `Relief_${K}`) : 'WallBlock', u, v, 0);
+  // bridges toward the east (+u) and north (−v); model runs along +x from the tile centre
+  if (K && MODELS[`Bridge_${K}`]) { if (isWall(u + 1, v)) put(`Bridge_${K}`, u, v, 0); if (isWall(u, v - 1)) put(`Bridge_${K}`, u, v, -90); }
+}
+for (const [u, v] of [[2, 1], [3, 3], [4, 6]]) put(K ? `Civil_${K}` : 'Civil_default', u, v, 0);
+for (const [u, v] of [[1, 5], [6, 6]]) put('CoolingUnit', u, v, 0);
+// channel: vertical run (2,3)-(2,5): hub per tile, arms toward connected neighbours, hazard edges on the open sides
+const chan = [[2, 3], [2, 4], [2, 5]]; const isCh = (u, v) => chan.some(([a, b]) => a === u && b === v);
+for (const [u, v] of chan) { const sides = [[1, 0, 0], [0, -1, -90], [-1, 0, 180], [0, 1, 90]].map(([du, dv, yaw]) => ({ yaw, on: isCh(u + du, v + dv) }));
+  const n = sides.filter(x => x.on).length; if (n === 0) { put('ChannelSingle', u, v, 0); continue; }
+  const straight = n === 2 && ((sides[0].on && sides[2].on) || (sides[1].on && sides[3].on));
+  put('ChannelHub', u, v, 0, straight ? { hide: ['Junction'] } : {});
+  for (const sd of sides) put(sd.on ? 'ChannelArm' : 'ChannelEdge', u, v, sd.yaw); }
+put('CopyCabinet', 7, 0, 0); put('CopyCabinet', 7, 7, 0);
+const tgt = put(st === 'last' && q.get('open') ? 'LootCrateOpen' : 'LootCrate', 5, 4, 0);
+{ const dm = put(K ? `EntryDoor_${K}` : 'EntryDoor_default', -0.65, 2, 0, {}); if (dm && q.get('doorScale')) dm.holder.scale.y = +q.get('doorScale'); }
+// pawns
+const PW = { plan: [['T', 0, 1, {}], ['E', 0, 2, {}], ['A', 0, 3, { plate: 1 }]], kit: [['T', 0, 1, {}], ['E', 0, 2, {}], ['A', 0, 3, { plate: 1 }]],
+  machine: [['T', 2, 2, { done: 1 }], ['E', 1, 2, { done: 1 }], ['A', 0, 4, { done: 1, plate: 1 }]],
+  event: [['T', 1, 3, {}], ['E', 1, 2, {}], ['A', 0, 4, { plate: 1 }]],
+  last: [['T', 4, 4, {}], ['E', 3, 2, { tape: 1 }], ['A', 2, 2, { plate: 1 }]] }[st] || [];
+for (const [L, u, v, o] of PW) { const hide = []; if (!o.tape) hide.push('Tape'); if (!o.done) hide.push('Tick'); if (!o.plate) hide.push('Plate');
+  const pm = put(`Pawn_${L}`, u, v, 0, { hide, pose: o.done ? { Letter: 180 } : {} });
+  if (pm && q.get('doneMat')) pm.root.traverse(ob => { if (ob.isMesh && ob.userData.mat === 'r_pawnDone') ob.material = material(q.get('doneMat')); }); }
+// machines (face west = Unity yaw 90)
+const MC = { plan: [['Drone', 5, 1], ['MaintRobot', 6, 4], ['Locker', 6, 5]], kit: [['Drone', 5, 1], ['MaintRobot', 6, 4], ['Locker', 6, 5]],
+  machine: [['Drone', 5, 1], ['MaintRobot', 6, 4], ['Locker', 6, 5], ['MaintRobot', 7, 6]],
+  event: [['Drone', 5, 1], ['Mortar', 6, 3], ['ShieldDrone', 6, 5], ['Replicator', 7, 6]],
+  last: [['Drone', 5, 1], ['MaintRobot', 6, 4], ['Locker', 4, 5], ['MaintRobot', 7, 5]] }[st] || [];
+for (const [n, u, v] of MC) put(n, u, v, 90);
+// events
+if (st === 'event') { put('Tube', 5, 6, 0); put('WeldArmBase', 1, 4, 0); put('WeldArm', 1, 4, 0); put('CeilingDebris', 4, 3, 0); }
+// marks (Rev2 acetate textures; r3 wake pin)
+if (st === 'plan') {
+  const blocked = new Set(P.filter(p => !/^Channel|^Board|^Entry|^Bridge/.test(p.name)).map(p => p.u + ',' + p.v));
+  const dist = { '0,1': 0 }; const Q = [[0, 1]];
+  while (Q.length) { const [u, v] = Q.shift(); const d = dist[u + ',' + v]; if (d === 3) continue; for (const [du, dv] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const nu = u + du, nv = v + dv, k = nu + ',' + nv; if (nu < 0 || nv < 0 || nu > 7 || nv > 7 || k in dist || blocked.has(k)) continue; dist[k] = d + 1; Q.push([nu, nv]); } }
+  for (const k of Object.keys(dist)) { if (k === '0,1') continue; const [u, v] = k.split(',').map(Number); B.mark(scene, 'move', u, v); }
+  B.mark(scene, 'sel', 0, 1);
+}
+if (st === 'plan' || st === 'machine') { B.mark(scene, 'hit', 2, 1); B.mark(scene, 'hit', 5, 3); B.mark(scene, 'hit', 5, 5); }
+if (st === 'event') { for (const [u, v] of [[5, 5], [4, 6], [6, 6], [5, 7], [1, 3]]) B.mark(scene, 'hit', u, v); }
+if (st === 'last') { B.mark(scene, 'hit', 4, 4); B.mark(scene, 'hit', 3, 1); B.mark(scene, 'hit', 5, 3); B.mark(scene, 'target', 5, 4); B.mark(scene, 'sel', 4, 4); }
+if (st === 'plan') put('WakePin', 7, 6, 0); if (st === 'machine') put('WakePin', 7, 2, 0);
+// ---- lights (Rev2 raid recipe: hemisphere + fill + one shadowed key)
+scene.add(new THREE.HemisphereLight(0x9fb4c8, 0x2a2016, num('hemi', 0.5)));
+const fill = new THREE.DirectionalLight(0xb8c8d8, num('fill', 2.2)); fill.position.set(-2, 7, 10); fill.target.position.set(4, 0, 4); scene.add(fill, fill.target);
+const key = new THREE.DirectionalLight(0xffe3b0, num('key', 3.4)); key.position.set(-2, 9, -0.5); key.target.position.set(4, 0, 4); scene.add(key, key.target);
+key.castShadow = true; key.shadow.mapSize.set(4096, 4096); Object.assign(key.shadow.camera, { left: -9, right: 9, top: 9, bottom: -9, near: 0.5, far: 30 }); key.shadow.bias = -0.0006; key.shadow.radius = 3;
+// ---- camera
+const ppu = num('ppu', 132.58);
+const cam = new THREE.OrthographicCamera(-W / 2 / ppu, W / 2 / ppu, H / 2 / ppu, -H / 2 / ppu, 0.1, 100);
+const a = Math.PI / 4, p = 35 * Math.PI / 180;
+const fwd = new THREE.Vector3(Math.sin(a) * Math.cos(p), -Math.sin(p), -Math.cos(a) * Math.cos(p));
+const up = new THREE.Vector3(Math.sin(a) * Math.sin(p), Math.cos(p), -Math.cos(a) * Math.sin(p));
+const centre = new THREE.Vector3(num('cu', 4), 0, num('cv', 4)).addScaledVector(up, -((H / 2 - num('cy', H * 528 / 1080)) / ppu));
+cam.position.copy(centre).addScaledVector(fwd, -30); cam.up.copy(up); cam.lookAt(centre); cam.updateMatrixWorld(); cam.updateProjectionMatrix();
+renderer.render(scene, cam);
+const proj = (v) => { const pp = v.clone().project(cam); return [+((pp.x + 1) / 2 * W).toFixed(1), +((1 - pp.y) / 2 * H).toFixed(1)]; };
+const out = { kit, s: st, used, tiles: {} };
+for (const pc of P) if (!/^Board|^Channel|^Bridge/.test(pc.name)) out.tiles[pc.name + '@' + pc.u + ',' + pc.v] = proj(new THREE.Vector3(pc.u + 0.5, 0.6, pc.v + 0.5));
+let tris = 0; scene.traverse(o => { if (o.isMesh && o.visible && o.geometry) tris += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3; }); out.tris = Math.round(tris);
+window.__proj = proj; window.__done = out;
+</script></body></html>

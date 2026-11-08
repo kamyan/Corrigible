@@ -5,29 +5,35 @@
 ```
 Corrigible/                          (Unity proje kökü, git deposu)
 ├─ AGENTS.md, CLAUDE.md              yapay zeka ajanları için giriş
-├─ Docs/                             bu belgeler; UI_Siginak (oda tasarımı, ilk tur), UI_Siginak_Rev2 (Revizyon 2: güncel eşleme,
-│                                    S1–S9 panoları, görüntü seti), UI_Sade ve UI_C (masa/baskın arayüzü
+├─ Docs/                             bu belgeler; UI_Siginak (oda tasarımı, ilk tur), UI_Siginak_Rev2 (Revizyon 2: önceki tur eşlemesi,
+│                                    S1–S9 panoları, görüntü seti), UI_Siginak_Rev3 (Revizyon 3 + ek 11-05: model paketi,
+│                                    token 1.3, IMPLEMENTATION_MAP: güncel eşleme), UI_Sade ve UI_C (masa/baskın arayüzü
 │                                    kökenleri), SonSalter_Baskin_Paketi (baskın görsel referansı)
 ├─ Tools/unity-helpers.sh            Unity CLI kısayolları
-├─ Tools/Audio/raid_site_audio.py    baskın yerinin yer tutucu seslerini (9 yatak, 22 olay sesi) sentezleyen üretici
+├─ Tools/Audio/                      yer tutucu ses üreticileri: raid_site_audio.py (9 yatak, 22 olay sesi), cabinet_audio.py (dolap, menü),
+│                                    rev3_placeholder_audio.py (Revizyon 3'ün 42 ipucu)
 └─ Assets/Corrigible/
    ├─ Core/                          saf C# simülasyon (asmdef Corrigible.Core, motor referansı yok)
    ├─ Game/                          GameController, BalanceConfig, platform; Audio/, Localization/, Raid/ (3B baskın tahtası)
    ├─ Desk/                          komuta odası ve ekran kâğıtları
    │  ├─ Scripts/Runtime/            asmdef Corrigible.Desk: Siginak/ (oda bileşenleri, vardiya ve operasyon raporu),
-   │  │                              Settings/ (ayarlar dolabı), Entrance/ (menü sahnesi), Raid/ (baskın HUD'u),
+   │  │                              PlanningBoard/ (kart, cep ve görünüm), Settings/ (ayarlar dolabı),
+   │  │                              Entrance/ (menü sahnesi), Raid/ (baskın HUD'u),
    │  │                              Sade/Map/ (kâğıt harita), Components/,
-   │  │                              Theme/, Core/
+   │  │                              Theme/, Core/, Rev3/ (model prefab'ının kökü, parça sürücüsü, yazı yuvası,
+   │  │                              malzeme kitaplığı)
    │  ├─ Scripts/Bridge/             asmdef Corrigible.Desk.Bridge: oyunu sunuma bağlar (Siginak/ bağlayıcılar, Entrance/
    │  │                              menü sahnesi, SimDesk*, baskın veri kaynağı)
-   │  ├─ Scripts/Editor/             varlık hattı (Import/), oda araçları (Siginak/), bina kiti araçları (Raid/)
+   │  ├─ Scripts/Editor/             varlık hattı (Import/), oda araçları (Siginak/), bina kiti araçları (Raid/),
+   │  │                              Revizyon 3 model hattı (Rev3/)
    │  ├─ Scenes/Giris.unity          menü sahnesi: sığınağın kapısının dışı (build listesinde ilk)
    │  ├─ Scenes/DeskGame.unity       oyunun sahnesi (build listesinde ikinci)
-   │  ├─ Prefabs/                    Components/ (kâğıt bileşenleri), Siginak/ (SettingsCabinet: ayarlar dolabı),
-   │  │                              Sade/Raid/ (baskın HUD, kart, panel, etiket prefab'ları)
+   │  ├─ Prefabs/                    Siginak/ (SettingsCabinet: ayarlar dolabı),
+   │  │                              Sade/Raid/ (baskın HUD, kart, panel, etiket prefab'ları), Rev3/<aile>/ (198 model)
    │  ├─ Resources/                  temalar (DeskTheme, SadeTheme, RaidTheme, SiginakTheme), DeskSprites, fontlar
    │  ├─ Data/                       tema kaynakları (tokens_*.json), harita ekip noktaları, stil sayfası
-   │  ├─ Art/, Fonts/                sprite'lar, atlaslar, dokular, modeller, malzemeler; font dosyaları ve lisansları
+   │  ├─ Art/, Fonts/                sprite'lar, atlaslar, dokular, modeller, malzemeler (Rev3/: OBJ kopyaları ve
+   │  │                              malzeme kitaplığı); font dosyaları ve lisansları
    │  └─ Tests/EditMode/             asmdef Corrigible.Desk.Tests
    ├─ Scenes/Baskin.unity            taktik baskın; DeskGame'in üstüne eklemeli yüklenir
    ├─ Prefabs/Raid/                  3B baskın parçaları (karo, duvar, kanal, dolaplar, olay nesneleri, birimler; Kits/ gedik molozları)
@@ -60,7 +66,7 @@ Corrigible/                          (Unity proje kökü, git deposu)
  Girdi (fare: odadaki hedefler, harita, fişler; klavye: DeskInput, SiginakDesk anahtarları)
         │
         ▼
- Oda bağlayıcıları (SiginakDesk, SiginakMap, SiginakShelter, SiginakCrt, SiginakShift, SiginakBriefing, SiginakCabinet)
+ Oda bağlayıcıları (PlanningBoardPresenter, SiginakDesk/Map/Crt/Shift/Briefing/Cabinet)
         │ komut                                            ▲ okur
         ▼                                                  │
  LiberationDeskView ── GameController ── komut/Step ──► Simulation (Core) ── WorldState
@@ -73,17 +79,26 @@ Corrigible/                          (Unity proje kökü, git deposu)
 ```
 
 - **`Simulation`** (`Core/Simulation.cs` + partial'lar): bütün kurallar. `NewGame(seed, balance)`, `Step()` (bir vardiya),
-  komutlar (`StartLiberationRaid`, `ResolveRaid`, `SelectLiberationRegion`, `ShelterUpgrade`, `ShelterAssign`, `AnswerDoor`),
-  denetimler (`LiberationRaidCheck`, `SelectLiberationRegionCheck`, `ShelterUpgradeCheck`, `ShelterAssignCheck`,
-  `DoorAnswerCheck`: komut yapılamıyorsa gerekçe metni) ve türetilmiş değerler (`Occupation`, `LiberationFrontier`,
-  `NextLiberationSector`, `IncomeBreakdown`, `DoorVisitor`, `DoorOptions`, `DoorOptionEffect`).
+  komutlar (`StartLiberationRaid`, `ResolveRaid`, `SelectLiberationRegion`, `AssignResident`, `TrainResident`,
+  `EquipResident`, `ScrapEquipment`, `QueueProduction`, `ReserveProductionMaterial`, `CancelProduction`, `PrintShift`, `FileShift`,
+  `InspectApplicant`, `DecideApplicant`, `ReviewResident`, `RestrictResident`, `DismissResident`),
+  denetimler (`LiberationRaidCheck`, `PlanningRaidCheck`, `BoardPlanCheck`, kabul/dosya `*Check` metotları:
+  komut yapılamıyorsa gerekçe metni) ve türetilmiş değerler (`Occupation`, `LiberationFrontier`,
+  `NextLiberationSector`, `IncomeBreakdown`, `DoorVisitor`, `DoorOptions`, `DoorOptionEffect`; kabul için salt okunur
+  `AdmissionWatcher(targetId)` (gözetmen = Boşta'nın ilk uygun kişisi, K4-A) ve `AdmissionFindingCode(personId, kind)`
+  (yapılmış incelemenin sonuç kodu: `match`/`date`/`serial`/`seal`/`origin`, `fog`/`clear`, `north`/`east`/`south`)).
   Komutlar `RunCommand` üstünden geçer: `ActResult { Ok, Msg }` döner, fon değişimini `TransactionLedger`'a, komutu kayda
-  yazar. Dosyalar: `CampaignLiberation.cs` (bölge/sektör durumu ve baskın), `Simulation.Shelter.cs` + `ShelterLogic.cs`
-  (sığınak), `Teams.cs` (ekip), `Economy.cs` (gelir ve işlem defteri), `Door.cs` (sığınağın kapısı: durum, vuruş, kart seçimi,
-  `door_answer`) ve `DoorCards.cs` (ziyaretçi tablosu: metinler `Loc.N`, koşullar, seçenekler ve etkileri).
+  yazar. Dosyalar: `CampaignLiberation.cs` (bölge/sektör ve baskın), `Simulation.PlanningBoard.cs` (kart komutları,
+  üretim, eğitim, devir), `Simulation.PlanningRaid.cs` (gerçek kişiden kadro ve kişiye dönüş),
+  `Simulation.CommunityAdmissions.cs` (başvuru, talimat, dosya ve gecikmeli sızma), `Teams.cs` (ekip), `Economy.cs`
+  (gelir ve işlem defteri). `Simulation.Shelter.cs`/`ShelterLogic.cs`, `Door.cs`/`DoorCards.cs` eski oda ve ziyaretçi
+  yolunu korur; `Balance.planningBoardEnabled = true` varsayılanında bu döngü çalışmaz.
 - **`WorldState`** (`Core/WorldState.cs`): oyunun tüm durumu (gün, fon, ekipler, süren baskın, baskın günlüğü, harekât ve
   sığınak, kapı (`DoorState`: bekleyen ziyaretçi, sıradaki vuruş, bayraklar, zincirler, ziyaretler), işgal geçmişi, kırılma
-  anları, son). Görünümler doğrudan yazmaz. `S.Raid` varken `Step` çalışmaz (`Blocked`).
+  anları, son). `Shelter.Plan` (`PlanningBoardState`) isimli sakinler, tek sahipli eşya, tür bazlı stok, üretim emri,
+  ikmal hammadde ilerlemesi, plan kilidi ve fiş kimliğini taşır; `Simulation.Board` burayı okur. `Board.Admission` aday, talimat arşivi,
+  kalıcı kişi dosyası, gizli kimlik ve olay izlerini tutar. Görünümler doğrudan yazmaz. `S.Raid` varken veya kartlı
+  oyunda etkin fiş dosyalanmıyorken `Step` çalışmaz.
 - **`Baskin`** (`Core/Baskin.cs`): 8×8 taktik savaş motoru, kendi RNG'si (`BState.Rs`), Unity yok. `Create(RaidParams)` →
   `BState`; `DoMove`, `DoAct`, `Undo`, `Preview`, `EndTurn`, `Retreat`, `Result`, `Intents`. Stratejiye yalnız
   `RaidResult` döner (kayda `raidres` olarak yazılır; taktik hamleler kaydedilmez).
@@ -117,7 +132,9 @@ Corrigible/                          (Unity proje kökü, git deposu)
   "YÜKLÜ" etiketi), `RaidBoard3D.AnimateLeave` ve "evac" efekti (tahliye), `RaidViewModel.Escaping/CargoLost/CanRetreat`
   (amaç satırı, ALINDI/KAYBOLDU damgası, soluk GERİ ÇEKİL), `RaidTeamModel.Out/Left`, `PreviewResult.Escape`; tur şeridi 8
   kutuya kadar, plaka tur sayısıyla kayar.
-- **`GameController`** (`Game/GameController.cs`): komut kapısı. `NewGame`, komut metotları, `AdvanceShift` (vardiya),
+- **`GameController`** (`Game/GameController.cs`): komut kapısı. `NewGame`, komut metotları,
+  `ExecuteBoardCommand` (pano/kabul için `Run` ile kayıt ve olay dağıtımı), `PrintBoardShift`, `FileBoardShift`;
+  `AdvanceShift` yalnız eski oyunda doğrudan vardiya ilerletir,
   `Flush` (olayları `EventsRaised` ile dağıtır; harekât bitince başarımı açar, kaydı siler), `Save`/`ContinueSaved` (dosya
   `SaveStore`'da; menü sahnesi kartın özetini aynı yerden okur).
   `StoryHold` açılış ve emir belgesi açıkken vardiyayı engeller. Olaylar: `Changed`, `EventsRaised`, `NewGameStarted`,
@@ -128,21 +145,26 @@ Corrigible/                          (Unity proje kökü, git deposu)
 
 ## Determinizm ve kayıt
 
-- RNG: `Rng` (mulberry32, `Core/Rng.cs`). Durumu `S.Rng.State`. Kapı kendi üretecini her kullanımda harekât tohumu, gün ve
-  amaçtan kurar (`Simulation.DoorRng`); ana sıraya dokunmaz (`DoorTests`). `Js.Round` = JS `Math.round` (`Math.Floor(v + 0.5)`);
+- RNG: `Rng` (mulberry32, `Core/Rng.cs`). Durumu `S.Rng.State`. Kişi profili, geliş aralığı, aday ve gizli kimlik
+  bu üreteçle ve sabit tüketim sırasıyla kurulur. Kimlik sonradan karar anında yeniden çekilmez. Eski ziyaretçi kapısı
+  kendi üretecini harekât tohumu, gün ve amaçtan kurar (`Simulation.DoorRng`); ana sıraya dokunmaz (`DoorTests`). `Js.Round` = JS `Math.round` (`Math.Floor(v + 0.5)`);
   tüm sayılar `double`. Aynı tohum + aynı komutlar = aynı oyun (`LiberationCampaignTests`).
-- `GameRecord` (`Core/GameRecord.cs`): `version` (12), `seed`, `balance`, `commands[]`, `day`. `SavedCommand { day, kind, a, b }`;
-  türler `liberation_region`, `liberation_raid` (a: sektör, b: Teknisyen'in yanına seçilen roller kadro sırasıyla, çözülmüş
-  hâliyle; boş b yeniden oynatmada o anki varsayılan seçime döner; defter kimliği yine sektördür: `RunCommand`'ın `ledger`
-  argümanı), `raidres` (`RaidResult.Encode`: başarı, geri çekilme, kırılan sivil, düşen,
-  tur, kadro canı, zırh, ayakta kalan sivil), `shelter_upgrade`, `shelter_assign`, `door_answer` (a: seçenek, b: kart).
-  Ziyaretçi bir vardiyanın sonunda (`Step`) gelir; cevabı o günün komutudur. Cevapsız ziyaretçi bir sonraki `Step`'te
-  açılmadı sayılır (komut değildir, yeniden oynatmada da aynı olur).
-- `Replay.Restore(rec)` yeni oyunu kurar, her komutun gününe kadar `Step` eder ve komutu uygular, sonra kayıt gününe
-  kadar ilerler. Bu sürümden eski kayıtlar (kriz oyunu dönemi) yüklenmez.
-- `GameController.Save()` → `SaveStore.Write` → `persistentDataPath/liberation_savegame.json` (JsonUtility); her başarılı komutta, vardiya
-  sonunda ve uygulama kapanırken. Kayda girmeyen oda durumu (teleks, evrak tepsisi, kamera pozu) `SiginakDeskStore` ile
-  `liberation_desk.json`'a yazılır; tohum eşleşmezse yok sayılır.
+- `GameRecord` (`Core/GameRecord.cs`): `version` (**15**; Aşama 6'da K4-A gözetmen kuralıyla 14 → 15), `seed`, `balance`, `commands[]`, `day`.
+  `SavedCommand { day, kind, a, b }`. Harekât komutları `liberation_region`, `liberation_raid`, `raidres`;
+  pano komutları `board_assign`, `board_train`, `board_equip`, `board_queue`, `board_reserve`, `board_cancel`,
+  `board_print`, `board_file`, `board_scrap`; kabul komutları `inspectApplicant`, `decideApplicant`, `reviewResident`,
+  `restrictResident`, `dismissResident`. `shelter_upgrade`, `shelter_assign`, `door_answer` eski yol için korunur.
+- `Replay.Restore(rec)` aynı tohumu ve dengeyi kurar, komutları sırasıyla uygular. Kartlı oyunda `board_file`
+  kapanan güne kaydedilir ve `FileShift` günü kendisi ilerletir. Gün atlamak için eksik fişle doğrudan `Step` eden
+  bozuk kayıt sonsuz döngü yerine hata verir. Baskın sonucu `RaidResult.Encode` ile kadro canı, zırhı ve geride kalan
+  sıralarını da taşır; aynı kişi kimlikleri başlangıç/atama komutlarından yeniden kurulur.
+- `GameController.Save()` → `SaveStore.Write` → `persistentDataPath/liberation_savegame.json` (JsonUtility); her
+  başarılı komutta, kapanışta ve uygulama kapanırken. Dosya önce `.writing` olarak yazılıp atomik değiştirilir. Farklı
+  sürümdeki eski dosya üzerine ilk yazmada `.v<eski sürüm>.backup` kopyası tutulur; bu, sürüm göçü değildir.
+  Biçim 14 ve öncesi yeni sürümde devam etmez. Kayda girmeyen oda durumu (`SiginakDeskStore`, `liberation_desk.json`)
+  tohum eşleşmezse yok sayılır.
+- Editörde `SessionState["Corrigible.TestStorage"]` doluysa `SaveStore.StorageDirectory` ve `SiginakDeskStore` ayrı
+  doğrulama klasörüne gider. Bu anahtar oyun kaydının parçası değildir; test sonunda silinmelidir.
 - **Yeni bir oyuncu komutu eklerken:** `Simulation`'a `XCore` + `public ActResult X(...) => RunCommand(() => XCore(...), "kind", ...)`,
   `Replay.Restore`'a `case "kind"`, GameController'a ince bir metot, `LiberationDeskView`'a gerekçeli komut, test.
 
@@ -157,19 +179,136 @@ Audio                    AudioDirector (SoundBank)
 CommandPost3D            CommandPostDesk (kamera girdisi kapısı); Main Camera + SiginakCameraRig
 SiginakRaidLink          baskın sahnesi yüklüyken odayı gizler, CRT geçişini RaidLauncher'a verir
 SiginakRoom              oda: masa (sayaçlar, anahtar rayı, şalter, teleks, evrak tepsisi, Desk/MapMount altında kâğıt
-                         harita SadeMapCanvas), raf (sığınak maketi, oda kartları), CRT, duvar; sağ duvarda Bunker door
-                         (DoorProp, DeskTarget; duvarın mesh'i kapı boşluklu, wall_doorway; ziyaretçi çentiği) ve ardında
-                         Corridor (merdiven boşluğu, iki lamba, Visitors: VisitorSilhouette); Poses/K8 (kapı pozu);
+                         harita SadeMapCanvas), fiş çıkışlı vardiya şalteri ve mevcut EVRAK kutusu; Planning board (daha küçük ayaklı pano,
+                         kişi kartları, görev alanları, ayrı depo ve üretim alanı),
+                         CRT, duvar; sağ duvarda Bunker door
+                         (DoorProp, DeskTarget; duvarın mesh'i kapı boşluklu, wall_doorway; ziyaretçi çentiği; kanatta
+                         ColdGlass, yanda IntercomBox) ve ardında Corridor (merdiven boşluğu, iki lamba, Visitors:
+                         VisitorSilhouette); Admission station (AdmissionStation: kabul tezgâhı, panel, tezgâh lambası,
+                         damga rafı, büyüteç, talep defteri, kâğıtlar), Admission controller (SiginakAdmission);
+                         Poses/K8 (kapı pozu), K8A, K8G, K8R;
                          arka duvarın sağında, CRT'nin üstünde Settings cabinet (SettingsCabinet prefab'ı; K9 çapası içinde) ve Cabinet controller
                          (SiginakCabinet);
                          SiginakHud (Overlay 45: karartma, kenar satırı, görev fişi, ATLA plakası, vardiya raporu,
                          operasyon raporu, emir belgesi, kapı kâğıdı, teleks şeridi, üzerine gelme etiketi)
+Planning closing fade   Overlay; fiziksel devir kâğıdı mevcut EVRAK kutusuna girince kararıp açılır
 SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
 ```
 
 - Oda, yerleşim ve bileşen bağlantıları sahnede serileştirilir; kalıcı kurucu yoktur (son kurucu `eed2824`'te). Tasarım
-  eşlemesi ve değişiklik günlüğü: `Docs/UI_Siginak_Rev2/IMPLEMENTATION_MAP.md` (Revizyon 2, güncel); ilk tur ve poz/kamera
-  ayrıntısı `Docs/UI_Siginak/IMPLEMENTATION_MAP.md`.
+  eşlemesi ve değişiklik günlüğü: `Docs/UI_Siginak_Rev3/IMPLEMENTATION_MAP.md` (Revizyon 3, güncel); önceki turlar
+  `Docs/UI_Siginak_Rev2/IMPLEMENTATION_MAP.md` ve `Docs/UI_Siginak/IMPLEMENTATION_MAP.md` (ilk tur, poz/kamera ayrıntısı).
+- **Malzeme üretimi:** Core `EnableAutomaticProduction` ve `StageProductionMaterial` komutları `Rec`/Replay ile kayıtlıdır.
+  `AutomaticProduction` yalnız yeni komutla açılır; eski geçmişte false kalıp eski emir sonuçlarını korur. `ProductionInputs`
+  serbest stok hesabına dahildir. Kapanışta uygun tarif/üretici/yer varsa tek kez ödenip tek ürün depoya eklenir. Sunum
+  `ProductionMaterials` kartlarıyla yalnız bu durumu gösterir. Eğitim işaretleri sahnede serileştirilmiş kalem halkalarıdır.
+- **Kartlı pano (Revizyon 3 · Aşama 3; `Desk/Scripts/Runtime/PlanningBoard/Rev3`, `Bridge/Board3D`):** pano modelin
+  (`SiginakRoom/Planning board`, `PlanningBoard` modeli) üstünde 3B kartlarla çizilir.
+  - **Akış:** `PlanningBoardPresenter` simülasyondan `PlanningBoardSnapshotBuilder` ile yerelleştirilmiş bir `BoardSnapshot`
+    kurar (RNG çekmez, komut yazmaz) ve `BoardView3D.Render`'a verir. Çizim yalnız değişimde (oyun `Changed`, yükleme, dil,
+    poz, sürükleme sonu). Bırakma: `BoardDragController.DropRequested` → `BoardDropRules.CommandFor` (tek Core komutu) →
+    `GameController.ExecuteBoardCommand` → `drag.Resolve(ok)`; önizleme `BoardPreviewText`. Seçim, eğitim konusu ve fiş
+    yerleri sunumdur (`BoardUiState`; `PlanningBoardLayoutStore` v2, `planning_board_layout.json`).
+  - **Geometri:** `BoardLayout` pano mm'sini (iç alanın sol üstü, y aşağı) model yereline çevirir (x = −0,580 + mm/1000,
+    y = 1,593 − mm/1000; yüz z −0,014, kartlar seviyeyle öne). Ölçüler tema (`board.layoutMm`); saf hesap, testten çağrılır.
+  - **Kartlar:** `Prefabs/Rev3Board/{PersonCard, ItemCard, MaterialCard, ChipCard}` = paketin kart modeli (iç içe, geçersiz
+    kılmasız) + `BoardCardView` (havuz Core kimliğiyle, `Place`/`MoveTo`/`ArcTo`, mıknatıs) + yüzde tek World Space tuval
+    (1 birim = 1 mm, ölçek 0,001; raycaster yok) ve altında pişirilmiş sözcüksüz ışıklı taban malzemesi. Yüzler
+    (`PersonCardFace`, `ItemCardFace`, `MaterialCardFace`, `ChipCardFace`) yalnız değişince bağlar (`CardFace.ChangedBinds`).
+    `CardStateOverlay` durum katmanlarını ve modelin bayrak parçasını sürer. Portre `PortraitLibrary` (kırpma döşemesi).
+  - **Pano parçaları:** `BostaDeckView`, `StoreView`, `WorkOrderView`, `TrainingTopics`, `PersonFolderView`,
+    `LostEnvelopeView`, `HurdaBin`, `BoardMarks`; üzerine gelme etiketi `HoverTag` (bırakma önizlemesi `IHoverFrame` ile
+    mavi/amber çerçeve). Sesler `BoardSound` → sunucu → `Sfx` (97–106).
+  - **Girdi:** kartın ve pano parçalarının çarpıştırıcıları odanın `PhysicsRaycaster`'ıyla; boş pano tıklaması hiyerarşi
+    boyunca `BoardDragController`'a çıkar. Sürükleme pano düzlemine ışınla; kamera girdisi bu sırada askıda.
+    Esc/sağ tık/MASAYA DÖN `SiginakCameraRig.BackClicked` → sunucunun geri zinciri (açık dosya, deste, sonra masa).
+  - **Sahne:** bileşenler ve bağları `DeskGame.unity`'de (tek seferlik `Rev3Stage3Board` kurdu, silindi). Eski uGUI pano
+    tuvali ("Serbest pano kartları") Aşama 10'da (T1c) sahneden silindi: `PlanningBoardView` ve `PlanningBoardMotion` kökte kalır, tuvale bakan alanları boştur,
+    public API'leri durur (`SetCamera`, `SetStatus` boş alanla güvenli; `Motion`'ın deste yolu kartlı oyunda çalışmaz). Kapının eski uGUI kabul penceresi Aşama 6'da silindi (`PlanningBoardView` kabul alanları
+    boş, yerine kabul istasyonu), tarif defteri Aşama 5'ten beri 3B. Aşağıdaki üç madde eski uGUI panonun kodunu anlatır; sahnede karşılığı kalmadı.
+- **Defter ve yedek eli:** `PlanningBoardMotion` sahneye kaydedilmiş kapak, iki sayfa, gezinme düğmeleri ve yedek elini unscaled zamanla hareket ettirir. Tarifler yalnız açık sayfada görünür; sürüklenen tarif kapanan defterden bağımsız kalır. Boşta kişiler kapalı deste/yan yana el arasında taşınır; ilk kişi en üstte çizilir ve kapalı desteden doğrudan sürüklenebilir. Yalnız tıklama üst karttan başlayarak eli açar; kişi alınırken diğerleri geri döner. Açık elde kart, boş görev alanı veya `PlanningBoardSurface.Clicked` eli kapatır. Başarılı Boşta bırakışında `AcceptReserveDrop`, kartın `KeepPosition` dönüş noktasını ve ilk deste yerleşimini korur; eski göreve sıçrama olmaz. Ek el paneli/başlığı/Topla düğmesi yoktur. `PlanningBoardCard` pointer-down ile tıklama durumunu sıfırlar ve sürüklemenin bırakılışını tıklama olarak iletmez. Açılış üstten, kapanış alttan 70 ms aralıkla 320 ms hareketleri başlatır. Geçiş başlangıcında konum/ölçek ve kart sırası yakalanır; yeniden çizim veya yön değişimi animasyonu eski konuma sıçratmaz. Konum/animasyon Core komutu değildir.
+- **Güncel kutu oyunu tahtası:** dikey kişi kartları ve yedi alan (tek/emp/ana/craft/cook/train/rest). care/gather/watch/contact alanları kaldırıldı (`watch` Aşama 6'dan beri gözetmen de sayılmaz; gözetmen Boşta'nın ilk uygun kişisi). Eski kilitsiz plandaki bu görevler `PlanningBoardPresenter.RetireJobs` üzerinden kayıtlı AssignResident(rest) komutlarıyla bırakılır; kilitliyken kartlar Boşta gösterilip kapanış beklenir. Portreler sahnede stilize yer tutucudur.
+- **Planlama panosu:** `PlanningBoardPresenter` (Bridge) → `GameController.ExecuteBoardCommand` → Core komutları.
+  `PlanningBoardView`, `PlanningBoardCard`, `PlanningBoardSurface` ve `PlanningBoardDropZone` yalnız kartları çizer,
+  seçme/sürükleme/bırakma olaylarını iletir. Her görev alanı `PlanningDropKind.Job` ve sabit Core görev kimliği taşır;
+  kişi kartı bu alana bırakılınca `AssignResident`, eğitim alanında `TrainResident` komuta gider. Dolu alanın geçerli
+  ataması iki kişinin görevini takas eder. Sürüklenirken kart ortak düzleme çıkar; Boşta kişileri ve depodaki teçhizat
+  kaydırılan içeriğin altında maskelenir. Son konumlar görev alanlarının serileştirilmiş `CardAnchor` referanslarından
+  ve Core durumundan hesaplanır. Eski serbest kişi konumları yüklenmez.
+  Teçhizat kişi kartının üstüne bırakılınca `EquipResident` ile sahiplenilir; kişiyle taşınır. Ayrı `Inventory` alanı
+  Depo'dur; buraya bırakmak sahipliği kaldırır. Tarif, girdi ve hurda hedefleri de açık tür/kimlik taşır. Boş panoya
+  veya yanlış türde hedefe bırakmak komut üretmeden geri döner. Topluluk sicili ve pano üstünde vardiya kontrolü yoktur.
+  Kişideki teçhizat sahnedeki `equipmentOffset` / `equipmentStackStep` ile üst üste yerleşir. Önceki serbest panonun
+  `PlanningBoardLayoutStore` ve `planning_board_layout.json` verileri görev alanlı yerleşimi etkilemez; dosyadaki
+  eski kişi/eşya ofsetleri okunmaz. Üretim kartları için `production:<kind>` anahtarları bırakılan serbest konumu saklar;
+  stok ve rezervasyon bu dosyadan okunmaz. Dil/yeniden çizim ve kayıttan devamda bu konum kullanılır.
+  Simülasyonun RNG veya komut geçmişi salt konum değişiminden etkilenmez.
+  Drag sırasında `CanvasGroup.blocksRaycasts` kaldırılır ve kamera girdisi askıya alınır; bitince eski duruma döner.
+  Bu uGUI kartları Aşama 10'da (T1c) silindi; çalışma anında hiyerarşi kurucu yoktur. Eski raf (`Shelf`) ve `Shelter controller` da silindi (T1a):
+  `SiginakShelter` kodu durur, sahnede örneği yok; `CampaignWear.stages[0..2].objects` boş, `stages` dizisi kaymasın diye yerinde. Oda geliştirmeli SiginakTutorial
+  kapalıdır; ayarlar dolabı korunur.
+- **Tarif defteri ve üretim (Revizyon 3 · Aşama 5, R18; karar D1-B):** tarifi oyuncu seçer. `RecipeBookView` (defter modeli; durum
+  `BookState`: Closed, Opening, Open, Turning, Lowered, Closing) kancadan okuma pozuna gelir; sayfalar `RecipeBookPage` (World Space
+  tuval, ışıksız TMP, içerik anlık görüntünün `Recipes`'inden). Açıkken `BoardView3D.SetBookMode(true)`: pano yüzü ve MASAYA DÖN dışındaki
+  pano çarpıştırıcıları kapanır, tık defteri kapatır. Tarif kutusundan sürükleme `RecipeLifted` → sunucu kopyayı (`RecipeCardFace`)
+  denetçiye verir; bırakma `BoardDropRules`: boş emre `board_queue`, dolu emre `board_cancel` + `board_queue`, formdaki kart dışarı
+  `board_cancel`; hammadde fişi `board_reserve` ±1 (`ChipCount` ayrılanları sayar). Yetersiz stok: `CanPick` reddi → titreme + kırmızı.
+  Form durumları ve not `ProductionForecast` (fişle aynı tahmin). Ürün kayışı ve YENİ etiketi (`NewItemTag`) sunum durumu
+  (`BoardUiState.NewItem`, layout v3). Eski kayıttaki konmuş fişler devamda bir kez `board_stage(kind, 0)` ile stoka döner.
+- **Vardiya kapanışı (Revizyon 3 · Aşama 4, R19; kartlı oyun):** `SiginakShiftClose` (Bridge, `SiginakRoom/Shift controller`) akışın
+  sahibidir; `SiginakShift` kartlı dalda ona devreder, eski yol (`ShiftSequence`, `Poses/K6a`) aynen kalır.
+  - **Şalter:** `ShiftSwitch` R19 kipi (`shiftClose`; dolabın ve menünün şalterleri eski kipte): `ShiftPhase` (hazır · kapak kalkık · fiş
+    bekliyor · kilitli · ret), süreler token'dan, `Advance(dt)` kendi saatiyle (EditMode testleri sürer). Plakanın 2. satırını ve üzerine
+    gelme satırını yalnız `ShiftPlate` yazar. Kilit nedeni `SiginakShiftClose.LockReason` (saf): baskın > harekât bitti > belge açık > rapor
+    açık > `BoardPlanCheck`.
+  - **Fiş:** `ShiftReceiptMachine` kol inişini bekler, `ShiftReceiptPaper` (durumlar `Where`: Hidden, Feeding, Tongue, ToHand, Hand,
+    Dragging, ToTray, Tray, Returning, Reading) `LateUpdate`'te yürür; el pozu canlı kameradan (`HandPose`, saf). `EvrakTray` hedef ışığını,
+    bırakma pozunu ve dosyalanmış kopyayı tutar. Fiş yüzü `HandoverSlipFace` (World Space tuval, 1 birim = 1 mm, ışıksız TMP);
+    veri `HandoverSlipFactsBuilder.Build(sim)` (saf, gizli gelecek okunmaz) → `HandoverSlipFacts` → `HandoverSlipFormat` (o anki dil).
+  - **Komutlar:** kolun ikinci tıkı `PrintBoardShift` (`board_print`); EVRAK'a kabul edilen bırakıştan sonra tam karanlıkta
+    `FileBoardShift(id)` (`board_file`). Okuma, el ve geri dönüş komut yazmaz. Kayıttan devamda `GameLoaded` → basılı fiş dile, şalter
+    bekleme hâline anında.
+  - **Arşiv:** son 5 fişin facts'i `liberation_desk.json`'da (`SiginakDeskStore`); EVRAK'a tık son fişi salt okunur gösterir. Kartlı
+    oyunda Revizyon 2 raporu EVRAK'a eklenmez.
+  - **Kamera ve girdi:** `SiginakPose.ShiftClose` (K6). Eldeyken masa kilitli; Esc ve sağ tıkı `SiginakShiftClose.Update` kendisi okur
+    (`DeskInput` ve rig o sırada ulaştırmaz). Sesler `ShiftSound` → `Sfx` 107–114.
+- **Kapı ve kabul (Revizyon 3 · Aşama 6, R9 / R17; kartlı oyun):** `SiginakAdmission` (Bridge, `SiginakRoom/Admission controller`)
+  akışın sahibidir; `SiginakDoor` kartlı oyunda ona devreder (`Delegated`), eski kapı yolu (`Sim.Board == null`) aynen kalır ve akış
+  hiçbir görünümü bağlamaz.
+  - **Veri akışı:** Core → `AdmissionSnapshotBuilder.Build(sim, ui)` (Bridge, saf; RNG çekmez, komut yazmaz) → yerelleştirilmiş
+    `AdmissionSnapshot` (`DocumentData`, `OrdersData`/`RuleData`, `ToolData`, `StampData`, `SlipData`, `RequestData`, `AdmissionWords`;
+    `Runtime/Admission/AdmissionSnapshot.cs`) → `AdmissionStation.Bind(s, animate)` → araçlar (`MagnifierTool`, `IntercomTool`,
+    `ColdGlassView`, `RequestPadTool`, `StampDecision`) ve kâğıt yüzleri (`AdmissionPaperFace` tabanı: `AdmissionDocumentFace`,
+    `OrdersStripFace`, `FindingSlipFace`, `RequestFormFace`; World Space tuval, 1 birim = 1 mm, ışıksız TMP). `Runtime/Admission`
+    `Loc` çağırmaz; metin anlık görüntüyle gelir. Kilitler ve araç durumları yalnız Core denetimlerinden (`ApplicantInspectionCheck`,
+    `ApplicantDecisionCheck`), bulgu damgaları `AdmissionFindingCode`'dan, gözetmen adı `AdmissionWatcher`'dan (sunum metin eşlemez);
+    talimat maddeleri `AdmissionRuleMap`. Kişi dosyasının kabul bölümü `PlanningBoardSnapshotBuilder.Folder` (KARAR, bulgular, İZLER,
+    `TagText` → `FileTagView`).
+  - **Akış:** görünüm olayları (`station.CounterClicked/PaperClicked/DocumentTaken`, araçların `Used`, damgaların `Pressed`) →
+    `UseTool` / `PressStamp` → denetim null ise tek `InspectApplicant(kind)` (`inspectApplicant`) ya da `DecideApplicant(choice)`
+    (`decideApplicant`) `GameController.ExecuteBoardCommand` üstünden; ret komutsuz `Deny`. Komut sırasında gelen `Changed` ertelenir,
+    akış kendi sırasıyla çizer. Vuruş canlı oyunda aday kimliği değişince bir kez (`announcedId`; `Restore`/yeni oyun eşitler).
+    Karar dizisi `DecisionTimeline` (token'dan): KABUL/KISITLI'da kamera K8, tezgâh katlanır, kapı `DoorProp.SetOpen(…, admitWheelS,
+    admitLeafS)` ile açılıp kapanır; RET/YARDIM istasyonun dizisi. Dizide rig kilitli; Esc ve sürüklemesiz sağ tıkı akış kendisi okur
+    ve diziyi sona atlatır. Teleks "TALİMAT n" kapanış teleksinden sonra (`SiginakDesk.ShiftFiling`). Sesler görünümlerin `Sound`
+    olaylarından `CueOf` → `Sfx` 120–128 (yer tutucu; damga 63, dönüş 99, ret 100, kapı 50/51/62).
+  - **Pozlar ve geri:** `SiginakPose.Admission` 8 (K8A), `BreathGlass` 9 (K8G), `AdmissionRead` 10 (K8R: çapa `Poses/K8R` her okumada
+    `station.ReadPose(kâğıt, sıra, admission.readDistanceM)` ile kâğıda göre kurulur). Geri zinciri: elde damga → dizi → K8R → K8A →
+    K8 → K1; K8G geldiği poza; MASA tuşu doğrudan K1. K8 ailesinde kenar satırı gizli, kapı hedefi `BlockedOverride` ile susar.
+  - **Sunum durumu:** `AdmissionUi` (görülen talimat sürümü, sonucu görülen aday, tezgâhtaki belge) `liberation_desk.json`'da
+    (`SiginakDeskStore.AdmissionSeen`); yalnız oynanmış kayıtta okunur, yeni oyunda güncel sürüm görülmüş sayılır. Talimat değişimi ve
+    dış kayıt sonucu ilk K8/K8A varışında oynar (`OnArrived`; sonuç o ana dek BEKLENİYOR, `HoldsResult`).
+  - **Sahne:** `SiginakRoom/Admission station` (istasyon kökü; kâğıt ve araçlar onun altında, tıklar ata zincirinde istasyona çıkar),
+    buğu camı `DoorLeaf/Hinge` çocuğu, interkom kendi kutusuyla, kapı kutusu kanadın arkasında; kâğıt prefab'ları
+    `Prefabs/Rev3Admission/`. Bağlar `Configure*` ve `[SerializeField]`; kayıtlı hâl katlı tezgâh. `PlanningBoardPresenter.ShowAdmissions`/
+    `CloseAdmissions` → `admission.Enter()`/`Leave()` (public API korundu).
+- **Kapanış (eski açıklama; kartlı oyunda yukarıdaki akış):** `ShiftReceiptMachine`/`ShiftReceiptPaper` masadaki kapaklı vardiya şalterini (`Shift switch`) sürer.
+  Kapağın kalkması basım değildir; kolun inmesi (`ShiftSwitch.Thrown`) `PrintBoardShift` ile fiş üretir ve fiziksel
+  kâğıt şalterin yanındaki çıkışta görünür. Fiş beklenirken `ShiftSwitch.SetAwaitingReceipt` şalteri inik ve kilitli
+  tutar; durum satırı şalterin pirinç plakasının ikinci satırıdır (`kapağı kaldır` / `fişi EVRAK'a koy`). Kâğıt mevcut `EvrakTray`
+  kutusuna bırakılınca karartma sırasında `FileBoardShift` çağrılır. Gün Core'da bir kez ilerler; fiş kimliği ve plan
+  kilidi kayıttan geri kurulur. Pano presenter'ı kapanış yapmaz. Kutunun eski arşiv eylemleri korunur. Kabul kapıdaki
+  kabul istasyonundadır (aşağıda).
 - **Ayarlar dolabı** (`Docs/AYARLAR-DOLABI-VE-MENU.md`; Runtime/Settings, prefab `Desk/Prefabs/Siginak/SettingsCabinet`):
   arka duvarın sağında, CRT masasının üstünde (K1'den görünür) çelik hat dolabı. `SettingsCabinet` kapağı (mandal 0,15 s, kanat 0,45 s), iç ampulü, kontrolleri ve
   `IDeskSettings` bağını yönetir; `CabinetFader` (kollu dikey sürgü: işaretçinin ışını panel düzlemine düşürülür, %5 adım,
@@ -181,18 +320,21 @@ SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
   bağlayıcı `Sfx`'e çevirir (`Cue.CabinetOpen` 89 … `SelectorClunk` 93). `SettingsCabinet.Instance.IsOpen` odanın beş
   kilidinde okunur (`LiberationDeskView.InputBlocked`, `CommandPostDesk`, eğitim, emir belgesi, `DeskInput`). Oda tarafı
   `SiginakCabinet`: dolaba tıklama (K1'den görünür) ve Esc `RequestOpen` → kamera K9'a (`SiginakPose.Cabinet`,
-  dikey 45°), kapak kamera varınca açılır; kapanınca önceki poz. Emir belgesi açıkken belge gizlenir
+  dikey 48°), kapak kamera varınca açılır; kapanınca önceki poz. Emir belgesi açıkken belge gizlenir
   (`BriefingView.SetVeiled`); dolapta gün 0'da dil değişirse oyun dolap kapanınca yeni dilde kurulur
-  (`BridgeSettings.RebuildIfPending`). MENÜYE DÖN: kayıt, `OpeningSequence.FadeOut`, `Giris` sahnesi (build'de yoksa çıkış).
+  (`BridgeSettings.RebuildIfPending`). Aşama 8: model pivotları `PartDriver` üzerinden sürülür; menü dolabı ayrı
+  `SettingsCabinetMenu` prefab'ıdır (−120°, kör kapak), oda −95°. `LiberationDeskView.MenuExitBlocked` dolabın kendi
+  odağı dışındaki kâğıt/işlem kilitlerini okur; `SiginakCabinet` menü koluna neden ve mühür bandı uygular. Aşama 10: `SiginakCabinet.radio` K9'da gizlenir (anten açılan kanadın yayına giriyor), başka poza geçişin başında geri gelir.
+  `ShiftSwitch.lockedFeedback` kilitli tıkı yalnız titreme ve sesle yanıtlar. MENÜYE DÖN: kayıt, `OpeningSequence.FadeOut`, `Giris` sahnesi (build'de yoksa çıkış).
 - **Bağlayıcılar** (Bridge/Siginak): `SiginakDesk` (sayaçlar, anahtarlar, şalter), `SiginakMap` (kâğıt harita, görev ve
-  cephe fişleri, ekip figürü), `SiginakShelter` (maket ve oda kartları), `SiginakCrt` (telsiz hattı, `IRaidTransition`),
-  `SiginakShift` (vardiya dizisi, vardiya raporu, evrak tepsisi, karşı saldırının alarm lambası ve harita ✕'i; raporu saf C#
+  cephe fişleri, ekip figürü), `SiginakShelter` (eski maket ve oda kartları; Aşama 10'dan beri sahnede örneği yok, eski yol kodu olarak durur), `SiginakCrt` (telsiz hattı, `IRaidTransition`),
+  `SiginakShift` (kartlı oyunda panoya/basıma yönlendirir; eski vardiya dizisi, vardiya raporu, evrak tepsisi, karşı saldırının alarm lambası ve harita ✕'i; raporu saf C#
   `ShiftReportBuilder` kurar, renk kuralı `ReportTones`), `SiginakBriefing` (açılış ve emir belgesi),
-  `SiginakDoor` (kapı: vuruş, kamera, kâğıdın evreleri, `LiberationDeskView.AnswerDoor`; kâğıdı saf C# `DoorViewBuilder`
+  `SiginakDoor` (kartlı oyunda kapıyı `SiginakAdmission`'a devreder: KAPI/4/K ve kapıya tık → `admission.Enter()`, K8 ailesinde kapı hedefi susar; eski kapıda vuruş, kamera, kâğıdın evreleri, `LiberationDeskView.AnswerDoor`; kâğıdı saf C# `DoorViewBuilder`
   kurar (kart → siluet tablosu da orada), `DoorCardView` çizer, kapıyı `DoorProp`, ziyaretçiyi `VisitorSilhouette`
   canlandırır; ölümcül kararda oda ışığını kırmızıya çevirir ve son raporu `DeskBridgeState.HoldEnding` ile kâğıt
   kapanana kadar bekletir),
-  `SiginakTutorial` (eğitim: sahne kökünde kendi tuvali `SiginakTutorial`, sıralama 70, baskın HUD'unun üstünde; odanın
+  `SiginakTutorial` (eski oda geliştirmeli eğitim; kartlı oyunda kapalı: sahne kökünde kendi tuvali `SiginakTutorial`, sıralama 70, baskın HUD'unun üstünde; odanın
   dışında olduğu için baskında da çalışır; adımlar saf C# `TutorialFlow`, not `TutorialNoteView`; senaryolu ilk baskın
   `TutorialRaid` ve rehberi `RaidGuide`: `LiveRaidDataSource` eğitim baskın adımındaysa tahtayı senaryonun tohumuyla kurar,
   `RaidDataSource` girdiyi rehberin sıradaki adımıyla süzer, `RaidBoard3D.Marks.Guide` sarı çerçeveyi çizer). Modelleri saf
@@ -228,25 +370,28 @@ açılır. Sahne tek seferlik bir betikle kuruldu (kalıcı kurucu yok); dünya 
 
 ```
 EventSystem          [InputSystemUIInputModule]
-Entrance             Landing (koridorun malzemeleriyle genişletilmiş sahanlık, merdiven ve yukarı kat, üç lamba),
+Entrance             Landing (koridorun malzemeleriyle genişletilmiş sahanlık, merdiven, üç ana ışık + gölgesiz kart dolgusu),
                      Bunker door (DeskGame'deki kapının kopyası: dış yüzde çark, “07”, SIĞINAK 07, gözetleme halkası;
                      DoorProp dıştaki çarkı döndürür, içeriden sızan ışığı yakar), Inside (karanlık iç, sıcak ışık),
-                     Intercom outside, Title root (“SON ŞALTER” / “CORRIGIBLE”), Settings cabinet (prefab; MENÜYE DÖN kolu
-                     kapalı), Time clock (TimeClock: puantaj saati ve kart rafı), Main switch (ShiftSwitch: son şalter),
-                     Poses (M0 sahanlık, M2 saat, M3 eşik ve içerisi), Main Camera (EntranceCamera, PhysicsRaycaster)
+                     Intercom outside, Title root (“SON ŞALTER” / “CORRIGIBLE”), Settings cabinet (SettingsCabinetMenu prefab; kör kapak), Time clock (TimeClock: puantaj saati ve kart rafı), Main switch (ShiftSwitch: son şalter),
+                     Poses (M0 sahanlık, M2 saat, yükseltilmiş M2, MS ana şalter, M3 eşik ve içerisi), Main Camera (EntranceCamera, PhysicsRaycaster)
 EntranceUI           Overlay 45: HoverTag (DeskGame'deki etiketin kopyası), Fade (Overlay 100, siyah örtü)
 Audio                AudioDirector (game boş)
 Entrance controller  EntranceController, BridgeSettings (veri kaynağı yok)
 ```
 
 - `EntranceController` (Bridge/Entrance): karanlıktan açılış (lambalar iki kırpışmayla), kayıt özeti
-  (`SaveStore.Load` → `BriefingBuilder.Summarize`, arka iş parçacığında; Core saf C#) karta yazılır. Karta tıklamak
+  (`SaveStore.Load` → `BriefingBuilder.Summarize`, arka iş parçacığında; Core saf C#) karta yazılır. Karta veya saate tıklamak
   kayıttan devam, boş deste yeni harekât (kayıt varsa kıskaç iki adım: `TimeClock.Armed`, 4 s). Seçilen kart saate basılır
   (`TimeClock.Punch` → `Stamped`), kapının zili, kapı açılır, kamera eşikten geçer (`EntranceCamera.Walk`), ekran kararır;
-  DeskGame `LoadSceneAsync` ile kart basılırken yüklenmeye başlar ve karanlıkta etkinleşir. Niyet `GameLaunch.Pending`
+  DeskGame `LoadSceneAsync` ile çark bittikten sonra kanat açılırken yüklenmeye başlar; yürüyüşün son 0,3 s
+  kararması ve en az 0,2 s tam siyah ardından etkinleşir. Girişte Esc dahil tüm girdiler kilitli ve imleç gizlidir. Niyet `GameLaunch.Pending`
   (Game, statik). Son şalter (`ShiftSwitch`: kapak + kol) lambaları söndürür, `Application.Quit` (editörde Play durur).
   Esc dolabı kapatır, kıskacı bırakır ya da saatten sahanlığa döner; oyundan çıkarmaz. `DeskTarget.Blocked` menüde
   geçişler ve dolap için kurulur.
+  `EntranceInstruments` zil tokmağını, lamba ışımasını ve gölge geçişini yönetir. Saat kartında dört satır ve en çok
+  80 bitmiş vardiya deliği vardır. Paket OBJ UV'leri için sahne ağ kopyaları `Art/Rev3/SceneMeshes/Menu`, baskı dokuları
+  `Rev3TextureBaker.BakeStage8()` içindedir. R1–R4 ve kamera kalibrasyonu: `Docs/UI_Siginak_Rev3/A8_DOGRULAMA.md`.
 - **DeskGame açılışı:** `LiberationDeskView.Start` `GameLaunch.Take()`'i okur. Devam: `ContinueSaved` →
   `SiginakBriefing.OpenReturn` (siyahtan ampul 0,6 s, `OpeningSequence.Play(..., shortReturn: true)`, kamera K1, teleks
   KAYITTAN DEVAM · V.nnn); açılamazsa teleks ve yeni oyun. Yeni: açılış + emir belgesi dosyasız (`BriefingData.NoDossier`,
@@ -321,8 +466,7 @@ RaidPanelCanvas   RaidPanels (olay, onay, günlük, kurallar, geri çekilme, son
 - **Temalar** (ScriptableObject, `Desk/Resources`): `SiginakTheme` (oda), `SadeTheme` (harita, kâğıt), `RaidTheme`
   (baskın), `DeskTheme` (fontlar, ortak kâğıt renkleri). Token kaynakları `Desk/Data/*/tokens_*.json`,
   `Desk/Data/Sade/raid_tokens.json` ve `Docs/UI_C/spec/tokens.json`; içe aktarıcılar Corrigible menüsünde. Bileşenler renkleri anahtarla alır (`ThemeTint`).
-- **Kâğıt bileşenleri** (`Desk/Prefabs/Components`): PaperPanel, DeskButton (+ kapatma varyantı), KeyChip,
-  RadioCheck. Özel Graphic'ler: `UILineGraphic`, `UIPolygonGraphic`, `SpotlightGraphic`,
+- **Kâğıt bileşenleri:** `Desk/Prefabs/Components` (PaperPanel, DeskButton, KeyChip, RadioCheck) hiçbir sahneden erişilmediği için Aşama 10'da (T1b) silindi; yedek `UI_Siginak_Rev3/A10_silinenler.zip`. Özel Graphic'ler: `UILineGraphic`, `UIPolygonGraphic`, `SpotlightGraphic`,
   `RegionMeshGraphic` (harita bölgeleri: sahnede serileştirilmiş çokgenler ve tıklama testi). Çokgenler tasarım
   dikdörtgeninden (1920 × 1080) taşar; `SadeMapCanvas`'taki `RectMask2D` haritayı kâğıdın kenarında keser (testli).
 - **Biçim:** `DeskFormat` (sayı, yüzde, vardiya kodu), `DeskText` (tr-TR büyük harf), `TrNumber` (Türkçe ekler),
@@ -341,6 +485,9 @@ Unity Localization paketi kullanılmadı: metinlerin bir kısmı motordan bağı
 - **Tablo:** `Resources/Localization/strings.txt`, sekmeyle ayrılmış `tr<TAB>en`; `\n`, `\t`, `\\` kaçış dizileri; `#`
   satırları yorum (kaynağın geldiği dosya).
 - **Sahne/prefab:** sabit yazılarda `DeskLocText` bileşeni kaynağı saklar ve Play'de çevirir.
+- **Bağlamlı çeviri (Aşama 10):** `DeskLoc.Instance.Ctx("bağlam", "KAYNAK")` aynı Türkçe kaynağa yere göre ayrı EN verir (KABUL damgada ADMIT, tezgâh şablonunda ADMISSION). Tablo anahtarı `kaynak@@bağlam`;
+  satır yoksa düz `Loc.T` gibi davranır, Türkçede kaynağın kendisidir. İki argüman da dizgi sabiti olmalı (`LocalizationTool` toplar). Desk katmanındadır, Core kullanmaz.
+- **Zaten çevrilmiş değerler:** `RegionDef.Name` ve `EndingDef.Title/Text` çevrilmiş döner; ikinci `Loc.T` EN'de `Loc.Missing` tetikler. Türkçe sayıya uyumlu ayrılma eki `TrNumber.WithAblative`.
 - **Dil seçimi:** `Game/Localization/Localization.cs`: sahne yüklenmeden önce PlayerPrefs `corrigible.language`'dan,
   yoksa sistem diline göre. Masa ve menü (`DeskLoc`) ayarlar dolabının kademe anahtarından dili sahneyi yeniden yüklemeden
   değiştirir; `DeskLoc` statik olduğu için menüde seçilen dil DeskGame'e taşınır.
@@ -379,6 +526,8 @@ Unity Localization paketi kullanılmadı: metinlerin bir kısmı motordan bağı
 - **Menü sahnesi:** aynı `AudioDirector` `game` boşken yalnız drone ve dünyanın uğultusunu çalar; dolabın, saatin ve son
   şalterin sesleri `Cue` 89–96 (yer tutucular `Tools/Audio/cabinet_audio.py` ile sentezlendi).
   AudioMixer yok; karışım `AudioDirector`'da ses düzeyi ve `AudioLowPassFilter`'la.
+- **Revizyon 3 ipuçları:** `Cue` 56–66 ve 97–128'in (109 hariç) 42 yer tutucusu `Tools/Audio/rev3_placeholder_audio.py` ile sentezlendi (A10-D5), `Audio/Placeholder`'da durur ve `SoundBank`'a bağlıdır.
+  Vardiya kolu (109) `SwitchClack` kliplerini kullanır.
 
 ## Kalıcılık ve platform
 
@@ -392,13 +541,50 @@ Unity Localization paketi kullanılmadı: metinlerin bir kısmı motordan bağı
 
 - `CorrigibleDebug` (`Editor/CorrigibleDebug.cs`): `Capture(path)` (Overlay canvas'ları geçici olarak kameraya bağlayıp
   PNG alır; edit ve Play modda), `Status()` (harekât özeti).
-- Oda araçları (`Desk/Scripts/Editor/Siginak`): `SiginakCaptureSet` (Revizyon 2 tam görüntü seti: DeskGame'de S1a…S8b,
-  Baskin tek başına S6a–c; TR, `_EN`, `_gray` → `Docs/UI_Siginak_Rev2/screens_unity_rev2/`), `SiginakCapture`
+- Oda araçları (`Desk/Scripts/Editor/Siginak`): `Rev3CaptureSet` (Aşama 10 tam görüntü ve dil/punto seti: oturumlar `menu`, `k1`, `k4`, `k6`, `k8`,
+  `hover`, `raid`; tohum 79, 1920×1080, TR ve EN → `Docs/UI_Siginak_Rev3/screens_unity_rev3/A10_*`; `EditorApplication.update` üstünde yürür, yeni MonoBehaviour yok), `SiginakCapture`
   (`Render(poz)`: Overlay'siz 3B görüntü, `SiginakPose` adıyla), `SiginakFixtures` (V014, V031, K6, V019, injured, V015ca),
-  `SiginakTextScan` (punto taraması: oda, CRT, eğitim notu, DeskUI ve Baskin sahnesi; rapor
-  `Docs/UI_Siginak_Rev2/punto_taramasi.txt`), `SiginakFontPreview`, `SiginakTextureBaker`, token içe aktarıcı.
-- Varlık hattı (`Desk/Scripts/Editor/Import`): sprite içe aktarıcı ve kaydı, atlas, font asset'leri, tema içe
-  aktarıcıları.
+  `SiginakTextScan` (punto taraması: oda, CRT, eğitim notu, DeskUI, Baskin sahnesi, devir fişi, defter ve kabul kâğıtları
+  ("KAPI VE KABUL", K8R okuma pozunda); rapor `Docs/UI_Siginak_Rev3/punto_taramasi.txt`; canlı tarama `ScanLiveAll(cam, tag)` durum başına satır yazar, `ResetLiveAll`/`WriteLiveAll` →
+  `Docs/UI_Siginak_Rev3/A10_dil_olcumleri.json`), `AdmissionFixtures` (kabul sunum
+  fikstürleri `present`…`inspect_en`, düz kâğıt çizimi), `HandoverSlipFixtures`, `SiginakFontPreview`, `SiginakTextureBaker`,
+  token içe aktarıcı.
+- Varlık hattı (`Desk/Scripts/Editor/Import`): sprite içe aktarıcı ve kaydı, atlas, font asset'leri (tek font için
+  `DeskFontSetup.BuildOne`), tema içe aktarıcıları (sığınak token'ının kaldırılmış düğümleri `_was_1_3`'ten korunur).
+- **Revizyon 3 model hattı** (`Desk/Scripts/Editor/Rev3`; Docs/UI_Siginak_Rev3/PROMPT §4). Kalıcı bir asset hattıdır,
+  sahne kurmaz.
+  - **Kaynak:** `Rev3Manifest` paketteki manifesti okur (`Docs/UI_Siginak_Rev3/modeller`).
+  - **İçe aktarma:** `Rev3ModelImporter` (Corrigible › Revizyon 3 › Modelleri içe aktar) OBJ'yi `Art/Rev3/Models/<aile>`'ye
+    kopyalar; ayarı `Rev3ModelPostprocessor` kilitler (ölçek 1, dönüşüm yok, normaller dosyadan).
+  - **Prefab:** `Prefabs/Rev3/<aile>/<Model>.prefab` kurulur. Kökte `Rev3Model`; altında `Body` ve manifestteki parçalar
+    (`parent`, `pivotLocal`; hareketlide `PartDriver`, dinlenme pozunda).
+  - **Yazı yuvası:** `TXT_*` → 3B TMP + `Rev3TextSlot`. Punto `capMm` ve fontun büyük harf oranından; şablon rolü Big
+    Shoulders. Yüz yuvası TMP'siz bir dikdörtgendir.
+  - **Çapa ve ışık:** çapalar boş nesne; ışık noktaları kapalı `Light`.
+  - **Malzeme:** `Rev3MaterialSetup` her anahtar için URP Lit kurar (manifest + token 1.3, aynı değerli anahtarlar paylaşır)
+    → `Art/Rev3/Materials/Rev3MaterialLibrary.asset`.
+  - **Görüntü:** `Rev3ModelSheet` model sayfası ve aile görüntüsü çizer (boş, kaydedilmeyen sahnede).
+  - **Rapor:** `Docs/UI_Siginak_Rev3/model_import_report.txt`.
+  - Çalışma anı tarafı (`Desk/Scripts/Runtime/Rev3`): `PartDriver` pozu uygular (`Set`, `AnimateTo`, `SetSwap`,
+    `SetVisible`); mantık görünümdedir.
+  - **Odada (Aşama 2):** modeller sahnede prefab örneği olarak durur; sunum bileşenleri model parçalarına bağlanır
+    (`CounterWheel.drum`, `StationKey.cap/jewel`, `ShiftSwitch.coverHinge/lever/lockBand`, `Teleprinter.frontCode…frontPrev`,
+    `DoorProp.leaf/wheel/peepCover`, `RadioLogBook.page`…). Parçayı bileşen sürer (`localRotation`, `sharedMaterial`);
+    aynı parçada `PartDriver.AnimateTo` ya da `Rev3Model.ResetPose` çağrılmaz. Sahneye özel dokulu malzemeler (metre
+    cinsinden UV'li kadran, gösterge) `Art/Rev3/SceneMaterials/`'da; kitaplık yeniden kurulunca etkilenmez.
+- **Poz ışığı** (`Runtime/Rev3/PoseLighting`, `PoseLightRecipe` → `Desk/Data/Rev3/PoseLightRecipe.asset`): rig'in
+  `PoseChanged`'inde tarifteki ışıkların taban şiddeti geçiş boyunca karışır; gölge geçişin başında açılır, sonunda kapanır,
+  sönecek ışık sonunda kapanır. Ampul ve dolgusu `BulbFlicker.BaseIntensity` / `SetFillBase` üzerinden (kırpışma ve vardiya
+  karartması üstüne çarpar). Ortam: sahnenin üç renkli ortamı × poz çarpanı × `ShiftSequence.AmbientScale`, yalnız DeskGame
+  etkin sahneyken. Bir pozda en çok 4 gölgeli ışık (`Rev3RoomTests`; K8A/K8G/K8R tam 3: ampul spotu, masa lambası, `counterSpot`;
+  `counterSpot` K8 ailesi dışında tarifte açıkça kapalı). Tarifte olmayan ışıklara (kapı, koridor, dolap,
+  şalterin amber ışığı, umut ışığı) sahipleri dokunur. İki pozda aynı kalan şiddet yazılmaz. `cameraFill` (tarifte
+  `envFill`) kamerayı izleyen gölgesiz geniş spottur: three.js referansının ortam haritasının karşılığı; odanın içinde durur,
+  baskında oda gizlenince söner.
+- **Gölge kuralları (Aşama 10, `Rev3RoomTests`):** DeskGame ve Giris'te gölgeli her `Light` Spot'tur, kapalı olanlar dahil (Point gölge 6 atlas dilimi yer; koridor lambası bu yüzden Spot 110°,
+  `CeilingBulb/BulbLight` gölgesiz). Üç ana ışık (`bulbSpot`, `deskLamp`, `boardLamp`; `PoseLighting` bağlamaları) Custom kademede `shadowResolution` 2048 ister (sahne override'ı): URP bu kademede
+  `m_CustomResolution`'ı değil `Light.shadowResolution`'ı okur, −1 atlası küçültür. `counterSpot` Yüksek kademede (1024). Ölçülen atlas: K1 3 × 2048, K4 2048, K8A 2048 + 1024,
+  K8 kapı açık 2048, 2048, 1024, 1024. Yönlü ışık ve `m_MainLightShadowmapResolution` yalnız Baskin'i etkiler (DeskGame ve Giris'te Directional yok).
 - Bina kiti araçları (`Desk/Scripts/Editor/Raid`): `RaidKitTextureBaker` (Corrigible › Baskın › Kit dokularını üret: 12
   kitin dokuları, malzemeleri ve `Kit_<bölge>.asset`'leri; motifler `RaidKitTextureBaker.Motifs*.cs`'te), `RaidKitGate`
   (okunabilirlik kapısı; baker kapıdan geçmeyen kiti kütüphaneden çıkarır, `RaidRoomKitTests` de aynı kapıyı kullanır),

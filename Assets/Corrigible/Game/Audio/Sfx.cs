@@ -4,7 +4,8 @@ namespace Corrigible.Game.Audio
 {
     /// <summary>
     /// Tek seferlik ses olayları. Klipleri <see cref="SoundBank.cues"/> bağlar; asset değeri sayı olarak sakladığı için her
-    /// üyenin sayısı sabittir (silinen sesler numaralarını boş bırakır).
+    /// üyenin sayısı sabittir (silinen sesler numaralarını boş bırakır). 56–66 ve 97–128'in klipleri yer tutucudur
+    /// (<c>Tools/Audio/rev3_placeholder_audio.py</c>); ShiftLever (109) geçici olarak SwitchClack klibini kullanır.
     /// </summary>
     public enum Cue
     {
@@ -65,6 +66,27 @@ namespace Corrigible.Game.Audio
         CabinetOpen = 89, CabinetClose = 90, FaderDetent = 91, SwitchClack = 92, SelectorClunk = 93,
         // Menü sahnesi: kart basma saatinin “ka-çunk”u, kapının zili, son şalter (ışıklar söner, jeneratör susar)
         TimeClockPunch = 94, DoorBuzzer = 95, PowerDown = 96,
+        // Kartlı pano (Revizyon 3 · Aşama 3, PLAN §1.8): kart kalkışı (kâğıt hışırtısı), mıknatıs “tık”ı, geri dönüşün yumuşak
+        // “tak”ı, kilitli planın “tok”u, destenin kayışı ve toplanışı (“şırp”), eşyanın kartın arkasına sıkışması (“şık”), hurda
+        // kutusunun “tunk”u, asma kilidin “klak”ı, plan kapağının metal “tık”ı.
+        BoardLift = 97, BoardMagnet = 98, BoardReturn = 99, BoardDeny = 100, BoardDeckSlide = 101, BoardDeckCollect = 102,
+        BoardItemTuck = 103, BoardHurda = 104, BoardPadlock = 105, BoardFlap = 106,
+        // Vardiya kapanışı (Revizyon 3 · Aşama 4, R19 · PLAN §1.11): kapağın metal menteşe “tık”ı ve kapanışı, kolun “klak-klunk”u
+        // (tek klip; bankada geçici olarak SwitchClack klibi), yazıcının “tırrt”ı (0,3 s), kopmanın “çıt”ı, fişin EVRAK'a düşüşünün
+        // “şap”ı, yeni vardiyanın kısık “gong”u (düzey 0,5), basım reddinde boş ağzın “tık”ı. Kilitli tık SwitchClack, fişin ele
+        // gelişi BoardLift, dönüşü BoardReturn çalar.
+        ShiftCoverOpen = 107, ShiftCoverShut = 108, ShiftLever = 109, SlipPrint = 110, SlipTear = 111, SlipFile = 112,
+        ShiftGong = 113, SlipMouthEmpty = 114,
+        // Tarif defteri ve üretim (Revizyon 3 · Aşama 5, R18 · PLAN §1.13): defterin kancadan öne gelip açılışı, sayfa çevirmenin
+        // kâğıt sesi, kapanışı, tarif kartının defterden kalkışının “şırp”ı, ürün kartının depoya kayışının “şık”ı. Tarif kartının
+        // iş emrine oturuşu BoardMagnet, dönüşü BoardReturn, reddi BoardDeny çalar.
+        BoardBookOpen = 115, BoardPageTurn = 116, BoardBookClose = 117, BoardRecipeLift = 118, BoardProductSlide = 119,
+        // Kapı ve kabul (Revizyon 3 · Aşama 6, R9/R17 · PLAN §1.13): tezgâh kanadının inişindeki “tank”, evrak çekmecesi (tenekelerle
+        // dışarı da aynı ses), talimat işaretçisinin “tık”ı, bulgu fişinin yazıcı tıkırtısı, interkomun 0,2 s cızırtısı, buğu camı
+        // (kapak ve buğu), talep defterinden koparma, damganın raftan kalkışı, tezgâhın katlanışı. Damganın basışı StampHeavy, rafa
+        // dönüşü BoardReturn, reddi BoardDeny, belgenin tezgâha düşüşü PaperSlide, kapı DoorKnock/DoorOpen/DoorClose çalar.
+        AdmissionCounterDown = 120, AdmissionDrawer = 121, AdmissionMarker = 122, AdmissionSlip = 123, AdmissionIntercom = 124,
+        AdmissionGlass = 125, AdmissionPadTear = 126, AdmissionStampLift = 127, AdmissionCounterFold = 128,
     }
 
     /// <summary>Sürekli çalan döngüler (sesi duruma göre açılıp kısılır).</summary>

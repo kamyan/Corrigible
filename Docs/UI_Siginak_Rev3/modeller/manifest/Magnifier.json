@@ -1,0 +1,110 @@
+{
+ "name": "Magnifier",
+ "family": "admission",
+ "budget": "small",
+ "origin": "cetvelin alt yüz ortası (y = 0)",
+ "note": "Çelik cetvel 300 × 34 (ölçek ve kıl çizgisi dokuda) üstünde kayan pirinç araba ve Ø 70 mercek. Cetvel belgeye yatırılır, araba bir alanın üstüne gelince talimatta eşleşen satırın yakutu yanar; iki alan aynı hizaya alınınca fark (204 / 240) mercekte büyür.",
+ "listName": "Büyüteç ve karşılaştırma cetveli",
+ "parts": [
+  {
+   "name": "Carriage",
+   "parent": "Body",
+   "pivotModel": [
+    -0.11,
+    0.003,
+    0
+   ],
+   "pivotLocal": [
+    -0.11,
+    0.003,
+    0
+   ],
+   "kind": "slide",
+   "axis": "x",
+   "range": [
+    0,
+    0.22
+   ],
+   "rest": 0,
+   "note": "araba cetvel boyunca kayar (0 = sol uç)"
+  }
+ ],
+ "texts": [],
+ "anchors": [
+  {
+   "name": "Lens",
+   "part": "Carriage",
+   "pos": [
+    -0.11,
+    0.012,
+    -0.085
+   ],
+   "note": "mercek merkezi (altındaki alan büyür)"
+  }
+ ],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 672,
+ "trisPerPart": {
+  "Body": 56,
+  "Carriage": 616
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.15,
+   0,
+   -0.125
+  ],
+  "max": [
+   0.15,
+   0.0155,
+   0.02
+  ],
+  "size": [
+   0.3,
+   0.0155,
+   0.145
+  ]
+ },
+ "materials": [
+  {
+   "key": "steelBare",
+   "hex": "#8E918C",
+   "rough": 0.38,
+   "metal": 0.9,
+   "note": "mil, cıvata, aşınmış kenar",
+   "tris": 44,
+   "isNew": true
+  },
+  {
+   "key": "inkBlack",
+   "hex": "#1E1B16",
+   "rough": 0.8,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 424,
+   "isNew": true
+  },
+  {
+   "key": "glassClear",
+   "hex": "#DCE6E3",
+   "rough": 0.05,
+   "metal": 0,
+   "alpha": 0.18,
+   "note": "saat camı, gösterge camı (Transparent)",
+   "tris": 192,
+   "isNew": true
+  }
+ ]
+}

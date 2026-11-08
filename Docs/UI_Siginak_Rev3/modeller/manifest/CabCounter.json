@@ -1,0 +1,135 @@
+{
+ "name": "CabCounter",
+ "family": "cabinet",
+ "budget": "small",
+ "origin": "pano yüzünde merkez",
+ "note": "Üç haneli teker (masanın CounterWheel’i ve rakam dokusu). Değer değişince teker döner (080 → 085).",
+ "listName": "Sayaç tekerleri",
+ "parts": [
+  {
+   "name": "Wheel0",
+   "parent": "Body",
+   "pivotModel": [
+    -0.0175,
+    0,
+    0.005
+   ],
+   "pivotLocal": [
+    -0.0175,
+    0,
+    0.005
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    360
+   ],
+   "rest": 0,
+   "note": "36° / rakam"
+  },
+  {
+   "name": "Wheel1",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0,
+    0.005
+   ],
+   "pivotLocal": [
+    0,
+    0,
+    0.005
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    360
+   ],
+   "rest": 0,
+   "note": "36° / rakam"
+  },
+  {
+   "name": "Wheel2",
+   "parent": "Body",
+   "pivotModel": [
+    0.0175,
+    0,
+    0.005
+   ],
+   "pivotLocal": [
+    0.0175,
+    0,
+    0.005
+   ],
+   "kind": "rotate",
+   "axis": "x",
+   "range": [
+    0,
+    360
+   ],
+   "rest": 0,
+   "note": "36° / rakam"
+  }
+ ],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 524,
+ "trisPerPart": {
+  "Body": 188,
+  "Wheel0": 112,
+  "Wheel1": 112,
+  "Wheel2": 112
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.032,
+   -0.015,
+   -0.008
+  ],
+  "max": [
+   0.032,
+   0.015,
+   0.017
+  ],
+  "size": [
+   0.064,
+   0.03,
+   0.025
+  ]
+ },
+ "materials": [
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 176,
+   "isNew": false
+  },
+  {
+   "key": "counterFace",
+   "hex": "#1B130C",
+   "rough": 0.45,
+   "metal": 0.35,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "counterDrum",
+   "hex": "#1C150E",
+   "rough": 0.5,
+   "metal": 0,
+   "tex": "tx_counterDigits 128×1408: 11 hücreli şerit (0–9 + ikinci 0), krem rakam #EFDCAE koyu zeminde, hücre 0 üstte (v ekseni). Çark çevresi v = 1 → 1/11 (10 hücre, 36°/rakam); 11. hücre yalnız UV kaydırma içindir",
+   "note": "sayaç çarkı (bakalit tambur)",
+   "tris": 336,
+   "isNew": true
+  }
+ ]
+}

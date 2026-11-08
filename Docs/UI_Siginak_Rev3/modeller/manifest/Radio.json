@@ -1,0 +1,422 @@
+{
+ "name": "Radio",
+ "family": "crt",
+ "budget": "big",
+ "origin": "taban ortası (oturduğu yüzey, y = 0)",
+ "note": "Ceviz kasalı tüplü alıcı: üst kenarları yuvarlak kasa, koyu bakalit ön panel. Solda pirinç çerçeveli hoparlör bezi ve üç çıta, altında TELSİZ · K-07 plakası; sağ üstte arkadan aydınlatılan kanal skalası (rakamlar dokuda) ve kayan DialPointer; altta SİNYAL ölçeği (Needle) ile SES ve AYAR düğmeleri. Arkada teleskop anten.",
+ "listName": "Ahşap telsiz (tüplü alıcı)",
+ "parts": [
+  {
+   "name": "DialPointer",
+   "parent": "Body",
+   "pivotModel": [
+    0.105,
+    0.208,
+    -0.138
+   ],
+   "pivotLocal": [
+    0.105,
+    0.208,
+    -0.138
+   ],
+   "kind": "slide",
+   "axis": "x",
+   "range": [
+    -0.09,
+    0.09
+   ],
+   "rest": 0,
+   "note": "kanal göstergesi; 0 = skala ortası (K-07)"
+  },
+  {
+   "name": "Needle",
+   "parent": "Body",
+   "pivotModel": [
+    0.045,
+    0.088,
+    -0.1378
+   ],
+   "pivotLocal": [
+    0.045,
+    0.088,
+    -0.1378
+   ],
+   "kind": "rotate",
+   "axis": "z",
+   "range": [
+    -50,
+    50
+   ],
+   "rest": 0,
+   "note": "SİNYAL ibresi; 0 = dik"
+  },
+  {
+   "name": "KnobVolume",
+   "parent": "Body",
+   "pivotModel": [
+    0.135,
+    0.11,
+    -0.135
+   ],
+   "pivotLocal": [
+    0.135,
+    0.11,
+    -0.135
+   ],
+   "kind": "rotate",
+   "axis": "z",
+   "range": [
+    -150,
+    150
+   ],
+   "rest": 0,
+   "note": "ses"
+  },
+  {
+   "name": "KnobTune",
+   "parent": "Body",
+   "pivotModel": [
+    0.185,
+    0.11,
+    -0.135
+   ],
+   "pivotLocal": [
+    0.185,
+    0.11,
+    -0.135
+   ],
+   "kind": "rotate",
+   "axis": "z",
+   "range": [
+    -150,
+    150
+   ],
+   "rest": 0,
+   "note": "ince ayar (DialPointer ile birlikte)"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Plate",
+   "part": "Body",
+   "center": [
+    -0.105,
+    0.048,
+    -0.13720000000000002
+   ],
+   "size": [
+    0.14,
+    0.018
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 10,
+   "align": "center",
+   "sample": "TELSİZ · K-07",
+   "sampleEn": "RADIO · K-07",
+   "note": ""
+  },
+  {
+   "name": "TXT_Channel",
+   "part": "Body",
+   "center": [
+    0.105,
+    0.2535,
+    -0.13520000000000001
+   ],
+   "size": [
+    0.1,
+    0.012
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 7,
+   "align": "center",
+   "sample": "KANAL",
+   "sampleEn": "CHANNEL",
+   "note": "krem baskı #E9DDBE"
+  },
+  {
+   "name": "TXT_Signal",
+   "part": "Body",
+   "center": [
+    0.045,
+    0.102,
+    -0.13720000000000002
+   ],
+   "size": [
+    0.06,
+    0.01
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 6,
+   "align": "center",
+   "sample": "SİNYAL",
+   "sampleEn": "SIGNAL",
+   "note": "ölçek yüzünde, mürekkep #2A1E10"
+  },
+  {
+   "name": "TXT_Volume",
+   "part": "Body",
+   "center": [
+    0.135,
+    0.062,
+    -0.13520000000000001
+   ],
+   "size": [
+    0.048,
+    0.012
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 7,
+   "align": "center",
+   "sample": "SES",
+   "sampleEn": "VOLUME",
+   "note": ""
+  },
+  {
+   "name": "TXT_Tune",
+   "part": "Body",
+   "center": [
+    0.185,
+    0.062,
+    -0.13520000000000001
+   ],
+   "size": [
+    0.048,
+    0.012
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "up": [
+    0,
+    1,
+    0
+   ],
+   "role": "plateLabel",
+   "font": "Courier Prime 700",
+   "capMm": 7,
+   "align": "center",
+   "sample": "AYAR",
+   "sampleEn": "TUNE",
+   "note": ""
+  }
+ ],
+ "anchors": [],
+ "lights": [
+  {
+   "name": "DialLight",
+   "part": "Body",
+   "pos": [
+    0.105,
+    0.208,
+    -0.165
+   ],
+   "type": "point",
+   "color": "#FFA850",
+   "shadows": false,
+   "note": "skala ışığı; Rev2 0,12, menzil 0,6 m"
+  }
+ ],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    1.7814,
+    0.87,
+    1.7122
+   ],
+   "yaw": 35,
+   "note": "dünya; masa yereli (0.235, 0.870, 0.155), yaw +0: yükseltilmiş telsiz rafının üstü (CrtTable.RadioSpot)"
+  }
+ ],
+ "tris": 2112,
+ "trisPerPart": {
+  "Body": 1744,
+  "DialPointer": 12,
+  "Needle": 52,
+  "KnobVolume": 152,
+  "KnobTune": 152
+ },
+ "budgetTris": 4000,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.23,
+   -0.006,
+   -0.1611
+  ],
+  "max": [
+   0.23,
+   0.7099,
+   0.1322
+  ],
+  "size": [
+   0.46,
+   0.7159,
+   0.2933
+  ]
+ },
+ "materials": [
+  {
+   "key": "radioBody",
+   "hex": "#4A3020",
+   "rough": 0.6,
+   "metal": 0,
+   "tris": 124,
+   "isNew": false
+  },
+  {
+   "key": "rubber",
+   "hex": "#1C1C1A",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 320,
+   "isNew": false
+  },
+  {
+   "key": "bakelite",
+   "hex": "#24180F",
+   "rough": 0.38,
+   "metal": 0,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "radioGrille",
+   "hex": "#2A1D14",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "brassWorn",
+   "hex": "#A0814C",
+   "rough": 0.48,
+   "metal": 0.8,
+   "note": "el değen pirinç",
+   "tris": 896,
+   "isNew": true
+  },
+  {
+   "key": "plate",
+   "hex": "#B8955A",
+   "rough": 0.45,
+   "metal": 0.35,
+   "tris": 44,
+   "isNew": false
+  },
+  {
+   "key": "radioDial",
+   "hex": "#000000",
+   "rough": 0.6,
+   "metal": 0,
+   "emissive": "#FFFFFF",
+   "ei": 0.9,
+   "tris": 12,
+   "isNew": false
+  },
+  {
+   "key": "glassClear",
+   "hex": "#DCE6E3",
+   "rough": 0.05,
+   "metal": 0,
+   "alpha": 0.18,
+   "note": "saat camı, gösterge camı (Transparent)",
+   "tris": 24,
+   "isNew": true
+  },
+  {
+   "key": "dialCream",
+   "hex": "#ECE3C8",
+   "rough": 0.6,
+   "metal": 0,
+   "tex": "tx_dials (ölçek ve rakam, kelime yok)",
+   "note": "kadran zemini",
+   "tris": 12,
+   "isNew": true
+  },
+  {
+   "key": "chrome",
+   "hex": "#C8CCCC",
+   "rough": 0.22,
+   "metal": 1,
+   "tris": 256,
+   "isNew": false
+  },
+  {
+   "key": "paintBlack",
+   "hex": "#20211E",
+   "rough": 0.5,
+   "metal": 0.05,
+   "note": "lamba başlığı, ızgara",
+   "tris": 64,
+   "isNew": true
+  },
+  {
+   "key": "bakeliteBlack",
+   "hex": "#181412",
+   "rough": 0.34,
+   "metal": 0,
+   "note": "düğme, kol başı",
+   "tris": 280,
+   "isNew": true
+  },
+  {
+   "key": "paintCream",
+   "hex": "#D6CDB4",
+   "rough": 0.55,
+   "metal": 0,
+   "note": "emaye panel, ölçek zemini",
+   "tris": 24,
+   "isNew": true
+  }
+ ]
+}

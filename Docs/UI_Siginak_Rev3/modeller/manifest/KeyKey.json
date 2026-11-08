@@ -1,0 +1,247 @@
+{
+ "name": "KeyKey",
+ "family": "desk",
+ "budget": "small",
+ "origin": "yuva ortası, ray tablası üstü (y = 0); rayda x −20° eğik oturur",
+ "note": "Bakalit tuş başlığı (56 mm kare, yuvarlatılmış), üstte 3 mm derin ikon yuvası (ikon = doku hücresi: odalar, fiş, çarklı kapı, lambalı masa). Arkasında pirinç bilezikli amber mücevher lamba. Dikkat fişi: tuşun dibinden ray kenarına uzanan 7 mm bez şerit, kenardan çekül sarkan sarı kâğıt fiş (masa kenarının önünde).",
+ "listName": "Anahtar tuşu",
+ "parts": [
+  {
+   "name": "Cap",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0,
+    0
+   ],
+   "pivotLocal": [
+    0,
+    0,
+    0
+   ],
+   "kind": "slide",
+   "axis": "y",
+   "range": [
+    -0.006,
+    0.004
+   ],
+   "rest": 0,
+   "note": "−6 mm basılı (etkin istasyon) · +4 mm üzerinde"
+  },
+  {
+   "name": "Jewel",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.006,
+    0.06
+   ],
+   "pivotLocal": [
+    0,
+    0.006,
+    0.06
+   ],
+   "kind": "swap",
+   "axis": null,
+   "range": null,
+   "rest": 0,
+   "note": "jewelAmberOn (etkin istasyon / kapıda biri) ↔ jewelAmberOff"
+  },
+  {
+   "name": "Tag",
+   "parent": "Body",
+   "pivotModel": [
+    0,
+    0.004,
+    -0.06
+   ],
+   "pivotLocal": [
+    0,
+    0.004,
+    -0.06
+   ],
+   "kind": "rotate",
+   "axis": "z",
+   "range": [
+    -12,
+    12
+   ],
+   "rest": 0,
+   "note": "yalnız kapıda biri varken görünür; ray kenarından çekül sarkar, ±12° sallanır"
+  }
+ ],
+ "texts": [
+  {
+   "name": "TXT_Tag",
+   "part": "Tag",
+   "center": [
+    0,
+    -0.026804644399939577,
+    -0.07185048030221862
+   ],
+   "size": [
+    0.066,
+    0.034
+   ],
+   "normal": [
+    0,
+    0.3420201433256687,
+    -0.9396926207859084
+   ],
+   "up": [
+    0,
+    0.9396926207859084,
+    0.3420201433256687
+   ],
+   "role": "handNote",
+   "font": "Kalam 700",
+   "capMm": 8,
+   "align": "center",
+   "sample": "kapıda biri / bekliyor",
+   "sampleEn": "someone at / the door",
+   "note": "iki satır el yazısı; K1’de ~7 px — fişin rengi ve sallanması yeter, metin üzerine gelince kâğıt etikette"
+  }
+ ],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    -0.5910000000000001,
+    0.7928111078829118,
+    0.821483094143225
+   ],
+   "yaw": 0,
+   "euler": [
+    -20,
+    0,
+    0
+   ],
+   "note": "SIĞINAK / SHELTER · ikon: odalar · Unity localEulerAngles (−20, 0, 0)"
+  },
+  {
+   "pos": [
+    -0.29100000000000004,
+    0.7928111078829118,
+    0.821483094143225
+   ],
+   "yaw": 0,
+   "euler": [
+    -20,
+    0,
+    0
+   ],
+   "note": "GÖREVLER / MISSIONS · ikon: fiş · Unity localEulerAngles (−20, 0, 0)"
+  },
+  {
+   "pos": [
+    0.008999999999999932,
+    0.7928111078829118,
+    0.821483094143225
+   ],
+   "yaw": 0,
+   "euler": [
+    -20,
+    0,
+    0
+   ],
+   "note": "KAPI / DOOR · ikon: çarklı kapı · Unity localEulerAngles (−20, 0, 0)"
+  },
+  {
+   "pos": [
+    0.3089999999999999,
+    0.7928111078829118,
+    0.821483094143225
+   ],
+   "yaw": 0,
+   "euler": [
+    -20,
+    0,
+    0
+   ],
+   "note": "MASA / DESK · ikon: lambalı masa · Unity localEulerAngles (−20, 0, 0)"
+  }
+ ],
+ "tris": 462,
+ "trisPerPart": {
+  "Body": 96,
+  "Cap": 222,
+  "Jewel": 96,
+  "Tag": 48
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.037,
+   -0.0469,
+   -0.0789
+  ],
+  "max": [
+   0.037,
+   0.039,
+   0.0722
+  ],
+  "size": [
+   0.074,
+   0.0859,
+   0.1511
+  ]
+ },
+ "materials": [
+  {
+   "key": "brass",
+   "hex": "#B8955A",
+   "rough": 0.36,
+   "metal": 0.85,
+   "tris": 96,
+   "isNew": false
+  },
+  {
+   "key": "bakelite",
+   "hex": "#24180F",
+   "rough": 0.38,
+   "metal": 0,
+   "tris": 220,
+   "isNew": false
+  },
+  {
+   "key": "keyIcon",
+   "hex": "#E9DDBE",
+   "rough": 0.55,
+   "metal": 0,
+   "tex": "tx_keyIcons 4 hücre: odalar (kesit), görev fişi, çarklı kapı, lambalı masa; koyu çizgi #1E1B16; UV 0–1 + hücre kaydırma",
+   "note": "tuş başlığı ikon yuvası (kelime yok)",
+   "tris": 2,
+   "isNew": true
+  },
+  {
+   "key": "jewelAmberOff",
+   "hex": "#4A2F12",
+   "rough": 0.25,
+   "metal": 0,
+   "note": "amber mücevher lamba sönük",
+   "tris": 96,
+   "isNew": true
+  },
+  {
+   "key": "tape",
+   "hex": "#D9CFA8",
+   "rough": 0.6,
+   "metal": 0,
+   "tris": 36,
+   "isNew": false
+  },
+  {
+   "key": "tagPaper",
+   "hex": "#F2E27A",
+   "rough": 0.9,
+   "metal": 0,
+   "note": "dikkat fişi (sarı not kâğıdı), yazı TMP Kalam",
+   "tris": 12,
+   "isNew": true
+  }
+ ]
+}

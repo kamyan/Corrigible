@@ -39,12 +39,12 @@ namespace Corrigible.Desk.Bridge
         {
             string why = sim.SelectLiberationRegionCheck(regionId);
             if (why == null) return null;
-            string name = string.IsNullOrEmpty(regionId) ? "—" : Loc.T(GameData.Region(regionId).Name);
+            string name = string.IsNullOrEmpty(regionId) ? "—" : GameData.Region(regionId).Name;
             // K3 notu: cephe açıkken aday seçimi → “Avrasya: cephe zaten açık (Doğu Avrupa 2/3)”
             var lib = sim.S.Liberation;
             var front = lib != null ? sim.LiberationRegion(lib.CurrentRegion) : null;
             if (sim.S.Raid == null && front != null && !front.Completed && regionId != lib.CurrentRegion && sim.LiberationRegion(regionId) != null)
-                return Loc.F("{0}: cephe zaten açık ({1} {2}/{3})", name, Loc.T(GameData.Region(lib.CurrentRegion).Name), front.CapturedCount, front.Sectors.Count);
+                return Loc.F("{0}: cephe zaten açık ({1} {2}/{3})", name, GameData.Region(lib.CurrentRegion).Name, front.CapturedCount, front.Sectors.Count);
             return Loc.F("{0}: {1}", name, why);
         }
 
@@ -59,10 +59,10 @@ namespace Corrigible.Desk.Bridge
             var front = sim.LiberationRegion(lib.CurrentRegion);
             var area = sim.LiberationRegion(regionId);
             if (area == null) return Loc.T("Geçersiz bölge.");
-            string name = Loc.T(GameData.Region(regionId).Name);
+            string name = GameData.Region(regionId).Name;
             if (front != null && !front.Completed)
                 return regionId == lib.CurrentRegion ? null
-                    : Loc.F("Cephe açık: {0} {1}/{2}", Loc.T(GameData.Region(lib.CurrentRegion).Name), front.CapturedCount, front.Sectors.Count);
+                    : Loc.F("Cephe açık: {0} {1}/{2}", GameData.Region(lib.CurrentRegion).Name, front.CapturedCount, front.Sectors.Count);
             if (regionId == lib.CurrentRegion) return null;
             if (area.Completed) return Loc.F("{0}: bölge zaten özgür", name);
             if (!System.Linq.Enumerable.Contains(sim.LiberationFrontier, regionId)) return Loc.F("{0}: özgür bölgeye komşu değil", name);
@@ -76,6 +76,11 @@ namespace Corrigible.Desk.Bridge
             if (team == null) return Loc.T("Ekip yok.");
             string name = LiberationMapBuilder.TeamName(team);
             if (sim.S.Raid != null) return Loc.F("{0} sahada", name);
+            if (sim.Board != null)
+            {
+                string why = sim.PlanningRaidCheck();
+                return why == null ? null : Loc.F("{0}: {1}", name, why);
+            }
             if (!sim.SquadCanRaid(team)) return Loc.F("{0}: Teknisyen yaralı ({1} gün)", name, LiberationMapBuilder.TechnicianDown(team));
             return null;
         }
@@ -86,6 +91,7 @@ namespace Corrigible.Desk.Bridge
             if (why == null) return null;
             if (RaidFundsOnly(sim, sectorId))
                 return Loc.F("Baskın: fon yetersiz ({0} gerekli / {1} var)", N(sim.B.liberationRaidCost), N(sim.S.Fon, 1));
+            if (sim.Board != null) return Loc.F("Baskın: {0}", why);
             var ready = System.Linq.Enumerable.FirstOrDefault(sim.S.Teams, Simulation.TeamReady);
             if (sim.S.Raid == null && ready != null && !sim.SquadCanRaid(ready))
                 return Loc.F("{0}: Teknisyen yaralı ({1} gün), yedek uzman yok", LiberationMapBuilder.TeamName(ready), LiberationMapBuilder.TechnicianDown(ready));
@@ -101,6 +107,7 @@ namespace Corrigible.Desk.Bridge
             if (sim.S.Ending != null || sim.S.Raid != null || sim.S.Fon >= sim.B.liberationRaidCost) return false;
             var sector = sim.LiberationSector(sectorId);
             var ready = System.Linq.Enumerable.FirstOrDefault(sim.S.Teams, Simulation.TeamReady);
+            if (sim.Board != null && sim.PlanningRaidCheck() != null) return false;
             return sector != null && !sector.Captured && sector.Region == sim.S.Liberation.CurrentRegion &&
                    sim.NextLiberationSector(sector.Region)?.Id == sectorId && ready != null && sim.SquadCanRaid(ready);
         }

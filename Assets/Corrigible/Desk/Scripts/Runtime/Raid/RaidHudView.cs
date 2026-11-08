@@ -19,6 +19,8 @@ namespace Corrigible.Desk
         [SerializeField] MonoBehaviour dataSource, commandSource;
         [SerializeField] RaidPanelsView panels;
         public RaidPanelsView Panels => panels;
+        [SerializeField] RaidBlueprintView blueprint;
+        [SerializeField] TMP_Text crateContents;
         [SerializeField] CanvasGroup cornerGroup;
         [Header("Tur şeridi")]
         [SerializeField] TMP_Text turnLabel;
@@ -107,6 +109,25 @@ namespace Corrigible.Desk
             foreach (var card in team) { card.Button.onClick.RemoveAllListeners(); card.Hovered -= OnTeamHover; }
         }
 
+        /// <summary>
+        /// Köşe panellerinin (durum, düğmeler, komut, yetenek kartı, kadro, pafta) kapladığı ekran dikdörtgenleri: piksel, sol alt köken
+        /// (kaplama tuval). Tahta, adı ve can etiketlerini bu alanların dışına iter; gölge payı için kenardan <see cref="LabelKeepOutMargin"/>.
+        /// </summary>
+        public void CollectLabelKeepOuts(System.Collections.Generic.List<Rect> rects)
+        {
+            if (cornerGroup == null) return;
+            var root = cornerGroup.transform;
+            float margin = LabelKeepOutMargin * root.lossyScale.x;
+            for (int i = 0; i < root.childCount; i++)
+            {
+                if (!(root.GetChild(i) is RectTransform panel) || !panel.gameObject.activeInHierarchy) continue;
+                panel.GetWorldCorners(PanelCorners);
+                rects.Add(Rect.MinMaxRect(PanelCorners[0].x - margin, PanelCorners[0].y - margin, PanelCorners[2].x + margin, PanelCorners[2].y + margin));
+            }
+        }
+        const float LabelKeepOutMargin = 6;
+        static readonly Vector3[] PanelCorners = new Vector3[4];
+
         void OnTeamHover(char letter) => TeamHovered?.Invoke(letter);
         public void ShowAbilityTip() { abilityTipVisible = true; Refresh(); }
         public void HideAbilityTip() { abilityTipVisible = false; Refresh(); }
@@ -114,6 +135,8 @@ namespace Corrigible.Desk
 
         public void Render(RaidViewModel vm)
         {
+            if(blueprint!=null)blueprint.Render(vm);
+            if(crateContents){crateContents.text=vm.CrateContents;crateContents.gameObject.SetActive(!string.IsNullOrEmpty(vm.CrateContents));}
             Turns(vm);
             Phase(vm);
             Mission(vm);
@@ -228,6 +251,7 @@ namespace Corrigible.Desk
             trustValue.gameObject.SetActive(vm.TrustMax > 0);
             trustValue.text = vm.Trust.ToString();
             civilianTitle.text = Loc.T("SİVİL SUNUCU");
+            // Tahtada simge yuvasından çok sunucu olabilir: yuvalar dolar, kırılan da işaretlenir; gerçek sayıyı yandaki rakam söyler
             int civShown = Mathf.Min(vm.Civilians, civilians.Length), civBroken = Mathf.Min(vm.CivilianBroken, civShown);
             for (int i = 0; i < civilians.Length; i++)
             {
@@ -239,7 +263,9 @@ namespace Corrigible.Desk
 
         void Buttons(RaidViewModel vm)
         {
-            logLabel.text = Loc.T("TELSİZ"); rulesLabel.text = Loc.T("KURALLAR"); retreatLabel.text = vm.RetreatArmed ? Loc.T("EMİN MİSİN?") : Loc.T("GERİ ÇEKİL");
+            logLabel.text = Loc.T("TELSİZ"); rulesLabel.text = Loc.T("KURALLAR"); retreatLabel.text = vm.RetreatArmed ? DeskLoc.Instance.Ctx("retreat", "EMİN MİSİN?") : Loc.T("GERİ ÇEKİL");
+            // İkinci onay şeridi KURALLAR yazısının üstüne biner: yazı yerini koruyarak görünmez olur (düğme içeriği kaymaz)
+            rulesLabel.alpha = vm.RetreatArmed ? 0 : 1;
             unread.gameObject.SetActive(vm.LogUnread && vm.LogUnreadCount > 0);
             unreadCount.text = vm.LogUnreadCount > 9 ? "9+" : vm.LogUnreadCount.ToString();
             // Makine evresinde GERİ ÇEKİL ve Geri al soluk; EMRİ İLET'in yerinde kilitli kâğıt. Kaçışta geri çekilme yok.

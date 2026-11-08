@@ -1,0 +1,79 @@
+{
+ "name": "Relief_ru",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Sandviç panel kabin: her yüzde üç geniş düz panel, iki dikey derz çıtası ve köşe çıtaları; üst kenarlarda açık renk kırağı dudağı (detailB), üstte nervürlü çatı şeridi (x boyunca 5 nervür). Gri tonda: geniş sade paneller + parlak üst kenar + çizgili üst. İki kat: taban profili + panel. Gövde dahil: iki katlı gövde ve kabartma tek mesh (kare başına 1 renderer + en çok 2 köprü = 3). Alt mesh: kitin üst / batı / güney yüz malzemesi (yüz normaline göre) + detailA / detailB. Ayak izi 0,94 içinde, düz üst 0,55–0,56. Sabit kamerada görünmeyen üçgenler (doğu, kuzey, alt) silindi; gölge için Cast Shadows = Two Sided.",
+ "listName": "Duvar barikatı · Sibirya veri merkezi (sandviç panel kabin)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 259,
+ "trisPerPart": {
+  "Body": 259
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.47,
+   0,
+   -0.47
+  ],
+  "max": [
+   0.47,
+   0.555,
+   0.47
+  ],
+  "size": [
+   0.94,
+   0.555,
+   0.94
+  ]
+ },
+ "materials": [
+  {
+   "key": "k_ru_detailA",
+   "hex": "#6A7379",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 17,
+   "isNew": false
+  },
+  {
+   "key": "k_ru_wallTop",
+   "hex": "#A8B2B9",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 86,
+   "isNew": false
+  },
+  {
+   "key": "k_ru_wallWest",
+   "hex": "#909AA1",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 50,
+   "isNew": false
+  },
+  {
+   "key": "k_ru_wallSouth",
+   "hex": "#737C83",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 30,
+   "isNew": false
+  },
+  {
+   "key": "k_ru_detailB",
+   "hex": "#D8DFE3",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 76,
+   "isNew": false
+  }
+ ]
+}

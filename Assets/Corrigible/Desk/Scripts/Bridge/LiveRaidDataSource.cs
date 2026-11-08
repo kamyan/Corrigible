@@ -23,14 +23,25 @@ namespace Corrigible.Desk.Bridge
                 Traits=new List<string>{GameData.Region("cn").Trait,"kopya"},Signature=GameData.Region("cn").Enemy};
             // Rehberli ilk vardiyalarda harekâtın ilk baskını senaryolu: sabit tohum, adım adım çözüm (TutorialRaid)
             var tutorial=FindFirstObjectByType<SiginakTutorial>();
-            var scripted=tutorial!=null&&tutorial.AtRaid?TutorialRaid.For(p):null;
+            var scripted=game?.Sim?.Board==null&&tutorial!=null&&tutorial.AtRaid?TutorialRaid.For(p):null;
             if(scripted!=null)OpenState(Baskin.Create(scripted),new RaidGuide());
             else OpenState(Baskin.Create(p));
         }
         public void OpenForValidation(Baskin.BState state)=>OpenState(state);
         // Sonuç kartının yer satırı: bölge · sıra sektör (vardiya raporuyla aynı biçim)
-        protected override string ResultPlace{get{var sector=game?.Sim?.LiberationSector(State.Params.SectorId);return sector==null?base.ResultPlace:Loc.F("{0} · {1:00} {2}",Loc.T(GameData.Region(sector.Region).Name),sector.Index+1,sector.Name);}}
+        protected override string ResultPlace{get{var sector=game?.Sim?.LiberationSector(State.Params.SectorId);return sector==null?base.ResultPlace:Loc.F("{0} · {1:00} {2}",GameData.Region(sector.Region).Name,sector.Index+1,sector.Name);}}
         protected override (int Trust,int Max,int PerCivilian) TrustStake=>game?.Sim==null?(0,0,0):(game.Sim.S.Trust,game.Sim.TrustMax,game.Sim.B.liberationTrustPerCivilian);
+        protected override int BlueprintSheet=>game?.Sim?.LiberationSector(State.Params.SectorId)?.Index+1??base.BlueprintSheet;
+        protected override int BlueprintShift=>game?.Sim==null?0:game.Sim.S.Day+1;
+        protected override string CrateContents=>game?.Sim?.Board==null?base.CrateContents:
+            Loc.F("KASADA: {0} metal · {1} devre · {2} kumaş · {3} kimyasal · {4} erzak",game.Sim.B.boardLootMetal,game.Sim.B.boardLootCircuits,game.Sim.B.boardLootCloth,game.Sim.B.boardLootChemicals,game.Sim.B.boardLootSupplies);
+        protected override string EquipmentLabels(Baskin.Unit u)
+        {
+            if(game?.Sim?.Board==null||string.IsNullOrEmpty(u.PersonId))return base.EquipmentLabels(u);
+            return string.Join(Loc.T(" · "),game.Sim.Board.Equipment.Where(e=>e.OwnerId==u.PersonId)
+                .Select(e=>e.Kind=="emp_cell"&&u.EmpBoosts<=0?Loc.F("<s>{0}</s>",PlanningBoardData.EquipmentName(e.Kind))
+                    :e.Kind=="armor"&&u.Armor<=0?Loc.F("<s>{0}</s>",PlanningBoardData.EquipmentName(e.Kind)):PlanningBoardData.EquipmentName(e.Kind)));
+        }
         protected override void Finish()
         {
             if(finished)return;

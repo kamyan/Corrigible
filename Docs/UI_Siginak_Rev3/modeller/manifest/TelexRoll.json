@@ -1,0 +1,77 @@
+{
+ "name": "TelexRoll",
+ "family": "desk",
+ "budget": "small",
+ "origin": "taban ortası (masa üstü, y = 0)",
+ "note": "Geç harekât: dik duran yedek rulo (Ø90 × 130), karton göbek, kraft bant, ucu masaya sarkan kâğıt.",
+ "listName": "Yedek teleks rulosu",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "place": [
+  {
+   "pos": [
+    0.865,
+    0.76,
+    1.79
+   ],
+   "yaw": -20,
+   "note": "stage late · sağ arka köşe"
+  }
+ ],
+ "tris": 228,
+ "trisPerPart": {
+  "Body": 228
+ },
+ "budgetTris": 800,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.05,
+   0,
+   -0.085
+  ],
+  "max": [
+   0.05,
+   0.1305,
+   0.0455
+  ],
+  "size": [
+   0.1,
+   0.1305,
+   0.1305
+  ]
+ },
+ "materials": [
+  {
+   "key": "telexPaper",
+   "hex": "#EFE4BC",
+   "rough": 0.92,
+   "metal": 0,
+   "tex": "tx_telexPaper: kenar delik sırası ve kesikli kenar çizgisi, kelime yok (mesajlar TMP)",
+   "note": "teleks kâğıdı; Render Face: Both",
+   "tris": 172,
+   "isNew": true
+  },
+  {
+   "key": "cardboard",
+   "hex": "#8B6B45",
+   "rough": 0.85,
+   "metal": 0,
+   "note": "rulo göbeği (karton)",
+   "tris": 24,
+   "isNew": true
+  },
+  {
+   "key": "clipboard",
+   "hex": "#8B6B45",
+   "rough": 0.7,
+   "metal": 0,
+   "tris": 32,
+   "isNew": false
+  }
+ ]
+}

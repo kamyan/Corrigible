@@ -1,0 +1,82 @@
+{
+ "name": "Rubble_jk",
+ "family": "raidkit",
+ "budget": "raid",
+ "origin": "kare merkezi, tahta yüzeyi (y = 0)",
+ "note": "Yere düşmüş pano kapağı (üstünde panjur çıtaları), kopuk kablo (detailA), sac parçaları; toz lekesi. Gedik molozu: karenin içinde (±0,47), 0,10–0,19 yüksek, tek renderer; kitin yüz malzemeleri + vurgu, toz lekesi dörtgeni (rk_dust, UV 0–1, gölgesiz). Görünmeyen üçgenler silindi.",
+ "listName": "Gedik molozu · Çip fabrikası (pano kapağı ve kablo)",
+ "parts": [],
+ "texts": [],
+ "anchors": [],
+ "lights": [],
+ "variants": null,
+ "states": null,
+ "tris": 181,
+ "trisPerPart": {
+  "Body": 181
+ },
+ "budgetTris": 400,
+ "overBudget": false,
+ "bbox": {
+  "min": [
+   -0.45,
+   0.0018,
+   -0.45
+  ],
+  "max": [
+   0.45,
+   0.138,
+   0.45
+  ],
+  "size": [
+   0.9,
+   0.1362,
+   0.9
+  ]
+ },
+ "materials": [
+  {
+   "key": "rk_dust",
+   "hex": "#6B6257",
+   "rough": 1,
+   "metal": 0,
+   "alpha": 0.55,
+   "tex": "tx_dust (yumuşak kenarlı toz lekesi, kenara doğru saydam, 256²)",
+   "note": "gedik molozunun toz lekesi (zemine yapışık dörtgen, gölgesiz)",
+   "tris": 2,
+   "isNew": true
+  },
+  {
+   "key": "k_jk_wallWest",
+   "hex": "#A0A49F",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 40,
+   "isNew": false
+  },
+  {
+   "key": "k_jk_wallTop",
+   "hex": "#B2B6B0",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 48,
+   "isNew": false
+  },
+  {
+   "key": "k_jk_wallSouth",
+   "hex": "#818580",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 41,
+   "isNew": false
+  },
+  {
+   "key": "k_jk_detailA",
+   "hex": "#6C726E",
+   "rough": 0.9,
+   "metal": 0,
+   "tris": 50,
+   "isNew": false
+  }
+ ]
+}

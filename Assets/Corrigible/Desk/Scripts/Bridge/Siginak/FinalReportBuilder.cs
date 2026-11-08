@@ -18,7 +18,7 @@ namespace Corrigible.Desk.Bridge
         /// <summary>Kırılma anlarının en çoğu.</summary>
         public const int MaxMoments = 6;
 
-        static string Name(string region) => Loc.T(GameData.Region(region).Name);
+        static string Name(string region) => GameData.Region(region).Name;
 
 
         static string Code(int day) => Loc.F("V.{0:000}", day + 1);
@@ -41,7 +41,7 @@ namespace Corrigible.Desk.Bridge
                 Number = Loc.F("SIĞINAK 07 · V.{0:000} · tek nüsha", shifts),
                 Won = won,
                 Stamp = won ? Loc.T("KAZANILDI") : Loc.T("KAYBEDİLDİ"),
-                Reason = won ? null : DeskText.Upper(Loc.T(end.Title)),
+                Reason = won ? null : DeskText.Upper(end.Title),
                 Shifts = shifts,
                 ChartTitle = Loc.T("İŞGAL ORANI"),
                 ChartRange = Loc.F("VARDİYA 1–{0}", shifts),
@@ -52,6 +52,10 @@ namespace Corrigible.Desk.Bridge
             };
             switch (S.Ending)
             {
+                case "topluluk":
+                    d.Headline = Loc.T("Sığınakta görev yapabilecek kimse kalmadı.");
+                    d.Sub = end.Text;
+                    break;
                 case "silme":
                     d.Headline = Loc.F("Bütün bölgeler özgür. YZ'nin son sunucusu {0}. vardiyada düştü.", shifts);
                     d.Sub = Loc.T("AĞA BAĞLANMA · ANALOG KAL");
@@ -59,15 +63,15 @@ namespace Corrigible.Desk.Bridge
                     break;
                 case "dagilma":
                     d.Headline = Loc.T("Sivil güven sıfıra indi; Sığınak 07 dağıldı.");
-                    d.Sub = Loc.T(end.Text);
+                    d.Sub = end.Text;
                     break;
                 case "vuruldu":
                     d.Headline = Loc.F("Komutan kapıda vuruldu; Sığınak 07 {0}. vardiyada düştü.", shifts);
-                    d.Sub = Loc.T(end.Text);
+                    d.Sub = end.Text;
                     break;
                 default:
                     d.Headline = Loc.F("Sığınak 07'nin yeri {0}. vardiyada YZ'ye sızdı.", shifts);
-                    d.Sub = Loc.T(end.Text);
+                    d.Sub = end.Text;
                     break;
             }
 
@@ -126,7 +130,7 @@ namespace Corrigible.Desk.Bridge
             {
                 var fatal = S.Door.Log.LastOrDefault(v => v.Ending != null);
                 if (fatal != null) final = new Candidate { Day = fatal.Day, Order = 3, Text = Loc.F("Kapı açıldı · {0}", Loc.T(DoorCards.Get(fatal.Card).Who)), Final = true };
-                else final = new Candidate { Day = S.Day, Order = 3, Text = Loc.T(GameData.Ending(S.Ending).Title), Final = true };
+                else final = new Candidate { Day = S.Day, Order = 3, Text = GameData.Ending(S.Ending).Title, Final = true };
             }
 
             for (int i = 0; i < freed.Count; i++)

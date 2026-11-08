@@ -76,6 +76,7 @@ namespace Corrigible.Desk.EditorTools
             theme.lfRegular = F("LF-Regular"); theme.lfMedium = F("LF-Medium"); theme.lfSemiBold = F("LF-SemiBold");
             theme.lfBold = F("LF-Bold"); theme.lfExtraBold = F("LF-ExtraBold");
             theme.kalamRegular = F("Kalam-Regular"); theme.kalamBold = F("Kalam-Bold");
+            theme.stencilExtraBold = F("BSS-ExtraBold");
             theme.styleSheet = AssetDatabase.LoadAssetAtPath<TMP_StyleSheet>(DeskFontSetup.StyleSheetPath);
 
             EditorUtility.SetDirty(theme);
