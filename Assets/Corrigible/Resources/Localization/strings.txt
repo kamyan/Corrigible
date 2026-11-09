@@ -1533,6 +1533,43 @@ Sivil güven	Civilian trust
 YZ alarmı	AI alarm
 EŞİK AŞILDI	THRESHOLD CROSSED
 değişmedi · {0}	unchanged · {0}
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/PlanningTutorialFlow.cs
+İLK VARDİYAN	YOUR FIRST SHIFT
+Önce ekibini tanıyıp bir görev vereceğiz. Zaman kendiliğinden akmaz; vardiya, basılı devir fişini EVRAK kutusuna koyduğunda ilerler. Hazır olduğunda SONRAKİ'ye bas.	First, meet your people and assign a task. Time does not pass on its own: a shift advances when you file the printed handover slip in PAPERS. Press NEXT when ready.
+KİŞİ PANOSUNU AÇ	OPEN THE PERSONNEL BOARD
+Masadaki SIĞINAK tuşuna veya soldaki panoya tıkla. Sekiz kişinin kartları burada; aynı kişiler sığınakta çalışır ve baskına çıkar.	Click SHELTER on the desk or the board on your left. These are the cards of your eight residents; the same people work in the shelter and go on raids.
+BİR KİŞİYİ TANI	MEET A RESIDENT
+Panodaki bir kişi kartına tıkla. CAN, hareket ve güç kişiye aittir. Boşta destesine tek tık kartları açar; sürüklemek üstteki kartı alır.	Click a person card on the board. HP, movement and power belong to that person. Click the Idle stack to spread the cards; drag to take the top card.
+İLK GÖREVİNİ VER	ASSIGN YOUR FIRST TASK
+Boşta'dan bir kişi kartını MUTFAK alanına sürükleyip bırak. Dolu alana bırakırsan iki kişi yer değiştirir. Mutfak, vardiya sonunda erzak tüketimini azaltır.	Drag a person card from Idle into KITCHEN. Dropping onto an occupied area swaps the two people. The kitchen reduces ration consumption at the end of a shift.
+SAHA KADROSU VE EŞYALAR	FIELD TEAM AND EQUIPMENT
+TEKNİSYEN, EMP ve ANALİST baskına giden üç kişidir. Her birinin kendi rol kiti olmalı. Depodaki ekipman kartını kişinin kartının üstüne bırakarak verirsin; zırh plakası ilk hasarı karşılar.	TECHNICIAN, EMP and ANALYST are the three people sent on raids. Each needs their role kit. Drop an equipment card from storage onto a person to equip it; an armour plate blocks the first hit.
+GÖREVİ SEÇ	CHOOSE A MISSION
+MASAYA DÖN ile uzaklaş, GÖREVLER tuşuna bas. Haritadaki görev fişi hedefi, bedeli ve kazanılacak kaynakları gösterir.	Use BACK TO DESK, then click MISSIONS. The mission slip on the map shows the target, cost and resources you can recover.
+KADROYU KONTROL ET	CHECK YOUR TEAM
+BASKIN EMRİ VER'e bas. Açılan kadro raporunda isimleri, canları ve kitleri kontrol et; hazır olduğunda BASKINA ÇIK'a bas. Eksik varsa rapor nedenini yazar.	Press ISSUE RAID ORDER. Check names, HP and kits on the squad report, then press DEPLOY. If something is missing, the report explains why.
+SAHADA BİR KİŞİ SEÇ	SELECT A FIELD OPERATIVE
+Alt sıradaki isimli kartlardan birine veya tahtadaki piyonuna tıkla; 1, 2, 3 de seçer. Mavi kareler yürüyebileceği yerlerdir. Kırmızı oklar makinelerin sıradaki niyetlerini gösterir.	Click a named card at the bottom or its pawn on the board; 1, 2 and 3 also select them. Blue tiles show where they can move. Red arrows show the machines' upcoming intentions.
+İLK HAMLE	YOUR FIRST MOVE
+Seçtiğin kişinin ulaşabildiği mavi bir kareye tıkla. Hareket hakkı kullanılır. Her kişi bir turda bir hareket ve bir yetenek kullanabilir; Z son hamleyi geri alır.	Click a reachable blue tile. This spends the selected person's move. Each person can move once and use one ability per turn; Z undoes the last action.
+YETENEĞİ KULLAN	USE AN ABILITY
+Q'ya veya yetenek satırına bas, ardından işaretlenen geçerli bir hedefe tıkla. Teknisyen kasayı açar, EMP makineleri iter, Analist çeker. Hedef üstündeki önizleme sonucu gösterir.	Press Q or click the ability row, then click a marked valid target. The Technician opens crates, EMP pushes machines, and the Analyst pulls. Hover over a target to preview the result.
+EMRİ İLET	SEND ORDERS
+Diğer kişilerin hareket ve yeteneklerini de değerlendir. Hazır olduğunda EMRİ İLET'e veya Enter'a bas. Makineler bayraklarındaki sırayla oynar; Boşluk hızlı yürütmeyi açar.	Consider the other people's moves and abilities too. When ready, press SEND ORDERS or Enter. Machines act in flag order; Space toggles fast playback.
+KASAYI AL, EKİBİ ÇIKAR	TAKE THE CRATE, GET EVERYONE OUT
+Teknisyen ile ikmal kasasını açtıktan sonra herkesi yeşil giriş karelerinden tahliye et. Tur sınırını izle: süre sonunda geride kalan kişi kalıcı olarak kaybedilir. Zırh ve can fişleri güncel durumu gösterir.	After opening the supply crate with the Technician, evacuate everyone through the green entry tiles. Watch the turn limit: anyone left behind when time runs out is lost for good. Armour and HP tags show their current condition.
+SONUCU MASAYA GETİR	BRING THE RESULT BACK
+Sonuç kâğıdını oku, OPERASYON RAPORUNA GEÇ'e bas. Kayıplar, yaralar ve eldeki ekipman sığınağa döner; ölen kişi geri gelmez.	Read the result sheet and press GO TO OPERATION REPORT. Losses, wounds and remaining equipment return to the shelter; dead people do not come back.
+RAPORU DOSYALA	FILE THE REPORT
+Operasyon raporunda kişi sonuçlarını ve kazançları oku; raporu EVRAK'a kaldırıp masaya dön.	Read the person outcomes and rewards on the operation report, then file it in PAPERS and return to the desk.
+YARALIYI DİNLENDİR	REST YOUR WOUNDED
+Hafif yaralıyı Boşta'ya bırak: her vardiya kapanışında 1 can iyileşir. Yatan yaralı, canı dolsa bile yatış süresi bitene kadar çalışamaz. Gerekiyorsa sağlıklı birini saha rolüne geçir ve rol kitini de ona ver.	Leave a lightly wounded person in Idle: they recover 1 HP at each shift closing. A laid-up person cannot work until their recovery period ends, even with full HP. If needed, replace them in a field role with someone healthy and transfer the role kit too.
+KAPAĞI AÇ, FİŞİ BAS	OPEN THE COVER, PRINT THE SLIP
+MASA'ya dön. VARDİYAYI BİTİR şalterinin önce kapağını aç, sonra koluna bas. Plan uygunsa devir fişi çıkar; eksik varsa düzeltmen gereken bilgi yazılır. Fişi basmak henüz zamanı ilerletmez.	Return to DESK. Open the END SHIFT switch cover, then press its lever. A valid plan prints a handover slip; otherwise, the message explains what to fix. Printing alone does not advance time.
+YENİ VARDİYAYI BAŞLAT	START THE NEXT SHIFT
+Şalterin yanındaki basılı fişi alıp EVRAK kutusuna sürükle ve bırak. Yeni vardiya ancak bu dosyalama ile başlar; üretim, dinlenme ve erzak hesabı o anda işlenir.	Take the printed slip beside the switch, drag it to PAPERS and release it. Filing starts the next shift; production, rest and ration use are resolved then.
+ARTIK KOMUTA SENDE	YOU HAVE THE COMMAND
+Temel döngü: panoda hazırlan, görev seç, baskından dön, devir fişini dosyala. Üretim için panodaki tarif defterini kullan. Kapı çaldığında kabul tezgâhındaki talimatı oku; büyüteç belgeleri karşılaştırır. Öğreticiyi bitirmek için SONRAKİ'ye bas.	The basic loop: prepare on the board, select a mission, return from the raid, file the handover slip. Use the recipe book on the board for production. When someone knocks, read the admission instructions; the magnifier compares documents. Press NEXT to finish the tutorial.
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/RadioLogBuilder.cs
 {0} döndü · {1} alındı	{0} back · {1} taken
 {0} geri çekildi · {1}	{0} withdrew · {1}
@@ -1723,7 +1760,10 @@ plan düzeltilmeli	plan needs fixing
 VARDİYA DEVREDİLDİ	SHIFT HANDED OVER
 Devir fişi EVRAK kutusuna kondu. Yeni vardiya başladı.	Handover slip filed in PAPERS. New shift started.
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakTutorial.cs
+İLK VARDİYA · REHBER	FIRST SHIFT · GUIDE
 ADIM {0}/{1}	STEP {0}/{1}
+SONRAKİ	NEXT
+EĞİTİMİ BİTİR	END TUTORIAL
 BASKIN · ADIM {0}/{1}	RAID · STEP {0}/{1}
 Makineler sırayla oynuyor: bayraktaki sırayı ve okları izle.	The machines act in order: watch the flag numbers and the arrows.
 ANALİST · NOT	ANALYST · NOTE
@@ -1853,7 +1893,6 @@ MAKİNELER HAREKET EDİYOR	MACHINES ARE MOVING
 girdi kilitli · {0}/{1} hamle	input locked · move {0}/{1}
 girdi kilitli	input locked
 EMİN MİSİN?	ARE YOU SURE?
-EMRİ İLET	SEND ORDERS
 EMİN MİSİN?@@retreat	SURE?
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidLogRowView.cs
 YZ · ELE GEÇİRİLEN SATIR	AI · INTERCEPTED LINE
@@ -2064,13 +2103,6 @@ TELEKS	TELEX
 Son emirler ve sonuçlar	Latest orders and results
 Brifing ve vardiya raporları	Briefing and shift reports
 TELEKS · KYGA-07	TELEX · KYGA-07
-SIĞINAK 07 · KESİT	SHELTER 07 · SECTION
-Tıkla: oda kartı panoda açılır	Click: the room card opens on the board
-Jeneratör	Generator
-TOPLULUK	COMMUNITY
-UZMANLAR	SPECIALISTS
-GELİŞTİRME	UPGRADE
-EN ÜST SEVİYE	MAX LEVEL
 TELSİZ HATTI	RADIO LINE
 Yalnız baskın emriyle hat açılır. Emri görev fişinden ver.	The line opens only with a raid order. Issue it from the mission slip.
 K-07	K-07
@@ -2082,20 +2114,13 @@ BEDEL	COST
 ziyaretçi	visitors
 SIĞINAK 07 · KYGA	SHELTER 07 · KYGA
 2 · VARDİYA PANOSU	2 · SHIFT PLANNING BOARD
-ÜRETİM EKİBİ	PRODUCTION
-ANALİZ	ANALYSIS
-BAKIM	CARE
-İKMAL	FORAGING
-BOŞTA / DİNLENME	IDLE / REST
-Kişiyi görev alanına sürükle · tekerlekle kaydır	Drag people to job areas · use the wheel to scroll
-ÜRETİM · İŞ EMRİ	PRODUCTION · WORK ORDER
-KULLANILABİLİR KİTLER	AVAILABLE KITS
-HURDA · GERİ DÖNÜŞÜM	SCRAP · RECYCLING
-KİŞİ DOSYASI	PERSONAL FILE
-TAHLİYE ET	DISMISS
 ◄ MASAYA DÖN	◄ BACK TO DESK
 PLAN AÇIK	PLAN OPEN
 VARDİYA PLANI · SIĞINAK 07	SHIFT PLAN · SHELTER 07
+ÜRETİM EKİBİ	PRODUCTION
+BOŞTA / DİNLENME	IDLE / REST
+ÜRETİM · İŞ EMRİ	PRODUCTION · WORK ORDER
+KİŞİ DOSYASI	PERSONAL FILE
 DEPO · HAMMADDE	STORE · RAW MATERIALS
 DEPO · KULLANILABİLİR KİTLER	STORE · AVAILABLE KITS
 KİT · GEREKLİ	KIT · NEEDED
@@ -2112,4 +2137,17 @@ KYGA · SİVİL SAVUNMA	KYGA · CIVIL DEFENCE
 YENİ HAREKÂT	NEW CAMPAIGN
 ANA ŞALTER	MAIN SWITCH
 # --- Kullanılmayan çeviriler (koddan silinmiş metinler; gerekirse geri alınır) ---
-#V.{0:000} kaydının üstüne yazılır · onay için yeniden bas	save S.{0:000} will be overwritten · press again to confirm
+#SIĞINAK 07 · KESİT	SHELTER 07 · SECTION
+#Tıkla: oda kartı panoda açılır	Click: the room card opens on the board
+#Jeneratör	Generator
+#TOPLULUK	COMMUNITY
+#UZMANLAR	SPECIALISTS
+#GELİŞTİRME	UPGRADE
+#EN ÜST SEVİYE	MAX LEVEL
+#ANALİZ	ANALYSIS
+#BAKIM	CARE
+#İKMAL	FORAGING
+#Kişiyi görev alanına sürükle · tekerlekle kaydır	Drag people to job areas · use the wheel to scroll
+#KULLANILABİLİR KİTLER	AVAILABLE KITS
+#HURDA · GERİ DÖNÜŞÜM	SCRAP · RECYCLING
+#TAHLİYE ET	DISMISS

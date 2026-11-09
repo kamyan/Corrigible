@@ -11,6 +11,10 @@ namespace Corrigible.Desk.EditorTools
         static void Reset()
         {
             SiginakTutorial.Done = false;
+            SiginakTutorial.PlanningDone = false;
+            PlayerPrefs.DeleteKey(SiginakTutorial.PlanningSeedKey);
+            PlayerPrefs.DeleteKey(SiginakTutorial.PlanningStepKey);
+            PlayerPrefs.Save();
             Debug.Log("Eğitim sıfırlandı: bir sonraki yeni harekâtta yeniden açılır.");
         }
     }

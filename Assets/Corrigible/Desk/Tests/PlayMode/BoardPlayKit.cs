@@ -62,6 +62,7 @@ namespace Corrigible.Desk.Tests
 
         static string storage, previousStorage;
         static bool storageIsolated;
+        static TutorialPreferenceScope tutorialPrefs;
         static DeskLang previousLanguage;
         static int emptySceneCount;
 
@@ -73,12 +74,13 @@ namespace Corrigible.Desk.Tests
         /// belgesi açık kalır (BAŞLA'ya basılmaz; hikâye kilidi ve masa kilidi sürer, kamera belgede; Revizyon 3 · Aşama 4 P10
         /// "belge açık" kilidi için). O durumda <c>RetireJobs</c>'un komutları da reddedilir (<c>StoryHold</c>).
         /// </summary>
-        public static IEnumerator LoadDesk(uint seed = DefaultSeed, bool passBriefing = true)
+        public static IEnumerator LoadDesk(uint seed = DefaultSeed, bool passBriefing = true, bool tutorial = false)
         {
 #if !UNITY_EDITOR
             Assert.Ignore("Pano PlayMode testleri yalnız editörde koşar: kayıt klasörü SessionState ile ayrılır.");
 #endif
             IsolateStorage();
+            tutorialPrefs?.Dispose();tutorialPrefs=new TutorialPreferenceScope(tutorial);
             previousLanguage = DeskLoc.Instance.Lang;
             GameLaunch.Pending = GameLaunch.Mode.None;
 
@@ -194,6 +196,7 @@ namespace Corrigible.Desk.Tests
             Game = null; Rig = null; Surface = null; Desk = null; Presenter = null; Briefing = null; Events = null;
             if (DeskLoc.Instance.Lang != previousLanguage) DeskLoc.Instance.SetLanguage(previousLanguage);
             GameLaunch.Pending = GameLaunch.Mode.None;
+            tutorialPrefs?.Dispose();tutorialPrefs=null;
             RestoreStorage();
         }
 

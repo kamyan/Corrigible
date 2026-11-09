@@ -245,7 +245,7 @@ SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
   Simülasyonun RNG veya komut geçmişi salt konum değişiminden etkilenmez.
   Drag sırasında `CanvasGroup.blocksRaycasts` kaldırılır ve kamera girdisi askıya alınır; bitince eski duruma döner.
   Bu uGUI kartları Aşama 10'da (T1c) silindi; çalışma anında hiyerarşi kurucu yoktur. Eski raf (`Shelf`) ve `Shelter controller` da silindi (T1a):
-  `SiginakShelter` kodu durur, sahnede örneği yok; `CampaignWear.stages[0..2].objects` boş, `stages` dizisi kaymasın diye yerinde. Oda geliştirmeli SiginakTutorial
+  `SiginakShelter` kodu durur, sahnede örneği yok; `CampaignWear.stages[0..2].objects` boş, `stages` dizisi kaymasın diye yerinde. Eski oda geliştirmeli TutorialFlow
   kapalıdır; ayarlar dolabı korunur.
 - **Tarif defteri ve üretim (Revizyon 3 · Aşama 5, R18; karar D1-B):** tarifi oyuncu seçer. `RecipeBookView` (defter modeli; durum
   `BookState`: Closed, Opening, Open, Turning, Lowered, Closing) kancadan okuma pozuna gelir; sayfalar `RecipeBookPage` (World Space
@@ -334,7 +334,7 @@ SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
   kurar (kart → siluet tablosu da orada), `DoorCardView` çizer, kapıyı `DoorProp`, ziyaretçiyi `VisitorSilhouette`
   canlandırır; ölümcül kararda oda ışığını kırmızıya çevirir ve son raporu `DeskBridgeState.HoldEnding` ile kâğıt
   kapanana kadar bekletir),
-  `SiginakTutorial` (eski oda geliştirmeli eğitim; kartlı oyunda kapalı: sahne kökünde kendi tuvali `SiginakTutorial`, sıralama 70, baskın HUD'unun üstünde; odanın
+  `SiginakTutorial` (kartlı başlangıç için `PlanningTutorialFlow`, eski oda yolu için `TutorialFlow`: sahne kökünde kendi tuvali `SiginakTutorial`, sıralama 70, baskın HUD'unun üstünde; odanın
   dışında olduğu için baskında da çalışır; adımlar saf C# `TutorialFlow`, not `TutorialNoteView`; senaryolu ilk baskın
   `TutorialRaid` ve rehberi `RaidGuide`: `LiveRaidDataSource` eğitim baskın adımındaysa tahtayı senaryonun tohumuyla kurar,
   `RaidDataSource` girdiyi rehberin sıradaki adımıyla süzer, `RaidBoard3D.Marks.Guide` sarı çerçeveyi çizer). Modelleri saf
@@ -409,6 +409,15 @@ RaidHUDCanvas     LiveRaidDataSource, RaidCommands, RaidPreviewOverlay; RaidHud,
 RaidEventSystem   [RaidEventSystemGate] ana EventSystem varken yereli kapatır
 RaidPanelCanvas   RaidPanels (olay, onay, günlük, kurallar, geri çekilme, sonuç), RaidOutcomeSpot
 ```
+
+- **Kartlı başlangıç rehberi:** `SiginakTutorial`'ın serileştirilmiş `planningBoard` ve `shiftClose` bağları; yeni, salt okunur
+  `PlanningTutorialContext` → `PlanningTutorialFlow` → mevcut `TutorialNoteView`. `GameController.NewGameStarted` yeni akışı,
+  `GameLoaded` yalnız aynı tohumun kayıtlı rehberini açar. İlk `Start` bir kare bekler: menünün DEVAM kararı ve tüm Start'lar
+  işlenir. Rehber tercihi ancak emir belgesi kapandıktan sonra yazılır. İlerleme ayrı PlayerPrefs anahtarlarıdır; GameRecord
+  ve sürüm 15 değişmez. Eski `TutorialRaid` kartlı rehberde kullanılmaz, `FixedSquad` yalnız eski oyun yolundadır. Panel
+  yalnız SONRAKİ/EĞİTİMİ BİTİR düğmelerinde ışın alır; metin ve zemin alttaki masanın tıklarını yutmaz. İçerik aynıysa
+  her kare metin/boy yeniden yazılmaz. Baskında sağ üstten 310 px aşağıya taşınır; geçiş, açılış, dolap ve dosyalama
+  sırasında gizlenir.
 
 - `RaidLauncher` (DeskGame'de, Game nesnesi): `S.Raid` oluşunca önce kamerayı CRT'ye daldırır, sonra sahneyi
   `LoadSceneMode.Additive` ile yükler; odanın kamera, dinleyici, canvas ve girdilerini kapatır (`hideDuringRaid`: nesneler

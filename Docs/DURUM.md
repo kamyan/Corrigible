@@ -1,8 +1,10 @@
 # Durum, kararlar ve açık işler
 
-_Son güncelleme: 2026-11-08 (Revizyon 3 Aşama 10: EN ve punto geçişi, gölge atlası ve kare süresi, onaylı eski görünüm temizliği (T1), 42 yer tutucu ses; Aşama 9: model baskın kitleri, isimli saha, ozalit antet ve son tur kayıp onayı; Aşama 8: menü sahanlığı, puantaj/kart, giriş sekansı ve iki ayarlar dolabı; Aşama 7: isimli saha kâğıtları, iki sayfalık kişi dosyası ve CRT; Aşama 6: kapı ve kabul, gözetmen kuralı ve kayıt biçimi 15; Aşama 5: tarif defteri ve üretim; Aşama 4: vardiya kapanışı ve devir fişi; Aşama 3: 3B kartlı pano ve kartlar; Aşama 2: komuta odasının modelleri ve poz ışığı; Aşama 0–1: keşif ve model hattı; önceki: vardiya şalterinin eski modeli geri geldi; kartla görev alanına atama, ayrı üretim/depo ve 3D devir makinesi; kartlı vardiya panosu, isimli topluluk, kişisel eğitim/üretim, belgeyle kabul ve gecikmeli sızma; önceki: ayarlar dolabı ve menü, baskın mekânları)_
+_Son güncelleme: 2026-11-09 (kartlı başlangıç rehberi; Revizyon 3 Aşama 10: EN ve punto geçişi, gölge atlası ve kare süresi, onaylı eski görünüm temizliği (T1), 42 yer tutucu ses; Aşama 9: model baskın kitleri, isimli saha, ozalit antet ve son tur kayıp onayı; Aşama 8: menü sahanlığı, puantaj/kart, giriş sekansı ve iki ayarlar dolabı; Aşama 7: isimli saha kâğıtları, iki sayfalık kişi dosyası ve CRT; Aşama 6: kapı ve kabul, gözetmen kuralı ve kayıt biçimi 15; Aşama 5: tarif defteri ve üretim; Aşama 4: vardiya kapanışı ve devir fişi; Aşama 3: 3B kartlı pano ve kartlar; Aşama 2: komuta odasının modelleri ve poz ışığı; Aşama 0–1: keşif ve model hattı; önceki: vardiya şalterinin eski modeli geri geldi; kartla görev alanına atama, ayrı üretim/depo ve 3D devir makinesi; kartlı vardiya panosu, isimli topluluk, kişisel eğitim/üretim, belgeyle kabul ve gecikmeli sızma; önceki: ayarlar dolabı ve menü, baskın mekânları)_
 
 ## Nerede kaldık
+
+**Başlangıç rehberi** (9 Kasım): yeni kartlı harekâtta emir belgesinden sonra açılan 18 adım; pano/gerçek kart ataması, isimli kadro, gerçek baskın, rapor, Boşta dinlenme ve şalter → fiş → EVRAK. Aynı kayıtta adım korunur, eski kayda dayatılmaz, EĞİTİMİ BİTİR ile kapatılabilir. Simülasyon, denge, RNG ve kayıt biçimi değişmedi. Doğrulama ve kapsam: `Baslangic_Rehberi/README.md`.
 
 Revizyon 3 **Aşama 10** tamamlandı ve Unity'de doğrulandı; paketin bütün aşamaları (0–10) bitti. Bütün pozların EN geçişi ve punto ölçümü yapıldı, gölge atlası onarıldı, kare süresi ölçüldü, kapalı eski görünüm onayla kaldırıldı (T1), 42 sessiz ses ipucu yer tutucu klip aldı. Core, denge, RNG ve kayıt biçimi değişmedi (15). Tam EditMode **988/988**, PlayMode **85/85**; çeviri doğrulaması 0, üç sahnede eksik script 0. Punto taraması 2321 metin, 0 ihlal, 149 gerekçeli istisna; canlı ölçümde 86 durum × 2 dil (B1 yalnız EN), 169 çekim adımı OK, kırpılan yazı yok. Her senaryo kare hedefinin içinde (en kötü medyan 5,7 ms, en kötü p95 7 ms; dev Mac, Editor). Gerçek kayıtlar ve tercihler korundu, tek seferlik script'ler silindi. Kanıt: `UI_Siginak_Rev3/A10_DOGRULAMA.md`; kalanlar aşağıda ("Açık işler"in başı).
 
@@ -29,7 +31,7 @@ Kayıt biçimi **15** (Aşama 6, gözetmen kuralı K4-A); pano, üretim, eğitim
 kurulur. Biçim 14 ve öncesi yeni kuralla devam etmez; yeni kayıt eski sürümün üzerine yazılmadan sürüm numaralı yedeği
 korunur (`liberation_savegame.json.v14.backup`). Biçim 14 hiç commit edilmediği için kayıp yalnız geliştirme makinesindeki
 kayıttır: orada KAYITTAN DEVAM görünmez, yeni oyun gerekir. Türkçe ve İngilizce.
-Güncel tam koşu (Aşama 10): EditMode **988/988**, PlayMode **85/85**.
+Önceki tam koşu (Aşama 10): EditMode **988/988**, PlayMode **85/85**.
 Kartlı panonun ilk gerçek Play akışında atama/takas, Boşta, Depo, eğitim, üretim, fiziksel fiş ve kayıttan devam doğrulandı;
 o koşunun ayrıntıları `UI_KartliPano/DOGRULAMA.md` ile `test_sonucu.json` içinde. Önceki bot başarı
 oranları yeni kişi ve ekonomi dengesini doğrulamaz.

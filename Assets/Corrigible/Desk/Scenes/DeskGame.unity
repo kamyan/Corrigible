@@ -146459,7 +146459,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &924727501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146507,8 +146507,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 21
-  m_fontSizeBase: 21
+  m_fontSize: 18
+  m_fontSizeBase: 18
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -146577,7 +146577,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 18, y: -44}
-  m_SizeDelta: {x: 304, y: 28}
+  m_SizeDelta: {x: 302, y: 44}
   m_Pivot: {x: 0, y: 1}
 --- !u!1001 &924903521
 PrefabInstance:
@@ -180366,7 +180366,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -38}
+  m_AnchoredPosition: {x: 0, y: -96}
   m_SizeDelta: {x: -36, y: 400}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!23 &1133536250 stripped
@@ -298277,7 +298277,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1918053606}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb37059a884de4726846b39b0cf97fb1, type: 3}
   m_Name: 
@@ -298290,6 +298290,8 @@ MonoBehaviour:
   rig: {fileID: 1126207693}
   launcher: {fileID: 1035231620}
   note: {fileID: 2115600546}
+  planningBoard: {fileID: 8779247}
+  shiftClose: {fileID: 1875109964}
 --- !u!114 &1918053608
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -328570,18 +328572,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.TutorialNoteView
   card: {fileID: 2053333500}
   anchor: {fileID: 2115600548}
-  bottomOffset: {x: -16, y: 16}
-  raidOffset: {x: -24, y: -796}
+  bottomOffset: {x: -16, y: 690}
+  raidOffset: {x: -20, y: -310}
   group: {fileID: 2115600547}
   head: {fileID: 1046714399}
   step: {fileID: 1417061233}
-  title: {fileID: 0}
+  title: {fileID: 924727501}
   body: {fileID: 1133428727}
   okLabel: {fileID: 1559815280}
   skipLabel: {fileID: 993651619}
   ok: {fileID: 925358708}
   skip: {fileID: 434164030}
-  chromeHeight: 92
+  chromeHeight: 146
 --- !u!225 &2115600547
 CanvasGroup:
   m_ObjectHideFlags: 0

@@ -66,6 +66,8 @@ ueval 'UnityEditor.SceneManagement.EditorSceneManager.NewScene(UnityEditor.Scene
 | `Desk/Tests/EditMode/DeskAssetTests`, `CommandPostProjectionTests` | sprite/font/tema varlıkları, dünya-ekran izdüşümü |
 | `Desk/Tests/EditMode/Rev3RoomTests` | Revizyon 3 odası: sayaç tamburu rakam başına 36°, tebeşir çetelesinin hücreleri, teleks kâğıdının dört yuvası, telsiz defterinin sayfası, poz ışığı tarifi (her pozda en çok 4 gölgeli ışık, K1'de 3, K4'te yalnız pano lambası), gölgeli her ışık Spot (DeskGame ve Giris, kapalılar dahil), üç ana ışık 2048 ve sahnedeki bağlamalar |
 | `Desk/Tests/EditMode/Rev3ModelTests` | Revizyon 3 model hattı: 198 manifestin prefab'ı, üçgen sayısı ve bütçe, sıfır pozda kutu (OBJ köşeleriyle ≤ 0,1 mm, manifestin ≤ 1 mm içinde), parça hiyerarşisi ve pivotlar, yazı yuvalarının yeri ve normali, çapa ve ışık sayıları, parçaların aralığında kendi ekseninde dönmesi/kayması, swap malzemeleri, `_AxisTest` eksenleri, büyük harf yüksekliği ve şablon fontu, malzeme kitaplığının değerleri, onarılan devir fişi |
+| `Desk/Tests/EditMode/PlanningTutorialFlowTests` | İlk vardiyada gerçek eylem sırası, bilgi onayı, fişin basılması ile dosyalanmasının ayrımı, doğrudan atama/erken baskın/kayıp, bloke durum ve geçerli devam adımı |
+| `Desk/Tests/PlayMode/PlanningTutorialPlayTests` | Rehber açık gerçek DeskGame: gerçek kart sürüklemesiyle ilerleme, kendi komut/RNG'sini yazmaması, aynı kayıttan rehbere devam ve kapatma, eski kayda dayatılmama, açılışta ilerlemenin korunması, TR/EN okunurluk ve Esc geri zinciri |
 | `Desk/Tests/EditMode/Rev3Stage9RaidTests` | 13 model kiti ve 0,29 m giriş kapıları, 16 tek renderer'lı/gölgesiz kanal maskesi, piyon menteşeleri, kaynak kolu, antet/istatistik/kalıcı kayıp bağları; sağlık şeridi → bayrak/durum geçişinde taşma yok |
 | `Desk/Tests/PlayMode/RaidModelPlayTests` | (PlayMode, 4) gerçek kampanyadan Baskin eklemeli yükleme; TR/EN isimli kartların kadrajı, gerçek kasa içeriği, hareket/geri al ve kayıt saflığı; hasar/plaka/tik/180°/−70°; son kaçış turunda hak kalmasa da isimli ölüm onayı; iki tıklı geri çekilme → masa → kayıt/replay ve aynı canlı kişiler |
 | `Desk/Tests/EditMode/EnglishCardBuildersTests` | Kartlı harekât gerçek çeviri tablosuyla EN (V.001/005/009/031): Bridge kurucularının her dizgesi yansımayla toplanır; Türkçe harf, harfsiz Türkçe sözcük (KABUL, SEVK), çevrilmemiş kaynak yok, `Loc.Missing` hiç tetiklenmez |
@@ -91,7 +93,7 @@ doğrula. Dolu eşya deposundan `ScrapEquipment` ile yer açılmalı; aynı eşy
 `Desk/Tests/PlayMode/` (asmdef `Corrigible.Desk.PlayTests`, `includePlatforms: []`, editör asmdef'lerine bağlanmaz) gerçek
 DeskGame'i Play'de yükler. Ortak düzen `BoardPlayKit`:
 
-- `LoadDesk(seed)` kayıtları geçici klasöre ayırır (`SessionState "Corrigible.TestStorage"`, sahne yüklenmeden önce), DeskGame'i
+- `LoadDesk(seed, passBriefing: true, tutorial: false)` kayıtları geçici klasöre ayırır (`SessionState "Corrigible.TestStorage"`, sahne yüklenmeden önce), DeskGame'i
   açar, `NewGame(seed)`, emir belgesini BAŞLA ile geçer (özel `SiginakBriefing.Action`, yansımayla), kamerayı K1'e oturtur,
   `RetireJobs` için üç kare bekler ve `Baseline`'a komut sayısı + `S.Rng.State` yazar. `[UnityTearDown]`'da
   `BoardPlayKit.TearDown()`: önce DeskGame boşaltılır, sonra klasör silinir (sıra önemli; yoksa kapanışta gerçek kayıt ezilir).
@@ -105,6 +107,11 @@ DeskGame'i Play'de yükler. Ortak düzen `BoardPlayKit`:
   ışınla (`HitOn`: çarpıştırıcının ekranda ilk çarpılan noktası, örtülme raporlanır) ve **Input System 1.19 kuralıyla** (`ClickHit`:
   basış hiyerarşideki ilk `IPointerDownHandler`'a, tık en yakın `IPointerClickHandler`'a); `BoardPlayKit.ClickHit` eski kuralı uygular.
   Uzun kurulumlarda `liberationAlarmPerShift = 0` (karşı saldırı araya girmesin; alarm RNG çekmez).
+
+Rehber testlerinde `LoadDesk(tutorial: true)` kullanılır. Normal pano testleri `TutorialPreferenceScope` ile rehberi kapatır;
+önceki Done/Seed/Step değerleri sahne boşaltıldıktan sonra geri gelir. Aynı koruma menü testlerinde de vardır.
+Manuel deneme: yeni harekât başlat, emir belgesinde BAŞLA; rehber daha önce bitmişse **Corrigible › Eğitim › Eğitimi sıfırla**
+ve yeni harekât. Oyuncunun kaydında denemek yerine kayıt alanını ayır; gerçek tercihleri de yedekle.
 
 Koşmak: önce **boş sahne aç**, Play'de olmadığından emin ol, sonra `uptest` (ya da `uptest BoardCameraPlayTests`). PlayMode
 HTTP üstünden eşzamanlı koşamaz: `uptest` `run_tests --mode playmode --async_tests true` ile başlatır ve `test_status`'u

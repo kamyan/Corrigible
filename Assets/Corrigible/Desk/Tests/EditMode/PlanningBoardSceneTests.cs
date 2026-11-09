@@ -160,7 +160,7 @@ namespace Corrigible.Desk.Tests
             Assert.IsNull(room.Find("Shelf"), "T1a: eski raf silindi");
             Assert.IsNull(room.Find("Shelter controller"), "T1a: maket denetçisi silindi");
             Assert.IsEmpty(roots.SelectMany(r => r.GetComponentsInChildren<SiginakShelter>(true)), "T1a: sahnede SiginakShelter yok");
-            Assert.IsFalse(One<SiginakTutorial>().enabled);
+            Assert.IsTrue(One<SiginakTutorial>().enabled, "Kartlı başlangıç rehberi sahnede etkin");
             Assert.Less(Vector3.Distance(presenter.transform.position, oldShelfPosition), .35f,
                 "Pano eski sığınak dolabının alanında olmalı; duvarı aşmamak için küçük poz düzeltmesi yapılabilir.");
             var cabinet = One<SettingsCabinet>();

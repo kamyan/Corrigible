@@ -537,6 +537,16 @@ kaçmış bir teknisyen… Kapı erzağa, güvene ve alarma bir yüz verir; bask
   görevleri, eğitim/üretim durumunu, beklenen erzak değişimini ve açık dosya uyarılarını yazar; gelecek gizli olayı
   açıklamaz. EVRAK kutusunun eski rapor arşivi korunur; eski vardiya raporu dizisi oda geliştirmeli oyuna aittir.
 - **Açılış (K7):** açılış dizisi ve emir belgesi; BAŞLA ile oda açılır. Kayıt varsa son rapor kısaca görünür.
+- **Kartlı başlangıç rehberi (2026-11-09):** ilk yeni harekâtta emir belgesi kapandıktan sonra sağda rehber notu açılır.
+  `PlanningTutorialFlow` 18 adımda pano → kişi → Mutfağa kart atama → saha kitleri → görev/kadro → gerçek baskında seçim,
+  hareket, yetenek ve tur bitirme → kaçış/rapor → dinlenme → şalterden fiş basma → EVRAK'a dosyalama döngüsünü tanıtır.
+  Bekleme adımları gerçek durum/komut geçmişinden ilerler; bilgi adımları SONRAKİ ile. Kartı doğrudan atayan veya rehberden
+  önce sefere çıkan oyuncu gerideki adımlarda takılmaz. Rehber kural, kaynak ya da RNG değiştirmez; normal isimli kadro ve
+  kampanya baskını kullanılır. EĞİTİMİ BİTİR kapatır; Esc panodan geri dönme görevini korur.
+  `Corrigible.PlanningTutorialDone/Seed/Step` sunum tercihleri aynı harekâtın yarım kalan rehberini devam ettirir; rehberle
+  başlamamış eski kayıtta kendiliğinden açılmaz. Açılış/DEVAM kararı verilmeden önce eski rehber ilerlemesi ezilmez.
+  Editörde Corrigible › Eğitim › Eğitimi sıfırla, hem yeni hem eski rehberi sıfırlar. Üretim ve kapı için kapanışta kısa
+  yönlendirme vardır; bu ilk rehberde ayrı uygulamalı üretim/kabul dersi yoktur.
 - **Eski rehberli eğitim (kartlı oyunda kapalı):** oda geliştirmeli yeni harekâtta, eğitim daha önce bitirilmediyse ya da atlanmadıysa sağ altta
   analistin notu çıkar (`SiginakTutorial`, adımlar `TutorialFlow.Steps`). 12 adım: komuta odası (TAMAM) → görev fişi →
   baskın emri → taktik tahta → sonuç → operasyon raporu → sığınak → atölyeyi onar → personel ata → vardiya şalteri →

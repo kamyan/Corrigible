@@ -277,7 +277,7 @@ namespace Corrigible.Desk.Bridge
         }
 
         /// <summary>Eğitim sürerken ilk baskının kadrosu değişmez (senaryo üç uzmana göre yazıldı).</summary>
-        bool FixedSquad => tutorial != null && tutorial.Active && Sim != null && Sim.S.Raids == 0;
+        bool FixedSquad => tutorial != null && tutorial.Active && Sim != null && Sim.Board == null && Sim.S.Raids == 0;
 
         /// <summary>Seçim bu vardiyanın; vardiya değişince varsayılana döner.</summary>
         List<string> Pick

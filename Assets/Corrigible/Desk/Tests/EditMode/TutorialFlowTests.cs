@@ -95,15 +95,16 @@ namespace Corrigible.Desk.Tests
             try
             {
                 var tutorial = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<SiginakTutorial>(true)).Single();
+                Assert.IsTrue(tutorial.enabled,"yeni oyunda rehber sahnede etkin");
                 Assert.IsNull(tutorial.transform.parent, "odanın kökünün dışında: baskında da çalışır");
                 var so = new SerializedObject(tutorial);
-                foreach (var name in new[] { "game", "briefing", "map", "shift", "rig", "launcher", "note" })
+                foreach (var name in new[] { "game", "briefing", "map", "shift", "rig", "launcher", "note", "planningBoard", "shiftClose" })
                     Assert.IsNotNull(so.FindProperty(name).objectReferenceValue, name);
                 var canvas = tutorial.GetComponent<Canvas>();
                 Assert.AreEqual(RenderMode.ScreenSpaceOverlay, canvas.renderMode);
                 Assert.Greater(canvas.sortingOrder, 50, "baskın HUD'u ve paneller (20, 50) üstünde");
                 var note = new SerializedObject(tutorial.GetComponentInChildren<TutorialNoteView>(true));
-                foreach (var name in new[] { "card", "anchor", "group", "head", "step", "body", "okLabel", "skipLabel", "ok", "skip" })
+                foreach (var name in new[] { "card", "anchor", "group", "head", "step", "title", "body", "okLabel", "skipLabel", "ok", "skip" })
                     Assert.IsNotNull(note.FindProperty(name).objectReferenceValue, name);
             }
             finally { EditorSceneManager.CloseScene(scene, true); }

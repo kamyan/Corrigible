@@ -20,17 +20,20 @@ namespace Corrigible.Desk.Tests
     public sealed class EntrancePlayTests
     {
         const string Menu="Assets/Corrigible/Desk/Scenes/Giris.unity";
+        TutorialPreferenceScope tutorialPrefs;
         string storage,previousStorage;DeskLang previousLang;EntranceController ctrl;TimeClock clock;SettingsCabinet cabinet;
         static T F<T>(Object o,string n)=>(T)o.GetType().GetField(n,BindingFlags.Instance|BindingFlags.NonPublic).GetValue(o);
         static void Click(DeskTarget t)=>t.OnPointerClick(new PointerEventData(EventSystem.current){button=PointerEventData.InputButton.Left});
         static IEnumerator Wait(Func<bool> done,float seconds=12){float until=Time.realtimeSinceStartup+seconds;while(!done()&&Time.realtimeSinceStartup<until)yield return null;Assert.IsTrue(done(),"beklenen durum oluşmadı");}
         [UnitySetUp] public IEnumerator SetUp()
         {
+            tutorialPrefs=new TutorialPreferenceScope();
             previousStorage=UnityEditor.SessionState.GetString(BoardPlayKit.StorageKey,"");storage=Path.Combine(Path.GetTempPath(),"Corrigible-Entrance-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(storage);UnityEditor.SessionState.SetString(BoardPlayKit.StorageKey,storage);previousLang=DeskLoc.Instance.Lang;DeskLoc.Instance.SetLanguage(DeskLang.Tr);yield return Load();
         }
         IEnumerator Load(){var a=SceneManager.LoadSceneAsync(Menu,LoadSceneMode.Single);while(!a.isDone)yield return null;yield return null;ctrl=Object.FindFirstObjectByType<EntranceController>();clock=F<TimeClock>(ctrl,"clock");cabinet=F<SettingsCabinet>(ctrl,"cabinet");yield return Wait(()=>ctrl.Ready);yield return null;}
         [UnityTearDown] public IEnumerator TearDown()
         {
+            tutorialPrefs?.Dispose();
             var empty=SceneManager.CreateScene("Entrance-empty-"+Guid.NewGuid().ToString("N"));SceneManager.SetActiveScene(empty);
             foreach(string p in new[]{Menu,BoardPlayKit.DeskScenePath}){var s=SceneManager.GetSceneByPath(p);if(s.IsValid()&&s.isLoaded){var a=SceneManager.UnloadSceneAsync(s);while(a!=null&&!a.isDone)yield return null;}}
             yield return null;GameLaunch.Pending=GameLaunch.Mode.None;Cursor.visible=true;DeskLoc.Instance.SetLanguage(previousLang);UnityEditor.SessionState.SetString(BoardPlayKit.StorageKey,previousStorage);if(Directory.Exists(storage))Directory.Delete(storage,true);

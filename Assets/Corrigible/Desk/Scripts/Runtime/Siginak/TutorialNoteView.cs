@@ -34,7 +34,8 @@ namespace Corrigible.Desk
 
         public event Action OkClicked, SkipClicked;
 
-        string shownTitle;
+        string shownTitle,shownBody,shownHead,shownStep,shownOk,shownSkip;
+        bool shownInfo;
         float shownAt = -1;
         Vector2 rest;
         bool visible;
@@ -50,6 +51,8 @@ namespace Corrigible.Desk
 
         public void Show(TutorialNoteData d)
         {
+            if(d.Title==shownTitle&&d.Body==shownBody&&d.Head==shownHead&&d.Step==shownStep&&d.Ok==shownOk&&d.Skip==shownSkip&&d.ShowOk==shownInfo){visible=true;return;}
+            shownBody=d.Body;shownHead=d.Head;shownStep=d.Step;shownOk=d.Ok;shownSkip=d.Skip;shownInfo=d.ShowOk;
             if (d.Title != shownTitle) { shownTitle = d.Title; shownAt = Time.unscaledTime; }
             head.text = d.Head;
             if (step != null) step.text = d.Step ?? "";
