@@ -6,6 +6,7 @@ using Corrigible.Desk.Bridge;
 using NUnit.Framework;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -28,11 +29,61 @@ namespace Corrigible.Desk.Tests
             var map=Object.FindFirstObjectByType<SiginakMap>();var slip=Object.FindFirstObjectByType<OperationSlip>(FindObjectsInactive.Include);var report=Object.FindFirstObjectByType<SquadReportSlip>(FindObjectsInactive.Include);var before=BoardPlayKit.Snapshot();
             foreach(var lang in new[]{DeskLang.Tr,DeskLang.En})
             {
-                DeskLoc.Instance.SetLanguage(lang);map.ShowMissions();yield return BoardPlayKit.WaitSeconds(1.4f);Assert.IsTrue(map.SlipOpen);OnScreen((RectTransform)Field<Button>(slip,"action").transform);
+                DeskLoc.Instance.SetLanguage(lang);
+                BoardPlayKit.Rig.ResetView();
+                yield return ShiftPlayKit.WaitForPose(SiginakPose.Desk);
+                yield return BoardPlayKit.PressKey(lang == DeskLang.Tr ? Key.F : Key.Digit3);
+                yield return ShiftPlayKit.WaitForPose(SiginakPose.Map);
+                yield return BoardPlayKit.WaitFor(() => map.SlipOpen, 2, "haritaya varınca görev fişi açılmadı");
+                yield return BoardPlayKit.WaitSeconds(.6f);
+                Assert.AreEqual(map.State.Front, slip.RegionId);
+                OnScreen((RectTransform)Field<Button>(slip,"action").transform);
                 map.HandleEnter();yield return BoardPlayKit.WaitSeconds(.4f);Assert.IsTrue(map.SquadReportOpen);OnScreen((RectTransform)Field<Button>(report,"action").transform);
                 Assert.IsTrue(map.HandleEscape());yield return BoardPlayKit.WaitSeconds(.2f);Assert.IsTrue(map.SlipOpen);Assert.IsFalse(map.SquadReportOpen);map.HandleEscape();yield return BoardPlayKit.WaitSeconds(.5f);
+                Assert.IsFalse(map.SlipOpen, "kapatılan fiş aynı harita ziyaretinde yeniden açılmaz");
             }
             Assert.AreEqual(before,BoardPlayKit.Snapshot());
+        }
+        [UnityTest]
+        public IEnumerator MapCanvasClick_OpensMissions_AndFocusedLandStillSelectsRegion()
+        {
+            var map = Object.FindFirstObjectByType<SiginakMap>();
+            var layer = Object.FindFirstObjectByType<LiberationMapLayer>();
+            var slip = Object.FindFirstObjectByType<OperationSlip>(FindObjectsInactive.Include);
+            var landPoint = new Vector2(1463, 383);
+            var seaPoint = new Vector2(730, 825);
+            var region = layer.Regions.First(r => r.Hit.ContainsMapPoint(landPoint));
+            Assert.AreNotEqual(map.State.Front, region.RegionId);
+            var before = BoardPlayKit.Snapshot();
+
+            ClickMap(seaPoint, null);
+            yield return ShiftPlayKit.WaitForPose(SiginakPose.Map);
+            Assert.AreEqual(map.State.Front, slip.RegionId);
+            Assert.IsTrue(map.HandleEscape());
+            yield return BoardPlayKit.WaitSeconds(.5f);
+            Assert.IsFalse(map.SlipOpen);
+            ClickMap(seaPoint, null);
+            Assert.AreEqual(map.State.Front, slip.RegionId);
+
+            ClickMap(landPoint, region.Hit);
+            Assert.AreEqual(region.RegionId, slip.RegionId);
+            BoardPlayKit.Rig.ResetView();
+            yield return ShiftPlayKit.WaitForPose(SiginakPose.Desk);
+            ClickMap(landPoint, region.Hit);
+            yield return ShiftPlayKit.WaitForPose(SiginakPose.Map);
+            Assert.AreEqual(map.State.Front, slip.RegionId);
+            Assert.AreEqual(before, BoardPlayKit.Snapshot());
+
+            void ClickMap(Vector2 point, RegionMeshGraphic land)
+            {
+                var screen = BoardPlayKit.ScreenOfWorld(layer.MapToWorld(point));
+                var hit = BoardPlayKit.FirstHit(screen);
+                Assert.IsNotNull(hit.gameObject, point.ToString());
+                if (land != null) Assert.AreSame(land.gameObject, hit.gameObject);
+                else Assert.IsNotNull(hit.gameObject.GetComponent<DeskHitArea>());
+                Assert.IsTrue(BoardPlayKit.ClickHit(hit));
+                Assert.IsTrue(map.SlipOpen);
+            }
         }
         [UnityTest]
         public IEnumerator NamedPerson_ClickUsesTheRealRaycast_AndSelectsThatCardWithoutAssignment()

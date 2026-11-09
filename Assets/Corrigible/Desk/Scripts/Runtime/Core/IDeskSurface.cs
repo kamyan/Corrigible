@@ -8,7 +8,7 @@ namespace Corrigible.Desk
     {
         /// <summary>Hikâye, baskına geçiş, açık kâğıt ya da modal varken oda girdisi kapalı.</summary>
         bool InputBlocked { get; }
-        /// <summary>GÖREVLER (3): harita pozu ve görev fişi.</summary>
+        /// <summary>Harita tıklaması veya 3 kısayolu: harita pozu ve görev fişi.</summary>
         void ShowPlanning();
         /// <summary>Emir belgesi (okuma kipi): EVRAK tepsisi, rapor yokken.</summary>
         void OpenGuide();

@@ -356,7 +356,7 @@ SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
   sektör işaretinin mavi onayı (`LiberationRegionMarks.AnimateRetaken`). Enter/Esc/düğme tepsiye dosyalar ve
   `LiberationDeskView.MarkRaidReportSeen` raporu okundu sayar. Açıkken masa kilitli (`InputBlocked`).
 - `DeskInput` klavyenin tek sahibidir: ayarlar dolabı açıkken Esc (dolabın kendi Tab/okları ayrıca); son raporda Enter; aksi hâlde 3 planlama, Esc
-  ayarlar/geri. Odanın anahtarları (`StationKeyRail`: SIĞINAK, GÖREVLER, KAPI, MASA; üst kenar şeridi `EdgeLine` aynı sıra;
+  ayarlar/geri. Odanın anahtarları (`StationKeyRail`: SIĞINAK, KAPI, MASA; üst kenar şeridi `EdgeLine` aynı sıra;
   AYARLAR çipi yok: ayarlar odadaki dolapta, sağ üstteki plaka yalnız dizilerde ATLA), vardiya raporu ve operasyon raporu kendi tuşlarını dinler. DeskGame klavye tuşu **yazmaz**: tuş
   fişi, “Enter/Esc/Home” ipucu ve üzerine gelme etiketinde kısayol yok (`IHoverSource` yalnız başlık ve satır); her
   kısayolun tıklanan bir karşılığı vardır (kapı kâğıdının alt satırı `DoorCardView.Dismissed`). Tuş başlıklarında ve

@@ -1545,7 +1545,7 @@ Boşta'dan bir kişi kartını MUTFAK alanına sürükleyip bırak. Dolu alana b
 SAHA KADROSU VE EŞYALAR	FIELD TEAM AND EQUIPMENT
 TEKNİSYEN, EMP ve ANALİST baskına giden üç kişidir. Her birinin kendi rol kiti olmalı. Depodaki ekipman kartını kişinin kartının üstüne bırakarak verirsin; zırh plakası ilk hasarı karşılar.	TECHNICIAN, EMP and ANALYST are the three people sent on raids. Each needs their role kit. Drop an equipment card from storage onto a person to equip it; an armour plate blocks the first hit.
 GÖREVİ SEÇ	CHOOSE A MISSION
-MASAYA DÖN ile uzaklaş, GÖREVLER tuşuna bas. Haritadaki görev fişi hedefi, bedeli ve kazanılacak kaynakları gösterir.	Use BACK TO DESK, then click MISSIONS. The mission slip on the map shows the target, cost and resources you can recover.
+MASAYA DÖN ile uzaklaş ve masadaki haritaya tıkla. Görev fişi hedefi, bedeli ve kazanılacak kaynakları gösterir.	Use BACK TO DESK, then click the map on the desk. The mission slip shows the target, cost and resources you can recover.
 KADROYU KONTROL ET	CHECK YOUR TEAM
 BASKIN EMRİ VER'e bas. Açılan kadro raporunda isimleri, canları ve kitleri kontrol et; hazır olduğunda BASKINA ÇIK'a bas. Eksik varsa rapor nedenini yazar.	Press ISSUE RAID ORDER. Check names, HP and kits on the squad report, then press DEPLOY. If something is missing, the report explains why.
 SAHADA BİR KİŞİ SEÇ	SELECT A FIELD OPERATIVE
@@ -1790,7 +1790,7 @@ Baskın: {0}	Raid: {0}
 KOMUTA ODASI	COMMAND ROOM
 Burası Sığınak 07. Üstteki sayaçlar fonu, erzakı, malzemeyi, özgür bölgeleri ve sivil GÜVEN'i sayar; duvardaki YZ ALARMI eşiğe varınca YZ karşı saldırır. Zaman yalnız vardiya şalterini indirince ilerler.	This is Shelter 07. The counters above track funds, supplies, materials, liberated regions and civilian TRUST; when the AI ALARM on the wall reaches its threshold, the AI counterattacks. Time moves only when you pull the shift switch.
 GÖREV FİŞİ	MISSION SLIP
-Masadaki GÖREVLER tuşuna bas: harita açılır, cephedeki Batı Avrupa'nın görev fişi gelir.	Press the MISSIONS key on the desk: the map opens with the slip for Western Europe, the current front.
+Masadaki haritaya tıkla. Aktif cephenin görev fişi açılır.	Click the map on the desk to open the mission slip for the active front.
 BASKIN EMRİ	RAID ORDER
 Fiş sıradaki sektörü, bedelini, ödülünü, bölgenin özelliğini ve kadroyu yazar. BASKIN EMRİ VER'e bas: yanında kadro raporu açılır; uzmanların durumunu oku, BASKINA ÇIK ile onayla.	The slip lists the next sector, its cost, reward, the region's trait and your squad. Press ORDER THE RAID: a squad report opens beside it; read your specialists' condition and confirm with DEPLOY.
 TAKTİK TAHTA	TACTICAL BOARD
@@ -2092,10 +2092,9 @@ hazır	ready
 kilitli	locked
 HAMMADDE	RAW MATERIALS
 Kesit maketi · odaları yönet	Cross-section model · manage the rooms
-GÖREVLER	MISSIONS
-Görev fişi · baskın emri	Mission slip · raid order
 kapıda biri bekliyor	someone is at the door
 Masaya dön	Back to the desk
+GÖREVLER	MISSIONS
 VARDİYAYI BİTİR	END SHIFT
 Kapağı kaldır, kolu indir; çıkan fişi EVRAK kutusuna koy.	Lift the cover, pull the lever, then file the printed slip in PAPERS.
 DEVİR FİŞİ	HAND-OVER
@@ -2151,3 +2150,4 @@ ANA ŞALTER	MAIN SWITCH
 #KULLANILABİLİR KİTLER	AVAILABLE KITS
 #HURDA · GERİ DÖNÜŞÜM	SCRAP · RECYCLING
 #TAHLİYE ET	DISMISS
+#Görev fişi · baskın emri	Mission slip · raid order

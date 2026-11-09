@@ -51,7 +51,7 @@ namespace Corrigible.Desk.Bridge
         [Tooltip("Eğitim sürerken ilk baskının kadrosu sabit (Teknisyen, EMP uzmanı, Analist).")]
         [SerializeField] SiginakTutorial tutorial;
         float unlockedSince = -1;
-        bool primed, figureDisplaced, figureHovered;
+        bool primed, figureDisplaced, figureHovered, missionsOnArrival;
         readonly HashSet<string> knownFree = new HashSet<string>();
         LiberationMapState state;
 
@@ -82,9 +82,12 @@ namespace Corrigible.Desk.Bridge
         void OnEnable()
         {
             if (game != null) { game.Changed += Refresh; game.GameLoaded += ResetState; game.NewGameStarted += ResetState; }
+            rig.PoseChanged += PoseChanged;
+            PoseChanged(rig.Current);
             DeskLoc.Instance.Changed += Refresh;
             layer.Blocked = () => Locked || drag.Carrying;
-            layer.RegionClicked += RegionClicked;
+            layer.RegionClicked += MapRegionClicked;
+            sadeMap.BackgroundClicked += MapBackgroundClicked;
             slip.ActionClicked += SlipAction;
             slip.CloseClicked += CloseSlip;
             slip.PickClicked += TogglePick;
@@ -106,9 +109,11 @@ namespace Corrigible.Desk.Bridge
         void OnDisable()
         {
             if (game != null) { game.Changed -= Refresh; game.GameLoaded -= ResetState; game.NewGameStarted -= ResetState; }
+            rig.PoseChanged -= PoseChanged;
             DeskLoc.Instance.Changed -= Refresh;
             layer.Blocked = null;
-            layer.RegionClicked -= RegionClicked;
+            layer.RegionClicked -= MapRegionClicked;
+            sadeMap.BackgroundClicked -= MapBackgroundClicked;
             slip.ActionClicked -= SlipAction;
             slip.CloseClicked -= CloseSlip;
             slip.PickClicked -= TogglePick;
@@ -135,6 +140,7 @@ namespace Corrigible.Desk.Bridge
         void ResetState()
         {
             primed = false;
+            PoseChanged(rig.Current);
             pending = null;
             pick = null;
             revealQueued = null;
@@ -191,9 +197,15 @@ namespace Corrigible.Desk.Bridge
             if (Sim == null) return;
             // K3 dizisi kilit (baskın sahnesi, operasyon raporu modalı) kalktıktan kısa süre sonra başlar; rapor henüz
             // açılmadıysa onu da bekler (modal bir sonraki bağlamada gelir)
-            if (Locked || RaidLauncher.IsRaidLoaded || surface.RaidReportPending) unlockedSince = -1;
+            bool blocked = Locked || RaidLauncher.IsRaidLoaded || surface.RaidReportPending;
+            if (blocked) unlockedSince = -1;
             else if (unlockedSince < 0) unlockedSince = Time.unscaledTime;
             if (revealQueued != null && unlockedSince >= 0 && Time.unscaledTime - unlockedSince >= 0.35f) PlayReveal();
+            if (missionsOnArrival && !blocked && !rig.InTransition && !rig.InputSuspended && revealQueued == null)
+            {
+                missionsOnArrival = false;
+                if (!SlipOpen && !FrontSlipOpen) OpenFrontMission();
+            }
             // Fişler harita pozunda okunur; kamera başka istasyona dönünce kapanır (K1'de katlı etiket yok, Aşama 6+)
             if ((slip.IsOpen || frontSlip.IsOpen) && rig.Current != SiginakPose.Map && !rig.InputSuspended)
             {
@@ -224,22 +236,42 @@ namespace Corrigible.Desk.Bridge
 
         // ---------- Bölge tıklaması, fişler ----------
 
+        void PoseChanged(SiginakPose pose) => missionsOnArrival = pose == SiginakPose.Map;
+
+        void MapBackgroundClicked()
+        {
+            if (!drag.Carrying) surface.ShowPlanning();
+        }
+
+        void MapRegionClicked(string id)
+        {
+            if (rig.IsFocused && !rig.InTransition) RegionClicked(id);
+            else MapBackgroundClicked();
+        }
+
         void RegionClicked(string id)
         {
             if (Locked || state == null) return;
             var r = state.Find(id);
             if (r == null) return;
             rig.FocusMap();
+            missionsOnArrival = false;
             if (r.Kind == MapRegionKind.Candidate) SelectCandidate(id);
             else OpenSlip(id);
         }
 
-        /// <summary>3 GÖREVLER: harita pozu ve cephenin görev fişi (cephe özgürse adaylar beklenir).</summary>
+        /// <summary>Harita tıklaması ve 3 kısayolu: harita pozu ve cephenin görev fişi (cephe özgürse adaylar beklenir).</summary>
         public void ShowMissions()
         {
             if (Locked || state == null) return;
             rig.FocusMap();
-            if (state.FrontOpen) OpenSlip(state.Front);
+            missionsOnArrival = false;
+            OpenFrontMission();
+        }
+
+        void OpenFrontMission()
+        {
+            if (state?.FrontOpen == true) OpenSlip(state.Front);
         }
 
         void OpenSlip(string id)

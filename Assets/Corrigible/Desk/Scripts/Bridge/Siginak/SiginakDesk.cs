@@ -188,7 +188,6 @@ namespace Corrigible.Desk.Bridge
             switch (index)
             {
                 case StationKeyRail.Shelter: surface.ShowShelter(); break;
-                case StationKeyRail.Missions: surface.ShowPlanning(); break;
                 case StationKeyRail.Door:
                     if (AdmissionActive) admission.Enter();
                     else if (Sim?.Board != null && planningBoard != null) planningBoard.ShowAdmissions();
@@ -227,7 +226,6 @@ namespace Corrigible.Desk.Bridge
         /// <summary>Anahtar rayında yanık istasyon: K8 ailesi KAPI tuşudur (Aşama 6); dizi, CRT ve ayarlar hiçbiri.</summary>
         public static int StationOf(SiginakPose pose) => pose switch
         {
-            SiginakPose.Map => StationKeyRail.Missions,
             SiginakPose.Shelf => StationKeyRail.Shelter,
             SiginakPose.Desk => StationKeyRail.Desk,
             SiginakPose.Door => StationKeyRail.Door,

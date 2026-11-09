@@ -94,7 +94,7 @@ namespace Corrigible.Desk.Bridge
             if (desk != null) desk.ExternalBlocked = storyOpen || launcher != null && launcher.IsTransitioning;
         }
 
-        /// <summary>Harita pozu ve görev fişi (3 GÖREVLER).</summary>
+        /// <summary>Haritaya tıklama ve 3 kısayolu: harita pozu ve görev fişi.</summary>
         public void ShowPlanning()
         {
             if (!InputBlocked) siginakMap.ShowMissions();

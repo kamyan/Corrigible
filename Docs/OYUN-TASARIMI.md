@@ -505,12 +505,12 @@ kaçmış bir teknisyen… Kapı erzağa, güvene ve alarma bir yüz verir; bask
 
 ## Komuta odası (sunum)
 
-- **Masa (K1):** sayaç bankası (VARDİYA, FON, ERZAK, MALZEME, ÖZGÜR BÖLGE, GÜVEN), anahtar rayı (SIĞINAK, GÖREVLER, KAPI,
-  MASA; tuş başlığında istasyonun simgesi: yer altındaki odalar, görev fişi, çarklı kapı, lambalı masa), vardiya şalteri,
+- **Masa (K1):** sayaç bankası (VARDİYA, FON, ERZAK, HAMMADDE, ÖZGÜR BÖLGE, GÜVEN), anahtar rayı (SIĞINAK, KAPI,
+  MASA; tuş başlığında istasyonun simgesi: yer altındaki odalar, çarklı kapı, lambalı masa), vardiya şalteri,
   teleks, evrak tepsisi (harekât emri de orada). Oda klavye tuşu yazmaz: kısayollar (2, 3, 4/K, Home, F, Enter, Esc, Boşluk)
   çalışır ama ekranda ipucu yok; her birinin tıklanan bir karşılığı var (kapı kâğıdında “masaya dön” satırı). Arka duvarda, mantar pano ile posterin
-  arasında YZ ALARMI panosu (rafta yedinci sayaca yer yok: masa ve lamba sınırı).
-- **Harita (K2, K3; Revizyon 2 · S2):** bölge seçilince görev fişi açılır: ekran katmanında sol masa kenarında (Kuzey ya
+  arasında YZ ALARMI panosu.
+- **Harita (K2, K3; Revizyon 2 · S2):** masadaki haritaya tıklayınca aktif cephenin görev fişi açılır. Yakın görünümde bölge seçilince bölgenin fişi açılır: ekran katmanında sol masa kenarında (Kuzey ya
   da Güney Amerika seçiliyse sağda), kırmızı iple bölgeye bağlı. SAHA satırları (bölge özelliği, imza makinesi, tehdit
   kademesi; işaretleri haritadaki ve baskın tahtasındakilerle aynı), sektörler, bedel/ödül, ekip diskleri, baskın emri.
   Bölge tamamlanınca cephe onay fişi. Haritada cephe bloğu (sektör şeridi + yüzde + saha işaretleri), işaretler kutusunda

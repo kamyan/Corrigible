@@ -31,7 +31,7 @@ namespace Corrigible.Desk.Bridge
             Info("intro", Loc.N("KOMUTA ODASI"),
                 Loc.N("Burası Sığınak 07. Üstteki sayaçlar fonu, erzakı, malzemeyi, özgür bölgeleri ve sivil GÜVEN'i sayar; duvardaki YZ ALARMI eşiğe varınca YZ karşı saldırır. Zaman yalnız vardiya şalterini indirince ilerler.")),
             Wait("slip", Loc.N("GÖREV FİŞİ"),
-                Loc.N("Masadaki GÖREVLER tuşuna bas: harita açılır, cephedeki Batı Avrupa'nın görev fişi gelir."),
+                Loc.N("Masadaki haritaya tıkla. Aktif cephenin görev fişi açılır."),
                 (c, f) => c.SlipOpen || c.RaidOrdered),
             Wait("order", Loc.N("BASKIN EMRİ"),
                 Loc.N("Fiş sıradaki sektörü, bedelini, ödülünü, bölgenin özelliğini ve kadroyu yazar. BASKIN EMRİ VER'e bas: yanında kadro raporu açılır; uzmanların durumunu oku, BASKINA ÇIK ile onayla."),

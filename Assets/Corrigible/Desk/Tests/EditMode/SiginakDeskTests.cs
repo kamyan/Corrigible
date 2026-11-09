@@ -252,11 +252,15 @@ namespace Corrigible.Desk.Tests
                 Assert.IsNotNull(sv.FindProperty("telex").objectReferenceValue);
 
                 var room = desk.transform.parent.gameObject;
-                // SIĞINAK · GÖREVLER · KAPI · MASA (KOMUTA ve KILAVUZ kalktı); yalnız kapı tuşunun dikkat lambası var. Tuş başlığında
+                // SIĞINAK · KAPI · MASA; yalnız kapı tuşunun dikkat lambası var. Tuş başlığında
                 // tuş adı yerine istasyonun simgesi (aydınlatılan saydam dörtgen, çarpıştırıcısız)
                 var rail = room.GetComponentInChildren<StationKeyRail>(true);
-                Assert.AreEqual(4, rail.Count);
-                var icons = new[] { "tx_keyIcon_shelter", "tx_keyIcon_missions", "tx_keyIcon_door", "tx_keyIcon_desk" };   // Revizyon 3: krem karo, koyu çizgi
+                Assert.AreEqual(3, rail.Count);
+                var railModel = rail.GetComponentsInChildren<Rev3Model>(true).Single(m => m.ModelName == "KeyRail");
+                Assert.Less(railModel.GetComponentInChildren<MeshRenderer>().bounds.size.x, 1f, "ray üç düğmeye göre daraltılmış");
+                Assert.AreEqual(rail[1].transform.localPosition.x - rail[0].transform.localPosition.x,
+                    rail[2].transform.localPosition.x - rail[1].transform.localPosition.x, 1e-4f, "düğmeler eşit aralıkta");
+                var icons = new[] { "tx_keyIcon_shelter", "tx_keyIcon_door", "tx_keyIcon_desk" };   // Revizyon 3: krem karo, koyu çizgi
                 for (int i = 0; i < rail.Count; i++)
                 {
                     var ks = new SerializedObject(rail[i]);
@@ -271,7 +275,8 @@ namespace Corrigible.Desk.Tests
                 }
                 // Üst kenar şeridi aynı istasyonlar (AYARLAR çipi yok: ayarlar odadaki dolapta); tuş kutularında simge
                 var edgeLine = new SerializedObject(room.transform.root.GetComponentsInChildren<EdgeLine>(true).Single());
-                Assert.AreEqual(rail.Count, edgeLine.FindProperty("chips").arraySize);
+                foreach (var field in new[] { "chips", "chipBacks", "chipLabels", "chipKeys" })
+                    Assert.AreEqual(rail.Count, edgeLine.FindProperty(field).arraySize, field);
                 foreach (var target in room.GetComponentsInChildren<DeskTarget>(true))
                     Assert.Greater(target.GetComponent<BoxCollider>().size.sqrMagnitude, 0, target.name + " çarpıştırıcısı boş");
                 // Ekran katmanı Overlay; harita fişleri (Aşama 5) ayrı World Space canvas'lardır
