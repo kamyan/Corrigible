@@ -75,13 +75,14 @@ namespace Corrigible.Desk
             l.Expected.Add(new HandoverSlipLines.Row
             {
                 Name = Loc.T("KAPI"),
-                Value = f.openApplications > 0 ? Loc.F("{0} açık başvuru", f.openApplications) : Loc.T("açık başvuru yok"),
+                Value = f.openApplications > 0 ? Loc.F("{0} aday bekliyor", f.openApplications) : Loc.T("aday yok"),
             });
 
             if (f.warnings != null)
                 foreach (var w in f.warnings)
                 {
-                    if (w == null) continue;
+                    // Eski yan dosyanın sökülmüş türleri (0–3) yazılmaz
+                    if (w == null || !Enum.IsDefined(typeof(SlipWarningKind), w.kind)) continue;
                     var box = l.Warnings.Find(b => b.Kind == w.kind);
                     if (box == null)
                     {
@@ -96,7 +97,11 @@ namespace Corrigible.Desk
                         if (name.Length > 0 && !box.Names.Contains(name)) box.Names.Add(name);
                     }
                 }
-            foreach (var box in l.Warnings) box.Text = WarningText(box.Kind, box.Names);
+            foreach (var box in l.Warnings)
+                box.Text = box.Kind == SlipWarningKind.Rations ? RationsText(f)
+                    : box.Kind == SlipWarningKind.Exposure ? ExposureText(f)
+                    : box.Kind == SlipWarningKind.ShelterShort ? ShelterShortText(f)
+                    : WarningText(box.Kind, box.Names);
 
             l.Footer = Loc.F("plan {0:000}/{1} · tek kullanımlık · yeniden basılmaz", shift, copy);
             l.Action = Loc.T("fişi EVRAK’a koy");
@@ -105,23 +110,65 @@ namespace Corrigible.Desk
 
         // ---------------------------------------------------------------- uyarılar
 
-        /// <summary>Uyarı kutusunun öneki: "KAPI ·" ya da "DOSYA ·".</summary>
-        public static string WarningPrefix(SlipWarningKind kind) => kind == SlipWarningKind.Door ? Loc.T("KAPI ·") : Loc.T("DOSYA ·");
+        /// <summary>Uyarı kutusunun öneki: "KAPI ·", "ERZAK ·", "İFŞA ·" ya da "SIĞINAK EKSİK ·".</summary>
+        public static string WarningPrefix(SlipWarningKind kind)
+        {
+            switch (kind)
+            {
+                case SlipWarningKind.DoorLastShift: return Loc.T("KAPI ·");
+                case SlipWarningKind.Rations: return Loc.T("ERZAK ·");
+                case SlipWarningKind.Exposure: return Loc.T("İFŞA ·");
+                case SlipWarningKind.ShelterShort: return Loc.T("SIĞINAK EKSİK ·");
+                default: return string.Empty;
+            }
+        }
 
         /// <summary>
-        /// Uyarı kutusunun metni. <paramref name="shown"/>: kutuda yazılan ad sayısı; adların hepsi sığmıyorsa kalanlar
-        /// "… +n" olur (D9-A: punto küçülmez, kutu kesilir). Kapı uyarısı ad taşımaz.
+        /// İFŞA kutusu (KOS aşama 6): "konum çözüldü · bu vardiya son", kararla varılan eşiğin ilk uyarı vardiyasında "konum çözüldü ·
+        /// n vardiya kaldı", ya da "eşikte · kapanışta konum çözülür".
+        /// </summary>
+        public static string ExposureText(HandoverSlipFacts f)
+            => f == null || !f.exposurePending ? Loc.T("eşikte · kapanışta konum çözülür")
+            : f.exposureShiftsLeft > 1 ? Loc.F("konum çözüldü · {0} vardiya kaldı", f.exposureShiftsLeft)
+            : Loc.T("konum çözüldü · bu vardiya son");
+
+        /// <summary>
+        /// SIĞINAK EKSİK kutusu (KOS aşama 6; baskın kadrosunun "KADRO EKSİK"inden ayrı ad): "n/m" ya da sınıra varınca
+        /// "n/m · bu kapanışta boşalır".
+        /// </summary>
+        public static string ShelterShortText(HandoverSlipFacts f)
+        {
+            if (f == null) return string.Empty;
+            return f.shelterShortMax > 0 && f.shelterShort >= f.shelterShortMax
+                ? Loc.F("{0}/{1} · bu kapanışta boşalır", f.shelterShort, f.shelterShortMax)
+                : Loc.F("{0}/{1}", f.shelterShort, f.shelterShortMax);
+        }
+
+        /// <summary>
+        /// ERZAK kutusunun metni (KOS aşama 4): "aç n V", "sürerse {ad} ayrılır", "yarım tayın n V", "karartma", <see cref="Separator"/>
+        /// ile. Kesilmez (tek kutu, ad tek); dört parçası birden KAPI uyarısıyla en kötü fişe sığsın diye kısa
+        /// (<c>Rev3HandoverSlipFaceTests.Layout_WorstCase_WithFourPartRations_TrEn_NoOverflow</c>; karartmanın açıklaması CRT'de).
+        /// </summary>
+        public static string RationsText(HandoverSlipFacts f)
+        {
+            if (f == null) return string.Empty;
+            var parts = new List<string>(4);
+            if (f.hungryStreak > 0) parts.Add(Loc.F("aç {0} V", f.hungryStreak));
+            if (!string.IsNullOrEmpty(f.nextDeserter)) parts.Add(Loc.F("sürerse {0} ayrılır", f.nextDeserter));
+            if (f.halfRationLeft > 0) parts.Add(Loc.F("yarım tayın {0} V", f.halfRationLeft));
+            if (f.blackout) parts.Add(Loc.T("karartma"));
+            return string.Join(Separator, parts);
+        }
+
+        /// <summary>
+        /// Uyarı kutusunun metni (ERZAK, İFŞA ve SIĞINAK EKSİK kutularının metni kendi yöntemlerinden). Ad taşıyan kutuda
+        /// <paramref name="shown"/> kutuda yazılan ad sayısıdır; adların hepsi sığmıyorsa kalanlar "… +n" olur (D9-A: punto küçülmez,
+        /// kutu kesilir). Kapı uyarısı ad taşımaz.
         /// </summary>
         public static string WarningText(SlipWarningKind kind, IReadOnlyList<string> names, int shown = int.MaxValue)
         {
-            if (kind == SlipWarningKind.Door) return Loc.T("Açık kapı başvurusu kararsızsa bu kapanışta reddedilir.");
-            string who = Names(names, shown);
-            switch (kind)
-            {
-                case SlipWarningKind.FileRestrictionExpired: return Loc.F("{0} · kısıtlı süre doldu", who);
-                case SlipWarningKind.FileClues: return Loc.F("{0} · iki bağımsız bulgu", who);
-                default: return Loc.F("{0} · inceleme fişi açık", who);
-            }
+            if (kind == SlipWarningKind.DoorLastShift) return Loc.T("Son vardiya: karar verilmezse adaylar gider.");
+            return Names(names, shown);
         }
 
         static string Names(IReadOnlyList<string> names, int shown)
@@ -216,7 +263,7 @@ namespace Corrigible.Desk
             }
         }
 
-        /// <summary>Durum eki (ince): yaralı, yatıyor n, kısıtlı n, kısıtlı · bitti; durum yoksa boş.</summary>
+        /// <summary>Durum eki (ince): yaralı, yatıyor n, kısıtlı n, kısıtlı · bitti, tecritte n, görev yok n; durum yoksa boş.</summary>
         public static string StateWord(SlipPersonState state, int shifts)
         {
             switch (state)
@@ -225,6 +272,8 @@ namespace Corrigible.Desk
                 case SlipPersonState.Down: return Loc.F("yatıyor {0}", shifts);
                 case SlipPersonState.Restricted: return Loc.F("kısıtlı {0}", shifts);
                 case SlipPersonState.RestrictionEnded: return Loc.T("kısıtlı · bitti");
+                case SlipPersonState.Isolated: return Loc.F("tecritte {0}", shifts);
+                case SlipPersonState.Idle: return Loc.F("görev yok {0}", shifts);
                 default: return string.Empty;
             }
         }
@@ -290,7 +339,7 @@ namespace Corrigible.Desk
             public string Disc = string.Empty, Name = string.Empty, Value = string.Empty, Suffix = string.Empty, Strong = string.Empty;
         }
 
-        /// <summary>Uyarı kutusu: tür, önek (“KAPI ·”), metin ve (DOSYA'da) kutudaki adlar.</summary>
+        /// <summary>Uyarı kutusu: tür, önek (“KAPI ·”), metin ve (ad taşıyan kutuda) adlar.</summary>
         public sealed class Box
         {
             public SlipWarningKind Kind;

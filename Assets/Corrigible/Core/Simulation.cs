@@ -35,6 +35,8 @@ namespace Corrigible.Core
             sim.SetupLiberation();
             sim.SetupPlanningBoard();
             if (sim.Board != null) sim.SetupAdmissions();
+            // Çekim yapmaz; olaylar kapalı olsa da kurulur (okuyucular null denetlemesin).
+            if (sim.Board != null) sim.SetupShelterEvents();
             sim.Record = new GameRecord { seed = sd, balance = b.Clone() };
             s.Events.Clear();
             return sim;
@@ -75,9 +77,19 @@ namespace Corrigible.Core
             StepTeams();
             if (Board != null)
             {
+                // Sıra kayıt biçiminin parçasıdır. Çekim yapanlar: vadeli sonuçlar ve tecrit bitişi, kapı (32), olağan olay açılışı (2).
                 AdvanceAdmissions();
+                AdvanceShelterPeople();
                 AdvancePlanningBoard();
-                if (!Board.People.Any(p => p.Alive)) End("topluluk");
+                AdvanceShelterDelayed();
+                // Kapı pano kapanışının arkasındadır: yeni grup ertesi vardiyanın başında bekler.
+                AdvanceCandidateDoor();
+                // Sayaçlar ve sonlar (topluluk > dusus > terk) olay açılışından önce: son kapanışta kâğıt açılmaz, bu kapanışın
+                // sabotajı düşüşün nedeni olamaz. Uyarı açılıştan sonra kurulur (sabotajla varılan eşik aynı kapanışta uyarır).
+                // Son gelirse alarm adımı işlemez (dagilma en sonda).
+                AdvanceShelterEndings();
+                OpenShelterEvent();
+                AdvanceShelterWarnings();
             }
             else ShelterLogic.Advance(S, B);
             StepAlarm();

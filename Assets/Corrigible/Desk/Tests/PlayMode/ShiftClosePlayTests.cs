@@ -812,7 +812,7 @@ namespace Corrigible.Desk.Tests
             var sim = ShiftPlayKit.Sim;
             var saved = SaveStore.Load();
             Assert.IsNotNull(saved, "basımdan sonra kayıt dosyası var (GameController.Run kaydeder)");
-            Assert.AreEqual(15, GameRecord.CurrentVersion, "kayıt biçimi 15 (Aşama 6 K4-A gözetmen kuralı)");
+            Assert.AreEqual(17, GameRecord.CurrentVersion, "kayıt biçimi 17 (KOS aşama 5: sonlar; 16 aday grubu)");
             Assert.AreEqual(GameRecord.CurrentVersion, saved.version, "kaydın sürümü");
             Assert.AreEqual("board_print", saved.commands.Last().kind, "kaydın son komutu board_print");
             Assert.AreEqual(sim.S.Day, saved.day, "kaydın günü");

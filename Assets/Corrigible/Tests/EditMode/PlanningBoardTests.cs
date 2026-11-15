@@ -8,7 +8,7 @@ namespace Corrigible.Tests
     public class PlanningBoardTests
     {
         static Simulation Ready(uint seed = 79) => Simulation.NewGame(seed, new Balance
-        {
+        { shelterEventsEnabled = false,
             planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 100, admissionKnockMax = 100
         });
 
@@ -76,7 +76,7 @@ namespace Corrigible.Tests
         [Test]
         public void NamedCommunity_CanCompleteAllRegionsWithDefaultEconomy_AndReplayTheVictory()
         {
-            var sim = Simulation.NewGame(79);
+            var sim = Simulation.NewGame(79, new Balance { shelterEventsEnabled = false });
             for (int region = 0; region < GameData.Regions.Length; region++)
             {
                 string current = sim.S.Liberation.CurrentRegion;
@@ -223,22 +223,6 @@ namespace Corrigible.Tests
             Assert.AreEqual(0, sim.Board.Orders.Count);
             Assert.AreEqual(1, sim.Board.Equipment.Count(e => e.Kind == "emp_cell"));
             Assert.AreEqual(metal - sim.B.boardEmpMetal, sim.Board.Material("metal").Quantity);
-        }
-
-        [Test]
-        public void ActiveContact_BringsArrivalForwardOneShiftComparedWithIdleResident()
-        {
-            var balance = new Balance { admissionKnockMin = 3, admissionKnockMax = 3, liberationAlarmPerShift = 0 };
-            var active = Simulation.NewGame(79, balance);
-            var idle = Simulation.NewGame(79, balance);
-            var worker = active.Board.People.Single(p => p.Job == "rest");
-            Assert.IsTrue(active.AssignResident(worker.Id, "contact").Ok);
-            Close(active); Close(idle);
-            Assert.IsNull(active.Admission.Candidate);
-            Close(active); Close(idle);
-            Assert.IsNotNull(active.Admission.Candidate);
-            Assert.IsNull(idle.Admission.Candidate);
-            Assert.IsTrue(active.Admission.Candidate.ArrivalShift < idle.Admission.NextArrivalShift);
         }
 
         [Test]

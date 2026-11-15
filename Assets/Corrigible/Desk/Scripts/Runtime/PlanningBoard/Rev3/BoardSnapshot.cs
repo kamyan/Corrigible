@@ -78,7 +78,9 @@ namespace Corrigible.Desk
     /// <summary>Kart yüzlerinin dile bağlı sabit sözcükleri.</summary>
     public sealed class BoardWords
     {
-        public string Injured = "YARALI", Bedridden = "YATIYOR", Restricted = "KISITLI", Review = "İNCELE", Lost = "KAYIP";
+        public string Injured = "YARALI", Bedridden = "YATIYOR", Restricted = "KISITLI", Lost = "KAYIP";
+        /// <summary>Tecrit köşesinin sözcüğü (KOS aşama 4; kısıt köşesini kullanır).</summary>
+        public string Isolated = "TECRİT";
         public string Free = "serbest";
         public string Kit = "KİT", Armor = "ZIRH", Aid = "YARDIMCI";
     }
@@ -97,7 +99,9 @@ namespace Corrigible.Desk
         public bool Hurt;
         public string Strip;
         public StripTone StripTone;
-        public bool Injured, Bedridden, Restricted, Review, Lost;
+        public bool Injured, Bedridden, Restricted, Lost;
+        /// <summary>Tecritte (KOS aşama 4): kart kısıt köşesini <see cref="BoardWords.Isolated"/> sözcüğüyle taşır.</summary>
+        public bool Isolated;
         public bool Selected;
         public string HoverTitle, HoverLine;
     }
@@ -147,26 +151,22 @@ namespace Corrigible.Desk
         public string TraineeId;
     }
 
-    /// <summary>Kişi dosyası: kapak ve iki sayfa satırları; sekmelerin durumu.</summary>
+    /// <summary>Kişi dosyası: kapak ve iki sayfa satırları (eski kabulün sekmeleri ve künyesi aşama 7'de söküldü).</summary>
     public sealed class FolderData
     {
         public string PersonId, Name, PortraitKey;
         public PersonCardData Card;
-        public string Profession, Trait, Job, Header, AdmissionHeader;
+        public string Profession, Trait, Job, Header;
+        /// <summary>Sağ sayfanın üst satırı (soldaki <see cref="Header"/> hizasında): "KALICI KİŞİ DOSYASI". Çevrilmiş gelir.</summary>
+        public string RightHeader;
         public readonly List<FolderLine> Mastery = new List<FolderLine>();
         public string[] Gear = new string[3];
         public readonly List<FolderLine> DossierRight = new List<FolderLine>();
         public readonly List<FolderLine> Left = new List<FolderLine>();
         public readonly List<FolderLine> Right = new List<FolderLine>();
-        public bool CanReview, CanRestrict, CanDismiss;
-        public string ReviewLabel, RestrictLabel, DismissLabel;
-        /// <summary>Sekmelerin alt satırları (R10, R17f: işin ne istediği). Yalnız etiket: Core durumundan bağımsız, çevrilmiş gelir.</summary>
-        public string ReviewSub, RestrictSub, DismissSub;
-        /// <summary>Sekmenin neden kapalı olduğu (Core'un iletisi).</summary>
-        public string ReviewNote, RestrictNote, DismissNote;
         /// <summary>
-        /// Dosyanın kıskaçlı etiketi (Aşama 6, R17f; <see cref="FileTagView"/>): "İNCELEME" (inceleme fişi açık) ya da "KISITLI · n V";
-        /// null = etiket yok. Çevrilmiş gelir.
+        /// Dosyanın kıskaçlı etiketi (Aşama 6, R17f; <see cref="FileTagView"/>): "KISITLI · n V", "TECRİT", "İZ n" vb.; null = etiket yok.
+        /// Çevrilmiş gelir.
         /// </summary>
         public string TagText;
     }

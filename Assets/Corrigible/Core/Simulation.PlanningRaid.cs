@@ -19,7 +19,8 @@ namespace Corrigible.Core
                 slots.Add(new SquadSlot
                 {
                     Type = role, PersonId = person.Id, PersonName = person.Name,
-                    Hp = person.Hp, MaxHp = person.MaxHp,
+                    // Yarım tayında kadro eksik canla çıkar (en az 1); fark dönüşte geri gelir.
+                    Hp = HalfRationActive ? Math.Max(1, person.Hp - Math.Max(0, B.halfRationRaidHp)) : person.Hp, MaxHp = person.MaxHp,
                     Move = Math.Min(B.boardMaxFieldMove, person.Move + (tier >= B.boardFieldSkillMoveTier ? B.boardFieldSkillMoveBonus : 0)),
                     Power = Math.Min(B.boardMaxFieldPower, person.Power + (tier >= B.boardFieldSkillPowerTier ? B.boardFieldSkillPowerBonus : 0)),
                     Armor = Board.Equipment.Any(e => e.OwnerId == person.Id && e.Kind == "armor" && e.Charges > 0) ? 1 : 0,
@@ -40,10 +41,14 @@ namespace Corrigible.Core
             foreach (var slot in squad)
             {
                 var person = Board.Person(slot.PersonId);
-                if (person.Restricted) return Loc.F("{0} kısıtlı kabulde; saha erişimi kapalı.", person.Name);
+                if (person.Restricted) return Loc.F("{0}: {1}", person.Name, Loc.T("Kısıtlı sakin bu göreve erişemez."));
                 if (!Board.Equipment.Any(e => e.OwnerId == person.Id && e.Kind == "kit_" + slot.Type && e.Charges > 0))
                     return Loc.F("{0} için {1} gerekiyor.", person.Name, PlanningBoardData.EquipmentName("kit_" + slot.Type));
             }
+            if (ShelterEvents != null)
+                foreach (var feud in ShelterEvents.Feuds)
+                    if (S.Day < feud.Until && squad.Any(x => x.PersonId == feud.A) && squad.Any(x => x.PersonId == feud.B))
+                        return Loc.F("{0} ile {1} ayrı tutuluyor; aynı baskına giremezler.", EventPersonName(feud.A), EventPersonName(feud.B));
             return null;
         }
 
@@ -84,7 +89,8 @@ namespace Corrigible.Core
                 }
                 else
                 {
-                    person.Hp = Math.Min(person.MaxHp, after); person.Down = 0;
+                    // Yarım tayında eksik çıkılan can kalıcı kayıp değildir: baskın sürerken pano değişmediği için fark buradan türer.
+                    person.Hp = Math.Min(person.MaxHp, after + Math.Max(0, person.Hp - slot.Hp)); person.Down = 0;
                     BoardGainExperience(person, slot.Type);
                     lines.Add(Loc.F("{0} döndü: can {1}/{2}.", person.Name, person.Hp, person.MaxHp));
                 }

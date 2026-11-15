@@ -56,5 +56,12 @@ namespace Corrigible.Desk
         }
 
         public void Unpin() { foreach (var m in modules) if (m != null) m.Unpin(); }
+
+        /// <summary>Bir sayacın fark fişinde dinlenme metni (KOS aşama 4: ERZAK'ta açlık, yarım tayın, karartma); null kaldırır.</summary>
+        public void SetRest(Slot slot, string text, Color ink)
+        {
+            int i = (int)slot;
+            if (modules != null && i < modules.Length && modules[i] != null) modules[i].SetRest(text, ink);
+        }
     }
 }

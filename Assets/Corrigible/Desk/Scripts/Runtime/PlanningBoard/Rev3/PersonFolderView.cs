@@ -10,12 +10,11 @@ namespace Corrigible.Desk
     /// KİŞİ DOSYASI (R15f; <c>PersonFolder</c> model örneği, tel sepette): kapakta seçili kişinin adı (ya da seçim yokken
     /// soluk ipucu), tıklayınca (ya da kişi kartına çift tıklayınca, sunucu çağırır) 0,35 s'de okuma pozuna gelip açılır.
     /// Sayfalar (<c>TXT_PageL/R</c> yüzeylerindeki dünya tuvalleri, 1 birim = 1 mm) <see cref="FolderData"/>'dan çalışma anında
-    /// bir TMP satır şablonuyla kurulur. Sekmeler: İNCELE, ERİŞİM (tıklama), TAHLİYE (1,2 s basılı tutma, damga düşer; klavyede
-    /// sunucu <see cref="BeginDismissHold"/>/<see cref="EndDismissHold"/> ile sürer). Kapalı sekmeye tıklayınca nedeni sayfada
-    /// yazar. Kapak dönüşü modelin −176°'sine +θ yönünden (öne doğru) gider ve sonda parçaya oturur (C §8-7).
+    /// bir TMP satır şablonuyla kurulur; uzun kayıt ek yapraklara bölünür (önceki/sonraki yaprak). Eski kabulün sekmeleri (İNCELE,
+    /// ERİŞİM, TAHLİYE) ve TAHLİYE damgası aşama 7'de söküldü: kısıt ve yollama yalnız olay kararıyla. Kapak dönüşü modelin −176°'sine +θ yönünden (öne doğru) gider ve sonda parçaya oturur (C §8-7).
     /// </summary>
     public sealed class PersonFolderView : MonoBehaviour, IHoverSource, IPointerEnterHandler, IPointerExitHandler,
-        IPointerDownHandler, IPointerUpHandler, IPointerClickHandler
+        IPointerDownHandler, IPointerClickHandler
     {
         [Header("Model (PersonFolder)")]
         [Tooltip("Okuma pozuna giden kök (boşsa bu nesne).")]
@@ -40,22 +39,9 @@ namespace Corrigible.Desk
         [SerializeField] TMP_Text rowTemplate;
         [SerializeField] PersonDossierFace dossier;
         [SerializeField] Collider previousPage, nextPage;
-        [Tooltip("Sağ sayfada sekmelerin üstündeki not satırı (kapalı sekmenin nedeni, Core'un iletisi).")]
-        [SerializeField] TMP_Text note;
-
-        [Header("Sekmeler (bu nesnenin çocukları, DeskTarget'sız)")]
-        [SerializeField] Collider reviewTab;
-        [SerializeField] Collider accessTab;
-        [SerializeField] Collider dismissTab;
-        [SerializeField] TMP_Text reviewLabel, accessLabel, dismissLabel;
-        [Tooltip("Aşama 10 (D-F, R10): sekmelerin alt satırları; sekme kapalıyken adıyla birlikte soluklaşır.")]
-        [SerializeField] TMP_Text reviewSub, accessSub, dismissSub;
-        [Tooltip("TAHLİYE damgası (basılı tutarken iner, 1,2 s'de oturur).")]
-        [SerializeField] CanvasGroup stamp;
-        [SerializeField] TMP_Text stampText;
 
         [Header("Etiket (Aşama 6, R17f)")]
-        [Tooltip("Dosyanın üst kenarındaki kıskaçlı etiket (FileTag modeli): İNCELEME ya da KISITLI · n V; yoksa gizli.")]
+        [Tooltip("Dosyanın üst kenarındaki kıskaçlı etiket (FileTag modeli): KISITLI · n V, TECRİT, İZ n…; yoksa gizli.")]
         [SerializeField] FileTagView fileTag;
 
         FolderMotion motion;
@@ -66,13 +52,8 @@ namespace Corrigible.Desk
         Color coverNameColour;
         TMP_FontAsset coverNameFont;
         bool coverCaptured;
-
-        bool holding, holdByPointer, landed;
-        float holdStart, landedAt;
-        PointerEventData holdEvent;
         GameObject pressGo;
 
-        public event Action Review, Access, Dismiss;
         /// <summary>Kapalı dosyanın kapağına tıklandı (sunucu seçili kişinin dosyasıyla <see cref="Open"/> der).</summary>
         public event Action Clicked;
 
@@ -98,7 +79,6 @@ namespace Corrigible.Desk
             CaptureCover();
             if (rowTemplate != null) rowTemplate.gameObject.SetActive(false);
             SetPagesActive(false);
-            ResetStamp();
             SetTag(null);
             UpdateColliders();
         }
@@ -150,15 +130,14 @@ namespace Corrigible.Desk
 
         // ------------------------------------------------------------------ aç / kapa
 
-        /// <summary>Dosyayı bu verilerle açar; zaten açıksa yalnız sayfaları yeniler (aynı kişide not satırı korunur).</summary>
+        /// <summary>Dosyayı bu verilerle açar; zaten açıksa yalnız sayfaları yeniler.</summary>
         public void Open(FolderData d)
         {
             if (d == null) return;
             EnsureMotion();
-            bool samePerson = current != null && current.PersonId == d.PersonId;
             current = d;
             SetPagesActive(true);   // önce: satır kopyaları etkin hiyerarşide uyansın (TMP ölçüsü)
-            Build(d, samePerson);
+            Build(d);
             if (open) { UpdateColliders(); return; }
             open = true;
             EndHover();
@@ -172,7 +151,6 @@ namespace Corrigible.Desk
             open = false;
             // Etiket açık dosyanın verisini taşır; kapanınca kalkar (seçim değişince bayat kalmasın; sunucu SetTag ile yeniden takabilir)
             SetTag(null);
-            CancelHold();
             EnsureMotion();
             motion.SetOpen(false);
             UpdateColliders();
@@ -182,7 +160,7 @@ namespace Corrigible.Desk
         public void SetInteractive(bool on)
         {
             interactive = on;
-            if (!on) { CancelHold(); EndHover(); }
+            if (!on) EndHover();
             UpdateColliders();
         }
 
@@ -190,9 +168,6 @@ namespace Corrigible.Desk
         {
             if (coverHit != null) coverHit.enabled = interactive && !open;
             bool tabs = interactive && open;
-            if (reviewTab != null) reviewTab.enabled = tabs;
-            if (accessTab != null) accessTab.enabled = tabs;
-            if (dismissTab != null) dismissTab.enabled = tabs;
             // Sayfa yüzeyleri (işleyicisiz; tık bu bileşene çıkar) yalnız dosya açıkken: kapalıyken ya da defter kipinde (Aşama 5)
             // kapağın önündeki ışını yutup arkadaki pano tıkını engelliyorlardı
             pageSurfaces ??= OtherColliders();
@@ -205,12 +180,12 @@ namespace Corrigible.Desk
 
         Collider[] pageSurfaces;
 
-        /// <summary>Kendi alt ağacındaki kapak ve sekmeler dışındaki çarpıştırıcılar (sayfa yüzeyleri).</summary>
+        /// <summary>Kendi alt ağacındaki kapak ve yaprak düğmeleri dışındaki çarpıştırıcılar (sayfa yüzeyleri).</summary>
         Collider[] OtherColliders()
         {
             var list = new System.Collections.Generic.List<Collider>();
             foreach (var c in GetComponentsInChildren<Collider>(true))
-                if (c != coverHit && c != reviewTab && c != accessTab && c != dismissTab && c != previousPage && c != nextPage) list.Add(c);
+                if (c != coverHit && c != previousPage && c != nextPage) list.Add(c);
             return list.ToArray();
         }
 
@@ -222,7 +197,7 @@ namespace Corrigible.Desk
 
         // ------------------------------------------------------------------ sayfalar
 
-        void Build(FolderData d, bool keepNote)
+        void Build(FolderData d)
         {
             float margin = BoardViewUtil.Num("personFile.page.marginMm", 8f);
             float labelW = BoardViewUtil.Num("personFile.page.labelMm", 38f);
@@ -231,7 +206,6 @@ namespace Corrigible.Desk
             float nameMm = BoardViewUtil.Num("personFile.page.nameMm", 7f);
             float sectionMm = BoardViewUtil.Num("personFile.page.sectionMm", 3.4f);
             float gap = BoardViewUtil.Num("personFile.page.gapMm", 1.4f);
-            float tabsMm = BoardViewUtil.Num("personFile.page.tabsMm", 34f);
             var desk = DeskTheme.Active;
             var fBold = desk != null ? desk.Font(DeskFont.LfBold) : null;
             var fBody = desk != null ? desk.Font(DeskFont.LfRegular) : null;
@@ -249,19 +223,11 @@ namespace Corrigible.Desk
             if (dossier == null && rightRows != null)
             {
                 rightRows.Begin(margin);
-                PutLines(rightRows, d.Right, margin, labelW, bodyMm, labelMm, sectionMm, gap, fBody, fMono, rightRows.Height - tabsMm);
+                PutLines(rightRows, d.Right, margin, labelW, bodyMm, labelMm, sectionMm, gap, fBody, fMono, rightRows.Height - margin);
                 rightRows.End();
             }
 
             SetTag(d.TagText);
-            SetTab(reviewLabel, d.ReviewLabel, d.CanReview);
-            SetTab(accessLabel, d.RestrictLabel, d.CanRestrict);
-            SetTab(dismissLabel, d.DismissLabel, d.CanDismiss);
-            SetTab(reviewSub, d.ReviewSub, d.CanReview);
-            SetTab(accessSub, d.RestrictSub, d.CanRestrict);
-            SetTab(dismissSub, d.DismissSub, d.CanDismiss);
-            BoardViewUtil.SetText(stampText, d.DismissLabel);
-            if (!keepNote) { BoardViewUtil.SetText(note, ""); ResetStamp(); }
         }
 
         static void PutLines(PageRows rows, List<FolderLine> lines, float margin, float labelW, float bodyMm, float labelMm,
@@ -311,71 +277,13 @@ namespace Corrigible.Desk
             }
         }
 
-        static void SetTab(TMP_Text label, string text, bool enabled)
-        {
-            if (label == null) return;
-            BoardViewUtil.SetText(label, text);
-            float a = enabled ? 1f : BoardViewUtil.Num("personFile.tab.disabledAlpha", 0.4f);
-            if (!Mathf.Approximately(label.alpha, a)) label.alpha = a;
-        }
-
         /// <summary>
-        /// Kıskaçlı dosya etiketi (Aşama 6, R17f; <see cref="FolderData.TagText"/>): "İNCELEME" ya da "KISITLI · n V"; null gizler.
+        /// Kıskaçlı dosya etiketi (Aşama 6, R17f; <see cref="FolderData.TagText"/>): "KISITLI · n V" vb.; null gizler.
         /// Dosya açılınca verisinden kendiliğinden takılır, kapanınca kalkar.
         /// </summary>
         public void SetTag(string text)
         {
             if (fileTag != null) fileTag.Bind(text);
-        }
-
-        /// <summary>Sağ sayfanın not satırına yazar (ör. Core'un reddi); TAHLİYE damgası kalkar.</summary>
-        public void ShowNote(string text)
-        {
-            BoardViewUtil.SetText(note, text);
-            ResetStamp();
-        }
-
-        // ------------------------------------------------------------------ TAHLİYE basılı tutma
-
-        /// <summary>Klavye yolu: dosya açıkken Enter basılınca başlar (tutma 1,2 s).</summary>
-        public void BeginDismissHold()
-        {
-            if (!open || current == null) return;
-            if (!current.CanDismiss) { BoardViewUtil.SetText(note, current.DismissNote); return; }
-            StartHold(false, null);
-        }
-
-        /// <summary>Klavye yolu: Enter bırakıldı; 1,2 s dolmadıysa iptal.</summary>
-        public void EndDismissHold() { if (holding) CancelHold(); }
-
-        void StartHold(bool pointer, PointerEventData e)
-        {
-            holding = true; holdByPointer = pointer; holdEvent = e; landed = false;
-            holdStart = Time.unscaledTime;
-            ShowStamp(0f, 0f);
-        }
-
-        void CancelHold()
-        {
-            if (!holding) return;
-            holding = false; holdEvent = null;
-            ResetStamp();
-        }
-
-        void ResetStamp()
-        {
-            landed = false;
-            if (stamp == null) return;
-            stamp.alpha = 0f;
-            stamp.transform.localScale = Vector3.one;
-        }
-
-        void ShowStamp(float alpha, float drop)
-        {
-            if (stamp == null) return;
-            stamp.alpha = alpha;
-            float s = Mathf.Lerp(BoardViewUtil.Num("personFile.stamp.liftScale", 1.35f), 1f, drop);
-            stamp.transform.localScale = new Vector3(s, s, 1f);
         }
 
         // ------------------------------------------------------------------ işaretçi
@@ -403,15 +311,6 @@ namespace Corrigible.Desk
         public void OnPointerDown(PointerEventData eventData)
         {
             pressGo = eventData.pointerPressRaycast.gameObject;
-            if (eventData.button != PointerEventData.InputButton.Left || !interactive || Blocked || !open || current == null) return;
-            if (!Is(dismissTab, pressGo)) return;
-            if (!current.CanDismiss) { BoardViewUtil.SetText(note, current.DismissNote); return; }
-            StartHold(true, eventData);
-        }
-
-        public void OnPointerUp(PointerEventData eventData)
-        {
-            if (holding && holdByPointer) CancelHold();
         }
 
         public void OnPointerClick(PointerEventData eventData)
@@ -430,60 +329,17 @@ namespace Corrigible.Desk
                 if (dossier) dossier.Turn(Is(nextPage, go) ? 1 : -1);
                 UpdateColliders();
             }
-            else if (Is(reviewTab, go))
-            {
-                if (current.CanReview) Review?.Invoke();
-                else BoardViewUtil.SetText(note, current.ReviewNote);
-            }
-            else if (Is(accessTab, go))
-            {
-                if (current.CanRestrict) Access?.Invoke();
-                else BoardViewUtil.SetText(note, current.RestrictNote);
-            }
         }
 
         // ------------------------------------------------------------------ kare
 
         void Update()
         {
-            float now = Time.unscaledTime;
-            if (motion != null && motion.Tick(Time.unscaledDeltaTime) && !open)
-            {
-                SetPagesActive(false);
-                ResetStamp();
-            }
-
+            if (motion != null && motion.Tick(Time.unscaledDeltaTime) && !open) SetPagesActive(false);
             if (hovered && (Blocked || !interactive || open)) EndHover();
-
-            if (holding)
-            {
-                bool stillOn = !holdByPointer || (holdEvent != null && Is(dismissTab, holdEvent.pointerCurrentRaycast.gameObject));
-                if (!stillOn || !open) CancelHold();
-                else
-                {
-                    float p = (now - holdStart) / Mathf.Max(0.01f, BoardViewUtil.Num("motion.board.dismissHoldS", 1.2f));
-                    if (p >= 1f)
-                    {
-                        holding = false; holdEvent = null;
-                        landed = true; landedAt = now;
-                        Dismiss?.Invoke();
-                    }
-                    else ShowStamp(0.15f + 0.45f * p, 0.35f * p);
-                }
-            }
-            if (landed)
-            {
-                float s = BoardViewUtil.Num("motion.stampS", 0.1f);
-                float t = s <= 0 ? 1f : Mathf.Clamp01((now - landedAt) / s);
-                ShowStamp(Mathf.Lerp(0.6f, 1f, t), Mathf.Lerp(0.35f, 1f, BoardViewUtil.Out(t)));
-            }
         }
 
-        void OnDisable()
-        {
-            CancelHold();
-            EndHover();
-        }
+        void OnDisable() => EndHover();
     }
 
     /// <summary>

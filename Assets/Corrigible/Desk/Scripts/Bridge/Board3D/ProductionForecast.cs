@@ -5,7 +5,7 @@ using Corrigible.Core;
 namespace Corrigible.Desk.Bridge
 {
     /// <summary>Üretimin kapanışta durma nedeni (dilden bağımsız; metni <see cref="ProductionOutlook.StopReason"/>).</summary>
-    public enum ProductionStop { None, NoMaker, Starvation, StoreFull }
+    public enum ProductionStop { None, NoMaker, Starvation, StoreFull, Blackout }
 
     /// <summary>
     /// Kapanışta üretimin ne yapacağının tahmini (Revizyon 3 · Aşama 5; PLAN §1.7, D8): hangi tarif, üretici kim, çalışıyor mu, durursa
@@ -55,13 +55,14 @@ namespace Corrigible.Desk.Bridge
     /// "Kapanışta üretim olur mu" kuralının tek yeri (PLAN §1.1, W4), Core'un <c>AdvanceBoardProduction</c> koşullarıyla:
     /// <list type="bullet">
     /// <item>üretici: ayakta (<c>Alive &amp;&amp; Down &lt;= 0 &amp;&amp; Hp &gt; 0</c>) ve ÜRETİM cebinde (<c>Job == "craft"</c>) ilk kişi;</item>
+    /// <item>eşya deposu: <c>BoardDepotCount &gt;= boardEquipmentCapacity</c> (kişiye bağlı olmayan teçhizat; bağlı eşya tavana sayılmaz);</item>
     /// <item>açlık: kapanış erzağı 0'a iniyorsa (<c>Supplies + BoardFoodPreview &lt;= 0</c>; Core'un kırpılmamış dengesi public değil,
-    /// tek fark tam 0 dengesi; devir fişinin kuralı, D8);</item>
-    /// <item>eşya deposu: <c>Equipment.Count &gt;= boardEquipmentCapacity</c>;</item>
+    /// tek fark tam 0 dengesi; devir fişinin kuralı, D8). Kit kilidi: <c>boardStarvingKitProduction</c> açıkken bekleyen tarif eksik bir
+    /// rol kitiyse (<c>BoardKitMissing</c>) açlık üretimi durdurmaz;</item>
     /// <item>önce iş emri (başlamış ya da her girdisi tam ayrılmış ve stokta), yoksa otomatik yolun seçeceği tarif (tek kapanış);</item>
     /// <item>hız: <c>BoardSkillTier(üretici, "craft") &gt;= boardCraftSpeedTier</c> ise kapanış başına 1 + <c>boardCraftExtraProgress</c>.</item>
     /// </list>
-    /// Durma nedeninin sırası Core'un denetim sırasıdır: üretici, açlık, depo.
+    /// Durma nedeninin sırası Core'un denetim sırasıdır: karartma (KOS aşama 4; Core üretimi hiç çağırmaz), üretici, depo, açlık.
     /// </summary>
     public static class ProductionForecast
     {
@@ -72,7 +73,7 @@ namespace Corrigible.Desk.Bridge
             if (board == null) return ProductionOutlook.None;
             var b = sim.B;
             var producer = Producer(board);
-            var stop = StopOf(sim, producer);
+            var stop = StopOf(sim, producer, Pending(sim));
             string reason = ReasonText(stop);
             string maker = producer?.Name;
             bool runs = stop == ProductionStop.None;
@@ -110,14 +111,30 @@ namespace Corrigible.Desk.Bridge
         public static ResidentState Producer(PlanningBoardState board) =>
             board?.People.FirstOrDefault(p => p.Alive && p.Down <= 0 && p.Hp > 0 && p.Job == "craft");
 
-        /// <summary>Üretimi durduran koşul, Core'un sırasıyla (tarif ve girdiden bağımsız).</summary>
-        public static ProductionStop StopOf(Simulation sim, ResidentState producer)
+        /// <summary>Kapanışta sırası gelen tarif: ilk iş emrinin tarifi, emir yoksa otomatik yolun seçeceği; yoksa null.</summary>
+        public static BoardRecipe Pending(Simulation sim)
+        {
+            var board = sim?.Board;
+            if (board == null) return null;
+            var order = board.Orders.FirstOrDefault();
+            if (order != null) return sim.BoardRecipes.FirstOrDefault(r => r.Id == order.RecipeId);
+            return board.AutomaticProduction ? sim.AutomaticProductionRecipe : null;
+        }
+
+        /// <summary>
+        /// Üretimi durduran koşul, Core'un sırasıyla (girdiden bağımsız): üretici, depo, açlık. Açlık, bekleyen tarif
+        /// (<paramref name="pending"/>) eksik bir rol kitiyse durdurmaz (kit kilidi).
+        /// </summary>
+        public static ProductionStop StopOf(Simulation sim, ResidentState producer, BoardRecipe pending = null)
         {
             var board = sim?.Board;
             if (board == null) return ProductionStop.None;
+            // KOS aşama 4: karartmada Core üretimi hiç çağırmaz (AdvancePlanningBoard: if (!blackout)); bu yüzden önce gelir
+            if (sim.BlackoutActive) return ProductionStop.Blackout;
             if (producer == null) return ProductionStop.NoMaker;
-            if (Starving(sim)) return ProductionStop.Starvation;
-            if (board.Equipment.Count >= sim.B.boardEquipmentCapacity) return ProductionStop.StoreFull;
+            if (sim.BoardDepotCount >= sim.B.boardEquipmentCapacity) return ProductionStop.StoreFull;
+            if (Starving(sim) && !(sim.B.boardStarvingKitProduction && pending != null && sim.BoardKitMissing(pending.Output)))
+                return ProductionStop.Starvation;
             return ProductionStop.None;
         }
 
@@ -133,6 +150,7 @@ namespace Corrigible.Desk.Bridge
                 case ProductionStop.NoMaker: return Loc.T("üretici yok");
                 case ProductionStop.Starvation: return Loc.T("açlık");
                 case ProductionStop.StoreFull: return Loc.T("eşya deposu dolu");
+                case ProductionStop.Blackout: return Loc.T("karartma");
                 default: return null;
             }
         }

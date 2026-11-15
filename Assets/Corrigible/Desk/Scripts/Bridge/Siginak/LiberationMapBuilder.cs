@@ -20,6 +20,7 @@ namespace Corrigible.Desk.Bridge
             if (sim == null) return s;
             var lib = sim.S.Liberation;
             s.Tier = sim.Tier;
+            s.MaxTier = sim.MaxTier;
             s.Front = lib.CurrentRegion;
             var current = sim.LiberationRegion(lib.CurrentRegion);
             s.FrontOpen = current != null && !current.Completed;
@@ -189,9 +190,12 @@ namespace Corrigible.Desk.Bridge
             }
             into.Add(new SlipField
             {
-                Tier = sim.Tier, Label = Loc.T("TEHDİT"), Value = Loc.F("{0}/4", sim.Tier),
-                HoverTitle = Loc.F("TEHDİT · {0}/4", sim.Tier),
-                HoverLine = Loc.T("Özgür bölge sayısıyla yükselir. 3. kademede makineler kopyalanır, 4. kademede güçlenir."),
+                Tier = sim.Tier, Label = Loc.T("TEHDİT"), Value = Loc.F("{0}/{1}", sim.Tier, sim.MaxTier),
+                HoverTitle = Loc.F("TEHDİT · {0}/{1}", sim.Tier, sim.MaxTier),
+                // 4. kademe yalnız harekâtta ulaşılabiliyorsa anılır (Balance.liberationTier4At bölge sayısına eşitken gelmez).
+                HoverLine = sim.MaxTier >= 4
+                    ? Loc.T("Özgür bölge sayısıyla yükselir. 3. kademede makineler kopyalanır, 4. kademede güçlenir.")
+                    : Loc.T("Özgür bölge sayısıyla yükselir. 3. kademede makineler kopyalanır."),
             });
         }
 
@@ -464,7 +468,7 @@ namespace Corrigible.Desk.Bridge
             d.Occupation = Loc.F("İŞGAL {0}", DeskFormat.Percent(Occupation(area)));
             foreach (var s in area.Sectors)
                 d.Sectors.Add(new SlipSector { No = (s.Index + 1).ToString("00"), Name = s.Name, Kind = Kind(s), Mark = SectorMark.Locked });
-            d.Rule = Loc.F("{0} Tehdit {1}/4. Cephe açılınca 01 {2} baskına hazır olur.", Identity(regionId, true), sim.Tier, area.Sectors[0].Name);
+            d.Rule = Loc.F("{0} Tehdit {1}/{2}. Cephe açılınca 01 {3} baskına hazır olur.", Identity(regionId, true), sim.Tier, sim.MaxTier, area.Sectors[0].Name);
             d.Action = Loc.T("SEÇİLİ BÖLGEDE CEPHE AÇ");
             d.Cancel = Loc.T("Vazgeç");
             d.ActionEnabled = sim.SelectLiberationRegionCheck(regionId) == null;

@@ -405,55 +405,9 @@ def admission_drawer():
 
 def admission_marker():
     r = rng('AdmissionMarker')
-    x = silence(0.07)                                         # talimat işaretçisi “tık”ı
+    x = silence(0.07)                                         # işaret “tık”ı (olay tutanağı)
     add(x, ping(1650, 0.05, 0.008), 0.0, 1.0)
     add(x, click(r, 0.006, 2000, 0.0014), 0.0, 0.6)
-    return x
-
-
-def admission_slip():
-    r = rng('AdmissionSlip')
-    x = silence(0.35)                                         # slipS 0,35; yavaş yazıcı tıkırtısı
-    t = 0.0
-    while t < 0.33:
-        f = r.uniform(900, 1250)
-        add(x, ping(f, 0.018, 0.0035), t, r.uniform(0.55, 1.0))
-        add(x, click(r, 0.004, 1500, 0.001), t, 0.35)
-        t += r.uniform(0.024, 0.036)
-    return x
-
-
-def admission_intercom():
-    r = rng('AdmissionIntercom')
-    x = band(r, 0.2, 600, 3400)                               # intercomCrackleS 0,2
-    gates, gate = [], 1.0
-    for i in range(len(x)):
-        if i % n(0.006) == 0:
-            gate = r.choice((0.15, 0.35, 0.7, 1.0, 1.0))
-        gates.append(gate)
-    y = [v * g + 0.12 * math.sin(2 * math.pi * 100 * i / SR) for i, (v, g) in enumerate(zip(x, gates))]
-    return hump(y, 0.25)
-
-
-def admission_glass():
-    r = rng('AdmissionGlass')
-    x = silence(0.22)                                         # glassCoverS 0,2; cam “tin”, buğunun nefesi
-    add(x, ping(3300, 0.1, 0.02), 0.0, 1.0)
-    add(x, ping(5100, 0.06, 0.01), 0.0, 0.45)
-    add(x, click(r, 0.005, 4000, 0.001), 0.0, 0.5)
-    add(x, hump(band(r, 0.2, 2500, 8000)), 0.015, 0.22)
-    return x
-
-
-def admission_pad_tear():
-    r = rng('AdmissionPadTear')
-    x = silence(0.2)                                          # delikli sıra boyunca hızlanan yırtık
-    t, gap = 0.0, 0.026
-    while t < 0.16:
-        add(x, env_exp(band(r, 0.02, 1800, 8000), 0.006, 0.0005), t, r.uniform(0.6, 1.0))
-        t += gap
-        gap = max(0.007, gap * 0.86)
-    add(x, click(r, 0.008, 3500, 0.0015), t, 0.7)
     return x
 
 
@@ -492,8 +446,8 @@ CUES = [
     ('CueBoardBookOpen', board_book_open, 0.6), ('CueBoardPageTurn', board_page_turn, 0.5), ('CueBoardBookClose', board_book_close, 0.6),
     ('CueBoardRecipeLift', board_recipe_lift, 0.5), ('CueBoardProductSlide', board_product_slide, 0.5),
     ('CueAdmissionCounterDown', admission_counter_down, 0.8), ('CueAdmissionDrawer', admission_drawer, 0.65),
-    ('CueAdmissionMarker', admission_marker, 0.55), ('CueAdmissionSlip', admission_slip, 0.55), ('CueAdmissionIntercom', admission_intercom, 0.5),
-    ('CueAdmissionGlass', admission_glass, 0.5), ('CueAdmissionPadTear', admission_pad_tear, 0.55), ('CueAdmissionStampLift', admission_stamp_lift, 0.5),
+    # KOS aşama 7: eski kabulün bulgu fişi, interkom, buğu camı ve talep defteri sesleri (CueAdmission{Slip,Intercom,Glass,PadTear}) söküldü
+    ('CueAdmissionMarker', admission_marker, 0.55), ('CueAdmissionStampLift', admission_stamp_lift, 0.5),
     ('CueAdmissionCounterFold', admission_counter_fold, 0.7),
 ]
 

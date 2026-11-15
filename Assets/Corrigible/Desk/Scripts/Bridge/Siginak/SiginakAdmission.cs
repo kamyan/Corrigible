@@ -10,21 +10,19 @@ using UnityEngine.InputSystem;
 namespace Corrigible.Desk.Bridge
 {
     /// <summary>
-    /// Kapı ve kabul akışı (Revizyon 3 · Aşama 6, R9/R17; PLAN §1.3–§1.5, §1.11, §1.13, §1.14): K8/K8A/K8G/K8R pozları ve geri zinciri,
-    /// vuruş algısı (canlı oyunda aday değişince bir kez; yüklemede yok), tezgâh durumu, araç ve damga olaylarından Core komutları
-    /// (<c>GameController.ExecuteBoardCommand</c>; yeni komut yok), kabul dizisi (kapı), sesler, "TALİMAT n" teleksi, görülen sürüm
-    /// (<see cref="SiginakDeskStore"/>), kayıttan devamda animasyonsuz kurulum. Kartlı oyunda kapının tek sahibi.
+    /// Kapı ve kabul akışı (Revizyon 3 · Aşama 6, R9/R17; PLAN §1.3–§1.5, §1.11, §1.13, §1.14): K8/K8A/K8R pozları ve geri zinciri,
+    /// vuruş algısı (canlı oyunda grup değişince bir kez; yüklemede yok), tezgâh durumu, damga olaylarından Core komutları
+    /// (<c>GameController.ExecuteBoardCommand</c>), kabul dizisi (kapı), sesler, "KAPI" teleksi, kayıttan devamda animasyonsuz kurulum.
+    /// Kartlı oyunda kapının tek sahibi.
     /// <para>
-    /// Simülasyonu yalnız iki var olan komutla değiştirir: <c>InspectApplicant</c> (araçlar) ve <c>DecideApplicant</c> (damgalar). Her
-    /// komuttan önce Core'un kendi denetimi okunur (<c>ApplicantInspectionCheck</c>, <c>ApplicantDecisionCheck</c>); ret komutsuz bir
-    /// <see cref="AdmissionSound.Deny"/>'dır. Görünümler (<see cref="AdmissionStation"/>, araçlar, damgalar) yalnız anlık görüntüyü
-    /// (<see cref="AdmissionSnapshotBuilder"/>) çizer ve olay yayar; ses burada <see cref="CueOf"/> ile çalınır.
-    /// </para>
-    /// <para>
-    /// Sunum durumu (<see cref="AdmissionUi"/>: belge tezgâhta mı, görülen talimat sürümü, görülen dış kayıt sonucu) kayda girmez,
-    /// <c>liberation_desk.json</c>'a <see cref="SiginakDesk.SaveNotes"/> ile yazılır. Yeni oyunda ve yan dosyasız devamda güncel
-    /// sürüm görülmüş sayılır (v1 hiç "yeni" değildir; eleştiri 8). Talimat değişimi ve dış kayıt sonucu ilk K8/K8A varışında bir
-    /// kez oynar (D12).
+    /// KOS aşama 2 (aday grubu): kapıda 2–3 aday kartı ve grup fişi durur. Simülasyonu yalnız iki komutla değiştirir:
+    /// <c>ChooseCandidate</c> (KABUL damgası bir karta; dolu sığınakta fişte işaretlenen kişiyle) ve <c>PassCandidates</c> (GERİ ÇEVİR
+    /// damgası grup fişine). Her komuttan önce Core'un kendi denetimi okunur (<c>CandidateChoiceCheck</c>, <c>CandidatePassCheck</c>); ret
+    /// komutsuz bir <see cref="AdmissionSound.Deny"/>'dır. Yollanacak kişinin işareti sunum durumudur (<see cref="AdmissionUi.ReplaceId"/>;
+    /// komut yazmaz, kayda girmez). Yeni grup bir kez vurur ve teleks satırı düşer; süresi dolan grup için "gitti" satırı. Görünümler
+    /// (<see cref="AdmissionStation"/>, <see cref="CandidateGroupView"/>, damgalar) yalnız anlık görüntüyü
+    /// (<see cref="AdmissionSnapshotBuilder"/>) çizer ve olay yayar; ses burada <see cref="CueOf"/> ile çalınır. Eski tek adaylı kabulün
+    /// inceleme araçları (büyüteç, interkom, buğu camı, talep defteri), belgesi, talimat şeridi ve bulgu fişleri aşama 7'de söküldü.
     /// </para>
     /// <para>
     /// Esc'in tek girişi <c>LiberationDeskView.Escape</c> → <see cref="HandleEscape"/>; sürüklemesiz sağ tık <c>SiginakDesk.Back</c> →
@@ -37,7 +35,7 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] GameController game;
         [SerializeField] LiberationDeskView surface;
         [SerializeField] SiginakCameraRig rig;
-        [Tooltip("Talimat değişiminin satırı (TALİMAT n), kapanış teleksinden sonra.")]
+        [Tooltip("Kapı satırı (KAPI: grubun gelişi ya da gidişi), kapanış teleksinden sonra.")]
         [SerializeField] TelexFeed telex;
         [Header("Kapı")]
         [Tooltip("Kanat, çark, vuruş lambası, merdiven ışığı (kabul dizisi kapıyı burada açar).")]
@@ -46,14 +44,10 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] SiginakDoor doorController;
         [Header("Kabul istasyonu")]
         [SerializeField] AdmissionStation station;
-        [SerializeField] ColdGlassView glass;
-        [SerializeField] IntercomTool intercom;
-        [SerializeField] MagnifierTool magnifier;
-        [SerializeField] RequestPadTool pad;
-        [Tooltip("Dört karar damgası (sıra önemsiz; her biri kendi seçimini taşır).")]
+        [Tooltip("Karar damgaları: KABUL ve GERİ ÇEVİR (sıra önemsiz; her biri kendi seçimini taşır).")]
         [SerializeField] StampDecision[] stamps = Array.Empty<StampDecision>();
         [Header("Oda")]
-        [Tooltip("Görülen durum masanın yan dosyasına yazılır (SaveNotes); teleks satırı dosyalama bitince basılır.")]
+        [Tooltip("Teleks satırı dosyalama bitince basılır (ShiftFiling).")]
         [SerializeField] SiginakDesk desk;
         [SerializeField] PlanningBoardPresenter planningBoard;
         [Tooltip("İstasyonun üzerine gelme etiketi (istasyonda bağ yoksa bu verilir).")]
@@ -67,13 +61,12 @@ namespace Corrigible.Desk.Bridge
 
         readonly AdmissionUi ui = new AdmissionUi();
         readonly List<(string title, string body)> pendingTelex = new List<(string, string)>();
-        /// <summary>Bu sunum durumunun ait olduğu kayıt (yükleme / yeni oyun sırasında erken yan dosya yazımına karşı).</summary>
+        /// <summary>Bu sunum durumunun ait olduğu kayıt (başka bir kayıt yüklenince sunum durumu sıfırlanır).</summary>
         GameRecord uiOf;
         AdmissionSnapshot last;
-        string announcedId;
-        int protocolEvents;
-        bool commanding, glassPending, glassFog, glassOpen, lockedByMe;
-        SiginakPose glassReturn = SiginakPose.Admission;
+        /// <summary>Vuruşu çalmış (ya da yüklemede duyurulmuş sayılan) grubun anahtarı; null = kapıda grup yoktu.</summary>
+        string announcedKey;
+        bool commanding, lockedByMe;
         int escapeFrame = -10;
         RightButtonGesture right;
 
@@ -85,29 +78,28 @@ namespace Corrigible.Desk.Bridge
         bool stationDone, cameraMoved, doorOpened, leafSounded, doorClosed;
 
         Simulation Sim => game != null ? game.Sim : null;
-        string CandidateId => Sim?.Admission?.Candidate?.Resident?.Id;
-        /// <summary>Görülmemiş talimat (kurucuyla aynı kural: 0 = bilinmiyor, yeni sayılmaz).</summary>
-        bool OrdersUnseen => Sim?.Admission?.Protocol != null && ui.SeenOrdersVersion > 0 && ui.SeenOrdersVersion < Sim.Admission.Protocol.Version;
+        /// <summary>Kapıda bekleyen aday grubunun anahtarı; grup yoksa (ya da harekât bittiyse) null.</summary>
+        string GroupKey => AdmissionSnapshotBuilder.GroupWaiting(Sim) ? AdmissionSnapshotBuilder.GroupKey(Sim) : null;
 
         /// <summary>Bir dizi oynuyor (masa girdisi kapalı).</summary>
         public bool Busy => sequence != Sequence.None;
         /// <summary>Kamera K8 ailesinde ve kabul kartlı oyunda var.</summary>
         public bool Active => rig != null && InFamily(rig.Current) && Sim?.Board != null && Sim.Admission != null;
-        /// <summary>Sunum durumu (belge tezgâhta, görülen sürüm, görülen sonuç).</summary>
+        /// <summary>Sunum durumu (dolu sığınakta işaretli yollanacak kişi).</summary>
         public AdmissionUi Ui => ui;
         /// <summary>Son çizilen anlık görüntü (testler ve sahne denetimleri için).</summary>
         public AdmissionSnapshot Last => last;
         public SiginakDoor DoorController => doorController;
         public PlanningBoardPresenter PlanningBoard => planningBoard;
 
-        /// <summary>Kapanış teleksine satır (başlık, gövde): "TALİMAT n" + değişiklik metni.</summary>
+        /// <summary>Kapanış teleksine satır (başlık, gövde): "KAPI" + grubun gelişi ya da gidişi.</summary>
         public event Action<string, string> TelexLine;
         /// <summary>Çalınan her ses olayı (testler; ses <see cref="Sfx"/> ile ayrıca çalar).</summary>
         public event Action<AdmissionSound> Sounded;
 
-        /// <summary>K8 ailesi: kapı (K8), tezgâh (K8A), buğu camı (K8G), okuma (K8R).</summary>
+        /// <summary>K8 ailesi: kapı (K8), tezgâh (K8A), okuma (K8R).</summary>
         public static bool InFamily(SiginakPose pose) => pose == SiginakPose.Door || pose == SiginakPose.Admission ||
-            pose == SiginakPose.BreathGlass || pose == SiginakPose.AdmissionRead;
+            pose == SiginakPose.AdmissionRead;
 
         // ------------------------------------------------------------------ yaşam döngüsü
 
@@ -121,14 +113,10 @@ namespace Corrigible.Desk.Bridge
                 station.CounterClicked += ClickCounter;
                 station.DeskKeyClicked += ClickDeskKey;
                 station.PaperClicked += ClickPaper;
-                station.DocumentTaken += DocumentTaken;
+                station.ReplaceClicked += ClickReplace;
                 station.Sound += Play;
                 if (station.Tag == null && hoverTag != null) station.Tag = hoverTag;
             }
-            if (magnifier != null) { magnifier.Used += MagnifierUsed; magnifier.Sound += Play; }
-            if (intercom != null) { intercom.Used += IntercomUsed; intercom.Sound += Play; }
-            if (glass != null) { glass.Used += GlassUsed; glass.Clicked += GlassClicked; glass.Sound += Play; }
-            if (pad != null) { pad.Used += PadUsed; pad.PaperClicked += PadPaperClicked; pad.Sound += Play; }
             foreach (var s in stamps) if (s != null) { s.Pressed += StampPressed; s.Sound += Play; }
             ShareHoverTag();
             if (deskEdge != null) { deskEdge.Clicked += ClickDeskKey; deskEdge.BlockedOverride = DeskEdgeBlocked; }
@@ -145,55 +133,29 @@ namespace Corrigible.Desk.Bridge
                 station.CounterClicked -= ClickCounter;
                 station.DeskKeyClicked -= ClickDeskKey;
                 station.PaperClicked -= ClickPaper;
-                station.DocumentTaken -= DocumentTaken;
+                station.ReplaceClicked -= ClickReplace;
                 station.Sound -= Play;
             }
-            if (magnifier != null) { magnifier.Used -= MagnifierUsed; magnifier.Sound -= Play; }
-            if (intercom != null) { intercom.Used -= IntercomUsed; intercom.Sound -= Play; }
-            if (glass != null) { glass.Used -= GlassUsed; glass.Clicked -= GlassClicked; glass.Sound -= Play; }
-            if (pad != null) { pad.Used -= PadUsed; pad.PaperClicked -= PadPaperClicked; pad.Sound -= Play; }
             foreach (var s in stamps) if (s != null) { s.Pressed -= StampPressed; s.Sound -= Play; }
             if (deskEdge != null) { deskEdge.Clicked -= ClickDeskKey; deskEdge.BlockedOverride = null; }
             EndSequence(false);
             right.Reset();
         }
 
-        void MagnifierUsed() => UseTool(AdmissionTool.Papers);
-        void IntercomUsed() => UseTool(AdmissionTool.Interview);
-        void GlassUsed() => UseTool(AdmissionTool.Breath);
-        void PadUsed() => UseTool(AdmissionTool.Record);
         void StampPressed(StampChoice choice) => PressStamp(choice);
-        void PadPaperClicked(AdmissionPaper kind) => ClickPaper(kind, 0);
-
-        /// <summary>K8G'de cama tık (kullanılmış araç da olsa): geldiği poza döner (PLAN §1.5; W2 <c>Clicked</c> her tıkta gelir).</summary>
-        void GlassClicked()
-        {
-            if (sequence != Sequence.None || rig == null) return;
-            if (rig.Current == SiginakPose.BreathGlass) { rig.Focus(glassReturn); return; }
-            // K8/K8A'da kullanılmış ya da kilitli cam: komutsuz ret sesi (öteki araçlar kendi Deny'larını çalar; cam yalnız Clicked yayar)
-            var breath = last?.Tools[(int)AdmissionTool.Breath];
-            if (Interactive && breath != null && !breath.Enabled) Play(AdmissionSound.Deny);
-        }
-
         /// <summary>
-        /// Üzerine gelme etiketi: sahne bağı tek (bu bileşende); bağı boş görünümlere verilir. Buğu camı ve interkom istasyonun dışındadır
-        /// (kapı kanadı ve kasası), etiketi yalnız buradan alırlar (W2 sözleşmesi).
+        /// Üzerine gelme etiketi: sahne bağı tek (bu bileşende); bağı boş damgalara verilir.
         /// </summary>
         void ShareHoverTag()
         {
             var tag = hoverTag != null ? hoverTag : station != null ? station.Tag : null;
             if (tag == null) return;
-            if (glass != null && glass.Tag == null) glass.Tag = tag;
-            if (intercom != null && intercom.Tag == null) intercom.Tag = tag;
-            if (magnifier != null && magnifier.Tag == null) magnifier.Tag = tag;
-            if (pad != null && pad.Tag == null) pad.Tag = tag;
             foreach (var s in stamps) if (s != null && s.Tag == null) s.Tag = tag;
         }
 
         /// <summary>
-        /// Tıklanabilirlik: istasyon (damgalar, büyüteç, defter dahil) ve istasyon dışındaki iki araç (buğu camı, interkom) aynı kurala
-        /// uyar — K8 ailesinde, dizi yokken, oda kilitli değilken. Aile dışında çarpıştırıcıları kapalıdır: K1'den kapıya tık kapının
-        /// kendi hedefine düşer.
+        /// Tıklanabilirlik: istasyon (damgalar, aday kâğıtları dahil) K8 ailesinde, dizi yokken, oda kilitli değilken. Aile dışında
+        /// çarpıştırıcıları kapalıdır: K1'den kapıya tık kapının kendi hedefine düşer.
         /// </summary>
         void ApplyInteractive()
         {
@@ -203,8 +165,6 @@ namespace Corrigible.Desk.Bridge
                 station.SetReading(rig != null && rig.Current == SiginakPose.AdmissionRead);
                 station.SetInteractive(on);
             }
-            if (glass != null) glass.SetInteractive(on);
-            if (intercom != null) intercom.SetInteractive(on);
         }
 
         /// <summary>Masa kenarı yalnız K8 ailesinde (ve oda kilitli değilken) tıklanır.</summary>
@@ -216,7 +176,7 @@ namespace Corrigible.Desk.Bridge
             {
                 // Vuruş lambası kartlı oyunda burada: aday varken amber (vuruş parlamaları Knock'ta), yoksa sönük. Eski denetleyicinin
                 // yükleme sıfırlaması (ResetClosed) bir kare sonra düzelir.
-                bool waiting = CandidateId != null && Sim.S.Ending == null;
+                bool waiting = GroupKey != null;
                 if (door.Knocking != waiting && sequence != Sequence.Admit) door.SetKnocking(waiting);
             }
             ReadSequenceInput();
@@ -244,85 +204,47 @@ namespace Corrigible.Desk.Bridge
         }
 
         /// <summary>
-        /// Diziyi, bekleyen buğu oynatımını ve teleks satırını <paramref name="dt"/> kadar ilerletir (edit modda testler sürer). Kapının
-        /// kendi hareketini <see cref="DoorProp"/> sürer.
+        /// Diziyi ve teleks satırını <paramref name="dt"/> kadar ilerletir (edit modda testler sürer). Kapının kendi hareketini
+        /// <see cref="DoorProp"/> sürer.
         /// </summary>
         public void Advance(float dt)
         {
             if (dt < 0) dt = 0;
             if (sequence != Sequence.None) StepSequence(dt);
-            if (glassPending && rig != null && rig.Current == SiginakPose.BreathGlass && !rig.InTransition)
-            {
-                glassPending = false;
-                glassOpen = true;
-                if (glass != null) glass.Play(glassFog, null);
-            }
             FlushTelex();
         }
 
         // ------------------------------------------------------------------ durum
 
-        /// <summary>Yeni oyun: v1 görülmüş, aday yok sayılır; vuruş yok.</summary>
+        /// <summary>Yeni oyun: sunum durumu sıfır, kapıdaki grup (varsa) duyurulmuş sayılır; vuruş yok.</summary>
         void NewGame()
         {
             EndSequence(false);
             ResetPresentation();
-            var sim = Sim;
-            uiOf = sim?.Record;
+            uiOf = Sim?.Record;
             ui.Reset();
-            if (sim?.Admission != null)
-            {
-                ui.SeenOrdersVersion = sim.Admission.Protocol.Version;
-                ui.SeenResultFor = ArrivedResultFor(sim);
-                protocolEvents = ProtocolEvents(sim);
-            }
-            announcedId = CandidateId;
+            announcedKey = GroupKey;
             Render(false);
-            SnapMagnifier();
         }
 
         /// <summary>
-        /// Kayıttan devam (ve açılış): sunum durumu yan dosyadan (yoksa ya da oynanmamış oyunda yeni oyun kuralıyla), bekleyen aday
-        /// duyurulmuş sayılır (vuruş çalmaz, D12), istasyon animasyonsuz son durumuna oturur.
+        /// Kayıttan devam (ve açılış): sunum durumu sıfır, bekleyen grup duyurulmuş sayılır (vuruş çalmaz, D12), istasyon animasyonsuz
+        /// son durumuna oturur.
         /// </summary>
         public void Restore()
         {
             EndSequence(false);
             ResetPresentation();
-            var sim = Sim;
-            uiOf = sim?.Record;
+            uiOf = Sim?.Record;
             ui.Reset();
-            if (sim?.Admission != null)
-            {
-                bool played = sim.Record != null && sim.Record.commands.Count > 0;
-                if (!(played && ui.Apply(SiginakDeskStore.LoadAdmissionSeen(sim.Record))))
-                {
-                    ui.SeenOrdersVersion = sim.Admission.Protocol.Version;
-                    ui.SeenResultFor = ArrivedResultFor(sim);
-                }
-                protocolEvents = ProtocolEvents(sim);
-            }
-            announcedId = CandidateId;
+            announcedKey = GroupKey;
             pendingTelex.Clear();
             Render(false);
-            SnapMagnifier();
         }
 
         /// <summary>
-        /// Yeni oyun ve yan dosyasız yükleme için <see cref="AdmissionUi.SeenResultFor"/> başlangıcı (PLAN §1.2, D12): kapıdaki adayın dış
-        /// kayıt sonucu zaten geldiyse görülmüş sayılır (yüklemede ağızdan çıkış animasyonu yok, fiş statik); gelmediyse null — sonuç
-        /// sonraki kapanışta gelince ilk K8/K8A varışına dek BEKLENİYOR kalır (§1.8). Adayı koşulsuz "görülmüş" saymak bekleyen talebin
-        /// sonucunu K1'de çıkarırdı.
-        /// </summary>
-        string ArrivedResultFor(Simulation sim)
-        {
-            var id = CandidateId;
-            return id != null && sim.AdmissionFindingCode(id, "record") != null ? id : null;
-        }
-
-        /// <summary>
-        /// Oyun değişti (<c>GameController.Changed</c>): yeni aday bir kez vurur (tezgâh iner), yeni talimat teleks satırını bekletir,
-        /// istasyon yeniden çizilir. Kendi komutlarımızın ve dizilerin sırasında çizim ertelenir (sunum kendi sırasıyla gelir).
+        /// Oyun değişti (<c>GameController.Changed</c>): yeni grup bir kez vurur (tezgâh iner) ve teleks satırını bekletir, istasyon
+        /// yeniden çizilir. Kendi komutlarımızın ve dizilerin sırasında çizim ertelenir (sunum kendi sırasıyla gelir).
         /// </summary>
         public void Refresh()
         {
@@ -332,54 +254,37 @@ namespace Corrigible.Desk.Bridge
             if (!ReferenceEquals(sim.Record, uiOf)) { Restore(); return; }
             if (sim.Admission != null)
             {
-                var id = sim.S.Ending == null ? CandidateId : null;
-                if (id != null && id != announcedId)
+                string key = GroupKey;
+                var adm = sim.Admission;
+                // Bekleyen grup karar verilmeden gitti (süre aşımı bu kapanışta): tek satır. Aynı kapanışta yeni (ör. acil) grup gelse de
+                // yazılır, geliş satırından önce. Seçme ve geri çevirme teleks yazmaz (PressStamp announcedKey'i sıfırlar).
+                if (announcedKey != null && key != announcedKey)
                 {
-                    announcedId = id;
+                    var gone = adm.Passed.Count > 0 ? adm.Passed[adm.Passed.Count - 1] : null;
+                    if (gone != null && gone.Kind == "expired" && gone.Shift == sim.S.Day)
+                        pendingTelex.Add((Loc.T("KAPI"), Loc.T("Adaylar karar beklemeden gitti.")));
+                }
+                if (key != null && key != announcedKey)
+                {
+                    // Yeni grup: kapı bir kez vurur, teleks satırı kapanış teleksinden sonra basılır
                     if (door != null) door.Knock();
                     Play(AdmissionSound.Knock);
+                    int wait = Math.Max(0, adm.GroupWaitingUntil - sim.S.Day);
+                    pendingTelex.Add((Loc.T("KAPI"), adm.GroupEmergency
+                        ? Loc.F("ACİL · {0} aday kapıda. Bekleme: {1} vardiya.", adm.Group.Count, wait)
+                        : Loc.F("{0} aday kapıda. Bekleme: {1} vardiya.", adm.Group.Count, wait)));
                 }
-                int protocols = ProtocolEvents(sim);
-                if (protocols > protocolEvents)
-                {
-                    var protocol = sim.Admission.Protocol;
-                    pendingTelex.Add((Loc.F("TALİMAT {0}", protocol.Version), Loc.T(protocol.Change)));
-                }
-                protocolEvents = protocols;
+                announcedKey = key;
             }
             Render(true);
         }
 
         void Relabel() => Render(false);
 
-        static int ProtocolEvents(Simulation sim) => sim.Admission.Events.Count(e => e.Kind == "protocol");
-
         void ResetPresentation()
         {
-            glassPending = glassOpen = false;
-            glassReturn = SiginakPose.Admission;
             right.Reset();
             ReturnStamps(false);
-            // Kayıttan devam / yeni oyun: süren araç hareketleri animasyonsuz biter (W2 sözleşmesi 6)
-            if (intercom != null) intercom.Stop();
-            if (glass != null) glass.ResetClosed();
-        }
-
-        /// <summary>
-        /// Kayıttan devamda büyüteç dinlenme pozundadır: tasarımda büyüteç yalnız karşılaştırma anında belgenin üstündedir (R17_inspect,
-        /// R17_read); sonraki durumlarda (R17_pending, R17_stamped) cetvel dinlenme yerinde, kıskaçtaki fişleri örtmez.
-        /// </summary>
-        void SnapMagnifier()
-        {
-            if (magnifier != null) magnifier.ReturnToRest(false);
-        }
-
-        /// <summary>Başka bir araç ya da damga işe girince büyüteç dinlenmeye döner (R17_pending / R17_stamped).</summary>
-        void RestMagnifier()
-        {
-            if (magnifier == null) return;
-            var st = magnifier.State;
-            if (st == MagnifierTool.MagnifierState.Inspect || st == MagnifierTool.MagnifierState.ToInspect) magnifier.ReturnToRest(true);
         }
 
         /// <summary>
@@ -392,6 +297,9 @@ namespace Corrigible.Desk.Bridge
             if (sim?.Board == null || sim.Admission == null) { last = null; return; }
             var s = AdmissionSnapshotBuilder.Build(sim, ui);
             if (s == null) return;
+            // Kurucunun saymadığı işaret (yer açıldı, kişi panodan düştü, grup değişti) sunum durumundan da silinir: sığınak yeniden
+            // dolarsa eski işaret kendiliğinden geri gelmez
+            if (ui.ReplaceId != null && s.Group?.ReplaceId != ui.ReplaceId) ui.ReplaceId = ui.ReplaceForGroup = null;
             if (s.Counter == CounterState.Folded && sequence == Sequence.None && rig != null && InFamily(rig.Current) && station != null &&
                 (station.Counter == CounterState.Down || station.Counter == CounterState.Lowering))
                 s.Counter = CounterState.Down;
@@ -403,22 +311,6 @@ namespace Corrigible.Desk.Bridge
         {
             if (station != null) station.Bind(s, animate);
             ApplyInteractive();
-            if (magnifier != null && s.Tools[(int)AdmissionTool.Papers] != null) magnifier.Bind(s.Tools[(int)AdmissionTool.Papers]);
-            if (intercom != null && s.Tools[(int)AdmissionTool.Interview] != null) intercom.Bind(s.Tools[(int)AdmissionTool.Interview]);
-            if (glass != null && s.Tools[(int)AdmissionTool.Breath] != null) glass.Bind(s.Tools[(int)AdmissionTool.Breath]);
-            if (pad != null)
-            {
-                if (s.Tools[(int)AdmissionTool.Record] != null) pad.Bind(s.Tools[(int)AdmissionTool.Record]);
-                // Yaprak GİDEN'de: talep gönderildi ve sonuç (görülmüş olarak) henüz gelmedi = kıskaçta BEKLENİYOR fişi var (W4 sözleşmesi c)
-                if (s.Request != null)
-                {
-                    bool outgoing = s.Request.Sent && s.Slips.Any(x => x != null && x.Tool == AdmissionTool.Record && x.Kind == SlipVerdict.Pending);
-                    pad.Bind(s.Request, outgoing);
-                    // Animasyonsuz bağlama (kayıttan devam, dil değişimi): yaprak uçmaz, GİDEN'de oturur. Defterin ilk bağlaması
-                    // talepsiz bir anlık görüntüyle tükenmiş olabilir; o zaman Bind gönderimi animasyonla başlatırdı.
-                    if (!animate && outgoing && pad.State != RequestPadTool.PadState.Outgoing) pad.SnapOutgoing();
-                }
-            }
             foreach (var st in stamps)
             {
                 if (st == null) continue;
@@ -432,15 +324,6 @@ namespace Corrigible.Desk.Bridge
 
         /// <summary>Komut yazılabilir mi (Core'un denetimi ayrıca okunur).</summary>
         bool CanAct => game != null && Sim?.Board != null && Sim.Admission != null && Interactive;
-
-        /// <summary>
-        /// Yan dosyaya yazılacak görülen durum: <paramref name="record"/> bu durumun kaydıysa bellekteki, değilse dosyadaki (yükleme
-        /// sırasında başka bir dinleyici <see cref="SiginakDesk.SaveNotes"/>'u erken çağırırsa önceki oyunun durumu yazılmasın).
-        /// </summary>
-        public SiginakDeskStore.AdmissionSeen SeenFor(GameRecord record) =>
-            record != null && ReferenceEquals(record, uiOf) ? ui.ToSeen() : SiginakDeskStore.LoadAdmissionSeen(record);
-
-        void SaveNotes() { if (desk != null) desk.SaveNotes(); }
 
         // ------------------------------------------------------------------ pozlar ve geri zinciri
 
@@ -468,7 +351,7 @@ namespace Corrigible.Desk.Bridge
             return Back();
         }
 
-        /// <summary>Sürüklemesiz sağ tık: bir seviye geri (damga → dizi → K8R → K8A → K8 → K1; K8G geldiği poza).</summary>
+        /// <summary>Sürüklemesiz sağ tık: bir seviye geri (damga → dizi → K8R → K8A → K8 → K1).</summary>
         public void HandleBack() => Back();
 
         bool Back()
@@ -480,7 +363,6 @@ namespace Corrigible.Desk.Bridge
             switch (rig.Current)
             {
                 case SiginakPose.AdmissionRead: rig.Focus(SiginakPose.Admission); return true;
-                case SiginakPose.BreathGlass: rig.Focus(glassReturn); return true;
                 case SiginakPose.Admission: rig.Focus(SiginakPose.Door); return true;
                 case SiginakPose.Door: Leave(); return true;
                 default: return false;
@@ -491,51 +373,17 @@ namespace Corrigible.Desk.Bridge
         {
             if (!InFamily(pose))
             {
-                glassPending = false;
-                if (glassOpen) { glassOpen = false; if (glass != null) glass.Close(); }
                 ReturnStamps(false);
                 if (sequence != Sequence.None) Skip();
                 // Aileden çıkış: görülecek bir şey yoksa tezgâh şimdi katlanır (T4)
                 Render(true);
                 return;
             }
-            if (pose != SiginakPose.BreathGlass)
-            {
-                glassPending = false;
-                if (glassOpen) { glassOpen = false; if (glass != null) glass.Close(); }
-            }
             ApplyInteractive();
         }
 
-        /// <summary>
-        /// Kamera poza oturdu. K8 ya da K8A'ya ilk varışta görülmemiş talimat değişimi oynar (eski şerit ESKİ cebine, yenisi yuvaya,
-        /// eşleşen dosya varsa İNCELEME FİŞİ) ve gelmiş dış kayıt sonucunun fişi ağızdan bir kez çıkar (PLAN §1.8, §1.9).
-        /// </summary>
-        public void OnArrived(SiginakPose pose)
-        {
-            ApplyInteractive();
-            if (pose != SiginakPose.Door && pose != SiginakPose.Admission) return;
-            var sim = Sim;
-            if (sim?.Admission == null || sequence != Sequence.None) return;
-            bool changed = false;
-            if (OrdersUnseen)
-            {
-                var s = last ?? AdmissionSnapshotBuilder.Build(sim, ui);
-                if (station != null && s != null)
-                    station.PlayOrdersChange(s.Archive.Count > 0 ? s.Archive[0] : null, s.Orders, s.Slips.FirstOrDefault(x => x != null && x.Review));
-                ui.SeenOrdersVersion = sim.Admission.Protocol.Version;
-                changed = true;
-            }
-            var id = CandidateId;
-            if (id != null && ui.SeenResultFor != id && sim.AdmissionFindingCode(id, "record") != null)
-            {
-                ui.SeenResultFor = id;
-                changed = true;
-            }
-            if (!changed) return;
-            SaveNotes();
-            Render(true);
-        }
+        /// <summary>Kamera poza oturdu: tıklanabilirlik yeniden kurulur.</summary>
+        public void OnArrived(SiginakPose pose) => ApplyInteractive();
 
         // ------------------------------------------------------------------ istasyon girdileri (olayların karşılığı)
 
@@ -548,8 +396,8 @@ namespace Corrigible.Desk.Bridge
         }
 
         /// <summary>
-        /// Kâğıda tık. K8A'da çekmecedeki belge tezgâha alınır (T3), tezgâhtaki kâğıt K8R'de okunur (çapa kâğıda göre); K8R'de ikinci
-        /// tık K8A'ya döner; K8 / K8G'de tezgâha tık gibi.
+        /// Kâğıda tık (aday kartı, grup fişi): K8A'da kâğıt K8R'de okunur (çapa kâğıda göre); K8R'de ikinci tık K8A'ya döner; K8'de tezgâha
+        /// tık gibi.
         /// </summary>
         public void ClickPaper(AdmissionPaper kind, int index)
         {
@@ -557,14 +405,6 @@ namespace Corrigible.Desk.Bridge
             var pose = rig.Current;
             if (pose == SiginakPose.AdmissionRead) { rig.Focus(SiginakPose.Admission); return; }
             if (pose != SiginakPose.Admission) { if (CounterDown) rig.Focus(SiginakPose.Admission); return; }
-            var id = CandidateId;
-            if (kind == AdmissionPaper.Document && id != null && !ui.DocumentOnCounter(id))
-            {
-                TakeDocument(id);
-                SaveNotes();
-                Render(true);
-                return;
-            }
             if (station != null && readAnchor != null)
             {
                 var read = station.ReadPose(kind, index, ReadDistance);
@@ -580,92 +420,28 @@ namespace Corrigible.Desk.Bridge
             Leave();
         }
 
+        /// <summary>Tezgâh inik mi: istasyon varsa onun durumu, yoksa (testler) Core'dan aynı kural (kapıda grup bekliyor).</summary>
+        bool CounterDown => station != null ? station.Counter == CounterState.Down : GroupKey != null;
+
         /// <summary>
-        /// Tezgâh inik mi: istasyon varsa onun durumu, yoksa (testler) Core'dan aynı kural (aday var ya da görülmemiş talimat).
+        /// Grup fişindeki bir satıra tık (dolu sığınak): kişi yollanacak olarak işaretlenir; aynı kişiye ikinci tık işareti kaldırır.
+        /// Yalnız sunum durumu (<see cref="AdmissionUi.ReplaceId"/>): komut yazmaz. Kişi KABUL basışında aynı komutla yollanır.
         /// </summary>
-        bool CounterDown => station != null ? station.Counter == CounterState.Down : CandidateId != null || OrdersUnseen;
+        public void ClickReplace(string personId)
+        {
+            if (!Interactive || string.IsNullOrEmpty(personId)) return;
+            string key = GroupKey;
+            if (key == null) return;
+            bool same = ui.Replace(key) == personId;
+            ui.ReplaceForGroup = same ? null : key;
+            ui.ReplaceId = same ? null : personId;
+            Play(AdmissionSound.DocDrop);
+            Render(true);
+        }
 
         static float ReadDistance => Num("admission.readDistanceM", 0.318f);
 
         static float Num(string key, float fallback) => SiginakTheme.Active != null ? SiginakTheme.Active.NumberOf(key, fallback) : fallback;
-
-        void TakeDocument(string candidateId)
-        {
-            ui.DocumentOnCounterFor = candidateId;
-            if (station != null) station.TakeDocument();
-        }
-
-        /// <summary>
-        /// İstasyon belgeyi çekmeceden kendisi aldı (çekmecedeki belgeye tık, incelemenin T3'ü): sunum durumu ve yan dosya (P15: kayıttan
-        /// devamda belge tezgâhta).
-        /// </summary>
-        void DocumentTaken()
-        {
-            var id = CandidateId;
-            if (id == null || ui.DocumentOnCounter(id)) return;
-            ui.DocumentOnCounterFor = id;
-            SaveNotes();
-            // K8'den çekmecedeki belgeye tık: belge tezgâha, kamera tezgâha (K8A)
-            if (rig != null && rig.Current == SiginakPose.Door && Interactive) rig.Focus(SiginakPose.Admission);
-        }
-
-        // ------------------------------------------------------------------ araçlar → InspectApplicant
-
-        /// <summary>
-        /// Bir aracın kullanımı: tam bir <c>inspectApplicant</c> komutu (Core denetimi önce; ret komutsuz <c>Deny</c>). İlk araç belgeyi
-        /// çekmeceden tezgâha alır. Başarıda aracın hareketi ve fişin ağızdan çıkışı; SOĞUK GÖZLEM'de kamera K8G'ye gider, kapak ve
-        /// buğu varışta oynar. K8G'de cama ikinci tık geldiği poza döner. İşlediyse true.
-        /// </summary>
-        public bool UseTool(AdmissionTool tool)
-        {
-            if (tool == AdmissionTool.Breath && rig != null && rig.Current == SiginakPose.BreathGlass && sequence == Sequence.None)
-            {
-                rig.Focus(glassReturn);
-                return false;
-            }
-            if (!CanAct) return false;
-            var sim = Sim;
-            string kind = AdmissionIds.KindOf(tool);
-            if (sim.ApplicantInspectionCheck(kind) != null) { Play(AdmissionSound.Deny); return false; }
-            var id = CandidateId;
-            bool took = !ui.DocumentOnCounter(id);
-            if (took) TakeDocument(id);
-            var result = Command(s => s.InspectApplicant(kind));
-            if (result == null || !result.Ok)
-            {
-                Play(AdmissionSound.Deny);
-                Render(true);
-                if (took) SaveNotes();
-                return false;
-            }
-            if (tool != AdmissionTool.Papers) RestMagnifier();
-            var snap = AdmissionSnapshotBuilder.Build(sim, ui);
-            var slip = snap?.Slips.LastOrDefault(x => x != null && x.Tool == tool);
-            switch (tool)
-            {
-                case AdmissionTool.Papers:
-                    if (magnifier != null) magnifier.PlayInspect(sim.AdmissionFindingCode(id, "papers"), null);
-                    break;
-                case AdmissionTool.Interview:
-                    // LED hat açıkken yanar: cızırtı + gövdenin harf harf dökümü (fiş yüzü aynı süreyle döker)
-                    if (intercom != null) intercom.Play(IntercomTool.CrackleS + IntercomTool.TranscriptSeconds(slip?.Body), null);
-                    break;
-                case AdmissionTool.Breath:
-                    glassReturn = rig.Current == SiginakPose.Door ? SiginakPose.Door : SiginakPose.Admission;
-                    glassFog = sim.AdmissionFindingCode(id, "breath") == "fog";
-                    glassPending = true;
-                    rig.Focus(SiginakPose.BreathGlass);
-                    break;
-                case AdmissionTool.Record:
-                    if (pad != null) pad.PlaySend(null);
-                    break;
-            }
-            // Fiş ağızdan bir kez çıkar (anahtarına göre; istasyon aynı anahtarı Bind'de yeniden oynatmaz)
-            if (station != null && slip != null) station.PlayInspection(tool, slip);
-            Render(true);
-            if (took) SaveNotes();
-            return true;
-        }
 
         ActResult Command(Func<Simulation, ActResult> command)
         {
@@ -674,26 +450,46 @@ namespace Corrigible.Desk.Bridge
             finally { commanding = false; }
         }
 
-        // ------------------------------------------------------------------ damgalar → DecideApplicant ve diziler
+        // ------------------------------------------------------------------ damgalar → ChooseCandidate / PassCandidates ve diziler
+
+        /// <summary>Damga basıldı: hedef kart, görünümün son kabul ettiği KABUL hedefidir (<see cref="CandidateGroupView.StampCandidateId"/>).</summary>
+        public bool PressStamp(StampChoice choice) =>
+            PressStamp(choice, station != null && station.Candidates != null ? station.Candidates.StampCandidateId : null);
 
         /// <summary>
-        /// Damga belgeye basıldı: tam bir <c>decideApplicant</c> komutu (Core denetimi önce; ret komutsuz <c>Deny</c>, damga rafına).
-        /// Başarıda iz belgede kalır ve karar dizisi başlar (PLAN §1.11): KABUL / KISITLI'da belge ve fişler çekmeceye, kamera K8'e,
-        /// tezgâh katlanır, sonra çark, kanat, bekleme, kapanış; REDDET ve YARDIM'da istasyonun çekmece dizisi. İşlediyse true.
+        /// Damga basıldı. KABUL: <c>ChooseCandidate</c> (<paramref name="candidateId"/>; dolu sığınakta fişte işaretli kişi aynı komutla
+        /// yollanır). GERİ ÇEVİR: <c>PassCandidates</c>. Core denetimi önce; ret komutsuz <c>Deny</c>, damga rafına. Başarıda iz kartta /
+        /// fişte kalır ve karar dizisi başlar: KABUL'de kâğıtlar çekmeceye, kamera K8'e, tezgâh katlanır, sonra çark, kanat, bekleme,
+        /// kapanış; GERİ ÇEVİR'de istasyonun çekmece dizisi (kapı açılmaz). Başka seçim komutsuz reddedilir. İşlediyse true.
         /// </summary>
-        public bool PressStamp(StampChoice choice)
+        public bool PressStamp(StampChoice choice, string candidateId)
         {
             if (!CanAct) { Deny(choice); return false; }
             var sim = Sim;
-            string id = AdmissionIds.ChoiceOf(choice);
-            if (sim.ApplicantDecisionCheck(id) != null) { Deny(choice); return false; }
-            // Komuttan önceki görüntü: aday ve belgesi; iz bunun üstüne basılır (komuttan sonra aday yoktur)
+            Func<Simulation, ActResult> command;
+            // Komuttan önceki görüntü: grup ve kartları; iz bunun üstüne basılır (komuttan sonra grup Core'dan düşer)
             var before = AdmissionSnapshotBuilder.Build(sim, ui);
-            if (before != null) AdmissionSnapshotBuilder.Stamp(before.Document, choice, sim.B);
-            var result = Command(s => s.DecideApplicant(id));
+            if (choice == StampChoice.Admit)
+            {
+                // Tek doğruluk kaynağı görüntü: kurucu, yer açıldıysa ya da kişi panodan düştüyse işareti saymaz
+                string replace = before?.Group?.ReplaceId;
+                if (sim.CandidateChoiceCheck(candidateId, replace) != null) { Deny(choice); return false; }
+                AdmissionSnapshotBuilder.StampCard(before?.Group, candidateId, sim.B);
+                command = s => s.ChooseCandidate(candidateId, replace);
+            }
+            else if (choice == StampChoice.Reject)
+            {
+                if (sim.CandidatePassCheck() != null) { Deny(choice); return false; }
+                AdmissionSnapshotBuilder.StampPass(before?.Group);
+                command = s => s.PassCandidates();
+            }
+            else { Deny(choice); return false; }
+            var result = Command(command);
             if (result == null || !result.Ok) { Deny(choice); Render(true); return false; }
+            ui.ReplaceId = ui.ReplaceForGroup = null;
+            // Kendi kararımız: grup bizim komutumuzla kalktı; Refresh bunu "gitti" saymasın
+            announcedKey = null;
             if (station != null && before != null) station.Bind(before, true);
-            RestMagnifier();
             StartSequence(choice);
             return true;
         }
@@ -712,7 +508,7 @@ namespace Corrigible.Desk.Bridge
 
         void StartSequence(StampChoice choice)
         {
-            sequence = choice == StampChoice.Admit || choice == StampChoice.Restricted ? Sequence.Admit : Sequence.Out;
+            sequence = choice == StampChoice.Admit ? Sequence.Admit : Sequence.Out;
             sequenceChoice = choice;
             timeline = DecisionTimeline.From(SiginakTheme.Active);
             sequenceT = openedAt = closedAt = 0;
@@ -724,14 +520,14 @@ namespace Corrigible.Desk.Bridge
             ApplyInteractive();   // dizi: hepsi etkileşimsiz
             if (station != null) station.PlayDecision(choice, () => { if (id == sequenceId) stationDone = true; });
             // Komut basışta yazıldı: istasyon dizisi bitince uygulanacak son görüntü komuttan SONRAKİ durumdur (aday yok). Dizi
-            // sürerken Refresh susar; bu bağlanmazsa FinishSequence basıştan önceki görüntüyü (aday, tezgâh İNİK) uygular: tezgâh
-            // katlanıştan sonra yeniden iner, belge ve fişler geri gelir. Dizi sırasında Bind yalnız son görüntüyü saklar (+ şerit).
+            // sürerken Refresh susar; bu bağlanmazsa FinishSequence basıştan önceki görüntüyü (grup, tezgâh İNİK) uygular: tezgâh
+            // katlanıştan sonra yeniden iner, kartlar geri gelir. Dizi sırasında Bind yalnız son görüntüyü saklar.
             if (station != null && station.SequenceActive)
             {
                 var after = AdmissionSnapshotBuilder.Build(Sim, ui);
                 if (after != null) station.Bind(after, true);
             }
-            // İstasyon dizisi anında bittiyse (istasyon yok ya da modeli bağlı değil: kabuk/test) REDDET / YARDIM'ın da ilk adımı bu karede biter
+            // İstasyon dizisi anında bittiyse (istasyon yok ya da modeli bağlı değil: kabuk/test) GERİ ÇEVİR'in de ilk adımı bu karede biter
             if (sequence == Sequence.Out && stationDone) EndSequence(true);
         }
 
@@ -799,7 +595,7 @@ namespace Corrigible.Desk.Bridge
 
         // ------------------------------------------------------------------ teleks
 
-        /// <summary>"TALİMAT n" satırı kapanışın "VARDİYA DEVREDİLDİ"sinden sonra basılır (dosyalama karanlığı bitince).</summary>
+        /// <summary>"KAPI" satırı kapanışın "VARDİYA DEVREDİLDİ"sinden sonra basılır (dosyalama karanlığı bitince).</summary>
         void FlushTelex()
         {
             if (pendingTelex.Count == 0 || desk != null && desk.ShiftFiling) return;
@@ -830,13 +626,6 @@ namespace Corrigible.Desk.Bridge
             {
                 case AdmissionSound.CounterDown: return Cue.AdmissionCounterDown;
                 case AdmissionSound.Drawer: return Cue.AdmissionDrawer;
-                case AdmissionSound.TinsOut: return Cue.AdmissionDrawer;
-                case AdmissionSound.Marker: return Cue.AdmissionMarker;
-                case AdmissionSound.SlipOut: return Cue.AdmissionSlip;
-                case AdmissionSound.IntercomCrackle: return Cue.AdmissionIntercom;
-                case AdmissionSound.GlassCover: return Cue.AdmissionGlass;
-                case AdmissionSound.Fog: return Cue.AdmissionGlass;
-                case AdmissionSound.PadTear: return Cue.AdmissionPadTear;
                 case AdmissionSound.StampLift: return Cue.AdmissionStampLift;
                 case AdmissionSound.CounterFold: return Cue.AdmissionCounterFold;
                 case AdmissionSound.StampPress: return Cue.StampHeavy;
@@ -852,7 +641,7 @@ namespace Corrigible.Desk.Bridge
     }
 
     /// <summary>
-    /// Kabul dizisinin zaman çizelgesi (PLAN §1.11; süreler <c>admission.motion</c> ve <c>_local_a6</c>), t = 0 basışın sonu: belge ve fişler
+    /// Kabul dizisinin zaman çizelgesi (PLAN §1.11; süreler <c>admission.motion</c> ve <c>_local_a6</c>), t = 0 basışın sonu: aday kâğıtları
     /// çekmeceye (<see cref="DocsS"/> = <c>drawerS</c>), kamera K8'e, tezgâh katlanır (<see cref="FoldS"/> = lamba + kanat + konsollar),
     /// kanat açılmadan önce katlanış biter (<see cref="OpenAtS"/>); çark <see cref="WheelS"/>, kanat <see cref="LeafS"/>, açık bekleme
     /// <see cref="HoldS"/>, sonra kapanış.
@@ -868,7 +657,7 @@ namespace Corrigible.Desk.Bridge
             DocsS = docsS; FoldS = foldS; WheelS = wheelS; LeafS = leafS; HoldS = holdS; CloseCapS = closeCapS;
         }
 
-        /// <summary>Çark dönmeye başlar: belge çekmecede ve tezgâh katlı (kanat açılırken tezgâh katlı, R9_open; eleştiri 3).</summary>
+        /// <summary>Çark dönmeye başlar: kâğıtlar çekmecede ve tezgâh katlı (kanat açılırken tezgâh katlı, R9_open; eleştiri 3).</summary>
         public float OpenAtS => DocsS + FoldS;
         /// <summary>Kanat kapanmaya başlar.</summary>
         public float CloseAtS => OpenAtS + WheelS + LeafS + HoldS;

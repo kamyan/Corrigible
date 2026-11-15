@@ -1,8 +1,14 @@
 # Durum, kararlar ve açık işler
 
-_Son güncelleme: 2026-11-09 (kartlı başlangıç rehberi; Revizyon 3 Aşama 10: EN ve punto geçişi, gölge atlası ve kare süresi, onaylı eski görünüm temizliği (T1), 42 yer tutucu ses; Aşama 9: model baskın kitleri, isimli saha, ozalit antet ve son tur kayıp onayı; Aşama 8: menü sahanlığı, puantaj/kart, giriş sekansı ve iki ayarlar dolabı; Aşama 7: isimli saha kâğıtları, iki sayfalık kişi dosyası ve CRT; Aşama 6: kapı ve kabul, gözetmen kuralı ve kayıt biçimi 15; Aşama 5: tarif defteri ve üretim; Aşama 4: vardiya kapanışı ve devir fişi; Aşama 3: 3B kartlı pano ve kartlar; Aşama 2: komuta odasının modelleri ve poz ışığı; Aşama 0–1: keşif ve model hattı; önceki: vardiya şalterinin eski modeli geri geldi; kartla görev alanına atama, ayrı üretim/depo ve 3D devir makinesi; kartlı vardiya panosu, isimli topluluk, kişisel eğitim/üretim, belgeyle kabul ve gecikmeli sızma; önceki: ayarlar dolabı ve menü, baskın mekânları)_
+_Son güncelleme: 2026-11-15 (KOS aşama 8, denge ve belgeler: altı `Balance` alanı bot ölçümüyle değişti, bütün ölçüm sunumun kuralıyla ve 80 tohumla, tüketim 0,40, olay aralığı 2–3 kaldı, bot `Tools/DengeBotu/`'da; inceleme sonrası rehber düzeltmeleri; belgeler son hâlinde; KOS aşama 8, rehber: aday grubu, olay tutanağı, hedef satırı, İFŞA ve son şalter adımları; KOS aşama 8, ilk adım: ikinci tur kararları uygulandı; KOS aşama 7: eski tek adaylı kabulün Core, sunum, sahne, test, çeviri ve ses sökümü; menüde kapı ve ayarlar dolabı odadaki yeni modellerle; 2026-11-13 model entegrasyonu: kullanıcının yerleştirdiği masa, kapı, monitör, telsiz ve duvar modelleri sisteme bağlandı, eskileri sahneden çıktı; 2026-11-09: kartlı başlangıç rehberi; Revizyon 3 Aşama 10: EN ve punto geçişi, gölge atlası ve kare süresi, onaylı eski görünüm temizliği (T1), 42 yer tutucu ses; Aşama 9: model baskın kitleri, isimli saha, ozalit antet ve son tur kayıp onayı; Aşama 8: menü sahanlığı, puantaj/kart, giriş sekansı ve iki ayarlar dolabı; Aşama 7: isimli saha kâğıtları, iki sayfalık kişi dosyası ve CRT; Aşama 6: kapı ve kabul, gözetmen kuralı ve kayıt biçimi 15; Aşama 5: tarif defteri ve üretim; Aşama 4: vardiya kapanışı ve devir fişi; Aşama 3: 3B kartlı pano ve kartlar; Aşama 2: komuta odasının modelleri ve poz ışığı; Aşama 0–1: keşif ve model hattı; önceki: vardiya şalterinin eski modeli geri geldi; kartla görev alanına atama, ayrı üretim/depo ve 3D devir makinesi; kartlı vardiya panosu, isimli topluluk, kişisel eğitim/üretim, belgeyle kabul ve gecikmeli sızma; önceki: ayarlar dolabı ve menü, baskın mekânları)_
 
 ## Nerede kaldık
+
+**KOS (aday seçimi, sığınak olayları ve yeni sonlar) bitti** (13–15 Kasım, aşama 1–8;
+[KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md](KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md)): kapıda 2–3 adaylı grup ve şüphe kademeleri, on dört
+sığınak olayı ve sızma zinciri, ifşa, `dusus`/`terk`/son şalter ve zaferin üç tonu; eski tek adaylı kabul söküldü; rehber yeni
+oynanışa göre 26 adım; denge bot ölçümüyle ayarlandı (altı alan, aşağıda "KOS aşama 8: denge ve belgeler"; düzenek `Tools/DengeBotu/`). Kayıt biçimi 17.
+EditMode 1186/1186, PlayMode 91/91. Açık kalanlar "Açık işler"in başında.
 
 **Başlangıç rehberi** (9 Kasım): yeni kartlı harekâtta emir belgesinden sonra açılan 18 adım; pano/gerçek kart ataması, isimli kadro, gerçek baskın, rapor, Boşta dinlenme ve şalter → fiş → EVRAK. Aynı kayıtta adım korunur, eski kayda dayatılmaz, EĞİTİMİ BİTİR ile kapatılabilir. Simülasyon, denge, RNG ve kayıt biçimi değişmedi. Doğrulama ve kapsam: `Baslangic_Rehberi/README.md`.
 
@@ -21,16 +27,17 @@ Soldaki eski sığınak dolabının yerinde daha küçük ayaklı pano bulunur; 
 yoktur. Kişi kartı Boşta, Teknisyen, Analist, EMP ve diğer belirgin görev alanlarına bırakılarak atanır; üretim ve
 depo ayrı alanlardır. Teçhizat kartı kişinin üstüne bırakılır, depoya taşınarak kişiden çıkarılır. Vardiya panodan
 ayrıdır: masadaki kapaklı vardiya şalterinin kapağı kaldırılıp kolu indirilir; yanından çıkan kâğıt mevcut EVRAK
-kutusuna bırakılınca kararıp açılır ve bir vardiya ilerler. 2–4 vardiyada bir aday kapıyı çalar; belgesi kapının
-yanındaki kabul tezgâhında büyüteç, interkom, buğu camı ve talep defteriyle incelenir, karar damgayla verilir;
-talimatlar değişir. Dış kaydın gözetmeni Boşta'nın ilk uygun kişisidir. Robot kimliği gelişte sabittir; iki kalıcı iz ve müdahale fırsatından sonra görevine bağlı
-kaynak sabotajı yapabilir. Oda seviyeleri, anonim yedekler ve eski 23 ziyaretçi döngüsü bu modelde çalışmaz. Eski
+kutusuna bırakılınca kararıp açılır ve bir vardiya ilerler. 3–4 vardiyada bir kapıya 2–3 kişilik aday grubu gelir; kapının
+yanındaki kabul tezgâhında kartlar ve grup fişi durur, oyuncu KABUL damgasıyla en çok birini alır ya da GERİ ÇEVİR'le grubu
+gönderir (dolu sığınakta aynı kararla birini yollar). Sızma, tecrit, kısıt ve yollama sığınak olaylarının kâğıtlarıyla yürür;
+ifşa, `dusus`, `terk` ve son şalter yeni sonlardır ([KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md](KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md)).
+Eski tek adaylı kabul (belge incelemesi, talimatlar, gözetmen, elle kısıt/tahliye) KOS aşama 7'de söküldü. Oda seviyeleri, anonim yedekler ve eski 23 ziyaretçi döngüsü bu modelde çalışmaz. Eski
 kural yolu regresyon testleri için `planningBoardEnabled = false` ile korunur.
 
-Kayıt biçimi **15** (Aşama 6, gözetmen kuralı K4-A); pano, üretim, eğitim, basılı fiş ve kişi kabulü komutlarla yeniden
-kurulur. Biçim 14 ve öncesi yeni kuralla devam etmez; yeni kayıt eski sürümün üzerine yazılmadan sürüm numaralı yedeği
-korunur (`liberation_savegame.json.v14.backup`). Biçim 14 hiç commit edilmediği için kayıp yalnız geliştirme makinesindeki
-kayıttır: orada KAYITTAN DEVAM görünmez, yeni oyun gerekir. Türkçe ve İngilizce.
+Kayıt biçimi **17** (KOS: 16 aday grubu ve olaylar, 17 ifşa, yeni sonlar ve son şalter; aşama 7 sürümü değiştirmedi); pano,
+üretim, eğitim, basılı fiş, aday seçimi, olay kararı ve son şalter komutlarla yeniden kurulur. Biçim 16 ve öncesi yeni kuralla
+devam etmez; yeni kayıt eski sürümün üzerine yazılmadan sürüm numaralı yedeği korunur (`liberation_savegame.json.v16.backup`).
+Türkçe ve İngilizce.
 Önceki tam koşu (Aşama 10): EditMode **988/988**, PlayMode **85/85**.
 Kartlı panonun ilk gerçek Play akışında atama/takas, Boşta, Depo, eğitim, üretim, fiziksel fiş ve kayıttan devam doğrulandı;
 o koşunun ayrıntıları `UI_KartliPano/DOGRULAMA.md` ile `test_sonucu.json` içinde. Önceki bot başarı
@@ -41,6 +48,367 @@ oranları yeni kişi ve ekonomi dengesini doğrulamaz.
 güven, YZ alarmı, hazırlık sığınağı, bölge kimliği ve eğitim: `6e658a5`). Sonrası (baskında tıklama düzeltmeleri, alarm
 panosu, harita havuzu ve torbası, ikmal kaçışı, makine aklı, sivillere saldıran makineler ve güven ödülü, sığınağın kapısı):
 `c6f61e9`; build: `05ffdcb`; telsiz: `9d16037`; tasarım revizyonu 2: `927296b`; Madenci, Sis uzmanı, kadro seçimi, plaka rafı ve haritanın kenarı: `8097337`; sonra `acc1b7e`, `411d3eb`, `c1a743a` (kartlı pano ve Revizyon 3 öncesi). Revizyon 3 (Aşama 0–10) `c1a743a` üstünde, commit edilmedi.
+
+## KOS aşama 8: denge ve belgeler (2026-11-14/15)
+
+KOS'un son aşaması. Bot ölçümünün önerdiği denge uygulandı, belgeler son hâline getirildi; inceleme sonrası bütün ölçüm sunumun
+kuralıyla ve 80 tohumla yinelendi. Kural, RNG sırası ve komutlar değişmedi; kayıt biçimi **17**'de kaldı. Tasarım belgesinin
+ölçüm tablosu §8 "Ölçüm sonuçları", oyunun sayıları `OYUN-TASARIMI.md` › "Denge ölçümü".
+
+- **Düzenek: `Tools/DengeBotu/`** (gerçek Core + `Tests/EditMode/RaidBot.cs`, Mono'da derlenen konsol programı; README). İnceleme
+  sonrası projeye alındı (önceden oturumun geçici klasöründeydi ve silinirse 0,40 kararı yeniden üretilemezdi). `kos.sh
+  asama8.txt` bu bölümün bütün koşularını yeniden üretir; derlenen bot oturumdaki son koşunun satırlarını birebir verdi.
+- **İlk ölçüm ve sapma.** İlk ölçüm (40 tohum × 120 vardiya, beş kapı × dört olay politikası ve şalter satırları, 960 harekât; 30
+  aday set) yedi alan önerdi. Oyunda denerken görüldü: önerilen tüketimle (0,575) V.001 net tüketimi 3,9 ve ilk erzak olayı V.005.
+  Botun `Plan`'ı `gather` (İkmal, kademe 1'de +1,4 erzak) görevini atıyor ve kuruluştaki `care` (Bakım) kişisini tutuyordu; Core
+  bu görevleri kabul eder ama yayındaki panoda yuvaları yok, sunum (`PlanningBoardPresenter.RetireJobs`) onları Boşta'ya indirir.
+  Bot sunumun kuralıyla (`RETIRE=1`) yeniden koşuldu ve tüketim 0,40 seçildi (net 2,5; toplayıcılı 3,9 − 1,4 = 2,5 ile aynı).
+- **Uygulanan değerler** (`Balance.cs` varsayılanı ve `Settings/BalanceConfig.asset`, yalnız bu alanlar; asset kodla yansımayla
+  alan alan aynı, 259/259):
+
+  | Alan | Önce | Şimdi | Neden (sunum kuralıyla ölçülen) |
+  |---|---|---|---|
+  | `liberationServerExtraTurns` | 1 | 2 | Sunucu kaçışı; ilk ölçümde başarısızlık %11 → %6 (tek başına yeniden ölçülmedi) |
+  | `liberationTier3At` / `liberationTier4At` | 6 / 10 | 7 / 12 | 4. kademe 12 bölgelik harekâtta gelmez (başarısızlık %30, baskın başına 2,06 sivil); kod yerinde; göstergeler `Simulation.MaxTier`'i okur ("TEHDİT n/3") |
+  | `liberationTrustPerRegion` | 3 | 4 | dagilma'yı ödül tarafından karşılar |
+  | `boardSuppliesPerResident` | 0,35 | **0,40** | Erzak baskısı; öneri 0,575 toplayıcılı botla yapılmıştı |
+  | `boardLootSupplies` | 6 | 4 | 13 Kasım kararı 2; tüketimle birlikte "iki ikmal atlanırsa uyarı" |
+  | `eventGapMax` | 3 | **3** (2 denendi) | 2, toplayıcılı botun kısa harekâtına göre seçilmişti (12,6 → 14,4); sunumun kuralıyla erzak olayları da açılınca 2'de olay/harekât 16,6 (bant 12–15 dışı), 3'te 14,7. Zafer %68 / %64 (aynı 80 tohum, gürültü içinde); 60. vardiyada süren 20 / 8 |
+
+- **Son ölçüm** (uygulanan denge, 6 yapılandırma × 80 tohum; "iyi" = karışık+tecrit, karışık+ucuz, kefilli+ucuz, 240 harekât):
+  zafer %64, dagilma %28, terk %5, `dusus` %2; zafer uzunluğu ort 48,3 / med 48; olay/harekât 14,7; `erzak_azaliyor` görülen %53,
+  aç kapanış görülen %44; temiz ton %8, gölgeli %5; 60. vardiyada süren 8/240; harekât başına ölü 6,4, baskın başına sivil 1,7.
+  Taban (aynı kural, eski yedi değer, 40 tohum): zafer %35, dagilma %62, `erzak_azaliyor` %0, olay 11,9. Öteki altı alan sunum
+  kuralıyla da işe yarıyor. Ayrıntılı tablo tasarım §8'de.
+- **Tüketimin duyarlılığı** (olay aralığı 2–3, iyi, 40 tohum):
+
+  | Tüketim | Zafer | terk | `erzak_azaliyor` | Aç kapanış |
+  |---|---|---|---|---|
+  | 0,375 | %62 | %0 | %28 | %20 |
+  | **0,40** | **%62** | **%6** | **%47** | **%36** |
+  | 0,425 | %58 | %6 | %62 | %53 |
+  | 0,45 (aralık 2) | %60 | %16 | %67 | — |
+
+  0,40 hem terk (< %10) hem `erzak_azaliyor` (≥ %30) hedefini tutar ve 0,375 ile 0,425 arasında eğim diktir: obur ya da onuncu
+  kişi gibi küçük bir değişiklik açlığı belirgin kaydırır. Bot hep tam tayın verir ve takası reddeder; insan oyuncuda erzak baskısı
+  daha düşük çıkar. Elle sınamada yarım tayın ve takasla bakılmalı.
+- **Kayıt.** Sürüm 17 kalır. Kural (tasarım §6 "Sürüm"; A5 §3): sürüm, `Step` ya da RNG sonucunu değiştiren bir Core
+  değişikliğinde artar; 17 hiç yayınlanmadı ve diskte v17 kaydı yok. Bu turda kural ve RNG sırası aynı, yalnız varsayılan sayılar
+  değişti; denge kayda yazılır (`GameRecord.balance`, bütün alanlar) ve kayıttan devam kaydın dengesiyle kurulur
+  (`BalanceConfig.asset` okunmaz). `Simulation.MaxTier` türetilmiş okuyucudur (çekim ve yazma yok). Doğrulama (Unity, eval): eski
+  dengeyle tohum 79'da baskınsız 24 kapanış ve inceleme sonrası `ShelterEventTests.Play` ile baskınlı (sentetik sonuç, en çok 16
+  baskın) 12 + 12 harekât; JSON gidiş-dönüşünden sonra `Replay.Restore` gün, RNG, erzak, güven, baskın sayısı, özgür bölge,
+  kademe, canlı, olay günlüğü ve sonda birebir aynı, geri gelen denge yazılanla aynı (24/24). Gerçek kayıt yerindeki
+  `liberation_savegame.json` sürüm 16 (13 Kasım); yüklenmez, dokunulmadı.
+- **Testler (altın değerler gerçek Core'dan yeniden üretildi; davranış kuralı değişmedi, yalnız sayı).**
+  - `ShelterEventTests.Draws_Seed79_TwoGroupsThreeEvents_GoldenTimeline`: başlangıç erzağı 13 (baskınsız sığınak 9. vardiya
+    dolayında tükensin); olay aralığı 2–3 ile yeniden üretildi: olağan açılışlar 5, 7, 9, 12, 15; çekim noktaları aynı (grup 32,
+    olağan açılış 2, vadeli 2, zincir ve karar 0).
+  - `ShelterEventTests.Replay_CampaignWithEvents_SameStateAndEnding`: tohum 1000–1059 (on dört olayın hepsi; `buyuk_hirsizlik`
+    1050'de). `Balance_Clone_…`: `eventGapMax` 3. `ShelterEventCaseTests.LowRations_…`: tüketim 2,5. `HalfRation_…`: kurulum
+    tüketime bağlı. `CandidateGroupTests.FullShelter_LowStock_…`: stok elle 1,5. `RegionIdentityTests.Tier_…`: kademe tablosu ve
+    `MaxTier` (uygulanan 3, eski eşiklerle 4, `liberationTier4At` 11 ile 4).
+  - `Rev3BoardSnapshotTests.Header_*` ("erzak 24 (−2,5)"), `Rev3HandoverSlipFactsTests.Facts_V001_Retired79` (21,5, −2,5),
+    `Facts_JsonRoundTrip_EmptyNamesStayEmpty` (JsonUtility'nin bir ulp'lik okuma kayması: sayılar toleransla, metin ikinci
+    gidiş-dönüşte birebir; fişte erzak bir ondalık). `SiginakMapTests` TEHDİT satırı "n/m".
+  - PlayMode `CandidatePlayTests` (2): erzak olayı grupla aynı günlerde açılıp fişi kilitliyordu; `SettleEvent` açık olayı güvenli
+    seçenekle gerçek komutla kapatır.
+  - Sonuç: EditMode **1186/1186**, PlayMode **91/91**; çevrimdışı Core 275/275.
+- **Play'de denendi** (DeskGame, tohum 79, yalıtılmış kayıt klasörü): oyun asset'in değerleriyle açılır (V.001 tüketimi 2,5);
+  baskınsız kapanışlarda erzak 24 → 6,8 ve ilk olay V.008'de `erzak_azaliyor` (kapıda 2 aday, fiş "olay bekliyor"). 0,575
+  denemesinde aynı olay V.005'teydi; olay hata ayıklama kurulumu ve `dusus` tarifi (`GELISTIRME.md`) son raporu SIĞINAK DÜŞTÜ ile
+  açtı. O turun görüntüleri editörün `Temp/` klasöründeydi (`a8d_*.png`; geçici, silinmiş olabilir). Gerçek kayıtlar ve
+  `* Dyn SDF.asset`'ler oturum öncesiyle aynı.
+- **Hedef dışı kalanlar ve öneriler** (karar geliştiricinin, "Açık işler"):
+  1. **Zafer uzunluğu** ort 48,3 / med 48 (hedef 35–45) ve **60. vardiyada süren** 8/240. 36 sektör en az 36 vardiya; üstüne ~5
+     başarısız baskın, ~7 boş vardiya, ~1,4 karşı saldırı. Balance'ın kalan kaldıraçları dagilma'yı artırıyor ya da etkisiz. Daha
+     iyi baskın oynayan bot (`ALT=16`) medyan 43,5 verdi: hedef iyi oyuncu için tutuyor. Öneri: hedef kalsın, elle sınamayla bakılsın;
+     tutmazsa yol kodda (sektör ya da bölge sayısı).
+  2. **Temiz ton** %8 (hedef %10–30); usta botta %13. Ölçüt (taban 0, her 15 vardiyada +1 ölüm) en çok ölüm satırında tutmuyor
+     (zaferlerin %89'u); bot harekât başına ~6,4 kişi kaybediyor. Öneri: ölçüt kalsın; elle sınamada temiz zafer görülmezse
+     `victoryCleanDeathShifts` 12 (bot %14).
+  3. **Gölgeli ton** %5 (iyi), %6 (bütün): bandın alt ucu. Yalnız "ucuz"un görmezden geldiği sızmacıdan doğar.
+  4. **"Al ve yolla"** %76, en iyi öteki politikadan (cömert+yolla %71, karışık+ucuz %69) 5–7 puan iyi (80 tohum; gürültü
+     sınırında). `dismissSupplies` 2 → 4 farkı kapatıyor (al ve yolla %71) ve karışık+ucuz'u değiştirmiyor (%69); yolluk rehber ve
+     fiş metinlerinde canlı yazılır, testlerde de kullanılır. Karar geliştiricinin.
+  5. **"Hep yolla"da insan payı** kapıya bağlı: karışık kapıda yollananların %82'si insan, cömertte %33, al ve yollada %45.
+  6. **dagilma** %28. Son darbe çoğunlukla baskında kırılan sivil (%72). Dağılmaların %41'i ilk 20 vardiyada, %49'u 35.
+     vardiyadan sonra: ölümle süren yıpranma (medyan 5 ölü, 6 canlı). **`liberationTrustStart` 10 → 12 bunu değiştirmedi** (80
+     tohum, %29): önceki öneri geri çekildi. Geç sarmal için bakılacak kollar: bölge ya da sivil ödülü, Bakım olmadan iyileşme,
+     ölümün kadroya etkisi.
+  7. **Soru 14 (`anma`):** olayların %8'i, tetik değişmedi.
+- **Botun sınırları.** RaidBot gerçek oyuncudan çok sivil kırıyor ve çok kişi kaybediyor olabilir (1,7 sivil/baskın, ~6,4
+  ölü/harekât). Kapı ve olay kararları sabit kurallı; `erzak_azaliyor`'da hep tam tayın, takas hep ret, üretim ve aşçı ataması
+  basit, eğitim fırsatları kullanılmıyor: açlık, terk ve ölüm üst sınır. Üç "iyi" yapılandırma çoğu tohumda aynı yolu izlediği
+  için 40 tohumda "iyi" küme yaklaşık ±7 puan oynar (tohum 1–40 / 41–80: zafer %62 / %66, temiz ton %11 / %5); kararlar 80 tohumla.
+
+## KOS aşama 8: rehber (2026-11-14)
+
+Rehberli ilk vardiyalar yeni oynanışa göre güncellendi (tasarım §7 "Rehber", Docs kararı: dört biçimden rehberli ilk
+vardiyalar). Simülasyon, denge, RNG ve kayıt biçimi değişmedi (sürüm 17).
+
+- **Akış (26 adım):** ilk vardiyanın 17 adımı aynı. İlk vardiya dosyalanınca (`Day > 0`; rapor görülmeden kapanan vardiya da)
+  **HEDEF VE SAYAÇLAR** gelir: kazanma (bütün sektörler) ve kaybettirenler (güven 0, ifşa eşiği, açlıkla eksik kalan sığınak;
+  alarm eşiği oyunu bitirmez, bir sektörü geri aldırır ve güveni düşürür; aşama 8 incelemesinde düzeltildi); altında canlı **hedef satırı** (ONERILER Ö4:
+  "HEDEF · sektör 0/36 · güven 10 · alarm 1/10 · ifşa 0/6"; değer ve etiketi bölünmez boşlukla bağlı). Sonra **konu bölümü**:
+  EVRAK'a ilk tutanak düşünce "OLAY TUTANAĞI" (tepsiden al; fiş kilidi "olay bekliyor") ve "SATIR SEÇ, KARARA BAĞLA" (bedel,
+  risk, GÜVENLİ satır her durumda açık ama bedelsiz değil); kapıya ilk grup gelince "KAPIDA ADAYLAR" (KAPI tuşu, tezgâh) ve
+  "KARTI OKU, DAMGALA" (şüphe satırı, getirdiği ve kişiye bağlı teçhizat, en çok biri, KABUL karta / GERİ ÇEVİR fişe, dolu
+  sığınakta fişte yollanacak kişi ve yolluk). Hangisi önce gelirse o; tezgâhtan ayrılan ya da tutanağı tepsiye koyan oyuncu
+  bir önceki adıma döner. İkisi yokken "VARDİYAYI SÜRDÜR" hedef satırıyla bekler. İkisi de bir kez karara bağlanınca (ya da
+  V.011'e konusuz girilirse) "İFŞA VE İZLER" (bir iz şüphe, iki iz güçlü kanıt; görmezden gelinen iz ifşayı artırır; tecrit
+  her zaman bulgu vermez; KONUM ÇÖZÜLDÜ: sorgu, son baskın ya da son şalter yetişmezse sığınak düşer), "SON ŞALTER VE ÇEKİLME" (mühürlü; ÇEKİLME yenilgi değil, TAHLİYE yenilgi) ve
+  "ARTIK KOMUTA SENDE". Not başlığı ilk vardiyadan sonra "REHBER".
+- **Rehber sürerken son şalter "mühürlü · rehber"** (aşama 6 kilidi); İFŞA şeridinin satırı ve "konum çözüldü" teleksi de onu
+  önermez (`SiginakDesk.TutorialSealsSwitch`). Bekleme V.011'e girilince biter (`WatchLastDay` = 10 kapanış): rehber şalteri
+  sonsuza dek mühürlemez. Konu adımları gelişe göre seçildiği için konu bölümünde not sayacı adım numarası yerine
+  "REHBER · KONU" yazar.
+- **Eski kabul yolu:** son bilgi kartındaki kabul/olay paragrafı kalktı (yerine konu adımları); rehber metinlerinde eski
+  kabulün sözcükleri yok (test). Eski oda yolunun `TutorialFlow`/`TutorialRaid`'i kartsız oyuna ait, dokunulmadı.
+- **Kod:** `PlanningTutorialFlow` (konu adımları `Topic`, `BodyText`, `GoalLine`, `WatchLastDay`), `SiginakTutorial` (bağlam:
+  grup, tezgâh pozu, tutanak, "bir kez karara bağlandı" kayıttan; yeni `[SerializeField] shelterEvent`; konu bölümünde baskın
+  tahtasında not gizli). Sahne: `DeskGame.unity`'de yalnız bu bağ (tek satır). 19 yeni metin TR+EN; eski "go" metni silindi.
+- **Testler:** `PlanningTutorialFlowTests` 13 (8 yeni), `DeskBridgeTests` bağ satırı, `PlanningTutorialPlayTests` 6 (2 yeni:
+  gerçek akışta ilk olay ve ilk grup, şalter mührü; 26 adımın TR/EN sığması). EditMode 1186/1186, PlayMode 91/91.
+- **Play'de denendi** (tohum 79, komutla kapanış; aşama 8 incelemesi sonrası yeniden): ilk grup V.005'te (2 aday), ilk olay
+  V.008'de (`erzak_azaliyor`; ikinci grup da kapıda ama grup konusu bitmiş); tutanak elde iken not kâğıdın sağ kenarına bitişik
+  (yazı çerçevesiyle aralık 1,9 px), tezgâhta kartların, fişin ve damgaların üstüne binmiyor; not başlığı tek satır "REHBER",
+  konu bölümünde sayaç "REHBER · KONU". 18–26. adımların TR ve EN görüntüleri toplu olarak
+  `Docs/Baslangic_Rehberi/screens/kos8_rehber_{tr,en}.jpg` (kalıcı); tek tek görüntüler oturum klasöründeydi (geçici).
+- **İnceleme sonrası düzeltmeler (2026-11-15):** "HEDEF VE SAYAÇLAR" yanlış kural anlatıyordu ("ALARM eşikte … kaybettirir";
+  alarm eşiği oyunu bitirmez, son sektörü geri aldırır ve güveni 1 düşürür; `terk` hiç anılmıyordu): metin kaybettirenleri doğru
+  sayar. İFŞA adımı teleksle aynı üç çıkışı söyler (sorgu, son baskın ya da son şalter); son şalter adımı "sığınak eksik" der;
+  kapı adımı "KAPI tuşuyla kapıya dön, inik tezgâha tıkla". Rehber sürerken İFŞA şeridinin satırı ve "konum çözüldü" teleksi son
+  şalteri önermez (önce yalnız güne bakıyordu). İlk vardiyanın "İLK VARDİYA · REHBER" başlığı notta iki satıra kırılıp adım
+  başlığına değiyordu: başlık hep "REHBER". Rehber kaydı her karede taramaz (yeni komutları bir kez okur).
+  `PlanningTutorialPlayTests` notu gerçek başlık/sayaçla, ilk vardiyanın baskın adımlarını baskın yerleşiminde de ölçer, başlık
+  ve sayacın tek satır kaldığını ve notun elde tutanağın yazı çerçevesini ve tezgâhtaki kartları örtmediğini sınar (en yüksek
+  not üst kenarı 1041/1080).
+- **Açık:** baskınsız kapanışlarda ilk olağan olay V.008–V.009'da geliyor (60 tohum); gerçek oyunda baskın yaraları ve kabul
+  daha erken olay doğurur, ama bunun ölçümü bot düzeneğinde yapılmadı. Kalıcı bir hedef satırı (rehber bittikten sonra da)
+  yok: yalnız rehberde; Ö4'ün kalıcı yeri (fiş ya da CRT) açık karar.
+
+## KOS aşama 8, ilk adım: ikinci tur kararları (2026-11-14)
+
+Geliştiricinin 14 Kasım ikinci tur kararları ([KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md](KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md) §11)
+uygulandı. Kayıt biçimi **17**'de kaldı: kurallar `Step` ve komut sonucunu değiştiriyor, ama sürüm 17 yayınlanmadı ve gerçek
+kayıt yerinde yalnız sürüm 16 kaydı var (belgedeki kural; §6 "Sürüm").
+
+- **Core:** ortaya çıkmış sabotajcının sorgusu tecrit yeri istemez ve yer tutmaz (`IsolationFree` ortaya çıkmış kişiyi
+  saymaz). İfşa eşiğine vardiya içindeki bir kararla (görmezden gelinen iz) varılırsa uyarı `exposureDecisionWarnShifts`
+  (2) vardiya sürer, sığınak ikinci kapanışta düşer; sabotajla varılan eşikte bir vardiya (`Shelter.FallGrace`, okuyucu
+  `FallShiftsLeft`; günlükteki `konum` girdisinin miktarı uyarının süresi). Yeni tahliye nedeni `aclik`
+  (`DesertionsOngoing`: son kapanış aç, açlık sayacı ayrılma eşiğinde, sıradaki ayrılacak kişi belli). Ton ölçütleri:
+  temiz zaferin ölüm sınırı `victoryCleanMaxDeaths` (0) + vardiya ÷ `victoryCleanDeathShifts` (15): 30–44. vardiyada 2, 45–59'da 3;
+  gölgeli yalnız içeride en az
+  `victoryShadowIgnoredTraces` (1) izi görmezden gelinmiş, ortaya çıkmamış sızmacı varken (araştırılmış iz gölgelemez). Üç yeni
+  `Balance` alanı `BalanceConfig.asset`'te de.
+- **Sunum ve metin:** fiş, CRT, İFŞA üzerine gelme satırı, teleks ve devir fişi kalan uyarı vardiyasını yazar ("bu vardiya
+  dahil 2 vardiya kaldı"); şalter emri, son rapor ÇEŞİT kutusu ve damgası `aclik`'i eşler ("AÇLIK SÜRÜYORDU"). Gölgeli zafer
+  cümlesi "Son sunucu düştü. İçeride {ad} hâlâ dinliyordu." Kişi dosyasının sağ sayfasının üst satırı "KALICI KİŞİ DOSYASI"
+  (`FolderData.RightHeader`; satırlar arasında tekrarlanmaz). İnceleme sonrası: son raporun gölge satırı "Gölge: izi
+  görmezden gelinen sızmacı içeride" (Core'un ölçütüyle aynı), düşüş satırı "Uyarı süresinde sorgu", eşiğe vardıran "görmezden
+  gel"in bedeli kalan süreyi yazar ("…, 2 vardiyan kalır."), gölgeli zaferin EN cümlesi sayıdan bağımsız ("Still listening
+  inside: {0}."). Çeviri tablosu: 2288 metin, eksik 0.
+- **Sahne (DeskGame):** doktrin afişi son şalterin üstünde (0,68; 1,53; 2,30), ölçek 0,40: K1'de tamamen görünür (eski yerinde
+  elektrik kutusu sol yarısını örtüyordu). Elektrik kutusunun kapağında küçük AYARLAR plakası (CabPlate, DeskLocText; "4"
+  ile uyarı üçgeni arasında); Giris'teki kutuda aynısı (Giris'te ayrıca Ana şalterin `stateTokens: shiftClose` satırı
+  yazıldı: aşama 6'da eklenen alanın varsayılanı, sahne kaydında serileşti; davranış aynı). Telsiz (`SM_Radio`) ve altındaki `SM_Device_1` `Radio` köküyle
+  (DeskTarget kutusu ve `DialLight` dahil) kapıdan uzağa kaydı: masa ekseninde 9,3 cm geri ve 2,7 cm sola (aşama 7 yerinden
+  9,7 cm; kök (0,208; 0,87; 0,248)). Kanadın 0–95° süpürmesi (cihazların bütün LOD0 köşeleri, kanadın mesh kutuları, 1° adım)
+  ≥ 1 cm pay bırakır; cihazın sol yanı CRT'nin kutusuna 1 cm. **Ahize kordonu kaldırıldı (inceleme sonrası, geliştirici onayı
+  bekliyor):** kordon modelin tek parçası ve gövdenin 18 cm soluna sarkıyor; ölçülen hiçbir konumda hem kanattan hem CRT'den uzak
+  kalmıyordu (eski yerde ekran metninin önünden geçiyordu, ilk adımdaki 14 cm'lik yerde CRT'nin camını deliyordu, K1 ve K5a'da
+  görünür). `SM_Radio`'nun beş LOD'u kordon bileşeni çıkarılmış türev mesh'lerle çizilir (`Art/Rev3/SceneMeshes/Radio/*_NoCord`;
+  malzeme, ölçek ve kalan geometri aynı; kaynak FBX'e dokunulmadı). Geri dönüş: LOD renderer'larındaki mesh geçersiz kılmasını
+  geri almak (kordon geri gelir ama yeni yerde CRT'ye girer). Kalıcı çözüm kordonu yeniden yönlendiren bir model işidir.
+  Cihazın sağ ucu CRT masasının sağ kenarından ~16 cm taşar (kullanıcının yerleşimi; aşama 7'de 18,5 cm idi) ve alt kısmı
+  masa yüzeyinin altına iner (kaydırmayla değişmedi). Kilit: `KosStage8SceneTests` (yer, kordonsuz LOD'lar, CRT payı,
+  kanat süpürmesi).
+  Hurda kutusu yeni panonun (`SM_Board`) çerçevesinin içinde: `layoutMm.hurda` 1012 → 992 mm; model çapası `Hurda_Slot`,
+  `HurdaLid`, `TXT_P_hurda`, hedef kutusu (`Hurda önü`), odak çerçevesi, 2. satır ve türev mesh'in galv alt mesh'i birlikte.
+  Aşağı kaydırmak K4 kadrajından taşırdı, sola daha fazlası son kit kartına binerdi; K4'te kapağın sağ kenarı çerçevenin
+  iç kenarının ~5 mm içinde.
+- **Temizlik:** `SiginakTextScan`'daki `Leaf/TXT_LeafPlate` istisnası silindi. `AGENTS.md` belge tablosuna tasarım belgesi eklendi.
+- **Testler:** EditMode **1178/1178**, PlayMode **89/89** (inceleme sonrası). Yeni ya da değişen: `EndingTests` (iki uyarı vardiyası, ek sürenin
+  sorguyla sıfırlanması, `aclik`, ölüm sınırının ölçeklenmesi, yalnız görmezden gelinmiş izin gölgelemesi; gizlilik testi iki
+  uyarı vardiyasıyla), `ShelterEventTests` (sorgu yer istemez), `KosFinalReportTests` (`aclik` senaryosu, dört ÇEŞİT satırı),
+  `Rev3ExposurePanelTests` (kalan vardiya metinleri), `Rev3BoardSnapshotTests` (sağ sayfa başlığı), `PlanningBoardSceneTests`
+  (`SavedScene_HurdaBinInsideTheBoardFrame_AtK4`), `Rev3Stage8EntranceTests` (iki dolapta aynı AYARLAR plakası), `KosStage8SceneTests`
+  (telsizin yeri, kordonsuz LOD'lar, CRT payı, kanat süpürmesi).
+- **Belirlenimcilik (a7/det düzeneği, 50 tohum × 60 vardiya):** olaylar kapalıyken RNG, fiş ve komut akışı birebir aynı; son
+  durum yalnız yeni `FallGrace=0` alanıyla ayrışıyor; `Replay` 50/50. Olaylar açıkken 41/50 tohum aynı; 6 tohum (hep görmezden
+  gelen politika) bir vardiya geç düşüyor, 1 tohumda sorgu (yer dolu olsa da) ifşayı indirip düşüşü önlüyor, 2 tohumda yalnız
+  fiş satırı değişiyor.
+- **Ton sayıları (inceleme sonrası bot, 40 tohum, 120 vardiya, dört kapı × dört olay politikası; 272 zafer, aynı oyunlar bir
+  kez sayılınca 174):** ilk adımın taban 2 + her 30 vardiyada +1 biçimi 30–59 vardiyalık her harekâtta 3 veriyordu (zaferler
+  37–99 vardiya, ortalama 52): ölçekleme yalnız addaydı. Yeni varsayılan taban 0, her 15 vardiyada +1 (30–44: 2, 45–59: 3,
+  60–74: 4). Temiz: tekil %24,7, "hiçbirini alma" hariç %27,1, iyi altı politika %25,0, yinelenenler dahil %32,4 (eski
+  biçimle sırasıyla %27,0 / %29,7 / %28,2 / %34,6). Gölgeli bütün politikalarda tekil %2,9 (hedef %5–15, altında), iyi altı
+  politikada %5,6 (alt uçta); ölçüt kararın istediği gibi (yalnız görmezden gelinmiş iz), oranı iz ve sızmacı sıklığıyla aşama
+  8'in denge işinde ele alınacak. Zafer uzunluğu (37–99, medyan 50) hedefin (35–45) üstünde; uzunluk ayarlanınca ton yeniden
+  ölçülmeli.
+
+## KOS aşama 7: eski kabulün sökümü (2026-11-14)
+
+Yeni kural yok; oyunun davranışı (olaylar açık, `BalanceConfig`) değişmedi, kayıt biçimi **17**'de kaldı. Belirlenimcilik: 50 tohum ×
+60 vardiyalık düzenekte (yalnız kalan komutlarla) RNG durumu, fiş metni (iki metin değişikliği normalleştirilerek), son durum dökümü
+ve komut listesi silmeden önceki ve sonraki Core'da bayt bayt aynı; `Replay.Restore` 50/50 aynı.
+
+- **Core:** `InspectApplicant`, `DecideApplicant`, `ReviewResident`, `RestrictResident`, `DismissResident` ve denetimleri, ön
+  izlemeleri, bulgu okuyucuları (`AdmissionFindingCode`, `AdmissionWatcher`, `ResidentAdmissionRisk`, `CanRestrictedResidentWork`…);
+  `Replay.Apply`'daki beş karşılık (bilinmeyen tür sessizce atlanır); belge üretimi/karşılaştırması, talimat sürümü ve arşivi,
+  gözetmen ve `ObservationTarget`, dış kayıt beklemesi, tek aday `Admission.Candidate`, `Admission.Events`; eski sızma zincirinin
+  ölü alanları; fişin "Açık kapı başvurusu…" satırı; olaylar kapalıyken çalışan elle kısıt dalları; okunmayan dokuz `admission*`
+  denge alanı (`BalanceConfig.asset`'ten de). Fişte "KADRO EKSİK n/m" → **"SIĞINAK EKSİK n/m"** (sunumla aynı ad).
+- **Olaylar kapalıyken** (`shelterEventsEnabled = false`, yalnız testler): olay, sızma, tecrit, kısıt, tayın kipi, karartma,
+  açlıktan ayrılma, ifşa, `dusus`/`terk` çalışmaz; aday grubu kapısı çalışır; sığınağın kendi sonu yalnız `topluluk`, son şalter
+  (`salter`) çalışır ve tahliye nedeni yalnız güven olabilir. Kısıtı ya da kapı dışı yollamayı kuran elle yol yoktur.
+- **Kayıt etkisi:** `GameRecord` alanları değişmedi. Olaylar açık oynanmış biçim 17 kaydında eski beş komut yoktu; yalnız olaylar
+  kapalı oynanmış (yayınlanmamış) bir biçim 17 kaydı onları taşıyabilirdi; bu komutlar olmadan başka oyuna döneceği için öyle kayıt
+  yüklenmez (`SaveStore.HasRetiredCommand`, yükleme süzgeci) ve yeni oyun yazılırken `.retired.backup` olarak arşivlenir (diskte
+  biçim 17 kaydı yoktu). Yan dosyadaki `admissionSeen` alanı söküldü (eski dosya sorunsuz okunur);
+  devir fişi arşivindeki eski uyarı türleri (`SlipWarningKind` 0–3) sayıları boş bırakılarak silindi, eski fişte yazılmaz.
+- **Sunum:** `AdmissionStation` sadeleşti (tezgâh, lamba, çekmece, aday görünümü, iki damga); `retiredTools` ve belge, şerit, ESKİ
+  cebi, fiş kıskacı, işaretçi, tenekeler, büyüteç, talep defteri yolları silindi. Sınıflar silindi: `MagnifierTool`,
+  `RequestPadTool`, `RequestFormFace`, `ColdGlassView`, `IntercomTool`, `FindingSlipFace`, `OrdersStripFace`,
+  `AdmissionDocumentFace`; prefab'lar `Rev3Admission/{AdmissionDocument, OrdersStrip, FindingSlip, RequestForm}`. `AdmissionSnapshot`
+  ve `AdmissionTypes` eski alan ve türlerden arındı (`AdmissionTool`, `SlipVerdict`, belge/şerit/fiş/talep verisi), `AdmissionUi`
+  yalnız yollanacak kişinin işareti. Kişi dosyasının İNCELE/ERİŞİM/TAHLİYE sekmeleri, TAHLİYE damgası, not satırı, Enter'la tahliye ve
+  "KYGA · KABUL VE ERİŞİM" künyesi söküldü; yaprak gezinmesi sağ sayfanın altına indi (satır alanı 42 → 24 mm alt pay). K8G pozu
+  emekli (enum ve çapa duruyor). Fikstür ve görüntü setinde eski kabul senaryoları silindi, grup fikstürleri kaldı.
+- **Sahne (`DeskGame`, tek seferlik script):** istasyondan belge, şerit, iki ESKİ şerit, beş fiş, büyüteç, talep defteri (karbonuyla),
+  kalem, KISITLI ve YARDIM damgaları, iki teneke, panelin TXT_Out/Holder/Archive/Slip/Strip etiketleri ve işaretçisi (Marker + Jewel),
+  tezgâhın TXT_Findings etiketi silindi (model içi parçalar "removed GameObject" geçersiz kılmasıyla). Raf (karar K1-a): KABUL Slot2'ye
+  taşındı, GERİ ÇEVİR Slot3'te; dış yuvaların dilleri ve TXT_S1/TXT_S4 plakaları söküldü, TXT_S2 KABUL plakası oldu, yuva dipleri
+  (paintBlack) gövdenin ahşabıyla boyandı. Kapıda (karar K4) buğu camının ve interkomun etkileşim bileşenleri ve çarpıştırıcıları
+  ile buğu dairesi silindi; gövde, kapak ve plakalar duruyor. Kişi dosyasından üç sekme hedefi, üç sekme, TAHLİYE damgası ve not
+  satırı silindi. Fark yalnız istasyon, kapının iki modeli ve kişi dosyası.
+- **Çeviri ve ses:** tablo yeniden üretildi, 188 yetim satır (inceleme sonrası "İNCELE" ve "Bu damga kullanılmıyor." dahil) ve "Kullanılmayan" bölümü silindi (tablo 2274 metin, eksik 0).
+  `Cue` 123–126, SoundBank'taki dört girdi, dört yer tutucu klip ve üreticideki işlevleri silindi. Kullanılmayan kâğıt malzemeleri
+  (`Admission strip/request/carbon`) ve dokuz `adm_*` sprite'ı silindi.
+- **Testler:** "Aşama 7'de silinecek" ve "eski sızma zinciri silindi" Ignore'lu bütün testler silindi ya da yeni yola taşındı; atlanan
+  test kalmadı. Doğrulama: EditMode **1169/1169**, PlayMode **89/89** (atlanan 0; A6 tabanı EditMode 1254 · 61 atlanan, PlayMode 115 · 25 atlanan).
+- **İnceleme sonrası düzeltmeler:** kişi kartının İNCELE bayrağı (K7: veri alanı, sözcük, overlay'in bayrak/sözcük alanları ve kart
+  prefab'ındaki kapalı "Bayrak sözcüğü"; modelin `Flag` parçasını kart kurulumda gizler), okuyucusuz emekli `admission.*` token'ları ve
+  `personFile.pages` (K8; içe aktarıldı, sahne kirlenmedi), sahipsiz `Cold fog.mat` + `tx_fog.png` + fırını, `PlanningBoardView`'ın eski
+  kabul penceresi alanları ve İNCELE/KISITLA/TAHLİYE düğmeleri, sahnede silinen model çocuklarını hedefleyen 44 ölü prefab geçersiz
+  kılması (kabul paneli 20, tezgâh 10, raf 14) söküldü; eski komutlu kayıt için yükleme süzgeci eklendi (yukarıda).
+- **Açık:** raf modeli hâlâ dört yuvalı (dış yuvalarda ahşap daire ve boş pirinç plaka) ve panelde TALİMAT tutucusu, ESKİ cebi, GİDEN
+  ve BULGU ağızlarının boş plakaları mesh'in parçası: iki yuvalı raf ve sade panel modeli gerekir (K1-c). Raf yuvalarının ahşap rengi
+  modelde değil, sahnede **geçici renderer geçersiz kılması** (`DecisionStampRack` örneği, `paintBlack` yuvası → `stampWood`); model
+  değişince bu geçersiz kılma kaldırılmalı. `Magnifier`, `RequestPad`, `RationTin`, `ColdGlass` model prefab'ları içe aktarıcının
+  kitaplığıdır (manifestten yeniden üretilir), sahnede örnekleri yok; silinmedi. Kapıda (K4) yalnız buğu camının ve interkomun etkileşim
+  bileşenleri istasyon dışından söküldü (sınıflar silindiği için zorunlu; "başka nesneye dokunma" kuralının tek istisnası).
+
+## Menü (Giris): kapı ve ayarlar dolabı odadaki yeni modellerle (2026-11-14)
+
+Yalnız sunum (simülasyon, kayıt, DeskGame değişmedi). Tek seferlik ueval script'leriyle; Giris kaydedildi.
+
+- **Kapı:** eski Rev3 `DoorFrame`/`DoorLeaf` örnekleri (koridor çarkı `OuterWheel`, `PeepRing` dahil) silindi. İki sahne aynı koordinatları
+  paylaştığı için odadaki kapı aynı dünya pozuyla kuruldu: `SM_Door` (LOD0 `DoorFrame_SM`, LOD1–4 kapalı, çarpıştırıcısız), `Leaf/LeafMesh`,
+  `Leaf/Wheel/WheelMesh`, `Leaf/PeepCover`. Koridordan Leartes kapısının dış yüzü görünür (kırmızı çark, menteşe plakaları solda, mandal);
+  çark mesh'i iki yüzdeki çarkı tek milde taşıdığı için `DoorProp.wheel` dışarıdaki çarkı da çevirir (koridordan eskisiyle aynı yönde).
+  Kanat artık **odaya** açılır (eskisi koridora); M3 yürüyüşü (z 0,75) açık kanada değmez. "SIĞINAK 07 · KYGA" şablonu yeni kanadın koridor
+  yüzüne taşındı (y 1,62). Lento kasanın tepesine indi (1,957; aradan içerisi görünüyordu), başlık levhası ("SON ŞALTER") eski kasadaki
+  ilişkiyle yeni kasanın tepesine (kök y 2,17 → 2,057). Portal tehlike bantları yeni kasanın pervaz oluğuna (iç yüz, z 0,262 / 1,240,
+  x 2,220…2,335, açıklığa bakar): açık kapıda pervazın iki yanında görünür, kapalıyken kanadın arkasında kalır (yalnız kanat ile pervaz
+  arasındaki aralıkta ince şerit). Eski yerlerinde kasanın içinden ve dış kenarından taşıyorlardı. Kapı altı sıcaklığı (nokta ışık) eşiğin
+  hemen dışına (2,455; 0,03; 0,75): eski yerinde yeni kanadın/eşiğin hacminde kalıp zemine vurmuyordu, kapının dibindeki sıcak leke geri geldi.
+- **Dolap:** `SettingsCabinetMenu` örneği odadaki dolabın sahne override'larının aynısıyla `SM_PowerBox1`'e çevrildi (kutu, türev
+  gövde/kapak/kilit, malzemeler, menteşe ve kilit, hedef kutuları, −160°, iç düzen 0,70 ve dolgu ışığı, ampul/spot). Kamera çapası
+  menünün kendi (açılı) çapasından aynı afinle. AYARLAR şablonu, SES · DİL plakası ve rozet kapalı (odadaki gibi). Prefab'lar değişmedi
+  (DİL düzeltmesi hariç): `Siginak/SettingsCabinetMenu.prefab` yalnız Giris'te, ama odadaki dolap da aynı yöntemle çevrildiği için iki
+  dolap aynı yapıda kaldı.
+- **DİL · LANGUAGE plakası:** CabPlate kökte ve gövdede ×1,4 ölçekliydi; yazı yatayda 1,4× gerilip kenar vidalarının üstüne biniyordu.
+  İki prefab'da yazı gerilmesiz (TXT ×0,714 → ×0,5102); punto aynı, glifler vidaların arasında.
+- **Testler:** `Rev3Stage8EntranceTests` dolap testi prefab yerine iki sahnedeki gerçek dolaba (−160) bakar ve her plaka yazısının
+  gerilmesiz, vidaların arasında olduğunu denetler; yeni `Menu_UsesTheRoomDoorAndCabinetModels` menü kapısının ve dolabının odadakiyle
+  aynı mesh/malzeme/pozda olduğunu, kanadın odaya açıldığını, çarkın ve şablonun koridor yüzünde olduğunu kilitler. Plaka puntosu
+  ayrıca dünya ölçeğiyle ölçülür: dolabın kamera çapasından ekranda em ≥ `cabinet.plates.minPxAtK9` (14; oda 15,6, menü en küçük 14,3 px: Aşama 10 ölçümüyle aynı). `SettingsCabinetTests`
+  OuterWheel yerine `DoorWheel_SM`. EditMode 1204 (1143 geçti, 0 kaldı, 61 atlandı); PlayMode 109 (84 geçti, 0 kaldı, 25 atlandı).
+- **Asset'ler:** silinen yok. Artık hiçbir sahnede olmayan `Prefabs/Rev3/door/DoorFrame`, `DoorLeaf`, `Prefabs/Rev3/menu/OuterWheel`,
+  `PeepRing` (ve OBJ'leri) manifest hattında (`Docs/UI_Siginak_Rev3/modeller/manifest`), duruyor.
+
+## Model entegrasyonu 2: lamba, fincan, kapı lambası, iki pano, ayarlar dolabı (2026-11-13)
+
+Aynı yöntem (kullanıcının yeri/ölçeği/malzemesi asıl; sistem yeni modele uyar; simülasyon, kayıt ve `Giris.unity` değişmedi).
+Yeni modellerin MeshCollider'ları kaldırıldı; türev mesh'ler `Art/Rev3/SceneMeshes/{KnockLight,PowerBox,PlanningBoard}`.
+
+- **Masa lambası (`SM_Lamp`):** `Desk/Desk lamp` altında; eski `DeskLamp` örneği silindi. `Desk lamp light` (spot, 2048) yeni abajurun
+  ağzına (ampulün 1,5 cm altı, 0,687; 1,154; 1,453) taşındı, token hedefine (0,02; 0,76; 1,22) bakar. `OpeningSequence.deskLamp` boş
+  (HEAD'den beri kapalı `LampSpot`'u gösteriyordu, etkisizdi).
+- **Fincan (`SM_Cup`):** eski `Mug` örneği silindi (yalnız dekor).
+- **Kapı lambası (`SM_SmallLight`):** kafes ve cam bağlı parçaya göre iki mesh (2300 + 300 üçgen); cam `DoorProp.lamp` (jewelAmberOff/On,
+  knockLampRed takası), `KnockLight` camın önünde. `Bunker door/KnockLamp` artık düz sahne nesnesi (Rev3 örneği silindi).
+- **Kurtarılan bölgeler panosu (`SM_Board`):** `Freed board` kökü 1,4 mm öne (eski mantar yüzü → yeni yüz); hedef kutusu yeni panoya;
+  eski `CorkBoard/Body` mesh'i kaldırıldı (raptiye, yazı, yuva parçaları duruyor).
+- **Sığınak panosu (`SM_Board (1)`):** `Planning board` kökü yeni yüze oturdu (yaw +0,138°, 5,2 mm öne; eski yüz −0,014 = `BoardLayout.FaceZ`
+  yeni yüzün üstünde). Eski gövde mesh'i kaldırıldı; işlevsel yüzeyleri (başlık karatahtası + çerçevesi, iş emri kâğıdı, hurda kutusu)
+  `Body/Pano ekleri` türev mesh'iyle yeni panoda. Askı kolu gittiği için pano lambasının camı görünmez (`BoardLamp` ışığı ve takası kalır).
+  `Pano erişimi` kutusu yeni panoya. Pano 0,86–1,67 m'de ayaksız (kullanıcının yeri).
+- **Ayarlar dolabı (`SM_PowerBox1`, kullanıcı 00:09'da `SM_PowerBox2`'yi değiştirdi):** kullanıcı `SM_PowerBox2`'yi, türev kapağını ve
+  kapalı alternatifleri (`SM_PowerBox1`/`3` eski örnekleri) sildi; yeni `SM_PowerBox1`'i `SettingsCabinet` altına (hover kaldırmasıyla) koydu.
+  Kutu 12 üçgenlik küp + ön ayrıntılar: gövde (açık kutu; iç duvarlar paintOliveDark, iç levha cabPanel ön yüzden 9,4 cm geride), kapak
+  (ön levha, göstergeler, döner anahtar; 2 cm) ve kilit (kutunun tek kilit adası) olarak bölündü (`SceneMeshes/PowerBox/PowerBox1*`;
+  eski `PowerBox*_SM` başvurusuz kaldığı için silindi). Kapak `SettingsCabinet/Body/Leaf` (sağ ön kenar, −160°), kilit `Leaf/Latch`;
+  `SM_PowerBox2`'den kalan eski kilit silindi. MeshCollider silindi, LODGroup kapalı, LOD1–4 kapalı, BatchingStatic kapalı.
+  Hedef kutuları yeni kutuya (0,465 × 0,742 × 0,19 m). İç düzen prefab'ın özgün dönüşünden 0,70 ölçekle, iç ağza her yandan ≥2,5 cm payla
+  ortalandı; `Camera anchor` aynı afinle (ekrandaki kontrol boyutu özgün tasarımla aynı; K9'da ampul kadraj dışında). Panel dolgu ışığı
+  levhadan özgün 15,6 cm uzağa alındı (şiddet token'dan geldiği için ölçekle yaklaşınca parlıyordu). `Giris.unity` o turda değişmedi: menüdeki dolap
+  ayrı `SettingsCabinetMenu` prefab'ı (Rev3 dolap, AYARLAR yazılı) olarak kaldı (2026-11-14'te menüdeki dolap da aynı kutuya çevrildi).
+- **Sığınak panosu etiketleri:** eski gövdenin pirinç etiket bantları (cep, BOŞTA, iş emri, dosya, iki depo bandı, altı küçük kit levhası) ve
+  perçinleri `Pano ekleri`'ne eklendi; koyu mürekkep (#1C150E, testte kilitli) yeniden pirinç üstünde okunuyor. `Pano ekleri` BatchingStatic.
+- **Test:** `PlanningBoardSceneTests` yeni pano yüzü baskı alanını kapsar, yüz ve bütün LOD'ların yüzü `FaceZ`'de; `SettingsCabinetTests`
+  iç düzenin kutu içinde (yanlardan ≥1,5 cm) kaldığını ve kutu modelinde çarpıştırıcı/LOD1+ olmadığını denetler; `SiginakRoomTests` hedef
+  payı 1e-5 yuvarlama toleransı. EditMode 1176 (1115 geçti, 0 kaldı, 61 atlandı); PlayMode 109 (84 geçti, 0 kaldı, 25 atlandı).
+- **Tokens:** `cabinet._model2`, `cameras.K9._model2`, `board.place._model2` notları sahne değerlerini yazar (kod okumaz; değerler Rev3
+  modelinin / Giris menüsünün değerleri olarak kaldı).
+- **Açık:** hurda kutusu yeni panonun sağ çerçevesine taşıyor (`layoutMm.hurda`, model çapası, kapak, yazı ve hedef birlikte kaymalı);
+  pano lambasının görünür kaynağı yok; masa lambası K8'de solda öne giriyor (kullanıcının yeri); cep altı şerit satırları (YARDIMCI) mantarda
+  soluk; `OpeningSequence.deskLamp` bağlı değil (HEAD'den beri etkisiz).
+
+## Model entegrasyonu: kullanıcının yerleştirdiği oda modelleri (2026-11-13)
+
+Kullanıcı DeskGame'de masayı, kapıyı, monitörü, telsizi ve duvarları `Assets/LeartesStudios/ColdWarUndergroundBunker`
+modelleriyle değiştirdi; sistem onlara uyduruldu, yerleri/ölçekleri/malzemeleri değişmedi. Simülasyon, denge, RNG, kayıt biçimi
+ve `Giris.unity` değişmedi (yalnız sunum).
+
+- **Masa:** `Desk/DeskModel` (`SM_Table_2`, LODGroup). Eski `Desk/Desk model` sahneden çıktı; modelle gelen 8 BoxCollider kaldırıldı
+  (masa girdi almaz). Tabla üstü y 0,7606: masa üstü nesneler taşınmadı.
+- **Kapı:** model tek parça geldiği için `SM_Door_LOD0` üç türev mesh'e bölündü (`Art/Rev3/SceneMeshes/Door`: kasa 484, kanat 2794,
+  çark 3452 üçgen; toplam özgün 6730). Kasa `SM_Door`'da kalır; kanat `Bunker door/Leaf` menteşe pivotunda, çark `Leaf/Wheel`'de.
+  **Karar:** yeni kapının menteşeleri oda yüzünde, kanat **odaya** açılır (eskisi koridora açılıyordu; koridora açmak kanadı kasanın
+  içinden geçirirdi). `DoorProp.openAngle` 95 kaldı, yönü pivotun duruşu verir. Açık kanat K8'den interkomu ve kabul tezgâhını
+  örter; kapı yalnız kabul dizisinde (kamera K8'de, tezgâh katlıyken) açılır. Gözetleme deliği yok (`Leaf/PeepCover` boş Transform).
+  Buğu camı kanadın iç panosunda (dünya 2,263; 1,46; 0,58), kapının hedef kutusu camın arkasında (x 2,27…2,445).
+  Eski `DoorFrame`/`DoorLeaf` sahneden çıktı (2026-11-14'te menüden de; prefab'ları artık hiçbir sahnede yok, manifest hattında duruyor).
+- **Monitör:** `SM_TV_2`. Ekran eski `Crt` modelinin `Screen` parçası (tüp, `Display` tuvali, `ScreenLight`), TV'nin tüp çukurunda;
+  eski gövde mesh'i, gömülü plaka ve boş `Crt` kabuğu kaldırıldı, güç ışığı TV'nin ön yüzüne alındı, tık kutusu TV'ye göre ölçüldü.
+  `Crt.prefab`'a commit'le girmiş Pekdata monitörü prefab'dan çıkarıldı (manifest hâli: 2126 üçgen); `Body` renderer'ı yeniden açıldı).
+- **Telsiz:** `SM_Radio` + `SM_Device_1`. Eski gövde (ibre, düğmeler, 5 plaka, kanal sayıları) kaldırıldı;
+  `CrtInstruments.dial/needle/tune` boş (yeni modelde ayrı parça yok: kanal arama ve sinyal ibresi animasyonu oynamaz),
+  `DialLight` `Radio` kökünde, ön panelin ~5 cm önünde (gövdenin içinde kalmıştı, kadranları aydınlatmıyordu). Tık kutusu iki cihazın gövdesine göre (ahize kordonu hariç).
+- **Duvarlar:** `SM_Wall4x4` ×6, `SM_Wall15`. Eski `Back wall`, `Left wall`, `Right wall`, `Right wall extension` sahneden çıktı;
+  `wall_doorway.asset`, `wall_extension_right.asset`, `Concrete side.mat` silindi (başvuru kalmadı).
+  Eski telsiz gövdesinin iki sahne malzemesi (`SceneMaterials/Radio dial scale.mat`, `Radio meter face.mat`) da silindi; dokuları
+  (`tx_dialScale.png`, `tx_meterFace.png`) `Rev3TextureBaker` çıktısı olduğu için duruyor (başvuran yok). Zemin, tavan, ön duvar eski.
+- **Çarpıştırıcı kuralı:** üçüncü taraf modellerin MeshCollider/BoxCollider'ları kaldırıldı (dekor ışın yutmaz).
+  `SiginakRoomTests` yalnız kapalı hiyerarşide duran, mesh'i `Assets/Corrigible` dışından gelen MeshCollider'ı (park edilmiş alternatif)
+  muaf tutar.
+- **Dokunulmayan kullanıcı alternatifleri (sahnede kapalı):** Pekdata `CRTMonitor` (TV'nin altında), `SM_TV_2_LOD1–4`,
+  `SM_Device_1_LOD1–4`, `Microphone`, `Radio log/LogBook`.
+- **Silinmeyen eski model dosyaları:** `Desk`, `Crt`, `Radio`, `Microphone`, `LogBook` prefab/OBJ'leri 198 modellik manifest
+  hattının (`Docs/UI_Siginak_Rev3/modeller`, `Rev3ModelTests`) parçası; `DoorFrame`/`DoorLeaf` menüde kullanılıyor.
+- **Açık:** kapının yönü (odaya) onay bekliyor; mikrofon ve telsiz defteri kapalı; sayaç rafı ve damga rafı yeni masanın arka
+  kenarından taşıyor (oyun pozlarında görünmüyor); ahize kordonu CRT ekranının önünden geçiyor; ~~menü kapısı eski model~~ (2026-11-14 yenilendi);
+  Leartes shader'larıyla gölge atlası/kare süresi yeniden ölçülmedi.
+  **Kanat açılırken `SM_Device_1`'in kapıya bakan köşesinin içinden geçiyor** (ölçüm: 20°–34°, en çok ~5 cm; köşe menteşeye
+  0,963 m, kanat erişimi ~1,02 m; `Temp/v_sweep27_a.png`): cihaz ~7 cm uzaklaşmalı, kullanıcı kararı (model taşınmadı).
+  **2026-11-14 (KOS aşama 8):** telsiz ve cihaz 14 cm kaydırıldı, kanat süpürmesiyle çakışma yok; kordon notu orada.
+  `K8G.target` (2,21; 1,45; 0,62) camın yeni yerine (2,263; 1,46; 0,58) göre ~5 cm kaçık (plaka okunur; poz verisi değişmedi).
+  `CandidatePlayTests.DoorBlocker = "SM_Door"` yedek yolu artık tetiklenmez (SM_Door çarpıştırıcısı kalktı; kabul işinin dosyası).
+- **Doğrulama:** EditMode 1078 (1018 geçti, 0 kaldı, 60 atlandı: "Aşama 7" [Ignore]); PlayMode 100 (75 geçti, 0 kaldı, 25 atlandı: "Aşama 7" [Ignore]). Görüntüler `Temp/model_sonra_*.png` (izlenmez).
 
 ## Revizyon 3 · Aşama 10: dil, okunurluk, performans ve temizlik (2026-11-08)
 
@@ -78,6 +446,9 @@ panosu, harita havuzu ve torbası, ikmal kaçışı, makine aklı, sivillere sal
 - **Aşama 9:** 13 baskın kiti, sekiz makine, isimli T/E/A piyonları ve ayrı menteşeleri, sivil cihazlar/girişler/olay nesneleri, kanal maskeleri; kâğıt paneller, bina anteti ve anahtar plan. Kartlarda gerçek istatistik/eşya, görev çipinde gerçek kasa içeriği; son kaçış turunda isimli kalıcı kayıp onayı var. Core/denge/RNG/kayıt biçimi değişmedi (15). Tam EditMode **969/969**, PlayMode **83/83**; son antet denetimi **5/5**. Genel punto 2438 metinde sıfır ihlal; canlı EN'de min 14 px ve sıfır taşma. Gerçek kayıtlar ve tercihler korundu, geçici kurucular silindi, Giris Edit Mode açık. Kanıt: `UI_Siginak_Rev3/A9_DOGRULAMA.md`.
 
 ## Revizyon 3 · Aşama 6: kapı ve kabul (2026-11-07)
+
+_Geçmiş: bu bölümün tek adaylı kabulü (inceleme araçları, talimat, gözetmen, dört karar) KOS aşama 2'de aday grubuna geçti ve
+aşama 7'de söküldü (yukarıda)._
 
 - **Kural değişti (K4-A, kayıt biçimi 15):** dış kaydın ve dosya incelemesinin gözetmeni artık Boşta'nın ilk uygun kişisi
   (canlı, yatmıyor, kısıtsız, hedeften farklı; pano sırasıyla) ve her an yeniden okunur; emekli Gözetim görevi sayılmaz. Core'a salt
@@ -1317,6 +1688,25 @@ bugünkü odanın tasarım brifidir.)
 
 ## Açık işler
 
+- **KOS sonrası (2026-11-15; ayrıntı yukarıda, "KOS aşama 8: denge ve belgeler" ve "ikinci tur kararları"):**
+  - **Elle sınama:** tasarımın iki tam harekâtı (bilinçli ihmalle `dusus`, açlıkla `kacak` ve ayrılmalar) yapılmadı; bot insan
+    değildir. Uygulanan dengeyle (tüketim 0,40) gerçek oyunda erzak baskısı (yarım tayın, takas), terk, zafer uzunluğu ve temiz ton
+    görülmeli; "iyi oyuncu için fazla kolay mı" (usta bot %80 zafer) da.
+  - **Denge kararları:** zafer uzunluğu (med 48, hedef 35–45; usta botta 43,5) ve 60. vardiyada süren harekât Balance'la
+    kısalmıyor (öneri: hedef kalsın, elle bakılsın; tutmazsa sektör/bölge sayısı); temiz ton %8 (öneri: elle sınamadan sonra
+    gerekirse `victoryCleanDeathShifts` 12); "al ve yolla" en iyiden 5–7 puan iyi (`dismissSupplies` 4 farkı kapatır);
+    dagilma'nın geç sarmalı (`liberationTrustStart` 12 etkisiz çıktı).
+  - **Bot düzeneği** `Tools/DengeBotu/`'da (README). Projeye denge testi (Unity) olarak alınması açık iş; 80 tohumluk koşu
+    ~1,5 saat sürdüğü için EditMode'a uygun değil.
+  - **Raf ve panel modeli (karar: şimdilik böyle):** kabul tezgâhının dört yuvalı damga rafı ve panel kalır (iki damga orta
+    yuvalarda, dış yuvalar boş); iki yuvalı yeni model geliştiricinin işi.
+  - **Steam kimlikleri:** altı başarım yalnız kodda eşli (aşağıda "Steam"); Steamworks'te tanımlanmalı.
+  - **Telsiz ahize kordonu:** kordonsuz türev mesh'ler geliştirici onayı bekliyor; kalıcı çözüm model işi.
+  - **Kalıcı hedef satırı** (ONERILER Ö4) yalnız rehberde; fiş ya da CRT'de kalıcı yeri açık karar.
+  - **Ölüm ve İkmal/Bakım:** yayındaki panoda İkmal ve Bakım yuvası yok (soru 12, "bu iş boyunca geri gelmeyecek"); Core'un
+    `gather`/`care` kuralları ve `Balance` alanları duruyor. Geri gelirlerse tüketim yeniden ölçülmeli (toplayıcı net tüketimi
+    ~1,4 düşürür).
+
 - **Revizyon 3 · Aşama 10'dan kalanlar (2026-11-08; ayrıntı `UI_Siginak_Rev3/IMPLEMENTATION_MAP` ve `A10_DOGRULAMA`):**
   - **Sahibin elinde:** 42 yeni yer tutucu klip dinlenmedi (düzey `SoundBank.asset`); PC'de kare süresi ölçülmedi (asgari sistem tanımsız); oyuncu derlemesi alınmadı.
   - **Proje kopyası gerekir:** R15 (baskın gölgesi 2048/4096, uzaklık 20 + 1 kaskad).
@@ -1366,6 +1756,10 @@ bugünkü odanın tasarım brifidir.)
 - **İngilizce metinlerin ana dili İngilizce olan biri tarafından gözden geçirilmesi** (çeviriler ajan tarafından yapıldı).
 - **Steam:** Steamworks.NET paketi kurulmadı, App ID ve `steam_appid.txt` yok. `Corrigible.Steam` paket kurulunca
   derlenir; denenmedi. Steamworks'te başarım ve Auto-Cloud (`persistentDataPath`) tanımlanmalı.
+  **Geliştiricinin işi (ikinci tur kararı):** başarımlar kodda eşlendi (`Game/Platform.cs › Achievements`); Steamworks
+  panelinde şu altı API adıyla tanımlanmalı, tanımlanmayan kimlik sessizce düşer: `ACH_ERADICATION` (zafer, `silme`),
+  `ACH_ERADICATION_CLEAN` (temiz zafer), `ACH_WITHDRAWAL` (son şalter, düzenli çekilme), `ACH_EVACUATION` (son şalter,
+  tahliye), `ACH_SHELTER_FALLEN` (`dusus`), `ACH_SHELTER_ABANDONED` (`terk`).
 - **Baskın ekranı yalnız fare/klavye için;** gamepad akışı yok.
 - **Test eksikleri:** PlayMode testleri yalnız Revizyon 3 akışlarında (pano kamerası ve kart sürükleme, vardiya kapanışı, üretim, kabul, harita kâğıtları, menü ve dolap,
   model baskın; 85 test); eski yol PlayMode'da sınanmıyor.

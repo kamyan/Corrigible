@@ -18,7 +18,7 @@ namespace Corrigible.Tests
     public class ShiftCloseCoreTests
     {
         static Simulation Ready(uint seed = 79) => Simulation.NewGame(seed, new Balance
-        {
+        { shelterEventsEnabled = false,
             planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 100, admissionKnockMax = 100
         });
 
@@ -50,7 +50,7 @@ namespace Corrigible.Tests
             foreach (var e in b.Equipment) sb.Append(e.Id).Append(e.OwnerId).Append(';');
             foreach (var m in b.Materials) sb.Append(m.Kind).Append(m.Quantity).Append(';');
             foreach (var o in b.Orders) sb.Append(o.Id).Append(o.Remaining).Append(o.Started).Append(';');
-            sb.Append(sim.Admission.Events.Count);
+            sb.Append(sim.Admission.Files.Count);
             return sb.ToString();
         }
 

@@ -89,6 +89,8 @@ namespace Corrigible.Desk.Bridge
                     d.Sub = Alarm(sim);
                     break;
             }
+            // KOS aşama 4: hat kapalıyken baskın gerekçesi kalır; başka durumlarda ipucu satırı açlık, yarım tayın ve karartmayı yazar
+            if (d.State != CrtState.Disabled) d.Hint = ShelterEventSnapshotBuilder.CrtHint(sim);
             return d;
         }
 

@@ -103,7 +103,6 @@ namespace Corrigible.Desk.EditorTools
             new Step("k4", "K4n", K4n),
             new Step("k4", "F1", F1),
             new Step("k4", "F2", F2),
-            new Step("k4", "F3", F3),
             new Step("k4", "BK1", () => Book("BK1", 0)),
             new Step("k4", "BK2", () => Book("BK2", 1)),
             new Step("k4", "BK3", () => Book("BK3", 2)),
@@ -123,18 +122,12 @@ namespace Corrigible.Desk.EditorTools
 
             new Step("k8", "D1", D1),
             new Step("k8", "D2", D2),
-            new Step("k8", "A1", () => Admission("A1", "present")),
-            new Step("k8", "A2", () => Admission("A2", "inspect")),
-            new Step("k8", "A3", () => Admission("A3", "pending")),
-            new Step("k8", "A4", () => Admission("A4", "stamped")),
-            new Step("k8", "A5", () => Admission("A5", "aid")),
-            new Step("k8", "A6", () => Admission("A6", "v3")),
+            new Step("k8", "A1", () => Admission("A1", "group")),
+            new Step("k8", "A2", () => Admission("A2", "group_full")),
+            new Step("k8", "A3", () => Admission("A3", "group_stamped")),
             new Step("k8", "A7", A7),
-            new Step("k8", "G1", G1),
-            new Step("k8", "AR1", () => ReadPaper("AR1", "inspect", AdmissionPaper.Document, 0)),
-            new Step("k8", "AR2", () => ReadPaper("AR2", "inspect", AdmissionPaper.Strip, 0)),
-            new Step("k8", "AR3", () => ReadPaper("AR3", "inspect", AdmissionPaper.Slip, 0)),
-            new Step("k8", "AR4", () => ReadPaper("AR4", "pending", AdmissionPaper.Request, 0)),
+            new Step("k8", "AR1", () => ReadPaper("AR1", "group", AdmissionPaper.Candidate, 0)),
+            new Step("k8", "AR2", () => ReadPaper("AR2", "group_full", AdmissionPaper.GroupSlip, 0)),
 
             new Step("hover", "H1", H1, timeout: 420f),
 
@@ -1176,7 +1169,7 @@ namespace Corrigible.Desk.EditorTools
             var folder = Board.Folder;
             bool english = DeskLoc.Instance.Lang == DeskLang.En;
             var data = PlanningBoardSnapshotBuilder.Build(Sim, presenter.Ui, english, false, false).Folder;
-            for (int i = 0; i < 40; i++) data.DossierRight.Add(new FolderLine("V.031", Loc.T("İZ 1 · erişim kaydı")));
+            for (int i = 0; i < 40; i++) data.DossierRight.Add(new FolderLine("V.031", Loc.F("İZ {0}", 1)));
             folder.Open(data);
             yield return WaitFor(() => folder.IsOpen && !folder.Moving, 4, "dosya okuma pozuna varmadı");
             var dossier = Get<PersonDossierFace>(folder, "dossier");
@@ -1189,20 +1182,6 @@ namespace Corrigible.Desk.EditorTools
             yield return WaitFor(() => !folder.Moving, 4, "dosya kapanmadı");
             presenter.Ui.SelectedId = null;
             presenter.Refresh();
-        }
-
-        static IEnumerator F3()
-        {
-            yield return AtBoard();
-            Cur.Note(AdmissionFixtures.Present("trace"));
-            yield return WaitFor(() => !Rig.InTransition && Rig.Current == SiginakPose.Shelf, 4, "K4'e varılmadı");
-            var folder = Board.Folder;
-            yield return WaitFor(() => !folder.Moving, 4, "dosya okuma pozuna varmadı");
-            yield return Wait(0.3f);
-            Capture("F3");
-            folder.Close();
-            AdmissionFixtures.Restore();
-            yield return Wait(0.4f);
         }
 
         static IEnumerator Book(string id, int spread)
@@ -1394,12 +1373,9 @@ namespace Corrigible.Desk.EditorTools
         {
             yield return EnsureRoom();
             Cur.Note(AdmissionFixtures.Present(fixture));
-            if (fixture != "aid")
-            {
-                var station = Get<AdmissionStation>(AdmissionFlow, "station");
-                yield return Wait(0.5f);
-                yield return WaitOrNote(() => station == null || !station.Moving, 3, "istasyon durmadı (fişler)");
-            }
+            var station = Get<AdmissionStation>(AdmissionFlow, "station");
+            yield return Wait(0.5f);
+            yield return WaitOrNote(() => station == null || !station.Moving, 3, "istasyon durmadı (kartlar)");
             Capture(id);
             AdmissionFixtures.Restore();
             yield return Wait(0.2f);
@@ -1408,7 +1384,7 @@ namespace Corrigible.Desk.EditorTools
         static IEnumerator A7()
         {
             yield return EnsureRoom();
-            Cur.Note(AdmissionFixtures.Present("inspect"));
+            Cur.Note(AdmissionFixtures.Present("group"));
             yield return Wait(0.5f);
             var stamps = Get<StampDecision[]>(AdmissionFlow, "stamps") ?? new StampDecision[0];
             if (stamps.Length == 0) throw new InvalidOperationException("damga yok");
@@ -1426,20 +1402,6 @@ namespace Corrigible.Desk.EditorTools
             AdmissionFixtures.Restore();
         }
 
-        static IEnumerator G1()
-        {
-            yield return ContinueFrom(FixtureAt(4));
-            yield return ToPose(SiginakPose.Door);
-            var admission = AdmissionFlow;
-            admission.ClickCounter();
-            yield return WaitFor(() => !admission.Busy && !Rig.InTransition, 5, "tezgâha gelinmedi");
-            if (!admission.UseTool(AdmissionTool.Breath)) throw new InvalidOperationException("buğu camı reddedildi");
-            yield return WaitFor(() => Rig.Current == SiginakPose.BreathGlass && !Rig.InTransition, 4, "K8G'ye varılmadı");
-            yield return Wait(0.95f);   // kapak 0,2 + buğu 0,6 s (ColdGlassView); buğu 2,5 s'de solmaya başlar
-            Capture("G1");
-            needReload = true;
-        }
-
         static IEnumerator ReadPaper(string id, string fixture, AdmissionPaper kind, int index)
         {
             yield return EnsureRoom();
@@ -1447,14 +1409,7 @@ namespace Corrigible.Desk.EditorTools
             var admission = AdmissionFlow;
             var station = Get<AdmissionStation>(admission, "station");
             yield return Wait(0.5f);
-            yield return WaitOrNote(() => station == null || !station.Moving, 3, "istasyon durmadı (fişler)");
-            if (kind == AdmissionPaper.Request)
-            {
-                // Yaprak yalnız GİDEN'e varınca okunur (RequestPadTool.OutgoingPaper); önceki bağlama varsa gönderim canlı oynar (TearS + FlyS)
-                var pad = Get<RequestPadTool>(admission, "pad");
-                yield return WaitOrNote(() => pad != null && pad.State == RequestPadTool.PadState.Outgoing && !pad.Moving, 3, "talep yaprağı GİDEN'e varmadı");
-                if (pad == null || pad.OutgoingPaper == null) { kind = AdmissionPaper.Carbon; Cur.Note(id + ": talep yaprağı yok, karbon okundu"); }
-            }
+            yield return WaitOrNote(() => station == null || !station.Moving, 3, "istasyon durmadı (kartlar)");
             var anchor = Get<Transform>(admission, "readAnchor");
             var theme = SiginakTheme.Active;
             float distance = theme != null ? theme.NumberOf("admission.readDistanceM", 0.318f) : 0.318f;
@@ -1807,7 +1762,7 @@ namespace Corrigible.Desk.EditorTools
             if (pocketed.Count >= 4)
             {
                 s.Person(pocketed[0]).Injured = true; s.Person(pocketed[0]).Hurt = true;
-                s.Person(pocketed[1]).Review = true;
+                s.Person(pocketed[1]).Isolated = true; s.Person(pocketed[1]).StripTone = StripTone.Red;
                 s.Person(pocketed[2]).Restricted = true; s.Person(pocketed[2]).StripTone = StripTone.Red;
                 s.Person(pocketed[3]).Bedridden = true; s.Person(pocketed[3]).StripTone = StripTone.Blue;
             }

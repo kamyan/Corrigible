@@ -19,8 +19,8 @@ namespace Corrigible.Desk.Bridge
     /// <c>Changed</c>, yükleme, yeni oyun, dil, poz, sürükleme sonu), her karede değil. Kartın görevi ve sahipliği Core durumundan
     /// okunur; seçim, eğitim konusu ve fiş yerleri sunumdur (<see cref="BoardUiState"/>, <c>planning_board_layout.json</c>).
     /// Aşama 6 (R17, D20): kapının eski uGUI kabul penceresi kalktı; kabul kapıdaki 3B istasyondadır (<see cref="SiginakAdmission"/>).
-    /// <see cref="ShowAdmissions"/> ve <see cref="CloseAdmissions"/> genel API olarak kalır ve oraya gider. Dosyanın İNCELE sekmesi,
-    /// kapıda bekleyen bir dış kayıt talebini iptal edecekse önce uyarır; ikinci tık komutu yazar (H2/H4, D3-a).
+    /// <see cref="ShowAdmissions"/> ve <see cref="CloseAdmissions"/> genel API olarak kalır ve oraya gider. Kişi dosyası yalnız okunur:
+    /// eski İNCELE / ERİŞİM / TAHLİYE sekmeleri ve Enter'la tahliye aşama 7'de söküldü (kısıt ve yollama yalnız olay kararıyla).
     /// <para>
     /// Aşama 5 (R18; PLAN §1.3, §1.12, D1 = B): 3B tarif defteri (<see cref="RecipeBookView"/>, <see cref="BoardView3D.Book"/>)
     /// her çizimde anlık görüntüden bağlanır; defter açıkken pano "defter kipi"ndedir (kart ve nesne girdisi kapalı, pano tıkı defteri
@@ -54,9 +54,7 @@ namespace Corrigible.Desk.Bridge
 
         readonly BoardUiState ui = new BoardUiState();
         PlanningBoardLayout layout;
-        bool shownInputBlocked, shownStoryHold, renderAfterDrag, enterHeld;
-        /// <summary>İNCELE sekmesinin uyarısı bu kişi için gösterildi (ikinci tık komutu yazar).</summary>
-        string reviewWarnedFor;
+        bool shownInputBlocked, shownStoryHold, renderAfterDrag;
 
         // Aşama 5: defter kipi (gösterilen durum) ve eski fişlerin serbest bırakılması
         bool bookModeShown, legacyReleaseBlocked;
@@ -115,8 +113,7 @@ namespace Corrigible.Desk.Bridge
             DeskLoc.Instance.Changed -= Relabel;
             if (rig != null) { rig.PoseChanged -= PoseChanged; rig.Arrived -= RigArrived; rig.InputSuspended = false; }
             WireBoard(false);
-            if (enterHeld && board3D != null && board3D.Folder != null) board3D.Folder.EndDismissHold();
-            enterHeld = renderAfterDrag = false;
+            renderAfterDrag = false;
             if (bookModeShown && board3D != null) board3D.SetBookMode(false);
             bookModeShown = false;
         }
@@ -154,8 +151,8 @@ namespace Corrigible.Desk.Bridge
                 var folder = board3D.Folder;
                 if (folder != null)
                 {
-                    if (on) { folder.Clicked += OpenFolder; folder.Review += ReviewFolder; folder.Access += AccessFolder; folder.Dismiss += DismissFolder; }
-                    else { folder.Clicked -= OpenFolder; folder.Review -= ReviewFolder; folder.Access -= AccessFolder; folder.Dismiss -= DismissFolder; }
+                    if (on) folder.Clicked += OpenFolder;
+                    else folder.Clicked -= OpenFolder;
                 }
                 var topics = board3D.Topics;
                 if (topics != null) { if (on) topics.RowClicked += TopicRowClicked; else topics.RowClicked -= TopicRowClicked; }
@@ -205,23 +202,7 @@ namespace Corrigible.Desk.Bridge
         /// <summary>Odanın girdi kilidi ya da tutulan (cevap bekleyen) kart: sabit pano hedeflerinin kendi kilidi.</summary>
         bool HeldBlocked() => DeskTarget.Blocked != null && DeskTarget.Blocked() || drag != null && drag.Held != null;
 
-        void Update()
-        {
-            BookKeys();
-
-            // Klavyeyle TAHLİYE: dosya açıkken Enter 1,2 s basılı tutulur (Tab/Enter/↑↓ panoda BoardDragController'dadır).
-            var folder = board3D != null ? board3D.Folder : null;
-            if (folder == null || !folder.IsOpen || !board3D.Interactive)
-            {
-                if (enterHeld && folder != null) folder.EndDismissHold();
-                enterHeld = false;
-                return;
-            }
-            var kb = Keyboard.current;
-            if (kb == null || TextFieldSelected() || DeskTarget.Blocked != null && DeskTarget.Blocked()) return;
-            if (!enterHeld && (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame)) { enterHeld = true; folder.BeginDismissHold(); }
-            else if (enterHeld && !kb.enterKey.isPressed && !kb.numpadEnterKey.isPressed) { enterHeld = false; folder.EndDismissHold(); }
-        }
+        void Update() => BookKeys();
 
         /// <summary>Açık defterde ← / → sayfa çevirir (B11); çevirme sürerken basış yok sayılır (B4, defterin kuralı).</summary>
         void BookKeys()
@@ -260,7 +241,6 @@ namespace Corrigible.Desk.Bridge
 
         void NewLayout()
         {
-            reviewWarnedFor = null;
             legacyReleaseBlocked = false;
             ui.Reset();
             layout = NewLayoutFor(Sim?.Record);
@@ -270,7 +250,6 @@ namespace Corrigible.Desk.Bridge
 
         void LoadLayout()
         {
-            reviewWarnedFor = null;
             legacyReleaseBlocked = false;
             layout = PlanningBoardLayoutStore.Load(Sim?.Record) ?? NewLayoutFor(Sim?.Record);
             PlanningBoardLayoutStore.Apply(layout, ui);
@@ -540,7 +519,7 @@ namespace Corrigible.Desk.Bridge
 
         void PoseChanged(SiginakPose pose)
         {
-            if (pose != SiginakPose.Shelf) { ui.SelectedId = null; reviewWarnedFor = null; }
+            if (pose != SiginakPose.Shelf) { ui.SelectedId = null; }
             UpdateInteractivity();
             Refresh();
         }
@@ -835,53 +814,7 @@ namespace Corrigible.Desk.Bridge
             var f = board3D != null && board3D.Last != null ? board3D.Last.Folder : null;
             if (f == null || board3D.Folder == null) return;
             if (board3D.LostEnvelope != null && board3D.LostEnvelope.IsOpen) board3D.LostEnvelope.Close();
-            reviewWarnedFor = null;
             board3D.Folder.Open(f);
-        }
-
-        /// <summary>
-        /// İNCELE sekmesi. Komut tek gözetim yuvasındaki başka bir işi bozacaksa (kapıdaki dış kayıt talebi, başka dosyanın bekleyen
-        /// incelemesi, gözetimle çalışan kısıtlı kişi; son istek kazanır, D3-a) ilk tık yalnız uyarır (<see cref="ReviewCancelsDoorRecord"/>,
-        /// not satırında); aynı dosyada ikinci tık komutu yazar.
-        /// </summary>
-        void ReviewFolder()
-        {
-            var id = FolderPerson;
-            var warning = ReviewCancelsDoorRecord(Sim, id);
-            if (warning != null && reviewWarnedFor != id && board3D != null && board3D.Folder != null && board3D.Folder.IsOpen)
-            {
-                reviewWarnedFor = id;
-                board3D.Folder.ShowNote(warning);
-                return;
-            }
-            reviewWarnedFor = null;
-            FolderCommand(BoardDropRules.ReviewCommand(id));
-        }
-
-        /// <summary>
-        /// Bu dosyanın İNCELE'si tek gözetim yuvasındaki başka bir işi bozar mı (D3-a, H2/H4; Core'un public durumu: <c>ObservationTarget</c>,
-        /// adayın incelemeleri, dosyalar): kapıdaki dış kayıt talebi bekliyorsa "Kapıdaki dış kayıt talebi iptal olur.", yuva başka bir
-        /// dosyanın bekleyen incelemesindeyse ya da gözetimle çalışan kısıtlı bir kişideyse onun uyarısı (metinler
-        /// <see cref="AdmissionSnapshotBuilder.ReviewWarning"/>'ten, talep defterinin uyarılarıyla aynı). Bozmuyorsa (kişi aday, İNCELE zaten
-        /// yapılamıyor, yuva boş ya da kendisinde) null. Saf okuma.
-        /// </summary>
-        public static string ReviewCancelsDoorRecord(Simulation sim, string personId)
-        {
-            var a = sim?.Admission;
-            if (a == null || string.IsNullOrEmpty(personId)) return null;
-            if (a.Candidate != null && personId == a.Candidate.Resident.Id) return null;
-            if (sim.ResidentReviewCheck(personId) != null) return null;
-            return AdmissionSnapshotBuilder.ReviewWarning(sim, personId);
-        }
-        void AccessFolder() => FolderCommand(BoardDropRules.AccessCommand(FolderPerson, Sim));
-        void DismissFolder() => FolderCommand(BoardDropRules.DismissCommand(FolderPerson));
-
-        /// <summary>Dosya sekmesinin komutu; Core'un iletisi sağ sayfanın not satırına yazılır (tahliyede dosya kendiliğinden kapanır).</summary>
-        void FolderCommand(Func<Simulation, ActResult> command)
-        {
-            if (command == null || game == null) return;
-            var result = game.ExecuteBoardCommand(command);
-            if (result != null && board3D != null && board3D.Folder != null && board3D.Folder.IsOpen) board3D.Folder.ShowNote(result.Msg ?? string.Empty);
         }
 
         /// <summary>KAYIPLAR zarfına tık: kişi dosyası kapanır, kayıp listesi okuma pozunda açılır.</summary>

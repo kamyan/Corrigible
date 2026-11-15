@@ -330,7 +330,12 @@ namespace Corrigible.Desk.Tests
             Assert.IsTrue(sw.ShiftCloseMode, "oda şalteri R19 kipinde");
             var others = roots.SelectMany(r => r.GetComponentsInChildren<ShiftSwitch>(true)).Where(s => s != sw).ToList();
             Assert.IsNotEmpty(others, "ayarlar dolabının MENÜYE DÖN kolu da ShiftSwitch");
-            foreach (var other in others) Assert.IsFalse(other.ShiftCloseMode, other.name + ": eski kip (shiftClose kapalı)");
+            // KOS aşama 6: son şalter de R19 kipinde, ama kendi açılarıyla ("lastSwitch") ve plakasız; vardiya kapanışına bağlı değil
+            foreach (var other in others)
+            {
+                if (other.name == "Last switch") { Assert.IsTrue(other.ShiftCloseMode); Assert.AreEqual("lastSwitch", other.StateTokens); Assert.IsNull(other.Plate); continue; }
+                Assert.IsFalse(other.ShiftCloseMode, other.name + ": eski kip (shiftClose kapalı)");
+            }
 
             var model = ModelUnder(sw.transform, "ShiftSwitch");
             Assert.IsTrue(Reference<Transform>(sw, "coverHinge").IsChildOf(model.Part("Cover").transform), "kapak = Cover parçası");

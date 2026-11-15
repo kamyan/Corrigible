@@ -1010,7 +1010,7 @@ namespace Corrigible.Desk.Tests
             var saved = SaveStore.Load();
             Assert.IsNotNull(saved, "kayıt dosyası yazıldı");
             Assert.AreEqual(GameRecord.CurrentVersion, saved.version, "kayıt biçimi");
-            Assert.AreEqual(15, GameRecord.CurrentVersion, "kayıt biçimi 15 (Aşama 6 K4-A gözetmen kuralı)");
+            Assert.AreEqual(17, GameRecord.CurrentVersion, "kayıt biçimi 17 (KOS aşama 5: sonlar; 16 aday grubu)");
             CollectionAssert.AreEqual(lines, ShiftPlayKit.CommandLines(saved), "kayıt dosyasının komutları canlıyla aynı");
 
             sounds?.Dispose();

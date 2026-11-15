@@ -16,7 +16,7 @@ namespace Corrigible.Desk.Tests
     {
         static readonly int StId = Shader.PropertyToID("_BaseMap_ST");
 
-        static Simulation NewLiberation(double fon) => LegacySimulation.NewGame(731, new Balance { startFon = fon });
+        static Simulation NewLiberation(double fon) => LegacySimulation.NewGame(731, new Balance { shelterEventsEnabled = false, startFon = fon });
 
         static CounterWheel Wheel(GameObject parent)
         {

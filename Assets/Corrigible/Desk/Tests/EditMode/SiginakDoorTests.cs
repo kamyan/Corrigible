@@ -17,7 +17,7 @@ namespace Corrigible.Desk.Tests
     {
         static Simulation New()
         {
-            var sim = LegacySimulation.NewGame(77, new Balance { startFon = 100 });
+            var sim = LegacySimulation.NewGame(77, new Balance { shelterEventsEnabled = false, startFon = 100 });
             while (sim.S.Day < 3) sim.Step();
             sim.S.Door.Visit = null;
             return sim;

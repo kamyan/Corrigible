@@ -34,7 +34,7 @@ namespace Corrigible.Desk.Tests
         [Test]
         public void DiskRoundTrip_KeepsFreeCoordinatesAndEquipmentOffset_WithoutChangingTheSimulation()
         {
-            var sim = Simulation.NewGame(79);
+            var sim = Simulation.NewGame(79, new Balance { shelterEventsEnabled = false });
             int commands = sim.Record.commands.Count;
             uint rng = sim.S.Rng.State;
             var layout = new PlanningBoardLayout();
@@ -52,7 +52,7 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(layout.Entries[0].Position, loaded.Entries[0].Position, "Kartın kesirli konumu ızgaraya yuvarlanmamalı.");
             Assert.AreEqual("sakin-1", loaded.Entries[1].OwnerId);
             Assert.AreEqual(layout.Entries[1].Position, loaded.Entries[1].Position, "Bağlı eşyanın kişi üzerindeki görsel ofseti korunmalı.");
-            Assert.IsNull(PlanningBoardLayoutStore.Load(Simulation.NewGame(80).Record), "Başka harekâtın konumları yüklenmemeli.");
+            Assert.IsNull(PlanningBoardLayoutStore.Load(Simulation.NewGame(80, new Balance { shelterEventsEnabled = false }).Record), "Başka harekâtın konumları yüklenmemeli.");
             Assert.AreEqual(commands, sim.Record.commands.Count, "Yerleşim yeni oyuncu komutu üretmemeli.");
             Assert.AreEqual(rng, sim.S.Rng.State, "Dosya okuma/yazma oyun rastgeleliğini tüketmemeli.");
         }
@@ -64,7 +64,7 @@ namespace Corrigible.Desk.Tests
         [Test]
         public void V2RoundTrip_KeepsChipPosesAnglesAndTrainingTopic_AfterUnstageCompaction()
         {
-            var sim = Simulation.NewGame(79);
+            var sim = Simulation.NewGame(79, new Balance { shelterEventsEnabled = false });
             int commands = sim.Record.commands.Count;
             uint rng = sim.S.Rng.State;
 
@@ -99,7 +99,7 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(new Vector3(612.25f, 318.5f, -7.5f), back.ChipPose("chip:metal:0"));
             Assert.AreEqual(new Vector3(780.5f, 341.25f, -2f), back.ChipPose("chip:devre:0"));
 
-            Assert.IsNull(PlanningBoardLayoutStore.Load(Simulation.NewGame(80).Record), "Başka harekâtın yerleşimi yüklenmemeli.");
+            Assert.IsNull(PlanningBoardLayoutStore.Load(Simulation.NewGame(80, new Balance { shelterEventsEnabled = false }).Record), "Başka harekâtın yerleşimi yüklenmemeli.");
             Assert.AreEqual(commands, sim.Record.commands.Count, "Yerleşim komut üretmemeli.");
             Assert.AreEqual(rng, sim.S.Rng.State, "Yerleşim oyun rastgeleliğini tüketmemeli.");
         }
@@ -111,7 +111,7 @@ namespace Corrigible.Desk.Tests
         [Test]
         public void V1File_IgnoresCanvasProductionEntries_AndKeepsSeedCheck()
         {
-            var record = Simulation.NewGame(79).Record;
+            var record = Simulation.NewGame(79, new Balance { shelterEventsEnabled = false }).Record;
             string seed = record.seed.ToString(System.Globalization.CultureInfo.InvariantCulture);
             Directory.CreateDirectory(directory);
             File.WriteAllText(PlanningBoardLayoutStore.FilePath,
@@ -153,7 +153,7 @@ namespace Corrigible.Desk.Tests
         public void Layout_V3_RoundTrip_V2Compatible()
         {
             Assert.AreEqual(3, PlanningBoardLayoutStore.CurrentVersion);
-            var sim = Simulation.NewGame(79);
+            var sim = Simulation.NewGame(79, new Balance { shelterEventsEnabled = false });
             int commands = sim.Record.commands.Count;
             uint rng = sim.S.Rng.State;
             string seed = sim.Record.seed.ToString(System.Globalization.CultureInfo.InvariantCulture);
@@ -246,7 +246,7 @@ namespace Corrigible.Desk.Tests
         [Test]
         public void StorageOverride_DoesNotReadOrOverwriteAnotherSessionsLayout()
         {
-            var record = Simulation.NewGame(79).Record;
+            var record = Simulation.NewGame(79, new Balance { shelterEventsEnabled = false }).Record;
             var first = new PlanningBoardLayout();
             first.Entries.Add(new PlanningBoardPlacement { Key = "0:sakin-1", Position = new Vector2(11.5f, 24.25f) });
             PlanningBoardLayoutStore.Save(record, first);

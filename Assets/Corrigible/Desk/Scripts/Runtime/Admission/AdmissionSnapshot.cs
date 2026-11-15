@@ -3,9 +3,10 @@ using System.Collections.Generic;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Kabul istasyonunun bir anlık görüntüsü (Revizyon 3 · Aşama 6, PLAN §1.2, §3 W0): <c>AdmissionSnapshotBuilder</c> (Bridge) Core'un
-    /// salt okunur durumundan ve sunum durumundan (<c>AdmissionUi</c>) kurar; görünümler yalnız bunu çizer. Metinler çevrilmiş gelir
-    /// (görünümler <c>Loc</c> çağırmaz). Robotluk hiçbir alana girmez.
+    /// Kabul istasyonunun bir anlık görüntüsü (Revizyon 3 · Aşama 6, PLAN §1.2, §3 W0; KOS aşama 2 ve 7): <c>AdmissionSnapshotBuilder</c>
+    /// (Bridge) Core'un salt okunur durumundan ve sunum durumundan (<c>AdmissionUi</c>) kurar; görünümler yalnız bunu çizer. Metinler
+    /// çevrilmiş gelir (görünümler <c>Loc</c> çağırmaz). Robotluk hiçbir alana girmez. Eski tek adaylı kabulün alanları (belge, talimat
+    /// şeridi, araçlar, bulgu fişleri, talep formu) aşama 7'de söküldü.
     /// </summary>
     public sealed class AdmissionSnapshot
     {
@@ -14,67 +15,77 @@ namespace Corrigible.Desk
         /// <summary>Bütün araç ve damgalar kilitli (plan kilitli, baskın, oyun bitti); okuma serbest. Neden Core'un iletisi.</summary>
         public bool Locked;
         public string LockReason;
-        /// <summary>Hedef tezgâh durumu: aday var ya da görülmemiş talimat varsa <see cref="CounterState.Down"/>.</summary>
+        /// <summary>Hedef tezgâh durumu: kapıda aday grubu bekliyorsa <see cref="CounterState.Down"/>.</summary>
         public CounterState Counter;
-        /// <summary>Kapıdaki adayın kimliği; null = aday yok.</summary>
-        public string CandidateId;
-        /// <summary>Kimlik/sevk belgesi; null = aday yok.</summary>
-        public DocumentData Document;
-        /// <summary>Belge çekmeceden tezgâha alındı (sunum durumu).</summary>
-        public bool DocumentOnCounter;
-        /// <summary>Yuvadaki talimat şeridi.</summary>
-        public OrdersData Orders;
-        /// <summary>ESKİ cebi: arşivdeki sürümler, yeniden eskiye.</summary>
-        public readonly List<OrdersData> Archive = new List<OrdersData>();
-        /// <summary>Talimat değişim animasyonu henüz oynamadı.</summary>
-        public bool OrdersUnseen;
-        /// <summary><see cref="AdmissionTool"/> sırasıyla dört araç.</summary>
-        public readonly ToolData[] Tools = new ToolData[4];
-        /// <summary><see cref="StampChoice"/> sırasıyla dört damga.</summary>
+        /// <summary><see cref="StampChoice"/> sırasıyla dört yer: yalnız KABUL ve GERİ ÇEVİR dolu; KISITLI ve YARDIM metinsiz, kapalı (aşama 7'de söküldü).</summary>
         public readonly StampData[] Stamps = new StampData[4];
-        /// <summary>Kıskaçtaki fişler, alttan üste.</summary>
-        public readonly List<SlipData> Slips = new List<SlipData>();
-        public RequestData Request;
-        /// <summary>Soğuk gözlemde buğu görüldü (Core kodu "fog").</summary>
-        public bool BreathFog;
-        /// <summary>İşaretçinin hizalandığı madde dizini; −1 = en üst.</summary>
-        public int MarkerRule = -1;
         /// <summary>Plaka ve üzerine gelme sözcükleri (çevrilmiş).</summary>
         public AdmissionWords Words;
         public string CounterHoverTitle, CounterHoverLine;
+        /// <summary>Kapıdaki aday grubu (KOS aşama 2); null = grup yok.</summary>
+        public CandidateGroupData Group;
     }
 
-    /// <summary>Kimlik/sevk belgesi (148 × 105 mm) ve kararın damga izi.</summary>
-    public sealed class DocumentData
+    /// <summary>
+    /// Aday grubu (2–3 kart), grup fişi ve dolu sığınak listesi (KOS aşama 2). Metinler çevrilmiş gelir; gizli kimlik hiçbir alana girmez.
+    /// Komut bağımsız değişkenleri metin değildir: <c>candidate_choose</c> a = kart <see cref="CandidateCardData.Id"/>, b =
+    /// <see cref="ReplaceId"/>; <c>candidate_pass</c> bağımsız değişkensiz.
+    /// </summary>
+    public sealed class CandidateGroupData
     {
-        public string Name, Profession, Origin, Issued, Serial, Referral, Seal, PortraitKey, Stats;
+        /// <summary>Animasyon ve vuruş kimliği: "group:{geliş vardiyası}:{ilk aday kimliği}".</summary>
+        public string Key;
+        public readonly List<CandidateCardData> Cards = new List<CandidateCardData>();
+        public bool Emergency, LastShift, Full;
+        /// <summary>Kalan vardiya (bekleme sonu − gün; 2 ya da 1).</summary>
+        public int WaitLeft;
+        /// <summary>Grup fişi, sol blok.</summary>
+        public string SlipHeader, SlipShift, SlipTitle, WaitLine, EmergencyLine, HintLine;
+        /// <summary>Grup fişi, sağ blok (yer durumu).</summary>
+        public string RoomTitle, RoomHint, ReplaceLine;
+        /// <summary>Dolu sığınakta yollanabilir kişiler (pano sırası); dolu değilse boş.</summary>
+        public readonly List<ReplaceRowData> Replace = new List<ReplaceRowData>();
+        /// <summary>Seçili yollanacak kişi (sunum durumu); null = seçilmedi.</summary>
+        public string ReplaceId;
+        /// <summary>Grup geri çevrilebilir mi; neden Core iletisi.</summary>
+        public bool CanPass;
+        public string PassReason;
+        /// <summary>GERİ ÇEVİR izi (basıştan sonra; null = iz yok).</summary>
+        public string[] PassStampLines;
+        public string PassStampColor;
+        public string SlipHoverTitle, SlipHoverLine, RowHoverLine;
+    }
+
+    /// <summary>Bir aday kartı (148 × 105 mm): ad, ustalık, kademe, şüphe satırı, özellikler ve KABUL izi.</summary>
+    public sealed class CandidateCardData
+    {
+        public string Id, Name, PortraitKey, Arrived, Mastery, Stats, TierName, TierColor, Suspicion, HoverLine;
         public bool PortraitFlip;
-        /// <summary>Basılan damganın Core seçimi (karar sonrası dizide); null = iz yok.</summary>
-        public string StampChoiceId;
+        public int Tier;
+        public readonly List<PerkRowData> Perks = new List<PerkRowData>();
+        /// <summary>Core'un seçim denetimi (kart ve seçili yollanacak kişi); neden Core iletisi aynen.</summary>
+        public bool CanChoose;
+        public string ChooseReason;
+        /// <summary>KABUL izi: Core seçim kimliği (null = iz yok), çevrilmiş satırlar, "#RRGGBB" renk.</summary>
+        public string StampChoiceId, StampColor;
         public string[] StampLines;
-        public string StampColor;
     }
 
-    /// <summary>Talimat şeridi (80 × 210 mm) ya da ESKİ cebindeki başı.</summary>
-    public sealed class OrdersData
+    /// <summary>Kartın bir özellik satırı. <see cref="Tag"/>: çevrilmiş "GETİRİ" / "BEDEL".</summary>
+    public sealed class PerkRowData
     {
-        public int Version;
-        public string Header, Number, Title, Subtitle, ArchiveTitle, ArchiveRule, Footer, Footer2;
-        public readonly List<RuleData> Rules = new List<RuleData>();
+        public string Id, Tag, Name, Effect;
+        public bool Cost;
     }
 
-    /// <summary>Şeridin bir maddesi. <see cref="Tag"/>: "sürüm 2’den" ya da "YENİ · V.009".</summary>
-    public sealed class RuleData
+    /// <summary>
+    /// Dolu sığınak listesinin bir satırı. <see cref="Job"/>: çevrilmiş yer; <see cref="Label"/>: fişte yazılan satır ("Ad · Yer");
+    /// <see cref="Reason"/>: seçilemiyorsa Core iletisi.
+    /// </summary>
+    public sealed class ReplaceRowData
     {
-        public string Number, Text, Tag;
-        public bool IsNew;
-    }
-
-    /// <summary>Bir inceleme aracının durumu. <see cref="Reason"/>: Core iletisi ya da kısa etiket.</summary>
-    public sealed class ToolData
-    {
-        public bool Used, Enabled;
-        public string Title, Reason;
+        public string Id, Name, Job, Label, Reason;
+        public bool Selected, Enabled, BoundGear;
     }
 
     /// <summary>Bir karar damgasının durumu: raf plakası, sap yazısı, kilit nedeni (Core) ve kısa nedeni, band rengi.</summary>
@@ -85,34 +96,9 @@ namespace Corrigible.Desk
         public string BandColor;
     }
 
-    /// <summary>
-    /// Kıskaçtaki bir fiş (90 × 60 mm). <see cref="Key"/>: animasyon kimliği ("cand:resident-9:papers", "review:4",
-    /// "record:resident-9:result"); aynı anahtarlı fiş ikinci kez ağızdan çıkmaz.
-    /// </summary>
-    public sealed class SlipData
-    {
-        /// <summary>Fişi veren araç; null = İNCELEME FİŞİ.</summary>
-        public AdmissionTool? Tool;
-        public bool Review;
-        public string Header, Shift, Title, Icon, Body, Note, Verdict;
-        public SlipVerdict Kind;
-        public bool Dashed;
-        public string Key;
-    }
-
-    /// <summary>DIŞ KAYIT talep yaprağı ve karbon kopyası; gözetmen adı her çizimde Core'dan.</summary>
-    public sealed class RequestData
-    {
-        public bool Sent, Enabled;
-        public string Reason, Warning;
-        public string[] Labels, Values;
-        public string Supervisor;
-        public bool SupervisorMissing;
-    }
-
     /// <summary>Plaka ve üzerine gelme sözcükleri. İlkleyici yok (AGENTS kural 9: Türkçe sabit kodda durmaz; kurucu çevirip doldurur).</summary>
     public sealed class AdmissionWords
     {
-        public string Drawer, Out, Holder, Archive, Slip, Findings, Under, Glass, Intercom, Desk, Rations;
+        public string Drawer, Under, Desk;
     }
 }

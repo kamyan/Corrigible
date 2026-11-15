@@ -24,7 +24,7 @@ namespace Corrigible.Tests
         public void Scenario_MatchesCampaignRaidOrder_AndBotIsDeterministic()
         {
             // Beş uzman baştan: ölçüm kadroları karşılaştırır, atölye kilidini değil
-            var balance = new Balance { startFon = 100, liberationMinerWorkshopLevel = 0, liberationSmokeWorkshopLevel = 0 };
+            var balance = new Balance { shelterEventsEnabled = false, startFon = 100, liberationMinerWorkshopLevel = 0, liberationSmokeWorkshopLevel = 0 };
             var sim = LegacySimulation.NewGame(4242, balance);
             foreach (var (sector, pick) in new[] { ("weu_1", "maden,duman"), ("weu_2", "emp,ana"), ("weu_3", "ana,maden") })
             {

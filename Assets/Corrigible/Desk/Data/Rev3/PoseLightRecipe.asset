@@ -398,3 +398,38 @@ MonoBehaviour:
       on: 1
       intensity: 2
       shadows: 1
+  - pose: 11
+    ambientScale: 1
+    lights:
+    - id: bulbSpot
+      on: 1
+      intensity: 2
+      shadows: 1
+    - id: bulbFill
+      on: 1
+      intensity: 2
+      shadows: 0
+    - id: deskLamp
+      on: 1
+      intensity: 3.5
+      shadows: 1
+    - id: boardLamp
+      on: 1
+      intensity: 0.9
+      shadows: 1
+    - id: crtLeak
+      on: 1
+      intensity: 0.3
+      shadows: 0
+    - id: radioDial
+      on: 1
+      intensity: 0.1
+      shadows: 0
+    - id: envFill
+      on: 1
+      intensity: 0.4
+      shadows: 0
+    - id: counterSpot
+      on: 0
+      intensity: 2
+      shadows: 0

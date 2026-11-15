@@ -380,7 +380,7 @@ namespace Corrigible.Desk.Tests
             d.prop.SetFatal(false);
 
             // Eski kapı bağlayıcısı: kabul bağı olsa da eski oyunda masa kilidi bugünkü ifade (kapı kımıldıyorsa meşgul)
-            var (door, game, _) = Controller(LegacySimulation.NewGame(77, new Balance { startFon = 100 }), d, withAdmission: true);
+            var (door, game, _) = Controller(LegacySimulation.NewGame(77, new Balance { shelterEventsEnabled = false, startFon = 100 }), d, withAdmission: true);
             Assert.IsNull(game.Sim.Board, "eski oyun");
             Assert.IsFalse(door.Busy);
             d.prop.SetOpen(true);
@@ -441,17 +441,17 @@ namespace Corrigible.Desk.Tests
             m.Invoke(o, null);
         }
 
-        /// <summary>Kartlı oyun (tohum 79, alarm yok); <paramref name="candidate"/> ise ilk aday gelene dek gerçek kapanışlar.</summary>
+        /// <summary>Kartlı oyun (tohum 79, alarm yok); <paramref name="candidate"/> ise ilk aday grubu gelene dek gerçek kapanışlar.</summary>
         static Simulation BoardGame(bool candidate)
         {
-            var sim = Simulation.NewGame(79, new Balance { planningBoardEnabled = true, liberationAlarmPerShift = 0 });
+            var sim = Simulation.NewGame(79, new Balance { shelterEventsEnabled = false, planningBoardEnabled = true, liberationAlarmPerShift = 0 });
             Assert.IsNotNull(sim.Board, "kartlı oyun");
-            for (int i = 0; candidate && sim.Admission?.Candidate == null && i < 20; i++)
+            for (int i = 0; candidate && sim.Admission.Group.Count == 0 && i < 20; i++)
             {
                 Assert.IsTrue(sim.PrintShift().Ok, "fiş basılır (V." + (sim.S.Day + 1) + ")");
                 Assert.IsTrue(sim.FileShift(sim.Board.ReceiptId).Ok, "fiş dosyalanır");
             }
-            Assert.AreEqual(candidate, sim.Admission?.Candidate != null, candidate ? "kapıda aday (tohum 79: V.005)" : "Day 0: kapıda kimse yok");
+            Assert.AreEqual(candidate, AdmissionSnapshotBuilder.GroupWaiting(sim), candidate ? "kapıda aday grubu" : "Day 0: kapıda kimse yok");
             return sim;
         }
 
@@ -471,7 +471,7 @@ namespace Corrigible.Desk.Tests
             Assert.IsFalse(d.prop.KnockPlaying, "yedek vuruş çalmaz");
             Assert.AreSame(d.on, d.lamp.sharedMaterial);
             var target = (DeskTarget)Ref(door, "target");
-            Assert.AreEqual(Loc.T("Kapıda başvuru var: tezgâha bak."), target.LineOverride, "kartlı satır (aday var)");
+            Assert.AreEqual(Loc.T("Kapıda aday var: tezgâha bak."), target.LineOverride, "kartlı satır (aday var)");
             Assert.AreEqual("SIĞINAK KAPISI", target.Title, "başlık değişmez (sahne testi ve çeviri kaynağı)");
 
             // Harekât bitti: lamba söner, kırmızıya hiç dönmez; oda ışığı rengi aynı; siluet ve çentik çağrılmaz
@@ -507,7 +507,7 @@ namespace Corrigible.Desk.Tests
             Call(door, "Update");
             d.prop.Advance(0.05f);
             Assert.IsTrue(d.prop.KnockPlaying, "kabulün vuruşu bağlayıcının karesinde kesilmez");
-            Assert.AreEqual(Loc.T("Kapıda başvuru var: tezgâha bak."), ((DeskTarget)Ref(door, "target")).LineOverride);
+            Assert.AreEqual(Loc.T("Kapıda aday var: tezgâha bak."), ((DeskTarget)Ref(door, "target")).LineOverride);
 
             // Masa kilidi kabulün dizisi: kanat kımıldasa da kabul meşgul değilse kapı da değil
             d.prop.SetOpen(true, null, 1, false, 0.5f, 0.8f);
@@ -544,7 +544,7 @@ namespace Corrigible.Desk.Tests
             var fields = typeof(SiginakDoor).GetFields(BindingFlags.Static | BindingFlags.NonPublic);
             var values = new List<string>();
             foreach (var f in fields) if (f.FieldType == typeof(string)) values.Add((string)f.GetValue(null));
-            CollectionAssert.Contains(values, "Kapıda başvuru var: tezgâha bak.");
+            CollectionAssert.Contains(values, "Kapıda aday var: tezgâha bak.");
             CollectionAssert.Contains(values, "Kapıda kimse yok.");
             CollectionAssert.Contains(values, "SIĞINAK KAPISI");
             CollectionAssert.Contains(values, "Biri çalınca: gözetleme deliği, interkom, kapıyı aç ya da açma.");

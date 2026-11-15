@@ -10,7 +10,8 @@ namespace Corrigible.Core
     {
         public int day;
         /// <summary>liberation_region, liberation_raid (a: sektör, b: Teknisyen'in yanına seçilen roller), raidres, shelter_upgrade,
-        /// shelter_assign, door_answer (a: seçenek, b: kart).</summary>
+        /// shelter_assign, door_answer (a: seçenek, b: kart), candidate_choose (a: aday, b: yollanacak kişi ya da boş), candidate_pass,
+        /// event_decide (a: açık sığınak olayının seçenek kimliği), last_switch (son şalter).</summary>
         public string kind;
         public string a, b;
     }
@@ -22,8 +23,8 @@ namespace Corrigible.Core
     [System.Serializable]
     public sealed class GameRecord
     {
-        /// <summary>Dosya biçimi. Bu sürümden eski kayıtlar yüklenmez (15: dış kayıt ve dosya incelemesinin gözetmeni Boşta'nın ilk uygun kişisi (K4-A); İNCELE+DIŞ KAYIT takılması ve kurucu kimliği düzeltildi; 14: isimli sakinler, kartlı görev/teçhizat, ayrılmış üretim girdileri, kişisel eğitim, devir fişi ve topluluk kabulü; 13: Madenci ve Sis uzmanı atölyenin seviyesiyle katılır; 12: beş uzmanlı kadro ve baskın öncesi seçim; 11: 30 haritalık havuz, kıt sığınak ekonomisi; 10: sığınağın kapısı ve ziyaretçiler; öncekiler başka kurallarla oynandı).</summary>
-        public const int CurrentVersion = 15;
+        /// <summary>Dosya biçimi. Bu sürümden eski kayıtlar yüklenmez (17: ifşa eşiği (tavansız sayaç, sorguda uyarının hemen kalkması), alarm ara bedeli, sığınağın düşmesi (dusus) ve terk sonları (sonlar olay açılışından önce sınanır), son şalter (last_switch); aşama 8, yayından önce aynı sürümde: kararla varılan eşikte iki uyarı vardiyası, sorgu tecrit yeri istemez, açlık tahliye nedeni; 16: aday grubu (2–3 aday, en çok biri alınır), şüphe kademeleri ve özellikler, kişiye bağlı teçhizat, acil grup, grup üretimi pano kapanışının arkasında, eksik rol kitinin aç kapanışta ve devresiz üretimi, sığınak olayları (event_decide), tecrit, tayın kipi ve açlıktan ayrılma; 15: dış kayıt ve dosya incelemesinin gözetmeni Boşta'nın ilk uygun kişisi (K4-A); İNCELE+DIŞ KAYIT takılması ve kurucu kimliği düzeltildi; 14: isimli sakinler, kartlı görev/teçhizat, ayrılmış üretim girdileri, kişisel eğitim, devir fişi ve topluluk kabulü; 13: Madenci ve Sis uzmanı atölyenin seviyesiyle katılır; 12: beş uzmanlı kadro ve baskın öncesi seçim; 11: 30 haritalık havuz, kıt sığınak ekonomisi; 10: sığınağın kapısı ve ziyaretçiler; öncekiler başka kurallarla oynandı).</summary>
+        public const int CurrentVersion = 17;
         public int version = CurrentVersion;
         public uint seed;
         public Balance balance;
@@ -60,6 +61,12 @@ namespace Corrigible.Core
             }
         }
 
+        /// <summary>
+        /// Bilinmeyen tür sessizce atlanır. Aşama 7'de silinen eski kabul komutları (inspectApplicant, decideApplicant, reviewResident,
+        /// restrictResident, dismissResident) olaylar açıkken hiç kaydedilmezdi; yalnız olaylar kapalı oynanmış bir sürüm 17 kaydında
+        /// bulunabilirdi (yayınlanmadı, diskte yok). Oyun böyle kaydı yüklemez (<c>SaveStore.HasRetiredCommand</c>; yükleme süzgeci, sürüm 17'de kalır);
+        /// burada doğrudan verilirse bu komutlar olmadan yeniden oynanır.
+        /// </summary>
         static void Apply(Simulation sim, SavedCommand c)
         {
             switch (c.kind)
@@ -81,11 +88,10 @@ namespace Corrigible.Core
                 case "board_cancel": sim.CancelProduction(c.a); break;
                 case "board_print": sim.PrintShift(); break;
                 case "board_file": sim.FileShift(c.a); break;
-                case "inspectApplicant": sim.InspectApplicant(c.a); break;
-                case "decideApplicant": sim.DecideApplicant(c.a); break;
-                case "reviewResident": sim.ReviewResident(c.a); break;
-                case "restrictResident": sim.RestrictResident(c.a, c.b == "1"); break;
-                case "dismissResident": sim.DismissResident(c.a); break;
+                case "candidate_choose": sim.ChooseCandidate(c.a, c.b); break;
+                case "candidate_pass": sim.PassCandidates(); break;
+                case "event_decide": sim.DecideShelterEvent(c.a); break;
+                case "last_switch": sim.PullLastSwitch(); break;
             }
         }
     }

@@ -7,7 +7,7 @@ namespace Corrigible.Tests
     /// <summary>Sığınağın kapısı: vuruş zamanı, açma/açmama, bedeller, zincirler, ölümcül ziyaretçilerin kuralları, kayıt.</summary>
     public class DoorTests
     {
-        static Simulation New(uint seed = 101, Balance b = null) => LegacySimulation.NewGame(seed, b ?? new Balance { startFon = 100 });
+        static Simulation New(uint seed = 101, Balance b = null) => LegacySimulation.NewGame(seed, b ?? new Balance { shelterEventsEnabled = false, startFon = 100 });
 
         static void Until(Simulation sim, int day) { while (sim.S.Day < day && sim.S.Ending == null) sim.Step(); }
 
@@ -70,7 +70,7 @@ namespace Corrigible.Tests
         {
             for (uint seed = 1; seed <= 20; seed++)
             {
-                var sim = New(seed, new Balance { startFon = 100, liberationTrustStart = 40, liberationAlarmThreshold = 1000 });
+                var sim = New(seed, new Balance { shelterEventsEnabled = false, startFon = 100, liberationTrustStart = 40, liberationAlarmThreshold = 1000 });
                 uint rng = sim.S.Rng.State;
                 int last = -1;
                 for (int i = 0; i < 40 && sim.S.Ending == null; i++)
@@ -91,7 +91,7 @@ namespace Corrigible.Tests
         [Test]
         public void Copy_NeedsAWarning_NeverComesInSafeShifts_AndOnlyOpeningKills()
         {
-            var b = new Balance { startFon = 100, liberationTrustStart = 40, liberationAlarmThreshold = 1000, doorCopyAlarm = 0.003 };
+            var b = new Balance { shelterEventsEnabled = false, startFon = 100, liberationTrustStart = 40, liberationAlarmThreshold = 1000, doorCopyAlarm = 0.003 };
             // Uyarı yoksa kopya gelmez (her ziyaretçi geri çevrilir: uyarı da hiç alınmaz)
             for (uint seed = 1; seed <= 15; seed++)
             {
@@ -128,7 +128,7 @@ namespace Corrigible.Tests
         [Test]
         public void ArmedResident_FollowsARefusedDelegation_WhileTheShelterStarves()
         {
-            var sim = New(7, new Balance { startFon = 100, liberationTrustStart = 40, liberationAlarmThreshold = 1000 });
+            var sim = New(7, new Balance { shelterEventsEnabled = false, startFon = 100, liberationTrustStart = 40, liberationAlarmThreshold = 1000 });
             Until(sim, 9);
             // Açlık: erzak yok, toplayan yok
             sim.Shelter.Room(ShelterLogic.Living).Workers = 0;
@@ -160,7 +160,7 @@ namespace Corrigible.Tests
         [Test]
         public void ArmedResident_IsDroppedIfTheHungerEnded()
         {
-            var sim = New(7, new Balance { startFon = 100, liberationTrustStart = 40, liberationAlarmThreshold = 1000 });
+            var sim = New(7, new Balance { shelterEventsEnabled = false, startFon = 100, liberationTrustStart = 40, liberationAlarmThreshold = 1000 });
             Until(sim, 9);
             sim.S.Door.Visit = null;
             Knock(sim, "heyet");

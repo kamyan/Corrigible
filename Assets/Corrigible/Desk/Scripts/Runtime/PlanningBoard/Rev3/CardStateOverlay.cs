@@ -13,9 +13,12 @@ namespace Corrigible.Desk
         Injured = 1,
         Bedridden = 2,
         Restricted = 4,
+        /// <summary>Eski dosya incelemesinin İNCELE bayrağı (aşama 7'de söküldü): çizilmez; sayı yer paylaşımı için korunur.</summary>
         Review = 8,
         Lost = 16,
         Selected = 32,
+        /// <summary>Tecritte (KOS aşama 4): kısıt köşesi tecrit sözcüğüyle (bayrak her zaman <see cref="Restricted"/> ile birlikte).</summary>
+        Isolated = 64,
     }
 
     /// <summary>
@@ -27,10 +30,10 @@ namespace Corrigible.Desk
     /// <item>YATIYOR: portre ortasında (27; 53,1) −14,9° mavi çift çerçeveli damga; genişlik = sözcük + 5 mm, yükseklik 1,32 em.</item>
     /// <item>KISITLI: sağ üstte kırmızı üçgen (54 → 78,4; 1,6 → 26) ve köşegen sözcük; KAYIP: siyah yas köşesi (50 → 78,4; 1,6 → 30),
     /// köşegen sözcük ve portre kararır (<c>_BaseColor</c> 0,601 / 0,588 / 0,566, MaterialPropertyBlock).</item>
-    /// <item>İNCELE: modelin 3B <c>Flag</c> parçası (üst kenardan 8 mm taşan kırmızı bayrak) ve üstündeki 3B sözcük.</item>
     /// <item>Seçili: 1,2 mm sarı çerçeve, 0,6 mm içeride.</item>
     /// </list>
-    /// Köşe ve bayrak sözcükleri süstür (şerit ve üzerine gelme satırı taşır); tasarımdaki gibi alanlarına sığdırılır.
+    /// Köşe sözcükleri süstür (şerit ve üzerine gelme satırı taşır); tasarımdaki gibi alanlarına sığdırılır. Eski İNCELE bayrağı (modelin
+    /// 3B <c>Flag</c> parçası) aşama 7'de söküldü; parçayı <see cref="BoardCardView"/> kurulumda gizler.
     /// </summary>
     public sealed class CardStateOverlay : MonoBehaviour
     {
@@ -54,32 +57,20 @@ namespace Corrigible.Desk
         [SerializeField] Image lostCorner;
         [SerializeField] TMP_Text lostWord;
         [SerializeField] float cornerWordEmMm = 4.6f, restrictedWordMaxMm = 20f, lostWordMaxMm = 22f;
-        [Header("İNCELE (3B bayrak)")]
-        [SerializeField] PartDriver flag;
-        [SerializeField] TMP_Text flagWord;
-        [Tooltip("3B bayrak sözcüğünün puntosu (TextMeshPro fontSize = em mm / 100) ve en geniş yazısı (m).")]
-        [SerializeField] float flagWordSize = 0.056f, flagWordMaxM = 0.0164f;
-        [Tooltip("İNCELE bayrağı modeldeki yerinden bu kadar yukarıda gösterilir (mm): ataşı adın üstünde kalır (R16a). Model parçasını " +
-                 "bu bileşen sürer; iç içe modelde geçersiz kılma yok.")]
-        [SerializeField] float flagLiftMm = 6f;
         [Header("KAYIP portresi ve seçim")]
         [SerializeField] Renderer portrait;
         [SerializeField] Color lostPortraitTint = new Color(0.601f, 0.588f, 0.566f, 1f);
         [SerializeField] Image selectedFrame;
 
         PersonStates applied = (PersonStates)(-1);
-        Vector3 flagRest;
-        bool flagRestKnown;
-        string injured, bed, restricted, review, lost;
+        string injured, bed, restricted, isolated, lost;
 
         public PersonStates Applied => applied;
         public TMP_Text InjuredWord => injuredWord;
         public TMP_Text StampWord => stampWord;
         public TMP_Text RestrictedWord => restrictedWord;
         public TMP_Text LostWord => lostWord;
-        public TMP_Text FlagWord => flagWord;
         public Renderer Portrait => portrait;
-        public PartDriver Flag => flag;
 
         /// <summary>Kişi kartının verisinden durum bayrakları (veri zaten canlılığa göre süzülmüştür).</summary>
         public static PersonStates StatesOf(PersonCardData d)
@@ -89,7 +80,7 @@ namespace Corrigible.Desk
             if (d.Injured) s |= PersonStates.Injured;
             if (d.Bedridden) s |= PersonStates.Bedridden;
             if (d.Restricted) s |= PersonStates.Restricted;
-            if (d.Review) s |= PersonStates.Review;
+            if (d.Isolated) s |= PersonStates.Restricted | PersonStates.Isolated;
             if (d.Lost) s |= PersonStates.Lost;
             if (d.Selected) s |= PersonStates.Selected;
             return s;
@@ -99,9 +90,9 @@ namespace Corrigible.Desk
         public void Apply(PersonStates s, BoardWords w)
         {
             w ??= BoardCardView.DefaultWords;
-            if (s == applied && injured == w.Injured && bed == w.Bedridden && restricted == w.Restricted && review == w.Review && lost == w.Lost) return;
+            if (s == applied && injured == w.Injured && bed == w.Bedridden && restricted == w.Restricted && isolated == w.Isolated && lost == w.Lost) return;
             applied = s;
-            injured = w.Injured; bed = w.Bedridden; restricted = w.Restricted; review = w.Review; lost = w.Lost;
+            injured = w.Injured; bed = w.Bedridden; restricted = w.Restricted; isolated = w.Isolated; lost = w.Lost;
 
             bool isLost = (s & PersonStates.Lost) != 0;
 
@@ -128,30 +119,14 @@ namespace Corrigible.Desk
             bool isRestricted = (s & PersonStates.Restricted) != 0;
             Show(restrictedCorner, isRestricted);
             Show(restrictedWord, isRestricted);
-            if (isRestricted) Fit(restrictedWord, restricted, cornerWordEmMm, restrictedWordMaxMm);
+            if (isRestricted) Fit(restrictedWord, (s & PersonStates.Isolated) != 0 ? isolated : restricted, cornerWordEmMm, restrictedWordMaxMm);
 
             Show(lostCorner, isLost);
             Show(lostWord, isLost);
             if (isLost) Fit(lostWord, lost, cornerWordEmMm, lostWordMaxMm);
             TintPortrait(isLost);
 
-            bool flagged = (s & PersonStates.Review) != 0;
-            if (flagged) PlaceFlag();
-            if (flag != null) flag.SetVisible(flagged);
-            Show(flagWord, flagged);
-            if (flagged) Fit(flagWord, review, flagWordSize, flagWordMaxM);
-
             Show(selectedFrame, (s & PersonStates.Selected) != 0);
-        }
-
-        /// <summary>Bayrak parçasını model pozundan <see cref="flagLiftMm"/> yukarıya koyar (yalnız değişince yazar).</summary>
-        void PlaceFlag()
-        {
-            if (flag == null) return;
-            var t = flag.transform;
-            if (!flagRestKnown) { flagRest = t.localPosition; flagRestKnown = true; }
-            var p = flagRest + Vector3.up * (flagLiftMm / 1000f);
-            if (t.localPosition != p) t.localPosition = p;
         }
 
         /// <summary>Önbelleği boşaltır (sonraki <see cref="Apply"/> her şeyi yeniden yazar).</summary>
@@ -180,8 +155,7 @@ namespace Corrigible.Desk
             if (!Mathf.Approximately(t.fontSize, designSize)) t.fontSize = designSize;
             t.text = value;
             if (value.Length == 0) return;
-            // GetPreferredValues genişliği 0,01 birime yukarı yuvarlar; metre ölçekli 3B bayrak sözcüğünde bu 10 mm demek.
-            // Ölçü bu yüzden çizilen yazının sınırından.
+            // GetPreferredValues genişliği 0,01 birime yukarı yuvarlar; ölçü bu yüzden çizilen yazının sınırından.
             t.ForceMeshUpdate(true, true);
             float width = t.textBounds.size.x;
             if (width > maxWidth && width > 0) t.fontSize = Mathf.Max(designSize * 0.7f, designSize * maxWidth / width);

@@ -60,7 +60,7 @@ namespace Corrigible.Desk.Tests
         // ================================================================ simülasyon kurulumu (Rev3BoardDropRulesTests ile aynı)
 
         static Simulation Ready(uint seed = 79) => Simulation.NewGame(seed, new Balance
-        {
+        { shelterEventsEnabled = false,
             planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 100, admissionKnockMax = 100
         });
 

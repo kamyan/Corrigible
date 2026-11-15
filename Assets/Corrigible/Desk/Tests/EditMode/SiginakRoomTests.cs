@@ -29,7 +29,7 @@ namespace Corrigible.Desk.Tests
                 var room = roots.Single(g => g.name == "SiginakRoom");
                 Assert.IsTrue(room.activeSelf, "oda sahnede açık kayıtlı");
                 foreach (var path in new[] { "Shell", "Desk", "Desk/MapMount", "Desk/Counter bank", "Desk/Key rail", "Desk/Shift switch", "Desk/Teleprinter",
-                             "CRT desk", "CRT desk/CRT/Crt/Body/Screen", "Ceiling bulb", "Poses/K1", "Poses/Map", "Poses/K4", "Poses/K5a", "Poses/K6a",
+                             "CRT desk", "CRT desk/CRT/CRT/Body/Screen", "Ceiling bulb", "Poses/K1", "Poses/Map", "Poses/K4", "Poses/K5a", "Poses/K6a",
                              "Poses/K6", "Desk/Paper tray/Slip over", "Desk/Paper tray/Slip target light", "Desk/Paper tray/Filed slip" })
                     Assert.IsNotNull(room.transform.Find(path), path);
                 var mount = room.transform.Find("Desk/MapMount");
@@ -71,10 +71,13 @@ namespace Corrigible.Desk.Tests
                 Assert.AreEqual(2048, lamp.shadowCustomResolution);
                 Assert.IsNotNull(room.GetComponentInChildren<BulbFlicker>(true));
                 // Dekor çarpıştırıcı taşımaz. İstasyon hedefleri ve kendi sürükleme işleyicisi olan fiziksel kâğıt girdi alır.
-                int receiptColliders = 0, admissionColliders = 0;
+                int receiptColliders = 0, admissionColliders = 0, eventColliders = 0;
                 foreach (var collider in room.GetComponentsInChildren<Collider>(true))
                 {
                     if (collider.GetComponent<DeskTarget>() != null) continue;
+                    // Model entegrasyonu: kullanıcının sahnede KAPALI park ettiği üçüncü taraf alternatif (Pekdata monitörünün cam
+                    // kırıkları; Rigidbody + MeshCollider). Kapalı hiyerarşide ışın almaz; mesh'i Assets/Corrigible dışından gelir.
+                    if (IsParkedThirdPartyCollider(collider)) continue;
                     // Revizyon 3 kartlı pano: konu satırları, deste tepsisi, pano yüzü, dosya ve KAYIPLAR sayfaları panonun girdi
                     // alanlarıdır. Ya bir pano bileşeni çarpıştırıcıyı serileştirilmiş alanında tutar ya da tık hiyerarşi boyunca
                     // bir atadaki pano işleyicisine çıkar (işleyicisiz sayfa yüzeyi → PersonFolderView, pano yüzü → BoardDragController).
@@ -87,10 +90,9 @@ namespace Corrigible.Desk.Tests
                             string.Join(", ", boardOwners.Select(o => o.GetType().Name)) + " bu girdi alanını tutmalı ya da tıkını almalı");
                         continue;
                     }
-                    // Aşama 6 (R9, R17): kapıdaki kabul istasyonu ve araçları. Tezgâh ve MASA tuşu (AdmissionStation.counterHit/deskKeyHit),
-                    // damgalar, büyüteç, talep defteri (yaprak ve karbon dahil), buğu camı ve interkom kutularını kendi bileşenleri tutar;
-                    // istasyon kökündeki kâğıtların (belge, şerit, ESKİ şeritleri, fişler) tıkı hiyerarşi boyunca AdmissionStation'a çıkar.
-                    // Kaydedilmiş sahnede hepsi kapalıdır (Rev3AdmissionSceneTests.S5).
+                    // Aşama 6 (R9, R17) ve KOS aşama 2/7: kapıdaki kabul istasyonu. Tezgâh ve MASA tuşu (AdmissionStation.counterHit/deskKeyHit)
+                    // ve damgaları kendi bileşenleri tutar; aday kartlarının ve grup fişinin tıkı CandidateGroupView'a çıkar. Buğu camı ve
+                    // interkomun etkileşimi aşama 7'de söküldü (çarpıştırıcıları da). Kaydedilmiş sahnede hepsi kapalıdır (Rev3AdmissionSceneTests.S5).
                     var admissionOwners = InputOwners(collider.transform, AdmissionInputTypes);
                     if (admissionOwners.Count > 0)
                     {
@@ -98,6 +100,15 @@ namespace Corrigible.Desk.Tests
                             string.Join(", ", admissionOwners.Select(o => o.GetType().Name)) + " bu girdi alanını tutmalı ya da tıkını almalı");
                         Assert.IsFalse(collider.enabled, collider.name + ": kabul çarpıştırıcısı kapalı kaydedilir (yalnız etkileşimliyken açılır)");
                         admissionColliders++;
+                        continue;
+                    }
+                    // KOS aşama 4: olay tutanağının tek girdi alanı kökteki kutu; görünüm onu hitArea'da tutar, kaydedilmiş sahnede kapalı
+                    var eventPaper = collider.GetComponent<ShelterEventPaperView>();
+                    if (eventPaper != null)
+                    {
+                        Assert.AreSame(collider, eventPaper.HitArea, collider.name + ": olay tutanağının girdi alanı açıkça bağlanmalı");
+                        Assert.IsFalse(collider.enabled, collider.name + ": olay tutanağının çarpıştırıcısı kapalı kaydedilir (yalnız veri varken açılır)");
+                        eventColliders++;
                         continue;
                     }
                     var paper = collider.GetComponent<ShiftReceiptPaper>();
@@ -108,7 +119,8 @@ namespace Corrigible.Desk.Tests
                     receiptColliders++;
                 }
                 Assert.AreEqual(1, receiptColliders, "Masada tek sürüklenebilir devir kâğıdı bulunmalı.");
-                Assert.Greater(admissionColliders, 12, "kabul istasyonu, buğu camı ve interkom girdi alanları");
+                Assert.AreEqual(1, eventColliders, "EVRAK tepsisinde tek olay tutanağı (KOS aşama 4)");
+                Assert.GreaterOrEqual(admissionColliders, 8, "kabul istasyonu: tezgâh, MASA tuşu, iki damga, üç aday kartı ve grup fişi");
                 // Revizyon 3 · Aşama 4 (R19): fiş yüzü, tepsideki kopya, EVRAK üstü çapası ve hedef ışığı çarpıştırıcı taşımaz;
                 // fişin tek girdi alanı kökteki kutu (100 × 150 mm, D §0.9)
                 var receipt = room.GetComponentsInChildren<ShiftReceiptPaper>(true).Single();
@@ -120,10 +132,18 @@ namespace Corrigible.Desk.Tests
                 foreach (var path in new[] { "Desk/Paper tray/Slip over", "Desk/Paper tray/Slip target light", "Desk/Paper tray/Filed slip" })
                     Assert.IsEmpty(room.transform.Find(path).GetComponentsInChildren<Collider>(true), path + ": çarpıştırıcısız");
                 // Hareket etmeyen parçalar statik birleşir (Aşama 10 performans)
-                Assert.IsTrue(GameObjectUtility.GetStaticEditorFlags(room.transform.Find("Desk/Desk model/Body").gameObject).HasFlag(StaticEditorFlags.BatchingStatic));
+                Assert.IsTrue(GameObjectUtility.GetStaticEditorFlags(room.transform.Find("Desk/DeskModel/SM_Table_2_LOD0").gameObject).HasFlag(StaticEditorFlags.BatchingStatic));
                 Assert.IsFalse(GameObjectUtility.GetStaticEditorFlags(room.GetComponentInChildren<StationKey>(true).gameObject).HasFlag(StaticEditorFlags.BatchingStatic));
             }
             finally { EditorSceneManager.CloseScene(scene, true); }
+        }
+
+        /// <summary>Kapalı hiyerarşide duran ve mesh'i <c>Assets/Corrigible</c> dışından gelen MeshCollider (park edilmiş alternatif model).</summary>
+        static bool IsParkedThirdPartyCollider(Collider collider)
+        {
+            if (collider.gameObject.activeInHierarchy || !(collider is MeshCollider mesh) || mesh.sharedMesh == null) return false;
+            string path = AssetDatabase.GetAssetPath(mesh.sharedMesh);
+            return !string.IsNullOrEmpty(path) && !path.StartsWith("Assets/Corrigible/");
         }
 
         static readonly System.Type[] BoardInputTypes =
@@ -134,10 +154,10 @@ namespace Corrigible.Desk.Tests
             typeof(RecipeBookView), typeof(RecipeBookPage),
         };
 
-        /// <summary>Aşama 6: kabul istasyonu ve kapıdaki araçların girdi bileşenleri (hepsi <see cref="IPointerClickHandler"/>).</summary>
+        /// <summary>Aşama 6 / KOS aşama 2: kabul istasyonunun girdi bileşenleri (hepsi <see cref="IPointerClickHandler"/>).</summary>
         static readonly System.Type[] AdmissionInputTypes =
         {
-            typeof(AdmissionStation), typeof(StampDecision), typeof(MagnifierTool), typeof(RequestPadTool), typeof(ColdGlassView), typeof(IntercomTool),
+            typeof(AdmissionStation), typeof(StampDecision), typeof(CandidateGroupView),
         };
 
         /// <summary>Çarpıştırıcının atalarındaki (kendisi dahil) kartlı pano girdi bileşenleri; pano dışındaysa boş.</summary>
@@ -192,7 +212,8 @@ namespace Corrigible.Desk.Tests
                         }
                     }
                     var slack = box.size - (max - min);
-                    Assert.LessOrEqual(Mathf.Max(slack.x, slack.y, slack.z), 0.05f, target.name + ": çarpıştırıcı modelden büyük " + slack.ToString("F3"));
+                    // 1e-5: ölçekli ebeveyn (model entegrasyonu 2: dolabın iç düzeni 0,615) dönüşüm yuvarlaması; sürgü kutusu tam 5 cm pay taşır
+                    Assert.LessOrEqual(Mathf.Max(slack.x, slack.y, slack.z), 0.05f + 1e-5f, target.name + ": çarpıştırıcı modelden büyük " + slack.ToString("F3"));
                     checkedTargets++;
                 }
                 Assert.Greater(checkedTargets, 8);

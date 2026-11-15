@@ -7,8 +7,8 @@ using UnityEngine.UI;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Kabul kâğıtlarının (kimlik/sevk belgesi, talimat şeridi, bulgu fişi, talep formu; Revizyon 3 · Aşama 6, PLAN §1.6–§1.10, W3)
-    /// ortak yüz tabanı: World Space tuval, 1 birim = 1 mm, sol üst orijin, y aşağı (<c>HandoverSlipFace</c> kalıbı). Kâğıt rengi
+    /// Kabul kâğıtlarının (aday kartı, grup fişi, olay tutanağı; Revizyon 3 · Aşama 6, PLAN §1.6–§1.10, W3; KOS aşama 2–7) ortak yüz
+    /// tabanı: World Space tuval, 1 birim = 1 mm, sol üst orijin, y aşağı (<c>HandoverSlipFace</c> kalıbı). Kâğıt rengi
     /// kâğıdın Quad malzemesindedir; tuvalde yalnız yazılar, çizgiler, çerçeveler ve simgeler durur. Tuval ışın almaz
     /// (<c>GraphicRaycaster</c> yok; tık kâğıdın çarpıştırıcısından), yazılar fontun kendi (ışıksız) malzemesiyle (GELISTIRME
     /// "Işıklı TMP … mürekkebi soldurur").
@@ -214,7 +214,7 @@ namespace Corrigible.Desk
 
     /// <summary>
     /// Kabul kâğıtlarının renkleri: tema anahtarı (<c>SiginakTheme</c>; <c>_local_a6</c> <c>admission.paper.*</c>,
-    /// <c>admission.slipVerdict.*</c>, <c>admission.stampMarks.*</c>) ya da yoksa tasarımın değeri (<c>kagit_kaynak</c>).
+    /// <c>admission.stampMarks.*</c>) ya da yoksa tasarımın değeri (<c>kagit_kaynak</c>).
     /// </summary>
     internal static class AdmissionPaperStyle
     {
@@ -228,44 +228,16 @@ namespace Corrigible.Desk
         public static Color Rule => BoardViewUtil.Col("admission.paper.rule", new Color32(0xD2, 0x48, 0x3F, 0xFF));
         /// <summary>Noktalı alt çizgi #8E8166.</summary>
         public static Color Dotted => BoardViewUtil.Col("ui.reportRule", new Color32(0x8E, 0x81, 0x66, 0xFF));
-        /// <summary>Ters zeminli kutunun yazısı #F4ECD8.</summary>
-        public static Color Reverse => BoardViewUtil.Col("ui.inkButtonText", new Color32(0xF4, 0xEC, 0xD8, 0xFF));
         /// <summary>Fiş kenarı #CDBF97.</summary>
         public static Color SlipEdge => BoardViewUtil.Col("doorPaper.edge", new Color32(0xCD, 0xBF, 0x97, 0xFF));
         /// <summary>Belgenin iç çift çerçevesi #B9AC8E.</summary>
         public static Color DocFrame => BoardViewUtil.Col("slip.rule", new Color32(0xB9, 0xAC, 0x8E, 0xFF));
         /// <summary>Portre zemini #EAE0C2.</summary>
         public static Color PortraitGround => BoardViewUtil.Col("doorPaper.block", new Color32(0xEA, 0xE0, 0xC2, 0xFF));
-        /// <summary>Düzenleyen mührün moru #5A3F78 (temada anahtar yok: tasarım değeri).</summary>
-        public static Color Seal => BoardViewUtil.Col("admission.paper.seal", new Color32(0x5A, 0x3F, 0x78, 0xFF));
-        /// <summary>Şerit kenarı #D2C7AF.</summary>
-        public static Color StripEdge => BoardViewUtil.Col("admission.paper.stripEdge", new Color32(0xD2, 0xC7, 0xAF, 0xFF));
-        /// <summary>Talep formu değerleri (kalem) #1A2F5A.</summary>
-        public static Color Signature => BoardViewUtil.Col("pen.signature", new Color32(0x1A, 0x2F, 0x5A, 0xFF));
-        public static Color CarbonInk => BoardViewUtil.Col("admission.paper.carbonInk", new Color32(0x2E, 0x3C, 0x6E, 0xFF));
-        public static Color CarbonLabel => BoardViewUtil.Col("admission.paper.carbonLabel", new Color32(0x4A, 0x56, 0x80, 0xFF));
-        /// <summary>Uyarı kırmızısı #9A1E14 ("gözetmen yok · sonuç gelmez").</summary>
+        /// <summary>Uyarı kırmızısı #9A1E14 (aday kartında BEDEL etiketi, grup fişinde YER YOK).</summary>
         public static Color Alarm => BoardViewUtil.Col("admission.paper.alarm", new Color32(0x9A, 0x1E, 0x14, 0xFF));
         /// <summary>Damga izlerinin opaklığı (KK <c>damga_*</c> 0,93).</summary>
         public static float StampOpacity => BoardViewUtil.Num("admission.stampMarks.opacity", 0.93f);
-
-        /// <summary>Bulgu fişinin sonuç damgasının rengi: eşleşme yeşil, uyuşmazlık kahverengi, görüşme nötr, bekleyen/inceleme gri.</summary>
-        public static Color Verdict(SlipVerdict kind)
-        {
-            switch (kind)
-            {
-                case SlipVerdict.Match:
-                case SlipVerdict.Found:
-                    return BoardViewUtil.Col("admission.slipVerdict.match", new Color32(0x24, 0x59, 0x2E, 0xFF));
-                case SlipVerdict.Mismatch:
-                case SlipVerdict.Differs:
-                    return BoardViewUtil.Col("admission.slipVerdict.mismatch", new Color32(0x85, 0x40, 0x05, 0xFF));
-                case SlipVerdict.Neutral:
-                    return BoardViewUtil.Col("admission.slipVerdict.neutral", new Color32(0x46, 0x3F, 0x34, 0xFF));
-                default:
-                    return BoardViewUtil.Col("admission.slipVerdict.pending", new Color32(0x67, 0x5F, 0x50, 0xFF));
-            }
-        }
 
         /// <summary>Karar damgası izinin rengi (veri vermezse token).</summary>
         public static Color Stamp(StampChoice choice)
@@ -273,9 +245,7 @@ namespace Corrigible.Desk
             switch (choice)
             {
                 case StampChoice.Admit: return BoardViewUtil.Col("admission.stampMarks.admit.color", new Color32(0x24, 0x59, 0x2E, 0xFF));
-                case StampChoice.Restricted: return BoardViewUtil.Col("admission.stampMarks.restricted.color", new Color32(0x85, 0x40, 0x05, 0xFF));
-                case StampChoice.Reject: return BoardViewUtil.Col("admission.stampMarks.reject.color", new Color32(0x9A, 0x1E, 0x14, 0xFF));
-                default: return BoardViewUtil.Col("admission.stampMarks.aid.color", new Color32(0x46, 0x3F, 0x34, 0xFF));
+                default: return BoardViewUtil.Col("admission.stampMarks.reject.color", new Color32(0x9A, 0x1E, 0x14, 0xFF));
             }
         }
 

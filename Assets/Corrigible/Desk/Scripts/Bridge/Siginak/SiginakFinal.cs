@@ -1,5 +1,6 @@
 using Corrigible.Game.Audio;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Corrigible.Desk.Bridge
 {
@@ -36,6 +37,22 @@ namespace Corrigible.Desk.Bridge
 
         void Closed() => rig.Locked = false;
 
-        static void Stamped(bool won) => Sfx.Play(won ? Cue.FinalBell : Cue.StampHeavy, 0.9f);
+        /// <summary>Damga sesi: kazanınca uzun zil, kayıpta boğuk "tak", düzenli çekilmede daha hafif "tak" (KOS aşama 6).</summary>
+        static void Stamped(FinalOutcome outcome)
+        {
+            if (outcome == FinalOutcome.Won) Sfx.Play(Cue.FinalBell, 0.9f);
+            else Sfx.Play(Cue.StampHeavy, outcome == FinalOutcome.Withdrawn ? 0.7f : 0.9f);
+        }
+
+        /// <summary>Tab ya da ←/→: alt yarıda HAREKÂT ↔ SİCİL (KOS aşama 6).</summary>
+        void Update()
+        {
+            if (report == null || !report.IsOpen || !report.HasRecord) return;
+            var kb = Keyboard.current;
+            if (kb == null) return;
+            if (kb.tabKey.wasPressedThisFrame) report.TogglePage();
+            else if (kb.leftArrowKey.wasPressedThisFrame) report.ShowPage(0);
+            else if (kb.rightArrowKey.wasPressedThisFrame) report.ShowPage(1);
+        }
     }
 }

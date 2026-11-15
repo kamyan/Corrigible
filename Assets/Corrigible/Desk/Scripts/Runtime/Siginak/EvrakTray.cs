@@ -37,7 +37,8 @@ namespace Corrigible.Desk
         [SerializeField] Vector3 slipDropOffset = new Vector3(0.006f, 0.0015f, -0.004f), slipDropEuler = new Vector3(90, -0.3f, 0);
 
         readonly List<ShiftReportInput> reports = new List<ShiftReportInput>();
-        bool sheetOut, briefing, briefingOut, filedHidden;
+        bool sheetOut, briefing, briefingOut, filedHidden, attention;
+        float restIntensity = -1f, litIntensity;
 
         public IReadOnlyList<ShiftReportInput> Reports => reports;
         /// <summary>Emir belgesi tepside (açılış bitti).</summary>
@@ -76,9 +77,48 @@ namespace Corrigible.Desk
         public void SetReceiptTarget(bool on)
         {
             ReceiptTargetLit = on;
+            ApplyLight();
+        }
+
+        /// <summary>KOS aşama 4: tepside karar bekleyen olay tutanağı var (hedef ışığı soluk nabızla yanar).</summary>
+        public bool AttentionLit => attention;
+
+        /// <summary>
+        /// KOS aşama 4: tepside karar bekleyen olay tutanağı varken hedef ışığı soluk ve yavaş nabızla yanar (şiddet
+        /// <c>shelterEvent.trayAttention.intensity</c> × hedef şiddeti, nabız <c>shelterEvent.trayAttention.pulseHz</c>); fiş hedefi
+        /// yanınca (<see cref="SetReceiptTarget"/>) tam şiddet onundur. Yeni kalıcı gösterge değil: var olan hedef ışığı.
+        /// </summary>
+        public void SetAttention(bool on)
+        {
+            if (attention == on) return;
+            attention = on;
+            ApplyLight();
+        }
+
+        /// <summary>Işık fiş hedefi ya da tutanak bekleyişi için yanar; yanarken tür, renk, şiddet ve menzil tokenlardan.</summary>
+        void ApplyLight()
+        {
             if (targetLight == null) return;
-            if (on) ApplyHighlightTokens(targetLight, targetIntensityScale);
-            if (targetLight.enabled != on) targetLight.enabled = on;
+            if (restIntensity < 0f) restIntensity = targetLight.intensity;
+            bool lit = ReceiptTargetLit || attention;
+            if (lit)
+            {
+                targetLight.intensity = restIntensity;
+                ApplyHighlightTokens(targetLight, targetIntensityScale);
+                litIntensity = targetLight.intensity;
+                if (!ReceiptTargetLit) targetLight.intensity = litIntensity * AttentionLevel(Time.unscaledTime);
+            }
+            if (targetLight.enabled != lit) targetLight.enabled = lit;
+        }
+
+        /// <summary>Bekleyiş nabzının şiddet çarpanı: token oranının yarısıyla tamamı arasında sinüs (saf; testler çağırır).</summary>
+        public static float AttentionLevel(float time)
+        {
+            var theme = SiginakTheme.Active;
+            float level = theme != null ? theme.NumberOf("shelterEvent.trayAttention.intensity", 0.5f) : 0.5f;
+            float hz = theme != null ? theme.NumberOf("shelterEvent.trayAttention.pulseHz", 0.5f) : 0.5f;
+            float wave = 0.5f + 0.5f * Mathf.Sin(time * hz * 2f * Mathf.PI);
+            return level * (0.5f + 0.5f * wave);
         }
 
         /// <summary>Hedef ışığının token değerleri (saf yardımcı; testler doğrudan çağırır).</summary>
@@ -122,6 +162,8 @@ namespace Corrigible.Desk
         void LateUpdate()
         {
             if (filedSlip != null && filedSlip.gameObject.activeSelf) PlaceFiled();
+            if (attention && !ReceiptTargetLit && targetLight != null && targetLight.enabled)
+                targetLight.intensity = litIntensity * AttentionLevel(Time.unscaledTime);
         }
 
         /// <summary>R19: arşivdeki fiş elde okunurken tepsideki kopya gizlenir.</summary>
@@ -152,7 +194,11 @@ namespace Corrigible.Desk
             SetReceiptTarget(false);
         }
 
-        void OnDisable() => SetReceiptTarget(false);
+        void OnDisable()
+        {
+            attention = false;
+            SetReceiptTarget(false);
+        }
 
         /// <summary>Yeni rapor (en sona); en eskisi düşer.</summary>
         public void Add(ShiftReportInput report)

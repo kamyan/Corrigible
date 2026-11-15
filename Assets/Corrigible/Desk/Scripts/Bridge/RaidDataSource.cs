@@ -568,13 +568,14 @@ namespace Corrigible.Desk.Bridge
             if(p!=null)parts.Add(TierText(p.Tier));
             return string.Join("\n",parts);
         }
-        /// <summary>Zorluk kademesi cümlesi (görev çipi, görev fişi).</summary>
+        /// <summary>Zorluk kademesi cümlesi (görev çipi, görev fişi). Payda yazılmaz: harekâtın ulaşabildiği en yüksek kademe
+        /// dengeye bağlıdır (<c>Simulation.MaxTier</c>; haritadaki “TEHDİT n/m” onu okur).</summary>
         public static string TierText(int tier)=>tier switch
         {
-            1=>Loc.F("Tehdit {0}/4: makineler alışılmış düzende.",1),
-            2=>Loc.F("Tehdit {0}/4: başta bir makine fazla.",2),
-            3=>Loc.F("Tehdit {0}/4: iki makine fazla, turda iki uyanma.",3),
-            _=>Loc.F("Tehdit {0}/4: üç makine fazla, turda iki uyanma, canları +1.",4),
+            1=>Loc.F("Tehdit {0}: makineler alışılmış düzende.",1),
+            2=>Loc.F("Tehdit {0}: başta bir makine fazla.",2),
+            3=>Loc.F("Tehdit {0}: iki makine fazla, turda iki uyanma.",3),
+            _=>Loc.F("Tehdit {0}: üç makine fazla, turda iki uyanma, canları +1.",4),
         };
     }
 }

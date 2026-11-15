@@ -25,9 +25,9 @@ namespace Corrigible.Desk.Bridge
     /// artık olmayan emir ve fişlerin yerlerini silmek sunucunun <see cref="SyncUi"/> çağrısıdır.
     /// </para>
     /// <para>
-    /// Aşama 6 · R17f (PLAN §1.16): kişi dosyasının BULGULAR satırları Core'un bulgu kodlarından (<see cref="Simulation.AdmissionFindingCode"/>)
-    /// sunum ifadesi, İZLER bölümü, GEÇMİŞ'te inceleme fişi olayı sunum ifadesiyle, KARAR satırı ve kıskaçlı etiket
-    /// (<see cref="FolderData.TagText"/>). Dosyanın hiçbir satırı "robot" demez.
+    /// Kişi dosyasının sağ sayfası: KAYIT (kurucu, geliş, kabul, KARAR satırı, kısıt bitişi, bağımsız bulgu), olay satırları (İZLER, af,
+    /// ayrı tutulan çift) ve kıskaçlı etiket (<see cref="FolderData.TagText"/>). Yalnız public dosya alanları; hiçbir satır "robot" demez.
+    /// Eski belge, dış kayıt, inceleme ve bulgu satırları aşama 7'de kalktı.
     /// </para>
     /// </summary>
     public static class PlanningBoardSnapshotBuilder
@@ -64,6 +64,9 @@ namespace Corrigible.Desk.Bridge
             // ---------------- başlık, kilit, plaka satırları
             s.Header = Loc.F("V.{0:000} · erzak {1} ({2}) · {3}/{4} kişi", sim.S.Day + 1, (int)Math.Floor(sim.Shelter?.Supplies ?? 0),
                 DeskFormat.Signed(sim.BoardFoodPreview, 1, lang), alive, capacity);
+            // KOS aşama 4: açlık, yarım tayın ve karartma tebeşir başlığın sonunda
+            string status = ShelterEventSnapshotBuilder.StatusLine(sim);
+            if (status != null) s.Header = Loc.F("{0} · {1}", s.Header, status);
             s.Locked = board.Locked;
             s.LockReason = LockReason(sim) ?? string.Empty;
             s.Editable = !board.Locked && !inputBlocked && !storyHold && sim.S.Ending == null && sim.S.Raid == null;
@@ -89,8 +92,8 @@ namespace Corrigible.Desk.Bridge
             {
                 if (!p.Alive || place.ContainsKey(p.Id)) continue;
                 place[p.Id] = "rest";
-                // K4-A: üstte Boşta'nın ilk uygun kişisi (yatan ve kısıtlı olmayan); sonra kalanlar, ikisi de Bd.People sırasıyla
-                if (p.Down <= 0 && !p.Restricted) s.DeckOrder.Add(p.Id); else later.Add(p.Id);
+                // K4-A: üstte Boşta'nın ilk uygun kişisi (yatan, kısıtlı, tecritte ve görevsiz olmayan); sonra kalanlar, ikisi de Bd.People sırasıyla
+                if (DeckFirst(sim, p)) s.DeckOrder.Add(p.Id); else later.Add(p.Id);
             }
             s.DeckOrder.AddRange(later);
 
@@ -131,6 +134,16 @@ namespace Corrigible.Desk.Bridge
         }
 
         // ---------------------------------------------------------------- herkese açık yardımcılar
+
+        /// <summary>
+        /// Boşta destesinin üst kısmında mı (görev alabilir): yatmıyor, kısıtsız, tecrit dışında ve bu vardiya görevsiz değil (KOS aşama
+        /// 4). Devir fişinin BOŞTA sırası da bunu okur.
+        /// </summary>
+        public static bool DeckFirst(Simulation sim, ResidentState p) =>
+            p.Down <= 0 && !p.Restricted && !p.Isolated && IdleLeft(sim, p) <= 0;
+
+        /// <summary>Görev alamadığı kalan vardiya (<c>IdleUntil − S.Day</c>); yoksa 0 ya da altı.</summary>
+        public static int IdleLeft(Simulation sim, ResidentState p) => (sim.Admission?.File(p.Id)?.IdleUntil ?? -1) - sim.S.Day;
 
         /// <summary>
         /// Kilidin nedeni (kilit etiketinin 2. satırı): basılı devir fişi önce gelir; yoksa süren ya da bu vardiya çözülmüş baskın
@@ -218,16 +231,14 @@ namespace Corrigible.Desk.Bridge
             d.StatValues[2] = DeskFormat.Int(slot?.Power ?? p.Power);
             d.Hurt = p.Alive && p.Hp < p.MaxHp;
             Strip(sim, p, place, out d.Strip, out d.StripTone);
-            var file = sim.Admission?.File(p.Id);
             d.Injured = p.Alive && p.Hp < p.MaxHp;
             d.Bedridden = p.Alive && p.Down > 0;
             d.Restricted = p.Alive && p.Restricted;
-            // İNCELE: dosya incelemede (yeni talimat eşleşti ya da inceleme emri bekliyor); robot bilgisi taşımaz
-            d.Review = p.Alive && file != null && (file.ReviewNeeded || file.ReviewPending);
+            d.Isolated = p.Alive && p.Isolated;
             d.Lost = !p.Alive;
             d.Selected = ui.SelectedId == p.Id;
             d.HoverTitle = p.Name;
-            d.HoverLine = d.Review ? Loc.F("{0} · {1}", d.Strip, words.Review) : d.Strip;
+            d.HoverLine = d.Strip;
             return d;
         }
 
@@ -236,10 +247,26 @@ namespace Corrigible.Desk.Bridge
         {
             if (!p.Alive) { text = LostLine(sim, p); tone = StripTone.Ink; return; }
             if (p.Down > 0) { text = Loc.F("Yatıyor · {0} v.", p.Down); tone = StripTone.Blue; return; }
+            if (p.Isolated)
+            {
+                // KOS aşama 4: tecrit (kalan kapanış); sabotaj kararı bekleyen sorgunun bitişi yok
+                int until = sim.Admission?.File(p.Id)?.IsolatedUntil ?? -1;
+                text = until < 0 ? Loc.T("Tecritte · karar bekliyor") : Loc.F("Tecritte · {0} v.", Math.Max(0, until - sim.S.Day));
+                tone = StripTone.Red;
+                return;
+            }
             if (p.Restricted)
             {
                 int left = (sim.Admission?.File(p.Id)?.RestrictedUntil ?? -1) - sim.S.Day;
                 text = left > 0 ? Loc.F("Kısıtlı · {0} v.", left) : Loc.T("Kısıtlı · bitti");
+                tone = StripTone.Red;
+                return;
+            }
+            int idle = IdleLeft(sim, p);
+            if (idle > 0)
+            {
+                // Görev yok (ikna, yas): Boşta'da kalan vardiya; kilitli planda çalışan kişinin bedeli sonraki vardiyada
+                text = place == "rest" ? Loc.F("Görev yok · {0} v.", idle) : Loc.T("Sonraki vardiya görev yok");
                 tone = StripTone.Red;
                 return;
             }
@@ -254,12 +281,15 @@ namespace Corrigible.Desk.Bridge
             }
             if (place == "rest")
             {
-                int heal = Math.Max(0, Math.Min(p.MaxHp, p.Hp + Math.Max(0, sim.B.boardRestHeal)) - p.Hp);
+                // Yarım tayında dinlenme can vermez (Core AdvancePlanningBoard)
+                int heal = sim.HalfRationActive ? 0 : Math.Max(0, Math.Min(p.MaxHp, p.Hp + Math.Max(0, sim.B.boardRestHeal)) - p.Hp);
                 text = heal > 0 ? Loc.F("Boşta · +{0} can", heal) : Loc.T("Boşta");
                 tone = StripTone.Mute;
                 return;
             }
             text = PlanningBoardData.JobName(place);
+            // Karartmada Üretim ve Mutfak çalışmaz (Core)
+            if (sim.BlackoutActive && (place == "craft" || place == "cook")) text = Loc.F("{0} · karartma", text);
             tone = StripTone.Ink;
         }
 
@@ -420,7 +450,7 @@ namespace Corrigible.Desk.Bridge
             w.Injured = Loc.T("YARALI");
             w.Bedridden = Loc.T("YATIYOR");
             w.Restricted = Loc.T("KISITLI");
-            w.Review = Loc.T("İNCELE");
+            w.Isolated = Loc.T("TECRİT");
             w.Lost = Loc.T("KAYIP");
             w.Free = Loc.T("serbest");
             w.Kit = Loc.T("KİT");
@@ -704,7 +734,7 @@ namespace Corrigible.Desk.Bridge
             var board = sim.Board;
             var f = new FolderData { PersonId = p.Id, Name = p.Name, PortraitKey = PortraitKeyOf(p.Name), Card = card,
                 Profession = Loc.T(p.Profession), Trait = Loc.T(p.Trait), Job = PlaceText(p, card.JobId),
-                Header = Loc.F("KYGA · KİŞİ DOSYASI · V.{0:000}", sim.S.Day + 1), AdmissionHeader = Loc.T("KYGA · KABUL VE ERİŞİM") };
+                Header = Loc.F("KYGA · KİŞİ DOSYASI · V.{0:000}", sim.S.Day + 1), RightHeader = Loc.T("KALICI KİŞİ DOSYASI") };
             int expert = sim.B.boardExpertAt;
 
             // Sol sayfa: künye, değerler, ustalık, taşıdığı eşyalar
@@ -732,164 +762,108 @@ namespace Corrigible.Desk.Bridge
             f.Gear[2] = string.Join(" / ", items.Where(e => !e.Kind.StartsWith("kit_") && e.Kind != "armor").Select(e => PlanningBoardData.EquipmentName(e.Kind)));
             if (items.Count == 0) f.Left.Add(new FolderLine(null, Loc.T("taşıdığı eşya yok"), StripTone.Mute));
 
-            // Sağ sayfa: kalıcı kabul dosyası (LastAccessJob yalnız robotlarda yazılır: asla gösterilmez)
+            // Sağ sayfa: kalıcı kabul dosyası (LastAccessJob yalnız robotlarda yazılır: asla gösterilmez). Başlığı (KALICI KİŞİ
+            // DOSYASI) sayfanın üst satırında RightHeader'dır (ikinci tur kararı); satırlar arasında tekrarlanmaz.
             var adm = sim.Admission;
             var file = adm?.File(p.Id);
-            f.Right.Add(Section(Loc.T("KALICI KİŞİ DOSYASI")));
             if (file == null) f.Right.Add(new FolderLine(null, Loc.T("dosya bulunamadı"), StripTone.Mute));
             else
             {
-                var papers = file.Papers;
-                if (papers != null)
-                {
-                    f.Right.Add(new FolderLine(Loc.T("AD"), papers.Name));
-                    f.Right.Add(new FolderLine(Loc.T("MESLEK"), Loc.T(papers.Profession)));
-                    f.Right.Add(new FolderLine(Loc.T("GELDİĞİ YER"), Loc.T(papers.Origin)));
-                    f.Right.Add(new FolderLine(Loc.T("DÜZENLEME"), ShiftText(papers.IssuedShift)));
-                    f.Right.Add(new FolderLine(Loc.T("BELGE NO"), PaperCode(papers.Serial, "K-")));
-                    f.Right.Add(new FolderLine(Loc.T("SEVK NO"), PaperCode(papers.ReferralSerial, "K-")));
-                    f.Right.Add(new FolderLine(Loc.T("MÜHÜR"), papers.Seal));
-                    f.Right.Add(new FolderLine(Loc.T("PORTRE İZİ"), PaperCode(papers.Portrait, "P-")));
-                }
                 f.Right.Add(Section(Loc.T("KAYIT")));
                 f.Right.Add(new FolderLine(Loc.T("KURUCU"), file.Founder ? Loc.T("evet") : Loc.T("hayır")));
                 f.Right.Add(new FolderLine(Loc.T("GELİŞ"), ShiftText(file.ArrivalShift)));
                 f.Right.Add(new FolderLine(Loc.T("KABUL"), ShiftText(file.AcceptedShift)));
-                // Kapıdaki karar (Aşama 6, R17f): KARAR V.nnn · damganın adı; kurucularda yok
-                var decision = file.Founder ? null : adm.Events.FirstOrDefault(e => e.PersonId == p.Id && (e.Kind == "admit" || e.Kind == "restricted"));
-                if (decision != null)
-                    f.Right.Add(new FolderLine(null, Loc.F("KARAR V.{0:000} · {1}", file.AcceptedShift + 1,
-                        decision.Kind == "admit" ? Loc.T("KABUL · TAM ERİŞİM") : Loc.T("KISITLI KABUL"))));
+                // Kapıdaki karar: KARAR V.nnn · KABUL · TAM ERİŞİM (alınan her aday kabul damgasıyla girer); kurucularda yok
+                if (!file.Founder)
+                    f.Right.Add(new FolderLine(null, Loc.F("KARAR V.{0:000} · {1}", file.AcceptedShift + 1, Loc.T("KABUL · TAM ERİŞİM"))));
                 if (file.RestrictedUntil >= 0) f.Right.Add(new FolderLine(Loc.T("KISITLAMA BİTİŞİ"), ShiftText(file.RestrictedUntil), StripTone.Red));
-                f.Right.Add(new FolderLine(Loc.T("DIŞ KAYIT"), file.RecordVerified ? Loc.T("teyitli") : Loc.T("teyitsiz")));
-                f.Right.Add(new FolderLine(Loc.T("İNCELEME"),
-                    file.ReviewPending ? Loc.T("bekliyor") : file.ReviewNeeded ? Loc.T("gerekli") : Loc.T("yok"),
-                    file.ReviewPending || file.ReviewNeeded ? StripTone.Red : StripTone.Ink));
                 f.Right.Add(new FolderLine(Loc.T("BAĞIMSIZ BULGU"), DeskFormat.Int(file.ClueCount)));
-                // BULGULAR (D4/D5): Core'un bulgu kodlarından sunum ifadeleri; Core'un belge ve buğu cümleleri "robot" der, dosya demez
-                var findings = Findings(sim, file);
-                if (findings.Count > 0)
-                {
-                    f.Right.Add(Section(Loc.T("BULGULAR")));
-                    f.Right.AddRange(findings);
-                }
-                // İZLER: bağımsız kayıtlar kısa sunum ifadesiyle (Core'un iz cümleleri GEÇMİŞ'e girmez)
-                var clues = adm.Events.Where(e => e.PersonId == p.Id && (e.Kind == "clue_access" || e.Kind == "clue_component")).ToList();
-                if (clues.Count > 0)
-                {
-                    f.Right.Add(Section(Loc.T("İZLER")));
-                    foreach (var e in clues)
-                        f.Right.Add(new FolderLine(ShiftText(e.Shift), e.Kind == "clue_access" ? Loc.T("İZ 1 · erişim kaydı") : Loc.T("İZ 2 · parça kaydı"),
-                            e.Resolved ? StripTone.Mute : StripTone.Ink));
-                }
-                var history = adm.Events.Where(e => e.PersonId == p.Id && e.Kind != "clue_access" && e.Kind != "clue_component").TakeLast(8).ToList();
-                if (history.Count > 0)
-                {
-                    f.Right.Add(Section(Loc.T("GEÇMİŞ")));
-                    foreach (var e in history) f.Right.Add(new FolderLine(ShiftText(e.Shift), HistoryText(adm, e), e.Resolved ? StripTone.Mute : StripTone.Ink));
-                }
-                string risk = sim.ResidentAdmissionRisk(p.Id);
-                if (!string.IsNullOrEmpty(risk))
-                {
-                    f.Right.Add(Section(Loc.T("UYARI")));
-                    f.Right.Add(new FolderLine(null, risk, StripTone.Red));
-                }
+                // Olay izleri (alan), af ve ayrı tutulan çift (yalnız public dosya alanları; insan ve sızmacıda aynı). Olaylar kapalıyken boş.
+                f.Right.AddRange(EventLines(sim, p, file));
                 // Özet ve bağımsız izler önce; belge ayrıntıları ek yapraklarda da bütünüyle okunur.
                 f.DossierRight.Add(new FolderLine(Loc.T("GELİŞ"), ShiftText(file.ArrivalShift)));
                 f.DossierRight.Add(new FolderLine(Loc.T("KABUL"), ShiftText(file.AcceptedShift)));
-                f.DossierRight.Add(new FolderLine(Loc.T("ERİŞİM"), p.Restricted ? Loc.T("KISITLI") : Loc.T("TAM ERİŞİM")));
-                f.DossierRight.Add(new FolderLine(Loc.T("İNCELEME"), file.ReviewPending ? Loc.T("bekliyor") : file.ReviewNeeded ? Loc.T("gerekli") : Loc.T("yok")));
-                if (clues.Count > 0)
-                {
-                    f.DossierRight.Add(Section(Loc.T("İZLER")));
-                    foreach (var e in clues) f.DossierRight.Add(new FolderLine(ShiftText(e.Shift), e.Kind == "clue_access" ? Loc.T("İZ 1 · erişim kaydı") : Loc.T("İZ 2 · parça kaydı")));
-                }
-                if (history.Count > 0)
-                {
-                    f.DossierRight.Add(Section(Loc.T("GEÇMİŞ")));
-                    foreach (var e in history) f.DossierRight.Add(new FolderLine(ShiftText(e.Shift), HistoryText(adm, e)));
-                }
+                // ERİŞİM yalnız kısıtlıyken (olay kısıtı)
+                if (p.Restricted) f.DossierRight.Add(new FolderLine(Loc.T("ERİŞİM"), Loc.T("KISITLI")));
                 var seen = new HashSet<(string label, string value, bool section)>();
                 var ordered = f.DossierRight.Concat(f.Right).Where(line => seen.Add((line.Label, line.Value, line.Section))).ToList();
                 f.DossierRight.Clear(); f.DossierRight.AddRange(ordered);
                 f.TagText = TagText(sim, p, file, words);
             }
 
-            // Sekmeler: Core'un saf denetimleri; kapalıysa nedeni Core'un iletisi. İNCELE'nin gözetmeni Boşta'nın ilk uygun kişisi (K4-A,
-            // biçim 15; Simulation.AdmissionWatcher, hedefin kendisi hariç); Boşta boşsa kapalı. Açıkken tek gözlem yuvası uyarısı (H2/H4)
-            // AdmissionSnapshotBuilder.ReviewWarning'den, sekmenin üzerine gelme satırında (sunucu).
-            f.ReviewLabel = words.Review;
-            f.RestrictLabel = Loc.T("ERİŞİM");
-            f.DismissLabel = DeskText.Upper(Loc.T("Tahliye"), lang);
-            f.ReviewSub = Loc.T("dış kayıt · 1 gözetmen vardiyası");
-            f.RestrictSub = Loc.T("kısıtla · kaldır");
-            f.DismissSub = Loc.T("güvenle ayır · iki adım");
-            bool open = !inputBlocked && !storyHold;
-            string gate = storyHold ? Loc.T("Önce açılış belgesini kapat.") : null;
-            string review = sim.ResidentReviewCheck(p.Id);
-            string access = sim.ResidentRestrictionCheck(p.Id, !p.Restricted);
-            string dismiss = sim.ResidentDismissCheck(p.Id);
-            f.CanReview = open && review == null;
-            f.CanRestrict = open && access == null;
-            f.CanDismiss = open && dismiss == null;
-            f.ReviewNote = gate ?? review;
-            f.RestrictNote = gate ?? access;
-            f.DismissNote = gate ?? dismiss;
             return f;
         }
 
         /// <summary>
-        /// Dosyanın BULGULAR satırları: belge ve dış kayıt kodu → alan ifadesi, soğuk gözlem kodu → buğu ifadesi, görüşme → Core'un
-        /// görüşme metni (robotluk içermez). Kod yalnız yapılmış incelemede vardır (<see cref="Simulation.AdmissionFindingCode"/>).
+        /// Dosyanın olay satırları (KOS aşama 4): İZLER (<c>TraceAreas</c> sırasıyla "İZ n · alan"), af ve ayrı tutulan çift. Yalnız
+        /// public dosya alanları; gizli kimlik okunmaz.
         /// </summary>
-        static List<FolderLine> Findings(Simulation sim, ResidentAdmissionFile file)
+        static List<FolderLine> EventLines(Simulation sim, ResidentState p, ResidentAdmissionFile file)
         {
             var lines = new List<FolderLine>();
-            string id = file.PersonId;
-            string papers = AdmissionSnapshotBuilder.PaperPhrase(sim.AdmissionFindingCode(id, "papers"));
-            if (papers != null) lines.Add(new FolderLine(null, papers));
-            string record = AdmissionSnapshotBuilder.PaperPhrase(sim.AdmissionFindingCode(id, "record"));
-            if (record != null) lines.Add(new FolderLine(Loc.T("DIŞ KAYIT"), record));
-            string breath = AdmissionSnapshotBuilder.BreathPhrase(sim.AdmissionFindingCode(id, "breath"));
-            if (breath != null) lines.Add(new FolderLine(null, breath));
-            if (sim.AdmissionFindingCode(id, "interview") != null && !string.IsNullOrEmpty(file.Interview)) lines.Add(new FolderLine(null, Loc.T(file.Interview)));
+            var areas = file.TraceAreas;
+            if (areas != null && areas.Count > 0)
+            {
+                lines.Add(Section(Loc.T("İZLER")));
+                for (int i = 0; i < areas.Count; i++) lines.Add(new FolderLine(null, Loc.F("İZ {0} · {1}", i + 1, TraceArea(areas[i])), StripTone.Red));
+            }
+            var notes = new List<FolderLine>();
+            if (file.Pardoned) notes.Add(new FolderLine(null, Loc.T("hırsızlık affedildi")));
+            var feuds = sim.ShelterEvents?.Feuds;
+            if (feuds != null)
+                foreach (var feud in feuds)
+                {
+                    if (feud == null || sim.S.Day >= feud.Until || (feud.A != p.Id && feud.B != p.Id)) continue;
+                    string other = ShelterEventSnapshotBuilder.NameOf(sim, feud.A == p.Id ? feud.B : feud.A);
+                    notes.Add(new FolderLine(null, Loc.F("{0} ile ayrı tutuluyor · {1} V", other, feud.Until - sim.S.Day), StripTone.Red));
+                }
+            if (notes.Count > 0)
+            {
+                lines.Add(Section(Loc.T("OLAY NOTLARI")));
+                lines.AddRange(notes);
+            }
             return lines;
         }
 
-        /// <summary>GEÇMİŞ satırı: inceleme fişi olayı sunum ifadesiyle (Core cümlesi "robot" der), öteki olaylar Core metniyle.</summary>
-        static string HistoryText(CommunityAdmissionState adm, AdmissionEvent e) =>
-            e.Kind == "file_review" ? Loc.F("İnceleme fişi açıldı · talimat {0}", AdmissionSnapshotBuilder.VersionAt(adm, e.Shift)) : Loc.T(e.Text);
+        /// <summary>İzin bulunduğu yer (Core alan kimliği "uretim" | "erzak" | "nobet").</summary>
+        static string TraceArea(string area)
+        {
+            switch (area)
+            {
+                case "uretim": return Loc.T("üretim dolabı");
+                case "erzak": return Loc.T("erzak sayımı");
+                default: return Loc.T("nöbet");
+            }
+        }
 
         /// <summary>
-        /// Dosyanın kıskaçlı etiketi (R17f; D16): inceleme fişi açıksa "İNCELEME", değilse kısıtlıysa "KISITLI · n V" (kalan vardiya; plan
-        /// eki), süresi dolmuşsa "KISITLI"; yoksa null.
+        /// Dosyanın kıskaçlı etiketi, ilk eşleşen: tecrit ("TECRİT · n V" ya da kararı bekliyorsa "TECRİT · KARAR"), kısıt ("KISITLI · n V",
+        /// süresi dolmuşsa "KISITLI"), görevsiz vardiya ("GÖREV YOK · n V"), iz ("İZ n"); yoksa null. Olaylar kapalıyken bu durumlar kurulmaz.
         /// </summary>
         static string TagText(Simulation sim, ResidentState p, ResidentAdmissionFile file, BoardWords words)
         {
             if (!p.Alive || file.Departed) return null;
-            if (file.ReviewNeeded) return Loc.T("İNCELEME");
-            if (!p.Restricted) return null;
-            int left = file.RestrictedUntil - sim.S.Day;
-            return left > 0 ? Loc.F("KISITLI · {0} V", left) : words.Restricted;
+            // Olaylar kapalıyken tecrit, görev yasağı ve iz hiç kurulmaz (K9); "events" yalnız bu değişmezin koruması, davranışı değiştirmez
+            bool events = sim.B.shelterEventsEnabled;
+            // KOS aşama 4: tecrit > kısıt > görev yok > iz
+            if (events && p.Isolated)
+                return file.IsolatedUntil < 0 ? Loc.T("TECRİT · KARAR") : Loc.F("TECRİT · {0} V", Math.Max(0, file.IsolatedUntil - sim.S.Day));
+            if (p.Restricted)
+            {
+                int left = file.RestrictedUntil - sim.S.Day;
+                return left > 0 ? Loc.F("KISITLI · {0} V", left) : words.Restricted;
+            }
+            if (!events) return null;
+            int idle = file.IdleUntil - sim.S.Day;
+            if (idle > 0) return Loc.F("GÖREV YOK · {0} V", idle);
+            return file.ClueCount > 0 ? Loc.F("İZ {0}", file.ClueCount) : null;
         }
 
         static FolderLine Section(string label) => new FolderLine(label, null, StripTone.Ink, true);
 
         static string ShiftText(int day) => Loc.F("V.{0:000}", day + 1);
 
-        /// <summary>
-        /// Kurucu belgesinin Core alanları ham kimliği taşır ("K-sakin-3", "sakin-3"); kişi dosyasında numaraya iner ("K-003", "P-003").
-        /// Yalnız gösterim: Core ve kayıt aynı kalır, kurucu olmayan belgeler ("N-17/009") olduğu gibi geçer.
-        /// </summary>
-        static string PaperCode(string value, string prefix)
-        {
-            const string founderId = "sakin-";
-            int at = value?.IndexOf(founderId, StringComparison.Ordinal) ?? -1;
-            if (at < 0 || !int.TryParse(value.Substring(at + founderId.Length), System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out int number)) return value;
-            return prefix + number.ToString("000", System.Globalization.CultureInfo.InvariantCulture);
-        }
-
-        static string PlaceText(ResidentState p, string place)
+        public static string PlaceText(ResidentState p, string place)
         {
             if (!p.Alive) return Loc.T("Kayıp");
             if (place == "train") return Loc.F("{0} · {1}", PlanningBoardData.JobName("train"), TopicLabel(p.TrainingSubject));
@@ -897,7 +871,7 @@ namespace Corrigible.Desk.Bridge
             return PlanningBoardData.JobName(place);
         }
 
-        static string TierWord(int tier)
+        public static string TierWord(int tier)
         {
             switch (tier)
             {

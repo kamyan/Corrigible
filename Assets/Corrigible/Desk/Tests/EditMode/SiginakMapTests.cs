@@ -12,10 +12,10 @@ namespace Corrigible.Desk.Tests
     /// <summary>Sığınak Aşama 5: kurtuluş haritasının durumları, fiş içerikleri, figür kuralları ve sahne bağlantıları.</summary>
     public class SiginakMapTests
     {
-        static Simulation NewLiberation(double fon = 100) => LegacySimulation.NewGame(731, new Balance { startFon = fon });
+        static Simulation NewLiberation(double fon = 100) => LegacySimulation.NewGame(731, new Balance { shelterEventsEnabled = false, startFon = fon });
         /// <summary>Beş uzman baştan (atölye kilidi açık).</summary>
         static Simulation NewOpen() =>
-            LegacySimulation.NewGame(731, new Balance { startFon = 100, liberationMinerWorkshopLevel = 0, liberationSmokeWorkshopLevel = 0 });
+            LegacySimulation.NewGame(731, new Balance { shelterEventsEnabled = false, startFon = 100, liberationMinerWorkshopLevel = 0, liberationSmokeWorkshopLevel = 0 });
 
         /// <summary>V.014'ün ilk yarısı: Batı Avrupa'nın üç sektörü alınır, yeni cephe henüz seçilmez.</summary>
         static Simulation WeuFreed()
@@ -121,7 +121,7 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(SiginakGlyphs.Machine(def.Enemy, framed: true), d.Fields[2].Glyph);
             Assert.AreEqual(Loc.T(Baskin.UnitTypes[def.Enemy].Name), d.Fields[2].Value);
             Assert.AreEqual(sim.Tier, d.Fields[3].Tier);
-            Assert.AreEqual(Loc.F("{0}/4", sim.Tier), d.Fields[3].Value);
+            Assert.AreEqual(Loc.F("{0}/{1}", sim.Tier, sim.MaxTier), d.Fields[3].Value);
             Assert.IsFalse(d.Task.Contains("\n"), "kimlik satırı görevden SAHA'ya taşındı");
 
             Assert.AreEqual(sim.NextLiberationSector(Simulation.HQ).MissionKind == "loot" ? 4 : 2, d.Rewards.Count);

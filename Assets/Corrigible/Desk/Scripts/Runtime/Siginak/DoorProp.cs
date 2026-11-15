@@ -6,7 +6,7 @@ namespace Corrigible.Desk
     /// <summary>
     /// Sığınağın çelik kapısı (sağ duvar, Revizyon 2 · S4). Biri kapıyı çalınca tehlike bandının üstündeki kafesli vuruş
     /// lambası amber yanar, her vuruşta bir an parlar; harekâtı bitiren kapıda kırmızıdır. Açılırken önce el çarkı döner
-    /// (0,5 s), sonra kanat menteşesinde koridora doğru açılır (0,8 s); merdiven boşluğunun ışıkları 0,3 s'de yanar ve ziyaretçinin
+    /// (0,5 s), sonra kanat menteşesinde açılır (0,8 s; menteşeler oda yüzünde, kanat odaya; menüdeki kapı aynı model ve aynı dünya pozu); merdiven boşluğunun ışıkları 0,3 s'de yanar ve ziyaretçinin
     /// silueti görünür. Kapanırken kanat 0,6 s'de kapanır, sonra çark geri döner. Gözetleme deliğinin kapağı 0,15 s'de kayar;
     /// interkomdan cevap gelirken amber noktası yanar. Yalnız çizer: ne zaman ne olacağını kapının bağlayıcısı söyler.
     /// Çalışırken hiyerarşi yaratmaz.
@@ -18,7 +18,7 @@ namespace Corrigible.Desk
     /// </summary>
     public sealed class DoorProp : MonoBehaviour
     {
-        [Tooltip("Kanadın menteşe pivotu (yerel y ekseninde döner); açı tokens › layout3d.door.leafOpenDeg (koridora).")]
+        [Tooltip("Kanadın menteşe pivotu (yerel y ekseninde +openAngle döner; yönü pivotun duruşu belirler: sığınakta yerel y aşağı = odaya); açı tokens › layout3d.door.leafOpenDeg.")]
         [SerializeField] Transform leaf;
         [SerializeField] float openAngle = 95;
         [Tooltip("Kanattaki çark (yerel z ekseninde döner).")]

@@ -52,7 +52,7 @@ namespace Corrigible.Desk.Bridge
         /// <summary>Kapının üzerine gelme etiketi (sahnedeki başlık bu kaynağı taşır; satır dile göre buradan yazılır).</summary>
         static readonly string TargetTitle = Loc.N("SIĞINAK KAPISI"), TargetLine = Loc.N("Biri çalınca: gözetleme deliği, interkom, kapıyı aç ya da açma.");
         /// <summary>Kartlı oyunda kapı hedefinin satırı (PLAN §4): kapıda aday var / yok.</summary>
-        static readonly string BoardLineWaiting = Loc.N("Kapıda başvuru var: tezgâha bak."), BoardLineIdle = Loc.N("Kapıda kimse yok.");
+        static readonly string BoardLineWaiting = Loc.N("Kapıda aday var: tezgâha bak."), BoardLineIdle = Loc.N("Kapıda kimse yok.");
 
         DoorPhase phase;
         DoorVisit shown, announced;
@@ -68,7 +68,7 @@ namespace Corrigible.Desk.Bridge
         /// <summary>Kartlı oyun ve kabul bağlı: kapının sahibi <see cref="SiginakAdmission"/> (bağ yoksa eski yedek).</summary>
         bool Delegated => admission != null && Sim?.Board != null;
         /// <summary>Kartlı oyunda kapıda bekleyen aday (harekât bitmediyse).</summary>
-        static bool CandidateWaiting(Simulation sim) => sim?.Admission?.Candidate != null && sim.S.Ending == null;
+        static bool CandidateWaiting(Simulation sim) => AdmissionSnapshotBuilder.GroupWaiting(sim);
 
         /// <summary>
         /// Kâğıt açık, kapı kımıldıyor ya da vuruş kameranın dönmesini bekliyor: masa kilitli. Kartlı oyunda kabul bağlıysa kabulün

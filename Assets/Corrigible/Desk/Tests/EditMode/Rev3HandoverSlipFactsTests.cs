@@ -32,16 +32,19 @@ namespace Corrigible.Desk.Tests
 
         /// <summary>Kartlı oyun, kapıya kimse gelmez (<c>Rev3BoardSnapshotTests</c> ile aynı denge).</summary>
         static Simulation Ready(uint seed = 79) => Simulation.NewGame(seed, new Balance
-        {
+        { shelterEventsEnabled = false,
             planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 100, admissionKnockMax = 100
         });
 
-        /// <summary>Kapıya her vardiya bir aday gelir; robot ve belge kusuru payı ayarlı.</summary>
-        static Simulation Doors(uint seed = 79, double robotChance = 0, int knockMax = 1, double faultChance = 0) =>
+        /// <summary>
+        /// Kapıya <c>1..knockMax</c> vardiyada bir aday grubu gelir; <paramref name="robotChance"/> üç kademenin de sızmacı olasılığıdır
+        /// (gizli; çekim sayısını değiştirmez).
+        /// </summary>
+        static Simulation Doors(uint seed = 79, double robotChance = 0, int knockMax = 1) =>
             Simulation.NewGame(seed, new Balance
-            {
+            { shelterEventsEnabled = false,
                 planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 1, admissionKnockMax = knockMax,
-                admissionRobotChance = robotChance, admissionPaperFaultChance = faultChance
+                candidateTier0Robot = robotChance, candidateTier1Robot = robotChance, candidateTier2Robot = robotChance
             });
 
         /// <summary>Sunucunun ilk açılıştaki <c>RetireJobs</c>'u: otomatik üretim ve emekli görevlerin BOŞTA'ya alınması.</summary>
@@ -103,19 +106,27 @@ namespace Corrigible.Desk.Tests
         }
 
         /// <summary>
-        /// E11 durumu: V.002'de ilk aday kısıtlı kabul edilir, V.003'te ikinci aday kapıda; bir kişi sıfırdan eğitimde, bir kişi yaralı
-        /// ama ayakta; baskın dönüşünde kadronun ilki kurtarılır (yatıyor), üçüncüsü geride kalır (ölür). Plan baskınla kilitli.
+        /// E11 durumu: V.002'de ilk gruptan bir aday (bedelsiz özellikli) alınır ve kısıtlanır, V.003'te ikinci grup kapıda (geliş
+        /// vardiyası: son vardiya değil); bir kişi sıfırdan eğitimde, bir kişi yaralı ama ayakta; baskın dönüşünde kadronun ilki kurtarılır
+        /// (yatıyor), üçüncüsü geride kalır (ölür). Plan baskınla kilitli.
         /// </summary>
         static Simulation Mixed(out string rescued, out string lost, out string restricted)
         {
             var sim = Doors();
             Close(sim);
-            Assert.IsNotNull(sim.Admission.Candidate, "V.002: ilk aday kapıda.");
-            restricted = sim.Admission.Candidate.Resident.Id;
-            var decided = sim.DecideApplicant("restricted");
-            Assert.IsTrue(decided.Ok, decided.Msg);
+            Assert.Greater(sim.Admission.Group.Count, 1, "V.002: ilk aday grubu kapıda.");
+            restricted = sim.Admission.Group.First(c => !c.Perks.Any(CandidateData.IsCost)).Resident.Id;
+            var chosen = sim.ChooseCandidate(restricted);
+            Assert.IsTrue(chosen.Ok, chosen.Msg);
+            // Test düzeni: olay kısıtının durumu (eski elle kısıt aşama 7'de silindi)
+            string rid = restricted;
+            var r = sim.Board.Person(rid);
+            r.Restricted = true;
+            r.Job = "rest";
+            sim.Admission.File(rid).RestrictedUntil = sim.S.Day + 3;
+            foreach (var e in sim.Board.Equipment.Where(e => e.OwnerId == rid && !e.Bound)) e.OwnerId = null;
             Close(sim);
-            Assert.IsNotNull(sim.Admission.Candidate, "V.003: ikinci aday kapıda.");
+            Assert.Greater(sim.Admission.Group.Count, 1, "V.003: ikinci aday grubu kapıda.");
             Assert.AreEqual("care", At(sim, 5).Job);
             Assert.AreEqual(0, At(sim, 5).Skill("emp"));
             var trained = sim.TrainResident(At(sim, 5).Id, "emp");
@@ -145,30 +156,21 @@ namespace Corrigible.Desk.Tests
             foreach (var p in b.People)
                 sb.Append(p.Id).Append(p.Job).Append(p.Hp).Append(p.Down).Append(p.Restricted).Append(p.Alive).Append(p.TrainingSubject)
                   .Append(string.Join(",", p.Experience.Select(x => x.Subject + x.Points))).Append(';');
-            foreach (var e in b.Equipment) sb.Append(e.Id).Append(e.Kind).Append(e.OwnerId).Append(e.Charges).Append(';');
+            foreach (var e in b.Equipment) sb.Append(e.Id).Append(e.Kind).Append(e.OwnerId).Append(e.Charges).Append(e.Bound).Append(';');
             foreach (var m in b.Materials) sb.Append(m.Kind).Append(m.Quantity).Append(';');
             foreach (var m in b.ProductionInputs) sb.Append(m.Kind).Append(m.Quantity).Append(';');
             foreach (var o in b.Orders) sb.Append(o.Id).Append(o.RecipeId).Append(o.Remaining).Append(o.Started).Append(';');
             var a = sim.Admission;
-            sb.Append(a.ObservationTarget).Append('|').Append(a.Events.Count).Append('|').Append(a.NextArrivalShift).Append('|')
-              .Append(a.Candidate?.Resident.Id).Append(a.Candidate?.WaitingUntil).Append('|');
-            foreach (var f in a.Files) sb.Append(f.PersonId).Append(f.ReviewPending).Append(f.ReviewNeeded).Append(f.RestrictedUntil).Append(f.ClueCount).Append(';');
+            sb.Append(a.NextArrivalShift).Append('|')
+              .Append(a.GroupArrivalShift).Append(a.GroupWaitingUntil).Append(a.GroupEmergency).Append(a.Passed.Count).Append('|');
+            foreach (var c in a.Group) sb.Append(c.Resident.Id).Append(c.Tier).Append(c.SuspicionKey).Append(string.Join(",", c.Perks)).Append(';');
+            foreach (var f in a.Files) sb.Append(f.PersonId).Append(f.Departed).Append(f.RestrictedUntil).Append(f.ClueCount).Append(';');
             return sb.ToString();
-        }
-
-        /// <summary>Core'un o kişi için yazdığı kabul riskinin türü (Türkçe metnin başından; yalnız test).</summary>
-        static SlipWarningKind CoreKind(string risk)
-        {
-            Assert.IsNotNull(risk);
-            if (risk.StartsWith("Kısıtlı kabul süresi doldu", StringComparison.Ordinal)) return SlipWarningKind.FileRestrictionExpired;
-            if (risk.StartsWith("İki bağımsız bulgu", StringComparison.Ordinal)) return SlipWarningKind.FileClues;
-            StringAssert.StartsWith("Güncel talimat", risk);
-            return SlipWarningKind.FileReview;
         }
 
         /// <summary>
         /// Fişi kurar, vardiyayı kapatır ve tahmini gerçek kapanışla karşılaştırır: ERZAK, EĞİTİM (deneyim, kademe), ÜRETİM (ilerleme,
-        /// tamamlanan). Kapanışın başında gizli bir kabul olayı (müdahale, kapatma) olduysa fiş onu bilerek bilmez; o kapanış atlanır.
+        /// tamamlanan).
         /// </summary>
         static HandoverSlipFacts CloseAndCompare(Simulation sim, string label)
         {
@@ -176,14 +178,7 @@ namespace Corrigible.Desk.Tests
             var trainee = BoardDropRules.Occupant(sim.Board, "train");
             var order = sim.Board.Orders.FirstOrDefault();
             int remaining = order?.Remaining ?? 0;
-            int events = sim.Admission.Events.Count;
             Close(sim);
-            var hidden = sim.Admission.Events.Skip(events).Where(e => e.Kind == "sabotage" || e.Kind == "contained").Select(e => e.Kind).ToList();
-            if (hidden.Count > 0)
-            {
-                TestContext.WriteLine(label + ": kapanışta gizli kabul olayı (" + string.Join(", ", hidden) + "); fiş bunu bilmez, karşılaştırma atlandı.");
-                return f;
-            }
             Assert.AreEqual(f.suppliesAfter, sim.Shelter.Supplies, Eps, label + ": ERZAK");
             if (f.training.active)
             {
@@ -253,9 +248,10 @@ namespace Corrigible.Desk.Tests
             Assert.IsTrue(f.shelter.Where((r, i) => i != 2).All(r => string.IsNullOrEmpty(r.subject)), "Konu yalnız eğitim satırında.");
             Assert.IsTrue(f.shelter.All(r => r.state == SlipPersonState.None && r.stateShifts == 0), "V.001'de durum eki yok.");
 
-            // KAPANIŞTA BEKLENEN: ERZAK 24,0 → 21,9 / 60 −2,1 · EĞİTİM +2 (2→4) · ÜRETİM iş emri yok · çıktı yok · KAPI açık başvuru yok
-            Assert.AreEqual(21.9, f.suppliesAfter, Eps);
-            Assert.AreEqual(-2.1, f.suppliesAfter - f.supplies, Eps);
+            // KAPANIŞTA BEKLENEN: ERZAK 24,0 → 21,5 / 60 −2,5 · EĞİTİM +2 (2→4) · ÜRETİM iş emri yok · çıktı yok · KAPI açık başvuru yok
+            // (tasarım fişi 21,9 / −2,1 yazar: tüketim 0,35; aşama 8 dengesiyle 8 × 0,40 − 0,7 = 2,5)
+            Assert.AreEqual(21.5, f.suppliesAfter, Eps);
+            Assert.AreEqual(-2.5, f.suppliesAfter - f.supplies, Eps);
             Assert.AreEqual(sim.BoardFoodPreview, f.suppliesAfter - f.supplies, Eps);
             Assert.IsTrue(f.training.active);
             Assert.AreEqual(trainee.Name, f.training.name);
@@ -348,6 +344,14 @@ namespace Corrigible.Desk.Tests
             var sim = Mixed(out _, out _, out _);
             var f = Build(sim);
             var back = UnityEngine.JsonUtility.FromJson<HandoverSlipFacts>(Json(f));
+            // JsonUtility 17 haneli bir double'ı en çok bir ulp kaydırarak okuyabilir (aşama 8 dengesiyle bu senaryoda
+            // 20.299999999999998 → 20.3); fişte erzak bir ondalıkla yazılır. Sayılar toleransla, metin ikinci gidiş-dönüşte birebir.
+            var again = UnityEngine.JsonUtility.FromJson<HandoverSlipFacts>(Json(back));
+            Assert.AreEqual(Json(back), Json(again), "ikinci gidiş-dönüş birebir");
+            Assert.AreEqual(f.supplies, back.supplies, Eps);
+            Assert.AreEqual(f.suppliesAfter, back.suppliesAfter, Eps);
+            back.supplies = f.supplies;
+            back.suppliesAfter = f.suppliesAfter;
             Assert.AreEqual(Json(f), Json(back), "EVRAK arşivi gidiş-dönüşü veriyi değiştirmez.");
             Assert.IsTrue(string.IsNullOrEmpty(back.field[0].name), "Boş cep arşivden de boş döner (null → \"\").");
             Assert.IsTrue(string.IsNullOrEmpty(back.field[2].name));
@@ -364,7 +368,7 @@ namespace Corrigible.Desk.Tests
             var sim = Mixed(out string rescued, out string lost, out string restricted);
             var f = Build(sim);
             Assert.AreEqual(sim.S.Day + 1, f.shift);
-            Assert.AreEqual(8, f.alive, "8 kurucu + kısıtlı kabul − kaybedilen.");
+            Assert.AreEqual(8, f.alive, "8 kurucu + alınan aday − kaybedilen.");
 
             // SAHA: kurtarılan yatışta (BOŞTA), kaybedilen öldü → iki boş cep; dönen EMP uzmanı kit ve zırhıyla
             CollectionAssert.AreEqual(new[] { "tek", "emp", "ana" }, f.field.Select(r => r.role));
@@ -408,79 +412,76 @@ namespace Corrigible.Desk.Tests
             // ÜRETİM: iş emri yok, otomatik üretim kapalı
             Assert.AreEqual(SlipProductionKind.None, f.production.kind);
 
-            // KAPI: 1 açık başvuru, bu kapanışta ret sayılacak → KAPI kutusu; DOSYA riski yok
-            Assert.AreEqual(1, f.openApplications);
-            Assert.AreEqual(1, f.warnings.Count);
-            Assert.AreEqual(SlipWarningKind.Door, f.warnings[0].kind);
-            Assert.IsTrue(string.IsNullOrEmpty(f.warnings[0].name));
-        }
-
-        [Test]
-        public void Facts_FileWarnings_FollowCoreRiskOrder_OneBoxPerKind()
-        {
-            var sim = Ready();
-            var adm = sim.Admission;
-            adm.File(At(sim, 5).Id).ReviewNeeded = true;
-            adm.File(At(sim, 6).Id).ReviewNeeded = true;
-            adm.File(At(sim, 7).Id).ClueCount = 2;
-            adm.File(At(sim, 3).Id).ClueCount = 2;
-            adm.File(At(sim, 3).Id).ReviewNeeded = true;     // Core bulguyu incelemeden önce yazar
-            At(sim, 4).Restricted = true;
-            adm.File(At(sim, 4).Id).RestrictedUntil = sim.S.Day;   // süresi bu vardiya doldu
-
-            var f = Build(sim);
-            CollectionAssert.AreEqual(new[] { SlipWarningKind.FileRestrictionExpired, SlipWarningKind.FileClues, SlipWarningKind.FileReview },
-                f.warnings.Select(w => w.kind), "Kutu sırası Core'un kabul riski sırası; tür başına tek kutu.");
-            Assert.AreEqual(At(sim, 4).Name, f.warnings[0].name);
-            Assert.AreEqual(At(sim, 3).Name + ", " + At(sim, 7).Name, f.warnings[1].name, "Aynı türün adları panodaki sırayla, virgülle.");
-            Assert.AreEqual(At(sim, 5).Name + ", " + At(sim, 6).Name, f.warnings[2].name);
-            foreach (var w in f.warnings)
-                foreach (string name in w.name.Split(new[] { ", " }, StringSplitOptions.None))
-                {
-                    var person = sim.Board.People.Single(p => p.Name == name);
-                    Assert.AreEqual(w.kind, CoreKind(sim.ResidentAdmissionRisk(person.Id)), name + ": fişin türü Core'un oyunda gösterdiği riskle aynı.");
-                }
-            var cook = f.shelter.Single(r => r.name == At(sim, 4).Name);
-            Assert.AreEqual(SlipPersonState.RestrictionEnded, cook.state, "kısıtlı · bitti");
-            Assert.AreEqual(0, cook.stateShifts);
-
-            // Kapatılan dosyada bulgu kutusu düşer, inceleme kalır
-            adm.File(At(sim, 3).Id).Contained = true;
-            f = Build(sim);
-            Assert.AreEqual(At(sim, 7).Name, f.warnings[1].name);
-            Assert.AreEqual(At(sim, 3).Name + ", " + At(sim, 5).Name + ", " + At(sim, 6).Name, f.warnings[2].name);
-            Assert.AreEqual(SlipWarningKind.FileReview, CoreKind(sim.ResidentAdmissionRisk(At(sim, 3).Id)));
-        }
-
-        [Test]
-        public void Facts_DoorWarning_FollowsCoreRejection()
-        {
-            var sim = Doors();
-            Close(sim);
-            var candidate = sim.Admission.Candidate;
-            Assert.IsNotNull(candidate);
-            string id = candidate.Resident.Id;
-            var f = Build(sim);
-            Assert.AreEqual(1, f.openApplications);
-            CollectionAssert.AreEqual(new[] { SlipWarningKind.Door }, f.warnings.Select(w => w.kind), "Kararsız başvuru bu kapanışta reddedilir.");
-
-            // Dış kayıt teyidi bu vardiya gözetimde: karar bir vardiya uzar, kutu çıkmaz. K4-A (biçim 15): gözetmen Boşta'nın ilk
-            // uygun kişisi (burada BOŞTA'daki kurucu), ayrı görev ataması yok
-            Assert.AreSame(At(sim, 7), sim.AdmissionWatcher(id));
-            var inspected = sim.InspectApplicant("record");
-            Assert.IsTrue(inspected.Ok, inspected.Msg);
-            f = Build(sim);
-            Assert.AreEqual(1, f.openApplications);
+            // KAPI: kapıdaki grubun aday sayısı; grup bu vardiya geldi (son vardiya değil) → KAPI kutusu yok; DOSYA riski yok
+            Assert.AreEqual(sim.Admission.Group.Count, f.openApplications);
+            Assert.Greater(f.openApplications, 1);
             CollectionAssert.IsEmpty(f.warnings);
-            Close(sim);
-            Assert.AreEqual(id, sim.Admission.Candidate?.Resident.Id, "Core: dış kayıt kararı bir vardiya uzattı.");
+        }
 
-            // Uzatma bir kez: şimdi kutu yine çıkar ve Core adayı kapanışta reddeder
-            f = Build(sim);
-            CollectionAssert.AreEqual(new[] { SlipWarningKind.Door }, f.warnings.Select(w => w.kind));
+        /// <summary>
+        /// KOS §7 (fiş uyarısı): grup geldiği vardiyada kutu yok; ikinci (son) vardiyasında tek bir KAPI kutusu (<c>DoorLastShift</c>, adsız),
+        /// fiş basılınca da aynı; karar verilmezse Core grubu o kapanışta yollar ("expired") ve kutu kalkar. Eski <c>Door</c> türü hiç üretilmez.
+        /// Fişi okumak durumu değiştirmez.
+        /// </summary>
+        [Test]
+        public void Facts_DoorLastShift_OnlyOnTheSecondShift()
+        {
+            var sim = Simulation.NewGame(79, new Balance
+            { shelterEventsEnabled = false,
+                planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 3, admissionKnockMax = 3
+            });
+            for (int i = 0; i < 8 && sim.Admission.Group.Count == 0; i++)
+            {
+                var none = Build(sim);
+                Assert.AreEqual(0, none.openApplications);
+                CollectionAssert.IsEmpty(none.warnings, "Kapı boşken kutu yok.");
+                Close(sim);
+            }
+            var adm = sim.Admission;
+            int size = adm.Group.Count;
+            Assert.Greater(size, 1, "kurulum: aday grubu");
+            var ids = adm.Group.Select(c => c.Resident.Id).ToList();
+            Assert.AreEqual(sim.S.Day, adm.GroupArrivalShift);
+            Assert.AreEqual(sim.S.Day + 2, adm.GroupWaitingUntil);
+
+            // Geliş vardiyası: kutu yok
+            string before = Fingerprint(sim);
+            var f = Build(sim);
+            Assert.AreEqual(size, f.openApplications);
+            CollectionAssert.IsEmpty(f.warnings, "Geliş vardiyasında grup bir vardiya daha bekler.");
+            Assert.IsFalse(AdmissionSnapshotBuilder.GroupLastShift(sim));
+            Assert.AreEqual(before, Fingerprint(sim), "Fişi okumak durumu değiştirmez.");
+
+            // Son vardiya: tek KAPI kutusu, basılı fişte de
             Close(sim);
-            Assert.AreNotEqual(id, sim.Admission.Candidate?.Resident.Id, "Core: kararsız başvuru kapanışta ret sayıldı.");
-            Assert.IsTrue(sim.Admission.Events.Any(e => e.PersonId == id && e.Kind == "default_reject"));
+            CollectionAssert.AreEqual(ids, adm.Group.Select(c => c.Resident.Id), "Core: grup ikinci vardiyasını bekliyor.");
+            Assert.IsTrue(AdmissionSnapshotBuilder.GroupLastShift(sim));
+            f = Build(sim);
+            Assert.AreEqual(size, f.openApplications);
+            CollectionAssert.AreEqual(new[] { SlipWarningKind.DoorLastShift }, f.warnings.Select(w => w.kind));
+            Assert.IsTrue(string.IsNullOrEmpty(f.warnings[0].name), "KAPI kutusu ad taşımaz.");
+            Assert.IsTrue(sim.PrintShift().Ok, sim.BoardPlanCheck());
+            CollectionAssert.AreEqual(new[] { SlipWarningKind.DoorLastShift }, Build(sim).warnings.Select(w => w.kind), "Basılı fişte de aynı.");
+            Assert.AreEqual(Json(f).Replace("\"receiptId\":\"\"", "\"receiptId\":\"" + sim.Board.ReceiptId + "\""), Json(Build(sim)));
+
+            // Kapanış: Core grubu yollar, kutu kalkar
+            Assert.IsTrue(sim.FileShift(sim.Board.ReceiptId).Ok);
+            Assert.AreEqual(0, adm.Group.Count, "Core: kararsız grup kapanışta gitti.");
+            var gone = adm.Passed.Skip(adm.Passed.Count - size).ToList();
+            Assert.IsTrue(gone.All(p => p.Kind == "expired" && p.Shift == sim.S.Day));
+            f = Build(sim);
+            Assert.AreEqual(0, f.openApplications);
+            CollectionAssert.IsEmpty(f.warnings);
+
+            // Son vardiyada karar verilirse kutu o an kalkar
+            var decided = Doors();
+            Close(decided);
+            Close(decided);
+            Assert.IsTrue(AdmissionSnapshotBuilder.GroupLastShift(decided), "kurulum: son vardiya");
+            Assert.AreEqual(SlipWarningKind.DoorLastShift, Build(decided).warnings.Single().kind);
+            Assert.IsTrue(decided.PassCandidates().Ok);
+            CollectionAssert.IsEmpty(Build(decided).warnings);
+            Assert.AreEqual(0, Build(decided).openApplications);
         }
 
         // ---------------------------------------------------------------- KAPANIŞTA BEKLENEN = kapanış
@@ -561,24 +562,33 @@ namespace Corrigible.Desk.Tests
         [Test]
         public void Facts_HiddenIdentityDoesNotChangeTheSlip()
         {
-            // Aynı tohum ve görünür veri; ikinci adayın robot olup olmaması ve sıradaki gelişin zamanı gizlidir
-            Simulation SecondApplicant(double robotChance)
+            // Aynı tohum ve görünür veri; adayların sızmacı olup olmaması gizlidir (olasılık 0 ve 1: çekimler aynı, yalnız gizli kimlik ayrışır).
+            // İlk grup hiçbir zaman sızmacı taşımadığı için ikinci gruba bakılır: geliş vardiyası, son vardiya ve seçim anı.
+            Simulation SecondGroup(double robotChance)
             {
                 var sim = Doors(79, robotChance, knockMax: 4);
-                for (int i = 0; i < 8 && sim.Admission.Candidate == null; i++) Close(sim);
-                Assert.IsNotNull(sim.Admission.Candidate);
-                Assert.IsTrue(sim.DecideApplicant("reject").Ok);
-                for (int i = 0; i < 8 && sim.Admission.Candidate == null; i++) Close(sim);
-                Assert.IsNotNull(sim.Admission.Candidate);
+                for (int i = 0; i < 8 && sim.Admission.Group.Count == 0; i++) Close(sim);
+                Assert.Greater(sim.Admission.Group.Count, 0);
+                Assert.IsTrue(sim.PassCandidates().Ok);
+                for (int i = 0; i < 8 && sim.Admission.Group.Count == 0; i++) Close(sim);
+                Assert.Greater(sim.Admission.Group.Count, 0);
                 return sim;
             }
-            var human = SecondApplicant(0);
-            var robot = SecondApplicant(1);
+            var human = SecondGroup(0);
+            var robot = SecondGroup(1);
             Assert.AreEqual(human.S.Day, robot.S.Day);
-            Assert.AreEqual(human.Admission.Candidate.Papers.Serial, robot.Admission.Candidate.Papers.Serial, "Görünür belge aynı.");
-            Assert.AreNotEqual(human.S.Rng.State, robot.S.Rng.State, "Gizli durum gerçekten ayrıştı (robot modeli ayrı çekilir).");
-            Assert.AreEqual(Dump(Build(human)), Dump(Build(robot)), "Fiş gizli kimliği ve gelecek gelişi yazmaz (sıradaki geliş: insan "
-                + human.Admission.NextArrivalShift + ", robot " + robot.Admission.NextArrivalShift + ").");
+            Assert.AreEqual(human.S.Rng.State, robot.S.Rng.State, "Kimlik aynı çekimin eşiğidir: görünür akış ayrışmaz.");
+            CollectionAssert.AreEqual(human.Admission.Group.Select(c => c.Resident.Id + c.Tier + c.SuspicionKey + string.Join(",", c.Perks)),
+                robot.Admission.Group.Select(c => c.Resident.Id + c.Tier + c.SuspicionKey + string.Join(",", c.Perks)), "Görünür adaylar aynı.");
+            Assert.AreEqual(Dump(Build(human)), Dump(Build(robot)), "Geliş vardiyası: fiş gizli kimliği yazmaz.");
+            Close(human);
+            Close(robot);
+            Assert.AreEqual(SlipWarningKind.DoorLastShift, Build(human).warnings.Single().kind, "kurulum: son vardiya");
+            Assert.AreEqual(Dump(Build(human)), Dump(Build(robot)), "Son vardiya: fiş aynı.");
+            string id = human.Admission.Group[0].Resident.Id;
+            Assert.IsTrue(human.ChooseCandidate(id).Ok);
+            Assert.IsTrue(robot.ChooseCandidate(id).Ok);
+            Assert.AreEqual(Dump(Build(human)), Dump(Build(robot)), "Seçim anı: fiş aynı.");
         }
     }
 }

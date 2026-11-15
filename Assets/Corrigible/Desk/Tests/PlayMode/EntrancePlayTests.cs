@@ -64,7 +64,7 @@ namespace Corrigible.Desk.Tests
         }
         [UnityTest] public IEnumerator ClockFace_ContinuesTheSavedCampaign_AfterStampDoorAndBlackHold()
         {
-            var sim=Simulation.NewGame(79,new Balance());Assert.IsTrue(sim.PrintShift().Ok);SaveStore.Write(sim.Record);yield return Load();yield return Wait(()=>clock.HasCard);var door=F<DoorProp>(ctrl,"door");float stamp=-1,load=-1,black=-1,start=Time.realtimeSinceStartup;clock.Stamped+=()=>stamp=Time.realtimeSinceStartup;
+            var sim=Simulation.NewGame(79,new Balance { shelterEventsEnabled = false });Assert.IsTrue(sim.PrintShift().Ok);SaveStore.Write(sim.Record);yield return Load();yield return Wait(()=>clock.HasCard);var door=F<DoorProp>(ctrl,"door");float stamp=-1,load=-1,black=-1,start=Time.realtimeSinceStartup;clock.Stamped+=()=>stamp=Time.realtimeSinceStartup;
             Click(F<DeskTarget>(clock,"clockTarget"));Assert.IsTrue(ctrl.Entering);Assert.IsFalse(Cursor.visible);Assert.IsTrue(DeskTarget.Blocked());
             while(ctrl&&Time.realtimeSinceStartup-start<15)
             {

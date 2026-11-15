@@ -481,6 +481,18 @@ MonoBehaviour:
     color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
   - key: report.dim
     color: {r: 0.05490196, g: 0.03529412, b: 0.023529412, a: 0.62}
+  - key: report.withdrawn
+    color: {r: 0.101960786, g: 0.2784314, b: 0.5372549, a: 1}
+  - key: report.criteria.metInk
+    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
+  - key: report.criteria.missInk
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: report.criteria.neutralInk
+    color: {r: 0.40392157, g: 0.37254903, b: 0.3137255, a: 1}
+  - key: report.page.tabInk
+    color: {r: 0.40392157, g: 0.37254903, b: 0.3137255, a: 1}
+  - key: report.page.tabActiveInk
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
   - key: space.edgeLine.border
     color: {r: 0.43137255, g: 0.3529412, b: 0.2, a: 1}
   - key: lights.bulb.color
@@ -911,6 +923,8 @@ MonoBehaviour:
     color: {r: 0.41960785, g: 0.3529412, b: 0.5411765, a: 1}
   - key: materialsExtra.pawnOchre
     color: {r: 0.5411765, g: 0.41568628, b: 0.24705882, a: 1}
+  - key: materialsExtra.exposureStepOffHigh
+    color: {r: 0.2901961, g: 0.11764706, b: 0.08627451, a: 1}
   - key: cabinet.bulb.color
     color: {r: 1, g: 0.84705883, b: 0.627451, a: 1}
   - key: menu.cardGrid
@@ -949,44 +963,46 @@ MonoBehaviour:
     color: {r: 1, g: 0.7058824, b: 0.2901961, a: 1}
   - key: admission.stampMarks.admit.color
     color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
-  - key: admission.stampMarks.restricted.color
-    color: {r: 0.52156866, g: 0.2509804, b: 0.019607844, a: 1}
   - key: admission.stampMarks.reject.color
     color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
-  - key: admission.stampMarks.aid.color
-    color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
-  - key: admission.slipVerdict.match
-    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
-  - key: admission.slipVerdict.mismatch
-    color: {r: 0.52156866, g: 0.2509804, b: 0.019607844, a: 1}
-  - key: admission.slipVerdict.neutral
-    color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
-  - key: admission.slipVerdict.pending
-    color: {r: 0.40392157, g: 0.37254903, b: 0.3137255, a: 1}
-  - key: admission.paper.strip
-    color: {r: 0.9843137, g: 0.96862745, b: 0.9254902, a: 1}
-  - key: admission.paper.stripEdge
-    color: {r: 0.8235294, g: 0.78039217, b: 0.6862745, a: 1}
   - key: admission.paper.rule
     color: {r: 0.8235294, g: 0.28235295, b: 0.24705882, a: 1}
   - key: admission.paper.ink
     color: {r: 0.27450982, g: 0.24705882, b: 0.20392157, a: 1}
   - key: admission.paper.label
     color: {r: 0.40392157, g: 0.37254903, b: 0.3137255, a: 1}
-  - key: admission.paper.carbon
-    color: {r: 0.9137255, g: 0.89411765, b: 0.8392157, a: 1}
-  - key: admission.paper.carbonInk
-    color: {r: 0.18039216, g: 0.23529412, b: 0.43137255, a: 1}
-  - key: admission.paper.carbonLabel
-    color: {r: 0.2901961, g: 0.3372549, b: 0.5019608, a: 1}
   - key: admission.paper.plateBrass
     color: {r: 0.72156864, g: 0.58431375, b: 0.3529412, a: 1}
   - key: admission.paper.plateEdge
     color: {r: 0.36078432, g: 0.28235295, b: 0.14901961, a: 1}
   - key: admission.paper.alarm
     color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
-  - key: admission.paper.seal
-    color: {r: 0.3529412, g: 0.24705882, b: 0.47058824, a: 1}
+  - key: admission.candidates.tier0
+    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
+  - key: admission.candidates.tier1
+    color: {r: 0.52156866, g: 0.2509804, b: 0.019607844, a: 1}
+  - key: admission.candidates.tier2
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: shelterEvent.ink.selected
+    color: {r: 0.101960786, g: 0.18431373, b: 0.3529412, a: 1}
+  - key: shelterEvent.ink.safe
+    color: {r: 0.14117648, g: 0.34901962, b: 0.18039216, a: 1}
+  - key: shelterEvent.ink.closed
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: shelterEvent.ink.kitLock
+    color: {r: 0.52156866, g: 0.2509804, b: 0.019607844, a: 1}
+  - key: shelterEvent.stamp.decision.color
+    color: {r: 0.101960786, g: 0.2784314, b: 0.5372549, a: 1}
+  - key: shelterEvent.stamp.closed.color
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: shelterEvent.counterTag.hungry
+    color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: shelterEvent.counterTag.other
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 1}
+  - key: lastSwitch.plate.line2Ink
+    color: {r: 0.2901961, g: 0.22745098, b: 0.13333334, a: 1}
+  - key: lastSwitch.plate.line2InkEvac
+    color: {r: 0.47843137, g: 0.09411765, b: 0.0627451, a: 1}
   numbers:
   - key: mapLiberation.occupiedHatch[0].angle
     value: 45
@@ -1564,6 +1580,10 @@ MonoBehaviour:
     value: 3
   - key: motion.crtInstrumentS
     value: 0.3
+  - key: motion.lastSwitch.orderDelayS
+    value: 0.4
+  - key: motion.lastSwitch.deniedRepeatS
+    value: 3
   - key: 'cameras.K1.pos[0]'
     value: 0
   - key: 'cameras.K1.pos[1]'
@@ -1807,6 +1827,20 @@ MonoBehaviour:
   - key: 'cameras.K8R.counterLocalTarget[2]'
     value: -0.23
   - key: cameras.K8R.fovV
+    value: 40
+  - key: 'cameras.KLS.pos[0]'
+    value: 0.3
+  - key: 'cameras.KLS.pos[1]'
+    value: 1.5
+  - key: 'cameras.KLS.pos[2]'
+    value: 1.3
+  - key: 'cameras.KLS.target[0]'
+    value: 0.68
+  - key: 'cameras.KLS.target[1]'
+    value: 1.2
+  - key: 'cameras.KLS.target[2]'
+    value: 2.24
+  - key: cameras.KLS.fovV
     value: 40
   - key: lights.bulb.kelvin
     value: 2700
@@ -2600,6 +2634,30 @@ MonoBehaviour:
     value: 600
   - key: 'layout3d.roomCard.tex[1]'
     value: 148
+  - key: 'layout3d.exposureBoard.pos[0]'
+    value: 0.15
+  - key: 'layout3d.exposureBoard.pos[1]'
+    value: 0.97
+  - key: 'layout3d.exposureBoard.pos[2]'
+    value: 2.3
+  - key: 'layout3d.exposureBoard.size[0]'
+    value: 0.5
+  - key: 'layout3d.exposureBoard.size[1]'
+    value: 0.136
+  - key: 'layout3d.lastSwitch.pos[0]'
+    value: 0.68
+  - key: 'layout3d.lastSwitch.pos[1]'
+    value: 0.98
+  - key: 'layout3d.lastSwitch.pos[2]'
+    value: 2.3
+  - key: 'layout3d.doctrinePoster.pos[0]'
+    value: 0.68
+  - key: 'layout3d.doctrinePoster.pos[1]'
+    value: 1.53
+  - key: 'layout3d.doctrinePoster.pos[2]'
+    value: 2.3
+  - key: layout3d.doctrinePoster.scale
+    value: 0.4
   - key: materialsExtra.rubber.roughness
     value: 0.9
   - key: materialsExtra.rubber.metal
@@ -2843,6 +2901,10 @@ MonoBehaviour:
   - key: materialsExtra.pawnOchre.roughness
     value: 0.6
   - key: materialsExtra.pawnOchre.metal
+    value: 0
+  - key: materialsExtra.exposureStepOffHigh.roughness
+    value: 0.6
+  - key: materialsExtra.exposureStepOffHigh.metal
     value: 0
   - key: cabinet.bulbIntensity
     value: 0.15
@@ -3259,7 +3321,7 @@ MonoBehaviour:
   - key: 'board.layoutMm.book[1]'
     value: 452
   - key: 'board.layoutMm.hurda[0]'
-    value: 1012
+    value: 992
   - key: 'board.layoutMm.hurda[1]'
     value: 474
   - key: 'board.layoutMm.hurda[2]'
@@ -3488,22 +3550,6 @@ MonoBehaviour:
     value: 0.35
   - key: admission.motion.docDropS
     value: 0.2
-  - key: admission.motion.markerS
-    value: 0.2
-  - key: admission.motion.slipS
-    value: 0.35
-  - key: admission.motion.intercomCrackleS
-    value: 0.2
-  - key: admission.motion.transcriptPerCharS
-    value: 0.03
-  - key: admission.motion.toK8GS
-    value: 0.45
-  - key: admission.motion.glassCoverS
-    value: 0.2
-  - key: admission.motion.fogInS
-    value: 0.6
-  - key: admission.motion.fogOutS
-    value: 2.5
   - key: admission.motion.stampLiftS
     value: 0.1
   - key: admission.motion.stampPressS
@@ -3512,24 +3558,12 @@ MonoBehaviour:
     value: 0.5
   - key: admission.motion.admitLeafS
     value: 0.8
-  - key: admission.motion.aidDrawerS
-    value: 0.35
   - key: admission.motion.readS
     value: 0.25
   - key: admission.motion.counterBracketS
     value: 0.15
   - key: admission.motion.counterFoldS
     value: 0.35
-  - key: admission.motion.slipDropS
-    value: 0.15
-  - key: admission.motion.stripOutS
-    value: 0.25
-  - key: admission.motion.stripInS
-    value: 0.3
-  - key: admission.motion.padTearS
-    value: 0.15
-  - key: admission.motion.magnifierMoveS
-    value: 0.25
   - key: admission.motion.admitHoldS
     value: 0.6
   - key: admission.motion.hoverDelayS
@@ -3538,8 +3572,6 @@ MonoBehaviour:
     value: 0.8
   - key: admission.readDistanceM
     value: 0.318
-  - key: admission.slipPathMm
-    value: 160
   - key: admission.stampMarks.opacity
     value: 0.93
   - key: 'admission.stampMarks.admit.sizeMm[0]'
@@ -3550,14 +3582,6 @@ MonoBehaviour:
     value: 63.7
   - key: 'admission.stampMarks.admit.sizeMmEn[1]'
     value: 29.9
-  - key: 'admission.stampMarks.restricted.sizeMm[0]'
-    value: 114.9
-  - key: 'admission.stampMarks.restricted.sizeMm[1]'
-    value: 25.2
-  - key: 'admission.stampMarks.restricted.sizeMmEn[0]'
-    value: 149.3
-  - key: 'admission.stampMarks.restricted.sizeMmEn[1]'
-    value: 25.2
   - key: 'admission.stampMarks.reject.sizeMm[0]'
     value: 77.2
   - key: 'admission.stampMarks.reject.sizeMm[1]'
@@ -3566,18 +3590,82 @@ MonoBehaviour:
     value: 77.2
   - key: 'admission.stampMarks.reject.sizeMmEn[1]'
     value: 25
-  - key: 'admission.stampMarks.aid.sizeMm[0]'
-    value: 115.8
-  - key: 'admission.stampMarks.aid.sizeMm[1]'
-    value: 31.9
-  - key: 'admission.stampMarks.aid.sizeMmEn[0]'
-    value: 89.4
-  - key: 'admission.stampMarks.aid.sizeMmEn[1]'
-    value: 31.9
   - key: admission.counterSpot.spotAngle
     value: 68
   - key: admission.counterSpot.intensity
     value: 2
+  - key: admission.candidates.cardScale
+    value: 1
+  - key: admission.candidates.gapMm
+    value: 8
+  - key: admission.candidates.rowCenterX
+    value: -0.075
+  - key: admission.candidates.rowZ
+    value: -0.122
+  - key: admission.candidates.slipX
+    value: -0.075
+  - key: admission.candidates.slipZ
+    value: -0.235
+  - key: shelterEvent.paper.widthMm
+    value: 210
+  - key: shelterEvent.paper.heightMm
+    value: 148
+  - key: shelterEvent.tray.liftM
+    value: 0.034
+  - key: shelterEvent.tray.dropFromM
+    value: 0.08
+  - key: shelterEvent.hand.heightFraction
+    value: 0.8
+  - key: shelterEvent.motion.dropS
+    value: 0.35
+  - key: shelterEvent.motion.toHandS
+    value: 0.3
+  - key: shelterEvent.motion.toTrayS
+    value: 0.3
+  - key: shelterEvent.motion.stampHoldS
+    value: 0.6
+  - key: shelterEvent.row.closedAlpha
+    value: 0.45
+  - key: shelterEvent.layout.decisionColMm
+    value: 62
+  - key: shelterEvent.layout.rowGapMm
+    value: 2
+  - key: shelterEvent.trayAttention.intensity
+    value: 0.5
+  - key: shelterEvent.trayAttention.pulseHz
+    value: 0.5
+  - key: exposure.cells
+    value: 6
+  - key: exposure.stepS
+    value: 0.12
+  - key: exposure.flashTimes
+    value: 3
+  - key: exposure.flashS
+    value: 0.15
+  - key: exposure.blinkS
+    value: 0.5
+  - key: exposure.glowIntensity
+    value: 0.8
+  - key: lastSwitch.states.ready.lever
+    value: 55
+  - key: lastSwitch.states.waiting.lever
+    value: -55
+  - key: lastSwitch.states.cover.cover
+    value: 115
+  - key: lastSwitch.states.cover.autoCloseS
+    value: 4
+  - key: lastSwitch.order.namesMaxChars
+    value: 170
+  - key: finalReport.record.namesMaxChars
+    value: 150
+  - key: finalReport.record.doorNamesMaxChars
+    value: 90
+  - key: finalReport.record.exposureLines
+    value: 8
+  - key: finalReport.record.hiddenLines
+    value: 4
+  - key: finalReport.tone.namesMaxChars
+    value: 80
   type:
   - role: plateLabel
     font: 1
@@ -4800,6 +4888,12 @@ MonoBehaviour:
     value: "d\xF6kme al\xFCminyum"
   - key: 'materials.aluCast.usedBy[0]'
     value: OuterIntercom
+  - key: materialsExtra.exposureStepOffHigh.note
+    value: "\u0130F\u015EA \u015Feridi bo\u015F h\xFCcresi, alarm ara bedeli b\xF6lgesi
+      ve e\u015Fik (k\u0131rm\u0131z\u0131 kenarl\u0131 bo\u015F; KOS a\u015Fama
+      6 d\xFCzeltme)"
+  - key: 'materialsExtra.exposureStepOffHigh.usedBy[0]'
+    value: Exposure panel
   - key: cabinet.bulb.type
     value: Spot
   - key: 'cabinet.plates.text.tr[0]'
@@ -5443,12 +5537,6 @@ MonoBehaviour:
       yok (sekmeler ve kapak)"
   - key: personFile.cover
     value: "Cover y 0\u2026\u2212176\xB0"
-  - key: 'personFile.pages[0]'
-    value: "\u0130NCELE"
-  - key: 'personFile.pages[1]'
-    value: "ER\u0130\u015E\u0130M"
-  - key: 'personFile.pages[2]'
-    value: "TAHL\u0130YE"
   - key: personFile.nameOnCover
     value: "se\xE7ili ki\u015Finin ad\u0131 (TMP, \xE7evrilmez)"
   - key: shiftClose.states.ready.lamp
@@ -5507,47 +5595,3 @@ MonoBehaviour:
     value: SHIFT HANDED OVER
   - key: shiftClose.evrakHighlight.type
     value: Point
-  - key: admission.instruction.versions.v1
-    value: "ba\u015Flang\u0131\xE7"
-  - key: admission.instruction.versions.v2
-    value: 4. vardiya
-  - key: admission.instruction.versions.v3
-    value: 8. vardiya
-  - key: admission.instruction.holder
-    value: "talimat \u015Feridi 80 \xD7 210 mm, kayan \xE7izgi i\u015Faret\xE7isi
-      + yakut"
-  - key: admission.checks.karsilastirma
-    value: "b\xFCy\xFCte\xE7 + talimat \u015Feridi"
-  - key: admission.checks.gorusme
-    value: interkom
-  - key: admission.checks.soguk
-    value: "bu\u011Fu cam\u0131 (kanatta, g\xF6zetleme deli\u011Finin yan\u0131nda)"
-  - key: admission.checks.disKayit
-    value: "G\u0130DEN \xB7 TELS\u0130Z yuvas\u0131 + talep defteri"
-  - key: 'admission.decisions.tr[0]'
-    value: "KABUL \xB7 TAM ER\u0130\u015E\u0130M"
-  - key: 'admission.decisions.tr[1]'
-    value: KISITLI KABUL
-  - key: 'admission.decisions.tr[2]'
-    value: RET
-  - key: 'admission.decisions.tr[3]'
-    value: "DI\u015EARIDAN YARDIM"
-  - key: 'admission.decisions.en[0]'
-    value: "ADMIT \xB7 FULL ACCESS"
-  - key: 'admission.decisions.en[1]'
-    value: RESTRICTED ADMISSION
-  - key: 'admission.decisions.en[2]'
-    value: REJECT
-  - key: 'admission.decisions.en[3]'
-    value: OUTSIDE AID
-  - key: admission.decisions.tool
-    value: "damga (geri d\xF6n\xFClmez)"
-  - key: admission.decisions.disabled.admitAndRestricted
-    value: kapasite 10/10
-  - key: admission.decisions.disabled.aid
-    value: erzak < 2
-  - key: admission.supervisor.proposal
-    value: "Bo\u015Fta destesinin \xFCst kart\u0131; Bo\u015Fta bo\u015Fsa defter
-      kilitlenir: \u201Cg\xF6zetmen yok\u201D"
-  - key: admission.supervisor.status
-    value: "a\xE7\u0131k karar"

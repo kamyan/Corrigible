@@ -34,22 +34,35 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] PlanningBoardPresenter planningBoard;
         [Tooltip("Kartlı oyunun kapısı ve kabul istasyonu (Revizyon 3 · Aşama 6): Esc önce ona gider; dizi sürerken masa kilitli.")]
         [SerializeField] SiginakAdmission admission;
+        [Tooltip("Sığınak olaylarının tutanağı (KOS aşama 4): kâğıt eldeyken masa kilitli, kâğıdın kendisi tıklanır kalır.")]
+        [SerializeField] SiginakShelterEvent shelterEvent;
+        [Tooltip("Son şalter (KOS aşama 6): emir kâğıdı açıkken masa kilitli; Esc önce ona gider.")]
+        [SerializeField] SiginakLastSwitch lastSwitch;
 
         bool storyOpen;
         Simulation Sim => game != null ? game.Sim : null;
         /// <summary>Baskın sonucu henüz okunmadı: operasyon raporu açılacak ya da açık (K3 dizisi onu bekler).</summary>
         public bool RaidReportPending => Sim != null && source != null && Sim.S.Raid == null && Sim.S.RaidLog.Count > source.State.RaidLogSeen;
-        public bool InputBlocked => BlockedExceptDoor || DoorBusy;
+        public bool InputBlocked => BlockedExceptDoor || DoorBusy || EventBusy || LastSwitchBusy;
+        /// <summary>Son şalterin kolu inik ya da emir kâğıdı açık (KOS aşama 6).</summary>
+        public bool LastSwitchBusy => lastSwitch != null && lastSwitch.isActiveAndEnabled && lastSwitch.Busy;
         /// <summary>Dolabın kendi odağı hariç, menüye dönüşü engelleyen kâğıt ve işlem kilitleri.</summary>
-        public bool MenuExitBlocked => SceneBlocked || ShiftBusy || DoorBusy ||
+        public bool MenuExitBlocked => SceneBlocked || ShiftBusy || DoorBusy || EventBusy || LastSwitchBusy ||
             siginakMap != null && (siginakMap.SlipOpen || siginakMap.FrontSlipOpen || siginakMap.SquadReportOpen);
         /// <summary>Kapının kendisi dışındaki kilitler (kapı ancak bunlar yokken çalar ve açılır).</summary>
-        public bool BlockedExceptDoor => OtherBlocked || ShiftBusy;
+        public bool BlockedExceptDoor => OtherBlocked || ShiftBusy || EventBusy;
         /// <summary>
         /// Vardiya kapanışının kendisi dışındaki kilitler (Revizyon 3 · R19): fiş eldeyken ya da sürüklenirken masa kilitlidir ama
         /// fişin kendisi tıklanır ve EVRAK'a bırakılabilir kalır. <see cref="InputBlocked"/>'ın alt kümesidir.
         /// </summary>
-        public bool BlockedExceptShift => OtherBlocked || DoorBusy;
+        public bool BlockedExceptShift => OtherBlocked || DoorBusy || EventBusy;
+        /// <summary>
+        /// Olay tutanağının kendisi dışındaki kilitler (KOS aşama 4): tutanak eldeyken masa kilitlidir ama kâğıdın kendisi tıklanır kalır.
+        /// <see cref="InputBlocked"/>'ın alt kümesidir.
+        /// </summary>
+        public bool BlockedExceptEvent => OtherBlocked || ShiftBusy || DoorBusy;
+        /// <summary>Olay tutanağı elde ya da hareket hâlinde, karar izi basılıyor.</summary>
+        public bool EventBusy => shelterEvent != null && shelterEvent.isActiveAndEnabled && shelterEvent.Busy;
 
         bool DoorBusy => siginakDoor != null && siginakDoor.isActiveAndEnabled && siginakDoor.Busy ||
             admission != null && admission.isActiveAndEnabled && admission.Busy;
@@ -214,11 +227,13 @@ namespace Corrigible.Desk.Bridge
         // ---------- IDeskSurface ----------
 
         /// <summary>
-        /// Esc'in tek girişi: kartlı oyunda önce kapı ve kabul (K8 ailesinde bir seviye geri; Revizyon 3 · Aşama 6), sonra pano, sonra
-        /// masanın açık kâğıtları; hiçbiri işlemezse ayarlar dolabı.
+        /// Esc'in tek girişi: önce eldeki olay tutanağı (tepsiye döner; KOS aşama 4), kartlı oyunda kapı ve kabul (K8 ailesinde bir seviye
+        /// geri; Revizyon 3 · Aşama 6), sonra pano, sonra masanın açık kâğıtları; hiçbiri işlemezse ayarlar dolabı.
         /// </summary>
         public void Escape()
         {
+            if (lastSwitch != null && lastSwitch.isActiveAndEnabled && lastSwitch.HandleEscape()) return;
+            if (shelterEvent != null && shelterEvent.isActiveAndEnabled && shelterEvent.HandleEscape()) return;
             if (Sim?.Board != null && admission != null && admission.isActiveAndEnabled && admission.HandleEscape()) return;
             if (Sim?.Board != null && planningBoard != null && planningBoard.HandleEscape()) return;
             if (siginak != null && siginak.isActiveAndEnabled && siginak.HandleEscape()) return;

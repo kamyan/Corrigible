@@ -45,7 +45,7 @@ namespace Corrigible.Tests
             /// <summary>Olaysız eşli koşu: her senaryo T+E+A ile bölge olayı kapalı bir kez daha (olayın başarıya etkisi).</summary>
             public bool EventPairs = true;
             public int[] DynamiteValues = { 1, 2, 3 }, SmokeValues = { 2, 3, 4 };
-            public Balance Balance = new Balance();
+            public Balance Balance = new Balance { shelterEventsEnabled = false };
             public int Alternatives = 8;
             /// <summary>Botun puan ağırlıkları (boşsa varsayılan).</summary>
             public RaidBot.Weights Weights;

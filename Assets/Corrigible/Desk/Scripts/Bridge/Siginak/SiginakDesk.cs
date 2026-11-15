@@ -1,6 +1,7 @@
 using System.Linq;
 using Corrigible.Core;
 using Corrigible.Game;
+using Corrigible.Game.Audio;
 using Corrigible.Game.Raid;
 using TMPro;
 using UnityEngine;
@@ -24,9 +25,8 @@ namespace Corrigible.Desk.Bridge
     /// </para>
     /// <para>
     /// Revizyon 3 · Aşama 6 (R9/R17): kartlı oyunda KAPI tuşu <see cref="SiginakAdmission.Enter"/>'a gider (K8); K8 ailesinde (K8, K8A,
-    /// K8G, K8R) sürüklemesiz sağ tık <see cref="SiginakAdmission.HandleBack"/>'tir, kenar satırı gizlidir ve Enter şaltere gitmez.
-    /// Esc kabule yalnız <c>LiberationDeskView.Escape</c>'ten girer (burada ikinci kez çağrılmaz). Kabulün görülen durumu yan dosyaya
-    /// <see cref="SaveNotes"/> ile yazılır.
+    /// K8R) sürüklemesiz sağ tık <see cref="SiginakAdmission.HandleBack"/>'tir, kenar satırı gizlidir ve Enter şaltere gitmez.
+    /// Esc kabule yalnız <c>LiberationDeskView.Escape</c>'ten girer (burada ikinci kez çağrılmaz).
     /// </para>
     /// </summary>
     public sealed class SiginakDesk : MonoBehaviour
@@ -40,6 +40,8 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] CounterBank counters;
         [Tooltip("Arka duvardaki YZ ALARMI panosu (sayaç + kırmızı ışık).")]
         [SerializeField] AlarmPanel alarm;
+        [Tooltip("KOS aşama 6: alarm panosunun altındaki İFŞA şeridi (odadaki tek yeni kalıcı gösterge).")]
+        [SerializeField] ExposurePanel exposure;
         [SerializeField] StationKeyRail rail;
         [SerializeField] ShiftSwitch shiftSwitch;
         [SerializeField] TelexFeed telex;
@@ -71,6 +73,8 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] SiginakShiftClose shiftClose;
         [Tooltip("Kartlı oyunun kapısı ve kabul istasyonu (Revizyon 3 · Aşama 6): KAPI tuşu, K8 ailesinin sağ tıkı, görülen durum.")]
         [SerializeField] SiginakAdmission admission;
+        [Tooltip("Sığınak olaylarının tutanağı (KOS aşama 4): EVRAK'a tık önce tepsideki tutanağı ele alır.")]
+        [SerializeField] SiginakShelterEvent shelterEvent;
 
         /// <summary>KAPI tuşunun etiketi (kaynak metinler; gösterirken çevrilir).</summary>
         static readonly string DoorWaitingTitle = Loc.N("KAPI · ZİYARETÇİ VAR"),
@@ -79,10 +83,19 @@ namespace Corrigible.Desk.Bridge
             DoorIdleLine = Loc.N("Kapıda kimse yok. Biri çalınca lamba yanıp söner.");
         /// <summary>Kartlı oyunda KAPI tuşunun etiketi (Aşama 6; "ziyaretçi" yerine kabul başvurusu).</summary>
         static readonly string DoorApplicantTitle = Loc.N("KAPI · ADAY VAR"),
-            DoorApplicantLine = Loc.N("Kapıda başvuru var: tezgâha bak."),
+            DoorApplicantLine = Loc.N("Kapıda aday var: tezgâha bak."),
             DoorEmptyLine = Loc.N("Kapıda kimse yok.");
 
         bool countersShown;
+        /// <summary>
+        /// Rehber sürüyor ve son şalter "mühürlü · rehber": İFŞA ve teleks metinleri son şalteri seçenek olarak önermez (yalnız sunum
+        /// girdisi, <c>LastSwitchViewBuilder.LockInputs.Tutorial</c> ile aynı kaynak).
+        /// </summary>
+        public bool TutorialSealsSwitch => tutorial != null && tutorial.isActiveAndEnabled && tutorial.Active;
+        bool shownSeal;
+        // İFŞA şeridi: son gösterilen değer, KONUM kuruluşu ve tutanak kapanınca bekleyen dikkat flaşı (KOS aşama 6)
+        int shownExposure = -1;
+        bool shownPending, flashPending;
 
         Simulation Sim => game != null ? game.Sim : null;
         bool Locked => surface == null || surface.InputBlocked;
@@ -114,6 +127,7 @@ namespace Corrigible.Desk.Bridge
             plaque.SkipClicked += Skip;
             rig.PoseChanged += PoseChanged;
             rig.BackClicked += Back;
+            if (exposure != null) exposure.Stepped += ExposureStepped;
             shiftSwitch.Armed += PreCheck;
             telex.Posted += Store;
             shelfTarget.Clicked += ShowShelter;
@@ -132,6 +146,7 @@ namespace Corrigible.Desk.Bridge
             plaque.SkipClicked -= Skip;
             rig.PoseChanged -= PoseChanged;
             rig.BackClicked -= Back;
+            if (exposure != null) exposure.Stepped -= ExposureStepped;
             shiftSwitch.Armed -= PreCheck;
             telex.Posted -= Store;
             shelfTarget.Clicked -= ShowShelter;
@@ -153,6 +168,8 @@ namespace Corrigible.Desk.Bridge
         void OpenTray()
         {
             if (Locked) return;
+            // KOS aşama 4: tepside olay tutanağı varsa EVRAK tıkı onu ele alır (arşiv fişi ve emir belgesi sonra)
+            if (shelterEvent != null && shelterEvent.isActiveAndEnabled && shelterEvent.TakeFromTray()) return;
             if (shift == null || !shift.OpenTray()) surface.OpenGuide();
         }
 
@@ -171,8 +188,8 @@ namespace Corrigible.Desk.Bridge
         /// Sürüklemesiz sağ tık (Karar K7), <see cref="SiginakCameraRig.BackClicked"/>: K4'te panonun geri adımı (tutulan kart
         /// geri döner, açık dosya ya da defter kapanır, yoksa masaya dönülür; <see cref="PlanningBoardPresenter.HandleBack"/>).
         /// K6'da (kartlı oyun) açık kapak kapanır, değilse masaya dönülür (<see cref="SiginakShiftClose.HandleBack"/>; fiş eldeyken
-        /// kamera askıda, tık buraya gelmez). K8 ailesinde (kartlı oyun) bir seviye geri: damga → K8R → K8A → K8 → K1, K8G geldiği
-        /// poza (<see cref="SiginakAdmission.HandleBack"/>; dizi sürerken masa kilitli, sağ tıkı kabul kendisi okur).
+        /// kamera askıda, tık buraya gelmez). K8 ailesinde (kartlı oyun) bir seviye geri: damga → K8R → K8A → K8 → K1
+        /// (<see cref="SiginakAdmission.HandleBack"/>; dizi sürerken masa kilitli, sağ tıkı kabul kendisi okur).
         /// </summary>
         void Back(SiginakPose pose)
         {
@@ -200,6 +217,9 @@ namespace Corrigible.Desk.Bridge
         void Update()
         {
             ReadKeys();
+            ExposureFlash();
+            // Rehber bitince İFŞA satırı oyun değişmeden de son şalteri önerir
+            if (TutorialSealsSwitch != shownSeal) { shownSeal = !shownSeal; if (countersShown && Sim != null) ShowExposure(Sim, false); }
 
             bool locked = Locked;
             int active = StationOf(rig.Current);
@@ -230,16 +250,17 @@ namespace Corrigible.Desk.Bridge
             SiginakPose.Desk => StationKeyRail.Desk,
             SiginakPose.Door => StationKeyRail.Door,
             SiginakPose.Admission => StationKeyRail.Door,
-            SiginakPose.BreathGlass => StationKeyRail.Door,
             SiginakPose.AdmissionRead => StationKeyRail.Door,
+            SiginakPose.LastSwitch => StationKeyRail.Desk,
             _ => -1,
         };
 
         /// <summary>
-        /// Kenar satırı (sayaç şeridi + istasyon çipleri) gizli mi: K4 ve K6'da her zaman; kartlı oyunda K8, K8A, K8G, K8R'de de (PROMPT §2,
+        /// Kenar satırı (sayaç şeridi + istasyon çipleri) gizli mi: K4 ve K6'da her zaman; kartlı oyunda K8, K8A, K8R'de de (PROMPT §2,
         /// R17-not). Eski yolun K8'i (ziyaretçi kâğıdı) değişmez.
         /// </summary>
         public static bool EdgeHidden(SiginakPose pose, bool boardMode) => pose == SiginakPose.Shelf || pose == SiginakPose.ShiftClose ||
+            pose == SiginakPose.LastSwitch ||
             boardMode && SiginakAdmission.InFamily(pose);
 
         void ReadKeys()
@@ -297,9 +318,9 @@ namespace Corrigible.Desk.Bridge
 
         // ---------- Durum ----------
 
-        void NewGame() { telex.Clear(); countersShown = false; Refresh(); }
+        void NewGame() { telex.Clear(); countersShown = false; shownExposure = -1; Refresh(); }
 
-        void Loaded() { Restore(); countersShown = false; Refresh(); }
+        void Loaded() { Restore(); countersShown = false; shownExposure = -1; Refresh(); }
 
         void Restore() => telex.Restore(SiginakDeskStore.LoadTelex(Sim?.Record));
 
@@ -312,12 +333,11 @@ namespace Corrigible.Desk.Bridge
             // Henüz oynanmamış oyun (gün 0, komut yok) eski kaydın notlarının üstüne yazmasın (GameController.Save ile aynı kural)
             if (sim?.Record == null || sim.S.Day == 0 && sim.Record.commands.Count == 0) return;
             SiginakDeskStore.Save(sim.Record, telex.Lines, shift != null ? shift.Tray.Reports : null, SavedPose(rig.Current).ToString(),
-                shiftClose != null ? shiftClose.ArchiveFor(sim.Record) : null,
-                admission != null ? admission.SeenFor(sim.Record) : SiginakDeskStore.LoadAdmissionSeen(sim.Record));
+                shiftClose != null ? shiftClose.ArchiveFor(sim.Record) : null);
         }
 
         /// <summary>
-        /// KAYITTAN DEVAM'ın döneceği poz: istasyonlar; dizi, vardiya şalteri (K6, K6a), CRT bakışı ve kapının K8 ailesi (K8, K8A, K8G,
+        /// KAYITTAN DEVAM'ın döneceği poz: istasyonlar; dizi, vardiya şalteri (K6, K6a), CRT bakışı ve kapının K8 ailesi (K8, K8A,
         /// K8R) masaya sayılır.
         /// </summary>
         public static SiginakPose SavedPose(SiginakPose pose) => pose == SiginakPose.Map || pose == SiginakPose.Shelf ? pose : SiginakPose.Desk;
@@ -340,7 +360,7 @@ namespace Corrigible.Desk.Bridge
             var sim = Sim;
             bool raid = sim != null && (sim.S.Raid != null || RaidLauncher.IsRaidLoaded);
             bool board = sim?.Board != null;
-            bool waiting = sim != null && sim.S.Ending == null && (board ? sim.Admission?.Candidate != null : sim.DoorVisitor != null);
+            bool waiting = sim != null && sim.S.Ending == null && (board ? AdmissionSnapshotBuilder.GroupWaiting(sim) : sim.DoorVisitor != null);
             key.SetAttention(waiting && !raid);
             key.Target.TitleOverride = waiting ? board ? DoorApplicantTitle : DoorWaitingTitle : null;
             key.Target.LineOverride = Loc.T(raid ? DoorRaidLine : waiting ? board ? DoorApplicantLine : DoorWaitingLine : board ? DoorEmptyLine : DoorIdleLine);
@@ -362,10 +382,14 @@ namespace Corrigible.Desk.Bridge
                 (operation == null || !operation.HoldCounters)) ShowCounters(countersShown);
             // Revizyon 2: GÜVEN, ALARM ve 4 KAPI fişiyle tek satıra sığsın diye ayırıcılar tek boşluklu. Revizyon 3: sayaç plakası
             // gibi HAMMADDE (Soru 3)
-            edge.SetValues(Loc.F("VARDİYA {0:000} · FON {1} · ERZAK {2}/{3} · HAMMADDE {4} · ÖZGÜR {5}/{6} · GÜVEN {7}/{8} · ALARM {9}/{10}", surface.Shift,
+            string values = Loc.F("VARDİYA {0:000} · FON {1} · ERZAK {2}/{3} · HAMMADDE {4} · ÖZGÜR {5}/{6} · GÜVEN {7}/{8} · ALARM {9}/{10}", surface.Shift,
                 DeskFormat.Number(sim.S.Fon, 1), DeskFormat.Number(System.Math.Floor(shelter.Supplies), 0), DeskFormat.Number(capacity, 0),
                 DeskFormat.Number(System.Math.Floor(shelter.Materials), 0), free, regions, sim.S.Trust, sim.TrustMax,
-                DeskFormat.Number(sim.S.Alarm, 0), DeskFormat.Number(sim.B.liberationAlarmThreshold, 0)));
+                DeskFormat.Number(sim.S.Alarm, 0), DeskFormat.Number(sim.B.liberationAlarmThreshold, 0));
+            // KOS aşama 4: açlık, yarım tayın ve karartma kenar satırına yazılmaz: satır zaten sınırda (1920 × 1080'de 1040 px'lik kutuda
+            // en uzun değerler TR 981 / EN 991 px), tek etiket bile taşırır (TR 1065 / EN 1118 px). Gösterge ERZAK sayacının fişinde,
+            // CRT ipucunda, pano başlığında ve devir fişinin ERZAK kutusunda.
+            edge.SetValues(values);
             hope.Show(free, settings == null || settings.hopeMarks);
             FreedList(sim);
             if (tally != null) tally.Show(surface.Shift);
@@ -393,7 +417,62 @@ namespace Corrigible.Desk.Bridge
                     Loc.F("Eşiğe ({0}) varınca YZ karşı saldırır, bir sektör yeniden işgal edilir. Her vardiya +{1}; telsiz odası düşürür.",
                         DeskFormat.Number(sim.B.liberationAlarmThreshold, 0), ShelterViewBuilder.Rate(sim.AlarmPerShift)));
             if (alarm != null) alarm.SetRadioActive(ShelterLogic.RadioWorkers(shelter) > 0);
+            ShowExposure(sim, animate);
+            CounterTag(sim);
             countersShown = true;
+        }
+
+        /// <summary>
+        /// İFŞA şeridi (KOS aşama 6): alarm panosuyla aynı yoldan ve aynı tutmayla (kapanış karanlığında eski değer). Yeni hücreler
+        /// sırayla yanar (her biri <see cref="Cue.ExposureStep"/>); olay tutanağı tepsiye ya da dosyaya gidince şerit üç kez yanıp söner
+        /// (kâğıttaki "İfşa +n" duvarda karşılık bulur). İniş (sorgu) SwitchClack, KONUM ÇÖZÜLDÜ kuruluşu AlarmHum.
+        /// </summary>
+        void ShowExposure(Simulation sim, bool animate)
+        {
+            if (exposure == null) return;
+            bool on = ShelterEventSnapshotBuilder.ExposureVisible(sim);
+            if (exposure.gameObject.activeSelf != on) exposure.gameObject.SetActive(on);
+            if (!on) { shownExposure = -1; return; }
+            int e = sim.Shelter.Exposure;
+            bool pending = sim.Shelter.FallPending && sim.LocationCompromised;
+            exposure.Show(e, sim.B.exposureThreshold, sim.B.exposureAlarmAt, pending, animate && shownExposure >= 0,
+                ShelterEventSnapshotBuilder.ExposureHint(sim, TutorialSealsSwitch));
+            if (shownExposure >= 0 && countersShown)
+            {
+                if (e > shownExposure) flashPending = true;
+                else if (e < shownExposure) Sfx.Play(Cue.SwitchClack, 0.5f);
+                if (pending && !shownPending) Sfx.Play(Cue.AlarmHum);
+            }
+            shownExposure = e;
+            shownPending = pending;
+        }
+
+        void ExposureStepped(int _) => Sfx.Play(Cue.ExposureStep);
+
+        /// <summary>Bekleyen dikkat flaşı: tutanak elden çıkınca (tepsi ya da dosya) ve kapanış karanlığı bitince.</summary>
+        void ExposureFlash()
+        {
+            if (!flashPending || exposure == null || !exposure.isActiveAndEnabled) return;
+            if (shelterEvent != null && shelterEvent.isActiveAndEnabled && shelterEvent.Busy) return;
+            if (shiftClose != null && shiftClose.HoldCounters || exposure.Animating) return;
+            flashPending = false;
+            exposure.Flash(SiginakTheme.Active != null ? Mathf.RoundToInt(SiginakTheme.Active.NumberOf("exposure.flashTimes", 3)) : 3);
+        }
+
+        /// <summary>İFŞA şeridi (testler).</summary>
+        public ExposurePanel Exposure => exposure;
+
+        /// <summary>
+        /// ERZAK sayacının fark fişinde dinlenme etiketi (KOS aşama 4; yeni kalıcı gösterge yok): aç vardiya ("AÇ 2", uyarı rengi),
+        /// yarım tayın ("YARIM TAYIN 3 V") ya da karartma; yoksa kalkar. Sayaçlar eski değerde tutulurken çağrılmaz (ShowCounters).
+        /// </summary>
+        void CounterTag(Simulation sim)
+        {
+            string tag = ShelterEventSnapshotBuilder.CounterTag(sim, out bool hungry);
+            // Mürekkep yalnız temadan (kural 7); tema yoksa etiket yazılmaz
+            var theme = SiginakTheme.Active;
+            if (theme == null) { counters.SetRest(CounterBank.Slot.Supplies, null, default); return; }
+            counters.SetRest(CounterBank.Slot.Supplies, tag, theme.ColorOf(hungry ? "shelterEvent.counterTag.hungry" : "shelterEvent.counterTag.other"));
         }
 
         /// <summary>

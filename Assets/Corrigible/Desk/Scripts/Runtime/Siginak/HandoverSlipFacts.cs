@@ -34,10 +34,26 @@ namespace Corrigible.Desk
         public SlipTraining training = new SlipTraining();
         /// <summary>KAPANIŞTA BEKLENEN · ÜRETİM.</summary>
         public SlipProduction production = new SlipProduction();
-        /// <summary>KAPANIŞTA BEKLENEN · KAPI: kapıdaki açık başvuru (0 ya da 1).</summary>
+        /// <summary>KAPANIŞTA BEKLENEN · KAPI: kapıdaki aday sayısı (0–3).</summary>
         public int openApplications;
-        /// <summary>Uyarı kutuları (KAPI, DOSYA); sırası kutu sırasıdır.</summary>
+        /// <summary>Uyarı kutuları (KAPI, ERZAK, DOSYA); sırası kutu sırasıdır.</summary>
         public List<SlipWarning> warnings = new List<SlipWarning>();
+        /// <summary>
+        /// KOS aşama 4 (ERZAK kutusu; olaylar kapalıyken hep boş): üst üste aç kapanış sayısı, kalan yarım tayın kapanışı, bu kapanış
+        /// karartmada mı ve açlık sürerse ayrılacak kişinin adı (yoksa boş).
+        /// </summary>
+        public int hungryStreak, halfRationLeft;
+        public bool blackout;
+        public string nextDeserter;
+        /// <summary>
+        /// KOS aşama 6 (İFŞA ve SIĞINAK EKSİK kutuları; olaylar kapalıyken ve eski arşiv fişlerinde 0): ifşa ve eşiği, eşikte mi
+        /// (kapanışta konum çözülür), konum çözüldü mü (bu vardiya son); sığınak eksik sayacının bu kapanıştan sonraki değeri ve sınırı.
+        /// </summary>
+        public int exposure, exposureThreshold;
+        public bool exposureWarned, exposurePending;
+        /// <summary>Konum çözüldüyse kalan vardiya, bu vardiya dahil (kararla varılan eşikte 2'den başlar); eski fişlerde 0 = bu vardiya son.</summary>
+        public int exposureShiftsLeft;
+        public int shelterShort, shelterShortMax;
     }
 
     /// <summary>
@@ -66,9 +82,9 @@ namespace Corrigible.Desk
 
     /// <summary>
     /// Kişinin fişteki durum eki: yaralı (can eksik, ayakta), yatıyor n (vardiya), kısıtlı n (kalan vardiya), kısıtlı · bitti
-    /// (süre bu kapanışta doldu).
+    /// (süre bu kapanışta doldu). KOS aşama 4: tecritte n (kalan kapanış), görev yok n. Yeni değer sona eklenir (yan dosyada sayıyla).
     /// </summary>
-    public enum SlipPersonState { None, Hurt, Down, Restricted, RestrictionEnded }
+    public enum SlipPersonState { None, Hurt, Down, Restricted, RestrictionEnded, Isolated, Idle }
 
     /// <summary>
     /// Eğitim tahmini: train cebindeki kişi, konu, deneyim önce/sonra (<c>boardExpertAt</c>'ta durur) ve kademe önce/sonra
@@ -107,9 +123,14 @@ namespace Corrigible.Desk
     }
 
     /// <summary>
-    /// Uyarı türü: <see cref="Door"/> kararsız kapı başvurusu bu kapanışta reddedilir; DOSYA uyarıları Core'un kabul riski
-    /// sırasıyla <see cref="FileRestrictionExpired"/> (kısıt süresi doldu), <see cref="FileClues"/> (iki bağımsız bulgu),
-    /// <see cref="FileReview"/> (inceleme fişi açık).
+    /// Uyarı türü: <see cref="DoorLastShift"/> (KOS aşama 2): aday grubunun son vardiyası, karar verilmezse bu kapanışta giderler.
+    /// <see cref="Rations"/> (KOS aşama 4): aç vardiya, ayrılacak kişi, yarım tayın, karartma; metni fişin ERZAK alanlarından.
+    /// Yeni tür sona eklenir (fiş verisi yan dosyada sayıyla saklanır).
     /// </summary>
-    public enum SlipWarningKind { Door, FileReview, FileRestrictionExpired, FileClues }
+    /// <remarks>
+    /// KOS aşama 6: <see cref="Exposure"/> (konum çözüldü ya da eşikte) ve <see cref="ShelterShort"/> (sığınak eksik sayacı n/m).
+    /// KOS aşama 7: eski kabulün uyarıları (0 açık kapı başvurusu, 1 inceleme fişi, 2 kısıt süresi, 3 iki bulgu) söküldü; sayıları
+    /// boş kalır. Eski yan dosyada bu sayılarla saklanmış uyarı fişte yazılmaz (<c>HandoverSlipFormat</c> tanımsız türü atlar).
+    /// </remarks>
+    public enum SlipWarningKind { DoorLastShift = 4, Rations = 5, Exposure = 6, ShelterShort = 7 }
 }

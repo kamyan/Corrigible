@@ -36,7 +36,7 @@ namespace Corrigible.Tests
         [Test]
         public void Personnel_CannotExceedPopulationOrRoomSlots()
         {
-            var sim = Ready(new Balance { shelterStartMaterials = 100 });
+            var sim = Ready(new Balance { shelterEventsEnabled = false, shelterStartMaterials = 100 });
             Assert.IsFalse(sim.ShelterAssign(ShelterLogic.Workshop, 1).Ok, "Bozuk oda çalıştırılamaz");
             Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Workshop).Ok);
             Assert.IsFalse(sim.ShelterAssign(ShelterLogic.Workshop, 3).Ok, "Birinci seviye oda iki kişiliktir");
@@ -56,7 +56,7 @@ namespace Corrigible.Tests
         [Test]
         public void Starvation_IsRecoverableAndDoesNotKillResidents()
         {
-            var sim = Ready(new Balance { shelterLootResidents = 0 });
+            var sim = Ready(new Balance { shelterEventsEnabled = false, shelterLootResidents = 0 });
             var shelter = sim.Shelter;
             shelter.Supplies = 0;
             Assert.IsTrue(sim.ShelterAssign(ShelterLogic.Living, 0).Ok);
@@ -77,7 +77,7 @@ namespace Corrigible.Tests
         [Test]
         public void Workshop_CastsPlatesFromMaterials_UpToStorage()
         {
-            var sim = Ready(new Balance { shelterStartMaterials = 100 });
+            var sim = Ready(new Balance { shelterEventsEnabled = false, shelterStartMaterials = 100 });
             var s = sim.Shelter;
             Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Workshop).Ok);
             Assert.IsTrue(sim.ShelterAssign(ShelterLogic.Living, 0).Ok);
@@ -106,7 +106,7 @@ namespace Corrigible.Tests
         [Test]
         public void Infirmary_HealsMostWoundedFirst_AndGetsTheDownedUpEarly()
         {
-            var sim = Ready(new Balance { shelterHealPerWorker = 0.5 });
+            var sim = Ready(new Balance { shelterEventsEnabled = false, shelterHealPerWorker = 0.5 });
             Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Infirmary).Ok);
             Assert.IsTrue(sim.ShelterAssign(ShelterLogic.Living, 0).Ok);
             Assert.IsTrue(sim.ShelterAssign(ShelterLogic.Infirmary, 2).Ok);
@@ -126,7 +126,7 @@ namespace Corrigible.Tests
         [Test]
         public void LivingArea_HoldsOneReservePerLevel()
         {
-            var sim = Ready(new Balance { shelterStartMaterials = 100, startFon = 200 });
+            var sim = Ready(new Balance { shelterEventsEnabled = false, shelterStartMaterials = 100, startFon = 200 });
             Assert.AreEqual(1, sim.Shelter.Reserves.Count);
             foreach (var r in sim.S.Liberation.Regions.Take(sim.B.shelterLevel2Regions)) foreach (var s in r.Sectors) s.Captured = true;
             Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Living).Ok);

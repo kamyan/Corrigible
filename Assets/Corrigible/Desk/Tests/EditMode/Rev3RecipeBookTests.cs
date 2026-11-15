@@ -587,7 +587,7 @@ namespace Corrigible.Desk.Tests
             Assert.IsFalse(v.Hovered, "açık defterde etiket yok");
 
             // Anlık görüntünün sözcükleri (W4 kurucusu; EN satırı çeviri tablosu güncellenince)
-            var sim = Simulation.NewGame(79, new Balance { planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 100, admissionKnockMax = 100 });
+            var sim = Simulation.NewGame(79, new Balance { shelterEventsEnabled = false, planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 100, admissionKnockMax = 100 });
             var tr = PlanningBoardSnapshotBuilder.Build(sim, new BoardUiState(), false, false, false);
             Assert.AreEqual("TARİF DEFTERİ", tr.BookTitle);
             Assert.AreEqual("6 tarif", tr.BookLine);
@@ -824,7 +824,7 @@ namespace Corrigible.Desk.Tests
             Assert.AreSame(desk.Font(DeskFont.LfRegular), page.InputNames[0].font, "girdi adı Libre Franklin 400");
             Assert.AreSame(desk.Font(DeskFont.KalamBold), page.Note.font, "el notu Kalam 700");
 
-            var sim = Simulation.NewGame(79, new Balance { planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 100, admissionKnockMax = 100 });
+            var sim = Simulation.NewGame(79, new Balance { shelterEventsEnabled = false, planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 100, admissionKnockMax = 100 });
             foreach (bool english in new[] { false, true })
             {
                 if (english) UseEnglish(); else Loc.SetLanguage(Loc.Turkish);

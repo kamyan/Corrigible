@@ -32,10 +32,15 @@ namespace Corrigible.Desk
         ShiftClose = 7,
         /// <summary>K8A kabul tezgâhı (Revizyon 3 · Aşama 6, R17): inik tezgâha tıklayınca; çapa <c>Poses/K8A</c>, 47°.</summary>
         Admission = 8,
-        /// <summary>K8G buğu camı (R17b): kanattaki soğuk cama yakın bakış; çapa <c>Poses/K8G</c>, 30°.</summary>
+        /// <summary>
+        /// K8G buğu camı (R17b): eski tek adaylı kabulün yakın bakışı; aşama 7'de emekli (hiçbir yol odaklamaz). Sayı asset'lerde
+        /// (<c>PoseLightRecipe</c>) ve çapa <c>Poses/K8G</c> sahnede durduğu için üye korunur.
+        /// </summary>
         BreathGlass = 9,
         /// <summary>K8R kâğıt okuma (R17): tıklanan kâğıda göre çapası kurulan okuma pozu; çapa <c>Poses/K8R</c>, 40°.</summary>
         AdmissionRead = 10,
+        /// <summary>KLS son şalter (KOS aşama 6): arka duvardaki son şaltere sol çaprazdan yakın bakış; çapa <c>Poses/KLS</c>, 40°.</summary>
+        LastSwitch = 11,
     }
 
     /// <summary>
@@ -173,8 +178,8 @@ namespace Corrigible.Desk
         /// <summary>
         /// Varsayılan geçiş süresi (PROMPT §0.3: süreler motion.* tokenlarından): herhangi bir pozdan K4'e (pano)
         /// <c>motion.board.toK4S</c> (0,6 s), K4'ten herhangi bir poza <c>motion.board.backToDeskS</c> (0,5 s); öteki geçişler
-        /// <c>motion.poseS</c> (<c>transitionSeconds</c>, 0,45 s). Kapının K8 ailesi (Aşama 6): K8G'ye ve K8G'den
-        /// <c>admission.motion.toK8GS</c> (0,45 s), K8R'ye ve K8R'den <c>admission.motion.readS</c> (0,25 s). Süresini kendisi veren
+        /// <c>motion.poseS</c> (<c>transitionSeconds</c>, 0,45 s). Kapının K8 ailesi (Aşama 6): K8R'ye ve K8R'den
+        /// <c>admission.motion.readS</c> (0,25 s). Süresini kendisi veren
         /// çağrılar (vardiya dizisi, açılış, operasyon) bundan etkilenmez.
         /// </summary>
         public float PoseSeconds(SiginakPose from, SiginakPose to)
@@ -183,12 +188,10 @@ namespace Corrigible.Desk
             var theme = SiginakTheme.Active;
             if (to == SiginakPose.Shelf) return theme != null ? theme.NumberOf("motion.board.toK4S", 0.6f) : 0.6f;
             if (from == SiginakPose.Shelf) return theme != null ? theme.NumberOf("motion.board.backToDeskS", 0.5f) : 0.5f;
-            // Aşama 6 K8 ailesi (PLAN §1.5): K8 ↔ K8A motion.poseS (varsayılan); K8/K8A ↔ K8G admission.motion.toK8GS (0,45);
+            // Aşama 6 K8 ailesi (PLAN §1.5): K8 ↔ K8A motion.poseS (varsayılan);
             // K8A ↔ K8R admission.motion.readS (0,25; R17-not "0,25 s'de kameraya döner")
             if (to == SiginakPose.AdmissionRead || from == SiginakPose.AdmissionRead)
                 return theme != null ? theme.NumberOf("admission.motion.readS", 0.25f) : 0.25f;
-            if (to == SiginakPose.BreathGlass || from == SiginakPose.BreathGlass)
-                return theme != null ? theme.NumberOf("admission.motion.toK8GS", transitionSeconds) : transitionSeconds;
             return transitionSeconds;
         }
 

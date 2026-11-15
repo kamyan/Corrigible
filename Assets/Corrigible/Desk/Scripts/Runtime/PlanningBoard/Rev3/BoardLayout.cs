@@ -91,7 +91,7 @@ namespace Corrigible.Desk
         public static Vector2 Recipe => P("board.layoutMm.recipe", 514, 328);
         public static Rect Folder => R("board.layoutMm.folder", 906, 244, 244, 194);
         public static Rect FolderFace => R("board.layoutMm.folderFace", 963, 268, 130, 180);
-        public static Rect Hurda => R("board.layoutMm.hurda", 1012, 474, 130, 126);
+        public static Rect Hurda => R("board.layoutMm.hurda", 992, 474, 130, 126);
         /// <summary>DEPO bandı (hammadde ve kitler; eşya buraya bırakılınca sahipsiz olur).</summary>
         public static Rect Depot => new Rect(0, N("board.layoutMm.depotY", 446), InnerWidthMm, InnerHeightMm - N("board.layoutMm.depotY", 446));
         public static Rect Back => R("board.layoutMm.header.back", 6, 6, 124, 28);

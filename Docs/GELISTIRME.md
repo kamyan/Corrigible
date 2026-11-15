@@ -33,11 +33,9 @@ ueval 'UnityEditor.SceneManagement.EditorSceneManager.NewScene(UnityEditor.Scene
 | `Tests/EditMode/LiberationCampaignTests` | açılış, sektör sırası, ödüller, sınır seçimi, bütün harekâtın kazanılabilmesi, makinelerin kopyalanması, sivil güven (kayıp, ayakta kalan sivil ödülü, tavan), kayıt/devam |
 | `Tests/EditMode/DoorTests` | sığınağın kapısı: ilk vuruş, aç/açma ve seçim, cevapsız ziyaretçi, vuruş aralığı ve ana RNG'ye dokunmama, kopya ve silahlı sakinin koşulları, bedeller, kart tablosunun bütünlüğü, kayıttan devam |
 | `Tests/EditMode/PlanningBoardTests` | isimli kadro, tek kişi/tek iş, kit/eşya sahipliği, üretim girdisinin bir kez ödenmesi, eğitim, fiş, kalıcı kayıp, hurdalama, ikmalden kit toparlama ve kayıt/devam |
-| `Tests/EditMode/CommunityAdmissionTests` | aday kimliği, bağımsız belge kusuru, dış kayıt/gözetmen (Boşta'nın ilk uygun kişisi), değişen talimat, kısıtlı kabul, kalıcı izler, müdahale ve sabotaj, replay |
-| `Tests/EditMode/AdmissionSupervisorTests` | Aşama 6 Core (K4-A, biçim 15): gözetmen Boşta'nın ilk uygunu `Board.People` sırasıyla, gözetmensizlikte dış kayıt ve İNCELE kilidi, dinamik kural, RNG tüketmeme, replay, tohum 79 altın zaman çizelgesi (gelişler, talimat v2/v3), H1/H3, `AdmissionFindingCode` ↔ Core metinleri, sürüm 15 |
 | `Desk/Tests/EditMode/PlanningBoardSceneTests` | Revizyon 3 kartlı pano sahnede: bileşenler ve bağları, plakalar ve yazılar, eski tuvalin, rafın ve `Shelter controller`'ın yokluğu (Aşama 10), eski kabul penceresinin yokluğu ve kabul istasyonunun bağları, şalter (kapak, kol)/kâğıt/EVRAK kutusu, karartma ve eksik script yokluğu |
 | `Desk/Tests/EditMode/Rev3BoardLayoutTests`, `Rev3BoardSnapshotTests`, `Rev3BoardDropRulesTests` | pano mm ↔ model yereli, cepler, deste aralığı min(82, 636/(n−1)); anlık görüntünün Core'dan kurulması (RNG/komut yok); bırakmanın tek Core komutuna çevrilmesi ve önizleme metni |
-| `Desk/Tests/EditMode/Rev3CardFaceTests` | dört kart prefab'ı (model, çarpıştırıcı, yüz tuvali, iç içe modelde geçersiz kılma yok), kişi yüzünün yerleşimi ve durum katmanları (İNCELE bayrağı adın üstünde), TR/EN taşma geçidi (meslekler, şeritler, eşya kullanım satırı ≤ 3 satır) |
+| `Desk/Tests/EditMode/Rev3CardFaceTests` | dört kart prefab'ı (model, çarpıştırıcı, yüz tuvali, iç içe modelde geçersiz kılma yok), kişi yüzünün yerleşimi ve durum katmanları (eski İNCELE bayrağı aşama 7'de söküldü: overlay'de alanı yok, modelin `Flag` parçası kurulumda gizli), TR/EN taşma geçidi (meslekler, şeritler, eşya kullanım satırı ≤ 3 satır) |
 | `Tests/EditMode/ShelterTests` | eski model (`planningBoardEnabled = false`): sığınak tüketimi, plaka dökümü, revir, yedekler, telsiz, depo sınırları |
 | `Tests/EditMode/RaidEngineTests` | mulberry32, aynı hamlelerle aynı savaş (beklenen imzalar, bütün ekip kaçışla çıkar), geri alma, önizleme, ikmal görevi, kaçış (son çıkan kazandırır, süre dolarken kalan düşmüş sayılır, sunucu kaçışı, geri çekilme yok), sunucu sertliği (düğüm canı, ek makine; kasa ve çekirdek hariç) |
 | `Tests/EditMode/RaidMapsTests` | harekâtın harita havuzu: aynı tohum aynı havuz, harekâtlar harita paylaşmaz, üretilen haritaların kuralları, altı türden eşit sayıda ve her harita türünün kurallarına uyar, torba (her harita bir kez, art arda tekrar yok), havuz yalnız `MapSeed` ile |
@@ -55,19 +53,27 @@ ueval 'UnityEditor.SceneManagement.EditorSceneManager.NewScene(UnityEditor.Scene
 | `Desk/Tests/PlayMode/ShiftClosePlayTests` | (PlayMode, 14) şalter → fiş → EVRAK: kapak 0,25 s / kol 0,3 s / tam bir `board_print`; fiş kol inince 0,35 s'de dile; kapak 4 s'de kapanır; el (%67) ve okumak zaman ilerletmez; EVRAK dışı ve reddedilen bırakış dile döner; EVRAK'ta tam bir gün (kararma, K1, VARDİYA, teleks); aynı fiş yeniden kullanılmaz; geçersiz plan ve baskın kilidi; basım reddi; kayıttan devam; Esc/sağ tık; arşiv okuma |
 | `Desk/Tests/PlayMode/MapPaperPlayTests` | (PlayMode, 4) görev fişi ve kadro raporunun TR/EN düğmeleri kadrajda; kişi satırına gerçek ışınla tık panoda aynı kişiyi seçer; uzun dosyanın sayfa çarpıştırıcısı çalışır; CRT ışığı/kapanması kayıt ve RNG değiştirmez |
 | `Desk/Tests/EditMode/Rev3Stage7PaperTests` | (10) isimli saha kadrosu, eşya sahipliği, gerçek istatistikler; eksik kit ve yatan kişi; kapasite sınırındaki gerçek baskın ganimeti, kayıt/devam ve okuma saflığı; isimli kurtuluş/kayıp; TR/EN uzun kişi dosyasında sayfalama |
-| `Desk/Tests/PlayMode/AdmissionPlayTests` | (PlayMode, 26) tohum 79 gerçek DeskGame: vuruş yalnız canlı kapanışta, K8 → K8A → K8R geri zinciri, dört araç gerçek tık/sürüklemeyle birer komut, dış kayıt bekliyor → sonuç ilk K8 varışında, KABUL/KISITLI'da kapı ve kart, RET/YARDIM, damga kilitleri (kapasite, tek kısıtlı yer, erzak, basılı plan, baskın), talimat v2/v3 ve inceleme fişi, kayıttan devam, kişi dosyasında iz ("robot" yok), K8R okunurluğu, gözetmensiz defter, gözetmen değişimi |
+| `Desk/Tests/PlayMode/CandidatePlayTests` | (PlayMode, 10) aday grubu, tohum 79 gerçek DeskGame: grup canlı kapanışta gelir (tek vuruş, teleks, 2–3 kart + grup fişi, emekli araçlar ve beş etiket sahnede yok (aşama 7)); KABUL karta → `candidate_choose` ve kişi Boşta'da; GERİ ÇEVİR fişe → `candidate_pass`; dolu sığınakta işaretsiz KABUL kilitli, satır tıkı işaretler, tek komutla takas ve yolluk; iki vardiya kararsız → fiş uyarısı, grup gider, tezgâh katlanır; fiş basılıyken damga komut yazmaz; kayıttan devam aynı kartlar, vuruşsuz; EN'de Türkçe harf yok; K8A'da karta ve fişe gerçek ışın (araya yalnız `SM_Door` girerse günlüğe yazar, sentetik yola düşer) |
+| `Tests/EditMode/CandidateGroupTests` | (KOS, 43) aday grubu: geliş aralığı ve ilk grup, 2–3 aday, bekleme ve süre aşımı, kademe payları ve kaydırma, özellikler ve dönüşümleri, kişiye bağlı teçhizat ve taksit, dolu sığınakta `replaceId` ve yolluk (`DismissSuppliesPreview`), acil grup, kilitli planda seçim, adlar, altın zaman çizelgesi (tohum 79, ilk üç grup), kit kilidi, kayıttan devam |
+| `Tests/EditMode/ShelterEventTests`, `ShelterEventCaseTests` (yardımcı `ShelterEventKit`) | (KOS, 31 + 27) olaylar: çekim sırası (altın zaman çizelgesi, tohum 79; kapanış başına 32/2/0 çekim), aralık, öncelik, tekrar sınırı, hedefi giden olay, sızma zinciri ve tecrit, kilitsizlik, gizlilik, komut koşulları, kayıttan devam (60 tohum, on dört olayın hepsi); tek tek her olayın tetiği ve seçenekleri, açlık ve ayrılma, tayın kipi, karartma, kişi durumları. `ShelterEventKit.Quiet/On/Robots/Humans` olayları ve kimlikleri test için ayarlar |
+| `Tests/EditMode/EndingTests` | (KOS, 30) ifşa (kaynaklar, eşik, bir ve iki uyarı vardiyası, sorgu), `dusus`, `terk` (eksik kadro sayacı ve acil grup), son şalter ve iki çeşidi (nedenler `konum`, `kadro`, `aclik`, `guven`), zaferin tonu (ölüm sınırının ölçeklenmesi, yalnız görmezden gelinmiş izin gölgelemesi), `EndReport`, öncelik, gizlilik, kayıt |
+| `Desk/Tests/EditMode/Rev3CandidatePaperTests`, `Rev3CandidateViewTests` | aday kartı ve grup fişi prefab'ları (satırlar, seçili satır, GERİ ÇEVİR izi), tezgâhtaki kart düzeni ve çekmece |
+| `Desk/Tests/EditMode/Rev3ShelterEventSnapshotTests`, `Rev3ShelterEventSceneTests` | olay tutanağının anlık görüntüsü Core'dan (14 tür TR/EN, kapalı seçenek ve nedeni, GÜVENLİ/EŞİK etiketi, kişiye bağlı kit satırı), sahnede tutanak, tepsi ve bağlar |
+| `Desk/Tests/EditMode/Rev3ExposurePanelTests`, `Rev3LastSwitchTests`, `KosFinalReportTests`, `Rev3KosStage6SceneTests` | İFŞA göstergesi (lambalar, kalan uyarı vardiyası, CRT önceliği, fişin İFŞA ve SIĞINAK EKSİK kutuları); son şalterin kilidi, plakası ve ÇEKİLME EMRİ (TR/EN); son raporun yeni sonları, ton ve ölçüt kutusu, SİCİL, başarım eşlemesi, Core kimliklerinin ham yazılmaması; sahnede şalter, gösterge ve rapor yuvaları |
+| `Desk/Tests/EditMode/KosStage8SceneTests` | (KOS aşama 8, ikinci tur) telsizin yeri, kordonsuz LOD'lar, CRT payı, kapı kanadının süpürmesi |
+| `Desk/Tests/PlayMode/ShelterEventPlayTests`, `KosEndingsPlayTests` | (PlayMode, 9 + 6) gerçek DeskGame'de tutanak: tepsi, ele alma, satır ve KARAR, Esc, K6'dan tık, hedefi giden olayın kapanması, 14 tür hata ayıklama kurulumuyla; sonlar: ifşa göstergesi ve uyarı, son şalterin iki adımı ve damga (`last_switch`), son raporlar |
 | `Desk/Tests/EditMode/Rev3ShiftSwitchTests`, `Rev3SlipMotionTests`, `Rev3ShiftCloseFlowTests` | şalterin R19 durumları ve süreleri (token), plaka metni/rengi TR/EN, eski kip aynen; fiş pozları (dil, el, tepsi), çıkış ease-out ve 160 mm, ret dönüşü, EVRAK ışığı; kilit nedeni önceliği, ses eşlemesi, dosyalama zaman çizelgesi, arşiv gidiş-dönüşü |
 | `Desk/Tests/EditMode/Rev3HandoverSlipFaceTests`, `Rev3HandoverSlipFactsTests`, `Tests/EditMode/ShiftCloseCoreTests` | fiş biçimi R19c V.001/V.031 TR/EN, R10 düzeni mm, en kötü fiş taşmasız, prefab (ışıksız TMP, çarpıştırıcısız); fiş verisinin saflığı ve kapanışla eşleşmesi; Core: basılıyken Step ilerlemez, dünkü fiş reddi, replay |
 | `Desk/Tests/EditMode/Rev3ShiftCloseSceneTests` | sahnede kapanış bağları (model parçaları, SlipMouth çapaları, EVRAK ışığı, K6 kadrajı), plaka iki satırı TR/EN sığar, token ↔ tablo metinleri, ad araması yok |
-| `Desk/Tests/EditMode/Rev3Stage6ContractTests`, `Rev3AdmissionSnapshotTests` | Aşama 6 sözleşmeleri (poz 8–10, cue 120–128, araç/damga kimlikleri ↔ Core, `_local_a6` token yolları, K8 ailesinin poz ışığı); kabul anlık görüntüsünün Core'dan kurulması (kilit ve nedenler, araç/damga durumları, fişler bulgu kodlarından, şerit v1–v3, talep formu, gözetmen adı, H2/H4 uyarıları, sonucun ilk varışa dek tutulması, TR/EN) |
-| `Desk/Tests/EditMode/Rev3DoorTests`, `Rev3AdmissionMotionTests` | kapı: iç saatli vuruş (0/0,3/0,6 s, 0,9 s), süreli açılış (çark 0,5, kanat 0,8, merdiven 0,3, kapanış 0,6), kartlı oyunda kırmızı yok, kabule devir, eski yol aynen; istasyon ve araçlar: tezgâh T1–T5, çekmece, işaretçi, fiş yolu (EaseOut eğrisine karşı), talimat değişimi, karar dizileri, damga (kalkış, basış, dönüş, kilit), büyüteç, interkom, buğu camı, talep yaprağı (+35°), okuma pozu |
-| `Desk/Tests/EditMode/Rev3AdmissionPaperTests`, `Rev3AdmissionFlowTests`, `Rev3AdmissionSceneTests` | kâğıt yüzleri (belge 148 × 105, şerit 80 × 210, fiş 90 × 60, talep formu; damga izleri TR/EN, ışıksız mürekkep, FileTag sığması, `tx_fog` belirlenimci); akış (her araç/damga tam bir komut, kilitte komut yok, vuruş aday başına bir kez, geri zinciri, KABUL/KISITLI'da kapı, sunum durumu yan dosyada, teleks, ad araması yok); sahnede istasyon bağları, model yerleri, çarpıştırıcılar ve gerçek ışınlar, K8A/K8G/K8R pozları, plakalar TR/EN |
+| `Desk/Tests/EditMode/Rev3Stage6ContractTests`, `Rev3CandidateSnapshotTests` | Aşama 6 sözleşmeleri (poz 8–10, cue 120–122/127–128 ve 123–126 boş, damga kimlikleri ↔ Core, `SlipWarningKind` sayıları, `_local_a6` token yolları, K8 ailesinin poz ışığı); aday grubunun anlık görüntüsü Core'dan (kartlar, fiş, dolu sığınak, damga kilitleri, gizli kimlik sızmaz, TR/EN) |
+| `Desk/Tests/EditMode/Rev3DoorTests`, `Rev3AdmissionMotionTests` | kapı: iç saatli vuruş (0/0,3/0,6 s, 0,9 s), süreli açılış (çark 0,5, kanat 0,8, merdiven 0,3, kapanış 0,6), kartlı oyunda kırmızı yok, kabule devir, eski yol aynen; istasyon: tezgâh T1–T5, çekmece, aday kartları ve grup fişi, karar dizileri (KABUL, GERİ ÇEVİR), damga (kalkış, basış, dönüş, kilit, tık-tık), okuma pozu, çarpıştırıcılar |
+| `Desk/Tests/EditMode/Rev3AdmissionPaperTests`, `Rev3AdmissionFlowTests`, `Rev3AdmissionSceneTests` | kâğıt prefab kuralları (aday kartı, grup fişi; ışıksız mürekkep, FileTag sığması, kâğıt malzemeleri; buğu dokusu aşama 7'de söküldü); akış (her damga tam bir komut, kilitte komut yok, vuruş grup başına bir kez, geri zinciri, KABUL'de kapı, işaret yan dosyaya yazılmaz, teleks, ad araması yok); sahnede istasyon bağları, model yerleri (damgalar orta yuvalarda), emekli nesnelerin ve eksik script'in yokluğu, çarpıştırıcılar ve gerçek ışınlar, K8A/K8R pozları, plakalar TR/EN |
 | `Desk/Tests/EditMode/SadeRaid*Tests`, `LootRaidPresentationTests` | baskın HUD komutları, kamera izdüşümü, Baskin sahnesi bağlantıları |
 | `Desk/Tests/EditMode/DeskAssetTests`, `CommandPostProjectionTests` | sprite/font/tema varlıkları, dünya-ekran izdüşümü |
 | `Desk/Tests/EditMode/Rev3RoomTests` | Revizyon 3 odası: sayaç tamburu rakam başına 36°, tebeşir çetelesinin hücreleri, teleks kâğıdının dört yuvası, telsiz defterinin sayfası, poz ışığı tarifi (her pozda en çok 4 gölgeli ışık, K1'de 3, K4'te yalnız pano lambası), gölgeli her ışık Spot (DeskGame ve Giris, kapalılar dahil), üç ana ışık 2048 ve sahnedeki bağlamalar |
 | `Desk/Tests/EditMode/Rev3ModelTests` | Revizyon 3 model hattı: 198 manifestin prefab'ı, üçgen sayısı ve bütçe, sıfır pozda kutu (OBJ köşeleriyle ≤ 0,1 mm, manifestin ≤ 1 mm içinde), parça hiyerarşisi ve pivotlar, yazı yuvalarının yeri ve normali, çapa ve ışık sayıları, parçaların aralığında kendi ekseninde dönmesi/kayması, swap malzemeleri, `_AxisTest` eksenleri, büyük harf yüksekliği ve şablon fontu, malzeme kitaplığının değerleri, onarılan devir fişi |
-| `Desk/Tests/EditMode/PlanningTutorialFlowTests` | İlk vardiyada gerçek eylem sırası, bilgi onayı, fişin basılması ile dosyalanmasının ayrımı, doğrudan atama/erken baskın/kayıp, bloke durum ve geçerli devam adımı |
-| `Desk/Tests/PlayMode/PlanningTutorialPlayTests` | Rehber açık gerçek DeskGame: gerçek kart sürüklemesiyle ilerleme, kendi komut/RNG'sini yazmaması, aynı kayıttan rehbere devam ve kapatma, eski kayda dayatılmama, açılışta ilerlemenin korunması, TR/EN okunurluk ve Esc geri zinciri |
+| `Desk/Tests/EditMode/PlanningTutorialFlowTests` | İlk vardiyada gerçek eylem sırası, bilgi onayı, fişin basılması ile dosyalanmasının ayrımı, doğrudan atama/erken baskın/kayıp, bloke durum ve geçerli devam adımı; aşama 8: dosyalanmış vardiyada hedefe atlama, olay/grup konularının geliş sırasına göre seçilmesi, tezgâhtan ya da tutanaktan geri dönüş, süresi dolan grup ve bekleme sınırı, konu içinde devam, canlı yer tutucular (hedef satırı), eski kabul sözcüklerinin yokluğu |
+| `Desk/Tests/PlayMode/PlanningTutorialPlayTests` | Rehber açık gerçek DeskGame: gerçek kart sürüklemesiyle ilerleme, kendi komut/RNG'sini yazmaması, aynı kayıttan rehbere devam ve kapatma, eski kayda dayatılmama, açılışta ilerlemenin korunması, TR/EN okunurluk ve Esc geri zinciri; aşama 8: gerçek akışta hedef satırı, ilk olay tutanağı (EVRAK'a gerçek ışınla tık, satır, KARAR) ve ilk aday grubu (KAPI, tezgâh, GERİ ÇEVİR damgası fişe), rehber sürerken son şalterin "mühürlü · rehber" olması ve bitince kalkması; 26 adımın canlı metninin TR/EN notun kâğıdına ve ekrana sığması |
 | `Desk/Tests/EditMode/Rev3Stage9RaidTests` | 13 model kiti ve 0,29 m giriş kapıları, 16 tek renderer'lı/gölgesiz kanal maskesi, piyon menteşeleri, kaynak kolu, antet/istatistik/kalıcı kayıp bağları; sağlık şeridi → bayrak/durum geçişinde taşma yok |
 | `Desk/Tests/PlayMode/RaidModelPlayTests` | (PlayMode, 4) gerçek kampanyadan Baskin eklemeli yükleme; TR/EN isimli kartların kadrajı, gerçek kasa içeriği, hareket/geri al ve kayıt saflığı; hasar/plaka/tik/180°/−70°; son kaçış turunda hak kalmasa da isimli ölüm onayı; iki tıklı geri çekilme → masa → kayıt/replay ve aynı canlı kişiler |
 | `Desk/Tests/EditMode/EnglishCardBuildersTests` | Kartlı harekât gerçek çeviri tablosuyla EN (V.001/005/009/031): Bridge kurucularının her dizgesi yansımayla toplanır; Türkçe harf, harfsiz Türkçe sözcük (KABUL, SEVK), çevrilmemiş kaynak yok, `Loc.Missing` hiç tetiklenmez |
@@ -187,28 +193,66 @@ surface.LaunchSector(game.Sim.NextLiberationSector(game.Sim.S.Liberation.Current
   R19c fikstürü Play'de fiş eldeyken `HandoverSlipFixtures.Present("V031")` (yalnız sunum), düz çizim `RenderAllFlat()`; canlı punto
   `SiginakTextScan.ScanLiveSlip(view)`. PlayMode yardımcıları `ShiftPlayKit` (`Begin`, `Log`, `DragSlip`, `TrayScreen`).
   Kartlı kipte `SiginakFixtures` günü fiş basıp dosyalayarak ilerletir.
-- **Revizyon 3 kapı ve kabul (K8 ailesi, R9 / R17):** tutamak `SiginakAdmission` (`SiginakRoom/Admission controller`): `Enter()` /
-  `Leave()`, `Busy`, `Active`, `Last` (son anlık görüntü), `Ui` (görülen sürüm/sonuç); sentetik girdi `UseTool(AdmissionTool)`,
-  `PressStamp(StampChoice)`, `ClickCounter()`, `ClickPaper(AdmissionPaper, i)`, `ClickDeskKey()`, `HandleBack()` (gerçek tık yolu ayrıca
-  denenmeli; `AdmissionPlayKit.HitOn`/`ClickHit`). İstasyon, araçlar ve damgalar akışın özel alanlarında (`station`, `glass`, `intercom`,
-  `magnifier`, `pad`, `stamps`, `door`, `readAnchor`).
-  - **Tohum 79 durumları** (varsayılan denge, alarm 0; `RetireJobs` sonrası Boşta Cem, İpek, Zeynep; Day n = n kapanıştan sonra =
-    V.(n+1)): ilk aday **Suna 9** Day 4'te (V.005, `resident-9`, N-17/009), talimat v2 de Day 4'te, v3 Day 8'de (V.009); **Eren** Day 8'de
-    (`resident-10`); sonra Banu Day 12, Ozan Day 14 (tarih kusuru), Lale Day 16. Day 4'te gözetmen **Cem** (`AdmissionWatcher(resident-9)`);
-    o gün DIŞ KAYIT istenirse sonuç sonraki kapanışta gelir (Day 5: `record_done`, kod `match`, aday bir vardiya daha bekler; Day 6'da
-    aday yok). Gün atlamak için `PrintShift` + `FileShift(Board.ReceiptId)` (Core) ya da şalter → fiş → EVRAK (arayüz).
-  - **Gözetmen takası:** `AssignResident` takastır; gözetmeni (Cem) dolu bir cebe (ÜRETİM) almak cebin sahibini (Suna, sakin-4) Boşta'ya
-    döndürür ve o `Board.People` sırasında önde olduğu için yeni gözetmen olur. Boşta'yı boşaltmak için kişileri yalnız boş emekli
-    ceplere (`watch`, `care`, `gather`, `contact`) gönder; 8 kişi 6 cebe sığmaz.
-  - **Uzun kurulum:** varsayılan dengede alarm V.010'da karşı saldırı yapar (`liberationAlarmPerShift = 0` ver); erzak V.013'e varmadan
-    biter ve YARDIM kilitlenir (`boardStartSupplies = boardSuppliesCapacity`). Gözetmensiz defter için `boardStartResidents = 5`.
-  - **Sunum fikstürleri:** Play'de `AdmissionFixtures.PresentAndCapture("inspect", "Temp/a.png")` (`present`, `inspect`, `pending`,
-    `stamped`, `aid`, `v3`, `read`, `inspect_en`; `trace` K4'e gider: önce `Present("trace")`, varınca `CorrigibleDebug.Capture`), sonra
-    `AdmissionFixtures.Restore()`; düz kâğıtlar `RenderAllPapersFlat("Docs/UI_Siginak_Rev3/screens_unity_rev3")`. Canlı punto K8R'de
-    `SiginakTextScan.ScanLiveAdmission(Camera.main)`.
-  - **Beklenen davranış:** vuruş yalnız canlı kapanışta (yüklemede yok, kamera dönmez); talimat değişimi ve dış kayıt sonucu ilk K8/K8A
-    varışında oynar (K1'de fiş BEKLENİYOR, GİDEN yaprağı yerinde); buğu camı K8'den (kanatta); KABUL/KISITLI'da kamera K8'e döner,
-    tezgâh katlanır, kapı açılır; dizi sırasında Esc diziyi sona atlatır. Kayıttan devam vuruşsuz, belge/fişler/yaprak yerinde.
+- **Revizyon 3 kapı ve kabul (K8 ailesi, R9 / R17; KOS aşama 2 ve 7):** tutamak `SiginakAdmission` (`SiginakRoom/Admission controller`):
+  `Enter()` / `Leave()`, `Busy`, `Active`, `Last` (son anlık görüntü), `Ui` (dolu sığınakta işaretli yollanacak kişi); sentetik girdi
+  `PressStamp(StampChoice, adayId)`, `ClickReplace(kişiId)`, `ClickCounter()`, `ClickPaper(AdmissionPaper.Candidate | GroupSlip, i)`,
+  `ClickDeskKey()`, `HandleBack()` (gerçek tık yolu ayrıca denenmeli; `AdmissionPlayKit.HitOn`/`ClickHit`). İstasyon ve iki damga
+  akışın özel alanlarında (`station`, `stamps`, `door`, `readAnchor`); kartlar `station.Candidates`.
+  - **Tohum 79 durumları** (varsayılan denge; `RetireJobs` sonrası Boşta Cem, İpek, Zeynep; Day n = n kapanıştan sonra = V.(n+1)):
+    ilk grup V.005'te 2 aday (`AdmissionFixtures.FirstGroup()`), tohum 3'te V.003'te 3 aday. Dolu sığınak için
+    `boardResidentCapacity = boardStartResidents` (`FullGroup`). Gün atlamak için `PrintShift` + `FileShift(Board.ReceiptId)` (Core)
+    ya da şalter → fiş → EVRAK (arayüz).
+  - **Sunum fikstürleri:** Play'de `AdmissionFixtures.PresentAndCapture("group", "Temp/a.png")` (`group`, `group_full`,
+    `group_stamped`, `group_en`), sonra `AdmissionFixtures.Restore()`. Canlı punto K8R'de `SiginakTextScan.ScanLiveAdmission(Camera.main)`.
+  - **Beklenen davranış:** vuruş yalnız canlı kapanışta (yüklemede yok, kamera dönmez); KABUL bir karta, GERİ ÇEVİR grup fişine;
+    KABUL'de kamera K8'e döner, tezgâh katlanır, kapı açılır; dizi sırasında Esc diziyi sona atlatır. Kayıttan devam vuruşsuz.
+  - **Geçmiş (aşama 7'de söküldü):** eski tek adaylı kabulün fikstürleri (`present`, `inspect`, `pending`, `stamped`, `aid`, `v3`,
+    `read`, `trace`), Suna 9 / Eren / gözetmen Cem senaryosu, büyüteç cetveli, buğu camı (K8G) ve talep defteri notları.
+- **Sığınak olayları, ifşa ve sonlar (KOS; KOS aşama 8'de Play'de denendi).** Önce kayıt alanını ayır, DeskGame açıkken
+  Play'e gir, yeni harekâtı kur ve emir belgesini geç:
+
+  ```bash
+  ueval 'UnityEditor.SessionState.SetString("Corrigible.TestStorage", "/tmp/kos-deneme"); return "ok";'
+  uplay
+  ueval 'var g = UnityEngine.Object.FindFirstObjectByType<Corrigible.Game.GameController>(); g.NewGame(79); return "yeni";'
+  # 2-3 kez: BAŞLA'ya basar (durum Ready değilse Skip)
+  ueval 'var b = UnityEngine.Object.FindFirstObjectByType<Corrigible.Desk.Bridge.SiginakBriefing>(); var t = b.GetType(); var st = t.GetField("state", System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(b).ToString(); if (st != "Ready") { b.Skip(); return st; } t.GetMethod("Action", System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(b, null); return "BASLA";'
+  ```
+
+  - **Gerçek akışla olay:** kapanışları komutla geç (`PrintBoardShift` + `FileBoardShift`, sunum atlanır). Aşama 8 dengesiyle
+    tohum 79'da baskınsız yedinci kapanışta (V.008) `erzak_azaliyor` açılır; kapıda ilk grup V.005'te, ikincisi V.008'de:
+
+    ```bash
+    ueval 'var g = UnityEngine.Object.FindFirstObjectByType<Corrigible.Game.GameController>(); var sim = g.Sim; for (int i = 0; i < 8 && sim.PendingShelterEvent == null; i++) { if (!g.PrintBoardShift().Ok) break; g.FileBoardShift(sim.Board.ReceiptId); } return (sim.PendingShelterEvent?.Kind ?? "-") + " V." + (sim.S.Day + 1);'
+    ```
+
+    Karar komutla: `g.ExecuteBoardCommand(s => s.DecideShelterEvent("tam"))` (seçenek kimlikleri `ShelterEventData.Options(tür)`,
+    güvenlisi `SafeOption(tür)`).
+  - **Belirli bir olayı hemen getirmek** (hata ayıklama kurulumu: komut değildir, kayda girmez, RNG çekmez; bu durumdan sonra
+    kayıt başka oyuna döner, kaydetme ya da yalıtılmış klasörde kal). `iz`/`ikinci_iz`/`hirsizlik`/`kacak`/`agir_yarali`/`anma`
+    için `PersonId = sim.Board.People[0].Id`, `kavga` için ayrıca `OtherId`; `iz` için `Area = "uretim"`. `Changed` olayı yansımayla
+    tetiklenir ki oda yenilensin:
+
+    ```bash
+    ueval 'var g = UnityEngine.Object.FindFirstObjectByType<Corrigible.Game.GameController>(); var sim = g.Sim; sim.ShelterEvents.Pending = new Corrigible.Core.ShelterEventInstance { Kind = "konvoy", OpenedShift = sim.S.Day }; (typeof(Corrigible.Game.GameController).GetField("Changed", System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(g) as System.Action)?.Invoke(); return sim.PendingShelterEvent.Kind;'
+    ```
+
+    Kapalı satırı görmek için önce koşulu bozan değeri kur (ör. `karartma` için `sim.S.Alarm = sim.B.liberationAlarmThreshold - 1`).
+  - **İfşa göstergesi:** `sim.Shelter.Exposure = 2` (şerit), `= sim.B.exposureThreshold` ve `sim.Shelter.FallPending = true`
+    (KONUM ÇÖZÜLDÜ: lamba, CRT, teleks, fiş). `sim.Shelter.FallGrace = 1` kararla varılan eşiğin ikinci uyarı vardiyasıdır.
+  - **Sonu hemen getirmek:** `dusus` için açık olayı kaldır (`sim.ShelterEvents.Pending = null`), `Exposure` eşikte,
+    `FallPending = true`, `FallGrace = 0`, sonra bir kapanış: son rapor SIĞINAK DÜŞTÜ ile açılır.
+
+    ```bash
+    ueval 'var g = UnityEngine.Object.FindFirstObjectByType<Corrigible.Game.GameController>(); var sim = g.Sim; sim.ShelterEvents.Pending = null; sim.Shelter.Exposure = sim.B.exposureThreshold; sim.Shelter.FallPending = true; sim.Shelter.FallGrace = 0; g.PrintBoardShift(); g.FileBoardShift(sim.Board.ReceiptId); return sim.S.Ending;'
+    ```
+
+    Son şalter: `sim.S.Day = sim.B.lastSwitchMinShift - 1` şalterin mührünü açar (yalnız deneme; kayıtla çelişir), `sim.S.Trust = 1`
+    plakayı "çekilirse: TAHLİYE" yapar; çekmek gerçek arayüzle (kapak, kol, ÇEKİLME EMRİ'ne damga). `terk` ve zafer tonları için
+    gerçek akış gerekir: kayıt fikstürleri `KosEndingsPlayTests` ve `EndingTests`'te (ör. `Quiet` dengesi, eksik kadro kurulumu);
+    zafer için aşağıdaki "harekâtın sonu" tarifi.
+  - Sonda: `ustop`, `ueval 'UnityEditor.SessionState.EraseString("Corrigible.TestStorage"); return "ok";'`, klasörü sil,
+    `* Dyn SDF.asset`'leri yedekten geri al.
 - **Vardiya şalteri ve fiş:** şalterin kapağı ve kolu ayrı eylemlerdir (`ShiftSwitch.Press` iki kez). Kol inince
   kâğıt şalterin yanındaki çıkışta görünmeli, şalter inik kalmalı ve gün değişmemeli. `ShiftReceiptPaper` gerçek işaretçi sürüklemesiyle mevcut
   `EvrakTray` kutusuna bırakılınca kararma ve `GameController.FileBoardShift` ile yalnız bir gün geçmeli. Yanlış yere
@@ -311,10 +355,31 @@ kuralı değiştirme.
 
 ## Sık yapılan işler
 
-**Denge sayısı değiştirmek:** `Balance.cs` alanı (testler varsayılanları kullanır) ya da yalnızca oyunda denemek için
-`Settings/BalanceConfig.asset`. Sonra `LiberationCampaignTests`/`ShelterTests`'i çalıştır; ödül ve gelir beklentileri
-`Balance` alanlarından okunur. RNG sırasını ya da var olan komutun sonucunu değiştiriyorsan `GameRecord.CurrentVersion`'ı
-artır (AGENTS kural 1).
+**Denge sayısı değiştirmek:** kalıcı değişiklik iki yerde birden: `Balance.cs` varsayılanı (testler `new Balance()` kullanır)
+ve `Settings/BalanceConfig.asset` (oyun asset'i okur). Asset'i tek seferlik, yalnız o alanlarla düzenle (metin düzenlemesi ya
+da `SerializedObject`), sonra ikisinin alan alan aynı olduğunu yansımayla doğrula:
+
+```bash
+ueval 'var a = UnityEditor.AssetDatabase.LoadAssetAtPath<Corrigible.Game.BalanceConfig>("Assets/Corrigible/Settings/BalanceConfig.asset").balance; var d = new Corrigible.Core.Balance(); var sb = new System.Text.StringBuilder(); foreach (var f in typeof(Corrigible.Core.Balance).GetFields()) if (!object.Equals(f.GetValue(a), f.GetValue(d))) sb.Append(f.Name + " asset=" + f.GetValue(a) + " kod=" + f.GetValue(d) + "; "); return sb.Length == 0 ? "aynı" : sb.ToString();'
+```
+
+Yalnız oyunda denemek için asset yeter. Sonra bütün EditMode ve PlayMode testlerini koş: ödül ve gelir beklentileri
+`Balance` alanlarından okunur, ama tohuma kilitli altın değerler ve bazı kurulumlar varsayılana bağlıdır. KOS aşama 8'de
+(tüketim, ganimet, olay aralığı, kademe eşikleri) kayanlar: `ShelterEventTests` (tohum 79 zaman çizelgesi, 60 tohumluk kayıt
+testi, varsayılan beklentileri), `ShelterEventCaseTests` (tüketim 2,5, yarım tayın kurulumu), `CandidateGroupTests` (düşük stok
+kurulumu), `RegionIdentityTests` (kademe tablosu ve `MaxTier`), `Rev3BoardSnapshotTests` ve `Rev3HandoverSlipFactsTests` (V.001 erzak
+satırı), PlayMode `CandidatePlayTests` (grupla aynı günlerde açılan erzak olayı). Altın değeri gerçek Core'dan yeniden üret
+(test iletisi gözleneni yazar) ve gerekçesini yorumda bırak; senaryo bozuluyorsa (ör. baskınsız sığınak açlıktan boşalıyor)
+kurulumu ayarla, kuralı değil. Denge kayda yazıldığı için yalnız sayı değişikliği sürüm istemez (MIMARI "Determinizm ve
+kayıt"); RNG sırasını ya da var olan komutun sonucunu değiştiriyorsan `GameRecord.CurrentVersion`'ı artır (AGENTS kural 1).
+
+**Bot ölçümü:** harekât düzeneği `Tools/DengeBotu/` (gerçek Core + `Tests/EditMode/RaidBot.cs`, Mono'da `csc` ile derlenen
+konsol programı; Unity gerekmez, Assets dışında). `derle.sh` → `Library/DengeBotu/camp8.exe`, `kos.sh asama8.txt` aşama 8'in son
+ölçümünü yeniden üretir, `ozet.py` özetler (README'de kullanım ve politikalar). Denge `BAL="alan=değer;…"`. Bot **sunumun
+kurallarını taklit etmeli** (`RETIRE=1`, `kos.sh`'ta varsayılan): yayındaki panoda yuvası olmayan görevler (`care`, `gather`,
+`watch`, `contact`) `PlanningBoardPresenter.RetireJobs` ile Boşta'ya iner; Core bu görevleri kabul ettiği için bot onları
+kullanırsa oyuncunun sahip olmadığı erzak ve bakım kazanır (aşama 8'de yaşandı). Core değişince yeniden derle; sonuçları 80
+tohumla oku (40 tohumda "iyi" küme yaklaşık ±7 puan oynar).
 
 **Oyuncu eylemi eklemek:** bkz. MIMARI.md → "Determinizm ve kayıt". Odada eylemi `LiberationDeskView`'a gerekçeli bir
 komut olarak ekle (`TelexReasons`'a yapılamama gerekçesi), bağlayıcı onu çağırır.
@@ -389,11 +454,16 @@ Ajan olarak: `ueval 'return Corrigible.EditorTools.LocalizationTool.UpdateTable(
 - **URP Custom gölge kademesi `m_CustomResolution`'ı değil `Light.shadowResolution`'ı okur:** `m_Shadows.m_Resolution` −1 kalınca ışık 65535 px ister, atlas yarıya inerek küçülür (pano lambası 4095, tezgâh lambası 32 px). Belirti Editor.log'daki ölçek uyarısı.
   Çözünürlüğü sahne override'ı olarak yaz; `m_CustomResolution` tek başına yetmez.
 - **Point gölge 6 atlas dilimi yer ve edit modda görünmez:** kapı açılınca yanan koridor lambası atlası 32 px'e düşürüyordu. Kapalı ışıkları da say (kural `Rev3RoomTests`'te).
+- **Edit modda `DoorProp.SetOpen`/`ResetClosed` merdiven ışıklarını sıfırlar:** `Rest()` Edit modda ilk çağrıda çalışır, `Apply` şiddeti
+  `taban × glow` yazar; kapalıya dönünce sahnedeki `CorridorLight` şiddeti 0 kalır ve URP ışığa `UniversalAdditionalLightData` ekler.
+  Açık kapı görüntüsü aldıktan sonra sahneyi KAYDETME (yeniden aç) ya da şiddeti (2,4) geri yaz ve eklenen bileşeni sil.
+- **Tek parça gelen modelin hareketli parçası:** üçüncü taraf kapı tek mesh'ti; bağlı parçalara (konum kaynağı + üçgen bağlılığı) ayrılıp
+  kasa/kanat/çark türev mesh'leri üretildi (`Art/Rev3/SceneMeshes/Door`). `DoorProp` kanadı yerel y'de +95° döndürür: yönü pivotun
+  duruşuyla seç (yerel y aşağı = ters yön), `openAngle`'ın işaretiyle değil (`Rev3DoorTests` 95 bekler).
 - **Yakın nokta dolgu ışığı panelde sıcak leke yapar:** panele 13 cm'deki dolap dolgu ışığı (0,35) ortadaki kadranları beyaza gömüyordu; rengi ya da pürüzlülüğü kurcalamadan önce şiddeti sınamak için token'ı düşür (`cabinet.panelFillIntensity`, 0,04).
 - **Kök ölçeği çocuğa çarpılır:** prefab örneğinin kökünde ölçek override'ı varsa çocuğa yazılan ölçek onunla çarpılır (`DİL · LANGUAGE` plakası 1,4 × 1,7 = 2,38 oldu). Plakayı genişletirken yazının ters ölçeğini birlikte güncelle.
-- **Pano sunucusunun altında otomatik punto yasak:** `PlanningBoardSceneTests.SavedScene_NoMissingScriptsAndBoardTextsFollowTheirKind` kırılır; dosya sekmesi alt satırları bu yüzden sabit 3,0 mm.
+- **Pano sunucusunun altında otomatik punto yasak:** `PlanningBoardSceneTests.SavedScene_NoMissingScriptsAndBoardTextsFollowTheirKind` kırılır; eski dosya sekmesinin alt satırları bu yüzden sabit 3,0 mm'ydi (sekmeler aşama 7'de söküldü).
 - **Çevrilmiş değeri yeniden `Loc.T`'ye verme:** `RegionDef.Name`, `EndingDef.Title/Text` zaten çevrilmiş döner; TR'de fark edilmez, EN'de `Loc.Missing` tetikler.
-- **Kabul fikstüründe cetvel:** `AdmissionFixtures` `SnapInspect`'i yalnız `inspect*` ve `read`'de çağırır; ötekilerde cetvel dinlenmeye döner, yoksa kıskaçtaki fişin yazısını örter.
 - **Uzun ölçüm sürücüsü:** bitişi eval'in döndürdüğü dizgiden değil günlük dosyasından izle: adımdan önceki satır sayısını al, ondan sonra gelen `BİTTİ` satırını bekle (CLI çıktısında `ü`/`İ` eşleşmesine güvenilmez). Play'de koşan ölçümde Unity kapanırsa sürücü durur ve `Temp` günlüğü gider;
   koşuyu baştan başlat. Yeniden başlatmada kalması gereken tek seferlik iş klasörünü `Library/` altına koy.
 
@@ -405,16 +475,17 @@ Ajan olarak: `ueval 'return Corrigible.EditorTools.LocalizationTool.UpdateTable(
   yazılmaz. Her adımı kendi içinde koru ya da `MoveNext`'i elle sürüp yakala; durumu `Temp/*.txt`'ye adım adım yaz.
 - **Elde tutulan nesne işaretçiyi izler:** damga elde `Mouse.current`'ın konumunu izler (Update'te), çarpıştırıcısı bir kare geriden
   gelir (`autoSyncTransforms` kapalı). Sentetik tık-tık'ta ikinci tıktan önce sanal fareyi `QueueStateEvent` ile hedefe taşı ve bir kare
-  bekle; yoksa ikinci tık eski yerdeki başka çarpıştırıcıya düşer (Aşama 6'da büyüteç `inspectApplicant papers` yazıyordu; damga elde
-  iken büyüteç kutusu artık kapalı).
+  bekle; yoksa ikinci tık eski yerdeki başka çarpıştırıcıya düşer (Aşama 6'da büyüteç `inspectApplicant papers` yazıyordu; büyüteç
+  aşama 7'de söküldü).
 - **Input System 1.19 tık kuralı:** basış hiyerarşideki ilk `IPointerDownHandler`'a, tık en yakın `IPointerClickHandler`'a gider; bir
-  işleyicinin çocuğundaki işleyici (istasyon altındaki damga, büyüteç, defter) kendi tıkını alır. Sentetik tıkı bu kuralla kur
+  işleyicinin çocuğundaki işleyici (istasyon altındaki damga, aday görünümü) kendi tıkını alır. Sentetik tıkı bu kuralla kur
   (`AdmissionPlayKit.ClickHit`); `BoardPlayKit.ClickHit` tıkı yalnız basılan nesneye verir.
 - **Model prefab'ının ışık yönü tasarımın hedefi olmayabilir:** manifestteki ışık noktası yalnız yeri verir; `CounterLamp` spotu dik
   aşağı bakıyordu, tasarımda tezgâhın ortasına ~11° eğik. Işığı koddan hedefe çevir (`AdmissionStation.AimCounterSpot`) ve referansla
   bölge parlaklığını karşılaştır.
-- **Kısmen gizli World Space kâğıt:** ağza girmiş kâğıdın görünmeyen kısmını dörtgeni kısaltıp yüz tuvaline `RectMask2D` ekleyerek kırp
-  (`RequestFormFace.ShowBottom`); World Space uGUI'deki TMP `RectMask2D`'ye uyar. Kâğıdı olduğu gibi bırakmak plakayı örter.
+- **Kısmen gizli World Space kâğıt:** ağza girmiş kâğıdın görünmeyen kısmını dörtgeni kısaltıp yüz tuvaline `RectMask2D` ekleyerek kırp;
+  World Space uGUI'deki TMP `RectMask2D`'ye uyar. Kâğıdı olduğu gibi bırakmak plakayı örter. (Geçmiş: örneği talep defterinin
+  `RequestFormFace.ShowBottom`'uydu; aşama 7'de söküldü.)
 - **Sabit model yuvasında iki dil:** "punto küçülmez, sarar" kuralı modelin sabit plaka yuvasında (raf plakaları, damga sapları, teneke
   şablonu) EN'de sözcüğü harf ortasından böler (RATION/S, ADMIS/SION). Tasarım puntosunu üst sınır yap, TMP otomatik punto (en az
   %45–70), sarma kapalı; değişikliği sahne örneğine TMP geçersiz kılması olarak yaz, punto taramasına gerekçeli istisna ekle.
@@ -423,8 +494,8 @@ Ajan olarak: `ueval 'return Corrigible.EditorTools.LocalizationTool.UpdateTable(
   yerine eğrinin kendisiyle karşılaştır.
 - **`SerializedObject` yinelemesi Unity iç alanlarını da verir:** `m_CorrespondingSourceObject`, `m_PrefabInstance`, `m_PrefabAsset`
   prefab varlığında doğal olarak boştur; "bütün alanlar bağlı mı" denetiminde derinlik 0'daki bu adları atla.
-- **Tepe anı örneklenmez:** tutmasız bir canlandırmanın tepesi (buğu alfa 1) kare örneğine düşmez; PlayMode testinde tepe olarak olay
-  sesinden sonraki en büyük örneği al ve ardından gelen evreyi tepe değerinden başlat (`ColdGlassView`: `Snap(1)`).
+- **Tepe anı örneklenmez:** tutmasız bir canlandırmanın tepesi kare örneğine düşmez; PlayMode testinde tepe olarak olay sesinden sonraki
+  en büyük örneği al ve ardından gelen evreyi tepe değerinden başlat (aşama 6'nın buğu camı örneği; cam aşama 7'de emekli).
 - **Uç değerde `Mathf.Approximately` ile "değişti mi" sınaması son adımı yutar:** canlandırma 0,99999'dan 1'e geçerken "aynı" sayılır,
   uçtaki `PartDriver.Set` hiç çağrılmaz (defter kapağı görünüşte açık, değeri 0). Uygulanan değeri tam eşitlikle karşılaştır.
 - **Sürükleme sırasında alıcı değişebilir:** defter tarif kopyasını kaldırınca `eventData.pointerDrag`'i karta çevirir. Sentetik

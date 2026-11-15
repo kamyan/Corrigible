@@ -1,6 +1,12 @@
 # Kartlı başlangıç rehberi
 
-2026-11-09 · Unity 6000.3.12f1 · kayıt biçimi 15.
+2026-11-09 · Unity 6000.3.12f1 · kayıt biçimi 15 (ilk hâl).
+
+> **Güncel durum (KOS aşama 8, 2026-11-15):** rehber 26 adımdır. İlk vardiyanın 17 adımı aşağıdaki gibidir; ilk vardiya
+> dosyalanınca hedef satırı ("HEDEF VE SAYAÇLAR") gelir, ardından konu bölümü: kapıda ilk aday grubu ve EVRAK'ta ilk olay
+> tutanağı geldikleri anda anlatılır (sayaç "REHBER · KONU" yazar), ikisi karara bağlanınca ya da V.011'e konusuz girilince İFŞA,
+> son şalter ve kapanış bilgileri gelir. Rehber sürerken son şalter "mühürlü · rehber"dir. Kayıt biçimi 17. Güncel ayrıntı:
+> `Docs/OYUN-TASARIMI.md` (Rehber), `Docs/DURUM.md` (KOS aşama 8). Bu sayfanın "Doğrulama" bölümü ilk hâlin (18 adım) kaydıdır.
 
 Yeni harekâtta emir belgesi kapandıktan sonra ilk vardiya rehberi açılır. Mevcut sahne notu kullanılır; yeni sahne veya sahne kurucusu yoktur.
 
@@ -15,9 +21,9 @@ Yeni harekâtta emir belgesi kapandıktan sonra ilk vardiya rehberi açılır. M
 7. Sonuç ve operasyon raporunun dosyalanması.
 8. Yaralıyı Boşta'da dinlendirme.
 9. Şalterin kapağı/kolu ile fiş basma; ayrı adımda fişi EVRAK'a bırakıp yeni vardiya.
-10. Sonraki üretim ve kabul işleri için kısa yönlendirme.
+10. (KOS aşama 8) Hedef satırı; ilk aday grubu ve ilk olay tutanağı geldikleri anda; İFŞA, son şalter ve kapanış.
 
-Toplam 18 kısa adım var. Bilgi adımı SONRAKİ ile, eylem adımı gerçek durum değişince ilerler. Boşta kartını tıklamadan doğrudan Mutfağa atan oyuncu geriye dönüp ayrıca seçim yapmak zorunda kalmaz. Rehberden önce baskına çıkan veya ilk baskını kaybeden oyuncu da hazırlık/hamle adımlarında takılmaz. Dersler kaynak ya da ücretsiz hamle vermez; mevcut mekaniklerin erişim kurallarını değiştirmez.
+Toplam 26 kısa adım var (ilk hâlde 18; 10. madde kısa bir yönlendirmeydi). Bilgi adımı SONRAKİ ile, eylem adımı gerçek durum değişince ilerler. Boşta kartını tıklamadan doğrudan Mutfağa atan oyuncu geriye dönüp ayrıca seçim yapmak zorunda kalmaz. Rehberden önce baskına çıkan veya ilk baskını kaybeden oyuncu da hazırlık/hamle adımlarında takılmaz. Dersler kaynak ya da ücretsiz hamle vermez; mevcut mekaniklerin erişim kurallarını değiştirmez.
 
 ## Tercihler ve devam
 
@@ -31,7 +37,8 @@ Toplam 18 kısa adım var. Bilgi adımı SONRAKİ ile, eylem adımı gerçek dur
 
 `PlanningTutorialFlow` ve bağlamı saf C# sunum akışıdır. `SiginakTutorial` mevcut GameController, pano, harita, baskın, rapor ve `SiginakShiftClose` durumunu okur. Kendi oyun komutu yazmaz. Gerçek oyuncu eylemleri mevcut komut kapılarından geçer. `TutorialNoteView` aynı içerikte her kare metin/ölçü yazmaz; panelin zemin ve yazıları masaya giden tıkları yutmaz. Rehber adımları gerçek isimli kampanya kadrosunu kullanır; eski `TutorialRaid` ve sabit kadro kuralı yalnız eski oyun yolunda kalır.
 
-Üretim/kabul için burada ayrı uygulamalı ders yoktur; bu rehber ilk operasyon ve ilk vardiya kapanışına odaklanır. Türkçe ve İngilizce metinler çeviri tablosundadır.
+Üretim için ayrı uygulamalı ders yoktur (kapanış notu tarif defterini gösterir). Kabul ve olaylar KOS aşama 8'den beri konu
+adımlarıyla anlatılır: kapıda grup, tezgâhta damga, EVRAK'ta tutanak, satır ve KARAR. Türkçe ve İngilizce metinler çeviri tablosundadır.
 
 ## Doğrulama
 

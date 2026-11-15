@@ -1,4 +1,5 @@
 using System;
+using Corrigible.Core;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -42,6 +43,21 @@ namespace Corrigible.Desk
             public UiHoverTarget hover;
         }
 
+        /// <summary>Ölçüt kutusunun satırı (KOS aşama 6): etiket, değer · sınır, hüküm.</summary>
+        [Serializable]
+        public sealed class CriteriaSlot
+        {
+            public GameObject root;
+            public TMP_Text label, value, verdict;
+        }
+
+        /// <summary>SİCİL sütunu (KOS aşama 6): başlık ve gövde.</summary>
+        [Serializable]
+        public sealed class RecordSlot
+        {
+            public TMP_Text title, body;
+        }
+
         [SerializeField] GameObject root;
         [SerializeField] Image dim;
         [Tooltip("Aşağıdan gelen kâğıt.")]
@@ -58,6 +74,18 @@ namespace Corrigible.Desk
         [Tooltip("Neden damgasının yeri sonuç damgasının (dönük) sağ ucuna göre: damga dile göre daralınca (EN “LOST”) birlikte kayar.")]
         [SerializeField] Vector2 reasonOffset = new Vector2(65, -113);
         [SerializeField] TMP_Text headline, sub;
+        [Tooltip("KOS aşama 6: başlığın altında ton satırı (boşsa gizli).")]
+        [SerializeField] TMP_Text toneLine;
+        [Header("Ölçüt kutusu (KOS aşama 6)")]
+        [SerializeField] GameObject criteriaRoot;
+        [SerializeField] TMP_Text criteriaTitle, criteriaRule;
+        [SerializeField] CriteriaSlot[] criteria = Array.Empty<CriteriaSlot>();
+        [Header("Sekmeler ve SİCİL (KOS aşama 6)")]
+        [SerializeField] Button mainTab, recordTab;
+        [SerializeField] TMP_Text mainTabLabel, recordTabLabel;
+        [SerializeField] Image mainTabLine, recordTabLine;
+        [SerializeField] CanvasGroup mainPage, recordPage;
+        [SerializeField] RecordSlot[] record = Array.Empty<RecordSlot>();
         [Header("Göstergeler")]
         [SerializeField] IndicatorSlot[] indicators = Array.Empty<IndicatorSlot>();
         [Header("İşgal şeridi")]
@@ -86,6 +114,7 @@ namespace Corrigible.Desk
         [SerializeField, Min(0)] float rowStagger = 0.08f, typeCharSeconds = 0.04f;
 
         FinalReportData data;
+        int page;
         float openedAt;
         bool stamped;
         Vector2 sheetRest;
@@ -97,8 +126,12 @@ namespace Corrigible.Desk
 
         /// <summary>Rapor açıldı (bağlayıcı kamerayı harita pozuna alır) ya da kapandı.</summary>
         public event Action Opened, Closed;
-        /// <summary>Sonuç damgası basıldı (kazanıldı mı): bağlayıcı sesi çalar.</summary>
-        public event Action<bool> Stamped;
+        /// <summary>Sonuç damgası basıldı (sonuç: kazanıldı, kaybedildi, çekildi): bağlayıcı sesi çalar.</summary>
+        public event Action<FinalOutcome> Stamped;
+        /// <summary>Alt yarıda açık sayfa: 0 HAREKÂT (işgal şeridi ve kırılma anları), 1 SİCİL.</summary>
+        public int Page => page;
+        /// <summary>SİCİL sekmesi var (son raporu verisi varken).</summary>
+        public bool HasRecord => data != null && data.Record != null && data.Record.Count > 0;
         public event Action RestartClicked;
 
         float StampAt => dimDelay + dimSeconds + paperSeconds;
@@ -109,6 +142,8 @@ namespace Corrigible.Desk
             Instance = this;
             Rest();
             action.onClick.AddListener(PressRestart);
+            if (mainTab != null) mainTab.onClick.AddListener(() => ShowPage(0));
+            if (recordTab != null) recordTab.onClick.AddListener(() => ShowPage(1));
             root.SetActive(false);
         }
 
@@ -139,9 +174,10 @@ namespace Corrigible.Desk
             bool fresh = !IsOpen;
             root.SetActive(true);
             Write(d);
-            if (!fresh) return;
+            if (!fresh) { ShowPage(page); return; }
             openedAt = Application.isPlaying ? Time.unscaledTime : float.NegativeInfinity;
             stamped = false;
+            ShowPage(0);
             Opened?.Invoke();
             Animate();
         }
@@ -150,7 +186,7 @@ namespace Corrigible.Desk
         {
             head.text = d.Head;
             number.text = d.Number;
-            var stampInk = T.ColorOf(d.Won ? "report.positive" : "report.counterAttackLine");
+            var stampInk = T.ColorOf(StampInk(d.Outcome));
             stampText.text = d.Stamp;
             stampText.color = stampOuter.color = stampInner.color = stampInk;
             reason.gameObject.SetActive(!string.IsNullOrEmpty(d.Reason));
@@ -165,6 +201,13 @@ namespace Corrigible.Desk
             sub.font = DeskTheme.Active.Font(d.SubIsMotto ? DeskFont.CpBold : DeskFont.LfRegular);
             sub.fontSize = d.SubIsMotto ? 16 : 19;
             sub.characterSpacing = d.SubIsMotto ? 4 : 0;
+            if (toneLine != null)
+            {
+                toneLine.gameObject.SetActive(!string.IsNullOrEmpty(d.ToneLine));
+                toneLine.text = d.ToneLine ?? "";
+            }
+            WriteCriteria(d);
+            WriteRecord(d);
 
             for (int i = 0; i < indicators.Length; i++)
             {
@@ -215,6 +258,80 @@ namespace Corrigible.Desk
             actionLabel.text = d.Action;
         }
 
+        /// <summary>Damga mürekkebi: kazanınca yeşil, düzenli çekilmede mavi, kayıpta (tahliye dahil) kırmızı.</summary>
+        public static string StampInk(FinalOutcome outcome) => outcome switch
+        {
+            FinalOutcome.Won => "report.positive",
+            FinalOutcome.Withdrawn => "report.withdrawn",
+            _ => "report.counterAttackLine",
+        };
+
+        void WriteCriteria(FinalReportData d)
+        {
+            if (criteriaRoot == null) return;
+            bool on = d.Criteria != null && d.Criteria.Count > 0;
+            criteriaRoot.SetActive(on);
+            if (!on) return;
+            criteriaTitle.text = d.CriteriaTitle ?? "";
+            criteriaRule.gameObject.SetActive(!string.IsNullOrEmpty(d.CriteriaRule));
+            criteriaRule.text = d.CriteriaRule ?? "";
+            var ink = T.ColorOf("report.criteria.neutralInk");
+            for (int i = 0; i < criteria.Length; i++)
+            {
+                bool show = i < d.Criteria.Count;
+                criteria[i].root.SetActive(show);
+                if (!show) continue;
+                var c = d.Criteria[i];
+                criteria[i].label.text = c.Label;
+                criteria[i].value.text = string.IsNullOrEmpty(c.Limit) ? c.Value : Loc.F("{0}  ({1})", c.Value, c.Limit);
+                criteria[i].verdict.text = c.Verdict ?? "";
+                // Düzenli çekilmede hüküm nötr; tahliye nedeni ve tutmayan ölçüt kırmızı, tutan yeşil
+                string key = c.Alert || c.Met == false ? "report.criteria.missInk"
+                    : c.Met == true && d.Outcome != FinalOutcome.Withdrawn ? "report.criteria.metInk" : "report.criteria.neutralInk";
+                criteria[i].verdict.color = T.ColorOf(key);
+                criteria[i].label.color = criteria[i].value.color = c.Alert ? T.ColorOf("report.criteria.missInk") : T.ColorOf("ink");
+            }
+            criteriaRule.color = ink;
+        }
+
+        void WriteRecord(FinalReportData d)
+        {
+            bool has = d.Record != null && d.Record.Count > 0;
+            if (mainTab != null) mainTab.gameObject.SetActive(has);
+            if (recordTab != null) recordTab.gameObject.SetActive(has);
+            if (mainTabLabel != null) mainTabLabel.text = d.MainTab ?? "";
+            if (recordTabLabel != null) recordTabLabel.text = d.RecordTab ?? "";
+            for (int i = 0; i < record.Length; i++)
+            {
+                bool on = has && i < d.Record.Count;
+                record[i].title.gameObject.SetActive(on);
+                record[i].body.gameObject.SetActive(on);
+                if (!on) continue;
+                record[i].title.text = d.Record[i].Title;
+                record[i].title.color = T.ColorOf(d.Record[i].Alert ? "report.criteria.missInk" : "ink");
+                record[i].body.text = d.Record[i].Body;
+            }
+            if (!has) page = 0;
+        }
+
+        /// <summary>Alt yarının sayfası: 0 HAREKÂT, 1 SİCİL (SİCİL yoksa 0). Tab ya da ←/→ ile bağlayıcı çağırır.</summary>
+        public void ShowPage(int index)
+        {
+            page = index == 1 && HasRecord ? 1 : 0;
+            if (mainPage != null) { mainPage.alpha = page == 0 ? 1 : 0; mainPage.blocksRaycasts = page == 0; mainPage.interactable = page == 0; }
+            if (recordPage != null) { recordPage.alpha = page == 1 ? 1 : 0; recordPage.blocksRaycasts = page == 1; recordPage.interactable = page == 1; }
+            if (T == null) return;
+            var tab = T.ColorOf("report.page.tabInk");
+            var active = T.ColorOf("report.page.tabActiveInk");
+            if (mainTabLabel != null) mainTabLabel.color = page == 0 ? active : tab;
+            if (recordTabLabel != null) recordTabLabel.color = page == 1 ? active : tab;
+            if (mainTabLine != null) mainTabLine.enabled = page == 0;
+            if (recordTabLine != null) recordTabLine.enabled = page == 1;
+        }
+
+        /// <summary>Öteki sayfaya geçer (Tab, ←/→).</summary>
+        public void TogglePage() => ShowPage(page == 0 ? 1 : 0);
+
         /// <summary>x ekseni: 1, 5'in katları ve N (N'ye 2'den yakın kat atlanır); uzun harekâtta 10'un katları.</summary>
         void Axis(int shifts)
         {
@@ -257,7 +374,7 @@ namespace Corrigible.Desk
 
             float s = Mathf.Clamp01((t - StampAt) / stampSeconds);
             stamp.localScale = Vector3.one * (s <= 0 ? 0 : Mathf.Lerp(1.6f, 1, s));
-            if (s > 0 && !stamped && Application.isPlaying) { stamped = true; Stamped?.Invoke(data.Won); }
+            if (s > 0 && !stamped && Application.isPlaying) { stamped = true; Stamped?.Invoke(data.Outcome); }
             float r = Mathf.Clamp01((t - StampAt - reasonDelay) / stampSeconds);
             reason.localScale = Vector3.one * (r <= 0 ? 0 : Mathf.Lerp(1.6f, 1, r));
 

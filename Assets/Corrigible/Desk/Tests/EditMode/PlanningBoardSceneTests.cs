@@ -85,11 +85,9 @@ namespace Corrigible.Desk.Tests
             (typeof(NewItemTag), new[] { "background", "word", "group" }),
             (typeof(TrainingTopics), new[] { "rows", "ring", "rowHits", "frame", "hoverTag" }),
             (typeof(PersonFolderView), new[] { "cover", "frame", "coverTitle", "coverLine", "coverHit", "hoverTag", "pageLeft", "pageRight",
-                "rowTemplate", "note", "reviewTab", "accessTab", "dismissTab", "reviewLabel", "accessLabel", "dismissLabel", "stamp", "stampText",
-                // Revizyon 3 · Aşama 6 (R17f, PLAN §2.3; W0 adı fileTag)
-                "fileTag",
-                // Revizyon 3 · Aşama 10 (D-F, R10): sekme alt satırları
-                "reviewSub", "accessSub", "dismissSub" }),
+                "rowTemplate", "previousPage", "nextPage", "dossier",
+                // Revizyon 3 · Aşama 6 (R17f, PLAN §2.3; W0 adı fileTag). Aşama 7: İNCELE/ERİŞİM/TAHLİYE sekmeleri, not satırı ve damga söküldü
+                "fileTag" }),
             (typeof(FileTagView), new[] { "label" }),
             (typeof(LostEnvelopeView), new[] { "cover", "frame", "body", "coverText", "hit", "hoverTag", "page", "pageTitle", "rowTemplate" }),
             (typeof(PlanningBoardPresenter), new[] { "board3D", "drag", "backSign", "hurdaFront", "admission" }),
@@ -150,7 +148,7 @@ namespace Corrigible.Desk.Tests
                 Assert.AreSame(admission, Reference<SiginakAdmission>(owner, "admission"), owner.GetType().Name + ".admission");
         }
 
-        /// <summary>Pano eski sığınak dolabının yerinde, ayaklı model yerde; K4 kamerası modelin Cam_K4 çapası, FOV 41° (D1).</summary>
+        /// <summary>Pano eski sığınak dolabının yerinde; görünen pano kullanıcının mantar panosu (SM_Board), baskı alanı onun yüzünde; K4 kamerası modelin Cam_K4 çapası, FOV 41° (D1).</summary>
         [Test]
         public void SavedScene_SmallerBoardOccupiesOldShelterAreaAndPreservesSettingsCabinet()
         {
@@ -166,12 +164,39 @@ namespace Corrigible.Desk.Tests
             var cabinet = One<SettingsCabinet>();
             Assert.IsTrue(cabinet.gameObject.activeInHierarchy);
             var model = Model();
+            // Model entegrasyonu 2: görünen pano kullanıcının yerleştirdiği üçüncü taraf mantar pano (SM_Board); eski gövdenin
+            // mesh'i sahneden kalktı, parçaları (levha, plaka, hurda kapağı, lamba ışığı) ve çapalar Rev3 modelinde kalır.
             var body = model.transform.Find("Body");
-            var mesh = body.GetComponent<MeshFilter>().sharedMesh.bounds;
-            Assert.Less(mesh.size.x, 2.4f, "Önceki 2,86 m pano küçültülmeli.");
-            Assert.LessOrEqual(BoardLayout.InnerWidthMm / 1000f, mesh.size.x, "iç baskı alanı modelin içinde");
+            Assert.IsNull(body.GetComponent<MeshFilter>(), "eski pano gövdesinin mesh'i kalktı");
+            Assert.IsNull(body.GetComponent<MeshRenderer>(), "eski pano gövdesinin renderer'ı kalktı");
+            var board = model.GetComponentsInChildren<MeshFilter>(true).Single(f => f.name == "SM_Board_LOD0");
+            Assert.IsFalse(AssetDatabase.GetAssetPath(board.sharedMesh).StartsWith("Assets/Corrigible/"), "yeni pano üçüncü taraf modeli");
+            Assert.IsEmpty(board.GetComponentsInParent<Collider>(true).Where(c => c.transform.IsChildOf(model.transform)), "pano modeli çarpıştırıcı taşımaz");
+            var min = Vector3.positiveInfinity; var max = Vector3.negativeInfinity;
+            var b = board.sharedMesh.bounds;
+            for (int i = 0; i < 8; i++)
+            {
+                var corner = b.center + Vector3.Scale(b.extents, new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
+                var local = model.transform.InverseTransformPoint(board.transform.TransformPoint(corner));
+                min = Vector3.Min(min, local); max = Vector3.Max(max, local);
+            }
+            Assert.Less(max.x - min.x, 2.4f, "Önceki 2,86 m pano küçültülmeli.");
             Assert.Less(BoardLayout.InnerHeightMm / 1000f, 1.7f, "Önceki 1,83 m pano küçültülmeli.");
-            Assert.Less(body.GetComponent<MeshRenderer>().bounds.min.y, .1f, "pano ayakları yerde");
+            // iç baskı alanı (cepler, BOŞTA, iş emri, depo) yeni panonun yüzünde; yüz baskı düzlemine (FaceZ) oturur (±1 mm)
+            Assert.LessOrEqual(min.x, BoardLayout.InnerLeft, "iç alan solda pano içinde");
+            Assert.GreaterOrEqual(max.x, BoardLayout.InnerLeft + BoardLayout.InnerWidthMm / 1000f, "iç alan sağda pano içinde");
+            Assert.GreaterOrEqual(max.y, BoardLayout.InnerTop, "iç alan üstte pano içinde");
+            Assert.LessOrEqual(min.y, BoardLayout.InnerTop - BoardLayout.InnerHeightMm / 1000f, "iç alan altta pano içinde");
+            Assert.AreEqual(BoardLayout.FaceZ, min.z, 0.0015f, "pano yüzü baskı düzleminde");
+            // LODGroup açık: K1 uzaklığında LOD1+ seçilebilir; her LOD'un ön yüzü de baskı düzleminde (baskı katmanı titremez)
+            var lods = model.GetComponentsInChildren<MeshFilter>(true).Where(f => f.name.StartsWith("SM_Board_LOD")).ToArray();
+            Assert.GreaterOrEqual(lods.Length, 1);
+            foreach (var lod in lods)
+            {
+                float z = float.PositiveInfinity;
+                foreach (var v in lod.sharedMesh.vertices) z = Mathf.Min(z, model.transform.InverseTransformPoint(lod.transform.TransformPoint(v)).z);
+                Assert.AreEqual(BoardLayout.FaceZ, z, 0.0015f, lod.name + " yüzü baskı düzleminde");
+            }
             var rig = One<SiginakCameraRig>();
             Assert.IsTrue(rig.TryGetPose(SiginakPose.Shelf, out var k4));
             Assert.AreEqual(model.Anchor("Cam_K4"), k4.anchor);
@@ -247,6 +272,61 @@ namespace Corrigible.Desk.Tests
                 CollectionAssert.DoesNotContain(statics, c, "defter çarpıştırıcısı sabit hedeflerde değil: " + c.name);
             foreach (var c in new Collider[] { hurda.Front, Reference<PersonFolderView>(view3D, "folder").Hit, Reference<LostEnvelopeView>(view3D, "lostEnvelope").Hit })
                 CollectionAssert.DoesNotContain(statics, c, "kendi görünümü açıp kapar: " + c.name);
+        }
+
+        /// <summary>
+        /// KOS aşama 8 (ikinci tur kararı): hurda kutusu yeni panonun (SM_Board) çerçevesinin içinde. Kutunun gövdesi (türev mesh'in galv alt
+        /// mesh'i), kapağı ve hedef kutusu K4 kadrajında çerçevenin iç kenarının solunda ve kadrajın içinde (alttan taşmaz); kutunun sol yanı
+        /// 5. kit kartının sağ kenarının sağında (kart üstüne binmez). Çerçevenin iç kenarı panonun ön yüz mesh'inden ölçülür.
+        /// </summary>
+        [Test]
+        public void SavedScene_HurdaBinInsideTheBoardFrame_AtK4()
+        {
+            var model = Model();
+            var boardMesh = model.GetComponentsInChildren<MeshFilter>(true).Single(f => f.sharedMesh != null && f.sharedMesh.name == "SM_Board_LOD0");
+            // Çerçevenin sağ dikmesi: ön yüzde (FaceZ) x > 0,58 olan köşelerin iki ayrı değeri iç ve dış kenardır
+            var front = boardMesh.sharedMesh.vertices.Select(v => model.transform.InverseTransformPoint(boardMesh.transform.TransformPoint(v)))
+                .Where(v => Mathf.Abs(v.z - BoardLayout.FaceZ) < 0.0015f && v.x > 0.58f).Select(v => Mathf.Round(v.x * 1000f) / 1000f).Distinct().OrderBy(x => x).ToArray();
+            Assert.GreaterOrEqual(front.Length, 2, "çerçevenin iç ve dış kenarı");
+            float inner = front[front.Length - 2];
+            Assert.AreEqual(0.595f, inner, 0.002f, "SM_Board çerçevesinin iç kenarı");
+
+            var rig = One<SiginakCameraRig>();
+            Assert.IsTrue(rig.TryGetPose(SiginakPose.Shelf, out var k4));
+            var go = new GameObject("K4 ölçü") { hideFlags = HideFlags.HideAndDontSave };
+            try
+            {
+                var cam = go.AddComponent<Camera>();
+                cam.enabled = false; cam.aspect = 16f / 9f; cam.fieldOfView = k4.fieldOfView;
+                cam.transform.SetPositionAndRotation(k4.anchor.position, k4.anchor.rotation);
+                Vector3 Vp(Vector3 local) => cam.WorldToViewportPoint(model.transform.TransformPoint(local));
+
+                var inserts = model.GetComponentsInChildren<MeshFilter>(true).Single(f => f.sharedMesh != null && f.sharedMesh.name == "PlanningBoardInserts_SM");
+                var im = inserts.sharedMesh; var iv = im.vertices;
+                var points = im.GetTriangles(3).Distinct().Select(i => model.transform.InverseTransformPoint(inserts.transform.TransformPoint(iv[i]))).ToList();
+                var lid = model.Part("HurdaLid").GetComponent<MeshFilter>();
+                points.AddRange(lid.sharedMesh.vertices.Select(v => model.transform.InverseTransformPoint(lid.transform.TransformPoint(v))));
+                var hurda = Reference<HurdaBin>(One<BoardView3D>(), "hurda");
+                var box = (BoxCollider)hurda.Front;
+                for (int i = 0; i < 8; i++)
+                {
+                    var c = box.center + Vector3.Scale(box.size * 0.5f, new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
+                    points.Add(model.transform.InverseTransformPoint(box.transform.TransformPoint(c)));
+                }
+                Assert.Greater(points.Count, 8, "kutu gövdesi (galv alt mesh'i) bulundu");
+                float right = points.Max(p => Vp(p).x), bottom = points.Min(p => Vp(p).y);
+                float frameRight = Vp(new Vector3(inner, 1.05f, BoardLayout.FaceZ)).x;
+                Assert.Less(right, frameRight, "K4'te kutunun sağ kenarı çerçevenin iç kenarının solunda");
+                Assert.Greater(bottom, 0f, "K4 kadrajının altından taşmaz");
+                // Son kit kartı (80 × 50 mm) ile aynı yükseklikteki kutu parçaları kartın sağ kenarının sağında
+                var kit = BoardLayout.Kit(BoardLayout.KitKinds.Length - 1);
+                var kitTopRight = BoardLayout.MmToLocal(kit + new Vector2(40f, -25f), BoardLayout.FaceZ);
+                var kitBottom = BoardLayout.MmToLocal(kit + new Vector2(40f, 25f), BoardLayout.FaceZ);
+                var beside = points.Where(p => p.y <= kitTopRight.y && p.y >= kitBottom.y).ToList();
+                Assert.IsNotEmpty(beside);
+                Assert.GreaterOrEqual(beside.Min(p => p.x), kitTopRight.x - 0.0005f, "kutu son kit kartının sağında");
+            }
+            finally { Object.DestroyImmediate(go); }
         }
 
         /// <summary>BoardView3D, sürükleme denetleyicisi ve sunucu, PlanningBoard modelinin parçalarına ve yuvalarına bağlı.</summary>
@@ -403,9 +483,13 @@ namespace Corrigible.Desk.Tests
                 Assert.IsNotNull(page.GetComponent<Canvas>(), field);
             }
             Assert.IsFalse(Reference<TMP_Text>(folder, "rowTemplate").gameObject.activeSelf, "satır şablonu pasif");
-            foreach (var tab in new[] { "reviewTab", "accessTab", "dismissTab" })
-                Assert.IsTrue(Reference<Collider>(folder, tab).transform.IsChildOf(folder.transform), tab);
-            Assert.AreEqual(0f, Reference<CanvasGroup>(folder, "stamp").alpha);
+            // Aşama 7: eski sekmeler ve TAHLİYE damgası sökülü; yaprak gezinmesi sağ sayfanın altında (sekmelerin yeri)
+            foreach (string gone in new[] { "Sekme hedefi · İNCELE", "Sekme hedefi · ERİŞİM", "Sekme hedefi · TAHLİYE", "Sekme · İNCELE", "Sekme · ERİŞİM",
+                         "Sekme · TAHLİYE", "TAHLİYE damgası", "Not" })
+                Assert.IsFalse(folder.GetComponentsInChildren<Transform>(true).Any(x => x.name == gone), "emekli parça sahnede: " + gone);
+            Assert.IsNull(typeof(PersonFolderView).GetField("reviewTab", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance));
+            foreach (string nav in new[] { "previousPage", "nextPage" })
+                Assert.LessOrEqual(((RectTransform)Reference<Collider>(folder, nav).transform).anchoredPosition.y, -148f + 1e-3f, nav + " sağ sayfanın altında");
             Assert.IsEmpty(folder.GetComponentsInChildren<GraphicRaycaster>(true));
             Assert.IsEmpty(folder.GetComponentsInChildren<DeskTarget>(true), "dosya tıklamayı kendisi alır");
 
@@ -680,7 +764,7 @@ namespace Corrigible.Desk.Tests
 
         /// <summary>
         /// Revizyon 3 · Aşama 6 (D20, PLAN §2.2 #14–#15): eski uGUI kabul penceresi (<c>SiginakRoom/Admission papers</c>) alt ağacıyla
-        /// kalktı; <c>PlanningBoardView</c>'ın kabul alanları boş (alanlar ve erişimciler API olarak kalır); kabul kapıdaki istasyonda
+        /// kalktı; <c>PlanningBoardView</c>'ın kabul alanları ve İNCELE/KISITLA/TAHLİYE düğmeleri aşama 7'de koddan da silindi; kabul kapıdaki istasyonda
         /// (<see cref="AdmissionStation"/>, <see cref="SiginakAdmission"/>). Eski uGUI pano tuvali yine gizli; pano altında etkin bölge,
         /// kart, yüzey ya da GraphicRaycaster yok.
         /// </summary>
@@ -692,15 +776,9 @@ namespace Corrigible.Desk.Tests
             Assert.IsFalse(roots.SelectMany(r => r.GetComponentsInChildren<TMP_Text>(true)).Any(t => t.text == "KAPI · BAŞVURU VE GÜVENLİK DOSYASI"),
                 "eski pencerenin başlığı sahnede yok");
             var so = new SerializedObject(board);
-            foreach (var field in new[] { "admissionCanvas", "admissionControls", "admissionsRoot", "admissionProtocol", "admissionPapers", "admissionFindings", "admissionClose" })
-            {
-                var p = so.FindProperty(field);
-                Assert.IsNotNull(p, "PlanningBoardView." + field + " alanı kalır (API)");
-                Assert.IsNull(p.objectReferenceValue, "PlanningBoardView." + field + " boş");
-            }
-            Assert.AreEqual(0, board.Inspections.Length);
-            Assert.AreEqual(0, board.Decisions.Length);
-            Assert.IsNull(board.AdmissionClose);
+            foreach (var field in new[] { "admissionCanvas", "admissionControls", "admissionsRoot", "admissionProtocol", "admissionPapers", "admissionFindings",
+                         "inspections", "decisions", "admissionClose", "review", "restrict", "dismiss" })
+                Assert.IsNull(so.FindProperty(field), "PlanningBoardView." + field + " silindi (aşama 7)");
 
             var station = One<AdmissionStation>();
             var admission = One<SiginakAdmission>();

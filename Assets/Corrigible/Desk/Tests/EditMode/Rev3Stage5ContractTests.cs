@@ -84,7 +84,7 @@ namespace Corrigible.Desk.Tests
         static Simulation Retired(uint seed = 79)
         {
             var sim = Simulation.NewGame(seed, new Balance
-            {
+            { shelterEventsEnabled = false,
                 planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 100, admissionKnockMax = 100
             });
             Assert.IsTrue(sim.EnableAutomaticProduction().Ok);

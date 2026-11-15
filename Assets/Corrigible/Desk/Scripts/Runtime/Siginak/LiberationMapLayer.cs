@@ -25,7 +25,7 @@ namespace Corrigible.Desk
         [SerializeField] UILineGraphic stringLine, stringShadow;
         [Tooltip("Basılı lejant (fiş yerleşimi onu da örtmemeye çalışır).")]
         [SerializeField] RectTransform legend;
-        [Tooltip("İşaretler kutusunun sağ üstündeki “TEHDİT n/4”.")]
+        [Tooltip("İşaretler kutusunun sağ üstündeki “TEHDİT n/m”.")]
         [SerializeField] TMP_Text legendTier;
 
         readonly List<Vector2> curve = new List<Vector2>(3);
@@ -102,7 +102,7 @@ namespace Corrigible.Desk
         {
             state = s;
             foreach (var r in regions) if (r != null) r.Bind(s?.Find(r.RegionId));
-            if (legendTier != null && s != null) legendTier.text = Corrigible.Core.Loc.F("TEHDİT {0}/4", s.Tier);
+            if (legendTier != null && s != null) legendTier.text = Corrigible.Core.Loc.F("TEHDİT {0}/{1}", s.Tier, s.MaxTier);
         }
 
         public LiberationRegionMarks Marks(string id)

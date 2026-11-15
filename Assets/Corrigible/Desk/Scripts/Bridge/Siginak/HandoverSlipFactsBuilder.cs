@@ -16,8 +16,8 @@ namespace Corrigible.Desk.Bridge
     /// <c>PlanningBoardSnapshotBuilder</c> ile aynı); durum eki önceliği yatıyor &gt; kısıtlı &gt; yaralı (kart şeridiyle aynı).</item>
     /// <item>KAPANIŞTA BEKLENEN: erzak <c>BoardFoodPreview</c>; eğitim ve üretim Core'un kapanış kuralıyla (<c>AdvancePlanningBoard</c>,
     /// <c>AdvanceBoardProduction</c>); kapıdaki aday.</item>
-    /// <item>Uyarılar: önce bu kapanışta reddedilecek kapı başvurusu, sonra DOSYA kutuları tür başına (adlar virgülle) Core'un
-    /// <c>ResidentAdmissionRisk</c> sırasıyla: kısıt süresi doldu, iki bağımsız bulgu, inceleme fişi.</item>
+    /// <item>Uyarılar, kutu sırasıyla: KAPI (grubun son vardiyası), İFŞA, SIĞINAK EKSİK, ERZAK. Eski DOSYA kutuları (kısıt süresi doldu,
+    /// iki bağımsız bulgu, inceleme fişi) eski kabul yoluyla birlikte aşama 7'de kalktı; arşivdeki eski fişler yine okunur.</item>
     /// </list>
     /// Basılıyken plan kilitli olduğundan veri basılan planla aynıdır. Tahmin, kapanışın başında koşan gizli kabul olaylarını
     /// (müdahale, kapatma) bilerek bilmez: R19c "gelecekteki gizli olayı yazmaz".
@@ -26,10 +26,6 @@ namespace Corrigible.Desk.Bridge
     {
         /// <summary>Sığınak satırlarının cep sırası (saha cepleri ayrı bölümde).</summary>
         static readonly string[] ShelterPockets = { "craft", "cook", "train" };
-
-        /// <summary>DOSYA kutularının sırası: Core'un kabul riski sırası (<c>ResidentAdmissionRisk</c>).</summary>
-        static readonly SlipWarningKind[] FileOrder =
-            { SlipWarningKind.FileRestrictionExpired, SlipWarningKind.FileClues, SlipWarningKind.FileReview };
 
         /// <summary>Fişin verisi; simülasyon ya da kartlı pano yoksa null.</summary>
         public static HandoverSlipFacts Build(Simulation sim)
@@ -48,12 +44,13 @@ namespace Corrigible.Desk.Bridge
                 supplies = supplies,
                 suppliesCapacity = ShelterLogic.SuppliesCapacity(shelter, sim.B),
                 suppliesAfter = supplies + sim.BoardFoodPreview,
-                openApplications = sim.Admission?.Candidate != null ? 1 : 0,
+                openApplications = sim.Admission?.Group.Count ?? 0,
             };
             FillField(f, board);
             FillShelter(f, sim, board);
             FillTraining(f, sim, board);
             FillProduction(f, sim, board);
+            FillRations(f, sim);
             FillWarnings(f, sim, board);
             return f;
         }
@@ -94,7 +91,7 @@ namespace Corrigible.Desk.Bridge
             foreach (var p in board.People)
             {
                 if (!p.Alive || BoardDropRules.PlaceOf(board, p) != "rest") continue;
-                if (p.Down <= 0 && !p.Restricted) f.shelter.Add(ShelterRow(sim, p, "rest"));
+                if (PlanningBoardSnapshotBuilder.DeckFirst(sim, p)) f.shelter.Add(ShelterRow(sim, p, "rest"));
                 else later.Add(p);
             }
             foreach (var p in later) f.shelter.Add(ShelterRow(sim, p, "rest"));
@@ -103,10 +100,18 @@ namespace Corrigible.Desk.Bridge
         static SlipShelterRow ShelterRow(Simulation sim, ResidentState p, string job)
         {
             var row = new SlipShelterRow { name = p.Name, job = job, subject = job == "train" ? p.TrainingSubject : null };
+            int idle = (sim.Admission?.File(p.Id)?.IdleUntil ?? -1) - sim.S.Day;
             if (p.Down > 0)
             {
                 row.state = SlipPersonState.Down;
                 row.stateShifts = p.Down;
+            }
+            else if (p.Isolated)
+            {
+                // KOS aşama 4: kalan kapanış; sabotaj kararı bekleyen (bitişi yok) 0
+                int until = sim.Admission?.File(p.Id)?.IsolatedUntil ?? -1;
+                row.state = SlipPersonState.Isolated;
+                row.stateShifts = until < 0 ? 0 : Math.Max(0, until - sim.S.Day);
             }
             else if (p.Restricted)
             {
@@ -114,6 +119,11 @@ namespace Corrigible.Desk.Bridge
                 int left = (sim.Admission?.File(p.Id)?.RestrictedUntil ?? -1) - sim.S.Day;
                 row.state = left > 0 ? SlipPersonState.Restricted : SlipPersonState.RestrictionEnded;
                 row.stateShifts = Math.Max(0, left);
+            }
+            else if (idle > 0)
+            {
+                row.state = SlipPersonState.Idle;
+                row.stateShifts = idle;
             }
             else if (p.Hp < p.MaxHp) row.state = SlipPersonState.Hurt;
             return row;
@@ -170,55 +180,53 @@ namespace Corrigible.Desk.Bridge
             production.after = outlook.After;
         }
 
+        // ---------------------------------------------------------------- ERZAK (KOS aşama 4)
+
+        /// <summary>
+        /// Açlık, ayrılacak kişi, yarım tayın ve karartma (olaylar açıkken; Core'un public okuyucuları). Biri varsa tek ERZAK kutusu;
+        /// kutunun adı ayrılacak kişidir.
+        /// </summary>
+        static void FillRations(HandoverSlipFacts f, Simulation sim)
+        {
+            if (!sim.B.shelterEventsEnabled || sim.Shelter == null) return;
+            f.hungryStreak = Math.Max(0, sim.Shelter.HungryStreak);
+            f.halfRationLeft = sim.HalfRationShiftsLeft;
+            f.blackout = sim.BlackoutActive;
+            f.nextDeserter = sim.NextDeserter?.Name;
+        }
+
+        static bool HasRations(HandoverSlipFacts f) =>
+            f.hungryStreak > 0 || f.halfRationLeft > 0 || f.blackout || !string.IsNullOrEmpty(f.nextDeserter);
+
         // ---------------------------------------------------------------- uyarılar
 
         static void FillWarnings(HandoverSlipFacts f, Simulation sim, PlanningBoardState board)
         {
-            var adm = sim.Admission;
-            if (adm == null) return;
-            int day = sim.S.Day;
+            if (sim.Admission == null) return;
 
-            // KAPI: kararsız başvuru kapanışta ret sayılır; yalnız süren dış kayıt teyidi bir vardiya uzatır
-            var candidate = adm.Candidate;
-            if (candidate != null && day + 1 >= candidate.WaitingUntil && !RecordCheckExtends(sim, adm, candidate, day))
-                f.warnings.Add(new SlipWarning { kind = SlipWarningKind.Door });
+            // KAPI: bekleme süresinin son vardiyası; karar verilmezse grup bu kapanışta gider (Core'un grup süre aşımıyla aynı kural)
+            if (AdmissionSnapshotBuilder.GroupLastShift(sim))
+                f.warnings.Add(new SlipWarning { kind = SlipWarningKind.DoorLastShift });
 
-            // DOSYA: Core'un kabul riskinin türü; aynı tür tek kutuda
-            var names = new Dictionary<SlipWarningKind, List<string>>();
-            foreach (var p in board.People)
+            // İFŞA ve SIĞINAK EKSİK (KOS aşama 6): yalnız public durum; kutu sırası KAPI, İFŞA, SIĞINAK EKSİK, ERZAK
+            if (sim.B.shelterEventsEnabled && sim.ShelterEvents != null)
             {
-                if (!p.Alive || sim.ResidentAdmissionRisk(p.Id) == null) continue;
-                var file = adm.File(p.Id);
-                if (file == null) continue;
-                var kind = FileKind(adm, file, day);
-                if (!names.TryGetValue(kind, out var list)) names[kind] = list = new List<string>();
-                list.Add(p.Name);
+                f.exposure = sim.Shelter.Exposure;
+                f.exposureThreshold = sim.B.exposureThreshold;
+                f.exposurePending = sim.Shelter.FallPending && sim.LocationCompromised;
+                f.exposureWarned = sim.LocationCompromised && !f.exposurePending;
+                f.exposureShiftsLeft = f.exposurePending ? sim.FallShiftsLeft : 0;
+                if (sim.UnderstaffedCounting)
+                {
+                    f.shelterShort = sim.UnderstaffedAtClose;
+                    f.shelterShortMax = sim.B.abandonUnderstaffedShifts;
+                }
+                if (sim.LocationCompromised) f.warnings.Add(new SlipWarning { kind = SlipWarningKind.Exposure });
+                if (f.shelterShort > 0) f.warnings.Add(new SlipWarning { kind = SlipWarningKind.ShelterShort });
             }
-            foreach (var kind in FileOrder)
-                if (names.TryGetValue(kind, out var list))
-                    f.warnings.Add(new SlipWarning { kind = kind, name = string.Join(", ", list) });
-        }
 
-        /// <summary>
-        /// Riskli dosyanın türü, Core'un sırasıyla (riskin var olduğu bilinir). Kısıt süresi doldu önce; inceleme gerekmiyorsa kalan
-        /// tek risk iki bulgudur. İnceleme de gerekiyorsa Core bulguyu önce yazar, ancak bulgunun zararı gerçekleşmişse yazmaz: bunu
-        /// oyuncunun dosya geçmişinde zaten gördüğü geçmiş "sabotage" kaydından okuruz (gizli bayrağa dokunmadan).
-        /// </summary>
-        static SlipWarningKind FileKind(CommunityAdmissionState adm, ResidentAdmissionFile file, int day)
-        {
-            if (file.Resident.Restricted && file.RestrictedUntil <= day) return SlipWarningKind.FileRestrictionExpired;
-            if (!file.ReviewNeeded) return SlipWarningKind.FileClues;
-            bool clues = file.ClueCount >= 2 && !file.Contained
-                && !adm.Events.Any(e => e.PersonId == file.PersonId && e.Kind == "sabotage");
-            return clues ? SlipWarningKind.FileClues : SlipWarningKind.FileReview;
+            // ERZAK (KOS aşama 4): tek kutu
+            if (HasRations(f)) f.warnings.Add(new SlipWarning { kind = SlipWarningKind.Rations, name = f.nextDeserter });
         }
-
-        /// <summary>
-        /// Core'un kapanış başındaki gözlem adımı (<c>CompleteAdmissionObservation</c>): adayın dış kaydı bu vardiya gözetimdeyse
-        /// karar bir vardiya uzar ve bu kapanışta ret olmaz.
-        /// </summary>
-        static bool RecordCheckExtends(Simulation sim, CommunityAdmissionState adm, CommunityApplicant c, int day) =>
-            c.Resident != null && adm.ObservationTarget == c.Resident.Id && sim.HasAdmissionWatcher(c.Resident.Id)
-            && c.Inspections.Contains("record") && c.WaitingUntil <= day + 1;
     }
 }

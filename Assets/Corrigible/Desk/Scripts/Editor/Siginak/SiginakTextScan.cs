@@ -42,13 +42,12 @@ namespace Corrigible.Desk.EditorTools
     /// ve "K4 yakın" pozda (yakınlaşma alt sınırı, <c>zoomLimit.x</c> 0,6) ölçülür, büyüğü alınır (Aşama 3'ün "içerik Aşama 5" istisnası
     /// kalktı: form yakın pozda okunur). <see cref="ScanBoardCards"/> tarif kartını TARİF kutusunda (<c>Order_Recipe</c>) en kötü örnekle
     /// ve YENİ etiketini zırh yığınının üst kartında ölçer. Canlı: <see cref="ScanLiveBook"/>.</item>
-    /// <item>Kapı ve kabul (Revizyon 3 · Aşama 6, PLAN §5.3, E §6): K8A/K8G/K8R pozları <see cref="PoseCameras"/>'a enum'dan kendiliğinden
-    /// girer (plakalar ve tezgâh yazıları genel kuralla). Kabul kâğıtlarının (belge, talimat şeridi ve ESKİ cebi, bulgu fişi, talep yaprağı
-    /// ve karbon) yazıları genel taramada atlanır; <see cref="ScanAdmissionPapers"/> her kâğıdı K8R okuma pozunda (kâğıda
-    /// <c>admission.readDistanceM</c> 0,318 m, K8R'nin FOV'u; tezgâhta yatan kâğıtta token K8R yönü, dik kâğıtta yüz normali; akışın
-    /// <c>AdmissionStation.ReadPose</c> hesabı, <see cref="AdmissionReadPose"/>) <see cref="AdmissionFixtures.ScanCases"/> verileriyle bağlar ve
-    /// çizilen puntoyla ölçer: belgedeki ad ≥ 18 px, öteki ≥ 14 px; taşma, otomatik punto ve ışıklı font malzemesi ihlaldir. Raf plakaları ve
-    /// damga sapları gerekçeli istisnadır (D14); erzak tenekelerinin şablonu da (silindir yüzündeki yuva büyüyemez). Kişi dosyasının kıskaçlı
+    /// <item>Kapı ve kabul (Revizyon 3 · Aşama 6, PLAN §5.3, E §6; KOS aşama 2 ve 7): K8A/K8R pozları <see cref="PoseCameras"/>'a enum'dan
+    /// kendiliğinden girer (plakalar ve tezgâh yazıları genel kuralla). Aday kartı ve grup fişinin yazıları genel taramada atlanır;
+    /// <see cref="ScanAdmissionPapers"/> her kâğıdı K8R okuma pozunda (kâğıda <c>admission.readDistanceM</c> 0,318 m, K8R'nin FOV'u; tezgâhta
+    /// yatan kâğıtta token K8R yönü; akışın <c>AdmissionStation.ReadPose</c> hesabı, <see cref="AdmissionReadPose"/>)
+    /// <see cref="AdmissionFixtures.ScanCases"/> verileriyle bağlar ve çizilen puntoyla ölçer: karttaki ad ≥ 18 px, öteki ≥ 14 px; taşma,
+    /// otomatik punto ve ışıklı font malzemesi ihlaldir. Raf plakaları ve damga sapları gerekçeli istisnadır (D14). Kişi dosyasının kıskaçlı
     /// etiketi (<see cref="FileTagView"/>) panoda (K4) ve dosyanın okuma pozunda ölçülür, büyüğü alınır. Canlı: <see cref="ScanLiveAdmission"/>.</item>
     /// <item>Dil ve punto geçişi (Revizyon 3 · Aşama 10, PLAN §1.2): <see cref="Run"/> Giris'i de açar (<see cref="ScanEntrance"/>: sahanlık, dolap, saat, son şalter
     /// çapalarından). <see cref="ScanLiveAll"/> Play'de yüklü bütün sahnelerin etkin yazılarını çizilen puntoyla ölçer; taşma iki eksende, otomatik punto,
@@ -126,12 +125,11 @@ namespace Corrigible.Desk.EditorTools
             ("PlanningBoard/Body/LockRod/TXT_LockTag", "panonun kilit etiketi (tasarım büyük harf 5 mm, el yazısı); kilit ve nedeni pano erişiminin üzerine gelme satırında (“PLAN KİLİTLİ · neden”) ≥ 14 px"),
             ("PlanningBoard/Body/LockRod/Kilit etiketi 2. satır", "kilit etiketinin 2. satırı (neden; tasarımın küçük el yazısı satırı); aynı neden pano erişiminin üzerine gelme satırında (“PLAN KİLİTLİ · neden”) ≥ 14 px"),
             ("/KYGA · 07", "tarif defteri kapağının künyesi (tasarım 6,2 mm, %65 soluk; anlatı süsü): defterin adı kapak etiketinde (TXT_Cover) ve üzerine gelme etiketinde ≥ 14 px"),
-            ("DecisionStampRack/", "karar damgalarının raf plakaları (yuva 6 mm büyük harf; K8A'da ölçülen 6,4–9,1 px; Aşama 6 D14 gerekçeli istisna): geri dönüşsüz eylemin adı damganın üzerine gelme satırında ≥ 14 px (Aşama 10 A7 ölçümü, TR + EN) ve belgedeki izde okuma pozunda (K8R) okunur"),
-            ("/Drawer/Teneke ", "erzak tenekesinin ERZAK şablonu (Aşama 6: K8A ≈ 13,9 px; büyütülemez: 50 mm yuva silindir yüzünde düz TMP, EN “RATIONS” yuvayı şimdiden dolduruyor, büyürse yazı silindirden kopar): tenekeler yalnız DIŞARIDAN YARDIM kararında çekmeceyle görünür; kararın adı raf plakasında, damganın üzerine gelme satırında (≥ 14 px) ve izde"),
+            ("DecisionStampRack/", "karar damgalarının raf plakaları (yuva 6 mm büyük harf; K8A'da ölçülen 6,4–9,1 px; Aşama 6 D14 gerekçeli istisna): geri dönüşsüz eylemin adı damganın üzerine gelme satırında ≥ 14 px (Aşama 10 A7 ölçümü, TR + EN) ve kâğıttaki izde okuma pozunda (K8R) okunur"),
             ("/TXT_Cap", "karar damgalarının sap yazısı (4 mm, K8A ≈ 8 px; Aşama 6 D14 gerekçeli istisna): kararın adı raf plakasında, üzerine gelme satırında ve izde"),
             ("ShiftCard/Body/Tilt/TXT_Sign", "vardiya kartının imza satırı (anlatı süsü; M3'te 11,5 px): kartın kimliği TXT_Shift ve TXT_Role ≥ 14 px"),
             ("LastSwitch/Body/TXT_Lamp", "son şalterin lamba yazısı (M0'da 6,7 px, MS kadrajı dışında): şalterin adı plakada ≥ 14 px"),
-            ("Leaf/TXT_LeafPlate", "ayar dolabı kapağının küçük plakası (M0'da 9,1 px): dolabın adı TXT_Stencil 36 px"),
+            ("Shell/Exposure panel/ExposureBoard/Frame/Title plate/", "İFŞA şeridinin başlık plakası (KOS aşama 6; şerit 13,6 cm yüksekliğinde, K1'de ≈ 8 px): göstergenin adı, değeri ve eşikleri üzerine gelme etiketinde ≥ 14 px; uyarılar teleks, CRT ve devir fişinde"),
         };
 
         /// <summary>
@@ -676,7 +674,7 @@ namespace Corrigible.Desk.EditorTools
 
         // ================================================================ kapı ve kabul (Revizyon 3 · Aşama 6, PLAN §5.3, E §6)
 
-        /// <summary>Kabul kâğıtlarının adının eşiği (belgedeki ad; PLAN §5.3), öteki kâğıt yazıları <see cref="Minimum"/>.</summary>
+        /// <summary>Kabul kâğıtlarının adının eşiği (aday kartındaki ad; PLAN §5.3), öteki kâğıt yazıları <see cref="Minimum"/>.</summary>
         public const float AdmissionNameMinimum = 18;
         /// <summary>Oyunda (Play) kabul kâğıtlarının ölçüsü (<see cref="ScanLiveAdmission"/>).</summary>
         public const string LiveAdmissionReportPath = "Temp/punto_kabul_live.txt";
@@ -685,8 +683,8 @@ namespace Corrigible.Desk.EditorTools
 
         /// <summary>
         /// K8R okuma pozu, kâğıdın kendi çerçevesinde (akışın <c>AdmissionStation.ReadPose</c> hesabı): tezgâhta yatan kâğıtta
-        /// (<paramref name="flat"/>; belge, bulgu fişi) kamera kâğıt merkezinden tezgâh yereli (0; 0,4; −0,1) yönünde <paramref name="distance"/>
-        /// geride (eğim 75,96°, ekranın üstü duvara), dik kâğıtta (şerit, ESKİ, GİDEN yaprağı, karbon) yüz normali boyunca. Kâğıt kökü
+        /// (<paramref name="flat"/>; aday kartı, grup fişi) kamera kâğıt merkezinden tezgâh yereli (0; 0,4; −0,1) yönünde <paramref name="distance"/>
+        /// geride (eğim 75,96°, ekranın üstü duvara), dik kâğıtta yüz normali boyunca. Kâğıt kökü
         /// (merkez) <paramref name="paper"/>; ön yüz −z, yatan kâğıt Euler(90, 0, 0) ile yüzü yukarı konmuş olmalı.
         /// </summary>
         public static Pose AdmissionReadPose(Transform paper, bool flat, float distance)
@@ -704,32 +702,19 @@ namespace Corrigible.Desk.EditorTools
             return new Pose(at, Quaternion.LookRotation(-normal, paper.up));
         }
 
-        static Object RefAt(Object owner, string field, int index)
-        {
-            if (owner == null) return null;
-            var p = new SerializedObject(owner).FindProperty(field);
-            if (p == null || !p.isArray || index >= p.arraySize) return null;
-            var e = p.GetArrayElementAtIndex(index);
-            return e.propertyType == SerializedPropertyType.ObjectReference ? e.objectReferenceValue : null;
-        }
-
         /// <summary>
-        /// Sahnedeki kabul kâğıtlarının kökleri (istasyonun ve defterin bağları); bağ yoksa W3 prefab'ı. Tür: belge, şerit, ESKİ, fiş, talep,
-        /// karbon; <c>flat</c> tezgâhta yatanlar.
+        /// Sahnedeki kabul kâğıtlarının kökleri (istasyonun aday görünümünden); bağ yoksa prefab. Tür: aday kartı, grup fişi; ikisi de
+        /// tezgâhta yatar (<c>flat</c>).
         /// </summary>
         static List<(string kind, GameObject source, bool flat)> AdmissionSources(Scene scene)
         {
             var list = new List<(string, GameObject, bool)>();
             var station = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<AdmissionStation>(true)).FirstOrDefault();
-            var pad = station != null ? Ref(station, "pad") as RequestPadTool : null;
             GameObject Of(Object o) => o is Transform t && t != null ? t.gameObject : null;
             GameObject Prefab(string path) => AssetDatabase.LoadAssetAtPath<GameObject>(path);
-            list.Add(("Belge", Of(Ref(station, "documentPaper")) ?? Prefab(AdmissionFixtures.DocumentPrefab), true));
-            list.Add(("Şerit", Of(Ref(station, "stripPaper")) ?? Prefab(AdmissionFixtures.StripPrefab), false));
-            list.Add(("ESKİ", Of(RefAt(station, "archivePapers", 0)) ?? Prefab(AdmissionFixtures.StripPrefab), false));
-            list.Add(("Fiş", Of(RefAt(station, "slipPapers", 0)) ?? Prefab(AdmissionFixtures.SlipPrefab), true));
-            list.Add(("Talep", Of(Ref(pad, "sheetPaper")) ?? Prefab(AdmissionFixtures.RequestPrefab), false));
-            list.Add(("Karbon", Of(Ref(pad, "carbonPaper")) ?? Prefab(AdmissionFixtures.RequestPrefab), false));
+            var group = Ref(station, "candidates") as CandidateGroupView;
+            list.Add(("Aday", Of(group != null && group.CardPapers.Count > 0 ? group.CardPapers[0] : null) ?? Prefab(AdmissionFixtures.CardPrefab), true));
+            list.Add(("Grup fişi", Of(group != null ? group.SlipPaper : null) ?? Prefab(AdmissionFixtures.GroupSlipPrefab), true));
             return list.Where(x => x.Item2 != null).ToList();
         }
 
@@ -744,10 +729,10 @@ namespace Corrigible.Desk.EditorTools
         }
 
         /// <summary>
-        /// Kabul kâğıtları K8R okuma pozunda (PLAN §5.3, E §6.1–6.2; <see cref="AdmissionReadPose"/>): sahnedeki kâğıtlar (yoksa W3 prefab'ları)
+        /// Kabul kâğıtları K8R okuma pozunda (PLAN §5.3, E §6.1–6.2; <see cref="AdmissionReadPose"/>): sahnedeki kâğıtlar (yoksa prefab'lar)
         /// önizleme sahnesine kopyalanır, <see cref="AdmissionFixtures.ScanCases"/>'in her durumuyla (<paramref name="english"/> dili) bağlanır
         /// ve K8R kamerasıyla (rig'in yuvasının FOV'u, yoksa <c>cameras.K8R.fovV</c>; sensör rig'in) çizilen puntoyla, dört köşe kadrajda
-        /// ölçülür: belgedeki ad ≥ 18 px, öteki görünür yazılar ≥ 14 px. Otomatik punto, ışıklı ya da başka font malzemesi (Aşama 4 bulgusu)
+        /// ölçülür: karttaki ad ≥ 18 px, öteki görünür yazılar ≥ 14 px. Otomatik punto, ışıklı ya da başka font malzemesi (Aşama 4 bulgusu)
         /// ve kâğıt taşması (<see cref="AdmissionPaperFace.Overflowing"/>) eşikten bağımsız ihlaldir. Sahneyi değiştirmez.
         /// </summary>
         public static List<Entry> ScanAdmissionPapers(Scene scene, bool english)
@@ -803,31 +788,22 @@ namespace Corrigible.Desk.EditorTools
             return list;
         }
 
-        /// <summary>Kâğıt türüne göre durumun verisi (fişte her fiş ayrı, talepte gönderilmişse); etiket yol eki.</summary>
+        /// <summary>Kâğıt türüne göre durumun verisi (her aday kartı ayrı); etiket yol eki.</summary>
         static IEnumerable<(string label, bool bound)> BindAdmission(string kind, AdmissionPaperFace face, AdmissionSnapshot s)
         {
             switch (kind)
             {
-                case "Belge":
-                    if (face is AdmissionDocumentFace doc && s.Document != null) { doc.Bind(s.Document); doc.ShowImpression(false, false); yield return ("", true); }
-                    break;
-                case "Şerit":
-                    if (face is OrdersStripFace strip && s.Orders != null) { strip.Bind(s.Orders); yield return ("/v" + s.Orders.Version, true); }
-                    break;
-                case "ESKİ":
-                    if (face is OrdersStripFace head && s.Archive.Count > 0) { head.BindHead(s.Archive[0]); yield return ("/v" + s.Archive[0].Version, true); }
-                    break;
-                case "Fiş":
-                    if (face is FindingSlipFace slip)
-                        foreach (var d in s.Slips.Where(x => x != null))
+                case "Aday":
+                    if (face is CandidateCardFace card && s.Group != null)
+                        for (int i = 0; i < s.Group.Cards.Count; i++)
                         {
-                            slip.Bind(d);
-                            yield return ("/" + (d.Review ? "inceleme" : d.Tool?.ToString() ?? "?") + "-" + d.Kind, true);
+                            card.Bind(s.Group.Cards[i]);
+                            card.ShowImpression(false, false);
+                            yield return ("/" + (i + 1), true);
                         }
                     break;
-                case "Talep":
-                case "Karbon":
-                    if (face is RequestFormFace form && s.Request != null && s.Request.Sent) { form.Bind(s.Request, kind == "Karbon"); yield return ("", true); }
+                case "Grup fişi":
+                    if (face is CandidateGroupSlipFace groupSlip && s.Group != null) { groupSlip.Bind(s.Group); groupSlip.ShowStamp(false, false); yield return ("", true); }
                     break;
             }
         }
@@ -835,7 +811,7 @@ namespace Corrigible.Desk.EditorTools
         static List<Entry> MeasureAdmissionFace(AdmissionPaperFace face, List<(string, Camera)> cams, string prefix, string poseSuffix)
         {
             var list = new List<Entry>();
-            var name = face is AdmissionDocumentFace doc ? doc.NameText : null;
+            var name = face is CandidateCardFace card ? card.NameText : null;
             bool first = true;
             foreach (var t in face.GetComponentsInChildren<TMP_Text>(false))
             {
@@ -857,7 +833,7 @@ namespace Corrigible.Desk.EditorTools
 
         /// <summary>
         /// Oyunda (Play) kabul kâğıtlarının ölçüsü (E §6 canlı): <paramref name="cam"/> odanın kamerası (K8R'de bir kâğıda bakarken ya da
-        /// K8A'da), dört köşesi kadrajda olan bütün etkin kâğıt yazıları, çizilen puntoyla, 1080p'ye ölçeklenmiş; belgedeki ad ≥ 18 px, öteki
+        /// K8A'da), dört köşesi kadrajda olan bütün etkin kâğıt yazıları, çizilen puntoyla, 1080p'ye ölçeklenmiş; karttaki ad ≥ 18 px, öteki
         /// ≥ 14 px. Sonuç <see cref="LiveAdmissionReportPath"/>'e eklenir (her çağrı bir blok: dil ve poz başlıkta); dönen satır sınıfların en
         /// küçükleri. TR ve EN için dili değiştirip yeniden çağır.
         /// </summary>
@@ -873,7 +849,7 @@ namespace Corrigible.Desk.EditorTools
             {
                 if (!face.isActiveAndEnabled) continue;
                 if (face.Overflowing) overflow++;
-                var name = face is AdmissionDocumentFace doc ? doc.NameText : null;
+                var name = face is CandidateCardFace card ? card.NameText : null;
                 foreach (var t in face.GetComponentsInChildren<TMP_Text>(false))
                 {
                     if (t == null || !t.isActiveAndEnabled || string.IsNullOrEmpty(t.text)) continue;
@@ -1250,14 +1226,14 @@ namespace Corrigible.Desk.EditorTools
                 }
                 else if (states)
                 {
-                    d.Injured = d.Bedridden = d.Restricted = d.Review = d.Selected = true;
+                    d.Injured = d.Bedridden = d.Restricted = d.Selected = true;
                 }
                 else
                 {
                     d.Injured = i % 5 == 3;
                     d.Bedridden = i % 5 == 1;
                     d.Restricted = i % 5 == 2;
-                    d.Review = i % 5 == 4;
+                    d.Isolated = i % 5 == 4;
                 }
                 d.HoverTitle = d.Name;
                 d.HoverLine = d.Strip;
@@ -1866,12 +1842,10 @@ namespace Corrigible.Desk.EditorTools
         /// <summary>Kabul kâğıdının okunduğu durum kimliği; hedefi canlı ölçülmeyen kâğıtta (statik taramada K8R) boş; kabul kâğıdı değilse null.</summary>
         static string AdmissionPaperTarget(string path)
         {
-            const string station = "Admission station/";
-            if (path.Contains(station + "Belge/")) return "AR1";
-            if (path.Contains(station + "Şerit/")) return "AR2";
-            if (path.Contains(station + "Fiş 1/")) return "AR3";
-            if (path.Contains("Talep yaprağı/")) return "AR4";
-            return path.Contains(station + "Fiş 2/") || path.Contains(station + "ESKİ şerit") || path.Contains("RequestPad/Karbon/") ? "" : null;
+            const string group = "Admission station/Aday grubu/";
+            if (path.Contains(group + "Aday kartı 1/")) return "AR1";
+            if (path.Contains(group + "Grup fişi/")) return "AR2";
+            return path.Contains(group + "Aday kartı ") ? "" : null;
         }
 
         /// <summary>Durum kimliğinin poz ailesi (PLAN §1.3); listede olmayan durum kendi ailesidir.</summary>
@@ -1888,7 +1862,6 @@ namespace Corrigible.Desk.EditorTools
             if (Starts("K8") || tag is "D1" or "D2") return "K8";
             if (Starts("AR")) return "K8R";
             if (Numbered('A')) return "K8A";
-            if (tag == "G1") return "K8G";
             if (Starts("K9")) return "K9";
             if (tag is "B1" or "M0a" or "M0b") return "M0";
             return Starts("Z") ? "Z" : tag;
@@ -1917,7 +1890,7 @@ namespace Corrigible.Desk.EditorTools
 
         /// <summary>
         /// Yüklü bütün sahnelerde etkin her yazıyı ölçer (Aşama 10, PLAN §1.2 b): Overlay'de çizilen punto × tuval ölçeği, dünyada <paramref name="cam"/> ile
-        /// dört köşe kadrajda çizilen punto, ikisi de 1080p'ye ölçeklenir; kadraj dışı atlanır. Eşikler kart adı, fiş adı, defter adı ve belgedeki ad için 18 px, öteki
+        /// dört köşe kadrajda çizilen punto, ikisi de 1080p'ye ölçeklenir; kadraj dışı atlanır. Eşikler kart adı, fiş adı, defter adı ve aday kartındaki ad için 18 px, öteki
         /// 14 px; kart yüzünün gerekçeleri ve <see cref="Exceptions"/> uygulanır. Eşikten bağımsız bayraklar: kesilme, dikey ve yatay taşma, otomatik puntonun alt sınırı,
         /// .notdef, Dyn yedeğe düşen karakter, İngilizcede izin listesi dışı Türkçe harf, sözcük ya da çevrilmemiş kaynak metin. <c>küçük</c> bayrağı burada konmaz: yazının okunduğu
         /// poz bütün durumlar bitince belli olur (<see cref="AssignReading"/>); dönen özetteki "eşik altı" ham sayıdır. <paramref name="only"/> verilirse yalnız onun seçtiği yazılar (ör.
@@ -2010,8 +1983,8 @@ namespace Corrigible.Desk.EditorTools
                 foreach (var t in slip.NameTexts) if (t != null) map[t] = (SlipNameMinimum, null);
             foreach (var page in Object.FindObjectsByType<RecipeBookPage>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
                 foreach (var t in page.NameTexts) if (t != null) map[t] = (BookNameMinimum, null);
-            foreach (var doc in Object.FindObjectsByType<AdmissionDocumentFace>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
-                if (doc.NameText != null) map[doc.NameText] = (AdmissionNameMinimum, null);
+            foreach (var card in Object.FindObjectsByType<CandidateCardFace>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                if (card.NameText != null) map[card.NameText] = (AdmissionNameMinimum, null);
             return map;
         }
 
@@ -2184,7 +2157,7 @@ namespace Corrigible.Desk.EditorTools
             if (admission.Count > 0)
             {
                 sb.AppendLine();
-                sb.AppendLine("KAPI VE KABUL (R17: kâğıtlar K8R okuma pozunda, 0,318 m; belgedeki ad ≥ 18 / öteki ≥ 14; kâğıt türü başına en kötü)");
+                sb.AppendLine("KAPI VE KABUL (R17: kâğıtlar K8R okuma pozunda, 0,318 m; karttaki ad ≥ 18 / öteki ≥ 14; kâğıt türü başına en kötü)");
                 foreach (var g in admission.GroupBy(e => (lang: e.Pose.Substring(e.Pose.LastIndexOf(' ') + 1), kind: e.Path.Split('/')[2].Split('/')[0]))
                              .OrderBy(g => g.Key.lang).ThenBy(g => g.Key.kind))
                 {

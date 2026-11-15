@@ -11,6 +11,8 @@ namespace Corrigible.Core
         public string Id, Name, Profession, Trait, Job = "rest", TrainingSubject;
         public int Hp, MaxHp, Move, Power, Down;
         public bool Alive = true, Restricted;
+        /// <summary>Tecritte: hiçbir göreve konamaz, teçhizat alamaz, yer.</summary>
+        public bool Isolated;
         public List<ResidentSkill> Experience = new List<ResidentSkill>();
         public int Wounds => Math.Max(0, MaxHp - Hp);
         public int Skill(string subject) => Experience.FirstOrDefault(x => x.Subject == subject)?.Points ?? 0;
@@ -36,6 +38,8 @@ namespace Corrigible.Core
     {
         public string Id, Kind, OwnerId;
         public int Charges = 1;
+        /// <summary>Kişiye bağlı teçhizat: devredilemez, sökülemez; sahibi sığınaktan çıkınca onunla gider.</summary>
+        public bool Bound;
     }
 
     [Serializable]
@@ -81,6 +85,8 @@ namespace Corrigible.Core
     {
         public static readonly string[] FieldJobs = { "tek", "emp", "ana" };
         public static readonly string[] Subjects = { "tek", "emp", "ana", "craft", "cook", "care", "gather" };
+        /// <summary>Kapıya gelen adayların konuları (bakım ve ikmal oyuncuya kapalı).</summary>
+        public static readonly string[] CandidateSubjects = { "tek", "emp", "ana", "craft", "cook" };
         public static readonly string[] Jobs = { "tek", "emp", "ana", "craft", "cook", "care", "gather", "train", "rest", "watch", "contact" };
         public static readonly string[] MaterialKinds = { "metal", "devre", "kumas", "kimyasal" };
 

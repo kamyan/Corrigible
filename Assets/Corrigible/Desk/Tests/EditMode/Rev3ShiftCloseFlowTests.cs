@@ -87,7 +87,7 @@ namespace Corrigible.Desk.Tests
             training = { active = true, name = "Deniz", subject = "tek", xpBefore = 1, xpAfter = 3, tierBefore = 0, tierAfter = 1 },
             production = { kind = SlipProductionKind.Progress, itemType = "kit_tek", maker = "Ayla", done = 1, after = 2, turns = 3 },
             openApplications = 1,
-            warnings = { new SlipWarning { kind = SlipWarningKind.Door }, new SlipWarning { kind = SlipWarningKind.FileClues, name = "Deniz" } },
+            warnings = { new SlipWarning { kind = SlipWarningKind.DoorLastShift }, new SlipWarning { kind = SlipWarningKind.Rations, name = "Deniz" } },
         };
 
         /// <summary>Gerçek kartlı oyun (GameController, tohum 79) ve ona bağlı kapanış; şalter R19 kipinde, teleks ve masa yüzü bağlı.</summary>
@@ -104,6 +104,11 @@ namespace Corrigible.Desk.Tests
             Set(close, "surface", surface);
             Set(close, "telex", telex);
             Set(close, "shiftSwitch", sw);
+            // Olay kâğıdı sonraki aşamada gelir; o güne dek bu akış sığınak olayları kapalıyken sınanır (açık olay fişi kilitler).
+            var config = ScriptableObject.CreateInstance<BalanceConfig>();
+            created.Add(config);
+            config.balance = new Balance { shelterEventsEnabled = false };
+            Set(game, "balanceConfig", config);
             game.NewGame(79);
             close.Restore();
             return (game, close, telex, sw);
@@ -314,7 +319,7 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(SlipProductionKind.Progress, f7.production.kind);
             Assert.AreEqual(2, f7.production.after);
             Assert.AreEqual(1, f7.openApplications);
-            CollectionAssert.AreEqual(new[] { SlipWarningKind.Door, SlipWarningKind.FileClues }, f7.warnings.Select(w => w.kind).ToArray());
+            CollectionAssert.AreEqual(new[] { SlipWarningKind.DoorLastShift, SlipWarningKind.Rations }, f7.warnings.Select(w => w.kind).ToArray());
             Assert.AreEqual(1, SiginakDeskStore.LoadTelex(record).Count, "teleks aynı dosyada");
             Assert.AreEqual("Desk", SiginakDeskStore.LoadPose(record));
             Assert.IsNull(SiginakDeskStore.LoadSlips(new GameRecord { seed = 80 }), "başka oyunun dosyası yok sayılır");

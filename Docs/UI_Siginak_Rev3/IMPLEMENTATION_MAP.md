@@ -231,6 +231,20 @@ Ayrıntı [A9_DOGRULAMA.md](A9_DOGRULAMA.md).
 | Baskın ışığı | Ortak `PC_RPAsset` 2048, 4 kaskad, tarifin 4096'sı uygulanmadı | KARAR BEKLER (R15) | `lightsRecipe.RAID` |
 | Ölçek | 132,58 px/birim; zemin kenarı projeksiyonu 108,08 px | KULLANILDI (Soru 7) | `tokens_sade.json → raid.camera` |
 
+### 3.9a Sığınağın sonları (KOS aşama 6; `Docs/KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md` §4, §7)
+
+Yollar `Assets/Corrigible/Desk/` altında. Core değişmedi (sürüm 17); sunum yalnız public okuyuculardan kurar.
+
+| Öğe | Uygulama | Durum | Veri kaynağı / komut |
+|---|---|---|---|
+| İFŞA şeridi | `Shell/Exposure panel` (`Runtime/Siginak/ExposurePanel`): `walls/AlarmBoard` örneğinin altı hücresi ve lambası (gövde gizli), `cabinet/CabBlank` ×2 (pirinç kenar, bakalit yüz), `CabPlate` başlığı; alarm panosunun malzemeleri. `SiginakDesk.ShowCounters` alarmla aynı tutmayla yazar | UYGULANDI | `Shelter.Exposure`, `FallPending`, `exposureThreshold`, `exposureAlarmAt`; ipucu `ShelterEventSnapshotBuilder.ExposureHint` |
+| Son şalter | `Shell/Last switch`: `menu/LastSwitch` örneği (doktrin afişinin eski yeri), `ShiftSwitch` R19 kipi `stateTokens = "lastSwitch"` (115° / ±55°), düz KİLİTLİ bandı, `LastSwitchPlate` (gerekçe plakası). Köprü `SiginakLastSwitch` (`SiginakRoom/Last switch controller`), metinler `LastSwitchViewBuilder` | UYGULANDI | `LastSwitchCheck`, `LastSwitchReasons`; `ExecuteBoardCommand(s => s.PullLastSwitch())` (`last_switch`) |
+| KLS pozu | `SiginakPose.LastSwitch` = 11, çapa `Poses/KLS`, 44°; kenar satırı gizli; kayıttan devamda masaya; ışık tarifi K1'in kopyası | UYGULANDI | `cameras.KLS` |
+| ÇEKİLME / TAHLİYE EMRİ | `SiginakHud/Withdrawal order`: emir belgesinin (`BriefingView`) dosyasız kopyası; DAMGALA yalnız fare tıkı | UYGULANDI | `LastSwitchViewBuilder.Order` |
+| Son raporu | `FinalReportView`: ton satırı (Lead'in 3. satırı), ölçüt kutusu, HAREKÂT / SİCİL sekmeleri (Tab, ←/→), damga mürekkebi `FinalOutcome`'a göre (`report.withdrawn` mavi) | UYGULANDI | `FinalReportBuilder` (`EndReport`, `VictoryTone` yalnız burada) |
+| Fiş, CRT, teleks | `SlipWarningKind.Exposure` (6), `ShelterShort` (7); CRT ipucu önceliği; teleks İFŞA / KONUM ÇÖZÜLDÜ satırları (günlük toplamı) | UYGULANDI | `HandoverSlipFactsBuilder`, `ShelterEventSnapshotBuilder` |
+| Ses | `Cue.ExposureStep` = 129 (yer tutucu `Tools/Audio/kos6_placeholder_audio.py`); öteki anlar var olan klipler | UYGULANDI | `SoundBank.cues` |
+
 ### 3.10 Kalıcı doğrulama araçları
 
 | Araç | Yer ve çalıştırma | Çıktı |
@@ -959,3 +973,27 @@ Yalnız bugün doğru ve yol gösteren olanlar. Bütün liste A9 kopyası §1.
   - Gölge çözünürlüğü onarımı (A10-D7), koridor lambası Spot; kare süresi, atlas, Q13, TAA ve post ölçümleri; hedef sağlandı (dev Mac, Editor; çözünürlük uyarısı A10_DOGRULAMA'da).
   - T1 kaldırma: 1.160 GO, 165 asset, `SiginakCaptureSet`; yedek `A10_silinenler.zip`. 42 yer tutucu ses.
   - EditMode 988/988, PlayMode 85/85; punto 2321 / 0 / 149; kayıt biçimi 15, Core değişmedi. Harita sadeleşti, tam metin `IMPLEMENTATION_MAP_A9.md`.
+
+- **2026-11-13 · Model entegrasyonu (kullanıcının yerleştirdiği oda modelleri).**
+  - Masa `SM_Table_2`, kapı `SM_Door`, monitör `SM_TV_2`, telsiz `SM_Radio` + `SM_Device_1`, duvarlar `SM_Wall4x4`/`SM_Wall15`
+    (Leartes paketi) sisteme bağlandı; yerleri, ölçekleri ve malzemeleri kullanıcının bıraktığı gibi.
+  - Kapı üç türev mesh'e bölündü (kasa/kanat/çark), `Bunker door/Leaf` pivotu; kanat odaya açılır (D: onay bekliyor). Buğu camı kanadın
+    iç panosunda; kapı kutusu x 2,27…2,445.
+  - Sahneden çıkanlar: `Desk/Desk model`, `DoorFrame`, `DoorLeaf`, `CRT/Crt` kabuğu ve eski CRT gövde mesh'i + plakası, `Radio/Body`,
+    dört eski duvar. Silinen asset: `wall_doorway`, `wall_extension_right`, `Concrete side.mat`.
+  - Rev3 manifesti (198) değişmedi: `Crt.prefab` manifest hâline döndü (2126 üçgen). Yeni modeller manifest dışı; bütçe ölçümü yok
+    (kapı 6730, telsiz 8526 + cihaz, masa 2526 üçgen LOD0).
+  - İnceleme düzeltmeleri: `DialLight` telsiz gövdesinin içinden ön panelin önüne alındı; öksüz `SceneMaterials/Radio dial scale.mat` ve
+    `Radio meter face.mat` silindi; `Crt.prefab` `Body` renderer'ı yeniden açıldı. Açık (kullanıcı kararı): kanat 20°–34° arasında
+    `SM_Device_1`'in köşesinden geçiyor (cihaz ~7 cm uzaklaşmalı).
+  - EditMode 1078 (1018 geçti, 0 kaldı, 60 atlandı: "Aşama 7" [Ignore]); PlayMode 100 (75 geçti, 0 kaldı, 25 atlandı: "Aşama 7" [Ignore]). Ayrıntı `Docs/DURUM.md` › Model entegrasyonu.
+
+- **2026-11-13/15 · KOS (aday seçimi, sığınak olayları ve yeni sonlar), aşama 1–8.**
+  - Tasarım ve kararlar `Docs/KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md`; ayrıntı `Docs/DURUM.md` (KOS aşama 7, aşama 8 ilk adım, rehber, denge).
+  - Kabul tezgâhı çok kartlı aday grubu (KABUL / GERİ ÇEVİR, dolu sığınakta yollanacak kişi), EVRAK tepsisinde olay tutanağı,
+    İFŞA göstergesi, son şalter ve ÇEKİLME EMRİ, yeni son raporları; eski tek adaylı kabulün araçları sahneden söküldü (K1–K8).
+  - Aşama 8: telsiz ve cihaz kapıdan 9,7 cm uzakta (kordonsuz türev mesh, onay bekliyor), afiş son şalterin üstünde, hurda kutusu
+    pano çerçevesinin içinde, iki dolapta AYARLAR plakası; rehber 26 adım; altı `Balance` alanı (tüketim 0,40; olay aralığı 2–3 kaldı)
+    ve belgeler. İnceleme sonrası: TEHDİT göstergeleri "n/m" (`Simulation.MaxTier`), rehber notunun başlığı tek satır "REHBER",
+    konu bölümünde "REHBER · KONU"; bot düzeneği `Tools/DengeBotu/`.
+  - Kayıt biçimi 17. EditMode 1186/1186, PlayMode 91/91.

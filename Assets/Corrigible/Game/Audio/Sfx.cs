@@ -4,7 +4,7 @@ namespace Corrigible.Game.Audio
 {
     /// <summary>
     /// Tek seferlik ses olayları. Klipleri <see cref="SoundBank.cues"/> bağlar; asset değeri sayı olarak sakladığı için her
-    /// üyenin sayısı sabittir (silinen sesler numaralarını boş bırakır). 56–66 ve 97–128'in klipleri yer tutucudur
+    /// üyenin sayısı sabittir (silinen sesler numaralarını boş bırakır). 56–66 ve 97–129'un klipleri yer tutucudur
     /// (<c>Tools/Audio/rev3_placeholder_audio.py</c>); ShiftLever (109) geçici olarak SwitchClack klibini kullanır.
     /// </summary>
     public enum Cue
@@ -81,12 +81,16 @@ namespace Corrigible.Game.Audio
         // kâğıt sesi, kapanışı, tarif kartının defterden kalkışının “şırp”ı, ürün kartının depoya kayışının “şık”ı. Tarif kartının
         // iş emrine oturuşu BoardMagnet, dönüşü BoardReturn, reddi BoardDeny çalar.
         BoardBookOpen = 115, BoardPageTurn = 116, BoardBookClose = 117, BoardRecipeLift = 118, BoardProductSlide = 119,
-        // Kapı ve kabul (Revizyon 3 · Aşama 6, R9/R17 · PLAN §1.13): tezgâh kanadının inişindeki “tank”, evrak çekmecesi (tenekelerle
-        // dışarı da aynı ses), talimat işaretçisinin “tık”ı, bulgu fişinin yazıcı tıkırtısı, interkomun 0,2 s cızırtısı, buğu camı
-        // (kapak ve buğu), talep defterinden koparma, damganın raftan kalkışı, tezgâhın katlanışı. Damganın basışı StampHeavy, rafa
-        // dönüşü BoardReturn, reddi BoardDeny, belgenin tezgâha düşüşü PaperSlide, kapı DoorKnock/DoorOpen/DoorClose çalar.
-        AdmissionCounterDown = 120, AdmissionDrawer = 121, AdmissionMarker = 122, AdmissionSlip = 123, AdmissionIntercom = 124,
-        AdmissionGlass = 125, AdmissionPadTear = 126, AdmissionStampLift = 127, AdmissionCounterFold = 128,
+        // Kapı ve kabul (Revizyon 3 · Aşama 6, R9/R17 · PLAN §1.13): tezgâh kanadının inişindeki “tank”, evrak çekmecesi, eski talimat
+        // işaretçisinin “tık”ı (KOS: olay tutanağının işaret sesi), damganın raftan kalkışı, tezgâhın katlanışı. Damganın basışı
+        // StampHeavy, rafa dönüşü BoardReturn, reddi BoardDeny, kâğıdın düşüşü PaperSlide, kapı DoorKnock/DoorOpen/DoorClose çalar.
+        // KOS aşama 7: eski kabulün bulgu fişi (123), interkom (124), buğu camı (125) ve talep defteri (126) sesleri söküldü; sayıları
+        // boş kalır (SoundBank sayıyla saklar).
+        AdmissionCounterDown = 120, AdmissionDrawer = 121, AdmissionMarker = 122, AdmissionStampLift = 127, AdmissionCounterFold = 128,
+        // Sığınağın sonları (KOS aşama 6): İFŞA şeridinde hücre yanınca rölenin "klak"ı ve kısa lamba vızıltısı (yer tutucu,
+        // Tools/Audio/kos6_placeholder_audio.py). Sorguyla inişte SwitchClack, KONUM ÇÖZÜLDÜ'de AlarmHum, son şalterin komutunda
+        // PowerDown çalar.
+        ExposureStep = 129,
     }
 
     /// <summary>Sürekli çalan döngüler (sesi duruma göre açılıp kısılır).</summary>

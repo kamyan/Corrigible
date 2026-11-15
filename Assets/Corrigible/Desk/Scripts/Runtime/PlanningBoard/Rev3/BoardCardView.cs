@@ -7,7 +7,7 @@ namespace Corrigible.Desk
     /// <summary>
     /// Kartlı panodaki bir kart (Revizyon 3 · R15/R16): kişi, eşya, hammadde, fiş ya da (Aşama 5) tarif. Prefab kökündedir (<c>Prefabs/Rev3Board/*Card</c>):
     /// altında iç içe kart modeli (<c>Model</c>, geçersiz kılma yok), yüz tuvali (<c>Face</c>, <see cref="CardFace"/>) ve kişide ışık
-    /// alan portre dörtgeni ile 3B İNCELE sözcüğü.
+    /// alan portre dörtgeni.
     /// <list type="bullet">
     /// <item><b>Kimlik:</b> havuzdan alınır, <c>Bind</c> ile Core kimliğine bağlanır (kişi <c>sakin-N</c>, eşya <c>esya-N</c>, hammadde
     /// türü, fiş <c>chip:tür:i</c>). Yüz yalnız değişen veride yeniden yazılır.</item>
@@ -18,7 +18,7 @@ namespace Corrigible.Desk
     /// <see cref="Controller"/>'a aktarılır, kart kendisi karar vermez.</item>
     /// <item><b>Görünüm:</b> türün ışık alan yüz malzemesi model gövdesinin <c>cardFace</c> yuvasına <c>Awake</c>'te yazılır (iç içe
     /// prefab'da geçersiz kılma olmasın diye); eşya kartı yuvasına göre üç malzemeden birini alır. Modelin <c>Tape</c> parçası hep
-    /// gizli (bant yüze çizilir), <c>Flag</c> yalnız İNCELE'de görünür, mıknatıs <see cref="SetMagnetVisible"/> ile.</item>
+    /// gizli (bant yüze çizilir), <c>Flag</c> da hep gizli (eski İNCELE bayrağı, aşama 7'de söküldü), mıknatıs <see cref="SetMagnetVisible"/> ile.</item>
     /// </list>
     /// Sunum simülasyonu okumaz: veriler anlık görüntüden (<see cref="BoardSnapshot"/>) gelir, zaten çevrilmiştir.
     /// </summary>
@@ -128,7 +128,7 @@ namespace Corrigible.Desk
                 localWords = new BoardWords
                 {
                     Injured = Corrigible.Core.Loc.T(tr.Injured), Bedridden = Corrigible.Core.Loc.T(tr.Bedridden),
-                    Restricted = Corrigible.Core.Loc.T(tr.Restricted), Review = Corrigible.Core.Loc.T(tr.Review),
+                    Restricted = Corrigible.Core.Loc.T(tr.Restricted), Isolated = Corrigible.Core.Loc.T(tr.Isolated),
                     Lost = Corrigible.Core.Loc.T(tr.Lost), Free = Corrigible.Core.Loc.T(tr.Free),
                     Kit = Corrigible.Core.Loc.T(tr.Kit), Armor = Corrigible.Core.Loc.T(tr.Armor), Aid = Corrigible.Core.Loc.T(tr.Aid),
                 };
@@ -168,7 +168,7 @@ namespace Corrigible.Desk
             {
                 pf.Bind(d, Words ?? DefaultWords, IsEnglish);
                 // KISITLI ve KAYIP köşe şeridi mıknatısın yerini alır (R16a: köşeli kartta mıknatıs çizilmez; sözcüğü örtmesin)
-                SetMagnetBlocked(pf.NameUsesMagnetSpace || d.Restricted || d.Lost);
+                SetMagnetBlocked(pf.NameUsesMagnetSpace || d.Restricted || d.Isolated || d.Lost);
             }
             BindPortrait(string.IsNullOrEmpty(d.PortraitKey) ? d.Name : d.PortraitKey);
         }

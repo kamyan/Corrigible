@@ -60,8 +60,10 @@ namespace Corrigible.Desk
         public string Front, Shelter;
         /// <summary>Cephe bölgesi henüz özgür değil: aday çizilmez, aynı anda tek cephe.</summary>
         public bool FrontOpen;
-        /// <summary>Zorluk kademesi (1–4), işaretler kutusunun başlığında “TEHDİT n/4”.</summary>
+        /// <summary>Zorluk kademesi (1–4), işaretler kutusunun başlığında “TEHDİT n/m”.</summary>
         public int Tier = 1;
+        /// <summary>Harekâtta ulaşılabilen en yüksek kademe (<c>Simulation.MaxTier</c>), “TEHDİT n/m”deki m.</summary>
+        public int MaxTier = 4;
         public TeamFigureState Team = new TeamFigureState();
 
         public MapRegionState Find(string id)

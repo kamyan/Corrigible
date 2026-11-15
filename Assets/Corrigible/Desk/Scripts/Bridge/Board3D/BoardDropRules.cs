@@ -186,29 +186,6 @@ namespace Corrigible.Desk.Bridge
             return s => s.TrainResident(id, subject);
         }
 
-        /// <summary>Dosya sekmesi İNCELE (<c>reviewResident</c>).</summary>
-        public static Func<Simulation, ActResult> ReviewCommand(string personId)
-        {
-            if (string.IsNullOrEmpty(personId)) return null;
-            return s => s.ReviewResident(personId);
-        }
-
-        /// <summary>Dosya sekmesi ERİŞİM: kısıtlı değilse kısıtlar, kısıtlıysa serbest bırakır (<c>restrictResident</c> "1"/"0").</summary>
-        public static Func<Simulation, ActResult> AccessCommand(string personId, Simulation sim)
-        {
-            var person = sim?.Board?.Person(personId);
-            if (person == null) return null;
-            bool restrict = !person.Restricted;
-            return s => s.RestrictResident(personId, restrict);
-        }
-
-        /// <summary>Dosya sekmesi TAHLİYE (<c>dismissResident</c>; basılı tutma görünümde).</summary>
-        public static Func<Simulation, ActResult> DismissCommand(string personId)
-        {
-            if (string.IsNullOrEmpty(personId)) return null;
-            return s => s.DismissResident(personId);
-        }
-
         /// <summary>Kişi bir cepte (BOŞTA dışı) mı: tek emp ana craft cook train.</summary>
         public static bool IsPocketJob(string job) => Array.IndexOf(PocketJobs, job) >= 0;
 
@@ -397,19 +374,17 @@ namespace Corrigible.Desk.Bridge
             return null;
         }
 
-        /// <summary>Core <c>BoardResidentJobCheck</c> ile aynı sıra.</summary>
+        /// <summary>Core <c>BoardResidentJobCheck</c> ile aynı sıra (KOS aşama 4: tecrit, görevsiz vardiya, olay kısıtında yalnız Eğitim).</summary>
         static string JobCheck(Simulation sim, ResidentState person, string job)
         {
             if (person == null || !person.Alive) return Loc.T("Bu sakin görev alamıyor.");
             if (Array.IndexOf(PlanningBoardData.Jobs, job) < 0) return Loc.T("Böyle bir görev yok.");
             if (job == "rest") return null;
             if (person.Down > 0 || person.Hp <= 0) return Loc.T("Yatan yaralı önce dinlenmeli.");
-            if (person.Restricted)
-            {
-                if (Array.IndexOf(PlanningBoardData.FieldJobs, job) >= 0 || job == "craft" || job == "contact" || job == "watch")
-                    return Loc.T("Kısıtlı sakin bu göreve erişemez.");
-                if (!sim.CanRestrictedResidentWork(person.Id)) return Loc.T("Kısıtlı sakin için ayrı gözetmen gerekiyor.");
-            }
+            if (person.Isolated) return Loc.T("Tecritteki sakin görev alamaz.");
+            if (sim.S.Day < (sim.Admission?.File(person.Id)?.IdleUntil ?? -1)) return Loc.T("Bu sakin bu vardiya görev alamaz.");
+            // Olay kısıtı: yalnız Eğitim ve Boşta açık (kısıtı yalnız olay kararı kurar)
+            if (person.Restricted && job != "train") return Loc.T("Kısıtlı sakin bu göreve erişemez.");
             return null;
         }
 
@@ -437,7 +412,7 @@ namespace Corrigible.Desk.Bridge
             if (equipment == null || equipment.Charges <= 0) return Loc.T("Bu eşya depoda veya kişide bulunmuyor.");
             personId = string.IsNullOrEmpty(personId) ? null : personId;
             var person = personId == null ? null : sim.Board.Person(personId);
-            if (personId != null && (person == null || !person.Alive || person.Restricted)) return Loc.T("Bu sakin teçhizat kullanamıyor.");
+            if (personId != null && (person == null || !person.Alive || person.Restricted || person.Isolated)) return Loc.T("Bu sakin teçhizat kullanamıyor.");
             if (equipment.OwnerId == personId) return Loc.T("Eşya zaten bu cepte.");
             return null;
         }

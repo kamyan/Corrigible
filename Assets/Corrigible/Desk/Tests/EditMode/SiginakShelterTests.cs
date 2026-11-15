@@ -10,7 +10,7 @@ namespace Corrigible.Desk.Tests
     /// <summary>Sığınak Aşama 6: oda hâlleri ve pano içeriği (not, maliyet, düğme hâlleri). Sahne bağlantısı sınamaları Aşama 10'da (T1a) maketle birlikte kalktı.</summary>
     public class SiginakShelterTests
     {
-        static Simulation NewLiberation(double fon = 100) => LegacySimulation.NewGame(731, new Balance { startFon = fon });
+        static Simulation NewLiberation(double fon = 100) => LegacySimulation.NewGame(731, new Balance { shelterEventsEnabled = false, startFon = fon });
 
         static ShelterRoomData Room(Simulation sim, string id) => ShelterViewBuilder.Rooms(sim, id).Single(r => r.Id == id);
 

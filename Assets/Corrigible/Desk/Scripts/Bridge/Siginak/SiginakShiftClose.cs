@@ -50,7 +50,7 @@ namespace Corrigible.Desk.Bridge
         /// <summary>Arşivin ait olduğu kayıt (yükleme / yeni oyun sırasında öteki dinleyicilerin erken yan dosya yazımına karşı).</summary>
         GameRecord archiveOf;
         HandoverSlipFacts live;
-        string planIssue;
+        string planIssue, eventIssue;
         bool filing, printing, rejectPending, reading, readSeen, suspendedByMe;
         int readFrame = -10, inputFrame = -10;
         SiginakPose readReturn;
@@ -145,7 +145,8 @@ namespace Corrigible.Desk.Bridge
             if (sim?.Board == null) return;
             if (rig != null) rig.Focus(SiginakPose.ShiftClose);
             if (telex != null && surface != null)
-                telex.Post(surface.Shift, Loc.T("ÖN KONTROL"), sim.BoardPlanCheck() ?? Loc.T("Plan hazır. Devir fişini çıkar."), TelexKind.Info);
+                telex.Post(surface.Shift, Loc.T("ÖN KONTROL"),
+                    sim.BoardPlanCheck() ?? ShelterEventSnapshotBuilder.PrintIssue(sim) ?? Loc.T("Plan hazır. Devir fişini çıkar."), TelexKind.Info);
         }
 
         /// <summary>
@@ -199,16 +200,19 @@ namespace Corrigible.Desk.Bridge
             bool ended = sim.S.Ending != null;
             bool story = game != null && game.StoryHold || briefing != null && briefing.Busy;
             // Rapor yalnız eski yolda açılır (kartlı oyunda EVRAK fiş arşividir, Karar D7-A)
-            var (plate, line) = LockReason(raid, ended, story, false, printed, printed ? null : planIssue);
+            var (plate, line) = LockReason(raid, ended, story, false, printed, printed ? null : planIssue, printed ? null : eventIssue);
             shiftSwitch.SetDisabled(plate != null, line, plate);
         }
 
         /// <summary>
-        /// Şalter kilidinin nedeni; öncelik baskın &gt; harekât bitti &gt; belge açık &gt; rapor açık (eski yol) &gt; plan. Basılıyken
+        /// Şalter kilidinin nedeni; öncelik baskın &gt; harekât bitti &gt; belge açık &gt; rapor açık (eski yol) &gt; plan &gt; olay. Basılıyken
         /// kilit yoktur (fiş dosyalanmalı). <c>plate</c> plakanın kısa metni, <c>line</c> üzerine gelme satırının uzun metni (o anki
         /// dilde); kilit yoksa ikisi de null. <paramref name="planIssue"/>: <c>BoardPlanCheck()</c>'in iletisi (null: plan geçerli).
+        /// <paramref name="eventIssue"/> (KOS aşama 4): açık olayın fiş kilidi (<c>ShelterEventPrintCheck</c>; Core <c>PrintShift</c>
+        /// sırasıyla plandan sonra).
         /// </summary>
-        public static (string plate, string line) LockReason(bool raid, bool ended, bool story, bool report, bool printed, string planIssue)
+        public static (string plate, string line) LockReason(bool raid, bool ended, bool story, bool report, bool printed, string planIssue,
+            string eventIssue = null)
         {
             if (printed) return (null, null);
             if (raid) return (Loc.T("baskın sürüyor"), Loc.T("Baskın sürüyor: vardiya bitirilemez."));
@@ -216,6 +220,7 @@ namespace Corrigible.Desk.Bridge
             if (story) return (Loc.T("belge açık"), Loc.T("Önce açılış belgesini kapat."));
             if (report) return (Loc.T("rapor açık"), Loc.T("Rapor açık: önce EVRAK tepsisine dosyala."));
             if (!string.IsNullOrEmpty(planIssue)) return (Loc.T("plan düzeltilmeli"), planIssue);
+            if (!string.IsNullOrEmpty(eventIssue)) return (Loc.T("olay bekliyor"), eventIssue);
             return (null, null);
         }
 
@@ -493,6 +498,7 @@ namespace Corrigible.Desk.Bridge
         void Changed()
         {
             planIssue = PlanIssue();
+            eventIssue = ShelterEventSnapshotBuilder.PrintIssue(Sim);
             // Dosyalama sürerken tazeleme yok: şalter kararmada kalkmaz, fiş tepside kalır
             if (!filing) Refresh(false);
         }
@@ -500,6 +506,7 @@ namespace Corrigible.Desk.Bridge
         void Relabel()
         {
             planIssue = PlanIssue();
+            eventIssue = ShelterEventSnapshotBuilder.PrintIssue(Sim);
             if (!filing) Refresh(false);
         }
 
@@ -551,6 +558,7 @@ namespace Corrigible.Desk.Bridge
                 tray.ShowFiled(archive.Count > 0 ? archive[archive.Count - 1] : null);
             }
             planIssue = PlanIssue();
+            eventIssue = ShelterEventSnapshotBuilder.PrintIssue(Sim);
             var board = Sim?.Board;
             if (shiftSwitch != null && board != null && !board.Printed)
             {

@@ -125,6 +125,15 @@ namespace Corrigible.Desk
             if (slip != null && slip.Visible) slip.Release();
         }
 
+        /// <summary>Fark fişinin dinlenme metni (KOS aşama 4; <see cref="DeltaSlip.SetRest"/>); null kaldırır.</summary>
+        public void SetRest(string text, Color ink)
+        {
+            if (slip != null) slip.SetRest(text, ink);
+        }
+
+        /// <summary>Fark fişi (testler).</summary>
+        public DeltaSlip Slip => slip;
+
         /// <summary>Modül yerinde <paramref name="times"/> kez yana titrer (eksik kaynağı gösterir; değer değişmez).</summary>
         public void Shake(int times = 2)
         {

@@ -196,28 +196,13 @@ namespace Corrigible.Desk.Tests
             CornerWordAt(face, ov.LostWord, new Vector2(70.4f, 9.6f), "KAYIP");
             RectAt(face, Field<Image>(ov, "selectedFrame").rectTransform, new Vector2(0.6f, 0.6f), new Vector2(78.8f, 118.8f), "seçim çerçevesi");
 
-            // İNCELE: 3B sözcük bayrağın kartın üstünden taşan kırmızı dilinde ortalı (model bayrağı yüz x 23–41 mm'de; CardStateOverlay
-            // onu gösterirken 6 mm yukarı alır; ataş sözcüğü örtmesin diye bayrağın önünde), 4,5 mm em (fontSize = em mm / 100; CP-Bold
-            // eşaralıklı, altı harf 16,2 mm). Ölçü bayrak gösterilirken (inceleme durumu).
-            ov.Apply(PersonStates.Review, new BoardWords());
-            var flag = ov.FlagWord;
-            Assert.IsNotNull(flag, "İNCELE sözcüğü");
-            Assert.IsInstanceOf<TextMeshPro>(flag, "İNCELE sözcüğü 3B TextMeshPro");
-            Assert.AreEqual(0.045f, flag.fontSize, 0.0005f, "İNCELE em 4,5 mm");
-            Assert.IsNotNull(ov.Flag, "Flag parçası bağlı");
-            var flagRenderer = ov.Flag.GetComponentInChildren<Renderer>(true);
-            Assert.IsNotNull(flagRenderer, "bayrak modeli");
-            var fMin = card.transform.InverseTransformPoint(flagRenderer.bounds.min);
-            var fMax = card.transform.InverseTransformPoint(flagRenderer.bounds.max);
-            var local = card.transform.InverseTransformPoint(flag.transform.position);
-            Assert.AreEqual((fMin.x + fMax.x) / 2, local.x, 0.0002f, "İNCELE bayrağın ortasında");
-            Assert.AreEqual(Mathf.Max(fMin.y, fMax.y) - 0.004f, local.y, 0.0002f, "İNCELE bayrağın kırmızı dilinin ortasında (üst kenarın 4 mm altı)");
-            // Bayrak 6 mm yukarıda: ataş adın üstünde kalır, adı örtmez (R16a); iç içe modelde geçersiz kılma yok
-            Assert.GreaterOrEqual(Mathf.Min(fMin.y, fMax.y), 0.0555f, "bayrağın alt ucu ad satırının üstünde");
-            Assert.Less(local.z, Mathf.Min(fMin.z, fMax.z), "İNCELE bayrağın önünde");
-            Assert.AreEqual(HorizontalAlignmentOptions.Center, flag.horizontalAlignment, "İNCELE ortalı");
-            Assert.AreEqual(VerticalAlignmentOptions.Middle, flag.verticalAlignment, "İNCELE dikeyde ortalı");
-            Assert.AreSame(ov.Flag, Field<PartDriver>(card, "flag"), "overlay ve kart aynı bayrağı sürer");
+            // Eski İNCELE bayrağı (aşama 7'de söküldü): overlay'de bayrak ve sözcük alanı yok; modelin Flag parçasını kart kurulumda gizler
+            Assert.IsNull(typeof(CardStateOverlay).GetField("flagWord", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance), "İNCELE sözcüğü söküldü");
+            Assert.IsNull(typeof(CardStateOverlay).GetField("flag", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance), "overlay bayrağı sürmez");
+            var cardFlag = Field<PartDriver>(card, "flag");
+            Assert.IsNotNull(cardFlag, "kartın Flag parçası bağlı (gizlemek için)");
+            card.Bind(Person("Cem", "Elektronikçi", "Teknisyen", false));
+            Assert.IsFalse(cardFlag.gameObject.activeSelf, "bayrak kurulumda gizlenir");
 
             // EN değer hücreleri (HP 3,5–24,5 · MOVE 24,5–47,5 · POWER 47,5–76,5) ve geri dönüş
             card.Portraits = null;
@@ -454,15 +439,14 @@ namespace Corrigible.Desk.Tests
                         case 0: d.Injured = true; d.Hurt = true; break;
                         case 1: d.Bedridden = true; d.StripTone = StripTone.Blue; break;
                         case 2: d.Restricted = true; d.StripTone = StripTone.Red; break;
-                        case 3: d.Review = true; break;
+                        case 3: d.Isolated = true; d.StripTone = StripTone.Red; break;
                         default: d.Lost = true; break;
                     }
                     person.Bind(d);
                     CheckSingleLines(pf, lang + " kişi", failures);
                     var ov = pf.Overlay;
-                    if (d.Restricted) CheckFit(ov.RestrictedWord, 20f, lang + " KISITLI köşesi", failures);
+                    if (d.Restricted || d.Isolated) CheckFit(ov.RestrictedWord, 20f, lang + (d.Isolated ? " TECRİT köşesi" : " KISITLI köşesi"), failures);
                     if (d.Lost) CheckFit(ov.LostWord, 22f, lang + " KAYIP köşesi", failures);
-                    if (d.Review) CheckFit(ov.FlagWord, 0.0164f, lang + " İNCELE bayrağı (m)", failures);
                 }
                 foreach (var job in jobs)
                 {
@@ -754,7 +738,7 @@ namespace Corrigible.Desk.Tests
         static BoardWords Words(bool english) => new BoardWords
         {
             Injured = Tr(english, "YARALI", "INJURED"), Bedridden = Tr(english, "YATIYOR", "LAID UP"),
-            Restricted = Tr(english, "KISITLI", "RESTRICTED"), Review = Tr(english, "İNCELE", "REVIEW"), Lost = Tr(english, "KAYIP", "LOST"),
+            Restricted = Tr(english, "KISITLI", "RESTRICTED"), Isolated = Tr(english, "TECRİT", "ISOLATED"), Lost = Tr(english, "KAYIP", "LOST"),
             Free = Tr(english, "serbest", "free"), Kit = Tr(english, "KİT", "KIT"), Armor = Tr(english, "ZIRH", "ARMOUR"), Aid = Tr(english, "YARDIMCI", "AID"),
         };
 

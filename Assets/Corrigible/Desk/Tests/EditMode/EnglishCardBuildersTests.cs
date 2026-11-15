@@ -33,10 +33,6 @@ namespace Corrigible.Desk.Tests
         /// <summary>Denetlenen vardiyalar (1 tabanlı, plan: V.001 / V.005 / V.009 / V.031); ulaşılamayan son vardiyalar atlanır.</summary>
         static readonly int[] LaterShifts = { 5, 9, 31 };
 
-        /// <summary>Kapıda karar sırası: her kabul damgası en az bir kez iz bıraksın (KABUL, KISITLI, RED, YARDIM).</summary>
-        static readonly string[] Decisions = { "admit", "restricted", "reject", "aid" };
-
-        static readonly string[] Inspections = { "papers", "interview", "breath", "record" };
 
         // Büyük/küçük harf duyarlı: IgnoreCase "ı"yı "I" ile eşleştirir
         static readonly Regex TurkishLetters = new Regex("[ğüşıöçĞÜŞİÖÇ]");
@@ -76,6 +72,7 @@ namespace Corrigible.Desk.Tests
                 Loc.SetLanguage(Loc.English, english);   // önce dil, sonra oyun
                 candidateSeen = PlayMainLine(harvest, reached);
                 PlayRetreat(harvest);
+                candidateSeen &= PlayFullShelter(harvest);
                 harvest.Add("sim yok", BoardDropRules.CanPick(BoardCardKind.Person, "sakin-1", null));
             }
             finally { Loc.Missing -= OnMissing; }
@@ -87,7 +84,7 @@ namespace Corrigible.Desk.Tests
             Assert.IsEmpty(turkish, "Türkçe kalan metinler:\n" + string.Join("\n", turkish.Take(40)));
 
             CollectionAssert.IsSubsetOf(new[] { 1, 5 }, reached, "V.001 ve V.005 tohum 79'da ulaşılabilir olmalı.");
-            Assert.IsTrue(candidateSeen, "Kapıda aday görülmedi: kabul kurucusu sınanmadı.");
+            Assert.IsTrue(candidateSeen, "Kapıda aday grubu görülmedi: kabul kurucusu sınanmadı.");
             Assert.Greater(harvest.Count, 500, "Toplanan metin beklenenden az: yansıma veriyi görmüyor olabilir.");
         }
 
@@ -96,14 +93,17 @@ namespace Corrigible.Desk.Tests
         /// <summary>Kartlı harekât, tohum 79; açılış komutları panonun ilk açılışıyla aynı (<c>PlanningBoardPresenter.RetireJobs</c>).</summary>
         static Simulation NewGame()
         {
-            var sim = Simulation.NewGame(Seed, new Balance { planningBoardEnabled = true, liberationAlarmPerShift = 0 });
+            var sim = Simulation.NewGame(Seed, new Balance { shelterEventsEnabled = false, planningBoardEnabled = true, liberationAlarmPerShift = 0 });
             Ok(sim.EnableAutomaticProduction());
             foreach (var p in sim.Board.People.Where(p => p.Alive && (p.Job == "care" || p.Job == "gather" || p.Job == "watch" || p.Job == "contact")).ToArray())
                 Ok(sim.AssignResident(p.Id, "rest"));
             return sim;
         }
 
-        /// <summary>V.001'in iş emri, baskın ve kilitli plan durumları, sonra sıradaki vardiyalar. Kapıda aday görüldüyse true.</summary>
+        /// <summary>
+        /// V.001'in iş emri, baskın ve kilitli plan durumları, sonra sıradaki vardiyalar. Kapıda grup varsa sırayla bir aday alınır
+        /// (<c>ChooseCandidate</c>) ya da grup geri çevrilir (<c>PassCandidates</c>). Kapıda aday grubu görüldüyse true.
+        /// </summary>
         static bool PlayMainLine(Harvest h, List<int> reached)
         {
             var sim = NewGame();
@@ -135,12 +135,18 @@ namespace Corrigible.Desk.Tests
                 reached.Add(shift);
                 string tag = "V." + shift.ToString("000");
                 Sweep(h, sim, tag);
-                if (sim.Admission?.Candidate == null) continue;
+                // Grup o vardiyada kapıda değilse gelene dek (en çok dört kapanış) beklenir
+                for (int i = 0; i < 4 && sim.Admission.Group.Count == 0 && sim.S.Ending == null; i++)
+                {
+                    SendHome(sim);
+                    AdmissionFixtures.CloseTo(sim, sim.S.Day + 1);
+                }
+                if (sim.Admission.Group.Count == 0) continue;
 
                 candidateSeen = true;
-                foreach (string kind in Inspections) sim.InspectApplicant(kind);   // dış kayıt gözetmensiz reddedilebilir; ileti de toplanır
-                Sweep(h, sim, tag + " incelendi");
-                sim.DecideApplicant(Decisions[decision++ % Decisions.Length]);
+                Sweep(h, sim, tag + " grup");
+                if (decision++ % 2 == 0) Ok(sim.ChooseCandidate(sim.Admission.Group[0].Resident.Id));
+                else Ok(sim.PassCandidates());
                 Sweep(h, sim, tag + " karar");
             }
             Endings(h, sim);
@@ -158,6 +164,28 @@ namespace Corrigible.Desk.Tests
             SendHome(sim);
             AdmissionFixtures.CloseTo(sim, sim.S.Day + 1);
             Sweep(h, sim, "geri çekilme sonrası");
+        }
+
+        /// <summary>
+        /// Dolu sığınak ve acil grup (kapasite 8, acil eşiği 9, her kapanışta grup): YER YOK listesi, yollanacak kişi satırı, kit ekli
+        /// kartlar, son vardiya uyarısı; sonra işaretli kişiyle seçim. Grup görüldüyse true.
+        /// </summary>
+        static bool PlayFullShelter(Harvest h)
+        {
+            var sim = Simulation.NewGame(Seed, new Balance
+            { shelterEventsEnabled = false,
+                planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 1, admissionKnockMax = 1,
+                boardResidentCapacity = 8, candidateEmergencyBelow = 9,
+            });
+            AdmissionFixtures.CloseTo(sim, 1);
+            if (sim.Admission.Group.Count == 0) return false;
+            Sweep(h, sim, "dolu sığınak");
+            AdmissionFixtures.CloseTo(sim, 2);
+            Sweep(h, sim, "dolu sığınak son vardiya");
+            if (sim.Admission.Group.Count == 0) return false;
+            Ok(sim.ChooseCandidate(sim.Admission.Group[0].Resident.Id, sim.Board.People.Last(p => p.Alive).Id));
+            Sweep(h, sim, "dolu sığınak karar");
+            return true;
         }
 
         /// <summary>Yatan ya da kısıtlı saha görevlisini Boşta'ya alır: plan basılabilsin.</summary>
@@ -202,24 +230,27 @@ namespace Corrigible.Desk.Tests
             var ui = new AdmissionUi();
             var snap = AdmissionSnapshotBuilder.Build(sim, ui);
             h.Walk(tag + "/Kabul", snap);
-            ui.DocumentOnCounterFor = sim.Admission?.Candidate?.Resident?.Id;
-            var counter = AdmissionSnapshotBuilder.Build(sim, ui);
-            h.Walk(tag + "/Kabul tezgâh", counter);
-
-            foreach (AdmissionTool tool in Enum.GetValues(typeof(AdmissionTool)))
+            // Aday grubu: dolu sığınakta her kişi işaretliyken (yollanacak satırı), sonra KABUL ve GERİ ÇEVİR izleriyle
+            if (snap.Group != null)
             {
-                h.Add(tag + "/Araç", AdmissionSnapshotBuilder.ToolTitle(tool));
-                h.Add(tag + "/Fiş", AdmissionSnapshotBuilder.SlipTitle(tool));
+                foreach (var row in snap.Group.Replace)
+                {
+                    ui.ReplaceForGroup = snap.Group.Key;
+                    ui.ReplaceId = row.Id;
+                    h.Walk(tag + "/Kabul işaretli", AdmissionSnapshotBuilder.Build(sim, ui));
+                }
+                var stamped = AdmissionSnapshotBuilder.Build(sim, ui);
+                AdmissionSnapshotBuilder.StampCard(stamped.Group, stamped.Group.Cards[0].Id, sim.B);
+                AdmissionSnapshotBuilder.StampPass(stamped.Group);
+                h.Walk(tag + "/Kabul damgalı", stamped);
             }
-            foreach (StampChoice choice in Enum.GetValues(typeof(StampChoice)))
+
+            foreach (var choice in new[] { StampChoice.Admit, StampChoice.Reject })
             {
                 h.Add(tag + "/Damga plakası", AdmissionSnapshotBuilder.StampPlate(choice));
                 h.Add(tag + "/Damga sapı", AdmissionSnapshotBuilder.StampCap(choice));
                 h.Walk(tag + "/Damga izi", AdmissionSnapshotBuilder.ImpressionLines(choice, sim.B));
             }
-            h.Add(tag + "/Talep uyarısı", AdmissionSnapshotBuilder.RequestWarning(sim));
-            foreach (var person in sim.Board.People.Where(p => p.Alive))
-                h.Add(tag + "/İnceleme uyarısı", AdmissionSnapshotBuilder.ReviewWarning(sim, person.Id));
         }
 
         static void Handover(Harvest h, Simulation sim, string tag)
@@ -356,8 +387,7 @@ namespace Corrigible.Desk.Tests
             public void LearnNames(Simulation sim)
             {
                 var people = sim.Board.People.Select(p => p.Name).ToList();
-                var candidate = sim.Admission?.Candidate?.Resident?.Name;
-                if (candidate != null) people.Add(candidate);
+                if (sim.Admission != null) people.AddRange(sim.Admission.Group.Select(c => c.Resident.Name));
                 foreach (string name in people.Where(n => !string.IsNullOrEmpty(n)))
                 {
                     names.Add(name);

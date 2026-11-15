@@ -18,8 +18,10 @@ using Object = UnityEngine.Object;
 namespace Corrigible.Desk.Tests
 {
     /// <summary>
-    /// Revizyon 3 · Aşama 6 (R9, R17; PLAN §2.2–§2.3, W6) kaydedilmiş DeskGame: kapıdaki kabul istasyonu, araçları, damgaları, kâğıtları,
-    /// buğu camı, interkom, tezgâh lambası, K8A/K8G/K8R pozları, poz ışığı, kişi dosyasının etiketi ve plaka çevirileri. Sahne gerektiren
+    /// Revizyon 3 · Aşama 6 (R9, R17; PLAN §2.2–§2.3, W6) ve KOS aşama 2/7 kaydedilmiş DeskGame: kapıdaki kabul istasyonu, iki damgası,
+    /// aday kartları ve grup fişi, tezgâh lambası, K8A/K8R pozları, poz ışığı, kişi dosyasının etiketi ve plaka çevirileri. Eski tek adaylı
+    /// kabulün nesneleri (büyüteç, talep defteri, kalem, KISITLI/YARDIM damgaları, belge, şeritler, fişler, tenekeler, etiketler) ve buğu
+    /// camı ile interkomun etkileşimi aşama 7'de söküldü; testler bunların sahnede olmadığını da sınar. Sahne gerektiren
     /// testler kullanıcının açık DeskGame'ine dokunmaz (<c>Assert.Ignore</c>); boş sahnede koş. Sahneyi tek seferlik
     /// <c>Rev3Stage6Scene.Apply()</c> kurar; testler o script'e bağlı değildir (o silinir), yalnız kayıtlı sahneyi okur.
     /// </summary>
@@ -79,49 +81,33 @@ namespace Corrigible.Desk.Tests
 
         // ================================================================== S1 · bileşenler
 
-        /// <summary>S1: her istasyon bileşeninden bir tane (damga dört, dört karar), bütün bağlar dolu; dört giriş noktası akışa bağlı.</summary>
+        /// <summary>S1: her istasyon bileşeninden bir tane (iki damga: KABUL, GERİ ÇEVİR), bütün bağlar dolu; dört giriş noktası akışa bağlı; eksik script yok.</summary>
         [Test]
         public void S1_Required_OneEach()
         {
             Open();
             var station = Station;
             var flow = Flow;
-            var glass = One<ColdGlassView>();
-            var intercom = One<IntercomTool>();
-            var magnifier = One<MagnifierTool>();
-            var pad = One<RequestPadTool>();
             var tag = One<FileTagView>();
             var stamps = roots.SelectMany(r => r.GetComponentsInChildren<StampDecision>(true)).ToList();
-            Assert.AreEqual(4, stamps.Count, "dört damga");
-            CollectionAssert.AreEquivalent(new[] { StampChoice.Admit, StampChoice.Restricted, StampChoice.Reject, StampChoice.Aid }, stamps.Select(s => s.Choice).ToArray());
+            Assert.AreEqual(2, stamps.Count, "iki damga");
+            CollectionAssert.AreEquivalent(new[] { StampChoice.Admit, StampChoice.Reject }, stamps.Select(s => s.Choice).ToArray());
 
             var problems = new List<string>();
             Filled(station, problems, "hoverTag", "counterBody", "top", "bracketL", "bracketR", "counterHit", "deskKeyHit", "lampBody", "lampOn", "lampOff",
-                "counterSpot", "panel", "drawer", "marker", "jewel", "documentPaper", "stripPaper", "magnifier", "pad");
-            ArrayOf(station, "archivePapers", 2, problems);
-            ArrayOf(station, "slipPapers", 5, problems);
-            ArrayOf(station, "tins", 2, problems);
-            ArrayOf(station, "stamps", 4, problems);
-            if (new SerializedObject(station).FindProperty("looseTools").arraySize < 6) problems.Add("AdmissionStation.looseTools < 6");
+                "counterSpot", "panel", "drawer", "candidates");
+            ArrayOf(station, "stamps", 2, problems);
+            ArrayOf(station, "looseTools", 3, problems);
             Assert.AreEqual(4, new SerializedObject(station).FindProperty("lampSlot").intValue, "lamba camı yuvası 4");
             foreach (var s in stamps) Filled(s, problems, "hit", "band", "lockTongue", "frame", "view", "capLabel");
-            Filled(magnifier, problems, "frame", "carriage", "hit", "view");
-            Filled(pad, problems, "sheet", "sheetPaper", "carbonPaper", "panel", "hit", "view");
-            Filled(glass, problems, "cover", "fog", "hit");
-            Filled(intercom, problems, "button", "led", "ledOn", "ledOff", "hit");
             Filled(tag, problems, "label");
-            Filled(flow, problems, "game", "surface", "rig", "telex", "door", "doorController", "station", "glass", "intercom", "magnifier", "pad", "desk",
-                "planningBoard", "hoverTag", "readAnchor");
-            ArrayOf(flow, "stamps", 4, problems);
+            Filled(flow, problems, "game", "surface", "rig", "telex", "door", "doorController", "station", "desk", "planningBoard", "hoverTag", "readAnchor");
+            ArrayOf(flow, "stamps", 2, problems);
+            foreach (var mb in roots.SelectMany(r => r.GetComponentsInChildren<MonoBehaviour>(true)))
+                if (mb == null) { problems.Add("sahnede eksik script (Missing Script)"); break; }
             Assert.IsEmpty(problems, string.Join("\n", problems));
 
             Assert.AreSame(station, Reference<AdmissionStation>(flow, "station"));
-            Assert.AreSame(glass, Reference<ColdGlassView>(flow, "glass"));
-            Assert.AreSame(intercom, Reference<IntercomTool>(flow, "intercom"));
-            Assert.AreSame(magnifier, Reference<MagnifierTool>(flow, "magnifier"));
-            Assert.AreSame(pad, Reference<RequestPadTool>(flow, "pad"));
-            Assert.AreSame(magnifier, Reference<MagnifierTool>(station, "magnifier"));
-            Assert.AreSame(pad, Reference<RequestPadTool>(station, "pad"));
             Assert.AreSame(Door, Reference<DoorProp>(flow, "door"));
             Assert.AreSame(One<SiginakDoor>(), Reference<SiginakDoor>(flow, "doorController"));
             Assert.AreSame(One<PlanningBoardPresenter>(), Reference<PlanningBoardPresenter>(flow, "planningBoard"));
@@ -131,20 +117,19 @@ namespace Corrigible.Desk.Tests
             foreach (var owner in new Component[] { One<SiginakDoor>(), One<SiginakDesk>(), One<PlanningBoardPresenter>(), One<LiberationDeskView>() })
                 Assert.AreSame(flow, Reference<SiginakAdmission>(owner, "admission"), owner.GetType().Name + ".admission");
             Assert.AreSame(tag, Reference<FileTagView>(One<PersonFolderView>(), "fileTag"), "PersonFolderView.fileTag");
-            // kâğıt kökleri, damgalar ve araçlar istasyonun altında (tık ata zincirinden istasyona çıkar; W2 sözleşmesi)
-            foreach (var t in new[] { Reference<Transform>(station, "documentPaper"), Reference<Transform>(station, "stripPaper") }
-                         .Concat(References<Transform>(station, "archivePapers")).Concat(References<Transform>(station, "slipPapers")))
-                Assert.IsTrue(t.IsChildOf(station.transform), t.name + " istasyonun altında");
+            // damgalar istasyonun altında (tık ata zincirinden istasyona çıkar; W2 sözleşmesi)
             foreach (var s in stamps) Assert.IsTrue(s.transform.IsChildOf(station.transform), s.name);
-            Assert.IsTrue(magnifier.transform.IsChildOf(station.transform) && pad.transform.IsChildOf(station.transform));
+            CollectionAssert.AreEquivalent(stamps, References<StampDecision>(station, "stamps"));
+            CollectionAssert.AreEquivalent(stamps, References<StampDecision>(flow, "stamps"));
         }
 
         // ================================================================== S2 · yerleşim
 
         /// <summary>
-        /// S2: modeller manifestteki yerde (±1 mm): istasyon ADM tabanında, lamba (2,20; 1,78; −0,43), araçlar Top yerelinde (DA:112–133),
-        /// damgalar Slot1..4'te, tenekeler çekmecede; buğu camı kanadın Hinge'inin çocuğu ve kanat 95° açılınca birlikte döner. Uydu model
-        /// örneklerinde parça taşıma geçersiz kılması yok; tezgâh ve panelde yalnız bileşenin sürdüğü parçalar (katlı hâl).
+        /// S2: modeller manifestteki yerde (±1 mm): istasyon ADM tabanında, lamba (2,20; 1,78; −0,43), raf ve MASA tuşu Top yerelinde (DA:112–133),
+        /// iki damga rafın orta yuvalarında (KABUL Slot2, GERİ ÇEVİR Slot3; aşama 7, K1), rafın yuva dipleri ahşap (boş yuva görünmez); buğu
+        /// camının gövdesi kanat pivotunun (Bunker door/Leaf) çocuğu ve kanat 95° açılınca birlikte döner. Uydu model örneklerinde parça taşıma
+        /// geçersiz kılması yok; tezgâh ve panelde yalnız bileşenin sürdüğü parçalar (katlı hâl).
         /// </summary>
         [Test]
         public void S2_Models_PlacedByManifest()
@@ -170,9 +155,6 @@ namespace Corrigible.Desk.Tests
                 Assert.Less(Quaternion.Angle(Quaternion.Euler(0f, yaw, 0f), m.transform.localRotation), 0.1f, model + " yaw " + yaw);
             }
             OnTop("DecisionStampRack", new Vector3(0.30f, 0.003f, -0.22f), -8f);
-            OnTop("Magnifier", new Vector3(0.02f, 0.0035f, -0.22f), 182f);
-            OnTop("RequestPad", new Vector3(-0.295f, 0.003f, -0.215f), 6f);
-            OnTop("Pencil", new Vector3(-0.215f, 0.0075f, -0.245f), 70f);
             OnTop("KeyKey", new Vector3(-0.385f, 0f, -0.225f), 0f);
             var key = ModelUnder(station, "KeyKey");
             Assert.IsFalse(key.Part("Tag").gameObject.activeSelf, "MASA tuşunda dikkat fişi (Tag) gizli");
@@ -180,40 +162,43 @@ namespace Corrigible.Desk.Tests
             var rack = ModelUnder(station, "DecisionStampRack");
             foreach (var s in station.GetComponentsInChildren<StampDecision>(true))
             {
-                var slot = rack.Anchor("Slot" + ((int)s.Choice + 1));
+                var slot = rack.Anchor(s.Choice == StampChoice.Admit ? "Slot2" : "Slot3");
                 Assert.AreSame(slot, s.transform.parent, s.name + " kendi yuvasında (" + s.Choice + ")");
                 Near(new Vector3(0f, 0.0005f, 0f), s.transform.localPosition, 1e-4f, s.name);
                 Assert.IsNotNull(s.LockTongue, s.name + " kilit dili");
                 Assert.IsNull(s.LockTongue.GetComponent<Collider>(), "kilit dilinde çarpıştırıcı yok (ışını yutmasın)");
+                Assert.AreSame(slot, s.LockTongue.transform.parent, s.name + ": kilit dili kendi yuvasında");
             }
+            foreach (string empty in new[] { "Slot1", "Slot4" })
+                Assert.AreEqual(0, rack.Anchor(empty).childCount, empty + ": dış yuva boş (dil ve damga söküldü)");
+            var rackBody = rack.GetComponentsInChildren<MeshRenderer>(true).Single(r => r.sharedMaterials.Length == 4);
+            Assert.AreSame(rackBody.sharedMaterials[0], rackBody.sharedMaterials[1], "yuva dipleri gövdenin ahşabında (boş yuva görünmez)");
             var drawer = panel.Part("Drawer");
-            var tins = References<GameObject>(station, "tins");
-            Assert.IsTrue(tins.All(t => t.transform.parent == drawer.transform && t.GetComponent<Rev3Model>().ModelName == "RationTin"), "iki teneke çekmecede");
+            Assert.IsFalse(drawer.GetComponentsInChildren<Rev3Model>(true).Any(m => m.ModelName == "RationTin"), "çekmecede teneke yok");
 
-            // Buğu camı: Hinge çocuğu, kapalıyken (2,213; 1,46; 0,58), kanatla döner
-            var glass = One<ColdGlassView>();
+            // Buğu camı: kanat pivotunun (Bunker door/Leaf; yeni kapı modelinin menteşe ekseni, yerel y aşağı) çocuğu, kapalıyken kanadın
+            // iç panosunda (2,263; 1,46; 0,58), yüzü odaya; kanatla döner
             var hinge = Reference<Transform>(Door, "leaf");
-            Assert.AreSame(hinge, glass.transform.parent, "ColdGlass DoorLeaf/Hinge'in çocuğu");
-            Near(new Vector3(-0.27f, 1.46f, -0.025f), glass.transform.localPosition, 1e-4f, "Hinge yereli");
-            Assert.Less(Quaternion.Angle(Quaternion.identity, glass.transform.localRotation), 0.01f, "birim dönme");
-            Near(new Vector3(2.213f, 1.46f, 0.58f), glass.transform.position, 2 * Mm, "kapalı kapıda cam");
+            var glass = hinge.GetComponentsInChildren<Rev3Model>(true).Single(m => m.ModelName == "ColdGlass");
+            Assert.AreSame(hinge, glass.transform.parent, "ColdGlass Bunker door/Leaf'in çocuğu");
+            Near(new Vector3(0.0775f, -1.466f, -0.369f), glass.transform.localPosition, 1e-4f, "Leaf yereli");
+            Assert.Less(Quaternion.Angle(Quaternion.Euler(0f, 90f, 0f), glass.transform.rotation), 0.01f, "yüzü odaya (dünya y 90°)");
+            Near(new Vector3(2.263f, 1.46f, 0.58f), glass.transform.position, 2 * Mm, "kapalı kapıda cam");
             var rest = hinge.localRotation;
             try
             {
                 hinge.localRotation = rest * Quaternion.Euler(0f, 95f, 0f);
-                Assert.Greater(Vector3.Distance(new Vector3(2.213f, 1.46f, 0.58f), glass.transform.position), 0.1f, "kanat 95°: cam birlikte döner");
+                Assert.Greater(Vector3.Distance(new Vector3(2.263f, 1.46f, 0.58f), glass.transform.position), 0.1f, "kanat 95°: cam birlikte döner");
                 Near(hinge.TransformPoint(glass.transform.localPosition), glass.transform.position, 1e-5f, "cam kanadın çerçevesinde");
             }
             finally { hinge.localRotation = rest; }
 
             // Parça taşıma geçersiz kılmaları
             var problems = new List<string>();
-            var satellites = new List<Rev3Model> { rack, ModelUnder(station, "Magnifier"), ModelUnder(station, "RequestPad"), ModelUnder(station, "Pencil"), key,
-                glass.GetComponent<Rev3Model>(), One<FileTagView>().GetComponent<Rev3Model>() };
+            var satellites = new List<Rev3Model> { rack, key, glass, One<FileTagView>().GetComponent<Rev3Model>() };
             satellites.AddRange(station.GetComponentsInChildren<StampDecision>(true).Select(s => s.GetComponent<Rev3Model>()));
-            satellites.AddRange(tins.Select(t => t.GetComponent<Rev3Model>()));
             foreach (var m in satellites) problems.AddRange(PartMoves(m.gameObject, new HashSet<string>()));
-            var driven = new HashSet<string> { "Top", "BracketL", "BracketR", "Drawer", "Marker" };
+            var driven = new HashSet<string> { "Top", "BracketL", "BracketR", "Drawer" };
             problems.AddRange(PartMoves(counter.gameObject, driven));
             problems.AddRange(PartMoves(panel.gameObject, driven));
             problems.AddRange(PartMoves(lamp.gameObject, new HashSet<string>()));
@@ -259,9 +244,8 @@ namespace Corrigible.Desk.Tests
         // ================================================================== S4 · tıklanmayanlar ve gerçek ışın
 
         /// <summary>
-        /// S4: kanat, çark ve gözetleme kapağı tıklanmaz (kanatta buğu camından başka çarpıştırıcı yok; K8'den çarka/gözetlemeye ışın yalnız
-        /// kapının kendi kutusuna çarpar, ayrı hedef yok). Etkileşimli hâl taklit edilince (cam, interkom kutuları açık) K8'den cama ve interkoma
-        /// ilk çarpılan kendi hedefidir (kapı kutusu kanat yüzünün arkasında, D25). K8A'dan EVRAK çekmecesi ve GİDEN ağzı kapı kutusunca yutulmaz.
+        /// S4: kanat, çark, gözetleme kapağı, buğu camı ve interkom tıklanmaz (aşama 7: kanatta ve interkom kutusunda çarpıştırıcı yok; K8'den
+        /// çarka/gözetlemeye ışın yalnız kapının kendi kutusuna çarpar, ayrı hedef yok). K8A'dan EVRAK çekmecesi kapı kutusunca yutulmaz.
         /// </summary>
         [Test]
         public void S4_NotClickable_DoorWheelPeep_RealRays()
@@ -269,44 +253,21 @@ namespace Corrigible.Desk.Tests
             Open();
             var door = Door;
             var leaf = Reference<Transform>(door, "leaf");
-            var glass = One<ColdGlassView>();
-            var intercom = One<IntercomTool>();
             var doorBox = door.GetComponent<BoxCollider>();
-            foreach (var col in leaf.GetComponentsInChildren<Collider>(true))
-                Assert.IsTrue(col.transform.IsChildOf(glass.transform), "kanatta buğu camı dışında çarpıştırıcı: " + col.name);
+            Assert.IsEmpty(leaf.GetComponentsInChildren<Collider>(true), "kanatta çarpıştırıcı yok (buğu camı emekli)");
+            var intercom = door.GetComponentsInChildren<Rev3Model>(true).Single(m => m.ModelName == "IntercomBox");
+            Assert.IsEmpty(intercom.GetComponentsInChildren<Collider>(true), "interkom kutusunda çarpıştırıcı yok (emekli)");
             Assert.IsTrue(Rig.TryGetPose(SiginakPose.Door, out var k8));
             Assert.IsTrue(Rig.TryGetPose(SiginakPose.Admission, out var k8a));
-            var glassHit = Reference<Collider>(glass, "hit");
-            var intercomHit = Reference<Collider>(intercom, "hit");
-            Assert.IsFalse(glassHit.enabled || intercomHit.enabled, "cam ve interkom kutuları kapalı kaydedilir (akış K8 ailesinde açar)");
-            try
+            Physics.SyncTransforms();
+            foreach (var (part, what) in new[] { (Reference<Transform>(door, "wheel"), "çark"), (Reference<Transform>(door, "peepCover"), "gözetleme kapağı") })
             {
-                glassHit.enabled = true;
-                intercomHit.enabled = true;
-                Physics.SyncTransforms();
-                var toGlass = Hits(k8.anchor.position, glassHit.bounds.center);
-                Assert.IsNotEmpty(toGlass, "K8'den cama ışın");
-                Assert.AreSame(glassHit, toGlass[0].collider, "cama ilk çarpılan: " + toGlass[0].collider.name);
-                var toIntercom = Hits(k8.anchor.position, intercomHit.bounds.center);
-                Assert.IsNotEmpty(toIntercom, "K8'den interkoma ışın");
-                Assert.AreSame(intercomHit, toIntercom[0].collider, "interkoma ilk çarpılan: " + toIntercom[0].collider.name);
-                foreach (var (part, what) in new[] { (Reference<Transform>(door, "wheel"), "çark"), (Reference<Transform>(door, "peepCover"), "gözetleme kapağı") })
-                {
-                    var hits = Hits(k8.anchor.position, part.position);
-                    Assert.IsTrue(hits.Count == 0 || hits[0].collider == doorBox, what + ": ayrı hedef yok (ilk çarpılan " + (hits.Count > 0 ? hits[0].collider.name : "-") + ")");
-                }
-                var panel = ModelUnder(Station, "AdmissionPanel");
-                var drawerFace = panel.Slot("TXT_Drawer").transform.position;
-                var outSlot = panel.Anchor("OutSlot").position;
-                foreach (var (target, what) in new[] { (drawerFace, "EVRAK çekmecesi"), (outSlot, "GİDEN ağzı") })
-                    Assert.IsFalse(Hits(k8a.anchor.position, target).Any(h => h.collider == doorBox), what + " kapı kutusunca yutulmaz");
+                var hits = Hits(k8.anchor.position, part.position);
+                Assert.IsTrue(hits.Count == 0 || hits[0].collider == doorBox, what + ": ayrı hedef yok (ilk çarpılan " + (hits.Count > 0 ? hits[0].collider.name : "-") + ")");
             }
-            finally
-            {
-                glassHit.enabled = false;
-                intercomHit.enabled = false;
-                Physics.SyncTransforms();
-            }
+            var panel = ModelUnder(Station, "AdmissionPanel");
+            var drawerFace = panel.Slot("TXT_Drawer").transform.position;
+            Assert.IsFalse(Hits(k8a.anchor.position, drawerFace).Any(h => h.collider == doorBox), "EVRAK çekmecesi kapı kutusunca yutulmaz");
         }
 
         List<RaycastHit> Hits(Vector3 from, Vector3 to)
@@ -320,7 +281,7 @@ namespace Corrigible.Desk.Tests
         // ================================================================== S5 · çarpıştırıcılar
 
         /// <summary>
-        /// S5: istasyon, cam ve interkomun bütün çarpıştırıcıları kendi nesnelerinin ekseninde kutu (GELISTIRME "dönük nesnenin çarpıştırıcısı")
+        /// S5: istasyonun bütün çarpıştırıcıları (tezgâh, MASA tuşu, iki damga, aday kartları, grup fişi) kendi nesnelerinin ekseninde kutu (GELISTIRME "dönük nesnenin çarpıştırıcısı")
         /// ve kapalı kaydedilir; tezgâh hedefinin üst yüzü keçeyi (Top yereli y 0,003) geçmez; kapı kutusu çerçeve genişliğinde (1,27 m) ve
         /// kanat yüzünün arkasında (dünya x ≥ 2,213). İstasyon, cam ve interkom kutularının hiçbiri kapı kutusunu kesmez ve kapı kutusu onlara
         /// giden odadan (K8, K8A) ışınların önüne geçmez: kapı kutusunun dz/dy aralığıyla örtüşen her kutu onun ön yüzünün (dünya x) önündedir.
@@ -332,10 +293,8 @@ namespace Corrigible.Desk.Tests
         {
             Open();
             var station = Station;
-            var glass = One<ColdGlassView>();
-            var intercom = One<IntercomTool>();
-            var all = station.GetComponentsInChildren<Collider>(true).Concat(glass.GetComponentsInChildren<Collider>(true)).Concat(intercom.GetComponentsInChildren<Collider>(true)).ToList();
-            Assert.Greater(all.Count, 12);
+            var all = station.GetComponentsInChildren<Collider>(true).ToList();
+            Assert.GreaterOrEqual(all.Count, 8, "tezgâh, MASA tuşu, iki damga, üç kart, grup fişi");
             foreach (var col in all)
             {
                 Assert.IsInstanceOf<BoxCollider>(col, col.name + ": kutu (kendi ekseninde)");
@@ -367,9 +326,6 @@ namespace Corrigible.Desk.Tests
                 Assert.IsTrue(apart || cb.max.x < b.min.x, Rev3SceneRefAudit.PathOf(col.transform) + ": kapı kutusuyla örtüşür ya da onun arkasında (kutu "
                     + cb.min.ToString("F3") + " … " + cb.max.ToString("F3") + ", kapı " + b.min.ToString("F3") + " … " + b.max.ToString("F3") + ")");
             }
-            var gb = WorldBounds(Reference<BoxCollider>(glass, "hit"));
-            Assert.Less(gb.max.x, b.min.x, "cam kutusu kapı kutusunun önünde");
-            Assert.Less(WorldBounds(Reference<BoxCollider>(intercom, "hit")).max.z, b.min.z, "interkom kutusu kapı kutusunun dışında");
         }
 
         /// <summary>Kutunun dünya sınırı (kapalı çarpıştırıcıda <c>Collider.bounds</c> boştur; köşelerden).</summary>
@@ -466,19 +422,15 @@ namespace Corrigible.Desk.Tests
 
         // ================================================================== S9 · kâğıtlar
 
-        /// <summary>S9: kâğıt yüzlerinin yazıları fontun kendi (ışıksız) malzemesiyle ve ışın yakalamaz; GraphicRaycaster yok; kâğıt malzemesinin
-        /// rengi albedo ≤ 0,8 (token <c>admission.paperAlbedo</c>); kâğıt Quad'ları gölge düşürmez.</summary>
+        /// <summary>S9: aday kartlarının ve grup fişinin yazıları fontun kendi (ışıksız) malzemesiyle ve ışın yakalamaz; GraphicRaycaster yok;
+        /// kâğıt malzemesinin rengi albedo ≤ 0,8 (token <c>admission.paperAlbedo</c>); kâğıt Quad'ları gölge düşürmez.</summary>
         [Test]
         public void S9_Papers_UnlitInk_NoRaycast()
         {
             Open();
-            var station = Station;
-            var pad = One<RequestPadTool>();
-            var papers = new List<Transform> { Reference<Transform>(station, "documentPaper"), Reference<Transform>(station, "stripPaper"),
-                Reference<Transform>(pad, "sheetPaper"), Reference<Transform>(pad, "carbonPaper") };
-            papers.AddRange(References<Transform>(station, "archivePapers"));
-            papers.AddRange(References<Transform>(station, "slipPapers"));
-            Assert.AreEqual(11, papers.Distinct().Count(), "belge, şerit, 2 ESKİ, 5 fiş, talep yaprağı, karbon");
+            var view = One<CandidateGroupView>();
+            var papers = new List<Transform>(References<Transform>(view, "cardPapers")) { Reference<Transform>(view, "slipPaper") };
+            Assert.AreEqual(4, papers.Distinct().Count(), "üç aday kartı ve grup fişi");
             float albedo = Theme.NumberOf("admission.paperAlbedo", 0.8f);
             var problems = new List<string>();
             foreach (var p in papers)
@@ -503,57 +455,51 @@ namespace Corrigible.Desk.Tests
                 }
             }
             Assert.IsEmpty(problems, string.Join("\n", problems));
-            var fog = Reference<Renderer>(One<ColdGlassView>(), "fog");
-            Assert.AreEqual("Cold fog", fog.sharedMaterial.name);
-            Assert.AreEqual(108f, fog.transform.localScale.x * 1000f, 0.5f, "buğu Ø 108 mm");
-            Assert.AreEqual(ShadowCastingMode.Off, fog.shadowCastingMode);
-            Assert.IsNull(fog.GetComponent<Collider>(), "buğu Quad'ında çarpıştırıcı yok");
         }
 
         // ================================================================== S10 · sesler
 
-        /// <summary>S10 (D23, D5 = c): kabul cue'ları 120–128 enum'un sonunda, bankada yer tutucu klipli (klipsiz cue sessiz kalırdı).</summary>
+        /// <summary>
+        /// S10 (D23, D5 = c): kabul cue'ları 120–122 ve 127–128, bankada yer tutucu klipli (klipsiz cue sessiz kalırdı). Aşama 7: 123–126 (bulgu
+        /// fişi, interkom, buğu camı, talep defteri) enum'dan ve bankadan söküldü.
+        /// </summary>
         [Test]
         public void S10_Sounds_CueMap()
         {
-            var cues = new[] { Cue.AdmissionCounterDown, Cue.AdmissionDrawer, Cue.AdmissionMarker, Cue.AdmissionSlip, Cue.AdmissionIntercom,
-                Cue.AdmissionGlass, Cue.AdmissionPadTear, Cue.AdmissionStampLift, Cue.AdmissionCounterFold };
-            CollectionAssert.AreEqual(Enumerable.Range(120, 9).ToArray(), cues.Select(c => (int)c).ToArray());
-            Assert.AreEqual(128, Enum.GetValues(typeof(Cue)).Cast<Cue>().Max(c => (int)c), "128 en sonda (asset'te sayı)");
+            var cues = new[] { Cue.AdmissionCounterDown, Cue.AdmissionDrawer, Cue.AdmissionMarker, Cue.AdmissionStampLift, Cue.AdmissionCounterFold };
+            CollectionAssert.AreEqual(new[] { 120, 121, 122, 127, 128 }, cues.Select(c => (int)c).ToArray());
+            // KOS aşama 6: İFŞA şeridinin sesi (129) kabulün seslerinden sonra eklendi
+            Assert.AreEqual(129, Enum.GetValues(typeof(Cue)).Cast<Cue>().Max(c => (int)c), "129 en sonda (asset'te sayı)");
+            Assert.AreEqual(129, (int)Cue.ExposureStep);
             var bank = AssetDatabase.LoadAssetAtPath<SoundBank>(SoundBankPath);
             Assert.IsNotNull(bank, SoundBankPath);
             foreach (var cue in cues) Assert.IsNotNull(bank.Cue(cue).clip, cue + ": klip yok (D5 = c)");
+            Assert.IsFalse(bank.cues.Any(c => (int)c.cue >= 123 && (int)c.cue <= 126), "sökülen seslerin banka girdisi yok");
         }
 
         // ================================================================== plakalar
 
         /// <summary>
-        /// R17-EN: plakalar yuva yuva (EVRAK/PAPERS, GİDEN · TELSİZ/OUT · RADIO, TALİMAT/ORDERS, ESKİ/OLD, BULGU/FINDING, BULGULAR/FINDINGS,
-        /// KABUL/ADMISSION, raf TXT_S1–4, ERZAK/RATIONS ×2, BUĞU CAMI/BREATH GLASS, İNTERKOM/INTERCOM, MASA/DESK) <c>DeskLocText</c> kaynağı = metin
-        /// ve tablodaki EN; 3B plakalar ışıklı TMP malzemesinde; TALİMAT/BULGULAR em ≥ 10,6 mm (D14); damga sapları ve dosya etiketi koddan
-        /// yazılır (DeskLocText yok).
+        /// R17-EN: plakalar yuva yuva (EVRAK/PAPERS, KABUL/ADMISSION, raf TXT_S2 (KABUL) ve TXT_S3 (GERİ ÇEVİR), BUĞU CAMI/BREATH GLASS ve
+        /// İNTERKOM/INTERCOM gövde plakaları, MASA/DESK) <c>DeskLocText</c> kaynağı = metin ve tablodaki EN; 3B plakalar ışıklı TMP malzemesinde;
+        /// damga sapları ve dosya etiketi koddan yazılır (DeskLocText yok). Aşama 7: emekli etiketler (GİDEN · TELSİZ, TALİMAT, ESKİ, BULGU,
+        /// BULGULAR), rafın dış plakaları ve tenekelerin şablonu söküldü.
         /// </summary>
         [Test]
         public void Plates_DeskLocText_TrEn()
         {
             Open();
             var station = Station;
+            var door = Door;
             var english = Corrigible.Core.Loc.ParseTable(File.ReadAllText(StringsPath))[Corrigible.Core.Loc.English];
             var cases = new (Component under, string model, string slot, string tr, string en)[]
             {
                 (station, "AdmissionPanel", "TXT_Drawer", "EVRAK", "PAPERS"),
-                (station, "AdmissionPanel", "TXT_Out", "GİDEN · TELSİZ", "OUT · RADIO"),
-                (station, "AdmissionPanel", "TXT_Holder", "TALİMAT", "ORDERS"),
-                (station, "AdmissionPanel", "TXT_Archive", "ESKİ", "OLD"),
-                (station, "AdmissionPanel", "TXT_Slip", "BULGU", "FINDING"),
-                (station, "AdmissionCounter", "TXT_Findings", "BULGULAR", "FINDINGS"),
                 (station, "AdmissionCounter", "TXT_Under", "KABUL", "ADMISSION"),
-                (station, "DecisionStampRack", "TXT_S1", "KABUL ·\nTAM ERİŞİM", "ADMIT ·\nFULL ACCESS"),
-                (station, "DecisionStampRack", "TXT_S2", "KISITLI\nKABUL", "RESTRICTED\nADMISSION"),
-                (station, "DecisionStampRack", "TXT_S3", "REDDET", "REJECT"),
-                (station, "DecisionStampRack", "TXT_S4", "DIŞARIDAN\nYARDIM", "OUTSIDE\nAID"),
-                (One<ColdGlassView>(), "ColdGlass", "TXT_Plate", "BUĞU CAMI", "BREATH GLASS"),
-                (One<IntercomTool>(), "IntercomBox", "TXT_Plate", "İNTERKOM", "INTERCOM"),
+                (station, "DecisionStampRack", "TXT_S2", "KABUL ·\nTAM ERİŞİM", "ADMIT ·\nFULL ACCESS"),
+                (station, "DecisionStampRack", "TXT_S3", "GERİ\nÇEVİR", "TURN\nAWAY"),   // KOS aşama 2: REDDET plakası GERİ ÇEVİR oldu
+                (door, "ColdGlass", "TXT_Plate", "BUĞU CAMI", "BREATH GLASS"),
+                (door, "IntercomBox", "TXT_Plate", "İNTERKOM", "INTERCOM"),
             };
             var problems = new List<string>();
             void Check(TMP_Text t, string what, string tr, string en)
@@ -568,17 +514,19 @@ namespace Corrigible.Desk.Tests
             foreach (var (under, model, slot, tr, en) in cases)
             {
                 var m = under.GetComponentsInChildren<Rev3Model>(true).Single(x => x.ModelName == model);
-                var t = m.Slot(slot)?.Text;
-                Check(t, model + "/" + slot, tr, en);
-                if (slot == "TXT_Holder" || slot == "TXT_Findings") Assert.GreaterOrEqual(t.fontSize, 0.106f - 1e-5f, slot + " em ≥ 10,6 mm (D14)");
+                Check(m.Slot(slot)?.Text, model + "/" + slot, tr, en);
             }
-            var tins = References<GameObject>(station, "tins");
-            Assert.AreEqual(2, tins.Length);
-            foreach (var tin in tins) Check(tin.GetComponent<Rev3Model>().Slot("TXT_Stencil")?.Text, tin.name + "/TXT_Stencil", "ERZAK", "RATIONS");
+            // Sökülen yuvalar: model örneğinden kaldırıldı (Rev3Model.Slot null)
+            var rack = ModelUnder(station, "DecisionStampRack");
+            var panelModel = ModelUnder(station, "AdmissionPanel");
+            var counterModel = ModelUnder(station, "AdmissionCounter");
+            foreach (var (m, slot) in new[] { (rack, "TXT_S1"), (rack, "TXT_S4"), (panelModel, "TXT_Out"), (panelModel, "TXT_Holder"), (panelModel, "TXT_Archive"),
+                         (panelModel, "TXT_Slip"), (panelModel, "TXT_Strip"), (counterModel, "TXT_Findings") })
+                if (m.Slot(slot) != null) problems.Add(m.ModelName + "/" + slot + ": emekli yuva sahnede");
             var masa = station.GetComponentsInChildren<TextMeshPro>(true).Where(t => t.GetComponent<DeskLocText>() != null && t.GetComponent<DeskLocText>().Source == "MASA").ToList();
             Assert.AreEqual(1, masa.Count, "MASA plakası");
             Check(masa[0], "MASA plakası", "MASA", "DESK");
-            Assert.IsTrue(References<GameObject>(station, "looseTools").Any(go => masa[0].transform.IsChildOf(go.transform)), "MASA plakası gevşek araçlarla gizlenir");
+            Assert.IsTrue(References<GameObject>(station, "looseTools").Any(go => masa[0].transform.IsChildOf(go.transform)), "MASA plakası gevşek nesnelerle gizlenir");
             foreach (var s in station.GetComponentsInChildren<StampDecision>(true))
             {
                 var cap = Reference<TMP_Text>(s, "capLabel");
@@ -588,6 +536,96 @@ namespace Corrigible.Desk.Tests
             var tagLabel = Reference<TMP_Text>(One<FileTagView>(), "label");
             if (tagLabel.GetComponent<DeskLocText>() != null) problems.Add("FileTag/TXT_Tag: DeskLocText (TagText koddan)");
             Assert.IsEmpty(problems, string.Join("\n", problems));
+        }
+
+        // ================================================================== S11 · aday grubu (KOS aşama 2)
+
+        /// <summary>
+        /// S11: istasyonun altında tek <see cref="CandidateGroupView"/>; üç aday kartı ve grup fişi prefab örneği onun çocuğu, kapalı ve
+        /// çarpıştırıcıları kapalı kaydedilmiş; görünümün bağları (etiket, tezgâh kanadı, evrak çekmecesi) istasyonunkilerle aynı;
+        /// <c>station.candidates</c> dolu; eski kabulün nesneleri sahnede yok (aşama 7); oyunun dengesinde kapı aralığı 3–4 vardiya. Bağlar
+        /// <c>[SerializeField]</c>: yeni dosyalarda obje adıyla arama yok.
+        /// </summary>
+        [Test]
+        public void S11_CandidateGroup_Wired()
+        {
+            Open();
+            var station = Station;
+            var view = One<CandidateGroupView>();
+            Assert.AreSame(view, Reference<CandidateGroupView>(station, "candidates"), "AdmissionStation.candidates");
+            Assert.AreSame(station.transform, view.transform.parent, "Aday grubu istasyonun çocuğu (tık ata zincirinde önce görünümde durur)");
+            Assert.IsNull(view.GetComponent<Collider>(), "görünümün kendi çarpıştırıcısı yok");
+
+            var problems = new List<string>();
+            Filled(view, problems, "hoverTag", "frame", "stowFrame", "slipPaper");
+            ArrayOf(view, "cardPapers", CandidateGroupView.MaxCards, problems);
+            Assert.IsEmpty(problems, string.Join("\n", problems));
+            Assert.AreSame(Reference<HoverTag>(station, "hoverTag"), Reference<HoverTag>(view, "hoverTag"), "etiket istasyonunkiyle aynı");
+            Assert.AreSame(Reference<Component>(station, "top").transform, Reference<Transform>(view, "frame"), "kartlar tezgâh kanadının (Top) yerelinde");
+            Assert.AreSame(Reference<Component>(station, "drawer").transform, Reference<Transform>(view, "stowFrame"), "karar dizisinde evrak çekmecesine");
+
+            var cardAsset = AssetDatabase.LoadAssetAtPath<GameObject>(AdmissionFixtures.CardPrefab);
+            var slipAsset = AssetDatabase.LoadAssetAtPath<GameObject>(AdmissionFixtures.GroupSlipPrefab);
+            Assert.IsNotNull(cardAsset, AdmissionFixtures.CardPrefab);
+            Assert.IsNotNull(slipAsset, AdmissionFixtures.GroupSlipPrefab);
+            var cards = References<Transform>(view, "cardPapers");
+            Assert.AreEqual(3, cards.Distinct().Count(), "üç ayrı kart");
+            var slip = Reference<Transform>(view, "slipPaper");
+            foreach (var (paper, asset, type) in cards.Select(c => (c, cardAsset, typeof(CandidateCardFace))).Concat(new[] { (slip, slipAsset, typeof(CandidateGroupSlipFace)) }))
+            {
+                Assert.AreSame(view.transform, paper.parent, paper.name + " görünümün çocuğu");
+                Assert.AreSame(asset, PrefabUtility.GetCorrespondingObjectFromSource(paper.gameObject), paper.name + " prefab örneği");
+                Assert.IsFalse(paper.gameObject.activeSelf, paper.name + ": kapalı kaydedilir (grup bağlanınca açılır)");
+                Assert.IsNotNull(paper.GetComponent(type), paper.name + ": kökte yüz");
+                var box = paper.GetComponent<BoxCollider>();
+                Assert.IsNotNull(box, paper.name + ": okuma ve damga çarpıştırıcısı");
+                Assert.IsFalse(box.enabled, paper.name + ": çarpıştırıcı kapalı kaydedilir");
+                Assert.AreEqual(Vector3.one, paper.localScale, paper.name + ": ölçek 1 kaydedilir (kart ölçeği temadan uygulanır)");
+                foreach (var g in paper.GetComponentsInChildren<UnityEngine.UI.Graphic>(true)) Assert.IsFalse(g.raycastTarget, paper.name + "/" + g.name + ": raycastTarget");
+                Assert.IsEmpty(paper.GetComponentsInChildren<MonoBehaviour>(true).Where(b => b == null), paper.name + ": eksik script yok");
+            }
+            Assert.AreEqual(3, station.GetComponentsInChildren<CandidateCardFace>(true).Length, "sahnede üç kart yüzü");
+            Assert.AreEqual(1, station.GetComponentsInChildren<CandidateGroupSlipFace>(true).Length);
+
+            // Aşama 7: eski kabulün nesneleri sahneden söküldü (emekli listesi de)
+            Assert.IsNull(new SerializedObject(station).FindProperty("retiredTools"), "AdmissionStation.retiredTools söküldü");
+            var names = station.GetComponentsInChildren<Transform>(true).Select(x => x.name).ToList();
+            foreach (string gone in new[] { "Magnifier", "RequestPad", "Pencil", "Karbon", "Damga KISITLI", "Damga YARDIM", "Belge", "Şerit", "ESKİ şerit 1",
+                         "ESKİ şerit 2", "Fiş 1", "Fiş 5", "Teneke L", "Teneke R", "TXT_Out", "TXT_Holder", "TXT_Archive", "TXT_Slip", "TXT_Findings", "Marker" })
+                CollectionAssert.DoesNotContain(names, gone, "emekli nesne sahnede: " + gone);
+            var stamps = station.GetComponentsInChildren<StampDecision>(true);
+            CollectionAssert.AreEquivalent(new[] { StampChoice.Admit, StampChoice.Reject }, stamps.Select(x => x.Choice));
+            var rack = ModelUnder(station, "DecisionStampRack");
+            Assert.AreEqual("KABUL ·\nTAM ERİŞİM", rack.Slot("TXT_S2").Text.text, "KABUL'ün raf plakası (orta yuva)");
+            Assert.AreEqual("GERİ\nÇEVİR", rack.Slot("TXT_S3").Text.text, "raf plakası");
+            Assert.AreEqual("GERİ\nÇEVİR", rack.Slot("TXT_S3").Text.GetComponent<DeskLocText>().Source);
+
+            // Oyunun dengesi: kapı 3–4 vardiyada bir çalar; grup 2–3 kişi, 2 vardiya bekler (asset aşama 1 alanlarını varsayılanlarıyla taşır)
+            var config = AssetDatabase.LoadAssetAtPath<Corrigible.Game.BalanceConfig>("Assets/Corrigible/Settings/BalanceConfig.asset");
+            Assert.IsNotNull(config, "Settings/BalanceConfig.asset");
+            var defaults = new Corrigible.Core.Balance();
+            Assert.AreEqual(3, config.balance.admissionKnockMin, "admissionKnockMin");
+            Assert.AreEqual(4, config.balance.admissionKnockMax, "admissionKnockMax");
+            Assert.AreEqual(defaults.candidateGroupMin, config.balance.candidateGroupMin);
+            Assert.AreEqual(defaults.candidateGroupMax, config.balance.candidateGroupMax);
+            Assert.AreEqual(defaults.candidateWaitShifts, config.balance.candidateWaitShifts);
+            Assert.AreEqual(defaults.candidateEmergencyBelow, config.balance.candidateEmergencyBelow);
+            Assert.AreEqual(defaults.dismissSupplies, config.balance.dismissSupplies);
+            Assert.AreEqual(defaults.boardResidentCapacity, config.balance.boardResidentCapacity);
+            Assert.LessOrEqual(config.balance.boardResidentCapacity, CandidateGroupSlipFace.MaxRows, "fişin satırları kapasiteye yeter");
+
+            // AGENTS kural 5: yeni dosyalar obje adıyla arama yapmaz
+            foreach (string path in new[]
+                     {
+                         "Assets/Corrigible/Desk/Scripts/Runtime/Admission/CandidateGroupView.cs", "Assets/Corrigible/Desk/Scripts/Runtime/Admission/CandidateCardFace.cs",
+                         "Assets/Corrigible/Desk/Scripts/Runtime/Admission/CandidateGroupSlipFace.cs", "Assets/Corrigible/Desk/Scripts/Runtime/Admission/AdmissionStation.cs",
+                     })
+            {
+                Assert.IsTrue(File.Exists(path), path);
+                string source = File.ReadAllText(path);
+                foreach (string banned in new[] { "Find(\"", "GameObject.Find", "FindObjectOfType", "FindObjectsOfType", "FindFirstObjectByType", "FindAnyObjectByType", "Loc.T(", "Loc.F(" })
+                    Assert.IsFalse(source.Contains(banned), path + ": " + banned);
+            }
         }
 
         // ================================================================== yardımcılar

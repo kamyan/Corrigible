@@ -5,7 +5,7 @@ namespace Corrigible.Desk
 {
     /// <summary>
     /// Kişi dosyasının üst kenarındaki kıskaçlı etiket (<c>FileTag</c> modeli, <c>TXT_Tag</c> yuvası 46 × 20 mm; Revizyon 3 · Aşama 6,
-    /// R17f, PLAN §1.16): <see cref="FolderData.TagText"/> ("İNCELEME" ya da plan eki "KISITLI · n V"); null ya da boşsa etiket gizli.
+    /// R17f, PLAN §1.16): <see cref="FolderData.TagText"/> (ör. "İZ 1", "KISITLI · n V", "TECRİT · KARAR"); null ya da boşsa etiket gizli.
     /// Metin koddan (çevrilmiş) gelir; yuvanın 3B TMP'sine yazılır.
     /// <para>Sığdırma: yazı önce yuvanın puntosunda (prefab, cap 6 mm) denenir; sözcük bölünmeden yuvaya (genişlik ve yükseklik) sığana dek
     /// punto küçülür (en çok <see cref="MinScale"/>'e). Satır sarar; " · " ayırıcısı önceki sözcüğe bağlanır ("KISITLI ·" / "3 V").

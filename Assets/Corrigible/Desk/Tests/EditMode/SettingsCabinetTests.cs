@@ -123,6 +123,30 @@ namespace Corrigible.Desk.Tests
                     Assert.IsNotNull(Ref(bridge, f), f);
                 Assert.AreSame(bridge, Ref(All<LiberationDeskView>(scene).Single(), "siginakCabinet"));
                 Assert.IsNotNull(Ref(cabinet, "exit"), "odada MENÜYE DÖN kolu var");
+                // Model entegrasyonu 2: odadaki dolap kullanıcının kutu modeli; iç düzen (mesh sınırları) kapalı hedef kutusunun içinde,
+                // yanlardan en az 1,5 cm payla; kutu modelinde çarpıştırıcı yok, yalnız LOD0 görünür (açık kapakta LOD1+ kapalı kutuyu gösterirdi)
+                var box = (BoxCollider)((DeskTarget)Ref(cabinet, "closedTarget")).GetComponent<Collider>();
+                var interior = (GameObject)Ref(cabinet, "interior");
+                foreach (var mf in interior.GetComponentsInChildren<MeshFilter>(true).Where(f => f.sharedMesh != null && f.GetComponent<MeshRenderer>() != null))
+                {
+                    var b = mf.sharedMesh.bounds;
+                    for (int i = 0; i < 8; i++)
+                    {
+                        var c = b.center + Vector3.Scale(b.extents, new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
+                        var l = box.transform.InverseTransformPoint(mf.transform.TransformPoint(c)) - box.center;
+                        Assert.LessOrEqual(Mathf.Abs(l.x), box.size.x / 2 - 0.015f, mf.name + " iç düzen kutunun yan duvarına değiyor");
+                        Assert.LessOrEqual(Mathf.Abs(l.y), box.size.y / 2 - 0.015f, mf.name + " iç düzen kutunun tavanına/tabanına değiyor");
+                        Assert.LessOrEqual(Mathf.Abs(l.z), box.size.z / 2, mf.name + " iç düzen kutunun dışında");
+                    }
+                }
+                var boxModel = cabinet.GetComponentsInChildren<LODGroup>(true).SingleOrDefault();
+                if (boxModel != null)
+                {
+                    Assert.IsEmpty(boxModel.GetComponentsInChildren<Collider>(true), "kutu modeli çarpıştırıcı taşımaz");
+                    Assert.IsFalse(boxModel.enabled, "kutu LODGroup kapalı");
+                    foreach (var r in boxModel.GetComponentsInChildren<MeshRenderer>(true).Where(r => !r.name.EndsWith("_LOD0")))
+                        Assert.IsFalse(r.gameObject.activeInHierarchy, r.name + " kapalı");
+                }
                 Assert.IsFalse(scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<Transform>(true)).Any(t => t.name == "SettingsCard"),
                     "eski ayarlar kartı kalktı");
                 // Ekranda AYARLAR düğmesi yok: kenar satırında çip yok, sağ üstteki plaka yalnız ATLA
@@ -157,7 +181,10 @@ namespace Corrigible.Desk.Tests
                     Assert.IsNotNull(Ref(clock, f), f);
                 Assert.AreEqual(80, P(clock, "punches").arraySize);
                 var door = (DoorProp)Ref(ctrl, "door");
-                Assert.AreEqual("OuterWheel", ((Transform)Ref(door, "wheel")).GetComponentInParent<Rev3Model>().ModelName, "kapı dışarıdaki çarkla açılır");
+                // Model entegrasyonu: menü kapısı odadaki Leartes kapısı; çark mesh'i iki yüzdeki çarkı tek milde taşır, kapı koridordan görünen çarkla açılır
+                var wheel = (Transform)Ref(door, "wheel");
+                Assert.IsTrue(wheel.IsChildOf((Transform)Ref(door, "leaf")), "çark kanatla döner");
+                Assert.AreEqual("DoorWheel_SM", wheel.GetComponentInChildren<MeshFilter>().sharedMesh.name, "kapı dışarıdaki çarkla açılır");
                 Assert.IsNull(Ref(door, "silhouette"));
                 Assert.AreEqual(1, P(door, "stairLights").arraySize);
                 Assert.IsNotNull(P(door, "stairLights").GetArrayElementAtIndex(0).objectReferenceValue, "içeriden sızan ışık");

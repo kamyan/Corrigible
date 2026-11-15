@@ -6,7 +6,11 @@ using UnityEngine.UI;
 
 namespace Corrigible.Desk
 {
-    /// <summary>R10 iki sayfalık kişi dosyası. Uzun kayıtlar ek yapraklara bölünür; hiçbir satır sessizce düşmez.</summary>
+    /// <summary>
+    /// R10 iki sayfalık kişi dosyası. Uzun kayıtlar ek yapraklara bölünür; hiçbir satır sessizce düşmez. Sağ sayfanın üst satırında
+    /// "KALICI KİŞİ DOSYASI" başlığı (soldaki künyeyle aynı hizada ve biçimde; ikinci tur kararı), altında ad durur (soldaki adla aynı
+    /// hizada); eski "KYGA · KABUL VE ERİŞİM" künyesi aşama 7'de söküldü.
+    /// </summary>
     public sealed class PersonDossierFace : MonoBehaviour
     {
         [SerializeField] RectTransform left, right;
@@ -19,6 +23,11 @@ namespace Corrigible.Desk
         public int Page { get; private set; }
         public int PageCount => pages.Count;
         public bool Overflowing { get; private set; }
+        /// <summary>
+        /// Sağ sayfanın altında satırsız kalan şerit (mm): yaprak numarası ve önceki/sonraki düğmeleri (sahnede y 148–160). Eski kabulün
+        /// sekmeleri ve not satırı aşama 7'de söküldü (önceki ayrım 42 mm).
+        /// </summary>
+        const float FootMm = 24f;
         static Color Ink => SiginakTheme.Active.ColorOf("ink");
         static Color Mute => SiginakTheme.Active.ColorOf("ink2");
         static Color Red => SiginakTheme.Active.ColorOf("cards.material.reservedRing");
@@ -97,7 +106,7 @@ namespace Corrigible.Desk
             foreach (var line in lines)
             {
                 float h = Height(line);
-                if (y + h > right.rect.height - 42 && page.Count > 0) { page = new List<FolderLine>(); pages.Add(page); y = 25; }
+                if (y + h > right.rect.height - FootMm && page.Count > 0) { page = new List<FolderLine>(); pages.Add(page); y = 25; }
                 page.Add(line); y += h;
             }
         }
@@ -105,7 +114,7 @@ namespace Corrigible.Desk
         void LayoutRight()
         {
             rightRows.Begin(0);
-            Put(rightRows, data.AdmissionHeader, 5, 4, 110, 3.4f, Mono, Mute);
+            Put(rightRows, data.RightHeader, 5, 4, 110, 3.4f, Mono, Mute);
             Put(rightRows, data.Name, 5, 12, 110, 5.5f, Bold, Ink);
             float y = 25;
             if (Page < pages.Count) foreach (var line in pages[Page])

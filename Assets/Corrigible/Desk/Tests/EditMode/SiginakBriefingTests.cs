@@ -18,7 +18,7 @@ namespace Corrigible.Desk.Tests
     /// </summary>
     public class SiginakBriefingTests
     {
-        static Simulation NewLiberation(double fon = 100) => LegacySimulation.NewGame(731, new Balance { startFon = fon });
+        static Simulation NewLiberation(double fon = 100) => LegacySimulation.NewGame(731, new Balance { shelterEventsEnabled = false, startFon = fon });
 
         [Test]
         public void Build_Modes_NoSave_Save_Armed_Reading()

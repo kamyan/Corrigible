@@ -29,7 +29,7 @@ namespace Corrigible.Desk.Tests
         public void RestoreTurkish() => Loc.SetLanguage(Loc.Turkish);
 
         static Simulation Ready(uint seed = 79) => Simulation.NewGame(seed, new Balance
-        {
+        { shelterEventsEnabled = false,
             planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 100, admissionKnockMax = 100
         });
 
@@ -47,6 +47,19 @@ namespace Corrigible.Desk.Tests
             PlanningBoardSnapshotBuilder.Build(sim, ui ?? new BoardUiState(), english, inputBlocked, storyHold);
 
         static ResidentState At(Simulation sim, int index) => sim.Board.People[index];
+
+        /// <summary>
+        /// Test düzeni: olay kısıtının durumu (kısıtı yalnız olay kararı kurar; eski elle kısıt aşama 7'de silindi). Kişi Boşta'ya iner,
+        /// bağlı olmayan eşyası depoya döner.
+        /// </summary>
+        static void Restrict(Simulation sim, string id)
+        {
+            var p = sim.Board.Person(id);
+            p.Restricted = true;
+            p.Job = "rest";
+            sim.Admission.File(id).RestrictedUntil = sim.S.Day + 3;
+            foreach (var e in sim.Board.Equipment.Where(e => e.OwnerId == id && !e.Bound)) e.OwnerId = null;
+        }
 
         /// <summary>Kadronun ilk kişisi kurtarılır (yatıyor), üçüncüsü kaçışta geride kalır (ölür); plan kilitli kalır.</summary>
         static Simulation RaidWithLoss(out string lost, out string rescued)
@@ -79,8 +92,8 @@ namespace Corrigible.Desk.Tests
                   .Append(string.Join(",", o.Reserves.Select(r => r.Kind + r.Quantity))).Append(';');
             sb.Append(string.Join(",", b.LastCompleted)).Append('|').Append(b.NextEquipmentId).Append(b.NextOrderId).Append('|');
             var a = sim.Admission;
-            sb.Append(a.ObservationTarget).Append('|').Append(a.Events.Count).Append('|');
-            foreach (var f in a.Files) sb.Append(f.PersonId).Append(f.ReviewPending).Append(f.ReviewNeeded).Append(f.RestrictedUntil).Append(';');
+            sb.Append(a.Group.Count).Append('|').Append(a.Passed.Count).Append('|');
+            foreach (var f in a.Files) sb.Append(f.PersonId).Append(f.Departed).Append(f.RestrictedUntil).Append(f.ClueCount).Append(';');
             return sb.ToString();
         }
 
@@ -90,7 +103,8 @@ namespace Corrigible.Desk.Tests
         public void Header_AtV001_AfterRetire_ReadsDesignValue()
         {
             var s = Build(Retired());
-            Assert.AreEqual("V.001 · erzak 24 (" + Minus + "2,1) · 8/10 kişi", s.Header);
+            // Tasarım değeri 2,1 idi (tüketim 0,35); aşama 8 dengesiyle (2026-11-15) 8 × 0,40 − 0,7 = 2,5
+            Assert.AreEqual("V.001 · erzak 24 (" + Minus + "2,5) · 8/10 kişi", s.Header);
             Assert.IsFalse(s.Locked);
             Assert.AreEqual("", s.LockReason);
             Assert.AreEqual("PLAN AÇIK · 8/10 kişi", s.EntryLine);
@@ -108,7 +122,7 @@ namespace Corrigible.Desk.Tests
             });
             var s = Build(sim, english: true);
             Assert.IsTrue(s.English);
-            Assert.AreEqual("S.001 · rations 24 (" + Minus + "2.1) · 8/10 people", s.Header);
+            Assert.AreEqual("S.001 · rations 24 (" + Minus + "2.5) · 8/10 people", s.Header);
         }
 
         [Test]
@@ -188,7 +202,7 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual("rest", s.Person(At(sim, 5).Id).JobId, "Emekli görevler BOŞTA destesindedir.");
 
             // Kısıtlı kişi üst karttan iner (K4-A: üst kart Boşta'nın ilk uygun kişisi)
-            Assert.IsTrue(sim.RestrictResident(At(sim, 5).Id, true).Ok);
+            Restrict(sim, At(sim, 5).Id);
             CollectionAssert.AreEqual(new[] { At(sim, 6).Id, At(sim, 7).Id, At(sim, 5).Id }, Build(sim).DeckOrder);
         }
 
@@ -218,7 +232,7 @@ namespace Corrigible.Desk.Tests
             Assert.IsTrue(dead.Lost);
             Assert.AreEqual("Kayıp · V.001", dead.Strip);
             Assert.AreEqual(StripTone.Ink, dead.StripTone);
-            Assert.IsFalse(dead.Injured || dead.Bedridden || dead.Restricted || dead.Review);
+            Assert.IsFalse(dead.Injured || dead.Bedridden || dead.Restricted || dead.Isolated);
 
             var bed = s.Person(rescued);
             Assert.AreEqual("Yatıyor · " + sim.Board.Person(rescued).Down + " v.", bed.Strip);
@@ -236,7 +250,7 @@ namespace Corrigible.Desk.Tests
             var restricted = At(sim, 5);
             var trainee = At(sim, 6);
             var hurt = At(sim, 7);
-            Assert.IsTrue(sim.RestrictResident(restricted.Id, true).Ok);
+            Restrict(sim, restricted.Id);
             Assert.IsTrue(sim.TrainResident(trainee.Id, "craft").Ok);
             var s = Build(sim);
             Assert.AreEqual("Kısıtlı · 3 v.", s.Person(restricted.Id).Strip);
@@ -255,12 +269,8 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual("Boşta · +1 can", injured.Strip);
             Assert.IsTrue(injured.Injured);
             Assert.AreEqual(hurt.Hp + "/" + hurt.MaxHp, injured.StatValues[0]);
-
-            sim.Admission.File(hurt.Id).ReviewNeeded = true;   // test düzeni: yeni talimat dosyayla eşleşti
-            var flagged = Build(sim).Person(hurt.Id);
-            Assert.IsTrue(flagged.Review);
-            Assert.AreEqual(hurt.Name, flagged.HoverTitle);
-            Assert.AreEqual("Boşta · +1 can · İNCELE", flagged.HoverLine);
+            Assert.AreEqual(hurt.Name, injured.HoverTitle);
+            Assert.AreEqual("Boşta · +1 can", injured.HoverLine);
         }
 
         [Test]
@@ -445,7 +455,7 @@ namespace Corrigible.Desk.Tests
         }
 
         [Test]
-        public void Folder_SelectedPerson_PagesAndTabsFromCoreChecks()
+        public void Folder_SelectedPerson_Pages_LegacyTabsClosed()
         {
             var sim = Retired();
             var p = At(sim, 7);
@@ -458,44 +468,21 @@ namespace Corrigible.Desk.Tests
             Assert.IsTrue(f.Left.Any(l => l.Label == "MESLEK" && l.Value == Loc.T(p.Profession)));
             Assert.AreEqual(7 + 1, f.Left.SkipWhile(l => l.Label != "USTALIK").TakeWhile(l => l.Label != "TEÇHİZAT").Count());
             Assert.AreEqual("sakin-8", p.Id, "kurucu fikstürü");
-            Assert.AreEqual("K-008", f.Right.Single(l => l.Label == "BELGE NO").Value, "ham kimlik görünmez");
-            Assert.AreEqual("K-008", f.Right.Single(l => l.Label == "SEVK NO").Value);
-            Assert.AreEqual("P-008", f.Right.Single(l => l.Label == "PORTRE İZİ").Value);
-            Assert.IsTrue(f.Right.Any(l => l.Section && l.Label == "KALICI KİŞİ DOSYASI"));
-            Assert.IsTrue(f.CanDismiss);
-            Assert.IsTrue(f.CanRestrict);
-            Assert.IsNull(f.DismissNote);
-            // K4-A (biçim 15): Boşta'da hedeften ayrı uygun kişiler var (emekliler + kurucu) → İNCELE açık, not yok
-            Assert.IsNotNull(sim.AdmissionWatcher(p.Id));
-            Assert.IsNull(sim.ResidentReviewCheck(p.Id));
-            Assert.IsTrue(f.CanReview);
-            Assert.IsNull(f.ReviewNote);
-            Assert.AreEqual("İNCELE", f.ReviewLabel);
-            Assert.AreEqual("ERİŞİM", f.RestrictLabel);
-            Assert.AreEqual("TAHLİYE", f.DismissLabel);
-            Assert.AreEqual("dış kayıt · 1 gözetmen vardiyası", f.ReviewSub);
-            Assert.AreEqual("kısıtla · kaldır", f.RestrictSub);
-            Assert.AreEqual("güvenle ayır · iki adım", f.DismissSub);
-
-            var held = Build(sim, new BoardUiState { SelectedId = p.Id }, storyHold: true).Folder;
-            Assert.IsFalse(held.CanDismiss);
-            Assert.AreEqual("Önce açılış belgesini kapat.", held.DismissNote);
+            Assert.AreEqual("KALICI KİŞİ DOSYASI", f.RightHeader, "sağ sayfanın üst satırı (ikinci tur kararı)");
+            Assert.IsFalse(f.Right.Any(l => l.Label == "KALICI KİŞİ DOSYASI"), "başlık satırlar arasında tekrarlanmaz");
+            Assert.IsFalse(f.DossierRight.Any(l => l.Label == "KALICI KİŞİ DOSYASI"));
+            Assert.IsTrue(f.Right.Any(l => l.Section && l.Label == "KAYIT"));
+            Assert.AreEqual("evet", f.Right.Single(l => l.Label == "KURUCU").Value);
+            Assert.IsFalse(f.Right.Any(l => l.Label == "BELGE NO" || l.Label == "DIŞ KAYIT" || l.Label == "İNCELEME"), "eski belge ve inceleme satırları yok");
+            Assert.IsFalse(f.Right.Any(l => l.Value != null && l.Value.StartsWith("KARAR")), "kurucuda karar satırı yok");
+            // Eski sekmeler (İNCELE, ERİŞİM, TAHLİYE) ve künye aşama 7'de söküldü: kısıt ve yollama yalnız olay kararıyla
+            Assert.IsNull(typeof(FolderData).GetField("LegacyActions"));
+            Assert.IsNull(typeof(FolderData).GetField("AdmissionHeader"));
 
             var none = Build(sim, new BoardUiState { SelectedId = "yok-1" });
             Assert.IsNull(none.Folder);
             Assert.IsNull(none.SelectedId);
             Assert.AreEqual("— kart seç —", none.FolderCoverLine);
-
-            // Boşta boş (hedef dışındaki uygunlar gerçek komutlarla cebe alınır): İNCELE kapalı, neden Core'un iletisi
-            string[] away = { "watch", "contact", "train" };
-            var idle = sim.Board.People.Where(x => x.Alive && x.Id != p.Id && x.Job == "rest" && !x.Restricted && x.Down <= 0).ToList();
-            Assert.LessOrEqual(idle.Count, away.Length);
-            for (int i = 0; i < idle.Count; i++) Assert.IsTrue(sim.AssignResident(idle[i].Id, away[i]).Ok, idle[i].Name + " → " + away[i]);
-            Assert.IsNull(sim.AdmissionWatcher(p.Id));
-            var empty = Build(sim, new BoardUiState { SelectedId = p.Id }).Folder;
-            Assert.IsFalse(empty.CanReview);
-            Assert.AreEqual(sim.ResidentReviewCheck(p.Id), empty.ReviewNote);
-            Assert.AreEqual("Gözetmen yok: dış kayıt için Boşta'da ayrı, sağlam ve kısıtsız bir sakin bırak.", empty.ReviewNote);
         }
 
         [Test]
@@ -503,7 +490,6 @@ namespace Corrigible.Desk.Tests
         {
             var s = Build(Retired());
             Assert.AreEqual("YARALI", s.Words.Injured);
-            Assert.AreEqual("İNCELE", s.Words.Review);
             Assert.AreEqual("KİT", s.Words.Kit);
             Loc.SetLanguage(Loc.English, new Dictionary<string, string> { { "YARALI", "INJURED" }, { "KİT", "KIT" } });
             var en = Build(Retired(), english: true);
@@ -546,6 +532,104 @@ namespace Corrigible.Desk.Tests
         static void FillStore(Simulation sim)
         {
             while (sim.Board.Equipment.Count < sim.B.boardEquipmentCapacity) Assert.IsNotNull(sim.AddBoardEquipment("medkit"));   // test düzeni
+        }
+
+        /// <summary>
+        /// KOS aşama 2 (A1 bulgusu D1): kişiye bağlı teçhizat depo tavanına sayılmaz. Tahmin Core'un <c>BoardDepotCount</c>'unu okur: bağlı
+        /// eşyayla toplam sayı tavana varsa da üretim durmaz; bağlı olmayan eşya tavanı doldurunca "eşya deposu dolu".
+        /// </summary>
+        [Test]
+        public void Forecast_BoundGear_DoesNotFillTheStore()
+        {
+            var sim = Retired();
+            Ok(sim.QueueProduction("armor"));
+            Ok(sim.ReserveProductionMaterial("metal", 2));
+            Ok(sim.ReserveProductionMaterial("kumas", 1));
+            int capacity = sim.B.boardEquipmentCapacity;
+            while (sim.BoardDepotCount < capacity - 1) Assert.IsNotNull(sim.AddBoardEquipment("medkit"));   // test düzeni
+            string owner = At(sim, 6).Id;
+            Assert.IsNotNull(sim.AddBoardEquipment("armor", owner, true), "bağlı eşya tavana bakmadan eklenir");
+            Assert.IsNotNull(sim.AddBoardEquipment("kit_tek", owner, true));
+            Assert.GreaterOrEqual(sim.Board.Equipment.Count, capacity, "kurulum: toplam eşya tavanda ya da üstünde");
+            Assert.AreEqual(capacity - 1, sim.BoardDepotCount, "depoda bir boş yer");
+            var open = ProductionForecast.Of(sim);
+            Assert.AreEqual(ProductionStop.None, open.Stop, "bağlı eşya depoyu doldurmaz");
+            Assert.IsTrue(open.Works);
+            Assert.IsNull(open.StopReason);
+            Assert.IsNull(sim.BoardPlanCheck(), "Core da fişi engellemez");
+
+            Assert.IsNotNull(sim.AddBoardEquipment("medkit"));
+            Assert.AreEqual(capacity, sim.BoardDepotCount);
+            var full = ProductionForecast.Of(sim);
+            Assert.AreEqual(ProductionStop.StoreFull, full.Stop);
+            Assert.AreEqual("eşya deposu dolu", full.StopReason);
+            Assert.IsFalse(full.Works);
+
+            // Tahmin = Core: dolu depoda Core da fişi bastırmaz; yer açılınca emir kapanışta biter
+            var order = sim.Board.Orders.First();
+            Assert.IsNotNull(sim.BoardPlanCheck(), "Core: depo doluyken plan basılmaz");
+            sim.Board.Equipment.Remove(sim.Board.Equipment.Last(e => !e.Bound && e.OwnerId == null));   // test düzeni
+            Assert.AreEqual(ProductionStop.None, ProductionForecast.Of(sim).Stop);
+            Assert.IsNull(sim.BoardPlanCheck());
+            Close(sim);
+            Assert.IsNull(sim.Board.Order(order.Id), "yer açılınca emir bitti (bağlı eşya hâlâ kişide)");
+            Assert.AreEqual(2, sim.Board.Equipment.Count(e => e.Bound && e.OwnerId == owner));
+        }
+
+        /// <summary>
+        /// Kit kilidi (KOS aşama 1): aç kapanış eksik bir rol kitinin üretimini durdurmaz; tahmin de öyle der ve kapanışla birebir tutar.
+        /// Kilit kapalıyken ya da kit eksik değilken açlık durdurur. Durma nedeninin sırası Core'unki: depo, sonra açlık.
+        /// </summary>
+        [Test]
+        public void Forecast_Starving_MissingKitOrderStillWorks()
+        {
+            Simulation KitOrder(bool missing)
+            {
+                var s = Retired();
+                if (missing) s.Board.Equipment.RemoveAll(e => e.Kind == "kit_emp");   // test düzeni
+                Assert.AreEqual(missing, s.BoardKitMissing("kit_emp"), "kurulum");
+                Ok(s.QueueProduction("kit_emp"));
+                foreach (var input in s.BoardRecipes.First(r => r.Id == "kit_emp").Inputs)
+                {
+                    s.AddBoardMaterial(input.Kind, input.Quantity);   // test düzeni
+                    Ok(s.ReserveProductionMaterial(input.Kind, input.Quantity));
+                }
+                s.Shelter.Supplies = 0;   // test düzeni
+                return s;
+            }
+
+            var sim = KitOrder(true);
+            Assert.IsTrue(sim.B.boardStarvingKitProduction, "kurulum: kit kilidi açık");
+            Assert.IsTrue(ProductionForecast.Starving(sim));
+            int remaining = sim.Board.Orders.First().Remaining;
+            string orderId = sim.Board.Orders.First().Id;
+            var o = ProductionForecast.Of(sim);
+            Assert.AreEqual(ProductionStop.None, o.Stop, "aç ama eksik kit: durmaz");
+            Assert.IsNull(o.StopReason);
+            Assert.IsTrue(o.Works);
+            Assert.Greater(o.After, o.Done);
+
+            // Sıra: dolu depo açlıktan önce
+            var stored = new List<BoardEquipment>();
+            while (sim.BoardDepotCount < sim.B.boardEquipmentCapacity) stored.Add(sim.AddBoardEquipment("medkit"));   // test düzeni
+            Assert.AreEqual(ProductionStop.StoreFull, ProductionForecast.Of(sim).Stop, "dolu depo eksik kiti de durdurur");
+            foreach (var e in stored) sim.Board.Equipment.Remove(e);
+
+            CloseAndCompareForecast(sim, "aç + eksik kit");
+            Assert.IsTrue(sim.Shelter.Starving, "Core da açlık saydı");
+            var left = sim.Board.Order(orderId);
+            Assert.IsTrue(left == null || left.Remaining < remaining, "Core kiti ilerletti");
+
+            // Kit eksik değil: açlık durdurur
+            var owned = KitOrder(false);
+            Assert.AreEqual(ProductionStop.Starvation, ProductionForecast.Of(owned).Stop);
+            CloseAndCompareForecast(owned, "aç + eldeki kit");
+
+            // Kilit kapalı: eksik kit de durur
+            var off = KitOrder(true);
+            off.B.boardStarvingKitProduction = false;
+            Assert.AreEqual(ProductionStop.Starvation, ProductionForecast.Of(off).Stop);
+            CloseAndCompareForecast(off, "aç + kilit kapalı");
         }
 
         // ---------------------------------------------------------------- E7 · defter sayfaları
@@ -595,7 +679,7 @@ namespace Corrigible.Desk.Tests
 
             // Denge değişince sayfa değişir (PROMPT §7: kartlar veriden çizilir)
             var heavy = Simulation.NewGame(79, new Balance
-            {
+            { shelterEventsEnabled = false,
                 planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 100, admissionKnockMax = 100,
                 boardArmorMetal = 3, boardEmpTurns = 3, boardCraftExtraProgress = 1,
             });
@@ -1228,37 +1312,46 @@ namespace Corrigible.Desk.Tests
             return sb.ToString();
         }
 
-        // ================================================================ Aşama 6 · R17f kişi dosyasındaki iz (PLAN W4, E14–E16)
+        // ================================================================ kişi dosyasındaki iz (yeni zincir; aşama 7'de yeniden yazıldı)
 
         /// <summary>
-        /// Robotluk payı 1, her kapanışta aday (knockMax 1), kusursuz belge: ilk aday reddedilir; ikincisi (robot) dört incelemeyle kabul edilir,
-        /// ÜRETİM'e alınır ve üç kapanış geçer. Sızma kuralı (SCA): ilk tam vardiya katkı, sonra İZ 1 (erişim), sonra İZ 2 (parça).
+        /// Olaylar açık, sızmacı olasılığı 1, insan izi yok, iz gecikmesi 1, her kapanışta grup: ilk grup geri çevrilir, ikinci grubun ilk
+        /// adayı (sızmacı) alınır, ÜRETİM'e konur, kapı kapatılır ve iki kapanış geçer (iz ve ikinci iz; açılan her olayda ilk açık seçenek, izde "yoksay").
         /// </summary>
-        static Simulation AdmittedRobot(out string id)
+        static Simulation AdmittedInfiltrator(out string id)
         {
             var sim = Simulation.NewGame(79, new Balance
             {
-                planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 1, admissionKnockMax = 1,
-                admissionRobotChance = 1, admissionPaperFaultChance = 0,
+                planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 1, admissionKnockMax = 1, candidateEmergencyBelow = 0,
+                candidateTier0Robot = 1, candidateTier1Robot = 1, candidateTier2Robot = 1, humanTraceChance = 0, humanSecondTraceChance = 0,
+                traceDelayMin = 1, traceDelayMax = 1, secondTraceGapMin = 1, secondTraceGapMax = 1,
             });
             Ok(sim.EnableAutomaticProduction());
             foreach (var p in sim.Board.People.Where(p => p.Alive && (p.Job == "care" || p.Job == "gather" || p.Job == "watch" || p.Job == "contact")).ToArray())
                 Ok(sim.AssignResident(p.Id, "rest"));
-            Close(sim);
-            Assert.IsNotNull(sim.Admission.Candidate, "Day 1 ilk aday");
-            Ok(sim.DecideApplicant("reject"));
-            Close(sim);
-            Assert.IsNotNull(sim.Admission.Candidate, "Day 2 ikinci aday (robot)");
-            id = sim.Admission.Candidate.Resident.Id;
-            foreach (string kind in new[] { "papers", "interview", "breath", "record" }) Ok(sim.InspectApplicant(kind));
-            Ok(sim.DecideApplicant("admit"));
+            for (int i = 0; i < 8 && sim.Admission.Group.Count == 0; i++) Close(sim);
+            Ok(sim.PassCandidates());
+            for (int i = 0; i < 8 && sim.Admission.Group.Count == 0; i++) { DecideAny(sim); Close(sim); }
+            id = sim.Admission.Group[0].Resident.Id;
+            Ok(sim.ChooseCandidate(id));
             Ok(sim.AssignResident(id, "craft"));
-            for (int i = 0; i < 3; i++)
+            sim.Admission.NextArrivalShift = 100000;   // test düzeni: kapı kapalı
+            for (int i = 0; i < 2; i++)
             {
-                if (sim.Admission.Candidate != null) Ok(sim.DecideApplicant("reject"));
+                DecideAny(sim);
+                if (sim.Admission.Group.Count > 0) Ok(sim.PassCandidates());
                 Close(sim);
             }
+            DecideAny(sim);
             return sim;
+        }
+
+        static void DecideAny(Simulation sim)
+        {
+            if (sim.PendingShelterEvent == null) return;
+            var open = sim.ShelterEventOptions().Where(o => o.Open).ToList();
+            var pick = open.FirstOrDefault(o => o.Id == "yoksay") ?? open.First();
+            Ok(sim.DecideShelterEvent(pick.Id));
         }
 
         static FolderData FolderOf(Simulation sim, string id, bool english = false) =>
@@ -1268,10 +1361,7 @@ namespace Corrigible.Desk.Tests
         {
             yield return f.Name;
             yield return f.TagText;
-            yield return f.ReviewLabel; yield return f.RestrictLabel; yield return f.DismissLabel;
-            yield return f.ReviewSub; yield return f.RestrictSub; yield return f.DismissSub;
-            yield return f.ReviewNote; yield return f.RestrictNote; yield return f.DismissNote;
-            foreach (var l in f.Left.Concat(f.Right)) { yield return l.Label; yield return l.Value; }
+            foreach (var l in f.Left.Concat(f.Right).Concat(f.DossierRight)) { yield return l.Label; yield return l.Value; }
         }
 
         static IEnumerable<string> CardTexts(PersonCardData c)
@@ -1282,77 +1372,32 @@ namespace Corrigible.Desk.Tests
 
         static bool SaysRobot(string t) => t != null && t.IndexOf("robot", System.StringComparison.OrdinalIgnoreCase) >= 0;
 
+        /// <summary>Kişi dosyası ve kartlar hiçbir dilde "robot" demez; sızmacının dosyasında izler ve KARAR satırı görünür (TR ve EN).</summary>
         [Test]
         public void Folder_NeverSaysRobot_TrEn()
         {
-            var sim = AdmittedRobot(out string id);
+            var sim = AdmittedInfiltrator(out string id);
             var file = sim.Admission.File(id);
-            Assert.AreEqual(2, file.ClueCount, "iki bağımsız iz dosyada");
-            Assert.IsTrue(sim.Admission.Events.Any(e => e.PersonId == id && e.Kind == "clue_component"));
-            // Core'un metinleri robot der: dosya bunları göstermemeli
-            Assert.IsTrue(SaysRobot(file.PaperFinding) || SaysRobot(file.Breath) || sim.Admission.Events.Any(e => e.PersonId == id && SaysRobot(e.Text)),
-                "sınama anlamlı: kişinin Core cümlelerinden biri 'robot' diyor");
+            Assert.GreaterOrEqual(file.ClueCount, 1, "test düzeni: sızmacının izi dosyada");
             foreach (bool english in new[] { false, true })
             {
                 if (english) Rev3AdmissionEnglish.Use(); else Loc.SetLanguage(Loc.Turkish);
-                var s = Build(sim, new BoardUiState { SelectedId = id }, english);
-                foreach (var t in FolderTexts(s.Folder)) Assert.IsFalse(SaysRobot(t), (english ? "EN dosya: " : "TR dosya: ") + t);
-                foreach (var t in CardTexts(s.Person(id))) Assert.IsFalse(SaysRobot(t), (english ? "EN kart: " : "TR kart: ") + t);
-                Assert.AreEqual(PlanningBoardSnapshotBuilder.PortraitKeyOf(s.Person(id).Name), s.Folder.PortraitKey, "portre adı izler, olağan");
                 foreach (var p in sim.Board.People.Where(x => x.Alive))
-                    foreach (var t in FolderTexts(FolderOf(sim, p.Id, english))) Assert.IsFalse(SaysRobot(t), p.Name + ": " + t);
+                {
+                    var f = FolderOf(sim, p.Id, english);
+                    foreach (var t in FolderTexts(f)) Assert.IsFalse(SaysRobot(t), p.Name + ": " + t);
+                    var s = Build(sim, new BoardUiState { SelectedId = p.Id }, english);
+                    foreach (var t in CardTexts(s.Person(p.Id))) Assert.IsFalse(SaysRobot(t), p.Name + ": " + t);
+                }
+                var mine = FolderOf(sim, id, english);
+                Assert.IsTrue(mine.Right.Any(l => l.Section && l.Label == (english ? Loc.T("İZLER") : "İZLER")), "izler bölümü");
+                Assert.AreEqual(1, mine.Right.Count(l => l.Value != null && l.Value.StartsWith(english ? "DECISION" : "KARAR")), "karar satırı");
             }
+            Loc.SetLanguage(Loc.Turkish);
         }
 
         [Test]
-        public void Folder_TraceRows_FindingsFromCodes_Decision()
-        {
-            var sim = AdmittedRobot(out string id);
-            var file = sim.Admission.File(id);
-            var f = FolderOf(sim, id);
-
-            // KARAR satırı
-            Assert.IsTrue(f.Right.Any(l => l.Label == null && l.Value == Loc.F("KARAR V.{0:000} · {1}", file.AcceptedShift + 1, "KABUL · TAM ERİŞİM")),
-                "KARAR V.003 · KABUL · TAM ERİŞİM");
-            Assert.AreEqual(2, file.AcceptedShift);
-
-            // BULGULAR: kodlardan sunum ifadeleri
-            var findings = f.Right.SkipWhile(l => !(l.Section && l.Label == "BULGULAR")).Skip(1).TakeWhile(l => !l.Section).ToList();
-            Assert.IsTrue(findings.Any(l => l.Label == null && l.Value == "Belge alanları uyumlu"), "belge (kusursuz)");
-            Assert.AreEqual("match", sim.AdmissionFindingCode(id, "record"));
-            Assert.IsTrue(findings.Any(l => l.Label == "DIŞ KAYIT" && l.Value == "Belge alanları uyumlu"), "dış kayıt (kabulden sonra dosyada tamamlandı)");
-            string breath = sim.AdmissionFindingCode(id, "breath");
-            Assert.IsTrue(findings.Any(l => l.Value == (breath == "fog" ? "Soğuk gözlem: buğu var" : "Soğuk gözlem: buğu yok")), "soğuk gözlem kodu " + breath);
-            Assert.IsTrue(findings.Any(l => l.Value == Loc.T(file.Interview)), "görüşme Core metni");
-            Assert.IsFalse(findings.Any(l => l.Value == Loc.T(file.PaperFinding) || l.Value == Loc.T(file.Breath)), "Core'un belge/buğu cümlesi yok");
-
-            // İZLER: iki satır, vardiyası olayınkiyle
-            var clues = sim.Admission.Events.Where(e => e.PersonId == id && e.Kind.StartsWith("clue_")).ToList();
-            Assert.AreEqual(2, clues.Count);
-            var traces = f.Right.SkipWhile(l => !(l.Section && l.Label == "İZLER")).Skip(1).TakeWhile(l => !l.Section).ToList();
-            Assert.AreEqual(2, traces.Count);
-            Assert.AreEqual(Loc.F("V.{0:000}", clues[0].Shift + 1), traces[0].Label);
-            Assert.AreEqual("İZ 1 · erişim kaydı", traces[0].Value);
-            Assert.AreEqual(Loc.F("V.{0:000}", clues[1].Shift + 1), traces[1].Label);
-            Assert.AreEqual("İZ 2 · parça kaydı", traces[1].Value);
-            Assert.AreEqual(file.LastClueShift, clues[1].Shift);
-
-            // GEÇMİŞ: iz olayları burada tekrar etmez; kabul olayı Core metniyle
-            var history = f.Right.SkipWhile(l => !(l.Section && l.Label == "GEÇMİŞ")).Skip(1).TakeWhile(l => !l.Section).ToList();
-            Assert.IsFalse(history.Any(l => l.Value == "İZ 1 · erişim kaydı" || l.Value == "İZ 2 · parça kaydı"));
-            var admit = sim.Admission.Events.First(e => e.PersonId == id && e.Kind == "admit");
-            Assert.IsTrue(history.Any(l => l.Value == Loc.T(admit.Text)));
-
-            // İngilizce sunum ifadeleri
-            Rev3AdmissionEnglish.Use();
-            var en = FolderOf(sim, id, true);
-            Assert.IsTrue(en.Right.Any(l => l.Value == "TRACE 1 · access log"));
-            Assert.IsTrue(en.Right.Any(l => l.Value == "Paper fields agree"));
-            Assert.IsTrue(en.Right.Any(l => l.Value == Loc.F("DECISION S.{0:000} · {1}", file.AcceptedShift + 1, Loc.T("KABUL · TAM ERİŞİM"))));
-        }
-
-        [Test]
-        public void Folder_FileTag_ReviewThenRestricted()
+        public void Folder_FileTag_Restricted()
         {
             // Kurucular: etiket yok
             var sim = Retired();
@@ -1360,7 +1405,7 @@ namespace Corrigible.Desk.Tests
 
             // Kısıtlı: "KISITLI · n V" (kalan vardiya; plan eki D16), süre dolunca "KISITLI"
             var r = sim.Board.People.First(x => x.Alive && x.Job == "cook");
-            Ok(sim.RestrictResident(r.Id));
+            Restrict(sim, r.Id);
             Assert.AreEqual("KISITLI · 3 V", FolderOf(sim, r.Id).TagText);
             Close(sim);
             Assert.AreEqual("KISITLI · 2 V", FolderOf(sim, r.Id).TagText);
@@ -1371,38 +1416,7 @@ namespace Corrigible.Desk.Tests
             Rev3AdmissionEnglish.Use();
             Assert.AreEqual("RESTRICTED", FolderOf(sim, r.Id, true).TagText);
             Loc.SetLanguage(Loc.Turkish);
-
-            // İnceleme fişi (v3 buğu gözlemli eski dosya): "İNCELEME"; GEÇMİŞ'te sunum ifadesi; incelenince etiket kalkar
-            var game = Simulation.NewGame(79, new Balance { planningBoardEnabled = true, liberationAlarmPerShift = 0 });
-            Ok(game.EnableAutomaticProduction());
-            foreach (var p in game.Board.People.Where(p => p.Alive && (p.Job == "care" || p.Job == "gather" || p.Job == "watch" || p.Job == "contact")).ToArray())
-                Ok(game.AssignResident(p.Id, "rest"));
-            for (int i = 0; i < 4; i++) Close(game);
-            string suna = game.Admission.Candidate.Resident.Id;
-            Ok(game.InspectApplicant("breath"));
-            Ok(game.DecideApplicant("admit"));
-            Assert.IsNull(FolderOf(game, suna).TagText);
-            for (int i = 0; i < 4; i++)
-            {
-                if (game.Admission.Candidate != null && i < 3) Ok(game.DecideApplicant("reject"));
-                Close(game);
-            }
-            Assert.AreEqual(3, game.Admission.Protocol.Version);
-            Assert.IsTrue(game.Admission.File(suna).ReviewNeeded);
-            var tagged = FolderOf(game, suna);
-            Assert.AreEqual("İNCELEME", tagged.TagText);
-            Assert.IsTrue(tagged.Right.Any(l => l.Value == "İnceleme fişi açıldı · talimat 3"), "Core'un file_review cümlesi robot der; dosya sunum ifadesi");
-            Assert.IsTrue(tagged.CanReview);
-            Rev3AdmissionEnglish.Use();
-            Assert.AreEqual("REVIEW", FolderOf(game, suna, true).TagText);
-            Loc.SetLanguage(Loc.Turkish);
-            Ok(game.ReviewResident(suna));
-            if (game.Admission.Candidate != null) Ok(game.DecideApplicant("reject"));
-            Close(game);
-            Assert.IsFalse(game.Admission.File(suna).ReviewNeeded);
-            Assert.IsNull(FolderOf(game, suna).TagText);
-            Assert.IsTrue(FolderOf(game, suna).Right.Any(l => l.Label == "DIŞ KAYIT" && l.Value == "Belge alanları uyumlu"),
-                "dosya incelemesi dış kaydı tamamladı (LastObservedShift)");
         }
+
     }
 }

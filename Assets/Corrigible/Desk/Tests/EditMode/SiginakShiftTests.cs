@@ -16,7 +16,7 @@ namespace Corrigible.Desk.Tests
     /// </summary>
     public class SiginakShiftTests
     {
-        static Simulation NewLiberation(double fon = 100) => LegacySimulation.NewGame(731, new Balance { startFon = fon });
+        static Simulation NewLiberation(double fon = 100) => LegacySimulation.NewGame(731, new Balance { shelterEventsEnabled = false, startFon = fon });
 
         static string N(double v) => DeskFormat.Number(v, 1);
         static string S(double v) => DeskFormat.Signed(v, 1);

@@ -7,10 +7,10 @@ namespace Corrigible.Tests
     /// <summary>İşgal harekâtı: sektör sırası, sınır ilerlemesi, tek ödül, uzman yarası ve kadro, kayıt bütünlüğü.</summary>
     public class LiberationCampaignTests
     {
-        static Simulation New(uint seed = 101) => LegacySimulation.NewGame(seed, new Balance { startFon = 100 });
+        static Simulation New(uint seed = 101) => LegacySimulation.NewGame(seed, new Balance { shelterEventsEnabled = false, startFon = 100 });
         /// <summary>Beş uzman baştan (atölye kilidi açık): kadro seçimi ve dinlenme testleri için.</summary>
         static Simulation NewOpen(uint seed = 101) =>
-            LegacySimulation.NewGame(seed, new Balance { startFon = 100, liberationMinerWorkshopLevel = 0, liberationSmokeWorkshopLevel = 0 });
+            LegacySimulation.NewGame(seed, new Balance { shelterEventsEnabled = false, startFon = 100, liberationMinerWorkshopLevel = 0, liberationSmokeWorkshopLevel = 0 });
 
         /// <summary>Baskın vardiyayı doldurur: ekip hazır olana kadar vardiya biter.</summary>
         static void Ready(Simulation sim) { while (!sim.S.Teams.Any(Simulation.TeamReady)) sim.Step(); }
@@ -63,7 +63,7 @@ namespace Corrigible.Tests
         [Test]
         public void ServerRaid_CarriesTheServerHardness_LootRaidDoesNot()
         {
-            var sim = LegacySimulation.NewGame(101, new Balance { startFon = 100, liberationServerTargetHp = 2, liberationServerMachines = 1 });
+            var sim = LegacySimulation.NewGame(101, new Balance { shelterEventsEnabled = false, startFon = 100, liberationServerTargetHp = 2, liberationServerMachines = 1 });
             Ready(sim);
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
             Assert.AreEqual(0, sim.S.Raid.Params.TargetHpBonus);
@@ -267,7 +267,7 @@ namespace Corrigible.Tests
             var restored = Replay.Restore(UnityEngine.JsonUtility.FromJson<GameRecord>(UnityEngine.JsonUtility.ToJson(sim.Record)));
             CollectionAssert.AreEqual(new[] { "tek", "ana", "duman" }, restored.S.Raid.Params.Squad.Select(x => x.Type).ToArray());
             Assert.AreEqual(UnityEngine.JsonUtility.ToJson(sim.S.Raid), UnityEngine.JsonUtility.ToJson(restored.S.Raid));
-            Assert.AreEqual(15, GameRecord.CurrentVersion, "gözetmen kuralı (K4-A): dış kayıt ve dosya incelemesinin gözetmeni Boşta'nın ilk uygun kişisi");
+            Assert.AreEqual(17, GameRecord.CurrentVersion, "sonlar: ifşa eşiği ve ara bedel, dusus, terk, son şalter (16: aday grubu, kişiye bağlı teçhizat, acil grup, kit kilidi)");
         }
 
         [Test]
@@ -539,7 +539,7 @@ namespace Corrigible.Tests
             Assert.IsEmpty(RaidResult.Decode("1|0|0|1|8|2,0,3|0,0,0|0").Left, "eski kayıtta kimse geride kalmamış");
             Assert.AreEqual("1|0|0|0|8|||0", new RaidResult { Success = true, Turns = 8 }.Encode(), "geride kalan yoksa biçim eskisi gibi");
 
-            var sim = LegacySimulation.NewGame(101, new Balance { startFon = 100 });
+            var sim = LegacySimulation.NewGame(101, new Balance { shelterEventsEnabled = false, startFon = 100 });
             Ready(sim);
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
             var squad = sim.S.Raid.Params.Squad;

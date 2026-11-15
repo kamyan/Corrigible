@@ -52,6 +52,9 @@ namespace Corrigible.Desk
         [SerializeField] ShiftPlate plate;
         [Tooltip("Kapağın ön kenarının menteşe eksenine uzaklığı (m); üzerine gelme kalkışı ve titreme mm'den açıya bununla çevrilir.")]
         [SerializeField] float coverRadiusM = 0.159f;
+        [Tooltip("R19 kipinde açıların ve kendiliğinden kapanmanın token öneki: \"{stateTokens}.states.*\". Odadaki vardiya şalteri " +
+                 "shiftClose, son şalter (KOS aşama 6) lastSwitch. Token yoksa serileştirilmiş açı kalır.")]
+        [SerializeField] string stateTokens = "shiftClose";
 
         /// <summary>
         /// Üzerine gelme kalkışının süresi (s): <see cref="DeskTarget"/>'ın kalkış süresiyle aynı (<c>DeskTarget.cs</c> 0,08 s);
@@ -104,6 +107,8 @@ namespace Corrigible.Desk
         public bool ShiftCloseMode => shiftClose;
         /// <summary>Plakanın ikinci satırı (R19 kipi; boş olabilir).</summary>
         public ShiftPlate Plate => plate;
+        /// <summary>Açıların token öneki (KOS aşama 6: son şalter "lastSwitch").</summary>
+        public string StateTokens => Tokens;
         /// <summary>Kapak kalktı (ön kontrol satırı zamanı).</summary>
         public event Action Armed;
         /// <summary>Kol indi: vardiya bitirilir.</summary>
@@ -497,14 +502,15 @@ namespace Corrigible.Desk
             return t != null ? t.NumberOf(key, fallback) : fallback;
         }
 
-        float OpenDeg => shiftClose ? Num("shiftClose.states.cover.cover", coverOpenDeg) : coverOpenDeg;
-        float UpDeg => shiftClose ? Num("shiftClose.states.ready.lever", leverUpDeg) : leverUpDeg;
-        float DownDeg => shiftClose ? Num("shiftClose.states.waiting.lever", leverDownDeg) : leverDownDeg;
+        string Tokens => string.IsNullOrEmpty(stateTokens) ? "shiftClose" : stateTokens;
+        float OpenDeg => shiftClose ? Num(Tokens + ".states.cover.cover", coverOpenDeg) : coverOpenDeg;
+        float UpDeg => shiftClose ? Num(Tokens + ".states.ready.lever", leverUpDeg) : leverUpDeg;
+        float DownDeg => shiftClose ? Num(Tokens + ".states.waiting.lever", leverDownDeg) : leverDownDeg;
         static float CoverS => Num("motion.shiftClose.coverS", 0.25f);
         static float CoverCloseS => Num("motion.shiftClose.coverCloseS", 0.3f);
         static float LeverS => Num("motion.shiftClose.leverS", 0.3f);
         static float RejectLeverS => Num("motion.shiftClose.rejectLeverS", 0.4f);
-        static float AutoCloseS => Num("shiftClose.states.cover.autoCloseS", 4f);
+        float AutoCloseS => Num(Tokens + ".states.cover.autoCloseS", 4f);
         static float HoverLiftMm => Num("motion.shiftClose.hoverLiftMm", 3f);
         static float DenyMm => Num("motion.board.denyShakeMm", 2f);
         static float DenyS => Num("motion.board.denyShakeS", 0.18f);

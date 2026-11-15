@@ -117,6 +117,11 @@ namespace Corrigible.Desk.Tests
             var game = Make<GameController>("Game");
             var surface = Make<LiberationDeskView>("Surface");
             Set(surface, "game", game);
+            // Olay kâğıdı sonraki aşamada gelir; o güne dek bu akış sığınak olayları kapalıyken sınanır (açık olay fişi kilitler).
+            var config = ScriptableObject.CreateInstance<BalanceConfig>();
+            created.Add(config);
+            config.balance = new Balance { shelterEventsEnabled = false };
+            Set(game, "balanceConfig", config);
             game.NewGame(79);
             Assert.IsNotNull(game.Sim?.Board, "kartlı oyun");
             Assert.IsFalse(game.StoryHold);

@@ -26,6 +26,22 @@ namespace Corrigible.Game
         }
         public static string SavePath => Path.Combine(StorageDirectory, "liberation_savegame.json");
 
+        /// <summary>
+        /// KOS aşama 7'de silinen eski kabul komutları. Olaylar açıkken hiç kaydedilmezlerdi; olaylar kapalı oynanmış bir sürüm 17
+        /// geliştirme kaydında bulunabilirler ve <see cref="Replay"/> onları artık tanımaz (kayıt başka oyuna dönerdi). Böyle kayıt
+        /// yüklenmez; yeni oyun yazılırken arşivlenir. Kural değil, yükleme süzgeci (sürüm değişmez).
+        /// </summary>
+        static readonly string[] RetiredCommandKinds = { "inspectApplicant", "decideApplicant", "reviewResident", "restrictResident", "dismissResident" };
+
+        /// <summary>Kayıt aşama 7'de silinen bir kabul komutu taşıyor mu.</summary>
+        public static bool HasRetiredCommand(GameRecord rec)
+        {
+            if (rec?.commands == null) return false;
+            foreach (var c in rec.commands)
+                if (c != null && Array.IndexOf(RetiredCommandKinds, c.kind) >= 0) return true;
+            return false;
+        }
+
         public static void Write(GameRecord record)
         {
             try
@@ -42,6 +58,8 @@ namespace Corrigible.Game
                         ArchivePrevious(json, ".unreadable.backup");
                     else if (previous.version != record.version)
                         ArchivePrevious(json, ".v" + previous.version + ".backup");
+                    else if (HasRetiredCommand(previous))
+                        ArchivePrevious(json, ".retired.backup");
                 }
                 string pending = SavePath + ".writing";
                 File.WriteAllText(pending, JsonUtility.ToJson(record));
@@ -70,9 +88,15 @@ namespace Corrigible.Game
             try
             {
                 if (!File.Exists(SavePath)) return null;
-                var rec = JsonUtility.FromJson<GameRecord>(File.ReadAllText(SavePath));
+                string json = File.ReadAllText(SavePath);
+                var rec = JsonUtility.FromJson<GameRecord>(json);
                 // Eski biçimdeki (kriz oyunu dönemi) kayıtlar yeniden oynatılamaz
                 if (rec == null || rec.balance == null || rec.commands == null || rec.version != GameRecord.CurrentVersion) return null;
+                // Sürüm 16'nın sığınak olaylarından önceki geliştirme kayıtları: JsonUtility eksik alanı C# varsayılanıyla (olaylar
+                // açık) doldurur ve kayıt başka kuralla yeniden oynanır. Alan adı dosyada yoksa kayıt bu biçimden değildir.
+                if (json.IndexOf("\"shelterEventsEnabled\"", StringComparison.Ordinal) < 0) return null;
+                // Aşama 7'de silinen eski kabul komutlarını taşıyan kayıt bu komutlar olmadan başka oyuna döner
+                if (HasRetiredCommand(rec)) return null;
                 // JsonUtility null listeyi boş listeye dönüştürebilir. Kartlı oyunda devirsiz geçmiş gün geçerli değildir.
                 if (rec.balance.planningBoardEnabled && rec.day > 0 && rec.commands.Count == 0) return null;
                 return rec.day > 0 || rec.commands.Count > 0 ? rec : null;

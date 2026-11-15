@@ -71,14 +71,23 @@ namespace Corrigible.Tests
         [Test]
         public void Tier_RisesWithLiberatedRegions()
         {
+            // Aşama 8 dengesi (2026-11-14): kademe 3 yedinci, kademe 4 on üçüncü bölgede; 12 bölgelik harekâtta 4. kademe gelmez
             var sim = LegacySimulation.NewGame(3);
-            CollectionAssert.AreEqual(new[] { 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4 }, Enumerable.Range(0, 12).Select(sim.RaidTier).ToArray());
+            CollectionAssert.AreEqual(new[] { 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3 }, Enumerable.Range(0, 12).Select(sim.RaidTier).ToArray());
+            // Kademe 4 kodda durur: eski eşiklerle yine gelir
+            var old = LegacySimulation.NewGame(3, new Balance { liberationTier3At = 6, liberationTier4At = 10 });
+            CollectionAssert.AreEqual(new[] { 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4 }, Enumerable.Range(0, 12).Select(old.RaidTier).ToArray());
+            // Göstergelerin paydası (TEHDİT n/m): son bölge alınınca harekât biter, ulaşılabilen kademe 11 özgür bölgeyle hesaplanır
+            Assert.AreEqual(12, sim.S.Liberation.Regions.Count);
+            Assert.AreEqual(3, sim.MaxTier, "uygulanan dengede 4. kademe gelmez");
+            Assert.AreEqual(4, old.MaxTier);
+            Assert.AreEqual(4, LegacySimulation.NewGame(3, new Balance { liberationTier4At = 11 }).MaxTier, "son bölge 4. kademe");
         }
 
         [Test]
         public void RaidOrder_CarriesRegionTraitSignatureAndTier()
         {
-            var sim = LegacySimulation.NewGame(3, new Balance { startFon = 100 });
+            var sim = LegacySimulation.NewGame(3, new Balance { shelterEventsEnabled = false, startFon = 100 });
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
             var p = sim.S.Raid.Params;
             CollectionAssert.AreEqual(new[] { "guvenli" }, p.Traits, "kademe 1: yalnız bölge özelliği");
@@ -249,7 +258,7 @@ namespace Corrigible.Tests
         [Test]
         public void ShelterLevels_OpenWithLiberatedRegions()
         {
-            var sim = LegacySimulation.NewGame(5, new Balance { startFon = 500, shelterStartMaterials = 100 });
+            var sim = LegacySimulation.NewGame(5, new Balance { shelterEventsEnabled = false, startFon = 500, shelterStartMaterials = 100 });
             Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Workshop).Ok, "onarım (seviye 1) açık");
             Assert.AreEqual(Loc.F("Seviye {0} için {1} özgür bölge gerekiyor (şimdi {2}).", 2, sim.B.shelterLevel2Regions, 0),
                 sim.ShelterUpgradeCheck(ShelterLogic.Workshop));

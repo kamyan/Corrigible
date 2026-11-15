@@ -57,7 +57,7 @@ namespace Corrigible.Desk.Tests
                 ("", "Eren", "BOŞTA", ""), ("", "Nermin", "BOŞTA", ""));
             Assert.AreEqual("KAPANIŞTA BEKLENEN", tr.ExpectedLabel);
             Rows(tr.Expected, "kapanışta", ("", "ERZAK", "24,0 → 21,9 / 60", Minus + "2,1"), ("", "EĞİTİM", "Selin · Teknisyen +2 (2→4)", ""),
-                ("", "ÜRETİM", "iş emri yok · çıktı yok", ""), ("", "KAPI", "açık başvuru yok", ""));
+                ("", "ÜRETİM", "iş emri yok · çıktı yok", ""), ("", "KAPI", "aday yok", ""));
             Assert.AreEqual("", tr.Expected[1].Strong, "kademe değişmedi: kalın sözcük yok");
             Assert.IsEmpty(tr.Warnings);
             Assert.AreEqual("plan 001/1 · tek kullanımlık · yeniden basılmaz", tr.Footer);
@@ -76,7 +76,7 @@ namespace Corrigible.Desk.Tests
                 ("", "Eren", "IDLE", ""), ("", "Nermin", "IDLE", ""));
             Assert.AreEqual("EXPECTED AT CLOSING", en.ExpectedLabel);
             Rows(en.Expected, "EN kapanışta", ("", "RATIONS", "24.0 → 21.9 / 60", Minus + "2.1"), ("", "TRAINING", "Selin · Technician +2 (2→4)", ""),
-                ("", "PRODUCTION", "no work order · no output", ""), ("", "DOOR", "no open application", ""));
+                ("", "PRODUCTION", "no work order · no output", ""), ("", "DOOR", "no candidates", ""));
             Assert.AreEqual("plan 001/1 · single use · cannot be reprinted", en.Footer);
             Assert.AreEqual("file the slip in PAPERS", en.Action, "D3-A: EN'de EVRAK yerine PAPERS (plaka ile tek anahtar)");
         }
@@ -92,11 +92,11 @@ namespace Corrigible.Desk.Tests
             Rows(tr.Shelter, "sığınak", ("", "Rauf", "ÜRETİM", ""), ("", "Nermin", "MUTFAK", ""), ("", "Suna", "EĞİTİM · EMP", ""),
                 ("", "Selin", "BOŞTA", "yaralı"), ("", "İpek", "BOŞTA", "yatıyor 2"), ("", "Aylin", "BOŞTA", "kısıtlı 2"));
             Rows(tr.Expected, "kapanışta", ("", "ERZAK", "17,0 → 15,6 / 60", Minus + "1,4"), ("", "EĞİTİM", "Suna · EMP +2 → EĞİTİMLİ", ""),
-                ("", "ÜRETİM", "Zırh plakası 0/1 → 1/1 · Rauf", ""), ("", "KAPI", "1 açık başvuru", ""));
+                ("", "ÜRETİM", "Zırh plakası 0/1 → 1/1 · Rauf", ""), ("", "KAPI", "1 aday bekliyor", ""));
             Assert.AreEqual("EĞİTİMLİ", tr.Expected[1].Strong, "kademe değişti: son sözcük kalın");
             Assert.AreEqual(2, tr.Warnings.Count);
-            Box(tr.Warnings[0], SlipWarningKind.Door, "KAPI ·", "Açık kapı başvurusu kararsızsa bu kapanışta reddedilir.");
-            Box(tr.Warnings[1], SlipWarningKind.FileReview, "DOSYA ·", "Rauf · inceleme fişi açık");
+            Box(tr.Warnings[0], SlipWarningKind.DoorLastShift, "KAPI ·", "Son vardiya: karar verilmezse adaylar gider.");
+            Box(tr.Warnings[1], SlipWarningKind.Exposure, "İFŞA ·", "eşikte · kapanışta konum çözülür");
             Assert.AreEqual("plan 031/1 · tek kullanımlık · yeniden basılmaz", tr.Footer);
 
             UseEnglish();
@@ -107,44 +107,28 @@ namespace Corrigible.Desk.Tests
             Rows(en.Shelter, "EN sığınak", ("", "Rauf", "PRODUCTION", ""), ("", "Nermin", "KITCHEN", ""), ("", "Suna", "TRAINING · EMP", ""),
                 ("", "Selin", "IDLE", "injured"), ("", "İpek", "IDLE", "laid up 2"), ("", "Aylin", "IDLE", "restricted 2"));
             Rows(en.Expected, "EN kapanışta", ("", "RATIONS", "17.0 → 15.6 / 60", Minus + "1.4"), ("", "TRAINING", "Suna · EMP +2 → TRAINED", ""),
-                ("", "PRODUCTION", "Armour plate 0/1 → 1/1 · Rauf", ""), ("", "DOOR", "1 open application", ""));
-            Box(en.Warnings[0], SlipWarningKind.Door, "DOOR ·", "An unresolved application at the door will be rejected at this handover.");
-            Box(en.Warnings[1], SlipWarningKind.FileReview, "FILE ·", "Rauf · review slip open");
+                ("", "PRODUCTION", "Armour plate 0/1 → 1/1 · Rauf", ""), ("", "DOOR", "1 candidates waiting", ""));
+            Box(en.Warnings[0], SlipWarningKind.DoorLastShift, "DOOR ·", "Last shift: the candidates leave if no decision is made.");
+            Box(en.Warnings[1], SlipWarningKind.Exposure, "EXPOSURE ·", "at threshold · compromised at closing");
             Assert.AreEqual("plan 031/1 · single use · cannot be reprinted", en.Footer);
         }
 
         [Test]
-        public void Format_WarningsOneBoxPerKind_FirstSeenOrder_CutWithPlusN()
+        public void Format_WarningsOneBoxPerKind_FirstSeenOrder_RetiredKindsSkipped()
         {
             var f = V001();
-            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.Door });
-            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.FileRestrictionExpired, name = "Aylin" });
-            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.FileClues, name = "Ece" });
-            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.FileReview, name = "Rauf" });
-            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.FileReview, name = "Cem" });
-            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.FileReview, name = "Rauf" });   // aynı ad bir kez
+            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.DoorLastShift });
+            f.warnings.Add(new SlipWarning { kind = (SlipWarningKind)1, name = "Rauf" });   // aşama 7'de sökülen tür (eski yan dosya)
+            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.ShelterShort });
+            f.warnings.Add(new SlipWarning { kind = (SlipWarningKind)0 });
+            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.DoorLastShift });
+            f.shelterShort = 1; f.shelterShortMax = 3;
             var l = HandoverSlipFormat.Format(f);
-            CollectionAssert.AreEqual(new[] { SlipWarningKind.Door, SlipWarningKind.FileRestrictionExpired, SlipWarningKind.FileClues, SlipWarningKind.FileReview },
-                l.Warnings.Select(b => b.Kind).ToArray(), "tür başına bir kutu, verideki ilk görünüş sırası (köprü Core sırasıyla yazar)");
-            Box(l.Warnings[1], SlipWarningKind.FileRestrictionExpired, "DOSYA ·", "Aylin · kısıtlı süre doldu");
-            Box(l.Warnings[2], SlipWarningKind.FileClues, "DOSYA ·", "Ece · iki bağımsız bulgu");
-            Box(l.Warnings[3], SlipWarningKind.FileReview, "DOSYA ·", "Rauf, Cem · inceleme fişi açık");
-            CollectionAssert.AreEqual(new[] { "Rauf", "Cem" }, l.Warnings[3].Names);
-
-            var names = new[] { "Rauf", "Cem", "Ece", "Aylin" };
-            Assert.AreEqual("Rauf, Cem … +2 · inceleme fişi açık", HandoverSlipFormat.WarningText(SlipWarningKind.FileReview, names, 2));
-            Assert.AreEqual("Rauf … +3 · inceleme fişi açık", HandoverSlipFormat.WarningText(SlipWarningKind.FileReview, names, 1));
-            Assert.AreEqual("Rauf … +3 · inceleme fişi açık", HandoverSlipFormat.WarningText(SlipWarningKind.FileReview, names, 0), "en az bir ad");
-            Assert.AreEqual("Rauf, Cem, Ece, Aylin · inceleme fişi açık", HandoverSlipFormat.WarningText(SlipWarningKind.FileReview, names));
-            Assert.AreEqual("Açık kapı başvurusu kararsızsa bu kapanışta reddedilir.", HandoverSlipFormat.WarningText(SlipWarningKind.Door, names, 1));
-
-            // Bir ad, birleşik kutu (köprü adları virgülle yazmışsa da tek kutu kalır)
-            var g = V001();
-            g.warnings.Add(new SlipWarning { kind = SlipWarningKind.FileReview, name = "Rauf, Cem" });
-            var lg = HandoverSlipFormat.Format(g);
-            Assert.AreEqual(1, lg.Warnings.Count);
-            Assert.AreEqual("Rauf, Cem · inceleme fişi açık", lg.Warnings[0].Text);
-            CollectionAssert.AreEqual(new[] { "Rauf", "Cem" }, lg.Warnings[0].Names, "birleşik adlar kesim için ayrılır");
+            CollectionAssert.AreEqual(new[] { SlipWarningKind.DoorLastShift, SlipWarningKind.ShelterShort }, l.Warnings.Select(b => b.Kind).ToArray(),
+                "tür başına bir kutu, verideki ilk görünüş sırası; eski yan dosyanın sökülmüş türleri (0–3) yazılmaz");
+            Box(l.Warnings[0], SlipWarningKind.DoorLastShift, "KAPI ·", "Son vardiya: karar verilmezse adaylar gider.");
+            Box(l.Warnings[1], SlipWarningKind.ShelterShort, "SIĞINAK EKSİK ·", "1/3");
+            Assert.IsFalse(l.Warnings.Any(b => b.Prefix == "DOSYA ·"), "DOSYA kutusu yok");
         }
 
         [Test]
@@ -318,17 +302,17 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(2, face.Warnings.Count);
             Assert.AreEqual(-1, face.CutNames, "kesim yok");
             var door = face.Warnings[0];
-            Assert.AreEqual(2, door.LineCount, "KAPI uyarısı iki satır (tasarım)");
-            Assert.AreEqual(1, face.Warnings[1].LineCount, "DOSYA uyarısı tek satır");
+            Assert.LessOrEqual(door.LineCount, 2, "KAPI uyarısı en çok iki satır");
+            Assert.AreEqual(1, face.Warnings[1].LineCount, "İFŞA uyarısı tek satır");
             float boxTop = Top(door.Rect);
             Near(Bottom(face.ExpectedRows[3].Rect) + 10 * Px, boxTop, Tol, "ilk kutu 10 px aşağıda");
             Near(Bottom(door.Rect) + 6 * Px, Top(face.Warnings[1].Rect), Tol, "ikinci kutu 6 px aşağıda");
-            Near((1.5f + 5 + 2 * 20 + 6 + 1.5f) * Px, door.HeightMm, Tol, "iki satırlık kutu 54 px");
+            Near((1.5f + 5 + door.LineCount * 20 + 6 + 1.5f) * Px, door.HeightMm, Tol, "kutu yüksekliği satır sayısından (iki satır 54 px)");
             NearBox(door.FrameLeft.rectTransform, 0, 0, 5 * Px, door.HeightMm, "sol çubuk 5 px");
             Near((5 + 6 + 18 + 7) * Px, door.Text.rectTransform.anchoredPosition.x, Tol, "metin simge sütunundan sonra");
             float spare = face.FooterTopMm - face.ContentBottomMm;
-            TestContext.WriteLine("V.031 boş yer: " + (spare / Px).ToString("0.0") + " px (tasarım 47 px)");
-            Assert.That(spare / Px, Is.InRange(40f, 55f), "V.031'in boş yeri tasarımınkine yakın (47 px)");
+            TestContext.WriteLine("V.031 boş yer: " + (spare / Px).ToString("0.0") + " px (tasarım 47 px, iki satırlık eski KAPI uyarısıyla)");
+            Assert.That(spare / Px, Is.InRange(40f, 55f + 20f * (2 - door.LineCount)), "V.031'in boş yeri tasarımınkine yakın (47 px; tek satırlık kutuda +20 px)");
         }
 
         [Test]
@@ -347,7 +331,7 @@ namespace Corrigible.Desk.Tests
                                       face.FooterTopMm.ToString("0.00") + " mm, kesim " + face.CutNames);
                 Assert.AreEqual(3, face.FieldRows.Count);
                 Assert.AreEqual(7, face.ShelterRows.Count);
-                Assert.AreEqual(2, face.Warnings.Count, "KAPI + birleşik DOSYA");
+                Assert.AreEqual(2, face.Warnings.Count, "KAPI + SIĞINAK EKSİK");
                 foreach (var row in face.FieldRows.Concat(face.ShelterRows).Concat(face.ExpectedRows))
                 {
                     string at = lang + " " + row.name + " '" + row.NameText.text + "'";
@@ -380,23 +364,43 @@ namespace Corrigible.Desk.Tests
             Assert.IsEmpty(failures, string.Join("\n", failures));
         }
 
+        /// <summary>
+        /// KOS aşama 4: olaylar açıkken en kötü fiş: KAPI uyarısı ve dört parçalı ERZAK kutusu (aç vardiya, ayrılacak kişi, yarım tayın,
+        /// karartma). ERZAK kesilmez ("… +n" yok, ayrılacak kişinin adı yazılı); TR ve EN'de fiş taşmaz, punto küçülmez.
+        /// </summary>
         [Test]
-        public void Layout_ManyFileNames_CutLastBoxWithPlusN_FontsKeepSize()
+        public void Layout_WorstCase_WithFourPartRations_TrEn_NoOverflow()
         {
-            var face = Spawn();
-            var f = V031();
-            // köprü aynı türün adlarını virgülle birleştirir (HandoverSlipFactsBuilder)
-            f.warnings[1].name = string.Join(", ", new[] { "Rauf", "Levent 30", "Yalcin 12", "Feride 21", "Kerem 22", "Mehmet 19", "Gülizar",
-                "Orhan 25", "Sinan 14", "Tamer 16", "Dilan 17", "Banu 18", "Ozan 20", "Lale 23" });
-            face.Bind(f);
-            Assert.AreEqual(2, face.Warnings.Count, "aynı türün adları tek kutuda");
-            Assert.That(face.CutNames, Is.InRange(1, 13), "son kutu kesildi");
-            var last = face.Warnings[1].Text;
-            StringAssert.Contains("… +", last.text);
-            StringAssert.Contains("inceleme fişi açık", last.text);
-            Assert.IsFalse(face.Overflowing, "kesimden sonra sığar");
-            Near(face.Layout.boxTextEmMm, last.fontSize, 1e-4f, "punto küçülmez");
-            Assert.LessOrEqual(face.ContentBottomMm, face.FooterTopMm + 0.01f);
+            var failures = new List<string>();
+            foreach (bool english in new[] { false, true })
+            {
+                if (english) UseEnglish(); else Loc.SetLanguage(Loc.Turkish);
+                string lang = english ? "EN" : "TR";
+                var face = Spawn();
+                var f = Worst();
+                f.hungryStreak = 12;
+                f.halfRationLeft = 3;
+                f.blackout = true;
+                f.nextDeserter = "Feride 21";
+                f.warnings.RemoveAll(w => w.kind != SlipWarningKind.DoorLastShift);
+                f.warnings.Add(new SlipWarning { kind = SlipWarningKind.Rations, name = f.nextDeserter });
+                face.Bind(f);
+                TestContext.WriteLine(lang + " KAPI + ERZAK: içerik altı " + face.ContentBottomMm.ToString("0.00") + " mm, alt blok " +
+                                      face.FooterTopMm.ToString("0.00") + " mm");
+                Assert.AreEqual(2, face.Warnings.Count, lang + ": KAPI + ERZAK");
+                string rations = face.Warnings[1].Text.text;
+                TestContext.WriteLine(lang + " ERZAK kutusu: " + rations);
+                StringAssert.Contains("Feride 21", rations, lang + ": ayrılacak kişinin adı kesilmez");
+                StringAssert.DoesNotContain("… +", rations, lang + ": ERZAK kutusu kesilmez");
+                if (face.Overflowing) failures.Add(lang + ": taşma, içerik altı " + face.ContentBottomMm.ToString("0.00") + " > " + face.FooterTopMm.ToString("0.00"));
+                foreach (var t in face.Content.GetComponentsInChildren<TMP_Text>(false))
+                {
+                    if (t.enableAutoSizing) failures.Add(lang + " " + t.name + ": otomatik punto");
+                    if (t.fontSize < face.Layout.headerEmMm - 1e-4f) failures.Add(lang + " " + t.name + ": punto " + t.fontSize + " < 14 px sınıfı");
+                }
+                Object.DestroyImmediate(face.gameObject);
+            }
+            Assert.IsEmpty(failures, string.Join("\n", failures));
         }
 
         // ================================================================== kıvrım
@@ -672,15 +676,15 @@ namespace Corrigible.Desk.Tests
             f.shelter.Add(Shelter("Selin", "rest", null, SlipPersonState.Hurt));
             f.shelter.Add(Shelter("İpek", "rest", null, SlipPersonState.Down, 2));
             f.shelter.Add(Shelter("Aylin", "rest", null, SlipPersonState.Restricted, 2));
-            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.Door });
-            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.FileReview, name = "Rauf" });
+            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.DoorLastShift });
+            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.Exposure });
             return f;
         }
 
         /// <summary>
         /// En kötü gerçekçi fiş (E13): 10 canlı (3 saha + 7 sığınak), en uzun adlar (aday havuzu + sayı eki), her görev × olası
         /// durum (Core: yatan yalnız dinlenir, kısıtlı gözetmensiz yalnız dinlenir, yaralı her göreve girebilir), eğitim + üretim +
-        /// kapı, KAPI uyarısı ve üç adlı birleşik DOSYA kutusu.
+        /// kapı, KAPI (son vardiya) ve SIĞINAK EKSİK kutuları (dört parçalı ERZAK ayrı testte).
         /// </summary>
         static HandoverSlipFacts Worst()
         {
@@ -702,8 +706,9 @@ namespace Corrigible.Desk.Tests
             f.shelter.Add(Shelter("Mehmet 19", "rest", null, SlipPersonState.Restricted, 12));
             f.shelter.Add(Shelter("Kerem 22", "rest", null, SlipPersonState.RestrictionEnded));
             f.shelter.Add(Shelter("Orhan 25", "rest", null, SlipPersonState.Hurt));
-            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.Door });
-            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.FileReview, name = "Mehmet 19, Kerem 22, Gülizar" });
+            f.shelterShort = 2; f.shelterShortMax = 3;
+            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.DoorLastShift });
+            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.ShelterShort });
             return f;
         }
 
@@ -750,14 +755,9 @@ namespace Corrigible.Desk.Tests
             { "{0} {1}/{2} → {3}/{2} · {4}", "{0} {1}/{2} → {3}/{2} · {4}" },
             { "Zırh plakası", "Armour plate" },
             { "KAPI", "DOOR" },
-            { "açık başvuru yok", "no open application" },
-            { "{0} açık başvuru", "{0} open application" },
+            { "aday yok", "no candidates" },
+            { "{0} aday bekliyor", "{0} candidates waiting" },
             { "KAPI ·", "DOOR ·" },
-            { "DOSYA ·", "FILE ·" },
-            { "Açık kapı başvurusu kararsızsa bu kapanışta reddedilir.", "An unresolved application at the door will be rejected at this handover." },
-            { "{0} · inceleme fişi açık", "{0} · review slip open" },
-            { "{0} · kısıtlı süre doldu", "{0} · restriction expired" },
-            { "{0} · iki bağımsız bulgu", "{0} · two independent findings" },
             { "{0} … +{1}", "{0} … +{1}" },
             { "plan {0:000}/{1} · tek kullanımlık · yeniden basılmaz", "plan {0:000}/{1} · single use · cannot be reprinted" },
             { "fişi EVRAK’a koy", "file the slip in PAPERS" },

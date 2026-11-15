@@ -13,7 +13,7 @@ namespace Corrigible.Desk.Tests
     /// <summary>R6/R10 verisi: gerçek isimler, eşya, depo sınırı, kalıcı sonuç ve kayıt saflığı.</summary>
     public sealed class Rev3Stage7PaperTests
     {
-        static Simulation New(int capacity=50) => Simulation.NewGame(79,new Balance { boardMaterialsCapacity=capacity, liberationAlarmPerShift=0 });
+        static Simulation New(int capacity=50) => Simulation.NewGame(79,new Balance { shelterEventsEnabled = false, boardMaterialsCapacity=capacity, liberationAlarmPerShift=0 });
         static void Language(bool en) => Loc.SetLanguage(en?Loc.English:Loc.Turkish,en?Loc.ParseTable(File.ReadAllText("Assets/Corrigible/Resources/Localization/strings.txt"))[Loc.English]:null);
         [TearDown] public void Restore() => Loc.SetLanguage(Loc.Turkish);
         static string Fingerprint(Simulation sim) => sim.S.Rng.State+"|"+sim.Record.commands.Count+"|"+string.Join(",",sim.Board.People.Select(p=>p.Id+p.Job+p.Hp+p.Down+string.Join(";",p.Experience.Select(x=>x.Points))))+"|"+string.Join(",",sim.Board.Materials.Select(m=>m.Quantity));

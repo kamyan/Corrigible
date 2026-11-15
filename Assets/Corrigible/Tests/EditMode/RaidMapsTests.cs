@@ -90,7 +90,7 @@ namespace Corrigible.Tests
         [Test]
         public void CampaignRaid_CarriesTheCampaignSeedAsMapSeed()
         {
-            var sim = LegacySimulation.NewGame(4242, new Balance());
+            var sim = LegacySimulation.NewGame(4242, new Balance { shelterEventsEnabled = false });
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
             Assert.AreEqual(sim.S.Seed, sim.S.Raid.Params.MapSeed);
             Assert.AreNotEqual(0u, sim.S.Raid.Params.MapSeed);

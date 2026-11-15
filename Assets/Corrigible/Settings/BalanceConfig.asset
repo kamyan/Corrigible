@@ -24,13 +24,13 @@ MonoBehaviour:
     liberationRestHeal: 1
     liberationRookieHpPenalty: 1
     liberationTier2At: 2
-    liberationTier3At: 6
-    liberationTier4At: 10
+    liberationTier3At: 7
+    liberationTier4At: 12
     liberationTrustStart: 10
     liberationTrustMax: 20
     liberationTrustPerCivilian: 1
     liberationCiviliansPerTrust: 2
-    liberationTrustPerRegion: 3
+    liberationTrustPerRegion: 4
     liberationAlarmPerShift: 1
     liberationAlarmPerFailure: 1
     liberationAlarmPerServer: 4
@@ -39,7 +39,7 @@ MonoBehaviour:
     liberationServerTargetHp: 2
     liberationServerMachines: 0
     liberationLootExtraTurns: 2
-    liberationServerExtraTurns: 1
+    liberationServerExtraTurns: 2
     liberationCivilianHp: 2
     liberationDynamiteCharges: 2
     liberationSmokeCharges: 3
@@ -110,7 +110,7 @@ MonoBehaviour:
     boardStartSupplies: 24
     boardSuppliesCapacity: 60
     boardMaterialsCapacity: 60
-    boardSuppliesPerResident: 0.35
+    boardSuppliesPerResident: 0.4
     boardCookSaving: 0.6
     boardCookSavingPerTier: 0.1
     boardGatherSupplies: 1.25
@@ -154,20 +154,121 @@ MonoBehaviour:
     boardServerCircuits: 2
     boardServerCloth: 1
     boardServerChemicals: 1
-    boardLootSupplies: 6
+    boardLootSupplies: 4
     boardEmpCellCharges: 1
     boardEmpBoostCharges: 1
     boardEmpBoostDamage: 1
-    admissionKnockMin: 2
+    admissionKnockMin: 3
     admissionKnockMax: 4
-    admissionContactAdvance: 1
-    admissionRobotChance: 0.35
-    admissionPaperFaultChance: 0.35
-    admissionAidRations: 2
-    admissionRestrictedShifts: 3
-    admissionSettleShifts: 1
-    admissionClueGap: 1
     admissionSabotageRations: 3
     admissionSabotageMaterials: 2
-    admissionSabotageRestrictedScale: 0.34
-    admissionProtocolInterval: 4
+    candidateGroupMin: 2
+    candidateGroupMax: 3
+    candidateWaitShifts: 2
+    candidateEmergencyBelow: 3
+    candidateTier0Share: 0.3
+    candidateTier2Share: 0.3
+    candidateTier0Robot: 0.05
+    candidateTier1Robot: 0.2
+    candidateTier2Robot: 0.45
+    candidateTier0CostChance: 0.35
+    perkCircuits: 2
+    perkCircuitShifts: 2
+    perkSupplies: 6
+    perkSupplyShifts: 3
+    perkWoundedShifts: 2
+    perkSturdyHp: 1
+    perkSlowMove: 1
+    perkDoubleRationFactor: 2
+    dismissSupplies: 2
+    traceDelayMin: 2
+    traceDelayMax: 6
+    secondTraceGapMin: 1
+    secondTraceGapMax: 3
+    humanTraceChance: 0.2
+    humanSecondTraceChance: 0.25
+    boardMissingKitCircuits: 0
+    boardStarvingKitProduction: 1
+    shelterEventsEnabled: 1
+    eventGapMin: 2
+    eventGapMax: 3
+    isolationShifts: 3
+    isolationCapacity: 1
+    interventionShifts: 1
+    isolationFindChance: 0.6
+    isolationFindChanceTwo: 0.85
+    eventRestrictShifts: 3
+    eventRestrictLongShifts: 5
+    exposureIgnoredTrace: 1
+    exposureSabotage: 2
+    exposureInterrogation: -1
+    exposureThreshold: 6
+    exposureDecisionWarnShifts: 2
+    exposureWarnAt1: 2
+    exposureWarnAt2: 4
+    exposureAlarmAt: 3
+    exposureAlarmBonus: 0.5
+    abandonUnderstaffedShifts: 3
+    lastSwitchMinShift: 5
+    evacuationTrustBelow: 2
+    victoryCleanMaxDeaths: 0
+    victoryCleanDeathShifts: 15
+    victoryShadowIgnoredTraces: 1
+    victoryCleanMaxExposure: 2
+    victoryCleanMinTrust: 5
+    desertStreak: 3
+    eventDeserterStreak: 2
+    rationWarnShifts: 3
+    halfRationShifts: 4
+    halfRationRaidHp: 1
+    halfRationFactor: 0.5
+    theftSupplies: 2
+    bigTheftSupplies: 5
+    bigTheftChance: 0.35
+    bigTheftDelayMin: 3
+    bigTheftDelayMax: 5
+    reviveSupplies: 3
+    woundWorsenChance: 0.25
+    reviveHp: 2
+    feudShifts: 2
+    feudInjuryChance: 0.5
+    memorialSupplies: 2
+    griefChance: 0.4
+    memorialTrust: 1
+    blackoutAlarm: 2
+    blackoutAlarmMargin: 2
+    tradeMetal: 2
+    tradeCircuits: 1
+    tradeMetalSupplies: 5
+    tradeSupplies: 4
+    tradeLowSupplies: 8
+    tradeHighSupplies: 12
+    callSupplies: 4
+    callRefuseChance: 0.5
+    callMinSupplies: 12
+    callTrust: 2
+    convoySupplies: 5
+    convoyAlarm: 2
+    convoyTrustAt: 15
+    eventBigTheftMax: 2
+    eventBigTheftCooldown: 0
+    eventDeserterMax: 3
+    eventDeserterCooldown: 3
+    eventLowRationMax: 3
+    eventLowRationCooldown: 5
+    eventTheftMax: 2
+    eventTheftCooldown: 6
+    eventWoundedMax: 3
+    eventWoundedCooldown: 4
+    eventFeudMax: 2
+    eventFeudCooldown: 6
+    eventMemorialMax: 3
+    eventMemorialCooldown: 4
+    eventBlackoutMax: 3
+    eventBlackoutCooldown: 5
+    eventTradeMax: 3
+    eventTradeCooldown: 5
+    eventCallMax: 2
+    eventCallCooldown: 8
+    eventConvoyMax: 2
+    eventConvoyCooldown: 8

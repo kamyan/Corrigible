@@ -819,51 +819,29 @@
     "changed": []
   },
   "_local_a6": {
-    "_": "UYGULAMA EKİ (Unity, Revizyon 3 Aşama 6 · R9/R17, PLAN §1.15, Karar D24): paket dosyasında (Docs/UI_Siginak_Rev3/tokens/tokens_siginak.json) olmayan yerel anahtarlar. Proje dosyası paketten bunlarda da ayrılır; her düğümün yanında “_local_a6” notu var. Kaynaklar: R9-not (konsol 0,15 s, katlanış 0,35 s), R17-not (okuma 0,25 s), R17e (şerit 0,25 / 0,3 s), kagit_kaynak damga_* ve bulgu_* html'leri, E §6.2 (okuma mesafesi). Bkz. Docs/UI_Siginak_Rev3/IMPLEMENTATION_MAP.md › Aşama 6.",
+    "_": "UYGULAMA EKİ (Unity, Revizyon 3 Aşama 6 · R9/R17, PLAN §1.15, Karar D24): paket dosyasında (Docs/UI_Siginak_Rev3/tokens/tokens_siginak.json) olmayan yerel anahtarlar. Proje dosyası paketten bunlarda da ayrılır; her düğümün yanında “_local_a6” notu var. Kaynaklar: R9-not (konsol 0,15 s, katlanış 0,35 s), R17-not (okuma 0,25 s), R17e (şerit 0,25 / 0,3 s), kagit_kaynak damga_* ve bulgu_* html'leri, E §6.2 (okuma mesafesi). Bkz. Docs/UI_Siginak_Rev3/IMPLEMENTATION_MAP.md › Aşama 6. KOS aşama 7: eski kabul araçlarına ait 22 yerel anahtar silindi (şerit/fiş/defter/büyüteç süreleri, slipPathMm, kısıtlı/yardım izleri, fiş sonuç renkleri, şerit/karbon/mühür renkleri).",
     "new": [
       "admission.motion.readS",
       "admission.motion.counterBracketS",
       "admission.motion.counterFoldS",
-      "admission.motion.slipDropS",
-      "admission.motion.stripOutS",
-      "admission.motion.stripInS",
-      "admission.motion.padTearS",
-      "admission.motion.magnifierMoveS",
       "admission.motion.admitHoldS",
       "admission.motion.hoverDelayS",
       "admission.readDistanceM",
-      "admission.slipPathMm",
       "admission.stampMarks.opacity",
       "admission.stampMarks.admit.color",
       "admission.stampMarks.admit.sizeMm",
       "admission.stampMarks.admit.sizeMmEn",
-      "admission.stampMarks.restricted.color",
-      "admission.stampMarks.restricted.sizeMm",
-      "admission.stampMarks.restricted.sizeMmEn",
       "admission.stampMarks.reject.color",
       "admission.stampMarks.reject.sizeMm",
       "admission.stampMarks.reject.sizeMmEn",
-      "admission.stampMarks.aid.color",
-      "admission.stampMarks.aid.sizeMm",
-      "admission.stampMarks.aid.sizeMmEn",
-      "admission.slipVerdict.match",
-      "admission.slipVerdict.mismatch",
-      "admission.slipVerdict.neutral",
-      "admission.slipVerdict.pending",
       "admission.counterSpot.spotAngle",
       "admission.counterSpot.intensity",
-      "admission.paper.strip",
-      "admission.paper.stripEdge",
       "admission.paper.rule",
       "admission.paper.ink",
       "admission.paper.label",
-      "admission.paper.carbon",
-      "admission.paper.carbonInk",
-      "admission.paper.carbonLabel",
       "admission.paper.plateBrass",
       "admission.paper.plateEdge",
-      "admission.paper.alarm",
-      "admission.paper.seal"
+      "admission.paper.alarm"
     ],
     "changed": []
   },
@@ -1413,6 +1391,16 @@
       "dim": {
         "hex": "#0E0906",
         "alpha": 0.62
+      },
+      "withdrawn": "#1A4789",
+      "criteria": {
+        "metInk": "#24592E",
+        "missInk": "#9A1E14",
+        "neutralInk": "#675F50"
+      },
+      "page": {
+        "tabInk": "#675F50",
+        "tabActiveInk": "#1E1B16"
       }
     }
   },
@@ -2350,7 +2338,12 @@
       "hoverLiftMm": 3,
       "_local_a4": "UYGULAMA EKİ (Unity, Revizyon 3 Aşama 4 · R19): rejectLeverS — basım reddinde kolun −35°'den +35°'ye geri kalkışı (R19-not “kol 0,4 s'de geri kalkar”); hoverLiftMm — şalterin üzerine gelince kapağın ön kenarının kalkışı, mm (R19-not 3 mm; genel motion.hoverLiftMm 4 değişmez). Paket dosyasında yok; bkz. _local_a4."
     },
-    "crtInstrumentS": 0.3
+    "crtInstrumentS": 0.3,
+    "lastSwitch": {
+      "orderDelayS": 0.4,
+      "_local_kos6": "Kol indikten sonra emir kâğıdının düşüşüne kadar.",
+      "deniedRepeatS": 3
+    }
   },
   "cameras": {
     "_": "★ Unity koordinatı (x sağ, y yukarı, z ileri), metre. K1 Physical Camera + lens shift; diğerleri bakış hedefli.",
@@ -2536,7 +2529,8 @@
         -0.1
       ],
       "fovV": 48,
-      "_": "★1.3 uygulanan K9 (dolap çapası)"
+      "_": "★1.3 uygulanan K9 (dolap çapası)",
+      "_model2": "Model entegrasyonu 2 (sahne değeri, kod okumaz): DeskGame'de iç düzen kullanıcının kutusuna 0,70 ölçekle sığdırıldı, Camera anchor aynı afinle taşındı: dolap yerelinde (−0,1016; 0,3196; −0,7598). Ekrandaki kontrol boyutu bu cabinetLocalPos'la aynı kalır."
     },
     "K6": {
       "_": "★1.3 ek: vardiya şalteri yakın pozu (R19).",
@@ -2591,6 +2585,20 @@
         0,
         0,
         -0.23
+      ],
+      "fovV": 40
+    },
+    "KLS": {
+      "_": "KOS aşama 6: son şalter yakın pozu.",
+      "pos": [
+        0.3,
+        1.5,
+        1.3
+      ],
+      "target": [
+        0.68,
+        1.2,
+        2.24
       ],
       "fovV": 40
     }
@@ -4055,6 +4063,36 @@
       "_": "KALDIRILDI (ek 11-05)",
       "removed": true,
       "why": "oda kartları → görev cepleri"
+    },
+    "exposureBoard": {
+      "pos": [
+        0.15,
+        0.97,
+        2.3
+      ],
+      "size": [
+        0.5,
+        0.136
+      ],
+      "_local_kos6": "İFŞA şeridi, YZ ALARMI panosunun altı."
+    },
+    "lastSwitch": {
+      "pos": [
+        0.68,
+        0.98,
+        2.3
+      ],
+      "_local_kos6": "Son şalter, doktrin afişinin eski yeri."
+    },
+    "doctrinePoster": {
+      "pos": [
+        0.68,
+        1.53,
+        2.3
+      ],
+      "scale": 0.4,
+      "_local_kos6": "Doktrin afişi dolabın sağına taşındı (karar S1).",
+      "_local_kos8": "KOS aşama 8 (ikinci tur kararı): afiş tamamen görünür olsun diye son şalterin üstüne alındı; dolabın sağında elektrik kutusu sol yarısını K1'den örtüyordu. Alt kenar şalter gövdesinin 2 cm üstünde, üst kenar K1 kadrajının içinde (duvarda ≈ 1,78)."
     }
   },
   "materialsExtra": {
@@ -4360,10 +4398,20 @@
       "hex": "#8A6A3F",
       "roughness": 0.6,
       "metal": 0
+    },
+    "exposureStepOffHigh": {
+      "hex": "#4A1E16",
+      "roughness": 0.6,
+      "metal": 0,
+      "note": "İFŞA şeridi boş hücresi, alarm ara bedeli bölgesi ve eşik (kırmızı kenarlı boş; KOS aşama 6 düzeltme)",
+      "usedBy": [
+        "Exposure panel"
+      ]
     }
   },
   "cabinet": {
     "_": "UYGULAMA EKİ + ★1.3 model: ayarlar dolabı. Süreler motion.cabinet*S.",
+    "_model2": "Model entegrasyonu 2 (sahne değerleri, kod okumaz): DeskGame'deki dolabın görünen gövdesi kullanıcının SM_PowerBox1 kutusu (Leartes; dolap yerelinde x −0,333…0,133, y −0,056…0,686, z −0,188…0,002). Kutu türev mesh'lere bölündü (Art/Rev3/SceneMeshes/PowerBox/PowerBox1*): gövde (açık kutu, iç duvar paintOliveDark, iç levha cabPanel, ön yüzden 9,4 cm geride), kapak (ön levha ve göstergeler, 2 cm; menteşe sağ ön kenar), kilit (kutunun tek kilidi, Latch). Sahnedeki leafOpenDeg −160 (aşağıdaki room.leafOpenDeg −95 Rev3 dolap prefab'ının değeri). İç düzen (cabinet.panel) 0,70 ölçekli ve iç ağıza her yandan ≥2,5 cm payla ortalı; ampul tavanda, iç spot kapak ağzında aşağı bakar; panel dolgu ışığı levhadan özgün 15,6 cm uzakta (Interior z −0,347). outer Rev3 dolap modelinin ölçüsü (Giris menüsü).",
     "bulbIntensity": 0.15,
     "outer": [
       0.68,
@@ -4380,6 +4428,7 @@
       "leafOpenDeg": -95
     },
     "menu": {
+      "_giris": "Giris menüsü (sahne değeri, kod okumaz): menüdeki dolap da odadaki SM_PowerBox1 kutusu (aynı türev mesh'ler, malzemeler ve dolap yerelindeki yerler; sahnedeki leafOpenDeg −160, iç düzen 0,70, kamera çapası menünün kendi çapasından aynı afinle). Aşağıdaki leafOpenDeg −120 Rev3 menü dolabı prefab'ının değeri.",
       "leafOpenDeg": -120,
       "noMenuLever": true
     },
@@ -4457,6 +4506,7 @@
       }
     },
     "plates": {
+      "_kod": "Sahne/prefab değeri, oyun kodu okumaz: capMm ve widthMm tasarımın standart plaka ölçüleri (Rev3 CabPlate yuvası). Gerçek plakalar prefab'da: yazı 7,2 mm büyük harf; DİL · LANGUAGE plakası kökte ve gövdede ×1,4 (≈147 mm, iç düzen biriminde; menu.cabinetReadability._dilPlate), yazı ölçüsü prefab'daki TXT ölçeğinde. minPxAtK9'u Rev3Stage8EntranceTests okur: her plaka yazısı dolabın kamera çapasından (oda K9, menü M1) ekranda em ≥ 14 px.",
       "capMm": 6.2,
       "minPxAtK9": 14,
       "widthMm": 80,
@@ -4669,6 +4719,7 @@
       "farWallZ": 1.85
     },
     "cabinetReadability": {
+      "_dilPlate": "Uygulama notu (kod okumaz): DİL · LANGUAGE plakası prefab'da kökte ×1,4 ve gövdede ×1,4 (plaka 147 mm, iç düzen biriminde); yazı da ×1,4 gerilip kenar vidalarının üstüne biniyordu. Yazı artık gerilmesiz (TXT ölçeği 1/1,96), glifler vidaların iç kenarından her yanda menüde ≈11 mm, odada (0,70) ≈8 mm içeride; punto (7,2 mm büyük harf) aynı. languagePlateWidthMm (112) tasarım değeri, gerçek plakayla eşleşmez. Düzeltme tema token'ı üzerinden yapılamadı: bu token'ları kod okumuyor, ölçü prefab'da. Rev3Stage8EntranceTests her plaka yazısını gerilmesiz, vidaların arasında ve çapadan ekranda ≥ cabinet.plates.minPxAtK9 kilitler.",
       "plateCapMm": 7.2,
       "languagePlateWidthMm": 112,
       "rotaryLabelWidthMm": 58,
@@ -4783,7 +4834,8 @@
         1.7
       ],
       "yawDeg": -48,
-      "note": "ön yüz masanın sol önüne dönük; K1’de sağ yarısı (Boşta, dosya, hurda) görünür"
+      "note": "ön yüz masanın sol önüne dönük; K1’de sağ yarısı (Boşta, dosya, hurda) görünür",
+      "_model2": "Model entegrasyonu 2 (sahne değeri, kod okumaz): görünen pano kullanıcının mantar panosu (SM_Board, 1,219 × 0,812 m, yerden 0,857 m; ayaksız). Kök yeni yüze paralel oturtuldu: (−1,6161; 0; 1,6965), yaw −47,862°. Baskı düzlemi (BoardLayout.FaceZ) yeni mantar yüzündedir. Eski gövdeden yalnız işlevsel yüzeyler türev mesh'e taşındı (Pano ekleri: karatahta, iş emri kâğıdı, hurda kutusu, pirinç etiket bantları ve perçinleri). Yukarıdaki \"_\" metni (ayaklı, çelik yüz) Rev3 modelini anlatır."
     },
     "frameMm": [
       1196,
@@ -5023,8 +5075,9 @@
         70,
         452
       ],
+      "_kos8": "KOS aşama 8 (ikinci tur kararı): hurda kutusu yeni panonun (SM_Board) çerçevesinin içine alındı: x 1012 → 992 (K4'te ön yüzün sağ kenarı çerçevenin iç kenarının ~4 mm içinde; aşağı kaydırma K4 kadrajından taşırdı, sola daha fazlası 5. kit kartına binerdi). Model çapası Hurda_Slot, HurdaLid, TXT_P_hurda, hedef kutusu ve türev mesh (PlanningBoardInserts_SM, galv alt mesh'i) birlikte.",
       "hurda": [
-        1012,
+        992,
         474,
         130,
         126
@@ -5292,13 +5345,8 @@
     "_local_a5": "UYGULAMA EKİ (Unity, Revizyon 3 Aşama 5 · R18a–b, Kararlar D10, D11): readPoseLocal — açık defterin okuma pozu, lowPoseLocal — tarif tutulurken alçak poz; ikisi de Planning board model yerelinde (m, x eğimi derece; three.js dress_room_board.js:169 “read” ve “bookdrag”; kameraya 0,315 m ≈ R18a 0,32 m). hoverMm — kapalı defterin üzerine gelince öne kayışı (R18a 4 mm; kart kuralı öteleme). coverDelayS — açılışta kapağın öne gelmeye göre gecikmesi (kapak 0,10–0,35 s, örtüşük). Paket dosyasında yok; bkz. _local_a5."
   },
   "personFile": {
-    "_": "★1.3 ek · kişi dosyası (PersonFolder, manila 130 × 180 mm): tel sepette; tık = öne gelir ve açılır.",
+    "_": "★1.3 ek · kişi dosyası (PersonFolder, manila 130 × 180 mm): tel sepette; tık = öne gelir ve açılır. (KOS aşama 7: eski İNCELE/ERİŞİM/TAHLİYE sekmeleri — pages — silindi.)",
     "cover": "Cover y 0…−176°",
-    "pages": [
-      "İNCELE",
-      "ERİŞİM",
-      "TAHLİYE"
-    ],
     "nameOnCover": "seçili kişinin adı (TMP, çevrilmez)"
   },
   "shiftClose": {
@@ -5409,77 +5457,25 @@
     }
   },
   "admission": {
-    "_": "★1.3 ek · kapıda belgeli kabul (R17, K8A/K8G/K8R). Aday görünmez; belgeler evrak gözünden tezgâha düşer. Robot gizli kalır; yeni son: SON KİŞİ.",
-    "instruction": {
-      "versions": {
-        "v1": "başlangıç",
-        "v2": "4. vardiya",
-        "v3": "8. vardiya"
-      },
-      "holder": "talimat şeridi 80 × 210 mm, kayan çizgi işaretçisi + yakut"
-    },
-    "checks": {
-      "karsilastirma": "büyüteç + talimat şeridi",
-      "gorusme": "interkom",
-      "soguk": "buğu camı (kanatta, gözetleme deliğinin yanında)",
-      "disKayit": "GİDEN · TELSİZ yuvası + talep defteri"
-    },
-    "decisions": {
-      "tr": [
-        "KABUL · TAM ERİŞİM",
-        "KISITLI KABUL",
-        "RET",
-        "DIŞARIDAN YARDIM"
-      ],
-      "en": [
-        "ADMIT · FULL ACCESS",
-        "RESTRICTED ADMISSION",
-        "REJECT",
-        "OUTSIDE AID"
-      ],
-      "tool": "damga (geri dönülmez)",
-      "disabled": {
-        "admitAndRestricted": "kapasite 10/10",
-        "aid": "erzak < 2"
-      }
-    },
-    "supervisor": {
-      "proposal": "Boşta destesinin üst kartı; Boşta boşsa defter kilitlenir: “gözetmen yok”",
-      "status": "açık karar"
-    },
+    "_": "★1.3 ek · kapıda aday grubunun kabulü (R17, K8A/K8R; KOS aşama 2). Aday kartları ve grup fişi tezgâhta; iki damga: KABUL ve GERİ ÇEVİR. Eski tek adaylı belgeli kabulün düğümleri (talimat, denetimler, dört karar, gözetmen, fiş sonuç renkleri, şerit/karbon kâğıtları, kısıtlı/yardım izleri, emekli araç süreleri) KOS aşama 7'de silindi.",
     "motion": {
       "counterLeafS": 0.4,
       "lampS": 0.08,
       "drawerS": 0.35,
       "docDropS": 0.2,
-      "markerS": 0.2,
-      "slipS": 0.35,
-      "intercomCrackleS": 0.2,
-      "transcriptPerCharS": 0.03,
-      "toK8GS": 0.45,
-      "glassCoverS": 0.2,
-      "fogInS": 0.6,
-      "fogOutS": 2.5,
       "stampLiftS": 0.1,
       "stampPressS": 0.12,
       "admitWheelS": 0.5,
       "admitLeafS": 0.8,
-      "aidDrawerS": 0.35,
       "readS": 0.25,
       "counterBracketS": 0.15,
       "counterFoldS": 0.35,
-      "slipDropS": 0.15,
-      "stripOutS": 0.25,
-      "stripInS": 0.3,
-      "padTearS": 0.15,
-      "magnifierMoveS": 0.25,
       "admitHoldS": 0.6,
       "hoverDelayS": 0.4,
-      "_local_a6": "UYGULAMA EKİ (Unity, Revizyon 3 Aşama 6 · R9/R17): readS — K8A ↔ K8R okuma pozu geçişi (R17-not “0,25 s'de kameraya döner”); counterBracketS — tezgâh konsollarının açılışı/kapanışı (R9-not “konsollar 0,15 s”); counterFoldS — tezgâh kanadının katlanışı (R9-not “katlanış tersi, 0,35 s”); slipDropS — bulgu fişinin ağızdan kıskaca düşüşü; stripOutS / stripInS — eski şeridin ESKİ cebine çıkışı, yenisinin yuvaya oturuşu (R17e); padTearS — talep yaprağının kalkışı ve koparılışı; magnifierMoveS — büyütecin dinlenme ↔ inceleme pozu; admitHoldS — kabul dizisinde kanadın açık bekleyişi; hoverDelayS — üzerine gelme etiketinin gecikmesi (R17-not 400 ms). Paket dosyasında yok; bkz. _local_a6."
+      "_local_a6": "UYGULAMA EKİ (Unity, Revizyon 3 Aşama 6 · R9/R17): readS — K8A ↔ K8R okuma pozu geçişi (R17-not “0,25 s'de kameraya döner”); counterBracketS — tezgâh konsollarının açılışı/kapanışı (R9-not “konsollar 0,15 s”); counterFoldS — tezgâh kanadının katlanışı (R9-not “katlanış tersi, 0,35 s”); admitHoldS — kabul dizisinde kanadın açık bekleyişi; hoverDelayS — üzerine gelme etiketinin gecikmesi (R17-not 400 ms). Paket dosyasında yok; bkz. _local_a6. (KOS aşama 7: eski kabul araçlarının süreleri — slipDropS, stripOutS/stripInS, padTearS, magnifierMoveS ve paketin markerS, slipS, intercomCrackleS, transcriptPerCharS, toK8GS, glassCoverS, fogInS/fogOutS, aidDrawerS — silindi.)"
     },
     "paperAlbedo": 0.8,
     "readDistanceM": 0.318,
-    "slipPathMm": 160,
     "stampMarks": {
       "opacity": 0.93,
       "admit": {
@@ -5493,17 +5489,6 @@
           29.9
         ]
       },
-      "restricted": {
-        "color": "#854005",
-        "sizeMm": [
-          114.9,
-          25.2
-        ],
-        "sizeMmEn": [
-          149.3,
-          25.2
-        ]
-      },
       "reject": {
         "color": "#9A1E14",
         "sizeMm": [
@@ -5515,25 +5500,7 @@
           25.0
         ]
       },
-      "aid": {
-        "color": "#463F34",
-        "sizeMm": [
-          115.8,
-          31.9
-        ],
-        "sizeMmEn": [
-          89.4,
-          31.9
-        ]
-      },
-      "_local_a6": "UYGULAMA EKİ (Unity, Revizyon 3 Aşama 6 · R17d): belgedeki karar damgası izleri (Courier 700, saydam zemin, opaklık 0,93); renk ve TR/EN boyutları kagit_kaynak/damga_kabul_tam, damga_kisitli_3, damga_ret, damga_yardim_2 html'lerinden (mm). EN kısıtlı izi 149,3 mm > belge 148 mm: iki satıra sarar (D17 notu). Paket dosyasında yok; bkz. _local_a6."
-    },
-    "slipVerdict": {
-      "match": "#24592E",
-      "mismatch": "#854005",
-      "neutral": "#463F34",
-      "pending": "#675F50",
-      "_local_a6": "UYGULAMA EKİ (Unity, Revizyon 3 Aşama 6 · R17b–c): bulgu fişinin sonuç damgası renkleri — EŞLEŞİYOR / KAYIT BULUNDU yeşil, UYUŞMUYOR / KAYIT FARKLI / BUĞU YOK kahverengi, GÖRÜŞÜLDÜ nötr, BEKLENİYOR / İNCELE gri (kagit_kaynak bulgu_* html'leri; D15). Paket dosyasında yok; bkz. _local_a6."
+      "_local_a6": "UYGULAMA EKİ (Unity, Revizyon 3 Aşama 6 · R17d): karar damgası izleri (Courier 700, saydam zemin, opaklık 0,93); renk ve TR/EN boyutları kagit_kaynak/damga_kabul_tam ve damga_ret html'lerinden (mm). Paket dosyasında yok; bkz. _local_a6. (KOS aşama 7: kısıtlı ve yardım izleri silindi.)"
     },
     "counterSpot": {
       "spotAngle": 68,
@@ -5541,20 +5508,41 @@
       "_local_a6": "UYGULAMA EKİ (Unity, Revizyon 3 Aşama 6 · R17a): tezgâh lambasının spotu — Unity spotAngle tam açıdır (three.js yarım açı 34° → 68; GELISTIRME tuzağı; prefab 70); intensity başlangıç değeri (three.js 4, penumbra 0,65), W6'da R17_present'e göre kalibre edilir. Paket dosyasında yok; bkz. _local_a6."
     },
     "paper": {
-      "strip": "#FBF7EC",
-      "stripEdge": "#D2C7AF",
       "rule": "#D2483F",
       "ink": "#463F34",
       "label": "#675F50",
-      "carbon": "#E9E4D6",
-      "carbonInk": "#2E3C6E",
-      "carbonLabel": "#4A5680",
       "plateBrass": "#B8955A",
       "plateEdge": "#5C4826",
       "alarm": "#9A1E14",
-      "seal": "#5A3F78",
-      "_local_a6": "UYGULAMA EKİ (Unity, Revizyon 3 Aşama 6 · R17, eleştiri 21): kâğıt yüzlerinin TMP renkleri (AGENTS kural 7: koda gömülmez) — şerit kâğıdı ve kenarı, kırmızı çizgi, mürekkep, etiket, karbon kopya zemini / mürekkebi / etiketi, MASA plakasının pirinci ve kenarı, \"gözetmen yok\" uyarısı, kimlik belgesindeki mühür halkasının moru (seal; kimlik_sevk_* html, bütünleyici C) (kagit_kaynak kabul_talimati_*, dis_kayit_talebi, damga_* html'leri). Malzeme renkleri malzeme asset'inde kalabilir. Paket dosyasında yok; bkz. _local_a6."
+      "_local_a6": "UYGULAMA EKİ (Unity, Revizyon 3 Aşama 6 · R17, eleştiri 21): kâğıt yüzlerinin TMP renkleri (AGENTS kural 7: koda gömülmez) — kırmızı çizgi, mürekkep, etiket, MASA plakasının pirinci ve kenarı, uyarı kırmızısı. Malzeme renkleri malzeme asset'inde kalabilir. Paket dosyasında yok; bkz. _local_a6. (KOS aşama 7: şerit, karbon kopya ve kimlik belgesi mührü renkleri silindi.)"
+    },
+    "candidates": {
+      "cardScale": 1.0,
+      "gapMm": 8,
+      "rowCenterX": -0.075,
+      "rowZ": -0.122,
+      "slipX": -0.075,
+      "slipZ": -0.235,
+      "tier0": "#24592E",
+      "tier1": "#854005",
+      "tier2": "#9A1E14",
+      "_local_kos2": "UYGULAMA EKİ (Unity, KOS aşama 2 · aday grubu): üç aday kartının ve grup fişinin tezgâh kanadı (Top) yerelindeki yeri (m; kart ölçeği, kartlar arası boşluk mm) ve kademe işareti renkleri (kefilli yeşil, kayıtsız kahverengi, şüpheli kırmızı; damga izleriyle aynı aile). Paket dosyasında yok; bkz. _local_kos2."
     }
+  },
+  "_local_kos2": {
+    "_": "UYGULAMA EKİ (Unity, KOS aşama 2 · aday grubu; Docs/KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md §7): paket dosyasında (Docs/UI_Siginak_Rev3/tokens/tokens_siginak.json) olmayan yerel anahtarlar. Kabul tezgâhındaki aday kartları ve grup fişinin yerleşimi ve kademe renkleri; düğümün yanında “_local_kos2” notu var.",
+    "new": [
+      "admission.candidates.cardScale",
+      "admission.candidates.gapMm",
+      "admission.candidates.rowCenterX",
+      "admission.candidates.rowZ",
+      "admission.candidates.slipX",
+      "admission.candidates.slipZ",
+      "admission.candidates.tier0",
+      "admission.candidates.tier1",
+      "admission.candidates.tier2"
+    ],
+    "changed": []
   },
   "_local_a7": {
     "_": "UYGULAMA EKİ (Unity, Revizyon 3 Aşama 7 · R6/R8/R10): paket dosyasında (Docs/UI_Siginak_Rev3/tokens/tokens_siginak.json) olmayan iki yerel anahtar ve K5a'nın iki yerel ezmesi. K5a: CRT yerel sağına +14 cm, FOV 52° (Soru 8: iki görüntüyle karar; telsiz, mikrofon ve açık defter kadraja girer, K5b hedefi korunur). crtInstrumentS — CRT ibresinin yeni sinyale gidişi ve kanal arama süresi; opening.deskLampDelayS — açılışta ampulden sonra masa lambasının gecikmesi. Bkz. Docs/UI_Siginak_Rev3/IMPLEMENTATION_MAP.md › Aşama 7.",
@@ -5623,6 +5611,167 @@
       ],
       "cameras.K9.fovV": 45,
       "cabinet.bulbIntensity": 0.3
+    }
+  },
+  "shelterEvent": {
+    "paper": {
+      "widthMm": 210,
+      "heightMm": 148
+    },
+    "tray": {
+      "liftM": 0.034,
+      "dropFromM": 0.08
+    },
+    "hand": {
+      "heightFraction": 0.8
+    },
+    "motion": {
+      "dropS": 0.35,
+      "toHandS": 0.3,
+      "toTrayS": 0.3,
+      "stampHoldS": 0.6
+    },
+    "row": {
+      "closedAlpha": 0.45
+    },
+    "layout": {
+      "decisionColMm": 62,
+      "rowGapMm": 2
+    },
+    "ink": {
+      "selected": "#1A2F5A",
+      "safe": "#24592E",
+      "closed": "#9A1E14",
+      "kitLock": "#854005"
+    },
+    "stamp": {
+      "decision": {
+        "color": "#1A4789"
+      },
+      "closed": {
+        "color": "#9A1E14"
+      }
+    },
+    "counterTag": {
+      "hungry": "#9A1E14",
+      "other": "#1E1B16"
+    },
+    "trayAttention": {
+      "intensity": 0.5,
+      "pulseHz": 0.5
+    },
+    "_local_kos4": "UYGULAMA EKİ (Unity, KOS aşama 4 · olay tutanağı; Docs/KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md §7): paket dosyasında (Docs/UI_Siginak_Rev3/tokens/tokens_siginak.json) olmayan yerel anahtarlar. EVRAK tepsisindeki olay tutanağının ölçüsü (A5 yatay), tepsideki dinlenme yüksekliği ve düşüşü, el pozunun ekran payı, hareket süreleri, kapalı satır soluklığı, sol sütun genişliği ve satır aralığı, kâğıt mürekkepleri (seçim kalemi, güvenli, kapalı, kit kilidi), karar ve KAPALI izlerinin rengi, ERZAK sayacı dinlenme etiketinin mürekkebi, tutanak tepside beklerken EVRAK hedef ışığının soluk nabzı (hedef şiddetine oran, Hz). Basış süresi admission.motion.stampPressS'ten. Bkz. _local_kos4."
+  },
+  "_local_kos4": {
+    "_": "UYGULAMA EKİ (Unity, KOS aşama 4 · olay tutanağı; Docs/KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md §7): paket dosyasında (Docs/UI_Siginak_Rev3/tokens/tokens_siginak.json) olmayan yerel anahtarlar. EVRAK tepsisindeki olay tutanağının ölçüsü (A5 yatay), tepsideki dinlenme yüksekliği ve düşüşü, el pozunun ekran payı, hareket süreleri, kapalı satır soluklığı, sol sütun genişliği ve satır aralığı, kâğıt mürekkepleri (seçim kalemi, güvenli, kapalı, kit kilidi), karar ve KAPALI izlerinin rengi, ERZAK sayacı dinlenme etiketinin mürekkebi, tutanak tepside beklerken EVRAK hedef ışığının soluk nabzı (hedef şiddetine oran, Hz). Basış süresi admission.motion.stampPressS'ten. Bkz. _local_kos4.",
+    "new": [
+      "shelterEvent.paper.widthMm",
+      "shelterEvent.paper.heightMm",
+      "shelterEvent.tray.liftM",
+      "shelterEvent.tray.dropFromM",
+      "shelterEvent.hand.heightFraction",
+      "shelterEvent.motion.dropS",
+      "shelterEvent.motion.toHandS",
+      "shelterEvent.motion.toTrayS",
+      "shelterEvent.motion.stampHoldS",
+      "shelterEvent.row.closedAlpha",
+      "shelterEvent.layout.decisionColMm",
+      "shelterEvent.layout.rowGapMm",
+      "shelterEvent.ink.selected",
+      "shelterEvent.ink.safe",
+      "shelterEvent.ink.closed",
+      "shelterEvent.ink.kitLock",
+      "shelterEvent.stamp.decision.color",
+      "shelterEvent.stamp.closed.color",
+      "shelterEvent.counterTag.hungry",
+      "shelterEvent.counterTag.other",
+      "shelterEvent.trayAttention.intensity",
+      "shelterEvent.trayAttention.pulseHz"
+    ],
+    "changed": []
+  },
+  "_local_kos6": {
+    "_": "UYGULAMA EKİ (Unity, KOS aşama 6 · sunum ve sonlar; Docs/KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md §4, §7): paket dosyasında olmayan yerel anahtarlar. İFŞA şeridi (hücre sayısı, yanış aralığı, dikkat flaşı, KONUM lambasının yanıp sönmesi ve ışığı, duvardaki yeri), son şalter (açılar, kendiliğinden kapanma, gerekçe plakasının mürekkepleri, yeri, emir kâğıdının gecikmesi), KLS kamera pozu, son raporun ÇEKİLDİ mavisi, ölçüt kutusunun hüküm mürekkepleri ve sekme mürekkepleri. Doktrin afişinin yeni yeri. Bkz. _local_kos6.",
+    "new": [
+      "colors.report.withdrawn",
+      "colors.report.criteria.metInk",
+      "colors.report.criteria.missInk",
+      "colors.report.criteria.neutralInk",
+      "colors.report.page.tabInk",
+      "colors.report.page.tabActiveInk",
+      "exposure.cells",
+      "exposure.stepS",
+      "exposure.flashTimes",
+      "exposure.flashS",
+      "exposure.blinkS",
+      "exposure.glowIntensity",
+      "layout3d.exposureBoard.pos",
+      "layout3d.exposureBoard.size",
+      "layout3d.lastSwitch.pos",
+      "layout3d.doctrinePoster.pos",
+      "layout3d.doctrinePoster.scale",
+      "lastSwitch.states.ready.lever",
+      "lastSwitch.states.waiting.lever",
+      "lastSwitch.states.cover.cover",
+      "lastSwitch.states.cover.autoCloseS",
+      "lastSwitch.plate.line2Ink",
+      "lastSwitch.plate.line2InkEvac",
+      "motion.lastSwitch.orderDelayS",
+      "cameras.KLS",
+      "lastSwitch.order.namesMaxChars",
+      "motion.lastSwitch.deniedRepeatS",
+      "finalReport.record.namesMaxChars",
+      "finalReport.record.doorNamesMaxChars",
+      "finalReport.record.exposureLines",
+      "finalReport.record.hiddenLines",
+      "finalReport.tone.namesMaxChars",
+      "materialsExtra.exposureStepOffHigh"
+    ],
+    "changed": []
+  },
+  "exposure": {
+    "_local_kos6": "UYGULAMA EKİ (KOS aşama 6): İFŞA şeridi; bkz. _local_kos6.",
+    "cells": 6,
+    "stepS": 0.12,
+    "flashTimes": 3,
+    "flashS": 0.15,
+    "blinkS": 0.5,
+    "glowIntensity": 0.8,
+    "_local_kos6fix": "glowIntensity 1,8 → 0,8: AlarmGlow ışığı bağlandı (düzeltme); 1,8'de şerit uyarıda okunmuyordu."
+  },
+  "lastSwitch": {
+    "_local_kos6": "UYGULAMA EKİ (KOS aşama 6): son şalterin açıları ve plakası; bkz. _local_kos6.",
+    "states": {
+      "ready": {
+        "lever": 55
+      },
+      "waiting": {
+        "lever": -55
+      },
+      "cover": {
+        "cover": 115,
+        "autoCloseS": 4
+      }
+    },
+    "plate": {
+      "line2Ink": "#4A3A22",
+      "line2InkEvac": "#7A1810",
+      "_local_kos6fix": "İkinci satır kapak kalkıkken ve kol inikken de çeşidi yazar; birinci satır (şalterin adı) köprüden, DeskLocText'siz."
+    },
+    "order": {
+      "namesMaxChars": 170
+    }
+  },
+  "finalReport": {
+    "_local_kos6": "UYGULAMA EKİ (KOS aşama 6 düzeltme): son raporunun ad ve satır bütçeleri (kâğıdın yerleşim ölçüleri; kod yalnız yedek değer taşır).",
+    "record": {
+      "namesMaxChars": 150,
+      "doorNamesMaxChars": 90,
+      "exposureLines": 8,
+      "hiddenLines": 4
+    },
+    "tone": {
+      "namesMaxChars": 80
     }
   }
 }

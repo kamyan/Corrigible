@@ -64,7 +64,7 @@ namespace Corrigible.Desk
         PersonStates cachedStates;
         string[] cachedLetters, cachedLabels, cachedValues;
         int[] cachedTiers;
-        string wInjured, wBed, wRestricted, wReview, wLost;
+        string wInjured, wBed, wRestricted, wIsolated, wLost;
         string suffixOpen;
         bool nameUsesMagnetSpace;
 
@@ -101,9 +101,8 @@ namespace Corrigible.Desk
                 if (overlay == null) yield break;
                 if (overlay.InjuredWord != null) yield return (overlay.InjuredWord, "YARALI sözcüğü: bant deseni, kırmızı CAN değeri ve şerit taşır");
                 if (overlay.StampWord != null) yield return (overlay.StampWord, "YATIYOR damgası: şerit 'Yatıyor · n v.' taşır");
-                if (overlay.RestrictedWord != null) yield return (overlay.RestrictedWord, "KISITLI köşe sözcüğü: köşe şekli ve şerit taşır");
+                if (overlay.RestrictedWord != null) yield return (overlay.RestrictedWord, "KISITLI / TECRİT köşe sözcüğü: köşe şekli ve şerit taşır");
                 if (overlay.LostWord != null) yield return (overlay.LostWord, "KAYIP köşe sözcüğü: yas köşesi ve şerit taşır");
-                if (overlay.FlagWord != null) yield return (overlay.FlagWord, "İNCELE bayrağı: bayrak şekli ve üzerine gelme satırı taşır");
             }
         }
 
@@ -198,7 +197,7 @@ namespace Corrigible.Desk
             && cachedHurt == d.Hurt && cachedStates == states
             && Same(cachedLetters, d.MasteryLetters) && Same(cachedTiers, d.MasteryTiers)
             && Same(cachedLabels, d.StatLabels) && Same(cachedValues, d.StatValues)
-            && wInjured == w.Injured && wBed == w.Bedridden && wRestricted == w.Restricted && wReview == w.Review && wLost == w.Lost;
+            && wInjured == w.Injured && wBed == w.Bedridden && wRestricted == w.Restricted && wIsolated == w.Isolated && wLost == w.Lost;
 
         void Store(PersonCardData d, BoardWords w, bool english, PersonStates states)
         {
@@ -206,7 +205,7 @@ namespace Corrigible.Desk
             cachedHurt = d.Hurt; cachedStates = states;
             Copy(ref cachedLetters, d.MasteryLetters); Copy(ref cachedTiers, d.MasteryTiers);
             Copy(ref cachedLabels, d.StatLabels); Copy(ref cachedValues, d.StatValues);
-            wInjured = w.Injured; wBed = w.Bedridden; wRestricted = w.Restricted; wReview = w.Review; wLost = w.Lost;
+            wInjured = w.Injured; wBed = w.Bedridden; wRestricted = w.Restricted; wIsolated = w.Isolated; wLost = w.Lost;
         }
 
         /// <summary>

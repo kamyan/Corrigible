@@ -41,21 +41,31 @@ eski kural yoludur; bu belgedeki eski ölçümler yeni panonun denge ölçümü 
   bir yolun çıkmaza dönmesini engeller. Seçilen bölge tamamlanmadan başka bölgeye geçilmez.
 - **Son:** Bütün 36 sektör geri alınınca **Silme** (`"silme"`, zafer): "Çekirdek yok edildi, kopyalar temizlendi." Sivil
   güven sıfıra inerse **Dağılma** (`"dagilma"`, yenilgi; aşağıda). Çekirdeği düşüren baskın aynı anda güveni bitirse de
-  zaferdir. Son canlı sakinin de kaybı **Son kişi** (`"topluluk"`) yenilgisidir. Yeni kabul modelinde robot
-  sabotajı kaynak kaybettirir; kapıda tek yanlış kararla anlık oyun sonu yoktur. **Vuruldu** (`"vuruldu"`) ve **Sızma**
+  zaferdir. Son canlı sakinin de kaybı **Son kişi** (`"topluluk"`) yenilgisidir. Kartlı yolda ayrıca **Sığınak düştü**
+  (`"dusus"`, ifşa), **Terk** (`"terk"`, açlık ve eksik kadro) ve oyuncunun kendi çektiği **Son şalter** (`"salter"`) vardır;
+  zaferin tonu temiz, bedelli ya da gölgelidir (aşağıda "Aday grubu, sığınak olayları ve sonlar"). Kapıda tek yanlış kararla
+  anlık oyun sonu yoktur. **Vuruldu** (`"vuruldu"`) ve **Sızma**
   (`"sizma"`) yalnız eski ziyaretçi modelinin sonlarıdır.
 - Son bölgenin sunucu merkezinde YZ çekirdeği vardır (`IsCore`).
 
 ## Zorluk kademesi (`Simulation.RaidTier`, `RaidParams.Tier`)
 
-Harekât ilerledikçe baskınlar sertleşir. Kademe özgür bölge sayısına bağlıdır (`liberationTier2At/3At/4At`: 2, 6, 10):
+Harekât ilerledikçe baskınlar sertleşir. Kademe özgür bölge sayısına bağlıdır (`liberationTier2At/3At/4At`: 2, 7, 12;
+KOS aşama 8 dengesi, önce 2, 6, 10):
 
 | Kademe | Özgür bölge | Başta ek makine | Uyanma / tur | Makine canı | İmza makinesi |
 |---|---|---|---|---|---|
 | 1 | 0–1 | 0 | 1 | normal | 1 |
-| 2 | 2–5 | 1 | 1 | normal | 1 |
-| 3 | 6–9 | 2 | 2 (`"kopya"`) | normal | 2 |
-| 4 | 10–11 | 3 | 2 | +1 (`"guclu"`) | 2 |
+| 2 | 2–6 | 1 | 1 | normal | 1 |
+| 3 | 7–11 | 2 | 2 (`"kopya"`) | normal | 2 |
+| 4 | 12+ | 3 | 2 | +1 (`"guclu"`) | 2 |
+
+12 bölgelik harekâtta 4. kademe gelmez: son bölgeye 11 özgür bölgeyle girilir. Kural kodda durur ve `Balance` ile geri
+açılır (eşik 10 ile son iki bölge 4. kademedir). Neden: bot ölçümünde (2026-11-14) 4. kademe baskınların %30'u başarısız,
+baskın başına 2,06 sivil kırılıyordu; dagilma ve harekât uzunluğu en çok buradan geliyordu (aşağıda "Denge ölçümü").
+Göstergeler (haritanın işaretler kutusu, görev fişinin TEHDİT satırı, cephe onay fişi) paydayı `Simulation.MaxTier`'den okur
+(son bölge alınınca harekât biter, kademe 11 özgür bölgeyle hesaplanır): uygulanan dengede "TEHDİT n/3"; baskın tahtasının
+kademe cümlesi paydasız ("Tehdit 2: …").
 
 Ek makineler tahtanın uzak yarısına konur; dron, bakım robotu ya da (üçte bir) bölgenin imza makinesi olur. Uyanan
 makineler de aynı dağılımla seçilir (`Baskin.WakeType`). Görev çipi ve görev fişi kademeyi yazar ("Tehdit 2/4").
@@ -98,7 +108,7 @@ parça eklenmez.
 - Baskında kırılan her sivil sunucu (`RaidResult.Collateral`, kimin kırdığına bakılmaz) güveni `liberationTrustPerCivilian`
   (1) düşürür; başarılı ya da başarısız her baskında. **Kazanılan** baskında tahtada ayakta kalan her
   `liberationCiviliansPerTrust` (2) sivil sunucu +1 geri verir (`RaidResult.CiviliansLeft`; kaybedilen baskının sivilleri
-  işgal altında kalır). Özgürleşen her bölge `liberationTrustPerRegion` (3) geri verir. Değişim `LiberationRaidReward.Trust`'a
+  işgal altında kalır). Özgürleşen her bölge `liberationTrustPerRegion` (4; KOS aşama 8, önce 3) geri verir. Değişim `LiberationRaidReward.Trust`'a
   yazılır; operasyon raporu "Kırılan sivil sunucu" ve "Sivil güven +1 · 11/20" satırlarını gösterir, güven 3 ve altına
   inince başlığın altındaki cümle uyarır. Kampanyada sivil sunucu `liberationCivilianHp` (2) canlıdır.
 - Güven 0 olunca harekât **Dağılma** ile biter; son rapor KAYBEDİLDİ ve DAĞILMA damgalarıyla açılır.
@@ -167,13 +177,14 @@ Aynı fiş yeniden kullanılamaz. Planın düzeltilmesi gereken bir girdisi vars
 
 1. **Gelir:** `liberationDailyFunds` (2) + özgür bölge başına `liberationRegionIncome` (0,5) fon (`IncomeBreakdown`).
 2. **Ekip:** baskın meşguliyeti bir azalır. Yeni panoda anonim uzman/yedek iyileşmesi yapılmaz.
-3. **Kabul ve dosyalar:** önce o vardiyaya ayrılan gözetim (dış kayıt ya da dosya incelemesi) sonuçlanır; sızmacının erişim
-   izleri ve varsa sabotajı, talimat yenilemesi, bekleyen başvurunun süresi ve yeni gelişler işlenir (`AdvanceAdmissions`).
-   Gözetmen kapanan vardiyanın kilitli planından okunur: o anda Boşta'nın ilk uygun kişisi (aşağıda, K4-A); Boşta'da uygun
-   kimse yoksa gözetim sonuçlanmaz.
-4. **Pano işleri:** erzak tüketimi ve mutfak/ikmal katkısı; dinlenme, yatış süresi ve tek vardiyalık eğitim; üretim ve
-   en yaralı kişiye bakım; kısıt süresinin dolması (`AdvancePlanningBoard`). Tamamlanan eşya depoya eklenir, plan açılır.
-5. **YZ alarmı ve geçmiş:** alarm artar, eşikte karşı saldırı işler; işgal geçmişi kayda alınır.
+3. **Kapıdaki grubun süresi:** bekleme süresi dolan aday grubu gider (`AdvanceAdmissions`; KOS aşama 7'den beri yalnız bu).
+4. **Kişiler ve pano işleri:** tecrit ve kısıt süreleri, sızma saatleri ve vadesi gelen izler; erzak dengesi (tayın kipi,
+   taksitler), aç vardiya sayacı ve ayrılma; dinlenme, yatış süresi ve tek vardiyalık eğitim; üretim (karartmada yok) ve en
+   yaralı kişiye bakım (`AdvancePlanningBoard`). Tamamlanan eşya depoya eklenir, plan açılır.
+5. **Olaylar, kapı ve sonlar:** vadeli olay sonuçları ve tecrit bulgusu; kapı (acil koşulu, grup üretimi); sığınağın sonları
+   (`topluluk`, `dusus`, `terk`); olay açılışı; uyarılar (ifşa eşiği, acil kapı). Sıra ve RNG çekimleri:
+   [KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md](KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md) §6.
+6. **YZ alarmı ve geçmiş:** alarm artar (ifşa eşikte ara bedeliyle), eşikte karşı saldırı işler; işgal geçmişi kayda alınır.
 
 Baskın sürerken, harekât bitmişken ya da açılış/emir belgesi açıkken kapanış yapılamaz. Kartlı oyunda doğrudan
 `AdvanceShift`/`Step` çağrısı fiş olmadan gün ilerletmez. Eski modelde şalter, `AdvanceShift` ve vardiya raporu akışı sürer.
@@ -224,7 +235,7 @@ Baskın sürerken, harekât bitmişken ya da açılış/emir belgesi açıkken k
   (ilk denemede tek kapı ve 8–11 adımla %55), iki hat %74, açık salon %69 (ilk denemede %83), şebeke %75, rehine %72.
   4. kademede koridor en zor tür (%38; ötekiler %47–61). Harekât ölçümünde (30 harekât) yalnız koridorlu havuz 19/30,
   türlü havuz 24/30 kazandı; baskın başarısı %66 → %68 (fark gürültü sınırında, ama 4. kademedeki farkla uyumlu).
-- **Taktik tahta** (`Core/Baskin.cs`, 8×8, 6 tur; kampanyada kaçışın dönüş yolu için ikmal 8 (`liberationLootExtraTurns`), sunucu 7 (`liberationServerExtraTurns`); Kısa nöbette bir tur az): oyuncu birimleri
+- **Taktik tahta** (`Core/Baskin.cs`, 8×8, 6 tur; kampanyada kaçışın dönüş yolu için ikmal 8 (`liberationLootExtraTurns` 2), sunucu 8 (`liberationServerExtraTurns` 2; KOS aşama 8, önce 1 ve 7 tur); Kısa nöbette bir tur az): oyuncu birimleri
 
   | Uzman | Can · yürüyüş | Yetenek |
   |---|---|---|
@@ -287,7 +298,7 @@ Baskın sürerken, harekât bitmişken ya da açılış/emir belgesi açıkken k
     sertleşir (4 → 6; zırhlı dolapta 7); son bölgenin çekirdeği hariç (5 can, 6 turda yetişilsin). Ek makine ayarı
     `liberationServerMachines` 0 (ölçümde etkisiz).
 - **Sonuç** (`ResolveRaid`, taktik sonuçtan masaya dönülürken bir kez):
-  - İkmal başarısı: +10 fon, +3 metal, +2 devre, +2 kumaş, +1 kimyasal, +6 erzak. Otomatik anonim kurtulan eklenmez.
+  - İkmal başarısı: +10 fon, +3 metal, +2 devre, +2 kumaş, +1 kimyasal, +4 erzak (`boardLootSupplies`; KOS aşama 8, önce 6). Otomatik anonim kurtulan eklenmez.
   - Sunucu başarısı: +8 fon, +2 metal, +2 devre, +1 kumaş, +1 kimyasal.
   - Bölge tamamlanınca ayrıca +15 fon. Başarısızlık ya da geri çekilme sektörü değiştirmez.
   - **Kişi döner** (`ReturnPlanningSquad`): can ve kırılan plaka kalıcı duruma yazılır. Çıkamayan (`RaidResult.Left`)
@@ -322,12 +333,11 @@ konumu Core görevinden yeniden çizilir; pano boşluğuna veya yanlış alana b
 | Teknisyen, EMP uzmanı, Analist | Aynı topluluktan üç kişilik baskın kadrosu; görev kiti gerekir |
 | Üretim | Girdi ve yer varsa tek iş emrini ilerletir; deneyimli üretici kapanışta +1 ek çalışma ilerlemesi |
 | Mutfak | Tüketimden 0,6 + kademe başına 0,1 erzak düşer; toplam tüketimin en fazla yarısı |
-| İkmal | 1,25 + kademe başına 0,15 erzak; her 3 sağlıklı çalışma vardiyasında 1 metal + 1 devre |
-| Bakım ve dönüş triyajı | Kendisi dışındaki en yaralı canlı kişiye 1 + kademe başına 1 can; varsa bir bakım kitiyle +1 |
+| İkmal (yayındaki panoda cebi yok; kilitsiz planda `RetireJobs` Boşta'ya alır) | 1,25 + kademe başına 0,15 erzak; her 3 sağlıklı çalışma vardiyasında 1 metal + 1 devre |
+| Bakım ve dönüş triyajı (yayındaki panoda cebi yok; Boşta'ya iner) | Kendisi dışındaki en yaralı canlı kişiye 1 + kademe başına 1 can; varsa bir bakım kitiyle +1 |
 | Eğitim | Seçilen yedi alandan birine +2 deneyim; kapanışta dinlenmeye döner |
-| Dinlenme / yedek (Boşta) | +1 can; yatış süresi de bir azalır. Boşta'nın ilk uygun kişisi dış kayıt ve dosya incelemesinin gözetmenidir |
-| Gözetim (eski görev; panoda cebi yok) | Katkısı yok; biçim 15'ten (K4-A) beri gözetmen sayılmaz. Kilitsiz planda `RetireJobs` kişiyi Boşta'ya alır |
-| Dış temas | Kapıda aday yoksa sıradaki gelişi bir vardiya öne çeker; zamanı ilerletmez, kimliği yeniden belirlemez |
+| Dinlenme / yedek (Boşta) | +1 can; yatış süresi de bir azalır |
+| Gözetim, Dış temas (eski görevler; panoda cebi yok) | Katkısı yok (KOS aşama 7: kabul bağları söküldü). Kilitsiz planda `RetireJobs` kişiyi Boşta'ya alır |
 
 Saha dönüşü ve uygun iş +1 deneyim verir. Alan kademeleri 2/6/12 deneyimde açılır; 12 tavanıdır. Eğitim kişiye aittir,
 rol veya kit değişince silinmez. Üretim ustalığı 2. kademede her kapanışa +1 çalışma ilerlemesi ekler; iki vardiyalık
@@ -351,46 +361,198 @@ Tek üretim emri ve tek eğitim yeri vardır. Başlamadan iptal rezervasyonu ser
 harcanan girdiyi geri vermez. Bitmiş eşya depoda kart olur ve kişiye ayrıca takılır. Tarifler şu an baştan açıktır;
 sefer içinde tarif bulma ve rol kiti kilidi uygulanmış değildir.
 
-Her canlı kişi vardiyada 0,35 erzak tüketir. Mutfak ve ikmal açığı küçültür; ikmal baskını +6 erzakla destekler.
+Her canlı kişi vardiyada 0,40 erzak tüketir (`boardSuppliesPerResident`; KOS aşama 8, önce 0,35; `obur` kişi iki katı). Mutfak
+açığı küçültür; ikmal baskını +4 erzakla destekler. **Erzak hesabı:** sekiz kişi ve kademe 1 aşçıyla vardiya tüketimi
+8 × 0,40 − 0,7 = 2,5. Yayındaki panoda İkmal ve Bakım yuvası yok (toplayıcının 1,25 + kademe başına 0,15'i ve bakımcının
+iyileştirmesi yalnız Core'da ve testlerde işler; kilitsiz planda sunumun `RetireJobs`'u bu kişileri Boşta'ya alır). Başlangıçtaki
+24 erzak baskınsız yedinci kapanışta 6,8'e iner (aşçı deneyim kazandıkça tüketim 2,4'e düşer), üç vardiyalık tüketimin
+altındadır ve `erzak_azaliyor` açılır (tohum 79, Play'de görüldü: V.008); iki ikmal baskını atlanırsa uyarı gelir. Yarım tayın tüketimi aşçıdan sonra yarıya indirir (2,5 → 1,25).
 İkmal görevlisinin üç sağlıklı çalışma vardiyasında topladığı metal/devre, bütün saha kitleri kaybedilse bile yeni
 kit üretme yolunu açık tutar. Açlıkta veya görevli yokken bu hammadde ilerlemesi durur; birikimi görevliye değil
-`Board.GatheringProgress`'e aittir ve kayıttan aynı kurulur.
+`Board.GatheringProgress`'e aittir ve kayıttan aynı kurulur. (Yayındaki panoda İkmal cebi olmadığı için bu yol yalnız Core'da
+ve testlerde işler; oyunda kit kilidini KOS aşama 1 kuralı açar: eksik temel rol kiti aç kapanışta da, hiç yoksa devresiz üretilir.)
 Erzak sıfırın altına düşecekse stok sıfırlanır, o kapanışta üretim ve bakım durur. Bütün değerler `Balance.board*`
-alanlarından gelir. Eski sığınak botlarının kazanma oranları bu ekonomi için geçerli değildir; uzun harekât dengesi
+alanlarından gelir. Eski sığınak botlarının kazanma oranları bu ekonomi için geçerli değildir; KOS aşama 8 ölçümü aşağıda
+("Denge ölçümü"); uzun harekât dengesi
 ayrıca ölçülmelidir.
 
-## Belgeyle kabul ve gecikmeli sızma (`CommunityAdmissionState`)
+## Aday grubu, sığınak olayları ve sonlar (`CommunityAdmissionState`, `ShelterEventState`)
 
-Her 2–4 vardiyada bir aday gelir. İlk aday güvenli, insan ve kusursuz belgeli öğretici vakadır. Sonrakilerde robot
-olasılığı %35, belge kusuru olasılığı bundan bağımsız %35'tir. Gizli kimlik gelişte belirlenir, karara göre yeniden
-zar atılmaz. Belge, görüşme ve soğukta nefes kontrolü yapılabilir; dış kayıt teyidi ayrı bir gözetmenin vardiyasını
-kullanır ve sonraki kapanışta sonuçlanır. Bu işlem için aday bir ek karar vardiyası bekler.
+Tasarımın gerekçeleri, ret edilen seçenekler ve karar tarihçesi:
+[KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md](KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md) (KOS aşama 1–8). Bu bölüm uygulanmış hâli ve
+sayıları yazar. Sayılar `Balance` varsayılanıdır; KOS aşama 8'de bot ölçümüyle dengelendi (aşağıda "Denge ölçümü").
 
-**Gözetmen (K4-A, biçim 15; `AdmissionWatcher(targetId)`):** Boşta'daki (`rest`) ilk canlı, yatmayan, kısıtsız ve
-incelenen kişiden farklı sakin, panonun kişi sırasıyla; adı talep formunda ve karbonda yazar. Kural her an yeniden okunur: talepten
-sonra gözetmen başka göreve alınırsa sıradaki uygun kişi gözetmen olur; kapanışta Boşta'da uygun kimse yoksa sonuç gelmez
-ve bekleyen aday süresi dolunca reddedilir. Boşta boşken dış kayıt talebi ve dosya incelemesi (İNCELE) kilitlidir. Tek
-gözetim yuvası (`ObservationTarget`) vardır: kapıdaki dış kayıt, bir dosyanın incelemesi ve kısıtlı sakinin gözetimli
-çalışması aynı yuvayı kullanır, son istek öncekini iptal eder (sunum önceden uyarır).
+**İlkeler.** Gizli kimlik (insan ya da sızmacı) adayın üretiminde `S.Rng` ile çekilir ve değişmez. Oyuncunun gördüğü hiçbir
+alan (kart, bedel, şüphe satırı, olay kâğıdı, seçeneklerin açıklığı, sayaçlar, izin zamanı) aynı kademedeki insanla sızmacıyı
+ayırmaz; kesinlik yalnız sabotajdan, tecrit bulgusundan ve son rapordan gelir. Her sonun sayacı odada ya da fişte görünür; tek
+karar harekâtı bitirmez (istisna: son şalter); her olayda son üretmeyen, her durumda açık bir seçenek vardır. Kurucular ve ilk
+grubun adayları sızmacı olamaz, kurucular iz bırakmaz. Komutlar ve okuyucular RNG çekmez; çekim sayısı olasılıklara bağlı değildir.
 
-- **Kabul:** aynı kişi topluluğa gelir. **Kısıtlı kabul:** üç vardiya; saha, üretim, dış temas ve gözetim erişimi kapalı,
-  uygun diğer işlerde ayrı gözetmen (Boşta'nın ilk uygun kişisi) ve kişinin dosyasında İNCELE gerekir (gözetim yuvası onda olmalı).
-  Süresi dolunca görev durur; kısıt yenilenir, kaldırılır veya kişi ayrılır.
-- **Ret:** aday dış tahliye hattına yönlendirilir. **Dış yardım:** 2 erzak verilir, aday içeri alınmaz. Cevapsız başvuru
-  kapanışta ret sayılır. Kapasite doluysa yeni kabul yapılamaz; mevcut kişinin güvenli ayrılma kararı mümkündür.
-- **Talimat:** başlangıçta tarih ve numara eşleşmesi; 4. vardiyada N-17 serisi ve S-6 nefes işareti; 8. vardiyada
-  R-4'ün buğuyu taklit edebildiği bilgisi gelir. Yenilik yalnız ilgili eski dosyalara inceleme fişi açar. Geçerli belge
-  veya nefes buğusu insanlık garantisi, belge kusuru tek başına robot kanıtı değildir.
-- **Robot içeride:** ilk tam görev vardiyasında normal katkı sağlar. Sonra erişim ve parça kaydı olmak üzere iki
-  bağımsız, kalıcı iz bırakır. İkinci izden sonraki kapanıştan önce hassas görevini kaldırmak, erişimini kısıtlamak,
-  dış kaydı incelemek veya güvenle ayırmak mümkündür. Gözetmenli dosya incelemesiyle (İNCELE, sonucu kapanışta) doğrulanan iki iz
-  kritik erişimi kapatır; kişi kısıtlanır.
-- **Müdahale edilmezse:** saha/üretim erişiminde en çok 2 serbest metal; diğer uygun işlerde 3 erzak sabote edilir.
-  Kısıtlı erişimde zarar ölçeklenir. Robot açığa çıkar, görevi dinlenmeye döner, erişimi kısıtlanır. İlk kapsamda bu
-  olay kimseyi öldürmez; rastgele tek hamleyle harekâtı bitiren ihanet yoktur.
+### Kabul: aday grubu (`Simulation.CandidateGroups.cs`, `Simulation.CommunityAdmissions.cs`)
 
-Kişi dosyaları, belgeler, inceleme sonucu ve izler kişi öldüğünde veya ayrıldığında geçmişte kalır. Bu sistem önceki
-23 ziyaretçili kapıyla aynı anda çalışmaz.
+- **Geliş:** grup kapanışta üretilir, yeni vardiyanın başında kapıdadır; aralık `admissionKnockMin`–`Max` (3–4) vardiya, grubun
+  geldiği kapanıştan sayılır. 2–3 aday (`candidateGroupMin/Max`), `candidateWaitShifts` (2) vardiya bekler, sonra cezasız gider.
+- **Karar:** en çok biri alınır (`ChooseCandidate`, `candidate_choose`) ya da grup geri çevrilir (`PassCandidates`,
+  `candidate_pass`). Alınan kişi Boşta gelir. Seçim ve geri çevirme kilitli planda da geçer; baskın sürerken ve fiş basıldıktan
+  sonra kapı kapalıdır. Bekleyen grup fiş basmayı engellemez; son vardiyada fiş "KAPI · son vardiya" yazar.
+- **Dolu sığınak** (`boardResidentCapacity` 10): aday ancak içeriden biri yollanarak alınır (aynı komutta `b` = yollanan).
+  **Yollama** her yerde aynı bedeldir: kişi, ustalığı, kişiye bağlı teçhizatı ve kalan taksitleri gider; `dismissSupplies` (2)
+  erzak yolluk (stok azsa eldeki; `DismissSuppliesPreview`). Serbest yollama yoktur; canlı 1 iken yollama kapalıdır.
+- **Acil grup:** kapanışta canlı < `candidateEmergencyBelow` (3) ve kapıda grup yoksa aynı kapanışta 3 kişilik acil grup gelir;
+  konular sırayla eksik saha rollerine çevrilir, her aday kişiye bağlı rol kitiyle gelir. Kademe ve kimlik olağan kuralla.
+- **Şüphe kademesi** (kartta görünür; sızmacı olasılığı yalnız kademeye bağlı):
+
+  | Kademe | Pay | Sızmacı | Kartın değeri |
+  |---|---|---|---|
+  | 0 · Kefilli | %30 (`candidateTier0Share`) | %5 | Bir özellik: %35 bedel (`candidateTier0CostChance`), %65 getiri |
+  | 1 · Kayıtsız | %40 | %20 | Bir getiri |
+  | 2 · Şüpheli | %30 (`candidateTier2Share`) | %45 | İki getiri |
+
+  Bütün adaylar aynı kademeden çıkarsa sonuncusu bir kaydırılır. Kefil adı yaşayan bir kurucudan; kefil yalnız metindir.
+- **Özellikler** (`Perks`): getiri `kit` (rol kiti, kişiye bağlı), `zirh` (kişiye bağlı), `devre` (2 kapanışta 1'er),
+  `erzak` (3 kapanışta 2'şer), `usta` (ustalık kademe 2), `saglam` (+1 can); bedel `yarali` (can 1, 2 vardiya yatar), `obur`
+  (iki kat tüketim), `acemi` (ustalık 0), `yavas` (hareket −1; etkisizse `obur`a döner). Kişiye bağlı teçhizat devredilemez,
+  kişiyle gider; taksitler kişi çıkınca kesilir ("al, getirisini depoya koy, yolla" yolu kapalı).
+
+### Sığınak olayları (`Simulation.ShelterEvents.cs`, `ShelterEventData.cs`, `ShelterEventState.cs`)
+
+- **Tetik:** her kapanışta durum koşulları sınanır; aynı anda en çok bir olay açıktır. Olağan olaylar açılıştan açılışa
+  `eventGapMin`–`eventGapMax` (2–3) vardiya bekler (açılışta iki çekim: aralık ve hedef). Zincir olayları (`iz`,
+  `ikinci_iz`, `sabotaj`) aralık bütçesinin dışındadır. Öncelik: zincir, hayatta kalma, kişiler, fırsatlar. Her olağan olayın
+  harekât başına sınırı ve bekleme süresi düz `Balance` alanıdır (`event<Ad>Max/Cooldown`).
+- **Karar:** `DecideShelterEvent(seçenek)` (`event_decide`). Açık olay karar verilmeden fiş basılmaz (`PrintShift`'e özgü; baskın
+  emrini engellemez). Kâğıt her seçeneğin anlık bedelini ve gecikmeli riskin varlığını yazar (olasılığın sayısını yazmaz);
+  karşılanamayan seçenek kapalı görünür ve nedenini söyler. Güveni düşüren seçenek güven 1'de, kişi çıkaran seçenek canlı 1'de
+  kapalıdır; "güvenli" seçenek her durumda açıktır. Olayın kişisi karar verilmeden ölür ya da giderse olay kapanır.
+- **On dört olay** (güvenli seçenek kalın):
+
+  | Olay | Tetik | Seçenekler |
+  |---|---|---|
+  | `iz` | Bir kişi iz bıraktı | Tecrit (3 vardiya, yer 1) · Yolla · **Görmezden gel** (ifşa +1) |
+  | `ikinci_iz` | Aynı kişiden ikinci iz | `iz` ile aynı |
+  | `sabotaj` | Sızmacı sabotajı tamamladı (3 erzak ya da 2 metal gitti, ifşa +2) | **Sök** · Sorgula (3 vardiya yer tutmadan, sonra sökülür; ifşa −1) |
+  | `buyuk_hirsizlik` | Affedilmiş hırsız yeniden çaldı (en çok 5 erzak) | Yolla · **Kısıtla** (5 vardiya) |
+  | `kacak` | Açlık sayacı 2; biri gitmek istiyor | **İkna et** · Bırak · Kapıyı kilitle (3 vardiya kısıt, güven −1) |
+  | `erzak_azaliyor` | Erzak 3 vardiyalık tüketimin altında, yarım tayın yok | Yarım tayın (4 vardiya; dinlenme iyileştirmez, baskın kadrosu 1 can eksik) · **Tam tayın** |
+  | `hirsizlik` | Yarım tayın ya da erzak düşük, stok ≥ 2; 2 erzak çalındı | Yolla · **Affet** (%35 olasılıkla 3–5 vardiya sonra büyük hırsızlık) · Kısıtla (3 vardiya) |
+  | `agir_yarali` | Biri bu kapanışta yatışa girdi, kalan ≥ 2 | Erzakla ayağa kaldır (3 erzak, 2 can) · **Beklet** (%25 yatış +1) |
+  | `kavga` | Başarısız ya da ölümlü baskından dönen iki kişi | Ayır (2 vardiya aynı kadroya giremez) · **Karışma** (%50 biri 1 can, 1 vardiya yatar) |
+  | `anma` | Önceki vardiyada baskında ölüm | Anma yap (2 erzak, güven +1) · **İşe devam** (%40 bir arkadaşı 1 vardiya çalışmaz) |
+  | `karartma` | Alarm eşiğin 2 altında | Karart (Üretim ve Mutfak durur, alarm −2) · **Çalışmaya devam** |
+  | `takas` | Erzak < 8 ve metal ≥ 2; ya da saha kiti eksik ve erzak > 12 | Metal ver (2 metal → 5 erzak) · Erzak ver (4 erzak → 1 devre) · **Geri çevir** |
+  | `cagri` | Başarılı baskından sonra, erzak > 12 | Erzak yolla (4 erzak, güven +2) · **Yollama** (%50 güven −1, 1'in altına inmez) |
+  | `konvoy` | Güven ≥ 15 | Kabul et (+5 erzak, alarm +2) · **Geri çevir** |
+
+- **Kişi durumları:** kısıtlı (Saha, Üretim, Mutfak kapalı), tecritte (hiçbir yuva; saat durur), izli, affedilmiş, ayrı
+  tutulan çift. Tecrit yeri `isolationCapacity` (1); ortaya çıkmış sabotajcı yer tutmaz, sorgu yer istemez.
+- **Sızma zinciri:** kişinin sığınakta, ayakta ve tecrit dışında geçirdiği her kapanış saati ilerletir (görev fark etmez).
+  Saat üretimde çekilen gecikmeye (`traceDelayMin`–`Max`, 2–6) varınca `iz`; görmezden gelinirse `secondTraceGap` (1–3) sonra
+  `ikinci_iz`; o da görmezden gelinirse bir müdahale vardiyası (`interventionShifts` 1), sonra `sabotaj`. **İnsan da iz
+  bırakır:** sonradan alınan insan `humanTraceChance` (%20) olasılıkla aynı gecikme dağılımından iz, bunların %25'i ikinci iz
+  bırakır; insan sabotaj yapmaz. Kural: bir iz şüphe, iki iz güçlü kanıt, sabotaj kesindir.
+- **Tecrit:** 3 vardiya; süre dolunca tek çekim: sızmacıysa bir izde %60, iki izde %85 bulgu ve söküm (`bulgu`), değilse "bulgu
+  yok" (`bulgu_yok`; kimseyi temize çıkarmaz, izler dosyada kalır).
+- **Açlık ve tayın:** aç kapanışta stok 0'a kırpılır, `HungryStreak` 1 artar (tok kapanışta 1 azalır). Sayaç `desertStreak` (3)
+  ve üstündeyken her aç kapanışta biri ayrılır (RNG'siz sıra: önce sonradan gelenler, en son katılandan; kit sahibi saha üyesi en
+  sona; yatan ve o vardiya gelen ayrılmaz; son kişi gitmez). Aç kapanışta da eksik rol kiti üretilir, hiç olmayan rol kiti devresiz
+  üretilir (`boardStarvingKitProduction`, `boardMissingKitCircuits` 0).
+
+### İfşa (`Shelter.Exposure`, `Simulation.Endings.cs`)
+
+İfşayı yalnız iki şey artırır: görmezden gelinen iz `exposureIgnoredTrace` (+1; sahibi kim olursa olsun) ve tamamlanan sabotaj
+`exposureSabotage` (+2). Azaltan tek şey ortaya çıkmış sabotajcının sorgusudur `exposureInterrogation` (−1). Kendiliğinden
+azalmaz, tavanı yoktur (gösterge kırpar). Teleks `exposureWarnAt1/2` (2, 4)'te uyarır; `exposureAlarmAt` (3) ve üstünde YZ alarmı
+vardiyada `exposureAlarmBonus` (+0,5) fazla artar. Eşik `exposureThreshold` (6): eşiğe varılan kapanışta "KONUM ÇÖZÜLDÜ"
+(`Shelter.FallPending`); sabotajla varıldıysa bir, vardiya içindeki bir kararla varıldıysa `exposureDecisionWarnShifts` (2)
+vardiya uyarı (`Shelter.FallGrace`, okuyucu `FallShiftsLeft`). Uyarı süresinde zafer alınabilir, sorgu ifşayı eşiğin altına
+indirirse uyarı hemen kalkar, son şalter çekilebilir; süre sonunda hâlâ eşikteyse `dusus`. Sunum: odadaki altı lambalı İFŞA
+göstergesi (`ExposurePanel`), CRT, teleks ve fiş.
+
+### Sonlar (`Simulation.Endings.cs`, `EndReport.cs`, `GameData.Endings`)
+
+| Son | Kimlik | Koşul | Sonuç |
+|---|---|---|---|
+| Silme | `silme` | Bütün 36 sektör geri alındı | Zafer; tonu aşağıda |
+| Dağılma | `dagilma` | Sivil güven 0 | Yenilgi |
+| Son kişi | `topluluk` | Canlı kimse kalmadı | Yenilgi |
+| Sığınak düştü | `dusus` | İfşa uyarı süresinin sonunda hâlâ eşikte | Yenilgi |
+| Terk | `terk` | Son tam kadrodan beri (`DesertedSinceFull`) açlıktan ayrılma var ve canlı < 3; kapıda acil grup beklemişken üst üste `abandonUnderstaffedShifts` (3) kapanış (`UnderstaffedStreak`; fişte "SIĞINAK EKSİK n/3") | Yenilgi. Yalnız ölümlerle eksilen sığınak bu sonla bitmez |
+| Son şalter | `salter` | Oyuncu en erken `lastSwitchMinShift` (5) vardiyada şalteri çeker ve ÇEKİLME EMRİ'ni damgalar (`PullLastSwitch`, `last_switch`; rehber sürerken mühürlü) | **Düzenli çekilme** yenilgi sayılmaz; **tahliye** (nedenler `konum` uyarı açık, `kadro` eksik kadro sayacı işliyor, `aclik` aç sığınaktan ayrılmalar sürüyor, `guven` < `evacuationTrustBelow` 2) yenilgidir |
+
+Öncelik aynı kapanışta `topluluk`, `dusus`, `terk`, sonra alarm adımının `dagilma`'sı; sonlar olay açılışından önce sınanır.
+**Zaferin tonu** (`VictoryTone`, yalnız son raporda): **gölgeli** içeride en az `victoryShadowIgnoredTraces` (1) izi görmezden
+gelinmiş, ortaya çıkmamış canlı sızmacı varsa ("Son sunucu düştü. İçeride {ad} hâlâ dinliyordu."); **temiz** gölgeli değilse ve
+ölüm ≤ `victoryCleanMaxDeaths` (0) + vardiya ÷ `victoryCleanDeathShifts` (15) (30–44. vardiyada 2, 45–59'da 3), açlıktan ayrılan
+yok, ifşa ≤ `victoryCleanMaxExposure` (2) ve güven hiç `victoryCleanMinTrust` (5)'in altına inmemişse; öteki zaferler **bedelli**.
+`EndReport` son yokken `null`; son rapor (`FinalReportBuilder`, `SiginakFinal`) başlık, damga, ölçüt satırları, kapı bölümü
+(alınan, yollanan ve kaçı insan, geri çevrilen ve kaçı sızmacı) ve sonun kendi satırlarını yazar. Başarımlar aşağıda.
+
+### Denge ölçümü (KOS aşama 8, 2026-11-14/15)
+
+Bot düzeneği `Tools/DengeBotu/` (gerçek Core ve gerçek `RaidBot`, 8 seçenek; olaylar açık, 120 vardiya sınırı; README'de
+politikalar). İlk ölçüm (40 tohum, beş kapı × dört olay politikası ve şalter satırları, 960 harekât) yedi alanlık bir set önerdi,
+ama bot yayındaki panoda bulunmayan İkmal (`gather`, kademe 1'de +1,4 erzak) ve Bakım (`care`) görevlerini kullanıyordu; sunum bu
+görevleri Boşta'ya indirir. Bütün sonuçlar **sunumun kuralıyla** (`RETIRE=1`) yeniden ölçüldü: tüketim 0,575 yerine **0,40**
+(toplayıcılı ölçümün 3,9 − 1,4 = 2,5 net tüketimiyle aynı) ve olay aralığı 2–2 yerine **2–3** (değişmedi). Son ölçüm 80 tohum.
+
+"İyi" = karışık+tecrit, karışık+ucuz, kefilli+ucuz (240 harekât). Taban = aynı kuralla eski değerler (40 tohum, 120 harekât).
+
+| Ölçü | Hedef | Taban (sunum kuralı) | **Uygulanan (80 tohum)** |
+|---|---|---|---|
+| Zafer (iyi) | — | %35 | **%64** |
+| dagilma (iyi) | belirgin düşsün | %62 | **%28** |
+| terk (iyi) | < %10 | %0 | **%5** |
+| `erzak_azaliyor` görülen (iyi) | ≥ %30 | %0 | **%53** |
+| Zafer uzunluğu (iyi) | 35–45 | ort 48,2 / med 48 | **ort 48,3 / med 48** (tutmuyor) |
+| Olay / harekât | 12–15 | 11,9 | **14,7** (iyi), 14,6 (6 yapılandırma) |
+| En sık olay türü | ≤ %35 | agir_yarali %18 | **agir_yarali %15** |
+| Kapı farkı (en iyi − kefilli; ucuz) | ≤ 15 puan | 8 | **5** (karışık %69, kefilli %64) |
+| "Hiç alma" | belirgin kötü | %20 | **%34** (iyi %59–69) |
+| Cömert + görmezden gel `dusus` | ≥ %40 | %62 | **%61** |
+| Karışık + tecrit `dusus`; ucuzdan iyi değil | < %15 | %0; %38 = %38 | **%0; %59 < %69** |
+| Temiz ton (zaferler) | %10–30 | %7 | **%8** (iyi), %7 (6 yapılandırma) (tutmuyor, bot) |
+| Gölgeli ton (zaferler) | %5–15 | %0 | **%5** (iyi), %6 (6 yapılandırma) |
+| 60. vardiyada süren (iyi) | 0 | 5/120 | **8/240** (tutmuyor) |
+| "Hep yolla"da yollanan insan payı | çoğunluk | — | **kapıya bağlı:** karışık %82, cömert %33 |
+| "Al ve yolla" | hiçbirini geçmez | — | **%76** > en iyi %69–71 (tutmuyor) |
+
+Değişen altı alan: `liberationServerExtraTurns` 1 → 2, `liberationTier3At` 6 → 7, `liberationTier4At` 10 → 12 (12 bölgelik
+harekâtta 4. kademe gelmez; göstergeler `Simulation.MaxTier`'i okur: "TEHDİT n/3"), `liberationTrustPerRegion` 3 → 4,
+`boardSuppliesPerResident` 0,35 → 0,40, `boardLootSupplies` 6 → 4. `eventGapMax` 3'te kaldı (2 denendi: olay/harekât 16,6, bant
+dışı). Tüketimin eğimi diktir: 0,375 / 0,40 / 0,425'te `erzak_azaliyor` %28 / %47 / %62 (40 tohum); obur ya da onuncu kişi
+açlığı belirgin kaydırır. dagilma'nın son darbesi çoğunlukla baskında kırılan sivillerdir (%72); dağılmaların %41'i ilk 20
+vardiyada, %49'u 35. vardiyadan sonra (ölümle süren yıpranma). Başlangıç güveni 12 bunu değiştirmedi (%29).
+
+Bot insan değildir (baskın başına ~1,7 sivil, harekât başına ~6,4 ölü, yarım tayın ve takas yok). Seçeneği iki katına çıkan
+bot (`ALT=16`, karışık+ucuz, 40 tohum) zafer %65 → %80, dagilma %25 → %15, uzunluk medyanı 48,5 → 43,5, temiz ton %8 → %13:
+uzunluk ve temiz ton hedefleri daha iyi baskın oyunuyla tutuyor. Sapmaların yorumu ve açık kararlar `DURUM.md`'de.
+
+### Kodda yerleri
+
+| Konu | Core | Sunum |
+|---|---|---|
+| Aday grubu | `Simulation.CandidateGroups.cs` (`ChooseCandidate`, `PassCandidates`, `CandidateChoiceCheck`), `CommunityAdmissionState.cs` (`Board.Admission`) | `SiginakAdmission`, `AdmissionSnapshotBuilder`, `AdmissionUi` (kabul tezgâhı, KABUL / GERİ ÇEVİR) |
+| Kapı aralığı, kurucu dosyaları, grubun süresi | `Simulation.CommunityAdmissions.cs` | Teleks, fiş uyarısı (`HandoverSlipFactsBuilder`) |
+| Olaylar, zincir, tecrit, kısıt, tayın | `Simulation.ShelterEvents.cs`, `ShelterEventData.cs` (tablolar, `SafeOption`), `ShelterEventState.cs` (`Board.ShelterEvents`) | `SiginakShelterEvent`, `ShelterEventSnapshotBuilder`, `ShelterEventPaperView` (EVRAK tepsisindeki tutanak) |
+| Açlık, ayrılma, erzak dengesi | `Simulation.PlanningBoard.cs` (`AdvancePlanningBoard`, `BoardConsumption`, `BoardFoodPreview`) | Pano başlığı, fiş (ERZAK satırı, ayrılacak kişi) |
+| İfşa ve sonlar | `Simulation.Endings.cs`, `ShelterState.cs` (`Exposure`, `FallPending`, `FallGrace`, `HungryStreak`, `UnderstaffedStreak`), `EndReport.cs`, `GameData.Endings` | `ExposurePanel`, `SiginakLastSwitch` + `LastSwitchViewBuilder` + `LastSwitchPlate`, `SiginakFinal` + `FinalReportBuilder` |
+| Başarımlar | — | `Game/Platform.cs › Achievements.ForEnding` |
+| Sayılar | `Balance.cs`, `Settings/BalanceConfig.asset` | — |
+
+- **Olaylar kapalıyken** (`Balance.shelterEventsEnabled = false`; yalnız testlerin olaysız kapanış dizileri için): olay,
+  sızma zinciri, tecrit, kısıt, tayın kipi, karartma, açlıktan ayrılma, ifşa, `dusus`/`terk` ve son şalterin ifşa/eksik
+  nedenleri çalışmaz; aday grubu kapısı (seçim, geri çevirme, dolu sığınakta yollama, acil grup) çalışır; `HungryStreak`
+  sayılır; sığınağın kendi sonu yalnız `topluluk`, son şalter (`salter`) olaylardan bağımsız çalışır ve tahliye nedeni yalnız güven
+  (`guven`) olabilir. Kısıtı ya da kapı dışı yollamayı kuran elle bir yol yoktur: kapalı oyunda kimse
+  kısıtlı olmaz.
+
+**Geçmiş (KOS aşama 7'de söküldü).** Önceki tek adaylı kabul: belge, görüşme, soğukta nefes (buğu camı) ve dış kayıt
+incelemeleri (`InspectApplicant`), dört karar (kabul, kısıtlı kabul, ret, dış yardım; `DecideApplicant`), talimat sürümleri
+ve arşivi, gözetmenli dosya incelemesi (`ReviewResident`), elle kısıt (`RestrictResident`) ve serbest yollama
+(`DismissResident`), tek gözetim yuvası (`ObservationTarget`) ve `watch`/`contact` görevlerinin kabul bağları. Komutları,
+Core durumları, denge alanları, sunumu (büyüteç, talep defteri, kalem, KISITLI/YARDIM damgaları, buğu camı ve interkom
+etkileşimi, talimat şeridi, bulgu fişleri, kişi dosyasının İNCELE/ERİŞİM/TAHLİYE sekmeleri), sesleri ve çevirileri
+silindi. Kayıt biçimi 17'de kaldı (bkz. Kayıt ve kalıcılık).
 
 ## Eski oda geliştirmeli sığınak (yalnız `planningBoardEnabled = false`)
 
@@ -514,7 +676,7 @@ kaçmış bir teknisyen… Kapı erzağa, güvene ve alarma bir yüz verir; bask
   da Güney Amerika seçiliyse sağda), kırmızı iple bölgeye bağlı. SAHA satırları (bölge özelliği, imza makinesi, tehdit
   kademesi; işaretleri haritadaki ve baskın tahtasındakilerle aynı), sektörler, bedel/ödül, ekip diskleri, baskın emri.
   Bölge tamamlanınca cephe onay fişi. Haritada cephe bloğu (sektör şeridi + yüzde + saha işaretleri), işaretler kutusunda
-  TEHDİT n/4; karşı saldırının aldığı sektör geri alınana kadar ✕ ve YENİDEN İŞGAL damgasıyla işaretli. Ekip figürü
+  TEHDİT n/m (m = `Simulation.MaxTier`, uygulanan dengede 3); karşı saldırının aldığı sektör geri alınana kadar ✕ ve YENİDEN İŞGAL damgasıyla işaretli. Ekip figürü
   haritada sürüklenebilir.
 - **Tarif defteri / Boşta:** tarif şeridi yoktur. Deftere tıklanınca öne açılır; önceki/sonrakiyle üç açılımda altı tarif gezilir, tarif üretime sürüklenir. Boşta tıklanınca tüm kartlar alt sıraya yayılır; bir kişi sürüklenirken diğerleri geri toplanır.
 - **Güncel tahta:** kişi kartları 210×294 dikeydir; aktif yuvalar Teknisyen, EMP, Analist, Üretim, Mutfak, Eğitim ve Boşta. Bakım/İkmal/Gözetim/Dış temas kaldırıldı; eski kayıttaki bu görevler yeni kilitsiz planda kayıtlı atama komutlarıyla Boşta olur. Aşağıdaki eski alanlı yerleşim açıklaması tasarım geçmişidir.
@@ -545,8 +707,19 @@ kaçmış bir teknisyen… Kapı erzağa, güvene ve alarma bir yüz verir; bask
   kampanya baskını kullanılır. EĞİTİMİ BİTİR kapatır; Esc panodan geri dönme görevini korur.
   `Corrigible.PlanningTutorialDone/Seed/Step` sunum tercihleri aynı harekâtın yarım kalan rehberini devam ettirir; rehberle
   başlamamış eski kayıtta kendiliğinden açılmaz. Açılış/DEVAM kararı verilmeden önce eski rehber ilerlemesi ezilmez.
-  Editörde Corrigible › Eğitim › Eğitimi sıfırla, hem yeni hem eski rehberi sıfırlar. Üretim ve kapı için kapanışta kısa
-  yönlendirme vardır; bu ilk rehberde ayrı uygulamalı üretim/kabul dersi yoktur.
+  Editörde Corrigible › Eğitim › Eğitimi sıfırla, hem yeni hem eski rehberi sıfırlar. Üretim için kapanışta kısa
+  yönlendirme vardır; ayrı uygulamalı üretim dersi yoktur.
+  **KOS aşama 8 (2026-11-14):** rehber 26 adım; ilk vardiya dosyalanınca **hedef satırı** gelir (kazanma: bütün sektörler;
+  kaybettirenler: güven 0'da dağılma, ifşa eşiğinde konum çözülmesi, açlıkla eksik kalan sığınağın terki; alarm eşiği oyunu
+  bitirmez, YZ son sektörü geri alır ve güven 1 düşer; satır canlıdır: "HEDEF · sektör 0/36 · güven 10 · alarm 1/10 ·
+  ifşa 0/6"). Sonra rehber oyunun kendisini bekler: EVRAK'a ilk olay tutanağı düşünce "tutanağı al" ve "satır seç, KARAR"
+  (güvenli satır, fiş kilidi "olay bekliyor"), kapıya ilk grup gelince "KAPI → tezgâh" ve "kartı oku, damgala" (şüphe satırı,
+  getirdiği, KABUL/GERİ ÇEVİR, dolu sığınakta yollama ve yolluk). Hangisi önce gelirse o anlatılır; ikisi yokken "vardiyayı
+  sürdür" adımı hedef satırıyla bekler. İkisi de bir kez karara bağlanınca (ya da V.011'e konusuz girilirse) İFŞA ve izler
+  (bir iz şüphe, iki iz güçlü kanıt; KONUM ÇÖZÜLDÜ: sorgu, son baskın ya da son şalter yetişmezse sığınak düşer), son şalter (mühürlü; ÇEKİLME / TAHLİYE) ve kapanış bilgisi gelir. Rehber
+  sürerken son şalter "mühürlü · rehber"dir; İFŞA ve teleks metinleri de onu önermez. Konu bölümünde not sayacı "REHBER · KONU"
+  yazar. Yeni ekran balonu yoktur; not adımı oyunun yüzeylerine (teleks, EVRAK, plaka,
+  fiş, tezgâh) yönlendirir.
 - **Eski rehberli eğitim (kartlı oyunda kapalı):** oda geliştirmeli yeni harekâtta, eğitim daha önce bitirilmediyse ya da atlanmadıysa sağ altta
   analistin notu çıkar (`SiginakTutorial`, adımlar `TutorialFlow.Steps`). 12 adım: komuta odası (TAMAM) → görev fişi →
   baskın emri → taktik tahta → sonuç → operasyon raporu → sığınak → atölyeyi onar → personel ata → vardiya şalteri →
@@ -565,15 +738,17 @@ kaçmış bir teknisyen… Kapı erzağa, güvene ve alarma bir yüz verir; bask
   çekilir, baskın serbest oynanır. Simülasyon yalnız baskının sonucunu gördüğü için kayıt bozulmaz.
   "Eğitimi atla" ya da kapanış eğitimi bitirir (PlayerPrefs `Corrigible.TutorialDone`; editörde Corrigible › Eğitim ›
   Eğitimi sıfırla). Kayıttan devam eden oyunda eğitim yoktur. Simülasyona dokunmaz.
-- **Kapı ve kabul tezgâhı (K8, K8A, K8G, K8R; Revizyon 3 · Aşama 6):** yeni aday gelince kapı bir kez üç vuruşla çalar (yüklemede
-  çalmaz, kamera dönmez), lamba amber kalır, kapının yanındaki kabul tezgâhı iner. KAPI tuşu K8'e, tezgâha tık K8A'ya götürür. Tezgâhta
-  çekmecedeki belge, talimat şeridi (sürüm değişince eskisi ESKİ cebine), kıskaçta bulgu fişleri; dört araç birer inceleme komutudur:
-  büyüteç (KARŞILAŞTIR), interkom (GÖRÜŞME), kapı kanadındaki buğu camı (SOĞUK GÖZLEM, K8G), talep defteri (DIŞ KAYIT; GİDEN yaprağı,
-  karbonda gözetmenin adı; sonuç sonraki kapanışta). Dört damga (KABUL · TAM ERİŞİM, KISITLI KABUL, REDDET, DIŞARIDAN YARDIM) sürüklenip
-  ya da tıklanıp belgeye basılır; kilitliyken pirinç dil ve gerekçe. KABUL ve KISITLI'da tezgâh katlanır, kapı açılır (koridor boş),
-  kişinin kartı Boşta'ya düşer. Kâğıtlara tık K8R'de okutur; Esc / sağ tık bir seviye geri, MASA tuşu masaya. Kabul edilen kişinin izleri
-  ve bulguları panodaki kişi dosyasında ("robot" yazmaz), dosyada İNCELEME / KISITLI etiketi. Aşağıdaki kapı kâğıdı/siluet dizisi eski
-  ziyaretçi yoludur.
+- **Kapı ve kabul tezgâhı (K8, K8A, K8R; Revizyon 3 · Aşama 6, KOS aşama 2 ve 7):** yeni aday grubu gelince kapı bir kez üç
+  vuruşla çalar (yüklemede çalmaz, kamera dönmez), lamba amber kalır, teleks “KAPI · n aday kapıda” basar, kapının yanındaki kabul
+  tezgâhı iner. KAPI tuşu K8'e, tezgâha tık K8A'ya götürür. Tezgâhta 2–3 aday kartı ve grup fişi (dolu sığınakta YER YOK listesi,
+  satıra tık yollanacak kişiyi işaretler) durur; raftaki iki damga (KABUL · TAM ERİŞİM, GERİ ÇEVİR) sürüklenip ya da tıklanıp
+  basılır: KABUL bir karta (`candidate_choose`), GERİ ÇEVİR grup fişine (`candidate_pass`); kilitliyken pirinç dil ve gerekçe.
+  KABUL'de kâğıtlar çekmeceye iner, tezgâh katlanır, kapı açılır (koridor boş), kişinin kartı Boşta'ya düşer. Kâğıtlara tık
+  K8R'de okutur; Esc / sağ tık bir seviye geri, MASA tuşu masaya. Kişinin izleri ve olay kayıtları panodaki kişi dosyasında
+  ("robot" yazmaz), dosyada KISITLI / TECRİT / İZ etiketi. Aşama 7'de emekli araçlar (büyüteç, talep defteri, kalem, KISITLI ve
+  YARDIM damgaları), belge, talimat şeridi, bulgu fişleri, tenekeler ve panelin etiketleri sahneden söküldü; kapıdaki buğu camı
+  ve interkomun gövdesi durur ama tıklanmaz. K8G pozu emeklidir (çapa sahnede, hiçbir yol odaklamaz). Aşağıdaki kapı
+  kâğıdı/siluet dizisi eski ziyaretçi yoludur.
   **Eski kapı görünümü (Revizyon 2 · S4):** sağ duvarda çarklı çelik kapı: üstünde tehlike bandı ve kafesli vuruş lambası, yanında
   interkom, solunda tebeşirle ziyaretçi çentiği; arkasında fayanslı merdiven boşluğu. Biri çalınca (vardiya raporu
   dosyalanıp masa boşalınca) üç vuruş gelir, lamba amber yanar ve her vuruşta parlar, tavan ampulü titrer, teleks "KAPI
@@ -595,17 +770,26 @@ başarısız; ÖZGÜR BÖLGE x/12 + sektör; SIĞINAK NÜFUSU, kayıpta kırmız
 zaman tam genişlik; kırmızı işgal, mavi geri alınan; karşı saldırılar yukarı çıkıntı) ve üstünde numaralı kırılma anları,
 altta aynı numarayla satırlar (en çok altı: ilk özgür bölge, karşı saldırılar, öteki özgür bölgeler, Dağılma'da son güven
 düşüşü, son olay: son sunucu / güvenin sıfırlanması / kapının açılması), **YENİDEN BAŞLA** (Enter). İşaretin ya da satırın
-üzerine gelince ikisi birlikte seçilir (`FinalReportBuilder`, `FinalReportView`).
+üzerine gelince ikisi birlikte seçilir (`FinalReportBuilder`, `FinalReportView`). KOS sonlarında (aşama 6) başlık ve damga
+sonun kendisinindir (SIĞINAK DÜŞTÜ, SIĞINAK BOŞALDI, ÇEKİLME / TAHLİYE ve nedeni); zaferde ton damgası ve ölçüt satırları
+("tuttu / tutmadı"), her sonda kapı bölümü yazar.
 
 ## Kayıt ve kalıcılık
 
-- Kayıt = tohum + denge değerleri + **komut geçmişi** (`GameRecord`, **biçim 15**; 15 = K4-A gözetmen kuralı). İsimli kişiler, sabit gizli kimlik,
-  görev/eşya, ayrılmış üretim girdisi, eğitim, basılı devir fişi ve kabul kararları `Replay.Restore` ile yeniden kurulur.
-  `board_*` komutları (eşya hurdalama `board_scrap` dahil) ve `inspectApplicant`, `decideApplicant`, `reviewResident`, `restrictResident`, `dismissResident`
-  kayda girer. `board_file` kapanan güne yazılır ve günü kendisi ilerletir; eksik devir komutu sonsuz döngü yerine hata verir.
+- Kayıt = tohum + denge değerleri + **komut geçmişi** (`GameRecord`, **biçim 17**; 16 = aday grubu ve olaylar, 17 = ifşa, yeni
+  sonlar ve son şalter). İsimli kişiler, sabit gizli kimlik, görev/eşya, ayrılmış üretim girdisi, eğitim, basılı devir fişi, aday
+  seçimleri ve olay kararları `Replay.Restore` ile yeniden kurulur. `board_*` komutları (eşya hurdalama `board_scrap` dahil) ve
+  `candidate_choose`, `candidate_pass`, `event_decide`, `last_switch` kayda girer. Eski kabulün beş komut türü
+  (`inspectApplicant`, `decideApplicant`, `reviewResident`, `restrictResident`, `dismissResident`) aşama 7'de silindi:
+  `Replay.Apply` onları tanımaz (sessizce atlar). Olaylar açık oynanmış bir biçim 17 kaydında bu türler yoktu; yalnız olaylar
+  kapalı oynanmış (yayınlanmamış) bir kayıt onları taşıyabilirdi; öyle bir kayıt başka oyuna döneceği için yüklenmez
+  (`SaveStore.HasRetiredCommand`, yükleme süzgeci) ve yeni oyun yazılırken `.retired.backup` olarak arşivlenir. `board_file` kapanan güne yazılır ve günü kendisi ilerletir; eksik devir komutu sonsuz döngü yerine hata verir.
+- Denge değerleri kayda yazılır (`GameRecord.balance`, bütün alanlar); yeni oyun `BalanceConfig.asset`'in kopyasıyla başlar,
+  kayıttan devam kaydın kendi dengesiyle. Bu yüzden yalnız varsayılan sayıları değiştirmek (KOS aşama 8 dengesi) sürüm
+  istemez: eski kayıt eski sayılarla aynı oyuna döner (eski dengeli kayıt yeni kodla birebir yeniden kuruldu, `DURUM.md`).
 - Baskın sonucu kişilerin kalan canını, plakasını, geride kalanları ve ayakta kalan sivilleri taşır (`RaidResult.Encode`).
   Her başarılı komutta ve uygulama kapanırken kaydedilir; harekât bitince etkin kayıt silinir.
-- Biçim 14 ve öncesi bu kurallarla yeniden oynatılmaz. Yeni oyun eski sürüm dosyasının üzerine ilk kez kaydedilirken
+- Biçim 16 ve öncesi bu kurallarla yeniden oynatılmaz. Yeni oyun eski sürüm dosyasının üzerine ilk kez kaydedilirken
   `SaveStore` sürüm numaralı `.backup` kopyasını korur; bu bir kayıt göçü değildir, eski harekât yeni sürümde devam etmez.
 - Dosyalar `Application.persistentDataPath` altında: `liberation_savegame.json` (oyun) ve kayda girmeyen sunum durumu
   için `liberation_desk.json` (teleks, evrak geçmişi, kamera pozu; tohum eşleşmezse yok sayılır). Editör testleri
@@ -613,4 +797,18 @@ düşüşü, son olay: son sunucu / güvenin sıfırlanması / kapının açılm
 
 ## Başarımlar (Steam)
 
-`Game/Platform.cs → Achievements`: yalnız `ACH_ERADICATION` (Silme sonu).
+`Game/Platform.cs → Achievements.ForEnding(son, çeşit, ton)` (KOS aşama 6; çeşit ve ton `Simulation.EndReport`'tan,
+`GameController.Flush` açar):
+
+| Son | Başarım |
+|---|---|
+| `silme` | `ACH_ERADICATION`; ton `temiz` ise ayrıca `ACH_ERADICATION_CLEAN` |
+| `salter` düzenli çekilme | `ACH_WITHDRAWAL` |
+| `salter` tahliye | `ACH_EVACUATION` |
+| `dusus` | `ACH_SHELTER_FALLEN` |
+| `terk` | `ACH_SHELTER_ABANDONED` |
+| `topluluk`, `dagilma`, `vuruldu`, `sizma` | yok |
+
+Yalnız `ACH_ERADICATION` Steamworks'te tanımlı; yeni beş kimlik **yalnız kod eşlemesidir** ve yayından önce Steamworks'te
+tanımlanmalıdır (tanımlanmazsa `SetAchievement` false döner, sessizce düşer). KOS aşama 8'de tablo gözden geçirildi ve
+değişmedi; Steamworks'te tanımlamak geliştiricinin işi (`DURUM.md` › Açık işler).

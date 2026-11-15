@@ -16,14 +16,33 @@ namespace Corrigible.Core
             Recipe("medkit", Loc.T("Bakım kiti"), "medkit", B.boardMedkitTurns, "kumas", B.boardMedkitCloth, "kimyasal", B.boardMedkitChemicals),
             Recipe("emp_cell", Loc.T("EMP hücresi"), "emp_cell", B.boardEmpTurns, "metal", B.boardEmpMetal, "devre", B.boardEmpCircuits),
             // Son teknisyenin kaybı, kalan sakinlerin temel saha kitine erişimini kapatmaz.
-            Recipe("kit_tek", Loc.T("Teknisyen kiti"), "kit_tek", B.boardKitTurns, "metal", B.boardKitMetal, "devre", B.boardKitCircuits),
-            Recipe("kit_emp", Loc.T("EMP kiti"), "kit_emp", B.boardKitTurns, "metal", B.boardKitMetal, "devre", B.boardKitCircuits),
-            Recipe("kit_ana", Loc.T("Analist kiti"), "kit_ana", B.boardKitTurns, "metal", B.boardKitMetal, "devre", B.boardKitCircuits),
+            KitRecipe("kit_tek", Loc.T("Teknisyen kiti")),
+            KitRecipe("kit_emp", Loc.T("EMP kiti")),
+            KitRecipe("kit_ana", Loc.T("Analist kiti")),
         };
 
-        static BoardRecipe Recipe(string id, string name, string output, int turns, string first, int firstCount, string second, int secondCount) =>
-            new BoardRecipe { Id = id, Name = name, Output = output, Turns = Math.Max(1, turns), Inputs = new List<BoardMaterial>
-            { new BoardMaterial { Kind = first, Quantity = Math.Max(0, firstCount) }, new BoardMaterial { Kind = second, Quantity = Math.Max(0, secondCount) } } };
+        /// <summary>Eksik rol kiti: panoda o türden şarjı olan hiçbir eşya yok (sahibi kim olursa olsun, kişiye bağlı olan da sayılır).</summary>
+        public bool BoardKitMissing(string kind) => Board != null && kind != null && kind.StartsWith("kit_", StringComparison.Ordinal)
+            && !Board.Equipment.Any(e => e.Kind == kind && e.Charges > 0);
+
+        /// <summary>
+        /// Depo tavanına (<c>boardEquipmentCapacity</c>) sayılan teçhizat. Kişiye bağlı eşya sahibinin üzerindedir, depoda yer tutmaz:
+        /// tavan dolu olsa da verilir ve ne üretimi ne de fişi durdurur (kilitli planda alınan aday vardiyayı kilitleyemez).
+        /// </summary>
+        public int BoardDepotCount => Board == null ? 0 : Board.Equipment.Count(e => !e.Bound);
+
+        /// <summary>Kit kilidi: eksik rol kitinin tarifi devre istemez (ya da <c>boardMissingKitCircuits</c> kadar ister).</summary>
+        BoardRecipe KitRecipe(string kind, string name) =>
+            Recipe(kind, name, kind, B.boardKitTurns, "metal", B.boardKitMetal, "devre", BoardKitMissing(kind) ? B.boardMissingKitCircuits : B.boardKitCircuits);
+
+        /// <summary>Sıfır adetli girdi tarife yazılmaz.</summary>
+        static BoardRecipe Recipe(string id, string name, string output, int turns, string first, int firstCount, string second, int secondCount)
+        {
+            var recipe = new BoardRecipe { Id = id, Name = name, Output = output, Turns = Math.Max(1, turns) };
+            if (firstCount > 0) recipe.Inputs.Add(new BoardMaterial { Kind = first, Quantity = firstCount });
+            if (secondCount > 0) recipe.Inputs.Add(new BoardMaterial { Kind = second, Quantity = secondCount });
+            return recipe;
+        }
 
         void SetupPlanningBoard()
         {
@@ -60,16 +79,23 @@ namespace Corrigible.Core
             SyncBoardMaterialTotal();
         }
 
+        /// <summary>Kurucu üretimi: çekim sırası (konu yalnız dizin dışındaysa, sonra profil) kayıt biçiminin parçasıdır.</summary>
         ResidentState CreateBoardResident(string id, string name, int index)
         {
             string[] subjects = PlanningBoardData.Subjects;
             int subject = index >= 0 && index < subjects.Length ? index : (int)Math.Floor(S.Rng.Next() * subjects.Length);
             int profile = (int)Math.Floor(S.Rng.Next() * 4);
+            return MakeBoardResident(id, name, subjects[subject], profile);
+        }
+
+        /// <summary>Kişi kartını verilen konu ve profilden kurar; RNG çekmez.</summary>
+        ResidentState MakeBoardResident(string id, string name, string subject, int profile)
+        {
             int step = Math.Max(0, B.boardProfileStatStep);
             var p = new ResidentState
             {
                 Id = id, Name = name, MaxHp = Math.Max(2, B.boardBaseHp), Move = Math.Max(2, B.boardBaseMove), Power = Math.Max(1, B.boardBasePower),
-                Profession = ProfessionName(subjects[subject]), TrainingSubject = subjects[subject], Job = "rest"
+                Profession = ProfessionName(subject), TrainingSubject = subject, Job = "rest"
             };
             switch (profile)
             {
@@ -79,11 +105,9 @@ namespace Corrigible.Core
                 default: p.Trait = Loc.N("Dengeli, saha deneyimi az"); break;
             }
             p.Hp = p.MaxHp;
-            p.Experience.Add(new ResidentSkill { Subject = subjects[subject], Points = B.boardTrainedAt });
+            p.Experience.Add(new ResidentSkill { Subject = subject, Points = B.boardTrainedAt });
             return p;
         }
-
-        internal ResidentState CreateAdmissionResident(string id) => CreateBoardResident(id, id, -1);
 
         static string ProfessionName(string subject)
         {
@@ -133,12 +157,10 @@ namespace Corrigible.Core
             if (!PlanningBoardData.Jobs.Contains(job)) return Loc.T("Böyle bir görev yok.");
             if (job == "rest") return null;
             if (person.Down > 0 || person.Hp <= 0) return Loc.T("Yatan yaralı önce dinlenmeli.");
-            if (person.Restricted)
-            {
-                if (PlanningBoardData.FieldJobs.Contains(job) || job == "craft" || job == "contact" || job == "watch")
-                    return Loc.T("Kısıtlı sakin bu göreve erişemez.");
-                if (!CanRestrictedResidentWork(person.Id)) return Loc.T("Kısıtlı sakin için ayrı gözetmen gerekiyor.");
-            }
+            if (person.Isolated) return Loc.T("Tecritteki sakin görev alamaz.");
+            if (S.Day < (Admission?.File(person.Id)?.IdleUntil ?? -1)) return Loc.T("Bu sakin bu vardiya görev alamaz.");
+            // Olay kısıtı: yalnız Eğitim ve Boşta açık. Kısıtı yalnız olay kararı kurar; olaylar kapalıyken kimse kısıtlı olmaz.
+            if (person.Restricted && job != "train") return Loc.T("Kısıtlı sakin bu göreve erişemez.");
             return null;
         }
 
@@ -204,12 +226,15 @@ namespace Corrigible.Core
             if (equipment == null || equipment.Charges <= 0) return ActResult.Fail(Loc.T("Bu eşya depoda veya kişide bulunmuyor."));
             personId = string.IsNullOrEmpty(personId) ? null : personId;
             var person = personId == null ? null : Board.Person(personId);
-            if (personId != null && (person == null || !person.Alive || person.Restricted)) return ActResult.Fail(Loc.T("Bu sakin teçhizat kullanamıyor."));
+            if (personId != null && (person == null || !person.Alive || person.Restricted || person.Isolated)) return ActResult.Fail(Loc.T("Bu sakin teçhizat kullanamıyor."));
             if (equipment.OwnerId == personId) return ActResult.Fail(Loc.T("Eşya zaten bu cepte."));
+            if (equipment.Bound) return ActResult.Fail(Loc.T("Bu teçhizat sahibine bağlı; devredilemez."));
             if (person != null)
             {
                 string slot = PlanningBoardData.EquipmentSlot(equipment.Kind);
                 var old = Board.Equipment.FirstOrDefault(e => e.Id != equipmentId && e.OwnerId == personId && PlanningBoardData.EquipmentSlot(e.Kind) == slot);
+                // Takas, kişiye bağlı eşyayı başkasının cebine ya da depoya geçiremez.
+                if (old != null && old.Bound) return ActResult.Fail(Loc.T("Bu cebi kişinin kendi teçhizatı tutuyor."));
                 if (old != null) old.OwnerId = equipment.OwnerId;
             }
             equipment.OwnerId = personId;
@@ -242,7 +267,7 @@ namespace Corrigible.Core
 
         public BoardRecipe AutomaticProductionRecipe => Board==null ? null : BoardRecipes
             .Where(r=>r.Inputs.All(m=>Board.ProductionInputs.Where(i=>i.Kind==m.Kind).Sum(i=>i.Quantity)>=m.Quantity))
-            .OrderBy(r=>r.Output.StartsWith("kit_",StringComparison.Ordinal)&&!Board.Equipment.Any(e=>e.Kind==r.Output)?0:1).FirstOrDefault();
+            .OrderBy(r=>BoardKitMissing(r.Output)?0:1).FirstOrDefault();
 
         public ActResult ScrapEquipment(string equipmentId) => RunCommand(() =>
         {
@@ -250,6 +275,7 @@ namespace Corrigible.Core
             if (why != null) return ActResult.Fail(why);
             var equipment = Board.EquipmentItem(equipmentId);
             if (equipment == null) return ActResult.Fail(Loc.T("Hurdaya ayrılabilen bir eşya seç."));
+            if (equipment.Bound) return ActResult.Fail(Loc.T("Bu teçhizat sahibine bağlı; sökülemez."));
             Board.Equipment.Remove(equipment);
             AddBoardMaterial("metal", B.boardScrapMetal);
             return ActResult.Success(Loc.F("{0} hurdaya ayrıldı; {1} metal kazanıldı.", PlanningBoardData.EquipmentName(equipment.Kind), Math.Max(0, B.boardScrapMetal)));
@@ -317,7 +343,7 @@ namespace Corrigible.Core
                     if (order.Reserves.Where(r => r.Kind == input.Kind).Sum(r => r.Quantity) != input.Quantity)
                         return Loc.F("{0}: {1} adedi {2} olmalı.", recipe.Name, PlanningBoardData.MaterialName(input.Kind), input.Quantity);
             }
-            if (Board.Orders.Count > 0 && Board.Equipment.Count >= B.boardEquipmentCapacity)
+            if (Board.Orders.Count > 0 && BoardDepotCount >= B.boardEquipmentCapacity)
                 return Loc.T("Teçhizat deposu dolu. Üretimden önce yer aç.");
             return null;
         }
@@ -330,18 +356,47 @@ namespace Corrigible.Core
             get
             {
                 if (Board == null) return 0;
-                double consumption = Board.People.Count(p => p.Alive) * Math.Max(0, B.boardSuppliesPerResident);
-                var cook = Board.People.FirstOrDefault(p => p.Alive && p.Down <= 0 && p.Hp > 0 && p.Job == "cook");
-                if (cook != null) consumption -= Math.Min(consumption * B.boardCookingMaxSavingFraction, B.boardCookSaving + BoardSkillTier(cook, "cook") * B.boardCookSavingPerTier);
+                // Obur kişi tayının katını yer. Obur yokken çarpan tam olarak canlı sayısıdır (eski değerle bit düzeyinde aynı).
+                double consumption = BoardRawConsumption;
+                // Yarım tayın, aşçı tasarrufu düşüldükten sonra çarpılır. Yarım tayın yokken aritmetik eskisiyle bit düzeyinde aynıdır.
+                if (HalfRationActive) consumption *= Math.Max(0, B.halfRationFactor);
                 var gather = Board.People.FirstOrDefault(p => p.Alive && p.Down <= 0 && p.Hp > 0 && p.Job == "gather");
                 double gain = gather == null ? 0 : B.boardGatherSupplies + BoardSkillTier(gather, "gather") * B.boardGatherSuppliesPerTier;
+                // Erzak taksiti kazanca burada eklenir ki fiş ön izlemesi ile kapanış aynı sayıyı yazsın.
+                int sacks = SupplyFiles(f => f.SupplyInstallments > 0).Count();
+                if (sacks > 0) gain += sacks * Math.Max(0, B.perkSupplies) / Math.Max(1, B.perkSupplyShifts);
                 return gain - Math.Max(0, consumption);
             }
         }
 
+        /// <summary>Tam tayınla vardiya tüketimi: kişi başı tayın (obur katıyla), aşçı tasarrufu düşülmüş. Karartmada aşçı sayılmaz.</summary>
+        double BoardRawConsumption
+        {
+            get
+            {
+                int gluttons = SupplyFiles(f => f.Perks.Contains("obur")).Count();
+                double consumption = (Board.People.Count(p => p.Alive) + gluttons * (Math.Max(1, B.perkDoubleRationFactor) - 1)) * Math.Max(0, B.boardSuppliesPerResident);
+                var cook = BlackoutActive ? null : Board.People.FirstOrDefault(p => p.Alive && p.Down <= 0 && p.Hp > 0 && p.Job == "cook");
+                if (cook != null) consumption -= Math.Min(consumption * B.boardCookingMaxSavingFraction, B.boardCookSaving + BoardSkillTier(cook, "cook") * B.boardCookSavingPerTier);
+                return consumption;
+            }
+        }
+
+        /// <summary>Bu vardiyanın tam tayınla tüketimi (yarım tayın çarpanı uygulanmadan); olay eşikleri bunu okur.</summary>
+        public double BoardConsumption => Board == null ? 0 : Math.Max(0, BoardRawConsumption);
+
+        /// <summary>Sığınakta yaşayan (panoda duran, canlı, ayrılmamış) kişilerin dosyaları; yatan kişi de sayılır.</summary>
+        IEnumerable<ResidentAdmissionFile> SupplyFiles(Func<ResidentAdmissionFile, bool> match) => Admission == null
+            ? Enumerable.Empty<ResidentAdmissionFile>()
+            : Admission.Files.Where(f => !f.Departed && f.Resident.Alive && match(f) && Board.People.Contains(f.Resident));
+
         public ActResult PrintShift() => RunCommand(() =>
         {
             string why = BoardPlanCheck();
+            if (why != null) return ActResult.Fail(why);
+            // Açık olay fişi kilitler (baskın emrini değil); hedefi gitmiş olay önce kendiliğinden kapanır.
+            CloseOrphanShelterEvent();
+            why = ShelterEventPrintCheck();
             if (why != null) return ActResult.Fail(why);
             if (Board.Printed) return ActResult.Fail(Loc.T("Bu vardiyanın fişi zaten çıkış tepsisinde."));
             Board.Locked = true;
@@ -383,12 +438,31 @@ namespace Corrigible.Core
             if(Board.AutomaticProduction)lines.Add(Loc.F("Üretim alanı: {0}",AutomaticProductionRecipe?.Name??Loc.T("Uygun tarif yok; malzemeler korunur.")));
             foreach (var person in Board.People.Where(p => p.Alive && p.Job == "train"))
                 lines.Add(Loc.F("{0}: {1} alanında +{2} eğitim.", person.Name, PlanningBoardData.SubjectName(person.TrainingSubject), B.boardTrainingGain));
-            foreach (var person in Board.People.Where(p => p.Alive))
+            if (B.shelterEventsEnabled && Shelter != null)
             {
-                string risk = ResidentAdmissionRisk(person.Id);
-                if (!string.IsNullOrEmpty(risk)) lines.Add(Loc.F("{0}: {1}", person.Name, risk));
+                if (Shelter.HungryStreak > 0) lines.Add(Loc.F("ERZAK · aç vardiya: {0}.", Shelter.HungryStreak));
+                var deserter = NextDeserter;
+                if (deserter != null) lines.Add(Loc.F("ERZAK · açlık sürerse {0} ayrılır.", deserter.Name));
+                if (HalfRationActive) lines.Add(Loc.F("ERZAK · yarım tayın, {0} vardiya kaldı.", HalfRationShiftsLeft));
+                // Sorgu ifşayı eşiğin altına indirince uyarı o anda kalkar: satır da kalkar.
+                if (LocationCompromised)
+                    lines.Add(!Shelter.FallPending ? Loc.T("İFŞA · eşikte: bu kapanışta konum çözülür.")
+                        : FallShiftsLeft > 1 ? Loc.F("İFŞA · konum çözüldü: bu vardiya dahil {0} vardiya kaldı.", FallShiftsLeft)
+                        : Loc.T("İFŞA · konum çözüldü: bu vardiya son vardiya."));
+                // Terk sayacı bu kapanıştan sonraki değeriyle yazılır (ilk eksik vardiya da görünür); eşiğe varacaksa son satırı.
+                if (UnderstaffedCounting)
+                {
+                    int next = UnderstaffedAtClose;
+                    lines.Add(next >= B.abandonUnderstaffedShifts
+                        ? Loc.F("SIĞINAK EKSİK · {0}/{1}: bu kapanışta sığınak boşalır.", next, B.abandonUnderstaffedShifts)
+                        : Loc.F("SIĞINAK EKSİK · {0}/{1}.", next, B.abandonUnderstaffedShifts));
+                }
             }
-            lines.Add(Loc.T("Açık kapı başvurusu kararsızsa bu kapanışta reddedilir."));
+            if (Admission != null && Admission.Group.Count > 0)
+            {
+                lines.Add(Loc.F("KAPI · {0} aday bekliyor.", Admission.Group.Count));
+                if (S.Day + 1 >= Admission.GroupWaitingUntil) lines.Add(Loc.T("KAPI · son vardiya: karar verilmezse adaylar gider."));
+            }
             return string.Join("\n", lines);
         }
 
@@ -397,12 +471,26 @@ namespace Corrigible.Core
             if (Board == null) return;
             double before = Shelter.Supplies;
             double food = BoardFoodBalance;
+            // Kapanış sürerken okunur (Board.Filing): bu kapanışın tayın kipi ve karartması.
+            bool half = HalfRationActive, blackout = BlackoutActive;
             var working = new HashSet<string>(Board.People.Where(p => p.Alive && p.Down <= 0 && p.Hp > 0).Select(p => p.Id));
             Shelter.Supplies = Math.Min(B.boardSuppliesCapacity, Math.Max(0, Shelter.Supplies + food));
             Shelter.Starving = before + food < 0;
+            // Açlık sayacı olaylardan bağımsız sayılır (çekimsiz); ayrılma yalnız olaylar açıkken işler.
+            Shelter.HungryStreak = Shelter.Starving ? Shelter.HungryStreak + 1 : Math.Max(0, Shelter.HungryStreak - 1);
+            DesertFromHunger();
             Board.LastSuppliesChange = Shelter.Supplies - before;
             Shelter.LastSuppliesChange = Board.LastSuppliesChange;
             Board.LastCompleted.Clear();
+            // Taksitler yalnız sığınakta yaşayan kişi için ödenir; erzak payı yukarıdaki dengeye girdi, devre üretimden önce gelir.
+            foreach (var file in SupplyFiles(f => f.SupplyInstallments > 0).ToList()) file.SupplyInstallments--;
+            foreach (var file in SupplyFiles(f => f.CircuitInstallments > 0).ToList())
+            {
+                int n = Math.Max(1, B.perkCircuitShifts), total = Math.Max(0, B.perkCircuits);
+                int paid = Math.Max(0, n - file.CircuitInstallments);
+                AddBoardMaterial("devre", total * (paid + 1) / n - total * paid / n);
+                file.CircuitInstallments--;
+            }
             // Bütün saha kitleri kaybedilse de gerideki topluluk yavaşça yeniden sefere hazırlanabilir.
             if (!Shelter.Starving && Board.People.Any(p => working.Contains(p.Id) && p.Job == "gather"))
             {
@@ -416,23 +504,29 @@ namespace Corrigible.Core
             }
             foreach (var person in Board.People.Where(p => p.Alive).ToList())
             {
-                if (person.Down > 0) { person.Down--; person.Hp = Math.Min(person.MaxHp, Math.Max(1, person.Hp) + Math.Max(0, B.boardRestHeal)); continue; }
+                // Yarım tayında dinlenme ve yatış can vermez; yatış süresi yine azalır (yatan kişi en az 1 canla kalkar).
+                if (person.Down > 0) { person.Down--; person.Hp = Math.Min(person.MaxHp, Math.Max(1, person.Hp) + (half ? 0 : Math.Max(0, B.boardRestHeal))); continue; }
                 if (person.Job == "train")
                 {
                     GainBoardExperience(person, person.TrainingSubject, B.boardTrainingGain);
                     person.Job = "rest";
                 }
-                else if (person.Job == "rest") person.Hp = Math.Min(person.MaxHp, person.Hp + Math.Max(0, B.boardRestHeal));
+                else if (person.Job == "rest") { if (!half) person.Hp = Math.Min(person.MaxHp, person.Hp + Math.Max(0, B.boardRestHeal)); }
+                else if (person.Job == "cook" && blackout) { }
                 else if (person.Job == "cook" || person.Job == "gather") BoardGainExperience(person, person.Job);
             }
-            AdvanceBoardProduction(working);
+            // Karartmada Üretim çalışmaz (Mutfak da: tasarruf ve deneyim yok).
+            if (!blackout) AdvanceBoardProduction(working);
             AdvanceBoardCare(working);
             Shelter.Population = Board.People.Count(p => p.Alive);
             SyncBoardMaterialTotal();
             Board.Shift = S.Day;
-            // Vadesinin son vardiyasını çalışan kişi yeni planda karar bekler; gizlice süresiz çalışmaz.
-            foreach (var person in Board.People.Where(p => p.Alive && p.Restricted))
-                if ((Admission?.File(person.Id)?.RestrictedUntil ?? -1) <= S.Day) person.Job = "rest";
+            // Olay durumlarına göre görev düzeltme: bu vardiya görev alamayan (ikna; kilitli planda bedeli buraya kayar) Boşta'ya
+            // iner. Tecrit ve kısıt kararı görevi kilitli planda da hemen indirir; o iki koşul yalnız değişmez korumasıdır.
+            // Olaylar kapalıyken bu durumların hiçbiri kurulmaz; döngü bir şey yapmaz.
+            foreach (var person in Board.People.Where(p => p.Alive && p.Job != "rest"))
+                if (person.Isolated || S.Day < (Admission?.File(person.Id)?.IdleUntil ?? -1) || person.Restricted && person.Job != "train")
+                    person.Job = "rest";
             Board.Locked = false;
             Board.Printed = false;
             Board.Filing = false;
@@ -445,7 +539,13 @@ namespace Corrigible.Core
         {
             var producer = Board.People.FirstOrDefault(p => working.Contains(p.Id) && p.Job == "craft");
             var order = Board.Orders.FirstOrDefault();
-            if(producer==null||Shelter.Starving||Board.Equipment.Count>=B.boardEquipmentCapacity)return;
+            if(producer==null||BoardDepotCount>=B.boardEquipmentCapacity)return;
+            if(Shelter.Starving)
+            {
+                // Kit kilidi: aç kapanış yalnız eksik bir rol kitinin üretimini durdurmaz.
+                var pending=order!=null?BoardRecipes.FirstOrDefault(r=>r.Id==order.RecipeId):Board.AutomaticProduction?AutomaticProductionRecipe:null;
+                if(!B.boardStarvingKitProduction||pending==null||!BoardKitMissing(pending.Output))return;
+            }
             if(order==null)
             {
                 if(!Board.AutomaticProduction)return;
@@ -496,10 +596,11 @@ namespace Corrigible.Core
             SyncBoardMaterialTotal();
         }
 
-        public BoardEquipment AddBoardEquipment(string kind, string ownerId = null)
+        /// <summary>Kişiye bağlı teçhizat (<paramref name="bound"/>) depo tavanı dolu olsa da verilir ve tavana sayılmaz.</summary>
+        public BoardEquipment AddBoardEquipment(string kind, string ownerId = null, bool bound = false)
         {
-            if (Board == null || Board.Equipment.Count >= B.boardEquipmentCapacity) return null;
-            var equipment = new BoardEquipment { Id = "esya-" + (Board.NextEquipmentId++).ToString(CultureInfo.InvariantCulture), Kind = kind, OwnerId = ownerId,
+            if (Board == null || (!bound && BoardDepotCount >= B.boardEquipmentCapacity)) return null;
+            var equipment = new BoardEquipment { Id = "esya-" + (Board.NextEquipmentId++).ToString(CultureInfo.InvariantCulture), Kind = kind, OwnerId = ownerId, Bound = bound,
                 Charges = kind == "emp_cell" ? Math.Max(1, B.boardEmpCellCharges) : 1 };
             Board.Equipment.Add(equipment);
             return equipment;

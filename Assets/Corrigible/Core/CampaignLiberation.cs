@@ -86,6 +86,7 @@ namespace Corrigible.Core
         {
             S.Liberation = new LiberationCampaignState { CurrentRegion = HQ, Shelter = ShelterLogic.Create(B) };
             S.Trust = B.liberationTrustStart;
+            S.Liberation.Shelter.MinTrust = S.Trust;
             foreach (var def in GameData.Regions)
             {
                 var area = new LiberationRegionState { Id = def.Id };
@@ -241,7 +242,12 @@ namespace Corrigible.Core
                 // Baskın vardiyayı doldurur: ekip sonraki vardiyada hazır (Busy adımda düşer)
                 team.Task = null; team.Busy = 1;
                 if (Board == null) ReturnSquad(team, raid.Params.Squad, result, reward);
-                else ReturnPlanningSquad(raid.Params.Squad, result, reward);
+                else
+                {
+                    ReturnPlanningSquad(raid.Params.Squad, result, reward);
+                    // Baskında ölen kişinin açık olayı kendiliğinden kapanır.
+                    CloseOrphanShelterEvent();
+                }
             }
             S.RaidLog.Add(new RaidLogEntry
             {
@@ -327,6 +333,7 @@ namespace Corrigible.Core
         {
             int before = S.Trust;
             S.Trust = Math.Max(0, Math.Min(TrustMax, S.Trust + delta));
+            if (Shelter != null) Shelter.MinTrust = Math.Min(Shelter.MinTrust, S.Trust);
             if (reward != null) reward.Trust += S.Trust - before;
             if (S.Trust <= 0) End("dagilma");
         }
@@ -368,8 +375,19 @@ namespace Corrigible.Core
         /// <summary>Şimdiki zorluk kademesi.</summary>
         public int Tier => RaidTier(S.Liberation.Regions.Count(r => r.Completed));
 
-        /// <summary>Vardiya alarmı: telsiz odasındaki her görevli yükselişi yavaşlatır (eksiye inmez).</summary>
-        public double AlarmPerShift => Math.Max(0, B.liberationAlarmPerShift - ShelterLogic.RadioWorkers(Shelter) * B.shelterRadioAlarmPerWorker);
+        /// <summary>
+        /// Bu harekâtta ulaşılabilen en yüksek kademe (göstergelerin paydası, "TEHDİT n/m"). Son bölge özgürleşince harekât biter,
+        /// bu yüzden kademe en çok bölge sayısının bir eksiğiyle hesaplanır: 12 bölge ve <c>liberationTier4At</c> = 12 iken 3.
+        /// Türetilmiş okuyucu; RNG çekmez, durum yazmaz.
+        /// </summary>
+        public int MaxTier => RaidTier(Math.Max(0, S.Liberation.Regions.Count - 1));
+
+        /// <summary>
+        /// Vardiya alarmı: telsiz odasındaki her görevli yükselişi yavaşlatır (eksiye inmez); ifşa ara bedeli
+        /// (<see cref="ExposureAlarmBonus"/>) üstüne eklenir.
+        /// </summary>
+        public double AlarmPerShift => Math.Max(0, B.liberationAlarmPerShift - ShelterLogic.RadioWorkers(Shelter) * B.shelterRadioAlarmPerWorker)
+            + ExposureAlarmBonus;
 
         /// <summary>Vardiya sonu: alarm bir vardiyalık yükselir (adım çağırır).</summary>
         void StepAlarm() => ChangeAlarm(AlarmPerShift, null);

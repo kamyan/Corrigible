@@ -14,7 +14,7 @@ namespace Corrigible.Desk.Tests
     {
         const string ScenePath = "Assets/Corrigible/Desk/Scenes/DeskGame.unity";
 
-        static Simulation New() => LegacySimulation.NewGame(731, new Balance { startFon = 100 });
+        static Simulation New() => LegacySimulation.NewGame(731, new Balance { shelterEventsEnabled = false, startFon = 100 });
 
         static DeskViewModel Build(Simulation sim, DeskBridgeState st = null) =>
             new SimDeskBuilder().Build(sim, st ?? new DeskBridgeState());
@@ -135,6 +135,74 @@ namespace Corrigible.Desk.Tests
             StringAssert.StartsWith(Loc.F("Baskında {0} sivil sunucu kırıldı", sim.B.liberationTrustStart), over.Moments[over.Moments.Count - 2].Text, "kaybın nedeni");
         }
 
+        /// <summary>Aşama 5: pano açık oyunda her son kimliği (yenileri dahil) istisnasız rapor kurar; gerçek şalter ve düşüşle de.</summary>
+        [Test]
+        public void FinalReport_EveryEndingId_BuildsWithoutException()
+        {
+            static Simulation Board() => Simulation.NewGame(79, new Balance { planningBoardEnabled = true, admissionKnockMin = 100, admissionKnockMax = 100, eventGapMin = 99, eventGapMax = 99 });
+            foreach (var ending in GameData.Endings)
+            {
+                var sim = Board();
+                sim.S.Ending = ending.Id;
+                var report = FinalReportBuilder.Build(sim);
+                Assert.IsNotNull(report, ending.Id);
+                Assert.IsFalse(string.IsNullOrEmpty(report.Headline), ending.Id);
+                if (ending.Id != "silme") Assert.IsFalse(string.IsNullOrEmpty(report.Reason), ending.Id);
+                Assert.Greater(report.Moments.Count, 0, ending.Id);
+                Assert.IsNotNull(Build(sim).FinalReport, ending.Id);
+            }
+
+            var pulled = Board();
+            while (pulled.S.Day + 1 < pulled.B.lastSwitchMinShift)
+            {
+                Assert.IsTrue(pulled.PrintShift().Ok);
+                Assert.IsTrue(pulled.FileShift(pulled.Board.ReceiptId).Ok);
+            }
+            Assert.IsTrue(pulled.PullLastSwitch().Ok);
+            var over = FinalReportBuilder.Build(pulled);
+            // KOS aşama 6: düzenli çekilme yenilgi değil (ÇEKİLDİ); başlık çeşidi söyler
+            Assert.AreEqual(Loc.F("Son şalter {0}. vardiyada indi; Sığınak 07 düzenli çekildi.", pulled.S.Day + 1), over.Headline);
+            Assert.AreEqual(Loc.T(GameData.Ending("salter").Text), Loc.T(over.Sub));
+            Assert.AreEqual(FinalOutcome.Withdrawn, over.Outcome);
+            Assert.AreEqual(Loc.T("ÇEKİLDİ"), over.Stamp);
+
+            var fallen = Board();
+            fallen.Shelter.Exposure = fallen.B.exposureThreshold;
+            for (int i = 0; i < 2; i++)
+            {
+                Assert.IsTrue(fallen.PrintShift().Ok);
+                Assert.IsTrue(fallen.FileShift(fallen.Board.ReceiptId).Ok);
+            }
+            Assert.AreEqual("dusus", fallen.S.Ending);
+            Assert.AreEqual(Loc.F("Konum çözüldü; Sığınak 07 {0}. vardiyada düştü.", fallen.S.Day + 1), FinalReportBuilder.Build(fallen).Headline);
+            Assert.IsNotNull(Build(fallen).FinalReport);
+
+            // İngilizcede sonun başlığı (neden damgası, son an) ve metni çevrilir: EndingDef.Title/Text okurken Loc.T uygular
+            // (inceleme bulgusu "çevrilmiyor" yanlıştı; burada kilitlenir, kurucuda ikinci bir Loc.T çift çeviri olurdu).
+            string[] ids = { "topluluk", "dusus", "terk", "salter" };
+            var turkish = ids.ToDictionary(id => id, id => GameData.Ending(id).Title + "|" + GameData.Ending(id).Text);
+            var lang = DeskLoc.Instance.Lang;
+            try
+            {
+                DeskLoc.Instance.SetLanguage(DeskLang.En);
+                foreach (string id in ids)
+                {
+                    var sim = Board();
+                    sim.S.Ending = id;
+                    var report = FinalReportBuilder.Build(sim);
+                    var end = GameData.Ending(id);
+                    Assert.AreNotEqual(turkish[id], end.Title + "|" + end.Text, id + ": İngilizcesi var");
+                    Assert.AreEqual(end.Text, report.Sub, id);
+                    // KOS aşama 6: sığınağın sonları kendi neden damgasını ve son anını yazar (SIĞINAK DÜŞTÜ, SIĞINAK BOŞALDI, ÇEKİLME)
+                    string reason = id == "dusus" ? Loc.T("SIĞINAK DÜŞTÜ") : id == "terk" ? Loc.T("SIĞINAK BOŞALDI") : id == "salter" ? Loc.T("ÇEKİLME") : DeskText.Upper(end.Title);
+                    string last = id == "dusus" ? Loc.T("Konum çözüldü · Sığınak 07 düştü") : id == "terk" ? Loc.T("Sığınak boşaldı") : id == "salter" ? Loc.T("Son şalter · çekilme") : end.Title;
+                    Assert.AreEqual(reason, report.Reason, id);
+                    Assert.IsTrue(report.Moments.Any(m => m.Text == last), id + ": " + string.Join(" | ", report.Moments.Select(m => m.Text)));
+                }
+            }
+            finally { DeskLoc.Instance.SetLanguage(lang); }
+        }
+
         [Test]
         public void FinalReport_TurningPointsMarkCounterattacks()
         {
@@ -231,6 +299,8 @@ namespace Corrigible.Desk.Tests
                     Assert.IsNotNull(Ref(op, field), field);
                 Assert.AreSame(op, Ref(All<SiginakDesk>(scene).Single(), "operation"), "sayaçlar rapor inene kadar bekler");
                 Assert.AreSame(op, Ref(All<SiginakTutorial>(scene).Single(), "operation"));
+                // KOS aşama 8: rehber tutanağın elde olduğunu olay sunumundan okur
+                Assert.AreSame(All<SiginakShelterEvent>(scene).Single(), Ref(All<SiginakTutorial>(scene).Single(), "shelterEvent"), "rehber → olay tutanağı");
             });
         }
 
@@ -268,12 +338,18 @@ namespace Corrigible.Desk.Tests
         {
             InScene(scene =>
             {
-                var begin = (UnityEngine.UI.Button)Ref(All<BriefingView>(scene).Single(), "action");
-                var canvas = begin.GetComponentInParent<Canvas>(true).rootCanvas;
-                Assert.AreEqual(RenderMode.ScreenSpaceOverlay, canvas.renderMode, "emir belgesi Overlay: oda kilitliyken de fareyle ulaşılır");
-                Assert.IsTrue(canvas.GetComponent<UnityEngine.UI.GraphicRaycaster>().enabled);
-                Assert.IsTrue(begin.interactable);
-                Assert.IsTrue(begin.targetGraphic.raycastTarget);
+                // KOS aşama 6: emir belgesinin dosyasız kopyası (ÇEKİLME / TAHLİYE EMRİ) da aynı kurala uyar
+                var views = All<BriefingView>(scene).ToList();
+                Assert.AreEqual(2, views.Count, "emir belgesi ve son şalterin emir kâğıdı");
+                foreach (var view in views)
+                {
+                    var begin = (UnityEngine.UI.Button)Ref(view, "action");
+                    var canvas = begin.GetComponentInParent<Canvas>(true).rootCanvas;
+                    Assert.AreEqual(RenderMode.ScreenSpaceOverlay, canvas.renderMode, view.name + ": Overlay, oda kilitliyken de fareyle ulaşılır");
+                    Assert.IsTrue(canvas.GetComponent<UnityEngine.UI.GraphicRaycaster>().enabled);
+                    Assert.IsTrue(begin.interactable);
+                    Assert.IsTrue(begin.targetGraphic.raycastTarget);
+                }
             });
         }
 

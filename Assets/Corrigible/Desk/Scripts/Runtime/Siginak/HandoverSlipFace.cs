@@ -19,7 +19,7 @@ namespace Corrigible.Desk
     /// <item>Kıvrım (D §0.5): model kâğıdı üst kenara doğru yüz yönüne 4 mm kıvrılır; her öğe kendi üst kenarındaki kâğıdın
     /// 0,4 mm önünde durur: yerel z = −(4 · ((150 − y) / 150)² + 0,4) mm (<see cref="CurlZ"/>). Tuval modelin düz düzleminde
     /// (z 0) durur.</item>
-    /// <item>Satır sarar, punto küçülmez, otomatik punto yok. Sığmazsa (D9-A) son DOSYA kutusunun adları "… +n" ile kesilir;
+    /// <item>Satır sarar, punto küçülmez, otomatik punto yok. Sığmazsa (D9-A) son ad taşıyan kutunun adları "… +n" ile kesilir;
     /// yine sığmazsa <see cref="Overflowing"/>.</item>
     /// <item>Dil değişince (<c>DeskLoc.Changed</c>) aynı veriyi yeniden yazar (yalnız sözcükler ve ondalık ayırıcı değişir).
     /// Nesne kapalıyken gelen bağlama açıldıktan sonraki ilk karede uygulanır (TMP ölçüsü uyanık yazı ister).</item>
@@ -90,7 +90,7 @@ namespace Corrigible.Desk
         public float ContentBottomMm { get; private set; }
         /// <summary>Alta yaslı alt bloğun üstü (alt çizginin üstündeki boşluk dahil; içerik bunu aşmamalı).</summary>
         public float FooterTopMm { get; private set; }
-        /// <summary>Son DOSYA kutusu kesildiyse kutuda kalan ad sayısı; kesilmediyse −1.</summary>
+        /// <summary>Son ad taşıyan kutu kesildiyse kutuda kalan ad sayısı; kesilmediyse −1.</summary>
         public int CutNames { get; private set; } = -1;
 
         public HandoverSlipMetrics Layout => layout;
@@ -285,12 +285,12 @@ namespace Corrigible.Desk
             // ---- alt blok (alta yaslı)
             FooterTopMm = LayoutFooter(l, m, p);
 
-            // ---- taşma (D9-A): son DOSYA kutusunun adları "… +n"
+            // ---- taşma (D9-A): son ad taşıyan kutunun adları "… +n"
             if (y > FooterTopMm + Eps && usedBoxes > 0)
             {
                 var data = l.Warnings[usedBoxes - 1];
                 var box = boxes[usedBoxes - 1];
-                if (data.Kind != SlipWarningKind.Door && data.Names.Count > 1)
+                if (data.Kind != SlipWarningKind.DoorLastShift && data.Kind != SlipWarningKind.Rations && data.Names.Count > 1)
                     for (int shown = data.Names.Count - 1; shown >= 1; shown--)
                     {
                         data.Text = HandoverSlipFormat.WarningText(data.Kind, data.Names, shown);

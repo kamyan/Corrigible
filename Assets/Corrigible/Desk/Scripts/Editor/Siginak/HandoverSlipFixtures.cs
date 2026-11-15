@@ -91,7 +91,7 @@ namespace Corrigible.Desk.EditorTools
         /// R19c V.031 (geç harekât; <c>devir_fisi_v031_tr.html</c>, PNG): 9/10 kişi, erzak 17/60 → 15,6 (−1,4); T Deniz kit · zırh,
         /// E Cem kit · zırh · EMP hücresi, A Zeynep kit · bakım kiti; Rauf ÜRETİM, Nermin MUTFAK, Suna EĞİTİM · EMP, Selin BOŞTA ·
         /// yaralı, İpek BOŞTA · yatıyor 2, Aylin BOŞTA · kısıtlı 2; EĞİTİM Suna · EMP +2 → EĞİTİMLİ; ÜRETİM Zırh plakası 0/1 → 1/1 ·
-        /// Rauf; KAPI 1 açık başvuru; uyarılar KAPI ve DOSYA (Rauf · inceleme fişi açık).
+        /// Rauf; KAPI 1 açık başvuru; uyarı KAPI (grubun son vardiyası). Tasarımdaki DOSYA kutusu (inceleme fişi) eski kabule aitti, aşama 7'de söküldü.
         /// </summary>
         public static HandoverSlipFacts V031()
         {
@@ -112,15 +112,14 @@ namespace Corrigible.Desk.EditorTools
             f.shelter.Add(Shelter("Selin", "rest", null, SlipPersonState.Hurt));
             f.shelter.Add(Shelter("İpek", "rest", null, SlipPersonState.Down, 2));
             f.shelter.Add(Shelter("Aylin", "rest", null, SlipPersonState.Restricted, 2));
-            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.Door });
-            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.FileReview, name = "Rauf" });
+            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.DoorLastShift });
             return f;
         }
 
         /// <summary>
         /// En kötü gerçekçi fiş (E13; W3'ün taşma testindeki veriyle aynı): 10 canlı (3 saha + 7 sığınak), en uzun adlar (aday havuzu
-        /// + sayı eki), her görev × olası durum (Core: yatan yalnız dinlenir, kısıtlı gözetmensiz yalnız dinlenir, yaralı her işe girer),
-        /// eğitim + üretim + kapı, KAPI uyarısı ve üç adlı birleşik DOSYA kutusu. Punto taraması fişi bununla da ölçer.
+        /// + sayı eki), her görev × olası durum (Core: yatan yalnız dinlenir, kısıtlı yalnız Eğitim ya da Boşta, yaralı her işe girer),
+        /// eğitim + üretim + kapı, KAPI (son vardiya) ve SIĞINAK EKSİK kutuları. Punto taraması fişi bununla da ölçer.
         /// </summary>
         public static HandoverSlipFacts Worst()
         {
@@ -142,8 +141,9 @@ namespace Corrigible.Desk.EditorTools
             f.shelter.Add(Shelter("Mehmet 19", "rest", null, SlipPersonState.Restricted, 12));
             f.shelter.Add(Shelter("Kerem 22", "rest", null, SlipPersonState.RestrictionEnded));
             f.shelter.Add(Shelter("Orhan 25", "rest", null, SlipPersonState.Hurt));
-            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.Door });
-            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.FileReview, name = "Mehmet 19, Kerem 22, Gülizar" });
+            f.shelterShort = 2; f.shelterShortMax = 3;
+            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.DoorLastShift });
+            f.warnings.Add(new SlipWarning { kind = SlipWarningKind.ShelterShort });
             return f;
         }
 

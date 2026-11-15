@@ -43,7 +43,10 @@ namespace Corrigible.Game
             foreach (var e in events)
             {
                 if (e.Type != SimEventType.End) continue;
-                Platform.Current.UnlockAchievement(Achievements.ForEnding(Sim.S.Ending));
+                // KOS aşama 6: çeşit ve ton son raporundan (eski oda yolunda null: yalnız kimlik)
+                var report = Sim.EndReport;
+                foreach (var id in Achievements.ForEnding(Sim.S.Ending, report?.SwitchKind, report?.Tone))
+                    Platform.Current.UnlockAchievement(id);
                 SaveStore.Delete();
             }
             EventsRaised?.Invoke(events);

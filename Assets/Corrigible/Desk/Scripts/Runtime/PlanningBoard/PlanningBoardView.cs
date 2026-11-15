@@ -34,17 +34,10 @@ namespace Corrigible.Desk
         [SerializeField] Button[] traces = Array.Empty<Button>();
         [SerializeField] TMP_Text[] traceLabels = Array.Empty<TMP_Text>();
         [SerializeField] Button[] subjects = Array.Empty<Button>();
-        [SerializeField] Button close, machine, cancelProduction, review, restrict, dismiss;
+        [SerializeField] Button close, machine, cancelProduction;
         [SerializeField] PlanningBoardCard receipt;
         [SerializeField] GameObject receiptRoot, coverOpen, coverClosed;
         [SerializeField] CanvasGroup fade;
-        [SerializeField] Canvas admissionCanvas;
-        [SerializeField] CanvasGroup admissionControls;
-        [SerializeField] GameObject admissionsRoot;
-        [SerializeField] TMP_Text admissionProtocol, admissionPapers, admissionFindings;
-        [SerializeField] Button[] inspections = Array.Empty<Button>();
-        [SerializeField] Button[] decisions = Array.Empty<Button>();
-        [SerializeField] Button admissionClose;
 
         public PlanningBoardCard[] RoleTags => roleTags ?? Array.Empty<PlanningBoardCard>();
         public RectTransform WorkArea => workArea != null ? workArea : dragPlane;
@@ -62,15 +55,8 @@ namespace Corrigible.Desk
         public Button CloseButton => close;
         public Button MachineButton => machine;
         public Button CancelProductionButton => cancelProduction;
-        public Button ReviewButton => review;
-        public Button RestrictButton => restrict;
-        public Button DismissButton => dismiss;
         public RectTransform DragPlane => dragPlane;
         public CanvasGroup Fade => fade;
-        // Aşama 6 (D20): eski kabul penceresi sahneden silindi; alanlar boş/null kalır, erişimciler boş dizi döner
-        public Button[] Inspections => inspections ?? Array.Empty<Button>();
-        public Button[] Decisions => decisions ?? Array.Empty<Button>();
-        public Button AdmissionClose => admissionClose;
         public ScrollRect StockScroll => stockScroll;
         public ScrollRect IdleScroll => idleScroll;
 
@@ -156,7 +142,7 @@ namespace Corrigible.Desk
             return position;
         }
 
-        public void SetCamera(Camera camera) { if (canvas) canvas.worldCamera = camera; if (admissionCanvas) admissionCanvas.worldCamera = camera; }
+        public void SetCamera(Camera camera) { if (canvas) canvas.worldCamera = camera; }
         public void SetFocused(bool focused)
         { if (motion) motion.Focus(focused); if (controls) { controls.interactable = focused; controls.blocksRaycasts = focused; } if (freeSurface) freeSurface.Interactable = focused; }
         public void SetHeader(string title, string food, string plan)
@@ -178,14 +164,5 @@ namespace Corrigible.Desk
         public void SetCover(bool open, string label)
         { if (coverOpen) coverOpen.SetActive(open); if (coverClosed) coverClosed.SetActive(!open); if (machineLabel) machineLabel.text = label; }
         public void Highlight(PlanningBoardCard card) { foreach (var zone in zones) zone.ShowTarget(card); }
-        /// <summary>Eski kabul penceresi (Aşama 6'da sahneden silindi, D20): alanlar boşken hiçbir şey yapmaz.</summary>
-        public void SetAdmissions(bool shown, string protocol, string papers, string findings)
-        {
-            if (admissionsRoot) admissionsRoot.SetActive(shown);
-            if (admissionControls) { admissionControls.interactable = shown; admissionControls.blocksRaycasts = shown; }
-            if (admissionProtocol) admissionProtocol.text = protocol;
-            if (admissionPapers) admissionPapers.text = papers;
-            if (admissionFindings) admissionFindings.text = findings;
-        }
     }
 }

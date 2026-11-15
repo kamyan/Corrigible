@@ -17,7 +17,7 @@ namespace Corrigible.Desk
         [SerializeField] PartDriver lid;
         [Tooltip("Bidonun ön yüzü (130 × 126 mm, z −0,089): bırakma ve tıklama hedefi.")]
         [SerializeField] Collider front;
-        [Tooltip("Kapaktaki yarık (Hurda_Slot çapası); yutulan kart buraya iner. Boşsa (1077, 464) mm, z −0,074.")]
+        [Tooltip("Kapaktaki yarık (Hurda_Slot çapası); yutulan kart buraya iner. Boşsa board.layoutMm.hurda'nın ortası, üst kenarın 10 mm üstü, z −0,074.")]
         [SerializeField] Transform slot;
         [Tooltip("İsteğe bağlı klavye odağı çerçevesi (ön yüz düzleminde, z −0,0895); yoksa odak yalnız kapak aralığıdır.")]
         [SerializeField] GameObject focusFrame;
@@ -101,7 +101,9 @@ namespace Corrigible.Desk
         {
             var parent = c.transform.parent;
             if (slot != null) return parent != null ? parent.InverseTransformPoint(slot.position) : slot.position;
-            return BoardLayout.MmToLocal(new Vector2(1077, 464), -0.074f);
+            // Yarık: kutunun ön yüzünün yatay ortası, üst kenarın 10 mm üstü (token board.layoutMm.hurda'dan)
+            var h = BoardLayout.Hurda;
+            return BoardLayout.MmToLocal(new Vector2(h.center.x, h.yMin - 10f), -0.074f);
         }
 
         void AnimateLid(float to, float seconds, int ease)

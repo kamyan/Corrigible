@@ -107,6 +107,9 @@ namespace Corrigible.Core
             new EndingDef { Id = "dagilma", Title = Loc.N("Dağılma"), Text = Loc.N("Hastaneler ve bankalar bizim baskınlarımızda karardı. Halk direnişe sırtını döndü; sığınağın kapısını artık kimse çalmıyor.") },
             new EndingDef { Id = "vuruldu", Title = Loc.N("Vuruldu"), Text = Loc.N("Kapıyı açtın ve silah patladı. Sığınak bir gecede komutansız kaldı; sabah telsizden yalnız parazit geliyordu.") },
             new EndingDef { Id = "sizma", Title = Loc.N("Sızma"), Text = Loc.N("Kapıyı bir kopyaya açtın. Sığınak 07'nin yeri artık YZ'nin haritasında; kopyalar bir sonraki kapıyı çalıyor.") },
+            new EndingDef { Id = "dusus", Title = Loc.N("Sığınak düştü"), Text = Loc.N("Konum çözüldü. YZ'nin makineleri kapıya vardığında panoda hâlâ ertesi vardiyanın planı asılıydı.") },
+            new EndingDef { Id = "terk", Title = Loc.N("Terk"), Text = Loc.N("Erzak bitti, insanlar birer birer kapıdan çıktı. Geride kalanlar sığınağı ayakta tutamadı.") },
+            new EndingDef { Id = "salter", Title = Loc.N("Son şalter"), Text = Loc.N("Şalter indi, çekilme emri damgalandı. Sığınak 07 karardı; çıkanlar bir sonraki sığınağa yürüdü.") },
         };
 
         static readonly Dictionary<string, RegionDef> regionById = Regions.ToDictionary(r => r.Id);

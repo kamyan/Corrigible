@@ -11,14 +11,14 @@ namespace Corrigible.Desk
     /// <list type="bullet">
     /// <item>Sürükle-bırak: raftan sürükleyince damga raftaki yüksekliğinin 25 mm üstüne kalkar (<c>stampLiftS</c> 0,1;
     /// <see cref="AdmissionSound.StampLift"/>) ve o yükseklikte imlecin altında kalarak onu izler; bırakış noktası damganın tezgâhtaki
-    /// izdüşümüdür (<see cref="DropPoint"/>). Belgenin damga alanında bırakılınca 0,12 s'de basar (<c>stampPressS</c>; "tak",
+    /// izdüşümüdür (<see cref="DropPoint"/>). Hedef kâğıdın (KABUL: aday kartı, GERİ ÇEVİR: grup fişi) üstünde bırakılınca 0,12 s'de basar (<c>stampPressS</c>; "tak",
     /// <see cref="AdmissionSound.StampPress"/>),
     /// başka yere bırakılınca rafına 0,25 s kavisle döner (<c>motion.board.returnArcS</c>; <see cref="AdmissionSound.StampReturn"/>).</item>
-    /// <item>Tık-tık: damgaya tık = elde (imleci 25 mm yukarıda izler), belgeye tık = bas, başka yere tık ya da Esc/sağ tık
+    /// <item>Tık-tık: damgaya tık = elde (imleci 25 mm yukarıda izler), hedef kâğıda tık = bas, başka yere tık ya da Esc/sağ tık
     /// (<see cref="ReturnToRack"/>) = rafına.</item>
     /// </list>
     /// Basış bitince <see cref="Pressed"/> yayılır (komutu sunucu yazar); işleyici damgayı rafına döndürmediyse damga "kullanılmış"
-    /// pozuna gider (Top yereli (0,072; 0,038; −0,087) yaw −14; YARDIM (−0,10; 0,03; −0,075)) ve tezgâh katlanırken rafına döner.
+    /// pozuna gider (Top yereli (0,072; 0,038; −0,087) yaw −14) ve tezgâh katlanırken rafına döner.
     /// Kilitliyken (<see cref="StampData.Enabled"/> false) damga kalkmaz, yuvanın önünde pirinç dil görünür, tıkta 2 mm titrer
     /// (<c>motion.board.denyShakeMm</c>) ve <see cref="AdmissionSound.Deny"/>. Komut yazmaz, ses çalmaz. Edit modda <see cref="Advance"/>.
     /// </summary>
@@ -43,7 +43,6 @@ namespace Corrigible.Desk
 
         /// <summary>Kullanılmış poz (Top yereli; DA:153–154).</summary>
         public static readonly Vector3 UsedLocal = new Vector3(0.072f, 0.038f, -0.087f);
-        public static readonly Vector3 UsedAidLocal = new Vector3(-0.10f, 0.03f, -0.075f);
         public const float UsedYaw = -14f;
         /// <summary>Sürükleme düzlemi Top yerelinde belge yüzeyi yüksekliğinde (0,0043).</summary>
         public const float DragPlaneY = 0.0043f;
@@ -61,7 +60,7 @@ namespace Corrigible.Desk
 
         public event Action<StampChoice> Pressed;
         public event Action<AdmissionSound> Sound;
-        /// <summary>Damga raftan kalktı (sürükleme ya da tık-tık'ın ilk tıkı). İstasyon belgeyi çekmeceden alır.</summary>
+        /// <summary>Damga raftan kalktı (sürükleme ya da tık-tık'ın ilk tıkı).</summary>
         public event Action<StampChoice> Lifted;
 
         StampData data;
@@ -86,9 +85,9 @@ namespace Corrigible.Desk
         public bool Moving => t.Moving || clock.Pending || shakeStart >= 0f;
         public bool Enabled => enabledByData;
         public bool Interactive => interactive;
-        /// <summary>Dünya noktası belgenin damga alanında mı (istasyon verir).</summary>
+        /// <summary>Dünya noktası damganın hedef kâğıdının üstünde mi (istasyon verir).</summary>
         public Func<Vector3, bool> DropAccepts { get; set; }
-        /// <summary>Basışın hedef pozu (istasyon verir: belgenin damga alanı, −4°). Boşsa bırakılan nokta, o anki dönüş.</summary>
+        /// <summary>Basışın hedef pozu (istasyon verir: hedef kâğıdın iz yeri, −4°). Boşsa bırakılan nokta, o anki dönüş.</summary>
         public Func<Pose> PressTarget { get; set; }
         public HoverTag Tag { get; set; }
         public Collider Hit => hit;
@@ -182,7 +181,7 @@ namespace Corrigible.Desk
         {
             get
             {
-                var local = choice == StampChoice.Aid ? UsedAidLocal : UsedLocal;
+                var local = UsedLocal;
                 var rot = Quaternion.Euler(0f, UsedYaw, 0f);
                 return frame != null ? new Pose(frame.TransformPoint(local), frame.rotation * rot) : new Pose(local, rot);
             }
