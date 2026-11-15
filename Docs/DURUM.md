@@ -1,6 +1,6 @@
 # Durum, kararlar ve açık işler
 
-_Son güncelleme: 2026-11-15 (KOS aşama 8, denge ve belgeler: altı `Balance` alanı bot ölçümüyle değişti, bütün ölçüm sunumun kuralıyla ve 80 tohumla, tüketim 0,40, olay aralığı 2–3 kaldı, bot `Tools/DengeBotu/`'da; inceleme sonrası rehber düzeltmeleri; belgeler son hâlinde; KOS aşama 8, rehber: aday grubu, olay tutanağı, hedef satırı, İFŞA ve son şalter adımları; KOS aşama 8, ilk adım: ikinci tur kararları uygulandı; KOS aşama 7: eski tek adaylı kabulün Core, sunum, sahne, test, çeviri ve ses sökümü; menüde kapı ve ayarlar dolabı odadaki yeni modellerle; 2026-11-13 model entegrasyonu: kullanıcının yerleştirdiği masa, kapı, monitör, telsiz ve duvar modelleri sisteme bağlandı, eskileri sahneden çıktı; 2026-11-09: kartlı başlangıç rehberi; Revizyon 3 Aşama 10: EN ve punto geçişi, gölge atlası ve kare süresi, onaylı eski görünüm temizliği (T1), 42 yer tutucu ses; Aşama 9: model baskın kitleri, isimli saha, ozalit antet ve son tur kayıp onayı; Aşama 8: menü sahanlığı, puantaj/kart, giriş sekansı ve iki ayarlar dolabı; Aşama 7: isimli saha kâğıtları, iki sayfalık kişi dosyası ve CRT; Aşama 6: kapı ve kabul, gözetmen kuralı ve kayıt biçimi 15; Aşama 5: tarif defteri ve üretim; Aşama 4: vardiya kapanışı ve devir fişi; Aşama 3: 3B kartlı pano ve kartlar; Aşama 2: komuta odasının modelleri ve poz ışığı; Aşama 0–1: keşif ve model hattı; önceki: vardiya şalterinin eski modeli geri geldi; kartla görev alanına atama, ayrı üretim/depo ve 3D devir makinesi; kartlı vardiya panosu, isimli topluluk, kişisel eğitim/üretim, belgeyle kabul ve gecikmeli sızma; önceki: ayarlar dolabı ve menü, baskın mekânları)_
+_Son güncelleme: 2026-11-15 (teleks modeli: kullanıcının daktilosu teleks olarak bağlandı, devir fişi şalterin yanındaki ağızdan değil teleks daktilosundan basılıyor; KOS aşama 8, denge ve belgeler: altı `Balance` alanı bot ölçümüyle değişti, bütün ölçüm sunumun kuralıyla ve 80 tohumla, tüketim 0,40, olay aralığı 2–3 kaldı, bot `Tools/DengeBotu/`'da; inceleme sonrası rehber düzeltmeleri; belgeler son hâlinde; KOS aşama 8, rehber: aday grubu, olay tutanağı, hedef satırı, İFŞA ve son şalter adımları; KOS aşama 8, ilk adım: ikinci tur kararları uygulandı; KOS aşama 7: eski tek adaylı kabulün Core, sunum, sahne, test, çeviri ve ses sökümü; menüde kapı ve ayarlar dolabı odadaki yeni modellerle; 2026-11-13 model entegrasyonu: kullanıcının yerleştirdiği masa, kapı, monitör, telsiz ve duvar modelleri sisteme bağlandı, eskileri sahneden çıktı; 2026-11-09: kartlı başlangıç rehberi; Revizyon 3 Aşama 10: EN ve punto geçişi, gölge atlası ve kare süresi, onaylı eski görünüm temizliği (T1), 42 yer tutucu ses; Aşama 9: model baskın kitleri, isimli saha, ozalit antet ve son tur kayıp onayı; Aşama 8: menü sahanlığı, puantaj/kart, giriş sekansı ve iki ayarlar dolabı; Aşama 7: isimli saha kâğıtları, iki sayfalık kişi dosyası ve CRT; Aşama 6: kapı ve kabul, gözetmen kuralı ve kayıt biçimi 15; Aşama 5: tarif defteri ve üretim; Aşama 4: vardiya kapanışı ve devir fişi; Aşama 3: 3B kartlı pano ve kartlar; Aşama 2: komuta odasının modelleri ve poz ışığı; Aşama 0–1: keşif ve model hattı; önceki: vardiya şalterinin eski modeli geri geldi; kartla görev alanına atama, ayrı üretim/depo ve 3D devir makinesi; kartlı vardiya panosu, isimli topluluk, kişisel eğitim/üretim, belgeyle kabul ve gecikmeli sızma; önceki: ayarlar dolabı ve menü, baskın mekânları)_
 
 ## Nerede kaldık
 
@@ -26,8 +26,8 @@ kaybolduğunda kurtarılamayan kişi kalıcı gider. Son canlı kişinin kaybı 
 Soldaki eski sığınak dolabının yerinde daha küçük ayaklı pano bulunur; ayarlar dolabı korunur. Sicil listesi
 yoktur. Kişi kartı Boşta, Teknisyen, Analist, EMP ve diğer belirgin görev alanlarına bırakılarak atanır; üretim ve
 depo ayrı alanlardır. Teçhizat kartı kişinin üstüne bırakılır, depoya taşınarak kişiden çıkarılır. Vardiya panodan
-ayrıdır: masadaki kapaklı vardiya şalterinin kapağı kaldırılıp kolu indirilir; yanından çıkan kâğıt mevcut EVRAK
-kutusuna bırakılınca kararıp açılır ve bir vardiya ilerler. 3–4 vardiyada bir kapıya 2–3 kişilik aday grubu gelir; kapının
+ayrıdır: masadaki kapaklı vardiya şalterinin kapağı kaldırılıp kolu indirilir; devir fişi teleks daktilosundan basılır, mevcut
+EVRAK kutusuna bırakılınca kararıp açılır ve bir vardiya ilerler. 3–4 vardiyada bir kapıya 2–3 kişilik aday grubu gelir; kapının
 yanındaki kabul tezgâhında kartlar ve grup fişi durur, oyuncu KABUL damgasıyla en çok birini alır ya da GERİ ÇEVİR'le grubu
 gönderir (dolu sığınakta aynı kararla birini yollar). Sızma, tecrit, kısıt ve yollama sığınak olaylarının kâğıtlarıyla yürür;
 ifşa, `dusus`, `terk` ve son şalter yeni sonlardır ([KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md](KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md)).
@@ -48,6 +48,65 @@ oranları yeni kişi ve ekonomi dengesini doğrulamaz.
 güven, YZ alarmı, hazırlık sığınağı, bölge kimliği ve eğitim: `6e658a5`). Sonrası (baskında tıklama düzeltmeleri, alarm
 panosu, harita havuzu ve torbası, ikmal kaçışı, makine aklı, sivillere saldıran makineler ve güven ödülü, sığınağın kapısı):
 `c6f61e9`; build: `05ffdcb`; telsiz: `9d16037`; tasarım revizyonu 2: `927296b`; Madenci, Sis uzmanı, kadro seçimi, plaka rafı ve haritanın kenarı: `8097337`; sonra `acc1b7e`, `411d3eb`, `c1a743a` (kartlı pano ve Revizyon 3 öncesi). Revizyon 3 (Aşama 0–10) `c1a743a` üstünde, commit edilmedi.
+
+## Teleks modeli: daktilo ve devir fişinin daktilodan basılması (2026-11-15)
+
+Kullanıcı masadaki teleksi bir daktilo modeliyle değiştirdi (`Assets/Typewriter/Prefabs/Typewriter_FBX_Unity`, `Desk/Teleprinter`
+altında; yeri, ölçeği, malzemesi olduğu gibi) ve devir fişinin daktilodan çıkmasını istedi. Core, denge, RNG ve kayıt biçimi
+değişmedi (17); komutlar aynı (`board_print`, `board_file`).
+
+- **Model:** eski Rev3 `Telex` örneği (kapalı gövde, TELEKS plakası) sahneden silindi; daktilo `Teleprinter`'ın doğrudan çocuğu,
+  çarpıştırıcısız. Teleksin işlevsel parçaları daktiloya taşındı: kâğıt (`TelexPaper`, dört yuva) silindirden çıkar ve 10° arkaya
+  yaslanır (türev mesh `Art/Rev3/SceneMeshes/Telex/TypewriterTelexPaper_SM`: yalnız ön kâğıt; eski ağızdan masaya akan şerit ve krom
+  mandal daktiloda anlamsızdı), koparılan kopya (`Torn sheet`) kâğıdın yerinde; kâğıt rulosu (`Paper roll`, eski Telex.obj'nin rulosu,
+  26 cm) daktilonun arkasında masada, besleme şeridi (`Paper feed`) silindirin arkasına çıkar, rulo harf başına 2° döner
+  (`Teleprinter.roll`, `motion.telexRollDegPerChar`); TELEKS plakası (eski Telex.obj'nin pirinç levhası %75, `TelexPlate_SM`) kapağın
+  önünde, logonun sağında. Kökteki DeskTarget kutusu daktilonun gövdesiyle sınırlı (silindirdeki fiş ışını alsın), kâğıdın kendi eğik
+  `Paper target`'ı var. `Teleprinter.paperRenderer` artık görünen kâğıt (eskiden kapalı gövdeyi gösteriyordu). Teleksin kendi ışığı ve
+  sesi yoktu; değişmedi.
+- **Devir fişi:** şalterin fiş ağzı (`SlipMouth`: ağız, amber lamba, DEVİR FİŞİ plakası) silindi; şalter yalnız basma düğmesi,
+  plakası aynı (VARDİYAYI BİTİR / fişi EVRAK’a koy). Kol −35°'ye varınca kamera K1'e döner; fiş teleksin o anki satırı (çoğunlukla
+  ÖN KONTROL) bitip kamera masaya varınca (`ShiftReceiptMachine.FeedHold`, `SiginakShiftClose.FeedHold`, en çok 3 s) daktilonun
+  içinden (`Teleprinter/Slip feed/SlipStart` + 40 mm) 1,4 s'de 7 satır adımıyla yazılarak çıkar (`ShiftReceiptPaper.TypedFeed`) ve
+  silindirde, teleks kâğıdının sağında dik durur (yol yine 160 mm; kâğıdı örtmez). Fişe tık eskisi gibi K6 + el; K1'den doğrudan
+  EVRAK'a sürükleme de çalışır (EVRAK ve daktilo aynı kadrajda; P4 sınar). Yanlış bırakış, ret ve dosyalama reddi fişi daktiloya
+  döndürür; kayıttan devamda basılı fiş daktiloda anında; eski fiş reddi aynı.
+- **Kamera:** basımda kamera K6'ya çağrılmaz (kol inince doğrudan K1; K6 → K1 → K6 gidip gelmesin); yalnız basım reddinde K6'ya gidilir
+  (ret plakası orada okunur). Canlı fiş daktiloya dönerken (eldeyken tık / Esc / sağ tık, EVRAK dışı ya da reddedilen bırakış,
+  dosyalama reddi) kamera K6'daysa K1'e döner: K6 daktiloyu görmez, fiş kadrajdan uçup kaybolmasın. Dönüş yola göre uzar
+  (`ShiftReceiptPaper.ReturnSeconds`: yol / 3 m/s, en az eski 0,25 s, en çok 0,45 s = kameranın K6 → K1 geçişi; masanın öbür ucundan
+  ~1,4 m, eskiden saniyede 6 m'yle geçiyordu).
+- **Sıra kararı:** aynı silindirde önce teleks satırı, sonra fiş (köprü `SiginakShiftClose.HoldFeed`, saf; üst sınırda kamera başka
+  pozda ya da teleks basıyor olsa da fiş basılır). Fiş daktilodayken gelen teleks satırı kâğıda basılır ve kâğıt okunur boydaysa
+  şeride düşmez: fiş kâğıdın yanında durur, örtmez (ilk turdaki "fiş önünü örter" bayrağı `TelexFeed.PrinterCovered` gerçek yerleşimle
+  çelişiyordu, kaldırıldı; P1 fişin ekran dikdörtgeninin ileti yuvalarıyla kesişmediğini sınar).
+- **Teleks kâğıdı ayrıntıları:** önceki satır yuvası (`TXT_Prev`) kâğıdın alt kenarında silindirin arkasına gömülüyor, K1'de yarım harf
+  parçaları görünüyordu; ileti yuvasının hemen altına, K1'den görünen kâğıdın başladığı yerin (~0,142) 25 mm üstüne alındı. Koparılan
+  kâğıt eski teleksin ağzından öne devrilip 11 cm iniyordu (daktiloda kapağın ve klavyenin içinden); artık silindirden yukarı çekilip
+  arkaya atılır ve daktilonun arkasına düşer (`Teleprinter.TearPose`, token `motion.telexTear.*`).
+- **Metin:** rehberin iki adımı ("…devir fişi teleks daktilosundan basılır…", "Daktilodaki basılı fişi alıp…") ve şalterin üzerine
+  gelme satırı ("…daktilodan çıkan fişi EVRAK kutusuna koy.") TR/EN; DEVİR FİŞİ plakasının çevirisi tablodan düştü. Plakanın ikinci
+  satırı ("fişi EVRAK’a koy") bilerek aynı: fişin yüzündeki eylem satırı ve testler bu metne bağlı.
+- **Token (`_local_teleks`):** `motion.shiftClose.slipTypeS` 1,4, `motion.shiftClose.slipLineSlideFraction` 0,35,
+  `motion.shiftClose.feedHoldMaxS` 3, `motion.shiftClose.slipReturnMps` 3, `motion.shiftClose.slipReturnMaxS` 0,45,
+  `motion.telexRollDegPerChar` 2, `motion.telexTear.{moveMm, fallMm, euler}`, `shiftClose.slip.typeLines` 7,
+  `shiftClose.slip.typewriterLocalStart/Exit/Euler`, `shiftClose.slip.tongueOffsetMm` 20; tema yeniden içe aktarıldı. `slipExitS` ve `switchLocal*` paketin değerleri olarak kaldı.
+- **Punto:** teleks kâğıdının ileti satırı K1'de 13,7 px (kâğıt eski teleksin önündeki yerinden ~11 cm geride; eğim/yer denemeleri
+  13,9'u geçmedi); `SiginakTextScan`'e gerekçeli istisna. Durum satırı 19 px.
+- **Asset:** yeni `SceneMeshes/Telex/{TypewriterTelexPaper,TypewriterTelexRoll,TypewriterTelexFeed,TelexPlate}_SM`. Silinen yok:
+  `Telex`, `TelexPaper`, `SlipMouth` prefab/OBJ'leri Rev3 manifest hattının parçası (`Rev3ModelTests`).
+- **Sahne yan etkisi:** KONUM plakasının (`TXT_BeaconLabel`) yazı rengi ezmesi ilk turun bir kaydında editör tarafından eklenmişti;
+  geri alındı (prefab varsayılanı). Bu turun kaydında editörün yerleşim grubu sürücülerinin yazdığı 32 RectTransform değeri ve iki
+  teleks yuvası renk ezmesi de kayda girmişti; kayıt öncesi hâle döndürüldü (sahne farkı yalnız istenen satırlar).
+- **Testler:** yeni `TelexTypewriterSceneTests` (kullanıcının modelinin yeri/ölçeği/malzemesi ve ezmeleri sabit, önceki satır yuvası,
+  koparılan kâğıdın yolu, okunurluk); `Rev3SlipMotionTests` (daktilo düzeneği, satır satır çıkış, `FeedHold`, köprünün `HoldFeed`'i,
+  `TypedFeed` token'dan, `ReturnSeconds`), `Rev3ShiftCloseSceneTests` (daktilo çapaları, fiş ağzı yok, K1 kadrajı), `SiginakCameraTests`,
+  `ShiftClosePlayTests` P1 (K1'de basım, sıra, fiş kâğıdı örtmez), P3/P12 (fiş daktiloya dönerken K1), P4/P5 (yola göre dönüş, K1'den
+  EVRAK), `ShiftPlayKit.PrintToTongue` (K1'de biter). Toplamlar: EditMode 1198/1198, PlayMode 91/91.
+- **Açık / kullanıcıya:** ileti satırının puntosu (%3 büyütme mi, istisna mı); fiş daktilonun sağ ucunda, kâğıdın yanında (ortada
+  kâğıdın önünde olsaydı teleks satırını örterdi); kâğıt rulosu masada yatıyor (tutucu yok); fişin basım sesleri hâlâ eski "yazıcı
+  tırrt" + varışta "kopma çıt" (daktilo tuşu / satır başı zili klibi yok); fişin yerini gösteren işaret (eski amber lamba) yok, kod
+  daktiloya küçük bir lambayı kabul eder (`ShiftReceiptMachine.slipLamp`).
 
 ## KOS aşama 8: denge ve belgeler (2026-11-14/15)
 

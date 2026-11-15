@@ -281,7 +281,7 @@ namespace Corrigible.Desk
         }
 
         /// <summary>
-        /// R19 basım reddi: kol −35°'ye varır (<see cref="LeverArrived"/> true; köprü boş ağız sesini çalar), sonra
+        /// R19 basım reddi: kol −35°'ye varır (<see cref="LeverArrived"/> true; köprü fişsiz “tık” sesini çalar), sonra
         /// <c>motion.shiftClose.rejectLeverS</c> (0,4 s) içinde +35°'ye kalkar (<see cref="LeverArrived"/> false); kapak açık kalır ve
         /// 4 s sayacı yeniden başlar. Kol kalktığında şalter kilitlendiyse kapak kapanır. Yalnız kol inikken (köprünün
         /// <see cref="Thrown"/> işleyicisinde) anlamlıdır; eski kipte <see cref="Release()"/> gibi davranır.

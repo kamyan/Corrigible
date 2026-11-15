@@ -102,7 +102,7 @@ Biçim: öğe · şimdiki karşılık (dosya, prefab, sahne) · durum · veri ka
 | Sayaç rafı | `CounterRack` + `CounterModule`, `CounterWheel` (36·d); ERZAK eki TMP (Soru 11); HAMMADDE / RAW MAT. (Soru 3) | UYGULANDI | `S.Day`, `S.Fon`, `Shelter.Supplies` / `SuppliesCapacity`, `Shelter.Materials`, özgür bölge, `S.Trust` |
 | Anahtar rayı | `KeyRail` + 4 `KeyKey` (`StationKeyRail`) | UYGULANDI | rig pozu; `Adm.Candidate` |
 | Vardiya şalteri | `Desk/Shift switch`, model parçaları; §3.5 | UYGULANDI | §3.5 |
-| Teleks | `Telex`, `TelexPaper` (dört yuva), `TelexRoll` (`Teleprinter`, `TelexFeed`) | UYGULANDI | `TelexFeed` |
+| Teleks | Kullanıcının daktilo modeli (`Assets/Typewriter`, `Teleprinter/Typewriter_FBX_Unity`; eski `Telex` modeli 2026-11-15'te KALDIRILDI), `TelexPaper` (dört yuva; türev mesh `TypewriterTelexPaper_SM`), `Paper roll` / `Paper feed` (`Teleprinter.roll`), `Telex plate` (`Teleprinter`, `TelexFeed`) | UYGULANDI (teleks modeli değişimi) | `TelexFeed` |
 | EVRAK | `PaperTray` (`EvrakTray`; Soru 14, §4.4 D7) | UYGULANDI | son 5 fiş |
 | Duvarlar | `AlarmBoard`, `CorkBoard`, `Poster`, `StencilSign`, `Duct`, `PipeRun`, `JunctionBox`, `CeilingBulb`, `PencilNote`; `FreedRegionsBoard`, `BulbFlicker` yerinde | UYGULANDI | `S.Day` |
 | Tebeşir çetelesi | `ChalkTally`, 16 çentik yeri; kartlı oyunda yalnız vardiya | UYGULANDI | `S.Day` |
@@ -154,9 +154,9 @@ Soru 9 **B** ile çözüldü (§4.5 D1).
 |---|---|---|---|
 | Şalter durumları | `ShiftSwitch` kip `shiftClose`, `ShiftPhase`; dolap ve menü şalteri eski kipte | UYGULANDI | `Bd.Printed`, `S.Raid` |
 | Plakanın 2. satırı | `ShiftPlate` (kilit nedenleri §4.4 D2) | UYGULANDI | `shiftClose.states.*` |
-| `SlipMouth` | Model; `ShiftReceiptMachine.slipLamp` | UYGULANDI | `Bd.Printed` |
+| `SlipMouth` | Model; `ShiftReceiptMachine.slipLamp` | KALDIRILDI (2026-11-15: fiş teleks daktilosundan basılır; ağız, lamba ve DEVİR FİŞİ plakası odadan kalktı; `slipLamp` boş, kodda isteğe bağlı) | `Bd.Printed` |
 | Devir fişi | `HandoverSlipFace`, `HandoverSlipFactsBuilder`, prefab `Prefabs/Siginak/HandoverSlipView` | UYGULANDI | `Bd.ReceiptId` |
-| Fiş yolu | `ShiftReceiptPaper`: ağız 0,35 s (160 mm), el 0,25 s, tepsi 0,2 s, dile 0,25 s | UYGULANDI | `board_print`, `board_file` |
+| Fiş yolu | `ShiftReceiptPaper`: daktilodan yazılarak 1,4 s (7 satır adımı, 160 mm; eski ağız 0,35 s), el 0,25 s, tepsi 0,2 s, daktiloya dönüş yola göre 0,25–0,45 s (`ReturnSeconds`) | UYGULANDI | `board_print`, `board_file` |
 | EVRAK hedef ışığı | Gölgesiz amber nokta | UYGULANDI | `DragChanged` |
 | Kapanış | `SiginakShiftClose`: kararma, tam karanlık kare, `FileBoardShift`, K1'e kesme, sayaçlar 0,4 s, teleks 1,2 s | UYGULANDI | `GameController.FileBoardShift` |
 | K6 pozu | `SiginakPose.ShiftClose`, `Poses/K6`, 42° | UYGULANDI | `cameras.K6` |
@@ -997,3 +997,9 @@ Yalnız bugün doğru ve yol gösteren olanlar. Bütün liste A9 kopyası §1.
     ve belgeler. İnceleme sonrası: TEHDİT göstergeleri "n/m" (`Simulation.MaxTier`), rehber notunun başlığı tek satır "REHBER",
     konu bölümünde "REHBER · KONU"; bot düzeneği `Tools/DengeBotu/`.
   - Kayıt biçimi 17. EditMode 1186/1186, PlayMode 91/91.
+- **2026-11-15 · Teleks modeli ve devir fişi daktilodan.** Kullanıcı masadaki teleksi kendi daktilo modeliyle değiştirdi (yeri,
+  ölçeği, malzemesi asıl; testle sabit). Teleksin kâğıdı (türev mesh), rulosu, besleme şeridi, TELEKS plakası ve hedefleri
+  daktiloya taşındı; eski `Telex` örneği ve `Shift switch/SlipMouth` (ağız, lamba, DEVİR FİŞİ plakası) kaldırıldı. Şalter yalnız
+  basma komutu; fiş daktilonun silindirinden, teleks kâğıdının yanında satır satır çıkar (önce teleks satırı, kamera K1'e varınca;
+  en çok 3 s). Fiş K6'dan daktiloya dönerken kamera K1'e döner; dönüş yola göre 0,25–0,45 s. Koparılan teleks kâğıdı yukarı
+  çekilip arkaya düşer (`motion.telexTear.*`). Ayrıntı: `Docs/DURUM.md` › Teleks modeli.

@@ -12,10 +12,12 @@ using Where = Corrigible.Desk.ShiftReceiptPaper.Where;
 namespace Corrigible.Desk.Tests
 {
     /// <summary>
-    /// Revizyon 3 · Aşama 4 (R19b, PLAN §1.5–§1.7, paket W2): devir fişinin hareketi ve EVRAK hedefi. Sahne açılmaz; şalter, fiş
-    /// ağzı ve EVRAK tepsisi DeskGame'deki yerlerinde (şalter (0,765; 0,76; 0,885) yaw 10, tepsi (0,765; 0,76; 1,30) yaw −4, çapalar
-    /// SlipMouth manifestinden) boş nesnelerle kurulur; kamera K6 token'ından (1920 × 1080). Zaman <c>Advance</c> ile ilerler
-    /// (Edit modda <c>Update</c> ve <c>OnEnable</c> çalışmaz), süreler <c>SiginakTheme</c>'den okunur.
+    /// Revizyon 3 · Aşama 4 (R19b, PLAN §1.5–§1.7, paket W2) ve teleks modeli değişimi: devir fişinin hareketi ve EVRAK hedefi.
+    /// Sahne açılmaz; teleks daktilosu, şalter ve EVRAK tepsisi DeskGame'deki yerlerinde (Teleprinter (−0,765; 0,76; 1,21) yaw −12,
+    /// fişin çıkış çapaları <c>shiftClose.slip.typewriterLocal*</c>, şalter (0,765; 0,76; 0,885) yaw 10, tepsi (0,765; 0,76; 1,30)
+    /// yaw −4) boş nesnelerle kurulur; kamera K6 token'ından (1920 × 1080). Zaman <c>Advance</c> ile ilerler (Edit modda
+    /// <c>Update</c> ve <c>OnEnable</c> çalışmaz), süreler <c>SiginakTheme</c>'den okunur. Lamba makinenin isteğe bağlı lambasıdır
+    /// (odada fiş ağzı kalmadı; burada yalnız ışığın fişin durumunu izlediği sınanır).
     /// </summary>
     public class Rev3SlipMotionTests
     {
@@ -61,7 +63,7 @@ namespace Corrigible.Desk.Tests
 
         sealed class Bench
         {
-            public Transform switchRoot, exit, start, over, sheet;
+            public Transform printerRoot, exit, start, over, sheet;
             public EvrakTray tray;
             public BoxCollider trayBox;
             public Light light;
@@ -107,20 +109,23 @@ namespace Corrigible.Desk.Tests
         }
 
         /// <summary>
-        /// Şalter + fiş ağzı çapaları, EVRAK tepsisi (çarpıştırıcı, üst kâğıt, <c>Slip over</c>, hedef ışığı), K6 kamerası, fiş ve
+        /// Teleks daktilosunun fiş çapaları, EVRAK tepsisi (çarpıştırıcı, üst kâğıt, <c>Slip over</c>, hedef ışığı), K6 kamerası, fiş ve
         /// (istenirse) makine ile lambası. <paramref name="withSwitch"/>: makine gerçek bir <see cref="ShiftSwitch"/>'e bağlı
         /// (kol inişi beklenir); değilse besleme hemen başlar.
         /// </summary>
         Bench Build(bool withMachine = true, bool withSwitch = false)
         {
             var b = new Bench();
-            var sw = Make("Shift switch");
-            sw.transform.SetPositionAndRotation(new Vector3(0.765f, 0.76f, 0.885f), Quaternion.Euler(0, 10, 0));
-            b.switchRoot = sw.transform;
-            b.exit = Make("SlipExit", sw.transform).transform;
-            b.exit.localPosition = new Vector3(-0.30f, 0.14f, 0.015f);
-            b.start = Make("SlipStart", sw.transform).transform;
-            b.start.localPosition = new Vector3(-0.18f, 0.14f, 0.015f);
+            var printer = Make("Teleprinter");
+            printer.transform.SetPositionAndRotation(new Vector3(-0.765f, 0.76f, 1.21f), Quaternion.Euler(0, 348, 0));
+            b.printerRoot = printer.transform;
+            var euler = Quaternion.Euler(Theme.Vector("shiftClose.slip.typewriterLocalEuler"));
+            b.exit = Make("SlipExit", printer.transform).transform;
+            b.exit.localPosition = Theme.Vector("shiftClose.slip.typewriterLocalExit");
+            b.exit.localRotation = euler;
+            b.start = Make("SlipStart", printer.transform).transform;
+            b.start.localPosition = Theme.Vector("shiftClose.slip.typewriterLocalStart");
+            b.start.localRotation = euler;
 
             var trayGo = Make("Paper tray");
             trayGo.transform.SetPositionAndRotation(new Vector3(0.765f, 0.76f, 1.30f), Quaternion.Euler(0, -4, 0));
@@ -253,26 +258,36 @@ namespace Corrigible.Desk.Tests
                 "örnek pozu token boyutu ve varsayılanlarla statik pozla aynı");
         }
 
-        /// <summary>Dil pozu: şalter yerelinde Euler (90, −90, 0), y 0,1356 ± 0,5 mm; fişin üstü ağızdan uzakta, yüzü yukarıda.</summary>
+        /// <summary>
+        /// Dil pozu (daktilonun silindiri): fiş merkezi çıkış çapasından <c>shiftClose.slip.tongueOffsetMm</c> (20 mm) yukarıda, dönüşü
+        /// çapanınki (Teleprinter yerelinde 10° arkaya yaslanmış); yüzü öne ve yukarı, üstü yukarı; alt kenarı silindirin altında
+        /// (K1'den görünmez), üst kenarı kâğıdın üstünde. Serileşmiş varsayılanlar token'la aynı.
+        /// </summary>
         [Test]
-        public void TonguePose_TopAwayFromMouth_RestsOnTongue()
+        public void TonguePose_StandsInPlaten_FacingFront()
         {
             var b = Build(withMachine: false);
             var tongue = b.paper.TongueTarget;
-            var local = b.switchRoot.InverseTransformPoint(tongue.position);
-            Assert.AreEqual(-0.30f, local.x, 0.0005f);
-            Assert.AreEqual(0.1356f, local.y, 0.0005f, "dilin üstünde (çapa 0,14 değil)");
-            Assert.AreEqual(0.015f, local.z, 0.0005f);
-            var rel = Quaternion.Inverse(b.switchRoot.rotation) * tongue.rotation;
-            Assert.Less(Quaternion.Angle(rel, Quaternion.Euler(90, -90, 0)), 0.01f, "şalter yerelinde (90, −90, 0)");
-            var mouth = (b.start.localPosition - b.exit.localPosition).normalized;
-            var top = b.switchRoot.InverseTransformDirection(tongue.rotation * Vector3.up);
-            Assert.Less(Vector3.Dot(top, mouth), -0.999f, "üst kenar ağızdan uzakta");
-            var face = b.switchRoot.InverseTransformDirection(tongue.rotation * Vector3.back);
-            Assert.Greater(Vector3.Dot(face, Vector3.up), 0.999f, "yüz yukarı");
+            var offset = Theme.Vector("shiftClose.slip.tongueOffsetMm") * 0.001f;
+            Assert.AreEqual(0.02f, offset.y, 1e-6f);
+            var tilt = Quaternion.Euler(Theme.Vector("shiftClose.slip.typewriterLocalEuler"));
+            var local = b.printerRoot.InverseTransformPoint(tongue.position);
+            var expected = Theme.Vector("shiftClose.slip.typewriterLocalExit") + tilt * offset;
+            Assert.Less(Vector3.Distance(expected, local), 0.0005f, "çıkış + 20 mm (çapa yereli)");
+            var rel = Quaternion.Inverse(b.printerRoot.rotation) * tongue.rotation;
+            Assert.Less(Quaternion.Angle(rel, tilt), 0.01f, "dönüş çapanınki (10°)");
+            var top = b.printerRoot.InverseTransformDirection(tongue.rotation * Vector3.up);
+            Assert.Greater(top.y, 0.98f, "üst kenar yukarı");
+            Assert.Greater(top.z, 0.15f, "arkaya yaslanır (kâğıtla aynı)");
+            var face = b.printerRoot.InverseTransformDirection(tongue.rotation * Vector3.back);
+            Assert.Less(face.z, -0.98f, "yüz öne (klavyeye)");
+            Assert.Greater(face.y, 0.15f, "yüz hafif yukarı (K1'e)");
+            float bottom = local.y - 0.075f * top.y, upper = local.y + 0.075f * top.y;
+            Assert.Less(bottom, 0.105f, "alt kenar silindirin ve kart tutucunun arkasında (K1'den görünmez)");
+            Assert.Greater(upper, 0.23f, "fiş silindirin üstünde ~10 cm görünür");
 
-            var stat = ShiftReceiptPaper.TonguePose(b.exit, new Vector3(0, -0.0044f, 0), new Vector3(90, -90, 0));
-            Assert.Less(Vector3.Distance(stat.position, tongue.position), 1e-6f);
+            var stat = ShiftReceiptPaper.TonguePose(b.exit, offset, Vector3.zero);
+            Assert.Less(Vector3.Distance(stat.position, tongue.position), 1e-6f, "serileşmiş varsayılan = token");
             b.paper.Present(Id, Facts(1), ShiftReceiptPaper.Entry.Instant);
             AssertPose(tongue, b.paper.transform, 0.01f, "anında sunulan fiş");
         }
@@ -280,11 +295,13 @@ namespace Corrigible.Desk.Tests
         // ------------------------------------------------------------------ çıkış
 
         /// <summary>
-        /// Basılan fiş kol aşağıya varana dek görünmez ve lamba sönük; kol varınca ağzın 40 mm içinden (Karar D12, yol 160 mm)
-        /// 0,35 s'de dile çıkar, ease-out (yarı zamanda ≥ 0,6), başta yazıcı, sonda kopma sesi; lamba besleme başında yanar.
+        /// Basılan fiş kol aşağıya varana dek görünmez ve lamba sönük; kol varınca daktilonun içinden (SlipStart + 40 mm, Karar D12,
+        /// yol 160 mm) <c>motion.shiftClose.slipTypeS</c> (1,4 s) boyunca <c>shiftClose.slip.typeLines</c> (7) satır adımıyla yazılarak
+        /// silindirdeki duruşuna çıkar (her adımın ilk %35'i kayış, kalanı duruş), başta yazıcı, sonda kopma sesi; lamba besleme
+        /// başında yanar.
         /// </summary>
         [Test]
-        public void Feed_WaitsForLever_EaseOut_035s()
+        public void Feed_WaitsForLever_TypedLines_14s()
         {
             var b = Build(withSwitch: true);
             b.shiftSwitch.Press();
@@ -299,37 +316,148 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(Where.Hidden, b.paper.State, "zaman geçse de kol varmadan çıkmaz");
             Assert.IsEmpty(b.sounds);
 
-            // D12: SlipStart'ın 40 mm içinden; yol ≈ 160 mm (dikeyde çapa 0,14 → dil 0,1356).
-            var from = b.switchRoot.InverseTransformPoint(b.paper.FeedFrom);
-            Assert.AreEqual(-0.14f, from.x, 0.0005f, "SlipStart + 40 mm ağız içine");
-            Assert.AreEqual(0.14f, from.y, 0.0005f, "ağzın ekseninde başlar");
-            Assert.AreEqual(0.015f, from.z, 0.0005f);
+            // D12: SlipStart'ın 40 mm içinden (daktilonun gövdesinde); yol 160 mm
+            var exitLocal = Theme.Vector("shiftClose.slip.typewriterLocalExit");
+            var up = Quaternion.Euler(Theme.Vector("shiftClose.slip.typewriterLocalEuler")) * Vector3.up;
+            var from = b.printerRoot.InverseTransformPoint(b.paper.FeedFrom);
+            Assert.Less(Vector3.Distance(exitLocal - up * 0.14f, from), 0.0005f, "çıkış çapasının 140 mm altında (SlipStart + 40 mm)");
+            Assert.Less(from.y + 0.075f * up.y, 0.12f, "başta fişin üst kenarı silindirin altında (görünmez)");
             Assert.AreEqual(0.16f, b.paper.FeedPathM, 0.0005f, "yol 160 mm");
 
             RaiseLeverArrived(b.shiftSwitch, true);
             Assert.AreEqual(Where.Feeding, b.paper.State);
             Assert.IsTrue(b.paper.gameObject.activeSelf);
+            Assert.IsTrue(b.paper.InPrinter, "fiş daktiloda");
             Assert.IsTrue(b.machine.LampLit);
-            Assert.AreEqual(1, b.lamp.SwapState, "fiş ağzı lambası yanık");
+            Assert.AreEqual(1, b.lamp.SwapState, "lamba yanık");
             CollectionAssert.AreEqual(new[] { ShiftSound.SlipPrint }, b.sounds);
             Assert.Less(Vector3.Distance(b.paper.transform.position, b.paper.FeedFrom), 1e-5f, "çıkış başında");
 
-            float exit = Token("motion.shiftClose.slipExitS");
-            Assert.AreEqual(0.35f, exit, 1e-6f);
+            float typeS = Token("motion.shiftClose.slipTypeS");
+            int lines = Mathf.RoundToInt(Token("shiftClose.slip.typeLines"));
+            Assert.AreEqual(1.4f, typeS, 1e-6f);
+            Assert.AreEqual(7, lines);
             var start = b.paper.FeedFrom;
             var end = b.paper.TongueTarget.position;
-            b.paper.Advance(exit * 0.5f);
-            Assert.AreEqual(Where.Feeding, b.paper.State);
-            float half = Progress(start, end, b.paper.transform.position);
-            Assert.GreaterOrEqual(half, 0.6f, "ease-out: yarı zamanda yolun ≥ %60'ı");
-            Assert.Less(half, 1f);
-            b.paper.Advance(exit * 0.5f - 0.005f);
-            Assert.AreEqual(Where.Feeding, b.paper.State, "0,35 s dolmadan dilde değil");
-            b.paper.Advance(0.01f);
+            float step = typeS / lines, elapsed = 0;
+            void To(float at) { b.paper.Advance(at - elapsed); elapsed = at; }
+            // 1. adımın kayışı bitti: bir satır
+            To(step * 0.5f);
+            Assert.AreEqual(1f / lines, Progress(start, end, b.paper.transform.position), 0.002f, "ilk satır");
+            // duruş: harfler basılırken fiş kıpırdamaz
+            var still = b.paper.transform.position;
+            To(step * 0.95f);
+            Assert.Less(Vector3.Distance(still, b.paper.transform.position), 1e-6f, "satır basılırken duruş");
+            // 3. adımın kayışının ortası: iki satırla üç satır arası
+            To(step * (2 + LineSlideHalf));
+            float mid = Progress(start, end, b.paper.transform.position);
+            Assert.Greater(mid, 2f / lines + 0.001f);
+            Assert.Less(mid, 3f / lines - 0.001f);
+            To(typeS - 0.005f);
+            Assert.AreEqual(Where.Feeding, b.paper.State, "1,4 s dolmadan duruşunda değil");
+            To(typeS + 0.005f);
             Assert.AreEqual(Where.Tongue, b.paper.State);
-            AssertPose(b.paper.TongueTarget, b.paper.transform, 1f, "dilde");
+            AssertPose(b.paper.TongueTarget, b.paper.transform, 1f, "silindirde");
             CollectionAssert.AreEqual(new[] { ShiftSound.SlipPrint, ShiftSound.SlipTear }, b.sounds);
             Assert.IsTrue(b.machine.LampLit);
+            Assert.IsTrue(b.paper.InPrinter);
+        }
+
+        static float LineSlideHalf => Token("motion.shiftClose.slipLineSlideFraction") * 0.5f;
+
+        /// <summary>
+        /// Yazılarak çıkışın yol kesri (saf): uçlar, satır adımları, duruşlar, tekdüzelik; 0 satır tek ease-out. Satır adımının kayış
+        /// payı token'dan (<c>motion.shiftClose.slipLineSlideFraction</c> 0,35).
+        /// </summary>
+        [Test]
+        public void TypedFeed_StepsAndPauses()
+        {
+            Assert.AreEqual(0.35f, Token("motion.shiftClose.slipLineSlideFraction"), 1e-6f);
+            Assert.AreEqual(Token("motion.shiftClose.slipLineSlideFraction"), ShiftReceiptPaper.LineSlideFraction, 1e-6f, "kayış payı token'dan");
+            Assert.AreEqual(ShiftReceiptPaper.TypedFeed(0.3f / 7f, 7, ShiftReceiptPaper.LineSlideFraction), ShiftReceiptPaper.TypedFeed(0.3f / 7f, 7), 1e-6f);
+            Assert.AreEqual(0f, ShiftReceiptPaper.TypedFeed(0, 7), 1e-6f);
+            Assert.AreEqual(1f, ShiftReceiptPaper.TypedFeed(1, 7), 1e-6f);
+            Assert.AreEqual(1f, ShiftReceiptPaper.TypedFeed(2, 7), 1e-6f);
+            for (int k = 0; k < 7; k++)
+            {
+                Assert.AreEqual((k + 1) / 7f, ShiftReceiptPaper.TypedFeed((k + 0.5f) / 7f, 7), 1e-5f, "adım " + k + " duruşta");
+                Assert.AreEqual((k + 1) / 7f, ShiftReceiptPaper.TypedFeed((k + 0.99f) / 7f, 7), 1e-5f, "adım " + k + " duruşun sonu");
+            }
+            float last = 0;
+            for (int i = 0; i <= 700; i++)
+            {
+                float v = ShiftReceiptPaper.TypedFeed(i / 700f, 7);
+                Assert.GreaterOrEqual(v, last - 1e-6f, "tekdüze");
+                last = v;
+            }
+            Assert.AreEqual(CardEasing.Evaluate(CardEase.EaseOut, 0.5f), ShiftReceiptPaper.TypedFeed(0.5f, 0), 1e-6f, "satırsız: ease-out");
+        }
+
+        /// <summary>
+        /// Köprünün besleme kararı (<see cref="Corrigible.Desk.Bridge.SiginakShiftClose.HoldFeed"/>, saf): teleks satır basarken ya da
+        /// kamera masaya varmamışken bekler; üst sınırda (<c>motion.shiftClose.feedHoldMaxS</c> 3 s) kamera başka pozda kilitli ya da
+        /// teleks hâlâ basıyor olsa da fiş basılır.
+        /// </summary>
+        [Test]
+        public void BridgeHoldFeed_WaitsForTelexAndCamera_UntilCap()
+        {
+            float cap = Token("motion.shiftClose.feedHoldMaxS");
+            Assert.AreEqual(3f, cap, 1e-6f);
+            Assert.IsFalse(Corrigible.Desk.Bridge.SiginakShiftClose.HoldFeed(0, cap, false, true), "teleks boşta, kamera K1'de: hemen basılır");
+            Assert.IsTrue(Corrigible.Desk.Bridge.SiginakShiftClose.HoldFeed(0.5f, cap, true, true), "teleks satır basarken bekler");
+            Assert.IsTrue(Corrigible.Desk.Bridge.SiginakShiftClose.HoldFeed(0.5f, cap, false, false), "kamera K1'e varmadan bekler");
+            Assert.IsTrue(Corrigible.Desk.Bridge.SiginakShiftClose.HoldFeed(cap - 0.01f, cap, true, false), "üst sınırdan hemen önce bekler");
+            Assert.IsFalse(Corrigible.Desk.Bridge.SiginakShiftClose.HoldFeed(cap, cap, true, false), "üst sınırda kamera başka pozda, teleks basıyor: yine basılır");
+            Assert.IsFalse(Corrigible.Desk.Bridge.SiginakShiftClose.HoldFeed(cap + 5, cap, false, false), "üst sınırdan sonra basılır");
+        }
+
+        /// <summary>
+        /// Daktiloya dönüşün süresi (saf): kısa yolda eski süre (0,25 s), uzun yolda yol / <c>motion.shiftClose.slipReturnMps</c>
+        /// (3 m/s), en çok <c>motion.shiftClose.slipReturnMaxS</c> (0,45 s); tema değerleriyle aynı.
+        /// </summary>
+        [Test]
+        public void ReturnSeconds_ScalesWithDistance_Clamped()
+        {
+            float mps = Token("motion.shiftClose.slipReturnMps"), max = Token("motion.shiftClose.slipReturnMaxS");
+            Assert.AreEqual(3f, mps, 1e-6f);
+            Assert.AreEqual(0.45f, max, 1e-6f);
+            Assert.AreEqual(0.25f, ShiftReceiptPaper.ReturnSeconds(0.3f, 0.25f), 1e-6f, "kısa yol: eski süre");
+            Assert.AreEqual(0.3f, ShiftReceiptPaper.ReturnSeconds(0.9f, 0.25f), 1e-5f, "0,9 m / 3 m/s");
+            Assert.AreEqual(0.45f, ShiftReceiptPaper.ReturnSeconds(1.5f, 0.25f), 1e-6f, "uzun yol: üst sınır");
+            Assert.AreEqual(0.25f, ShiftReceiptPaper.ReturnSeconds(0, 0.25f), 1e-6f);
+            Assert.AreEqual(0.6f, ShiftReceiptPaper.ReturnSeconds(1.5f, 0.6f, 3, 0.45f), 1e-6f, "taban üst sınırdan büyükse taban");
+        }
+
+        /// <summary>
+        /// Teleks daktilosu (sıra: önce teleks satırı, sonra fiş): <see cref="ShiftReceiptMachine.FeedHold"/> true iken kol varsa da fiş
+        /// beklemede kalır; izin gelince kol varışı (ya da şaltersiz düzenekte yeniden sunma) beslemeyi başlatır.
+        /// </summary>
+        [Test]
+        public void FeedHold_DelaysFeedUntilReleased()
+        {
+            var b = Build(withSwitch: true);
+            bool hold = true;
+            b.machine.FeedHold = () => hold;
+            b.shiftSwitch.Press();
+            b.shiftSwitch.Press();
+            b.machine.Present(Id, Facts(1), true);
+            RaiseLeverArrived(b.shiftSwitch, true);
+            Assert.IsTrue(b.paper.FeedPending, "teleks satırı / kamera beklenir");
+            Assert.AreEqual(Where.Hidden, b.paper.State);
+            Assert.IsEmpty(b.sounds);
+            hold = false;
+            RaiseLeverArrived(b.shiftSwitch, true);
+            Assert.AreEqual(Where.Feeding, b.paper.State, "izin gelince basılır");
+
+            var w = Build();
+            bool hold2 = true;
+            w.machine.FeedHold = () => hold2;
+            w.machine.Present(Id, Facts(1), true);   // şalter yok: kol beklenmez, yalnız izin
+            Assert.IsTrue(w.paper.FeedPending);
+            hold2 = false;
+            w.machine.Present(Id, Facts(1), false);  // aynı kimlik: bekleme sürer, izin yoklanır
+            Assert.AreEqual(Where.Feeding, w.paper.State);
+            w.machine.FeedHold = null;
         }
 
         /// <summary>Aynı kimlikle yeniden sunmak fişi yeniden çıkarmaz (yalnız yüz verisi yenilenir); kol beklenirken anında sunma beklemeyi bozmaz.</summary>
@@ -339,7 +467,7 @@ namespace Corrigible.Desk.Tests
             var b = Build();
             b.machine.Present(Id, Facts(1), true);   // şalter yok: besleme hemen
             Assert.AreEqual(Where.Feeding, b.paper.State);
-            b.paper.Advance(1f);
+            b.paper.Advance(2f);
             Assert.AreEqual(Where.Tongue, b.paper.State);
             var before = b.paper.transform.position;
             var refreshed = Facts(1);
@@ -389,11 +517,13 @@ namespace Corrigible.Desk.Tests
         // ------------------------------------------------------------------ bırakış
 
         /// <summary>
-        /// EVRAK dışına bırakılan fiş 0,25 s'de (<c>motion.board.returnArcS</c>) ortada <c>cards.heldLiftMm</c> kavisle dile döner;
+        /// EVRAK dışına bırakılan fiş ortada <c>cards.heldLiftMm</c> kavisle daktiloya döner; süre yola göre
+        /// (<see cref="ShiftReceiptPaper.ReturnSeconds(float, float)"/>: en az <c>motion.board.returnArcS</c> 0,25 s; masanın öbür
+        /// ucundan 0,45 s);
         /// sürüklerken EVRAK üstü dönüşüne geçer; dosyalama yok, lamba yanık kalır.
         /// </summary>
         [Test]
-        public void DropOutside_ReturnsToTongueIn025s()
+        public void DropOutside_ReturnsToTypewriter_ByDistance()
         {
             var b = Build();
             b.machine.Present(Id, Facts(1), false);
@@ -418,10 +548,13 @@ namespace Corrigible.Desk.Tests
             Assert.IsTrue(b.machine.LampLit);
             Assert.IsFalse(b.tray.ReceiptTargetLit);
 
-            float back = Token("motion.board.returnArcS");
+            Assert.AreEqual(0.25f, Token("motion.board.returnArcS"), 1e-6f);
             float arcM = Token("cards.heldLiftMm") * 0.001f;
-            Assert.AreEqual(0.25f, back, 1e-6f);
             var tongue = b.paper.TongueTarget.position;
+            float back = b.paper.MoveSeconds;
+            Assert.AreEqual(ShiftReceiptPaper.ReturnSeconds(Vector3.Distance(release, tongue), Token("motion.board.returnArcS")), back, 1e-5f, "yola göre süre");
+            Assert.That(back, Is.InRange(0.25f, Token("motion.shiftClose.slipReturnMaxS") + 1e-6f));
+            Assert.Greater(back, 0.3f, "masanın öbür ucundan dönüş 0,25 s'den uzun");
             b.paper.Advance(back * 0.5f);
             var straight = (release + tongue) * 0.5f;   // in-out yarı zamanda yolun yarısı
             Assert.AreEqual(straight.y + arcM, b.paper.transform.position.y, 2e-4f, "ortada kavis tepesi");
@@ -453,7 +586,8 @@ namespace Corrigible.Desk.Tests
             Assert.IsFalse(b.tray.ReceiptTargetLit);
             Assert.IsFalse(b.light.enabled);
             Assert.IsTrue(b.machine.LampLit, "fiş EVRAK'a girmedi: lamba yanık");
-            b.paper.Advance(Token("motion.board.returnArcS") + 0.01f);
+            Assert.That(b.paper.MoveSeconds, Is.InRange(Token("motion.board.returnArcS"), Token("motion.shiftClose.slipReturnMaxS") + 1e-6f));
+            b.paper.Advance(b.paper.MoveSeconds + 0.01f);
             Assert.AreEqual(Where.Tongue, b.paper.State);
             AssertPose(b.paper.TongueTarget, b.paper.transform, 0.01f, "dile döndü");
         }
@@ -515,7 +649,7 @@ namespace Corrigible.Desk.Tests
             Assert.IsTrue(b.machine.LampLit, "lamba yeniden yanar");
             Assert.AreEqual(1, b.lamp.SwapState);
             CollectionAssert.AreEqual(new[] { ShiftSound.SlipReturn }, b.sounds);
-            b.paper.Advance(Token("motion.board.returnArcS") + 0.01f);
+            b.paper.Advance(b.paper.MoveSeconds + 0.01f);
             Assert.AreEqual(Where.Tongue, b.paper.State);
             AssertPose(b.paper.TongueTarget, b.paper.transform, 0.01f, "dile döndü");
 
@@ -641,7 +775,8 @@ namespace Corrigible.Desk.Tests
 
         // ------------------------------------------------------------------ el ve arşiv
 
-        /// <summary>El: 0,25 s'de ele gelir, hedef canlı kamerayı izler; elde de izler; <c>PutBack</c> 0,25 s'de dile döndürür; sürükleme
+        /// <summary>El: 0,25 s'de ele gelir, hedef canlı kamerayı izler; elde de izler; <c>PutBack</c> daktiloya döndürür (yola göre
+        /// <see cref="ShiftReceiptPaper.ReturnSeconds(float, float)"/>, en az 0,25 s); sürükleme
         /// elden de başlar (Karar D5). Okumak hiçbir karar olayı çıkarmaz.</summary>
         [Test]
         public void TakeToHand_FollowsLiveCamera_PutBackReturns()
@@ -665,10 +800,15 @@ namespace Corrigible.Desk.Tests
             AssertPose(b.paper.HandTarget, b.paper.transform, 0.01f, "elde kamerayı izler");
             Assert.IsTrue(b.machine.LampLit, "elde: fiş EVRAK'a girmedi");
 
+            var held = b.paper.transform.position;
             b.paper.PutBack();
             Assert.AreEqual(Where.Returning, b.paper.State);
             CollectionAssert.AreEqual(new[] { ShiftSound.SlipLift, ShiftSound.SlipReturn }, b.sounds);
-            b.paper.Advance(toHand + 0.01f);
+            Assert.AreEqual(ShiftReceiptPaper.ReturnSeconds(Vector3.Distance(held, b.paper.TongueTarget.position), toHand), b.paper.MoveSeconds, 1e-5f,
+                "elden daktiloya yola göre");
+            b.paper.Advance(b.paper.MoveSeconds - 0.01f);
+            Assert.AreEqual(Where.Returning, b.paper.State);
+            b.paper.Advance(0.02f);
             Assert.AreEqual(Where.Tongue, b.paper.State);
             AssertPose(b.paper.TongueTarget, b.paper.transform, 0.01f, "dile döndü");
             b.paper.PutBack();

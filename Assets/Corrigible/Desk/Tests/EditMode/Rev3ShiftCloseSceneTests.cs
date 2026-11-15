@@ -20,9 +20,9 @@ namespace Corrigible.Desk.Tests
 {
     /// <summary>
     /// Revizyon 3 · Aşama 4 (R19 vardiya kapanışı) kaydedilmiş <c>DeskGame</c>: tek seferlik sahne script'inin (PLAN §2.2) kurduğu
-    /// bağlar ve ölçüler. Plakanın iki satırı TR/EN sığar (E6), fiş yolu SlipMouth çapalarından (E16, Karar D12-B), kapanış
-    /// odadaki şaltere ve modelin parçalarına bağlı (E17), EVRAK hedef ışığı (E18), K6 kadrajı (E19), token ↔ tablo ↔ kod metinleri
-    /// (E7), çalışma kodunda ada göre arama yok (E20), kolun sesi (D10). Sahne açıkken (kullanıcının sahnesi) sahne testleri atlanır;
+    /// bağlar ve ölçüler. Plakanın iki satırı TR/EN sığar (E6), fiş yolu teleks daktilosunun çapalarından (E16, Karar D12-B;
+    /// teleks modeli değişimi: fiş ağzı kalktı), kapanış odadaki şaltere ve modelin parçalarına bağlı (E17), EVRAK hedef ışığı (E18),
+    /// K6 ve K1 kadrajları (E19), token ↔ tablo ↔ kod metinleri (E7), çalışma kodunda ada göre arama yok (E20), kolun sesi (D10). Sahne açıkken (kullanıcının sahnesi) sahne testleri atlanır;
     /// sahne kaydedilmeden kapatılır.
     /// </summary>
     public sealed class Rev3ShiftCloseSceneTests
@@ -219,48 +219,60 @@ namespace Corrigible.Desk.Tests
         // ================================================================== E16 · fiş yolu
 
         /// <summary>
-        /// E16: fişin başı ve ucu SlipMouth modelinin SlipStart (−0,18; 0,14; 0,015) ve SlipExit (−0,30; 0,14; 0,015) çapaları (±0,5 mm,
-        /// şalter yereli; token <c>shiftClose.slip.switchLocal*</c>), aralarındaki yol 120 mm (<c>travelMm</c>); Karar D12-B ile çıkış ağzın
-        /// 40 mm içinden başlar, yol 160 mm. Dil pozu (−0,30; 0,1356; 0,015), dönüş (90, −90, 0): üst ağızdan uzakta, yüz yukarı; fiş
-        /// orada pasif kaydedilir.
+        /// E16 (teleks modeli değişimi): fişin başı ve ucu teleks daktilosunun <c>Slip feed/SlipStart</c> ve <c>SlipExit</c> çapaları
+        /// (Teleprinter yereli ±0,5 mm, token <c>shiftClose.slip.typewriterLocal*</c>; ikisi de 10° arkaya yaslanmış), aralarındaki yol
+        /// 100 mm; Karar D12-B ile çıkış 40 mm içeriden başlar, yol 160 mm. Dil pozu silindirde: merkez çıkıştan 20 mm yukarıda
+        /// (<c>tongueOffsetMm</c>), dönüş çapanınki; fiş orada pasif kaydedilir. Fiş teleks kâğıdıyla örtüşmez (kâğıdın yanında).
         /// </summary>
         [Test]
-        public void SlipPath_UsesSlipMouthAnchors()
+        public void SlipPath_UsesTypewriterAnchors()
         {
             RequireScene();
             var theme = Theme();
-            var sw = RoomSwitch();
-            var mouth = ModelUnder(sw.transform, "SlipMouth");
+            var printer = One<Teleprinter>();
             var paper = One<ShiftReceiptPaper>();
             var machine = One<ShiftReceiptMachine>();
             var start = Reference<Transform>(paper, "start");
             var exit = Reference<Transform>(paper, "output");
-            Assert.AreSame(mouth.Anchor("SlipStart"), start, "çıkışın başı SlipStart çapası");
-            Assert.AreSame(mouth.Anchor("SlipExit"), exit, "ağzın dış ucu SlipExit çapası");
+            Assert.AreEqual("SlipStart", start.name);
+            Assert.AreEqual("SlipExit", exit.name);
+            Assert.AreEqual("Slip feed", exit.parent.name);
+            Assert.AreSame(exit.parent, start.parent);
+            Assert.AreSame(printer.transform, exit.parent.parent, "çapalar teleks daktilosunun (Teleprinter) altında");
             Assert.AreSame(exit, Reference<Transform>(machine, "output"));
 
-            AssertNear(theme.Vector("shiftClose.slip.switchLocalStart"), sw.transform.InverseTransformPoint(start.position), 0.0005f, "SlipStart şalter yereli");
-            AssertNear(theme.Vector("shiftClose.slip.switchLocalExit"), sw.transform.InverseTransformPoint(exit.position), 0.0005f, "SlipExit şalter yereli");
-            Assert.AreEqual(theme.NumberOf("shiftClose.slip.travelMm", 120) / 1000f, Vector3.Distance(start.position, exit.position), 0.0005f, "çapalar arası 120 mm");
+            var tp = printer.transform;
+            AssertNear(theme.Vector("shiftClose.slip.typewriterLocalStart"), tp.InverseTransformPoint(start.position), 0.0005f, "SlipStart daktilo yereli");
+            AssertNear(theme.Vector("shiftClose.slip.typewriterLocalExit"), tp.InverseTransformPoint(exit.position), 0.0005f, "SlipExit daktilo yereli");
+            var tilt = Quaternion.Euler(theme.Vector("shiftClose.slip.typewriterLocalEuler"));
+            foreach (var anchor in new[] { start, exit })
+                Assert.Less(Quaternion.Angle(tilt, Quaternion.Inverse(tp.rotation) * anchor.rotation), 0.05f, anchor.name + " 10° arkaya yaslanmış");
+            Assert.AreEqual(0.10f, Vector3.Distance(start.position, exit.position), 0.0005f, "çapalar arası 100 mm");
 
             var so = new SerializedObject(paper);
             Assert.AreEqual(0.04f, so.FindProperty("feedHiddenM").floatValue, 1e-5f, "D12-B: 40 mm içeriden");
-            AssertNear(new Vector3(0, -0.0044f, 0), so.FindProperty("tongueOffset").vector3Value, 1e-5f, "dil ofseti");
-            AssertNear(new Vector3(90, -90, 0), so.FindProperty("tongueEuler").vector3Value, 1e-3f, "dil dönüşü");
+            AssertNear(theme.Vector("shiftClose.slip.tongueOffsetMm") * 0.001f, so.FindProperty("tongueOffset").vector3Value, 1e-5f, "dil ofseti (token)");
+            AssertNear(Vector3.zero, so.FindProperty("tongueEuler").vector3Value, 1e-3f, "dil dönüşü = çapanınki");
             var inward = (start.position - exit.position).normalized;
             float path = Vector3.Distance(start.position + inward * 0.04f, paper.TongueTarget.position);
-            Assert.AreEqual(path, paper.FeedPathM, 1e-4f, "çıkış yolu SlipStart + 40 mm'den dile");
-            Assert.AreEqual(0.160f, paper.FeedPathM, 0.0005f, "D12-B: 160 mm (tasarım 120 mm; sapma IMPLEMENTATION_MAP'te)");
+            Assert.AreEqual(path, paper.FeedPathM, 1e-4f, "çıkış yolu SlipStart + 40 mm'den silindirdeki duruşa");
+            Assert.AreEqual(0.160f, paper.FeedPathM, 0.0005f, "D12-B: 160 mm");
 
             var tongue = paper.TongueTarget;
-            var local = sw.transform.InverseTransformPoint(tongue.position);
-            AssertNear(sw.transform.InverseTransformPoint(exit.position) + new Vector3(0, -0.0044f, 0), local, 0.0005f, "dil pozu şalter yereli (y 0,1356)");
-            Assert.Less(Quaternion.Angle(Quaternion.Euler(90, -90, 0), Quaternion.Inverse(sw.transform.rotation) * tongue.rotation), 0.05f, "dil dönüşü (90, −90, 0)");
-            Assert.Less(sw.transform.InverseTransformDirection(tongue.rotation * Vector3.up).x, -0.99f, "fişin üstü ağızdan uzakta (şalter −x)");
-            Assert.Greater(sw.transform.InverseTransformDirection(tongue.rotation * Vector3.back).y, 0.99f, "fişin yüzü (−z) yukarı");
+            AssertNear(exit.position + exit.rotation * new Vector3(0, 0.02f, 0), tongue.position, 0.0005f, "silindirde: çıkış + 20 mm");
+            Assert.Less(Quaternion.Angle(exit.rotation, tongue.rotation), 0.05f, "dönüş çapanınki");
+            Assert.Greater(tp.InverseTransformDirection(tongue.rotation * Vector3.up).y, 0.98f, "fiş dik (üstü yukarı)");
+            Assert.Less(tp.InverseTransformDirection(tongue.rotation * Vector3.back).z, -0.98f, "fişin yüzü (−z) öne, klavyeye");
             Assert.Less(Vector3.Distance(paper.transform.position, tongue.position), 1e-4f, "kaydedilmiş poz = dil pozu");
             Assert.Less(Quaternion.Angle(paper.transform.rotation, tongue.rotation), 0.05f, "kaydedilmiş dönüş = dil dönüşü");
             Assert.IsFalse(paper.gameObject.activeSelf, "basılmamış fiş görünmez");
+
+            // Fiş teleks kâğıdının yanında: x aralıkları örtüşmez (K1'de iki kâğıt ayrı)
+            var sheet = Reference<Renderer>(printer, "paperRenderer");
+            float sheetMaxX = float.MinValue;
+            foreach (var v in sheet.GetComponent<MeshFilter>().sharedMesh.vertices) sheetMaxX = Mathf.Max(sheetMaxX, tp.InverseTransformPoint(sheet.transform.TransformPoint(v)).x);
+            float slipMinX = tp.InverseTransformPoint(tongue.position).x - 0.05f;
+            Assert.Greater(slipMinX, sheetMaxX, "fiş teleks kâğıdının sağında (kâğıt x ≤ " + sheetMaxX.ToString("0.000") + ")");
         }
 
         // ================================================================== E17 · bağlar
@@ -271,13 +283,14 @@ namespace Corrigible.Desk.Tests
             (typeof(SiginakShiftClose), new[] { "game", "surface", "desk", "rig", "shiftSwitch", "machine", "tray", "telex", "fade", "view", "briefing" }),
             (typeof(ShiftPlate), new[] { "line2", "target" }),
             (typeof(ShiftReceiptPaper), new[] { "output", "start", "dragSurface", "hitArea", "view", "face", "tray" }),
-            (typeof(ShiftReceiptMachine), new[] { "shiftSwitch", "paper", "tray", "view", "output", "slipLamp" }),
+            (typeof(ShiftReceiptMachine), new[] { "shiftSwitch", "paper", "tray", "view", "output" }),
             (typeof(EvrakTray), new[] { "sheet", "sheetTitle", "receiptDropArea", "targetLight", "slipOver", "filedSlip" }),
         };
 
         /// <summary>
         /// E17: makinenin ve kapanışın şalteri SiginakShift'inki (dolabın MENÜYE DÖN kolu değil, o eski kipte); şalterin kapak/kol/lamba/bant
-        /// bağları ShiftSwitch modelinin Cover/Lever/ReadyLamp/LockBand parçalarında; fiş ağzı lambası SlipMouth/Lamp; plakanın 2. satırı
+        /// bağları ShiftSwitch modelinin Cover/Lever/ReadyLamp/LockBand parçalarında; fiş ağzı (SlipMouth) ve lambası odadan kalktı
+        /// (fiş teleks daktilosundan basılır); plakanın 2. satırı
         /// modelin TXT_Plate2'si; fiş yüzü ve tepsideki kopya HandoverSlipView prefab'ının örnekleri (içinde HandoverSlip modeli);
         /// bütün zorunlu alanlar dolu.
         /// </summary>
@@ -342,8 +355,8 @@ namespace Corrigible.Desk.Tests
             Assert.IsTrue(Reference<Transform>(sw, "lever").IsChildOf(model.Part("Lever").transform), "kol = Lever parçası");
             Assert.IsTrue(Reference<Renderer>(sw, "readyLamp").transform.IsChildOf(model.Part("ReadyLamp").transform), "hazır lambası = ReadyLamp");
             Assert.IsTrue(Reference<GameObject>(sw, "lockBand").transform.IsChildOf(model.Part("LockBand").transform), "kilit bandı = LockBand");
-            var mouth = ModelUnder(sw.transform, "SlipMouth");
-            Assert.AreSame(mouth.Part("Lamp"), Reference<PartDriver>(machine, "slipLamp"), "fiş ağzı lambası = SlipMouth/Lamp");
+            Assert.IsFalse(roots.SelectMany(r => r.GetComponentsInChildren<Rev3Model>(true)).Any(m => m.ModelName == "SlipMouth"), "fiş ağzı odadan kalktı");
+            Assert.IsNull(new SerializedObject(machine).FindProperty("slipLamp").objectReferenceValue, "fiş ağzı lambası yok");
 
             var plate = Reference<ShiftPlate>(sw, "plate");
             Assert.AreSame(sw.gameObject, plate.gameObject);
@@ -467,11 +480,12 @@ namespace Corrigible.Desk.Tests
         // ================================================================== E19 · K6
 
         /// <summary>
-        /// E19: K6 pozu <c>cameras.K6</c> (0,40; 1,28; 0,42) → (0,665; 0,82; 1,08), FOV 42, lens kaydırması yok; 1920 × 1080'de şalter, fiş
-        /// ağzı, dildeki fiş, EVRAK bırakma kutusu ve plakanın iki satırı dört köşesiyle kadrajda.
+        /// E19: K6 pozu <c>cameras.K6</c> (0,40; 1,28; 0,42) → (0,665; 0,82; 1,08), FOV 42, lens kaydırması yok; 1920 × 1080'de şalter,
+        /// EVRAK bırakma kutusu ve plakanın iki satırı dört köşesiyle kadrajda (fiş teleks daktilosunda basılır, K1'de görülür:
+        /// <see cref="K1Pose_FramesTypewriterSlipAndTray"/>).
         /// </summary>
         [Test]
-        public void K6Pose_FramesSwitchMouthTrayAndPlate()
+        public void K6Pose_FramesSwitchTrayAndPlate()
         {
             RequireScene();
             var theme = Theme();
@@ -489,9 +503,6 @@ namespace Corrigible.Desk.Tests
 
             var sw = RoomSwitch();
             var switchModel = ModelUnder(sw.transform, "ShiftSwitch");
-            var mouth = ModelUnder(sw.transform, "SlipMouth");
-            var paper = One<ShiftReceiptPaper>();
-            var paperBox = (BoxCollider)Reference<Collider>(paper, "hitArea");
             var trayBox = (BoxCollider)Reference<Collider>(One<EvrakTray>(), "receiptDropArea");
             var plate = Reference<ShiftPlate>(sw, "plate");
 
@@ -513,10 +524,6 @@ namespace Corrigible.Desk.Tests
                 go.transform.SetPositionAndRotation(k6.anchor.position, k6.anchor.rotation);
 
                 InFrame(cam, BoundsCorners(switchModel.ManifestBounds).Select(switchModel.transform.TransformPoint), "şalter", problems);
-                InFrame(cam, BoundsCorners(mouth.ManifestBounds).Select(mouth.transform.TransformPoint), "fiş ağzı", problems);
-                var tongue = paper.TongueTarget;
-                var atTongue = Matrix4x4.TRS(tongue.position, tongue.rotation, Vector3.one);
-                InFrame(cam, BoundsCorners(new Bounds(paperBox.center, paperBox.size)).Select(atTongue.MultiplyPoint3x4), "dildeki fiş", problems);
                 InFrame(cam, BoundsCorners(new Bounds(trayBox.center, trayBox.size)).Select(trayBox.transform.TransformPoint), "EVRAK kutusu", problems);
                 foreach (var t in new[] { switchModel.Slot("TXT_Plate").Text, Reference<TMP_Text>(plate, "line2") })
                 {
@@ -524,6 +531,55 @@ namespace Corrigible.Desk.Tests
                     t.rectTransform.GetWorldCorners(corners);
                     InFrame(cam, corners, "plaka " + t.name, problems);
                 }
+            }
+            finally
+            {
+                go.GetComponent<Camera>().targetTexture = null;
+                Object.DestroyImmediate(texture);
+                Object.DestroyImmediate(go);
+            }
+            Assert.IsEmpty(problems, string.Join("\n", problems));
+        }
+
+        /// <summary>
+        /// E19 (teleks modeli değişimi): fiş K1'de (masa) basılır. K1'de (rig yuvası: FOV, lens kaydırması) 1920 × 1080'de daktilodaki
+        /// fişin kutusu (dil pozunda), teleks kâğıdı ve EVRAK bırakma kutusu dört köşesiyle kadrajda; fiş kutusu ekranda en az 40 px
+        /// geniş (tıklanır).
+        /// </summary>
+        [Test]
+        public void K1Pose_FramesTypewriterSlipAndTray()
+        {
+            RequireScene();
+            var rig = One<SiginakCameraRig>();
+            Assert.IsTrue(rig.TryGetPose(SiginakPose.Desk, out var k1), "rig'de Desk (K1) yuvası");
+            var paper = One<ShiftReceiptPaper>();
+            var paperBox = (BoxCollider)Reference<Collider>(paper, "hitArea");
+            var trayBox = (BoxCollider)Reference<Collider>(One<EvrakTray>(), "receiptDropArea");
+            var sheet = Reference<Renderer>(One<Teleprinter>(), "paperRenderer");
+            var go = new GameObject("K1 kadraj testi", typeof(Camera)) { hideFlags = HideFlags.HideAndDontSave };
+            var texture = new RenderTexture(1920, 1080, 0) { hideFlags = HideFlags.HideAndDontSave };
+            var problems = new List<string>();
+            try
+            {
+                var cam = go.GetComponent<Camera>();
+                cam.enabled = false;
+                cam.targetTexture = texture;
+                cam.aspect = 16f / 9f;
+                cam.usePhysicalProperties = true;
+                cam.sensorSize = new SerializedObject(rig).FindProperty("sensorSizeMm").vector2Value;
+                cam.gateFit = Camera.GateFitMode.Vertical;
+                cam.focalLength = Camera.FieldOfViewToFocalLength(k1.fieldOfView, cam.sensorSize.y);
+                cam.lensShift = new Vector2(0, k1.lensShiftY);
+                cam.nearClipPlane = 0.03f;
+                go.transform.SetPositionAndRotation(k1.anchor.position, k1.anchor.rotation);
+                var tongue = paper.TongueTarget;
+                var atTongue = Matrix4x4.TRS(tongue.position, tongue.rotation, Vector3.one);
+                var slipCorners = BoundsCorners(new Bounds(paperBox.center, paperBox.size)).Select(atTongue.MultiplyPoint3x4).ToList();
+                InFrame(cam, slipCorners, "daktilodaki fiş", problems);
+                InFrame(cam, BoundsCorners(sheet.bounds), "teleks kâğıdı", problems);
+                InFrame(cam, BoundsCorners(new Bounds(trayBox.center, trayBox.size)).Select(trayBox.transform.TransformPoint), "EVRAK kutusu", problems);
+                var xs = slipCorners.Select(c => cam.WorldToViewportPoint(c).x * 1920f).ToList();
+                if (xs.Max() - xs.Min() < 40) problems.Add("fiş K1'de " + (xs.Max() - xs.Min()).ToString("0") + " px geniş (≥ 40)");
             }
             finally
             {
@@ -556,7 +612,7 @@ namespace Corrigible.Desk.Tests
         // ================================================================== E7 · metinler
 
         /// <summary>
-        /// E7: R19 token metinlerinin (plaka 1. satır, dört durumun 2. satırı, fiş ağzı plakası, devir teleksi) Türkçesi çeviri
+        /// E7: R19 token metinlerinin (plaka 1. satır, dört durumun 2. satırı, devir teleksi; fiş ağzının plakası odadan kalktı) Türkçesi çeviri
         /// tablosunda ve İngilizcesi token'la aynı (D3-A: EN'de PAPERS); kod aynı Türkçe anahtarları kullanır; sahnedeki sabit plaka
         /// yazıları token kaynağından.
         /// </summary>
@@ -571,7 +627,7 @@ namespace Corrigible.Desk.Tests
             foreach (var key in new[]
                      {
                          "shiftClose.plate.line1", "shiftClose.states.ready.plate2", "shiftClose.states.cover.plate2", "shiftClose.states.waiting.plate2",
-                         "shiftClose.states.locked.plate2", "shiftClose.slipMouth.plate", "shiftClose.afterDrop.telex",
+                         "shiftClose.states.locked.plate2", "shiftClose.afterDrop.telex",
                      })
             {
                 string tr = theme.Text(key + ".tr"), enToken = theme.Text(key + ".en");
@@ -599,8 +655,9 @@ namespace Corrigible.Desk.Tests
                 var sw = RoomSwitch();
                 var plate1 = ModelUnder(sw.transform, "ShiftSwitch").Slot("TXT_Plate").Text.GetComponent<DeskLocText>();
                 if (plate1 == null || plate1.Source != theme.Text("shiftClose.plate.line1.tr")) problems.Add("TXT_Plate kaynağı token line1.tr değil");
-                var mouth = ModelUnder(sw.transform, "SlipMouth").Slot("TXT_Plate").Text.GetComponent<DeskLocText>();
-                if (mouth == null || mouth.Source != theme.Text("shiftClose.slipMouth.plate.tr")) problems.Add("SlipMouth/TXT_Plate kaynağı token slipMouth.plate.tr değil");
+                // Fiş ağzının DEVİR FİŞİ plakası odadan kalktı (teleks modeli değişimi)
+                if (roots.SelectMany(r => r.GetComponentsInChildren<DeskLocText>(true)).Any(t => t.Source == theme.Text("shiftClose.slipMouth.plate.tr")))
+                    problems.Add("DEVİR FİŞİ plakası hâlâ sahnede");
             }
             Assert.IsEmpty(problems, string.Join("\n", problems));
         }

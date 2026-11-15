@@ -59,7 +59,7 @@ namespace Corrigible.Desk.Tests
             AssertColor(ShiftPlate.InkFor(ShiftPhase.Ready), plate.Line2.color, context + ": plaka mürekkebi (shiftClose.plate.line2Ink)");
         }
 
-        /// <summary>Fiş bekliyor: kapak açık, kol aşağıda, hazır lambası sönük, fiş ağzı lambası yanık, plaka kırmızı "fişi EVRAK’a koy".</summary>
+        /// <summary>Fiş bekliyor: kapak açık, kol aşağıda, hazır lambası sönük, fiş masada (<c>LampLit</c>), plaka kırmızı "fişi EVRAK’a koy".</summary>
         static void AssertWaiting(string context)
         {
             var sw = ShiftPlayKit.Switch;
@@ -71,7 +71,7 @@ namespace Corrigible.Desk.Tests
             Assert.IsFalse(sw.Target.Interactable, context + ": fiş beklenirken şalter tıklanmaz");
             Assert.IsFalse(ShiftPlayKit.ReadyLampLit, context + ": hazır lambası sönük (readyLampOff)");
             Assert.IsFalse(ShiftPlayKit.LockBandShown, context + ": kilit bandı gizli");
-            Assert.IsTrue(ShiftPlayKit.Machine.LampLit, context + ": fiş ağzı lambası yanık");
+            Assert.IsTrue(ShiftPlayKit.Machine.LampLit, context + ": fiş masada, EVRAK'a girmedi (LampLit)");
             Assert.AreEqual(ShiftPlate.TextFor(ShiftPhase.Waiting, null), plate.Text, context + ": plaka “fişi EVRAK’a koy”");
             AssertColor(ShiftPlate.InkFor(ShiftPhase.Waiting), plate.Line2.color, context + ": plaka kırmızı (shiftClose.plate.line2InkWaiting)");
         }
@@ -124,9 +124,10 @@ namespace Corrigible.Desk.Tests
 
         /// <summary>
         /// P1: K1'de şaltere tık → kapak 0,25 s'de 112° (ease-out), plaka "kolu indir", teleks ÖN KONTROL, kamera K6'ya, komut yok;
-        /// ikinci tık → kol 0,3 s'de −35°, tam bir <c>board_print</c> (eski gün), RNG aynı; fiş kol −35°'ye varınca ağızdan çıkar,
-        /// 0,35 s'de dilde (±1 mm, ease-out: yarı sürede yolun ≥ %60'ı); hazır lambası sönük, fiş ağzı lambası yanık, plaka kırmızı;
-        /// üçüncü tık bir şey değiştirmez.
+        /// ikinci tık → kol 0,3 s'de −35°, tam bir <c>board_print</c> (eski gün), RNG aynı; kol −35°'ye varınca kamera K1'e (masa) döner,
+        /// fiş teleks ÖN KONTROL satırını bitirip kamera masaya varınca (teleks modeli değişimi: önce teleks satırı, sonra fiş) daktilodan
+        /// <c>motion.shiftClose.slipTypeS</c> (1,4 s) boyunca satır satır yazılarak çıkar ve silindirde durur (±1 mm); basılırken
+        /// teleks kâğıdı örtülü sayılır; hazır lambası sönük, fiş masada, plaka kırmızı; üçüncü tık bir şey değiştirmez.
         /// </summary>
         [UnityTest]
         public IEnumerator Cover_Lever_PrintsSlip_ToTongue()
@@ -138,9 +139,10 @@ namespace Corrigible.Desk.Tests
             var sim = ShiftPlayKit.Sim;
             float coverS = ShiftPlayKit.Token("motion.shiftClose.coverS", 0.25f);
             float leverS = ShiftPlayKit.Token("motion.shiftClose.leverS", 0.3f);
-            float exitS = ShiftPlayKit.Token("motion.shiftClose.slipExitS", 0.35f);
+            float typeS = ShiftPlayKit.Token("motion.shiftClose.slipTypeS", 1.4f);
+            int lines = Mathf.RoundToInt(ShiftPlayKit.Token("shiftClose.slip.typeLines", 7));
             AssertReady("açılış");
-            Assert.IsFalse(ShiftPlayKit.Machine.LampLit, "açılışta fiş ağzı lambası sönük");
+            Assert.IsFalse(ShiftPlayKit.Machine.LampLit, "açılışta fiş masada değil");
             var start = ShiftPlayKit.Mark();
             int day = sim.S.Day;
             var log = ShiftPlayKit.Log();
@@ -179,31 +181,48 @@ namespace Corrigible.Desk.Tests
             Assert.IsTrue(sim.Board.Printed && sim.Board.Locked, "fiş basıldı, plan kilitli");
             Assert.AreEqual(sim.Board.ReceiptId, paper.ReceiptId, "kâğıdın kimliği basılan fişinki");
             Assert.IsTrue(paper.FeedPending, "fiş kol inmeden çıkmaz (bekleyen besleme)");
-            Assert.AreEqual(Where.Hidden, paper.State, "kol inerken fiş ağızda");
+            Assert.AreEqual(Where.Hidden, paper.State, "kol inerken fiş daktilonun içinde");
             Assert.AreEqual(1, log.Count("SwitchSound", ShiftSound.Lever.ToString()), "“klak-klunk” ses olayı");
-            yield return ShiftPlayKit.WatchUntil(samples, () => paper.State == Where.Tongue && !paper.FeedPending, 3, "fiş dile çıkmadı (" + paper.State + ")");
+            yield return ShiftPlayKit.WatchUntil(samples, () => paper.State == Where.Tongue && !paper.FeedPending, 8, "fiş silindire çıkmadı (" + paper.State + ")");
 
             float leverAt = log.At("Lever", "down", thrown);
             AssertDuration(leverAt - thrown, leverS, "kol +35 → −35°");
             float feedAt = log.At("Slip", Where.Feeding.ToString(), thrown);
             Assert.GreaterOrEqual(feedAt, leverAt, "fiş kol −35°'ye varınca çıkar");
-            int leverFrame = log.Entries.First(e => e.Name == "Lever" && e.Value == "down").Frame;
+            // Kol varınca kamera masaya (K1): fiş daktiloda basılır, K6 daktiloyu görmez
+            float toDeskAt = log.At("Pose", SiginakPose.Desk.ToString(), leverAt - 1e-4f);
+            Assert.LessOrEqual(toDeskAt - leverAt, 0.1f + 2 * BoardPlayKit.MaxFrameDt, "kol varınca kamera masaya (K1) döner");
+            float arrivedAt = log.At("Arrived", SiginakPose.Desk.ToString(), leverAt);
             int feedFrame = log.Entries.First(e => e.Name == "Slip" && e.Value == Where.Feeding.ToString()).Frame;
-            Assert.LessOrEqual(feedFrame - leverFrame, 1, "çıkış kolun varışıyla aynı (ya da sonraki) karede başlar");
-            Assert.IsTrue(samples.Where(s => s.Frame < leverFrame).All(s => s.Slip == Where.Hidden), "kol inerken fiş görünmez");
+            Assert.IsTrue(samples.Where(s => s.Frame < feedFrame).All(s => s.Slip == Where.Hidden), "basılmadan önce fiş görünmez");
+            // Sıra: önce teleks satırı biter ve kamera masaya varır, sonra fiş (en çok feedHoldMaxS)
+            Assert.GreaterOrEqual(feedAt, arrivedAt - 1e-4f, "fiş kamera K1'e varınca basılır");
+            var typedBefore = samples.Where(s => s.Frame < feedFrame && s.Typing).ToList();
+            float typedUntil = typedBefore.Count > 0 ? typedBefore.Max(s => s.At) : leverAt;
+            Assert.GreaterOrEqual(feedAt, typedUntil - 1e-4f, "fiş teleks satırı bitince basılır");
+            Assert.IsTrue(samples.Where(s => s.Slip == Where.Feeding).All(s => !s.Typing), "fiş basılırken teleks satır basmaz");
+            Assert.LessOrEqual(feedAt - Mathf.Max(arrivedAt, typedUntil), 0.1f + 3 * BoardPlayKit.MaxFrameDt, "izin gelince fiş hemen basılır");
+            Assert.LessOrEqual(feedAt - leverAt, ShiftPlayKit.Token("motion.shiftClose.feedHoldMaxS", 3) + 0.1f, "bekleme üst sınırı");
+            Assert.IsTrue(samples.Where(s => s.Slip == Where.Feeding).All(s => s.Pose == SiginakPose.Desk), "fiş K1'de basılır");
             float tongueAt = log.At("Slip", Where.Tongue.ToString(), feedAt);
-            AssertDuration(tongueAt - feedAt, exitS, "fiş çıkışı (ağız → dil)");
-            Assert.LessOrEqual(ShiftPlayKit.FromTongueMm, 1f, "fiş dil pozunda (±1 mm)");
+            AssertDuration(tongueAt - feedAt, typeS, "fiş yazılarak çıkışı (daktilo → silindirdeki duruş)");
+            Assert.LessOrEqual(ShiftPlayKit.FromTongueMm, 1f, "fiş silindirdeki pozunda (±1 mm)");
+            Assert.AreEqual(0f, ShiftPlayKit.SlipOverTelexPx(), "fiş K1'de teleks kâğıdının ileti yuvalarını örtmez (yanında durur)");
             var path = Vector3.Distance(paper.FeedFrom, paper.TongueTarget.position);
             // Fiş LateUpdate'te yürür; örnek eşyordamda (Update'ten sonra, LateUpdate'ten önce) alınır, yani i. örneğin konumu
-            // (i − 1). karenin LateUpdate'idir. Yarı süre o önceki karenin zamanına göre aranır (test koşucusunun düşük kare hızında
-            // bir kare çıkışın yarısı kadar sürebilir).
-            int midIndex = -1;
+            // (i − 1). karenin LateUpdate'idir. Satır adımının duruşundaki örnekte yol tam o satır sayısıdır (TypedFeed).
+            int checkedPauses = 0;
             for (int i = 1; i < samples.Count; i++)
-                if (samples[i].Slip == Where.Feeding && samples[i - 1].At - feedAt >= exitS * 0.5f) { midIndex = i; break; }
-            if (midIndex > 0)
-                Assert.GreaterOrEqual(Vector3.Distance(paper.FeedFrom, samples[midIndex].SlipPosition) / path, 0.6f, "çıkış ease-out (yarı sürede yolun ≥ %60'ı)");
-            else TestContext.WriteLine("çıkışın ortası örneklenmedi (kare süresi " + BoardPlayKit.MaxFrameDt.ToString("0.000") + " s)");
+            {
+                if (samples[i].Slip != Where.Feeding || samples[i - 1].Slip != Where.Feeding) continue;
+                float x = (samples[i - 1].At - feedAt) / typeS * lines;
+                int k = Mathf.FloorToInt(x);
+                float f = x - k;
+                if (k >= lines - 1 || f < ShiftReceiptPaper.LineSlideFraction + 0.1f || f > 0.9f) continue;
+                Assert.AreEqual((k + 1f) / lines, Vector3.Distance(paper.FeedFrom, samples[i].SlipPosition) / path, 0.03f, "satır " + (k + 1) + " duruşunda");
+                checkedPauses++;
+            }
+            if (checkedPauses == 0) TestContext.WriteLine("satır duruşu örneklenmedi (kare süresi " + BoardPlayKit.MaxFrameDt.ToString("0.000") + " s)");
             Assert.AreEqual(1, log.Count("SlipSound", ShiftSound.SlipPrint.ToString()), "çıkışın başında yazıcı “tırrt”");
             Assert.AreEqual(1, log.Count("SlipSound", ShiftSound.SlipTear.ToString()), "dilde kopma “çıt”");
             AssertWaiting("fiş dilde");
@@ -322,8 +341,12 @@ namespace Corrigible.Desk.Tests
             BoardPlayKit.ResetFrameStats();
             ShiftPlayKit.ClickSlip();
             float back = log.At("Slip", Where.Returning.ToString(), clicked);
+            float backS = paper.MoveSeconds;
+            Assert.That(backS, Is.InRange(toHandS, ShiftPlayKit.Token("motion.shiftClose.slipReturnMaxS", 0.45f) + 1e-4f),
+                "elden daktiloya yola göre (" + backS.ToString("0.000") + " s)");
             yield return BoardPlayKit.WaitFor(() => paper.State == Where.Tongue, 1, "eldeki fişe tık dile döndürmedi");
-            AssertDuration(log.At("Slip", Where.Tongue.ToString(), back) - back, toHandS, "el → dil");
+            AssertDuration(log.At("Slip", Where.Tongue.ToString(), back) - back, backS, "el → dil");
+            Assert.AreEqual(SiginakPose.Desk, ShiftPlayKit.Rig.Current, "fiş daktiloya dönerken kamera K6'dan masaya (K1) döner");
             Assert.LessOrEqual(ShiftPlayKit.FromTongueMm, 1f, "fiş dil pozunda (±1 mm)");
             Assert.AreEqual(1, log.Count("SlipSound", ShiftSound.SlipReturn.ToString()), "dile dönüş ses olayı (BoardReturn)");
             ShiftPlayKit.AssertUnchanged(printed, "fişi dile geri koymak");
@@ -333,8 +356,9 @@ namespace Corrigible.Desk.Tests
         // ================================================================== P4
 
         /// <summary>
-        /// P4: fişi EVRAK dışına sürükleyip bırak → <c>motion.board.returnArcS</c> (0,25 s) içinde dile döner (±1 mm), kimlik aynı, hedef
-        /// ışığı hiç yanmadı, komut yok; ikinci deneme EVRAK'a: tam bir gün (fiş takılı kalmaz).
+        /// P4: fişi EVRAK dışına sürükleyip bırak → yola göre (<c>ShiftReceiptPaper.ReturnSeconds</c>: en az <c>motion.board.returnArcS</c>
+        /// 0,25 s, en çok 0,45 s) daktiloya döner (±1 mm), kimlik aynı, hedef ışığı hiç yanmadı, komut yok; ikinci deneme K1'den
+        /// doğrudan EVRAK'a: tam bir gün (fiş takılı kalmaz).
         /// </summary>
         [UnityTest]
         public IEnumerator DropOutside_ReturnsToTongue_ThenEvrakWorks()
@@ -360,8 +384,11 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(0, log.Count("Filed"), "EVRAK dışı bırakış dosyalanmaz");
             Assert.IsFalse(ShiftPlayKit.Close.Filing, "dosyalama başlamadı");
             Assert.AreEqual(Where.Returning, paper.State, "fiş dile dönüyor (bulgu 17: askıda kalmaz)");
+            float backS = paper.MoveSeconds;
+            Assert.That(backS, Is.InRange(returnS, ShiftPlayKit.Token("motion.shiftClose.slipReturnMaxS", 0.45f) + 1e-4f),
+                "EVRAK'tan daktiloya yola göre (" + backS.ToString("0.000") + " s)");
             yield return BoardPlayKit.WaitFor(() => paper.State == Where.Tongue, 1, "fiş dile dönmedi (" + paper.State + ")");
-            AssertDuration(log.At("Slip", Where.Tongue.ToString(), released) - released, returnS, "EVRAK dışından dile dönüş");
+            AssertDuration(log.At("Slip", Where.Tongue.ToString(), released) - released, backS, "EVRAK dışından dile dönüş");
             Assert.LessOrEqual(ShiftPlayKit.FromTongueMm, 1f, "fiş dil pozunda (±1 mm)");
             Assert.IsNotEmpty(lit, "sürükleme kareleri");
             Assert.IsTrue(lit.All(l => !l), "EVRAK dışındaki sürüklemede hedef ışığı hiç yanmaz");
@@ -373,6 +400,7 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(day, sim.S.Day, "gün aynı");
             AssertWaiting("EVRAK dışı bırakıştan sonra");
 
+            Assert.AreEqual(SiginakPose.Desk, ShiftPlayKit.Rig.Current, "ikinci deneme K1'den (EVRAK ve daktilo aynı kadrajda)");
             var before = ShiftPlayKit.Mark();
             yield return ShiftPlayKit.FileOnEvrak();
             var commands = ShiftPlayKit.Since(before.commands);
@@ -387,7 +415,7 @@ namespace Corrigible.Desk.Tests
 
         /// <summary>
         /// P5 (bulgu 17): kâğıda bayat bir kimlik verilir (yalnız sunum), EVRAK'a bırakılır → <c>CanFile</c> reddeder, fiş tepside
-        /// asılı kalmaz, 0,25 s'de dile döner; komut ve gün aynı. Ardından bir <c>Changed</c> gerçek fişi geri getirir.
+        /// asılı kalmaz, yola göre (0,25–0,45 s) daktiloya döner; komut ve gün aynı. Ardından bir <c>Changed</c> gerçek fişi geri getirir.
         /// </summary>
         [UnityTest]
         public IEnumerator RejectedEvrakDrop_ReturnsToTongue()
@@ -417,8 +445,10 @@ namespace Corrigible.Desk.Tests
             Assert.IsFalse(ShiftPlayKit.Close.Filing, "dosyalama başlamadı");
             Assert.AreNotEqual(Where.ToTray, paper.State, "reddedilen fiş tepsiye inmez");
             Assert.AreNotEqual(Where.Tray, paper.State, "reddedilen fiş tepside asılı kalmaz");
+            float backS = paper.State == Where.Returning ? paper.MoveSeconds : returnS;
+            Assert.That(backS, Is.InRange(returnS, ShiftPlayKit.Token("motion.shiftClose.slipReturnMaxS", 0.45f) + 1e-4f), "yola göre süre");
             yield return BoardPlayKit.WaitFor(() => paper.State == Where.Tongue, 1, "reddedilen bırakış fişi dile döndürmedi (" + paper.State + ")");
-            AssertDuration(log.At("Slip", Where.Tongue.ToString(), released) - released, returnS, "reddedilen bırakıştan dile dönüş");
+            AssertDuration(log.At("Slip", Where.Tongue.ToString(), released) - released, backS, "reddedilen bırakıştan dile dönüş");
             Assert.LessOrEqual(ShiftPlayKit.FromTongueMm, 1f, "fiş dil pozunda (±1 mm)");
             Assert.IsTrue(machine.LampLit, "fiş masada: ağız lambası yanık");
             Assert.IsFalse(tray.ReceiptTargetLit, "bırakışta hedef ışığı söner");
@@ -878,8 +908,9 @@ namespace Corrigible.Desk.Tests
         /// <summary>
         /// P12 (Karar D5, PLAN §1.10): K6'da Esc ve sürüklemesiz sağ tık sırası, gerçek sanal klavye ve fareyle (eldeyken tuşları
         /// <c>SiginakShiftClose.Update</c> okur; masa kilitli, kamera askıda): kapak açıkken Esc kapağı kapatır (K6'da kalınır), sonra
-        /// K1; basılı fiş eldeyken Esc ve sağ tık fişi dile döndürür (kamera K6'da, geri tık kameraya ulaşmaz), fiş dildeyken Esc ve
-        /// sağ tık K1'e döndürür. K1'den fişe tık K6'ya götürüp ele alır. Hiçbiri komut yazmaz.
+        /// K1; basılı fiş eldeyken Esc ve sağ tık fişi daktiloya döndürür ve kamera K1'e döner (K6 daktiloyu görmez; fiş kadrajdan uçup
+        /// kaybolmaz; geri tık kameraya ulaşmaz), fiş daktilodayken K6'da Esc ve sağ tık K1'e döndürür. K1'den fişe tık K6'ya götürüp
+        /// ele alır. Hiçbiri komut yazmaz.
         /// </summary>
         [UnityTest]
         public IEnumerator Hand_EscAndRightClick_ReturnSlip_ThenK1()
@@ -904,23 +935,26 @@ namespace Corrigible.Desk.Tests
             yield return ShiftPlayKit.WaitForPose(SiginakPose.Desk);
             ShiftPlayKit.AssertUnchanged(start, "kapak ve Esc");
 
-            // B) basılı fiş elde: Esc → dile (K6'da) → Esc → K1
+            // B) basılı fiş elde: Esc → fiş daktiloya, kamera K1'e (tek poz değişimi); K6'da fiş daktilodayken Esc → K1
             yield return ShiftPlayKit.PrintToTongue();
             var printed = ShiftPlayKit.Mark();
             yield return ShiftPlayKit.TakeToHand();
             int poses = log.Count("Pose");
             yield return BoardPlayKit.PressKey(Key.Escape);
-            Assert.That(paper.State == Where.Returning || paper.State == Where.Tongue, "eldeyken Esc fişi dile döndürür (" + paper.State + ")");
-            Assert.AreEqual(SiginakPose.ShiftClose, rig.Current, "fiş dile dönerken kamera K6'da");
-            Assert.AreEqual(poses, log.Count("Pose"), "eldeki Esc kamerayı oynatmaz");
+            Assert.That(paper.State == Where.Returning || paper.State == Where.Tongue, "eldeyken Esc fişi daktiloya döndürür (" + paper.State + ")");
             yield return BoardPlayKit.WaitFor(() => paper.State == Where.Tongue, 1, "fiş dile dönmedi");
-            yield return BoardPlayKit.Frames(2);
-            yield return BoardPlayKit.PressKey(Key.Escape);
-            Assert.AreEqual(SiginakPose.Desk, rig.Current, "fiş dildeyken Esc K1'e döner");
+            Assert.AreEqual(SiginakPose.Desk, rig.Current, "fiş daktiloya dönerken kamera K6'dan masaya (K1) döner");
+            Assert.AreEqual(poses + 1, log.Count("Pose"), "tek poz değişimi (K6 → K1)");
             yield return ShiftPlayKit.WaitForPose(SiginakPose.Desk);
-            Assert.AreEqual(Where.Tongue, paper.State, "fiş dilde kalır");
+            Assert.IsTrue(ShiftPlayKit.SlipInFrame(), "daktilodaki fiş K1'de kadrajda");
+            rig.Focus(SiginakPose.ShiftClose);
+            yield return ShiftPlayKit.WaitForPose(SiginakPose.ShiftClose);
+            yield return BoardPlayKit.PressKey(Key.Escape);
+            Assert.AreEqual(SiginakPose.Desk, rig.Current, "fiş daktilodayken K6'da Esc K1'e döner");
+            yield return ShiftPlayKit.WaitForPose(SiginakPose.Desk);
+            Assert.AreEqual(Where.Tongue, paper.State, "fiş daktiloda kalır");
 
-            // C) K1'den fişe tık: K6 + el; sağ tık → dile; sağ tık → K1
+            // C) K1'den fişe tık: K6 + el; sağ tık → fiş daktiloya, kamera K1'e; K6'da fiş daktilodayken sağ tık → K1
             ShiftPlayKit.ClickSlip();
             Assert.AreEqual(SiginakPose.ShiftClose, rig.Current, "K1'den fişe tık K6'ya götürür");
             yield return BoardPlayKit.WaitFor(() => paper.State == Where.Hand, 1, "fiş ele gelmedi");
@@ -929,14 +963,17 @@ namespace Corrigible.Desk.Tests
             int backs = log.Count("Back");
             yield return BoardPlayKit.RightDrag(BoardPlayKit.ScreenCentre, new Vector2(3, 0), 1);
             Assert.AreEqual(backs, log.Count("Back"), "fiş eldeyken sağ tık kameraya ulaşmaz (rig.InputSuspended)");
-            Assert.That(paper.State == Where.Returning || paper.State == Where.Tongue, "eldeyken sürüklemesiz sağ tık fişi dile döndürür (" + paper.State + ")");
-            Assert.AreEqual(SiginakPose.ShiftClose, rig.Current, "kamera K6'da");
+            Assert.That(paper.State == Where.Returning || paper.State == Where.Tongue, "eldeyken sürüklemesiz sağ tık fişi daktiloya döndürür (" + paper.State + ")");
             yield return BoardPlayKit.WaitFor(() => paper.State == Where.Tongue, 1, "fiş dile dönmedi");
+            Assert.AreEqual(SiginakPose.Desk, rig.Current, "kamera masaya (K1) döner");
+            yield return ShiftPlayKit.WaitForPose(SiginakPose.Desk);
+            rig.Focus(SiginakPose.ShiftClose);
+            yield return ShiftPlayKit.WaitForPose(SiginakPose.ShiftClose);
             yield return BoardPlayKit.Frames(2);
             yield return BoardPlayKit.RightDrag(BoardPlayKit.ScreenCentre, new Vector2(3, 0), 1);
             Assert.AreEqual(backs + 1, log.Count("Back"), "fiş dildeyken sağ tık kameranın geri tıkıdır (BackClicked)");
             Assert.AreEqual(SiginakPose.ShiftClose.ToString(), log.Entries.Last(e => e.Name == "Back").Value, "geri tık K6'da");
-            Assert.AreEqual(SiginakPose.Desk, rig.Current, "fiş dildeyken sağ tık K1'e döner");
+            Assert.AreEqual(SiginakPose.Desk, rig.Current, "fiş daktilodayken K6'da sağ tık K1'e döner");
             yield return ShiftPlayKit.WaitForPose(SiginakPose.Desk);
 
             ShiftPlayKit.AssertUnchanged(printed, "Esc ve sağ tık");

@@ -6,15 +6,18 @@ using UnityEngine.EventSystems;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Vardiya şalterinin ağzından çıkan devir fişi (gerçek dünya kâğıdı).
+    /// Teleks daktilosundan basılan devir fişi (gerçek dünya kâğıdı).
     /// <para>
-    /// Revizyon 3 · R19b (devir fişi, PLAN §1.5–§1.6): kol inince ağızdan dile çıkar (<see cref="BeginFeed"/>,
-    /// <c>motion.shiftClose.slipExitS</c>, ease-out; Karar D12: ağzın 40 mm içinden başlar, yol 160 mm), tıkla ele gelir
-    /// (<see cref="TakeToHand"/>; kameranın önünde ekran yüksekliğinin %67'si, canlı kamerayı izler), tık / Esc / sağ tık dile
-    /// döndürür (<see cref="PutBack"/>; tık ve tuşları köprü okur, kâğıt yalnız <see cref="Clicked"/> yayar), EVRAK üstüne
-    /// bırakılınca tepsinin üst kâğıdına iner (<see cref="FileToTray"/>), EVRAK dışına ya da reddedilen bırakışta 0,25 s kavisle dile
-    /// döner (<see cref="ReturnToTongue"/>; bulgu 17: hiçbir bırakış fişi askıda bırakmaz). Arşivdeki fiş elde salt okunur gösterilir
-    /// (<see cref="ReadArchived"/>, Karar D7-A). Yüzü <see cref="HandoverSlipFace"/> yazar.
+    /// Revizyon 3 · R19b (devir fişi, PLAN §1.5–§1.6); teleks modeli değişimi (daktilo): kol inince fiş beklemeye girer, makine
+    /// izin verince (<see cref="ShiftReceiptMachine.FeedHold"/>: önce teleks satırı biter, kamera masaya varır) daktilonun
+    /// silindirinden yazılarak çıkar (<see cref="BeginFeed"/>, <c>motion.shiftClose.slipTypeS</c>, <c>shiftClose.slip.typeLines</c>
+    /// satır adımı, <see cref="TypedFeed"/>; çıkış SlipStart'ın 40 mm içinden başlar, yol 160 mm) ve silindirde dik durur (dil
+    /// pozu). Tıkla ele gelir (<see cref="TakeToHand"/>; kameranın önünde ekran yüksekliğinin %67'si, canlı kamerayı izler), tık / Esc /
+    /// sağ tık daktiloya döndürür (<see cref="PutBack"/>; tık ve tuşları köprü okur, kâğıt yalnız <see cref="Clicked"/> yayar), EVRAK
+    /// üstüne bırakılınca tepsinin üst kâğıdına iner (<see cref="FileToTray"/>), EVRAK dışına ya da reddedilen bırakışta 0,25 s kavisle
+    /// daktiloya döner (<see cref="ReturnToTongue"/>; bulgu 17: hiçbir bırakış fişi askıda bırakmaz). Arşivdeki fiş elde salt okunur
+    /// gösterilir (<see cref="ReadArchived"/>, Karar D7-A). Yüzü <see cref="HandoverSlipFace"/> yazar. Adlardaki "dil" (Tongue)
+    /// fişin çıkış yerindeki duruşudur: eski şalter ağzının dili, şimdi daktilonun silindiri.
     /// </para>
     /// <para>
     /// Zaman <see cref="Advance"/> ile ilerler: oyunda <c>LateUpdate</c> gerçek zamanla (kamera rig'inden sonra, el pozu o karenin
@@ -38,13 +41,13 @@ namespace Corrigible.Desk
         [SerializeField] TMP_Text heading, body;
         [SerializeField] Camera view;
         [Header("Revizyon 3 · R19 devir fişi")]
-        [Tooltip("Fiş ağzının iç ucu (SlipMouth/SlipStart): çıkışın başı. Dil pozu output'tan (SlipExit).")]
+        [Tooltip("Daktilonun içindeki çapa (Teleprinter/Slip feed/SlipStart): çıkışın başı. Dil pozu output'tan (SlipExit, silindirin önü).")]
         [SerializeField] Transform start;
         [SerializeField] HandoverSlipFace face;
         [SerializeField] EvrakTray tray;
-        [Tooltip("Dil pozu: ağzın dış ucundan ofset (şalter yereli, m) ve dönüş (fiş üstü ağızdan uzakta, yüz yukarı).")]
-        [SerializeField] Vector3 tongueOffset = new Vector3(0, -0.0044f, 0), tongueEuler = new Vector3(90, -90, 0);
-        [Tooltip("Çıkışın başında fişin SlipStart'tan ağız içine doğru kalan payı (m; Karar D12, ilk karede kesik görünmez).")]
+        [Tooltip("Dil pozu: çıkış çapasından ofset (çapa yereli, m; daktiloda fiş merkezi 20 mm yukarıda, token shiftClose.slip.tongueOffsetMm) ve dönüş (çapa yereli).")]
+        [SerializeField] Vector3 tongueOffset = new Vector3(0, 0.02f, 0), tongueEuler = Vector3.zero;
+        [Tooltip("Çıkışın başında fişin SlipStart'tan daktilonun içine doğru kalan payı (m; Karar D12, ilk karede görünmez).")]
         [SerializeField] float feedHiddenM = 0.04f;
         [Tooltip("El pozu: fişin ekran yüksekliğindeki payı (R19b #3: %67).")]
         [SerializeField, Range(0.3f, 0.9f)] float handHeightFraction = 0.67f;
@@ -66,6 +69,7 @@ namespace Corrigible.Desk
         Goal goal;
         Pose moveFrom, moveTo;
         float moveElapsed, moveSeconds, moveArcM;
+        int moveLines;
         CardEase moveEase;
         Where arriveAs;
         bool arriveSound;
@@ -94,7 +98,7 @@ namespace Corrigible.Desk
         public event Action<Vector2> Dragged;
         /// <summary>R19: ses olayı (köprü <c>Sfx</c>'e çevirir).</summary>
         public event Action<ShiftSound> Sound;
-        /// <summary>R19: <see cref="State"/> değişti (makine fiş ağzı lambasını buna göre yakar).</summary>
+        /// <summary>R19: <see cref="State"/> değişti (makine isteğe bağlı lambasını buna göre yakar).</summary>
         public event Action<Where> StateChanged;
 
         /// <summary>Fişin yeri.</summary>
@@ -103,8 +107,10 @@ namespace Corrigible.Desk
         public bool ReadOnly => readOnly;
         /// <summary>Basılan fiş kol aşağıya varmayı bekliyor (<see cref="Present(string, HandoverSlipFacts, Entry)"/> AfterLever).</summary>
         public bool FeedPending => feedPending;
+        /// <summary>Canlı fiş daktilonun silindirinde (çıkıyor ya da duruyor; teleks kâğıdının yanında, kâğıdı örtmez).</summary>
+        public bool InPrinter => !readOnly && !string.IsNullOrEmpty(ReceiptId) && (where == Where.Feeding || where == Where.Tongue);
         /// <summary>
-        /// Canlı fiş masada ve EVRAK'a girmedi (ağızda, dilde, elde, sürüklenirken ya da dile dönerken): fiş ağzının lambası yanar.
+        /// Canlı fiş masada ve EVRAK'a girmedi (daktilodan çıkıyor ya da orada duruyor, elde, sürükleniyor ya da daktiloya dönüyor).
         /// Bekleyen besleme, tepsiye iniş, tepside duruş ve arşiv okuma sayılmaz.
         /// </summary>
         public bool LiveSlipOut => !readOnly && !string.IsNullOrEmpty(ReceiptId)
@@ -112,15 +118,17 @@ namespace Corrigible.Desk
         /// <summary>Yüzde yazan veri (arşiv okunurken arşivdeki fiş).</summary>
         public HandoverSlipFacts Facts => readOnly ? archivedFacts : liveFacts;
         public Camera View => view;
+        /// <summary>Son başlayan hareketin süresi (s; testler ve sunum ölçümü).</summary>
+        public float MoveSeconds => moveSeconds;
 
-        /// <summary>Dil pozu (ağzın dış ucu + ofset; fiş üstü ağızdan uzakta, yüz yukarı).</summary>
+        /// <summary>Dil pozu: daktilonun silindirindeki duruş (çıkış çapası + ofset, dönüş çapanınki · <c>tongueEuler</c>).</summary>
         public Pose TongueTarget => TonguePose(output, tongueOffset, tongueEuler);
         /// <summary>El pozu o anki kameradan (kamera yoksa şimdiki poz).</summary>
         public Pose HandTarget => view != null
             ? HandPose(view.transform.position, view.transform.rotation, view.fieldOfView, handHeightFraction, SlipHeightM, handOffset, handEuler)
             : Current;
         /// <summary>
-        /// Çıkışın başladığı nokta: SlipStart çapası + ağız içine <c>feedHiddenM</c> (Karar D12). SlipStart yoksa ağzın ekseninde
+        /// Çıkışın başladığı nokta: SlipStart çapası + daktilonun içine <c>feedHiddenM</c> (Karar D12). SlipStart yoksa çıkışın ekseninde
         /// (<c>output.right</c>) <c>shiftClose.slip.travelMm</c> + pay. Dönüş dil dönüşüdür.
         /// </summary>
         public Vector3 FeedFrom
@@ -149,7 +157,16 @@ namespace Corrigible.Desk
         }
 
         static float ExitS => Num("motion.shiftClose.slipExitS", 0.35f);
+        /// <summary>Daktilodan yazılarak çıkışın süresi (yoksa eski ağız çıkışı <c>slipExitS</c>).</summary>
+        static float TypeS => Num("motion.shiftClose.slipTypeS", ExitS);
+        /// <summary>Çıkışın satır adımı sayısı (0: tek ease-out kayış).</summary>
+        static int TypeLines => Mathf.Max(0, Mathf.RoundToInt(Num("shiftClose.slip.typeLines", 0)));
+        /// <summary>Satır adımının kayış payı (kalanı duruş: harfler basılıyor; <c>motion.shiftClose.slipLineSlideFraction</c>).</summary>
+        public static float LineSlideFraction => Mathf.Clamp01(Num("motion.shiftClose.slipLineSlideFraction", 0.35f));
         static float ToHandS => Num("motion.shiftClose.slipToHandS", 0.25f);
+        /// <summary>Daktiloya uzun dönüşün hızı (m/s) ve süre üst sınırı (s): masanın öbür ucundan dönüş yola göre uzar.</summary>
+        static float ReturnMps => Num("motion.shiftClose.slipReturnMps", 3f);
+        static float ReturnMaxS => Num("motion.shiftClose.slipReturnMaxS", 0.45f);
         static float ToTrayS => Num("motion.shiftClose.slipToTrayS", 0.2f);
         static float ReturnArcS => Num("motion.board.returnArcS", 0.25f);
         /// <summary>Dönüş kavsinin tepe yüksekliği: panonun geri kavsiyle aynı (<c>cards.heldLiftMm</c>; tasarımda kavis yok).</summary>
@@ -217,7 +234,10 @@ namespace Corrigible.Desk
             if (gameObject.activeSelf) gameObject.SetActive(false);
         }
 
-        /// <summary>Kol aşağıya vardı: bekleyen fiş ağızdan dile çıkar (başta yazıcı, sonda kopma sesi). Bekleyen fiş yoksa yok sayılır.</summary>
+        /// <summary>
+        /// Besleme izni geldi (kol aşağıda, teleks satırı bitti, kamera masada): bekleyen fiş daktilodan satır satır yazılarak
+        /// silindirde dik duruşuna çıkar (başta yazıcı, sonda kopma sesi). Bekleyen fiş yoksa yok sayılır.
+        /// </summary>
         public void BeginFeed()
         {
             if (!feedPending || readOnly || string.IsNullOrEmpty(ReceiptId)) return;
@@ -228,7 +248,7 @@ namespace Corrigible.Desk
             Place(from);
             SetWhere(Where.Feeding);
             Emit(ShiftSound.SlipPrint);
-            StartMove(from, Goal.Tongue, default, ExitS, CardEase.EaseOut, 0, Where.Tongue, true, ShiftSound.SlipTear);
+            StartMove(from, Goal.Tongue, default, TypeS, CardEase.EaseOut, 0, Where.Tongue, true, ShiftSound.SlipTear, TypeLines);
         }
 
         /// <summary>
@@ -246,7 +266,10 @@ namespace Corrigible.Desk
             StartMove(from, Goal.Hand, default, ToHandS, CardEase.EaseInOut, 0, Where.Hand, false, default);
         }
 
-        /// <summary>Eldeki fiş dile döner (0,25 s); arşivden okunuyorsa tepsiye döner ve gizlenir. Başka yerde yok sayılır.</summary>
+        /// <summary>
+        /// Eldeki fiş daktiloya döner (<c>slipToHandS</c> 0,25 s; uzun yolda <see cref="ReturnSeconds"/>); arşivden okunuyorsa tepsiye
+        /// döner ve gizlenir. Başka yerde yok sayılır.
+        /// </summary>
         public void PutBack()
         {
             if (readOnly)
@@ -262,7 +285,8 @@ namespace Corrigible.Desk
             var from = Current;
             SetWhere(Where.Returning);
             Emit(ShiftSound.SlipReturn);
-            StartMove(from, Goal.Tongue, default, ToHandS, CardEase.EaseInOut, 0, Where.Tongue, false, default);
+            StartMove(from, Goal.Tongue, default, ReturnSeconds(Vector3.Distance(from.position, TongueTarget.position), ToHandS),
+                CardEase.EaseInOut, 0, Where.Tongue, false, default);
         }
 
         /// <summary>Kabul edilen bırakış: fiş EVRAK tepsisinin üst kâğıdına iner (0,2 s, ease-out; varınca “şap”).</summary>
@@ -278,8 +302,9 @@ namespace Corrigible.Desk
         }
 
         /// <summary>
-        /// Reddedilen bırakış ya da dosyalama reddi (bulgu 17): fiş bulunduğu yerden dile döner (<c>motion.board.returnArcS</c>,
-        /// ortada <c>cards.heldLiftMm</c> kavis). Gizlenmiş canlı fiş dilde belirir; çıkan fiş çıkışını bitirir; arşiv fişi tepsiye döner.
+        /// Reddedilen bırakış ya da dosyalama reddi (bulgu 17): fiş bulunduğu yerden daktiloya döner (<c>motion.board.returnArcS</c>;
+        /// uzun yolda <see cref="ReturnSeconds"/>; ortada <c>cards.heldLiftMm</c> kavis). Gizlenmiş canlı fiş daktiloda belirir; çıkan
+        /// fiş çıkışını bitirir; arşiv fişi tepsiye döner.
         /// </summary>
         public void ReturnToTongue()
         {
@@ -304,7 +329,8 @@ namespace Corrigible.Desk
             var from = Current;
             SetWhere(Where.Returning);
             Emit(ShiftSound.SlipReturn);
-            StartMove(from, Goal.Tongue, default, ReturnArcS, CardEase.EaseInOut, ReturnArcM, Where.Tongue, false, default);
+            StartMove(from, Goal.Tongue, default, ReturnSeconds(Vector3.Distance(from.position, TongueTarget.position), ReturnArcS),
+                CardEase.EaseInOut, ReturnArcM, Where.Tongue, false, default);
         }
 
         /// <summary>
@@ -345,6 +371,17 @@ namespace Corrigible.Desk
         // ------------------------------------------------------------------ pozlar (saf)
 
         /// <summary>
+        /// Daktiloya dönüşün süresi (saf): yol / <c>motion.shiftClose.slipReturnMps</c> (3 m/s), en az <paramref name="baseS"/> (kısa
+        /// yolun eski süresi, 0,25 s), en çok <c>motion.shiftClose.slipReturnMaxS</c> (0,45 s = kameranın K6 → K1 geçişi). Fiş masanın
+        /// öbür ucundaki EVRAK'tan ya da K6'daki elden ~1,4 m döner; 0,25 s'de saniyede 6 m'yle kayboluyordu.
+        /// </summary>
+        public static float ReturnSeconds(float distanceM, float baseS) => ReturnSeconds(distanceM, baseS, ReturnMps, ReturnMaxS);
+
+        /// <summary><see cref="ReturnSeconds(float, float)"/>; hız (m/s) ve üst sınır (s) verilir.</summary>
+        public static float ReturnSeconds(float distanceM, float baseS, float speedMps, float maxS) =>
+            Mathf.Clamp(Mathf.Max(0, distanceM) / Mathf.Max(0.01f, speedMps), baseS, Mathf.Max(baseS, maxS));
+
+        /// <summary>
         /// El pozu: fiş kameranın önünde, yüksekliği ekranın <paramref name="heightFraction"/> kesri olacak uzaklıkta
         /// (<c>d = slipHeightM / (heightFraction · 2 · tan(fov / 2))</c>; K6'da ≈ 0,29 m), kamera eksenlerinde hafif sağda ve
         /// aşağıda (<see cref="DefaultHandOffset"/>), yüzü kameraya dönük, düzlem içinde −2,9° (<see cref="DefaultHandEuler"/>).
@@ -362,11 +399,30 @@ namespace Corrigible.Desk
             return new Pose(camPos + camRot * new Vector3(offsetM.x, offsetM.y, d), camRot * Quaternion.Euler(tiltEuler));
         }
 
-        /// <summary>Dil pozu: ağzın dış ucu + <paramref name="offset"/> (ağız yereli), dönüş ağzın dönüşü · <paramref name="euler"/>.</summary>
+        /// <summary>Dil pozu: çıkış çapası + <paramref name="offset"/> (çapa yereli), dönüş çapanın dönüşü · <paramref name="euler"/>.</summary>
         public static Pose TonguePose(Transform output, Vector3 offset, Vector3 euler)
         {
             if (output == null) return Pose.identity;
             return new Pose(output.position + output.rotation * offset, output.rotation * Quaternion.Euler(euler));
+        }
+
+        /// <summary>
+        /// Daktilodan yazılarak çıkışın yol kesri (saf): <paramref name="t"/> ∈ [0, 1] süresince <paramref name="lines"/> satır adımı;
+        /// her adımın ilk <paramref name="slide"/> kesrinde fiş bir satır ease-out kayar, kalanında durur (harfler basılıyor).
+        /// <paramref name="lines"/> 0 ise tek ease-out kayış. Monoton, 0'da 0, 1'de 1.
+        /// </summary>
+        public static float TypedFeed(float t, int lines) => TypedFeed(t, lines, LineSlideFraction);
+
+        /// <summary><see cref="TypedFeed(float, int)"/>; satır adımının kayış payı verilir.</summary>
+        public static float TypedFeed(float t, int lines, float slide)
+        {
+            t = Mathf.Clamp01(t);
+            if (lines <= 0) return CardEasing.Evaluate(CardEase.EaseOut, t);
+            if (t >= 1) return 1;
+            float x = t * lines;
+            int k = Mathf.FloorToInt(x);
+            float s = slide > 0 ? Mathf.Clamp01((x - k) / slide) : 1;
+            return (k + CardEasing.Evaluate(CardEase.EaseOut, s)) / lines;
         }
 
         // ------------------------------------------------------------------ zaman
@@ -382,9 +438,10 @@ namespace Corrigible.Desk
             if (where == Where.Hand || where == Where.Reading) Place(HandTarget);
         }
 
-        void StartMove(Pose from, Goal g, Pose fixedTo, float seconds, CardEase ease, float arcM, Where arrive, bool sound, ShiftSound cue)
+        void StartMove(Pose from, Goal g, Pose fixedTo, float seconds, CardEase ease, float arcM, Where arrive, bool sound, ShiftSound cue, int lines = 0)
         {
             moving = true;
+            moveLines = lines;
             goal = g;
             moveFrom = from;
             moveTo = fixedTo;
@@ -412,7 +469,7 @@ namespace Corrigible.Desk
                 Arrive();
                 return;
             }
-            float e = CardEasing.Evaluate(moveEase, t);
+            float e = moveLines > 0 ? TypedFeed(t, moveLines) : CardEasing.Evaluate(moveEase, t);
             var p = Vector3.LerpUnclamped(moveFrom.position, to.position, e) + Vector3.up * (moveArcM * Mathf.Sin(Mathf.PI * t));
             Place(new Pose(p, Quaternion.SlerpUnclamped(moveFrom.rotation, to.rotation, e)));
         }

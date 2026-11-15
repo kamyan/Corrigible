@@ -14,13 +14,17 @@ namespace Corrigible.Desk.Bridge
     /// <summary>
     /// Kartlı oyunun vardiya kapanışı (Revizyon 3 · R19, PLAN §1.3–§1.11; kamera K6 = <see cref="SiginakPose.ShiftClose"/>).
     /// Kapak kalkınca ön kontrol (K6 + teleks <c>ÖN KONTROL</c>); kol inince <c>GameController.PrintBoardShift</c> (kayıt hemen
-    /// yazılır), fiş kol −35°'ye varınca ağızdan dile çıkar. Fişe tık ele getirir (okumak zaman ilerletmez), EVRAK'a sürüklenip
+    /// yazılır), kol −35°'ye varınca kamera K1'e (masa) döner ve fiş teleks daktilosundan yazılarak çıkar: aynı silindirde önce teleks
+    /// o anki satırı bitirir, kamera masaya varır, sonra fiş basılır (<see cref="FeedHold"/>, en çok
+    /// <c>motion.shiftClose.feedHoldMaxS</c>). Fiş silindirde teleks kâğıdının yanında, sağ uçta durur (kâğıdı örtmez). Fişe tık
+    /// ele getirir (kamera K6'ya; okumak zaman ilerletmez), EVRAK'a sürüklenip
     /// bırakılınca kabul edilen bırakıştan 0,30 s sonra, tam karanlıkta <c>GameController.FileBoardShift(id)</c> günü tam bir kez
     /// ilerletir; kamera K1'e kesilir, şalter 0,3 s'de hazıra döner, sayaçlar 0,4 s'de döner, teleks “VARDİYA DEVREDİLDİ”
-    /// 1,2 s'de basılır. Reddedilen her bırakış ve her dosyalama reddi fişi dile döndürür. Kilit nedenlerini (<see cref="LockReason"/>)
+    /// 1,2 s'de basılır. Reddedilen her bırakış ve her dosyalama reddi fişi daktiloya döndürür; canlı fiş daktiloya dönerken kamera
+    /// K6'daysa masaya (K1) döner (K6 daktiloyu görmez). Kilit nedenlerini (<see cref="LockReason"/>)
     /// her karede şaltere iletir. Fiş eldeyken ve arşiv okunurken Esc ile sürüklemesiz sağ tıkı kendisi okur (masa o sırada
     /// kilitli). Sunumun ses olaylarını (<see cref="ShiftSound"/>) <see cref="CueOf"/> ile çalar. Kayıttan devamda basılı fiş
-    /// animasyonsuz dilde geri gelir (<see cref="Restore"/>). Dosyalanan son 5 fiş EVRAK arşivindedir (yan dosya, kayda girmez).
+    /// animasyonsuz daktiloda geri gelir (<see cref="Restore"/>). Dosyalanan son 5 fiş EVRAK arşivindedir (yan dosya, kayda girmez).
     /// <para>
     /// Simülasyonu yalnız iki komutla değiştirir (<c>board_print</c>, <c>board_file</c>); fiş verisi
     /// <see cref="HandoverSlipFactsBuilder"/> ile salt okunur kurulur. Eski yol (<c>planningBoardEnabled = false</c>) bu bileşeni
@@ -53,6 +57,9 @@ namespace Corrigible.Desk.Bridge
         string planIssue, eventIssue;
         bool filing, printing, rejectPending, reading, readSeen, suspendedByMe;
         int readFrame = -10, inputFrame = -10;
+        /// <summary>Bekleyen beslemenin ilk bekletildiği an (−1: bekleyen yok) ve kameranın masaya çağrıldığı.</summary>
+        float feedHoldSince = -1;
+        bool feedLookAsked;
         SiginakPose readReturn;
         RightButtonGesture right;
         Coroutine flow;
@@ -112,6 +119,7 @@ namespace Corrigible.Desk.Bridge
                 machine.Clicked += SlipClicked;
                 machine.Sound += Play;
                 machine.CanFile = CanFile;
+                machine.FeedHold = FeedHold;
             }
             Restore();
         }
@@ -128,6 +136,7 @@ namespace Corrigible.Desk.Bridge
                 machine.Clicked -= SlipClicked;
                 machine.Sound -= Play;
                 if (machine.CanFile == (Func<string, bool>)CanFile) machine.CanFile = null;
+                if (machine.FeedHold == (Func<bool>)FeedHold) machine.FeedHold = null;
             }
             StopFlow();
             reading = false;
@@ -151,14 +160,14 @@ namespace Corrigible.Desk.Bridge
 
         /// <summary>
         /// Kol indi (şalterin <c>Thrown</c>'ı, <see cref="SiginakShift"/> iletir): fişi basar. Kayıt tıkla aynı karede yazılır; fiş kol
-        /// aşağıya varınca çıkar (makine bekler). Ret kolu boş ağızla geri kaldırır (<see cref="ShiftSwitch.RejectThrow"/>, kol
-        /// varınca “ağız boş” sesi) ve teleks YAPILAMADI basar.
+        /// aşağıya varınca teleks daktilosundan çıkar (makine bekler; <see cref="FeedHold"/> kamerayı K1'e alır). Basımda kamera K6'ya
+        /// çağrılmaz (fiş K1'de basılır; K6 → K1 → K6 gidip gelmesin). Ret kolu fişsiz geri kaldırır (<see cref="ShiftSwitch.RejectThrow"/>,
+        /// kol varınca “boş” sesi), kamera K6'ya (ret plakası orada okunur) ve teleks YAPILAMADI basar.
         /// </summary>
         public void Throw()
         {
             var sim = Sim;
             if (sim?.Board == null || game == null) { if (shiftSwitch != null) shiftSwitch.Release(); return; }
-            if (rig != null) rig.Focus(SiginakPose.ShiftClose);
             rejectPending = false;
             ActResult printed;
             // Basımın Changed bildirimi fişi kol inince çıkacak biçimde sunar (feed); başka tazeleme beslemeyi başlatmaz (Risk 3)
@@ -173,13 +182,42 @@ namespace Corrigible.Desk.Bridge
             finally { printing = false; }
             if (printed.Ok) return;
             rejectPending = true;
+            if (rig != null) rig.Focus(SiginakPose.ShiftClose);
             if (shiftSwitch != null) shiftSwitch.RejectThrow();
             if (telex != null && surface != null) telex.Post(surface.Shift, Loc.T("YAPILAMADI"), printed.Msg, TelexKind.Failed);
         }
 
+        /// <summary>
+        /// Teleks daktilosu (makinenin <see cref="ShiftReceiptMachine.FeedHold"/>'u; kol aşağıda, fiş bekliyor): teleks satırı
+        /// basılırken ya da kamera masaya (K1) varmadan fiş basılmaz; ilk çağrıda kamera masaya çağrılır. Üst sınır
+        /// <c>motion.shiftClose.feedHoldMaxS</c> (kamera başka poza alınsa da fiş sonunda basılır).
+        /// </summary>
+        bool FeedHold()
+        {
+            float now = Time.unscaledTime;
+            if (feedHoldSince < 0) feedHoldSince = now;
+            var theme = SiginakTheme.Active;
+            float maxS = theme != null ? theme.NumberOf("motion.shiftClose.feedHoldMaxS", 3f) : 3f;
+            if (now - feedHoldSince < maxS && rig != null && !feedLookAsked)
+            {
+                feedLookAsked = true;
+                if (rig.Current != SiginakPose.Desk) rig.Focus(SiginakPose.Desk);
+            }
+            bool atDesk = rig == null || rig.Current == SiginakPose.Desk && !rig.InTransition;
+            return HoldFeed(now - feedHoldSince, maxS, telex != null && telex.Typing, atDesk);
+        }
+
+        /// <summary>
+        /// Fişin beslemesi bekletilsin mi (saf; <see cref="FeedHold"/>): <paramref name="waitedS"/> üst sınıra (<paramref name="maxS"/>,
+        /// <c>motion.shiftClose.feedHoldMaxS</c>) varmadıkça teleks satır basarken ya da kamera masaya (K1) varmamışken bekler; üst
+        /// sınırda fiş her durumda basılır (kamera başka poza kilitli ya da teleks uzun satır basıyor olsa da).
+        /// </summary>
+        public static bool HoldFeed(float waitedS, float maxS, bool telexTyping, bool cameraAtDesk) =>
+            waitedS < maxS && (telexTyping || !cameraAtDesk);
+
         void LeverArrived(bool down)
         {
-            // Basım reddi: kol indi, ağızdan fiş çıkmaz (“tık”); kol şalterin kendisinde 0,4 s'de kalkar
+            // Basım reddi: kol indi, daktilodan fiş çıkmaz (“tık”); kol şalterin kendisinde 0,4 s'de kalkar
             if (!down || !rejectPending) return;
             rejectPending = false;
             if (Sim?.Board != null && Sim.Board.Printed) return;
@@ -245,8 +283,8 @@ namespace Corrigible.Desk.Bridge
         // ---------- Fiş ----------
 
         /// <summary>
-        /// Fişe sürüklemesiz tık (makinenin <c>Clicked</c>'ı): dildeki (çıkan, dile dönen) fiş ele gelir, eldeki dile döner; arşivden
-        /// okunan fiş tepsiye döner (Karar D5-A).
+        /// Fişe sürüklemesiz tık (makinenin <c>Clicked</c>'ı): daktilodaki (çıkan, daktiloya dönen) fiş ele gelir, eldeki daktiloya
+        /// döner; arşivden okunan fiş tepsiye döner (Karar D5-A).
         /// </summary>
         void SlipClicked()
         {
@@ -445,6 +483,11 @@ namespace Corrigible.Desk.Bridge
         void Update()
         {
             var p = Paper;
+            if (p == null || !p.FeedPending) { feedHoldSince = -1; feedLookAsked = false; }
+            // Canlı fiş daktiloya dönüyor (eldeyken tık / Esc / sağ tık, EVRAK dışı ya da reddedilen bırakış, dosyalama reddi) ve
+            // kamera K6'da: K6 daktiloyu görmez, fiş kadrajdan uçup kaybolmasın diye masaya (K1) dönülür
+            if (!filing && rig != null && p != null && !p.ReadOnly && p.State == Where.Returning && rig.Current == SiginakPose.ShiftClose)
+                rig.Focus(SiginakPose.Desk);
             if (reading && p != null)
             {
                 // Arşiv fişi tepsiye dönüp gizlendi; hiç görünmediyse (ReadArchived reddetti) iki kare sonra bırakılır
@@ -540,6 +583,8 @@ namespace Corrigible.Desk.Bridge
         {
             StopFlow();
             reading = rejectPending = printing = false;
+            feedHoldSince = -1;
+            feedLookAsked = false;
             right.Reset();
             // Okunan arşiv fişi kapanır (okuma bayrağı burada iner; kâğıt Reading'de kalırsa masa kilitli kalırdı)
             var paper = Paper;

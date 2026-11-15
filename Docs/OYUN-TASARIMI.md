@@ -694,8 +694,8 @@ kaçmış bir teknisyen… Kapı erzağa, güvene ve alarma bir yüz verir; bask
 - **Görev fişi** yeni panoda üç saha kişisini adları, gerçek can/hareket/güç değerleri ve teçhizatıyla gösterir.
   Kadro panoda belirlenir; eski beş uzman seçimi oda geliştirmeli yola aittir. BASKIN EMRİ VER önce kadro raporunu açar;
   emir rapordaki BASKINA ÇIK ile verilir. Eksik kit, yaralı kişi ve yetersiz fon gerekçeleri komuttan okunur.
-- **Vardiya geçişi (K6):** masadaki kapaklı vardiya şalteri: kapak → kol → şalterin yanından kâğıt → mevcut EVRAK
-  kutusu → kararıp açılma. Fiş beklenirken kol inik, kapak açık, hazır lambası sönük kalır. Kâğıdın fiziksel bırakılması tamamlanmadan gün ilerlemez; panoya gidilmez. Kâğıt o anda bilinen
+- **Vardiya geçişi (K6 → K1):** masadaki kapaklı vardiya şalteri: kapak → kol (basma komutu) → teleks daktilosundan
+  satır satır basılan fiş (kamera masaya döner; önce teleksin o anki satırı biter) → mevcut EVRAK kutusu → kararıp açılma. Fiş beklenirken kol inik, kapak açık, hazır lambası sönük kalır. Kâğıdın fiziksel bırakılması tamamlanmadan gün ilerlemez; panoya gidilmez. Kâğıt o anda bilinen
   görevleri, eğitim/üretim durumunu, beklenen erzak değişimini ve açık dosya uyarılarını yazar; gelecek gizli olayı
   açıklamaz. EVRAK kutusunun eski rapor arşivi korunur; eski vardiya raporu dizisi oda geliştirmeli oyuna aittir.
 - **Açılış (K7):** açılış dizisi ve emir belgesi; BAŞLA ile oda açılır. Kayıt varsa son rapor kısaca görünür.

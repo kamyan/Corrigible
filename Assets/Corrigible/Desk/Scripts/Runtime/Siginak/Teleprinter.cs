@@ -12,6 +12,9 @@ namespace Corrigible.Desk
     /// koparılır ve masaya düşer.
     /// Revizyon 3: makineden sarkan kâğıdın dört yuvası (<see cref="frontCode"/>, durum, ileti, önceki satır) tek ön yazının
     /// yerini alır; koparılan kopya yine birleşik metni taşır.
+    /// Teleks daktilosu (kullanıcının modeli): kâğıt silindirden çıkar, rulo daktilonun arkasındadır ve satır basılırken döner
+    /// (<see cref="roll"/>, harf başına <c>motion.telexRollDegPerChar</c>). <see cref="Typing"/> basım sürerken true (devir fişi
+    /// beklerken okunur: aynı silindirde önce teleks satırı biter, sonra fiş basılır).
     /// </summary>
     public sealed class Teleprinter : MonoBehaviour
     {
@@ -27,11 +30,15 @@ namespace Corrigible.Desk
         [SerializeField] Transform torn;
         [SerializeField] TMP_Text tornText;
         [SerializeField, Min(0.05f)] float tearSeconds = 0.4f;
+        [Tooltip("Daktilonun arkasındaki kâğıt rulosu (kendi x ekseninde döner). Boşsa dönen rulo yok.")]
+        [SerializeField] Transform roll;
 
         readonly List<TelexLine> shown = new List<TelexLine>();
         float typedSince, typeSeconds = -1, tornAt = -100;
-        int typingLength;
+        int typingLength, rolledChars;
         bool typing;
+        Quaternion rollRest;
+        bool rollRestSet;
         Vector3 tornPos;
         Quaternion tornRot;
         string fitStatus, tornStatus, frontComposite = "";
@@ -46,6 +53,15 @@ namespace Corrigible.Desk
         bool HasFront => front != null || Slots;
 
         public void Configure(TMP_Text text, Renderer renderer, string headerSource) { paper = text; paperRenderer = renderer; header = headerSource; }
+
+        /// <summary>Kâğıt rulosu (tek seferlik sahne script'i ve testler).</summary>
+        public void ConfigureRoll(Transform paperRoll) { roll = paperRoll; rollRestSet = false; }
+
+        /// <summary>En yeni satır harf harf basılıyor.</summary>
+        public bool Typing => typing;
+
+        /// <summary>Rulonun basılan harflerle döndüğü toplam açı (derece; yalnız sunum).</summary>
+        public float RollDegrees { get; private set; }
 
         /// <summary>
         /// Son satırları gösterir; <paramref name="animateNewest"/> ise en yeni satır harf harf basılır. <paramref name="lineSeconds"/>
@@ -69,6 +85,7 @@ namespace Corrigible.Desk
             typedSince = Time.unscaledTime;
             typeSeconds = lineSeconds;
             typingLength = shown.Count > 0 ? Plain(shown[0]).Length : 0;
+            rolledChars = 0;
             Render(typing ? 0 : typingLength);
         }
 
@@ -80,7 +97,18 @@ namespace Corrigible.Desk
             if (!typing) return;
             int n = TypedChars(Time.unscaledTime - typedSince, typingLength, typeSeconds, SiginakTheme.Active.Number("motion.telexCharS", 0.03f));
             Render(n);
+            Roll(n);
             if (n >= typingLength) typing = false;
+        }
+
+        /// <summary>Rulo basılan her harfte <c>motion.telexRollDegPerChar</c> döner (kâğıt silindire çekilir).</summary>
+        void Roll(int typed)
+        {
+            if (roll == null || typed <= rolledChars) return;
+            if (!rollRestSet) { rollRest = roll.localRotation; rollRestSet = true; }
+            RollDegrees = Mathf.Repeat(RollDegrees + (typed - rolledChars) * (SiginakTheme.Active != null ? SiginakTheme.Active.Number("motion.telexRollDegPerChar", 2f) : 2f), 360f);
+            rolledChars = typed;
+            roll.localRotation = rollRest * Quaternion.Euler(-RollDegrees, 0, 0);
         }
 
         /// <summary>
@@ -122,7 +150,11 @@ namespace Corrigible.Desk
 
         static string Plain(TelexLine l) => l.code + "  " + l.status + "  " + l.message;
 
-        /// <summary>Koparılan kâğıt öne doğru devrilip masaya düşer ve kaybolur (S1 notu › hareket: 0,4 s).</summary>
+        /// <summary>
+        /// Koparılan kâğıt (S1 notu › hareket: 0,4 s): teleks daktilosunda silindirden yukarı çekilir, arkaya atılıp daktilonun arkasına
+        /// düşer ve kaybolur (<see cref="TearPose"/>; token <c>motion.telexTear.*</c>). Eski teleksin ağzından öne devrilip masaya
+        /// düşüş daktiloda kapağın ve klavyenin içinden geçiyordu.
+        /// </summary>
         void Tear()
         {
             if (torn == null || tornAt < 0) return;
@@ -134,8 +166,28 @@ namespace Corrigible.Desk
                 tornAt = -100;
                 return;
             }
-            torn.localPosition = tornPos + new Vector3(0.02f * t, -0.11f * t * t, -0.06f * t);
-            torn.localRotation = tornRot * Quaternion.Euler(-70 * t, 0, 12 * t);
+            var pose = TearPose(t, SiginakTheme.Active);
+            torn.localPosition = tornPos + pose.position;
+            torn.localRotation = tornRot * pose.rotation;
+        }
+
+        /// <summary><see cref="TearPose(float, Vector3, float, Vector3)"/>, değerler <c>motion.telexTear.*</c> token'larından.</summary>
+        public static Pose TearPose(float t, SiginakTheme theme)
+        {
+            float N(string key, float fallback) => theme != null ? theme.NumberOf(key, fallback) : fallback;
+            var move = new Vector3(N("motion.telexTear.moveMm[0]", 10), N("motion.telexTear.moveMm[1]", 150), N("motion.telexTear.moveMm[2]", 170)) * 0.001f;
+            var euler = new Vector3(N("motion.telexTear.euler[0]", 55), N("motion.telexTear.euler[1]", 0), N("motion.telexTear.euler[2]", 10));
+            return TearPose(t, move, N("motion.telexTear.fallMm", 200) * 0.001f, euler);
+        }
+
+        /// <summary>
+        /// Koparılan kâğıdın <paramref name="t"/> ∈ [0, 1] anındaki ofseti (saf; Teleprinter yereli, m) ve dinlenme dönüşüne göre
+        /// dönüşü: <c>move·t − fall·t²</c> (yukarı çekilir, arkaya (+z) atılıp düşer), dönüş <c>euler·t</c> (+x: üstü arkaya yatar).
+        /// </summary>
+        public static Pose TearPose(float t, Vector3 moveM, float fallM, Vector3 euler)
+        {
+            t = Mathf.Clamp01(t);
+            return new Pose(moveM * t + Vector3.down * (fallM * t * t), Quaternion.Euler(euler * t));
         }
 
         /// <summary>Ön kâğıt: kod (soluk), durum (büyük, yapılamadıysa kırmızı), ileti; altında önceki satır küçük.</summary>

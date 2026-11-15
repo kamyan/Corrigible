@@ -316,6 +316,38 @@ namespace Corrigible.Desk.Tests
             return true;
         }
 
+        /// <summary>
+        /// Fişin ekran dikdörtgeni ile teleks kâğıdının ileti yuvalarının (kod, durum, ileti) ekran dikdörtgeni kesişiyor mu (px²;
+        /// 0: örtmez). Fiş daktiloda kâğıdın yanında durur.
+        /// </summary>
+        public static float SlipOverTelexPx()
+        {
+            var size = new Vector2(TokenOr("shiftClose.slip.sizeMm[0]", 100), TokenOr("shiftClose.slip.sizeMm[1]", 150)) * 0.0005f;
+            var t = Paper.transform;
+            var cam = Cam;
+            Rect Of(IEnumerable<Vector3> world)
+            {
+                var pts = world.Select(w => (Vector2)cam.WorldToScreenPoint(w)).ToList();
+                return Rect.MinMaxRect(pts.Min(q => q.x), pts.Min(q => q.y), pts.Max(q => q.x), pts.Max(q => q.y));
+            }
+            var slip = Of(new[] { new Vector3(-size.x, -size.y), new Vector3(size.x, -size.y), new Vector3(-size.x, size.y), new Vector3(size.x, size.y) }
+                .Select(c => t.TransformPoint(c)));
+            var corners = new List<Vector3>();
+            foreach (var slot in new[] { "frontCode", "frontStatus", "frontMessage" })
+            {
+                var text = Get<TMPro.TMP_Text>(Printer, slot);
+                if (text == null) continue;
+                var c = new Vector3[4];
+                text.rectTransform.GetWorldCorners(c);
+                corners.AddRange(c);
+            }
+            if (corners.Count == 0) return 0;
+            var paper = Of(corners);
+            float w = Mathf.Min(slip.xMax, paper.xMax) - Mathf.Max(slip.xMin, paper.xMin);
+            float h = Mathf.Min(slip.yMax, paper.yMax) - Mathf.Max(slip.yMin, paper.yMin);
+            return w > 0 && h > 0 ? w * h : 0;
+        }
+
         /// <summary>Fişe sürüklemesiz sol tık (kâğıdın IPointerClickHandler'ı; anlamını kapanış verir).</summary>
         public static void ClickSlip() => BoardPlayKit.Click(Paper.gameObject);
 
@@ -435,8 +467,9 @@ namespace Corrigible.Desk.Tests
         }
 
         /// <summary>
-        /// P1'in yolu: şaltere tık (kapak), kapak açılınca tık (kol: <c>board_print</c>); fiş kol inince çıkar ve dile oturur, kamera
-        /// K6'ya varır. Bittiğinde fiş dilde, şalter fiş bekliyor.
+        /// P1'in yolu: şaltere tık (kapak), kapak açılınca tık (kol: <c>board_print</c>); kol inince kamera K1'e döner, fiş teleks satırı
+        /// bitince teleks daktilosundan yazılarak çıkar ve silindirde durur (teleks modeli değişimi). Bittiğinde fiş daktiloda, kamera K1'de,
+        /// şalter fiş bekliyor.
         /// </summary>
         public static IEnumerator PrintToTongue()
         {
@@ -447,8 +480,8 @@ namespace Corrigible.Desk.Tests
             yield return BoardPlayKit.WaitFor(() => !sw.Moving, 2, "kapak açılışı bitmedi");
             ClickSwitch();
             Assert.IsTrue(Sim.Board.Printed, "2. tık (kol) fişi basar (board_print)");
-            yield return BoardPlayKit.WaitFor(() => Paper.State == Where.Tongue && !Paper.FeedPending, 3, "fiş dile çıkmadı (" + Paper.State + ")");
-            yield return WaitForPose(SiginakPose.ShiftClose);
+            yield return BoardPlayKit.WaitFor(() => Paper.State == Where.Tongue && !Paper.FeedPending, 8, "fiş silindire çıkmadı (" + Paper.State + ")");
+            yield return WaitForPose(SiginakPose.Desk);
             yield return BoardPlayKit.WaitFor(() => !sw.Moving, 1, "şalter durmadı");
             Assert.AreEqual(ShiftPhase.Waiting, sw.Phase, "fiş basılı: şalter fiş bekliyor");
         }

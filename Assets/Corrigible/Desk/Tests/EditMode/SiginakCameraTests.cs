@@ -391,7 +391,8 @@ namespace Corrigible.Desk.Tests
                 Assert.AreEqual("K6", k6.anchor.name);
                 Assert.AreEqual(SiginakTheme.Active.NumberOf("cameras.K6.fovV", 42), k6.fieldOfView, 1e-4f);
                 Assert.AreEqual(0, k6.lensShiftY, 1e-6f);
-                AssertPhysicalReceiptAndTrayFitShiftCloseFrame(roots, sceneRig, k6);
+                Assert.IsTrue(sceneRig.TryGetPose(SiginakPose.Desk, out var k1), "Desk (K1)");
+                AssertPhysicalReceiptAndTrayFitShiftCloseFrame(roots, sceneRig, k6, k1);
 
                 var surface = roots.SelectMany(g => g.GetComponentsInChildren<LiberationDeskView>(true)).Single();
                 Assert.AreSame(sceneRig, new SerializedObject(surface).FindProperty("siginakRig").objectReferenceValue);
@@ -413,10 +414,12 @@ namespace Corrigible.Desk.Tests
         }
 
         /// <summary>
-        /// K6'da (1920 × 1080) dildeki fişin kutusu (100 × 150 mm, <see cref="ShiftReceiptPaper.TongueTarget"/> pozunda) ve EVRAK
-        /// bırakma kutusu bütünüyle kadrajda.
+        /// Teleks modeli değişimi: fiş daktilodan K1'de basılır. K1'de (1920 × 1080) daktilodaki fişin kutusu (100 × 150 mm,
+        /// <see cref="ShiftReceiptPaper.TongueTarget"/> pozunda) ve EVRAK bırakma kutusu, K6'da EVRAK bırakma kutusu bütünüyle kadrajda
+        /// (fiş eldeyken K6'da EVRAK'a sürüklenir).
         /// </summary>
-        static void AssertPhysicalReceiptAndTrayFitShiftCloseFrame(GameObject[] roots, SiginakCameraRig sceneRig, SiginakCameraRig.PoseSlot shift)
+        static void AssertPhysicalReceiptAndTrayFitShiftCloseFrame(GameObject[] roots, SiginakCameraRig sceneRig, SiginakCameraRig.PoseSlot shift,
+            SiginakCameraRig.PoseSlot desk)
         {
             var paper = roots.SelectMany(g => g.GetComponentsInChildren<ShiftReceiptPaper>(true)).Single();
             var paperData = new SerializedObject(paper);
@@ -439,19 +442,24 @@ namespace Corrigible.Desk.Tests
                 preview.usePhysicalProperties = true;
                 preview.sensorSize = new SerializedObject(sceneRig).FindProperty("sensorSizeMm").vector2Value;
                 preview.gateFit = Camera.GateFitMode.Vertical;
-                preview.focalLength = Camera.FieldOfViewToFocalLength(shift.fieldOfView, preview.sensorSize.y);
-                preview.lensShift = new Vector2(0, shift.lensShiftY);
                 preview.nearClipPlane = .03f;
-                preview.transform.SetPositionAndRotation(shift.anchor.position, shift.anchor.rotation);
+                void Use(SiginakCameraRig.PoseSlot slot)
+                {
+                    preview.focalLength = Camera.FieldOfViewToFocalLength(slot.fieldOfView, preview.sensorSize.y);
+                    preview.lensShift = new Vector2(0, slot.lensShiftY);
+                    preview.transform.SetPositionAndRotation(slot.anchor.position, slot.anchor.rotation);
+                }
 
-                // Başlangıçta gizli fiş çıkınca dil pozunda durur (ağzın dış ucu + ofset, üstü ağızdan uzakta; PLAN §1.5); oradaki
-                // gerçek kutusunu izdüşür.
+                // Başlangıçta gizli fiş çıkınca daktilonun silindirinde (dil pozu) durur; oradaki gerçek kutusunu K1'de izdüşür.
                 var tongue = paper.TongueTarget;
                 Assert.AreEqual(0.10f, paperBox.size.x, 1e-4f, "fiş kutusu 100 mm");
                 Assert.AreEqual(0.15f, paperBox.size.y, 1e-4f, "fiş kutusu 150 mm");
                 var paperAtTongue = Matrix4x4.TRS(tongue.position, tongue.rotation, paper.transform.lossyScale) * paper.transform.worldToLocalMatrix;
-                AssertBoxInFrame(preview, paperBox, paperAtTongue, "Dildeki devir fişi");
-                AssertBoxInFrame(preview, trayBox, Matrix4x4.identity, "Mevcut EVRAK kutusu");
+                Use(desk);
+                AssertBoxInFrame(preview, paperBox, paperAtTongue, "K1: daktilodaki devir fişi");
+                AssertBoxInFrame(preview, trayBox, Matrix4x4.identity, "K1: EVRAK kutusu");
+                Use(shift);
+                AssertBoxInFrame(preview, trayBox, Matrix4x4.identity, "K6: EVRAK kutusu");
             }
             finally
             {

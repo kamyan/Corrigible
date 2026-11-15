@@ -18,7 +18,8 @@ namespace Corrigible.Desk
     /// <summary>
     /// Bütün geri bildirimin tek kapısı (PROMPT §4 TelexFeed): “Emir uygulandı” / “Yapılamadı” ve dizilerin satırları
     /// buradan geçer. Satır masadaki teleks kâğıdına basılır; teleks kadraj dışındaysa aynı satır ekranın altından kâğıt
-    /// şerit olarak kayar. Son 30 satır tutulur (yan kayıt dosyasına yazılır).
+    /// şerit olarak kayar. Son 30 satır tutulur (yan kayıt dosyasına yazılır). Devir fişi daktilonun silindirinde teleks kâğıdının
+    /// yanında durur (kâğıdı örtmez); aynı silindirde önce teleks satırı biter, sonra fiş basılır (<see cref="Typing"/>).
     /// </summary>
     public sealed class TelexFeed : MonoBehaviour
     {
@@ -75,6 +76,9 @@ namespace Corrigible.Desk
         }
 
         public void Clear() => Restore(null);
+
+        /// <summary>Daktilo yeni satırı basıyor (<see cref="Teleprinter.Typing"/>).</summary>
+        public bool Typing => printer != null && printer.Typing;
 
         /// <summary>Teleks kâğıdı kadrajın içinde mi.</summary>
         public bool PrinterVisible => printer != null && view != null && printer.IsVisibleFrom(view);

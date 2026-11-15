@@ -26,7 +26,8 @@ namespace Corrigible.Desk
         /// <summary>K9 ayarlar dolabı (arka duvarın sağı, CRT'nin üstü; dolaba tıklama ya da Esc).</summary>
         Cabinet,
         /// <summary>
-        /// K6 vardiya şalteri yakın pozu (R19): şalter, fiş ağzı, plaka ve EVRAK tepsisi birlikte. Kartlı oyunun kapanışı burada
+        /// K6 vardiya şalteri yakın pozu (R19): şalter, plaka ve EVRAK tepsisi birlikte (devir fişi teleks daktilosunda K1'de basılır,
+        /// ele alınınca K6'ya gelir). Kartlı oyunun kapanışı burada
         /// geçer; eski yolun <see cref="Shift"/> (K6a) pozu ayrı kalır. Sayı asset'lerde saklandığı için en sonda.
         /// </summary>
         ShiftClose = 7,

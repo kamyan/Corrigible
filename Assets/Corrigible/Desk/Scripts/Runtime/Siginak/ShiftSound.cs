@@ -8,7 +8,7 @@ namespace Corrigible.Desk
     /// <item><see cref="Lever"/> kolun “klak-klunk”u (tek klip) · <see cref="Denied"/> kilitliyken tık (“klak”).</item>
     /// <item><see cref="SlipPrint"/> yazıcının “tırrt”ı (çıkış başı) · <see cref="SlipTear"/> kopmanın “çıt”ı (dile varış).</item>
     /// <item><see cref="SlipLift"/> fiş ele gelir · <see cref="SlipReturn"/> fiş dile ya da tepsiden geri döner.</item>
-    /// <item><see cref="SlipFile"/> fiş EVRAK'a düşer (“şap”) · <see cref="MouthEmpty"/> basım reddinde boş ağzın “tık”ı.</item>
+    /// <item><see cref="SlipFile"/> fiş EVRAK'a düşer (“şap”) · <see cref="MouthEmpty"/> basım reddinde fişsiz “tık” (ad eski fiş ağzından).</item>
     /// <item><see cref="Gong"/> yeni vardiyanın kısık “gong”u (tam karanlıkta).</item>
     /// </list>
     /// </summary>

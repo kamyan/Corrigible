@@ -1578,12 +1578,38 @@ MonoBehaviour:
     value: 0.4
   - key: motion.shiftClose.hoverLiftMm
     value: 3
+  - key: motion.shiftClose.slipTypeS
+    value: 1.4
+  - key: motion.shiftClose.feedHoldMaxS
+    value: 3
+  - key: motion.shiftClose.slipLineSlideFraction
+    value: 0.35
+  - key: motion.shiftClose.slipReturnMps
+    value: 3
+  - key: motion.shiftClose.slipReturnMaxS
+    value: 0.45
   - key: motion.crtInstrumentS
     value: 0.3
   - key: motion.lastSwitch.orderDelayS
     value: 0.4
   - key: motion.lastSwitch.deniedRepeatS
     value: 3
+  - key: motion.telexRollDegPerChar
+    value: 2
+  - key: 'motion.telexTear.moveMm[0]'
+    value: 10
+  - key: 'motion.telexTear.moveMm[1]'
+    value: 150
+  - key: 'motion.telexTear.moveMm[2]'
+    value: 170
+  - key: motion.telexTear.fallMm
+    value: 200
+  - key: 'motion.telexTear.euler[0]'
+    value: 55
+  - key: 'motion.telexTear.euler[1]'
+    value: 0
+  - key: 'motion.telexTear.euler[2]'
+    value: 10
   - key: 'cameras.K1.pos[0]'
     value: 0
   - key: 'cameras.K1.pos[1]'
@@ -3530,6 +3556,32 @@ MonoBehaviour:
     value: 0.25
   - key: shiftClose.slip.toTrayS
     value: 0.2
+  - key: shiftClose.slip.typeLines
+    value: 7
+  - key: 'shiftClose.slip.typewriterLocalStart[0]'
+    value: 0.145
+  - key: 'shiftClose.slip.typewriterLocalStart[1]'
+    value: 0.05152
+  - key: 'shiftClose.slip.typewriterLocalStart[2]'
+    value: 0.00814
+  - key: 'shiftClose.slip.typewriterLocalExit[0]'
+    value: 0.145
+  - key: 'shiftClose.slip.typewriterLocalExit[1]'
+    value: 0.15
+  - key: 'shiftClose.slip.typewriterLocalExit[2]'
+    value: 0.0255
+  - key: 'shiftClose.slip.typewriterLocalEuler[0]'
+    value: 10
+  - key: 'shiftClose.slip.typewriterLocalEuler[1]'
+    value: 0
+  - key: 'shiftClose.slip.typewriterLocalEuler[2]'
+    value: 0
+  - key: 'shiftClose.slip.tongueOffsetMm[0]'
+    value: 0
+  - key: 'shiftClose.slip.tongueOffsetMm[1]'
+    value: 20
+  - key: 'shiftClose.slip.tongueOffsetMm[2]'
+    value: 0
   - key: shiftClose.afterDrop.darkS
     value: 0.2
   - key: shiftClose.afterDrop.countersS

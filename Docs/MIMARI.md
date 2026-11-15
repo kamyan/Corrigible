@@ -193,8 +193,8 @@ Game                     GameController (BalanceConfig), RaidLauncher
 Audio                    AudioDirector (SoundBank)
 CommandPost3D            CommandPostDesk (kamera girdisi kapısı); Main Camera + SiginakCameraRig
 SiginakRaidLink          baskın sahnesi yüklüyken odayı gizler, CRT geçişini RaidLauncher'a verir
-SiginakRoom              oda: masa (sayaçlar, anahtar rayı, şalter, teleks, evrak tepsisi, Desk/MapMount altında kâğıt
-                         harita SadeMapCanvas), fiş çıkışlı vardiya şalteri ve mevcut EVRAK kutusu; Planning board (daha küçük ayaklı pano,
+SiginakRoom              oda: masa (sayaçlar, anahtar rayı, şalter, teleks daktilosu, evrak tepsisi, Desk/MapMount altında kâğıt
+                         harita SadeMapCanvas), vardiya şalteri (basma düğmesi; devir fişi teleks daktilosundan çıkar) ve mevcut EVRAK kutusu; Planning board (daha küçük ayaklı pano,
                          kişi kartları, görev alanları, ayrı depo ve üretim alanı),
                          CRT, duvar; sağ duvarda Bunker door
                          (DoorProp, DeskTarget; SM_Door = kasa, Leaf = menteşe pivotu (LeafMesh, Wheel, PeepCover, ColdGlass),
@@ -231,6 +231,13 @@ SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
     gövde/kapak/kilit; kapak `<model>/Body/Leaf`, kilit `Leaf/Latch`, gövde iç içe Rev3 modelinin altında (hover kaldırma).
     `Interior` 0,70 ölçekli, `Camera anchor` aynı afinle yaklaşır. Menüde (`Giris`) `SettingsCabinetMenu` prefab örneği aynı sahne
     override'larıyla çevrildi (prefab'lar Rev3 dolabını göstermeye devam eder); MENÜYE DÖN yok, kör kapak kalır.
+  - Teleks daktilosu (kullanıcının modeli `Assets/Typewriter/Prefabs/Typewriter_FBX_Unity`, `Desk/Teleprinter` altında, çarpıştırıcısız;
+    eski Rev3 `Telex` örneği silindi): kâğıt `TelexPaper` silindirden çıkar (kök 13° döndürülüp silindire oturtuldu, türev mesh
+    `SceneMeshes/Telex/TypewriterTelexPaper_SM` yalnız ön kâğıt, alt kenarı silindirin altında), rulo `Paper roll`
+    (`TypewriterTelexRoll_SM`, eski Telex.obj'nin rulosu, `Teleprinter.roll` harf başına döner) ve besleme şeridi `Paper feed` arkada,
+    `Telex plate` (`TelexPlate_SM` + `TXT_Plate` "TELEKS") kapakta. Kökteki DeskTarget kutusu gövdeyle sınırlı, kâğıdın kendi
+    `Paper target`'ı var. Devir fişinin çıkış çapaları `Teleprinter/Slip feed/SlipStart, SlipExit` (token
+    `shiftClose.slip.typewriterLocal*`); şalterin fiş ağzı (`SlipMouth`) odadan kalktı.
   - Menü kapısı (`Giris/Entrance/Bunker door`) odadaki kapının aynısı ve aynı dünya pozunda (iki sahne aynı koordinatları paylaşır):
     `SM_Door` (LOD0 = `DoorFrame_SM`), `Leaf/LeafMesh`, `Leaf/Wheel/WheelMesh` (çark mesh'i iki yüzdeki çarkı tek milde taşır), kanat
     odaya açılır. Koridor yüzünde `Leaf/TXT_StencilOuter` ("SIĞINAK 07 · KYGA"). Eski Rev3 `DoorFrame`/`DoorLeaf`/`OuterWheel`/`PeepRing`
@@ -343,7 +350,8 @@ SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
     `admission.Enter()`/`Leave()` (public API korundu).
 - **Kapanış (eski açıklama; kartlı oyunda yukarıdaki akış):** `ShiftReceiptMachine`/`ShiftReceiptPaper` masadaki kapaklı vardiya şalterini (`Shift switch`) sürer.
   Kapağın kalkması basım değildir; kolun inmesi (`ShiftSwitch.Thrown`) `PrintBoardShift` ile fiş üretir ve fiziksel
-  kâğıt şalterin yanındaki çıkışta görünür. Fiş beklenirken `ShiftSwitch.SetAwaitingReceipt` şalteri inik ve kilitli
+  kâğıt teleks daktilosunun silindirinden basılır (kamera K1'e döner; önce teleksin o anki satırı biter: `ShiftReceiptMachine.FeedHold`,
+  `SiginakShiftClose.HoldFeed`; fiş silindirde teleks kâğıdının yanında durur, kâğıdı örtmez; K6'dan daktiloya dönerken kamera K1'e döner). Fiş beklenirken `ShiftSwitch.SetAwaitingReceipt` şalteri inik ve kilitli
   tutar; durum satırı şalterin pirinç plakasının ikinci satırıdır (`kapağı kaldır` / `fişi EVRAK'a koy`). Kâğıt mevcut `EvrakTray`
   kutusuna bırakılınca karartma sırasında `FileBoardShift` çağrılır. Gün Core'da bir kez ilerler; fiş kimliği ve plan
   kilidi kayıttan geri kurulur. Pano presenter'ı kapanış yapmaz. Kutunun eski arşiv eylemleri korunur. Kabul kapıdaki

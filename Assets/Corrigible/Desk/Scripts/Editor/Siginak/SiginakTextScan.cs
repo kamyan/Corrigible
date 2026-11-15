@@ -118,6 +118,7 @@ namespace Corrigible.Desk.EditorTools
             ("/Stamp/Day", "haritadaki ÖZGÜR damgasının vardiya kodu (tasarım ~9 ekran px, Aşama 5)"),
             ("Report sheet/", "EVRAK tepsisindeki A5 kâğıt başlığı (okuma görünümü ayrıca açılır)"),
             ("TelexPaper/Body/TXT_Code", "teleks kâğıdının kodu (Revizyon 3 TelexPaper: büyük harf 9 mm); durum ve ileti satırı K1'de okunur"),
+            ("TelexPaper/Body/TXT_Message", "teleks kâğıdının ileti satırı (teleks modeli değişimi: kâğıt kullanıcının daktilosunun silindirinden çıkar, eski teleksin önündeki yerinden ~11 cm geride; K1'de 13,7 px, eşiğin %2 altı; eğim ve yer denemeleri 13,9 px'i geçmedi); durum satırı 19 px okunur; ileti puntosunun %3 büyütülmesi kullanıcıya soruldu"),
             ("TelexPaper/Body/TXT_Prev", "teleks kâğıdının önceki satırı (büyük harf 7 mm, kesikli ayracın altında); satır teleks şeridinde ve raporlarda da var"),
             ("/Tag/TXT_Tag", "tuş etiketi yalnız KAPI tuşunda (“kapıda biri bekliyor”, ≥ 14 px); öbür tuşlarda boş ve kapalı"),
             ("IntercomBox/Body/TXT_Plate", "interkom plakası (Revizyon 3 IntercomBox: büyük harf 11 mm); kapının adı üzerine gelme etiketinde"),

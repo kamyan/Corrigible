@@ -5,15 +5,16 @@ using UnityEngine;
 
 namespace Corrigible.Desk
 {
-    /// <summary>Vardiya şalterinin fiş çıkışı ve fiziksel EVRAK tepsisi; simülasyona bağlayıcı karar verir. Durum satırı şalterin
-    /// pirinç plakasının ikinci satırıdır. Revizyon 3: fiş ağzının amber lambası fiş masadayken yanar.
+    /// <summary>Vardiya şalterinin basım komutu ile teleks daktilosundaki devir fişi ve fiziksel EVRAK tepsisi arasındaki sunum;
+    /// simülasyona bağlayıcı karar verir. Durum satırı şalterin pirinç plakasının ikinci satırıdır.
     /// <para>
-    /// Revizyon 3 · R19 (PLAN §1.5, §1.7): basılan fiş kol aşağıya varınca çıkar (<c>ShiftSwitch.LeverArrived(true)</c>; olay
-    /// kaçarsa <c>Update</c> <c>ShiftSwitch.LeverDown</c>'ı yoklar). Lamba fişin durumundan türetilir: besleme başında yanar, dilde,
-    /// elde, sürüklenirken ve dile dönerken yanık, kabul edilen bırakışta söner, <see cref="Reject"/>'te yeniden yanar. Sürüklenen fiş
-    /// EVRAK üstündeyken tepsinin hedef ışığı yanar (ölçüt bırakılan ekran noktasının ışını). Bırakışın kabulüne <see cref="CanFile"/>
-    /// karar verir; reddedilen her bırakış fişi dile döndürür (bulgu 17). Kâğıdın tık ve ses olaylarını iletir. Plakayı R19 kipinde
-    /// <see cref="ShiftPlate"/> yazar (<c>status</c> boş; yalnız eski yol).
+    /// Revizyon 3 · R19 (PLAN §1.5, §1.7); teleks modeli değişimi: basılan fiş kol aşağıya varınca (<c>ShiftSwitch.LeverArrived(true)</c>;
+    /// olay kaçarsa <c>Update</c> <c>ShiftSwitch.LeverDown</c>'ı yoklar) ve <see cref="FeedHold"/> izin verince (köprü: teleks o anki
+    /// satırını bitirdi, kamera masada) daktilonun silindirinden çıkar. Sürüklenen fiş EVRAK üstündeyken tepsinin hedef ışığı yanar
+    /// (ölçüt bırakılan ekran noktasının ışını). Bırakışın kabulüne <see cref="CanFile"/> karar verir; reddedilen her bırakış fişi
+    /// daktiloya döndürür (bulgu 17). Kâğıdın tık ve ses olaylarını iletir. Plakayı R19 kipinde <see cref="ShiftPlate"/> yazar
+    /// (<c>status</c> boş; yalnız eski yol). <see cref="LampLit"/> fiş masada ve EVRAK'a girmedi demektir; eski fiş ağzının lambası
+    /// (<c>slipLamp</c>) isteğe bağlıdır, odada fiş ağzı kalmadığı için boştur.
     /// </para>
     /// <para>
     /// Kâğıt ve şalter olaylarına bağlanma tembeldir (<c>OnEnable</c> ya da ilk <c>Present</c>/<c>Configure</c>): EditMode'da
@@ -28,7 +29,7 @@ namespace Corrigible.Desk
         [SerializeField] Camera view;
         [SerializeField] Transform output;
         [SerializeField] TMP_Text status;
-        [Tooltip("Fiş ağzının lambası (Revizyon 3 SlipMouth/Lamp; swap 0 sönük, 1 yanık). Boşsa lamba yok.")]
+        [Tooltip("İsteğe bağlı fiş lambası (eski SlipMouth/Lamp; swap 0 sönük, 1 yanık). Boşsa lamba yok (daktilodan basımda boş).")]
         [SerializeField] PartDriver slipLamp;
 
         [NonSerialized] ShiftReceiptPaper wiredPaper;
@@ -51,7 +52,13 @@ namespace Corrigible.Desk
         /// </summary>
         public Func<string, bool> CanFile { get; set; }
 
-        /// <summary>R19: fiş ağzının lambası yanık.</summary>
+        /// <summary>
+        /// Teleks daktilosu: kol aşağıdayken bekleyen beslemeyi geciktirir (true: bekle). Köprü yazar (önce teleks satırı biter,
+        /// kamera masaya varır; üst sınırı köprüde). Boşsa besleme kol varınca hemen başlar.
+        /// </summary>
+        public Func<bool> FeedHold { get; set; }
+
+        /// <summary>R19: fiş masada ve EVRAK'a girmedi (isteğe bağlı lamba bununla yanar).</summary>
         public bool LampLit { get; private set; }
 
         public void Configure(ShiftSwitch button, ShiftReceiptPaper sheet, EvrakTray inbox, Camera camera, Transform origin, TMP_Text label)
@@ -60,7 +67,7 @@ namespace Corrigible.Desk
             Wire();
         }
 
-        /// <summary>R19: fiş ağzının lambası (tek seferlik sahne script'i ve testler).</summary>
+        /// <summary>R19: isteğe bağlı fiş lambası (eski fiş ağzınınki; testler). Odada boş.</summary>
         public void ConfigureLamp(PartDriver lamp)
         {
             slipLamp = lamp;
@@ -145,14 +152,19 @@ namespace Corrigible.Desk
 
         void LeverArrived(bool down)
         {
-            if (down && paper && paper.FeedPending) paper.BeginFeed();
+            if (down && paper && paper.FeedPending && !Held()) paper.BeginFeed();
         }
 
-        /// <summary>Bekleyen besleme kol aşağıdayken başlar (olay kaçtıysa ya da kol zaten inikse; şalter yoksa hemen).</summary>
+        /// <summary>
+        /// Bekleyen besleme kol aşağıdayken ve <see cref="FeedHold"/> izin verince başlar (olay kaçtıysa ya da kol zaten inikse;
+        /// şalter yoksa kol beklenmez).
+        /// </summary>
         void PollLever()
         {
-            if (paper && paper.FeedPending && (shiftSwitch == null || shiftSwitch.LeverDown)) paper.BeginFeed();
+            if (paper && paper.FeedPending && (shiftSwitch == null || shiftSwitch.LeverDown) && !Held()) paper.BeginFeed();
         }
+
+        bool Held() => FeedHold != null && FeedHold();
 
         /// <summary>
         /// Bırakış (bulgu 17): EVRAK üstünde ve <see cref="CanFile"/> izin veriyorsa fiş tepsiye iner, lamba söner,
@@ -198,8 +210,8 @@ namespace Corrigible.Desk
         }
 
         /// <summary>
-        /// R19: devir fişini gösterir. <paramref name="feed"/> true: fiş kol aşağıya varınca ağızdan çıkar (basım anı);
-        /// false: dilde anında, şalter fiş bekliyor duruşuna anında oturur (kayıttan yükleme, dil değişimi). Aynı kimlikli fiş kol
+        /// R19: devir fişini gösterir. <paramref name="feed"/> true: fiş kol aşağıya varınca (ve <see cref="FeedHold"/> izin verince)
+        /// daktilodan çıkar (basım anı); false: daktiloda anında, şalter fiş bekliyor duruşuna anında oturur (kayıttan yükleme, dil değişimi). Aynı kimlikli fiş kol
         /// inişini bekliyorsa <paramref name="feed"/> false onu bozmaz (bekleme sürer, şalter anında oturmaz). Boş kimlik fişi gizler.
         /// </summary>
         public void Present(string id, HandoverSlipFacts facts, bool feed)
@@ -214,7 +226,7 @@ namespace Corrigible.Desk
             ApplyLamp();
         }
 
-        /// <summary>R19: dosyalama Core'da reddedildi; fiş tepsiden (ya da bulunduğu yerden) dile döner, ağız lambası yeniden yanar.</summary>
+        /// <summary>R19: dosyalama Core'da reddedildi; fiş tepsiden (ya da bulunduğu yerden) daktiloya döner (varsa lamba yeniden yanar).</summary>
         public void Reject()
         {
             Wire();

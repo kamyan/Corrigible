@@ -2336,14 +2336,35 @@
       "telexPrintS": 1.2,
       "rejectLeverS": 0.4,
       "hoverLiftMm": 3,
-      "_local_a4": "UYGULAMA EKİ (Unity, Revizyon 3 Aşama 4 · R19): rejectLeverS — basım reddinde kolun −35°'den +35°'ye geri kalkışı (R19-not “kol 0,4 s'de geri kalkar”); hoverLiftMm — şalterin üzerine gelince kapağın ön kenarının kalkışı, mm (R19-not 3 mm; genel motion.hoverLiftMm 4 değişmez). Paket dosyasında yok; bkz. _local_a4."
+      "_local_a4": "UYGULAMA EKİ (Unity, Revizyon 3 Aşama 4 · R19): rejectLeverS — basım reddinde kolun −35°'den +35°'ye geri kalkışı (R19-not “kol 0,4 s'de geri kalkar”); hoverLiftMm — şalterin üzerine gelince kapağın ön kenarının kalkışı, mm (R19-not 3 mm; genel motion.hoverLiftMm 4 değişmez). Paket dosyasında yok; bkz. _local_a4.",
+      "slipTypeS": 1.4,
+      "feedHoldMaxS": 3,
+      "slipLineSlideFraction": 0.35,
+      "slipReturnMps": 3,
+      "slipReturnMaxS": 0.45,
+      "_local_teleks": "UYGULAMA EKİ (Unity, teleks modeli değişimi): slipTypeS — devir fişinin daktilonun silindirinden yazılarak çıkışı (1,4 s, shiftClose.slip.typeLines satır adımı); slipLineSlideFraction — her satır adımının kayış payı (0,35; kalanı duruş: harfler basılıyor); feedHoldMaxS — kol inince fişin teleks satırını bitirmeyi ve kameranın masaya (K1) varışını en çok bekleyeceği süre (3 s); slipReturnMps / slipReturnMaxS — fişin daktiloya dönüşü yola göre uzar (yol / 3 m/s, en az eski süre slipToHandS ya da board.returnArcS 0,25 s, en çok 0,45 s = kameranın K6 → K1 geçişi; EVRAK'tan ve K6'daki elden yol ~1,4 m). Paket dosyasında yok; bkz. _local_teleks."
     },
     "crtInstrumentS": 0.3,
     "lastSwitch": {
       "orderDelayS": 0.4,
       "_local_kos6": "Kol indikten sonra emir kâğıdının düşüşüne kadar.",
       "deniedRepeatS": 3
-    }
+    },
+    "telexRollDegPerChar": 2,
+    "telexTear": {
+      "moveMm": [
+        10,
+        150,
+        170
+      ],
+      "fallMm": 200,
+      "euler": [
+        55,
+        0,
+        10
+      ]
+    },
+    "_local_teleks": "UYGULAMA EKİ (Unity, teleks modeli değişimi): telexRollDegPerChar — daktilonun arkasındaki kâğıt rulosu basılan her harfte 2° döner; telexTear — yeni satırda koparılan teleks kâğıdının 0,4 s'lik yolu (Teleprinter yereli): ofset moveMm·t − fallMm·t² (silindirden yukarı çekilir, arkaya atılıp daktilonun arkasına düşer), dönüş euler·t (+x üstü arkaya yatar). Eski teleksin öne devrilip masaya düşüşü daktiloda kapağın ve klavyenin içinden geçiyordu. Paket dosyasında yok; bkz. _local_teleks."
   },
   "cameras": {
     "_": "★ Unity koordinatı (x sağ, y yukarı, z ileri), metre. K1 Physical Camera + lens shift; diğerleri bakış hedefli.",
@@ -5427,7 +5448,29 @@
       "toHandS": 0.25,
       "toTrayS": 0.2,
       "dropTarget": "PaperTray (EVRAK)",
-      "wrongDrop": "EVRAK dışına bırakılan fiş dile döner"
+      "wrongDrop": "EVRAK dışına bırakılan fiş dile döner",
+      "typeLines": 7,
+      "typewriterLocalStart": [
+        0.145,
+        0.05152,
+        0.00814
+      ],
+      "typewriterLocalExit": [
+        0.145,
+        0.15,
+        0.0255
+      ],
+      "typewriterLocalEuler": [
+        10,
+        0,
+        0
+      ],
+      "tongueOffsetMm": [
+        0,
+        20,
+        0
+      ],
+      "_local_teleks": "UYGULAMA EKİ (Unity, teleks modeli değişimi): fiş teleks daktilosunun silindirinden çıkar. typewriterLocalExit silindirin önü (kart tutucuyla silindir arası, teleks kâğıdının 3 mm önü, daktilonun sağ ucunda, kâğıdın yanında: K1'de iki kâğıt ayrı görünür), typewriterLocalStart çıkışın 100 mm altı (kâğıtla aynı 10° arkaya yaslanma, typewriterLocalEuler); çıkış SlipStart'ın 40 mm içinden başlar, yol yine 160 mm (Karar D12). tongueOffsetMm: silindirde dik duran fişin merkezi çıkıştan 20 mm yukarıda (alt kenarı K1'den görünmesin diye 55 mm silindirin ve kart tutucunun arkasında). Fiş kâğıdı örtmez (x aralıkları ayrık); teleks satırları fiş daktilodayken de kâğıttan okunur. typeLines: çıkışın satır adımı. switchLocal* eski fiş ağzının değerleri (ağız odadan kalktı). Paket dosyasında yok; bkz. _local_teleks."
     },
     "slipMouth": {
       "model": "SlipMouth",
@@ -5436,7 +5479,8 @@
         "tr": "DEVİR FİŞİ",
         "en": "HAND-OVER",
         "_local_a4": "UYGULAMA EKİ (Unity, Revizyon 3 Aşama 4): EN plaka iki satıra tirede bölünür (HAND- / OVER, TR DEVİR / FİŞİ gibi); paket değeri “HANDOVER” tek sözcük olarak plakaya sığmıyor, harf harf bölünüyordu (HANDOVE / R). Bkz. _local_a4."
-      }
+      },
+      "_local_teleks": "UYGULAMA EKİ (Unity, teleks modeli değişimi): fiş ağzı (SlipMouth) ve DEVİR FİŞİ plakası odadan kalktı; fiş teleks daktilosundan basılır. Değerler paketin kaydı olarak kalır; bkz. _local_teleks."
     },
     "afterDrop": {
       "darkS": 0.2,
@@ -5773,5 +5817,25 @@
     "tone": {
       "namesMaxChars": 80
     }
+  },
+  "_local_teleks": {
+    "_": "UYGULAMA EKİ (Unity, teleks modeli değişimi): kullanıcı masadaki teleksi bir daktilo modeliyle (Assets/Typewriter) değiştirdi; devir fişi artık şalterin yanındaki fiş ağzından değil teleks daktilosunun silindirinden basılır. Paket dosyasında (Docs/UI_Siginak_Rev3/tokens/tokens_siginak.json) olmayan yerel anahtarlar; düğümlerin yanında “_local_teleks” notu var. slipTypeS: fişin silindirden yazılarak çıkışı (s; eski ağız çıkışı slipExitS 0,35 s eski yolun değeri olarak kalır); typeLines: çıkışın satır adımı; feedHoldMaxS: kol inince fişin teleks satırını ve kameranın masaya (K1) varışını en çok bekleyeceği süre; slipLineSlideFraction: satır adımının kayış payı; slipReturnMps / slipReturnMaxS: fişin daktiloya dönüşünün yola göre süresi; telexTear: koparılan teleks kâğıdının yolu; telexRollDegPerChar: daktilonun arkasındaki kâğıt rulosunun basılan harf başına dönüşü; typewriterLocal*: fişin çıkış çapaları (Teleprinter yereli, m; Euler derece), tongueOffsetMm: silindirdeki duruşta fiş merkezinin çıkış çapasından uzaklığı (çapa yereli, mm). Bkz. Docs/DURUM.md › Teleks modeli.",
+    "new": [
+      "motion.shiftClose.slipTypeS",
+      "motion.shiftClose.feedHoldMaxS",
+      "motion.shiftClose.slipLineSlideFraction",
+      "motion.shiftClose.slipReturnMps",
+      "motion.shiftClose.slipReturnMaxS",
+      "motion.telexRollDegPerChar",
+      "motion.telexTear.moveMm",
+      "motion.telexTear.fallMm",
+      "motion.telexTear.euler",
+      "shiftClose.slip.typeLines",
+      "shiftClose.slip.typewriterLocalStart",
+      "shiftClose.slip.typewriterLocalExit",
+      "shiftClose.slip.typewriterLocalEuler",
+      "shiftClose.slip.tongueOffsetMm"
+    ],
+    "changed": []
   }
 }
