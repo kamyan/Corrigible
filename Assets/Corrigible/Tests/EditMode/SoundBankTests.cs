@@ -179,6 +179,8 @@ namespace Corrigible.Tests
                 ["emme"] = new[] { ("EvDrain", 1f) },
                 ["islik"] = new[] { ("EvValveWhistle", .8f) }, ["tup_uc"] = new[] { ("EvTubeLaunch", 1f), ("EvTubeLand", 1f) },
                 ["yag"] = new[] { ("EvOilSlide", .7f) },
+                // Tesis aşama 12: Yalpa'nın yatışı (yeni ses yok)
+                ["yalpa"] = new[] { ("EvShelfRoll", .8f) },
             };
             var src = File.ReadAllText(BoardSource);
             int a = src.IndexOf("IEnumerator EventFx(", StringComparison.Ordinal);

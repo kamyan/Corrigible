@@ -94,16 +94,13 @@ namespace Corrigible.Tests
         {
             var started = sim.StartLiberationRaid("weu_1");
             Assert.IsTrue(started.Ok, started.Msg);
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Down = 3, Hp = { 0, 0, 0 }, Armor = { 0, 0, 0 } }).Ok);
+            FacilityKit.ResolveRaid(sim, false, 1, 1, 1);
         }
 
         /// <summary>Kadro kayıpsız geri çekilir; plan kilitli kalır.</summary>
         static void RetreatUnharmed(Simulation sim)
         {
-            var squad = sim.PlanningSquad();
-            var result = new RaidResult { Retreat = true };
-            foreach (var slot in squad) { result.Hp.Add(slot.Hp); result.Armor.Add(slot.Armor); }
-            Assert.IsTrue(sim.ResolveRaid(result).Ok);
+            FacilityKit.ResolveRaid(sim, false);
         }
 
         static uint After(uint state, int draws)
@@ -168,7 +165,7 @@ namespace Corrigible.Tests
         }
 
         /// <summary>Varsayılan denge (yalnız alarm kapalı), kimse karar vermez: üretilen grupların zaman çizelgesi (değerler gerçek Core'dan üretildi).</summary>
-        static List<string> Timeline(Simulation sim, int groups, int lastShift)
+        internal static List<string> Timeline(Simulation sim, int groups, int lastShift)
         {
             var lines = new List<string>();
             int seen = 0;
@@ -194,14 +191,14 @@ namespace Corrigible.Tests
             var expected = new[]
             {
                 "vardiya 4 · gelis 4 · son 6 · sonraki 7 · acil 0 · aday 2 · rng 3215543326",
-                "resident-9 Dilan craft k2 saglam+devre tek_basina - can3/3 h4 g1 yatis0 usta2",
-                "resident-10 Yalcin cook k1 erzak cift_kayit - can4/4 h2 g1 yatis0 usta2",
+                "resident-9 June craft k2 saglam+devre tek_basina - can3/3 h4 g1 yatis0 usta2",
+                "resident-10 Bernard cook k1 erzak cift_kayit - can4/4 h2 g1 yatis0 usta2",
                 "vardiya 7 · gelis 7 · son 9 · sonraki 10 · acil 0 · aday 4 · rng 1696107198",
-                "resident-11 Feride cook k2 devre+erzak yarasiz - can4/4 h2 g1 yatis0 usta2",
-                "resident-12 Umut craft k1 erzak cift_kayit - can4/4 h2 g1 yatis0 usta2",
+                "resident-11 Doris cook k2 devre+erzak yarasiz - can4/4 h2 g1 yatis0 usta2",
+                "resident-12 Milo craft k1 erzak cift_kayit - can4/4 h2 g1 yatis0 usta2",
                 "vardiya 10 · gelis 10 · son 12 · sonraki 14 · acil 0 · aday 6 · rng 176671070",
-                "resident-13 Ayca tek k0 saglam kefil Orhan can4/4 h2 g2 yatis0 usta2",
-                "resident-14 Levent cook k1 devre belge_yanmis - can3/3 h3 g1 yatis0 usta2",
+                "resident-13 Lena tek k0 saglam kefil Walter can4/4 h2 g2 yatis0 usta2",
+                "resident-14 Ray cook k1 devre belge_yanmis - can3/3 h3 g1 yatis0 usta2",
             };
             CollectionAssert.AreEqual(expected, seen, "gözlenen:\n" + string.Join("\n", seen));
         }
@@ -216,17 +213,17 @@ namespace Corrigible.Tests
             var expected = new[]
             {
                 "vardiya 3 · gelis 3 · son 5 · sonraki 7 · acil 0 · aday 3 · rng 3215543250",
-                "resident-9 Ece cook k0 zirh sevk_tam - can3/3 h2 g2 yatis0 usta2",
-                "resident-10 Murat emp k0 obur sevk_tam - can3/3 h2 g2 yatis0 usta2",
-                "resident-11 Aylin ana k1 erzak belge_yanmis - can4/4 h2 g1 yatis0 usta2",
+                "resident-9 Maya cook k0 zirh sevk_tam - can3/3 h2 g2 yatis0 usta2",
+                "resident-10 Owen emp k0 obur sevk_tam - can3/3 h2 g2 yatis0 usta2",
+                "resident-11 Clara ana k1 erzak belge_yanmis - can4/4 h2 g1 yatis0 usta2",
                 "vardiya 7 · gelis 7 · son 9 · sonraki 11 · acil 0 · aday 6 · rng 1696107122",
-                "resident-12 Baran emp k1 devre cift_kayit - can3/3 h2 g2 yatis0 usta2",
-                "resident-13 Banu tek k1 saglam belge_yanmis - can5/5 h2 g1 yatis0 usta2",
-                "resident-14 Ozan emp k0 erzak sevk_tam - can3/3 h3 g1 yatis0 usta2",
+                "resident-12 Hugo emp k1 devre cift_kayit - can3/3 h2 g2 yatis0 usta2",
+                "resident-13 Nora tek k1 saglam belge_yanmis - can5/5 h2 g1 yatis0 usta2",
+                "resident-14 Felix emp k0 erzak sevk_tam - can3/3 h3 g1 yatis0 usta2",
                 "vardiya 11 · gelis 11 · son 13 · sonraki 15 · acil 0 · aday 9 · rng 176670994",
-                "resident-15 Lale craft k2 saglam+devre gece_gecis - can4/4 h3 g1 yatis0 usta2",
-                "resident-16 Sinan cook k1 devre belge_yanmis - can2/2 h4 g1 yatis0 usta2",
-                "resident-17 Asli tek k2 kit+usta tek_basina - can2/2 h4 g1 yatis0 usta6",
+                "resident-15 Mabel craft k2 saglam+devre gece_gecis - can4/4 h3 g1 yatis0 usta2",
+                "resident-16 Grant cook k1 devre belge_yanmis - can2/2 h4 g1 yatis0 usta2",
+                "resident-17 Ivy tek k2 kit+usta tek_basina - can2/2 h4 g1 yatis0 usta6",
             };
             CollectionAssert.AreEqual(expected, seen, "gözlenen:\n" + string.Join("\n", seen));
         }
@@ -304,9 +301,9 @@ namespace Corrigible.Tests
             foreach (string[] tier in CandidateData.Suspicions)
             {
                 Assert.GreaterOrEqual(tier.Length, 3, "her kademede en az üç şüphe satırı");
-                foreach (string key in tier) Assert.AreNotEqual(key, CandidateData.SuspicionLine(key, "Derya"), key);
+                foreach (string key in tier) Assert.AreNotEqual(key, CandidateData.SuspicionLine(key, "Hazel"), key);
             }
-            StringAssert.Contains("Derya", CandidateData.SuspicionLine("kefil", "Derya"));
+            StringAssert.Contains("Hazel", CandidateData.SuspicionLine("kefil", "Hazel"));
             Assert.AreEqual(3, new[] { 0, 1, 2 }.Select(CandidateData.TierName).Distinct().Count());
             StringAssert.Contains(PlanningBoardData.EquipmentName("kit_emp"), CandidateData.PerkEffect("kit", b, "emp"));
         }
@@ -324,7 +321,7 @@ namespace Corrigible.Tests
                 var b = new Balance { shelterEventsEnabled = false };
                 var texts = new List<string>();
                 for (int tier = 0; tier < 3; tier++) texts.Add(CandidateData.TierName(tier));
-                foreach (string key in CandidateData.Suspicions.SelectMany(x => x)) texts.Add(CandidateData.SuspicionLine(key, "Derya"));
+                foreach (string key in CandidateData.Suspicions.SelectMany(x => x)) texts.Add(CandidateData.SuspicionLine(key, "Hazel"));
                 foreach (string perk in CandidateData.Benefits.Concat(CandidateData.Costs))
                 {
                     texts.Add(CandidateData.PerkName(perk, b));
@@ -641,9 +638,35 @@ namespace Corrigible.Tests
                 Assert.AreEqual(candidates, sim.Admission.Passed.Count);
             }
             // On kurucu adının hiçbiri havuzda yoktur; havuzda yinelenen ad yoktur
-            foreach (string founder in new[] { "Derya", "Selin", "İpek", "Deniz", "Nermin", "Zeynep", "Orhan", "Cem", "Eren", "Suna" })
+            foreach (string founder in CandidateData.Founders)
                 Assert.IsFalse(CandidateData.Names.Contains(founder), founder);
             Assert.AreEqual(64, CandidateData.Names.Distinct().Count());
+        }
+
+        /// <summary>
+        /// Sakin adları (aşama 3, TASARIM §7): 10 kurucu + 64 aday; İngilizce, ASCII, en çok 7 harf, tekrarsız (büyük-küçük harf
+        /// duyarsız; portre anahtarı küçük harftir) ve hiçbiri bir YZ adına benzemez (ilk dört harfi ortak değil, onu içermez).
+        /// </summary>
+        [Test]
+        public void ResidentNames_AreEnglishAsciiAndDisjoint()
+        {
+            Assert.AreEqual(10, CandidateData.Founders.Length);
+            Assert.AreEqual(64, CandidateData.Names.Length);
+            var all = CandidateData.Founders.Concat(CandidateData.Names).ToList();
+            Assert.AreEqual(all.Count, all.Select(n => n.ToLowerInvariant()).Distinct().Count(), "adlar tekrarsız (küçük harfle de)");
+            var shape = new System.Text.RegularExpressions.Regex("^[A-Z][a-z]{1,6}$");
+            foreach (string name in all) Assert.IsTrue(shape.IsMatch(name), name + ": İngilizce, ASCII, 2–7 harf");
+            foreach (string name in all)
+            {
+                string n = name.ToLowerInvariant();
+                foreach (var region in GameData.Regions)
+                {
+                    string ai = region.Ai.ToLowerInvariant();
+                    Assert.IsFalse(n.Length >= 4 && ai.StartsWith(n.Substring(0, 4), StringComparison.Ordinal)
+                        || ai.Length >= 4 && n.StartsWith(ai.Substring(0, 4), StringComparison.Ordinal)
+                        || n.Contains(ai) || ai.Contains(n), name + " YZ adına benziyor: " + region.Ai);
+                }
+            }
         }
 
         // ---------------------------------------------------------------- seçim, geri çevirme, süre aşımı
@@ -946,7 +969,8 @@ namespace Corrigible.Tests
             var squad = sim.PlanningSquad();
             Assert.AreEqual(id, squad[0].PersonId);
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Retreat = true, Hp = { 0, squad[1].Hp, squad[2].Hp }, Armor = { 0, squad[1].Armor, squad[2].Armor }, Left = { 0 } }).Ok);
+            // Kişi sahada kalır (tesiste geri çekilmede yerde kalan düşen ölür)
+            FacilityKit.ResolveRaid(sim, false, 1, 0, 0);
             Assert.IsFalse(sim.Board.Person(id).Alive);
             Assert.IsFalse(sim.Board.Equipment.Any(e => e.OwnerId == id), "ölen kişinin bağlı teçhizatı da yok olur");
             Assert.IsFalse(sim.Board.Equipment.Any(e => e.Bound));
@@ -1198,10 +1222,13 @@ namespace Corrigible.Tests
 
         // ---------------------------------------------------------------- acil grup
 
+        /// <summary>Dört kişilik sığınak. Acil grup testleri "üçün altı" kuralının eşiğini sabit 3 tutar (varsayılan tek kip denge
+        /// turundan beri 4); eşiğin kendisi <see cref="EmergencyGroup_ThresholdFollowsBalance"/>'da.</summary>
         static Balance Four(int knock)
         {
             var b = Bal(knock);
             b.boardStartResidents = 4;
+            b.candidateEmergencyBelow = 3;
             return b;
         }
 
@@ -1255,6 +1282,40 @@ namespace Corrigible.Tests
             for (int i = 0; i < 3; i++) Close(sim);
             Assert.AreEqual(groups, sim.Admission.GeneratedGroups);
             Assert.AreEqual(0, sim.Admission.Group.Count);
+        }
+
+        /// <summary>
+        /// Eşik <c>candidateEmergencyBelow</c>'dan okunur (varsayılan 4, tek kip denge turu; varsayılanın kendisi
+        /// <see cref="Defaults_AndVersion17"/>'de): altı kişilik sığınak bütün kadrosunu kaybedip üç kişiye inince eşik 4'te acil grup
+        /// gelir, eşik 3'te gelmez; yedi kişilik sığınak dörde inince eşik 4'te de gelmez.
+        /// </summary>
+        [Test]
+        public void EmergencyGroup_ThresholdFollowsBalance()
+        {
+            foreach (int below in new[] { 4, 3 })
+            {
+                var b = Bal(100);
+                b.boardStartResidents = 6;
+                b.candidateEmergencyBelow = below;
+                var sim = New(79, b);
+                Close(sim);
+                Assert.AreEqual(0, sim.Admission.Group.Count, "altı canlı: acil grup yok");
+                LoseWholeSquad(sim);
+                Assert.AreEqual(3, sim.Board.People.Count(p => p.Alive));
+                Close(sim);
+                Assert.AreEqual(below > 3, sim.Admission.GroupEmergency, "eşik " + below);
+                Assert.AreEqual(below > 3 ? 3 : 0, sim.Admission.Group.Count, "eşik " + below);
+            }
+            var seven = Bal(100);
+            seven.boardStartResidents = 7;
+            seven.candidateEmergencyBelow = 4;
+            var four = New(79, seven);
+            Close(four);
+            LoseWholeSquad(four);
+            Assert.AreEqual(4, four.Board.People.Count(p => p.Alive));
+            Close(four);
+            Assert.IsFalse(four.Admission.GroupEmergency, "dört canlı eşik 4'ün altında değil");
+            Assert.AreEqual(0, four.Admission.Group.Count);
         }
 
         /// <summary>
@@ -1396,7 +1457,9 @@ namespace Corrigible.Tests
             Assert.IsTrue(sim.Shelter.Starving, "test düzeni: kapanış aç");
             Assert.AreEqual(1, sim.Board.Equipment.Count(e => e.Kind == "kit_tek"));
             CollectionAssert.Contains(sim.Board.LastCompleted, "kit_tek");
-            Assert.AreEqual(0, sim.Board.Orders.Count);
+            // Tek kip (tesis aşama 8, K19): açık emir varken eksik rol kiti emrin dışında üretilir; üretici o kapanış kiti yapar, emir ilerlemez
+            Assert.AreEqual(1, sim.Board.Orders.Count);
+            Assert.IsFalse(sim.Board.Orders[0].Started);
 
             // Eksik olmayan kit ve zırh aç kapanışta üretilmez; girdiler harcanmaz
             foreach (string recipe in new[] { "kit_emp", "armor" })
@@ -1617,13 +1680,13 @@ namespace Corrigible.Tests
             Assert.AreEqual(2, b.candidateGroupMin);
             Assert.AreEqual(3, b.candidateGroupMax);
             Assert.AreEqual(2, b.candidateWaitShifts);
-            Assert.AreEqual(3, b.candidateEmergencyBelow);
+            Assert.AreEqual(4, b.candidateEmergencyBelow, "tek kip denge turu (2026-11-22): 3 → 4");
             Assert.AreEqual(0, b.boardMissingKitCircuits);
             Assert.IsTrue(b.boardStarvingKitProduction);
-            Assert.AreEqual(17, GameRecord.CurrentVersion, "sonlar (biçim 17); aday grubu, kişiye bağlı teçhizat, acil grup ve kit kilidi biçim 16'da girdi; eski biçim yüklenmez");
-            Assert.AreEqual(17, new GameRecord().version);
+            Assert.AreEqual(22, GameRecord.CurrentVersion, "22: görevde iyileşme; 21: tesis baskını tek kip; 20: g5 paket yerleşimi; 19: tesis oda zinciri (raid_room), tesis parmak izi; üretilmiş harita (biçim 18); sonlar (biçim 17); aday grubu, kişiye bağlı teçhizat, acil grup ve kit kilidi biçim 16'da girdi; eski biçim yüklenmez");
+            Assert.AreEqual(22, new GameRecord().version);
             var sim = New();
-            Assert.AreEqual(17, sim.Record.version);
+            Assert.AreEqual(22, sim.Record.version);
             Assert.AreEqual(0, sim.Admission.Group.Count);
             Assert.AreEqual(-1, sim.Admission.GroupArrivalShift);
             Assert.AreEqual(0, sim.Admission.Passed.Count);

@@ -63,15 +63,41 @@ namespace Corrigible.Desk
         // Canlandırma başlangıçları (gerçek zaman); −1 = yok
         float stampAt = -1, eraseAt = -1, arriveAt = -1, arriveSeconds = 0.3f, reoccAt = -1, blinkAt = -1, retakenAt = -1;
         int retaken = -1;
+        /// <summary>Tesis aşama 11: nabız atan kuşatma işaretinin sırası (−1 yok); kuşatma bitince işaret düz rengine döner.</summary>
+        int pulsing = -1;
         RectTransform arriving;
         float hatchAlphaA, hatchAlphaB, eraseFrom;
         float labelWidth, labelHalfHeight;
         readonly System.Collections.Generic.List<Vector2> leadPoints = new System.Collections.Generic.List<Vector2>(2);
 
+        /// <summary>Sahnedeki dünya haritası verisi; üretilmiş harita uygulanırken saklanır, anahtar 0'a dönüşte geri konur.</summary>
+        sealed class SceneData
+        {
+            public Vector2 label, stamp, lead, root, stripOffset;
+            public float labelSize, maxLineWidth;
+            public StripSide stripSide;
+            public RegionMeshGraphic.Polygon[] hit, hatchA, hatchB, tint;
+            public Vector2[] contour;
+        }
+        SceneData sceneData;
+        // Üretilmiş haritada ad kutusu (iki dilin büyüğü): şerit, yüzde ve raptiye iki dilde aynı yerde durur
+        Vector2 generatedBox;
+        // Üretilmiş haritada ÖZGÜR damgasının ölçeği (dar bölgede küçülür) ve YENİDEN İŞGAL'in şeride göre yeri
+        float stampScale = 1;
+        Vector2 reoccupiedOffset = GeneratedMapLayout.ReoccupiedBelow;
+        // Üretilmiş haritada raptiyenin yanı (+1 adın sağı, −1 solu; 0: şeride göre, şerit soldaysa sağda)
+        int pinSide;
         public string RegionId => regionId;
         public RegionMeshGraphic Hit => hit;
         public Vector2 LabelPoint => labelPoint;
+        /// <summary>ÖZGÜR damgasının merkezi (harita pikseli).</summary>
+        public Vector2 StampPoint => stampPoint;
+        /// <summary>Üretilmiş haritanın geometrisi ve yerleşimi uygulanmış (anahtar 1).</summary>
+        public bool Generated => sceneData != null;
         public MapRegionState State => state;
+        /// <summary>Tesis aşama 11: nabız atan kuşatma işaretinin sırası (yoksa −1) ve cephe damgasının yazısı (gizliyse null).</summary>
+        public int SiegeMark => pulsing;
+        public string StampWord => reoccStamp != null && reoccStamp.gameObject.activeSelf ? reoccWord.text : null;
         /// <summary>Cephe raptiyesinin harita noktası (görev fişinin ipi buraya bağlanır).</summary>
         public Vector2 PinPoint => Design(pin.rectTransform);
         /// <summary>Adayın ADAY damgasının sağ ucu (onay fişinin ipi).</summary>
@@ -124,8 +150,11 @@ namespace Corrigible.Desk
             }
             if (eraseAt < 0) ApplyHatchAlpha();
 
-            // Seçim / üzerinde dolgusu
-            var fill = s.Selected ? t.ColorOf("mapLiberation.selectFill") : hovered ? t.ColorOf("mapLiberation.hoverFill") : Color.clear;
+            // Seçim / üzerinde dolgusu; üretilmiş haritada aday (seçilebilir komşu) açık sarı yıkamayla vurgulanır
+            bool candidateWash = Generated && s.Kind == MapRegionKind.Candidate;
+            var fill = s.Selected ? t.ColorOf("mapLiberation.selectFill")
+                : hovered ? (candidateWash ? t.ColorOf("mapLiberation.candidateHoverFill") : t.ColorOf("mapLiberation.hoverFill"))
+                : candidateWash ? t.ColorOf("mapLiberation.candidateFill") : Color.clear;
             tint.gameObject.SetActive(fill.a > 0);
             tint.SetAppearance(fill);
 
@@ -140,7 +169,8 @@ namespace Corrigible.Desk
             else if (s.Kind == MapRegionKind.Candidate)
             {
                 contour.color = s.Selected ? t.ColorOf("ink") : t.ColorOf("mapLiberation.candidateContour");
-                contour.Thickness = t.Number("mapLiberation.candidateContour.width", 2.5f);
+                // Üretilmiş haritada kontur sınırın içine kaydırılmış: koyu sınır çizgisinin yanında daha kalın kesik grafit
+                contour.Thickness = Generated ? t.NumberOf("space.mapGen.candidateContourWidth", 3.4f) : t.Number("mapLiberation.candidateContour.width", 2.5f);
                 contour.SetDash(new[] { t.Number("mapLiberation.candidateContour.dash[0]", 12), t.Number("mapLiberation.candidateContour.dash[1]", 8) });
             }
 
@@ -148,6 +178,118 @@ namespace Corrigible.Desk
             Below(s, t);
             if (stampAt < 0 && eraseAt < 0) ApplyStamp(1);
             if (arriveAt < 0) ApplyArrival(candidateStamp, 1);
+        }
+
+        // ---------- Üretilmiş harita (anahtar 1) ----------
+
+        /// <summary>
+        /// Üretilmiş haritanın bölge geometrisi ve yerleşimi (<see cref="GeneratedMapLayout"/>): hücre çokgenleri dört dolguya
+        /// (isabet, iki tarama, seçim), bölgenin içe kaydırılmış halkaları kontura gider; etiket noktası, punto, iki satır eşiği,
+        /// cephe şeridinin yanı ve ÖZGÜR damgası sahnedeki elle girilmiş değerlerin yerine geçer; denizdeki ad çizgisi kalkar.
+        /// Sahnedeki dünya verisi ilk çağrıda saklanır (<see cref="ClearGenerated"/> geri koyar); sahne asset'i değişmez.
+        /// </summary>
+        public void SetGenerated(RegionMeshGraphic.Polygon[] polygons, System.Collections.Generic.IReadOnlyList<System.Collections.Generic.IReadOnlyList<Vector2>> outline,
+            GeneratedMapLayout.Placement place)
+        {
+            var root = (RectTransform)transform;
+            if (sceneData == null)
+                sceneData = new SceneData
+                {
+                    label = labelPoint, stamp = stampPoint, lead = leadPoint, root = root.anchoredPosition,
+                    labelSize = labelSize, maxLineWidth = maxLineWidth, stripSide = stripSide, stripOffset = stripOffset,
+                    hit = Copy(hit), hatchA = Copy(hatchA), hatchB = Copy(hatchB), tint = Copy(tint),
+                    contour = contour != null ? System.Linq.Enumerable.ToArray(contour.Points) : null,
+                };
+            foreach (var g in new[] { hit, hatchA, hatchB, tint }) if (g != null) g.SetPolygons(polygons);
+            if (contour != null) contour.SetPathsTopLeft(outline, Vector2.zero, true);
+            labelPoint = place.Label;
+            stampPoint = place.Stamp;
+            labelSize = place.FontSize;
+            maxLineWidth = place.MaxLineWidth;
+            stripSide = place.StripSide;
+            stripOffset = place.StripOffset;
+            generatedBox = place.LabelBox;
+            stampScale = place.StampScale > 0 ? place.StampScale : 1;
+            reoccupiedOffset = place.ReoccupiedOffset;
+            pinSide = place.PinRight ? 1 : -1;
+            leadPoint = Vector2.zero;
+            root.anchoredPosition = Local(place.Label);
+            if (state != null) Bind(state);
+        }
+
+        /// <summary>Dünya haritasına dönüş (anahtar 0): sahnedeki çokgenler, kontur ve yerleşim geri konur.</summary>
+        public void ClearGenerated()
+        {
+            if (sceneData == null) return;
+            var d = sceneData;
+            sceneData = null;
+            if (hit != null) hit.SetPolygons(d.hit);
+            if (hatchA != null) hatchA.SetPolygons(d.hatchA);
+            if (hatchB != null) hatchB.SetPolygons(d.hatchB);
+            if (tint != null) tint.SetPolygons(d.tint);
+            if (contour != null && d.contour != null) contour.SetPoints(d.contour);
+            labelPoint = d.label;
+            stampPoint = d.stamp;
+            leadPoint = d.lead;
+            labelSize = d.labelSize;
+            maxLineWidth = d.maxLineWidth;
+            stripSide = d.stripSide;
+            stripOffset = d.stripOffset;
+            generatedBox = Vector2.zero;
+            stampScale = 1;
+            reoccupiedOffset = GeneratedMapLayout.ReoccupiedBelow;
+            pinSide = 0;
+            ((RectTransform)transform).anchoredPosition = d.root;
+            if (state != null) Bind(state);
+        }
+
+        static RegionMeshGraphic.Polygon[] Copy(RegionMeshGraphic g) =>
+            g != null ? System.Linq.Enumerable.ToArray(g.Polygons) : System.Array.Empty<RegionMeshGraphic.Polygon>();
+
+        /// <summary>Punto ve iki satır eşiği (üretilmiş haritada yerleşimden; dünya haritasında sahneden).</summary>
+        public float LabelSize => labelSize;
+        public float MaxLineWidth => maxLineWidth;
+        public StripSide Strip => stripSide;
+
+        /// <summary>
+        /// Adın verilen puntodaki tercih edilen boyu (etiketin kendi TMP'siyle, harf aralığı 4); yerleşim için. Etiketin
+        /// puntosunu değiştirmez.
+        /// </summary>
+        public Vector2 MeasureLabel(string text, float fontSize)
+        {
+            float size = label.fontSize, spacing = label.characterSpacing;
+            label.fontSize = fontSize;
+            label.characterSpacing = 4;
+            var v = label.GetPreferredValues(text);
+            label.fontSize = size;
+            label.characterSpacing = spacing;
+            return v;
+        }
+
+        /// <summary>
+        /// Yerleşimin iki dile bağlı ölçüleri: yüzdeler (CP 700 28 ve cephede 32), ADAY ve YENİDEN İŞGAL damgaları; her biri
+        /// iki dilin büyüğü. Damga ve figür gibi sabit ölçüler <see cref="GeneratedMapLayout.Metrics"/>'teki varsayılanlardır.
+        /// </summary>
+        public void MeasureMetrics(GeneratedMapLayout.Metrics m)
+        {
+            float subSize = sub.fontSize;
+            sub.fontSize = 28;
+            m.Percent = Vector2.Max(sub.GetPreferredValues("%100"), sub.GetPreferredValues("100%")) + new Vector2(6, 2);
+            sub.fontSize = 32;
+            m.FrontPercent = Vector2.Max(sub.GetPreferredValues("%66,7"), sub.GetPreferredValues("66.7%")) + new Vector2(6, 2);
+            sub.fontSize = subSize;
+            string candidateEn = DeskLoc.Instance.In("ADAY", Corrigible.Core.Loc.English);
+            m.Candidate = Vector2.Max(candidateWord.GetPreferredValues("ADAY"), candidateWord.GetPreferredValues(candidateEn)) + new Vector2(22, 12);
+            string reoccEn = DeskLoc.Instance.In("YENİDEN İŞGAL", Corrigible.Core.Loc.English);
+            m.Reoccupied = Vector2.Max(reoccWord.GetPreferredValues("YENİDEN İŞGAL"), reoccWord.GetPreferredValues(reoccEn)) + new Vector2(24, 14);
+            // Tesis aşama 11: aynı yuvaya KUŞATMA damgası da iner (iki dilin büyüğü; bugünkü sözcüklerden kısa, yerleşim değişmez)
+            string siegeEn = DeskLoc.Instance.In("KUŞATMA", Corrigible.Core.Loc.English);
+            m.Reoccupied = Vector2.Max(m.Reoccupied, Vector2.Max(reoccWord.GetPreferredValues("KUŞATMA"), reoccWord.GetPreferredValues(siegeEn)) + new Vector2(24, 14));
+            // Damga eğik basılır: kutu dönmüş dikdörtgenin sınırı (eğiklik sahnede)
+            float tilt = Mathf.Abs(Mathf.DeltaAngle(0, reoccStamp.localEulerAngles.z)) * Mathf.Deg2Rad;
+            m.Reoccupied = new Vector2(m.Reoccupied.x * Mathf.Cos(tilt) + m.Reoccupied.y * Mathf.Sin(tilt), m.Reoccupied.x * Mathf.Sin(tilt) + m.Reoccupied.y * Mathf.Cos(tilt));
+            if (stamp != null) m.FreeStamp = Mathf.Max(stamp.rect.width, stamp.rect.height) * (Mathf.Cos(0.12f) + Mathf.Sin(0.12f)) * 1.1f;
+            if (pin != null) m.Pin = Mathf.Max(pin.rectTransform.rect.width, pin.rectTransform.rect.height);
         }
 
         /// <summary>Ad: CP 700, hale; seçili / üzerindeyken sarı çip (halesiz). Dar yerde iki satır, denizdeki adda ince çizgi.</summary>
@@ -161,6 +303,8 @@ namespace Corrigible.Desk
             var size = label.GetPreferredValues(name);
             labelWidth = size.x;
             labelHalfHeight = size.y * 0.5f;
+            // Üretilmiş haritada yerleşim iki dilin büyüğüyle yapıldı: altındakiler dilden bağımsız aynı yerde
+            if (generatedBox != Vector2.zero) { labelWidth = generatedBox.x; labelHalfHeight = generatedBox.y * 0.5f; }
             label.rectTransform.sizeDelta = size + new Vector2(4, 0);
 
             bool chipOn = s.Selected || hovered && s.Kind != MapRegionKind.Free;
@@ -184,7 +328,7 @@ namespace Corrigible.Desk
         }
 
         /// <summary>“GÜNEY AMERİKA” → iki satır; tireli adda tireden sonra (“JAPONYA-” / “KORE”).</summary>
-        static string TwoLines(string name)
+        public static string TwoLines(string name)
         {
             int mid = name.Length / 2, best = -1;
             for (int i = 0; i < name.Length; i++)
@@ -256,19 +400,29 @@ namespace Corrigible.Desk
                 SetGlyph(signatureGlyph, signature, t.ColorOf("status.threat"), origin + new Vector2(trait != null ? 46 : 0, 0));
             }
 
-            // YENİDEN İŞGAL: karşı saldırının aldığı sektör geri alınana kadar, saha işaretlerinin sağ altında
-            bool reocc = front && s.Reoccupied >= 0;
+            // Tesis aşama 11: kuşatılan sektörün ✓ işareti nabız atar (Update); kuşatma bitince düz rengine döner
+            if (pulsing >= 0 && pulsing != s.Siege && pulsing < marks.Length)
+            {
+                marks[pulsing].color = Color.white;
+                marks[pulsing].rectTransform.localScale = Vector3.one;
+            }
+            pulsing = (front || free) && s.Siege >= 0 && s.Siege < marks.Length ? s.Siege : -1;
+
+            // YENİDEN İŞGAL: karşı saldırının aldığı sektör geri alınana kadar, saha işaretlerinin sağ altında. Tesis aşama 11: kuşatma
+            // sürerken aynı yerde KUŞATMA (yalnız cephede; özgür bölgenin yerleşiminde damgaya yer yok, K39-3)
+            bool siege = front && s.Siege >= 0;
+            bool reocc = front && (s.Reoccupied >= 0 || siege);
             reoccStamp.gameObject.SetActive(reocc);
             if (reocc)
             {
-                reoccWord.text = Corrigible.Core.Loc.T("YENİDEN İŞGAL");
+                reoccWord.text = siege ? Corrigible.Core.Loc.T("KUŞATMA") : Corrigible.Core.Loc.T("YENİDEN İŞGAL");
                 reoccStamp.sizeDelta = reoccWord.GetPreferredValues(reoccWord.text) + new Vector2(24, 14);
-                reoccStamp.anchoredPosition = Local(strip + new Vector2(150, 128));
+                reoccStamp.anchoredPosition = Local(strip + reoccupiedOffset);
             }
 
-            // Raptiye: adın solunda (şerit soldaysa sağında), ilk satır hizasında
+            // Raptiye: adın solunda (şerit soldaysa sağında; üretilmiş haritada yerleşimin seçtiği yanda), ilk satır hizasında
             pin.gameObject.SetActive(front);
-            float side = stripSide == StripSide.Left ? 1 : -1;
+            float side = pinSide != 0 ? pinSide : stripSide == StripSide.Left ? 1 : -1;
             pin.rectTransform.anchoredPosition = Local(new Vector2(side * (labelWidth * 0.5f + 18), -12));
 
             // Özgür damgası: “ÖZGÜR · V.011”, sabit yerde (adların dışında); taze mürekkep α .97 ve 1,1 kat, sonra .86
@@ -382,6 +536,13 @@ namespace Corrigible.Desk
                 marks[retaken].rectTransform.localScale = Vector3.one * (now < retakenAt ? 0 : p < 0.6f ? Mathf.Lerp(0, 1.3f, p / 0.6f) : Mathf.Lerp(1.3f, 1, (p - 0.6f) / 0.4f));
                 if (p >= 1) { retakenAt = -1; retaken = -1; }
             }
+            // Tesis aşama 11: kuşatma nabzı (1,2 s): ✓ tehdit rengine yaklaşır ve hafifçe büyür
+            if (pulsing >= 0 && pulsing < marks.Length && marks[pulsing].gameObject.activeSelf && retaken != pulsing)
+            {
+                float k = 0.5f + 0.5f * Mathf.Sin(now * Mathf.PI * 2 / 1.2f);
+                marks[pulsing].color = Color.Lerp(Color.white, t.ColorOf("status.threat"), 0.65f * k);
+                marks[pulsing].rectTransform.localScale = Vector3.one * (1 + 0.12f * k);
+            }
             if (blinkAt >= 0 && state != null && state.Reoccupied >= 0 && state.Reoccupied < marks.Length)
             {
                 // İki yanıp sönme: 0,15 s sönük, 0,15 s yanık
@@ -431,7 +592,7 @@ namespace Corrigible.Desk
         {
             if (stamp == null) return;
             float fresh = state != null && state.FreshStamp ? 1.1f : 1;
-            stamp.localScale = Vector3.one * Mathf.Lerp(1.35f, 1, p) * fresh;
+            stamp.localScale = Vector3.one * Mathf.Lerp(1.35f, 1, p) * fresh * stampScale;
             var g = stamp.GetComponent<CanvasGroup>();
             if (g != null) g.alpha = p;
         }

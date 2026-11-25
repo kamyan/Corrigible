@@ -124,6 +124,37 @@ namespace Corrigible.Desk.Tests
             Assert.IsFalse(File.Exists(SaveStore.SavePath + ".writing"));
         }
 
+        /// <summary>
+        /// Kayıt 21 (tek kip: tek tahta kaldırıldı, tesis baskını tek baskın kipi): sürüm 20 kaydı (tek tahtada ya da tesiste) yüklenmez;
+        /// yeni oyun yazılırken <c>.v20.backup</c> olarak aynen arşivlenir. Aynı kayıt güncel sürümle yüklenir (red yalnız sürümden).
+        /// </summary>
+        [Test]
+        public void Load_RejectsVersion20()
+        {
+            Assert.AreEqual(22, GameRecord.CurrentVersion);
+            var sim = NewGame();
+            Close(sim);
+            sim.Record.day = sim.S.Day;
+            var current = JsonUtility.FromJson<GameRecord>(JsonUtility.ToJson(sim.Record));
+            File.WriteAllText(SaveStore.SavePath, JsonUtility.ToJson(current));
+            Assert.IsNotNull(SaveStore.Load(), "güncel sürüm yüklenir");
+
+            current.version = 20;
+            string old = JsonUtility.ToJson(current);
+            File.WriteAllText(SaveStore.SavePath, old);
+            Assert.IsNull(SaveStore.Load(), "sürüm 20 yüklenmez");
+            current.facility = "";
+            File.WriteAllText(SaveStore.SavePath, JsonUtility.ToJson(current));
+            Assert.IsNull(SaveStore.Load(), "tek tahta kaydı (izsiz, sürüm 20) yüklenmez");
+            File.WriteAllText(SaveStore.SavePath, old);
+
+            var fresh = NewGame(27);
+            Assert.IsTrue(fresh.PrintShift().Ok);
+            SaveStore.Write(fresh.Record);
+            Assert.AreEqual(old, File.ReadAllText(SaveStore.SavePath + ".v20.backup"), "eski kayıt aynen arşivlenir");
+            Assert.AreEqual(27u, SaveStore.Load().seed);
+        }
+
         [Test]
         public void UnreadableOldJson_IsPreservedAndDoesNotPreventSavingTheNewGame()
         {
@@ -196,6 +227,41 @@ namespace Corrigible.Desk.Tests
             Assert.IsTrue(fresh.PrintShift().Ok);
             SaveStore.Write(fresh.Record);
             Assert.AreEqual(retired, File.ReadAllText(SaveStore.SavePath + ".retired.backup"), "yeni oyun yazılırken arşivlenir");
+            Assert.AreEqual(27u, SaveStore.Load().seed);
+        }
+
+        /// <summary>
+        /// Harita kayda yazılmaz, tohum ve dengeden yeniden üretilir. Aynı sürümde parmak izi tutmayan (üretici değişmiş) ya da izi
+        /// eksik kayıt yüklenmez ve yeni oyun yazılırken üstüne yazılmadan ".map.backup" olarak saklanır. Üretilmiş haritalı
+        /// (anahtar 1) kayıt diskten yüklenir.
+        /// </summary>
+        [Test]
+        public void Load_RejectsAMapFingerprintMismatch_AndWriteArchivesIt()
+        {
+            var generated = Simulation.NewGame(31, new Balance
+            { shelterEventsEnabled = false, planningBoardEnabled = true, liberationMapGen = 1, admissionKnockMin = 1, admissionKnockMax = 1 });
+            Close(generated);
+            File.WriteAllText(SaveStore.SavePath, JsonUtility.ToJson(generated.Record));
+            var loaded = SaveStore.Load();
+            Assert.IsNotNull(loaded, "üretilmiş haritalı kayıt yüklenir");
+            StringAssert.StartsWith("m1-", loaded.map);
+            Assert.AreEqual(generated.MapFingerprint, Replay.Restore(loaded).MapFingerprint);
+
+            var sim = NewGame();
+            Close(sim);
+            var rec = JsonUtility.FromJson<GameRecord>(JsonUtility.ToJson(sim.Record));
+            rec.map = null;
+            File.WriteAllText(SaveStore.SavePath, JsonUtility.ToJson(rec));
+            Assert.IsNull(SaveStore.Load(), "izi eksik kayıt yüklenmez");
+            rec.map = "m0-00000000";
+            string stale = JsonUtility.ToJson(rec);
+            File.WriteAllText(SaveStore.SavePath, stale);
+            Assert.IsNull(SaveStore.Load(), "izi tutmayan kayıt yüklenmez");
+
+            var fresh = NewGame(27);
+            Assert.IsTrue(fresh.PrintShift().Ok);
+            SaveStore.Write(fresh.Record);
+            Assert.AreEqual(stale, File.ReadAllText(SaveStore.SavePath + ".map.backup"), "yeni oyun yazılırken arşivlenir");
             Assert.AreEqual(27u, SaveStore.Load().seed);
         }
 

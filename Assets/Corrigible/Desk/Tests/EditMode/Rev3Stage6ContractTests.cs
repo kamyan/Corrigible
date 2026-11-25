@@ -73,9 +73,10 @@ namespace Corrigible.Desk.Tests
             CollectionAssert.AreEqual(new[] { "Admit", "Restricted", "Reject", "Aid" }, Enum.GetNames(typeof(StampChoice)), "sahnede sayıyla (0 KABUL, 2 GERİ ÇEVİR)");
             CollectionAssert.AreEqual(new[] { "Document", "Strip", "Slip", "Request", "Carbon", "Candidate", "GroupSlip" }, Enum.GetNames(typeof(AdmissionPaper)),
                 "KOS aşama 2: aday kartı ve grup fişi sonda");
-            CollectionAssert.AreEqual(new[] { "DoorLastShift", "Rations", "Exposure", "ShelterShort" }, Enum.GetNames(typeof(SlipWarningKind)),
+            CollectionAssert.AreEqual(new[] { "DoorLastShift", "Rations", "Exposure", "ShelterShort", "Siege" }, Enum.GetNames(typeof(SlipWarningKind)),
                 "fiş verisi yan dosyada sayıyla saklanır: yeni tür sonda; aşama 7'de sökülen 0–3 boş");
-            CollectionAssert.AreEqual(new[] { 4, 5, 6, 7 }, Enum.GetValues(typeof(SlipWarningKind)).Cast<int>().ToArray(), "sayılar korunur");
+            // Tesis aşama 11: KARŞI SALDIRI (Siege = 8) sona eklendi
+            CollectionAssert.AreEqual(new[] { 4, 5, 6, 7, 8 }, Enum.GetValues(typeof(SlipWarningKind)).Cast<int>().ToArray(), "sayılar korunur");
             CollectionAssert.AreEqual(new[]
             {
                 "CounterDown", "Drawer", "StampLift", "CounterFold", "StampPress", "StampReturn", "Deny", "DocDrop", "Knock", "Open", "Close",

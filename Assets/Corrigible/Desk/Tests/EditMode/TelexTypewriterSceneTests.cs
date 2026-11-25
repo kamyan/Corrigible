@@ -14,8 +14,9 @@ namespace Corrigible.Desk.Tests
     /// Teleks modeli değişimi (kullanıcının daktilo modeli, <c>Assets/Typewriter</c>): kaydedilmiş <c>DeskGame</c>'de teleksin işlevsel
     /// parçaları daktiloya bağlı. Eski Rev3 Telex gövdesi yok; daktilo çarpıştırıcısız; teleks kâğıdı silindirden çıkar (dört yuva
     /// silindirin üstünde, alt kenarı silindirin altında), rulo arkada ve <c>Teleprinter.roll</c>; TELEKS plakası daktilonun
-    /// kapağında; kök hedef kutusu silindirin altında kalır (fiş ışını alır), kâğıdın kendi hedefi var. Sahne açıkken (kullanıcının
-    /// sahnesi) atlanır; sahne kaydedilmeden kapatılır. Ayrıca kâğıdın okunurluk ölçüsü (saf düzenek) ve koparılan kâğıdın yolu.
+    /// kapağında; kök hedef kutusu silindirin altında kalır (fiş ışını alır), kâğıdın kendi hedefi fişin çarpıştırıcısıyla aynı yerde
+    /// (tek kâğıt akışı: kâğıt yokken kapalı). Sahne açıkken (kullanıcının sahnesi) atlanır; sahne kaydedilmeden kapatılır. Ayrıca
+    /// kâğıdın okunurluk ölçüsü (saf düzenek), düşen kâğıdın yolu ve yeni kâğıdın yazım çizgisinden başlaması.
     /// </summary>
     public sealed class TelexTypewriterSceneTests
     {
@@ -156,6 +157,24 @@ namespace Corrigible.Desk.Tests
             var torn = Reference<Transform>(printer, "torn");
             Assert.Less(Vector3.Distance(torn.position, sheet.bounds.center), 0.06f, "koparılan kopya kâğıdın yerinde");
             Assert.IsFalse(torn.gameObject.activeSelf);
+
+            // Tek kâğıt akışı: kâğıdın kökü, hedefi ve yazım çizgisi bağlı; yazım çizgisi kâğıt düzleminde, silindirin üstünde
+            Assert.AreSame(sheet.transform.parent, Reference<Transform>(printer, "sheet"), "Teleprinter.sheet = TelexPaper kökü");
+            Assert.AreSame(tp.Find("Paper target").GetComponent<BoxCollider>(), Reference<Collider>(printer, "sheetTarget"), "Teleprinter.sheetTarget = Paper target");
+            var line = Reference<Transform>(printer, "printLine");
+            Assert.IsNotNull(line, "Teleprinter.printLine");
+            Assert.AreSame(tp, line.parent);
+            var at = tp.InverseTransformPoint(line.position);
+            Assert.That(at.y, Is.InRange(0.135f, 0.155f), "yazım çizgisi silindirin üstünde");
+            Assert.Less(at.y, tp.InverseTransformPoint(Reference<TMP_Text>(printer, "frontCode").transform.position).y, "kod yuvasının altında");
+            // kâğıt düzlemi: alt ve üst kenarın orta noktalarından geçen doğru (Teleprinter yereli y–z)
+            var pts = mesh.vertices.Select(v => tp.InverseTransformPoint(sheet.transform.TransformPoint(v))).ToList();
+            float lowY = pts.Min(p => p.y), highY = pts.Max(p => p.y);
+            var lo = pts.Where(p => p.y < lowY + 0.002f).Aggregate(Vector3.zero, (a, c) => a + c) / pts.Count(p => p.y < lowY + 0.002f);
+            var hi = pts.Where(p => p.y > highY - 0.002f).Aggregate(Vector3.zero, (a, c) => a + c) / pts.Count(p => p.y > highY - 0.002f);
+            float planeZ = lo.z + (at.y - lo.y) / (hi.y - lo.y) * (hi.z - lo.z);
+            Assert.AreEqual(planeZ, at.z, 0.003f, "yazım çizgisi kâğıt düzleminde (±3 mm)");
+            Assert.Greater(tp.InverseTransformDirection(line.up).z, 0.15f, "yukarı ekseni kâğıtla arkaya yaslı");
         }
 
         /// <summary>Rulo daktilonun arkasında masada (Teleprinter.roll), besleme şeridi silindirin arkasına çıkar; ikisi de çarpıştırıcısız.</summary>
@@ -206,10 +225,11 @@ namespace Corrigible.Desk.Tests
 
         /// <summary>
         /// Hedefler: kökteki TELEKS kutusu daktilonun gövdesinde (üstü fişin çıkışının altında, silindirdeki fiş ışını alır); kâğıdın
-        /// kendi eğik kutusu aynı başlıkla; ikisi fişin kutusuyla x'te örtüşmez.
+        /// kendi eğik kutusu aynı başlıkla, fişin çarpıştırıcısıyla aynı yerde ve boyda (tek kâğıt akışı: fiş teleks kâğıdının yerinde
+        /// durur; kâğıdın hedefini <c>Teleprinter.sheetTarget</c> kâğıt yokken, yani fiş silindirdeyken kapatır).
         /// </summary>
         [Test]
-        public void Targets_BodyAndPaper_LeaveSlipClickable()
+        public void Targets_PaperTargetSharesSlipPlace_SwitchedBySheet()
         {
             RequireScene();
             var printer = One<Teleprinter>();
@@ -225,9 +245,44 @@ namespace Corrigible.Desk.Tests
             Assert.IsNotNull(dt);
             Assert.AreEqual(tp.GetComponent<DeskTarget>().Title, dt.Title, "aynı başlık (TELEKS)");
             var tbox = target.GetComponent<BoxCollider>();
-            float targetMaxX = tp.InverseTransformPoint(target.TransformPoint(tbox.center + new Vector3(tbox.size.x / 2, 0, 0))).x;
-            float slipMinX = tp.InverseTransformPoint(paper.TongueTarget.position).x - 0.05f;
-            Assert.Less(targetMaxX, slipMinX, "kâğıdın hedefi fişin solunda biter");
+            var hit = (BoxCollider)Reference<Collider>(paper, "hitArea");
+            var tongue = paper.TongueTarget;
+            var slipCentre = tongue.position + tongue.rotation * hit.center;
+            Assert.Less(Vector3.Distance(target.TransformPoint(tbox.center), slipCentre), 0.005f, "kâğıdın hedefi fişin çarpıştırıcısının yerinde (±5 mm)");
+            Assert.Less(Quaternion.Angle(target.rotation, tongue.rotation), 1f, "aynı eğim");
+            Assert.AreEqual(hit.size.x, tbox.size.x, 0.003f, "aynı genişlik");
+            Assert.AreEqual(hit.size.y, tbox.size.y, 0.003f, "aynı yükseklik");
+            Assert.AreSame(tbox, Reference<Collider>(printer, "sheetTarget"), "kâğıt yokken Teleprinter kapatır");
+        }
+
+        /// <summary>
+        /// Tek kâğıt akışı: yeni kâğıt ilk satırı (kod) yazım çizgisinde olacak kadar silindirin içinden başlar (dinlenmedeki kod yuvası
+        /// y ≈ 0,298, yazım çizgisi 0,146: ≈ 0,15 m); satırların geri alma mesafeleri yukarıdan aşağı artmaz, hepsi ≥ 0; son ileti
+        /// satırı da yazım çizgisinin üstünde (satır bitince kâğıt dinlenme pozuna çıkar). Kaydedilmiş sahnede ölçülür (kaydedilmez).
+        /// </summary>
+        [Test]
+        public void TelexSheet_FirstRowStartsOnPrintLine()
+        {
+            RequireScene();
+            var printer = One<Teleprinter>();
+            var lines = new List<TelexLine>
+            {
+                new TelexLine { code = "001/00", status = "KYGA-07 HAT AÇIK", message = "Analog hat açık." },
+                new TelexLine { code = "001/01", status = "ÖN KONTROL", message = "Plan hazır. Devir fişini çıkar. Kapak kalktı, kol inince fiş daktilodan yazılarak çıkar." },
+            };
+            printer.Show(lines, false);
+            var rows = printer.RowRetracts;
+            TestContext.WriteLine("satır geri almaları: " + string.Join(", ", rows.Select(r => r.ToString("0.0000"))));
+            Assert.GreaterOrEqual(rows.Count, 3, "kod, durum ve en az bir ileti satırı");
+            Assert.AreEqual(0.15f, rows[0], 0.012f, "ilk satır (kod) yazım çizgisinde: ≈ 0,15 m geri");
+            for (int i = 1; i < rows.Count; i++) Assert.LessOrEqual(rows[i], rows[i - 1] + 1e-6f, "satır " + i + " artmaz");
+            Assert.IsTrue(rows.All(r => r >= 0), "geri alma ≥ 0");
+            Assert.Greater(rows[rows.Count - 1], 0f, "son ileti satırı yazım çizgisinin üstünde");
+            CollectionAssert.AreEqual(printer.RowStarts.OrderBy(i => i).ToList(), printer.RowStarts.ToList(), "satır başları artan");
+            int length = (lines[1].code + "  " + lines[1].status + "  " + lines[1].message).Length;
+            Assert.Less(printer.RowStarts.Last(), length, "son satırın başı satırın içinde");
+            Assert.AreEqual(rows.Last(), PlatenFeed.RowRetract(length - 1, length, printer.RowStarts, rows), 1e-6f, "son harfte son satır yazım çizgisinde");
+            Assert.AreEqual(0, PlatenFeed.RowRetract(length, length, printer.RowStarts, rows), 1e-6f, "satır bitince dinlenme pozu");
         }
 
         /// <summary>
@@ -275,8 +330,9 @@ namespace Corrigible.Desk.Tests
 
         /// <summary>
         /// Koparılan teleks kâğıdının yolu (<see cref="Teleprinter.TearPose(float, SiginakTheme)"/>, token <c>motion.telexTear.*</c>):
-        /// öne (klavyeye) hiç gitmez, merkezi hep daktilonun kapağının (y 0,15) üstünde kalır, yukarı çekilip arkaya düşer; uçlarda
-        /// 0 ve token değerleri. Sahnedeki kopyanın dinlenme yerinden ölçülür.
+        /// öne (klavyeye) hiç gitmez, kapağın üstünden geçerken (z &lt; 0,2 m) merkezi daktilonun kapağının (y 0,15) üstünde kalır,
+        /// yukarı çekilip arkaya düşer ve rulonun arkasında masa hizasında biter (z &gt; 0,3 m, y &lt; 0,05 m: K1'den daktilonun gövdesi
+        /// örter, kopya havada sönmez); uçlarda 0 ve token değerleri. Sahnedeki kopyanın dinlenme yerinden ölçülür.
         /// </summary>
         [Test]
         public void TornSheet_PulledUpAndBack_NeverThroughBody()
@@ -285,6 +341,28 @@ namespace Corrigible.Desk.Tests
             var printer = One<Teleprinter>();
             var torn = Reference<Transform>(printer, "torn");
             Assert.AreSame(printer.transform, torn.parent, "kopya Teleprinter yerelinde");
+            // Tek kâğıt akışı: düşen kopya asıl kâğıdın aynısı (TelexPaper örneği, aynı mesh, dört yuva bağlı), asıl kâğıdın üstünde
+            Assert.IsFalse(torn.gameObject.activeSelf, "kopya kapalı");
+            var copy = torn.Find("TelexPaper");
+            Assert.IsNotNull(copy, "Torn sheet/TelexPaper");
+            Assert.IsTrue(PrefabUtility.IsOutermostPrefabInstanceRoot(copy.gameObject), "TelexPaper prefab örneği");
+            var sheetBody = Reference<Renderer>(printer, "paperRenderer");
+            var copyBody = copy.Find("Body").GetComponent<MeshRenderer>();
+            Assert.AreSame(sheetBody.GetComponent<MeshFilter>().sharedMesh, copyBody.GetComponent<MeshFilter>().sharedMesh, "aynı kâğıt mesh'i");
+            Assert.IsEmpty(copy.GetComponentsInChildren<Collider>(true), "kopyada çarpıştırıcı yok");
+            Assert.IsNull(Reference<TMP_Text>(printer, "tornText"), "birleşik yazı yolu kalktı");
+            foreach (var (field, slot) in new[] { ("tornCode", "frontCode"), ("tornStatus", "frontStatus"), ("tornMessage", "frontMessage"), ("tornPrev", "frontPrev") })
+            {
+                var t = Reference<TMP_Text>(printer, field);
+                Assert.IsNotNull(t, field);
+                Assert.IsTrue(t.transform.IsChildOf(copy), field + " kopyanın yuvası");
+                var main = Reference<TMP_Text>(printer, slot);
+                Assert.AreEqual(main.name, t.name, field);
+                // kapalı kopyanın dinlenme yeri asıl kâğıdınkiyle aynı (yuva ezmeleri kopyalandı)
+                var tp = printer.transform;
+                Assert.Less(Vector3.Distance(tp.InverseTransformPoint(t.transform.position), tp.InverseTransformPoint(main.transform.position)), 0.001f, field + " yuvası asıl kâğıtla ±1 mm");
+                Assert.AreEqual(main.fontSize, t.fontSize, 1e-4f, field + " puntosu");
+            }
             var theme = SiginakTheme.Active;
             Assert.IsNotNull(theme);
             var start = Teleprinter.TearPose(0, theme);
@@ -296,12 +374,15 @@ namespace Corrigible.Desk.Tests
                 var p = Teleprinter.TearPose(i / 20f, theme);
                 var at = torn.localPosition + p.position;
                 Assert.GreaterOrEqual(at.z, torn.localPosition.z - 1e-5f, "öne (klavyeye) gitmez (t " + i / 20f + ")");
-                Assert.Greater(at.y, 0.15f, "merkez kapağın üstünde (t " + i / 20f + ")");
+                if (at.z < 0.2f) Assert.Greater(at.y, 0.15f, "kapağın üstünden geçerken merkez kapağın üstünde (t " + i / 20f + ")");
                 peak = Mathf.Max(peak, at.y);
             }
             Assert.Greater(peak, torn.localPosition.y + 0.02f, "önce yukarı çekilir");
             var end = Teleprinter.TearPose(1, theme);
             Assert.Greater(end.position.z, 0.1f, "arkaya atılır");
+            var last = torn.localPosition + end.position;
+            Assert.Greater(last.z, 0.3f, "rulonun arkasında biter (daktilonun gövdesi örter)");
+            Assert.Less(last.y, 0.05f, "masa hizasına düşer (havada sönmez)");
             Assert.AreEqual(theme.NumberOf("motion.telexTear.moveMm[1]") - theme.NumberOf("motion.telexTear.fallMm"), end.position.y * 1000f, 1e-3f);
             Assert.AreEqual(theme.NumberOf("motion.telexTear.euler[0]"), Mathf.DeltaAngle(0, end.rotation.eulerAngles.x), 0.01f, "üstü arkaya yatar");
         }

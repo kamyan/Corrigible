@@ -18,8 +18,10 @@ namespace Corrigible.Desk
     /// <summary>
     /// Bütün geri bildirimin tek kapısı (PROMPT §4 TelexFeed): “Emir uygulandı” / “Yapılamadı” ve dizilerin satırları
     /// buradan geçer. Satır masadaki teleks kâğıdına basılır; teleks kadraj dışındaysa aynı satır ekranın altından kâğıt
-    /// şerit olarak kayar. Son 30 satır tutulur (yan kayıt dosyasına yazılır). Devir fişi daktilonun silindirinde teleks kâğıdının
-    /// yanında durur (kâğıdı örtmez); aynı silindirde önce teleks satırı biter, sonra fiş basılır (<see cref="Typing"/>).
+    /// şerit olarak kayar. Son 30 satır tutulur (yan kayıt dosyasına yazılır). Teleks kâğıdı ve devir fişi aynı silindirden çıkar
+    /// (tek kâğıt akışı, <see cref="Teleprinter"/>): yeni satırda o anki kâğıt düşer, yenisi alttan yazılarak çıkar; devirde önce
+    /// teleks satırı biter (<see cref="Typing"/>), sonra teleks kâğıdı düşer ve fiş aynı yerden basılır. Fiş silindirdeyken
+    /// (<see cref="PlatenBusy"/>) satırlar kâğıda basılmaz, okunur sayılmadıkları için şeritte görünür.
     /// </summary>
     public sealed class TelexFeed : MonoBehaviour
     {
@@ -53,8 +55,11 @@ namespace Corrigible.Desk
             lines.Add(line);
             if (lines.Count > keep) lines.RemoveRange(0, lines.Count - keep);
             if (printer != null) printer.Show(lines, true, typeSeconds);
+            // Okunurluk basımdan sonra (yeni satırın durum puntosuyla), kâğıdın dinlenme pozunda ölçülür (yeni kâğıt silindirin içinden
+            // başlar; fiş silindirdeyse okunmaz)
+            bool readable = PrinterReadable;
             // Kâğıt okunur boyda değilse (ya da uyarı satırıysa, ör. KAYIT VAR) satır şeritte de görünür
-            if (strip != null && (!PrinterReadable || kind == TelexKind.Alarm)) strip.Enqueue(line);
+            if (strip != null && (!readable || kind == TelexKind.Alarm)) strip.Enqueue(line);
             Posted?.Invoke(line);
             return line;
         }
@@ -77,8 +82,26 @@ namespace Corrigible.Desk
 
         public void Clear() => Restore(null);
 
+        /// <summary>
+        /// Silindir devir fişinde mi (köprü yazar; <see cref="Teleprinter.PlatenBusy"/>): doluyken satırlar kâğıda basılmaz, o anki
+        /// teleks kâğıdı düşer.
+        /// </summary>
+        public Func<bool> PlatenBusy
+        {
+            get => printer != null ? printer.PlatenBusy : null;
+            set { if (printer != null) printer.PlatenBusy = value; }
+        }
+
+        /// <summary>Devir fişi beslenirken rulo da döner (yalnız sunum; <see cref="Teleprinter.RollBy"/>).</summary>
+        public void RollPlaten(float degrees) { if (printer != null) printer.RollBy(degrees); }
+
         /// <summary>Daktilo yeni satırı basıyor (<see cref="Teleprinter.Typing"/>).</summary>
         public bool Typing => printer != null && printer.Typing;
+
+        /// <summary>
+        /// Fişin silindir durumunu hemen uygular (<see cref="Teleprinter.SyncPlaten"/>; köprü fişi geri yükledikten sonra çağırır).
+        /// </summary>
+        public void SyncPlaten(bool instant) { if (printer != null) printer.SyncPlaten(instant); }
 
         /// <summary>Teleks kâğıdı kadrajın içinde mi.</summary>
         public bool PrinterVisible => printer != null && view != null && printer.IsVisibleFrom(view);

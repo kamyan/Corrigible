@@ -30,6 +30,8 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] FrontSlip frontSlip;
         [Tooltip("BASKIN EMRİ VER'den sonra görev fişinin yanında açılan kadro raporu; emir onunla verilir.")]
         [SerializeField] SquadReportSlip squadReport;
+        [Tooltip("Tesis kipinde görev fişinin iç yanında, üst bantta sıradaki kanadın üç paftası (bina planı; plan yokken hiç açılmaz).")]
+        [SerializeField] FacilityPlanSheets plans;
         [SerializeField] TeamFigure figure;
         [SerializeField] TeamFigureDrag drag;
         [SerializeField] DeskTarget figureTarget;
@@ -48,11 +50,26 @@ namespace Corrigible.Desk.Bridge
         /// <summary>Fişteki kadro seçimi (seçim sırasıyla; en eski önce); null ise varsayılan seçim. Vardiya değişince sıfırlanır.</summary>
         List<string> pick;
         int pickDay = -1;
+        int seenLayout = -1;
         [Tooltip("Eğitim sürerken ilk baskının kadrosu sabit (Teknisyen, EMP uzmanı, Analist).")]
         [SerializeField] SiginakTutorial tutorial;
         float unlockedSince = -1;
         bool primed, figureDisplaced, figureHovered, missionsOnArrival;
         readonly HashSet<string> knownFree = new HashSet<string>();
+        /// <summary>Tesis aşama 10 (K39): ÖNLEM teleksinin basıldığı öğrenme günlüğü uzunluğu; ilk bağlamada "primed" (yeni oyun ve
+        /// kayıttan devam duyuru basmaz), reveal'de yeni girdiler basılır.</summary>
+        int seenLearned;
+        /// <summary>
+        /// Tesis aşama 11: kuşatma günlüğünün son görülen hâli (girdi başına sonuç) ve baskın günlüğünün uzunluğu; ilk bağlamada "primed".
+        /// Kartlı oyunda kapanışta (ve vardiya ortasında baskın dışı bir yoldan) kurulan kuşatma "KARŞI SALDIRI BEKLİYOR", karar verilmeyip
+        /// kendiliğinden bırakılan kanat "YZ KARŞI SALDIRISI" teleksiyle bir kez duyurulur; kayıttan devamda yinelenmez. Kartsız oyunda
+        /// kapanışın duyurusu vardiya raporundadır (SiginakShift); baskının kurduğu kuşatmayı operasyon raporu duyurur.
+        /// </summary>
+        readonly List<string> seenSieges = new List<string>();
+        int seenRaids;
+        /// <summary>Tesis aşama 11: BIRAK'ın ilk tıkı (onay bekleniyor); kanat ve vardiya değişince ya da fiş kapanınca düşer.</summary>
+        string yieldArmed;
+        int yieldArmedDay = -1;
         LiberationMapState state;
 
         Simulation Sim => game != null ? game.Sim : null;
@@ -60,8 +77,12 @@ namespace Corrigible.Desk.Bridge
         int Shift => surface != null ? surface.Shift : 1;
         public LiberationMapState State => state;
         public bool SlipOpen => slip.IsOpen;
+        /// <summary>Özgür kalan bölgenin K3 dizisi ("BÖLGE ÖZGÜR") sırada, henüz oynamadı (kapıdan gelen sunucu ödülü onu bekler).</summary>
+        public bool RevealPending => revealQueued != null;
         public bool FrontSlipOpen => frontSlip.IsOpen;
         public bool SquadReportOpen => squadReport.IsOpen;
+        /// <summary>Bina planının paftaları açık (tesis kipi).</summary>
+        public bool PlansOpen => plans != null && plans.IsOpen;
         public string Pending => pending;
         /// <summary>Vardiya dizisi (K6): adımdan sonra figür yerinde bekler; rapor düşerken <see cref="ReleaseFigure"/>.</summary>
         public bool HoldFigure { get; set; }
@@ -89,6 +110,7 @@ namespace Corrigible.Desk.Bridge
             layer.RegionClicked += MapRegionClicked;
             sadeMap.BackgroundClicked += MapBackgroundClicked;
             slip.ActionClicked += SlipAction;
+            slip.YieldClicked += YieldClicked;
             slip.CloseClicked += CloseSlip;
             slip.PickClicked += TogglePick;
             slip.PersonClicked += ShowPerson; squadReport.PersonClicked += ShowPerson;
@@ -115,6 +137,7 @@ namespace Corrigible.Desk.Bridge
             layer.RegionClicked -= MapRegionClicked;
             sadeMap.BackgroundClicked -= MapBackgroundClicked;
             slip.ActionClicked -= SlipAction;
+            slip.YieldClicked -= YieldClicked;
             slip.CloseClicked -= CloseSlip;
             slip.PickClicked -= TogglePick;
             slip.PersonClicked -= ShowPerson; squadReport.PersonClicked -= ShowPerson;
@@ -146,6 +169,7 @@ namespace Corrigible.Desk.Bridge
             revealQueued = null;
             figureDisplaced = false;
             squadReport.Hide();
+            if (plans != null) plans.Hide();
             slip.Hide();
             frontSlip.Hide();
             Refresh();
@@ -156,11 +180,16 @@ namespace Corrigible.Desk.Bridge
         {
             var sim = Sim;
             if (sim == null) return;
+            // Üretilmiş harita (anahtar 1) harekât başında bir kez kurulur; aynı haritada bir şey yapmaz
+            layer.SetMap(sim.Map);
             // K3: yeni özgürleşen bölge (yükleme ve yeni oyunda dizi yok)
             var free = sim.S.Liberation.Regions.Where(r => r.Completed).Select(r => r.Id).ToList();
             if (primed) foreach (var id in free) if (!knownFree.Contains(id)) revealQueued = id;
             knownFree.Clear();
             foreach (var id in free) knownFree.Add(id);
+            if (!primed) seenLearned = LearnedCount(sim);
+            if (primed) PostSieges(sim);
+            else SeeSieges(sim);
             primed = true;
 
             state = LiberationMapBuilder.Build(sim, null, pending);
@@ -175,17 +204,19 @@ namespace Corrigible.Desk.Bridge
             PlaceFigure(!figure.Placed);
             if (slip.IsOpen)
             {
-                var data = LiberationMapBuilder.Slip(sim, slip.RegionId, Pick, FixedSquad);
+                var data = SlipData(sim, slip.RegionId);
                 slip.Show(data, slip.OnRight);
                 // Rapor açıkken kadro değişirse yeniden yazılır; emir artık verilemiyorsa (vardiya, ekip, fon) kapanır
                 if (squadReport.IsOpen)
                 {
                     if (data.ActionState == SlipActionState.Ready && squadReport.RegionId == slip.RegionId)
-                        squadReport.Show(LiberationMapBuilder.SquadReport(sim, slip.RegionId, Pick, FixedSquad));
+                        squadReport.Show(LiberationMapBuilder.SquadReport(sim, slip.RegionId, Pick, FixedSquad, FacilityDefenseText.SlipSector(sim, slip.RegionId)?.Id));
                     else squadReport.Hide();
                 }
+                ShowPlans(sim);
             }
             else if (squadReport.IsOpen) squadReport.Hide();
+            if (plans != null && !slip.gameObject.activeSelf) plans.Hide();
             if (frontSlip.IsOpen && pending != null) frontSlip.Show(LiberationMapBuilder.Front(sim, pending));
             // Görev fişinin ipi diziyle birlikte çizilir (açılırken yarım)
             if (frontSlip.IsOpen || !slip.gameObject.activeSelf) UpdateString();
@@ -195,6 +226,8 @@ namespace Corrigible.Desk.Bridge
         void Update()
         {
             if (Sim == null) return;
+            // Yerleşim yeniden hesaplandıysa (lejant ilk karede yeniden ölçüldü) figür yeni ekip noktasına
+            if (layer.LayoutVersion != seenLayout) { seenLayout = layer.LayoutVersion; if (state != null) PlaceFigure(true); }
             // K3 dizisi kilit (baskın sahnesi, operasyon raporu modalı) kalktıktan kısa süre sonra başlar; rapor henüz
             // açılmadıysa onu da bekler (modal bir sonraki bağlamada gelir)
             bool blocked = Locked || RaidLauncher.IsRaidLoaded || surface.RaidReportPending;
@@ -271,7 +304,28 @@ namespace Corrigible.Desk.Bridge
 
         void OpenFrontMission()
         {
+            // Tesis aşama 11 (K39-4): karar vardiyasında 3 ve haritaya ilk dönüş kuşatılan kanadın fişini açar (karar kaçmasın)
+            var sim = Sim;
+            if (sim != null && FacilityDefenseText.On(sim) && sim.SiegeDecisionDue && sim.SiegeSector is LiberationSectorState siege)
+            {
+                OpenSlip(siege.Region);
+                return;
+            }
             if (state?.FrontOpen == true) OpenSlip(state.Front);
+        }
+
+        /// <summary>Görev fişinin verisi; kuşatma kipinde BIRAK'ın onayı bekleniyorsa düğme "EMİN MİSİN? · güven −1" yazar.</summary>
+        OperationSlipData SlipData(Simulation sim, string id)
+        {
+            var data = LiberationMapBuilder.Slip(sim, id, Pick, FixedSquad);
+            var siege = data.Siege ? FacilityDefenseText.SlipSector(sim, id) : null;
+            if (siege == null || yieldArmed != siege.Id || yieldArmedDay != sim.S.Day || !data.YieldEnabled) yieldArmed = null;
+            else
+            {
+                data.YieldArmed = true;
+                data.Yield = FacilityDefenseText.YieldConfirm(sim);
+            }
+            return data;
         }
 
         void OpenSlip(string id)
@@ -282,9 +336,11 @@ namespace Corrigible.Desk.Bridge
             bool open = slip.IsOpen, sameRegion = open && slip.RegionId == id;
             // Kamera haritaya varınca dizi başlar: iğne düşer, iplik çekilir, sonra fiş kayar
             float start = rig.TransitionRemaining, pinS = t.NumberOf("motion.pinDropS", 0.12f), stringS = t.NumberOf("motion.stringS", 0.25f);
-            // Karar 1 B: fiş sol masa kenarında; Kuzey ya da Güney Amerika seçiliyse sağda
-            bool right = id == "na" || id == "sa";
-            slip.Show(LiberationMapBuilder.Slip(Sim, id, Pick, FixedSquad), right, start + pinS + stringS);
+            // Karar 1 B: fiş sol masa kenarında; Kuzey ya da Güney Amerika seçiliyse sağda. Üretilmiş haritada genel kural:
+            // bölgenin etiketi haritanın sol yarısındaysa fiş sağda (fiş masa kenarında haritanın o yanını örter)
+            bool right = SlipOnRight(id);
+            if (!sameRegion) yieldArmed = null;
+            slip.Show(SlipData(Sim, id), right, start + pinS + stringS);
             if (!sameRegion)
             {
                 slipAt = Time.unscaledTime + start;
@@ -296,16 +352,40 @@ namespace Corrigible.Desk.Bridge
             AnimateSlip();
         }
 
+        /// <summary>
+        /// Görev fişinin yanı: üretilmiş haritada etiketi sol yarıda olan bölgede sağ; dünya haritasında (anahtar 0) Kuzey ve
+        /// Güney Amerika'da sağ (genel kural orada Batı ve Doğu Avrupa'yı da sağa alırdı, eski davranış korunur).
+        /// </summary>
+        public bool SlipOnRight(string id)
+        {
+            if (layer.Map != null && layer.Marks(id) is LiberationRegionMarks m) return m.LabelPoint.x < MapProjection.DesignWidth * 0.5f;
+            return id == "na" || id == "sa";
+        }
+
         void CloseSlip() => CloseSlip(0);
 
         /// <summary>Kapanış (S2): iplik 0,15 s'de sarılır, fiş 0,18 s'de kenara çekilir.</summary>
         void CloseSlip(float delay)
         {
             if (!slip.IsOpen) return;
+            yieldArmed = null;
             if (squadReport.IsOpen) squadReport.Close(delay);
+            if (plans != null) plans.Close(delay);
             slipCloseAt = Time.unscaledTime + delay;
             slip.Close(delay + StringCloseS);
             Refresh();
+        }
+
+        /// <summary>
+        /// Bina planı (tesis aşama 5): fişin bölgesinde sıradaki kanadın üç paftası; tesis planı yokken ya da alınacak kanat
+        /// yokken kurucu null döner ve paftalar gizli kalır.
+        /// </summary>
+        void ShowPlans(Simulation sim)
+        {
+            if (plans == null) return;
+            var data = FacilityPlanBuilder.Build(sim, slip.RegionId);
+            if (data == null) plans.Hide();
+            else plans.Show(data);
         }
 
         /// <summary>Eğitim sürerken ilk baskının kadrosu değişmez (senaryo üç uzmana göre yazıldı).</summary>
@@ -345,6 +425,7 @@ namespace Corrigible.Desk.Bridge
         void SelectCandidate(string id)
         {
             squadReport.Hide();
+            if (plans != null) plans.Hide();
             if (slip.IsOpen) slip.Hide();
             pending = id;
             frontSlip.Show(LiberationMapBuilder.Front(Sim, id));
@@ -380,6 +461,26 @@ namespace Corrigible.Desk.Bridge
             var sim = Sim;
             if (!slip.IsOpen || Locked || sim == null) return;
             string id = slip.RegionId;
+            // Tesis aşama 11 (§8.3): kuşatma kipinde asıl eylem SAVUN: hazırsa kadro raporu (emir "SAVUNMAYA ÇIK"la), değilse komut
+            // denenir ve gerekçe teleksten basılır
+            if (slip.HasAction && FacilityDefenseText.SlipSector(sim, id) is LiberationSectorState siege)
+            {
+                slip.Press();
+                yieldArmed = null;
+                if (slip.ActionState == SlipActionState.Ready)
+                {
+                    if (!squadReport.IsOpen)
+                    {
+                        Sfx.Play(Cue.PaperSlide, 0.6f, slip.OnRight ? 0.3f : -0.3f);
+                        reportFrame = Time.frameCount;
+                    }
+                    squadReport.Show(LiberationMapBuilder.SquadReport(sim, id, Pick, FixedSquad, siege.Id));
+                    Refresh();
+                    return;
+                }
+                surface.DefendSector();
+                return;
+            }
             if (slip.HasAction)
             {
                 var next = sim.NextLiberationSector(id);
@@ -410,11 +511,51 @@ namespace Corrigible.Desk.Bridge
                 surface.OpenFront(id);
         }
 
+        /// <summary>
+        /// Tesis aşama 11 (§8.3, K39-2): BIRAK yalnız tıkla. İlk tık onay sorar (düğme "EMİN MİSİN? · güven −1", kalem sesi); ikinci tık
+        /// komutu verir (siege_yield; teleks "EMİR UYGULANDI · Kanat bırakıldı: …"), ardından haritada bugünkü karşı saldırı dizisi (✕ ve
+        /// YENİDEN İŞGAL). Fiş açık kalır (aynı bölgede baskın emri Core gerekçesiyle kapalı).
+        /// </summary>
+        void YieldClicked()
+        {
+            var sim = Sim;
+            if (!slip.IsOpen || Locked || sim == null) return;
+            var siege = FacilityDefenseText.SlipSector(sim, slip.RegionId);
+            if (siege == null) return;
+            if (yieldArmed != siege.Id || yieldArmedDay != sim.S.Day)
+            {
+                if (sim.YieldSectorCheck() != null) { surface.YieldSector(); return; }
+                yieldArmed = siege.Id;
+                yieldArmedDay = sim.S.Day;
+                if (squadReport.IsOpen) squadReport.Hide();
+                Sfx.Play(Cue.Pencil, .6f);
+                Refresh();
+                return;
+            }
+            yieldArmed = null;
+            var result = surface.YieldSector();
+            if (result?.Ok != true) { Refresh(); return; }
+            Sfx.Play(Cue.StampHeavy, 0.8f);
+            PlayCounterattack(0.15f);
+        }
+
         /// <summary>Kadro raporunda BASKINA ÇIK: emir verilir; tutmazsa (gerekçe teleksten) rapor kapanır, fiş açık kalır.</summary>
         void ConfirmSquad()
         {
             var sim = Sim;
             if (!squadReport.IsOpen || Locked || sim == null || Time.frameCount == reportFrame) return;
+            // Tesis aşama 11: kuşatma kipinin raporu savunma emrini verir (fon yok, kadro baskınla aynı)
+            if (FacilityDefenseText.SlipSector(sim, squadReport.RegionId) is LiberationSectorState siege)
+            {
+                if (!slip.IsOpen || slip.RegionId != squadReport.RegionId) { squadReport.Hide(); return; }
+                squadReport.Press();
+                squadReport.Close(0.06f);
+                var defended = surface.DefendSector();
+                if (defended?.Ok != true) { squadReport.Hide(); return; }
+                pick = null;
+                CloseSlip(0.06f);
+                return;
+            }
             var next = sim.NextLiberationSector(squadReport.RegionId);
             if (next == null || !slip.IsOpen || slip.RegionId != squadReport.RegionId) { squadReport.Hide(); return; }
             // Düğme 0,06 s iner, sonra kart fişle birlikte solar (emir Refresh'i tetiklese de kapanış sürer)
@@ -561,12 +702,71 @@ namespace Corrigible.Desk.Bridge
             rig.FocusMap();
             // 0,2 s: mavi ÖZGÜR damgası iner, tarama 0,5 s'de silinir; teleks iki satır; adaylar 0,12 s arayla çizilir
             layer.PlayFreed(id, 0.2f);
-            telex.Post(Shift, Loc.T("BÖLGE ÖZGÜR"), Loc.F("{0} · {1} fon", GameData.Region(id).Name,
+            // Tesis aşama 11 (§9.3): yeniden alınan bölgenin fonu ikinci kez verilmez (son baskının ödülü RegionRepeat)
+            var last = sim.S.RaidLog.LastOrDefault();
+            bool repeat = last?.LiberationReward?.RegionRepeat == true && last.Region == id;
+            telex.Post(Shift, Loc.T("BÖLGE ÖZGÜR"), repeat ? Loc.F("{0} · yeniden özgür", sim.RegionName(id)) : Loc.F("{0} · {1} fon", sim.RegionName(id),
                 DeskFormat.Signed(sim.B.liberationCaptureFunds, 0)), TelexKind.Done);
+            PostCountermeasures(sim);
             var candidates = state.Regions.Where(r => r.Kind == MapRegionKind.Candidate).Select(r => r.Id).ToList();
             if (candidates.Count == 0) return;
             telex.Post(Shift, Loc.T("BEKLENİYOR"), Loc.T("Sıradaki cepheyi seç"), TelexKind.Info);
             layer.PlayCandidates(candidates, 0.7f);
+        }
+
+        /// <summary>Öğrenme günlüğünün uzunluğu (önlem defteri kapalıyken 0).</summary>
+        static int LearnedCount(Simulation sim) => FacilityCounterText.On(sim) ? sim.Facility.Learned.Count : 0;
+
+        /// <summary>
+        /// Tesis aşama 10 (K39): "BÖLGE ÖZGÜR"den sonra bu tamamlamada öğrenilen önlemler, girdi başına iki satır "YZ ÖNLEMİ" (Alarm;
+        /// şeritte de görünür). Önlem alınmadıysa, yeniden tamamlanan bölgede (girdi eklenmez) ve oyun bittiyse satır yok.
+        /// </summary>
+        void PostCountermeasures(Simulation sim)
+        {
+            int count = LearnedCount(sim);
+            if (sim.S.Ending == null)
+                for (int i = seenLearned; i < count; i++)
+                {
+                    var (first, second) = FacilityCounterText.Telex(sim, sim.Facility.Learned[i]);
+                    if (first == null) continue;
+                    telex.Post(Shift, FacilityCounterText.TelexStatus, first, TelexKind.Alarm);
+                    telex.Post(Shift, FacilityCounterText.TelexStatus, second, TelexKind.Alarm);
+                }
+            seenLearned = count;
+        }
+
+        // ---------- Kuşatma duyurusu (tesis aşama 11) ----------
+
+        static string SiegeKey(FacilitySiegeEntry e) => e == null ? "" : e.Outcome ?? "";
+
+        void SeeSieges(Simulation sim)
+        {
+            seenSieges.Clear();
+            if (FacilityDefenseText.On(sim)) seenSieges.AddRange(sim.Facility.Sieges.Select(SiegeKey));
+            seenRaids = sim.S.RaidLog.Count;
+        }
+
+        /// <summary>
+        /// Kartlı oyunda yeni kuşatma (bekleyen girdi) ve kendiliğinden bırakılan kanat teleksten bir kez duyurulur. Baskının sonucunun
+        /// kurduğu kuşatma operasyon raporunda duyurulur (burada atlanır); komutla bırakma ve savunmanın sonucu kendi teleksleriyle.
+        /// </summary>
+        void PostSieges(Simulation sim)
+        {
+            if (!FacilityDefenseText.On(sim)) { seenSieges.Clear(); seenRaids = sim.S.RaidLog.Count; return; }
+            var log = sim.S.RaidLog.Count > seenRaids ? sim.S.RaidLog[sim.S.RaidLog.Count - 1] : null;
+            var list = sim.Facility.Sieges;
+            if (sim.Board != null && sim.S.Ending == null)
+                for (int i = 0; i < list.Count; i++)
+                {
+                    var e = list[i];
+                    if (e == null) continue;
+                    string was = i < seenSieges.Count ? seenSieges[i] : null, now = SiegeKey(e);
+                    if (was == null && now == Simulation.SiegePending && log?.LiberationReward?.Siege != e.Sector)
+                        telex.Post(Shift, FacilityDefenseText.PendingStatus, FacilityDefenseText.PendingLine(sim, e.Sector), TelexKind.Alarm);
+                    else if (was != now && now == Simulation.SiegeAuto)
+                        telex.Post(Shift, FacilityDefenseText.FallStatus, FacilityDefenseText.AutoYieldLine(sim, e.Sector), TelexKind.Alarm);
+                }
+            SeeSieges(sim);
         }
 
         // ---------- Karşı saldırı (Revizyon 2 · S5b) ----------

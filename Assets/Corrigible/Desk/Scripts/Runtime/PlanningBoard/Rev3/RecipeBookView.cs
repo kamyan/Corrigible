@@ -407,11 +407,11 @@ namespace Corrigible.Desk
         /// önce, önceki yalnız sol sayfada ve ilk açılımdan sonra (sağ/sol alt köşede 16 × 16 mm ve yazısının şeridi). Tarif bölgesi
         /// (kutu + İŞ EMRİ ▶ sekmesi) yalnız <paramref name="recipesDraggable"/> iken; sayfa dışı <see cref="BookZone.Outside"/>.
         /// </summary>
-        public static BookZone ZoneAt(bool rightPage, Vector2 pageMm, int spread, int spreadCount, bool recipesDraggable)
+        public static BookZone ZoneAt(bool rightPage, Vector2 pageMm, int spread, int spreadCount, bool recipesDraggable, int rows = 2)
         {
             var m = RecipePageMetrics.Default;
             if (pageMm.x < 0 || pageMm.y < 0 || pageMm.x > m.sizeMm.x || pageMm.y > m.sizeMm.y) return BookZone.Outside;
-            var g = m.Geometry(rightPage);
+            var g = m.Geometry(rightPage, rows);
             if (rightPage && spread < spreadCount - 1 && g.InNext(pageMm)) return BookZone.Next;
             if (!rightPage && spread > 0 && g.InPrev(pageMm)) return BookZone.Prev;
             if (recipesDraggable && g.InRecipe(pageMm)) return rightPage ? BookZone.RecipeR : BookZone.RecipeL;
@@ -430,10 +430,16 @@ namespace Corrigible.Desk
             var page = right ? pageRight : pageLeft;
             var col = right ? hitRight : hitLeft;
             Vector2 mm = page != null ? page.PageMm(hit.worldPosition) : ColliderMm(col, hit.worldPosition);
-            var zone = ZoneAt(right, mm, Spread, SpreadCount, RecipesDraggable || Locked);
-            if ((zone == BookZone.RecipeL || zone == BookZone.RecipeR) && RecipeAt(2 * Spread + (right ? 1 : 0)) == null) zone = BookZone.Page;
-            return zone;
+            var recipe = RecipeAt(2 * Spread + (right ? 1 : 0));
+            return RecipeZone(ZoneAt(right, mm, Spread, SpreadCount, RecipesDraggable || Locked, RecipeBookPage.RowsOf(recipe)), recipe);
         }
+
+        /// <summary>
+        /// Tarif bölgesinin sayfadaki tarife göre düzeltmesi (saf): boş sayfanın ve kapalı sayfanın (tesis aşama 9, K22) kutusu sayfa
+        /// sayılır; tutulmaz, sürüklenmez.
+        /// </summary>
+        public static BookZone RecipeZone(BookZone zone, RecipeData recipe) =>
+            (zone == BookZone.RecipeL || zone == BookZone.RecipeR) && (recipe == null || recipe.Locked) ? BookZone.Page : zone;
 
         static Vector2 ColliderMm(BoxCollider c, Vector3 world)
         {

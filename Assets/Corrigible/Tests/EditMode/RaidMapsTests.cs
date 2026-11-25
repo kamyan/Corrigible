@@ -5,45 +5,49 @@ using NUnit.Framework;
 namespace Corrigible.Tests
 {
     /// <summary>
-    /// Harekâtın harita havuzu (<see cref="RaidMaps"/>): yeni oyunun tohumundan deterministik, kurallara uyan ve harekâttan
-    /// harekâta değişen haritalar; havuzsuz baskın (eğitim, örnek baskın) elle çizilmiş haritalarda kalır.
+    /// Tesis odalarının harita üreticisi (<see cref="RaidMaps"/>): tohumlu, kurallara uyan, türüne uyan haritalar ve üreticinin bit
+    /// kilidi. Koddan kurulan örnek tahta (<see cref="Baskin.Create"/>) havuzsuzdur: elle çizilmiş haritalarda kalır.
     /// </summary>
     public sealed class RaidMapsTests
     {
         [Test]
-        public void Pool_IsSameForSameSeed_AndDiffersBetweenCampaigns()
+        public void Generate_FitsItsKind_AndFollowsTheRules([Range(1, 20)] int seed)
         {
-            var a = RaidMaps.Pool(17).Select(m => string.Join("/", m.Rows)).ToList();
-            var b = RaidMaps.Pool(18).Select(m => string.Join("/", m.Rows)).ToList();
-            var again = RaidMaps.Pool(17).Select(m => string.Join("/", m.Rows)).ToList();
-            CollectionAssert.AreEqual(a, again);
-            Assert.AreEqual(0, a.Intersect(b).Count(), "iki harekât aynı haritayı paylaşmaz");
-        }
-
-        [Test]
-        public void Pool_MapsFollowTheRules([Range(1, 60)] int seed)
-        {
-            var pool = RaidMaps.Pool((uint)seed);
-            Assert.AreEqual(RaidMaps.PoolSize, pool.Count);
-            Assert.AreEqual(pool.Count, pool.Select(m => string.Join("/", m.Rows)).Distinct().Count(), "haritalar farklı");
-            Assert.AreEqual(pool.Count, pool.Select(m => m.Name).Distinct().Count(), "adlar farklı");
-            foreach (var m in pool)
-            {
-                Assert.IsTrue(RaidMaps.Valid(m.Rows), string.Join("/", m.Rows));
-                Assert.IsFalse(Baskin.Layouts.Any(l => l.Rows.SequenceEqual(m.Rows)), "üretilmiş harita");
-            }
-        }
-
-        [Test]
-        public void Pool_HasEveryKindEqually_AndEachMapFitsItsKind([Range(1, 20)] int seed)
-        {
-            var pool = RaidMaps.Pool((uint)seed);
-            var kinds = pool.Select(m => RaidMaps.KindOf(m.Name)).ToList();
+            int made = 0;
             foreach (var kind in RaidMaps.Kinds)
-                Assert.AreEqual(RaidMaps.PoolSize / RaidMaps.Kinds.Length, kinds.Count(k => k == kind), kind);
-            for (int i = 0; i < pool.Count; i++)
-                Assert.IsTrue(RaidMaps.Valid(pool[i].Rows, kinds[i]), kinds[i] + ": " + string.Join("/", pool[i].Rows));
+            {
+                var rows = RaidMaps.Generate(kind, new Rng((uint)seed));
+                if (rows == null) continue;
+                made++;
+                Assert.AreEqual(Baskin.N, rows.Length, kind);
+                Assert.IsTrue(RaidMaps.Valid(rows, kind), kind + ": " + string.Join("/", rows));
+                Assert.IsFalse(Baskin.Layouts.Any(l => l.Rows.SequenceEqual(rows)), "üretilmiş harita: " + kind);
+            }
+            Assert.Greater(made, 0, "tohum hiçbir tür üretmedi");
         }
+
+        /// <summary>
+        /// Üreticinin doğrudan bit kilidi (tek tahta havuzunun kilidinin yerine): 6 tür × 4 tohum <see cref="RaidMaps.Generate(string, Rng)"/>
+        /// dökümünün FNV-1a özeti. Tesis odaları bu çıktının giydirilmiş hâli; değişirse <c>FacilityMaps.GeneratorVersion</c> artar ve bu
+        /// değer bilinçli güncellenir.
+        /// </summary>
+        [Test]
+        public void Generate_Golden()
+        {
+            var dump = new System.Text.StringBuilder();
+            foreach (var kind in RaidMaps.Kinds)
+                foreach (uint seed in new uint[] { 1, 7, 79, 4242 })
+                {
+                    var rows = RaidMaps.Generate(kind, new Rng(seed));
+                    dump.Append(kind).Append(':').Append(seed).Append('=').Append(rows == null ? "-" : string.Join("/", rows)).Append('\n');
+                }
+            uint h = 2166136261;
+            foreach (char c in dump.ToString()) { h ^= c; h *= 16777619; }
+            Assert.AreEqual(GoldenHash, h, dump.ToString());
+        }
+
+        /// <summary>Kayıt 21 öncesi Core ile yakalandı (aynı değer; tek tahtanın kaldırılması üreticiyi değiştirmedi).</summary>
+        const uint GoldenHash = 0x862CC4DEu;
 
         [Test]
         public void Kinds_HaveTheirShape()
@@ -66,24 +70,17 @@ namespace Corrigible.Tests
             }
         }
 
+        /// <summary>Örnek tahta havuzsuzdur: MapSeed (harekât emrinde kitin işareti) tahtayı değiştirmez; elle çizilmiş haritalarda kalır.</summary>
         [Test]
-        public void Slot_DealsEveryMapBeforeRepeating_AndNeverTwiceInARow([Values(3u, 77u, 4242u)] uint seed)
+        public void Create_IgnoresMapSeed()
         {
-            var slots = Enumerable.Range(1, RaidMaps.PoolSize * 4).Select(n => RaidMaps.Slot(seed, n)).ToList();
-            for (int bag = 0; bag < 4; bag++)
-                CollectionAssert.AreEquivalent(Enumerable.Range(0, RaidMaps.PoolSize), slots.Skip(bag * RaidMaps.PoolSize).Take(RaidMaps.PoolSize), "torba " + bag);
-            for (int i = 1; i < slots.Count; i++) Assert.AreNotEqual(slots[i - 1], slots[i], "baskın " + (i + 1));
-        }
-
-        [Test]
-        public void Create_UsesCampaignPool_OnlyWithMapSeed()
-        {
-            var pool = RaidMaps.Pool(5).Select(m => m.Name).ToList();
             var hand = Baskin.Layouts.Select(l => l.Name).ToList();
             for (int seed = 1; seed <= 20; seed++)
             {
-                Assert.Contains(Baskin.Create(new RaidParams { Seed = seed, MapSeed = 5 }).Layout, pool);
-                Assert.Contains(Baskin.Create(new RaidParams { Seed = seed }).Layout, hand);
+                var plain = Baskin.Create(new RaidParams { Seed = seed });
+                var marked = Baskin.Create(new RaidParams { Seed = seed, MapSeed = 7919 });
+                Assert.Contains(marked.Layout, hand);
+                Assert.AreEqual(Baskin.Signature(plain), Baskin.Signature(marked), "tohum " + seed);
             }
         }
 
@@ -93,8 +90,7 @@ namespace Corrigible.Tests
             var sim = LegacySimulation.NewGame(4242, new Balance { shelterEventsEnabled = false });
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
             Assert.AreEqual(sim.S.Seed, sim.S.Raid.Params.MapSeed);
-            Assert.AreNotEqual(0u, sim.S.Raid.Params.MapSeed);
-            Assert.AreEqual(1, sim.S.Raid.Params.MapSlot, "harekâtın ilk baskını torbanın ilk haritası");
+            Assert.AreNotEqual(0u, sim.S.Raid.Params.MapSeed, "sunum tesis odasının bina kitini MapSeed ile seçer");
         }
     }
 }

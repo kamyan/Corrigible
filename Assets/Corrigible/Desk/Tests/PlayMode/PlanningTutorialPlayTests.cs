@@ -23,20 +23,26 @@ namespace Corrigible.Desk.Tests
         [UnityTest] public IEnumerator Guide_SeesARealCardDrop_AndDoesNotWriteItsOwnCommands()
         {
             Assert.IsTrue(Tutor.Active);Assert.AreEqual("intro",Tutor.CurrentStepId);var before=BoardPlayKit.Snapshot();
+            F<Button>(Note,"ok").onClick.Invoke();yield return BoardPlayKit.Frames(2);Assert.AreEqual("counters",Tutor.CurrentStepId);
+            yield return BoardPlayKit.WaitFor(()=>Tutor.Pointer!=null&&Tutor.Pointer.Visible,3,"sayaçlar adımında işaretçi görünmeli");
             F<Button>(Note,"ok").onClick.Invoke();yield return BoardPlayKit.Frames(2);Assert.AreEqual("board",Tutor.CurrentStepId);Assert.AreEqual(before,BoardPlayKit.Snapshot());
+            yield return BoardPlayKit.WaitFor(()=>Tutor.Pointer.Visible&&Tutor.Pointer.Label==Loc.T("BURAYA BAS"),3,"SIĞINAK tuşu işaretlenmeli");
+            Assert.IsTrue(Screen.safeArea.Overlaps(Tutor.Pointer.Target),"işaretçi ekranda");
             BoardPlayKit.Presenter.Show();yield return BoardPlayKit.WaitSeconds(.8f);Assert.AreEqual("person",Tutor.CurrentStepId);
             var board=BoardPlayKit.Board;var card=board.Deck.Top;Assert.IsNotNull(card);
             yield return BoardPlayKit.Drag(card.gameObject,BoardPlayKit.BoardWorld(BoardLayout.CardCentre("cook")),12);
             yield return BoardPlayKit.WaitSeconds(.5f);
             Assert.AreEqual("gear",Tutor.CurrentStepId);Assert.AreEqual("board_assign",BoardPlayKit.Sim.Record.commands.Last().kind);Assert.AreEqual("cook",BoardPlayKit.Sim.Record.commands.Last().b);
-            before=BoardPlayKit.Snapshot();F<Button>(Note,"ok").onClick.Invoke();yield return BoardPlayKit.Frames(2);Assert.AreEqual("slip",Tutor.CurrentStepId);Assert.AreEqual(before,BoardPlayKit.Snapshot());
+            before=BoardPlayKit.Snapshot();F<Button>(Note,"ok").onClick.Invoke();yield return BoardPlayKit.Frames(2);Assert.AreEqual("intel",Tutor.CurrentStepId);
+            F<Button>(Note,"ok").onClick.Invoke();yield return BoardPlayKit.Frames(2);Assert.AreEqual("back",Tutor.CurrentStepId);Assert.AreEqual(before,BoardPlayKit.Snapshot());
             // Panodan dönüş sürerken baskın açılırsa oda kamerası kilitlenir; rehber onu beklememeli.
             BoardPlayKit.Presenter.Close();
             var next=BoardPlayKit.Sim.NextLiberationSector(BoardPlayKit.Sim.S.Liberation.CurrentRegion);
             Assert.IsTrue(BoardPlayKit.Game.StartLiberationRaid(next.Id).Ok);
             yield return BoardPlayKit.WaitFor(()=>Object.FindFirstObjectByType<LiveRaidDataSource>()?.State!=null,8,"baskın sahnesi yüklenmedi");
-            yield return BoardPlayKit.WaitSeconds(.4f);Assert.AreEqual("raidSelect",Tutor.CurrentStepId);
+            yield return BoardPlayKit.WaitSeconds(.4f);Assert.AreEqual("raidBoard",Tutor.CurrentStepId);
             Assert.Greater(F<CanvasGroup>(Note,"group").alpha,.99f,"baskında rehber görünmeli");
+            yield return BoardPlayKit.WaitFor(()=>Tutor.Pointer.Visible,3,"baskında tur şeridi işaretlenmeli");
             var unload=UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync("Baskin");while(unload!=null&&!unload.isDone)yield return null;
         }
         // ---------------------------------------------------------------- KOS aşama 8: aday grubu, olay tutanağı, son şalter
@@ -72,19 +78,6 @@ namespace Corrigible.Desk.Tests
             var screen=BoardPlayKit.ScreenPoint(PaperWorld(v,mm));var hit=BoardPlayKit.FirstHit(screen);
             Assert.AreSame(v.HitArea.gameObject,hit.gameObject,what+": ilk ışın tutanağa düşmeli ("+BoardPlayKit.DescribeHits(screen)+")");
             K.ClickHit(hit);yield return BoardPlayKit.Frames(2);
-        }
-        /// <summary>Tepsideki tutanağın görünen bir noktasına gerçek ışınla tık (EVRAK ya da kâğıt) → ele gelir.</summary>
-        static IEnumerator TakeFromTray(ShelterEventPaperView v)
-        {
-            var tray=ShiftPlayKit.Tray.transform;
-            bool OnTray(RaycastResult h)=>h.gameObject!=null&&(h.gameObject==v.HitArea.gameObject||h.gameObject.transform.IsChildOf(tray)||
-                ShiftPlayKit.TrayTarget!=null&&h.gameObject==ShiftPlayKit.TrayTarget.gameObject);
-            var centre=BoardPlayKit.ScreenPoint(v.transform.position);var hit=BoardPlayKit.FirstHit(centre);
-            for(int i=1;i<=9&&!OnTray(hit);i++)for(int j=1;j<=5&&!OnTray(hit);j++)
-                hit=BoardPlayKit.FirstHit(BoardPlayKit.ScreenPoint(PaperWorld(v,new Vector2(ShelterEventPaperFace.WidthMm*i/10f,ShelterEventPaperFace.HeightMm*j/6f))));
-            Assert.IsTrue(OnTray(hit),"tepsideki tutanağa tık ("+BoardPlayKit.DescribeHits(centre)+")");
-            K.ClickHit(hit);
-            yield return BoardPlayKit.WaitFor(()=>v.State==ShelterEventPaperView.Where.Hand&&!v.Moving,4,"tutanak ele gelmedi ("+v.State+")");
         }
         /// <summary>Notun kâğıdının ekran köşeleri (Screen Space Overlay: dünya köşeleri piksel).</summary>
         Vector2[] NoteQuad(){var c=new Vector3[4];F<RectTransform>(Note,"card").GetWorldCorners(c);return c.Select(p=>(Vector2)p).ToArray();}
@@ -137,8 +130,8 @@ namespace Corrigible.Desk.Tests
         }
 
         /// <summary>
-        /// KOS aşama 8: ilk vardiyadan sonra rehber hedef satırını gösterir, sonra gerçek akışta gelen ilk olay tutanağını (EVRAK
-        /// tepsisine tık → elde → satır → KARAR) ve ilk aday grubunu (KAPI → tezgâh → GERİ ÇEVİR damgası fişe) sırasıyla değil,
+        /// KOS aşama 8: ilk vardiyadan sonra rehber hedef satırını gösterir, sonra gerçek akışta gelen ilk olay tutanağını (kapı
+        /// panosuna düşer → KAPI tuşu → panodaki kâğıda tık → elde → satır → KARAR) ve ilk aday grubunu (KAPI → tezgâh → GERİ ÇEVİR damgası fişe) sırasıyla değil,
         /// geldikleri anda anlatır. Rehber sürerken son şalter "mühürlü · rehber"dir; İFŞA, son şalter ve kapanış bilgileri onaylanınca
         /// mühür kalkar. Rehber kendi komutunu yazmaz.
         /// </summary>
@@ -157,9 +150,11 @@ namespace Corrigible.Desk.Tests
                 if(sim.PendingShelterEvent!=null&&!sawEvent)
                 {
                     var view=Events.View;
-                    yield return BoardPlayKit.WaitFor(()=>view.State==ShelterEventPaperView.Where.Tray&&!view.Moving,6,"tutanak tepsiye düşmedi ("+view.State+")");
+                    yield return ShiftPlayKit.WaitDoor(view,"rehberin ilk tutanağı",6);
                     yield return BoardPlayKit.Frames(2);yield return AssertVisible("event");Log("olay "+sim.PendingShelterEvent.Kind+" · gün "+sim.S.Day);
-                    yield return TakeFromTray(view);
+                    // Adımın dediği gibi: KAPI tuşuyla kapıya dön (adım sürer), çekmeceyi açıp tutanağı al
+                    yield return K.EnterDoor();yield return AssertVisible("event");
+                    yield return ShiftPlayKit.TakeFromDoor(view,"rehberin ilk tutanağı");
                     yield return BoardPlayKit.Frames(2);yield return AssertVisible("decide");AssertSealed("tutanak elde");
                     AssertNoteClear(PaperQuad(view),"elde tutanağın yazı çerçevesi");
                     var rows=Events.Last.Rows;int pick=rows.FindIndex(r=>r.Enabled&&r.Safe);if(pick<0)pick=rows.FindIndex(r=>r.Enabled);
@@ -168,9 +163,13 @@ namespace Corrigible.Desk.Tests
                     Assert.AreEqual(rows[pick].Id,Events.Last.Selected?.Id,"satır işaretlendi");
                     yield return ClickPaper(view,view.Face.ConfirmRect.center,"KARAR kutusu");
                     Assert.AreEqual("event_decide",sim.Record.commands.Last().kind);
-                    yield return BoardPlayKit.WaitFor(()=>!Events.Busy,6,"tutanak tepsiye inmedi");
+                    yield return BoardPlayKit.WaitFor(()=>!Events.Busy,6,"tutanak çekmeceye konmadı");
+                    // Adımın dediği gibi: karar çekmeceye konunca şalteri çekip dışarıya bildir
+                    yield return ShiftPlayKit.SendFromDrawer(view,"rehberin ilk tutanağı");
                     yield return BoardPlayKit.Frames(2);sawEvent=true;
                     Assert.IsFalse(Tutor.CurrentStepId=="event"||Tutor.CurrentStepId=="decide","karar verilince olay adımı kapanır");
+                    // Karar K8'de verildi; kamera orada kalır. Grup kolu KAPI tuşuyla masadan girer: masaya dön
+                    BoardPlayKit.Rig.ResetView();yield return ShiftPlayKit.WaitForPose(SiginakPose.Desk,3);yield return BoardPlayKit.Frames(2);
                     continue;
                 }
                 if(sim.Admission.Group.Count>0&&!sawGroup)
@@ -213,23 +212,28 @@ namespace Corrigible.Desk.Tests
             foreach(var lang in new[]{DeskLang.Tr,DeskLang.En})
             {
                 DeskLoc.Instance.SetLanguage(lang);yield return BoardPlayKit.Frames(2);
+                // Asset oyunu (tesis, alt bayraklar açık) ve alt bayraksız tesis (rehberin taban metinleri)
+                var plain=Simulation.NewGame(79,new Balance{facilityTitlesEnabled=false,facilityDefenseEnabled=false,infiltratorFieldEnabled=false});
+                foreach(var simulation in new[]{BoardPlayKit.Sim,plain})
                 foreach(var step in PlanningTutorialFlow.Steps)
                 foreach(bool raidLayout in new[]{false,true})
                 {
                     int index=PlanningTutorialFlow.IndexOf(step.Id);
-                    bool raidStep=index>=PlanningTutorialFlow.IndexOf("raidSelect")&&index<=PlanningTutorialFlow.IndexOf("raid");
+                    bool raidStep=index>=PlanningTutorialFlow.IndexOf("raidBoard")&&index<=PlanningTutorialFlow.IndexOf("raidEscape");
                     if(raidLayout&&!raidStep)continue;
                     bool topic=step.Topic!=null||step.Id=="watch";
+                    string expected=PlanningTutorialFlow.BodyText(step,simulation);
                     Note.SetRaid(raidLayout);
                     Note.Show(new TutorialNoteData{Head=Loc.T("REHBER"),
-                        Step=topic?Loc.T("REHBER · KONU"):Loc.F("ADIM {0}/{1}",index+1,PlanningTutorialFlow.Steps.Length),Title=Loc.T(step.Title),Body=PlanningTutorialFlow.BodyText(step,BoardPlayKit.Sim),ShowOk=step.Info,Ok=Loc.T("SONRAKİ"),Skip=Loc.T("EĞİTİMİ BİTİR")});
+                        Step=topic?Loc.T("REHBER · KONU"):Loc.F("ADIM {0}/{1}",index+1,PlanningTutorialFlow.Steps.Length),Title=Loc.T(step.Title),Body=expected,ShowOk=step.Info,Ok=Loc.T("SONRAKİ"),Skip=Loc.T("EĞİTİMİ BİTİR")});
                     yield return BoardPlayKit.WaitSeconds(.3f);
+                    Assert.AreEqual(expected,F<TMP_Text>(Note,"body").text,step.Id);
                     foreach(var t in new[]{F<TMP_Text>(Note,"body"),F<TMP_Text>(Note,"title")}){t.ForceMeshUpdate();if(t.isTextOverflowing)bad.Add(lang+" · "+step.Id+": "+t.name+" taşıyor");Assert.GreaterOrEqual(t.fontSize,14);}
                     foreach(var t in new[]{F<TMP_Text>(Note,"head"),F<TMP_Text>(Note,"step")}){t.ForceMeshUpdate();if(t.isTextOverflowing)bad.Add(lang+" · "+step.Id+": "+t.name+" taşıyor");
                         if(t.textInfo.lineCount>1)bad.Add(lang+" · "+step.Id+": "+t.name+" "+t.textInfo.lineCount+" satıra kırılıyor ("+t.text+")");}
                     var corners=new Vector3[4];F<RectTransform>(Note,"card").GetWorldCorners(corners);
                     float top=corners.Max(c=>c.y),left=corners.Min(c=>c.x),right=corners.Max(c=>c.x),bottom=corners.Min(c=>c.y);
-                    string at=lang+" · "+step.Id+(raidLayout?" · baskın":"");
+                    string at=lang+(simulation==plain?" · alt bayraksız":" · tesis")+" · "+step.Id+(raidLayout?" · baskın":"");
                     Debug.Log("[PlanningTutorialPlayTests] not "+at+" · üst "+top.ToString("0")+" alt "+bottom.ToString("0")+" / "+Screen.height);
                     if(top>Screen.height+1||bottom< -1||left< -1||right>Screen.width+1)bad.Add(at+": kâğıt ekrandan taşıyor (üst "+top.ToString("0")+", alt "+bottom.ToString("0")+" / "+Screen.height+")");
                 }
@@ -239,8 +243,9 @@ namespace Corrigible.Desk.Tests
         }
         [UnityTest] public IEnumerator ResumeAndSkip_PreserveTheCampaignAndRememberTheTutorialChoice()
         {
+            F<Button>(Note,"ok").onClick.Invoke();yield return BoardPlayKit.Frames(2);Assert.AreEqual("counters",Tutor.CurrentStepId);
             F<Button>(Note,"ok").onClick.Invoke();yield return BoardPlayKit.Frames(2);Assert.AreEqual("board",Tutor.CurrentStepId);BoardPlayKit.Game.Save();
-            yield return BoardPlayKit.ContinueDesk();yield return BoardPlayKit.Frames(3);Assert.IsTrue(Tutor.Active);Assert.AreEqual("board",Tutor.CurrentStepId);
+            yield return BoardPlayKit.ContinueDesk();yield return BoardPlayKit.Frames(3);Assert.IsTrue(Tutor.Active);Assert.AreEqual("board",Tutor.CurrentStepId,"adım kimlikle sürer");
             var before=BoardPlayKit.Snapshot();F<Button>(Note,"skip").onClick.Invoke();yield return BoardPlayKit.Frames(2);Assert.IsFalse(Tutor.Active);Assert.IsTrue(SiginakTutorial.PlanningDone);Assert.AreEqual(before,BoardPlayKit.Snapshot());
             BoardPlayKit.Game.NewGame(81);yield return BoardPlayKit.Frames(2);Assert.IsFalse(Tutor.Active);
         }
@@ -260,6 +265,26 @@ namespace Corrigible.Desk.Tests
                 var corners=new Vector3[4];F<RectTransform>(Note,"card").GetWorldCorners(corners);foreach(var p in corners){Assert.That(p.x,Is.InRange(-1f,Screen.width+1f));Assert.That(p.y,Is.InRange(-1f,Screen.height+1f));}
             }
             BoardPlayKit.Presenter.Show();yield return BoardPlayKit.WaitSeconds(.8f);Assert.IsFalse(Tutor.HandleEscape());Assert.IsTrue(BoardPlayKit.Presenter.HandleEscape());Assert.IsTrue(Tutor.Active);
+        }
+    }
+
+    public sealed class FacilityPlanningTutorialPlayTests
+    {
+        [UnityTearDown] public IEnumerator Teardown() => BoardPlayKit.TearDown();
+
+        [UnityTest] public IEnumerator FirstWing_OpensWithTheSpecialistNote()
+        {
+            yield return BoardPlayKit.LoadDesk(tutorial:true);
+            var sim=BoardPlayKit.Sim;
+            var wing=sim.NextLiberationSector(sim.S.Liberation.CurrentRegion);
+            Assert.IsTrue(BoardPlayKit.Game.StartLiberationRaid(wing.Id).Ok);
+            yield return BoardPlayKit.WaitFor(()=>Object.FindFirstObjectByType<LiveRaidDataSource>()?.State?.Room!=null,12,"ilk tesis odası yüklenmedi");
+            var tutor=Object.FindFirstObjectByType<SiginakTutorial>();
+            yield return BoardPlayKit.WaitFor(()=>tutor.CurrentStepId=="raidBoard",5,"rehber tesis tahtasına geçmedi");
+            var note=tutor.GetComponentInChildren<TutorialNoteView>(true);
+            var body=(TMP_Text)typeof(TutorialNoteView).GetField("body",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(note);
+            var step=PlanningTutorialFlow.Steps[PlanningTutorialFlow.IndexOf("raidBoard")];
+            Assert.AreEqual(PlanningTutorialFlow.BodyText(step,sim),body.text);
         }
     }
 }

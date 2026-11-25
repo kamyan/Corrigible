@@ -294,7 +294,7 @@ namespace Corrigible.Desk.Tests
         /// <summary>Fişin ekrandaki yüksekliği / ekran yüksekliği (üst ve alt kenarın ortası izdüşürülür; düzlem içi eğimden bağımsız).</summary>
         public static float SlipHeightFraction()
         {
-            float half = TokenOr("shiftClose.slip.sizeMm[1]", 150) * 0.0005f;
+            float half = TokenOr("shiftClose.slip.sizeMm[1]", 225) * 0.0005f;
             var t = Paper.transform;
             var cam = Cam;
             Vector3 top = cam.WorldToScreenPoint(t.TransformPoint(new Vector3(0, half, 0)));
@@ -305,7 +305,7 @@ namespace Corrigible.Desk.Tests
         /// <summary>Fişin dört köşesi kadrajda.</summary>
         public static bool SlipInFrame()
         {
-            var size = new Vector2(TokenOr("shiftClose.slip.sizeMm[0]", 100), TokenOr("shiftClose.slip.sizeMm[1]", 150)) * 0.0005f;
+            var size = new Vector2(TokenOr("shiftClose.slip.sizeMm[0]", 260), TokenOr("shiftClose.slip.sizeMm[1]", 225)) * 0.0005f;
             var t = Paper.transform;
             var cam = Cam;
             foreach (var c in new[] { new Vector3(-size.x, -size.y), new Vector3(size.x, -size.y), new Vector3(-size.x, size.y), new Vector3(size.x, size.y) })
@@ -316,37 +316,29 @@ namespace Corrigible.Desk.Tests
             return true;
         }
 
-        /// <summary>
-        /// Fişin ekran dikdörtgeni ile teleks kâğıdının ileti yuvalarının (kod, durum, ileti) ekran dikdörtgeni kesişiyor mu (px²;
-        /// 0: örtmez). Fiş daktiloda kâğıdın yanında durur.
-        /// </summary>
-        public static float SlipOverTelexPx()
+        // ---------- Tek kâğıt akışı (teleks kâğıdı ve fiş aynı silindirden) ----------
+
+        /// <summary>Silindirde teleks kâğıdı var (<see cref="Teleprinter.SheetPresent"/>; fiş silindirdeyken yok).</summary>
+        public static bool TelexSheetPresent => Printer != null && Printer.SheetPresent;
+        /// <summary>Eski teleks kâğıdının kopyası düşüyor (<see cref="Teleprinter.Dropping"/>).</summary>
+        public static bool TornActive => Printer != null && Printer.Dropping;
+        /// <summary>Teleks kâğıdının silindirin içine geri alındığı mesafe (m; yeni kâğıt alttan yazılarak çıkar).</summary>
+        public static float SheetRetractM => Printer != null ? Printer.SheetRetractM : 0;
+        /// <summary>Teleks satırı bitti ve kâğıt dinlenme pozunda (<see cref="Teleprinter.Settled"/>).</summary>
+        public static bool TelexSettled => Printer == null || Printer.Settled;
+        /// <summary>Teleks kâğıdının TELEKS hedefi (<c>Teleprinter.sheetTarget</c>) açık.</summary>
+        public static bool PaperTargetEnabled
         {
-            var size = new Vector2(TokenOr("shiftClose.slip.sizeMm[0]", 100), TokenOr("shiftClose.slip.sizeMm[1]", 150)) * 0.0005f;
-            var t = Paper.transform;
-            var cam = Cam;
-            Rect Of(IEnumerable<Vector3> world)
+            get
             {
-                var pts = world.Select(w => (Vector2)cam.WorldToScreenPoint(w)).ToList();
-                return Rect.MinMaxRect(pts.Min(q => q.x), pts.Min(q => q.y), pts.Max(q => q.x), pts.Max(q => q.y));
+                var c = Get<Collider>(Printer, "sheetTarget");
+                return c != null && c.enabled && c.gameObject.activeInHierarchy;
             }
-            var slip = Of(new[] { new Vector3(-size.x, -size.y), new Vector3(size.x, -size.y), new Vector3(-size.x, size.y), new Vector3(size.x, size.y) }
-                .Select(c => t.TransformPoint(c)));
-            var corners = new List<Vector3>();
-            foreach (var slot in new[] { "frontCode", "frontStatus", "frontMessage" })
-            {
-                var text = Get<TMPro.TMP_Text>(Printer, slot);
-                if (text == null) continue;
-                var c = new Vector3[4];
-                text.rectTransform.GetWorldCorners(c);
-                corners.AddRange(c);
-            }
-            if (corners.Count == 0) return 0;
-            var paper = Of(corners);
-            float w = Mathf.Min(slip.xMax, paper.xMax) - Mathf.Max(slip.xMin, paper.xMin);
-            float h = Mathf.Min(slip.yMax, paper.yMax) - Mathf.Max(slip.yMin, paper.yMin);
-            return w > 0 && h > 0 ? w * h : 0;
         }
+        /// <summary>Teleks kâğıdının hedef kutusu (dinlenme pozunda kâğıdın merkezi; fişin dil pozu da burası).</summary>
+        public static Collider PaperTarget => Get<Collider>(Printer, "sheetTarget");
+        /// <summary>Ekran şeridinde bekleyen satırlar (<see cref="TelexStrip"/>).</summary>
+        public static IReadOnlyCollection<TelexLine> StripQueue => Get<Queue<TelexLine>>(Get<TelexStrip>(Telex, "strip"), "queue");
 
         /// <summary>Fişe sürüklemesiz sol tık (kâğıdın IPointerClickHandler'ı; anlamını kapanış verir).</summary>
         public static void ClickSlip() => BoardPlayKit.Click(Paper.gameObject);
@@ -458,6 +450,87 @@ namespace Corrigible.Desk.Tests
             ExecuteEvents.Execute(go, ped, ExecuteEvents.pointerExitHandler);
         }
 
+        // ---------- Kapıdan gelen belgeler (Docs/KAPI-BELGELERI-VE-YZ-MEKANLARI-TASARIMI.md §A) ----------
+
+        /// <summary>Kâğıt belge çekmecesinin tablasına indi (iniş bitti).</summary>
+        public static IEnumerator WaitDoor(ShelterEventPaperView view, string what, float timeout = 3)
+        {
+            yield return BoardPlayKit.WaitFor(() => view.State == ShelterEventPaperView.Where.Door && !view.Moving, timeout,
+                what + ": kâğıt çekmeceye inmedi (" + view.State + ")");
+        }
+
+        /// <summary>Kapıya girer (kamera K8'de değilse <see cref="SiginakAdmission.Enter"/>).</summary>
+        static IEnumerator EnterDoor(string what)
+        {
+            if (Rig.Current == SiginakPose.Door) yield break;
+            var admission = BoardPlayKit.Find<SiginakAdmission>();
+            Assert.IsNotNull(admission, "kabul (kapı) bileşeni");
+            admission.Enter();
+            yield return BoardPlayKit.WaitFor(() => Rig.Current == SiginakPose.Door && !Rig.InTransition, 8,
+                what + ": kamera kapıya varmadı (" + Rig.Current + ", geçiş " + Rig.InTransition + ")");
+        }
+
+        /// <summary>Sahnedeki belge çekmecesi (<see cref="PassDrawer"/>).</summary>
+        public static PassDrawer Drawer => BoardPlayKit.Find<PassDrawer>();
+
+        /// <summary>Hedefin çarpıştırıcısının ortasına gerçek ışınla tık (ilk ışın hedefe düşmeli).</summary>
+        static void ClickTarget(Component target, string what)
+        {
+            var col = target.GetComponent<Collider>();
+            Assert.IsNotNull(col, what + ": çarpıştırıcı");
+            var centre = BoardPlayKit.ScreenPoint(col.bounds.center);
+            var hit = BoardPlayKit.FirstHit(centre);
+            Assert.IsTrue(hit.gameObject == col.gameObject, what + ": ışın hedefe düşer (" + BoardPlayKit.DescribeHits(centre) + ")");
+            BoardPlayKit.ClickHit(hit);
+        }
+
+        /// <summary>
+        /// Çekmecedeki kâğıda gerçek ışınla tık: kamera K8'de değilse KAPI'ya girilir, çekmece kapalıysa önüne tıklanıp açılır, kâğıdın
+        /// ortasına giden ilk ışın kâğıdın kendisine düşer ve kâğıt ele gelir.
+        /// </summary>
+        public static IEnumerator TakeFromDoor(ShelterEventPaperView view, string what)
+        {
+            Assert.AreEqual(ShelterEventPaperView.Where.Door, view.State, what + ": kâğıt çekmecede");
+            Assert.IsNotNull(view.DoorAnchor, what + ": çekmecenin çapası bağlı");
+            yield return EnterDoor(what);
+            yield return BoardPlayKit.Frames(2);
+            var drawer = Drawer;
+            if (drawer != null && !drawer.IsOpen)
+            {
+                Assert.IsFalse(view.HitArea.enabled, what + ": kapalı çekmecedeki kâğıt tıklanmaz");
+                ClickTarget(drawer.DrawerTarget, what + ": çekmecenin önü");
+            }
+            if (drawer != null)
+                yield return BoardPlayKit.WaitFor(() => drawer.FullyOpen && view.HitArea.enabled, 3, what + ": çekmece açılmadı");
+            yield return BoardPlayKit.Frames(2);
+            var centre = BoardPlayKit.ScreenPoint(view.transform.position);
+            var hit = BoardPlayKit.FirstHit(centre);
+            Assert.IsTrue(hit.gameObject != null && view.HitArea != null && hit.gameObject == view.HitArea.gameObject,
+                what + ": çekmecedeki kâğıdın ortasına ışın kâğıda düşer (" + BoardPlayKit.DescribeHits(centre) + ")");
+            BoardPlayKit.ClickHit(hit);
+            yield return BoardPlayKit.WaitFor(() => view.State == ShelterEventPaperView.Where.Hand && !view.Moving, 3,
+                what + ": çekmecedeki kâğıt ele gelmedi (" + view.State + ")");
+        }
+
+        /// <summary>
+        /// Karara bağlanan kâğıt çekmecenin tablasına konur (Outbox), lamba yeşil yanıp söner; şaltere gerçek ışınla tık kolu çeker,
+        /// çekmece kapanır ve kâğıt gizlenir (duvarın öbür yanına geçti).
+        /// </summary>
+        public static IEnumerator SendFromDrawer(ShelterEventPaperView view, string what)
+        {
+            yield return BoardPlayKit.WaitFor(() => view.State == ShelterEventPaperView.Where.Outbox && !view.Moving, 4,
+                what + ": karar çekmeceye konmadı (" + view.State + ")");
+            var drawer = Drawer;
+            Assert.IsNotNull(drawer, what + ": belge çekmecesi");
+            Assert.AreEqual(PassDrawer.Lamp.Green, drawer.LampState, what + ": lamba yeşil");
+            yield return EnterDoor(what);
+            yield return BoardPlayKit.Frames(2);
+            ClickTarget(drawer.SwitchTarget, what + ": şalter");
+            yield return BoardPlayKit.WaitFor(() => view.State == ShelterEventPaperView.Where.Hidden, 4, what + ": şalterden sonra kâğıt gitmedi (" + view.State + ")");
+            Assert.IsFalse(drawer.IsOpen, what + ": çekmece kapandı");
+            yield return BoardPlayKit.WaitFor(() => drawer.LampState == PassDrawer.Lamp.Off, 2, what + ": lamba söndü");
+        }
+
         // ---------- Akışlar ----------
 
         /// <summary>Kamera <paramref name="pose"/>'a vardı (geçiş bitti).</summary>
@@ -521,16 +594,16 @@ namespace Corrigible.Desk.Tests
             return sim.StartLiberationRaid(next.Id);
         }
 
-        /// <summary>Süren baskın doğrudan, kayıpsız başarıyla çözülür; operasyon raporu okunmuş sayılır (masa kilitlenmesin).</summary>
+        /// <summary>
+        /// Süren baskın doğrudan, kayıpsız başarıyla çözülür (tek kip: oda zinciri komutlarla yürür; <c>raid_room</c> × oda ve
+        /// <c>raidres</c> kayda girer, <c>Changed</c> yayılmaz, baskın sahnesi yüklenmez: <see cref="FacilityRewardPlayKit.WinRaid"/>);
+        /// operasyon raporu okunmuş sayılır (masa kilitlenmesin).
+        /// </summary>
         public static void ResolveRaidDirect()
         {
             var sim = Sim;
             if (sim?.S.Raid == null) return;
-            var squad = sim.S.Raid.Params.Squad;
-            var result = new RaidResult { Success = true, Turns = 6 };
-            foreach (var slot in squad) { result.Hp.Add(slot.Hp); result.Armor.Add(slot.Armor); }
-            var r = sim.ResolveRaid(result);
-            Assert.IsTrue(r.Ok, "baskın çözülemedi: " + r.Msg);
+            FacilityRewardPlayKit.WinRaid(sim);
             if (BoardPlayKit.Surface != null) BoardPlayKit.Surface.MarkRaidReportSeen();
         }
 
@@ -607,6 +680,10 @@ namespace Corrigible.Desk.Tests
         public bool TargetLit, LightOn, MouthLit;
         public double ShiftCounter;
         public bool ShiftRolling, Typing;
+        /// <summary>Teleks kâğıdı silindirde; eski kâğıdın kopyası düşüyor (tek kâğıt akışı).</summary>
+        public bool Sheet, Dropping;
+        /// <summary>Daktilonun rulosunun toplam dönüşü (derece, 0–360; <see cref="Teleprinter.RollDegrees"/>).</summary>
+        public float Roll;
         public SiginakPose Pose;
 
         public static ShiftSample Now()
@@ -641,6 +718,9 @@ namespace Corrigible.Desk.Tests
                 ShiftCounter = counter != null ? counter.Value : -1,
                 ShiftRolling = ShiftPlayKit.ShiftCounterRolling,
                 Typing = ShiftPlayKit.TelexTyping,
+                Sheet = ShiftPlayKit.TelexSheetPresent,
+                Dropping = ShiftPlayKit.TornActive,
+                Roll = ShiftPlayKit.Printer != null ? ShiftPlayKit.Printer.RollDegrees : 0,
                 Pose = ShiftPlayKit.Rig != null ? ShiftPlayKit.Rig.Current : SiginakPose.Desk,
             };
         }

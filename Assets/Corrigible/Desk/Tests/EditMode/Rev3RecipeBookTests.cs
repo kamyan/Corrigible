@@ -590,11 +590,13 @@ namespace Corrigible.Desk.Tests
             var sim = Simulation.NewGame(79, new Balance { shelterEventsEnabled = false, planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 100, admissionKnockMax = 100 });
             var tr = PlanningBoardSnapshotBuilder.Build(sim, new BoardUiState(), false, false, false);
             Assert.AreEqual("TARİF DEFTERİ", tr.BookTitle);
-            Assert.AreEqual("6 tarif", tr.BookLine);
+            // Tesis tek kip: yedi tesis tarifi kapalı sayfa (sunucu ödülüyle açılır)
+            int locked = FacilityGear.Kinds.Length;
+            Assert.AreEqual(Loc.F("{0} tarif · {1} kapalı", 6, locked), tr.BookLine);
             UseEnglish();
             var en = PlanningBoardSnapshotBuilder.Build(sim, new BoardUiState(), true, false, false);
             Assert.AreEqual("RECIPE BOOK", en.BookTitle);
-            Assert.AreEqual("6 recipes", en.BookLine);
+            Assert.AreEqual("6 recipes · " + locked + " locked", en.BookLine);
         }
 
         // ================================================================== B10 · kilitli plan
@@ -829,19 +831,28 @@ namespace Corrigible.Desk.Tests
             {
                 if (english) UseEnglish(); else Loc.SetLanguage(Loc.Turkish);
                 var s = PlanningBoardSnapshotBuilder.Build(sim, new BoardUiState(), english, false, false);
-                Assert.AreEqual(6, s.Recipes.Count, "altı tarif");
+                // Altı temel tarif ve tesisin yedi kapalı sayfası (tek kip)
+                Assert.AreEqual(6 + FacilityGear.Kinds.Length, s.Recipes.Count, "altı tarif ve yedi kapalı sayfa");
+                int spreads = (s.Recipes.Count + 1) / 2;
                 for (int i = 0; i < s.Recipes.Count; i++)
                 {
                     bool right = i % 2 == 1;
                     int spread = i / 2;
-                    page.Bind(s.Recipes[i], s.Book, right, spread > 0, spread < 2, true);
+                    page.Bind(s.Recipes[i], s.Book, right, spread > 0, spread < spreads - 1, true);
                     string where = (english ? "EN " : "TR ") + s.Recipes[i].Id;
                     Assert.IsFalse(page.Overflowing, where + ": " + string.Join(", ", page.OverflowFields));
-                    foreach (var t in new[] { page.Title, page.OutName, page.SlotWord, page.HeaderLeft, page.HeaderRight, page.TimeText, page.InputNames[0], page.InputNames[1] })
+                    foreach (var t in new[] { page.Title, page.SlotWord, page.HeaderLeft, page.HeaderRight, page.TimeText, page.InputNames[0], page.InputNames[1] })
                     {
                         if (string.IsNullOrEmpty(t.text)) continue;
                         t.ForceMeshUpdate(true, true);
                         Assert.AreEqual(1, t.textInfo.lineCount, where + ": '" + t.text + "' tek satır");
+                    }
+                    // Çıktı adı sığmazsa iki satıra kırılır (tesis aşama 9: uzun tesis tarifleri, ör. "Kumanda kelepçesi"); en çok iki satır
+                    if (!string.IsNullOrEmpty(page.OutName.text))
+                    {
+                        page.OutName.ForceMeshUpdate(true, true);
+                        Assert.LessOrEqual(page.OutName.textInfo.lineCount, 2, where + ": '" + page.OutName.text + "' en çok iki satır");
+                        if (i < 6) Assert.AreEqual(1, page.OutName.textInfo.lineCount, where + ": temel tarifin adı tek satır");
                     }
                 }
             }

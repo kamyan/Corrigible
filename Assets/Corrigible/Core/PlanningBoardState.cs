@@ -14,6 +14,8 @@ namespace Corrigible.Core
         /// <summary>Tecritte: hiçbir göreve konamaz, teçhizat alamaz, yer.</summary>
         public bool Isolated;
         public List<ResidentSkill> Experience = new List<ResidentSkill>();
+        public FacilityTitle Titles;
+        public int[] Deeds;
         public int Wounds => Math.Max(0, MaxHp - Hp);
         public int Skill(string subject) => Experience.FirstOrDefault(x => x.Subject == subject)?.Points ?? 0;
     }
@@ -40,6 +42,8 @@ namespace Corrigible.Core
         public int Charges = 1;
         /// <summary>Kişiye bağlı teçhizat: devredilemez, sökülemez; sahibi sığınaktan çıkınca onunla gider.</summary>
         public bool Bound;
+        /// <summary>Tesis aşama 8: düşen köpeğin dinlenmesi (vardiya; her kapanışta bir azalır). 0 değilken baskına gitmez.</summary>
+        public int Rest;
     }
 
     [Serializable]
@@ -57,6 +61,15 @@ namespace Corrigible.Core
         public string Id, Name, Output;
         public int Turns;
         public List<BoardMaterial> Inputs = new List<BoardMaterial>();
+        /// <summary>Tesis aşama 8: erzak bedeli (yalnız köpek); iş emri başlarken hammaddeyle birlikte düşer, yetmezse emir bekler.</summary>
+        public double Supplies;
+        /// <summary>Tesis aşama 8: sunucu ödülüyle açılan tarif (<see cref="FacilityGear.Recipe"/>). Otomatik üretim yolu bunları görmez;
+        /// Tezgâh kazanımı bunlara işler.</summary>
+        public bool Reward;
+        /// <summary>Tesis aşama 10: sayfa cevap tarifine dönüştü (<see cref="FacilityGear.Answers"/> kimliği; yoksa null). Sayfanın
+        /// <see cref="Id"/>, <see cref="Output"/>, <see cref="Reward"/> ve <see cref="Turns"/>'ü temel tarifinkidir; ad cevabın, girdiye
+        /// <c>facilityAnswerCircuits</c> devre eklenir.</summary>
+        public string Answer;
     }
 
     [Serializable]
@@ -135,7 +148,36 @@ namespace Corrigible.Core
                 case "armor": return Loc.T("Zırh plakası");
                 case "medkit": return Loc.T("Bakım kiti");
                 case "emp_cell": return Loc.T("EMP hücresi");
+                // Tesis aşama 8: sunucu ödülüyle açılan yedi ekipman (FacilityGear.Kinds)
+                case "wire_kit": return Loc.T("Örme seti");
+                case "charge": return Loc.T("Dinamit lokumu");
+                case "turret": return Loc.T("Yaylı taret");
+                case "decoy": return Loc.T("Yürüyen yem");
+                case "winch": return Loc.T("Makaralı vinç");
+                case "clamp": return Loc.T("Kumanda kelepçesi");
+                case "dog": return Loc.T("Köpek");
                 default: return id;
+            }
+        }
+
+        /// <summary>
+        /// Tarif kartının kısa adı (tek kip, kayıt 21): 112 × 80 kartta ad 12 mm'den küçülmez (Revizyon 3 D6-A) ve çıktı simgesine
+        /// 80 mm kalır; tam adı buna sığmayan tarifte kart yüzü bunu yazar (defter sayfası tam adı iki satıra kırar). Kimlik tarifin
+        /// çıktısı ya da cevap sayfasında cevabın kimliği (<see cref="BoardRecipe.Answer"/>). Kısa adı olmayanda null.
+        /// </summary>
+        public static string CardName(string id)
+        {
+            switch (id)
+            {
+                case FacilityGear.Charge: return Loc.T("Dinamit");
+                case FacilityGear.Turret: return Loc.T("Taret");
+                case FacilityGear.Decoy: return Loc.T("Yem");
+                case FacilityGear.Winch: return Loc.T("Vinç");
+                case FacilityGear.Clamp: return Loc.T("Kelepçe");
+                case FacilityGear.AnsSokum: return Loc.T("Anahtar");
+                case FacilityGear.AnsPiercer: return Loc.T("Delici");
+                case FacilityGear.AnsSpring: return Loc.T("Zemberek");
+                default: return null;
             }
         }
     }

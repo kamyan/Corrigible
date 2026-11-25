@@ -126,8 +126,10 @@ namespace Corrigible.Desk.Tests
         /// P1: K1'de şaltere tık → kapak 0,25 s'de 112° (ease-out), plaka "kolu indir", teleks ÖN KONTROL, kamera K6'ya, komut yok;
         /// ikinci tık → kol 0,3 s'de −35°, tam bir <c>board_print</c> (eski gün), RNG aynı; kol −35°'ye varınca kamera K1'e (masa) döner,
         /// fiş teleks ÖN KONTROL satırını bitirip kamera masaya varınca (teleks modeli değişimi: önce teleks satırı, sonra fiş) daktilodan
-        /// <c>motion.shiftClose.slipTypeS</c> (1,4 s) boyunca satır satır yazılarak çıkar ve silindirde durur (±1 mm); basılırken
-        /// teleks kâğıdı örtülü sayılır; hazır lambası sönük, fiş masada, plaka kırmızı; üçüncü tık bir şey değiştirmez.
+        /// <c>motion.shiftClose.slipTypeS</c> (1,4 s) boyunca satır satır yazılarak çıkar ve silindirde durur (±1 mm); tek kâğıt akışı:
+        /// fiş beslenmeye başlayınca o anki teleks kâğıdı (ÖN KONTROL) en çok iki karede düşer (kopyası 0,4 s'de kaybolur), fiş teleks
+        /// kâğıdının dinlenme pozuna çıkar, kâğıdın TELEKS hedefi kapalı, K1'den fişin ortasına atılan ışın fişe çarpar; hazır lambası
+        /// sönük, fiş masada, plaka kırmızı; beslenirken rulo <c>motion.shiftClose.slipRollDeg</c> (120°) döner; üçüncü tık bir şey değiştirmez.
         /// </summary>
         [UnityTest]
         public IEnumerator Cover_Lever_PrintsSlip_ToTongue()
@@ -207,7 +209,29 @@ namespace Corrigible.Desk.Tests
             float tongueAt = log.At("Slip", Where.Tongue.ToString(), feedAt);
             AssertDuration(tongueAt - feedAt, typeS, "fiş yazılarak çıkışı (daktilo → silindirdeki duruş)");
             Assert.LessOrEqual(ShiftPlayKit.FromTongueMm, 1f, "fiş silindirdeki pozunda (±1 mm)");
-            Assert.AreEqual(0f, ShiftPlayKit.SlipOverTelexPx(), "fiş K1'de teleks kâğıdının ileti yuvalarını örtmez (yanında durur)");
+            // Tek kâğıt akışı: teleks kâğıdı (ÖN KONTROL) besleme başında düşer, fiş aynı yerden çıkar
+            var beforeFeed = samples.LastOrDefault(s => s.Frame < feedFrame);
+            Assert.AreNotEqual(0, beforeFeed.Frame, "beslemeden önce örneklendi");
+            Assert.IsTrue(beforeFeed.Sheet, "besleme öncesi teleks kâğıdı silindirde (ÖN KONTROL)");
+            // Fiş beslenirken rulo döner: çıkış boyunca motion.shiftClose.slipRollDeg (teleks bu arada basmaz)
+            var atTongue = samples.First(s => s.Slip == Where.Tongue);
+            float rolled = Mathf.Repeat(atTongue.Roll - beforeFeed.Roll, 360f);
+            Assert.AreEqual(ShiftPlayKit.Token("motion.shiftClose.slipRollDeg", 120), rolled, 3f, "fiş beslenirken rulo döner");
+            var dropped = samples.FirstOrDefault(s => s.Frame >= feedFrame + 2);
+            Assert.AreNotEqual(0, dropped.Frame, "beslemeden iki kare sonrası örneklendi");
+            Assert.IsFalse(dropped.Sheet, "fiş beslenince teleks kâğıdı en çok iki karede silindirden çıkar");
+            Assert.IsTrue(samples.Where(s => s.Frame >= feedFrame && s.Frame <= feedFrame + 2).Any(s => s.Dropping), "eski teleks kâğıdı düşer");
+            Assert.IsTrue(samples.Where(s => s.Frame >= feedFrame + 2).All(s => !s.Sheet), "fiş silindirdeyken teleks kâğıdı yok");
+            float tearS = ShiftPlayKit.Get<float>(ShiftPlayKit.Printer, "tearSeconds");
+            Assert.IsTrue(samples.Where(s => s.At > feedAt + tearS + Tol).All(s => !s.Dropping), "düşen kopya " + tearS + " s'de kaybolur");
+            Assert.IsFalse(ShiftPlayKit.TornActive);
+            Assert.Less(Vector3.Distance(paper.transform.position, ShiftPlayKit.PaperTarget.transform.position), 0.001f,
+                "fiş teleks kâğıdının dinlenme pozunda (±1 mm)");
+            Assert.IsFalse(ShiftPlayKit.PaperTargetEnabled, "fiş silindirdeyken kâğıdın TELEKS hedefi kapalı");
+            Physics.SyncTransforms();
+            var ray = ShiftPlayKit.Cam.ScreenPointToRay(ShiftPlayKit.ScreenOf(paper.transform.position));
+            Assert.IsTrue(Physics.Raycast(ray, out var hit, 10f), "K1'den fişe ışın");
+            Assert.AreSame(paper.gameObject, hit.collider.gameObject, "K1'de fişin ortasına tık fişe gider (" + hit.collider.name + ")");
             var path = Vector3.Distance(paper.FeedFrom, paper.TongueTarget.position);
             // Fiş LateUpdate'te yürür; örnek eşyordamda (Update'ten sonra, LateUpdate'ten önce) alınır, yani i. örneğin konumu
             // (i − 1). karenin LateUpdate'idir. Satır adımının duruşundaki örnekte yol tam o satır sayısıdır (TypedFeed).
@@ -457,6 +481,10 @@ namespace Corrigible.Desk.Tests
             Assert.IsTrue(sim.Board.Printed, "basılı fiş duruyor");
             Assert.AreEqual(real, sim.Board.ReceiptId, "Core'un fişi aynı");
 
+            Assert.IsFalse(ShiftPlayKit.TelexSheetPresent, "fiş silindire döndü: teleks kâğıdı yok");
+            Assert.IsFalse(ShiftPlayKit.TornActive, "reddedilen bırakışta kâğıt düşmez");
+            Assert.IsFalse(ShiftPlayKit.PaperTargetEnabled, "kâğıdın hedefi kapalı");
+
             ShiftPlayKit.RaiseChanged();
             Assert.AreEqual(real, paper.ReceiptId, "Changed gerçek fişi geri getirir");
             Assert.AreEqual(Where.Tongue, paper.State, "gerçek fiş dilde");
@@ -590,6 +618,11 @@ namespace Corrigible.Desk.Tests
             if (laterLine.HasValue && laterLine.Value <= typed.At)
                 TestContext.WriteLine("devir satırından sonra başka bir teleks satırı basıldı (" + laterLine.Value.ToString("0.000") + "); 1,2 s ölçülmedi: " + log);
             else AssertDuration(typed.At - telexAt, telexS, "teleks satırı (telexPrintS)");
+            // Tek kâğıt akışı: fiş EVRAK'ta, silindir boş; devir satırı düşen kâğıt olmadan yeni teleks kâğıdına yazılarak çıkar
+            Assert.IsTrue(samples.Where(s => s.At >= released && s.At < telexAt).All(s => !s.Sheet), "dosyalama boyunca silindirde teleks kâğıdı yok");
+            Assert.IsTrue(samples.Where(s => s.At >= released).All(s => !s.Dropping), "devirde düşen kâğıt yok (silindir boştu)");
+            Assert.IsTrue(samples.Where(s => s.At >= telexAt + 2 * BoardPlayKit.MaxFrameDt).All(s => s.Sheet), "devir satırı yeni kâğıtta");
+            Assert.IsTrue(ShiftPlayKit.TelexSheetPresent && ShiftPlayKit.PaperTargetEnabled, "yeni teleks kâğıdı silindirde, hedefi açık");
 
             // şalter, fiş, pano, kamera, EVRAK
             float leverUp = log.At("Lever", "up", released);
@@ -832,7 +865,8 @@ namespace Corrigible.Desk.Tests
         /// P11 (E §4): basılı fişle kaydet (her başarılı komut kaydeder) → aynı klasörden KAYITTAN DEVAM: kayıt sürümü 14, son komut
         /// <c>board_print</c>; devamda komut geçmişi, RNG, fişin kimliği, metni ve önizlemesi birebir; fiş dilde anında (çıkış
         /// oynamaz), şalter fiş bekliyor duruşunda olaysız, ağız lambası yanık, plaka kırmızı, pano kilitli. EVRAK'a bırakış tam bir
-        /// gün ilerletir (ikizle aynı), ardından aynı fiş reddedilir.
+        /// gün ilerletir (ikizle aynı), ardından aynı fiş reddedilir. Tek kâğıt akışı: basılı fişle devamda teleks kâğıdı yok; dosyalamadan
+        /// sonra (basılı fiş yok) yeniden devamda kayıttaki son satır kâğıtta geri gelir, KAYITTAN DEVAM onu düşürüp yeni kâğıda basılır.
         /// </summary>
         [UnityTest]
         public IEnumerator PrintedSlip_SurvivesSaveAndContinue()
@@ -842,7 +876,7 @@ namespace Corrigible.Desk.Tests
             var sim = ShiftPlayKit.Sim;
             var saved = SaveStore.Load();
             Assert.IsNotNull(saved, "basımdan sonra kayıt dosyası var (GameController.Run kaydeder)");
-            Assert.AreEqual(17, GameRecord.CurrentVersion, "kayıt biçimi 17 (KOS aşama 5: sonlar; 16 aday grubu)");
+            Assert.AreEqual(22, GameRecord.CurrentVersion, "kayıt biçimi 22 (22: görevde iyileşme; 21: tek kip, tesis baskını tek baskın kipi; 20: g5 paket yerleşimi; 19: tesis oda zinciri (raid_room), tesis parmak izi; 18 üretilmiş harita; 17 sonlar; 16 aday grubu)");
             Assert.AreEqual(GameRecord.CurrentVersion, saved.version, "kaydın sürümü");
             Assert.AreEqual("board_print", saved.commands.Last().kind, "kaydın son komutu board_print");
             Assert.AreEqual(sim.S.Day, saved.day, "kaydın günü");
@@ -872,9 +906,16 @@ namespace Corrigible.Desk.Tests
             Assert.LessOrEqual(ShiftPlayKit.FromTongueMm, 1f, "fiş dil pozunda (±1 mm)");
             AssertWaiting("kayıttan devam");
             Assert.AreEqual(SiginakPose.Desk, ShiftPlayKit.Rig.Current, "kayıttan devam K1'de");
+            // Tek kâğıt akışı: basılı fiş silindirde, teleks kâğıdı yok (yükleme sırasından bağımsız), düşüş olmaz
+            Assert.IsFalse(ShiftPlayKit.TelexSheetPresent, "kayıttan devam: silindirde fiş, teleks kâğıdı yok");
+            Assert.IsFalse(ShiftPlayKit.PaperTargetEnabled, "kâğıdın TELEKS hedefi kapalı");
+            Assert.IsFalse(ShiftPlayKit.TornActive, "yüklemede kâğıt düşmez");
+            Assert.IsFalse(ShiftPlayKit.TelexTyping, "yüklemede teleks basmaz");
 
             var loaded = ShiftPlayKit.Mark();
-            yield return ShiftPlayKit.Watch(null, 0.5f);
+            var held = new List<ShiftSample>();
+            yield return ShiftPlayKit.Watch(held, 0.5f);
+            Assert.IsTrue(held.All(s => !s.Sheet && !s.Dropping), "yüklemeden sonra teleks kâğıdı gelmez, düşmez");
             var motion = log.Entries.Where(e => e.Name == "Lever" || e.Name == "Armed" || e.Name == "Thrown" || e.Name == "SwitchSound" ||
                                                 e.Name == "Slip" || e.Name == "SlipSound").ToList();
             Assert.IsEmpty(motion, "yüklemeden sonra şalter ve fiş olay çıkarmaz: " + string.Join(", ", motion.Select(e => e.ToString())));
@@ -901,6 +942,26 @@ namespace Corrigible.Desk.Tests
             var again = ShiftPlayKit.Game.FileBoardShift(id);
             Assert.IsFalse(again.Ok, "aynı fiş ikinci kez dosyalanmaz");
             ShiftPlayKit.AssertUnchanged(mark, "aynı fişi yeniden dosyalamak");
+
+            // Basılı fiş yokken kayıttan devam (tek kâğıt akışı): kayıttaki son satır silindirdeki kâğıtta geri gelir (yükleme düşüş
+            // çıkarmaz), açılışın KAYITTAN DEVAM satırı onu düşürüp yeni kâğıda basılır (şeride düşmez; fiş silindirde değil)
+            yield return BoardPlayKit.WaitFor(() => ShiftPlayKit.TelexSettled && !ShiftPlayKit.TornActive, 6, "devir satırı bitmedi");
+            var lastLine = ShiftPlayKit.LastTelex;
+            yield return ShiftPlayKit.Continue();
+            Assert.IsFalse(ShiftPlayKit.Sim.Board.Printed, "dosyalanan fiş: basılı fiş yok");
+            Assert.AreEqual(Where.Hidden, ShiftPlayKit.Paper.State, "fiş gizli");
+            Assert.AreEqual(Loc.T("KAYITTAN DEVAM"), ShiftPlayKit.LastTelex.status, "açılışın satırı");
+            Assert.IsFalse(ShiftPlayKit.StripQueue.Any(l => l.code == ShiftPlayKit.LastTelex.code), "KAYITTAN DEVAM kâğıda basılır, şeride düşmez");
+            Assert.IsTrue(ShiftPlayKit.TelexSheetPresent, "fiş yokken teleks kâğıdı silindirde");
+            yield return BoardPlayKit.WaitFor(() => ShiftPlayKit.TelexSettled && !ShiftPlayKit.TornActive, 6, "KAYITTAN DEVAM satırı bitmedi");
+            Assert.AreEqual(0f, ShiftPlayKit.SheetRetractM, 1e-6f, "kâğıt dinlenme pozunda");
+            Assert.IsTrue(ShiftPlayKit.PaperTargetEnabled, "kâğıdın TELEKS hedefi açık");
+            StringAssert.Contains(Loc.T("KAYITTAN DEVAM"), ShiftPlayKit.Get<TMPro.TMP_Text>(ShiftPlayKit.Printer, "frontStatus").text, "kâğıtta yeni satır");
+            StringAssert.Contains(lastLine.code + "  " + lastLine.status, ShiftPlayKit.Get<TMPro.TMP_Text>(ShiftPlayKit.Printer, "frontPrev").text,
+                "önceki satır kayıttaki son satır (yüklemede geri geldi)");
+            var rest = new List<ShiftSample>();
+            yield return ShiftPlayKit.Watch(rest, 0.3f);
+            Assert.IsTrue(rest.All(s => s.Sheet && !s.Dropping && !s.Typing), "satırdan sonra kâğıt yerinde kalır");
         }
 
         // ================================================================== P12

@@ -38,7 +38,7 @@ kurallar eleştirinin düzeltmeleri işlenmiş hâli. Sayılar ilk öneri; ölç
   Analist'le oynanabilmeli (Madenci atölye 2'de, Sis uzmanı 3'te gelir).
 - **Kayıt ve RNG.** Olaylar `Rnd` çağırmaz. Kurulum bütün RNG çekimlerinden sonra yapılır: olaysız baskınlar ve
   `RaidEngineTests`'in kilitli imzaları aynı kalır. Tahta kaydedilmez, kampanya baskının sonunu `RaidResult` olarak yazar
-  ve olay bölge tanımından gelir: `GameRecord.CurrentVersion` artmaz. Eğitim baskını olaysız.
+  ve olay bölge tanımından gelir: `GameRecord.CurrentVersion` artmaz. Eğitim baskını olaysızdı (kayıt 21'de silindi); Baskin sahnesi tek başına açılınca kurulan örnek tahta olaysız.
 
 Baskın uzunlukları: sunucu 7 tur, ikmal 8 tur; kısa nöbette (Kuzey Amerika) 6 ve 7. "N. tur sonu", N. turun makine
 evresinin sonu demektir.
@@ -51,14 +51,14 @@ evresinin sonu demektir.
 | Doğu Avrupa | Dar koridor · kilitleyici | Kayar arşiv rafı | Devlet arşivi | 3. ve 5. tur sonu kayar | M |
 | Orta Doğu | Kum fırtınası · patlayan robot | Yanıcı gaz kaçağı | Körfez rafinerisi | 2 tur dolu, 1 tur boş · fitil | M |
 | Afrika | Açık arazi · havan | Çatlak tavan | Cevher hangarı | Darbeyle tetiklenir · fitil | M |
-| Kuzey Amerika | Kısa nöbet · havan | Yük asansörü | Dağıtım merkezi | 2.→3. ve 4.→5. tur | S–M |
+| Kuzey Amerika | Kısa nöbet · havan | Yük asansörü (tesis kipinde Katar, aşama 12) | Sevkiyat katarı (aşama 12; önce Dağıtım merkezi) | 2.→3. ve 4.→5. tur | S–M |
 | Rusya | Soğutma ağı · kalkan dronu | Kriyo soğutma hattı | Sibirya veri merkezi | 2., 4. (ikmalde 6.) tur sonu | S |
 | Hindistan | Kalabalık şehir · kalkan dronu | Vardiya turnikeleri | Çağrı merkezi | 2. ve 4. tur sonu döner; kaçışta ve son iki tur tahliye | M |
 | Çin | Zırhlı dolap · çoğaltıcı | Kaynak robotu kolu | Montaj fabrikası | Her evre sonu | M |
 | Japonya-Kore | Elektrik şebekesi · kilitleyici | Şebeke faz değişimi | Çip fabrikası | 3. ve 6. tur sonu faz değişir | S |
 | Güneydoğu Asya | Kopya fabrikası · çoğaltıcı | Süzgeç emmesi | Elektronik fabrikası | 3. ve 6. tur sonu | S |
 | Güney Amerika | Takviye · patlayan robot | Basınçlı tüp rafı | Hidroelektrik santrali | Vurulunca · fitil | M |
-| Okyanusya | Hızlı devriye · zırhlı dron | Hidrolik yağ sızıntısı | Maden limanı | 2. tur sonu, bir kez | S–M |
+| Okyanusya | Hızlı devriye · zırhlı dron | Hidrolik yağ sızıntısı (tesis kipinde Yalpa, aşama 12) | Yüzer maden platformu (aşama 12; önce Maden limanı) | 2. tur sonu, bir kez | S–M |
 
 ### Batı Avrupa · Söndürme bulutu
 
@@ -361,7 +361,9 @@ değişmez: `RaidEngineTests`'in kilitli imzaları aynı, `GameRecord.CurrentVer
 - **Veri:** `RegionDef.Event` (`GameData`), `Baskin.RegionEvents` (ad, kural, uyarı etiketi; `Loc.N`;
   bina 2026-11-02'den beri bölgenin: `RegionDef.Building`, Docs/BASKIN-MEKANLARI.md), `RaidParams.Event`
   (`StartLiberationRaidCore` bölgeden verir; `Balance.liberationRegionEvents` kapatır). `TutorialRaid.For` yeni alanı
-  kopyalamadığı için eğitim baskını olaysız; örnek baskınlar ve motor testleri de olay vermez. Olay kimlikleri: `bulut`,
+  kopyalamadığı için eğitim baskını olaysızdı (kayıt 21'de silindi); örnek baskınlar ve motor testleri de olay vermez. Kayıt 21'den
+  beri kampanya baskını tesistir: olay her odaya `FacilityMaps.EventFor` ile kurulur (Katar/Yalpa alt bayrakları `asansor`/`yag`'ın
+  yerine geçer). Olay kimlikleri: `bulut`,
   `raf`, `gaz`, `tavan`, `asansor`, `kriyo`, `turnike`, `kaynak`, `faz`, `suzgec`, `tup`, `yag`.
 - **Durum:** `BState.Ev` (`EvState`: kareler, tek kareler, `Mode`/`Count`/`Due`/`Stop`, fitiller ve tüpler, turnike
   kenarları, hasar tavanının listesi), `BState.InEvent`, `EvDamageTeam`/`EvDamageMachines` (bot ölçümü). Kare bayrakları
@@ -410,7 +412,7 @@ değişmez: `RaidEngineTests`'in kilitli imzaları aynı, `GameRecord.CurrentVer
   Telsiz şeridi olay adımlarını bildirir. Görev fişinde ve bölge bilgi fişinde BÖLGE satırının altında OLAY satırı (eğitim
   baskınında yok); yeni cephe fişinin cümlesi olayı da yazar.
 
-- **Ölçüm** (`RaidBotMeasurementTests.Measure_Quick`, "Bölge olayları" tablosu; turnike tahliye düzeltmesinden sonra):
+- **Ölçüm** (tarihsel, tek tahta dönemi: `RaidBotMeasurementTests.Measure_Quick`, kayıt 21'de silindi; "Bölge olayları" tablosu; turnike tahliye düzeltmesinden sonra):
 
   | Bölge | Olay | Olaylı − olaysız (T+E+A) | Hasar: ekibe | Hasar: makinelere |
   |---|---|---|---|---|

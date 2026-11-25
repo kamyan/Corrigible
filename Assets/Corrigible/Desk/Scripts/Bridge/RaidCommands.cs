@@ -15,5 +15,8 @@ namespace Corrigible.Desk.Bridge
         public void CancelPending()=>source.Cancel();public void SpeedUpMachines(bool on)=>source.Speed(on);
         public void RequestRetreat()=>source.Retreat();public void ToggleLog()=>source.Panel("log");
         public void ToggleRules()=>source.Panel("rules");public void ContinueToReport()=>source.Continue();
+        public void ArmAction()=>source.ArmAction();public void ChooseAction(int index)=>source.ChooseAction(index);
+        public void SelectUnitId(int id)=>source.SelectId(id,true);
+        public void ArmGear()=>source.ArmGear();public void ChooseGear(int index)=>source.ChooseGear(index);
     }
 }

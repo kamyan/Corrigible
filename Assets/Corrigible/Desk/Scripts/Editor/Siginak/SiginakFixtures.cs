@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using Corrigible.Core;
 using Corrigible.Game;
@@ -15,25 +16,31 @@ namespace Corrigible.Desk.EditorTools
     /// plan geçersizse ya da fiş reddedilirse fikstür nedeniyle durur. Devir fişinin (R19c) sunum fikstürleri
     /// <see cref="HandoverSlipFixtures"/>'tedir.
     /// V.014 — Batı Avrupa özgür, Doğu Avrupa cephe 1/3, ekip hazır; sığınak PROMPT §7'deki gibi (bellekte). V.019 — V.014'ten devam, Doğu Avrupa özgürleşir
-    /// (K3 dizisi oynar). V.015-yaralı — V.014'ten devam, baskın başarısız, Teknisyen düştü (yerine yedek çıkar, piyon yatık).
+    /// (K3 dizisi oynar). V.015-yaralı — V.014'ten devam, baskın başarısız, Teknisyen düştü (tesiste kaldı; yerine yedek çıkar).
     /// K6 — V.014'te baskın başarısız (fon 62 → 50, Teknisyen düştü) ve bir YAPILAMADI satırı; şalter indirilince
     /// V.014 → 015 raporu çıkar. V.031 (Revizyon 2) — beş bölge özgür (Batı Avrupa, Doğu Avrupa, Orta Doğu, Afrika, Rusya),
     /// cephe Hindistan 1/3. V.015-karşı saldırı — V.014'ten devam, alarm eşiğe varır, Doğu Avrupa'nın 01'i yeniden işgal.
+    /// Bölge adları dünya haritasınındır (anahtar 0). Üretilmiş haritada (anahtar 1) aynı adımlar paket kimliğiyle oynanır:
+    /// istenen paket sınırda değilse sınırdaki ilk bölge seçilir (<see cref="Next"/>), cephe sektörleri o bölgenindir. Yakalama
+    /// setleri tohumu sabitler (Rev3CaptureSet: 79), yani aynı harita ve aynı sıra.
     /// </summary>
     public static class SiginakFixtures
     {
         static GameController Game => UnityEngine.Object.FindFirstObjectByType<GameController>();
 
+        /// <summary>
+        /// Baskın emri ve oda zinciriyle sonucu (<see cref="RaidChainFixture"/>; tek kip: sonuç elle verilmez). Başarısızlıkta giriş
+        /// odasında geri çekilinir. Düşenler kadronun başından (önce Teknisyen); tesiste düşüp çıkarılmayan ölür. Bekleyen sunucu ödülü
+        /// (bölgenin son sektörü) tarifle seçilir: kartlı oyunda sonraki emri kilitler.
+        /// </summary>
         static void Raid(Simulation sim, string sector, bool success = true, int down = 0)
         {
             var r = sim.StartLiberationRaid(sector);
             if (!r.Ok) throw new InvalidOperationException(sector + ": " + r.Msg);
-            // Düşen üyeler kadronun başından (önce Teknisyen); ayaktakiler çıktıkları canla ve plakalarıyla döner
-            var squad = sim.S.Raid.Params.Squad;
-            var result = new RaidResult { Success = success, Down = down, Turns = 6 };
-            for (int i = 0; i < squad.Count; i++) { result.Hp.Add(i < down ? 0 : squad[i].Hp); result.Armor.Add(squad[i].Armor); }
-            r = sim.ResolveRaid(result);
-            if (!r.Ok) throw new InvalidOperationException(sector + " sonuç: " + r.Msg);
+            var fates = new int[Math.Max(0, down)];
+            for (int i = 0; i < fates.Length; i++) fates[i] = RaidChainFixture.Dies;
+            RaidChainFixture.Resolve(sim, success, fates);
+            RaidChainFixture.ChooseReward(sim);
         }
 
         /// <summary>
@@ -63,19 +70,33 @@ namespace Corrigible.Desk.EditorTools
             }
         }
 
+        /// <summary>
+        /// Sıradaki cephe: <paramref name="preferred"/> sınırdaysa o (dünya haritasında hep öyle), değilse sınırdaki ilk bölge
+        /// (<c>LiberationFrontier</c>, <c>GameData.Regions</c> sırası). Sınır boşsa <paramref name="preferred"/> (seçim reddedilir).
+        /// </summary>
+        public static string Next(Simulation sim, string preferred)
+        {
+            var frontier = sim.LiberationFrontier.ToList();
+            return frontier.Contains(preferred) ? preferred : frontier.FirstOrDefault() ?? preferred;
+        }
+
+        /// <summary>Açık cephe (V.014'ten devam eden fikstürler: dünya haritasında Doğu Avrupa).</summary>
+        static string Front(Simulation sim) => sim.S.Liberation.CurrentRegion;
+
         /// <summary>Yeni oyundan V.014: üç baskınla Batı Avrupa, cephe Doğu Avrupa, 01 geri alındı; gün 13 (vardiya 014).</summary>
         public static void ApplyV014(Simulation sim)
         {
             if (sim.S.Day != 0) throw new InvalidOperationException("Fikstür yeni bir harekât ister (gün 0).");
-            Raid(sim, "weu_1");
+            Raid(sim, Simulation.HQ + "_1");
             StepTo(sim, 3);
-            Raid(sim, "weu_2");
+            Raid(sim, Simulation.HQ + "_2");
             StepTo(sim, 6);
-            Raid(sim, "weu_3");
-            var r = sim.SelectLiberationRegion("eeu");
+            Raid(sim, Simulation.HQ + "_3");
+            string second = Next(sim, "eeu");
+            var r = sim.SelectLiberationRegion(second);
             if (!r.Ok) throw new InvalidOperationException(r.Msg);
             StepTo(sim, 9);
-            Raid(sim, "eeu_1");
+            Raid(sim, second + "_1");
             StepTo(sim, 13);
         }
 
@@ -109,7 +130,7 @@ namespace Corrigible.Desk.EditorTools
         public static void ApplyV031(Simulation sim)
         {
             if (sim.S.Day != 0) throw new InvalidOperationException("Fikstür yeni bir harekât ister (gün 0).");
-            string[] order = { "weu", "eeu", "me", "af", "ru" };
+            string[] order = { Simulation.HQ, "eeu", "me", "af", "ru" };
             int day = 0;
             void Keep()
             {
@@ -117,10 +138,12 @@ namespace Corrigible.Desk.EditorTools
                 sim.S.Alarm = 0;
                 sim.Shelter.Supplies = Math.Max(sim.Shelter.Supplies, 20);
             }
-            foreach (var region in order)
+            for (int k = 0; k < order.Length; k++)
             {
-                if (region != "weu")
+                string region = order[k];
+                if (k > 0)
                 {
+                    region = Next(sim, region);
                     var r = sim.SelectLiberationRegion(region);
                     if (!r.Ok) throw new InvalidOperationException(region + ": " + r.Msg);
                 }
@@ -129,46 +152,54 @@ namespace Corrigible.Desk.EditorTools
                     Keep();
                     Raid(sim, region + "_" + i);
                     // Son bölgenin son baskını bir gün arayla: Hindistan'ın 01'i vardiya 030'da, ekip 031'de hazır
-                    day += region == "ru" && i == 3 ? 1 : 2;
+                    day += k == order.Length - 1 && i == 3 ? 1 : 2;
                     Keep();
                     StepTo(sim, day);
                 }
             }
-            var front = sim.SelectLiberationRegion("in");
-            if (!front.Ok) throw new InvalidOperationException("in: " + front.Msg);
+            string last = Next(sim, "in");
+            var front = sim.SelectLiberationRegion(last);
+            if (!front.Ok) throw new InvalidOperationException(last + ": " + front.Msg);
             Keep();
-            Raid(sim, "in_1");
+            Raid(sim, last + "_1");
             Keep();
             StepTo(sim, 30);
             sim.S.Alarm = 7;
             sim.S.Fon = 88.5;
         }
 
-        /// <summary>V.014'ten V.015: alarm eşiğe varır, YZ karşı saldırır; Doğu Avrupa'nın 01'i yeniden işgal altında.</summary>
+        /// <summary>V.014'ten V.015: alarm eşiğe varır, YZ karşı saldırır: Doğu Avrupa'nın 01'i yeniden işgal altında. Tesis savunması
+        /// açıkken kanat önce kuşatılır; fikstür kanadı komutla bırakır (siege_yield), kanat düşer (anlık karşı saldırının sonucu).</summary>
         public static void ApplyCounterattack(Simulation sim)
         {
             sim.S.Alarm = sim.B.liberationAlarmThreshold - sim.B.liberationAlarmPerShift;
             StepTo(sim, 14);
+            if (sim.DefenseOn)
+            {
+                if (sim.PendingSiege == null) throw new InvalidOperationException("Karşı saldırı olmadı (kuşatma yok).");
+                var yielded = sim.YieldSector();
+                if (!yielded.Ok) throw new InvalidOperationException("Kanat bırakılamadı: " + yielded.Msg);
+            }
             if (sim.S.LastCounterattack == null) throw new InvalidOperationException("Karşı saldırı olmadı.");
         }
 
         /// <summary>V.014'ten V.019: Doğu Avrupa'nın iki sektörü daha; bölge vardiya 019'da özgürleşir.</summary>
         public static void ApplyV019(Simulation sim)
         {
-            Raid(sim, "eeu_2");
+            Raid(sim, Front(sim) + "_2");
             StepTo(sim, 18);
-            Raid(sim, "eeu_3");
+            Raid(sim, Front(sim) + "_3");
         }
 
         /// <summary>V.014'ten V.015: baskın başarısız, Teknisyen düştü (yerine yedek çıkar).</summary>
         public static void ApplyInjured(Simulation sim)
         {
             StepTo(sim, 14);
-            Raid(sim, "eeu_2", false, 1);
+            Raid(sim, Front(sim) + "_2", false, 1);
         }
 
         /// <summary>V.014'ün kendi vardiyasında baskın başarısız: Teknisyen düştü (K6 öncesi).</summary>
-        public static void ApplyFailedRaid(Simulation sim) => Raid(sim, "eeu_2", false, 1);
+        public static void ApplyFailedRaid(Simulation sim) => Raid(sim, Front(sim) + "_2", false, 1);
 
         /// <summary>
         /// Play içinde: <paramref name="name"/> = “V014”, “V031”, “K6”, “V019”, “injured” ya da “V015ca” (son üçü V.014 yüklüyken).

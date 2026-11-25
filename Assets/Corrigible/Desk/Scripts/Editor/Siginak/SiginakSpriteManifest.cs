@@ -107,6 +107,15 @@ namespace Corrigible.Desk.EditorTools
             new Entry("thumb_tube", Kind.Simple, generated: true), new Entry("thumb_weld", Kind.Simple, generated: true),
             new Entry("thumb_debris", Kind.Simple, generated: true), new Entry("thumb_civ", Kind.Simple, generated: true),
             new Entry("thumb_spawner", Kind.Simple, generated: true),
+            // Tesis aşama 9: aygıtlar (taret, yem, vinç), köpek (ekip kartında turu biten köpeğin grafit tonlu kopyası) ve engeller
+            new Entry("thumb_turret", Kind.Simple, generated: true), new Entry("thumb_decoy", Kind.Simple, generated: true),
+            new Entry("thumb_winch", Kind.Simple, generated: true), new Entry("thumb_dog", Kind.Simple, generated: true),
+            new Entry("thumb_dog_done", Kind.Simple, generated: true), new Entry("thumb_wire", Kind.Simple, generated: true),
+            new Entry("thumb_plank", Kind.Simple, generated: true), new Entry("thumb_scrap", Kind.Simple, generated: true),
+            // Tesis aşama 10: koku yayıcının küçük resmi
+            new Entry("thumb_emitter", Kind.Simple, generated: true),
+            // Tesis aşama 11: savunmanın saha rölesinin küçük resmi
+            new Entry("thumb_relay", Kind.Simple, generated: true),
             // İstasyon simgeleri (SiginakTextureBaker.KeyIcons): masadaki tuş başlıkları ve üst şeridin tuş kutuları; beyaz, boyanır
             new Entry("tx_key_shelter", Kind.Texture, generated: true), new Entry("tx_key_missions", Kind.Texture, generated: true),
             new Entry("tx_key_door", Kind.Texture, generated: true), new Entry("tx_key_desk", Kind.Texture, generated: true),

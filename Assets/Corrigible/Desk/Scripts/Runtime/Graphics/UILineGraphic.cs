@@ -12,6 +12,8 @@ namespace Corrigible.Desk
     /// Doku olarak atlas'taki <c>sh_fill_r0</c>'ın merkez UV'si kullanılır; böylece diğer UI ile aynı batch'te kalır.
     /// Noktalar yerel uzaydadır (y yukarı); <see cref="SetPointsTopLeft"/> tasarım (sol-üst, y aşağı) koordinatı alır.
     /// Karesel eğride noktalar p0, c1, p1, c2, p2…; kübikte p0, c1a, c1b, p1, c2a, c2b, p2….
+    /// Üretilmiş harita için tek grafikte birden çok yol çizilebilir (<see cref="SetPathsTopLeft"/>: kıyı halkaları, bölge
+    /// sınırları, kablolar); bu yollar çalışma anındadır, serileştirilmez.
     /// </summary>
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class UILineGraphic : MaskableGraphic
@@ -30,6 +32,9 @@ namespace Corrigible.Desk
         // Paylaşılan tamponlar: her yeniden çizimde bellek ayırma yok
         static readonly List<Vector2> flat = new List<Vector2>(256);
         static readonly List<Vector2> piece = new List<Vector2>(256);
+        // Çok yollu kip: her yolun points içindeki başlangıcı (boşsa tek yol); kapalı yollar sonu başa bağlar
+        [NonSerialized] readonly List<int> pathStarts = new List<int>();
+        [NonSerialized] bool pathsClosed;
 
         public float Thickness { get => thickness; set { if (thickness != value) { thickness = value; SetVerticesDirty(); } } }
         public LineCurve Curve { get => curve; set { if (curve != value) { curve = value; SetVerticesDirty(); } } }
@@ -43,10 +48,40 @@ namespace Corrigible.Desk
 
         public void SetRoundCap(bool on) { roundCap = on; SetVerticesDirty(); }
 
+        /// <summary>Yerel noktalar (tek yolda bütün çizgi; çok yollu kipte yollar art arda).</summary>
+        public IReadOnlyList<Vector2> Points => points;
+        /// <summary>Çok yollu kipte yol sayısı; tek yolda 1.</summary>
+        public int PathCount => pathStarts.Count > 0 ? pathStarts.Count : 1;
+
+        /// <summary>
+        /// Birden çok yol (tasarım koordinatı, sol üst orijin): her yol ayrı şerit ve ayrı kesik deseni; <paramref name="closed"/>
+        /// ise her yolun sonu başına bağlanır (kıyı ve bölge halkaları). Eğri türü her yola ayrı uygulanır.
+        /// </summary>
+        public void SetPathsTopLeft(IReadOnlyList<IReadOnlyList<Vector2>> paths, Vector2 rectTopLeftDesign, bool closed = false)
+        {
+            points.Clear();
+            pathStarts.Clear();
+            pathsClosed = closed;
+            var r = rectTransform.rect;
+            if (paths != null)
+                foreach (var path in paths)
+                {
+                    if (path == null || path.Count < 2) continue;
+                    pathStarts.Add(points.Count);
+                    for (int i = 0; i < path.Count; i++)
+                    {
+                        var d = path[i] - rectTopLeftDesign;
+                        points.Add(new Vector2(r.xMin + d.x, r.yMax - d.y));
+                    }
+                }
+            SetVerticesDirty();
+        }
+
         /// <summary>Yerel noktalar (y yukarı).</summary>
         public void SetPoints(IList<Vector2> pts)
         {
             points.Clear();
+            pathStarts.Clear();
             for (int i = 0; i < pts.Count; i++) points.Add(pts[i]);
             SetVerticesDirty();
         }
@@ -55,6 +90,7 @@ namespace Corrigible.Desk
         public void SetPointsTopLeft(IList<Vector2> designPts, Vector2 rectTopLeftDesign)
         {
             points.Clear();
+            pathStarts.Clear();
             var r = rectTransform.rect;
             for (int i = 0; i < designPts.Count; i++)
             {
@@ -75,29 +111,40 @@ namespace Corrigible.Desk
         {
             vh.Clear();
             if (points.Count < 2 || thickness <= 0) return;
-            Flatten();
-            if (flat.Count < 2) return;
             var uv = UV();
-            if (dash == null || dash.Length < 2) Strip(vh, flat, uv);
+            if (pathStarts.Count == 0) { Path(vh, 0, points.Count, false, uv); return; }
+            for (int p = 0; p < pathStarts.Count; p++)
+                Path(vh, pathStarts[p], p + 1 < pathStarts.Count ? pathStarts[p + 1] : points.Count, pathsClosed, uv);
+        }
+
+        void Path(VertexHelper vh, int from, int to, bool closed, Vector2 uv)
+        {
+            if (to - from < 2) return;
+            Flatten(from, to);
+            if (flat.Count < 2) return;
+            bool dashed = dash != null && dash.Length >= 2;
+            // Kapalı kesik yol: kapanış parçası düz bir parça gibi desene girer
+            if (closed && dashed) flat.Add(flat[0]);
+            if (!dashed) Strip(vh, flat, uv, closed && flat.Count >= 3);
             else Dashed(vh, uv);
         }
 
         // ------------------------------------------------------------------ eğri → çoklu çizgi
-        void Flatten()
+        void Flatten(int from, int to)
         {
             flat.Clear();
             switch (curve)
             {
                 case LineCurve.Quadratic:
-                    flat.Add(points[0]);
-                    for (int i = 0; i + 2 < points.Count; i += 2) Quad(points[i], points[i + 1], points[i + 2]);
+                    flat.Add(points[from]);
+                    for (int i = from; i + 2 < to; i += 2) Quad(points[i], points[i + 1], points[i + 2]);
                     break;
                 case LineCurve.Cubic:
-                    flat.Add(points[0]);
-                    for (int i = 0; i + 3 < points.Count; i += 3) Cubic(points[i], points[i + 1], points[i + 2], points[i + 3]);
+                    flat.Add(points[from]);
+                    for (int i = from; i + 3 < to; i += 3) Cubic(points[i], points[i + 1], points[i + 2], points[i + 3]);
                     break;
                 default:
-                    for (int i = 0; i < points.Count; i++) flat.Add(points[i]);
+                    for (int i = from; i < to; i++) flat.Add(points[i]);
                     break;
             }
         }
@@ -150,7 +197,7 @@ namespace Corrigible.Desk
                 {
                     pos += left;
                     var p = Vector2.Lerp(a, b, pos / seg);
-                    if (on) { piece.Add(p); Strip(vh, piece, uv); piece.Clear(); }
+                    if (on) { piece.Add(p); Strip(vh, piece, uv, false); piece.Clear(); }
                     else { piece.Clear(); piece.Add(p); }
                     on = !on;
                     di = (di + 1) % dash.Length;
@@ -159,11 +206,11 @@ namespace Corrigible.Desk
                 left -= seg - pos;
                 if (on) piece.Add(b);
             }
-            if (on && piece.Count >= 2) Strip(vh, piece, uv);
+            if (on && piece.Count >= 2) Strip(vh, piece, uv, false);
         }
 
         // ------------------------------------------------------------------ şerit + uçlar
-        void Strip(VertexHelper vh, List<Vector2> pts, Vector2 uv)
+        void Strip(VertexHelper vh, List<Vector2> pts, Vector2 uv, bool closed)
         {
             int n = pts.Count;
             if (n < 2) return;
@@ -172,8 +219,9 @@ namespace Corrigible.Desk
             int start = vh.currentVertCount;
             for (int i = 0; i < n; i++)
             {
-                Vector2 dirPrev = i > 0 ? (pts[i] - pts[i - 1]).normalized : (pts[1] - pts[0]).normalized;
-                Vector2 dirNext = i < n - 1 ? (pts[i + 1] - pts[i]).normalized : dirPrev;
+                // Kapalı yolda uçlar komşusunu karşı uçtan alır (birleşim de gönyelenir)
+                Vector2 dirPrev = i > 0 ? (pts[i] - pts[i - 1]).normalized : closed ? (pts[0] - pts[n - 1]).normalized : (pts[1] - pts[0]).normalized;
+                Vector2 dirNext = i < n - 1 ? (pts[i + 1] - pts[i]).normalized : closed ? (pts[0] - pts[n - 1]).normalized : dirPrev;
                 Vector2 tangent = (dirPrev + dirNext);
                 tangent = tangent.sqrMagnitude < 1e-6f ? dirNext : tangent.normalized;
                 var normal = new Vector2(-tangent.y, tangent.x);
@@ -187,6 +235,13 @@ namespace Corrigible.Desk
                 int a = start + i * 2;
                 vh.AddTriangle(a, a + 1, a + 3);
                 vh.AddTriangle(a, a + 3, a + 2);
+            }
+            if (closed)
+            {
+                int a = start + (n - 1) * 2;
+                vh.AddTriangle(a, a + 1, start + 1);
+                vh.AddTriangle(a, start + 1, start);
+                return;
             }
             if (!roundCap) return;
             Cap(vh, pts[0], (pts[0] - pts[1]).normalized, hw, col, uv);

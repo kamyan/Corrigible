@@ -9,7 +9,8 @@ namespace Corrigible.Desk.Bridge
     /// (SEKTÖR GERİ ALINDI / SEKTÖR İŞGAL ALTINDA), altında tek cümle (bölgenin kalan sektörü ya da “Ekip geri döndü…”;
     /// Teknisyen yedeksiz düştüyse ya da güven azaldıysa onun uyarısı). Başarılıda KAZANÇ gözleri (FON, MALZEME, ERZAK,
     /// KURTULAN) ve sayaçların ± fişleri; başarısızda ödül alanı yok, YZ alarmı ölçekle. SONUÇLAR: sektör, kırılan sivil
-    /// sunucu, ekip (düşen, yeni yara, kırılan plaka), sivil güven, YZ alarmı ve karşı saldırı. Yalnız simülasyonu okur.
+    /// sunucu, ekip (düşen, yeni yara, kırılan plaka), sivil güven, YZ alarmı ve karşı saldırı; tesiste açılan büyük sandık
+    /// sektör satırından hemen sonra. Yalnız simülasyonu okur.
     /// </summary>
     public static class OperationReportBuilder
     {
@@ -28,7 +29,7 @@ namespace Corrigible.Desk.Bridge
         static string SectorLabel(Simulation sim, string id)
         {
             var sector = string.IsNullOrEmpty(id) ? null : sim.LiberationSector(id);
-            return sector == null ? "—" : Loc.F("{0} · {1}", GameData.Region(sector.Region).Name, sector.Name);
+            return sector == null ? "—" : Loc.F("{0} · {1}", sim.RegionName(sector.Region), sector.Name);
         }
 
         /// <summary>Son baskının raporu (rapor yalnız son baskın için kurulur: güven ve alarm bugünkü değer).</summary>
@@ -44,7 +45,7 @@ namespace Corrigible.Desk.Bridge
             var sector = sim.LiberationSector(log.SectorId);
             var region = sim.LiberationRegion(log.Region);
             var reward = log.LiberationReward;
-            string regionName = GameData.Region(log.Region).Name;
+            string regionName = sim.RegionName(log.Region);
             string sectorName = sector?.Name ?? Loc.T("Sektör");
             var result = RaidPaperFacts.Result(sim, log);
             bool counter = reward?.Counterattack != null;
@@ -63,6 +64,8 @@ namespace Corrigible.Desk.Bridge
                 Action = Loc.T("MASAYA DÖN"),
             };
             d.Sentence = Sentence(sim, log, region, regionName, reward);
+            // Tesis aşama 11 (§8.6): savunmanın raporu ayrı kurulur (KANAT TUTULDU / KANAT DÜŞTÜ; "SEKTÖR GERİ ALINDI" basılmaz)
+            if (FacilityDefenseText.IsDefense(log)) return Defense(d, sim, log, reward, sectorName);
 
             // KAZANÇ ve fişler yalnız başarılı raporda (başarısızda ödül alanı hiç çıkmaz)
             if (log.Success && reward != null)
@@ -111,11 +114,122 @@ namespace Corrigible.Desk.Bridge
             }
             if (counter)
                 d.Results.Add(new OperationRow { Label = Loc.T("YZ karşı saldırısı"), Value = SectorLabel(sim, reward.Counterattack), Tone = OperationTone.Alert });
+            // Tesis aşama 11 (§8.1): başarısız baskın eşiğe vardırdıysa kuşatma kurulur; satır karşı saldırınınkinin yerinde
+            else if (FacilityDefenseText.SiegeRow(sim, reward) is OperationRow siege) d.Results.Add(siege);
+            // Tesis (kartlı yol): büyük sandık açıldıysa bölge satırından hemen sonra ödülü; kâğıdın yuvası aşılırsa değişmemiş
+            // (bilgi taşımayan) YZ alarmı satırı düşer
+            OperationRow crate = null;
+            if (log.Success && reward?.BigCrate == true)
+            {
+                crate = new OperationRow
+                {
+                    Label = Loc.T("Büyük sandık"),
+                    Value = Loc.F("+{0} metal · +{1} devre", sim.B.facilityBigCrateMetal, sim.B.facilityBigCrateCircuits),
+                    Tone = OperationTone.Good,
+                };
+                d.Results.Insert(1, crate);
+                if (d.Results.Count > OperationReportData.MaxResults && alarm != null && alarm.Tone == OperationTone.Neutral)
+                    d.Results.Remove(alarm);
+            }
+            // Tesis aşama 9 (§7.6, §8; K33): ekipman satırı (kelepçe, köpek) ve bölgeyi tamamlayan baskında bekleyen sunucu ödülü. Yuva
+            // aşılırsa önce değişmemiş YZ alarmı, sonra ekipman satırı, sonra büyük sandık düşer; ödül satırı düşmez
+            var gear = GearRow(sim, reward);
+            if (gear != null) d.Results.Add(gear);
+            var server = FacilityRewardText.ReportRow(sim, log);
+            if (server != null)
+            {
+                d.Results.Add(server);
+                d.Action = Loc.T("ÖDÜLÜ SEÇ");
+            }
+            if (d.Results.Count > OperationReportData.MaxResults && alarm != null && alarm.Tone == OperationTone.Neutral) d.Results.Remove(alarm);
+            if (d.Results.Count > OperationReportData.MaxResults && gear != null) d.Results.Remove(gear);
+            if (d.Results.Count > OperationReportData.MaxResults && server != null && crate != null) d.Results.Remove(crate);
+            // Ödül satırı yer bulamazsa (olağan başarılı raporda yedi satır dolu): bilgi taşımayan "0" sivil satırı, sonra karşı saldırı
+            // olmayan YZ alarmı satırı düşer (alarm CRT'de ve sayaçta görünür)
+            if (d.Results.Count > OperationReportData.MaxResults && server != null && log.Collateral <= 0) d.Results.Remove(civilians);
+            if (d.Results.Count > OperationReportData.MaxResults && server != null && alarm != null && alarm.Tone != OperationTone.Alert) d.Results.Remove(alarm);
             return d;
+        }
+
+        /// <summary>
+        /// Tesis aşama 11 (§8.6): savunmanın raporu. Başlık KANAT TUTULDU / KANAT DÜŞTÜ, damga TUTULDU / DÜŞTÜ, KAZANÇ yok. SONUÇLAR: kanat
+        /// (TUTULDU ya da DÜŞTÜ), terk edilen oda ve güven bedeli, ekip, kırılan sivil sunucu (varsa), sivil güven. Alarm değişmez (satır yok).
+        /// </summary>
+        static OperationReportData Defense(OperationReportData d, Simulation sim, RaidLogEntry log, LiberationRaidReward reward, string sectorName)
+        {
+            d.Defense = true;
+            d.Title = FacilityDefenseText.ReportTitle(log);
+            d.ResultStamp = FacilityDefenseText.ReportStamp(log);
+            d.Sentence = Warning(sim, reward) ?? FacilityDefenseText.ReportSentence(log);
+            d.Results.Add(new OperationRow { Label = sectorName, Value = FacilityDefenseText.ReportStamp(log), Tone = log.Success ? OperationTone.Retaken : OperationTone.Alert });
+            if (FacilityDefenseText.AbandonRow(sim, reward) is OperationRow abandon) d.Results.Add(abandon);
+            TeamRows(d, sim, reward, log);
+            if (log.Collateral > 0) d.Results.Add(new OperationRow { Label = Loc.T("Kırılan sivil sunucu"), Value = N(log.Collateral, 0), Tone = OperationTone.Plain });
+            TrustRow(d, sim, reward);
+            var gear = GearRow(sim, reward);
+            if (gear != null && d.Results.Count < OperationReportData.MaxResults) d.Results.Add(gear);
+            while (d.Results.Count > OperationReportData.MaxResults) d.Results.RemoveAt(d.Results.Count - 1);
+            return d;
+        }
+
+        /// <summary>
+        /// Tesis aşama 10 (K40, aşama 7'den taşındı; TESIS §7.3): CRT'nin "SONUÇ TELEKSTE" sözünün satırı, raporun kısa hâli. Başarıda
+        /// "SEKTÖR GERİ ALINDI" (Done), "{bölge} · {sektör} · {n} tur · ekip {a}/{t} ayakta" (+ "· {n} düştü", "· bölge özgür");
+        /// başarısızlıkta "BASKIN BAŞARISIZ" ya da geri çekilmede "GERİ ÇEKİLDİ" (Failed). Sayılar raporunkiyle aynı kaynaktan
+        /// (<see cref="RaidPaperFacts.Result"/>, <c>reward.Squad</c>). Yalnız okur.
+        /// </summary>
+        public static (string Status, string Message, TelexKind Kind) Telex(Simulation sim, RaidLogEntry log)
+        {
+            if (sim == null || log == null) return (null, null, TelexKind.Info);
+            var sector = sim.LiberationSector(log.SectorId);
+            var reward = log.LiberationReward;
+            var result = RaidPaperFacts.Result(sim, log);
+            // Tesis aşama 11: savunmanın sonuç teleksi (KANAT TUTULDU / KANAT DÜŞTÜ)
+            if (FacilityDefenseText.IsDefense(log)) return FacilityDefenseText.Telex(sim, log, result);
+            string region = sim.RegionName(log.Region), sectorName = sector?.Name ?? Loc.T("Sektör");
+            int total = reward?.Squad.Count ?? 0, standing = reward?.Squad.Count(o => !o.Down && !o.Dead) ?? 0;
+            string message = result != null
+                ? Loc.F("{0} · {1} · {2} tur · ekip {3}/{4} ayakta", region, sectorName, result.Turns, standing, total)
+                : Loc.F("{0} · {1} · ekip {2}/{3} ayakta", region, sectorName, standing, total);
+            int fallen = total - standing;
+            if (fallen > 0) message = Loc.F("{0} · {1} düştü", message, fallen);
+            if (log.Success && sim.LiberationRegion(log.Region)?.Completed == true) message = Loc.F("{0} · bölge özgür", message);
+            if (log.Success) return (Loc.T("SEKTÖR GERİ ALINDI"), message, TelexKind.Done);
+            return (result != null && result.Retreat ? Loc.T("GERİ ÇEKİLDİ") : Loc.T("BASKIN BAŞARISIZ"), message, TelexKind.Failed);
+        }
+
+        /// <summary>
+        /// Tesis aşama 9 (K33): "Ekipman · kelepçe harcandı (Suna) · köpek dinlenecek (3 V)", yalnız olan parçalarla; ikisi de yoksa null.
+        /// Sunum alanları (<see cref="SquadOutcome.ClampSpent"/>, <see cref="SquadOutcome.DogDown"/>) oda raporlarından türer.
+        /// </summary>
+        static OperationRow GearRow(Simulation sim, LiberationRaidReward reward)
+        {
+            if (reward == null || sim?.B == null) return null;
+            var clamps = reward.Squad.Where(o => o.ClampSpent).Select(o => string.IsNullOrEmpty(o.PersonName) ? Baskin.UnitTypes[o.Type].Short : o.PersonName).ToList();
+            bool dog = reward.Squad.Any(o => o.DogDown);
+            if (clamps.Count == 0 && !dog) return null;
+            int rest = Math.Max(0, sim.B.facilityDogRestTurns);
+            string names = string.Join(", ", clamps);
+            string value = clamps.Count > 0 && dog ? Loc.F("kelepçe harcandı ({0}) · köpek dinlenecek ({1} V)", names, rest)
+                : clamps.Count > 0 ? Loc.F("kelepçe harcandı ({0})", names) : Loc.F("köpek dinlenecek ({0} V)", rest);
+            return new OperationRow { Label = Loc.T("Ekipman"), Value = value, Tone = OperationTone.Plain };
         }
 
         /// <summary>Başlığın altındaki tek cümle: uyarı varsa o, yoksa bölgenin durumu ya da dönüş.</summary>
         static string Sentence(Simulation sim, RaidLogEntry log, LiberationRegionState region, string regionName, LiberationRaidReward reward)
+        {
+            if (Warning(sim, reward) is string warning) return warning;
+            if (!log.Success) return Loc.T("Ekip geri döndü. Toparlandıktan sonra yeniden deneyebilirsin.");
+            if (region == null) return Loc.T("Sonraki sektör operasyona açıldı.");
+            if (region.Completed) return Loc.F("{0} özgür; haritadan sınırdaki bir bölgeyi seç ve yeni cepheyi aç.", regionName);
+            int captured = region.CapturedCount, total = region.Sectors.Count, left = total - captured;
+            return left == 1
+                ? Loc.F("{0}: {1}/{2} sektör KYGA'da; bölgenin özgürlüğüne bir sektör kaldı.", regionName, captured, total)
+                : Loc.F("{0}: {1}/{2} sektör KYGA'da; bölgenin özgürlüğüne {3} sektör kaldı.", regionName, captured, total, left);
+        }
+
+        /// <summary>Raporun uyarı cümlesi (kayıp sakin, yedeksiz Teknisyen, düşük güven); yoksa null.</summary>
+        static string Warning(Simulation sim, LiberationRaidReward reward)
         {
             var S = sim.S;
             var team = S.Teams.FirstOrDefault();
@@ -125,13 +239,7 @@ namespace Corrigible.Desk.Bridge
                 return Loc.F("Teknisyen düştü ve yerine çıkacak yedek yok: {0} gün baskın yapılamaz. Revir kalkışı hızlandırır.", LiberationMapBuilder.TechnicianDown(team));
             if (reward != null && reward.Trust < 0 && S.Trust <= TrustWarning)
                 return Loc.F("Sivil güven {0}/{1}. Sıfıra inerse halk direnişten çekilir; atıştan kaçan ekip arkasındaki sunucuyu açıkta bırakır.", S.Trust, sim.TrustMax);
-            if (!log.Success) return Loc.T("Ekip geri döndü. Toparlandıktan sonra yeniden deneyebilirsin.");
-            if (region == null) return Loc.T("Sonraki sektör operasyona açıldı.");
-            if (region.Completed) return Loc.F("{0} özgür; haritadan sınırdaki bir bölgeyi seç ve yeni cepheyi aç.", regionName);
-            int captured = region.CapturedCount, total = region.Sectors.Count, left = total - captured;
-            return left == 1
-                ? Loc.F("{0}: {1}/{2} sektör KYGA'da; bölgenin özgürlüğüne bir sektör kaldı.", regionName, captured, total)
-                : Loc.F("{0}: {1}/{2} sektör KYGA'da; bölgenin özgürlüğüne {3} sektör kaldı.", regionName, captured, total, left);
+            return null;
         }
 
         static OperationGain Gain(double v, string label) =>
@@ -147,15 +255,25 @@ namespace Corrigible.Desk.Bridge
             if (sim.Board != null)
             {
                 var before = RaidPaperFacts.BeforeResult(sim, log);
+                // Tesis aşama 12 (Katar): kenardan düşenin yatışı Core'un sonuçta yazdığı değerdir: ReturnPlanningSquad'ın kuralı
+                // max(1, facilityFallInjuryTurns), denge kayıtla geldiği için sonradan değişmez (FallShifts; kişinin bugünkü Down'ı her
+                // vardiya azalır, okunmaz). Beceri indirimi bu dala uygulanmaz. Aşama 12 kapanışı: kayıttan ikinci yeniden oynatma kalktı
                 foreach (var o in reward.Squad)
                 {
                     var p = before?.Board?.Person(o.PersonId) ?? sim.Board.Person(o.PersonId);
-                    string state = o.Dead ? Loc.T("KALICI KAYIP") : o.Down
+                    string state = o.Turned ? (o.Subdued ? Loc.T("Sızmacı yakalandı · tecrit") : Loc.T("Sızmacı tesiste kaldı")) : o.Dead ? Loc.T("KALICI KAYIP") : o.Overboard
+                        ? FacilityConditionText.ReportOverboard(FacilityConditionText.FallShifts(sim.B))
+                        : o.Down
                         ? Loc.F("kurtarıldı · {0} vardiya yatış", Math.Max(1, sim.B.boardInjuryTurns - (p != null && sim.BoardSkillTier(p, o.Type) >= sim.B.boardFieldSkillRecoveryTier ? sim.B.boardFieldSkillRecoveryBonus : 0)))
                         : o.HpAfter < o.HpBefore ? Loc.F("döndü · CAN {0}/{1} · yeni yara", o.HpAfter, p?.MaxHp ?? o.HpBefore)
                         : Loc.T("döndü");
-                    if (!o.Dead && !o.Down) state = Loc.F("{0} · +{1} deneyim", state, Math.Max(0, Math.Min(Math.Max(0, sim.B.boardExpertAt) - (p?.Skill(o.Type) ?? 0), Math.Max(0, sim.B.boardWorkGain))));
+                    if (!o.Dead && !o.Down && (!FacilityDefenseText.IsDefense(log) || log.Success)) state = Loc.F("{0} · +{1} deneyim", state, Math.Max(0, Math.Min(Math.Max(0, sim.B.boardExpertAt) - (p?.Skill(o.Type) ?? 0), Math.Max(0, sim.B.boardWorkGain))));
                     if (o.PlateBroken) state = Loc.F("{0} · zırh kırıldı", state);
+                    if (o.NewTitles != FacilityTitle.None)
+                    {
+                        var titles = FacilityTitles.Order.Where(t => FacilityTitles.Has(o.NewTitles, t)).Select(FacilityTitles.Name);
+                        state = Loc.F("Yeni unvan · {0} · {1}", string.Join(" / ", titles), state);
+                    }
                     d.Results.Add(new OperationRow { Label = Loc.F("{0} · {1}", o.PersonName, Baskin.UnitTypes[o.Type].Short), Value = state,
                         Tone = o.Dead || o.Down ? OperationTone.Alert : OperationTone.Plain });
                 }
@@ -218,7 +336,7 @@ namespace Corrigible.Desk.Bridge
             double threshold = sim.B.liberationAlarmThreshold, alarm = sim.S.Alarm;
             int steps = (int)Math.Round(threshold);
             var row = new OperationRow { Label = Loc.T("YZ alarmı") };
-            if (reward.Counterattack != null)
+            if (reward.Counterattack != null || !string.IsNullOrEmpty(reward.Siege))
             {
                 row.Value = Loc.T("EŞİK AŞILDI");
                 row.Tone = OperationTone.Alert;

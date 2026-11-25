@@ -146,7 +146,7 @@ namespace Corrigible.Desk.Tests
 
         /// <summary>
         /// <c>PlanningBoardPresenter.RetireJobs</c>'un komutları aynı sırayla (<c>board_auto</c>, sonra emekli görevli her canlı BOŞTA'ya):
-        /// canlı oyunun ilk karelerinde yazılanlarla aynı kayıt (K4-A gözetmeni Boşta'dan; tohum 79'da Cem, İpek, Zeynep).
+        /// canlı oyunun ilk karelerinde yazılanlarla aynı kayıt (K4-A gözetmeni Boşta'dan; tohum 79'da Victor, Margot, Iris).
         /// </summary>
         public static void Retire(Simulation sim)
         {

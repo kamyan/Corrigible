@@ -72,7 +72,7 @@ namespace Corrigible.Core
         internal int Clock, TraceClock;
         /// <summary>Kapanan vardiyadaki görev; public olsaydı ilk izden önce kimliği ele verirdi.</summary>
         internal string LastAccessJob;
-        internal bool Sabotaged, IsolationFound;
+        internal bool Sabotaged, IsolationFound, FieldDecisionDue;
     }
 
     [Serializable]

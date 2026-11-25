@@ -6,7 +6,8 @@ namespace Corrigible.Desk
 {
     /// <summary>
     /// Panonun DEPO bandı (R15a, R16b): dört hammadde stok kartı <c>Mat_*</c> çapalarında (sırayla metal, devre, kumaş,
-    /// kimyasal; havuzdan çıkmaz), altı kit yığını <c>Kit_0..5</c>'te (kit_tek, kit_emp, kit_ana, armor, medkit, emp_cell).
+    /// kimyasal; havuzdan çıkmaz), altı kit yığını <c>Kit_0..5</c>'te (kit_tek, kit_emp, kit_ana, armor, medkit, emp_cell). Tesis
+    /// aşama 9: kitlerin altında yedi ekipmanın ikinci sırası (<see cref="BoardLayout.Gear"/>; yalnız tesis kipinde ve dolu yığında).
     /// Yığında en çok üç kart çizilir: en yenisi üstte, çapada ve en önde (seviye 2), alttakiler 0,9 mm sağ-aşağıda ve
     /// arkada; "×n" etiketi (TXT_Count_i), boş yığında "×0" soluk. Reddedilen hazırlamada stok kartının serbest sayısı 0,2 s
     /// kırmızı yanar. Aşama 5 (R18d): yeni ürün TARİF kutusundan yığına 0,3 s'de kayar (<see cref="SlideIn"/>) ve üstünde kırmızı
@@ -94,17 +95,22 @@ namespace Corrigible.Desk
             local = default;
             var s = lastLayout;
             if (s == null || string.IsNullOrEmpty(itemId)) return false;
-            for (int k = 0; k < s.Kits.Length; k++)
+            for (int row = 0; row < 2; row++)
             {
-                var kit = s.Kits[k];
-                if (kit == null) continue;
-                int m = kit.TopIds.Count;
-                for (int d = 0; d < m; d++)
+                var stacks = row == 0 ? s.Kits : s.Gear;
+                for (int k = 0; k < stacks.Length; k++)
                 {
-                    if (kit.TopIds[d] != itemId) continue;
-                    int j = m - 1 - d;
-                    local = BoardLayout.MmToLocal(BoardLayout.KitCard(k, j), BoardLayout.CardZ(BoardLayout.KitLevel(j)));
-                    return true;
+                    var kit = stacks[k];
+                    if (kit == null) continue;
+                    int m = kit.TopIds.Count;
+                    for (int d = 0; d < m; d++)
+                    {
+                        if (kit.TopIds[d] != itemId) continue;
+                        int j = m - 1 - d;
+                        var at = row == 0 ? BoardLayout.KitCard(k, j) : BoardLayout.GearCard(k, j);
+                        local = BoardLayout.MmToLocal(at, BoardLayout.CardZ(BoardLayout.KitLevel(j)));
+                        return true;
+                    }
                 }
             }
             return false;
@@ -188,6 +194,24 @@ namespace Corrigible.Desk
                     }
                 }
                 SetCount(k, kit);
+            }
+
+            // Tesis aşama 9: ekipman yığınları (ikinci sıra; sayı kart yüzünde "×n", ayrı sayaç yok)
+            for (int k = 0; k < s.Gear.Length; k++)
+            {
+                var gear = s.Gear[k];
+                if (gear == null || itemCard == null) continue;
+                int m = gear.TopIds.Count;
+                for (int d = 0; d < m; d++)
+                {
+                    var card = itemCard(gear.TopIds[d]);
+                    if (card == null) continue;
+                    int j = m - 1 - d;
+                    var target = BoardLayout.MmToLocal(BoardLayout.GearCard(k, j), BoardLayout.CardZ(BoardLayout.KitLevel(j)));
+                    card.SetMagnetVisible(true);
+                    card.SetVisible(true);
+                    BoardViewUtil.Pose(card, target, 0, animate, settle, CardEase.EaseOut);
+                }
             }
         }
 

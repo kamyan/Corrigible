@@ -16,7 +16,9 @@ namespace Corrigible.Desk.Bridge
     /// Kapak kalkınca ön kontrol (K6 + teleks <c>ÖN KONTROL</c>); kol inince <c>GameController.PrintBoardShift</c> (kayıt hemen
     /// yazılır), kol −35°'ye varınca kamera K1'e (masa) döner ve fiş teleks daktilosundan yazılarak çıkar: aynı silindirde önce teleks
     /// o anki satırı bitirir, kamera masaya varır, sonra fiş basılır (<see cref="FeedHold"/>, en çok
-    /// <c>motion.shiftClose.feedHoldMaxS</c>). Fiş silindirde teleks kâğıdının yanında, sağ uçta durur (kâğıdı örtmez). Fişe tık
+    /// <c>motion.shiftClose.feedHoldMaxS</c>). Tek kâğıt akışı: fiş beslenmeye başlayınca o anki teleks kâğıdı düşer, fiş aynı yerden
+    /// (teleks kâğıdının dinlenme pozuna) çıkar; fiş EVRAK'a dosyalanana dek silindiri tutar (<see cref="ShiftReceiptPaper.HoldsPlaten"/>,
+    /// teleksin <see cref="TelexFeed.PlatenBusy"/>'si), o sırada gelen teleks satırları şeritte görünür; beslenirken rulo döner. Fişe tık
     /// ele getirir (kamera K6'ya; okumak zaman ilerletmez), EVRAK'a sürüklenip
     /// bırakılınca kabul edilen bırakıştan 0,30 s sonra, tam karanlıkta <c>GameController.FileBoardShift(id)</c> günü tam bir kez
     /// ilerletir; kamera K1'e kesilir, şalter 0,3 s'de hazıra döner, sayaçlar 0,4 s'de döner, teleks “VARDİYA DEVREDİLDİ”
@@ -60,6 +62,8 @@ namespace Corrigible.Desk.Bridge
         /// <summary>Bekleyen beslemenin ilk bekletildiği an (−1: bekleyen yok) ve kameranın masaya çağrıldığı.</summary>
         float feedHoldSince = -1;
         bool feedLookAsked;
+        /// <summary>Beslenen fişin rulo dönüşü için son yol kesri (−1: besleme yok).</summary>
+        float feedRolled = -1;
         SiginakPose readReturn;
         RightButtonGesture right;
         Coroutine flow;
@@ -121,6 +125,7 @@ namespace Corrigible.Desk.Bridge
                 machine.CanFile = CanFile;
                 machine.FeedHold = FeedHold;
             }
+            if (telex != null) telex.PlatenBusy = PlatenBusy;
             Restore();
         }
 
@@ -138,6 +143,7 @@ namespace Corrigible.Desk.Bridge
                 if (machine.CanFile == (Func<string, bool>)CanFile) machine.CanFile = null;
                 if (machine.FeedHold == (Func<bool>)FeedHold) machine.FeedHold = null;
             }
+            if (telex != null && telex.PlatenBusy == (Func<bool>)PlatenBusy) telex.PlatenBusy = null;
             StopFlow();
             reading = false;
             right.Reset();
@@ -153,9 +159,11 @@ namespace Corrigible.Desk.Bridge
             var sim = Sim;
             if (sim?.Board == null) return;
             if (rig != null) rig.Focus(SiginakPose.ShiftClose);
-            if (telex != null && surface != null)
-                telex.Post(surface.Shift, Loc.T("ÖN KONTROL"),
-                    sim.BoardPlanCheck() ?? ShelterEventSnapshotBuilder.PrintIssue(sim) ?? Loc.T("Plan hazır. Devir fişini çıkar."), TelexKind.Info);
+            if (telex == null || surface == null) return;
+            string line = sim.BoardPlanCheck() ?? ShelterEventSnapshotBuilder.PrintIssue(sim) ?? Loc.T("Plan hazır. Devir fişini çıkar.");
+            // Tesis aşama 11 (§8.5): karar vardiyasında karar verilmediyse kanat kapanışta bırakılır
+            if (FacilityDefenseText.PreCheck(sim) is string siege) line = Loc.F("{0} · {1}", line, siege);
+            telex.Post(surface.Shift, Loc.T("ÖN KONTROL"), line, TelexKind.Info);
         }
 
         /// <summary>
@@ -207,6 +215,31 @@ namespace Corrigible.Desk.Bridge
             return HoldFeed(now - feedHoldSince, maxS, telex != null && telex.Typing, atDesk);
         }
 
+        /// <summary>Silindir devir fişinde (teleksin <see cref="TelexFeed.PlatenBusy"/>'si; her kare okunur).</summary>
+        bool PlatenBusy()
+        {
+            var p = Paper;
+            return p != null && p.HoldsPlaten;
+        }
+
+        /// <summary>
+        /// Fiş beslenirken rulo da döner (<c>motion.shiftClose.slipRollDeg</c> çıkış boyunca; satır adımlarını izler: fişin yoldaki
+        /// kesri). Yalnız sunum.
+        /// </summary>
+        void RollWithFeed(ShiftReceiptPaper p)
+        {
+            if (telex == null || p == null || p.State != Where.Feeding || p.ReadOnly) { feedRolled = -1; return; }
+            float path = p.FeedPathM;
+            if (path <= 1e-4f) return;
+            float progress = Mathf.Clamp01(1f - Vector3.Distance(p.transform.position, p.TongueTarget.position) / path);
+            var theme = SiginakTheme.Active;
+            float total = theme != null ? theme.NumberOf("motion.shiftClose.slipRollDeg", 0f) : 0f;
+            if (feedRolled < 0) feedRolled = 0;
+            float deg = (progress - feedRolled) * total;
+            feedRolled = progress;
+            if (deg > 0) telex.RollPlaten(deg);
+        }
+
         /// <summary>
         /// Fişin beslemesi bekletilsin mi (saf; <see cref="FeedHold"/>): <paramref name="waitedS"/> üst sınıra (<paramref name="maxS"/>,
         /// <c>motion.shiftClose.feedHoldMaxS</c>) varmadıkça teleks satır basarken ya da kamera masaya (K1) varmamışken bekler; üst
@@ -238,7 +271,8 @@ namespace Corrigible.Desk.Bridge
             bool ended = sim.S.Ending != null;
             bool story = game != null && game.StoryHold || briefing != null && briefing.Busy;
             // Rapor yalnız eski yolda açılır (kartlı oyunda EVRAK fiş arşividir, Karar D7-A)
-            var (plate, line) = LockReason(raid, ended, story, false, printed, printed ? null : planIssue, printed ? null : eventIssue);
+            var (plate, line) = LockReason(raid, ended, story, false, printed, printed ? null : planIssue, printed ? null : eventIssue,
+                desk != null && desk.Tutorial is SiginakTutorial tutorial && tutorial.isActiveAndEnabled && tutorial.SealsShift);
             shiftSwitch.SetDisabled(plate != null, line, plate);
         }
 
@@ -250,12 +284,14 @@ namespace Corrigible.Desk.Bridge
         /// sırasıyla plandan sonra).
         /// </summary>
         public static (string plate, string line) LockReason(bool raid, bool ended, bool story, bool report, bool printed, string planIssue,
-            string eventIssue = null)
+            string eventIssue = null, bool tutorialSeal = false)
         {
             if (printed) return (null, null);
             if (raid) return (Loc.T("baskın sürüyor"), Loc.T("Baskın sürüyor: vardiya bitirilemez."));
             if (ended) return (Loc.T("harekât bitti"), Loc.T("Harekât bitti."));
             if (story) return (Loc.T("belge açık"), Loc.T("Önce açılış belgesini kapat."));
+            // 2026-11-24: rehber ilk baskını adım adım gösterir; o bitene dek vardiya kapanmaz (EĞİTİMİ BİTİR mührü kaldırır)
+            if (tutorialSeal) return (Loc.T("rehber · önce baskın"), Loc.T("Rehber: önce ilk baskını yap. Rehberi atlamak için notta EĞİTİMİ BİTİR'e bas."));
             if (report) return (Loc.T("rapor açık"), Loc.T("Rapor açık: önce EVRAK tepsisine dosyala."));
             if (!string.IsNullOrEmpty(planIssue)) return (Loc.T("plan düzeltilmeli"), planIssue);
             if (!string.IsNullOrEmpty(eventIssue)) return (Loc.T("olay bekliyor"), eventIssue);
@@ -484,6 +520,7 @@ namespace Corrigible.Desk.Bridge
         {
             var p = Paper;
             if (p == null || !p.FeedPending) { feedHoldSince = -1; feedLookAsked = false; }
+            RollWithFeed(p);
             // Canlı fiş daktiloya dönüyor (eldeyken tık / Esc / sağ tık, EVRAK dışı ya da reddedilen bırakış, dosyalama reddi) ve
             // kamera K6'da: K6 daktiloyu görmez, fiş kadrajdan uçup kaybolmasın diye masaya (K1) dönülür
             if (!filing && rig != null && p != null && !p.ReadOnly && p.State == Where.Returning && rig.Current == SiginakPose.ShiftClose)
@@ -613,6 +650,9 @@ namespace Corrigible.Desk.Bridge
             }
             Refresh(true);
             SyncSuspend();
+            // Tek kâğıt akışı: fiş geri yüklendi; teleks silindiri hemen ve düşüşsüz eşitlenir (GameLoaded dinleyicilerinin sırasından
+            // ve teleksin kendi Update penceresinden bağımsız)
+            if (telex != null) telex.SyncPlaten(true);
         }
 
         /// <summary><c>BoardPlanCheck</c> önbelleği (her karede metin üretilmesin; Risk 12): komut, yükleme ve dil değişiminde.</summary>

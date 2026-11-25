@@ -221,8 +221,10 @@ namespace Corrigible.Desk.Tests
         /// <summary>
         /// E16 (teleks modeli değişimi): fişin başı ve ucu teleks daktilosunun <c>Slip feed/SlipStart</c> ve <c>SlipExit</c> çapaları
         /// (Teleprinter yereli ±0,5 mm, token <c>shiftClose.slip.typewriterLocal*</c>; ikisi de 10° arkaya yaslanmış), aralarındaki yol
-        /// 100 mm; Karar D12-B ile çıkış 40 mm içeriden başlar, yol 160 mm. Dil pozu silindirde: merkez çıkıştan 20 mm yukarıda
-        /// (<c>tongueOffsetMm</c>), dönüş çapanınki; fiş orada pasif kaydedilir. Fiş teleks kâğıdıyla örtüşmez (kâğıdın yanında).
+        /// 200 mm; Karar D12-B ile çıkış 40 mm içeriden başlar, yol 260 mm. Dil pozu silindirde: merkez çıkıştan 20 mm yukarıda
+        /// (<c>tongueOffsetMm</c>), dönüş çapanınki; fiş orada pasif kaydedilir. Tek kâğıt akışı: fişin dil pozu teleks kâğıdının
+        /// dinlenme pozuyla örtüşür (merkez ±3 mm, düzlem ±1°, aynı x aralığı ±2 mm); besleme başında fişin üst kenarı yazım çizgisinin
+        /// altında (görünmez).
         /// </summary>
         [Test]
         public void SlipPath_UsesTypewriterAnchors()
@@ -247,7 +249,7 @@ namespace Corrigible.Desk.Tests
             var tilt = Quaternion.Euler(theme.Vector("shiftClose.slip.typewriterLocalEuler"));
             foreach (var anchor in new[] { start, exit })
                 Assert.Less(Quaternion.Angle(tilt, Quaternion.Inverse(tp.rotation) * anchor.rotation), 0.05f, anchor.name + " 10° arkaya yaslanmış");
-            Assert.AreEqual(0.10f, Vector3.Distance(start.position, exit.position), 0.0005f, "çapalar arası 100 mm");
+            Assert.AreEqual(0.20f, Vector3.Distance(start.position, exit.position), 0.0005f, "çapalar arası 200 mm");
 
             var so = new SerializedObject(paper);
             Assert.AreEqual(0.04f, so.FindProperty("feedHiddenM").floatValue, 1e-5f, "D12-B: 40 mm içeriden");
@@ -256,7 +258,7 @@ namespace Corrigible.Desk.Tests
             var inward = (start.position - exit.position).normalized;
             float path = Vector3.Distance(start.position + inward * 0.04f, paper.TongueTarget.position);
             Assert.AreEqual(path, paper.FeedPathM, 1e-4f, "çıkış yolu SlipStart + 40 mm'den silindirdeki duruşa");
-            Assert.AreEqual(0.160f, paper.FeedPathM, 0.0005f, "D12-B: 160 mm");
+            Assert.AreEqual(0.260f, paper.FeedPathM, 0.0005f, "D12-B: 40 + 200 + 20 = 260 mm");
 
             var tongue = paper.TongueTarget;
             AssertNear(exit.position + exit.rotation * new Vector3(0, 0.02f, 0), tongue.position, 0.0005f, "silindirde: çıkış + 20 mm");
@@ -267,12 +269,24 @@ namespace Corrigible.Desk.Tests
             Assert.Less(Quaternion.Angle(paper.transform.rotation, tongue.rotation), 0.05f, "kaydedilmiş dönüş = dil dönüşü");
             Assert.IsFalse(paper.gameObject.activeSelf, "basılmamış fiş görünmez");
 
-            // Fiş teleks kâğıdının yanında: x aralıkları örtüşmez (K1'de iki kâğıt ayrı)
+            // Tek kâğıt akışı: fiş teleks kâğıdının yerinde (dinlenme pozu: alt ve üst kenarın orta noktası, kâğıt düzlemi)
             var sheet = Reference<Renderer>(printer, "paperRenderer");
-            float sheetMaxX = float.MinValue;
-            foreach (var v in sheet.GetComponent<MeshFilter>().sharedMesh.vertices) sheetMaxX = Mathf.Max(sheetMaxX, tp.InverseTransformPoint(sheet.transform.TransformPoint(v)).x);
-            float slipMinX = tp.InverseTransformPoint(tongue.position).x - 0.05f;
-            Assert.Greater(slipMinX, sheetMaxX, "fiş teleks kâğıdının sağında (kâğıt x ≤ " + sheetMaxX.ToString("0.000") + ")");
+            var pts = sheet.GetComponent<MeshFilter>().sharedMesh.vertices.Select(v => tp.InverseTransformPoint(sheet.transform.TransformPoint(v))).ToList();
+            float lowY = pts.Min(p => p.y), highY = pts.Max(p => p.y), sheetMinX = pts.Min(p => p.x), sheetMaxX = pts.Max(p => p.x);
+            var lo = pts.Where(p => p.y < lowY + 0.002f).Aggregate(Vector3.zero, (a, c) => a + c) / pts.Count(p => p.y < lowY + 0.002f);
+            var hi = pts.Where(p => p.y > highY - 0.002f).Aggregate(Vector3.zero, (a, c) => a + c) / pts.Count(p => p.y > highY - 0.002f);
+            var sheetCentre = new Vector3((sheetMinX + sheetMaxX) / 2, (lo.y + hi.y) / 2, (lo.z + hi.z) / 2);
+            var tongueLocal = tp.InverseTransformPoint(tongue.position);
+            Assert.Less(Vector3.Distance(sheetCentre, tongueLocal), 0.003f, "fişin merkezi teleks kâğıdının merkezinde (±3 mm): " + tongueLocal.ToString("F4") + " / " + sheetCentre.ToString("F4"));
+            var sheetUp = new Vector3(0, hi.y - lo.y, hi.z - lo.z).normalized;   // kenar ortalamaları x'te kayık: yalnız y–z eğimi
+            Assert.Less(Vector3.Angle(sheetUp, tp.InverseTransformDirection(tongue.rotation * Vector3.up)), 1f, "fiş kâğıtla aynı düzlemde (±1°)");
+            float slipHalfW = Theme().NumberOf("shiftClose.slip.sizeMm[0]") * 0.0005f;
+            Assert.AreEqual(sheetMinX, tongueLocal.x - slipHalfW, 0.002f, "fişin sol kenarı kâğıdınki");
+            Assert.AreEqual(sheetMaxX, tongueLocal.x + slipHalfW, 0.002f, "fişin sağ kenarı kâğıdınki");
+            var line = Reference<Transform>(printer, "printLine");
+            var up = tp.InverseTransformDirection(exit.up);
+            float feedTop = tp.InverseTransformPoint(paper.FeedFrom).y + Theme().NumberOf("shiftClose.slip.sizeMm[1]") * 0.0005f * up.y;
+            Assert.Less(feedTop, tp.InverseTransformPoint(line.position).y, "besleme başında fişin üst kenarı yazım çizgisinin altında");
         }
 
         // ================================================================== E17 · bağlar
@@ -391,8 +405,8 @@ namespace Corrigible.Desk.Tests
             var box = Reference<Collider>(paper, "hitArea") as BoxCollider;
             Assert.IsNotNull(box, "hitArea BoxCollider");
             Assert.AreSame(paper.gameObject, box.gameObject);
-            AssertNear(new Vector3(0.10f, 0.15f, 0.006f), box.size, 1e-5f, "fiş kutusu");
-            AssertNear(new Vector3(0, 0, -0.002f), box.center, 1e-5f, "fiş kutusunun merkezi");
+            AssertNear(new Vector3(0.26f, 0.225f, 0.006f), box.size, 1e-5f, "fiş kutusu (teleks kâğıdının boyu)");
+            AssertNear(new Vector3(0, 0, -0.003f), box.center, 1e-5f, "fiş kutusunun merkezi (6 mm kıvrım)");
             Assert.AreEqual(1, paper.GetComponentsInChildren<Collider>(true).Length, "fiş ağacında tek çarpıştırıcı");
             Assert.IsEmpty(paper.GetComponentsInChildren<GraphicRaycaster>(true), "fiş yüzü ışın yakalamaz");
         }

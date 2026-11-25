@@ -70,14 +70,33 @@ namespace Corrigible.Desk
 
         public void Hide() => visible = false;
 
+        bool raidSide, leftSide;
+
         /// <summary>Baskında sağ üst köşeden (EMRİ İLET'in üstü), öteki her yerde sağ alt.</summary>
-        public void SetRaid(bool raid)
+        public void SetRaid(bool raid) { raidSide = raid; Place(); }
+
+        /// <summary>Rehberin işaretlediği hedef notun altında kalıyorsa not sol köşeye kaçar (2026-11-24); false sağa döner.</summary>
+        public void SetLeft(bool left) { leftSide = left; Place(); }
+
+        /// <summary>Kâğıdın ekran dikdörtgeni (piksel; işaretçiyle çakışma denetimi). Ekran üstü tuvalde.</summary>
+        public Rect ScreenRect
+        {
+            get
+            {
+                var c = new Vector3[4]; card.GetWorldCorners(c);
+                return Rect.MinMaxRect(c[0].x, c[0].y, c[2].x, c[2].y);
+            }
+        }
+
+        void Place()
         {
             if (anchor == null) return;
-            var a = new Vector2(1, raid ? 1 : 0);
-            if (anchor.anchorMin == a && anchor.pivot == a) return;
+            var a = new Vector2(leftSide ? 0 : 1, raidSide ? 1 : 0);
+            var off = raidSide ? raidOffset : bottomOffset;
+            if (leftSide) off.x = -off.x;
+            if (anchor.anchorMin == a && anchor.pivot == a && anchor.anchoredPosition == off) return;
             anchor.anchorMin = anchor.anchorMax = anchor.pivot = a;
-            anchor.anchoredPosition = raid ? raidOffset : bottomOffset;
+            anchor.anchoredPosition = off;
             shownAt = Time.unscaledTime;
         }
 

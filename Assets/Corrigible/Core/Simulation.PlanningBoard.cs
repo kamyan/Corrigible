@@ -10,16 +10,36 @@ namespace Corrigible.Core
         public PlanningBoardState Board => Shelter?.Plan;
         internal bool BoardMayAdvance => Board == null || Board.Filing;
 
-        public List<BoardRecipe> BoardRecipes => new List<BoardRecipe>
+        /// <summary>
+        /// Tarif defteri: baştan açık altı tarif, ardından sunucu ödülüyle açılan temel ekipman tarifleri açılış
+        /// sırasıyla (<see cref="FacilityState.Recipes"/>; tesis aşama 8). Eski sayfaların dizini kaymaz; açılan tarif harekât boyunca
+        /// kapanmaz. Cevap tarifleri (aşama 10) yeni sayfa açmaz: önlem defteri açıkken temel tarifin sayfası aynı dizinde, aynı kimlikle
+        /// cevaba dönüşür (<see cref="AnswerPage"/>; Söküm anahtarı Teknisyen kitinin sayfasını). Kilitli tarif listede olmadığı için
+        /// <see cref="QueueProduction"/> onu reddeder.
+        /// </summary>
+        public List<BoardRecipe> BoardRecipes
         {
-            Recipe("armor", Loc.T("Zırh plakası"), "armor", B.boardArmorTurns, "metal", B.boardArmorMetal, "kumas", B.boardArmorCloth),
-            Recipe("medkit", Loc.T("Bakım kiti"), "medkit", B.boardMedkitTurns, "kumas", B.boardMedkitCloth, "kimyasal", B.boardMedkitChemicals),
-            Recipe("emp_cell", Loc.T("EMP hücresi"), "emp_cell", B.boardEmpTurns, "metal", B.boardEmpMetal, "devre", B.boardEmpCircuits),
-            // Son teknisyenin kaybı, kalan sakinlerin temel saha kitine erişimini kapatmaz.
-            KitRecipe("kit_tek", Loc.T("Teknisyen kiti")),
-            KitRecipe("kit_emp", Loc.T("EMP kiti")),
-            KitRecipe("kit_ana", Loc.T("Analist kiti")),
-        };
+            get
+            {
+                var list = new List<BoardRecipe>
+                {
+                    Recipe("armor", Loc.T("Zırh plakası"), "armor", B.boardArmorTurns, "metal", B.boardArmorMetal, "kumas", B.boardArmorCloth),
+                    Recipe("medkit", Loc.T("Bakım kiti"), "medkit", B.boardMedkitTurns, "kumas", B.boardMedkitCloth, "kimyasal", B.boardMedkitChemicals),
+                    Recipe("emp_cell", Loc.T("EMP hücresi"), "emp_cell", B.boardEmpTurns, "metal", B.boardEmpMetal, "devre", B.boardEmpCircuits),
+                    // Son teknisyenin kaybı, kalan sakinlerin temel saha kitine erişimini kapatmaz.
+                    KitRecipe("kit_tek", Loc.T("Teknisyen kiti")),
+                    KitRecipe("kit_emp", Loc.T("EMP kiti")),
+                    KitRecipe("kit_ana", Loc.T("Analist kiti")),
+                };
+                if (Facility != null)
+                {
+                    bool workbench = Facility.Perks.Contains(FacilityGear.Workbench);
+                    foreach (string id in Facility.Recipes)
+                        if (FacilityGear.IsGear(id)) list.Add(AnswerPage(FacilityGear.Recipe(B, id, workbench)));
+                }
+                return list;
+            }
+        }
 
         /// <summary>Eksik rol kiti: panoda o türden şarjı olan hiçbir eşya yok (sahibi kim olursa olsun, kişiye bağlı olan da sayılır).</summary>
         public bool BoardKitMissing(string kind) => Board != null && kind != null && kind.StartsWith("kit_", StringComparison.Ordinal)
@@ -31,9 +51,11 @@ namespace Corrigible.Core
         /// </summary>
         public int BoardDepotCount => Board == null ? 0 : Board.Equipment.Count(e => !e.Bound);
 
-        /// <summary>Kit kilidi: eksik rol kitinin tarifi devre istemez (ya da <c>boardMissingKitCircuits</c> kadar ister).</summary>
+        /// <summary>Kit kilidi: eksik rol kitinin tarifi devre istemez (ya da <c>boardMissingKitCircuits</c> kadar ister). Aşama 10: Söküm
+        /// anahtarı açıkken Teknisyen kitinin sayfası cevap sürümüdür (+ devre, eksik kit indiriminin üstüne; <see cref="AnswerPage"/>), eksik
+        /// kit yolu ve otomatik yol da bunu kullanır (<see cref="BoardRecipe.Reward"/> false kalır).</summary>
         BoardRecipe KitRecipe(string kind, string name) =>
-            Recipe(kind, name, kind, B.boardKitTurns, "metal", B.boardKitMetal, "devre", BoardKitMissing(kind) ? B.boardMissingKitCircuits : B.boardKitCircuits);
+            AnswerPage(Recipe(kind, name, kind, B.boardKitTurns, "metal", B.boardKitMetal, "devre", BoardKitMissing(kind) ? B.boardMissingKitCircuits : B.boardKitCircuits));
 
         /// <summary>Sıfır adetli girdi tarife yazılmaz.</summary>
         static BoardRecipe Recipe(string id, string name, string output, int turns, string first, int firstCount, string second, int secondCount)
@@ -48,7 +70,7 @@ namespace Corrigible.Core
         {
             if (!B.planningBoardEnabled || Shelter == null) return;
             Shelter.Plan = new PlanningBoardState { Shift = S.Day };
-            var names = new List<string> { "Derya", "Selin", "İpek", "Deniz", "Nermin", "Zeynep", "Orhan", "Cem", "Eren", "Suna" };
+            var names = new List<string>(CandidateData.Founders);
             for (int i = names.Count - 1; i > 0; i--)
             {
                 int other = (int)Math.Floor(S.Rng.Next() * (i + 1));
@@ -265,17 +287,32 @@ namespace Corrigible.Core
             return ActResult.Success(Loc.T("Hammadde üretim alanına kondu; uygun tarif varsa kapanışta işlenir."));
         }, "board_stage",kind,amount.ToString(CultureInfo.InvariantCulture));
 
+        /// <summary>Otomatik yol yalnız baştan açık tarifleri tanır (ödül tarifleri girdiden ayırt edilemez: örme ve vinç = zırh; tesis aşama 8).</summary>
         public BoardRecipe AutomaticProductionRecipe => Board==null ? null : BoardRecipes
-            .Where(r=>r.Inputs.All(m=>Board.ProductionInputs.Where(i=>i.Kind==m.Kind).Sum(i=>i.Quantity)>=m.Quantity))
+            .Where(r=>!r.Reward&&r.Inputs.All(m=>Board.ProductionInputs.Where(i=>i.Kind==m.Kind).Sum(i=>i.Quantity)>=m.Quantity))
             .OrderBy(r=>BoardKitMissing(r.Output)?0:1).FirstOrDefault();
 
-        public ActResult ScrapEquipment(string equipmentId) => RunCommand(() =>
+        /// <summary>Pano önizlemesi ve yeni hurda komutu aynı gerekçeyi kullanır.</summary>
+        public string ScrapEquipmentCheck(string equipmentId) => CheckScrap(equipmentId, false, out _);
+
+        string CheckScrap(string equipmentId, bool previouslyRecorded, out BoardEquipment equipment)
         {
+            equipment = null;
             string why = BoardCommandCheck();
+            if (why != null) return why;
+            equipment = Board.EquipmentItem(equipmentId);
+            if (equipment == null) return Loc.T("Hurdaya ayrılabilen bir eşya seç.");
+            if (!previouslyRecorded && equipment.Kind == FacilityGear.Dog) return Loc.T("Köpek hurdaya atılmaz.");
+            return equipment.Bound ? Loc.T("Bu teçhizat sahibine bağlı; sökülemez.") : null;
+        }
+
+        public ActResult ScrapEquipment(string equipmentId) => ScrapEquipment(equipmentId, previouslyRecorded: false);
+
+        // Aşama 15 Core komutu köpeği de kabul ediyordu. Yalnız kaydedilmiş sonucun tekrarında eski izin geçerlidir.
+        internal ActResult ScrapEquipment(string equipmentId, bool previouslyRecorded) => RunCommand(() =>
+        {
+            string why = CheckScrap(equipmentId, previouslyRecorded, out var equipment);
             if (why != null) return ActResult.Fail(why);
-            var equipment = Board.EquipmentItem(equipmentId);
-            if (equipment == null) return ActResult.Fail(Loc.T("Hurdaya ayrılabilen bir eşya seç."));
-            if (equipment.Bound) return ActResult.Fail(Loc.T("Bu teçhizat sahibine bağlı; sökülemez."));
             Board.Equipment.Remove(equipment);
             AddBoardMaterial("metal", B.boardScrapMetal);
             return ActResult.Success(Loc.F("{0} hurdaya ayrıldı; {1} metal kazanıldı.", PlanningBoardData.EquipmentName(equipment.Kind), Math.Max(0, B.boardScrapMetal)));
@@ -506,18 +543,26 @@ namespace Corrigible.Core
             {
                 // Yarım tayında dinlenme ve yatış can vermez; yatış süresi yine azalır (yatan kişi en az 1 canla kalkar).
                 if (person.Down > 0) { person.Down--; person.Hp = Math.Min(person.MaxHp, Math.Max(1, person.Hp) + (half ? 0 : Math.Max(0, B.boardRestHeal))); continue; }
+                // Kayıt 22 (geliştirici, 2026-11-24: "boşta olmayan ekip üyeleri de vardiya geçtikçe iyileşsin"): yatmayan herkes kapanışta
+                // iyileşir; Boşta boardRestHeal, görevdeki (saha rolleri dahil) boardDutyHeal. Yarım tayında kimse can almaz.
+                int heal = person.Job == "rest" ? B.boardRestHeal : B.boardDutyHeal;
                 if (person.Job == "train")
                 {
                     GainBoardExperience(person, person.TrainingSubject, B.boardTrainingGain);
                     person.Job = "rest";
                 }
-                else if (person.Job == "rest") { if (!half) person.Hp = Math.Min(person.MaxHp, person.Hp + Math.Max(0, B.boardRestHeal)); }
                 else if (person.Job == "cook" && blackout) { }
                 else if (person.Job == "cook" || person.Job == "gather") BoardGainExperience(person, person.Job);
+                if (!half) person.Hp = Math.Min(person.MaxHp, person.Hp + Math.Max(0, heal));
             }
+            // Tesis aşama 8: düşen köpeğin dinlenmesi her kapanışta bir azalır (çekimsiz)
+            foreach (var item in Board.Equipment) if (item.Rest > 0) item.Rest--;
             // Karartmada Üretim çalışmaz (Mutfak da: tasarruf ve deneyim yok).
             if (!blackout) AdvanceBoardProduction(working);
             AdvanceBoardCare(working);
+            // Dinleme nöbeti: bu vardiya çalışan Gözetim görevlisi puan üretir; görev düzeltmesinden önce, öbür
+            // görevlerle aynı çalışan kümesiyle
+            AdvanceFacilityIntel(working);
             Shelter.Population = Board.People.Count(p => p.Alive);
             SyncBoardMaterialTotal();
             Board.Shift = S.Day;
@@ -540,6 +585,8 @@ namespace Corrigible.Core
             var producer = Board.People.FirstOrDefault(p => working.Contains(p.Id) && p.Job == "craft");
             var order = Board.Orders.FirstOrDefault();
             if(producer==null||BoardDepotCount>=B.boardEquipmentCapacity)return;
+            // Tesis (aşama 8, K19): açık emir varken eksik rol kiti de üretilir; üretici o kapanış kiti yapar, emir ilerlemez
+            if(order!=null&&ProduceMissingKit(producer))return;
             if(Shelter.Starving)
             {
                 // Kit kilidi: aç kapanış yalnız eksik bir rol kitinin üretimini durdurmaz.
@@ -560,7 +607,15 @@ namespace Corrigible.Core
             {
                 foreach (var input in recipe.Inputs)
                     if (order.Reserves.Where(r => r.Kind == input.Kind).Sum(r => r.Quantity) != input.Quantity || (Board.Material(input.Kind)?.Quantity ?? 0) < input.Quantity) return;
+                // Erzak bedeli (tesis aşama 8, köpek): yetmezse emir hammadde eksikliği gibi bekler; yeterse vardiyanın erzak değişimine eklenir
+                if (recipe.Supplies > 0 && Shelter.Supplies < recipe.Supplies) return;
                 foreach (var input in recipe.Inputs) Board.Material(input.Kind).Quantity -= input.Quantity;
+                if (recipe.Supplies > 0)
+                {
+                    Shelter.Supplies -= recipe.Supplies;
+                    Board.LastSuppliesChange -= recipe.Supplies;
+                    Shelter.LastSuppliesChange = Board.LastSuppliesChange;
+                }
                 order.Started = true;
             }
             int progress = 1 + (BoardSkillTier(producer, "craft") >= B.boardCraftSpeedTier ? Math.Max(0, B.boardCraftExtraProgress) : 0);
@@ -570,6 +625,36 @@ namespace Corrigible.Core
             AddBoardEquipment(recipe.Output, null);
             Board.LastCompleted.Add(recipe.Output);
             Board.Orders.Remove(order);
+        }
+
+        /// <summary>
+        /// Açık emir varken (tesis aşama 8, K19): <see cref="PlanningBoardData.FieldJobs"/> sırasıyla ilk eksik rol kitinin tarifi
+        /// üretim alanındaki ve serbest hammaddeyle karşılanıyorsa kit üretilir (girdi önce üretim alanından, eksiği serbest hammaddeden;
+        /// emrin ayrılmış girdisine dokunulmaz). Aç kapanışta yalnız <c>boardStarvingKitProduction</c> açıkken. Kit üretildiyse true.
+        /// </summary>
+        bool ProduceMissingKit(ResidentState producer)
+        {
+            if (Shelter.Starving && !B.boardStarvingKitProduction) return false;
+            string kind = PlanningBoardData.FieldJobs.Select(r => "kit_" + r).FirstOrDefault(BoardKitMissing);
+            if (kind == null) return false;
+            var recipe = KitRecipe(kind, PlanningBoardData.EquipmentName(kind));
+            int Staged(string k) => Board.ProductionInputs.Where(m => m.Kind == k).Sum(m => m.Quantity);
+            if (recipe.Inputs.Any(m => Staged(m.Kind) + BoardMaterialFree(m.Kind) < m.Quantity)) return false;
+            foreach (var input in recipe.Inputs)
+            {
+                int need = input.Quantity;
+                foreach (var staged in Board.ProductionInputs.Where(m => m.Kind == input.Kind && m.Quantity > 0))
+                {
+                    int take = Math.Min(need, staged.Quantity);
+                    staged.Quantity -= take;
+                    need -= take;
+                }
+                Board.Material(input.Kind).Quantity -= input.Quantity;
+            }
+            AddBoardEquipment(kind, null);
+            Board.LastCompleted.Add(kind);
+            BoardGainExperience(producer, "craft");
+            return true;
         }
 
         void AdvanceBoardCare(HashSet<string> working)

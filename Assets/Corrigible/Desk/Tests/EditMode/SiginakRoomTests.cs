@@ -119,15 +119,16 @@ namespace Corrigible.Desk.Tests
                     receiptColliders++;
                 }
                 Assert.AreEqual(1, receiptColliders, "Masada tek sürüklenebilir devir kâğıdı bulunmalı.");
-                Assert.AreEqual(1, eventColliders, "EVRAK tepsisinde tek olay tutanağı (KOS aşama 4)");
+                // Tesis aşama 9: aynı görünümün ikinci örneği sunucu ödülünün kâğıdı (SiginakServerReward)
+                Assert.AreEqual(2, eventColliders, "olay tutanağı (KOS aşama 4) ve sunucu ödülü kâğıdı (tesis aşama 9): ikisi de kapı panosuna gelir, EVRAK tepsisine iner; pano çarpıştırıcısız");
                 Assert.GreaterOrEqual(admissionColliders, 8, "kabul istasyonu: tezgâh, MASA tuşu, iki damga, üç aday kartı ve grup fişi");
                 // Revizyon 3 · Aşama 4 (R19): fiş yüzü, tepsideki kopya, EVRAK üstü çapası ve hedef ışığı çarpıştırıcı taşımaz;
-                // fişin tek girdi alanı kökteki kutu (100 × 150 mm, D §0.9)
+                // fişin tek girdi alanı kökteki kutu (D §0.9; tek kâğıt akışında teleks kâğıdının boyu, 260 × 225 mm)
                 var receipt = room.GetComponentsInChildren<ShiftReceiptPaper>(true).Single();
                 Assert.AreEqual(1, receipt.GetComponentsInChildren<Collider>(true).Length, "fiş ağacında tek çarpıştırıcı");
                 var receiptBox = receipt.GetComponent<BoxCollider>();
-                Assert.AreEqual(0.10f, receiptBox.size.x, 1e-4f);
-                Assert.AreEqual(0.15f, receiptBox.size.y, 1e-4f);
+                Assert.AreEqual(0.26f, receiptBox.size.x, 1e-4f);
+                Assert.AreEqual(0.225f, receiptBox.size.y, 1e-4f);
                 Assert.IsNotEmpty(receipt.GetComponentsInChildren<HandoverSlipFace>(true), "fiş yüzü kâğıdın altında");
                 foreach (var path in new[] { "Desk/Paper tray/Slip over", "Desk/Paper tray/Slip target light", "Desk/Paper tray/Filed slip" })
                     Assert.IsEmpty(room.transform.Find(path).GetComponentsInChildren<Collider>(true), path + ": çarpıştırıcısız");
@@ -148,7 +149,7 @@ namespace Corrigible.Desk.Tests
 
         static readonly System.Type[] BoardInputTypes =
         {
-            typeof(TrainingTopics), typeof(BoardDragController), typeof(BoardView3D), typeof(PersonFolderView), typeof(LostEnvelopeView),
+            typeof(BoardDragController), typeof(BoardView3D), typeof(PersonFolderView), typeof(LostEnvelopeView),
             typeof(BoardCardView), typeof(HurdaBin), typeof(BostaDeckView),
             // Aşama 5 (E27): kapalı defterin gövdesi ve sayfa çarpıştırıcıları (RecipeBookView ve RecipeBookPage alanlarında tutulur)
             typeof(RecipeBookView), typeof(RecipeBookPage),

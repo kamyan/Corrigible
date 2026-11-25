@@ -126,10 +126,10 @@ namespace Corrigible.Desk.Tests
         }
 
         /// <summary>Bölgenin baskını: boş zemin karelerinden bir duvar, bir kayar raf duvarı, bir kanal, bir gedik (Madenci'nin yıktığı
-        /// duvarın yeri) ve bir sade zemin hazırlar. MapSeed ≠ 0 harekât baskını (bölgenin kiti), 0 eğitim ya da örnek baskın.</summary>
+        /// duvarın yeri) ve bir sade zemin hazırlar. MapSeed ≠ 0 harekât baskını (bölgenin kiti), 0 örnek baskın. Örnek tahta MapSeed'den bağımsız <c>Layouts</c> verir.</summary>
         static Baskin.BState KitBoard(string region, uint mapSeed, out Vector2Int[] tiles)
         {
-            var b = Baskin.Create(new RaidParams { Seed = 11, Compute = 3, Region = region, MapSeed = mapSeed, MapSlot = mapSeed != 0 ? 3 : 0 });
+            var b = Baskin.Create(new RaidParams { Seed = 11, Compute = 3, Region = region, MapSeed = mapSeed });
             tiles = EmptyFloor(b).Take(5).ToArray();
             Assert.AreEqual(5, tiles.Length);
             Vector2Int wall = tiles[0], shelf = tiles[1], cable = tiles[2], breach = tiles[3];
@@ -142,13 +142,13 @@ namespace Corrigible.Desk.Tests
 
         /// <summary>
         /// Bina kitinin adı (BASKIN-MEKANLARI Katman 6) kartta kural adının altında, gri ikinci satırda: duvar (kayar raf duvarı olayın
-        /// adını korur: "Kayar arşiv rafı"), kanal, gedik (başlık "Boş kare" kalır). Varsayılan kitte (MapSeed 0: eğitim, örnek baskın)
+        /// adını korur: "Kayar arşiv rafı"), kanal, gedik (başlık "Boş kare" kalır). Varsayılan kitte (MapSeed 0: örnek baskın)
         /// hiçbir karede alt satır yok. Üstünde birim duran karede mekân adı yok. Kurallar kartının lejantı kanalın adını alır.
         /// </summary>
         [Test]
         public void HoverCard_KitNameIsTheGreySubtitle_DefaultKitShowsNone()
         {
-            // Varsayılan kit: bölge Batı Avrupa ama MapSeed 0 (eğitim baskını gibi)
+            // Varsayılan kit: bölge Batı Avrupa ama MapSeed 0 (örnek baskın gibi)
             source.OpenForValidation(KitBoard("weu", 0, out var t));
             Assert.AreEqual(RaidKitText.Default, source.KitId);
             Assert.IsNull(source.Current.CableName, "lejant bugünkü gibi");

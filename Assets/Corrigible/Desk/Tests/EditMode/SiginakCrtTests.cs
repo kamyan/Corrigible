@@ -25,7 +25,7 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(CrtState.Live, CrtViewBuilder.State(sim, true));
             // Teknisyen düşer, yerine çıkacak yedek yok: ekip baskına çıkamaz
             sim.Shelter.Reserves.Clear();
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = false, Down = 1 }).Ok);
+            FacilityDeskKit.ResolveRaid(sim, false, FacilityDeskKit.Dies);
             Assert.AreEqual(CrtState.Cut, CrtViewBuilder.State(sim, false), "bu vardiyada baskın: sonuç teleks");
             sim.Step();
             Assert.AreEqual(CrtState.Disabled, CrtViewBuilder.State(sim, false), "Teknisyen yaralı");
@@ -35,14 +35,30 @@ namespace Corrigible.Desk.Tests
                 LiberationMapBuilder.TechnicianDown(sim.S.Teams[0])), screen.TeamLine);
         }
 
+        /// <summary>
+        /// Alarm buçuklu ilerler (varsayılan vardiya payı 0,5, tek kip denge turu): CRT ondalığı yazar, tam sayıya yuvarlamaz; 9,5
+        /// "10/10" görünse eşik dolmuş sanılır. Tam değer ondalıksız kalır.
+        /// </summary>
+        [Test]
+        public void Alarm_HalfStep_ShowsTheDecimal_NotRoundedUpToTheThreshold()
+        {
+            var sim = NewLiberation();
+            Assert.AreEqual(0.5, sim.B.liberationAlarmPerShift, "varsayılan vardiya payı");
+            sim.S.Alarm = 9.5;
+            Assert.AreEqual(Loc.F("YZ ALARMI {0}/{1}", DeskFormat.Number(9.5, 1), DeskFormat.Number(10, 0)), CrtViewBuilder.Alarm(sim));
+            StringAssert.DoesNotContain("10/10", CrtViewBuilder.Alarm(sim));
+            sim.S.Alarm = 7;
+            Assert.AreEqual(Loc.F("YZ ALARMI {0}/{1}", "7", "10"), CrtViewBuilder.Alarm(sim));
+        }
+
         [Test]
         public void Screen_Waiting_ShowsFourLines()
         {
             var sim = NewLiberation();
             var d = CrtViewBuilder.Screen(sim, false);
             Assert.AreEqual(Loc.T("DİNLEMEDE"), d.Title);
-            // Revizyon 2 · S1: kısa cephe satırı (“BATI AVR. / 01”), ipucu yok
-            Assert.AreEqual(Loc.F("{0} / {1:00}", CrtViewBuilder.ShortRegion(Simulation.HQ), 1), d.FrontLine);
+            // Revizyon 2 · S1: kısa cephe satırı (“VERITY / 01”; aşama 3: YZ adı), ipucu yok
+            Assert.AreEqual(Loc.F("{0} / {1:00}", CrtViewBuilder.ShortRegion(sim, Simulation.HQ), 1), d.FrontLine);
             Assert.IsFalse(d.TeamInverse);
             Assert.IsNull(d.Hint);
             Assert.IsNotNull(d.Sub, "YZ ALARMI satırı");
@@ -57,15 +73,15 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(Loc.T("Dinlemede — emir bekleniyor"), first[first.Count - 1].text);
             Assert.AreEqual(string.Format("{0:000}/02", sim.S.Day + 1), first[first.Count - 1].code, "sayaçtaki vardiya; bugünün ikinci satırı (ekip hazır, sonra hat)");
             string name = LiberationMapBuilder.TeamName(sim.S.Teams[0]);
-            Assert.AreEqual(Loc.F("{0} hazır · cephe {1}", name, RadioLogBuilder.Short(Simulation.HQ)), first[0].text);
+            Assert.AreEqual(Loc.F("{0} hazır · cephe {1}", name, RadioLogBuilder.Short(sim, Simulation.HQ)), first[0].text);
 
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
             Assert.AreEqual(Loc.T("Hat açık — ekip sahada"), RadioLogBuilder.Entries(sim, true).Last().text);
             int day = sim.S.Day;
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true, Collateral = 1 }).Ok);
+            FacilityDeskKit.ResolveRaid(sim, true, null, FacilityDeskKit.Civilians(0, 1));
             var after = RadioLogBuilder.Entries(sim, false);
             Assert.LessOrEqual(after.Count, RadioLogBuilder.Shown);
-            Assert.AreEqual(Loc.F("{0} döndü · {1} alındı", name, Loc.F("{0} {1:00}", RadioLogBuilder.Short("weu"), 1)), after[0].text);
+            Assert.AreEqual(Loc.F("{0} döndü · {1} alındı", name, Loc.F("{0} {1:00}", RadioLogBuilder.Short(sim, "weu"), 1)), after[0].text);
             Assert.AreEqual(Loc.F("{0} sivil sunucu kırıldı", 1), after[1].text);
             Assert.AreEqual(Loc.T("Hat kapandı — sonuç tekste"), after.Last().text);
             Assert.IsTrue(after.All(e => e.code.StartsWith((day + 1).ToString("000") + "/")), "hepsi bu vardiyanın kaydı");
@@ -76,13 +92,13 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(Loc.T("Dinlemede — emir bekleniyor"), later.Last().text);
         }
 
+        /// <summary>Bölgenin CRT adı YZ adının büyük harfli hâlidir (aşama 3): tek sözcük, kısaltılmaz.</summary>
         [Test]
-        public void ShortRegion_AbbreviatesLongSecondWord()
+        public void ShortRegion_IsTheUpperAiName()
         {
-            var weu = DeskText.Upper(Loc.T(GameData.Region("weu").Name)).Split(' ');
-            Assert.AreEqual(weu[0] + " " + weu[1].Substring(0, 3) + ".", CrtViewBuilder.ShortRegion("weu"), "BATI AVR.");
-            Assert.AreEqual(DeskText.Upper(Loc.T(GameData.Region("me").Name)), CrtViewBuilder.ShortRegion("me"), "ORTA DOĞU kısalmaz");
-            Assert.AreEqual(DeskText.Upper(Loc.T(GameData.Region("af").Name)), CrtViewBuilder.ShortRegion("af"), "tek sözcük");
+            var sim = NewLiberation();
+            foreach (var r in GameData.Regions)
+                Assert.AreEqual(DeskText.Upper(GameData.Region(r.Id).Ai), CrtViewBuilder.ShortRegion(sim, r.Id), r.Id);
         }
 
         [Test]

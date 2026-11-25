@@ -381,6 +381,8 @@ MonoBehaviour:
   tilesRoot: {fileID: 2007971061}
   piecesRoot: {fileID: 1098258519}
   marksRoot: {fileID: 724948701}
+  slideWith:
+  - {fileID: 1349350396}
   ghostMaterial: {fileID: 2100000, guid: 8efebcf31fd55407ba88019a6d9639b7, type: 2}
   handFont: {fileID: 11400000, guid: a47e6710c1c454464b7ad219b6d95629, type: 2}
   handLabelMaterial: {fileID: 0}
@@ -400,6 +402,8 @@ MonoBehaviour:
   machineMinStepSeconds: 0.1
   machineStepHop: 0.1
   coordinateSize: 2.2
+  slideSeconds: 0.45
+  slideDistance: 14
   wakeStampSeconds: 0.12
 --- !u!4 &229993050
 Transform:
@@ -7896,6 +7900,7 @@ MonoBehaviour:
   - {x: 4.3, y: -0.25, z: 4.3}
   - {x: 4.3, y: -0.25, z: -4.3}
   - {x: -4.3, y: -0.25, z: -4.3}
+  boardBase: {fileID: 1349350396}
   shadowOffset: {x: 15, y: -18}
   feltTile: 40
 --- !u!114 &1194222782

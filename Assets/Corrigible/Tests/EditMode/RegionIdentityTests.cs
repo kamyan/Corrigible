@@ -71,9 +71,9 @@ namespace Corrigible.Tests
         [Test]
         public void Tier_RisesWithLiberatedRegions()
         {
-            // Aşama 8 dengesi (2026-11-14): kademe 3 yedinci, kademe 4 on üçüncü bölgede; 12 bölgelik harekâtta 4. kademe gelmez
+            // Tek kip dengesi (2026-11-22; aşama 8: yedinci): kademe 3 dokuzuncu, kademe 4 on üçüncü bölgede; 12 bölgelik harekâtta 4. kademe gelmez
             var sim = LegacySimulation.NewGame(3);
-            CollectionAssert.AreEqual(new[] { 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3 }, Enumerable.Range(0, 12).Select(sim.RaidTier).ToArray());
+            CollectionAssert.AreEqual(new[] { 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3 }, Enumerable.Range(0, 12).Select(sim.RaidTier).ToArray());
             // Kademe 4 kodda durur: eski eşiklerle yine gelir
             var old = LegacySimulation.NewGame(3, new Balance { liberationTier3At = 6, liberationTier4At = 10 });
             CollectionAssert.AreEqual(new[] { 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4 }, Enumerable.Range(0, 12).Select(old.RaidTier).ToArray());
@@ -266,6 +266,43 @@ namespace Corrigible.Tests
             foreach (var r in sim.S.Liberation.Regions.Take(sim.B.shelterLevel2Regions)) foreach (var s in r.Sectors) s.Captured = true;
             Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Workshop).Ok, "iki özgür bölgede seviye 2");
             StringAssert.Contains(sim.B.shelterLevel3Regions.ToString(), sim.ShelterUpgradeCheck(ShelterLogic.Workshop));
+        }
+
+        // ---------------------------------------------------------------- YZ adları (aşama 3, TASARIM §6)
+
+        static readonly Dictionary<string, string> AiNames = new Dictionary<string, string>
+        {
+            { "weu", "VERITY" }, { "me", "EMBER" }, { "cn", "PARAGON" }, { "af", "CAIRN" }, { "in", "SOLACE" }, { "eeu", "QUORUM" },
+            { "sa", "HEADWATER" }, { "sea", "EDDY" }, { "ru", "BOREALIS" }, { "jk", "TESSEL" }, { "na", "WAYPOINT" }, { "oc", "HALCYON" },
+        };
+
+        /// <summary>Bölgenin oyuncuya görünen adı her iki harita kipinde de bölgeyi tutan YZ'nin adıdır; kaynak adı da aynıdır.</summary>
+        [Test]
+        public void RegionName_IsTheAiName_InBothMapModes([Values(0, 1)] int mapGen)
+        {
+            var sim = LegacySimulation.NewGame(79, new Balance { shelterEventsEnabled = false, liberationMapGen = mapGen });
+            Assert.AreEqual(12, GameData.Regions.Length);
+            foreach (var r in GameData.Regions)
+            {
+                Assert.AreEqual(AiNames[r.Id], r.Ai, r.Id);
+                Assert.AreEqual(r.Ai, sim.RegionName(r.Id), r.Id);
+                Assert.AreEqual(sim.RegionName(r.Id), sim.RegionSourceName(r.Id), r.Id + ": YZ adı çevrilmez");
+            }
+        }
+
+        /// <summary>YZ adları sabit, tekrarsız, büyük harf ASCII; çeviri tablosunda her biri kendine eşlenir (Loc.T eksik saymaz).</summary>
+        [Test]
+        public void AiNames_AreFixedUniqueAndUntranslated()
+        {
+            var names = GameData.Regions.Select(r => r.Ai).ToList();
+            CollectionAssert.AllItemsAreUnique(names);
+            foreach (string ai in names) Assert.IsTrue(System.Text.RegularExpressions.Regex.IsMatch(ai, "^[A-Z]+$"), ai);
+            var english = Loc.ParseTable(System.IO.File.ReadAllText(Corrigible.EditorTools.LocalizationTool.TableFile))[Loc.English];
+            foreach (string ai in names)
+            {
+                Assert.IsTrue(english.TryGetValue(ai, out var en), ai + ": tabloda yok");
+                Assert.AreEqual(ai, en, ai + ": İngilizcesi kendisi");
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ using Corrigible.Core;
 namespace Corrigible.Desk.Bridge
 {
     /// <summary>Üretimin kapanışta durma nedeni (dilden bağımsız; metni <see cref="ProductionOutlook.StopReason"/>).</summary>
-    public enum ProductionStop { None, NoMaker, Starvation, StoreFull, Blackout }
+    public enum ProductionStop { None, NoMaker, Starvation, StoreFull, Blackout, NoSupplies }
 
     /// <summary>
     /// Kapanışta üretimin ne yapacağının tahmini (Revizyon 3 · Aşama 5; PLAN §1.7, D8): hangi tarif, üretici kim, çalışıyor mu, durursa
@@ -34,14 +34,23 @@ namespace Corrigible.Desk.Bridge
         public readonly ProductionStop Stop;
         /// <summary>Girdiler hazır: emir başlamış ya da her girdi tam ayrılmış ve stokta; otomatik yolda tarifin girdileri stokta.</summary>
         public readonly bool Ready;
+        /// <summary>
+        /// Tesis aşama 9 (K19, K24): tesis kipinde emir açıkken bu kapanış eksik rol kiti yapılır, emir ilerlemez (Core
+        /// <c>ProduceMissingKit</c>). <see cref="RecipeId"/> ve <see cref="Output"/> kittir; beklemedeki emrin tarifi <see cref="WaitingRecipeId"/>.
+        /// </summary>
+        public readonly bool KitFirst;
+        /// <summary>K19'da bekleyen emrin tarifi; değilse null.</summary>
+        public readonly string WaitingRecipeId;
 
         public ProductionOutlook(string recipeId, string maker, string stopReason, bool works, bool fromOrder, bool started,
-            int turns, int done, int after, string output = null, ProductionStop stop = ProductionStop.None, bool ready = false)
+            int turns, int done, int after, string output = null, ProductionStop stop = ProductionStop.None, bool ready = false,
+            bool kitFirst = false, string waitingRecipeId = null)
         {
             RecipeId = recipeId; Maker = maker; StopReason = stopReason;
             Works = works; FromOrder = fromOrder; Started = started;
             Turns = turns; Done = done; After = after;
             Output = output ?? recipeId; Stop = stop; Ready = ready;
+            KitFirst = kitFirst; WaitingRecipeId = waitingRecipeId;
         }
 
         /// <summary>Üretim yok (tarif yok).</summary>
@@ -83,9 +92,21 @@ namespace Corrigible.Desk.Bridge
             {
                 var recipe = sim.BoardRecipes.FirstOrDefault(r => r.Id == order.RecipeId);
                 if (recipe == null) return ProductionOutlook.None;
+                // Tesis aşama 9 (K19): Core, açlık denetiminden önce eksik rol kitini yapar; emir bu kapanış ilerlemez
+                var kit = MissingKitFirst(sim, producer, stop);
+                if (kit != null)
+                    return new ProductionOutlook(kit.Id, maker, null, true, false, false, 1, 0, 1, kit.Output, ProductionStop.None, true, true, recipe.Id);
                 bool ready = order.Started || recipe.Inputs.All(i =>
                     order.Reserves.Where(r => r.Kind == i.Kind).Sum(r => r.Quantity) == i.Quantity
                     && (board.Material(i.Kind)?.Quantity ?? 0) >= i.Quantity);
+                // Tesis aşama 9 (K23): erzak bedeli (köpek) yetmezse başlamamış emir hammadde eksikliği gibi bekler (Core: kapanışın
+                // erzak değişiminden sonra Supplies < bedel)
+                if (runs && ready && !order.Started && recipe.Supplies > 0 && SuppliesAtProduction(sim) < recipe.Supplies)
+                {
+                    stop = ProductionStop.NoSupplies;
+                    reason = ReasonText(stop);
+                    runs = false;
+                }
                 int turns = recipe.Turns;
                 int done = Math.Max(0, turns - order.Remaining);
                 bool works = runs && ready;
@@ -105,6 +126,29 @@ namespace Corrigible.Desk.Bridge
             bool stocked = automatic.Inputs.All(m => (board.Material(m.Kind)?.Quantity ?? 0) >= m.Quantity);
             bool auto = runs && stocked;
             return new ProductionOutlook(automatic.Id, maker, reason, auto, false, false, 1, 0, auto ? 1 : 0, automatic.Output, stop, stocked);
+        }
+
+        /// <summary>Kapanışta üretim sırasındaki erzak: bu vardiyanın erzak değişiminden sonra (Core'un <c>AdvancePlanningBoard</c> sırası).</summary>
+        public static double SuppliesAtProduction(Simulation sim) => sim?.Shelter == null ? 0
+            : Math.Min(sim.B.boardSuppliesCapacity, Math.Max(0, sim.Shelter.Supplies + sim.BoardFoodPreview));
+
+        /// <summary>
+        /// Tesis aşama 9 (K19): emir açıkken Core'un <c>ProduceMissingKit</c>'i: karartma yok, üretici var, depo dolu değil;
+        /// açlıkta yalnız <c>boardStarvingKitProduction</c> açıkken; <c>FieldJobs</c> sırasıyla ilk eksik rol kitinin tarifi üretim
+        /// alanındaki ve serbest hammaddeyle karşılanıyor. Yapılacak kitin tarifi; yoksa null.
+        /// </summary>
+        public static BoardRecipe MissingKitFirst(Simulation sim, ResidentState producer, ProductionStop stop)
+        {
+            var board = sim?.Board;
+            if (board == null || board.Orders.Count == 0 || producer == null) return null;
+            if (stop != ProductionStop.None && stop != ProductionStop.Starvation) return null;
+            if (Starving(sim) && !sim.B.boardStarvingKitProduction) return null;
+            string kind = PlanningBoardData.FieldJobs.Select(r => "kit_" + r).FirstOrDefault(sim.BoardKitMissing);
+            if (kind == null) return null;
+            var recipe = sim.BoardRecipes.FirstOrDefault(r => r.Id == kind);
+            if (recipe == null) return null;
+            int Staged(string k) => board.ProductionInputs.Where(m => m.Kind == k).Sum(m => m.Quantity);
+            return recipe.Inputs.All(m => Staged(m.Kind) + sim.BoardMaterialFree(m.Kind) >= m.Quantity) ? recipe : null;
         }
 
         /// <summary>ÜRETİM cebinde ayakta olan ilk kişi (Core'un <c>working &amp;&amp; Job == "craft"</c>'ı); yoksa null.</summary>
@@ -151,6 +195,7 @@ namespace Corrigible.Desk.Bridge
                 case ProductionStop.Starvation: return Loc.T("açlık");
                 case ProductionStop.StoreFull: return Loc.T("eşya deposu dolu");
                 case ProductionStop.Blackout: return Loc.T("karartma");
+                case ProductionStop.NoSupplies: return Loc.T("erzak yetmiyor · emir bekliyor");
                 default: return null;
             }
         }

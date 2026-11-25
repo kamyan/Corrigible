@@ -32,17 +32,46 @@ namespace Corrigible.Core
             uint sd = seed ?? (uint)new Random().Next(0, int.MaxValue);
             var s = new WorldState { Seed = sd, Rng = new Rng(sd), Fon = b.startFon };
             var sim = new Simulation(s, b);
+            // Üretilmiş harita kendi akışından (S.Rng'den tüketmez); dünya haritasında null
+            if (b.liberationMapGen == 1) sim.Map = WorldMap.Generate(sd);
             sim.SetupLiberation();
             sim.SetupPlanningBoard();
             if (sim.Board != null) sim.SetupAdmissions();
             // Çekim yapmaz; olaylar kapalı olsa da kurulur (okuyucular null denetlemesin).
             if (sim.Board != null) sim.SetupShelterEvents();
-            sim.Record = new GameRecord { seed = sd, balance = b.Clone() };
+            sim.Record = new GameRecord { seed = sd, balance = b.Clone(), map = sim.MapFingerprint, facility = sim.FacilityFingerprint };
             s.Events.Clear();
             return sim;
         }
 
         static RegionDef Def(string id) => GameData.Region(id);
+
+        /// <summary>
+        /// Bu harekâtın üretilmiş haritası (<c>Balance.liberationMapGen</c> = 1): hücreler, bölgeler, bağlantılar, adlar ve sunumun
+        /// çizdiği geometri. Dünya haritasında (0) null. Kayda yazılmaz; tohumdan yeniden üretilir.
+        /// </summary>
+        public WorldMap Map { get; private set; }
+
+        /// <summary>Bu harekâtın komşuluk tablosu: üretilmiş haritanın bağlantıları ya da dünya haritasının <c>GameData.Links</c>'i.</summary>
+        public IReadOnlyList<LinkDef> Links => Map != null ? Map.LinkDefs : GameData.Links;
+
+        /// <summary>
+        /// Bölgenin oyuncuya görünen adı: bölgeyi tutan YZ'nin adı (<c>RegionDef.Ai</c>; iki haritada da, iki dilde de aynı, çevrilmez;
+        /// Docs/TESIS-BASKINLARI-TASARIMI.md §1). G5 haritası aynı adı parmak izine yazar.
+        /// </summary>
+        public string RegionName(string id) => GameData.Region(id).Ai;
+
+        /// <summary>
+        /// Bölge adının kaynağı (geçmişte başka dilde yazılmış metni tanımak için; sunum). YZ adı çevrilmediği için
+        /// <see cref="RegionName"/> ile aynıdır; tabloda kendi karşılığıyla durur.
+        /// </summary>
+        public string RegionSourceName(string id) => RegionName(id);
+
+        /// <summary>Haritanın parmak izi (kayda yazılır, yüklemede karşılaştırılır).</summary>
+        public string MapFingerprint => Map?.Fingerprint ?? WorldMap.WorldFingerprint;
+
+        /// <summary>Kayıttan yeniden oynatmada başarısız olan komut sayısı (<see cref="Replay.Restore"/> yazar; 0 olmalı).</summary>
+        public int ReplayFailures { get; internal set; }
 
         /// <summary>İşgal oranı (%): geri alınmamış sektörlerin payı.</summary>
         public double Occupation
@@ -65,10 +94,19 @@ namespace Corrigible.Core
         }
 
         // ---------- Bir vardiya ----------
-        /// <summary>Vardiyayı bitirir: gelir, ekiplerin toparlanması, sığınağın üretimi ve tüketimi, YZ alarmı, kapı.</summary>
+        /// <summary>Vardiyayı bitirir: gelir, ekiplerin toparlanması, sığınağın üretimi ve tüketimi, tesis aşama 11'in kuşatması (karar
+        /// verilmeyen kanadın bırakılması) ve YZ onarımı, YZ alarmı, kapı.</summary>
         public void Step()
         {
             if (S.Ending != null || S.Blocked || !BoardMayAdvance) return;
+            // Kapanışta kurulan kuşatmanın karar vardiyası artmış gündür (K5; kayda girmez)
+            stepping = true;
+            try { StepCore(); }
+            finally { stepping = false; }
+        }
+
+        void StepCore()
+        {
             S.Day++;
             S.LastIncome = IncomeBreakdown;
             S.LastIncomeDay = S.Day;
@@ -92,6 +130,9 @@ namespace Corrigible.Core
                 AdvanceShelterWarnings();
             }
             else ShelterLogic.Advance(S, B);
+            // Tesis aşama 11 (K11): karar verilmeyen kuşatma alarmdan önce bırakılır; sonra işgaldeki kanatların onarımı (çekimsiz)
+            AdvanceFacilitySiege();
+            AdvanceFacilityRepairs();
             StepAlarm();
             S.Hist.Add(new HistPoint { Day = S.Day, Real = Js.Round(Occupation * 10) / 10 });
             if (Board == null) StepDoor();

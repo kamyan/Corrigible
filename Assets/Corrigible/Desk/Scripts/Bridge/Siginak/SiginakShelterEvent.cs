@@ -10,17 +10,20 @@ using TelexEntry = Corrigible.Desk.Bridge.ShelterEventSnapshotBuilder.TelexEntry
 namespace Corrigible.Desk.Bridge
 {
     /// <summary>
-    /// Sığınak olaylarının masadaki sunumu (KOS aşama 4, tasarım §7; soru 8: tutanak EVRAK tepsisinde). Kapanışta açılan olayın
-    /// tutanağı dosyalama karanlığı bittikten sonra tepsiye düşer ve teleks OLAY satırını basar; tepsiye (ya da kâğıda) tık kâğıdı
-    /// ele getirir (yeni kamera pozu yok). Elde satıra tık ya da 1–3 satırı işaretler (sunum durumu, <see cref="ShelterEventUi"/>;
+    /// Sığınak olaylarının masadaki sunumu (KOS aşama 4, tasarım §7). Tutanak kapının yanındaki çift taraflı belge çekmecesinden gelir
+    /// (Docs/KAPI-BELGELERI-VE-YZ-MEKANLARI-TASARIMI.md §A; <see cref="SiginakPassDrawer"/>): kapanışta açılan olayın tutanağı dosyalama karanlığı
+    /// bittikten sonra çekmecenin tablasına konur, kapı bir kez vurur (<see cref="SiginakAdmission.KnockDelivery"/>), teleks OLAY satırını
+    /// basar; çekmecenin lambası, kapı lambası ve KAPI tuşu belgeyi gösterir. Oyuncu çekmeceyi açar, tabladaki kâğıda tık onu ele getirir
+    /// (yeni kamera pozu yok: el pozu o anki kameradan). Okunup bırakılan (Esc, sağ tık) kâğıt tablaya döner. Elde satıra tık ya da 1–3 satırı işaretler (sunum durumu, <see cref="ShelterEventUi"/>;
     /// kayda girmez), KARAR kutusuna tık ya da Enter kararı verir: önce Core'un denetimi (<c>ShelterEventDecisionCheck</c>), sonra
     /// tek komut <c>GameController.ExecuteBoardCommand(s =&gt; s.DecideShelterEvent(id))</c>. Kapalı satır ve seçimsiz karar komutsuz
     /// bir ret sesidir, gerekçe kâğıdın not satırına yazılır. Başarıda kâğıda "KARARA BAĞLANDI" izi basılır, teleks KARAR satırı
-    /// düşer, kâğıt kısa bir beklemeden sonra tepsiye inip gizlenir.
+    /// düşer, kâğıt kısa bir beklemeden sonra çekmecenin tablasına konur; şalter çekilince duvarın öbür yanına geçer (yalnız sunum).
     /// <para>
     /// Olay günlüğünün yeni girdileri (bulgu, bulgu yok, söküm, açlıktan ayrılma, kapanan tutanak, vadeli sonuçlar) teleksten
     /// basılır: kapanışta "VARDİYA DEVREDİLDİ"den sonra, KAPI satırlarından önce (<c>DefaultExecutionOrder(-10)</c>). Kayıttan devamda
-    /// açık olayın kâğıdı animasyonsuz tepsidedir, satırlar yeniden basılmaz (yan dosyada zaten vardır).
+    /// açık olayın kâğıdı animasyonsuz kapı panosundadır (tepsiye konmuş olsa da: yer sunum durumudur, kayda girmez), satırlar yeniden
+    /// basılmaz (yan dosyada zaten vardır).
     /// </para>
     /// <para>
     /// Kâğıt eldeyken masa kilitlidir (<see cref="Busy"/> → <c>LiberationDeskView.InputBlocked</c>); Esc, sürüklemesiz sağ tık, 1–3 ve
@@ -48,9 +51,15 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] DeskTarget trayTarget;
         [SerializeField] ShelterEventPaperView view;
         [SerializeField] HoverTag hoverTag;
+        [Tooltip("Kapı (kartlı oyunda kabul): tutanak çekmeceye konunca kapı bir kez vurur. Boşsa vuruş yok.")]
+        [SerializeField] SiginakAdmission admission;
+        [Tooltip("Belge çekmecesi: yeni tutanak yalnız çekmece kapalı ve boşken gelir. Boşsa beklemez.")]
+        [SerializeField] SiginakPassDrawer passDrawer;
 
         /// <summary>Tepsideki tutanağın etiket başlığı (kaynak metin; <c>DeskTarget.HoverTitle</c> çevirir).</summary>
         static readonly string TrayTitle = Loc.N("EVRAK · OLAY TUTANAĞI");
+        /// <summary>Kapı panosundaki tutanağın etiket başlığı (kaynak metin).</summary>
+        static readonly string DoorTitle = Loc.N("KAPI · OLAY TUTANAĞI");
 
         readonly ShelterEventUi ui = new ShelterEventUi();
         readonly List<TelexEntry> pendingTelex = new List<TelexEntry>();
@@ -78,6 +87,12 @@ namespace Corrigible.Desk.Bridge
         public ShelterEventPaperView View => view;
         /// <summary>Sonraki EVRAK tıkı arşivi açar (tutanak az önce tepsiye kondu; testler).</summary>
         public bool ArchiveNext => archiveNext;
+        /// <summary>Tutanak çekmecenin tablasında okunmayı bekliyor (ya da oraya iniyor): KAPI tuşu ve kapı lambası bunu gösterir.</summary>
+        public bool AtDoor => last != null && view != null && view.AtDoor;
+        /// <summary>Karara bağlanan tutanak tablada şalteri bekliyor.</summary>
+        public bool InOutbox => view != null && view.InOutbox;
+        /// <summary>Tutanak EVRAK tepsisinde (ya da oraya iniyor): tepsinin önceliği onundur (sunucu ödülü kâğıdı ondan sonra).</summary>
+        public bool InTray => last != null && view != null && view.InTray;
         /// <summary>Teleks satırı basıldı (durum, ileti; testler).</summary>
         public event Action<string, string> TelexLine;
         /// <summary>Çalınan her ses olayı (testler; ses <see cref="Sfx"/> ile ayrıca çalar).</summary>
@@ -101,7 +116,9 @@ namespace Corrigible.Desk.Bridge
                 if (view.Tag == null && hoverTag != null) view.Tag = hoverTag;
                 if (view.View == null && rig != null) view.View = rig.View;
             }
-            Restore();
+            // Oda baskından dönüp yeniden açılınca (SiginakRaidLink) aynı kaydın sunumu sürer: tepsiye konmuş tutanak kapıya geri dönmez
+            if (uiOf != null && Sim != null && ReferenceEquals(Sim.Record, uiOf)) Refresh();
+            else Restore();
         }
 
         void OnDisable()
@@ -132,7 +149,7 @@ namespace Corrigible.Desk.Bridge
 
         /// <summary>
         /// Kayıttan devam, yeni oyun ve açılış: sunum durumu sıfırlanır, günlük okunmuş sayılır (teleks yeniden basılmaz), açık olayın
-        /// kâğıdı animasyonsuz tepside.
+        /// kâğıdı animasyonsuz kapı panosunda (vuruş yok).
         /// </summary>
         public void Restore()
         {
@@ -147,7 +164,7 @@ namespace Corrigible.Desk.Bridge
             seenLog = sim?.ShelterEvents?.Log.Count ?? 0;
             announcedKey = ShelterEventSnapshotBuilder.KeyOf(ShelterEventSnapshotBuilder.Visible(sim));
             last = Build();
-            if (view != null) view.Restore(last);
+            if (view != null) view.Restore(last, true);
             SyncSuspend();
         }
 
@@ -173,7 +190,7 @@ namespace Corrigible.Desk.Bridge
                 announcedKey = key;
                 ui.Reset();
                 archiveNext = false;
-                if (stampTimer < 0f && view != null && view.State != ShelterEventPaperView.Where.Filing) view.HideNow();
+                if (stampTimer < 0f && view != null && view.State != ShelterEventPaperView.Where.Filing && !view.InOutbox) view.HideNow();
                 // Yeni kâğıt dosyalama bitince düşer (Flush); o zamana dek tepside kâğıt yok
                 last = null;
                 arrivalPending = key != null;
@@ -194,14 +211,15 @@ namespace Corrigible.Desk.Bridge
             last = d;
             if (view == null) return;
             var w = view.State;
-            if (w == ShelterEventPaperView.Where.Stamping || w == ShelterEventPaperView.Where.Filing) return;
+            if (w == ShelterEventPaperView.Where.Stamping || w == ShelterEventPaperView.Where.Filing || w == ShelterEventPaperView.Where.Outbox) return;
             if (d == null) { if (w != ShelterEventPaperView.Where.Hidden) view.HideNow(); return; }
-            view.Bind(d, false);
+            // Görünür kâğıtta yalnız yüz yenilenir; gizliyken beliren kâğıt kapıdan gelir
+            view.Bind(d, false, true);
         }
 
         /// <summary>
         /// Bekleyen teleks satırları ve yeni kâğıdın gelişi (dosyalama karanlığı sürerken bekler): önce günlük satırları, sonra OLAY
-        /// duyurusu ve tepsiye düşüş.
+        /// duyurusu, kapı panosuna iniş ve kapının vuruşu.
         /// </summary>
         void Flush()
         {
@@ -210,6 +228,10 @@ namespace Corrigible.Desk.Bridge
             foreach (var t in pendingTelex) Post(t);
             pendingTelex.Clear();
             if (!arrivalPending) return;
+            // Kararla açılan zincir olayı (sabotaj): önceki kâğıdın izi ve dosyalanışı bitince gelir
+            if (stampTimer >= 0f || view != null && view.State == ShelterEventPaperView.Where.Filing) return;
+            // Çekmece: önceki kâğıt şalterle gitmeli, açık çekmece kapanmalı (dışarıdan yalnız kapalı çekmeceye konur)
+            if (passDrawer != null && passDrawer.isActiveAndEnabled && !passDrawer.RequestDelivery()) return;
             arrivalPending = false;
             var e = ShelterEventSnapshotBuilder.Visible(Sim);
             if (e == null || ShelterEventSnapshotBuilder.KeyOf(e) != announcedKey) { last = null; return; }
@@ -218,9 +240,10 @@ namespace Corrigible.Desk.Bridge
             if (view != null)
             {
                 view.HideNow();
-                view.Bind(last, true);
+                view.Bind(last, true, true);
             }
             Play(ShelterEventSound.Drop);
+            if (admission != null && admission.isActiveAndEnabled) admission.KnockDelivery();
         }
 
         void Post(TelexEntry t)
@@ -236,12 +259,13 @@ namespace Corrigible.Desk.Bridge
         bool Open => surface == null || !surface.BlockedExceptEvent;
 
         /// <summary>
-        /// EVRAK tepsisine tık (<c>SiginakDesk.OpenTray</c> önce buraya sorar): tutanak tepsideyse ele gelir. Oyuncu onu az önce tepsiye
-        /// koyduysa bu tık bir kez eski yola bırakılır (arşiv fişi, emir belgesi; sonraki tık yine tutanak). Ele geldiyse true; değilse
-        /// çağıran eski EVRAK yolunu açar.
+        /// EVRAK tepsisine tık (<c>SiginakDesk.OpenTray</c> önce buraya sorar): tutanak tepsideyse ele gelir (kapı panosundaki tutanak
+        /// tepsiden gelmez; oyuncu kapıya gider). Oyuncu onu az önce tepsiye koyduysa bu tık bir kez eski yola bırakılır (arşiv fişi, emir
+        /// belgesi; sonraki tık yine tutanak). Ele geldiyse true; değilse çağıran eski EVRAK yolunu açar.
         /// </summary>
         public bool TakeFromTray()
         {
+            if (view == null || !view.InTray) return false;
             if (archiveNext && last != null && view != null && view.State == ShelterEventPaperView.Where.Tray && Open && stampTimer < 0f)
             {
                 archiveNext = false;
@@ -263,7 +287,10 @@ namespace Corrigible.Desk.Bridge
             return true;
         }
 
-        /// <summary>Eldeki kâğıt tepsiye döner (Esc, sağ tık, kâğıdın boş yerine tık); sonraki EVRAK tıkı arşivi açar.</summary>
+        /// <summary>
+        /// Eldeki kâğıt çekmecenin tablasına döner (Esc, sağ tık, kâğıdın boş yerine tık; çekmecesiz sahnede EVRAK tepsisine iner ve
+        /// sonraki EVRAK tıkı arşivi açar).
+        /// </summary>
         public void PutBack()
         {
             if (view == null || stampTimer >= 0f || !InHand) return;
@@ -333,6 +360,8 @@ namespace Corrigible.Desk.Bridge
             // Kendi kararımız: günlükteki KARAR satırı hemen; olay kalktı, Refresh bunu "giden olay" saymasın
             foreach (var t in ShelterEventSnapshotBuilder.TelexLines(sim, seenLog, out seenLog, TutorialSeal)) Post(t);
             announcedKey = ShelterEventSnapshotBuilder.KeyOf(ShelterEventSnapshotBuilder.Visible(sim));
+            // Karar aynı komutta zincir olayı açtıysa (alan kararı: sabotaj) onun tutanağı da kapıdan gelir (Flush, iz bitince)
+            arrivalPending = announcedKey != null;
             ui.Reset();
             stampTimer = StampHoldS;
             if (view != null) view.Stamp(ShelterEventSnapshotBuilder.StampLines(kind, id));
@@ -362,7 +391,7 @@ namespace Corrigible.Desk.Bridge
                 if (stampTimer < 0f)
                 {
                     stampTimer = -1f;
-                    if (view != null) view.FileAndHide();
+                    if (view != null) view.FileToDrawer();
                 }
             }
             ReadHandInput();
@@ -371,7 +400,12 @@ namespace Corrigible.Desk.Bridge
 
         void LateUpdate()
         {
-            if (view != null) view.Interactable = Open;
+            if (view != null)
+            {
+                view.Interactable = Open;
+                view.DoorTitle = last != null ? Loc.T(DoorTitle) : null;
+                view.DoorLine = last?.HoverLine;
+            }
             bool waiting = last != null && view != null && view.State == ShelterEventPaperView.Where.Tray;
             if (tray != null) tray.SetAttention(waiting);
             UpdateTrayTarget(waiting);

@@ -1,5 +1,17 @@
 # Mimari
 
+## Tesis baskını hangi katmandan geçer?
+
+| Sorumluluk | Güncel kaynak |
+|---|---|
+| Emir, pafta ve yeniden oynatma | `Simulation.Facility` emri açar, `FacilityMaps` ve `FacilityRoom` deterministik kurulumu verir, `RaidChain` oda raporlarını uygular. `AdvanceRaidRoom` her oynanan odanın raporunu kaydeder. `Replay.Restore` komutları yeniden yürütür. Dosya sürümü 21, üretilmiş harita g5, tesis izi saha kapalı f8 / açık f9. |
+| Tahta | `Baskin.Actions/Gear/Counters/Conditions/Signatures/Infiltrators` hamle, araç, önlem, şart, niyet ve saha dönüşünü çözer. `FacilityMarks` kanat izlerini, `FacilityTitles` kişilerin iş ve unvanını tutar. |
+| Sığınak ve savunma | `FacilityGear` tarif ve takım kazanımlarını, `FacilityCounters` öğrenme ve cevapları tanımlar. `Simulation.Siege` kuşatma kararı, `Baskin.Defense` dalga ve röle içindir. |
+| Görünüm | Görev fişi ve bina planı emir öncesini, `LiveRaidDataSource` ve `RaidDataSource` aktif paftayı tahtaya aktarır. `SiginakTutorial` mevcut adımı `PlanningTutorialFlow.BodyText` ile çevirir. Notun açılması komut üretmez. |
+| Ölçüm | `Camp8` gerçek Core'u, `CampaignBot` ve `RaidBot` sığınak ve tahtayı çalıştırır. `tesis17.txt` koşulları, `ozet.py --tesis/--esli` görev paydaları ve eşli farkları tanımlar. R saldırı, S savunma, C harekât sonudur. |
+
+Tesis baskını oyunun tek baskın kipidir (kayıt 21; ana anahtar `raidFacilityEnabled` ve eski tek tahta yolu kaldırıldı). Alt seçenekler `facilityCountermeasures`, `facilityMarks`, `facilityDefenseEnabled`, `facilityKatar`, `facilityYalpa`, `facilitySignatureMachines`, `facilityTitlesEnabled` ve `infiltratorFieldEnabled`; hepsinin C# varsayılanı açık. `facilityStretcherAlways`, `facilityTallyAmbush` ve `facilityLastBreathDies` deneysel kural seçenekleridir. Rehber ve ölçüm aracı değişikliği sürümü yükseltmez.
+
 ## Klasörler
 
 ```
@@ -42,7 +54,8 @@ Corrigible/                          (Unity proje kökü, git deposu)
    ├─ Settings/                      BalanceConfig, RaidPieceLibrary, SoundBank; Kits/ (bina kitleri, Kit_<bölge>.asset)
    ├─ Resources/Localization/        strings.txt (çeviri tablosu, tr → en)
    ├─ Editor/                        CorrigibleDebug, LocalizationTool
-   ├─ Tests/EditMode/                Core ve lokalizasyon testleri
+   ├─ Tests/EditMode/                Core ve lokalizasyon testleri; harekât botunun baskın (RaidBot.cs) ve vardiya planı
+   │                                 (CampaignBot.cs, aşama 8; Camp8 ve FacilityBotTests ortak, Tools/DengeBotu/derle.sh derler)
    └─ Steam/                         Steamworks.NET entegrasyonu (paket yoksa derlenmez)
 ```
 
@@ -105,7 +118,104 @@ Corrigible/                          (Unity proje kökü, git deposu)
   oyunda etkin fiş dosyalanmıyorken `Step` çalışmaz.
 - **`Baskin`** (`Core/Baskin.cs`): 8×8 taktik savaş motoru, kendi RNG'si (`BState.Rs`), Unity yok. `Create(RaidParams)` →
   `BState`; `DoMove`, `DoAct`, `Undo`, `Preview`, `EndTurn`, `Retreat`, `Result`, `Intents`. Stratejiye yalnız
-  `RaidResult` döner (kayda `raidres` olarak yazılır; taktik hamleler kaydedilmez).
+  `RaidResult` döner (kayda `raidres` olarak yazılır; taktik hamleler kaydedilmez). `Create` kampanyada kullanılmaz: örnek/test
+  tahtasıdır (elle çizilmiş `Layouts`; Baskin sahnesi tek başına, editör önizlemesi, motor testleri ve `RaidEngineTests`'in altın
+  imzaları). Kampanya baskını (tesis, `Docs/TESIS-BASKINLARI-TASARIMI.md`) her odayı ayrı bir `BState` olarak `CreateRoom` ile kurar; kapı ve geçiş
+  `Baskin.Chain.cs`'te, oda zincirinin kuralları saf `RaidChain`'de, durumu `RaidState.Reports` (`RoomReport`). Bölgenin
+  gösterilen adı YZ'nin adıdır (`RegionDef.Ai`, `Simulation.RegionName`; iki dilde aynı, `strings.txt`'te kendine çevrilir);
+  coğrafi `RegionDef.Name` yalnız iç kimlik ve eski metinlerde kalır.
+- **Tesis hamleleri** (aşama 6; `Core/Baskin.Actions.cs`, `Baskin` `partial`; kurallar `Docs/TESIS-BASKINLARI-TASARIMI.md` §4):
+  - Eski API (`Reachable`, `Targets`, `CanMove`, `CanAct`, `DoMove`, `DoAct`, `Preview`) uzmanın tek yeteneğidir ve değişmedi.
+    Yeni hamleler ayrı API'den girer: `CanAction`, `ActionTargets`, `DoAction`, `PreviewAction` (kimlikler `ActionKinds`:
+    `pusu`, `kosu`, `surukle`, `firlat`, `ortak`, `menfez`; bedel `CostOf`). `Preview`'ın gövdesi saf `Diff(B, C)`'dir; ikisi de
+    onu kullanır.
+  - Değerler `Balance` → `MoveRules.From` → `RoomSetup.Moves` → `BState.Moves` (örnek tahtada null; `CanAction` false). Her
+    yeni kural `B.Room != null` arkasındadır; hiçbiri RNG çekmez; makine aklı pusu hattını, gövdeyi, yerdeki yükü görmez.
+  - Tur içi durum: `Unit.AmbushDir/X/Y`, `Unit.Breath`, `BState.CargoX/Y`, `HoldId/HoldX/HoldY`, `CrateOpen`, `Cell.Crate`.
+    Hepsi `Snapshot`/`Undo` ile geri gelir (`CopyInto` taşır); `Signature` onları yalnız varsayılan dışındayken basar.
+    `EndTurn` pusuyu `PlanEnemies`'ten sonra ateşler (`FireAmbush`), tutuşu bırakır (`ClearHold`) ve son nefes için eski gövdeyi
+    (`EndTurnCore`) sarar.
+  - **Gövde modeli:** düşen kişi için yeni alan yok. `IsBody` (ekip, `Dead`, `!Left`, `Slot ≥ 0`); yerde yatan `LyingBody`
+    (`!AtGate && !Out`), kapıya sürüklenen `AtGate`, tesisten çıkarılan `Out`. `OnBoard` gövdeyi dışlar: kareyi kapatmaz, hedef
+    alınmaz, itilmez; yalnız `surukle` taşır. Zincirde `RoomMember.Body` (0 yerde, 1 ekiple, 2 çıkarıldı) ve `Picked`;
+    `RaidChain.Collect` dönüşte atlanan temiz odanın gövdelerini toplar, `RaidChain.IsExtracted` → `RaidResult.Extracted`,
+    `ReturnPlanningSquad`'ın tesis dalı yalnız çıkarılan düşeni kurtarır. Ekiple gelen gövdeler sonraki tahtada `B.Units`'in
+    sonuna eklenir (kimlik sırası değişmez).
+  - Büyük sandık plan bayrağıdır (`Cell.Crate`, duvar nişi; `Baskin.PlaceBigCrate`, RNG'siz); `FacilityMaps.GeneratorVersion`
+    aşama 6'da 2, aşama 8'de 3.
+- **Tesis ekipmanı** (aşama 8; `Core/FacilityGear.cs`, `Core/Baskin.Gear.cs`, kurallar `Docs/TESIS-BASKINLARI-TASARIMI.md` §5,
+  §6.2):
+  - Tablolar (kimlikler, bölge → tarif/kazanım, adlar, tarif, hak) `FacilityGear`'da statik, sayılar `Balance`'ta.
+  - `Unit.Class` (null uzman, `kopek`, `aygit`, `tutsak`) ve `Baskin.IsSpecialist`: kaçış, GEÇ, son nefes, sonuç ve bot yalnız
+    uzmanı sayar. Bölge olaylarının nişanı (`Baskin.Events.cs` `EventAim`) aşama 10'dan beri `TeamLike`'a bakar (uzman, yürüyen yem,
+    erimde havlayan köpek; yağ yalnız uzmana).
+  - Eylemler `ActionKinds` (altı, aşama 7'nin tuşları) ile ayrı `GearActionKinds`/`UnitActionKinds`/`AllActionKinds`; aynı
+    `CanAction`/`ActionTargets`/`DoAction`/`PreviewAction` API'si. Aygıtlar `EndTurnCore`'da niyetlerden sonra, uyanmadan önce
+    (`RunDevices`); tutsakların süresi planlamadan önce (`AdvanceCaptives`).
+  - Simülasyon: `FacilityState.Recipes/Perks/PendingReward`, `server_reward` (`Core/Simulation.Facility.cs`), `BoardRecipes`
+    açılan tariflerle, `SquadSlot.Gear`, `RaidParams.Perks`; oda raporu `Units`, `Sniff`, `CargoDog`. Yeni RNG çekimi yok.
+- **Önlem defteri** (aşama 10; `Core/FacilityCounters.cs`, `Core/Baskin.Counters.cs`, kurallar `Docs/TESIS-BASKINLARI-TASARIMI.md`
+  §6.3 "Uygulanan hâl (aşama 10)"):
+  - `FacilityCounters`: altı sınıfın tablosu (adlar, etkiler, cevap eşlemesi, imza makinesi), saf öğrenme (`Learn`) ve sınıf başına
+    tavanlı toplama (`RaidTally`). Durum `FacilityState.Tally/Counter/Learned`; alt bayrak `facilityCountermeasures`
+    (`Simulation.CountermeasuresOn`), ölçüm anahtarı `facilityTallyAmbush`.
+  - `Baskin.Counters.cs` (`Baskin` `partial`): sayım (`BState.Tally*`, emirde `MoveRules.Tally`), altı önlemin tahtadaki kuralları,
+    beş cevabın etkisi, kaplama (`ApplyCounterCells`: çift cidar, koku yayıcı; oda üretimine girmez, Digest aynı) ve bot ile sunumun
+    okuduğu public yardımcılar (`Bolted`, `IsDoubleWall`, `DoubleWallCost`, `EmitterBlocks`, `DeviceTurnsFor`, `ClampTurnsFor`,
+    `DangerTiles`; vinç için `Baskin.Gear.cs`'te `WinchPulls`). Kademeler ve cevaplar emirde kopyalanır (`RaidParams.Counters/Answers`
+    → `MoveRules.From`). Tek yeni `Rnd`: kısa bağın 2. kademesi.
+  - Simülasyon: `ResolveRaid` sayımı toplar ve bölgenin ilk tamamlanışında öğrenir; cevap tarifi temelin sayfasına geçer
+    (`BoardRecipe.Answer`, aynı `Id`, +1 devre) ve başlamamış taslak emri siler. Yeni komut yok; tesis izi f4.
+- **Kalıcı tahta ve savunma** (aşama 11; `Core/FacilityMarks.cs`, `Core/Baskin.Defense.cs`, `Core/Simulation.Siege.cs`, kurallar
+  `Docs/TESIS-BASKINLARI-TASARIMI.md` §9 "Uygulanan hâl (aşama 11)"; alt bayraklar `facilityMarks` → `Simulation.MarksOn`,
+  `facilityDefenseEnabled` → `Simulation.DefenseOn`):
+  - `FacilityMarks` (saf, çekimsiz): `Apply(cells, room, marks, rubble, events)` izleri plan kopyasına uygular ve uygulanamayanları döner
+    (`RoomBoard`'da önlem kaplamasından sonra, `DefenseBoard`'da, `Simulation.FacilityPlanCells`'te; plan = emirdeki tahta), `Derive`/`Merge`
+    (raporlardan iz), `Wipe`, `InWing`, `Copy`, `Links` (bağ kuralı). Durum `FacilityState.Marks/Repairs`; emirde `RaidParams.Marks`
+    (`Simulation.WingMarks`). `RaidChain.Setup`'ın isteğe bağlı `FacilityPlan plan` parametresi kırık donanım izini hazırlığa katar
+    (`MarkedDevices`).
+  - Savunma tahtası (`Baskin` `partial`): `RaidParams.Mode = "defense"` → `RaidChain.SetupDefense` → `RoomSetup.Defense/StartTurn/Followers/
+    Abandoned/RelayHp/Marks/Waves` → `Baskin.DefenseBoard`; `BState.Defense/StartTurn/Abandoned/Incoming/Waves` (`Clone`, `CopyInto`,
+    `Signature` "yalnız varsayılan dışındayken"). `EndTurnCore`'a `ReturnFromGate` (başta) ve `PlaceIncoming` (tur arttıktan sonra);
+    `PassRoom` kuyruğu rapora takipçi yazar; `Turn > MaxTurns` savunmada kazanma. Röle nesne `role` (`Baskin.RelayKind`, `ObjNames`'te
+    adı var; `IsTarget` değil). Takvim `Baskin.DefenseSchedule` (saf; dengeden `RaidChain.DefenseSchedule`). Okuyucular `IsDefense`,
+    `DefenseWaves`, `DefenseIncoming`, `RelayHp/RelayMax`, `BarricadeTurn`, `CanEndTurn`, `Abandoned`, `StartTurn`; test kancası
+    `Baskin.TestPlan` (internal). Savunma aynı zincir API'siyle oynanır (`OpenRaidRoom`, `AdvanceRaidRoom`, `FacilityRaidResult`,
+    `ResolveRaid`); sunum (`FacilityRaidSession`) ve bot (`RaidBot.PlayFacility`) kip bilmeden sürer.
+  - Simülasyon (`Simulation.Siege.cs`): `ChangeAlarm` eşikte `DefenseOn` iken `BeginSiege` (yoksa `Counterattack` = `PickCounterTarget` +
+    `FallSector`); kuşatma günlüğü `FacilityState.Sieges` (`FacilitySiegeEntry`; tek kaynak), karar vardiyası (`stepping` bayrağı,
+    `Step` → `StepCore`), kilitler `LiberationRaidCheck`'te; komutlar `DefendSector` (`siege_defend`; ortak emir gövdesi `OrderRaid`,
+    tohum `Rng.Mix(S.Seed, 0x53494547 + dizin)`) ve `YieldSector` (`siege_yield`); `ResolveDefense`; `Step`'te `AdvanceFacilitySiege` →
+    `AdvanceFacilityRepairs` → `StepAlarm`; `raidres`'te `UpdateFacilityMarks`. Okuma sözleşmesi: `PendingSiege`, `ActiveSiege`,
+    `SiegeDecisionDue`, `SiegeSector`, `YieldedToday`, `DefendSectorCheck`, `YieldSectorCheck`, `FacilityMarksOf`, `WingMarks`,
+    `RegionRewarded`, `RegionFundsDue`, `DefenseWaveSize`, `DefenseRelayHpFor`, `DefenseRoomTrust`, `DefenseTurns`, `DefenseWaveCount`,
+    `DefenseSchedulePreview`, `IsDefense`, sabitler `DefenseMode`, `Siege*`. Kartsız kapının ziyareti kuşatmayı bilir (`DoorVisit.Siege`).
+    Yeni RNG çekimi yok; tesis izi f5.
+- **Tesis şartları Katar ve Yalpa** (aşama 12; `Core/Baskin.Conditions.cs`, kurallar `Docs/TESIS-BASKINLARI-TASARIMI.md` §10 "Uygulanan
+  hâl (aşama 12)"; alt bayraklar `facilityKatar`, `facilityYalpa`):
+  - Kimlik: `RegionDef.FacilityEvent` → tek okuyucu `FacilityMaps.EventFor(def, katar, yalpa)` (plan, `OrderRaid`, `Simulation.RegionEvent`);
+    plan önbelleği (tohum, iki bayrak); Katar'da ileri geçit doğu sütununda (`Dress(…, eastOnly)`; `GeneratorVersion` 6). Şart parçası yok.
+  - Katar (`Baskin` `partial`): tek giriş `Push` (cıvata → açık kenar `FallOff` → turnike/duvar); `Unit.Overboard` (`Dead` ile; gövde ve
+    ayakta değil), `fall` Fx; takip `FollowerIds` (batı geçidine yürüme uzaklığı ≤ `MoveRules.FollowRange`) → `RoomReport.Follow` →
+    `RaidChain.Next`/`Setup.Followers` → `ReturnBoard` sonunda ortak `EntryTile` (aşama 11 `IncomingTile` ile ortak; `StepsFrom`),
+    gelen takipçi `Unit.Follower` (okuyucu `FollowedInIds`); AYIR `Baskin.Chain.cs` `DecoupleBlock`/`CanDecouple`/`Decouple`
+    (`BState.Decoupled`, `RoomReport.Decouple`). Kişi durumu `"k"`, `RaidResult.Overboard`.
+  - Yalpa: `EventEnd` → `EndTilt` (takvim `TiltAt/TiltDir/TiltSchedule`), `Push(…, slide: true)` kayma kipi, hurda/gövde/yük kayması;
+    `Slides(B)` kopyada uygulamayla hatlar (`Hazards`'ın `slide` çizgileri); makine aklı yatış turunda −0,5.
+  - Simülasyon: `ReturnPlanningSquad`'ın `over` dalı (yaşar, `facilityFallInjuryTurns` düz yatış; `SquadOutcome.Overboard`),
+    `KatarReportCheck` (`AdvanceRaidRoomCheck`'in sonunda), okuyucular `RegionEvent`, `RegionNote`, `FacilityRoomTurns` (ilk ziyaret tur
+    bütçesi: `RaidChain.Setup` + `Baskin.FirstVisitTurns`; `RoomBoard` aynı kuralı okur). Yeni komut ve yeni RNG çekimi yok; tesis izi f6.
+- **Tesis imza makineleri** (aşama 13). `Simulation.RegionSignature` imza alt bayrağını (`facilitySignatureMachines`) okur. `Baskin.Signatures`
+  niyeti hedef ve alan olarak üretir, makine aklıyla puanlar ve makine evresinde uygular. Baskın sunumu `Intents`, `Hazards` ve
+  `Fx` üzerinden çizilir. `Cell.FrostUntil` oda tahtasına aittir. `RoomMachine` ve `RoomUnit` içindeki `Assembled` dronla taşınır.
+  `RoomObject.MachineBuilt` geçici kalası ve hurdayı dönüş odasında kurar. `FacilityMarks.Derive` kalıcı izleri bundan ayırır.
+- **Tek kip ve kayıt uyumu (aşama 16, kayıt 21'de yeniden yazıldı).** Her harekât emri üç oda taşır (`RaidParams.Rooms`); `LiveRaidDataSource` emri oda oturumuna verir, odasız emirde `Debug.LogError` basıp sahneyi kapatır, `Baskin.Create`'i yalnız sahne tek başına açılınca (örnek baskın) çağırır. `ResolveRaid` verilen `RaidResult`'ı yok sayar: son oda raporlanmadıysa reddeder, sonucu oda raporlarından türetir (`FacilityRaidResult`; yalnız `Reason` korunur). Harita torbası, `MapSlot`, `ExtraTurns` ve görev ek turları kaldırıldı. G5 paketinin YZ adı `MapRegion.SourceName` olarak harita izine girer. Pano ve canlı hurda komutu `Simulation.ScrapEquipmentCheck` ile aynı kurala bağlıdır. Kaydedilmiş hurdanın tekrarında eski köpek işlemi de desteklenir.
+- **Sahadaki sızmacı (aşama 15).** `Simulation.SnapshotFieldIdentities` mevcut aday değerlerini emir anında `RaidParams` içindeki internal kadro maskelerine dönüştürür. Masa, HUD ve plan bu alanları okuyamaz. Gözlenen taraf değişiminden sonra `Baskin.IsTurncoat`, niyet ve telsiz satırları okunabilir. Oda raporunda `t` ve `x` kalıcı sonuçtur. Yeni komut gerekmez. Saha tutanağı mevcut olay kararlarını kullanır.
+- **Kişisel unvanlar** (aşama 14). `FacilityTitles` işi ve eşikleri tanımlar. Birimin oda içi `Work` ve `Dragged` bitleri
+  `RaidChain.Report` üzerinden `RoomMember`'a, oradan `raid_room` kaydına eklenir. `ReturnPlanningSquad` yaşayan kişiye
+  kazanılmış baskın başına en çok bir iş ilerlemesi verir. `ResidentState.Deeds/Titles` replay sırasında tekrar türetilir.
+  Kişisel etkiler emir anında `SquadSlot.Titles` olarak kilitlenir. Bot ve baskın önizlemesi `Baskin` menzil ve süre
+  okuyucularını kullanır. `OperationReportBuilder` sonuçtan yeni unvanı, kişi dosyası mevcut unvan ve etkisini okur.
 - **Bölge olayları** (`Core/Baskin.Events.cs`, `Baskin` `partial`; kurallar `Docs/BOLGE-OLAYLARI.md`): `RegionDef.Event` →
   `RaidParams.Event` (`Balance.liberationRegionEvents`) → `BState.Ev` (`EvState`), kare bayrakları (`Cell.Cloud/Gas/Crack/Oil/
   Shelf/Phase`), birim `Frozen/Ice/Cab`. `EventSetup` `Create`'te bütün RNG çekimlerinden sonra (RNG çekmez), `EventEnd`
@@ -116,15 +226,15 @@ Corrigible/                          (Unity proje kökü, git deposu)
   (turnike yönü; `Reachable`, `MachinePath`, bot) ve `RoomName`. Sunum: `RaidBoard3D.Marks.Hazards` → olay katmanı (renkler
   `RaidPieceLibrary.hazard*`, yeni nesneler `tup`/`kol`/`enkaz`), `RaidViewModel.TurnEvents` → tur şeridi, takım kartının
   `Threat` satırı, hover satırları (`RaidDataSource.HazardRow`), görev fişinin OLAY satırı (`OperationSlip` dördüncü alan).
-- **`RaidMaps`** (`Core/RaidMaps.cs`): harekâtın harita havuzu. `Pool(MapSeed)` yeni oyunun tohumundan 30 harita üretir (`PoolSize`): altı türün (`Kinds`: koridor, kasa odası, iki hat,
-  açık salon, şebeke, rehine) her birinden beşer, türün kendi oda adlarıyla (`KindOf`). `Generate(kind, rng)` türün yapısını
-  kurar (`BuildVault`, `BuildLanes`…), sonra dolapları ve makineleri yerleştirir; `Valid(rows)` ortak kurallar, `Valid(rows,
-  kind)` türün adım aralığı (`PathRange`, bot ölçümüyle ayarlı) ve imzası
-  (`Generate` + `Valid`: bağlantı, hedefe uzaklık, sayılar, dronların girişe açık atış hattı yok); karıştırma kendi
-  üreteciyle, `S.Rng`'den tüketmez. `StartLiberationRaid` `RaidParams.MapSeed = S.Seed`, `MapSlot = S.Raids` (harekâttaki
-  baskın sırası) ve `Tactics = 1` (gelişmiş makine aklı) yazar; `Baskin.Create` havuzdan `RaidMaps.Slot` ile (karıştırılmış
-  torbalar) seçer. `MapSeed` 0 ise (eğitim baskını, örnek baskın, eski testler) elle çizilmiş `Baskin.Layouts`. Kayıt
-  etkilenmez: tahta stratejiye yalnız sonuç verir.
+- **`RaidMaps`** (`Core/RaidMaps.cs`): tesis odalarının harita üreticisi (`FacilityMaps` çağırır). Altı tür (`Kinds`: koridor,
+  kasa odası, iki hat, açık salon, şebeke, rehine), türün kendi oda adları (`Names`). `Generate(kind, rng)` türün yapısını
+  kurar (`BuildVault`, `BuildLanes`…), sonra dolapları ve makineleri yerleştirir; `Valid(rows, kind)` ortak kuralları ve türün
+  adım aralığını (`PathRange`, bot ölçümüyle ayarlı) sınar (bağlantı, hedefe uzaklık, sayılar, dronların girişe açık atış hattı
+  yok); kendi üreteciyle çalışır, `S.Rng`'den tüketmez. Üretici `RaidMapsTests.Generate_Golden` ile bit bit kilitli. Eski
+  harekât havuzu (`Pool`, `Slot`, `PoolSize`, `KindOf`, tek argümanlı `Valid`) kayıt 21'de kaldırıldı. `StartLiberationRaid`
+  `RaidParams.MapSeed = S.Seed` ve `Tactics = 1` (gelişmiş makine aklı) yazar; `MapSeed` Core'da tahtayı seçmez (örnek tahta
+  `Baskin.Create` onu yok sayar, `RaidMapsTests.Create_IgnoresMapSeed`), sunumda bölgenin bina kitini seçer (0 = varsayılan
+  kit). Kayıt etkilenmez: tahta stratejiye yalnız sonuç verir.
 - **Kaçış ve makine aklı** (`Baskin`): `BState.Carrier` (kasayı açan Teknisyen), `Exits` (giriş kareleri, her görevde) ve
   `Escape` (görev hedefi tamam: kasa açıldı ya da hedef dolaplar kırıldı). `CheckEscape` yürüyüş, yetenek ve makine
   evresinden sonra kaçışta çıkıştaki uzmanı tahliye eder (`Unit.Out`), tahtada uzman kalmadıysa `FinishEscape` sonucu yazar;
@@ -153,9 +263,35 @@ Corrigible/                          (Unity proje kökü, git deposu)
   bu üreteçle ve sabit tüketim sırasıyla kurulur. Kimlik sonradan karar anında yeniden çekilmez. Eski ziyaretçi kapısı
   kendi üretecini harekât tohumu, gün ve amaçtan kurar (`Simulation.DoorRng`); ana sıraya dokunmaz (`DoorTests`). `Js.Round` = JS `Math.round` (`Math.Floor(v + 0.5)`);
   tüm sayılar `double`. Aynı tohum + aynı komutlar = aynı oyun (`LiberationCampaignTests`).
-- `GameRecord` (`Core/GameRecord.cs`): `version` (**17**; KOS: 16 aday grubu ve olaylar, 17 ifşa, yeni sonlar ve son şalter; aşama 7
-  sürümü değiştirmedi), `seed`, `balance`, `commands[]`, `day`.
-  `SavedCommand { day, kind, a, b }`. Harekât komutları `liberation_region`, `liberation_raid`, `raidres`;
+- **Ayrı akışlar:** tesis planı (`FacilityMaps`, `RaidMaps` üreticisiyle) ve üretilmiş dünya haritası (`WorldMap`) kendi üreteçlerini harekât
+  tohumundan ve bir tuzdan kurar (`Rng.Mix`, ortak splitmix karıştırıcı; `WorldMap.Salt` = 0x4D415031 "MAP1"); ana sırayı
+  tüketmez, altın zaman çizgileri anahtardan bağımsızdır (`WorldMapTests.Generation_DoesNotConsumeTheMainRng`).
+- **Üretilmiş harita (`Core/WorldMap.cs`, `WorldMap.Gen.cs`, `WorldMap.Names.cs`):** `Balance.liberationMapGen` = 1 iken
+  `Simulation.NewGame` haritayı kurar (`Simulation.Map`; 0'da null). Simülasyon haritayı yalnız `Simulation.Links` (sınır),
+  `Simulation.RegionName(id)` (anlar, baskın parametresi, mesajlar) ve `Simulation.HQ` (hep "weu" paketi, sabit kalır) üstünden
+  bilir. Sunumun okuyacağı geometri: `MapCell` (6 köşe `X/Y` double, ortak köşe kimliği `Vertex`, `Neighbor`, `Land`,
+  `Region`, `Continent`, `Depth`, merkez `CX/CY`), `MapRegion` (`Cells`, en içten dışa `Inner`, `Neighbors`, `Distance`,
+  `Stage`, `SourceName`), `MapLink` (`Cable`, uç hücreler ve merkezleri), `Coast` ve `Borders` kenar
+  listeleri (köşe kimlikleriyle zincirlenir), `HqCell`. Harita salt okunurdur (dışarıya `IReadOnlyList`, iç alanlar `internal`;
+  testler `Core/AssemblyInfo.cs` ile iç üyeleri görür) ve son üretilen harita önbellekte paylaşılır (`WorldMap.Generate`; kayıt
+  süzgeci, yeniden oynatma ve özet aynı tohumu art arda ister). Sunum kenar kırarken kendi kopyasını kurar. Kararlarda
+  trigonometri ve kayan noktalı karekök yok (tam sayı elips ve karekök, BFS, altıgen uzaklığı, kablo hattı için tam sayı
+  örnekleme); köşe sapması yalnız çizim içindir. Geçerlilik `WorldMap.Validate()`; altın harita tohum 79
+  (`WorldMapTests.Seed79_GoldenMap`): üretici ya da tabloları değişirse `WorldMap.GeneratorVersion` (parmak izine girer) ve
+  yayındaysa kayıt sürümü artar (şimdi **5**. Ayrı `KARI` akışındaki açılış karıştırması ve karargâh alan eşikleri g3/g4'ten
+  gelir. g5'te yer adları ve ortak imza için komşuluk takasları kalktı). Görsel döküm `Tools/HaritaDokumu/dokum.sh`. Anahtar `Settings/BalanceConfig.asset`'te **1** (oyun
+  üretilmiş haritayla açılır); C# varsayılanı 0 kalır (dünya haritası; eski testler ve geri dönüş yolu).
+- `GameRecord` (`Core/GameRecord.cs`): `version` (**21**; 16 aday grubu ve olaylar, 17 ifşa ve sonlar, 18 üretilmiş harita,
+  19 tesis oda zinciri, 20 g5 harita, 21 tek kip: tek tahta kaldırıldı, tesis izi hep f8/f9), `seed`, `balance`, `commands[]`, `day`, `map` (haritanın parmak izi: `m0-…` dünya, `m1-…` üretilmiş;
+  `Replay.MapMatches` yükleme süzgeci ve `SaveStore.Write`'ta `.map.backup` arşivi, `Replay.Restore` uyuşmazsa hata verir,
+  izsiz geçici kayıtları denetlemez ve izlerini doldurur; `GameController.ContinueSaved` başarısız komut sayısını loglar),
+  `facility` (saha alt bayrağına göre `f8` veya `f9`; kayıt 21'den beri hiç boş değil, boş izli kayıt `MapMatches`'ten geçmez).
+  `MapMatches` iki izi de sınar. f2–f6 tesis kurallarını, f7 imza makinelerini ve Katar/Yalpa pafta adlarını, f8 unvan işlerini, f9 sahadaki sızmacının sonucunu izler.
+  g5 üretilmiş harita sonucu tesis kipinden bağımsız değiştiği için kayıt süzgeci tüm sürüm 19 dosyalarını reddeder; sürüm 20
+  dosyaları tek tahtanın sonucunu taşıyabildiği için reddedilir (`SaveStoreTests.Load_RejectsVersion20`).
+  `SavedCommand { day, kind, a, b }`. Harekât komutları `liberation_region`, `liberation_raid`, `raid_room` (tesis
+  baskınında biten oda, a = `RoomReport.Encode()`), `raidres`, `server_reward` (tesis, aşama 8: a ödülü bekleyen bölge, b
+  `tarif` ya da `kazanim`), `siege_defend` ve `siege_yield` (tesis, aşama 11: kuşatmanın karar vardiyasında savun ya da bırak; argümansız);
   pano komutları `board_assign`, `board_train`, `board_equip`, `board_queue`, `board_reserve`, `board_cancel`,
   `board_print`, `board_file`, `board_scrap`; kapı, olay ve son komutları `candidate_choose` (a aday, b yollanacak kişi),
   `candidate_pass`, `event_decide` (a seçenek), `last_switch`. `shelter_upgrade`, `shelter_assign`, `door_answer` eski yol için
@@ -169,14 +305,16 @@ Corrigible/                          (Unity proje kökü, git deposu)
   (AGENTS kural 1). Yeni bir `Balance` alanı eklenince eski kayıtta o alan yoktur ve JsonUtility `new Balance()` varsayılanını
   bırakır: alanın varsayılanı eski davranışı vermiyorsa sürüm gerekir. `BalanceConfig.asset` `Balance` varsayılanlarıyla
   alan alan aynı tutulur (KOS aşama 8'de yansımayla doğrulandı); testlerin çoğu `new Balance()` kullanır, oyun asset'i.
-- `Replay.Restore(rec)` aynı tohumu ve dengeyi kurar, komutları sırasıyla uygular. Kartlı oyunda `board_file`
+- `Replay.Restore(rec)` aynı tohumu ve dengeyi kurar, komutları sırasıyla uygular; başarısız komutları
+  `Simulation.ReplayFailures`'ta sayar (0 olmalı; sunum isterse loglar). Kartlı oyunda `board_file`
   kapanan güne kaydedilir ve `FileShift` günü kendisi ilerletir. Gün atlamak için eksik fişle doğrudan `Step` eden
   bozuk kayıt sonsuz döngü yerine hata verir. Baskın sonucu `RaidResult.Encode` ile kadro canı, zırhı ve geride kalan
   sıralarını da taşır; aynı kişi kimlikleri başlangıç/atama komutlarından yeniden kurulur.
 - `GameController.Save()` → `SaveStore.Write` → `persistentDataPath/liberation_savegame.json` (JsonUtility); her
   başarılı komutta, kapanışta ve uygulama kapanırken. Dosya önce `.writing` olarak yazılıp atomik değiştirilir. Farklı
   sürümdeki eski dosya üzerine ilk yazmada `.v<eski sürüm>.backup` kopyası tutulur; bu, sürüm göçü değildir.
-  Biçim 14 ve öncesi yeni sürümde devam etmez. Kayda girmeyen oda durumu (`SiginakDeskStore`, `liberation_desk.json`)
+  Sürümü 22 olmayan dosya (22: görevde iyileşme) `SaveStore.Load`'da yüklenmez (`rec.version != GameRecord.CurrentVersion`); eski harekât yeni
+  sürümde devam etmez. Kayda girmeyen oda durumu (`SiginakDeskStore`, `liberation_desk.json`)
   tohum eşleşmezse yok sayılır.
 - Editörde `SessionState["Corrigible.TestStorage"]` doluysa `SaveStore.StorageDirectory` ve `SiginakDeskStore` ayrı
   doğrulama klasörüne gider. Bu anahtar oyun kaydının parçası değildir; test sonunda silinmelidir.
@@ -278,7 +416,7 @@ SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
 - **Planlama panosu:** `PlanningBoardPresenter` (Bridge) → `GameController.ExecuteBoardCommand` → Core komutları.
   `PlanningBoardView`, `PlanningBoardCard`, `PlanningBoardSurface` ve `PlanningBoardDropZone` yalnız kartları çizer,
   seçme/sürükleme/bırakma olaylarını iletir. Her görev alanı `PlanningDropKind.Job` ve sabit Core görev kimliği taşır;
-  kişi kartı bu alana bırakılınca `AssignResident`, eğitim alanında `TrainResident` komuta gider. Dolu alanın geçerli
+  kişi kartı bu alana bırakılınca `AssignResident` komuta gider (EĞİTİM alanı 2026-11-24'te kaldırıldı: `BoardLayout.PocketOpen("train")` hep false, `TrainingTopics` silindi; `TrainResident`/`board_train` Core'da durur ama kayıt 22 eski kayıtları yüklemediği için ölü yoldur (yalnız testler), `PlanningBoardPresenter.RetireJobs` eğitimdeki kişiyi Boşta'ya alır). Dolu alanın geçerli
   ataması iki kişinin görevini takas eder. Sürüklenirken kart ortak düzleme çıkar; Boşta kişileri ve depodaki teçhizat
   kaydırılan içeriğin altında maskelenir. Son konumlar görev alanlarının serileştirilmiş `CardAnchor` referanslarından
   ve Core durumundan hesaplanır. Eski serbest kişi konumları yüklenmez.
@@ -302,6 +440,11 @@ SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
   `board_cancel`; hammadde fişi `board_reserve` ±1 (`ChipCount` ayrılanları sayar). Yetersiz stok: `CanPick` reddi → titreme + kırmızı.
   Form durumları ve not `ProductionForecast` (fişle aynı tahmin). Ürün kayışı ve YENİ etiketi (`NewItemTag`) sunum durumu
   (`BoardUiState.NewItem`, layout v3). Eski kayıttaki konmuş fişler devamda bir kez `board_stage(kind, 0)` ile stoka döner.
+  Tesis aşama 9: defter `BoardRecipes`'in uzunluğunda (en çok 13 sayfa); açılmamış ekipman tarifleri kapalı sayfa (`RecipeData.Locked`;
+  `RecipeBookView.RecipeZone` kutuyu `Page` sayar, sürüklenmez). Sayfada üç girdi satırı (`RecipeBookPage.InputRows`) ve erzak satırı,
+  tarif kartında üç sütun ve üç kutu (`RecipeCardFace`). Depoda yedi ekipmanın ikinci sırası (`BoardLayout.GearKinds`, `Gear(i)`;
+  `BoardSnapshot.Gear`, `BoardView3D.RenderStore`, `StoreView`), yalnız tesis kipinde; kart yüzü piktogramı adla (`ItemCardFace.GearPictogram`,
+  `DeskSprites` `picto_<tür>`). Metinler `FacilityBoardText`; tahmin `ProductionForecast.NoSupplies` ve eksik kit (`KitFirst`).
 - **Vardiya kapanışı (Revizyon 3 · Aşama 4, R19; kartlı oyun):** `SiginakShiftClose` (Bridge, `SiginakRoom/Shift controller`) akışın
   sahibidir; `SiginakShift` kartlı dalda ona devreder, eski yol (`ShiftSequence`, `Poses/K6a`) aynen kalır.
   - **Şalter:** `ShiftSwitch` R19 kipi (`shiftClose`; dolabın ve menünün şalterleri eski kipte): `ShiftPhase` (hazır · kapak kalkık · fiş
@@ -351,7 +494,7 @@ SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
 - **Kapanış (eski açıklama; kartlı oyunda yukarıdaki akış):** `ShiftReceiptMachine`/`ShiftReceiptPaper` masadaki kapaklı vardiya şalterini (`Shift switch`) sürer.
   Kapağın kalkması basım değildir; kolun inmesi (`ShiftSwitch.Thrown`) `PrintBoardShift` ile fiş üretir ve fiziksel
   kâğıt teleks daktilosunun silindirinden basılır (kamera K1'e döner; önce teleksin o anki satırı biter: `ShiftReceiptMachine.FeedHold`,
-  `SiginakShiftClose.HoldFeed`; fiş silindirde teleks kâğıdının yanında durur, kâğıdı örtmez; K6'dan daktiloya dönerken kamera K1'e döner). Fiş beklenirken `ShiftSwitch.SetAwaitingReceipt` şalteri inik ve kilitli
+  `SiginakShiftClose.HoldFeed`; tek kâğıt akışı: fiş beslenince o anki teleks kâğıdı düşer, fiş aynı yerden teleks kâğıdının boyunda (260 × 225 mm) çıkar ve dosyalanana dek silindiri tutar, `ShiftReceiptPaper.HoldsPlaten` → `TelexFeed.PlatenBusy`; o sırada gelen teleks satırları şeritte; yeni teleks satırında eski kâğıt düşer, yenisi alttan yazılarak çıkar, `Teleprinter`/`PlatenFeed`; K6'dan daktiloya dönerken kamera K1'e döner). Fiş beklenirken `ShiftSwitch.SetAwaitingReceipt` şalteri inik ve kilitli
   tutar; durum satırı şalterin pirinç plakasının ikinci satırıdır (`kapağı kaldır` / `fişi EVRAK'a koy`). Kâğıt mevcut `EvrakTray`
   kutusuna bırakılınca karartma sırasında `FileBoardShift` çağrılır. Gün Core'da bir kez ilerler; fiş kimliği ve plan
   kilidi kayıttan geri kurulur. Pano presenter'ı kapanış yapmaz. Kutunun eski arşiv eylemleri korunur. Kabul kapıdaki
@@ -384,8 +527,7 @@ SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
   kapanana kadar bekletir),
   `SiginakTutorial` (kartlı başlangıç için `PlanningTutorialFlow`, eski oda yolu için `TutorialFlow`: sahne kökünde kendi tuvali `SiginakTutorial`, sıralama 70, baskın HUD'unun üstünde; odanın
   dışında olduğu için baskında da çalışır; adımlar saf C# `TutorialFlow`, not `TutorialNoteView`; senaryolu ilk baskın
-  `TutorialRaid` ve rehberi `RaidGuide`: `LiveRaidDataSource` eğitim baskın adımındaysa tahtayı senaryonun tohumuyla kurar,
-  `RaidDataSource` girdiyi rehberin sıradaki adımıyla süzer, `RaidBoard3D.Marks.Guide` sarı çerçeveyi çizer). Modelleri saf
+  `TutorialRaid`, rehberi `RaidGuide` ve `RaidBoard3D.Marks.Guide` kayıt 21'de silindi: hiçbir kipte ulaşılamıyordu). Modelleri saf
   C# kurucular üretir (`LiberationMapBuilder`, `ShelterViewBuilder`, `CrtViewBuilder`, `ShiftReportBuilder`,
   `BriefingBuilder`); odanın bileşenleri (Runtime/Siginak) yalnız modeli çizer.
 - `CommandPostDesk` masa kamerasının girdi kapısıdır: açık bir ekran kâğıdı ya da sunumun kilidi (`ExternalBlocked`)
@@ -403,6 +545,20 @@ SiginakCrtOverlay        Overlay 60, CRT'ye dalış geçişi
   figürün çevresine. Sayaçlar o ana kadar bekler (`SiginakOperation.HoldCounters`), sonra döner; başarılıda ± fişleri ve
   sektör işaretinin mavi onayı (`LiberationRegionMarks.AnimateRetaken`). Enter/Esc/düğme tepsiye dosyalar ve
   `LiberationDeskView.MarkRaidReportSeen` raporu okundu sayar. Açıkken masa kilitli (`InputBlocked`).
+- **Sunucu ödülü** (tesis aşama 9; `SiginakServerReward`, `Desk/Scripts/Bridge/Siginak/`; veri `FacilityRewardText`): bölgeyi
+  tamamlayan baskının raporu dosyalanınca (`SiginakOperation` → `Present`) ödül kâğıdı kapıdan gelir: kapının yanındaki panoya iner
+  ve kapı vurur (`Docs/KAPI-BELGELERI-VE-YZ-MEKANLARI-TASARIMI.md` §A; olay tutanağı da aynı yoldan gelir). Kâğıt sığınak olayı tutanağının
+  görünümünün (`ShelterEventPaper.prefab`, `ShelterEventPaperView`) DeskGame'deki ikinci örneğidir ("Sunucu ödülü", EVRAK tepsisinin
+  ikinci çapasında); denetleyici "Sunucu ödülü denetleyicisi" nesnesinde, `LiberationDeskView`, `SiginakDesk` ve `SiginakOperation`'a
+  `serverReward` ile bağlı. Karar tek komuttur: `GameController.ExecuteBoardCommand(s => s.ChooseServerReward(bölge, seçim))`
+  (`server_reward`). 2026-11-23'ten beri kâğıt kapının yanındaki çift taraflı belge çekmecesine gelir (`SiginakRoom/Belge çekmecesi`,
+  `PassDrawer` + köprüsü `SiginakPassDrawer`; tasarım §A.0): çekmece açılınca tabladaki kâğıt alınır, Esc tablaya geri koyar, karar
+  verilince kâğıt tablaya konur (`ShelterEventPaperView.Where.Outbox`) ve şalter çekilince gizlenir (yalnız sunum, kayda girmez). Yeni
+  belge çekmece kapalı ve boşken gelir (`RequestDelivery`). Çapasız sahnede eski tepsi yolu sürer. Kayıttan devamda kâğıt animasyonsuz
+  çekmecededir, çekmece kapalıdır (`Where.Door`). Eldeyken masa
+  kilitli (`LiberationDeskView.RewardBusy`). Bekleyen ödül kilidinin bütün yüzeyleri (`RaidPaperFacts.DisabledReason`,
+  `TelexReasons`, `CrtViewBuilder`, `RadioLogBuilder`, `OperationReportBuilder`) tek yardımcıyı okur: `FacilityRewardText.Pending`
+  (bayrak, kartlı oyun, `Ending == null`, baskın yok).
 - `DeskInput` klavyenin tek sahibidir: ayarlar dolabı açıkken Esc (dolabın kendi Tab/okları ayrıca); son raporda Enter; aksi hâlde 3 planlama, Esc
   ayarlar/geri. Odanın anahtarları (`StationKeyRail`: SIĞINAK, KAPI, MASA; üst kenar şeridi `EdgeLine` aynı sıra;
   AYARLAR çipi yok: ayarlar odadaki dolapta, sağ üstteki plaka yalnız dizilerde ATLA), vardiya raporu ve operasyon raporu kendi tuşlarını dinler. DeskGame klavye tuşu **yazmaz**: tuş
@@ -458,6 +614,16 @@ RaidEventSystem   [RaidEventSystemGate] ana EventSystem varken yereli kapatır
 RaidPanelCanvas   RaidPanels (olay, onay, günlük, kurallar, geri çekilme, sonuç), RaidOutcomeSpot
 ```
 
+- **Rehberin işaretçisi (2026-11-24):** `TutorialTargets.For(adım, bağlam, baskın, seçili)` (Bridge, saf) adımın hedefini seçer:
+  sahnedeki `TutorialAnchor` kimliği (DeskGame'de 9 masa hedefi; `RaidHud.prefab`/`RaidPanels.prefab`'ta 6 baskın hedefi; kimlik
+  listesi `TutorialTargets.DeskAnchors/RaidAnchors`), pano alanı (`BoardView3D.PocketCorners`: görev cebi, "bosta" tepsisi, "depot"
+  satırları; pano dünyada dönük olduğu için dört köşe izdüşürülür) ya da baskın karesi (`MoveHint`, `GateTile`, `CrateTile`,
+  `IntentTile`; tahtanın kamerası, `RaidDataSource.Board`). `SiginakTutorial.UpdatePointer` dikdörtgeni `TutorialPointerView`'e
+  verir (rehber tuvalinde, notun altında; dört kenar ve kâğıt etiket, `ui.focusRing`; ışın almaz). Not hedefin üstüne düşerse
+  `TutorialNoteView.SetLeft` karşı köşeye kaçar. "İlk kez" notları `PlanningTutorialFlow.FirstNotes` (konu koşullu; görülenler
+  `Corrigible.PlanningTutorialFirstNotes`). Adım `Corrigible.PlanningTutorialStepId` ile kimlikle saklanır. İlk baskın bitene dek
+  `SiginakTutorial.SealsShift` vardiya şalterini mühürler (`SiginakShiftClose.LockReason(…, tutorialSeal)`, masa üzerinden
+  `SiginakDesk.Tutorial`).
 - **Kartlı başlangıç rehberi:** `SiginakTutorial`'ın serileştirilmiş `planningBoard`, `shiftClose` ve (KOS aşama 8) `shelterEvent`
   bağları. Aşama 8'de akışa konu adımları eklendi (`PlanningTutorialStep.Topic`): ilk vardiyadan sonra `PlanningTutorialFlow`
   bekleme adımında durur, kapıda grup ya da açık tutanak belirince onun adımını seçer; "bir kez karara bağlandı" bilgisi
@@ -469,7 +635,7 @@ RaidPanelCanvas   RaidPanels (olay, onay, günlük, kurallar, geri çekilme, son
   `PlanningTutorialContext` → `PlanningTutorialFlow` → mevcut `TutorialNoteView`. `GameController.NewGameStarted` yeni akışı,
   `GameLoaded` yalnız aynı tohumun kayıtlı rehberini açar. İlk `Start` bir kare bekler: menünün DEVAM kararı ve tüm Start'lar
   işlenir. Rehber tercihi ancak emir belgesi kapandıktan sonra yazılır. İlerleme ayrı PlayerPrefs anahtarlarıdır; rehber
-  komut yazmaz, `GameRecord`'a ve kayıt sürümüne (17) girmez. Eski `TutorialRaid` kartlı rehberde kullanılmaz, `FixedSquad` yalnız eski oyun yolundadır. Panel
+  komut yazmaz, `GameRecord`'a ve kayıt sürümüne (17) girmez. `FixedSquad` yalnız eski oyun yolundadır. Panel
   yalnız SONRAKİ/EĞİTİMİ BİTİR düğmelerinde ışın alır; metin ve zemin alttaki masanın tıklarını yutmaz. İçerik aynıysa
   her kare metin/boy yeniden yazılmaz. Baskında sağ üstten 310 px aşağıya taşınır; geçiş, açılış, dolap ve dosyalama
   sırasında gizlenir.
@@ -483,12 +649,179 @@ RaidPanelCanvas   RaidPanels (olay, onay, günlük, kurallar, geri çekilme, son
   kamera monitörde kalmıştır: `Depart` → `BeginReturn` aynı yolu tersinden yürür (`crtReturnDelayS` bekleyip), bitene kadar
   `IsTransitioning` doğrudur (masa kilitli, operasyon raporu kamera varınca iner). Boşluk ya da tık dalışı ve CRT dizisini,
   dönüşte de kamera yolunu atlar. Kanca yoksa eski düz yaklaşma ve anında dönüş.
-- `LiveRaidDataSource`, DeskGame'deki `GameController` ve `S.Raid.Params` ile `Baskin.Create`'i bir kez çağırır. Oyuncu
-  sonuçtan rapora geçtiğinde `GameController.ResolveRaid` çalışır ve sahne kapanır. Baskın boyunca odanın `DeskInput`'u
-  askıya alınır. Sahne tek başına açılırsa örnek bir sunucu baskını kurulur.
+- `LiveRaidDataSource`, DeskGame'deki `GameController` ile emrin oda oturumunu kurar (aşağıda). Oyuncu sonuçtan rapora
+  geçtiğinde `GameController.ResolveRaid` çalışır ve sahne kapanır. Baskın boyunca odanın `DeskInput`'u askıya alınır. Sahne
+  tek başına açılırsa `Baskin.Create` ile örnek bir sunucu baskını kurulur (MapSeed 0, `Layouts`, varsayılan kit).
+- **Tesis baskınının sunumu (oda zinciri; `Docs/TESIS-BASKINLARI-TASARIMI.md` §11.5):** emirde kanadın üç odası yazılıdır
+  (`FacilityRaidSession.Applies`; değilse hata ve sahne kapanır); `LiveRaidDataSource` bir `FacilityRaidSession` kurar (Bridge, UnityEngine'siz): sıradaki odayı
+  `Simulation.OpenRaidRoom` ile açar, biten odanın raporunu kurucuya verilen `advance` ile dosyalar (oyunda
+  `GameController.AdvanceRaidRoom` → `raid_room`), sonucu raporlardan okur; kendi durumu yalnız açılan oda ve açılıştaki kırılan
+  sivil toplamıdır (güven çift sayılmasın), gerisi simülasyondan. Oyuncu metinleri saf `FacilityRaidText`'te (gözcü raporu,
+  oda kapanış ayracı, düşenler, temiz oda, yürüyerek çıkış, amaç ve geçit satırları, kare öneki "2-C3"). `RaidDataSource`
+  odanın bitebildiği her yerde (hamle, yetenek, kapıya giriş, makine evresi, geri çekilme, GEÇ) `CheckRoomEnd` çağırır: rapor
+  dosyalanır, zincir sürüyorsa `ResetBoard(first: false)` ile sıradaki tahta kurulur (sahne yeniden yüklenmez; `OpenState`
+  yalnız ilk açılışta), son oda raporlandıysa sonuç kartı gösterilir. Herkes kapıdayken `RaidViewModel.CanPass` EMRİ İLET
+  düğmesini GEÇ yapar. Kayıttan devam içinde bulunulan odayı baştan açar; sonuç kartında çıkılmışsa kart gösterilmez,
+  `ResolveClosedRaid` sonucu yazar. `RaidBoard3D` paftayı kaydırır (tesis sürüm 10; `PageOut(dir)`/`PageIn(dir)`: biten paftanın
+  kökleri kullanılan geçidin tersine kayıp çıkar, yeni pafta geçidin yönünden gelir; yön `RaidBoard3D.GateDirection(Baskin.GateTiles)`,
+  `slideSeconds` 0,45, `slideDistance` en az kamera görüşü; sahnedeki `BoardBase` `slideWith` ile dünya uzayında birlikte kayar ve
+  `BoardBackgroundView.boardBase` gölgeyi ona bağlar; kayarken emir iğnesi gizlenir; `Build` önce `ResetPagePose` çağırır), kapıdaki birimi çizmez,
+  donanımı `RaidPieceLibrary.fusePanel/antenna/valve` (boşsa soğutma ünitesi) ve PANO/ANTEN/VANA etiketiyle çizer. Örnek
+  tahtada (sahne tek başına) oturum yoktur ve her yeni dal kapalıdır (`Session == null`, `State.Room == null`).
+- **Tesis bina planı (aşama 5; §7, §11.5):**
+  - **Core:**
+    - `LiberationCampaignState.Facility` (`FacilityState`: `Known`, `Intel`).
+    - Teyp `AdvanceRaidRoom`'da, evrak `ResolveLiberationRaidCore`'da.
+    - Dinleme `AdvanceFacilityIntel` (`AdvancePlanningBoard`, `AdvanceBoardCare`'den sonra) ve `SpendFacilityIntel`
+      (`SelectLiberationRegion` de çağırır).
+    - Okumalar: `FacilityKnown`, `FacilityIntelTarget`, `FacilityPlanCells` (odanın makinesiz plan tahtasının kopyası).
+    - Hiçbiri RNG çekmez ve komut eklemez.
+  - **Görev fişinin yanındaki paftalar:** `FacilityPlanBuilder` (Bridge, saf) → `FacilityPlanData` (Runtime) →
+    `FacilityPlanSheets` (fişe yaslanır, fişle kayar ve kapanır) → `FacilityPlanSheet` (altı `UILineGraphic` katmanı; aşama 10'da
+    yedincisi `counter`, önlemlerin kırmızı kalemi, `plan.counter`;
+    geometri `FacilityPlanSketch`'te). Sahnede `SiginakHud › Facility plan`, kadro raporunun önünde; bağ `SiginakMap.plans`.
+  - **Gözetim cebi:**
+    - `BoardLayout.WatchJob/PocketOpen/BostaZone`, `BoardSnapshot.WatchOpen`, `BoardView3D.watchParts`.
+    - Deste bayrağa bağlı: `BoardLayout.Deck(watchOpen)` (980 / 1098 mm), `HandStep`, `DeckClosed`, `HandOpen` ve
+      `DeckMotion` aynı parametreyi alır; `BoardView3D` her çizimde `BostaDeckView.WatchOpen`'ı yazar ve tepsinin
+      çarpıştırıcısını (`deckTray`) kaydırır. Sahne cepsiz yerde kayıtlı; kayıt 21'den beri oyunda değer hep açık (cepsiz
+      geometrinin sadeleştirmesi ertelendi).
+    - `BoardDropRules.WatchOpen` (`sim?.B != null`; denge yokken "watch"a komut yok, `PlanningBoardPresenter.RetiredJob`'ın
+      "watch" kolu oyunda artık çalışmaz); metinler `FacilityWatchText`.
+    - Sahnede `PlanningBoard/Body` altında `Slot_gozet`, `TXT_P_gozet`, `Gözetim bandı`, `Pano yazıları` altında
+      `Şerit · gozet · 1..3`; hepsi kapalı kayıtlı.
+  - **Telsiz masası:** `RaidHud.prefab › Corners › Radio desk` (`RaidHudView.radioDesk/onAirLamp/tapeDeck`), yalnız
+    `vm.BlueprintWing > 0` iken.
+    - `RaidOnAirLampView` `vm.OnAir`'i okur (`RaidDataSource.onAir`: emir ve GEÇ ile yanar, ilk değişen rapor satırında
+      söner).
+    - `RaidTapeDeckView` `vm.TapeSheets`'i okur (`RaidDataSource.TapeSheets()`: bu baskında dosyalanan ve bilinen odalar).
+  - **Tokenlar:** `tokens_siginak.json › colors.plan.*`, `stamp.noPlan`, `board.layoutMm.*.gozet`; `raid_tokens.json › radioDesk.*`.
+- **Tesis hamleleri (aşama 7; `Docs/TESIS-BASKINLARI-TASARIMI.md` §4 "Uygulanan hâl (aşama 7)"):** sahne ve prefab değişmedi;
+  hamleler mevcut HUD'a çalışma anında bağlanır. Örnek tahtada (`State.Room == null`) her yeni dal kapalıdır.
+  - **Girdi ve hamle kipi:** `IRaidCommands.ArmAction()` (E) ve `ChooseAction(int)` (kart satırı tıkı). `RaidHudView.LetterKeys`
+    harf tuşlarının tek tablosudur: Q yetenek, **E hamle**, Z geri al, L günlük. Kip `RaidDataSource`'ta tutulur (`ActionKind`,
+    `ActionOther`): E kullanılabilir seçeneklerde döner, sonuncudan sonra kapanır; Q, Esc, sağ tık, seçim, Z ve başarılı hamle
+    kapatır.
+  - **Model:** `RaidViewModel.ActionRows` (`RaidCardRow[]`), `ActionKey` (E'nin kuracağı satır, −1 yok), `ActionArmed`,
+    `CargoOnFloor` (görev çipinin YERDE damgası). Örnek tahtada boş/−1/false.
+  - **Kart:** `UnitCardView` hamle satırlarını prefab'da tutmaz. `EnsureActionRows`, Row 1'i çalışma anında kopyalar;
+    `Mirror<T>` şablonun `[SerializeField]` referansını kardeş sırası yoluyla kopyada bulur (`Find` yok). Kopyalar havuzda
+    kapanır; kopya tıkı `ChooseAction(i)`. Test erişimcisi `ActionRowCopies`.
+  - **Kaynak (`RaidDataSource`):**
+    - `ArmAction`, `ChooseAction`, `UseAction` (hedef tık → `Baskin.DoAction`) ve `ActionRoutine` (sürüklemede `AnimateWalk`,
+      menfezde yakın uca yürüyüş, sonra `Animate`; kapı ya da çıkışta `AnimateLeave`). Yürüyüşte yük alımı `Carrier`
+      farkından (`PickCargo`).
+    - `MarksFor(vm)` public: tahtanın işaretleri görünüm modelinden kurulur; `DrawPreview` hamle önizlemesini çizer.
+    - Yürüyüş yolu (2026-11-24): fare bir yürüyüş karesindeyken `Publish` `Baskin.MovePath` (Core; `WalkPath` + kişinin menzili,
+      `Reachable` ile aynı kural, salt okuma) ile `vm.MovePath`'i doldurur; `DrawPreview` onu `RaidBoard3D.SetMovePath`'e verir (kırık
+      çizgi `RaidArrow.SetPath`, köşeler dolu, renk `lib.move`, `lib.overlay`; ÇIKAR/KAPIYA/−N etiketli dallarda düz ok yerine).
+      `Move` yolu `DoMove`'dan önce alır, `MoveRoutine` parçayı `AnimateWalk` ile aynı yoldan yürütür (duvarın içinden kaymaz).
+    - `Machines`, ilk `ambush-hit`'te evreyi böler: saldırılar → `AnimateMachineMoves(after, alsoDead)` → `Animate(…, indexBase,
+      total)`; iki parça da `EffectPlaying`'e tam listenin sırasını ve uzunluğunu bildirir.
+    - `OnEffect`, `ambush-hit` ve `cargo-drop` için sunum kopyasını (`machineBefore`) günceller; evre içinde taşıyıcı, YERDE
+      damgası ve amaç satırı bu kopyadan okunur.
+    - Son nefes: oda bu evrede bittiyse `Breath` taşıyan gövdenin parçası evre sonunda ekiple kalkar; ekip kartının
+      `BodyText`'i Core'un oda raporu kuralını izler (ÇIKARILDI / GÖVDE KAPIDA / EKİPLE TAŞINIYOR / YERDE · kare).
+  - **Saf metin ve veri** (Bridge, UnityEngine'siz):
+    - `FacilityMoveText`: seçenekler (`Options`, `Relevant`, `JointWorks`), ad, ayrıntı, neden, etki, fişler (`Slip`,
+      `PickupSlip`, `PassSlip`, `EffectSlip`), hover (`BodyAt`, `TileTitle`, `TileRows`), gövde yardımcıları `Lying` (taşınmazsa
+      ölecek gövde) ve `GoesWithTeam` (son nefes).
+    - `FacilityMoveView.Preview`: önizleme verisi (`MovePreview`: `MoveStroke` çizgileri kare koordinatında, renkler anlam
+      anahtarı "good"/"ink"/"graphite"/"threat"; `MoveGhost`, `MoveLabel`, odak karesi).
+    - `FacilityRaidText`: gözcü, kapanış, amaç, notlar (SANDIK, TUTULUYOR, YÜK), `GateRows` ("Yerde kalan", "Yük yerde kalır")
+      ve `CargoLeftRow`.
+  - **Tahta (`RaidBoard3D`):**
+    - `Marks.Ambush` (hat, sahibi tahtada değilse soluk), `Marks.Cargo`, `Marks.Focus`; `Sync` sonunda `SyncFacility` çizer.
+    - `AddPreviewStroke`/`AddPreviewGhost` (`ClearPreview` siler).
+    - On yeni Fx dalı (`ambush`, `ambush-hit`, `rush`, `drag`, `throw`, `hold`, `open`, `vent`, `cargo-pick`, `cargo-drop`),
+      `AnimateWalk(id, path, followerId, followerEnd)`, `PickCargo`.
+    - Test erişimcileri: `AmbushLineCount`, `CargoShown`, `FocusShown`, `PieceTile`.
+    - `RaidPiece.Init()` tembeldir; düzenleme kipinde Awake çalışmaz.
+  - **Operasyon raporu:** `RaidPaperFacts.MaterialGains` büyük sandığın ekini sayar; `OperationReportBuilder` sandık satırını
+    sektör satırından sonra ekler; `OperationReportData.MaxResults` (7), sahnedeki `OperationReportView.rows` yuvasıyla aynıdır
+    (sahne testi kilitler).
+- **Tesis ekipmanı (aşama 9; `Docs/TESIS-BASKINLARI-TASARIMI.md` §5 "Uygulanan hâl (aşama 9)"):** örnek tahtada (`State.Room ==
+  null`, `Class == null`) her yeni dal kapalı; kurallar Core'dan (`CanAction`, `ActionTargets`, `PreviewAction`, `DoAction`).
+  - **Girdi:** `RaidHudView.LetterKeys`'e **R** ("gear" → `IRaidCommands.ArmGear`); `DigitKeys` 1–4 (kartın `UnitId > 0` ise
+    `SelectUnitId`, değilse `SelectUnit`). `IRaidCommands.SelectUnitId/ArmGear/ChooseGear` varsayılan gövdeli (eski sahteler derlenir).
+    Kip `RaidDataSource`'ta: `GearArmed`/`GearKind`; hamle ve ekipman kipi `Kip`/`KipKind`/`KipOther` üzerinden aynı `UseAction`
+    yolunu kullanır; tek kip açık (E ekipman kipini, R hamle kipini kapatır).
+  - **Seçim:** uzman harfle (`Selected`), köpek ve tutsak birim kimliğiyle (`SelectedOther`, `SelectId(id, cycle)`); harf araması
+    (`Unit(char)`) ve sayımlar `Baskin.IsSpecialist`. Aygıt seçilmez.
+  - **Model ve kart:** `RaidViewModel.GearRows/GearKey/GearArmed`, `RaidTeamModel.UnitId/Dog`; `UnitCardView` kopya havuzunda önce
+    ekipman satırı, sonra hamle satırları (tık `i < gearCount ? ChooseGear : ChooseAction`). Kart 10 satırı aşınca katlanır
+    (`MaxCardRows`, `actionRowMap`). Dördüncü ekip kartı `RaidHud.prefab › Corners › Team › Card 4` (280 px; kap `ContentSizeFitter`,
+    `childForceExpandWidth` kapalı, sağ dolgu 7), `RaidHudView.team[3]`, yalnız köpek varken açık.
+  - **Saf metin ve veri** (Bridge): `FacilityGearText` (seçenekler `GearOptions`/`UnitKinds`, ad, ayrıntı, neden, etki, fiş, kalan tur
+    `CaptiveLeft`/`DeviceTurnsText`, hover `UnitRows`/`ObjectRows`, `FreeFloor`), `FacilityGearView` (aygıt hatları `TurretLine`,
+    `WinchLine`, `PullEnd`, `DecoyPath`, havlama erimi; Core'un private kuralının kopyası, `FacilityGearViewTests` Core'un makine
+    evresiyle eşler). `FacilityMoveText`/`FacilityMoveView` ekipman ve birim türlerini bunlara devreder.
+  - **Tahta (`RaidBoard3D`):** `Marks.Devices` (aygıt hattı), `DecoyPaths`, `Bark` (erim karoları), `Tags` (uzman olmayan birimin
+    etiketi ve kırmızı bayrağı); NİYETSİZ (planı atlanan) ve KİLİTLİ (kilitlenen) notları `MarksFor`'da. `Sync` yeni birimleri
+    `RaidPieceLibrary`'nin kendi alanlarıyla kurar (`turret, decoy, winch, dog; wire, plank, scrap`; yoksa Teknisyen × 0,6 ya da enkaz),
+    aygıtı `GadgetYaw(Dir)`'e çevirir, tesis odasında karo süslerini (`shutter`, `shutterOpen`, `crateNiche(Open)`, `holdJack`)
+    koyar; kırılan engelin yerine enkaz koymaz. On altı Fx dalı `GearFx`'te; önizlemede `AddPreviewArea`. Çizgi kalınlığı ve alfa
+    `RaidPieceLibrary`'de (`gearLinePx`, `decoyPathAlpha`, `barkAlpha`). Parça prefab'ları `Desk/Prefabs/Raid/Gear` (Analist
+    mesh'leri + `Rev3MaterialLibrary`; yol E).
+- **Önlem defterinin sunumu (aşama 10; `Docs/TESIS-BASKINLARI-TASARIMI.md` §6.3, §7.1, §7.3 "Uygulanan hâl (aşama 10)"):** bütün
+  metinler saf `FacilityCounterText`'te (`Desk/Scripts/Bridge/Siginak/`; Core'un public okumalarından, kopya kural yok; defter kapalıyken
+  hiçbir yüzey metin üretmez: `FacilityCounterText.On`).
+  - **Görev fişi:** ÖNLEM satırı `SlipField.Alert` (kırmızı değer, mürekkep işareti); `LiberationMapBuilder.SlipFieldsMax` (5) dolunca
+    KAZANIM ile birleşik satır (`MergeWithPerks`). Sahnede beş yuva kalır.
+  - **Teleks:** ÖNLEM satırları `SiginakMap.PlayReveal` → `PostCountermeasures` ("BÖLGE ÖZGÜR"den sonra; `seenLearned` ilk bağlamada
+    dolar, yalnız reveal sırasında ilerler). Sonuç teleksi `OperationReportBuilder.Telex`; `SiginakOperation`'ın yeni `[SerializeField]
+    TelexFeed telex` bağı (= `SiginakMap.telex`), satır `Begin`'de kurulur, rapor inerken basılır (`telex != null` iken; kayıt 21'den beri ana bayrak koşulu yok).
+    Telsiz günlüğü `RadioLogBuilder` "YZ önlemi · {ad}".
+  - **Paftalar:** `FacilityPlanSheetData.Counters`/`CounterRange` (`FacilityPlanBuilder`), `FacilityPlanSketch.Counter`,
+    `FacilityPlanSheet.counter` (üç paftada `drawing` altında `Counter`, `parts`'ın kardeşi).
+  - **Baskın:** `RaidDataSource.GearMarks` CIVATALI etiketi; hover, neden ve gözcü satırları `FacilityCounterText`'ten; `FacilityGearView`
+    vinç hattını Core'un `Baskin.WinchPulls`'undan, süreleri `DeviceTurnsFor/ClampTurnsFor`'dan okur. `RaidBoard3D` beş yeni Fx dalı
+    (`bolted`, `unbolt`, `dwall`, `cut`, `jam`; yeni ses yok). Yayıcı parçası `RaidPieceLibrary.scentEmitter` (+ `emitterFallbackScale`)
+    → `Desk/Prefabs/Raid/Gear/ScentEmitter.prefab` (kurgu, yol E); küçük resim `thumb_emitter` (`SiginakTextureBaker.PieceThumbSpecs`,
+    `SiginakSpriteManifest`, `DeskSprites`).
+  - **Defter ve ödül kâğıdı:** `RecipeData.Answer` (cevap sayfası, kimlik ve dizin temelin), `FacilityRewardText` cevap satırı ve
+    `NewPageLine`; `BaseOf` kopyası kalktı (`FacilityGear.AnswerBases`).
+- **Kalıcı tahta ve savunmanın sunumu (aşama 11; `Docs/TESIS-BASKINLARI-TASARIMI.md` §9 "Uygulanan hâl (aşama 11)"):** masa metinleri
+  saf `FacilityDefenseText`'te (`Desk/Scripts/Bridge/Siginak/`), baskın sahnesininkiler `FacilityDefenseRaidText`'te (`Desk/Scripts/Bridge/`);
+  ikisi de yalnız Core okuyucularından (dalga takvimi, süre, röle canı, kuşatma günlüğü, izler), savunma ve iz alt bayrakları kapalıyken
+  hiçbir yüzey metin üretmez (`FacilityDefenseText.On`).
+  - **Görev fişi:** `LiberationMapBuilder.SiegeSlip` (kuşatma kipi; `SlipData.Siege`, `HasYield/Yield/YieldCost/YieldEnabled/YieldReason`),
+    sektör satırı `SlipSector.Siege`, kadro raporu `SquadReport(…, sectorId)`. Sahnede `OperationSlip.yieldAction/yieldLabel/yieldHover/
+    yieldFill` (BIRAK; asıl düğmenin altında, kapalı kaydedildi; iki tık) → `IDeskSurface.YieldSector` → `GameController.YieldSector`; SAVUN
+    `SiginakMap.SlipAction` → `ConfirmSquad` → `LiberationDeskView.DefendSector` → `GameController.DefendSector`. Kuşatma kipinde ödülsüz
+    ÖDÜL satırı kalkar.
+  - **Harita ve teleks:** `MapRegionState.Siege/SiegeDue`, `LiberationRegionMarks.SiegeMark` (nabız), `reoccStamp` "KUŞATMA"; `SiginakMap`
+    kuşatma günlüğünü izler (kartlı oyunda "KARŞI SALDIRI BEKLİYOR" ve kendiliğinden bırakma teleksi birer kez; primed, kayıttan devam
+    basmaz); kartsız vardiya raporu `ShiftReportInput.siege/siegeRegion/siegeFall/siegeFallRegion/siegeAuto`.
+  - **Paftalar:** `FacilityPlanBuilder.Build(sim, regionId, sectorId)`; `FacilityPlanSheetData.Traces` (plana uygulanmış izler, kareye
+    bakılarak), `FacilityPlanSketch.Traces` mürekkep (`lines`) katmanında, `PlanItem.Barrier/Scrap`.
+  - **CRT, telsiz, devir fişi, pano:** `CrtViewBuilder`, `RadioLogBuilder`, `SlipWarningKind.Siege` (8; `HandoverSlipFacts.siegeTrust`),
+    `SiginakDesk.PreCheck`/`SiginakShiftClose.PreCheck`, `PlanningBoardSnapshotBuilder.LockReason`. `RaidLog`'un savunma girdisi
+    (`Mode == "defense"`) `OperationReportBuilder`, `ShiftReportBuilder.Ledger`, `FinalReportBuilder`, `RaidPaperFacts.MaterialGains`,
+    `SiginakOperation`'da ayrılır.
+  - **Baskın sahnesi:** `RaidViewModel.BlueprintDefense/Defense/PassLabel/PassNote/RetreatBody/RulesDefense`; `RaidDataSource`
+    (`TimeoutEnd` savunmayı dışlar, `DefenseLastTurn`, `DefenseCard`, İÇERİ ÇEKİL onayı, dalga ve varış fişleri, gelecek makinelerin
+    işaretleri `DefenseIncoming`'den); `RaidHudView.FitCells` (8'den çok turda hücreler 8 hücrelik genişliğe daralır; `RaidHud.prefab › Turn
+    › Cells` Cell 9/10 ve `turnBoxes/turnFills/turnFrames`); `RaidBlueprintView` SAVUNMA anteti; `RaidPanelsView` kuralların savunma bölümü;
+    `RaidBoard3D` `wave` ve `relay-break` popup'ı, "GELDİ" etiketi, RÖLE etiketi (ekip mürekkebi); saha rölesi `RaidPieceLibrary.relay`
+    (+ `relayFallbackScale`) → `Desk/Prefabs/Raid/Gear/Relay.prefab` (kurgu, yol E); küçük resim `thumb_relay`.
+- **Katar ve Yalpa'nın sunumu (aşama 12; `Docs/TESIS-BASKINLARI-TASARIMI.md` §10 "Uygulanan hâl (aşama 12)"):** bütün metinler saf
+  `FacilityConditionText`'te (`Desk/Scripts/Bridge/`; yalnız Core okuyucularından: `RegionEvent`, `RegionNote`, `FacilityRoomTurns`,
+  `OpenEdgeRows`, `IsOpenEdge`, `FollowerIds`, `FollowedInIds`, `CanDecouple`, `DecoupleBlock`, `TiltSchedule`, `Slides`, `Bolted`,
+  `Hazards`; şart yoksa null).
+  - **Masa:** `LiberationMapBuilder.Identity(…, sim)`/`Fields` fişin OLAY'ı `RegionEvent`'ten, bina hover'ı `RegionNote`'tan (kuşatma fişi
+    `BuildingNote`); `FacilityPlanSheetData.OpenEdges` → `FacilityPlanSketch.DrawOpenEdges` (çerçeve açık kenarda çizilmez); paftanın
+    hover'ı `PlanLine`; `OperationReportBuilder.TeamRows` kenardan düşeni `ReportOverboard(FallShifts(sim.B))` ile yazar.
+  - **Baskın sahnesi:** `RaidDataSource` AYIR (`detach`, `Detach`, `CanDetach`, `ToggleDetach`, `Decouple`; `Arm` seçili birim yokken,
+    `Select` Teknisyen'in kartı, `EndTurn` `Decouple` ya da `Pass`), `PassLabel/PassNote`, durum satırı, `OnEffect` `fall`/`slide`/`yalpa`,
+    gözcünün takip satırı, "TAKİP EDER" (`MarksFor`), düşme önizlemesi; `RaidTeamModel.Detach` → `RaidTeamCardView` ("AYIR · Q", kart
+    tıklanır). `RaidBoard3D`: `DrawGate` `brink` ve `tilt`/`tilt_next`, `DrawHazardLine` `slide`, `HzLabel`/`HazardInk`, `Sync`'te
+    `Overboard` parçasız, `AddPreviewGhostAt` (kesirli kare), `Animate` `fall` ve `slide`, `EventFx` `yalpa` (`TiltRoll`, `SlideFx`,
+    `FallOffEdge`, `playedSlides`), test okuyucusu `HazardShownCount`. Renkler `RaidPieceLibrary.hazardBrink/hazardTilt`. Sahne ve prefab
+    değişmedi.
 - `RaidDataSource` taktik komut/sunum sınırıdır: kurallar, hedefler ve önizleme Core'dan; görünür niyetler
   `Baskin.Intents` üzerinden gelir. UI kural, hasar ya da RNG hesaplamaz. `RaidHudView` klavyenin tek giriş noktasıdır
-  (1–3 birim, Q yetenek, Z geri al, Enter tur bitir, Esc). Ekip kartları ve 1–3 sırası baskının kadrosundan
+  (1 / 2 / 3 birim seçer, tesiste 4 köpeğin kartı · Q yetenek · E hamle (yalnız tesiste) · R ekipman (yalnız tesiste) · Z geri al · L günlük · Enter emri ilet / GEÇ · Esc vazgeç). Ekip kartları ve 1–3 sırası baskının kadrosundan
   (`RaidParams.Roles`, yoksa `Squad`): Teknisyen ve seçilen iki uzman; yetenek satırı yeteneğin kimliğinden (`AbilityName`,
   `AbilityRange`; Madenci ve Sis uzmanında kalan hak).
 - `RaidBoard3D`: kare (x, y) → dünya `(x − 3,5, 0, 3,5 − y)`. Bir eylem ya da tur bitince motor durumu anında değişir;
@@ -507,8 +840,8 @@ RaidPanelCanvas   RaidPanels (olay, onay, günlük, kurallar, geri çekilme, son
   göre (kalınlık, yay, kesik, çift şerit, rozet); oklar `Pencil.mat`'ta ZTest Always; karo işaretleri (tarama, seçim, hedef, uyanma halkası) `Pencil marks.mat`'ta derinlik testli, parçalar örter (`RaidPieceLibrary.tileMarks`).
 - **Bina kiti ve karo giydirme** (`Docs/BASKIN-MEKANLARI.md` Katman 3–5): `RaidRoomKit` (ScriptableObject,
   `Settings/Kits/Kit_<bölge>.asset`) duvarın, sütunun, kanal ve kuyu zemininin malzemelerini, gedik molozunu ve köprü
-  bayrağını tutar. `RaidPieceLibrary.KitFor(bölge, MapSeed)` seçer (MapSeed 0 → `defaultKit`: eğitim, örnek baskın, görüntü
-  seti); `RaidDataSource.OpenState` `Build`'den önce `RaidBoard3D.SetDress` çağırır (`kitOverride` yalnız editörde). Karo
+  bayrağını tutar. `RaidPieceLibrary.KitFor(bölge, MapSeed)` seçer (MapSeed 0 → `defaultKit`: örnek baskın, görüntü seti; tesis odasının
+  `Params`'ı emrin kendisidir, MapSeed = harekât tohumu, `FacilityRaidSceneTests.FacilityRoom_UsesRegionKit` kilitler); `RaidDataSource.OpenState` `Build`'den önce `RaidBoard3D.SetDress` çağırır (`kitOverride` yalnız editörde). Karo
   hiç yeni nesne kurmaz: `RaidTileMask` komşulardan maskeyi (K=1 y−1, D=2, G=4, B=8), yalıtılmışlığı ve rafın ray yönünü
   çıkarır, `RaidTileSkin.Apply` yalnız çocukları açıp kapar ve `sharedMaterials` atar. Duvar (`Wall.prefab`): Body (tek
   `WallBlock` mesh, 3 alt mesh), komşu duvara BridgeE/N köprüleri (varsayılan kitte kapalı), kayar rafta ShelfGear (el
@@ -533,6 +866,43 @@ RaidPanelCanvas   RaidPanels (olay, onay, günlük, kurallar, geri çekilme, son
 - **Kâğıt bileşenleri:** `Desk/Prefabs/Components` (PaperPanel, DeskButton, KeyChip, RadioCheck) hiçbir sahneden erişilmediği için Aşama 10'da (T1b) silindi; yedek `UI_Siginak_Rev3/A10_silinenler.zip`. Özel Graphic'ler: `UILineGraphic`, `UIPolygonGraphic`, `SpotlightGraphic`,
   `RegionMeshGraphic` (harita bölgeleri: sahnede serileştirilmiş çokgenler ve tıklama testi). Çokgenler tasarım
   dikdörtgeninden (1920 × 1080) taşar; `SadeMapCanvas`'taki `RectMask2D` haritayı kâğıdın kenarında keser (testli).
+- **Üretilmiş haritanın sunumu (anahtar 1):** `SiginakMap.Refresh` her yenilemede `LiberationMapLayer.SetMap(sim.Map)` çağırır;
+  aynı harita için iş yapmaz, yeni harekâtta bir kez kurar, null ise sahnedeki dünya haritasına döner (çokgenler, etiketler,
+  `teamAnchors`, S-07, lejant yeri sahneden geri gelir; sahne asset'i hiç değişmez).
+  - `GeneratedMapGeometry` (düz sınıf, `Runtime/Sade/Map`): Core haritasının kopyası. Köşe kimliğinden tohumlanan köşe sapması,
+    kenar başına 7 ara nokta ve iki uç kimliğinden tohumlanan üç harmonikli dalga; kıyı kenarı ve köşesi iç sınırdan hırçın
+    (`space.mapGen.coastAmplitude/coastJitter` ↔ `edgeAmplitude/vertexJitter`). Kenar kanonik yönde bir kez hesaplanır, komşular
+    aynı çizgiyi görür; taşıyan hücre merkezlerinden bakınca geri dönen kenarın dalgası yarıya iner (yıldız biçim koruması,
+    yelpaze üçgenleme bozulmaz). Hücre çokgenleri, bölge/kıyı halkaları, sınır zincirleri, kablo eğrileri, içe kaydırılmış kontur,
+    su çizgisi, kalem geçişi, `CellAt/RegionAt` (64 px kova, dizi üstünde çift-tek testi).
+  - `GeneratedMapLayout` (düz sınıf, `Runtime/Siginak`): otomatik yerleşim; metni dışarıdan ölçer (`Measure`, TMP
+    `GetPreferredValues`), iki dilin büyüğüyle ve iki dilde aynı konumla. Birinci tur adın ve altındakilerin kendi bölgesinde
+    kalmasını ister (10 px ızgara, toplam alan tablosu), olmazsa ikinci tur yalnız çakışmasızlık; o da bitmezse üçüncü tur ikinci
+    turun kuralını adın hücre merkezinden daha uzağa kayabildiği geniş seçeneklerle dener (`LabelOptions(wide: true)`; tek
+    sözcüklü YZ adı iki satıra bölünemez). İlk iki turda biten yerleşim üçüncü turdan etkilenmez. Sabit kutular: S-07, lejant,
+    kablo raptiyeleri, örtücüler (`space.mapGen.occluderTypewriter/occluderPencil`: K2'de daktilo ve kalemin altı). Cephe bloğu
+    başka bölgenin karasına ve kendi konturunun üstüne düşmemeye, figür tabanı (`FigureBase`, `figureOwnShare`) kendi karasında
+    ve kablo raptiyesinden uzak durmaya puanlanır. `Exclusive` hangi iki kutunun aynı anda görünebildiğini söyler. Karargâh
+    önce yerleşir ve birinci turda kademelidir (`HqFull` figür + bütün blok + raptiye kendi karasında, `HqFigure` figür +
+    raptiye, `HqFigureOnly` yalnız figür, `HqLoose` genel kural; `Placement.HqStrict`). Raptiyenin yanı `Placement.PinRight` (`LiberationRegionMarks` aynı
+    yana çizer); "karada" ölçüsü başın konturun içinde kalması (`PinInside`, `PinClearance` 19 px; kontur sınırın 5 px
+    içinde); sıkı kademelerde figür tabanı `HqFigurePad` 6 px büyütülerek ölçülür;
+    karargâhın adı kendi bölgesinde sayılmak için kutusu `HqLabelPad` 3 px büyütülünce de karargâhta kalmalı. Karargâhın komşusu gevşemeden önce karargâh `HqFull`'dan iner; lejant yeri bitmezse aynı yerde `HqLoose` ile bir
+    kez daha. S-07 adayları (`ShelterSpots`) konturdan pay (`ShelterContourPad`), aday okları (`FrontierArrows`,
+    `GeneratedMapGeometry.MiddleEdge` ile `SetFrontier`'la aynı) ve kablo ipi kuralına göre işaretlenir; `ChooseShelter`
+    önce S-07'siz yerleşimin boş bıraktığı uyan adayı, yoksa karargâhı her adayla yeniden yerleştirip en iyisini seçer.
+  - `GeneratedMapRenderer` (MonoBehaviour, "Liberation marks" üstünde): katmanları açar/kapar (`worldLayers` = map_base/map_lines,
+    `generatedLayers` = GenPaper, GenHalo, GenLines, lejantın "kablo hattı" satırı), çizer (hale, su çizgileri, sınır, kıyı, kalem,
+    kablo ipi, raptiye katmanları) ve yerleşimi `LiberationRegionMarks.SetGenerated`'e verir; adaylara oklar (`SetFrontier`).
+    `BuildGeometry` ve `Names` (her dil, `Loc.Languages`) testlerle ortak.
+  - `LiberationMapLayer`: ekip noktası yerleşimden (`team_anchors.json` yalnız anahtar 0), S-07 yerleşimin seçtiği yere
+    taşınır (`GeneratedMapLayout.ShelterPoint`: karargâhın iç hücreleri ve küçük kaymalarından, karargâhın adı, ilk cephe
+    bloğu ve figürüyle birlikte en iyi sığanı; `ChooseShelter`), lejant
+    seçilen köşeye (sağ yarıda sağ kenarından tutulur). `SiginakMap.SlipOnRight`: anahtar 1'de etiket sol yarıdaysa fiş sağda,
+    anahtar 0'da eski "na"/"sa" kuralı.
+  - Adlar sunumun her yerinde `Simulation.RegionName/RegionSourceName/Links`'ten (telsiz ve CRT kısa adı harita başına tekil:
+    çakışan kısaltma tam yazılır). Harekâtsız örnekler (editör araçları, tek açılan Baskin) `Bridge/SampleMap` (tohum 79,
+    Core önbelleğine girmez). Renkler `colors.map.*`, `colors.mapLiberation.*`; ölçüler `space.mapGen.*` (`tokens_siginak.json`).
 - **Biçim:** `DeskFormat` (sayı, yüzde, vardiya kodu), `DeskText` (tr-TR büyük harf), `TrNumber` (Türkçe ekler),
   `DeskMath`.
 - **Sprite'lar ve fontlar:** `Desk/Art` (Sprite Atlas V2, `DeskSpriteImporter` ayarları `sprites.json`'dan), fontlar
@@ -573,7 +943,7 @@ Unity Localization paketi kullanılmadı: metinlerin bir kısmı motordan bağı
   `detailVolume`, `detailGap`) iki kaynakta (Bed A/B) çalar: yeni yatak sessiz olanda döngünün rastgele bir yerinden başlar,
   öbürü söner; aynı yatak çalıyorsa baştan başlamaz. Yatağı olan bölgede genel bina uğultusu (`LoopCue.RaidAmbience`) susar,
   yatağı yoksa yedek olarak çalar. Seyrek ayrıntılar (Bed Detail) son 0,4 sn'de bir saha sesi ya da gözcü bildirimi
-  başladıysa atlanır; eğitim baskınında ayrıntı yok. Baskın kapanınca yer unutulur. Yeni `LoopCue` eklenmez (her değeri hep
+  başladıysa atlanır. Baskın kapanınca yer unutulur. Yeni `LoopCue` eklenmez (her değeri hep
   çalan bir kaynak olur).
 - **Telsiz:** saha görülmez, telsizden duyulur. Baskın sahnesi açıkken saha sesleri (`Cue.RaidStep` … `RaidSpawn`) ve bina
   uğultusu ses kaynağındaki yüksek ve alçak geçiren filtreyle telsiz bandından çalar (`SoundBank.fieldThroughRadio`,

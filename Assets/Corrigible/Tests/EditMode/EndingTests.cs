@@ -405,6 +405,44 @@ namespace Corrigible.Tests
             Assert.AreEqual("terk", sim.S.Ending);
         }
 
+        /// <summary>
+        /// Varsayılan eşik (<c>candidateEmergencyBelow</c> 4, tek kip denge turu; öbür terk testleri 3'e sabitler): terk sayacı acil
+        /// grupla aynı eşiği okur. Dört kişilik sığınakta tek açlık ayrılması kalanı üçe indirir ve sayım başlar; üçüncü kapanış terk.
+        /// Eşik 3'te aynı kurulum (üç canlı) sayılmaz.
+        /// </summary>
+        [Test]
+        public void Abandon_DefaultThreshold_ThreeLeftAfterDesertion_Counts_ThresholdThreeDoesNot()
+        {
+            Assert.AreEqual(4, new Balance().candidateEmergencyBelow);
+            var b = Starve(4);
+            b.candidateEmergencyBelow = new Balance().candidateEmergencyBelow;
+            var sim = New(b);
+            CloseHungry(sim);
+            Assert.AreEqual(4, Alive(sim), "kurucular kuruluş kapanışında ayrılmaz");
+            CloseHungry(sim);
+            Assert.AreEqual(3, Alive(sim));
+            Assert.IsTrue(sim.Admission.GroupEmergency, "üç canlı eşiğin altında: acil grup");
+            Assert.IsTrue(sim.Shelter.DesertedSinceFull);
+            Assert.IsTrue(sim.UnderstaffedCounting);
+            CloseFed(sim);
+            Assert.AreEqual(1, sim.Shelter.UnderstaffedStreak);
+            CloseFed(sim);
+            Assert.AreEqual(2, sim.Shelter.UnderstaffedStreak);
+            Assert.IsNull(sim.S.Ending);
+            CloseFed(sim);
+            Assert.AreEqual("terk", sim.S.Ending);
+
+            var three = New(Starve(4));
+            CloseHungry(three);
+            CloseHungry(three);
+            Assert.AreEqual(3, Alive(three));
+            Assert.IsFalse(three.Admission.GroupEmergency, "eşik 3: üç canlı eksik sayılmaz");
+            Assert.IsFalse(three.UnderstaffedCounting);
+            for (int i = 0; i < 4; i++) CloseFed(three);
+            Assert.IsNull(three.S.Ending);
+            Assert.AreEqual(0, three.Shelter.UnderstaffedStreak);
+        }
+
         /// <summary>Vardiya acil grupla açıldıysa içinde aday alınsa da sayılır; canlı 3'e ulaşan kapanış sıfırlar.</summary>
         [Test]
         public void Abandon_TakingSomeoneButStillBelow_StillCounts_ReachingThreeResets()
@@ -441,7 +479,7 @@ namespace Corrigible.Tests
             b.boardStartResidents = 4;
             b.candidateEmergencyBelow = 3;
             var sim = New(b);
-            Raid(sim, false, 2, 2, 0);
+            Raid(sim, false, 1, 1, 0);
             Assert.AreEqual(2, Alive(sim));
             for (int i = 0; i < 10; i++)
             {
@@ -468,7 +506,7 @@ namespace Corrigible.Tests
             Assert.AreEqual(1, sim.Shelter.Deserted);
             Assert.IsFalse(sim.Shelter.DesertedSinceFull, "canlı 4 ile kapandı: ayrılma dönemi kapandı");
             for (int i = 0; i < 6; i++) CloseFed(sim);
-            Raid(sim, false, 2, 2, 0);
+            Raid(sim, false, 1, 1, 0);
             Assert.AreEqual(2, Alive(sim));
             for (int i = 0; i < 6; i++)
             {
@@ -880,10 +918,9 @@ namespace Corrigible.Tests
             Assert.AreEqual(sim.S.Trust, sim.Shelter.MinTrust, "başlangıç güveni");
             FillSquad(sim);
             StartRaid(sim);
-            var squad = sim.S.Raid.Params.Squad;
-            var costly = new RaidResult { Success = false, Retreat = true, Collateral = sim.S.Trust - 3 };
-            foreach (var slot in squad) { costly.Hp.Add(slot.Hp); costly.Armor.Add(slot.Armor); }
-            Assert.IsTrue(sim.ResolveRaid(costly).Ok);
+            // Kayıpsız geri çekilme; giriş odasında güvenin üç fazlası kadar sivil kırıldı (test düzeni)
+            int costly = sim.S.Trust - 3;
+            FacilityKit.ResolveRaid(sim, false, null, null, B => { if (B.Room.Type == RoomType.Entry && !B.Escape) B.Collateral = costly; });
             int low = sim.S.Trust;
             Assert.Less(low, sim.B.victoryCleanMinTrust);
             Assert.AreEqual(low, sim.Shelter.MinTrust);
@@ -976,7 +1013,7 @@ namespace Corrigible.Tests
             ShutDoor(sim);
 
             // Bir kayıp ve bir açlık ayrılması (yeni gelen o kapanışta ayrılmaz)
-            Raid(sim, false, 2, 0, 0);
+            Raid(sim, false, 1, 0, 0);
             string dead = sim.Board.People.Single(p => !p.Alive).Id;
             sim.B.desertStreak = 1;
             CloseHungry(sim);
@@ -1193,8 +1230,8 @@ namespace Corrigible.Tests
             Assert.AreEqual(0.5, b.exposureAlarmBonus);
             Assert.AreEqual(2, b.exposureDecisionWarnShifts);
             Assert.AreEqual(15, b.victoryCleanDeathShifts);
-            Assert.AreEqual(17, GameRecord.CurrentVersion, "ifşa eşiği, ara bedel, dusus, terk ve son şalter (biçim 17)");
-            Assert.AreEqual(17, new GameRecord().version);
+            Assert.AreEqual(22, GameRecord.CurrentVersion, "22: görevde iyileşme; ifşa eşiği, ara bedel, dusus, terk ve son şalter (biçim 17; 18 üretilmiş harita; 19: tesis oda zinciri (raid_room), tesis parmak izi; 20: g5 paket yerleşimi; 21: tesis baskını tek kip)");
+            Assert.AreEqual(22, new GameRecord().version);
         }
 
         [Test]
@@ -1213,7 +1250,7 @@ namespace Corrigible.Tests
             Assert.AreEqual(sim.Shelter.SwitchShift, restored.Shelter.SwitchShift);
             Assert.AreEqual(State(sim), State(restored));
             Assert.AreEqual(Json(sim.EndReport), Json(restored.EndReport));
-            Assert.AreEqual(17, RoundTrip(sim.Record).version);
+            Assert.AreEqual(22, RoundTrip(sim.Record).version);
 
             // Tahliye çeşidi: erzaksız üç kişilik sığınak; ayrılmadan sonraki ilk vardiyada çekilir (yalnız komutlar)
             var t = Starve(3);

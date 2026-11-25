@@ -105,7 +105,7 @@ namespace Corrigible.Desk.EditorTools
         /// </summary>
         static readonly Dictionary<string, (int x, int y)> PlaneRepairs = new Dictionary<string, (int x, int y)>
         {
-            ["HandoverSlip"] = (4, 8),   // threejs/r3/models/desk.js › HandoverSlip: PlaneGeometry(0,10, 0,15, 4, 8)
+            ["HandoverSlip"] = (8, 8),   // tek kâğıt akışı: teleks kâğıdının boyu, PlaneGeometry(0,26, 0,225, 8, 8) (eskisi 0,10 × 0,15, 4 × 8)
         };
 
         /// <summary>OBJ ve MTL'yi kopyalar; içerik aynıysa dokunmaz (gereksiz yeniden içe aktarma olmasın).</summary>

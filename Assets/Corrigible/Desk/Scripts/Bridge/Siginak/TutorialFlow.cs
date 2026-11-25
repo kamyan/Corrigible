@@ -21,8 +21,8 @@ namespace Corrigible.Desk.Bridge
     }
 
     /// <summary>
-    /// Rehberli ilk vardiyalar: ilk harekâtta analistin notları oyuncuyu masadan baskına (adım adım oynanan senaryolu ilk
-    /// baskın, <see cref="TutorialRaid"/>), rapordan sığınağa ve vardiya şalterine götürür. Her adım oyuncunun eylemini bekler; koşulu zaten sağlanmış adımlar atlanır. Simülasyona dokunmaz; yalnız okur.
+    /// Rehberli ilk vardiyalar (kartsız oyun): ilk harekâtta analistin notları oyuncuyu masadan baskına, rapordan sığınağa ve
+    /// vardiya şalterine götürür. Her adım oyuncunun eylemini bekler; koşulu zaten sağlanmış adımlar atlanır. Simülasyona dokunmaz; yalnız okur.
     /// </summary>
     public sealed class TutorialFlow
     {
@@ -36,7 +36,7 @@ namespace Corrigible.Desk.Bridge
             Wait("order", Loc.N("BASKIN EMRİ"),
                 Loc.N("Fiş sıradaki sektörü, bedelini, ödülünü, bölgenin özelliğini ve kadroyu yazar. BASKIN EMRİ VER'e bas: yanında kadro raporu açılır; uzmanların durumunu oku, BASKINA ÇIK ile onayla."),
                 (c, f) => c.RaidOrdered),
-            // Senaryolu ilk baskında not, rehberin adımlarını yazar (SiginakTutorial); bu metin rehbersiz baskın içindir
+            // Baskın tesis odalarında rehbersiz oynanır; not baskın boyunca bu metni yazar
             Wait("raid", Loc.N("TAKTİK TAHTA"),
                 Loc.N("Kırmızı oklar gözcünün telsizden bildirdiği makine hamleleri, bayraktaki sayı sırası. Uzmanı seç (1–3), mavi kareye yürü, Q ile yeteneği seç ve hedefe tıkla; Enter emri iletir. Kasayı altıncı turdan önce al."),
                 (c, f) => c.RaidOver || !c.RaidLoaded && !c.RaidOrdered && c.Raids > 0),
@@ -62,8 +62,16 @@ namespace Corrigible.Desk.Bridge
                 Loc.N("Rapor vardiyanın fonunu, üretimini, uzmanların yarasını ve alarmı yazar. Alttaki düğme onu EVRAK tepsisine kaldırır."),
                 (c, f) => f.ShiftReportSeen && !c.ShiftReportOpen),
             Info("go", Loc.N("İYİ ŞANSLAR"),
-                Loc.N("Batı Avrupa'nın üç sektörünü al, sonra sınırdaki bir bölgeyi seç. Her bölgenin kendi özelliği ve imza makinesi var; harekât ilerledikçe tehdit artar. Sivil GÜVEN sıfıra inerse direniş dağılır. Harekât emri EVRAK tepsisinde durur.")),
+                // {0}: sığınağın bölgesinin haritadaki adı (BodyText)
+                Loc.N("{0} bölgesinin üç sektörünü al, sonra sınırdaki bir bölgeyi seç. Her bölgenin kendi özelliği ve imza makinesi var; harekât ilerledikçe tehdit artar. Sivil GÜVEN sıfıra inerse direniş dağılır. Harekât emri EVRAK tepsisinde durur.")),
         };
+
+        /// <summary>
+        /// Adımın gösterilen metni: "go" sığınağın bölgesinin adını alır (<see cref="Simulation.RegionName"/>; harekât yoksa paketin
+        /// YZ adı), ötekiler düz çeviri.
+        /// </summary>
+        public static string BodyText(TutorialStep step, Simulation sim) =>
+            step.Id == "go" ? Loc.F(step.Body, sim != null ? sim.RegionName(Simulation.HQ) : GameData.Region(Simulation.HQ).Ai) : Loc.T(step.Body);
 
         static TutorialStep Info(string id, string title, string body) => new TutorialStep { Id = id, Title = title, Body = body, Info = true };
         static TutorialStep Wait(string id, string title, string body, Func<TutorialContext, TutorialFlow, bool> done) =>

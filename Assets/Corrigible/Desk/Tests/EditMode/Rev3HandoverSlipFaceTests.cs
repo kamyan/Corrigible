@@ -27,6 +27,8 @@ namespace Corrigible.Desk.Tests
         const string ModelGuid = "a2883c656ae81416a88818a1704ffc12";
         const string TablePath = "Assets/Corrigible/Resources/Localization/strings.txt";
         const float Px = 1f / 4.8f;   // tasarımın 1× pikseli (mm)
+        /// <summary>Tek kâğıt akışı: fiş teleks kâğıdının boyunda (260 × 225 mm = tasarım 832 × 720 px × 1,5); içerik genişliği px.</summary>
+        const float DesignW = 832, ContentW = 832 - 2 - 26 - 26;
         const float Tol = 0.1f;       // mm (E14)
         const string Minus = "−";
 
@@ -56,9 +58,9 @@ namespace Corrigible.Desk.Tests
             Rows(tr.Shelter, "sığınak", ("", "Suna", "ÜRETİM", ""), ("", "Deniz", "MUTFAK", ""), ("", "Selin", "EĞİTİM · TEKNİSYEN", ""),
                 ("", "Eren", "BOŞTA", ""), ("", "Nermin", "BOŞTA", ""));
             Assert.AreEqual("KAPANIŞTA BEKLENEN", tr.ExpectedLabel);
-            Rows(tr.Expected, "kapanışta", ("", "ERZAK", "24,0 → 21,9 / 60", Minus + "2,1"), ("", "EĞİTİM", "Selin · Teknisyen +2 (2→4)", ""),
+            // 2026-11-24: EĞİTİM bölümü kaldırıldı; kapanışta EĞİTİM satırı yok
+            Rows(tr.Expected, "kapanışta", ("", "ERZAK", "24,0 → 21,9 / 60", Minus + "2,1"),
                 ("", "ÜRETİM", "iş emri yok · çıktı yok", ""), ("", "KAPI", "aday yok", ""));
-            Assert.AreEqual("", tr.Expected[1].Strong, "kademe değişmedi: kalın sözcük yok");
             Assert.IsEmpty(tr.Warnings);
             Assert.AreEqual("plan 001/1 · tek kullanımlık · yeniden basılmaz", tr.Footer);
             Assert.AreEqual("fişi EVRAK’a koy", tr.Action, "kesme işareti ’ (D3, token ile aynı)");
@@ -75,7 +77,7 @@ namespace Corrigible.Desk.Tests
             Rows(en.Shelter, "EN sığınak", ("", "Suna", "PRODUCTION", ""), ("", "Deniz", "KITCHEN", ""), ("", "Selin", "TRAINING · TECHNICIAN", ""),
                 ("", "Eren", "IDLE", ""), ("", "Nermin", "IDLE", ""));
             Assert.AreEqual("EXPECTED AT CLOSING", en.ExpectedLabel);
-            Rows(en.Expected, "EN kapanışta", ("", "RATIONS", "24.0 → 21.9 / 60", Minus + "2.1"), ("", "TRAINING", "Selin · Technician +2 (2→4)", ""),
+            Rows(en.Expected, "EN kapanışta", ("", "RATIONS", "24.0 → 21.9 / 60", Minus + "2.1"),
                 ("", "PRODUCTION", "no work order · no output", ""), ("", "DOOR", "no candidates", ""));
             Assert.AreEqual("plan 001/1 · single use · cannot be reprinted", en.Footer);
             Assert.AreEqual("file the slip in PAPERS", en.Action, "D3-A: EN'de EVRAK yerine PAPERS (plaka ile tek anahtar)");
@@ -91,9 +93,8 @@ namespace Corrigible.Desk.Tests
             Rows(tr.Field, "saha", ("T", "Deniz", "kit · zırh", ""), ("E", "Cem", "kit · zırh · EMP hücresi", ""), ("A", "Zeynep", "kit · bakım kiti", ""));
             Rows(tr.Shelter, "sığınak", ("", "Rauf", "ÜRETİM", ""), ("", "Nermin", "MUTFAK", ""), ("", "Suna", "EĞİTİM · EMP", ""),
                 ("", "Selin", "BOŞTA", "yaralı"), ("", "İpek", "BOŞTA", "yatıyor 2"), ("", "Aylin", "BOŞTA", "kısıtlı 2"));
-            Rows(tr.Expected, "kapanışta", ("", "ERZAK", "17,0 → 15,6 / 60", Minus + "1,4"), ("", "EĞİTİM", "Suna · EMP +2 → EĞİTİMLİ", ""),
+            Rows(tr.Expected, "kapanışta", ("", "ERZAK", "17,0 → 15,6 / 60", Minus + "1,4"),
                 ("", "ÜRETİM", "Zırh plakası 0/1 → 1/1 · Rauf", ""), ("", "KAPI", "1 aday bekliyor", ""));
-            Assert.AreEqual("EĞİTİMLİ", tr.Expected[1].Strong, "kademe değişti: son sözcük kalın");
             Assert.AreEqual(2, tr.Warnings.Count);
             Box(tr.Warnings[0], SlipWarningKind.DoorLastShift, "KAPI ·", "Son vardiya: karar verilmezse adaylar gider.");
             Box(tr.Warnings[1], SlipWarningKind.Exposure, "İFŞA ·", "eşikte · kapanışta konum çözülür");
@@ -106,7 +107,7 @@ namespace Corrigible.Desk.Tests
             Rows(en.Field, "EN saha", ("T", "Deniz", "kit · armour", ""), ("E", "Cem", "kit · armour · EMP cell", ""), ("A", "Zeynep", "kit · care kit", ""));
             Rows(en.Shelter, "EN sığınak", ("", "Rauf", "PRODUCTION", ""), ("", "Nermin", "KITCHEN", ""), ("", "Suna", "TRAINING · EMP", ""),
                 ("", "Selin", "IDLE", "injured"), ("", "İpek", "IDLE", "laid up 2"), ("", "Aylin", "IDLE", "restricted 2"));
-            Rows(en.Expected, "EN kapanışta", ("", "RATIONS", "17.0 → 15.6 / 60", Minus + "1.4"), ("", "TRAINING", "Suna · EMP +2 → TRAINED", ""),
+            Rows(en.Expected, "EN kapanışta", ("", "RATIONS", "17.0 → 15.6 / 60", Minus + "1.4"),
                 ("", "PRODUCTION", "Armour plate 0/1 → 1/1 · Rauf", ""), ("", "DOOR", "1 candidates waiting", ""));
             Box(en.Warnings[0], SlipWarningKind.DoorLastShift, "DOOR ·", "Last shift: the candidates leave if no decision is made.");
             Box(en.Warnings[1], SlipWarningKind.Exposure, "EXPOSURE ·", "at threshold · compromised at closing");
@@ -142,18 +143,20 @@ namespace Corrigible.Desk.Tests
             f.training = new SlipTraining { active = false };
             f.production = new SlipProduction { kind = SlipProductionKind.NoOutput, itemType = "kit_tek" };
             f.shelter.Add(new SlipShelterRow { name = "Kerem", job = "rest", state = SlipPersonState.RestrictionEnded });
-            f.shelter.Add(new SlipShelterRow { name = "Orhan", job = "watch" });   // emekli görev → BOŞTA
+            // Tesis aşama 5: GÖZETİM satırını kurucu yalnız cebi açıkken yazar; emekli görevler (contact) BOŞTA
+            f.shelter.Add(new SlipShelterRow { name = "Orhan", job = "watch" });
+            f.shelter.Add(new SlipShelterRow { name = "Nil", job = "contact" });
             f.shelter.Add(new SlipShelterRow { name = "Banu", job = "cook", state = SlipPersonState.Hurt });
             var l = HandoverSlipFormat.Format(f);
             Assert.AreEqual("—", l.Field[2].Name, "boş cep");
             Assert.AreEqual("", l.Field[2].Value);
             Assert.AreEqual("A", l.Field[2].Disc);
-            Assert.AreEqual("eğitim yok", l.Expected[1].Value);
-            Assert.AreEqual("Teknisyen kiti · çıktı yok", l.Expected[2].Value);
+            Assert.AreEqual("Teknisyen kiti · çıktı yok", l.Expected[1].Value, "EĞİTİM satırı yok (2026-11-24)");
             Assert.AreEqual("kısıtlı · bitti", l.Shelter[5].Suffix);
-            Assert.AreEqual("BOŞTA", l.Shelter[6].Value);
-            Assert.AreEqual("MUTFAK", l.Shelter[7].Value);
-            Assert.AreEqual("yaralı", l.Shelter[7].Suffix);
+            Assert.AreEqual("GÖZETİM", l.Shelter[6].Value);
+            Assert.AreEqual("BOŞTA", l.Shelter[7].Value);
+            Assert.AreEqual("MUTFAK", l.Shelter[8].Value);
+            Assert.AreEqual("yaralı", l.Shelter[8].Suffix);
 
             f.suppliesAfter = 26.35;   // artış: "+" işaretli fark; yuvarlanmış değerlerden
             var up = HandoverSlipFormat.Format(f).Expected[0];
@@ -173,14 +176,23 @@ namespace Corrigible.Desk.Tests
         public void Metrics_MatchR10Template_Mm()
         {
             var m = new HandoverSlipMetrics();
-            Near(100, m.sizeMm.x, 1e-4f, "genişlik");
+            Near(DesignW * Px, m.sizeMm.x, 1e-3f, "tasarım genişliği 832 px (173,33 mm)");
             Near(150, m.sizeMm.y, 1e-4f, "yükseklik");
+            // Tek kâğıt akışı: dünya ölçüsü = tasarım × 1,5 = teleks kâğıdı (token shiftClose.slip.sizeMm, faceScale)
+            Near(1.5f, m.worldScale, 1e-6f, "dünya ölçeği");
+            Near(new Vector2(260, 225), m.WorldSizeMm, 0.01f, "dünyada 260 × 225 mm");
+            var theme = SiginakTheme.Active;
+            Assert.IsNotNull(theme);
+            Near(new Vector2(theme.NumberOf("shiftClose.slip.sizeMm[0]"), theme.NumberOf("shiftClose.slip.sizeMm[1]")), m.WorldSizeMm, 0.01f, "token sizeMm = tasarım × ölçek");
+            Near(theme.NumberOf("shiftClose.slip.faceScale"), m.worldScale, 1e-6f, "token faceScale");
+            Near(0.0015f, HandoverSlipFace.CanvasScale(m), 1e-7f, "tuval ölçeği 0,001 × 1,5");
+            Near(new Vector3(-0.13f, 0.1125f, 0), HandoverSlipFace.CanvasCorner(m), 1e-6f, "tuvalin sol üst köşesi");
             Near(2.50f, m.padTopMm, 0.005f, "üst boşluk 12 px");
             Near(5.42f, m.padRightMm, 0.005f, "sağ boşluk 26 px");
             Near(2.92f, m.padBottomMm, 0.005f, "alt boşluk 14 px");
             Near(5.42f, m.padLeftMm, 0.005f, "sol boşluk 26 px");
             Near(5.63f, m.ContentLeftMm, 0.01f, "içerik x 27 px");
-            Near(88.75f, m.ContentWidthMm, 0.01f, "içerik genişliği 426 px");
+            Near(ContentW * Px, m.ContentWidthMm, 0.01f, "içerik genişliği 778 px (162,08 mm; eskisi 426 px)");
             Near(3.75f, m.ContentTopMm, 0.01f, "içerik üstü 18 px");
             Near(146.875f, m.ContentBottomMm, 0.01f, "içerik altı 705 px");
             Near(2.92f, m.headerEmMm, 0.005f, "başlık satırı 14 px");
@@ -229,40 +241,40 @@ namespace Corrigible.Desk.Tests
             NearBaseline(face.HeaderLeft, headerTop, 18 * Px, 14 * Px, "başlık satırı sol");
             NearBaseline(face.HeaderRight, headerTop, 18 * Px, 14 * Px, "başlık satırı sağ");
             Near(27 * Px, face.HeaderLeft.rectTransform.anchoredPosition.x, Tol, "başlık sol x");
-            Near(453 * Px, face.HeaderRight.rectTransform.anchoredPosition.x, Tol, "başlık sağ kenarı x");
+            Near((27 + ContentW) * Px, face.HeaderRight.rectTransform.anchoredPosition.x, Tol, "başlık sağ kenarı x");
             float titleTop = headerTop + 18 * Px + 4 * Px;
             NearBaseline(face.Title, titleTop, 23 * 1.15f * Px, 23 * Px, "başlık");
             float subTop = titleTop + 23 * 1.15f * Px + 2 * Px;
             NearBaseline(face.Subtitle, subTop, 15 * 1.3f * Px, 15 * Px, "alt başlık");
             float ruleTop = subTop + 15 * 1.3f * Px + 8 * Px;
-            NearBox(face.RedRule.rectTransform, 27 * Px, ruleTop, 426 * Px, 2 * Px, "kırmızı çizgi");
+            NearBox(face.RedRule.rectTransform, 27 * Px, ruleTop, ContentW * Px, 2 * Px, "kırmızı çizgi");
 
             float labelLine = NormalLine(face.FieldLabel, 14 * Px);
             float fieldLabelTop = ruleTop + 2 * Px + 8 * Px;
             NearBaseline(face.FieldLabel, fieldLabelTop, labelLine, 14 * Px, "SAHA etiketi");
             float rowsTop = fieldLabelTop + labelLine + 1 * Px;
-            for (int i = 0; i < 3; i++) NearBox(face.FieldRows[i].Rect, 27 * Px, rowsTop + i * 24 * Px, 426 * Px, 24 * Px, "saha satırı " + i);
+            for (int i = 0; i < 3; i++) NearBox(face.FieldRows[i].Rect, 27 * Px, rowsTop + i * 24 * Px, ContentW * Px, 24 * Px, "saha satırı " + i);
             var first = face.FieldRows[0];
             NearBox(first.DiscFill.rectTransform, 0, 1 * Px, 22 * Px, 22 * Px, "disk (satır yereli)");
             Near(8 * Px + 22 * Px, first.NameText.rectTransform.anchoredPosition.x, Tol, "ad x (disk + 8 px)");
             NearBaselineLocal(first.NameText, 24 * Px, 18 * Px, "ad taban çizgisi");
             NearBaselineLocal(first.ValueText, 24 * Px, 15 * Px, "eşya taban çizgisi");
-            Near(426 * Px, first.ValueText.rectTransform.anchoredPosition.x, Tol, "eşyalar sağa yaslı");
+            Near(ContentW * Px, first.ValueText.rectTransform.anchoredPosition.x, Tol, "eşyalar sağa yaslı");
             Assert.IsTrue(first.Leader.gameObject.activeSelf, "nokta çizgisi");
             Near(24 * Px - 6 * Px - 3 * Px, Top(first.Leader.rectTransform), Tol, "nokta çizgisi altı satırın 6 px üstünde");
 
             float shelterLabelTop = rowsTop + 3 * 24 * Px + 7 * Px;
             NearBaseline(face.ShelterLabel, shelterLabelTop, labelLine, 14 * Px, "SIĞINAK etiketi");
             float shelterTop = shelterLabelTop + labelLine + 1 * Px;
-            for (int i = 0; i < 5; i++) NearBox(face.ShelterRows[i].Rect, 27 * Px, shelterTop + i * 24 * Px, 426 * Px, 24 * Px, "sığınak satırı " + i);
+            for (int i = 0; i < 5; i++) NearBox(face.ShelterRows[i].Rect, 27 * Px, shelterTop + i * 24 * Px, ContentW * Px, 24 * Px, "sığınak satırı " + i);
             float expectedLabelTop = shelterTop + 5 * 24 * Px + 7 * Px;
             NearBaseline(face.ExpectedLabel, expectedLabelTop, labelLine, 14 * Px, "KAPANIŞTA etiketi");
             float expectedTop = expectedLabelTop + labelLine + 1 * Px;
-            for (int i = 0; i < 4; i++) NearBox(face.ExpectedRows[i].Rect, 27 * Px, expectedTop + i * 24 * Px, 426 * Px, 24 * Px, "kapanışta satırı " + i);
+            for (int i = 0; i < 3; i++) NearBox(face.ExpectedRows[i].Rect, 27 * Px, expectedTop + i * 24 * Px, ContentW * Px, 24 * Px, "kapanışta satırı " + i);
             var rations = face.ExpectedRows[0];
             Near(104 * Px, rations.ValueText.rectTransform.anchoredPosition.x, Tol, "değer etiket sütunundan sonra");
             Assert.IsTrue(rations.SuffixText.gameObject.activeSelf, "ERZAK farkı");
-            Near(426 * Px, rations.SuffixText.rectTransform.anchoredPosition.x, Tol, "fark en sağda");
+            Near(ContentW * Px, rations.SuffixText.rectTransform.anchoredPosition.x, Tol, "fark en sağda");
             Near(rations.ValueText.rectTransform.anchoredPosition.y, rations.SuffixText.rectTransform.anchoredPosition.y, 1e-4f, "ortak taban çizgisi");
             Assert.IsFalse(face.ExpectedRows[1].SuffixText.gameObject.activeSelf, "farksız satır");
 
@@ -271,17 +283,17 @@ namespace Corrigible.Desk.Tests
             float inner = Mathf.Max(20 * Px, actionLine);
             float doubleTop = 705 * Px - 2 * Px - inner - 6 * Px - 3 * Px;
             Near(140.2f, doubleTop, 0.15f, "çift çizgi C §7.2 (140,2–140,8)");
-            NearBox(face.ActionRuleTop.rectTransform, 27 * Px, doubleTop, 426 * Px, 1 * Px, "çift çizgi üst");
-            NearBox(face.ActionRuleBottom.rectTransform, 27 * Px, doubleTop + 2 * Px, 426 * Px, 1 * Px, "çift çizgi alt");
+            NearBox(face.ActionRuleTop.rectTransform, 27 * Px, doubleTop, ContentW * Px, 1 * Px, "çift çizgi üst");
+            NearBox(face.ActionRuleBottom.rectTransform, 27 * Px, doubleTop + 2 * Px, ContentW * Px, 1 * Px, "çift çizgi alt");
             float footerTextTop = doubleTop - 6 * Px - 14 * 1.3f * Px;
             NearBaseline(face.Footer, footerTextTop, 14 * 1.3f * Px, 14 * Px, "alt satır");
             float footerRuleTop = footerTextTop - 5 * Px - 1 * Px;
             Near(134f, footerRuleTop, 0.3f, "alt çizgi C §7.2 (≈ 643 px)");
-            NearBox(face.FooterRule.rectTransform, 27 * Px, footerRuleTop, 426 * Px, 1 * Px, "alt çizgi");
+            NearBox(face.FooterRule.rectTransform, 27 * Px, footerRuleTop, ContentW * Px, 1 * Px, "alt çizgi");
             Near(footerRuleTop - 8 * Px, face.FooterTopMm, Tol, "alt bloğun üstü (8 px boşluk)");
             NearBox(face.ActionIcon.rectTransform, Left(face.ActionIcon.rectTransform), doubleTop + 3 * Px + 6 * Px + (inner - 20 * Px) / 2, 20 * Px, 20 * Px, "ok simgesi");
             float actionCentre = (Left(face.ActionIcon.rectTransform) + face.Action.rectTransform.anchoredPosition.x + face.Action.rectTransform.sizeDelta.x) / 2;
-            Near(50f, actionCentre, Tol, "eylem satırı ortada");
+            Near((27 + ContentW / 2) * Px, actionCentre, Tol, "eylem satırı ortada");
 
             // Yazı kuralları: otomatik punto yok, ışın hedefi yok, puntolar tasarımın
             foreach (var t in face.Content.GetComponentsInChildren<TMP_Text>(true))
@@ -305,14 +317,14 @@ namespace Corrigible.Desk.Tests
             Assert.LessOrEqual(door.LineCount, 2, "KAPI uyarısı en çok iki satır");
             Assert.AreEqual(1, face.Warnings[1].LineCount, "İFŞA uyarısı tek satır");
             float boxTop = Top(door.Rect);
-            Near(Bottom(face.ExpectedRows[3].Rect) + 10 * Px, boxTop, Tol, "ilk kutu 10 px aşağıda");
+            Near(Bottom(face.ExpectedRows[2].Rect) + 10 * Px, boxTop, Tol, "ilk kutu 10 px aşağıda");
             Near(Bottom(door.Rect) + 6 * Px, Top(face.Warnings[1].Rect), Tol, "ikinci kutu 6 px aşağıda");
             Near((1.5f + 5 + door.LineCount * 20 + 6 + 1.5f) * Px, door.HeightMm, Tol, "kutu yüksekliği satır sayısından (iki satır 54 px)");
             NearBox(door.FrameLeft.rectTransform, 0, 0, 5 * Px, door.HeightMm, "sol çubuk 5 px");
             Near((5 + 6 + 18 + 7) * Px, door.Text.rectTransform.anchoredPosition.x, Tol, "metin simge sütunundan sonra");
             float spare = face.FooterTopMm - face.ContentBottomMm;
             TestContext.WriteLine("V.031 boş yer: " + (spare / Px).ToString("0.0") + " px (tasarım 47 px, iki satırlık eski KAPI uyarısıyla)");
-            Assert.That(spare / Px, Is.InRange(40f, 55f + 20f * (2 - door.LineCount)), "V.031'in boş yeri tasarımınkine yakın (47 px; tek satırlık kutuda +20 px)");
+            Assert.That(spare / Px, Is.InRange(64f, 79f + 20f * (2 - door.LineCount)), "V.031'in boş yeri tasarımınkine yakın (47 px; tek satırlık kutuda +20 px; 2026-11-24 EĞİTİM satırı kalktı: +24 px)");
         }
 
         [Test]
@@ -332,6 +344,9 @@ namespace Corrigible.Desk.Tests
                 Assert.AreEqual(3, face.FieldRows.Count);
                 Assert.AreEqual(7, face.ShelterRows.Count);
                 Assert.AreEqual(2, face.Warnings.Count, "KAPI + SIĞINAK EKSİK");
+                // Tek kâğıt akışı: tam genişlikte (162 mm) iki kutu da tek satır
+                foreach (var w in face.Warnings)
+                    if (w.LineCount != 1) failures.Add(lang + " " + w.name + ": uyarı " + w.LineCount + " satır (tek satır olmalı) '" + w.Text.text + "'");
                 foreach (var row in face.FieldRows.Concat(face.ShelterRows).Concat(face.ExpectedRows))
                 {
                     string at = lang + " " + row.name + " '" + row.NameText.text + "'";
@@ -351,11 +366,11 @@ namespace Corrigible.Desk.Tests
                 {
                     var c = new Vector3[4];
                     g.rectTransform.GetLocalCorners(c);
-                    // tuval yereline (mm) çevir: köşeler fişin 100 × 150 mm'si içinde
+                    // tuval yereline (tasarım mm'si) çevir: köşeler fişin 173,33 × 150 mm'si içinde
                     for (int i = 0; i < 4; i++)
                     {
                         var p = face.FaceRect.InverseTransformPoint(g.rectTransform.TransformPoint(c[i]));
-                        if (p.x < -0.01f || p.x > 100.01f || p.y > 0.01f || p.y < -150.01f)
+                        if (p.x < -0.01f || p.x > DesignW * Px + 0.01f || p.y > 0.01f || p.y < -150.01f)
                             failures.Add(lang + " " + g.name + ": fişin dışında (" + p.x.ToString("0.0") + "; " + (-p.y).ToString("0.0") + ")");
                     }
                 }
@@ -368,6 +383,34 @@ namespace Corrigible.Desk.Tests
         /// KOS aşama 4: olaylar açıkken en kötü fiş: KAPI uyarısı ve dört parçalı ERZAK kutusu (aç vardiya, ayrılacak kişi, yarım tayın,
         /// karartma). ERZAK kesilmez ("… +n" yok, ayrılacak kişinin adı yazılı); TR ve EN'de fiş taşmaz, punto küçülmez.
         /// </summary>
+        [Test]
+        public void Layout_WorstCase_WithSiege_TrEn_NoOverflow()
+        {
+            // Tesis aşama 11 (§8.5): KARŞI SALDIRI kutusu (ilk kutu) en kötü fişe eklenir: tek satır, taşma yok, punto küçülmez
+            var failures = new List<string>();
+            foreach (bool english in new[] { false, true })
+            {
+                if (english) UseEnglish(); else Loc.SetLanguage(Loc.Turkish);
+                string lang = english ? "EN" : "TR";
+                var face = Spawn();
+                var f = Worst();
+                f.siegeTrust = 1;
+                f.warnings.Insert(0, new SlipWarning { kind = SlipWarningKind.Siege });
+                face.Bind(f);
+                TestContext.WriteLine(lang + " KARŞI SALDIRI + en kötü: içerik altı " + face.ContentBottomMm.ToString("0.00") + " mm, alt blok " +
+                                      face.FooterTopMm.ToString("0.00") + " mm");
+                Assert.AreEqual(3, face.Warnings.Count, lang + ": KARŞI SALDIRI + KAPI + SIĞINAK EKSİK");
+                var siege = face.Warnings[0];
+                StringAssert.Contains(HandoverSlipFormat.SiegeText(f), siege.Text.text, lang);
+                if (siege.LineCount != 1) failures.Add(lang + ": KARŞI SALDIRI kutusu " + siege.LineCount + " satır '" + siege.Text.text + "'");
+                if (face.Overflowing) failures.Add(lang + ": taşma, içerik altı " + face.ContentBottomMm.ToString("0.00") + " > " + face.FooterTopMm.ToString("0.00"));
+                foreach (var t in face.Content.GetComponentsInChildren<TMP_Text>(false))
+                    if (t.enableAutoSizing || t.fontSize < face.Layout.headerEmMm - 1e-4f) failures.Add(lang + " " + t.name + ": punto " + t.fontSize);
+                Object.DestroyImmediate(face.gameObject);
+            }
+            Assert.IsEmpty(failures, string.Join("\n", failures));
+        }
+
         [Test]
         public void Layout_WorstCase_WithFourPartRations_TrEn_NoOverflow()
         {
@@ -421,7 +464,7 @@ namespace Corrigible.Desk.Tests
             var mesh = model.GetComponentInChildren<MeshFilter>().sharedMesh;
             var top = mesh.vertices.OrderByDescending(v => v.y).First();
             var bottom = mesh.vertices.OrderBy(v => v.y).First();
-            Near(-0.004f, top.z, 2e-4f, "modelin üst kenarı (yüz −z)");
+            Near(-0.006f, top.z, 2e-4f, "modelin üst kenarı (yüz −z; dünyada 6 mm = 4 tasarım mm'si × 1,5)");
             Near(0f, bottom.z, 2e-4f, "modelin alt kenarı");
 
             int checkedCount = 0;
@@ -450,7 +493,7 @@ namespace Corrigible.Desk.Tests
                 checkedCount++;
             }
             Assert.Greater(checkedCount, 20, "yerleşen öğe sayısı");
-            Assert.Less(face.FieldRows[0].Rect.anchoredPosition3D.z, face.ExpectedRows[3].Rect.anchoredPosition3D.z,
+            Assert.Less(face.FieldRows[0].Rect.anchoredPosition3D.z, face.ExpectedRows[2].Rect.anchoredPosition3D.z,
                 "üstteki satır kâğıtla birlikte yüze daha yakın");
         }
 
@@ -527,18 +570,23 @@ namespace Corrigible.Desk.Tests
             Assert.AreSame(mat, body.sharedMaterial, "Body → Handover slip.mat (telexPaper paylaşılır, değişmez)");
             Assert.AreEqual(UnityEngine.Rendering.ShadowCastingMode.On, body.shadowCastingMode);
 
-            // Tuval: World Space, 100 × 150 birim, ölçek 0,001, sol üst pivot FACE yuvasının köşesinde, z 0
+            // Tuval: World Space, 173,33 × 150 birim (tasarım mm'si), ölçek 0,0015 (× 1,5 = teleks kâğıdının 260 × 225 mm'si), sol üst
+            // pivot FACE yuvasının köşesinde, z 0
             var canvasRect = face.FaceRect;
             Assert.IsNotNull(canvasRect);
             var canvas = canvasRect.GetComponent<Canvas>();
             Assert.IsNotNull(canvas);
             Assert.AreEqual(RenderMode.WorldSpace, canvas.renderMode);
             Assert.AreNotEqual(0, (int)(canvas.additionalShaderChannels & AdditionalCanvasShaderChannels.Normal), "ışıklı yazı için normal kanalı");
-            Near(new Vector2(100, 150), canvasRect.sizeDelta, 1e-4f, "tuval 100 × 150 mm");
+            Near(face.Layout.sizeMm, canvasRect.sizeDelta, 1e-4f, "tuval = tasarım ölçüsü");
+            Near(new Vector2(DesignW * Px, 150), canvasRect.sizeDelta, 1e-3f, "tuval 173,33 × 150 tasarım mm'si");
             Near(new Vector2(0, 1), canvasRect.pivot, 1e-6f, "sol üst pivot");
-            Near(Vector3.one * 0.001f, canvasRect.localScale, 1e-7f, "1 birim = 1 mm");
+            Near(Vector3.one * HandoverSlipFace.CanvasScale(face.Layout), canvasRect.localScale, 1e-7f, "1 birim = 1,5 mm (tasarım × 1,5)");
+            Near(Vector3.one * 0.0015f, canvasRect.localScale, 1e-7f, "ölçek 0,0015");
             Assert.AreEqual(Quaternion.identity, canvasRect.localRotation, "ön yüz −z (fişin yüzü)");
-            Near(new Vector3(-0.05f, 0.075f, 0f), canvasRect.localPosition, 1e-5f, "FACE yuvasının sol üst köşesi, modelin düz düzlemi");
+            Near(new Vector3(-0.13f, 0.1125f, 0f), canvasRect.localPosition, 1e-5f, "FACE yuvasının sol üst köşesi, modelin düz düzlemi");
+            var faceSlot = model.GetComponentInChildren<Rev3TextSlot>(true);
+            if (faceSlot != null) Near(new Vector2(0.26f, 0.225f), faceSlot.Size, 1e-4f, "modelin FACE yuvası 260 × 225 mm");
             Assert.IsFalse(canvasRect.IsChildOf(model.transform), "tuval modelin kardeşi (iç içe modele nesne eklenmez)");
             var contents = PrefabUtility.LoadPrefabContents(PrefabPath);
             try
@@ -603,12 +651,12 @@ namespace Corrigible.Desk.Tests
             try
             {
                 Assert.IsTrue(tex.LoadImage(File.ReadAllBytes(texPath)));
-                Assert.AreEqual(480, tex.width);
+                Assert.AreEqual(832, tex.width, "teleks kâğıdının 260 mm'si / 1,5 (4,8 px/mm)");
                 Assert.AreEqual(720, tex.height);
                 // satırlar alttan: CSS y → doku satırı 719 − y
                 Color At(int x, int y) => tex.GetPixel(x, 719 - y);
                 for (int y = 7; y < 720; y += 37)
-                    for (int x = 0; x < 480; x += 23)
+                    for (int x = 0; x < 832; x += 23)
                         Assert.AreEqual(1f, At(x, y).a, 1e-3f, "alfa yalnız kesik kenarda (" + x + "; " + y + ")");
                 Assert.Less(At(8, 1).a, 0.1f, "dişin dibi (x 8k, y 1) saydam");
                 Assert.Greater(At(4, 1).a, 0.9f, "dişin tepesi (x 4 + 8k) kâğıt");
@@ -618,7 +666,7 @@ namespace Corrigible.Desk.Tests
                 Assert.AreEqual(0xBC / 255f, paper.b, 0.01f);
                 var edge = At(0, 400);
                 Assert.AreEqual(0xC9 / 255f, edge.r, 0.01f, "sol kenar #C9B98A");
-                Assert.AreEqual(0xB9 / 255f, At(479, 400).g, 0.01f, "sağ kenar");
+                Assert.AreEqual(0xB9 / 255f, At(831, 400).g, 0.01f, "sağ kenar");
                 Assert.AreEqual(0x8A / 255f, At(240, 719).b, 0.01f, "alt kenar");
                 Assert.Less(At(5, 11).r, paper.r - 0.05f, "delik sırası (x 5,5; y 11)");
                 Assert.AreEqual(paper.r, At(10, 11).r, 0.01f, "delikler arası kâğıt");

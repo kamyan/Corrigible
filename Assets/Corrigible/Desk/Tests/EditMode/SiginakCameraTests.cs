@@ -414,7 +414,7 @@ namespace Corrigible.Desk.Tests
         }
 
         /// <summary>
-        /// Teleks modeli değişimi: fiş daktilodan K1'de basılır. K1'de (1920 × 1080) daktilodaki fişin kutusu (100 × 150 mm,
+        /// Teleks modeli değişimi: fiş daktilodan K1'de basılır. K1'de (1920 × 1080) daktilodaki fişin kutusu (tek kâğıt akışı: teleks kâğıdının boyu, 260 × 225 mm,
         /// <see cref="ShiftReceiptPaper.TongueTarget"/> pozunda) ve EVRAK bırakma kutusu, K6'da EVRAK bırakma kutusu bütünüyle kadrajda
         /// (fiş eldeyken K6'da EVRAK'a sürüklenir).
         /// </summary>
@@ -452,8 +452,8 @@ namespace Corrigible.Desk.Tests
 
                 // Başlangıçta gizli fiş çıkınca daktilonun silindirinde (dil pozu) durur; oradaki gerçek kutusunu K1'de izdüşür.
                 var tongue = paper.TongueTarget;
-                Assert.AreEqual(0.10f, paperBox.size.x, 1e-4f, "fiş kutusu 100 mm");
-                Assert.AreEqual(0.15f, paperBox.size.y, 1e-4f, "fiş kutusu 150 mm");
+                Assert.AreEqual(0.26f, paperBox.size.x, 1e-4f, "fiş kutusu 260 mm (teleks kâğıdı)");
+                Assert.AreEqual(0.225f, paperBox.size.y, 1e-4f, "fiş kutusu 225 mm (teleks kâğıdı)");
                 var paperAtTongue = Matrix4x4.TRS(tongue.position, tongue.rotation, paper.transform.lossyScale) * paper.transform.worldToLocalMatrix;
                 Use(desk);
                 AssertBoxInFrame(preview, paperBox, paperAtTongue, "K1: daktilodaki devir fişi");

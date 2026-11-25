@@ -1,0 +1,25 @@
+# Tesis baskınları aşama 12 ölçümü (Docs/TESIS-BASKINLARI-TASARIMI.md §10.1, §10.2, §13 "Katar": "İkisi de ölçülür"): Katar (na) ve
+# Yalpa (oc). Hedef satırı yok; okuma ölçütleri önceden yazılı (README "Katar ve Yalpa"). Değerler C# varsayılanları; ana bayrak yalnız
+# BAL'de açık, asset'te kapalı kalır; iki alt bayrak (facilityKatar, facilityYalpa) C#'ta açık. AYIR ve KENAR ortam değişkenidir
+# (BAL.txt'e yazılmaz; R ve C satırında görünür). Ortak: 80 tohum, "iyi" küme, aşama 11 t11savun'un ortamı: PICK=rastgele PAR=10 DEV=kir
+# DUSEN=hep ODUL=tarif ARAC=donus SAVUN=hep CEKIL=hic (RETIRE=1, ALT=8 kos.sh varsayılanı ve satırdan).
+#   t12K0      kilit: iki alt bayrak kapalı; aşama 12 anahtarları atılınca aşama 11'in t11savun'u ile tam dosya bayt aynı (I1)
+#   t12        AYIR=hep KENAR=hic: ana satır (I3, I4, I7, I8, I9, I10)
+#   t12ayir0   AYIR=hic: takip işler (I6; t12 ile ilk na baskını eşli)
+#   t12kenar   KENAR=kacis: yetişemeyecek üyeyi EMP ile kenardan atmak ucuz (I5, kaçış kapısının üst sınırı)
+#   t12yalpa   facilityKatar=false: Yalpa tek başına; ilk oc eşli (t12yalpa − t12K0, I9) ve ilk na eşlinin asansör tarafı (t12 − t12yalpa, I7)
+# Komutlar (OUT ortak çıktı klasörü; etiket başına bir koşu):
+#   ln -s <aşama 11 ölçüm out>/t11savun $OUT/out/t11savun
+#   export PICK=rastgele PAR=10 DEV=kir DUSEN=hep ODUL=tarif ARAC=donus SAVUN=hep CEKIL=hic
+#   Tools/DengeBotu/kos.sh <(grep -E '^t12(K0|yalpa)\|' Tools/DengeBotu/tesis12.txt)
+#   AYIR=hep KENAR=hic Tools/DengeBotu/kos.sh <(grep '^t12|' Tools/DengeBotu/tesis12.txt)
+#   AYIR=hic Tools/DengeBotu/kos.sh <(grep '^t12ayir0|' Tools/DengeBotu/tesis12.txt)
+#   KENAR=kacis Tools/DengeBotu/kos.sh <(grep '^t12kenar|' Tools/DengeBotu/tesis12.txt)
+#   python3 -I Tools/DengeBotu/ozet.py --tesis t12K0 t12 t12ayir0 t12kenar t12yalpa --taban t11savun
+#   python3 -I Tools/DengeBotu/ozet.py --ilk na t12kenar t12 t12ayir0 t12 t12 t12yalpa
+#   python3 -I Tools/DengeBotu/ozet.py --ilk oc t12yalpa t12K0
+t12K0|liberationMapGen=1;raidFacilityEnabled=true;facilityKatar=false;facilityYalpa=false;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t12|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t12ayir0|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t12kenar|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t12yalpa|liberationMapGen=1;raidFacilityEnabled=true;facilityKatar=false;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80

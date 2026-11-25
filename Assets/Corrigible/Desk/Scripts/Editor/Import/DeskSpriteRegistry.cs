@@ -45,6 +45,13 @@ namespace Corrigible.Desk.EditorTools
                 if (sp == null) { Debug.LogWarning("[Sığınak] Sprite yok: " + e.AssetPath); continue; }
                 list.Add(new DeskSprites.Entry { name = e.Name, sprite = sp, type = Image.Type.Simple, tint = e.Name.StartsWith("glyph_") });
             }
+            // Tesis aşama 9 (K20): Revizyon 3 pano kartlarının ekipman piktogramları ve erzak simgesi (kartlar adla arar)
+            foreach (var name in Corrigible.Desk.EditorTools.Rev3BoardTextureBaker.GearSpriteNames)
+            {
+                var sp = AssetDatabase.LoadAssetAtPath<Sprite>(Corrigible.Desk.EditorTools.Rev3BoardTextureBaker.SpriteDir + "/" + name + ".png");
+                if (sp == null) { Debug.LogWarning("[Rev3] Sprite yok: " + name); continue; }
+                list.Add(new DeskSprites.Entry { name = name, sprite = sp, type = Image.Type.Simple, tint = true });
+            }
             reg.sprites = list;
 
             reg.textures = AssetDatabase.FindAssets("t:Texture2D", new[] { DeskSpriteManifest.TexturesDir, SadeSpriteManifest.TexturesDir })

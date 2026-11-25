@@ -124,7 +124,7 @@ namespace Corrigible.Desk.Bridge
             var names = people.Select(p => p.Down > 0 ? Loc.F("{0} (sedyeyle)", p.Name) : p.Name).ToList();
             int free = lib.Regions.Count(r => r.Completed), sectors = lib.Regions.Sum(r => r.CapturedCount);
             var front = lib.Regions.FirstOrDefault(r => r.Id == lib.CurrentRegion);
-            string frontName = front != null ? GameData.Region(front.Id).Name : "—";
+            string frontName = front != null ? sim.RegionName(front.Id) : "—";
 
             string verdict;
             if (evac)

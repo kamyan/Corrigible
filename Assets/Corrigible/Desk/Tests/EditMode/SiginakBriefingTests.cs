@@ -79,6 +79,41 @@ namespace Corrigible.Desk.Tests
             finally { DeskLoc.Instance.SetLanguage(lang); }
         }
 
+        /// <summary>
+        /// Üretilmiş harita (anahtar 1): belge sığınağın bölgesini haritadaki adıyla yazar, gerçek yer adı taşımaz, diegetik
+        /// gerekçe (haritalar silindi, kâğıt telsiz ve kablo raporlarından) ilk iki paragrafta; en uzun YZ adıyla da taslak
+        /// sınırında kalır. Dünya haritasında (anahtar 0) aynı kalıp paketin adıyla.
+        /// </summary>
+        [Test]
+        public void Body_GeneratedMap_NamesTheShelterRegion_WithinDraftLimits()
+        {
+            var lang = DeskLoc.Instance.Lang;
+            try
+            {
+                var sim = LegacySimulation.NewGame(SampleMap.Seed, new Balance { shelterEventsEnabled = false, liberationMapGen = 1 });
+                var world = LegacySimulation.NewGame(SampleMap.Seed, new Balance { shelterEventsEnabled = false });
+                var pool = GameData.Regions.Select(r => r.Ai).ToList();
+                foreach (var (l, limit) in new[] { (DeskLang.Tr, 520), (DeskLang.En, 680) })
+                {
+                    DeskLoc.Instance.SetLanguage(l);
+                    string hq = sim.RegionName(Simulation.HQ);
+                    var d = BriefingBuilder.Build(false, null, false, true, sim);
+                    Assert.AreEqual(Loc.F("SIĞINAK 07 KOMUTANI · {0}", DeskText.Upper(hq)), d.To, l.ToString());
+                    StringAssert.Contains(hq, d.Paragraphs[1], l.ToString());
+                    StringAssert.DoesNotContain(GameData.Region(Simulation.HQ).Name, string.Join(" ", d.Paragraphs) + d.To, l + ": dünya adı yok");
+                    int longest = pool.Max(n => n.Length);
+                    int chars = d.Paragraphs.Sum(p => p.Length) + d.Closing.Length - hq.Length + longest;
+                    Assert.LessOrEqual(chars, limit, l + ": en uzun YZ adıyla");
+
+                    var w = BriefingBuilder.Build(false, null, false, true, world);
+                    Assert.AreEqual(Loc.F("SIĞINAK 07 KOMUTANI · {0}", DeskText.Upper(GameData.Region(Simulation.HQ).Ai)), w.To, l.ToString());
+                    Assert.AreNotEqual(w.Paragraphs[0], d.Paragraphs[0], l + ": gerekçe yalnız üretilmiş haritada");
+                    Assert.AreEqual(BriefingBuilder.Build(false, null, false).Paragraphs[1], w.Paragraphs[1], l + ": harekâtsız belge dünya haritasınınki");
+                }
+            }
+            finally { DeskLoc.Instance.SetLanguage(lang); }
+        }
+
         [Test]
         public void Opening_Skip_FiresRemainingCuesAndLightsTheRoom()
         {

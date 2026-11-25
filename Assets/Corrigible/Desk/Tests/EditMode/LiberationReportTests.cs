@@ -14,12 +14,16 @@ namespace Corrigible.Desk.Tests
 
         static OperationReportData Build(Simulation sim) => OperationReportBuilder.Build(sim);
 
-        static void Finish(Simulation sim, string sector, RaidResult result = null)
+        /// <summary>Ekip hazır olana dek vardiya ilerler, baskın emri verilir ve oda zinciriyle bitirilir (tek kip; kadronun kaderi
+        /// <paramref name="fates"/>'te, <see cref="FacilityDeskKit.ResolveRaid(Simulation, bool, int[], System.Action{Baskin.BState})"/>).
+        /// Kartsız oyunda düşen ve çıkamayan uzman ölmez, yatar.</summary>
+        static void Finish(Simulation sim, string sector, bool success = true, int[] fates = null, System.Action<Baskin.BState> act = null)
         {
             while (!sim.S.Teams.Any(Simulation.TeamReady)) sim.Step();
-            Assert.IsTrue(sim.StartLiberationRaid(sector).Ok);
-            Assert.IsTrue(sim.ResolveRaid(result ?? new RaidResult { Success = true, Turns = 4 }).Ok);
+            FacilityDeskKit.Raid(sim, sector, success, fates, act);
         }
+
+        const int D = FacilityDeskKit.Dies;
 
         static OperationRow Row(OperationReportData report, string label) => report.Results.Single(r => r.Label == Loc.T(label));
         static OperationGain GainOf(OperationReportData report, string label) => report.Gains.Single(g => g.Label == Loc.T(label));
@@ -43,14 +47,14 @@ namespace Corrigible.Desk.Tests
             Assert.IsNull(report.Slips[0], "VARDİYA sayacına fiş asılmaz");
             Assert.AreEqual(Loc.T("GERİ ALINDI"), report.Results[0].Value);
             Assert.AreEqual(OperationTone.Retaken, report.Results[0].Tone);
-            Assert.AreEqual(Loc.F("{0}: {1}/{2} sektör KYGA'da; bölgenin özgürlüğüne {3} sektör kaldı.", Loc.T("Batı Avrupa"), 1, 3, 2), report.Sentence);
+            Assert.AreEqual(Loc.F("{0}: {1}/{2} sektör KYGA'da; bölgenin özgürlüğüne {3} sektör kaldı.", "VERITY", 1, 3, 2), report.Sentence);
         }
 
         [Test]
         public void FailedReport_HasNoRewardArea_ShowsRecoveryAndAlarmScale()
         {
             var sim = New();
-            Finish(sim, "weu_1", new RaidResult { Down = 3, Retreat = true, Turns = 6 });
+            Finish(sim, "weu_1", false, new[] { D, D, D });
             var report = Build(sim);
             Assert.IsFalse(report.Success);
             Assert.AreEqual(Loc.T("SEKTÖR İŞGAL ALTINDA"), report.Title);
@@ -71,7 +75,7 @@ namespace Corrigible.Desk.Tests
         public void LeftBehind_HasItsOwnRow_ApartFromTheFallen()
         {
             var sim = New();
-            Finish(sim, "weu_1", new RaidResult { Success = true, Down = 2, Turns = 8, Hp = { 0, 0, 3 }, Left = { 1 } });
+            Finish(sim, "weu_1", true, new[] { D, FacilityDeskKit.LeftBehind });
             var report = Build(sim);
             var types = sim.S.RaidLog.Last().LiberationReward.Squad.Select(o => Baskin.UnitTypes[o.Type].Name).ToList();
             var fallen = report.Results.Single(r => r.Label == Loc.F("Düştü: {0}", types[0]));
@@ -97,22 +101,23 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(Gain(sim.B.liberationServerFunds + sim.B.liberationCaptureFunds), GainOf(report, "FON").Value);
             Assert.AreEqual(Gain(sim.B.shelterServerMaterials), GainOf(report, "MALZEME").Value);
             Assert.IsTrue(GainOf(report, "ERZAK").Zero && GainOf(report, "KURTULAN").Zero, "sunucudan erzak ve kurtulan gelmez");
-            Assert.AreEqual(Loc.F("{0} özgür; haritadan sınırdaki bir bölgeyi seç ve yeni cepheyi aç.", Loc.T("Batı Avrupa")), report.Sentence);
+            Assert.AreEqual(Loc.F("{0} özgür; haritadan sınırdaki bir bölgeyi seç ve yeni cepheyi aç.", "VERITY"), report.Sentence);
         }
 
         [Test]
         public void FailedRaidOverAlarmThreshold_ReportsCounterattack()
         {
-            var sim = New();
+            // Anlık karşı saldırı savunma alt bayrağı kapalıyken (açıkken eşik kuşatma kurar: FacilityDefenseTextTests)
+            var sim = LegacySimulation.NewGame(731, new Balance { shelterEventsEnabled = false, startFon = 100, facilityDefenseEnabled = false });
             Finish(sim, "weu_1");
             while (!sim.S.Teams.Any(Simulation.TeamReady)) sim.Step();
             sim.S.Alarm = sim.B.liberationAlarmThreshold - 1;
-            Finish(sim, "weu_2", new RaidResult { Success = false, Turns = 6 });
+            Finish(sim, "weu_2", false);
             Assert.AreEqual(1, sim.S.Counterattacks);
             var report = Build(sim);
             Assert.AreEqual(Loc.T("EŞİK AŞILDI"), Row(report, "YZ alarmı").Value);
             var lost = Row(report, "YZ karşı saldırısı");
-            Assert.AreEqual(Loc.F("{0} · {1}", Loc.T("Batı Avrupa"), Loc.T("Teknik depo")), lost.Value);
+            Assert.AreEqual(Loc.F("{0} · {1}", "VERITY", Loc.T("Teknik depo")), lost.Value);
             Assert.AreEqual(OperationTone.Alert, lost.Tone);
             StringAssert.DoesNotContain(lost.Value, report.Sentence, "karşı saldırı satırda; cümlede tekrar edilmez");
             Assert.IsFalse(sim.LiberationSector("weu_1").Captured);
@@ -139,7 +144,7 @@ namespace Corrigible.Desk.Tests
         {
             var sim = New();
             Finish(sim, "weu_1");
-            Finish(sim, "weu_2", new RaidResult { Success = false, Collateral = 2, Down = 1, Turns = 6 });
+            Finish(sim, "weu_2", false, new[] { D }, FacilityDeskKit.Civilians(0, 2));
             foreach (var report in new[] { Build(sim), OperationReportBuilder.Build(sim, sim.S.RaidLog[0]) })
             {
                 var texts = new[] { report.Title, report.Sentence, report.ResultStamp }

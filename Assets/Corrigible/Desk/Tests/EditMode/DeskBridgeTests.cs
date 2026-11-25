@@ -23,8 +23,8 @@ namespace Corrigible.Desk.Tests
         {
             string id = sim.NextLiberationSector(sim.S.Liberation.CurrentRegion).Id;
             while (!sim.S.Teams.Any(Simulation.TeamReady)) sim.Step();
-            Assert.IsTrue(sim.StartLiberationRaid(id).Ok, id);
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true, Turns = 4 }).Ok, id);
+            // Tek kip: oda zinciriyle kazanılır; ayakta sivil bırakmaz (güven yalnız bölge ve kırılan sivillerle değişir)
+            FacilityDeskKit.Raid(sim, id, true, null, FacilityDeskKit.Civilians(0));
         }
 
         static T[] All<T>(Scene scene) where T : Component => scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<T>(true)).ToArray();
@@ -62,8 +62,8 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(new Vector2(over.Shifts, 0), over.Points.Last(), "ve son vardiyada işgalsiz biter");
             Assert.LessOrEqual(over.Moments.Count, FinalReportBuilder.MaxMoments);
             var first = sim.S.RaidLog.First(l => l.Success && l.LiberationReward?.RegionCompleted == true);
-            Assert.AreEqual(Loc.F("{0} özgür, ilk bölge", Loc.T(GameData.Region(first.Region).Name)), over.Moments[0].Text, "ilk an ilk özgür bölge");
-            Assert.AreEqual(Loc.F("{0} özgür, son sunucu düştü", Loc.T(GameData.Region(sim.S.RaidLog.Last().Region).Name)), over.Moments.Last().Text);
+            Assert.AreEqual(Loc.F("{0} özgür, ilk bölge", GameData.Region(first.Region).Ai), over.Moments[0].Text, "ilk an ilk özgür bölge");
+            Assert.AreEqual(Loc.F("{0} özgür, son sunucu düştü", GameData.Region(sim.S.RaidLog.Last().Region).Ai), over.Moments.Last().Text);
             Assert.IsFalse(over.Moments.Any(m => m.Alert), "kazanınca kırmızı an yok");
             CollectionAssert.AreEqual(Enumerable.Range(1, over.Moments.Count), over.Moments.Select(m => m.Number));
             Assert.AreEqual(Loc.T("YENİDEN BAŞLA"), over.Action);
@@ -99,8 +99,7 @@ namespace Corrigible.Desk.Tests
             var sim = New();
             int max = sim.TrustMax, start = sim.S.Trust, per = sim.B.liberationCiviliansPerTrust;
             Assert.Greater(max, start, "Güven tavanı başlangıçtan yüksek.");
-            Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true, Collateral = 3, Turns = 4, CiviliansLeft = per }).Ok);
+            FacilityDeskKit.Raid(sim, "weu_1", true, null, FacilityDeskKit.Civilians(per, 3));
             var report = OperationReportBuilder.Build(sim);
             var line = report.Results.Single(l => l.Label == Loc.T("Sivil güven"));
             Assert.AreEqual(OperationTone.Plain, line.Tone, "eksi mürekkep (S5 kuralı)");
@@ -109,8 +108,7 @@ namespace Corrigible.Desk.Tests
             StringAssert.DoesNotContain(Loc.T("Sivil güven"), report.Sentence, "güven yüksekken uyarı yok");
 
             while (!sim.S.Teams.Any(Simulation.TeamReady)) sim.Step();
-            Assert.IsTrue(sim.StartLiberationRaid("weu_2").Ok);
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = false, Collateral = sim.S.Trust - 1, Turns = 6 }).Ok);
+            FacilityDeskKit.Raid(sim, "weu_2", false, null, FacilityDeskKit.Civilians(0, sim.S.Trust - 1));
             StringAssert.StartsWith($"Sivil güven 1/{max}.", OperationReportBuilder.Build(sim).Sentence, "güven azalınca rapor uyarır");
         }
 
@@ -118,8 +116,7 @@ namespace Corrigible.Desk.Tests
         public void FinalReport_WhenTrustRunsOut_LostStampWithDisbandingReason()
         {
             var sim = New();
-            Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = false, Collateral = sim.B.liberationTrustStart, Turns = 6 }).Ok);
+            FacilityDeskKit.Raid(sim, "weu_1", false, null, FacilityDeskKit.Civilians(0, sim.B.liberationTrustStart));
             Assert.AreEqual("dagilma", sim.S.Ending);
             var over = Build(sim).FinalReport;
             Assert.IsNotNull(over);
@@ -215,7 +212,7 @@ namespace Corrigible.Desk.Tests
             sim.Step();
             Assert.AreEqual("dagilma", sim.S.Ending);
             var moments = Build(sim).FinalReport.Moments;
-            Assert.AreEqual(1, moments.Count(m => m.Text == Loc.F("YZ karşı saldırısı: {0} {1:00} yeniden işgal", Loc.T("Batı Avrupa"), 1)),
+            Assert.AreEqual(1, moments.Count(m => m.Text == Loc.F("YZ karşı saldırısı: {0} {1:00} yeniden işgal", "VERITY", 1)),
                 string.Join(" | ", moments.Select(m => m.Text)));
             // An Türkçe yazıldı; dil değişince de sektör tanınır
             var lang = DeskLoc.Instance.Lang;
@@ -223,7 +220,7 @@ namespace Corrigible.Desk.Tests
             {
                 DeskLoc.Instance.SetLanguage(DeskLang.En);
                 moments = Build(sim).FinalReport.Moments;
-                Assert.AreEqual(1, moments.Count(m => m.Text == Loc.F("YZ karşı saldırısı: {0} {1:00} yeniden işgal", Loc.T("Batı Avrupa"), 1)),
+                Assert.AreEqual(1, moments.Count(m => m.Text == Loc.F("YZ karşı saldırısı: {0} {1:00} yeniden işgal", "VERITY", 1)),
                     string.Join(" | ", moments.Select(m => m.Text)));
             }
             finally { DeskLoc.Instance.SetLanguage(lang); }
@@ -295,7 +292,7 @@ namespace Corrigible.Desk.Tests
                 Assert.AreEqual(560, sheet.sizeDelta.x, 0.5f);
                 Assert.IsFalse(view.gameObject.activeSelf, "rapor yalnız baskından dönünce açılır");
                 var op = All<SiginakOperation>(scene).Single();
-                foreach (string field in new[] { "game", "surface", "desk", "rig", "map", "counters", "report", "tray", "launcher" })
+                foreach (string field in new[] { "game", "surface", "desk", "rig", "map", "counters", "report", "tray", "launcher", "telex" })
                     Assert.IsNotNull(Ref(op, field), field);
                 Assert.AreSame(op, Ref(All<SiginakDesk>(scene).Single(), "operation"), "sayaçlar rapor inene kadar bekler");
                 Assert.AreSame(op, Ref(All<SiginakTutorial>(scene).Single(), "operation"));
@@ -370,9 +367,20 @@ namespace Corrigible.Desk.Tests
                 for (bool enter = true; it.NextVisible(enter); enter = false)
                     if (it.propertyType == SerializedPropertyType.ObjectReference && it.name != "m_Script")
                         Assert.IsNotNull(it.objectReferenceValue, "fiş alanı bağlı değil: " + it.propertyPath);
-                Assert.AreEqual(4, so.FindProperty("fields").arraySize, "SAHA: bölge, olay, imza, tehdit");
+                // Tesis aşama 9 (K30): beşinci satır KAZANIM (yalnız tesis kipinde ve kazanım varken açılır). Aşama 10 (K37): ÖNLEM ya boş
+                // yuvaya ya da KAZANIM'la tek satıra iner (altıncı satırla fiş 1080'de taşar): yuva sayısı değişmez
+                Assert.AreEqual(5, so.FindProperty("fields").arraySize, "SAHA: bölge, olay, imza, tehdit, kazanım/önlem");
                 Assert.AreEqual(6, so.FindProperty("rewards").arraySize, "R6: fon, erzak ve dört hammadde");
                 Assert.AreEqual(4, so.FindProperty("tierGlyphs").arraySize);
+                // Tesis aşama 11 (§8.8 satır 1): BIRAK asıl düğmenin altında, actionBlock içinde; kapalı kaydedilir (kuşatma kipi açar)
+                var main = (UnityEngine.UI.Button)so.FindProperty("action").objectReferenceValue;
+                var yieldButton = (UnityEngine.UI.Button)so.FindProperty("yieldAction").objectReferenceValue;
+                Assert.AreSame(main.transform.parent, yieldButton.transform.parent, "BIRAK actionBlock içinde");
+                Assert.AreEqual(main.transform.GetSiblingIndex() + 1, yieldButton.transform.GetSiblingIndex(), "BIRAK asıl düğmenin hemen altında");
+                Assert.IsFalse(yieldButton.gameObject.activeSelf, "kuşatmasız fiş: tek düğme");
+                Assert.IsTrue(((Component)so.FindProperty("yieldLabel").objectReferenceValue).transform.IsChildOf(yieldButton.transform));
+                Assert.IsTrue(((Component)so.FindProperty("yieldFill").objectReferenceValue).transform.IsChildOf(yieldButton.transform));
+                Assert.AreSame(yieldButton.gameObject, ((Component)so.FindProperty("yieldHover").objectReferenceValue).gameObject);
                 foreach (var h in slip.GetComponentsInChildren<UiHoverTarget>(true))
                     Assert.IsNotNull(new SerializedObject(h).FindProperty("hoverTag").objectReferenceValue, h.name);
                 var launcher = All<Corrigible.Game.Raid.RaidLauncher>(scene).Single();

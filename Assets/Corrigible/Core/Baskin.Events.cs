@@ -32,6 +32,10 @@ namespace Corrigible.Core
                 ["suzgec"] = (Loc.N("Süzgeç emmesi"), Loc.N("3. ve 6. tur sonunda süzgeç dört yanındakileri içeri çeker; süzgeçte biri varsa çarpışırlar ve ikisi de 1 hasar alır."), Loc.N("EMME")),
                 ["tup"] = (Loc.N("Basınçlı tüp rafı"), Loc.N("Vurulan tüp ıslık çalar ve bir tur sonra çizili hattında uçar: hattaki ilk birime 1 hasar verir ve onu iter."), Loc.N("TÜP")),
                 ["yag"] = (Loc.N("Hidrolik yağ sızıntısı"), Loc.N("2. tur sonunda hortum patlar: yağdaki birim itilince, çekilince ya da vurulunca yağ bitene kadar kayar; çarpışma 1 hasar."), Loc.N("YAĞ")),
+                // Tesis aşama 12: iki tesis şartı (FacilityMaps.EventFor; yalnız tesis planından ve tesis emrinden gelir, örnek tahtada yok).
+                // Kurallar Baskin.Conditions.cs'te
+                ["katar"] = (Loc.N("Katar"), Loc.N("Vagonların kuzey ve güney kenarı açık: dışarı itilen düşer; makine yok olur, ekip üyesi yaralı döner. Dönüşte bağlantıya yakın makineler sonraki vagona geçer; Teknisyen vagonu ayırabilir."), Loc.N("KATAR")),
+                ["yalpa"] = (Loc.N("Yalpa"), Loc.N("Zemin 2., 4. ve 6. tur sonunda batıya, doğuya, batıya yatar; sabitlenmemiş her şey 1 kare kayar, engele çarpan 1 hasar alır."), Loc.N("YALPA")),
             };
 
         /// <summary>Fitil ya da tüp: kare, tüpün uçuş yönü (<see cref="Dirs"/>) ve işleyeceği tur (0: tetiklenmedi).</summary>
@@ -90,12 +94,15 @@ namespace Corrigible.Core
         static bool InCloud(BState B, int x, int y) => B.Ev != null && B.Ev.Id == "bulut" && Inb(x, y) && CellAt(B, x, y).Cloud;
 
         /// <summary>Çıkışlardan yürüyüş uzaklığı (duvar ve nesne geçilmez, birimler sayılmaz; ulaşılamayan −1).</summary>
-        static int[,] ExitSteps(BState B, HashSet<int> blocked = null)
+        static int[,] ExitSteps(BState B, HashSet<int> blocked = null) => StepsFrom(B, B.Exits, blocked);
+
+        /// <summary><see cref="ExitSteps"/>'in kaynak listesi alan hâli (aşama 12: Katar'ın takipçileri doğu geçidinden yerleşir).</summary>
+        static int[,] StepsFrom(BState B, IEnumerable<Pt> seeds, HashSet<int> blocked = null)
         {
             var dist = new int[N, N];
             for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) dist[y, x] = -1;
             var q = new Queue<Pt>();
-            foreach (var e in B.Exits) if (Passable(B, e.X, e.Y) && dist[e.Y, e.X] < 0) { dist[e.Y, e.X] = 0; q.Enqueue(e); }
+            foreach (var e in seeds) if (Passable(B, e.X, e.Y) && dist[e.Y, e.X] < 0) { dist[e.Y, e.X] = 0; q.Enqueue(e); }
             while (q.Count > 0)
             {
                 var p = q.Dequeue();
@@ -222,7 +229,8 @@ namespace Corrigible.Core
         /// yağdan kabloya kayan 1 hasar alır.</summary>
         static void Slide(BState B, Unit u, int[] d)
         {
-            if (!Is(B, "yag")) return;
+            // Tesis aşama 10: cıvatalı ayaklı makine yağda kaymaz
+            if (!Is(B, "yag") || Bolted(B, u)) return;
             for (int step = 0; step < N && !u.Dead && CellAt(B, u.X, u.Y).Oil; step++)
             {
                 int nx = u.X + d[0], ny = u.Y + d[1];
@@ -423,10 +431,18 @@ namespace Corrigible.Core
                 case "suzgec": ok = SetupDrain(B, tg); break;
                 case "tup": ok = SetupTubes(B, tg); break;
                 case "yag": ok = SetupOil(B, tg); break;
+                // Aşama 12: kenar geometriden, yatış takvimden gelir; kurulum çekimsiz ve hep tutar (parça yok)
+                case "katar": case "yalpa": ok = true; break;
                 default: ok = false; break;
             }
             if (!ok) { B.Ev = null; return; }
-            var def = RegionEvents[p.Event];
+            SayEvent(B, p.Event);
+        }
+
+        /// <summary>Olayın saha raporu telsize düşer (tesis odası da kurulumda yazar: metin oynandığı anın dilinde).</summary>
+        static void SayEvent(BState B, string id)
+        {
+            var def = RegionEvents[id];
             Say(B, Loc.F("Saha raporu · {0}: {1}", Loc.T(def.Name), Loc.T(def.Desc)), "sys");
         }
 
@@ -445,7 +461,7 @@ namespace Corrigible.Core
             for (int tier = 0; tier < 3; tier++)
             {
                 int minExit = tier == 0 ? 3 : 2, minSize = tier == 0 ? 4 : tier == 1 ? 3 : 2, lo = tier == 0 ? 2 : 1, hi = tier == 0 ? 5 : 6;
-                bool Fits(Pt n, List<Pt> a) => n.X >= lo && n.X <= hi && Passable(B, n.X, n.Y) && a.Count >= minSize && a.All(t => ExitDist(B, t.X, t.Y) >= minExit);
+                bool Fits(Pt n, List<Pt> a) => CanonX(B, n) >= lo && CanonX(B, n) <= hi && Passable(B, n.X, n.Y) && a.Count >= minSize && a.All(t => ExitDist(B, t.X, t.Y) >= minExit);
                 double Score(Pt n, List<Pt> a) => a.Count * 10 - 0.1 * (Math.Abs(2 * n.X - 7) + Math.Abs(2 * n.Y - 7));
                 Pt? bn = null; List<Pt> ba = null; double bs = double.NegativeInfinity;
                 foreach (var n in AllTiles())
@@ -489,7 +505,7 @@ namespace Corrigible.Core
                         var rail = Enumerable.Range(0, len).Select(i => new Pt(s.X + (vert ? 0 : i), s.Y + (vert ? i : 0))).ToList();
                         if (!rail.All(t => Inb(t.X, t.Y) && CellAt(B, t.X, t.Y).T == "floor"
                             && CellAt(B, t.X, t.Y).O == null && UnitAt(B, t.X, t.Y) == null
-                            && t.X >= (tier == 0 ? 2 : 1) && t.X <= (tier < 2 ? 6 : 7) && ExitDist(B, t.X, t.Y) >= 2 && Dist(t, tg) > 1)) continue;
+                            && CanonX(B, t) >= (tier == 0 ? 2 : 1) && CanonX(B, t) <= (tier < 2 ? 6 : 7) && ExitDist(B, t.X, t.Y) >= 2 && Dist(t, tg) > 1)) continue;
                         if (!ShelfSafe(B, rail, 0, before) || !ShelfSafe(B, rail, len - 1, before)) continue;
                         // Ray hedefin satırını (sütununu) keser ve giriş ile hedefin ortasına yakın durur
                         double mid = vert ? (ex + tg.X) / 2.0 : (ey + tg.Y) / 2.0;
@@ -577,7 +593,7 @@ namespace Corrigible.Core
                 bool Ok(Pt t) => CellAt(B, t.X, t.Y).T == "floor" && CellAt(B, t.X, t.Y).O == null && UnitAt(B, t.X, t.Y) == null
                     && ExitDist(B, t.X, t.Y) >= 2 && Dist(t, tg) > 1 && !spawn.Contains(Key(t)) && (tier == 2 || !path.Contains(Key(t)));
                 var broken = AllTiles().Where(t => rows != null && rows[t.Y][t.X] == '#' && Ok(t));
-                var near = AllTiles().Where(t => Ok(t) && t.X >= 2 && t.X <= 6
+                var near = AllTiles().Where(t => Ok(t) && CanonX(B, t) >= 2 && CanonX(B, t) <= 6
                     && (tier > 0 || Dirs.Any(d => Inb(t.X + d[0], t.Y + d[1]) && CellAt(B, t.X + d[0], t.Y + d[1]).T == "wall"))).OrderBy(t => Dist(t, tg));
                 var pick = new List<Pt>();
                 foreach (var t in broken.Concat(near))
@@ -613,7 +629,7 @@ namespace Corrigible.Core
             foreach (var t in AllTiles())
             {
                 if (!Stop(t) || Dist(t, b.Value) < 3) continue;
-                double s = (spawn.Contains(Key(t)) ? 10 : 0) + (t.X >= 4 ? 5 : 0) + 0.5 * Dist(t, b.Value) + (UnitAt(B, t.X, t.Y) == null ? 1 : 0);
+                double s = (spawn.Contains(Key(t)) ? 10 : 0) + (CanonX(B, t) >= 4 ? 5 : 0) + 0.5 * Dist(t, b.Value) + (UnitAt(B, t.X, t.Y) == null ? 1 : 0);
                 if (s > bs) { bs = s; a = t; }
             }
             if (a == null) return false;
@@ -634,7 +650,7 @@ namespace Corrigible.Core
                         if (s.X + w > N || s.Y + h > N) continue;
                         var rect = new List<Pt>();
                         for (int y = s.Y; y < s.Y + h; y++) for (int x = s.X; x < s.X + w; x++) rect.Add(new Pt(x, y));
-                        if (tier == 0 && rect.Any(t => t.X < 2 || t.X > 6) || tier == 1 && rect.Any(t => t.X < 1)) continue;
+                        if (tier == 0 && rect.Any(t => CanonX(B, t) < 2 || CanonX(B, t) > 6) || tier == 1 && rect.Any(t => CanonX(B, t) < 1)) continue;
                         if (rect.Any(t => Same(t, tg))) continue;
                         var zone = rect.Where(t => Passable(B, t.X, t.Y)).ToList();
                         if (zone.Count < (tier == 0 ? 4 : tier == 1 ? 3 : 2) || zone.Any(t => ExitDist(B, t.X, t.Y) < (tier == 0 ? 3 : 2))) continue;
@@ -764,7 +780,7 @@ namespace Corrigible.Core
                 {
                     var c = CellAt(B, t.X, t.Y);
                     int dt = Dist(t, tg);
-                    if (c.T != "floor" || c.O != null || t.X < lo || t.X > hi || ExitDist(B, t.X, t.Y) < (tier == 0 ? 3 : 2) || dt < 2 || dt > (tier < 2 ? 2 : 4)) continue;
+                    if (c.T != "floor" || c.O != null || CanonX(B, t) < lo || CanonX(B, t) > hi || ExitDist(B, t.X, t.Y) < (tier == 0 ? 3 : 2) || dt < 2 || dt > (tier < 2 ? 2 : 4)) continue;
                     var sides = Dirs.Select(d => new Pt(t.X + d[0], t.Y + d[1])).Where(p => Passable(B, p.X, p.Y)).ToList();
                     if (sides.Count < 2 || tier < 2 && !sides.Any(p => Dist(p, tg) == 1)) continue;
                     int sd = spawn.Count == 0 ? 2 * N : spawn.Min(k => Man(k % N, k / N, t.X, t.Y));
@@ -791,7 +807,7 @@ namespace Corrigible.Core
                 foreach (var t in AllTiles())
                 {
                     var c = CellAt(B, t.X, t.Y);
-                    if (c.T != "floor" || c.O != null || UnitAt(B, t.X, t.Y) != null || ExitDist(B, t.X, t.Y) < 2 || tier < 2 && (t.X < 2 || t.X > 6)) continue;
+                    if (c.T != "floor" || c.O != null || UnitAt(B, t.X, t.Y) != null || ExitDist(B, t.X, t.Y) < 2 || tier < 2 && (CanonX(B, t) < 2 || CanonX(B, t) > 6)) continue;
                     if (Dirs.Any(d => Inb(t.X + d[0], t.Y + d[1]) && CellAt(B, t.X + d[0], t.Y + d[1]).O is Obj o && (IsTarget(o.K) || o.K == "civ"))) continue;
                     Fuse bestF = null; int bestLen = 0;
                     for (int i = 0; i < 4; i++)
@@ -839,7 +855,7 @@ namespace Corrigible.Core
                 int maxLen = tier == 0 ? 5 : tier == 1 ? 4 : 3, minLen = tier == 0 ? 4 : tier == 1 ? 3 : 2;
                 foreach (var s in AllTiles())
                 {
-                    if (tier < 2 && (s.X < 3 || s.X > 5)) continue;
+                    if (tier < 2 && (CanonX(B, s) < 3 || CanonX(B, s) > 5)) continue;
                     for (int i = 0; i < 4; i++)
                         for (int len = maxLen; len >= minLen; len--)
                         {
@@ -884,6 +900,8 @@ namespace Corrigible.Core
                 case "suzgec": EndDrain(B, t); break;
                 case "tup": EndTubes(B, t); break;
                 case "yag": EndOil(B, t); break;
+                // Aşama 12: Katar'ın adımı yok (kenar her itmede); Yalpa'nın yatışı
+                case "yalpa": EndTilt(B, t); break;
             }
             B.InEvent = was;
             B.Ev.Hurt.Clear();
@@ -1067,7 +1085,8 @@ namespace Corrigible.Core
             foreach (var p in B.Ev.Area)
             {
                 var u = UnitAt(B, p.X, p.Y);
-                if (u == null) continue;
+                // Aşama 8: donma aygıta işlemez
+                if (u == null || IsGadget(u)) continue;
                 u.Frozen = true; u.Ice = 1; any = true;
                 AddFx(B, new Fx { K = "ev", Obj = "buz", X = p.X, Y = p.Y, Unit = u.Id });
             }
@@ -1234,6 +1253,8 @@ namespace Corrigible.Core
                     foreach (var f in ev.Fuses) if (f.Due != 0 && f.Due <= t && TubeLine(B, f).Any(a => Same(a, pos))) return -3;
                     return 0;
                 case "yag": return c.Oil ? -0.5 : 0;
+                // Aşama 12 (K26): yatış turunda yokuş aşağı komşusu kapalı (duvar, nesne, tahta kenarı) aday çarpar (yağ emsali)
+                case "yalpa": return TiltAt(B, t) && TiltBlocked(B, pos, TiltDir(t)) ? -0.5 : 0;
             }
             return 0;
         }
@@ -1267,7 +1288,9 @@ namespace Corrigible.Core
             if (ev.Id != "yag" && t + 1 >= B.MaxTurns) return 0;
             var tiles = AimTiles(B, e, kind, dir, px, py, out var it);
             if (tiles == null) return 0;
-            double V(Unit v, double team, double machine) => v == null || v.Id == e.Id ? 0 : v.Side == 'p' ? team : machine;
+            // Aşama 10 (olay nişanı): ekip değeri makine aklının ekip yüklemiyle (uzman; tesiste yem ve erimde havlayan köpek). Aygıt,
+            // susan köpek ve tutsak hedef değildir (0); örnek tahtada yüklem Side == 'p' ile aynı.
+            double V(Unit v, double team, double machine) => v == null || v.Id == e.Id ? 0 : TeamLike(B, e, v) ? team : v.Side == 'p' ? 0 : machine;
             switch (ev.Id)
             {
                 case "raf":
@@ -1309,11 +1332,15 @@ namespace Corrigible.Core
                 {
                     if (kind == "blast" || kind == "lock") return 0;
                     var v = UnitAt(B, it.X, it.Y);
-                    return v != null && v.Side == 'p' && CellAt(B, v.X, v.Y).Oil && SlideCrashes(B, v, Dirs[dir]) ? 2 : 0;
+                    // Kaydırıp çarptırmak yalnız uzmana değer (aşama 10 olay nişanı)
+                    return v != null && IsSpecialist(v) && CellAt(B, v.X, v.Y).Oil && SlideCrashes(B, v, Dirs[dir]) ? 2 : 0;
                 }
             }
             return 0;
         }
+
+        /// <summary>Yalnız testler: makinenin kendi karesinden verdiği niyetin olay puanı (boş planlama kaydıyla).</summary>
+        internal static double TestEventAim(BState B, Unit e, string kind, int dir) => EventAim(B, e, kind, dir, e.X, e.Y, new EventClaims());
 
         /// <summary>Seçilen niyetin olay tetiklerini planlama turunun kaydına yazar.</summary>
         static void Claim(BState B, Unit e, string kind, int dir, EventClaims claims)
@@ -1347,13 +1374,16 @@ namespace Corrigible.Core
         /// <summary>
         /// Kare işareti. Kind sunumun katmanı: cloud, cloud_next, nozzle; rail, rail_gap, rail_close, rail_open; gas, gas_next,
         /// gas_lit, leak; crack, crack_due; stop, stop_cab, ghost (Unit: varacak birim); freeze, freeze_next; hol; weld, weld_next;
-        /// live, dead; drain, drain_next; tube_hot; oil, oil_next, hose. Label: kısa etiket (çoğu işarette null).
+        /// live, dead; drain, drain_next; tube_hot; oil, oil_next, hose; aşama 12: tilt, tilt_next (Yalpa; yokuş aşağı kenarın orta karesi,
+        /// "YALPA {n}" etiketinin taşıyıcısı). Label: kısa etiket (çoğu işarette null).
         /// </summary>
         public sealed class HazardMark { public int X, Y, Unit; public string Kind, Label; }
         /// <summary>Turnike kenarı: (X, Y) holün içi, (X2, Y2) dışı. Kind: in (yalnız içeri), out (yalnız dışarı), both. Soon: bu tur
-        /// sonunda döner.</summary>
+        /// sonunda döner. Aşama 12: brink (Katar'ın açık kenarı; (X2, Y2) tahta dışı komşu), tilt (Yalpa, bu tur sonunda yatışın yokuş aşağı
+        /// kenarı), tilt_next (bir tur sonraki yatışın kenarı).</summary>
         public sealed class HazardEdge { public int X, Y, X2, Y2; public string Kind; public bool Soon; }
-        /// <summary>Hat: tüpün uçuş hattı (tube; ıslık çalan tube_hot), süzgecin çekişi (pull; Hit: süzgeçte biri var, çarpışır).</summary>
+        /// <summary>Hat: tüpün uçuş hattı (tube; ıslık çalan tube_hot), süzgecin çekişi (pull; Hit: süzgeçte biri var, çarpışır). Aşama 12:
+        /// Yalpa'nın kayması (slide; (X2, Y2) kaymanın yönündeki kare, Hit: çarpar ve 1 hasar alır, kaymaz; <see cref="Slides"/>).</summary>
         public sealed class HazardLine { public int X, Y, X2, Y2; public string Kind; public bool Hit; }
         /// <summary>Birim uyarısı: bu turun evre sonunda olayın birime yapacağı (Damage: hasar; birim düşecekse Down).</summary>
         public sealed class HazardWarn { public int Unit, Damage; public bool Down; public string Text; }
@@ -1406,6 +1436,9 @@ namespace Corrigible.Core
         public static HazardView Hazards(BState B)
         {
             var hv = new HazardView();
+            if (B.Signature == "kirag" || B.Units.Any(u => u.Type == "kirag"))
+                foreach (var p in AllTiles().Where(p => Frosted(B, p.X, p.Y)))
+                    hv.Marks.Add(new HazardMark { X = p.X, Y = p.Y, Kind = "frost" });
             if (B.Ev == null) return hv;
             var def = RegionEvents[B.Ev.Id];
             hv.Event = B.Ev.Id;
@@ -1556,6 +1589,31 @@ namespace Corrigible.Core
                         Mark(ev.P, "hose", t <= 2 ? Loc.F("HORTUM {0}", In(2)) : null);
                     }
                     break;
+                // Aşama 12: Katar'ın açık kenarı (kuzey ve güney satırının duvar olmayan kareleri, tahta dışı komşusuyla). İşaret değil
+                // kenar: bilinmeyen işaret türü sunumda kesik çerçeveye düşer
+                case "katar":
+                    foreach (var p in AllTiles())
+                    {
+                        if (!IsOpenEdge(pre, p.X, p.Y) || CellAt(pre, p.X, p.Y).T == "wall") continue;
+                        hv.Edges.Add(new HazardEdge { X = p.X, Y = p.Y, X2 = p.X, Y2 = p.Y == 0 ? -1 : N, Kind = "brink" });
+                    }
+                    break;
+                // Aşama 12: Yalpa. Yatış turunda kayma hatları (kopyada uygulanan kuralın farkı; şimdiki yerlerden), yokuş aşağı kenarın
+                // okları ve etiket "YALPA 1"; önceki turda soluk oklar ve "YALPA 2". Etiket kenarın orta karesindeki işarette
+                case "yalpa":
+                {
+                    bool now = step && TiltAt(pre, t), soon = step && !now && TiltAt(pre, t + 1);
+                    if (now) hv.Lines.AddRange(Slides(B));
+                    if (now || soon)
+                    {
+                        int dir = TiltDir(now ? t : t + 1), x = dir < 0 ? 0 : N - 1;
+                        string kind = now ? "tilt" : "tilt_next";
+                        var col = Enumerable.Range(0, N).Where(y => CellAt(pre, x, y).T != "wall").ToList();
+                        foreach (int y in col) hv.Edges.Add(new HazardEdge { X = x, Y = y, X2 = x + dir, Y2 = y, Kind = kind });
+                        if (col.Count > 0) Mark(new Pt(x, col.OrderBy(y => Math.Abs(2 * y - (N - 1))).ThenBy(y => y).First()), kind, Loc.F("YALPA {0}", now ? 1 : 2));
+                    }
+                    break;
+                }
             }
             hv.Turns = new string[B.MaxTurns + 1];
             for (int i = Math.Max(1, t); i <= B.MaxTurns; i++) hv.Turns[i] = Upcoming(pre, i);
@@ -1598,6 +1656,9 @@ namespace Corrigible.Core
                 case "suzgec": return DrainAt(i) ? Loc.T("EMME") : null;
                 case "tup": return ev.Fuses.Any(f => f.Due == i) ? Loc.T("TÜP") : null;
                 case "yag": return i == 2 && !ev.Stop ? Loc.T("HORTUM") : null;
+                // Aşama 12: Yalpa'nın şerit çipi yatışın yönüdür (K47); Katar'ın takvimi yok
+                case "yalpa": return TiltAt(B, i) ? (TiltDir(i) < 0 ? "←" : "→") : null;
+                case "katar": return null;
             }
             return null;
         }

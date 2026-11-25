@@ -353,7 +353,7 @@ namespace Corrigible.Desk.Tests
             var traitKeys = ((JObject)root["regionTraits"]).Properties().Where(p => p.Value is JObject).Select(p => p.Name);
             CollectionAssert.AreEquivalent(traitKeys, SiginakGlyphs.Traits.Select(r => r.TokenKey), "regionTraits anahtarları");
             var machineKeys = ((JObject)root["machineTypes"]["glyph"]).Properties().Where(p => !p.Name.StartsWith("_")).Select(p => p.Name);
-            CollectionAssert.AreEquivalent(machineKeys, SiginakGlyphs.Machines.Select(r => r.TokenKey), "machineTypes.glyph anahtarları");
+            CollectionAssert.AreEquivalent(machineKeys, SiginakGlyphs.Machines.Select(r => r.TokenKey).Distinct(), "machineTypes.glyph anahtarları");
 
             foreach (var r in SiginakGlyphs.Traits)
                 Assert.AreEqual((string)root["regionTraits"][r.TokenKey]["glyph"], r.Sprite, r.Id);

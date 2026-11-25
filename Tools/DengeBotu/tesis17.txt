@@ -1,0 +1,24 @@
+# Aşama 17. Her etikette RETIRE=1 REPLAY=1 PICK=rastgele DEV=kir ODUL=tarif ARAC=donus SAVUN=hep CEKIL=hic DUSEN=hep AYIR=hep KENAR=hic.
+# Tek kip (kayıt 21): sahadaki sızmacının varsayılanı açık; saha kapalı ölçülen etiketler ;infiltratorFieldEnabled=false ile kapatır.
+# Yorumdaki @ satırı o etiket için ortam değişikliklerini belirtir; kos.sh ile tek etiket çalıştırırken bunları ortamda ver.
+# §11.6'daki t17k3 ve t0g4kontrol bu listede yok: depodan yinelenemeyen tek seferlik deney koşularıdır. git dışı
+# Library/Calisma/asama17/k3.py t17g5'in (tek tahta; tek kipte, kayıt 21, listeden çıktı) işlerini t0g4kontrol için arşiv exe'si Library/Calisma/asama13/exe_once/camp8.exe ile,
+# t17k3 için bu exe'nin K3.cs ile yamalanmış deney kopyası Library/Calisma/asama17/k3/camp8.exe ile koştu (README "Aşama 17 ölçümünü yinelemek").
+# @t17
+t17|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+# @t17tek ARAC=tek
+t17tek|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+# @t17hazirsiz DEV=hic
+t17hazirsiz|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+# @t17hep DEV=hep
+t17hep|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+# @t17kazanim ODUL=kazanim
+t17kazanim|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+# @t17birak SAVUN=hic
+t17birak|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+# @t17cekil CEKIL=hep
+t17cekil|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+# @t17dusen DUSEN=hic
+t17dusen|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+# @t17saha
+t17saha|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=true|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80

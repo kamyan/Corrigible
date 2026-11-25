@@ -118,6 +118,50 @@ namespace Corrigible.Game.Raid
             mesh.RecalculateBounds();
         }
 
+        /// <summary>
+        /// Kırık çizgi (yürüyüş yolu; 2026-11-24): noktalar boyunca tek parça, iç köşeler dolu (her parça iç uçlarda yarım kalınlık
+        /// uzar: dik dönüşte köşe kare kapanır), uç yalnız sonda. Noktalar dünya uzayında; ikiden azsa mesh boşalır.
+        /// </summary>
+        public void SetPath(System.Collections.Generic.IList<Vector3> points, Color color, float width, float headLength)
+        {
+            EnsureMesh();
+            mesh.Clear();
+            if (points == null || points.Count < 2) return;
+            width = Mathf.Max(0.001f, width);
+            var verts = new System.Collections.Generic.List<Vector3>();
+            var cols = new System.Collections.Generic.List<Color>();
+            var tris = new System.Collections.Generic.List<int>();
+            int last = points.Count - 1;
+            var lastDir = (points[last] - points[last - 1]);
+            float lastLen = lastDir.magnitude;
+            if (lastLen < 0.01f) return;
+            lastDir /= lastLen;
+            float head = Mathf.Min(headLength > 0 ? headLength : width * 4.6f, lastLen * 0.6f);
+            for (int i = 1; i <= last; i++)
+            {
+                var a = points[i - 1]; var b = points[i];
+                var dir = b - a; float len = dir.magnitude;
+                if (len < 0.001f) continue;
+                dir /= len;
+                if (i > 1) a -= dir * (width / 2);
+                if (i < last) b += dir * (width / 2); else b -= dir * head;
+                var side = Vector3.Cross(Vector3.up, dir).normalized * (width / 2);
+                int s = verts.Count;
+                verts.Add(transform.InverseTransformPoint(a - side)); verts.Add(transform.InverseTransformPoint(a + side));
+                verts.Add(transform.InverseTransformPoint(b + side)); verts.Add(transform.InverseTransformPoint(b - side));
+                for (int k = 0; k < 4; k++) cols.Add(color);
+                tris.AddRange(new[] { s, s + 1, s + 2, s, s + 2, s + 3 });
+            }
+            var end = points[last]; var shaftEnd = end - lastDir * head;
+            var hs = Vector3.Cross(Vector3.up, lastDir).normalized * Mathf.Max(width * 1.2f, head * 0.42f);
+            int h = verts.Count;
+            verts.Add(transform.InverseTransformPoint(shaftEnd - hs)); verts.Add(transform.InverseTransformPoint(shaftEnd + hs)); verts.Add(transform.InverseTransformPoint(end));
+            cols.Add(color); cols.Add(color); cols.Add(color);
+            tris.AddRange(new[] { h, h + 1, h + 2 });
+            mesh.SetVertices(verts); mesh.SetColors(cols); mesh.SetTriangles(tris, 0);
+            mesh.RecalculateBounds();
+        }
+
         void EnsureMesh()
         {
             if (mesh != null) return;

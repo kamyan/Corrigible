@@ -22,13 +22,17 @@ namespace Corrigible.Desk
     /// (<see cref="RecipeBookView"/> açıkken açar).</item>
     /// <item>Sayfa <c>Loc</c> çağırmaz: sözcükler anlık görüntüden (<see cref="RecipeData"/>, <see cref="BookWords"/>) gelir; dil
     /// değişince sunucu yeniden bağlar. Aynı veride iş yapmaz. Kapalıyken gelen bağlama açıldıktan sonraki ilk karede uygulanır.</item>
+    /// <item>Tesis aşama 9: en çok üç girdi satırı (<see cref="InputRows"/>); kutu tarifin satır sayısı kadar uzar (iki ve daha azında
+    /// bugünkü boy). Erzak bedeli bir girdi satırı gibi (<c>icon_erzak</c>). Kapalı sayfada (<see cref="RecipeData.Locked"/>) GİRDİ ve
+    /// SÜRE çizilmez, el notu yerinde kırmızı "KAPALI · … sunucusundan" damgası; İŞ EMRİ sekmesi yok.</item>
     /// </list>
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class RecipeBookPage : MonoBehaviour
     {
         const float Eps = 0.01f;
-        public const int InputRows = 2;
+        /// <summary>En çok girdi satırı (tesis aşama 9: yem üç girdili); kutunun boyu tarifin satır sayısıyla (en az iki).</summary>
+        public const int InputRows = 3;
 
         [Tooltip("Sayfa tuvali (99 × 140 birim, ölçek 0,001). Boşsa bu nesnenin RectTransform'u.")]
         [SerializeField] RectTransform face;
@@ -184,7 +188,7 @@ namespace Corrigible.Desk
             RightPage = rightPage;
             ShowsPrev = !rightPage && showPrev;
             ShowsNext = rightPage && showNext;
-            ShowsTab = showTab && recipe != null;
+            ShowsTab = showTab && recipe != null && !recipe.Locked;
             string key = Key();
             if (laidOut && !pending && key == cachedKey) return;
             cachedKey = key;
@@ -216,9 +220,10 @@ namespace Corrigible.Desk
             var r = Recipe;
             if (r == null) return sb.Append("∅").ToString();
             sb.Append(r.Id).Append('|').Append(r.Name).Append('|').Append(r.Title).Append('|').Append(r.Number).Append('|').Append(r.SlotWord).Append('|')
-                .Append(r.OutLine).Append('|').Append(r.TurnsLine).Append('|').Append(r.Note).Append('|').Append(r.PageLabel).Append('|').Append(r.SpreadLabel);
+                .Append(r.OutLine).Append('|').Append(r.TurnsLine).Append('|').Append(r.Note).Append('|').Append(r.PageLabel).Append('|').Append(r.SpreadLabel)
+                .Append('|').Append(r.Locked ? 'K' : '-').Append(r.LockedStamp);
             foreach (var i in r.Inputs)
-                if (i != null) sb.Append('|').Append(i.Kind).Append(':').Append(i.Name).Append(':').Append(i.BookQty);
+                if (i != null) sb.Append('|').Append(i.Kind).Append(':').Append(i.Name).Append(':').Append(i.BookQty).Append(i.Supplies ? ":e" : "");
             return sb.ToString();
         }
 
@@ -246,7 +251,7 @@ namespace Corrigible.Desk
         /// <summary>Tarif kutusunun ortasının dünya pozu (dönüş tuvalinki: yazının okunduğu yüz −ileri).</summary>
         public Pose RecipeBoxPose()
         {
-            var g = (layout ?? new RecipePageMetrics()).Geometry(RightPage);
+            var g = (layout ?? new RecipePageMetrics()).Geometry(RightPage, RowsOf(Recipe));
             var rt = Face;
             return new Pose(WorldAt(g.Box.center), rt != null ? rt.rotation : transform.rotation);
         }
@@ -261,8 +266,8 @@ namespace Corrigible.Desk
             overflow.Clear();
             var m = layout ?? (layout = new RecipePageMetrics());
             var p = palette ?? (palette = new RecipePagePalette());
-            var g = m.Geometry(RightPage);
             var r = Recipe;
+            var g = m.Geometry(RightPage, RowsOf(r));
             var w = Words ?? new BookWords();
 
             bool show = r != null;
@@ -272,9 +277,13 @@ namespace Corrigible.Desk
             Overflowing = overflow.Count > 0;
         }
 
+        /// <summary>Kutunun girdi satırı sayısı (en az iki: baştan açık tariflerin boyu değişmez; kapalı sayfada iki).</summary>
+        public static int RowsOf(RecipeData r) => r == null || r.Locked ? 2 : Mathf.Clamp(r.Inputs.Count, 2, InputRows);
+
         void LayoutRecipe(RecipeData r, BookWords w, RecipePageMetrics m, RecipePagePalette p, RecipePageGeometry g)
         {
             float em(float px) => px * m.emMmPerPx;
+            bool locked = r.Locked;
 
             // ---- künye (sol ve sağ, tek satır) · ad · kırmızı çizgi
             float hl = Single(headerLeft, w.Header, em(m.headerEmPx), m.headerSpacingEm, p.label, g.ContentLeft, g.HeaderCenter, TextAlignmentOptions.BaselineLeft);
@@ -337,7 +346,8 @@ namespace Corrigible.Desk
             Label(outputLabel, outputDots, w.Output, g.OutLabelCenter, m, p, g, "ÇIKTI");
             Box(iconEdge, g.IconBox, p.secondary);
             Box(iconFill, Inset(g.IconBox, g.X(m.iconBorderPx), g.Y(m.iconBorderPx), g.X(m.iconBorderPx), g.Y(m.iconBorderPx)), p.page);
-            Picture(outputIcon, Pick(icons, Array.IndexOf(BoardLayout.KitKinds, r.Id)), g.Icon, p.secondary);
+            int kit = Array.IndexOf(BoardLayout.KitKinds, r.Id);
+            Picture(outputIcon, kit >= 0 ? Pick(icons, kit) : ItemCardFace.GearPictogram(r.Id), g.Icon, p.secondary);
 
             float cEm = em(m.countEmPx);
             Style(outCount, cEm, 0, p.ink, false);
@@ -351,15 +361,25 @@ namespace Corrigible.Desk
             Style(outName, nEm, 0, p.ink, false);
             Set(outName, r.Name);
             float nw = Width(outName, r.Name);
-            if (outName != null)
-                HandoverSlipText.PlaceLine(outName, nameX, baseline, Mathf.Max(nw, Eps), HandoverSlipText.NormalLine(outName, nEm), TextAlignmentOptions.BaselineLeft);
-            Fits("çıktı adı", nameX + nw, g.InnerRight);
+            float nLine = outName != null ? HandoverSlipText.NormalLine(outName, nEm) : nEm;
+            if (outName != null && nameX + nw > g.InnerRight + Eps)
+            {
+                // Tesis aşama 9: uzun ekipman adı ("Kumanda kelepçesi") punto küçülmeden iki satıra sarar; ilk satır bir satır yukarıda
+                HandoverSlipText.Style(outName, nEm, 0, p.ink, true, nLine);
+                Set(outName, r.Name);
+                HandoverSlipText.PlaceLine(outName, nameX, baseline - nLine, g.InnerRight - nameX, nLine, TextAlignmentOptions.BaselineLeft);
+                if (HandoverSlipText.Lines(outName) > 2) overflow.Add("çıktı adı");
+            }
+            else if (outName != null)
+                HandoverSlipText.PlaceLine(outName, nameX, baseline, Mathf.Max(nw, Eps), nLine, TextAlignmentOptions.BaselineLeft);
             float sw = Single(slotWord, r.SlotWord, em(m.slotEmPx), m.slotSpacingEm, p.label, g.TextX, g.SlotCenter, TextAlignmentOptions.BaselineLeft);
             Fits("yuva", g.TextX + sw, g.InnerRight);
 
-            // ---- GİRDİ (her girdi: simge, ad, nokta çizgisi, "× n")
-            Label(inputLabel, inputDots, w.Input, g.InLabelCenter, m, p, g, "GİRDİ");
-            int n = r.Inputs.Count;
+            // ---- GİRDİ (her girdi: simge, ad, nokta çizgisi, "× n"); kapalı sayfada GİRDİ ve SÜRE yok
+            SetActive(inputLabel, !locked); SetActive(inputDots, !locked);
+            SetActive(timeLabel, !locked); SetActive(timeDots, !locked); SetActive(clock, !locked); SetActive(timeText, !locked);
+            if (!locked) Label(inputLabel, inputDots, w.Input, g.InLabelCenter, m, p, g, "GİRDİ");
+            int n = locked ? 0 : r.Inputs.Count;
             if (n > InputRows) overflow.Add("girdi sayısı " + n);
             for (int i = 0; i < InputRows; i++)
             {
@@ -373,8 +393,7 @@ namespace Corrigible.Desk
                 if (!on) continue;
                 float cy = g.InRowCenter(i);
                 float iconMm = g.X(m.inputIconPx);
-                Picture(icon, Pick(materialIcons, Array.IndexOf(BoardLayout.MaterialKinds, input.Kind)),
-                    new Rect(g.InnerLeft, cy - g.Y(m.inputIconPx) / 2, iconMm, g.Y(m.inputIconPx)), p.secondary);
+                Picture(icon, InputIcon(input), new Rect(g.InnerLeft, cy - g.Y(m.inputIconPx) / 2, iconMm, g.Y(m.inputIconPx)), p.secondary);
                 float nx = g.InnerLeft + iconMm + g.X(m.inputNameGapPx);
                 float w1 = Single(name, input.Name, em(m.inputNameEmPx), 0, p.ink, nx, cy, TextAlignmentOptions.BaselineLeft);
                 float w2 = Single(qty, input.BookQty, em(m.qtyEmPx), 0, p.ink, g.InnerRight, cy, TextAlignmentOptions.BaselineRight);
@@ -384,20 +403,24 @@ namespace Corrigible.Desk
             }
 
             // ---- SÜRE
-            Label(timeLabel, timeDots, w.Time, g.TimeLabelCenter, m, p, g, "SÜRE");
-            Picture(clock, clock != null ? clock.sprite : null, new Rect(g.InnerLeft, g.TimeCenter - g.Y(m.clockPx) / 2, g.X(m.clockPx), g.Y(m.clockPx)), p.secondary);
-            float tx = g.InnerLeft + g.X(m.clockPx) + g.X(m.clockGapPx);
-            float tw2 = Single(timeText, r.TurnsLine, em(m.timeEmPx), 0, p.ink, tx, g.TimeCenter, TextAlignmentOptions.BaselineLeft);
-            Fits("süre", tx + tw2, g.InnerRight);
+            if (!locked)
+            {
+                Label(timeLabel, timeDots, w.Time, g.TimeLabelCenter, m, p, g, "SÜRE");
+                Picture(clock, clock != null ? clock.sprite : null, new Rect(g.InnerLeft, g.TimeCenter - g.Y(m.clockPx) / 2, g.X(m.clockPx), g.Y(m.clockPx)), p.secondary);
+                float tx = g.InnerLeft + g.X(m.clockPx) + g.X(m.clockGapPx);
+                float tw2 = Single(timeText, r.TurnsLine, em(m.timeEmPx), 0, p.ink, tx, g.TimeCenter, TextAlignmentOptions.BaselineLeft);
+                Fits("süre", tx + tw2, g.InnerRight);
+            }
 
-            // ---- el notu (kurşun kalem, −2°; sarar, en çok iki satır)
-            bool hasNote = !string.IsNullOrEmpty(r.Note);
+            // ---- el notu (kurşun kalem, −2°; sarar, en çok iki satır); kapalı sayfada kırmızı KAPALI damgası
+            string noteText = locked ? r.LockedStamp : r.Note;
+            bool hasNote = !string.IsNullOrEmpty(noteText);
             SetActive(note, hasNote);
             if (hasNote && note != null)
             {
                 float noteEm = em(m.noteEmPx), noteLine = g.Y(m.noteLinePx);
-                HandoverSlipText.Style(note, noteEm, 0, p.pencil, true, noteLine);
-                Set(note, r.Note);
+                HandoverSlipText.Style(note, noteEm, 0, locked ? p.red : p.pencil, true, noteLine);
+                Set(note, noteText);
                 HandoverSlipText.PlaceLine(note, g.NoteLeft, g.NoteTop + HandoverSlipText.Baseline(note, noteEm, noteLine), g.NoteWidth, noteLine,
                     TextAlignmentOptions.BaselineLeft);
                 int lines = HandoverSlipText.Lines(note);
@@ -521,6 +544,15 @@ namespace Corrigible.Desk
 
         static T At<T>(T[] a, int i) where T : class => a != null && i >= 0 && i < a.Length ? a[i] : null;
         static Sprite Pick(Sprite[] a, int i) => a != null && i >= 0 && i < a.Length ? a[i] : null;
+
+        /// <summary>Girdi satırının simgesi: hammaddede dizi, erzakta (tesis aşama 9) adla <c>icon_erzak</c>.</summary>
+        Sprite InputIcon(RecipeInput input)
+        {
+            int k = Array.IndexOf(BoardLayout.MaterialKinds, input.Kind);
+            if (k >= 0) return Pick(materialIcons, k);
+            var reg = DeskSprites.Instance;
+            return reg != null && reg.TryGet("icon_" + input.Kind, out var e) ? e.sprite : null;
+        }
     }
 
     /// <summary>
@@ -586,8 +618,11 @@ namespace Corrigible.Desk
         [Tooltip("Köşe sekmesinin tık alanı: köşede 16 × 16 mm (çizilen üçgenin 1,6 katı) ve yazının şeridi.")]
         public float cornerHitMm = 16, cornerLabelHitWidthMm = 33, cornerLabelHitHeightMm = 7;
 
-        /// <summary>Tek satırlık tasarım yerleşimi (sol ya da sağ sayfa).</summary>
-        public RecipePageGeometry Geometry(bool rightPage) => new RecipePageGeometry(this, rightPage);
+        /// <summary>
+        /// Tek satırlık tasarım yerleşimi (sol ya da sağ sayfa). <paramref name="rows"/>: kutudaki girdi satırı (en az iki; tesis aşama 9:
+        /// üç girdili tarifte kutu bir satır uzar).
+        /// </summary>
+        public RecipePageGeometry Geometry(bool rightPage, int rows = 2) => new RecipePageGeometry(this, rightPage, rows);
 
         static RecipePageMetrics defaults;
         /// <summary>Kod varsayılanları (saf bölge hesabı, <see cref="RecipeBookView.ZoneAt"/>).</summary>
@@ -596,8 +631,8 @@ namespace Corrigible.Desk
 
     /// <summary>
     /// Tarif sayfasının CSS akışından hesaplanmış yerleri (mm, sayfanın sol üstünden, y aşağı). Sol sayfanın içeriği 31 px'ten, sağ
-    /// sayfanınki 35 px'ten başlar (sırt tarafı 34 px); öteki her şey aynı akıştır. Tarif kutusu bütün tariflerde iki girdi satırıyla
-    /// aynı yükseklikte (B §2: her tarifte tam iki girdi).
+    /// sayfanınki 35 px'ten başlar (sırt tarafı 34 px); öteki her şey aynı akıştır. Tarif kutusu iki girdi satırıyla aynı yükseklikte
+    /// (B §2); tesis aşama 9'da üç girdili tarifte bir satır uzar.
     /// </summary>
     public readonly struct RecipePageGeometry
     {
@@ -615,7 +650,7 @@ namespace Corrigible.Desk
         public float X(float px) => px * Sx;
         public float Y(float px) => px * Sy;
 
-        public RecipePageGeometry(RecipePageMetrics m, bool right)
+        public RecipePageGeometry(RecipePageMetrics m, bool right, int rows = 2)
         {
             RightPage = right;
             Sx = m.sizeMm.x / RecipePageMetrics.DesignWidthPx;
@@ -635,7 +670,7 @@ namespace Corrigible.Desk
             float colH = m.outRowPx + m.slotGapPx + m.labelRowPx, colTop = outRowTop + (m.iconBoxPx - colH) / 2;
             float inLabelTop = outRowTop + m.iconBoxPx + m.inputGapPx;
             float inRowsTop = inLabelTop + m.labelRowPx + m.inputRowsGapPx;
-            float timeLabelTop = inRowsTop + RecipeBookPage.InputRows * m.inputRowPx + m.timeGapPx;
+            float timeLabelTop = inRowsTop + Mathf.Clamp(rows, 2, RecipeBookPage.InputRows) * m.inputRowPx + m.timeGapPx;
             float timeRowTop = timeLabelTop + m.labelRowPx + m.timeRowGapPx;
             float boxBottom = timeRowTop + m.timeRowPx + m.boxPadBottomPx + m.boxBorderPx;
 

@@ -375,7 +375,7 @@ RectTransform:
   m_GameObject: {fileID: 819510536650402812}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.001, y: 0.001, z: 0.001}
+  m_LocalScale: {x: 0.0015, y: 0.0015, z: 0.0015}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4823631393053032166}
@@ -384,8 +384,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.05, y: 0.075}
-  m_SizeDelta: {x: 100, y: 150}
+  m_AnchoredPosition: {x: -0.13000001, y: 0.112500004}
+  m_SizeDelta: {x: 173.33333, y: 150}
   m_Pivot: {x: 0, y: 1}
 --- !u!223 &8732470141143695553
 Canvas:
@@ -966,7 +966,8 @@ MonoBehaviour:
   actionIcon: {fileID: 3973659154796333209}
   action: {fileID: 796865773433627674}
   layout:
-    sizeMm: {x: 100, y: 150}
+    sizeMm: {x: 173.33333, y: 150}
+    worldScale: 1.5
     bodyTopMm: 1.25
     borderMm: 0.20833333
     padTopMm: 2.5

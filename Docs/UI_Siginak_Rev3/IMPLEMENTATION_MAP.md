@@ -102,7 +102,7 @@ Biçim: öğe · şimdiki karşılık (dosya, prefab, sahne) · durum · veri ka
 | Sayaç rafı | `CounterRack` + `CounterModule`, `CounterWheel` (36·d); ERZAK eki TMP (Soru 11); HAMMADDE / RAW MAT. (Soru 3) | UYGULANDI | `S.Day`, `S.Fon`, `Shelter.Supplies` / `SuppliesCapacity`, `Shelter.Materials`, özgür bölge, `S.Trust` |
 | Anahtar rayı | `KeyRail` + 4 `KeyKey` (`StationKeyRail`) | UYGULANDI | rig pozu; `Adm.Candidate` |
 | Vardiya şalteri | `Desk/Shift switch`, model parçaları; §3.5 | UYGULANDI | §3.5 |
-| Teleks | Kullanıcının daktilo modeli (`Assets/Typewriter`, `Teleprinter/Typewriter_FBX_Unity`; eski `Telex` modeli 2026-11-15'te KALDIRILDI), `TelexPaper` (dört yuva; türev mesh `TypewriterTelexPaper_SM`), `Paper roll` / `Paper feed` (`Teleprinter.roll`), `Telex plate` (`Teleprinter`, `TelexFeed`) | UYGULANDI (teleks modeli değişimi) | `TelexFeed` |
+| Teleks | Kullanıcının daktilo modeli (`Assets/Typewriter`, `Teleprinter/Typewriter_FBX_Unity`; eski `Telex` modeli 2026-11-15'te KALDIRILDI), `TelexPaper` (dört yuva; türev mesh `TypewriterTelexPaper_SM`; tek kâğıt akışı: yeni satırda eski kâğıt düşer, yenisi `Print line`'dan satır satır yazılarak çıkar; devir fişi aynı yerden, 260 × 225), `Torn sheet` (`TelexPaper` kopyası), `Paper roll` / `Paper feed` (`Teleprinter.roll`), `Telex plate` (`Teleprinter`, `TelexFeed`, `PlatenFeed`) | UYGULANDI (teleks modeli değişimi; tek kâğıt akışı 2026-11-16) | `TelexFeed`, `ShiftReceiptPaper.HoldsPlaten` |
 | EVRAK | `PaperTray` (`EvrakTray`; Soru 14, §4.4 D7) | UYGULANDI | son 5 fiş |
 | Duvarlar | `AlarmBoard`, `CorkBoard`, `Poster`, `StencilSign`, `Duct`, `PipeRun`, `JunctionBox`, `CeilingBulb`, `PencilNote`; `FreedRegionsBoard`, `BulbFlicker` yerinde | UYGULANDI | `S.Day` |
 | Tebeşir çetelesi | `ChalkTally`, 16 çentik yeri; kartlı oyunda yalnız vardiya | UYGULANDI | `S.Day` |
@@ -118,7 +118,7 @@ Biçim: öğe · şimdiki karşılık (dosya, prefab, sahne) · durum · veri ka
 | Veri yolu | `PlanningBoardSnapshotBuilder` → `BoardSnapshot` → `BoardView3D`; yalnız değişimde çizer | UYGULANDI | `Bd` |
 | Pano yüzü, plakalar | `tx_board_face` (sözcüksüz), 25 plaka yuvası; `Rev3BoardTextureBaker` | UYGULANDI | token `board.plates` |
 | 6 cep, saha bandı | `BoardMarks`, `BoardDragController` cep dikdörtgenleri | UYGULANDI | `AssignResident` → `board_assign` |
-| Boşta destesi | `BostaDeckView` (0,32 s, 0,07 s; min(82, 636/(n−1))) | UYGULANDI | `job == "rest"` |
+| Boşta destesi | `BostaDeckView` (0,32 s, 0,07 s; min(82, 636/(n−1)), deste 1098 mm; tesis bayrağıyla Gözetim cebi açıkken 518 ve 980, `BoardLayout.Deck(watchOpen)`) | UYGULANDI | `job == "rest"` |
 | Kişi kartı | `Prefabs/Rev3Board/PersonCard` + `PersonCardFace`, `CardStateOverlay`, kimliğe göre havuz; `PortraitLibrary` (32) | UYGULANDI | `ResidentState`, `Adm.File(id)` |
 | Ustalık sütunu | 7 satır, kademe 2 / 6 / 12 (Soru 1) | UYGULANDI | `Experience`, `BoardSkillTier` |
 | KAYIPLAR zarfı | `LostEnvelopeView`, kişi dosyasının arkasında (§4.3 D5); `BoardDeathLog` | UYGULANDI | `People.Where(!Alive)` |
@@ -379,7 +379,7 @@ Core ve kayıt biçimi (14) değişmez; yalnız `PrintBoardShift` ve `FileBoardS
 | D2 | Tasarlanmamış kilit nedenlerinin plaka metni | baskın sürüyor · harekât bitti · belge açık · rapor açık (eski yol) · plan düzeltilmeli · fiş basılamadı; uzun metin üzerine gelme satırında |
 | D3 | EN terimleri | EN'de EVRAK yerine her yerde **PAPERS** (tepsi etiketi gibi): "file the slip in PAPERS"; FIELD · RAID TEAM; injured / laid up / restricted; kesme işareti ’ |
 | D4 | Fiş yüzü tekniği | World Space TMP tuvali (1 birim = 1 mm), satırlar modelin 4 mm kıvrımının önünde; görünüm tutmazsa RenderTexture için ayrıca sorulur |
-| D5 | Eldeyken girdi | tık / Esc / sürüklemesiz sağ tık dile döndürür; sürükleme elden de başlar; dilden sürükleme doğrudan EVRAK'a; EVRAK dışı bırakış 0,25 s kavisle dile; K1'den fişe tık K6 + el; elde x eğimi 0°, z −2,9° |
+| D5 | Eldeyken girdi | tık / Esc / sürüklemesiz sağ tık dile döndürür; sürükleme elden de başlar; dilden sürükleme doğrudan EVRAK'a; EVRAK dışı bırakış 0,25 s kavisle dile; K1'den fişe tık K6 + el; elde x eğimi 0°, z −2,9° (tek kâğıt akışında 260 mm'lik fişte aynı köşe düşüşü için −1,1°; `DURUM.md` › Tek kâğıt akışı) |
 | D6 | Kapak 4 s'de kendiliğinden kapanınca | kamera K6'da kalır; dosyalama başarısında tam karanlıkta K1'e kesme |
 | D7 | EVRAK kartlı oyunda (Soru 14) | dosyalanan fiş tepside üst kâğıt; kartlı oyunda Rev2 boş raporu eklenmez; EVRAK'a tık (fiş basılı değilken) son fişi elde salt okunur gösterir, ← emir belgesine geçer; son 5 fiş `liberation_desk.json`'da; KAYITTAN DEVAM'ın rapor parlaması kartlı oyunda atlanır |
 | D8 | Geç durum görüntüleri | R19c V.001/V.031 için sunum fikstürü; kilitli ve kayıt/devam için gerçek komutlarla kısa kayıt |
@@ -1003,3 +1003,13 @@ Yalnız bugün doğru ve yol gösteren olanlar. Bütün liste A9 kopyası §1.
   basma komutu; fiş daktilonun silindirinden, teleks kâğıdının yanında satır satır çıkar (önce teleks satırı, kamera K1'e varınca;
   en çok 3 s). Fiş K6'dan daktiloya dönerken kamera K1'e döner; dönüş yola göre 0,25–0,45 s. Koparılan teleks kâğıdı yukarı
   çekilip arkaya düşer (`motion.telexTear.*`). Ayrıntı: `Docs/DURUM.md` › Teleks modeli.
+- **2026-11-16 · Tek kâğıt akışı (teleks kâğıdı ve devir fişi birleşti).** Silindirde tek kâğıt: yeni teleks satırında o anki kâğıt
+  düşer (`TelexPaper` kopyası, `motion.telexTear.*`), yenisi silindirin içinden satır satır yazılarak çıkar (`Print line`,
+  `motion.telexFeed.slideS` 0,06 s, `PlatenFeed`); devirde teleks kâğıdı düşer, fiş aynı yerden çıkar ve teleks kâğıdının
+  dinlenme pozunda durur (`ShiftReceiptPaper.HoldsPlaten` → `TelexFeed.PlatenBusy`); fiş silindirdeyken gelen satırlar şeritte.
+  Fiş 260 × 225 mm (yüz tasarımı 173,33 × 150 mm × 1,5; doku 832 × 720; model 8 × 8, 6 mm kıvrım). Ayrıntı: `Docs/DURUM.md` › Tek
+  kâğıt akışı.
+- **2026-11-16 · Tek kâğıt akışı, inceleme düzeltmeleri.** Düşen kâğıt daktilonun arkasına, masa hizasına düşüp gövdenin arkasında
+  kaybolur (havada sönmez; `motion.telexTear` yeni değerler); elde eğim −1,1° (D5'in köşe düşüşü 260 mm'de); ileti yuvası
+  `maxVisibleCharacters`; okunurluk basımdan sonra; `SyncPlaten`; uzun karelerde satır kayışı geride kalmaz; eski 100 × 150 yedekleri
+  kalktı. Ayrıntı: `Docs/DURUM.md` › Tek kâğıt akışı.

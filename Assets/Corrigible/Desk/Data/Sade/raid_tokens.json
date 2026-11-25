@@ -3024,5 +3024,45 @@
    "panel.ozalit.paper": "#D3DBD6",
    "panel.ozalit.borderAlpha": 0.55
   }
+ },
+ "radioDesk": {
+  "lamp": {
+   "bezel": "#2A2622",
+   "on": "#E2452B",
+   "off": "#5A2A23",
+   "glow": {
+    "hex": "#F2643F",
+    "alpha": 0.4
+   },
+   "labelOn": "#9A1E14",
+   "labelOff": "#6E675B",
+   "holdS": 0.4
+  },
+  "tape": {
+   "plate": "#2A2622",
+   "reel": "#4A443B",
+   "spoke": "#1E1B16",
+   "hub": "#C8CED0",
+   "tape": "#5B3A22",
+   "window": "#160F0A",
+   "cellOn": "#ECE2BE",
+   "cellOff": "#34302B",
+   "sheetOn": "#1E1B16",
+   "sheetOff": "#8C8475",
+   "labelPaper": {
+    "hex": "#ECE2BE",
+    "alpha": 0.78
+   },
+   "label": "#1E1B16",
+   "reelDegPerS": 120,
+   "writeS": 0.45
+  }
+ },
+ "_local_tesis5": {
+  "_": "UYGULAMA EKİ (Unity, tesis baskınları aşama 5 · Docs/TESIS-BASKINLARI-TASARIMI.md §7.3): baskın HUD'unun telsiz masası (Corners › Radio desk), paket dosyasında olmayan yerel anahtarlar. radioDesk.lamp — YAYINDA lambası: çerçeve, yanık/sönük mercek, hale, yazının yanık/sönük rengi; holdS lambanın en az yanık kalma süresi (s). radioDesk.tape — makaralı teyp: plaka, makara gövdesi, kol, göbek, bant, sayaç penceresi, kayıtlı/kayıtsız pafta hücresi ve numarası, etiket kâğıdı ve yazısı; reelDegPerS makara dönüşü (°/s), writeS etiketin yazılış süresi (s). Tema içe aktarımı bu notu atlar (SadeThemeSetup.FillRaid).",
+  "new": [
+   "radioDesk.lamp",
+   "radioDesk.tape"
+  ]
  }
 }

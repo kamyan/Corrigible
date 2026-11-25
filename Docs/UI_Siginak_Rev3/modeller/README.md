@@ -53,8 +53,8 @@ ince olan (tel, ölçek çizgisi, vida yarığı, ızgara) dokuya gider. Dokular
 - **Yeni aile `admission`** (kapıda kabul, R17): `AdmissionCounter`, `AdmissionPanel`, `ColdGlass` (buğu camı, kanatta),
   `DecisionStampRack` + `DecisionStamp`, `Magnifier`, `RequestPad`, `CounterLamp`, `RationTin`, `FileTag`.
 - **Masa ailesine eklenen:** `SlipMouth` (fiş ağzı, şalterle aynı yerleşim; `SlipStart` → `SlipExit` çapaları, şalter
-  yerelinde x −0,18 → −0,30, y 0,14, z 0,015) ve `HandoverSlip` (devir fişi 100 × 150 mm, kıvrık düzlem; doku R10
-  `devir_fisi_*`). `ShiftSwitch` değişmedi; plakası iki satırlı kullanılır.
+  yerelinde x −0,18 → −0,30, y 0,14, z 0,015) ve `HandoverSlip` (devir fişi; tek kâğıt akışında teleks kâğıdıyla
+  aynı boyda 260 × 225 mm, eskisi 100 × 150; kıvrık düzlem, 8 × 8 ızgara; doku R10 `devir_fisi_*`, tasarım × 1,5). `ShiftSwitch` değişmedi; plakası iki satırlı kullanılır.
 - **Pakette olmayanlar** (oyundan çıktı; kaynakta legacy olarak duruyor, token `models3d.removed_1_3`): raf ve maket
   ailesinin 28 modeli (`Shelf`, `Diorama*`, `Depot*`, `RoomCard*`, `ClipboardStand`, `IdleTray`, `Peg*`, `Crate`,
   `Jerrycan`, `HopePlant1–3`), 9 ziyaretçi silüeti (`Visitor_*`), `Pawn_M` ve `Pawn_S`.

@@ -17,12 +17,22 @@ namespace Corrigible.Desk
         /// <summary>Cepteki kişi kartının seviyesi (z = FaceZ − 0,0003 − 0,0007 · seviye).</summary>
         public const float PocketLevel = 3;
 
-        /// <summary>Model çapalarının cep adları ve karşılık gelen Core görevleri (aynı sırayla).</summary>
-        public static readonly string[] Slots = { "tek", "emp", "ana", "uret", "mutf", "egit" };
-        public static readonly string[] Jobs = { "tek", "emp", "ana", "craft", "cook", "train" };
+        /// <summary>
+        /// Model çapalarının cep adları ve karşılık gelen Core görevleri (aynı sırayla). Sonuncusu GÖZETİM (tesis aşama 5, dinleme
+        /// nöbeti): yalnız cebi açıkken (<c>BoardDropRules.WatchOpen</c>; oyunda hep) görünür ve hedeftir (<see cref="WatchJob"/>, <see cref="PocketOpen"/>).
+        /// </summary>
+        public static readonly string[] Slots = { "tek", "emp", "ana", "uret", "mutf", "egit", "gozet" };
+        public static readonly string[] Jobs = { "tek", "emp", "ana", "craft", "cook", "train", "watch" };
+        /// <summary>GÖZETİM cebinin Core görevi.</summary>
+        public const string WatchJob = "watch";
         /// <summary>Hammadde türleri (stok kartlarının sırası) ve kit yığınlarının türleri.</summary>
         public static readonly string[] MaterialKinds = { "metal", "devre", "kumas", "kimyasal" };
         public static readonly string[] KitKinds = { "kit_tek", "kit_emp", "kit_ana", "armor", "medkit", "emp_cell" };
+        /// <summary>
+        /// Tesis aşama 9: depodaki ikinci sıranın türleri (yedi ekipman, Core sırası <c>FacilityGear.Kinds</c>); yalnız
+        /// Türün depoda kartı varken çizilir (<see cref="BoardSnapshot.Gear"/>).
+        /// </summary>
+        public static readonly string[] GearKinds = Corrigible.Core.FacilityGear.Kinds;
 
         static float N(string key, float fallback)
         {
@@ -63,10 +73,18 @@ namespace Corrigible.Desk
         static readonly float[,] PocketFallback =
         {
             { 14, 44, 108, 194 }, { 132, 44, 108, 194 }, { 250, 44, 108, 194 },
-            { 14, 244, 108, 194 }, { 132, 244, 108, 194 }, { 250, 244, 180, 194 },
+            { 14, 244, 108, 194 }, { 132, 244, 108, 194 }, { 250, 244, 180, 194 }, { 1042, 44, 108, 194 },
         };
 
-        static readonly float[,] CentreFallback = { { 68, 128 }, { 186, 128 }, { 304, 128 }, { 68, 328 }, { 186, 328 }, { 304, 328 } };
+        static readonly float[,] CentreFallback = { { 68, 128 }, { 186, 128 }, { 304, 128 }, { 68, 328 }, { 186, 328 }, { 304, 328 }, { 1096, 128 } };
+
+        /// <summary>Cep bu panoda açık mı: GÖZETİM yalnız <paramref name="watchOpen"/> iken (BoardDropRules.WatchOpen; oyunda hep); EĞİTİM
+        /// hiç (geliştirici, 2026-11-24: "sığınaktaki eğitim bölümünü kaldır"; Core'daki <c>board_train</c> durur, kayıt 22 eski kayıtları yüklemediğinden ölü yoldur), ötekiler
+        /// her zaman.</summary>
+        public static bool PocketOpen(string job, bool watchOpen) => SlotIndexOfJob(job) >= 0 && job != TrainJob && (watchOpen || job != WatchJob);
+
+        /// <summary>Kaldırılan EĞİTİM cebinin görevi (dizilerde yeri durur, cep kapalıdır).</summary>
+        public const string TrainJob = "train";
 
         /// <summary>Cep dikdörtgeni (Core görevine göre). EĞİTİM 180 mm geniş (konu listesi dahil).</summary>
         public static Rect Pocket(string job)
@@ -84,7 +102,18 @@ namespace Corrigible.Desk
             return P("board.layoutMm.cardCentres." + Slots[i], CentreFallback[i, 0], CentreFallback[i, 1]);
         }
 
-        public static Rect Bosta => R("board.layoutMm.bosta", 380, 44, 770, 194);
+        public static Rect Bosta => R("board.layoutMm.bosta", 380, 44, 652, 194);
+
+        /// <summary>
+        /// BOŞTA'nın bırakma alanı: GÖZETİM açıkken <see cref="Bosta"/>; kapalıyken bandın sağındaki boş köşe de (GÖZETİM'in sağ
+        /// kenarına kadar) BOŞTA sayılır: cep kapalıyken bırakma davranışı eski 770 mm'lik BOŞTA ile aynı kalır.
+        /// </summary>
+        public static Rect BostaZone(bool watchOpen)
+        {
+            var b = Bosta;
+            if (watchOpen) return b;
+            return Rect.MinMaxRect(b.xMin, b.yMin, Mathf.Max(b.xMax, Pocket(WatchJob).xMax), b.yMax);
+        }
         public static Rect Order => R("board.layoutMm.order", 446, 244, 450, 194);
         public static Rect Sheet => R("board.layoutMm.sheet", 450, 266, 440, 170);
         public static Rect Inputs => R("board.layoutMm.inputs", 582, 296, 294, 56);
@@ -135,22 +164,32 @@ namespace Corrigible.Desk
 
         // ---------------------------------------------------------------- deste
 
-        public static Vector2 Deck => P("board.layoutMm.deck", 1098, 128);
+        /// <summary>
+        /// Destenin yeri. GÖZETİM cebi açıkken (oyunda hep, <see cref="BoardSnapshot.WatchOpen"/>) deste cebin solunda durur
+        /// (<c>board.layoutMm.deck</c>, 980 mm); kapalıyken bugünkü yerinde (<c>board.layoutMm.deckNoWatch</c>, 1098 mm). Bayrak
+        /// kapalıyken pano tesis aşama 5'ten önceki görünümüyle aynıdır (§14 sekizinci tur).
+        /// </summary>
+        public static Vector2 Deck(bool watchOpen) =>
+            watchOpen ? P("board.layoutMm.deck", 980, 128) : P("board.layoutMm.deckNoWatch", 1098, 128);
         public static float HandLeftX => N("board.layoutMm.handLeft", 462);
 
-        /// <summary>Açık eldeki kart aralığı: min(82, 636 / (n − 1)) mm (636 = deste x − elin sol ucu).</summary>
-        public static float HandStep(int n)
+        /// <summary>Açık eldeki kart aralığı: min(82, (deste x − elin sol ucu) / (n − 1)) mm; GÖZETİM açıkken 518, kapalıyken 636.</summary>
+        public static float HandStep(int n, bool watchOpen)
         {
             float max = N("board.deck.maxStepMm", 82);
-            return n <= 1 ? max : Mathf.Min(max, (Deck.x - HandLeftX) / (n - 1));
+            return n <= 1 ? max : Mathf.Min(max, (Deck(watchOpen).x - HandLeftX) / (n - 1));
         }
 
         /// <summary>Kapalı destede j. kart (0 = üst): her alttaki 1 mm sağ-aşağı.</summary>
-        public static Vector2 DeckClosed(int j) => Deck + new Vector2(j, j);
+        public static Vector2 DeckClosed(int j, bool watchOpen) => Deck(watchOpen) + new Vector2(j, j);
         public static float DeckClosedLevel(int j, int n) => PocketLevel + (n - 1 - j) * 1.6f;
 
         /// <summary>Açık elde j. kart: üst kart destede kalır, diğerleri sola.</summary>
-        public static Vector2 HandOpen(int j, int n) => new Vector2(Deck.x - j * HandStep(n), Deck.y);
+        public static Vector2 HandOpen(int j, int n, bool watchOpen)
+        {
+            var d = Deck(watchOpen);
+            return new Vector2(d.x - j * HandStep(n, watchOpen), d.y);
+        }
         public static float HandLevel(int j, int n) => PocketLevel + (n - 1 - j) * 2f;
 
         public static float DeckPerCardS => N("motion.board.deckPerCardS", 0.32f);
@@ -180,6 +219,17 @@ namespace Corrigible.Desk
         public static float KitLevel(int j) => 2 - j;
         /// <summary>×n etiketinin yeri (kit merkezinin sağ altı).</summary>
         public static Vector2 KitCount(int kit) => Kit(kit) + new Vector2(26, 34);
+
+        static readonly float[] GearXFallback = { 459, 541, 623, 705, 787, 869, 951 };
+
+        /// <summary>
+        /// Tesis aşama 9 (K18): ekipman yığınının çapası, kit sırasının altında ikinci sıra (token <c>board.layoutMm.gearX/gearY</c>; kart
+        /// 80 × 50 mm, y 546–596, x 419–991: hammadde kartlarının, kit sayaçlarının (y ≈ 536) ve hurda kutusunun dışında).
+        /// </summary>
+        public static Vector2 Gear(int i) =>
+            new Vector2(N($"board.layoutMm.gearX[{i}]", GearXFallback[Mathf.Clamp(i, 0, GearXFallback.Length - 1)]), N("board.layoutMm.gearY", 571));
+        /// <summary>Ekipman yığınında j. kart (0 = üst), kit yığınıyla aynı kayma.</summary>
+        public static Vector2 GearCard(int gear, int j) => Gear(gear) + new Vector2(0.9f * j, 0.9f * j);
 
         static readonly Vector3[] ChipSpots = { new Vector3(612, 314, -4), new Vector3(668, 330, 3), new Vector3(742, 318, -2), new Vector3(800, 334, 5) };
 
@@ -212,14 +262,15 @@ namespace Corrigible.Desk
         /// için DEPO bandı, stok kartı için İŞ EMRİ. Hurda ve kişi kartı hedefleri çarpıştırıcıyla çözülür (çıkıntılı), burada yok.
         /// Tarif kartı (Aşama 5 · [B]): İŞ EMRİ içi <see cref="BoardTargetKind.Order"/>, dışı her yer <see cref="BoardTargetKind.Book"/>
         /// (deftere dön: kopya için komutsuz dönüş, formdaki kart için iptal).
+        /// <paramref name="watchOpen"/> yanlışsa GÖZETİM cebi yoktur, yeri BOŞTA'dır (<see cref="BostaZone"/>).
         /// </summary>
-        public static BoardTarget ZoneAt(Vector2 mm, BoardCardKind dragged)
+        public static BoardTarget ZoneAt(Vector2 mm, BoardCardKind dragged, bool watchOpen = true)
         {
             switch (dragged)
             {
                 case BoardCardKind.Person:
-                    foreach (var job in Jobs) if (Pocket(job).Contains(mm)) return BoardTarget.Pocket(job);
-                    if (Bosta.Contains(mm)) return BoardTarget.Bosta();
+                    foreach (var job in Jobs) if (PocketOpen(job, watchOpen) && Pocket(job).Contains(mm)) return BoardTarget.Pocket(job);
+                    if (BostaZone(watchOpen).Contains(mm)) return BoardTarget.Bosta();
                     return BoardTarget.None;
                 case BoardCardKind.Item:
                 case BoardCardKind.Chip:

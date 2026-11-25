@@ -97,6 +97,11 @@ namespace Corrigible.Desk
         [SerializeField] RectTransform actionFace;
         [SerializeField] Image actionFill, actionShadow;
         [SerializeField] TMP_Text actionLabel, actionCost, actionNote, shortfall;
+        [Tooltip("Tesis aşama 11: kuşatma kipinin ikinci düğmesi BIRAK (actionBlock içinde, asıl düğmenin altında). İlk tık onay sorar, ikinci tık bırakır; yalnız tıkla (Enter asıl eylemdir). Kuşatma yokken gizli.")]
+        [SerializeField] Button yieldAction;
+        [SerializeField] TMP_Text yieldLabel;
+        [SerializeField] UiHoverTarget yieldHover;
+        [SerializeField] Image yieldFill;
         [Tooltip("İğne (ipin fiş ucu): solda sağ üst köşede, sağda sol üst köşede.")]
         [SerializeField] RectTransform pin;
         [SerializeField] Sprite markDone, markReady, markLocked, markReoccupied, frameSolid, frameDashed;
@@ -119,6 +124,8 @@ namespace Corrigible.Desk
         bool[] chipPicked = Array.Empty<bool>(), chipLocked = Array.Empty<bool>();
 
         public event Action ActionClicked, CloseClicked;
+        /// <summary>Tesis aşama 11: BIRAK düğmesine tıklandı (onay ve komut bağlayıcıda).</summary>
+        public event Action YieldClicked;
         public event Action<string> PersonClicked;
         /// <summary>Kadro seçicide bir uzmana tıklandı (rol kimliği).</summary>
         public event Action<string> PickClicked;
@@ -129,6 +136,13 @@ namespace Corrigible.Desk
         public bool HasAction { get; private set; }
         public bool ActionEnabled => actionState == SlipActionState.Ready;
         public SlipActionState ActionState => actionState;
+        /// <summary>Tesis aşama 11: BIRAK düğmesi görünür ve tıklanır.</summary>
+        public bool YieldShown => yieldAction != null && yieldAction.gameObject.activeSelf;
+        public bool YieldInteractable => YieldShown && yieldAction.interactable;
+        /// <summary>BIRAK düğmesinin yazısı (onay bekliyorken "EMİN MİSİN? · güven −1").</summary>
+        public string YieldText => yieldLabel != null ? yieldLabel.text : null;
+        /// <summary>Testler: BIRAK düğmesi (sahne bağı).</summary>
+        public Button YieldButton => yieldAction;
         /// <summary>Kâğıt sağda (Kuzey ya da Güney Amerika).</summary>
         public bool OnRight => right;
         /// <summary>Kâğıdın kendisi (kadro raporu yanına oturur, kayarken onunla gider).</summary>
@@ -158,6 +172,11 @@ namespace Corrigible.Desk
             // Tıklanan düğme EventSystem'de seçili kalmasın: Enter'ı yalnız masa okur (yoksa Submit de basar, rapor aynı karede onaylanır)
             DeskUi.NoNavigation(action);
             action.onClick.AddListener(() => ActionClicked?.Invoke());
+            if (yieldAction != null)
+            {
+                DeskUi.NoNavigation(yieldAction);
+                yieldAction.onClick.AddListener(() => YieldClicked?.Invoke());
+            }
             close.onClick.AddListener(() => CloseClicked?.Invoke());
             foreach (var member in planningMembers) if (member) member.Clicked += id => PersonClicked?.Invoke(id);
             chipRoles = new string[pickChips.Length];
@@ -202,6 +221,10 @@ namespace Corrigible.Desk
             task.text = d.Task ?? "";
             costBlock.SetActive(!infoOnly && !string.IsNullOrEmpty(d.Cost));
             cost.text = d.Cost ?? "";
+            // Tesis aşama 11 (P4b): kuşatma kipinde ödül yok: ÖDÜL satırı kalkar (fiş 1080'de BIRAK'la birlikte kadraja sığar); öbür
+            // kiplerde satır bugünkü gibi
+            if (rewards.Length > 0 && rewards[0].root != null && rewards[0].root.transform.parent != null && rewards[0].root.transform.parent.parent != null)
+                rewards[0].root.transform.parent.parent.gameObject.SetActive(!d.Siege || d.Rewards.Count > 0);
             for (int i = 0; i < rewards.Length; i++)
             {
                 var r = i < d.Rewards.Count ? d.Rewards[i] : null;
@@ -278,7 +301,8 @@ namespace Corrigible.Desk
                 // Tehdit değeri kırmızı CP 700 20; öteki değerler LF 600 18 mürekkep
                 bool tier = data.Tier > 0;
                 t.ApplyType(f.value, tier ? "costValue" : "sahaValue");
-                f.value.color = tier ? t.ColorOf("status.threat") : t.ColorOf("ink");
+                // Tesis aşama 10: ÖNLEM satırının değeri (önlem varken) kırmızı, yazı rolü öbür SAHA değerleriyle aynı
+                f.value.color = tier || data.Alert ? t.ColorOf("status.threat") : t.ColorOf("ink");
                 f.hover.Title = data.HoverTitle;
                 f.hover.Line = data.HoverLine;
             }
@@ -300,13 +324,15 @@ namespace Corrigible.Desk
                 rowLocked[i] = s.Mark == SectorMark.Locked;
                 rowSelected[i] = s.Highlight;
                 row.pointer.gameObject.SetActive(s.Highlight);
-                row.mark.sprite = s.Reoccupied ? markReoccupied : s.Mark == SectorMark.Retaken ? markDone : s.Mark == SectorMark.Ready ? markReady : markLocked;
+                row.mark.sprite = s.Siege ? markDone : s.Reoccupied ? markReoccupied : s.Mark == SectorMark.Retaken ? markDone : s.Mark == SectorMark.Ready ? markReady : markLocked;
                 var (key, word, angle) = s.Mark switch
                 {
                     SectorMark.Retaken => ("stamp.retaken", Corrigible.Core.Loc.T("GERİ ALINDI"), 4f),
                     SectorMark.Ready => ("stamp.ready", Corrigible.Core.Loc.T("BASKINA HAZIR"), 3f),
                     _ => ("stamp.locked", Corrigible.Core.Loc.T("KİLİTLİ"), 2f),
                 };
+                // Tesis aşama 11: kuşatılan kanat kırmızı "KUŞATMA" damgasıyla (tehdit damgasının rengi)
+                if (s.Siege) (key, word, angle) = ("stamp.ready", Corrigible.Core.Loc.T("KUŞATMA"), 3f);
                 Stamp(row.stamp, row.stampFrame, row.stampText, key, word, angle);
                 row.hover.Title = s.Hover != null ? word : null;
                 row.hover.Line = s.Hover;
@@ -404,6 +430,32 @@ namespace Corrigible.Desk
             actionShadow.gameObject.SetActive(!disabled);
             actionHover.Title = d.ActionState == SlipActionState.Ready ? null : disabled ? d.ActionNote : Corrigible.Core.Loc.T("FON YETERSİZ");
             actionHover.Line = d.Reason;
+            Yield(d, t);
+        }
+
+        /// <summary>
+        /// Tesis aşama 11: BIRAK (kuşatma kipinde). Açıkken kâğıt zeminde mürekkep yazı ve bedel ("BIRAK · güven −1"); onay beklerken
+        /// tehdit renginde dolgu ve "EMİN MİSİN? · güven −1"; kapalıyken soluk, üzerine gelince gerekçe. Kuşatma yokken gizli (eski fiş).
+        /// </summary>
+        void Yield(OperationSlipData d, SiginakTheme t)
+        {
+            if (yieldAction == null) return;
+            bool show = d.HasAction && d.HasYield;
+            yieldAction.gameObject.SetActive(show);
+            if (!show) return;
+            yieldAction.interactable = d.YieldEnabled;
+            if (yieldLabel != null)
+            {
+                yieldLabel.text = d.YieldArmed ? d.Yield ?? "" : string.IsNullOrEmpty(d.YieldCost) ? d.Yield ?? "" : Corrigible.Core.Loc.F("{0} · {1}", d.Yield, d.YieldCost);
+                yieldLabel.color = t.ColorOf(!d.YieldEnabled ? "slip.buttonDisabledText" : d.YieldArmed ? "ui.inkButtonText" : "ink");
+            }
+            if (yieldFill != null)
+                yieldFill.color = !d.YieldEnabled ? t.ColorOf("slip.buttonDisabled") : d.YieldArmed ? t.ColorOf("status.threat") : t.ColorOf("slip.rowHover");
+            if (yieldHover != null)
+            {
+                yieldHover.Title = d.YieldEnabled ? null : d.Yield;
+                yieldHover.Line = d.YieldEnabled ? null : d.YieldReason;
+            }
         }
 
         void Stamp(RectTransform root, Image frame, TMP_Text text, string key, string word, float angle, float maxWidth = 0)

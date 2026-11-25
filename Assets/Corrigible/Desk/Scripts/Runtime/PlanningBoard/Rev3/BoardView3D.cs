@@ -38,6 +38,14 @@ namespace Corrigible.Desk
         [SerializeField] TMP_Text hurdaLine2;
         [Tooltip("MASAYA DÖN tabelasının DeskTarget'ı (üzerine gelince BackSign 4 mm öne kayar; tıklamayı sunucu bağlar).")]
         [SerializeField] DeskTarget backTarget;
+        [Tooltip("Tesis aşama 5 · GÖZETİM cebinin görünen parçaları (TXT_P_gozet plakası, Gözetim bandı, Şerit · gozet · 1..3): yalnız " +
+                 "anlık görüntünün WatchOpen'ı (BoardDropRules.WatchOpen) doğruyken etkin; sahnede kapalı kaydedilir.")]
+        [SerializeField] GameObject[] watchParts = new GameObject[0];
+        [Tooltip("Deste tepsisinin tık çarpıştırıcısı: GÖZETİM açıkken destenin yeni yerine (980 mm), kapalıyken bugünkü yerine " +
+                 "(1098 mm) kayar. Sahnede kapalı (bayraksız) yerde kaydedilir.")]
+        [SerializeField] BoxCollider deckTray;
+        // Son çizimin GÖZETİM durumu (destenin yeri; SetWatchVisible yazar)
+        bool watchOpen;
 
         [Header("Kartlar")]
         [SerializeField] BoardCardView personPrefab;
@@ -54,7 +62,6 @@ namespace Corrigible.Desk
         [SerializeField] BostaDeckView deckView;
         [SerializeField] StoreView store;
         [SerializeField] WorkOrderView order;
-        [SerializeField] TrainingTopics topics;
         [SerializeField] PersonFolderView folder;
         [SerializeField] LostEnvelopeView lostEnvelope;
         [SerializeField] HurdaBin hurda;
@@ -160,7 +167,6 @@ namespace Corrigible.Desk
         public BostaDeckView Deck => deckView;
         public StoreView Store => store;
         public WorkOrderView Order => order;
-        public TrainingTopics Topics => topics;
         public PersonFolderView Folder => folder;
         public LostEnvelopeView LostEnvelope => lostEnvelope;
         public HurdaBin Hurda => hurda;
@@ -236,7 +242,7 @@ namespace Corrigible.Desk
         {
             var d = new RecipeCardData
             {
-                Id = r.Id, RecipeId = r.Id, Name = r.Name, IconKey = r.Id, TurnsLine = r.TurnsLine,
+                Id = r.Id, RecipeId = r.Id, Name = r.Name, ShortName = r.ShortName, IconKey = r.Id, TurnsLine = r.TurnsLine,
                 OutLine = Corrigible.Core.Loc.T("→ 1 ürün"), NeedsLabel = words != null ? words.Input : null,
                 Turns = r.Turns, Done = -1,
             };
@@ -287,7 +293,6 @@ namespace Corrigible.Desk
         void Awake()
         {
             EnsureDelegates();
-            if (topics != null && topics.Tag == null) topics.Tag = hoverTag;
             if (folder != null && folder.Tag == null) folder.Tag = hoverTag;
             if (lostEnvelope != null && lostEnvelope.Tag == null) lostEnvelope.Tag = hoverTag;
             if (book != null && book.Tag == null) book.Tag = hoverTag;
@@ -397,19 +402,73 @@ namespace Corrigible.Desk
             clickable.Clear();
 
             RenderTexts(s, anim);
+            SetWatchVisible(s.WatchOpen);
             RenderPersons(s, anim);
             RenderItems(s, anim);
             RenderStore(s, anim);
             RenderChips(s, anim);
             RenderOrder(s, anim);
             if (book != null) { book.Locked = s.Locked; book.RecipesDraggable = s.RecipesDraggable; }
-            if (topics != null && s.Topics != null) topics.SetRows(s.Topics.Labels, s.Topics.Mastered, s.Topics.RingRow, anim);
             RenderLock(s.Locked, anim);
 
             rendered = true;
             RebuildActive();
             ApplyInteractivity();
         }
+
+        /// <summary>GÖZETİM cebinin plakası, bandı ve şeritleri (cebi açıkken görünür, oyunda hep; kapalıyken o köşe boş).</summary>
+        void SetWatchVisible(bool open)
+        {
+            watchOpen = open;
+            foreach (var part in watchParts)
+                if (part != null && part.activeSelf != open) part.SetActive(open);
+            if (deckView != null) deckView.WatchOpen = open;
+            PlaceDeckTray(open);
+        }
+
+        /// <summary>Tepsinin çarpıştırıcısını destenin altına kaydırır (yalnız x; y ve z sahnedeki gibi).</summary>
+        void PlaceDeckTray(bool open)
+        {
+            if (deckTray == null || model == null) return;
+            var world = model.transform.TransformPoint(BoardLayout.MmToLocal(BoardLayout.Deck(open), 0));
+            float x = deckTray.transform.InverseTransformPoint(world).x;
+            var c = deckTray.center;
+            if (Mathf.Abs(c.x - x) > 1e-5f) deckTray.center = new Vector3(x, c.y, c.z);
+        }
+
+        /// <summary>Tepsinin çarpıştırıcısı (testler okur).</summary>
+        public BoxCollider DeckTray => deckTray;
+
+        /// <summary>Depo şeridinin kart satırları (başlık ve kartlar; panonun alt kenarına inen boş kısım hariç).</summary>
+        static Rect DepotRows { get { var d = BoardLayout.Depot; return new Rect(d.x, d.y, d.width, Mathf.Min(d.height, 130)); } }
+
+        /// <summary>Panonun bir alanının dünyadaki dört köşesi (rehberin işaretçisi, 2026-11-24; pano dünyada dönük olduğu için kutu değil
+        /// köşeler): "depot" depo şeridi, "bosta" BOŞTA destesi, öbürü görev cebi (<see cref="BoardLayout.Pocket"/>); kart kökü ya da alan
+        /// yoksa false. Yalnız okur.</summary>
+        public bool PocketCorners(string job, Vector3[] corners)
+        {
+            if (corners == null || corners.Length < 4) return false;
+            // BOŞTA destesi: tepsinin kendisi (tık ve sürükleme alanı); kutunun yerel köşeleri dünyaya
+            if (job == "bosta" && deckTray != null && deckTray.enabled)
+            {
+                var t = deckTray.transform; var c = deckTray.center; var e = deckTray.size * 0.5f;
+                corners[0] = t.TransformPoint(c + new Vector3(-e.x, -e.y, 0)); corners[1] = t.TransformPoint(c + new Vector3(e.x, -e.y, 0));
+                corners[2] = t.TransformPoint(c + new Vector3(e.x, e.y, 0)); corners[3] = t.TransformPoint(c + new Vector3(-e.x, e.y, 0));
+                return true;
+            }
+            if (cardRoot == null) return false;
+            var r = job == "depot" ? DepotRows : BoardLayout.Pocket(job);
+            if (r.width <= 0 || r.height <= 0) return false;
+            float z = BoardLayout.CardZ(BoardLayout.PocketLevel);
+            corners[0] = cardRoot.TransformPoint(BoardLayout.MmToLocal(new Vector2(r.xMin, r.yMin), z));
+            corners[1] = cardRoot.TransformPoint(BoardLayout.MmToLocal(new Vector2(r.xMax, r.yMin), z));
+            corners[2] = cardRoot.TransformPoint(BoardLayout.MmToLocal(new Vector2(r.xMax, r.yMax), z));
+            corners[3] = cardRoot.TransformPoint(BoardLayout.MmToLocal(new Vector2(r.xMin, r.yMax), z));
+            return true;
+        }
+
+        /// <summary>GÖZETİM parçaları (testler ve tek seferlik sahne script'i okur).</summary>
+        public GameObject[] WatchParts => watchParts;
 
         public BoardCardView CardFor(string id)
         {
@@ -486,7 +545,7 @@ namespace Corrigible.Desk
                 if (fresh.Contains(card))
                 {
                     int at = deckList.Count;
-                    card.Place(BoardLayout.MmToLocal(BoardLayout.DeckClosed(at), BoardLayout.CardZ(BoardLayout.DeckClosedLevel(at, n))), 0);
+                    card.Place(BoardLayout.MmToLocal(BoardLayout.DeckClosed(at, watchOpen), BoardLayout.CardZ(BoardLayout.DeckClosedLevel(at, n))), 0);
                 }
                 card.SetMagnetVisible(true);
                 card.SetVisible(true);
@@ -510,7 +569,7 @@ namespace Corrigible.Desk
             int n = deckList.Count;
             for (int j = 0; j < n; j++)
             {
-                var target = BoardLayout.MmToLocal(BoardLayout.DeckClosed(j), BoardLayout.CardZ(BoardLayout.DeckClosedLevel(j, n)));
+                var target = BoardLayout.MmToLocal(BoardLayout.DeckClosed(j, watchOpen), BoardLayout.CardZ(BoardLayout.DeckClosedLevel(j, n)));
                 BoardViewUtil.Pose(deckList[j], target, 0, anim, BoardLayout.DeckPerCardS, CardEase.EaseInOut);
             }
         }
@@ -665,21 +724,27 @@ namespace Corrigible.Desk
             UpdateNewItem(s);
             // Depodaki eşyalar: yığın başına en çok üçü çizilir, en yenisi (TopIds sonu) üstte ve sürüklenebilir.
             seen.Clear();
-            for (int k = 0; k < s.Kits.Length; k++)
+            // Tesis aşama 9: ikinci sıra ekipman yığınları (tesis durumu yokken dizi boş: döngü bir şey yapmaz)
+            for (int row = 0; row < 2; row++)
             {
-                var kit = s.Kits[k];
-                if (kit == null) continue;
-                int m = kit.TopIds.Count;
-                for (int d = 0; d < m; d++)
+                var stacks = row == 0 ? s.Kits : s.Gear;
+                for (int k = 0; k < stacks.Length; k++)
                 {
-                    string id = kit.TopIds[d];
-                    if (id == null || !items.TryGetValue(id, out var card)) continue;
-                    seen.Add(id);
-                    if (d == m - 1) clickable.Add(card);
-                    if (Owned(card)) { Skip(card); continue; }
-                    if (HeldForSlide(id)) continue;   // yeni ürün: TARİF kutusunda bekler ya da kayar (RenderNewItem)
-                    if (fresh.Contains(card))
-                        card.Place(BoardLayout.MmToLocal(BoardLayout.KitCard(k, m - 1 - d), BoardLayout.CardZ(BoardLayout.KitLevel(m - 1 - d))), 0);
+                    var kit = stacks[k];
+                    if (kit == null) continue;
+                    int m = kit.TopIds.Count;
+                    for (int d = 0; d < m; d++)
+                    {
+                        string id = kit.TopIds[d];
+                        if (id == null || !items.TryGetValue(id, out var card)) continue;
+                        seen.Add(id);
+                        if (d == m - 1) clickable.Add(card);
+                        if (Owned(card)) { Skip(card); continue; }
+                        if (HeldForSlide(id)) continue;   // yeni ürün: TARİF kutusunda bekler ya da kayar (RenderNewItem)
+                        var at = row == 0 ? BoardLayout.KitCard(k, m - 1 - d) : BoardLayout.GearCard(k, m - 1 - d);
+                        if (fresh.Contains(card))
+                            card.Place(BoardLayout.MmToLocal(at, BoardLayout.CardZ(BoardLayout.KitLevel(m - 1 - d))), 0);
+                    }
                 }
             }
             foreach (var it in s.Items)
@@ -1140,7 +1205,6 @@ namespace Corrigible.Desk
                 }
             if (boardFace != null) boardFace.enabled = interactive;
             if (hurda != null && hurda.Front != null) hurda.Front.enabled = live;
-            if (topics != null) topics.SetInteractive(live);
             if (folder != null) folder.SetInteractive(live);
             if (lostEnvelope != null) lostEnvelope.SetInteractive(live);
             for (int i = 0; i < active.Count; i++)

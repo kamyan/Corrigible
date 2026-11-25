@@ -34,7 +34,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0.1, y: 0.15}
+  m_SizeDelta: {x: 0.26, y: 0.225}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6306045072217877152
 MonoBehaviour:
@@ -54,7 +54,7 @@ MonoBehaviour:
   sample: 
   sampleEn: 
   capMm: 0
-  size: {x: 0.1, y: 0.15}
+  size: {x: 0.26, y: 0.225}
   surface: 1
   text: {fileID: 0}
 --- !u!1 &6554826035312163181
@@ -195,10 +195,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.Rev3Model
   modelName: HandoverSlip
   family: desk
-  manifestTris: 64
+  manifestTris: 128
   manifestBounds:
-    m_Center: {x: 0, y: 0, z: -0.002}
-    m_Extent: {x: 0.05, y: 0.075, z: 0.002}
+    m_Center: {x: 0, y: 0, z: -0.003}
+    m_Extent: {x: 0.13, y: 0.1125, z: 0.003}
   parts: []
   slots:
   - {fileID: 6306045072217877152}

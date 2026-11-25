@@ -28,6 +28,7 @@ namespace Corrigible.Desk.Bridge
             var s = sim.Shelter;
             var b = sim.B;
             var lib = sim.S.Liberation;
+            var hit = string.IsNullOrEmpty(sim.S.LastCounterattack) ? null : sim.LiberationSector(sim.S.LastCounterattack);
             var snap = new ShiftSnapshot
             {
                 shift = sim.S.Day + 1, fon = sim.S.Fon,
@@ -40,6 +41,7 @@ namespace Corrigible.Desk.Bridge
                 starving = s.Starving,
                 alarm = sim.S.Alarm, alarmThreshold = b.liberationAlarmThreshold,
                 counterattacks = sim.S.Counterattacks, lastCounterattack = sim.S.LastCounterattack,
+                lastCounterattackRegion = hit != null ? sim.RegionSourceName(hit.Region) : null,
                 doorVisits = sim.S.Door?.Log.Count ?? 0,
             };
             foreach (var r in s.Rooms) snap.rooms.Add(new ShiftRoomSnapshot { id = r.Id, level = r.Level, workers = r.Workers });
@@ -58,7 +60,8 @@ namespace Corrigible.Desk.Bridge
             int day = sim.S.Day;
             var moves = sim.TransactionLedger.Where(t => t.Day == day && t.Kind != "income" && t.Fon != 0).ToList();
             // Ödül kaydı baskın sonucunun kodunu taşır; sektör aynı günün başarılı baskın kayıtlarından sırayla
-            var wins = sim.S.RaidLog.Where(l => l.Day == day && l.Success && l.SectorId != null).ToList();
+            // Tesis aşama 11 (§8.6): savunma fon hareketi yazmaz; eşleme kaymasın diye atlanır
+            var wins = sim.S.RaidLog.Where(l => l.Day == day && l.Success && l.SectorId != null && !FacilityDefenseText.IsDefense(l)).ToList();
             int win = 0;
             var list = new List<ShiftLedgerEntry>();
             for (int i = 0; i < moves.Count; i++)
@@ -97,7 +100,7 @@ namespace Corrigible.Desk.Bridge
         public static ShiftReportInput Input(Simulation sim, ShiftSnapshot before, List<ShiftLedgerEntry> ledger, IEnumerable<TelexLine> failures)
         {
             var income = sim.S.LastIncome;
-            return new ShiftReportInput
+            var input = new ShiftReportInput
             {
                 before = before, after = Capture(sim), ledger = ledger ?? new List<ShiftLedgerEntry>(),
                 incomeCentral = income.Central, incomeRegional = income.RegionalBase,
@@ -109,7 +112,41 @@ namespace Corrigible.Desk.Bridge
                     counterattack = v.Counterattack,
                 }).ToList(),
             };
+            Sieges(sim, input);
+            return input;
         }
+
+        /// <summary>
+        /// Tesis aşama 11 (§8.1): kuşatma günlüğünden kapanışın kuşatma bilgisi (savunma kapalıyken boş). Kurulan: bekleyen girdi, bugün
+        /// kuruldu ve bugün karar vardiyası (kapanışta kuruldu). Düşen: biten vardiyada kendiliğinden ("kendi") ya da komutla ("birak")
+        /// bırakılan kanat.
+        /// </summary>
+        static void Sieges(Simulation sim, ShiftReportInput input)
+        {
+            if (!FacilityDefenseText.On(sim)) return;
+            int day = sim.S.Day;
+            var made = sim.Facility.Sieges.LastOrDefault(e => e != null && e.Outcome == Simulation.SiegePending && e.Day == day && e.Due == day);
+            var made2 = made == null ? null : sim.LiberationSector(made.Sector);
+            if (made2 != null) { input.siege = made2.Id; input.siegeRegion = sim.RegionSourceName(made2.Region); }
+            var fell = sim.Facility.Sieges.LastOrDefault(e => e != null && e.Closed == day - 1
+                && (e.Outcome == Simulation.SiegeAuto || e.Outcome == Simulation.SiegeYielded));
+            var fell2 = fell == null ? null : sim.LiberationSector(fell.Sector);
+            if (fell2 == null) return;
+            input.siegeFall = fell2.Id;
+            input.siegeFallRegion = sim.RegionSourceName(fell2.Region);
+            input.siegeAuto = fell.Outcome == Simulation.SiegeAuto;
+        }
+
+        /// <summary>Kapanışta YZ alarmı eşiğe vardı (karşı saldırı ya da kuşatma; kendiliğinden bırakma eşik değildir).</summary>
+        public static bool Threshold(ShiftReportInput input)
+        {
+            int fell = input.after.counterattacks - input.before.counterattacks;
+            return !string.IsNullOrEmpty(input.siege) || fell > (input.siegeAuto ? 1 : 0);
+        }
+
+        /// <summary>Kapanışta alarm lambası yanar: eşik ya da kanadın düşmesi.</summary>
+        public static bool Alarmed(ShiftReportInput input) =>
+            Threshold(input) || input.after.counterattacks > input.before.counterattacks;
 
         /// <summary>Kapanan vardiyanın YAPILAMADI satırları (teleks kodu “VVV/…”).</summary>
         public static IEnumerable<TelexLine> Failures(IEnumerable<TelexLine> telex, int shift)
@@ -236,7 +273,7 @@ namespace Corrigible.Desk.Bridge
             int steps = (int)Math.Round(a.alarmThreshold);
             d.AlarmSteps = steps;
             d.AlarmHighFrom = Math.Max(1, steps - 2);
-            if (a.counterattacks > b.counterattacks)
+            if (Threshold(input))
             {
                 // Alarm eşiğe vardı ve sıfırlandı: göz eşiği gösterir
                 double rise = a.alarmThreshold - b.alarm;
@@ -284,12 +321,43 @@ namespace Corrigible.Desk.Bridge
         {
             var b = input.before;
             var a = input.after;
-            if (a.counterattacks <= b.counterattacks) return;
-            string sector = SectorLabel(a.lastCounterattack);
-            d.Counterattack = Loc.F("{0} yeniden işgal altında · sivil güven −{1}", sector, input.rates.counterattackTrust);
-            d.CounterTitle = Loc.T("YZ KARŞI SALDIRISI");
-            d.CounterCode = input.counterCode ?? "";
-            d.CounterText = Loc.F("{0} yeniden işgal altında.", sector);
+            if (a.counterattacks > b.counterattacks)
+            {
+                string sector = SectorLabel(a.lastCounterattack, a.lastCounterattackRegion);
+                d.CounterTitle = Loc.T("YZ KARŞI SALDIRISI");
+                d.CounterCode = input.counterCode ?? "";
+                d.CounterMap = true;
+                // Tesis aşama 11: karar verilmeyen kuşatmada kanat kendiliğinden bırakıldı
+                if (input.siegeAuto && input.siegeFall == a.lastCounterattack)
+                {
+                    d.Counterattack = Loc.F("{0} · kanat bırakıldı (karar verilmedi) · sivil güven −{1}", sector, input.rates.counterattackTrust);
+                    d.CounterText = Loc.F("{0} · kanat bırakıldı (karar verilmedi).", sector);
+                }
+                else
+                {
+                    d.Counterattack = Loc.F("{0} yeniden işgal altında · sivil güven −{1}", sector, input.rates.counterattackTrust);
+                    d.CounterText = Loc.F("{0} yeniden işgal altında.", sector);
+                }
+            }
+            // Tesis aşama 11 (K39-5): vardiya içinde BIRAK ile bırakılan kanat: kutu kapanışta, teleks komutta basıldı (dizi de komutta)
+            else if (!string.IsNullOrEmpty(input.siegeFall) && !input.siegeAuto)
+            {
+                d.CounterTitle = Loc.T("YZ KARŞI SALDIRISI");
+                d.CounterCode = input.counterCode ?? "";
+                d.CounterText = Loc.F("{0} · kanat bırakıldı.", SectorLabel(input.siegeFall, input.siegeFallRegion));
+            }
+            // Tesis aşama 11 (§8.1): kapanışta kurulan kuşatma: "KARŞI SALDIRI BEKLİYOR" (kutu boşsa başlık; doluysa ikinci satır)
+            if (!string.IsNullOrEmpty(input.siege))
+            {
+                d.Siege = Loc.F("{0} kuşatıldı · sonraki vardiya savun ya da bırak", SectorLabel(input.siege, input.siegeRegion));
+                if (d.CounterTitle == null)
+                {
+                    d.CounterTitle = Loc.T("KARŞI SALDIRI BEKLİYOR");
+                    d.CounterCode = input.counterCode ?? "";
+                    d.CounterText = d.Siege;
+                }
+                else d.CounterText = Loc.F("{0} {1}.", d.CounterText, d.Siege);
+            }
         }
 
         /// <summary>Kapı satırı (ekiplerin altında): vardiya biterken kapıda kalan ziyaretçi açılmadı sayıldı.</summary>
@@ -310,12 +378,15 @@ namespace Corrigible.Desk.Bridge
         static string DoorWho(string card) => DoorCards.Exists(card) ? Loc.T(DoorCards.Get(card).Who) : "—";
 
         /// <summary>“Bölge · 01 Sektör” (sektör kimliği “weu_1”); geri alınacak sektör yoksa “—”.</summary>
-        static string SectorLabel(string id)
+        /// <paramref name="regionSource"/> bölge adının kaynağı (<c>Simulation.RegionSourceName</c>: YZ adı, tabloda kendi karşılığıyla);
+        /// boşsa paketin YZ adı.
+        static string SectorLabel(string id, string regionSource)
         {
             int cut = id?.LastIndexOf('_') ?? -1;
             if (cut <= 0 || !int.TryParse(id.Substring(cut + 1), NumberStyles.Integer, CultureInfo.InvariantCulture, out int n)) return "—";
             var region = GameData.Region(id.Substring(0, cut));
-            return Loc.F("{0} · {1:00} {2}", region.Name, n, region.Sector(n - 1));
+            string name = string.IsNullOrEmpty(regionSource) ? region.Ai : Loc.T(regionSource);
+            return Loc.F("{0} · {1:00} {2}", name, n, region.Sector(n - 1));
         }
 
         /// <summary>

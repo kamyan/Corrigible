@@ -109,9 +109,13 @@ namespace Corrigible.Desk.Bridge
             }
         }
 
-        /// <summary>Plaka sözcüğü: cep görevinin adı ya da BOŞTA, büyük harf.</summary>
+        /// <summary>
+        /// Plaka sözcüğü: cep görevinin adı ya da BOŞTA, büyük harf. GÖZETİM (yalnız cebi açıkken bırakma planına girer) plakanın
+        /// sözcüğüyle (<c>board.plates.tr.gozet</c>).
+        /// </summary>
         static string PlaceWord(string job) =>
-            DeskText.Upper(BoardDropRules.IsPocketJob(job) ? PlanningBoardData.JobName(job) : Loc.T("Boşta"));
+            job == BoardLayout.WatchJob ? Loc.T("GÖZETİM")
+            : DeskText.Upper(BoardDropRules.IsPocketJob(job) ? PlanningBoardData.JobName(job) : Loc.T("Boşta"));
 
         // ---------------------------------------------------------------- gövde
 
@@ -119,20 +123,30 @@ namespace Corrigible.Desk.Bridge
         {
             var board = sim.Board;
             var mover = board.Person(plan.Id);
-            string from = BoardDropRules.PlaceOf(board, mover), to = plan.Job;
-            var partner = to == "rest" ? null : BoardDropRules.Occupant(board, to);
+            bool watch = BoardDropRules.WatchOpen(sim);
+            string from = BoardDropRules.PlaceOf(board, mover, watch), to = plan.Job;
+            var partner = to == "rest" ? null : BoardDropRules.Occupant(board, to, watch);
             if (partner == mover) partner = null;
             if (partner != null) notes.Add(SwapLine(board, partner, from));
             if (to == "rest")
             {
-                int heal = RestHeal(sim, mover);
+                int heal = CloseHeal(sim, mover, "rest");   // bırakılınca görevi "rest" olur (Core'un kuralı)
                 if (heal > 0) notes.Add(Loc.F("kapanışta +{0} can", heal));
                 if (from == "train") notes.Add(Loc.T("eğitim bırakılır"));
             }
             else
             {
                 if (!IsField(to)) notes.Add(Loc.T("kit gerekmez"));
-                if (mover.Hp < mover.MaxHp) warnings.Add(Loc.F("yaralı: can {0}/{1}, görevde iyileşmez", mover.Hp, mover.MaxHp));
+                if (to == BoardLayout.WatchJob)
+                {
+                    // Tesis aşama 5: dinleme nöbeti; açılacak plan yoksa uyarı (puan bir plan bedeline kadar birikir)
+                    notes.Add(FacilityWatchText.CloseLine(sim));
+                    if (FacilityWatchText.Target(sim) != null) notes.Add(FacilityWatchText.Next(sim));
+                    else warnings.Add(FacilityWatchText.Next(sim));
+                }
+                // Kayıt 22: görevde de iyileşir (yarım tayında hiç)
+                int heal = CloseHeal(sim, mover, to);
+                if (heal > 0) notes.Add(Loc.F("kapanışta +{0} can", heal));
             }
             FieldWarnings(board, mover, to, partner, from, warnings);
         }
@@ -141,7 +155,7 @@ namespace Corrigible.Desk.Bridge
         {
             var board = sim.Board;
             var mover = board.Person(plan.Id);
-            string from = BoardDropRules.PlaceOf(board, mover);
+            string from = BoardDropRules.PlaceOf(board, mover, BoardDropRules.WatchOpen(sim));
             int xp = mover.Skill(plan.Job);
             int gain = Math.Max(0, Math.Min(sim.B.boardExpertAt, xp + sim.B.boardTrainingGain) - xp);
             notes.Add(Loc.F("kapanışta {0} +{1}", PlanningBoardSnapshotBuilder.TopicLabel(plan.Job), gain));
@@ -149,7 +163,6 @@ namespace Corrigible.Desk.Bridge
             var trainee = BoardDropRules.Occupant(board, "train");
             if (trainee == mover) trainee = null;
             if (trainee != null) notes.Add(SwapLine(board, trainee, from));
-            if (mover.Hp < mover.MaxHp) warnings.Add(Loc.F("yaralı: can {0}/{1}, görevde iyileşmez", mover.Hp, mover.MaxHp));
             FieldWarnings(board, mover, "train", trainee, from, warnings);
         }
 
@@ -176,6 +189,8 @@ namespace Corrigible.Desk.Bridge
                 else warnings.Add(Loc.F("{0} için {1} gerekiyor.", target.Name, PlanningBoardData.EquipmentName("kit_" + field)));
             }
             if (item.Kind == "emp_cell" && field != "emp") notes.Add(Loc.T("hücre yalnız EMP uzmanında etkili"));
+            // Tesis aşama 9 (K32): dinlenen köpek takılır ama baskına gitmez (Core PlanningSquad onu götürmez)
+            if (FacilityBoardText.On(sim) && item.Rest > 0) warnings.Add(FacilityBoardText.RestNote(item.Rest));
             if (source != null) LosesKit(board, source, item, old, warnings);
         }
 
@@ -296,10 +311,13 @@ namespace Corrigible.Desk.Bridge
             return IsField(place) ? place : null;
         }
 
-        /// <summary>Kapanışta dinlenmenin getireceği can (Core <c>AdvancePlanningBoard</c>: yatan da dinlenen de iyileşir).</summary>
-        static int RestHeal(Simulation sim, ResidentState p)
+        /// <summary>Kapanışta <paramref name="job"/>'da getireceği can (Core <c>AdvancePlanningBoard</c>, kayıt 22: yatan ve Boşta
+        /// <c>boardRestHeal</c>, görevdeki <c>boardDutyHeal</c>; yarım tayında yatan dışında 0).</summary>
+        public static int CloseHeal(Simulation sim, ResidentState p, string job)
         {
-            int heal = Math.Max(0, sim.B.boardRestHeal);
+            if (sim?.B == null || p == null) return 0;
+            bool half = sim.HalfRationActive;
+            int heal = half ? 0 : Math.Max(0, job == "rest" || p.Down > 0 ? sim.B.boardRestHeal : sim.B.boardDutyHeal);
             int after = p.Down > 0 ? Math.Min(p.MaxHp, Math.Max(1, p.Hp) + heal) : Math.Min(p.MaxHp, p.Hp + heal);
             return Math.Max(0, after - p.Hp);
         }

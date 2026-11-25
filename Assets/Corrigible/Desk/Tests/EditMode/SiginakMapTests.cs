@@ -24,8 +24,7 @@ namespace Corrigible.Desk.Tests
             foreach (var id in new[] { "weu_1", "weu_2", "weu_3" })
             {
                 while (!sim.S.Teams.Any(Simulation.TeamReady)) sim.Step();
-                Assert.IsTrue(sim.StartLiberationRaid(id).Ok, id);
-                Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true }).Ok, id);
+                FacilityDeskKit.Raid(sim, id, true);
             }
             return sim;
         }
@@ -70,9 +69,9 @@ namespace Corrigible.Desk.Tests
             sim.Step();
             Assert.IsTrue(sim.StartLiberationRaid("eeu_1").Ok);
             Assert.IsTrue(LiberationMapBuilder.Build(sim).Team.Hidden, "baskında figür haritadan kalkar");
-            // Teknisyen düşer ve yerine çıkacak yedek yok: ekip sığınakta bekler
+            // Teknisyen düşer ve yerine çıkacak yedek yok: ekip sığınakta bekler (kartsız oyunda düşen yatar)
             sim.Shelter.Reserves.Clear();
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = false, Down = 1 }).Ok);
+            FacilityDeskKit.ResolveRaid(sim, false, FacilityDeskKit.Dies);
             var team = LiberationMapBuilder.Build(sim).Team;
             Assert.IsTrue(team.AtShelter);
             Assert.AreEqual(Simulation.HQ, team.Region);
@@ -184,7 +183,7 @@ namespace Corrigible.Desk.Tests
                     {
                         var d = LiberationMapBuilder.Slip(sim, r.Id);
                         Assert.AreEqual(Loc.F("BİNA · {0}", DeskText.Upper(r.Building)), d.BuildingHoverTitle, lang + " " + r.Id);
-                        Assert.AreEqual(r.BuildingNote, d.BuildingHoverLine, lang + " " + r.Id);
+                        Assert.AreEqual(sim.RegionNote(r.Id), d.BuildingHoverLine, lang + " " + r.Id + ": bölgenin notu (tesis şartı olan bölgede şartın notu)");
                         Assert.IsFalse(string.IsNullOrEmpty(d.BuildingHoverLine), lang + " " + r.Id + ": bina notu yok");
                         if (lang != Loc.Turkish)
                             Assert.IsFalse(System.Text.RegularExpressions.Regex.IsMatch(d.BuildingHoverTitle + d.BuildingHoverLine, "[ğüşıöçĞÜŞİÖÇ]"),
@@ -267,7 +266,7 @@ namespace Corrigible.Desk.Tests
         {
             var sim = NewLiberation();
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true }).Ok);
+            FacilityDeskKit.ResolveRaid(sim, true);
             var d = LiberationMapBuilder.Slip(sim, Simulation.HQ);
             Assert.AreEqual(SlipActionState.Disabled, d.ActionState);
             Assert.AreEqual(Loc.T("EKİP HAZIR DEĞİL"), d.ActionNote);
@@ -289,8 +288,12 @@ namespace Corrigible.Desk.Tests
             var d = LiberationMapBuilder.Slip(sim, "eeu");
             Assert.IsTrue(d.Sectors[0].Reoccupied);
             Assert.AreEqual(SectorMark.Ready, d.Sectors[0].Mark, "yeniden işgal edilen sektör yine sıradaki hedef");
-            Assert.IsTrue(sim.StartLiberationRaid("eeu_1").Ok);
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true }).Ok);
+            // Kuşatmada bırakılan kanada aynı vardiya baskın verilemez (tesis savunması): bir vardiya geçer
+            sim.Step();
+            Assert.IsNull(sim.PendingSiege, "yeni kuşatma yok");
+            var started = sim.StartLiberationRaid("eeu_1");
+            Assert.IsTrue(started.Ok, started.Msg);
+            FacilityDeskKit.ResolveRaid(sim, true);
             Assert.AreEqual(-1, LiberationMapBuilder.Build(sim).Find("eeu").Reoccupied, "geri alınınca işaret kalkar");
         }
 
@@ -308,7 +311,7 @@ namespace Corrigible.Desk.Tests
             var freed = WeuFreed();
             Assert.IsTrue(freed.SelectLiberationRegion("eeu").Ok);
             var neighbor = LiberationMapBuilder.Slip(freed, "na");
-            StringAssert.Contains(Loc.T(GameData.Region("eeu").Name), neighbor.Info, "cephe açıkken sınırdaki bölge: tek cephe kuralı");
+            StringAssert.Contains(GameData.Region("eeu").Ai, neighbor.Info, "cephe açıkken sınırdaki bölge: tek cephe kuralı");
             var free = LiberationMapBuilder.Slip(freed, "weu");
             Assert.IsFalse(free.HasAction);
             Assert.IsTrue(free.Sectors.All(x => x.Mark == SectorMark.Retaken));
@@ -320,7 +323,7 @@ namespace Corrigible.Desk.Tests
             var sim = WeuFreed();
             var ok = LiberationMapBuilder.Front(sim, "eeu");
             Assert.IsTrue(ok.ActionEnabled);
-            StringAssert.Contains(Loc.T(GameData.Region("weu").Name), ok.Neighbor);
+            StringAssert.Contains(GameData.Region("weu").Ai, ok.Neighbor);
             Assert.AreEqual(3, ok.Sectors.Count);
             var far = LiberationMapBuilder.Front(sim, "oc");
             Assert.IsFalse(far.ActionEnabled);
@@ -328,7 +331,7 @@ namespace Corrigible.Desk.Tests
 
             // K3 notu: cephe açıkken aday seçimi teleks hatası verir (“cephe zaten açık (Doğu Avrupa 0/3)”)
             Assert.IsTrue(sim.SelectLiberationRegion("eeu").Ok);
-            Assert.AreEqual(Loc.F("{0}: cephe zaten açık ({1} {2}/{3})", Loc.T(GameData.Region("na").Name), Loc.T(GameData.Region("eeu").Name), 0, 3),
+            Assert.AreEqual(Loc.F("{0}: cephe zaten açık ({1} {2}/{3})", GameData.Region("na").Ai, GameData.Region("eeu").Ai, 0, 3),
                 TelexReasons.Front(sim, "na"));
         }
 
@@ -337,13 +340,13 @@ namespace Corrigible.Desk.Tests
         {
             var sim = NewLiberation();
             Assert.IsNull(TelexReasons.Drop(sim, Simulation.HQ), "cephe açıkken kendi cephesi geçerli");
-            Assert.AreEqual(Loc.F("Cephe açık: {0} {1}/{2}", Loc.T(GameData.Region(Simulation.HQ).Name), 0, 3), TelexReasons.Drop(sim, "na"));
+            Assert.AreEqual(Loc.F("Cephe açık: {0} {1}/{2}", GameData.Region(Simulation.HQ).Ai, 0, 3), TelexReasons.Drop(sim, "na"));
             Assert.IsNotNull(TelexReasons.Drop(sim, null), "deniz: geçersiz");
 
             var freed = WeuFreed();
             Assert.IsNull(TelexReasons.Drop(freed, "eeu"), "aday geçerli");
             Assert.IsNull(TelexReasons.Drop(freed, "weu"), "kendi yerine bırakmak geçerli");
-            Assert.AreEqual(Loc.F("{0}: özgür bölgeye komşu değil", Loc.T(GameData.Region("oc").Name)), TelexReasons.Drop(freed, "oc"));
+            Assert.AreEqual(Loc.F("{0}: özgür bölgeye komşu değil", GameData.Region("oc").Ai), TelexReasons.Drop(freed, "oc"));
             Assert.IsNull(TelexReasons.Pick(freed));
         }
 
@@ -389,7 +392,7 @@ namespace Corrigible.Desk.Tests
                 var roots = scene.GetRootGameObjects();
                 var map = roots.SelectMany(g => g.GetComponentsInChildren<SiginakMap>(true)).Single();
                 var so = new SerializedObject(map);
-                foreach (var f in new[] { "game", "surface", "rig", "telex", "sadeMap", "layer", "slip", "frontSlip", "squadReport", "figure", "drag", "figureTarget", "counters" })
+                foreach (var f in new[] { "game", "surface", "rig", "telex", "sadeMap", "layer", "slip", "frontSlip", "squadReport", "plans", "figure", "drag", "figureTarget", "counters" })
                     Assert.IsNotNull(so.FindProperty(f).objectReferenceValue, f);
                 var desk = roots.SelectMany(g => g.GetComponentsInChildren<SiginakDesk>(true)).Single();
                 Assert.AreSame(map, new SerializedObject(desk).FindProperty("map").objectReferenceValue, "Enter/Esc önce harita fişine");
@@ -415,6 +418,33 @@ namespace Corrigible.Desk.Tests
                 Assert.IsTrue(map.transform.root.GetComponentsInChildren<Transform>(true).Any(t => t.name == "Liberation fills" && t.gameObject.activeSelf));
                 var figure = map.transform.root.GetComponentsInChildren<TeamFigure>(true).Single();
                 Assert.Greater(figure.GetComponent<BoxCollider>().size.x, 0.1f, "tık hedefi K1'de de ≥ 44 px");
+            }
+            finally { EditorSceneManager.CloseScene(scene, true); }
+        }
+
+        /// <summary>
+        /// Tesis aşama 11 (§8.2, K39-3): kuşatılan sektörün işareti ✓ kalır ve nabız atar (cephede ve özgür bölgede); damga yalnız cephede
+        /// "KUŞATMA" (YENİDEN İŞGAL'in yuvası); özgür bölgede damga yok. Kuşatma bitince nabız durur, yeniden işgalde bugünkü damga.
+        /// </summary>
+        [Test]
+        public void DeskGameScene_SiegeMark_PulsesAndStampsOnlyOnTheFront()
+        {
+            var scene = EditorSceneManager.OpenScene(DeskSpriteManifest.Root + "/Scenes/DeskGame.unity", OpenSceneMode.Additive);
+            try
+            {
+                var layer = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<LiberationMapLayer>(true)).Single();
+                var m = layer.Regions.First();
+                m.Bind(new MapRegionState { Id = m.RegionId, Name = "Test", Kind = MapRegionKind.Front, Captured = 1, Occupation = 66.7, Siege = 0, SiegeDue = true });
+                Assert.AreEqual(0, m.SiegeMark, "cephede kuşatma işareti nabız atar");
+                Assert.AreEqual(Loc.T("KUŞATMA"), m.StampWord);
+                m.Bind(new MapRegionState { Id = m.RegionId, Name = "Test", Kind = MapRegionKind.Free, Captured = 3, Occupation = 0, Siege = 2, FreeShift = 4 });
+                Assert.AreEqual(2, m.SiegeMark, "özgür bölgede de işaret");
+                Assert.IsNull(m.StampWord, "özgür bölgede damga yok");
+                m.Bind(new MapRegionState { Id = m.RegionId, Name = "Test", Kind = MapRegionKind.Front, Captured = 0, Occupation = 100, Reoccupied = 0 });
+                Assert.AreEqual(-1, m.SiegeMark, "kuşatma bitti");
+                Assert.AreEqual(Loc.T("YENİDEN İŞGAL"), m.StampWord, "bırakılan kanatta bugünkü damga");
+                m.Bind(new MapRegionState { Id = m.RegionId, Name = "Test", Kind = MapRegionKind.Front, Captured = 1, Occupation = 66.7 });
+                Assert.IsNull(m.StampWord, "kuşatma ve yeniden işgal yokken damga yok");
             }
             finally { EditorSceneManager.CloseScene(scene, true); }
         }
@@ -529,7 +559,7 @@ namespace Corrigible.Desk.Tests
             var sim = NewLiberation();
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
             sim.Shelter.Reserves.Clear();
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = false, Down = 2 }).Ok);
+            FacilityDeskKit.ResolveRaid(sim, false, FacilityDeskKit.Dies, FacilityDeskKit.Dies);
             var team = LiberationMapBuilder.Build(sim).Team;
             Assert.IsTrue(team.AtShelter);
             var scene = EditorSceneManager.OpenScene(DeskSpriteManifest.Root + "/Scenes/DeskGame.unity", OpenSceneMode.Additive);

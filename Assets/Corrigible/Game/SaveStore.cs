@@ -60,6 +60,9 @@ namespace Corrigible.Game
                         ArchivePrevious(json, ".v" + previous.version + ".backup");
                     else if (HasRetiredCommand(previous))
                         ArchivePrevious(json, ".retired.backup");
+                    // Aynı sürümde haritanın parmak izi tutmayan kayıt (üretici ya da tabloları değişmiş) yüklenmez; üstüne yazılmadan saklanır
+                    else if (!Replay.MapMatches(previous))
+                        ArchivePrevious(json, ".map.backup");
                 }
                 string pending = SavePath + ".writing";
                 File.WriteAllText(pending, JsonUtility.ToJson(record));
@@ -97,6 +100,9 @@ namespace Corrigible.Game
                 if (json.IndexOf("\"shelterEventsEnabled\"", StringComparison.Ordinal) < 0) return null;
                 // Aşama 7'de silinen eski kabul komutlarını taşıyan kayıt bu komutlar olmadan başka oyuna döner
                 if (HasRetiredCommand(rec)) return null;
+                // Harita kayda yazılmaz, tohum ve dengeden yeniden üretilir: parmak izi tutmayan kayıt (üretici değişmiş ya da iz
+                // eksik) başka haritada yeniden oynanırdı. Sürüm uyuşmazlığıyla aynı yol.
+                if (!Replay.MapMatches(rec)) return null;
                 // JsonUtility null listeyi boş listeye dönüştürebilir. Kartlı oyunda devirsiz geçmiş gün geçerli değildir.
                 if (rec.balance.planningBoardEnabled && rec.day > 0 && rec.commands.Count == 0) return null;
                 return rec.day > 0 || rec.commands.Count > 0 ? rec : null;

@@ -994,7 +994,7 @@ namespace Corrigible.Desk.EditorTools
                 const int Hand = 10;
                 for (int j = 0; j < Hand; j++)
                 {
-                    var card = Spawn("person", BoardLayout.HandOpen(j, Hand), BoardLayout.HandLevel(j, Hand), 0, "Hand_" + j);
+                    var card = Spawn("person", BoardLayout.HandOpen(j, Hand, false), BoardLayout.HandLevel(j, Hand), 0, "Hand_" + j);
                     if (card == null) continue;
                     samples.Measure(card.Face as PersonCardFace);
                     card.Bind(samples.Person(j + 1, states: false, lost: j == 0));
@@ -1113,12 +1113,7 @@ namespace Corrigible.Desk.EditorTools
         /// </summary>
         sealed class CardSamples
         {
-            static readonly string[] Names =
-            {
-                "Derya", "Selin", "İpek", "Deniz", "Nermin", "Zeynep", "Orhan", "Cem", "Eren", "Suna", "Rauf", "Meral", "Arda", "Ece", "Murat",
-                "Aylin", "Baran", "Banu", "Ozan", "Lale", "Sinan", "Asli", "Kerem", "Sema", "Tamer", "Dilan", "Yalcin", "Feride", "Umut", "Ayca",
-                "Levent", "Naz",
-            };
+            static readonly string[] Names = Corrigible.Core.CandidateData.Founders.Concat(Corrigible.Core.CandidateData.Names).ToArray();
             static readonly string[] Professions =
             {
                 "Elektronikçi", "Elektrikçi", "Haberleşmeci", "Tamirci", "Aşçı", "Sağlık çalışanı", "Depo görevlisi",
@@ -1145,6 +1140,9 @@ namespace Corrigible.Desk.EditorTools
                 s.Add(Corrigible.Core.Loc.F("Kayıp · V.{0:000}", 31));
                 s.Add(Corrigible.Core.Loc.F("Boşta · +{0} can", 1));
                 foreach (var job in new[] { "tek", "emp", "ana", "craft", "cook" }) s.Add(Corrigible.Core.PlanningBoardData.JobName(job));
+                // Tesis aşama 5: GÖZETİM şeridi (dinleme puanı)
+                s.Add(Corrigible.Core.Loc.F("Dinleme {0}/{1}", 3, 3));
+                s.Add(Corrigible.Core.Loc.T("Dinleme · bitti"));
                 strips = s.ToArray();
                 letters = Corrigible.Core.Loc.T(Corrigible.Core.Loc.N("T E A Ü M B İ")).Split(new[] { ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
                 kitNames = new[] { "kit_tek", "kit_emp", "kit_ana" }.Select(Corrigible.Core.PlanningBoardData.EquipmentName).ToArray();
@@ -1314,7 +1312,7 @@ namespace Corrigible.Desk.EditorTools
                 var multi = recipes.Where(r => r.Turns > 1).OrderByDescending(r => Width(face.TurnsText, r.TurnsLine)).FirstOrDefault() ?? widest;
                 var d = new RecipeCardData
                 {
-                    Id = "tarama-tarif", RecipeId = widest.Id, Name = widest.Name, IconKey = widest.Id, TurnsLine = multi.TurnsLine,
+                    Id = "tarama-tarif", RecipeId = widest.Id, Name = widest.Name, ShortName = widest.ShortName, IconKey = widest.Id, TurnsLine = multi.TurnsLine,
                     OutLine = Corrigible.Core.Loc.T("→ 1 ürün"), NeedsLabel = s.Book != null ? s.Book.Input : null,
                     Turns = Mathf.Max(2, multi.Turns), Done = Mathf.Max(1, multi.Turns - 1),
                 };
@@ -1453,7 +1451,7 @@ namespace Corrigible.Desk.EditorTools
                 if (p != null) euler = p.vector3Value;
             }
             var theme = SiginakTheme.Active;
-            float height = (theme != null ? theme.NumberOf("shiftClose.slip.sizeMm[1]", 150) : 150) * 0.001f;
+            float height = (theme != null ? theme.NumberOf("shiftClose.slip.sizeMm[1]", 225) : 225) * 0.001f;
             return ShiftReceiptPaper.HandPose(cam.transform.position, cam.transform.rotation, cam.fieldOfView, fraction, height, offset, euler);
         }
 
@@ -1700,13 +1698,16 @@ namespace Corrigible.Desk.EditorTools
         static readonly Regex WordToken = new Regex(@"\p{L}+", RegexOptions.CultureInvariant);
         /// <summary>İngilizcede de Türkçe kalan bütün metinler (dil anahtarı, künye).</summary>
         static readonly HashSet<string> EnglishFixedTexts = new HashSet<string> { "TÜRKÇE", "Türkçe · English", "DİL · LANGUAGE", "KYGA", "ANA ŞALTER" };
-        /// <summary>Oyundaki kişi adları (<c>Simulation.PlanningBoard</c> kurucu listesi + aday adları + fikstürlerin tasarım adları).</summary>
-        static readonly string[] AdmittedNames =
+        /// <summary>
+        /// Oyundaki kişi adları (<c>CandidateData.Founders</c> + <c>CandidateData.Names</c>) ve fikstürlerin tasarım adları: fikstürler
+        /// (<c>HandoverSlipFixtures</c>, <c>Rev3CaptureSet</c>) aşama 3'ten önceki Türkçe adları korur.
+        /// </summary>
+        static readonly string[] AdmittedNames = Corrigible.Core.CandidateData.Founders.Concat(Corrigible.Core.CandidateData.Names).Concat(new[]
         {
             "Derya", "Selin", "İpek", "Deniz", "Nermin", "Zeynep", "Orhan", "Cem", "Eren", "Suna", "Rauf", "Meral", "Arda", "Ece", "Murat",
             "Aylin", "Baran", "Banu", "Ozan", "Lale", "Sinan", "Asli", "Kerem", "Sema", "Tamer", "Dilan", "Yalcin", "Feride", "Umut", "Ayca",
             "Levent", "Naz", "Melek", "Tarık", "Ebru", "Gülizar", "Mehmet",
-        };
+        }).ToArray();
 
         /// <summary>Çevrilmeyen sözcükler: kişi adları (Core'un kurucu listesi, aday adları) büyük ve küçük harfli, künye.</summary>
         static readonly HashSet<string> EnglishFixedWords = BuildFixedWords();

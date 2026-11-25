@@ -63,8 +63,13 @@ namespace Corrigible.Game.Raid
         Quaternion letterRotation, fallRotation;
         Transform flipBody;
 
-        void Awake()
+        void Awake() => Init();
+
+        /// <summary>Boya ve poz başlangıçları. Oyunda Awake kurar; düzenleme kipinde (EditMode testleri tahtayı Awake'siz kurar) ilk
+        /// poz ya da boya değişikliğinde kurulur. İkinci çağrı bir şey yapmaz.</summary>
+        void Init()
         {
+            if (mpb != null) return;
             mpb = new MaterialPropertyBlock();
             baseColors = new Color[tinted.Length][];
             baseEmission = new Color[tinted.Length][];
@@ -120,10 +125,11 @@ namespace Corrigible.Game.Raid
         public void SetSpent(bool on)
         {
             if (spent == on) return;
+            Init();
             spent = on; ApplyPose(standee && !down && Application.isPlaying); Apply();
         }
 
-        public void SetDown(bool on) { if (down == on) return; down = on; ApplyPose(); Apply(); }
+        public void SetDown(bool on) { if (down == on) return; Init(); down = on; ApplyPose(); Apply(); }
 
         /// <summary>Kâğıt etiketler tahtanın havuzunda çizilir; eski prefab yazıları üst üste gelmesin.</summary>
         public void SetWorldLabelsVisible(bool on)

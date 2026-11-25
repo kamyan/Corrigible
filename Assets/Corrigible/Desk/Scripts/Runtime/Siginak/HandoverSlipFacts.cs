@@ -54,6 +54,8 @@ namespace Corrigible.Desk
         /// <summary>Konum çözüldüyse kalan vardiya, bu vardiya dahil (kararla varılan eşikte 2'den başlar); eski fişlerde 0 = bu vardiya son.</summary>
         public int exposureShiftsLeft;
         public int shelterShort, shelterShortMax;
+        /// <summary>Tesis aşama 11: bu vardiya karşı saldırının karar vardiyası ve kanat kendiliğinden bırakılırsa güven kaybı (uyarı kutusu).</summary>
+        public int siegeTrust;
     }
 
     /// <summary>
@@ -69,7 +71,7 @@ namespace Corrigible.Desk
     }
 
     /// <summary>
-    /// Sığınak satırı. <see cref="job"/>: craft | cook | train | rest (<c>BoardDropRules.PlaceOf</c>); <see cref="subject"/> yalnız
+    /// Sığınak satırı. <see cref="job"/>: craft | cook | train | watch (yalnız GÖZETİM açıkken) | rest (<c>BoardDropRules.PlaceOf</c>); <see cref="subject"/> yalnız
     /// train'de (eğitim konusu kimliği). <see cref="state"/> ve <see cref="stateShifts"/>: durum eki (“yatıyor 2”, “kısıtlı 2”).
     /// </summary>
     [Serializable]
@@ -132,5 +134,6 @@ namespace Corrigible.Desk
     /// KOS aşama 7: eski kabulün uyarıları (0 açık kapı başvurusu, 1 inceleme fişi, 2 kısıt süresi, 3 iki bulgu) söküldü; sayıları
     /// boş kalır. Eski yan dosyada bu sayılarla saklanmış uyarı fişte yazılmaz (<c>HandoverSlipFormat</c> tanımsız türü atlar).
     /// </remarks>
-    public enum SlipWarningKind { DoorLastShift = 4, Rations = 5, Exposure = 6, ShelterShort = 7 }
+    /// <remarks>Tesis aşama 11: <see cref="Siege"/>: karşı saldırıya karar verilmedi, kapanışta kanat kendiliğinden bırakılır.</remarks>
+    public enum SlipWarningKind { DoorLastShift = 4, Rations = 5, Exposure = 6, ShelterShort = 7, Siege = 8 }
 }

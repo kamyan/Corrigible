@@ -53,11 +53,7 @@ namespace Corrigible.Desk.Bridge
             FillMaterials(s, sim, board, lang);
             FillKits(s, board);
             FillBook(s, sim, lang);
-            if (board == null)
-            {
-                FillTopics(s, sim, null, ui, lang);
-                return s;
-            }
+            if (board == null) return s;
 
             int alive = board.People.Count(p => p.Alive), capacity = sim.B.boardResidentCapacity;
 
@@ -78,11 +74,12 @@ namespace Corrigible.Desk.Bridge
                 ? Loc.F("{0} · {1}", s.HurdaPlateLine, Loc.F("metal deposu dolu ({0}): kazanç yok", metalCap))
                 : s.HurdaPlateLine;
 
-            // ---------------- cepler ve deste (canlılar)
+            // ---------------- cepler ve deste (canlılar); GÖZETİM yalnız BoardDropRules.WatchOpen iken cep (oyunda hep; kapalıyken "watch" emekli, destede)
+            s.WatchOpen = BoardDropRules.WatchOpen(sim);
             var place = new Dictionary<string, string>();
             foreach (string job in BoardLayout.Jobs)
             {
-                var occupant = BoardDropRules.Occupant(board, job);
+                var occupant = BoardDropRules.Occupant(board, job, s.WatchOpen);
                 if (occupant == null) continue;
                 s.PocketOccupant[job] = occupant.Id;
                 place[occupant.Id] = job;
@@ -106,9 +103,9 @@ namespace Corrigible.Desk.Bridge
             // ---------------- eşyalar (yuva sırası, sonra oluşturma sırası; OrderBy kararlıdır)
             foreach (var e in board.Equipment.OrderBy(x => SlotRank(x.Kind)))
                 s.Items.Add(ItemCard(sim, board, e, s.Words));
+            FillGear(s, sim, board);
 
             FillChips(s, board, lang);
-            FillTopics(s, sim, board, ui, lang);
             FillOrder(s, sim, board, lang);
             s.NewItem = NewItemOf(sim, ui);
             s.RecipesDraggable = s.Editable;
@@ -155,6 +152,9 @@ namespace Corrigible.Desk.Bridge
             if (board == null || !board.Locked) return null;
             if (board.Printed) return Loc.T("devir fişi basıldı");
             var log = sim.S.RaidLog;
+            // Tesis aşama 11: süren ya da bu vardiya biten savunma "savunma emri verildi"
+            if (FacilityDefenseText.Defending(sim) || sim.S.Raid == null && log.Count > 0 && log[log.Count - 1].Day == sim.S.Day
+                && FacilityDefenseText.IsDefense(log[log.Count - 1])) return FacilityDefenseText.LockReason;
             if (sim.S.Raid != null || log.Count > 0 && log[log.Count - 1].Day == sim.S.Day) return Loc.T("baskın emri verildi");
             return null;
         }
@@ -174,10 +174,6 @@ namespace Corrigible.Desk.Bridge
                 default: return PlanningBoardData.SubjectName(subject);
             }
         }
-
-        /// <summary>Konu satırının üzerine gelme satırı: eğitimdeki kişi o konuda ustaysa "usta" (renk tek başına durum taşımaz).</summary>
-        public static string TopicHoverLine(TopicsData topics, int row) =>
-            topics != null && row >= 0 && row < topics.Mastered.Length && topics.Mastered[row] ? Loc.T("usta") : null;
 
         /// <summary>
         /// Portre anahtarı: ad ASCII küçük harfe katlanır ("İpek" → "ipek"), sayısal ek atılır ("Suna 12" → "suna"; portre adı
@@ -238,11 +234,15 @@ namespace Corrigible.Desk.Bridge
             d.Lost = !p.Alive;
             d.Selected = ui.SelectedId == p.Id;
             d.HoverTitle = p.Name;
-            d.HoverLine = d.Strip;
+            // GÖZETİM: şerit puanı, üzerine gelme satırı açılacak paftayı da söyler (yatan, kısıtlı vb. kendi şeridini korur)
+            d.HoverLine = place == BoardLayout.WatchJob && d.StripTone == StripTone.Ink ? FacilityWatchText.Line(sim) : d.Strip;
+            // Kayıt 22: görevdeki yaralı da kapanışta iyileşir (şerit ≤ 66 mm; ipucu üzerine gelme satırında; Boşta şeridi zaten yazar)
+            if (p.Alive && p.Down <= 0 && place != "rest" && d.StripTone == StripTone.Ink && BoardPreviewText.CloseHeal(sim, p, p.Job) is int dutyHeal && dutyHeal > 0)
+                d.HoverLine = Loc.F("{0} · kapanışta +{1} can", d.HoverLine, dutyHeal);
             return d;
         }
 
-        /// <summary>Kart şeridi, ilk eşleşen: kayıp, yatıyor, kısıtlı, eğitim, boşta, cep adı (karışık harf, ≤ 66 mm).</summary>
+        /// <summary>Kart şeridi, ilk eşleşen: kayıp, yatıyor, kısıtlı, eğitim, boşta, gözetim (dinleme puanı), cep adı (karışık harf, ≤ 66 mm).</summary>
         static void Strip(Simulation sim, ResidentState p, string place, out string text, out StripTone tone)
         {
             if (!p.Alive) { text = LostLine(sim, p); tone = StripTone.Ink; return; }
@@ -281,10 +281,17 @@ namespace Corrigible.Desk.Bridge
             }
             if (place == "rest")
             {
-                // Yarım tayında dinlenme can vermez (Core AdvancePlanningBoard)
-                int heal = sim.HalfRationActive ? 0 : Math.Max(0, Math.Min(p.MaxHp, p.Hp + Math.Max(0, sim.B.boardRestHeal)) - p.Hp);
+                // Yarım tayında dinlenme can vermez (Core AdvancePlanningBoard; kuralı Core'un görevine göre: BoardPreviewText.CloseHeal)
+                int heal = BoardPreviewText.CloseHeal(sim, p, p.Job);
                 text = heal > 0 ? Loc.F("Boşta · +{0} can", heal) : Loc.T("Boşta");
                 tone = StripTone.Mute;
+                return;
+            }
+            if (place == BoardLayout.WatchJob)
+            {
+                // Tesis aşama 5: dinleme puanı (n/3) ya da açılacak plan yok
+                text = FacilityWatchText.Strip(sim);
+                tone = StripTone.Ink;
                 return;
             }
             text = PlanningBoardData.JobName(place);
@@ -342,6 +349,12 @@ namespace Corrigible.Desk.Bridge
                 Id = e.Id, Kind = e.Kind, Name = PlanningBoardData.EquipmentName(e.Kind), Slot = SlotOf(e.Kind),
                 SlotLabel = SlotWord(e.Kind, words), UseLine = UseLine(sim, e.Kind), OwnerId = owner,
             };
+            // Tesis aşama 9 (K32): dinlenen köpeğin kartı damgasını taşır (kullanım satırının yerinde)
+            if (FacilityBoardText.On(sim) && e.Rest > 0)
+            {
+                d.Rest = e.Rest;
+                d.UseLine = FacilityBoardText.RestStamp(e.Rest);
+            }
             d.HoverTitle = d.Name;
             string where = owner == null ? Loc.T("DEPO") : board.Person(owner)?.Name ?? Loc.T("DEPO");
             d.HoverLine = string.IsNullOrEmpty(d.UseLine) ? where : Loc.F("{0} · {1}", where, d.UseLine);
@@ -366,7 +379,8 @@ namespace Corrigible.Desk.Bridge
                 case "medkit":
                     return Loc.F("bakım görevinde +{0} can; panoda bakım cebi yok", Math.Max(0, sim?.B.boardMedkitHeal ?? 1));
                 default:
-                    return string.Empty;
+                    // Tesis aşama 9: ekipmanın baskın hakkı ve etkisi
+                    return FacilityBoardText.UseLine(sim, kind) ?? string.Empty;
             }
         }
 
@@ -407,6 +421,32 @@ namespace Corrigible.Desk.Bridge
         }
 
         /// <summary>
+        /// Tesis aşama 9 (K18–K19): depodaki ikinci sıra, <see cref="BoardLayout.GearKinds"/> sırasıyla. Yalnız tesis kipinde ve türün
+        /// depoda kartı varken yığın kurulur (boş yığın gölgesi yok); yığının üst kartı sayıyı yüzünde taşır ("YARDIMCI · ×2", yalnız
+        /// n &gt; 1). Dinlenen köpek yığında ayrı sayılmaz; üstteki kart dinlenmeyen köpektir.
+        /// </summary>
+        static void FillGear(BoardSnapshot s, Simulation sim, PlanningBoardState board)
+        {
+            if (!FacilityBoardText.On(sim) || board == null) return;
+            for (int i = 0; i < s.Gear.Length && i < BoardLayout.GearKinds.Length; i++)
+            {
+                string kind = BoardLayout.GearKinds[i];
+                // Dinlenen köpek alta (OrderBy kararlı): üstteki kart dinlenmeyendir
+                var stored = board.Equipment.Where(e => string.IsNullOrEmpty(e.OwnerId) && e.Kind == kind).OrderByDescending(e => e.Rest > 0 ? 1 : 0).ToList();
+                if (stored.Count == 0) continue;
+                var k = new KitStackData { Kind = kind, Count = stored.Count, CountText = Loc.F("×{0}", stored.Count) };
+                for (int j = Math.Max(0, stored.Count - KitStackDrawn); j < stored.Count; j++) k.TopIds.Add(stored[j].Id);
+                s.Gear[i] = k;
+                var top = s.Item(k.TopIds[k.TopIds.Count - 1]);
+                if (top != null && stored.Count > 1)
+                {
+                    top.Count = stored.Count;
+                    top.SlotLabel = Loc.F("{0} · {1}", top.SlotLabel, k.CountText);
+                }
+            }
+        }
+
+        /// <summary>
         /// İş emrine ayrılan (ya da eski kayıtta konan) her birim bir fiş (<see cref="BoardDropRules.ChipCount"/>, PLAN §1.8; başlamış
         /// emirde girdi ödendiği için fiş yok); en çok 8 çizilir, türler sırayla paylaşır (her türün en az bir fişi görünür).
         /// </summary>
@@ -429,20 +469,6 @@ namespace Corrigible.Desk.Bridge
                 for (int j = 0; j < drawn[i]; j++)
                     s.Chips.Add(new ChipData { Id = BoardUiState.ChipId(kinds[i], j), Kind = kinds[i], Name = name, Index = j });
             }
-        }
-
-        static void FillTopics(BoardSnapshot s, Simulation sim, PlanningBoardState board, BoardUiState ui, DeskLang lang)
-        {
-            var trainee = BoardDropRules.Occupant(board, "train");
-            var t = s.Topics;
-            for (int i = 0; i < t.Labels.Length && i < Subjects.Length; i++)
-            {
-                t.Subjects[i] = Subjects[i];
-                t.Labels[i] = DeskText.Upper(TopicLabel(Subjects[i]), lang);
-                t.Mastered[i] = trainee != null && trainee.Skill(Subjects[i]) >= sim.B.boardExpertAt;
-            }
-            t.RingRow = Math.Max(0, Array.IndexOf(Subjects, BoardDropRules.TrainingSubject(sim, ui)));
-            t.TraineeId = trainee?.Id;
         }
 
         static void FillWords(BoardWords w)
@@ -476,13 +502,17 @@ namespace Corrigible.Desk.Bridge
             w.Tab = Loc.T("İŞ EMRİ");
             // BoardRecipes her okumada yeni liste kurar: bir kez alınır (PLAN §0)
             var recipes = sim?.BoardRecipes ?? new List<BoardRecipe>();
-            int spreads = Math.Max(1, (recipes.Count + 1) / 2);
+            // Tesis aşama 9 (K22): açılmamış temel tarifler açık sayfalardan sonra kapalı sayfa (dizinler kaymaz)
+            var locked = FacilityBoardText.LockedKinds(sim);
+            int pages = recipes.Count + locked.Length;
+            int spreads = Math.Max(1, (pages + 1) / 2);
             for (int i = 0; i < recipes.Count; i++)
             {
                 var r = recipes[i];
                 var d = new RecipeData
                 {
                     Id = r.Id, Name = r.Name, Title = DeskText.Upper(r.Name, lang), Index = i, Turns = r.Turns,
+                    ShortName = PlanningBoardData.CardName(string.IsNullOrEmpty(r.Answer) ? r.Output : r.Answer),
                     Number = Loc.F("TARİF {0:00}", i + 1),
                     SlotWord = SlotPhrase(r.Output),
                     OutLine = Loc.T("1 ×"),
@@ -491,11 +521,46 @@ namespace Corrigible.Desk.Bridge
                     PageLabel = Loc.F("s. {0}", i + 1),
                     SpreadLabel = Loc.F("AÇILIM {0}/{1}", i / 2 + 1, spreads),
                 };
+                if (r.Reward)
+                {
+                    d.Reward = true;
+                    d.Source = FacilityRewardText.SourceName(sim, r.Id);
+                    d.Supplies = (int)Math.Ceiling(Math.Max(0, r.Supplies));
+                    string reward = FacilityBoardText.RewardNote(sim, r);
+                    d.Note = string.IsNullOrEmpty(d.Note) ? reward : string.IsNullOrEmpty(reward) ? d.Note : Loc.F("{0} · {1}", reward, d.Note);
+                }
+                // Tesis aşama 10 (K45): cevap sayfası (Core aynı dizinde, aynı kimlikle, cevabın adı ve +devreyle verir): el notu cevabı
+                // söyler, kaynak iki YZ'yi
+                if (!string.IsNullOrEmpty(r.Answer))
+                {
+                    d.Answer = r.Answer;
+                    d.Note = FacilityCounterText.AnswerNote(sim, r);
+                    d.Source = FacilityCounterText.AnswerSource(sim, r);
+                }
                 AddInputs(d.Inputs, r);
                 s.Recipes.Add(d);
             }
+            for (int j = 0; j < locked.Length; j++)
+            {
+                int i = recipes.Count + j;
+                string name = PlanningBoardData.EquipmentName(locked[j]);
+                s.Recipes.Add(new RecipeData
+                {
+                    Id = locked[j], Name = name, Title = DeskText.Upper(name, lang), Index = i, Locked = true,
+                    ShortName = PlanningBoardData.CardName(locked[j]),
+                    Number = Loc.F("TARİF {0:00}", i + 1), SlotWord = SlotPhrase(locked[j]), OutLine = Loc.T("1 ×"),
+                    TurnsLine = string.Empty, Note = string.Empty, PageLabel = Loc.F("s. {0}", i + 1),
+                    SpreadLabel = Loc.F("AÇILIM {0}/{1}", i / 2 + 1, spreads),
+                    Source = FacilityRewardText.SourceName(sim, locked[j]), LockedStamp = FacilityBoardText.LockedStamp(sim, locked[j]),
+                });
+            }
             s.BookTitle = Loc.T("TARİF DEFTERİ");
-            s.BookLine = Loc.F("{0} tarif", recipes.Count);
+            s.BookLine = locked.Length > 0 ? Loc.F("{0} tarif · {1} kapalı", recipes.Count, locked.Length) : Loc.F("{0} tarif", recipes.Count);
+            // Tesis aşama 10: dönüşen sayfalar ("{n} tarif · {k} cevap"; kapalı sayfa da varsa üçü)
+            int answers = recipes.Count(r => !string.IsNullOrEmpty(r.Answer));
+            if (answers > 0)
+                s.BookLine = locked.Length > 0 ? Loc.F("{0} tarif · {1} cevap · {2} kapalı", recipes.Count, answers, locked.Length)
+                    : Loc.F("{0} tarif · {1} cevap", recipes.Count, answers);
         }
 
         /// <summary>Çıktının yuva sözcüğü (sayfanın ÇIKTI satırı): zırh, yardımcı ya da kit yuvası.</summary>
@@ -531,7 +596,20 @@ namespace Corrigible.Desk.Bridge
                     Kind = m.Kind, Name = PlanningBoardData.MaterialName(m.Kind), Quantity = m.Quantity,
                     BookQty = Loc.F("× {0}", m.Quantity), CardQty = Loc.F("×{0}", m.Quantity),
                 });
+            // Tesis aşama 9 (K23): erzak bedeli (köpek) son satır, hammadde gibi çizilir; fiş ve ayırma yok
+            if (r.Supplies > 0)
+            {
+                int n = (int)Math.Ceiling(r.Supplies);
+                list.Add(new RecipeInput
+                {
+                    Kind = SuppliesKind, Name = Loc.T("erzak"), Quantity = n, Supplies = true,
+                    BookQty = Loc.F("× {0}", n), CardQty = Loc.F("×{0}", n),
+                });
+            }
         }
+
+        /// <summary>Erzak satırının türü (simgesi <c>icon_erzak</c>; hammadde türü değildir).</summary>
+        public const string SuppliesKind = "erzak";
 
         /// <summary>112 × 80 tarif kartının verisi (PLAN §1.6). <paramref name="id"/>: formdaki kartta iş emri, kopyada tarif kimliği.</summary>
         static RecipeCardData CardOf(BoardRecipe r, string id)
@@ -539,6 +617,7 @@ namespace Corrigible.Desk.Bridge
             var c = new RecipeCardData
             {
                 Id = id, RecipeId = r.Id, Name = r.Name, IconKey = r.Output, Turns = r.Turns,
+                ShortName = PlanningBoardData.CardName(string.IsNullOrEmpty(r.Answer) ? r.Output : r.Answer),
                 TurnsLine = TurnsLine(r.Turns), OutLine = Loc.T("→ 1 ürün"), NeedsLabel = Loc.T("GİRDİ"),
             };
             AddInputs(c.Inputs, r);
@@ -594,6 +673,13 @@ namespace Corrigible.Desk.Bridge
             }
 
             var outlook = ProductionForecast.Of(sim);
+            // Tesis aşama 9 (K19): bu kapanış eksik rol kiti yapılır, emir beklemede (durmuş sayılmaz; damga yok)
+            if (outlook.KitFirst)
+            {
+                d.State = order.Started ? OrderState.Started : OrderState.Full;
+                d.Status = Loc.F("{0} · {1}", name, Loc.F("bu kapanış {0} yapılır · emir beklemede", Lowered(PlanningBoardData.EquipmentName(outlook.Output), lang)));
+                return;
+            }
             if (outlook.Stop != ProductionStop.None)
             {
                 d.State = OrderState.Stopped;
@@ -662,6 +748,9 @@ namespace Corrigible.Desk.Bridge
             var e = board.EquipmentItem(id);
             if (e == null || !string.IsNullOrEmpty(e.OwnerId) || !board.LastCompleted.Contains(e.Kind)) return null;
             int stack = Array.IndexOf(BoardLayout.KitKinds, e.Kind);
+            // Tesis aşama 9: ekipman ikinci sıradaki yığınına kayar (YENİ etiketi de)
+            if (stack < 0 && FacilityBoardText.On(sim) && (stack = Array.IndexOf(BoardLayout.GearKinds, e.Kind)) >= 0)
+                return new NewItemData { ItemId = e.Id, Kind = e.Kind, Stack = stack, Day = day, Gear = true };
             if (stack < 0) return null;
             return new NewItemData { ItemId = e.Id, Kind = e.Kind, Stack = stack, Day = day };
         }
@@ -743,6 +832,9 @@ namespace Corrigible.Desk.Bridge
             f.Left.Add(new FolderLine(Loc.T("PROFİL"), Loc.T(p.Trait)));
             f.Left.Add(new FolderLine(Loc.T("GÖREV"), PlaceText(p, card.JobId)));
             f.Left.Add(new FolderLine(Loc.T("DURUM"), card.Strip, card.StripTone));
+            if (sim.FacilityTitlesOn && p.Alive)
+                foreach (var title in FacilityTitles.Order.Where(t => FacilityTitles.Has(p.Titles, t)))
+                    f.Left.Add(new FolderLine(FacilityTitles.Name(title), FacilityTitles.Effect(sim.B, title)));
             f.Left.Add(new FolderLine(card.StatLabels[0], card.StatValues[0], card.Hurt ? StripTone.Red : StripTone.Ink));
             f.Left.Add(new FolderLine(card.StatLabels[1], card.StatValues[1]));
             f.Left.Add(new FolderLine(card.StatLabels[2], card.StatValues[2]));
@@ -759,7 +851,8 @@ namespace Corrigible.Desk.Bridge
             foreach (var e in items) f.Left.Add(new FolderLine(SlotWord(e.Kind, words), PlanningBoardData.EquipmentName(e.Kind)));
             f.Gear[0] = string.Join(" / ", items.Where(e => e.Kind.StartsWith("kit_")).Select(e => PlanningBoardData.EquipmentName(e.Kind)));
             f.Gear[1] = string.Join(" / ", items.Where(e => e.Kind == "armor").Select(e => PlanningBoardData.EquipmentName(e.Kind)));
-            f.Gear[2] = string.Join(" / ", items.Where(e => !e.Kind.StartsWith("kit_") && e.Kind != "armor").Select(e => PlanningBoardData.EquipmentName(e.Kind)));
+            f.Gear[2] = string.Join(" / ", items.Where(e => !e.Kind.StartsWith("kit_") && e.Kind != "armor").Select(e =>
+                FacilityBoardText.On(sim) && e.Rest > 0 ? Loc.F("{0} {1}", PlanningBoardData.EquipmentName(e.Kind), Loc.T("(dinleniyor)")) : PlanningBoardData.EquipmentName(e.Kind)));
             if (items.Count == 0) f.Left.Add(new FolderLine(null, Loc.T("taşıdığı eşya yok"), StripTone.Mute));
 
             // Sağ sayfa: kalıcı kabul dosyası (LastAccessJob yalnız robotlarda yazılır: asla gösterilmez). Başlığı (KALICI KİŞİ

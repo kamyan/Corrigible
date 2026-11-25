@@ -344,7 +344,7 @@ namespace Corrigible.Desk.EditorTools
             }
         }
 
-        // ================================================================ me · Körfez rafinerisi: kutu sehpada boru demeti
+        // ================================================================ me · Petrol rafinerisi: kutu sehpada boru demeti
 
         /// <summary>Boru istifi uçtan: her katta iki sıra şaşırtmalı boru ağzı (kesik kenar parlak, içi koyu, alt-sağda gölge), kimi
         /// ağızda cıvatalı koyu çelik flanş; her katın dibinde sehpanın çelik kirişi. Yüz üstünde dokuda daireler yatayda 1,87 kat
@@ -794,7 +794,7 @@ namespace Corrigible.Desk.EditorTools
             for (float k = 30; k < w; k += 70) c.Rect(x + k, y + 1, 2, 4, Color.black, 0.2f);
         }
 
-        // ================================================================ ru · Sibirya veri merkezi: sandviç panel kabin
+        // ================================================================ ru · Kutup veri merkezi: sandviç panel kabin
 
         /// <summary>Sandviç panel: ince yatay mikro nervürler, boydan iki dikey derz (koyu oluk + açık kapak), üst ve alt
         /// kaplama, katlar arası kuşak, dipte ve derz diplerinde kırağı.</summary>

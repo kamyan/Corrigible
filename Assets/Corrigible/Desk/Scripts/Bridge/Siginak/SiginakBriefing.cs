@@ -65,7 +65,7 @@ namespace Corrigible.Desk.Bridge
         static SiginakTheme T => SiginakTheme.Active;
 
         BriefingData Data() => Sim?.Board != null ? BriefingBuilder.Planning(Sim, state == State.Reading, save, armed, !fromEntrance)
-            : BriefingBuilder.Build(state == State.Reading, save, armed, !fromEntrance);
+            : BriefingBuilder.Build(state == State.Reading, save, armed, !fromEntrance, Sim);
 
         /// <summary>Menüden yeni harekât: kayıt kararı kapıda verildi, belgede dosya ve sekme yok.</summary>
         bool fromEntrance;

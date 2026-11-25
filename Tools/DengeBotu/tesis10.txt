@@ -1,0 +1,38 @@
+# Tesis baskınları aşama 10 ölçümü (Docs/TESIS-BASKINLARI-TASARIMI.md §11.6, §12 satır 10): önlem defteri. Bitti ölçütü "tek araç ve
+# dönüşümlü politika ölçülür": t10tek ve t10donus önlem açık, t10tekK0 ve t10donusK0 önlem kapalı; eşli fark ve farkların farkı.
+# Değerler C# varsayılanları; bayrak yalnız BAL'de açık, asset'te kapalı kalır. ODUL, ARAC, TAK, DEV ve DUSEN ortam değişkenidir
+# (BAL.txt'e yazılmaz; R satırının odul=, arac=, tak= anahtarında görünür). Ortak: 80 tohum, "iyi" küme, PICK=rastgele PAR=10 DEV=kir
+# DUSEN=hep (RETIRE=1, ALT=8 kos.sh varsayılanı ve satırdan). Pusu isabeti varsayılan olarak sayılmaz (K6); A etiketleri §6.3 lafzı.
+#   t10taban    kıyas tabanı = aşama 8 ölçümünün t8yok'u (bağlantı; ayrıca t8tek, t8donus olay nişanının etkisi için)
+#   t10yokK0    regresyon kilidi: ODUL=tarif ARAC=yok, facilityCountermeasures=false (aşama 10 anahtarları atılınca t8yok ile bayt aynı)
+#   t10tekK0    ODUL=tarif ARAC=tek, önlem kapalı (farkların farkı tabanı; − t8tek = olay nişanının etkisi)
+#   t10donusK0  ODUL=tarif ARAC=donus, önlem kapalı (aynı)
+#   t10tek      ODUL=tarif ARAC=tek (bitti ölçütü)
+#   t10donus    ODUL=tarif ARAC=donus (bitti ölçütü)
+#   t10tekA     ODUL=tarif ARAC=tek, facilityTallyAmbush=true (pusu isabeti aygıta sayılır: §6.3 lafzı, S1'in verisi)
+#   t10donusA   ODUL=tarif ARAC=donus, facilityTallyAmbush=true
+#   t10onlem    ODUL=onlem ARAC=donus (cevap tarifi yalnız önleme karşı; cevabın seçimi ve etkisi)
+#   t10yok      ODUL=tarif ARAC=yok (ekipmansız oyuncuya önlem ve Söküm bedeli)
+#   t10uretK0   ODUL=tarif ARAC=donus TAK=hic, önlem kapalı (üretir, takmaz: üretim yolunun ayrıştırması)
+# Komutlar (OUT ortak çıktı klasörü; etiket başına bir koşu):
+#   ln -s <aşama 8 ölçüm out>/t8yok $OUT/out/t10taban; ln -s <…>/t8tek $OUT/out/t8tek; ln -s <…>/t8donus $OUT/out/t8donus
+#   PICK=rastgele PAR=10 DEV=kir DUSEN=hep ODUL=tarif ARAC=yok   Tools/DengeBotu/kos.sh <(grep '^t10yokK0|' Tools/DengeBotu/tesis10.txt)
+#   PICK=rastgele PAR=10 DEV=kir DUSEN=hep ODUL=tarif ARAC=tek   Tools/DengeBotu/kos.sh <(grep -E '^t10tek(K0|A)?\|' Tools/DengeBotu/tesis10.txt)
+#   PICK=rastgele PAR=10 DEV=kir DUSEN=hep ODUL=tarif ARAC=donus Tools/DengeBotu/kos.sh <(grep -E '^t10donus(K0|A)?\|' Tools/DengeBotu/tesis10.txt)
+#   PICK=rastgele PAR=10 DEV=kir DUSEN=hep ODUL=onlem ARAC=donus Tools/DengeBotu/kos.sh <(grep '^t10onlem|' Tools/DengeBotu/tesis10.txt)
+#   PICK=rastgele PAR=10 DEV=kir DUSEN=hep ODUL=tarif ARAC=yok   Tools/DengeBotu/kos.sh <(grep '^t10yok|' Tools/DengeBotu/tesis10.txt)
+#   PICK=rastgele PAR=10 DEV=kir DUSEN=hep ODUL=tarif ARAC=donus TAK=hic Tools/DengeBotu/kos.sh <(grep '^t10uretK0|' Tools/DengeBotu/tesis10.txt)
+#   python3 -I Tools/DengeBotu/ozet.py --tesis t10yokK0 t10tekK0 t10donusK0 t10tek t10donus t10tekA t10donusA t10onlem t10yok t10uretK0 --taban t10taban
+#   python3 -I Tools/DengeBotu/ozet.py --esli t10tek t10donus t10tekK0 t10donusK0 t10tek t10tekK0 t10donus t10donusK0 t10tekK0 t8tek t10donusK0 t8donus t10onlem t10donus t10yok t10yokK0 t10uretK0 t10yokK0 t10donusK0 t10uretK0
+#   python3 -I Tools/DengeBotu/ozet.py --fark t10tek t10tekK0 t10donus t10donusK0 t10tekA t10tekK0 t10donusA t10donusK0
+# Kilit (README "Önlem defteri"): t10yokK0'dan aşama 10 anahtarları atılınca t8yok ile tam dosya bayt aynı.
+t10yokK0|liberationMapGen=1;raidFacilityEnabled=true;facilityCountermeasures=false;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t10tekK0|liberationMapGen=1;raidFacilityEnabled=true;facilityCountermeasures=false;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t10donusK0|liberationMapGen=1;raidFacilityEnabled=true;facilityCountermeasures=false;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t10tek|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t10donus|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t10tekA|liberationMapGen=1;raidFacilityEnabled=true;facilityTallyAmbush=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t10donusA|liberationMapGen=1;raidFacilityEnabled=true;facilityTallyAmbush=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t10onlem|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t10yok|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t10uretK0|liberationMapGen=1;raidFacilityEnabled=true;facilityCountermeasures=false;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80

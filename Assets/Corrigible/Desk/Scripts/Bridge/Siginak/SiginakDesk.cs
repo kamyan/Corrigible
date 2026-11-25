@@ -75,6 +75,8 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] SiginakAdmission admission;
         [Tooltip("Sığınak olaylarının tutanağı (KOS aşama 4): EVRAK'a tık önce tepsideki tutanağı ele alır.")]
         [SerializeField] SiginakShelterEvent shelterEvent;
+        [Tooltip("Tesis aşama 9: sunucu ödülünün kâğıdı; tepside beklerken (olay tutanağı yoksa) EVRAK tıkı onu ele getirir.")]
+        [SerializeField] SiginakServerReward serverReward;
 
         /// <summary>KAPI tuşunun etiketi (kaynak metinler; gösterirken çevrilir).</summary>
         static readonly string DoorWaitingTitle = Loc.N("KAPI · ZİYARETÇİ VAR"),
@@ -82,6 +84,9 @@ namespace Corrigible.Desk.Bridge
             DoorRaidLine = Loc.N("Baskın sürüyor: kapıya gidilemez."),
             DoorIdleLine = Loc.N("Kapıda kimse yok. Biri çalınca lamba yanıp söner.");
         /// <summary>Kartlı oyunda KAPI tuşunun etiketi (Aşama 6; "ziyaretçi" yerine kabul başvurusu).</summary>
+        /// <summary>Belge çekmecesinde belge bekliyor ya da karar şalteri bekliyor (aday yokken; Docs/KAPI-BELGELERI-VE-YZ-MEKANLARI-TASARIMI.md §A).</summary>
+        static readonly string DoorPaperTitle = Loc.N("KAPI · BELGE VAR"), DoorPaperLine = Loc.N("Kapıya bir belge bırakıldı: kapının yanındaki çekmeceden al."),
+            DoorSendLine = Loc.N("Karar çekmecede: yanındaki şalteri çekip dışarıya bildir.");
         static readonly string DoorApplicantTitle = Loc.N("KAPI · ADAY VAR"),
             DoorApplicantLine = Loc.N("Kapıda aday var: tezgâha bak."),
             DoorEmptyLine = Loc.N("Kapıda kimse yok.");
@@ -92,6 +97,8 @@ namespace Corrigible.Desk.Bridge
         /// girdisi, <c>LastSwitchViewBuilder.LockInputs.Tutorial</c> ile aynı kaynak).
         /// </summary>
         public bool TutorialSealsSwitch => tutorial != null && tutorial.isActiveAndEnabled && tutorial.Active;
+        /// <summary>Rehber (vardiya şalterinin ilk baskın mührü <see cref="SiginakTutorial.SealsShift"/>'i okur).</summary>
+        public SiginakTutorial Tutorial => tutorial;
         bool shownSeal;
         // İFŞA şeridi: son gösterilen değer, KONUM kuruluşu ve tutanak kapanınca bekleyen dikkat flaşı (KOS aşama 6)
         int shownExposure = -1;
@@ -170,6 +177,8 @@ namespace Corrigible.Desk.Bridge
             if (Locked) return;
             // KOS aşama 4: tepside olay tutanağı varsa EVRAK tıkı onu ele alır (arşiv fişi ve emir belgesi sonra)
             if (shelterEvent != null && shelterEvent.isActiveAndEnabled && shelterEvent.TakeFromTray()) return;
+            // Tesis aşama 9 (K27): tutanak yoksa tepsideki sunucu ödülü kâğıdı
+            if (serverReward != null && serverReward.isActiveAndEnabled && serverReward.TakeFromTray()) return;
             if (shift == null || !shift.OpenTray()) surface.OpenGuide();
         }
 
@@ -312,6 +321,8 @@ namespace Corrigible.Desk.Bridge
             if (sim.DoorVisitor != null) notes.Add(Loc.T("kapıda biri bekliyor: açılmadı sayılır"));
             var next = sim.NextLiberationSector(sim.S.Liberation.CurrentRegion);
             if (next != null && sim.LiberationRaidCheck(next.Id) == null) notes.Add(Loc.F("baskın emri verilmedi: {0}", next.Name));
+            // Tesis aşama 11 (§8.5): karar vardiyasında karar verilmediyse kanat kapanışta bırakılır
+            if (FacilityDefenseText.PreCheck(sim) is string siege) notes.Add(siege);
             telex.Post(surface.Shift, Loc.T("ÖN KONTROL"),
                 notes.Count == 0 ? Loc.T("eksik yok · kolu indirmek için yeniden bas") : string.Join(" · ", notes), TelexKind.Info);
         }
@@ -353,6 +364,16 @@ namespace Corrigible.Desk.Bridge
         /// KAPI: biri beklerken lamba yanıp söner (1 Hz), etiket bekleyeni söyler; baskında nedenini yazar. Kartlı oyunda kapıdaki
         /// kabul başvurusu (Aşama 6), eski yolda ziyaretçi.
         /// </summary>
+        /// <summary>
+        /// Kapının yanındaki belge çekmecesinde okunmamış bir belge ya da şalteri bekleyen bir karar var (olay tutanağı ya da sunucu ödülü;
+        /// Docs/KAPI-BELGELERI-VE-YZ-MEKANLARI-TASARIMI.md §A): KAPI tuşu, kapı lambası ve kapı hedefinin satırı bunu söyler.
+        /// </summary>
+        public bool PaperAtDoor => PaperToSend || shelterEvent != null && shelterEvent.isActiveAndEnabled && shelterEvent.AtDoor
+            || serverReward != null && serverReward.isActiveAndEnabled && serverReward.AtDoor;
+        /// <summary>Karara bağlanan belge çekmecede şalteri bekliyor.</summary>
+        public bool PaperToSend => shelterEvent != null && shelterEvent.isActiveAndEnabled && shelterEvent.InOutbox
+            || serverReward != null && serverReward.isActiveAndEnabled && serverReward.InOutbox;
+
         void DoorKey()
         {
             if (rail.Count <= StationKeyRail.Door) return;
@@ -361,9 +382,11 @@ namespace Corrigible.Desk.Bridge
             bool raid = sim != null && (sim.S.Raid != null || RaidLauncher.IsRaidLoaded);
             bool board = sim?.Board != null;
             bool waiting = sim != null && sim.S.Ending == null && (board ? AdmissionSnapshotBuilder.GroupWaiting(sim) : sim.DoorVisitor != null);
-            key.SetAttention(waiting && !raid);
-            key.Target.TitleOverride = waiting ? board ? DoorApplicantTitle : DoorWaitingTitle : null;
-            key.Target.LineOverride = Loc.T(raid ? DoorRaidLine : waiting ? board ? DoorApplicantLine : DoorWaitingLine : board ? DoorEmptyLine : DoorIdleLine);
+            bool paper = board && !waiting && sim.S.Ending == null && PaperAtDoor;
+            key.SetAttention((waiting || paper) && !raid);
+            key.Target.TitleOverride = waiting ? board ? DoorApplicantTitle : DoorWaitingTitle : paper ? DoorPaperTitle : null;
+            key.Target.LineOverride = Loc.T(raid ? DoorRaidLine : waiting ? board ? DoorApplicantLine : DoorWaitingLine : paper ? PaperToSend ? DoorSendLine : DoorPaperLine
+                : board ? DoorEmptyLine : DoorIdleLine);
         }
 
         void Relabel() => Refresh();
@@ -385,7 +408,9 @@ namespace Corrigible.Desk.Bridge
             string values = Loc.F("VARDİYA {0:000} · FON {1} · ERZAK {2}/{3} · HAMMADDE {4} · ÖZGÜR {5}/{6} · GÜVEN {7}/{8} · ALARM {9}/{10}", surface.Shift,
                 DeskFormat.Number(sim.S.Fon, 1), DeskFormat.Number(System.Math.Floor(shelter.Supplies), 0), DeskFormat.Number(capacity, 0),
                 DeskFormat.Number(System.Math.Floor(shelter.Materials), 0), free, regions, sim.S.Trust, sim.TrustMax,
-                DeskFormat.Number(sim.S.Alarm, 0), DeskFormat.Number(sim.B.liberationAlarmThreshold, 0));
+                ShelterViewBuilder.Rate(sim.S.Alarm), DeskFormat.Number(sim.B.liberationAlarmThreshold, 0));
+            // Alarm buçuklu ilerler (vardiya payı 0,5, tek kip denge turu): raporlar gibi ondalığıyla yazılır; tam sayıya yuvarlansa 9,5
+            // "ALARM 10/10" görünür, eşik dolmuş sanılır.
             // KOS aşama 4: açlık, yarım tayın ve karartma kenar satırına yazılmaz: satır zaten sınırda (1920 × 1080'de 1040 px'lik kutuda
             // en uzun değerler TR 981 / EN 991 px), tek etiket bile taşırır (TR 1065 / EN 1118 px). Gösterge ERZAK sayacının fişinde,
             // CRT ipucunda, pano başlığında ve devir fişinin ERZAK kutusunda.
@@ -414,8 +439,11 @@ namespace Corrigible.Desk.Bridge
                 lib.Regions.Count(r => r.Completed), lib.Regions.Count, sim.S.Trust, sim.TrustMax, animate, stagger, shiftRoll, slips, roll);
             if (alarm != null)
                 alarm.Show(sim.S.Alarm, sim.B.liberationAlarmThreshold, animate, stagger * 6,
-                    Loc.F("Eşiğe ({0}) varınca YZ karşı saldırır, bir sektör yeniden işgal edilir. Her vardiya +{1}; telsiz odası düşürür.",
-                        DeskFormat.Number(sim.B.liberationAlarmThreshold, 0), ShelterViewBuilder.Rate(sim.AlarmPerShift)));
+                    // Tesis aşama 11 (§8.1): savunma açıkken eşikte kuşatma kurulur (karar sonraki vardiya)
+                    FacilityDefenseText.On(sim)
+                        ? FacilityDefenseText.AlarmHover(sim, DeskFormat.Number(sim.B.liberationAlarmThreshold, 0), ShelterViewBuilder.Rate(sim.AlarmPerShift))
+                        : Loc.F("Eşiğe ({0}) varınca YZ karşı saldırır, bir sektör yeniden işgal edilir. Her vardiya +{1}; telsiz odası düşürür.",
+                            DeskFormat.Number(sim.B.liberationAlarmThreshold, 0), ShelterViewBuilder.Rate(sim.AlarmPerShift)));
             if (alarm != null) alarm.SetRadioActive(ShelterLogic.RadioWorkers(shelter) > 0);
             ShowExposure(sim, animate);
             CounterTag(sim);
@@ -449,12 +477,16 @@ namespace Corrigible.Desk.Bridge
 
         void ExposureStepped(int _) => Sfx.Play(Cue.ExposureStep);
 
-        /// <summary>Bekleyen dikkat flaşı: tutanak elden çıkınca (tepsi ya da dosya) ve kapanış karanlığı bitince.</summary>
+        /// <summary>
+        /// Bekleyen dikkat flaşı: tutanak elden çıkınca (tepsi ya da dosya), kapanış karanlığı bitince ve kamera kapının K8 ailesinden
+        /// çıkınca (tutanak kapıda okunur; şerit arka duvarda, kapıdan görünmez).
+        /// </summary>
         void ExposureFlash()
         {
             if (!flashPending || exposure == null || !exposure.isActiveAndEnabled) return;
             if (shelterEvent != null && shelterEvent.isActiveAndEnabled && shelterEvent.Busy) return;
             if (shiftClose != null && shiftClose.HoldCounters || exposure.Animating) return;
+            if (rig != null && SiginakAdmission.InFamily(rig.Current)) return;
             flashPending = false;
             exposure.Flash(SiginakTheme.Active != null ? Mathf.RoundToInt(SiginakTheme.Active.NumberOf("exposure.flashTimes", 3)) : 3);
         }
@@ -487,9 +519,9 @@ namespace Corrigible.Desk.Bridge
                 .Select(r => (id: r.Id, day: r.Sectors.Max(s => s.CapturedDay)))
                 .OrderBy(r => r.day)
                 // Kartta ad iki satır (“BATI / AVRUPA”): raptiye ilk satırın ortasına düşmesin
-                .Select(r => (DeskText.Upper(GameData.Region(r.id).Name).Replace(' ', '\n'), r.day + 1)).ToList();
+                .Select(r => (DeskText.Upper(sim.RegionName(r.id)).Replace(' ', '\n'), r.day + 1)).ToList();
             var front = lib.Regions.FirstOrDefault(r => r.Id == lib.CurrentRegion);
-            string next = front != null && !front.Completed ? GameData.Region(front.Id).Name : null;
+            string next = front != null && !front.Completed ? sim.RegionName(front.Id) : null;
             freedBoard.Show(freed, next, countersShown);
         }
     }

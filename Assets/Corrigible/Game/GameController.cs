@@ -54,8 +54,17 @@ namespace Corrigible.Game
 
         // ---------- Komutlar ----------
         public ActResult StartLiberationRaid(string sectorId, string pick = null) => Run(() => Sim.StartLiberationRaid(sectorId, pick));
+        /// <summary>Baskını kapatır: sonuç oda raporlarından türetilir (verilen sonuçtan yalnız <c>Reason</c> okunur); son oda raporlanmadıysa reddedilir.</summary>
         public ActResult ResolveRaid(RaidResult result) => Run(() => Sim.ResolveRaid(result));
+        /// <summary>
+        /// Tesis baskınında biten odanın raporu (<c>raid_room</c>; Docs/TESIS-BASKINLARI-TASARIMI.md §3.6): kaydedilir, kayıt
+        /// dosyası yazılır. Yalnız tesis baskını oturumu çağırır.
+        /// </summary>
+        public ActResult AdvanceRaidRoom(RoomReport report) => Run(() => Sim.AdvanceRaidRoom(report));
         public ActResult SelectLiberationRegion(string regionId) => Run(() => Sim.SelectLiberationRegion(regionId));
+        /// <summary>Tesis aşama 11: bekleyen karşı saldırıda kanadı savun (<c>siege_defend</c>) ya da bırak (<c>siege_yield</c>).</summary>
+        public ActResult DefendSector() => Run(() => Sim.DefendSector());
+        public ActResult YieldSector() => Run(() => Sim.YieldSector());
         public ActResult ShelterUpgrade(string roomId) => Run(() => Sim.ShelterUpgrade(roomId));
         public ActResult ShelterAssign(string roomId, int workers) => Run(() => Sim.ShelterAssign(roomId, workers));
         public ActResult AnswerDoor(string option) => Run(() => Sim.AnswerDoor(option));
@@ -112,6 +121,8 @@ namespace Corrigible.Game
                 Debug.LogWarning($"Kayıt geri yüklenemedi: {e.Message}");
                 return false;
             }
+            // Yeniden oynatmada başarısız komut: oyun kayıttakinden farklı bir yere dönmüş olabilir (geliştirici uyarısı)
+            if (Sim.ReplayFailures > 0) Debug.LogWarning($"Kayıttan devam: {Sim.ReplayFailures} komut yeniden oynatılamadı.");
             GameLoaded?.Invoke();
             Changed?.Invoke();
             return true;

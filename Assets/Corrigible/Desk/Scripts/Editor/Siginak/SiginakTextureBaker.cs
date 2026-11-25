@@ -451,7 +451,22 @@ namespace Corrigible.Desk.EditorTools
             ("thumb_debris", l => l.debris, 80, 92, 0, 0),
             ("thumb_civ", l => l.civilian, 80, 92, 0, 0),
             ("thumb_spawner", l => l.spawner, 80, 92, 0, 0),
+            // Tesis aşama 9: aygıtlar, köpek (ekip kartının resim kutusu da 80 × 92; "_done" grafit tonlu kopya) ve engeller
+            ("thumb_turret", l => l.turret, 80, 92, 0, 0),
+            ("thumb_decoy", l => l.decoy, 80, 92, 0, 0),
+            ("thumb_winch", l => l.winch, 80, 92, 0, 0),
+            ("thumb_dog", l => l.dog, 80, 92, 0, 0),
+            ("thumb_wire", l => l.wire, 80, 92, 0, 0),
+            ("thumb_plank", l => l.plank, 80, 92, 0, 0),
+            ("thumb_scrap", l => l.scrap, 80, 92, 0, 0),
+            // Tesis aşama 10: YZ'nin koku yayıcısı (hover kartının nesne resmi)
+            ("thumb_emitter", l => l.scentEmitter, 80, 92, 0, 0),
+            // Tesis aşama 11: savunmanın saha rölesi (görev çipi ve hover kartı)
+            ("thumb_relay", l => l.relay, 80, 92, 0, 0),
         };
+
+        /// <summary>Küçük resmin grafit tonlu kopyası (tahtadan çekilen ya da turu biten köpeğin ekip kartı): gri, koyu, alfa aynı.</summary>
+        static readonly (string from, string name)[] PieceThumbDone = { ("thumb_dog", "thumb_dog_done") };
 
         /// <summary>Parça küçük resimlerinin adları (sprite tablosunda üretilenler; baskın kartları kayıtta adla arar).</summary>
         public static string[] PieceThumbNames => PieceThumbSpecs.Select(s => s.name).ToArray();
@@ -473,8 +488,22 @@ namespace Corrigible.Desk.EditorTools
             {
                 var piece = s.piece(lib);
                 if (piece == null) { missing.Add(s.name); continue; }
-                Save(s.name, Isolated(s.w, s.h, s.size, Vector3.up * s.lookY, new[] { (piece.gameObject, Vector3.zero) }), SiginakSpriteManifest.SpritesDir);
+                var canvas = Isolated(s.w, s.h, s.size, Vector3.up * s.lookY, new[] { (piece.gameObject, Vector3.zero) });
+                Save(s.name, canvas, SiginakSpriteManifest.SpritesDir);
                 made.Add(s.name);
+                foreach (var (from, name) in PieceThumbDone)
+                {
+                    if (from != s.name) continue;
+                    // Grafit #1E1B16'ya doğru: parlaklık korunur, renk çekilir, %35 koyulaşır
+                    for (int i = 0; i < canvas.Px.Length; i++)
+                    {
+                        var c = canvas.Px[i];
+                        float l = (0.3f * c.r + 0.59f * c.g + 0.11f * c.b) * 0.65f;
+                        canvas.Px[i] = new Color(Mathf.Lerp(0.118f, 0.86f, l), Mathf.Lerp(0.106f, 0.84f, l), Mathf.Lerp(0.086f, 0.80f, l), c.a);
+                    }
+                    Save(name, canvas, SiginakSpriteManifest.SpritesDir);
+                    made.Add(name);
+                }
             }
             AssetDatabase.Refresh();
             foreach (var name in made)

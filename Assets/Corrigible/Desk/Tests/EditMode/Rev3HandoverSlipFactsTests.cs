@@ -139,7 +139,8 @@ namespace Corrigible.Desk.Tests
             lost = squad[2].PersonId;
             var raid = sim.StartLiberationRaid("weu_1");
             Assert.IsTrue(raid.Ok, raid.Msg);
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Retreat = true, Hp = { 0, squad[1].Hp, 0 }, Armor = { 0, 1, 0 }, Left = { 2 } }).Ok);
+            // Tek kip: ilk kişi giriş odasında düşer ve ekipçe çıkarılır (yatar), üçüncüsü kaçışta geride kalır (ölür)
+            FacilityDeskKit.ResolveRaid(sim, true, FacilityDeskKit.Rescued, FacilityDeskKit.Returns, FacilityDeskKit.LeftBehind);
             Assert.IsFalse(sim.Board.Person(lost).Alive);
             Assert.Greater(sim.Board.Person(rescued).Down, 0);
             Assert.IsTrue(sim.Board.Locked);
@@ -241,11 +242,10 @@ namespace Corrigible.Desk.Tests
             CollectionAssert.AreEqual(new[] { "kit_emp", "armor" }, f.field[1].items);
             CollectionAssert.AreEqual(new[] { "kit_ana" }, f.field[2].items);
 
-            // SIĞINAK: ÜRETİM, MUTFAK, EĞİTİM, sonra iki BOŞTA (emekliler deste sırasıyla)
+            // SIĞINAK: ÜRETİM, MUTFAK, sonra BOŞTA'lar (2026-11-24: EĞİTİM yok; eski kayıttan eğitimdeki kişi BOŞTA satırı)
             CollectionAssert.AreEqual(new[] { At(sim, 3).Name, At(sim, 4).Name, trainee.Name, At(sim, 6).Name, At(sim, 7).Name }, f.shelter.Select(r => r.name));
-            CollectionAssert.AreEqual(new[] { "craft", "cook", "train", "rest", "rest" }, f.shelter.Select(r => r.job));
-            Assert.AreEqual("care", f.shelter[2].subject);
-            Assert.IsTrue(f.shelter.Where((r, i) => i != 2).All(r => string.IsNullOrEmpty(r.subject)), "Konu yalnız eğitim satırında.");
+            CollectionAssert.AreEqual(new[] { "craft", "cook", "rest", "rest", "rest" }, f.shelter.Select(r => r.job));
+            Assert.IsTrue(f.shelter.All(r => string.IsNullOrEmpty(r.subject)), "Konu satırı yok.");
             Assert.IsTrue(f.shelter.All(r => r.state == SlipPersonState.None && r.stateShifts == 0), "V.001'de durum eki yok.");
 
             // KAPANIŞTA BEKLENEN: ERZAK 24,0 → 21,5 / 60 −2,5 · EĞİTİM +2 (2→4) · ÜRETİM iş emri yok · çıktı yok · KAPI açık başvuru yok
@@ -253,13 +253,7 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(21.5, f.suppliesAfter, Eps);
             Assert.AreEqual(-2.5, f.suppliesAfter - f.supplies, Eps);
             Assert.AreEqual(sim.BoardFoodPreview, f.suppliesAfter - f.supplies, Eps);
-            Assert.IsTrue(f.training.active);
-            Assert.AreEqual(trainee.Name, f.training.name);
-            Assert.AreEqual("care", f.training.subject);
-            Assert.AreEqual(2, f.training.xpBefore);
-            Assert.AreEqual(4, f.training.xpAfter);
-            Assert.AreEqual(1, f.training.tierBefore);
-            Assert.AreEqual(1, f.training.tierAfter, "Kademe değişmez: satır \"(2→4)\" biter.");
+            Assert.IsFalse(f.training.active, "EĞİTİM bölümü yok (2026-11-24)");
             Assert.AreEqual(SlipProductionKind.None, f.production.kind, "Otomatik üretim açık ama girdisiz: uygun tarif yok.");
             Assert.IsTrue(string.IsNullOrEmpty(f.production.itemType));
             Assert.AreEqual(0, f.openApplications);
@@ -386,8 +380,9 @@ namespace Corrigible.Desk.Tests
                 At(sim, 3).Name, At(sim, 4).Name, At(sim, 5).Name, At(sim, 6).Name, At(sim, 7).Name,
                 sim.Board.Person(rescued).Name, sim.Board.Person(restricted).Name,
             }, rows.Select(r => r.name));
-            CollectionAssert.AreEqual(new[] { "craft", "cook", "train", "rest", "rest", "rest", "rest" }, rows.Select(r => r.job));
-            Assert.AreEqual("emp", rows[2].subject);
+            // 2026-11-24: EĞİTİM kaldırıldı; eski kayıttan eğitimdeki kişi BOŞTA satırıdır (emekli görev)
+            CollectionAssert.AreEqual(new[] { "craft", "cook", "rest", "rest", "rest", "rest", "rest" }, rows.Select(r => r.job));
+            Assert.IsTrue(string.IsNullOrEmpty(rows[2].subject));
             CollectionAssert.AreEqual(new[]
             {
                 SlipPersonState.None, SlipPersonState.None, SlipPersonState.None, SlipPersonState.Hurt, SlipPersonState.None,
@@ -400,14 +395,8 @@ namespace Corrigible.Desk.Tests
             Assert.IsFalse(rows.Any(r => r.name == sim.Board.Person(lost).Name), "Ölüler fişte yok.");
             Assert.AreEqual(f.alive, f.shelter.Count + f.field.Count(r => !string.IsNullOrEmpty(r.name)), "Her canlı tek satırda.");
 
-            // EĞİTİM: sıfırdan, kademe atlar (→ EĞİTİMLİ)
-            Assert.IsTrue(f.training.active);
-            Assert.AreEqual(At(sim, 5).Name, f.training.name);
-            Assert.AreEqual("emp", f.training.subject);
-            Assert.AreEqual(0, f.training.xpBefore);
-            Assert.AreEqual(sim.B.boardTrainingGain, f.training.xpAfter);
-            Assert.AreEqual(0, f.training.tierBefore);
-            Assert.AreEqual(1, f.training.tierAfter);
+            // EĞİTİM bölümü yok (2026-11-24)
+            Assert.IsFalse(f.training.active);
 
             // ÜRETİM: iş emri yok, otomatik üretim kapalı
             Assert.AreEqual(SlipProductionKind.None, f.production.kind);
@@ -507,8 +496,6 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(1, v002.production.after);
             Assert.AreEqual(1, v002.production.turns);
             Assert.AreEqual(At(sim, 3).Name, v002.production.maker);
-            Assert.AreEqual(0, v002.training.tierBefore);
-            Assert.AreEqual(1, v002.training.tierAfter);
 
             // V.003: tarif uygun ama üretici yok → bakım kiti · çıktı yok
             Assert.IsTrue(sim.StageProductionMaterial("kumas", 1).Ok);
@@ -545,7 +532,7 @@ namespace Corrigible.Desk.Tests
             // Baskın dönüşü: kilitli plan, yatan, kısıtlı, kapıda aday, ikmalde yaralı
             var raid = Mixed(out _, out _, out _);
             var back = CloseAndCompare(raid, "baskın dönüşü");
-            Assert.IsTrue(back.training.active);
+            Assert.IsFalse(back.training.active, "EĞİTİM bölümü yok (2026-11-24)");
         }
 
         // ---------------------------------------------------------------- E12 · gizli gelecek

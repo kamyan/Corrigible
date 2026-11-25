@@ -32,23 +32,33 @@ namespace Corrigible.Desk.Bridge
             return sim.NextLiberationSector(lib.CurrentRegion);
         }
 
-        static string Region(string id) => DeskText.Upper(GameData.Region(id).Name);
+        static string Region(Simulation sim, string id) => DeskText.Upper(sim.RegionName(id));
 
         /// <summary>
         /// Ekrandaki kısa bölge adı (Revizyon 2 · S1: “BATI AVR. / 01”): iki sözcüklü adda ikinci sözcük dört harften uzunsa
         /// ilk üç harfi ve nokta. K1'den okunsun diye satır kısa tutulur. İngilizcede tasarım ilk sözcüğü kısaltır (“E. EUROPE / 02”).
+        /// Kısaltma haritada başka bir bölgenin kısaltmasıyla aynıysa (üretilmiş haritada “Sand Shore” / “Stony Shore” →
+        /// “S. SHORE”) ad tam yazılır.
         /// </summary>
-        public static string ShortRegion(string id)
+        public static string ShortRegion(Simulation sim, string id)
         {
-            var words = Region(id).Split(' ');
+            string mine = Abbreviate(Region(sim, id));
+            foreach (var r in GameData.Regions)
+                if (r.Id != id && Abbreviate(Region(sim, r.Id)) == mine) return Region(sim, id);
+            return mine;
+        }
+
+        static string Abbreviate(string name)
+        {
+            var words = name.Split(' ');
             if (words.Length != 2 || words[1].Length <= 4) return string.Join(" ", words);
             if (Loc.Lang == Loc.English) return words[0].Substring(0, 1) + ". " + words[1];
             return words[0] + " " + words[1].Substring(0, 3) + ".";
         }
 
-        /// <summary>Kanal YZ trafiğini dinler: alarm eşiğe ulaşınca YZ karşı saldırır.</summary>
-        static string Alarm(Simulation sim) =>
-            Loc.F("YZ ALARMI {0}/{1}", DeskFormat.Number(sim.S.Alarm, 0), DeskFormat.Number(sim.B.liberationAlarmThreshold, 0));
+        /// <summary>Kanal YZ trafiğini dinler: alarm eşiğe ulaşınca YZ karşı saldırır. Buçuklu alarm ondalığıyla yazılır (9,5 "10" görünmez).</summary>
+        public static string Alarm(Simulation sim) =>
+            Loc.F("YZ ALARMI {0}/{1}", ShelterViewBuilder.Rate(sim.S.Alarm), DeskFormat.Number(sim.B.liberationAlarmThreshold, 0));
 
         public static CrtScreenData Screen(Simulation sim, bool raidLoaded)
         {
@@ -72,8 +82,8 @@ namespace Corrigible.Desk.Bridge
             var lib = sim.S.Liberation;
             // Boşta dört satır (Revizyon 2 · S1): durum, ekip, cephe / sektör, YZ alarmı; ipucu yalnız hat kapalıyken
             d.FrontLine = sector != null
-                ? Loc.F("{0} / {1:00}", ShortRegion(sector.Region), sector.Index + 1)
-                : Loc.F("{0} · ÖZGÜR", ShortRegion(lib.CurrentRegion));
+                ? Loc.F("{0} / {1:00}", ShortRegion(sim, sector.Region), sector.Index + 1)
+                : Loc.F("{0} · ÖZGÜR", ShortRegion(sim, lib.CurrentRegion));
             switch (d.State)
             {
                 case CrtState.Establishing: d.Title = Loc.T("HAT AÇILIYOR"); break;
@@ -91,6 +101,10 @@ namespace Corrigible.Desk.Bridge
             }
             // KOS aşama 4: hat kapalıyken baskın gerekçesi kalır; başka durumlarda ipucu satırı açlık, yarım tayın ve karartmayı yazar
             if (d.State != CrtState.Disabled) d.Hint = ShelterEventSnapshotBuilder.CrtHint(sim);
+            // Tesis aşama 11 (§8.5): bekleyen karşı saldırı (bekleyen ödülden sonra gelir; ödül ipucu onu ezer)
+            if (d.State != CrtState.Live && d.State != CrtState.Establishing && FacilityDefenseText.CrtHint(sim) is string siege) d.Hint = siege;
+            // Tesis aşama 9 (K28): bekleyen sunucu ödülü (durum yayının durumudur, DİNLEMEDE kalır); ipucu kâğıdın yerini gösterir (kapıdan gelir, bırakılınca EVRAK'a iner)
+            if (FacilityRewardText.Pending(sim) && d.State != CrtState.Live && d.State != CrtState.Establishing) d.Hint = Loc.T("SUNUCU ÖDÜLÜ BEKLİYOR · KAPI ÇEKMECESİ");
             return d;
         }
 
@@ -107,9 +121,9 @@ namespace Corrigible.Desk.Bridge
             var team = sim.S.Teams.FirstOrDefault();
             int shift = sim.S.Day + 1;
             if (sector == null) { d.Code = Loc.F("V.{0:000}", shift); return d; }
-            string kind = sector.MissionKind == "loot" ? Loc.T("YAĞMA") : Loc.T("SUNUCU YIKIMI");
+            string kind = FacilityDefenseText.CrtMission(sim) ?? (sector.MissionKind == "loot" ? Loc.T("YAĞMA") : Loc.T("SUNUCU YIKIMI"));
             d.Code = Loc.F("V.{0:000} · OP-{1:00}", shift, sector.Index + 1);
-            d.Target = Loc.F("{0} · {1} / {2:00} {3}", DeskText.Upper(LiberationMapBuilder.TeamName(team)), Region(sector.Region), sector.Index + 1,
+            d.Target = Loc.F("{0} · {1} / {2:00} {3}", DeskText.Upper(LiberationMapBuilder.TeamName(team)), Region(sim, sector.Region), sector.Index + 1,
                 DeskText.Upper(sector.Name));
             // Saha görüntü vermez: gözcü telsizden bildirir, durum masadaki paftada (binanın maketi) figürlerle tutulur
             d.Camera = Loc.F("SAHA MASASI · {0} · GÖREV: {1}", DeskText.Upper(GameData.Region(sector.Region).Building), kind);

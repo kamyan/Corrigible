@@ -1527,6 +1527,7 @@ GameObject:
   - component: {fileID: 4927346446487161160}
   - component: {fileID: 1023436032584770592}
   - component: {fileID: 8915310174999490984}
+  - component: {fileID: 2399808446667642477}
   m_Layer: 0
   m_Name: Continue
   m_TagString: Untagged
@@ -1670,6 +1671,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.UiHoverTarget
   hoverTag: {fileID: 0}
+--- !u!114 &2399808446667642477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1073717199961707471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd782956bce5a462dbf80cf264a14355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Corrigible.Desk::Corrigible.Desk.TutorialAnchor
+  id: raid.continue
+  view: {fileID: 0}
 --- !u!1 &1081572196421772358
 GameObject:
   m_ObjectHideFlags: 0

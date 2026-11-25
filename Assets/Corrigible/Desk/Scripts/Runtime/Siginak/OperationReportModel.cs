@@ -44,9 +44,15 @@ namespace Corrigible.Desk
     [Serializable]
     public sealed class OperationReportData
     {
+        /// <summary>Rapor kâğıdındaki SONUÇLAR yuvası (<c>DeskGame.unity</c> <see cref="OperationReportView"/> <c>rows</c>); sahne testi
+        /// yuva sayısını buna kilitler. Büyük sandık satırı sınırı aşarsa değişmemiş YZ alarmı satırı düşer.</summary>
+        public const int MaxResults = 7;
+
         public string Head, Number;
         public string DateLabel, Date, ResultLabel, ResultStamp, TargetLabel, Target, DurationLabel, Duration;
         public bool Success;
+        /// <summary>Tesis aşama 11: savunmanın raporu (Success = kanat tutuldu; KAZANÇ yok, haritada geri alma onayı yok).</summary>
+        public bool Defense;
         public string Title, Sentence;
         public string GainsTitle, ResultsTitle;
         public List<OperationGain> Gains = new List<OperationGain>();

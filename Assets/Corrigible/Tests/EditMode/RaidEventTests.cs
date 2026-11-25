@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace Corrigible.Tests
 {
     /// <summary>
-    /// Bölge olayları (Docs/BOLGE-OLAYLARI.md, Core/Baskin.Events.cs): her bölgenin kendi olayı, her harita türünde yer bulma,
+    /// Bölge olayları (Docs/BOLGE-OLAYLARI.md, Core/Baskin.Events.cs): her bölgenin kendi olayı (her tesis odasında yer bulması FacilityRoomTests'te),
     /// RNG'nin aynı kalması, her olayın kuralı, simetri (kural tarafa bakmaz), hasar tavanı, nesne muafiyeti ve önizleme.
     /// </summary>
     public class RaidEventTests
@@ -49,12 +49,6 @@ namespace Corrigible.Tests
             foreach (var (u, x, y) in at) { u.X = x; u.Y = y; u.Intent = null; }
         }
 
-        static RaidParams Campaign(RegionDef r, uint mapSeed, int slot, string kind) => new RaidParams
-        {
-            Seed = 1000 + slot * 7 + (int)mapSeed, Region = r.Id, MissionKind = kind, Traits = new List<string> { r.Trait }, Signature = r.Enemy,
-            Event = r.Event, MapSeed = mapSeed, MapSlot = slot, Tactics = 1, Tier = 1 + slot % 4, ExtraTurns = kind == "loot" ? 2 : 1,
-        };
-
         // ---------- Kimlik ve kurulum ----------
         [Test]
         public void EveryRegion_HasOwnBoardEvent()
@@ -62,7 +56,14 @@ namespace Corrigible.Tests
             var events = GameData.Regions.Select(r => r.Event).ToList();
             CollectionAssert.AllItemsAreUnique(events, "her bölgenin olayı kendine");
             CollectionAssert.IsSubsetOf(events, Baskin.RegionEvents.Keys);
-            Assert.AreEqual(GameData.Regions.Length, Baskin.RegionEvents.Count);
+            // Aşama 12: 12 bölge olayı + 2 tesis olayı (na Katar, oc Yalpa); her bölgenin tesis şartı da tekil, alt bayraklar kapalıyken olay
+            var facility = GameData.Regions.Select(r => FacilityMaps.EventFor(r, true, true)).ToList();
+            CollectionAssert.AllItemsAreUnique(facility, "her bölgenin tesis şartı kendine");
+            CollectionAssert.IsSubsetOf(facility, Baskin.RegionEvents.Keys);
+            Assert.AreEqual(GameData.Regions.Length + 2, Baskin.RegionEvents.Count);
+            CollectionAssert.AreEquivalent(Baskin.RegionEvents.Keys, events.Union(facility));
+            CollectionAssert.AreEqual(new[] { "katar", "yalpa" }, GameData.Regions.Where(r => r.FacilityEvent != null).Select(r => r.FacilityEvent).ToArray());
+            CollectionAssert.AreEqual(events, GameData.Regions.Select(r => FacilityMaps.EventFor(r, false, false)).ToList());
             foreach (var e in Baskin.RegionEvents.Values)
             {
                 Assert.IsNotEmpty(e.Name); Assert.IsNotEmpty(e.Desc); Assert.IsNotEmpty(e.Tag);
@@ -78,31 +79,6 @@ namespace Corrigible.Tests
             var off = LegacySimulation.NewGame(3, new Balance { shelterEventsEnabled = false, startFon = 100, liberationRegionEvents = false });
             Assert.IsTrue(off.StartLiberationRaid("weu_1").Ok);
             Assert.IsNull(off.S.Raid.Params.Event);
-            Assert.IsNull(Baskin.Create(new RaidParams { Seed = 5 }).Ev, "olay verilmeyen baskın olaysız");
-        }
-
-        [Test]
-        public void EveryEvent_FindsAPlace_OnEveryMap_WithoutTouchingExitsOrUnits()
-        {
-            foreach (var r in GameData.Regions)
-                for (uint ms = 1; ms <= 3; ms++)
-                    for (int slot = 1; slot <= 30; slot++)
-                        foreach (var kind in new[] { "server", "loot" })
-                        {
-                            var B = Baskin.Create(Campaign(r, ms * 7919u, slot, kind));
-                            string at = $"{r.Id} {B.Layout} {ms}/{slot} {kind}";
-                            Assert.IsNotNull(B.Ev, at);
-                            Assert.IsTrue(B.Log.Any(l => l.Text.Contains(Baskin.RegionEvents[r.Event].Name)), "saha raporu " + at);
-                            var ev = B.Ev;
-                            var tiles = ev.Area.Concat(ev.Area2).Concat(ev.Fuses.Select(f => P(f.X, f.Y))).ToList();
-                            if (r.Event != "faz") tiles.AddRange(new[] { ev.P, ev.Q }.Where(p => p.X != 0 || p.Y != 0));
-                            foreach (var t in tiles)
-                                Assert.IsFalse(B.Exits.Any(e => System.Math.Abs(e.X - t.X) + System.Math.Abs(e.Y - t.Y) <= 1), "çıkış ya da komşusu olay karesi " + at);
-                            foreach (var u in B.Units.Where(Baskin.OnBoard))
-                                Assert.IsTrue(B.Cells[u.Y, u.X].T != "wall" && B.Cells[u.Y, u.X].O == null, "birim duvarda ya da nesnede " + at);
-                            var tek = B.Units.First(u => u.Type == "tek");
-                            Assert.IsTrue(Reaches(B, tek), "Teknisyen hedefe yürüyebilmeli " + at);
-                        }
         }
 
         [Test]
@@ -118,6 +94,40 @@ namespace Corrigible.Tests
                     var withEvent = Baskin.Create(p);
                     Assert.AreEqual(plain.Rs, withEvent.Rs, ev + " " + seed);
                 }
+        }
+
+        /// <summary>
+        /// Oda başına takvim (Docs/TESIS-BASKINLARI-TASARIMI.md §2.4): olay adımı yalnız son turdan önce işler, bu yüzden 5 turluk
+        /// tesis odasında (ara oda) adımlar 8 turluk baskının önekidir; 9 turluk hedef odanın (tek kip denge turundan beri) adımları da bu tablonun devamıdır, ayrıca kilitli değil. Kaynak, tavan ve tüp darbe ve
+        /// evre güdümlüdür: takvimleri boş. Kural değişirse bu tablo bilinçli güncellenir.
+        /// </summary>
+        [Test]
+        public void EventSchedule_PerRoomBudget()
+        {
+            var expected = new Dictionary<string, (int[] Five, int[] Eight)>
+            {
+                ["bulut"] = (new[] { 1, 3 }, new[] { 1, 3, 5, 7 }),
+                ["raf"] = (new[] { 3 }, new[] { 3, 5 }),
+                ["gaz"] = (new[] { 1, 3, 4 }, new[] { 1, 3, 4, 6, 7 }),
+                ["asansor"] = (new[] { 2 }, new[] { 2, 4, 6 }),
+                ["kriyo"] = (new[] { 2 }, new[] { 2, 4, 6 }),
+                ["turnike"] = (new[] { 2 }, new[] { 2, 4 }),
+                ["suzgec"] = (new[] { 3 }, new[] { 3, 6 }),
+                ["yag"] = (new[] { 2 }, new[] { 2 }),
+                ["faz"] = (new[] { 3 }, new[] { 3, 6 }),
+                ["kaynak"] = (new int[0], new int[0]),
+                ["tavan"] = (new int[0], new int[0]),
+                ["tup"] = (new int[0], new int[0]),
+                // Aşama 12: Katar'ın adımı yok; Yalpa 2., 4., 6. tur sonu (bütçe içinde)
+                ["katar"] = (new int[0], new int[0]),
+                ["yalpa"] = (new[] { 2, 4 }, new[] { 2, 4, 6 }),
+            };
+            CollectionAssert.AreEquivalent(Baskin.RegionEvents.Keys, expected.Keys);
+            foreach (var kv in expected)
+            {
+                CollectionAssert.AreEqual(kv.Value.Five, Baskin.EventStepTurns(kv.Key, 5), kv.Key + " 5 tur");
+                CollectionAssert.AreEqual(kv.Value.Eight, Baskin.EventStepTurns(kv.Key, 8), kv.Key + " 8 tur");
+            }
         }
 
         [Test]
@@ -561,6 +571,75 @@ namespace Corrigible.Tests
             Machine(B, "dron", 0, 3, "shoot", 1);
             Assert.IsTrue(Baskin.EndTurn(B));
             Assert.AreEqual((5, 3), (tek.X, tek.Y), "isabet yönünde kayar");
+        }
+
+        // ---------- Olay nişanı (tesis aşama 10, A0) ----------
+        /// <summary>Tesis odası (G, olaysız, düz zemin; tek uzman köşede) ve elle kurulan olay; makine (2, 3)'te.</summary>
+        static (Baskin.BState B, Baskin.Unit E) FacilityEvent(string ev)
+        {
+            var B = FacilityKit.Open(FacilityKit.Params(FacilityKit.Wings[0], 41, 1, false), new List<RoomReport>(), FacilityKit.Bal(events: false));
+            FacilityKit.Flat(B, P(0, 7));
+            Assert.IsNotNull(B.Room);
+            B.Ev = new Baskin.EvState { Id = ev, P = P(3, 3), Area = new List<Baskin.Pt> { P(3, 3) } };
+            return (B, FacilityKit.AddMachine(B, "dron", P(2, 3)));
+        }
+
+        /// <summary>(3, 3)'e kurulan birimin olay niyeti puanı: gazda patlama, yağda doğuya yakın vuruş (arkası duvar: kayar ve çarpar).</summary>
+        static double AimAt(string ev, System.Func<Baskin.BState, Baskin.Unit> put)
+        {
+            var (B, e) = FacilityEvent(ev);
+            if (ev == "gaz") B.Cells[3, 3].Gas = true;
+            else { B.Cells[3, 3].Oil = true; B.Cells[3, 4].T = "wall"; }
+            var v = put(B);
+            Assert.AreSame(v, Baskin.UnitAt(B, 3, 3), "birim kendi karesinde");
+            return ev == "gaz" ? Baskin.TestEventAim(B, e, "blast", 0) : Baskin.TestEventAim(B, e, "melee", FacilityKit.DirOf(new[] { 1, 0 }));
+        }
+
+        /// <summary>
+        /// Olay niyetinin ekip değeri makine aklının ekip yüklemine bakar (aşama 10 K3; on birinci tur 51, on ikinci tur 34): tesiste uzman,
+        /// yürüyen yem ve erimde havlayan köpek ekip; susan köpek, taret, vinç ve tutsak hedef değil (0, makine cezası da değil). Eski
+        /// tahtada sınıf yok: her Side 'p' birim ekip, değer değişmez.
+        /// </summary>
+        [Test]
+        public void EventAim_Gas_CountsOnlyTeamLikeUnits()
+        {
+            var A = Empty("gaz");
+            A.Ev.P = P(3, 3); A.Ev.Area = new List<Baskin.Pt> { P(3, 3) };
+            A.Cells[3, 3].Gas = true;
+            var ea = Machine(A, "dron", 2, 3);
+            Team(A, "tek", 3, 3);
+            Assert.AreEqual(2, Baskin.TestEventAim(A, ea, "blast", 0), "örnek tahta: uzman");
+            Team(A, "tek", 6, 6);
+            Machine(A, "dron", 3, 3);
+            Assert.AreEqual(-1, Baskin.TestEventAim(A, ea, "blast", 0), "örnek tahta: makine");
+
+            int[] east = { 1, 0 };
+            Assert.AreEqual(2, AimAt("gaz", B => { var u = FacilityKit.BySlot(B, 0); FacilityKit.Place(u, P(3, 3)); return u; }), "uzman");
+            Assert.AreEqual(2, AimAt("gaz", B => FacilityKit.AddGadget(B, "yem", P(3, 3), east)), "yem");
+            Assert.AreEqual(0, AimAt("gaz", B => FacilityKit.AddGadget(B, "taret", P(3, 3), east)), "taret");
+            Assert.AreEqual(0, AimAt("gaz", B => FacilityKit.AddGadget(B, "vinc", P(3, 3), east)), "vinç");
+            Assert.AreEqual(0, AimAt("gaz", B => FacilityKit.AddDog(B, 0, P(3, 3))), "susan köpek");
+            Assert.AreEqual(2, AimAt("gaz", B => { var d = FacilityKit.AddDog(B, 0, P(3, 3)); d.Bark = true; return d; }), "erimde havlayan köpek");
+            Assert.AreEqual(0, AimAt("gaz", B => FacilityKit.Captive(FacilityKit.AddMachine(B, "dron", P(3, 3)))), "tutsak");
+            Assert.AreEqual(-1, AimAt("gaz", B => FacilityKit.AddMachine(B, "dron", P(3, 3))), "makine");
+        }
+
+        /// <summary>Yağda kaydırıp çarptırmak yalnız uzmana değer (aşama 10 K3): köpek, yem ve tutsak 0; örnek tahtada (Baskin.Create) uzman aynı.</summary>
+        [Test]
+        public void EventAim_Oil_OnlySpecialist()
+        {
+            var A = Empty("yag");
+            A.Ev.Stop = true;
+            A.Cells[3, 3].Oil = true; A.Cells[3, 4].T = "wall";
+            var ea = Machine(A, "dron", 2, 3);
+            Team(A, "tek", 3, 3);
+            Assert.AreEqual(2, Baskin.TestEventAim(A, ea, "melee", 1), "örnek tahta: uzman");
+
+            int[] east = { 1, 0 };
+            Assert.AreEqual(2, AimAt("yag", B => { var u = FacilityKit.BySlot(B, 0); FacilityKit.Place(u, P(3, 3)); return u; }), "uzman");
+            Assert.AreEqual(0, AimAt("yag", B => FacilityKit.AddGadget(B, "yem", P(3, 3), east)), "yem");
+            Assert.AreEqual(0, AimAt("yag", B => { var d = FacilityKit.AddDog(B, 0, P(3, 3)); d.Bark = true; return d; }), "havlayan köpek");
+            Assert.AreEqual(0, AimAt("yag", B => FacilityKit.Captive(FacilityKit.AddMachine(B, "dron", P(3, 3)))), "tutsak");
         }
 
         // ---------- Önizleme ----------

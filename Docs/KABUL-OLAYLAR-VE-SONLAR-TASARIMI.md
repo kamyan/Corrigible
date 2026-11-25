@@ -9,7 +9,9 @@ oraya işlenir. Bu belge [isimli topluluk ve sızma](TOPLULUK-KADRO-VE-SIZMA-TAS
 bölümlerinin yerine geçer.
 
 Sayılar “(b)” ile işaretli başlangıç değerleriydi; aşama 8'de bot ölçümüyle altı alan değişti (§5 "Aşama 8 dengesi", §8
-"Ölçüm sonuçları"), ötekiler başlangıç değerinde kaldı. Kod yolları `Assets/Corrigible/` altındadır.
+"Ölçüm sonuçları"), ötekiler başlangıç değerinde kaldı. Tek kip denge turunda (2026-11-22; tesis tasarımı §11.6 "Tek kip denge
+ölçümü") `candidateEmergencyBelow` 3 → 4 oldu: acil grup ve terk sayacı dört kişinin altında başlar; aşağıdaki "3" eşikleri o turdan
+öncesini anlatır. Kod yolları `Assets/Corrigible/` altındadır.
 Kodda ya da ölçümle doğrulanamayan varsayımlar bölüm 12'de toplanmıştır.
 
 ## 1. Amaç ve kapsam
@@ -183,7 +185,7 @@ gelir (alınan aday başına en çok üç). Gerçek sayı bot ölçümüyle ayar
 | 3 | `sabotaj` | Sabotaj tamamlandı, kişi ortaya çıktı. Kayıp uygulanmıştır (3 erzak ya da 2 metal), ifşa +2 | **Sök:** kişi listeden çıkar. **Sorgula:** 3 vardiya yer tutmadan bekletilir (tecrit yeri istemez), sonra sökülür; ifşa −1 | Yok | Sök | Sızmacı başı 1 |
 | 4 | `buyuk_hirsizlik` | Affedilmiş kişi yeniden çaldı; en çok 5 erzak gitti | **Yolla.** **Kısıtla:** 5 vardiya | Yok | Kısıtla | Kişi başı 1 |
 | 5 | `kacak` | Açlık sayacı 2; bir kişi gitmek istiyor | **İkna et:** kişi kalır, sonraki vardiya görev alamaz. **Bırak:** kişi gider. **Kapıyı kilitle:** kişi 3 vardiya kısıtlı, güven −1 | Açlık sürerse terk kuralı işler | İkna et | 3; bekleme 3 |
-| 6 | `erzak_azaliyor` | Erzak üç vardiyalık tüketimin altında, yarım tayın yok | **Yarım tayın:** 4 vardiya tüketim yarıya iner; dinlenme iyileştirmez, baskın kadrosu 1 can eksik çıkar (en az 1). **Tam tayın** | Yok | Tam tayın | 3; bekleme 5 |
+| 6 | `erzak_azaliyor` | Erzak üç vardiyalık tüketimin altında, yarım tayın yok | **Yarım tayın:** 4 vardiya tüketim yarıya iner; kimse iyileşmez (Boşta da görev de; kayıt 22), baskın kadrosu 1 can eksik çıkar (en az 1). **Tam tayın** | Yok | Tam tayın | 3; bekleme 5 |
 | 7 | `hirsizlik` | Yarım tayın sürüyor ya da erzak üç vardiyalık tüketimin altında; **ve** erzak en az 2. 2 erzak eksilir | **Yolla.** **Affet:** bedel yok. **Kısıtla:** 3 vardiya | Affedilirse %35 olasılıkla 3–5 vardiya sonra `buyuk_hirsizlik` | Affet | 2; bekleme 6 |
 | 8 | `agir_yarali` | Bir kişi bu kapanışta yatışa girdi ve kalan yatışı en az 2 | **Erzakla ayağa kaldır:** 3 erzak; kişi 2 canla kalkar. **Beklet** | Bekletilirse %25 olasılıkla yatış 1 vardiya uzar | Beklet | 3; bekleme 4 |
 | 9 | `kavga` | Başarısız ya da ölümlü baskından dönen iki sağ kişi | **Ayır:** ikisi 2 vardiya aynı baskına giremez. **Karışma** | Karışılmazsa %50 olasılıkla biri 1 can kaybeder, 1 vardiya yatar | Karışma | 2; bekleme 6 |
@@ -574,7 +576,7 @@ olaylar ve sonlar için birer yeni dosya). `UnityEngine`, `System.Random`, `Date
 | Aday grubu | Kabul tezgâhı (K8A) | 2–3 aday kartı yan yana; KABUL damgası bir karta basılır |
 | “Hiçbiri” | Tezgâh | GERİ ÇEVİR damgası grup fişine basılır |
 | Dolu sığınakta yollanacak kişi | Tezgâhta “YER YOK” listesi | Bir satır seçilir, sonra damga geçerli olur; yolluk yazar |
-| Olay | Masadaki evrak tepsisinde “OLAY TUTANAĞI” kâğıdı | Satır seç, onayla; bedel sütunu sağda; kapalı satır nedeniyle |
+| Olay | Kapının yanındaki panoya gelen “OLAY TUTANAĞI” kâğıdı (2026-11-22'den beri; bırakılınca evrak tepsisine iner, `Docs/KAPI-BELGELERI-VE-YZ-MEKANLARI-TASARIMI.md` §A) | Satır seç, onayla; bedel sütunu sağda; kapalı satır nedeniyle |
 | Olay duyurusu, bulgu ve sonuç | Teleks | Yalnız duyuru |
 | Bekleyen karar | Devir fişi uyarısı, vardiya şalteri gerekçesi | Açık olayda fiş basılamaz |
 | İfşa | Arka duvarda altı lambalı gösterge | Odaya eklenen **tek** kalıcı yeni gösterge. **Aşama 6:** YZ ALARMI panosunun hemen altında İFŞA şeridi (`Shell/Exposure panel`, 0,50 × 0,136 m; pirinç kenarlı levha, başlık plakası, altı hücre, KONUM lambası). Hücreler eşikte kırpılır, `exposureAlarmAt`'tan sonrası kırmızı; lamba eşikte yanar, “konum çözüldü” vardiyasında yanıp söner; üzerine gelme satırı gerçek değeri ve Balance sayılarını yazar. Kâğıttaki “İfşa +n” kararla birlikte duvarda yanan hücre (sesli), tutanak elden çıkınca üç flaş ve İFŞA teleks satırıyla karşılık bulur. **Aşama 6 düzeltme:** kâğıt elde şeridi örttüğü için ifşayı değiştiren satırın bedeline şerit önizlemesi eklenir (“İfşa 2/6 → 3/6. Alarm her vardiya +0,5.”; sorguda iniş ve “Alarm ara bedeli kalkar.”); alarm bölgesindeki ve eşikteki boş hücre koyu kırmızı (`materialsExtra.exposureStepOffHigh`), lambanın altında “KONUM” plakası, lambanın ışığı (`AlarmGlow`, `exposure.glowIntensity` 0,8) uyarıda yanar. “Konum çözüldü” metinleri son şalteri ancak 5. vardiyadan sonra seçenek olarak sayar |
@@ -880,7 +882,7 @@ aşamalarına kadar açık.
    mi? Bu belgede bitmez; acil aday ve son şalter vardır.
 7. **Son şalter.** Odadaki kesin yeri; en erken vardiya (öneri 5, rehber sürerken kapalı); “tahliye” çeşidinin
    yenilgi sayılması; `salter`, `dusus`, `terk` için başarım olacak mı?
-8. **Olay kâğıdı** masadaki evrak tepsisinde mi (öneri), tezgâhta mı dursun?
+8. **Olay kâğıdı** masadaki evrak tepsisinde mi (öneri), tezgâhta mı dursun? **Değişti (2026-11-22):** kâğıt önce kapının yanındaki panoya gelir, okunup bırakılınca tepsiye iner (`Docs/KAPI-BELGELERI-VE-YZ-MEKANLARI-TASARIMI.md` §A).
 9. **Kurucu izi.** Kurucular iz bırakmıyor; bu, “yeni gelen iz bırakır” bilgisini oyuncuya verir. Kabul mü?
 10. **Kefil.** Kefil olan kurucu için bir sonuç olsun mu (kefil olduğu kişi sızmacı çıkarsa)? Bu belgede kefil yalnız metindir.
 11. **Bekleyen grup.** Aday grubu beklerken fiş basılabiliyor (uyarıyla). Olay gibi kararı zorunlu mu olsun?

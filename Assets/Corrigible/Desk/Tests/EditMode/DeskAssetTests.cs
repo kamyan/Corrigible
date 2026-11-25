@@ -51,7 +51,11 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(40, glyphs);
             // Üretilen küçük resimler (ikmal sandığı) de adla aranır
             int thumbs = SiginakSpriteManifest.All.Count(e => e.Generated && e.Name.StartsWith("thumb_"));
-            Assert.AreEqual(DeskSpriteManifest.All.Count() + SadeSpriteManifest.All.Count() + glyphs + thumbs, reg.sprites.Count);
+            // Tesis aşama 9 (K20): Revizyon 3 panosunun ekipman piktogramları ve erzak simgesi de adla aranır
+            int gear = Corrigible.Desk.EditorTools.Rev3BoardTextureBaker.GearSpriteNames.Length;
+            Assert.AreEqual(8, gear);
+            Assert.AreEqual(DeskSpriteManifest.All.Count() + SadeSpriteManifest.All.Count() + glyphs + thumbs + gear, reg.sprites.Count);
+            Assert.IsTrue(reg.TryGet("picto_dog", out var dog) && dog.type == Image.Type.Simple && dog.sprite != null);
             Assert.IsTrue(reg.TryGet("thumb_crate", out var crate) && crate.type == Image.Type.Simple && !crate.tint);
             Assert.AreEqual(reg.sprites.Count, reg.sprites.Select(s => s.name).Distinct().Count(), "kayıtta aynı ad iki kez");
             Assert.IsTrue(reg.TryGet("glyph_armordrone_frame", out var glyph) && glyph.type == Image.Type.Simple && glyph.tint);

@@ -577,7 +577,8 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(0.5f / 5.4f * 100f, rf.NeedsLabel.characterSpacing, 0.05f, "GİRDİ aralığı 0,5 mm");
             for (int i = 0; i < RecipeCardFace.Columns; i++)
             {
-                float dx = 50f * i;
+                // Tesis aşama 9 (K21): üçüncü sütun yalnız üç girdili tarifte açılır ve dar adımla (34 mm) kaydedilir
+                float dx = i < 2 ? 50f * i : 34f * i;
                 RectAt(face, rf.InputIcons[i].rectTransform, new Vector2(6f + dx, 31f), new Vector2(12f, 12f), "girdi simgesi " + i);
                 TextAt(face, rf.InputQty[i], 20f + dx, 42f, 9.5f, HorizontalAlignmentOptions.Left, "girdi sayısı " + i);
                 Width(rf.InputQty[i], 28f, "girdi sayısı " + i);
@@ -622,7 +623,8 @@ namespace Corrigible.Desk.Tests
             Check(2, 0, 2, 0);    // başlamamış iki vardiyalık emir
             Check(2, 1, 2, 1);    // 1/2
             Check(2, 2, 2, 2);
-            Check(3, 1, 2, 1);    // en çok iki kutu çizilir
+            Check(3, 1, 3, 1);    // tesis aşama 9: üç vardiyalık tarif (köpek) üç kutu
+            Check(4, 1, 3, 1);    // en çok üç kutu çizilir
             Check(1, -1, 0, 0);   // geri döner
         }
 
@@ -646,6 +648,69 @@ namespace Corrigible.Desk.Tests
             Assert.IsNotNull(rf.Icon.sprite, "çıktı simgesi (armor)");
             Assert.AreSame(rf.Icons[3], rf.Icon.sprite, "armor = KitKinds[3]");
             Assert.AreSame(rf.MaterialIcons[2], rf.InputIcons[1].sprite, "kumaş = MaterialKinds[2]");
+        }
+
+        /// <summary>
+        /// Tek kip: ad 12 mm'den küçülmez; tam adı ad alanına sığmayan tesis tarifi kısa kart adını yazar ("Kumanda kelepçesi" →
+        /// "Kelepçe"), sığan ad kısa adı olsa da tam yazılır. Üzerine gelme başlığı hep tam ad; kısa ad değişince yüz yeniden yazar.
+        /// </summary>
+        [Test]
+        public void RecipeCard_LongName_UsesShortCardName()
+        {
+            var card = Spawn(RecipePath);
+            var rf = (RecipeCardFace)card.Face;
+            var d = Recipe("clamp", "Kumanda kelepçesi", "devre", "Devre", "metal", "Metal", 1, -1, false);
+            d.ShortName = "Kelepçe";
+            card.Bind(d);
+            Assert.AreEqual("Kelepçe", rf.NameText.text, "sığmayan ad kısa adla yazılır");
+            Assert.AreEqual("Kumanda kelepçesi", card.HoverTitle, "üzerine gelme başlığı tam ad");
+            float w = rf.NameText.GetPreferredValues(rf.NameText.text, float.PositiveInfinity, float.PositiveInfinity).x;
+            Assert.LessOrEqual(w, rf.SingleLineFields.First(f => f.text == rf.NameText).maxWidthMm + 0.05f, "kısa ad sığar");
+
+            var fits = Recipe("turret", "Yaylı taret", "metal", "Metal", "devre", "Devre", 1, -1, false);
+            fits.ShortName = "Taret";
+            card.Bind(fits);
+            Assert.AreEqual("Yaylı taret", rf.NameText.text, "sığan ad kısa adı olsa da tam yazılır");
+
+            var noShort = Recipe("clamp", "Kumanda kelepçesi", "devre", "Devre", "metal", "Metal", 1, -1, false);
+            card.Bind(noShort);
+            Assert.AreEqual("Kumanda kelepçesi", rf.NameText.text, "kısa adı yoksa tam ad (yedek)");
+            int n = CardFace.ChangedBinds;
+            card.Bind(d);
+            Assert.AreEqual(n + 1, CardFace.ChangedBinds, "kısa adın gelmesi yüzü yeniden yazar");
+            Assert.AreEqual("Kelepçe", rf.NameText.text);
+        }
+
+        /// <summary>
+        /// Tek kip: oyunun bütün tarif adları (altı temel, yedi tesis ekipmanı, beş cevap) TR ve EN'de, kısa kart adıyla birlikte
+        /// (<see cref="PlanningBoardData.CardName"/>), tarif kartının ad alanına 12 mm'de sığar.
+        /// </summary>
+        [Test]
+        public void RecipeCard_EveryRecipeName_FitsTrEn()
+        {
+            var card = Spawn(RecipePath);
+            var rf = (RecipeCardFace)card.Face;
+            float max = rf.SingleLineFields.First(f => f.text == rf.NameText).maxWidthMm + 0.05f;
+            var english = Loc.ParseTable(File.ReadAllText("Assets/Corrigible/Resources/Localization/strings.txt"))[Loc.English];
+            var ids = new[] { "kit_tek", "kit_emp", "kit_ana", "armor", "medkit", "emp_cell" }.Concat(FacilityGear.Kinds).Concat(FacilityGear.Answers);
+            var failures = new List<string>();
+            try
+            {
+                foreach (bool en in new[] { false, true })
+                {
+                    Loc.SetLanguage(en ? Loc.English : Loc.Turkish, en ? english : null);
+                    foreach (var id in ids)
+                    {
+                        var d = Recipe(id, FacilityGear.RecipeName(id), "metal", "Metal", "devre", "Devre", 1, -1, en);
+                        d.ShortName = PlanningBoardData.CardName(id);
+                        card.Bind(d);
+                        float w = rf.NameText.GetPreferredValues(rf.NameText.text, float.PositiveInfinity, float.PositiveInfinity).x;
+                        if (w > max) failures.Add($"{(en ? "EN" : "TR")} {id} “{rf.NameText.text}” {w:0.0} > {max:0.0}");
+                    }
+                }
+            }
+            finally { Loc.SetLanguage(Loc.Turkish); }
+            Assert.IsEmpty(failures, string.Join("\n", failures));
         }
 
         /// <summary>
@@ -760,6 +825,9 @@ namespace Corrigible.Desk.Tests
                 Tr(english, "Kısıtlı · bitti", "Restricted · over"),
                 Fmt(english, "Boşta · +{0} can", "Idle · +{0} HP", 2),
                 Tr(english, "Boşta", "Idle"),
+                // Tesis aşama 5: GÖZETİM görevlisinin şeridi (dinleme puanı)
+                Fmt(english, "Dinleme {0}/{1}", "Listening {0}/{1}", 3, 3),
+                Tr(english, "Dinleme · bitti", "Listening · done"),
             };
             var topics = new[]
             {

@@ -73,8 +73,12 @@ namespace Corrigible.Desk.Tests
         /// hikâye kilidi kalkık, <see cref="Baseline"/> alınmış. <paramref name="passBriefing"/> false ise açılış atlanır ama emir
         /// belgesi açık kalır (BAŞLA'ya basılmaz; hikâye kilidi ve masa kilidi sürer, kamera belgede; Revizyon 3 · Aşama 4 P10
         /// "belge açık" kilidi için). O durumda <c>RetireJobs</c>'un komutları da reddedilir (<c>StoryHold</c>).
+        /// <paramref name="mapGen"/> verilirse harekât o harita anahtarıyla kurulur (<see cref="OverrideMapGen"/>; asset değişmez).
+        /// <paramref name="tune"/> verilirse harekât, dengenin o değişiklikle kurulmuş bellek kopyasıyla açılır
+        /// (<see cref="OverrideBalance"/>; ör. tesis baskını bayrağı; asset değişmez). İkisi birlikteyse önce harita anahtarı yazılır.
         /// </summary>
-        public static IEnumerator LoadDesk(uint seed = DefaultSeed, bool passBriefing = true, bool tutorial = false)
+        public static IEnumerator LoadDesk(uint seed = DefaultSeed, bool passBriefing = true, bool tutorial = false, int? mapGen = null,
+            Action<Balance> tune = null)
         {
 #if !UNITY_EDITOR
             Assert.Ignore("Pano PlayMode testleri yalnız editörde koşar: kayıt klasörü SessionState ile ayrılır.");
@@ -92,6 +96,8 @@ namespace Corrigible.Desk.Tests
 
             // Açılış Start'ta başladı; yeni harekât (NewGameStarted) açılışı aynı tohumla baştan açar
             yield return WaitFor(() => Briefing.Busy, 5, "açılış başlamadı (LiberationDeskView.Start)");
+            if (mapGen != null || tune != null)
+                OverrideBalance(b => { if (mapGen != null) b.liberationMapGen = mapGen.Value; tune?.Invoke(b); });
             Game.NewGame(seed);
             if (passBriefing)
             {
@@ -156,6 +162,44 @@ namespace Corrigible.Desk.Tests
             ResetFrameStats();
         }
 
+        static BalanceConfig balanceOverride;
+        /// <summary>Sahnedeki asıl BalanceConfig (asset) ve testten önceki değerlerinin JSON'u: söküm değişmediğini doğrular.</summary>
+        static BalanceConfig overriddenAsset;
+        static string overriddenAssetJson;
+
+        /// <summary>
+        /// Harita anahtarını (<c>Balance.liberationMapGen</c>) yalnız bu sahne için değiştirir (<see cref="OverrideBalance"/>).
+        /// </summary>
+        public static void OverrideMapGen(int value) => OverrideBalance(b => b.liberationMapGen = value);
+
+        /// <summary>
+        /// Dengeyi yalnız bu sahne için değiştirir: GameController'a asset'in bellek kopyasından kurulan ve <paramref name="tune"/>
+        /// ile ayarlanan geçici bir <see cref="BalanceConfig"/> verilir. <c>Settings/BalanceConfig.asset</c> değişmez (söküm bunu
+        /// JSON karşılaştırmasıyla doğrular); geçici nesne <see cref="TearDown"/>'da yok edilir. Sonraki <c>NewGame</c> bu dengeyle
+        /// kurulur; KAYITTAN DEVAM kaydın kendi dengesini kullanır (kayıt = tohum + denge + komutlar), yeniden yüklenen sahnenin
+        /// GameController'ı asset'e bağlı kalır.
+        /// </summary>
+        public static void OverrideBalance(Action<Balance> tune)
+        {
+            Assert.IsNotNull(tune, "OverrideBalance: ayar yok");
+            var field = typeof(GameController).GetField("balanceConfig", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(field, "GameController.balanceConfig");
+            var current = (BalanceConfig)field.GetValue(Game);
+            // İkinci çağrıda alan zaten geçici nesneyi gösterir: asıl asset ilk çağrıda saklandı
+            var original = current != null && current == balanceOverride ? overriddenAsset : current;
+            if (balanceOverride == null)
+            {
+                overriddenAsset = original;
+                overriddenAssetJson = original != null && original.balance != null ? JsonUtility.ToJson(original.balance) : null;
+            }
+            if (balanceOverride != null) Object.Destroy(balanceOverride);
+            balanceOverride = ScriptableObject.CreateInstance<BalanceConfig>();
+            balanceOverride.name = "BalanceConfig (test: bellek kopyası)";
+            balanceOverride.balance = original != null ? original.CreateRuntimeCopy() : new Balance();
+            tune(balanceOverride.balance);
+            field.SetValue(Game, balanceOverride);
+        }
+
         /// <summary>Yüklenen DeskGame'in tutamakları (yeniden yüklemede eskileri yok olur).</summary>
         static void FindHandles()
         {
@@ -197,7 +241,13 @@ namespace Corrigible.Desk.Tests
             if (DeskLoc.Instance.Lang != previousLanguage) DeskLoc.Instance.SetLanguage(previousLanguage);
             GameLaunch.Pending = GameLaunch.Mode.None;
             tutorialPrefs?.Dispose();tutorialPrefs=null;
+            if (balanceOverride != null) { Object.Destroy(balanceOverride); balanceOverride = null; }
             RestoreStorage();
+            // Geçici denge yalnız bellekteydi: asıl asset'in değerleri testten önceki gibi kalmalı (bayraklar dahil)
+            var asset = overriddenAsset; string before = overriddenAssetJson;
+            overriddenAsset = null; overriddenAssetJson = null;
+            if (asset != null && before != null)
+                Assert.AreEqual(before, JsonUtility.ToJson(asset.balance), "BalanceConfig asset'i testte değişti (OverrideBalance yalnız kopyayı ayarlamalı)");
         }
 
         static AsyncOperation LoadDeskScene()

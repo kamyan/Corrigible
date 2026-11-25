@@ -225,6 +225,8 @@ namespace Corrigible.Desk.Bridge
             if (v.Trust != 0) parts.Add(Loc.F("Güven {0}", DeskFormat.Signed(v.Trust, 0)));
             if (System.Math.Abs(v.Alarm) >= 0.05) parts.Add(Loc.F("YZ alarmı {0}", DeskFormat.Signed(v.Alarm, 0)));
             if (v.Counterattack) parts.Add(Loc.T("YZ karşı saldırdı"));
+            // Tesis aşama 11: savunma açıkken eşik kanadı düşürmez, kuşatma kurar (DoorVisit.Siege)
+            if (v.Siege) parts.Add(Loc.T("Karşı saldırı bekliyor"));
             return parts.Count == 0 ? null : string.Join(" · ", parts);
         }
 

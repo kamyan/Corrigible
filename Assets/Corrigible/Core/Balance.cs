@@ -29,10 +29,19 @@ namespace Corrigible.Core
         /// Aşama 8 bot ölçümü (2026-11-14, 40 tohum): 3. kademe 6 → 7, 4. kademe 10 → 12. 12 bölgelik harekâtta 4. kademe hiç
         /// gelmez (başarısızlığın %30, sivil kaybının baskın başına 2,06 olduğu kademeydi); kod yerinde, buradan geri açılır.
         /// Göstergeler paydayı <c>Simulation.MaxTier</c>'den okur ("TEHDİT n/3"); 11 olursa son bölge 4. kademe olur (ölçülmedi).
+        /// Tek kip denge turu (2026-11-22, Docs/TESIS-BASKINLARI-TASARIMI.md §11.6 "Tek kip denge ölçümü"): 3. kademe 7 → 9; tesiste
+        /// 3. kademe sektörü 2. kademenin ~1,5 katı vardiya tutuyordu (çıkarınca bot zaferi %55 → %45).
         /// </summary>
         public int liberationTier2At = 2;
-        public int liberationTier3At = 7;
+        public int liberationTier3At = 9;
         public int liberationTier4At = 12;
+        /// <summary>
+        /// Harekât haritası: 0 bugünkü dünya haritası (sabit 12 bölge ve 18 bağlantı, <c>GameData.Links</c>), 1 her yeni harekâtta
+        /// tohumdan üretilen harita (<c>WorldMap</c>: kıtalar, bölge şekilleri, komşuluk ve adlar üretilir; 12 kimlik paketi
+        /// düğümlere dağıtılır, karargâh hep "weu"). Kayıt bu değeri taşır; harita kayda yazılmaz, tohumdan yeniden üretilir.
+        /// Sunum üretilmiş haritayı çizene kadar oyunda 0.
+        /// </summary>
+        public int liberationMapGen = 0;
         /// <summary>Sivil güven: başlangıç. Sıfıra inerse direniş dağılır (harekât kaybedilir).</summary>
         public int liberationTrustStart = 10;
         /// <summary>
@@ -54,8 +63,9 @@ namespace Corrigible.Core
         /// (toplayıcılı bot) sayısı %51 → %18 idi. 5 de çalışır ama harekâtı uzatır.
         /// </summary>
         public int liberationTrustPerRegion = 4;
-        // YZ alarmı: vardiyalar ve başarısız baskınlar yükseltir, kırılan YZ sunucusu düşürür; eşikte YZ karşı saldırır
-        public double liberationAlarmPerShift = 1;
+        // YZ alarmı: vardiyalar ve başarısız baskınlar yükseltir, kırılan YZ sunucusu düşürür; eşikte YZ karşı saldırır.
+        // Tek kip denge turu (2026-11-22): vardiya payı 1 → 0,5 (kuşatmaların %83'ü vardiya alarmındandı; çıkarınca bot zaferi %55 → %42,5)
+        public double liberationAlarmPerShift = 0.5;
         public double liberationAlarmPerFailure = 1;
         public double liberationAlarmPerServer = 4;
         public double liberationAlarmThreshold = 10;
@@ -67,23 +77,11 @@ namespace Corrigible.Core
         /// </summary>
         public int liberationServerTargetHp = 2;
         public int liberationServerMachines = 0;
-        /// <summary>
-        /// İkmal görevinin ek turu: kasa alındıktan sonra bütün ekip malzemeyle girişe döner (kaçış, dönüş yolu). Harekât ölçümü (2026-10-28, bot,
-        /// 10'ar harekât): ek tur 2, başarısızlık alarmı 1, bölge güveni 3 ile orta oyuncu 5/10, dikkatli 7/10 kazanır; eski
-        /// değerlerle (1, 3, 2) 0/10 ve 2/10 (başarısız baskınların alarmı ve uzayan harekâtın sivil kayıpları güveni bitiriyordu).
-        /// </summary>
-        public int liberationLootExtraTurns = 2;
-        /// <summary>
-        /// Sunucu görevinin ek turu: hedef kırılınca bütün ekip girişten çıkmalı (kaçış), çıkamayan baskında düşmüş sayılır. Bot
-        /// ölçümünde (2026-11-01, 12 tohum) 1 ek turla sunucu başarısı kaçıştan önceki kadar (T+E+A %91, eskiden %90; zayıf
-        /// ikililer ±3 puan), 2 ek turla 3–13 puan kolay; ek tursuz T+E+A %78. Aşama 8 harekât ölçümü (2026-11-14, 40 tohum): 1 → 2;
-        /// ilk ölçümde (toplayıcılı bot; sunumun kuralıyla yeniden ölçülmedi, tek başına) sunucu başarısızlığı %11 → %6, harekât
-        /// başına ölü −1,5, zafer uzunluğu −2,7 vardiya.
-        /// </summary>
-        public int liberationServerExtraTurns = 2;
-        /// <summary>Sivil sunucunun canı (kampanyada): gelişmiş akılda ekibe ulaşamayan makine sivillere saldırır, ikinci can
-        /// oyuncuya bir tur kurtarma fırsatı verir.</summary>
-        public int liberationCivilianHp = 2;
+        /// <summary>Sivil sunucunun canı (kampanyada): gelişmiş akılda ekibe ulaşamayan makine sivillere saldırır, fazla can
+        /// oyuncuya bir tur kurtarma fırsatı verir. Tek kip denge turu (2026-11-22): 2 → 3. Bakım robotunun yakın saldırısı 2 vurur;
+        /// 2 canda sivili tek turda kırıyor, "bir tur" niyeti işlemiyordu. Tesiste baskın başına kırılan sivil 2,32 → ~1,6, dağılma
+        /// (güven 0) sonların %74'ünden ~%15'e.</summary>
+        public int liberationCivilianHp = 3;
         /// <summary>
         /// Baskın başına hak: Madenci'nin duvar yıkan dinamiti (robota ve nesneye atılan dinamit hak harcamaz) ve Sis uzmanının sis
         /// bombası. Sınırsız dinamit kasa odası ve şerit haritalarının bulmacasını, sınırsız sis taşıyıcı kovalamacasını çökertir.
@@ -95,6 +93,201 @@ namespace Corrigible.Core
         /// kayar raf, yük asansörü…). Kapalıyken baskın yalnız bölge özelliği ve imza makinesiyle oynanır.
         /// </summary>
         public bool liberationRegionEvents = true;
+        // ---- Tesis baskınları (Docs/TESIS-BASKINLARI-TASARIMI.md): baskın kanat başına üç odalı tesis (giriş, ara oda, hedef oda)
+        // olarak oynanır. Oyunun tek baskın kipidir (kayıt 21; eski tek tahta kaldırıldı). Aşağıdaki facility* değerleri tesisin
+        // ayarları ve alt bayraklarıdır.
+        /// <summary>Tesisin giriş odasının tur sayısı. Sürüm 10 telafisi (2026-11-24): 5 → 6 (döndürülmüş odalarla simetrik geçit zaferi
+        /// %45'ten %31'e düşürdü; G/A/dönüş 6 ve hedef 10 ile %43, Docs/TESIS-BASKINLARI-TASARIMI.md §14.x).</summary>
+        public int facilityEntryTurns = 6;
+        /// <summary>Tesisin ara odasının tur sayısı. Sürüm 10 telafisi: 5 → 6.</summary>
+        public int facilityMiddleTurns = 6;
+        /// <summary>Tesisin hedef odasının tur sayısı (kısa nöbet bölgesinde bir tur kısa). Tek kip denge turu (2026-11-22): 8 → 9;
+        /// başarısızlığın çoğu süre dolmasıydı ve hedef odada kaçışın süresi dolunca geride kalan ölüyordu (çıkarınca bot zaferi
+        /// %55 → %42,5). Sürüm 10 telafisi (2026-11-24): 9 → 10.</summary>
+        public int facilityTargetTurns = 10;
+        /// <summary>Giriş odasının başlangıç makineleri: bir bakım robotu, kalanı dron. Aşama 4 kararı (2026-11-18): 2 → 1 (yalnız bakım
+        /// robotu; Docs/TESIS-BASKINLARI-TASARIMI.md §11.6 "Aşama 4 ölçümü", §14 yedinci tur).</summary>
+        public int facilityEntryMachines = 1;
+        /// <summary>Ara odanın başlangıç makineleri: bir bakım robotu, kalanı dron. Aşama 4 kararı: 3 → 1.</summary>
+        public int facilityMiddleMachines = 1;
+        /// <summary>Hedef odanın başlangıç makineleri: bir bakım robotu, kalanı dron; kademe ekleri ve imza dönüşümü bunlara eklenir.</summary>
+        public int facilityTargetMachines = 3;
+        /// <summary>Sigorta panosunun canı (giriş odasının donanımı).</summary>
+        public int facilityPanelHp = 2;
+        /// <summary>Çağrı anteninin canı (giriş ya da ara odanın donanımı).</summary>
+        public int facilityAntennaHp = 2;
+        /// <summary>Soğutma vanasının canı (ara odanın donanımı).</summary>
+        public int facilityValveHp = 1;
+        /// <summary>Dönüş odasının (kaçışta batıya geri geçilen ara ya da giriş odası) tur sayısı. Aşama 4 kararı: 4 → 5 (geride kalan
+        /// ve ekibin tamamının öldüğü baskın azalır). Sürüm 10 telafisi (2026-11-24): 5 → 6.</summary>
+        public int facilityReturnTurns = 6;
+        /// <summary>Sigorta panosu kırıkken hedef odasında kopya dolaplarının makine uyandırmadığı ilk tur sayısı.</summary>
+        public int facilityPanelQuietTurns = 2;
+        /// <summary>Çağrı anteni kırıkken hedef odasına eksik gelen makine (önce kademe ekinden, yetmezse başlangıç dronundan).</summary>
+        public int facilityAntennaMachines = 1;
+        /// <summary>Soğutma vanası kapalıyken sunucu görevinde hedef dolabın eksik canı (en az 1 kalır).</summary>
+        public int facilityValveTargetHp = 2;
+        /// <summary>Soğutma vanası kapalıyken ikmal görevinde hedef odasının makinelerinin yürümediği ilk tur sayısı.</summary>
+        public int facilityValveStillTurns = 1;
+        /// <summary>Tesis hamleleri (aşama 6; Docs/TESIS-BASKINLARI-TASARIMI.md §4): pusu hattının boyu (kurulduğu kareden).</summary>
+        public int facilityAmbushRange = 4;
+        /// <summary>Koşu darbesinin en kısa koşusu (kare; üst sınır uzmanın yürüyüşü).</summary>
+        public int facilityRushRun = 3;
+        /// <summary>Koşu darbesinin makineyi aynı yönde itmesi (kare).</summary>
+        public int facilityRushPush = 2;
+        /// <summary>Yükün fırlatılabildiği en uzak kare (düz hat).</summary>
+        public int facilityThrowRange = 3;
+        /// <summary>Düşen kişiyi sürükleyen uzmanın yürüyüş kaybı (o tur yeteneği de yoktur).</summary>
+        public int facilityDragMoveCost = 1;
+        /// <summary>İkmal hedef odasının büyük sandığı (iki kişilik iş) açılan kazanılmış baskında ek metal ve devre (kartlı oyun).</summary>
+        public int facilityBigCrateMetal = 2, facilityBigCrateCircuits = 1;
+        /// <summary>
+        /// "Son nefes" kuralını kapatır (yalnız ölçüm için; oyunda false). Kural: tesiste oyuncunun hamle sırası dışında (makine
+        /// evresi, tur sonu olay, kablo, gaz) düşen uzman, oda oyuncu bir daha hamle yapamadan biterse (kendiliğinden geçiş, süre ya da
+        /// kaçış) ve ekipten biri ayakta çıktıysa ekiple gider (Docs/TESIS-BASKINLARI-TASARIMI.md §4.3). Ad olumsuz: kayıtta ya da
+        /// asset'te alan yoksa false gelir ve kural açık kalır (serileştiricinin eksik alanı nasıl doldurduğuna bağlı değil).
+        /// </summary>
+        public bool facilityLastBreathDies = false;
+        /// <summary>Dinleme nöbeti: bir odanın bina planını açan puan (aşama 5; Docs/TESIS-BASKINLARI-TASARIMI.md §7.2). Geliştirici
+        /// (2026-11-24): "3 vardiyada bir harita değil, 1 vardiyada bir oda haritası": 3 → 1 (Gözetim'deki kişi her kapanışta bir paftayı
+        /// açar; Kulak'la iki). Kayıt dengeyi taşır: eski oyunlar eski bedelle sürer.</summary>
+        public int facilityIntelCost = 1;
+        /// <summary>Dinleme nöbeti: Gözetim görevindeki kişinin her vardiya kapanışında ürettiği puan.</summary>
+        public int facilityWatchIntel = 1;
+        // ---- Tesis aşama 8: ekipman, tarifler ve kazanımlar (Docs/TESIS-BASKINLARI-TASARIMI.md §5, §6.1–6.2, §11.1). Kimlikler ve
+        // tablolar Core/FacilityGear.cs'te; buradaki sayılar asset'e yazılmaz, C# varsayılanıyla çalışır (aşama 6 emsali).
+        /// <summary>Örme setinin ve dinamit lokumunun baskın başına hakkı (Yedek çanta kazanımı ikisine de ekler).</summary>
+        public int facilityWireCharges = 2, facilityChargeCharges = 2;
+        /// <summary>Tel örgünün ve kalas duvarın canı.</summary>
+        public int facilityWireHp = 3, facilityPlankHp = 3;
+        /// <summary>Kalas duvarın örme setinden düştüğü hak (tel 1).</summary>
+        public int facilityPlankCost = 2;
+        /// <summary>Süresi biten ya da kırılan aygıtın karesinde kalan hurdanın canı.</summary>
+        public int facilityScrapHp = 1;
+        /// <summary>Aygıtın (taret, yem, vinç) çalıştığı makine evresi ve canı.</summary>
+        public int facilityDeviceTurns = 3, facilityDeviceHp = 2;
+        /// <summary>Taretin ve vincin hattı (kare, pusu emsali).</summary>
+        public int facilityTurretRange = 4, facilityWinchRange = 4;
+        /// <summary>Vincin bir evrede çektiği kare ve yemin bir evrede yürüdüğü kare.</summary>
+        public int facilityWinchPull = 1, facilityDecoyStep = 2;
+        /// <summary>Ele geçirilen makinenin oyuncu için oynadığı tur.</summary>
+        public int facilityClampTurns = 3;
+        /// <summary>Köpeğin canı, yürüyüşü ve düşünce panoda kullanılamadığı vardiya.</summary>
+        public int facilityDogHp = 2, facilityDogMove = 5, facilityDogRestTurns = 3;
+        /// <summary>Havlamanın erimi (Manhattan; makinenin plan öncesi karesinden).</summary>
+        public int facilityBarkRange = 3;
+        /// <summary>Örme seti tarifi: metal, kumaş, vardiya.</summary>
+        public int facilityWireMetal = 2, facilityWireCloth = 1, facilityWireShifts = 1;
+        /// <summary>Dinamit lokumu tarifi: metal, kimyasal, vardiya.</summary>
+        public int facilityChargeMetal = 1, facilityChargeChemicals = 2, facilityChargeShifts = 2;
+        /// <summary>Yaylı taret tarifi: metal, devre, vardiya.</summary>
+        public int facilityTurretMetal = 2, facilityTurretCircuits = 1, facilityTurretShifts = 2;
+        /// <summary>Yürüyen yem tarifi: metal, devre, kumaş, vardiya.</summary>
+        public int facilityDecoyMetal = 1, facilityDecoyCircuits = 1, facilityDecoyCloth = 1, facilityDecoyShifts = 1;
+        /// <summary>Makaralı vinç tarifi: metal, kumaş, vardiya.</summary>
+        public int facilityWinchMetal = 2, facilityWinchCloth = 1, facilityWinchShifts = 1;
+        /// <summary>Kumanda kelepçesi tarifi: devre, metal, vardiya.</summary>
+        public int facilityClampCircuits = 2, facilityClampMetal = 1, facilityClampShifts = 2;
+        /// <summary>Köpek eğitiminin erzak bedeli (iş emri başlarken düşer; yetmezse emir bekler).</summary>
+        public double facilityDogSupplies = 4;
+        /// <summary>Köpek eğitimi tarifi: kumaş, vardiya.</summary>
+        public int facilityDogCloth = 1, facilityDogShifts = 3;
+        /// <summary>Kulak: Gözetim görevlisinin vardiya başına ek dinleme puanı.</summary>
+        public int facilityEarIntel = 1;
+        /// <summary>Yedek çanta: örme setinin ve dinamit lokumunun ek baskın hakkı.</summary>
+        public int facilitySpareCharges = 1;
+        /// <summary>Açık hat: dönüş odasının ek turu. Eşik: gidişteki giriş odasının ek turu.</summary>
+        public int facilityOpenLineTurns = 1, facilityThresholdTurns = 1;
+        /// <summary>Revir: tesisten çıkarılan düşenin yatışından düşen vardiya (en az 1 kalır). Tezgâh: ödül tariflerinin kısalan
+        /// vardiyası (en az 1 kalır).</summary>
+        public int facilityInfirmaryShifts = 1, facilityWorkbenchShifts = 1;
+        /// <summary>Nişan: pusu hattına eklenen kare. Kürk: köpeğe eklenen can. Makara: vincin çektiği kare (mutlak).</summary>
+        public int facilitySightRange = 1, facilityFurHp = 1, facilityPulleyPull = 2;
+        /// <summary>
+        /// Yalnız ölçüm: Sedye kazanımını bütün harekât boyunca açık sayar (aşama 8, K24; <c>facilityLastBreathDies</c> emsali). Oyunda
+        /// false: kazanım yalnız sunucu ödülüyle gelir.
+        /// </summary>
+        public bool facilityStretcherAlways = false;
+        // ---- Tesis aşama 10: önlem defteri (Docs/TESIS-BASKINLARI-TASARIMI.md §6.3, §11.1). Sınıflar ve adlar Core/FacilityCounters.cs'te,
+        // tahta kuralları Core/Baskin.Counters.cs'te; buradaki sayılar asset'e yazılmaz, C# varsayılanıyla çalışır (aşama 8 emsali).
+        /// <summary>Bir baskının bir sınıfa ekleyebileceği en çok sayaç ve önlemin öğrenildiği eşik (en az 1 okunur).</summary>
+        public int facilityTallyCap = 3, facilityCounterThreshold = 6;
+        /// <summary>Önlem defterinin alt bayrağı: sayım, öğrenme, önlemler ve
+        /// cevap tarifleri. Ölçüm kilidi için false (aşama 9 ile aynı oyun).</summary>
+        public bool facilityCountermeasures = true;
+        /// <summary>Yalnız ölçüm: pusu isabeti "aygıt" sayacına girer (belge §6.3'ün lafzı; aşama 10 K6). Oyunda false.</summary>
+        public bool facilityTallyAmbush = false;
+        /// <summary>Çift cidar: odada seçilen duvar sayısı, yıkmanın hak bedeli (tek hamlede) ve Delici şarjla bedeli.</summary>
+        public int facilityDoubleWalls = 2, facilityDoubleWallCharges = 2, facilityPiercerCharges = 1;
+        /// <summary>Kesici kol: makine niyetinin tele (kademe 2'de kalasa da) ek hasarı.</summary>
+        public int facilityCutterDamage = 1;
+        /// <summary>Kısa bağ: kelepçenin kısalan oyuncu turu (en az 1 kalır).</summary>
+        public int facilityShortClampTurns = 1;
+        /// <summary>Koku yayıcı: canı ve köpek komutlarını kestiği erim (Manhattan). Odadaki sayısı önlemin kademesidir.</summary>
+        public int facilityEmitterHp = 1, facilityEmitterRange = 3;
+        /// <summary>Parazit: aygıtın kısalan çalışma turu (en az 1 kalır).</summary>
+        public int facilityJamTurns = 1;
+        /// <summary>Makine aklı: pusu ve taret hattındaki varış karesinin konum cezası.</summary>
+        public double facilityCounterLinePenalty = 6.0;
+        /// <summary>Cevap tarifinin temel tarife eklediği devre.</summary>
+        public int facilityAnswerCircuits = 1;
+        /// <summary>Cevapların etkisi: Çelik tel setinin tele eklediği can, Yedek rölenin kelepçeye ve Çift zembereğin aygıtlara eklediği tur.</summary>
+        public int facilitySteelWireHp = 1, facilityRelayTurns = 1, facilitySpringTurns = 1;
+        // ---- Tesis aşama 11: kalıcı tahta (izler), YZ onarımı, bekleyen karşı saldırı ve üç odalı savunma (Docs/TESIS-BASKINLARI-TASARIMI.md
+        // §9.1–9.3, §11.1). İzler Core/FacilityMarks.cs'te, savunma tahtası Core/Baskin.Defense.cs'te; buradaki sayılar asset'e yazılmaz,
+        // C# varsayılanıyla çalışır (aşama 8 ve 10 emsali).
+        /// <summary>İzlerin alt bayrağı: kalıcı tahta, YZ onarımı, bina planındaki izler ve emirdeki iz kopyası. Ölçüm kilidi için false
+        /// (aşama 10 tahtaları).</summary>
+        public bool facilityMarks = true;
+        /// <summary>Onarım: işgaldeki her kanatta vardiya kapanışında listede en önde duran bu kadar iz silinir (en eski önce).</summary>
+        public int facilityRepairPerShift = 1;
+        /// <summary>Savunmanın alt bayrağı: bekleyen karşı saldırı (kuşatma), savun/bırak komutları, üç odalı savunma ve yeniden alınan
+        /// bölgenin fonu ve güveninin bir kez verilmesi (§9.3). false: anlık karşı saldırı ve yeniden verilen bölge ödülü (aşama 10).</summary>
+        public bool facilityDefenseEnabled = true;
+        /// <summary>Savunmanın toplam süresi (tek tur sayacı; oda değişince sıfırlanmaz, en az 1 okunur).</summary>
+        public int facilityDefenseTurns = 10;
+        /// <summary>Dalgalar: ilk dalganın çıkış turu, dalga aralığı ve dalga sayısı (2, 5, 8). İç odaya geliş terk edilen oda başına bir
+        /// tur gecikir; iç odanın ilk turu (barikat) makinesizdir.</summary>
+        public int facilityDefenseFirstWave = 2, facilityDefenseWaveTurns = 3, facilityDefenseWaves = 3;
+        /// <summary>Dalga büyüklüğü: bu taban + en çok 3 olmak üzere kademe (kademe 1/2/3/4 → 2/3/4/4).</summary>
+        public int facilityDefenseWaveBase = 1;
+        /// <summary>Saha rölesinin canı (hedef odasında; belgede facilityRelayHp, Yedek rölenin facilityRelayTurns'üyle karışmasın diye bu
+        /// ad). Röle kırılırsa savunma kaybedilir.</summary>
+        public int facilityDefenseRelayHp = 4;
+        /// <summary>Savunmada terk edilen (içeri çekilinen) oda başına güven kaybı.</summary>
+        public int facilityDefenseRoomTrust = 1;
+        /// <summary>Siper kazanımı: savunmada saha rölesine eklenen can.</summary>
+        public int facilityCoverRelayHp = 1;
+        // ---- Tesis aşama 12: Katar (na) ve Yalpa (oc) tesis şartları (Docs/TESIS-BASKINLARI-TASARIMI.md §10, §11.1). Kurallar
+        // Core/Baskin.Conditions.cs'te; buradaki sayılar asset'e yazılmaz, C# varsayılanıyla çalışır (aşama 8, 10 ve 11 emsali).
+        /// <summary>Katar'da açık kenardan düşen ekip üyesinin yatışı (vardiya; ölmez; en az 1 okunur).</summary>
+        public int facilityFallInjuryTurns = 5;
+        /// <summary>Katar'ın takibi: dönüşte batı geçidine (bağlantıya) yürüme uzaklığı en çok bu kadar olan makine sonraki vagona geçer.</summary>
+        public int facilityFollowRange = 2;
+
+        // Tesis aşama 13: bölgeye özgü imza makineleri.
+        public bool facilitySignatureMachines = true;
+        public int facilityFlameRange = 2, facilityFlameDamage = 1;
+        public int facilityRamRange = 3, facilityRamPush = 2;
+        public int facilityAnchorRange = 4, facilityAnchorPull = 2;
+        public int facilityFrostRange = 3, facilityFrostTurns = 2;
+        public int facilitySealHp = 3, facilityBuildDamage = 1;
+        /// <summary>Sahadaki sızmacının alt bayrağı (tesis aşama 17; kayıt 21'den beri varsayılan açık): ekipteki sızmacı baskında döner,
+        /// saha kararı (sabotaj olayı) açılır, tesis izi "f10" (sürüm 10; önce "f9"). false: saha kapalı (tesis izi "f8s10", önce "f8"; aşama 13–15 ölçüm kilitleri bunu BAL
+        /// ile verir).</summary>
+        public bool infiltratorFieldEnabled = true;
+        public int infiltratorTellMaxDelay = 4, infiltratorTurn = 2;
+        public bool facilityTitlesEnabled = true;
+        public int facilityMaxTitles = 2;
+        public int facilityMarksmanAt = 3, facilityCarrierAt = 2, facilityRamTitleAt = 3;
+        public int facilityHandlerAt = 3, facilityBuilderAt = 3, facilityThrowerAt = 2;
+        public int facilityTitleAmbushBonus = 2, facilityTitleRushBonus = 1, facilityTitleThrowBonus = 2;
+        public int facilityTitleDeviceBonus = 1, facilityTitleDogCommands = 2;
+        /// <summary>Katar'ın alt bayrağı: na tesiste Katar (açık kenar, takip, AYIR; G ve A'da ileri geçit doğu sütununda). false: yük
+        /// asansörü (aşama 11 planı ve tahtaları).</summary>
+        public bool facilityKatar = true;
+        /// <summary>Yalpa'nın alt bayrağı: oc tesiste Yalpa (2., 4., 6. tur sonunda yatış). false: hidrolik yağ (aşama 11).</summary>
+        public bool facilityYalpa = true;
         /// <summary>
         /// Madenci ve Sis uzmanı kadroya atölyenin bu seviyesinde katılır (0: baştan). Atölye seviyesi düşmez; katılan ayrılmaz.
         /// Erken baskınlar T + E + A ile ölçüldü; dinamit ve sis haritanın yeni çözümlerini kademeyle açar.
@@ -207,6 +400,9 @@ namespace Corrigible.Core
         public int boardGatherCircuits = 1;
         public double boardCookingMaxSavingFraction = 0.5;
         public int boardRestHeal = 1;
+        /// <summary>Kayıt 22: Boşta olmayan (görevdeki, saha rolündeki) yatmayan kişinin vardiya kapanışındaki iyileşmesi; Boşta
+        /// <see cref="boardRestHeal"/> alır. Yarım tayında ikisi de 0.</summary>
+        public int boardDutyHeal = 1;
         public int boardCareHeal = 1;
         public int boardCareHealPerTier = 1;
         public int boardMedkitHeal = 1;
@@ -258,7 +454,10 @@ namespace Corrigible.Core
         public int candidateGroupMin = 2;
         public int candidateGroupMax = 3;
         public int candidateWaitShifts = 2;
-        public int candidateEmergencyBelow = 3;
+        /// <summary>Ayaktaki kişi bunun altındaysa kapıya acil grup gelir (terk sayacı da bu eşiği okur). Tek kip denge turu
+        /// (2026-11-22): 3 → 4; tesiste baskınların ~%9'unda üç kişilik ekibin tamamı ölüyor, 3'te bu sığınağın tamamı oluyordu
+        /// ("son kişi" sonu; çıkarınca bot zaferi %55 → %32,5).</summary>
+        public int candidateEmergencyBelow = 4;
         public double candidateTier0Share = 0.30;
         public double candidateTier2Share = 0.30;
         public double candidateTier0Robot = 0.05;

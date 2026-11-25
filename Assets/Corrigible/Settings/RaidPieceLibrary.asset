@@ -50,6 +50,12 @@ MonoBehaviour:
   locker: {fileID: 5928732255777017362, guid: 21074d07e6ae94a2299816c2736a796c, type: 3}
   shieldDrone: {fileID: 143638077709538218, guid: e7edfdec1baca4b1da7c86ba51611583, type: 3}
   replicator: {fileID: 8651172726398756266, guid: 4e55dab93adf94f1290e4179e677f7cb, type: 3}
+  flameRobot: {fileID: 7666415545473254610, guid: 15c2352b967a14485bacae02dc5288f6, type: 3}
+  sealer: {fileID: 271837389915320218, guid: 602d578b29fab44d4a5a4a3b9b500aea, type: 3}
+  ramRobot: {fileID: 8957507303706636263, guid: d8d272afbe7754d1ebb92110a3102518, type: 3}
+  assembler: {fileID: 8126634954142840525, guid: 3b30838fbe01143db9686141b4f43ab9, type: 3}
+  frostDrone: {fileID: 8673447946072513420, guid: 5390a73c9a2f7446c8613fa5d4137fdb, type: 3}
+  anchorRobot: {fileID: 7780400856901373508, guid: b5292a8e91887419e85cde8aa0f47a54, type: 3}
   glyphDrone: {fileID: 21300000, guid: 8ba3a5dcded1e4c7bbdf94249340f67f, type: 3}
   glyphArmoredDrone: {fileID: 21300000, guid: 07c41679aec164ea2863eca61608dd3b, type: 3}
   glyphShieldDrone: {fileID: 21300000, guid: 4ab52c267e042421c8826564579c3cdb, type: 3}
@@ -89,6 +95,33 @@ MonoBehaviour:
   tubeFallbackScale: {x: 0.5, y: 1.45, z: 0.5}
   debrisFallbackScale: {x: 1.15, y: 1.7, z: 1.15}
   weldArmFallbackScale: {x: 1.2, y: 0.35, z: 1.2}
+  fusePanel: {fileID: 0}
+  antenna: {fileID: 0}
+  valve: {fileID: 0}
+  fusePanelFallbackScale: {x: 0.8, y: 0.7, z: 0.45}
+  antennaFallbackScale: {x: 0.4, y: 1.4, z: 0.4}
+  valveFallbackScale: {x: 0.9, y: 0.5, z: 0.9}
+  turret: {fileID: 1426719047642775010, guid: 96b8773f0d6c0403582fd40c2cd7fba7, type: 3}
+  decoy: {fileID: 8129958027088532710, guid: 2469c1f480114437dbc028e9818e58e0, type: 3}
+  winch: {fileID: 3690654282582036917, guid: 58215e1bfb62442629547f50b2ea40fa, type: 3}
+  dog: {fileID: 8021751476635748820, guid: 40e0d56f30a7c45b2a4dcab828cb8adf, type: 3}
+  wire: {fileID: 9177765646302221590, guid: ee8ac3ebdef7b411eacdc69da97b9047, type: 3}
+  plank: {fileID: 840554127132451904, guid: 0c4038d8a55024cc7974980649359bb7, type: 3}
+  scrap: {fileID: 2486454467430846866, guid: 97d147ba410f24c4fb7c10350362eda9, type: 3}
+  shutter: {fileID: 2774769403681887417, guid: c5c7b9756cc324533a54eac423082b43, type: 3}
+  shutterOpen: {fileID: 4481929986122089842, guid: 32132965e30454bb1a8a8ec72a12d57a, type: 3}
+  crateNiche: {fileID: 7413730988079734171, guid: edbaf05f53be341ebaaf1b1febc57c3e, type: 3}
+  crateNicheOpen: {fileID: 3742581471303194138, guid: 899ff08dd45884f8097b41b6b0fd7e5a, type: 3}
+  holdJack: {fileID: 1669478313458702261, guid: 270baacc9c2a842eb8368156fb93efdb, type: 3}
+  scentEmitter: {fileID: 8317664479661937023, guid: cd8fc282666fc46c6a13775f73cb8994, type: 3}
+  emitterFallbackScale: {x: 0.45, y: 0.8, z: 0.45}
+  relay: {fileID: 3778866944705339195, guid: c4d314456ca2b4c0192766f3586a2d7b, type: 3}
+  relayFallbackScale: {x: 0.6, y: 1.1, z: 0.6}
+  gearUnitFallbackScale: {x: 0.6, y: 0.6, z: 0.6}
+  barrierFallbackScale: {x: 0.9, y: 0.5, z: 0.9}
+  gearLinePx: 3
+  decoyPathAlpha: 0.6
+  barkAlpha: 0.18
   hazardCloud: {r: 0.99, g: 0.99, b: 1, a: 1}
   hazardCloudEdge: {r: 0.45, g: 0.54, b: 0.62, a: 1}
   hazardGas: {r: 0.85, g: 0.66, b: 0.05, a: 1}
@@ -105,3 +138,5 @@ MonoBehaviour:
   hazardGate: {r: 0.1, g: 0.28, b: 0.54, a: 1}
   hazardDrain: {r: 0.12, g: 0.16, b: 0.2, a: 1}
   hazardTube: {r: 0.93, g: 0.5, b: 0.15, a: 1}
+  hazardBrink: {r: 0.6627, g: 0.3216, b: 0.0392, a: 1}
+  hazardTilt: {r: 0.1725, g: 0.4314, b: 0.451, a: 1}

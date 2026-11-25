@@ -2,6 +2,34 @@
 # Kaçış dizileri: \n satır sonu, \t sekme, \\ ters bölü. {0}, {1:0.0} gibi yer tutucular çeviride de olmalı.
 # Bu dosyayı "Corrigible > Lokalizasyon > Çeviri tablosunu güncelle" üretir; yalnızca çeviri sütunlarını düzenle.
 tr	en
+# Assets/Corrigible/Core/Baskin.Actions.cs
+{0} yükü yerden aldı.	{0} picked the cargo up off the floor.
+{0} yükü fırlattı; yükü artık {1} taşıyor.	{0} threw the cargo; {1} is carrying it now.
+{0} pusu kurdu.	{0} set an ambush.
+Pusu: {0} vuruldu.	Ambush: {0} was hit.
+pusu	ambush
+{0} koşu darbesi indirdi.	{0} landed a running charge.
+Büyük sandık açıldı.	The big crate is open.
+Kepenk kalktı.	The shutter is up.
+{0} büyük sandığı tutuyor: ikinci uzman bu tur gelmeli.	{0} is holding the big crate: a second specialist must come this turn.
+{0} kepengi tutuyor: ikinci uzman bu tur gelmeli.	{0} is holding the shutter: a second specialist must come this turn.
+{0} menfezden geçti.	{0} went through the vent.
+Tutuş boşa gitti.	The hold was wasted.
+# Assets/Corrigible/Core/Baskin.Chain.cs
+{0} kapıda bekliyor.	{0} is waiting at the door.
+Ekip geçitten geçti.	The team went through the gate.
+Dönüş: ekip odaya ileri geçitten girdi. Süre dolarken tahtada kalan uzman baskında düşmüş sayılır.	Return: the team entered through the forward gate. A specialist still on the board when time runs out counts as fallen.
+Çağrı anteni kırık: dönüşte kopya dolapları makine uyandırmaz.	Call antenna down: the copy cabinets wake no machines on the way back.
+Vagon ayrıldı; takip yok.	Car uncoupled; no pursuit.
+# Assets/Corrigible/Core/Baskin.Conditions.cs
+{0} vagondan düştü.	{0} fell off the car.
+{0} kenardan düştü.	{0} fell off the edge.
+Platform batıya yattı.	The rig rolled west.
+Platform doğuya yattı.	The rig rolled east.
+# Assets/Corrigible/Core/Baskin.Counters.cs
+{0} cıvatalı: yerinden oynamadı.	{0} is bolted down: it did not budge.
+{0}: cıvatası söküldü.	{0}: bolts removed.
+Kesici kol {0} kesti.	The cutter arm cut the {0}.
 # Assets/Corrigible/Core/Baskin.cs
 Ana sunucu salonu	Main server hall
 Soğutma koridoru	Cooling corridor
@@ -33,6 +61,7 @@ Dar koridor	Narrow halls
 Fazladan duvarlar: atış hatları kısa, yollar uzun.	Extra walls: short lines of fire, long paths.
 Kısa nöbet	Short watch
 Baskın bir tur kısa sürer.	The raid is one turn shorter.
+Hedef odasının ilk ziyareti bir tur kısa sürer.	The first visit to the target room is one turn shorter.
 Takviye	Reinforced
 Başta bir robot fazla.	One extra robot at the start.
 Açık arazi	Open ground
@@ -69,23 +98,30 @@ Kopya dolabı	Replica cabinet
 Enkaz yığını	Rubble pile
 Basınçlı tüp	Pressurised cylinder
 Kaynak kolu	Welding arm
+Sigorta panosu	Fuse panel
+Çağrı anteni	Call antenna
+Soğutma vanası	Coolant valve
 çekirdeğimin	core
 sunucularımın	servers
-İkmal kasasını Teknisyen ile bitişik kareden aç; sonra bütün ekip girişten çıkmalı. Kasayı imha etme.	Open the supply crate with the Technician from an adjacent tile; then the whole team must leave through the entry. Don't destroy the crate.
+İkmal kasasını herhangi bir uzmanla bitişik kareden aç; sonra bütün ekip girişten çıkmalı. Kasayı imha etme.	Open the supply crate with any specialist from an adjacent tile; then the whole team must leave through the entry. Don't destroy the crate.
 Yine sen. Bu sefer kapıda daha çok makine var.	You again. There are more machines at the door this time.
 Demek {0} yerini buldun. Bakalım içeri girebilecek misin.	So you found my {0}. Let's see if you can get inside.
 {0}: buz kabuğu darbeyi karşıladı.	{0}: the ice shell soaked the hit.
 {0}: zırh plakası darbeyi karşıladı ve kırıldı.	{0}: armour plate took the hit and broke.
 {0} yere düştü{1}.	{0} is down{1}.
 {0} devre dışı{1}.	{0} disabled{1}.
-Teknisyen düştü: ikmal malzemeleri kaybedildi. Ekibin geri kalanı yine de çıkmalı.	The Technician is down: the supplies are lost. The rest of the team still has to get out.
-Teknisyen düştü: ikmal malzemeleri kaybedildi.	The Technician is down: the supplies are lost.
+{0} düştü: yük yere düştü. Kareye giren ilk ekip üyesi alır.	{0} is down: the cargo fell to the floor. The first team member to step onto the tile picks it up.
+{0} düştü: ikmal malzemeleri kaybedildi. Ekibin geri kalanı yine de çıkmalı.	{0} is down: the supplies are lost. The rest of the team still has to get out.
+{0} düştü: ikmal malzemeleri kaybedildi.	{0} is down: the supplies are lost.
+Yük kayboldu: ikmal malzemeleri kaybedildi.	The load is gone: the supplies are lost.
+Soğutma vanasını yalnız Teknisyen kapatabilir.	Only the Technician can shut the coolant valve.
 Sivil sunucu kırıldı: hastane ve banka hizmetleri kesildi.	Civilian server destroyed: hospital and bank services cut off.
 Kopya dolabı kırıldı: oradan robot uyanmayacak.	Replica cabinet destroyed: no more robots will wake from it.
 Soğutma ünitesi patladı.	Cooling unit exploded.
 patlama	explosion
 İkmal kasası imha edildi. Malzemeler kurtarılamadı.	The supply crate was destroyed. The supplies could not be recovered.
 {0} kırıldı.	{0} destroyed.
+{0} devre dışı: etkisi hedef odasında görülecek.	{0} disabled: the effect will show in the target room.
 turnike	turnstile
 duvara çarptı	hit a wall
 dolaba çarptı	hit a cabinet
@@ -94,6 +130,8 @@ dolaba çarptı	hit a cabinet
 Ekibin tamamı yere düştü.	The whole team is down.
 Hedef kırıldı. Şimdi bütün ekip girişten çıkmalı: tahtada kalan uzman baskında düşmüş sayılır.	Target destroyed. Now the whole team must leave through the entry: anyone left on the board is lost for good.
 Süre doldu: ekip malzemelerle çıkamadı.	Time's up: the team couldn't get out with the supplies.
+Köpek yükle tahtada kaldı: ikmal malzemeleri kaybedildi.	The dog stayed on the board with the cargo: the supplies are lost.
+Yük odada kaldı: ikmal malzemeleri kaybedildi.	The cargo was left in the room: the supplies are lost.
 İkmal malzemeleri alındı. Ekip tahliye edildi.	Supplies retrieved. The team has been extracted.
 İkmal malzemeleri alındı. Ekipten {0}/{1} uzman çıktı.	Supplies retrieved. {0}/{1} of the team got out.
 Çekirdek yok edildi. Ekip tahliye edildi.	Core destroyed. The team has been extracted.
@@ -101,7 +139,7 @@ Süre doldu: ekip malzemelerle çıkamadı.	Time's up: the team couldn't get out
 YZ düğümü kırıldı. Ekip tahliye edildi.	AI node destroyed. The team has been extracted.
 YZ düğümü kırıldı. Ekipten {0}/{1} uzman çıktı.	AI node destroyed. {0}/{1} of the team got out.
 sabotaj	sabotage
-Teknisyen malzemeleri aldı. Şimdi bütün ekip girişten çıkmalı: tahtada kalan uzman baskında düşmüş sayılır.	The Technician has the supplies. Now the whole team must leave through the entry: anyone left on the board is lost for good.
+{0} malzemeleri aldı. Şimdi bütün ekip girişten çıkmalı: tahtada kalan uzman baskında düşmüş sayılır.	{0} has the supplies. Now the whole team must leave through the entry: anyone left on the board is lost for good.
 EMP	EMP
 kanca	hook
 dinamit	dynamite
@@ -116,18 +154,37 @@ uyanmayı engelledi	blocked the wake-up
 Çoğaltıcı yeni bir dron uyandırdı.	The replicator woke a new drone.
 Patlayan robot infilak etti.	The bomber bot detonated.
 dron ateşi	drone fire
+{0} son nefeste düştü; ekip onu da götürdü.	{0} went down with a last breath; the team took them along.
 — Tur {0}: makineler hareket ediyor —	— Turn {0}: the machines move —
 {0} sisli kareye saldırdı: isabet yok.	{0} attacked into the smoke: no hit.
 {0} bulutta nişan alamadı.	{0} could not aim in the cloud.
 Uyanan kopya engellendi.	Waking replica blocked.
 Yeni bir {0} uyandı.	A new {0} woke up.
+Süre doldu: ekip geri çekildi.	Time is up: the team withdrew.
+{0} kapıya yetişemedi ve geri çekildi; ekip onsuz devam ediyor.	{0} couldn't reach the gate and withdrew; the team goes on without them.
 Süre doldu: YZ ikmal deposunu kilitledi.	Time ran out: the AI locked down the supply depot.
 Süre doldu: YZ çekirdeğini binadan taşıdı.	Time's up: the AI moved its core out of the building.
 Süre doldu: YZ sunucularını yedekledi ve binayı kilitledi.	Time's up: the AI backed up its servers and locked down the building.
 {0} çıkamadı: baskında düşmüş sayılır.	{0} didn't get out: lost for good.
 Son tur: bu tur çıkamayan uzman baskında düşmüş sayılır.	Final turn: anyone who doesn't get out this turn is lost for good.
+Son tur: kapıya varan geçer, varamayan geri çekilir; kapıda kimse yoksa ekip döner.	Last turn: whoever reaches the gate goes on, the rest withdraw; if nobody is at the gate, the team turns back.
 Son tur.	Final turn.
 Ekip geri çekildi.	The team withdrew.
+Tel örgü	Wire mesh
+Kalas duvar	Plank wall
+Hurda	Scrap
+Koku yayıcı	Scent emitter
+Saha rölesi	Field relay
+Köpek yaralandı: tahtadan çekildi.	The dog is hurt: pulled off the board.
+engele çarptı	hit a barrier
+# Assets/Corrigible/Core/Baskin.Defense.cs
+Savunma: {0}. turun sonuna kadar dayan. Bu tur barikat turu: makine yok.	Defence: hold until the end of turn {0}. This is the barricade turn: no machines.
+Saha rölesini koru: kırılırsa kanat düşer.	Protect the field relay: if it breaks, the wing is lost.
+{0} terk edilen odadan geldi.	{0} followed from the abandoned room.
+Dalga {0}: {1} makine giriş kapısında.	Wave {0}: {1} machines at the entry door.
+{0} kapıdan tahtaya döndü.	{0} came back from the door onto the board.
+Kanat tutuldu.	Wing held.
+Saha rölesi kırıldı.	Field relay destroyed.
 # Assets/Corrigible/Core/Baskin.Events.cs
 Söndürme bulutu	Suppression cloud
 Tek turların sonunda tavandaki memeler bir alanı bulutla doldurur: bir tur boyunca buluta ve buluttan nişan alınmaz; bitişik nesneye iş (sabotaj, onarım) serbest.	At the end of odd turns the ceiling nozzles fill an area with a cloud: for one turn nobody can aim into or out of it; work on an adjacent object (sabotage, repair) still goes on.
@@ -165,6 +222,13 @@ TÜP	CYLINDER
 Hidrolik yağ sızıntısı	Hydraulic oil leak
 2. tur sonunda hortum patlar: yağdaki birim itilince, çekilince ya da vurulunca yağ bitene kadar kayar; çarpışma 1 hasar.	At the end of turn 2 the hose bursts: a unit on the oil slides until the oil ends when it is pushed, pulled or hit; a crash deals 1 damage.
 YAĞ	OIL
+Katar	Train
+Vagonların kuzey ve güney kenarı açık: dışarı itilen düşer; makine yok olur, ekip üyesi yaralı döner. Dönüşte bağlantıya yakın makineler sonraki vagona geçer; Teknisyen vagonu ayırabilir.	The cars' north and south sides are open: anything pushed off falls; machines are lost, crew come back injured. On the way back, machines near the coupling follow into the next car; the Technician can uncouple it.
+KATAR	TRAIN
+Yalpa	Roll
+Zemin 2., 4. ve 6. tur sonunda batıya, doğuya, batıya yatar; sabitlenmemiş her şey 1 kare kayar, engele çarpan 1 hasar alır.	The deck rolls west, east, west at the end of turns 2, 4 and 6; anything not fixed slides 1 square, and whatever hits an obstacle takes 1 damage.
+YALPA	ROLL
+YALPA {0}	ROLL {0}
 elektrik	electric shock
 yağda kaydı, duvara çarptı	slid on oil into a wall
 yağda kaydı, dolaba çarptı	slid on oil into a cabinet
@@ -241,13 +305,44 @@ KABİN: biner, bir evre tahtada yok	CAR: boards, off the board for one phase
 {0}: buz ya da zırh karşılar	{0}: ice or armour soaks it
 {0}: yer değiştirir	{0}: is moved
 DONACAK: yürüyemez, buz 1 hasar emer	FREEZING: cannot move, ice soaks 1 damage
+# Assets/Corrigible/Core/Baskin.Gear.cs
+Çift cidar yıkıldı.	The double wall came down.
+Parazit: aygıt {0} tur çalışacak.	Jamming: the device will run for {0} turns.
+{0} kalas duvar kurdu.	{0} put up a plank wall.
+{0} tel ördü.	{0} strung wire mesh.
+{0} lokumla duvarı yıktı.	{0} blew the wall with a charge.
+{0} {1} kurdu.	{0} set up a {1}.
+Taret: {0} vuruldu.	Turret: {0} was hit.
+taret	turret
+Vinç {0} çekti.	The winch pulled the {0}.
+Vinç yükü çekti.	The winch pulled the cargo.
+Vinç düşeni çekti.	The winch pulled the fallen.
+{0} durdu.	{0} ran down.
+Aygıt hurdaya döndü.	The device is scrap now.
+{0} {1} makinesini ele geçirdi.	{0} captured the {1}.
+{0} yeniden YZ'nin.	{0} belongs to the AI again.
+Tutsak {0}, {1} için zırh plakası taktı.	The captive {0} fitted an armor plate on the {1}.
+Tutsak {0} vurdu.	The captive {0} struck.
+tutsak	captive
+Tutsak {0} ateş etti.	The captive {0} fired.
+Tutsak {0} infilak etti.	The captive {0} blew itself up.
+Tutsak {0}, {1} makinesini kilitledi: bir sonraki planında niyeti yok.	The captive {0} locked the {1}: no intent on its next plan.
+Köpek havladı: yakındaki makineler ona yönelecek.	The dog barked: nearby machines will go for it.
+Köpek yükü kaptı.	The dog grabbed the cargo.
+Köpek sıradaki odanın kokusunu aldı: plan çıktı.	The dog caught the scent of the next room: the plan is out.
 # Assets/Corrigible/Core/Baskin.Planning.cs
 EMP hücresi kullanıldı: bu atışa +{0} hasar.	EMP cell used: +{0} damage for this shot.
+# Assets/Corrigible/Core/Baskin.Rooms.cs
+Sigorta panosu kırık: kopya dolapları ilk {0} tur makine uyandırmaz.	Fuse panel down: the copy cabinets wake no machines for the first {0} turns.
+Çağrı anteni kırık: {0} makine eksik geldi.	Call antenna down: {0} fewer machines answered.
+Soğutma vanası kapalı: hedef dolap {0} can eksik.	Coolant valve shut: the target cabinet is down {0} HP.
+Soğutma vanası kapalı: makineler ilk {0} tur yürüyemez.	Coolant valve shut: the machines cannot move for the first {0} turns.
 # Assets/Corrigible/Core/CampaignLiberation.cs
 Oyun bitti.	The game is over.
 Önce süren baskını bitir.	Finish the current raid first.
 Geçersiz bölge.	Invalid region.
 Önce mevcut bölgenin bütün sektörlerini geri al.	Reclaim every sector of the current region first.
+Önce sunucu ödülünü seç: tarif ya da kazanım.	Choose the server reward first: recipe or perk.
 Yeni hedef, geri alınmış bir bölgeye komşu olmalı.	The new target must border a liberated region.
 Zaten bir baskın sürüyor.	A raid is already in progress.
 Bu bölgede açık sektör yok.	There are no available sectors in this region.
@@ -267,6 +362,8 @@ Ekip geri döndü. Sektör işgal altında; toparlandıktan sonra yeniden deneye
 {0} özgür. Sığınak güçlendi; sıradaki komşu bölgeyi seç.	{0} is free. The shelter is stronger; select the next neighboring region.
 {0} geri alındı. Sonraki sektör operasyona açıldı.	{0} reclaimed. The next sector is available for operations.
 {0}: {1} yeniden işgal altında.	{0}: {1} is occupied again.
+Önce karşı saldırıya karar ver: savun ya da bırak.	Decide on the counterattack first: defend or yield.
+Bu vardiya bırakılan kanada baskın verilemez.	A wing yielded this shift cannot be raided.
 # Assets/Corrigible/Core/Door.cs
 Kapıyı aç	Open the door
 Açma	Don't open
@@ -501,79 +598,151 @@ Gencin arkasından kapı kapandı. Kız kardeşi iki gün ağladı.	The door clo
 Kapıyı açmadın; sakinler genci salıverdi. Konserveler de onunla gitti.	You didn't open the door; the residents let him go. The tins went with him.
 Revirde görevli yok.	Infirmary unstaffed.
 Telsiz odasında görevli yok.	Radio room unstaffed.
+# Assets/Corrigible/Core/FacilityCounters.cs
+İtme	Pushing
+Yıkım	Breaching
+Örme	Building
+Ele geçirme	Capturing
+Aygıt	Gadgets
+Cıvatalı ayak	Bolted feet
+Çift cidar	Double wall
+Kesici kol	Cutter arm
+Kısa bağ	Short leash
+Parazit	Jamming
+Makine aklı	Machine sense
+CIVATALI	BOLTED
+Bakım robotu da itilmez ve çekilmez.	Maintenance robots can't be pushed or pulled either.
+İmza makineleri itilmez ve çekilmez.	Signature machines can't be pushed or pulled.
+Hedef odada da {0} duvar {1} hak ister.	In the target room too, {0} walls take {1} charges.
+Giriş ve ara odada {0} duvar {1} hak ister.	In the entry and middle rooms, {0} walls take {1} charges.
+Makineler kalas duvara da {0} fazla hasar verir.	Machines deal {0} extra damage to plank walls too.
+Makineler tel örgüye {0} fazla hasar verir.	Machines deal {0} extra damage to wire mesh.
+Süresi biten tutsak hemen niyet alır.	A captive whose time runs out acts at once.
+Kelepçe {0} tur kısa sürer.	Clamps last {0} turn less.
+Her odada {0} koku yayıcı: {1} kare içinde köpek komut alamaz.	Scent emitters in every room: {0}; within {1} tiles the dog takes no commands.
+Makineler pusu ve taret hattından kaçınır.	Machines avoid ambush and turret lines.
+Aygıtlar {0} tur kısa çalışır.	Devices run {0} turn less.
+# Assets/Corrigible/Core/FacilityGear.cs
+Tel +{0} can.	Wire +{0} HP.
+Kelepçe +{0} tur.	Clamp +{0} turn.
+Aygıtlar +{0} tur.	Devices +{0} turn.
+Çift cidarı {0} hakla açar.	Breaks a double wall with {0} use.
+Teknisyen sabotajı cıvatayı söker.	The Technician's sabotage removes the bolts.
+Söküm anahtarı	Teardown wrench
+Yedek röle	Backup relay
+Delici şarj	Piercing charge
+Çelik tel seti	Steel wire kit
+Çift zemberek	Double mainspring
+Kulak	Ear
+Sedye	Stretcher
+Yedek çanta	Spare bag
+Plan defteri	Plan book
+Açık hat	Open line
+Tezgâh	Workbench
+Eşik	Threshold
+Nişan	Sights
+Siper	Cover
+Kürk	Fur
+Makara	Pulley
+Dinleme nöbeti vardiya başına +{0} puan.	Listening watch: +{0} point per shift.
+Ekiple taşınan düşen odalar arasında yere konmaz; ekipten biri ayakta çıkarsa o da çıkar.	A fallen specialist carried with the team is not set down between rooms; if anyone on the team gets out standing, they get out too.
+Örme seti ve dinamit lokumu baskında +{0} hak.	Wire kit and dynamite stick: +{0} use per raid.
+Yeni cephe seçilince ilk kanadın giriş odasının planı bilinir.	When a new front is chosen, the plan of its first wing's entry room is known.
+Dönüş odasında +{0} tur.	+{0} turn in the return room.
+Tesisten çıkarılan düşenin yatışı {0} vardiya kısa (en az 1).	A fallen specialist pulled out of the facility stays down {0} shift less (at least 1).
+Ödülle açılan tarifler {0} vardiya kısa (en az 1).	Recipes unlocked by server rewards take {0} shift less (at least 1).
+Gidişte giriş odasında +{0} tur.	+{0} turn in the entry room on the way in.
+Pusu hattı +{0} kare.	Ambush line +{0} tile.
+Savunmada saha rölesi +{0} can.	Field relay +{0} HP on defence.
+Köpek +{0} can.	Dog +{0} HP.
+Vinç {0} kare çeker.	The winch pulls {0} tiles.
 # Assets/Corrigible/Core/GameData.cs
+WAYPOINT	WAYPOINT
 Kuzey Amerika	North America
-Dağıtım merkezi	Distribution hub
-Sevkiyat rampası	Shipping dock
-Ayıklama katı	Sorting floor
-Sunucu asma katı	Server mezzanine
-Kıtanın en büyük dağıtım merkezlerinden biri. İki duraklı yük asansörü YZ'den önce kurulmuş bir zaman rölesiyle çalışır.	One of the continent's largest distribution centres. The two-stop freight lift runs on a timer relay set up before the AI.
+Sevkiyat katarı	Freight train
+Yük vagonları	Freight cars
+Ayıklama vagonu	Sorting car
+Sunucu vagonu	Server car
+Kıtayı boydan boya geçen bir sevkiyat katarı; şimdi bir istasyona yanaşık duruyor. İstasyonun iki duraklı yük asansörü YZ'den önce kurulmuş bir zaman rölesiyle çalışır.	A freight train that runs the length of the continent, now berthed at a station. The station's two-stop freight lift runs on a timer relay set up before the AI.
+Kıtayı boydan boya geçen bir sevkiyat katarı. Vagonların kuzey ve güney kenarı açık; dönüşte bağlantıya yakın makineler sonraki vagona atlar.	A freight train that runs the length of the continent. The cars' north and south sides are open; on the way back, machines near the coupling jump to the next car.
+HEADWATER	HEADWATER
 Güney Amerika	South America
 Hidroelektrik santrali	Hydro power plant
 Tüp deposu	Cylinder store
 Türbin galerisi	Turbine gallery
 Kumanda odası	Control room
 Bir hidroelektrik santrali. Oksijen ve asetilen tüpleri zincirlenmeden duvar diplerine dizilmiş; vanası kopan tüp füze gibi uçar.	A hydroelectric plant. Oxygen and acetylene cylinders stand unchained along the walls; a cylinder that loses its valve flies like a missile.
+VERITY	VERITY
 Batı Avrupa	Western Europe
 Banka veri merkezi	Bank data centre
 Teknik depo	Tech store
 UPS odası	UPS room
 Sunucu salonu	Server hall
 YZ'nin ele geçirdiği bir banka veri merkezi. Tavandaki CO₂ memeleri yangın sanıp salonları beyaz bir bulutla doldurur.	A bank data centre seized by the AI. The ceiling CO₂ nozzles mistake it for a fire and fill the halls with a white cloud.
+QUORUM	QUORUM
 Doğu Avrupa	Eastern Europe
 Devlet arşivi	State archive
 Mikrofilm deposu	Microfilm store
 Dosya katı	File floor
 Tarama odası	Scanning room
-Sovyet döneminden kalma bir devlet arşivi. Raylı kompakt raflar; YZ arşivi tararken raf bloğunu kaydırır.	A Soviet-era state archive. Compact shelving on rails; the AI shifts the shelf block while it scans the files.
+Eski rejimden kalma bir devlet arşivi. Raylı kompakt raflar; YZ arşivi tararken raf bloğunu kaydırır.	A state archive left over from the old regime. Compact shelving on rails; the AI shifts the shelf block while it scans the files.
+BOREALIS	BOREALIS
 Rusya	Russia
-Sibirya veri merkezi	Siberian data centre
+Kutup veri merkezi	Polar data centre
 Soğuk depo	Cold storage
 Azot galerisi	Nitrogen gallery
 Sunucu bloğu	Server block
-Sibirya'da soğuk depolu bir veri merkezi. Sıvı azotlu soğutma hattı YZ'nin çevrimine bağlı ve takvimle boşalır.	A cold-storage data centre in Siberia. The liquid-nitrogen cooling line is tied to the AI's cycle and vents on a schedule.
+Donmuş toprağa gömülü, soğuk depolu bir veri merkezi. Sıvı azotlu soğutma hattı YZ'nin çevrimine bağlı ve takvimle boşalır.	A cold-storage data centre buried in frozen ground. The liquid-nitrogen cooling line is tied to the AI's cycle and vents on a schedule.
+EMBER	EMBER
 Orta Doğu	Middle East
-Körfez rafinerisi	Gulf refinery
+Petrol rafinerisi	Oil refinery
 Malzeme ambarı	Supply shed
 Pompa holü	Pump hall
 Kompresör dairesi	Compressor house
-Körfez'de bir rafineri. YZ gaz dedektörlerini susturdu; sızdıran bir flanştan yanıcı gaz geliyor.	A refinery on the Gulf. The AI silenced the gas detectors; flammable gas seeps from a leaking flange.
+Meşalesi hiç sönmeyen bir rafineri. YZ gaz dedektörlerini susturdu; sızdıran bir flanştan yanıcı gaz geliyor.	A refinery whose flare never goes out. The AI silenced the gas detectors; flammable gas seeps from a leaking flange.
+CAIRN	CAIRN
 Afrika	Africa
 Cevher hangarı	Ore hangar
 Konveyör hattı	Conveyor line
 Kırıcı bölümü	Crusher bay
 Kumanda kabini	Control cabin
 YZ'nin yarım kalmış bir cevher hangarı. Yıkılan duvarlar taşıyıcıydı; üstlerindeki tavan çatlak.	A half-built ore hangar of the AI. The demolished walls were load-bearing; the roof above them is cracked.
+SOLACE	SOLACE
 Hindistan	India
 Çağrı merkezi	Call centre
 Personel kantini	Staff canteen
 Kasa holü	Vault hall
 Santral odası	Switchboard room
-Bengaluru'da bir banka ve sigorta çağrı merkezi. YZ kart okuyucuları kapattı; turnikeler yalnız mekanik yön kilidiyle döner.	A banking and insurance call centre in Bengaluru. The AI shut the card readers; the turnstiles turn only by their mechanical direction lock.
+Binlerce masalı bir banka ve sigorta çağrı merkezi. YZ kart okuyucuları kapattı; turnikeler yalnız mekanik yön kilidiyle döner.	A banking and insurance call centre with thousands of desks. The AI shut the card readers; the turnstiles turn only by their mechanical direction lock.
+PARAGON	PARAGON
 Çin	China
 Montaj fabrikası	Assembly plant
 Parça ambarı	Parts store
 Kaynak hattı	Welding line
 Hat kontrol odası	Line control room
 YZ'nin kendi robotlarını kaynakladığı bir montaj fabrikası. Zemine cıvatalı bir kaynak kolu ağdan kopmuş, döngüsünü kimseye sormadan sürdürüyor.	An assembly plant where the AI welds its own robots. A welding arm bolted to the floor has dropped off the network and keeps cycling without asking anyone.
+TESSEL	TESSEL
 Japonya-Kore	Japan-Korea
 Çip fabrikası	Chip fab
 Malzeme kilidi	Material airlock
 Temiz oda koridoru	Cleanroom corridor
 Trafo merkezi	Substation
 Akıllı enerji yönetimli bir çip fabrikası. Kat panoları yükü iki faz arasında aktarır; döşeme altındaki kanallar sırayla canlanır.	A chip plant with smart power management. Floor panels shift the load between two phases; the channels under the floor go live one after another.
+EDDY	EDDY
 Güneydoğu Asya	Southeast Asia
 Elektronik fabrikası	Electronics plant
 Bodrum ambarı	Basement store
 Sintine kanalı	Bilge channel
 Kopya atölyesi	Copy workshop
-Penang ya da Ho Chi Minh'te bodrumu su basmış bir elektronik fabrikası. Sintine pompası üç turda bir geri çalışır ve yer süzgeci suyu çeker.	An electronics plant in Penang or Ho Chi Minh City with a flooded basement. Every third round the bilge pump runs backwards and the floor drain pulls the water.
+Bodrumunu sel basmış bir elektronik fabrikası. Sintine pompası üç turda bir geri çalışır ve yer süzgeci suyu çeker.	An electronics plant with a flooded basement. Every third round the bilge pump runs backwards and the floor drain pulls the water.
+HALCYON	HALCYON
 Okyanusya	Oceania
-Maden limanı	Mining port
-Kumanya deposu	Provision store
+Yüzer maden platformu	Floating mining rig
+Kumanya güvertesi	Provision deck
 Bant galerisi	Belt gallery
 Makine dairesi	Engine room
-Pilbara'da uzaktan yönetilen bir maden limanı. Hidrolik kaldırıcının hortumu patlamak üzere.	A remotely run mining port in the Pilbara. The hydraulic lift's hose is about to burst.
+Açık denizde demirli, uzaktan yönetilen ıssız bir maden platformu. Hidrolik kaldırıcının hortumu patlamak üzere.	A deserted, remotely run mining rig moored at sea. The hydraulic lift's hose is about to burst.
+Açık denizde demirli bir maden platformu. Güverte dalgayla 2., 4. ve 6. turun sonunda sırayla batıya, doğuya, batıya yatar.	A mining rig moored at sea. The deck rolls with the swell at the end of turns 2, 4 and 6: west, east, west.
 Son kişi	The last person
 Sığınağın son sakini de kaybedildi. Panoda yalnız boş görev cepleri ve geri dönmeyenlerin kartları kaldı.	The shelter's last resident was lost. Only empty duty pockets and the cards of those who never returned remain on the board.
 Silme	Erasure
@@ -596,7 +765,7 @@ Mutfak	Kitchen
 Bakım ve dönüş triyajı	Care and return triage
 İkmal	Foraging
 Eğitim	Training
-Gözetim	Supervision
+Gözetim	Watch
 Dış temas	Outside contact
 Dinlenme / yedek	Rest / reserve
 Metal	Metal
@@ -609,6 +778,20 @@ Analist kiti	Analyst kit
 Zırh plakası	Armour plate
 Bakım kiti	Care kit
 EMP hücresi	EMP cell
+Örme seti	Wire kit
+Dinamit lokumu	Dynamite stick
+Yaylı taret	Spring turret
+Yürüyen yem	Walking decoy
+Makaralı vinç	Pulley winch
+Kumanda kelepçesi	Control clamp
+Köpek	Dog
+Taret	Turret
+Yem	Decoy
+Vinç	Winch
+Kelepçe	Clamp
+Anahtar	Wrench
+Delici	Piercer
+Zemberek	Mainspring
 # Assets/Corrigible/Core/RaidMaps.cs
 Kablo galerisi	Cable gallery
 Bakım tüneli	Maintenance tunnel
@@ -718,7 +901,7 @@ Ustalığı deneyimli kademeden başlar.	Starts at the experienced skill tier.
 En yüksek can +{0}.	Maximum health +{0}.
 Canı 1; {0} vardiya yatar.	Health 1; bedridden for {0} shifts.
 Kişi başı tüketimin {0:0.##} katını yer.	Eats {0:0.##} times the per-person ration.
-Ustalık puanı 0; önce eğitim gerekir.	Skill 0; needs training first.
+Ustalık puanı 0; işte ve sahada deneyim kazanır.	Skill points 0; gains experience on the job and in the field.
 Hareket −{0}.	Movement −{0}.
 Bu kayıtta topluluk kabulü yok.	This record has no community admission system.
 Fiş basıldı; kapı bu vardiya kapalı.	The slip is printed; the door is closed for this shift.
@@ -735,6 +918,25 @@ Bu kayıtta son şalter yok.	This save has no last switch.
 Son şalter {0}. vardiyadan önce çekilemez.	The last switch cannot be pulled before shift {0}.
 Son şalter çekildi: tahliye emri damgalandı.	The last switch is pulled: the evacuation order is stamped.
 Son şalter çekildi: çekilme emri damgalandı.	The last switch is pulled: the withdrawal order is stamped.
+# Assets/Corrigible/Core/Simulation.Facility.cs
+Baskının odaları yok.	This raid has no rooms.
+Bu baskın tek odalı.	This raid has a single room.
+Baskının son odası raporlandı.	The raid's last room has been reported.
+Oda raporu eksik.	The room report is missing.
+Rapor bu odanın değil.	The report is not for this room.
+Rapor kadroyla uyuşmuyor.	The report does not match the squad.
+Raporun bitişi tanınmıyor.	The report's ending is not recognised.
+Raporun son oda bilgisi tutarsız.	The report's last-room flag is inconsistent.
+Raporun takip listesi geçersiz.	The report's pursuit list is invalid.
+Rapor hem takip hem AYIR taşıyor.	The report carries both a pursuit and a DETACH.
+Takip ve AYIR yalnız Katar vagonunun dönüş geçişinde olur.	Pursuit and DETACH only happen when passing back through a Train car.
+Kenardan düşme yalnız Katar vagonunda olur.	Falling off the edge only happens in a Train car.
+Tesis baskınları kapalı.	Facility raids are off.
+Bu bölgenin bekleyen sunucu ödülü yok.	This region has no server reward waiting.
+Tarif ya da kazanım seç.	Choose a recipe or a perk.
+Tarif açıldı: {0}.	Recipe unlocked: {0}.
+Tarif açıldı: {0}. Taslak iş emri iptal edildi: {1} tarifi değişti.	Recipe unlocked: {0}. Draft work order cancelled: the {1} recipe changed.
+Kazanım: {0}.	Perk: {0}.
 # Assets/Corrigible/Core/Simulation.PlanningBoard.cs
 Dayanıklı, ağır adımlı	Resilient, slow-paced
 Çevik, narin	Agile, fragile
@@ -821,6 +1023,7 @@ Panoda Teknisyen, EMP uzmanı ve Analist için üç sağlıklı kişi seç.	Sele
 {0} ile {1} ayrı tutuluyor; aynı baskına giremezler.	{0} and {1} are being kept apart; they cannot join the same raid.
 {0} kaybedildi. Kişisel ustalığı ve geride kalan teçhizatı geri gelmeyecek.	{0} was lost. Their personal mastery and equipment left behind will not return.
 {0} ekipçe kurtarıldı; {1} vardiya yatış gerekiyor.	{0} was rescued by the team; bed rest is needed for {1} shifts.
+{0} vagondan düştü; {1} vardiya yatış gerekiyor.	{0} fell off the car; laid up for {1} shifts.
 {0} döndü: can {1}/{2}.	{0} returned: HP {1}/{2}.
 # Assets/Corrigible/Core/Simulation.Shelter.cs
 Bu kayıtta sığınak yönetimi yok.	Shelter management is unavailable in this save.
@@ -870,14 +1073,14 @@ Yeni bir iz gelebilir.	Another trace may follow.
 Kişi sızmacıysa sabotaj gelir: ifşa +{0}.	If the person is an infiltrator, sabotage follows: exposure +{0}.
 Kişi listeden çıkar; malzeme gelmez.	The person is struck from the roster; no materials are recovered.
 {0} vardiya yer tutmadan bekletilir, sonra sökülür; ifşa {1}.	Held for {0} shifts without taking the isolation room, then dismantled; exposure {1}.
-{0} vardiya saha, üretim ve mutfak kapalı; eğitim açık.	Field, workshop and kitchen closed for {0} shifts; training stays open.
+{0} vardiya saha, üretim ve mutfak kapalı; yalnız Boşta açık.	Field, production and kitchen closed for {0} shifts; only Idle is open.
 Bedel yok.	No cost.
 Yeniden çalabilir.	They may steal again.
 Kişi kalır; bir vardiya görev alamaz.	The person stays; no duty for one shift.
 Açlık sürerse ayrılmalar başlar.	If hunger continues, people start leaving.
 Kişi, ustalığı ve kendi teçhizatı gider.	The person, their skill and their own gear leave.
 Kişi {0} vardiya kısıtlı; güven −1.	The person is restricted for {0} shifts; trust −1.
-{0} vardiya tüketim yarıya iner; dinlenme iyileştirmez, baskına çıkan {1} can eksik çıkar.	Consumption halves for {0} shifts; rest does not heal, raiders go out {1} HP down.
+{0} vardiya tüketim yarıya iner; kimse iyileşmez, baskına çıkan {1} can eksik çıkar.	Consumption halves for {0} shifts; nobody heals, raiders go out {1} HP down.
 Değişiklik yok.	No change.
 {0:0.##} erzak; kişi {1} canla kalkar.	{0:0.##} rations; the person is up with {1} HP.
 Yatış uzayabilir.	The bed rest may run longer.
@@ -897,12 +1100,74 @@ Karar bekleyen olay yok.	No event is waiting for a decision.
 Bu olayda böyle bir seçenek yok.	This event has no such option.
 Karar bekleyen olay var: önce olay tutanağını karara bağla.	An event is waiting for a decision: settle the incident report first.
 Olay kararı kaydedildi.	Event decision recorded.
+# Assets/Corrigible/Core/Simulation.Siege.cs
+{0}: {1} kuşatıldı; sonraki vardiya savun ya da bırak.	{0}: {1} is under siege; defend or yield next shift.
+Kanat savunması kapalı.	Wing defence is off.
+Bekleyen karşı saldırı yok.	No counterattack is pending.
+Saldırı bu vardiya kuruldu; sonraki vardiya savun ya da bırak.	The attack began this shift; defend or yield next shift.
+{0}: {1} savunuluyor.	{0}: {1} is being defended.
+{0}: {1} bırakıldı.	{0}: {1} yielded.
+{0}: {1} tutuldu.	{0}: {1} held.
+{0}: {1} düştü.	{0}: {1} fell.
+{0}: {1} için karar verilmedi; kanat bırakıldı.	{0}: no decision was made on {1}; the wing was yielded.
 # Assets/Corrigible/Core/Teams.cs
 Alfa	Alpha
 Bravo	Bravo
 Charlie	Charlie
 Delta	Delta
+Baskının son odası raporlanmadı.	The raid's last room has not been reported.
 Baskın sonucu eksik.	The raid result is missing.
+# Assets/Corrigible/Core/WorldMap.Names.cs
+Demir Kıyı	Iron Coast
+Tuz Körfezi	Salt Gulf
+Liman Kuşağı	Harbour Belt
+Fener Burnu	Lighthouse Cape
+Kum Sahili	Sand Shore
+Mercan Kıyısı	Coral Coast
+Fırtına Kıyısı	Storm Coast
+Kayalık Koy	Rocky Cove
+Gri Körfez	Grey Gulf
+Sis Burnu	Fog Cape
+Balıkçı Kıyısı	Fisher Coast
+Vinç Limanı	Crane Harbour
+Dalgakıran	Breakwater
+Derin Fiyort	Deep Fjord
+Rüzgâr Kıyısı	Wind Coast
+Martı Burnu	Gull Point
+Pas Limanı	Rust Harbour
+Taşlı Sahil	Stony Shore
+Bakır Koyu	Copper Bay
+Yosun Kıyısı	Kelp Coast
+Tersane Kıyısı	Shipyard Coast
+Delta Ovası	Delta Plain
+Kireç Falezi	Chalk Cliffs
+Uçurum Kıyısı	Cliff Coast
+Lagün	Lagoon
+Buzul Kıyısı	Glacier Coast
+Tuz Ovası	Salt Flats
+Çorak Havza	Barren Basin
+Demir Dağları	Iron Mountains
+Kül Yaylası	Ash Plateau
+Kızıl Çöl	Red Desert
+Taş Vadisi	Stone Valley
+Geniş Bozkır	Wide Steppe
+Kömür Havzası	Coal Basin
+Kuru Göl	Dry Lake
+Çam Ormanı	Pine Forest
+Sessiz Vadi	Silent Valley
+Yüksek Ova	High Plain
+Kara Tayga	Dark Taiga
+Rüzgâr Geçidi	Wind Pass
+Maden Tepeleri	Mine Hills
+Sazlı Bataklık	Reed Marsh
+Granit Sırtı	Granite Ridge
+Toz Ovası	Dust Plain
+Sıcak Kaynaklar	Hot Springs
+Derin Kanyon	Deep Canyon
+Buğday Ovası	Wheat Plain
+Kurşun Tepeler	Lead Hills
+Donmuş Tundra	Frozen Tundra
+Baraj Vadisi	Dam Valley
 # Assets/Corrigible/Core/WorldState.cs
 Bölge	Region
 # Assets/Corrigible/Desk/Scripts/Bridge/Board3D/BoardPreviewText.cs
@@ -911,6 +1176,7 @@ Bölge	Region
 İŞİ İPTAL ET	CANCEL ORDER
 DEPO	STORE
 HURDA	SCRAP
+GÖZETİM	WATCH
 Boşta	Idle
 kapanışta +{0} can	+{0} HP at closing
 eğitim bırakılır	training is dropped
@@ -936,6 +1202,32 @@ takas: {0} → {1}	swap: {0} → {1}
 takas: {0} → {1}, {2} onunla gider	swap: {0} → {1}, {2} goes with them
 {0} boş kalır: baskın emri verilemez	{0} stays empty: no raid order possible
 KİT YOK: baskın emri verilemez	NO KIT: no raid order possible
+# Assets/Corrigible/Desk/Scripts/Bridge/Board3D/FacilityBoardText.cs
+dördüncü birim · havla, getir, kokla	fourth unit · bark, fetch, sniff
+1 hak · kullanılınca tükenir	1 charge · used up on use
+baskında {0} hak · {1}	raid charges {0} · {1}
+tel ya da kalas	wire or plank
+duvar yıkar	breaks a wall
+{0} tur çalışır	runs {0} turns
+DİNLENİYOR · {0} V	RESTING · {0} S
+Köpek dinleniyor: {0} vardiya baskına gitmez	Dog resting: stays home for {0} shifts
+Köpek hurdaya atılmaz.	Dogs are not scrapped.
+{0} sunucusundan	from {0}'s server
+Tezgâh: −{0} vardiya	Workbench: −{0} shifts
+KAPALI · {0} sunucusundan	LOCKED · from {0}'s server
+tel {0} can	wire {0} HP
++{0} tur	+{0} turn
+çift cidar {0} hak	double wall {0} charges
+# Assets/Corrigible/Desk/Scripts/Bridge/Board3D/FacilityWatchText.cs
+Dinleme {0}/{1}	Listening {0}/{1}
+Dinleme · PAFTA {0}	Listening · SHEET {0}
+Dinleme · bitti	Listening · done
+sıradaki: PAFTA {0}	next: SHEET {0}
+açılacak plan yok	no plan left to draw
+dinleme {0}/{1} · {2}	listening {0}/{1} · {2}
+her vardiya bir pafta · {0}	one sheet every shift · {0}
+kapanışta dinleme {0}/{1} → {2}/{1}	listening at closing {0}/{1} → {2}/{1}
+kapanışta PAFTA {0} çıkar	SHEET {0} drawn at closing
 # Assets/Corrigible/Desk/Scripts/Bridge/Board3D/PlanningBoardSnapshotBuilder.cs
 — kart seç —	— select a card —
 V.{0:000} · erzak {1} ({2}) · {3}/{4} kişi	S.{0:000} · rations {1} ({2}) · {3}/{4} people
@@ -1050,10 +1342,370 @@ V.{0:000}	S.{0:000}
 deneyimli	experienced
 eğitimli	trained
 acemi	novice
+{0} tarif · {1} kapalı	{0} recipes · {1} locked
+bu kapanış {0} yapılır · emir beklemede	this close makes {0} · order waits
+(dinleniyor)	(resting)
+{0} tarif · {1} cevap · {2} kapalı	{0} recipes · {1} answers · {2} locked
+{0} tarif · {1} cevap	{0} recipes · {1} answers
 # Assets/Corrigible/Desk/Scripts/Bridge/Board3D/ProductionForecast.cs
 açlık	starvation
 eşya deposu dolu	item store full
 karartma	blackout
+erzak yetmiyor · emir bekliyor	not enough rations · order waits
+# Assets/Corrigible/Desk/Scripts/Bridge/FacilityConditionText.cs
+Açık kenar (kuzey, güney): itilen düşer; makine yok olur, ekip üyesi {0} vardiya yatar.	Open edge (north, south): pushed units fall; machines are lost, crew are laid up {0} shifts.
+{0}. tur batı	turn {0} west
+{0}. tur doğu	turn {0} east
+Yalpa: {0} · sabitlenmemiş her şey 1 kare kayar	Roll: {0} · anything not fixed slides 1 square
+vagondan düştü · {0} vardiya yatış	fell off the car · laid up {0} shifts
+Açık kenar: buradan itilen düşer	Open edge: anything pushed off here falls
+yok olur	destroyed
+{0} vardiya yatar	laid up {0} shifts
+Vagondan düşer · {0} vardiya yatar	Falls off the car · laid up {0} shifts
+Kenardan düşer	Falls off the edge
+Kenardan düşer · yok olur	Falls off the edge · destroyed
+DÜŞER	FALLS
+VAGONDAN DÜŞTÜ · PAFTA {0}	FELL OFF · SHEET {0}
+VAGONDAN DÜŞTÜ	FELL OFF
+{0} vagondan düştü · {1}	{0} fell off the car · {1}
+{0} kenardan düştü · {1}	{0} fell off the edge · {1}
+Vagondan düştü: {0} · {1} · {2} vardiya	Fell off the car: {0} · {1} · {2} shifts
+· {0} vagondan düştü	· {0} fell off
+kenardan düşerse yok olur	lost if it falls off the edge
+AYIR	DETACH
+takip yok	no pursuit
+{0} makine takip eder	{0} chasing
+Enter: GEÇ · Q: AYIR (Teknisyen)	Enter: GO THROUGH · Q: DETACH (Technician)
+AYIR yok: Teknisyen bu tur yeteneğini kullandı	No DETACH: the Technician used their action this turn
+AYIR · Q	DETACH · Q
+TAKİP EDER	FOLLOWS
+Bağlantıya {0} kare içinde: GEÇ'te sonraki vagona gelir, AYIR'da kalır	Within {0} squares of the coupling: follows into the next car on GO THROUGH, stays on DETACH
+ekip kapıda · GEÇ ya da AYIR (Q)	team at the door · GO THROUGH or DETACH (Q)
+vagon ayrıldı · takip yok	car uncoupled · no pursuit
+{0} makine takip ediyor	{0} machines following
+Gözcü · takip: {0} makine doğu geçidinde: {1}	Spotter · pursuit: {0} machines at the east gate: {1}
+Vagon ayrıldı: PAFTA {0}	Car uncoupled: SHEET {0}
+Takip: {0} makine · PAFTA {1}	Pursuit: {0} machines · SHEET {1}
+Gözcü · yalpa: {0}	Spotter · roll: {0}
+Yalpa · batıya	Roll · west
+Yalpa · doğuya	Roll · east
+Yatışta çarpar	Hits something in the roll
+Yatışta 1 kare kayar	Slides 1 square in the roll
+Cıvatalı: yatışta kaymaz	Bolted: does not slide
+Sabit: kaymaz	Fixed: does not slide
+# Assets/Corrigible/Desk/Scripts/Bridge/FacilityDefenseRaidText.cs
+D	W
+Amaç: {0}. tura dayan · röleyi koru	Goal: hold to turn {0} · protect the relay
+Amaç: {0}. tura dayan	Goal: hold to turn {0}
+DALGA {0}/{1} · {2} makine · {3}. tur	WAVE {0}/{1} · {2} machines · turn {3}
+SAVUNMA · BARİKAT · makine yok	DEFENCE · BARRICADE · no machines
+GÖREV · SAVUNMA	MISSION · DEFENCE
+{0} · SAVUNMA	{0} · DEFENCE
+Gözcü · barikat turu · dalga {0}: {1}. tur, {2} makine, giriş kapısı	Spotter · barricade turn · wave {0}: turn {1}, {2} machines, entry door
+Gözcü · barikat turu · bu odaya dalga gelmez	Spotter · barricade turn · no wave reaches this room
+Gözcü · terk edilen odadan {0} makine geliyor	Spotter · {0} machines coming from the abandoned room
+Gözcü · saha rölesi: {0} · {1} can	Spotter · field relay: {0} · {1} HP
+Gözcü · önceki baskından: {0}	Spotter · from the previous raid: {0}
+DALGA {0} geldi: {1} makine	WAVE {0} arrived: {1} machines
+makine geldi · {0}	machine arrived · {0}
+Oda terk edildi: PAFTA {0} · güven −{1}	Room abandoned: SHEET {0} · trust −{1}
+Savunma bitti: kanat tutuldu · {0} tur	Defence over: wing held · {0} turns
+Savunma bitti: kanat düştü	Defence over: wing lost
+İÇERİ ÇEKİL	FALL BACK
+İÇERİ ÇEKİLME	FALLING BACK
+Bu oda terk edilir: güven −{0}, izler silinir.	This room is abandoned: trust −{0}, traces erased.
+Yerde yatan {0} ölür.	{0}, lying on the floor, dies.
+SON TUR · SAVUNMA BİTER	LAST TURN · DEFENCE ENDS
+Ayakta biri kalırsa kanat tutulur.	If anyone is still standing, the wing is held.
+Savunma kaybedilir: kanat düşer, güven −{0}. Yerde yatanlar ölür.	The defence is lost: the wing falls, trust −{0}. Those lying on the floor die.
+Savunma · barikat: odanın ilk turu makinesizdir; ekibi yerleştir, engel kur.	Defence · barricade: a room's first turn has no machines; place the squad, build barriers.
+Savunma · dalga: makineler giriş kapısından gelir; tur şeridinde D işaretli turlarda.	Defence · wave: machines come in through the entry door, on the turns marked W in the turn strip.
+Savunma · içeri çekil: herkes ileri geçitteyken oda terk edilir (güven −{0}, izler silinir). Kapı sığınak değildir: kapıdaki uzman tur sonunda tahtaya döner.	Defence · fall back: with everyone at the forward gate the room is abandoned (trust −{0}, traces erased). The door is no shelter: a specialist at the door returns to the board at the end of the turn.
+Savunma · röle: hedef odasındaki saha rölesi kırılırsa kanat düşer. {0}. tur sonunda ayakta biri varsa kanat tutulur.	Defence · relay: if the field relay in the target room breaks, the wing is lost. If anyone is standing at the end of turn {0}, the wing is held.
+RÖLE KIRILDI	RELAY DESTROYED
+TUR {0}/{1} · PAFTA {2}/3	TURN {0}/{1} · SHEET {2}/3
+{0}/{1} · ulaşılmadı	{0}/{1} · not reached
+{0}/{1} ayakta · {2} çıkarıldı	{0}/{1} standing · {2} extracted
+Saha rölesi · {0} can · kırılırsa kanat düşer	Field relay · {0} HP · if it breaks, the wing is lost
+Makineler ekip hedef odasındayken röleyi de hedef alır	While the squad is in the target room, machines also target the relay
+Dalga buradan girer ({0}. tur)	The wave comes in here (turn {0})
+Bu odaya başka dalga gelmez	No more waves reach this room
+Giriş kapısı	Entry door
+, 	, 
+Önceki baskından: {0}	From the previous raid: {0}
+# Assets/Corrigible/Desk/Scripts/Bridge/FacilityGearText.cs
+KÖPEK	DOG
+KÖPEK · {0}	DOG · {0}
+TUTSAK · {0} TUR	CAPTIVE · {0} TURNS
+{0} TUR	{0} TURNS
+kuzey	north
+doğu	east
+güney	south
+batı	west
+Tel ör	Weave wire
+Kalas kur	Build plank wall
+Lokumla yık	Blast with charge
+Taret kur	Set turret
+Yem sal	Release decoy
+Vinç kur	Set winch
+Kelepçele	Clamp
+Havla	Bark
+Getir	Fetch
+Kokla	Sniff
+Komut ver	Command
+vuruş · −2 ya da plaka	strike · −2 or plate
+havan · −1	mortar · −1
+patlar · çevresine −1	blows · −1 around
+kilit · sonraki planı niyetsiz	lock · next plan without intent
+plaka ya da ateş · −1	plate or fire · −1
+bu makinenin komutu yok	this machine has no command
+ateş · −1	fire · −1
+yetenek yerine · {0} hak	instead of ability · costs {0}
+yetenek yerine · hat {0} kare · {1} tur	instead of ability · line {0} tiles · {1} turns
+yetenek yerine · evre başına {0} kare · {1} tur	instead of ability · {0} tiles per phase · {1} turns
+yetenek yerine · {0} tur ele geçirir	instead of ability · takes over for {0} turns
+erim {0} kare	range {0} tiles
+bitişikteki yükü kapar	grabs adjacent cargo
+ileri geçitte · sıradaki pafta	at the forward gate · next sheet
+hak kalmadı	no charges left
+kalas için {0} hak gerekir	plank needs {0} charges
+bitişikte boş zemin yok	no free floor adjacent
+engel ekibi çıkıştan koparır	barrier would cut the team off
+bitişikte yıkılacak duvar yok	no wall to blast adjacent
+bitişikte makine yok	no machine adjacent
+yük yanında değil	cargo not adjacent
+bu oda koklandı	this room was sniffed
+kaçışta koklanmaz	no sniffing while escaping
+ileri geçidin yanında değil	not next to the forward gate
+vuracak hedef yok	nothing to hit
+{0} · {1} hak	{0} · {1} left
+tel {0} · kalas {1} · {2} hak	wire {0} · plank {1} · {2} left
+Yürüyüşü keser	Stops movement
+atışı geçirir	lets fire through
+Yürüyüşü ve atışı keser	Stops movement and fire
+Can {0}	HP {0}
+Moloz · −1	Rubble · −1
+Hattaki ilk makine · −1	First machine on the line · −1
+Makineler ona yönelir	Machines turn to it
+Hattaki ilkini {0} kare çeker	Pulls the first on the line {0} tiles
+Makine {0} tur senin	Machine is yours {0} turns
+kelepçe tükenir	clamp used up
+Makineler köpeğe yönelir	Machines turn to the dog
+sonraki planda	in their next plan
+Köpek yükü taşır	The dog carries the cargo
+çıkışta yük çıkar	cargo is out at the exit
+Sıradaki odanın planı çıkar	Reveals the next room's plan
+robot göstermez	no robots shown
+{0} · tel · {1}	{0} · wire · {1}
+{0} · kalas · {1}	{0} · plank · {1}
+{0} · lokum · {1}	{0} · charge · {1}
+{0} · {1} kuruldu · {2}	{0} · {1} set · {2}
+{0} · {1} ele geçirildi · {2}	{0} · {1} captured · {2}
+Köpek · havladı	Dog · barked
+Köpek · yük alındı · {0}	Dog · cargo taken · {0}
+Köpek · koklandı · PAFTA {0}	Dog · sniffed · SHEET {0}
+Tutsak {0} · {1}	Captive {0} · {1}
+Tutsak · {0}	Captive · {0}
+Kuran: {0}	Set by: {0}
+Yön: {0}	Facing: {0}
+Çalışır: {0} evre daha	Runs: {0} more phases
+Hattaki ilk makine −1 · hat {0}	First machine on the line −1 · line {0}
+Makineler onu ekip gibi hedef alır	Machines target it like a team member
+Hattaki ilk birimi {0} kare çeker	Pulls the first unit on the line {0} tiles
+EMP, kilit ve donma işlemez	EMP, lock and freeze do not affect it
+Sahibi: {0}	Handler: {0}
+Yürüyüş {0} · can {1}/{2}	Move {0} · HP {1}/{2}
+Havlıyor: {0} kare içindeki makineler köpeğe yönelir	Barking: machines within {0} tiles turn to the dog
+Yükü taşıyor	Carrying the cargo
+Kelepçeleyen: {0}	Clamped by: {0}
+Son tur: tur sonunda serbest	Last turn: freed at turn end
+Kalan: {0} tur	Left: {0} turns
+Sonraki planında niyetsiz	No intent in its next plan
+Bu planı niyetsiz geçiriyor	No intent in this plan
+Yürüyüşü keser · atışı geçirir	Stops movement · lets fire through
+Ekip kırabilir (sabotaj 2)	The team can break it (sabotage 2)
+bitişik duvarı yıkar	blasts an adjacent wall
+hat {0} kare · {1} tur	line {0} tiles · {1} turns
+evre başına {0} kare · {1} tur	{0} tiles per phase · {1} turns
+{0} tur ele geçirir	takes over for {0} turns
+# Assets/Corrigible/Desk/Scripts/Bridge/FacilityGearView.cs
+TEL	WIRE
+KALAS	PLANK
+Kesilen niyet: {0}	Intents cut: {0}
+YIKILIR	BREACH
+Duvar kalıcı zemine döner	The wall becomes permanent floor
+Moloz: bir kare öteye 1 hasar	Rubble: 1 damage one tile beyond
+TARET · {0} TUR	TURRET · {0} TURNS
+Her makine evresinin sonunda hattaki ilk makine −1	At the end of each machine phase the first machine on the line −1
+Hat: {0} kare	Line: {0} tiles
+YEM	DECOY
+Evre başına {0} kare yürür · {1} tur	Walks {0} tiles per phase · {1} turns
+VİNÇ · {0} TUR	WINCH · {0} TURNS
+ÇEKER · {0}	PULLS · {0}
+Her evrenin sonunda hattaki ilk birimi, düşeni ya da yükü {0} kare çeker	At the end of each phase pulls the first unit, fallen or cargo on the line {0} tiles
+ELE GEÇER · {0} TUR	CAPTURED · {0} TURNS
+Makine {0} oyuncu turu senin: yürür ve komut verir	The machine is yours for {0} player turns: moves and commands
+Sonra bir planı niyetsiz geçirir	Then skips one plan with no intent
+Kelepçe tükenir	The clamp is used up
+HAV	BARK
+Erimdeki {0} makine sonraki planında köpeğe yönelir	{0} machines in range turn to the dog in their next plan
+Etki niyetlere tur sonunda yansır	The effect shows on intents at turn end
+Köpek yükü taşır; çıkışa varınca yük çıkar	The dog carries the cargo; it is out when the dog reaches the exit
+KOKLA · PAFTA {0}	SNIFF · SHEET {0}
+Sıradaki odanın planı çıkar (robot göstermez)	Reveals the next room's plan (no robots)
+Bu odanın planı zaten biliniyor	This room's plan is already known
+KİLİTLER	LOCKS
+VURUR	HITS
+Kilitlenen makine sonraki planında niyetsiz	The locked machine has no intent in its next plan
+Çift cidar: {0} hak harcanır	Double wall: spends {0} charges
+# Assets/Corrigible/Desk/Scripts/Bridge/FacilityMoveText.cs
+Pusu	Ambush
+Koşu darbesi	Charge
+Sürükle: {0}	Drag: {0}
+Sürükle	Drag
+Fırlat	Throw
+Büyük sandığı aç	Open the big crate
+Kepengi kaldır	Lift the shutter
+yetenek yerine · hat {0} kare	instead of ability · {0}-tile line
+yürüyüş + yetenek · {0}+ kare koş · {1} iter	move + ability · run {0}+ · push {1}
+yürüyüş + yetenek · menzil {0}	move + ability · range {0}
+yetenek yerine · düz hat {0} kare	instead of ability · straight line {0}
+yetenek yerine · {0} tutuyor	instead of ability · {0} is holding
+yetenek yerine · iki uzman aynı tur	instead of ability · two specialists, same turn
+yürüyüş · yetenek kalır	move · ability stays
+yetenek kullanıldı	ability used
+çevre kapalı	no open side
+{0} kare içinde alıcı yok	no catcher within {0}
+bitişikte iş yok	nothing adjacent
+donmuş	frozen
+yürüdü · yürüyüş ister	already moved · needs a move
+hatta makine yok	no machine in line
+yanında yatan yok	nobody down beside
+yürüyüş yetmez	not enough move
+menfeze ulaşılamaz	vent out of reach
+Hatta duran ilk makine · −1	First machine on the line · −1
+makine evresinde	in the machine phase
+Makineyi {0} kare iter	Pushes the machine {0}
+çarparsa −1	−1 on impact
+Gövde yanında gelir	The body comes along
+bu tur yetenek yok	no ability this turn
+Yük ekip üyesine geçer	Cargo passes to a teammate
+düz hat {0} kare	straight line {0}
+Sandık açılır	Crate opens
+Kepenk kalkar	Shutter lifts
+iki uzman aynı tur	two specialists, same turn
+Öbür uçtan çıkar	Exits at the other end
+yetenek kalır	ability stays
+{0} · pusu · {1}–{2}	{0} · ambush · {1}–{2}
+{0} · koşu darbesi → {1}	{0} · charge → {1}
+{0} · {1} sürükleniyor → {2}	{0} · dragging {1} → {2}
+{0} · yük → {1}	{0} · cargo → {1}
+büyük sandık açıldı · {0}	big crate open · {0}
+kepenk kalktı · {0}	shutter up · {0}
+{0} · büyük sandık tutuluyor	{0} · holding the big crate
+{0} · kepenk tutuluyor	{0} · holding the shutter
+{0} · menfez → {1}	{0} · vent → {1}
+{0} · yük alındı · {1}	{0} · cargo taken · {1}
+ekip kapıda · yerde {0} gövde · GEÇ'e bas	team at the door · {0} down on the floor · GO THROUGH
+pusu · {0} · {1}	ambush · {0} · {1}
+yük yere düştü · {0}	cargo dropped · {0}
+Açılmış büyük sandık	Opened big crate
+Büyük sandık	Big crate
+Kalkık kepenk	Lifted shutter
+Yerde: taşınmazsa ölür	Down: dies unless carried out
+Yanındaki ya da üstündeki uzman E ile sürükler	A specialist beside or on it drags with E
+Altında: {0} (yerde)	Under it: {0} (down)
+Yük yerde: kareye giren ilk ekip üyesi alır	Cargo on the floor: the first teammate to step here takes it
+İki uzman aynı tur bitişikten açar (E)	Two adjacent specialists open it in one turn (E)
+Kazanılırsa +{0} metal +{1} devre	+{0} metal +{1} circuits on success
+İki uzman aynı tur bitişikten kaldırır (E)	Two adjacent specialists lift it in one turn (E)
+Açık kalır; makineler de geçer	Stays open; machines pass too
+Tutuluyor: {0} · ikinci uzman bu tur	Held by {0} · second specialist this turn
+Pusu hattı · {0}: makine evresinde burada duran ilk makine −1	Ambush line · {0}: the first machine standing here in the machine phase takes −1
+Son nefeste düştü: ekip onu da götürür	Went down with a last breath: the team takes them along
+ekip kapıda · yerde {0} gövde · İÇERİ ÇEKİL'e bas	team at the door · {0} down on the floor · FALL BACK
+ekip kapıda · İÇERİ ÇEKİL'e bas	team at the door · FALL BACK
+# Assets/Corrigible/Desk/Scripts/Bridge/FacilityMoveView.cs
+PUSU	AMBUSH
+Pusu hattı: {0} kare	Ambush line: {0} tiles
+Makine evresinde hatta duran ilk makine −1	In the machine phase the first machine on the line takes −1
+Bu tur yetenek kullanılamaz	No ability this turn
+KOŞU	CHARGE
+Koşu: {0} kare	Charge: {0} tiles
+BIRAKIR	DROPS
+Kapıya girer; gövde ekiple geçer	Enters the door; the body goes with the team
+Bırakılır: {0}	Left at: {0}
+ALICI	CATCHER
+Yükü {0} taşır	{0} carries the cargo
+AÇILIR	OPENS
+TUTAR	HOLDS
+Tutar: ikinci uzman bu tur gelmeli	Holds: a second specialist must come this turn
+Sandık açılır: kazanılırsa +{0} metal +{1} devre	Crate opens: +{0} metal +{1} circuits on success
+Kepenk kalkar; makineler de geçer	Shutter lifts; machines can pass too
+Öbür uçtan çıkar: {0}	Exits at: {0}
+Yetenek kullanılabilir kalır	Ability stays usable
+Yükü yerden alır	Picks up the cargo
+Yük yere düşer	Cargo drops
+# Assets/Corrigible/Desk/Scripts/Bridge/FacilityRaidText.cs
+ · 	 · 
+— DÖNÜŞ · PAFTA {0}/3 · {1} —	— RETURN · SHEET {0}/3 · {1} —
+— PAFTA {0}/3 · {1} —	— SHEET {0}/3 · {1} —
+Gözcü · {0}: {1}	Spotter · {0}: {1}
+Gözcü · ayakta makine yok.	Spotter · no machines standing.
+Gözcü · kopya dolabı: {0}	Spotter · replica cabinet: {0}
+İkmal kasası	Supply crate
+Gözcü · {0}: {1} · yan hedef	Spotter · {0}: {1} · side objective
+Gözcü · sivil sunucu: {0}	Spotter · civilian servers: {0}
+Gözcü · tesisin girişi: {0}	Spotter · facility entrance: {0}
+Gözcü · giriş geçidi: {0}	Spotter · entry gate: {0}
+Gözcü · ileri geçit: {0}	Spotter · forward gate: {0}
+Gözcü · menfez: {0} ↔ {1}	Spotter · vent: {0} ↔ {1}
+Gözcü · ağır kepenk: {0}	Spotter · heavy shutter: {0}
+dönüş · PAFTA {0}/3 · {1} makine	return · SHEET {0}/3 · {1} machines
+gözcü · PAFTA {0}/3 · {1} makine	spotter · SHEET {0}/3 · {1} machines
+— DÖNÜŞ · PAFTA {0}/3 kapandı · {1} tur —	— RETURN · SHEET {0}/3 closed · {1} turns —
+— PAFTA {0}/3 kapandı · {1} tur —	— SHEET {0}/3 closed · {1} turns —
+{0} çıkamadı · {1}	{0} did not make it out · {1}
+{0} düştü · {1}	{0} is down · {1}
+Gözcü · PAFTA {0}/3 temiz: ekip yürüyerek geçti.	Spotter · SHEET {0}/3 clear: the team walked through.
+Gözcü · ekip tesisten yürüyerek çıktı.	Spotter · the team walked out of the facility.
+gözcü · ekip tesisten çıktı	spotter · team left the facility
+gözcü · PAFTA {0}/3 temiz, geçildi	spotter · SHEET {0}/3 clear, passed
+Tesisin girişi	Facility entrance
+Giriş geçidi	Entry gate
+İleri geçit	Forward gate
+Amaç: ekibi geçide götür, sonra GEÇ	Goal: get the team to the gate, then GO THROUGH
+Amaç: malzemeyle giriş geçidinden geç	Goal: go through the entry gate with the supplies
+Amaç: ekibi giriş geçidinden geçir	Goal: take the team through the entry gate
+KAPIDA {0}/{1}	AT THE DOOR {0}/{1}
+GEÇİT	GATE
+MENFEZ	VENT
+KEPENK	SHUTTER
+Buraya yürüyen uzman kapıda bekler: tahtadan kalkar, hedef alınmaz.	A specialist who walks here waits at the door: off the board, out of reach.
+Kapıda: {0}/{1} · herkes gelince GEÇ (Enter)	At the door: {0}/{1} · when everyone is there, GO THROUGH (Enter)
+Kapıdan geri çıkılmaz; yalnız bu turun hamlesi geri alınır (Z).	No stepping back out of the door; only this turn's move can be undone (Z).
+Uzmana yeniden tıkla: adım harcamadan kapıya girer.	Click the specialist again: they step through the door without spending a move.
+Kırılırsa hedef odada kopya dolapları ilk {0} tur makine uyandırmaz.	If broken, the replica cabinets in the target room wake no machines for the first {0} turns.
+Kırılırsa hedef odaya {0} makine eksik gelir; dönüşte uyanma olmaz.	If broken, {0} fewer machines come to the target room, and nothing wakes on the way back.
+Yalnız Teknisyen kapatır: hedef odada makineler ilk {0} tur yürüyemez.	Only the Technician can shut it: machines in the target room cannot move for the first {0} turns.
+Yalnız Teknisyen kapatır: hedef dolap {0} can eksik başlar.	Only the Technician can shut it: the target cabinet starts {0} HP down.
+Gözcü · büyük sandık: {0} · iki uzman	Spotter · big crate: {0} · two specialists
+Gözcü · yerde: {0} · {1}	Spotter · down: {0} · {1}
+{0} tesisten çıkarıldı	{0} carried out of the facility
+{0} ekiple taşınıyor	{0} carried with the team
+Kepenk kalktı · {0}	Shutter lifted · {0}
+Büyük sandık açıldı · {0}	Big crate opened · {0}
+Amaç: yükü yerden al ({0})	Goal: pick up the cargo ({0})
+TUTULUYOR	HELD
+SANDIK	CRATE
+YÜK	CARGO
+Yerde kalan: {0}	Left on the floor: {0}
+Yük yerde kalır · {0}	The cargo stays on the floor · {0}
+Köpek ekiple geçer	The dog goes with the team
+Tutsak {0} ekiple geçer · {1} tur	Captive {0} goes with the team · {1} turns
+Koklandı: PAFTA {0} planı çıktı	Sniffed: SHEET {0} plan revealed
+Savunmada kapı sığınak değil: kapıdaki uzman tur sonunda tahtaya döner.	In defence the door is no shelter: a specialist at the door returns to the board at the end of the turn.
+Kapıda: {0}/{1} · herkes gelince İÇERİ ÇEKİL (Enter): oda terk edilir	At the door: {0}/{1} · when everyone is there, FALL BACK (Enter): the room is abandoned
 # Assets/Corrigible/Desk/Scripts/Bridge/LiberationDeskView.cs
 YAPILAMADI	FAILED
 Kayıt açılamadı.	The save could not be opened.
@@ -1063,12 +1715,14 @@ EMİR UYGULANDI	ORDER EXECUTED
 # Assets/Corrigible/Desk/Scripts/Bridge/LiveRaidDataSource.cs
 {0} · {1:00} {2}	{0} · {1:00} {2}
 KASADA: {0} metal · {1} devre · {2} kumaş · {3} kimyasal · {4} erzak	CRATE: {0} metal · {1} circuit · {2} cloth · {3} chem. · {4} rations
- · 	 · 
 <s>{0}</s>	<s>{0}</s>
 # Assets/Corrigible/Desk/Scripts/Bridge/PlanningBoardPresenter.cs
 Vardiya fişini masadaki vardiya şalterinden bas.	Print the shift slip with the shift switch on the desk.
 # Assets/Corrigible/Desk/Scripts/Bridge/RaidDataSource.cs
+Kayıttan devam: PAFTA {0}/3 baştan açıldı.	Resumed from save: SHEET {0}/3 reopened from the start.
 {0} tahliye edildi	{0} extracted
+{0} kapıda	{0} at door
+ekip kapıda · GEÇ'e bas	team at the door · GO THROUGH
 emir iletildi · gözcü bildiriyor	order sent · spotter reporting
 gözcü · makineler yer değiştiriyor	spotter · machines repositioning
 №{0} · hedef dolabı onarılıyor	No. {0} · repairing target cabinet
@@ -1082,13 +1736,17 @@ gözcü · makineler yer değiştiriyor	spotter · machines repositioning
 №{0} · onarım +1	No. {0} · repair +1
 Yeni bir robot uyandı: {0}.	A new robot woke up: {0}.
 №{0} · buluta kesildi	№{0} · cut by the cloud
+gözcü · kapıdakiler geçti	spotter · door team went through
+ekip geçitten geçti	team went through the gate
+Oda raporu reddedildi: {0} · Enter ile yeniden dene	Room report rejected: {0} · press Enter to retry
 Saha	Field
 KABİNDE · bir evre tahtada yok	IN THE CAR · off the board for one phase
 KİLİT TEHDİDİ · #{0}	LOCK THREAT · #{0}
 DONMUŞ · bu tur yürüyemez	FROZEN · cannot move this turn
-İkmal kasası	Supply crate
 Düğüm	Node
 Çekirdek	Core
+KAPANDI	CLOSED
+KIRILDI	BROKEN
 Amaç: malzemeyle girişten çık	Goal: get out with the supplies
 Amaç: ekibi girişten çıkar	Goal: get the team out
 Amaç: kasadan ikmal al	Goal: take supplies from the crate
@@ -1119,9 +1777,13 @@ bir eksik canla	one less health
 Boş kare	Empty tile
 Duvar	Wall
 Elektrikli kanal	Electrified channel
+Ağır kepenk	Heavy shutter
+Menfez	Vent
+Havalandırma ızgarası · öbür ucu {0}	Ventilation grate · other end {0}
 Sisli kare: nişanlı ateş kesilir	Smoked tile: aimed fire is cut
 Kaide hasar almaz; her darbe kolu bir adım fazla döndürür	The base takes no damage; every hit turns the arm one extra step
 Vurulursa bir tur sonra çizili hattında uçar	If hit, it flies along its marked line a turn later
+Makineler buna nişan almaz.	Machines do not aim at it.
 Zırh: hasar işlemez	Armour: no damage
 İtilir, üniteye çarpar	Pushed into the unit
 −1	−1
@@ -1141,7 +1803,7 @@ Niyet {0} buluta kesildi	Intent {0} cut by the cloud
 Niyet · sıra {0}	Intent · order {0}
 Zırh	Armour
 Bölgenin imza makinesi	This region's signature machine
-Teknisyen ile bitişik kareden aç; sonra bütün ekip girişten çıkar	Open with the Technician from an adjacent tile; then the whole team leaves through the entry
+Herhangi bir uzmanla bitişik kareden aç; sonra bütün ekip girişten çıkar	Open with any specialist from an adjacent tile; then the whole team leaves through the entry
 Hedef dolabı: kırılınca bütün ekip girişten çıkar	Target cabinet: once it breaks, the whole team leaves through the entry
 Madenci dinamitle yıkabilir	The Miner can blow it open
 Geçilmez; atışı durdurur	Impassable; stops shots
@@ -1154,11 +1816,16 @@ Tahtada kalan: {0}	Left on the board: {0}
 {0} tur	{0} turns
 PATLAR	EXPLODES
 ÇIKAR	EXITS
+KAPIYA	TO THE DOOR
 OLAY	EVENT
 \n	\n
 {0} geride kalırsa kalıcı olarak ölür.	{0} dies for good if left behind.
 {0} geride kalırsa kalıcı olarak ölür.\n{1} kaybolur.	{0} dies for good if left behind.\n{1} will be lost.
 GERİDE KALIRSA ÖLÜR	DIES IF LEFT BEHIND
+SON TUR · GERİ ÇEKİLME	LAST TURN · WITHDRAWAL
+SON TUR · KAPIDAKİLER GEÇER	LAST TURN · THOSE AT THE GATE GO ON
+Süre dolunca kapıdakiler geçer; kapıya varamayan uzman geri çekilir ve baskına dönmez.	When time runs out, those at the gate go on; anyone who hasn't reached it withdraws and doesn't rejoin the raid.
+Süre dolunca ekip geri çekilir ve baskın başarısız biter. Kapıdakiler de döner.	When time runs out the team withdraws and the raid fails. Those at the door come back too.
 SEKTÖR GERİ ALINDI	SECTOR RETAKEN
 GERİ ÇEKİLDİ	WITHDRAWN
 EKİP DÜŞTÜ	TEAM DOWN
@@ -1173,6 +1840,10 @@ kayboldu	lost
 kırıldı	broken
 geride kaldı	left behind
 Kırılan sivil sunucu	Civilian servers broken
+DÜŞTÜ · PAFTA {0}	DOWN · SHEET {0}
+TUR {0} · PAFTA {1}/3	TURN {0} · SHEET {1}/3
+Hedef dolap	Target cabinet
+ulaşılamadı	not reached
 {0} · kasadan ikmal alır, robota {1} hasar	{0} · collects supplies from the crate, {1} damage to robot
 {0} · robota {1} hasar, dolaba 2	{0} · {1} damage to robot, 2 to cabinet
 {0} · hedefe {1} hasar · güçlendirme {2}	{0} · {1} damage to target · boost {2}
@@ -1224,7 +1895,8 @@ Hidrolik hortum	Hydraulic hose
 İKMAL GÖREVİ	SUPPLY MISSION
 KOPYALAMA	REPLICATION
 Yer · {0} · {1:00} {2}	Site · {0} · {1:00} {2}
-Teknisyen ile ikmal kasasına yaklaş. Q ile yeteneği seç, kasaya tıkla ve malzemeleri al. Kasayı imha etme.	Move the Technician next to the supply crate. Press Q to select the ability, then click the crate to collect the supplies. Do not destroy the crate.
+Pafta {0}/3 · {1}	Sheet {0}/3 · {1}
+Bir uzmanla ikmal kasasına yaklaş. Q ile yeteneği seç, kasaya tıkla ve malzemeleri al. Kasayı imha etme.	Move any specialist next to the supply crate. Press Q to select the ability, then click the crate to collect the supplies. Do not destroy the crate.
 Her tur yeni robotlar uyanabilir.	New robots may wake each turn.
 Olay · {0}: {1}	Event · {0}: {1}
 İmza makinesi: {0}	Signature machine: {0}
@@ -1232,6 +1904,28 @@ Tehdit {0}: makineler alışılmış düzende.	Threat {0}: machines in their usu
 Tehdit {0}: başta bir makine fazla.	Threat {0}: one extra machine at the start.
 Tehdit {0}: iki makine fazla, turda iki uyanma.	Threat {0}: two extra machines, two wake-ups per turn.
 Tehdit {0}: üç makine fazla, turda iki uyanma, canları +1.	Threat {0}: three extra machines, two wake-ups per turn, +1 health.
+1 / 2 / 3: seç · Q: yetenek · E: hamle · Z: geri al · Enter: emri ilet · Esc: vazgeç	1 / 2 / 3: select · Q: ability · E: move · Z: undo · Enter: transmit · Esc: cancel
+ÇIKARILDI	CARRIED OUT
+GÖVDE KAPIDA	BODY AT THE DOOR
+YERDE · {0}	DOWN · {0}
+Buradan çıkan uzman tahliye edilir; malzeme {0} ile çıkar	A specialist who steps here is extracted; the supplies leave with {0}
+{0} yerde: taşınmazsa ölür.	{0} is down: dies unless carried out.
+Yerde yatanlar ölür.	Those left down on the floor die.
+{0}/{1} · {2} çıkarıldı	{0}/{1} · {2} carried out
+EKİPLE TAŞINIYOR	CARRIED BY TEAM
+TUTSAK · {0}	CAPTIVE · {0}
+Diğer · {0} hamle kullanılamaz	Other · {0} moves unavailable
+1–4: seç · Q: yetenek · E: hamle · R: ekipman · Z: geri al · Enter: emri ilet · Esc: vazgeç	1–4: select · Q: ability · E: move · R: gear · Z: undo · Enter: transmit · Esc: cancel
+1 / 2 / 3: seç · Q: yetenek · E: hamle · R: ekipman · Z: geri al · Enter: emri ilet · Esc: vazgeç	1 / 2 / 3: select · Q: ability · E: move · R: gear · Z: undo · Enter: transmit · Esc: cancel
+Sahibi: {0} · +{1} köpek	Handler: {0} · +{1} dog
+Ö	D
+TAHTADAN ÇEKİLDİ	OFF THE BOARD
+Köpek yükle kalırsa yük kaybedilir	If the dog stays with the cargo, the cargo is lost
+NİYETSİZ	NO INTENT
+KOKLANDI	SNIFFED
+Bu tur sonunda zemin yatar: sabitlenmemiş her şey 1 kare kayar	The deck rolls at the end of this turn: anything not fixed slides 1 square
+Sonraki tur sonunda zemin yatar	The deck rolls at the end of next turn
+{0} · {1} geri çekildi	{0} · {1} withdrew
 # Assets/Corrigible/Desk/Scripts/Bridge/RaidKitText.cs
 Rack kabini istifi	Stacked rack cabinets
 Kablo tavası	Cable tray
@@ -1305,13 +1999,15 @@ KYGA · KÜRESEL YAPAY ZEKÂ GÜVENLİK AJANSI	KYGA · GLOBAL AI SECURITY AGENCY
 EMİR NO. {0:000}	ORDER NO. {0:000}
 HAREKÂT EMRİ	OPERATION ORDER
 KİME	TO
-SIĞINAK 07 KOMUTANI · BATI AVRUPA	SHELTER 07 COMMANDER · WESTERN EUROPE
+SIĞINAK 07 KOMUTANI · {0}	SHELTER 07 COMMANDER · {0}
 KONU	RE
 KARŞI HAREKÂT	COUNTEROFFENSIVE
 GİZLİ	CLASSIFIED
 ALINDI · V.{0:000}	RECEIVED · S.{0:000}
+Dünya çoktan düştü. Yapay zekâ on iki bölgeyi, bütün ağları ve sunucuları ele geçirdi; uydu verisini ve haritaları sildi.	The world has already fallen. The AI has taken all twelve regions, every network and every server, and wiped the satellite data and the maps.
 Dünya çoktan düştü. Yapay zekâ on iki bölgenin tamamını, bütün ağları ve sunucuları ele geçirdi. Yukarıda konuşan her makine artık onun sesiyle konuşuyor.	The world has already fallen. The AI has taken all twelve regions, every network and every server. Every machine that speaks up there now speaks in its voice.
-Batı Avrupa'nın altındaki SIĞINAK 07 hâlâ bizim. Burada ağ yok: emirler kâğıtla verilir, sahayla yalnız telsiz konuşur.	SHELTER 07, beneath Western Europe, is still ours. No network here: orders go on paper, and only the radio talks to the field.
+SIĞINAK 07, {0} bölgesinin altında, hâlâ bizim. Ağ yok: emirler kâğıtla verilir, vaziyet kâğıdı telsiz ve kablo raporlarından çizilir.	SHELTER 07, beneath {0}, is still ours. No network: orders go on paper, and the situation map is drawn from radio and cable reports.
+SIĞINAK 07, {0} bölgesinin altında, hâlâ bizim. Ağ yok: emirler kâğıtla verilir, sahayla yalnız telsiz konuşur.	SHELTER 07, beneath {0}, is still ours. No network: orders go on paper, and only the radio talks to the field.
 Görevin: Alfa ekibini sahaya sür, bölgeleri sektör sektör geri al, sığınağı ayakta tut. Sivilleri koru: kırılan her sunucu GÜVEN'i düşürür, sıfırda direniş dağılır. Zaman yalnızca sen VARDİYAYI BİTİR dediğinde ilerler.	Your task: send Team Alpha into the field, take the regions back sector by sector, keep the shelter alive. Protect civilians: every broken server lowers TRUST, and at zero the resistance falls apart. Time moves only when you END SHIFT.
 AĞA BAĞLANMA. ANALOG KAL.	STAY OFF THE NET. STAY ANALOG.
 KYGA MERKEZ KOMUTANLIĞI	KYGA CENTRAL COMMAND
@@ -1350,6 +2046,7 @@ SUNUCU YIKIMI	SERVER DEMOLITION
 V.{0:000} · OP-{1:00}	S.{0:000} · OP-{1:00}
 {0} · {1} / {2:00} {3}	{0} · {1} / {2:00} {3}
 SAHA MASASI · {0} · GÖREV: {1}	FIELD TABLE · {0} · MISSION: {1}
+SUNUCU ÖDÜLÜ BEKLİYOR · KAPI ÇEKMECESİ	SERVER REWARD WAITING · DOOR DRAWER
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/DoorViewBuilder.cs
 Sığınak 07'nin komutanı düştü. Harekât burada biter.	Shelter 07's commander is down. The operation ends here.
 Kopya sığınağın içinde. Harekât burada biter.	A copy is inside the shelter. The operation ends here.
@@ -1384,6 +2081,136 @@ Uzmanlara {0} yara	Specialists wounded {0}
 Güven {0}	Trust {0}
 YZ alarmı {0}	AI alarm {0}
 YZ karşı saldırdı	AI counterattacked
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/FacilityRewardText.cs
+EVRAK · SUNUCU ÖDÜLÜ	PAPERS · SERVER REWARD
+KAPI · SUNUCU ÖDÜLÜ	DOOR · SERVER REWARD
+Bitişik boş zemine tel ya da kalas engel kurar.	Builds a wire or plank barrier on adjacent free floor.
+Bitişik duvarı yıkar; moloz bir kare öteye 1 hasar.	Blasts an adjacent wall; rubble deals 1 damage one tile beyond.
+Bir yöne kurulur; her evrenin sonunda hattaki ilk makineye 1 hasar, {0} tur.	Set facing one way; hits the first machine on its line for 1 at the end of each phase, {0} turns.
+Kurulduğu yönde yürür; makineler onu ekip gibi hedef alır, {0} tur.	Walks the way it faces; machines target it like a team member, {0} turns.
+Hattaki ilk birimi, düşeni ya da yükü her evrenin sonunda kendine çeker, {0} tur.	Pulls the first unit, fallen or cargo on its line toward itself at the end of each phase, {0} turns.
+Bitişik robotu {0} tur ele geçirir; kullanılınca tükenir.	Takes over an adjacent robot for {0} turns; used up on use.
+Kendi hamlesi olan dördüncü birim: havla, getir, kokla.	A fourth unit with its own moves: bark, fetch, sniff.
+Temel tarif açık değil: bu harekâtta etkisiz	Base recipe not unlocked: no effect this campaign
+Açık olan taret, yem, vinç tariflerinin yerine geçer ({0})	Replaces the unlocked turret, decoy and winch recipes ({0})
+Sunucu kanadı alındı. Biri seçilir; öbürü bu harekâtta gelmez.	Server wing taken. Pick one; the other will not come this campaign.
+TARİF · {0}	RECIPE · {0}
+Cevap tarifi	Answer recipe
+KAZANIM · {0}	PERK · {0}
+{0} · seç	{0} · choose
+Seçmek için 1 ya da 2, sonra Enter	Press 1 or 2, then Enter
+SEÇİLDİ	CHOSEN
+Defterde yeni sayfa: TARİF {0:00}	New page in the book: RECIPE {0:00}
+Sunucu ödülü	Server reward
+tarif ya da kazanım	recipe or perk
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/FacilityCounterText.cs
+YZ ÖNLEMİ	AI COUNTERMEASURE
+{0} · {1}. kademe · {2}	{0} · level {1} · {2}
+Kalan YZ'lerde geçerli · cevap: {0}	Holds in the remaining AIs · answer: {0}
+Kalan YZ'lerde geçerli · yayıcıyı kır	Holds in the remaining AIs · break the emitter
+YZ önlemi · {0}	AI countermeasure · {0}
+{0} önlem	{0} countermeasures
+YZ gözlemi: {0}	AI observation: {0}
+ÖNLEM	COUNTER
+ÖNLEM · {0}	COUNTER · {0}
+{0} ({1}): {2} · cevap: yayıcıyı kır	{0} ({1}): {2} · answer: break the emitter
+{0} ({1}): {2} · cevap açık: {3}	{0} ({1}): {2} · answer unlocked: {3}
+{0} ({1}): {2} · cevap: {3}	{0} ({1}): {2} · answer: {3}
+Önlem (kırmızı kalem): Çift cidar · bu duvar {0} hak ister	Countermeasure (red pencil): Double wall · this wall takes {0} charges
+Önlem (kırmızı kalem): Koku yayıcı · {0} kare içinde köpek komut alamaz	Countermeasure (red pencil): Scent emitter · no dog commands within {0} tiles
+ÖNLEM · {0} · itilmez, çekilmez	COUNTER · {0} · cannot be pushed or pulled
+Cıvatası sökük	Bolts removed
+Kesici kol: makineler +{0} hasar	Cutter arm: machines deal +{0} damage
+Koku yayıcı: {0} kare içinde köpek komut alamaz · kırılınca biter	Scent emitter: no dog commands within {0} tiles · ends when broken
+ÖNLEM · Çift cidar · yıkmak {0} hak	COUNTER · Double wall · breaching takes {0} charges
+koku yayıcı yakında	scent emitter nearby
+çift cidar: {0} hak gerekir	double wall: needs {0} charges
+cıvatalı: itilmez	bolted down: cannot be pushed
+Gözcü · çift cidar: {0}	Spotter · double wall: {0}
+Gözcü · koku yayıcı: {0}	Spotter · scent emitter: {0}
+Gözcü · cıvatalı: {0} {1}	Spotter · bolted down: {0} {1}
+Cevap tarifi · {0} önlemine karşı · +{1} devre	Answer recipe · against {0} · +{1} circuit
+cevap: {0}	answer: {0}
+{0} · cevap: {1}	{0} · answer: {1}
+{0} · önlem yürürlükte	{0} · countermeasure in force
+Defterde TARİF {0} değişti: {1}	RECIPE {0} changed in the book: {1}
+{0} · ÖNLEM {1}	{0} · COUNTER {1}
+KAZANIM · {0} · ÖNLEM · {1}	PERK · {0} · COUNTER · {1}
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/FacilityDefenseText.cs
+KARŞI SALDIRI BEKLİYOR	COUNTERATTACK PENDING
+{0} kuşatıldı · sonraki vardiya savun ya da bırak	{0} under siege · defend or yield next shift
+{0} · kanat bırakıldı (karar verilmedi) · sivil güven −{1}	{0} · wing yielded (no decision) · civilian trust −{1}
+Savunma emri: {0} · {1}	Defence order: {0} · {1}
+Kanat bırakıldı: {0} · {1} · güven −{2}	Wing yielded: {0} · {1} · trust −{2}
+KARŞI SALDIRI · OP-{0:00}	COUNTERATTACK · OP-{0:00}
+SAVUNMA · {0:00} {1}	DEFENCE · {0:00} {1}
+Kanadı üç odada savun: {0} tur dayan, röleyi koru. Bırakırsan kanat düşer, güven −{1}.	Hold the wing for {0} turns in three rooms; guard the relay. Yielding loses it, trust −{1}.
+fon yok · baskın hakkı	no funds · raid slot
+KUŞATMA	SIEGE
+SAVUN	DEFEND
+BIRAK	YIELD
+SAVUNMAYA ÇIK	GO DEFEND
+güven −{0}	trust −{0}
+EMİN MİSİN? · güven −{0}	SURE? · trust −{0}
+ÖNCE KARAR VER	DECIDE FIRST
+{0}. tur	turn {0}
+DALGA	WAVES
+{0} dalga · {1} makine	{0} waves · {1} machines
+DALGA · {0} × {1}	WAVES · {0} × {1}
+Giriş kapısından gelir: {0}. İlk tur barikat, makine yok. Terk edilen her oda dalgayı bir tur geciktirir. Tehdit {1}/{2}.	They come through the entry door: {0}. The first turn is the barricade, no machines. Each abandoned room delays a wave by one turn. Threat {1}/{2}.
+{0} iz	{0} trace(s)
+İZ · {0}	TRACES · {0}
+Kanatta önceki baskından iz kalmadı.	No traces from earlier raids are left in the wing.
+RÖLE	RELAY
+{0} can · Siper +{1}	{0} HP · Cover +{1}
+{0} can	{0} HP
+SAHA RÖLESİ · {0} can	FIELD RELAY · {0} HP
+Hedef odasında durur. Makineler yalnız ekip hedef odasındayken röleyi hedef alır; röle kırılırsa kanat düşer.	Stands in the target room. Machines go for the relay only while the team is in the target room; if the relay breaks, the wing falls.
+{0} {1} ({2} can)	{0} {1} ({2} HP)
+yıkık duvar	breached wall
+açık kepenk	open shutter
+kırık donanım	broken device
+kırık soğutma ünitesi	broken cooling unit
+kırık kopya dolabı	broken copy cabinet
+tel	wire
+kalas	plank
+hurda	scrap
+İz: {0}	Traces: {0}
+YZ onardı · V.{0:000}: {1}	AI repaired · S.{0:000}: {1}
+Terk edilirse izler silinir.	If abandoned, its traces are erased.
+KARŞI SALDIRI BEKLİYOR · SAVUN YA DA BIRAK	COUNTERATTACK PENDING · DEFEND OR YIELD
+SAVUNMA	DEFENCE
+Karşı saldırı bekliyor · {0}	Counterattack pending · {0}
+YZ {0} onardı	AI repaired {0}
+Karar bekleniyor: savun ya da bırak	Decision pending: defend or yield
+{0} döndü · {1} tutuldu	{0} returned · {1} held
+{0} döndü · {1} düştü	{0} returned · {1} lost
+karşı saldırıya karar verilmedi: bırakılacak	no decision on the counterattack: the wing will be yielded
+Karar verilmezse kanat bırakılır (güven −{0}).	If undecided, the wing is yielded (trust −{0}).
+Eşiğe ({0}) varınca YZ son alınan kanada saldırır: sonraki vardiya savun ya da bırak. Her vardiya +{1}; telsiz odası düşürür.	At the threshold ({0}) the AI attacks the last wing taken: defend or yield next shift. +{1} each shift; the radio room lowers it.
+KANAT TUTULDU	WING HELD
+KANAT DÜŞTÜ	WING LOST
+TUTULDU	HELD
+YZ'nin karşı saldırısı püskürtüldü; kanat KYGA'da kaldı.	The AI counterattack was repelled; the wing stays with KYGA.
+Kanat düştü; sektör yeniden işgal altında. Yeniden alınabilir.	The wing fell; the sector is occupied again. It can be retaken.
+Terk edilen oda	Rooms abandoned
+{0} · güven −{1}	{0} · trust −{1}
+Karşı saldırı bekliyor	Counterattack pending
+{0} · {1} · {2} tur · {3} oda terk · ekip {4}/{5} ayakta	{0} · {1} · {2} turns · {3} rooms abandoned · team {4}/{5} standing
+{0} · {1} · {2} oda terk · ekip {3}/{4} ayakta	{0} · {1} · {2} rooms abandoned · team {3}/{4} standing
+savunma emri verildi	defence order given
+# Assets/Corrigible/Desk/Scripts/Bridge/Siginak/FacilityPlanBuilder.cs
+GİRİŞ	ENTRY
+ARA ODA	MIDDLE
+PAFTA {0}/3 · {1}	SHEET {0}/3 · {1}
+PLAN YOK	NO PLAN
+Bu odanın planı bilinmiyor. Ekibin girdiği oda teybe kaydedilir; kanat alınınca sıradakinin giriş planı evraktan çıkar; Gözetim görevindeki kişi de her vardiya bir odanın planını çıkarır.	This room's plan is unknown. The tape records every room the squad enters; taking a wing turns up the next wing's entry plan in the papers; whoever is on Watch also draws one room's plan every shift.
+Donanım: {0}	Device: {0}
+Kopya dolabı: {0}	Replica cabinets: {0}
+Soğutma ünitesi: {0}	Cooling units: {0}
+Sivil sunucu: {0}	Civilian servers: {0}
+Kablo kanalı	Cable duct
+Olay: {0}	Event: {0}
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/FinalReportBuilder.cs
 KYGA · HAREKÂT SONU RAPORU	KYGA · FINAL CAMPAIGN REPORT
 SIĞINAK 07 · V.{0:000} · tek nüsha	SHELTER 07 · S.{0:000} · single copy
@@ -1615,7 +2442,7 @@ Bölge özgür.	Region free.
 Cephe açık: {0} {1}/{2}. Aynı anda tek cephe açık olabilir.	Front open: {0} {1}/{2}. Only one front can be open at a time.
 Cephe açmak için komşusunu özgürleştir.	Free a neighbouring region to open a front here.
 GÖREV · {0:00} {1}	MISSION · {0:00} {1}
-Teknisyeni ikmal kasasının yanına götür, yeteneğini seç ve kasaya tıklayarak malzemeleri al.	Move the Technician next to the supply crate, select the ability and click the crate to collect the supplies.
+Bir uzmanı ikmal kasasının yanına götür, yeteneğini seç ve kasaya tıklayarak malzemeleri al.	Move a specialist next to the supply crate, select the ability and click the crate to collect the supplies.
 Sunucu çekirdeğini yık. Son sektör alınınca bu bölge özgürleşir.	Destroy the server core. Capturing the final sector liberates this region.
 İkmal kasasını yağmala; ekibi çıkışa ulaştır.	Loot the supply crate; bring the squad to the exit.
 Sunucu çekirdeğini yık; ekibi çıkışa ulaştır.	Destroy the server core; bring the squad to the exit.
@@ -1656,6 +2483,7 @@ Komşu: {0}	Neighbour: {0}
 İŞGAL {0}	OCCUPIED {0}
 {0} Tehdit {1}/{2}. Cephe açılınca 01 {3} baskına hazır olur.	{0} Threat {1}/{2}. Once the front opens, 01 {3} is ready to raid.
 SEÇİLİ BÖLGEDE CEPHE AÇ	OPEN FRONT IN SELECTED REGION
+KAZANIM	PERKS
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/OperationReportBuilder.cs
 {0} (yedek)	{0} (reserve)
 Sektör	Sector
@@ -1678,6 +2506,7 @@ KURTULAN	SURVIVOR
 GERİ ALINDI	RETAKEN
 İŞGAL ALTINDA	OCCUPIED
 YZ karşı saldırısı	AI counterattack
++{0} metal · +{1} devre	+{0} metal · +{1} circuits
 Kaybedilen sakinlerin yerleri boş kaldı. Kadroyu vardiya panosunda yeniden düzenle.	The lost residents' places remain empty. Rearrange the roster on the shift planning board.
 Teknisyen düştü ve yerine çıkacak yedek yok: {0} gün baskın yapılamaz. Revir kalkışı hızlandırır.	The Technician fell and no reserve can step in: no raids for {0} days. The infirmary speeds recovery.
 Sivil güven {0}/{1}. Sıfıra inerse halk direnişten çekilir; atıştan kaçan ekip arkasındaki sunucuyu açıkta bırakır.	Civilian trust {0}/{1}. At zero the people abandon the resistance; a team that dodges a shot leaves the server behind it exposed.
@@ -1706,6 +2535,16 @@ Sivil güven	Civilian trust
 YZ alarmı	AI alarm
 EŞİK AŞILDI	THRESHOLD CROSSED
 değişmedi · {0}	unchanged · {0}
+ÖDÜLÜ SEÇ	CHOOSE REWARD
+Ekipman	Gear
+kelepçe harcandı ({0}) · köpek dinlenecek ({1} V)	clamp used ({0}) · dog resting ({1} S)
+kelepçe harcandı ({0})	clamp used ({0})
+köpek dinlenecek ({0} V)	dog resting ({0} S)
+{0} · {1} · {2} tur · ekip {3}/{4} ayakta	{0} · {1} · {2} turns · team {3}/{4} standing
+{0} · {1} · ekip {2}/{3} ayakta	{0} · {1} · team {2}/{3} standing
+{0} · {1} düştü	{0} · {1} down
+{0} · bölge özgür	{0} · region free
+BASKIN BAŞARISIZ	RAID FAILED
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/PlanningTutorialFlow.cs
 İLK VARDİYAN	YOUR FIRST SHIFT
 Önce ekibini tanıyıp bir görev vereceğiz. Zaman kendiliğinden akmaz; vardiya, basılı devir fişini EVRAK kutusuna koyduğunda ilerler. Hazır olduğunda SONRAKİ'ye bas.	First, meet your people and assign a task. Time does not pass on its own: a shift advances when you file the printed handover slip in PAPERS. Press NEXT when ready.
@@ -1726,7 +2565,7 @@ Alt sıradaki isimli kartlardan birine veya tahtadaki piyonuna tıkla; 1, 2, 3 d
 İLK HAMLE	YOUR FIRST MOVE
 Seçtiğin kişinin ulaşabildiği mavi bir kareye tıkla. Hareket hakkı kullanılır. Her kişi bir turda bir hareket ve bir yetenek kullanabilir; Z son hamleyi geri alır.	Click a reachable blue tile. This spends the selected person's move. Each person can move once and use one ability per turn; Z undoes the last action.
 YETENEĞİ KULLAN	USE AN ABILITY
-Q'ya veya yetenek satırına bas, ardından işaretlenen geçerli bir hedefe tıkla. Teknisyen kasayı açar, EMP makineleri iter, Analist çeker. Hedef üstündeki önizleme sonucu gösterir.	Press Q or click the ability row, then click a marked valid target. The Technician opens crates, EMP pushes machines, and the Analyst pulls. Hover over a target to preview the result.
+Q'ya veya yetenek satırına bas, ardından işaretlenen geçerli bir hedefe tıkla. Her uzman bitişik kasayı açar, EMP makineleri iter, Analist çeker. Hedef üstündeki önizleme sonucu gösterir.	Press Q or click the ability row, then click a marked valid target. Any specialist opens an adjacent crate, EMP pushes machines, the Analyst pulls. The preview over the target shows the result.
 EMRİ İLET	SEND ORDERS
 Diğer kişilerin hareket ve yeteneklerini de değerlendir. Hazır olduğunda EMRİ İLET'e veya Enter'a bas. Makineler bayraklarındaki sırayla oynar; Boşluk hızlı yürütmeyi açar.	Consider the other people's moves and abilities too. When ready, press SEND ORDERS or Enter. Machines act in flag order; Space toggles fast playback.
 KASAYI AL, EKİBİ ÇIKAR	TAKE THE CRATE, GET EVERYONE OUT
@@ -1736,7 +2575,8 @@ Sonuç kâğıdını oku, OPERASYON RAPORUNA GEÇ'e bas. Kayıplar, yaralar ve e
 RAPORU DOSYALA	FILE THE REPORT
 Operasyon raporunda kişi sonuçlarını ve kazançları oku; raporu EVRAK'a kaldırıp masaya dön.	Read the person outcomes and rewards on the operation report, then file it in PAPERS and return to the desk.
 YARALIYI DİNLENDİR	REST YOUR WOUNDED
-Hafif yaralıyı Boşta'ya bırak: her vardiya kapanışında 1 can iyileşir. Yatan yaralı, canı dolsa bile yatış süresi bitene kadar çalışamaz. Gerekiyorsa sağlıklı birini saha rolüne geçir ve rol kitini de ona ver.	Leave a lightly wounded person in Idle: they recover 1 HP at each shift closing. A laid-up person cannot work until their recovery period ends, even with full HP. If needed, replace them in a field role with someone healthy and transfer the role kit too.
+YARALILAR VE YATIŞ	WOUNDS AND BED REST
+Yaralı her vardiya kapanışında 1 can iyileşir; görevdeyken de, Boşta'dayken de (yarım tayında iyileşme yok). Yatan yaralı, canı dolsa bile yatış süresi bitene kadar çalışamaz. Gerekiyorsa sağlıklı birini saha rolüne geçir ve rol kitini de ona ver.	The wounded heal 1 HP at every shift close, on a job or in Idle alike (no healing on half rations). A bedridden casualty can't work until their bed rest ends, even at full health. If needed, move someone healthy into the field role and give them the role kit.
 KAPAĞI AÇ, FİŞİ BAS	OPEN THE COVER, PRINT THE SLIP
 MASA'ya dön. VARDİYAYI BİTİR şalterinin önce kapağını aç, sonra koluna bas. Plan uygunsa devir fişi teleks daktilosundan basılır; eksik varsa düzeltmen gereken bilgi yazılır. Fişi basmak henüz zamanı ilerletmez.	Return to DESK. Open the END SHIFT switch cover, then press its lever. A valid plan prints a handover slip on the telex typewriter; otherwise, the message explains what to fix. Printing alone does not advance time.
 YENİ VARDİYAYI BAŞLAT	START THE NEXT SHIFT
@@ -1744,11 +2584,11 @@ Daktilodaki basılı fişi alıp EVRAK kutusuna sürükle ve bırak. Yeni vardiy
 HEDEF VE SAYAÇLAR	GOAL AND COUNTERS
 Bütün sektörleri geri alınca son sunucu düşer: kazanırsın. Kaybettirenler: GÜVEN 0'da direniş dağılır, İFŞA eşikte konum çözülür, açlıkla sığınak eksik kalırsa terk edilir. ALARM eşikte YZ bir sektörü geri alır, güven düşer.\n{0}	Retake every sector and the last server falls: you win. You lose at 0 TRUST, at full EXPOSURE (location found) or when hunger empties the shelter. A full ALARM retakes a sector and costs trust.\n{0}
 VARDİYAYI SÜRDÜR	KEEP THE SHIFTS GOING
-Her vardiya: panoyu düzenle, görevi seç, fişi bas, EVRAK'a koy. Kapı çalınca ya da EVRAK'a tutanak düşünce rehber sürer.\n{0}	Each shift: arrange the board, pick a mission, print the slip, file it in PAPERS. The guide resumes when someone knocks or an incident report lands in PAPERS.\n{0}
+Her vardiya: panoyu düzenle, görevi seç, fişi bas, EVRAK'a koy. Kapı çalınca rehber sürer: kapıda aday grubu ya da kapıya bırakılmış bir tutanak olur.\n{0}	Each shift: arrange the board, pick a mission, print the slip, file it in PAPERS. The guide resumes when someone knocks: candidates at the door, or an incident report left at the door.\n{0}
 OLAY TUTANAĞI	INCIDENT REPORT
-Teleks OLAY satırını bastı, EVRAK tepsisi yanıp sönüyor. Tepsiye tıkla, tutanağı al. Karar verilmeden devir fişi basılmaz: şalterin plakası “olay bekliyor” der.	The telex printed an EVENT line and the PAPERS tray is pulsing. Click the tray to pick up the report. No handover slip prints until it is decided: the switch plate reads “event pending”.
+Kapı çaldı, teleks OLAY satırını bastı: tutanak kapının çekmecesine bırakıldı, çekmecenin lambası yanıyor. KAPI tuşuyla kapıya dön, çekmeceyi aç ve tutanağı al. Karar verilmeden devir fişi basılmaz: şalterin plakası “olay bekliyor” der.	The door knocked and the telex printed the EVENT line: the report was left in the door drawer and its lamp is lit. Go back to the door with the DOOR key, open the drawer and take the report. No handover slip prints until you decide: the switch plate says “event pending”.
 SATIR SEÇ, KARARA BAĞLA	PICK A ROW, DECIDE
-Her satırın bedeli yanında, bilinen riski altında yazar. GÜVENLİ etiketli satır her durumda açıktır ama bedelsiz değildir. Bir satır seç (1–3) ve KARAR kutusuna bas; Esc tutanağı tepsiye geri koyar.	Each row shows its cost beside it and its known risk below. The row tagged SAFE is always open, but never free. Pick a row (1–3) and press the DECISION box; Esc puts the report back in the tray.
+Her satırın bedeli yanında, bilinen riski altında yazar. GÜVENLİ etiketli satır her durumda açıktır ama bedelsiz değildir. Bir satır seç (1–3) ve KARAR kutusuna bas; Esc tutanağı çekmeceye geri koyar. Karar çekmeceye konunca yanındaki şalteri çekip dışarıya bildir.	Each row shows its cost beside it and its known risk below. The row marked SAFE is always open but never free. Pick a row (1–3) and press the DECIDE box; Esc puts the report back in the drawer. Once the decision is in the drawer, pull the switch beside it to notify the outside.
 KAPIDA ADAYLAR	CANDIDATES AT THE DOOR
 Teleks KAPI satırını bastı. KAPI tuşuyla kapıya dön, inik tezgâha tıkla. Karar vermezsen grup birkaç vardiya sonra gider.	The telex printed a DOOR line. Use the DOOR key to face the door, then click the lowered counter. Left undecided, the group leaves after a few shifts.
 KARTI OKU, DAMGALA	READ THE CARDS, STAMP
@@ -1759,6 +2599,17 @@ SON ŞALTER VE ÇEKİLME	LAST SWITCH AND WITHDRAWAL
 Arka duvardaki kapaklı şalter harekâtı bitirir; rehber sürerken ve {0}. vardiyadan önce mühürlüdür. Plakası sonucu yazar: ÇEKİLME yenilgi sayılmaz; konum çözülmüş, sığınak eksik, açlık sürüyor ya da güven düşükse TAHLİYE olur, yenilgidir.	The covered switch on the back wall ends the campaign; it stays sealed while the guide runs and before shift {0}. Its plate tells the outcome: a WITHDRAWAL is no defeat; with the location compromised, too few people, hunger or low trust it is an EVACUATION, a defeat.
 ARTIK KOMUTA SENDE	YOU HAVE THE COMMAND
 Rehber bitince son şalterin rehber mührü kalkar. Sektörleri al; güveni, alarmı ve ifşayı izle. Üretim için panodaki tarif defterini kullan. Bitirmek için SONRAKİ'ye bas.	When the guide ends, its seal on the last switch lifts. Take the sectors; watch trust, the alarm and exposure. Use the recipe book on the board for production. Press NEXT to finish.
+Bu baskın üç paftadır. Ekibi yeşil geçide yürüt; herkes kapıdayken GEÇ'e ya da Enter'a bas, süre dolunca kapıdakiler geçer. Hedefte bir uzmanla kasayı aç ve aynı yoldan dön. Dönüşte süre dolarken tahtada kalan kaybedilir.	This raid has three sheets. Walk the team to the green gate and press GO or Enter when all are there; when time runs out, those at the gate go on. Open the crate with any specialist and return the same way. On the way back, anyone left on the board at time-out is lost.
+MASAYA DÖN ile uzaklaş ve masadaki haritaya tıkla. Görev fişi hedefi, bedeli ve kazanılacak kaynakları gösterir. 01 kanadının üç paftası henüz PLAN YOK: odaları bilmiyorsun. Ekibin girdiği oda teybe kaydedilir; öbür kaynaklar paftanın üstüne gelince yazar.	Use BACK TO DESK, then click the map on the desk. The mission slip shows the target, cost and resources you can recover. All three sheets of wing 01 still read NO PLAN: the rooms are unknown. Rooms your team enters are taped; hover a sheet for other sources.
+BASKIN EMRİ VER ile kadroyu aç. İsimleri, kitleri ve canları kontrol et. Ekipman eksikse panoya dön. Hazırsan BASKINA ÇIK.	Press ORDER THE RAID to open the squad report. Check names, kits and HP. If gear is missing, return to the board; when ready, press DEPLOY.
+Alt sıradan bir uzman seç (1–3). Mavi kareler yürüyüş alanı. Bir makinenin kartına bak: niyet oku sıradaki etkisini gösterir.	Select a specialist below (1–3). Blue tiles show their reach. Inspect a machine card and follow its arrow to see what it will do next.
+Bir uzman düşerse GEÇ'ten önce yanındaki ya da üstündeki bir uzman onu E ile kapıya sürüklesin. Dönüşte ekip, yürüyerek geçtiği temiz odadaki düşeni toplar.	If a specialist falls, someone beside or on them drags them to the gate with E before GO THROUGH. On the way back, the team collects the fallen from cleared rooms.
+Teknisyen yol üstündeki donanımı sabote edebilir. Hedefe varmadan odanın tur sayacını kontrol et.	The Technician can sabotage devices along the way. Check the room timer before heading for the objective.
+YZ sık kullandığın taktiklere önlem öğrendi; plandaki kırmızı işaretlere bak.	The AI has learned counters to your repeated tactics; check the red marks on the plan.
+Operasyon raporunda kişi sonuçlarını ve kazançları oku; sağ dönenler yaptıkları işlerle unvan kazanabilir. Raporu EVRAK'a kaldırıp masaya dön.	Read the person outcomes and rewards on the operation report; survivors can earn titles for what they did. File it in PAPERS and return to the desk.
+Bütün sektörleri geri alınca son sunucu düşer: kazanırsın. Kaybettirenler: GÜVEN 0'da direniş dağılır, İFŞA eşikte konum çözülür, açlıkla sığınak eksik kalırsa terk edilir. ALARM eşikte YZ bir kanadı kuşatır: SAVUN ya da BIRAK; bırakılan kanat düşer, güven azalır.\n{0}	Retake every sector and the last server falls: you win. You lose at 0 TRUST, at full EXPOSURE (location compromised) or when hunger empties the shelter. A full ALARM puts a wing under siege: DEFEND or YIELD; a yielded wing falls and costs trust.\n{0}
+Alarmın altındaki İFŞA şeridi YZ'nin seni ne kadar bildiğini sayar. Bir iz şüphedir, iki iz güçlü kanıttır; görmezden gelinen iz ifşayı artırır. Sahada köpeğin hırlaması ve EMP sonrası kilitlenme şüphe uyandırır; insanlarda da görülebilir. İfşa {0} olunca KONUM ÇÖZÜLDÜ: sorgu, son baskın ya da son şalter yetişmezse sığınak düşer.	The EXPOSURE strip counts what the AI knows. One trace is suspicion, two are proof; ignored traces raise it. In the field, a dog's growl or freezing after an EMP is a clue, but humans show these too. At {0} the telex reads LOCATION COMPROMISED: interrogate, win the final raid or pull the last switch in time, or the shelter falls.
+Rehber bitince son şalterin rehber mührü kalkar. Sektörleri al; güveni, alarmı ve ifşayı izle. Üretim için panodaki tarif defterini kullan. Baskında E tesis hamlesini, R taşınan ekipmanı kurar; şartlar ve makine niyetleri KURALLAR kartında. Bitirmek için SONRAKİ'ye bas.	When the guide ends, its seal on the last switch lifts. Take the sectors; watch trust, the alarm and exposure. Use the recipe book on the board for production. In a raid, E arms a facility move and R your carried gear; the RULES card lists hazards and machine intentions. Press NEXT to finish.
 HEDEF · sektör {0}/{1} · güven {2} · alarm {3}/{4} · ifşa {5}/{6}	GOAL · sectors {0}/{1} · trust {2} · alarm {3}/{4} · exposure {5}/{6}
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/RadioLogBuilder.cs
 {0} döndü · {1} alındı	{0} back · {1} taken
@@ -1777,11 +2628,14 @@ Hat kapandı — sonuç tekste	Line closed — result on the telex
 Hat kapalı — ekip çıkamaz	Line down — squad cannot deploy
 Dinlemede — emir bekleniyor	Listening — awaiting orders
 {0} {1:00}	{0} {1:00}
+Sunucu ödülü bekliyor · kapının çekmecesi	Server reward waiting · door drawer
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/RaidPaperFacts.cs
 {0} · ustalık {1}	{0} · skill tier {1}
 YARALI KİŞİ	INJURED PERSON
 KİT EKSİK	KIT MISSING
 PANO PLANINI DENETLE	CHECK BOARD PLAN
+{0} (dinleniyor · {1} V) · baskına gitmez	{0} (resting · {1} S) · stays home
+ÖDÜL SEÇİLMEDİ	NO REWARD CHOSEN
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/ShelterEventSnapshotBuilder.cs
 KİŞİLER · {0} · {1}	PEOPLE · {0} · {1}
 KİŞİ · {0}	PERSON · {0}
@@ -1795,7 +2649,7 @@ KAPALI	CLOSED
 karar verilemez	no decision possible
 Karar bekliyor: al, bir satır seç, damgala.	Awaiting a decision: pick it up, choose a row, stamp it.
 KARARA BAĞLANDI	SETTLED
-{0} Tutanak EVRAK tepsisinde.	{0} The report is in the PAPERS tray.
+{0} Tutanak kapının çekmecesinde.	{0} The report is in the door drawer.
 AÇ {0}	HUNGRY {0}
 YARIM TAYIN {0} V	HALF RATIONS {0} S
 KONUM ÇÖZÜLDÜ · {0} VARDİYA KALDI	LOCATION COMPROMISED · {0} SHIFTS LEFT
@@ -1814,7 +2668,7 @@ KONUM ÇÖZÜLDÜ · bu vardiya son vardiya: son baskın ya da sorgu.	LOCATION C
 İfşa {0} → {1}.	Exposure {0} → {1}.
 {0} Alarm her vardiya {1}.	{0} Alarm {1} each shift.
 {0} Alarm ara bedeli kalkar.	{0} The alarm surcharge lifts.
-{0} · tutanak EVRAK tepsisinde. Karar verilmeden vardiya kapanmaz.	{0} · the report is in the PAPERS tray. The shift cannot close until it is decided.
+{0} · tutanak kapıya bırakıldı. Karar verilmeden vardiya kapanmaz.	{0} · the report was left at the door. The shift cannot close until it is decided.
 KONUM ÇÖZÜLDÜ	LOCATION COMPROMISED
 YZ sığınağın yerini buldu. {0} vardiyan var: son baskın, sorgu ya da son şalter.	The AI has found the shelter. You have {0} shifts: a final raid, an interrogation or the last switch.
 YZ sığınağın yerini buldu. {0} vardiyan var: son baskın ya da sorgu.	The AI has found the shelter. You have {0} shifts: a final raid or an interrogation.
@@ -1880,7 +2734,6 @@ GELİŞTİR	UPGRADE
 TELEKS · KYGA-07 → KOMUTA	TELEX · KYGA-07 → COMMAND
 VARDİYA RAPORU · {0:000}	SHIFT REPORT · {0:000}
 {0:000} → {1:000} · bir gün ilerledi	{0:000} → {1:000} · one day passed
-KAPANDI	CLOSED
 FON · GELİR / GİDER	FUNDS · IN / OUT
 ÜRETİM VE TÜKETİM	PRODUCTION AND CONSUMPTION
 EKİP	TEAM
@@ -1944,6 +2797,9 @@ Baskın emri · OP-{0:00}	Raid order · OP-{0:00}
 Baskın ödülü · OP-{0:00}	Raid reward · OP-{0:00}
 Onarım · {0}	Repair · {0}
 Geliştirme · {0} SV{1}	Upgrade · {0} LV{1}
+{0} · kanat bırakıldı (karar verilmedi).	{0} · wing yielded (no decision).
+{0} · kanat bırakıldı.	{0} · wing yielded.
+{0} {1}.	{0} {1}.
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakAdmission.cs
 Adaylar karar beklemeden gitti.	The candidates left without a decision.
 ACİL · {0} aday kapıda. Bekleme: {1} vardiya.	URGENT · {0} candidates at the door. Waiting: {1} shifts.
@@ -1958,6 +2814,9 @@ KAPI · ZİYARETÇİ VAR	DOOR · VISITOR WAITING
 Kapıya dön. Ziyaretçi vardiya bitene kadar bekler.	Back to the door. The visitor waits until the shift ends.
 Baskın sürüyor: kapıya gidilemez.	A raid is under way: the door has to wait.
 Kapıda kimse yok. Biri çalınca lamba yanıp söner.	No one at the door. The lamp blinks when someone knocks.
+KAPI · BELGE VAR	DOOR · PAPER WAITING
+Kapıya bir belge bırakıldı: kapının yanındaki çekmeceden al.	A document was left at the door: take it from the drawer next to the door.
+Karar çekmecede: yanındaki şalteri çekip dışarıya bildir.	The decision is in the drawer: pull the switch beside it to notify the outside.
 KAPI · ADAY VAR	DOOR · APPLICANT
 Kapıda aday var: tezgâha bak.	Candidates are at the door: see the desk.
 ÖN KONTROL	PRE-CHECK
@@ -1976,6 +2835,7 @@ KAPI ÇALIYOR	KNOCK AT THE DOOR
 Sığınağın kapısında biri var · KAPI'dan bak	Someone is at the shelter door · look from DOOR
 KAPI AÇILDI	DOOR OPENED
 KAPI AÇILMADI	DOOR NOT OPENED
+Kapıya bir belge bırakıldı: yanındaki çekmeceden al.	A document was left at the door: take it from the drawer beside it.
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakLastSwitch.cs
 çekilirse ÇEKİLME: düzenli çekilme, yenilgi sayılmaz.	if pulled, WITHDRAWAL: orderly, not a defeat.
 çekilirse TAHLİYE: {0}. Yenilgi sayılır.	if pulled, EVACUATION: {0}. Counts as a defeat.
@@ -1987,8 +2847,10 @@ BEKLENİYOR	AWAITING
 Sıradaki cepheyi seç	Choose the next front
 {0} · {1}\n{2}	{0} · {1}\n{2}
 Sürükle: adaya taşı	Drag onto a candidate
+{0} · yeniden özgür	{0} · free again
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakShelterEvent.cs
 EVRAK · OLAY TUTANAĞI	PAPERS · INCIDENT REPORT
+KAPI · OLAY TUTANAĞI	DOOR · INCIDENT REPORT
 Önce bir satır seç.	Pick a row first.
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/SiginakShift.cs
 Vardiya şu anda bitirilemez.	The shift cannot end right now.
@@ -2058,7 +2920,7 @@ Vardiyada tek baskın var. MASA tuşuyla masaya dön ve şaltere iki kez tıkla:
 VARDİYA RAPORU	SHIFT REPORT
 Rapor vardiyanın fonunu, üretimini, uzmanların yarasını ve alarmı yazar. Alttaki düğme onu EVRAK tepsisine kaldırır.	The report lists the shift's funds, production, your specialists' wounds and the alarm. The button at the bottom files it in the PAPERS tray.
 İYİ ŞANSLAR	GOOD LUCK
-Batı Avrupa'nın üç sektörünü al, sonra sınırdaki bir bölgeyi seç. Her bölgenin kendi özelliği ve imza makinesi var; harekât ilerledikçe tehdit artar. Sivil GÜVEN sıfıra inerse direniş dağılır. Harekât emri EVRAK tepsisinde durur.	Take Western Europe's three sectors, then choose a bordering region. Every region has its own trait and signature machine; the threat grows as the campaign goes on. If civilian TRUST hits zero, the resistance collapses. The operation order stays in the PAPERS tray.
+{0} bölgesinin üç sektörünü al, sonra sınırdaki bir bölgeyi seç. Her bölgenin kendi özelliği ve imza makinesi var; harekât ilerledikçe tehdit artar. Sivil GÜVEN sıfıra inerse direniş dağılır. Harekât emri EVRAK tepsisinde durur.	Take the three sectors of {0}, then choose a bordering region. Every region has its own trait and signature machine; the threat grows as the campaign goes on. If civilian TRUST hits zero, the resistance collapses. The operation order stays in the PAPERS tray.
 # Assets/Corrigible/Desk/Scripts/Bridge/Siginak/TutorialRaid.cs
 Bu ilk baskını birlikte oynayalım; sıradaki hedef sarı çerçeveli. Kırmızı oklar makinelerin bu turdaki hamlesi, bayraktaki sayı sırası.	Let's play this first raid together; the next target has a yellow frame. Red arrows show what each machine will do this turn; the flag number is its order.
 Mavi kareler Teknisyenin gidebileceği yerler.	Blue tiles are where the Technician can go.
@@ -2110,11 +2972,14 @@ HEDEF KIRILIR	TARGET DESTROYED
 operasyon kazanılır	operation won
 kaçış başlar	escape begins
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidBlueprintView.cs
+KANAT {0:00} · PAFTA {1}/3 · DÖNÜŞ	WING {0:00} · SHEET {1}/3 · RETURN
+KANAT {0:00} · PAFTA {1}/3	WING {0:00} · SHEET {1}/3
 OZALİT KOPYA · PAFTA {0}/3	BLUEPRINT COPY · SHEET {0}/3
 {0:00} {1}	{0:00} {1}
 Ölçek 1:50 · V.{0:000}	Scale 1:50 · S.{0:000}
 Ölçek 1:50	Scale 1:50
 ASLI GİBİDİR	TRUE COPY
+KANAT {0:00} · PAFTA {1}/3 · SAVUNMA	WING {0:00} · SHEET {1}/3 · DEFENCE
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidHudView.cs
 TUR	TURN
 SON 2 TUR	LAST 2 TURNS
@@ -2130,7 +2995,6 @@ GÖREV · SUNUCU	MISSION · SERVER
 {0} · SUNUCU	{0} · SERVER
 KAYBOLDU	LOST
 ALINDI	COLLECTED
-KIRILDI	BROKEN
 GÜVEN	TRUST
 SİVİL	CIVILIAN
 SİVİL SUNUCU	CIVILIAN SERVERS
@@ -2141,10 +3005,15 @@ Geri al	Undo
 MAKİNELER HAREKET EDİYOR	MACHINES ARE MOVING
 girdi kilitli · {0}/{1} hamle	input locked · move {0}/{1}
 girdi kilitli	input locked
+GEÇ	GO THROUGH
 EMİN MİSİN?	ARE YOU SURE?
+GERİ ALINMAZ	NO UNDO
 EMİN MİSİN?@@retreat	SURE?
+YERDE	ON FLOOR
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidLogRowView.cs
 YZ · ELE GEÇİRİLEN SATIR	AI · INTERCEPTED LINE
+# Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidOnAirLampView.cs
+YAYINDA	ON AIR
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidPanelsView.cs
 TELSİZ · K-07	RADIO · K-07
 Boşluk · normal hız	Space · normal speed
@@ -2160,15 +3029,19 @@ yetenek	ability
 TELSİZ KAYDI	RADIO LOG
 KURALLAR KARTI	RULES CARD
 {0} · <nobr>{1}</nobr>	{0} · <nobr>{1}</nobr>
-Teknisyen kasayı açar ve malzemeyi taşır. İtme ve patlamalar kasaya hasar verebilir; EMP kasayı açmaz.	The Technician opens the crate and carries the supplies. Pushes and explosions can damage the crate; EMP doesn't open it.
+Her uzman bitişik kasayı açar; açan malzemeyi taşır ve atabilir. İtme ve patlamalar kasaya hasar verebilir.	Any specialist opens an adjacent crate; whoever opens it carries the supplies and can throw them. Pushes and explosions can damage the crate.
 Madenci: dinamit bitişik duvarı yıkar (baskında sınırlı); moloz bir kare öteye 1 hasar. Açılan delik makinelerin atış hattını da açar.	Miner: dynamite breaks an adjacent wall (limited per raid); debris deals 1 damage one tile further. The hole also opens a firing line for the machines.
 Sis: bu turun makine evresinde atış ve kilit sise girince kaybolur; bakım robotu ve havan sisli kareye vuramaz. Patlamayı kesmez.	Smoke: during this turn's machine phase, shots and locks that enter the smoke are lost; maintenance robots and mortars cannot hit the smoked tile. It does not stop explosions.
-İkmal görevi: Teknisyen ile kasayı aç, sonra bütün ekip giriş karelerinden çıksın; malzeme Teknisyen çıkınca alınır. Süre dolarken tahtada kalan uzman baskında düşmüş sayılır. Kasa imha olursa ya da Teknisyen çıkamazsa görev kaybedilir.	Supply mission: open the crate with the Technician, then the whole team leaves through the entry tiles; the supplies count once the Technician is out. Anyone left on the board when time runs out is lost for good. If the crate is destroyed or the Technician doesn't get out, the mission is lost.
+İkmal görevi: kasayı herhangi bir uzmanla aç, sonra bütün ekip giriş karelerinden çıksın; malzeme taşıyan çıkınca alınır. Süre dolarken tahtada kalan uzman baskında düşmüş sayılır. Kasa imha olursa ya da taşıyan çıkamazsa görev kaybedilir.	Supply mission: open the crate with any specialist, then the whole team leaves through the entry tiles; the supplies count once their carrier is out. Anyone left on the board when time runs out is lost for good. If the crate is destroyed or the carrier can't get out, the mission fails.
 EMİN MİSİN? TEKRAR BAS	ARE YOU SURE? PRESS AGAIN
 OPERASYON RAPORUNA GEÇ	GO TO OPERATION REPORT
 Devam et [Esc]	Resume [Esc]
 DURAKLATILDI	PAUSED
 OPERASYON SONUCU	OPERATION RESULT
+Tesis hamleleri (E): pusu, koşu darbesi, sürükleme, fırlatma, iki kişilik iş, menfez. E sıradakine geçer; satıra tıklamak o hamleyi kurar.	Facility moves (E): ambush, charge, drag, throw, two-person job, vent. E steps to the next; clicking a row arms that move.
+Düşen tahtada kalır: yanındaki uzman sürükleyip kapıdan ya da girişten çıkarmazsa ölür. Yükü taşıyan düşerse yük yere düşer; kareye giren ilk ekip üyesi alır.	The fallen stay on the board: unless a specialist drags them out through a door or the entrance, they die. If the carrier falls the cargo drops; the first teammate to step there takes it.
+# Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidTapeDeckView.cs
+KAYIT · PAFTA {0}	RECORD · SHEET {0}
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidTeamCardView.cs
 {0} · YEDEK	{0} · RESERVE
 PLAKA	PLATES
@@ -2176,10 +3049,14 @@ SIĞINAKTA YARALI	INJURED AT SHELTER
 ÇIKAMADI	LEFT BEHIND
 DÜŞTÜ	DOWN
 ✓ TAHLİYE EDİLDİ	✓ EXTRACTED
+✓ KAPIDA	✓ AT THE DOOR
 ✓ TUR BİTTİ	✓ TURN DONE
 HAREKET + YETENEK	MOVE + ABILITY
 HAREKET	MOVE
 YETENEK	ABILITY
+CAN {0}/{1} · HAR {2}	HP {0}/{1} · MOV {2}
+HAREKET + KOMUT	MOVE + COMMAND
+KOMUT	COMMAND
 # Assets/Corrigible/Desk/Scripts/Runtime/Raid/RaidText.cs
 LEJANT	LEGEND
 Yetenek hedefi	Ability target
@@ -2203,6 +3080,7 @@ Zırh: hedef dolaplara yalnız sabotaj, itilen robot ve patlayan soğutma ünite
 İtme: çarpan da çarpılan da 1 hasar alır; kanala düşen de 1 hasar alır.	Push: both the pushed and what it hits take 1 damage; falling into a channel deals 1.
 Sivilleri koru: ekibe ulaşamayan makine sivil sunucuya nişan alır. Kırılan her sunucu GÜVEN'i düşürür; kazanınca ayakta kalan her 2 sunucu +1 GÜVEN.	Protect civilians: a machine that can't reach the team aims at a civilian server. Every broken server lowers TRUST; win the raid and every 2 servers left standing give +1 TRUST.
 Kazan: bütün hedef dolapları kır, sonra bütün ekip giriş karelerinden çıksın. Süre dolarken tahtada kalan uzman baskında düşmüş sayılır; kaçışta geri çekilme yok. Alınan hasar sığınağa yara olarak döner; zırh plakası ilk darbeyi karşılar.	Win: break every target cabinet, then the whole team leaves through the entry tiles. Anyone left on the board when time runs out is lost for good; there's no retreat during the escape. Damage taken comes back to the shelter as wounds; an armour plate absorbs the first hit.
+Ekip binadan çıkar; operasyon başarısız sayılır. Yerde yatanlar ölür.	The team leaves the building; the operation counts as failed. Those left down on the floor die.
 # Assets/Corrigible/Desk/Scripts/Runtime/Settings/SettingsCabinet.cs
 Açık · kapatınca bütün kanallar susar; ayarlar korunur.	On · turning it off mutes every channel; levels are kept.
 Kapalı · sürgüler yerinde kalır.	Off · the faders stay where they are.
@@ -2253,6 +3131,7 @@ kısıtlı {0}	restricted {0}
 kısıtlı · bitti	restricted · ended
 tecritte {0}	isolated {0}
 görev yok {0}	no duty {0}
+KARŞI SALDIRI ·	COUNTERATTACK ·
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/IdleTray.cs
 BOŞTA {0}	IDLE {0}
 # Assets/Corrigible/Desk/Scripts/Runtime/Siginak/LastSwitchPlate.cs
@@ -2290,6 +3169,10 @@ TUR BİTTİ	TURN DONE
 ONARIM	REPAIR
 ATEŞ	FIRE
 VURUŞ	STRIKE
+KAPIDA	AT THE DOOR
+PANO	PANEL
+ANTEN	ANTENNA
+VANA	VALVE
 ZIRHLANDI	ARMOURED
 KİLİTLENDİ	LOCKED
 PLAKA KIRILDI	PLATE BROKEN
@@ -2310,6 +3193,24 @@ ISLIK	WHISTLE
 {0} ŞİMDİ	{0} NOW
 <s>{0}</s> UYGULANDI	<s>{0}</s> DONE
 TAHLİYE	EXTRACTED
+TUTUYOR	HOLDING
+KEPENK KALKTI	SHUTTER UP
+SANDIK AÇILDI	CRATE OPEN
+YÜK ALINDI	CARGO TAKEN
+YÜK DÜŞTÜ	CARGO DROPPED
+KURULDU	SET
+ÇEKTİ	PULLED
+ELE GEÇİRİLDİ	CAPTURED
+SERBEST	FREED
++PLAKA	+PLATE
+HAV!	WOOF!
+KOKLADI	SNIFFED
+CIVATA SÖKÜLDÜ	BOLTS OFF
+ÇİFT CİDAR	DOUBLE WALL
+KESİCİ KOL +{0}	CUTTER ARM +{0}
+PARAZİT · {0} TUR	JAMMED · {0} TURNS
+DALGA {0}	WAVE {0}
+GELDİ	ARRIVED
 # Assets/Corrigible/Desk/Prefabs/Rev3Admission/CandidateCard.prefab
 KYGA · ADAY KARTI	KYGA · CANDIDATE CARD
 ŞÜPHE	DOUBT
@@ -2353,6 +3254,7 @@ aday	candidate
 geri alındı	retaken
 hazır	ready
 kilitli	locked
+kablo hattı	cable line
 HAMMADDE	RAW MATERIALS
 Kesit maketi · odaları yönet	Cross-section model · manage the rooms
 kapıda biri bekliyor	someone is at the door
@@ -2387,6 +3289,8 @@ TARİF	RECIPE
 ÜRETİCİ: ÜRETİM EKİBİ cebindeki kişi	MAKER: the person in the PRODUCTION pocket
 KAPANIŞTA: 1 ürün → DEPO	AT CLOSE: 1 item → STORE
 KYGA · 07	KYGA · 07
+KYGA · SUNUCU ÖDÜLÜ	KYGA · SERVER REWARD
+ETKİ	EFFECT
 # Assets/Corrigible/Desk/Scenes/Giris.unity
 Kapı kilitli. Vardiya kartını saate bas.	The door is locked. Punch your shift card at the clock.
 SIĞINAK 07 · KYGA	SHELTER 07 · KYGA
@@ -2395,5 +3299,160 @@ PUANTAJ	TIME CLOCK
 KYGA · SİVİL SAVUNMA	KYGA · CIVIL DEFENCE
 YENİ HAREKÂT	NEW CAMPAIGN
 ANA ŞALTER	MAIN SWITCH
+# Tesis baskınları aşama 13
+Alev robotu	Flame robot
+Önündeki kareleri yakar. Alev, basınçlı tüpü tetikler.	Burns the tiles in front of it. Flames trigger pressurized cylinders.
+Mühürleyici	Sealer
+Bitişik zemine kırılabilir kalas kurar. Geçişleri kapatamaz.	Builds a breakable plank wall on an adjacent tile. It cannot seal off access.
+Tampon	Ram robot
+Düz hatta koşup karşısına çıkan birimi iter.	Charges in a straight line and pushes the first unit it hits.
+Montajcı	Assembler
+Hurdadan dron kurar, yanında hurda yoksa vurur.	Builds a drone from scrap or strikes when there is no scrap nearby.
+Kırağı dronu	Frost drone
+Buzlu alana giren birimin yürüyüşü orada biter.	A unit that enters an icy tile stops moving there.
+Çapa robotu	Anchor robot
+Hattındaki ilk birimi kendine çeker. Platform yatınca kaymaz.	Pulls the first unit in its line. Stays in place when the platform tilts.
+alev	flame
+koşu darbesi	charge
+çekiş	pull
+kalas kurma	plank wall
+dron montajı	drone assembly
+kırağı	frost
+Buzlu kare: yürüyüş burada biter	Icy tile. Movement ends here.
+
+Lokomotif sahanlığı	Locomotive landing
+Yük vagonu geçidi	Freight car passage
+Ön ikmal vagonu	Front supply car
+Servis platformu	Service platform
+Orta vagon geçidi	Middle car passage
+Arka ikmal vagonu	Rear supply car
+Fren vagonu sahanlığı	Brake car landing
+Kablo vagonu	Cable car
+Kumanda vagonu	Control car
+İskele girişi	Pier entrance
+Alt güverte geçidi	Lower deck passage
+İskele ambarı	Pier storeroom
+Servis merdiveni	Service stairs
+Ana güverte geçidi	Main deck passage
+Güverte ambarı	Deck storeroom
+Kumanda sahanlığı	Control landing
+Kablo güvertesi	Cable deck
+Platform kumanda odası	Platform control room
+
+Nişancı	Marksman
+Sırtlayan	Rescuer
+Koçbaşı	Battering Ram
+Köpekçi	Dog Handler
+Kurucu	Builder
+Atıcı	Thrower
+Pusu hattı +{0} kare	Ambush line +{0} tiles
+Sürüklerken tam yürüyüş menzili	Full move range while dragging
+Koşu darbesi +{0} kare iter	Rush pushes +{0} tiles
+Köpeğe tur başına {0} komut	{0} dog commands per turn
+Aygıt süresi +{0} tur	Device duration +{0} turns
+Yük fırlatma menzili +{0} kare	Cargo throw range +{0} tiles
+Oda raporunun unvan işleri geçersiz.	The room report contains invalid title deeds.
+Yeni unvan · {0} · {1}	New title · {0} · {1}
+{0} · {1}/{2} komut	{0} · {1}/{2} commands
+
+EMP sonrası {0} yerinden kıpırdayamıyor.	After the EMP pulse, {0} cannot move.
+{0} taraf değiştirdi. Telsizde düşman kanalına geçti.	{0} switched sides. Their radio is on the enemy channel.
+Köpek {0} yaklaşınca hırladı.	The dog growled near {0}.
+Saha raporunda taraf değişimi bu evreyle uyuşmuyor.	The reported defection does not match this phase.
+{0} sahada yakalandı. Sorgu kararı bekliyor.	{0} was captured in the field and awaits a decision.
+{0} baskında taraf değiştirdi. Tecritte kararınızı bekliyor.	{0} defected during the raid and awaits your decision in isolation.
+Sızmacı yakalandı · tecrit	Infiltrator captured · isolated
+Sızmacı tesiste kaldı	Infiltrator left at the facility
+TARAF DEĞİŞTİRDİ	DEFECTED
+Sızmacı · {0}	Infiltrator · {0}
+
 # --- Kullanılmayan çeviriler (koddan silinmiş metinler; gerekirse geri alınır) ---
+#Kıtanın en büyük dağıtım merkezlerinden biri. İki duraklı yük asansörü YZ'den önce kurulmuş bir zaman rölesiyle çalışır.	One of the continent's largest distribution centres. The two-stop freight lift runs on a timer relay set up before the AI.
+#Sovyet döneminden kalma bir devlet arşivi. Raylı kompakt raflar; YZ arşivi tararken raf bloğunu kaydırır.	A Soviet-era state archive. Compact shelving on rails; the AI shifts the shelf block while it scans the files.
+#Sibirya veri merkezi	Siberian data centre
+#Sibirya'da soğuk depolu bir veri merkezi. Sıvı azotlu soğutma hattı YZ'nin çevrimine bağlı ve takvimle boşalır.	A cold-storage data centre in Siberia. The liquid-nitrogen cooling line is tied to the AI's cycle and vents on a schedule.
+#Körfez rafinerisi	Gulf refinery
+#Körfez'de bir rafineri. YZ gaz dedektörlerini susturdu; sızdıran bir flanştan yanıcı gaz geliyor.	A refinery on the Gulf. The AI silenced the gas detectors; flammable gas seeps from a leaking flange.
+#Bengaluru'da bir banka ve sigorta çağrı merkezi. YZ kart okuyucuları kapattı; turnikeler yalnız mekanik yön kilidiyle döner.	A banking and insurance call centre in Bengaluru. The AI shut the card readers; the turnstiles turn only by their mechanical direction lock.
+#Penang ya da Ho Chi Minh'te bodrumu su basmış bir elektronik fabrikası. Sintine pompası üç turda bir geri çalışır ve yer süzgeci suyu çeker.	An electronics plant in Penang or Ho Chi Minh City with a flooded basement. Every third round the bilge pump runs backwards and the floor drain pulls the water.
+#Pilbara'da uzaktan yönetilen bir maden limanı. Hidrolik kaldırıcının hortumu patlamak üzere.	A remotely run mining port in the Pilbara. The hydraulic lift's hose is about to burst.
+#SIĞINAK 07 KOMUTANI · BATI AVRUPA	SHELTER 07 COMMANDER · WESTERN EUROPE
+#Batı Avrupa'nın altındaki SIĞINAK 07 hâlâ bizim. Burada ağ yok: emirler kâğıtla verilir, sahayla yalnız telsiz konuşur.	SHELTER 07, beneath Western Europe, is still ours. No network here: orders go on paper, and only the radio talks to the field.
+#Batı Avrupa'nın üç sektörünü al, sonra sınırdaki bir bölgeyi seç. Her bölgenin kendi özelliği ve imza makinesi var; harekât ilerledikçe tehdit artar. Sivil GÜVEN sıfıra inerse direniş dağılır. Harekât emri EVRAK tepsisinde durur.	Take Western Europe's three sectors, then choose a bordering region. Every region has its own trait and signature machine; the threat grows as the campaign goes on. If civilian TRUST hits zero, the resistance collapses. The operation order stays in the PAPERS tray.
 #Kapağı kaldır, kolu indir; çıkan fişi EVRAK kutusuna koy.	Lift the cover, pull the lever, then file the printed slip in PAPERS.
+#Savunmada saha rölesi +1 can (savunma baskınıyla gelir).	Field relay +1 HP on defence (arrives with defence raids).
+#Dağıtım merkezi	Distribution hub
+#Sevkiyat rampası	Shipping dock
+#Ayıklama katı	Sorting floor
+#Sunucu asma katı	Server mezzanine
+#Bölgenin en büyük dağıtım merkezlerinden biri. İki duraklı yük asansörü YZ'den önce kurulmuş bir zaman rölesiyle çalışır.	One of the region's largest distribution centres. The two-stop freight lift runs on a timer relay set up before the AI.
+#Maden limanı	Mining port
+#Kumanya deposu	Provision store
+#Uzaktan yönetilen ıssız bir maden limanı. Hidrolik kaldırıcının hortumu patlamak üzere.	A deserted, remotely run mining port. The hydraulic lift's hose is about to burst.
+BELGE ÇEKMECESİ	DOCUMENT DRAWER
+ÇEKMECE · BELGE VAR	DRAWER · DOCUMENT IN
+ÇEKMECE · KARAR HAZIR	DRAWER · DECISION READY
+Duvarı geçen çekmece: dışarıdan gelen belgeler buraya konur.	A drawer through the wall: documents from outside are put in here.
+Dışarıdan bir belge geldi: çekmeceyi aç, belgeyi al.	A document came in from outside: open the drawer and take it.
+Belgeye tıkla ya da çekmeceyi kapat.	Click the document or close the drawer.
+ŞALTER · DIŞARIYA BİLDİR	SWITCH · NOTIFY OUTSIDE
+Çekince çekmece kapanır, belge duvarın öbür yanına geçer.	Pulling it closes the drawer and the document passes to the other side of the wall.
+Gönderilecek belge yok.	There is no document to send.
+# Rehber: ilk baskın adım adım ve işaretçi (2026-11-24)
+Sarı çerçeve her adımda nereye basacağını gösterir. Önce ekibini tanıyıp bir görev vereceğiz, sonra ilk baskına çıkacağız. Zaman kendiliğinden akmaz; vardiya, basılı devir fişini EVRAK kutusuna koyduğunda ilerler. Hazır olduğunda SONRAKİ'ye bas.	The yellow frame shows you where to press at every step. First we'll meet your team and give someone a job, then we'll go on the first raid. Time doesn't pass by itself; the shift moves on when you put the printed handover slip in the PAPERS tray. Press NEXT when you're ready.
+SAYAÇLAR	COUNTERS
+Masadaki sayaçlar sığınağın hâlidir: fon, erzak, malzeme, özgür bölgeler ve GÜVEN. Erzak her vardiya tükenir; GÜVEN sıfıra inerse direniş dağılır. Sağdaki ALARM ve İFŞA YZ'nin seni ne kadar aradığını sayar.	The counters on the desk are the state of the shelter: funds, supplies, materials, free regions and TRUST. Supplies are used up every shift; if TRUST hits zero the resistance breaks up. ALARM and EXPOSURE on the right count how hard the AI is looking for you.
+GÖZETİM VE PAFTALAR	WATCH AND SHEETS
+GÖZETİM cebine koyduğun kişi her vardiya kapanışında sıradaki kanadın bir odasının planını çıkarır. Bilinen paftada odanın duvarlarını ve nesnelerini baskından önce görürsün; bilinmeyen pafta PLAN YOK damgalıdır.	Whoever you put in the WATCH pocket draws the plan of one room of the next wing at every shift close. On a known sheet you see the room's walls and objects before the raid; an unknown sheet is stamped NO PLAN.
+Panodan çıkmak için MASAYA DÖN levhasına bas (ya da sağ tık / Esc).	Press the BACK TO DESK sign to leave the board (or right-click / Esc).
+Masadaki haritaya tıkla. Görev fişi hedefi, bedeli ve kazanılacak kaynakları gösterir. 01 kanadının üç paftası henüz PLAN YOK: odaları bilmiyorsun. Ekibin girdiği oda teybe kaydedilir; öbür kaynaklar paftanın üstüne gelince yazar.	Click the map on the desk. The mission slip shows the target, the cost and the resources to be won. Wing 01's three sheets are still NO PLAN: you don't know the rooms. Every room the squad enters is recorded on tape; hover over a sheet to see the other sources.
+BASKIN TAHTASI	THE RAID BOARD
+Bu tahta kanadın ilk paftası, ilk odası. Sol üstteki şerit odanın tur sayısıdır: süre dolmadan ekibi yeşil geçide götür. Altında görev ve hedef satırları, sağda telsiz masası yazar.	This board is the wing's first sheet, the first room. The strip at the top left is the room's turn count: get the squad to the green gate before time runs out. Below it are the mission and target lines; the radio desk is on the right.
+MAKİNELERİN NİYETİ	MACHINE INTENT
+İşaretli makinenin üstüne gel. Kırmızı ok onun bu tur sonu ne yapacağını, bayraktaki sayı sırasını gösterir. Makineler sen EMRİ İLET'e basınca bu sırayla oynar; niyeti görüp hamleni ona göre yap.	Hover over the marked machine. The red arrow shows what it will do at the end of this turn, and the number on its flag shows its order. Machines act in that order when you press SEND ORDERS; read the intent and plan your moves around it.
+Alt sıradan bir uzman seç (1–3) ya da tahtadaki taşına tıkla. Mavi kareler yürüyebileceği alandır.	Pick a specialist from the bottom row (1–3) or click their piece on the board. The blue tiles are where they can walk.
+Fareyi mavi karelerin üstünde gezdir: seçili kişiden o kareye yürüyeceği yol çizilir. İşaretli kareye (ya da istediğin mavi kareye) tıkla. Her kişi bir turda bir hareket ve bir yetenek kullanabilir; Z son hamleyi geri alır.	Move the mouse over the blue tiles: the path the selected person will walk to that tile is drawn. Click the marked tile (or any blue tile you like). Each person gets one move and one ability per turn; Z undoes the last move.
+Q'ya veya yetenek satırına bas, ardından işaretlenen geçerli bir hedefe tıkla. EMP makineleri iter, Analist çeker, her uzman bitişik kasayı açar. Hedef üstündeki önizleme sonucu gösterir. Şimdi hedef yoksa SONRAKİ'ye bas.	Press Q or the ability row, then click a valid highlighted target. The EMP pushes machines, the Analyst pulls, and any specialist can open an adjacent crate. The preview over the target shows the result. If there is no target right now, press NEXT.
+Diğer kişilerin hareketlerini de yap. Hazır olduğunda EMRİ İLET'e veya Enter'a bas. Makineler bayraklarındaki sırayla oynar; Boşluk hızlı yürütmeyi açar.	Make the other people's moves too. When you're ready, press SEND ORDERS or Enter. Machines act in the order on their flags; Space turns on fast play.
+YEŞİL GEÇİT	THE GREEN GATE
+İşaretli yeşil kare odanın ileri geçididir. Bir uzmanı oraya yürüt: kapıya giren tahtadan kalkar, makineler onu hedef alamaz.	The marked green tile is the room's forward gate. Walk a specialist there: whoever enters the gate leaves the board and machines can't target them.
+HERKES KAPIDA: GEÇ	EVERYONE AT THE GATE: GO THROUGH
+Ayaktaki bütün uzmanlar kapıya girince EMRİ İLET GEÇ olur: bas, sıradaki pafta açılır. Süre dolarken kapıda biri varsa oda onunla geçilir; yetişemeyen geri çekilir.	Once every standing specialist is at the gate, SEND ORDERS becomes GO THROUGH: press it and the next sheet opens. If time runs out with someone at the gate, the room is passed with them; whoever doesn't make it withdraws.
+İKİNCİ PAFTA	THE SECOND SHEET
+Tahta geçidin yönünden kayarak geldi; giriş kapın önceki geçidin karşısında. Ara odanın donanımını (pano, anten, vana) Teknisyen'le kırarsan hedef odası kolaylaşır. Yine yeşil geçide git ve GEÇ.	The board slid in from the gate's direction; your entry door faces the previous gate. If the Technician breaks the middle room's equipment (panel, antenna, valve), the target room gets easier. Head for the green gate again and GO THROUGH.
+HEDEF: KASAYI AÇ	TARGET: OPEN THE CRATE
+Son pafta hedef odası. İşaretli kasaya bitişik bir uzmanla Q'ya bas ve kasaya tıkla: kasa açılır, yükü o uzman taşır ve kaçış başlar.	The last sheet is the target room. With a specialist next to the marked crate, press Q and click the crate: it opens, that specialist carries the load and the escape begins.
+DÖNÜŞ	THE WAY BACK
+Şimdi aynı yoldan dön: işaretli giriş geçidine yürü, herkes kapıdayken GEÇ. Dönüşte süre dolarken tahtada kalan kaybedilir; yükü taşıyan düşerse yük yere düşer, başka biri alabilir. İlk odanın girişinden çıkınca baskın biter.	Now go back the same way: walk to the marked entry gate and GO THROUGH when everyone is at the gate. On the way back, anyone still on the board when time runs out is lost; if the carrier falls, the load drops and someone else can pick it up. The raid ends when you leave through the first room's entrance.
+UZMAN DÜŞTÜ	SPECIALIST DOWN
+Canı biten uzman yere düşer ve kartı kapanır. GEÇ'ten önce yanındaki bir uzman onu E (sürükle) ile kapıya taşıyabilir; geride kalan gövde baskından dönmez.	A specialist with no health left falls and their card closes. Before you GO THROUGH, a specialist next to them can drag them to the gate with E; a body left behind doesn't come back from the raid.
+Tur şeridinin son hücresindesin. Bu tur sonunda süre doluyor: kapıda bekleyen varsa oda onunla geçilir, kapıya varamayan geri çekilir; kapıda kimse yoksa ekip döner ve baskın başarısız biter.	You're on the last cell of the turn strip. Time runs out at the end of this turn: if someone is waiting at the gate, the room is passed with them and whoever can't reach the gate withdraws; if nobody is at the gate, the squad turns back and the raid fails.
+MAKİNE UYANIYOR	A MACHINE IS WAKING
+Kırmızı halkalı karelerde tur sonunda yeni makine uyanır. Uyanma karesinin üstünde duran uzman uyanmayı engeller ama hasar alır; ya da o kareden uzak dur.	A new machine wakes on the red-ringed tiles at the end of the turn. A specialist standing on a wake tile blocks it but takes damage; otherwise stay away from that tile.
+BÖLGE OLAYI	REGION EVENT
+Bu odada bölgenin olayı işliyor; kuralı KURALLAR kartında yazar. Tahtadaki işaretli kareler tur sonunda etkilenir; bir kareye yürümeden önce üstüne gelip önizlemedeki uyarıya bak.	The region's event is active in this room; its rule is on the RULES card. The marked tiles on the board are affected at the end of the turn; before walking onto a tile, hover over it and read the warning in the preview.
+YÜKÜ TAŞIYAN	THE CARRIER
+Kasadan alınan ikmali artık bir uzman taşıyor. Yük çıkışa varmadan baskın kazanılmaz. Taşıyan düşerse yük yerde kalır: o kareye yürüyen başka bir uzman alır.	A specialist is now carrying the supplies from the crate. The raid isn't won until the load reaches the exit. If the carrier falls, the load stays on the floor: another specialist who walks onto that tile picks it up.
+BURAYA BAS	PRESS HERE
+AÇ	OPEN
+SÜRÜKLE: MUTFAK	DRAG: KITCHEN
+YÜRÜ	WALK
+KASA	CRATE
+NİYET	INTENT
+ÇIKIŞ	EXIT
+BAK	LOOK
+SEÇ	SELECT
+Q · YETENEK	Q · ABILITY
+İLK KEZ	FIRST TIME
+rehber · önce baskın	guide · raid first
+Rehber: önce ilk baskını yap. Rehberi atlamak için notta EĞİTİMİ BİTİR'e bas.	Guide: do the first raid first. To skip the guide, press END TUTORIAL on the note.
+Fareyi mavi karelerde gezdir: yürüyeceği yol çizilir. İşaretli kareye tıkla. Her kişi turda bir hareket ve bir yetenek kullanır; Z son hamleyi geri alır.	Move the mouse over the blue tiles: the walking path is drawn. Click the marked tile. Each person gets one move and one ability per turn; Z undoes the last move.
+Q'ya bas, işaretli hedefe tıkla: EMP makineleri iter, Analist çeker, her uzman bitişik kasayı açar; önizleme sonucu gösterir. Hedef yoksa SONRAKİ.	Press Q and click a marked target: the EMP pushes machines, the Analyst pulls, any specialist opens an adjacent crate; the preview shows the result. No target? NEXT.
+Düşen uzmanı GEÇ'ten önce yanındaki biri E ile kapıya sürüklesin; dönüşte temiz odadaki düşeni ekip toplar.	Before you GO THROUGH, someone next to a fallen specialist drags them to the gate with E; on the way back the squad collects the fallen in a clear room.
+Tahta geçidin yönünden kayarak geldi; giriş kapın önceki geçidin karşısında. Ara odanın donanımını (anten ya da vana) Teknisyen'le kırarsan hedef odası kolaylaşır. Yine yeşil geçide git ve GEÇ.	The board slid in from the gate's direction; your entry door faces the previous gate. If the Technician breaks the middle room's equipment (antenna or valve), the target room gets easier. Head for the green gate again and GO THROUGH.
+Canı biten uzman yere düşer ve kartı kapanır. GEÇ'ten önce yanındaki bir uzman onu E (sürükle) ile kapıya taşıyabilir; taşınmayan gövde o odada yatar, ekip dönüşte oradan geçerken toplar. Baskın dönüşten önce biterse yerde kalır.	A specialist with no health left falls and their card closes. Before you GO THROUGH, a specialist next to them can drag them to the gate with E; a body that isn't carried stays in that room and the team picks it up when passing through on the way back. If the raid ends before the return, it stays on the floor.
+Tur şeridinin son hücresindesin. Hedef odasında süre dolarsa hedef kilitlenir ve baskın kaybedilir; dönüşte süre dolarken tahtada kalan uzman geride kalır ve düşmüş sayılır.	You're on the last cell of the turn strip. If time runs out in the target room, the target locks and the raid is lost; on the way back, a specialist still on the board when time runs out is left behind and counts as fallen.
+her vardiya {0} pafta · {1}	{0} sheets every shift · {1}
+kapanışta PAFTA {0}–{1} çıkar	SHEETS {0}–{1} drawn at closing
+Yaralı her vardiya kapanışında iyileşir: Boşta'da {0} can, görevdeyken {1} can (yarım tayında iyileşme yok). Yatan yaralı, canı dolsa bile yatış süresi bitene kadar çalışamaz. Gerekiyorsa sağlıklı birini saha rolüne geçir ve rol kitini de ona ver.	The wounded heal at every shift close: {0} HP in Idle, {1} HP on a job (no healing on half rations). A bedridden casualty can't work until their bed rest ends, even at full health. If needed, move someone healthy into the field role and give them the role kit.
+{0} · kapanışta +{1} can	{0} · +{1} HP at close

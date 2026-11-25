@@ -74,6 +74,11 @@ namespace Corrigible.Desk
         public double alarm, alarmThreshold;
         public int counterattacks;
         public string lastCounterattack;
+        /// <summary>
+        /// Son karşı saldırının bölgesinin çevrilmemiş (Türkçe kaynak) adı: rapor sonradan, simülasyonsuz ve başka dilde de
+        /// kurulduğu için harekâtın haritasındaki ad burada saklanır; boşsa paketin dünya haritası adı.
+        /// </summary>
+        public string lastCounterattackRegion;
         /// <summary>Biten kapı ziyareti sayısı (vardiya sonunda açılmadı sayılanları ayırmak için).</summary>
         public int doorVisits;
         public List<ShiftRoomSnapshot> rooms = new List<ShiftRoomSnapshot>();
@@ -121,6 +126,13 @@ namespace Corrigible.Desk
         public List<ShiftDoorEntry> door = new List<ShiftDoorEntry>();
         /// <summary>Bu vardiyada YZ karşı saldırdıysa teleksteki “YZ KARŞI SALDIRISI” satırının kodu (raporun kutusunda).</summary>
         public string counterCode;
+        /// <summary>
+        /// Tesis aşama 11 (§8.1): kapanışta kurulan kuşatmanın sektörü ve bölgesinin kaynak adı (<c>Simulation.RegionSourceName</c>); bu
+        /// vardiya düşen kuşatılmış kanat (kapanışta kendiliğinden ya da vardiya içinde BIRAK ile) ve bölgesi; kendiliğinden mi. Varsayılan
+        /// boş: eski raporlar aynen okunur.
+        /// </summary>
+        public string siege, siegeRegion, siegeFall, siegeFallRegion;
+        public bool siegeAuto;
     }
 
     // ---------- Görünüm verisi ----------
@@ -213,5 +225,9 @@ namespace Corrigible.Desk
         public bool TeamReturned;
         /// <summary>Bu vardiyada YZ karşı saldırdıysa teleks iletisi; yoksa null.</summary>
         public string Counterattack;
+        /// <summary>Tesis aşama 11: kapanışta kurulan kuşatmanın teleks iletisi ("KARŞI SALDIRI BEKLİYOR"); yoksa null.</summary>
+        public string Siege;
+        /// <summary>Kutu basılınca haritada karşı saldırı dizisi oynar (kanat bu kapanışta düştü; BIRAK'ta dizi komutta oynadı).</summary>
+        public bool CounterMap;
     }
 }

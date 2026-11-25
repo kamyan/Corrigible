@@ -698,8 +698,8 @@ namespace Corrigible.Tests
             for (int i = 0; i < 7; i++)
             {
                 sim.Shelter.Supplies = 90;
-                // Başarılı ama kayıplı baskın: Teknisyen geride kalır (kiti de gider), EMP uzmanı düşer
-                Raid(sim, true, 2, 1, 0);
+                // Başarılı ama kayıplı baskın: Teknisyen geride kalır (kiti de gider), EMP uzmanı düşer ve tesisten çıkarılır (yatar)
+                Raid(sim, true, 2, 3, 0);
                 if (sim.PendingShelterEvent != null) Decide(sim, ShelterEventData.SafeOption(sim.PendingShelterEvent.Kind));
                 Close(sim);
                 seen.Add(Pending(sim));
@@ -836,7 +836,7 @@ namespace Corrigible.Tests
             FillSquad(sim);
             StartRaid(sim);
             Assert.AreSame(e, sim.PendingShelterEvent, "baskın emri olayı kapatmaz");
-            ResolveRaid(sim, false, 2, 0, 0);
+            ResolveRaid(sim, false, 1, 0, 0);
             Assert.IsFalse(sim.Board.Person(e.PersonId).Alive);
             Assert.IsNull(sim.PendingShelterEvent);
             Assert.AreEqual("kapandi", sim.ShelterEvents.Log.Last().Kind);
@@ -1564,21 +1564,37 @@ namespace Corrigible.Tests
                     var kit = sim.Board.Equipment.FirstOrDefault(x => x.Kind == "kit_" + role && !x.Bound);
                     if (kit != null) sim.EquipResident(kit.Id, p.Id);
                 }
+                // Ölen saha kişisinin kiti kaybolur: eksik rol kiti için iş emri verilir (tek kipte açık emir eksik kiti de ürettirir)
+                if (sim.Board.Orders.Count == 0)
+                {
+                    string missing = PlanningBoardData.FieldJobs.Select(r => "kit_" + r).FirstOrDefault(sim.BoardKitMissing);
+                    if (missing != null) sim.QueueProduction(missing);
+                }
+                // Tek kip: bölgeyi tamamlayan baskının sunucu ödülü sonraki emri kilitler; rastgele tarif ya da kazanım seçilir
+                string reward = sim.Facility?.PendingReward;
+                if (!string.IsNullOrEmpty(reward))
+                    Assert.IsTrue(sim.ChooseServerReward(reward, rng.Next(2) == 0 ? FacilityGear.ChoiceRecipe : FacilityGear.ChoicePerk).Ok);
                 var sector = sim.NextLiberationSector(sim.S.Liberation.CurrentRegion);
                 if (sector != null && sim.LiberationRaidCheck(sector.Id) == null)
                 {
                     Assert.IsTrue(sim.StartLiberationRaid(sector.Id).Ok);
+                    // Baskın oda zinciriyle biter (tek kip): kader ve hasar rastgele. Zar 0 ölür (başarıda geride kalır, geri çekilmede
+                    // yerde kalır); zar 1 başarıda düşüp tesisten çıkarılır, geri çekilmede ağır yaralı (can 1) döner. Başarı için en az
+                    // biri ayakta döner
                     var squad = sim.S.Raid.Params.Squad;
-                    var result = new RaidResult { Success = rng.NextDouble() < win, CiviliansLeft = 3, Collateral = rng.Next(collateral) };
+                    bool success = rng.NextDouble() < win;
+                    int broken = rng.Next(collateral);
+                    var fates = new int[squad.Count];
+                    var hurt = new int[squad.Count];
                     for (int i = 0; i < squad.Count; i++)
                     {
                         int roll = rng.Next(8);
-                        result.Hp.Add(roll <= 1 ? 0 : Math.Max(1, squad[i].Hp - rng.Next(2)));
-                        result.Armor.Add(squad[i].Armor);
-                        if (roll == 0) result.Left.Add(i);
-                        if (roll <= 1) result.Down++;
+                        int lost = roll <= 1 ? 0 : rng.Next(2);
+                        fates[i] = roll > 1 ? 0 : roll == 0 ? (success ? 2 : 1) : success ? 3 : 0;
+                        hurt[i] = roll == 1 && !success ? squad[i].Hp - 1 : squad[i].Hp > 1 ? lost : 0;
                     }
-                    Assert.IsTrue(sim.ResolveRaid(result).Ok);
+                    if (success && !fates.Contains(0)) fates[0] = 0;
+                    FacilityKit.ResolveRaid(sim, success, fates, hurt, B => { if (B.Room.Type == RoomType.Entry && !B.Escape) B.Collateral = broken; });
                     if (sim.S.Ending != null) return;
                 }
                 DecideRandomly(sim, rng);
@@ -1641,7 +1657,7 @@ namespace Corrigible.Tests
 
                 var record = RoundTrip(sim);
                 Assert.AreEqual(GameRecord.CurrentVersion, record.version);
-                Assert.AreEqual(17, record.version);
+                Assert.AreEqual(22, record.version, "22: görevde iyileşme; 21: tesis baskını tek kip; 20: g5 paket yerleşimi; 19: tesis oda zinciri (raid_room), tesis parmak izi");
                 Assert.AreEqual(sim.Record.commands.Count, record.commands.Count);
                 Assert.IsTrue(record.balance.shelterEventsEnabled);
                 Assert.AreEqual(sim.B.isolationFindChance, record.balance.isolationFindChance, "yeni denge alanları kayıtla taşınır");
@@ -1780,7 +1796,7 @@ namespace Corrigible.Tests
             Assert.AreEqual(3, d.desertStreak);
             Assert.AreEqual(4, d.halfRationShifts);
             Assert.AreEqual(0.5, d.halfRationFactor);
-            Assert.AreEqual(17, GameRecord.CurrentVersion);
+            Assert.AreEqual(22, GameRecord.CurrentVersion, "22: görevde iyileşme; 21: tesis baskını tek kip; 20: g5 paket yerleşimi; 19: tesis oda zinciri (raid_room), tesis parmak izi");
         }
     }
 }

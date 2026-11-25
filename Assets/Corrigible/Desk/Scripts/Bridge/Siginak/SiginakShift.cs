@@ -45,6 +45,8 @@ namespace Corrigible.Desk.Bridge
         ShiftReportInput pending, shown;
         int closing, browseIndex = -1;
         bool holdCounters, fresh;
+        /// <summary>Taze raporun kutusu basılınca haritada karşı saldırı dizisi oynar (tesis aşama 11: kuşatmada ve BIRAK'ta oynamaz).</summary>
+        bool counterMap;
         float flashUntil;
         System.Action flashDone;
 
@@ -140,7 +142,7 @@ namespace Corrigible.Desk.Bridge
                     if (pending != null)
                         pending.code = telex.Post(closing, Loc.F("VARDİYA {0:000} KAPANDI", closing), Loc.T("Rapor basılıyor…"), TelexKind.Info).code;
                     // Karşı saldırı: rapordan önce duvardaki alarm lambası üç kez yanar (alçak uğultu)
-                    if (pending != null && pending.after.counterattacks > pending.before.counterattacks && !skipped)
+                    if (pending != null && ShiftReportBuilder.Alarmed(pending) && !skipped)
                     {
                         desk.FlashAlarm();
                         Sfx.Play(Corrigible.Game.Audio.Cue.AlarmHum, 0.7f);
@@ -172,6 +174,13 @@ namespace Corrigible.Desk.Bridge
                 pending.counterCode = telex.Post(surface.Shift, Loc.T("YZ KARŞI SALDIRISI"), data.Counterattack, TelexKind.Alarm).code;
                 data = ShiftReportBuilder.Build(pending);
             }
+            // Tesis aşama 11 (§8.1): kapanışta kurulan kuşatma "KARŞI SALDIRI BEKLİYOR" (kutuda karşı saldırı yoksa kod bu satırın)
+            if (data.Siege != null)
+            {
+                string code = telex.Post(surface.Shift, FacilityDefenseText.PendingStatus, data.Siege, TelexKind.Alarm).code;
+                if (pending.counterCode == null) { pending.counterCode = code; data = ShiftReportBuilder.Build(pending); }
+            }
+            counterMap = data.CounterMap;
             tray.Add(pending);
             desk.SaveNotes();
             shown = pending;
@@ -182,13 +191,13 @@ namespace Corrigible.Desk.Bridge
             report.Show(data, false, !skipped);
             PinSlips(data);
             map.ReleaseFigure(skipped);
-            if (data.Counterattack != null && skipped) map.PlayCounterattack(0);
+            if (data.CounterMap && skipped) map.PlayCounterattack(0);
             if (data.TeamReturned && Sim?.S.Teams.FirstOrDefault() is TeamState team)
             {
                 string name = DeskText.Upper(LiberationMapBuilder.TeamName(team));
                 bool front = map.State != null && map.State.FrontOpen;
                 telex.Post(surface.Shift, front ? Loc.F("{0} CEPHEDE", name) : Loc.F("{0} HAZIR", name),
-                    front ? Loc.F("Ekip toparlandı · {0}", GameData.Region(map.State.Front).Name) : Loc.T("Ekip toparlandı · sıradaki cepheyi seç"),
+                    front ? Loc.F("Ekip toparlandı · {0}", Sim.RegionName(map.State.Front)) : Loc.T("Ekip toparlandı · sıradaki cepheyi seç"),
                     TelexKind.Done);
             }
         }
@@ -211,7 +220,7 @@ namespace Corrigible.Desk.Bridge
         void CounterStamped()
         {
             Sfx.Play(Corrigible.Game.Audio.Cue.StampHeavy, 0.9f);
-            if (fresh) map.PlayCounterattack(0.12f);
+            if (fresh && counterMap) map.PlayCounterattack(0.12f);
         }
 
         /// <summary>Özet gözünün üzerine gelince ilgili sayaç (ve fişi) kalkar: ERZAK, FON; alarm gözü duvardaki panoyu anar.</summary>

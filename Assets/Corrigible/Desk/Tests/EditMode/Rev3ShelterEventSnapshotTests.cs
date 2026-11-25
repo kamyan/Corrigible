@@ -150,8 +150,8 @@ namespace Corrigible.Desk.Tests
         {
             var sim = Ready();
             Open(sim, "erzak_azaliyor");
-            // Core gerekçesi ve tutanağın yeri (kayıttan devamda OLAY teleksi yeniden basılmaz)
-            string issue = Loc.F("{0} Tutanak EVRAK tepsisinde.", sim.ShelterEventPrintCheck());
+            // Core gerekçesi ve tutanağın yeri: kapıdan gelir, okunup bırakılınca tepsiye iner (kayıttan devamda OLAY teleksi yeniden basılmaz)
+            string issue = Loc.F("{0} Tutanak kapının çekmecesinde.", sim.ShelterEventPrintCheck());
             Assert.AreEqual(issue, ShelterEventSnapshotBuilder.PrintIssue(sim));
             var (plate, line) = SiginakShiftClose.LockReason(false, false, false, false, false, null, ShelterEventSnapshotBuilder.PrintIssue(sim));
             Assert.AreEqual(Loc.T("olay bekliyor"), plate);

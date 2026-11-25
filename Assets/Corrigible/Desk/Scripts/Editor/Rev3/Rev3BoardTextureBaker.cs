@@ -84,6 +84,38 @@ namespace Corrigible.Desk.EditorTools
             "icon_clock",
         };
 
+        /// <summary>
+        /// Tesis aşama 9 (K20): yedi ekipmanın piktogramı (<c>picto_&lt;tür&gt;</c>, BoardLayout.GearKinds sırası) ve erzak bedelinin girdi
+        /// simgesi (<c>icon_erzak</c>). Kartlar bunları adla <c>DeskSprites</c>'tan okur (dizi alanları ve prefab'lar değişmez); aynı
+        /// çizgi kalınlığı ve tek renk mürekkep düzeni.
+        /// </summary>
+        public static readonly string[] GearSpriteNames =
+        {
+            "picto_wire_kit", "picto_charge", "picto_turret", "picto_decoy", "picto_winch", "picto_clamp", "picto_dog", "icon_erzak",
+        };
+
+        /// <summary>Yalnız aşama 9 simgelerini üretir ve içe aktarır (var olan sprite'lara dokunmaz).</summary>
+        public static string BakeGearSprites()
+        {
+            Directory.CreateDirectory(SpriteDir);
+            int n = 0;
+            foreach (var name in GearSpriteNames)
+            {
+                string path = SpriteDir + "/" + name + ".png";
+                var paint = IconSprite(GearIconOf[name]);
+                Write(path, paint);
+                ImportSprite(path, IconPx / 10f, Vector4.zero, Mathf.Max(paint.W, paint.H));
+                n++;
+            }
+            return n + " ekipman simgesi";
+        }
+
+        static readonly Dictionary<string, string> GearIconOf = new Dictionary<string, string>
+        {
+            { "picto_wire_kit", "wire_kit" }, { "picto_charge", "charge" }, { "picto_turret", "turret" }, { "picto_decoy", "decoy" },
+            { "picto_winch", "winch" }, { "picto_clamp", "clamp" }, { "picto_dog", "dog" }, { "icon_erzak", "erzak" },
+        };
+
         /// <summary>Kit yığını türü → piktogram sprite'ı (BoardLayout.KitKinds sırası).</summary>
         public static readonly string[] PictogramSprites = { "picto_kit_tek", "picto_kit_emp", "picto_kit_ana", "picto_armor", "picto_medkit", "picto_emp_cell" };
         /// <summary>Hammadde türü → simge sprite'ı (BoardLayout.MaterialKinds sırası).</summary>
@@ -927,6 +959,69 @@ namespace Corrigible.Desk.EditorTools
                     FillR(4, 0.9f, 2, 1.1f);
                     FillP(5.6f, 3.2f, 3.9f, 5.9f, 5.2f, 5.9f, 4.4f, 8.3f, 6.3f, 5.2f, 5, 5.2f);
                     break;
+                // ---- tesis aşama 9: ekipman piktogramları ve erzak
+                case "wire_kit":
+                    // Örme seti: iki direk arasında zikzak tel, altta kalas
+                    StrokeP(false, 1.4f, 1.2f, 1.4f, 7.2f);
+                    StrokeP(false, 8.6f, 1.2f, 8.6f, 7.2f);
+                    StrokeP(false, 1.4f, 2.2f, 3.2f, 5.2f, 5, 2.2f, 6.8f, 5.2f, 8.6f, 2.2f);
+                    StrokeR(1, 7.8f, 8, 1.6f);
+                    break;
+                case "charge":
+                    // Dinamit lokumu: üç çubuk, fitil ve kıvılcım
+                    StrokeR(1.2f, 4.4f, 2.2f, 4.8f);
+                    StrokeR(3.4f, 4.4f, 2.2f, 4.8f);
+                    StrokeR(5.6f, 4.4f, 2.2f, 4.8f);
+                    StrokeP(false, 4.5f, 4.4f, 5.4f, 2.8f, 7.2f, 2.4f);
+                    FillP(8.2f, 1.2f, 8.5f, 2.1f, 9.4f, 2.4f, 8.5f, 2.7f, 8.2f, 3.6f, 7.9f, 2.7f, 7, 2.4f, 7.9f, 2.1f);
+                    break;
+                case "turret":
+                    // Taret: üç ayaklı sehpa, gövde ve namlu
+                    StrokeR(2.2f, 2.8f, 4.4f, 3.2f);
+                    StrokeP(false, 6.6f, 4.4f, 9.4f, 4.4f);
+                    StrokeP(false, 4.4f, 6, 4.4f, 7.2f);
+                    StrokeP(false, 4.4f, 7.2f, 1.6f, 9.2f);
+                    StrokeP(false, 4.4f, 7.2f, 7.2f, 9.2f);
+                    StrokeP(false, 4.4f, 7.2f, 4.4f, 9.2f);
+                    break;
+                case "decoy":
+                    // Yem: tekerlekli kukla (baş, gövde, iki teker)
+                    Arc(5, 2.2f, 1.4f, 0, Mathf.PI * 2);
+                    StrokeP(true, 2.8f, 4.2f, 7.2f, 4.2f, 7.2f, 7.2f, 2.8f, 7.2f);
+                    StrokeP(false, 2.8f, 5.2f, 1.2f, 6.4f);
+                    StrokeP(false, 7.2f, 5.2f, 8.8f, 6.4f);
+                    Disc(3.6f, 8.6f, 0.9f);
+                    Disc(6.4f, 8.6f, 0.9f);
+                    break;
+                case "winch":
+                    // Vinç: makara, halat ve kanca
+                    Arc(3.6f, 4.2f, 2.6f, 0, Mathf.PI * 2);
+                    Disc(3.6f, 4.2f, 0.8f);
+                    StrokeP(false, 3.6f, 1.6f, 8.4f, 1.6f, 8.4f, 6.4f);
+                    Arc(7.6f, 7.4f, 1, -0.2f, Mathf.PI * 1.1f);
+                    StrokeP(false, 1.2f, 9.2f, 6, 9.2f);
+                    break;
+                case "clamp":
+                    // Kumanda kelepçesi: C kelepçe, vida ve kol
+                    StrokeP(false, 7.6f, 1.6f, 2, 1.6f, 2, 8.4f, 7.6f, 8.4f);
+                    StrokeP(false, 7.6f, 3.4f, 7.6f, 6.6f);
+                    StrokeP(false, 5.8f, 6.6f, 9.4f, 6.6f);
+                    FillR(6.6f, 2.6f, 2, 1);
+                    break;
+                case "dog":
+                    // Köpek başı: kulaklar, ağız ve gözler
+                    StrokeP(true, 1.6f, 3.4f, 2.6f, 1, 4, 2.8f, 6, 2.8f, 7.4f, 1, 8.4f, 3.4f, 8.4f, 6.2f, 6.8f, 8.8f, 3.2f, 8.8f, 1.6f, 6.2f);
+                    Disc(3.8f, 4.6f, 0.6f);
+                    Disc(6.2f, 4.6f, 0.6f);
+                    FillP(4.2f, 6.4f, 5.8f, 6.4f, 5, 7.6f);
+                    break;
+                case "erzak":
+                    // Erzak: kulplu kutu, bağ şeridi
+                    StrokeR(1.4f, 3.4f, 7.2f, 5.6f);
+                    StrokeP(false, 3.8f, 3.4f, 3.8f, 1.6f, 6.2f, 1.6f, 6.2f, 3.4f);
+                    StrokeP(false, 1.4f, 5.6f, 8.6f, 5.6f);
+                    FillR(4.4f, 5, 1.2f, 4);
+                    break;
                 case "person":
                     Disc(5, 3.2f, 2.2f);
                     FillP(1.4f, 9.6f, 1.6f, 7.2f, 3, 5.8f, 7, 5.8f, 8.4f, 7.2f, 8.6f, 9.6f);
@@ -990,6 +1085,7 @@ namespace Corrigible.Desk.EditorTools
             var salmon = Rgb(240, 150, 120);
             foreach (var job in BoardLayout.Jobs)
             {
+                if (!BoardLayout.PocketOpen(job, false)) continue;   // GÖZETİM yalnız cebi açıkken; dokuya basılmaz
                 var c = BoardLayout.CardCentre(job);
                 float x0 = c.x - 40, y0 = c.y - 60;
                 p.StrokeRect(x0, y0, 80, 120, 0.55f, Cream, 0.55f, 2.2f, 1.6f);
@@ -1001,12 +1097,10 @@ namespace Corrigible.Desk.EditorTools
                     p.StrokeRect(x0, y0 + 121 + i * 14, 80, 13, 0.55f, i == 0 && field ? salmon : Cream, i == 0 && field ? 0.7f : 0.40f, 2.2f, 1.6f);
             }
 
-            // eğitim konuları: yedi satır, sekiz ince çizgi
-            var row = BoardLayout.TopicRow(0);
-            for (int i = 0; i <= 7; i++) p.HLine(row.x, row.y + row.height * i, row.x + 72, Cream, 0.4f, 0.22f);
+            // 2026-11-24: EĞİTİM bölümü kaldırıldı (konu satırları ve cep hattı basılmaz; cep PocketOpen ile kapalı)
 
             // Boşta yelpaze izi: dört kesikli kart hattı ve sola ok
-            var d = BoardLayout.Deck;
+            var d = BoardLayout.Deck(false);
             for (int i = 1; i <= 4; i++) p.StrokeRect(d.x - 40 - i * 78, d.y - 60, 80, 120, 0.55f, Cream, 0.30f - i * 0.05f, 2.2f, 1.6f);
             p.HLine(d.x - 52, d.y + 74, d.x - 300, Cream, 1f, 0.35f);
             var head = p.MaskMm(d.x - 306, d.y + 69, d.x - 296, d.y + 79);

@@ -43,6 +43,11 @@ namespace Corrigible.Desk
         bool NotMember(BoardCardView c) => !members.Contains(c);
 
         public bool IsOpen => open;
+        /// <summary>
+        /// GÖZETİM cebi açık mı (oyunda hep; <see cref="BoardView3D"/> her çizimde anlık görüntüden yazar): deste ve açık el
+        /// <see cref="BoardLayout.Deck(bool)"/>'a göre dizilir. Varsayılan kapalı: bugünkü yer.
+        /// </summary>
+        public bool WatchOpen { get; set; }
         /// <summary>Destedeki kartlar, üstten alta (alınan kart dahil değil).</summary>
         public IReadOnlyList<BoardCardView> Cards => cards;
         public BoardCardView Top => cards.Count > 0 ? cards[0] : null;
@@ -173,7 +178,7 @@ namespace Corrigible.Desk
 
         int SlotCount => gapIndex >= 0 ? gapCount : cards.Count;
         int SlotOf(int i) => gapIndex >= 0 && i >= gapIndex ? i + 1 : i;
-        Vector3 PoseOf(int j, int n) => open ? DeckMotion.OpenLocal(j, n) : DeckMotion.ClosedLocal(j, n);
+        Vector3 PoseOf(int j, int n) => open ? DeckMotion.OpenLocal(j, n, WatchOpen) : DeckMotion.ClosedLocal(j, n, WatchOpen);
 
         void Slide(BoardCardView c, Vector3 target)
         {
@@ -226,7 +231,7 @@ namespace Corrigible.Desk
                 bool inFlight = c.Moving && tracks.TryGetValue(c, out var tr) && now >= tr.Start && now < tr.End;
                 if (inFlight)
                 {
-                    float full = (DeckMotion.OpenLocal(j, n) - DeckMotion.ClosedLocal(j, n)).magnitude;
+                    float full = (DeckMotion.OpenLocal(j, n, WatchOpen) - DeckMotion.ClosedLocal(j, n, WatchOpen)).magnitude;
                     float seconds = DeckMotion.ReverseSeconds((basePos - target).magnitude, full);
                     c.MoveTo(target, 0, seconds, CardEase.EaseInOut);
                     tracks[c] = new Track { Start = now, End = now + seconds };
@@ -279,12 +284,12 @@ namespace Corrigible.Desk
         public static float MinReverseS => Num("motion.board.deckReverseMinS", 0.08f);
 
         /// <summary>Kapalı destede j. kartın (0 = üst) model yerelindeki pozu.</summary>
-        public static Vector3 ClosedLocal(int j, int n) =>
-            BoardLayout.MmToLocal(BoardLayout.DeckClosed(j), BoardLayout.CardZ(BoardLayout.DeckClosedLevel(j, Mathf.Max(1, n))));
+        public static Vector3 ClosedLocal(int j, int n, bool watchOpen) =>
+            BoardLayout.MmToLocal(BoardLayout.DeckClosed(j, watchOpen), BoardLayout.CardZ(BoardLayout.DeckClosedLevel(j, Mathf.Max(1, n))));
 
         /// <summary>Açık elde j. kartın pozu (üst kart tepside, diğerleri sola).</summary>
-        public static Vector3 OpenLocal(int j, int n) =>
-            BoardLayout.MmToLocal(BoardLayout.HandOpen(j, Mathf.Max(1, n)), BoardLayout.CardZ(BoardLayout.HandLevel(j, Mathf.Max(1, n))));
+        public static Vector3 OpenLocal(int j, int n, bool watchOpen) =>
+            BoardLayout.MmToLocal(BoardLayout.HandOpen(j, Mathf.Max(1, n), watchOpen), BoardLayout.CardZ(BoardLayout.HandLevel(j, Mathf.Max(1, n))));
 
         /// <summary>Açılışta j. kartın gecikmesi: üstten başlar, j·0,07 s.</summary>
         public static float OpenDelay(int j, int n) => BoardLayout.DeckStart(Mathf.Clamp(j, 0, Mathf.Max(0, n - 1)));

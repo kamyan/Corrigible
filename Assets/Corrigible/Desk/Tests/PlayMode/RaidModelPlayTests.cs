@@ -11,7 +11,8 @@ using UnityEngine.TestTools;
 using Object=UnityEngine.Object;
 namespace Corrigible.Desk.Tests
 {
-    /// <summary>R11: gerçek eklemeli sahne; isimli kadro, komut/geri al, menteşeler ve kalıcı kayıp onayı.</summary>
+    /// <summary>R11: gerçek eklemeli sahne; isimli kadro, komut/geri al, menteşeler ve kalıcı kayıp onayı. Tek kip: hepsi ilk tesis odasında
+    /// (giriş); kaçışın son turu girişte de geçerli bir tesis durumudur (dönüşün son odası).</summary>
     public sealed class RaidModelPlayTests
     {
         LiveRaidDataSource source;
@@ -21,6 +22,7 @@ namespace Corrigible.Desk.Tests
             yield return BoardPlayKit.LoadDesk();var next=BoardPlayKit.Sim.NextLiberationSector(BoardPlayKit.Sim.S.Liberation.CurrentRegion);
             var started=BoardPlayKit.Game.StartLiberationRaid(next.Id);Assert.IsTrue(started.Ok,started.Msg);
             yield return BoardPlayKit.WaitFor(()=>Object.FindFirstObjectByType<LiveRaidDataSource>()?.State!=null,8,"baskın sahnesi yüklenmedi");source=Object.FindFirstObjectByType<LiveRaidDataSource>();
+            Assert.IsNotNull(source.State.Room,"tek kip: ilk tesis odası (giriş)");Assert.AreEqual(RoomType.Entry,source.State.Room.Type);
             yield return BoardPlayKit.WaitSeconds(.6f);
         }
         [UnityTearDown] public IEnumerator Teardown(){if(RaidLauncher.IsRaidLoaded){var unload=UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync("Baskin");while(unload!=null&&!unload.isDone)yield return null;}yield return BoardPlayKit.TearDown();}

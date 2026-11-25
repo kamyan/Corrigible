@@ -35,6 +35,11 @@ namespace Corrigible.Desk
         public string Trait, Signature;
         /// <summary>Son karşı saldırıda yeniden işgal edilen ve henüz geri alınmamış sektörün sırası; yoksa −1.</summary>
         public int Reoccupied = -1;
+        /// <summary>Tesis aşama 11: bekleyen ya da süren karşı saldırının (kuşatma) kuşattığı sektörün sırası; yoksa −1. İşaret ✓ kalır,
+        /// tehdit renginde nabız atar; cephede "KUŞATMA" damgası.</summary>
+        public int Siege = -1;
+        /// <summary>Tesis aşama 11: bu vardiya kuşatmanın karar vardiyası (savun ya da bırak).</summary>
+        public bool SiegeDue;
     }
 
     /// <summary>Ekip figürünün yeri ve hâli (Ekip-figuru.md › yeri oyun durumundan gelir). Kayda yazılmaz.</summary>
@@ -83,6 +88,8 @@ namespace Corrigible.Desk
         public bool Highlight;
         /// <summary>Karşı saldırıda yeniden işgal edildi (kırmızı ✕ işareti; damga yine sırasına göre).</summary>
         public bool Reoccupied;
+        /// <summary>Tesis aşama 11: kuşatılan kanat (✓ işareti, "KUŞATMA" damgası).</summary>
+        public bool Siege;
         /// <summary>Üzerine gelince etiket satırı (kilitli satır: neden seçilmediği).</summary>
         public string Hover;
     }
@@ -96,6 +103,8 @@ namespace Corrigible.Desk
         public string Glyph, Label, Value, HoverTitle, HoverLine;
         /// <summary>Tehdit satırı: işaret <c>threat_tier_n</c>, değer kırmızı CP.</summary>
         public int Tier;
+        /// <summary>Tesis aşama 10 (ÖNLEM satırı): değer kırmızı (tehdit rengi) ama tehdit yazı rolü değil, mürekkep işaretiyle.</summary>
+        public bool Alert;
     }
 
     /// <summary>Ödül ızgarasının bir hücresi: yeşil miktar (“+10”) ve birim (“fon”).</summary>
@@ -155,6 +164,13 @@ namespace Corrigible.Desk
         public string Reason, Shortfall;
         /// <summary>Bilgi fişi metni (görev, bedel, ekip ve eylem yerine).</summary>
         public string Info;
+        /// <summary>
+        /// Tesis aşama 11: fiş kuşatma kipinde (asıl eylem SAVUN; kadro raporu savunma emrini verir). İkinci düğme BIRAK
+        /// (<see cref="HasYield"/>): etiket, bedel ("güven −1"), açık mı, ilk tıktan sonra onay bekliyor mu ve kapalıysa gerekçe.
+        /// </summary>
+        public bool Siege;
+        public bool HasYield, YieldEnabled, YieldArmed;
+        public string Yield, YieldCost, YieldReason;
     }
 
     /// <summary>Kadro raporunun bir satırı: rol harfi (disk), uzmanın adı ve durumu; sağlamsa yeşil, değilse kırmızı.</summary>
@@ -174,6 +190,8 @@ namespace Corrigible.Desk
     public sealed class SquadReportData
     {
         public bool Planning;
+        /// <summary>Tesis aşama 11: savunma emrinin raporu (düğme "SAVUNMAYA ÇIK", fon yok).</summary>
+        public bool Siege;
         public string Number, Warning;
         public string RegionId, Head, Region, Sector, Action, ActionCost, Cancel;
         public readonly List<SquadReportRow> Rows = new List<SquadReportRow>();

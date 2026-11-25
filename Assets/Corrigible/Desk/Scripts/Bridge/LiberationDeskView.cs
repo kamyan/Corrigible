@@ -38,31 +38,42 @@ namespace Corrigible.Desk.Bridge
         [SerializeField] SiginakShelterEvent shelterEvent;
         [Tooltip("Son şalter (KOS aşama 6): emir kâğıdı açıkken masa kilitli; Esc önce ona gider.")]
         [SerializeField] SiginakLastSwitch lastSwitch;
+        [Tooltip("Tesis aşama 9: sunucu ödülünün kâğıdı; elde ya da hareket hâlindeyken masa kilitli, kâğıdın kendisi tıklanır kalır.")]
+        [SerializeField] SiginakServerReward serverReward;
 
         bool storyOpen;
         Simulation Sim => game != null ? game.Sim : null;
         /// <summary>Baskın sonucu henüz okunmadı: operasyon raporu açılacak ya da açık (K3 dizisi onu bekler).</summary>
         public bool RaidReportPending => Sim != null && source != null && Sim.S.Raid == null && Sim.S.RaidLog.Count > source.State.RaidLogSeen;
-        public bool InputBlocked => BlockedExceptDoor || DoorBusy || EventBusy || LastSwitchBusy;
+        /// <summary>Haritada özgür kalan bölgenin K3 dizisi sırada (<see cref="SiginakMap.RevealPending"/>); kapıdan gelen sunucu ödülü onu bekler.</summary>
+        public bool MapRevealPending => siginakMap != null && siginakMap.isActiveAndEnabled && siginakMap.RevealPending;
+        public bool InputBlocked => BlockedExceptDoor || DoorBusy || EventBusy || LastSwitchBusy || RewardBusy;
         /// <summary>Son şalterin kolu inik ya da emir kâğıdı açık (KOS aşama 6).</summary>
         public bool LastSwitchBusy => lastSwitch != null && lastSwitch.isActiveAndEnabled && lastSwitch.Busy;
         /// <summary>Dolabın kendi odağı hariç, menüye dönüşü engelleyen kâğıt ve işlem kilitleri.</summary>
-        public bool MenuExitBlocked => SceneBlocked || ShiftBusy || DoorBusy || EventBusy || LastSwitchBusy ||
+        public bool MenuExitBlocked => SceneBlocked || ShiftBusy || DoorBusy || EventBusy || LastSwitchBusy || RewardBusy ||
             siginakMap != null && (siginakMap.SlipOpen || siginakMap.FrontSlipOpen || siginakMap.SquadReportOpen);
         /// <summary>Kapının kendisi dışındaki kilitler (kapı ancak bunlar yokken çalar ve açılır).</summary>
-        public bool BlockedExceptDoor => OtherBlocked || ShiftBusy || EventBusy;
+        public bool BlockedExceptDoor => OtherBlocked || ShiftBusy || EventBusy || RewardBusy;
         /// <summary>
         /// Vardiya kapanışının kendisi dışındaki kilitler (Revizyon 3 · R19): fiş eldeyken ya da sürüklenirken masa kilitlidir ama
         /// fişin kendisi tıklanır ve EVRAK'a bırakılabilir kalır. <see cref="InputBlocked"/>'ın alt kümesidir.
         /// </summary>
-        public bool BlockedExceptShift => OtherBlocked || DoorBusy || EventBusy;
+        public bool BlockedExceptShift => OtherBlocked || DoorBusy || EventBusy || RewardBusy;
         /// <summary>
         /// Olay tutanağının kendisi dışındaki kilitler (KOS aşama 4): tutanak eldeyken masa kilitlidir ama kâğıdın kendisi tıklanır kalır.
         /// <see cref="InputBlocked"/>'ın alt kümesidir.
         /// </summary>
-        public bool BlockedExceptEvent => OtherBlocked || ShiftBusy || DoorBusy;
+        public bool BlockedExceptEvent => OtherBlocked || ShiftBusy || DoorBusy || RewardBusy;
         /// <summary>Olay tutanağı elde ya da hareket hâlinde, karar izi basılıyor.</summary>
         public bool EventBusy => shelterEvent != null && shelterEvent.isActiveAndEnabled && shelterEvent.Busy;
+        /// <summary>
+        /// Tesis aşama 9: ödül kâğıdının kendisi dışındaki kilitler (kâğıt eldeyken masa kilitlidir ama kâğıdın kendisi tıklanır kalır).
+        /// <see cref="InputBlocked"/>'ın alt kümesidir.
+        /// </summary>
+        public bool BlockedExceptReward => OtherBlocked || ShiftBusy || DoorBusy || EventBusy;
+        /// <summary>Tesis aşama 9: ödül kâğıdı elde ya da hareket hâlinde, seçim izi basılıyor.</summary>
+        public bool RewardBusy => serverReward != null && serverReward.isActiveAndEnabled && serverReward.Busy;
 
         bool DoorBusy => siginakDoor != null && siginakDoor.isActiveAndEnabled && siginakDoor.Busy ||
             admission != null && admission.isActiveAndEnabled && admission.Busy;
@@ -162,6 +173,33 @@ namespace Corrigible.Desk.Bridge
         }
 
         /// <summary>
+        /// Tesis aşama 11 (§8.3): kuşatılan kanadı savun (siege_defend). Teleks "EMİR UYGULANDI · Savunma emri: {bölge} · {sektör}";
+        /// yapılamazsa Core'un gerekçesi. Baskın sahnesi süren baskından açılır (savunma aynı zincirle oynanır).
+        /// </summary>
+        public ActResult DefendSector()
+        {
+            if (InputBlocked || Sim == null) return null;
+            string why = Sim.DefendSectorCheck();
+            string sector = Sim.PendingSiege?.Sector;
+            string done = FacilityDefenseText.DefendDone(Sim, sector);
+            return Report(game.DefendSector(), why, done, true);
+        }
+
+        /// <summary>
+        /// Tesis aşama 11 (§8.3): kuşatılan kanadı bırak (siege_yield). Teleks "EMİR UYGULANDI · Kanat bırakıldı: {bölge} · {sektör} ·
+        /// güven −{n}"; bırakma harekâtı bitirdiyse (güven tükendi) Core'un iletisi.
+        /// </summary>
+        public ActResult YieldSector()
+        {
+            if (InputBlocked || Sim == null) return null;
+            string why = Sim.YieldSectorCheck();
+            string sector = Sim.PendingSiege?.Sector;
+            string done = FacilityDefenseText.YieldDone(Sim, sector);
+            var result = game.YieldSector();
+            return Report(result, why, done, Sim.S.Ending == null);
+        }
+
+        /// <summary>
         /// Kapıdaki ziyaretçiye cevap (kapının kâğıdından; kâğıt açıkken masa kilitli olduğu için yalnız öteki kilitlere bakar).
         /// Yapılamazsa gerekçe teleksten basılır; yapılanı kapının bağlayıcısı basar.
         /// </summary>
@@ -211,14 +249,14 @@ namespace Corrigible.Desk.Bridge
             source.MarkDirty();
         }
 
-        static string RegionName(string id) => string.IsNullOrEmpty(id) ? "—" : GameData.Region(id).Name;
+        string RegionName(string id) => string.IsNullOrEmpty(id) ? "—" : Sim.RegionName(id);
 
-        ActResult Report(ActResult result, string failDetail = null, string doneDetail = null)
+        ActResult Report(ActResult result, string failDetail = null, string doneDetail = null, bool doneFirst = false)
         {
-            // Başarılı komutun iletisi boşsa (baskın emri, cephe) teleks satırı neyin uygulandığını yazar
+            // Başarılı komutun iletisi boşsa (baskın emri, cephe) teleks satırı neyin uygulandığını yazar; doneFirst: kendi satırı (aşama 11)
             if (telex != null && result != null)
                 telex.Post(Shift, result.Ok ? Loc.T("EMİR UYGULANDI") : Loc.T("YAPILAMADI"),
-                    result.Ok ? (string.IsNullOrEmpty(result.Msg) ? doneDetail ?? "" : result.Msg) : failDetail ?? result.Msg,
+                    result.Ok ? (doneFirst && !string.IsNullOrEmpty(doneDetail) || string.IsNullOrEmpty(result.Msg) ? doneDetail ?? "" : result.Msg) : failDetail ?? result.Msg,
                     result.Ok ? TelexKind.Done : TelexKind.Failed);
             source.MarkDirty();
             return result;
@@ -234,6 +272,7 @@ namespace Corrigible.Desk.Bridge
         {
             if (lastSwitch != null && lastSwitch.isActiveAndEnabled && lastSwitch.HandleEscape()) return;
             if (shelterEvent != null && shelterEvent.isActiveAndEnabled && shelterEvent.HandleEscape()) return;
+            if (serverReward != null && serverReward.isActiveAndEnabled && serverReward.HandleEscape()) return;
             if (Sim?.Board != null && admission != null && admission.isActiveAndEnabled && admission.HandleEscape()) return;
             if (Sim?.Board != null && planningBoard != null && planningBoard.HandleEscape()) return;
             if (siginak != null && siginak.isActiveAndEnabled && siginak.HandleEscape()) return;

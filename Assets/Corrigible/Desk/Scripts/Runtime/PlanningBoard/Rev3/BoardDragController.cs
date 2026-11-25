@@ -28,8 +28,8 @@ namespace Corrigible.Desk
     /// takar (<see cref="TargetClicked"/>); kapalı destenin kartına tık eli açar, açık eldeki karta tık seçer ve eli toplar; kişiye
     /// çift tık dosyayı açar (<see cref="CardDoubleClicked"/>). Boş pano: el toplanır, plan açıksa <see cref="EmptyClicked"/>.
     /// BOŞTA alanına tık: kişi seçiliyse dinlenmeye gönderir, değilse eli açar/toplar. Sürüklemeden sonraki bırakış tık sayılmaz.</item>
-    /// <item><b>Klavye</b> (<see cref="ReadKeys"/>): Tab / Shift+Tab hedefler arasında (tek emp ana üretim mutfak eğitim BOŞTA
-    /// iş emri depo hurda; odak aynı amber çerçeve, hurdada kapak aralığı + ön yüz çerçevesi), Enter seçili kartı odaktaki hedefe
+    /// <item><b>Klavye</b> (<see cref="ReadKeys"/>): Tab / Shift+Tab hedefler arasında (tek emp ana üretim mutfak eğitim [gözetim] BOŞTA
+    /// iş emri depo hurda; gözetim yalnız cebi açıkken, <see cref="BoardSnapshot.WatchOpen"/>; odak aynı amber çerçeve, hurdada kapak aralığı + ön yüz çerçevesi), Enter seçili kartı odaktaki hedefe
     /// bırakır (BOŞTA = dinlenme), ↑/↓ canlı kişiler arasında seçer. Esc'yi sunucu okur (<c>HandleBack</c> → <see cref="Cancel"/>).</item>
     /// <item><b>İptal:</b> tutulurken sağ tuş basışı, poz K4'ten ayrılınca, girdi kilitlenince ya da plan kilitlenince kart yayla
     /// yerine döner, komut yazılmaz. Tutulan kart başka bir yoldan kaybolursa (hurdaya gitti, kişi öldü) girdi hemen geri verilir
@@ -61,13 +61,20 @@ namespace Corrigible.Desk
         [Tooltip("Klavye yolu (Tab / Shift+Tab, Enter, ↑/↓) bu bileşende okunur. Sunucu kendisi okuyorsa kapatın.")]
         [SerializeField] bool readKeys = true;
 
-        /// <summary>Klavye hedeflerinin sırası (PLAN §1.5): tek, emp, ana, üretim, mutfak, eğitim, BOŞTA, iş emri, depo, hurda.</summary>
+        /// <summary>
+        /// Klavye hedeflerinin sırası (PLAN §1.5): tek, emp, ana, üretim, mutfak, gözetim (tesis aşama 5; cebi kapalıyken
+        /// atlanır), BOŞTA, iş emri, depo, hurda.
+        /// </summary>
         public static readonly BoardTarget[] KeyboardTargets =
         {
             BoardTarget.Pocket("tek"), BoardTarget.Pocket("emp"), BoardTarget.Pocket("ana"), BoardTarget.Pocket("craft"),
-            BoardTarget.Pocket("cook"), BoardTarget.Pocket("train"), BoardTarget.Bosta(), BoardTarget.Order(), BoardTarget.Store(),
-            BoardTarget.Hurda(),
+            BoardTarget.Pocket("cook"), BoardTarget.Pocket(BoardLayout.WatchJob), BoardTarget.Bosta(),
+            BoardTarget.Order(), BoardTarget.Store(), BoardTarget.Hurda(),
         };
+
+        /// <summary>Hedef bu panoda var mı: GÖZETİM cebi yalnız <paramref name="watchOpen"/> iken.</summary>
+        public static bool TargetOpen(BoardTarget t, bool watchOpen) =>
+            t.Kind != BoardTargetKind.Pocket || t.Job != BoardLayout.WatchJob || watchOpen;
 
         const float WaitTimeoutS = 1f;
         const float RayLength = 5f;
@@ -344,6 +351,9 @@ namespace Corrigible.Desk
         BostaDeckView Deck => board != null ? board.Deck : null;
         BoardSnapshot Snap => board != null ? board.Last : null;
 
+        /// <summary>GÖZETİM cebi açık mı (son anlık görüntüden; oyunda hep). Görüntü yokken kapalı.</summary>
+        bool WatchOpen => Snap != null && Snap.WatchOpen;
+
         /// <summary>Etkin ve hiyerarşide açık (edit modda da; <c>isActiveAndEnabled</c> OnEnable'ı bekler).</summary>
         static bool Live(Behaviour b) => b != null && b.enabled && b.gameObject.activeInHierarchy;
 
@@ -432,13 +442,18 @@ namespace Corrigible.Desk
             return new Rect(centre.x - size.x / 2, centre.y - size.y / 2, size.x, size.y);
         }
 
-        /// <summary>Hedefin pano mm dikdörtgeni (çerçeve ve odak için); dikdörtgeni yoksa false (hurda, kişi kartı).</summary>
-        public static bool TargetRectMm(BoardTarget t, out Rect rect)
+        /// <summary>Hedefin pano mm dikdörtgeni (çerçeve ve odak için); dikdörtgeni yoksa false (hurda, kişi kartı). GÖZETİM açık sayılır.</summary>
+        public static bool TargetRectMm(BoardTarget t, out Rect rect) => TargetRectMm(t, true, out rect);
+
+        /// <summary>Hedefin dikdörtgeni; GÖZETİM kapalıyken BOŞTA o köşeyi de kapsar (<see cref="BoardLayout.BostaZone"/>), kapalı cebin dikdörtgeni yok.</summary>
+        public static bool TargetRectMm(BoardTarget t, bool watchOpen, out Rect rect)
         {
             switch (t.Kind)
             {
-                case BoardTargetKind.Pocket: rect = BoardLayout.Pocket(t.Job); return rect.width > 0;
-                case BoardTargetKind.Bosta: rect = BoardLayout.Bosta; return true;
+                case BoardTargetKind.Pocket:
+                    rect = TargetOpen(t, watchOpen) ? BoardLayout.Pocket(t.Job) : default;
+                    return rect.width > 0;
+                case BoardTargetKind.Bosta: rect = BoardLayout.BostaZone(watchOpen); return true;
                 case BoardTargetKind.Order: rect = BoardLayout.Order; return true;
                 case BoardTargetKind.Store: rect = BoardLayout.Depot; return true;
                 case BoardTargetKind.Topic: rect = BoardLayout.TopicRow(t.Row); return t.Row >= 0;
@@ -476,10 +491,7 @@ namespace Corrigible.Desk
             {
                 case BoardCardKind.Person:
                 {
-                    if (drag && BoardLayout.Pocket("train").Contains(mm))
-                        for (int r = 0; r < 7; r++)
-                            if (BoardLayout.TopicRow(r).Contains(mm)) return BoardTarget.Topic(r);
-                    return BoardLayout.ZoneAt(mm, BoardCardKind.Person);
+                    return BoardLayout.ZoneAt(mm, BoardCardKind.Person, WatchOpen);
                 }
                 case BoardCardKind.Item:
                 {
@@ -487,7 +499,7 @@ namespace Corrigible.Desk
                     if (!t.IsNone) return t;
                     var s = Snap;
                     foreach (var job in BoardLayout.Jobs)
-                        if (BoardLayout.Pocket(job).Contains(mm))
+                        if (BoardLayout.PocketOpen(job, WatchOpen) && BoardLayout.Pocket(job).Contains(mm))
                             return s != null && s.PocketOccupant.TryGetValue(job, out var who) && !string.IsNullOrEmpty(who)
                                 ? BoardTarget.Pocket(job) : BoardTarget.None;
                     return BoardTarget.None;
@@ -551,7 +563,7 @@ namespace Corrigible.Desk
             }
             if (!PlaneLocal(ray, Frame, BoardLayout.FaceZ, out var p)) return BoardTarget.None;
             t = ZoneFor(c.Kind, BoardLayout.LocalToMm(p), true);
-            hasRect = TargetRectMm(t, out rect);
+            hasRect = TargetRectMm(t, WatchOpen, out rect);
             return t;
         }
 
@@ -565,7 +577,7 @@ namespace Corrigible.Desk
             if (!PlaneLocal(ray, Frame, BoardLayout.FaceZ, out var p)) return new BoardTarget(BoardTargetKind.Empty);
             var mm = BoardLayout.LocalToMm(p);
             t = ZoneFor(kind, mm, false);
-            if (t.IsNone && BoardLayout.Bosta.Contains(mm)) t = BoardTarget.Bosta();
+            if (t.IsNone && BoardLayout.BostaZone(WatchOpen).Contains(mm)) t = BoardTarget.Bosta();
             return t.IsNone ? new BoardTarget(BoardTargetKind.Empty) : t;
         }
 
@@ -872,7 +884,8 @@ namespace Corrigible.Desk
                     case BoardCardKind.Person:
                     case BoardCardKind.Item:
                         foreach (var job in BoardLayout.Jobs)
-                            if (job != home && !CanDrop(c, BoardTarget.Pocket(job))) dimRects.Add(BoardLayout.Pocket(job));
+                            if (job != home && BoardLayout.PocketOpen(job, WatchOpen) && !CanDrop(c, BoardTarget.Pocket(job)))
+                                dimRects.Add(BoardLayout.Pocket(job));
                         break;
                     case BoardCardKind.Material:
                         if (!CanDrop(c, BoardTarget.Order())) dimRects.Add(BoardLayout.Order);
@@ -1304,6 +1317,9 @@ namespace Corrigible.Desk
             if (dir == 0) return;
             int n = KeyboardTargets.Length;
             keyboardIndex = keyboardIndex < 0 ? (dir > 0 ? 0 : n - 1) : ((keyboardIndex + dir) % n + n) % n;
+            // Kapalı GÖZETİM cebi atlanır (en çok bir hedef)
+            for (int k = 0; k < n && !TargetOpen(KeyboardTargets[keyboardIndex], WatchOpen); k++)
+                keyboardIndex = ((keyboardIndex + (dir > 0 ? 1 : -1)) % n + n) % n;
             ShowKeyboardFocus();
         }
 
@@ -1369,7 +1385,7 @@ namespace Corrigible.Desk
             {
                 if (hurdaFocusedByKeys && hurda != null) { hurda.SetFocused(false); hurda.SetTargeted(false); }
                 hurdaFocusedByKeys = false;
-                TargetRectMm(t, out var rect);
+                TargetRectMm(t, WatchOpen, out var rect);
                 if (marks != null) marks.ShowFocus(rect);
                 world = Frame.TransformPoint(BoardLayout.MmToLocal(new Vector2(rect.xMax, rect.yMin), BoardLayout.FaceZ));
             }

@@ -225,8 +225,9 @@ namespace Corrigible.Tests
         }
 
         /// <summary>
-        /// Baskın emri verir ve sonucu elle yazar. <paramref name="fates"/> kadro sırasıyla: 0 sağ döner, 1 düşer ve kurtarılır,
-        /// 2 geride kalır (ölür). Başarısız baskın geri çekilmedir.
+        /// Baskın emri verir ve baskını oda zinciriyle bitirir (<see cref="FacilityKit.ResolveRaid"/>). <paramref name="fates"/> kadro
+        /// sırasıyla: 0 sağ döner, 1 düşer ve tesiste kalır (ölür), 2 geride kalır (ölür; yalnız başarıda), 3 düşer ve tesisten çıkarılır
+        /// (yatar; yalnız başarıda). Başarısız baskın giriş odasında geri çekilmedir.
         /// </summary>
         public static void Raid(Simulation sim, bool success, params int[] fates)
         {
@@ -237,6 +238,8 @@ namespace Corrigible.Tests
 
         public static void StartRaid(Simulation sim)
         {
+            // Kartlı oyunda bekleyen sunucu ödülü baskın emrini kilitler: test düzeni hep tarifi seçer (seçilecek ödül yoksa hiçbir şey)
+            FacilityKit.ChooseReward(sim);
             var region = sim.LiberationRegion(sim.S.Liberation.CurrentRegion);
             if (region.Completed) Assert.IsTrue(sim.SelectLiberationRegion(sim.LiberationFrontier.First()).Ok);
             var sector = sim.NextLiberationSector(sim.S.Liberation.CurrentRegion);
@@ -244,21 +247,8 @@ namespace Corrigible.Tests
             Assert.IsTrue(started.Ok, started.Msg);
         }
 
-        public static void ResolveRaid(Simulation sim, bool success, params int[] fates)
-        {
-            var squad = sim.S.Raid.Params.Squad;
-            var result = new RaidResult { Success = success, Retreat = !success };
-            for (int i = 0; i < squad.Count; i++)
-            {
-                int fate = i < fates.Length ? fates[i] : 0;
-                result.Hp.Add(fate == 0 ? squad[i].Hp : 0);
-                result.Armor.Add(squad[i].Armor);
-                if (fate == 2) result.Left.Add(i);
-                if (fate != 0) result.Down++;
-            }
-            var resolved = sim.ResolveRaid(result);
-            Assert.IsTrue(resolved.Ok, resolved.Msg);
-        }
+        /// <summary>Süren baskını oda zinciriyle bitirir (<see cref="FacilityKit.ResolveRaid"/>; kaderler <see cref="Raid"/>'deki gibi).</summary>
+        public static void ResolveRaid(Simulation sim, bool success, params int[] fates) => FacilityKit.ResolveRaid(sim, success, fates);
 
         /// <summary>Olağan olayın tetiğini bu vardiya için kurar (kapanıştan önce çağrılır).</summary>
         public static void Arrange(Simulation sim, string kind)
@@ -270,9 +260,11 @@ namespace Corrigible.Tests
                 case "erzak_azaliyor": sim.Shelter.Supplies = eaten * 2; break;
                 case "karartma": sim.S.Alarm = sim.B.liberationAlarmThreshold - 1; break;
                 case "hirsizlik": sim.Shelter.Supplies = eaten + sim.B.theftSupplies + 0.5; break;
-                case "agir_yarali": Raid(sim, false, 1, 0, 0); break;
+                // Tesiste yalnız çıkarılan düşen yaralı döner: kazanılan baskında giriş odasında düşen, ekip çıkarken alınır
+                case "agir_yarali": Raid(sim, true, 3, 0, 0); break;
                 case "kavga": Raid(sim, false, 0, 0, 0); break;
-                case "anma": Raid(sim, false, 2, 0, 0); break;
+                // Geri çekilmede yerde kalan düşen ölür
+                case "anma": Raid(sim, false, 1, 0, 0); break;
                 case "takas": sim.Shelter.Supplies = eaten + 1; sim.AddBoardMaterial("metal", sim.B.tradeMetal); break;
                 case "cagri": sim.Shelter.Supplies = 90; Raid(sim, true, 0, 0, 0); break;
                 case "konvoy": sim.S.Trust = sim.B.convoyTrustAt; break;

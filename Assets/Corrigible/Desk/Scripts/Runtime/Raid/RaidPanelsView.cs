@@ -63,7 +63,8 @@ namespace Corrigible.Desk
             }
             bool fatal=!string.IsNullOrEmpty(vm.FatalWarning);
             if(fatalWarning){fatalWarning.gameObject.SetActive(fatal);fatalWarning.text=vm.FatalWarning;}
-            confirmTitle.text=fatal?Loc.T("KAÇIŞ · SON TUR"):Loc.T("HAKKI DURAN BİRİM");confirmFoot.text=Loc.T("Enter yine de ilet · Esc vazgeç");
+            // Tesis odasında son tur: köprünün başlığı (SON TUR · GERİ ÇEKİLME); örnek tahtada ConfirmTitle hep boş, bugünkü başlık
+            confirmTitle.text=!string.IsNullOrEmpty(vm.ConfirmTitle)?vm.ConfirmTitle:fatal?Loc.T("KAÇIŞ · SON TUR"):Loc.T("HAKKI DURAN BİRİM");confirmFoot.text=Loc.T("Enter yine de ilet · Esc vazgeç");
             for(int i=0;i<unusedRows.Length;i++)
             {
                 unusedRows[i].gameObject.SetActive(!fatal&&i<vm.Unused.Length);if(i>=vm.Unused.Length)continue;var u=vm.Unused[i];
@@ -76,17 +77,23 @@ namespace Corrigible.Desk
             // satıra iner ve alttaki satırlar aşağı kayar (varsayılan kitte lejant bugünkü gibi)
             if(legendRows.Length>ChannelRow&&!string.IsNullOrEmpty(vm.CableName))legendRows[ChannelRow].text=Loc.F("{0} · <nobr>{1}</nobr>",RaidText.Get("legend.channel"),DeskText.Lower(vm.CableName,DeskFormat.Lang));
             float legendExtra=LayoutLegend();
-            if(vm.IsLootMission&&ruleRows.Length>2)ruleRows[2].text=Loc.T("Teknisyen kasayı açar ve malzemeyi taşır. İtme ve patlamalar kasaya hasar verebilir; EMP kasayı açmaz.");
+            if(vm.IsLootMission&&ruleRows.Length>2)ruleRows[2].text=Loc.T("Her uzman bitişik kasayı açar; açan malzemeyi taşır ve atabilir. İtme ve patlamalar kasaya hasar verebilir.");
             // Madenci ve Sis uzmanı kadrodaysa yetenekleri seçim satırının altında
             if(ruleRows.Length>1&&vm.Team!=null)
             {
                 if(vm.Team.Any(t=>t.Letter=='M'))ruleRows[1].text+="\n"+Loc.T("Madenci: dinamit bitişik duvarı yıkar (baskında sınırlı); moloz bir kare öteye 1 hasar. Açılan delik makinelerin atış hattını da açar.");
                 if(vm.Team.Any(t=>t.Letter=='S'))ruleRows[1].text+="\n"+Loc.T("Sis: bu turun makine evresinde atış ve kilit sise girince kaybolur; bakım robotu ve havan sisli kareye vuramaz. Patlamayı kesmez.");
             }
-            if(vm.IsLootMission&&ruleRows.Length>5)ruleRows[5].text=Loc.T("İkmal görevi: Teknisyen ile kasayı aç, sonra bütün ekip giriş karelerinden çıksın; malzeme Teknisyen çıkınca alınır. Süre dolarken tahtada kalan uzman baskında düşmüş sayılır. Kasa imha olursa ya da Teknisyen çıkamazsa görev kaybedilir.");
+            // Tesis baskını (aşama 7; örnek tahtada BlueprintWing 0): seçim satırının altında hamleler (E), kazanma satırının altında düşenin
+            // ve yükün kuralı
+            if(vm.BlueprintWing>0&&ruleRows.Length>1)ruleRows[1].text+="\n"+Loc.T("Tesis hamleleri (E): pusu, koşu darbesi, sürükleme, fırlatma, iki kişilik iş, menfez. E sıradakine geçer; satıra tıklamak o hamleyi kurar.");
+            if(vm.IsLootMission&&ruleRows.Length>5)ruleRows[5].text=Loc.T("İkmal görevi: kasayı herhangi bir uzmanla aç, sonra bütün ekip giriş karelerinden çıksın; malzeme taşıyan çıkınca alınır. Süre dolarken tahtada kalan uzman baskında düşmüş sayılır. Kasa imha olursa ya da taşıyan çıkamazsa görev kaybedilir.");
+            if(vm.BlueprintWing>0&&ruleRows.Length>5)ruleRows[5].text+="\n"+Loc.T("Düşen tahtada kalır: yanındaki uzman sürükleyip kapıdan ya da girişten çıkarmazsa ölür. Yükü taşıyan düşerse yük yere düşer; kareye giren ilk ekip üyesi alır.");
+            // Tesis aşama 11: savunmada kazanma satırı savunma bölümüyle değişir (barikat, dalga, içeri çekilme, röle; veri kaynağından)
+            if(!string.IsNullOrEmpty(vm.RulesDefense)&&ruleRows.Length>5)ruleRows[5].text=vm.RulesDefense;
             float ry=52;foreach(var t in ruleRows){float h=Mathf.Max(30,t.GetPreferredValues(t.text,366,float.PositiveInfinity).y+8);var r=(RectTransform)t.transform.parent;r.anchoredPosition=new Vector2(14,-ry);r.sizeDelta=new Vector2(392,h);t.rectTransform.sizeDelta=new Vector2(366,h);ry+=h;}
             if(legendRoot!=null){legendRoot.anchoredPosition=new Vector2(14,-ry-8);((RectTransform)rulesCard.transform).sizeDelta=new Vector2(420,Mathf.Max(431.5f,ry+136+legendExtra));}
-            retreatTitle.text=RaidText.Get("raid.retreat.title");retreatBody.text=RaidText.Get(vm.IsLootMission?"raid.retreat.bodyLoot":"raid.retreat.body");retreatFoot.text=RaidText.Get("raid.retreat.foot");retreatAgainLabel.text=Loc.T("EMİN MİSİN? TEKRAR BAS");
+            retreatTitle.text=RaidText.Get("raid.retreat.title");retreatBody.text=!string.IsNullOrEmpty(vm.RetreatBody)?vm.RetreatBody:RaidText.Get(vm.BlueprintWing>0?"raid.retreat.bodyFacility":vm.IsLootMission?"raid.retreat.bodyLoot":"raid.retreat.body");retreatFoot.text=RaidText.Get("raid.retreat.foot");retreatAgainLabel.text=Loc.T("EMİN MİSİN? TEKRAR BAS");
             continueLabel.text=Loc.T("OPERASYON RAPORUNA GEÇ");resumeLabel.text=Loc.T("Devam et [Esc]");pauseLabel.text=Loc.T("DURAKLATILDI");
             dim.gameObject.SetActive(vm.Finished||vm.RetreatArmed||vm.Paused);dim.color=DeskTheme.Active.Get("sade.plaque.bg");var col=dim.color;col.a=vm.Finished ? DimAlpha*Dim() : .32f;dim.color=col;
             if(!vm.Finished)dim.SetSpot(Vector2.zero,150,14,Color.clear,false);

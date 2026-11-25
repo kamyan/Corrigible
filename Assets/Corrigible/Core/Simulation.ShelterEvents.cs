@@ -221,7 +221,17 @@ namespace Corrigible.Core
         /// </summary>
         void AdvanceShelterDelayed()
         {
-            if (!ShelterEventsOn) return;
+            if (!ShelterEventsOn)
+            {
+                if (B.infiltratorFieldEnabled && Admission != null)
+                    foreach (var f in Admission.Files.Where(f => f.Revealed && f.Resident.Alive && f.Resident.Isolated &&
+                        f.IsolatedUntil >= 0 && S.Day >= f.IsolatedUntil).ToArray())
+                    {
+                        SendAway(f, "sokuldu", false);
+                        LogShelterEvent("sokuldu", null, f.PersonId);
+                    }
+                return;
+            }
             // Kısıt, süresinin son kapanışı bittikten sonra kalkar: o kapanışın açlıktan ayrılması kişiyi hâlâ kısıtlı görür; fişin
             // "ayrılır" satırı (NextDeserter) da planda onu kısıtlı gördüğü için ikisi aynı kişiyi yazar. Çekim yok.
             foreach (var f in Admission.Files)
@@ -351,6 +361,7 @@ namespace Corrigible.Core
         /// </summary>
         void OpenShelterEvent()
         {
+            OpenFieldDecision();
             if (!ShelterEventsOn || S.Ending != null || PendingShelterEvent != null || BoardAliveCount == 0) return;
             var state = ShelterEvents;
             state.Pending = null;
@@ -431,7 +442,16 @@ namespace Corrigible.Core
             state.Pending = e;
         }
 
-        void OpenChainEvent(ResidentAdmissionFile f, string kind)
+        void OpenFieldDecision()
+        {
+            if (!B.infiltratorFieldEnabled || ShelterEvents == null || PendingShelterEvent != null) return;
+            var f = Admission?.Files.FirstOrDefault(v => v.FieldDecisionDue && !v.Departed && v.Resident.Alive);
+            if (f == null) return;
+            f.FieldDecisionDue = false;
+            OpenChainEvent(f, "sabotaj", fieldCapture: true);
+        }
+
+        void OpenChainEvent(ResidentAdmissionFile f, string kind, bool fieldCapture = false)
         {
             var state = ShelterEvents;
             var count = EventCount(kind);
@@ -442,7 +462,11 @@ namespace Corrigible.Core
             };
             count.Count++;
             count.LastShift = S.Day;
-            if (kind == "sabotaj")
+            if (fieldCapture)
+            {
+                e.Area = "saha";
+            }
+            else if (kind == "sabotaj")
             {
                 string job = f.LastAccessJob;
                 if (job == "craft" || PlanningBoardData.FieldJobs.Contains(job))
@@ -567,6 +591,7 @@ namespace Corrigible.Core
                         : Loc.F("{0}: gece yerinde değildi; telsiz odasının kapısı açık bulundu.", name);
                 case "ikinci_iz": return Loc.F("{0}: ikinci iz. Bakım defteriyle uyuşmayan bir parça bulundu.", name);
                 case "sabotaj":
+                    if (e.Area == "saha") return Loc.F("{0} baskında taraf değiştirdi. Tecritte kararınızı bekliyor.", name);
                     return e.Resource == "metal"
                         ? Loc.F("{0} sabotaj yaptı ve ortaya çıktı: {1} metal kaybedildi.", name, (int)e.Amount)
                         : Loc.F("{0} sabotaj yaptı ve ortaya çıktı: {1:0.##} erzak kaybedildi.", name, e.Amount);
@@ -672,7 +697,7 @@ namespace Corrigible.Core
                     cost = Loc.F("{0} vardiya yer tutmadan bekletilir, sonra sökülür; ifşa {1}.", B.isolationShifts, B.exposureInterrogation);
                     break;
                 case "kisitla":
-                    cost = Loc.F("{0} vardiya saha, üretim ve mutfak kapalı; eğitim açık.",
+                    cost = Loc.F("{0} vardiya saha, üretim ve mutfak kapalı; yalnız Boşta açık.",
                         e.Kind == "buyuk_hirsizlik" ? B.eventRestrictLongShifts : B.eventRestrictShifts);
                     break;
                 case "affet":
@@ -690,7 +715,7 @@ namespace Corrigible.Core
                     cost = Loc.F("Kişi {0} vardiya kısıtlı; güven −1.", B.eventRestrictShifts);
                     break;
                 case "yarim":
-                    cost = Loc.F("{0} vardiya tüketim yarıya iner; dinlenme iyileştirmez, baskına çıkan {1} can eksik çıkar.", B.halfRationShifts, B.halfRationRaidHp);
+                    cost = Loc.F("{0} vardiya tüketim yarıya iner; kimse iyileşmez, baskına çıkan {1} can eksik çıkar.", B.halfRationShifts, B.halfRationRaidHp);
                     break;
                 case "tam":
                     cost = Loc.T("Değişiklik yok.");
@@ -793,6 +818,7 @@ namespace Corrigible.Core
             ShelterEvents.Pending = null;
             ApplyShelterEventOption(e, optionId);
             LogShelterEvent(e.Kind, optionId, e.PersonId, e.OtherId, e.Amount);
+            OpenFieldDecision();
             return Rec(ActResult.Success(Loc.T("Olay kararı kaydedildi.")), "event_decide", optionId);
         }
 

@@ -77,8 +77,16 @@ namespace Corrigible.Desk.Bridge
     /// </summary>
     public static class BoardDropRules
     {
-        /// <summary>Cep görevleri (BOŞTA dışında): tek emp ana craft cook train.</summary>
-        static readonly string[] PocketJobs = { "tek", "emp", "ana", "craft", "cook", "train" };
+        /// <summary>Cep görevleri (BOŞTA dışında): tek emp ana craft cook train. GÖZETİM (watch) ayrı: <see cref="WatchOpen"/>.</summary>
+        // 2026-11-24: EĞİTİM cebi kaldırıldı ("train" emekli görev: eğitimdeki kişi, yalnız testlerde kurulabilir, Boşta'da görünür ve oraya iner)
+        static readonly string[] PocketJobs = { "tek", "emp", "ana", "craft", "cook" };
+
+        /// <summary>
+        /// GÖZETİM cebi açık mı (tesis aşama 5, dinleme nöbeti): tesis tek baskın kipi olduğundan simülasyon varken hep açık.
+        /// Kapalı geometri (cep yok, bırakma komut üretmez, o görevdeki kişi BOŞTA destesinde) yalnız simülasyonsuz çağrıda kalır;
+        /// sadeleştirilmesi ertelendi.
+        /// </summary>
+        public static bool WatchOpen(Simulation sim) => sim?.B != null;
 
         static string[] Subjects => PlanningBoardData.Subjects;
 
@@ -137,7 +145,7 @@ namespace Corrigible.Desk.Bridge
                 case BoardDropAction.Assign: return sim.AssignResidentCheck(plan.Id, plan.Job);
                 case BoardDropAction.Train: return TrainCheck(sim, plan.Id, plan.Job);
                 case BoardDropAction.Equip: return EquipCheck(sim, plan.Id, plan.PersonId);
-                case BoardDropAction.Scrap: return ScrapCheck(sim, plan.Id);
+                case BoardDropAction.Scrap: return sim.ScrapEquipmentCheck(plan.Id);
                 case BoardDropAction.Stage: return StageCheck(sim, plan.Id, plan.Amount);
                 case BoardDropAction.Queue: return QueueCheck(sim, plan.Id, null);
                 case BoardDropAction.Reserve: return ReserveCheck(sim, plan.Id, plan.Amount);
@@ -155,7 +163,7 @@ namespace Corrigible.Desk.Bridge
             switch (kind)
             {
                 case BoardCardKind.Person: return PersonPlan(board, id, t, sim, ui);
-                case BoardCardKind.Item: return ItemPlan(board, id, t);
+                case BoardCardKind.Item: return ItemPlan(board, id, t, WatchOpen(sim));
                 case BoardCardKind.Material: return MaterialPlan(board, id, t);
                 case BoardCardKind.Chip: return ChipPlan(board, id, t);
                 case BoardCardKind.Recipe: return RecipePlan(board, id, t, sim);
@@ -172,32 +180,23 @@ namespace Corrigible.Desk.Bridge
             return IsSubject(topic) ? topic : "tek";
         }
 
+
+        /// <summary>Kişi bir cepte (BOŞTA dışı) mı: tek emp ana craft cook train; <paramref name="watchOpen"/> iken watch da.</summary>
+        public static bool IsPocketJob(string job, bool watchOpen = false) =>
+            Array.IndexOf(PocketJobs, job) >= 0 || watchOpen && job == BoardLayout.WatchJob;
+
+        /// <summary>Cepteki canlı kişi (Core takası yüzünden en çok bir); boşsa null. GÖZETİM yalnız <paramref name="watchOpen"/> iken cep.</summary>
+        public static ResidentState Occupant(PlanningBoardState board, string job, bool watchOpen = false) =>
+            board == null || !IsPocketJob(job, watchOpen) ? null : board.People.FirstOrDefault(p => p.Alive && p.Job == job);
+
         /// <summary>
-        /// Konu satırına tıklama: biri eğitimdeyse onu o konuya alır (<c>board_train</c>); kimse yoksa ya da konu aynıysa null (sunucu
-        /// yalnız <see cref="BoardUiState.TrainingTopic"/>'i saklar).
+        /// Kişinin panodaki yeri: cebin görevi ya da "rest" (BOŞTA destesi; emekli görevler dahil). GÖZETİM kapalıyken (varsayılan)
+        /// "watch" emeklidir ve "rest" döner.
         /// </summary>
-        public static Func<Simulation, ActResult> TopicCommand(int row, Simulation sim)
+        public static string PlaceOf(PlanningBoardState board, ResidentState person, bool watchOpen = false)
         {
-            if (row < 0 || row >= Subjects.Length) return null;
-            var trainee = sim?.Board?.People.FirstOrDefault(p => p.Alive && p.Job == "train");
-            if (trainee == null) return null;
-            string id = trainee.Id, subject = Subjects[row];
-            if (trainee.TrainingSubject == subject) return null;
-            return s => s.TrainResident(id, subject);
-        }
-
-        /// <summary>Kişi bir cepte (BOŞTA dışı) mı: tek emp ana craft cook train.</summary>
-        public static bool IsPocketJob(string job) => Array.IndexOf(PocketJobs, job) >= 0;
-
-        /// <summary>Cepteki canlı kişi (Core takası yüzünden en çok bir); boşsa null.</summary>
-        public static ResidentState Occupant(PlanningBoardState board, string job) =>
-            board == null || !IsPocketJob(job) ? null : board.People.FirstOrDefault(p => p.Alive && p.Job == job);
-
-        /// <summary>Kişinin panodaki yeri: cebin görevi ya da "rest" (BOŞTA destesi; emekli görevler dahil).</summary>
-        public static string PlaceOf(PlanningBoardState board, ResidentState person)
-        {
-            if (person == null || !IsPocketJob(person.Job)) return "rest";
-            return Occupant(board, person.Job) == person ? person.Job : "rest";
+            if (person == null || !IsPocketJob(person.Job, watchOpen)) return "rest";
+            return Occupant(board, person.Job, watchOpen) == person ? person.Job : "rest";
         }
 
         /// <summary>Üretim alanındaki miktar (Core'un <c>StageProductionMaterial</c>'ı ilk kaydı okur).</summary>
@@ -255,6 +254,7 @@ namespace Corrigible.Desk.Bridge
         {
             var person = board.Person(id);
             if (person == null) return BoardDropPlan.None;
+            bool watch = WatchOpen(sim);
             switch (t.Kind)
             {
                 case BoardTargetKind.Person:
@@ -262,39 +262,33 @@ namespace Corrigible.Desk.Bridge
                     // Başka bir kişi kartının üstü = o kişinin yeri (takas Core'da)
                     var other = board.Person(t.Id);
                     if (other == null || other.Id == id || !other.Alive) return BoardDropPlan.None;
-                    string place = PlaceOf(board, other);
-                    return place == "rest" ? ToRest(person) : ToPocket(person, place, -1, sim, ui);
+                    string place = PlaceOf(board, other, watch);
+                    return place == "rest" ? ToRest(person, watch) : ToPocket(person, place, -1, sim, ui);
                 }
                 case BoardTargetKind.Bosta:
                 case BoardTargetKind.Deck:
-                    return ToRest(person);
+                    return ToRest(person, watch);
                 case BoardTargetKind.Pocket:
-                    return t.Job == "rest" ? ToRest(person) : ToPocket(person, t.Job, t.Row, sim, ui);
-                case BoardTargetKind.Topic:
-                {
-                    if (t.Row < 0 || t.Row >= Subjects.Length) return BoardDropPlan.None;
-                    string subject = Subjects[t.Row];
-                    if (person.Job == "train" && person.TrainingSubject == subject) return BoardDropPlan.None;
-                    return new BoardDropPlan(BoardDropAction.Train, id, subject);
-                }
+                    return t.Job == "rest" ? ToRest(person, watch) : ToPocket(person, t.Job, t.Row, sim, ui);
                 default:
                     return BoardDropPlan.None;
             }
         }
 
         /// <summary>BOŞTA: zaten destede olan (dinlenen ya da emekli görevli) için aynı yer.</summary>
-        static BoardDropPlan ToRest(ResidentState person) =>
-            IsPocketJob(person.Job) ? new BoardDropPlan(BoardDropAction.Assign, person.Id, "rest") : BoardDropPlan.None;
+        static BoardDropPlan ToRest(ResidentState person, bool watchOpen) =>
+            IsPocketJob(person.Job, watchOpen) ? new BoardDropPlan(BoardDropAction.Assign, person.Id, "rest") : BoardDropPlan.None;
 
+        /// <summary>Cebe atama; GÖZETİM kapalıyken (WatchOpen false) "watch" komut üretmez.</summary>
         static BoardDropPlan ToPocket(ResidentState person, string job, int row, Simulation sim, BoardUiState ui)
         {
-            if (!IsPocketJob(job) || person.Job == job) return BoardDropPlan.None;
+            if (!IsPocketJob(job, WatchOpen(sim)) || person.Job == job) return BoardDropPlan.None;
             if (job != "train") return new BoardDropPlan(BoardDropAction.Assign, person.Id, job);
             string subject = row >= 0 && row < Subjects.Length ? Subjects[row] : TrainingSubject(sim, ui);
             return new BoardDropPlan(BoardDropAction.Train, person.Id, subject);
         }
 
-        static BoardDropPlan ItemPlan(PlanningBoardState board, string id, BoardTarget t)
+        static BoardDropPlan ItemPlan(PlanningBoardState board, string id, BoardTarget t, bool watchOpen)
         {
             var item = board.EquipmentItem(id);
             if (item == null) return BoardDropPlan.None;
@@ -309,7 +303,7 @@ namespace Corrigible.Desk.Bridge
                 case BoardTargetKind.Pocket:
                 {
                     // Cep dikdörtgeni, içindeki kişi kartı sayılır; boş cebe eşya bırakılmaz
-                    var occupant = Occupant(board, t.Job);
+                    var occupant = Occupant(board, t.Job, watchOpen);
                     if (occupant == null || item.OwnerId == occupant.Id) return BoardDropPlan.None;
                     return new BoardDropPlan(BoardDropAction.Equip, id, null, occupant.Id);
                 }
@@ -415,14 +409,6 @@ namespace Corrigible.Desk.Bridge
             if (personId != null && (person == null || !person.Alive || person.Restricted || person.Isolated)) return Loc.T("Bu sakin teçhizat kullanamıyor.");
             if (equipment.OwnerId == personId) return Loc.T("Eşya zaten bu cepte.");
             return null;
-        }
-
-        /// <summary><c>ScrapEquipment</c>'ın denetimleri.</summary>
-        static string ScrapCheck(Simulation sim, string equipmentId)
-        {
-            string why = CommonCheck(sim);
-            if (why != null) return why;
-            return sim.Board.EquipmentItem(equipmentId) == null ? Loc.T("Hurdaya ayrılabilen bir eşya seç.") : null;
         }
 
         /// <summary>

@@ -1133,7 +1133,12 @@
         "#9A1E14",
         "solid"
       ],
-      "_local_a5": "UYGULAMA EKİ (Unity, Revizyon 3 Aşama 5 · R18c): stopped — iş emri formunun DURDU / STOPPED damgası (üretici yok, açlık, eşya deposu dolu); CP 700, −6°, em 9,4 mm. Paket dosyasında yok; bkz. _local_a5."
+      "_local_a5": "UYGULAMA EKİ (Unity, Revizyon 3 Aşama 5 · R18c): stopped — iş emri formunun DURDU / STOPPED damgası (üretici yok, açlık, eşya deposu dolu); CP 700, −6°, em 9,4 mm. Paket dosyasında yok; bkz. _local_a5.",
+      "noPlan": [
+        "#675F50",
+        "dashed"
+      ],
+      "_local_tesis5": "UYGULAMA EKİ (Unity, tesis baskınları aşama 5 · bina planı): noPlan — planı bilinmeyen odanın paftasındaki PLAN YOK / NO PLAN damgası (KİLİTLİ gibi soluk, kesik kenar); CP 700 14. Paket dosyasında yok; bkz. colors.plan._local_tesis5."
     },
     "ui": {
       "_": "★ ekran kenarı ve kâğıt kontrolleri. Bazı değerler sade ile aynı (yanında belirtildi).",
@@ -1255,7 +1260,34 @@
         "alpha": 0.3
       },
       "_extra": "UYGULAMA EKİ (Unity, Aşama 5): land (bölge kâğıdı, harita tabanının üstünde), string ve stringShadow (kırmızı ip #A3241A 2,6 px + gölge), hatchGain (K2'de doku pikseli ≈ 0,63 ekran pikseli: 1,5 px'lik tarama çizgisi süzülürken soluyor; referans görüntüyle ölçülerek ×1,8); paket dosyasında yok, K2/K3/Ekip notlarından. Bkz. IMPLEMENTATION_MAP › CHANGELOG Aşama 5.",
-      "hatchGain": 1.8
+      "hatchGain": 1.8,
+      "_genMap": "UYGULAMA EKİ (üretilmiş harita, anahtar 1): cable (kablo hattı, kesik kurşun kalem) ve cablePin (uçlardaki raptiye noktası). Kâğıt, hale, kıyı ve sınır renkleri Sade map.* (coastHaloWide/Narrow, coast, regionBorder, regionBorderUnder); ölçüler space.mapGen.",
+      "cable": {
+        "hex": "#2E2820",
+        "alpha": 1
+      },
+      "cablePin": "#A3241A",
+      "_layout": "UYGULAMA EKİ (üretilmiş harita, C4/C7): candidateFill ve candidateHoverFill aday (seçilebilir komşu) yıkaması; frontierArrow özgür bölgeden adaya giden ok (kara sınırının ortasında ve kablonun aday ucunda); cablePinShadow ve cablePinShine kablo raptiyesinin gölgesi ve parıltısı.",
+      "candidateFill": {
+        "hex": "#F5D646",
+        "alpha": 0.3
+      },
+      "candidateHoverFill": {
+        "hex": "#F5D646",
+        "alpha": 0.38
+      },
+      "frontierArrow": {
+        "hex": "#1E1B16",
+        "alpha": 0.9
+      },
+      "cablePinShadow": {
+        "hex": "#000000",
+        "alpha": 0.3
+      },
+      "cablePinShine": {
+        "hex": "#FFFFFF",
+        "alpha": 0.6
+      }
     },
     "alarm": {
       "_": "★2 YZ alarmı panosu (arka duvar, 0,48 × 0,29 m) ve kâğıttaki küçük ölçek.",
@@ -1369,6 +1401,32 @@
       "rule": "#B9AC8E",
       "edge": "#D2C7AF",
       "_extra": "UYGULAMA EKİ (Unity, Revizyon 2 Aşama 3): buttonDisabled / buttonDisabledText (BASKIN EMRİ VER devre dışı: zemin #8A8374, yazı #EFE7D6; S2 notu › etkileşim), buttonKey (Enter fişi ve düğmedeki bedel #E6CF9C), rule (bölümler arası 1 px noktalı ayraç #B9AC8E) ve edge (kâğıt kenarı #D2C7AF); paket dosyasında yok, S2-TR panosundan."
+    },
+    "plan": {
+      "_local_tesis5": "UYGULAMA EKİ (Unity, tesis baskınları aşama 5 · bina planı, Docs/TESIS-BASKINLARI-TASARIMI.md §7.1): görev fişinin yanındaki üç paftanın ozalit renkleri (baskın antetinin ozalitiyle aynı aile: raid_tokens colors.ozalitPaper / ozalitLine). paper kâğıt, edge kâğıt kenarı, line mürekkep (yapı, nesneler, yazılar), grid ince ızgara, wall duvar dolgusu, part tesis şartının parçaları ve alanları (kurşun kalem değil, kahve mürekkep: kırmızı kalem önlem defterine ayrıldı, §7.1), counter YZ'nin yapısal önlemleri (tesis aşama 10, K41: çift cidar ve koku yayıcı kırmızı kalemle, §7.1: yapısal önlemler plana kırmızı kalemle işlenir), shadow kâğıt gölgesi. Paket dosyasında yok.",
+      "paper": "#D3DBD6",
+      "edge": {
+        "hex": "#2C4C8E",
+        "alpha": 0.55
+      },
+      "line": "#2C4C8E",
+      "grid": {
+        "hex": "#2C4C8E",
+        "alpha": 0.16
+      },
+      "wall": {
+        "hex": "#2C4C8E",
+        "alpha": 0.82
+      },
+      "part": "#8A4B12",
+      "counter": {
+        "hex": "#B3261A",
+        "alpha": 0.92
+      },
+      "shadow": {
+        "hex": "#000000",
+        "alpha": 0.42
+      }
     },
     "report": {
       "_": "★2 vardiya raporu, operasyon raporu, son rapor.",
@@ -2108,6 +2166,101 @@
     ],
     "frontSlipW": 404,
     "mapK2ScreenW": 1210,
+    "mapGen": {
+      "_": "★ üretilmiş harita çizimi (harita pikseli, 1920×1080). Kenar kırma: edgeAmplitude kenar boyuna oranla dalga üst sınırı (≈ %20, hücre yıldız biçimli kalır), vertexJitter köşe sapması. Kıyı halesi dıştan içe: haloWidth kalınlık, haloAlpha renk alfasının çarpanı (dıştakiler coastHaloWide, en içteki coastHaloNarrow). Kablo: cableWidth, cableDash (açık/kapalı), cablePin uç noktası çapı.",
+      "edgeAmplitude": 0.14,
+      "vertexJitter": 0.06,
+      "haloWidth": [
+        44,
+        30,
+        18,
+        9
+      ],
+      "haloAlpha": [
+        0.3,
+        0.5,
+        0.75,
+        0.9
+      ],
+      "coastWidth": 3,
+      "borderUnderWidth": 6,
+      "borderWidth": 2.2,
+      "cableWidth": 3.4,
+      "cableDash": [
+        14,
+        6
+      ],
+      "cablePin": 12,
+      "_layout": "UYGULAMA EKİ (C4 yerleşim, C7 cila). labelSize ad puntosu kademesi (34 → 31 → 28; 28 K2'de ≈ 17,6 ekran px, A10 alt sınırı 14 px), labelMaxLine tek satırı bunu aşan ad iki satır, layoutGap kutular arası en az boşluk, layoutMargin harita kenar payı, figurePawnPad figür tabanına piyon payı. candidateContourWidth adayın içe kaydırılmış kesik konturu. waterlineOffset/Width/Alpha kıyıdan denize su çizgileri (map.coast alfasının çarpanı). sketch* kıyının kurşun kalem ikinci geçişi. cableSag kablonun boyuna oranla sarkması (6–22 px), pinShadowOffset raptiye gölgesi. frontier* adaya giden ok (gövde boyu, baş). legendCable* lejanttaki kablo hattı simgesi.",
+      "labelSize": [
+        34,
+        31,
+        28
+      ],
+      "labelMaxLine": 200,
+      "layoutGap": 4,
+      "layoutMargin": 12,
+      "figurePawnPad": 10,
+      "candidateContourWidth": 3.4,
+      "waterlineOffset": [
+        11,
+        22,
+        35
+      ],
+      "waterlineWidth": [
+        1.4,
+        1.15,
+        0.95
+      ],
+      "waterlineAlpha": [
+        0.6,
+        0.38,
+        0.2
+      ],
+      "sketchAlpha": 0.45,
+      "sketchWidth": 1.2,
+      "sketchJitter": 2.2,
+      "cableSag": 0.08,
+      "pinShadowOffset": [
+        2,
+        3
+      ],
+      "frontierWidth": 4,
+      "frontierLength": 56,
+      "frontierHead": 20,
+      "legendCableDash": [
+        6,
+        4
+      ],
+      "legendCablePin": 7,
+      "_final": "UYGULAMA EKİ (aşama 2 kapanış düzeltmeleri). Kenar kırma: edgeAmplitude artık iç bölge sınırı (sakin), coastAmplitude ve coastJitter kıyı kenarı ve kıyı köşesi (hırçın; kenar 7 ara nokta, üç harmonik, yıldız biçim koruması). labelMaxSingle: bölgesine sığarsa ad bu genişliğe kadar tek satır kalır. labelOwnTolerance: ad, yüzde, ADAY ve ✓✓✓ kutusunun bölge dışında kalabilecek payı (önce kendi bölgesinde kalan seçenekler). figureOwnShare: figür taban elipsinin kendi bölgesinde kalması gereken payı; figureSidePad tabana yan pay. occluderTypewriter / occluderPencil: haritanın K2'de daktilo ve kalemin altında kalan yeri (x, y, en, boy; harita pikseli); hiçbir işaret ve lejant buraya konmaz. legendCableGap lejantla kablo arasında en az boşluk, legendLand lejantın altında kalabilecek kara payı. frontierCableBack kablolu adayda ok başının raptiyeden geriliği; pinShineSize ve pinShineOffset raptiye parıltısının çapı ve kayması (raptiye çapına oranla).",
+      "coastAmplitude": 0.24,
+      "coastJitter": 0.12,
+      "labelMaxSingle": 340,
+      "labelOwnTolerance": 0.03,
+      "figureOwnShare": 0.85,
+      "figureSidePad": 4,
+      "occluderTypewriter": [
+        0,
+        480,
+        140,
+        600
+      ],
+      "occluderPencil": [
+        1560,
+        990,
+        90,
+        90
+      ],
+      "legendCableGap": 12,
+      "legendLand": 0.02,
+      "frontierCableBack": 26,
+      "pinShineSize": 0.35,
+      "pinShineOffset": [
+        -0.18,
+        -0.2
+      ]
+    },
     "_extra": "UYGULAMA EKİ (Unity, Aşama 5): stringPx, stringShadowPx, frontSlipW (onay fişi 404 px), mapK2ScreenW (K2'de harita 1210 ekran px: fiş pikseli bu ölçekle masaya yatar); paket dosyasında yok, K2/K3/Ekip notlarından. Bkz. IMPLEMENTATION_MAP › CHANGELOG Aşama 5."
   },
   "motion": {
@@ -2342,7 +2495,8 @@
       "slipLineSlideFraction": 0.35,
       "slipReturnMps": 3,
       "slipReturnMaxS": 0.45,
-      "_local_teleks": "UYGULAMA EKİ (Unity, teleks modeli değişimi): slipTypeS — devir fişinin daktilonun silindirinden yazılarak çıkışı (1,4 s, shiftClose.slip.typeLines satır adımı); slipLineSlideFraction — her satır adımının kayış payı (0,35; kalanı duruş: harfler basılıyor); feedHoldMaxS — kol inince fişin teleks satırını bitirmeyi ve kameranın masaya (K1) varışını en çok bekleyeceği süre (3 s); slipReturnMps / slipReturnMaxS — fişin daktiloya dönüşü yola göre uzar (yol / 3 m/s, en az eski süre slipToHandS ya da board.returnArcS 0,25 s, en çok 0,45 s = kameranın K6 → K1 geçişi; EVRAK'tan ve K6'daki elden yol ~1,4 m). Paket dosyasında yok; bkz. _local_teleks."
+      "slipRollDeg": 120,
+      "_local_teleks": "UYGULAMA EKİ (Unity, teleks modeli değişimi): slipRollDeg — devir fişi silindirden yazılarak çıkarken daktilonun arkasındaki rulonun toplam dönüşü (derece, fişin yoldaki kesriyle; tek kâğıt akışı); slipTypeS — devir fişinin daktilonun silindirinden yazılarak çıkışı (1,4 s, shiftClose.slip.typeLines satır adımı); slipLineSlideFraction — her satır adımının kayış payı (0,35; kalanı duruş: harfler basılıyor); feedHoldMaxS — kol inince fişin teleks satırını bitirmeyi ve kameranın masaya (K1) varışını en çok bekleyeceği süre (3 s); slipReturnMps / slipReturnMaxS — fişin daktiloya dönüşü yola göre uzar (yol / 3 m/s, en az eski süre slipToHandS ya da board.returnArcS 0,25 s, en çok 0,45 s = kameranın K6 → K1 geçişi; EVRAK'tan ve K6'daki elden yol ~1,4 m). Paket dosyasında yok; bkz. _local_teleks."
     },
     "crtInstrumentS": 0.3,
     "lastSwitch": {
@@ -2351,20 +2505,23 @@
       "deniedRepeatS": 3
     },
     "telexRollDegPerChar": 2,
+    "telexFeed": {
+      "slideS": 0.06
+    },
     "telexTear": {
       "moveMm": [
         10,
-        150,
-        170
+        190,
+        300
       ],
-      "fallMm": 200,
+      "fallMm": 420,
       "euler": [
-        55,
+        60,
         0,
         10
       ]
     },
-    "_local_teleks": "UYGULAMA EKİ (Unity, teleks modeli değişimi): telexRollDegPerChar — daktilonun arkasındaki kâğıt rulosu basılan her harfte 2° döner; telexTear — yeni satırda koparılan teleks kâğıdının 0,4 s'lik yolu (Teleprinter yereli): ofset moveMm·t − fallMm·t² (silindirden yukarı çekilir, arkaya atılıp daktilonun arkasına düşer), dönüş euler·t (+x üstü arkaya yatar). Eski teleksin öne devrilip masaya düşüşü daktiloda kapağın ve klavyenin içinden geçiyordu. Paket dosyasında yok; bkz. _local_teleks."
+    "_local_teleks": "UYGULAMA EKİ (Unity, teleks modeli değişimi): telexRollDegPerChar — daktilonun arkasındaki kâğıt rulosu basılan her harfte 2° döner; telexFeed.slideS — tek kâğıt akışı: yeni teleks kâğıdı silindirin içinden satır satır yazılarak çıkar, satır değişince bir sonraki satırın taban çizgisi yazım çizgisine bu sürede ease-out kayar (0,06 s; satır bitince son kayışla dinlenme pozuna); telexTear — yeni satırda (ve devir fişi beslenmeye başlayınca) düşen teleks kâğıdının 0,4 s'lik yolu (Teleprinter yereli): ofset moveMm·t − fallMm·t² (silindirden ~2 cm yukarı çekilir, arkaya atılıp arkaya yatarak daktilonun arkasına düşer; t = 1'de merkez rulonun arkasında masa hizasında, K1'den daktilonun gövdesi örter, kopya orada kaybolur: havada sönmez), dönüş euler·t (+x üstü arkaya yatar). Kapağın üstünden geçerken (z < 0,2 m) merkez 0,15 m'nin üstünde. Eski teleksin öne devrilip masaya düşüşü daktiloda kapağın ve klavyenin içinden geçiyordu. Paket dosyasında yok; bkz. _local_teleks."
   },
   "cameras": {
     "_": "★ Unity koordinatı (x sağ, y yukarı, z ileri), metre. K1 Physical Camera + lens shift; diğerleri bakış hedefli.",
@@ -4905,7 +5062,7 @@
       "collectFromBottom": true,
       "perCardMs": 320,
       "gapMs": 70,
-      "handStepMm": "min(82, 636 / (n − 1))",
+      "handStepMm": "min(82, (deste x − 462) / (n − 1)): GÖZETİM açıkken 518, kapalıyken 636",
       "takeOne": "bir kart alınınca diğerleri desteye döner"
     },
     "plates": {
@@ -4916,6 +5073,7 @@
         "uret": "ÜRETİM EKİBİ",
         "mutf": "MUTFAK",
         "egit": "EĞİTİM",
+        "gozet": "GÖZETİM",
         "bosta": "BOŞTA / DİNLENME",
         "order": "ÜRETİM · İŞ EMRİ",
         "dosya": "KİŞİ DOSYASI",
@@ -4940,6 +5098,7 @@
         "uret": "PRODUCTION",
         "mutf": "KITCHEN",
         "egit": "TRAINING",
+        "gozet": "WATCH",
         "bosta": "IDLE / REST",
         "order": "PRODUCTION · WORK ORDER",
         "dosya": "PERSONAL FILE",
@@ -4960,7 +5119,7 @@
     },
     "limits": {
       "people": 10,
-      "areas": 7,
+      "areas": 8,
       "rawMaterials": 4,
       "itemCards": 32,
       "rationCap": 60
@@ -5003,6 +5162,12 @@
           244,
           180,
           194
+        ],
+        "gozet": [
+          1042,
+          44,
+          108,
+          194
         ]
       },
       "cardCentres": {
@@ -5029,15 +5194,23 @@
         "egit": [
           304,
           328
+        ],
+        "gozet": [
+          1096,
+          128
         ]
       },
       "bosta": [
         380,
         44,
-        770,
+        652,
         194
       ],
       "deck": [
+        980,
+        128
+      ],
+      "deckNoWatch": [
         1098,
         128
       ],
@@ -5092,6 +5265,16 @@
         951
       ],
       "kitsY": 502,
+      "gearX": [
+        459,
+        541,
+        623,
+        705,
+        787,
+        869,
+        951
+      ],
+      "gearY": 571,
       "book": [
         70,
         452
@@ -5141,8 +5324,11 @@
         "ana",
         "uret",
         "mutf",
-        "egit"
-      ]
+        "egit",
+        "gozet"
+      ],
+      "_local_tesis5": "UYGULAMA EKİ (Unity, tesis baskınları aşama 5 · dinleme nöbeti, Docs/TESIS-BASKINLARI-TASARIMI.md §7.2): GÖZETİM cebi BOŞTA bandının sağ ucunda (pockets.gozet [1042, 44, 108, 194], kart merkezi [1096, 128]; plaka TXT_P_gozet, pirinç bant ayrı nesne 'Gözetim bandı', şeritler 'Şerit · gozet · 1..3'). BOŞTA 770 → 652 mm (380–1032); BOŞTA plakası ve bandı yerinde. Cep yalnız Balance.raidFacilityEnabled açıkken görünür ve hedeftir; o zaman deste 980'e kayar (deck; açık elin aralığı min(82, 518 / (n − 1)), 10 kişide 57,6 mm). Kapalıyken köşe boş kalır, BOŞTA'nın bırakma alanı sayılır (1150'ye kadar) ve deste bugünkü yerindedir (deckNoWatch 1098, aralık 636 / (n − 1)): pano aşama 5'ten önceki görünümüyle aynı. Paket dosyasında yok.",
+      "_local_tesis9": "UYGULAMA EKİ (Unity, tesis baskınları aşama 9 · ekipman, aşama 9 tasarımı §7.1, K18): DEPO bandında kitlerin altında yedi ekipmanın ikinci sırası; gearX yedi yığın çapası (FacilityGear.Kinds sırası: wire_kit, charge, turret, decoy, winch, clamp, dog), gearY 571 (kart 80 × 50 mm, y 546–596; ekran görüntüsünde 566 kit sayaçlarının ×n yazısına değiyordu; hammadde kartlarının, kit sayaçlarının ve hurda kutusunun dışında). Yalnız Balance.raidFacilityEnabled açıkken ve türün depoda kartı varken çizilir; sayı kart yüzünde (×n). Paket dosyasında yok."
     },
     "newTag": {
       "color": "#B4291C",
@@ -5429,9 +5615,10 @@
     "slip": {
       "model": "HandoverSlip",
       "sizeMm": [
-        100,
-        150
+        260,
+        225
       ],
+      "faceScale": 1.5,
       "texture": "devir_fisi_v001 / v031 (TR, EN), R10 ailesi",
       "switchLocalStart": [
         -0.18,
@@ -5451,14 +5638,14 @@
       "wrongDrop": "EVRAK dışına bırakılan fiş dile döner",
       "typeLines": 7,
       "typewriterLocalStart": [
-        0.145,
-        0.05152,
-        0.00814
+        -0.04,
+        -0.0107,
+        0.0016
       ],
       "typewriterLocalExit": [
-        0.145,
-        0.15,
-        0.0255
+        -0.04,
+        0.1863,
+        0.0363
       ],
       "typewriterLocalEuler": [
         10,
@@ -5470,7 +5657,7 @@
         20,
         0
       ],
-      "_local_teleks": "UYGULAMA EKİ (Unity, teleks modeli değişimi): fiş teleks daktilosunun silindirinden çıkar. typewriterLocalExit silindirin önü (kart tutucuyla silindir arası, teleks kâğıdının 3 mm önü, daktilonun sağ ucunda, kâğıdın yanında: K1'de iki kâğıt ayrı görünür), typewriterLocalStart çıkışın 100 mm altı (kâğıtla aynı 10° arkaya yaslanma, typewriterLocalEuler); çıkış SlipStart'ın 40 mm içinden başlar, yol yine 160 mm (Karar D12). tongueOffsetMm: silindirde dik duran fişin merkezi çıkıştan 20 mm yukarıda (alt kenarı K1'den görünmesin diye 55 mm silindirin ve kart tutucunun arkasında). Fiş kâğıdı örtmez (x aralıkları ayrık); teleks satırları fiş daktilodayken de kâğıttan okunur. typeLines: çıkışın satır adımı. switchLocal* eski fiş ağzının değerleri (ağız odadan kalktı). Paket dosyasında yok; bkz. _local_teleks."
+      "_local_teleks": "UYGULAMA EKİ (Unity, teleks modeli değişimi; tek kâğıt akışı): fiş teleks daktilosunun silindirinden, teleks kâğıdının yerinden çıkar (o anki teleks kâğıdı düşer). sizeMm: fiş teleks kâğıdıyla aynı boyda (TypewriterTelexPaper_SM, 260 × 225 mm; eski 100 × 150); faceScale: yüzün tasarım mm'sinden dünyaya ölçeği (tasarım 173,33 × 150 mm = 832 × 720 px @4,8; punto ve boşluklar eş ölçekli ×1,5, elde ad yine 18 px). typewriterLocalExit teleks kâğıdının dinlenme düzleminde, merkezinin 20 mm altı (Teleprinter yereli, m; tek seferlik sahne script'i kâğıdın mesh'inden hesapladı), typewriterLocalStart çıkışın 200 mm altı (kâğıtla aynı 10° arkaya yaslanma, typewriterLocalEuler; besleme başında fişin üst kenarı yazım çizgisinin altında); çıkış SlipStart'ın 40 mm içinden başlar, yol 260 mm (Karar D12). tongueOffsetMm: silindirde dik duran fişin merkezi çıkıştan 20 mm yukarıda = teleks kâğıdının merkezi (alt ~47 mm silindirin ve kart tutucunun arkasında). typeLines: çıkışın satır adımı. switchLocal* eski fiş ağzının değerleri (ağız odadan kalktı). Paket dosyasında yok; bkz. _local_teleks."
     },
     "slipMouth": {
       "model": "SlipMouth",
@@ -5819,8 +6006,11 @@
     }
   },
   "_local_teleks": {
-    "_": "UYGULAMA EKİ (Unity, teleks modeli değişimi): kullanıcı masadaki teleksi bir daktilo modeliyle (Assets/Typewriter) değiştirdi; devir fişi artık şalterin yanındaki fiş ağzından değil teleks daktilosunun silindirinden basılır. Paket dosyasında (Docs/UI_Siginak_Rev3/tokens/tokens_siginak.json) olmayan yerel anahtarlar; düğümlerin yanında “_local_teleks” notu var. slipTypeS: fişin silindirden yazılarak çıkışı (s; eski ağız çıkışı slipExitS 0,35 s eski yolun değeri olarak kalır); typeLines: çıkışın satır adımı; feedHoldMaxS: kol inince fişin teleks satırını ve kameranın masaya (K1) varışını en çok bekleyeceği süre; slipLineSlideFraction: satır adımının kayış payı; slipReturnMps / slipReturnMaxS: fişin daktiloya dönüşünün yola göre süresi; telexTear: koparılan teleks kâğıdının yolu; telexRollDegPerChar: daktilonun arkasındaki kâğıt rulosunun basılan harf başına dönüşü; typewriterLocal*: fişin çıkış çapaları (Teleprinter yereli, m; Euler derece), tongueOffsetMm: silindirdeki duruşta fiş merkezinin çıkış çapasından uzaklığı (çapa yereli, mm). Bkz. Docs/DURUM.md › Teleks modeli.",
+    "_": "UYGULAMA EKİ (Unity, teleks modeli değişimi): kullanıcı masadaki teleksi bir daktilo modeliyle (Assets/Typewriter) değiştirdi; devir fişi artık şalterin yanındaki fiş ağzından değil teleks daktilosunun silindirinden basılır. Paket dosyasında (Docs/UI_Siginak_Rev3/tokens/tokens_siginak.json) olmayan yerel anahtarlar; düğümlerin yanında “_local_teleks” notu var. slipTypeS: fişin silindirden yazılarak çıkışı (s; eski ağız çıkışı slipExitS 0,35 s eski yolun değeri olarak kalır); typeLines: çıkışın satır adımı; feedHoldMaxS: kol inince fişin teleks satırını ve kameranın masaya (K1) varışını en çok bekleyeceği süre; slipLineSlideFraction: satır adımının kayış payı; slipReturnMps / slipReturnMaxS: fişin daktiloya dönüşünün yola göre süresi; telexTear: koparılan teleks kâğıdının yolu; telexRollDegPerChar: daktilonun arkasındaki kâğıt rulosunun basılan harf başına dönüşü; typewriterLocal*: fişin çıkış çapaları (Teleprinter yereli, m; Euler derece), tongueOffsetMm: silindirdeki duruşta fiş merkezinin çıkış çapasından uzaklığı (çapa yereli, mm). Tek kâğıt akışı (teleks ve devir kâğıdı birleşti): telexFeed.slideS yeni teleks kâğıdının satır adımı kayışı; slipRollDeg fiş beslenirken rulonun dönüşü; faceScale fiş yüzünün tasarım ölçeğinden dünyaya ölçeği; changed: shiftClose.slip.sizeMm paketteki 100 × 150 yerine teleks kâğıdının 260 × 225'i. Bkz. Docs/DURUM.md › Teleks modeli.",
     "new": [
+      "motion.telexFeed.slideS",
+      "motion.shiftClose.slipRollDeg",
+      "shiftClose.slip.faceScale",
       "motion.shiftClose.slipTypeS",
       "motion.shiftClose.feedHoldMaxS",
       "motion.shiftClose.slipLineSlideFraction",
@@ -5836,6 +6026,8 @@
       "shiftClose.slip.typewriterLocalEuler",
       "shiftClose.slip.tongueOffsetMm"
     ],
-    "changed": []
+    "changed": [
+      "shiftClose.slip.sizeMm"
+    ]
   }
 }

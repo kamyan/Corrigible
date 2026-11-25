@@ -29,6 +29,7 @@ namespace Corrigible.Desk
 
         bool bound;
         string cachedKind, cachedName, cachedSlotLabel, cachedUse;
+        float nameBaseSize = -1f;
 
         public override BoardCardKind Kind => BoardCardKind.Item;
         public override TMP_Text NameText => null;
@@ -76,16 +77,46 @@ namespace Corrigible.Desk
             SetText(slotLabel, d.SlotLabel);
             SetText(useLine, d.UseLine);
             SetText(nameText, d.Name);
+            FitName(d.Name);
             var sprite = PictogramFor(d.Kind);
             SetSprite(pictogram, sprite, pictogramTint);
             SetSprite(bandIcon, sprite, bandIconTint);
             return true;
         }
 
+        /// <summary>
+        /// Tesis aşama 9: ad bandına sığmayan uzun ekipman adı ("Kumanda kelepçesi") <see cref="nameMaxMm"/>'ye sığacak kadar küçülür (en çok
+        /// %20; bantta ikinci satır yok). Sığan adda prefab puntosu (baştan açık altı tür değişmez).
+        /// </summary>
+        void FitName(string name)
+        {
+            if (nameText == null) return;
+            if (nameBaseSize < 0f) nameBaseSize = nameText.fontSize;
+            float size = nameBaseSize;
+            if (!string.IsNullOrEmpty(name))
+            {
+                if (nameText.fontSize != nameBaseSize) nameText.fontSize = nameBaseSize;
+                float w = nameText.GetPreferredValues(name, float.PositiveInfinity, float.PositiveInfinity).x;
+                if (w > nameMaxMm) size = Mathf.Max(nameBaseSize * 0.8f, nameBaseSize * nameMaxMm / w * 0.995f);
+            }
+            if (nameText.fontSize != size) nameText.fontSize = size;
+        }
+
         Sprite PictogramFor(string kind)
         {
             int i = System.Array.IndexOf(BoardLayout.KitKinds, kind);
-            return i >= 0 && i < pictograms.Length ? pictograms[i] : null;
+            return i >= 0 && i < pictograms.Length ? pictograms[i] : GearPictogram(kind);
+        }
+
+        /// <summary>
+        /// Tesis aşama 9 (K20): kit dizisi dışındaki türün piktogramı adla <see cref="DeskSprites"/>'tan (<c>picto_&lt;tür&gt;</c>); dizi
+        /// alanları ve prefab'lar değişmez. Kayıtta yoksa null (kart piktogramsız çizilir).
+        /// </summary>
+        public static Sprite GearPictogram(string kind)
+        {
+            if (string.IsNullOrEmpty(kind)) return null;
+            var reg = DeskSprites.Instance;
+            return reg != null && reg.TryGet("picto_" + kind, out var e) ? e.sprite : null;
         }
     }
 }

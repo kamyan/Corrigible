@@ -153,8 +153,8 @@ namespace Corrigible.Desk.Tests
 
             var paperGo = Make("Physical receipt");
             b.hit = paperGo.AddComponent<BoxCollider>();
-            b.hit.size = new Vector3(0.10f, 0.15f, 0.006f);
-            b.hit.center = new Vector3(0, 0, -0.002f);
+            b.hit.size = new Vector3(0.26f, 0.225f, 0.006f);
+            b.hit.center = new Vector3(0, 0, -0.003f);
             b.paper = paperGo.AddComponent<ShiftReceiptPaper>();
             b.paper.Configure(b.exit, b.over, b.hit, null, null, b.cam);
             b.paper.ConfigureSlip(b.start, null, b.tray);
@@ -219,16 +219,18 @@ namespace Corrigible.Desk.Tests
 
         // ------------------------------------------------------------------ pozlar
 
-        /// <summary>E15: K6 token kamerasında el pozu: dört köşe kadrajda, fişin yüksekliği ekranın %67'si (723,6 px ± %1); yüz kameraya
-        /// dönük, x eğimi 0°, z −2,9° (Karar D5); örnek pozu canlı kameradan aynı sonucu verir.</summary>
+        /// <summary>E15: K6 token kamerasında el pozu: fiş teleks kâğıdının boyunda (tek kâğıt akışı, 260 × 225 mm); dört köşe kadrajda,
+        /// fişin yüksekliği ekranın %67'si (723,6 px ± %1; uzaklık 0,4374 m); yüz kameraya dönük, x eğimi 0°, z −1,1° (Karar D5'in 100 mm'lik
+        /// fişteki −2,9° köşe düşüşü 260 mm'de: sağa yaslı değerler satırının hizasında kalır); örnek
+        /// pozu canlı kameradan aynı sonucu verir.</summary>
         [Test]
         public void HandPose_67Percent_AllCornersInFrame()
         {
             var cam = K6Camera();
             float w = Token("shiftClose.slip.sizeMm[0]") * 0.001f, h = Token("shiftClose.slip.sizeMm[1]") * 0.001f;
-            Assert.AreEqual(0.10f, w, 1e-6f);
-            Assert.AreEqual(0.15f, h, 1e-6f);
-            var pose = ShiftReceiptPaper.HandPose(cam.transform.position, cam.transform.rotation, cam.fieldOfView);
+            Assert.AreEqual(0.26f, w, 1e-6f, "teleks kâğıdının genişliği");
+            Assert.AreEqual(0.225f, h, 1e-6f, "teleks kâğıdının yüksekliği");
+            var pose = ShiftReceiptPaper.HandPose(cam.transform.position, cam.transform.rotation, cam.fieldOfView, 0.67f, h);
 
             for (int i = 0; i < 4; i++)
             {
@@ -244,24 +246,28 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(0.67f * 1080f, px, 0.01f * 0.67f * 1080f, "fişin ekrandaki yüksekliği");
 
             float d = Vector3.Dot(pose.position - cam.transform.position, cam.transform.forward);
-            Assert.AreEqual(0.15f / (0.67f * 2 * Mathf.Tan(21f * Mathf.Deg2Rad)), d, 1e-4f, "K6'da uzaklık ≈ 0,2916 m");
+            Assert.AreEqual(0.225f / (0.67f * 2 * Mathf.Tan(21f * Mathf.Deg2Rad)), d, 1e-4f, "K6'da uzaklık ≈ 0,4374 m");
             Assert.Greater(Vector3.Dot(pose.rotation * Vector3.back, cam.transform.position - pose.position), 0, "yüz (−z) kameraya bakar");
             Assert.Less(Vector3.Angle(pose.rotation * Vector3.forward, cam.transform.forward), 0.1f, "x eğimi 0° (D5; acos kayan nokta payı)");
-            Assert.AreEqual(-2.9f, Vector3.SignedAngle(cam.transform.up, pose.rotation * Vector3.up, cam.transform.forward), 0.01f, "düzlem içi −2,9°");
+            Assert.AreEqual(-1.1f, Vector3.SignedAngle(cam.transform.up, pose.rotation * Vector3.up, cam.transform.forward), 0.01f, "düzlem içi −1,1°");
+            // Köşe düşüşü eski 100 mm'lik fişin −2,9°'siyle aynı (≈ 5 mm); sağ sütun satırının yarısından az kayar (satır adımı 5 mm × 1,5)
+            Assert.AreEqual(100f * Mathf.Sin(2.9f * Mathf.Deg2Rad), w * 1000f * Mathf.Sin(1.1f * Mathf.Deg2Rad), 0.1f, "köşe düşüşü ≈ 5 mm");
+            Assert.Less(w * 1000f * 0.5f * Mathf.Sin(1.1f * Mathf.Deg2Rad), 0.5f * 5f * 1.5f, "sağ yarı satır adımının yarısından az kayar");
             var local = Quaternion.Inverse(cam.transform.rotation) * (pose.position - cam.transform.position);
             Assert.AreEqual(0.02f, local.x, 1e-5f, "kamera sağına 2 cm");
             Assert.AreEqual(-0.004f, local.y, 1e-5f, "kamera aşağısına 4 mm");
 
             var b = Build(withMachine: false);
             var live = b.paper.HandTarget;
-            Assert.Less(Vector3.Distance(live.position, ShiftReceiptPaper.HandPose(b.cam.transform.position, b.cam.transform.rotation, b.cam.fieldOfView).position), 1e-5f,
+            Assert.Less(Vector3.Distance(live.position, ShiftReceiptPaper.HandPose(b.cam.transform.position, b.cam.transform.rotation, b.cam.fieldOfView, 0.67f, h).position), 1e-5f,
                 "örnek pozu token boyutu ve varsayılanlarla statik pozla aynı");
         }
 
         /// <summary>
         /// Dil pozu (daktilonun silindiri): fiş merkezi çıkış çapasından <c>shiftClose.slip.tongueOffsetMm</c> (20 mm) yukarıda, dönüşü
         /// çapanınki (Teleprinter yerelinde 10° arkaya yaslanmış); yüzü öne ve yukarı, üstü yukarı; alt kenarı silindirin altında
-        /// (K1'den görünmez), üst kenarı kâğıdın üstünde. Serileşmiş varsayılanlar token'la aynı.
+        /// (K1'den görünmez), üst kenarı teleks kâğıdınınki gibi ~0,317'de (tek kâğıt akışı: fiş teleks kâğıdının dinlenme pozunda,
+        /// 225 mm boyunda). Serileşmiş varsayılanlar token'la aynı.
         /// </summary>
         [Test]
         public void TonguePose_StandsInPlaten_FacingFront()
@@ -282,9 +288,11 @@ namespace Corrigible.Desk.Tests
             var face = b.printerRoot.InverseTransformDirection(tongue.rotation * Vector3.back);
             Assert.Less(face.z, -0.98f, "yüz öne (klavyeye)");
             Assert.Greater(face.y, 0.15f, "yüz hafif yukarı (K1'e)");
-            float bottom = local.y - 0.075f * top.y, upper = local.y + 0.075f * top.y;
+            float half = Token("shiftClose.slip.sizeMm[1]") * 0.0005f;
+            Assert.AreEqual(0.1125f, half, 1e-6f);
+            float bottom = local.y - half * top.y, upper = local.y + half * top.y;
             Assert.Less(bottom, 0.105f, "alt kenar silindirin ve kart tutucunun arkasında (K1'den görünmez)");
-            Assert.Greater(upper, 0.23f, "fiş silindirin üstünde ~10 cm görünür");
+            Assert.Greater(upper, 0.30f, "fiş teleks kâğıdı gibi silindirin ~17 cm üstüne çıkar");
 
             var stat = ShiftReceiptPaper.TonguePose(b.exit, offset, Vector3.zero);
             Assert.Less(Vector3.Distance(stat.position, tongue.position), 1e-6f, "serileşmiş varsayılan = token");
@@ -296,7 +304,7 @@ namespace Corrigible.Desk.Tests
 
         /// <summary>
         /// Basılan fiş kol aşağıya varana dek görünmez ve lamba sönük; kol varınca daktilonun içinden (SlipStart + 40 mm, Karar D12,
-        /// yol 160 mm) <c>motion.shiftClose.slipTypeS</c> (1,4 s) boyunca <c>shiftClose.slip.typeLines</c> (7) satır adımıyla yazılarak
+        /// yol 260 mm; başta üst kenarı yazım çizgisinin altında) <c>motion.shiftClose.slipTypeS</c> (1,4 s) boyunca <c>shiftClose.slip.typeLines</c> (7) satır adımıyla yazılarak
         /// silindirdeki duruşuna çıkar (her adımın ilk %35'i kayış, kalanı duruş), başta yazıcı, sonda kopma sesi; lamba besleme
         /// başında yanar.
         /// </summary>
@@ -316,13 +324,13 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(Where.Hidden, b.paper.State, "zaman geçse de kol varmadan çıkmaz");
             Assert.IsEmpty(b.sounds);
 
-            // D12: SlipStart'ın 40 mm içinden (daktilonun gövdesinde); yol 160 mm
+            // D12: SlipStart'ın 40 mm içinden (daktilonun gövdesinde); çapalar arası 200 mm, yol 260 mm
             var exitLocal = Theme.Vector("shiftClose.slip.typewriterLocalExit");
             var up = Quaternion.Euler(Theme.Vector("shiftClose.slip.typewriterLocalEuler")) * Vector3.up;
             var from = b.printerRoot.InverseTransformPoint(b.paper.FeedFrom);
-            Assert.Less(Vector3.Distance(exitLocal - up * 0.14f, from), 0.0005f, "çıkış çapasının 140 mm altında (SlipStart + 40 mm)");
-            Assert.Less(from.y + 0.075f * up.y, 0.12f, "başta fişin üst kenarı silindirin altında (görünmez)");
-            Assert.AreEqual(0.16f, b.paper.FeedPathM, 0.0005f, "yol 160 mm");
+            Assert.Less(Vector3.Distance(exitLocal - up * 0.24f, from), 0.0005f, "çıkış çapasının 240 mm altında (SlipStart + 40 mm)");
+            Assert.Less(from.y + Token("shiftClose.slip.sizeMm[1]") * 0.0005f * up.y, 0.146f, "başta fişin üst kenarı yazım çizgisinin altında (görünmez)");
+            Assert.AreEqual(0.26f, b.paper.FeedPathM, 0.0005f, "yol 260 mm");
 
             RaiseLeverArrived(b.shiftSwitch, true);
             Assert.AreEqual(Where.Feeding, b.paper.State);
@@ -364,6 +372,52 @@ namespace Corrigible.Desk.Tests
         }
 
         static float LineSlideHalf => Token("motion.shiftClose.slipLineSlideFraction") * 0.5f;
+
+        /// <summary>
+        /// Tek kâğıt akışı: canlı fiş basıldığından EVRAK'a dosyalanana dek silindiri tutar (<see cref="ShiftReceiptPaper.HoldsPlaten"/>;
+        /// teleks kâğıdı o sırada yok): beslenirken, dilde, ele giderken, elde, sürüklenirken, dönerken, tepsiye inerken ve tepside. Bekleyen
+        /// besleme, dosyalama sonrası (gizli) ve arşiv okuması tutmaz.
+        /// </summary>
+        [Test]
+        public void ShiftReceiptPaper_HoldsPlaten_States()
+        {
+            var b = Build(withMachine: false);
+            var p = b.paper;
+            Assert.IsFalse(p.HoldsPlaten, "fiş yok");
+            p.Present(Id, Facts(1), ShiftReceiptPaper.Entry.AfterLever);
+            Assert.IsTrue(p.FeedPending);
+            Assert.IsFalse(p.HoldsPlaten, "bekleyen besleme silindiri tutmaz (teleks satırı biter)");
+            p.BeginFeed();
+            Assert.AreEqual(Where.Feeding, p.State);
+            Assert.IsTrue(p.HoldsPlaten, "beslenirken");
+            p.Advance(5f);
+            Assert.AreEqual(Where.Tongue, p.State);
+            Assert.IsTrue(p.HoldsPlaten, "dilde");
+            p.TakeToHand();
+            Assert.AreEqual(Where.ToHand, p.State);
+            Assert.IsTrue(p.HoldsPlaten, "ele giderken");
+            p.Advance(1f);
+            Assert.AreEqual(Where.Hand, p.State);
+            Assert.IsTrue(p.HoldsPlaten, "elde");
+            p.PutBack();
+            Assert.AreEqual(Where.Returning, p.State);
+            Assert.IsTrue(p.HoldsPlaten, "dönerken");
+            p.Advance(1f);
+            p.OnBeginDrag(Pointer(b.cam.WorldToScreenPoint(p.transform.position)));
+            Assert.AreEqual(Where.Dragging, p.State);
+            Assert.IsTrue(p.HoldsPlaten, "sürüklenirken");
+            p.FileToTray();
+            Assert.AreEqual(Where.ToTray, p.State);
+            Assert.IsTrue(p.HoldsPlaten, "tepsiye inerken (ret dönüşü silindire)");
+            p.Advance(1f);
+            Assert.AreEqual(Where.Tray, p.State);
+            Assert.IsTrue(p.HoldsPlaten, "tepside (dosyalama sürüyor)");
+            p.Hide();
+            Assert.IsFalse(p.HoldsPlaten, "dosyalandı: silindir boş");
+            p.ReadArchived(Facts(1), new Pose(b.tray.transform.position, b.tray.transform.rotation));
+            Assert.AreEqual(Where.Reading, p.State);
+            Assert.IsFalse(p.HoldsPlaten, "arşiv okuması silindiri tutmaz");
+        }
 
         /// <summary>
         /// Yazılarak çıkışın yol kesri (saf): uçlar, satır adımları, duruşlar, tekdüzelik; 0 satır tek ease-out. Satır adımının kayış

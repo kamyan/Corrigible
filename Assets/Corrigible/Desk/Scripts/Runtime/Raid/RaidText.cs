@@ -22,6 +22,8 @@ namespace Corrigible.Desk
             ["raid.retreat.title"]=Loc.N("GERİ ÇEKİLME · 2. ONAY"),
             ["raid.retreat.body"]=Loc.N("Ekip binadan çıkar; operasyon başarısız sayılır. Hedef dolaplar ayakta kalır."),
             ["raid.retreat.bodyLoot"]=Loc.N("Ekip binadan çıkar; operasyon başarısız sayılır. İkmal kasası geride kalır."),
+            // Tesis baskını (aşama 7): düşen tahtada kalır; geri çekilmede yerde yatanlar ölür
+            ["raid.retreat.bodyFacility"]=Loc.N("Ekip binadan çıkar; operasyon başarısız sayılır. Yerde yatanlar ölür."),
             ["raid.retreat.foot"]=Loc.N("İkinci basış geri çeker."),
             ["raid.result.targetBroken"]=Loc.N("HEDEF KIRILDI"),
             ["rules.title"]=Loc.N("KURALLAR KARTI"),

@@ -154,8 +154,6 @@ namespace Corrigible.Desk.Bridge
                     if (on) folder.Clicked += OpenFolder;
                     else folder.Clicked -= OpenFolder;
                 }
-                var topics = board3D.Topics;
-                if (topics != null) { if (on) topics.RowClicked += TopicRowClicked; else topics.RowClicked -= TopicRowClicked; }
                 var lost = board3D.LostEnvelope;
                 if (lost != null) { if (on) lost.Clicked += OpenLost; else lost.Clicked -= OpenLost; }
             }
@@ -786,24 +784,6 @@ namespace Corrigible.Desk.Bridge
         /// </summary>
         public static bool DeniesStock(BoardCardKind kind, string reason) => BoardDragController.FlashesStock(kind, reason);
 
-        // ------------------------------------------------------------------ eğitim konuları
-
-        /// <summary>Konu satırına tık: biri eğitimdeyse onu o konuya alır (<c>board_train</c>); kimse yoksa halkalı konu saklanır.</summary>
-        void TopicRowClicked(int row)
-        {
-            var sim = Sim;
-            var snap = board3D != null ? board3D.Last : null;
-            if (game == null || sim?.Board == null || snap == null || !snap.Editable) return;
-            if (row < 0 || row >= PlanningBoardData.Subjects.Length) return;
-            var command = BoardDropRules.TopicCommand(row, sim);
-            if (command != null) { game.ExecuteBoardCommand(command); return; }
-            string subject = PlanningBoardData.Subjects[row];
-            if (ui.TrainingTopic == subject) return;
-            ui.TrainingTopic = subject;
-            SaveLayout();
-            RenderBoard(true);
-        }
-
         // ------------------------------------------------------------------ kişi dosyası ve KAYIPLAR
 
         string FolderPerson => board3D != null && board3D.Last != null && board3D.Last.Folder != null ? board3D.Last.Folder.PersonId : null;
@@ -860,7 +840,12 @@ namespace Corrigible.Desk.Bridge
 
         // ------------------------------------------------------------------ emekli görevler (her karede; değişmedi)
 
-        static bool RetiredJob(string job) => job == "care" || job == "gather" || job == "watch" || job == "contact";
+        /// <summary>
+        /// Rev3 panosunda cebi olmayan görevler. "watch" yalnız GÖZETİM kapalıyken (simülasyonsuz; oyunda hep açık) emeklidir: açıkken cebi vardır
+        /// ve buraya girerse kişi her karede BOŞTA'ya inerdi. "contact" emekli kalır.
+        /// </summary>
+        bool RetiredJob(string job) =>
+            job == "care" || job == "gather" || job == "contact" || job == "train" || job == BoardLayout.WatchJob && !BoardDropRules.WatchOpen(Sim);
         void RetireJobs()
         {
             if (Sim?.Board == null || Sim.Board.Locked || game.StoryHold || Sim.S.Raid != null || Sim.S.Ending != null) return;

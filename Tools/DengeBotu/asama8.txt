@@ -1,8 +1,10 @@
+# TARİHSEL: tek tahta dönemi; artık koşmaz (ApplyBal emekli alan). Tek kipte (kayıt 21) her satırın BAL'i ölçüldüğü hâli açıkça
+# yazar (raidFacilityEnabled=false: o günün varsayılanı); yapılandırmaları cekirdek6.txt, yolla4.txt ve usta1.txt de tarihseldir.
 # KOS aşama 8 son ölçümü (2026-11-15; Docs/KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md §8). Uygulanan denge = Balance.cs varsayılanı.
-son|-|8|cekirdek6.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
-sonY|-|8|yolla4.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
-tabanR|liberationServerExtraTurns=1;liberationTier3At=6;liberationTier4At=10;liberationTrustPerRegion=3;boardSuppliesPerResident=0.35;boardLootSupplies=6;eventGapMax=3|8|cekirdek6.txt|1-10 11-20 21-30 31-40
-c375|boardSuppliesPerResident=0.375|8|iyi3.txt|1-10 11-20 21-30 31-40
-c425|boardSuppliesPerResident=0.425|8|iyi3.txt|1-10 11-20 21-30 31-40
-usta|-|16|usta1.txt|1-10 11-20 21-30 31-40
-t12|liberationTrustStart=12|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+son|raidFacilityEnabled=false|8|cekirdek6.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+sonY|raidFacilityEnabled=false|8|yolla4.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+tabanR|raidFacilityEnabled=false;liberationServerExtraTurns=1;liberationTier3At=6;liberationTier4At=10;liberationTrustPerRegion=3;boardSuppliesPerResident=0.35;boardLootSupplies=6;eventGapMax=3|8|cekirdek6.txt|1-10 11-20 21-30 31-40
+c375|raidFacilityEnabled=false;boardSuppliesPerResident=0.375|8|iyi3.txt|1-10 11-20 21-30 31-40
+c425|raidFacilityEnabled=false;boardSuppliesPerResident=0.425|8|iyi3.txt|1-10 11-20 21-30 31-40
+usta|raidFacilityEnabled=false|16|usta1.txt|1-10 11-20 21-30 31-40
+t12|raidFacilityEnabled=false;liberationTrustStart=12|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Corrigible.Core;
+using Corrigible.Desk.Bridge;
 using Corrigible.Game.Raid;
 using UnityEditor;
 using UnityEngine;
@@ -20,7 +21,7 @@ namespace Corrigible.Desk.EditorTools
     /// sahnesinin masa lambası (yumuşak gölge) ve soğuk dolgusu, üç renkli ortam. Her şey HideAndDontSave, 31. katmanda kurulur;
     /// sahnedeki ışıklar çizim boyunca kapanır, ışık ve ortam ayarları finally'de geri yüklenir. Açık sahne kirlenmez.
     /// Olay katmanı, işaretler ve etiketler çizilmez (tahtanın kendisi değil, maketi).
-    /// Menü: Corrigible › Baskın › Kit önizleme sayfası. Kodla: <see cref="Render"/>, <see cref="RenderState"/>, <see cref="Page"/>.
+    /// Menü: Corrigible › Baskın › Kit önizleme sayfası. Kodla: <see cref="Render"/>, <see cref="RenderState"/>, <see cref="Page"/>; oyundaki gibi tesis odası <see cref="RoomSample"/>.
     /// </summary>
     public static class RaidKitPreview
     {
@@ -48,37 +49,29 @@ namespace Corrigible.Desk.EditorTools
             public Color Background = new Color32(0x1C, 0x37, 0x2C, 0xFF);
         }
 
-        /// <summary>Örnek: eğitim baskını (tohum 129, Batı Avrupa, yağma; "Ana sunucu salonu", MapSeed 0 → varsayılan kit).</summary>
-        public static RaidParams TutorialParams() => new RaidParams
-        {
-            Seed = 129, Region = "weu", RegionName = GameData.Region("weu").Name, Compute = 4, RaidNumber = 1, Tier = 1,
-            MissionKind = "loot", SectorId = "weu_1", Traits = new List<string> { "guvenli" }, Signature = "zdron",
-        };
-
         /// <summary>
-        /// Harekât havuzundan bir harita (MapSeed ≠ 0): <paramref name="kind"/> türünün (<see cref="RaidMaps.Kinds"/>) havuzdaki
-        /// <paramref name="nth"/>. haritasına düşen ilk baskın sırası. Aynı tohum ve sıra her bölgede aynı haritayı verir (kit sayfası).
+        /// Oyundaki gibi bir tesis odası (kit ve tür önizlemesi): <paramref name="planSeed"/> harekât tohumuyla kurulan tesis planında
+        /// (<see cref="FacilityMaps.For"/>) giriş odası <paramref name="kind"/> türünde (<see cref="RaidMaps.Kinds"/>; null ya da planda
+        /// yoksa herhangi bir tür) olan ilk kanadın emri; tahtası raporsuz ilk oda (<see cref="RaidChain.Open"/>). MapSeed = harekât
+        /// tohumu: kit oyundaki gibi bölgeden seçilir (<see cref="RaidPieceLibrary.KitFor"/>). Aynı tohum ve tür hep aynı odayı verir.
         /// </summary>
-        public static RaidParams PoolParams(uint mapSeed, string kind, string region = "weu", int nth = 0)
+        public static Baskin.BState RoomSample(uint planSeed, string kind = null, Balance balance = null)
         {
-            var pool = RaidMaps.Pool(mapSeed);
-            int seen = 0;
-            for (int slot = 1; slot <= RaidMaps.PoolSize * 4; slot++)
+            var plan = FacilityMaps.For(planSeed);
+            var entries = plan.Rooms.Where(r => r.Type == RoomType.Entry).ToList();
+            var room = entries.FirstOrDefault(r => kind == null || r.MapKind == kind) ?? entries.FirstOrDefault()
+                ?? throw new InvalidOperationException("tesis planında giriş odası yok");
+            var def = GameData.Region(room.Region);
+            var p = new RaidParams
             {
-                var map = pool[RaidMaps.Slot(mapSeed, slot)];
-                if (RaidMaps.KindOf(map.Name) != kind) continue;
-                if (seen++ < nth) continue;
-                var r = GameData.Region(region);
-                return new RaidParams
-                {
-                    Seed = 1000 + slot, Region = region, RegionName = r.Name, Compute = 4, RaidNumber = slot, Tier = 2, MissionKind = "server",
-                    Traits = new List<string> { r.Trait }, Signature = r.Enemy, MapSeed = mapSeed, MapSlot = slot,
-                };
-            }
-            throw new ArgumentException("havuzda bu türden harita yok: " + kind);
+                Seed = 1000 + room.Wing, Region = room.Region, RegionName = SampleMap.RegionName(null, room.Region), SectorId = room.SectorId,
+                Compute = 4, RaidNumber = room.Wing, Tier = 2, MissionKind = room.Mission, Traits = new List<string> { def.Trait }, Signature = def.Enemy,
+                MapSeed = planSeed, Rooms = plan.Wing(room.SectorId).Select(r => r.Id).ToList(),
+            };
+            return RaidChain.Open(balance ?? new Balance(), plan, p, new List<RoomReport>());
         }
 
-        /// <summary>Baskını kurar (<see cref="Baskin.Create"/>) ve çizer. <paramref name="kitId"/> boşsa kit oyundaki gibi seçilir
+        /// <summary>Örnek tahtayı kurar (<see cref="Baskin.Create"/>: elle çizilmiş haritalar) ve çizer. <paramref name="kitId"/> boşsa kit oyundaki gibi seçilir
         /// (<see cref="RaidPieceLibrary.KitFor"/>: MapSeed 0 → varsayılan); doluysa o kimlik zorlanır (kitOverride gibi).
         /// Yazılan PNG'nin tam yolunu döndürür.</summary>
         public static string Render(RaidParams p, string kitId = null, string path = "Temp/raid_kit.png", Options options = null)
@@ -135,14 +128,16 @@ namespace Corrigible.Desk.EditorTools
             return Path.GetFullPath(path) + " · " + Path.GetFullPath(grayPath) + " · " + B.Layout;
         }
 
-        /// <summary>Menü: harekât havuzunun şebeke haritası, varsayılan kit ve kütüphanedeki bütün kitlerle (Temp/raid_kit_page.png).</summary>
+        /// <summary>Menü: tesis planının şebeke türü giriş odası (<see cref="RoomSample"/>), varsayılan kit ve kütüphanedeki bütün
+        /// kitlerle (Temp/raid_kit_page.png).</summary>
         [MenuItem("Corrigible/Baskın/Kit önizleme sayfası")]
         public static string MenuPage()
         {
             var lib = AssetDatabase.LoadAssetAtPath<RaidPieceLibrary>(LibraryPath);
             var ids = new List<string> { "default" };
             if (lib != null && lib.kits != null) ids.AddRange(lib.kits.Where(k => k != null).Select(k => k.id));
-            var result = Page(PoolParams(20261102, RaidMaps.Grid), ids);
+            var B = RoomSample(20261102, RaidMaps.Grid);
+            var result = PageKits(B, ids.Select(id => ResolveKit(B, id)).ToList()) + " · " + string.Join(", ", ids);
             Debug.Log("Kit önizleme sayfası: " + result);
             return result;
         }

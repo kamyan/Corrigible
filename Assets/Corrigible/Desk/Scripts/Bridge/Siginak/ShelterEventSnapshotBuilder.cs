@@ -115,7 +115,8 @@ namespace Corrigible.Desk.Bridge
 
         /// <summary>
         /// Fişin olay kilidi (şalter plakasının üzerine gelme satırı ve ÖN KONTROL): açık olayın Core gerekçesi ve tutanağın yeri ("Tutanak
-        /// EVRAK tepsisinde."; kayıttan devamda OLAY teleksi yeniden basılmaz, oyuncu kâğıdı buradan bulur); yetim olayda null (Core
+        /// kapıda ya da EVRAK tepsisinde."; tutanak kapıdan gelir, okunup bırakılınca tepsiye iner; kayıttan devamda OLAY teleksi yeniden
+        /// basılmaz, oyuncu kâğıdı buradan bulur); yetim olayda null (Core
         /// <c>PrintShift</c> onu kapatıp geçer, sunum yanlış kilit göstermesin).
         /// </summary>
         public static string PrintIssue(Simulation sim)
@@ -123,7 +124,7 @@ namespace Corrigible.Desk.Bridge
             var e = sim?.Board != null ? sim.PendingShelterEvent : null;
             if (e == null || Orphan(sim, e)) return null;
             string why = sim.ShelterEventPrintCheck();
-            return why == null ? null : Loc.F("{0} Tutanak EVRAK tepsisinde.", why);
+            return why == null ? null : Loc.F("{0} Tutanak kapının çekmecesinde.", why);
         }
 
         // ---------------------------------------------------------------- göstergeler
@@ -290,7 +291,7 @@ namespace Corrigible.Desk.Bridge
 
         /// <summary>Yeni olay duyurusu (OLAY satırı).</summary>
         public static TelexEntry Announcement(ShelterEventInstance e) =>
-            new TelexEntry(Loc.T("OLAY"), Loc.F("{0} · tutanak EVRAK tepsisinde. Karar verilmeden vardiya kapanmaz.", ShelterEventData.Title(e.Kind)), TelexKind.Alarm);
+            new TelexEntry(Loc.T("OLAY"), Loc.F("{0} · tutanak kapıya bırakıldı. Karar verilmeden vardiya kapanmaz.", ShelterEventData.Title(e.Kind)), TelexKind.Alarm);
 
         /// <summary>
         /// Günlüğün <paramref name="from"/>'dan sonraki girdileri teleks satırı olarak (o anki dilde); <paramref name="next"/> günlüğün

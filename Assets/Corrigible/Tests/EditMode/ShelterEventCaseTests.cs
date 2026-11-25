@@ -431,10 +431,11 @@ namespace Corrigible.Tests
         [Test]
         public void Wounded_OpensWhenBedRestStarts_ReviveOrWait()
         {
-            // Varsayılan denge: kendi alanında eğitimli saha kişisi 2 vardiya yatar; olay yatışın başladığı kapanışta açılır
+            // Varsayılan denge: kendi alanında eğitimli saha kişisi 2 vardiya yatar; olay yatışın başladığı kapanışta açılır. Tesiste yaralı
+            // dönen, düşüp tesisten çıkarılandır (kazanılan baskın, kader 3)
             var sim = New(For("agir_yarali"));
             var tek = sim.Board.People.First(p => p.Job == "tek");
-            Raid(sim, false, 1, 0, 0);
+            Raid(sim, true, 3, 0, 0);
             Assert.AreEqual(2, tek.Down);
             Assert.AreEqual(0, tek.Hp);
             var e = CloseTo(sim, "agir_yarali");
@@ -490,7 +491,7 @@ namespace Corrigible.Tests
             var old = sim.Board.People.First(p => p.Job == "tek");
             Assert.IsTrue(sim.AssignResident(cook.Id, "tek").Ok);
             Assert.IsTrue(sim.EquipResident(sim.Board.Equipment.First(x => x.Kind == "kit_tek").Id, cook.Id).Ok);
-            Raid(sim, false, 1, 0, 0);
+            Raid(sim, true, 3, 0, 0);
             Assert.AreEqual(3, cook.Down);
             e = CloseTo(sim, "agir_yarali");
             Assert.AreEqual(cook.Id, e.PersonId);
@@ -503,10 +504,10 @@ namespace Corrigible.Tests
             var light = For("agir_yarali");
             light.boardInjuryTurns = 2;
             sim = New(light);
-            Raid(sim, false, 1, 0, 0);
+            Raid(sim, true, 3, 0, 0);
             CloseTo(sim, "-");
             sim = New(For("agir_yarali"));
-            Raid(sim, false, 2, 0, 0);
+            Raid(sim, false, 1, 0, 0);
             CloseTo(sim, "-");
         }
 
@@ -627,9 +628,9 @@ namespace Corrigible.Tests
             Assert.AreEqual(0, Log(sim, "vadeli").Count);
             Assert.IsTrue(sim.Admission.Files.All(f => f.IdleUntil < 0));
 
-            // Ölümsüz baskın anma açmaz
+            // Ölümsüz baskın anma açmaz (düşen tesisten çıkarıldı, yaşıyor)
             sim = New(For("anma"));
-            Raid(sim, false, 1, 0, 0);
+            Raid(sim, true, 3, 0, 0);
             CloseTo(sim, "-");
         }
 

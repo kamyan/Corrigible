@@ -89,7 +89,7 @@ namespace Corrigible.Desk.Tests
         {
             var d = new CandidateCardData
             {
-                Id = "resident-99", Name = DeskText.Upper(name), PortraitKey = "suna", Arrived = Loc.F("V.{0:000}", 128),
+                Id = "resident-99", Name = DeskText.Upper(name), PortraitKey = "nell", Arrived = Loc.F("V.{0:000}", 128),
                 Mastery = Loc.F("{0} · {1}", PlanningBoardSnapshotBuilder.TopicLabel(subject), PlanningBoardSnapshotBuilder.TierWord(2)),
                 Stats = Loc.F("CAN {0}/{1} · HAR {2} · GÜÇ {3}", 4, 4, 3, 2),
                 Tier = tier, TierName = DeskText.Upper(CandidateData.TierName(tier)),

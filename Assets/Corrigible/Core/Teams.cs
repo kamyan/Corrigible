@@ -12,7 +12,10 @@ namespace Corrigible.Core
     /// </summary>
     public sealed partial class Simulation
     {
-        /// <summary>Son sığınağın bölgesi: harekât buradan başlar.</summary>
+        /// <summary>
+        /// Son sığınağın bölgesi (paket kimliği): harekât buradan başlar. Üretilmiş haritada da karargâh hep bu pakettir (yeri
+        /// üretilir, <c>WorldMap.HqCell</c>); bu yüzden sabit kalır.
+        /// </summary>
         public const string HQ = "weu";
         public static readonly string[] TeamNames = { Loc.N("Alfa"), Loc.N("Bravo"), Loc.N("Charlie"), Loc.N("Delta") };
         /// <summary>Uzman rolleri (Baskin birim türleri), kadro ve giriş sırası. Ekipte yalnız katılmış olanlar bulunur.</summary>
@@ -146,7 +149,22 @@ namespace Corrigible.Core
             foreach (var m in reserves) if (m.Down > 0) m.Down--;
         }
 
-        /// <summary>Taktik haritanın sonucu: sektör geri alınır ya da ekip geri döner.</summary>
-        public ActResult ResolveRaid(RaidResult result) => RunCommand(() => result == null ? ActResult.Fail(Loc.T("Baskın sonucu eksik.")) : ResolveLiberationRaidCore(result), "raidres", result?.Encode());
+        /// <summary>
+        /// Baskının sonucu: sektör geri alınır ya da ekip geri döner. Verilen sonuç yok sayılır: sonuç her zaman oda raporlarından
+        /// toplanır (<see cref="FacilityRaidResult"/>; çağıranın Reason'ı sunum için korunur, kayda girmez). Son oda raporlanmadıysa
+        /// (ya da emrin odası yoksa) reddedilir. Kayda toplanmış sonuç yazılır. Testlere "sonucu elle ver" kısayolu yoktur; baskın
+        /// komutlarla oda oda yürütülür (<see cref="OpenRaidRoom"/>, <see cref="AdvanceRaidRoom"/>).
+        /// </summary>
+        public ActResult ResolveRaid(RaidResult result)
+        {
+            if (S.Raid != null)
+            {
+                if (!RaidRoomsClosed) return ActResult.Fail(Loc.T("Baskının son odası raporlanmadı."));
+                string reason = result?.Reason ?? "";
+                result = FacilityRaidResult();
+                result.Reason = reason;
+            }
+            return RunCommand(() => result == null ? ActResult.Fail(Loc.T("Baskın sonucu eksik.")) : ResolveLiberationRaidCore(result), "raidres", result?.Encode());
+        }
     }
 }

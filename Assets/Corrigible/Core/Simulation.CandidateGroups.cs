@@ -16,13 +16,18 @@ namespace Corrigible.Core
             new[] { "kayit_yok", "belge_yanmis", "cift_kayit" },
             new[] { "tek_basina", "yarasiz", "gece_gecis" },
         };
-        /// <summary>Kurucu adları (Derya, Selin, İpek, Deniz, Nermin, Zeynep, Orhan, Cem, Eren, Suna) bu havuzda yoktur.</summary>
+        /// <summary>Kurucu adları (SetupPlanningBoard'da S.Rng ile karıştırılır); aday havuzunda yoktur. İngilizce, çevrilmez.</summary>
+        public static readonly string[] Founders = { "Hazel", "Robin", "Margot", "Quinn", "Agnes", "Iris", "Walter", "Victor", "Harold", "Nell" };
+        /// <summary>
+        /// Aday adları (<c>CandidateName</c> sırayla dağıtır); kurucu adları bu havuzda yoktur. İngilizce, ASCII, çevrilmez. İlk 22'sinin
+        /// portresi var (<c>Desk/Data/Rev3/PortraitLibrary.asset</c>); sıra portrelerin kişilerine bağlıdır, değiştirme.
+        /// </summary>
         public static readonly string[] Names =
         {
-            "Rauf", "Meral", "Arda", "Ece", "Murat", "Aylin", "Baran", "Banu", "Ozan", "Lale", "Sinan", "Asli", "Kerem", "Sema", "Tamer", "Dilan",
-            "Yalcin", "Feride", "Umut", "Ayca", "Levent", "Naz", "Hakan", "Esra", "Tolga", "Melis", "Serkan", "Nihan", "Volkan", "Pelin", "Emre", "Burcu",
-            "Kaan", "Derin", "Onur", "Sibel", "Tarik", "Gamze", "Erdem", "Hande", "Koray", "Jale", "Mert", "Nalan", "Alper", "Ebru", "Bora", "Demet",
-            "Cenk", "Filiz", "Engin", "Gonca", "Ferit", "Hale", "Ilker", "Leyla", "Metin", "Nur", "Polat", "Reyhan", "Sarp", "Tuba", "Ufuk", "Yasemin",
+            "Frank", "Edith", "Leo", "Maya", "Owen", "Clara", "Hugo", "Nora", "Felix", "Mabel", "Grant", "Ivy", "Theo", "Ruth", "Albert", "June",
+            "Bernard", "Doris", "Milo", "Lena", "Ray", "Daisy", "Simon", "Alice", "Ben", "Grace", "Carl", "Paula", "Dean", "Rose", "Adam", "Wendy",
+            "Jack", "Holly", "Neil", "Mona", "Glen", "Lucy", "Roy", "Amy", "Miles", "Elsie", "Sam", "Joan", "Ted", "Fay", "Luke", "Kate",
+            "Eli", "Olive", "Rex", "Beth", "Gus", "Pearl", "Nate", "Lily", "Joel", "Ann", "Abe", "Greta", "Cole", "Tina", "Dale", "Eve",
         };
 
         public static bool IsCost(string perk) => Array.IndexOf(Costs, perk) >= 0;
@@ -86,7 +91,7 @@ namespace Corrigible.Core
                 case "saglam": return Loc.F("En yüksek can +{0}.", Math.Max(0, b.perkSturdyHp));
                 case "yarali": return Loc.F("Canı 1; {0} vardiya yatar.", Math.Max(0, b.perkWoundedShifts));
                 case "obur": return Loc.F("Kişi başı tüketimin {0:0.##} katını yer.", Math.Max(1, b.perkDoubleRationFactor));
-                case "acemi": return Loc.T("Ustalık puanı 0; önce eğitim gerekir.");
+                case "acemi": return Loc.T("Ustalık puanı 0; işte ve sahada deneyim kazanır.");
                 case "yavas": return Loc.F("Hareket −{0}.", Math.Max(0, b.perkSlowMove));
                 default: return perk;
             }

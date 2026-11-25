@@ -174,9 +174,9 @@ namespace Corrigible.Desk.Bridge
         {
             if (Sim?.Board != null && door != null)
             {
-                // Vuruş lambası kartlı oyunda burada: aday varken amber (vuruş parlamaları Knock'ta), yoksa sönük. Eski denetleyicinin
-                // yükleme sıfırlaması (ResetClosed) bir kare sonra düzelir.
-                bool waiting = GroupKey != null;
+                // Vuruş lambası kartlı oyunda burada: aday ya da kapıya bırakılmış belge varken amber (vuruş parlamaları Knock'ta), yoksa
+                // sönük. Eski denetleyicinin yükleme sıfırlaması (ResetClosed) bir kare sonra düzelir.
+                bool waiting = GroupKey != null || DeliveryWaiting;
                 if (door.Knocking != waiting && sequence != Sequence.Admit) door.SetKnocking(waiting);
             }
             ReadSequenceInput();
@@ -326,6 +326,20 @@ namespace Corrigible.Desk.Bridge
         bool CanAct => game != null && Sim?.Board != null && Sim.Admission != null && Interactive;
 
         // ------------------------------------------------------------------ pozlar ve geri zinciri
+
+        /// <summary>Kapının yanındaki panoda okunmamış bir belge (olay tutanağı, sunucu ödülü) bekliyor (<c>SiginakDesk.PaperAtDoor</c>).</summary>
+        public bool DeliveryWaiting => desk != null && desk.PaperAtDoor;
+
+        /// <summary>
+        /// Dışarıdan bir belge kapıya bırakıldı (Docs/KAPI-BELGELERI-VE-YZ-MEKANLARI-TASARIMI.md §A): kapı bir kez vurur (lamba parlar, vuruş
+        /// sesi). Kamera dönmez; KAPI tuşu ve lamba belgeyi gösterir. Yüklemede çağrılmaz.
+        /// </summary>
+        public void KnockDelivery()
+        {
+            if (Sim?.Board == null) return;
+            if (door != null) door.Knock();
+            Play(AdmissionSound.Knock);
+        }
 
         /// <summary>KAPI istasyonuna (K8) girer (KAPI tuşu, 4 / K, K1'de kapıya tık).</summary>
         public void Enter()

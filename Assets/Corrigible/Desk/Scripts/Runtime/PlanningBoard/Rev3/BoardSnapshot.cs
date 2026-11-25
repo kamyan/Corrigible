@@ -23,9 +23,14 @@ namespace Corrigible.Desk
         public string HurdaLine;
         /// <summary>Hurda plakasının 2. satırı (dinamik; denge değerinden).</summary>
         public string HurdaPlateLine;
+        /// <summary>
+        /// GÖZETİM cebi açık (tesis aşama 5, <c>BoardDropRules.WatchOpen</c>; oyunda hep): plaka, pirinç bant ve şeritler görünür, cep bırakma ve
+        /// klavye hedefidir. Kapalıyken o köşe boştur ve BOŞTA sayılır.
+        /// </summary>
+        public bool WatchOpen;
 
         public readonly List<PersonCardData> People = new List<PersonCardData>();
-        /// <summary>Cepteki kişi: görev (tek, emp, ana, craft, cook, train) → kişi kimliği.</summary>
+        /// <summary>Cepteki kişi: görev (tek, emp, ana, craft, cook, train; GÖZETİM açıkken watch) → kişi kimliği.</summary>
         public readonly Dictionary<string, string> PocketOccupant = new Dictionary<string, string>();
         /// <summary>Boşta destesi, üstten alta (0 = üst kart = ilk uygun kişi).</summary>
         public readonly List<string> DeckOrder = new List<string>();
@@ -34,8 +39,12 @@ namespace Corrigible.Desk
         public readonly MaterialCardData[] Materials = new MaterialCardData[4];
         /// <summary>Altı kit yığını, sırayla kit_tek, kit_emp, kit_ana, armor, medkit, emp_cell.</summary>
         public readonly KitStackData[] Kits = new KitStackData[6];
+        /// <summary>
+        /// Tesis aşama 9: yedi ekipman yığını (<see cref="BoardLayout.GearKinds"/> sırası; depodaki ikinci sıra). Yalnız türün depoda
+        /// kartı varken dolu; öbür yuvalar null (boş yığın gölgesi yok). Tesis durumu yokken hepsi null.
+        /// </summary>
+        public readonly KitStackData[] Gear = new KitStackData[7];
         public readonly List<ChipData> Chips = new List<ChipData>();
-        public TopicsData Topics = new TopicsData();
         /// <summary>Seçili kişinin dosyası; seçim yoksa null.</summary>
         public FolderData Folder;
         /// <summary>Dosya kapağının 2. satırı (seçili kişinin adı büyük harfle ya da "— kart seç —").</summary>
@@ -88,7 +97,7 @@ namespace Corrigible.Desk
     public sealed class PersonCardData
     {
         public string Id, Name, Job, PortraitKey;
-        /// <summary>Core görevi: tek, emp, ana, craft, cook, train, rest (emekli görevler rest sayılır).</summary>
+        /// <summary>Core görevi: tek, emp, ana, craft, cook, train, watch (yalnız GÖZETİM açıkken), rest (emekli görevler rest sayılır).</summary>
         public string JobId;
         /// <summary>Yedi konu harfi (TR: T E A Ü M B İ · EN: T E A P K C F) ve kademe 0–3.</summary>
         public readonly string[] MasteryLetters = new string[7];
@@ -110,6 +119,10 @@ namespace Corrigible.Desk
     {
         public string Id, Kind, Name, SlotLabel, UseLine;
         public ItemSlotKind Slot;
+        /// <summary>Tesis aşama 9: dinlenen köpeğin kalan vardiyası (<c>BoardEquipment.Rest</c>); 0 = dinlenmiyor.</summary>
+        public int Rest;
+        /// <summary>Tesis aşama 9 (K19): depodaki ekipman yığınının üst kartında yığının kart sayısı (yüzde "×n", yalnız n &gt; 1); öbürlerinde 0.</summary>
+        public int Count;
         /// <summary>Sahibi (kişi kimliği); depodaysa null.</summary>
         public string OwnerId;
         public string HoverTitle, HoverLine;
@@ -138,17 +151,6 @@ namespace Corrigible.Desk
         /// <summary>"chip:metal:0" biçiminde; aynı türün sırası.</summary>
         public string Id, Kind, Name;
         public int Index;
-    }
-
-    public sealed class TopicsData
-    {
-        public readonly string[] Labels = new string[7];
-        /// <summary>Konunun Core kimliği (tek emp ana craft cook care gather).</summary>
-        public readonly string[] Subjects = new string[7];
-        /// <summary>Eğitimdeki kişi bu konuda usta (soluk; üzerine gelince "usta").</summary>
-        public readonly bool[] Mastered = new bool[7];
-        public int RingRow;
-        public string TraineeId;
     }
 
     /// <summary>Kişi dosyası: kapak ve iki sayfa satırları (eski kabulün sekmeleri ve künyesi aşama 7'de söküldü).</summary>
@@ -201,6 +203,8 @@ namespace Corrigible.Desk
         public string Id;
         /// <summary>Tarifin adı (cümle düzeni) ve sayfa başlığı (büyük harf, <c>DeskText.Upper</c>).</summary>
         public string Name, Title;
+        /// <summary>Tek kip: tarif kartının kısa adı (<see cref="RecipeCardData.ShortName"/>); yoksa null.</summary>
+        public string ShortName;
         /// <summary>Sayfa künyesinin sağ yarısı ("TARİF 01").</summary>
         public string Number;
         /// <summary>Çıktının yuva sözcüğü ("zırh yuvası", "yardımcı yuvası", "kit yuvası").</summary>
@@ -214,8 +218,27 @@ namespace Corrigible.Desk
         /// <summary>Sayfa altı ("s. 3") ve açılım ("AÇILIM 2/3"; yalnız sağ sayfada çizilir).</summary>
         public string PageLabel, SpreadLabel;
         public int Turns, Index;
-        /// <summary>Girdiler (her tarifte iki), Core sırasıyla.</summary>
+        /// <summary>
+        /// Girdiler, Core sırasıyla (baştan açık tariflerde iki; tesis aşama 9: yemde üç). Erzak bedeli olan tarifte (köpek) son satır
+        /// erzaktır (<see cref="RecipeInput.Supplies"/>).
+        /// </summary>
         public readonly List<RecipeInput> Inputs = new List<RecipeInput>();
+        /// <summary>Tesis aşama 9: tarif sunucu ödülüyle açıldı (<c>BoardRecipe.Reward</c>).</summary>
+        public bool Reward;
+        /// <summary>Tesis aşama 9: tarifi veren sunucunun YZ adı (ödül sayfası ve kapalı sayfa); yoksa boş.</summary>
+        public string Source;
+        /// <summary>Tesis aşama 9: erzak bedeli (köpek); yoksa 0.</summary>
+        public int Supplies;
+        /// <summary>
+        /// Tesis aşama 9 (K22): kapalı sayfa (henüz açılmamış temel ekipman tarifi). Kutu yerine <see cref="LockedStamp"/> çizilir, tarif
+        /// kutusu sürüklenmez (<see cref="BookZone.Page"/>); girdiler boş.
+        /// </summary>
+        public bool Locked;
+        /// <summary>Kapalı sayfanın damgası: "KAPALI · VERITY sunucusundan" (çevrilmiş).</summary>
+        public string LockedStamp;
+        /// <summary>Tesis aşama 10 (K45): sayfa cevap tarifine dönüştü (Core <c>BoardRecipe.Answer</c>: sokum, delici, celik_tel,
+        /// yedek_role, cift_zemberek); temel sayfada null. Kimlik ve dizin temelinkidir; ad, girdi ve el notu cevabın.</summary>
+        public string Answer;
     }
 
     /// <summary>Tarifin bir girdisi: hammadde türü, adı, defterdeki ("× 2") ve karttaki ("×2") miktar yazısı.</summary>
@@ -223,6 +246,8 @@ namespace Corrigible.Desk
     {
         public string Kind, Name, BookQty, CardQty;
         public int Quantity;
+        /// <summary>Tesis aşama 9: erzak bedeli satırı (hammadde değil; fiş ve ayırma yok; simgesi <c>icon_erzak</c>).</summary>
+        public bool Supplies;
     }
 
     /// <summary>
@@ -232,6 +257,8 @@ namespace Corrigible.Desk
     public sealed class RecipeCardData
     {
         public string Id, RecipeId, Name, IconKey, TurnsLine, OutLine, NeedsLabel;
+        /// <summary>Tek kip: kısa kart adı (<c>PlanningBoardData.CardName</c>); tam ad yüzün ad alanına sığmazsa yazılır. Yoksa null.</summary>
+        public string ShortName;
         public readonly List<RecipeInput> Inputs = new List<RecipeInput>();
         public int Turns;
         /// <summary>Biten vardiya sayısı ([B] başlamış emir); &lt; 0: kutu yok (tek vardiyalık tarif ya da [A]).</summary>
@@ -271,12 +298,14 @@ namespace Corrigible.Desk
 
     /// <summary>
     /// Son kapanışta depoya gelen yeni ürün (PLAN §1.11): eşya kimliği (esya-N), türü, kit yığını (0–5, <see cref="BoardSnapshot.Kits"/>
-    /// sırası) ve günü (S.Day).
+    /// sırası; tesis aşama 9: ekipmanda <see cref="Gear"/> ve <see cref="BoardSnapshot.Gear"/> dizini) ve günü (S.Day).
     /// </summary>
     public sealed class NewItemData
     {
         public string ItemId, Kind;
         public int Stack, Day;
+        /// <summary>Tesis aşama 9: <see cref="Stack"/> ekipman sırasının dizini (<see cref="BoardSnapshot.Gear"/>), değilse kit sırası.</summary>
+        public bool Gear;
     }
 
     /// <summary>

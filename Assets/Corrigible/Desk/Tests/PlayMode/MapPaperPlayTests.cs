@@ -16,7 +16,8 @@ namespace Corrigible.Desk.Tests
     public sealed class MapPaperPlayTests
     {
         static T Field<T>(Object o,string name) => (T)o.GetType().GetField(name,BindingFlags.Instance|BindingFlags.NonPublic).GetValue(o);
-        [UnitySetUp] public IEnumerator SetUp(){yield return BoardPlayKit.LoadDesk();}
+        // Dünya haritasına özgü sabit kara ve deniz noktaları: anahtar 0 (üretilmiş haritanın karşılığı GeneratedMapPlayTests)
+        [UnitySetUp] public IEnumerator SetUp(){yield return BoardPlayKit.LoadDesk(mapGen: 0);}
         [UnityTearDown] public IEnumerator TearDown(){yield return BoardPlayKit.TearDown();}
         static void OnScreen(RectTransform rect)
         {

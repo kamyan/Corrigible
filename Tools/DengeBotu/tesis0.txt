@@ -1,0 +1,10 @@
+# TARİHSEL: tek tahta dönemi; artık koşmaz (ApplyBal emekli alan). Tek kipte (kayıt 21) her satırın BAL'i ölçüldüğü hâli açıkça
+# yazar (raidFacilityEnabled=false: o günün varsayılanı). Yeni regresyon tabanı Library/Calisma/taban21 (kilit21.sh).
+# Tesis baskınları aşama 0 tabanı (2026-11-17; Docs/TESIS-BASKINLARI-TASARIMI.md §11.6, §12). Oyun kodu değişmez; bugünkü kural.
+# t0gen oyunun bugünkü hâlidir (üretilmiş harita, asset'teki liberationMapGen=1): PICK=rastgele ile koşulur.
+# t0dunya KOS aşama 8 tabanıyla karşılaştırma içindir (dünya haritası): PICK=sira ile ayrıca koşulur.
+#   PICK=rastgele PAR=10 Tools/DengeBotu/kos.sh <(grep '^t0gen' Tools/DengeBotu/tesis0.txt)
+#   PICK=sira     PAR=10 Tools/DengeBotu/kos.sh <(grep '^t0dunya' Tools/DengeBotu/tesis0.txt)
+#   python3 -I Tools/DengeBotu/ozet.py --baskin t0gen t0dunya
+t0gen|raidFacilityEnabled=false;liberationMapGen=1|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t0dunya|raidFacilityEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80

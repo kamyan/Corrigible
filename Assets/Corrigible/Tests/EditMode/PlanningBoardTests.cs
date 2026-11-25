@@ -83,9 +83,10 @@ namespace Corrigible.Tests
                 while (!sim.LiberationRegion(current).Completed)
                 {
                     var sector = sim.NextLiberationSector(current);
+                    FacilityKit.ChooseReward(sim);
                     var launched = sim.StartLiberationRaid(sector.Id);
                     Assert.IsTrue(launched.Ok, launched.Msg);
-                    Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true }).Ok);
+                    FacilityKit.ResolveRaid(sim, true);
                     if (sim.S.Ending == null) Close(sim);
                 }
                 if (sim.S.Ending == null)
@@ -340,7 +341,7 @@ namespace Corrigible.Tests
             Assert.AreEqual(person.MaxHp, preview[0].MaxHp);
             Assert.AreEqual(System.Math.Min(sim.B.boardMaxFieldMove, person.Move + sim.B.boardFieldSkillMoveBonus), preview[0].Move);
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
-            var board = Baskin.Create(sim.S.Raid.Params);
+            var board = sim.OpenRaidRoom();
             var actual = board.Units.Single(u => u.PersonId == person.Id);
             Assert.AreEqual(preview[0].Hp, actual.Hp);
             Assert.AreEqual(preview[0].MaxHp, actual.Max);
@@ -359,10 +360,8 @@ namespace Corrigible.Tests
             string rescued = squad[0].PersonId, lost = squad[2].PersonId;
             int before = sim.Board.People.Count;
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult
-            {
-                Retreat = true, Hp = { 0, squad[1].Hp, 0 }, Armor = { 0, 1, 0 }, Left = { 2 }
-            }).Ok);
+            // Tesiste kurtarılan düşen tesisten çıkarılandır (kader 3), geride kalan (kader 2) ölür: kazanılan baskın
+            FacilityKit.ResolveRaid(sim, true, 3, 0, 2);
             Assert.IsTrue(sim.Board.Person(rescued).Alive);
             Assert.Greater(sim.Board.Person(rescued).Down, 0);
             Assert.AreEqual("rest", sim.Board.Person(rescued).Job);
@@ -388,7 +387,7 @@ namespace Corrigible.Tests
             Assert.Less(sim.Board.Material("devre").Quantity, PlanningBoardData.FieldJobs.Length * sim.B.boardKitCircuits,
                 "Başlangıç devre stoğu üç yeni kit için tek başına yetmez; toparlanma gerçekten ikmale dayanmalı.");
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Down = 3, Hp = { 0, 0, 0 }, Armor = { 0, 0, 0 } }).Ok);
+            FacilityKit.ResolveRaid(sim, false, 1, 1, 1);
             Assert.IsTrue(lost.All(id => !sim.Board.Person(id).Alive));
             Assert.AreEqual(5, sim.Shelter.Population);
             Assert.IsFalse(sim.Board.Equipment.Any(e => e.Kind.StartsWith("kit_")));
@@ -417,11 +416,14 @@ namespace Corrigible.Tests
                 }
                 ReserveRecipe(sim, "kit_" + role);
                 int production = 0;
-                while (sim.Board.Orders.Count > 0)
+                while (sim.BoardKitMissing("kit_" + role))
                 {
                     Assert.Less(production++, sim.B.boardKitTurns + 1);
                     Close(sim);
                 }
+                // Tek kip (tesis aşama 8, K19): açık emir varken eksik kit emrin dışında da üretilir ve emir ilerlemez; ayrılan girdisi
+                // artık tarife uymayan emir iptal edilir (girdi serbest kalır)
+                foreach (var o in sim.Board.Orders.ToList()) Assert.IsTrue(sim.CancelProduction(o.Id).Ok);
             }
             Assert.AreEqual(3, sim.Board.Equipment.Count(e => e.Kind.StartsWith("kit_")));
             var replacements = new[]
@@ -462,7 +464,7 @@ namespace Corrigible.Tests
             int cloth = sim.Board.Material("kumas").Quantity;
             int chemicals = sim.Board.Material("kimyasal").Quantity;
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true }).Ok);
+            FacilityKit.ResolveRaid(sim, true);
             Assert.AreEqual(metal + sim.B.boardLootMetal, sim.Board.Material("metal").Quantity);
             Assert.AreEqual(circuits + sim.B.boardLootCircuits, sim.Board.Material("devre").Quantity);
             Assert.AreEqual(cloth + sim.B.boardLootCloth, sim.Board.Material("kumas").Quantity);
@@ -487,15 +489,12 @@ namespace Corrigible.Tests
             Assert.AreEqual(sim.B.boardEmpBoostCharges, preview.EmpBoosts);
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
             Assert.IsFalse(sim.Board.Equipment.Any(e => e.Id == cell.Id));
-            var board = Baskin.Create(sim.S.Raid.Params);
+            // Emrin gerçek tahtası (tek kip: tesisin giriş odası); oda düz zemine indirilir (kapı, menfez, kepenk yok)
+            var board = sim.OpenRaidRoom();
             var emp = board.Units.Single(u => u.PersonId == person.Id);
             board.Units.RemoveAll(u => u.Id != emp.Id);
             board.Ev = null;
-            for (int y = 0; y < Baskin.N; y++) for (int x = 0; x < Baskin.N; x++)
-            {
-                board.Cells[y, x].T = "floor";
-                board.Cells[y, x].O = null;
-            }
+            for (int y = 0; y < Baskin.N; y++) for (int x = 0; x < Baskin.N; x++) board.Cells[y, x] = new Baskin.Cell { T = "floor" };
             emp.X = 0; emp.Y = 0;
             var target = new Baskin.Unit { Id = 999, Type = "dron", Side = 'e', X = 2, Y = 0, Hp = 3, Max = 3 };
             board.Units.Add(target);
@@ -511,6 +510,18 @@ namespace Corrigible.Tests
             emp.Acted = false; emp.Moved = false;
             Assert.IsTrue(Baskin.DoAct(board, emp.Id, target.X, target.Y));
             Assert.AreEqual(1, board.FxList.Single(f => f.K == "dmg" && f.Unit == target.Id).N, "Temel EMP, sarf bitince çalışmaya devam eder.");
+        }
+
+        /// <summary>
+        /// Kurucu adları İngilizceye geçince (aşama 3, TASARIM §7.3) karıştırma aynı kalır: aynı tohumda i'inci eski adın yerinde
+        /// i'inci yeni ad durur (eskiden Nermin, Orhan, Deniz, Suna, Selin, Cem, İpek, Zeynep).
+        /// </summary>
+        [Test]
+        public void Founders_Seed79_KeepTheShuffleOrder()
+        {
+            var sim = Simulation.NewGame(79, new Balance { shelterEventsEnabled = false });
+            CollectionAssert.AreEqual(new[] { "Agnes", "Walter", "Quinn", "Nell", "Robin", "Victor", "Margot", "Iris" },
+                sim.Board.People.Select(p => p.Name).ToArray());
         }
     }
 }

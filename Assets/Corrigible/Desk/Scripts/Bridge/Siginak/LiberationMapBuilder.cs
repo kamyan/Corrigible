@@ -33,7 +33,7 @@ namespace Corrigible.Desk.Bridge
                 s.Regions.Add(new MapRegionState
                 {
                     Id = def.Id,
-                    Name = def.Name,
+                    Name = sim.RegionName(def.Id),
                     Kind = area.Completed ? MapRegionKind.Free
                         : def.Id == s.Front && s.FrontOpen ? MapRegionKind.Front
                         : candidates.Contains(def.Id) ? MapRegionKind.Candidate : MapRegionKind.Occupied,
@@ -44,8 +44,10 @@ namespace Corrigible.Desk.Bridge
                     FreeShift = area.Completed ? freedDay + 1 : -1,
                     FreshStamp = area.Completed && freedDay >= sim.S.Day,
                     Trait = def.Trait,
-                    Signature = def.Enemy,
+                    Signature = sim.RegionSignature(def.Id),
                     Reoccupied = Reoccupied(sim, area),
+                    Siege = SiegeIndex(sim, area),
+                    SiegeDue = SiegeIndex(sim, area) >= 0 && sim.SiegeDecisionDue,
                 });
             }
             s.Team = Team(sim, s.Front);
@@ -62,6 +64,13 @@ namespace Corrigible.Desk.Bridge
             if (string.IsNullOrEmpty(id)) return -1;
             var sector = area.Sectors.FirstOrDefault(x => x.Id == id);
             return sector != null && !sector.Captured ? sector.Index : -1;
+        }
+
+        /// <summary>Tesis aşama 11: bekleyen ya da süren kuşatmanın sektörü bu bölgedeyse sırası; yoksa (ya da savunma kapalıyken) −1.</summary>
+        static int SiegeIndex(Simulation sim, LiberationRegionState area)
+        {
+            var sector = FacilityDefenseText.On(sim) ? sim.SiegeSector : null;
+            return sector != null && sector.Region == area.Id ? sector.Index : -1;
         }
 
         /// <summary>Ekip adı gösterilen dilde (kayıttaki ad oluşturulduğu dilde kalır).</summary>
@@ -109,12 +118,16 @@ namespace Corrigible.Desk.Bridge
         /// Bölgenin kimliği: kısa (“Bölge: Kısa nöbet · İmza: Havan robotu”) ya da açıklamalı (özelliğin ve imza makinesinin
         /// ne yaptığı).
         /// </summary>
-        public static string Identity(string regionId, bool full)
+        /// <remarks>Tesis aşama 12: <paramref name="sim"/> verilirse olay emre yazılan şarttır (<see cref="Simulation.RegionEvent"/>: tesis
+        /// açıkken na Katar, oc Yalpa); bölge olayları kapalıyken ya da simülasyonsuz bugünkü olay (<see cref="RegionDef.Event"/>).</remarks>
+        public static string Identity(string regionId, bool full, Simulation sim = null)
         {
             var def = GameData.Region(regionId);
-            if (def.Trait == null || !Baskin.RegionTraits.TryGetValue(def.Trait, out var trait) || def.Enemy == null) return "";
-            var enemy = Baskin.UnitTypes[def.Enemy];
-            if (full && def.Event != null && Baskin.RegionEvents.TryGetValue(def.Event, out var ev))
+            string signature = sim?.RegionSignature(regionId) ?? def.Enemy;
+            if (def.Trait == null || !Baskin.RegionTraits.TryGetValue(def.Trait, out var trait) || signature == null) return "";
+            var enemy = Baskin.UnitTypes[signature];
+            string evId = FacilityConditionText.EventOf(sim, regionId) ?? def.Event;
+            if (full && evId != null && Baskin.RegionEvents.TryGetValue(evId, out var ev))
                 return Loc.F("{0}: {1} Olay · {2}: {3} İmza makinesi {4}: {5}", Loc.T(trait.Name), Loc.T(trait.Desc), Loc.T(ev.Name), Loc.T(ev.Desc), enemy.Name, enemy.Desc);
             return full
                 ? Loc.F("{0}: {1} İmza makinesi {2}: {3}", Loc.T(trait.Name), Loc.T(trait.Desc), enemy.Name, enemy.Desc)
@@ -170,7 +183,9 @@ namespace Corrigible.Desk.Bridge
                     HoverTitle = Loc.F("BÖLGE · {0}", DeskText.Upper(name)), HoverLine = Loc.T(trait.Desc),
                 });
             }
-            if (!noEvent && sim.B.liberationRegionEvents && def.Event != null && Baskin.RegionEvents.TryGetValue(def.Event, out var ev))
+            // Tesis aşama 12: emre yazılan şart (Simulation.RegionEvent; bölge olayları kapalıyken null)
+            string evId = noEvent ? null : FacilityConditionText.EventOf(sim, regionId);
+            if (evId != null && Baskin.RegionEvents.TryGetValue(evId, out var ev))
             {
                 string name = Loc.T(ev.Name);
                 into.Add(new SlipField
@@ -179,12 +194,13 @@ namespace Corrigible.Desk.Bridge
                     HoverTitle = Loc.F("OLAY · {0}", DeskText.Upper(name)), HoverLine = Loc.T(ev.Desc),
                 });
             }
-            if (def.Enemy != null && Baskin.UnitTypes.TryGetValue(def.Enemy, out var enemy))
+            string signature = sim.RegionSignature(regionId);
+            if (signature != null && Baskin.UnitTypes.TryGetValue(signature, out var enemy))
             {
                 string name = enemy.Name;
                 into.Add(new SlipField
                 {
-                    Glyph = SiginakGlyphs.Machine(def.Enemy, framed: true), Label = Loc.T("İMZA"), Value = name,
+                    Glyph = SiginakGlyphs.Machine(signature, framed: true), Label = Loc.T("İMZA"), Value = name,
                     HoverTitle = Loc.F("İMZA · {0}", DeskText.Upper(name)), HoverLine = enemy.Desc,
                 });
             }
@@ -196,6 +212,28 @@ namespace Corrigible.Desk.Bridge
                 HoverLine = sim.MaxTier >= 4
                     ? Loc.T("Özgür bölge sayısıyla yükselir. 3. kademede makineler kopyalanır, 4. kademede güçlenir.")
                     : Loc.T("Özgür bölge sayısıyla yükselir. 3. kademede makineler kopyalanır."),
+            });
+        }
+
+        /// <summary>Uzun kazanım listesinin yerine sayının yazıldığı sınır (karakter; fişin değer sütunu tek satırdır).</summary>
+        const int PerkListMax = 24;
+
+        /// <summary>Görev fişinin SAHA yuvası (sahnedeki satır sayısı; altıncı satırla fiş 1080'de kadrajdan taşar, tesis aşama 10 K37).</summary>
+        public const int SlipFieldsMax = 5;
+
+        /// <summary>
+        /// Tesis aşama 9 (K30): sunucu ödülüyle seçilen kazanımlar görev fişinin SAHA bloğunun sonunda ("KAZANIM"); yalnız tesis kipinde ve
+        /// en az bir kazanım varken. Liste değer sütununa sığmazsa yalnız sayı yazılır, liste üzerine gelme satırındadır.
+        /// </summary>
+        static void PerkField(Simulation sim, List<SlipField> into)
+        {
+            string list = FacilityRewardText.PerkList(sim);
+            if (string.IsNullOrEmpty(list)) return;
+            int count = sim.Facility.Perks.Count;
+            into.Add(new SlipField
+            {
+                Glyph = "ic_shield_s", Label = Loc.T("KAZANIM"), Value = list.Length <= PerkListMax ? list : DeskFormat.Int(count),
+                HoverTitle = Loc.F("KAZANIM · {0}", count), HoverLine = list,
             });
         }
 
@@ -271,17 +309,32 @@ namespace Corrigible.Desk.Bridge
             int captured = area.CapturedCount, count = area.Sectors.Count;
             double occupation = Occupation(area);
             int reoccupied = Reoccupied(sim, area);
+            // Tesis aşama 11: kuşatma kipi (bekleyen ya da süren karşı saldırının bölgesi; §8.3)
+            var siege = FacilityDefenseText.SlipSector(sim, regionId);
+            if (siege != null) return SiegeSlip(sim, regionId, area, siege, pick, fixedSquad, d);
+            int siegeIndex = SiegeIndex(sim, area);
             d.Code = front && next != null ? Loc.F("HAREKÂT FORMU · OP-{0:00}", next.Index + 1) : Loc.T("HAREKÂT FORMU");
             if (sim.Board != null) d.Code = Loc.F("KYGA · {0} · V.{1:000}", d.Code, sim.S.Day + 1);
-            d.Region = DeskText.Upper(GameData.Region(regionId).Name);
+            d.Region = DeskText.Upper(sim.RegionName(regionId));
             d.Building = GameData.Region(regionId).Building;
             // Bina satırının üzerine gelince binanın notu (bilgi fişinde de)
             d.BuildingHoverTitle = Loc.F("BİNA · {0}", DeskText.Upper(d.Building));
-            d.BuildingHoverLine = GameData.Region(regionId).BuildingNote;
+            // Tesis aşama 12: şartın notu (Simulation.RegionNote: oynanan şart bugünkü olaydan farklıysa tesis notu, değilse binanın notu)
+            d.BuildingHoverLine = sim.RegionNote(regionId);
             d.Progress = area.Completed
                 ? Loc.F("SEKTÖRLER {0}/{1} · ÖZGÜR", captured, count)
                 : Loc.F("SEKTÖRLER {0}/{1} · İŞGAL {2}", captured, count, DeskFormat.Percent(occupation, captured > 0 ? 1 : 0));
             Fields(sim, regionId, d.Fields, fixedSquad);
+            PerkField(sim, d.Fields);
+            // Tesis aşama 10 (K37): ÖNLEM satırı KAZANIM'dan sonra (önlem defteri açıkken, önlem ya da YZ gözlemi varken). Fiş beş SAHA
+            // satırıyla 1080'e sığar (altıncı satırla BASKIN EMRİ VER kadrajdan taşar): beşi doluysa KAZANIM ile tek satır
+            var counter = FacilityCounterText.SlipField(sim);
+            if (counter != null)
+            {
+                int perk = d.Fields.FindLastIndex(f => f.Label == Loc.T("KAZANIM"));
+                if (d.Fields.Count >= SlipFieldsMax && perk >= 0) d.Fields[perk] = FacilityCounterText.MergeWithPerks(sim, d.Fields[perk], counter);
+                else d.Fields.Add(counter);
+            }
             foreach (var s in area.Sectors)
             {
                 // Karar 3: cephedeki ilk alınmamış sektör fon ya da ekip eksik olsa da BASKINA HAZIR; düğme gerekçeyle kapalı
@@ -289,7 +342,7 @@ namespace Corrigible.Desk.Bridge
                 d.Sectors.Add(new SlipSector
                 {
                     No = (s.Index + 1).ToString("00"), Name = s.Name, Kind = Kind(s), Mark = mark, Highlight = mark == SectorMark.Ready,
-                    Reoccupied = s.Index == reoccupied,
+                    Reoccupied = s.Index == reoccupied, Siege = s.Index == siegeIndex,
                     Hover = mark != SectorMark.Locked ? null : front ? Loc.T("Önceki sektör alınınca açılır.") : Loc.T("Bölge cephe olunca sırayla açılır."),
                 });
             }
@@ -302,7 +355,7 @@ namespace Corrigible.Desk.Bridge
                         ? Loc.T("Bölge özgür. Haritadan sınırdaki bir bölgeyi seç ve yeni cepheyi aç.")
                         : Loc.T("Bölge özgür."))
                     : frontOpen && sim.LiberationFrontier.Contains(regionId)
-                        ? Loc.F("Cephe açık: {0} {1}/{2}. Aynı anda tek cephe açık olabilir.", GameData.Region(lib.CurrentRegion).Name,
+                        ? Loc.F("Cephe açık: {0} {1}/{2}. Aynı anda tek cephe açık olabilir.", sim.RegionName(lib.CurrentRegion),
                             frontArea.CapturedCount, frontArea.Sectors.Count)
                         : Loc.T("Cephe açmak için komşusunu özgürleştir.");
                 return d;
@@ -310,7 +363,7 @@ namespace Corrigible.Desk.Bridge
 
             d.TaskHead = Loc.F("GÖREV · {0:00} {1}", next.Index + 1, DeskText.Upper(next.Name));
             d.Task = next.MissionKind == "loot"
-                ? Loc.T("Teknisyeni ikmal kasasının yanına götür, yeteneğini seç ve kasaya tıklayarak malzemeleri al.")
+                ? Loc.T("Bir uzmanı ikmal kasasının yanına götür, yeteneğini seç ve kasaya tıklayarak malzemeleri al.")
                 : Loc.T("Sunucu çekirdeğini yık. Son sektör alınınca bu bölge özgürleşir.");
             if (sim.Board != null) d.Task = next.MissionKind == "loot"
                 ? Loc.T("İkmal kasasını yağmala; ekibi çıkışa ulaştır.")
@@ -322,7 +375,8 @@ namespace Corrigible.Desk.Bridge
             {
                 bool loot = next.MissionKind == "loot";
                 d.Planning = true;
-                d.Rewards.Add(Reward((loot ? b.liberationLootFunds : b.liberationServerFunds) + (last ? b.liberationCaptureFunds : 0), Loc.T("fon")));
+                // Tesis aşama 11 (§9.3): yeniden alınan bölgenin fonu ikinci kez verilmez (Core RegionFundsDue; savunma kapalıyken hep true)
+                d.Rewards.Add(Reward((loot ? b.liberationLootFunds : b.liberationServerFunds) + (last && sim.RegionFundsDue(regionId) ? b.liberationCaptureFunds : 0), Loc.T("fon")));
                 d.Rewards.Add(Reward(loot ? b.boardLootSupplies : 0, Loc.T("erzak")));
                 var amounts = RaidPaperFacts.Nominal(sim, loot);
                 for (int i = 0; i < amounts.Length; i++) d.Rewards.Add(Reward(amounts[i], PlanningBoardData.MaterialName(PlanningBoardData.MaterialKinds[i])));
@@ -340,7 +394,7 @@ namespace Corrigible.Desk.Bridge
             {
                 d.Rewards.Add(Reward(b.liberationServerFunds, Loc.T("fon")));
                 d.Rewards.Add(Reward(sim.Board != null ? b.boardServerMetal + b.boardServerCircuits + b.boardServerCloth + b.boardServerChemicals : b.shelterServerMaterials, Loc.T("malzeme")));
-                if (last) d.Rewards.Add(Reward(b.liberationCaptureFunds, Loc.T("fon · bölge özgür")));
+                if (last && sim.RegionFundsDue(regionId)) d.Rewards.Add(Reward(b.liberationCaptureFunds, Loc.T("fon · bölge özgür")));
             }
 
             }
@@ -392,6 +446,99 @@ namespace Corrigible.Desk.Bridge
                 d.ActionNote = RaidPaperFacts.DisabledReason(sim);
                 d.Reason = field ? null : why;
             }
+            // Tesis aşama 11 (§8.3): karar vardiyasında baskın emri kilitli (Core gerekçesi); kısa not "ÖNCE KARAR VER"
+            if (d.ActionState == SlipActionState.Disabled && !field && FacilityDefenseText.On(sim) && sim.SiegeDecisionDue)
+            {
+                d.ActionNote = FacilityDefenseText.DecideFirst;
+                d.Reason = why;
+            }
+            return d;
+        }
+
+        /// <summary>
+        /// Tesis aşama 11 (§8.3): görev fişinin kuşatma kipi. Kod "KARŞI SALDIRI · OP-nn", görev "SAVUNMA · nn SEKTÖR", bedel "fon yok ·
+        /// vardiyanın baskın hakkı", ödül yok; SAHA: bölge, imza, DALGA, İZ, RÖLE (beş yuva); sektör satırında kuşatılan kanat "KUŞATMA".
+        /// Asıl eylem SAVUN (kadro raporu, sonra savunma emri; gerekçe <see cref="Simulation.DefendSectorCheck"/>), ikinci düğme BIRAK
+        /// (gerekçe <see cref="Simulation.YieldSectorCheck"/>; onayı bağlayıcı tutar). Savunma sürerken düğmeler kapalı, damga SAHADA.
+        /// </summary>
+        static OperationSlipData SiegeSlip(Simulation sim, string regionId, LiberationRegionState area, LiberationSectorState siege,
+            IList<string> pick, bool fixedSquad, OperationSlipData d)
+        {
+            int captured = area.CapturedCount, count = area.Sectors.Count;
+            d.Siege = true;
+            d.Code = FacilityDefenseText.SlipCode(siege);
+            if (sim.Board != null) d.Code = Loc.F("KYGA · {0} · V.{1:000}", d.Code, sim.S.Day + 1);
+            d.Region = DeskText.Upper(sim.RegionName(regionId));
+            d.Building = GameData.Region(regionId).Building;
+            d.BuildingHoverTitle = Loc.F("BİNA · {0}", DeskText.Upper(d.Building));
+            // Tesis aşama 12 (S2): savunma tahtası şart kurmaz (Katar'ın kenarı ve Yalpa savunmada kapalı); not binanın notu kalır
+            d.BuildingHoverLine = GameData.Region(regionId).BuildingNote;
+            d.Progress = area.Completed
+                ? Loc.F("SEKTÖRLER {0}/{1} · ÖZGÜR", captured, count)
+                : Loc.F("SEKTÖRLER {0}/{1} · İŞGAL {2}", captured, count, DeskFormat.Percent(Occupation(area), captured > 0 ? 1 : 0));
+            // SAHA: bölge ve imza (olay ve tehdit satırı yok: savunmada şart takvimi kapalı, kademe DALGA'da), sonra savunmanın üç satırı
+            Fields(sim, regionId, d.Fields, noEvent: true);
+            d.Fields.RemoveAll(f => f.Tier > 0);
+            d.Fields.AddRange(FacilityDefenseText.SlipFields(sim, siege));
+            if (d.Fields.Count > SlipFieldsMax) d.Fields.RemoveRange(0, d.Fields.Count - SlipFieldsMax);
+            int reoccupied = Reoccupied(sim, area);
+            foreach (var s in area.Sectors)
+            {
+                bool mine = s.Id == siege.Id;
+                var mark = s.Captured ? SectorMark.Retaken : SectorMark.Locked;
+                d.Sectors.Add(new SlipSector
+                {
+                    No = (s.Index + 1).ToString("00"), Name = s.Name, Kind = Kind(s), Mark = mark, Highlight = mine, Siege = mine,
+                    Reoccupied = s.Index == reoccupied,
+                    Hover = mine ? FacilityDefenseText.PendingLine(sim, s.Id) : null,
+                });
+            }
+            d.TaskHead = FacilityDefenseText.TaskHead(siege);
+            d.Task = FacilityDefenseText.Task(sim);
+            d.Cost = FacilityDefenseText.Cost;
+
+            var team = sim.S.Teams.FirstOrDefault();
+            d.TeamName = Loc.F("EKİP {0}", DeskText.Upper(TeamName(team)));
+            var chosen = team == null ? new List<string>() : pick != null ? pick.Where(r => r != "tek").Distinct().ToList() : Simulation.DefaultPick(team);
+            if (team != null)
+            {
+                d.Members.AddRange(SquadDiscs(sim, team, out var extra, chosen));
+                d.TeamExtra = extra;
+                Pick(sim, team, chosen, fixedSquad, d);
+            }
+            bool field = sim.S.Raid != null;
+            bool back = team != null && !Simulation.TeamReady(team);
+            if (sim.Board != null)
+            {
+                d.Planning = true;
+                d.TeamName = Loc.T("SAHA KADROSU"); d.TeamExtra = null; d.Members.Clear();
+                d.Members.AddRange(RaidPaperFacts.Members(sim));
+                d.TeamReady = !field && !back && sim.PlanningSquad().Count == PlanningBoardData.FieldJobs.Length;
+                d.TeamStamp = field ? Loc.T("SAHADA") : back ? Loc.T("SONRAKİ VARDİYA") : d.TeamReady ? Loc.T("HAZIR") : Loc.T("KADRO EKSİK · PANOYU DÜZENLE");
+            }
+            else
+            {
+                d.TeamReady = team != null && !back && sim.SquadCanRaid(team);
+                d.TeamStamp = field ? Loc.T("SAHADA") : d.TeamReady ? Loc.T("HAZIR")
+                    : back ? Loc.T("SONRAKİ VARDİYA") : Loc.F("TEKNİSYEN YARALI · {0} GÜN", TechnicianDown(team));
+            }
+
+            d.HasAction = true;
+            d.Action = FacilityDefenseText.DefendAction;
+            d.ActionCost = FacilityDefenseText.DefendCost(sim);
+            string why = sim.DefendSectorCheck();
+            d.ActionState = why == null ? SlipActionState.Ready : SlipActionState.Disabled;
+            if (d.ActionState == SlipActionState.Disabled)
+                d.ActionNote = field ? Loc.T("SAHADA") : !sim.SiegeDecisionDue ? Loc.T("SONRAKİ VARDİYA")
+                    : sim.Board != null ? RaidPaperFacts.DisabledReason(sim) : Loc.T("EKİP HAZIR DEĞİL");
+            d.Reason = field ? null : why;
+
+            // BIRAK: savunma sürerken yok; kurulduğu vardiyada gerekçesiyle kapalı
+            d.HasYield = !field;
+            d.Yield = FacilityDefenseText.YieldAction;
+            d.YieldCost = FacilityDefenseText.YieldCost(sim);
+            d.YieldReason = sim.YieldSectorCheck();
+            d.YieldEnabled = d.YieldReason == null;
             return d;
         }
 
@@ -401,14 +548,18 @@ namespace Corrigible.Desk.Bridge
         /// ve yerine yedek, yatıyor ve yedek yok; plaka takılacaksa eki. <paramref name="pick"/> ve <paramref name="fixedSquad"/>
         /// görev fişindeki gibi.
         /// </summary>
-        public static SquadReportData SquadReport(Simulation sim, string regionId, IList<string> pick = null, bool fixedSquad = false)
+        public static SquadReportData SquadReport(Simulation sim, string regionId, IList<string> pick = null, bool fixedSquad = false,
+            string sectorId = null)
         {
             var d = new SquadReportData { RegionId = regionId };
-            var next = sim?.NextLiberationSector(regionId);
+            // Tesis aşama 11 (§8.3): kuşatma kipinde savunulacak kanat (verilmezse fişin kipinden); değilse sıradaki sektör
+            var siege = sim == null ? null : sectorId != null ? sim.LiberationSector(sectorId) : FacilityDefenseText.SlipSector(sim, regionId);
+            if (siege != null && FacilityDefenseText.SlipSector(sim, regionId)?.Id != siege.Id) siege = null;
+            var next = siege ?? sim?.NextLiberationSector(regionId);
             if (next == null) return d;
             d.Head = Loc.T("KADRO RAPORU");
             if (sim.Board != null) d.Head = Loc.T("KYGA · KADRO RAPORU");
-            d.Region = DeskText.Upper(GameData.Region(regionId).Name);
+            d.Region = DeskText.Upper(sim.RegionName(regionId));
             d.Sector = Loc.F("{0:00} {1} · {2}", next.Index + 1, DeskText.Upper(next.Name), Kind(next));
             // Emrin göndereceği seçim (SiginakMap.ConfirmSquad): eğitim baskınında ve seçim yokken varsayılan
             var preview = sim.LiberationSquadPreview(fixedSquad || pick == null ? null : Simulation.PickKey(pick));
@@ -449,6 +600,14 @@ namespace Corrigible.Desk.Bridge
             d.Action = Loc.T("BASKINA ÇIK");
             d.ActionCost = Loc.F("{0} fon", DeskFormat.Signed(-sim.B.liberationRaidCost, 0));
             d.Cancel = Loc.T("Vazgeç");
+            if (siege != null)
+            {
+                // Savunma emri fon istemez; düğme "SAVUNMAYA ÇIK", bedel yerine süre
+                d.Siege = true;
+                d.Sector = Loc.F("{0:00} {1} · {2}", next.Index + 1, DeskText.Upper(next.Name), Loc.T("SAVUNMA"));
+                d.Action = FacilityDefenseText.ReportAction;
+                d.ActionCost = FacilityDefenseText.DefendCost(sim);
+            }
             return d;
         }
 
@@ -459,16 +618,16 @@ namespace Corrigible.Desk.Bridge
             var area = sim?.LiberationRegion(regionId);
             if (area == null) return d;
             var cleared = new HashSet<string>(sim.S.Liberation.Regions.Where(r => r.Completed).Select(r => r.Id));
-            var neighbors = GameData.Links
+            var neighbors = sim.Links
                 .Where(l => l.A == regionId && cleared.Contains(l.B) || l.B == regionId && cleared.Contains(l.A))
-                .Select(l => l.A == regionId ? l.B : l.A).Distinct().Select(id => GameData.Region(id).Name).ToList();
+                .Select(l => l.A == regionId ? l.B : l.A).Distinct().Select(id => sim.RegionName(id)).ToList();
             d.Head = Loc.T("YENİ CEPHE · ONAY");
-            d.Region = DeskText.Upper(GameData.Region(regionId).Name);
+            d.Region = DeskText.Upper(sim.RegionName(regionId));
             d.Neighbor = neighbors.Count > 0 ? Loc.F("Komşu: {0}", string.Join(", ", neighbors)) : "";
             d.Occupation = Loc.F("İŞGAL {0}", DeskFormat.Percent(Occupation(area)));
             foreach (var s in area.Sectors)
                 d.Sectors.Add(new SlipSector { No = (s.Index + 1).ToString("00"), Name = s.Name, Kind = Kind(s), Mark = SectorMark.Locked });
-            d.Rule = Loc.F("{0} Tehdit {1}/{2}. Cephe açılınca 01 {3} baskına hazır olur.", Identity(regionId, true), sim.Tier, sim.MaxTier, area.Sectors[0].Name);
+            d.Rule = Loc.F("{0} Tehdit {1}/{2}. Cephe açılınca 01 {3} baskına hazır olur.", Identity(regionId, true, sim), sim.Tier, sim.MaxTier, area.Sectors[0].Name);
             d.Action = Loc.T("SEÇİLİ BÖLGEDE CEPHE AÇ");
             d.Cancel = Loc.T("Vazgeç");
             d.ActionEnabled = sim.SelectLiberationRegionCheck(regionId) == null;

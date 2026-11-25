@@ -10,9 +10,10 @@ namespace Corrigible.Desk
     /// <para>
     /// Revizyon 3 · R19b (devir fişi, PLAN §1.5–§1.6); teleks modeli değişimi (daktilo): kol inince fiş beklemeye girer, makine
     /// izin verince (<see cref="ShiftReceiptMachine.FeedHold"/>: önce teleks satırı biter, kamera masaya varır) daktilonun
-    /// silindirinden yazılarak çıkar (<see cref="BeginFeed"/>, <c>motion.shiftClose.slipTypeS</c>, <c>shiftClose.slip.typeLines</c>
-    /// satır adımı, <see cref="TypedFeed"/>; çıkış SlipStart'ın 40 mm içinden başlar, yol 160 mm) ve silindirde dik durur (dil
-    /// pozu). Tıkla ele gelir (<see cref="TakeToHand"/>; kameranın önünde ekran yüksekliğinin %67'si, canlı kamerayı izler), tık / Esc /
+    /// silindirinden, teleks kâğıdının yerinden yazılarak çıkar (tek kâğıt akışı: o anki teleks kâğıdı düşer, <see cref="HoldsPlaten"/>;
+    /// <see cref="BeginFeed"/>, <c>motion.shiftClose.slipTypeS</c>, <c>shiftClose.slip.typeLines</c> satır adımı, <see cref="TypedFeed"/>;
+    /// çıkış SlipStart'ın 40 mm içinden başlar, yol 260 mm) ve teleks kâğıdının dinlenme pozunda dik durur (dil pozu; fiş teleks
+    /// kâğıdıyla aynı boyda, 260 × 225 mm). Tıkla ele gelir (<see cref="TakeToHand"/>; kameranın önünde ekran yüksekliğinin %67'si, canlı kamerayı izler), tık / Esc /
     /// sağ tık daktiloya döndürür (<see cref="PutBack"/>; tık ve tuşları köprü okur, kâğıt yalnız <see cref="Clicked"/> yayar), EVRAK
     /// üstüne bırakılınca tepsinin üst kâğıdına iner (<see cref="FileToTray"/>), EVRAK dışına ya da reddedilen bırakışta 0,25 s kavisle
     /// daktiloya döner (<see cref="ReturnToTongue"/>; bulgu 17: hiçbir bırakış fişi askıda bırakmaz). Arşivdeki fiş elde salt okunur
@@ -53,12 +54,12 @@ namespace Corrigible.Desk
         [SerializeField, Range(0.3f, 0.9f)] float handHeightFraction = 0.67f;
         [Tooltip("El pozu: kamera eksenlerinde ofset (m; sağ, yukarı). Kamera eksenleri bilinçli: el canlı kamerayı izler.")]
         [SerializeField] Vector2 handOffset = new Vector2(0.02f, -0.004f);
-        [Tooltip("El pozu: kameraya göre eğim (derece; Karar D5: x 0°, z −2,9°).")]
-        [SerializeField] Vector3 handEuler = new Vector3(0, 0, -2.9f);
+        [Tooltip("El pozu: kameraya göre eğim (derece; Karar D5: x 0°, z −2,9° 100 mm'lik fişte; tek kâğıt akışında 260 mm'lik fişte aynı köşe düşüşü için −1,1°).")]
+        [SerializeField] Vector3 handEuler = new Vector3(0, 0, -1.1f);
 
         /// <summary>El pozunun varsayılan ofseti (kamera sağ/yukarı, m) ve eğimi (Karar D5).</summary>
         public static readonly Vector2 DefaultHandOffset = new Vector2(0.02f, -0.004f);
-        public static readonly Vector3 DefaultHandEuler = new Vector3(0, 0, -2.9f);
+        public static readonly Vector3 DefaultHandEuler = new Vector3(0, 0, -1.1f);
 
         Where where = Where.Hidden;
         bool feedPending, readOnly, dragActive;
@@ -107,7 +108,7 @@ namespace Corrigible.Desk
         public bool ReadOnly => readOnly;
         /// <summary>Basılan fiş kol aşağıya varmayı bekliyor (<see cref="Present(string, HandoverSlipFacts, Entry)"/> AfterLever).</summary>
         public bool FeedPending => feedPending;
-        /// <summary>Canlı fiş daktilonun silindirinde (çıkıyor ya da duruyor; teleks kâğıdının yanında, kâğıdı örtmez).</summary>
+        /// <summary>Canlı fiş daktilonun silindirinde (çıkıyor ya da duruyor; teleks kâğıdının yerinde, o anki teleks kâğıdı düşer).</summary>
         public bool InPrinter => !readOnly && !string.IsNullOrEmpty(ReceiptId) && (where == Where.Feeding || where == Where.Tongue);
         /// <summary>
         /// Canlı fiş masada ve EVRAK'a girmedi (daktilodan çıkıyor ya da orada duruyor, elde, sürükleniyor ya da daktiloya dönüyor).
@@ -115,6 +116,12 @@ namespace Corrigible.Desk
         /// </summary>
         public bool LiveSlipOut => !readOnly && !string.IsNullOrEmpty(ReceiptId)
             && where != Where.Hidden && where != Where.ToTray && where != Where.Tray;
+        /// <summary>
+        /// Canlı fiş silindiri tutuyor (tek kâğıt akışı): basıldı, görünür ve EVRAK'a dosyalanmadı (beslenirken, dilde, ele giderken,
+        /// elde, sürüklenirken, dönerken, tepsiye inerken ve tepside ret beklerken). Bekleyen besleme ve arşiv okuma tutmaz. Tutarken
+        /// teleks kâğıdı silindirde yoktur, yeni teleks satırları kâğıda basılmaz.
+        /// </summary>
+        public bool HoldsPlaten => !readOnly && !string.IsNullOrEmpty(ReceiptId) && where != Where.Hidden;
         /// <summary>Yüzde yazan veri (arşiv okunurken arşivdeki fiş).</summary>
         public HandoverSlipFacts Facts => readOnly ? archivedFacts : liveFacts;
         public Camera View => view;
@@ -143,7 +150,7 @@ namespace Corrigible.Desk
                 return anchor + inward * Mathf.Max(0, feedHiddenM);
             }
         }
-        /// <summary>Çıkış yolunun uzunluğu (m; çıkış başından dil pozuna). D12 ile ≈ 0,16.</summary>
+        /// <summary>Çıkış yolunun uzunluğu (m; çıkış başından dil pozuna). D12 ile ≈ 0,26 (40 + 200 + 20 mm).</summary>
         public float FeedPathM => Vector3.Distance(FeedFrom, TongueTarget.position);
 
         Pose Current => new Pose(transform.position, transform.rotation);
@@ -174,7 +181,7 @@ namespace Corrigible.Desk
         /// <summary>Sürükleme başında fişin EVRAK üstü dönüşüne geçişi (temada yok; yedek 0,1 s, PLAN §1.5).</summary>
         static float PickS => Num("motion.shiftClose.slipPickS", 0.1f);
         static float TravelM => Num("shiftClose.slip.travelMm", 120f) * 0.001f;
-        static float SlipHeightM => Num("shiftClose.slip.sizeMm[1]", 150f) * 0.001f;
+        static float SlipHeightM => Num("shiftClose.slip.sizeMm[1]", 225f) * 0.001f;
 
         // ------------------------------------------------------------------ kurulum
 
@@ -383,11 +390,12 @@ namespace Corrigible.Desk
 
         /// <summary>
         /// El pozu: fiş kameranın önünde, yüksekliği ekranın <paramref name="heightFraction"/> kesri olacak uzaklıkta
-        /// (<c>d = slipHeightM / (heightFraction · 2 · tan(fov / 2))</c>; K6'da ≈ 0,29 m), kamera eksenlerinde hafif sağda ve
-        /// aşağıda (<see cref="DefaultHandOffset"/>), yüzü kameraya dönük, düzlem içinde −2,9° (<see cref="DefaultHandEuler"/>).
+        /// (<c>d = slipHeightM / (heightFraction · 2 · tan(fov / 2))</c>; 225 mm'lik fişle K6'da ≈ 0,44 m), kamera eksenlerinde hafif sağda ve
+        /// aşağıda (<see cref="DefaultHandOffset"/>), yüzü kameraya dönük, düzlem içinde −1,1° (<see cref="DefaultHandEuler"/>; Karar D5'in −2,9°'si 100 mm'lik fişin köşe düşüşüydü, 260 mm'de
+        /// sağa yaslı değerleri satırların altına kaydırıyordu).
         /// Saf: yalnız verilen kameradan hesaplanır.
         /// </summary>
-        public static Pose HandPose(Vector3 camPos, Quaternion camRot, float fovDeg, float heightFraction = 0.67f, float slipHeightM = 0.15f)
+        public static Pose HandPose(Vector3 camPos, Quaternion camRot, float fovDeg, float heightFraction = 0.67f, float slipHeightM = 0.225f)
             => HandPose(camPos, camRot, fovDeg, heightFraction, slipHeightM, DefaultHandOffset, DefaultHandEuler);
 
         /// <summary><see cref="HandPose(Vector3, Quaternion, float, float, float)"/>; ofset (m, kamera sağ/yukarı) ve eğim (derece) verilir.</summary>
@@ -411,19 +419,10 @@ namespace Corrigible.Desk
         /// her adımın ilk <paramref name="slide"/> kesrinde fiş bir satır ease-out kayar, kalanında durur (harfler basılıyor).
         /// <paramref name="lines"/> 0 ise tek ease-out kayış. Monoton, 0'da 0, 1'de 1.
         /// </summary>
-        public static float TypedFeed(float t, int lines) => TypedFeed(t, lines, LineSlideFraction);
+        public static float TypedFeed(float t, int lines) => PlatenFeed.TypedFeed(t, lines, LineSlideFraction);
 
-        /// <summary><see cref="TypedFeed(float, int)"/>; satır adımının kayış payı verilir.</summary>
-        public static float TypedFeed(float t, int lines, float slide)
-        {
-            t = Mathf.Clamp01(t);
-            if (lines <= 0) return CardEasing.Evaluate(CardEase.EaseOut, t);
-            if (t >= 1) return 1;
-            float x = t * lines;
-            int k = Mathf.FloorToInt(x);
-            float s = slide > 0 ? Mathf.Clamp01((x - k) / slide) : 1;
-            return (k + CardEasing.Evaluate(CardEase.EaseOut, s)) / lines;
-        }
+        /// <summary><see cref="TypedFeed(float, int)"/>; satır adımının kayış payı verilir (<see cref="PlatenFeed.TypedFeed"/>).</summary>
+        public static float TypedFeed(float t, int lines, float slide) => PlatenFeed.TypedFeed(t, lines, slide);
 
         // ------------------------------------------------------------------ zaman
 

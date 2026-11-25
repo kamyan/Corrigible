@@ -8,17 +8,19 @@ using UnityEngine.UI;
 namespace Corrigible.Desk
 {
     /// <summary>
-    /// Devir fişinin 100 × 150 mm yüzü (Revizyon 3 · R19c, PLAN W3, Karar D4-A): World Space tuval, 1 birim = 1 mm, sol üst
-    /// orijin, y aşağı; ışın almaz (tuvalde <c>GraphicRaycaster</c> yok, tıklama fişin çarpıştırıcısından). Kâğıt, kesik kenar,
+    /// Devir fişinin yüzü (Revizyon 3 · R19c, PLAN W3, Karar D4-A): World Space tuval, 1 birim = 1 tasarım mm'si, sol üst orijin, y
+    /// aşağı. Tek kâğıt akışında fiş teleks kâğıdıyla aynı boyda (dünyada 260 × 225 mm): tasarım ölçüsü 173,33 × 150 mm (tasarım
+    /// HTML'inin punto ve boşlukları aynı, içerik tam genişlikte), tuval dünyada ×1,5 ölçeklenir
+    /// (<see cref="HandoverSlipMetrics.worldScale"/>, <see cref="CanvasScale"/>); ışın almaz (tuvalde <c>GraphicRaycaster</c> yok, tıklama fişin çarpıştırıcısından). Kâğıt, kesik kenar,
     /// delik sırası ve kenar çizgisi modelin dokusundadır (<c>tx_handoverSlip</c>); tuvalde yalnız yazılar, çizgiler, diskler ve
     /// simgeler durur.
     /// <list type="bullet">
     /// <item><see cref="Bind"/> veriyi <see cref="HandoverSlipFormat.Format"/> ile o anki dilde satırlara çevirir ve yukarıdan
     /// aşağı dizer (tasarım HTML'inin CSS akışı, <see cref="HandoverSlipMetrics"/>); alt satır ve eylem satırı alta yaslıdır.
     /// Satırlar şablonlardan (<see cref="HandoverSlipRow"/>, <see cref="HandoverSlipWarning"/>) havuzla çoğaltılır.</item>
-    /// <item>Kıvrım (D §0.5): model kâğıdı üst kenara doğru yüz yönüne 4 mm kıvrılır; her öğe kendi üst kenarındaki kâğıdın
-    /// 0,4 mm önünde durur: yerel z = −(4 · ((150 − y) / 150)² + 0,4) mm (<see cref="CurlZ"/>). Tuval modelin düz düzleminde
-    /// (z 0) durur.</item>
+    /// <item>Kıvrım (D §0.5): model kâğıdı üst kenara doğru yüz yönüne 4 tasarım mm'si (dünyada 6 mm) kıvrılır; her öğe kendi üst
+    /// kenarındaki kâğıdın 0,4 mm önünde durur: yerel z = −(4 · ((150 − y) / 150)² + 0,4) mm (<see cref="CurlZ"/>). Tuval modelin
+    /// düz düzleminde (z 0) durur.</item>
     /// <item>Satır sarar, punto küçülmez, otomatik punto yok. Sığmazsa (D9-A) son ad taşıyan kutunun adları "… +n" ile kesilir;
     /// yine sığmazsa <see cref="Overflowing"/>.</item>
     /// <item>Dil değişince (<c>DeskLoc.Changed</c>) aynı veriyi yeniden yazar (yalnız sözcükler ve ondalık ayırıcı değişir).
@@ -30,7 +32,7 @@ namespace Corrigible.Desk
     {
         const float Eps = 0.01f;
 
-        [Tooltip("Yüz tuvali (100 × 150 birim, sol üst pivot, ölçek 0,001).")]
+        [Tooltip("Yüz tuvali (173,33 × 150 birim, sol üst pivot, ölçek 0,0015 = 0,001 × worldScale).")]
         [SerializeField] RectTransform face;
         [Tooltip("Yazıların kökü (tuvalin çocuğu, tuvali kaplar); boş yüzde kapalı.")]
         [SerializeField] RectTransform content;
@@ -211,6 +213,16 @@ namespace Corrigible.Desk
         }
 
         // ================================================================== yerleşim
+
+        /// <summary>Yüz tuvalinin yerel ölçeği: 1 tasarım mm'si = 0,001 · <see cref="HandoverSlipMetrics.worldScale"/> m.</summary>
+        public static float CanvasScale(HandoverSlipMetrics m) => 0.001f * (m != null && m.worldScale > 0 ? m.worldScale : 1f);
+
+        /// <summary>Yüz tuvalinin sol üst köşesi (modelin yereli, m): dünya ölçüsünün yarısı sola ve yukarı, modelin düz düzleminde.</summary>
+        public static Vector3 CanvasCorner(HandoverSlipMetrics m)
+        {
+            var size = m != null ? m.WorldSizeMm : new Vector2(260, 225);
+            return new Vector3(-size.x * 0.0005f, size.y * 0.0005f, 0f);
+        }
 
         /// <summary>Kıvrım ofseti: üst kenarı fişin üstünden <paramref name="yTopMm"/> mm'de olan öğenin tuval yereli z'si (mm).</summary>
         public static float CurlZ(float yTopMm, HandoverSlipMetrics m)
@@ -439,17 +451,24 @@ namespace Corrigible.Desk
     }
 
     /// <summary>
-    /// Fiş yüzünün ölçüleri (mm, fişin sol üstünden, y aşağı). Kaynak tasarım HTML'i <c>tasarim/kagit_kaynak/devir_fisi_*.html</c>
-    /// (480 × 720 px @1×, 4,8 px/mm; C §7.2): her değer CSS pikselinden yazılır. Yazı boyutları em (mm), harf aralıkları em.
+    /// Fiş yüzünün ölçüleri (tasarım mm'si, fişin sol üstünden, y aşağı). Kaynak tasarım HTML'i <c>tasarim/kagit_kaynak/devir_fisi_*.html</c>
+    /// (4,8 px/mm; C §7.2): her değer CSS pikselinden yazılır. Yazı boyutları em (mm), harf aralıkları em. Tek kâğıt akışında kâğıt
+    /// teleks kâğıdının boyunda: tasarım 832 × 720 px (173,33 × 150 mm; genişlik tam), dünyada × <see cref="worldScale"/> (1,5) =
+    /// 260 × 225 mm.
     /// </summary>
     [Serializable]
     public sealed class HandoverSlipMetrics
     {
         public const float PxPerMm = 4.8f;
         const float Px = 1f / PxPerMm;
+        /// <summary>Tasarım genişliği: teleks kâğıdının 260 mm'si / 1,5 (832 px).</summary>
+        public const float DesignWidthMm = 832 * Px;
 
         [Header("Kâğıt")]
-        public Vector2 sizeMm = new Vector2(100, 150);
+        [Tooltip("Tasarım ölçüsü (mm): 832 × 720 px @4,8; dünyada × worldScale (token shiftClose.slip.sizeMm = 260 × 225).")]
+        public Vector2 sizeMm = new Vector2(DesignWidthMm, 150);
+        [Tooltip("Tasarım mm'sinden dünyaya (token shiftClose.slip.faceScale 1,5): punto, boşluk ve satır adımı eş ölçekli büyür.")]
+        public float worldScale = 1.5f;
         [Tooltip("Gövdenin üstü (kesik kenar 0–7 px; gövde 6 px'ten başlar).")]
         public float bodyTopMm = 6 * Px;
         [Tooltip("Sol, sağ ve alt kenar çizgisi (1 px #C9B98A, dokuda).")]
@@ -485,7 +504,7 @@ namespace Corrigible.Desk
         public float actionGapMm = 6 * Px, actionRuleMm = 3 * Px, actionPadTopMm = 6 * Px, actionPadBottomMm = 2 * Px;
         public float actionIconMm = 20 * Px, actionIconGapMm = 10 * Px, actionEmMm = 19 * Px, actionSpacingEm = 0.04f;
 
-        [Header("Kıvrım (model: z = −0,004 · ((y + 0,075) / 0,15)²)")]
+        [Header("Kıvrım (model: z = −0,006 · ((y + 0,1125) / 0,225)²; tasarım mm'sinde 4)")]
         public float curlMm = 4f;
         [Tooltip("Her öğe kâğıdın bu kadar önünde.")]
         public float liftMm = 0.4f;
@@ -494,7 +513,9 @@ namespace Corrigible.Desk
         public float ContentLeftMm => borderMm + padLeftMm;
         /// <summary>İçeriğin üst kenarı (gövdenin üstü + üst boşluk; 3,75 mm).</summary>
         public float ContentTopMm => bodyTopMm + padTopMm;
-        /// <summary>İçerik genişliği (88,75 mm).</summary>
+        /// <summary>Dünya ölçüsü (mm): tasarım × <see cref="worldScale"/> (260 × 225).</summary>
+        public Vector2 WorldSizeMm => sizeMm * (worldScale > 0 ? worldScale : 1f);
+        /// <summary>İçerik genişliği (162,08 tasarım mm'si; dünyada 243 mm).</summary>
         public float ContentWidthMm => sizeMm.x - 2 * borderMm - padLeftMm - padRightMm;
         /// <summary>İçeriğin alt kenarı (146,88 mm).</summary>
         public float ContentBottomMm => sizeMm.y - borderMm - padBottomMm;

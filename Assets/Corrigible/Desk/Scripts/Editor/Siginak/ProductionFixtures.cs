@@ -66,7 +66,7 @@ namespace Corrigible.Desk.EditorTools
         {
             var d = new RecipeCardData
             {
-                Id = id, RecipeId = r.Id, Name = r.Name, IconKey = r.Id, TurnsLine = r.TurnsLine, OutLine = Loc.T("→ 1 ürün"),
+                Id = id, RecipeId = r.Id, Name = r.Name, ShortName = r.ShortName, IconKey = r.Id, TurnsLine = r.TurnsLine, OutLine = Loc.T("→ 1 ürün"),
                 NeedsLabel = s.Book != null ? s.Book.Input : null, Turns = r.Turns, Done = r.Turns > 1 ? done : -1,
             };
             foreach (var i in r.Inputs) if (i != null) d.Inputs.Add(i);

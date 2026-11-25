@@ -1,0 +1,30 @@
+# Tesis baskınları aşama 6 ölçümü (Docs/TESIS-BASKINLARI-TASARIMI.md §11.6, §12 satır 6): hamleler ve ölüm kuralı. Değerler C#
+# varsayılanları (giriş 1, ara 1 makine, dönüş 5 tur = aşama 4 M11R5); bayrak yalnız BAL'de açık, asset'te kapalı kalır.
+# DEV ve DUSEN ortam değişkenidir (BAL.txt'e yazılmaz, R satırının dev= ve dusen= anahtarında görünür).
+#   t6taban  aşama 5 sonu davranışı (yeni hamleler ve ölüm kuralı yok): aşama 6'dan önce derlenmiş exe ile, aynı tohumlar
+#            OUT=<aşama 5 exe klasörü> PICK=rastgele PAR=10 DEV=kir Tools/DengeBotu/kos.sh <(grep '^t6taban' Tools/DengeBotu/tesis6.txt)
+#   t6hep    hep taşı:  PICK=rastgele PAR=10 DEV=kir DUSEN=hep Tools/DengeBotu/kos.sh <(grep '^t6hep' Tools/DengeBotu/tesis6.txt)
+#   t6hic    hiç taşıma: PICK=rastgele PAR=10 DEV=kir DUSEN=hic Tools/DengeBotu/kos.sh <(grep '^t6hic' Tools/DengeBotu/tesis6.txt)
+#   python3 -I Tools/DengeBotu/ozet.py --tesis t6hep t6hic --taban t6taban
+t6taban|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t6hep|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t6hic|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+# Karar kuralı D22 (tasarım §9.3/5): t6hep ölü > 7,5 ise sürükleme bedelsiz (facilityDragMoveCost=0) ölçülür
+#   PICK=rastgele PAR=10 DEV=kir DUSEN=hep Tools/DengeBotu/kos.sh <(grep '^t6hepD0' Tools/DengeBotu/tesis6.txt)
+t6hepD0|liberationMapGen=1;raidFacilityEnabled=true;facilityDragMoveCost=0;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+# Aşama 6 kapanışı (son nefes kuralı, düzeltilmiş bot sayaçları; ölçüm anahtarı facilityLastBreathDies, varsayılan false = kural açık).
+# Taban yine t6taban (aşama 5 exe'si, yeniden koşulmaz). R satırında breath= (oda başına son nefes), bsaved= (son nefesle çıkarılan,
+# carried'ın alt kümesi), fate= (düşen ve geride kalanın sonu; Camp8.Fates).
+#   t6sn     son nefes açık, hep:   PICK=rastgele PAR=10 DEV=kir DUSEN=hep Tools/DengeBotu/kos.sh <(grep -E '^t6sn0?\|' Tools/DengeBotu/tesis6.txt)
+#   t6sn0    son nefes kapalı, hep (t6hep'in düzeltilmiş sayaçlı karşılığı): yukarıdaki komutla birlikte
+#   t6snhic  son nefes açık, hic:   PICK=rastgele PAR=10 DEV=kir DUSEN=hic Tools/DengeBotu/kos.sh <(grep '^t6snhic' Tools/DengeBotu/tesis6.txt)
+#   python3 -I Tools/DengeBotu/ozet.py --tesis t6sn t6sn0 t6snhic --taban t6taban
+t6sn|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t6sn0|liberationMapGen=1;raidFacilityEnabled=true;facilityLastBreathDies=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t6snhic|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+# Bilgi (pusu katkısı, rapor C öneri 4): pusu kapalı (facilityAmbushRange=0: hat boş, bot pusu adayı üretmez), son nefes açık, hep
+#   PICK=rastgele PAR=10 DEV=kir DUSEN=hep Tools/DengeBotu/kos.sh <(grep '^t6snP0' Tools/DengeBotu/tesis6.txt)
+t6snP0|liberationMapGen=1;raidFacilityEnabled=true;facilityAmbushRange=0;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+# Bilgi (aşama 8 "Sedye" kazanımının üst sınırı): sürükleme bedelsiz (facilityDragMoveCost=0), son nefes açık, hep
+#   PICK=rastgele PAR=10 DEV=kir DUSEN=hep Tools/DengeBotu/kos.sh <(grep '^t6snD0' Tools/DengeBotu/tesis6.txt)
+t6snD0|liberationMapGen=1;raidFacilityEnabled=true;facilityDragMoveCost=0;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80

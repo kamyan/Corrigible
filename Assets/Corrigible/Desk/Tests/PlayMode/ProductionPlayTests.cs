@@ -19,7 +19,7 @@ namespace Corrigible.Desk.Tests
     /// Tarif defteri ve üretim (Revizyon 3 · Aşama 5, R18; PLAN §5.2 P1–P17, E §3; Karar D1-B: tarif kartı iş emrine
     /// <c>board_queue</c>, dolu emre <c>board_cancel</c> + <c>board_queue</c>, fiş <c>board_reserve ±1</c>, formdan dışarı
     /// <c>board_cancel</c>). DeskGame gerçek sahnesiyle Play'de, tohum 79 (V.001: metal 3 · devre 2 · kumaş 2 · kimyasal 1, ÜRETİM'de
-    /// Suna). Defter tıkları ve tarif sürüklemesi <b>gerçek ışınla</b> (<see cref="BoardPlayKit.FirstHit"/>; örtülme de sınanır) ve
+    /// Nell). Defter tıkları ve tarif sürüklemesi <b>gerçek ışınla</b> (<see cref="BoardPlayKit.FirstHit"/>; örtülme de sınanır) ve
     /// EventSystem'in hiyerarşi kuralıyla (<see cref="PointerGesture"/>) verilir; kart sürüklemeleri Aşama 3'ün
     /// <see cref="BoardPlayKit.Drag"/>'iyle; üzerine gelme sanal fareyle. Süreler token'dan (<c>motion.board.*</c>, yerel
     /// <c>recipeBook.*</c>), tolerans token + iki kare (<see cref="BoardPlayKit.FrameTolerance"/>). Defterin ve kartların hareketi
@@ -298,7 +298,7 @@ namespace Corrigible.Desk.Tests
 
         /// <summary>
         /// P1 (R18a; PLAN §1.4 B0, B1): kapalı defter kancada (Aşama 3 pozu); sanal fare üzerine gelince kök pano −z'sinde 4 mm öne
-        /// (<c>recipeBook.hoverMm</c>, <c>cardLiftS</c> 0,08 s), 0,4 s sonra etiket "TARİF DEFTERİ" · "6 tarif". Gerçek ışınla tık: kök
+        /// (<c>recipeBook.hoverMm</c>, <c>cardLiftS</c> 0,08 s), 0,4 s sonra etiket "TARİF DEFTERİ" · "6 tarif · 7 kapalı". Gerçek ışınla tık: kök
         /// okuma pozuna <c>bookForwardS</c> 0,35 s ease-out (yarı sürede yolun ≥ %60'ı), kapak 0,10 s'de başlar ve 0,35 s'de −178°'de;
         /// yaprak gizli, açılım 1 (TARİF 01 Zırh plakası / 02 Bakım kiti). Kamera K4'te kalır, arka plan karartılmaz (yeni Overlay
         /// tuval yok), tek <c>BookOpen</c> ses olayı, defter kipi (kart girdisi askıda), komut ve RNG aynı.
@@ -357,7 +357,8 @@ namespace Corrigible.Desk.Tests
             yield return BoardPlayKit.WaitFor(() => tag.Visible && tag.Owner == (IHoverSource)book, tagDelay + 1, "defterin etiketi açılmadı");
             if (viaMouse) AssertDuration(Time.unscaledTime - hoverAt, tagDelay, "etiket gecikmesi (motion.tooltipDelayS, yedek 0,4)");
             Assert.AreEqual(Loc.T("TARİF DEFTERİ"), ShiftPlayKit.Get<TMP_Text>(tag, "title").text, "etiket başlığı");
-            Assert.AreEqual(Loc.F("{0} tarif", 6), ShiftPlayKit.Get<TMP_Text>(tag, "line").text, "etiket satırı (altı tarif, veriden)");
+            // Tek kip: altı temel tarif ve yedi kapalı tesis sayfası (sunucu ödülüyle açılır)
+            Assert.AreEqual(Loc.F("{0} tarif · {1} kapalı", 6, FacilityGear.Kinds.Length), ShiftPlayKit.Get<TMP_Text>(tag, "line").text, "etiket satırı (altı tarif ve kapalılar, veriden)");
             Assert.AreEqual(Board.Last.BookTitle, book.HoverTitle, "başlık anlık görüntüden");
             Assert.AreEqual(Board.Last.BookLine, book.Line, "satır anlık görüntüden");
             if (viaMouse) yield return BoardPlayKit.MoveMouse(new Vector2(6, 6));
@@ -395,9 +396,10 @@ namespace Corrigible.Desk.Tests
 
             // açılım 1: TARİF 01 / 02
             Assert.AreEqual(0, book.Spread, "ilk açılış açılım 1'de");
-            Assert.AreEqual(3, book.SpreadCount, "üç açılım");
+            Assert.AreEqual((6 + FacilityGear.Kinds.Length + 1) / 2, book.SpreadCount, "yedi açılım (altı temel tarif, yedi kapalı sayfa)");
             var ids = Board.Last.Recipes.Select(r => r.Id).ToArray();
-            CollectionAssert.AreEqual(new[] { "armor", "medkit", "emp_cell", "kit_tek", "kit_emp", "kit_ana" }, ids, "defterin sayfa sırası Core'un sırası");
+            CollectionAssert.AreEqual(new[] { "armor", "medkit", "emp_cell", "kit_tek", "kit_emp", "kit_ana" }, ids.Take(6), "defterin sayfa sırası Core'un sırası");
+            Assert.IsTrue(Board.Last.Recipes.Skip(6).All(r => r.Locked), "tesis sayfaları kapalı");
             Assert.AreEqual("armor", book.PageLeft.Recipe?.Id, "sol sayfa TARİF 01");
             Assert.AreEqual("medkit", book.PageRight.Recipe?.Id, "sağ sayfa TARİF 02");
             Assert.AreEqual(RecipeOf("armor").Title, book.PageLeft.Title.text, "sol sayfanın başlığı (büyük harf)");
@@ -428,7 +430,8 @@ namespace Corrigible.Desk.Tests
         /// <summary>
         /// P2 (R18a; B2–B4, B11): "sonraki ►" köşesine gerçek ışınla tık yaprağı <c>pageTurnS</c> 0,25 s'de çevirir (yaprak görünür,
         /// açısı tekdüze, bitince gizli; tek <c>PageTurn</c>); açılım 2 = 03 EMP hücresi / 04 Teknisyen kiti, 3 = 05 EMP kiti /
-        /// 06 Analist kiti. Çevirme sürerken tık yok sayılır. Açılım 3'te sonraki, 1'de önceki sekmesi yok ve köşe bir şey yapmaz.
+        /// 06 Analist kiti; sonra kapalı tesis sayfaları (tek kip). Çevirme sürerken tık yok sayılır. Son açılımda sonraki, 1'de önceki
+        /// sekmesi yok ve köşe bir şey yapmaz.
         /// ← tuşu geri çevirir. Açılım yerleşime yazılır (<c>BoardUiState.BookSpread</c>); komut yok.
         /// </summary>
         [UnityTest]
@@ -470,20 +473,34 @@ namespace Corrigible.Desk.Tests
                 Assert.AreEqual(to, Ui.BookSpread, "açılım yerleşime yazıldı (bookSpread)");
             }
 
-            // açılım 3: sonraki yok
-            Assert.IsFalse(book.PageRight.ShowsNext, "açılım 3'te sonraki sekmesi çizilmez");
-            Assert.IsTrue(book.PageLeft.ShowsPrev, "açılım 3'te önceki sekmesi var");
+            // Tek kip: temel tariflerden sonra kapalı tesis sayfaları; son açılıma kadar çevrilir, sonda sonraki yok
+            Assert.IsTrue(book.PageRight.ShowsNext, "açılım 3'ten sonra kapalı tesis sayfaları");
+            int last = book.SpreadCount - 1;
+            for (int guard = 0; guard < 10 && book.Spread < last; guard++)
+            {
+                BoardPlayKit.ClickHit(PageHit(true, NextMm, "sonraki (açılım " + (book.Spread + 2) + ")"));
+                yield return BoardPlayKit.WaitFor(() => book.State == BookState.Open, 2, "çevirme bitmedi");
+            }
+            Assert.AreEqual(last, book.Spread, "son açılım");
+            Assert.IsFalse(book.PageRight.ShowsNext, "son açılımda sonraki sekmesi çizilmez");
+            Assert.IsTrue(book.PageLeft.ShowsPrev, "son açılımda önceki sekmesi var");
             int before = sounds.Count(BoardSound.PageTurn);
-            BoardPlayKit.ClickHit(PageHit(true, NextMm, "açılım 3'te sonraki köşesi"));
+            BoardPlayKit.ClickHit(PageHit(true, NextMm, "son açılımda sonraki köşesi"));
             yield return BoardPlayKit.Frames(2);
-            Assert.AreEqual(BookState.Open, book.State, "açılım 3'te sonraki köşesi bir şey yapmaz");
-            Assert.AreEqual(2, book.Spread);
+            Assert.AreEqual(BookState.Open, book.State, "son açılımda sonraki köşesi bir şey yapmaz");
+            Assert.AreEqual(last, book.Spread);
             Assert.AreEqual(before, sounds.Count(BoardSound.PageTurn), "ses yok");
 
             // ← tuşu (B11) ve önceki köşesi
             yield return BoardPlayKit.PressKey(Key.LeftArrow);
-            yield return BoardPlayKit.WaitFor(() => book.State == BookState.Open && book.Spread == 1, turnS + 1, "← tuşu geri çevirmedi");
+            yield return BoardPlayKit.WaitFor(() => book.State == BookState.Open && book.Spread == last - 1, turnS + 1, "← tuşu geri çevirmedi");
             Assert.AreEqual(before + 1, sounds.Count(BoardSound.PageTurn), "← tek çevirme");
+            for (int guard = 0; guard < 10 && book.Spread > 1; guard++)
+            {
+                BoardPlayKit.ClickHit(PageHit(false, PrevMm, "önceki (açılım " + (book.Spread + 1) + ")"));
+                yield return BoardPlayKit.WaitFor(() => book.State == BookState.Open, 2, "geri çevirme bitmedi");
+            }
+            Assert.AreEqual(1, book.Spread, "açılım 2");
             BoardPlayKit.ClickHit(PageHit(false, PrevMm, "önceki (açılım 2)"));
             Assert.AreEqual(BookState.Turning, book.State, "önceki köşesi yaprağı geri çevirir (B3)");
             var back = new List<BookSample>();
@@ -768,7 +785,7 @@ namespace Corrigible.Desk.Tests
             }
             Assert.AreEqual(OrderState.Full, Board.Last.Order.State, "kumaştan sonra form tam (" + Board.Last.Order.Status + ")");
             string makerName = ProductionForecast.Of(Sim).Maker;
-            Assert.IsFalse(string.IsNullOrEmpty(makerName), "V.001'de üretici var (Suna)");
+            Assert.IsFalse(string.IsNullOrEmpty(makerName), "V.001'de üretici var (Nell)");
             Assert.AreEqual(Loc.F("{0} · girdiler ayrıldı · üretici: {1}", PlanningBoardSnapshotBuilder.Lowered(armor.Name, DeskLoc.Instance.Lang), makerName),
                 Board.Last.Order.Status, "form: girdiler ayrıldı · üretici (R18c)");
             Assert.IsFalse(Board.Order.Stamped, "hazır emirde damga yok");
@@ -1010,7 +1027,7 @@ namespace Corrigible.Desk.Tests
             var saved = SaveStore.Load();
             Assert.IsNotNull(saved, "kayıt dosyası yazıldı");
             Assert.AreEqual(GameRecord.CurrentVersion, saved.version, "kayıt biçimi");
-            Assert.AreEqual(17, GameRecord.CurrentVersion, "kayıt biçimi 17 (KOS aşama 5: sonlar; 16 aday grubu)");
+            Assert.AreEqual(22, GameRecord.CurrentVersion, "kayıt biçimi 22 (22: görevde iyileşme; 21: tek kip, tesis baskını tek baskın kipi; 20: g5 paket yerleşimi; 19: tesis oda zinciri (raid_room), tesis parmak izi; 18 üretilmiş harita; 17 sonlar; 16 aday grubu)");
             CollectionAssert.AreEqual(lines, ShiftPlayKit.CommandLines(saved), "kayıt dosyasının komutları canlıyla aynı");
 
             sounds?.Dispose();
@@ -1096,7 +1113,7 @@ namespace Corrigible.Desk.Tests
         // ================================================================== P11
 
         /// <summary>
-        /// P11 (R18c DURDU): tam zırh emrinde üretici (Suna, ÜRETİM) BOŞTA'ya sürüklenir → tam bir <c>board_assign(Suna, rest)</c>; form
+        /// P11 (R18c DURDU): tam zırh emrinde üretici (Nell, ÜRETİM) BOŞTA'ya sürüklenir → tam bir <c>board_assign(Nell, rest)</c>; form
         /// DURDU damgası (sözcük + #9A1E14) ve neden "üretici yok"; şalter kilitlenmez (yalnız DURDU). Kapanışta hiçbir şey harcanmaz,
         /// emir ve fişler kalır.
         /// </summary>
@@ -1296,7 +1313,7 @@ namespace Corrigible.Desk.Tests
         // ================================================================== P14
 
         /// <summary>
-        /// P14 (R18d "iki vardiya EMP hücresi", D7-A): V.001'de Suna'nın üretim kademesi hız eşiğinin altında (iki kapanış). EMP hücresi
+        /// P14 (R18d "iki vardiya EMP hücresi", D7-A): V.001'de Nell'in üretim kademesi hız eşiğinin altında (iki kapanış). EMP hücresi
         /// + metal 1 + devre 1 → 1. kapanış: metal ve devre birer düşer, emir başladı (Done 1/2), kartta iki kutudan biri dolu, fiş yok,
         /// ürün yok; başlamış emre başka tarif önizlemesi "harcanan girdi geri gelmez" (Esc ile geri alınır, komut yok). 2. kapanış:
         /// EMP hücresi depoda (YENİ ile), emir silindi.
@@ -1385,17 +1402,15 @@ namespace Corrigible.Desk.Tests
             var book = Book;
             var s = Board.Last;
             string personId = null;
-            foreach (var job in new[] { "tek", "emp", "ana", "craft", "cook", "train" })
+            foreach (var job in new[] { "tek", "emp", "ana", "craft", "cook" })
                 if (s.PocketOccupant.TryGetValue(job, out var id) && !string.IsNullOrEmpty(id)) { personId = id; break; }
             Assert.IsNotNull(personId, "cepte bir kişi");
             var person = Board.CardFor(personId);
-            var rows = ShiftPlayKit.Get<BoxCollider[]>(Board.Topics, "rowHits");
             var folderHit = Board.Folder != null ? Board.Folder.Hit : null;
             var targets = new List<(string name, Collider col, Vector3 world)>
             {
                 ("kişi kartı", person.Collider, person.transform.position),
             };
-            if (rows != null && rows.Length > 1 && rows[1] != null) targets.Add(("konu satırı", rows[1], rows[1].transform.TransformPoint(rows[1].center)));
             if (folderHit != null) targets.Add(("dosya kapağı", folderHit, folderHit is BoxCollider fb ? fb.transform.TransformPoint(fb.center) : folderHit.transform.position));
             string selected = Ui.SelectedId, topic = Ui.TrainingTopic;
             var mark = ShiftPlayKit.Mark();

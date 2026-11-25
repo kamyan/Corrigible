@@ -42,6 +42,12 @@ namespace Corrigible.Desk
             new Row("kalkan", "shieldDrone", "glyph_shield"),
             new Row("bomba", "bomber", "glyph_bomber"),
             new Row("cogalt", "replicator", "glyph_replicator"),
+            new Row("alev", "mortar", "glyph_mortar"),
+            new Row("muhur", "locker", "glyph_locker"),
+            new Row("tampon", "maintenanceRobot", "glyph_maint"),
+            new Row("montaj", "replicator", "glyph_replicator"),
+            new Row("kirag", "shieldDrone", "glyph_shield"),
+            new Row("capa", "locker", "glyph_locker"),
         };
 
         /// <summary>Bölge özelliğinin işareti; bilinmeyen kimlikte null (yerinde yalnız yazı durur).</summary>

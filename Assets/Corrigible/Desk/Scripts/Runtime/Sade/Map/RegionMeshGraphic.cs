@@ -30,6 +30,19 @@ namespace Corrigible.Desk
 
         public string RegionId => regionId;
         public int PolygonCount => polygons.Length;
+        /// <summary>Çizilen çokgenler (sahnedeki dünya verisi ya da <see cref="SetPolygons"/> ile gelen üretilmiş hücreler).</summary>
+        public System.Collections.Generic.IReadOnlyList<Polygon> Polygons => polygons;
+
+        /// <summary>
+        /// Üretilmiş harita (anahtar 1): çokgenleri çalışma anında verir (hücre başına bir çokgen, merkezden yelpaze üçgenli).
+        /// İsabet testi (<see cref="ContainsMapPoint"/>) aynı veriyle çalışır. Sahnedeki serileştirilmiş veriyi kalıcı değiştirmez:
+        /// çağıran, dünya haritasına dönerken eski diziyi geri verir.
+        /// </summary>
+        public void SetPolygons(Polygon[] value)
+        {
+            polygons = value ?? Array.Empty<Polygon>();
+            SetVerticesDirty();
+        }
         public event Action<string> Clicked;
         /// <summary>Üzerine gelme (true) ve çıkma (false); kurtuluş haritasının sarı dolgusu için.</summary>
         public event Action<string, bool> Hovered;

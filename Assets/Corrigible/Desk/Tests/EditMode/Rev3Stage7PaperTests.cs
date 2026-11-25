@@ -45,24 +45,26 @@ namespace Corrigible.Desk.Tests
         [TestCase(false)] [TestCase(true)]
         public void MaterialGains_UseTheRecordedPreRaidStocks_IncludingCapacity_WithoutMutatingLiveGame(bool en)
         {
-            Language(en);var sim=New(4);var before=PlanningBoardData.MaterialKinds.Select(k=>sim.Board.Material(k)?.Quantity??0).ToArray();Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success=true,Turns=6 }).Ok);
+            Language(en);var sim=New(4);var before=PlanningBoardData.MaterialKinds.Select(k=>sim.Board.Material(k)?.Quantity??0).ToArray();Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);FacilityDeskKit.ResolveRaid(sim,true);
             string frozen=Fingerprint(sim);var log=sim.S.RaidLog.Last();var gains=RaidPaperFacts.MaterialGains(sim,log);var nominal=RaidPaperFacts.Nominal(sim,true);
             CollectionAssert.AreEqual(before.Select((n,i)=>Math.Max(0,Math.Min(4-n,nominal[i]))),gains);
             var report=OperationReportBuilder.Build(sim);Assert.AreEqual(6,report.Gains.Count);Assert.AreEqual(log.LiberationReward.Materials,gains.Sum());Assert.IsTrue(report.Results.Any(r=>r.Label.Contains(log.LiberationReward.Squad[0].PersonName)));
-            Assert.AreEqual(Loc.F("V.{0:000}",1),report.Date);Assert.AreEqual(Loc.F("{0} tur",6),report.Duration);
+            Assert.AreEqual(Loc.F("V.{0:000}",1),report.Date);int turns=RaidResult.Decode(sim.Record.commands.Last(c=>c.kind=="raidres").a).Turns;Assert.Greater(turns,0);Assert.AreEqual(Loc.F("{0} tur",turns),report.Duration,"süre: odaların toplamı");
             Assert.AreEqual(frozen,Fingerprint(sim));var replay=Replay.Restore(sim.Record);CollectionAssert.AreEqual(gains,RaidPaperFacts.MaterialGains(replay,replay.S.RaidLog.Last()));
         }
         [Test]
         public void OldReport_StillUsesItsOwnStocks_AfterLaterShifts()
         {
-            var sim=New(4);sim.StartLiberationRaid("weu_1");sim.ResolveRaid(new RaidResult {Success=true});var log=sim.S.RaidLog.Last();var gains=RaidPaperFacts.MaterialGains(sim,log);
+            var sim=New(4);Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);FacilityDeskKit.ResolveRaid(sim,true);var log=sim.S.RaidLog.Last();var gains=RaidPaperFacts.MaterialGains(sim,log);
             Assert.IsTrue(sim.PrintShift().Ok);Assert.IsTrue(sim.FileShift(sim.Board.ReceiptId).Ok);CollectionAssert.AreEqual(gains,RaidPaperFacts.MaterialGains(sim,log));
         }
         [Test]
         public void BoardReport_ListsEachNamedReturnRescueAndPermanentLoss()
         {
-            var sim=New();var squad=sim.PlanningSquad();sim.StartLiberationRaid("weu_1");sim.ResolveRaid(new RaidResult {Retreat=true,Hp={0,squad[1].Hp,0},Left={2}});
-            var report=OperationReportBuilder.Build(sim);Assert.IsEmpty(report.Gains);Assert.AreEqual(3,report.Results.Count(r=>squad.Any(p=>r.Label.Contains(p.PersonName))));
+            // Tek kip: ilk kişi giriş odasında düşer ve ekipçe çıkarılır, üçüncüsü kaçışta geride kalır (kalıcı kayıp); baskın kazanılır
+            var sim=New();var squad=sim.PlanningSquad();Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
+            FacilityDeskKit.ResolveRaid(sim,true,FacilityDeskKit.Rescued,FacilityDeskKit.Returns,FacilityDeskKit.LeftBehind);
+            var report=OperationReportBuilder.Build(sim);Assert.IsNotEmpty(report.Gains,"kazanılan baskının kazançları");Assert.AreEqual(3,report.Results.Count(r=>squad.Any(p=>r.Label.Contains(p.PersonName))));
             Assert.IsTrue(report.Results.Any(r=>r.Label.Contains(squad[2].PersonName)&&r.Value==Loc.T("KALICI KAYIP")));
         }
         [TestCase(false)] [TestCase(true)]

@@ -42,6 +42,8 @@ namespace Corrigible.Desk.Tests
             ("TXT_P_uret", "uret", DeskFont.CpBold, 12f, "#1C150E"),
             ("TXT_P_mutf", "mutf", DeskFont.CpBold, 12f, "#1C150E"),
             ("TXT_P_egit", "egit", DeskFont.CpBold, 12f, "#1C150E"),
+            // Tesis aşama 5: GÖZETİM plakası (sahnede kapalı kaydedilir; görünüm çalışma anında açar, tek kipte hep açık)
+            ("TXT_P_gozet", "gozet", DeskFont.CpBold, 12f, "#1C150E"),
             ("TXT_P_bosta", "bosta", DeskFont.CpBold, 12f, "#1C150E"),
             ("TXT_P_order", "order", DeskFont.CpBold, 12f, "#1C150E"),
             ("TXT_P_dosya", "dosya", DeskFont.CpBold, 12f, "#1C150E"),
@@ -72,9 +74,11 @@ namespace Corrigible.Desk.Tests
         {
             (typeof(BoardView3D), new[] { "model", "backSign", "flap", "hurdaLid", "lockRod", "lamp", "boardLamp", "header", "lockTagLine2",
                 "hurdaLine2", "backTarget", "personPrefab", "itemPrefab", "materialPrefab", "chipPrefab", "cardRoot", "portraits", "deckView",
-                "store", "order", "topics", "folder", "lostEnvelope", "hurda", "marks", "drag", "hoverTag", "boardEntry", "staticColliders",
+                "store", "order", "folder", "lostEnvelope", "hurda", "marks", "drag", "hoverTag", "boardEntry", "staticColliders",
                 // Revizyon 3 · Aşama 5 (PLAN §2.3 #8)
-                "recipePrefab", "book", "boardFace" }),
+                "recipePrefab", "book", "boardFace",
+                // Tesis aşama 5: GÖZETİM cebinin plakası, bandı ve şeritleri
+                "watchParts", "deckTray" }),
             (typeof(BoardDragController), new[] { "view", "modelRoot", "rig", "board", "marks", "hurda", "hoverTag" }),
             (typeof(BoardMarks), new[] { "root", "modelRoot", "glowPrefab", "focusPrefab", "dimPrefab", "smudge" }),
             (typeof(HurdaBin), new[] { "lid", "front", "slot", "focusFrame" }),
@@ -83,7 +87,6 @@ namespace Corrigible.Desk.Tests
             // Aşama 5 (R18a, R18d): defter (dört RecipeBookPage ayrı denetlenir: sahnede dört tane) ve YENİ etiketi
             (typeof(RecipeBookView), new[] { "root", "frame", "cover", "leaf", "pageLeft", "pageRight", "leafFront", "leafBack", "closedHit", "hitLeft", "hitRight" }),
             (typeof(NewItemTag), new[] { "background", "word", "group" }),
-            (typeof(TrainingTopics), new[] { "rows", "ring", "rowHits", "frame", "hoverTag" }),
             (typeof(PersonFolderView), new[] { "cover", "frame", "coverTitle", "coverLine", "coverHit", "hoverTag", "pageLeft", "pageRight",
                 "rowTemplate", "previousPage", "nextPage", "dossier",
                 // Revizyon 3 · Aşama 6 (R17f, PLAN §2.3; W0 adı fileTag). Aşama 7: İNCELE/ERİŞİM/TAHLİYE sekmeleri, not satırı ve damga söküldü
@@ -204,7 +207,10 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(41f, k4.fieldOfView, 0.01f, "D1: K4 FOV 41°");
         }
 
-        /// <summary>Altı cep, BOŞTA, iş emri, depo ve hurda hedefleri token board.layoutMm'den; model çapaları aynı yerde (±0,5 mm).</summary>
+        /// <summary>
+        /// Yedi cep (GÖZETİM dahil), BOŞTA, iş emri, depo ve hurda hedefleri token board.layoutMm'den; model çapaları aynı yerde (±0,5 mm).
+        /// Deste tepsisinin çarpıştırıcısı destenin altında (sahne GÖZETİM kapalı kaydedilir: 1098; GÖZETİM açıkken, yani tek kipte hep, çalışma anında 980).
+        /// </summary>
         [Test]
         public void SavedScene_PocketsAndTargetsFollowLayoutMm()
         {
@@ -225,8 +231,13 @@ namespace Corrigible.Desk.Tests
             }
             Assert.AreEqual(180f, BoardLayout.Pocket("train").width, 0.01f, "EĞİTİM 180 mm (konu listesi dahil)");
             var deck = model.Anchor("Bosta_Deck");
-            Assert.IsTrue(BoardLayout.Bosta.Contains(Mm(deck)));
-            Near(BoardLayout.Deck, Mm(deck), 0.5f, "Bosta_Deck");
+            // Sahne GÖZETİM kapalı kaydedilir: deste ve tepsi kapalı geometrinin yerinde; BoardView3D tepsiyi çalışma anında kaydırır
+            Assert.IsTrue(BoardLayout.BostaZone(false).Contains(Mm(deck)));
+            Near(BoardLayout.Deck(false), Mm(deck), 0.5f, "Bosta_Deck");
+            var tray = presenter.transform.Find("Deste tepsisi").GetComponent<BoxCollider>();
+            Assert.AreEqual(BoardLayout.Deck(false).x, BoardLayout.LocalToMm(model.transform.InverseTransformPoint(tray.transform.TransformPoint(tray.center))).x, 0.5f, "Deste tepsisi destenin altında");
+            Assert.AreSame(tray, One<BoardView3D>().DeckTray, "BoardView3D.deckTray");
+            Assert.IsFalse(BoardLayout.Pocket("watch").Overlaps(BoardLayout.Bosta), "GÖZETİM BOŞTA'yla çakışmaz");
             Assert.AreEqual(BoardLayout.HandLeftX, Mm(model.Anchor("Bosta_HandLeft")).x, 0.5f, "Bosta_HandLeft");
             Assert.IsTrue(BoardLayout.Order.Contains(Mm(model.Anchor("Order_Recipe"))), "Order_Recipe");
             Assert.IsTrue(BoardLayout.Inputs.Contains(Mm(model.Anchor("Order_Inputs"))), "Order_Inputs");
@@ -437,16 +448,10 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(BoardLayout.FaceZ - 0.0026f, Local(marks.transform).z, 1e-5f, "yüzün 2,6 mm önünde");
             Assert.AreSame(model.transform, Reference<Transform>(marks, "modelRoot"));
 
-            var topics = Reference<TrainingTopics>(view3D, "topics");
-            var rows = References<TMP_Text>(topics, "rows");
-            var hits = References<BoxCollider>(topics, "rowHits");
-            Assert.AreEqual(7, rows.Length);
-            Assert.AreEqual(7, hits.Length);
-            Assert.IsTrue(hits.All(h => h != null && h.transform.IsChildOf(topics.transform)), "satır hedefleri konuların çocuğu (olaylar kabarır)");
-            Assert.AreSame(model.transform, Reference<Transform>(topics, "frame"));
+            // 2026-11-24: EĞİTİM bölümü kaldırıldı (konu listesi sahnede yok)
             var texts = presenter.transform.Find("Pano yazıları");
             Assert.IsNotNull(texts, "Planning board/Pano yazıları");
-            Assert.IsTrue(topics.transform.IsChildOf(texts), "eleştiri #12: sahneye ait kardeş");
+            Assert.IsNull(texts.Find("Eğitim konuları"), "konu listesi kaldırıldı");
 
             var order = Reference<WorkOrderView>(view3D, "order");
             Assert.IsNull(order.GetComponent<BoardView3D>(), "WorkOrderView kendi nesnesinde (punto taraması istisnası)");
@@ -536,7 +541,9 @@ namespace Corrigible.Desk.Tests
                 if (t == null) { problems.Add(slot + ": yuva yok"); continue; }
                 string tr = theme.Text("board.plates.tr." + key), enToken = theme.Text("board.plates.en." + key);
                 if (key == "hurda") { tr = First(tr); enToken = First(enToken); }
-                if (!t.gameObject.activeSelf) problems.Add(slot + ": etkin değil");
+                // GÖZETİM plakası kapalı kaydedilir (görünüm çalışma anında açar); EĞİTİM'inki kaldırıldı (2026-11-24, kapalı); ötekiler etkin
+                bool off = key == "gozet" || key == "egit";
+                if (t.gameObject.activeSelf == off) problems.Add(slot + (off ? ": sahnede açık" : ": etkin değil"));
                 var loc = t.GetComponent<DeskLocText>();
                 if (loc == null) problems.Add(slot + ": DeskLocText yok");
                 else if (loc.Source != tr) problems.Add($"{slot}: kaynak '{loc.Source}' ≠ token '{tr}'");
@@ -555,7 +562,46 @@ namespace Corrigible.Desk.Tests
             Assert.IsEmpty(problems, string.Join("\n", problems));
         }
 
-        /// <summary>TXT_S_* ve TXT_Topics gizli; yerlerinde Pano yazıları altında 18 şerit satırı (14 mm aralık) ve 7 konu satırı (16 mm).</summary>
+        /// <summary>
+        /// Tesis aşama 5 (§7.2): GÖZETİM cebinin plakası, ayrı pirinç bandı (TEKNİSYEN bandının kopyası: brass + steelBare vidalar) ve
+        /// üç şeridi <c>BoardView3D.watchParts</c>'a bağlı ve sahnede kapalı (görünüm çalışma anında açar; kapalı geometri ertelenen sadeleştirmeye kadar durur). Hepsi
+        /// GÖZETİM cebinin içinde, bant cebin üst kenarında (öteki ceplerin bantlarıyla aynı 2 mm iç pay).
+        /// </summary>
+        [Test]
+        public void SavedScene_WatchPocketParts_AreBoundAndHiddenByDefault()
+        {
+            var model = Model();
+            var view = One<BoardView3D>();
+            var parts = References<GameObject>(view, "watchParts");
+            CollectionAssert.AreEquivalent(new[] { "TXT_P_gozet", "Gözetim bandı", "Şerit · gozet · 1", "Şerit · gozet · 2", "Şerit · gozet · 3" },
+                parts.Select(p => p.name).ToArray());
+            CollectionAssert.AreEqual(parts, view.WatchParts);
+            foreach (var part in parts) Assert.IsFalse(part.activeSelf, part.name + ": sahnede kapalı");
+            Assert.AreSame(model.Slot("TXT_P_gozet").gameObject, parts.Single(p => p.name == "TXT_P_gozet"));
+            Assert.AreEqual("WATCH", model.Slot("TXT_P_gozet").SampleEn);
+
+            var pocket = BoardLayout.Pocket("watch");
+            Vector2 Mm(Vector3 world) => BoardLayout.LocalToMm(model.transform.InverseTransformPoint(world));
+            foreach (var part in parts.Where(p => p.name != "Gözetim bandı"))
+                Assert.IsTrue(pocket.Contains(Mm(part.transform.position)), part.name + " GÖZETİM cebinde");
+
+            var band = parts.Single(p => p.name == "Gözetim bandı");
+            Assert.IsTrue(band.transform.IsChildOf(model.transform), "bant modelin Body'sinde");
+            var renderer = band.GetComponent<MeshRenderer>();
+            CollectionAssert.AreEqual(new[] { "brass", "steelBare" }, renderer.sharedMaterials.Select(m => m.name).ToArray());
+            var bounds = band.GetComponent<MeshFilter>().sharedMesh.bounds;
+            var min = Mm(band.transform.TransformPoint(new Vector3(bounds.min.x, bounds.max.y, bounds.center.z)));
+            var max = Mm(band.transform.TransformPoint(new Vector3(bounds.max.x, bounds.min.y, bounds.center.z)));
+            Assert.AreEqual(pocket.xMin + 2, min.x, 0.1f, "bandın sol kenarı");
+            Assert.AreEqual(pocket.xMax - 2, max.x, 0.1f, "bandın sağ kenarı");
+            Assert.AreEqual(pocket.yMin + 2, min.y, 0.1f, "bandın üst kenarı");
+            Assert.AreEqual(pocket.yMin + 20, max.y, 0.1f, "bandın alt kenarı (18 mm)");
+        }
+
+        /// <summary>
+        /// TXT_S_* ve TXT_Topics gizli; yerlerinde Pano yazıları altında 21 şerit satırı (yedi cep × 3, 14 mm aralık; GÖZETİM'inkiler
+        /// kapalı kaydedilir) ve 7 konu satırı (16 mm).
+        /// </summary>
         [Test]
         public void SavedScene_StripAndTopicRowsReplaceImportedSlots()
         {
@@ -575,6 +621,8 @@ namespace Corrigible.Desk.Tests
                 {
                     string name = "Şerit · " + BoardLayout.Slots[s] + " · " + (i + 1);
                     var t = texts.GetComponentsInChildren<TMP_Text>(true).SingleOrDefault(x => x.name == name);
+                    // 2026-11-24: EĞİTİM cebinin şeritleri kaldırıldı
+                    if (BoardLayout.Jobs[s] == BoardLayout.TrainJob) { if (t != null) problems.Add(name + " kaldırılmalıydı"); continue; }
                     if (t == null) { problems.Add(name + " yok"); continue; }
                     string source = i == 0 ? (field ? "KİT · GEREKLİ" : "KİT") : i == 1 ? "ZIRH" : "YARDIMCI";
                     var loc = t.GetComponent<DeskLocText>();
@@ -583,18 +631,6 @@ namespace Corrigible.Desk.Tests
                     if (Mathf.Abs(mm.x - centre.x) > 0.5f || Mathf.Abs(mm.y - (centre.y + 67.5f + 14f * i)) > 0.5f) problems.Add(name + ": yer " + mm);
                     CheckStyle(t, name, cp, 9.4f, i == 0 && field ? "#F0A08A" : "#E8E0C89E", problems);
                 }
-            }
-            var topics = texts.GetComponentInChildren<TrainingTopics>(true);
-            Assert.IsNotNull(topics);
-            var rows = References<TMP_Text>(topics, "rows");
-            for (int i = 0; i < rows.Length; i++)
-            {
-                if (rows[i].GetComponent<DeskLocText>() != null) problems.Add("konu " + i + ": DeskLocText (anlık görüntüden yazılır)");
-                var mm = Mm(rows[i].transform);
-                var b = BoardLayout.TopicBaseline(i);
-                if (Vector2.Distance(mm, b) > 0.5f) problems.Add("konu " + i + ": yer " + mm + " ≠ " + b);
-                if (i > 0 && Mathf.Abs(mm.y - Mm(rows[i - 1].transform).y - 16f) > 0.1f) problems.Add("konu " + i + ": aralık 16 mm değil");
-                CheckStyle(rows[i], "konu " + i, cp, 9.43f, "#E8E0C8", problems);
             }
             Assert.IsEmpty(problems, string.Join("\n", problems));
         }
@@ -843,7 +879,6 @@ namespace Corrigible.Desk.Tests
                 Reference<TMP_Text>(Reference<FileTagView>(Reference<PersonFolderView>(view3D, "folder"), "fileTag"), "label"),
             };
             dynamic.AddRange(References<TMP_Text>(Reference<StoreView>(view3D, "store"), "counts"));
-            dynamic.AddRange(References<TMP_Text>(Reference<TrainingTopics>(view3D, "topics"), "rows"));
             foreach (var t in dynamic)
                 Assert.IsNull(t.GetComponent<DeskLocText>(), "Dinamik yazı; sabit çevirici metni ezmemeli: " + t.name);
 

@@ -129,7 +129,7 @@ namespace Corrigible.Desk.Bridge
                 {
                     string no = sim.CandidateChoiceCheck(adm.Group[0].Resident.Id, p.Id);
                     // Yer kısa yazılır (eğitimde konu eklenmez): satır 57 mm'lik sütuna sığmalı
-                    string place = BoardDropRules.PlaceOf(sim.Board, p);
+                    string place = BoardDropRules.PlaceOf(sim.Board, p, BoardDropRules.WatchOpen(sim));
                     string job = place == "train" ? PlanningBoardData.JobName("train") : PlanningBoardSnapshotBuilder.PlaceText(p, place);
                     g.Replace.Add(new ReplaceRowData
                     {
@@ -271,7 +271,7 @@ namespace Corrigible.Desk.Bridge
         // ---------------------------------------------------------------- portre
 
         /// <summary>
-        /// Sayılı ad ("Suna 9"): portre anahtarı sayıyı atar (kurucu Suna'nın yüzü); sunum yüzü belirlenimci aynalar (D18-B). Yalnız ada
+        /// Sayılı ad ("Frank 9"): portre anahtarı sayıyı atar (Frank'in yüzü); sunum yüzü belirlenimci aynalar (D18-B). Yalnız ada
         /// bakar, gizli kimliğe asla.
         /// </summary>
         public static bool NumberedName(string name)

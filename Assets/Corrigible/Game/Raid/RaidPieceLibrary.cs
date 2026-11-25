@@ -46,6 +46,7 @@ namespace Corrigible.Game.Raid
         public RaidPiece locker;
         public RaidPiece shieldDrone;
         public RaidPiece replicator;
+        public RaidPiece flameRobot, sealer, ramRobot, assembler, frostDrone, anchorRobot;
 
         [Header("Etiket işaretleri (Revizyon 2 · S6/S9)")]
         [Tooltip("Makine türünün işareti: can etiketinde 18 px, haritadaki imza işaretiyle aynı çizim.")]
@@ -100,6 +101,66 @@ namespace Corrigible.Game.Raid
         [Tooltip("Kaynak kolu kaidesi atanmamışken yedek parçanın ölçeği.")]
         public Vector3 weldArmFallbackScale = new Vector3(1.2f, 0.35f, 1.2f);
 
+        [Header("Tesis donanımları (Docs/TESIS-BASKINLARI-TASARIMI.md §3.4)")]
+        [Tooltip("Sigorta panosu (pano). Boşsa soğutma ünitesi fusePanelFallbackScale ölçeğiyle.")]
+        public RaidPiece fusePanel;
+        [Tooltip("Çağrı anteni (anten). Boşsa soğutma ünitesi antennaFallbackScale ölçeğiyle.")]
+        public RaidPiece antenna;
+        [Tooltip("Soğutma vanası (vana). Boşsa soğutma ünitesi valveFallbackScale ölçeğiyle.")]
+        public RaidPiece valve;
+        [Tooltip("Sigorta panosu atanmamışken yedek parçanın ölçeği (basık, geniş kutu).")]
+        public Vector3 fusePanelFallbackScale = new Vector3(0.8f, 0.7f, 0.45f);
+        [Tooltip("Çağrı anteni atanmamışken yedek parçanın ölçeği (ince uzun direk).")]
+        public Vector3 antennaFallbackScale = new Vector3(0.4f, 1.4f, 0.4f);
+        [Tooltip("Soğutma vanası atanmamışken yedek parçanın ölçeği (alçak, geniş gövde).")]
+        public Vector3 valveFallbackScale = new Vector3(0.9f, 0.5f, 0.9f);
+
+        [Header("Tesis ekipmanı (aşama 9; Docs/TESIS-BASKINLARI-TASARIMI.md §5): aygıtlar, köpek, engeller, karo süsleri")]
+        [Tooltip("Yaylı taret (taret): kaide, gövde, namlu −Z; ekip tarafı, kırmızı yok. Boşsa Teknisyen piyonu gearUnitFallbackScale ölçeğiyle.")]
+        public RaidPiece turret;
+        [Tooltip("Yürüyen yem (yem): ekip piyonu taklidi, tekerlekli. Boşsa Teknisyen piyonu ölçekli.")]
+        public RaidPiece decoy;
+        [Tooltip("Makaralı vinç (vinc): taban, tambur, halat, kanca kolu −Z. Boşsa Teknisyen piyonu ölçekli.")]
+        public RaidPiece winch;
+        [Tooltip("Köpek (kopek): alçak, dört bacaklı; piyon yüksekliğinin yarısı. Boşsa Teknisyen piyonu ölçekli.")]
+        public RaidPiece dog;
+        [Tooltip("Tel örgü (tel): iki direk, ince tel sargıları (atışı geçirir). Boşsa kırık dolap enkazı barrierFallbackScale ölçeğiyle.")]
+        public RaidPiece wire;
+        [Tooltip("Kalas duvar (kalas): yüksek tahta perde (atışı keser). Boşsa kırık dolap enkazı ölçekli.")]
+        public RaidPiece plank;
+        [Tooltip("Aygıt hurdası (hurda): alçak metal yığın (moloz değil). Boşsa kırık dolap enkazı ölçekli.")]
+        public RaidPiece scrap;
+        [Tooltip("Kapalı ağır kepenk: duvar bloğunu saran oluklu sac kılıf (karo süsü, çarpıştırıcısız). Boşsa süs kurulmaz.")]
+        public GameObject shutter;
+        [Tooltip("Kalkık kepenk: zemin karesinde duvar tepesinde sarılı rulo ve iki ray (süs; birimi örtmez). Boşsa süs kurulmaz.")]
+        public GameObject shutterOpen;
+        [Tooltip("Büyük sandığın duvar nişi (kapalı): duvar yüzünde çerçeve ve içinde sandık. Boşsa süs kurulmaz.")]
+        public GameObject crateNiche;
+        [Tooltip("Büyük sandığın nişi açıldıktan sonra: çerçeve ve açık sandık. Boşsa süs kurulmaz.")]
+        public GameObject crateNicheOpen;
+        [Tooltip("İki kişilik işin tutuşu: kepengin ya da nişin altına sokulmuş kriko (geçici süs). Boşsa süs kurulmaz.")]
+        public GameObject holdJack;
+        [Header("Önlem defteri (aşama 10; Docs/TESIS-BASKINLARI-TASARIMI.md §6.3)")]
+        [Tooltip("Koku yayıcı (yayici): YZ'nin köpeğe karşı nesnesi, alçak kutu ve buhar ağzı. Boşsa çağrı anteninin yedeği (soğutma ünitesi) emitterFallbackScale ölçeğiyle.")]
+        public RaidPiece scentEmitter;
+        [Tooltip("Koku yayıcı atanmamışken yedek parçanın ölçeği (alçak, dar).")]
+        public Vector3 emitterFallbackScale = new Vector3(0.45f, 0.8f, 0.45f);
+        [Header("Savunma (aşama 11; Docs/TESIS-BASKINLARI-TASARIMI.md §9.2)")]
+        [Tooltip("Saha rölesi (role): savunmanın hedef odasında ekibin koruduğu kutu ve anten direği (ekip tarafı, kırmızı yok). Boşsa soğutma ünitesi relayFallbackScale ölçeğiyle.")]
+        public RaidPiece relay;
+        [Tooltip("Saha rölesi atanmamışken yedek parçanın ölçeği.")]
+        public Vector3 relayFallbackScale = new Vector3(0.6f, 1.1f, 0.6f);
+        [Tooltip("Aygıt ya da köpek parçası atanmamışken yedek piyonun ölçeği (dron değil: ekip tarafı).")]
+        public Vector3 gearUnitFallbackScale = new Vector3(0.6f, 0.6f, 0.6f);
+        [Tooltip("Engel parçası atanmamışken kırık dolap enkazının ölçeği.")]
+        public Vector3 barrierFallbackScale = new Vector3(0.9f, 0.5f, 0.9f);
+        [Tooltip("Aygıt hatlarının (taret, vinç) çizgi kalınlığı (ekran pikseli).")]
+        [Min(1)] public float gearLinePx = 3f;
+        [Tooltip("Yemin yolu (kesik, ok uçlu) saydamlığı.")]
+        [Range(0, 1)] public float decoyPathAlpha = 0.6f;
+        [Tooltip("Havlama eriminin karo boyası saydamlığı.")]
+        [Range(0, 1)] public float barkAlpha = 0.18f;
+
         [Header("Bölge olaylarının renkleri (okunurluk: bulut beyaz, sis gri, gaz sarı)")]
         [Tooltip("Söndürme bulutu (Batı Avrupa): dolu bulut beyaz.")]
         public Color hazardCloud = new Color(0.99f, 0.99f, 1f, 1f);
@@ -133,25 +194,50 @@ namespace Corrigible.Game.Raid
         public Color hazardDrain = new Color(0.12f, 0.16f, 0.2f, 1f);
         [Tooltip("Basınçlı tüpün uçuş hattı (Güney Amerika): soluk turuncu şerit, ıslık çalanda parlak.")]
         public Color hazardTube = new Color(0.93f, 0.5f, 0.15f, 1f);
+        [Tooltip("Tesis aşama 12 · Katar'ın açık kenarı (kuzey ve güney): kesik uyarı çizgisi ve dışa bakan tırnak (raid_tokens hazardStripe tonu, #A9520A).")]
+        public Color hazardBrink = new Color(0.6627f, 0.3216f, 0.0392f, 1f);
+        [Tooltip("Tesis aşama 12 · Yalpa'nın yatışı: kayma hatları ve yokuş aşağı kenarın okları (deniz yeşili, #2C6E73).")]
+        public Color hazardTilt = new Color(0.1725f, 0.4314f, 0.451f, 1f);
 
         public RaidPiece Object(string kind) => kind switch
         {
             "core" => core, "node" => node, "civ" => civilian, "cool" => cooling, "spawner" => spawner,
             // Bölge olaylarının nesneleri: atanmamışsa yedek parça (tahta ölçekler; enkazı kırık dolap enkazından kurar)
             "tup" => Or(tube, cooling), "kol" => Or(weldArm, cooling), "enkaz" => Or(debris, civilian),
+            // Tesis donanımları (yalnız tesis odalarında; örnek tahtada bu türler hiç kurulmaz): eskiden sivil sunucuya düşüyordu
+            "pano" => Or(fusePanel, cooling), "anten" => Or(antenna, cooling), "vana" => Or(valve, cooling),
+            // Tesis aşama 9: engeller (atanmamışsa tahta kırık dolap enkazından kurar: NewObjectPiece; sivil sunucu okunuşu yanlış)
+            "tel" => Or(wire, civilian), "kalas" => Or(plank, civilian), "hurda" => Or(scrap, civilian),
+            // Tesis aşama 10: koku yayıcı (atanmamışsa anten yedeği gibi soğutma ünitesi, ölçekli)
+            "yayici" => Or(scentEmitter, cooling),
+            // Tesis aşama 11: saha rölesi (eskiden bilinmeyen tür olarak sivil sunucuya düşerdi)
+            "role" => Or(relay, cooling),
             _ => civilian,
         };
 
-        /// <summary>Nesnenin kendi parçası atanmış mı (olay nesnelerinde yedek parça kullanılırken false).</summary>
+        /// <summary>Nesnenin kendi parçası atanmış mı (olay nesnelerinde ve tesis donanımlarında yedek parça kullanılırken false).</summary>
         public bool HasOwnPiece(string kind) => kind switch
         {
-            "tup" => tube != null, "kol" => weldArm != null, "enkaz" => debris != null, _ => true,
+            "tup" => tube != null, "kol" => weldArm != null, "enkaz" => debris != null,
+            "pano" => fusePanel != null, "anten" => antenna != null, "vana" => valve != null,
+            "tel" => wire != null, "kalas" => plank != null, "hurda" => scrap != null, "yayici" => scentEmitter != null,
+            "role" => relay != null,
+            "taret" => turret != null, "yem" => decoy != null, "vinc" => winch != null, "kopek" => dog != null,
+            "alev" => flameRobot != null, "muhur" => sealer != null, "tampon" => ramRobot != null,
+            "montaj" => assembler != null, "kirag" => frostDrone != null, "capa" => anchorRobot != null,
+            _ => true,
         };
 
         /// <summary>Yedek parçanın ölçeği (kendi parçası olan nesnede 1).</summary>
         public Vector3 FallbackScale(string kind) => HasOwnPiece(kind) ? Vector3.one : kind switch
         {
-            "tup" => tubeFallbackScale, "kol" => weldArmFallbackScale, "enkaz" => debrisFallbackScale, _ => Vector3.one,
+            "tup" => tubeFallbackScale, "kol" => weldArmFallbackScale, "enkaz" => debrisFallbackScale,
+            "pano" => fusePanelFallbackScale, "anten" => antennaFallbackScale, "vana" => valveFallbackScale,
+            "tel" or "kalas" or "hurda" => barrierFallbackScale,
+            "yayici" => emitterFallbackScale,
+            "role" => relayFallbackScale,
+            "taret" or "yem" or "vinc" or "kopek" => gearUnitFallbackScale,
+            _ => Vector3.one,
         };
 
         // Unity nesnesinde ?? sahte null'u görmez
@@ -206,6 +292,8 @@ namespace Corrigible.Game.Raid
         {
             "dron" => glyphDrone, "zdron" => glyphArmoredDrone, "kalkan" => glyphShieldDrone, "bakim" => glyphMaintenance,
             "kilit" => glyphLocker, "havan" => glyphMortar, "cogalt" => glyphReplicator, "bomba" => glyphBomber,
+            "alev" => glyphMortar, "muhur" or "capa" => glyphLocker, "tampon" => glyphMaintenance,
+            "montaj" => glyphReplicator, "kirag" => glyphShieldDrone,
             _ => null,
         };
 
@@ -216,6 +304,10 @@ namespace Corrigible.Game.Raid
             // Yeni parça henüz atanmadıysa ailesinin parçası (havada olanlar dron, yerdekiler bakım robotu)
             "zdron" => Or(armoredDrone, drone), "kalkan" => Or(shieldDrone, drone), "havan" => Or(mortar, maintenance),
             "bomba" => Or(bomber, maintenance), "kilit" => Or(locker, maintenance), "cogalt" => Or(replicator, maintenance),
+            "alev" => Or(flameRobot, maintenance), "muhur" => Or(sealer, maintenance), "tampon" => Or(ramRobot, maintenance),
+            "montaj" => Or(assembler, maintenance), "kirag" => Or(frostDrone, drone), "capa" => Or(anchorRobot, maintenance),
+            // Tesis aşama 9: ekibin aygıtları ve köpeği (yedek dron değil, Teknisyen piyonu ölçekli: ekip tarafı)
+            "taret" => Or(turret, technician), "yem" => Or(decoy, technician), "vinc" => Or(winch, technician), "kopek" => Or(dog, technician),
             _ => drone,
         };
     }

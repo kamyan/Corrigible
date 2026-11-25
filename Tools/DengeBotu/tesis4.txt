@@ -1,0 +1,34 @@
+# Tesis baskınları aşama 4 ölçümü (2026-11-18; Docs/TESIS-BASKINLARI-TASARIMI.md §11.6, §12). Bayrak yalnız BAL'de açık;
+# asset'te kapalı kalır. Bot aşama 4 yamalı (RaidBot: gerçek yürüyüş, geçit puanı, son tur). DEV etiket listesi dışında
+# ortam değişkenidir: her DEV kendi satırlarıyla ayrı koşulur. Taban t0gen (tesis0.txt).
+# Ölçüm aşama 4 kararından (2026-11-18: giriş 1, ara 1 makine, dönüş 5 tur = M11R5 Balance varsayılanı oldu) önce
+# alındı; satırlar o günkü değerleri (giriş 2, ara 3 makine, dönüş 4 tur) açıkça yazar, çıktı aynı kalır.
+#   PICK=rastgele PAR=10 DEV=kir Tools/DengeBotu/kos.sh <(grep '^t4kir' Tools/DengeBotu/tesis4.txt)   (bütün t4kir* etiketleri)
+#   PICK=rastgele PAR=10 DEV=hic Tools/DengeBotu/kos.sh <(grep '^t4hic' Tools/DengeBotu/tesis4.txt)
+#   PICK=rastgele PAR=10 DEV=hep Tools/DengeBotu/kos.sh <(grep '^t4hep' Tools/DengeBotu/tesis4.txt)
+#   python3 -I Tools/DengeBotu/ozet.py --tesis t4kir t4hic t4hep t4kirM t4kirT t4kirMT t4kirM11 t4kirGev
+#   python3 -I Tools/DengeBotu/ozet.py --tesis t4kirM11 t4kirM11R5 t4kirM11G4 t4kirM11C1 t4kirM11R5C1 t4kirGev
+# Etiketler:
+#   t4kir/t4hic/t4hep  "devam": bugünkü Balance (giriş 5 tur 2 makine, ara 5 tur 3 makine), üç donanım politikası
+#   t4kirM             makine kısma (giriş 1, ara 2)
+#   t4kirT             tur kısma (giriş 4, ara 4)
+#   t4kirMT            ikisi birlikte (aşama 4'ün "kısılır" seçeneği)
+#   t4kirM11           güçlü makine kısma (giriş 1, ara 1)
+#   t4kirGev           bilgi için, aşama 4 kararının dışında: M11 + ara 6 tur + dönüş 5 tur + liberationCiviliansPerTrust 1
+#   Doğrulamadan sonra eklenenler (Gev'in bileşenlerini ayırmak ve §13 "Dönüş bütçesi" kararı için):
+#   t4kirM11R5         M11 + dönüş 5 tur
+#   t4kirM11G4         M11 + yalnız giriş 4 tur (ara 5 kalır)
+#   t4kirM11C1         M11 + liberationCiviliansPerTrust 1 (kural, bilgi için)
+#   t4kirM11R5C1       M11 + dönüş 5 tur + liberationCiviliansPerTrust 1 (Gev'den yalnız ara 6 tur eksik)
+t4kir|liberationMapGen=1;raidFacilityEnabled=true;facilityEntryMachines=2;facilityMiddleMachines=3;facilityReturnTurns=4;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t4hic|liberationMapGen=1;raidFacilityEnabled=true;facilityEntryMachines=2;facilityMiddleMachines=3;facilityReturnTurns=4;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t4hep|liberationMapGen=1;raidFacilityEnabled=true;facilityEntryMachines=2;facilityMiddleMachines=3;facilityReturnTurns=4;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t4kirM|liberationMapGen=1;raidFacilityEnabled=true;facilityEntryMachines=1;facilityMiddleMachines=2;facilityReturnTurns=4;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t4kirT|liberationMapGen=1;raidFacilityEnabled=true;facilityEntryTurns=4;facilityMiddleTurns=4;facilityEntryMachines=2;facilityMiddleMachines=3;facilityReturnTurns=4;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t4kirMT|liberationMapGen=1;raidFacilityEnabled=true;facilityEntryMachines=1;facilityMiddleMachines=2;facilityEntryTurns=4;facilityMiddleTurns=4;facilityReturnTurns=4;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t4kirM11|liberationMapGen=1;raidFacilityEnabled=true;facilityEntryMachines=1;facilityMiddleMachines=1;facilityReturnTurns=4;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t4kirGev|liberationMapGen=1;raidFacilityEnabled=true;facilityEntryMachines=1;facilityMiddleMachines=1;facilityMiddleTurns=6;facilityReturnTurns=5;liberationCiviliansPerTrust=1;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t4kirM11R5|liberationMapGen=1;raidFacilityEnabled=true;facilityEntryMachines=1;facilityMiddleMachines=1;facilityReturnTurns=5;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t4kirM11G4|liberationMapGen=1;raidFacilityEnabled=true;facilityEntryMachines=1;facilityMiddleMachines=1;facilityEntryTurns=4;facilityReturnTurns=4;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t4kirM11C1|liberationMapGen=1;raidFacilityEnabled=true;facilityEntryMachines=1;facilityMiddleMachines=1;liberationCiviliansPerTrust=1;facilityReturnTurns=4;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t4kirM11R5C1|liberationMapGen=1;raidFacilityEnabled=true;facilityEntryMachines=1;facilityMiddleMachines=1;facilityReturnTurns=5;liberationCiviliansPerTrust=1;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80

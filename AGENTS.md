@@ -28,6 +28,9 @@ Ayrıntılar `Docs/` altında; burada bağlam, değişmez kurallar ve en sık ku
 | `Docs/GELISTIRME.md` | Unity CLI ile çalışma, testler, oyunu ajan olarak denemek, sık yapılan işler, bilinen tuzaklar |
 | `Docs/DURUM.md` | Ne yapıldı, hangi kararlar neden alındı, açık işler |
 | `Docs/KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md` | Aday seçimi, sığınak olayları ve yeni sonlar (ifşa, terk, son şalter, zaferin tonu): tasarım, Core tasarımı, testler ve bot ölçümü, uygulama aşamaları, geliştirici kararları (§11) |
+| `Docs/TESIS-BASKINLARI-TASARIMI.md` | Tesis baskınları (aşama 0–18 uygulandı; tesis oyunun tek baskın kipi, kayıt 21; sahadaki sızmacı varsayılan açık; denge hedefleri §11.6'da). Üç odalı baskın, on iki imza makinesi, bina planı, hamleler ve ekipman, önlem defteri, kalıcı tahta, üç odalı savunma, Katar ve Yalpa, kişisel unvanlar ve sahadaki sızmacı. Uygulama ve geliştirici kararları §12 ve §14 |
+| `Docs/KAPI-BELGELERI-VE-YZ-MEKANLARI-TASARIMI.md` | Dışarıdan gelen belgeler (olay tutanağı, sunucu ödülü) önce kapı panosuna gelir, bırakılınca EVRAK'a iner (§A, uygulandı); VERITY dışındaki YZ'lerin mekân ve kural önerileri (§B, onay bekliyor) |
+| `Docs/UI_Rev6/BRIEF_rev6.md` | Claude Design brifi (24 Kasım 2026): menü, komuta odası ve baskın tahtasının bugünkü hâli, istenen tasarım, kısıtlar; ekleri `ekler/` |
 | `Docs/UI_Siginak_Rev3/IMPLEMENTATION_MAP.md` | Revizyon 3 (model paketi, token 1.3): güncel eşleme, kararlar, açık sorular, aşama sonuçları ve günlük |
 | `Docs/UI_Siginak_Rev3/A10_DOGRULAMA.md` | Aşama 10 kanıtı: dil ve punto ölçümleri, gölge atlası ve kare süresi, T1 temizliği |
 | `Docs/UI_Siginak_Rev3/IMPLEMENTATION_MAP_A9.md` | Haritanın Aşama 9 sonundaki tam metni (son hâl sadeleşmeden önceki kopya) |
@@ -41,7 +44,7 @@ Ayrıntılar `Docs/` altında; burada bağlam, değişmez kurallar ve en sık ku
    `S.Rng` (mulberry32) ve RNG tüketen satırların sırası anlamlıdır. Var olan bir komutun sonucunu ya da RNG sırasını
    değiştirirsen eski kayıtlar başka oyuna döner: `GameRecord.CurrentVersion`'ı artır (eski kayıt yüklenmez) ve
    `LiberationCampaignTests`'in kayıt testlerini güncelle. Taktik tahta (`Core/Baskin.cs`) kendi tohumuyla çalışır;
-   beklenen değerleri `RaidEngineTests`'te kilitli.
+   motorun altın imzaları örnek tahta (`Baskin.Create`, kampanyada kullanılmaz) üzerinde `RaidEngineTests`'te kilitli.
 2. **Core motordan bağımsızdır.** `Corrigible.Core` asmdef'i `noEngineReferences: true`. Orada `UnityEngine` kullanma,
    `System.Random`/`DateTime`/`float` kullanma: tüm sayılar `double`, yuvarlama `Js.Round`, rastgelelik yalnızca `S.Rng`.
 3. **Sunum simülasyonu okur, değiştirmez.** Oda, harita ve raporlar `WorldState`'i ve `Simulation`'ın türetilmiş
@@ -50,7 +53,10 @@ Ayrıntılar `Docs/` altında; burada bağlam, değişmez kurallar ve en sık ku
 4. **Simülasyonu yalnızca komutlar değiştirir.** Oyuncu eylemleri `LiberationDeskView` → `GameController` →
    `Simulation` public metotları (`StartLiberationRaid`, `ResolveRaid`, `SelectLiberationRegion`, `ShelterUpgrade`,
    `ShelterAssign`) üzerinden gider; vardiya `GameController.AdvanceShift` → `Simulation.Step` ile biter (kartlı oyunda pano komutları `GameController.ExecuteBoardCommand`, vardiya `PrintBoardShift` → `FileBoardShift`;
-   kapı, olay ve son: `ChooseCandidate`, `PassCandidates`, `DecideShelterEvent`, `PullLastSwitch`). Her başarılı
+   kapı, olay ve son: `ChooseCandidate`, `PassCandidates`, `DecideShelterEvent`, `PullLastSwitch`; tesis baskınında
+   biten her oda: `AdvanceRaidRoom` (Katar'ın AYIR'ı ayrı komut değil, oda raporunun `Decouple`'ı); tesisin sunucu ödülü: `ExecuteBoardCommand(s => s.ChooseServerReward(…))`, kayıtta
+   `server_reward`; kuşatmanın kararı: `GameController.DefendSector`/`YieldSector` → `Simulation.DefendSector`/`YieldSector`, kayıtta
+   `siege_defend`/`siege_yield`). Her başarılı
    komut `Rec(...)` ile `GameRecord`'a yazılır. Yeni oyuncu eylemi eklersen `Rec(...)` ile kaydet ve `Replay.Restore`'a
    karşılığını ekle; yoksa kayıttan devam bozulur.
 5. **Sahne ve prefab'lar asıl kaynaktır.** Oda ve UI hiyerarşisi `DeskGame.unity`, `Baskin.unity` ve `Desk/Prefabs`

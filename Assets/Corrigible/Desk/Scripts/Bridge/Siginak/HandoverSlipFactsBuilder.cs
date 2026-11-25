@@ -12,7 +12,7 @@ namespace Corrigible.Desk.Bridge
     /// Görünür sözcük üretmez: veri dilden bağımsızdır, metni <c>HandoverSlipFormat</c> o anki dilde yazar.
     /// <list type="bullet">
     /// <item>Saha: <c>BoardDropRules.Occupant</c> + kişinin eşyaları yuva sırasıyla (kit, zırh, yardımcı; aynı yuvada oluşturma sırası).</item>
-    /// <item>Sığınak: cep sırası (craft, cook, train), sonra BOŞTA destesi panodaki sırayla (uygunlar önce, sonra yatan ve kısıtlı;
+    /// <item>Sığınak: cep sırası (craft, cook, train; cebi açıkken watch = GÖZETİM), sonra BOŞTA destesi panodaki sırayla (uygunlar önce, sonra yatan ve kısıtlı;
     /// <c>PlanningBoardSnapshotBuilder</c> ile aynı); durum eki önceliği yatıyor &gt; kısıtlı &gt; yaralı (kart şeridiyle aynı).</item>
     /// <item>KAPANIŞTA BEKLENEN: erzak <c>BoardFoodPreview</c>; eğitim ve üretim Core'un kapanış kuralıyla (<c>AdvancePlanningBoard</c>,
     /// <c>AdvanceBoardProduction</c>); kapıdaki aday.</item>
@@ -24,7 +24,7 @@ namespace Corrigible.Desk.Bridge
     /// </summary>
     public static class HandoverSlipFactsBuilder
     {
-        /// <summary>Sığınak satırlarının cep sırası (saha cepleri ayrı bölümde).</summary>
+        /// <summary>Sığınak satırlarının cep sırası (saha cepleri ayrı bölümde). GÖZETİM yalnız cebi açıkken (oyunda hep) sona eklenir.</summary>
         static readonly string[] ShelterPockets = { "craft", "cook", "train" };
 
         /// <summary>Fişin verisi; simülasyon ya da kartlı pano yoksa null.</summary>
@@ -86,11 +86,15 @@ namespace Corrigible.Desk.Bridge
                 var occupant = BoardDropRules.Occupant(board, job);
                 if (occupant != null) f.shelter.Add(ShelterRow(sim, occupant, job));
             }
+            // Tesis aşama 5: GÖZETİM'deki kişi kendi göreviyle; cep kapalıyken "watch" emeklidir ve BOŞTA satırına düşer (eski davranış)
+            bool watch = BoardDropRules.WatchOpen(sim);
+            var watcher = watch ? BoardDropRules.Occupant(board, BoardLayout.WatchJob, true) : null;
+            if (watcher != null) f.shelter.Add(ShelterRow(sim, watcher, BoardLayout.WatchJob));
             // BOŞTA destesi: üstte uygun kişiler (yatan ve kısıtlı olmayan), sonra kalanlar; ikisi de panodaki sırayla
             var later = new List<ResidentState>();
             foreach (var p in board.People)
             {
-                if (!p.Alive || BoardDropRules.PlaceOf(board, p) != "rest") continue;
+                if (!p.Alive || BoardDropRules.PlaceOf(board, p, watch) != "rest") continue;
                 if (PlanningBoardSnapshotBuilder.DeckFirst(sim, p)) f.shelter.Add(ShelterRow(sim, p, "rest"));
                 else later.Add(p);
             }
@@ -202,6 +206,12 @@ namespace Corrigible.Desk.Bridge
 
         static void FillWarnings(HandoverSlipFacts f, Simulation sim, PlanningBoardState board)
         {
+            // Tesis aşama 11 (§8.5): karar vardiyasında karar verilmediyse kanat bu kapanışta kendiliğinden bırakılır (ilk kutu)
+            if (FacilityDefenseText.PreCheck(sim) != null)
+            {
+                f.siegeTrust = FacilityDefenseText.YieldTrust(sim);
+                f.warnings.Add(new SlipWarning { kind = SlipWarningKind.Siege });
+            }
             if (sim.Admission == null) return;
 
             // KAPI: bekleme süresinin son vardiyası; karar verilmezse grup bu kapanışta gider (Core'un grup süre aşımıyla aynı kural)

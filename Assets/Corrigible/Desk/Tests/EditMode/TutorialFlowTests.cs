@@ -21,6 +21,21 @@ namespace Corrigible.Desk.Tests
             Assert.IsTrue(TutorialFlow.Steps.First().Info && TutorialFlow.Steps.Last().Info, "açılış ve kapanış TAMAM ile geçer");
         }
 
+        /// <summary>Son not sığınağın bölgesini görünen adıyla (iki anahtarda da YZ adı; dünya adı değil) yazar; öteki notlar düz çeviri.</summary>
+        [Test]
+        public void GoStep_NamesTheShelterRegionFromTheMap()
+        {
+            var go = TutorialFlow.Steps.Last();
+            Assert.AreEqual("go", go.Id);
+            var world = LegacySimulation.NewGame(79, new Balance { shelterEventsEnabled = false });
+            var drawn = LegacySimulation.NewGame(79, new Balance { shelterEventsEnabled = false, liberationMapGen = 1 });
+            Assert.AreEqual(Loc.F(go.Body, GameData.Region(Simulation.HQ).Ai), TutorialFlow.BodyText(go, world));
+            Assert.AreEqual(Loc.F(go.Body, drawn.RegionName(Simulation.HQ)), TutorialFlow.BodyText(go, drawn));
+            StringAssert.DoesNotContain(GameData.Region(Simulation.HQ).Name, TutorialFlow.BodyText(go, drawn));
+            var intro = TutorialFlow.Steps.First();
+            Assert.AreEqual(Loc.T(intro.Body), TutorialFlow.BodyText(intro, drawn));
+        }
+
         [Test]
         public void Flow_WalksTheFirstShift_InOrder()
         {

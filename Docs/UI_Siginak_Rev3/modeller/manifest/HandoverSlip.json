@@ -3,8 +3,8 @@
  "family": "desk",
  "budget": "small",
  "origin": "fişin merkezi; ön yüz −z (dilde yatarken +y)",
- "note": "Teleks kâğıdından devir fişi (0,2 mm), üst kenarı delikli koparma çizgisi. Dilde yatarken uzun kenarı x boyunca; elde kameraya dönük, hafif kıvrık. Yüz dokusu R10 devir fişi (TR/EN), alfa yalnız koparma kenarında.",
- "listName": "Devir fişi (100 × 150 mm)",
+ "note": "Teleks kâğıdından devir fişi (0,2 mm), üst kenarı delikli koparma çizgisi. Tek kâğıt akışı: teleks kâğıdıyla aynı boyda (TypewriterTelexPaper_SM, 0,26 × 0,225 m), daktilonun silindirinde teleks kâğıdının yerinde durur; elde kameraya dönük, hafif kıvrık (üst kenar 6 mm). Yüz dokusu R10 devir fişi (TR/EN; tasarım 832 × 720 px, dünyada × 1,5), alfa yalnız koparma kenarında.",
+ "listName": "Devir fişi (260 × 225 mm)",
  "parts": [],
  "texts": [
   {
@@ -16,8 +16,8 @@
     -0.0003
    ],
    "size": [
-    0.1,
-    0.15
+    0.26,
+    0.225
    ],
    "normal": [
     0,
@@ -42,27 +42,27 @@
  "lights": [],
  "variants": null,
  "states": null,
- "tris": 64,
+ "tris": 128,
  "trisPerPart": {
-  "Body": 15
+  "Body": 128
  },
  "budgetTris": 800,
  "overBudget": false,
  "bbox": {
   "min": [
-   -0.05,
-   -0.075,
-   -0.004
+   -0.13,
+   -0.1125,
+   -0.006
   ],
   "max": [
-   0.05,
-   0.075,
+   0.13,
+   0.1125,
    0
   ],
   "size": [
-   0.1,
-   0.15,
-   0.004
+   0.26,
+   0.225,
+   0.006
   ]
  },
  "materials": [
@@ -73,7 +73,7 @@
    "metal": 0,
    "tex": "tx_telexPaper: kenar delik sırası ve kesikli kenar çizgisi, kelime yok (mesajlar TMP)",
    "note": "teleks kâğıdı; Render Face: Both",
-   "tris": 64,
+   "tris": 128,
    "isNew": true
   }
  ]

@@ -151,6 +151,48 @@ namespace Corrigible.Tests
             Assert.IsNull(state.Cells[3, 3].O);
         }
 
+        /// <summary>
+        /// Sürüm 10: ikmal kasasını her uzman açar (yetenek hakkı harcar, şarj harcamaz): Madenci ve Sis uzmanı bitişik kasayı açar, taşıyıcı
+        /// olur, kaçış başlar, kasa kırılmaz; önizleme canlı durumu ve RNG'yi değiştirmez. Köpek, tutsak ve aygıt açamaz (uzman değil).
+        /// </summary>
+        [Test]
+        public void Cabinet_AnySpecialistOpens()
+        {
+            foreach (var type in new[] { "maden", "duman" })
+            {
+                var state = SpecialistFixture(out _, out var miner, out var smoke);
+                var u = type == "maden" ? miner : smoke;
+                u.X = 3; u.Y = 2;
+                int charges = u.Charges;
+                Assert.IsTrue(Baskin.Targets(state, u).Any(p => p.X == 3 && p.Y == 3), type + ": bitişik kasa hedef");
+                string before = Baskin.Signature(state);
+                int rng = state.Rs;
+                var preview = Baskin.Preview(state, u.Id, 3, 3);
+                Assert.IsTrue(preview.Escape && preview.Fx.Any(f => f.K == "loot"), type);
+                Assert.AreEqual(u.Id, preview.Carrier);
+                Assert.AreEqual(before, Baskin.Signature(state), "önizleme canlı durumu değiştirmez");
+                Assert.IsTrue(Baskin.DoAct(state, u.Id, 3, 3), type);
+                Assert.AreEqual(u.Id, state.Carrier, type + " taşıyıcı");
+                Assert.IsTrue(state.Escape);
+                Assert.IsNull(state.Cells[3, 3].O, "kasa açıldı");
+                Assert.AreEqual(0, state.Collateral, "kasa kırılmadı");
+                Assert.AreEqual(charges, u.Charges, "şarj harcanmaz");
+                Assert.IsTrue(u.Acted, "yetenek hakkı harcanır");
+                Assert.AreEqual(rng, state.Rs);
+            }
+            // Uzak kasa hedef değil
+            var far = SpecialistFixture(out _, out var m2, out _);
+            m2.X = 3; m2.Y = 1;
+            Assert.IsFalse(Baskin.Targets(far, m2).Any(p => p.X == 3 && p.Y == 3), "iki kare öteki kasa hedef değil");
+            // Sunucu görevinde (ikmal değil) kasa yoktur: dolap açılmaz
+            var server = Baskin.Create(new RaidParams { Seed = 11, MissionKind = "server", Squad = new List<SquadSlot> { new SquadSlot { Type = "maden", Hp = 3 } } });
+            for (int y = 0; y < Baskin.N; y++) for (int x = 0; x < Baskin.N; x++) server.Cells[y, x] = new Baskin.Cell { T = "floor" };
+            server.Cells[3, 3].O = new Baskin.Obj { K = "node", Hp = 4, Max = 4 };
+            foreach (var e in server.Units.Where(v => v.Side == 'e')) e.Dead = true;
+            var sm = server.Units.First(v => v.Type == "maden"); sm.X = 3; sm.Y = 2;
+            Assert.IsFalse(Baskin.Targets(server, sm).Any(p => p.X == 3 && p.Y == 3), "sunucu dolabı dinamit hedefi değil");
+        }
+
         [Test]
         public void Escape_EveryoneMustLeave_LastOneOutWins()
         {
@@ -507,9 +549,10 @@ namespace Corrigible.Tests
             state.Cells[1, 3].T = "wall";
             state.Cells[2, 2].O = new Baskin.Obj { K = "civ", Hp = 1, Max = 1 };
             var targets = Baskin.Targets(state, miner).Select(p => (p.X, p.Y)).ToList();
-            CollectionAssert.AreEquivalent(new[] { (3, 1), (2, 2) }, targets, "kasa (3,3) ve dost uzman (4,2) hedef değil");
+            // Sürüm 10: bitişik ikmal kasası her uzmanın hedefidir ama dinamitle kırılmaz, açılır (Cabinet_AnySpecialistOpens)
+            CollectionAssert.AreEquivalent(new[] { (3, 1), (2, 2), (3, 3) }, targets, "dost uzman (4,2) hedef değil; kasa (3,3) açılır");
             miner.Charges = 0;
-            CollectionAssert.AreEquivalent(new[] { (2, 2) }, Baskin.Targets(state, miner).Select(p => (p.X, p.Y)).ToList(), "dinamit bitince duvar yıkılmaz");
+            CollectionAssert.AreEquivalent(new[] { (2, 2), (3, 3) }, Baskin.Targets(state, miner).Select(p => (p.X, p.Y)).ToList(), "dinamit bitince duvar yıkılmaz");
 
             // Robota atılan dinamit 1 hasar verir, itmez ve hak harcamaz
             state = SpecialistFixture(out _, out miner, out _);

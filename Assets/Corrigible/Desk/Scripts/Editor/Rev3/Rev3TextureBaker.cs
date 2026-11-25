@@ -469,7 +469,7 @@ namespace Corrigible.Desk.EditorTools
 
         // ---------------------------------------------------------------- devir fişi (Revizyon 3 · Aşama 4, R19c)
 
-        /// <summary>Devir fişinin kâğıt dokusu (<see cref="Dir"/>'da; 480 × 720, 4,8 px/mm, sözcüksüz).</summary>
+        /// <summary>Devir fişinin kâğıt dokusu (<see cref="Dir"/>'da; 832 × 720, 4,8 px/mm, sözcüksüz; teleks kâğıdının 260 × 225 mm'si × 1/1,5).</summary>
         public const string HandoverSlipTexture = "tx_handoverSlip";
         /// <summary>Fiş yüzünün sprite'ları (beyaz + alfa; Image rengi boyar).</summary>
         public const string SlipSpriteDir = Rev3ModelImporter.ArtDir + "/Sprites/slip";
@@ -484,7 +484,7 @@ namespace Corrigible.Desk.EditorTools
         /// <summary>
         /// Devir fişinin dokusu ve yüz sprite'ları (tasarım HTML'i <c>kagit_kaynak/devir_fisi_*.html</c>, C §7.2):
         /// <list type="bullet">
-        /// <item><c>tx_handoverSlip.png</c> 480 × 720 RGBA: kâğıt #EFE4BC (token <c>materials.telexPaper</c>), sol/sağ/alt 1 px
+        /// <item><c>tx_handoverSlip.png</c> 832 × 720 RGBA (tek kâğıt akışı: fiş teleks kâğıdının boyunda, tasarım ölçeği × 1,5): kâğıt #EFE4BC (token <c>materials.telexPaper</c>), sol/sağ/alt 1 px
         /// kenar #C9B98A (gövde y 6'dan), üstte testere dişi (adım 8 px, derinlik 5 px; alfa yalnız burada), delik sırası y 8–14
         /// (r 1,4 px, 1,8'de söner; adım 9 × 6; rgba(120,104,70,0,35)). İçe aktarma: NPOT küçültme yok, mip açık, sRGB.</item>
         /// <item><see cref="SlipSprites"/> (<see cref="SlipSpriteDir"/>): beyaz şekiller, <see cref="SlipSpritePxPerMm"/>
@@ -505,7 +505,7 @@ namespace Corrigible.Desk.EditorTools
             AssetDatabase.Refresh();
             Import(HandoverSlipTexture, false);
             foreach (var name in SlipSprites) ImportSlipSprite(SlipSpriteDir + "/" + name + ".png", name == "slip_leader");
-            return "Devir fişi dokusu " + Dir + "/" + HandoverSlipTexture + ".png (480 × 720) ve " + SlipSprites.Length + " sprite → " + SlipSpriteDir;
+            return "Devir fişi dokusu " + Dir + "/" + HandoverSlipTexture + ".png (832 × 720) ve " + SlipSprites.Length + " sprite → " + SlipSpriteDir;
         }
 
         static void SaveAt(string path, Canvas canvas)
@@ -551,7 +551,7 @@ namespace Corrigible.Desk.EditorTools
         /// <summary>Kâğıt: kesik kenar, kenar çizgisi ve delik sırası (CSS pikseli = doku pikseli).</summary>
         static Canvas HandoverSlipPaper()
         {
-            const int W = 480, H = 720, BodyTop = 6;
+            const int W = 832, H = 720, BodyTop = 6;
             var paper = SlipToken("materials.telexPaper", "#EFE4BC");
             var edge = Hex("#C9B98A");
             var canvas = new Canvas(W, H, new Color(paper.r, paper.g, paper.b, 0));

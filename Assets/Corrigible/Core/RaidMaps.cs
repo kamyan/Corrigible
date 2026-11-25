@@ -5,26 +5,26 @@ using System.Linq;
 namespace Corrigible.Core
 {
     /// <summary>
-    /// Harekâtın taktik harita havuzu: yeni oyunun tohumundan deterministik üretilen 8×8 yerleşimler (<see cref="Baskin.Layouts"/>
-    /// ile aynı biçim). Her harekâtın kendi havuzu olur; baskınlar havuzu karıştırılmış torbalardan sırayla çeker (<see cref="Slot"/>). Kendi
-    /// üretecini kullanır: <c>S.Rng</c>'den tüketmez, kaydı ve baskın tohumlarını değiştirmez.
-    /// Havuz altı türden beşer haritadır (<see cref="Kinds"/>); her tür ayrı bir taktik sorun kurar: koridor (dağınık kısa duvarlar),
-    /// kasa odası (hedef iki kapılı odada), iki hat (uzun bir duvar tahtayı ikiye böler), açık salon (tek karelik sütunlar,
-    /// açık atış hatları), şebeke (ortada kablo kuşağı: itilen yanar), rehine (siviller yolun ortasında). Bütün türlerde sol
-    /// kenarda üç giriş, tek hedef dolap ve yanında duvar, 4–5 sivil, 2 soğutma, 2 kopya dolabı, 2 dron ve 1 bakım robotu; hiçbir
-    /// dronun girişe açık atış hattı yok. Girişten hedefe uzaklık türün zorluğunu ayarlar (bot ölçümüyle, <see cref="PathRange"/>).
+    /// Tesis odalarının harita üreticisi (<see cref="FacilityMaps"/>): tohumlu <see cref="Rng"/>'den deterministik 8×8 yerleşimler
+    /// (<see cref="Baskin.Layouts"/> ile aynı biçim). Kendi üretecini kullanır: <c>S.Rng</c>'den tüketmez, kaydı ve baskın tohumlarını
+    /// değiştirmez. Altı tür (<see cref="Kinds"/>) her biri ayrı bir taktik sorun kurar: koridor (dağınık kısa duvarlar), kasa odası
+    /// (hedef iki kapılı odada), iki hat (uzun bir duvar tahtayı ikiye böler), açık salon (tek karelik sütunlar, açık atış hatları),
+    /// şebeke (ortada kablo kuşağı: itilen yanar), rehine (siviller yolun ortasında). Bütün türlerde sol kenarda üç giriş, tek hedef
+    /// dolap ve yanında duvar, 4–5 sivil, 2 soğutma, 2 kopya dolabı, 2 dron ve 1 bakım robotu; hiçbir dronun girişe açık atış hattı
+    /// yok. Girişten hedefe uzaklık türün zorluğunu ayarlar (<see cref="PathRange"/>). FacilityMaps tesis odasını
+    /// <see cref="Generate(string, Rng)"/> çıktısını giydirerek kurar; kurucular değişirse <c>FacilityMaps.GeneratorVersion</c> artar.
+    /// (Kayıt 21'e kadar bu sınıf tek tahta harekâtının 30 haritalık havuzunu da üretirdi; havuz ve torba tek tahtayla kalktı.)
     /// </summary>
     public static class RaidMaps
     {
-        public const int PoolSize = 30;
         const int N = Baskin.N;
 
         public const string Corridor = "koridor", Vault = "oda", Lanes = "serit", Hall = "salon", Grid = "sebeke", Hostage = "rehine";
-        /// <summary>Harita türleri; havuzda her türden eşit sayıda harita.</summary>
+        /// <summary>Harita türleri.</summary>
         public static readonly string[] Kinds = { Corridor, Vault, Lanes, Hall, Grid, Hostage };
 
         /// <summary>Her türün oda adları (türün haritaları bu adları alır).</summary>
-        static readonly Dictionary<string, string[]> Names = new Dictionary<string, string[]>
+        internal static readonly Dictionary<string, string[]> Names = new Dictionary<string, string[]>
         {
             [Corridor] = new[] { Loc.N("Kablo galerisi"), Loc.N("Bakım tüneli"), Loc.N("Güvenlik koridoru"), Loc.N("Yük asansörü holü"), Loc.N("Havalandırma şaftı") },
             [Vault] = new[] { Loc.N("Arşiv katı"), Loc.N("Kontrol odası"), Loc.N("Yedekleme merkezi"), Loc.N("Batarya odası"), Loc.N("Sinyal odası") },
@@ -44,65 +44,23 @@ namespace Corrigible.Core
             _ => (7, 10),
         };
 
-        /// <summary>Haritanın türü (adından); havuz dışı ad için null.</summary>
-        public static string KindOf(string mapName) => Names.FirstOrDefault(kv => kv.Value.Contains(mapName)).Key;
-
-        static uint cachedSeed;
-        static List<(string Name, string[] Rows)> cached;
-
-        /// <summary>Harekâtın havuzu: <see cref="PoolSize"/> farklı harita, türler sırayla ve her biri ayrı adla. Aynı tohum aynı havuzu verir.</summary>
-        public static List<(string Name, string[] Rows)> Pool(uint campaignSeed)
-        {
-            if (cached != null && cachedSeed == campaignSeed) return cached;
-            var pool = new List<(string Name, string[] Rows)>();
-            int per = PoolSize / Kinds.Length;
-            for (int k = 0; k < Kinds.Length; k++)
-            {
-                var names = Names[Kinds[k]].ToList();
-                var order = new Rng(Mix(campaignSeed, 500u + (uint)k));
-                for (int i = names.Count - 1; i > 0; i--) { int j = (int)Math.Floor(order.Next() * (i + 1)); (names[i], names[j]) = (names[j], names[i]); }
-                int made = 0;
-                for (int i = 1; made < per && i <= per * 40; i++)
-                {
-                    var rows = Generate(Kinds[k], new Rng(Mix(campaignSeed, (uint)(k * 1000 + i))));
-                    if (rows == null || pool.Any(m => m.Rows.SequenceEqual(rows))) continue;
-                    pool.Add((names[made++], rows));
-                }
-            }
-            // Üretilemezse (olmaması gerekir) elle çizilmiş haritalarla tamamlanır
-            for (int i = 0; pool.Count < PoolSize; i++) pool.Add(Baskin.Layouts[i % Baskin.Layouts.Length]);
-            cachedSeed = campaignSeed; cached = pool;
-            return pool;
-        }
+        /// <summary>Verilen türden tek bir harita; türün ve genel kuralların uyduğu bir yerleşim bulunamazsa null.</summary>
+        public static string[] Generate(string kind, Rng r) => Generate(kind, r, null);
 
         /// <summary>
-        /// Harekâtın <paramref name="raid"/>. baskınının (1'den) havuzdaki haritası: havuz karıştırılmış torbalardan sırayla
-        /// çekilir. Her harita bir kez gelmeden hiçbiri tekrar etmez; torba değişirken aynı harita art arda gelmez.
+        /// <see cref="Generate(string, Rng)"/> ile aynı (aynı çekimler, aynı satırlar); <paramref name="vaultTiles"/> verilirse başarılı
+        /// denemede kasa odası türünün iç kareleriyle doldurulur (öbür türlerde boş kalır). Tesis odalarının giydirmesi okur.
+        /// <paramref name="entryTop"/> verilirse girişin üç karesi bu satırdan başlar (çekim yine yapılır, sonuç yok sayılır; tesis
+        /// sürüm 10: A ve H'nin girişi önceki odanın ileri geçidine simetrik). Verilmezse çıktı eskisinin aynısı.
         /// </summary>
-        public static int Slot(uint campaignSeed, int raid)
-        {
-            int k = Math.Max(0, raid - 1), bag = k / PoolSize;
-            var order = Bag(campaignSeed, bag);
-            if (bag > 0 && order[0] == Bag(campaignSeed, bag - 1)[PoolSize - 1]) (order[0], order[1]) = (order[1], order[0]);
-            return order[k % PoolSize];
-        }
-
-        static int[] Bag(uint campaignSeed, int bag)
-        {
-            var order = Enumerable.Range(0, PoolSize).ToArray();
-            var r = new Rng(Mix(campaignSeed, 1000u + (uint)bag));
-            for (int i = order.Length - 1; i > 0; i--) { int j = (int)Math.Floor(r.Next() * (i + 1)); (order[i], order[j]) = (order[j], order[i]); }
-            return order;
-        }
-
-        /// <summary>Verilen türden tek bir harita; türün ve genel kuralların uyduğu bir yerleşim bulunamazsa null.</summary>
-        public static string[] Generate(string kind, Rng r)
+        internal static string[] Generate(string kind, Rng r, HashSet<(int x, int y)> vaultTiles, int? entryTop = null)
         {
             for (int attempt = 0; attempt < 80; attempt++)
             {
                 var g = new char[N, N];
                 for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) g[y, x] = '.';
                 int ey = Int(r, 0, N - 3);
+                if (entryTop is int top) ey = Math.Max(0, Math.Min(N - 3, top));
                 for (int i = 0; i < 3; i++) g[ey + i, 0] = 'E';
                 // Girişin önü boş kalır: ilk iki sütunda girişin bir kare çevresine bir şey konmaz
                 bool NearEntry(int x, int y) => x <= 1 && y >= ey - 1 && y <= ey + 3;
@@ -148,7 +106,11 @@ namespace Corrigible.Core
                 Put(g, r, 'd', 2, (x, y) => x >= 4 && Out(x, y));
 
                 var rows = Enumerable.Range(0, N).Select(y => new string(Enumerable.Range(0, N).Select(x => g[y, x]).ToArray())).ToArray();
-                if (Valid(rows, kind)) return rows;
+                if (Valid(rows, kind))
+                {
+                    if (vaultTiles != null) { vaultTiles.Clear(); vaultTiles.UnionWith(room); }
+                    return rows;
+                }
             }
             return null;
         }
@@ -303,13 +265,10 @@ namespace Corrigible.Core
         }
 
         /// <summary>
-        /// Bütün türlerin kuralları: sol kenarda üç bitişik giriş, tek hedef dolap; girişlerden hedefin en az iki komşusuna ve
-        /// bütün makinelere varılır, hedefe 6–11 adım; en çok iki kapalı köşe kare; her kopya dolabının boş bir komşusu var; hiçbir
-        /// dronun girişe açık atış hattı yok; hedef dolabın yanında duvar var; sayılar aralıkta.
+        /// Genel kurallar ve türün kendi kuralları (adım aralığı ve türün imzası). Genel kurallar: sol kenarda üç bitişik giriş, tek
+        /// hedef dolap; girişlerden hedefin en az iki komşusuna ve bütün makinelere varılır; en çok iki kapalı köşe kare; her kopya
+        /// dolabının boş bir komşusu var; hiçbir dronun girişe açık atış hattı yok; hedef dolabın yanında duvar var; sayılar aralıkta.
         /// </summary>
-        public static bool Valid(string[] rows) => Path(rows) is int p && p >= 6 && p <= 11;
-
-        /// <summary>Genel kurallar ve türün kendi kuralları (adım aralığı ve türün imzası).</summary>
         public static bool Valid(string[] rows, string kind)
         {
             if (!(Path(rows) is int p)) return false;
@@ -414,16 +373,5 @@ namespace Corrigible.Core
 
         static bool In(int x, int y) => x >= 0 && y >= 0 && x < N && y < N;
         static int Int(Rng r, int min, int max) => min + (int)Math.Floor(r.Next() * (max - min + 1));
-
-        /// <summary>Harekât tohumu ve sıra numarasından birbirinden bağımsız alt tohumlar (splitmix tarzı karıştırma).</summary>
-        static uint Mix(uint seed, uint index)
-        {
-            unchecked
-            {
-                uint h = seed * 0x9E3779B1u ^ (index + 0x7F4A7C15u) * 0x85EBCA77u;
-                h ^= h >> 16; h *= 0x7FEB352Du; h ^= h >> 15; h *= 0x846CA68Bu; h ^= h >> 16;
-                return h;
-            }
-        }
     }
 }

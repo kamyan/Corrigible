@@ -387,6 +387,8 @@ namespace Corrigible.Desk.EditorTools
             var printer = Get<Teleprinter>(Any<TelexFeed>(), "printer");
             if (printer == null) yield break;
             yield return WaitOrNote(() => !Get<bool>(printer, "typing"), 4, "teleks yazıcısı bitmedi");
+            // Tek kâğıt akışı: son satırdan sonra kâğıt dinlenme pozuna kayar (motion.telexFeed.slideS)
+            yield return WaitOrNote(() => Get<bool>(printer, "Settled"), 1, "teleks kâğıdı dinlenme pozuna varmadı");
         }
 
         static T Get<T>(object owner, string name)
@@ -847,12 +849,14 @@ namespace Corrigible.Desk.EditorTools
             HandoverSlipFixtures.Present("V031");
             var board = Any<FreedRegionsBoard>();
             if (board == null) throw new InvalidOperationException("FreedRegionsBoard yok");
+            // Adlar açık harekâtın haritasından (tohum 79; üretilmiş haritada da aynı paketler, ad haritanınki)
+            var sim = Sim;
             var freed = new List<(string name, int shift)>
             {
-                (GameData.Region("weu").Name, 6), (GameData.Region("eeu").Name, 12), (GameData.Region("me").Name, 19),
-                (GameData.Region("af").Name, 24), (GameData.Region("ru").Name, 30),
+                (SampleMap.RegionName(sim, "weu"), 6), (SampleMap.RegionName(sim, "eeu"), 12), (SampleMap.RegionName(sim, "me"), 19),
+                (SampleMap.RegionName(sim, "af"), 24), (SampleMap.RegionName(sim, "ru"), 30),
             };
-            board.Show(freed, GameData.Region("in").Name, false);
+            board.Show(freed, SampleMap.RegionName(sim, "in"), false);
             yield return Wait(0.6f);
             Capture("K1c");
         }
@@ -1015,11 +1019,8 @@ namespace Corrigible.Desk.EditorTools
             var next = Sim.NextLiberationSector(Sim.S.Liberation.CurrentRegion);
             var r = Sim.StartLiberationRaid(next.Id);
             if (!r.Ok) throw new InvalidOperationException("baskın: " + r.Msg);
-            var squad = Sim.S.Raid.Params.Squad;
-            var res = new RaidResult { Success = true, Down = 0, Turns = 6 };
-            foreach (var m in squad) { res.Hp.Add(m.Hp); res.Armor.Add(m.Armor); }
-            r = Sim.ResolveRaid(res);
-            if (!r.Ok) throw new InvalidOperationException("sonuç: " + r.Msg);
+            // Tek kip: sonuç oda zincirinden (baskın sahnesi yüklenmez; komutlar doğrudan simülasyona)
+            RaidChainFixture.Win(Sim);
             Sim.DrainEvents();
             RaiseChanged();
             yield return FileOperationReport();
@@ -1609,9 +1610,11 @@ namespace Corrigible.Desk.EditorTools
             yield return EnsureRaid();
             var p = new RaidParams
             {
-                Seed = 731, Region = "eeu", RegionName = GameData.Region("eeu").Name, MissionKind = "loot", Tier = 2, Compute = 3, RaidNumber = 2,
+                Seed = 731, Region = "eeu", RegionName = SampleMap.RegionName(Sim, "eeu"), MissionKind = "loot", Tier = 2, Compute = 3, RaidNumber = 2,
                 Traits = new List<string> { "dar" }, Signature = "kilit", Event = Baskin.RegionEvents.Keys.First(),
-                MapSeed = Rev3CaptureSet.Seed,   // 0'da bina kiti varsayılana düşer (RaidKitText.KitFor); Z4 ve Z8 bu tahtayı sürdürür
+                // Örnek tahta (Baskin.Create: elle çizilmiş haritalar; MapSeed haritayı seçmez). MapSeed yalnız bina kitini seçer: 0'da kit
+                // varsayılana düşer (RaidKitText.KitFor). Z4 ve Z8 bu tahtayı sürdürür
+                MapSeed = Rev3CaptureSet.Seed,
             };
             var src = Src;
             src.OpenForValidation(Baskin.Create(p));
@@ -1650,27 +1653,51 @@ namespace Corrigible.Desk.EditorTools
             yield return Wait(0.3f);
         }
 
-        /// <summary>Tahtayı kazanılmış hâle getirir (yalnız görüntü; SiginakCaptureSet.Win ile aynı): görünüm durumu dil değişimiyle yeniden kurulur.</summary>
-        static void WinBoard(RaidDataSource src)
+        /// <summary>
+        /// Tesis baskınını sahnede kazanır (tek kip: sonuç kartı ancak son oda köprünün kendi oturumunda dosyalanınca gelir; evreyi "won"
+        /// yazmak yetmez). Her odada makineler ve kopya dolapları kalkar; hedef odasında hedef kaldırılır, kaçış başlar (ikmalde yükü
+        /// Teknisyen taşır); ayaktaki uzmanlar sırayla kapıya girer (köprünün EnterGate'i), GEÇ verilir; tesisin girişinde son çıkan
+        /// zinciri kapatır. Tahta yerel kopyadır; simülasyona yalnız oturumun raid_room'u yazar.
+        /// </summary>
+        static IEnumerator WinChain(LiveRaidDataSource src)
         {
-            var st = src.State;
-            int cx = -1, cy = -1;
-            for (int y = 0; y < 8; y++)
-                for (int x = 0; x < 8; x++)
-                    if (st.Cells[y, x].O != null && Baskin.IsTarget(st.Cells[y, x].O.K)) { cx = x; cy = y; }
-            if (cx >= 0)
+            for (int guard = 0; guard < 8 && !(src.Current?.Finished ?? false); guard++)
             {
-                var tek = st.Units.First(u => u.Type == "tek");
-                tek.X = cx > 0 ? cx - 1 : cx + 1;
-                tek.Y = cy;
-                st.Cells[cy, cx].O = null;
+                yield return WaitFor(() => !src.Busy && !src.Executing && !src.Passing, 10, "baskın boşalmadı");
+                var B = src.State;
+                if (B?.Room == null) throw new InvalidOperationException("tesis odası yok");
+                foreach (var e in B.Units.Where(u => u.Side == 'e' && !u.Dead)) { e.Dead = true; e.Intent = null; }
+                B.Spawns.Clear();
+                B.SpawnPerTurn = 0;
+                for (int y = 0; y < Baskin.N; y++)
+                    for (int x = 0; x < Baskin.N; x++)
+                        if (Baskin.CellAt(B, x, y).O?.K == "spawner") Baskin.CellAt(B, x, y).O = null;
+                var standing = B.Units.Where(u => Baskin.IsSpecialist(u) && Baskin.OnBoard(u)).OrderBy(u => u.Slot).ToList();
+                if (standing.Count == 0) throw new InvalidOperationException("tahtada ayakta uzman yok: " + B.Room.Id);
+                if (B.Room.Type == RoomType.Target && !B.Escape)
+                {
+                    foreach (var t in Baskin.TargetsLeft(B)) Baskin.CellAt(B, t.X, t.Y).O = null;
+                    if (Baskin.IsLoot(B)) B.Carrier = (standing.FirstOrDefault(u => u.Type == "tek") ?? standing[0]).Id;
+                    B.Escape = true;
+                }
+                bool final = Baskin.IsFinalExit(B);
+                foreach (var u in standing)
+                {
+                    var gate = Baskin.GateTiles(B).Where(g => { var o = Baskin.UnitAt(B, g.X, g.Y); return o == null || o == u; }).ToList();
+                    if (gate.Count == 0) throw new InvalidOperationException("boş kapı karesi yok: " + B.Room.Id);
+                    u.X = gate[0].X;
+                    u.Y = gate[0].Y;
+                    src.ClearHover();
+                    src.Select(Baskin.UnitTypes[u.Type].Short[0]);
+                    src.EnterGate();
+                    if (!u.AtGate && !u.Out) throw new InvalidOperationException("kapıya girilemedi: " + u.Type + " · " + B.Room.Id);
+                    yield return WaitFor(() => !src.Busy && !src.Executing && !src.Passing, 10, "kapıya giriş bitmedi");
+                }
+                if (final) continue;
+                src.Pass();
+                yield return WaitFor(() => !src.Busy && !src.Executing && !src.Passing, 12, "pafta çevrilmedi");
             }
-            st.Phase = "won";
-            st.Turn = 6;
-            var l = DeskLoc.Instance;
-            var cur = l.Lang;
-            l.SetLanguage(cur == DeskLang.En ? DeskLang.Tr : DeskLang.En);
-            l.SetLanguage(cur);
+            if (!(src.Current?.Finished ?? false)) throw new InvalidOperationException("sonuç kartı gelmedi");
         }
 
         static IEnumerator ReturnFromRaid(RaidDataSource src)
@@ -1684,7 +1711,7 @@ namespace Corrigible.Desk.EditorTools
         {
             yield return OpenRaid();
             var src = Src;
-            WinBoard(src);
+            yield return WinChain(src);
             yield return Wait(1.3f);
             Capture("Z10");
             yield return ReturnFromRaid(src);
@@ -1736,7 +1763,7 @@ namespace Corrigible.Desk.EditorTools
             var s = new BoardSnapshot
             {
                 English = src.English, Header = src.Header, Locked = false, LockReason = "", Editable = true, EntryLine = src.EntryLine, HurdaLine = src.HurdaLine,
-                HurdaPlateLine = src.HurdaPlateLine, Topics = src.Topics, Folder = src.Folder, FolderCoverLine = src.FolderCoverLine, LostCover = src.LostCover,
+                HurdaPlateLine = src.HurdaPlateLine, Folder = src.Folder, FolderCoverLine = src.FolderCoverLine, LostCover = src.LostCover,
                 SelectedId = src.SelectedId, Words = src.Words,
             };
             foreach (var p in src.People) s.People.Add(p);

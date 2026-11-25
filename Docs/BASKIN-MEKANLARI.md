@@ -122,14 +122,14 @@ kapatılırsa hangi baskının hangi binada geçtiği anlaşılmıyor.
 | Doğu Avrupa | Devlet arşivi | Mikrofilm deposu | Dosya katı | Tarama odası |
 | Orta Doğu | Körfez rafinerisi | Malzeme ambarı | Pompa holü | Kompresör dairesi |
 | Afrika | Cevher hangarı | Konveyör hattı | Kırıcı bölümü | Kumanda kabini |
-| Kuzey Amerika | Dağıtım merkezi | Sevkiyat rampası | Ayıklama katı | Sunucu asma katı |
+| Kuzey Amerika | Sevkiyat katarı (aşama 12; önce Dağıtım merkezi) | Yük vagonları (önce Sevkiyat rampası) | Ayıklama vagonu (önce Ayıklama katı) | Sunucu vagonu (önce Sunucu asma katı) |
 | Rusya | Sibirya veri merkezi | Soğuk depo | Azot galerisi | Sunucu bloğu |
 | Hindistan | Çağrı merkezi | Personel kantini | Kasa holü | Santral odası |
 | Çin | Montaj fabrikası | Parça ambarı | Kaynak hattı | Hat kontrol odası |
 | Japonya-Kore | Çip fabrikası | Malzeme kilidi | Temiz oda koridoru | Trafo merkezi |
 | Güneydoğu Asya | Elektronik fabrikası | Bodrum ambarı | Sintine kanalı | Kopya atölyesi |
 | Güney Amerika | Hidroelektrik santrali | Tüp deposu | Türbin galerisi | Kumanda odası |
-| Okyanusya | Maden limanı | Kumanya deposu | Bant galerisi | Makine dairesi |
+| Okyanusya | Yüzer maden platformu (aşama 12; önce Maden limanı) | Kumanya güvertesi (önce Kumanya deposu) | Bant galerisi | Makine dairesi |
 
 **Oyuncu adı nerede görür** (Batı Avrupa, 02 örneğiyle):
 - **Fiş:** "BATI AVRUPA" başlığının altında "Banka veri merkezi". Satırlar: "01 Teknik depo · YAĞMA", "02 UPS odası ·

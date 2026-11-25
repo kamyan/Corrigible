@@ -45,6 +45,9 @@ namespace Corrigible.Core
         public int Trust, Population, Plates, Healed, Wounded;
         /// <summary>Ziyaret YZ'nin karşı saldırısını tetikledi (alarm eşiği aşıldı).</summary>
         public bool Counterattack;
+        /// <summary>Tesis aşama 11: ziyaret alarmı eşiğe getirdi ve karşı saldırı kanat düşürmek yerine kuşatma kurdu (savunma açıkken;
+        /// <see cref="FacilityState.Sieges"/>). O zaman <see cref="Alarm"/> yazılmaz (sıfırlanan alarm etki değildir).</summary>
+        public bool Siege;
         /// <summary>Son etkinin metni (çevrilmemiş kaynak; gösterirken <c>Loc.T</c>) ve harekâtı bitirdiyse son.</summary>
         public string Result, Ending;
     }
@@ -275,10 +278,11 @@ namespace Corrigible.Core
             }
             if (e.Alarm != 0 && S.Ending == null)
             {
-                int attacks = S.Counterattacks;
+                int attacks = S.Counterattacks, sieges = Facility?.Sieges.Count ?? 0;
                 double before = S.Alarm;
                 ChangeAlarm(e.Alarm, null);
                 if (S.Counterattacks > attacks) v.Counterattack = true;
+                else if ((Facility?.Sieges.Count ?? 0) > sieges) v.Siege = true;
                 else v.Alarm += S.Alarm - before;
             }
             if (e.End != null && S.Ending == null)

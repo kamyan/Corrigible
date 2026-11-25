@@ -73,6 +73,8 @@ namespace Corrigible.Desk.Tests
                 candidateSeen = PlayMainLine(harvest, reached);
                 PlayRetreat(harvest);
                 candidateSeen &= PlayFullShelter(harvest);
+                PlayFacilityPlans(harvest);
+                PlayFacilityWatch(harvest);
                 harvest.Add("sim yok", BoardDropRules.CanPick(BoardCardKind.Person, "sakin-1", null));
             }
             finally { Loc.Missing -= OnMissing; }
@@ -88,12 +90,47 @@ namespace Corrigible.Desk.Tests
             Assert.Greater(harvest.Count, 500, "Toplanan metin beklenenden az: yansıma veriyi görmüyor olabilir.");
         }
 
+        /// <summary>
+        /// Üretilmiş harita (anahtar 1, tohum 79): ana hat İngilizce oynanır. Bölge adları havuzdan gelir ve çevrilidir; hiçbir
+        /// kurucu dünya haritasının bölge adını (iki dilde de) yazmaz.
+        /// </summary>
+        [Test]
+        public void EnglishCardBuilders_GeneratedMap_ProduceNoTurkishOrWorldNames()
+        {
+            var table = Loc.ParseTable(File.ReadAllText(TablePath));
+            var english = table[Loc.English];
+            var missing = new HashSet<string>();
+            void OnMissing(string s) => missing.Add(s);
+            Loc.Missing += OnMissing;
+            var harvest = new Harvest();
+            var reached = new List<int>();
+            try
+            {
+                mapGen = 1;
+                Loc.SetLanguage(Loc.English, english);
+                PlayMainLine(harvest, reached);
+            }
+            finally { Loc.Missing -= OnMissing; mapGen = 0; }
+
+            missing.ExceptWith(english.Values);
+            Assert.IsEmpty(missing, "Tabloda olmayan metinler:\n" + string.Join("\n", missing.Take(40)));
+            var turkish = harvest.Turkish(english);
+            Assert.IsEmpty(turkish, "Türkçe kalan metinler:\n" + string.Join("\n", turkish.Take(40)));
+            var world = GameData.Regions.SelectMany(r => new[] { r.SourceName, english.TryGetValue(r.SourceName, out var en) ? en : r.SourceName }).ToList();
+            var leaked = harvest.Containing(world);
+            Assert.IsEmpty(leaked, "Dünya haritasının bölge adı:\n" + string.Join("\n", leaked.Take(40)));
+            Assert.Greater(harvest.Count, 300, "Toplanan metin beklenenden az.");
+        }
+
         // ================================================================== senaryolar (yalnız gerçek Core komutları)
+
+        /// <summary>Harekât haritası (<c>Balance.liberationMapGen</c>): 0 dünya haritası, 1 üretilmiş harita.</summary>
+        static int mapGen;
 
         /// <summary>Kartlı harekât, tohum 79; açılış komutları panonun ilk açılışıyla aynı (<c>PlanningBoardPresenter.RetireJobs</c>).</summary>
         static Simulation NewGame()
         {
-            var sim = Simulation.NewGame(Seed, new Balance { shelterEventsEnabled = false, planningBoardEnabled = true, liberationAlarmPerShift = 0 });
+            var sim = Simulation.NewGame(Seed, new Balance { shelterEventsEnabled = false, planningBoardEnabled = true, liberationAlarmPerShift = 0, liberationMapGen = mapGen });
             Ok(sim.EnableAutomaticProduction());
             foreach (var p in sim.Board.People.Where(p => p.Alive && (p.Job == "care" || p.Job == "gather" || p.Job == "watch" || p.Job == "contact")).ToArray())
                 Ok(sim.AssignResident(p.Id, "rest"));
@@ -117,7 +154,7 @@ namespace Corrigible.Desk.Tests
 
             Ok(sim.StartLiberationRaid("weu_1"));
             Sweep(h, sim, "V.001 baskında");
-            Ok(sim.ResolveRaid(new RaidResult { Success = true, Turns = 6 }));
+            FacilityDeskKit.ResolveRaid(sim, true);
             Sweep(h, sim, "V.001 dönüş");
 
             SendHome(sim);
@@ -153,23 +190,76 @@ namespace Corrigible.Desk.Tests
             return candidateSeen;
         }
 
-        /// <summary>Geri çekilme: biri ölü, biri yaralı, biri geride; KAYIPLAR, yatan kart ve kısa vardiya sonrası.</summary>
+        /// <summary>
+        /// Kayıplar (tek kip: oda zinciri): geri çekilmede biri ölü; kazanılan baskında biri ekipçe çıkarılmış yaralı (yatar), biri
+        /// geride kalmış (ölü). KAYIPLAR, yatan kart ve kısa vardiya sonrası.
+        /// </summary>
         static void PlayRetreat(Harvest h)
         {
             var sim = NewGame();
-            var squad = sim.PlanningSquad();
             Ok(sim.StartLiberationRaid("weu_1"));
-            Ok(sim.ResolveRaid(new RaidResult { Retreat = true, Hp = { 0, squad[1].Hp, 0 }, Armor = { 0, 1, 0 }, Left = { 2 } }));
+            FacilityDeskKit.ResolveRaid(sim, false, FacilityDeskKit.Dies);
             Sweep(h, sim, "geri çekilme");
             SendHome(sim);
             AdmissionFixtures.CloseTo(sim, sim.S.Day + 1);
             Sweep(h, sim, "geri çekilme sonrası");
+
+            sim = NewGame();
+            Ok(sim.StartLiberationRaid("weu_1"));
+            FacilityDeskKit.ResolveRaid(sim, true, FacilityDeskKit.Rescued, FacilityDeskKit.Returns, FacilityDeskKit.LeftBehind);
+            Sweep(h, sim, "kayıplı dönüş");
+            SendHome(sim);
+            AdmissionFixtures.CloseTo(sim, sim.S.Day + 1);
+            Sweep(h, sim, "kayıplı dönüş sonrası");
         }
 
         /// <summary>
         /// Dolu sığınak ve acil grup (kapasite 8, acil eşiği 9, her kapanışta grup): YER YOK listesi, yollanacak kişi satırı, kit ekli
         /// kartlar, son vardiya uyarısı; sonra işaretli kişiyle seçim. Grup görüldüyse true.
         /// </summary>
+        /// <summary>
+        /// Tesis aşama 5: bina planının paftaları. Önce hiçbir oda bilinmezken (PLAN YOK), sonra her bölgenin
+        /// sıradaki kanadının üç odası biliniyorken (test kurulumu): oda adları, şart ve donanım adları, üzerine gelme satırları.
+        /// </summary>
+        static void PlayFacilityPlans(Harvest h)
+        {
+            var sim = Simulation.NewGame(Seed, new Balance { shelterEventsEnabled = false, liberationAlarmPerShift = 0, liberationMapGen = mapGen });
+            foreach (string id in RegionIds(sim)) h.Walk("Tesis/Bina planı boş", FacilityPlanBuilder.Build(sim, id));
+            foreach (string id in RegionIds(sim))
+            {
+                var next = sim.NextLiberationSector(id);
+                foreach (var room in sim.FacilityPlan.Wing(next.Id)) sim.Facility.Known.Add(room.Id);
+                h.Walk("Tesis/Bina planı", FacilityPlanBuilder.Build(sim, id));
+            }
+        }
+
+        /// <summary>
+        /// Tesis aşama 5 · GÖZETİM cebi: boş cebe önizleme, görevlinin kartı (dinleme puanı, sıradaki pafta), devir fişi
+        /// (GÖZETİM satırı), bir kapanış sonrası; sonra kanadın üç odası biliniyorken (açılacak plan yok: şerit, önizleme uyarısı).
+        /// </summary>
+        static void PlayFacilityWatch(Harvest h)
+        {
+            var sim = Simulation.NewGame(Seed, new Balance { shelterEventsEnabled = false, planningBoardEnabled = true,
+                liberationAlarmPerShift = 0, liberationMapGen = mapGen });
+            Ok(sim.EnableAutomaticProduction());
+            foreach (var p in sim.Board.People.Where(p => p.Alive && (p.Job == "care" || p.Job == "gather" || p.Job == "contact")).ToArray())
+                Ok(sim.AssignResident(p.Id, "rest"));
+            h.LearnNames(sim);
+            Drag(h, sim, "Gözetim boş");
+            var watcher = sim.Board.People.First(p => p.Alive && p.Job == "rest" && p.Down <= 0);
+            Ok(sim.AssignResident(watcher.Id, "watch"));
+            Board(h, sim, "Gözetim");
+            Handover(h, sim, "Gözetim");
+            Drag(h, sim, "Gözetim");
+            Ok(sim.PrintShift());
+            Ok(sim.FileShift(sim.Board.ReceiptId));
+            Board(h, sim, "Gözetim · PAFTA 2");
+            var next = sim.NextLiberationSector(sim.S.Liberation.CurrentRegion);
+            foreach (var room in sim.FacilityPlan.Wing(next.Id)) if (!sim.Facility.Known.Contains(room.Id)) sim.Facility.Known.Add(room.Id);
+            Board(h, sim, "Gözetim plan yok");
+            Drag(h, sim, "Gözetim plan yok");
+        }
+
         static bool PlayFullShelter(Harvest h)
         {
             var sim = Simulation.NewGame(Seed, new Balance
@@ -220,8 +310,6 @@ namespace Corrigible.Desk.Tests
                 h.Walk(tag + "/Pano seçili", PlanningBoardSnapshotBuilder.Build(sim, new BoardUiState { SelectedId = person.Id }, true, false, false).Folder);
                 h.Walk(tag + "/Pano seçili, kilitli girdi", PlanningBoardSnapshotBuilder.Build(sim, new BoardUiState { SelectedId = person.Id }, true, true, true).Folder);
             }
-            for (int row = 0; row < snap.Topics.Labels.Length; row++)
-                h.Add(tag + "/Konu " + row, PlanningBoardSnapshotBuilder.TopicHoverLine(snap.Topics, row));
             h.Add(tag + "/Kilit", PlanningBoardSnapshotBuilder.LockReason(sim));
         }
 
@@ -284,8 +372,9 @@ namespace Corrigible.Desk.Tests
                 h.Walk(tag + "/Görev fişi", LiberationMapBuilder.Slip(sim, id));
                 h.Walk(tag + "/Kadro raporu", LiberationMapBuilder.SquadReport(sim, id));
                 h.Walk(tag + "/Cephe fişi", LiberationMapBuilder.Front(sim, id));
-                h.Add(tag + "/CRT kısa bölge", CrtViewBuilder.ShortRegion(id));
-                h.Add(tag + "/Telsiz kısa bölge", RadioLogBuilder.Short(id));
+                h.Walk(tag + "/Bina planı", FacilityPlanBuilder.Build(sim, id));
+                h.Add(tag + "/CRT kısa bölge", CrtViewBuilder.ShortRegion(sim, id));
+                h.Add(tag + "/Telsiz kısa bölge", RadioLogBuilder.Short(sim, id));
             }
         }
 
@@ -434,6 +523,19 @@ namespace Corrigible.Desk.Tests
                 if (backing > 1) field = field.Substring(1, backing - 1);
                 return IdFields.Contains(field) || field.EndsWith("Id", StringComparison.Ordinal) || field.EndsWith("Ids", StringComparison.Ordinal)
                     || field.EndsWith("Key", StringComparison.Ordinal) || field.EndsWith("Color", StringComparison.Ordinal);
+            }
+
+            /// <summary>Verilen sözcüklerden birini (büyük/küçük harf duyarsız, iki dilin büyük harfiyle) taşıyan metinler ("yol: metin").</summary>
+            public List<string> Containing(IEnumerable<string> needles)
+            {
+                var list = needles.Where(n => !string.IsNullOrEmpty(n)).Distinct().ToList();
+                var found = new List<string>();
+                foreach (var pair in texts)
+                    if (list.Any(n => pair.Key.IndexOf(n, StringComparison.OrdinalIgnoreCase) >= 0
+                        || pair.Key.Contains(DeskText.Upper(n, DeskLang.Tr)) || pair.Key.Contains(DeskText.Upper(n, DeskLang.En))))
+                        found.Add(pair.Value + ": " + pair.Key);
+                found.Sort(StringComparer.Ordinal);
+                return found;
             }
 
             /// <summary>Türkçe kalan metinler ("yol: metin"). Adlar çıkarıldıktan sonra harf ve sözcük; tablo anahtarı olan kaynak olduğu gibi.</summary>

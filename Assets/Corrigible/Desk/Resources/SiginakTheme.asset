@@ -219,6 +219,8 @@ MonoBehaviour:
     color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
   - key: stamp.stopped
     color: {r: 0.6039216, g: 0.11764706, b: 0.078431375, a: 1}
+  - key: stamp.noPlan
+    color: {r: 0.40392157, g: 0.37254903, b: 0.3137255, a: 1}
   - key: ui.edgeLine
     color: {r: 0.05490196, g: 0.03529412, b: 0.023529412, a: 0.92}
   - key: ui.edgeLineBorder
@@ -321,6 +323,20 @@ MonoBehaviour:
     color: {r: 0.6392157, g: 0.14117648, b: 0.101960786, a: 1}
   - key: mapLiberation.stringShadow
     color: {r: 0, g: 0, b: 0, a: 0.3}
+  - key: mapLiberation.cable
+    color: {r: 0.18039216, g: 0.15686275, b: 0.1254902, a: 1}
+  - key: mapLiberation.cablePin
+    color: {r: 0.6392157, g: 0.14117648, b: 0.101960786, a: 1}
+  - key: mapLiberation.candidateFill
+    color: {r: 0.9607843, g: 0.8392157, b: 0.27450982, a: 0.3}
+  - key: mapLiberation.candidateHoverFill
+    color: {r: 0.9607843, g: 0.8392157, b: 0.27450982, a: 0.38}
+  - key: mapLiberation.frontierArrow
+    color: {r: 0.11764706, g: 0.105882354, b: 0.08627451, a: 0.9}
+  - key: mapLiberation.cablePinShadow
+    color: {r: 0, g: 0, b: 0, a: 0.3}
+  - key: mapLiberation.cablePinShine
+    color: {r: 1, g: 1, b: 1, a: 0.6}
   - key: alarm.body
     color: {r: 0.14117648, g: 0.09411765, b: 0.05882353, a: 1}
   - key: alarm.frame
@@ -459,6 +475,22 @@ MonoBehaviour:
     color: {r: 0.7254902, g: 0.6745098, b: 0.5568628, a: 1}
   - key: slip.edge
     color: {r: 0.8235294, g: 0.78039217, b: 0.6862745, a: 1}
+  - key: plan.paper
+    color: {r: 0.827451, g: 0.85882354, b: 0.8392157, a: 1}
+  - key: plan.edge
+    color: {r: 0.17254902, g: 0.29803923, b: 0.5568628, a: 0.55}
+  - key: plan.line
+    color: {r: 0.17254902, g: 0.29803923, b: 0.5568628, a: 1}
+  - key: plan.grid
+    color: {r: 0.17254902, g: 0.29803923, b: 0.5568628, a: 0.16}
+  - key: plan.wall
+    color: {r: 0.17254902, g: 0.29803923, b: 0.5568628, a: 0.82}
+  - key: plan.part
+    color: {r: 0.5411765, g: 0.29411766, b: 0.07058824, a: 1}
+  - key: plan.counter
+    color: {r: 0.7019608, g: 0.14901961, b: 0.101960786, a: 0.92}
+  - key: plan.shadow
+    color: {r: 0, g: 0, b: 0, a: 0.42}
   - key: report.summaryFill
     color: {r: 0.96862745, g: 0.94509804, b: 0.88235295, a: 1}
   - key: report.summaryLine
@@ -1220,6 +1252,138 @@ MonoBehaviour:
     value: 404
   - key: space.mapK2ScreenW
     value: 1210
+  - key: space.mapGen.edgeAmplitude
+    value: 0.14
+  - key: space.mapGen.vertexJitter
+    value: 0.06
+  - key: 'space.mapGen.haloWidth[0]'
+    value: 44
+  - key: 'space.mapGen.haloWidth[1]'
+    value: 30
+  - key: 'space.mapGen.haloWidth[2]'
+    value: 18
+  - key: 'space.mapGen.haloWidth[3]'
+    value: 9
+  - key: 'space.mapGen.haloAlpha[0]'
+    value: 0.3
+  - key: 'space.mapGen.haloAlpha[1]'
+    value: 0.5
+  - key: 'space.mapGen.haloAlpha[2]'
+    value: 0.75
+  - key: 'space.mapGen.haloAlpha[3]'
+    value: 0.9
+  - key: space.mapGen.coastWidth
+    value: 3
+  - key: space.mapGen.borderUnderWidth
+    value: 6
+  - key: space.mapGen.borderWidth
+    value: 2.2
+  - key: space.mapGen.cableWidth
+    value: 3.4
+  - key: 'space.mapGen.cableDash[0]'
+    value: 14
+  - key: 'space.mapGen.cableDash[1]'
+    value: 6
+  - key: space.mapGen.cablePin
+    value: 12
+  - key: 'space.mapGen.labelSize[0]'
+    value: 34
+  - key: 'space.mapGen.labelSize[1]'
+    value: 31
+  - key: 'space.mapGen.labelSize[2]'
+    value: 28
+  - key: space.mapGen.labelMaxLine
+    value: 200
+  - key: space.mapGen.layoutGap
+    value: 4
+  - key: space.mapGen.layoutMargin
+    value: 12
+  - key: space.mapGen.figurePawnPad
+    value: 10
+  - key: space.mapGen.candidateContourWidth
+    value: 3.4
+  - key: 'space.mapGen.waterlineOffset[0]'
+    value: 11
+  - key: 'space.mapGen.waterlineOffset[1]'
+    value: 22
+  - key: 'space.mapGen.waterlineOffset[2]'
+    value: 35
+  - key: 'space.mapGen.waterlineWidth[0]'
+    value: 1.4
+  - key: 'space.mapGen.waterlineWidth[1]'
+    value: 1.15
+  - key: 'space.mapGen.waterlineWidth[2]'
+    value: 0.95
+  - key: 'space.mapGen.waterlineAlpha[0]'
+    value: 0.6
+  - key: 'space.mapGen.waterlineAlpha[1]'
+    value: 0.38
+  - key: 'space.mapGen.waterlineAlpha[2]'
+    value: 0.2
+  - key: space.mapGen.sketchAlpha
+    value: 0.45
+  - key: space.mapGen.sketchWidth
+    value: 1.2
+  - key: space.mapGen.sketchJitter
+    value: 2.2
+  - key: space.mapGen.cableSag
+    value: 0.08
+  - key: 'space.mapGen.pinShadowOffset[0]'
+    value: 2
+  - key: 'space.mapGen.pinShadowOffset[1]'
+    value: 3
+  - key: space.mapGen.frontierWidth
+    value: 4
+  - key: space.mapGen.frontierLength
+    value: 56
+  - key: space.mapGen.frontierHead
+    value: 20
+  - key: 'space.mapGen.legendCableDash[0]'
+    value: 6
+  - key: 'space.mapGen.legendCableDash[1]'
+    value: 4
+  - key: space.mapGen.legendCablePin
+    value: 7
+  - key: space.mapGen.coastAmplitude
+    value: 0.24
+  - key: space.mapGen.coastJitter
+    value: 0.12
+  - key: space.mapGen.labelMaxSingle
+    value: 340
+  - key: space.mapGen.labelOwnTolerance
+    value: 0.03
+  - key: space.mapGen.figureOwnShare
+    value: 0.85
+  - key: space.mapGen.figureSidePad
+    value: 4
+  - key: 'space.mapGen.occluderTypewriter[0]'
+    value: 0
+  - key: 'space.mapGen.occluderTypewriter[1]'
+    value: 480
+  - key: 'space.mapGen.occluderTypewriter[2]'
+    value: 140
+  - key: 'space.mapGen.occluderTypewriter[3]'
+    value: 600
+  - key: 'space.mapGen.occluderPencil[0]'
+    value: 1560
+  - key: 'space.mapGen.occluderPencil[1]'
+    value: 990
+  - key: 'space.mapGen.occluderPencil[2]'
+    value: 90
+  - key: 'space.mapGen.occluderPencil[3]'
+    value: 90
+  - key: space.mapGen.legendCableGap
+    value: 12
+  - key: space.mapGen.legendLand
+    value: 0.02
+  - key: space.mapGen.frontierCableBack
+    value: 26
+  - key: space.mapGen.pinShineSize
+    value: 0.35
+  - key: 'space.mapGen.pinShineOffset[0]'
+    value: -0.18
+  - key: 'space.mapGen.pinShineOffset[1]'
+    value: -0.2
   - key: motion.poseS
     value: 0.45
   - key: motion.poseRiseS
@@ -1588,6 +1752,8 @@ MonoBehaviour:
     value: 3
   - key: motion.shiftClose.slipReturnMaxS
     value: 0.45
+  - key: motion.shiftClose.slipRollDeg
+    value: 120
   - key: motion.crtInstrumentS
     value: 0.3
   - key: motion.lastSwitch.orderDelayS
@@ -1596,16 +1762,18 @@ MonoBehaviour:
     value: 3
   - key: motion.telexRollDegPerChar
     value: 2
+  - key: motion.telexFeed.slideS
+    value: 0.06
   - key: 'motion.telexTear.moveMm[0]'
     value: 10
   - key: 'motion.telexTear.moveMm[1]'
-    value: 150
+    value: 190
   - key: 'motion.telexTear.moveMm[2]'
-    value: 170
+    value: 300
   - key: motion.telexTear.fallMm
-    value: 200
+    value: 420
   - key: 'motion.telexTear.euler[0]'
-    value: 55
+    value: 60
   - key: 'motion.telexTear.euler[1]'
     value: 0
   - key: 'motion.telexTear.euler[2]'
@@ -3181,7 +3349,7 @@ MonoBehaviour:
   - key: board.limits.people
     value: 10
   - key: board.limits.areas
-    value: 7
+    value: 8
   - key: board.limits.rawMaterials
     value: 4
   - key: board.limits.itemCards
@@ -3236,6 +3404,14 @@ MonoBehaviour:
     value: 180
   - key: 'board.layoutMm.pockets.egit[3]'
     value: 194
+  - key: 'board.layoutMm.pockets.gozet[0]'
+    value: 1042
+  - key: 'board.layoutMm.pockets.gozet[1]'
+    value: 44
+  - key: 'board.layoutMm.pockets.gozet[2]'
+    value: 108
+  - key: 'board.layoutMm.pockets.gozet[3]'
+    value: 194
   - key: 'board.layoutMm.cardCentres.tek[0]'
     value: 68
   - key: 'board.layoutMm.cardCentres.tek[1]'
@@ -3260,17 +3436,25 @@ MonoBehaviour:
     value: 304
   - key: 'board.layoutMm.cardCentres.egit[1]'
     value: 328
+  - key: 'board.layoutMm.cardCentres.gozet[0]'
+    value: 1096
+  - key: 'board.layoutMm.cardCentres.gozet[1]'
+    value: 128
   - key: 'board.layoutMm.bosta[0]'
     value: 380
   - key: 'board.layoutMm.bosta[1]'
     value: 44
   - key: 'board.layoutMm.bosta[2]'
-    value: 770
+    value: 652
   - key: 'board.layoutMm.bosta[3]'
     value: 194
   - key: 'board.layoutMm.deck[0]'
-    value: 1098
+    value: 980
   - key: 'board.layoutMm.deck[1]'
+    value: 128
+  - key: 'board.layoutMm.deckNoWatch[0]'
+    value: 1098
+  - key: 'board.layoutMm.deckNoWatch[1]'
     value: 128
   - key: board.layoutMm.handLeft
     value: 462
@@ -3342,6 +3526,22 @@ MonoBehaviour:
     value: 951
   - key: board.layoutMm.kitsY
     value: 502
+  - key: 'board.layoutMm.gearX[0]'
+    value: 459
+  - key: 'board.layoutMm.gearX[1]'
+    value: 541
+  - key: 'board.layoutMm.gearX[2]'
+    value: 623
+  - key: 'board.layoutMm.gearX[3]'
+    value: 705
+  - key: 'board.layoutMm.gearX[4]'
+    value: 787
+  - key: 'board.layoutMm.gearX[5]'
+    value: 869
+  - key: 'board.layoutMm.gearX[6]'
+    value: 951
+  - key: board.layoutMm.gearY
+    value: 571
   - key: 'board.layoutMm.book[0]'
     value: 70
   - key: 'board.layoutMm.book[1]'
@@ -3533,9 +3733,11 @@ MonoBehaviour:
   - key: shiftClose.plate.line2CapMm
     value: 6.4
   - key: 'shiftClose.slip.sizeMm[0]'
-    value: 100
+    value: 260
   - key: 'shiftClose.slip.sizeMm[1]'
-    value: 150
+    value: 225
+  - key: shiftClose.slip.faceScale
+    value: 1.5
   - key: 'shiftClose.slip.switchLocalStart[0]'
     value: -0.18
   - key: 'shiftClose.slip.switchLocalStart[1]'
@@ -3559,17 +3761,17 @@ MonoBehaviour:
   - key: shiftClose.slip.typeLines
     value: 7
   - key: 'shiftClose.slip.typewriterLocalStart[0]'
-    value: 0.145
+    value: -0.04
   - key: 'shiftClose.slip.typewriterLocalStart[1]'
-    value: 0.05152
+    value: -0.0107
   - key: 'shiftClose.slip.typewriterLocalStart[2]'
-    value: 0.00814
+    value: 0.0016
   - key: 'shiftClose.slip.typewriterLocalExit[0]'
-    value: 0.145
+    value: -0.04
   - key: 'shiftClose.slip.typewriterLocalExit[1]'
-    value: 0.15
+    value: 0.1863
   - key: 'shiftClose.slip.typewriterLocalExit[2]'
-    value: 0.0255
+    value: 0.0363
   - key: 'shiftClose.slip.typewriterLocalEuler[0]'
     value: 10
   - key: 'shiftClose.slip.typewriterLocalEuler[1]'
@@ -4142,6 +4344,8 @@ MonoBehaviour:
     value: solid
   - key: stamp.stopped.edge
     value: solid
+  - key: stamp.noPlan.edge
+    value: dashed
   - key: alarm.paperScaleDanger.edge
     value: "dashed\u2192solid"
   - key: cameras.K4.anchor
@@ -5366,7 +5570,8 @@ MonoBehaviour:
   - key: board.parts.Lamp
     value: "lampGlassWarm \u2194 roomBulbOff"
   - key: board.deck.handStepMm
-    value: "min(82, 636 / (n \u2212 1))"
+    value: "min(82, (deste x \u2212 462) / (n \u2212 1)): G\xD6ZET\u0130M a\xE7\u0131kken
+      518, kapal\u0131yken 636"
   - key: board.deck.takeOne
     value: "bir kart al\u0131n\u0131nca di\u011Ferleri desteye d\xF6ner"
   - key: board.plates.tr.tek
@@ -5381,6 +5586,8 @@ MonoBehaviour:
     value: MUTFAK
   - key: board.plates.tr.egit
     value: "E\u011E\u0130T\u0130M"
+  - key: board.plates.tr.gozet
+    value: "G\xD6ZET\u0130M"
   - key: board.plates.tr.bosta
     value: "BO\u015ETA / D\u0130NLENME"
   - key: board.plates.tr.order
@@ -5421,6 +5628,8 @@ MonoBehaviour:
     value: KITCHEN
   - key: board.plates.en.egit
     value: TRAINING
+  - key: board.plates.en.gozet
+    value: WATCH
   - key: board.plates.en.bosta
     value: IDLE / REST
   - key: board.plates.en.order
@@ -5461,6 +5670,8 @@ MonoBehaviour:
     value: mutf
   - key: 'board.layoutMm.slots[5]'
     value: egit
+  - key: 'board.layoutMm.slots[6]'
+    value: gozet
   - key: 'cards.person.fonts.name[0]'
     value: Courier Prime
   - key: 'cards.person.fonts.job[0]'

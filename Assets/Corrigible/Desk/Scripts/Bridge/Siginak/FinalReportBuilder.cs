@@ -18,7 +18,7 @@ namespace Corrigible.Desk.Bridge
         /// <summary>Kırılma anlarının en çoğu.</summary>
         public const int MaxMoments = 6;
 
-        static string Name(string region) => GameData.Region(region).Name;
+        static string Name(Simulation sim, string region) => sim.RegionName(region);
 
 
         static string Code(int day) => Loc.F("V.{0:000}", day + 1);
@@ -59,7 +59,8 @@ namespace Corrigible.Desk.Bridge
             int shifts = S.Day + 1;
             var regions = S.Liberation.Regions;
             int free = regions.Count(x => x.Completed), sectors = regions.Sum(x => x.Sectors.Count), captured = regions.Sum(x => x.CapturedCount);
-            int raids = S.RaidLog.Count, wins = S.RaidLog.Count(l => l.Success);
+            // Tesis aşama 11 (K39-11): savunma "baskın" sayısına ve başarıya girmez
+            int raids = S.RaidLog.Count(l => !FacilityDefenseText.IsDefense(l)), wins = S.RaidLog.Count(l => l.Success && !FacilityDefenseText.IsDefense(l));
             double now = Js.Round(sim.Occupation * 10) / 10;
 
             var d = new FinalReportData
@@ -433,13 +434,17 @@ namespace Corrigible.Desk.Bridge
             var freed = S.RaidLog.Where(l => l.Success && l.LiberationReward?.RegionCompleted == true).ToList();
             var must = new List<Candidate>();
             var counters = S.Moments.Where(m => m.Kind == "bad").Select(m => new Candidate { Day = m.Day, Order = 1, Text = Counterattack(sim, m) }).ToList();
+            // Tesis aşama 11: kuşatmanın kurulma ve karar anları (kötü an) kırılma anı değildir; kanadın düşüşü "yeniden işgal" anıyla gelir
+            if (FacilityDefenseText.On(sim))
+                counters = S.Moments.Where(m => m.Kind == "bad").Select(m => (m, Text: Reoccupation(sim, m)))
+                    .Where(x => x.Text != null).Select(x => new Candidate { Day = x.m.Day, Order = 1, Text = x.Text }).ToList();
             var others = new List<Candidate>();
 
             Candidate? final = null;
             if (S.Ending == "silme" && freed.Count > 0)
             {
                 var last = freed[freed.Count - 1];
-                final = new Candidate { Day = last.Day, Order = 3, Text = Loc.F("{0} özgür, son sunucu düştü", Name(last.Region)), Final = true };
+                final = new Candidate { Day = last.Day, Order = 3, Text = Loc.F("{0} özgür, son sunucu düştü", Name(sim, last.Region)), Final = true };
             }
             else if (S.Ending == "dagilma") final = new Candidate { Day = S.Day, Order = 3, Text = Loc.T("Güven 0 · sığınak dağıldı"), Final = true };
             else if (S.Ending == "dusus" || S.Ending == "terk" || S.Ending == "salter")
@@ -475,7 +480,7 @@ namespace Corrigible.Desk.Bridge
             for (int i = 0; i < freed.Count; i++)
             {
                 if (won && i == freed.Count - 1) continue;
-                var c = new Candidate { Day = freed[i].Day, Order = 0, Text = i == 0 ? Loc.F("{0} özgür, ilk bölge", Name(freed[i].Region)) : Loc.F("{0} özgür", Name(freed[i].Region)) };
+                var c = new Candidate { Day = freed[i].Day, Order = 0, Text = i == 0 ? Loc.F("{0} özgür, ilk bölge", Name(sim, freed[i].Region)) : Loc.F("{0} özgür", Name(sim, freed[i].Region)) };
                 if (i == 0) must.Add(c); else others.Add(c);
             }
             if (S.Ending == "dagilma" && Cause(sim) is Candidate cause) must.Add(cause);
@@ -500,18 +505,21 @@ namespace Corrigible.Desk.Bridge
         /// “YZ karşı saldırısı: Doğu Avrupa 01 yeniden işgal”. Sektör anın metninden bulunur (an, yazıldığı dilde durur: her dilin
         /// biçimi denenir); bulunamazsa metin olduğu gibi.
         /// </summary>
-        static string Counterattack(Simulation sim, Moment m)
+        static string Counterattack(Simulation sim, Moment m) => Reoccupation(sim, m) ?? Loc.F("YZ karşı saldırısı: {0}", m.Text.TrimEnd('.'));
+
+        /// <summary>Anın metni bir sektörün yeniden işgaliyse "YZ karşı saldırısı: … yeniden işgal"; değilse null.</summary>
+        static string Reoccupation(Simulation sim, Moment m)
         {
             foreach (var s in sim.S.Liberation.Regions.SelectMany(r => r.Sectors))
                 foreach (var lang in Loc.Languages)
                 {
                     // Anlar kayıttan yeniden oynatılınca bugünkü oda adıyla yazılır (sektör adı bölgeden)
                     var loc = DeskLoc.Instance;
-                    string text = string.Format(loc.In(Loc.N("{0}: {1} yeniden işgal altında."), lang), loc.In(GameData.Region(s.Region).SourceName, lang),
+                    string text = string.Format(loc.In(Loc.N("{0}: {1} yeniden işgal altında."), lang), loc.In(sim.RegionSourceName(s.Region), lang),
                         loc.In(GameData.Region(s.Region).SourceSector(s.Index), lang));
-                    if (text == m.Text) return Loc.F("YZ karşı saldırısı: {0} {1:00} yeniden işgal", Name(s.Region), s.Index + 1);
+                    if (text == m.Text) return Loc.F("YZ karşı saldırısı: {0} {1:00} yeniden işgal", Name(sim, s.Region), s.Index + 1);
                 }
-            return Loc.F("YZ karşı saldırısı: {0}", m.Text.TrimEnd('.'));
+            return null;
         }
 
         /// <summary>Dağılma'nın nedeni: son güven düşüşü (kapıda verilen karar ya da sivil sunucu kıran baskın); karşı saldırıysa o zaten listede.</summary>

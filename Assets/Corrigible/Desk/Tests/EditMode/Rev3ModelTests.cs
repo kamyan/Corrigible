@@ -225,9 +225,10 @@ namespace Corrigible.Desk.Tests
         public void HandoverSlipFacesAreRepaired()
         {
             var model = AssetDatabase.LoadAssetAtPath<GameObject>(Rev3ModelImporter.PrefabPath("desk", "HandoverSlip")).GetComponent<Rev3Model>();
-            Assert.AreEqual(64, Rev3ModelImporter.Tris(model));
+            // Tek kâğıt akışı: devir fişi teleks kâğıdının boyunda (0,26 × 0,225), 8 × 8 ızgara, üst kenar 6 mm kıvrık
+            Assert.AreEqual(128, Rev3ModelImporter.Tris(model));
             var b = Rev3ModelImporter.ZeroPoseBounds(model);
-            Assert.AreEqual(0.1f, b.size.x, 1e-4f); Assert.AreEqual(0.15f, b.size.y, 1e-4f);
+            Assert.AreEqual(0.26f, b.size.x, 1e-4f); Assert.AreEqual(0.225f, b.size.y, 1e-4f); Assert.AreEqual(0.006f, b.size.z, 1e-4f);
         }
     }
 }

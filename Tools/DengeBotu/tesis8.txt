@@ -1,0 +1,27 @@
+# Tesis baskınları aşama 8 ölçümü (Docs/TESIS-BASKINLARI-TASARIMI.md §11.6, §12 satır 8): ekipman, sunucu ödülü, kazanımlar.
+# Değerler C# varsayılanları; bayrak yalnız BAL'de açık, asset'te kapalı kalır. ODUL, ARAC, GEAR, DEV ve DUSEN ortam değişkenidir
+# (BAL.txt'e yazılmaz; R satırının odul=, arac=, gear=, dev=, dusen= anahtarında görünür). Ortak: 80 tohum, "iyi" küme,
+# PICK=rastgele PAR=10 DEV=kir DUSEN=hep (RETIRE=1, ALT=8 kos.sh varsayılanı ve satırdan).
+#   t8taban  kıyas tabanı = aşama 6 kapanışının t6sn'i (aşama 8'den önceki exe aynı çıktıyı verir; yeniden koşulmaz, bağlantı)
+#   t8yok    regresyon kilidi: ODUL=tarif ARAC=yok (aşama 8 anahtarları atılınca t6sn ile bayt aynı)
+#   t8tek    ODUL=tarif ARAC=tek (tek araç)
+#   t8donus  ODUL=tarif ARAC=donus (dönüşümlü; "kullanılmayan ekipman" hedefi)
+#   t8donus0 ODUL=tarif ARAC=donus GEAR=hic (ekipmanın kendi değeri, eşli: üretim ve taşıma aynı, kullanım yok)
+#   t8kaz    ODUL=kazanim ARAC=yok (kazanımların etkisi)
+#   t8sedye  ODUL=tarif ARAC=yok + facilityStretcherAlways=true (Sedye yeni tanımının üst sınırı = kaldıraç 1, K24)
+# Komutlar (OUT ortak çıktı klasörü; etiket başına bir koşu):
+#   ln -s <aşama 6 kapanış out>/t6sn $OUT/out/t8taban
+#   PICK=rastgele PAR=10 DEV=kir DUSEN=hep ODUL=tarif ARAC=yok    Tools/DengeBotu/kos.sh <(grep '^t8yok|' Tools/DengeBotu/tesis8.txt)
+#   PICK=rastgele PAR=10 DEV=kir DUSEN=hep ODUL=tarif ARAC=tek    Tools/DengeBotu/kos.sh <(grep '^t8tek|' Tools/DengeBotu/tesis8.txt)
+#   PICK=rastgele PAR=10 DEV=kir DUSEN=hep ODUL=tarif ARAC=donus  Tools/DengeBotu/kos.sh <(grep '^t8donus|' Tools/DengeBotu/tesis8.txt)
+#   PICK=rastgele PAR=10 DEV=kir DUSEN=hep ODUL=tarif ARAC=donus GEAR=hic Tools/DengeBotu/kos.sh <(grep '^t8donus0|' Tools/DengeBotu/tesis8.txt)
+#   PICK=rastgele PAR=10 DEV=kir DUSEN=hep ODUL=kazanim ARAC=yok  Tools/DengeBotu/kos.sh <(grep '^t8kaz|' Tools/DengeBotu/tesis8.txt)
+#   PICK=rastgele PAR=10 DEV=kir DUSEN=hep ODUL=tarif ARAC=yok    Tools/DengeBotu/kos.sh <(grep '^t8sedye|' Tools/DengeBotu/tesis8.txt)
+#   python3 -I Tools/DengeBotu/ozet.py --tesis t8yok t8tek t8donus t8donus0 t8kaz t8sedye --taban t8taban
+#   python3 -I Tools/DengeBotu/ozet.py --esli t8donus t8donus0 t8donus t8yok t8tek t8donus t8kaz t8yok t8sedye t8yok
+t8yok|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t8tek|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t8donus|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t8donus0|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t8kaz|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t8sedye|liberationMapGen=1;raidFacilityEnabled=true;facilityStretcherAlways=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80

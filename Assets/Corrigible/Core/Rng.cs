@@ -28,6 +28,21 @@ namespace Corrigible.Core
         public double Range(double a, double b) => a + Next() * (b - a);
 
         public T Pick<T>(IList<T> list) => list[(int)Math.Floor(Next() * list.Count)];
+
+        /// <summary>
+        /// Harekât tohumu ve bir tuzdan birbirinden bağımsız alt tohum (splitmix tarzı karıştırma). Ayrı akışlar (tesis planı
+        /// <c>FacilityMaps</c>, üretilmiş dünya haritası <c>WorldMap</c>) <c>S.Rng</c>'den tüketmeden buradan kurulur.
+        /// Değiştirirsen bu akışların bütün çıktıları değişir (kayıt sürümü).
+        /// </summary>
+        public static uint Mix(uint seed, uint index)
+        {
+            unchecked
+            {
+                uint h = seed * 0x9E3779B1u ^ (index + 0x7F4A7C15u) * 0x85EBCA77u;
+                h ^= h >> 16; h *= 0x7FEB352Du; h ^= h >> 15; h *= 0x846CA68Bu; h ^= h >> 16;
+                return h;
+            }
+        }
     }
 
     /// <summary>JavaScript'in Math.round davranışı (yarımlar yukarı); C#'ın bankacı yuvarlamasıyla karışmasın diye.</summary>

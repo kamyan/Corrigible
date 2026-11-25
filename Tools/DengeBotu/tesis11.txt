@@ -1,0 +1,31 @@
+# Tesis baskınları aşama 11 ölçümü (Docs/TESIS-BASKINLARI-TASARIMI.md §11.6, §12 satır 11, §13): kalıcı tahta ve savunma. Bitti ölçütü
+# "savunma baskını oynanır; ölçüm hedefte": t11savun (hep savun, hiç çekilme) savunma başarısı %40–60. Değerler C# varsayılanları;
+# bayrak yalnız BAL'de açık, asset'te kapalı kalır. SAVUN ve CEKIL ortam değişkenidir (BAL.txt'e yazılmaz; S satırında ve C satırında
+# görünür). Ortak: 80 tohum, "iyi" küme, PICK=rastgele PAR=10 DEV=kir DUSEN=hep ODUL=tarif ARAC=donus (RETIRE=1, ALT=8 kos.sh
+# varsayılanı ve satırdan).
+#   t11K0        kilit: iki alt bayrak kapalı (facilityDefenseEnabled=false, facilityMarks=false); aşama 11 anahtarları atılınca aşama 10'un
+#                t10donus'u ile tam dosya bayt aynı (README "Kuşatma ve savunma")
+#   t11iz        izler ve onarım tek başına (savunma kapalı: anlık karşı saldırı)
+#   t11birak     SAVUN=hic: hep bırak
+#   t11savun     SAVUN=hep CEKIL=hic: hedef satırı (savunma başarısı %40–60)
+#   t11cekil     SAVUN=hep CEKIL=hep: hep içeri çekil (iki oda terk)
+#   t11savunIz0  SAVUN=hep CEKIL=hic, facilityMarks=false: izlerin savunmaya katkısı
+#   t11baski     SAVUN=hep CEKIL=baski: tehlikede çekil
+# Komutlar (OUT ortak çıktı klasörü; etiket başına bir koşu):
+#   ln -s <aşama 10 ölçüm out>/t10donus $OUT/out/t10donus
+#   export PICK=rastgele PAR=10 DEV=kir DUSEN=hep ODUL=tarif ARAC=donus
+#   Tools/DengeBotu/kos.sh <(grep -E '^t11(K0|iz)\|' Tools/DengeBotu/tesis11.txt)
+#   SAVUN=hic Tools/DengeBotu/kos.sh <(grep '^t11birak|' Tools/DengeBotu/tesis11.txt)
+#   SAVUN=hep CEKIL=hic Tools/DengeBotu/kos.sh <(grep -E '^t11savun(Iz0)?\|' Tools/DengeBotu/tesis11.txt)
+#   SAVUN=hep CEKIL=hep Tools/DengeBotu/kos.sh <(grep '^t11cekil|' Tools/DengeBotu/tesis11.txt)
+#   SAVUN=hep CEKIL=baski Tools/DengeBotu/kos.sh <(grep '^t11baski|' Tools/DengeBotu/tesis11.txt)
+#   python3 -I Tools/DengeBotu/ozet.py --tesis t11K0 t11iz t11birak t11savun t11cekil t11savunIz0 t11baski --taban t10donus
+#   python3 -I Tools/DengeBotu/ozet.py --esli t11iz t11K0 t11birak t11iz t11savun t11birak t11cekil t11savun t11cekil t11birak t11savun t11savunIz0 t11baski t11savun t11savun t10donus
+#   python3 -I Tools/DengeBotu/ozet.py --fark t11savun t11birak t11cekil t11birak
+t11K0|liberationMapGen=1;raidFacilityEnabled=true;facilityDefenseEnabled=false;facilityMarks=false;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t11iz|liberationMapGen=1;raidFacilityEnabled=true;facilityDefenseEnabled=false;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t11birak|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t11savun|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t11cekil|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t11savunIz0|liberationMapGen=1;raidFacilityEnabled=true;facilityMarks=false;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80
+t11baski|liberationMapGen=1;raidFacilityEnabled=true;infiltratorFieldEnabled=false|8|iyi3.txt|1-10 11-20 21-30 31-40 41-50 51-60 61-70 71-80

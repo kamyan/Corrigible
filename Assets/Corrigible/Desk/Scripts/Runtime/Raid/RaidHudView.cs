@@ -33,6 +33,11 @@ namespace Corrigible.Desk
         [SerializeField] TMP_Text lastStampText;
         const float StampPad = 9;
         float lastStampWidth = -1;
+        /// <summary>Tesis aşama 11: şerit hücrelerinin yerleşim öğeleri ve prefab'daki genişliği (8'den çok turda daralır).</summary>
+        LayoutElement[] cellLayouts;
+        float cellWidth = -1, cellGap;
+        /// <summary>Şeridin prefab'daki hücre sayısının genişliği (8 hücre; hedef odası 9, savunma 10 tur aynı genişliğe daralarak sığar).</summary>
+        const int StripFit = 8;
         [Header("Evre çipi")]
         [SerializeField] Image phaseFrame;
         [SerializeField] Image phaseMark;
@@ -75,11 +80,21 @@ namespace Corrigible.Desk
         [SerializeField] HoverInspectorView hoverCard;
         [SerializeField] GameObject statusCard;
         [SerializeField] TMP_Text statusText;
+        [Header("Telsiz masası (tesis aşama 5)")]
+        [Tooltip("Corners › Radio desk: YAYINDA lambası ve makaralı teyp; yalnız tesis baskınında (BlueprintWing > 0) görünür.")]
+        [SerializeField] GameObject radioDesk;
+        [SerializeField] RaidOnAirLampView onAirLamp;
+        [SerializeField] RaidTapeDeckView tapeDeck;
+        public RaidOnAirLampView OnAirLamp => onAirLamp;
+        public RaidTapeDeckView TapeDeck => tapeDeck;
+        /// <summary>Telsiz masası görünüyor (tesis baskını).</summary>
+        public bool RadioDeskShown => radioDesk != null && radioDesk.activeSelf;
 
         IRaidDataSource source; IRaidCommands commands; bool abilityTipVisible, wasLast;
         float lastAt = -1;
         public RaidViewModel Current => source?.Current;
-        public event System.Action<char> TeamHovered;
+        /// <summary>Ekip kartının üzerine gelindi (kartın modeli: uzman harfle, aşama 9'un köpek kartı birim kimliğiyle).</summary>
+        public event System.Action<RaidTeamModel> TeamHovered;
 
         /// <summary>Renk: baskın teması (raid_tokens.json), yoksa masa teması, yoksa sığınak teması.</summary>
         public static Color C(string key)
@@ -128,7 +143,7 @@ namespace Corrigible.Desk
         const float LabelKeepOutMargin = 6;
         static readonly Vector3[] PanelCorners = new Vector3[4];
 
-        void OnTeamHover(char letter) => TeamHovered?.Invoke(letter);
+        void OnTeamHover(RaidTeamModel card) => TeamHovered?.Invoke(card);
         public void ShowAbilityTip() { abilityTipVisible = true; Refresh(); }
         public void HideAbilityTip() { abilityTipVisible = false; Refresh(); }
         void Refresh() { if (source?.Current != null) Render(source.Current); }
@@ -136,6 +151,7 @@ namespace Corrigible.Desk
         public void Render(RaidViewModel vm)
         {
             if(blueprint!=null)blueprint.Render(vm);
+            RadioDesk(vm);
             if(crateContents){crateContents.text=vm.CrateContents;crateContents.gameObject.SetActive(!string.IsNullOrEmpty(vm.CrateContents));}
             Turns(vm);
             Phase(vm);
@@ -164,6 +180,7 @@ namespace Corrigible.Desk
             turnNumber.color = C(vm.LastTurn ? "turnStrip.lastCurrent" : "turnStrip.current");
             lastTwoLabel.text = Loc.T("SON 2 TUR");
             lastTwoLabel.gameObject.SetActive(!vm.LastTurn && vm.Turns > 2);
+            FitCells(vm.Turns);
             for (int i = 0; i < turnBoxes.Length; i++)
             {
                 bool on = i < vm.Turns;
@@ -194,6 +211,31 @@ namespace Corrigible.Desk
             wasLast = vm.LastTurn;
         }
 
+        /// <summary>
+        /// Tesis aşama 11: savunmanın 10 turu (Cell 9/10) şeridin 8 hücrelik genişliğine sığar: hücreler daralır, evre çipi yerinde kalır.
+        /// 8 ve altı turda hücreler prefab'daki genişlikte (bugünkü görünüm).
+        /// </summary>
+        void FitCells(int turns)
+        {
+            if (cellLayouts == null)
+            {
+                cellLayouts = new LayoutElement[turnFills.Length];
+                for (int i = 0; i < turnFills.Length; i++) cellLayouts[i] = turnFills[i] != null ? turnFills[i].transform.parent.GetComponent<LayoutElement>() : null;
+                if (cellLayouts.Length > 0 && cellLayouts[0] != null) cellWidth = cellLayouts[0].preferredWidth;
+                var row = turnFills.Length > 0 && turnFills[0] != null ? turnFills[0].transform.parent.parent.GetComponent<HorizontalLayoutGroup>() : null;
+                cellGap = row != null ? row.spacing : 2;
+            }
+            if (cellWidth <= 0) return;
+            int shown = Mathf.Min(turns, cellLayouts.Length);
+            float w = shown > StripFit ? (StripFit * cellWidth + (StripFit - shown) * cellGap) / shown : cellWidth;
+            foreach (var le in cellLayouts)
+            {
+                if (le == null || Mathf.Approximately(le.preferredWidth, w)) continue;
+                le.preferredWidth = w;
+                if (le.minWidth > w) le.minWidth = w;
+            }
+        }
+
         /// <summary>Evre çipi (S6 › phaseChip): biçim + kelime + renk — SIRA SENDE yeşil daire, MAKİNELER kırmızı baklava, bitti kare.</summary>
         void Phase(RaidViewModel vm)
         {
@@ -213,7 +255,9 @@ namespace Corrigible.Desk
         /// </summary>
         void Mission(RaidViewModel vm)
         {
-            objective.text = string.IsNullOrEmpty(vm.Place)
+            // Tesis aşama 11: savunmada “{oda} · SAVUNMA” (saldırıda ve örnek tahtada Defense false: bugünkü)
+            objective.text = vm.Defense ? (string.IsNullOrEmpty(vm.Place) ? Loc.T("GÖREV · SAVUNMA") : Loc.F("{0} · SAVUNMA", vm.Place))
+                : string.IsNullOrEmpty(vm.Place)
                 ? vm.IsLootMission ? Loc.T("GÖREV · İKMAL") : Loc.T("GÖREV · SUNUCU")
                 : vm.IsLootMission ? Loc.F("{0} · İKMAL", vm.Place) : Loc.F("{0} · SUNUCU", vm.Place);
             abilityLabel.text = vm.AbilityLabel;
@@ -232,11 +276,13 @@ namespace Corrigible.Desk
                 targetGoals[i].gameObject.SetActive(i == 0 && !string.IsNullOrEmpty(vm.Goal));
                 targetGoals[i].text = vm.Goal ?? "";
                 targetCan[i].text = Loc.T("CAN");
-                targetCan[i].gameObject.SetActive(!t.Broken);
+                // Max 0: tesis odasının geçit satırı (can taşımaz). Örnek tahtada her hedefin Max'ı > 0 ve Stamp'i null: bugünkü hâl
+                targetCan[i].gameObject.SetActive(!t.Broken && t.Max > 0);
                 if (i < brokenStamps.Length)
                 {
                     brokenStamps[i].gameObject.SetActive(t.Broken);
-                    brokenStamps[i].text = vm.IsLootMission && vm.CargoLost ? Loc.T("KAYBOLDU") : vm.IsLootMission && (vm.Success || vm.Escaping) ? Loc.T("ALINDI") : Loc.T("KIRILDI");
+                    // Tesis odasında yük yerde (taşıyıcı düştü; aşama 7): YERDE (örnek tahtada CargoOnFloor hep false)
+                    brokenStamps[i].text = t.Stamp ?? (vm.IsLootMission && vm.CargoOnFloor ? Loc.T("YERDE") : vm.IsLootMission && vm.CargoLost ? Loc.T("KAYBOLDU") : vm.IsLootMission && (vm.Success || vm.Escaping) ? Loc.T("ALINDI") : Loc.T("KIRILDI"));
                 }
                 for (int j = 0; j < per; j++)
                 {
@@ -279,10 +325,27 @@ namespace Corrigible.Desk
             lockedPaper.SetActive(machines);
             lockedTitle.text = Loc.T("MAKİNELER HAREKET EDİYOR");
             lockedLine.text = vm.MachineMoves > 0 ? Loc.F("girdi kilitli · {0}/{1} hamle", Mathf.Max(1, vm.MachineMove), vm.MachineMoves) : Loc.T("girdi kilitli");
-            endLabel.text = vm.EndConfirm ? Loc.T("EMİN MİSİN?") : Loc.T("EMRİ İLET");
-            endLastTurn.gameObject.SetActive(vm.LastTurn && !vm.EndConfirm);
-            endLastTurn.text = Loc.T("SON TUR");
+            // Tesis odasında herkes kapıdayken düğme (ve Enter) GEÇ olur, onay sorulmaz; altında GERİ ALINMAZ. Örnek tahtada CanPass
+            // hep false: bugünkü EMRİ İLET / EMİN MİSİN? ve SON TUR
+            // Tesis aşama 11 (savunma; PassLabel dolu): GEÇ “İÇERİ ÇEKİL · güven −1” olur ve ilk basış onay sorar (EMİN MİSİN?). Saldırıda
+            // PassLabel null: bugünkü GEÇ, onay GEÇ'i örtmez
+            endLabel.text = vm.CanPass ? (vm.PassLabel != null ? (vm.EndConfirm ? Loc.T("EMİN MİSİN?") : vm.PassLabel) : Loc.T("GEÇ")) : vm.EndConfirm ? Loc.T("EMİN MİSİN?") : Loc.T("EMRİ İLET");
+            endLastTurn.gameObject.SetActive(vm.CanPass || vm.LastTurn && !vm.EndConfirm);
+            endLastTurn.text = vm.CanPass ? vm.PassNote ?? Loc.T("GERİ ALINMAZ") : Loc.T("SON TUR");
             end.interactable = !vm.Locked && !vm.Paused;
+        }
+
+        /// <summary>
+        /// Telsiz masası (§7.3): yalnız tesis baskınında görünür (örnek tahtada BlueprintWing 0: köşe bugünkü gibi boş, tahta
+        /// etiketlerinin kaçınma alanı da değişmez). Lamba emirle yanar, teyp kayıtlı paftaları yazar.
+        /// </summary>
+        void RadioDesk(RaidViewModel vm)
+        {
+            bool show = vm.BlueprintWing > 0;
+            if (radioDesk != null && radioDesk.activeSelf != show) radioDesk.SetActive(show);
+            if (!show) return;
+            if (onAirLamp != null) onAirLamp.Render(vm);
+            if (tapeDeck != null) tapeDeck.Render(vm);
         }
 
         /// <summary>Pip (S9 › B): dolu = var, kırmızı kenarlı boş = kayıp.</summary>
@@ -317,15 +380,36 @@ namespace Corrigible.Desk
             }
             EndButton();
             var k = Keyboard.current; if (k == null || commands == null) return;
-            // 1–3 kartların sırası: Teknisyen ve seçilen iki uzman
+            // 1–3 kartların sırası: Teknisyen ve seçilen iki uzman; 4 tesis aşama 9'un köpek kartı (birim kimliğiyle; seçili köpekteyken
+            // sıradaki köpek). Köpeksiz kadroda dördüncü kart yok: 4 etkisiz
             var roster = Current?.Team;
-            if (roster != null) for (int i = 0; i < roster.Length && i < 3; i++)
-                if ((i == 0 ? k.digit1Key : i == 1 ? k.digit2Key : k.digit3Key).wasPressedThisFrame) commands.SelectUnit(roster[i].Letter);
-            if (k.qKey.wasPressedThisFrame) commands.ArmAbility(); if (k.zKey.wasPressedThisFrame) commands.Undo(); if (k.enterKey.wasPressedThisFrame) commands.EndTurn();
+            if (roster != null) for (int i = 0; i < roster.Length && i < DigitKeys.Length; i++)
+                if (k[DigitKeys[i]].wasPressedThisFrame) { if (roster[i].UnitId > 0) commands.SelectUnitId(roster[i].UnitId); else commands.SelectUnit(roster[i].Letter); }
+            foreach (var (key, id) in LetterKeys) if (k[key].wasPressedThisFrame) Dispatch(id);
+            if (k.enterKey.wasPressedThisFrame) commands.EndTurn();
             if (k.escapeKey.wasPressedThisFrame || Mouse.current?.rightButton.wasPressedThisFrame == true) commands.CancelPending();
-            if (k.lKey.wasPressedThisFrame) commands.ToggleLog();
             if (k.f1Key.wasPressedThisFrame && !k.shiftKey.isPressed && !k.ctrlKey.isPressed || k.slashKey.wasPressedThisFrame && k.shiftKey.isPressed) commands.ToggleRules();
             if (k.spaceKey.wasPressedThisFrame) commands.SpeedUpMachines(!(Current?.FastMachines ?? false));
+        }
+
+        /// <summary>
+        /// Baskının harf tuşları (tek kaynak; sahne testi tekilliği ve rakam, Enter, Esc, F1, Boşluk ile çakışmamayı denetler): Q yetenek,
+        /// E tesis hamlesi (aşama 7; örnek tahtada etkisiz), R ekipman eylemi (aşama 9; örnek tahtada etkisiz), Z geri al, L telsiz kaydı.
+        /// </summary>
+        public static readonly (Key key, string id)[] LetterKeys = { (Key.Q, "ability"), (Key.E, "action"), (Key.R, "gear"), (Key.Z, "undo"), (Key.L, "log") };
+        /// <summary>Ekip kartlarının rakam tuşları (kart sırası; dördüncü kart aşama 9'un köpeği).</summary>
+        public static readonly Key[] DigitKeys = { Key.Digit1, Key.Digit2, Key.Digit3, Key.Digit4 };
+
+        void Dispatch(string id)
+        {
+            switch (id)
+            {
+                case "ability": commands.ArmAbility(); break;
+                case "action": commands.ArmAction(); break;
+                case "gear": commands.ArmGear(); break;
+                case "undo": commands.Undo(); break;
+                case "log": commands.ToggleLog(); break;
+            }
         }
 
         /// <summary>EMRİ İLET: üzerinde 2 px kalkar, basılı 2 px iner (S6 › etkileşim).</summary>

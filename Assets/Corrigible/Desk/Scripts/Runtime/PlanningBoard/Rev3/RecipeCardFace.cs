@@ -23,11 +23,17 @@ namespace Corrigible.Desk
     /// </list>
     /// Metinler anlık görüntüden gelir (çevrilmiş); yüz <c>Loc</c> çağırmaz. Bağlama yalnız değişince yazar
     /// (<see cref="CardFace.ChangedBinds"/>).
+    /// <para>
+    /// Tesis aşama 9 (K21): üç girdi sütunu ve üç ilerleme kutusu. İki girdide bugünkü düzen (adım 50 mm, adlı); üç girdide adım
+    /// <see cref="narrowStepMm"/> (34 mm) ve ad yok (simge + "×n"). Erzak bedeli (köpek) bir sütun gibi çizilir, simgesi adla
+    /// <c>icon_erzak</c>. Kit dizisi dışındaki çıktının simgesi <see cref="ItemCardFace.GearPictogram"/>.
+    /// </para>
+    /// <para>Tek kip (kayıt 21): tam adı ad alanına sığmayan tarifte kısa kart adı (<see cref="RecipeCardData.ShortName"/>).</para>
     /// </summary>
     public sealed class RecipeCardFace : CardFace
     {
-        /// <summary>Girdi sütunu sayısı (her tarifte iki girdi, B §2) ve en çok çizilen ilerleme kutusu.</summary>
-        public const int Columns = 2, MaxBoxes = 2;
+        /// <summary>Girdi sütunu sayısı (baştan açık tariflerde iki; tesis aşama 9: yemde üç) ve en çok çizilen ilerleme kutusu.</summary>
+        public const int Columns = 3, MaxBoxes = 3;
 
         [SerializeField] TMP_Text nameText, needsLabel, turnsText, outText;
         [Tooltip("Çıktının simgesi (17 mm, sağ üstte).")]
@@ -46,9 +52,11 @@ namespace Corrigible.Desk
         [SerializeField] Sprite[] materialIcons = new Sprite[4];
         [SerializeField] Color iconTint = Color.white;
         [SerializeField] float nameMaxMm = 80f, needsMaxMm = 40f, qtyMaxMm = 28f, inputNameMaxMm = 48f, turnsMaxMm = 52f, outMaxMm = 48f;
+        [Tooltip("Tesis aşama 9: sütun adımı (mm): iki girdide 50 (adlı), üç girdide 34 (adsız; simge + ×n).")]
+        [SerializeField] float columnStepMm = 50f, narrowStepMm = 34f;
 
         bool bound;
-        string cName, cIcon, cTurns, cOut, cNeeds;
+        string cName, cShort, cIcon, cTurns, cOut, cNeeds;
         int cTurnsN, cDone;
         readonly string[] cKinds = new string[Columns], cQty = new string[Columns], cInputNames = new string[Columns];
         int cInputs;
@@ -133,29 +141,36 @@ namespace Corrigible.Desk
             int inputs = Mathf.Min(Columns, d.Inputs.Count);
             if (bound && Same(d, iconKey, inputs)) return false;
             bound = true;
-            cName = d.Name; cIcon = iconKey; cTurns = d.TurnsLine; cOut = d.OutLine; cNeeds = d.NeedsLabel;
+            cName = d.Name; cShort = d.ShortName; cIcon = iconKey; cTurns = d.TurnsLine; cOut = d.OutLine; cNeeds = d.NeedsLabel;
             cTurnsN = d.Turns; cDone = d.Done; cInputs = inputs;
             CountBind();
 
-            SetText(nameText, d.Name);
+            SetText(nameText, CardName(d));
             SetText(needsLabel, d.NeedsLabel);
             SetText(turnsText, d.TurnsLine);
             SetText(outText, d.OutLine);
-            SetSprite(icon, Pick(icons, System.Array.IndexOf(BoardLayout.KitKinds, iconKey)), iconTint);
+            int kit = System.Array.IndexOf(BoardLayout.KitKinds, iconKey);
+            SetSprite(icon, kit >= 0 ? Pick(icons, kit) : ItemCardFace.GearPictogram(iconKey), iconTint);
 
+            // Üç girdide sütunlar daralır ve adlar gizlenir (sütunlar 0. sütunun prefab yerinden adımla dizilir)
+            bool narrow = inputs > 2;
+            float step = narrow ? narrowStepMm : columnStepMm;
             for (int i = 0; i < Columns; i++)
             {
                 var input = i < inputs ? d.Inputs[i] : null;
                 cKinds[i] = input?.Kind; cQty[i] = input?.CardQty; cInputNames[i] = input?.Name;
                 var ic = At(inputIcons, i);
-                if (input != null) SetSprite(ic, Pick(materialIcons, System.Array.IndexOf(BoardLayout.MaterialKinds, input.Kind)), iconTint);
+                if (input != null) SetSprite(ic, InputIcon(input), iconTint);
                 SetActive(ic, input != null);
+                Column(ic, At(inputIcons, 0), i, step);
                 var q = At(inputQty, i);
                 SetText(q, input?.CardQty);
                 SetActive(q, input != null);
+                Column(q, At(inputQty, 0), i, step);
                 var n = At(inputNames, i);
                 SetText(n, input?.Name);
-                SetActive(n, input != null);
+                SetActive(n, input != null && !narrow);
+                Column(n, At(inputNames, 0), i, step);
             }
 
             // [B] Çok vardiyalı tarifte vardiya kadar kutu (en çok MaxBoxes), dolu = biten vardiya. Tek vardiyalıkta ve Done < 0'da kutu yok.
@@ -172,7 +187,7 @@ namespace Corrigible.Desk
 
         bool Same(RecipeCardData d, string iconKey, int inputs)
         {
-            if (cName != d.Name || cIcon != iconKey || cTurns != d.TurnsLine || cOut != d.OutLine || cNeeds != d.NeedsLabel) return false;
+            if (cName != d.Name || cShort != d.ShortName || cIcon != iconKey || cTurns != d.TurnsLine || cOut != d.OutLine || cNeeds != d.NeedsLabel) return false;
             if (cTurnsN != d.Turns || cDone != d.Done || cInputs != inputs) return false;
             for (int i = 0; i < inputs; i++)
             {
@@ -182,7 +197,36 @@ namespace Corrigible.Desk
             return true;
         }
 
+        /// <summary>
+        /// Tek kip: ad 12 mm'den küçülmez (D6-A), çıktı simgesine <see cref="nameMaxMm"/> kalır. Tam ad sığmazsa ve kısa adı varsa
+        /// ("Kumanda kelepçesi" → "Kelepçe") kısa ad yazılır; tarif simgeden ve defterin tam adlı sayfasından tanınır.
+        /// </summary>
+        string CardName(RecipeCardData d)
+        {
+            if (nameText == null || string.IsNullOrEmpty(d.ShortName) || string.IsNullOrEmpty(d.Name)) return d.Name;
+            float w = nameText.GetPreferredValues(d.Name, float.PositiveInfinity, float.PositiveInfinity).x;
+            return w > nameMaxMm + 0.05f ? d.ShortName : d.Name;
+        }
+
         static T At<T>(T[] list, int i) where T : class => list != null && i >= 0 && i < list.Length ? list[i] : null;
+
+        /// <summary>Girdinin simgesi: hammaddede dizi, erzakta (tesis aşama 9) adla <c>icon_erzak</c>.</summary>
+        Sprite InputIcon(RecipeInput input)
+        {
+            int m = System.Array.IndexOf(BoardLayout.MaterialKinds, input.Kind);
+            if (m >= 0) return Pick(materialIcons, m);
+            var reg = DeskSprites.Instance;
+            return reg != null && reg.TryGet("icon_" + input.Kind, out var e) ? e.sprite : null;
+        }
+
+        /// <summary>i. sütunun öğesi 0. sütunun yerinden <paramref name="step"/> mm sağda (yalnız x; değişmediyse yazmaz).</summary>
+        static void Column(Graphic g, Graphic first, int i, float step)
+        {
+            if (g == null || first == null || i == 0) return;
+            var p = g.rectTransform.anchoredPosition;
+            float x = first.rectTransform.anchoredPosition.x + step * i;
+            if (Mathf.Abs(p.x - x) > 1e-4f) g.rectTransform.anchoredPosition = new Vector2(x, p.y);
+        }
 
         static Sprite Pick(Sprite[] list, int i) => list != null && i >= 0 && i < list.Length ? list[i] : null;
     }

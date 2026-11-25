@@ -18,7 +18,7 @@ namespace Corrigible.Desk.Tests
     public sealed class Rev3BoardDropRulesTests
     {
         const string LockedMessage = "Plan kilitli. Fişi devir kutusuna bırak.";
-        static readonly string[] PocketJobs = { "tek", "emp", "ana", "craft", "cook", "train" };
+        static readonly string[] PocketJobs = { "tek", "emp", "ana", "craft", "cook" };
 
         [SetUp]
         public void Turkish() => Loc.SetLanguage(Loc.Turkish);
@@ -30,7 +30,7 @@ namespace Corrigible.Desk.Tests
 
         static Simulation Ready(uint seed = 79) => Simulation.NewGame(seed, new Balance
         { shelterEventsEnabled = false,
-            planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 100, admissionKnockMax = 100
+            planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 100, admissionKnockMax = 100,
         });
 
         /// <summary>Sunucunun ilk açılıştaki <c>RetireJobs</c>'u: otomatik üretim ve emekli görevlerin BOŞTA'ya alınması.</summary>
@@ -210,63 +210,20 @@ namespace Corrigible.Desk.Tests
 
         // ---------------------------------------------------------------- eğitim
 
+        /// <summary>2026-11-24 (geliştirici: "sığınaktaki eğitim bölümünü kaldır"): EĞİTİM cebi ve konu satırları bırakma hedefi değildir;
+        /// eski kayıtta eğitimdeki kişi BOŞTA'da görünür (emekli görev). Core'daki <c>board_train</c> durur ama kayıt 22 eski kayıtları yüklemediği için yalnız testlerden ulaşılır (ölü yol).</summary>
         [Test]
-        public void Person_ToTraining_IsOneTrain_SubjectFromRowThenTraineeThenUi()
+        public void TrainingSection_IsGone_NoTargetAndTraineeShowsIdle()
         {
             var sim = Retired();
-            var a = At(sim, 5);
-            var b = At(sim, 6);
             var c = At(sim, 7);
-
-            // Kimse eğitimde değil: konu sunumun seçtiği konu, yoksa "tek"
-            Assert.AreEqual("tek", BoardDropRules.TrainingSubject(sim, null));
-            Assert.AreEqual("ana", BoardDropRules.TrainingSubject(sim, new BoardUiState { TrainingTopic = "ana" }));
-            AssertCommand(Drop(sim, BoardCardKind.Person, c.Id, BoardTarget.Pocket("train"), new BoardUiState { TrainingTopic = "ana" }),
-                "board_train", c.Id, "ana");
-            Assert.AreEqual("train", c.Job);
-            Assert.AreEqual("ana", c.TrainingSubject);
-
-            // Biri eğitimdeyse cebin konusu onun konusudur; eski eğitimli gelenin eski yerine geçer (takas, tek komut)
-            Assert.AreEqual("ana", BoardDropRules.TrainingSubject(sim, new BoardUiState { TrainingTopic = "cook" }));
-            AssertCommand(Drop(sim, BoardCardKind.Person, b.Id, BoardTarget.Pocket("train"), new BoardUiState { TrainingTopic = "cook" }),
-                "board_train", b.Id, "ana");
-            Assert.AreEqual("train", b.Job);
-            Assert.AreEqual("rest", c.Job);
-
-            // Konu satırına bırakma o konuyu seçer; satırlı cep hedefi de satırın konusunu alır
-            AssertCommand(Drop(sim, BoardCardKind.Person, a.Id, BoardTarget.Topic(4)), "board_train", a.Id, "cook");
-            Assert.AreEqual("cook", a.TrainingSubject);
-            Assert.AreEqual("rest", b.Job);
-            AssertCommand(Drop(sim, BoardCardKind.Person, At(sim, 3).Id, new BoardTarget(BoardTargetKind.Pocket, "train", null, 0)),
-                "board_train", At(sim, 3).Id, "tek");
-            Assert.AreEqual("craft", a.Job, "Önceki eğitimli gelenin cebine (Üretim) geçer.");
-
-            // Eğitimdeki kişinin kendi satırı aynı yerdir; başka satırı konu değişimidir
-            var trainee = At(sim, 3);
-            AssertNoCommand(sim, BoardCardKind.Person, trainee.Id, BoardTarget.Topic(0));
-            AssertNoCommand(sim, BoardCardKind.Person, trainee.Id, BoardTarget.Pocket("train"));
-            AssertCommand(Drop(sim, BoardCardKind.Person, trainee.Id, BoardTarget.Topic(2)), "board_train", trainee.Id, "ana");
+            Assert.IsFalse(BoardLayout.PocketOpen("train", true), "EĞİTİM cebi kapalı");
+            Assert.IsFalse(BoardDropRules.Valid(BoardCardKind.Person, c.Id, BoardTarget.Pocket("train"), sim), "cebe bırakılmaz");
+            Assert.IsFalse(BoardDropRules.Valid(BoardCardKind.Person, c.Id, BoardTarget.Topic(2), sim), "konu satırı yok");
+            Assert.IsTrue(sim.TrainResident(c.Id, "ana").Ok, "Core komutu eski kayıtlar için durur");
+            Assert.AreEqual("rest", BoardDropRules.PlaceOf(sim.Board, c, BoardDropRules.WatchOpen(sim)), "eğitimdeki kişi BOŞTA'da görünür");
         }
 
-        [Test]
-        public void TopicRowClick_WithATrainee_IsOneTrain_OtherwiseNoCommand()
-        {
-            var sim = Retired();
-            Assert.IsNull(BoardDropRules.TopicCommand(4, sim), "Kimse eğitimde değilken satır yalnız sunumun konusunu değiştirir.");
-            var trainee = At(sim, 7);
-            Assert.IsTrue(sim.TrainResident(trainee.Id, "craft").Ok);
-            Assert.IsNull(BoardDropRules.TopicCommand(3, sim), "Aynı konu komutsuz.");
-            Assert.IsNull(BoardDropRules.TopicCommand(-1, sim));
-            Assert.IsNull(BoardDropRules.TopicCommand(PlanningBoardData.Subjects.Length, sim));
-            var command = BoardDropRules.TopicCommand(4, sim);
-            Assert.IsNotNull(command);
-            int before = sim.Record.commands.Count;
-            Assert.IsTrue(command(sim).Ok);
-            Assert.AreEqual(before + 1, sim.Record.commands.Count);
-            AssertCommand(sim.Record.commands[before], "board_train", trainee.Id, "cook");
-            Assert.AreEqual("cook", trainee.TrainingSubject);
-            Assert.AreEqual("train", trainee.Job);
-        }
 
         // ---------------------------------------------------------------- eşya
 
@@ -483,7 +440,6 @@ namespace Corrigible.Desk.Tests
                 AssertNoCommand(sim, BoardCardKind.Person, tek.Id, t);
             AssertNoCommand(sim, BoardCardKind.Person, tek.Id, BoardTarget.Topic(-1));
             AssertNoCommand(sim, BoardCardKind.Person, tek.Id, BoardTarget.Topic(PlanningBoardData.Subjects.Length));
-            AssertNoCommand(sim, BoardCardKind.Person, tek.Id, BoardTarget.Pocket("watch"));
             AssertNoCommand(sim, BoardCardKind.Person, "yok-1", BoardTarget.Pocket("cook"));
             AssertNoCommand(sim, BoardCardKind.Person, null, BoardTarget.Pocket("cook"));
 
@@ -529,10 +485,8 @@ namespace Corrigible.Desk.Tests
             string chip = BoardUiState.ChipId("metal", 0);
 
             AssertRefused(sim, BoardCardKind.Person, At(sim, 5).Id, BoardTarget.Pocket("tek"), LockedMessage);
-            AssertRefused(sim, BoardCardKind.Person, At(sim, 5).Id, BoardTarget.Pocket("train"), LockedMessage);
             AssertRefused(sim, BoardCardKind.Person, At(sim, 6).Id, BoardTarget.Person(At(sim, 4).Id), LockedMessage);
             AssertRefused(sim, BoardCardKind.Person, tek.Id, BoardTarget.Bosta(), LockedMessage);
-            AssertRefused(sim, BoardCardKind.Person, At(sim, 3).Id, BoardTarget.Topic(4), LockedMessage);
             AssertRefused(sim, BoardCardKind.Item, Item(sim, "medkit", null).Id, BoardTarget.Person(tek.Id), LockedMessage);
             AssertRefused(sim, BoardCardKind.Item, Item(sim, "armor", tek.Id).Id, BoardTarget.Store(), LockedMessage);
             AssertRefused(sim, BoardCardKind.Item, Item(sim, "kit_ana", At(sim, 2).Id).Id, BoardTarget.Hurda(), LockedMessage);
@@ -543,9 +497,6 @@ namespace Corrigible.Desk.Tests
             Assert.IsFalse(BoardDropRules.IsLayoutOnly(BoardCardKind.Chip, chip, BoardTarget.Order(), sim));
             Assert.IsFalse(BoardDropRules.Valid(BoardCardKind.Chip, chip, BoardTarget.Order(), sim));
             string state = State(sim);
-            var topic = BoardDropRules.TopicCommand(4, sim);
-            Assert.IsNotNull(topic);
-            Assert.IsFalse(topic(sim).Ok);
             Assert.AreEqual(state, State(sim));
         }
 
@@ -557,16 +508,74 @@ namespace Corrigible.Desk.Tests
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
             AssertRefused(sim, BoardCardKind.Person, idle.Id, BoardTarget.Pocket("cook"), "Baskın sürerken plan değiştirilemez.");
             AssertRefused(sim, BoardCardKind.Item, sim.Board.Equipment.First().Id, BoardTarget.Hurda(), "Baskın sürerken plan değiştirilemez.");
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true }).Ok);
+            FacilityDeskKit.WinRaid(sim);
             Assert.IsNull(sim.S.Raid);
             AssertRefused(sim, BoardCardKind.Person, idle.Id, BoardTarget.Pocket("cook"), LockedMessage);
         }
 
+        // ---------------------------------------------------------------- GÖZETİM (tesis aşama 5)
+
+        /// <summary>
+        /// GÖZETİM bir cep (tek kip: hep açık): destedeki kart → tek <c>board_assign(kişi, watch)</c>; dolu cebe takas tek komut
+        /// (eski görevli öbürünün yerine); GÖZETİM'deki kart BOŞTA'ya → <c>board_assign(kişi, rest)</c>; eşya GÖZETİM'deki kişiye
+        /// (cep dikdörtgeni) <c>board_equip</c>. Hiçbiri RNG çekmez.
+        /// </summary>
+        [Test]
+        public void WatchPocket_AssignsWatch_SwapsAndReturns()
+        {
+            var sim = Retired();
+            Assert.IsTrue(BoardDropRules.WatchOpen(sim));
+            var first = sim.Board.People.First(p => p.Alive && p.Job == "rest" && p.Down <= 0 && !p.Restricted);
+            AssertCommand(Drop(sim, BoardCardKind.Person, first.Id, BoardTarget.Pocket("watch")), "board_assign", first.Id, "watch");
+            Assert.AreEqual("watch", first.Job);
+            Assert.AreEqual("watch", BoardDropRules.PlaceOf(sim.Board, first, true));
+            Assert.AreSame(first, BoardDropRules.Occupant(sim.Board, "watch", true));
+            AssertNoCommand(sim, BoardCardKind.Person, first.Id, BoardTarget.Pocket("watch"));
+
+            // Takas: cepteki aşçı GÖZETİM'e → tek komut, eski görevli MUTFAK'a
+            var cook = BoardDropRules.Occupant(sim.Board, "cook");
+            AssertCommand(Drop(sim, BoardCardKind.Person, cook.Id, BoardTarget.Pocket("watch")), "board_assign", cook.Id, "watch");
+            Assert.AreEqual("cook", first.Job, "takas: eski görevli öbürünün yerine");
+            // Kişinin üstüne bırakma = o kişinin yeri
+            AssertCommand(Drop(sim, BoardCardKind.Person, first.Id, BoardTarget.Person(cook.Id)), "board_assign", first.Id, "watch");
+            Assert.AreEqual("cook", cook.Job);
+
+            var medkit = Item(sim, "medkit", null);
+            AssertCommand(Drop(sim, BoardCardKind.Item, medkit.Id, BoardTarget.Pocket("watch")), "board_equip", medkit.Id, first.Id);
+            AssertCommand(Drop(sim, BoardCardKind.Person, first.Id, BoardTarget.Bosta()), "board_assign", first.Id, "rest");
+            Assert.IsNull(BoardDropRules.Occupant(sim.Board, "watch", true));
+        }
+
+        [Test]
+        public void Valid_PredictsTheCoreResult_ForEveryPersonAndPlace_WithWatch()
+        {
+            var sim = MixedWatch();
+            var ids = sim.Board.People.Select(p => p.Id).ToArray();
+            var targets = new List<BoardTarget> { BoardTarget.Pocket("watch"), BoardTarget.Bosta() };
+            targets.AddRange(PocketJobs.Select(job => BoardTarget.Pocket(job)));
+            targets.AddRange(ids.Select(id => BoardTarget.Person(id)));
+            var counts = Predict(ref sim, BoardCardKind.Person, ids, targets, MixedWatch);
+            Assert.Greater(counts.accepted, 0);
+            Assert.Greater(counts.refused, 0);
+        }
+
+        /// <summary><see cref="Mixed"/>; aşçı (4) GÖZETİM'de, MUTFAK boş.</summary>
+        static Simulation MixedWatch()
+        {
+            var sim = Retired();
+            Restrict(sim, At(sim, 5).Id);
+            Assert.IsTrue(sim.TrainResident(At(sim, 7).Id, "craft").Ok);
+            At(sim, 6).Down = 2;
+            Assert.IsTrue(sim.AssignResident(At(sim, 4).Id, "watch").Ok);
+            return sim;
+        }
+
         // ---------------------------------------------------------------- kısıtlı ve yatan kişi
 
-        /// <summary>Olay kısıtındaki kişi: Eğitim dışında hiçbir cep açık değil (gerekçe Core'un); BOŞTA zaten yeri (komutsuz).</summary>
+        /// <summary>Olay kısıtındaki kişi: hiçbir cep açık değil (gerekçe Core'un; 2026-11-24'ten beri EĞİTİM de yok); BOŞTA zaten yeri
+        /// (komutsuz).</summary>
         [Test]
-        public void RestrictedPerson_OnlyBostaAndTraining()
+        public void RestrictedPerson_OnlyBosta()
         {
             var sim = Retired();
             var r = At(sim, 5);
@@ -576,12 +585,6 @@ namespace Corrigible.Desk.Tests
             foreach (var job in PocketJobs)
             {
                 string reason = BoardDropRules.Reason(BoardCardKind.Person, r.Id, BoardTarget.Pocket(job), sim);
-                if (job == "train")
-                {
-                    Assert.AreNotEqual("Kısıtlı sakin bu göreve erişemez.", reason, "Eğitim kısıtlı kişiye açık");
-                    Assert.AreEqual(reason == null, BoardDropRules.Valid(BoardCardKind.Person, r.Id, BoardTarget.Pocket(job), sim));
-                    continue;
-                }
                 Assert.IsFalse(BoardDropRules.Valid(BoardCardKind.Person, r.Id, BoardTarget.Pocket(job), sim), job);
                 Assert.AreEqual(sim.AssignResidentCheck(r.Id, job), reason, job);
                 Assert.AreEqual("Kısıtlı sakin bu göreve erişemez.", reason, job);
@@ -595,7 +598,7 @@ namespace Corrigible.Desk.Tests
             // Test düzeni: kısıtlı kişi bir ceptedir; geçerli hedefler BOŞTA (ve açıksa Eğitim)
             Assert.IsTrue(sim.AssignResident(At(sim, 4).Id, "rest").Ok);
             r.Job = "cook";
-            var valid = PocketJobs.Where(job => job != "train").Select(job => BoardTarget.Pocket(job)).Concat(new[] { BoardTarget.Bosta(), Deck() })
+            var valid = PocketJobs.Select(job => BoardTarget.Pocket(job)).Concat(new[] { BoardTarget.Bosta(), Deck() })
                 .Where(t => BoardDropRules.Valid(BoardCardKind.Person, r.Id, t, sim)).ToArray();
             CollectionAssert.AreEqual(new[] { BoardTarget.Bosta(), Deck() }, valid);
             AssertCommand(Drop(sim, BoardCardKind.Person, r.Id, BoardTarget.Bosta()), "board_assign", r.Id, "rest");

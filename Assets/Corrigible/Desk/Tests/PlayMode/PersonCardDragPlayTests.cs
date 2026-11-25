@@ -73,11 +73,11 @@ namespace Corrigible.Desk.Tests
             const string job = "cook";
             var cook = BoardDropRules.Occupant(Sim.Board, job);
             Assert.IsNotNull(cook, "V.001'de MUTFAK cebinde biri var");
-            string subject = PlanningBoardData.Subjects.First(s => cook.Skill(s) < Sim.B.boardExpertAt);
-            var train = BoardPlayKit.Game.ExecuteBoardCommand(s => s.TrainResident(cook.Id, subject));
-            Assert.IsTrue(train != null && train.Ok, "düzen: aşçı eğitime (" + train?.Msg + ")");
+            // Düzen: aşçı boş GÖZETİM cebine (2026-11-24'e dek EĞİTİM'e; o bölüm kaldırıldı)
+            var moved = BoardPlayKit.Game.ExecuteBoardCommand(s => s.AssignResident(cook.Id, "watch"));
+            Assert.IsTrue(moved != null && moved.Ok, "düzen: aşçı gözetime (" + moved?.Msg + ")");
             yield return Arrive();
-            yield return BoardPlayKit.WaitFor(() => !Board.CardFor(cook.Id).Moving, 2, "aşçının kartı eğitim cebine varmadı");
+            yield return BoardPlayKit.WaitFor(() => !Board.CardFor(cook.Id).Moving, 2, "aşçının kartı gözetim cebine varmadı");
 
             var before = Board.Last;
             Assert.IsFalse(before.PocketOccupant.TryGetValue(job, out var occupant) && !string.IsNullOrEmpty(occupant), "düzen: MUTFAK cebi boş (" + occupant + ")");

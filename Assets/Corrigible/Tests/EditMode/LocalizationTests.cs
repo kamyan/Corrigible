@@ -45,7 +45,7 @@ namespace Corrigible.Tests
                 texts.AddRange(sim.S.Moments.Select(m => m.Text));
                 foreach (var r in GameData.Regions) texts.Add(r.Name);
                 foreach (var e in Baskin.RegionEvents.Values) texts.AddRange(new[] { Loc.T(e.Name), Loc.T(e.Desc), Loc.T(e.Tag) });
-                foreach (var r in GameData.Regions) texts.AddRange(new[] { r.Building, r.BuildingNote, r.Sector(0), r.Sector(1), r.Sector(2) });
+                foreach (var r in GameData.Regions) texts.AddRange(new[] { r.Building, r.BuildingNote, r.FacilityNote, r.Sector(0), r.Sector(1), r.Sector(2) });
                 foreach (var e in GameData.Endings) texts.AddRange(new[] { e.Title, e.Text });
                 foreach (var r in sim.S.Liberation.Regions) texts.AddRange(r.Sectors.Select(x => x.Name));
                 foreach (var room in sim.Shelter.Rooms) texts.AddRange(new[] { ShelterLogic.RoomName(room.Id), ShelterLogic.RoomDescription(room.Id) });
@@ -57,6 +57,24 @@ namespace Corrigible.Tests
                 Assert.Greater(texts.Count, 100);
             }
             finally { Loc.Missing -= OnMissing; }
+        }
+
+        /// <summary>Tesis aşama 12: na ve oc'nin yeni bina ve kanat adları, notlar ve tesis notları İngilizce (Türkçe harf yok).</summary>
+        [Test]
+        public void FacilityStage12Names_English()
+        {
+            Loc.SetLanguage(Loc.English, Loc.ParseTable(File.ReadAllText(LocalizationTool.TableFile))[Loc.English]);
+            var na = GameData.Region("na");
+            var oc = GameData.Region("oc");
+            Assert.AreEqual("Freight train", na.Building);
+            CollectionAssert.AreEqual(new[] { "Freight cars", "Sorting car", "Server car" }, new[] { na.Sector(0), na.Sector(1), na.Sector(2) });
+            Assert.AreEqual("Floating mining rig", oc.Building);
+            CollectionAssert.AreEqual(new[] { "Provision deck", "Belt gallery", "Engine room" }, new[] { oc.Sector(0), oc.Sector(1), oc.Sector(2) });
+            foreach (var t in new[] { na.BuildingNote, na.FacilityNote, oc.BuildingNote, oc.FacilityNote,
+                Loc.F("{0} vagondan düştü; {1} vardiya yatış gerekiyor.", "X", 5), Loc.T("Vagon ayrıldı; takip yok.") })
+                Assert.IsFalse(TurkishLetters.IsMatch(t) || TurkishWords.IsMatch(t), t);
+            Assert.AreEqual("Train", Loc.T(Baskin.RegionEvents["katar"].Name));
+            Assert.AreEqual("ROLL", Loc.T(Baskin.RegionEvents["yalpa"].Tag));
         }
 
         /// <summary>Dil yalnızca metni değiştirir: aynı tohum ve komutlarla iki dilde aynı harekât oynanır.</summary>
@@ -103,7 +121,7 @@ namespace Corrigible.Tests
                     if (sim.LiberationRaidCheck(sector.Id) == null)
                     {
                         Res(sim.StartLiberationRaid(sector.Id));
-                        Res(sim.ResolveRaid(PlayRaid(s.Raid, rng, texts)));
+                        Res(sim.ResolveRaid(PlayRaid(sim, rng, texts)));
                     }
                 }
                 AnswerDoor(sim, rng, texts);
@@ -132,34 +150,43 @@ namespace Corrigible.Tests
             var open = sim.DoorOptions().Where(o => sim.DoorAnswerCheck(o.Id) == null).ToList();
             if (open.Count > 0) sim.AnswerDoor(rng.Pick(open).Id);
         }
-        static RaidResult PlayRaid(RaidState raid, Rng rng, List<string> texts)
+        /// <summary>
+        /// Baskını oda oda rastgele oynar (tek kip: tesis odaları): her odada uzmanlar rastgele yürür ve yetenek kullanır; oda bitmezse
+        /// geçilir, geri çekilinir ya da süre doldurulur. Oda raporu komutla dosyalanır. Sonuç oda raporlarından türetilir (ResolveRaid onu
+        /// yok sayıp yeniden türetir).
+        /// </summary>
+        static RaidResult PlayRaid(Simulation sim, Rng rng, List<string> texts)
         {
-            var B = Baskin.Create(raid.Params);
-            for (int guard = 0; guard < 40 && B.Phase == "player"; guard++)
+            for (int room = 0; room < 8 && sim.S.Raid != null && !sim.RaidRoomsClosed; room++)
             {
-                foreach (var u in B.Units.Where(u => u.Side == 'p' && !u.Dead).ToList())
+                var B = sim.OpenRaidRoom();
+                for (int guard = 0; guard < 40 && B.Phase == "player"; guard++)
                 {
-                    var moves = Baskin.Reachable(B, u);
-                    if (moves.Count > 0 && rng.Next() < 0.7) { var m = rng.Pick(moves.ToArray()); Baskin.DoMove(B, u.Id, m.X, m.Y); }
-                    var targets = Baskin.Targets(B, u);
-                    if (targets.Count > 0) { var t = rng.Pick(targets.ToArray()); Baskin.DoAct(B, u.Id, t.X, t.Y); }
+                    foreach (var u in B.Units.Where(u => Baskin.IsSpecialist(u) && Baskin.OnBoard(u)).ToList())
+                    {
+                        var moves = Baskin.Reachable(B, u);
+                        if (moves.Count > 0 && rng.Next() < 0.7) { var m = rng.Pick(moves.ToArray()); Baskin.DoMove(B, u.Id, m.X, m.Y); }
+                        var targets = Baskin.Targets(B, u);
+                        if (targets.Count > 0) { var t = rng.Pick(targets.ToArray()); Baskin.DoAct(B, u.Id, t.X, t.Y); }
+                    }
+                    // Bölge olayının tahtadaki etiketleri, birim uyarıları ve tur şeridi
+                    var hz = Baskin.Hazards(B);
+                    texts.Add(hz.Name);
+                    texts.AddRange(hz.Marks.Select(m => m.Label));
+                    texts.AddRange(hz.Warnings.Select(w => w.Text));
+                    texts.AddRange(hz.Turns);
+                    if (!Baskin.EndTurn(B) && B.Phase == "player") Baskin.Pass(B);
                 }
-                // Bölge olayının tahtadaki etiketleri, birim uyarıları ve tur şeridi
-                var hz = Baskin.Hazards(B);
-                texts.Add(hz.Name);
-                texts.AddRange(hz.Marks.Select(m => m.Label));
-                texts.AddRange(hz.Warnings.Select(w => w.Text));
-                texts.AddRange(hz.Turns);
-                Baskin.EndTurn(B);
+                if (B.Phase == "player" && !Baskin.Pass(B)) Baskin.Retreat(B);
+                for (int guard = 0; guard < 40 && B.Phase == "player"; guard++) Baskin.EndTurn(B);
+                texts.AddRange(B.Log.Select(l => l.Text));
+                texts.Add(B.Layout == null ? null : Loc.T(B.Layout));
+                texts.Add(Baskin.RoomName(B));
+                texts.Add(B.OutcomeReason);
+                texts.Add(sim.AdvanceRaidRoom(sim.RaidRoomReport(B)).Msg);
             }
-            if (B.Phase == "player") Baskin.Retreat(B);
-            texts.AddRange(B.Log.Select(l => l.Text));
-            texts.Add(B.Layout == null ? null : Loc.T(B.Layout));
-            texts.Add(Baskin.RoomName(B));
             foreach (var t in Baskin.UnitTypes.Values) texts.Add(t.Name);
-            var res = Baskin.Result(B);
-            texts.Add(res.Reason);
-            return res;
+            return sim.FacilityRaidResult();
         }
     }
 }

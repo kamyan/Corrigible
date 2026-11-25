@@ -30,10 +30,13 @@ namespace Corrigible.Desk.Tests
 
         static Simulation Ready(uint seed = 79) => Simulation.NewGame(seed, new Balance
         { shelterEventsEnabled = false,
-            planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 100, admissionKnockMax = 100
+            planningBoardEnabled = true, liberationAlarmPerShift = 0, admissionKnockMin = 100, admissionKnockMax = 100,
         });
 
-        /// <summary>Sunucunun ilk açılıştaki <c>RetireJobs</c>'u: otomatik üretim ve emekli görevlerin (care, gather, watch, contact) BOŞTA'ya alınması.</summary>
+        /// <summary>
+        /// Sunucunun ilk açılıştaki <c>RetireJobs</c>'u: otomatik üretim ve emekli görevlerin (care, gather, contact) BOŞTA'ya alınması.
+        /// Açılışta kimse "watch"ta değildir.
+        /// </summary>
         static Simulation Retired(uint seed = 79)
         {
             var sim = Ready(seed);
@@ -61,7 +64,8 @@ namespace Corrigible.Desk.Tests
             foreach (var e in sim.Board.Equipment.Where(e => e.OwnerId == id && !e.Bound)) e.OwnerId = null;
         }
 
-        /// <summary>Kadronun ilk kişisi kurtarılır (yatıyor), üçüncüsü kaçışta geride kalır (ölür); plan kilitli kalır.</summary>
+        /// <summary>Kadronun ilk kişisi giriş odasında düşer ve ekipçe çıkarılır (yatıyor), üçüncüsü kaçışta geride kalır (ölür); baskın
+        /// oda zinciriyle kazanılır (tek kip), plan kilitli kalır.</summary>
         static Simulation RaidWithLoss(out string lost, out string rescued)
         {
             var sim = Ready();
@@ -69,7 +73,7 @@ namespace Corrigible.Desk.Tests
             rescued = squad[0].PersonId;
             lost = squad[2].PersonId;
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Retreat = true, Hp = { 0, squad[1].Hp, 0 }, Armor = { 0, 1, 0 }, Left = { 2 } }).Ok);
+            FacilityDeskKit.ResolveRaid(sim, true, FacilityDeskKit.Rescued, FacilityDeskKit.Returns, FacilityDeskKit.LeftBehind);
             Assert.IsFalse(sim.Board.Person(lost).Alive);
             Assert.Greater(sim.Board.Person(rescued).Down, 0);
             return sim;
@@ -135,7 +139,7 @@ namespace Corrigible.Desk.Tests
             Assert.IsFalse(during.Editable);
             Assert.AreEqual("baskın emri verildi", during.LockReason);
             Assert.AreEqual("PLAN KİLİTLİ · baskın emri verildi", during.EntryLine);
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true }).Ok);
+            FacilityDeskKit.WinRaid(sim);
             Assert.IsNull(sim.S.Raid);
             Assert.AreEqual("baskın emri verildi", Build(sim).LockReason, "Baskın çözülünce plan vardiya sonuna kadar kilitli kalır.");
 
@@ -206,6 +210,27 @@ namespace Corrigible.Desk.Tests
             CollectionAssert.AreEqual(new[] { At(sim, 6).Id, At(sim, 7).Id, At(sim, 5).Id }, Build(sim).DeckOrder);
         }
 
+        /// <summary>
+        /// Tesis aşama 5 · GÖZETİM (tek kip: cep hep açık): açılışta cep boş; görevli atanınca cep dolar, kartın görevi watch, şeridi
+        /// dinleme puanı.
+        /// </summary>
+        [Test]
+        public void WatchPocket_FillsWithTheWatcher()
+        {
+            var on = Retired();
+            var idle = At(on, 5);
+            Assert.IsFalse(Build(on).PocketOccupant.ContainsKey("watch"), "açılışta GÖZETİM boş");
+            Assert.IsTrue(on.AssignResident(idle.Id, "watch").Ok);
+            var s = Build(on);
+            Assert.IsTrue(s.WatchOpen);
+            Assert.AreEqual(idle.Id, s.PocketOccupant["watch"]);
+            CollectionAssert.DoesNotContain(s.DeckOrder, idle.Id);
+            Assert.AreEqual("watch", s.Person(idle.Id).JobId);
+            Assert.AreEqual("Dinleme · PAFTA 1", s.Person(idle.Id).Strip, "her vardiya bir pafta (bedel 1)");
+            Assert.AreEqual(StripTone.Ink, s.Person(idle.Id).StripTone);
+            Assert.AreEqual("her vardiya bir pafta · sıradaki: PAFTA 1", s.Person(idle.Id).HoverLine);
+        }
+
         [Test]
         public void Deck_PutsTheBedriddenLast_DeadHaveNoPlace()
         {
@@ -256,8 +281,9 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual("Kısıtlı · 3 v.", s.Person(restricted.Id).Strip);
             Assert.AreEqual(StripTone.Red, s.Person(restricted.Id).StripTone);
             Assert.IsTrue(s.Person(restricted.Id).Restricted);
-            Assert.AreEqual("Üretim +2", s.Person(trainee.Id).Strip);
-            Assert.AreEqual("train", s.Person(trainee.Id).JobId);
+            // 2026-11-24: EĞİTİM bölümü kaldırıldı; eski kayıttan eğitimdeki kişi BOŞTA'da görünür (emekli görev)
+            Assert.AreEqual("Boşta", s.Person(trainee.Id).Strip);
+            Assert.AreEqual("rest", s.Person(trainee.Id).JobId);
             Assert.AreEqual("Boşta", s.Person(hurt.Id).Strip);
             Assert.AreEqual(StripTone.Mute, s.Person(hurt.Id).StripTone);
             Assert.AreEqual("Teknisyen", s.Person(At(sim, 0).Id).Strip);
@@ -430,29 +456,6 @@ namespace Corrigible.Desk.Tests
 
         // ---------------------------------------------------------------- konular ve dosya
 
-        [Test]
-        public void Topics_RingFollowsTheTrainee_ElseThePresentationTopic()
-        {
-            var sim = Retired();
-            var s = Build(sim, new BoardUiState { TrainingTopic = "cook" });
-            CollectionAssert.AreEqual(PlanningBoardData.Subjects, s.Topics.Subjects);
-            CollectionAssert.AreEqual(new[] { "TEKNİSYEN", "EMP", "ANALİZ", "ÜRETİM", "MUTFAK", "BAKIM", "İKMAL" }, s.Topics.Labels);
-            Assert.AreEqual(4, s.Topics.RingRow);
-            Assert.IsNull(s.Topics.TraineeId);
-            Assert.IsTrue(s.Topics.Mastered.All(m => !m));
-
-            var trainee = At(sim, 7);
-            Assert.IsTrue(sim.TrainResident(trainee.Id, "craft").Ok);
-            var emp = trainee.Experience.FirstOrDefault(e => e.Subject == "emp");
-            if (emp == null) trainee.Experience.Add(new ResidentSkill { Subject = "emp", Points = sim.B.boardExpertAt });   // test düzeni
-            else emp.Points = sim.B.boardExpertAt;
-            var t = Build(sim, new BoardUiState { TrainingTopic = "cook" }).Topics;
-            Assert.AreEqual(3, t.RingRow);
-            Assert.AreEqual(trainee.Id, t.TraineeId);
-            Assert.IsTrue(t.Mastered[1]);
-            Assert.AreEqual("usta", PlanningBoardSnapshotBuilder.TopicHoverLine(t, 1));
-            Assert.IsNull(PlanningBoardSnapshotBuilder.TopicHoverLine(t, 3));
-        }
 
         [Test]
         public void Folder_SelectedPerson_Pages_LegacyTabsClosed()
@@ -615,10 +618,14 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(ProductionStop.StoreFull, ProductionForecast.Of(sim).Stop, "dolu depo eksik kiti de durdurur");
             foreach (var e in stored) sim.Board.Equipment.Remove(e);
 
-            CloseAndCompareForecast(sim, "aç + eksik kit");
+            // Tesis K19: Core eksik rol kitini emirden önce yapar (açlıkta kilit açıkken); emir bu kapanış ilerlemez
+            Assert.IsTrue(o.KitFirst, "tahmin: bu kapanış eksik kit");
+            Assert.AreEqual("kit_emp", o.Output);
+            Assert.AreEqual("kit_emp", o.WaitingRecipeId);
+            Close(sim);
             Assert.IsTrue(sim.Shelter.Starving, "Core da açlık saydı");
-            var left = sim.Board.Order(orderId);
-            Assert.IsTrue(left == null || left.Remaining < remaining, "Core kiti ilerletti");
+            Assert.IsFalse(sim.BoardKitMissing("kit_emp"), "Core eksik kiti yaptı");
+            Assert.AreEqual(remaining, sim.Board.Order(orderId).Remaining, "emir beklemede: ilerlemedi");
 
             // Kit eksik değil: açlık durdurur
             var owned = KitOrder(false);
@@ -639,10 +646,12 @@ namespace Corrigible.Desk.Tests
         {
             var sim = Retired();
             var core = sim.BoardRecipes;
+            // Tesis tek kip: altı temel tarifin ardından yedi kapalı tesis sayfası (FacilityGearBoardTests); bu test temel altıyı okur
             var s = Build(sim);
-            Assert.AreEqual(6, s.Recipes.Count);
+            Assert.AreEqual(6 + FacilityGear.Kinds.Length, s.Recipes.Count);
+            s.Recipes.RemoveRange(6, s.Recipes.Count - 6);
             CollectionAssert.AreEqual(new[] { "armor", "medkit", "emp_cell", "kit_tek", "kit_emp", "kit_ana" }, s.Recipes.Select(r => r.Id));
-            CollectionAssert.AreEqual(core.Select(r => r.Id), s.Recipes.Select(r => r.Id), "Sayfa i = BoardRecipes[i].");
+            CollectionAssert.AreEqual(core.Take(6).Select(r => r.Id), s.Recipes.Select(r => r.Id), "Sayfa i = BoardRecipes[i].");
             CollectionAssert.AreEqual(Enumerable.Range(0, 6), s.Recipes.Select(r => r.Index));
             CollectionAssert.AreEqual(new[] { "ZIRH PLAKASI", "BAKIM KİTİ", "EMP HÜCRESİ", "TEKNİSYEN KİTİ", "EMP KİTİ", "ANALİST KİTİ" },
                 s.Recipes.Select(r => r.Title), "Başlık TR büyük harfle (İ).");
@@ -653,7 +662,8 @@ namespace Corrigible.Desk.Tests
             CollectionAssert.AreEqual(new[] { "1 vardiya", "1 vardiya", "2 vardiya", "1 vardiya", "1 vardiya", "1 vardiya" }, s.Recipes.Select(r => r.TurnsLine));
             CollectionAssert.AreEqual(core.Select(r => r.Turns), s.Recipes.Select(r => r.Turns));
             CollectionAssert.AreEqual(new[] { "s. 1", "s. 2", "s. 3", "s. 4", "s. 5", "s. 6" }, s.Recipes.Select(r => r.PageLabel));
-            CollectionAssert.AreEqual(new[] { "AÇILIM 1/3", "AÇILIM 1/3", "AÇILIM 2/3", "AÇILIM 2/3", "AÇILIM 3/3", "AÇILIM 3/3" }, s.Recipes.Select(r => r.SpreadLabel));
+            // Yedi açılım: altı temel tarif ve yedi kapalı tesis sayfası (13 sayfa)
+            CollectionAssert.AreEqual(new[] { "AÇILIM 1/7", "AÇILIM 1/7", "AÇILIM 2/7", "AÇILIM 2/7", "AÇILIM 3/7", "AÇILIM 3/7" }, s.Recipes.Select(r => r.SpreadLabel));
             // El notu: yalnız EMP hücresinde (iki vardiya, deneyimli üretici tek kapanışta bitirir); [B] 04'ün notu çizilmez (D8)
             CollectionAssert.AreEqual(new[] { "", "", "→ deneyimli üretici: tek kapanış", "", "", "" }, s.Recipes.Select(r => r.Note));
             var armor = s.Recipes[0];
@@ -663,7 +673,7 @@ namespace Corrigible.Desk.Tests
             CollectionAssert.AreEqual(new[] { 2, 1 }, armor.Inputs.Select(i => i.Quantity));
             CollectionAssert.AreEqual(new[] { "× 2", "× 1" }, armor.Inputs.Select(i => i.BookQty));
             CollectionAssert.AreEqual(new[] { "×2", "×1" }, armor.Inputs.Select(i => i.CardQty));
-            for (int i = 0; i < core.Count; i++)
+            for (int i = 0; i < 6; i++)
                 CollectionAssert.AreEqual(core[i].Inputs.Select(m => m.Kind + m.Quantity), s.Recipes[i].Inputs.Select(m => m.Kind + m.Quantity), core[i].Id);
 
             // Sabit sözcükler ve kapalı defterin üzerine gelme satırları
@@ -675,7 +685,7 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual("◄ önceki", s.Book.Prev);
             Assert.AreEqual("İŞ EMRİ", s.Book.Tab);
             Assert.AreEqual("TARİF DEFTERİ", s.BookTitle);
-            Assert.AreEqual("6 tarif", s.BookLine);
+            Assert.AreEqual(Loc.F("{0} tarif · {1} kapalı", 6, FacilityGear.Kinds.Length), s.BookLine);
 
             // Denge değişince sayfa değişir (PROMPT §7: kartlar veriden çizilir)
             var heavy = Simulation.NewGame(79, new Balance
@@ -695,7 +705,7 @@ namespace Corrigible.Desk.Tests
                 { "TARİF {0:00}", "RECIPE {0:00}" }, { "KYGA · TARİF DEFTERİ", "KYGA · RECIPE BOOK" }, { "ÇIKTI", "OUTPUT" }, { "GİRDİ", "INPUT" },
                 { "SÜRE", "DURATION" }, { "1 vardiya", "1 shift" }, { "{0} vardiya", "{0} shifts" }, { "zırh yuvası", "armour slot" },
                 { "kit yuvası", "kit slot" }, { "s. {0}", "p. {0}" }, { "AÇILIM {0}/{1}", "SPREAD {0}/{1}" }, { "sonraki ►", "next ►" },
-                { "◄ önceki", "◄ previous" }, { "İŞ EMRİ", "WORK ORDER" }, { "TARİF DEFTERİ", "RECIPE BOOK" }, { "{0} tarif", "{0} recipes" },
+                { "◄ önceki", "◄ previous" }, { "İŞ EMRİ", "WORK ORDER" }, { "TARİF DEFTERİ", "RECIPE BOOK" }, { "{0} tarif", "{0} recipes" }, { "{0} tarif · {1} kapalı", "{0} recipes · {1} locked" },
                 { "→ deneyimli üretici: tek kapanış", "→ experienced maker: one closing" },
             });
             var en = Build(sim, english: true);
@@ -709,11 +719,11 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual("→ experienced maker: one closing", en.Recipes[2].Note);
             Assert.AreEqual("Cloth", en.Recipes[0].Inputs[1].Name);
             Assert.AreEqual("p. 3", en.Recipes[2].PageLabel);
-            Assert.AreEqual("SPREAD 2/3", en.Recipes[2].SpreadLabel);
+            Assert.AreEqual("SPREAD 2/7", en.Recipes[2].SpreadLabel);
             Assert.AreEqual("KYGA · RECIPE BOOK", en.Book.Header);
             Assert.AreEqual("next ►", en.Book.Next);
             Assert.AreEqual("RECIPE BOOK", en.BookTitle);
-            Assert.AreEqual("6 recipes", en.BookLine);
+            Assert.AreEqual("6 recipes · " + FacilityGear.Kinds.Length + " locked", en.BookLine);
         }
 
         // ---------------------------------------------------------------- E14 · iş emri formu

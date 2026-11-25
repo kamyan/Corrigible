@@ -16,7 +16,8 @@ namespace Corrigible.Desk.Tests
     /// </summary>
     public class SiginakShiftTests
     {
-        static Simulation NewLiberation(double fon = 100) => LegacySimulation.NewGame(731, new Balance { shelterEventsEnabled = false, startFon = fon });
+        /// <summary>V.014/K6 tasarım düzeni alarmı vardiyada +1 çizer; tek kip denge turundan (2026-11-22) beri varsayılan 0,5, burada 1 sabit.</summary>
+        static Simulation NewLiberation(double fon = 100) => LegacySimulation.NewGame(731, new Balance { shelterEventsEnabled = false, startFon = fon, liberationAlarmPerShift = 1 });
 
         static string N(double v) => DeskFormat.Number(v, 1);
         static string S(double v) => DeskFormat.Signed(v, 1);
@@ -48,16 +49,17 @@ namespace Corrigible.Desk.Tests
         [Test]
         public void Report_CounterattackDuringShift_IsReportedAndSentToTelex()
         {
-            var sim = NewLiberation();
+            // Anlık karşı saldırı savunma alt bayrağı kapalıyken olur (açıkken eşik kuşatma kurar: FacilityDefenseTextTests)
+            var sim = LegacySimulation.NewGame(731, new Balance { shelterEventsEnabled = false, startFon = 100, facilityDefenseEnabled = false, liberationAlarmPerShift = 1 });
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true, Turns = 4 }).Ok);
+            FacilityDeskKit.ResolveRaid(sim, true);
             sim.S.Alarm = sim.B.liberationAlarmThreshold - sim.B.liberationAlarmPerShift;
             var before = ShiftReportBuilder.Capture(sim);
             sim.Step();
             var input = ShiftReportBuilder.Input(sim, before, ShiftReportBuilder.Ledger(sim), null);
             input.counterCode = "015/03";
             var d = ShiftReportBuilder.Build(input);
-            string lost = Loc.F("{0} · {1:00} {2}", Loc.T("Batı Avrupa"), 1, Loc.T("Teknik depo"));
+            string lost = Loc.F("{0} · {1:00} {2}", "VERITY", 1, Loc.T("Teknik depo"));
             Assert.AreEqual(Loc.F("{0} yeniden işgal altında · sivil güven −{1}", lost, sim.B.liberationCounterattackTrust), d.Counterattack);
             // S5b: raporun başında kutu; alarm gözü eşikte kırmızı, ölçek dolu; alarm notu yok, ekip bölümünde alarm satırı yok
             Assert.AreEqual(Loc.T("YZ KARŞI SALDIRISI"), d.CounterTitle);
@@ -322,7 +324,7 @@ namespace Corrigible.Desk.Tests
             sim.Shelter.Materials = 50;
             Assert.IsTrue(sim.ShelterUpgrade(ShelterLogic.Infirmary).Ok);
             Assert.IsTrue(sim.StartLiberationRaid("weu_1").Ok);
-            Assert.IsTrue(sim.ResolveRaid(new RaidResult { Success = true, Turns = 5 }).Ok);
+            FacilityDeskKit.ResolveRaid(sim, true);
             var ledger = ShiftReportBuilder.Ledger(sim);
             Assert.AreEqual(new[] { "shelter_upgrade", "liberation_raid", "raidres" }, ledger.Select(e => e.kind).ToArray());
             Assert.AreEqual(1, ledger[0].number, "revir 0 → 1: onarım");

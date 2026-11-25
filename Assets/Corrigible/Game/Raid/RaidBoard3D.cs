@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Corrigible.Core;
 using Corrigible.Game.Audio;
@@ -33,8 +34,6 @@ namespace Corrigible.Game.Raid
             /// <summary>İkmal görevinde kasa alındıysa çıkışlar (giriş kareleri) ve malzemeyi taşıyan birim; yoksa boş / −1.</summary>
             public HashSet<int> Exits = new HashSet<int>();
             public int Carrier = -1;
-            /// <summary>Eğitim baskınında sıradaki hedef kare (sarı, nabız gibi atan çift çerçeve); yoksa −1.</summary>
-            public int Guide = -1;
             public List<(int fx, int fy, int tx, int ty)> Arrows = new List<(int, int, int, int)>();
             /// <summary>Sisli kareler (bu turun makine evresinde nişanlı ateş kesilir) ve önizlemede atılacak sis.</summary>
             public HashSet<int> Smoke = new HashSet<int>(), SmokePreview = new HashSet<int>();
@@ -43,6 +42,26 @@ namespace Corrigible.Game.Raid
             /// <summary>Bölge olayının katmanı (<see cref="Baskin.Hazards"/>; yetenek önizlemesinde hamleden sonraki hâli); olay yoksa
             /// null ya da boş.</summary>
             public Baskin.HazardView Hazards;
+            /// <summary>Tesis odasının kâğıt etiketleri (kare anahtarı, yazı: GEÇİT, KAPIDA 2/3, MENFEZ, KEPENK). Örnek tahtada
+            /// (Room null) köprü bunu hiç doldurmaz: boş kalır, etiket kurulmaz.</summary>
+            public List<(int key, string text)> Notes = new List<(int, string)>();
+            /// <summary>Tesis odası (aşama 7): kurulu pusu hatları, kurulduğu kareden hattın son karesine (hat boşsa yönündeki ilk kare:
+            /// kısa saplama); live false: sahibi tahtada değil (ateşlenmez, soluk). Örnek tahtada boş.</summary>
+            public List<(int fx, int fy, int tx, int ty, bool live)> Ambush = new List<(int, int, int, int, bool)>();
+            /// <summary>Tesis odası: yerdeki yükün karesi (y*8+x); yoksa −1.</summary>
+            public int Cargo = -1;
+            /// <summary>Hamle kipinde odak karesi (sürüklenecek gövde, iki kişilik iş; y*8+x); yoksa −1.</summary>
+            public int Focus = -1;
+            /// <summary>Tesis odası (aşama 9): ayaktaki taret ve vinçlerin hatları, kurulduğu kareden hattın son karesine (kind "taret" /
+            /// "vinc"; hit: hattın vuracağı ya da çekeceği ilk kare y*8+x, yoksa −1). Örnek tahtada boş.</summary>
+            public List<(int fx, int fy, int tx, int ty, string kind, int hit)> Devices = new List<(int, int, int, int, string, int)>();
+            /// <summary>Yemlerin bir sonraki evredeki yolu (kare anahtarları, ilk kare yemin karesi). Boş: yem yok.</summary>
+            public List<int[]> DecoyPaths = new List<int[]>();
+            /// <summary>Havlayan köpeklerin erim kareleri (y*8+x): karo boyası.</summary>
+            public HashSet<int> Bark = new HashSet<int>();
+            /// <summary>Uzman olmayan ekip birimlerinin etiket adı (aygıtta kalan tur, köpekte KÖPEK, tutsakta kalan tur); urgent: kırmızı
+            /// mürekkep (tutsağın son turu). Köprü yazar; uzmanda ve örnek tahtada boş (uzmanın etiketinde kişinin adı).</summary>
+            public Dictionary<int, (string text, bool urgent)> Tags = new Dictionary<int, (string, bool)>();
         }
 
         [SerializeField] RaidPieceLibrary lib;
@@ -50,6 +69,8 @@ namespace Corrigible.Game.Raid
         [SerializeField] Transform tilesRoot;
         [SerializeField] Transform piecesRoot;
         [SerializeField] Transform marksRoot;
+        [Tooltip("Pafta kayarken karolar, parçalar ve işaretlerle birlikte kayan sahne nesneleri (tahtanın tabanı; tesis sürüm 10). Dünya uzayında, tahtanın yönünde kayar.")]
+        [SerializeField] Transform[] slideWith;
         [Header("Masa maketi / dünya etiketleri")]
         [SerializeField] Material ghostMaterial;
         [SerializeField] TMP_FontAsset handFont;
@@ -85,9 +106,15 @@ namespace Corrigible.Game.Raid
         [SerializeField, Min(0)] float machineStepHop = 0.1f;
         [Tooltip("Pafta kenarındaki kare harf ve sayılarının boyu.")]
         [SerializeField, Min(0.1f)] float coordinateSize = 2.2f;
+        [Header("Pafta kayması (tesis baskınında oda geçişi)")]
+        [Tooltip("Biten paftanın çıkışı ya da yeni paftanın gelişi (saniye; ölçeksiz zaman).")]
+        [SerializeField, Min(0.05f)] float slideSeconds = 0.45f;
+        [Tooltip("Kaymanın en kısa uzaklığı (tahta birimi, kare = 1); pafta kameranın görüşünden çıkana dek uzar.")]
+        [SerializeField, Min(0)] float slideDistance = 14f;
 
         public event Action<int, int> TileClicked;
         public event Action<(int x, int y)?> HoverChanged;
+        /// <summary>Oynamaya başlayan efekt, tam efekt listesindeki sırası ve tam listenin uzunluğu (bölünmüş evrede de; <see cref="Animate"/>).</summary>
         public event Action<Baskin.Fx, int, int> EffectPlaying;
         public bool Busy { get; private set; }
         public bool InputEnabled { get; set; } = true;
@@ -104,7 +131,7 @@ namespace Corrigible.Game.Raid
 
         /// <summary>
         /// Bina kitini seçer; tek giriş noktası köprüdür (<c>RaidDataSource.OpenState</c>, <see cref="Build"/>'den önce). Harekât baskını
-        /// (MapSeed ≠ 0) bölgesinin kitini, MapSeed 0 (eğitim, örnek baskın) varsayılan kiti alır; <paramref name="force"/>
+        /// (MapSeed ≠ 0) bölgesinin kitini, MapSeed 0 (örnek baskın) varsayılan kiti alır; <paramref name="force"/>
         /// <paramref name="region"/>'ı kit kimliği sayar (editördeki kitOverride: MapSeed 0'da da o kit). Tahta Params okumaz.
         /// </summary>
         public void SetDress(string region, uint mapSeed, bool force = false)
@@ -126,7 +153,10 @@ namespace Corrigible.Game.Raid
         readonly GameObject[] spawnMarks = new GameObject[64];
         readonly GameObject[] modelMoves = new GameObject[64], modelHits = new GameObject[64], modelClones = new GameObject[64];
         public GameObject EntryDoor { get; private set; }
-        /// <summary>Duvar kareleri ve vurgulu kareler (yürüme, hedef, eğitim çerçevesi): tıklamanın hangi kareye düşeceği.</summary>
+        /// <summary>Tesis odasının ileri geçidindeki kapı modeli (girişin kapısıyla aynı parça); örnek tahtada ve ileri geçidi
+        /// olmayan odada (hedef) null.</summary>
+        public GameObject ForwardDoor { get; private set; }
+        /// <summary>Duvar kareleri ve vurgulu kareler (yürüme, hedef): tıklamanın hangi kareye düşeceği.</summary>
         readonly bool[] walls = new bool[64];
         /// <summary>Karo nesneleri ve türleri: Madenci duvarı yıkınca (ya da geri alınınca) karo durumdan yeniden kurulur.</summary>
         readonly GameObject[] tileObjects = new GameObject[64];
@@ -136,6 +166,8 @@ namespace Corrigible.Game.Raid
         readonly GameObject[] smokeClouds = new GameObject[64];
         readonly Dictionary<int, GameObject> breaches = new Dictionary<int, GameObject>();
         readonly List<RaidWorldLabel> smokeLabels = new List<RaidWorldLabel>();
+        /// <summary>Tesis odasının kâğıt etiketleri (<see cref="Marks.Notes"/>): tembel havuz, artan gizlenir.</summary>
+        readonly List<RaidWorldLabel> noteLabels = new List<RaidWorldLabel>();
         /// <summary>Bölge olayının katmanı (<see cref="SyncHazards"/>): tembel havuzlar; her Sync baştan dağıtır, artanı gizler.</summary>
         readonly List<Renderer> hazardFills = new List<Renderer>();
         readonly List<RaidArrow> hazardMarks = new List<RaidArrow>(), hazardStrokes = new List<RaidArrow>();
@@ -146,7 +178,6 @@ namespace Corrigible.Game.Raid
         readonly List<(string kind, int key, GameObject go)> hazardShown = new List<(string, int, GameObject)>();
         int hazardFillsUsed, hazardMarksUsed, hazardStrokesUsed, hazardLabelsUsed;
         readonly HashSet<int> pickable = new HashSet<int>();
-        int guideKey = -1;
         readonly RaycastHit[] hits = new RaycastHit[16];
         static readonly Comparer<RaycastHit> ByDistance = Comparer<RaycastHit>.Create((a, b) => a.distance.CompareTo(b.distance));
         readonly RaidArrow[] moveFrames = new RaidArrow[64], dangerFrames = new RaidArrow[64], repairFrames = new RaidArrow[64];
@@ -163,13 +194,28 @@ namespace Corrigible.Game.Raid
         readonly List<Mesh> effectMeshes = new List<Mesh>();
         readonly Dictionary<int, Baskin.IntentView> shownIntents = new Dictionary<int, Baskin.IntentView>();
         readonly Dictionary<int, RaidArrow> intentArrowByUnit = new Dictionary<int, RaidArrow>();
-        RaidArrow selectionFrame, guideFrame;
+        RaidArrow selectionFrame;
         Renderer selectionFill;
         RaidArrow activeIntentHighlight;
         GameObject hoverFrame;
         readonly List<RaidArrow> arrows = new List<RaidArrow>();
         readonly List<RaidArrow> previewArrows = new List<RaidArrow>();
         readonly List<GameObject> ghosts = new List<GameObject>();
+        // ---------- Tesis hamleleri (aşama 7): pusu hatları, yerdeki yük, odak çerçevesi, hamle önizlemesinin çizgileri ve hayaletleri.
+        // Örnek tahtada Marks'ın bu alanları boş: havuzlar hiç kurulmaz, odak gizli kalır.
+        readonly List<RaidArrow> ambushLines = new List<RaidArrow>();
+        readonly List<RaidArrow> previewStrokes = new List<RaidArrow>();
+        readonly List<GameObject> previewGhosts = new List<GameObject>();
+        int previewStrokesUsed;
+        GameObject cargoPiece, focusFrame;
+        // ---------- Tesis ekipmanı (aşama 9): aygıt hatları, yem yolları, havlama erimi ve önizlemenin erimi; karo süsleri (kepenk,
+        // sandık nişi, tutuş krikosu). Örnek tahtada alanlar boş, süs hücresi yok: havuzlar hiç kurulmaz.
+        readonly List<RaidArrow> deviceLines = new List<RaidArrow>(), decoyLines = new List<RaidArrow>();
+        readonly Renderer[] barkFills = new Renderer[64], previewAreaFills = new Renderer[64];
+        /// <summary>Karo süsleri: kare anahtarı → (tür, nesne). Tür değişince yeniden kurulur, karo kalkınca silinir.</summary>
+        readonly Dictionary<int, (string kind, GameObject go)> decor = new Dictionary<int, (string, GameObject)>();
+        /// <summary>Tutsak yönüne çevrilmiş makine parçaları (bırakılınca makine yönüne döner).</summary>
+        readonly HashSet<int> capturedYaw = new HashSet<int>();
         MaterialPropertyBlock mpb;
         (int x, int y)? hover;
         int buildVersion;
@@ -191,16 +237,23 @@ namespace Corrigible.Game.Raid
         public void Build(Baskin.BState B)
         {
             buildVersion++;
+            // Pafta çevrilirken (kökler dönük) kurulan parçalar dünya konumuyla yerleşir: önce kökler dinlenme pozuna döner.
+            // Örnek tahtada kökler hiç dönmez; bu çağrı dinlenme pozunu yeniden yazar, hiçbir şeyi değiştirmez.
+            ResetPagePose();
             StopAllCoroutines(); Busy = false; hover = null;
             ReleaseEffectMeshes();
             mpb ??= new MaterialPropertyBlock();
             Clear(tilesRoot); Clear(piecesRoot); Clear(marksRoot);
             units.Clear(); objects.Clear(); rubble.Clear(); arrows.Clear(); previewArrows.Clear(); ghosts.Clear(); labelGroups.Clear();
             hpLabels.Clear(); orderLabels.Clear(); stateLabels.Clear(); paperLabels.Clear(); shownIntents.Clear(); intentArrowByUnit.Clear(); flagPins.Clear(); downMarks.Clear();
-            arrowShadows.Clear(); extraArrows.Clear(); woke.Clear(); wokeStamped.Clear(); foreach (var b in badgeLabels) if (b != null) Destroy(b.gameObject); badgeLabels.Clear();
-            breaches.Clear(); foreach (var l in smokeLabels) if (l != null) Destroy(l.gameObject); smokeLabels.Clear(); Array.Clear(smokeClouds, 0, 64);
-            hazardFills.Clear(); hazardMarks.Clear(); hazardStrokes.Clear(); hazardPulse.Clear(); hazardShown.Clear();
-            foreach (var l in hazardLabels) if (l != null) Destroy(l.gameObject); hazardLabels.Clear();
+            arrowShadows.Clear(); extraArrows.Clear(); woke.Clear(); wokeStamped.Clear(); foreach (var b in badgeLabels) if (b != null) Kill(b.gameObject); badgeLabels.Clear();
+            breaches.Clear(); foreach (var l in smokeLabels) if (l != null) Kill(l.gameObject); smokeLabels.Clear(); Array.Clear(smokeClouds, 0, 64);
+            foreach (var l in noteLabels) if (l != null) Kill(l.gameObject); noteLabels.Clear();
+            // Tesis hamlelerinin havuzları marksRoot ve piecesRoot altında: kökler temizlendi, başvurular da sıfırlanır
+            ambushLines.Clear(); previewStrokes.Clear(); previewGhosts.Clear(); previewStrokesUsed = 0; cargoPiece = null; movePathArrow = null; movePathShown.Clear();
+            deviceLines.Clear(); decoyLines.Clear(); Array.Clear(barkFills, 0, 64); Array.Clear(previewAreaFills, 0, 64); decor.Clear(); capturedYaw.Clear();
+            hazardFills.Clear(); hazardMarks.Clear(); hazardStrokes.Clear(); hazardPulse.Clear(); hazardShown.Clear(); holdPiece = null;
+            foreach (var l in hazardLabels) if (l != null) Kill(l.gameObject); hazardLabels.Clear();
             for (int y = 0; y < Baskin.N; y++)
             for (int x = 0; x < Baskin.N; x++)
             {
@@ -236,25 +289,33 @@ namespace Corrigible.Game.Raid
                 modelHits[k] = ModelMark(lib.hitMarker,x,y,.028f);
                 modelClones[k] = ModelMark(lib.cloneMarker,x,y,.04f);
             }
+            // Kapı modelleri geçidin kenarında, tahtaya bakar (tesis sürüm 10: oda döndürülebilir, giriş her kenarda olabilir; geçit ile
+            // sonraki odanın girişi simetrik). Kenar karelerden; FromToRotation zıt vektörde ters dönebileceği için açık yaw tablosu.
             EntryDoor = null;
-            if (Kit != null && Kit.entryDoor != null && B.Exits.Count > 0)
+            builtGates = new List<IReadOnlyList<Baskin.Pt>> { new List<Baskin.Pt>(B.Exits) };
+            if (B.Room != null) builtGates.Add(B.Room.Forward);
+            if (Kit != null && Kit.entryDoor != null && B.Exits.Count > 0 && DoorPose(B.Exits) is (Vector3 entryAt, float entryYaw))
+                EntryDoor = Instantiate(Kit.entryDoor, entryAt, Quaternion.Euler(0, entryYaw, 0), piecesRoot);
+            ForwardDoor = null;
+            // Tesis odasının ileri geçidi (yalnız Room != null; örnek tahtada hiç kurulmaz): girişin kapı modeli
+            if (B.Room != null && B.Room.Forward.Count > 0 && Kit != null && Kit.entryDoor != null && DoorPose(B.Room.Forward) is (Vector3 at, float yaw))
             {
-                float row = (float)B.Exits.Average(p=>p.Y);
-                EntryDoor = Instantiate(Kit.entryDoor,W(B.Exits.Min(p=>p.X)-.65f,row),Quaternion.identity,piecesRoot);
+                ForwardDoor = Instantiate(Kit.entryDoor, at, Quaternion.Euler(0, yaw, 0), piecesRoot);
+                ForwardDoor.name = "Forward door";
             }
             // Karo giydirme bütün karolar kurulduktan sonra: maske komşulara bakar (durumdan; lastState ilk kurulumda yok)
             for (int k = 0; k < 64; k++) SkinTile(B, k);
             hoverFrame = Frame("Hover", Vector3.zero, lib.hover, 0.94f, PixelWorld * 1.8f);
             hoverFrame.SetActive(false);
+            // Hamle kipinin odak çerçevesi (aşama 7): grafit, hedef çerçevesinden küçük; yalnız Marks.Focus verilince görünür
+            focusFrame = Frame("Action focus", Vector3.zero, graphiteColor, 0.86f, PixelWorld * 2);
+            focusFrame.SetActive(false);
             // raid.js frameTex('#1A4789', 10, 4): dış 0,873 kalın, iç 0,72 ince, α .10 dolgu
             selectionFrame = Mark("Selected double frame", Vector3.zero, 0.04f);
             selectionFrame.SetDoubleFrame(0.873f, 0.0383f, 0.72f, 0.0153f, Alpha(verifiedColor, 0.95f));
             selectionFill = Flat("Selected fill", Vector3.zero, 0.873f, lib.highlight).GetComponent<Renderer>();
             SetColor(selectionFill, Alpha(verifiedColor, 0.10f));
             selectionFill.enabled = false;
-            guideFrame = Mark("Tutorial guide frame", Vector3.zero, 0.05f, true);
-            guideFrame.SetFrame(0.97f, PixelWorld * 5, highlighterColor, false, true);
-            guideFrame.gameObject.SetActive(false);
             activeIntentHighlight = NewArrow("Current intent highlighter");
             activeIntentHighlight.gameObject.SetActive(false);
             BuildCoordinates();
@@ -269,6 +330,11 @@ namespace Corrigible.Game.Raid
 
         /// <summary>Paftadaki kare adı: sütun harfi ve satır sayısı ("C3"). Telsizde kareler bu adla anılır.</summary>
         public static string CellName(int x, int y) => Column(x) + Row(y);
+        /// <summary>
+        /// Tesis odasındaki kare adı: pafta numarası önekiyle ("2-C3"; telsizde üç paftanın kareleri karışmasın). <paramref name="room"/>
+        /// ≤ 0 (örnek tahta, Room null) öneksiz <see cref="CellName(int,int)"/> ile aynıdır.
+        /// </summary>
+        public static string CellName(int room, int x, int y) => room <= 0 ? CellName(x, y) : room.ToString(CultureInfo.InvariantCulture) + "-" + CellName(x, y);
         static string Column(int x) => ((char)('A' + x)).ToString();
         static string Row(int y) => (Baskin.N - y).ToString();
 
@@ -304,28 +370,170 @@ namespace Corrigible.Game.Raid
             label.rectTransform.sizeDelta = new Vector2(0.4f, 0.3f);
         }
 
+        // Oynarken Destroy; düzenleme modunda (EditMode testleri tahtayı birden çok kez kurar: tesis odaları, kapıya giren uzman)
+        // DestroyImmediate. Oyundaki davranış aynı.
+        static void Kill(UnityEngine.Object o) { if (Application.isPlaying) Destroy(o); else DestroyImmediate(o); }
+
         static void Clear(Transform t)
         {
             for (int i = t.childCount - 1; i >= 0; i--)
             {
                 var go = t.GetChild(i).gameObject;
-                go.SetActive(false); Destroy(go);
+                go.SetActive(false); Kill(go);
             }
         }
 
         void ReleaseEffectMeshes()
         {
-            foreach (var mesh in effectMeshes) if (mesh != null) Destroy(mesh);
+            foreach (var mesh in effectMeshes) if (mesh != null) Kill(mesh);
             effectMeshes.Clear();
         }
 
-        void OnDisable() { buildVersion++; StopAllCoroutines(); Busy = false; }
+        void OnDisable() { buildVersion++; StopAllCoroutines(); Busy = false; ResetPagePose(); }
+
+        // ------------------------------------------------------------------ pafta kayması (tesis baskını)
+        /// <summary>Pafta kayıyor (çıkıyor ya da geliyor): köprü etiketleri gizler. Örnek tahtada hep false.</summary>
+        public bool Turning { get; private set; }
+        Vector3[] pageRestPositions; Quaternion[] pageRestRotations;
+        /// <summary>Tahtayla kayan sahne nesnelerinin dinlenme pozu (dünya; ilk <see cref="SetPagePose"/>'ta okunur).</summary>
+        Vector3[] slideRestPositions;
+        Transform[] PageRoots => new[] { tilesRoot, piecesRoot, marksRoot };
+        /// <summary>Kaymanın o anki kayması (tahta yerel uzayında; dinlenmede sıfır). Testler okur.</summary>
+        public Vector3 PageOffset { get; private set; }
+
+        /// <summary>Kenardaki geçidin kapı modelinin yeri ve yaw'ı (batı 0, doğu 180, kuzey 90, güney 270); kenarda değilse null.</summary>
+        static (Vector3 at, float yaw)? DoorPose(IReadOnlyList<Baskin.Pt> gate)
+        {
+            if (gate == null || gate.Count == 0) return null;
+            float midX = (float)gate.Average(p => p.X), midY = (float)gate.Average(p => p.Y);
+            if (gate.All(g => g.X == 0)) return (W(-.65f, midY), 0f);
+            if (gate.All(g => g.X == Baskin.N - 1)) return (W(Baskin.N - 1 + .65f, midY), 180f);
+            if (gate.All(g => g.Y == 0)) return (W(midX, -.65f), 90f);
+            if (gate.All(g => g.Y == Baskin.N - 1)) return (W(midX, Baskin.N - 1 + .65f), 270f);
+            return null;
+        }
+
+        /// <summary>
+        /// Geçidin yönü, tahta yerel uzayında: doğu sütunu +x, batı sütunu −x, kuzey satırı (y = 0) +z, güney satırı −z; geçit yoksa
+        /// sıfır. Oda geçişinde biten pafta bunun tersine gider, yeni pafta bu yönden gelir.
+        /// </summary>
+        public static Vector3 GateDirection(IReadOnlyList<Baskin.Pt> gate)
+        {
+            if (gate == null || gate.Count == 0) return Vector3.zero;
+            if (gate.All(g => g.X == Baskin.N - 1)) return Vector3.right;
+            if (gate.All(g => g.X == 0)) return Vector3.left;
+            if (gate.All(g => g.Y == 0)) return Vector3.forward;
+            if (gate.All(g => g.Y == Baskin.N - 1)) return Vector3.back;
+            return Vector3.zero;
+        }
+
+        /// <summary>Karolar, parçalar ve işaretler dinlenme pozundan <paramref name="offset"/> kadar kaymış (sıfır: dinlenme pozu).
+        /// Dinlenme pozu ilk çağrıda okunur (sahnede kökler birim pozdadır).</summary>
+        void SetPagePose(Vector3 offset)
+        {
+            var roots = PageRoots;
+            if (pageRestPositions == null)
+            {
+                pageRestPositions = new Vector3[roots.Length]; pageRestRotations = new Quaternion[roots.Length];
+                for (int i = 0; i < roots.Length; i++)
+                    if (roots[i] != null) { pageRestPositions[i] = roots[i].localPosition; pageRestRotations[i] = roots[i].localRotation; }
+                    else pageRestRotations[i] = Quaternion.identity;
+            }
+            PageOffset = offset;
+            for (int i = 0; i < roots.Length; i++)
+                if (roots[i] != null) roots[i].SetLocalPositionAndRotation(pageRestPositions[i] + offset, pageRestRotations[i]);
+            // Tahtanın tabanı da üstündekilerle birlikte gider ve gelir (geliştirici, 2026-11-24)
+            if (slideWith == null) return;
+            if (slideRestPositions == null || slideRestPositions.Length != slideWith.Length)
+            {
+                slideRestPositions = new Vector3[slideWith.Length];
+                for (int i = 0; i < slideWith.Length; i++) if (slideWith[i] != null) slideRestPositions[i] = slideWith[i].position;
+            }
+            var world = transform.TransformVector(offset);
+            for (int i = 0; i < slideWith.Length; i++)
+                if (slideWith[i] != null) slideWith[i].position = slideRestPositions[i] + world;
+        }
+
+        /// <summary>Tahtayla kayan sahne nesneleri (testler).</summary>
+        public IReadOnlyList<Transform> SlideWith => slideWith ?? System.Array.Empty<Transform>();
+
+        /// <summary>Kökler dinlenme pozunda, kayma bitti (Build ve OnDisable da çağırır; yarıda kalan kayma tahtayı kaymış bırakmaz).</summary>
+        public void ResetPagePose() { SetPagePose(Vector3.zero); Turning = false; }
+
+        /// <summary>
+        /// Kaymanın uzaklığı (<paramref name="dir"/> yönünde, tahta birimi): ayardaki değerden başlayarak paftanın ve tabanının sınırları
+        /// (kapılar ve taban dahil, ±5,5 kare, yükseklik −0,3–1,5) kameranın görüşünden tümüyle çıkana dek büyür. Kamera eğik ve 45° dönük olduğu için bir eksen boyunca
+        /// kayma ekranda daha kısa görünür; uzaklık bu yüzden kameradan hesaplanır.
+        /// </summary>
+        float SlideDistance(Vector3 dir)
+        {
+            float d = Mathf.Max(1f, slideDistance);
+            if (cam == null) return d;
+            for (int guard = 0; guard < 60 && Visible(dir * d); guard++) d += 1f;
+            return d;
+        }
+
+        bool Visible(Vector3 offset)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                var local = new Vector3((i & 1) == 0 ? -5.5f : 5.5f, (i & 2) == 0 ? -0.3f : 1.5f, (i & 4) == 0 ? -5.5f : 5.5f) + offset;
+                var v = cam.WorldToViewportPoint(transform.TransformPoint(local));
+                if (v.z > 0 && v.x > -0.02f && v.x < 1.02f && v.y > -0.02f && v.y < 1.02f) return true;
+            }
+            // Köşeler dışarıda ama pafta görüşü kaplıyor olabilir: merkez de dışarıda olmalı
+            var c = cam.WorldToViewportPoint(transform.TransformPoint(offset));
+            return c.z > 0 && c.x > 0 && c.x < 1 && c.y > 0 && c.y < 1;
+        }
+
+        /// <summary>
+        /// Biten oda paftası <paramref name="gateDir"/>'in tersine kayarak çıkar (tesis baskınında oda geçişi; yalnız köprünün oda
+        /// zinciri çağırır, örnek tahtada hiç çalışmaz). Girdi kilitli kalır (Busy true): sıradaki <see cref="Build"/> sıfırlar,
+        /// ardından <see cref="PageIn"/> yeni paftayı geçidin yönünden getirir. Yön sıfırsa batıya kayar.
+        /// </summary>
+        public IEnumerator PageOut(Vector3 gateDir)
+        {
+            int version = buildVersion;
+            Busy = Turning = true;
+            LabelsHidden = true;
+            if (hoverFrame != null) hoverFrame.SetActive(false);
+            ClearPreview();
+            var back = -(gateDir == Vector3.zero ? Vector3.right : gateDir.normalized);
+            var to = back * SlideDistance(back);
+            for (float t = 0; t < 1; t += Time.unscaledDeltaTime / slideSeconds)
+            {
+                if (version != buildVersion) yield break;
+                SetPagePose(to * (t * t));
+                yield return null;
+            }
+            if (version != buildVersion) yield break;
+            SetPagePose(to);
+        }
+
+        /// <summary>Yeni oda paftası (Build'den hemen sonra) <paramref name="gateDir"/> yönünden kayarak gelir; bitince girdi açılır.</summary>
+        public IEnumerator PageIn(Vector3 gateDir)
+        {
+            int version = buildVersion;
+            Busy = Turning = true;
+            var dir = gateDir == Vector3.zero ? Vector3.right : gateDir.normalized;
+            var from = dir * SlideDistance(dir);
+            SetPagePose(from);
+            for (float t = 0; t < 1; t += Time.unscaledDeltaTime / slideSeconds)
+            {
+                if (version != buildVersion) yield break;
+                SetPagePose(from * (1 - Ease(t)));
+                yield return null;
+            }
+            if (version != buildVersion) yield break;
+            ResetPagePose();
+            Busy = false;
+        }
         void OnDestroy() { ReleaseEffectMeshes(); }
 
         GameObject Flat(string name, Vector3 pos, float size, Material mat)
         {
             var go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            Destroy(go.GetComponent<Collider>());
+            Kill(go.GetComponent<Collider>());
             go.name = name;
             go.transform.SetParent(marksRoot, false);
             go.transform.SetPositionAndRotation(pos, Quaternion.Euler(90, 0, 0));
@@ -343,7 +551,7 @@ namespace Corrigible.Game.Raid
             return mark.gameObject;
         }
 
-        /// <summary>Karo işareti: parçalar örter (<c>lib.tileMarks</c>); <paramref name="onTop"/> eğitim çerçevesi gibi her zaman üstte.</summary>
+        /// <summary>Karo işareti: parçalar örter (<c>lib.tileMarks</c>); <paramref name="onTop"/> her zaman üstte.</summary>
         RaidArrow Mark(string name, Vector3 position, float height, bool onTop = false)
         {
             var mark = NewArrow(name, onTop ? null : lib.tileMarks);
@@ -402,7 +610,7 @@ namespace Corrigible.Game.Raid
             }
             if (rebuilt != null) foreach (var k in rebuilt) SkinAround(B, k);
             var broken = new HashSet<int>(B.Rubble.Select(p => Key(p.X, p.Y)));
-            foreach (var k in breaches.Keys.Where(k => !broken.Contains(k) || walls[k]).ToList()) { if (breaches[k] != null) Destroy(breaches[k]); breaches.Remove(k); }
+            foreach (var k in breaches.Keys.Where(k => !broken.Contains(k) || walls[k]).ToList()) { if (breaches[k] != null) Kill(breaches[k]); breaches.Remove(k); }
             // Gedik molozu kitin malzemesinden (alçak, karenin içinde, süs); kitin molozu yoksa kırık dolap enkazı basık
             var breachRubble = lib.BreachRubble(Kit, out var breachScale);
             foreach (var k in broken)
@@ -410,7 +618,7 @@ namespace Corrigible.Game.Raid
                 {
                     var debris = Instantiate(breachRubble, W(k % Baskin.N, k / Baskin.N), Quaternion.Euler(0, lib.BreachRubbleYaw(Kit,k), 0), piecesRoot);
                     debris.name = "Breach rubble"; debris.transform.localScale = breachScale;
-                    foreach (var col in debris.GetComponentsInChildren<Collider>()) Destroy(col);
+                    foreach (var col in debris.GetComponentsInChildren<Collider>()) Kill(col);
                     breaches[k] = debris;
                 }
             // Sis bulutları: canlı sis koyu, önizlemedeki sis soluk
@@ -428,6 +636,18 @@ namespace Corrigible.Game.Raid
                 labelGroups.Add(new[] { tag });
             }
             for (int i = smokeLabelsUsed; i < smokeLabels.Count; i++) smokeLabels[i].gameObject.SetActive(false);
+            // Tesis odasının kâğıt etiketleri (geçit, kapıdakiler, menfez, kepenk): örnek tahtada Notes boş, havuz hiç kurulmaz
+            int notesUsed = 0;
+            foreach (var (key, text) in m.Notes)
+            {
+                if (key < 0 || key >= 64 || string.IsNullOrEmpty(text)) continue;
+                if (notesUsed == noteLabels.Count) noteLabels.Add(NewPaperLabel("Note tag", 14));
+                var note = noteLabels[notesUsed++];
+                note.SetAnchor(W(key % Baskin.N, key / Baskin.N) + Vector3.up * (walls[key] ? WallTop + 0.75f : 0.75f));
+                note.Show(text, graphiteColor, graphiteColor);
+                labelGroups.Add(new[] { note });
+            }
+            for (int i = notesUsed; i < noteLabels.Count; i++) noteLabels[i].gameObject.SetActive(false);
             // Dolaplar ve enkaz; yağma görevinin hedefi ikmal sandığı (açılınca açık sandık kalır, kırılırsa enkaz)
             bool loot = Baskin.IsLoot(B);
             for (int y = 0; y < Baskin.N; y++)
@@ -440,7 +660,7 @@ namespace Corrigible.Game.Raid
                 {
                     if (piece == null || piece.Kind != o.K)
                     {
-                        if (piece != null) Destroy(piece.gameObject);
+                        if (piece != null) Kill(piece.gameObject);
                         piece = NewObjectPiece(o.K, x, y, loot);
                         piece.Kind = o.K; piece.X = x; piece.Y = y; piece.name = $"{o.K} {x},{y}";
                         objects[k] = piece;
@@ -458,20 +678,23 @@ namespace Corrigible.Game.Raid
                         // İkmal sandığı tehdit değil, açılacak şey: etiketi koyu mürekkep; EMP ona da işlemez (zırh işareti kalır)
                         bool crate = loot && Baskin.IsTarget(o.K) && lib.lootCrate != null;
                         var ink = crate ? graphiteColor : Baskin.IsTarget(o.K) || o.K == "spawner" ? lib.threat : graphiteColor;
-                        if (screenLabelPrefab != null) tag.ShowHealth(o.Hp, o.Max, ink, Baskin.IsTarget(o.K), o.K == "node" || o.K == "core", null, crate ? graphiteColor : lib.threat);
-                        else tag.Show(Loc.F("{0}/{1}", o.Hp, o.Max), ink, ink);
+                        // Tesis donanımı (pano, anten, vana; yalnız tesis odalarında) etiketinde adını taşır; öbür nesnelerde null
+                        string device = Baskin.IsDevice(o.K) ? DeviceTag(o.K) : o.K == Baskin.RelayKind ? Loc.T("RÖLE") : null;
+                        if (screenLabelPrefab != null) tag.ShowHealth(o.Hp, o.Max, ink, Baskin.IsTarget(o.K), o.K == "node" || o.K == "core", null, crate ? graphiteColor : lib.threat, device);
+                        else tag.Show(device == null ? Loc.F("{0}/{1}", o.Hp, o.Max) : Loc.F("{0} {1}/{2}", device, o.Hp, o.Max), ink, ink);
                         labelGroups.Add(new[] { tag });
                     }
-                    if (rubble.TryGetValue(k, out var rb)) { Destroy(rb); rubble.Remove(k); }
+                    if (rubble.TryGetValue(k, out var rb)) { Kill(rb); rubble.Remove(k); }
                 }
                 else if (piece != null)
                 {
-                    Destroy(piece.gameObject); objects.Remove(k);
+                    Kill(piece.gameObject); objects.Remove(k);
                     // Açılan ikmal sandığı (Teknisyen aldı) açık sandık olarak kalır; uçan (ya da çarpılıp kırılan) basınçlı tüp yerinde
                     // enkaz bırakmaz; kırılan tavan enkazı zaten molozdu, dağılır (yerine dolap enkazı konmaz)
-                    if (loot && B.Carrier != 0 && Baskin.IsTarget(piece.Kind) && lib.lootCrateOpen != null && !rubble.ContainsKey(k))
+                    if (loot && (B.Carrier != 0 || B.CargoX >= 0) && Baskin.IsTarget(piece.Kind) && lib.lootCrateOpen != null && !rubble.ContainsKey(k))
                         rubble[k] = Instantiate(lib.lootCrateOpen, W(x, y), Quaternion.identity, piecesRoot);
-                    else if (piece.Kind != "tup" && piece.Kind != "enkaz" && lib.rubble != null && !rubble.ContainsKey(k))
+                    // Tesis aşama 9: kırılan engel (tel, kalas, hurda) yok olur; yerine dolap enkazı konmaz
+                    else if (piece.Kind != "tup" && piece.Kind != "enkaz" && !Baskin.IsBarrier(piece.Kind) && lib.rubble != null && !rubble.ContainsKey(k))
                         rubble[k] = Instantiate(lib.rubble, W(x, y), Quaternion.Euler(0, (x * 37 + y * 53) % 360, 0), piecesRoot);
                 }
                 else if (m.Rubble.Contains(k) && lib.rubble != null && !rubble.ContainsKey(k))
@@ -482,15 +705,20 @@ namespace Corrigible.Game.Raid
             foreach (var u in B.Units)
             {
                 // Düşen ekip kartları yerinde kalır; Core.UnitAt onları yürüyüş ve atıştan zaten çıkarır. Kaçışta tahliye
-                // edilen uzman tahtadan kalkar.
-                if (u.Out || (u.Dead && u.Side != 'p')) continue;
+                // edilen uzman tahtadan kalkar; tesis odasında kapıya giren de (AtGate yalnız Room != null iken kurulur; geri
+                // alınınca parça yeniden kurulur). Son nefes (Unit.Breath; oda biterken ekiple giden gövde, yalnız tesiste) de kalkar.
+                // Tesis aşama 9: düşen köpek, kırılan aygıt ve düşen tutsak da kalkar (yalnız uzmanın gövdesi yatar; örnek tahtada aynı)
+                // Tesis aşama 12: Katar'ın kenarından düşen ekip üyesi (Overboard) tahtada yatmaz (gövde değil); geri alınınca parça yeniden kurulur
+                // Tesis sürüm 10: süre dolarken kapıya varamayıp geri çekilen uzman (Withdrew) da kalkar
+                if (u.Out || u.AtGate || u.Breath || u.Overboard || u.Withdrew || (u.Dead && !Baskin.IsSpecialist(u))) continue;
                 alive.Add(u.Id);
                 if (!units.TryGetValue(u.Id, out var p) || p == null)
                 {
-                    p = Instantiate(lib.Unit(u.Type), W(u.X, u.Y), Quaternion.Euler(0, u.Side == 'p' ? 45 : -135, 0), piecesRoot);
-                    p.Kind = u.Type; p.name = $"{u.Type} #{u.Id}";
+                    p = NewUnitPiece(u);
                     units[u.Id] = p;
                 }
+                // Tesis aşama 9: aygıtın yönü (Dir) ve tutsağın ekip yönü her eşitlemede (kurulumdan sonra değişebilir)
+                FaceUnit(u, p);
                 // Yük asansörünün kabinindeki birim tahtada değil: parçası havuzda gizli bekler (kabin inince yeniden görünür),
                 // etiketleri yukarıda zaten gizlendi
                 if (u.Cab) { p.gameObject.SetActive(false); continue; }
@@ -507,12 +735,15 @@ namespace Corrigible.Game.Raid
                 var hpTag = PieceLabel(hpLabels, u.Id, "Unit HP");
                 // Revizyon 2 · S6: uzmanın ve robotun etiketi altlığın önünde (u − 0,24, v + 0,24); robotta tür işareti + zırh
                 hpTag.SetAnchor(W(u.X, u.Y) + new Vector3(-0.24f, 0.02f, -0.24f));
-                var hpInk = u.Side == 'e' || u.Dead ? lib.threat : graphiteColor;
+                // Tesis aşama 9: uzman olmayan ekip biriminin etiketi köprünün adıyla (aygıtta kalan tur, tutsakta kalan tur; son turda
+                // kırmızı); tutsak makinenin tür işaretini korur
+                bool tagged = m.Tags.TryGetValue(u.Id, out var unitTag) && !string.IsNullOrEmpty(unitTag.text);
+                var hpInk = u.Side == 'e' || u.Dead || tagged && unitTag.urgent ? lib.threat : graphiteColor;
                 if (screenLabelPrefab != null)
                 {
                     hpTag.SetPaperColor(m.Spent.Contains(u.Id) ? spentPaperColor : paperColor);
-                    hpTag.ShowHealth(u.Dead ? 0 : u.Hp, u.Max, hpInk, false, !u.Dead && u.Armor > 0, u.Side == 'e' ? lib.Glyph(u.Type) : null, lib.threat,
-                        u.Side == 'p' ? u.PersonName : null);
+                    hpTag.ShowHealth(u.Dead ? 0 : u.Hp, u.Max, hpInk, false, !u.Dead && u.Armor > 0, u.Side == 'e' || Baskin.IsCaptive(u) ? lib.Glyph(u.Type) : null, lib.threat,
+                        tagged ? unitTag.text : u.Side == 'p' ? u.PersonName : null);
                 }
                 else hpTag.Show(Loc.F("{0} {1}/{2}", letter, u.Dead ? 0 : u.Hp, u.Max), hpInk, hpInk);
                 bool justWoke = u.Side == 'e' && !u.Dead && woke.TryGetValue(u.Id, out int wokeTurn) && B.Turn == wokeTurn;
@@ -522,7 +753,8 @@ namespace Corrigible.Game.Raid
                     // UYANDI: robotun tepesinde, sıra bayrağının hemen altında kırmızı kenarlı kâğıt; bayrakla birlikte yerleşir
                     wokeLabel = PieceLabel(stateLabels, u.Id, "Unit state", 14);
                     wokeLabel.SetAnchor(W(u.X, u.Y) + Vector3.up * p.VisualHeight + cam.transform.up * (PixelWorld * 22));
-                    wokeLabel.Show(Loc.T("UYANDI"), lib.threat, lib.threat);
+                    // Tesis aşama 11: savunmada makine uyanmaz, dalgayla ya da terk edilen odadan gelir: GELDİ
+                    wokeLabel.Show(Baskin.IsDefense(B) ? Loc.T("GELDİ") : Loc.T("UYANDI"), lib.threat, lib.threat);
                     if (wokeStamped.Add(u.Id)) wokeLabel.Stamp(wakeStampSeconds);
                     labelGroups.Add(new[] { hpTag });
                 }
@@ -559,7 +791,7 @@ namespace Corrigible.Game.Raid
                 }
                 else if (wokeLabel != null) labelGroups.Add(new[] { wokeLabel });
             }
-            foreach (var id in units.Keys.Where(id => !alive.Contains(id)).ToList()) { if (units[id] != null) Destroy(units[id].gameObject); units.Remove(id); }
+            foreach (var id in units.Keys.Where(id => !alive.Contains(id)).ToList()) { if (units[id] != null) Kill(units[id].gameObject); units.Remove(id); }
 
             // Karo vurguları
             for (int k = 0; k < 64; k++)
@@ -604,10 +836,6 @@ namespace Corrigible.Game.Raid
                 selectionFill.transform.position = W(selected.X, selected.Y) + Vector3.up * 0.021f;
             }
             pickable.Clear(); pickable.UnionWith(m.Moves); pickable.UnionWith(m.Targets);
-            if (m.Guide >= 0) pickable.Add(m.Guide);
-            guideKey = m.Guide;
-            guideFrame.gameObject.SetActive(m.Guide >= 0);
-            if (m.Guide >= 0) guideFrame.transform.position = W(m.Guide % Baskin.N, m.Guide / Baskin.N) + Vector3.up * 0.06f;
             // Niyet okları (Revizyon 2 · S9-C/C2): türe göre kalınlık, yay ve rozet; gölge (1,5; 2) α .28; her zaman üstte
             int shadowsUsed = 0, extrasUsed = 0, badgesUsed = 0;
             foreach (var badge in badgeLabels) badge.gameObject.SetActive(false);
@@ -645,9 +873,284 @@ namespace Corrigible.Game.Raid
             for (int i = m.Arrows.Count; i < arrows.Count; i++) arrows[i].gameObject.SetActive(false);
             for (int i = shadowsUsed; i < arrowShadows.Count; i++) arrowShadows[i].gameObject.SetActive(false);
             for (int i = extrasUsed; i < extraArrows.Count; i++) extraArrows[i].gameObject.SetActive(false);
+            SyncFacility(m);
+            SyncGear(B, m);
             // Olay katmanı en son: etiketleri birimlerin ve dolapların etiketlerine yol verir
             SyncHazards(B, m.Hazards);
             LayoutLabels();
+        }
+
+        // ------------------------------------------------------------------ tesis hamleleri (aşama 7)
+        /// <summary>
+        /// Tesis odasının durum işaretleri (<see cref="Marks.Ambush"/>, <see cref="Marks.Cargo"/>, <see cref="Marks.Focus"/>): pusu hatları
+        /// yeşil mürekkep kesik kalem (oksuz; sahibi tahtada değilse soluk), yerdeki yük küçük bir sandık parçası (karenin köşesinde; ayakta
+        /// birimle üst üste binmez), odak grafit çerçeve. Hat makine evresi boyunca kalır (evrede Sync yok); Core sildikten sonraki Sync'te
+        /// kaybolur. Örnek tahtada alanlar boş: hiçbir şey kurulmaz.
+        /// </summary>
+        void SyncFacility(Marks m)
+        {
+            int used = 0;
+            foreach (var a in m.Ambush)
+            {
+                if (!InBoard(a.fx, a.fy) || a.fx == a.tx && a.fy == a.ty) continue;
+                if (used == ambushLines.Count) ambushLines.Add(NewArrow("Ambush line", lib.tileMarks));
+                var line = ambushLines[used++];
+                var d = W(a.tx, a.ty) - W(a.fx, a.fy); d.y = 0; d.Normalize();
+                line.gameObject.SetActive(true);
+                // Kurulduğu karenin yön kenarından hattın son karesinin uzak kenarına
+                line.Set(W(a.fx, a.fy) + d * 0.42f + Vector3.up * 0.05f, W(a.tx, a.ty) + d * 0.42f + Vector3.up * 0.05f, Alpha(lib.good, a.live ? 0.95f : 0.35f), true, PixelWorld * 4, 0, 0, false);
+            }
+            for (int i = used; i < ambushLines.Count; i++) ambushLines[i].gameObject.SetActive(false);
+            if (m.Cargo >= 0 && m.Cargo < 64) ShowCargo(m.Cargo);
+            else if (cargoPiece != null) cargoPiece.SetActive(false);
+            if (focusFrame != null)
+            {
+                bool focus = m.Focus >= 0 && m.Focus < 64;
+                focusFrame.SetActive(focus);
+                if (focus) focusFrame.transform.position = W(m.Focus % Baskin.N, m.Focus / Baskin.N) + Vector3.up * (walls[m.Focus] ? WallTop + 0.02f : 0.05f);
+            }
+        }
+
+        /// <summary>Yerdeki yükün parçası (tembel): ikmal sandığı × 0,45, çarpıştırıcısız; sandık parçası yoksa küçük grafit kare.</summary>
+        void ShowCargo(int k)
+        {
+            if (cargoPiece == null)
+            {
+                if (lib.lootCrate != null)
+                {
+                    var crate = Instantiate(lib.lootCrate, piecesRoot);
+                    crate.name = "Floor cargo";
+                    crate.SetWorldLabelsVisible(false);
+                    foreach (var col in crate.GetComponentsInChildren<Collider>(true)) Kill(col);
+                    crate.transform.localScale = crate.transform.localScale * 0.45f;
+                    cargoPiece = crate.gameObject;
+                }
+                else cargoPiece = Frame("Floor cargo", Vector3.zero, graphiteColor, 0.34f, PixelWorld * 3);
+            }
+            // Karenin güney-doğu köşesi (kameraya yakın sağ): karede ayakta duran ya da yatan birimle üst üste binmez
+            cargoPiece.transform.position = W(k % Baskin.N, k / Baskin.N) + new Vector3(0.27f, 0.03f, -0.27f);
+            cargoPiece.SetActive(true);
+        }
+
+        // ------------------------------------------------------------------ tesis ekipmanı (aşama 9)
+        /// <summary>Birimin parçası: kütüphanenin türü (aygıt ve köpek atanmamışsa yedek piyon ölçekli); ekip 45°, makine −135°.</summary>
+        RaidPiece NewUnitPiece(Baskin.Unit u)
+        {
+            var p = Instantiate(lib.Unit(u.Type), W(u.X, u.Y), Quaternion.Euler(0, u.Side == 'p' ? 45 : -135, 0), piecesRoot);
+            if (!lib.HasOwnPiece(u.Type)) p.transform.localScale = lib.FallbackScale(u.Type);
+            p.Kind = u.Type; p.name = $"{u.Type} #{u.Id}";
+            return p;
+        }
+
+        /// <summary>Aygıtın dünya yönü: parçanın burnu (−Z) <see cref="Baskin.Dirs"/> yönüne (0 kuzey +Z, 1 doğu +X, 2 güney, 3 batı).</summary>
+        public static float GadgetYaw(int dir) => 180 + 90 * dir;
+
+        /// <summary>
+        /// Uzman olmayan ekip biriminin yönü her eşitlemede: aygıt Dir'ine bakar; ele geçirilen makine ekip yönüne (45°) döner, bırakılınca
+        /// makine yönüne (−135°) geri döner. Uzmanda ve makinede (örnek tahta dahil) hiçbir şey yapmaz.
+        /// </summary>
+        void FaceUnit(Baskin.Unit u, RaidPiece p)
+        {
+            if (Baskin.IsGadget(u)) { if (u.Dir >= 0 && u.Dir < 4) p.transform.rotation = Quaternion.Euler(0, GadgetYaw(u.Dir), 0); return; }
+            if (Baskin.IsCaptive(u)) { if (capturedYaw.Add(u.Id)) p.transform.rotation = Quaternion.Euler(0, 45, 0); return; }
+            if (capturedYaw.Remove(u.Id)) p.transform.rotation = Quaternion.Euler(0, -135, 0);
+        }
+
+        /// <summary>
+        /// Tesis ekipmanının durum işaretleri (<see cref="Marks.Devices"/>, <see cref="Marks.DecoyPaths"/>, <see cref="Marks.Bark"/>) ve
+        /// karo süsleri: taret hattı düz yeşil kalem; vinç hattı aynı, çekilecek kare varsa ok ucu vince bakar; yemin yolu kesik, ok uçlu,
+        /// soluk; havlama erimi yeşil karo boyası. Süsler: kapalı kepenk (oluklu sac kılıf), kalkık kepenk (rulo), sandık nişi (kapalı ya
+        /// da açık), tutuş krikosu. Örnek tahtada alanlar boş, kepenk ve niş hücresi yok: hiçbir şey kurulmaz.
+        /// </summary>
+        void SyncGear(Baskin.BState B, Marks m)
+        {
+            int used = 0;
+            float width = PixelWorld * Mathf.Max(1, lib.gearLinePx);
+            foreach (var d in m.Devices)
+            {
+                if (!InBoard(d.fx, d.fy) || !InBoard(d.tx, d.ty) || d.fx == d.tx && d.fy == d.ty) continue;
+                if (used == deviceLines.Count) deviceLines.Add(NewArrow("Device line", lib.tileMarks));
+                var line = deviceLines[used++];
+                var dir = W(d.tx, d.ty) - W(d.fx, d.fy); dir.y = 0; dir.Normalize();
+                var from = W(d.fx, d.fy) + dir * 0.3f + Vector3.up * 0.05f;
+                line.gameObject.SetActive(true);
+                if (d.kind == "vinc" && d.hit >= 0 && d.hit < 64)
+                    line.Set(W(d.hit % Baskin.N, d.hit / Baskin.N) + Vector3.up * 0.05f, from, Alpha(lib.good, 0.95f), false, width, 0, 0, true, PixelWorld * 12);
+                else line.Set(from, W(d.tx, d.ty) + dir * 0.42f + Vector3.up * 0.05f, Alpha(lib.good, 0.95f), false, width, 0, 0, false);
+            }
+            for (int i = used; i < deviceLines.Count; i++) deviceLines[i].gameObject.SetActive(false);
+            used = 0;
+            foreach (var path in m.DecoyPaths)
+            {
+                if (path == null || path.Length < 2) continue;
+                for (int i = 1; i < path.Length; i++)
+                {
+                    if (used == decoyLines.Count) decoyLines.Add(NewArrow("Decoy path", lib.tileMarks));
+                    var seg = decoyLines[used++];
+                    seg.gameObject.SetActive(true);
+                    var a = W(path[i - 1] % Baskin.N, path[i - 1] / Baskin.N) + Vector3.up * 0.05f;
+                    var b = W(path[i] % Baskin.N, path[i] / Baskin.N) + Vector3.up * 0.05f;
+                    seg.Set(a, b, Alpha(lib.good, lib.decoyPathAlpha), true, width, 0, 0, i == path.Length - 1, PixelWorld * 12);
+                }
+            }
+            for (int i = used; i < decoyLines.Count; i++) decoyLines[i].gameObject.SetActive(false);
+            PaintArea(barkFills, m.Bark, "Bark range", 0.022f);
+            SyncDecor(B);
+        }
+
+        /// <summary>Karo boyası (havlama erimi, önizlemenin erimi): yeşil, saydamlık kütüphaneden; tembel havuz.</summary>
+        void PaintArea(Renderer[] pool, ICollection<int> keys, string name, float height)
+        {
+            for (int k = 0; k < 64; k++)
+            {
+                bool on = keys != null && keys.Contains(k);
+                if (!on) { if (pool[k] != null) pool[k].enabled = false; continue; }
+                if (pool[k] == null) pool[k] = Flat($"{name} {k % Baskin.N},{k / Baskin.N}", Vector3.zero, 0.94f, lib.highlight).GetComponent<Renderer>();
+                pool[k].transform.position = W(k % Baskin.N, k / Baskin.N) + Vector3.up * (walls[k] ? WallTop + height : height);
+                SetColor(pool[k], Alpha(lib.good, lib.barkAlpha));
+                pool[k].enabled = true;
+            }
+        }
+
+        GameObject holdPiece;
+
+        /// <summary>
+        /// Tesis odasının karo süsleri (yalnız Room != null; örnek tahtada kepenk, niş ve tutuş yok): kapalı kepenk duvar bloğunu saran
+        /// kılıf, kalkık kepenk geçişe dik rulo (duvar hattının yönünden), sandık nişi duvarın ilk zemin komşusuna bakan yüzde (Dirs
+        /// sırası), tutuş krikosu tutulan karenin tutan uzmana bakan kenarında. Süsler çarpıştırıcısızdır (tıklama karoya düşer).
+        /// </summary>
+        void SyncDecor(Baskin.BState B)
+        {
+            var want = new Dictionary<int, (string kind, GameObject prefab, float yaw)>();
+            if (B.Room != null)
+                for (int y = 0; y < Baskin.N; y++)
+                    for (int x = 0; x < Baskin.N; x++)
+                    {
+                        var c = Baskin.CellAt(B, x, y);
+                        int k = Key(x, y);
+                        if (c.Shutter && c.T == "wall") { if (lib.shutter != null) want[k] = ("shutter", lib.shutter, 0); }
+                        else if (c.Shutter) { if (lib.shutterOpen != null) want[k] = ("shutterOpen", lib.shutterOpen, WallRun(B, x, y) ? 0 : 90); }
+                        else if (c.Crate)
+                        {
+                            var prefab = B.CrateOpen ? lib.crateNicheOpen : lib.crateNiche;
+                            int face = Array.FindIndex(Baskin.Dirs, d => InBoard(x + d[0], y + d[1]) && Baskin.CellAt(B, x + d[0], y + d[1]).T != "wall");
+                            if (prefab != null) want[k] = (B.CrateOpen ? "crateNicheOpen" : "crateNiche", prefab, GadgetYaw(face < 0 ? 2 : face));
+                        }
+                    }
+            foreach (var k in decor.Keys.Where(k => !want.ContainsKey(k) || want[k].kind != decor[k].kind).ToList())
+            {
+                if (decor[k].go != null) Kill(decor[k].go);
+                decor.Remove(k);
+            }
+            foreach (var pair in want)
+            {
+                if (decor.ContainsKey(pair.Key)) continue;
+                var go = Instantiate(pair.Value.prefab, W(pair.Key % Baskin.N, pair.Key / Baskin.N), Quaternion.Euler(0, pair.Value.yaw, 0), piecesRoot);
+                go.name = $"{pair.Value.kind} {pair.Key % Baskin.N},{pair.Key / Baskin.N}";
+                foreach (var col in go.GetComponentsInChildren<Collider>(true)) Kill(col);
+                foreach (var piece in go.GetComponentsInChildren<RaidPiece>(true)) piece.SetWorldLabelsVisible(false);
+                decor[pair.Key] = (pair.Value.kind, go);
+            }
+            // Tutuş krikosu: tutulan karenin (duvar) tutan uzmana bakan kenarı; tutuş yoksa kalkar
+            var holder = B.Room != null && B.HoldId != 0 ? B.Units.FirstOrDefault(u => u.Id == B.HoldId) : null;
+            if (holder == null || lib.holdJack == null || !InBoard(B.HoldX, B.HoldY)) { if (holdPiece != null) holdPiece.SetActive(false); return; }
+            if (holdPiece == null)
+            {
+                holdPiece = Instantiate(lib.holdJack, piecesRoot);
+                holdPiece.name = "Hold jack";
+                foreach (var col in holdPiece.GetComponentsInChildren<Collider>(true)) Kill(col);
+            }
+            var toward = new Vector3(Mathf.Clamp(holder.X - B.HoldX, -1, 1), 0, -Mathf.Clamp(holder.Y - B.HoldY, -1, 1));
+            if (toward.sqrMagnitude < 1e-4f) toward = Vector3.back;
+            toward.Normalize();
+            holdPiece.transform.SetPositionAndRotation(W(B.HoldX, B.HoldY) + toward * 0.56f, Quaternion.LookRotation(-toward, Vector3.up));
+            holdPiece.SetActive(true);
+        }
+
+        /// <summary>Kalkık kepengin duvar hattı doğu-batı mı (iki yatay komşusundan duvar olanlar dikeydekilerden az değil).</summary>
+        static bool WallRun(Baskin.BState B, int x, int y)
+        {
+            int Wall(int tx, int ty) => !InBoard(tx, ty) || Baskin.CellAt(B, tx, ty).T == "wall" ? 1 : 0;
+            return Wall(x - 1, y) + Wall(x + 1, y) >= Wall(x, y - 1) + Wall(x, y + 1);
+        }
+
+        /// <summary>Önizlemenin erimi (havla): <see cref="SetPreview"/>'dan sonra; <see cref="ClearPreview"/> siler.</summary>
+        public void AddPreviewArea(IEnumerable<int> keys) => PaintArea(previewAreaFills, keys == null ? null : new HashSet<int>(keys), "Preview area", 0.025f);
+
+        /// <summary>Test erişimcisi: çizili aygıt hattı sayısı.</summary>
+        public int DeviceLineCount => deviceLines.Count(a => a != null && a.gameObject.activeSelf);
+        /// <summary>Olay katmanında görünen bu türden çizim sayısı (aşama 12 testleri: "brink", "tilt", "slide"…; işaret, çizgi ve etiket).</summary>
+        public int HazardShownCount(string kind) => hazardShown.Count(s => s.kind == kind && s.go != null && s.go.activeSelf);
+        /// <summary>Test erişimcisi: çizili yem yolu parça sayısı.</summary>
+        public int DecoyPathSegments => decoyLines.Count(a => a != null && a.gameObject.activeSelf);
+        /// <summary>Test erişimcisi: boyalı havlama erimi karesi sayısı.</summary>
+        public int BarkTiles => barkFills.Count(r => r != null && r.enabled);
+        /// <summary>Test erişimcisi: boyalı önizleme erimi karesi sayısı.</summary>
+        public int PreviewAreaTiles => previewAreaFills.Count(r => r != null && r.enabled);
+        /// <summary>Test erişimcisi: karedeki süsün türü (shutter, shutterOpen, crateNiche, crateNicheOpen); yoksa null.</summary>
+        public string DecorAt(int x, int y) => decor.TryGetValue(Key(x, y), out var d) && d.go != null ? d.kind : null;
+        /// <summary>Test erişimcisi: tutuş krikosu görünüyor.</summary>
+        public bool HoldJackShown => holdPiece != null && holdPiece.activeSelf;
+        /// <summary>Test erişimcisi: birimin parçası (kimlikle); yoksa null.</summary>
+        public RaidPiece UnitPiece(int id) => units.TryGetValue(id, out var p) ? p : null;
+        /// <summary>Test erişimcisi: karedeki nesnenin parçası; yoksa null.</summary>
+        public RaidPiece ObjectPiece(int x, int y) => objects.TryGetValue(Key(x, y), out var p) ? p : null;
+        /// <summary>Test erişimcisi: karede dolap enkazı (ya da açık sandık) var mı.</summary>
+        public bool RubbleAt(int x, int y) => rubble.TryGetValue(Key(x, y), out var r) && r != null;
+
+        /// <summary>Test erişimcisi: tahtada çizili (etkin) pusu hattı sayısı.</summary>
+        public int AmbushLineCount => ambushLines.Count(a => a != null && a.gameObject.activeSelf);
+        /// <summary>Test erişimcisi: yerdeki yükün parçası görünüyor.</summary>
+        public bool CargoShown => cargoPiece != null && cargoPiece.activeSelf;
+        /// <summary>Test erişimcisi: hamle kipinin odak çerçevesi görünüyor.</summary>
+        public bool FocusShown => focusFrame != null && focusFrame.activeSelf;
+        /// <summary>Test erişimcisi: birimin parçasının bulunduğu kare (canlandırma ortasında da); parça yoksa ya da gizliyse null.</summary>
+        public (int x, int y)? PieceTile(int id) => units.TryGetValue(id, out var p) && p != null && p.gameObject.activeSelf ? TileOf(p.transform.position) : ((int, int)?)null;
+
+        /// <summary>Önizleme çizgisinin anlam rengi: good oyuncu mürekkebi (yeşil), threat tehdit, graphite soluk grafit, öbürü grafit.</summary>
+        Color Tone(string tone) => tone switch { "good" => lib.good, "threat" => lib.threat, "graphite" => Alpha(graphiteColor, 0.7f), _ => graphiteColor };
+
+        /// <summary>
+        /// Hamle önizlemesinin çizgisi (aşama 7; <see cref="SetPreview"/>'dan sonra çağrılır, <see cref="ClearPreview"/> siler): kare
+        /// noktaları boyunca parça parça; uç yalnız son parçada; iki noktalı çizgi kavisli olabilir (<paramref name="arc"/> kare
+        /// birimi). Renk anlamı <see cref="Tone"/>.
+        /// </summary>
+        public void AddPreviewStroke(IList<(int x, int y)> points, string tone, bool dashed, float arc = 0, bool tip = false)
+        {
+            if (points == null || points.Count < 2) return;
+            var color = Tone(tone);
+            for (int i = 1; i < points.Count; i++)
+            {
+                if (previewStrokesUsed == previewStrokes.Count) previewStrokes.Add(NewArrow("Preview stroke"));
+                var stroke = previewStrokes[previewStrokesUsed++];
+                stroke.gameObject.SetActive(true);
+                var a = W(points[i - 1].x, points[i - 1].y) + Vector3.up * 0.06f;
+                var b = W(points[i].x, points[i].y) + Vector3.up * 0.06f;
+                bool last = i == points.Count - 1;
+                stroke.Set(a, b, color, dashed, PixelWorld * 3, points.Count == 2 ? arc : 0, 0, tip && last, PixelWorld * 12);
+            }
+        }
+
+        /// <summary>Hamle önizlemesinin hayaleti: birimin parçası (kimlikle; aynı karede uzman ve gövde üst üste durabilir) (x, y)'de soluk.</summary>
+        public void AddPreviewGhost(int unitId, int x, int y)
+        {
+            if (!units.TryGetValue(unitId, out var source) || source == null || !source.gameObject.activeSelf) return;
+            var ghost = Ghost(source);
+            ghost.name = "Move preview ghost";
+            ghost.transform.position = W(x, y);
+            ghost.SetActive(true);
+            previewGhosts.Add(ghost);
+        }
+
+        /// <summary>Tesis aşama 12: hayalet dünya karesinin kesirli konumunda (kenardan düşecek birim: kenarın dışında yarım kare).</summary>
+        public void AddPreviewGhostAt(int unitId, float x, float y)
+        {
+            if (!units.TryGetValue(unitId, out var source) || source == null || !source.gameObject.activeSelf) return;
+            var ghost = Ghost(source);
+            ghost.name = "Fall preview ghost";
+            ghost.transform.position = W(x, y) + Vector3.down * 0.12f;
+            ghost.SetActive(true);
+            previewGhosts.Add(ghost);
         }
 
         // ------------------------------------------------------------------ bölge olayları
@@ -743,6 +1246,7 @@ namespace Corrigible.Game.Raid
                     // Kabinle inecek birimin yeri: kopyalama hayaletinin kesik halkası, asansör renginde
                     HzMark(k, kind, 0.04f).SetCircle(0.3275f, Alpha(lib.hazardLift, 0.95f), 0.035f, true, true);
                     break;
+                case "frost":
                 case "freeze":
                 case "freeze_next":
                     // Buz dokusu: iki yönlü ince tarama; boşalma turunda kesik çerçeve titrer
@@ -796,6 +1300,10 @@ namespace Corrigible.Game.Raid
                 case "hose":
                     HzMark(k, kind, 0.032f).SetCircle(0.2f, lib.hazardOil, px * 3);
                     HzMark(k, kind, 0.032f).SetCircle(0.1f, lib.hazardOil, px * 2);
+                    break;
+                case "tilt":
+                case "tilt_next":
+                    // Tesis aşama 12 (Yalpa): yalnız "YALPA n" etiketinin taşıyıcısı (oklar kenarda: DrawGate); karede işaret yok
                     break;
                 default:
                     // Bilinmeyen tür: kesik grafit çerçeve (yeni işaret türü eklenince kare boş kalmasın)
@@ -888,6 +1396,21 @@ namespace Corrigible.Game.Raid
             var outward = (outside - inside).normalized;
             var along = Vector3.Cross(Vector3.up, outward);
             const float reach = 0.24f;
+            // Tesis aşama 12 · Katar'ın açık kenarı: kare kenarı boyunca kesik uyarı çizgisi (~3 px) ve dışa bakan tek kısa tırnak; titremez.
+            // Tırnak karenin içinde kalır (güney kenarında sütun harflerinin üstüne binmez)
+            if (e.Kind == "brink")
+            {
+                HzStroke(e.Kind, k).Set(mid - along * 0.46f, mid + along * 0.46f, lib.hazardBrink, true, px * 3, 0, 0, false);
+                HzStroke(e.Kind, k).Set(mid - outward * 0.22f, mid - outward * 0.03f, lib.hazardBrink, false, px * 2.6f, 0, 0, true, px * 9);
+                return;
+            }
+            // Yalpa: yokuş aşağı kenarda dışa bakan ok; bir tur önceden soluk ve kesik (tilt_next), yatış turunda koyu (tilt)
+            if (e.Kind == "tilt" || e.Kind == "tilt_next")
+            {
+                bool soon = e.Kind == "tilt_next";
+                HzStroke(e.Kind, k).Set(mid - outward * 0.42f, mid - outward * 0.04f, soon ? Alpha(lib.hazardTilt, 0.5f) : lib.hazardTilt, soon, px * (soon ? 3f : 3.6f), 0, 0, true, px * 12);
+                return;
+            }
             HzStroke("edge", k).Set(mid - along * 0.3f, mid + along * 0.3f, Alpha(lib.hazardGate, 0.45f), false, px * 2, 0, 0, false);
             if (e.Kind == "both")
             {
@@ -915,6 +1438,17 @@ namespace Corrigible.Game.Raid
                 HzStroke(l.Kind, k).Set(to - dir * 0.18f, to, lib.threat, false, px * 3.4f, 0, 0, true, px * 13);
                 return;
             }
+            // Tesis aşama 12 · Yalpa'nın kayması: kayacak şeyden varışa kısa hat (deniz yeşili); çarpacaksa (Hit) hat kare kenarında
+            // biter, ucu kırmızı (süzgecin çekişi kalıbı)
+            if (l.Kind == "slide")
+            {
+                var from = a + Vector3.up * 0.07f + dir * 0.2f;
+                if (!l.Hit) { HzStroke(l.Kind, k).Set(from, b + Vector3.up * 0.07f - dir * 0.28f, lib.hazardTilt, false, px * 3.2f, 0, 0, true, px * 12); return; }
+                var stop = a + Vector3.up * 0.07f + dir * 0.47f;
+                HzStroke(l.Kind, k).Set(from, stop - dir * 0.13f, lib.hazardTilt, false, px * 3.2f, 0, 0, false);
+                HzStroke(l.Kind, k).Set(stop - dir * 0.15f, stop, lib.threat, false, px * 3.2f, 0, 0, true, px * 12);
+                return;
+            }
             bool hot = l.Kind == "tube_hot";
             var start = a + Vector3.up * 0.035f + dir * 0.3f;
             var end = b + Vector3.up * 0.035f + dir * (l.Hit ? -0.2f : 0.4f);
@@ -928,7 +1462,8 @@ namespace Corrigible.Game.Raid
         {
             if (hazardLabelsUsed == hazardLabels.Count) hazardLabels.Add(NewPaperLabel("Hazard tag", 14));
             var tag = hazardLabels[hazardLabelsUsed++];
-            bool danger = kind == "rail_close" || kind == "gas_lit" || kind == "crack_due" || kind == "tube_hot" || kind == "weld" || kind == "drain_next" || (kind == "leak" && lit);
+            // Aşama 12: "YALPA 1" (bu tur sonunda yatış) tehlike; "YALPA 2" geleceğin kesik kenarıyla
+            bool danger = kind == "rail_close" || kind == "gas_lit" || kind == "crack_due" || kind == "tube_hot" || kind == "weld" || kind == "drain_next" || kind == "tilt" || (kind == "leak" && lit);
             tag.SetAnchor(HazardAt(k, 0.75f));
             tag.Show(text, danger ? lib.threat : graphiteColor, danger ? lib.threat : HazardInk(kind), kind.EndsWith("_next", StringComparison.Ordinal));
             labelGroups.Add(new[] { tag });
@@ -952,6 +1487,7 @@ namespace Corrigible.Game.Raid
             "drain" or "drain_next" => lib.hazardDrain,
             "tube_hot" => lib.hazardTube,
             "oil" or "oil_next" or "hose" => lib.hazardOil,
+            "tilt" or "tilt_next" => lib.hazardTilt,
             _ => graphiteColor,
         };
 
@@ -1041,12 +1577,16 @@ namespace Corrigible.Game.Raid
             var end = W(tx, ty) + Vector3.up * 0.16f;
             var direction = (end - start).normalized;
             float px = PixelWorld;
-            bool quiet = kind == "shield" || kind == "clone";
+            bool quiet = kind == "shield" || kind == "clone" || kind == "build" || kind == "seal";
             var color = quiet ? lib.intentQuiet : lib.intent;
             float width = 3.4f, arc = 0, head = 16;
             bool dashed = false, tip = true;
             switch (kind)
             {
+                case "flame":
+                case "ram":
+                case "pull":
+                case "frost":
                 case "shoot":
                     start += direction * 0.24f; end -= direction * 0.40f;
                     break;
@@ -1065,6 +1605,8 @@ namespace Corrigible.Game.Raid
                 case "shield":
                     width = 1.6f; arc = RisePx(20); tip = false; start += direction * 0.24f; end -= direction * 0.30f;
                     break;
+                case "build":
+                case "seal":
                 case "clone":
                     width = 2.6f; dashed = true; head = 11; start += direction * 0.24f; end -= direction * 0.30f;
                     break;
@@ -1100,7 +1642,7 @@ namespace Corrigible.Game.Raid
             if (!flagPins.TryGetValue(id, out var pin))
             {
                 pin = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                pin.name = "Order flag needle"; Destroy(pin.GetComponent<Collider>());
+                pin.name = "Order flag needle"; Kill(pin.GetComponent<Collider>());
                 pin.transform.SetParent(marksRoot, false);
                 pin.GetComponent<Renderer>().sharedMaterial = lib.overlay;
                 SetColor(pin.GetComponent<Renderer>(), graphiteColor);
@@ -1160,7 +1702,12 @@ namespace Corrigible.Game.Raid
             foreach (var pair in orderLabels)
             {
                 if (!pair.Value.gameObject.activeSelf || !units.TryGetValue(pair.Key, out var actor)) continue;
-                if (!actor.gameObject.activeSelf) { if (flagPins.TryGetValue(pair.Key, out var pin)) pin.SetActive(false); continue; }
+                // Pafta kayarken bayrak kâğıdının çapası dinlenme pozunda kalır, robot kayar: iğne tahtayı çaprazlamasın (sürüm 10 kayması)
+                if (!actor.gameObject.activeSelf || PageOffset != Vector3.zero)
+                {
+                    if (flagPins.TryGetValue(pair.Key, out var pin)) pin.SetActive(false);
+                    continue;
+                }
                 // İğne tepe noktasından kâğıdın sol alt köşesine
                 FlagPin(pair.Key, actor.transform.position + Vector3.up * actor.VisualHeight,
                     pair.Value.transform.position - cam.transform.right * (PixelWorld * 15) - cam.transform.up * (PixelWorld * 14));
@@ -1196,6 +1743,38 @@ namespace Corrigible.Game.Raid
             r.SetPropertyBlock(mpb);
         }
 
+        RaidArrow movePathArrow;
+        readonly List<(int x, int y)> movePathShown = new List<(int x, int y)>();
+
+        /// <summary>Tahtada çizili yürüyüş yolu (kareler, başlangıç dahil; testler). Çizili değilse boş.</summary>
+        public IReadOnlyList<(int x, int y)> MovePathShown => movePathShown;
+
+        /// <summary>
+        /// Hareket emrinde fare altındaki yürüyüş karesine yol (geliştirici, 2026-11-24): kare merkezlerinden geçen kırık çizgi, birimin
+        /// tabanının biraz dışından başlar, varışta uçla biter; renk yürüyüş karelerinin mavisi (<c>lib.move</c>, koyu). Her zaman üstte
+        /// (<c>lib.overlay</c>). <see cref="SetPreview"/>'dan sonra çağrılır; <see cref="ClearPreview"/> siler.
+        /// </summary>
+        public void SetMovePath(IList<(int x, int y)> path)
+        {
+            ClearMovePath();
+            if (path == null || path.Count < 2) return;
+            if (movePathArrow == null) movePathArrow = NewArrow("Move path");
+            var points = new List<Vector3>(path.Count);
+            for (int i = 0; i < path.Count; i++) points.Add(W(path[i].x, path[i].y) + Vector3.up * 0.07f);
+            // Birimin tabanını örtmesin: ilk nokta ilk parça boyunca içeri
+            var first = (points[1] - points[0]).normalized;
+            points[0] += first * 0.3f;
+            movePathArrow.gameObject.SetActive(true);
+            movePathArrow.SetPath(points, Alpha(lib.move, 0.95f), PixelWorld * 5, PixelWorld * 16);
+            movePathShown.AddRange(path);
+        }
+
+        void ClearMovePath()
+        {
+            movePathShown.Clear();
+            if (movePathArrow != null) movePathArrow.gameObject.SetActive(false);
+        }
+
         RaidArrow NewArrow(string name, Material material = null)
         {
             var go = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer), typeof(RaidArrow));
@@ -1216,7 +1795,7 @@ namespace Corrigible.Game.Raid
                 previewArrows[i].Set(W(mv.fx, mv.fy) + Vector3.up * 0.06f, W(mv.tx, mv.ty) + Vector3.up * 0.06f, graphiteColor, false, PixelWorld * 3);
                 var source = units.Values.FirstOrDefault(p => p.X == mv.fx && p.Y == mv.fy && p.gameObject.activeSelf);
                 if (i == ghosts.Count) ghosts.Add(null);
-                if (ghosts[i] != null) Destroy(ghosts[i]);
+                if (ghosts[i] != null) Kill(ghosts[i]);
                 if (blockedMoves != null && blockedMoves.Contains(i)) { ghosts[i] = null; continue; }
                 ghosts[i] = source != null ? Ghost(source) : Frame("Ghost position", Vector3.zero, graphiteColor, 0.7f, PixelWorld * 2);
                 ghosts[i].transform.position = W(mv.tx, mv.ty);
@@ -1262,8 +1841,14 @@ namespace Corrigible.Game.Raid
 
         public void ClearPreview()
         {
+            ClearMovePath();
             foreach (var a in previewArrows) a.gameObject.SetActive(false);
+            foreach (var a in previewStrokes) if (a != null) a.gameObject.SetActive(false);
+            previewStrokesUsed = 0;
+            foreach (var g in previewGhosts) if (g != null) Kill(g);
+            previewGhosts.Clear();
             foreach (var g in ghosts) if (g != null) g.SetActive(false);
+            foreach (var r in previewAreaFills) if (r != null) r.enabled = false;
             foreach (var l in paperLabels) l.gameObject.SetActive(false);
             LayoutLabels();
         }
@@ -1271,8 +1856,6 @@ namespace Corrigible.Game.Raid
         // ------------------------------------------------------------------ girdi
         void Update()
         {
-            // Eğitim çerçevesi nabız gibi atar
-            if (guideFrame != null && guideFrame.gameObject.activeSelf) guideFrame.transform.localScale = Vector3.one * (1 + 0.06f * Mathf.Sin(Time.unscaledTime * 6));
             // Bu tur sonunda vuracak olay işaretleri titrer (alev almış gaz, çökecek tavan, kapanacak geçit, kaynak, emme, tüp)
             if (hazardPulse.Count > 0)
             {
@@ -1295,8 +1878,7 @@ namespace Corrigible.Game.Raid
 
         /// <summary>
         /// Işının ilk çarptığı kare ya da parça. Duvar bloğu yarım kare yüksekliğindedir ve arkasındaki karenin yarısını örter:
-        /// vurgusuz bir duvar, arkasındaki vurgulu kareyi (yürüme, hedef) bırakır. Eğitim çerçevesinin karesi ışının üstündeyse
-        /// önünde ne olursa olsun o seçilir. Işın zemine değince tarama biter (zeminin altındaki çarpışmalar sayılmaz).
+        /// vurgusuz bir duvar, arkasındaki vurgulu kareyi (yürüme, hedef) bırakır. Işın zemine değince tarama biter (zeminin altındaki çarpışmalar sayılmaz).
         /// </summary>
         (int x, int y)? Pick(Ray ray)
         {
@@ -1311,7 +1893,6 @@ namespace Corrigible.Game.Raid
                 if (cell == null && piece == null) continue;
                 var t = cell != null ? (cell.X, cell.Y) : (piece.X, piece.Y);
                 int k = Key(t.Item1, t.Item2);
-                if (k == guideKey) return t;
                 if (first == null) { first = t; throughWall = cell != null && walls[k] && !pickable.Contains(k); }
                 else if (throughWall && pickable.Contains(k)) return t;
                 if (cell != null && !walls[k]) break;
@@ -1344,33 +1925,44 @@ namespace Corrigible.Game.Raid
             Busy = false;
         }
 
-        /// <summary>Kaçışta çıkışa yürüyen uzman tahtayı terk eder (yürüyüşten sonra; Sync onu kaldırır).</summary>
-        public IEnumerator AnimateLeave(int unitId)
+        /// <summary>
+        /// Kaçışta çıkışa yürüyen uzman tahtayı terk eder (yürüyüşten sonra; Sync onu kaldırır). <paramref name="gate"/>: tesis
+        /// odasında kapıya giren uzman (yazı KAPIDA); eski çağrı (false) bugünkü TAHLİYE'dir.
+        /// </summary>
+        public IEnumerator AnimateLeave(int unitId, bool gate = false)
         {
             if (!units.TryGetValue(unitId, out var p) || p == null) yield break;
             Busy = true;
-            yield return Leave(p, p.X, p.Y);
+            yield return Leave(p, p.X, p.Y, gate ? Loc.T("KAPIDA") : null);
             Busy = false;
         }
 
-        /// <summary>Bir eylemin ya da düşman turunun efektlerini sırayla oynatır. Görsel, çağrıdan önceki durumdadır; sonra Sync gerekir.</summary>
-        public IEnumerator Animate(Baskin.BState after, List<Baskin.Fx> fx, bool enemyTurn)
+        /// <summary>Tesis donanımının tahtadaki kısa adı (etikette canın yanında); donanım değilse null.</summary>
+        static string DeviceTag(string k) => k switch { "pano" => Loc.T("PANO"), "anten" => Loc.T("ANTEN"), "vana" => Loc.T("VANA"), _ => null };
+
+        /// <summary>
+        /// Bir eylemin ya da düşman turunun efektlerini sırayla oynatır. Görsel, çağrıdan önceki durumdadır; sonra Sync gerekir.
+        /// <paramref name="indexBase"/>: liste tam efekt listesinin bir parçasıysa (makine evresi pusuda bölünür; aşama 7) parçanın ilk
+        /// efektinin tam listedeki sırası; <paramref name="total"/>: tam listenin uzunluğu (verilmezse, −1, parçanın sonu:
+        /// indexBase + fx.Count). <see cref="EffectPlaying"/> sırayı ve uzunluğu tam listeye göre bildirir.
+        /// </summary>
+        public IEnumerator Animate(Baskin.BState after, List<Baskin.Fx> fx, bool enemyTurn, int indexBase = 0, int total = -1)
         {
             int version = buildVersion;
             Busy = true;
             hoverFrame.SetActive(false);
             ClearPreview();
             selectionFrame.gameObject.SetActive(false);
-            guideFrame.gameObject.SetActive(false);
+            // Makine evresinde ekip harcanmış boyanır: uzman, köpek ve tutsak (aygıt boyanmaz; aşama 9)
             if (enemyTurn) foreach (var pair in units)
-                if (after.Units.Any(u => u.Id == pair.Key && u.Side == 'p' && !u.Dead)) pair.Value.SetSpent(true);
+                if (after.Units.Any(u => u.Id == pair.Key && u.Side == 'p' && !u.Dead && !Baskin.IsGadget(u))) pair.Value.SetSpent(true);
             int popups = 0;
             int fxIndex = 0;
             foreach (var f in fx)
             {
                 if (version != buildVersion) yield break;
                 if(enemyTurn&&f.K=="attack"&&fxIndex>0&&MachineDelay>0)yield return new WaitForSecondsRealtime(MachineDelay);
-                EffectPlaying?.Invoke(f, fxIndex++, fx.Count);
+                EffectPlaying?.Invoke(f, indexBase + fxIndex++, total >= 0 ? total : indexBase + fx.Count);
                 switch (f.K)
                 {
                     case "attack":
@@ -1434,6 +2026,11 @@ namespace Corrigible.Game.Raid
                         // Kaçış: uzman çıkıştan tahtayı terk eder (itilen ya da kaçış başlarken çıkışta duran)
                         if (units.TryGetValue(f.Unit, out var leaving)) yield return Leave(leaving, f.X, f.Y);
                         break;
+                    case "withdraw":
+                        // Tesis sürüm 10: süre dolarken kapıya varamayan uzman geri çekilir; tahtayı yerinde terk eder (kenara kaymaz,
+                        // yeşil TAHLİYE değil: tehdit renginde GERİ ÇEKİLDİ)
+                        if (units.TryGetValue(f.Unit, out var withdrawing)) yield return Leave(withdrawing, f.X, f.Y, Loc.T("GERİ ÇEKİLDİ"), lib.threat, false);
+                        break;
                     case "loot":
                         if (objects.TryGetValue(Key(f.X, f.Y), out var cargo)) cargo.Flash(lib.good);
                         Sfx.Play(Cue.RaidRepair, 1, Pan(W(f.X, f.Y)));
@@ -1457,8 +2054,21 @@ namespace Corrigible.Game.Raid
                         }
                         break;
                     case "ev":
-                        // Bölge olayı (Obj: alt tür)
-                        yield return EventFx(after, f, popups++ * 0.04f);
+                        // Bölge olayı (Obj: alt tür). Aşama 12: Yalpa'nın yatışı ardından gelen kaymaları birlikte oynatır (liste ve sıra)
+                        yield return EventFx(after, f, popups++ * 0.04f, fx, fxIndex);
+                        break;
+                    // ---------- Tesis aşama 12 (Katar ve Yalpa; örnek tahtada bu efektler hiç gelmez) ----------
+                    case "fall":
+                        if (units.TryGetValue(f.Unit, out var faller) && faller != null && faller.gameObject.activeSelf)
+                        {
+                            var fu = after.Units.FirstOrDefault(z => z.Id == f.Unit);
+                            yield return FallOffEdge(faller, f, fu != null && Baskin.IsSpecialist(fu), popups++ * 0.04f);
+                            if (version != buildVersion) yield break;
+                        }
+                        break;
+                    case "slide":
+                        // Yatışın kayması toplu oynar (EventFx "yalpa"); tek başına gelen (olmamalı) kendi karesinden kayar
+                        if (!playedSlides.Remove(f)) yield return SlideFx(f, 0.2f);
                         break;
                     case "clouded":
                         // Söndürme bulutuna kesilen niyet ("smoked"un beyaz eşi)
@@ -1485,8 +2095,10 @@ namespace Corrigible.Game.Raid
                         if (units.TryGetValue(f.Unit, out var dp))
                         {
                             var du = after.Units.FirstOrDefault(z => z.Id == f.Unit);
-                            Sfx.Play(du != null && du.Side == 'p' ? Cue.RaidUnitDown : Cue.RaidRobotDown, 1, Pan(dp.transform.position));
-                            if (du != null && du.Side == 'p') yield return Fall(dp);
+                            // Düşen tutsak makine gibi kalkar (aşama 9; örnek tahtada IsSpecialist = Side 'p')
+                            bool specialist = du != null && Baskin.IsSpecialist(du);
+                            Sfx.Play(specialist ? Cue.RaidUnitDown : Cue.RaidRobotDown, 1, Pan(dp.transform.position));
+                            if (specialist) yield return Fall(dp);
                             else yield return Sink(dp);
                             if (version != buildVersion) yield break;
                             if (orderLabels.TryGetValue(f.Unit, out var cancelled) && shownIntents.TryGetValue(f.Unit, out var cancelledIntent))
@@ -1534,6 +2146,151 @@ namespace Corrigible.Game.Raid
                         StartCoroutine(Popup(W(f.X, f.Y), Loc.T("SİSE KESİLDİ"), graphiteColor, popups++ * 0.04f));
                         yield return Wait(0.35f);
                         break;
+                    // ---------- Tesis hamleleri (aşama 7; örnek tahtada bu efektler hiç gelmez) ----------
+                    case "ambush":
+                        StartCoroutine(Popup(W(f.X, f.Y), Loc.T("PUSU"), lib.good, popups++ * 0.04f));
+                        Sfx.Play(Cue.RaidStep, 0.6f, Pan(W(f.X, f.Y)));
+                        yield return Wait(0.2f);
+                        break;
+                    case "ambush-hit":
+                        // Pusu vuruşu makinenin yeni karesinde (köprü makine yürüyüşünden sonra oynatır); hasar ve düşüş ardından gelir
+                        if (units.TryGetValue(f.Unit, out var ambushed)) ambushed.Flash(lib.threat);
+                        StartCoroutine(Popup(W(f.X, f.Y), Loc.T("PUSU"), lib.threat, popups++ * 0.04f));
+                        Sfx.Play(Cue.RaidHit, 1, Pan(W(f.X, f.Y)));
+                        yield return Wait(0.3f);
+                        break;
+                    case "rush":
+                        // Koşucu durduğu kareye (X + Dx, Y + Dy) koşar; itme ardından bugünkü push dalında
+                        if (units.TryGetValue(f.Unit, out var runner))
+                        {
+                            Sfx.Play(Cue.RaidStep, 1, Pan(W(f.X + f.Dx, f.Y + f.Dy)));
+                            yield return Slide(runner, W(f.X + f.Dx, f.Y + f.Dy), 0.08f * Mathf.Max(1, Mathf.Abs(f.Dx) + Mathf.Abs(f.Dy)));
+                            if (version != buildVersion) yield break;
+                            if (runner != null) { runner.X = f.X + f.Dx; runner.Y = f.Y + f.Dy; }
+                        }
+                        break;
+                    case "drag":
+                        // Gövde sürükleyenin yürüyüşüyle geldiyse (köprünün AnimateWalk'ı) yerindedir: atlanır; değilse kayar
+                        if (units.TryGetValue(f.Unit, out var dragged) && dragged != null)
+                        {
+                            var to = (f.X + f.Dx, f.Y + f.Dy);
+                            if (TileOf(dragged.transform.position) != to)
+                            {
+                                Sfx.Play(Cue.RaidPush, 0.5f, Pan(W(to.Item1, to.Item2)));
+                                yield return Slide(dragged, W(to.Item1, to.Item2), 0.2f);
+                                if (version != buildVersion) yield break;
+                            }
+                            if (dragged != null) { dragged.X = to.Item1; dragged.Y = to.Item2; }
+                        }
+                        break;
+                    case "throw":
+                        yield return Throw(f, popups++ * 0.04f);
+                        break;
+                    case "hold":
+                        StartCoroutine(Popup(W(f.X, f.Y), Loc.T("TUTUYOR"), graphiteColor, popups++ * 0.04f));
+                        Sfx.Play(Cue.RaidRepair, 0.6f, Pan(W(f.X, f.Y)));
+                        yield return Wait(0.3f);
+                        break;
+                    case "open":
+                    {
+                        int ok = Key(f.X, f.Y);
+                        if (Baskin.CellAt(after, f.X, f.Y).Crate)
+                        {
+                            // Büyük sandık nişi (model aşama 9): halka ve yazı
+                            Sfx.Play(Cue.RaidRepair, 1, Pan(W(f.X, f.Y)));
+                            StartCoroutine(Burst(W(f.X, f.Y) + Vector3.up * 0.3f, lib.good, 1.1f, 0.3f));
+                            StartCoroutine(Popup(W(f.X, f.Y), Loc.T("SANDIK AÇILDI"), lib.good, popups++ * 0.04f));
+                            yield return Wait(0.35f);
+                        }
+                        else
+                        {
+                            // Ağır kepenk kalkar: gedik dalının aynısı (blok çöker; Sync karoyu zemine çevirir)
+                            Sfx.Play(Cue.RaidBreak, 1, Pan(W(f.X, f.Y)));
+                            if (tileObjects[ok] != null && walls[ok])
+                            {
+                                if (tileSkins[ok] != null) tileSkins[ok].HideBridges();
+                                SkinAround(after, ok, false);
+                                yield return SinkWall(tileObjects[ok]);
+                            }
+                            StartCoroutine(Popup(W(f.X, f.Y), Loc.T("KEPENK KALKTI"), graphiteColor, popups++ * 0.04f));
+                        }
+                        break;
+                    }
+                    case "vent":
+                        yield return Vent(f);
+                        break;
+                    case "cargo-pick":
+                        yield return CargoPicked(f.X, f.Y);
+                        break;
+                    case "cargo-drop":
+                        // Taşıyıcı düştü: yük düştüğü karede belirir (makine evresinde Sync yok; evre sonunda Marks.Cargo aynı yeri çizer)
+                        ShowCargo(Key(f.X, f.Y));
+                        Sfx.Play(Cue.RaidHitObject, 1, Pan(W(f.X, f.Y)));
+                        StartCoroutine(Popup(W(f.X, f.Y), Loc.T("YÜK DÜŞTÜ"), lib.threat, popups++ * 0.04f));
+                        yield return Wait(enemyTurn ? 0.45f : 0.3f);
+                        break;
+                    // ---------- Tesis ekipmanı ve birimleri (aşama 9; örnek tahtada bu efektler hiç gelmez) ----------
+                    case "build":
+                    case "gadget":
+                    case "turret-hit":
+                    case "ram-step":
+                    case "decoy-step":
+                    case "winch-pull":
+                    case "scrap":
+                    case "device-break":
+                    case "capture":
+                    case "release":
+                    case "command":
+                    case "plate-give":
+                    case "bark":
+                    case "fetch":
+                    case "sniff":
+                    case "dog-down":
+                    case "charge":
+                        yield return GearFx(after, f, fx, fxIndex, enemyTurn, popups++ * 0.04f);
+                        break;
+                    // ---------- Önlem defteri (aşama 10; eski ve önlemsiz tahtada bu efektler hiç gelmez). Yeni ses yok ----------
+                    case "bolted":
+                        // Cıvatalı makine itmeye ya da çekişe direndi: yerinde kısa sarsıntı (itmenin hareketsiz hâli), kırmızı etiket
+                        if (units.TryGetValue(f.Unit, out var held) && held != null)
+                        {
+                            held.Flash(lib.threat);
+                            Sfx.Play(Cue.RaidArmor, 1, Pan(held.transform.position));
+                            StartCoroutine(Popup(W(f.X, f.Y), Loc.T("CIVATALI"), lib.threat, popups++ * 0.04f));
+                            yield return Jolt(held.transform, 0.18f);
+                        }
+                        break;
+                    case "unbolt":
+                        if (units.TryGetValue(f.Unit, out var loose) && loose != null) loose.Flash(lib.good);
+                        Sfx.Play(Cue.RaidRepair, 1, Pan(W(f.X, f.Y)));
+                        StartCoroutine(Popup(W(f.X, f.Y), Loc.T("CIVATA SÖKÜLDÜ"), lib.good, popups++ * 0.04f));
+                        yield return Wait(0.25f);
+                        break;
+                    case "dwall":
+                        // Çift cidar yıkıldı (gedik dalı ardından gelir): kısa not
+                        StartCoroutine(Popup(W(f.X, f.Y) + Vector3.up * 0.25f, Loc.T("ÇİFT CİDAR"), lib.threat, popups++ * 0.04f));
+                        yield return Wait(0.12f);
+                        break;
+                    case "cut":
+                        // Kesici kol: makinenin vuruşu engele fazladan hasar verir
+                        if (objects.TryGetValue(Key(f.X, f.Y), out var cutPiece) && cutPiece != null) cutPiece.Flash(lib.threat);
+                        StartCoroutine(Popup(W(f.X, f.Y) + Vector3.up * 0.25f, Loc.F("KESİCİ KOL +{0}", f.N), lib.threat, popups++ * 0.04f));
+                        yield return Wait(0.2f);
+                        break;
+                    case "jam":
+                        // Parazit: kurulan aygıt kısa çalışır (N: tur)
+                        StartCoroutine(Popup(W(f.X, f.Y) + Vector3.up * 0.25f, Loc.F("PARAZİT · {0} TUR", f.N), lib.threat, popups++ * 0.04f));
+                        yield return Wait(0.2f);
+                        break;
+                    case "wave":
+                        // Tesis aşama 11: savunmanın dalgası batı girişinden geldi (N dalga); makinelerin kendi "spawn"ları ayrıca oynar
+                        StartCoroutine(Popup(W(f.X, f.Y) + Vector3.up * 0.25f, Loc.F("DALGA {0}", f.N), lib.threat, popups++ * 0.04f));
+                        break;
+                    case "relay-break":
+                        // Tesis aşama 11: saha rölesi kırıldı (savunma kaybedildi)
+                        StartCoroutine(Popup(W(f.X, f.Y) + Vector3.up * 0.25f, Loc.T("RÖLE KIRILDI"), lib.threat, popups++ * 0.04f));
+                        yield return Wait(0.2f);
+                        break;
                     case "spawn":
                         // Yeni robot: uyandığı makine evresinden sonraki tur boyunca üstünde UYANDI (S6b). Uyanan robot
                         // aynı adımda planlanıp yürüyebildiği için kareyle değil kimlikle bulunur: uyanmalar kimlik sırasıyla gelir.
@@ -1553,11 +2310,278 @@ namespace Corrigible.Game.Raid
         }
 
         /// <summary>
+        /// Tesis ekipmanının ve birimlerinin efektleri (aşama 9; belge §5, tasarım §6): engel kurulur (yükselir), aygıt iner ve yönüne
+        /// döner, taret atışı ve vinç halatı kısa çizgi, yem adımı ve çekiş bir kare kayar, süresi biten ya da kırılan aygıt çöker,
+        /// ele geçirilen makine ekip yönüne döner (bırakılınca geri), tutsağın komutu atış ya da hamle, havlama halkası, koklama nabzı,
+        /// düşen köpek kayarak çekilir. Yeni ses yok (var olan Cue'lar). Kalıcı sonuç (hurda, etiket, yön) sonraki Sync'te.
+        /// </summary>
+        IEnumerator GearFx(Baskin.BState after, Baskin.Fx f, List<Baskin.Fx> fx, int fxIndex, bool enemyTurn, float delay)
+        {
+            int version = buildVersion;
+            var at = W(f.X, f.Y);
+            switch (f.K)
+            {
+                case "build":
+                {
+                    // Engel karede yükselir (durumda zaten var; Sync aynı parçayı korur)
+                    int k = Key(f.X, f.Y);
+                    if (objects.TryGetValue(k, out var old) && old != null && old.Kind != f.Obj) { Kill(old.gameObject); objects.Remove(k); }
+                    if (!objects.TryGetValue(k, out var piece) || piece == null)
+                    {
+                        piece = NewObjectPiece(f.Obj, f.X, f.Y, false);
+                        piece.Kind = f.Obj; piece.X = f.X; piece.Y = f.Y; piece.name = $"{f.Obj} {f.X},{f.Y}";
+                        piece.SetWorldLabelsVisible(false);
+                        objects[k] = piece;
+                    }
+                    Sfx.Play(Cue.RaidRepair, 1, Pan(at));
+                    StartCoroutine(Popup(at, f.Obj == "kalas" ? Loc.T("KALAS") : Loc.T("TEL"), lib.good, delay));
+                    yield return Grow(piece.Body, 0.25f);
+                    break;
+                }
+                case "charge":
+                {
+                    // Lokum: uzmanın önünde kısa parlama; duvarın yıkılışı ardından gelen gedik dalında
+                    var actor = units.TryGetValue(f.Unit, out var ap) && ap != null ? ap.transform.position : at;
+                    Sfx.Play(Cue.RaidDynamite, 1, Pan(at));
+                    StartCoroutine(Burst(Vector3.Lerp(actor, at, 0.6f) + Vector3.up * 0.3f, lib.good, 0.8f, 0.2f));
+                    yield return Wait(0.12f);
+                    break;
+                }
+                case "gadget":
+                {
+                    // Aygıt +0,6 yukarıdan iner ve Dir'e döner (parça durumdan kurulur; Sync aynısını korur)
+                    var u = after.Units.FirstOrDefault(z => z.Id == f.Unit);
+                    if (u == null) break;
+                    if (!units.TryGetValue(u.Id, out var p) || p == null) { p = NewUnitPiece(u); units[u.Id] = p; }
+                    p.X = u.X; p.Y = u.Y;
+                    p.gameObject.SetActive(true);
+                    int dir = Array.FindIndex(Baskin.Dirs, d => d[0] == f.Dx && d[1] == f.Dy);
+                    var to = Quaternion.Euler(0, GadgetYaw(dir < 0 ? 0 : dir), 0);
+                    var from = to * Quaternion.Euler(0, 90, 0);
+                    Sfx.Play(Cue.RaidRepair, 1, Pan(at));
+                    StartCoroutine(Popup(at, Loc.T("KURULDU"), lib.good, delay));
+                    for (float t = 0; t < 1; t += Time.deltaTime / 0.25f)
+                    {
+                        if (version != buildVersion || p == null) yield break;
+                        p.transform.SetPositionAndRotation(at + Vector3.up * (0.6f * (1 - Ease(t))), Quaternion.Slerp(from, to, Ease(t)));
+                        yield return null;
+                    }
+                    if (version != buildVersion || p == null) yield break;
+                    p.transform.SetPositionAndRotation(at, to);
+                    break;
+                }
+                case "turret-hit":
+                {
+                    // Taretten hedefe kısa yeşil atış çizgisi, hedefte parlama; hasar ve düşüş ardından gelen dallarda
+                    var source = units.TryGetValue(f.N, out var tp) && tp != null ? tp.transform.position : at;
+                    if (units.TryGetValue(f.Unit, out var hit)) hit.Flash(lib.good);
+                    Sfx.Play(Cue.RaidDroneShot, 1, Pan(at));
+                    yield return Streak(source + Vector3.up * 0.3f, at + Vector3.up * 0.3f, lib.good, 0.2f);
+                    break;
+                }
+                case "ram-step":
+                case "decoy-step":
+                    if (units.TryGetValue(f.Unit, out var decoy) && decoy != null)
+                    {
+                        Sfx.Play(Cue.RaidStep, 0.8f, Pan(at));
+                        yield return Slide(decoy, W(f.X + f.Dx, f.Y + f.Dy), 0.16f);
+                        if (version != buildVersion) yield break;
+                        if (decoy != null) { decoy.X = f.X + f.Dx; decoy.Y = f.Y + f.Dy; }
+                    }
+                    break;
+                case "winch-pull":
+                {
+                    // Vinçten hedefe halat (kısa çizgi), hedef bir kare kayar: ayaktaki birim, yatan gövde ya da yerdeki yük. Zincirin ilk
+                    // adımında ÇEKTİ (aynı vinç ve aynı hedefin ardışık adımları tek yazı)
+                    var to = W(f.X + f.Dx, f.Y + f.Dy);
+                    var winch = units.TryGetValue(f.N, out var wp) && wp != null ? wp.transform.position : to;
+                    bool first = fxIndex < 2 || !(fx[fxIndex - 2].K == "winch-pull" && fx[fxIndex - 2].N == f.N && fx[fxIndex - 2].Unit == f.Unit && fx[fxIndex - 2].Obj == f.Obj);
+                    if (first) StartCoroutine(Popup(at, Loc.T("ÇEKTİ"), lib.good, delay));
+                    Sfx.Play(Cue.RaidPush, first ? 1 : 0.7f, Pan(to));
+                    StartCoroutine(Streak(winch + Vector3.up * 0.15f, at + Vector3.up * 0.15f, graphiteColor, 0.15f));
+                    if (f.Obj == "cargo")
+                    {
+                        if (cargoPiece != null && cargoPiece.activeSelf)
+                        {
+                            var corner = new Vector3(0.27f, 0.03f, -0.27f);
+                            for (float t = 0; t < 1; t += Time.deltaTime / 0.18f)
+                            {
+                                if (version != buildVersion || cargoPiece == null) yield break;
+                                cargoPiece.transform.position = Vector3.Lerp(at, to, Ease(t)) + corner;
+                                yield return null;
+                            }
+                            if (cargoPiece != null) cargoPiece.transform.position = to + corner;
+                        }
+                        else yield return Wait(0.18f);
+                    }
+                    else if (units.TryGetValue(f.Unit, out var pulled) && pulled != null)
+                    {
+                        yield return Slide(pulled, to, 0.18f);
+                        if (version != buildVersion) yield break;
+                        if (pulled != null) { pulled.X = f.X + f.Dx; pulled.Y = f.Y + f.Dy; }
+                    }
+                    break;
+                }
+                case "scrap":
+                case "device-break":
+                    // Aygıt çöker ve kalkar (hurda nesnesi Sync'te); kırılan önce parlar
+                    if (units.TryGetValue(f.Unit, out var gadget) && gadget != null)
+                    {
+                        if (f.K == "device-break") gadget.Flash(lib.threat);
+                        Sfx.Play(Cue.RaidBreak, 1, Pan(at));
+                        StartCoroutine(Popup(at, f.K == "scrap" ? Loc.T("HURDA") : Loc.T("KIRILDI"), graphiteColor, delay));
+                        yield return Crumple(gadget, 0.3f);
+                    }
+                    break;
+                case "capture":
+                    // Kelepçe halkası, makine ekip yönüne döner; etiket ekip renginde Sync'te
+                    if (units.TryGetValue(f.Unit, out var caught) && caught != null)
+                    {
+                        Sfx.Play(Cue.RaidRepair, 1, Pan(at));
+                        StartCoroutine(Popup(at, Loc.T("ELE GEÇİRİLDİ"), lib.good, delay));
+                        StartCoroutine(Burst(at + Vector3.up * 0.05f, lib.good, 0.9f, 0.25f));
+                        capturedYaw.Add(f.Unit);
+                        yield return Turn(caught, 45, 0.25f);
+                    }
+                    break;
+                case "release":
+                    if (units.TryGetValue(f.Unit, out var freed) && freed != null)
+                    {
+                        Sfx.Play(Cue.RaidPush, 1, Pan(at));
+                        StartCoroutine(Popup(at, Loc.T("SERBEST"), lib.threat, delay));
+                        capturedYaw.Remove(f.Unit);
+                        yield return Turn(freed, -135, 0.25f);
+                    }
+                    break;
+                case "command":
+                    // Tutsağın komutu: uzaktan vuranlar atış, ötekiler hamle (bugünkü attack dalının kaynağı tutsak); patlama, düşüş,
+                    // hasar, kilit ve plaka ardından gelen dallarda
+                    if (units.TryGetValue(f.Unit, out var captive) && captive != null && f.Obj != "bomba")
+                    {
+                        bool ranged = Baskin.UnitTypes.TryGetValue(f.Obj ?? "", out var ct) && ct.Ranged;
+                        Sfx.Play(ranged ? Cue.RaidDroneShot : Cue.RaidMelee, 1, Pan(captive.transform.position));
+                        yield return ranged ? Shot(captive, f.X, f.Y) : Lunge(captive, f.X, f.Y);
+                    }
+                    break;
+                case "plate-give":
+                    if (units.TryGetValue(f.Unit, out var given) && given != null) given.Flash(lib.good);
+                    StartCoroutine(Popup(at, Loc.T("+PLAKA"), lib.good, delay));
+                    Sfx.Play(Cue.RaidRepair, 1, Pan(at));
+                    yield return Wait(0.25f);
+                    break;
+                case "bark":
+                {
+                    // Köpekten erim ölçüsünde büyüyen yeşil halka
+                    int range = after.Moves?.BarkRange ?? 2;
+                    Sfx.Play(Cue.RadioReport, 1, Pan(at));
+                    StartCoroutine(Popup(at, Loc.T("HAV!"), lib.good, delay));
+                    yield return Burst(at + Vector3.up * 0.05f, lib.good, 2 * range + 1, 0.4f);
+                    break;
+                }
+                case "fetch":
+                    yield return CargoPicked(f.X, f.Y);
+                    break;
+                case "sniff":
+                    Sfx.Play(Cue.RadioReport, 1, Pan(at));
+                    StartCoroutine(Popup(at, Loc.T("KOKLADI"), lib.good, delay));
+                    yield return Burst(at + Vector3.up * 0.05f, lib.good, 1.2f, 0.3f);
+                    break;
+                case "dog-down":
+                    // Köpek kayarak küçülür ve tahtadan çekilir (gövde değildir)
+                    if (units.TryGetValue(f.Unit, out var dog) && dog != null)
+                    {
+                        Sfx.Play(Cue.RaidUnitDown, 1, Pan(at));
+                        StartCoroutine(Popup(at, Loc.T("ÇEKİLDİ"), graphiteColor, delay));
+                        yield return Withdraw(dog, 0.35f);
+                    }
+                    break;
+            }
+        }
+
+        /// <summary>Gövde yerinde 0'dan boyuna yükselir (kurulan engel).</summary>
+        IEnumerator Grow(Transform body, float time)
+        {
+            int version = buildVersion;
+            if (body == null) yield break;
+            var s = body.localScale;
+            for (float t = 0; t < 1; t += Time.deltaTime / time)
+            {
+                if (version != buildVersion || body == null) yield break;
+                body.localScale = new Vector3(s.x, s.y * Mathf.Max(0.02f, Ease(t)), s.z);
+                yield return null;
+            }
+            if (version == buildVersion && body != null) body.localScale = s;
+        }
+
+        /// <summary>Aygıt çöker (y ölçeği 1 → 0,3) ve gizlenir; Sync onu kaldırır.</summary>
+        IEnumerator Crumple(RaidPiece p, float time)
+        {
+            int version = buildVersion;
+            var s = p.Body.localScale;
+            for (float t = 0; t < 1; t += Time.deltaTime / time)
+            {
+                if (version != buildVersion || p == null) yield break;
+                p.Body.localScale = new Vector3(s.x * (1 + t * 0.1f), s.y * (1 - Ease(t) * 0.7f), s.z * (1 + t * 0.1f));
+                yield return null;
+            }
+            if (version != buildVersion || p == null) yield break;
+            p.Body.localScale = s;
+            p.gameObject.SetActive(false);
+        }
+
+        /// <summary>Düşen köpek: hafif kayar, küçülür ve gizlenir.</summary>
+        IEnumerator Withdraw(RaidPiece p, float time)
+        {
+            int version = buildVersion;
+            var a = p.transform.position; var s = p.Body.localScale;
+            var away = p.transform.forward; away.y = 0; away = away.sqrMagnitude > 1e-4f ? away.normalized * 0.35f : Vector3.zero;
+            for (float t = 0; t < 1; t += Time.deltaTime / time)
+            {
+                if (version != buildVersion || p == null) yield break;
+                p.transform.position = a + away * Ease(t);
+                p.Body.localScale = s * (1 - Ease(t) * 0.8f);
+                yield return null;
+            }
+            if (version != buildVersion || p == null) yield break;
+            p.Body.localScale = s;
+            p.gameObject.SetActive(false);
+        }
+
+        /// <summary>Parça yerinde verilen dünya yönüne döner.</summary>
+        IEnumerator Turn(RaidPiece p, float yaw, float time)
+        {
+            int version = buildVersion;
+            var a = p.transform.rotation; var b = Quaternion.Euler(0, yaw, 0);
+            for (float t = 0; t < 1; t += Time.deltaTime / time)
+            {
+                if (version != buildVersion || p == null) yield break;
+                p.transform.rotation = Quaternion.Slerp(a, b, Ease(t));
+                yield return null;
+            }
+            if (version == buildVersion && p != null) p.transform.rotation = b;
+        }
+
+        /// <summary>İki nokta arasında kısa ömürlü düz çizgi (taret atışı, vinç halatı); sonra gizlenir.</summary>
+        IEnumerator Streak(Vector3 from, Vector3 to, Color color, float time)
+        {
+            int version = buildVersion;
+            var line = NewArrow("Gear streak");
+            line.Set(from, to, color, false, PixelWorld * Mathf.Max(1, lib.gearLinePx), 0, 0, false);
+            line.gameObject.SetActive(true);
+            for (float t = 0; t < 1; t += Time.deltaTime / time)
+            {
+                if (version != buildVersion || line == null) yield break;
+                yield return null;
+            }
+            if (line != null) Kill(line.gameObject);
+        }
+
+        /// <summary>
         /// Bölge olayının efekti (Fx "ev", alt tür Obj; Baskin.Events.cs). Kısa yazı, patlama halkası ve bir ses; kabin birimi
         /// gizler ya da indirir, tüp hattında uçar, raf duvarı kaldırır. Olayın kalıcı sonucu (bulut, gaz, enkaz, karo) Sync'te
         /// çizilir. Tüp uçuşunda ve rafta Dx, Dy yön değil, son karedir.
         /// </summary>
-        IEnumerator EventFx(Baskin.BState after, Baskin.Fx f, float delay)
+        IEnumerator EventFx(Baskin.BState after, Baskin.Fx f, float delay, List<Baskin.Fx> fx = null, int next = 0)
         {
             int version = buildVersion;
             var at = W(f.X, f.Y);
@@ -1750,7 +2774,132 @@ namespace Corrigible.Game.Raid
                     StartCoroutine(Popup(at, Loc.T("YAĞ"), graphiteColor, delay, lib.hazardOil));
                     yield return Wait(0.35f);
                     break;
+                case "yalpa":
+                    // Tesis aşama 12: platform yatar (karesi yok, Dx yön): tahta kökü eğilir ve döner, sonra kaymalar birlikte (TiltRoll)
+                    Sfx.Play(Cue.EvShelfRoll, 0.8f);
+                    yield return TiltRoll(f, fx, next, delay);
+                    break;
             }
+        }
+
+        /// <summary>Yatışın toplu oynattığı "slide" efektleri (Animate'in sırası gelince atlanır).</summary>
+        readonly HashSet<Baskin.Fx> playedSlides = new HashSet<Baskin.Fx>();
+
+        /// <summary>
+        /// Tesis aşama 12 (Yalpa; tasarım K40): popup "YALPA" ortada; tahta kökleri (karolar, parçalar, işaretler) yatış yönüne ~2,5° eğilir ve
+        /// döner (0,35 s), ardından olayın "slide" efektleri aynı anda oynar (birim, gövde, aygıt; yük; hurda nesnesi). Varış karesi Fx'ten:
+        /// itmenin kısayolu (son durumdaki yer) kullanılmaz; sonraki makine yürüyüşü parçanın o anki karesinden başlar. Toplam ≤ 0,6 s.
+        /// </summary>
+        IEnumerator TiltRoll(Baskin.Fx f, List<Baskin.Fx> fx, int next, float delay)
+        {
+            int version = buildVersion;
+            var slides = new List<Baskin.Fx>();
+            if (fx != null)
+                for (int i = Mathf.Max(0, next); i < fx.Count && fx[i].K != "ev"; i++)
+                    if (fx[i].K == "slide") slides.Add(fx[i]);
+            foreach (var sl in slides) playedSlides.Add(sl);
+            StartCoroutine(Popup(W(3.5f, 3.5f), Loc.T("YALPA"), graphiteColor, delay, lib.hazardTilt));
+            float scale = FastMachines ? 1 / 3.125f : 1;
+            var roots = PageRoots.Where(r => r != null).ToArray();
+            var saved = roots.Select(r => (r.position, r.rotation)).ToArray();
+            var pivot = W(3.5f, 3.5f);
+            float sign = f.Dx < 0 ? 1 : -1;
+            for (float t = 0; t < 1; t += Time.deltaTime / (0.35f * scale))
+            {
+                if (version != buildVersion) break;
+                float angle = Mathf.Sin(Mathf.PI * Ease(t)) * 2.5f * sign;
+                for (int i = 0; i < roots.Length; i++)
+                {
+                    if (roots[i] == null) continue;
+                    roots[i].SetPositionAndRotation(saved[i].position, saved[i].rotation);
+                    roots[i].RotateAround(pivot, Vector3.forward, angle);
+                }
+                yield return null;
+            }
+            for (int i = 0; i < roots.Length; i++) if (roots[i] != null) roots[i].SetPositionAndRotation(saved[i].position, saved[i].rotation);
+            if (version != buildVersion) yield break;
+            float time = 0.22f * scale;
+            foreach (var sl in slides) StartCoroutine(SlideFx(sl, time));
+            if (slides.Count > 0) yield return new WaitForSeconds(time + 0.02f);
+        }
+
+        /// <summary>
+        /// Tek kayma (aşama 12, Fx "slide": X/Y başlangıç, Dx/Dy yön, N 1 kaydı / 0 çarptı): hurda nesne parçası yeni kareye geçer (anahtar
+        /// yeniden yazılır), yerdeki yük parçası kayar, birim ya da gövde parçası kayar (yere yatmış çarpısı da); çarpan kısa sarsılır.
+        /// </summary>
+        IEnumerator SlideFx(Baskin.Fx s, float time)
+        {
+            int version = buildVersion;
+            int nx = s.X + s.Dx, ny = s.Y + s.Dy;
+            var to = W(nx, ny);
+            if (s.Obj == "hurda")
+            {
+                int k0 = Key(s.X, s.Y), k1 = Key(nx, ny);
+                if (!objects.TryGetValue(k0, out var scrap) || scrap == null || !InBoard(nx, ny)) yield break;
+                objects.Remove(k0);
+                objects[k1] = scrap;
+                scrap.X = nx; scrap.Y = ny; scrap.name = $"{scrap.Kind} {nx},{ny}";
+                yield return Slide(scrap, to, time);
+                yield break;
+            }
+            if (s.Obj == "cargo")
+            {
+                if (cargoPiece == null || !cargoPiece.activeSelf) yield break;
+                var corner = new Vector3(0.27f, 0.03f, -0.27f);
+                var from = W(s.X, s.Y);
+                for (float t = 0; t < 1; t += Time.deltaTime / time)
+                {
+                    if (version != buildVersion || cargoPiece == null) yield break;
+                    cargoPiece.transform.position = Vector3.Lerp(from, to, Ease(t)) + corner;
+                    yield return null;
+                }
+                if (cargoPiece != null) cargoPiece.transform.position = to + corner;
+                yield break;
+            }
+            if (!units.TryGetValue(s.Unit, out var p) || p == null || !p.gameObject.activeSelf) yield break;
+            if (s.N == 0) { yield return Jolt(p.transform, time); yield break; }
+            p.X = nx; p.Y = ny;
+            if (downMarks.TryGetValue(s.Unit, out var cross) && cross != null && cross.gameObject.activeSelf) cross.transform.position = to + Vector3.up * 0.11f;
+            yield return Slide(p, to, time);
+        }
+
+        /// <summary>
+        /// Tesis aşama 12 (Katar): birim açık kenardan düşer: parça kenara kayar (0,18 s), 0,5 birim düşerek eğilir ve söner; etiketleri kalkar.
+        /// Makinede "DÜŞTÜ" (itme ve robot düşüşü sesi), ekip üyesinde "VAGONDAN DÜŞTÜ" (ekip düşüşü sesi). Parçanın gövdesi yerine döner ve
+        /// gizlenir (sonraki Sync kaldırır; geri alınırsa yeniden kurar).
+        /// </summary>
+        IEnumerator FallOffEdge(RaidPiece p, Baskin.Fx f, bool member, float delay)
+        {
+            int version = buildVersion;
+            var at = W(f.X, f.Y);
+            var edge = W(f.X + f.Dx * 0.5f, f.Y + f.Dy * 0.5f);
+            HideUnitLabels(f.Unit);
+            if (member) Sfx.Play(Cue.RaidUnitDown, 1, Pan(at));
+            else { Sfx.Play(Cue.RaidPush, 1, Pan(at)); Sfx.Play(Cue.RaidRobotDown, 1, Pan(at)); }
+            StartCoroutine(Popup(at, member ? Loc.T("VAGONDAN DÜŞTÜ") : Loc.T("DÜŞTÜ"), lib.threat, delay));
+            if (!member && orderLabels.TryGetValue(f.Unit, out var cancelled) && shownIntents.TryGetValue(f.Unit, out var cancelledIntent))
+            {
+                cancelled.gameObject.SetActive(true);
+                cancelled.SetOpacity(0.55f); cancelled.SetPaperColor(paperColor);
+                cancelled.Show(Loc.F("<s>{0}</s> İPTAL", cancelledIntent.Order), lib.threat, graphiteColor);
+            }
+            yield return Slide(p, edge, 0.18f);
+            if (version != buildVersion || p == null) yield break;
+            var body = p.Body;
+            var rotation = body.localRotation; var position = body.localPosition; var scale = body.localScale;
+            var axis = Vector3.Cross(Vector3.up, new Vector3(f.Dx, 0, -f.Dy)).normalized;
+            for (float t = 0; t < 1; t += Time.deltaTime / 0.3f)
+            {
+                if (version != buildVersion || p == null) break;
+                float e = Ease(t);
+                p.transform.position = edge + new Vector3(f.Dx, 0, -f.Dy) * (0.25f * e) + Vector3.down * (0.5f * e * e);
+                body.localRotation = Quaternion.AngleAxis(-60 * e, p.transform.InverseTransformDirection(axis)) * rotation;
+                body.localScale = scale * (1 - 0.6f * e);
+                yield return null;
+            }
+            if (p == null) yield break;
+            body.localRotation = rotation; body.localPosition = position; body.localScale = scale;
+            if (version == buildVersion) p.gameObject.SetActive(false);
         }
 
         static bool InBoard(int x, int y) => x >= 0 && y >= 0 && x < Baskin.N && y < Baskin.N;
@@ -1805,6 +2954,140 @@ namespace Corrigible.Game.Raid
             p.gameObject.SetActive(false);
         }
 
+        // ---------- Tesis hamlelerinin canlandırma yardımcıları (aşama 7) ----------
+        /// <summary>
+        /// Yürüyüş yolu boyunca kare kare (sürükleme ve menfezin yakın ucu; aşama 7): <paramref name="path"/> başlangıç hariç kareler.
+        /// <paramref name="followerId"/> verilirse (sürüklenen gövde) bir adım arkadan aynı yolu izler: her adımda yürüyenin bir önceki
+        /// karesine kayar, <paramref name="followerEnd"/>'e varınca durur; yolda varmadıysa son adımda oraya geçer (kapıya sürüklemede
+        /// gövde sürükleyenle aynı karede). Yalnız sunum; sonra Sync.
+        /// </summary>
+        public IEnumerator AnimateWalk(int unitId, IList<(int x, int y)> path, int followerId = 0, (int x, int y)? followerEnd = null)
+        {
+            if (path == null || path.Count == 0 || !units.TryGetValue(unitId, out var p) || p == null) yield break;
+            RaidPiece follower = null;
+            if (followerId != 0 && units.TryGetValue(followerId, out var fp) && fp != null && fp.gameObject.activeSelf) follower = fp;
+            var trail = new (int x, int y)?[path.Count];
+            if (follower != null)
+            {
+                var previous = TileOf(p.transform.position);
+                bool stopped = followerEnd.HasValue && TileOf(follower.transform.position) == followerEnd.Value;
+                for (int i = 0; i < path.Count; i++)
+                {
+                    if (!stopped) { trail[i] = previous; if (followerEnd.HasValue && previous == followerEnd.Value) stopped = true; }
+                    previous = path[i];
+                }
+                if (followerEnd.HasValue && !stopped) trail[path.Count - 1] = followerEnd.Value;
+            }
+            int version = buildVersion;
+            Busy = true;
+            float step = Mathf.Max(machineStepSeconds, 0.14f);
+            for (int i = 0; i < path.Count; i++)
+            {
+                var a = p.transform.position; var b = W(path[i].x, path[i].y);
+                var fa = follower != null ? follower.transform.position : Vector3.zero;
+                bool drags = follower != null && trail[i].HasValue && TileOf(fa) != trail[i].Value;
+                var fb = drags ? W(trail[i].Value.x, trail[i].Value.y) : fa;
+                Sfx.Play(Cue.RaidStep, 0.8f, Pan(b));
+                if (drags) Sfx.Play(Cue.RaidPush, 0.5f, Pan(fb));
+                for (float t = 0; t < 1; t += Time.deltaTime / step)
+                {
+                    if (version != buildVersion || p == null) yield break;
+                    p.transform.position = Vector3.Lerp(a, b, Mathf.SmoothStep(0, 1, t)) + Vector3.up * Mathf.Sin(t * Mathf.PI) * 0.2f;
+                    if (drags && follower != null) follower.transform.position = Vector3.Lerp(fa, fb, Mathf.SmoothStep(0, 1, t));
+                    yield return null;
+                }
+                if (version != buildVersion || p == null) yield break;
+                p.transform.position = b; p.X = path[i].x; p.Y = path[i].y;
+                if (drags && follower != null) { follower.transform.position = fb; follower.X = trail[i].Value.x; follower.Y = trail[i].Value.y; }
+            }
+            Busy = false;
+        }
+
+        /// <summary>Yürüyüşte yerdeki yük alındı (köprünün yürüyüş canlandırmasından sonra; aşama 7): parça kalkar, YÜK ALINDI.</summary>
+        public IEnumerator PickCargo(int x, int y)
+        {
+            int version = buildVersion;
+            Busy = true;
+            yield return CargoPicked(x, y);
+            if (version == buildVersion) Busy = false;
+        }
+
+        IEnumerator CargoPicked(int x, int y)
+        {
+            if (cargoPiece != null) cargoPiece.SetActive(false);
+            Sfx.Play(Cue.RaidRepair, 0.5f, Pan(W(x, y)));
+            StartCoroutine(Popup(W(x, y), Loc.T("YÜK ALINDI"), lib.good, 0));
+            yield return Wait(0.3f);
+        }
+
+        /// <summary>Fırlatma: küçük sandık atandan alıcıya kavis çizer, sonra silinir; sandık parçası yoksa alıcıda halka ve YÜK.</summary>
+        IEnumerator Throw(Baskin.Fx f, float delay)
+        {
+            int version = buildVersion;
+            var at = W(f.X, f.Y);
+            Sfx.Play(Cue.RaidStep, 1, Pan(at));
+            if (lib.lootCrate == null || !units.TryGetValue(f.Unit, out var thrower) || thrower == null)
+            {
+                StartCoroutine(Burst(at, lib.good, 0.8f, 0.25f));
+                StartCoroutine(Popup(at, Loc.T("YÜK"), lib.good, delay));
+                yield return Wait(0.3f);
+                yield break;
+            }
+            var box = Instantiate(lib.lootCrate, marksRoot);
+            box.name = "Thrown cargo";
+            box.SetWorldLabelsVisible(false);
+            foreach (var col in box.GetComponentsInChildren<Collider>(true)) Kill(col);
+            box.transform.localScale = box.transform.localScale * 0.35f;
+            yield return Arc(box.gameObject, thrower.transform.position + Vector3.up * 0.5f, at + Vector3.up * 0.5f, 0.8f, stepTime * 1.4f);
+            if (box != null) Kill(box.gameObject);
+            if (version != buildVersion) yield break;
+            Sfx.Play(Cue.RaidStep, 0.6f, Pan(at));
+        }
+
+        /// <summary>Nesneyi a'dan b'ye <paramref name="height"/> yüksekliğinde kavisle taşır (fırlatma).</summary>
+        IEnumerator Arc(GameObject go, Vector3 a, Vector3 b, float height, float time)
+        {
+            int version = buildVersion;
+            for (float t = 0; t < 1; t += Time.deltaTime / time)
+            {
+                if (version != buildVersion || go == null) yield break;
+                go.transform.position = Vector3.Lerp(a, b, t) + Vector3.up * (Mathf.Sin(t * Mathf.PI) * height);
+                yield return null;
+            }
+            if (version == buildVersion && go != null) go.transform.position = b;
+        }
+
+        /// <summary>Menfez: Analist yakın uçta (X, Y) yere batar, öbür uçta (X + Dx, Y + Dy) çıkar; çıkışta grafit halka.</summary>
+        IEnumerator Vent(Baskin.Fx f)
+        {
+            if (!units.TryGetValue(f.Unit, out var p) || p == null) yield break;
+            int version = buildVersion;
+            var near = W(f.X, f.Y); var far = W(f.X + f.Dx, f.Y + f.Dy);
+            var s = p.Body.localScale;
+            Sfx.Play(Cue.RaidStep, 1, Pan(near));
+            for (float t = 0; t < 1; t += Time.deltaTime / 0.2f)
+            {
+                if (version != buildVersion || p == null) yield break;
+                float e = Ease(t);
+                p.transform.position = near + Vector3.down * (0.4f * e);
+                p.Body.localScale = s * (1 - 0.4f * e);
+                yield return null;
+            }
+            if (version != buildVersion || p == null) yield break;
+            Sfx.Play(Cue.RaidStep, 1, Pan(far));
+            for (float t = 0; t < 1; t += Time.deltaTime / 0.2f)
+            {
+                if (version != buildVersion || p == null) yield break;
+                float e = Ease(t);
+                p.transform.position = far + Vector3.down * (0.4f * (1 - e));
+                p.Body.localScale = s * (0.6f + 0.4f * e);
+                yield return null;
+            }
+            if (version != buildVersion || p == null) yield break;
+            p.Body.localScale = s; p.transform.position = far; p.X = f.X + f.Dx; p.Y = f.Y + f.Dy;
+            StartCoroutine(Burst(far, graphiteColor, 0.8f, 0.25f));
+        }
+
         /// <summary>
         /// Makine evresinden sonra robotlar yeni yerlerine kare kare yürür. Core yeni planı kurarken robotu doğrudan taşır
         /// (yol yok); yol burada Core.Reachable'ın kuralıyla bulunur: duvar ve nesne kapalı, ekip üyesi geçilmez, robot geçilir.
@@ -1812,9 +3095,10 @@ namespace Corrigible.Game.Raid
         /// bayrakları yürüyüşten önce kalkar; can etiketi robotla gider. Sonra Sync her şeyi yerine oturtur. Hızlı kipte
         /// süreler makine evresi gibi kısalır. Yalnız sunum: durum okunur, yazılmaz.
         /// </summary>
-        public IEnumerator AnimateMachineMoves(Baskin.BState after)
+        /// <param name="alsoDead">Evrenin sonraki parçasında düşecek makineler (pusu; aşama 7): önce yeni karelerine yürür, sonra orada batar.</param>
+        public IEnumerator AnimateMachineMoves(Baskin.BState after, ICollection<int> alsoDead = null)
         {
-            var walkers = MachineWalks(after);
+            var walkers = MachineWalks(after, alsoDead);
             if (walkers.Count == 0) yield break;
             int version = buildVersion;
             Busy = true;
@@ -1863,13 +3147,13 @@ namespace Corrigible.Game.Raid
         }
 
         /// <summary>Tahtada gösterildiği kareden yeni karesine yürüyecek robot var mı (yeni oluşanlar Sync'te yerinde belirir)?</summary>
-        public bool MachinesWillMove(Baskin.BState after) => MachineWalks(after).Count > 0;
+        public bool MachinesWillMove(Baskin.BState after, ICollection<int> alsoDead = null) => MachineWalks(after, alsoDead).Count > 0;
 
-        List<(RaidPiece piece, int id, List<(int x, int y)> path)> MachineWalks(Baskin.BState after)
+        List<(RaidPiece piece, int id, List<(int x, int y)> path)> MachineWalks(Baskin.BState after, ICollection<int> alsoDead = null)
         {
             var walkers = new List<(RaidPiece piece, int id, List<(int x, int y)> path)>();
-            // Asansör kabinindeki makine tahtada değil (parçası gizli): yürümez
-            foreach (var u in after.Units.Where(u => u.Side == 'e' && !u.Dead && !u.Cab).OrderBy(u => u.Order))
+            // Asansör kabinindeki makine tahtada değil (parçası gizli): yürümez. Pusuyla düşecek makine (alsoDead) önce yürür
+            foreach (var u in after.Units.Where(u => u.Side == 'e' && (!u.Dead || alsoDead != null && alsoDead.Contains(u.Id)) && !u.Cab).OrderBy(u => u.Order))
             {
                 if (!units.TryGetValue(u.Id, out var p) || p == null || !p.gameObject.activeSelf) continue;
                 var from = TileOf(p.transform.position);
@@ -1972,6 +3256,21 @@ namespace Corrigible.Game.Raid
         public float Pan(Vector3 world) => Sfx.PanOf(cam, world);
 
         IEnumerator Wait(float s) { yield return new WaitForSeconds(s * stepTime / 0.32f / (FastMachines ? 3.125f : 1)); }
+
+        /// <summary>Aşama 10 (cıvatalı ayak): yerinde kısa sarsıntı; parça sonunda yerine döner (itme yok).</summary>
+        IEnumerator Jolt(Transform t, float seconds)
+        {
+            if (t == null) yield break;
+            var home = t.localPosition;
+            float time = seconds * stepTime / 0.32f / (FastMachines ? 3.125f : 1);
+            for (float e = 0; e < time && t != null; e += Time.deltaTime)
+            {
+                float k = 1 - e / time;
+                t.localPosition = home + new Vector3(Mathf.Sin(e * 90f) * 0.04f * k, 0, 0);
+                yield return null;
+            }
+            if (t != null) t.localPosition = home;
+        }
         static float Ease(float t) => 1 - (1 - t) * (1 - t);
 
         IEnumerator Lunge(RaidPiece p, int x, int y)
@@ -1989,7 +3288,7 @@ namespace Corrigible.Game.Raid
         {
             int version = buildVersion;
             var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            Destroy(go.GetComponent<Collider>());
+            Kill(go.GetComponent<Collider>());
             go.transform.SetParent(marksRoot, false);
             go.transform.localScale = Vector3.one * 0.16f;
             go.GetComponent<Renderer>().sharedMaterial = lib.overlay;
@@ -1999,8 +3298,8 @@ namespace Corrigible.Game.Raid
             mesh.SetColors(Enumerable.Repeat(lib.threat, mesh.vertexCount).ToList());
             var a = p.Body.position; var b = W(x, y) + Vector3.up * 0.5f;
             for (float t = 0; t < 1; t += Time.deltaTime / (stepTime * 0.6f)) { if (version != buildVersion || go == null) yield break; go.transform.position = Vector3.Lerp(a, b, t); yield return null; }
-            effectMeshes.Remove(mesh); if (mesh != null) Destroy(mesh);
-            Destroy(go);
+            effectMeshes.Remove(mesh); if (mesh != null) Kill(mesh);
+            Kill(go);
         }
 
         IEnumerator Slide(RaidPiece p, Vector3 to, float time)
@@ -2026,14 +3325,15 @@ namespace Corrigible.Game.Raid
             if (version == buildVersion && p != null) p.gameObject.SetActive(false);
         }
 
-        /// <summary>Tahliye: uzman en yakın tahta kenarına doğru kayarak küçülür ve kaybolur; üstünde yeşil TAHLİYE.</summary>
-        IEnumerator Leave(RaidPiece p, int x, int y)
+        /// <summary>Tahliye (ya da kapıya giriş): uzman kapının kenarına (kare bir geçitteyse o geçidin yönü, tesis sürüm 10: köşe karede
+        /// de geçidin kenarı; değilse en yakın tahta kenarı) doğru kayarak küçülür ve kaybolur; üstünde yeşil TAHLİYE (<paramref name="popup"/>
+        /// verilirse o: tesis odasında KAPIDA). <paramref name="slide"/> false: yerinde küçülür (geri çekilme).</summary>
+        IEnumerator Leave(RaidPiece p, int x, int y, string popup = null, Color? color = null, bool slide = true)
         {
             int version = buildVersion;
-            int edge = Mathf.Min(Mathf.Min(x, Baskin.N - 1 - x), Mathf.Min(y, Baskin.N - 1 - y));
-            var away = x == edge ? new Vector3(-1, 0, 0) : Baskin.N - 1 - x == edge ? new Vector3(1, 0, 0) : y == edge ? new Vector3(0, 0, 1) : new Vector3(0, 0, -1);
+            var away = slide ? LeaveDirection(x, y) : Vector3.zero;
             Sfx.Play(Cue.RaidStep, 1, Pan(p.transform.position));
-            StartCoroutine(Popup(W(x, y), Loc.T("TAHLİYE"), lib.good, 0));
+            StartCoroutine(Popup(W(x, y), popup ?? Loc.T("TAHLİYE"), color ?? lib.good, 0));
             var a = p.transform.position; var s = p.Body.localScale;
             for (float t = 0; t < 1; t += Time.deltaTime / (stepTime * 1.4f))
             {
@@ -2045,6 +3345,20 @@ namespace Corrigible.Game.Raid
             if (version != buildVersion || p == null) yield break;
             p.Body.localScale = s;
             p.gameObject.SetActive(false);
+        }
+
+        /// <summary>Kurulan tahtanın geçitleri (çıkışlar ve tesis odasının ileri geçidi); <see cref="LeaveDirection"/> okur.</summary>
+        List<IReadOnlyList<Baskin.Pt>> builtGates;
+
+        /// <summary>Tahtayı terk eden uzmanın kayma yönü: kare bir geçitteyse geçidin yönü (<see cref="GateDirection"/>; köşe karede
+        /// komşu kenar değil), değilse en yakın tahta kenarı.</summary>
+        Vector3 LeaveDirection(int x, int y)
+        {
+            if (builtGates != null)
+                foreach (var g in builtGates)
+                    if (g != null && g.Any(t => t.X == x && t.Y == y) && GateDirection(g) is Vector3 d && d != Vector3.zero) return d;
+            int edge = Mathf.Min(Mathf.Min(x, Baskin.N - 1 - x), Mathf.Min(y, Baskin.N - 1 - y));
+            return x == edge ? new Vector3(-1, 0, 0) : Baskin.N - 1 - x == edge ? new Vector3(1, 0, 0) : y == edge ? new Vector3(0, 0, 1) : new Vector3(0, 0, -1);
         }
 
         IEnumerator Fall(RaidPiece p)
@@ -2070,7 +3384,7 @@ namespace Corrigible.Game.Raid
         void BuildTile(int x, int y, string kind)
         {
             int k = Key(x, y);
-            if (tileObjects[k] != null) Destroy(tileObjects[k]);
+            if (tileObjects[k] != null) Kill(tileObjects[k]);
             var prefab = kind == "wall" ? lib.wall : kind == "cable" ? lib.cable : lib.floor;
             var go = Instantiate(prefab, W(x, y), Quaternion.identity, tilesRoot);
             go.name = $"Tile {x},{y}";
@@ -2110,7 +3424,7 @@ namespace Corrigible.Game.Raid
                 for (int i = 0; i < offsets.Length; i++)
                 {
                     var puff = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    Destroy(puff.GetComponent<Collider>());
+                    Kill(puff.GetComponent<Collider>());
                     puff.name = "Puff";
                     puff.transform.SetParent(root.transform, false);
                     puff.transform.localPosition = offsets[i];
@@ -2170,7 +3484,7 @@ namespace Corrigible.Game.Raid
                 ring.transform.localScale = Vector3.one * Mathf.Lerp(0.3f, size, Ease(t)) / 0.3f;
                 yield return null;
             }
-            Destroy(ring);
+            Kill(ring);
         }
 
         /// <param name="edge">Kâğıdın kenarı (verilmezse yazı rengi): olay yazıları grafit mürekkep, olayın renginde kenar.</param>
@@ -2189,7 +3503,7 @@ namespace Corrigible.Game.Raid
                 label.SetOpacity(1 - Mathf.Max(0, k - 0.73f) / 0.27f);
                 yield return null;
             }
-            Destroy(label.gameObject);
+            Kill(label.gameObject);
         }
     }
 }

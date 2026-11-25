@@ -53,6 +53,8 @@ namespace Corrigible.Desk.Bridge
         static readonly string TargetTitle = Loc.N("SIĞINAK KAPISI"), TargetLine = Loc.N("Biri çalınca: gözetleme deliği, interkom, kapıyı aç ya da açma.");
         /// <summary>Kartlı oyunda kapı hedefinin satırı (PLAN §4): kapıda aday var / yok.</summary>
         static readonly string BoardLineWaiting = Loc.N("Kapıda aday var: tezgâha bak."), BoardLineIdle = Loc.N("Kapıda kimse yok.");
+        /// <summary>Kartlı oyunda kapı panosunda belge bekliyor (aday yokken; Docs/KAPI-BELGELERI-VE-YZ-MEKANLARI-TASARIMI.md §A).</summary>
+        static readonly string BoardLinePaper = Loc.N("Kapıya bir belge bırakıldı: yanındaki çekmeceden al.");
 
         DoorPhase phase;
         DoorVisit shown, announced;
@@ -130,7 +132,8 @@ namespace Corrigible.Desk.Bridge
         {
             if (target == null) return;
             var sim = Sim;
-            string line = sim?.Board == null ? TargetLine : CandidateWaiting(sim) ? BoardLineWaiting : BoardLineIdle;
+            string line = sim?.Board == null ? TargetLine : CandidateWaiting(sim) ? BoardLineWaiting
+                : admission != null && admission.DeliveryWaiting ? BoardLinePaper : BoardLineIdle;
             if (line == boardLine) return;
             boardLine = line;
             target.LineOverride = Loc.T(line);

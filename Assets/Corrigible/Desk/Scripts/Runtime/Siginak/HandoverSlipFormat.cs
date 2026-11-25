@@ -70,7 +70,7 @@ namespace Corrigible.Desk
 
             l.ExpectedLabel = Loc.T("KAPANIŞTA BEKLENEN");
             l.Expected.Add(Rations(f));
-            l.Expected.Add(Training(f.training));
+            // 2026-11-24: EĞİTİM bölümü kaldırıldı; fişte EĞİTİM satırı basılmaz
             l.Expected.Add(new HandoverSlipLines.Row { Name = Loc.T("ÜRETİM"), Value = Production(f.production) });
             l.Expected.Add(new HandoverSlipLines.Row
             {
@@ -101,6 +101,7 @@ namespace Corrigible.Desk
                 box.Text = box.Kind == SlipWarningKind.Rations ? RationsText(f)
                     : box.Kind == SlipWarningKind.Exposure ? ExposureText(f)
                     : box.Kind == SlipWarningKind.ShelterShort ? ShelterShortText(f)
+                    : box.Kind == SlipWarningKind.Siege ? SiegeText(f)
                     : WarningText(box.Kind, box.Names);
 
             l.Footer = Loc.F("plan {0:000}/{1} · tek kullanımlık · yeniden basılmaz", shift, copy);
@@ -119,6 +120,7 @@ namespace Corrigible.Desk
                 case SlipWarningKind.Rations: return Loc.T("ERZAK ·");
                 case SlipWarningKind.Exposure: return Loc.T("İFŞA ·");
                 case SlipWarningKind.ShelterShort: return Loc.T("SIĞINAK EKSİK ·");
+                case SlipWarningKind.Siege: return Loc.T("KARŞI SALDIRI ·");
                 default: return string.Empty;
             }
         }
@@ -131,6 +133,9 @@ namespace Corrigible.Desk
             => f == null || !f.exposurePending ? Loc.T("eşikte · kapanışta konum çözülür")
             : f.exposureShiftsLeft > 1 ? Loc.F("konum çözüldü · {0} vardiya kaldı", f.exposureShiftsLeft)
             : Loc.T("konum çözüldü · bu vardiya son");
+
+        /// <summary>Tesis aşama 11: KARŞI SALDIRI kutusu: "Karar verilmezse kanat bırakılır (güven −1)."</summary>
+        public static string SiegeText(HandoverSlipFacts f) => Loc.F("Karar verilmezse kanat bırakılır (güven −{0}).", f?.siegeTrust ?? 0);
 
         /// <summary>
         /// SIĞINAK EKSİK kutusu (KOS aşama 6; baskın kadrosunun "KADRO EKSİK"inden ayrı ad): "n/m" ya da sınıra varınca
@@ -250,7 +255,8 @@ namespace Corrigible.Desk
             return string.Join(Separator, words);
         }
 
-        /// <summary>Sığınak görevinin büyük harfli adı: ÜRETİM, MUTFAK, EĞİTİM · KONU, öteki her şey BOŞTA.</summary>
+        /// <summary>Sığınak görevinin büyük harfli adı: ÜRETİM, MUTFAK, EĞİTİM · KONU, GÖZETİM (tesis aşama 5; kurucu yalnız cebi açıkken
+        /// yazar), öteki her şey BOŞTA.</summary>
         public static string JobWord(string job, string subject)
         {
             switch (job)
@@ -259,6 +265,7 @@ namespace Corrigible.Desk
                 case "cook": return Loc.T("MUTFAK");
                 case "train":
                     return string.IsNullOrEmpty(subject) ? Loc.T("EĞİTİM") : Loc.F("EĞİTİM · {0}", DeskText.Upper(TopicLabel(subject)));
+                case "watch": return Loc.T("GÖZETİM");
                 default: return DeskText.Upper(Loc.T("Boşta"));
             }
         }

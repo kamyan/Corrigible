@@ -1,3 +1,4 @@
+using System.Linq;
 using Corrigible.Desk;
 using NUnit.Framework;
 using UnityEngine;
@@ -33,7 +34,10 @@ namespace Corrigible.Desk.Tests
             AssertAnchor(BoardLayout.CardCentre("craft"), -0.512f, 1.265f, "Slot_uret");
             AssertAnchor(BoardLayout.CardCentre("cook"), -0.394f, 1.265f, "Slot_mutf");
             AssertAnchor(BoardLayout.CardCentre("train"), -0.276f, 1.265f, "Slot_egit");
-            AssertAnchor(BoardLayout.Deck, 0.518f, 1.465f, "Bosta_Deck");
+            // Tesis aşama 5: GÖZETİM BOŞTA bandının sağ ucunda; deste yalnız GÖZETİM açıkken 1098 → 980 mm (model çapası bayraksız yer)
+            AssertAnchor(BoardLayout.CardCentre("watch"), 0.516f, 1.465f, "Slot_gozet");
+            AssertAnchor(BoardLayout.Deck(false), 0.518f, 1.465f, "Bosta_Deck");
+            Assert.That(BoardLayout.MmToLocal(BoardLayout.Deck(true), 0).x, Is.EqualTo(0.400f).Within(AnchorTol), "GÖZETİM açıkken deste x");
             Assert.That(BoardLayout.MmToLocal(new Vector2(BoardLayout.HandLeftX, 0), 0).x, Is.EqualTo(-0.118f).Within(AnchorTol), "Bosta_HandLeft x");
             AssertAnchor(BoardLayout.Material(0), -0.400f, 1.091f, "Mat_metal");
             AssertAnchor(BoardLayout.Material(2), -0.224f, 1.091f, "Mat_kumas");
@@ -67,26 +71,45 @@ namespace Corrigible.Desk.Tests
         [Test]
         public void Deck_SpacingAndSchedule()
         {
-            for (int n = 2; n <= 8; n++) Assert.That(BoardLayout.HandStep(n), Is.EqualTo(82f).Within(MmTol), "aralık n = " + n);
-            Assert.That(BoardLayout.HandStep(9), Is.EqualTo(79.5f).Within(MmTol), "aralık n = 9");
-            Assert.That(BoardLayout.HandStep(10), Is.EqualTo(636f / 9f).Within(MmTol), "aralık n = 10");
-            Assert.That(BoardLayout.HandStep(10), Is.EqualTo(70.67f).Within(0.01f));
+            // GÖZETİM kapalı geometri (saf düzen; tek kipte oyunda kullanılmaz, sadeleştirme ertelendi): deste 1098'de, açık el 462–1098 (636 mm)
+            for (int n = 2; n <= 8; n++) Assert.That(BoardLayout.HandStep(n, false), Is.EqualTo(82f).Within(MmTol), "aralık n = " + n);
+            Assert.That(BoardLayout.HandStep(9, false), Is.EqualTo(79.5f).Within(MmTol), "aralık n = 9");
+            Assert.That(BoardLayout.HandStep(10, false), Is.EqualTo(636f / 9f).Within(MmTol), "aralık n = 10");
+            Assert.That(BoardLayout.HandStep(10, false), Is.EqualTo(70.67f).Within(0.01f));
+            Assert.That(BoardLayout.HandOpen(2, 3, false).x, Is.EqualTo(934f).Within(MmTol), "n = 3");
+            Assert.That(BoardLayout.HandOpen(7, 8, false).x, Is.EqualTo(524f).Within(MmTol), "n = 8");
+            Assert.That(BoardLayout.HandOpen(9, 10, false).x, Is.EqualTo(462f).Within(MmTol), "n = 10");
+            Assert.LessOrEqual(BoardLayout.DeckClosed(9, false).x + 40f, BoardLayout.BostaZone(false).xMax, "kapalı deste BOŞTA'nın içinde");
 
-            for (int n = 1; n <= 10; n++)
+            // GÖZETİM açık (tesis aşama 5): deste 980'de, açık el 462–980 (518 mm)
+            for (int n = 2; n <= 7; n++) Assert.That(BoardLayout.HandStep(n, true), Is.EqualTo(82f).Within(MmTol), "aralık n = " + n);
+            Assert.That(BoardLayout.HandStep(8, true), Is.EqualTo(74f).Within(MmTol), "aralık n = 8");
+            Assert.That(BoardLayout.HandStep(9, true), Is.EqualTo(64.75f).Within(MmTol), "aralık n = 9");
+            Assert.That(BoardLayout.HandStep(10, true), Is.EqualTo(518f / 9f).Within(MmTol), "aralık n = 10");
+            Assert.That(BoardLayout.HandStep(10, true), Is.EqualTo(57.56f).Within(0.01f));
+            Assert.That(BoardLayout.HandOpen(2, 3, true).x, Is.EqualTo(816f).Within(MmTol), "n = 3");
+            Assert.That(BoardLayout.HandOpen(7, 8, true).x, Is.EqualTo(462f).Within(MmTol), "n = 8");
+            Assert.That(BoardLayout.HandOpen(9, 10, true).x, Is.EqualTo(462f).Within(MmTol), "n = 10");
+            // Kapalı destenin en alttaki kartı (j = 9, 1 mm sağ-aşağı adım) BOŞTA'da kalır, GÖZETİM'e taşmaz
+            Assert.LessOrEqual(BoardLayout.DeckClosed(9, true).x + 40f, BoardLayout.Bosta.xMax, "kapalı deste BOŞTA'nın içinde");
+            Assert.Less(BoardLayout.Bosta.xMax, BoardLayout.Pocket("watch").xMin, "BOŞTA ile GÖZETİM arasında boşluk");
+
+            foreach (bool watch in new[] { false, true })
             {
-                Assert.GreaterOrEqual(BoardLayout.HandOpen(n - 1, n).x, BoardLayout.HandLeftX - MmTol, "en soldaki kart, n = " + n);
-                Assert.AreEqual(BoardLayout.Deck, BoardLayout.HandOpen(0, n), "üst kart tepside kalır, n = " + n);
-                Assert.AreEqual(BoardLayout.Deck, BoardLayout.DeckClosed(0), "kapalı destenin üstü");
+                for (int n = 1; n <= 10; n++)
+                {
+                    Assert.GreaterOrEqual(BoardLayout.HandOpen(n - 1, n, watch).x, BoardLayout.HandLeftX - MmTol, "en soldaki kart, n = " + n);
+                    Assert.AreEqual(BoardLayout.Deck(watch), BoardLayout.HandOpen(0, n, watch), "üst kart tepside kalır, n = " + n);
+                    Assert.AreEqual(BoardLayout.Deck(watch), BoardLayout.DeckClosed(0, watch), "kapalı destenin üstü");
+                }
+                Assert.Less(80f - BoardLayout.HandStep(10, watch), 25f, "n = 10'da örtüşme adları kapatmaz");
+                for (int j = 1; j < 5; j++)
+                    Assert.AreEqual(BoardLayout.Deck(watch) + new Vector2(j, j), BoardLayout.DeckClosed(j, watch), "kapalı j = " + j);
             }
-            Assert.That(BoardLayout.HandOpen(2, 3).x, Is.EqualTo(934f).Within(MmTol), "n = 3");
-            Assert.That(BoardLayout.HandOpen(7, 8).x, Is.EqualTo(524f).Within(MmTol), "n = 8");
-            Assert.That(BoardLayout.HandOpen(9, 10).x, Is.EqualTo(462f).Within(MmTol), "n = 10");
-            Assert.Less(80f - BoardLayout.HandStep(10), 25f, "n = 10'da örtüşme adları kapatmaz");
 
             // Kapalı deste: her alttaki 1 mm sağ-aşağı; üst kart en önde (açık elde de)
             for (int j = 1; j < 5; j++)
             {
-                Assert.AreEqual(BoardLayout.Deck + new Vector2(j, j), BoardLayout.DeckClosed(j), "kapalı j = " + j);
                 Assert.Greater(BoardLayout.CardZ(BoardLayout.DeckClosedLevel(j, 5)), BoardLayout.CardZ(BoardLayout.DeckClosedLevel(j - 1, 5)), "kapalı sıra j = " + j);
                 Assert.Greater(BoardLayout.CardZ(BoardLayout.HandLevel(j, 5)), BoardLayout.CardZ(BoardLayout.HandLevel(j - 1, 5)), "açık sıra j = " + j);
             }
@@ -104,10 +127,10 @@ namespace Corrigible.Desk.Tests
             Assert.That(DeckMotion.WaveSeconds(1), Is.EqualTo(0.32f).Within(1e-4f));
 
             // Model yereli pozlar: açık elde j. kart HandOpen'da, kapalıda DeckClosed'da
-            var open3 = DeckMotion.OpenLocal(3, count);
-            var closed3 = DeckMotion.ClosedLocal(3, count);
-            Assert.That(BoardLayout.LocalToMm(open3).x, Is.EqualTo(1098f - 3 * 82f).Within(MmTol));
-            Assert.That(BoardLayout.LocalToMm(closed3).x, Is.EqualTo(1101f).Within(MmTol));
+            Assert.That(BoardLayout.LocalToMm(DeckMotion.OpenLocal(3, count, false)).x, Is.EqualTo(1098f - 3 * 82f).Within(MmTol));
+            Assert.That(BoardLayout.LocalToMm(DeckMotion.ClosedLocal(3, count, false)).x, Is.EqualTo(1101f).Within(MmTol));
+            Assert.That(BoardLayout.LocalToMm(DeckMotion.OpenLocal(3, count, true)).x, Is.EqualTo(980f - 3 * 82f).Within(MmTol));
+            Assert.That(BoardLayout.LocalToMm(DeckMotion.ClosedLocal(3, count, true)).x, Is.EqualTo(983f).Within(MmTol));
         }
 
         [Test]
@@ -117,8 +140,8 @@ namespace Corrigible.Desk.Tests
             float per = BoardLayout.DeckPerCardS;
             for (int j = 1; j < n; j++)
             {
-                var closed = DeckMotion.ClosedLocal(j, n);
-                var open = DeckMotion.OpenLocal(j, n);
+                var closed = DeckMotion.ClosedLocal(j, n, false);
+                var open = DeckMotion.OpenLocal(j, n, false);
                 float delay = DeckMotion.OpenDelay(j, n);
                 float full = (open - closed).magnitude;
                 float peakOpen = PeakSpeed(closed, open, delay, per, delay, delay + per);
@@ -191,8 +214,10 @@ namespace Corrigible.Desk.Tests
         [Test]
         public void ZoneAt_CentreInsideAndOutside()
         {
-            foreach (var job in BoardLayout.Jobs)
+            foreach (var job in BoardLayout.Jobs.Where(j => j != BoardLayout.TrainJob))
                 ExpectRect(BoardLayout.Pocket(job), BoardCardKind.Person, BoardTarget.Pocket(job), "cep " + job);
+            // 2026-11-24: EĞİTİM cebi kaldırıldı; yeri bırakma hedefi değil
+            Assert.AreEqual(BoardTarget.None, BoardLayout.ZoneAt(BoardLayout.Pocket(BoardLayout.TrainJob).center, BoardCardKind.Person), "eski EĞİTİM alanı");
             ExpectRect(BoardLayout.Bosta, BoardCardKind.Person, BoardTarget.Bosta(), "BOŞTA");
             ExpectRect(BoardLayout.Order, BoardCardKind.Material, BoardTarget.Order(), "İŞ EMRİ");
 
@@ -220,6 +245,37 @@ namespace Corrigible.Desk.Tests
             Assert.AreEqual(BoardTarget.None, BoardLayout.ZoneAt(new Vector2(r.xMax + 1, c.y), kind), what + " sağ kenarın 1 mm dışı");
             Assert.AreEqual(BoardTarget.None, BoardLayout.ZoneAt(new Vector2(c.x, r.yMin - 1), kind), what + " üst kenarın 1 mm dışı");
             Assert.AreEqual(BoardTarget.None, BoardLayout.ZoneAt(new Vector2(c.x, r.yMax + 1), kind), what + " alt kenarın 1 mm dışı");
+        }
+
+        /// <summary>
+        /// Tesis aşama 5: GÖZETİM kapalıyken (bayrak) cep yoktur, yeri BOŞTA'dır: bırakma alanı eski 770 mm'lik BOŞTA'yla aynı
+        /// (380–1150), çerçevesi de; kapalı cebin dikdörtgeni yok. Açıkken BOŞTA 380–1032, GÖZETİM 1042–1150, aradaki 10 mm hedefsiz.
+        /// </summary>
+        [Test]
+        public void ZoneAt_WatchClosed_IsBosta_AsBefore()
+        {
+            var watch = BoardLayout.Pocket("watch");
+            Assert.AreEqual(new Rect(1042, 44, 108, 194), watch);
+            Assert.AreEqual(new Rect(380, 44, 652, 194), BoardLayout.Bosta);
+            Assert.AreEqual(new Rect(380, 44, 770, 194), BoardLayout.BostaZone(false), "kapalıyken eski BOŞTA");
+            Assert.AreEqual(BoardLayout.Bosta, BoardLayout.BostaZone(true));
+            foreach (var p in new[] { watch.center, new Vector2(watch.xMin + 1, watch.center.y), new Vector2(watch.xMax - 1, watch.center.y),
+                         new Vector2(1037, 128) })
+            {
+                Assert.AreEqual(BoardTarget.Bosta(), BoardLayout.ZoneAt(p, BoardCardKind.Person, false), "kapalı: " + p);
+                Assert.AreEqual(BoardTarget.None, BoardLayout.ZoneAt(p, BoardCardKind.Item, false), "eşya: " + p);
+            }
+            Assert.AreEqual(BoardTarget.Pocket("watch"), BoardLayout.ZoneAt(watch.center, BoardCardKind.Person, true));
+            Assert.AreEqual(BoardTarget.None, BoardLayout.ZoneAt(new Vector2(1037, 128), BoardCardKind.Person, true), "açıkken aradaki boşluk");
+            Assert.IsFalse(BoardLayout.PocketOpen("watch", false));
+            Assert.IsTrue(BoardLayout.PocketOpen("watch", true));
+            foreach (var job in BoardLayout.Jobs.Where(j => j != "watch" && j != BoardLayout.TrainJob)) Assert.IsTrue(BoardLayout.PocketOpen(job, false), job);
+            Assert.IsFalse(BoardLayout.PocketOpen(BoardLayout.TrainJob, true), "EĞİTİM kaldırıldı");
+            Assert.IsFalse(BoardDragController.TargetRectMm(BoardTarget.Pocket("watch"), false, out _), "kapalı cebin çerçevesi yok");
+            Assert.IsTrue(BoardDragController.TargetRectMm(BoardTarget.Bosta(), false, out var bosta));
+            Assert.AreEqual(BoardLayout.BostaZone(false), bosta, "kapalıyken BOŞTA çerçevesi eski boyda");
+            Assert.IsTrue(BoardDragController.TargetRectMm(BoardTarget.Pocket("watch"), true, out var open));
+            Assert.AreEqual(watch, open);
         }
 
         [Test]
@@ -289,13 +345,18 @@ namespace Corrigible.Desk.Tests
         public void DragController_PureRules()
         {
             var order = BoardDragController.KeyboardTargets;
-            Assert.AreEqual(10, order.Length, "Tab sırası");
-            string[] jobs = { "tek", "emp", "ana", "craft", "cook", "train" };
+            Assert.AreEqual(10, order.Length, "Tab sırası (tesis aşama 5: gözetim eklendi; 2026-11-24: eğitim kalktı)");
+            string[] jobs = { "tek", "emp", "ana", "craft", "cook", "watch" };
             for (int i = 0; i < jobs.Length; i++) Assert.AreEqual(BoardTarget.Pocket(jobs[i]), order[i], "Tab " + i);
             Assert.AreEqual(BoardTarget.Bosta(), order[6]);
             Assert.AreEqual(BoardTarget.Order(), order[7]);
             Assert.AreEqual(BoardTarget.Store(), order[8]);
             Assert.AreEqual(BoardTarget.Hurda(), order[9]);
+            // Kapalı GÖZETİM Tab sırasında atlanır; öteki hedefler her zaman açık
+            Assert.IsFalse(BoardDragController.TargetOpen(BoardTarget.Pocket("watch"), false));
+            Assert.IsTrue(BoardDragController.TargetOpen(BoardTarget.Pocket("watch"), true));
+            foreach (var t in order.Where(t => !t.Equals(BoardTarget.Pocket("watch"))))
+                Assert.IsTrue(BoardDragController.TargetOpen(t, false), t.ToString());
 
             // Tasarımda saat yönü artı (kişi +3°, desteden alınan −3°, eşya −4°); Unity'de (kamera −z'den bakar) işaret ters
             Assert.That(BoardDragController.HeldTiltFor(BoardCardKind.Person, false), Is.EqualTo(-3f).Within(1e-4f), "kişi");

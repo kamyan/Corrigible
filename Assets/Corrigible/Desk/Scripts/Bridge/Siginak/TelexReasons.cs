@@ -39,12 +39,12 @@ namespace Corrigible.Desk.Bridge
         {
             string why = sim.SelectLiberationRegionCheck(regionId);
             if (why == null) return null;
-            string name = string.IsNullOrEmpty(regionId) ? "—" : GameData.Region(regionId).Name;
+            string name = string.IsNullOrEmpty(regionId) ? "—" : sim.RegionName(regionId);
             // K3 notu: cephe açıkken aday seçimi → “Avrasya: cephe zaten açık (Doğu Avrupa 2/3)”
             var lib = sim.S.Liberation;
             var front = lib != null ? sim.LiberationRegion(lib.CurrentRegion) : null;
             if (sim.S.Raid == null && front != null && !front.Completed && regionId != lib.CurrentRegion && sim.LiberationRegion(regionId) != null)
-                return Loc.F("{0}: cephe zaten açık ({1} {2}/{3})", name, GameData.Region(lib.CurrentRegion).Name, front.CapturedCount, front.Sectors.Count);
+                return Loc.F("{0}: cephe zaten açık ({1} {2}/{3})", name, sim.RegionName(lib.CurrentRegion), front.CapturedCount, front.Sectors.Count);
             return Loc.F("{0}: {1}", name, why);
         }
 
@@ -59,10 +59,10 @@ namespace Corrigible.Desk.Bridge
             var front = sim.LiberationRegion(lib.CurrentRegion);
             var area = sim.LiberationRegion(regionId);
             if (area == null) return Loc.T("Geçersiz bölge.");
-            string name = GameData.Region(regionId).Name;
+            string name = sim.RegionName(regionId);
             if (front != null && !front.Completed)
                 return regionId == lib.CurrentRegion ? null
-                    : Loc.F("Cephe açık: {0} {1}/{2}", GameData.Region(lib.CurrentRegion).Name, front.CapturedCount, front.Sectors.Count);
+                    : Loc.F("Cephe açık: {0} {1}/{2}", sim.RegionName(lib.CurrentRegion), front.CapturedCount, front.Sectors.Count);
             if (regionId == lib.CurrentRegion) return null;
             if (area.Completed) return Loc.F("{0}: bölge zaten özgür", name);
             if (!System.Linq.Enumerable.Contains(sim.LiberationFrontier, regionId)) return Loc.F("{0}: özgür bölgeye komşu değil", name);
@@ -78,6 +78,8 @@ namespace Corrigible.Desk.Bridge
             if (sim.S.Raid != null) return Loc.F("{0} sahada", name);
             if (sim.Board != null)
             {
+                // Tesis aşama 9 (K28): bekleyen sunucu ödülü öne alınır (Core'un baskın denetimiyle aynı metin)
+                if (FacilityRewardText.Pending(sim)) return Loc.F("{0}: {1}", name, Loc.T("Önce sunucu ödülünü seç: tarif ya da kazanım."));
                 string why = sim.PlanningRaidCheck();
                 return why == null ? null : Loc.F("{0}: {1}", name, why);
             }
@@ -105,6 +107,8 @@ namespace Corrigible.Desk.Bridge
         public static bool RaidFundsOnly(Simulation sim, string sectorId)
         {
             if (sim.S.Ending != null || sim.S.Raid != null || sim.S.Fon >= sim.B.liberationRaidCost) return false;
+            // Tesis aşama 9 (K28): bekleyen ödül fon kısa uyarısının altında kalmaz
+            if (FacilityRewardText.Pending(sim)) return false;
             var sector = sim.LiberationSector(sectorId);
             var ready = System.Linq.Enumerable.FirstOrDefault(sim.S.Teams, Simulation.TeamReady);
             if (sim.Board != null && sim.PlanningRaidCheck() != null) return false;

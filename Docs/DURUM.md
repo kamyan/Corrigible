@@ -1,14 +1,634 @@
 # Durum, kararlar ve açık işler
 
-_Son güncelleme: 2026-11-15 (teleks modeli: kullanıcının daktilosu teleks olarak bağlandı, devir fişi şalterin yanındaki ağızdan değil teleks daktilosundan basılıyor; KOS aşama 8, denge ve belgeler: altı `Balance` alanı bot ölçümüyle değişti, bütün ölçüm sunumun kuralıyla ve 80 tohumla, tüketim 0,40, olay aralığı 2–3 kaldı, bot `Tools/DengeBotu/`'da; inceleme sonrası rehber düzeltmeleri; belgeler son hâlinde; KOS aşama 8, rehber: aday grubu, olay tutanağı, hedef satırı, İFŞA ve son şalter adımları; KOS aşama 8, ilk adım: ikinci tur kararları uygulandı; KOS aşama 7: eski tek adaylı kabulün Core, sunum, sahne, test, çeviri ve ses sökümü; menüde kapı ve ayarlar dolabı odadaki yeni modellerle; 2026-11-13 model entegrasyonu: kullanıcının yerleştirdiği masa, kapı, monitör, telsiz ve duvar modelleri sisteme bağlandı, eskileri sahneden çıktı; 2026-11-09: kartlı başlangıç rehberi; Revizyon 3 Aşama 10: EN ve punto geçişi, gölge atlası ve kare süresi, onaylı eski görünüm temizliği (T1), 42 yer tutucu ses; Aşama 9: model baskın kitleri, isimli saha, ozalit antet ve son tur kayıp onayı; Aşama 8: menü sahanlığı, puantaj/kart, giriş sekansı ve iki ayarlar dolabı; Aşama 7: isimli saha kâğıtları, iki sayfalık kişi dosyası ve CRT; Aşama 6: kapı ve kabul, gözetmen kuralı ve kayıt biçimi 15; Aşama 5: tarif defteri ve üretim; Aşama 4: vardiya kapanışı ve devir fişi; Aşama 3: 3B kartlı pano ve kartlar; Aşama 2: komuta odasının modelleri ve poz ışığı; Aşama 0–1: keşif ve model hattı; önceki: vardiya şalterinin eski modeli geri geldi; kartla görev alanına atama, ayrı üretim/depo ve 3D devir makinesi; kartlı vardiya panosu, isimli topluluk, kişisel eğitim/üretim, belgeyle kabul ve gecikmeli sızma; önceki: ayarlar dolabı ve menü, baskın mekânları)_
+_Son güncelleme · 2026-11-24 (görevde iyileşme, kayıt 22; eğitim bölümü kaldırıldı; Claude Design brifi Rev6; önce: oda başına istihbarat, yürüyüş yolu, adım adım rehber; önce: belge çekmecesi, geçenlerle devam, kasayı her uzman açar, kayan oda geçişi, döndürülmüş odalarla simetrik geçit; zafer %45 → %31, tur telafisiyle (6/6/10, dönüş 6) %43. Önce 2026-11-22: tek kip: tesis baskını oyunun tek baskın kipi, eski tek tahta yolu ve senaryolu eğitim baskını silindi, sahadaki sızmacı varsayılan açık, kayıt 21. Önce 21 Kasım’da tesis baskınları aşama 17 bitti, 80 tohumluk hedef tablosu ve iki dilli rehber tamamlandı. Aynı gün aşama 16 bitti, tek tahta ve eski hurda kaydı uyumu korundu. Aynı gün aşama 15 bitti, ayrı kapalı saha bayrağı, gizlilik doğrulaması ve koşullu f9 izi. Önce 20 Kasım’da tesis baskınları aşama 14 bitti, altı unvan, f8 ve kayıt 20; önce aynı gün aşama 13 bitti, 12 ayrı imza, g5/f7 ve kayıt 20; önce aynı gün aşama 12 bitti: Katar (açık kenar, kenardan düşen ölmez 5 vardiya yatar, dönüşte takip,
+Teknisyen'le AYIR) ve Yalpa (2/4/6. tur sonunda batı/doğu/batı yatış, kayma); iki alt bayrak `facilityKatar`/`facilityYalpa`; adlar
+"Sevkiyat katarı" ve "Yüzer maden platformu" (bayraktan bağımsız); paftada kesik kenar ve yatış takvimi, baskında kenar çizgisi, düşme
+önizlemesi ve canlandırması, AYIR (Q, Teknisyen kartı), TAKİP EDER, Yalpa okları, kayma hatları ve eğilme; bitti ölçütü
+`FacilityConditionPlayTests` yeşil; bot `AYIR`/`KENAR`, 5 etiket × 80 tohum, hedef yok: kaçış kapısı ve AYIR'ın bedelsizliği okuma
+ölçütünü geçmedi, denge değişmedi; S1–S4 varsayılanla, onaya açık; bayrak kapalı, kayıt biçimi 19, tesis izi f6; önce aynı gün aşama 11
+bitti, ölçüm yarısı tutmadı: kalıcı tahta (sekiz iz türü, YZ onarımı, planda ve emirde iz), bekleyen karşı saldırı (kuşatma günlüğü, karar vardiyası, `siege_defend`/`siege_yield`, kendiliğinden bırakma), üç odalı savunma (barikat turu, üç dalga, içeri çekilme, saha rölesi, kapı sığınak değil), yeniden alınan bölgenin fonu ve güveni bir kez, Siper; görev fişinin kuşatma kipi ve BIRAK, haritada KUŞATMA, paftada izler, baskında SAVUNMA anteti, 10 hücreli şerit, saha rölesi parçası, KANAT TUTULDU; bitti ölçütü `FacilityDefensePlayTests` yeşil; bot `SAVUN`/`CEKIL`, 7 etiket × 80 tohum: savunma başarısı %100 (hedef %40–60 tutmadı; denge ve kural değişmedi, kuşatma başına tutulan kanat %46); S1–S4 varsayılanla, onaya açık; bayrak kapalı, kayıt biçimi 19, tesis izi f5; önceki 2026-11-19: tesis baskınları aşama 10 bitti: önlem defteri; sayım (pusu sayılmaz, ölçüm anahtarı), öğrenme, altı önlem iki kademe, beş cevap tarifi ekip düzeyinde, taslak iptali, plan kaplaması; olay nişanı sınıf süzgeci; ÖNLEM satırı (beş yuvada, gerekirse KAZANIM ile birleşik), ÖNLEM ve sonuç teleksi, paftada kırmızı kalem, CIVATALI, yayıcı parçası; bot `ODUL=onlem`, `TAK=hic`, yayıcı ve makine aklı terimleri; 10 etiket × 80 tohum ölçümü: hedef (tek araç 5–10 puan düşük) tutmadı (+0,1 ±0,6p), cezalı taşıma tutar (%61 / %39); S1–S4 varsayılanla, onaya açık; bayrak kapalı, kayıt biçimi 19, tesis izi f4; önce aynı gün aşama 9 bitti: ekipmanın ve ödülün sunumu; R tuşu ve köpeğin dördüncü kartı, kurgu parça modelleri, tahta işaretleri ve canlandırma, depo ikinci sırası, 13 sayfalık defter, ödül kâğıdı; bitti ölçütü `FacilityGearCampaignPlayTests` yeşil; Core değişmedi, bayrak kapalı, kayıt biçimi 19; önce aynı gün aşama 8 bitti: ekipman, tarif ve sunucu ödülü, kazanımlar, köpek ve kelepçe, Sedye yeni tanımı; bot politikası ve 80 tohum ölçümü; bayrak kapalı, kayıt biçimi 19, tesis izi f3; önce aynı gün aşama 7 bitti: hamlelerin sunumu; tek tuş E ve kart satırları, tahta işaretleri ve önizleme, canlandırma, makine evresinin pusu bölmesi, telsiz fişleri, son nefes gösterimi, büyük sandık operasyon raporunda; Core, sahne ve prefab değişmedi, bayrak kapalı, kayıt biçimi 19; önce aynı gün aşama 6 bitti: Core hamleleri (pusu, koşu darbesi, sürükleme, fırlatma, iki kişilik iş, menfez), gövde ve ölüm kuralı, son nefes, yük, büyük sandık; bot eylem kimliği ve düşen politikası, 80 tohum ölçümü: ölü hedefi tutmadı; bayrak kapalı, kayıt biçimi 19, tesis izi f2; önceki 2026-11-18: tesis baskınları aşama 5 bitti: bina planı; teyp, evrak ve dinleme nöbeti, görev fişinin yanında üç pafta, kartlı panoda Gözetim cebi, baskında YAYINDA lambası ve makaralı teyp; bayrak kapalı, kayıt biçimi 19; aşama 4 bitti: dikey dilim ölçüldü, bot tesis puanı düzeltildi; karar: giriş ve ara oda birer makine, dönüş 5 tur; aşama 3: sunumda üç odalı baskın, YZ adları, İngilizce sakin adları, bayrak kapalı; aşama 2: Core üç odalı baskın, kayıt biçimi 19, bayrak kapalı; aşama 1: Core odaları; önceki 2026-11-17: tesis baskınları: tasarım belgesi ve aşama 0 ölçüm tabanı; önceki 2026-11-16: üretilmiş harita aşama 2: sunum, metinler, açılış karıştırması; oyun artık üretilmiş haritayla açılır; önceki 2026-11-15: teleks modeli: kullanıcının daktilosu teleks olarak bağlandı, devir fişi şalterin yanındaki ağızdan değil teleks daktilosundan basılıyor; KOS aşama 8, denge ve belgeler: altı `Balance` alanı bot ölçümüyle değişti, bütün ölçüm sunumun kuralıyla ve 80 tohumla, tüketim 0,40, olay aralığı 2–3 kaldı, bot `Tools/DengeBotu/`'da; inceleme sonrası rehber düzeltmeleri; belgeler son hâlinde; KOS aşama 8, rehber: aday grubu, olay tutanağı, hedef satırı, İFŞA ve son şalter adımları; KOS aşama 8, ilk adım: ikinci tur kararları uygulandı; KOS aşama 7: eski tek adaylı kabulün Core, sunum, sahne, test, çeviri ve ses sökümü; menüde kapı ve ayarlar dolabı odadaki yeni modellerle; 2026-11-13 model entegrasyonu: kullanıcının yerleştirdiği masa, kapı, monitör, telsiz ve duvar modelleri sisteme bağlandı, eskileri sahneden çıktı; 2026-11-09: kartlı başlangıç rehberi; Revizyon 3 Aşama 10: EN ve punto geçişi, gölge atlası ve kare süresi, onaylı eski görünüm temizliği (T1), 42 yer tutucu ses; Aşama 9: model baskın kitleri, isimli saha, ozalit antet ve son tur kayıp onayı; Aşama 8: menü sahanlığı, puantaj/kart, giriş sekansı ve iki ayarlar dolabı; Aşama 7: isimli saha kâğıtları, iki sayfalık kişi dosyası ve CRT; Aşama 6: kapı ve kabul, gözetmen kuralı ve kayıt biçimi 15; Aşama 5: tarif defteri ve üretim; Aşama 4: vardiya kapanışı ve devir fişi; Aşama 3: 3B kartlı pano ve kartlar; Aşama 2: komuta odasının modelleri ve poz ışığı; Aşama 0–1: keşif ve model hattı; önceki: vardiya şalterinin eski modeli geri geldi; kartla görev alanına atama, ayrı üretim/depo ve 3D devir makinesi; kartlı vardiya panosu, isimli topluluk, kişisel eğitim/üretim, belgeyle kabul ve gecikmeli sızma; önceki: ayarlar dolabı ve menü, baskın mekânları)_
 
 ## Nerede kaldık
+
+**Görevde iyileşme, eğitim bölümü kaldırıldı, Claude Design brifi (24 Kasım 2026).** İstek: "boşta olmayan ekip üyeleri de vardiya
+geçtikçe iyileşsin, sığınaktaki eğitim bölümünü kaldır"; oyunun bu hâli için üç sahneyi kapsayan Claude Design prompt'u.
+- **İyileşme (kayıt 22):** yatmayan herkes vardiya kapanışında iyileşir; Boşta `boardRestHeal` (1), görevdeki ve saha rolündeki
+  `boardDutyHeal` (1, yeni alan); yarım tayında kimse. `GameRecord.CurrentVersion` 21 → 22 (var olan `board_file`'ın sonucu değişti;
+  denge bayrağıyla eski kayıt korunamazdı: eksik alan C# varsayılanıyla dolar). Önizleme "görevde iyileşmez" uyarısı yerine
+  "kapanışta +n can" (yarım tayını hesaba katar, `BoardPreviewText.CloseHeal`). Test `BoardDutyHealTests`.
+- **Eğitim bölümü:** panodan kalktı (cep, konu listesi, şeritler, plaka yazısı ve pirinç plakası, doku izleri, devir fişindeki
+  EĞİTİM satırı, Tab hedefi, sürükleme hedefi; `TrainingTopics` silindi). Core'daki `board_train` durur ama kayıt 22 eski kayıtları yüklemediği için ölü yoldur (yalnız testler);
+  eğitimdeki kişi emekli görev olarak Boşta'ya iner (Bakım/İkmal emsali). Boşalan alan (~180×194 mm) tasarıma açık. Pano dokusu
+  yeniden pişirildi (`tx_board_face.png`), `PlanningBoardInserts_SM`'den EĞİTİM plakası ve vidaları silindi (76 üçgen).
+- **Claude Design brifi:** `Docs/UI_Rev6/BRIEF_rev6.md` (menü, komuta odası, baskın; Rev4'ten bu yana değişenler, öğe ve durum
+  tabloları, görsel dil, kısıtlar, beklenen çıktılar, karar bekleyenler), ekleri `Docs/UI_Rev6/ekler/` (18 görüntü) ve token
+  dosyaları.
+
+**Oda başına istihbarat, yürüyüş yolu, adım adım rehber (24 Kasım 2026).** İstek: "harita istihbaratı için 3 vardiyada bir harita
+değil, 1 vardiyada bir oda haritası"; hareket emrinde fareyle gezilen kareye yol çizilsin; başlangıçta ilk baskın bitene kadar adım
+adım ("şuraya bas") rehber, ilk kez olan her şeyi tanıtsın.
+- **İstihbarat:** `facilityIntelCost` 3 → 1 (Balance ve asset): Gözetim'deki kişi her vardiya kapanışında sıradaki kanadın bir
+  odasının paftasını açar. Kayıt sürümü değişmedi (denge kayıtta). Şerit "Dinleme · PAFTA k", üzerine gelme "her vardiya bir pafta".
+- **Yürüyüş yolu:** `Baskin.MovePath` (Core, salt okuma) → `vm.MovePath` → `RaidBoard3D.SetMovePath` (köşeleri dolu mavi kırık
+  çizgi, uçlu). Parça da aynı yoldan yürür (`AnimateWalk`); eskiden duvarın içinden düz kayıyordu.
+- **Rehber:** sarı işaretçi (`TutorialPointerView`, `TutorialAnchor`, `TutorialTargets`); ilk baskın on bir adım; "ilk kez" notları
+  (düşen uzman, son tur, uyanan makine, bölge olayı, yük); not hedefi örterse karşı köşeye kaçar; ilk baskın bitene dek vardiya
+  şalteri "rehber · önce baskın" mühürlü; adım kimlikle saklanır. Ayrıntı `OYUN-TASARIMI.md` (rehber), `MIMARI.md`.
+- **Doğrulama:** Core yol testleri (`FacilityMovePathTests`, bütün bölgelerin üç paftası), sunum (`FacilityMovesPresentationTests`
+  yol testi), istihbarat (`FacilityIntelTests`, `FacilityWatchPocketTests`), rehber (`TutorialGuideTests` 7, `PlanningTutorialFlowTests`
+  19, `PlanningTutorialPlayTests` 6: işaretçinin göründüğü de sınanır). Ekran görüntüleriyle bakıldı: SIĞINAK tuşu, deste, MUTFAK
+  ve Gözetim cepleri, depo, harita, tur şeridi, niyetli makine, yürüyüş yolu ve önerilen kare, "SON TUR" notu.
+- **İnceleme iş akışı** 14 gerçek bulgu doğruladı, hepsi düzeltildi: KAPIYA/ÇIKAR etiketi yalnız gerçekten geçen birimde; pano
+  kapalıyken pano adımları SIĞINAK'ı, pano açıkken masa adımları MASAYA DÖN'ü gösterir; ara oda bekleme adımı (SONRAKİ hedef metnine
+  atlatmaz), ara oda ve dönüşte herkes kapıdayken GEÇ işaretlenir; eski kaydın adım dizini eski tablodan çevrilir; "ilk kez" notu
+  baskın bitince masaya taşınmaz, geride kalan/kenardan düşen "düştü" sayılmaz; hedef odası ve dönüş için ayrı SON TUR notu; düşen
+  uzman ve ara oda donanımı metinleri Core'la uyumlu; Kulak'la vardiyada iki pafta metinlerde de iki; dünya tuvalindeki hedefte kamera
+  arkası denetimi; önerilen kare en kısa yoldan seçilir.
+- **Doğrulama (son):** tam EditMode 2232/2233 (yalnız arka plan kısılmasında üretim hızı; tek başına geçer), PlayMode tesis 31, olay
+  10, rehber 6; düzeltmelerden sonra rehber, Gözetim, sunum ve lokalizasyon testleri yeniden geçti.
+- **Açık:** Gözetim'in hedefi yalnız sıradaki kanat (bedel 1'de üç vardiyada biter, sonra görevli boşa çalışır). İşaretçi masada
+  ekran dikdörtgenidir (eğik tahtada kare de dikdörtgen çerçeve). Rehber oyuncuyla denenmedi.
+
+**Belge çekmecesi, geçenlerle devam, erzak, oda geçişi (23–24 Kasım 2026).** İstek: dışarıdan gelen belgeler çift taraflı bir
+çekmeceden gelsin (ışık, aç-al, karardan sonra çekmeceye koy ve şalteri çek); ekibin tamamı geçmezse baskın geçenlerle sürsün;
+erzakı herkes taşısın; oda geçişi kayarak olsun, ileri geçit ile yeni odanın girişi simetrik olsun.
+- **Çekmece** (sunum; Core, kayıt, RNG değişmedi): `SiginakRoom/Belge çekmecesi` KABUL penceresinin altında; `PassDrawer` ve
+  `SiginakPassDrawer`. Kapı panosu kalktı. Tasarım `KAPI-BELGELERI-VE-YZ-MEKANLARI-TASARIMI.md` §A.0. Ekran görüntüsünde
+  çekmece gölgede, lamba ve şalter odanın kamerasından küçük ve sönük görünüyor (okunurluk açık).
+- **Geçenlerle devam:** giriş ya da ara odada süre dolarken kapıda bekleyen varsa oda geçilir; varamayan sağ geri çekilir ("w").
+- **Kasayı her uzman açar** (yetenek hakkıyla; köpek açamaz).
+- **Oda geçişi:** pafta geçidin tersine kayar, yeni pafta geçidin yönünden gelir (`RaidBoard3D.PageOut/PageIn(dir)`). 24 Kasım:
+  tahtanın tabanı da üstündekilerle birlikte kayar, gölgesi izler (`slideWith`, `BoardBackgroundView.boardBase`; sahne testi
+  `SadeRaidBoardTests.BaskinScene_BoardBaseSlidesWithThePage`).
+- **Simetrik geçit, döndürülmüş oda** (geliştirici kararı "odaları döndür"): ileri geçit doğu, kuzey ya da güney kenarında
+  kalır; sonraki oda kanonik üretilip döndürülür, girişi geçidin karşı kenarında aynı karelerde. Katar ve Yalpa yalnız doğu.
+  Tesis izi f10, kayıt 21.
+- **İki inceleme iş akışı** toplam 15 gerçek bulgu doğruladı; 13'ü düzeltildi, ikisi önceden vardı (oda açılamazsa tahta boş kalır;
+  kayarak gelişte HUD kilitsiz görünür). İkinci turun en önemlisi: plan tahtası odasını taşımıyordu, döndürülmüş odada şart ve
+  bölge sezgileri girişin yanına düşebiliyordu (`BState.PlanRoom`). Liste `TESIS-BASKINLARI-TASARIMI.md` §14.x.
+- Kayarken makinenin emir iğnesi tahtayı çaprazlıyordu (bayrak kâğıdı dinlenmede kalıyor); kayma süresince gizlenir.
+- **Denge:** 160 yeni tohumda (eşli, 480 harekât) taban %45, sürüm 10 **%31** (−13,3 ±3,3). Baskın başına başarı
+  neredeyse aynı (−1,7); kayıp harekât başına baskın sayısında (−2,9) ve dağılmada (+8,5). Telafi varyantları (aynı tohumlar):
+  G/A 6 tur %38, G/A/dönüş 6 tur %39, **G/A/dönüş 6 + hedef 10 tur %43** (tabandan −1,9 ±3,2, gürültü içinde). **Geliştirici
+  kararıyla uygulandı (24 Kasım):** `facilityEntryTurns`/`MiddleTurns`/`ReturnTurns` 6, `facilityTargetTurns` 10. Tablo §14.x.
+- **Doğrulama (24 Kasım):**
+  - EditMode 2219/2219 (tam koşuda üretim hızı testi editör arka plandayken 2,5 sn ölçtü ve düştü; tek başına geçti).
+  - PlayMode yeşil: `Facility*PlayTests` 31, `ShelterEventPlayTests` 10, `PlanningTutorialPlayTests` 6; emir iğnesi
+    düzeltmesinden sonra `FacilityRaidPlayTests` 8 ve `Corrigible.Desk.Tests.Raid*` 33 yeniden geçti.
+  - Core testleri Mono'da 934/934 (`scratchpad/monotest`, kalıcı değil).
+  - Gözle (geçici PlayMode testiyle ekran görüntüsü): karargâhın ilk kanadı, tohum 79. Oda 2'nin kuzey geçidi (F8/G8) ile
+    döndürülmüş oda 3'ün girişi (F1/G1) simetrik, kayma yönleri ve kapı modelleri doğru, dönüş ve kaçış metinleri yönsüz.
+
+**Kapıdan gelen belgeler ve YZ mekânları (22 Kasım 2026).** İstek: olaylar ve dışarıdan gelen belgeler EVRAK'a doğrudan düşmesin,
+kapıdan gelsin; VERITY dışındaki her YZ farklı bir yerde olsun. Belge: `Docs/KAPI-BELGELERI-VE-YZ-MEKANLARI-TASARIMI.md`.
+- **§A uygulandı (sunum; Core, kayıt ve RNG değişmedi):**
+  - Olay tutanağı ve sunucu ödülü kâğıdı kapının sağındaki yeni **kapı panosuna** iner ve kapı bir kez vurur. Ödül kâğıdı
+    haritanın "BÖLGE ÖZGÜR" dizisinden sonra gelir.
+  - Kâğıt panodayken kapı lambası ve KAPI tuşu belgeyi gösterir. KAPI'dan (K8) tıklanınca kâğıt ele gelir.
+  - Bırakılan kâğıt EVRAK tepsisine iner; oradan sonrası eski tepsi davranışıdır.
+  - Kayıttan devamda kâğıt panodadır. Baskın dönüşünde yerinde kalır.
+  - Sahnede `SiginakRoom/Kapı panosu` kuruldu: kapının solunda bir mantar pano ve iki çapa.
+  - Metinler güncellendi: teleks, şalter kilidi, CRT, telsiz ve rehber (TR ve EN).
+  - İnceleme iş akışı dört hata buldu, dördü de düzeltildi:
+    - baskın dönüşünde tepsideki kâğıdın kapıya sıçraması
+    - panodaki tutanağın ödül kâğıdının tepsi önceliğini kesmesi
+    - zincir olayın tepsiye düşmesi
+    - İFŞA parlamasının K8'de kaçması
+  - **Doğrulama:**
+    - Tam EditMode (batchmode kopya): 2.207/2.209, 0 kırmızı, 2 atlanan ölçüm. Pano taşınmadan önceki sahneyle koşuldu; sahne
+      testleri taşımadan sonra canlı editörde yeniden geçti.
+    - PlayMode, canlı editörde yedi sınıf, 44/44: `ShelterEventPlayTests` (10), `FacilityServerRewardPlayTests` (2),
+      `PlanningTutorialPlayTests` (6), `FacilityGearCampaignPlayTests` (1), `FacilityCounterPlayTests` (1), `CandidatePlayTests` (10),
+      `ShiftClosePlayTests` (14). Tam PlayMode koşulmadı.
+    - Oyunda (test kayıt klasörü) konvoy olayı açık kayıttan devam edildi. Tutanak kapının solundaki panoda; KAPI'dan tıklanınca
+      ele geliyor, Esc ile EVRAK tepsisine iniyor.
+    - Not: kâğıt K8'de elde biraz karanlık okunuyor; oda ışığı o pozda zayıf.
+- **§B öneri, onay bekliyor:** VERITY değişmez, Katar ve Yalpa var. Dokuz YZ için birer mekân ve kural önerildi:
+  - üçüncü tur listesi (sade kurallar; önceki iki tur belgenin B.8'inde): konteyner limanı (TESSEL, beğenildi),
+    kereste fabrikası (HEADWATER), maden ocağı (CAIRN)
+  - akaryakıt deposu (EMBER), gökdelen (SOLACE), sel basmış çarşı (EDDY)
+  - metro istasyonu (QUORUM), donmuş göl (BOREALIS), otomobil fabrikası (PARAGON)
+
+  - dördüncü tur, ikinci liste (birincinin yanına; biri havada): yolcu uçağı (BOREALIS), hastane (SOLACE), yüzme havuzu
+    (HEADWATER), kale (CAIRN), şantiye (EMBER), lunapark (EDDY), sınır kapısı (QUORUM), hurdalık (PARAGON)
+
+  - beşinci tur, üçüncü liste (kodla ve sadelikle sınandı; altı kural geçti): yanardağ krateri (CAIRN), elektrik santrali
+    (SOLACE), tersane (PARAGON), kayak merkezi (BOREALIS), Amazon yağmur ormanı (HEADWATER), denizaltı ya da asker indirme
+    uçağı (QUORUM). EMBER ve EDDY için geçen aday yok. Sınama önceki listelerde iki yanlış eşleşme buldu (kalkan dronu
+    hale değil plaka verir; patlayan robot itmez ve olay adımından önce patlar); belgede düzeltildi.
+
+  Birinci liste §B.2–B.3'te, ikinci liste §B.4'te, üçüncü liste ve motor gerçekleri §B.5'te, yedekler §B.6'da, sıra ve
+  karar soruları §B.7'de.
+
+**Tek kip denge turu (22 Kasım 2026).** Tek kipten sonra bot zaferi %1,2'ydi (sonların %74'ü dağılma). Beş `Balance` değeri değişti
+(`Balance.cs` ve `BalanceConfig.asset` birlikte): `liberationCivilianHp` 2 → 3, `facilityTargetTurns` 8 → 9, `candidateEmergencyBelow`
+3 → 4, `liberationTier3At` 7 → 9, `liberationAlarmPerShift` 1 → 0,5. Bot zaferi %43,3 (iyi3, 80 tohum × 3, 240/240 replay; karışık
+politikalarda %49–61, kefillide %20). Kural, komut ve kayıt sürümü değişmedi. Ölçüm, tarama, ayıklama ve kararlar tesis tasarımı §11.6
+"Tek kip denge ölçümü" ve §14 yirmi ikinci tur; liste `Tools/DengeBotu/denge22.txt`.
+- **Sunum:** alarm buçuklu ilerlediği için kenar satırı ve CRT alarmı ondalığıyla yazar (`SiginakDesk`, `CrtViewBuilder.Alarm`).
+- **Testler:** yeni `BalanceAssetTests.Asset_EqualsCodeDefaults_ExceptMapGen`, `CandidateGroupTests.EmergencyGroup_ThresholdFollowsBalance`,
+  `EndingTests.Abandon_DefaultThreshold_…`, `SiginakCrtTests.Alarm_HalfStep_…`; HUD şeridinde 9 tur. Sabit sayılara bağlı yedi test
+  güncellendi (V.014/K6 tasarım düzeni alarm payını 1'e sabitler). Tam EditMode (batchmode, son eklerle) 2.199/2.201, 0 kırmızı (2 atlanan ölçüm);
+  tam PlayMode batchmode'da 106/128, kalan 22'si (defter ışını ve 8 sn sahne yükleme zaman aşımı, CPU yükü altında) canlı editörde
+  1920×1080'de sınıf sınıf koşulunca 41/41 geçti. Tam PlayMode inceleme sonrası eklerden (HUD 9 tur denetimi EditMode'da) sonra yeniden
+  koşulmadı.
+- **Oyunda:** test kayıt klasörüyle DeskGame açıldı: oyun değerleri asset'ten okuyor; ilk kanat 5 / 5 / 9 tur; alarm 9,5'te CRT
+  "YZ ALARMI 9,5/10". Baskın elle oynanmadı (PlayMode baskın testleri gerçek akışı yeni değerlerle oynuyor).
+- **Kit kuralı denendi, geri alındı:** ölenin rol kitinin depoya dönmesi ve kapanışta birden çok eksik kit (ayrı ve birlikte) bot
+  zaferini artırmadı (%55'e karşı %50, gürültü içinde); baskınsız vardiyalar kit değil kadro yokluğundan. Kod geri alındı, kayıt 21,
+  bayt kilidi `taban22` tuttu (tesis tasarımı §11.6 "Kit kuralı denemesi").
+- **Açık:** zafer uzunluğu medyanı 74 (hedef 35–45); ölüm hızı kabulü geçiyor; sıradaki kaldıraç ölüm kuralı (gövdenin kurtarılması;
+  kayıt sürümü ister, geliştirici kararı). Sığınak düştü sonu %8'e çıktı. "Bakım robotu sivili tek turda kırmaz" için tahta testi yazılmadı.
+
+**Tek kip: tesis baskını oyunun tek baskın kipi (22 Kasım 2026; tesis aşama 18, kayıt 21).** Geliştiricinin kararıyla her baskının
+tek 8×8 tahtada geçtiği eski yol silindi; baskın her kanatta üç odalı tesis olarak oynanır. Bugüne dek asset tesis alanlarını
+taşımadığı için oyun C# varsayılanıyla tek tahtada oynanıyordu; bu iş bu yüzden ölü kod temizliği değil, oyunun kipini değiştirdi.
+Uygulama tasarımı oturumun geçici klasöründeydi (`tek_tahta/TASARIM.md`); kararlar tesis tasarımı §12 "18 · Tek kip" ve §14 yirmi
+birinci turda.
+- **Core:** `Balance.raidFacilityEnabled`, `liberationLootExtraTurns`, `liberationServerExtraTurns`, `RaidParams.MapSlot`/`ExtraTurns`
+  ve `RaidMaps` harekât havuzu (`Pool`, `Slot`, `PoolSize`, `KindOf`, tek argümanlı `Valid`) kaldırıldı; bayrak okumaları tesis
+  yönüne sabitlendi, alt bayraklar ve onların kapalı yolları kaldı. Her emir üç oda yazar. `ResolveRaid` verilen sonucu yok sayar:
+  son oda raporlanmadıysa reddeder, sonucu oda raporlarından türetir (imza aynı, `Reason` korunur). Kartlı ölüm kuralının tek tahta
+  kolu gitti: düşen yalnız tesisten çıkarılırsa yaşar. `infiltratorFieldEnabled` C# varsayılanı `true` (bilinçli tek oyun
+  değişikliği). `GameRecord.CurrentVersion` 21; tesis izi hep `f8`/`f9`, boş izli kayıt yüklenmez, sürüm 20 kayıtlar
+  `.v20.backup` olarak arşivlenir. `Baskin.Create` havuzsuz örnek/test tahtası olarak kaldı (`Layouts`; `MapSeed`'i yok sayar),
+  `RaidEngineTests`'in altın imzaları değişmedi. `RaidParams.MapSeed` sunumun bina kitini seçtiği için kaldı. "Kısa nöbet"
+  açıklaması gerçek etkisine göre düzeltildi: "Hedef odasının ilk ziyareti bir tur kısa sürer."
+- **Sunum ve editör:** senaryolu eski eğitim baskını (`TutorialRaid`, `RaidGuide`, `Marks.Guide`, `SiginakTutorial.AtRaid`) silindi;
+  hiçbir kipte ulaşılamıyordu. `LiveRaidDataSource` emri hep oda oturumuna verir (odasız emirde `LogError` ve kapanış), sahne tek
+  başına açılınca örnek baskını kurar. `PlanningTutorialFlow`'un tek tahta gövdeleri tesis metniyle değişti, alt bayrak kapalı taban
+  metinleri kaldı. Ana bayrak kapıları (operasyon raporu, teleks, sunucu ödülü, pano metni, üretim tahmini, Gözetim cebi) tesis
+  yönüne sabitlendi. Yeni editör yardımcısı `RaidChainFixture` baskını yalnız public komutlarla oda oda kapatır; `SiginakFixtures`,
+  `Rev3CaptureSet` (Z10 `WinChain`) ve `RaidKitPreview` (kit sayfası tesis odalarıyla) buna göre uyarlandı. Sahne ve prefab
+  değişmedi. `Settings/BalanceConfig.asset` tek seferlik yeniden serileştirildi: iki emekli anahtar çıktı, bütün `facility*`
+  alanları ve `infiltratorFieldEnabled: 1` açıkça yazılı; `liberationMapGen: 1` ve `planningBoardEnabled: 1` korundu.
+- **Testler:** `FacilityLockTests`, `RaidBotMeasurement`/`RaidBotMeasurementTests` ve `TutorialRaidTests` silindi; ana bayrak kapalı
+  ve eski tahta karşılaştırma testleri çıktı, alt bayrak kapalı testleri kaldı. Elle `ResolveRaid(new RaidResult{…})` veren testler
+  oda zinciri yardımcılarına geçti (`FacilityKit.ResolveRaid`, `ShelterEventKit`, `FacilityDeskKit.ResolveRaid`,
+  `FacilityRewardPlayKit.WinRaid`). Yeni: `SaveStoreTests.Load_RejectsVersion20`, `FacilityRecordTests.Fingerprint_NeverEmpty`,
+  `LiberationCampaignTests.Order_AlwaysHasThreeRooms`, `FacilityChainTests.ResolveRaid_IgnoresGivenResult_UntilLastRoom`,
+  `BalanceTests.NoSingleBoardFields`, `RaidMapsTests.Generate_Golden`, `RaidMapsTests.Create_IgnoresMapSeed`,
+  `FacilityRaidSceneTests.FacilityRoom_UsesRegionKit`. 108 oda olay testi eklenmedi (eşdeğerleri var).
+- **Bot:** `Camp8` her baskını tesis olarak oynar; `ApplyBal` `raidFacilityEnabled=true`'yu yok sayar, `raidFacilityEnabled=false` ve
+  iki ek tur alanında "emekli alan" ile durur. Saha kapalı etiketlere `;infiltratorFieldEnabled=false` eklendi, `t17g5` çıktı.
+- **Doğrulama:** bayt kilidi `Library/Calisma/taban21/kilit21.sh` (değişiklikten önce yakalanan taban; A g5 saha kapalı, B g5 saha
+  açık, C sabit dünya, t13K/t14K/t15K ve saha replay) 124/124 `cmp` eşit, `.err` boş, her C satırında `replay=ok`: tesis yolu bayt
+  bayt değişmedi. Mono koşucusunda 1.087 geçti, bilinen 3 taklit testi kaldı. Unity'de Desk EditMode önek filtreleriyle 1.005 testte
+  1 kırmızı (aşağıda), 27 PlayMode sınıfının hepsi yeşil. Son turda canlı editörde `LocalizationTests` 5/5, `BalanceAssetTests`,
+  `BalanceTests`, `SaveStoreTests` 9/9 ve `Rev3AdmissionSceneTests` 11/11 geçti. Tam EditMode tek koşuda, Core EditMode testleri
+  Unity'de, oyunda elle bir harekât ve v20 kayıtla açılış denenmedi.
+
+**Tesis baskınları aşama 17 bitti (21 Kasım 2026).** İlk tesis kanadı aynı rehber adımlarını kullanır. Ana politikada 240 harekât, 4.870 saldırı ve 231 savunma ölçüldü. Tur medyanı 20, ölü/harekât 14,88, zafer 4/240 ve savunma 231/231. Yedi ekipmandan beşi açık tarifli baskınlarda %10 kullanım eşiğini geçti. On güncel etiket ile g4 yeniden üretim ve tek ödül deneyinde toplam 2.880 komut geçmişi yeniden oynatıldı. Son sakin için söküm kapalıysa ölçüm botu açık sorguyu seçer. Oyun ayarları ve sürüm aynı. Boş sahneden batchmode EditMode’da 2.256 geçti, 5 atlandı ve hata çıkmadı. Tam PlayMode’da 117/133 geçti. Kalan 16 test aşama 16’nın bilinen düşük çözünürlük sonuçlarıyla aynı. Ana editörde 1920×1080’de altı rehber testi ve gerçek ilk tesis kanadını açan yeni test geçti (7/7; yalnız özet sayılar kaydedildi). Mono koşucusunda 1.149 test geçti, 5 atlandı; başta ve sonda aynı üç taklit katmanı testi kaldı. Tüm hedef ve kararlar tesis tasarımı §11.6 ve §14’te. Aynı gün bağımsız denetimden sonra düzeltme turu yapıldı: tesis rehberi artık taban metnin derslerini silmiyor, ilk kanadın PLAN YOK paftalarını doğru anlatıyor ve henüz anlamı olmayan notları koşula bağlıyor; `OYUN-TASARIMI.md`, `MIMARI.md`, tasarım belgesi ve bot README’si güncellendi. Canlı editörde `PlanningTutorialFlowTests` 19/19, `LocalizationTests` 5/5, 1920×1080 rehber PlayMode testleri 7/7 geçti; tam EditMode ve PlayMode yeniden koşulmadı.
+
+**Tesis baskınları aşama 16 bitti (21 Kasım 2026).** G5 haritasında eski yer adlarının ikinci okuyucusu, kıyı oranı ve karıştırıcı kaldırıldı. `MapSlot` ve iki ek tur ayarı tek tahtada etkin. Yeni hurda talebi köpeği panoda ve Core’da korur, önceki geçerli hurda kaydı aynı sonuçla yüklenir. 64/64 harekât ve tüm ham çıktılar Aşama 15 ile eşleşti. Batchmode EditMode’da 2.256 geçti, 5 atlandı ve hata çıkmadı. Tam PlayMode’da 116/132 geçti. Kalan 16 test aşama 14’ün bilinen düşük çözünürlük sonuçlarında da kaldı. Ayrı DeskGame denemesinde panonun bırakma işlemi köpeği hurdaya almayı reddetti ve aynı hedef tareti kabul etti (1/1). Sürüm 20, g5 ve f8/f9. Tesis varsayılanı kapalı. Tek tahtayı emekliye ayırma kararı §14’te onaya açık.
+
+**Tesis baskınları aşama 15 bitti (21 Kasım 2026).** Saha bayrağı açıkken insan ve sızmacı aynı EMP veya köpek belirtisini verebilir. Sunucu saldırısının hedef odasında ikinci turu ayakta geçiren sızmacı taraf değiştirir. Etkisizleştirilen kişi sığınakta sorgu veya söküm tutanağına girer, tesiste kalan kişi kalıcı olarak kaybedilir. Tesis ve saha bayrakları varsayılan olarak kapalıdır. Kayıt sürümü 20, harita g5, saha kapalı tesis izi f8 ve açık tesis izi f9.
+
+Kabul edilen 26 sızmacının 11’i sessizdi (%42,3). 5 harekâtta toplam 9 kişi taraf değiştirdi, bunların 7’si sahada etkisizleştirildi. Saha gizliliği için 19 Core testi geçti. Boş sahneden başlayan batchmode EditMode koşusunda 2.255 test geçti, 5 test atlandı. PlayMode’da 115/132 geçti. 16 test aşama 14’ün 640×480 batchmode koşusunda da kalmıştı. Ek olarak tutsak makine testi, baskın sahnesini yükleme aşamasında 8 saniyelik sınırı aştı. Ekipman sınıfı yeniden çalıştırıldığında bu test dahil 5/5 geçti. Yeni saha senaryosu hem tek başına hem tam PlayMode koşusunda geçti. Ölçüm tesis tasarımının §11.6 bölümünde, onaya açık üç karar §14’te.
+
+**Tesis baskınları aşama 14 bitti (20 Kasım 2026).** Kazanılan baskının işleri kişisel sayaca eklenir, eşiklerde altı unvandan biri
+açılır. Operasyon raporu yeni unvanı, kişi dosyası etkisini gösterir. Pusu, sürükleme, koşu, köpek, aygıt ve yük fırlatma kişisel
+değerleri uygular. Üretilmiş harita g5, tesis izi f8, dosya sürümü 20. Tesis ana bayrağı ayar dosyasında kapalı. 32 eşli tohumda
+unvan açıkken 26 harekâtta 169 unvan kazanıldı. Saldırı başarısı %79,2 → %75,3 ve zafer 3/32 → 0/32. Denge kararları §11.6 ve
+§14'te. Batchmode EditMode 2.236 geçti. PlayMode 115/131, diğer 16 önceki ekran sınırlamasıyla aynı. Yeni unvan senaryosu
+geçti. Dünya ve g5 bayt kilitleri ile yeniden oynatma doğrulandı. Sıradaki aşama sahadaki sızmacı.
+
+**Tesis baskınları aşama 13 bitti (20 Kasım 2026).** Altı yeni imza makinesi Core, bot ve tahtaya bağlandı.
+Tesis ana bayrağı ve `facilitySignatureMachines` birlikte 12 farklı imzayı etkinleştirir. Altı yeni prefab, niyet alanları ve
+Türkçe/İngilizce kural kartları eklendi. Üretilmiş haritada ad havuzu ve imza komşuluğu koşulu çıktı. Sürümler g5, f7 ve kayıt 20.
+80 eşli g5 tohumunda saldırı başarısı %78,4 → %76,8, ölü/harekât 13,32 → 15,39. Tesis ana bayrağı kapalı. Ayar önerileri ve
+açık ölçüm hedefleri tesis tasarımı §11.6 ve §14'te. Canlı Unity EditMode 2.224/2.224, PlayMode 130/130. Sabit dünya ve
+alt bayrak kilitleri tuttu, yeni g5 tabanı `Library/Calisma/taban13`. Sıradaki aşama unvanlar.
 
 **KOS (aday seçimi, sığınak olayları ve yeni sonlar) bitti** (13–15 Kasım, aşama 1–8;
 [KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md](KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md)): kapıda 2–3 adaylı grup ve şüphe kademeleri, on dört
 sığınak olayı ve sızma zinciri, ifşa, `dusus`/`terk`/son şalter ve zaferin üç tonu; eski tek adaylı kabul söküldü; rehber yeni
 oynanışa göre 26 adım; denge bot ölçümüyle ayarlandı (altı alan, aşağıda "KOS aşama 8: denge ve belgeler"; düzenek `Tools/DengeBotu/`). Kayıt biçimi 17.
 EditMode 1186/1186, PlayMode 91/91. Açık kalanlar "Açık işler"in başında.
+
+**Tesis baskınları: tasarım ve aşama 0** (17 Kasım;
+[TESIS-BASKINLARI-TASARIMI.md](TESIS-BASKINLARI-TASARIMI.md)): üç odalı baskın, on iki YZ ve imza makineleri, bina planı,
+yeni hamleler ve ekipman, önlem defteri, kalıcı tahta ve üç odalı savunma. Kararlar belgenin §14'ünde; açık soru kalmadı.
+Aşama 0 bitti: harekât botu (`Tools/DengeBotu/Camp8.cs`) baskın başına tur, hamle, düşen ve yeniden alınan sektör
+sayaçlarını yazar (`R` satırları, `ozet.py --baskin`, liste `tesis0.txt`); oyun kodu değişmedi. Taban (bugünkü oyun,
+üretilmiş harita, 80 tohum): zafer %65, medyan 48 vardiya, harekât başına 6,7 ölü ve 9,4 kendiliğinden kurtarılan düşen;
+baskın başına 6,6 tur, 26 uzman hamlesi, ikmal %82, sunucu %91. Dünya haritası koşusu KOS aşama 8 tabanını birebir
+verdi.
+
+**Tesis baskınları aşama 1 bitti** (18 Kasım; Core, bayrak `raidFacilityEnabled` kapalı, kayıt biçimi 18 kaldı):
+`FacilityMaps` harekât tohumundan ayrı akışla (`Rng.Mix(seed, 0x54455349)`, bölge başına FNV tuzu) 12 × 3 × 3 = 108 odayı
+tembel üretir; `RaidMaps.Generate` taslağı giydirilir (batı girişi, ileri geçit, menfez çifti, ara odada kepenk ve
+donanım: sigorta panosu, çağrı anteni, soğutma vanası), şart parçaları planda ve iki kademe çeşitlemesiyle durur.
+`Baskin.CreateRoom` odayı kurar (çekim sırası: kukla, başlangıç makineleri, kadro, hedefte kademe ekleri ve imza, olay,
+`PlanEnemies`). Eski yol yardımcılara bölündü; `FacilityLockTests` değişiklikten önce alınan iki altın özeti (1440 tahta,
+30 harita) kilitler. Nesne ekleyen bölge özellikleri yalnız hedef odada. Ara odada kepenk çoğunlukla bölme kepengi ve
+kapalıyken yol 10 adıma uzayabiliyor; geliştirici onayladı (18 Kasım; tasarım §2.3, §14 dördüncü tur). EditMode 1439/1439; Play'de bayrak kapalıyken
+kampanya baskını eski tahtayla açılıp oynandı. Sıradaki: aşama 2 (Core: üç
+odalı baskın, sürüm 19).
+
+**Tesis baskınları aşama 2 bitti** (18 Kasım; Core, bayrak kapalı, **kayıt biçimi 19**): baskın üç odayı sırayla
+oynar. Uzman geçide yürüyünce kapıda bekler (`Unit.AtGate`), herkes kapıdayken GEÇ (`Baskin.Chain`: `EnterGate`,
+`CanPass`, `Pass`); kapıdan geri çıkış yok, yalnız tur içi geri alma. Tahtadaki son uzman düşerse ya da kaçışta süre
+dolarsa kapıdakiler kendiliğinden geçer; giriş ve ara odada süre sonu geri çekilmedir. Can, zırh, EMP ve ekipman hakları
+odadan odaya taşınır. Kırık donanım hedef odayı hazırlar (pano: ilk 2 tur uyanma yok; anten: bir makine eksik, dönüşte
+uyanma yok; vana: sunucu hedefi 2 can eksik, ikmalde makineler ilk tur yürümez; makineler donanımı hedef almaz). Kaçışta
+temiz oda yürünür, temiz olmayan oda bıraktığın hâliyle 4 turluk dönüş tahtası olur ve şartı baştan başlar. Zincirin tek
+durumu `RaidState.Reports`'tur (`RoomReport`, konumsal dizgi); kurallar saf `RaidChain`'de, komut `AdvanceRaidRoom`
+(`raid_room`), `ResolveRaid` tesis kipinde sonucu raporlardan toplar. Kayda tesis parmak izi eklendi
+(`GameRecord.facility`). Sürüm 19 olduğu için sürüm 18 kayıtlar yüklenmez, arşivlenir. Bot üç odayı oynar
+(`RaidBot.PlayFacility`, donanım politikası `kir`/`hic`/`hep`), `Camp8` tesis kipini ve `REPLAY` denetimini bilir.
+Kararlar tasarım §14 beşinci turda. Bayrak kapalıyken kilitli altın değerler ve eski bot koşusu bayt bayt aynı;
+EditMode 1533/1533, sürüm iddialı PlayMode sınıfları 45/45; Play'de bayrak kapalıyken baskın eski tahtada açıldı,
+geri çekilme `raidres` yazdı, kayıttan devam aynı duruma döndü. İlk bot denemesi (bilgi için, tasarım §11.6): baskın
+başarısı %45, baskınların üçte biri ara odada süre dolarak bitiyor ve 30 harekâtın hepsi dağılmayla bitiyor; aşama 4'ün
+ilk işi.
+
+**Tesis baskınları aşama 3 bitti** (18 Kasım; sunum, bayrak asset'te kapalı, kayıt biçimi 19 kaldı): bayrak açıkken
+baskın üç paftayı Baskın sahnesinde, sahne yeniden yüklenmeden oynar. Oda zincirini iki saf Bridge sınıfı yürütür:
+`FacilityRaidSession` (sıradaki odayı açar, biten odanın raporunu `GameController.AdvanceRaidRoom` ile dosyalar) ve
+`FacilityRaidText` (gözcü raporu, rapor evresi, notlar, amaç ve geçit satırları). `RaidDataSource` odanın bittiği yedi yerde
+`CheckRoomEnd` çağırır; sıradaki pafta `ResetBoard(first: false)` ile ve `RaidBoard3D`'nin pafta çevirmesiyle açılır. Herkes
+kapıdayken EMRİ İLET düğmesi ve Enter GEÇ olur (altında GERİ ALINMAZ); kapıya giren figür tahtadan kalkar, kartı "✓ KAPIDA".
+Antet "KANAT 01 · PAFTA 2/3 · DÖNÜŞ", koordinatlar "2-C3", donanım soğutma ünitesi yedek parçasıyla ve PANO/ANTEN/VANA
+etiketiyle çizilir. Sonuç kartı üç odanın toplamını okur ("TUR 4 · PAFTA 3/3"); kartta çıkıp devam edilirse kart yeniden
+gösterilmez, sonuç yazılır. Baskının ortasında kaydedip devam odanın başından açılır. Rehberin "raid" adımı bayrak açıkken
+tesis metnini gösterir. Bayraktan bağımsız olarak bölgeler her yüzeyde YZ adını taşır (`RegionDef.Ai`: VERITY, HEADWATER…),
+sakinler İngilizce adlıdır (`CandidateData.Founders` 10, `Names` 64), portre anahtarları yeni adlarla yazıldı; RNG ve kayıt
+değişmedi (Camp8 iki kipte bayt bayt aynı, kilitli altın değerler aynı). Tek sözcüklü YZ adı iki satıra bölünemediği için
+üretilmiş harita tohum 72'de temiz yerleşmiyordu: `GeneratedMapLayout`'a yalnız ilk iki tur bitmezse çalışan geniş kaymalı
+üçüncü tur eklendi (öbür tohumların yerleşimi aynı). Oyunda bulunup düzeltilenler: telsiz fişine sığmayan beş satır
+kısaltıldı, İngilizce sonuç kartında hedef adı açılış dilinde donuyordu, rehberin İngilizce tesis metni notu ekrandan
+taşırıyordu. `RaidBoard3D` düzenleme modunda `DestroyImmediate` kullanır (EditMode testleri tahtayı birden çok kez kurar).
+Kararlar tasarım §14 altıncı turda. EditMode 1563/1563, PlayMode 102/102; Play'de karargâh tesisinin 01 kanadı baştan sona
+oynandı (G → A → H → A dönüşü → G temiz, yürüyerek çıkış; kayıt `liberation_raid raid_room×4 raidres`), bayrak kapalıyken
+eski tek tahta açıldı. Sıradaki: aşama 4 (dur ya da devam: dikey dilim ölçümü), geliştirici kararı.
+
+**Tesis baskınları aşama 4 bitti** (18 Kasım; bayrak asset'te kapalı, kayıt biçimi 19 kaldı): önce
+harekât botunun tesis puanı düzeltildi (`Tests/EditMode/RaidBot.cs`: kişinin kartındaki yürüyüş, geç kalan her uzman odanın
+kaybı, son turda geçide uzaklık, süreye sığmayan donanım hedefinden vazgeçme); bayrak kapalıyken Camp8 bayt bayt aynı, ayrı
+tohumlarda baskın başarısı %52 → %69. Sonra `Tools/DengeBotu/tesis4.txt` ile 12 varyant × 240 harekât (80 tohum) koşuldu;
+`ozet.py --tesis` (yeni) ve bağımsız betikle yeniden hesap tuttu. Sonuç (§11.6 "Aşama 4 ölçümü"): bugünkü değerlerle
+devam hedefleri tutmuyor (başarı %67, taban %85; zafer %0; dağılma %96, medyan 7. gün; toplam tur medyanı 18, hedef
+12–16). Tur kısma (giriş/ara 4) başarıyı düşürüyor (ilk baskın −17,5 puan; kepenkli ara odanın 10 adımlık yolu). Makine
+kısma (giriş 1, ara 1) ve dönüş 5 tur yararlı (ilk baskın +20, ölü/baskın 0,54 → 0,39) ama dağılma %86 kalıyor: dağılmanın
+nedeni güven ekonomisi (başarısız tesis baskınının sivil kaybı); Balance'ın tur ve makine alanları bunu çözmüyor, güven
+kuralı (`liberationCiviliansPerTrust` 1) zaferi ancak %10–12'ye çıkarıyor. Ayrıca: ekibin tamamının öldüğü baskınlar
+(%7–14; tabanda %0,9) ve sunucu baskınında dönüşte ölen ekibin baskını kazanmış sayılması. Bot değişikliğinden sonra EditMode 1563/1563. **Karar (geliştirici):** giriş
+ve ara oda birer makineyle (yalnız bakım robotu) başlar, dönüş odası 5 tur (`Balance`: `facilityEntryMachines` 1,
+`facilityMiddleMachines` 1, `facilityReturnTurns` 5; asset bu alanları yazmadığı için C# varsayılanı geçerli); tur bütçesi
+kısılmadı. Bayrak kapalıyken Camp8 bayt bayt aynı; yalnız bayrağı açan koşu ölçülen `t4kirM11R5` ile bayt bayt aynı;
+`tesis4.txt` satırları o günkü değerleri açıkça yazar. `FacilityRoomTests`'in iki makine sayısı kilidi karara göre
+güncellendi; `FacilityChainTests` zincir kurallarını makineli odayla sınar (kendi `Bal`'ı giriş 2, ara 3 makine yazar).
+Karardan sonra EditMode 1563/1563, PlayMode 102/102. Açık kalanlar
+(güven ve sivil kuralı, süre hedefinin tanımı, ekibin tamamının öldüğü baskın, sunucu baskınında dönüşte ölen ekip) tasarım
+§14 yedinci turun altında; elle oynama geliştiricide. Sıradaki: aşama 5 (bina planı) ve aşama 6 (hamleler), geliştirici
+isteyince.
+
+**Tesis baskınları aşama 5 bitti** (18 Kasım; bina planı; bayrak asset'te kapalı, kayıt biçimi 19 kaldı).
+
+- **Core:** `LiberationCampaignState.Facility` (`FacilityState`: `Known`, `Intel`).
+  - **Teyp:** girilen her oda bilinir.
+  - **Evrak:** alınan kanat, sıradaki kanadın giriş odasını açar.
+  - **Dinleme nöbeti:**
+    - Gözetim'deki çalışan kişi vardiya başına 1 puan getirir.
+    - 3 puan sıradaki kanadın bilinmeyen ilk odasını açar.
+    - Açılacak oda yokken puan 3'te durur.
+  - **Plan okuyucusu:** `FacilityPlanCells` baskın emrinin kuracağı tahtanın makinesiz kopyasını verir. 36 kanat × 3 oda ×
+    kademe 1/3 × olaylar × iki tohumda baskın tahtasıyla kare kare aynı.
+  - Hiçbiri RNG çekmez, yeni komut yok. Bayrak kapalıyken Camp8 bayt bayt aynı, `REPLAY=1` tamam.
+- **Sunum:**
+  - **Paftalar:** görev fişinin iç yanında üstte üç pafta (`FacilityPlanBuilder` → `FacilityPlanSheets`). Bilinmeyen odada
+    PLAN YOK, oda adı da gizli. Bilgi fişinde paftalar yalnız kanadın bir odası biliniyorsa çıkar.
+  - **Gözetim cebi:** kartlı panoda BOŞTA'nın sağ ucunda, yalnız bayrak açıkken.
+    - Şerit "Dinleme n/3".
+    - Önizleme kapanıştan sonraki hâli yazar.
+    - Devir fişinde GÖZETİM satırı.
+    - Bayrak kapalıyken "watch" emekli.
+  - **Telsiz masası:** baskında yalnız tesis baskınında. YAYINDA lambası emir ve GEÇ ile yanar, ilk rapor satırıyla söner.
+    Teyp bu baskında kaydedilen paftaları yazar.
+- **Bağımsız gözden geçirme:**
+  - Robot sızıntısı, kural ihlali ya da bayrak kapalıyken davranış farkı bulmadı.
+  - Bulgularından düzeltilenler:
+    - plan ile baskın tahtasının eşitlik testi genişletildi;
+    - kendini doğrulayan tohum testi düzeltildi;
+    - "baskından önce plan" uçtan uca test edildi;
+    - evrak testi kesinleştirildi;
+    - önizleme satırı düzeltildi;
+    - Gözetim'in İngilizcesi her yerde "Watch" oldu (önce görev adı "Supervision").
+- **Testler:** EditMode 1598/1598, PlayMode 107/107. Kayıt klasöründe yalnız Unity'nin oturum dosyası değişti.
+- **Kararlar:** tasarım §14 sekizinci tur.
+- **Açık bırakılanlar** (geliştiriciye bildirildi):
+  - Bayrak açıkken deste 980 mm'ye kayar; 10 kişilik açık elde soyadlar kesiliyor. Bayrak kapalıyken deste bugünkü yerinde
+    (1098 mm; geliştirici kararıyla bayrağa bağlandı), pano aşama 5'ten önceki görünümüyle aynı.
+  - Paftalar harita pozunda üst sayaçların rakamlarını örtüyor.
+  - Dinleme yalnız sıradaki kanadı hedefliyor.
+  - Gözetim'deki kişiye kit takılabiliyor.
+- **Ertelenen:** masadaki kayıt rafı.
+- **Doğrulanmayan:** üzerine gelme etiketleri gerçek fareyle denenmedi.
+- **Sıradaki:** aşama 6 (hamleler), geliştirici isteyince.
+
+**Tesis baskınları aşama 6 bitti** (19 Kasım; Core hamleleri; bayrak asset'te kapalı, kayıt biçimi 19 kaldı, tesis izi f2).
+Geliştirici uyurken, "karar gerekirse önerinle yap" talimatıyla yapıldı; kararlar onayına açık (tasarım §14 dokuzuncu tur).
+
+- **Core** (`Core/Baskin.Actions.cs`, yeni):
+  - **Eylem API'si** eskisinin yanında: `CanAction`, `ActionTargets`, `DoAction`, `PreviewAction`. Altı hamle: `pusu`, `kosu`,
+    `surukle`, `firlat`, `ortak`, `menfez`. Değerler `Balance` → `MoveRules` → `BState.Moves`.
+  - **Bedeller:** pusu, fırlatma ve ortak yeteneğin yerine; koşu ve sürükleme yürüyüş + yetenek; menfez yalnız yürüyüş.
+  - **Gövde:** yeni alan yok. Düşen tahtada yatar, kareyi kapatmaz, hedef alınmaz. Yalnız sürüklemeyle hareket eder: kapıya
+    sürüklenen ekiple geçer, tesisin girişinden sürüklenen çıkarılır. Raporda `Body` 0/1/2 ve `Picked`; sonuçta
+    `RaidResult.Extracted`. Tesiste düşen yalnız çıkarıldıysa yaşar; kartsız yol ve bayrak kapalı yol değişmedi.
+  - **Son nefes** (kapanışta eklendi): oyuncunun hamle sırası dışında düşen, oyuncuya tur kalmadan biten odada ekiple gider
+    (`Unit.Breath`; ölçüm anahtarı `facilityLastBreathDies`).
+  - **Yük:** taşıyıcı düşünce yere düşer (geçilemez karede en yakın açık kareye); kendi hareketiyle varan alır; yerde kalırsa
+    baskın ikmal olarak kaybedilir. Fırlatma 3 kare.
+  - **Kepenk ve büyük sandık:** iki uzman aynı tur, sekiz komşudan. Kepenk açık kalır, dönüş tahtası açık kurulur. Büyük
+    sandık ikmal hedef odasında bir duvar nişidir (`Cell.Crate`, RNG'siz; satırlar ve Digest aynı); açılırsa kazanılan baskında
+    2 metal, 1 devre. Kepenk ve sandık dinamit hedefi değil.
+  - **Menfez:** yalnız Analist, açık eylem; yetenek kullanılabilir kalır.
+  - Sekiz yeni `Balance` alanı (asset'e yazılmadı). Hiçbir hamle RNG çekmez; makine aklı değişmedi.
+  - **Kayıt:** yeni komut yok. Sürüm 19 kaldı, tesis izi f1 → f2: aşama 2–5'in tesis kayıtları yüklenmez, bayraksız kayıtlar
+    aynen yüklenir. AGENTS kural 1'in lafzından bilinçli sapma; gerekçe tasarım §11.4.
+- **Bot ve ölçüm:**
+  - `RaidBot`: eylem kimliği (`Step.Kind`), düşen politikası `hep`/`hic` (Camp8 `DUSEN`), yük ve tutuş terimleri.
+  - Camp8 tesis R satırına hamle, gövde ve ölüm kategorisi sayaçları; `tesis6.txt`; `ozet.py --tesis`'e "aşama 6" bölümü.
+  - Bayrak kapalıyken Camp8 iki harita kipinde bayt bayt aynı; tesiste `REPLAY` temiz.
+  - **Sonuç (80 tohum; tasarım §11.6):** hedefler tutmadı. Ölü 12,7 / harekât (hedef ≤ 7,5, taban 7,0); çıkarılan, tabanın
+    kendiliğinden kurtardığının %20'si (hedef ≥ %80); zafer %6,7 → %2,1. Sürükleme bedelini kaldırmak (D22) ve son nefes
+    kuralı ölüyü gürültü içinde değiştiriyor; `facilityDragMoveCost` 1 kaldı. Ölümlerin kaynağı kural yapısı: kaybedilen
+    baskında yatan, hedef ve dönüş odasında bırakılan, süre sonunda geride kalan. Pusu orta güçte (isabet 0,43).
+- **Bağımsız inceleme:**
+  - Core sağlam bulundu: bayrak kapalı davranış aynı, RNG çekimi yok, geri alma bütün alanları kapsıyor.
+  - Düzeltilenler:
+    - botun efekt sayacı şişikti (pusu isabeti 0,92 → gerçeği 0,43);
+    - `holdWin` geride kalan üretiyordu;
+    - üç kural kenarı: kapıdan geçen sürükleme yolu, geçilemez karede düşen yük, dost ya da bulutlu yöne pusu;
+    - eksik tasarım testleri yazıldı (`Death_TimeoutEscape_LeftDies_GateGoesOn`, `Rush_Turnstile`, `Body_NotPushed`,
+      `Cargo_NotPickedWhenPushed`, `Death_CardlessPath_Unchanged`, `BigCrate_Reward_NotOnLostRaid`, `Preview_Unchanged`).
+- **Testler:** yeni `FacilityMoveTests` ve `FacilityFallenTests`; `FacilityBotTests` iki politikayla.
+  - Editör ekran kilitliyken yanıt vermediği için Core ve motordan bağımsız sınıflar Mono koşucusunda koşuldu
+    (`Docs/GELISTIRME.md`): 776 geçti, 3 kaldı (Unity taklidinin bilinen eksikleri), 5 atlandı.
+  - `RaidEngineTests` altın imzaları ve `FacilityMapsTests.Golden_Seed79` değişmedi.
+  - Unity (batchmode, projenin APFS klonunda; editör ekran kilidi yüzünden yanıtsızdı): derleme temiz; EditMode 1732 test, 1727 geçti, 5 atlandı, 0 kaldı (`LocalizationTests`, `FacilityJsonTests`, `Generation_IsFastEnough` dahil); PlayMode 107 test, 93 geçti, 14 kaldı. Kalan 14'ü (`ProductionPlayTests`'in 13 defter/tarif testi ve `PlanningTutorialPlayTests.Guide_…`) batchmode ekranından: aynı testler aşama 6'dan önceki HEAD kopyasında da aynı biçimde düşüyor; editörde yeniden koşulmalı.
+- **Sahne ve prefab değişmedi;** sunum aşama 7.
+- **Açık bırakılanlar** (karar geliştiricinin; tasarım §14 dokuzuncu tur):
+  - ölüm hedefinin ne olacağı; kaldıraçlar: son nefes gövdesinin ekiple kalması, hedef ve dönüş odasında bırakılan gövde ve
+    geride kalan, gidiş kaybında yerde yatan, hedefin yeniden tanımı;
+  - pusu kısıtı (gerekli değil);
+  - Sedye ve Revir aşama 8'de zayıf;
+  - ikmal başarısı tabanın +7,9 puan üstünde;
+  - sunucu kademe 3 −27 puan.
+- **Sıradaki:** aşama 7 (sunum · hamleler), geliştirici isteyince.
+
+**Tesis baskınları aşama 7 bitti** (19 Kasım; hamlelerin sunumu; Core, sahne, prefab, BalanceConfig ve SoundBank değişmedi;
+yeni komut yok, kayıt biçimi 19; bayrak asset'te kapalı, bayrak kapalıyken baskın sunumu eskisinin aynısı). Geliştirici
+uyurken, "karar gerekirse önerinle yap" talimatıyla yapıldı; kararlar onayına açık (tasarım §14 onuncu tur, 48 karar).
+Ayrıntı tasarım §4 "Uygulanan hâl (aşama 7)".
+
+- **Giriş:** altı hamle oyunda verilir. Tek tuş E kullanılabilir hamlelerde döner; kart satırına tık doğrudan kurar. Q, Esc, sağ
+  tık, seçim değişimi, Z ve başarılı hamle kipi kapatır. Rehberli eğitim baskınında E etkisiz.
+- **Kart:**
+  - Yetenek kartında hamle satırları, yetenek satırının çalışma anı kopyalarıdır; prefab değişmedi.
+  - Yalnız odada anlamlı hamleler listelenir. Kullanılamayan satır soluk ve nedeniyle; E fişi E'nin satırında.
+  - En kötü kart (3 + 6 satır) TR ve EN'de sığar (prefab içeriğinde ölçüldü).
+- **Tahta:**
+  - Kipte hedef çerçevesi gösterilir. Hamle önizlemesi çizilir: pusu hattı, koşu ve itme, sürüklemede iki hayalet, fırlatma
+    oku, menfez kavisi.
+  - Kurulu pusu hattı (yeşil kesik), yerdeki yük (küçük sandık ve YÜK) ve odak çerçevesi; SANDIK ve TUTULUYOR notları.
+- **Canlandırma:** sürükleyen yürür, gövde arkasından gelir; menfezden batıp çıkma; fırlatmada kavis; kepenk çöker; popup'lar.
+  Makine evresi ilk pusu vuruşunda bölünür (saldırılar → yürüyüş → pusu ve uyanma).
+- **Metinler:** fişler, gözcü ve kapanış satırları, amaç ("yükü yerden al"), çıkış ve kapıda "Yük yerde kalır", ekip kartında
+  YERDE / GÖVDE KAPIDA / EKİPLE TAŞINIYOR / ÇIKARILDI, kurallar kartı ve geri çekilme metni.
+- **Son nefes:** oda kendiliğinden geçilince `Breath` taşıyan gövdenin parçası ekiple tahtadan kalkar; "yerde" sayan satırlar
+  onu saymaz (aşama 6'nın açık bıraktığı gösterim).
+- **Operasyon raporu:**
+  - Büyük sandık KAZANÇ'a sayılır. Önceden eksik gösteriyordu; hata düzeltildi.
+  - SONUÇLAR'da "Büyük sandık · +2 metal · +1 devre" satırı çıkar. 7 yuva aşılırsa değişmemiş YZ alarmı satırı düşer.
+- **Bağımsız inceleme:** bayrak kapalıyken davranış farkı, Core'a yazma, `Find` ya da Loc ihlali bulmadı. Kapanışta düzeltilenler:
+  - makine evresinde amaç satırı yükün düşüşünü önceden söylüyordu (artık sunum kopyasından);
+  - yük yerdeyken çıkış ve kapıda uyarı yoktu ("Yük yerde kalır");
+  - zayıf ya da sessizce atlanabilen test iddiaları elle yazılmış beklenenlerle ve koşulsuz `Assert.IsNotNull` ile değişti;
+  - `EffectPlaying` bölünmüş evrede tam uzunluğu bildirmiyordu (`Animate(…, total)`);
+  - son nefes gösterimi eklendi.
+  - İki yeni iddia ters sınamada eski hatayla kırıldı.
+  - İncelemenin "`.meta`'da `MonoImporter` eksik" bulgusu bu projede geçerli değil: Unity 6000.3.12f1 yeni betiğe kısa biçim
+    yazar (GELISTIRME "Bilinen tuzaklar").
+- **Testler:** `FacilityMoveTextTests` 10, `FacilityMovesPresentationTests` 16, `FacilityMovesSceneTests` 5,
+  `FacilityBigCrateReportTests` 3, PlayMode `FacilityMovesPlayTests` 6 (bitti ölçütü `Moves_AllSix_GivenInPlay`).
+- **Unity tam takımı** (batchmode kopyada, aşama 8'in o anki dosyalarıyla; editör ekran kilidi yüzünden yanıtsızdı):
+  - Derleme temiz.
+  - EditMode: 1814 test, 1809 geçti, 0 kaldı, 5 atlandı.
+  - PlayMode: 113 test, 99 geçti, 14 kaldı. Kalan 14 bilinen batchmode ortam kalanı (`ProductionPlayTests` 13,
+    `PlanningTutorialPlayTests.Guide_…` 1); aşama 7'den önceki HEAD kopyasında da düşüyor. Bir tam koşuda
+    `FacilityRaidPlayTests.RadioDesk_…` 8 sn zaman aşımıyla bir kez kaldı; tek başına ve ikinci tam koşuda geçti.
+- **Elle oynama:** yapılmadı, ekran görüntüsü yok (editör yanıtsız). Geliştiricide.
+- **Ertelenen:** sonuç teleksi (aşama 10), sandık nişi ve kepenk modeli (aşama 9), sürüklemenin Core telsiz satırı.
+- **Açık sorular:** hedef odasında süre sonu onayı; kalkık kepenk notu; pusunun tek yönü kapalıyken ayrı neden metni.
+- **Sıradaki:** aşama 8 (Core: ekipman ve ödül) başka bir oturumda sürüyor. Aşama 6'nın ölüm hedefi kararı geliştiricide
+  (§14 dokuzuncu tur).
+
+**Tesis baskınları aşama 8 bitti** (19 Kasım; Core: ekipman ve ödül; bayrak asset'te kapalı, kayıt biçimi 19 kaldı, tesis izi f3).
+Geliştirici uyurken, "karar gerekirse önerinle yap" talimatıyla dört sıralı parçada (A simülasyon, B tahta çerçevesi, C köpek ve
+kelepçe, D bot ve ölçüm) yapıldı; kararlar onayına açık (tasarım §14 on birinci tur, 75 karar). Ayrıntı tasarım §5 ve §6.2
+"Uygulanan hâl (aşama 8)".
+
+- **Simülasyon:** yedi ekipman tarifi sunucu ödülüyle açılır (`server_reward`: tarif ya da kazanım; bekleyen ödül baskın emrini
+  kilitler), tarif defterden iş emriyle seçilir, köpeğin erzak bedeli, emir açıkken eksik rol kiti; on iki kazanım (Siper aşama
+  11'e kadar etkisiz); kadroya yardımcı yuvadaki ekipman (`SquadSlot.Gear`).
+- **Tahta:** örme seti (tel, kalas), dinamit lokumu, üç aygıt (taret, yem, vinç; makine evresinde, hurda), kumanda kelepçesi ve
+  tutsak (komuta), köpek (havla, getir, kokla); `Unit.Class` ve `IsSpecialist`; makine aklı (yem ve havlayan köpek ekip gibi, engel
+  kırma); Sedye yeni tanımı (ekiple gövde odalar arasında yere konmaz).
+- **Bot ve ölçüm:** ortak planlama `Tests/EditMode/CampaignBot.cs` (`ODUL`, `ARAC`), `RaidBot.Gear` (`GEAR`); `tesis8.txt`, 7 etiket
+  × 240 harekât. Regresyon kilidi tuttu (`t8yok` = `t6sn`). Kullanım hedefi beş türde tuttu, vinç ve kelepçede tutmadı (köpeğin
+  %48'i havla yüzünden bilgi vermez; anlamlı ölçüler kokla 0,35 ve getir 0); ekipman baskın başına ölüyü değiştirmiyor, zaferi
+  +2,5 ±1,2p artırıyor; üretim yolu baskın başarısını ~2 puan düşürüyor (kaynağı açık); kazanımlar ölü / baskını −0,027 ±0,007,
+  Sedye −0,090 ±0,023 düşürüyor (yeni tanım kesinleşti); ölü ≤ 7,5 hedefi yine tutmuyor (12,7 / harekât).
+- **Testler:** `FacilityRewardTests`, `FacilityRecipeTests`, `FacilityGearTests`, `FacilityDogTests`, `FacilityCaptiveTests`,
+  `FacilityBotTests` ekleri. Mono koşucusu 903 geçti (3 bilinen taklit eksiği). Unity (batchmode, APFS klonunda; editör ekran kilidi
+  yüzünden yanıtsızdı): derleme temiz; EditMode 1899 test, 1894 geçti, 0 kaldı, 5 atlandı; PlayMode (parça C) 113 test, 99 geçti, 14
+  bilinen batchmode ortam kalanı.
+- **Bağımsız inceleme:** kesin sorun bulmadı (determinizm, kayıt, `CopyInto`/`Signature`, bayrak ve geri alma temiz; bayrak kapalı
+  bayt eşitliği, tam dosya `cmp` ile `t8yok` = `t6sn` ve `REPLAY` 60/60 yeniden koşuldu). Bulguları belgeye işlendi:
+  - üretim yolunun başarı düşüşüne aday: açık iş emri varken otomatik üretim çalışmıyor ve ekipman emri zırhla aynı girdiyi
+    (metal + kumaş) tüketiyor; düşüşün en büyüğü `t8tek`'te. Doğrulanmadı; aşama 9/10'da plaka sayısıyla sınanacak (§11.6 okuma 4);
+  - köpeğin "kullanıldı" ölçüsü havla yüzünden kendiliğinden tutuyor (§11.6);
+  - dağılmayla biten oyunda `PendingReward` dolu kalıyor (zararsız; aşama 9 son ekranda göstermemeli; §14 on birinci tur 38);
+  - `AdvanceRaidRoomCheck` raporun `Sniff`/`Units` alanlarını doğrulamıyor (bugün etkisiz; §11.3);
+  - `Gadget_NoRngDraw` dar (yalnız yem); `Tools/DengeBotu/README.md` regresyon tarifine `gearGone` anahtarı eklendi.
+- **Sahne, prefab, Desk ve BalanceConfig değişmedi;** sunum aşama 9. Elle oynanmadı.
+- **Açık sorular (geliştiriciye):** K24 Sedye (ölçümle kesinleşti), K22, K13, 38 (`PendingReward`); vinç ve kelepçe kullanım hedefi;
+  üretim yolunun başarı farkı; köpeğin kullanım hedefinin tanımı; olay hedeflemesinin (`Baskin.Events.cs` `Side == 'p'`)
+  `IsSpecialist`'e çevrilmesi (aşama 9/10); ölüm hedefi için kaldıraç 2–4 (§14 dokuzuncu tur).
+- **Sıradaki:** aşama 9 (sunum: dördüncü kart, aygıt ve engel modelleri, tarif ve ödül seçimi), geliştirici isteyince.
+
+**Tesis baskınları aşama 9 bitti** (19 Kasım; ekipmanın ve ödülün sunumu; Core, `BalanceConfig.asset` ve `SoundBank.asset` değişmedi;
+yeni komut yok, kayıt biçimi 19, tesis izi f3; bayrak asset'te kapalı, bayrak kapalıyken sunum eskisinin aynısı: tek sapma üç ekip
+kartının en çok 0,67 px kayması). Geliştirici uyurken, "karar gerekirse önerinle yap" talimatıyla dört sıralı parçada (1 baskın girişi
+ve kartlar, 2 tahta ve modeller, 3 sığınak ve ödül kâğıdı, 4 bitti ölçütü ve kapanış) yapıldı; kararlar onayına açık (tasarım §14 on
+ikinci tur, 84 karar). Ayrıntı tasarım §5, §5.6 ve §6.2 "Uygulanan hâl (aşama 9)".
+
+- **Baskın:** yeni tuş R ekipman eylemlerinde döner (tek ekipman satırı); E ve altı hamle değişmedi, tek kip açık. Köpeğin dördüncü
+  ekip kartı (4 tuşu), köpek ve tutsağın E komutları; tutsak tahtada tıkla seçilir, aygıt seçilmez. Sayımlar uzmana süzüldü. Önizleme:
+  taret ve vinç hattı, yem yolu, havlama erimi (Core'un private aygıt kuralının Bridge kopyası, Core'un makine evresiyle eşlik testi).
+- **Tahta:** on iki kurgu parça (yol E: var olan Analist mesh'leri ve Rev3 malzemeleri; node kurulmadı), aygıt hattı ve yönü, kalan tur
+  etiketleri, NİYETSİZ (planı atlanan) ve KİLİTLİ (kilitlenen makine), KOKLANDI; kepenk, niş ve tutuş süsleri; on altı Fx dalı.
+- **Sığınak:** depoda yedi ekipmanın ikinci sırası (piktogramlar), defter 13 sayfa (kapalı sayfalar, 3 girdi, erzak satırı), erzak ve
+  eksik kit tahmini, dinlenen köpek, köpek hurdaya atılmaz; görev fişinde KAZANIM.
+- **Ödül:** operasyon raporunda satır ve ÖDÜLÜ SEÇ, rapordan sonra ele gelen kalıcı kâğıt (`SiginakServerReward`; EVRAK tepsisi,
+  kayıttan devamda tepside), tek komut `ExecuteBoardCommand(s => s.ChooseServerReward(…))`; kilit fişte, telekste, CRT'de ve telsiz
+  günlüğünde; son ekranda ve kartsız oyunda görünmez.
+- **Bitti ölçütü:** `FacilityGearCampaignPlayTests.EveryGear_ProducedEquippedUsed` yeşil (tek harekâtta yedi tarif kâğıttan seçilir,
+  yedi ekipman defterden üretilir, panodan takılır, üç baskında R ve tahta tıkıyla kullanılır; kelepçe panodan silinir, düşen köpek
+  dinlenir; 83 sn).
+- **Bağımsız inceleme ve kapanış düzeltmeleri:** kural ihlali yok. Düzeltilenler: niyetsiz makinenin hover satırı Core'da hiç çıkmıyordu
+  (kilitli ve planı atlanan ayrıldı, test Core yolundan); kilitli makinede NİYETSİZ notu niyet okuyla çelişiyordu (KİLİTLİ); önizleme
+  olay odalarında Core'dan ayrılıyordu (yük turnikeye bakmaz, yağda kayma); bekleyen ödül kartsız oyunda yanlış görünüyordu; E/R öbür
+  kipi her durumda kapatmıyordu; köpek yükle kalırken son çıkışta uyarı yoktu; son ekran bileşen testi ve bitti ölçütü testi eklendi;
+  yanıltıcı test adı (`TeamCards_Three_Fixed345_ContainerUnchanged`). Gerekçeyle bırakılanlar: ayraçlar ve "1 hasar" sabiti, `Present`'in
+  masa kilidi, çizgi ve alfanın `RaidPieceLibrary`'de durması (§14 on ikinci tur 51, 81–83).
+- **Unity (editörde, boş sahnede):** derleme temiz; EditMode 1951 test, 1946 geçti, 0 kaldı, 5 koşulmadı (`Explicit`); PlayMode
+  122/122 (`ProductionPlayTests` ve `PlanningTutorialPlayTests` dahil); `LocalizationTool.Validate` boş. Dyn SDF'ler yedekten geri
+  kondu.
+- **Ekran görüntüleri** (1920×1080, TR ve EN; bir kez 16:10): dört kartlı baskın HUD'u (köpek seçili, aygıtlar, tutsak, KİLİTLİ ve
+  NİYETSİZ), hover kartları, vinç önizlemesi, depo ikinci sırası, defterin yem ve köpek sayfaları, ödül kâğıdı ve tepsisi.
+- **Elle oynama:** yapılmadı (§15).
+- **Açık (geliştiriciye):** gerçek three.js modelleri için node kurulumu onayı; `LiberationSans SDF - Fallback.asset`'in geri alınması
+  (eski testlerin fontsuz TMP'si kirletiyor; GELISTIRME tuzak notu); beş satırlı hover kartının telsiz masasıyla çakışması (ekran
+  görüntüsünde); Core'da köpek hurda kuralı; olay nişanı `IsSpecialist` (aşama 10); vinç ve kelepçe kullanım hedefi, üretim yolunun ~2
+  puanlık düşüşü (aşama 10, bot); aşama 8'in onay bekleyen kararları.
+- **Sıradaki:** aşama 10 (önlem defteri, cevap tarifleri, sonuç teleksi), geliştirici isteyince.
+
+**Tesis baskınları aşama 10 bitti** (19 Kasım; önlem defteri; `BalanceConfig.asset` ve `SoundBank.asset` değişmedi; ana bayrak asset'te
+kapalı; alt bayrak `facilityCountermeasures` kapalıyken oyun aşama 9 ile bayt aynı; kayıt biçimi 19, tesis izi f4). Geliştirici uyurken,
+"karar gerekirse önerinle yap" talimatıyla altı sıralı parçada (A0 olay nişanı, A Core tahta, B Core simülasyon, C bot ve ölçüm, D sunum,
+E kapanış) yapıldı; kararlar onayına açık (tasarım §14 on üçüncü tur, 88 karar; uygulama tasarımının açık soruları varsayılanla: S1 pusu isabeti
+sayılmaz, S2 cevaplar ekip düzeyinde, S3 sonuç teleksi yalnız tesis kipinde, S4 hedef tutmazsa denge değişmez). Ayrıntı tasarım §5.6,
+§6.3, §7.1 ve §7.3 "Uygulanan hâl (aşama 10)", ölçüm §11.6 "Aşama 10 ölçümü".
+
+- **Core:** `FacilityCounters.cs` (tablo, saf öğrenme, `RaidTally`), `Baskin.Counters.cs` (sayım, altı önlem, kaplama, public
+  okuyucular); `FacilityState.Tally/Counter/Learned`, `RaidParams.Counters/Answers`, cevap sayfaları (temelin yerinde, aynı kimlik,
+  +1 devre), taslak iptali, plan kaplaması; olay nişanı `TeamLike` (A0); 17 `Balance` alanı (alt bayrak `facilityCountermeasures`,
+  ölçüm anahtarı `facilityTallyAmbush`). Kapanışta `Baskin.WinchPulls` (vinç kuralının public okuyucusu; davranış aynı).
+- **Sunum:** görev fişinde ÖNLEM satırı (beş yuva kalır; beşi doluysa KAZANIM ile birleşik, kırmızı, `ic_robot_s`, hover'da "YZ
+  gözlemi"), ÖNLEM teleksi "BÖLGE ÖZGÜR"den sonra ve telsiz günlüğü, sonuç teleksi (rapor inerken; yalnız tesis kipinde), paftada
+  kırmızı kalem (çift cidar, yayıcı ve erimi), baskında CIVATALI etiketi, hover, neden ve gözcü satırları, beş yeni Fx canlandırması,
+  koku yayıcı parçası (kurgu, yol E) ve `thumb_emitter`, defterde cevap sayfası ve ödül kâğıdının cevap satırı. Metinler
+  `FacilityCounterText` (Bridge, saf; kopya kural yok).
+- **Bot:** `RaidBot` `Weights.Emitter` (6), `Weights.AmbushSeen` (0,25), `Tally` önlem efektleri ve `MachinePulls`, `TallyMap`;
+  `CampaignBot` `ODUL=onlem` (`AnswerChoice`), `TAK=hic` (`TakeGear`); Camp8 R/C anahtarları; `ozet.py --fark` ve "aşama 10" bölümü;
+  `tesis10.txt`; README "Önlem defteri".
+- **Ölçüm (80 tohum, 10 etiket):** kilitler bayt aynı; tek araç 0,71, dönüşümlü 1,19 önlem / harekât (pusu sayılmazken; lafızda
+  2,4–2,5 ve ilk önlem hep `aygit`); cezalı taşıma %61 / %39; baskın başarısı farkı `tek − donus` +0,1 ±0,6p, farkların farkı +0,2
+  ±0,5p (hedef 5–10p tutmadı, denge değişmedi); olay nişanı gürültü içinde; `ODUL=onlem` +0,6 ±0,3p (kazanımdan); üretim yolunun
+  düşüşü plaka değil.
+- **Doğrulama:** Mono koşucusu 962 geçti / 3 bilinen taklit / 5 atlandı; Camp8 kilitleri (bayrak kapalı, `t10yokK0` = `t8yok` 80 tohum),
+  `REPLAY=1` 190/190, `tl` = `tlb` her R satırında; kapanıştan sonra kilitler, REPLAY 20/20 ve iki ölçüm etiketinin tohum 1–10'u
+  yeniden bayt aynı. Unity: parça A–D'de kullanıcının editörü yanıtsızdı ("Main thread operation timed out"), doğrulama batchmode
+  kopyada; kapanışta batchmode tam EditMode 2031 test (2026 geçti, 0 kaldı, 5 atlandı) ve tam PlayMode 123 test (107 geçti, 16 bilinen
+  ortam kalanı), ardından editör yanıt verince **editörde, boş sahnede** derleme temiz, tam EditMode **2026/2026** (5 `Explicit`
+  koşulmadı), tam PlayMode **123/123**. `LocalizationTests` yeşil; Dyn SDF yedekten geri kondu; ekran görüntüleri 1920×1080 TR/EN
+  (batchmode).
+- **Bağımsız inceleme ve kapanış:** engelleyici bulgu yok. Düzeltilenler: belge notlarının sunum satırları uygulanan hâle göre
+  (beş yuva, `ic_robot_s`, teleksin zamanı), ölçüm okumasının SE'leri; vinç kuralı Core okuyucusuna (`WinchPulls`) ve
+  `CaptiveLeft`'in sabit 3'ü; dört İngilizce tekil/çoğul satırı. Gerekçeyle bırakılanlar: vincin cıvatalı makinede her evrede yinelenen
+  telsiz satırı, yayıcının uyanma adaylarını daraltması (belge notu), bağlantı testleri, `seenLearned` (aşama 11 notu) (§14 on üçüncü
+  tur 81–88).
+- **Elle oynama:** yapılmadı; ana bayrak asset'te kapalı (§15).
+- **Açık (geliştiriciye):** S1–S4'ün onayı; hedef tutmadı (seçenekler §14 on üçüncü tur); `ele` hiç öğrenilmedi (kısa bağ ve Yedek
+  röle ölçülmedi); önlemden kaçınan bot politikası yok; üretim yolunun ~1,6p düşüşünün kaynağı; EN görev fişinin olaylı bölgede
+  BASKIN EMRİ VER'i ~19 px taşırması (aşama 9'dan).
+- **Sıradaki:** aşama 11 (kalıcı tahta ve savunma), geliştirici isteyince.
+
+**Tesis baskınları aşama 11 bitti, ölçüm yarısı tutmadı** (20 Kasım; kalıcı tahta ve savunma; `BalanceConfig.asset` ve `SoundBank.asset`
+değişmedi; ana bayrak asset'te kapalı; iki alt bayrak `facilityMarks` ve `facilityDefenseEnabled` kapalıyken oyun aşama 10 ile bayt aynı;
+kayıt biçimi 19, tesis izi f5). Geliştirici uyurken, "karar gerekirse önerinle yap" talimatıyla altı sıralı parçada (P1 Core tahta, P2 Core
+simülasyon, P3 bot ve ölçüm, P4a sunum: masa, P4b sunum: baskın sahnesi, kapanış) yapıldı; kararlar onayına açık (tasarım §14 on dördüncü
+tur, 119 karar; uygulama tasarımının açık soruları varsayılanla: S1 saldırı baskınında savunma kancası yok, S2 "bırak" kuralı lafızla,
+S3 hedef tutmazsa yalnız yeni savunma alanları ayarlanır, S4 kapı kuralı genişletildi). Ayrıntı tasarım §9 "Uygulanan hâl (aşama 11)",
+ölçüm §11.6 "Aşama 11 ölçümü".
+
+- **Core:** `FacilityMarks.cs` (sekiz iz türü, saf `Apply`/`Derive`/`Merge`/`Wipe`, bağ kuralı), `Baskin.Defense.cs` (savunma tahtası:
+  tek sayaç, barikat turu, dalga takvimi ve gecikme, takipçiler ve kuyruk, saha rölesi, kapıdan dönüş, makine aklının röle terimleri,
+  okuyucular), `Simulation.Siege.cs` (kuşatma günlüğü `FacilityState.Sieges`, karar vardiyası, `siege_defend`/`siege_yield`, kendiliğinden
+  bırakma, savunmanın sonucu, iz toplama, onarım `FacilityState.Repairs`); `RaidParams.Mode/Marks`, `RaidLogEntry.Mode`, `SimEventType.Siege`;
+  `Counterattack` → `PickCounterTarget` + `FallSector`; saldırı ve savunma emri ortak `OrderRaid`; `Step` → `StepCore`; §9.3 (bölge fonu ve
+  güveni bir kez), Siper (röle +1); 11 `Balance` alanı. Kapanışta: `Baskin.ObjNames["role"]`, `DoorVisit.Siege` (kartsız kapının
+  kuşatması), okuyucular `Simulation.DefenseTurns/DefenseWaveCount/DefenseSchedulePreview` (sunum denge alanını doğrudan okumaz).
+- **Sunum:** masa (P4a): kuşatma duyurusu (vardiya raporu kutusu, kartlı teleks, operasyon raporu, alarm hover'ı, kartsız kapı), haritada
+  nabız atan ✓ ve "KUŞATMA" damgası, görev fişinin kuşatma kipi (SAVUN; iki tıklı BIRAK, `DeskGame.unity` `OperationSlip.yieldAction`),
+  paftada izler ve onarım (mürekkep katmanında), CRT, telsiz günlüğü, devir fişi uyarısı, ÖN KONTROL, pano kilidi, `RaidLog`'un on bir
+  tüketicisi ("KANAT TUTULDU"/"KANAT DÜŞTÜ"); metinler `FacilityDefenseText`. Baskın sahnesi (P4b): SAVUNMA anteti, 10 hücreli şerit
+  (`RaidHud.prefab` Cell 9/10, `FitCells`) ve dalga işareti, barikat fişi, amaç ve dalga satırı, saha rölesi (`Relay.prefab`, kurgu, yol E;
+  `thumb_relay`), "DALGA n" ve "GELDİ", İÇERİ ÇEKİL onayı, son tur ve geri çekilme onayları, sonuç kartı, kurallar kartının savunma bölümü,
+  hover'lar; metinler `FacilityDefenseRaidText`.
+- **Bot:** `CampaignBot.Savun` (`SAVUN` hep/hic/yok), `RaidBot.Retreat` (`CEKIL` hic/hep/baski), `DefenseScore` (`W.Relay` 10,
+  `W.WaveGhost` 1), hayalet erişim; Camp8 `S` satırı, R/C anahtarları, REPLAY `iz`/`kusatma`; `ozet.py --tesis` "aşama 11" bölümü;
+  `tesis11.txt`; README "Kuşatma ve savunma, kalıcı tahta (aşama 11)".
+- **Ölçüm (80 tohum, 7 etiket):** kilitler bayt aynı (`t11K0` = `t10donus` 24/24), REPLAY 130/130, iz defteri 0/1680. **Hedef tutmadı:**
+  oynanan savunmanın %100'ü kazanıldı (hep tutma; hep çekilmede %98); dalga, süre ve takvim taraması bandı tutturmadı, **denge ve kural
+  değişmedi**. Karar verilen kuşatmaların yalnız %46'sı savunulabildi (kalanında kadro yok; kuşatma başına tutulan kanat %46). Hep savunmak
+  hep bırakmaya göre dağılmayı −5,8 ±2,3p düşürür; hep çekilmek tutulan her savunmada −2 güven öder; izler ölü / baskını +0,034 ±0,015 artırır;
+  aşama 11'in toplamı ölü / harekât +1,48 (13,2).
+- **Doğrulama:** Mono koşucusu 1041 geçti / 3 bilinen taklit / 5 atlandı; Camp8 kilitleri kapanıştan sonra yeniden (bayrak kapalı `pre_*`,
+  `t11K0` iki parça = P3 ve `t10donus`, `t11savun`/`t11cekil`/`t11birak` parçaları P3 ölçümüyle bayt aynı, REPLAY 130/130). Unity: P2'de
+  editör uzun koşudan sonra yanıtsız kaldı, P4a–P4b batchmode kopyada (tam EditMode 2132: 2127 geçti, 5 atlandı; tam PlayMode 127: 111 geçti,
+  16 bilinen ortam kalanı); kapanışta editör yanıt verdi ve **editörde, boş sahnede** derleme temiz, tam EditMode 2129 test: 2128 geçti, tek kalan süre eşikli `FacilityMapsTests.Generation_IsFastEnough` (1777 ms / 1500; tesis üreticisi değişmedi, tek başına geçti; P2'de de aynı), 5 `Explicit` koşulmadı; tam PlayMode **127/127** (batchmode'da düşen 16 test dahil). `LocalizationTests` yeşil; Dyn SDF ve yedek font testten önceki hâline geri
+  kondu; ekran görüntüleri 1920×1080 TR/EN (batchmode, `asama11/shots`).
+- **Bağımsız inceleme ve kapanış:** kod kuralı ihlali yok; bitti ölçütünün ölçüm yarısı tutmadı. Düzeltilenler: ölçümün paydası başlık
+  tablosunda, rölenin adı Core'da, kartsız kapının kuşatması, sunumdaki denge sıkıştırması Core okuyucularına, test gücü (sabit TR/EN fiş
+  metni, PlayMode'da bir tur gerçek dalga çatışması), belge çelişkileri (savunma tohumunun tuzu, röle canının adı); bilinçli sapmalar
+  (GEÇ'te takipçiler, bekleyen kuşatma varken ikinci eşik) belgede onaya açık (§14 on dördüncü tur 111–119).
+- **Elle oynama:** yapılmadı; ana bayrak asset'te kapalı (§15).
+- **Açık (geliştiriciye):** S1–S4'ün onayı; **savunmanın amacı** (hedef tutmadı; seçenekler: sızma, dalga girişini bölme, pusu sınırı,
+  hedefi kuşatma başına tanımlama ya da olduğu gibi; §14 on dördüncü tur "Açık sorular" 5); "bırak" kuralının vardiya kaybettirmesi (S2);
+  kuşatmaların yarısının kadro yokken gelmesi; izlerin ölüme etkisi; ölüm hedefinden uzaklaşma (S1 ölçülmedi); onay notunun boyu.
+- **Sıradaki:** aşama 12 (Katar ve Yalpa), geliştirici isteyince.
+
+**Tesis baskınları aşama 12 bitti** (20 Kasım; Katar ve Yalpa; `BalanceConfig.asset` ve `SoundBank.asset` değişmedi; ana bayrak asset'te
+kapalı; iki alt bayrak `facilityKatar` ve `facilityYalpa` kapalıyken oyun aşama 11 ile bayt aynı; kayıt biçimi 19, tesis izi f6). Geliştirici
+uyurken, "karar gerekirse önerinle yap" talimatıyla altı sıralı parçada (P1 Core tahta ve zincir, P2 Core simülasyon ve adlar, P3 bot ve
+ölçüm, P4a sunum: masa, P4b sunum: baskın sahnesi, kapanış) yapıldı; kararlar onayına açık (tasarım §14 on beşinci tur, 120 karar;
+uygulama tasarımının açık soruları varsayılanla: S1 adlar bayraktan bağımsız, S2 savunmada Katar ve Yalpa kapalı, S3 bedel gerekmedi,
+S4 yeni kit ve kuplör yok). Ayrıntı tasarım §10 "Uygulanan hâl (aşama 12)", ölçüm §11.6 "Aşama 12 ölçümü".
+
+- **Core:** `Baskin.Conditions.cs` (açık kenar `IsOpenEdge`/`OpenEdgeRows`, `FallOff`, takip `FollowerIds`, yatış `TiltAt`/`TiltDir`/
+  `TiltSchedule`/`EndTilt`/`Slides`), AYIR (`Baskin.Chain.cs`: `DecoupleBlock`/`CanDecouple`/`Decouple`), `Push`'un kayma kipi, ortak
+  `EntryTile` ve `StepsFrom`, `Unit.Overboard`, `BState.Decoupled`; `RoomReport.Follow/Decouple` ve kişi durumu `"k"`, `RaidResult.Overboard`,
+  `RaidChain.Next`/`Setup` takipte; `FacilityMaps.EventFor` ve Katar'da doğu geçidi (`GeneratorVersion` 6); `ReturnPlanningSquad`
+  (kenardan düşen yaşar, 5 vardiya düz yatar; `SquadOutcome.Overboard`), `KatarReportCheck`, okuyucular `Simulation.RegionEvent/RegionNote`;
+  adlar ve `RegionDef.FacilityNote`; 4 `Balance` alanı. Kapanışta: `Simulation.FacilityRoomTurns` + `Baskin.FirstVisitTurns` (tur bütçesi
+  tek kural) ve `Baskin.FollowedInIds` + `Unit.Follower` (gelen takipçi); davranış aynı.
+- **Sunum:** masa (P4a): fişin OLAY'ı ve bina hover'ı Core okuyucularından, Katar paftasında kesik açık kenar ve tırnaklar, Yalpa paftasında
+  yatış takvimi, operasyon raporunda "vagondan düştü · 5 vardiya yatış"; metinler `FacilityConditionText`. Baskın sahnesi (P4b): `brink`
+  kenar çizgisi ve hover, düşme önizlemesi (hayalet, "DÜŞER") ve `fall` canlandırması, VAGONDAN DÜŞTÜ kartı ve satırları; AYIR (Q,
+  Teknisyen kartı "AYIR · Q", EMRİ İLET "AYIR · takip yok", durum satırı), "TAKİP EDER" ve hover, kapı ve geçiş fişleri, gözcü; Yalpa şeridi
+  okları, `tilt_next`/`tilt` okları ve "YALPA 2/1", kayma hatları, hover, eğilme canlandırması; iki renk `RaidPieceLibrary.hazardBrink/
+  hazardTilt` (tek asset değişikliği). Sahne, prefab, model ve ses değişmedi.
+- **Bot:** `RaidBot.Detach` (`AYIR` hep/hic/takip), `RaidBot.Edge` (`KENAR` hic/kacis), `Weights.EdgeFall/TekEdgeFall`, `Score`'un
+  `Overboard` dalı, `Tally` ekleri ve kaynak; Camp8 R/S/C ekleri, `fate e`; `ozet.py --ilk`; `tesis12.txt`; README "Katar ve Yalpa (aşama 12)".
+- **Ölçüm (80 tohum, 5 etiket; hedef yok):** kilitler bayt aynı (`t12K0` = `t11savun` 24/24, önek kilitleri 4 × 240/240), REPLAY 60/60;
+  1 070 Katar ve 820 Yalpa baskını istisnasız. Kaçış kapısı bot için gerçekleşmedi (kendi üyesini atma 0,18 / Katar baskını, hepsi gidişte;
+  ilk na eşli ölü −0,06 ±0,05), AYIR belirleyici değil (dönüş geçişi başına 0,12 takipçi); **denge değişmedi**. Katar baskın başına 0,83
+  makineyi kenardan düşürür (EMP %91); Yalpa olay hasarını yağın ~4 katına çıkarır, oc bölge başarısı Yalpa'lı etiketlerde 6–9 puan düşük
+  (eşli değil; ilk oc eşli +6,1 ±11,0p, gürültü).
+- **Doğrulama:** Mono koşucusu 1107 geçti / 3 bilinen taklit / 5 atlandı; Camp8 kilitleri kapanıştan sonra yeniden (bayrak
+  kapalı `pre_*` = `asama6/taban`, `t12K0` = `t11savun`, dört ölçüm etiketinin iki parçası ölçüm çıktısıyla 24/24 bayt aynı, REPLAY 12/12).
+  Unity: P2 ve P4b batchmode kopyada (editör yanıtsızdı); kapanışta editör yanıt verdi ve **editörde, boş sahnede** derleme temiz, tam
+  EditMode **2213/2213**, tam PlayMode **129/129** (bitti ölçütü `FacilityConditionPlayTests` 2/2 dahil). `LocalizationTests` yeşil;
+  Dyn SDF ve yedek font testten önceki hâline geri kondu; ekran görüntüleri 1920×1080 TR/EN (P4a, P4b; `asama12/shots`).
+- **Bağımsız inceleme ve kapanış:** kritik ya da yüksek bulgu yok. Düzeltilenler: EN'de GEÇ'in iki adı ("PASS"/"gate" → "GO THROUGH"/
+  "door"), sunumdaki Core kural kopyaları (tur bütçesi ve takipçi okuyucuları Core'a), operasyon raporunun ikinci yeniden oynatması, takvim
+  testinin totolojisi, belgeler (§10.1'in iki lafız farkı, AGENTS). Gerekçeyle bırakılanlar: EN telsiz fişlerinin dil değişince eski dilde
+  kalması (bütün fişlerin davranışı), EN "laid up"/"bedridden" (§14 on beşinci tur 112–120).
+- **Elle oynama:** yapılmadı; ana bayrak asset'te kapalı (§15).
+- **Açık (geliştiriciye):** S1–S4'ün onayı; kaçış kapısının insan elindeki değeri ve bedeli (S3); botun `hic` ağırlığı; kenarın makine
+  kayıplarındaki payı ve `itme` (aşama 13 Tampon ile); Yalpa'nın eşli ölçüm gücü; EN telsiz fişleri; EN beş satırlı fişin ~19 px taşması
+  (aşama 10 madde 75).
+- **Sıradaki:** aşama 13 (altı imza makinesi), geliştirici isteyince.
+
+**Üretilmiş harita, aşama 1 ve 2 bitti** (16 Kasım; aşağıda): her yeni harekâtta harita tohumdan üretilir ve oyun böyle açılır
+(`Settings/BalanceConfig.asset` `liberationMapGen` = 1; C# varsayılanı 0 = dünya haritası, geri dönüş yolu). Core üreticisi 3
+(açılış karıştırması), kayıt biçimi 18 ve parmak izi; sunum: kâğıt harita çizimi, iki dilli otomatik yerleşim, adların bütün
+okuyucuları, nötr açılış/öğretici metinleri ve yerden bağımsız bina notları. EditMode 1270/1270, PlayMode 96/96 (BalanceConfig.asset = 1 ile).
 
 **Başlangıç rehberi** (9 Kasım): yeni kartlı harekâtta emir belgesinden sonra açılan 18 adım; pano/gerçek kart ataması, isimli kadro, gerçek baskın, rapor, Boşta dinlenme ve şalter → fiş → EVRAK. Aynı kayıtta adım korunur, eski kayda dayatılmaz, EĞİTİMİ BİTİR ile kapatılabilir. Simülasyon, denge, RNG ve kayıt biçimi değişmedi. Doğrulama ve kapsam: `Baslangic_Rehberi/README.md`.
 
@@ -48,6 +668,134 @@ oranları yeni kişi ve ekonomi dengesini doğrulamaz.
 güven, YZ alarmı, hazırlık sığınağı, bölge kimliği ve eğitim: `6e658a5`). Sonrası (baskında tıklama düzeltmeleri, alarm
 panosu, harita havuzu ve torbası, ikmal kaçışı, makine aklı, sivillere saldıran makineler ve güven ödülü, sığınağın kapısı):
 `c6f61e9`; build: `05ffdcb`; telsiz: `9d16037`; tasarım revizyonu 2: `927296b`; Madenci, Sis uzmanı, kadro seçimi, plaka rafı ve haritanın kenarı: `8097337`; sonra `acc1b7e`, `411d3eb`, `c1a743a` (kartlı pano ve Revizyon 3 öncesi). Revizyon 3 (Aşama 0–10) `c1a743a` üstünde, commit edilmedi.
+
+## Üretilmiş harita, aşama 2: sunum ve açılış (2026-11-16)
+
+İstek: "her harekât başında harita değişimini tam versiyon olarak uygula". Aşama 2 sunumu, metinleri ve açılış çeşitliliğini
+getirdi; kapanışta `BalanceConfig.asset` 1 yapıldı. Dünya haritası yolu (anahtar 0) ve sahnedeki eski çokgen/etiket/ekip
+noktası verisi geri dönüş için duruyor; `SetMap(null)` hepsini birebir geri getirir (testli).
+
+- **Kurgu ve metin:** YZ uydu verisini ve haritaları sildi; sığınak vaziyet kâğıdını telsiz raporları ve kablo hatlarından
+  çizer. Açılış belgesi ve öğreticinin "go" adımı bölge adını `Loc.F` ile alır ("SIĞINAK 07, {0} bölgesinin altında…"),
+  anahtar 0'da da aynı nötr kalıp. 7 bina notu yerden bağımsız; gerçek yer adı taşıyan iki bina yeniden adlandırıldı
+  ("Sibirya veri merkezi" → "Kutup veri merkezi", "Körfez rafinerisi" → "Petrol rafinerisi"; kullanıcı onayı bekliyor).
+- **Ad okuyucuları:** sunumun her yeri `Simulation.RegionName/RegionSourceName/Links` okur (harita durumu, fişler, teleks
+  gerekçeleri, CRT, telsiz defteri, vardiya/operasyon/son raporu, son şalter, baskın parametresi). Vardiya raporu karşı
+  saldırının bölgesini `ShiftSnapshot.lastCounterattackRegion`'da Türkçe kaynakla saklar. Telsiz ve CRT kısa adı harita başına
+  tekil (çakışan kısaltma tam yazılır). Harekâtsız örnekler `Bridge/SampleMap` (tohum 79).
+- **Çizim (`GeneratedMapGeometry`, `GeneratedMapRenderer`):** kıyısız graticule'lü kâğıt (`Art/Sade/Map/map_base_blank@2x.png`),
+  el çizimi kıyı ve sınırlar (kenar başına 7 ara nokta, üç harmonik; kıyı %24 / köşe %12, iç sınır %14 / %6; yıldız biçim
+  koruması), 4 katlı hale, 3 su çizgisi, kalemin ikinci geçişi, çift çizgili sınırlar, kablo hatları sarkan kesik ip ve
+  raptiye (gölge, baş, parıltı). Aday: sarı yıkama + içe kaydırılmış kesik kontur + özgür bölgeden ok (kara sınırında ya da
+  kablonun aday ucunda). Lejantta "kablo hattı" satırı. Sahneye yalnız ekleme (GenPaper, GenHalo, GenLines, Frontier,
+  lejant satırı); bütün yeni grafiklerde raycast kapalı.
+- **Yerleşim (`GeneratedMapLayout`):** etiket `Inner` sırasıyla, iki dilde ölçülür, iki dilde aynı konum; 34/31/28 px; sığarsa
+  tek satır. Birinci tur adın ve altındakilerin kendi bölgesinde kalmasını ister, olmazsa yalnız çakışmasızlık. Çakışma
+  listesi: adlar, altları, ÖZGÜR damgası, cephe bloğu, figür tabanı, S-07, lejant, kablo raptiyeleri, daktilo ve kalemin
+  altı (K2). Cephe bloğu başka bölgenin karasına ve kendi konturunun üstüne düşmemeye, figür tabanı kendi karasında ve kablo
+  raptiyesinden uzak durmaya puanlanır. Lejant en az kara altında kalan köşeye (kablo raptiyesinden 12 px uzak). Görev fişi
+  etiket sol yarıdaysa sağda. S-07 karargâhın içinde, yerleşimin seçtiği yerde (aşağıda "Karargâh kalabalığı"). Mono aynası (300 tohum): 298/300 çakışmasız (kalan ikisi en az çakışmalı yerleşim ve konsol uyarısı; test tohumları 1–100 temiz); ad karadan taşan (%90'dan az kendi bölgesinde)
+  %3,3 (eski yerleşim %11), cephe bloğu başka karada %9,5 (eski %31), şeridi kendi konturunu kesen %17 (eski %61), figür
+  tabanı dışarıda %3,9 (eski %6); Unity testinde (100 tohum, gerçek TMP ölçümü) %2,9 / %8,9 / – / %4,2, yerleşim ortalama
+  64 ms, en kötü 136 ms. Karargâhın yüzdesi ve ADAY'ı hiç görünmediği için yerleşimde yer tutmaz. Sahne yüklenirken lejant küçük ölçülürse ilk görünür karede yeniden ölçülür ve yerleşim yenilenir.
+- **Karargâh kalabalığı (üretici 4 + S-07 serbest):** dar karargâhta ilk cephenin bloğu haritaların %28'inde komşu karaya
+  taşıyor, şeridi %22'sinde konturu kesiyor, adı %13'ünde taşıyordu (Mono, 300 tohum). İki yol birlikte: Core karargâh
+  adaylarına alan şartı koyar (en az iki kalın hücre, ortalama bölgenin ≥ %90'ı, en iç hücre kenar bandında; bant kalın
+  hücrede zaten tutar), yerleşim S-07'yi karargâhın iç hücrelerinden ad + ilk cephe bloğu + figürle en iyi sığan yere koyar ve
+  karargâhı birinci turda gevşetmez. Sonuç (Mono 300 / 600 tohum): %0,7 / %4,0 / %0 (600'de %0,3 / %5,0 / %0); Unity 100
+  tohum gerçek TMP: 0 / %6 / %0 (iki dil). Genel ölçüler iyileşti ya da aynı kaldı (ad taşan %3,2 → %2,0, cephe başka karada
+  %8,8 → %7,1, figür tabanı 1200 tohumda 630 → 615). Deneme ortalaması 24,0 → 26,3, yedek 0; tohum 79'un haritası değişti
+  (m1-2a717a71, deneme 13); en sık açılış kümesi 500 tohumda %21 → %23. Yerleşim ~%10 yavaş (Unity 100 tohum ort 64,5 ms).
+  **İkinci tur (inceleme bulguları, yalnız sunum; Core ve parmak izi aynı):** karargâhın figürü, raptiyesi ve S-07'si de ilk
+  ekranda kontura biniyordu. Karargâh birinci turda üç kademeyle yerleşir: en sıkı (`HqFull`: figür tabanının ≥ %90'ı
+  karargâhta ve figür kutusu başka karada ≤ %5; bütün cephe bloğu kendi karasında, şerit ≥ %98, saha işaretleri ≥ %94;
+  raptiye konturun içinde; blok kablo ipine değmez), sonra figür + raptiye (`HqFigure`), sonra yalnız figür (`HqFigureOnly`), sonra birinci turun genel kuralı
+  (ad ve cephe bloğu yine kendi karasında). Karargâhın komşusu gevşemeden önce karargâh en sıkı kademeden iner; bir lejant
+  yerinde birinci tur bitmezse karargâh genel kurala inip aynı yerde bir kez daha denenir (genel ölçüler kötüleşmesin).
+  Figür için karargâhta 22 × 20 px'lik sık nokta ızgarası; sıkı kademelerde taban elipsi 6 px büyütülerek ölçülür (kontur
+  sınırın 5 px içinde çizilir, taban koyu çizgiye binmesin). Raptiye artık şeritten bağımsız yan seçebilir
+  (`Placement.PinRight`; şeride göre yanı önce) ve "karada" ölçüsü raptiye başının konturun içinde, arada boşlukla kalmasıdır
+  (merkezden 19 px, `PinClearance`). S-07 adayı kutusu 6 px büyütülünce köşeleri ve kenar ortaları karargâhta olmalı,
+  karargâhın komşularına giden aday oklarına (`GeneratedMapGeometry.MiddleEdge`, `SetFrontier` ile ortak) ve kablo iplerine
+  değmemeli, cephe satırına yapışmamalı; uyan aday yoksa uymayan kullanılır. Lejant köşesi ancak bütün S-07 adaylarına
+  değiyorsa elenir; yedek yerleşimde S-07 ilk aday; `ChooseShelter`'ın budaması sezgisel olarak belgelendi.
+  Karargâhın adı da konturdan payla aranır (kutu 3 px büyütülünce köşeleri ve kenar ortaları karargâhta, `HqLabelPad`); S-07
+  adaylarında kayma 52 px'e kadar. Mono aynası 600 tohum (önce → sonra): karargâh adı kontura değen %57 → %0,3, figür tabanı
+  konturun üstünde (6 px payla < %90) %50 → %1,8 (< 0,85: %24 → %1,3), raptiye konturda (18 px) %55 → %3,2, S-07 kontura
+  yakın %44 → %2,8, aday okuna değen %12 → %0,7, cephe satırına yapışık %6,7 → %3,0; hedefler %0,3 → %0,3 / %5,0 → %3,0 /
+  %0 → %0,3 (cephe başka karada / şerit konturu kesen / ad taşan). Genel: ad taşan %2,0 → %1,8, cephe başka karada %7,1 →
+  %6,3, şerit konturu kesen %15,6 → %13,9, figür tabanı < 0,7 %4,2 → %3,6, raptiye kutusu karadan taşan %39 → %32, birinci
+  turda biten 593 → 595, çakışmasız 598 → 598. 601–1200'de de aynı yön (karargâh figür tabanı < 0,85 127 → 7, ad taşan
+  163 → 140, cephe başka karada 501 → 447, birinci tur 589 → 593). Yerleşim Mono'da ~%40 yavaş. Unity 100 tohum gerçek TMP (iki dil): karargâh cephe başka
+  karada 1, şerit konturu kesen 3, ad taşan 0/200; ad kontura yakın 0, figür tabanı konturda 4, raptiye konturda 0, S-07
+  kontura yakın 3, oka değen 0; genel ad taşan 31 → 23/1200, cephe başka karada 85 → 73, figür tabanı dışarıda 52 → 44;
+  yerleşim ort 64,5 → 97 ms, en kötü 156 → 257 ms (harekât başında ve kayıttan devamda bir kez; oturumun ilk koşusunda TMP
+  ısınırken daha uzun). Açılış çeşitliliği testi 500 tohuma çekildi (en sık küme < 125; ölçülen 115). Yeni
+  PlayMode testi: kayıttan devamda aynı harita, S-07, lejant ve karargâh yerleşimi, iki dilde.
+- **Açılış çeşitliliği (üretici 3):** karargâhın üç komşusu varsa %70 olasılıkla bir erken paket halkanın hemen arkasına,
+  yerine bir orta paket; en sık ilk küme %66 → %21, 21 küme; erkensiz açılış 0. Parmak izi değişti (tohum 79 m1-ccdb8451),
+  kayıt biçimi 18 kaldı (yayımlanmadı).
+- **Bot (iyi küme, `PICK=rastgele`):** dünya haritasına göre 200 tohumda −5,5 (se 3,5; kabul sınırı −5'in 0,5 puan dışında),
+  400 tohumda −3,5 (se 2,5); üretici 2'ye göre −1,1 (se 1,7). Bot rastgele seçiyor; erken paketi bilerek seçen oyuncu için
+  maliyet daha düşük olmalı.
+- **Performans:** harita harekât başında bir kez kurulur (geometri ~2–9 ms, yerleşim ~50 ms; Mac editör), sonra yalnız renk ve
+  oklar değişir. Kare süresinde gerileme yok (A10 yöntemi; ayrıntı aşağıda "Açık işler"de değil, raporlarda).
+- **Testler:** `GeneratedMapDrawingTests` (22), `GeneratedMapLayoutTests` (7; 100 tohum iki dilde çakışmasızlık, harita alanı,
+  örtücüler, okunurluk oranları, karargâh oranları ve S-07 karargâhın karasında; sahnede çizilen işaretlerin modelin kutularında kalması), `GeneratedMapPresentationTests` (7; kısa adların tekilliği dahil), `GeneratedMapPlayTests` (3; kayıttan devamda aynı S-07),
+  `WorldMapTests` (açılış testi, önbellekten bağımsız kayıttan devam). Dünya haritasının sabit noktalı PlayMode testi
+  (`MapPaperPlayTests`) `mapGen: 0` ile sabitlendi.
+- **Açık:** iki bina adının onayı; 200 tohumluk bot ölçümünün sınırın hemen dışında kalması; kıyı hâlâ altıgen ızgaranın
+  silüetini taşıyor (kenar dalgası onu yumuşatır, kıta biçimini değiştirmez); kabloların altına kâğıt renkli alt çizgi ve
+  uç noktalarının kıyıya taşınması yapılmadı (uçlar Core'un hücre merkezleri).
+
+## Üretilmiş harita, aşama 1: Core ve ilk bot ölçümü (2026-11-16)
+
+İstek: her yeni harekâtta harita değişsin (tasarım "Seçenek C", tam üretilmiş harita). Bu aşama yalnız Core (C0 + C1) ve bot
+düzeneği; sunum (çizim, etiket yerleşimi, sahne) sonraki aşama. Oyun şimdilik değişmedi: `Balance.liberationMapGen` C#
+varsayılanı ve `BalanceConfig.asset` 0 (dünya haritası); sunum hazır olunca asset 1 yapılacak.
+
+- **Core:** `Core/WorldMap.cs` (veri, parmak izi, geçerlilik), `WorldMap.Gen.cs` (üretici), `WorldMap.Names.cs` (50 ad, iki
+  havuz; paket kademe tablosu). Ayrı akış `new Rng(Rng.Mix(seed, 0x4D415031 + deneme))`; `Mix` `RaidMaps`'ten `Rng.Mix`'e taşındı
+  (aynı fonksiyon). `Simulation.Map`, `Simulation.Links` (sınır bunu okur), `Simulation.RegionName/RegionSourceName` (anlar,
+  baskın parametresi, mesajlar), `Simulation.MapFingerprint`, `Simulation.ReplayFailures`. `Simulation.HQ` sabit kaldı: karargâh
+  her haritada "weu" paketi (yeri `WorldMap.HqCell`).
+- **Kayıt biçimi 18:** `GameRecord.map` parmak izi; `SaveStore.Load` uyuşmayanı (ya da izsizi) yüklemez (`Replay.MapMatches`),
+  `Replay.Restore` uyuşmazsa hata verir; başarısız komutlar sayılır. Sürüm kilidi olan testler (5 EditMode, 3 PlayMode) 18'e çekildi.
+- **Ölçüler (500 tohum, Mono):** ortalama ~26 deneme, en çok ~180 (sınır 400; yedek düzen tohum 21 deneme 0), tohum başına
+  ~34 ms. Başarısızlıkların çoğu "kalın hücre" kuralı. 20×12 ızgara seçildi (tasarımdaki ~18×11 yerine): dış halka deniz
+  kalsın ve 110–150 kara arasında kıtaları ayıran boğazlara yer olsun diye.
+- **İlk bot karşılaştırması (40 tohum, karisik+ucuz, şalter yok, `PICK=rastgele`; ön ölçüm, C2 değil):** dünya haritası zafer
+  %72 (dagilma 25), üretilmiş harita %55 (dagilma 30, terk 8, dusus 8). Gürültü ±7–8 puan; fark büyük görünüyor, C2'de çok
+  politikalı ve 80 tohumla yeniden ölçülmeli. Paket tablosunda `oc` (geç, zdron) harekât başına 1,35 başarısız baskınla öne
+  çıkıyor.
+- **Testler:** `Tests/EditMode/WorldMapTests.cs` (17): determinizm, 500 tohum geçerliliği, geometri, yedek düzen, tohum 79 altın
+  harita, S.Rng'ye dokunmama (aday altın zaman çizgileri anahtar 1'de aynı), dünya haritası yolu, ad/sınır/baskın, harekât
+  boyunca sınır, kayıt gidiş-dönüşü (eski ve kartlı), parmak izi reddi, başarısız komut sayacı, ad havuzu. Tam EditMode
+  1223/1223, PlayMode 94/94.
+- **Araçlar:** `Tools/HaritaDokumu/` (SVG/PNG döküm), `Tools/DengeBotu` (`pkg`, `PICK`, `ozet.py --pkg`).
+- **Açık (sonraki aşama):** sunum (C3–C7) bütün adları hâlâ `GameData.Region(id).Name`'den okuyor; anahtar 1'de oyun Core'da
+  oynanır ama harita, etiketler, son rapor (`FinalReportBuilder` `SourceName`) ve CRT/telsiz adları dünya haritasınınki kalır.
+  7 bina notu ve 4 açılış/öğretici cümlesi gerçek coğrafya taşıyor (C5).
+- **Düzeltme turu (aynı gün; üretici sürümü 2, kayıt biçimi 18 kaldı, yayımlanmadı):** iki incelemenin bulguları ve C2 bot
+  ölçümü uygulandı.
+  - Kademe etiketleri (`WorldMap.PackageStage`) bot ölçümüyle (200 tohum, sıradan arınmış paket zorluğu): erken af, sa, jk;
+    orta me, in, sea, na; geç cn, eeu, ru, oc. Her imza düşmanı çifti farklı kademede. İmza takasında eşitlikte karargâh
+    uzaklığı en az değişen takas seçilir.
+  - Kıta sayısı denemeden değil tohumdan çekilir (80 denemelik bloklar, sınır 800); hücre, onu içeren elipslerin merkezi en
+    yakın kıtasına düşer (yutma yok); çekilen sayı tutmazsa yeniden dene. Dağılım ~%35/%38/%27 (önce %71/%26/%3).
+  - Boğaz 2–3 kıtada en az iki deniz hücresi; 4 kıtada bir (iki hücrelik boğazla 18×10 iç alana 110 kara sığmıyor, deneme
+    başarısı %0,1). Kıtaya %40 olasılıkla koy. Alan katsayısı kıta sayısına göre.
+  - Kablolar üçüncü bir bölgenin karasından geçmez ve birbirini kesmez (tam sayı örnekleme), aynı kıyı hücresinden ikinci
+    kablo çıkmaz, ağaç dışı ek kablo en çok 3 hücre.
+  - Ad: kıyı havuzu çevresinin ≥%40'ı deniz olan bölgeye; "Mercan Adaları", "Kuzey Fiyordu", "Kuzey Havzası", "Kablo Limanı"
+    yerine "Mercan Kıyısı", "Derin Fiyort", "Çorak Havza", "Vinç Limanı".
+  - Elips yarıçapları tam sayı karekökle (π ≈ 355/113). Harita salt okunur, son harita önbellekte. Parmak izi üretici
+    sürümünü taşır; aynı sürümde izi tutmayan kayıt `.map.backup` olarak arşivlenir; `Restore` izsiz kaydın izini doldurur;
+    `ContinueSaved` başarısız komutu loglar. Yedek düzen tohum 45 deneme 0.
+  - Testler: `WorldMapTests` 23 (bağımsız boğaz/kablo/ad/kıta dağılımı denetimi, komşuluk tablosunun hücrelerden yeniden
+    kurulması, bozulmuş haritada `Validate`, anahtar 0/1 aynı karar dizisinde S.Rng), `SaveStoreTests` +1.
+  - Bot (iyi küme, tohum 1–80, `PICK=rastgele`): dünya %65,8, üretici 1 %62,9, üretici 2 **%65,0** (eşli fark dünyaya −0,8,
+    se 4,9; gürültü içinde).
 
 ## Teleks modeli: daktilo ve devir fişinin daktilodan basılması (2026-11-15)
 
@@ -103,10 +851,75 @@ değişmedi (17); komutlar aynı (`board_print`, `board_file`).
   `TypedFeed` token'dan, `ReturnSeconds`), `Rev3ShiftCloseSceneTests` (daktilo çapaları, fiş ağzı yok, K1 kadrajı), `SiginakCameraTests`,
   `ShiftClosePlayTests` P1 (K1'de basım, sıra, fiş kâğıdı örtmez), P3/P12 (fiş daktiloya dönerken K1), P4/P5 (yola göre dönüş, K1'den
   EVRAK), `ShiftPlayKit.PrintToTongue` (K1'de biter). Toplamlar: EditMode 1198/1198, PlayMode 91/91.
-- **Açık / kullanıcıya:** ileti satırının puntosu (%3 büyütme mi, istisna mı); fiş daktilonun sağ ucunda, kâğıdın yanında (ortada
-  kâğıdın önünde olsaydı teleks satırını örterdi); kâğıt rulosu masada yatıyor (tutucu yok); fişin basım sesleri hâlâ eski "yazıcı
+- **Açık / kullanıcıya:** ileti satırının puntosu (%3 büyütme mi, istisna mı); ~~fiş daktilonun sağ ucunda, kâğıdın yanında~~
+  (kapandı: aşağıda "Tek kâğıt akışı"); kâğıt rulosu masada yatıyor (tutucu yok); fişin basım sesleri hâlâ eski "yazıcı
   tırrt" + varışta "kopma çıt" (daktilo tuşu / satır başı zili klibi yok); fişin yerini gösteren işaret (eski amber lamba) yok, kod
   daktiloya küçük bir lambayı kabul eder (`ShiftReceiptMachine.slipLamp`).
+
+## Tek kâğıt akışı: teleks kâğıdı ve devir fişi birleşti (2026-11-16)
+
+Kullanıcının isteği: teleks ve devir kâğıtları birleşsin; ikisi de daktilodan çıksın; telekse yeni bir şey gelince o anki kâğıt
+düşsün, yenisi alttan yazılarak çıksın; devirde de o anki kâğıt düşsün, yerine devir kâğıdı çıksın; devir kâğıdı teleks kâğıdıyla
+aynı boyda olsun. Yalnız sunum: Core, komutlar, RNG ve kayıt biçimi (17) değişmedi; yeni oyuncu metni yok. Yukarıdaki "Teleks
+modeli" bölümünün fişin yeri ("teleks kâğıdının sağında", yol 160 mm, 100 × 150) ve sıra kararındaki "fiş daktilodayken gelen
+satır kâğıda basılır" maddeleri bununla değişti.
+
+- **Silindir tek kâğıt tutar** (`Teleprinter`, saf hesap `PlatenFeed`): yeni teleks satırında o anki kâğıt (en az bir harfi
+  basılmışsa) düşer: kopyası (`Torn sheet` altında `TelexPaper`'ın ikinci örneği, aynı mesh ve dört yuva; yuva metinleri bire bir
+  kopyalanır) o anki pozundan `motion.telexTear.*` yoluyla (0,4 s; ~2 cm yukarı çekilir, arkaya yatıp daktilonun arkasına, masa
+  hizasına düşer; son pozda K1'den daktilonun gövdesi örter, kopya havada sönmez) düşer. Her yeni satır düşürür (aynı metinli satır da). Yeni kâğıt aynı karede
+  silindirin içine geri alınır (ilk satırın taban çizgisi yazım çizgisinde, `Teleprinter/Print line`, y 0,146; ≈ 0,15 m) ve satır
+  satır yükselir: o an basılan satır (kod, durum, iletinin sarılan satırları) yazım çizgisinde durur, satır değişince
+  `motion.telexFeed.slideS` (0,06 s) ease-out kayar (yeni kayış öncekinin o anki değerinden başlar: uzun karelerde kâğıt geride
+  kalmaz); ileti yuvası tam metni taşır, harfler `maxVisibleCharacters` ile açılır (sarma basım boyunca aynı, yarım kelime üst
+  satırda basılıp aşağı atlamaz); satır bitince (`typing` son harfte iner, süre sözleşmeleri aynı) son kayışla
+  dinlenme pozuna çıkar (`Teleprinter.Settled`; `Rev3CaptureSet.PrinterDone` bunu da bekler). Aynı karedeki ikinci satırda yeni kâğıdın
+  harfi basılmamıştır: boş kâğıt düşmez, tek kopya. Düşüşe ses eklenmedi.
+- **Devir:** kol inince sıra aynı (önce teleks satırı biter, kamera K1'e varır; `HoldFeed`). Fiş beslenmeye başladığı an
+  `ShiftReceiptPaper.HoldsPlaten` true olur (fiş basıldı, görünür, EVRAK'a dosyalanmadı: beslenirken, dilde, elde, sürüklenirken,
+  dönerken, tepsiye inerken ve tepside); köprü bunu `TelexFeed.PlatenBusy` ile verir, `Teleprinter` her kare okur (çekme) ve o anki
+  teleks kâğıdını düşürür. Fiş teleks kâğıdının yolundan çıkar: `SlipExit` kâğıdın merkezinin 20 mm altı, `SlipStart` 200 mm altı
+  (Teleprinter yereli (−0,04; 0,1863; 0,0363) / (−0,04; −0,0107; 0,0016), 10°), yol 260 mm, 1,4 s, 7 satır; dil pozu = teleks
+  kâğıdının dinlenme pozu. Beslenirken rulo döner (`motion.shiftClose.slipRollDeg` 120°, fişin yoldaki kesriyle).
+- **Fiş silindirdeyken gelen teleks satırı** kâğıda basılmaz, fiş düşmez (Core'da tek, yeniden basılmaz): satır kayda girer, kod sayacı
+  ilerler, okunur sayılmadığı için ekran şeridine düşer (`TelexFeed.Post` okunurluğu basımdan sonra, yeni satırın durum puntosuyla ve
+  kâğıdın dinlenme pozunda ölçer).
+  Fiş dosyalanınca silindir boşalır; "VARDİYA DEVREDİLDİ" düşen kâğıt olmadan yeni kâğıda yazılarak çıkar.
+- **Kayıttan devam / yeni oyun:** animasyonsuz `Show` bir kare süren "anında" penceresi açar; köprü fişi geri yükledikten sonra
+  `TelexFeed.SyncPlaten(true)` ile silindiri ayrıca hemen eşitler. `GameLoaded` dinleyicilerinin sırası ne olursa olsun basılı fiş
+  varsa teleks kâğıdı gizli, yoksa son satır dinlenme pozunda; düşüş olmaz (açılışın KAYITTAN DEVAM satırı sonra gelir ve onu düşürür). Yeni oyunda silindir boş, ilk satır
+  düşen olmadan çıkar. Fiş silindirdeyken kâğıdın TELEKS hedefi (`Paper target`) kapalı.
+- **Boyut:** fiş teleks kâğıdının mesh'iyle aynı, 260 × 225 mm (`shiftClose.slip.sizeMm`; manifestteki 0,26 × 0,19 eski ön kâğıdın).
+  Yüz tasarım ölçüsü 173,33 × 150 mm (832 × 720 px @4,8; punto, boşluk, satır adımı aynı, içerik tam genişlikte 162 mm), tuval
+  dünyada ×1,5 (`shiftClose.slip.faceScale`, `HandoverSlipMetrics.worldScale`, ölçek 0,0015); elde ad yine 18 px (el pozu 0,4374 m).
+  KAPI ve 4 parçalı ERZAK gibi iki satıra sarılan kutular tek satıra iner. Alt blok yine K1'de silindirin arkasında, elde görünür.
+  Model `HandoverSlip` 0,26 × 0,225, 6 mm kıvrım, 8 × 8 ızgara (128 üçgen); doku `tx_handoverSlip` 832 × 720; fişin çarpıştırıcısı ve
+  `Paper target` 0,26 × 0,225 × 0,006. EVRAK tepsisine sığar (üst A5'i örter).
+- **Sahne:** tek seferlik script (silindi): `Print line`, `Torn sheet` içeriği (Quad + birleşik TMP yerine `TelexPaper` örneği;
+  `Teleprinter.tornText` boş, `torn*` yuvaları bağlı), `Teleprinter.sheet/sheetTarget/printLine`, `Paper target` ve fiş çarpıştırıcısı,
+  `Slip feed` çapaları, `Physical receipt`'in kayıtlı pozu; `TelexPaper/Body`'nin "batching static" bayrağı kalktı (kâğıt artık
+  hareket ediyor); `HandoverSlipView.prefab` tuvali.
+- **Testler:** yeni `TelexPlatenTests` (EditMode: satır geri alması, kayış, silindir fişteyken teleks), `TelexSheetPlayTests`
+  (PlayMode: yeni satırda düşüş ve alttan çıkış, aynı karede iki satır, fiş silindirdeyken satır şeritte); güncellenen
+  `TelexTypewriterSceneTests`, `Rev3ShiftCloseSceneTests`, `Rev3SlipMotionTests` (+ `HoldsPlaten`), `Rev3HandoverSlipFaceTests`,
+  `Rev3ModelTests`, `SiginakCameraTests`, `SiginakRoomTests` (fiş kutusu 260 × 225), `ShiftClosePlayTests` (P1 düşüş, aynı yer ve
+  beslemede rulo 120°, P5 ret, P6 devir satırı yeni kâğıtta, P11 kayıttan devam: basılı fişle ve fiş yokken); `ShiftPlayKit.SlipOverTelexPx`
+  kalktı. İnceleme sonrası: `TelexPlatenTests` "anında" pencere dışı yol ve `SyncPlaten`, ileti yuvasının görünür harf sayısı;
+  `TornSheet_PulledUpAndBack_NeverThroughBody` yeni düşüş yolu (kapağın üstünden geçerken merkez > 0,15 m, sonda rulonun arkasında
+  masa hizasında). Toplamlar için bkz. aşağıdaki inceleme maddesi.
+- **Elde eğim:** Karar D5'in düzlem içi −2,9°'si 260 mm'lik fişte sağ sütunu ~1,6 satır aşağı indiriyordu (ERZAK farkı EĞİTİM
+  satırının hizasında); eski 100 mm'lik fişin köşe düşüşünü (≈ 5 mm) koruyan −1,1°'ye indi (sahnede `Physical receipt.handEuler`,
+  `ShiftReceiptPaper.DefaultHandEuler`, `HandPose_67Percent_AllCornersInFrame`). Değer kullanıcının kararının uyarlaması; 0° da olabilir.
+- **İnceleme düzeltmeleri:** okunurluk basımdan sonra ölçülür; her yeni satır düşürür; ileti yuvası `maxVisibleCharacters`; satır
+  kayışı uzun karelerde geride kalmaz; `SyncPlaten`; düşüş yolu (`motion.telexTear` moveMm [10, 190, 300], fallMm 420, euler [60, 0, 10]);
+  eski 100 × 150 yedek değerleri 260 × 225 oldu (`ShiftReceiptPaper.SlipHeightM`, `HandoverSlipFace.CanvasCorner`, `SiginakTextScan`,
+  `ShiftPlayKit`). Bilerek değişmeyenler: geri alma ekseni `Print line`'ın 10°'si (kâğıdın ölçülen 10,47°'siyle fark 0,15 m'de ≈ 1,2 mm,
+  fişle aynı eksen); `Paper target` dinlenme pozunda kalır (kâğıdı izlerse daktilonun gövdesine girer); `faceScale` token'ı prefab'daki
+  `worldScale`'in testle kilitli kopyası (`sizeMm` gibi).
+- **Açık / kullanıcıya:** (A) fiş silindirdeyken gelen teleks satırları yalnız şeritte (seçenek: fiş EVRAK'a konunca son satır kâğıda
+  basılsın); (B) fişin alt satırı ve "fişi EVRAK’a koy" K1'de silindirin arkasında (elde görünür); (C) düşüşe ses yok; (D) beş satıra
+  sarılan uzun iletide önceki satır yuvası (soluk, küçük) iletinin dördüncü satırıyla üst üste biner (oyundaki iletiler çoğunlukla
+  kısa; yuvalar sabit yerde).
 
 ## KOS aşama 8: denge ve belgeler (2026-11-14/15)
 
@@ -1747,6 +2560,61 @@ bugünkü odanın tasarım brifidir.)
 
 ## Açık işler
 
+- **Tek kip sonrası (2026-11-22):**
+  - **Kapanış doğrulaması (2026-11-22):** tam EditMode batchmode kopyada tek koşuda 2.197 test, 2.195 geçti, 0 kırmızı (2 atlanan
+    ölçüm testi); tam PlayMode canlı editörde 128/128; Mono koşucusu 1.087 (bilinen 3 taklit testi); depodaki son kodla
+    `taban21/kilit21.sh` 124/124 `cmp` eşit. Oyunda: harekât emri → ilk sektörün tesis baskını (üç pafta, saha gözcüsü) sahnede
+    `Rev3CaptureSet.WinChain` ile kapandı → sonuç kartı → operasyon raporu (kazanç yazıldı); kayıt 21, `raid_room` ×3 + `raidres`,
+    yeniden oynatma 0 hata. Sürümü 20'ye çevrilen kayıt yüklenmedi, yeni oyun yazılırken `.v20.backup` olarak arşivlendi.
+  - **Tarif kartı kısa adı:** tesis tarifinin adı 12 mm'lik kart adına sığmıyordu (TR "Kumanda kelepçesi" 112,6 > 81 px). Ad
+    küçültülmez (D6-A); sığmayan adda kart yüzü kısa kart adını yazar (`PlanningBoardData.CardName`: Dinamit, Taret, Yem, Vinç,
+    Kelepçe, Anahtar, Delici, Zemberek; `RecipeCardData.ShortName`). Üzerine gelme başlığı ve defter sayfası tam adı taşır. Testler:
+    `Rev3CardFaceTests.RecipeCard_LongName_UsesShortCardName`, `RecipeCard_EveryRecipeName_FitsTrEn`; `SiginakTextScanTests` yeşil.
+  - **Yalnız derlenenler:** `SiginakFixtures.ApplyCounterattack` (`YieldSector` yolu) ve `RaidChainFixture` çalıştırılmadı
+    (`WinChain` oyunda denendi). Z3 hâlâ örnek tahtada. Fikstürlerde "yaralı" düşen üye artık ölür (tesis kuralı).
+  - **Kartsız kip:** sunucu ödülü yüzeyi yok (`FacilityRewardText` `Board != null` ister); ödül seçilmeden kalır, oyun kilitlenmez.
+    Kip oyunda ulaşılamıyor (`planningBoardEnabled: 1`).
+  - **Ertelenenler:** GÖZETİM cepsiz geometrisinin (`watchOpen`, `deckNoWatch`) sadeleştirilmesi, `RaidBot`'taki `Room == null`
+    dalları (bayt kilitli ayrı iş), `ResolveRaid(string reason)` imza indirimi, örnek tahtanın tümden kaldırılması (seçenek B).
+
+- **Tesis baskınları aşama 17 sonrası (2026-11-21):**
+  - **Onay:** yirminci turun K3 (§11.6 açığı başına önerilen ayar ve bot deneylerinin sırası) geliştiricinin kararını bekliyor.
+    ~~K4 (tesis kipinin ve ayrı saha sızmacısı bayrağının yayına açılması)~~ 22 Kasım'da kapandı: tesis tek kip, saha varsayılan açık. Önceki turların onaya açık maddeleriyle birlikte tasarım
+    §14 "Geliştirici onayına açık kararlar dizini"nde.
+  - **Hedefler tutmadı:** §11.6 hedef tablosunun hiçbir satırı tutmadı (ekipman kullanımında yedi türün beşi eşiği geçti); denge
+    değişmedi, seçenekler §11.6 "Açıkların yorumu ve ayar seçenekleri"nde.
+
+- **Tesis baskınları aşama 10 sonrası (2026-11-19):**
+  - **Onay:** on üçüncü turun 88 kararı ve açık sorular S1–S4 geliştirici uyurken varsayılanla verildi (tasarım §14 on üçüncü tur).
+  - **Hedef tutmadı** ("tek araç 5–10 puan düşük"): denge değişmedi; seçenekler §14 on üçüncü tur S4.
+  - **EN görev fişi:** olaylı bölgede beş satırlı fiş BASKIN EMRİ VER'i ~19 px @1080 kadrajdan taşırıyor (aşama 9'dan; §14 on üçüncü tur 75).
+
+- **Tesis baskınları aşama 7 sonrası (2026-11-19):**
+  - **Elle oynama:** aşama 7 oyunda denenmedi, ekran görüntüsü yok (kayıt 21'den beri tesis oyunda açık; tasarım §15). Onuncu turun kararları
+    geliştirici uyurken önerilen varsayılanla verildi; onayı bekliyor.
+  - **Sürüklemenin Core telsiz satırı** (tek `Say`, RNG yok); bugün yalnız fiş var.
+  - ~~**Sandık nişi ve kepenk modeli**~~ aşama 9'da; ~~**sonuç teleksi**~~ aşama 10'da yapıldı.
+  - **Açık sorular:** hedef odasında süre sonu onayı; kalkık kepenk için not; pusunun tek yönü dost ya da bulut yüzünden
+    kapalıyken ayrı neden metni.
+
+- **Tesis baskınları aşama 6 sonrası (2026-11-19):**
+  - **Ölüm hedefi tutmadı** (ölü 12,7, hedef ≤ 7,5): ne yapılacağı geliştirici kararı; kaldıraçlar ve ölçüm tasarım §14
+    dokuzuncu turun altında ve §11.6 "Aşama 6 ölçümü"nde. Dokuzuncu turun kararları geliştirici uyurken önerilen varsayılanla
+    verildi; onayı bekliyor.
+  - ~~**Aşama 7'ye kalan sunum eksikleri**~~ aşama 7'de kapandı (yerdeki yük, yük yerde / kayıp ayrımı, `gone`, yeni Fx
+    türleri, son nefes gösterimi); yalnız sandık nişi ve kepenk modeli aşama 9'a kaldı.
+
+- **Tesis baskınları aşama 3 sonrası (2026-11-18):**
+  - **Aşama 4 (dur ya da devam):** dikey dilim ölçümü ve elle oynama; geliştirici kararı. Bayrak asset'te kapalı kalır (22 Kasım'da kalktı: tesis tek kip).
+  - **Pafta çevirmenin görünümü:** yalnız ekran görüntüsüyle bakıldı. Yavaşlatılınca taşlar ve işaretler ahşap tabanın
+    üstünde havaya kalkıyor (taban dönmez); 0,35 + 0,35 s'de kâğıt çevirme etkisi veriyor. Beğenilmezse tasarımın öbür
+    seçenekleri (kâğıt örtü sayfaları, anlık geçiş) §14 altıncı tur 4'te.
+  - **Donanım modelleri:** pano, anten ve vana soğutma ünitesi yedek parçasıyla çiziliyor (`RaidPieceLibrary.fusePanel`,
+    `antenna`, `valve` boş); kapı modelinin yönü yalnız ekran görüntüsüyle denetlendi.
+  - **Eski Türkçe adlar:** `Core/DoorCards.cs` (eski kapı kartı anlatısının çevrilmiş metni: Nermin, Deniz) ve sahte veri
+    fikstürleri (`HandoverSlipFixtures`, `Rev3CaptureSet`, `AdmissionFixtures`) Türkçe adlarla kaldı; kapı kartı metni geliştirici kararı.
+    `Desk/Data/Sade/raid_tokens.json`'daki örnek metinde hâlâ "BATI AVRUPA" geçer.
+
 - **KOS sonrası (2026-11-15; ayrıntı yukarıda, "KOS aşama 8: denge ve belgeler" ve "ikinci tur kararları"):**
   - **Elle sınama:** tasarımın iki tam harekâtı (bilinçli ihmalle `dusus`, açlıkla `kacak` ve ayrılmalar) yapılmadı; bot insan
     değildir. Uygulanan dengeyle (tüketim 0,40) gerçek oyunda erzak baskısı (yarım tayın, takas), terk, zafer uzunluğu ve temiz ton
@@ -1798,7 +2666,7 @@ bugünkü odanın tasarım brifidir.)
 - **Denge (kadro seçimi):** Madenci ve Sis uzmanının hakları (dinamit 2, sis 3) ölçülmedi; seçimli kadroyla zorluk yeniden
   ölçülmeli (yukarıda, "Madenci, Sis uzmanı ve kadro seçimi").
 - **Denge:** harekâtın zorluğu ve uzunluğu gerçek oyunla ayarlanmadı; sivil güven, alarm ve hazırlık sığınağı botla
-  ölçüldü, ama bot projede değil (oturumun geçici klasöründe); projeye denge testi olarak alınmadı. Botla görülen: zorluk
+  ölçüldü; bot sonradan `Tools/DengeBotu/`'ya alındı (`Camp8`, kayıt 21'den beri yalnız tesis), ama denge testi olarak alınmadı. Botla görülen: zorluk
   5. bölgeden sonra artmıyor. Harita türleri hep soldan girişli ve tek hedefli; birden çok hedefli ya da başka kenardan
   girişli türler motorda ikmal kaçışını ve makine yerleşimini genişletmeyi ister. Karşı saldırıyla
   yeniden özgürleşen bölge bölge fonunu ve güveni yeniden veriyor (ölçüm de böyleydi).

@@ -216,5 +216,35 @@ namespace Corrigible.Desk.Tests
             }
             finally { EditorSceneManager.CloseScene(scene, true); }
         }
+
+        /// <summary>Oda geçişinde tahtanın tabanı da karolar ve parçalarla birlikte kayar; gölge tabanı izler (tesis sürüm 10,
+        /// geliştirici 2026-11-24: "tahta da animasyona dahil olsun").</summary>
+        [Test]
+        public void BaskinScene_BoardBaseSlidesWithThePage()
+        {
+            var scene = EditorSceneManager.OpenScene("Assets/Corrigible/Scenes/Baskin.unity", OpenSceneMode.Additive);
+            try
+            {
+                var roots = scene.GetRootGameObjects();
+                var boardBase = roots.Single(g => g.name == "BoardBase").transform;
+                var components = roots.SelectMany(g => g.GetComponentsInChildren<Component>(true)).ToArray();
+                var board = components.OfType<RaidBoard3D>().Single();
+                CollectionAssert.AreEqual(new[] { boardBase }, board.SlideWith.ToArray(), "taban paftayla kayar");
+                var background = components.OfType<BoardBackgroundView>().Single();
+                Assert.AreSame(boardBase, Ref<Transform>(background, "boardBase"), "gölge tabanı izler");
+
+                var rest = boardBase.position;
+                var pose = typeof(RaidBoard3D).GetMethod("SetPagePose", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                var offset = new Vector3(0, 0, 6);
+                pose.Invoke(board, new object[] { offset });
+                try
+                {
+                    Assert.Less(Vector3.Distance(rest + board.transform.TransformVector(offset), boardBase.position), 1e-4f, "taban kaydı");
+                }
+                finally { board.ResetPagePose(); }
+                Assert.Less(Vector3.Distance(rest, boardBase.position), 1e-4f, "taban dinlenme pozuna döner");
+            }
+            finally { EditorSceneManager.CloseScene(scene, true); }
+        }
     }
 }

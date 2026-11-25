@@ -24,26 +24,157 @@ MonoBehaviour:
     liberationRestHeal: 1
     liberationRookieHpPenalty: 1
     liberationTier2At: 2
-    liberationTier3At: 7
+    liberationTier3At: 9
     liberationTier4At: 12
+    liberationMapGen: 1
     liberationTrustStart: 10
     liberationTrustMax: 20
     liberationTrustPerCivilian: 1
     liberationCiviliansPerTrust: 2
     liberationTrustPerRegion: 4
-    liberationAlarmPerShift: 1
+    liberationAlarmPerShift: 0.5
     liberationAlarmPerFailure: 1
     liberationAlarmPerServer: 4
     liberationAlarmThreshold: 10
     liberationCounterattackTrust: 1
     liberationServerTargetHp: 2
     liberationServerMachines: 0
-    liberationLootExtraTurns: 2
-    liberationServerExtraTurns: 2
-    liberationCivilianHp: 2
+    liberationCivilianHp: 3
     liberationDynamiteCharges: 2
     liberationSmokeCharges: 3
     liberationRegionEvents: 1
+    facilityEntryTurns: 6
+    facilityMiddleTurns: 6
+    facilityTargetTurns: 10
+    facilityEntryMachines: 1
+    facilityMiddleMachines: 1
+    facilityTargetMachines: 3
+    facilityPanelHp: 2
+    facilityAntennaHp: 2
+    facilityValveHp: 1
+    facilityReturnTurns: 6
+    facilityPanelQuietTurns: 2
+    facilityAntennaMachines: 1
+    facilityValveTargetHp: 2
+    facilityValveStillTurns: 1
+    facilityAmbushRange: 4
+    facilityRushRun: 3
+    facilityRushPush: 2
+    facilityThrowRange: 3
+    facilityDragMoveCost: 1
+    facilityBigCrateMetal: 2
+    facilityBigCrateCircuits: 1
+    facilityLastBreathDies: 0
+    facilityIntelCost: 1
+    facilityWatchIntel: 1
+    facilityWireCharges: 2
+    facilityChargeCharges: 2
+    facilityWireHp: 3
+    facilityPlankHp: 3
+    facilityPlankCost: 2
+    facilityScrapHp: 1
+    facilityDeviceTurns: 3
+    facilityDeviceHp: 2
+    facilityTurretRange: 4
+    facilityWinchRange: 4
+    facilityWinchPull: 1
+    facilityDecoyStep: 2
+    facilityClampTurns: 3
+    facilityDogHp: 2
+    facilityDogMove: 5
+    facilityDogRestTurns: 3
+    facilityBarkRange: 3
+    facilityWireMetal: 2
+    facilityWireCloth: 1
+    facilityWireShifts: 1
+    facilityChargeMetal: 1
+    facilityChargeChemicals: 2
+    facilityChargeShifts: 2
+    facilityTurretMetal: 2
+    facilityTurretCircuits: 1
+    facilityTurretShifts: 2
+    facilityDecoyMetal: 1
+    facilityDecoyCircuits: 1
+    facilityDecoyCloth: 1
+    facilityDecoyShifts: 1
+    facilityWinchMetal: 2
+    facilityWinchCloth: 1
+    facilityWinchShifts: 1
+    facilityClampCircuits: 2
+    facilityClampMetal: 1
+    facilityClampShifts: 2
+    facilityDogSupplies: 4
+    facilityDogCloth: 1
+    facilityDogShifts: 3
+    facilityEarIntel: 1
+    facilitySpareCharges: 1
+    facilityOpenLineTurns: 1
+    facilityThresholdTurns: 1
+    facilityInfirmaryShifts: 1
+    facilityWorkbenchShifts: 1
+    facilitySightRange: 1
+    facilityFurHp: 1
+    facilityPulleyPull: 2
+    facilityStretcherAlways: 0
+    facilityTallyCap: 3
+    facilityCounterThreshold: 6
+    facilityCountermeasures: 1
+    facilityTallyAmbush: 0
+    facilityDoubleWalls: 2
+    facilityDoubleWallCharges: 2
+    facilityPiercerCharges: 1
+    facilityCutterDamage: 1
+    facilityShortClampTurns: 1
+    facilityEmitterHp: 1
+    facilityEmitterRange: 3
+    facilityJamTurns: 1
+    facilityCounterLinePenalty: 6
+    facilityAnswerCircuits: 1
+    facilitySteelWireHp: 1
+    facilityRelayTurns: 1
+    facilitySpringTurns: 1
+    facilityMarks: 1
+    facilityRepairPerShift: 1
+    facilityDefenseEnabled: 1
+    facilityDefenseTurns: 10
+    facilityDefenseFirstWave: 2
+    facilityDefenseWaveTurns: 3
+    facilityDefenseWaves: 3
+    facilityDefenseWaveBase: 1
+    facilityDefenseRelayHp: 4
+    facilityDefenseRoomTrust: 1
+    facilityCoverRelayHp: 1
+    facilityFallInjuryTurns: 5
+    facilityFollowRange: 2
+    facilitySignatureMachines: 1
+    facilityFlameRange: 2
+    facilityFlameDamage: 1
+    facilityRamRange: 3
+    facilityRamPush: 2
+    facilityAnchorRange: 4
+    facilityAnchorPull: 2
+    facilityFrostRange: 3
+    facilityFrostTurns: 2
+    facilitySealHp: 3
+    facilityBuildDamage: 1
+    infiltratorFieldEnabled: 1
+    infiltratorTellMaxDelay: 4
+    infiltratorTurn: 2
+    facilityTitlesEnabled: 1
+    facilityMaxTitles: 2
+    facilityMarksmanAt: 3
+    facilityCarrierAt: 2
+    facilityRamTitleAt: 3
+    facilityHandlerAt: 3
+    facilityBuilderAt: 3
+    facilityThrowerAt: 2
+    facilityTitleAmbushBonus: 2
+    facilityTitleRushBonus: 1
+    facilityTitleThrowBonus: 2
+    facilityTitleDeviceBonus: 1
+    facilityTitleDogCommands: 2
+    facilityKatar: 1
+    facilityYalpa: 1
     liberationMinerWorkshopLevel: 2
     liberationSmokeWorkshopLevel: 3
     doorFirstKnock: 2
@@ -120,6 +251,7 @@ MonoBehaviour:
     boardGatherCircuits: 1
     boardCookingMaxSavingFraction: 0.5
     boardRestHeal: 1
+    boardDutyHeal: 1
     boardCareHeal: 1
     boardCareHealPerTier: 1
     boardMedkitHeal: 1
@@ -165,7 +297,7 @@ MonoBehaviour:
     candidateGroupMin: 2
     candidateGroupMax: 3
     candidateWaitShifts: 2
-    candidateEmergencyBelow: 3
+    candidateEmergencyBelow: 4
     candidateTier0Share: 0.3
     candidateTier2Share: 0.3
     candidateTier0Robot: 0.05
