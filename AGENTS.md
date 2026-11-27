@@ -29,8 +29,9 @@ Ayrıntılar `Docs/` altında; burada bağlam, değişmez kurallar ve en sık ku
 | `Docs/DURUM.md` | Ne yapıldı, hangi kararlar neden alındı, açık işler |
 | `Docs/KABUL-OLAYLAR-VE-SONLAR-TASARIMI.md` | Aday seçimi, sığınak olayları ve yeni sonlar (ifşa, terk, son şalter, zaferin tonu): tasarım, Core tasarımı, testler ve bot ölçümü, uygulama aşamaları, geliştirici kararları (§11) |
 | `Docs/TESIS-BASKINLARI-TASARIMI.md` | Tesis baskınları (aşama 0–18 uygulandı; tesis oyunun tek baskın kipi, kayıt 21; sahadaki sızmacı varsayılan açık; denge hedefleri §11.6'da). Üç odalı baskın, on iki imza makinesi, bina planı, hamleler ve ekipman, önlem defteri, kalıcı tahta, üç odalı savunma, Katar ve Yalpa, kişisel unvanlar ve sahadaki sızmacı. Uygulama ve geliştirici kararları §12 ve §14 |
-| `Docs/KAPI-BELGELERI-VE-YZ-MEKANLARI-TASARIMI.md` | Dışarıdan gelen belgeler (olay tutanağı, sunucu ödülü) önce kapı panosuna gelir, bırakılınca EVRAK'a iner (§A, uygulandı); VERITY dışındaki YZ'lerin mekân ve kural önerileri (§B, onay bekliyor) |
+| `Docs/KAPI-BELGELERI-VE-YZ-MEKANLARI-TASARIMI.md` | Dışarıdan gelen belgeler (olay tutanağı, sunucu ödülü) önce kapı panosuna gelir, bırakılınca EVRAK'a iner (§A, uygulandı); VERITY dışındaki YZ'lerin mekân ve kural önerileri ve Mars finalinin şartı (§B, son liste B.9; onay bekliyor) |
 | `Docs/UI_Rev6/BRIEF_rev6.md` | Claude Design brifi (24 Kasım 2026): menü, komuta odası ve baskın tahtasının bugünkü hâli, istenen tasarım, kısıtlar; ekleri `ekler/` |
+| `Docs/UI_Rev6/BRIEF_rev6_ek1_baskin_yerleri.md` | Brifin Ek 1'i (27 Kasım 2026): on üç baskın yeri ve kuralları (B.9), son şalterin finale bağlanması ve Mars finali; kesin olanlar ve ÖNERİ'ler ayrı |
 | `Docs/UI_Siginak_Rev3/IMPLEMENTATION_MAP.md` | Revizyon 3 (model paketi, token 1.3): güncel eşleme, kararlar, açık sorular, aşama sonuçları ve günlük |
 | `Docs/UI_Siginak_Rev3/A10_DOGRULAMA.md` | Aşama 10 kanıtı: dil ve punto ölçümleri, gölge atlası ve kare süresi, T1 temizliği |
 | `Docs/UI_Siginak_Rev3/IMPLEMENTATION_MAP_A9.md` | Haritanın Aşama 9 sonundaki tam metni (son hâl sadeleşmeden önceki kopya) |
